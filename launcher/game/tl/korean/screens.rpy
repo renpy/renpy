@@ -185,7 +185,7 @@
     new "## 게임 메뉴의 기본 틀입니다. 매개변수 title로 스크린 제목을 정하고, 배경, 제목, 그리고 navigation 스크린을 출력합니다."
 
     # screens.rpy:413
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     new "## scroll 매개변수는, None, \"viewport\" 혹은 \"vpgrid\" 중 하나여야 합니다. transclude 명령어를 통해 다른 스크린을 이 스크린 내부에 불러옵니다."
 
     # screens.rpy:473
@@ -717,4 +717,3 @@ translate korean strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-

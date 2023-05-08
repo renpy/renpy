@@ -193,7 +193,7 @@ translate japanese strings:
     new "## このスクリーンは、様々なゲームメニューの基本的な共通構造をレイアウトします。各ゲームメニュースクリーンによって呼び出され、背景・現在のスクリーンタイトル・ナビゲーションを表示します。"
 
     # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     new "## scroll パラメーターは None 、\"viewport\" 、\"vpgrid\" のいずれかをとります。呼び出し親のスクリーンのコンテンツは、このスクリーンの中の transclude の部分に配置されます。"
 
     # screens.rpy:435
@@ -737,4 +737,3 @@ translate japanese strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-

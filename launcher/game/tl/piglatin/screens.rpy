@@ -194,8 +194,8 @@ translate piglatin strings:
     new "## Histay ayslay outay hetay asicbay ommoncay ructurestay ofay aay amegay enumay creensay. Tiay'say alledcay ithway hetay creensay itletay, anday isplaysday hetay ackgroundbay, itletay, anday avigationnay."
 
     # gui/game/screens.rpy:411
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## Hetay crollsay arameterpay ancay ebay Onenay, oray oneay ofay \"iewportvay\" oray \"pgridvay\". Henway histay creensay isay intendeday otay ebay useday ithway oneay oray oremay ildrenchay, hichway areay anscludedtray (acedplay) insideay itay."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## Hetay crollsay arameterpay ancay ebay Onenay, oray oneay ofay \"iewportvay\" oray \"pgridvay\". Histay creensay isay intendeday otay ebay useday ithway oneay oray oremay ildrenchay, hichway areay anscludedtray (acedplay) insideay itay."
 
     # gui/game/screens.rpy:429
     old "## Reserve space for the navigation section."
@@ -672,4 +672,3 @@ translate piglatin strings:
     # gui/game/screens.rpy:1526
     old "Menu"
     new "Enumay"
-

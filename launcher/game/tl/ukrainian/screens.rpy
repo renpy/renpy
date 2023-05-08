@@ -194,8 +194,8 @@ translate ukrainian strings:
     new "## Це описує базову структуру екрана меню гри. Він викликається за допомогою заголовка екрана та відображає фон, заголовок і навігацію."
 
     # gui/game/screens.rpy:411
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## Параметр прокручування може бути None або одним із \"viewport\" чи \"vpgrid\". Коли цей екран призначений для використання з одним або декількома об'єктами, які включені (розміщені) всередині нього."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## Параметр прокручування може бути None або одним із \"viewport\" чи \"vpgrid\". Цей екран призначений для використання з одним або декількома об'єктами, які включені (розміщені) всередині нього."
 
     # gui/game/screens.rpy:429
     old "## Reserve space for the navigation section."
@@ -685,4 +685,3 @@ translate ukrainian strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-

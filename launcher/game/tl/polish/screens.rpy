@@ -198,8 +198,8 @@ translate polish strings:
     new "## Podstawową wspólna struktura ekranu menu gry. Jest wywoływany z razem z ekranem tytułowym, wyświetla tło, tytuł i nawigację."
 
     # gui/game/screens.rpy:415
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## Parametr przewijania może mieć wartość \"None\" (Brak) lub \"viewport\" albo \"vpgrid\". Gdy ten ekran ma być używany z jednym lub większą liczbą dzieci, które są transkludowane (umieszczane) wewnątrz niego."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## Parametr przewijania może mieć wartość \"None\" (Brak) lub \"viewport\" albo \"vpgrid\". Ten ekran ma być używany z jednym lub większą liczbą dzieci, które są transkludowane (umieszczane) wewnątrz niego."
 
     # gui/game/screens.rpy:433
     old "## Reserve space for the navigation section."
@@ -711,4 +711,3 @@ translate polish strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-

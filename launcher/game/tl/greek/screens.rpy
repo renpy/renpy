@@ -204,11 +204,6 @@ translate greek strings:
     # Automatic translation.
     new "## Εδώ παρουσιάζεται η βασική κοινή δομή της οθόνης του μενού ενός παιχνιδιού. Καλείται με τον τίτλο της οθόνης και εμφανίζει το φόντο, τον τίτλο και την πλοήγηση."
 
-    # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    # Automatic translation.
-    new "## Η παράμετρος κύλισης μπορεί να είναι None ή ένα από τα \"viewport\" ή \"vpgrid\". Όταν αυτή η οθόνη προορίζεται να χρησιμοποιηθεί με ένα ή περισσότερα παιδιά, τα οποία μεταφέρονται (τοποθετούνται) μέσα σε αυτήν."
-
     # screens.rpy:476
     old "Return"
     new "Επιστροφή"
@@ -887,4 +882,3 @@ translate greek strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-

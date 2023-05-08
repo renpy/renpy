@@ -174,8 +174,8 @@ translate indonesian strings:
     new "## Ini menjalaskan struktur dasar yang paling sering di gunakan di layar menu permainan, ini ditampilkan beserta layar judul, dan menampilkan latar belakang,judul,dan navigasi."
 
     # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## Parameter scroll dapat berisi 'None', atau \"viewport\" dan \"vpgrid\". Ketika layar ini di maksudkan untuk di gunakan dengan cabang satu atau lebih, yang di tempatkan di dalamnya."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## Parameter scroll dapat berisi 'None', atau \"viewport\" dan \"vpgrid\". Layar ini di maksudkan untuk di gunakan dengan cabang satu atau lebih, yang di tempatkan di dalamnya."
 
     # screens.rpy:476
     old "Return"
@@ -760,4 +760,3 @@ translate indonesian strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-

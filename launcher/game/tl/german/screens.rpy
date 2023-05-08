@@ -199,11 +199,6 @@ translate german strings:
     # Automatic translation.
     new "## Hier wird die allgemeine Grundstruktur eines Spielmenübildschirms festgelegt. Es wird mit dem Bildschirmtitel aufgerufen und zeigt den Hintergrund, den Titel und die Navigation an."
 
-    # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    # Automatic translation.
-    new "## Der Parameter scroll kann None oder einer der Parameter \"viewport\" oder \"vpgrid\" sein. Wenn dieser Bildschirm mit einem oder mehreren Kindern verwendet werden soll, die in ihn eingeschlossen (platziert) werden."
-
     # screens.rpy:476
     old "Return"
     new "Zurück"
@@ -876,4 +871,3 @@ translate german strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-

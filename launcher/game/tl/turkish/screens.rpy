@@ -197,7 +197,7 @@
     new "## Bu, bir oyun menüsünün temel yapısını ortaya koyar. Ekran başlığı ile çağrılır; arka planı, başlığı ve gezinmeyi gösterir."
 
     # screens.rpy:413
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     new "## Kaydırma parametresi Hiçbiri (None), \"viewport\" veya \"vpgrid\" olabilir. Bu ekran, içine yerleştirilen bir veya birden çok alt nesne (children) ile kullanılmak içindir."
 
     # screens.rpy:431
@@ -718,4 +718,3 @@ translate turkish strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-

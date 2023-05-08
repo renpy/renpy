@@ -181,7 +181,7 @@ translate italian strings:
     new "## Costruisce la struttura comune di tutti gli screen game menu. Viene avviato nella schermata del titolo, e mostra lo sfondo, il titolo e la navigazione."
 
     # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     new "## Il parametro 'scroll' può essere None, oppure uno fra \"viewport\" o \"vpgrid\". Questo screen è creato per essere usato con uno o più figli, che sono trasclusi (piazzati) dentro di esso."
 
     # screens.rpy:476
@@ -768,4 +768,3 @@ translate italian strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-

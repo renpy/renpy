@@ -221,11 +221,6 @@ translate portuguese strings:
     # Automatic translation.
     new "## Isso estabelece a estrutura básica comum de uma tela de menu de jogo. Ela é chamada com o título da tela e exibe o plano de fundo, o título e a navegação."
 
-    # gui/game/screens.rpy:411
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    # Automatic translation.
-    new "## O parâmetro de rolagem pode ser Nenhum ou um dos parâmetros \"viewport\" ou \"vpgrid\". Quando essa tela se destina a ser usada com um ou mais filhos, que são transcluídos (colocados) dentro dela."
-
     # gui/game/screens.rpy:429
     old "## Reserve space for the navigation section."
     # Automatic translation.
@@ -768,4 +763,3 @@ translate portuguese strings:
     # gui/game/screens.rpy:1526
     old "Menu"
     new "Menu"
-
