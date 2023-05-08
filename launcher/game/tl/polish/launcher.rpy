@@ -1730,13 +1730,11 @@ translate polish strings:
 
     # game/android.rpy:397
     old "Play Bundle"
-    # Automatic translation.
-    new "Pakiet zabaw"
+    new "Play Bundle"
 
     # game/android.rpy:402
     old "Universal APK"
-    # Automatic translation.
-    new "Uniwersalny APK"
+    new "Universal APK"
 
     # game/android.rpy:452
     old "List Devices"

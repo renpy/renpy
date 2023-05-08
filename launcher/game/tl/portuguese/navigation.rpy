@@ -30,8 +30,7 @@
 
     # game/navigation.rpy:179
     old "labels"
-    # Automatic translation.
-    new "rótulos"
+    new "labels"
 
     # game/navigation.rpy:180
     old "defines"

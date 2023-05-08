@@ -1318,8 +1318,7 @@ translate greek strings:
 
     # game/android.rpy:397
     old "Play Bundle"
-    # Automatic translation.
-    new "Παίζουν πακέτο"
+    new "Play Bundle"
 
     # game/android.rpy:402
     old "Universal APK"
@@ -1769,8 +1768,7 @@ translate greek strings:
 
     # game/editor.rpy:169
     old "Visual Studio Code"
-    # Automatic translation.
-    new "Κώδικας Visual Studio"
+    new "Visual Studio Code"
 
     # game/editor.rpy:169
     old "Up to 110 MB download required."

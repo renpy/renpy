@@ -548,8 +548,7 @@ translate finnish strings:
 
     # renpy/common/00director.rpy:1612
     old "(transition)"
-    # Automatic translation.
-    new "(siirtyminen)"
+    new "(transition)"
 
     # renpy/common/00director.rpy:1624
     old "(channel)"

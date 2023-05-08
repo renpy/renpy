@@ -731,8 +731,7 @@
 
     # 00accessibility.rpy:140
     old "Opendyslexic"
-    # Automatic translation.
-    new "난독증"
+    new "Opendyslexic"
 
     # 00accessibility.rpy:146
     old "Text Size Scaling"

@@ -676,8 +676,7 @@ translate ukrainian strings:
 
     # game/editor.rpy:169
     old "Visual Studio Code"
-    # Automatic translation.
-    new "Код Visual Studio"
+    new "Visual Studio Code"
 
     # game/editor.rpy:169
     old "Up to 110 MB download required."

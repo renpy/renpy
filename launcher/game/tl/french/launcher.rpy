@@ -794,8 +794,7 @@
 
     # navigation.rpy:197
     old "labels"
-    # Automatic translation.
-    new "étiquettes"
+    new "labels"
 
     # navigation.rpy:198
     old "defines"
@@ -1800,13 +1799,11 @@
 
     # game/android.rpy:384
     old "Play Bundle"
-    # Automatic translation.
-    new "Jouer à l'offre groupée"
+    new "Play Bundle"
 
     # game/android.rpy:388
     old "Universal APK"
-    # Automatic translation.
-    new "Universel APK"
+    new "Universal APK"
 
     # game/android.rpy:445
     old "Wi-Fi Debugging Pair"
@@ -1962,8 +1959,7 @@
 
     # game/editor.rpy:162
     old "Visual Studio Code"
-    # Automatic translation.
-    new "Code Visual Studio"
+    new "Visual Studio Code"
 
     # game/editor.rpy:162
     old "Up to 110 MB download required."

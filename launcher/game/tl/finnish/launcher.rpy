@@ -1277,8 +1277,7 @@ translate finnish strings:
 
     # game/android.rpy:397
     old "Play Bundle"
-    # Automatic translation.
-    new "Pelaa paketti"
+    new "Play Bundle"
 
     # game/android.rpy:402
     old "Universal APK"
@@ -1727,8 +1726,7 @@ translate finnish strings:
 
     # game/editor.rpy:169
     old "Visual Studio Code"
-    # Automatic translation.
-    new "Visual Studio -koodi"
+    new "Visual Studio Code"
 
     # game/editor.rpy:169
     old "Up to 110 MB download required."

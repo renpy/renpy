@@ -633,8 +633,7 @@ translate portuguese strings:
 
     # renpy/common/00accessibility.rpy:150
     old "Opendyslexic"
-    # Automatic translation.
-    new "Opendisléxico"
+    new "Opendyslexic"
 
     # renpy/common/00accessibility.rpy:156
     old "Text Size Scaling"
@@ -972,13 +971,11 @@ translate portuguese strings:
 
     # renpy/common/00director.rpy:1587
     old "(transform)"
-    # Automatic translation.
-    new "(transformar)"
+    new "(transform)"
 
     # renpy/common/00director.rpy:1612
     old "(transition)"
-    # Automatic translation.
-    new "(transição)"
+    new "(transition)"
 
     # renpy/common/00director.rpy:1624
     old "(channel)"
@@ -1234,8 +1231,7 @@ translate portuguese strings:
 
     # renpy/common/00preferences.rpy:473
     old "gl tearing"
-    # Automatic translation.
-    new "rasgo de vidro"
+    new "gl tearing"
 
     # renpy/common/00preferences.rpy:476
     old "font transform"

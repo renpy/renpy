@@ -1293,13 +1293,11 @@ translate italian strings:
 
     # game/android.rpy:397
     old "Play Bundle"
-    # Automatic translation.
-    new "Gioco in bundle"
+    new "Play Bundle"
 
     # game/android.rpy:402
     old "Universal APK"
-    # Automatic translation.
-    new "APK universale"
+    new "Universal APK"
 
     # game/android.rpy:452
     old "List Devices"
@@ -1735,8 +1733,7 @@ translate italian strings:
 
     # game/editor.rpy:169
     old "Visual Studio Code"
-    # Automatic translation.
-    new "Codice di Visual Studio"
+    new "Visual Studio Code"
 
     # game/editor.rpy:169
     old "Up to 110 MB download required."

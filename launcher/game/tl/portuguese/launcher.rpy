@@ -97,8 +97,7 @@ translate portuguese strings:
 
     # game/android.rpy:397
     old "Play Bundle"
-    # Automatic translation.
-    new "Pacote de jogos"
+    new "Play Bundle"
 
     # game/android.rpy:402
     old "Universal APK"
@@ -582,8 +581,7 @@ translate portuguese strings:
 
     # game/editor.rpy:169
     old "Visual Studio Code"
-    # Automatic translation.
-    new "Código do Visual Studio"
+    new "Visual Studio Code"
 
     # game/editor.rpy:169
     old "Up to 110 MB download required."

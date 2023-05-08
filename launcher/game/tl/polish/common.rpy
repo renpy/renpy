@@ -342,13 +342,11 @@ translate polish strings:
 
     # renpy/common/00director.rpy:1564
     old "(transform)"
-    # Automatic translation.
-    new "(przekształcenie)"
+    new "(transform)"
 
     # renpy/common/00director.rpy:1589
     old "(transition)"
-    # Automatic translation.
-    new "(przejście)"
+    new "(transition)"
 
     # renpy/common/00director.rpy:1601
     old "(channel)"
@@ -582,8 +580,7 @@ translate polish strings:
 
     # renpy/common/00preferences.rpy:449
     old "gl tearing"
-    # Automatic translation.
-    new "łzawienie"
+    new "gl tearing"
 
     # renpy/common/00preferences.rpy:452
     old "font transform"

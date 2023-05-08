@@ -170,13 +170,11 @@
 
     # game/android.rpy:401
     old "Play Bundle"
-    # Automatic translation.
-    new "播放捆绑"
+    new "Play Bundle"
 
     # game/android.rpy:406
     old "Universal APK"
-    # Automatic translation.
-    new "通用APK"
+    new "Universal APK"
 
     # game/android.rpy:413
     old "Build Package"
@@ -678,8 +676,7 @@
 
     # game/editor.rpy:162
     old "Visual Studio Code"
-    # Automatic translation.
-    new "Visual Studio代码"
+    new "Visual Studio Code"
 
     # game/editor.rpy:162
     old "Up to 110 MB download required."

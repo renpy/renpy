@@ -65,8 +65,7 @@ translate portuguese strings:
 
     # renpy/common/00gltest.rpy:191
     old "Tearing"
-    # Automatic translation.
-    new "Rasgando"
+    new "Tearing"
 
     # renpy/common/00gltest.rpy:249
     old "This game requires use of GL2 that can't be initialised."

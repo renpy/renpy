@@ -1594,13 +1594,11 @@ translate turkish strings:
 
     # game/android.rpy:397
     old "Play Bundle"
-    # Automatic translation.
-    new "Oyun Paketi"
+    new "Play Bundle"
 
     # game/android.rpy:402
     old "Universal APK"
-    # Automatic translation.
-    new "Evrensel APK"
+    new "Universal APK"
 
     # game/android.rpy:452
     old "List Devices"
@@ -1778,8 +1776,7 @@ translate turkish strings:
 
     # game/editor.rpy:169
     old "Visual Studio Code"
-    # Automatic translation.
-    new "Visual Studio Kodu"
+    new "Visual Studio Code"
 
     # game/editor.rpy:169
     old "Up to 110 MB download required."

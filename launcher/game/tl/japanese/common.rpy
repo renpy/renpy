@@ -358,13 +358,11 @@ translate japanese strings:
 
     # 00director.rpy:1472
     old "(transform)"
-    # Automatic translation.
-    new "(へんじる）"
+    new "(transform)"
 
     # 00director.rpy:1497
     old "(transition)"
-    # Automatic translation.
-    new "(移行)"
+    new "(transition)"
 
     # 00director.rpy:1509
     old "(channel)"
@@ -708,8 +706,7 @@ translate japanese strings:
 
     # renpy/common/00accessibility.rpy:88
     old "Opendyslexic"
-    # Automatic translation.
-    new "オープンディスレクシア"
+    new "Opendyslexic"
 
     # renpy/common/00accessibility.rpy:94
     old "Text Size Scaling"

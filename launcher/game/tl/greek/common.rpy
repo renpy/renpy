@@ -546,13 +546,11 @@ translate greek strings:
 
     # renpy/common/00director.rpy:1587
     old "(transform)"
-    # Automatic translation.
-    new "(μετασχηματισμός)"
+    new "(transform)"
 
     # renpy/common/00director.rpy:1612
     old "(transition)"
-    # Automatic translation.
-    new "(μετάβαση)"
+    new "(transition)"
 
     # renpy/common/00director.rpy:1624
     old "(channel)"

@@ -395,8 +395,7 @@ translate italian strings:
 
     # renpy/common/00accessibility.rpy:150
     old "Opendyslexic"
-    # Automatic translation.
-    new "Opendisessuale"
+    new "Opendyslexic"
 
     # renpy/common/00accessibility.rpy:156
     old "Text Size Scaling"
@@ -539,13 +538,11 @@ translate italian strings:
 
     # renpy/common/00director.rpy:1587
     old "(transform)"
-    # Automatic translation.
-    new "(trasformare)"
+    new "(transform)"
 
     # renpy/common/00director.rpy:1612
     old "(transition)"
-    # Automatic translation.
-    new "(transizione)"
+    new "(transition)"
 
     # renpy/common/00director.rpy:1624
     old "(channel)"
@@ -783,8 +780,7 @@ translate italian strings:
 
     # renpy/common/00preferences.rpy:473
     old "gl tearing"
-    # Automatic translation.
-    new "strappo gl"
+    new "gl tearing"
 
     # renpy/common/00preferences.rpy:476
     old "font transform"

@@ -493,8 +493,7 @@ translate indonesian strings:
 
     # renpy/common/00accessibility.rpy:150
     old "Opendyslexic"
-    # Automatic translation.
-    new "Opendisleksia"
+    new "Opendyslexic"
 
     # renpy/common/00accessibility.rpy:156
     old "Text Size Scaling"
@@ -787,8 +786,7 @@ translate indonesian strings:
 
     # renpy/common/00preferences.rpy:473
     old "gl tearing"
-    # Automatic translation.
-    new "gl merobek"
+    new "gl tearing"
 
     # renpy/common/00preferences.rpy:476
     old "font transform"

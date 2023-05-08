@@ -835,8 +835,7 @@ translate ukrainian strings:
 
     # 00accessibility.rpy:88
     old "Opendyslexic"
-    # Automatic translation.
-    new "Опендислексик"
+    new "Opendyslexic"
 
     # 00accessibility.rpy:94
     old "Text Size Scaling"

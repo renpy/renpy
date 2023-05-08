@@ -1726,8 +1726,7 @@
 
     # game/android.rpy:396
     old "Play Bundle"
-    # Automatic translation.
-    new "Игровой пакет"
+    new "Play Bundle"
 
     # game/android.rpy:401
     old "Universal APK"
@@ -1903,8 +1902,7 @@
 
     # game/editor.rpy:162
     old "Visual Studio Code"
-    # Automatic translation.
-    new "Код Visual Studio"
+    new "Visual Studio Code"
 
     # game/editor.rpy:162
     old "Up to 110 MB download required."

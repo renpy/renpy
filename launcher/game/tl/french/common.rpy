@@ -346,8 +346,7 @@
 
     # renpy/common/00accessibility.rpy:88
     old "Opendyslexic"
-    # Automatic translation.
-    new "Opendyslexique"
+    new "Opendyslexic"
 
     # renpy/common/00accessibility.rpy:94
     old "Text Size Scaling"
@@ -501,8 +500,7 @@
 
     # renpy/common/00director.rpy:1564
     old "(transform)"
-    # Automatic translation.
-    new "(transformer)"
+    new "(transform)"
 
     # renpy/common/00director.rpy:1589
     old "(transition)"
@@ -683,8 +681,7 @@
 
     # renpy/common/00preferences.rpy:442
     old "gl tearing"
-    # Automatic translation.
-    new "déchirure du verre"
+    new "gl tearing"
 
     # renpy/common/00preferences.rpy:445
     old "font transform"

@@ -51,8 +51,7 @@ translate turkish strings:
 
     # 00gltest.rpy:163
     old "Tearing"
-    # Automatic translation.
-    new "Yırtılma"
+    new "Tearing"
 
     # 00gltest.rpy:179
     old "Changes will take effect the next time this program is run."

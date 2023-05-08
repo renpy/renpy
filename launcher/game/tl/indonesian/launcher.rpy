@@ -1420,13 +1420,11 @@ translate indonesian strings:
 
     # game/android.rpy:397
     old "Play Bundle"
-    # Automatic translation.
-    new "Mainkan Bundel"
+    new "Play Bundle"
 
     # game/android.rpy:402
     old "Universal APK"
-    # Automatic translation.
-    new "APK Universal"
+    new "Universal APK"
 
     # game/android.rpy:452
     old "List Devices"
@@ -1857,8 +1855,7 @@ translate indonesian strings:
 
     # game/editor.rpy:169
     old "Visual Studio Code"
-    # Automatic translation.
-    new "Kode Studio Visual"
+    new "Visual Studio Code"
 
     # game/editor.rpy:169
     old "Up to 110 MB download required."
