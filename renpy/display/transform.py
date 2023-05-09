@@ -113,8 +113,6 @@ def cartesian_to_polar(x, y, xaround, yaround, available_width, available_height
 
     radius = tx(radius)
 
-    print("AR", angle, radius)
-
     return angle, radius
 
 
@@ -151,8 +149,6 @@ def polar_to_cartesian(angle, radius, xaround, yaround, available_width, availab
 
     x = tr(x)
     y = tr(y)
-
-    print("XY", x, y)
 
     return x, y
 
