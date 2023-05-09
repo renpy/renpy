@@ -1383,7 +1383,11 @@ class Interpolation(Statement):
             # between the new and old states.
             linear = trans.state.diff(newts)
 
-            revolution = None
+            # Angle and radius need to go after the linear changes, as
+            # around or alignaround must be set first.
+            angle = None
+            radius = None
+
             splines = [ ]
 
             revdir = self.revolution
@@ -1414,7 +1418,7 @@ class Interpolation(Statement):
                     startradius = trans.state.radius
                     endradius = newts.radius
 
-                    # Make sure the revolution is in the appropriate direction,
+                    # Make sure the angle is in the appropriate direction,
                     # and contains an appropriate number of circles.
 
                     if revdir == "clockwise":
@@ -1430,27 +1434,27 @@ class Interpolation(Statement):
                         startangle += circles * 360
 
                     if has_radius:
-                        linear["radius"] = (startradius, endradius)
+                        radius = (startradius, endradius)
 
-                    # Store the revolution.
+                    # Store the angle.
                     if has_angle:
-                        revolution = (startangle, endangle)
+                        angle = (startangle, endangle)
 
                 else:
 
                     if has_angle:
                         last_angle = trans.state.last_angle or trans.state.angle
-                        revolution = (last_angle, newts.last_angle)
+                        angle = (last_angle, newts.last_angle)
 
                     if has_radius:
-                        linear["radius"] = (trans.state.radius, newts.radius)
+                        radius = (trans.state.radius, newts.radius)
 
 
             # Figure out the splines.
             for name, values in self.splines:
                 splines.append((name, [ getattr(trans.state, name) ] + values))
 
-            state = (linear, revolution, splines)
+            state = (linear, angle, radius, splines)
 
             # Ensure that we set things, even if they don't actually
             # change from the old state.
@@ -1459,10 +1463,11 @@ class Interpolation(Statement):
                     setattr(trans.state, k, v)
 
         else:
-            linear, revolution, splines = state
+            linear, angle, radius, splines = state
 
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.items():
+
             if k == "orientation":
                 if old is None:
                     old = (0.0, 0.0, 0.0)
@@ -1478,13 +1483,17 @@ class Interpolation(Statement):
 
             setattr(trans.state, k, value)
 
-        # Handle the revolution.
-        if revolution is not None:
-            startangle, endangle = revolution[:2]
+        # Handle the angle.
+        if angle is not None:
+            startangle, endangle = angle[:2]
 
             angle = interpolate(complete, startangle, endangle, float)
             trans.state.last_angle = angle
             trans.state.angle = angle
+
+        if radius is not None:
+            startradius, endradius = radius
+            trans.state.radius = interpolate(complete, startradius, endradius, position)
 
         # Handle any splines we might have.
         for name, values in splines:

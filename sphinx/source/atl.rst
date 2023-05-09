@@ -913,21 +913,23 @@ both horizontal and vertical positions.
     :default: (0.0, 0.0)
 
     If not None, specifies the polar coordinate center, relative to
-    the upper-left of the containing area. Setting the center using
-    this allows for circular motion in position mode.
+    the upper-left of the containing area. The :tpref:`angle` and
+    :tpref:`radius` properties can then be used to specify a position
+    relative to this point.
 
-    This should be set before :tpref:`angle` or :tpref:`radius`.
 
 .. transform-property:: alignaround
 
     :type: (float, float)
-    :default: (0.0, 0.0)
 
-    If not None, specifies the polar coordinate center, relative to
-    the upper-left of the containing area. Setting the center using
-    this allows for circular motion in align mode.
+    This sets :tpref:`around` to the given position.
 
-    This should be set before :tpref:`angle` or :tpref:`radius`.
+    Then, as the displayable is rotated, :tpref:`xanchor` and :tpref:`yanchor`
+    are set to this, rotated by :tpref:`angle` around (0.5, 0.5).
+
+    The most sensible use case for this is to set alignaround to (0.5, 0.5),
+    which makes it possible to use angle and radius to position the center of
+    the child around the center of the screen. Other values are not recommended.
 
 .. transform-property:: angle
 

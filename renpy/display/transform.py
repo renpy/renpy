@@ -94,8 +94,6 @@ def cartesian_to_polar(x, y, xaround, yaround, available_width, available_height
     dx = x - xaround
     dy = y - yaround
 
-
-
     if tx is float:
         if available_width:
             dx /= available_width
@@ -152,7 +150,29 @@ def polar_to_cartesian(angle, radius, xaround, yaround, available_width, availab
 
     return x, y
 
+def rotate_anchor(angle, xaround, yaround):
+    """
+    Rotates the anchor by the given angle around 0.5, 0.5
+    """
 
+    angle = math.radians(angle)
+    xdx = math.sin(angle)
+
+    xaround -= 0.5
+    yaround -= 0.5
+
+    cosz = math.cos(angle)
+    sinz = math.sin(angle)
+
+    xdx = cosz
+    xdy = sinz
+    ydx = -sinz
+    ydy = cosz
+
+    return (
+        0.5 + xaround * xdx + yaround * xdy,
+        0.5 + xaround * ydx + yaround * ydy,
+    )
 
 def first_not_none(*args):
     """
@@ -329,8 +349,8 @@ class TransformState(renpy.object.Object):
         angle = value
         self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround, self.available_width, self.available_height)
 
-        if self.xanchoraround:
-            self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround, self.available_width, self.available_height)
+        if self.xanchoraround is not None and self.yanchoraround is not None:
+            self.xanchor, self.yanchor = rotate_anchor(angle, self.xanchoraround, self.yanchoraround)
 
     def set_radius(self, value):
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
@@ -339,8 +359,8 @@ class TransformState(renpy.object.Object):
         radius = value
         self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround, self.available_width, self.available_height)
 
-        if self.xanchoraround:
-            self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround, self.available_width, self.available_height)
+        if self.xanchoraround is not None and self.yanchoraround is not None:
+            self.xanchor, self.yanchor = rotate_anchor(angle, self.xanchoraround, self.yanchoraround)
 
     angle = property(get_angle, set_angle)
     radius = property(get_radius, set_radius)
