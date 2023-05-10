@@ -156,7 +156,6 @@ def rotate_anchor(angle, xaround, yaround):
     """
 
     angle = math.radians(angle)
-    xdx = math.sin(angle)
 
     xaround -= 0.5
     yaround -= 0.5
