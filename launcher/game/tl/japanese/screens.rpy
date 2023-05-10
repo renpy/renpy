@@ -462,7 +462,7 @@ translate japanese strings:
 
     # screens.rpy:1015
     old "Escape"
-    new "エスケープ"
+    new "ESC"
 
     # screens.rpy:1016
     old "Accesses the game menu."
