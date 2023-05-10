@@ -187,7 +187,7 @@ translate japanese strings:
 
     # renpy/common/00console.rpy:814
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
-    new "watch <expression>: python式をウォッチ\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    new "watch <expression>: python式をウォッチ\n watch short: トレースされた式を短く表現する (デフォルト)\n watch long: そのままの表現にする"
 
     # renpy/common/00console.rpy:925
     old "escape: Enables escaping of unicode symbols in unicode strings."

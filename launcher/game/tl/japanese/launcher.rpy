@@ -37,7 +37,7 @@
 
     # android.rpy:31
     old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Windows では、Android パッケージのビルドに 32-bit の Java 開発キットが必要です。JDK は JRE とは異なるため、JDK が無くても Java が利用できます。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK{/a}のダウンロードとインストールを行い、Ren'Py ランチャーを再起動して下さい。"
+    new "Windows では、Android パッケージのビルドに 32-bit の Java 開発キットが必要です。JDKはJREとは異なるため、JDKがなくてもJavaを使用できる可能性があります。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK{/a}のダウンロードとインストールを行い、Ren'Py ランチャーを再起動して下さい。"
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -1321,7 +1321,7 @@
 
     # game/android.rpy:31
     old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "ウィンドウズでアンドロイドパッケージをビルドするには、 64-bit/x64 Java 8 Development Kit が必要になります。 JDK は JRE とは違うもので、Java には含まれていません。\n\n{a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}JDK{/a}をダンロード、インストールしてから Ren'Py ランチャーを再起動してください。"
+    new "ウィンドウズでアンドロイドパッケージをビルドするには、 64-bit/x64 Java 8 Development Kit が必要になります。 JDKはJREとは異なるため、JDKがなくてもJavaを使用できる可能性があります。\n\n{a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}JDK{/a}をダンロード、インストールしてから Ren'Py ランチャーを再起動してください。"
 
     # game/android.rpy:50
     old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
@@ -1513,7 +1513,7 @@
 
     # game/androidstrings.rpy:52
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
-    new "テストファイルのコンパイルに javac が利用できません。Java Development Kit をダウンロードしていないなら、\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nからダウンロードしてください。 JDK は JRE とは違うもので、Java には含まれていません。JDK がなければ継続できません。"
+    new "テストファイルのコンパイルに javac が利用できません。Java Development Kit をダウンロードしていないなら、\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nからダウンロードしてください。 JDKはJREとは異なるため、JDKがなくてもJavaを使用できる可能性があります。 動作するJDKなしには続行できません。"
 
     # game/androidstrings.rpy:53
     old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
@@ -1741,7 +1741,7 @@
 
     # game/android.rpy:35
     old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "WindowsでAndroidパッケージをビルドするには64-bit/x64 Java 8 Development Kitが必要です。JDKはJREとは異り、JDKなしでJavaを利用できます。\n\n{a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}JDKのダウンロードとインストール{/a}を行い、Ren'Pyランチャーを再起動してください。"
+    new "WindowsでAndroidパッケージをビルドするには64-bit/x64 Java 8 Development Kitが必要です。JDKはJREとは異なるため、JDKがなくてもJavaを使用できる可能性があります。\n\n{a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}JDKのダウンロードとインストール{/a}を行い、Ren'Pyランチャーを再起動してください。"
 
     # game/android.rpy:403
     old "Universal APK"
@@ -1949,7 +1949,7 @@
 
     # game/androidstrings.rpy:43
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
-    new "javac を使用してテストファイルをコンパイルできませんでした。Java Development Kitをまだインストールしていないならば:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}からダウンロードしてください。\n\nJDK は JRE とは異り、JDKなしでJavaを利用できます。 'JavaSoft (Oracle) registry keys'.\n\nをインストールしたか確認してくあさい。JDK, I can't continue."
+    new "javac を使用してテストファイルをコンパイルできませんでした。Java Development Kitをまだインストールしていないならば:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}からダウンロードしてください。\n\nJDKはJREとは異なるため、JDKがなくてもJavaを使用できる可能性があります。 'JavaSoft (Oracle) registry keys' をインストールしたかどうか確認してください。\n\n動作するJDKなしでは続行できません。"
 
     # game/androidstrings.rpy:64
     old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
