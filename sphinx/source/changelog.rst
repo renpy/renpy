@@ -366,6 +366,43 @@ Live2D is now supported on x86_64 Android.
 The new Live2D.blend_opacity method makes it possible for a
 Live2D update_function to change the opacity of the Live2D model.
 
+Launcher and Engine Translations
+--------------------------------
+
+Where possible, machine translation has been used to update strings
+used by the launcher and the engine, to update translations that might
+not have been updated in many years.
+
+If you'd like to improve these translations, you can do so. Edit the
+.rpy files in launcher/game/tl/`language`, and send them to us. Please
+remove the "Automatic translation" lines when you do.
+
+The following languages have had their translations automatically
+updated:
+
+* Finnish
+* French
+* German
+* Greek
+* Indonesian
+* Italian
+* Japanese
+* Korean
+* Polish
+* Portuguese
+* Russian
+* Simplified Chinese
+* Turkish
+* Ukrainian
+
+The following translations had manual updates:
+
+* French
+* Portuguese
+* Spanish
+* Japanese
+* Ukrainian
+
 More New Features
 -----------------
 
