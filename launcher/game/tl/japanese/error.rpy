@@ -209,8 +209,7 @@ translate japanese strings:
 
     # 00gltest.rpy:89
     old "NPOT"
-    # Automatic translation.
-    new "エヌポット"
+    new "NPOT"
 
     # 00gltest.rpy:131
     old "Powersave"

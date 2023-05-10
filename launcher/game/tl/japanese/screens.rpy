@@ -222,8 +222,7 @@ translate japanese strings:
 
     # screens.rpy:561
     old "Version [config.version!t]\n"
-    # Automatic translation.
-    new "バージョン[config.version!t]\n"
+    new "バージョン [config.version!t]\n"
 
     # screens.rpy:563
     old "## gui.about is usually set in options.rpy."
@@ -439,7 +438,6 @@ translate japanese strings:
 
     # screens.rpy:1003
     old "Enter"
-    # Automatic translation.
     new "エンター"
 
     # screens.rpy:1004
@@ -448,7 +446,6 @@ translate japanese strings:
 
     # screens.rpy:1007
     old "Space"
-    # Automatic translation.
     new "スペース"
 
     # screens.rpy:1008
@@ -465,7 +462,6 @@ translate japanese strings:
 
     # screens.rpy:1015
     old "Escape"
-    # Automatic translation.
     new "エスケープ"
 
     # screens.rpy:1016
@@ -490,8 +486,7 @@ translate japanese strings:
 
     # screens.rpy:1027
     old "Page Up"
-    # Automatic translation.
-    new "ページアップ"
+    new "Page Up"
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
@@ -499,8 +494,7 @@ translate japanese strings:
 
     # screens.rpy:1031
     old "Page Down"
-    # Automatic translation.
-    new "ページダウン"
+    new "Page Down"
 
     # screens.rpy:1032
     old "Rolls forward to later dialogue."
@@ -687,7 +681,6 @@ translate japanese strings:
 
     # screens.rpy:916
     old "## This determines what tags are allowed to be displayed on the history screen."
-    # Automatic translation.
     new "## 履歴画面に表示できるタグを決定します。"
 
     # screens.rpy:1132
@@ -715,23 +708,19 @@ translate japanese strings:
 
     # gui/game/screens.rpy:676
     old "Upload Sync"
-    # Automatic translation.
-    new "アップロード・シンク"
+    new "同期のアップロード"
 
     # gui/game/screens.rpy:680
     old "Download Sync"
-    # Automatic translation.
-    new "シンクのダウンロード"
+    new "同期のダウンロード"
 
     # gui/game/screens.rpy:1410
     old "## Bubble screen"
-    # Automatic translation.
     new "## バブルスクリーン"
 
     # gui/game/screens.rpy:1412
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
-    # Automatic translation.
-    new "## バブルスクリーンは、スピーチバブルを使用する際に、プレイヤーにダイアログを表示するために使用されます。バブルスクリーンはセイスクリーンと同じパラメータを持ち、idが \"what \"のdisplayableを作成しなければならず、idが \"namebox\", \"who\", \"window \"のdisplayableを作成可能である。"
+    new "## バブルスクリーンは、吹き出しを使用する際に、プレイヤーにダイアログを表示するために使用されます。バブルスクリーンはSayスクリーンと同じパラメータを持ち、idが \"what \"のdisplayableを作成しなければならず、idが \"namebox\", \"who\", \"window \"のdisplayableを作成できます。"
 
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
