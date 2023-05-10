@@ -544,10 +544,7 @@ init -1500 python:
                 elif value == "disable":
                     return [ SetField(_preferences, "web_cache_preload", False), ExecJS("clearCache()") ]
                 elif value == "toggle":
-                    if _preferences.web_cache_preload:
-                        return Preference("web cache preload", "disable")
-                    else:
-                        return Preference("web cache preload", "enable")
+                    return ToggleField(_preferences, "web_cache_preload")
 
             elif name == _("voice after game menu"):
 
