@@ -985,10 +985,12 @@ incompatible_props = {
     "align" : {"xanchor", "yanchor", "xpos", "ypos"},
     "anchor" : {"xanchor", "yanchor"},
     "angle" : {"xpos", "ypos"},
+    "anchorangle" : {"xangle", "yangle"},
     "around" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
     "offset" : {"xoffset", "yoffset"},
     "pos" : {"xpos", "ypos"},
     "radius" : {"xpos", "ypos"},
+    "anchorradius" : {"xanchor", "yanchor"},
     "size" : {"xsize", "ysize"},
     "xalign" : {"xpos", "xanchor"},
     "xcenter" : {"xpos", "xanchor"},
@@ -1000,7 +1002,8 @@ incompatible_props = {
 
 # A list of sets of pairs of properties that do not conflict.
 compatible_pairs = [
-    {"radius", "angle"}
+    {"radius", "angle"},
+    {"anchorradius", "anchorangle"}
 ]
 
 # This can become one of four things:
@@ -1368,6 +1371,8 @@ class Interpolation(Statement):
 
             has_angle = False
             has_radius = False
+            has_anchorangle = False
+            has_anchorradius = False
 
             for k, v in self.properties:
                 setattr(newts, k, v)
@@ -1379,6 +1384,14 @@ class Interpolation(Statement):
                 elif k == "radius":
                     has_radius = True
 
+                elif k == "anchorangle":
+                    newts.last_anchorangle = v
+                    has_anchorangle = True
+
+                elif k == "anchorradius":
+                    has_anchorradius = True
+
+
             # Now, the things we change linearly are in the difference
             # between the new and old states.
             linear = trans.state.diff(newts)
@@ -1387,6 +1400,8 @@ class Interpolation(Statement):
             # around or alignaround must be set first.
             angle = None
             radius = None
+            anchorangle = None
+            anchorradius = None
 
             splines = [ ]
 
@@ -1418,6 +1433,11 @@ class Interpolation(Statement):
                     startradius = trans.state.radius
                     endradius = newts.radius
 
+                    startanchorangle = trans.state.anchorangle
+                    endanchorangle = newts.anchorangle
+                    startanchorradius = trans.state.anchorradius
+                    endanchorradius = newts.anchorradius
+
                     # Make sure the angle is in the appropriate direction,
                     # and contains an appropriate number of circles.
 
@@ -1425,36 +1445,52 @@ class Interpolation(Statement):
                         if endangle < startangle:
                             startangle -= 360
 
+                        if endanchorangle < startanchorangle:
+                            startanchorangle -= 360
+
                         startangle -= circles * 360
+                        startanchorangle -= circles * 360
 
                     elif revdir == "counterclockwise":
                         if endangle > startangle:
                             startangle += 360
 
+                        if endanchorangle > startanchorangle:
+                            startanchorangle += 360
+
                         startangle += circles * 360
+                        startanchorangle += circles * 360
 
-                    if has_radius:
-                        radius = (startradius, endradius)
+                    has_radius = True
+                    has_angle = True
+                    has_anchorangle = True
+                    has_anchorradius = True
 
-                    # Store the angle.
-                    if has_angle:
-                        angle = (startangle, endangle)
+                    radius = (startradius, endradius)
+                    angle = (startangle, endangle)
+                    anchorradius = (startanchorradius, endanchorradius)
+                    anchorangle = (startanchorangle, endanchorangle)
 
                 else:
 
                     if has_angle:
-                        last_angle = trans.state.last_angle or trans.state.angle
+                        last_angle = trans.state.angle or trans.state.last_angle
                         angle = (last_angle, newts.last_angle)
 
                     if has_radius:
                         radius = (trans.state.radius, newts.radius)
 
+                    if has_anchorangle:
+                        last_anchorangle = trans.state.anchorangle or trans.state.last_anchorangle
+
+                    if has_anchorradius:
+                        anchorradius = (trans.state.anchorradius, newts.anchorradius)
 
             # Figure out the splines.
             for name, values in self.splines:
                 splines.append((name, [ getattr(trans.state, name) ] + values))
 
-            state = (linear, angle, radius, splines)
+            state = (linear, angle, radius, anchorangle, anchorradius, splines)
 
             # Ensure that we set things, even if they don't actually
             # change from the old state.
@@ -1463,7 +1499,7 @@ class Interpolation(Statement):
                     setattr(trans.state, k, v)
 
         else:
-            linear, angle, radius, splines = state
+            linear, angle, radius, anchorangle, anchorradius, splines = state
 
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.items():
@@ -1488,12 +1524,23 @@ class Interpolation(Statement):
             startangle, endangle = angle[:2]
 
             angle = interpolate(complete, startangle, endangle, float)
-            trans.state.last_angle = angle
             trans.state.angle = angle
 
         if radius is not None:
             startradius, endradius = radius
             trans.state.radius = interpolate(complete, startradius, endradius, position)
+
+        if anchorangle is not None:
+            startangle, endangle = anchorangle[:2]
+
+            angle = interpolate(complete, startangle, endangle, float)
+            trans.state.anchorangle = angle
+
+        if anchorradius is not None:
+            startradius, endradius = anchorradius
+            trans.state.anchorradius = interpolate(complete, startradius, endradius, position)
+
+
 
         # Handle any splines we might have.
         for name, values in splines:

@@ -912,37 +912,60 @@ both horizontal and vertical positions.
     :type: (position, position)
     :default: (0.0, 0.0)
 
-    If not None, specifies the polar coordinate center, relative to
-    the upper-left of the containing area. The :tpref:`angle` and
+    If not None, specifies the center of the polar coordinate position
+    relative to the upper-left of the containing area. The :tpref:`angle` and
     :tpref:`radius` properties can then be used to specify a position
-    relative to this point.
+    using polar coordinates.
 
-.. transform-property:: alignaround
-
-    :type: (float, float)
-
-    This sets :tpref:`around` and :tpref:`anchor` to the same value.
-
-    The only sensible use case for this is to set alignaround to (0.5, 0.5),
-    which makes it possible to use angle and radius to position the center of
-    the child around the center of the screen. Other values are not recommended.
 
 .. transform-property:: angle
 
     :type: float
 
-    Get the angle component of the polar coordinate position, relative to
-    the :tpref:`around` point. This is measured in degrees,
+    This gives the angle portion of a position specified in polar
+    coordinates. This is measured in degrees, with 0 being to the top
+    of the screen, and 90 being to the right.
 
 .. transform-property:: radius
 
     :type: position
 
-    The radius component of the polar coordinate position. The type of
-    this is the type the radius was last set to, defaulting to pixels.
+    The radius component of the position given in polar
+    coordiates. The type of this is the type the radius was last set to,
+    defaulting to absolute pixels.
 
     If a float, this will be scaled to the smaller of the width and height
     available to the transform.
+
+.. transform-property:: anchoraround
+
+    :type: (position, position)
+
+    This, in conjunction with :tpref:`anchorangle`, and :tpref:`anchorradius`,
+    can be used to specify the anchor point of the transform in polar coordinates.
+
+    This should be in the same units as :tpref:`anchor`, do not mix relative and
+    absolute coordinates.
+
+.. transform-property:: anchorangle
+
+    :type: (float)
+
+    The angle component of the ploar coordinates of the anchor. This is specified
+    in degrees, with 0 being to the top and 90 being to the right.
+
+.. transform-property:: anchorradius
+
+    :type: (position)
+
+    The radius component of the polar coordinates of the anchor. This will have the same
+    type as :tpref:`anchoraround` and :tpref:`anchor`.
+
+.. transform-property:: alignaround
+
+    :type: (float, float)
+
+    This sets :tpref:`around` and :tpref:`anchoraround` to the same value.
 
 .. transform-property:: crop
 
