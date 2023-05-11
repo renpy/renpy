@@ -3,7 +3,7 @@ translate finnish strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
-    new "{#weekday}Maanatai"
+    new "{#weekday}Maanantai"
 
     # 00action_file.rpy:26
     old "{#weekday}Tuesday"
@@ -341,13 +341,12 @@ translate finnish strings:
 
     # renpy/common/00accessibility.rpy:32
     old "bar"
-    # Automatic translation.
-    new "baari"
+    new "palkki"
 
     # renpy/common/00accessibility.rpy:33
     old "selected"
     # Automatic translation.
-    new "valitut"
+    new "valittu"
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
@@ -375,13 +374,11 @@ translate finnish strings:
 
     # renpy/common/00accessibility.rpy:39
     old "increase"
-    # Automatic translation.
-    new "lisätä"
+    new "lisää"
 
     # renpy/common/00accessibility.rpy:40
     old "decrease"
-    # Automatic translation.
-    new "vähentää"
+    new "vähennä"
 
     # renpy/common/00accessibility.rpy:138
     old "Font Override"
@@ -413,8 +410,7 @@ translate finnish strings:
 
     # renpy/common/00accessibility.rpy:168
     old "Line Spacing Scaling"
-    # Automatic translation.
-    new "Riviväli Skaalaus"
+    new "Rivivälin skaalaus"
 
     # renpy/common/00accessibility.rpy:180
     old "High Contrast Text"
@@ -423,12 +419,11 @@ translate finnish strings:
 
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing"
-    # Automatic translation.
-    new "Itseään ilmaiseva"
+    new "Tietokoneen ääninäyttely"
 
     # renpy/common/00accessibility.rpy:197
     old "Off"
-    new "Off"
+    new "Pois päältä"
 
     # renpy/common/00accessibility.rpy:201
     old "Text-to-speech"
@@ -447,58 +442,47 @@ translate finnish strings:
 
     # renpy/common/00accessibility.rpy:223
     old "Self-Voicing Volume Drop"
-    # Automatic translation.
-    new "Itseään ilmaiseva äänenvoimakkuuden pudotus"
+    new "Tietokoneen ääninäyttelyn äänenvoimakkuuden pudotus"
 
     # renpy/common/00accessibility.rpy:234
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    # Automatic translation.
-    new "Tämän valikon vaihtoehtojen tarkoituksena on parantaa saavutettavuutta. Ne eivät välttämättä toimi kaikissa peleissä, ja jotkin vaihtoehtojen yhdistelmät saattavat tehdä pelistä pelikelvottoman. Tämä ei johdu pelistä tai moottorista. Parhaat tulokset saat, kun vaihdat fontteja, kun yrität pitää tekstin koon samana kuin se oli alun perin."
+    new "Tämän valikon vaihtoehtojen tarkoituksena on parantaa saavutettavuutta. Ne eivät välttämättä toimi kaikissa peleissä, ja joidenkin vaihtoehtojen yhdistelmät saattavat tehdä pelistä pelikelvottoman. Tämä ei johdu pelistä tai moottorista. Saat fontteja vaihtaessa parhaat tulokset kun yrität pitää tekstin koon samana kuin se oli alun perin."
 
     # renpy/common/00action_file.rpy:378
     old "Save slot %s: [text]"
-    # Automatic translation.
-    new "Tallenna paikka %s: [text]"
+    new "Tallennuspaikka %s: [text]"
 
     # renpy/common/00action_file.rpy:461
     old "Load slot %s: [text]"
-    # Automatic translation.
-    new "Lataa paikka %s: [text]"
+    new "Lataa tallennus %s: [text]"
 
     # renpy/common/00action_file.rpy:514
     old "Delete slot [text]"
-    # Automatic translation.
-    new "Poista korttipaikka [text]"
+    new "Poista tallennus [text]"
 
     # renpy/common/00action_file.rpy:593
     old "File page auto"
-    # Automatic translation.
-    new "Tiedoston sivu auto"
+    new "Tiedoston sivu: auto"
 
     # renpy/common/00action_file.rpy:595
     old "File page quick"
-    # Automatic translation.
-    new "Tiedoston sivu nopea"
+    new "Tiedoston sivu: pika"
 
     # renpy/common/00action_file.rpy:597
     old "File page [text]"
-    # Automatic translation.
-    new "Tiedoston sivu [text]"
+    new "Tiedoston sivu: [text]"
 
     # renpy/common/00action_file.rpy:796
     old "Next file page."
-    # Automatic translation.
-    new "Seuraava tiedostosivu."
+    new "Seuraava tiedoston sivu."
 
     # renpy/common/00action_file.rpy:868
     old "Previous file page."
-    # Automatic translation.
-    new "Edellinen sivu."
+    new "Edellinen tiedoston sivu."
 
     # renpy/common/00action_file.rpy:944
     old "Quick save."
-    # Automatic translation.
-    new "Nopea pelastus."
+    new "Pikatallennus."
 
     # renpy/common/00action_file.rpy:963
     old "Quick load."
@@ -656,8 +640,7 @@ translate finnish strings:
 
     # renpy/common/00preferences.rpy:292
     old "skip transitions"
-    # Automatic translation.
-    new "ohittaa siirtymiä"
+    new "ohita siirtymät"
 
     # renpy/common/00preferences.rpy:294
     old "video sprites"
@@ -689,18 +672,15 @@ translate finnish strings:
 
     # renpy/common/00preferences.rpy:330
     old "skip unseen [text]"
-    # Automatic translation.
-    new "hypätä näkymättömiin [text]"
+    new "ohita näkemätön [text]"
 
     # renpy/common/00preferences.rpy:335
     old "skip unseen text"
-    # Automatic translation.
-    new "hyppää näkymättömän tekstin yli"
+    new "ohita näkemätön teksti"
 
     # renpy/common/00preferences.rpy:337
     old "begin skipping"
-    # Automatic translation.
-    new "aloittaa hyppääminen"
+    new "aloita ohittaminen"
 
     # renpy/common/00preferences.rpy:341
     old "after choices"
@@ -709,28 +689,23 @@ translate finnish strings:
 
     # renpy/common/00preferences.rpy:348
     old "skip after choices"
-    # Automatic translation.
-    new "hyppää valintojen jälkeen"
+    new "ohita valintojen jälkeen"
 
     # renpy/common/00preferences.rpy:350
     old "auto-forward time"
-    # Automatic translation.
-    new "automaattisen eteenpäinlähetyksen aika"
+    new "automaattisen eteenpäinsiirtymisen aika"
 
     # renpy/common/00preferences.rpy:364
     old "auto-forward"
-    # Automatic translation.
-    new "automaattinen eteenpäinlähetys"
+    new "automaattinen eteenpäinsiirtyminen"
 
     # renpy/common/00preferences.rpy:371
     old "Auto forward"
-    # Automatic translation.
-    new "Automaattinen eteenpäin"
+    new "Automaattinen eteenpäinsiirtyminen"
 
     # renpy/common/00preferences.rpy:374
     old "auto-forward after click"
-    # Automatic translation.
-    new "automaattinen välitys eteenpäin napsautuksen jälkeen"
+    new "automaattinen eteenpäinsiirtyminen napsautuksen jälkeen"
 
     # renpy/common/00preferences.rpy:383
     old "automatic move"
@@ -749,27 +724,23 @@ translate finnish strings:
 
     # renpy/common/00preferences.rpy:410
     old "self voicing"
-    # Automatic translation.
-    new "itseään ilmaiseva"
+    new "tietokoneen ääninäyttely"
 
     # renpy/common/00preferences.rpy:419
     old "self voicing volume drop"
-    # Automatic translation.
-    new "itse ääntäminen äänenvoimakkuuden pudotus"
+    new "tietokoneen ääninäyttelyn äänenvoimakkuuden pudotus"
 
     # renpy/common/00preferences.rpy:427
     old "clipboard voicing"
-    # Automatic translation.
-    new "leikepöydän ääntäminen"
+    new "leikepöydän ääni"
 
     # renpy/common/00preferences.rpy:436
     old "debug voicing"
-    new "debug voicing"
+    new "virheenkorjausääni"
 
     # renpy/common/00preferences.rpy:445
     old "emphasize audio"
-    # Automatic translation.
-    new "korostaa ääntä"
+    new "korosta ääntä"
 
     # renpy/common/00preferences.rpy:454
     old "rollback side"
@@ -831,7 +802,7 @@ translate finnish strings:
     # renpy/common/00preferences.rpy:528
     old "audio when unfocused"
     # Automatic translation.
-    new "ääni, kun se ei ole keskittynyt"
+    new "ääni kun se ei ole keskittynyt"
 
     # renpy/common/00preferences.rpy:537
     old "web cache preload"
@@ -845,48 +816,39 @@ translate finnish strings:
 
     # renpy/common/00preferences.rpy:571
     old "main volume"
-    # Automatic translation.
-    new "päätehoste"
+    new "pää-äänenvoimakkuus"
 
     # renpy/common/00preferences.rpy:572
     old "music volume"
-    # Automatic translation.
     new "musiikin äänenvoimakkuus"
 
     # renpy/common/00preferences.rpy:573
     old "sound volume"
-    # Automatic translation.
-    new "äänenvoimakkuus"
+    new "tehosteiden äänenvoimakkuus"
 
     # renpy/common/00preferences.rpy:574
     old "voice volume"
-    # Automatic translation.
-    new "äänenvoimakkuus"
+    new "ääninäyttelyn äänenvoimakkuus"
 
     # renpy/common/00preferences.rpy:575
     old "mute main"
-    # Automatic translation.
-    new "mykistää päävirran"
+    new "mykistä pää-ääni"
 
     # renpy/common/00preferences.rpy:576
     old "mute music"
-    # Automatic translation.
-    new "mykistää musiikin"
+    new "mykistä musiikki"
 
     # renpy/common/00preferences.rpy:577
     old "mute sound"
-    # Automatic translation.
-    new "äänen mykistäminen"
+    new "mykistä äänitehosteet"
 
     # renpy/common/00preferences.rpy:578
     old "mute voice"
-    # Automatic translation.
-    new "mykistää äänen"
+    new "mykistä ääninäyttely"
 
     # renpy/common/00preferences.rpy:579
     old "mute all"
-    # Automatic translation.
-    new "mykistää kaikki"
+    new "mykistä kaikki"
 
     # renpy/common/00speechbubble.rpy:344
     old "Speech Bubble Editor"
@@ -950,8 +912,7 @@ translate finnish strings:
 
     # renpy/common/00sync.rpy:529
     old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
-    # Automatic translation.
-    new "Tämä lataa tallennuksesi osoitteeseen {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nHaluatko jatkaa?"
+    new "Tämä lataa tallennuksesi {a=https://sync.renpy.org}Ren'Py Sync Serveriin{/a}.\nHaluatko jatkaa?"
 
     # renpy/common/00sync.rpy:558
     old "Enter Sync ID"
@@ -960,13 +921,11 @@ translate finnish strings:
 
     # renpy/common/00sync.rpy:569
     old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
-    # Automatic translation.
-    new "Tämä ottaa yhteyttä {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    new "Tämä ottaa yhteyttä {a=https://sync.renpy.org}Ren'Py Sync Serveriin{/a}."
 
     # renpy/common/00sync.rpy:596
     old "Sync Success"
-    # Automatic translation.
-    new "Synkronoinnin onnistuminen"
+    new "Synkronointi onnistui"
 
     # renpy/common/00sync.rpy:599
     old "The Sync ID is:"
@@ -975,8 +934,7 @@ translate finnish strings:
 
     # renpy/common/00sync.rpy:605
     old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
-    # Automatic translation.
-    new "Voit käyttää tätä tunnusta ladataksesi tallennuksesi toiseen laitteeseen.\nTämä synkronointi päättyy tunnin kuluttua.\nRen'Py Sync on tuettu {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    new "Voit käyttää tätä tunnusta ladataksesi tallennuksesi toiseen laitteeseen.\nTämä synkronointi päättyy tunnin kuluttua.\nRen'Py Sync on {a=https://www.renpy.org/sponsors.html}Ren'Pyn sponsorien{/a} tukema."
 
     # renpy/common/00sync.rpy:631
     old "Sync Error"
