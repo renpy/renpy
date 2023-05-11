@@ -84,6 +84,8 @@ class TransformState(renpy.object.Object):
     available_width = 0
     available_height = 0
 
+    radius_type = absolute
+
     def __init__(self):
 
         # Most fields on this object are set by add_property, at the bottom
@@ -111,6 +113,9 @@ class TransformState(renpy.object.Object):
 
         self.last_angle = ts.last_angle
         self.last_events = ts.last_events
+
+        self.available_width = ts.available_width
+        self.available_height = ts.available_height
 
         # Set the position and anchor to None, so inheritance works.
         if self.perspective is None: # type: ignore
@@ -278,7 +283,15 @@ class TransformState(renpy.object.Object):
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
         _angle, radius = self.cartesian_to_polar(xpos, ypos)
-        return radius
+
+        if self.radius_type is float:
+            divisor = min(self.available_width, self.available_height)
+            if divisor:
+                radius = radius / divisor
+            else:
+                radius = 0.0
+
+        return self.radius_type(radius)
 
     def set_angle(self, angle):
         self.last_angle = angle
@@ -289,6 +302,11 @@ class TransformState(renpy.object.Object):
         self.xpos, self.ypos = self.polar_to_cartesian(angle, radius)
 
     def set_radius(self, radius):
+        self.radius_type = type(radius)
+
+        if type(radius) is float:
+            radius = self.scale(radius, min(self.available_width, self.available_height))
+
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
         angle, old_radius = self.cartesian_to_polar(xpos, ypos)
@@ -782,7 +800,6 @@ class Transform(Container):
                 renpy.game.interface.timeout(0)
             self.state.last_events = self.state.events
 
-    # The render method is now defined in accelerator.pyx.
     def render(self, width, height, st, at):
 
         # Prevent time from ticking backwards, as can happen if we replace a
@@ -797,6 +814,8 @@ class Transform(Container):
 
         self.state.available_width = width
         self.state.available_height = height
+
+        print(id(self.state))
 
         # Update the state.
         self.update_state()

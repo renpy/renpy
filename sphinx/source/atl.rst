@@ -936,10 +936,13 @@ both horizontal and vertical positions.
 
 .. transform-property:: radius
 
-    :type: absolute
+    :type: position
 
-    The radius component of the polar coordinate position. This is
-    measured in pixels.
+    The radius component of the polar coordinate position. The type of
+    this is the type the radius was last set to, defaulting to pixels.
+
+    If a float, this will be scaled to the smaller of the width and height
+    available to the transform.
 
 .. transform-property:: crop
 
