@@ -917,17 +917,13 @@ both horizontal and vertical positions.
     :tpref:`radius` properties can then be used to specify a position
     relative to this point.
 
-
 .. transform-property:: alignaround
 
     :type: (float, float)
 
-    This sets :tpref:`around` to the given position.
+    This sets :tpref:`around` and :tpref:`anchor` to the same value.
 
-    Then, as the displayable is rotated, :tpref:`xanchor` and :tpref:`yanchor`
-    are set to this, rotated by :tpref:`angle` around (0.5, 0.5).
-
-    The most sensible use case for this is to set alignaround to (0.5, 0.5),
+    The only sensible use case for this is to set alignaround to (0.5, 0.5),
     which makes it possible to use angle and radius to position the center of
     the child around the center of the screen. Other values are not recommended.
 
@@ -935,15 +931,15 @@ both horizontal and vertical positions.
 
     :type: float
 
-    Get the angle component of the polar coordinate position. This is
-    undefined when the polar coordinate center is not set.
+    Get the angle component of the polar coordinate position, relative to
+    the :tpref:`around` point. This is measured in degrees,
 
 .. transform-property:: radius
 
-    :type: position
+    :type: absolute
 
-    Get the radius component of the polar coordinate position. This is
-    undefined when the polar coordinate center is not set.
+    The radius component of the polar coordinate position. This is
+    measured in pixels.
 
 .. transform-property:: crop
 
