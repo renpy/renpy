@@ -1243,8 +1243,7 @@ translate finnish strings:
 
     # game/android.rpy:59
     old "Disconnects a device connected over Wi-Fi."
-    # Automatic translation.
-    new "Katkaisee Wi-Fi-yhteyden kautta yhdistetyn laitteen yhteyden."
+    new "Katkaisee yhteyden Wi-Fi-yhteyden kautta yhdistetyn laitteeseen."
 
     # game/android.rpy:61
     old "Removes Android temporary files."
@@ -1258,8 +1257,7 @@ translate finnish strings:
 
     # game/android.rpy:64
     old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
-    # Automatic translation.
-    new "Rakentaa universaalin APK-paketin, joka on tarkoitettu sivulataukseen ja muihin kauppoihin kuin Google Playyn. Tämä voi sisältää jopa 2 Gt dataa."
+    new "Rakentaa universaalin APK-paketin, joka on tarkoitettu sivulataukseen ja muihin kauppoihin kuin Google Play'hin. Tämä voi sisältää enintään 2 Gt dataa."
 
     # game/android.rpy:327
     old "Android: [project.current.display_name!q]"
@@ -1277,7 +1275,7 @@ translate finnish strings:
 
     # game/android.rpy:397
     old "Play Bundle"
-    new "Play Bundle"
+    new "Play-kaupan paketti"
 
     # game/android.rpy:402
     old "Universal APK"
@@ -1285,8 +1283,7 @@ translate finnish strings:
 
     # game/android.rpy:452
     old "List Devices"
-    # Automatic translation.
-    new "Luettelo Laitteet"
+    new "Listaa laitteet"
 
     # game/android.rpy:456
     old "Wi-Fi Debugging Pair"
@@ -1295,7 +1292,7 @@ translate finnish strings:
 
     # game/android.rpy:460
     old "Wi-Fi Debugging Connect"
-    new "Wi-Fi Debugging Connect"
+    new "Wi-Fi-vianmäärityksen yhdistäminen"
 
     # game/android.rpy:464
     old "Wi-Fi Debugging Disconnect"
@@ -1304,8 +1301,7 @@ translate finnish strings:
 
     # game/android.rpy:468
     old "Clean"
-    # Automatic translation.
-    new "Puhdas"
+    new "Puhdista"
 
     # game/android.rpy:573
     old "Wi-Fi Pairing Code"
@@ -1334,8 +1330,7 @@ translate finnish strings:
 
     # game/android.rpy:612
     old "This can be found in 'List Devices'."
-    # Automatic translation.
-    new "Tämä löytyy kohdasta 'List Devices'."
+    new "Tämä löytyy kohdasta 'listaa laitteet'."
 
     # game/android.rpy:632
     old "Cleaning up Android project."
@@ -1364,8 +1359,7 @@ translate finnish strings:
 
     # game/androidstrings.rpy:12
     old "Creating assets directory."
-    # Automatic translation.
-    new "Varallisuushakemiston luominen."
+    new "Materiaalihakemiston luominen."
 
     # game/androidstrings.rpy:13
     old "Packaging internal data."
@@ -1389,13 +1383,11 @@ translate finnish strings:
 
     # game/androidstrings.rpy:17
     old "Installing the bundle appears to have failed."
-    # Automatic translation.
-    new "Nipun asentaminen näyttää epäonnistuneen."
+    new "Paketin asentaminen näyttää epäonnistuneen."
 
     # game/androidstrings.rpy:18
     old "Launching app."
-    # Automatic translation.
-    new "Sovelluksen käynnistäminen."
+    new "Sovellus käynnistyy."
 
     # game/androidstrings.rpy:19
     old "Launching the app appears to have failed."
@@ -1409,8 +1401,7 @@ translate finnish strings:
 
     # game/androidstrings.rpy:21
     old "What is the full name of your application? This name will appear in the list of installed applications."
-    # Automatic translation.
-    new "Mikä on hakemuksesi koko nimi? Tämä nimi näkyy asennettujen sovellusten luettelossa."
+    new "Mikä on sovelluksesi koko nimi? Tämä nimi näkyy asennettujen sovellusten luettelossa."
 
     # game/androidstrings.rpy:22
     old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
@@ -1454,8 +1445,7 @@ translate finnish strings:
 
     # game/androidstrings.rpy:30
     old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
-    # Automatic translation.
-    new "Mikä on sovelluksen versio?\n\nTämän pitäisi olla ihmiselle luettava versio, jonka esittäisit henkilölle. Sen on sisällettävä vain numeroita ja pisteitä."
+    new "Mikä on sovelluksen versio?\n\nTämän pitäisi olla ihmisen luettava versio, jonka voisi näyttää henkilölle. Sen on sisällettävä vain numeroita ja pisteitä."
 
     # game/androidstrings.rpy:31
     old "The version number must contain only numbers and dots."
@@ -1475,7 +1465,7 @@ translate finnish strings:
     # game/androidstrings.rpy:34
     old "How would you like your application to be displayed?"
     # Automatic translation.
-    new "Miten haluat, että hakemuksesi näytetään?"
+    new "Miten haluat, että sovelluksesi näytetään?"
 
     # game/androidstrings.rpy:35
     old "In landscape orientation."
@@ -1499,21 +1489,19 @@ translate finnish strings:
 
     # game/androidstrings.rpy:39
     old "Google Play."
-    new "Google Play."
+    new "Google Playn."
 
     # game/androidstrings.rpy:40
     old "Amazon App Store."
-    new "Amazon App Store."
+    new "Amazon App Storen."
 
     # game/androidstrings.rpy:41
     old "Both, in one app."
-    # Automatic translation.
-    new "Molemmat yhdessä sovelluksessa."
+    new "Molempien yhdessä sovelluksessa."
 
     # game/androidstrings.rpy:42
     old "Neither."
-    # Automatic translation.
-    new "Ei kumpaakaan."
+    new "En kummankaan."
 
     # game/androidstrings.rpy:43
     old "Do you want to automatically update the Java source code?"
@@ -1537,8 +1525,7 @@ translate finnish strings:
 
     # game/androidstrings.rpy:47
     old "I'm compiling a short test program, to see if you have a working JDK on your system."
-    # Automatic translation.
-    new "Kokoonpanen lyhyen testiohjelman nähdäkseni, onko järjestelmässäsi toimiva JDK."
+    new "Rakennan lyhyen testiohjelman nähdäkseni, onko järjestelmässäsi toimiva JDK."
 
     # game/androidstrings.rpy:48
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
@@ -1647,8 +1634,7 @@ translate finnish strings:
 
     # game/androidstrings.rpy:70
     old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
-    # Automatic translation.
-    new "Voin luoda sinulle nipun allekirjoitusavaimen. Tätä avainta tarvitaan Android-sovelluspaketin (AAB) rakentamiseen Google Playyn lataamista varten.\n\nHaluatko luoda avaimen?"
+    new "Voin luoda sinulle paketin allekirjoitusavaimen. Tätä avainta tarvitaan Android-sovelluspaketin (AAB) rakentamiseen Google Playyn lataamista varten.\n\nHaluatko luoda avaimen?"
 
     # game/androidstrings.rpy:71
     old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
@@ -1682,13 +1668,11 @@ translate finnish strings:
 
     # game/distribute.rpy:1278
     old "Signing the Macintosh application...\n(This may take a long time.)"
-    # Automatic translation.
-    new "Macintosh-sovelluksen allekirjoittaminen...\n(Tämä voi kestää kauan.)"
+    new "Macintosh-sovellusta allekirjoitetaan...\n(Tämä voi kestää kauan.)"
 
     # game/distribute.rpy:1745
     old "Copying files..."
-    # Automatic translation.
-    new "Tiedostojen kopiointi..."
+    new "Tiedostoja kopioidaan..."
 
     # game/distribute_gui.rpy:157
     old "Build Distributions: [project.current.display_name!q]"
@@ -1697,8 +1681,7 @@ translate finnish strings:
 
     # game/distribute_gui.rpy:195
     old "Update old-game"
-    # Automatic translation.
-    new "Vanhan pelin päivitys"
+    new "Päivitä old-game"
 
     # game/distribute_gui.rpy:231
     old "(DLC)"
@@ -1744,8 +1727,7 @@ translate finnish strings:
 
     # game/editor.rpy:196
     old "Up to 150 MB download required."
-    # Automatic translation.
-    new "Tarvitaan enintään 150 Mt:n lataus."
+    new "Jopa 150 Mt:n lataus vaaditaan."
 
     # game/editor.rpy:211
     old "jEdit"
@@ -1758,13 +1740,11 @@ translate finnish strings:
 
     # game/editor.rpy:220
     old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
-    # Automatic translation.
-    new "Käyttää kopiota Visual Studio Code -ohjelmasta, jonka olet asentanut Ren'Py:n ulkopuolelle. On suositeltavaa asentaa language-renpy-laajennus lisätäksesi tuen Ren'Py-tiedostoille."
+    new "Käyttää kopiota Visual Studio Code -ohjelmasta, jonka olet asentanut Ren'Py:n ulkopuolelle. On suositeltavaa asentaa language-renpy -laajennus lisätäksesi tuen Ren'Py-tiedostoille."
 
     # game/editor.rpy:226
     old "System Editor"
-    # Automatic translation.
-    new "Järjestelmäeditori"
+    new "Järjestelmän editori"
 
     # game/editor.rpy:245
     old "None"
@@ -1778,8 +1758,7 @@ translate finnish strings:
 
     # game/front_page.rpy:58
     old "PROJECTS:"
-    # Automatic translation.
-    new "HANKKEET:"
+    new "PROJEKTIT:"
 
     # game/front_page.rpy:165
     old "audio"
@@ -1787,8 +1766,7 @@ translate finnish strings:
 
     # game/front_page.rpy:182
     old "Open project"
-    # Automatic translation.
-    new "Avoin hanke"
+    new "Avaa projekti"
 
     # game/front_page.rpy:188
     old "Actions"
@@ -1845,13 +1823,11 @@ translate finnish strings:
 
     # game/gui7.rpy:424
     old "creating a new project"
-    # Automatic translation.
-    new "uuden projektin luominen"
+    new "uutta projektia luodaan"
 
     # game/gui7.rpy:428
     old "activating the new project"
-    # Automatic translation.
-    new "uuden projektin aktivointi"
+    new "uutta projektia aktivoidaan"
 
     # game/install.rpy:33
     old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
@@ -1860,13 +1836,12 @@ translate finnish strings:
 
     # game/install.rpy:79
     old "Successfully installed [name!t]."
-    # Automatic translation.
-    new "Asennettu onnistuneesti [name!t]."
+    new "[name!t] asennettu onnistuneesti."
 
     # game/install.rpy:111
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
     # Automatic translation.
-    new "Tällä näytöllä voit asentaa kirjastoja, joita ei voi jakaa Ren'Py:n mukana. Jotkin näistä kirjastoista saattavat vaatia, että hyväksyt kolmannen osapuolen lisenssin ennen käyttöä tai jakelua."
+    new "Tällä näytöllä voit asentaa kirjastoja joita ei voi jakaa Ren'Py:n mukana. Jotkin näistä kirjastoista saattavat vaatia, että hyväksyt kolmannen osapuolen lisenssin ennen käyttöä tai jakelua."
 
     # game/install.rpy:117
     old "Install Steam Support"
@@ -1885,8 +1860,7 @@ translate finnish strings:
 
     # game/install.rpy:142
     old "Install Live2D Cubism SDK for Native"
-    # Automatic translation.
-    new "Asenna Live2D Cubism SDK for Native -ohjelmisto"
+    new "Asenna Live2D Cubism SDK for Native"
 
     # game/install.rpy:156
     old "Install Libraries"
@@ -1910,8 +1884,7 @@ translate finnish strings:
 
     # game/installer.rpy:10
     old "Downloading [extension.download_file]."
-    # Automatic translation.
-    new "Lataaminen [extension.download_file]."
+    new "Ladataan [extension.download_file]."
 
     # game/installer.rpy:11
     old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
@@ -1929,13 +1902,12 @@ translate finnish strings:
 
     # game/interface.rpy:141
     old "Ren'Py Sponsor Information"
-    # Automatic translation.
-    new "Ren'Py sponsorin tiedot"
+    new "Ren'Pyn sponsoritiedot"
 
     # game/interface.rpy:385
     old "opening the log file"
     # Automatic translation.
-    new "lokitiedoston avaaminen"
+    new "lokitiedostoa avataan"
 
     # game/ios.rpy:269
     old "iOS: [project.current.display_name!q]"
@@ -1948,8 +1920,7 @@ translate finnish strings:
 
     # game/itch.rpy:45
     old "Downloading the itch.io butler."
-    # Automatic translation.
-    new "Itch.io-hovimestarin lataaminen."
+    new "Ladataan itch.io'n butler-ohjelmaa."
 
     # game/navigation.rpy:168
     old "Navigate: [project.current.display_name!q]"
@@ -1958,8 +1929,7 @@ translate finnish strings:
 
     # game/new_project.rpy:81
     old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
-    # Automatic translation.
-    new "Teet [new_project_language]{#this substitution may be localized} -kieliprojektin. Vaihda käynnistyskieli asetuksissa, jos haluat luoda projektin toisella kielellä."
+    new "Luot [new_project_language]{#this substitution may be localized} -kielisen projektin. Vaihda käynnistyskieli asetuksissa, jos haluat luoda projektin toisella kielellä."
 
     # game/preferences.rpy:106
     old "General"
@@ -1968,13 +1938,11 @@ translate finnish strings:
 
     # game/preferences.rpy:107
     old "Options"
-    # Automatic translation.
-    new "Vaihtoehdot"
+    new "Asetukset"
 
     # game/preferences.rpy:224
     old "Sponsor message"
-    # Automatic translation.
-    new "Sponsorin viesti"
+    new "Sponsoriviesti"
 
     # game/preferences.rpy:227
     old "Daily check for update"
@@ -1983,8 +1951,7 @@ translate finnish strings:
 
     # game/preferences.rpy:246
     old "Launcher Theme:"
-    # Automatic translation.
-    new "Käynnistin Teema:"
+    new "Käynnistimen Teema:"
 
     # game/preferences.rpy:250
     old "Default theme"
@@ -2003,8 +1970,7 @@ translate finnish strings:
 
     # game/preferences.rpy:256
     old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    # Automatic translation.
-    new "Tietoa mukautetun teeman luomisesta löytyy {a=https://www.renpy.org/doc/html/skins.html}Ren'Py Documentation -dokumentaatiosta{/a}."
+    new "Tietoa mukautetun teeman luomisesta löytyy {a=https://www.renpy.org/doc/html/skins.html}Ren'Pyn dokumentaatiosta{/a}."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2013,18 +1979,15 @@ translate finnish strings:
 
     # game/preferences.rpy:300
     old "Reset window size"
-    # Automatic translation.
-    new "Nollaa ikkunan koko"
+    new "Palauta ikkunan oletuskoko"
 
     # game/preferences.rpy:301
     old "Clean temporary files"
-    # Automatic translation.
-    new "Puhdista väliaikaiset tiedostot"
+    new "Poista väliaikaiset tiedostot"
 
     # game/preferences.rpy:308
     old "Cleaning temporary files..."
-    # Automatic translation.
-    new "Väliaikaisten tiedostojen puhdistaminen..."
+    new "Poistetaan väliaikaisia tiedostoja..."
 
     # game/preferences.rpy:338
     old "{#in language font}Welcome! Please choose a language"
@@ -2033,8 +1996,7 @@ translate finnish strings:
 
     # game/preferences.rpy:373
     old "{#in language font}Start using Ren'Py in [lang_name]"
-    # Automatic translation.
-    new "{#in language font}Aloita Ren'Py:n käyttö [lang_name]"
+    new "{#in language font}Aloita Ren'Py:n käyttö kielellä [lang_name]"
 
     # game/project.rpy:46
     old "Lint checks your game for potential mistakes, and gives you statistics."
@@ -2053,8 +2015,7 @@ translate finnish strings:
 
     # game/translations.rpy:342
     old "Extract Dialogue: [project.current.display_name!q]"
-    # Automatic translation.
-    new "Ote vuoropuhelusta: [project.current.display_name!q]"
+    new "Kerää dialogi: [project.current.display_name!q]"
 
     # game/translations.rpy:391
     old "Language (or None for the default language):"
@@ -2073,21 +2034,19 @@ translate finnish strings:
 
     # game/updater.rpy:69
     old "Prerelease (Ren'Py 8, Python 3)"
-    new "Prerelease (Ren'Py 8, Python 3)"
+    new "Esijulkaisu (Ren'Py 8, Python 3)"
 
     # game/updater.rpy:70
     old "Prerelease (Ren'Py 7, Python 2)"
-    new "Prerelease (Ren'Py 7, Python 2)"
+    new "Esijulkaisu (Ren'Py 7, Python 2)"
 
     # game/updater.rpy:77
     old "Nightly (Ren'Py 8, Python 3)"
-    # Automatic translation.
-    new "Öisin (Ren'Py 8, Python 3)"
+    new "Nightly (Ren'Py 8, Python 3)"
 
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
-    # Automatic translation.
-    new "Öisin (Ren'Py 7, Python 2)"
+    new "Nightly (Ren'Py 7, Python 2)"
 
     # game/updater.rpy:108
     old "The update channel controls the version of Ren'Py the updater will download."
@@ -2115,23 +2074,19 @@ translate finnish strings:
 
     # game/updater.rpy:215
     old "Fetching the list of update channels"
-    # Automatic translation.
-    new "Päivityskanavien luettelon hakeminen"
+    new "Haetaan päivityskanavien luetteloa"
 
     # game/updater.rpy:220
     old "downloading the list of update channels"
-    # Automatic translation.
-    new "päivityskanavien luettelon lataaminen"
+    new "ladataan päivityskanavien luetteloa"
 
     # game/web.rpy:428
     old "Preparing progressive download"
-    # Automatic translation.
-    new "Progressiivisen latauksen valmistelu"
+    new "Valmistellaan progressiivista latausta"
 
     # game/web.rpy:485
     old "Creating package..."
-    # Automatic translation.
-    new "Paketin luominen..."
+    new "Luodaan pakettia..."
 
     # game/web.rpy:505
     old "Web: [project.current.display_name!q]"
