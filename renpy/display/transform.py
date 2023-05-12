@@ -260,6 +260,15 @@ class TransformState(renpy.object.Object):
         x = absolute(xaround + dx)
         y = absolute(yaround + dy)
 
+        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
+        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
+
+        if type(xpos) is float:
+            x = float(x / self.available_width)
+
+        if type(ypos) is float:
+            y = float(y / self.available_height)
+
         return x, y
 
     def cartesian_to_polar_anchor(self, x, y):
