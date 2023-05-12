@@ -857,8 +857,7 @@
 
     # game/front_page.rpy:218
     old "iOS"
-    # Automatic translation.
-    new "基础设施"
+    new "iOS"
 
     # game/front_page.rpy:219
     old "Web"
@@ -1138,13 +1137,11 @@
 
     # game/ios.rpy:298
     old "iPhone"
-    # Automatic translation.
-    new "笔记本电脑"
+    new "iPhone"
 
     # game/ios.rpy:302
     old "iPad"
-    # Automatic translation.
-    new "笔记本电脑"
+    new "iPad"
 
     # game/ios.rpy:322
     old "Select Xcode Projects Directory"

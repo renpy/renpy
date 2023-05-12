@@ -24,6 +24,11 @@ Visual Studio Code
 Atom
 jEdit
 Tab
+Android
+iOS
+iPhone
+iPad
+## Windows: %APPDATA\RenPy\<config.save_directory>
 """
 
 BLOCKLIST = set(i.strip() for i in BLOCKLIST.split("\n") if i.strip())
