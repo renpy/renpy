@@ -317,6 +317,7 @@ class TransformState(renpy.object.Object):
         self.xaround, self.yaround = value
 
     def set_alignaround(self, value):
+        self.xanchor, self.yanchor = value
         self.xaround, self.yaround = value
         self.xanchoraround, self.yanchoraround = value
 
