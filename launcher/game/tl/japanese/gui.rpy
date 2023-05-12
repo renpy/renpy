@@ -462,5 +462,4 @@ translate japanese strings:
 
     # gui/game/gui.rpy:14
     old "## Enable checks for invalid or unstable properties in screens or transforms"
-    # Automatic translation.
     new "## スクリーンやトランスフォームのプロパティが無効または不安定であることをチェックできるようにする。"

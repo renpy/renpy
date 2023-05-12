@@ -23,7 +23,6 @@ translate japanese strings:
 
     # options.rpy:17
     old "Ren'Py 7 Default GUI"
-    # Automatic translation.
     new "Ren'Py 7 デフォルトのGUI"
 
     # options.rpy:20
@@ -120,18 +119,15 @@ translate japanese strings:
 
     # options.rpy:134
     old "## Windows: %APPDATA%\\RenPy\\<config.save_directory>"
-    # Automatic translation.
-    new "## Windows: %APPDATA%\\RenPy\\<config.save_directory>。"
+    new "## Windows: %APPDATA%\\RenPy\\<config.save_directory>"
 
     # options.rpy:136
     old "## Macintosh: $HOME/Library/RenPy/<config.save_directory>"
-    # Automatic translation.
-    new "## Macintosh: $HOME/Library/RenPy/<config.save_directory>."
+    new "## Macintosh: $HOME/Library/RenPy/<config.save_directory>"
 
     # options.rpy:138
     old "## Linux: $HOME/.renpy/<config.save_directory>"
-    # Automatic translation.
-    new "## Linux: $HOME/.renpy/<config.save_directory>."
+    new "## Linux: $HOME/.renpy/<config.save_directory>"
 
     # options.rpy:140
     old "## This generally should not be changed, and if it is, should always be a literal string, not an expression."
@@ -217,8 +213,7 @@ translate japanese strings:
 
     # gui/game/options.rpy:203
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-    # Automatic translation.
-    new "## アプリ内課金を行うには、Google Playのライセンスキーが必要です。Google Play開発者コンソールの「マネタイズ」→「マネタイズ設定」→「ライセンス」で確認することができます。"
+    new "## アプリ内課金を行うには、Google Playのライセンスキーが必要です。Google Play開発者コンソールの「収益化」→「収益化のセットアップ」→「ライセンス」で確認することができます。"
 
 translate japanese strings:
 

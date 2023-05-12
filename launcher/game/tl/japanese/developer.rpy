@@ -187,7 +187,7 @@ translate japanese strings:
 
     # renpy/common/00console.rpy:814
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
-    new "watch <expression>: python式をウォッチ\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    new "watch <expression>: python式をウォッチ\n watch short: トレースされた式を短く表現する (デフォルト)\n watch long: そのままの表現にする"
 
     # renpy/common/00console.rpy:925
     old "escape: Enables escaping of unicode symbols in unicode strings."
@@ -206,21 +206,17 @@ translate japanese strings:
 
     # renpy/common/_developer/developer.rpym:51
     old "Persistent Viewer"
-    # Automatic translation.
-    new "永続的なビューア"
+    new "永続データビューア"
 
     # renpy/common/_developer/developer.rpym:70
     old "Speech Bubble Editor (Shift+B)"
-    # Automatic translation.
     new "スピーチバブルエディター（Shift+B）"
 
     # renpy/common/00console.rpy:789
     old "help: show this help\n help <expr>: show signature and documentation of <expr>"
-    # Automatic translation.
-    new "help: この助け舟を見せる\n help <expr>: <expr>の署名とドキュメントを表示する"
+    new "help: このヘルプを表示する\n help <expr>: <expr>の署名とドキュメントを表示する"
 
     # renpy/common/00console.rpy:813
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
-    # Automatic translation.
-    new "ヘルプでは、文書化されていない機能が表示されることがあります。その場合は、その関数または\nを使用したいクラスは、ドキュメントを参照してください。\n\n"
+    new "ヘルプでは、文書化されていない機能が表示されることがあります。ドキュメントで使用したい関数や\nクラスを確認してください。\n\n"
 
