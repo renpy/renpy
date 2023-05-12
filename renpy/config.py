@@ -1117,6 +1117,7 @@ gl_set_attributes = None
 # The blacklist of controllers with known problems.
 controller_blocklist = [
     "030000007e0500000920", # Nintendo Pro Controller (needs init to work.)
+    "030000006d0400000000", # Razer Xbox 360 Controller (#4622)
 ]
 
 # Should dissolve transitions be mipmapped by default?
