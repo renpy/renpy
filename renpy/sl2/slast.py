@@ -1154,7 +1154,8 @@ class SLDisplayable(SLBlock):
         cache.children = ctx.children
         cache.style_prefix = context.style_prefix
 
-        transform = transform # type: ignore
+        if not transform:
+            transform = None
 
         if (transform is not None) and (d is not NO_DISPLAYABLE):
             if reused and (transform == cache.raw_transform):
