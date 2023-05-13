@@ -41,10 +41,10 @@ tests.
 .. should an exception during a callback call prevent subsequent callbacks from being called ?
 
 There is no equivalent callback for code being executed before the tests
-happens, as such code can simply be put inside a python block at the beginning
+happen, as such code can simply be put inside a python block at the beginning
 of the testcase, or in ``init python`` blocks.
 
-The :func:`is_in_test` function is helpful to know whether a test is currently
+The :func:`renpy.is_in_test` function is helpful to know whether a test is currently
 executing or not.
 
 Test statements
@@ -237,7 +237,7 @@ It takes three optional properties:
 
 - ``button`` - same as the click clause
 - ``pos`` - same as the click clause, but the position is relative to the
-  focusable area of the target. If the position is invalid, for example if a
+  focusable area of the target. If the position is ommitted or is invalid, for example if a
   button is 100x100 pixels and the given ``pos`` is (105, 150), then the ``pos``
   is ignored and a random position within the target is used instead.
 - ``always`` does not take a value. It overrides the readiness of the clause,
@@ -270,7 +270,8 @@ This clause is always ready. ::
 
     pause 5.0
 
-Similar to the :ref:`pause-statement`.
+Similar to the :ref:`pause-statement`, but requires a value (there is no
+click-to-continue pause in tests).
 
 label clause
 ---------------
@@ -368,6 +369,7 @@ into their non-clause-taking python equivalents::
       while these statements can't take a dollar sign, much less a dollar-line.
 
 ..
+
     When the returned value of a function call is to be ignored, both are technically equivalent::
 
         $ print("Test 1")
@@ -416,7 +418,7 @@ of the clauses it contains:
 
 What happens when boolean clause operations execute is a little more complex.
 When executed:
-- ``not`` just executes its clause. (TODO: maybe it shouldn't do anything)
+- ``not`` doesn't do anything.
 - ``and`` executes both clauses if both are ready, and the left one otherwise.
 - ``or`` executes its ready clause(s), if any, and the right one otherwise. (TODO : maybe it should execute the ready clause if only one is, and the right one otherwise)
 
@@ -437,7 +439,7 @@ a clause will do what it does.
 
 The ``pattern`` property takes a string (except in the case of the string
 expression clause, where it is the string itself) which resolves to a target
-found on the screen, based on the shorted match in the alt text of focusable
+found on the screen, based on the shortest match among the alt text of focusable
 screen elements (typically, buttons). The search is case-insensitive.
 
 If no pattern is given, the virtual test mouse is positioned to the last
@@ -448,7 +450,7 @@ which does not overlap a focusable element is chosen instead.
 If a pattern is given, the mouse is positioned to the last previous location
 where a click happened, or to the specified position, if any. If that position
 does not lie inside the targeted element, a random position within it is chosen
-instead. To that end, things like focus_mask are taken into account.
+instead. To that end, things like :propref:`focus_mask` are taken into account.
 
 If a pattern is given and if it does not resolve to a target at the time when
 the clause using it executes, an exception is raised (terminating the test). To
