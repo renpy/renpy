@@ -78,6 +78,7 @@ the omission in future versions.
 * Enerccio
 * Eniko
 * Eric Ahn
+* Erufailon4
 * Evilantishad0w
 * Felix Lampe
 * Franck_v
