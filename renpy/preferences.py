@@ -182,6 +182,9 @@ Preference("web_cache_preload", False)
 # Should the voice continue to play after the user enters the game menu.
 Preference("voice_after_game_menu", False)
 
+# Should the game be maximized?
+Preference("maximized", False)
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
@@ -232,6 +235,7 @@ class Preferences(renpy.object.Object):
         audio_when_unfocused = True
         web_cache_preload = False
         voice_after_game_menu = False
+        maximized = False
 
     def init(self):
         """
@@ -286,7 +290,6 @@ class Preferences(renpy.object.Object):
 
         return self.volumes[mixer]
 
-
     def set_mixer(self, mixer, volume):
         if volume > 0:
             volume = renpy.config.volume_db_range * volume - renpy.config.volume_db_range
@@ -319,7 +322,7 @@ class Preferences(renpy.object.Object):
         return self.mute[mixer]
 
     def init_mixers(self):
-        for i in renpy.audio.music.get_all_mixers() + ["main"]:
+        for i in renpy.audio.music.get_all_mixers() + ["main", "voice"]:
             self.volumes.setdefault(i, 1.0)
             self.mute.setdefault(i, False)
 

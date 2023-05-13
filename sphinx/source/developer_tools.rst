@@ -58,6 +58,10 @@ When :var:`config.developer` is True, hitting Shift+R will save the current
 game, reload the game script, and reload the game. This will often place you at
 the last unchanged statement encountered before Shift+R was pressed.
 
+After the first reload, the game will be in autoreload mode, and any changes
+to files accessed since the last reload will cause the game to be reloaded
+again.
+
 This allows the developer to make script changes with an external editor, and
 not have to exit and restart Ren'Py to see the effect of the changes.
 
@@ -65,6 +69,8 @@ Note that game state, which includes variable values and scene lists, is
 preserved across the reload. This means that if one of those statements is
 changed, it is necessary to rollback and re-execute the statement to see its
 new effect.
+
+Shift+R reloading does not work in a replay.
 
 .. _style-inspector:
 

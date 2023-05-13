@@ -197,3 +197,11 @@ translate ukrainian strings:
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Ім’я користувача та назва проєкту, пов’язані з проєктом itch.io, розділені скісною рискою."
 
+
+translate ukrainian strings:
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    # Automatic translation.
+    new "## Для здійснення покупок у додатку потрібен ліцензійний ключ Google Play. Його можна знайти в консолі розробника Google Play у розділі \"Монетизація\" > \"Налаштування монетизації\" > \"Ліцензування\"."
+

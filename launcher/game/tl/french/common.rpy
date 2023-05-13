@@ -332,8 +332,6 @@
     old "return"
     new "retour"
 
-translate french strings:
-
     # renpy/common/00accessibility.rpy:76
     old "Font Override"
     new "Forcer la police"
@@ -392,7 +390,7 @@ translate french strings:
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
-    new "viewport"
+    new "fenêtre déroulante"
 
     # renpy/common/00accessibility.rpy:35
     old "horizontal scroll"
@@ -488,7 +486,7 @@ translate french strings:
 
     # renpy/common/00director.rpy:1561
     old "(statement)"
-    new "(statement)"
+    new "(instruction)"
 
     # renpy/common/00director.rpy:1562
     old "(tag)"
@@ -508,7 +506,8 @@ translate french strings:
 
     # renpy/common/00director.rpy:1601
     old "(channel)"
-    new "(channel)"
+    # Automatic translation.
+    new "(canal)"
 
     # renpy/common/00director.rpy:1602
     old "(filename)"
@@ -812,7 +811,11 @@ translate french strings:
 
     # renpy/common/00director.rpy:1771
     old "Click to set transform, right click to add to transform list."
-    new "Clic pour ajouter un transform, clic droit pour ajouter une liste de transforms."
+    new "Clic pour assigner le transform, clic droit pour ajouter à la liste des transforms."
+
+    # renpy/common/00director.rpy:1789
+    old "Click to set, right click to add to behind list."
+    new "Clic pour assigner, clic droit pour ajouter à la liste du \"behind\"."
 
     # renpy/common/00preferences.rpy:528
     old "audio when unfocused"
@@ -897,3 +900,11 @@ translate french strings:
     # renpy/common/00webvideo.rpy:5
     old "Touch to play the video."
     new "Touchez pour jouer la vidéo."
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    new "Cette sauvegarde a été créée sur un autre appareil. Des faux fichiers de sauvegarde peuvent être utilisés pour endommager votre ordinateur. Faites-vous confiance au créateur de cette sauvegarde et à tous ceux qui auraient pu modifier le fichier ?"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    new "Faites-vous confiance à l'appareil sur lequel cette sauvegarde a été créée ? Vous ne devriez dire oui que si vous en êtes l'unique utilisateur ."

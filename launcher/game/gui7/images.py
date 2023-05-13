@@ -408,13 +408,15 @@ class ImageGenerator(object):
 
         import shutil
 
-        source = os.path.join(config.renpy_base, "gui", "game", "gui", "bubble.png")
-        dest = os.path.join(self.prefix, "bubble.png")
+        for fn in [ "bubble.png", "thoughtbubble.png" ]:
 
-        if source == dest:
-            return
+            source = os.path.join(config.renpy_base, "gui", "game", "gui", fn)
+            dest = os.path.join(self.prefix, fn)
 
-        shutil.copyfile(source, dest)
+            if source == dest:
+                return
+
+            shutil.copyfile(source, dest)
 
 
     def generate_all(self):

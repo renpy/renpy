@@ -366,6 +366,9 @@ def main():
     choose_variants()
     renpy.display.touch = "touch" in renpy.config.variants
 
+    if (renpy.android or renpy.ios) and not renpy.config.log_to_stdout:
+        print("Version:", renpy.version)
+
     log_clock("Early init.")
 
     # Note the game directory.
@@ -667,13 +670,19 @@ def main():
                     run(restart)
                 finally:
                     restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
-                    renpy.persistent.update(True)
-                    renpy.persistent.save_on_quit_MP()
+
+            except renpy.game.QuitException:
+
+                renpy.audio.audio.fadeout_all()
+                raise
 
             except game.FullRestartException as e:
                 restart = e.reason
 
             finally:
+
+                renpy.persistent.update(True)
+                renpy.persistent.save_on_quit_MP()
 
                 # Reset live2d if it exists.
                 try:

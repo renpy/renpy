@@ -230,7 +230,6 @@
         global example_location
         global example_size
 
-
         if bottom:
             example_location = "bottom"
         elif top:
@@ -257,7 +256,20 @@
     def execute_init_example(data):
         read_example(data["name"], data["filename"], data["number"], data.get("outdent", "auto"))
 
-    renpy.register_statement("example", parse=parse_example, execute=execute_example, execute_init=execute_init_example, next=next_example, block="script")
+    def reachable_example(data, is_reachable, this, next, block):
+        if is_reachable:
+            return { this, next, block }
+        else:
+            return { True, block }
+
+    renpy.register_statement(
+        "example",
+        parse=parse_example,
+        execute=execute_example,
+        execute_init=execute_init_example,
+        next=next_example,
+        reachable=reachable_example,
+        block="script")
 
 
     # The show example statement.

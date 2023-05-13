@@ -97,7 +97,7 @@ savedir = None
 image_cache_size = None
 
 # The size of the image cache, in megabytes.
-image_cache_size_mb = 300
+image_cache_size_mb = 400
 
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
@@ -1117,6 +1117,7 @@ gl_set_attributes = None
 # The blacklist of controllers with known problems.
 controller_blocklist = [
     "030000007e0500000920", # Nintendo Pro Controller (needs init to work.)
+    "030000006d0400000000", # Razer Xbox 360 Controller (#4622)
 ]
 
 # Should dissolve transitions be mipmapped by default?
@@ -1275,7 +1276,7 @@ modal_blocks_pause = True
 modal_blocks_timer = False
 
 # The range, in decibels, of the volume mixers.
-volume_db_range = 60
+volume_db_range = 40
 
 # An alias -> font map.
 font_name_map = {}
@@ -1378,6 +1379,21 @@ autosave_prefix_callback = None
 
 # Functions called when a test ends - one way or another
 end_testcase_callbacks = [ ]
+
+# Compatibility for c492f2f8e6de57b2740fa5d00566f445124caaba.
+at_transform_compare_full_context = False
+
+# A list of callbacks when the display starts.
+display_start_callbacks = [ ]
+
+# If not None, the size of the sound buffer, in bytes.
+sound_buffer_size = None
+
+# If True, the default volumes are considered to be quadratic.
+quadratic_volumes = False
+
+# If true, fades will be linear rather than logarithmic.
+linear_fades = False
 
 del os
 del collections

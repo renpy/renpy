@@ -2302,7 +2302,7 @@ class Text(renpy.display.core.Displayable):
         # Add in the focus areas.
         for hyperlink, hx, hy, hw, hh, valid_st in layout.hyperlinks:
 
-            if st >= valid_st:
+            if st >= valid_st or not self.slow:
 
                 h_x, h_y = layout.unscale_pair(hx + layout.xoffset, hy + layout.yoffset)
                 h_w, h_h = layout.unscale_pair(hw, hh)

@@ -456,6 +456,17 @@ init -1500 python in build:
     # The itch.io project name.
     itch_project = None
 
+    # Maps from files to itch.io channels.
+    itch_channels = [
+        ( "*-all.zip", "win-osx-linux" ),
+        ( "*-market.zip", "win-osx-linux" ),
+        ( "*-pc.zip", "win-linux" ),
+        ( "*-win.zip", "win" ),
+        ( "*-mac.zip", "osx" ),
+        ( "*-linux.tar.bz2", "linux" ),
+        ( "*-release.apk", "android" ),
+    ]
+
     # Should we include the old Ren'Py themes?
     include_old_themes = True
 
@@ -551,6 +562,8 @@ init -1500 python in build:
 
         if itch_project:
             rv["itch_project"] = itch_project
+
+        rv["itch_channels"] = itch_channels
 
         if mac_identity:
             rv["mac_identity"] = mac_identity

@@ -36,8 +36,8 @@
     new "Para construir un paquete para Android, por favor descarga RAPT, descomprímelo y colócalo dentro de la carpeta de Ren'Py. Después reinicia el lanzador de Ren'Py."
 
     # game/android.rpy:31
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Se requiere un kit de desarrollo Java 8 de 64 bits/x64 para construir paquetes de Android en Windows. El JDK es diferente del JRE, por lo que es posible que tengas Java sin el JDK.\n\nPor favor, {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}descarga e instala el JDK{/a}, luego reinicia el lanzador de Ren'Py."
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Se requiere un kit de desarrollo Java 8 de 64 bits/x64 para construir paquetes de Android en Windows. El JDK es diferente del JRE, por lo que es posible que tengas Java sin el JDK.\n\nPor favor, {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}descarga e instala el JDK{/a}, luego reinicia el lanzador de Ren'Py."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -2060,7 +2060,7 @@ translate spanish strings:
     # game/preferences.rpy:327
     old "{#in language font}Start using Ren'Py in [lang_name]"
     new "{font=fonts/Roboto-Light.ttf}Empieza a usar Ren'Py en [lang_name]{/font}"
-    
+
     # game/distribute_gui.rpy:231
     old "(DLC)"
     new "(DLC)"
@@ -2072,3 +2072,47 @@ translate spanish strings:
     # game/web.rpy:484
     old "Creating package..."
     new "Creando paquete..."
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    new "RAPT ha sido instalado, pero no se ha configurado una clave. Por favor, genera nuevas claves, o copia android.keystore y bundle.keystore al directorio base."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new "Intenta emular una consola Android basada en televisión.\n\nLa entrada del controlador se asigna a las teclas de flecha, Enter se asigna al botón de selección, Escape se asigna al botón de menú y PageUp se asigna al botón de retroceso."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    new "Descarga e instala el SDK de Android y los paquetes de soporte."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    new "Genera las claves necesarias para firmar el paquete."
+
+    # game/android.rpy:383
+    old "Install SDK"
+    new "Instalar SDK"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    new "Generar claves"
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    new "¿Cuánta RAM (en GB) quiere asignar a Gradle?\nDebe ser un número entero positivo."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    new "El tamaño de la RAM debe contener sólo números y ser positivo."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    new "He encontrado un archivo android.keystore en el directorio rapt. ¿Quieres usar este archivo?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    new "\n\nDecir 'No' impedirá la creación de claves."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    new "He encontrado un archivo bundle.keystore en el directorio rapt. ¿Quieres usar este archivo?"

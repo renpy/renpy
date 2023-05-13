@@ -484,7 +484,7 @@ class ImageReference(renpy.display.core.Displayable):
 
     def _handles_event(self, event):
         if self.target is None:
-            return False
+            self.find_target()
 
         return self.target._handles_event(event)
 
@@ -745,7 +745,7 @@ class DynamicImage(renpy.display.core.Displayable):
 
     def _handles_event(self, event):
         if self.target is None:
-            return False
+            self.find_target()
 
         return self.target._handles_event(event)
 
@@ -1006,7 +1006,8 @@ class ShownImageInfo(renpy.object.Object):
 
             if ca:
                 ca_required = [ i for i in required if i not in attrs ]
-                ca_optional = [ i for i in optional if i not in attrs ]
+                ca_optional = [ i for i in optional if i not in attrs if i not in required ]
+
                 newattrs = ca(tag, ca_required, ca_optional)
 
                 if newattrs is None:
@@ -1014,18 +1015,20 @@ class ShownImageInfo(renpy.object.Object):
 
                 attrs = attrs + newattrs
 
-            num_required = 0
+            else:
 
-            for i in attrs:
-                if i in required:
-                    num_required += 1
+                num_required = 0
+
+                for i in attrs:
+                    if i in required:
+                        num_required += 1
+                        continue
+
+                # We don't have any not-found attributes. But we might not
+                # have all of the attributes.
+
+                if num_required != len(required):
                     continue
-
-            # We don't have any not-found attributes. But we might not
-            # have all of the attributes.
-
-            if num_required != len(required):
-                continue
 
             len_attrs = len(set(attrs))
 

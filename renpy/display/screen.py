@@ -1002,6 +1002,9 @@ def prepare_screens():
             s.ast.unprepare_screen()
             s.ast.prepare_screen()
 
+        # Compile ATL in screens.
+        renpy.atl.compile_all()
+
         prepared = True
 
     finally:

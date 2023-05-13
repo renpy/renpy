@@ -145,6 +145,16 @@ def shorten_filename(filename):
 
     return fn, common
 
+def is_empty_extend(t):
+    """
+    Reture true if the translation is an empty extend.
+    """
+
+    for t in t.block:
+        if t.get_code() != 'extend ""':
+            return False
+
+    return True
 
 def write_translates(filename, language, filter): # @ReservedAssignment
 
@@ -172,6 +182,9 @@ def write_translates(filename, language, filter): # @ReservedAssignment
         if hasattr(t, "alternate"):
             if (t.alternate, language) in translator.language_translates:
                 continue
+
+        if is_empty_extend(t):
+            continue
 
         f = open_tl_file(tl_filename)
 
@@ -429,6 +442,10 @@ def count_missing(language, min_priority, max_priority, common_only):
 
     for filename in translate_list_files():
         for _, t in translator.file_translates[filename]:
+
+            if is_empty_extend(t):
+                continue
+
             if (t.identifier, language) not in translator.language_translates:
                 missing_translates += 1
 

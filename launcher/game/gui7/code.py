@@ -214,7 +214,8 @@ class CodeGenerator(object):
             'gui.insensitive_color' : repr(self.p.insensitive_color.hexcode),
             'gui.text_color' : repr(self.p.text_color.hexcode),
             'gui.interface_text_color' : repr(self.p.text_color.hexcode),
-            'gui.choice_text_color' : repr(self.p.choice_color.hexcode),
+            'gui.choice_button_text_idle_color' : repr(self.p.idle_color.hexcode),
+            'gui.choice_button_text_insensitive_color' : repr(self.p.insensitive_color.hexcode),
             }
 
         self.update_defines(replacements, language_defines[self.p.language])

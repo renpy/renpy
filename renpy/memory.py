@@ -230,8 +230,9 @@ def walk_memory(roots, seen=None):
     if seen is None:
         seen = { }
 
-    # A list of (name, object) pairs.
-    worklist = [ ]
+    # A deque of (name, object) pairs.
+    # We use a deque because we want to pop from the left.
+    worklist = collections.deque()
 
     # A map from root_name to total_size.
     size = collections.defaultdict(int)
@@ -253,7 +254,7 @@ def walk_memory(roots, seen=None):
     ignore_types = (types.ModuleType, type, types.FunctionType)
 
     while worklist:
-        name, o = worklist.pop(0)
+        name, o = worklist.popleft()
 
         if isinstance(o, ignore_types):
             continue

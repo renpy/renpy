@@ -80,7 +80,7 @@ def load(fn):
         elif exception.rtype == 'video':
             # Video files are downloaded by the browser, so return
             # the file name instead of a file-like object
-            return 'url:' + renpy.config.web_video_base + "/" + fn
+            return 'url:' + renpy.config.web_video_base + "/" + exception.relpath
 
         # temporary 1s placeholder, will retry loading when looping:
         rv = open(os.path.join(renpy.config.commondir, '_dl_silence.ogg'), 'rb') # type: ignore
@@ -448,6 +448,9 @@ class Channel(object):
         # mixer is muted.
         force_stop = self.context.force_stop or (renpy.game.preferences.mute.get(self.mixer, False) and self.stop_on_mute)
 
+        if global_pause and not self.loop:
+            force_stop = True
+
         if self.playing and force_stop:
             renpysound.stop(self.number)
             self.playing = False
@@ -467,6 +470,9 @@ class Channel(object):
         # per call, to prevent memory leaks with really short sound
         # files. So this loop will only execute once, in practice.
         while True:
+
+            if global_pause:
+                break
 
             if self._number is not None:
                 depth = renpysound.queue_depth(self.number)
@@ -785,6 +791,7 @@ class Channel(object):
 
         return renpysound.video_ready(self.number)
 
+
 # Use unconditional imports so these files get compiled during the build
 # process.
 
@@ -988,11 +995,14 @@ def init():
             bufsize = 8192 # works for me
             # bufsize = 16384  # jitter/silence right after starting a sound
 
+        if renpy.config.sound_buffer_size is not None:
+            bufsize = renpy.config.sound_buffer_size
+
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
 
         try:
-            renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono)
+            renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono, renpy.config.linear_fades)
             pcm_ok = True
         except Exception:
 
@@ -1030,6 +1040,17 @@ def init():
             periodic_thread.start()
         else:
             periodic_thread = None
+
+def fadeout_all():
+    """
+    Called to fade out all playing audio as the game quits or restarts.
+    """
+
+    for c in all_channels:
+        c.dequeue()
+        c.fadeout(renpy.config.fadeout_audio)
+
+    periodic()
 
 
 def quit(): # @ReservedAssignment

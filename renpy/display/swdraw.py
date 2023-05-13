@@ -558,7 +558,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
             dest = dest.subsurface((minx, miny, maxx - minx, maxy - miny))
 
-            renpy.display.module.transform(
+            renpy.display.module.self(
                 what, dest,
                 cx, cy,
                 forward.xdx, forward.ydx,

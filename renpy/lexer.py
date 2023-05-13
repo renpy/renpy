@@ -1145,42 +1145,31 @@ class Lexer(object):
             return False
 
         old_pos = self.pos
-        c = self.text[self.pos]
 
-        # Allow unicode, raw, and formatted strings.
-        for mod in ('u', 'r', 'f'):
-            if c != mod:
-                continue
 
-            self.pos += 1
+        # Delimiter.
+        start = self.match(r'[urfURF]*("""|\'\'\'|"|\')')
 
-            if self.pos == len(self.text):
-                self.pos = old_pos
-                return False
-
-            c = self.text[self.pos]
-
-        if c not in ('"', "'"):
+        if not start:
             self.pos = old_pos
             return False
 
-        delim = c
+        delim = start.lstrip('urfURF')
 
+        # String contents.
         while True:
-            self.pos += 1
-
             if self.eol():
                 self.error("end of line reached while parsing string.")
 
-            c = self.text[self.pos]
-
-            if c == delim:
+            if self.match(delim):
                 break
 
-            if c == '\\':
+            if self.match(r'\\'):
                 self.pos += 1
+                continue
 
-        self.pos += 1
+            self.match(r'.[^\'"\\]*')
+
         return True
 
     def dotted_name(self):

@@ -455,3 +455,7 @@
     # gui/game/gui.rpy:441
     old "## Change the size and spacing of various things."
     new "## Changer la taille et l'espacement de diverses choses."
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    new "## Active la vérification de propriétés invalides ou instables dans les screens et transforms"

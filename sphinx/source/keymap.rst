@@ -138,6 +138,7 @@ as of version 8.1.0 is as follows::
         # Input.
         input_backspace = [ 'any_K_BACKSPACE' ],
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
+        input_next_line = [ 'shift_K_RETURN', 'shift_K_KP_ENTER' ],
         input_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
         input_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
         input_up = [ 'any_K_UP', 'any_KP_UP' ],

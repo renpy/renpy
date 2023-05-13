@@ -246,13 +246,13 @@ let video_start = (c) => {
 
     c.video_el.loop = c.loop;
 
-    //TODO? if (p.fadeout === null) {
-    //TODO?     if (p.fadein > 0) {
-    //TODO?         linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 1.0, p.fadein);
-    //TODO?     } else {
-    //TODO?         setValue(c.fade_volume.gain, 1.0);
-    //TODO?     }
-    //TODO? }
+    if (p.fadeout === null) {
+        if (p.fadein > 0) {
+            linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 1.0, p.fadein);
+        } else {
+            setValue(c.fade_volume.gain, 1.0);
+        }
+    }
 
     c.video_el.src = p.url;
     c.video_el.play().then(() => {
@@ -281,14 +281,14 @@ let video_start = (c) => {
         }
     });
 
-    //TODO? if (p.fadeout !== null) {
-    //TODO?     linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, p.fadeout);
-    //TODO?     try {
-    //TODO?         c.playing.source.stop(context.currentTime + p.fadeout);
-    //TODO?     } catch (e) {
-    //TODO?     }
-    //TODO? 
-    //TODO? }
+    if (p.fadeout !== null) {  // XXX Should not be possible for video
+        linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, p.fadeout);
+        try {
+            c.playing.source.stop(context.currentTime + p.fadeout);
+        } catch (e) {
+        }
+    
+    }
 
     setValue(c.relative_volume.gain, p.relative_volume);
 
@@ -546,7 +546,7 @@ renpyAudio.fadeout = (channel, delay) => {
     linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, delay);
 
     if (c.video) {
-        // TODO?
+        setTimeout(renpyAudio.stop, delay * 1000.0, channel);
         return;
     }
 
@@ -702,10 +702,13 @@ renpyAudio.set_pan = (channel, pan, delay) => {
     linearRampToValue(control, control.value, pan, delay);
 };
 
-renpyAudio.tts = (s) => {
-    console.log("tts: " + s);
+renpyAudio.tts = (s, v) => {
+    console.log("tts:", s, "volume:", v);
+
+    v = v || 1.0;
 
     let u = new SpeechSynthesisUtterance(s);
+    u.volume = v;
     speechSynthesis.cancel();
     speechSynthesis.speak(u);
 };

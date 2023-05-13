@@ -142,8 +142,8 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         method of the passed Live2D object.
         The function should return a delay, in seconds, after which it will
         be called again, or None to be called again at the start of the next
-        interaction. Note that as long the motion is running, this function
-        will also be called every frame.
+        interaction. The function is also called whenever the displayable is
+        re-rendered.
 
     The difference between `attribute_function` and `attribute_filter` is
     that the former is generally used to compute replacement - the presence
@@ -161,8 +161,25 @@ Live2D animations are defined using the Live2D displayable and the image stateme
 
     .. method:: blend_parameter(name, blend, value, weight=1.0)
 
-        This method blends the current value of the parameter with passed.
-        This have no effect outside of `update_function`.
+        This method blends the current value of the parameter with `value`
+        This has no effect outside of `update_function`.
+
+        `name`
+            A string giving the name of the parameter to change.
+
+        `blend`
+            One of "Add", "Multiply" or "Overwrite". The blend kind that will be used.
+
+        `value`
+            A float giving the value that will be blended in.
+
+        `weight`
+            A float between 0.0 and 1.0, the weight by which the new value will change the current value.
+
+    .. method:: blend_opacity(name, blend, value, weight=1.0)
+
+        This method blends the current value of the part opacity with `value`
+        This has no effect outside of `update_function`.
 
         `name`
             Name of parameter to change defined for this model.
@@ -171,10 +188,11 @@ Live2D animations are defined using the Live2D displayable and the image stateme
             One of "Add", "Multiply" or "Overwrite". The blend kind that will be used.
 
         `value`
-            The value to be used.
+            A float giving the opacity value that will be blended in.
 
         `weight`
-            Float from 0.0 to 1.0, the weight by which the new value will change the current value.
+            A float between 0.0 and 1.0, the weight by which the new value will change the current value.
+
 
 There is a config variable that can help in debugging what motions and
 expressions were loaded from .model3.json files:

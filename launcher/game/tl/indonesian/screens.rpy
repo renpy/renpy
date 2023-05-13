@@ -174,8 +174,8 @@ translate indonesian strings:
     new "## Ini menjalaskan struktur dasar yang paling sering di gunakan di layar menu permainan, ini ditampilkan beserta layar judul, dan menampilkan latar belakang,judul,dan navigasi."
 
     # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## Parameter scroll dapat berisi 'None', atau \"viewport\" dan \"vpgrid\". Ketika layar ini di maksudkan untuk di gunakan dengan cabang satu atau lebih, yang di tempatkan di dalamnya."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## Parameter scroll dapat berisi 'None', atau \"viewport\" dan \"vpgrid\". Layar ini di maksudkan untuk di gunakan dengan cabang satu atau lebih, yang di tempatkan di dalamnya."
 
     # screens.rpy:476
     old "Return"
@@ -291,7 +291,8 @@ translate indonesian strings:
 
     # screens.rpy:739
     old "Window"
-    new "Window"
+    # Automatic translation.
+    new "Jendela"
 
     # screens.rpy:740
     old "Fullscreen"
@@ -406,7 +407,8 @@ translate indonesian strings:
 
     # screens.rpy:1003
     old "Enter"
-    new "Enter"
+    # Automatic translation.
+    new "Masukkan"
 
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
@@ -430,7 +432,8 @@ translate indonesian strings:
 
     # screens.rpy:1015
     old "Escape"
-    new "Escape"
+    # Automatic translation.
+    new "Melarikan diri"
 
     # screens.rpy:1016
     old "Accesses the game menu."
@@ -454,7 +457,8 @@ translate indonesian strings:
 
     # screens.rpy:1027
     old "Page Up"
-    new "Page Up"
+    # Automatic translation.
+    new "Halaman Atas"
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
@@ -715,3 +719,44 @@ translate indonesian strings:
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
     new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
 
+
+translate indonesian strings:
+
+    # gui/game/screens.rpy:329
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    # Automatic translation.
+    new "## Tombol keluar dilarang di iOS dan tidak diperlukan di Android dan Web."
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "Sinkronisasi Unggah"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "Unduh Sinkronisasi"
+
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    # Automatic translation.
+    new "Membuka menu aksesibilitas."
+
+    # gui/game/screens.rpy:1320
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    # Automatic translation.
+    new "## Menampilkan menu, jika diberikan. Menu dapat ditampilkan dengan tidak benar jika config.narrator_menu diatur ke True."
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    # Automatic translation.
+    new "## Layar gelembung"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## Layar gelembung digunakan untuk menampilkan dialog kepada pemain saat menggunakan gelembung ucapan. Layar gelembung mengambil parameter yang sama dengan layar ucapkan, harus membuat tampilan dengan id \"apa\", dan dapat membuat tampilan dengan id \"kotak nama\", \"siapa\", dan \"jendela\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"

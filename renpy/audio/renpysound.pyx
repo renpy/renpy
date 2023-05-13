@@ -50,6 +50,8 @@ or is stopped.
 
 from __future__ import print_function
 
+from libc.stdint cimport uintptr_t
+
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
 
@@ -78,12 +80,13 @@ cdef extern from "renpysound_core.h":
     void RPS_set_video(int channel, int video)
 
     void RPS_sample_surfaces(object, object)
-    void RPS_init(int freq, int stereo, int samples, int status, int equal_mono)
+    void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int linear_fades)
     void RPS_quit()
 
     void RPS_periodic()
     char *RPS_get_error()
 
+    void (*RPS_generate_audio_c_function)(float *stream, int length)
 
 def check_error():
     """
@@ -369,7 +372,7 @@ def set_video(channel, video, loop=False):
     else:
         RPS_set_video(channel, NO_VIDEO)
 
-def init(freq, stereo, samples, status=False, equal_mono=False):
+def init(freq, stereo, samples, status=False, equal_mono=False, linear_fades=False):
     """
     Initializes the audio system with the given parameters. The parameter are
     just informational - the audio system should be able to play all supported
@@ -386,7 +389,13 @@ def init(freq, stereo, samples, status=False, equal_mono=False):
 
     `status`
         If true, the sound system will print errors out to the console.
-    `
+
+    `equal_mono`
+        If true, the sound system will play mono files at the same volume as
+        stereo files.
+
+    `linear_fades`
+        If true, the sound system will use linear fades.
     """
 
     if status:
@@ -394,7 +403,7 @@ def init(freq, stereo, samples, status=False, equal_mono=False):
     else:
         status = 0
 
-    RPS_init(freq, stereo, samples, status, equal_mono)
+    RPS_init(freq, stereo, samples, status, equal_mono, linear_fades)
     check_error()
 
 def quit(): # @ReservedAssignment
@@ -418,6 +427,24 @@ def advance_time():
 
 
     RPS_advance_time()
+
+def set_generate_audio_c_function(fn):
+    """
+    This can be use to set a C function that totally replaces the Ren'Py
+    audio system.
+
+    The function is expected to have the signature void (*)(short *buf, int samples,
+    and fill buf with samples samples of audio, where each sample consists of two
+    shorts.
+    """
+
+    global RPS_generate_audio_c_function
+
+    if not isinstance(fn, int):
+        import ctypes
+        fn = ctypes.cast(fn, ctypes.c_void_p).value
+
+    RPS_generate_audio_c_function = <void (*)(float *, int)> <uintptr_t> fn
 
 # Store the sample surfaces so they stay alive.
 rgb_surface = None

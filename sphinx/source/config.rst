@@ -1379,6 +1379,13 @@ Rarely or Internally Used
     They are always treated as :var:`sticky <config.sticky_layers>` and
     intended for use with the :class:`Layer` displayable for embedding.
 
+.. var:: config.display_start_callbacks = [ ]
+
+    This contains a list of functions that are called after Ren'Py
+    displays a window, but before the first frame is rendered. The
+    main use of this is to allow libraries to gain access to resources
+    that need an initializd gui, like OpenGL functions.
+
 .. var:: config.fadeout_audio = 0.016
 
     The default audio fadeout time that's used to fade out audio, when

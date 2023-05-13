@@ -376,8 +376,8 @@ def check_show(node, precise):
 
     layer = renpy.exports.default_layer(layer, tag or name)
 
-    if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
-        report("Uses layer '%s', which is not in config.layers.", layer)
+    if layer not in renpy.display.core.layers:
+        report("Uses layer '%s', which is not defined.", layer)
 
     image_exists(name, expression, tag, precise=precise)
 
@@ -404,8 +404,8 @@ def check_hide(node):
 
     layer = renpy.exports.default_layer(layer, tag)
 
-    if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
-        report("Uses layer '%s', which is not in config.layers.", layer)
+    if layer not in renpy.display.core.layers:
+        report("Uses layer '%s', which is not defined.", layer)
 
     if tag not in image_prefixes:
         report("The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.", tag)
@@ -820,22 +820,75 @@ def report_character_stats(charastats):
 
 
 def check_unreachables(all_nodes):
-    all_nodes = [node for node in all_nodes if not common(node)]
-
-    unreachable = set(all_nodes)
-
-    to_check = {node for node in all_nodes if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)) or isinstance(node, renpy.ast.Translate) and node.language is not None}
-    # reachable nodes whose children haven't yet been checked
 
     def add_block(block):
         next = block[0]
         if next in unreachable:
             to_check.add(next)
 
+    def add_names(names):
+        for name in names:
+
+            if name is None:
+                continue
+
+            if name is True:
+                continue
+
+            if isinstance(name, renpy.lexer.SubParse):
+                if name.block:
+                    add_block(name.block)
+                continue
+
+            node = renpy.game.script.lookup(name)
+
+            if node is None:
+                continue
+
+            if node in unreachable:
+                to_check.add(node)
+
+    # All nodes, outside of common.
+    all_nodes = [node for node in all_nodes if not common(node)]
+
+    # Unreachable nodes - this set shrinks as nodes become reachable.
+    unreachable = set(all_nodes)
+
+    # Weakly reachable nodes - nodes that are reachable, but don't
+    # make their next reachable.
+    weakly_reachable = set()
+
+    # The worklist of reachable nodes that haven't been checked yet.
+    to_check = set()
+
     for node in all_nodes:
-        if isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
+        if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)):
+            to_check.add(node)
+
+        elif isinstance(node, renpy.ast.Translate):
+            if node.language is not None:
+                to_check.add(node)
+
+        elif isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
             # the block of these ones is always reachable, but their next is reachable only if they are themselves reachable
             add_block(node.block)
+            weakly_reachable.add(node)
+            # Init and TranslateBlock nodes are meant to be unreachable, but we had to check them
+            # because if they are reachable, what follows them is too and must not be flagged as unreachable
+
+        elif isinstance(node, (renpy.ast.Return, renpy.ast.EndTranslate)):
+            weakly_reachable.add(node)
+            # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes
+            # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place,
+            # and EndTranslate nodes from explicit translate blocks are naturally unreachable
+
+        elif isinstance(node, renpy.ast.UserStatement):
+            reach = node.reachable(False)
+
+            if True in reach:
+                weakly_reachable.add(node)
+
+            add_names(reach)
 
     while to_check:
         node = to_check.pop() # type: Any
@@ -865,20 +918,14 @@ def check_unreachables(all_nodes):
                 add_block(block)
 
         elif isinstance(node, renpy.ast.UserStatement):
-            if node.code_block is not None:
-                add_block(node.code_block)
-
-            for i in node.subparses:
-                add_block(i.block)
+            add_names(node.reachable(True))
+            continue
 
         next = node.next
         if next in unreachable:
             to_check.add(next)
 
-    locations = sorted(set((node.filename, node.linenumber) for node in unreachable if not isinstance(node, (renpy.ast.Return, renpy.ast.EndTranslate, renpy.ast.Init, renpy.ast.TranslateBlock))))
-    # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes
-    # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place, and EndTranslate nodes from explicit translate blocks are naturally unreachable
-    # Init and TranslateBlock nodes are meant to be unreachable, but we had to check them because if they are reachable, what follows them is too and must not be flagged as unreachable
+    locations = sorted(set((node.filename, node.linenumber) for node in (unreachable - weakly_reachable)))
 
     locadict = collections.defaultdict(list)
     for filename, linenumber in locations:
