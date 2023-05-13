@@ -412,11 +412,8 @@ class Not(Clause):
         return self.clause.start()
 
     def execute(self, state, t):
-        """
-        The code executing us should evaluate our readiness (as for all clauses),
-        that's not the responsibility of the Not clause.
-        """
-        return self.clause.execute(state, t)
+        # return self.clause.execute(state, t)
+        return None
 
     def ready(self):
         return not self.clause.ready()
