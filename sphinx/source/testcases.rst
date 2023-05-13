@@ -10,7 +10,7 @@ Testcase statement
 
 The ``testcase`` statement creates a named testcase, it takes a name, a colon,
 and a block which contains successive test statements (see below). Testcases are
-similar to Ren'py :ref:`labels <labels-control-flow>`, with a few specificities:
+similar to Ren'py :ref:`labels <label-statement>`, with a few specificities:
 
 - The Testcase statement takes test statements, the Ren'py label statement takes
   Ren'py code. Both are mutually excusive.
@@ -252,7 +252,7 @@ on the screen, or if it is given the ``always`` property. ::
 run clause
 -------------
 
-Runs the provided :ref:`screen-language action <screen-actions>` (or list of
+Runs the provided :doc:`screen-language action <screen_actions>` (or list of
 actions).
 
 Ready if and when a button containing the provided action (or list) would be
@@ -314,8 +314,8 @@ on its own, directly after the ``"play chapter 1"`` string expression statement
 
 .. warning::
 
-    This clause should not be confused with the Ren'py native :ref:`label`
-    statement it refers to, or with the unrelated
+    This clause should not be confused with the Ren'py native
+    :ref:`label <label-statement>` statement it refers to, or with the unrelated
     :ref:`screen-language label element <sl-label>`.
 
 drag clause
