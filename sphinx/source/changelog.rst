@@ -545,6 +545,12 @@ Disabling Dialogue's :ref:`monologue-mode` is now possible using the
 Other Changes
 -------------
 
+The polar motion properties (:tpref:`around`, :tpref:`radius`, and :tpref:`angle`)
+will now produce circular, rather than oval motion, with radius using the
+minimum of the available wdith and height to scale distances expressed as
+heights. The new :tpref:`anchoraround`, :tpref:`anchorradius`, and :tpref:`anchorangle`
+properties can position the anchor using polar coordinates.
+
 Ren'Py will now produce errors when a screen sets two conflicting
 properties, like :propref:`align`, and :propref:`xalign`. Previously,
 the behavior of this was undefined.
