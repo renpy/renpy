@@ -75,31 +75,17 @@ from collections import namedtuple
 
 # Version numbers.
 try:
-    from renpy.vc_version import vc_version, official, nightly
+    from renpy.vc_version import official, nightly, name as version_name, version
 except ImportError:
-    vc_version = 0
+    version = "0.0.0.0"
+    name = "TBD"
     official = False
     nightly = False
 
 official = official and getattr(site, "renpy_build_official", False)
 
 VersionTuple = namedtuple("VersionTuple", ["major", "minor", "patch", "commit"])
-
-if PY2:
-
-    # The tuple giving the version number.
-    version_tuple = VersionTuple(7, 6, 0, vc_version)
-
-    # The name of this version.
-    version_name = "To Boldly Go"
-
-else:
-
-    # The tuple giving the version number.
-    version_tuple = VersionTuple(8, 1, 0, vc_version)
-
-    # The name of this version.
-    version_name = "Where No One Has Gone Before"
+version_tuple = VersionTuple(*(int(i) for i in version.split(".")))
 
 # A string giving the version number only (8.0.1.123), with a suffix if needed.
 version_only = ".".join(str(i) for i in version_tuple)

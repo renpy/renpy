@@ -118,41 +118,19 @@ def main():
 
     # Determine the version. We grab the current revision, and if any
     # file has changed, bump it by 1.
+
+    if "nightly" in args.version:
+        subprocess.check_call([ "./version.py", "--nightly" ])
+    else:
+        subprocess.check_call([ "./version.py" ])
+
+    if args.vc_version_only:
+        return
+
     import renpy
 
     if args.version is None:
         args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
-
-    try:
-        s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", ]).decode("utf-8").strip()
-        parts = s.strip().split("-")
-        dirty = "dirty" in parts
-
-        commits_per_day = collections.defaultdict(int)
-
-        for i in subprocess.check_output([ "git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d" ]).decode("utf-8").split():
-            commits_per_day[i[2:]] += 1
-
-        if dirty:
-            key = time.strftime("%Y%m%d")[2:]
-            vc_version = "{}{:02d}".format(key, commits_per_day[key] + 1)
-        else:
-            key = max(commits_per_day.keys())
-            vc_version = "{}{:02d}".format(key, commits_per_day[key])
-    except Exception:
-        vc_version = 0
-
-    with open("renpy/vc_version.py", "w") as f:
-        import socket
-        official = socket.gethostname() == "eileen"
-        nightly = args.version and "nightly" in args.version
-
-        f.write("vc_version = {}\n".format(vc_version))
-        f.write("official = {}\n".format(official))
-        f.write("nightly = {}\n".format(nightly))
-
-    if args.vc_version_only:
-        return
 
     try:
         reload(sys.modules['renpy.vc_version']) # @UndefinedVariable
