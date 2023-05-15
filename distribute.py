@@ -119,10 +119,8 @@ def main():
     # Determine the version. We grab the current revision, and if any
     # file has changed, bump it by 1.
 
-    if "nightly" in args.version:
-        subprocess.check_call([ "./version.py", "--nightly" ])
-    else:
-        subprocess.check_call([ "./version.py" ])
+    import version as version_module
+    version_module.generate_vc_version(nightly=args.version and "nightly" in args.version)
 
     if args.vc_version_only:
         return
