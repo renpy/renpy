@@ -207,11 +207,6 @@ translate indonesian strings:
     # Automatic translation.
     new "## Tombol Pilihan"
 
-    # gui.rpy:207
-    old "## Choice buttons are used in the in-game menus."
-    # Automatic translation.
-    new "Tombol pilihan ## digunakan dalam menu dalam game."
-
     # gui.rpy:220
     old "## File Slot Buttons"
     # Automatic translation.
@@ -266,11 +261,6 @@ translate indonesian strings:
     old "## The spacing between menu choices."
     # Automatic translation.
     new "## Jarak spasi di antara pilihan menu."
-
-    # gui.rpy:261
-    old "## Buttons in the navigation section of the main and game menus."
-    # Automatic translation.
-    new "Tombol ## di bagian navigasi pada menu utama dan menu permainan."
 
     # gui.rpy:264
     old "## Controls the amount of spacing between preferences."
@@ -441,11 +431,6 @@ translate indonesian strings:
     # Automatic translation.
     new "## Ini mengubah ukuran dan spasi berbagai elemen GUI untuk memastikan elemen-elemen tersebut mudah terlihat pada ponsel."
 
-    # gui.rpy:413
-    old "## Font sizes."
-    # Automatic translation.
-    new "Ukuran huruf ##."
-
     # gui.rpy:421
     old "## Adjust the location of the textbox."
     # Automatic translation.
@@ -470,8 +455,6 @@ translate indonesian strings:
     old "## Quick buttons."
     # Automatic translation.
     new "## Tombol cepat."
-
-translate indonesian strings:
 
     # gui.rpy:17
     old "## GUI Configuration Variables"
@@ -532,4 +515,3 @@ translate indonesian strings:
     old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
     # Automatic translation.
     new "## Jumlah maksimum entri mode NVL yang akan ditampilkan Ren'Py. Ketika lebih banyak entri daripada ini akan ditampilkan, entri tertua akan dihapus."
-

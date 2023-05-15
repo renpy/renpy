@@ -206,7 +206,7 @@ translate portuguese strings:
     # gui/game/options.rpy:175
     old "## * matches all characters, except the directory separator."
     # Automatic translation.
-    new "* corresponde a todos os caracteres, exceto o separador de diretório."
+    new "## * corresponde a todos os caracteres, exceto o separador de diretório."
 
     # gui/game/options.rpy:177
     old "## ** matches all characters, including the directory separator."
@@ -242,4 +242,3 @@ translate portuguese strings:
     old "## The username and project name associated with an itch.io project, separated by a slash."
     # Automatic translation.
     new "## O nome de usuário e o nome do projeto associados a um projeto itch.io, separados por uma barra."
-

@@ -207,11 +207,6 @@ translate german strings:
     # Automatic translation.
     new "## ** passt auf alle Zeichen, auch auf das Verzeichnis-Trennzeichen."
 
-    # options.rpy:173
-    old "## For example, \"*.txt\" matches txt files in the base directory, \"game/**.ogg\" matches ogg files in the game directory or any of its subdirectories, and \"**.psd\" matches psd files anywhere in the project."
-    # Automatic translation.
-    new "*.txt\" findet beispielsweise txt-Dateien im Basisverzeichnis, \"game/**.ogg\" findet ogg-Dateien im Spielverzeichnis oder einem seiner Unterverzeichnisse und \"**.psd\" findet psd-Dateien überall im Projekt."
-
     # options.rpy:177
     old "## Classify files as None to exclude them from the built distributions."
     # Automatic translation.
@@ -237,9 +232,6 @@ translate german strings:
     # Automatic translation.
     new "## Der mit einem itch.io-Projekt verbundene Benutzername und Projektname, getrennt durch einen Schrägstrich."
 
-
-translate german strings:
-
     # gui/game/options.rpy:31
     old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
     # Automatic translation.
@@ -263,4 +255,3 @@ translate german strings:
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
     # Automatic translation.
     new "## Für In-App-Käufe ist ein Google Play-Lizenzschlüssel erforderlich. Sie finden ihn in der Google Play-Entwicklerkonsole unter \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-
