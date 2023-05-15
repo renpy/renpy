@@ -207,13 +207,7 @@ translate korean strings:
     # Automatic translation.
     new "## 이 세 가지 변수는 무엇보다도 플레이어에게 기본적으로 표시되는 믹서를 제어합니다. 이 중 하나를 False로 설정하면 해당 믹서가 숨겨집니다."
 
-    # gui/game/options.rpy:152
-    old "## Icon"
-    # Automatic translation.
-    new "아이콘 ##"
-
     # gui/game/options.rpy:203
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
     # Automatic translation.
     new "## 인앱 구매를 수행하려면 Google Play 라이선스 키가 필요합니다. Google Play 개발자 콘솔의 '수익 창출' > '수익 창출 설정' > '라이선스'에서 찾을 수 있습니다."
-

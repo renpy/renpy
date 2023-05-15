@@ -134,7 +134,7 @@ translate german strings:
     # gui.rpy:96
     old "## Dialogue"
     # Automatic translation.
-    new "*Dialog"
+    new "## Dialog"
 
     # gui.rpy:98
     old "## These variables control how dialogue is displayed on the screen one line at a time."
@@ -576,4 +576,3 @@ translate german strings:
     old "## Change the size and spacing of various things."
     # Automatic translation.
     new "## Ändern Sie die Größe und die Abstände verschiedener Dinge."
-

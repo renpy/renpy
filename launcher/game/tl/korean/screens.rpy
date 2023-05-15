@@ -704,11 +704,6 @@ translate korean strings:
     # Automatic translation.
     new "## 주어진 경우 메뉴를 표시합니다. config.narrator_menu가 True로 설정된 경우 메뉴가 잘못 표시될 수 있습니다."
 
-    # gui/game/screens.rpy:1410
-    old "## Bubble screen"
-    # Automatic translation.
-    new "버블 스크린 ##"
-
     # gui/game/screens.rpy:1412
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
     # Automatic translation.
