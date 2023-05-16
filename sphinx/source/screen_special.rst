@@ -723,7 +723,8 @@ user. It takes the following parameters:
     * gui.SLOW_SKIP - "Are you sure you want to begin skipping?"
     * gui.FAST_SKIP_SEEN - "Are you sure you want to skip to the next choice?"
     * gui.FAST_SKIP_UNSEEN - "Are you sure you want to skip unseen dialogue to the next choice?"
-
+    * gui.UNKNOWN_TOKEN - "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    * gui.TRUST_TOKEN - "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
 
     The values of the variables are strings, which means they can be
     displayed using a text displayable.
