@@ -94,6 +94,8 @@ def main():
     ap.add_argument("--vc-version-only", action="store_true")
     ap.add_argument("--link-directories", action="store_true")
     ap.add_argument("--append-version", action="store_true")
+    ap.add_argument("--nightly", action="store_true")
+    ap.add_argument("--print-version", action="store_true")
 
     args = ap.parse_args()
 
@@ -120,15 +122,10 @@ def main():
     # file has changed, bump it by 1.
 
     import version as version_module
-    version_module.generate_vc_version(nightly=args.version and "nightly" in args.version)
+    version_module.generate_vc_version(nightly=args.nightly)
 
     if args.vc_version_only:
         return
-
-    import renpy
-
-    if args.version is None:
-        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
 
     try:
         reload(sys.modules['renpy.vc_version']) # @UndefinedVariable
@@ -137,11 +134,24 @@ def main():
 
     reload(sys.modules['renpy'])
 
+    import renpy
+
+    if args.print_version:
+        print(renpy.version_only)
+        return
+
+    if args.version is None:
+        if args.nightly:
+            args.version = renpy.version_only
+        else:
+            args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
+
     if args.append_version:
         args.version += "-"  + renpy.version_only
 
     # Check that the versions match.
     full_version = renpy.version_only # @UndefinedVariable
+
     if "-" not in args.version \
             and not full_version.startswith(args.version):
         raise Exception("The command-line and Ren'Py versions do not match.")
