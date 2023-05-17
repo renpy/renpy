@@ -57,7 +57,6 @@ fi
 setup "$ROOT/module/"
 
 python "$ROOT/distribute.py" --link-directories
-python "$ROOT/version.py"
 
 if  [ "$1" = "--build" ] ; then
     echo "Ren'Py build complete."
