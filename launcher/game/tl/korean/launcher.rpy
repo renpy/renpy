@@ -2047,8 +2047,7 @@ translate korean strings:
 
     # game/preferences.rpy:256
     old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    # Automatic translation.
-    new "사용자 지정 테마를 만드는 방법에 대한 정보는 Ren'Py 문서{/a} 에서 {a=https://www.renpy.org/doc/html/skins.html}확인할 수 있습니다."
+    new "사용자 지정 테마를 만드는 방법에 대한 정보는 {a=https://www.renpy.org/doc/html/skins.html}Ren'Py 문서{/a} 에서 확인할 수 있습니다."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2149,4 +2148,3 @@ translate korean strings:
     old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
     # Automatic translation.
     new "재생 중에 이미지와 음악을 다운로드할 수 있습니다. 이 동작을 구성할 수 있도록 'progressive_download.txt' 파일이 생성됩니다."
-
