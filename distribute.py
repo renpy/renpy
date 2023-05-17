@@ -103,8 +103,14 @@ def main():
     link_directory("renios")
     link_directory("web")
 
-    if args.link_directories:
+    import renpy.versions
+    renpy.versions.generate_vc_version(nightly=args.nightly)
+
+    if args.link_directories or args.vc_version_only:
         return
+
+    if not os.path.abspath(sys.executable).startswith(ROOT + "/lib"):
+        raise Exception("Distribute must be run with the python in lib/.")
 
     if args.sign:
         os.environ["RENPY_MAC_IDENTITY"] = "Developer ID Application: Tom Rothamel (XHTE5H7Z79)"
@@ -112,28 +118,12 @@ def main():
     if PY2 and not sys.flags.optimize:
         raise Exception("Not running with python optimization.")
 
-    if not os.path.abspath(sys.executable).startswith(ROOT + "/lib"):
-        raise Exception("Distribute must be run with the python in lib/.")
-
-    # Revision updating is done early, so we can do it even if the rest
-    # of the program fails.
-
-    # Determine the version. We grab the current revision, and if any
-    # file has changed, bump it by 1.
-
-    import version as version_module
-    version_module.generate_vc_version(nightly=args.nightly)
-
-    if args.vc_version_only:
-        return
-
     try:
-        reload(sys.modules['renpy.vc_version']) # @UndefinedVariable
+        reload(sys.modules['renpy.vc_version'])
     except Exception:
-        import renpy.vc_version # @UnusedImport
+        import renpy.vc_version
 
     reload(sys.modules['renpy'])
-
     import renpy
 
     if args.print_version:

@@ -75,12 +75,15 @@ from collections import namedtuple
 
 # Version numbers.
 try:
-    from renpy.vc_version import official, nightly, name as version_name, version
+    from renpy.vc_version import official, nightly, version_name, version
 except ImportError:
-    version = "0.0.0.0"
-    version_name = "None"
-    official = False
-    nightly = False
+    import renpy.versions
+    version_dict = renpy.versions.get_version()
+
+    official = version_dict["official"]
+    nightly = version_dict["nightly"]
+    version_name = version_dict["version_name"]
+    version = version_dict["version"]
 
 official = official and getattr(site, "renpy_build_official", False)
 
@@ -434,6 +437,7 @@ def import_all():
     import renpy.script
     import renpy.statements
     import renpy.util
+    import renpy.versions
 
     global plog
     plog = renpy.performance.log # type:ignore
