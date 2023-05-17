@@ -609,9 +609,12 @@ def display_say(
             # is not required.
             if renpy.config.scry_extend:
 
-                scry = renpy.exports.scry().next()
-                scry_count = 0
+                scry = renpy.exports.scry()
 
+                if scry is not None:
+                    scry = scry.next()
+
+                scry_count = 0
 
                 while scry and scry_count < 64:
                     if scry.extend_text is renpy.ast.DoesNotExtend:

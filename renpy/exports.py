@@ -2821,7 +2821,8 @@ def scry():
     """
     :doc: other
 
-    Returns the scry object for the current statement.
+    Returns the scry object for the current statement. Returns None if
+    there are no statements executing.
 
     The scry object tells Ren'Py about things that must be true in the
     future of the current statement. Right now, the scry object has the
@@ -2842,9 +2843,17 @@ def scry():
     ``who``
         If a ``say`` or ``menu-with-caption`` statement will execute
         before the next interaction, this is the character object it will use.
+
+    The scry object has a next() method, which returns the scry object of
+    the statement after the current one, if only one statement will execute
+    after the this one. Otherwise, it returns None.
     """
 
     name = renpy.game.context().current
+
+    if name is None:
+        return None
+
     node = renpy.game.script.lookup(name)
     return node.scry()
 
