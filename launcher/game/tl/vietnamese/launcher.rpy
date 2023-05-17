@@ -357,11 +357,11 @@
 
     # editor.rpy:150
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new "{b}Khuyến khích{/ b} Một trình biên tập có giao diện thân thiện và chức năng hỗ trợ phát triển, chẳng hạn như kiểm tra lỗi chính tả. Editra hiện đang thiếu sự hỗ trợ IME cần thiết để nhập văn bản Trung Quốc, Nhật Bản, và Hàn Quốc."
+    new "{b}Khuyến khích{/b} Một trình biên tập có giao diện thân thiện và chức năng hỗ trợ phát triển, chẳng hạn như kiểm tra lỗi chính tả. Editra hiện đang thiếu sự hỗ trợ IME cần thiết để nhập văn bản Trung Quốc, Nhật Bản, và Hàn Quốc."
 
     # editor.rpy:151
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
-    new "{b}Khuyến khích{/ b} Một trình biên tập có giao diện thân thiện và chức năng hỗ trợ phát triển, chẳng hạn như kiểm tra lỗi chính tả. Editra hiện đang thiếu sự hỗ trợ IME cần thiết để nhập văn bản Trung Quốc, Nhật Bản, và Hàn Quốc. Với Linux Editra cần thêm wxPython."
+    new "{b}Khuyến khích{/b} Một trình biên tập có giao diện thân thiện và chức năng hỗ trợ phát triển, chẳng hạn như kiểm tra lỗi chính tả. Editra hiện đang thiếu sự hỗ trợ IME cần thiết để nhập văn bản Trung Quốc, Nhật Bản, và Hàn Quốc. Với Linux Editra cần thêm wxPython."
 
     # editor.rpy:167
     old "This may have occured because wxPython is not installed on this system."
