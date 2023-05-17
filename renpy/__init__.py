@@ -78,7 +78,7 @@ try:
     from renpy.vc_version import official, nightly, name as version_name, version
 except ImportError:
     version = "0.0.0.0"
-    name = "TBD"
+    version_name = "None"
     official = False
     nightly = False
 
