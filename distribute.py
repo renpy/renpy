@@ -119,12 +119,16 @@ def main():
         raise Exception("Not running with python optimization.")
 
     try:
-        reload(sys.modules['renpy.vc_version'])
+        if renpy.vc_version.__file__.endswith(".pyc") or renpy.vc_version.__file__.endswith(".pyo"):
+            os.unlink(renpy.vc_version.__file__)
+        reload(renpy.vc_version)
     except Exception:
         import renpy.vc_version
 
-    reload(sys.modules['renpy'])
-    import renpy
+    if renpy.__file__.endswith(".pyc") or renpy.__file__.endswith(".pyo"):
+        os.unlink(renpy.__file__)
+
+    reload(renpy)
 
     if args.print_version:
         print(renpy.version_only)
