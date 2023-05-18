@@ -217,7 +217,7 @@ containing bonus material. We could classify the bonus files in to a
     build.classify("game/bonus/**", "bonus_archive")
 
     # Declare the package.
-    build.package("all-premium", "zip", "windows mac linux all bonus")
+    build.package("all-premium", "zip", "windows mac linux renpy all bonus")
 
 Supported package types are "zip" and "tar.bz2" to generate files in
 those formats, and "directory" to create a directory filled with
