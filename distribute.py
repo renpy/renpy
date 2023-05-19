@@ -104,7 +104,7 @@ def main():
     link_directory("web")
 
     import renpy.versions
-    renpy.versions.generate_vc_version(nightly=args.nightly)
+    version_dict = renpy.versions.generate_vc_version(nightly=args.nightly)
 
     if args.link_directories or args.vc_version_only:
         return
@@ -130,6 +130,9 @@ def main():
 
     reload(renpy)
 
+    version_only = version_dict["version"]
+    version_tuple = tuple(int(i) for i in version_only.split("."))
+
     if args.print_version:
         print(renpy.version_only)
         return
@@ -138,7 +141,7 @@ def main():
         if args.nightly:
             args.version = renpy.version_only
         else:
-            args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
+            args.version = ".".join(str(i) for i in version_tuple[:-1])
 
     if args.append_version:
         args.version += "-"  + renpy.version_only

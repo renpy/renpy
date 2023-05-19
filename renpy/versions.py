@@ -111,6 +111,7 @@ def get_version():
     return make_dict(branch)
 
 
+
 def generate_vc_version(nightly=False):
     """
     Generates the vc_version.py file.
@@ -160,6 +161,8 @@ def generate_vc_version(nightly=False):
     with open(vc_version_fn, "w") as f:
         for k, v in sorted(version_dict.items()):
             f.write("{} = {!r}\n".format(k, v))
+
+    return version_dict
 
 
 def main():
