@@ -104,7 +104,7 @@ def main():
     link_directory("web")
 
     import renpy.versions
-    version_dict = renpy.versions.generate_vc_version(nightly=args.nightly)
+    renpy.versions.generate_vc_version(nightly=args.nightly)
 
     if args.link_directories or args.vc_version_only:
         return
@@ -119,19 +119,20 @@ def main():
         raise Exception("Not running with python optimization.")
 
     try:
-        if renpy.vc_version.__file__.endswith(".pyc") or renpy.vc_version.__file__.endswith(".pyo"):
-            os.unlink(renpy.vc_version.__file__)
+        vc_version_base = os.path.splitext(renpy.vc_version.__file__)[0]
+
+        # Delete the .pyc and .pyo files, as reload can choose one of them instead
+        # of the new .py file.
+        for fn in [ vc_version_base + ".pyc", vc_version_base + ".pyo" ]:
+            if os.path.exists(fn):
+                os.unlink(fn)
+
         reload(renpy.vc_version)
     except Exception:
         import renpy.vc_version
 
-    if renpy.__file__.endswith(".pyc") or renpy.__file__.endswith(".pyo"):
-        os.unlink(renpy.__file__)
-
+    # A normal reload is fine, as renpy/__init__.py won't change.
     reload(renpy)
-
-    version_only = version_dict["version"]
-    version_tuple = tuple(int(i) for i in version_only.split("."))
 
     if args.print_version:
         print(renpy.version_only)
@@ -141,7 +142,7 @@ def main():
         if args.nightly:
             args.version = renpy.version_only
         else:
-            args.version = ".".join(str(i) for i in version_tuple[:-1])
+            args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
 
     if args.append_version:
         args.version += "-"  + renpy.version_only
