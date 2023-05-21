@@ -4,6 +4,16 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+8.1.1 / 7.6.1
+=============
+
+In some cases, when a class that inherited from the object class was changed
+to no longer inherit from the object class, Ren'Py would crash. Ren'Py
+now diagnoses this error, and :var:`config.ex_rollback_classes` lets you
+suppress the error. The error is only shown to developers, and is otherwise
+silently ignored.
+
+
 .. _renpy-8.1.0:
 .. _renpy-7.6.0:
 

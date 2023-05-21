@@ -371,7 +371,16 @@ class Rollback(renpy.object.Object):
         for obj, roll in reversed(self.objects):
 
             if roll is not None:
-                obj._rollback(roll)
+                try:
+                    obj._rollback(roll)
+                except AttributeError:
+                    if not hasattr(obj, "_rollback"):
+                        if isinstance(obj, tuple(renpy.config.ex_rollback_classes)):
+                            continue
+                        elif not renpy.config.developer:
+                            continue
+                        else:
+                            raise Exception("Load or rollback failed because class {} does not inherit from store.object, but did in the past. If this was an intentional change, add the class to config.ex_rollback_classes.".format(type(obj).__name__))
 
         for name, changes in self.stores.items():
             store = store_dicts.get(name, None)

@@ -1392,6 +1392,9 @@ quadratic_volumes = False
 # If true, fades will be linear rather than logarithmic.
 linear_fades = False
 
+# Classes that used to participate in rollback, but no longer do.
+ex_rollback_classes = [ ]
+
 del os
 del collections
 

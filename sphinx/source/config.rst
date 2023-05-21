@@ -1378,6 +1378,16 @@ Rarely or Internally Used
     main use of this is to allow libraries to gain access to resources
     that need an initializd gui, like OpenGL functions.
 
+.. var:: config.ex_rollback_classes = [ ]
+
+    A list of class objects that should not generate a warning that
+    the object supported rollback in the past, but do not now. If you
+    have intentionally removed rollack support from a class, place
+    the class object in this list and the warning will be suppressed.
+
+    Chances are, you don't want to use this - you want to add ``object``
+    to the list of base types for your class.
+
 .. var:: config.fadeout_audio = 0.016
 
     The default audio fadeout time that's used to fade out audio, when
