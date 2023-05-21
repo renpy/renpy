@@ -1162,15 +1162,15 @@
 
     # game/updater.rpy:76
     old "Nightly Fix"
-    new "Nightly Fix"
+    new "Journalière Corrective"
 
     # game/updater.rpy:77
     old "Nightly Fix (Ren'Py 8, Python 3)"
-    new "Nightly Fix (Ren'Py 8, Python 3)"
+    new "Journalière Corrective (Ren'Py 8, Python 3)"
 
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
-    new "Nightly Fix (Ren'Py 7, Python 2)"
+    new "Journalière Corrective (Ren'Py 7, Python 2)"
 
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
