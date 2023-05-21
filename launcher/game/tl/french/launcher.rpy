@@ -1108,6 +1108,14 @@
     old "Release"
     new "Stable"
 
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    new "Stable (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    new "Stable (Ren'Py 7, Python 2)"
+
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
     new "{b}Recommandé.{/b} La version de Ren’Py qui devrait être utilisée pour tous les jeux récemment sortis."
@@ -1115,6 +1123,14 @@
     # updater.rpy:102
     old "Prerelease"
     new "Pré-stable"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "Pré-stable (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "Pré-stable (Ren'Py 7, Python 2)"
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1132,9 +1148,33 @@
     old "Nightly"
     new "Journalière"
 
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    new "Journalière (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "Journalière (Ren'Py 7, Python 2)"
+
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new "Les toutes dernières version de Ren’Py encore en développement. Vous pouvez alors utiliser les toutes dernières fonctionnalités, mais le logiciel peut également ne pas s’exécuter du tout."
+    new "La toute dernière version de Ren’Py, encore en développement. Elle peut contenir les toutes dernières fonctionnalités, ou alors ne pas marcher du tout."
+
+    # game/updater.rpy:76
+    old "Nightly Fix"
+    new "Nightly Fix"
+
+    # game/updater.rpy:77
+    old "Nightly Fix (Ren'Py 8, Python 3)"
+    new "Nightly Fix (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly Fix (Ren'Py 7, Python 2)"
+    new "Nightly Fix (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    new "Une version journalière qui corrige les bugs de la dernière version stable."
 
     # updater.rpy:152
     old "An error has occured:"
@@ -2044,30 +2084,6 @@
     old "Install Libraries:"
     new "Installer des bibliothèques :"
 
-    # game/updater.rpy:64
-    old "Release (Ren'Py 8, Python 3)"
-    new "Stable (Ren'Py 8, Python 3)"
-
-    # game/updater.rpy:65
-    old "Release (Ren'Py 7, Python 2)"
-    new "Stable (Ren'Py 7, Python 2)"
-
-    # game/updater.rpy:69
-    old "Prerelease (Ren'Py 8, Python 3)"
-    new "Pré-stable (Ren'Py 8, Python 3)"
-
-    # game/updater.rpy:70
-    old "Prerelease (Ren'Py 7, Python 2)"
-    new "Pré-stable (Ren'Py 7, Python 2)"
-
-    # game/updater.rpy:77
-    old "Nightly (Ren'Py 8, Python 3)"
-    new "Journalière (Ren'Py 8, Python 3)"
-
-    # game/updater.rpy:78
-    old "Nightly (Ren'Py 7, Python 2)"
-    new "Journalière (Ren'Py 7, Python 2)"
-
     # game/preferences.rpy:327
     old "{#in language font}Welcome! Please choose a language"
     new "{font=fonts/Roboto-Light.ttf}Bienvenue ! Choisissez une langue{/font}"
@@ -2131,11 +2147,3 @@
     # game/androidstrings.rpy:69
     old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
     new "J'ai trouvé un fichier bundle.keystore dans le dossier \"rapt\". Voulez-vous l'utiliser ?"
-
-translate french strings:
-
-    # game/updater.rpy:79
-    old "A nightly build of fixes to the release version of Ren'Py."
-    # Automatic translation.
-    new "Une compilation nocturne des corrections apportées à la version release de Ren'Py."
-
