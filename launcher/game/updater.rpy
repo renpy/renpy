@@ -73,6 +73,11 @@ init python:
     _("Experimental")
     _("Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer.")
 
+    _("Nightly Fix")
+    _("Nightly Fix (Ren'Py 8, Python 3)")
+    _("Nightly Fix (Ren'Py 7, Python 2)")
+    _("A nightly build of fixes to the release version of Ren'Py.")
+
     _("Nightly")
     _("Nightly (Ren'Py 8, Python 3)")
     _("Nightly (Ren'Py 7, Python 2)")
