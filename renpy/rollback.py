@@ -918,41 +918,52 @@ class RollbackLog(renpy.object.Object):
 
         # Decide if we're replacing the current context (rollback command),
         # or creating a new set of contexts (loading).
-        if renpy.game.context().rollback:
-            replace_context = False
-            other_contexts = [ ]
 
-        else:
-            replace_context = True
-            other_contexts = renpy.game.contexts[1:]
-            renpy.game.contexts = renpy.game.contexts[0:1]
+        old_contexts = list(renpy.game.contexts)
 
-        if on_load and revlog[-1].retain_after_load:
-            retained = revlog.pop()
-            self.retain_after_load_flag = True
-        else:
-            retained = None
+        try:
 
-        come_from = None
+            if renpy.game.context().rollback:
+                replace_context = False
+                other_contexts = [ ]
+            else:
+                replace_context = True
+                other_contexts = renpy.game.contexts[1:]
+                renpy.game.contexts = renpy.game.contexts[0:1]
 
-        if current_label is not None:
-            come_from = renpy.game.context().current
-            label = current_label
+            if on_load and revlog[-1].retain_after_load:
+                retained = revlog.pop()
+                self.retain_after_load_flag = True
+            else:
+                retained = None
 
-        # Actually roll things back.
-        for rb in revlog:
-            rb.rollback()
+            come_from = None
 
-            if (rb.context.current == self.fixed_rollback_boundary) and (rb.context.current):
-                self.rollback_is_fixed = True
+            if current_label is not None:
+                come_from = renpy.game.context().current
+                label = current_label
 
-            if rb.forward is not None:
-                self.forward.insert(0, (rb.context.current, rb.forward))
+            # Actually roll things back.
+            for rb in revlog:
+                rb.rollback()
 
-        if retained is not None:
-            retained.rollback_control()
-            self.log.append(retained)
+                if (rb.context.current == self.fixed_rollback_boundary) and (rb.context.current):
+                    self.rollback_is_fixed = True
 
+                if rb.forward is not None:
+                    self.forward.insert(0, (rb.context.current, rb.forward))
+
+            if retained is not None:
+                retained.rollback_control()
+                self.log.append(retained)
+
+        except Exception:
+
+            # If there was an exception, restore the context list.
+            renpy.game.contexts = old_contexts
+            raise
+
+        # Preserve come_from.
         if (label is not None) and (come_from is None):
             come_from = renpy.game.context().current
 
