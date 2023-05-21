@@ -3,9 +3,11 @@
 set -e
 cd $(dirname $(dirname $(readlink -f $0)))
 
+args=("$@")
+
 translate () {
-    ./run.sh launcher translate $1 --empty --no-todo
-    ./scripts/automatic_translate.py $2 launcher/game/tl/$1/*.rpy
+    ./run.sh launcher translate $1 --strings-only --empty --no-todo "${args[@]}"
+    ./scripts/automatic_translate.py $2 launcher/game/tl/$1/*.rpy "${args[@]}"
 }
 
 translate finnish FI

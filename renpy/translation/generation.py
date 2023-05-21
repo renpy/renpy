@@ -220,7 +220,7 @@ def translation_filename(s):
     return filename
 
 
-def write_strings(language, filter, min_priority, max_priority, common_only): # @ReservedAssignment
+def write_strings(language, filter, min_priority, max_priority, common_only, only_strings=[]): # @ReservedAssignment
     """
     Writes strings to the file.
     """
@@ -250,6 +250,9 @@ def write_strings(language, filter, min_priority, max_priority, common_only): # 
 
         if language == "None" and tlfn == "common.rpy":
             tlfn = "common.rpym"
+
+        if only_strings and s.text not in only_strings:
+            continue
 
         stringfiles[tlfn].append(s)
 
@@ -491,6 +494,7 @@ def translate_command():
     ap.add_argument("--strings-only", help="Only translate strings (not dialogue).", dest="strings_only", default=False, action="store_true")
     ap.add_argument("--common-only", help="Only translate string from the common code.", dest="common_only", default=False, action="store_true")
     ap.add_argument("--no-todo", help="Do not include the TODO flag.", dest="todo", default=True, action="store_false")
+    ap.add_argument("--string", help="Translate a single string.", dest="string", action="append")
 
     args = ap.parse_args()
 
@@ -519,7 +523,7 @@ def translate_command():
         for filename in translate_list_files():
             write_translates(filename, args.language, filter)
 
-    write_strings(args.language, filter, args.min_priority, max_priority, args.common_only)
+    write_strings(args.language, filter, args.min_priority, max_priority, args.common_only, args.string)
 
     close_tl_files()
 

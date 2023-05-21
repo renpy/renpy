@@ -174,7 +174,17 @@ def quote_unicode(s):
 
     return f'"{s}"'
 
-def process_file(fn, language):
+def process_file(fn, language, only_strings=[]):
+
+
+    def should_translate(s):
+        if "{#" in s:
+            return False
+
+        if only_strings and s not in only_strings:
+            return False
+
+        return True
 
     print("Translate", fn, "to", language)
 
@@ -196,7 +206,7 @@ def process_file(fn, language):
             new = ast.literal_eval(l.strip().partition(" ")[2])
             orig_new = new
 
-            if (not new) or (new == old and ("{#" not in new)):
+            if ((not new) or (new == old)) and should_translate(old):
                 new = translate_lines(old, language, source_fn)
 
                 if new != old or new != orig_new:
@@ -224,11 +234,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("language")
     ap.add_argument("files", nargs="+")
+    ap.add_argument("--string", help="Translate a single string.", dest="string", action="append")
 
     args = ap.parse_args()
 
     for fn in args.files:
-        process_file(fn, args.language)
+        process_file(fn, args.language, args.string)
 
 
 if __name__ == "__main__":
