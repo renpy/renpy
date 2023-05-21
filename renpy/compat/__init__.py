@@ -142,11 +142,11 @@ from future.builtins import chr
 def add_attribute(obj, name, value):
     pass
 
-try:
-    if PY2:
+if PY2:
+    try:
         from renpy.compat.dictviews import add_attribute
-except ImportError:
-    print("Could not import renpy.compat.dictviews.", file=sys.stderr)
+    except ImportError:
+        print("Could not import renpy.compat.dictviews.", file=sys.stderr)
 
 
 ################################################################################
