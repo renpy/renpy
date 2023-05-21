@@ -130,6 +130,8 @@ def translate(s, lang, source_fn):
 
     if "00console" in source_fn:
         prefix, delim, s = s.rpartition(": ")
+    elif s.startswith("## "):
+        prefix, delim, s = s.partition(" ")
     else:
         prefix = ""
         delim = ""
