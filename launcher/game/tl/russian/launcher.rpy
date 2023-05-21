@@ -2091,3 +2091,11 @@ translate russian strings:
     # Automatic translation.
     new "Создание пакета..."
 
+
+translate russian strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ночная сборка исправлений к релизной версии Ren'Py."
+

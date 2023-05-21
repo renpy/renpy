@@ -2116,3 +2116,11 @@ translate spanish strings:
     # game/androidstrings.rpy:69
     old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
     new "He encontrado un archivo bundle.keystore en el directorio rapt. ¿Quieres usar este archivo?"
+
+translate spanish strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Una compilación nocturna de correcciones de la versión de lanzamiento de Ren'Py."
+

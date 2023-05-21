@@ -2168,3 +2168,11 @@ translate indonesian strings:
     # Automatic translation.
     new "Gambar dan musik dapat diunduh saat bermain. File 'progressive_download.txt' akan dibuat sehingga Anda dapat mengonfigurasi perilaku ini."
 
+
+translate indonesian strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Perbaikan versi malam hari untuk versi rilis Ren'Py."
+

@@ -2148,3 +2148,11 @@ translate korean strings:
     old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
     # Automatic translation.
     new "재생 중에 이미지와 음악을 다운로드할 수 있습니다. 이 동작을 구성할 수 있도록 'progressive_download.txt' 파일이 생성됩니다."
+
+translate korean strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ren'Py 릴리스 버전에 대한 수정 사항이 포함된 야간 빌드입니다."
+

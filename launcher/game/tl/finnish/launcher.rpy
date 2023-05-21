@@ -2122,3 +2122,11 @@ translate finnish strings:
     # Automatic translation.
     new "Ennen verkkosovellusten pakkaamista sinun on ladattava RenPyWeb, Ren'Pyn verkkotuki. Haluatko ladata RenPyWebin nyt?"
 
+
+translate finnish strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Yöllinen versio, joka sisältää korjauksia Ren'Pyn julkaisuversioon."
+

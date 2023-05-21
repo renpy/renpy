@@ -2169,3 +2169,11 @@ translate italian strings:
     # Automatic translation.
     new "Prima di confezionare le applicazioni web, è necessario scaricare RenPyWeb, il supporto web di Ren'Py. Volete scaricare RenPyWeb ora?"
 
+
+translate italian strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Una build notturna di correzioni alla versione di rilascio di Ren'Py."
+

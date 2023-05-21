@@ -2210,3 +2210,11 @@ translate greek strings:
     # Automatic translation.
     new "Πριν συσκευάσετε εφαρμογές ιστού, θα πρέπει να κατεβάσετε το RenPyWeb, την υποστήριξη ιστού της Ren'Py. Θα θέλατε να κατεβάσετε το RenPyWeb τώρα;"
 
+
+translate greek strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ένα νυχτερινό build με διορθώσεις στην έκδοση κυκλοφορίας του Ren'Py."
+

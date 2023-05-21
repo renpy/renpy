@@ -1911,3 +1911,11 @@ translate schinese strings:
     # Automatic translation.
     new "创建包..."
 
+
+translate schinese strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "对Ren'Py的发布版本进行修正的夜间构建。"
+

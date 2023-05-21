@@ -1227,3 +1227,11 @@ translate portuguese strings:
     # Automatic translation.
     new "Antes de empacotar aplicativos Web, você precisará baixar o RenPyWeb, o suporte Web do Ren'Py. Gostaria de fazer o download do RenPyWeb agora?"
 
+
+translate portuguese strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Uma compilação noturna de correções para a versão de lançamento do Ren'Py."
+

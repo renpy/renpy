@@ -2201,3 +2201,11 @@ translate german strings:
     # Automatic translation.
     new "Paket erstellen..."
 
+
+translate german strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ein nächtlicher Build mit Korrekturen für die Release-Version von Ren'Py."
+

@@ -2153,3 +2153,11 @@ translate japanese strings:
     old "Creating package..."
     new "パッケージの作成..."
 
+
+translate japanese strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ren'Py のリリース版に対する修正を行ったナイトリービルドです。"
+

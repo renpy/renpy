@@ -2055,3 +2055,11 @@ translate polish strings:
     # Automatic translation.
     new "Tworzenie pakietu..."
 
+
+translate polish strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Nocna kompilacja poprawek do wydanej wersji Ren'Py."
+

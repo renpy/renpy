@@ -2095,3 +2095,11 @@ translate turkish strings:
     # Automatic translation.
     new "Web uygulamalarını paketlemeden önce, Ren'Py'nin web desteği olan RenPyWeb'i indirmeniz gerekir. RenPyWeb'i şimdi indirmek ister misiniz?"
 
+
+translate turkish strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ren'Py'nin sürümüne yönelik düzeltmelerden oluşan bir gece derlemesi."
+

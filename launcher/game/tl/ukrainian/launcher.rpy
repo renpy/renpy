@@ -1911,3 +1911,11 @@ translate ukrainian strings:
     # Automatic translation.
     new "Створення пакету..."
 
+
+translate ukrainian strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Нічна збірка виправлень до релізної версії Ren'Py."
+
