@@ -2460,7 +2460,7 @@ class Interface(object):
         if icon:
 
             try:
-                with renpy.loader.load(icon) as f:
+                with renpy.loader.load(icon, directory="images") as f:
                     im = renpy.display.scale.image_load_unscaled(
                         f,
                         icon,
