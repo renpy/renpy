@@ -1907,14 +1907,11 @@ def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu
 
 def utter_restart(keep_renderer=False):
     """
-    :doc: reload
+    :undocumented: Used in the implementation of shift+R.
 
     Causes an utter restart of Ren'Py. This reloads the script and
     re-runs initialization.
-
-    This may not work on other platforms, notably Android.
     """
-    # Used in the implementation of shift+R.
 
     renpy.session["_keep_renderer"] = keep_renderer
 
@@ -3785,7 +3782,7 @@ def set_mouse_pos(x, y, duration=0):
 
 def set_autoreload(autoreload):
     """
-    :doc: reload
+    :doc: other
 
     Sets the autoreload flag, which determines if the game will be
     automatically reloaded after file changes. Autoreload will not be
@@ -3797,7 +3794,7 @@ def set_autoreload(autoreload):
 
 def get_autoreload():
     """
-    :doc: reload
+    :doc: other
 
     Gets the autoreload flag.
     """

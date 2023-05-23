@@ -267,7 +267,7 @@ def interact(type='misc', roll_forward=None, **kwargs): # @ReservedAssignment
     functions. However, it can be called directly if necessary.
 
     When an interaction ends, the transient layer and all screens shown with
-    transient=True are cleared from the scene lists.
+    `_transient` as true are cleared from the scene lists.
 
     The following arguments are documented. As other, undocumented arguments
     exist for Ren'Py's internal use, please pass all arguments as keyword
