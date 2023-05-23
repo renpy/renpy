@@ -354,8 +354,11 @@ init -1100 python in _sync:
 
             total_size = 0
 
-            if renpy.config.save_directory:
-                zf.writestr("save_directory", renpy.config.save_directory)
+            sd = renpy.config.save_directory
+            if sd:
+                if PY2:
+                    sd = sd.encode("utf-8")
+                zf.writestr("save_directory", sd)
 
             persistent = location.path("persistent")[1]
 
