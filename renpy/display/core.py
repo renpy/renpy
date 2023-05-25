@@ -2437,6 +2437,10 @@ class Interface(object):
 
             pygame.event.set_blocked(i)
 
+        # Fix a problem with fullscreen and maximized.
+        if renpy.game.preferences.fullscreen:
+            renpy.game.preferences.maximized = False
+
     def after_first_frame(self):
         """
         Called after the first frame has been drawn.
