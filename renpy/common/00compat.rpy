@@ -417,7 +417,7 @@ init 1100 python hide:
     if compat(6, 15, 7):
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
-        config.default_afm_enable = None
+        config.default_afm_enable = True
 
     if config.fade_music is not None:
         config.fadeout_audio = config.fade_music
