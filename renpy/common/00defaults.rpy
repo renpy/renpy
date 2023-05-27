@@ -33,25 +33,25 @@ init -1500 python:
     config.default_afm_time = None
 
     # If not None, the default value of afm_enable
-    config.default_afm_enable = False
+    config.default_afm_enable = None
 
     # If not None, the default language to use.
     config.default_language = None
 
     # If not None, the default value of wait_voice
-    config.default_wait_for_voice = True
+    config.default_wait_for_voice = None
 
     # If not None, the default value of voice_sustain
-    config.default_voice_sustain = False
+    config.default_voice_sustain = None
 
     # If not None, the default value of mouse_move.
-    config.default_mouse_move = True
+    config.default_mouse_move = None
 
     # If not None, the default value of show_empty_window.
-    config.default_show_empty_window = True
+    config.default_show_empty_window = None
 
     # If not None, the default value of emphasize_audio.
-    config.default_emphasize_audio = False
+    config.default_emphasize_audio = None
 
     # If not None, the default value of set_volume (music)
     config.default_music_volume = 1.0
