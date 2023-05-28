@@ -228,11 +228,11 @@ Some sample interpolations are::
         # Use a spline motion to move us around the screen.
         linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
 
-         # Changes xalign and yalign at thje same time.
-         linear 2.0 xalign 1.0 yalign 1.0
+        # Changes xalign and yalign at the same time.
+        linear 2.0 xalign 1.0 yalign 1.0
 
-         # The same thing, using a block.
-         linear 2.0:
+        # The same thing, using a block.
+        linear 2.0:
             xalign 1.0
             yalign 1.0
 
