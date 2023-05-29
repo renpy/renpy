@@ -1,4 +1,4 @@
-﻿translate schinese strings:
+translate schinese strings:
 
     # gui/game/options.rpy:1
     old "## This file contains options that can be changed to customize your game."
@@ -189,17 +189,10 @@
     new "## 匹配为文档模式的文件会在 Mac 应用程序构建中被复制，因此它们同时出现在 APP 和 ZIP 文件中。"
 
     # gui/game/options.rpy:203
-    old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
-    new "## 下载扩展文件和执行应用内购需要一个 Google Play 许可密钥。许可密钥可以在 Google Play 开发者控制台的“服务和 API”页面找到。"
+    old "## A Google Play license key is required to perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new "## 执行应用内购需要一个 Google Play 许可密钥。许可密钥可以在 Google Play 开发者控制台的“Monetize” > “Monetization Setup” > “Licensing”页面找到。"
 
     # gui/game/options.rpy:210
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## 与 itch.io 项目相关的用户名和项目名，以 / 分隔。"
-
-translate schinese strings:
-
-    # gui/game/options.rpy:203
-    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-    # Automatic translation.
-    new "##执行应用内购买需要一个Google Play许可证密钥。它可以在Google Play开发者控制台的 \"Monetize\" > \"Monetization Setup\" > \"Licensing \"下找到。"
-
