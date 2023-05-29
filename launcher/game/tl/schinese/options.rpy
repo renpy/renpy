@@ -1,4 +1,4 @@
-translate schinese strings:
+﻿translate schinese strings:
 
     # gui/game/options.rpy:1
     old "## This file contains options that can be changed to customize your game."

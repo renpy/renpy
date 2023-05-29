@@ -1,4 +1,4 @@
-init offset = -100
+﻿init offset = -100
 
 python early in layeredimage:
 
