@@ -27,6 +27,39 @@ report any issues. When reporting issues, please determine the hardware
 (device and GPU), os and driver versions, and year of manufacture.
 
 
+.. _incompatible-8.1.1:
+.. _incompatible-7.6.1:
+
+8.1.1 / 7.6.1
+-------------
+
+
+.. _android-key-migration:
+
+**Android Key Migration** We've received reports of games uploaded to the Google Play as bundles
+having their APKs rejected for having different keys. This was caused by
+an old release of Ren'Py that used the APK key for bundles. In the Play Console,
+this produced an error message like::
+
+
+    You uploaded an APK that is not signed with the upload certificate. You must use
+    the same certificate. The upload certificate has fingerprint:
+
+        SHA1: ...
+
+    and the certificate used to sign the APK you uploaded has fingerprint:
+
+        SHA1: ...
+
+Whine this can be cause by other problems (like simply using entirely incorrect
+keys), one potential fix is:
+
+1. In your project's base directory, rename ``bundle.keystore`` to ``bundle.keystore.bak``.
+2. In your project's base directory, copy ``android.keystore`` to ``bundle.keystore``.
+
+Then rebuild and re-upload your bundle.
+
+
 .. _incompatible-8.1.0:
 .. _incompatible-7.6.0:
 

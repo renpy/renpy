@@ -7,6 +7,23 @@ Changelog (Ren'Py 7.x-)
 8.1.1 / 7.6.1
 =============
 
+Android
+-------
+
+When creating keys for Android, Ren'Py will now use the same key for APKs
+and Play Bundles, as for new games it's not necessary to use different keys.
+(For existing games, Ren'Py will continue to use the existing separate
+keys.)
+
+We've received reports of games uploaded to the Google Play as bundles
+having their APKs rejected for having different keys. This was caused by
+an old release of Ren'Py that used the APK key for bundles. A solution to
+this problem is documented in :ref:`incompatible changes <android-key-migration>`.
+
+
+Fixes
+-----
+
 In some cases, when a class that inherited from the object class was changed
 to no longer inherit from the object class, Ren'Py would crash. Ren'Py
 now diagnoses this error, and :var:`config.ex_rollback_classes` lets you
