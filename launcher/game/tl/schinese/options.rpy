@@ -189,7 +189,6 @@
     new "## 匹配为文档模式的文件会在 Mac 应用程序构建中被复制，因此它们同时出现在 APP 和 ZIP 文件中。"
 
     # gui/game/options.rpy:203
-    old "## A Google Play license key is required to perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
     new "## 执行应用内购需要一个 Google Play 许可密钥。许可密钥可以在 Google Play 开发者控制台的“Monetize” > “Monetization Setup” > “Licensing”页面找到。"
 
