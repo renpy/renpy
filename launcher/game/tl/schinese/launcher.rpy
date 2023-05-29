@@ -1848,7 +1848,7 @@ translate schinese strings:
 
     # game/web.rpy:485
     old "Creating package..."
-    new "创建包..."
+    new "正在创建应用包……"
 
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
