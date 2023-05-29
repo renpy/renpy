@@ -66,6 +66,11 @@ html[data-theme='dark'] .highlight .na {
     color: #9cdcfe !important;
 }
 
+html[data-theme='dark'].writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt {
+    background: #0f0f0f;
+    color: #959595;
+    border-color: #2b2b2b;
+}
 
 dt.sig {
     display: block !important;
