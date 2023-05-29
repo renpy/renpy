@@ -1,4 +1,4 @@
-﻿translate schinese strings:
+translate schinese strings:
 
     # game/about.rpy:39
     old "[version!q]"
@@ -44,13 +44,9 @@
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
     new "RAPT 已安装，但您还需要安装安卓 SDK 才可以构建安卓应用包。请继续安装 SDK。"
 
-    # game/android.rpy:37
-    old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
-    new "RAPT 已安装，但尚未配置密钥。请创建一个新密钥，或恢复 android.keystore 文件。"
-
-    # game/android.rpy:38
-    old "RAPT has been installed, but a bundle key hasn't been configured. Please create a new key, or restore bundle.keystore."
-    new "RAPT 已安装，但尚未配置 bundle 密钥。请创建一个新密钥，或恢复 bundle.keystore 文件。"
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    new "RAPT 已安装，但尚未配置密钥。请生成新的密钥，或将 android.keystore 和 bundle.keystore 复制到基础目录中。"
 
     # game/android.rpy:39
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
@@ -73,12 +69,16 @@
     new "尝试模拟为安卓平板。\n\nEsc 和 PageUp 键将分别重映射为平板的菜单键和返回键。"
 
     # game/android.rpy:45
-    old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "尝试模拟为基于电视的安卓平台，例如 OUYA 或 Fire TV。\n\n键盘方向键将重映射为手柄方向键，Enter、Esc 和 PageUp 键将分别重映射为手柄的选择键、菜单键和返回键。"
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new "尝试模拟为基于电视的安卓游戏机。\n\n键盘方向键将重映射为手柄方向键，Enter、Esc 和 PageUp 键将分别重映射为手柄的选择键、菜单键和返回键。"
 
     # game/android.rpy:47
-    old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
-    new "下载并安装安卓 SDK 以及支持包。还可以选择生成对应用包进行签名所需的密钥。"
+    old "Downloads and installs the Android SDK and supporting packages."
+    new "下载并安装安卓 SDK 以及支持包。"
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    new "生成对应用包进行签名所需的密钥。"
 
     # game/android.rpy:48
     old "Configures the package name, version, and other information about this project."
@@ -195,11 +195,6 @@
     # game/android.rpy:444
     old "Other:"
     new "其他："
-
-    # game/android.rpy:452
-    old "Logcat"
-    # Automatic translation.
-    new "洛克特"
 
     # game/android.rpy:456
     old "List Devices"
@@ -354,12 +349,12 @@
     new "版本号应仅含数字和点。"
 
     # game/androidstrings.rpy:32
-    old "How much RAM do you want to allocate to Gradle?\n\nThis must be a positive integer number."
-    new "您打算给 Gradle 分配多少内存？\n\n必须为正整数。"
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    new "您希望为 Gradle 分配多少 GB 的内存？\n\n必须为正整数。"
 
     # game/androidstrings.rpy:33
-    old "The RAM size must contain only numbers."
-    new "内存大小应仅含数字。"
+    old "The RAM size must contain only numbers and be positive."
+    new "内存大小应为正整数。"
 
     # game/androidstrings.rpy:34
     old "How would you like your application to be displayed?"
@@ -496,11 +491,6 @@
     # game/choose_theme.rpy:304
     old "Could not change the theme. Perhaps options.rpy was changed too much."
     new "无法更改主题。可能 options.rpy 已被过度修改。"
-
-    # game/choose_theme.rpy:371
-    old "Planetarium"
-    # Automatic translation.
-    new "天文馆"
 
     # game/choose_theme.rpy:426
     old "Choose Theme"
@@ -777,11 +767,6 @@
     # game/front_page.rpy:132
     old "Tutorial"
     new "教程"
-
-    # game/front_page.rpy:133
-    old "The Question"
-    # Automatic translation.
-    new "问题"
 
     # game/front_page.rpy:149
     old "Active Project"
@@ -1815,107 +1800,56 @@
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "在打包网页应用之前，您需要先下载 Ren'Py 网页支持包 RenPyWeb。您希望现在下载 RenPyWeb 吗？"
 
-translate schinese strings:
-
-    # game/android.rpy:39
-    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
-    # Automatic translation.
-    new "RAPT已经安装，但还没有配置密钥。请生成新的密钥，或将android.keystore和bundle.keystore复制到基本目录中。"
-
-    # game/android.rpy:46
-    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    # Automatic translation.
-    new "试图模拟一个基于电视的安卓控制台。\n\n控制器的输入被映射到方向键上，回车键被映射到选择按钮上，Escape被映射到菜单按钮上，而PageUp被映射到返回按钮上。"
-
-    # game/android.rpy:48
-    old "Downloads and installs the Android SDK and supporting packages."
-    # Automatic translation.
-    new "下载并安装Android SDK和支持包。"
-
-    # game/android.rpy:49
-    old "Generates the keys required to sign the package."
-    # Automatic translation.
-    new "生成签署软件包所需的密钥。"
-
     # game/android.rpy:383
     old "Install SDK"
     # Automatic translation.
-    new "安装SDK"
+    new "安装 SDK"
 
     # game/android.rpy:387
     old "Generate Keys"
     # Automatic translation.
-    new "生成钥匙"
-
-    # game/androidstrings.rpy:32
-    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
-    # Automatic translation.
-    new "你想给Gradle分配多少内存（GB）？\n这必须是一个正的整数。"
-
-    # game/androidstrings.rpy:33
-    old "The RAM size must contain only numbers and be positive."
-    # Automatic translation.
-    new "RAM大小必须只包含数字，并且是正数。"
+    new "生成密钥"
 
     # game/androidstrings.rpy:38
     old "Which app store would you like to support in-app purchasing through?"
-    # Automatic translation.
-    new "你希望通过哪个应用商店支持应用内购买？"
-
-    # game/androidstrings.rpy:39
-    old "Google Play."
-    # Automatic translation.
-    new "谷歌游戏。"
+    new "您希望通过哪个应用商店支持应用内购买？"
 
     # game/androidstrings.rpy:40
     old "Amazon App Store."
-    # Automatic translation.
-    new "亚马逊应用商店。"
+    new "亚马逊（Amazon）应用商店。"
 
     # game/androidstrings.rpy:41
     old "Both, in one app."
-    # Automatic translation.
-    new "两者都是，在一个应用程序中。"
+    new "在一个应用程序中同时支持两者。"
 
     # game/androidstrings.rpy:42
     old "Neither."
-    # Automatic translation.
-    new "也没有。"
+    new "以上都不需要。"
 
     # game/androidstrings.rpy:63
     old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
-    # Automatic translation.
-    new "我在rapt目录中发现了一个android.keystore文件。你想使用这个文件吗？"
+    new "我在 RAPT 目录中找到了一个 android.keystore 文件。您希望使用这个文件吗？"
 
     # game/androidstrings.rpy:66
     old "\n\nSaying 'No' will prevent key creation."
-    # Automatic translation.
-    new "\n\n说 \"不 \"将阻止钥匙的创建。"
+    new "\n\n选择“否”将阻止密钥创建。"
 
     # game/androidstrings.rpy:69
     old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
-    # Automatic translation.
-    new "我在rapt目录中发现了一个bundle.keystore文件。你想使用这个文件吗？"
+    new "我在 RAPT 目录中找到了一个 bundle.keystore 文件。您希望使用这个文件吗？"
 
     # game/distribute_gui.rpy:231
     old "(DLC)"
-    new "(DLC)"
+    new "（DLC）"
 
     # game/project.rpy:46
     old "Lint checks your game for potential mistakes, and gives you statistics."
-    # Automatic translation.
-    new "林特检查你的游戏是否有潜在的错误，并给你统计。"
+    new "Lint 工具会检查您的游戏中可能的错误，并为您提供统计数据。"
 
     # game/web.rpy:485
     old "Creating package..."
-    # Automatic translation.
     new "创建包..."
-
-
-translate schinese strings:
 
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
-    # Automatic translation.
-    new "对Ren'Py的发布版本进行修正的夜间构建。"
-
+    new "对 Ren'Py 发布版进行修正的每夜构建。"
