@@ -6,7 +6,7 @@ translate schinese strings:
 
     # gui/game/screens.rpy:81
     old "## In-game screens"
-    new "## 游戏内"
+    new "## 游戏内屏幕"
 
     # gui/game/screens.rpy:85
     old "## Say screen"
