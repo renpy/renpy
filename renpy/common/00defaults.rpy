@@ -33,7 +33,7 @@ init -1500 python:
     config.default_afm_time = None
 
     # If not None, the default value of afm_enable
-    config.default_afm_enable = None
+    config.default_afm_enable = False
 
     # If not None, the default language to use.
     config.default_language = None
@@ -117,7 +117,7 @@ init 1500 python hide:
             _preferences.mouse_move = config.default_mouse_move
 
         if config.default_afm_enable is not None:
-            _preferences.afm_enable = config.default_afm_enable
+            _preferences.afm_enable = config.default_afm_enable or _preferences.afm_enable
 
         if config.default_show_empty_window is not None:
             _preferences.show_empty_window = config.default_show_empty_window
