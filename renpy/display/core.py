@@ -217,8 +217,7 @@ class absolute(float):
         return "absolute({})".format(float.__repr__(self))
 
     def __divmod__(self, value):
-        d, r = float.__divmod__(self, value)
-        return absolute(d), absolute(r)
+        return self//value, self%value
 
 to_wrap = (
     '__coerce__', # PY2
@@ -233,7 +232,7 @@ to_wrap = (
     '__ceil__',
     # '__divmod__', # special-cased above, tuple of floats
     # '__eq__', # non-float
-    '__floordiv__',
+    '__floordiv__', # not sure about this one
     # '__format__', # non-float
     # '__ge__', # non-float
     # '__gt__', # non-float
