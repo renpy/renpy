@@ -683,7 +683,7 @@ def check_style(name, s):
                     for f in set(v.map.values()):
                         check_file(name, f, directory="fonts")
                 else:
-                    check_file(name, v, directory="images")
+                    check_file(name, v, directory="fonts")
 
             if isinstance(v, renpy.display.core.Displayable):
                 check_style_property_displayable(name, k, v)
