@@ -190,11 +190,140 @@ class EndInteraction(Exception):
         self.value = value
 
 
-class absolute(float):
+def absolute_wrap(func_name):
     """
-    This represents an absolute float coordinate.
+    Wraps func_name into a method of absolute. The wrapped method
+    converts any absolute arguments to floats, and then converts
+    a float result back to absolute.
     """
-    __slots__ = [ ]
+
+    func = getattr(float, func_name)
+
+    def wrapper(*args):
+        args = (i.value if type(i) is absolute else i for i in args)
+        rv = func(*args)
+
+        if type(rv) is float:
+            return absolute(rv)
+        else:
+            return rv
+
+    return wrapper
+
+
+class absolute(object):
+    """
+    This represents a class that can be used to represent absolute
+    positions on the screen. It emulates float, except that all operations
+    that would return a float return an absolute instead.
+
+    In a previous version of Ren'Py, this was a subclass of float,
+    hence why new is needed to create an instance.
+    """
+
+    slots = [ 'value' ]
+
+    def __new__(cls, value):
+        self = object.__new__(cls)
+        self.value = float(value)
+        return self
+
+    def __getnewargs__(self):
+        return (self.value, ) #type: ignore
+
+    def __repr__(self, *args, **kwargs):
+        return "absolute({})".format(self.value) # type: ignore
+
+    def __float__(self):
+        return self.value # type: ignore
+
+    if not PY2:
+
+        __abs__ = absolute_wrap('__abs__') # type: ignore
+        __add__ = absolute_wrap('__add__') # type: ignore
+        __bool__ = absolute_wrap('__bool__') # type: ignore
+        __ceil__ = absolute_wrap('__ceil__') # type: ignore
+        __divmod__ = absolute_wrap('__divmod__') # type: ignore
+        __eq__ = absolute_wrap('__eq__') # type: ignore
+        __floordiv__ = absolute_wrap('__floordiv__') # type: ignore
+        __format__ = absolute_wrap('__format__') # type: ignore
+        __ge__ = absolute_wrap('__ge__') # type: ignore
+        __gt__ = absolute_wrap('__gt__') # type: ignore
+        __hash__ = absolute_wrap('__hash__') # type: ignore
+        __int__ = absolute_wrap('__int__') # type: ignore
+        __le__ = absolute_wrap('__le__') # type: ignore
+        __lt__ = absolute_wrap('__lt__') # type: ignore
+        __mod__ = absolute_wrap('__mod__') # type: ignore
+        __mul__ = absolute_wrap('__mul__') # type: ignore
+        __ne__ = absolute_wrap('__ne__') # type: ignore
+        __neg__ = absolute_wrap('__neg__') # type: ignore
+        __pos__ = absolute_wrap('__pos__') # type: ignore
+        __pow__ = absolute_wrap('__pow__') # type: ignore
+        __radd__ = absolute_wrap('__radd__') # type: ignore
+        __rdivmod__ = absolute_wrap('__rdivmod__') # type: ignore
+        __rfloordiv__ = absolute_wrap('__rfloordiv__') # type: ignore
+        __rmod__ = absolute_wrap('__rmod__') # type: ignore
+        __rmul__ = absolute_wrap('__rmul__') # type: ignore
+        __round__ = absolute_wrap('__round__') # type: ignore
+        __rpow__ = absolute_wrap('__rpow__') # type: ignore
+        __rsub__ = absolute_wrap('__rsub__') # type: ignore
+        __rtruediv__ = absolute_wrap('__rtruediv__') # type: ignore
+        __str__ = absolute_wrap('__str__') # type: ignore
+        __sub__ = absolute_wrap('__sub__') # type: ignore
+        __truediv__ = absolute_wrap('__truediv__') # type: ignore
+        __trunc__ = absolute_wrap('__trunc__') # type: ignore
+
+    else:
+
+        __abs__ = absolute_wrap('__abs__') # type: ignore
+        __add__ = absolute_wrap('__add__') # type: ignore
+        __coerce__ = absolute_wrap('__coerce__') # type: ignore
+        __div__ = absolute_wrap('__div__') # type: ignore
+        __divmod__ = absolute_wrap('__divmod__') # type: ignore
+        __eq__ = absolute_wrap('__eq__') # type: ignore
+        __floordiv__ = absolute_wrap('__floordiv__') # type: ignore
+        __format__ = absolute_wrap('__format__') # type: ignore
+        __ge__ = absolute_wrap('__ge__') # type: ignore
+        __gt__ = absolute_wrap('__gt__') # type: ignore
+        __hash__ = absolute_wrap('__hash__') # type: ignore
+        __int__ = absolute_wrap('__int__') # type: ignore
+        __le__ = absolute_wrap('__le__') # type: ignore
+        __long__ = absolute_wrap('__long__') # type: ignore
+        __lt__ = absolute_wrap('__lt__') # type: ignore
+        __mod__ = absolute_wrap('__mod__') # type: ignore
+        __mul__ = absolute_wrap('__mul__') # type: ignore
+        __ne__ = absolute_wrap('__ne__') # type: ignore
+        __neg__ = absolute_wrap('__neg__') # type: ignore
+        __nonzero__ = absolute_wrap('__nonzero__') # type: ignore
+        __pos__ = absolute_wrap('__pos__') # type: ignore
+        __pow__ = absolute_wrap('__pow__') # type: ignore
+        __radd__ = absolute_wrap('__radd__') # type: ignore
+        __rdiv__ = absolute_wrap('__rdiv__') # type: ignore
+        __rdivmod__ = absolute_wrap('__rdivmod__') # type: ignore
+        __rfloordiv__ = absolute_wrap('__rfloordiv__') # type: ignore
+        __rmod__ = absolute_wrap('__rmod__') # type: ignore
+        __rmul__ = absolute_wrap('__rmul__') # type: ignore
+        __rpow__ = absolute_wrap('__rpow__') # type: ignore
+        __rsub__ = absolute_wrap('__rsub__') # type: ignore
+        __rtruediv__ = absolute_wrap('__rtruediv__') # type: ignore
+        __str__ = absolute_wrap('__str__') # type: ignore
+        __sub__ = absolute_wrap('__sub__') # type: ignore
+        __truediv__ = absolute_wrap('__truediv__') # type: ignore
+        __trunc__ = absolute_wrap('__trunc__') # type: ignore
+
+    as_integer_ratio = absolute_wrap('as_integer_ratio')
+    conjugate = absolute_wrap('conjugate')
+    fromhex = absolute_wrap('fromhex')
+    hex = absolute_wrap('hex')
+    is_integer = absolute_wrap('is_integer')
+
+    @property
+    def imag(self):
+        return self.value.imag # type: ignore
+
+    @property
+    def real(self):
+        return self.value.real # type: ignore
 
 
 def place(width, height, sw, sh, placement):
