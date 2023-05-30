@@ -219,7 +219,7 @@ class absolute(float):
     def __divmod__(self, value):
         return self//value, self%value
 
-to_wrap = (
+for fn in (
     '__coerce__', # PY2
     '__div__', # PY2
     '__long__', # PY2
@@ -265,14 +265,12 @@ to_wrap = (
     'fromhex',
     # 'hex', # non-float
     # 'is_integer', # non-float
-)
-
-for fn in to_wrap:
+):
     f = getattr(float, fn, None)
     if f is not None: # for PY2-only and PY3-only methods
         setattr(absolute, fn, absolute_wrap(f))
 
-del absolute_wrap, to_wrap, fn, f # type: ignore
+del absolute_wrap, fn, f # type: ignore
 
 
 def place(width, height, sw, sh, placement):
