@@ -232,7 +232,7 @@ for fn in (
     '__ceil__',
     # '__divmod__', # special-cased above, tuple of floats
     # '__eq__', # non-float
-    '__floordiv__', # not sure about this one
+    '__floordiv__',
     # '__format__', # non-float
     # '__ge__', # non-float
     # '__gt__', # non-float
