@@ -2,6 +2,19 @@
     max-width: 1080px;
 }
 
+@media only screen and (min-width: 481px) {
+    div[role="search"] {
+        top: 12.944px;
+        margin-bottom: 12.944px;
+        width: 274.125px;
+        position: fixed;
+    }
+
+    .wy-side-nav-search {
+        padding-top: 41.944px;
+        padding-bottom: 0px !important;
+    }
+}
 
 /* Highlighting */
 
