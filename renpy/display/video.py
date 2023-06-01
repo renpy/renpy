@@ -22,8 +22,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
 import collections
+import re
 
 import renpy
 
@@ -413,6 +413,9 @@ class Movie(renpy.display.core.Displayable):
         """
 
         if isinstance(name, basestring):
+            m = re.match(r'<.*>(.*)$', name)
+            if m:
+                name = m.group(1)
             return renpy.loader.loadable(name, directory="audio")
         else:
             return any(renpy.loader.loadable(i, directory="audio") for i in name)

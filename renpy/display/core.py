@@ -190,11 +190,87 @@ class EndInteraction(Exception):
         self.value = value
 
 
+def absolute_wrap(func):
+    """
+    Wraps func_name into a method of absolute. The wrapped method
+    converts a float result back to absolute.
+    """
+
+    def wrapper(*args):
+        rv = func(*args)
+
+        if type(rv) is float:
+            return absolute(rv)
+        else:
+            return rv
+
+    return wrapper
+
 class absolute(float):
     """
     This represents an absolute float coordinate.
     """
-    __slots__ = [ ]
+
+    slots = ()
+
+    def __repr__(self):
+        return "absolute({})".format(float.__repr__(self))
+
+    def __divmod__(self, value):
+        return self//value, self%value
+
+for fn in (
+    '__coerce__', # PY2
+    '__div__', # PY2
+    '__long__', # PY2
+    '__nonzero__', # PY2
+    '__rdiv__', # PY2
+
+    '__abs__',
+    '__add__',
+    # '__bool__', # non-float
+    '__ceil__',
+    # '__divmod__', # special-cased above, tuple of floats
+    # '__eq__', # non-float
+    '__floordiv__',
+    # '__format__', # non-float
+    # '__ge__', # non-float
+    # '__gt__', # non-float
+    # '__hash__', # non-float
+    # '__int__', # non-float
+    # '__le__', # non-float
+    # '__lt__', # non-float
+    '__mod__',
+    '__mul__',
+    # '__ne__', # non-float
+    '__neg__',
+    '__pos__',
+    '__pow__',
+    '__radd__',
+    '__rdivmod__',
+    '__rfloordiv__',
+    '__rmod__',
+    '__rmul__',
+    '__round__',
+    '__rpow__',
+    '__rsub__',
+    '__rtruediv__',
+    # '__str__', # non-float
+    '__sub__',
+    '__truediv__',
+    # '__trunc__', # non-float
+
+    # 'as_integer_ratio', # tuple of non-floats
+    'conjugate',
+    'fromhex',
+    # 'hex', # non-float
+    # 'is_integer', # non-float
+):
+    f = getattr(float, fn, None)
+    if f is not None: # for PY2-only and PY3-only methods
+        setattr(absolute, fn, absolute_wrap(f))
+
+del absolute_wrap, fn, f # type: ignore
 
 
 def place(width, height, sw, sh, placement):
@@ -2436,6 +2512,10 @@ class Interface(object):
                 continue
 
             pygame.event.set_blocked(i)
+
+        # Fix a problem with fullscreen and maximized.
+        if renpy.game.preferences.fullscreen:
+            renpy.game.preferences.maximized = False
 
     def after_first_frame(self):
         """

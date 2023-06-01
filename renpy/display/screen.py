@@ -316,7 +316,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         'miss_cache',
         'profile',
         'phase',
-        'use_cache'
+        'use_cache',
         'copied_from'
         ]
 
@@ -334,7 +334,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         'miss_cache',
         'profile',
         'phase',
-        'use_cache'
+        'use_cache',
         'copied_from'
     ]
 

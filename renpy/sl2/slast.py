@@ -342,6 +342,29 @@ class SLNode(object):
         profile_log.write("%s", "    {}{}{} ({}:{})".format(const_type, prefix, formatted, self.location[0], self.location[1]))
 
 
+def analyze_keywords(node, analysis, conditional=GLOBAL_CONST):
+    """
+    Analyzes the keywords that can be applied to this statement,
+    including those provided by if statements.
+    """
+
+    rv = GLOBAL_CONST
+
+    for _, expr in node.keyword:
+        rv = min(rv, analysis.is_constant_expr(expr), conditional)
+
+    for n in node.children:
+        if isinstance(n, SLIf):
+
+            for cond, block in n.entries:
+                if cond is not None:
+                    conditional = min(conditional, analysis.is_constant_expr(cond))
+
+                rv = min(rv, analyze_keywords(block, analysis, conditional))
+
+    return rv
+
+
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = renpy.object.Sentinel("NotGiven")
 
@@ -739,12 +762,7 @@ class SLDisplayable(SLBlock):
     def analyze(self, analysis):
 
         if self.imagemap:
-
-            const = GLOBAL_CONST
-
-            for _k, expr in self.keyword:
-                const = min(const, analysis.is_constant_expr(expr))
-
+            const = analyze_keywords(self, analysis)
             analysis.push_control(imagemap=(const != GLOBAL_CONST))
 
         if self.hotspot:
