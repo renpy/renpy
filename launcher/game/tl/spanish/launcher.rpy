@@ -1185,7 +1185,7 @@
 
     # updater.rpy:91
     old "Release"
-    new "Lanzamiento"
+    new "Estable"
 
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -1193,7 +1193,7 @@
 
     # updater.rpy:102
     old "Prerelease"
-    new "Prelanzamiento"
+    new "Preliminar"
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1267,8 +1267,6 @@
     old "Proceed"
     new "Continuar"
 
-translate spanish strings:
-
     # game/add_file.rpy:37
     old "The file name may not be empty."
     new "El nombre del archivo no puede estar vacío."
@@ -1279,11 +1277,11 @@ translate spanish strings:
 
     # game/android.rpy:50
     old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
-    new "Selecciona la versión de depuración, a la que se puedes acceder a través de Android Studio. Cambiar entre las compilaciones de depuración y de versión requiere una desinstalación de su dispositivo."
+    new "Selecciona la versión de depuración, a la que se puedes acceder a través de Android Studio. Cambiar entre las compilaciones de depuración y estable requiere una desinstalación de su dispositivo."
 
     # game/android.rpy:51
     old "Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device."
-    new "Selecciona la versión de lanzamiento, que se puede cargar en las tiendas. Cambiar entre las compilaciones de depuración y de versión requiere una desinstalación de su dispositivo."
+    new "Selecciona la versión estable, que se puede cargar en las tiendas. Cambiar entre las compilaciones de depuración y estable requiere una desinstalación de su dispositivo."
 
     # game/androidstrings.rpy:7
     old "{} is not a directory."
@@ -2007,7 +2005,7 @@ translate spanish strings:
 
     # game/web.rpy:344
     old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
-    new "Restauraremos el soporte en una versión futura de Ren'Py 8. Hasta entonces, use Ren'Py 7 para soporte web."
+    new "Restauraremos el soporte en una versión estable futura de Ren'Py 8. Hasta entonces, use Ren'Py 7 para soporte web."
 
     # game/preferences.rpy:104
     old "General"
@@ -2047,11 +2045,11 @@ translate spanish strings:
 
     # game/updater.rpy:77
     old "Nightly (Ren'Py 8, Python 3)"
-    new "Nightly (Ren'Py 8, Python 3)"
+    new "Nocturna (Ren'Py 8, Python 3)"
 
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
-    new "Nightly (Ren'Py 7, Python 2)"
+    new "Nocturna (Ren'Py 7, Python 2)"
 
     # game/preferences.rpy:327
     old "{#in language font}Welcome! Please choose a language"
@@ -2119,7 +2117,7 @@ translate spanish strings:
     
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
-    new "Compilación nocturna de correcciones para la versión de lanzamiento de Ren'Py."
+    new "Compilación nocturna de correcciones para la versión estable de Ren'Py."
 
     # game/updater.rpy:76
     old "Nightly Fix"
