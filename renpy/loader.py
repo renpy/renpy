@@ -1142,11 +1142,36 @@ def auto_thread_function():
                     if auto_mtime(fn) != auto_mtimes[fn]:
                         needs_autoreload.add(fn)
 
+def check_git_index_lock():
+    """
+    Checks to see if the git index lock is present.
+    """
+
+    to_check = set(os.path.dirname(i) for i in needs_autoreload)
+    added = set(to_check)
+
+    while to_check:
+        dn = to_check.pop()
+
+        if os.path.exists(os.path.join(dn, ".git", "index.lock")):
+            return True
+
+        parent = os.path.dirname(dn)
+        if parent not in added:
+            added.add(parent)
+            to_check.add(os.path.dirname(dn))
+
+    return False
+
 
 def check_autoreload():
     """
     Checks to see if autoreload is required.
     """
+
+    # Defer loading while the git index lock is present.
+    if needs_autoreload and check_git_index_lock():
+        return
 
     while needs_autoreload:
         fn = next(iter(needs_autoreload))
