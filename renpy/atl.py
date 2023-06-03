@@ -301,12 +301,6 @@ class Context(object):
 
             for i in variables:
                 if self.context.get(i, NotInContext) != other.context.get(i, NotInContext):
-
-                    # Ignore the arguments given to ATL Transitions, which
-                    # will change each time an interaction restarts. (See #4167.)
-                    if i in ("new_widget", "old_widget"):
-                        continue
-
                     return False
 
             return True
@@ -447,6 +441,13 @@ class ATLTransformBase(renpy.object.Object):
 
         if t.atl.constant != GLOBAL_CONST:
             if not self.context.variables_equal(t.context, t.atl.find_loaded_variables()):
+                if t.state.delay is not None: # type: ignore
+                    self.st = t.st
+                    self.at = t.at
+                    self.st_offset = t.st_offset
+                    self.at_offset = t.at_offset
+                    self.atl_st_offset = t.atl_st_offset
+
                 return
 
         self.done = t.done
