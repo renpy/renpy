@@ -4,6 +4,9 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.1.1:
+.. _renpy-7.6.1:
+
 8.1.1 / 7.6.1
 =============
 
