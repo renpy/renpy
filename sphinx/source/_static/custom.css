@@ -8,6 +8,7 @@
         margin-bottom: 12.944px;
         width: 274.125px;
         position: fixed;
+        z-index: 1;
     }
 
     .wy-side-nav-search {
