@@ -30,6 +30,21 @@ draggable represents a window that the user places on the screen. If
 you need to refer to the drags after they've been created, then it's
 often better to create Drags directly, and add them to a DragGroup.
 
+Dropping
+--------
+
+There are two ways Ren'Py can process a drop:
+
+* If `mouse_drop` is true, the drag will be dropped onto the droppable
+  that is directly below the mouse cursor.
+* If `mouse_drop` is false, the default, the drop will occur onto
+  the droppable that most fully overlaps with the drag.
+
+Unlike when starting a drag, where `focus_mask` is used, dropping considers
+the entire rectangular areas of the draggable and droppable, including any
+transparent pixels. You may need to design your drag and drop displayables
+to take this into account, by being generally rectangular in shape.
+
 Displayables
 ------------
 
