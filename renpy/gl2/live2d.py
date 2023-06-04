@@ -665,13 +665,6 @@ class Live2D(renpy.display.core.Displayable):
         # Chose all motions.
         rv = [ i for i in attributes if i in common.motions ]
 
-        # If there are no motions, choose the last one from the optional attributes.
-        if not rv:
-            sustain = True
-            rv = [ i for i in optional if i in common.motions ]
-        else:
-            sustain = False
-
         # Choose the first expression.
         for i in list(attributes) + list(optional):
             if i in common.expressions:
@@ -687,18 +680,19 @@ class Live2D(renpy.display.core.Displayable):
             if i in common.nonexclusive:
                 rv.append(i)
 
-        rv = tuple(rv)
-
         if set(attributes) - set(rv):
             return None
+
+        rv = tuple(rv)
 
         if common.attribute_filter:
             rv = common.attribute_filter(rv)
             if not isinstance(rv, tuple):
                 rv = tuple(rv)
 
-        if sustain:
-            rv = ("_sustain",) + rv
+        # If there are no motions, take the optional motions and sustain those.
+        if not any(i in common.motions for i in rv):
+            rv = ( "_sustain", ) + tuple(i for i in optional if i in common.motions) + rv
 
         return rv
 
