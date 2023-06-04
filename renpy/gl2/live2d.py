@@ -689,6 +689,9 @@ class Live2D(renpy.display.core.Displayable):
 
         rv = tuple(rv)
 
+        if set(attributes) - set(rv):
+            return None
+
         if common.attribute_filter:
             rv = common.attribute_filter(rv)
             if not isinstance(rv, tuple):
