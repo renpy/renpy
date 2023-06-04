@@ -342,6 +342,9 @@ class Context(renpy.object.Object):
         # interact = False.
         self.deferred_translate_identifier = None
 
+        # When adding something here, consider if it needs to be added in
+        # renpy.rollback.Rollback.purge_unreachable.
+
     def replace_node(self, old, new):
 
         def replace_one(name):
