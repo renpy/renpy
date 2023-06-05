@@ -1919,7 +1919,7 @@ def utter_restart(keep_renderer=False):
 
 def reload_script():
     """
-    :doc: other
+    :doc: reload
 
     Causes Ren'Py to save the game, reload the script, and then load the
     save.
@@ -3782,11 +3782,11 @@ def set_mouse_pos(x, y, duration=0):
 
 def set_autoreload(autoreload):
     """
-    :doc: other
+    :doc: reload
 
     Sets the autoreload flag, which determines if the game will be
     automatically reloaded after file changes. Autoreload will not be
-    fully enabled until the game is reloaded with :func:`renpy.utter_restart`.
+    fully enabled until the game is reloaded with :func:`renpy.reload_script`.
     """
 
     renpy.autoreload = autoreload
@@ -3794,7 +3794,7 @@ def set_autoreload(autoreload):
 
 def get_autoreload():
     """
-    :doc: other
+    :doc: reload
 
     Gets the autoreload flag.
     """
