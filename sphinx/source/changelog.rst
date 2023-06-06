@@ -38,15 +38,55 @@ having their APKs rejected for having different keys. This was caused by
 an old release of Ren'Py that used the APK key for bundles. A solution to
 this problem is documented in :ref:`incompatible changes <android-key-migration>`.
 
-
 Fixes
 -----
+
+Web audio now treats the end time as a time, not a duration.
+
+An issue with that prevented audio volumes and pan from participating
+in rollback has been fixed.
+
+Fix an issue where Live2D could select an image despite all of the
+required attributes not being present.
+
+Support for start, end, and loop times in videos has been
+restored.
+
+Hotspots can no longer be const when the images used by the imagemap
+the hotspots come from are not const.
+
+An issue with non-resizable windows on macOS has been fixed.
+
+An issue with linting fonts in the font directory has been fixed.
 
 In some cases, when a class that inherited from the object class was changed
 to no longer inherit from the object class, Ren'Py would crash. Ren'Py
 now diagnoses this error, and :var:`config.ex_rollback_classes` lets you
 suppress the error. The error is only shown to developers, and is otherwise
 silently ignored.
+
+Other
+-----
+
+ATL Transitions now use the animation timebase. This is generally the same
+behavior as before, until the interaction restarts, in which case the
+transition would often incorrectly restart.
+
+Ren'Py will produce an error if an object that inherited from store.object
+in an old save is loaded, and no longer inherits from store.object, which
+would break rollback.
+
+Preferences no longer have defaults, meaning all preferences can be
+changed using the ``default`` statement.
+
+The absolute type, used to represent absolute amounts of pixels, now
+ensures the result of mathematically operations with integers and
+floats remain absolutes. This fixes a class of problems where
+operations performed on absolutes could produce the incorrect
+type, leasing to layout problems.
+
+Live2D now checks for a motion after evaluating an `attribute_filter`,
+and does not sustain the previous motions if a new motion is present.
 
 
 .. _renpy-8.1.0:
