@@ -34,10 +34,6 @@ in rollback has been fixed.
 Fix an issue where Live2D could select an image despite all of the
 required attributes not being present.
 
-ATL transitions are now re-evaluated when the new and old displayables
-change. This is necessary when a transition outlives a single interaction.
-In this case, time is propagated to the transition.
-
 Support for start, end, and loop times in videos has been
 restored.
 
@@ -56,6 +52,10 @@ silently ignored.
 
 Other
 -----
+
+ATL Transitions now use the animation timebase. This is generally the same
+behavior as before, until the interaction restarts, in which case the
+transition would often incorrectly restart.
 
 Ren'Py will produce an error if an object that inherited from store.object
 in an old save is loaded, and no longer inherits from store.object, which

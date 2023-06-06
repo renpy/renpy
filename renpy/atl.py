@@ -392,6 +392,13 @@ class ATLTransformBase(renpy.object.Object):
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
+    @property
+    def transition(self):
+        """
+        Returns true if this is likely to be an ATL transition.
+        """
+
+        return "new_widget" in self.context.context
 
     def _handles_event(self, event):
 
@@ -441,13 +448,6 @@ class ATLTransformBase(renpy.object.Object):
 
         if t.atl.constant != GLOBAL_CONST:
             if not self.context.variables_equal(t.context, t.atl.find_loaded_variables()):
-                if t.state.delay is not None: # type: ignore
-                    self.st = t.st
-                    self.at = t.at
-                    self.st_offset = t.st_offset
-                    self.at_offset = t.at_offset
-                    self.atl_st_offset = t.atl_st_offset
-
                 return
 
         self.done = t.done
@@ -597,6 +597,9 @@ class ATLTransformBase(renpy.object.Object):
 
     def execute(self, trans, st, at):
 
+        if self.state.debug:
+            print("A", st)
+
         if self.done:
             return None
 
@@ -640,7 +643,7 @@ class ATLTransformBase(renpy.object.Object):
         if (self.atl_st_offset is None) or (st - self.atl_st_offset) < 0:
             self.atl_st_offset = st
 
-        if self.atl.animation:
+        if self.atl.animation or self.transition:
             timebase = at
         else:
             timebase = st - self.atl_st_offset
