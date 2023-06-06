@@ -134,8 +134,8 @@ init -1500 python:
         * Preference("auto-forward after click", "disable") - Disable auto-forward mode after a click.
         * Preference("auto-forward after click", "toggle") - Toggle auto-forward after click.
 
-        * Preference("automatic move", "enable") - Enable automatic mouse mode.
-        * Preference("automatic move", "disable") - Disable automatic mouse mode.
+        * Preference("automatic move", "enable") - Allow Ren'Py to move the mouse automatically using the :func:`MouseMove` action.
+        * Preference("automatic move", "disable") - Disable the :func:`MouseMove` action.
         * Preference("automatic move", "toggle") - Toggle automatic mouse mode.
 
         * Preference("wait for voice", "enable")  - Wait for the currently playing voice to complete before auto-forwarding.
