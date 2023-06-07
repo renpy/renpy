@@ -149,9 +149,9 @@ can then change it again.)
 
 .. var:: preferences.system_cursor = False
 
-    If True, the system cursor is forced to be used, ignoring the
-    :var:`config.mouse` value. If False, it will not. The equivalent of the
-    "system cursor" preference.
+    If True, the system cursor is forced to be used, ignoring the value of
+    :var:`config.mouse` and :var:`config.mouse_displayable`. If False, it
+    will not. The equivalent of the "system cursor" preference.
 
 .. var:: preferences.audio_when_minimized = True
 

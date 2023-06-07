@@ -4005,13 +4005,16 @@ class Interface(object):
         for i in renpy.display.emulator.overlay:
             root_widget.add(i)
 
-        mouse_displayable = renpy.config.mouse_displayable
-        if mouse_displayable is not None:
-            if not isinstance(mouse_displayable, Displayable):
-                mouse_displayable = mouse_displayable()
-
+        if renpy.game.preferences.system_cursor:
+            mouse_displayable = None
+        else:
+            mouse_displayable = renpy.config.mouse_displayable
             if mouse_displayable is not None:
-                root_widget.add(mouse_displayable, 0, 0)
+                if not isinstance(mouse_displayable, Displayable):
+                    mouse_displayable = mouse_displayable()
+
+                if mouse_displayable is not None:
+                    root_widget.add(mouse_displayable, 0, 0)
 
         self.prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
         self.prediction_coroutine.send(None)
