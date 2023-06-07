@@ -1366,7 +1366,7 @@ class Interpolation(Statement):
 
         complete = warper(complete)
 
-        if state is None:
+        if state is None or len(state) != 6:
 
             # Create a new transform state, and apply the property
             # changes to it.
