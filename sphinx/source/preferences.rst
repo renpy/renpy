@@ -97,7 +97,7 @@ can then change it again.)
 .. var:: preferences.mouse_move = True
 
     If True, the mouse will automatically move to a selected button. If False,
-    it will not. The equivalent of the "automatic mouse move" preference.
+    it will not. The equivalent of the "automatic move" preference.
 
 .. var:: preferences.show_empty_window = True
 

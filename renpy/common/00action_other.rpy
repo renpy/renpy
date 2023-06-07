@@ -476,7 +476,8 @@ init -1500 python:
         :doc: other_action
 
         Move the mouse pointer to `x`, `y`. If the device does not have a mouse
-        pointer or _preferences.mouse_move is False, this does nothing.
+        pointer or if the :var:`"automatic move" preference <preferences.mouse_move>`
+        is False, this does nothing.
 
         `duration`
             The time it will take to perform the move, in seconds. During

@@ -2196,6 +2196,9 @@ class Bar(renpy.display.core.Displayable):
                 return renpy.display.render.Render(width, height)
             elif self.style.unscrollable == "insensitive":
                 self.set_style_prefix("insensitive_", True)
+        else:
+            if self.style.prefix == "insensitive_":
+                self.set_style_prefix("idle_", True)
 
         self.hidden = False
 

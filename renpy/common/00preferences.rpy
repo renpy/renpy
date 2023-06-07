@@ -80,186 +80,186 @@ init -1500 python:
     @renpy.pure
     def Preference(name, value=None, range=None):
         """
-         :doc: preference_action
+        :doc: preference_action
 
-         This constructs the appropriate action or value from a preference.
-         The preference name should be the name given in the standard
-         menus, while the value should be either the name of a choice,
-         "toggle" to cycle through choices, a specific value, or left off
-         in the case of buttons.
+        This constructs the appropriate action or value from a preference.
+        The preference name should be the name given in the standard
+        menus, while the value should be either the name of a choice,
+        "toggle" to cycle through choices, a specific value, or left off
+        in the case of buttons.
 
-         Actions that can be used with buttons and hotspots are:
+        Actions that can be used with buttons and hotspots are:
 
-         * Preference("display", "fullscreen") - displays in fullscreen mode.
-         * Preference("display", "window") - displays in windowed mode at 1x normal size.
-         * Preference("display", 2.0) - displays in windowed mode at 2.0x normal size.
-         * Preference("display", "any window") - displays in windowed mode at the previous size.
-         * Preference("display", "toggle") - toggle display mode.
+        * Preference("display", "fullscreen") - displays in fullscreen mode.
+        * Preference("display", "window") - displays in windowed mode at 1x normal size.
+        * Preference("display", 2.0) - displays in windowed mode at 2.0x normal size.
+        * Preference("display", "any window") - displays in windowed mode at the previous size.
+        * Preference("display", "toggle") - toggle display mode.
 
-         * Preference("transitions", "all") - show all transitions.
-         * Preference("transitions", "none") - do not show transitions.
-         * Preference("transitions", "toggle") - toggle transitions.
+        * Preference("transitions", "all") - show all transitions.
+        * Preference("transitions", "none") - do not show transitions.
+        * Preference("transitions", "toggle") - toggle transitions.
 
-         * Preference("video sprites", "show") - show all video sprites.
-         * Preference("video sprites", "hide") - fall back to images where possible.
-         * Preference("video sprites", "toggle") - toggle image fallback behavior.
+        * Preference("video sprites", "show") - show all video sprites.
+        * Preference("video sprites", "hide") - fall back to images where possible.
+        * Preference("video sprites", "toggle") - toggle image fallback behavior.
 
-         * Preference("show empty window", "show") - Allow the "window show" and "window auto" statement to show an empty window outside of the say statement.
-         * Preference("show empty window", "hide") - Prevent the above.
-         * Preference("show empty window", "toggle") - Toggle the above.
+        * Preference("show empty window", "show") - Allow the "window show" and "window auto" statement to show an empty window outside of the say statement.
+        * Preference("show empty window", "hide") - Prevent the above.
+        * Preference("show empty window", "toggle") - Toggle the above.
 
-         * Preference("text speed", 0) - make text appear instantaneously.
-         * Preference("text speed", 142) - set text speed to 142 characters per second.
+        * Preference("text speed", 0) - make text appear instantaneously.
+        * Preference("text speed", 142) - set text speed to 142 characters per second.
 
-         * Preference("joystick") - Show the joystick preferences.
+        * Preference("joystick") - Show the joystick preferences.
 
-         * Preference("skip", "seen") - Only skip seen messages.
-         * Preference("skip", "all") - Skip unseen messages.
-         * Preference("skip", "toggle") - Toggle between skip seen and skip all.
+        * Preference("skip", "seen") - Only skip seen messages.
+        * Preference("skip", "all") - Skip unseen messages.
+        * Preference("skip", "toggle") - Toggle between skip seen and skip all.
 
-         * Preference("begin skipping") - Starts skipping.
+        * Preference("begin skipping") - Starts skipping.
 
-         * Preference("after choices", "skip") - Skip after choices.
-         * Preference("after choices", "stop") - Stop skipping after choices.
-         * Preference("after choices", "toggle") - Toggle skipping after choices.
+        * Preference("after choices", "skip") - Skip after choices.
+        * Preference("after choices", "stop") - Stop skipping after choices.
+        * Preference("after choices", "toggle") - Toggle skipping after choices.
 
-         * Preference("auto-forward time", 0) - Set the auto-forward time to infinite.
-         * Preference("auto-forward time", 10) - Set the auto-forward time (unit is seconds per 250 characters).
+        * Preference("auto-forward time", 0) - Set the auto-forward time to infinite.
+        * Preference("auto-forward time", 10) - Set the auto-forward time (unit is seconds per 250 characters).
 
-         * Preference("auto-forward", "enable") - Enable auto-forward mode.
-         * Preference("auto-forward", "disable") - Disable auto-forward mode.
-         * Preference("auto-forward", "toggle") - Toggle auto-forward mode.
+        * Preference("auto-forward", "enable") - Enable auto-forward mode.
+        * Preference("auto-forward", "disable") - Disable auto-forward mode.
+        * Preference("auto-forward", "toggle") - Toggle auto-forward mode.
 
-         * Preference("auto-forward after click", "enable") - Remain in auto-forward mode after a click.
-         * Preference("auto-forward after click", "disable") - Disable auto-forward mode after a click.
-         * Preference("auto-forward after click", "toggle") - Toggle auto-forward after click.
+        * Preference("auto-forward after click", "enable") - Remain in auto-forward mode after a click.
+        * Preference("auto-forward after click", "disable") - Disable auto-forward mode after a click.
+        * Preference("auto-forward after click", "toggle") - Toggle auto-forward after click.
 
-         * Preference("automatic move", "enable") - Enable automatic mouse mode.
-         * Preference("automatic move", "disable") - Disable automatic mouse mode.
-         * Preference("automatic move", "toggle") - Toggle automatic mouse mode.
+        * Preference("automatic move", "enable") - Allow Ren'Py to move the mouse automatically using the :func:`MouseMove` action.
+        * Preference("automatic move", "disable") - Disable the :func:`MouseMove` action.
+        * Preference("automatic move", "toggle") - Toggle automatic mouse mode.
 
-         * Preference("wait for voice", "enable")  - Wait for the currently playing voice to complete before auto-forwarding.
-         * Preference("wait for voice", "disable") - Do not wait for the currently playing voice to complete before auto-forwarding.
-         * Preference("wait for voice", "toggle")  - Toggle wait voice.
+        * Preference("wait for voice", "enable")  - Wait for the currently playing voice to complete before auto-forwarding.
+        * Preference("wait for voice", "disable") - Do not wait for the currently playing voice to complete before auto-forwarding.
+        * Preference("wait for voice", "toggle")  - Toggle wait voice.
 
-         * Preference("voice sustain", "enable")  - Sustain voice past the current interaction.
-         * Preference("voice sustain", "disable") - Don't sustain voice past the current interaction.
-         * Preference("voice sustain", "toggle")  - Toggle voice sustain.
+        * Preference("voice sustain", "enable")  - Sustain voice past the current interaction.
+        * Preference("voice sustain", "disable") - Don't sustain voice past the current interaction.
+        * Preference("voice sustain", "toggle")  - Toggle voice sustain.
 
-         * Preference("music mute", "enable") - Mute the music mixer.
-         * Preference("music mute", "disable") - Un-mute the music mixer.
-         * Preference("music mute", "toggle") - Toggle music mute.
+        * Preference("music mute", "enable") - Mute the music mixer.
+        * Preference("music mute", "disable") - Un-mute the music mixer.
+        * Preference("music mute", "toggle") - Toggle music mute.
 
-         * Preference("sound mute", "enable") - Mute the sound mixer.
-         * Preference("sound mute", "disable") - Un-mute the sound mixer.
-         * Preference("sound mute", "toggle") - Toggle sound mute.
+        * Preference("sound mute", "enable") - Mute the sound mixer.
+        * Preference("sound mute", "disable") - Un-mute the sound mixer.
+        * Preference("sound mute", "toggle") - Toggle sound mute.
 
-         * Preference("voice mute", "enable") - Mute the voice mixer.
-         * Preference("voice mute", "disable") - Un-mute the voice mixer.
-         * Preference("voice mute", "toggle") - Toggle voice mute.
+        * Preference("voice mute", "enable") - Mute the voice mixer.
+        * Preference("voice mute", "disable") - Un-mute the voice mixer.
+        * Preference("voice mute", "toggle") - Toggle voice mute.
 
-         * Preference("mixer <mixer> mute", "enable") - Mute the specified mixer.
-         * Preference("mixer <mixer> mute", "disable") - Unmute the specified mixer.
-         * Preference("mixer <mixer> mute", "toggle") - Toggle mute of the specified mixer.
+        * Preference("mixer <mixer> mute", "enable") - Mute the specified mixer.
+        * Preference("mixer <mixer> mute", "disable") - Unmute the specified mixer.
+        * Preference("mixer <mixer> mute", "toggle") - Toggle mute of the specified mixer.
 
-         * Preference("all mute", "enable") - Mute each individual mixer.
-         * Preference("all mute", "disable") - Unmute each individual mixer.
-         * Preference("all mute", "toggle") - Toggle mute of each individual mixer.
+        * Preference("all mute", "enable") - Mute each individual mixer.
+        * Preference("all mute", "disable") - Unmute each individual mixer.
+        * Preference("all mute", "toggle") - Toggle mute of each individual mixer.
 
-         * Preference("main volume", 0.5) - Set the adjustment applied to all channels.
-         * Preference("music volume", 0.5) - Set the music volume.
-         * Preference("sound volume", 0.5) - Set the sound volume.
-         * Preference("voice volume", 0.5) - Set the voice volume.
-         * Preference("mixer <mixer> volume", 0.5) - Set the specified mixer volume.
+        * Preference("main volume", 0.5) - Set the adjustment applied to all channels.
+        * Preference("music volume", 0.5) - Set the music volume.
+        * Preference("sound volume", 0.5) - Set the sound volume.
+        * Preference("voice volume", 0.5) - Set the voice volume.
+        * Preference("mixer <mixer> volume", 0.5) - Set the specified mixer volume.
 
-         * Preference("emphasize audio", "enable") - Emphasize the audio channels found in :var:`config.emphasize_audio_channels`.
-         * Preference("emphasize audio", "disable") - Do not emphasize audio channels.
-         * Preference("emphasize audio", "toggle") - Toggle emphasize audio.
+        * Preference("emphasize audio", "enable") - Emphasize the audio channels found in :var:`config.emphasize_audio_channels`.
+        * Preference("emphasize audio", "disable") - Do not emphasize audio channels.
+        * Preference("emphasize audio", "toggle") - Toggle emphasize audio.
 
-         * Preference("self voicing", "enable") - Enables self-voicing.
-         * Preference("self voicing", "disable") - Disable self-voicing.
-         * Preference("self voicing", "toggle") - Toggles self-voicing.
+        * Preference("self voicing", "enable") - Enables self-voicing.
+        * Preference("self voicing", "disable") - Disable self-voicing.
+        * Preference("self voicing", "toggle") - Toggles self-voicing.
 
-         * Preference("self voicing volume drop", 0.5) - Drops the volume of non-voice mixers when self voicing is active.
+        * Preference("self voicing volume drop", 0.5) - Drops the volume of non-voice mixers when self voicing is active.
 
-         * Preference("clipboard voicing", "enable") - Enables clipboard-voicing.
-         * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
-         * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
+        * Preference("clipboard voicing", "enable") - Enables clipboard-voicing.
+        * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
+        * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
 
-         * Preference("debug voicing", "enable") - Enables self-voicing debug
-         * Preference("debug voicing", "disable") - Disable self-voicing debug.
-         * Preference("debug voicing", "toggle") - Toggles self-voicing debug.
+        * Preference("debug voicing", "enable") - Enables self-voicing debug
+        * Preference("debug voicing", "disable") - Disable self-voicing debug.
+        * Preference("debug voicing", "toggle") - Toggles self-voicing debug.
 
-         * Preference("rollback side", "left") - Touching the left side of the screen causes rollback.
-         * Preference("rollback side", "right") - Touching the right side of the screen causes rollback.
-         * Preference("rollback side", "disable") - Touching the screen will not cause rollback.
+        * Preference("rollback side", "left") - Touching the left side of the screen causes rollback.
+        * Preference("rollback side", "right") - Touching the right side of the screen causes rollback.
+        * Preference("rollback side", "disable") - Touching the screen will not cause rollback.
 
-         * Preference("gl powersave", True) - Drop framerate to allow for power savings.
-         * Preference("gl powersave", False) - Do not drop framerate to allow for power savings.
-         * Preference("gl powersave", "auto") - Enable powersave when running on battery.
+        * Preference("gl powersave", True) - Drop framerate to allow for power savings.
+        * Preference("gl powersave", False) - Do not drop framerate to allow for power savings.
+        * Preference("gl powersave", "auto") - Enable powersave when running on battery.
 
-         * Preference("gl framerate", None) - Runs at the display framerate.
-         * Preference("gl framerate", 60) - Runs at the given framerate.
+        * Preference("gl framerate", None) - Runs at the display framerate.
+        * Preference("gl framerate", 60) - Runs at the given framerate.
 
-         * Preference("gl tearing", True) - Tears rather than skipping frames.
-         * Preference("gl tearing", False) - Skips frames rather than tearing.
+        * Preference("gl tearing", True) - Tears rather than skipping frames.
+        * Preference("gl tearing", False) - Skips frames rather than tearing.
 
-         * Preference("font transform", "opendyslexic") - Sets the accessibility font transform to opendyslexic.
-         * Preference("font transform", "dejavusans") - Sets the accessibility font transform to deja vu sans.
-         * Preference("font transform", None) - Disables the accessibility font transform.
+        * Preference("font transform", "opendyslexic") - Sets the accessibility font transform to opendyslexic.
+        * Preference("font transform", "dejavusans") - Sets the accessibility font transform to deja vu sans.
+        * Preference("font transform", None) - Disables the accessibility font transform.
 
-         * Preference("font size", 1.0) - Sets the accessibility font size scaling factor.
-         * Preference("font line spacing", 1.0) - Sets the accessibility font vertical spacing scaling factor.
+        * Preference("font size", 1.0) - Sets the accessibility font size scaling factor.
+        * Preference("font line spacing", 1.0) - Sets the accessibility font vertical spacing scaling factor.
 
-         * Preference("system cursor", "enable") - Use system cursor ignoring :var:`config.mouse`.
-         * Preference("system cursor", "disable") - Use cursor defined in :var:`config.mouse`.
-         * Preference("system cursor", "toggle") - Toggle system cursor.
+        * Preference("system cursor", "enable") - Use system cursor ignoring :var:`config.mouse`.
+        * Preference("system cursor", "disable") - Use cursor defined in :var:`config.mouse`.
+        * Preference("system cursor", "toggle") - Toggle system cursor.
 
-         * Preference("high contrast text", "enable") - Enables white text on a black background.
-         * Preference("high contrast text", "disable") - Disables high contrast text.
-         * Preference("high contrast text", "toggle") - Toggles high contrast text.
+        * Preference("high contrast text", "enable") - Enables white text on a black background.
+        * Preference("high contrast text", "disable") - Disables high contrast text.
+        * Preference("high contrast text", "toggle") - Toggles high contrast text.
 
-         * Preference("audio when minimized", "enable") - Enable sounds playing when the window has been minimized.
-         * Preference("audio when minimized", "disable") - Disable sounds playing when the window has been minimized.
-         * Preference("audio when minimized", "toggle") - Toggle sounds playing when the window has been minimized.
+        * Preference("audio when minimized", "enable") - Enable sounds playing when the window has been minimized.
+        * Preference("audio when minimized", "disable") - Disable sounds playing when the window has been minimized.
+        * Preference("audio when minimized", "toggle") - Toggle sounds playing when the window has been minimized.
 
-         * Preference("audio when unfocused", "enable") - Enable sounds playing when the window is not in focus.
-         * Preference("audio when unfocused", "disable") - Disable sounds playing when the window is not in focus.
-         * Preference("audio when unfocused", "toggle") - Toggle sounds playing when the window is not in focus.
+        * Preference("audio when unfocused", "enable") - Enable sounds playing when the window is not in focus.
+        * Preference("audio when unfocused", "disable") - Disable sounds playing when the window is not in focus.
+        * Preference("audio when unfocused", "toggle") - Toggle sounds playing when the window is not in focus.
 
-         * Preference("web cache preload", "enable") - Will cause the web cache to be preloaded.
-         * Preference("web cache preload", "disable") - Will cause the web cache to not be preloaded, and preloaded data to be deleted.
-         * Preference("web cache preload", "toggle") - Will toggle the web cache preload state.
+        * Preference("web cache preload", "enable") - Will cause the web cache to be preloaded.
+        * Preference("web cache preload", "disable") - Will cause the web cache to not be preloaded, and preloaded data to be deleted.
+        * Preference("web cache preload", "toggle") - Will toggle the web cache preload state.
 
-         * Preference("voice after game menu", "enable") - Will cause the voice to continue being played when entering the game  menu.
-         * Preference("voice after game menu", "disable") - Will cause the voice to stop being played when entering the game menu.
-         * Preference("voice after game menu", "toggle") - Will toggle the voice after game menu state.
+        * Preference("voice after game menu", "enable") - Will cause the voice to continue being played when entering the game  menu.
+        * Preference("voice after game menu", "disable") - Will cause the voice to stop being played when entering the game menu.
+        * Preference("voice after game menu", "toggle") - Will toggle the voice after game menu state.
 
-         Values that can be used with bars are:
+        Values that can be used with bars are:
 
-         * Preference("text speed")
-         * Preference("auto-forward time")
-         * Preference("main volume")
-         * Preference("music volume")
-         * Preference("sound volume")
-         * Preference("voice volume")
-         * Preference("mixer <mixer> volume")
-         * Preference("self voicing volume drop")
-         * Preference("font size")
-         * Preference("font line spacing")
+        * Preference("text speed")
+        * Preference("auto-forward time")
+        * Preference("main volume")
+        * Preference("music volume")
+        * Preference("sound volume")
+        * Preference("voice volume")
+        * Preference("mixer <mixer> volume")
+        * Preference("self voicing volume drop")
+        * Preference("font size")
+        * Preference("font line spacing")
 
-         The `range` parameter can be given to give the range of certain bars.
-         For "text speed", it defaults to 200 cps. For "auto-forward time", it
-         defaults to 30.0 seconds per chunk of text. (These are maximums, not
-         defaults.)
+        The `range` parameter can be given to give the range of certain bars.
+        For "text speed", it defaults to 200 cps. For "auto-forward time", it
+        defaults to 30.0 seconds per chunk of text. (These are maximums, not
+        defaults.)
 
-         Actions that can be used with buttons are:
+        Actions that can be used with buttons are:
 
-         * Preference("renderer menu") - Show the renderer menu.
-         * Preference("accessibility menu") - Show the accessibility menu.
+        * Preference("renderer menu") - Show the renderer menu.
+        * Preference("accessibility menu") - Show the accessibility menu.
 
-         These screens are intended for internal use, and are not customizable.
-         """
+        These screens are intended for internal use, and are not customizable.
+        """
 
         name = name.lower()
 
