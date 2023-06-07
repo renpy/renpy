@@ -942,7 +942,7 @@ class Live2D(renpy.display.core.Displayable):
         zoom = self.zoom
 
         def s(n):
-            if isinstance(n, float):
+            if type(n) is float:
                 return n * sh
             else:
                 return n
