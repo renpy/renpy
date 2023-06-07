@@ -63,7 +63,7 @@ init -1500 python:
 
         def init_values(self, sizes):
             def to_abs_(value, size):
-                if isinstance(value, float):
+                if type(value) is float:
                     return value * size
                 else:
                     return value
