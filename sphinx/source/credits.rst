@@ -36,6 +36,7 @@ the omission in future versions.
 * Bbs3223474
 * Ben Wright
 * BlackDragonHunt/Mangagamer
+* Brainos
 * Bryan Tsang
 * Carl
 * Capntrips
