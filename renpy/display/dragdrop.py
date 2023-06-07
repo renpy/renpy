@@ -612,16 +612,16 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
             fx, fy, fw, fh = self.drag_handle
 
-            if isinstance(fx, float):
+            if type(fx) is float:
                 fx = int(fx * cw)
 
-            if isinstance(fy, float):
+            if type(fy) is float:
                 fy = int(fy * ch)
 
-            if isinstance(fw, float):
+            if type(fw) is float:
                 fw = int(fw * cw)
 
-            if isinstance(fh, float):
+            if type(fh) is float:
                 fh = int(fh * ch)
 
             mask = self.style.focus_mask
