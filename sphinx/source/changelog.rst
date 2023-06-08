@@ -4,23 +4,6 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
-.. _renpy-8.2.0:
-.. _renpy-7.7.0:
-
-8.2.0 / 7.7.0
-=============
-
-Other Changes
--------------
-
-When a file causes an autorealod, Ren'Py will check the directory containing
-the file and all parent directories for git lock files. The autoreload will
-be deferred until the lock files are removed when the git operation
-completes.
-
-The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
-when it used to only disable :var:`config.mouse`.
-
 
 .. _renpy-8.1.1:
 .. _renpy-7.6.1:
@@ -68,8 +51,11 @@ now diagnoses this error, and :var:`config.ex_rollback_classes` lets you
 suppress the error. The error is only shown to developers, and is otherwise
 silently ignored.
 
-Other
------
+Other Changes
+-------------
+
+The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
+when it used to only disable :var:`config.mouse`.
 
 ATL Transitions now use the animation timebase. This is generally the same
 behavior as before, until the interaction restarts, in which case the
