@@ -90,6 +90,7 @@ Transitions
 -----------
 
 *Main article:* :doc:`transitions`
+
 *See also:* :ref:`atl-transitions`
 
 A transition is a Python callable that, when called with two keyword
