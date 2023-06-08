@@ -674,9 +674,6 @@ translate polish strings:
     old "Menu"
     new "Menu"
 
-
-translate polish strings:
-
     # gui/game/screens.rpy:676
     old "Upload Sync"
     # Automatic translation.
@@ -700,7 +697,7 @@ translate polish strings:
     # gui/game/screens.rpy:1410
     old "## Bubble screen"
     # Automatic translation.
-    new "# Bubble screen"
+    new "## Bubble screen"
 
     # gui/game/screens.rpy:1412
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
