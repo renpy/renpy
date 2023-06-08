@@ -234,7 +234,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     if ymaximum is not None:
         if type(ymaximum) is float:
-            height = min(height * ymaximum, width)
+            height = min(height * ymaximum, height)
         else:
             height = min(ymaximum, height)
 
