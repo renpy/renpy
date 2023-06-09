@@ -305,46 +305,51 @@ def generic_filter(s, function):
     """
 
     def remove_special(s, start, end, process):
-        specials = 0
-        first = False
 
+        # A count of the number of special characters we've seen.
+        specials = 0
+
+        # The return value of the function.
         rv = ""
+
+        # If specials == 0, the norma l
         buf = ""
 
         for i in s:
 
             if i == start:
-                if first:
+
+                # Handle the case where there is a duplicate start.
+                if i == buf and specials:
+                    rv += buf + i
                     specials = 0
-                else:
+                    buf = ""
+                    continue
+
+                if specials == 0:
                     rv += process(buf)
                     buf = ""
 
-                    if specials == 0:
-                        first = True
+                buf += i
+                specials += 1
 
-                    specials += 1
+            elif i == end and specials:
 
-                rv += start
-
-            elif i == end:
-
-                first = False
-
+                buf += i
                 specials -= 1
-                if specials < 0:
-                    specials += 1
 
-                rv += end
+                if specials == 0:
+                    rv += buf
+                    buf = ""
 
             else:
-                if specials:
-                    rv += i
-                else:
-                    buf += i
+                buf += i
 
         if buf:
-            rv += process(buf)
+            if specials == 0:
+                rv += process(buf)
+            else:
+                rv += buf
 
         return rv
 
@@ -383,7 +388,9 @@ def piglatin_transform(s):
     def replace(m):
         i = m.group(0)
 
-        if i[0] in ['a', 'e', 'i', 'o', 'u']:
+        if i[0] in "0123456789":
+            rv = i
+        elif i[0] in ['a', 'e', 'i', 'o', 'u']:
             rv = i + 'ay'
         elif i[:2] in lst:
             rv = i[2:] + i[:2] + 'ay'
@@ -402,7 +409,10 @@ def piglatin_filter(s):
     if s == "{#language name and font}":
         return "Igpay Atinlay"
 
-    return generic_filter(s, piglatin_transform)
+    rv = generic_filter(s, piglatin_transform)
+    rv = re.sub(r'\{\{(.*)?ay\}', r'{{\1}', rv)
+    return rv
+
 
 
 def translate_list_files():
