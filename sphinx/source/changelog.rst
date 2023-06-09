@@ -18,9 +18,6 @@ the file and all parent directories for git lock files. The autoreload will
 be deferred until the lock files are removed when the git operation
 completes.
 
-The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
-when it used to only disable :var:`config.mouse`.
-
 
 .. _renpy-8.1.1:
 .. _renpy-7.6.1:
@@ -43,6 +40,9 @@ this problem is documented in :ref:`incompatible changes <android-key-migration>
 
 Fixes
 -----
+
+The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
+when it used to only disable :var:`config.mouse`.
 
 Web audio now treats the end time as a time, not a duration.
 
