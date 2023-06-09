@@ -10,6 +10,17 @@ Changelog (Ren'Py 7.x-)
 8.2.0 / 7.7.0
 =============
 
+\_\_future\_\_ in python
+------------------------
+
+Ren'Py now allows creators to pass
+`\_\_future\_\_ compiler directives <https://docs.python.org/reference/simple_stmts.html#future>`__
+for Python code run in Ren'Py. This is done using the ``rpy python xxx``
+statement at the top of the .rpy file(s) on which you want them to apply,
+where ``xxx`` is the name of the future feature. For example::
+
+    rpy python annotations
+
 Other Changes
 -------------
 
@@ -2650,7 +2661,7 @@ First, Ren'Py now uses `future <https://python-future.org/>`_ to provide
 standard library compatibility. It's now possible to import modules using
 their Python 3 names, when a renaming has occured.
 
-When a .rpyc file begins with the new ``rpy python 3``, the file is compiled
+When a .rpy file begins with the new ``rpy python 3``, the file is compiled
 in a Python 3 compatibility mode. The two changes this causes are:
 
 * Ren'Py will compile the file in a mode that attempts to emulate Python 3
