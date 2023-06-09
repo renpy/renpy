@@ -1442,14 +1442,18 @@ def style_statement(l, loc):
 
 
 @statement("rpy python")
-def rpy_python_3(l, loc):
+def rpy_python(l, loc):
 
-    l.require('3')
+    if l.match("3"):
+        # for compatibility with old code.
+        r = "3"
+    else:
+        r = l.require(l.word, "__future__ name")
 
     l.expect_eol()
     l.expect_noblock("rpy statement")
 
-    rv = ast.RPY(loc, ("python", "3"))
+    rv = ast.RPY(loc, ("python", r))
 
     l.advance()
     return rv

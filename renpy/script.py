@@ -27,6 +27,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy
 
+import __future__
 import collections
 import hashlib
 import os
@@ -458,8 +459,14 @@ class Script(object):
             i.get_children(all_stmts.append)
 
         for i in all_stmts:
-            if isinstance(i, renpy.ast.RPY) and i.rest == ("python", "3"):
-                renpy.python.py3_files.add(i.filename)
+            if isinstance(i, renpy.ast.RPY):
+                a, b = i.rest
+                if a == "python":
+                    if b == "3":
+                        b = "division"
+                    if b in __future__.all_feature_names:
+                        renpy.python.futured_files[i.filename] |= getattr(__future__, b).compiler_flag
+                    # invalid names are silently ignored
 
         # Take the translations.
         self.translator.take_translates(all_stmts)
@@ -925,8 +932,13 @@ class Script(object):
 
             key = i.get_hash() + MAGIC
 
-            if i.location[0] in renpy.python.py3_files:
-                key += b"_py3"
+            flags = renpy.python.futured_files[i.location[0]]
+            if flags:
+                if flags == __future__.division.compiler_flag:
+                    # avoid triggering a recompile
+                    key = b"_py3"
+                else:
+                    key += b"_flags" + str(flags).encode("utf-8")
 
             code = self.bytecode_oldcache.get(key, None)
 

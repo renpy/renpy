@@ -3031,7 +3031,7 @@ class RPY(Node):
         next_node(self.next)
         statement_name("rpy")
 
-        # rpy python 3 is run in Script.finish_load.
+        # rpy python is run in Script.finish_load.
 
     def get_code(self):
         return "rpy " + " ".join(self.rest)
