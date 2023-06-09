@@ -936,7 +936,7 @@ class Script(object):
             if flags:
                 if flags == __future__.division.compiler_flag:
                     # avoid triggering a recompile
-                    key = b"_py3"
+                    key += b"_py3"
                 else:
                     key += b"_flags" + str(flags).encode("utf-8")
 
