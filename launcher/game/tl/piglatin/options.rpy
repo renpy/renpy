@@ -23,7 +23,7 @@ translate piglatin strings:
 
     # gui/game/options.rpy:17
     old "Ren'Py 7 Default GUI"
-    new "Enray'Ypay 7ay Efaultday Uigay"
+    new "Enray'Ypay 7 Efaultday Uigay"
 
     # gui/game/options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
@@ -107,11 +107,11 @@ translate piglatin strings:
 
     # gui/game/options.rpy:123
     old "## Controls the default text speed. The default, 0, is infinite, while any other number is the number of characters per second to type out."
-    new "## Ontrolscay hetay efaultday exttay peedsay. Hetay efaultday, 0ay, isay infiniteay, hileway anyay otheray umbernay isay hetay umbernay ofay aracterschay erpay econdsay otay ypetay outay."
+    new "## Ontrolscay hetay efaultday exttay peedsay. Hetay efaultday, 0, isay infiniteay, hileway anyay otheray umbernay isay hetay umbernay ofay aracterschay erpay econdsay otay ypetay outay."
 
     # gui/game/options.rpy:129
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
-    new "## Hetay efaultday autoay-orwardfay elayday. Argerlay umbersnay eadlay otay ongerlay aitsway, ithway 0ay otay 03ay eingbay hetay alidvay angeray."
+    new "## Hetay efaultday autoay-orwardfay elayday. Argerlay umbersnay eadlay otay ongerlay aitsway, ithway 0 otay 30 eingbay hetay alidvay angeray."
 
     # gui/game/options.rpy:135
     old "## Save directory"
