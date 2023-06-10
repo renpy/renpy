@@ -179,7 +179,7 @@ init -1150 python in bubble:
             return (x, y, w, h)
 
 
-        def do_show(self, who, what, multiple=None, extra_properties=None):
+        def do_show(self, who, what, multiple=None, retain=None, extra_properties=None):
 
             if extra_properties is None:
                 extra_properties = { }
@@ -204,7 +204,7 @@ init -1150 python in bubble:
             extra_properties.update(properties.get(properties_key, { }))
             extra_properties[area_property] = self.expand_area(tag_properties[image_tag]["area"], properties_key)
 
-            return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, extra_properties=extra_properties)
+            return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, retain=retain, extra_properties=extra_properties)
 
     class CycleBubbleProperty(Action):
         """
