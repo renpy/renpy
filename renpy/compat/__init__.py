@@ -181,7 +181,7 @@ if PY2:
 
 ################################################################################
 # Chance the default for subprocess.Popen.
-if PY2:
+if PY2 and not renpy.emscripten:
     import subprocess
     class Popen(subprocess.Popen):
         def __init__(self, *args, **kwargs):
