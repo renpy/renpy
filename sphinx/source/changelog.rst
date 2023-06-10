@@ -2650,8 +2650,8 @@ First, Ren'Py now uses `future <https://python-future.org/>`_ to provide
 standard library compatibility. It's now possible to import modules using
 their Python 3 names, when a renaming has occured.
 
-When a .rpyc file begins with the new ``rpy python 3``, the file is compiled
-in a Python 3 compatibility mode. The two changes this causes are:
+When a .rpy file begins with the new ``rpy python 3`` statement, the file is
+compiled in a Python 3 compatibility mode. The two changes this causes are:
 
 * Ren'Py will compile the file in a mode that attempts to emulate Python 3
   semantics, including the change to division. In Python 3, ``1/2`` is equal
