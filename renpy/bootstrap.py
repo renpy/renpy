@@ -290,13 +290,16 @@ You may be using a system install of python. Please run {0}.sh,
                 exit_status = e.status
 
                 if e.relaunch:
-                    if hasattr(sys, "renpy_executable"):
+                    if renpy.emscripten:
+                        import emscripten  # type: ignore
+                        emscripten.sleep(0)
+                        emscripten.run_script("location.reload();")
+                    elif hasattr(sys, "renpy_executable"):
                         subprocess.Popen([sys.renpy_executable] + sys.argv[1:]) # type: ignore
+                    elif PY2:
+                        subprocess.Popen([sys.executable, "-EO"] + sys.argv)
                     else:
-                        if PY2:
-                            subprocess.Popen([sys.executable, "-EO"] + sys.argv)
-                        else:
-                            subprocess.Popen([sys.executable] + sys.argv)
+                        subprocess.Popen([sys.executable] + sys.argv)
 
             except renpy.game.ParseErrorException:
                 pass
