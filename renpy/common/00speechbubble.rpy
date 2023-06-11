@@ -188,7 +188,7 @@ init -1150 python in bubble:
 
             image_tag = self.image_tag
 
-            if image_tag not in tag_properties:
+            if retain or (image_tag not in tag_properties):
                 tag_properties[image_tag] = self.bubble_default_properties(image_tag)
 
             tlid = renpy.get_translation_identifier()
