@@ -75,6 +75,9 @@ init -1150 python in bubble:
     frame = None
     thoughtframe = None
 
+    # The layer that retained screens are placed on.
+    retain_layer = "screens"
+
     class ToggleShown(Action):
         def __call__(self):
             if not active and not shown.value:
@@ -178,6 +181,14 @@ init -1150 python in bubble:
 
             return (x, y, w, h)
 
+        def do_add(self, who, what, multiple=False):
+
+            tlid = renpy.get_translation_identifier()
+
+            if tlid is not None:
+
+                if db[tlid].get("clear_retain", False):
+                    renpy.clear_retain(layer=retain_layer)
 
         def do_show(self, who, what, multiple=None, retain=None, extra_properties=None):
 
@@ -237,6 +248,26 @@ init -1150 python in bubble:
             if "properties" in db[self.tlid]:
                 del db[self.tlid]["properties"]
                 renpy.rollback(checkpoints=0, force=True, greedy=True)
+
+
+    class ToggleClearRetain(Action):
+        """
+        This is an action that causes the clear_retain property to be toggled.
+        """
+
+        def __init__(self, tlid):
+            self.tlid = tlid
+
+        def get_selected(self):
+            return db[self.tlid].get("clear_retain", False)
+
+        def __call__(self):
+            db[self.tlid]["clear_retain"] = not db[self.tlid].get("clear_retain", False)
+            renpy.rollback(checkpoints=0, force=True, greedy=True)
+
+        def alternate(self):
+            self()
+
 
     class SetWindowArea(Action):
         """
@@ -356,6 +387,18 @@ screen _bubble_editor():
 
                     null height gui._scale(5)
 
+                    if bubble.current_dialogue and renpy.get_screen("_retain_0", layer=bubble.retain_layer):
+                        textbutton _("(clear retained bubbles)"):
+                            style "_default"
+                            text_color "#ddd8"
+                            text_selected_idle_color "#ddd"
+                            text_hover_color "#fff"
+                            text_size gui._scale(16)
+
+                            action bubble.ToggleClearRetain(bubble.current_dialogue[0][1])
+
+                        null height gui._scale(5)
+
                     for image_tag, properties in bubble.GetCurrentDialogue():
 
                         hbox:
@@ -364,7 +407,7 @@ screen _bubble_editor():
                             text "[image_tag!q]":
                                 style "_default"
                                 color "#fff"
-                                size gui._scale(15)
+                                size gui._scale(16)
 
                             for prop, action in properties:
                                 textbutton "[prop!q]":
@@ -374,7 +417,9 @@ screen _bubble_editor():
                                     text_color "#ddd8"
                                     text_selected_idle_color "#ddd"
                                     text_hover_color "#fff"
-                                    text_size gui._scale(15)
+                                    text_size gui._scale(16)
+
+
 
 
 screen _bubble_window_area_editor(action):
