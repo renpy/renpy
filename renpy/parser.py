@@ -1164,7 +1164,15 @@ def init_statement(l, loc):
         try:
             l.init = True
 
-            block = [ parse_statement(l) ]
+            checkpoint = l.checkpoint()
+
+            stmt = parse_statement(l)
+
+            if not isinstance(stmt, ast.Node):
+                l.revert(checkpoint)
+                l.error("init expects a block or statement")
+
+            block = [ stmt ]
 
         finally:
             l.init = old_init
