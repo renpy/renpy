@@ -289,13 +289,9 @@ movie_channel_serial = 0
 class Movie(renpy.display.core.Displayable):
     """
     :doc: movie
+    :args: (*, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, group=None, **properties)
 
     This is a displayable that shows the current movie.
-
-    `fps`
-        The framerate that the movie should be shown at. (This is currently
-        ignored, but the parameter is kept for backwards compatibility.
-        The framerate is auto-detected.)
 
     `size`
         This should be specified as either a tuple giving the width and
