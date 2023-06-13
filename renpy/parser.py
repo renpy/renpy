@@ -1761,7 +1761,7 @@ def report_parse_errors():
     renpy.display.error.report_parse_errors(full_text, error_fn)
 
     try:
-        if renpy.game.args.command == "run": # type: ignore
+        if renpy.game.args.command == "run" or renpy.game.args.errors_in_editor: # type: ignore
             renpy.exports.launch_editor([ error_fn ], 1, transient=True)
     except Exception:
         pass
