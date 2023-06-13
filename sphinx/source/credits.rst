@@ -229,6 +229,7 @@ the omission in future versions.
 * Susnux
 * Sylvain Beucler
 * Tey
+* The66F95
 * Thuong Nguyen Huu
 * Tichq
 * Tlm-2501

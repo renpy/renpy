@@ -13,7 +13,7 @@ Changelog (Ren'Py 7.x-)
 Other Changes
 -------------
 
-When a file causes an autorealod, Ren'Py will check the directory containing
+When a file causes an autoreload, Ren'Py will check the directory containing
 the file and all parent directories for git lock files. The autoreload will
 be deferred until the lock files are removed when the git operation
 completes.
@@ -68,8 +68,11 @@ now diagnoses this error, and :var:`config.ex_rollback_classes` lets you
 suppress the error. The error is only shown to developers, and is otherwise
 silently ignored.
 
-Other
------
+Other Changes
+-------------
+
+The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
+when it used to only disable :var:`config.mouse`.
 
 ATL Transitions now use the animation timebase. This is generally the same
 behavior as before, until the interaction restarts, in which case the

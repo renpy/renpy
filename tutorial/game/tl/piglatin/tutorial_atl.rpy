@@ -15,7 +15,7 @@ translate piglatin tutorial_positions_ba39aabc:
 translate piglatin tutorial_positions_a60b775d:
 
     # e "For example, 100 is an integer, while 0.5 is a floating point number, or float for short. In this system, there are two zeros: 0 is an integer, and 0.0 is a float."
-    e "Orfay exampleay, 001ay isay anay integeray, hileway 0ay.5ay isay aay oatingflay ointpay umbernay, oray oatflay orfay ortshay. Niay histay ystemsay, heretay areay wotay eroszay: 0ay isay anay integeray, anday 0ay.0ay isay aay oatflay."
+    e "Orfay exampleay, 100 isay anay integeray, hileway 0.5 isay aay oatingflay ointpay umbernay, oray oatflay orfay ortshay. Niay histay ystemsay, heretay areay wotay eroszay: 0 isay anay integeray, anday 0.0 isay aay oatflay."
 
 # game/tutorial_atl.rpy:214
 translate piglatin tutorial_positions_7f1a560c:
@@ -45,37 +45,37 @@ translate piglatin tutorial_positions_76d7a5bf:
 translate piglatin tutorial_positions_be14c7c3:
 
     # e "When we increase xpos, we move to the right. So here's an xpos of .5, meaning half the width across the screen."
-    e "Henway eway increaseay posxay, eway ovemay otay hetay ightray. Osay erehay'say anay posxay ofay .5ay, eaningmay alfhay hetay idthway acrossay hetay creensay."
+    e "Henway eway increaseay posxay, eway ovemay otay hetay ightray. Osay erehay'say anay posxay ofay .5, eaningmay alfhay hetay idthway acrossay hetay creensay."
 
 # game/tutorial_atl.rpy:243
 translate piglatin tutorial_positions_9b91be6c:
 
     # e "Increasing xpos to 1.0 moves us to the right-hand border of the screen."
-    e "Ncreasingiay posxay otay 1ay.0ay ovesmay usay otay hetay ightray-andhay orderbay ofay hetay creensay."
+    e "Ncreasingiay posxay otay 1.0 ovesmay usay otay hetay ightray-andhay orderbay ofay hetay creensay."
 
 # game/tutorial_atl.rpy:249
 translate piglatin tutorial_positions_2b293304:
 
     # e "We can also use an absolute xpos, which is given in an absolute number of pixels from the left side of the screen. For example, since this window is 1280 pixels across, using an xpos of 640 will return the target to the center of the top row."
-    e "Eway ancay alsoay useay anay absoluteay posxay, hichway isay ivengay inay anay absoluteay umbernay ofay ixelspay omfray hetay eftlay idesay ofay hetay creensay. Orfay exampleay, incesay histay indowway isay 2801ay ixelspay acrossay, usingay anay posxay ofay 406ay illway eturnray hetay argettay otay hetay entercay ofay hetay optay owray."
+    e "Eway ancay alsoay useay anay absoluteay posxay, hichway isay ivengay inay anay absoluteay umbernay ofay ixelspay omfray hetay eftlay idesay ofay hetay creensay. Orfay exampleay, incesay histay indowway isay 1280 ixelspay acrossay, usingay anay posxay ofay 640 illway eturnray hetay argettay otay hetay entercay ofay hetay optay owray."
 
 # game/tutorial_atl.rpy:251
 translate piglatin tutorial_positions_c4d18c0a:
 
     # e "The y-axis position, or ypos works the same way. Right now, we have a ypos of 0.0."
-    e "Hetay yay-axisay ositionpay, oray posyay orksway hetay amesay ayway. Ightray ownay, eway avehay aay posyay ofay 0ay.0ay."
+    e "Hetay yay-axisay ositionpay, oray posyay orksway hetay amesay ayway. Ightray ownay, eway avehay aay posyay ofay 0.0."
 
 # game/tutorial_atl.rpy:257
 translate piglatin tutorial_positions_16933a61:
 
     # e "Here's a ypos of 0.5."
-    e "Erehay'say aay posyay ofay 0ay.5ay."
+    e "Erehay'say aay posyay ofay 0.5."
 
 # game/tutorial_atl.rpy:262
 translate piglatin tutorial_positions_6eb36777:
 
     # e "A ypos of 1.0 specifies a position at the bottom of the screen. If you look carefully, you can see the position indicator spinning below the text window."
-    e "Aay posyay ofay 1ay.0ay pecifiessay aay ositionpay atay hetay ottombay ofay hetay creensay. Fiay ouyay ooklay arefullycay, ouyay ancay eesay hetay ositionpay indicatoray pinningsay elowbay hetay exttay indowway."
+    e "Aay posyay ofay 1.0 pecifiessay aay ositionpay atay hetay ottombay ofay hetay creensay. Fiay ouyay ooklay arefullycay, ouyay ancay eesay hetay ositionpay indicatoray pinningsay elowbay hetay exttay indowway."
 
 # game/tutorial_atl.rpy:264
 translate piglatin tutorial_positions_a423050f:
@@ -93,13 +93,13 @@ translate piglatin tutorial_positions_bc7a809a:
 translate piglatin tutorial_positions_6f926e18:
 
     # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
-    e "Orrysay, hattay'say rongway. Hetay posxay isay .57ay, anday hetay posyay isay .52ay."
+    e "Orrysay, hattay'say rongway. Hetay posxay isay .75, anday hetay posyay isay .25."
 
 # game/tutorial_atl.rpy:278
 translate piglatin tutorial_positions_5d5feb98:
 
     # e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top."
-    e "Niay otheray ordsway, itay'say 57ay%% ofay hetay ayway omfray hetay eftlay idesay, anday 52ay%% ofay hetay ayway omfray hetay optay."
+    e "Niay otheray ordsway, itay'say 75%% ofay hetay ayway omfray hetay eftlay idesay, anday 25%% ofay hetay ayway omfray hetay optay."
 
 # game/tutorial_atl.rpy:282
 translate piglatin tutorial_positions_77b45218:
@@ -111,13 +111,13 @@ translate piglatin tutorial_positions_77b45218:
 translate piglatin tutorial_positions_6f926e18_1:
 
     # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
-    e "Orrysay, hattay'say rongway. Hetay posxay isay .57ay, anday hetay posyay isay .52ay."
+    e "Orrysay, hattay'say rongway. Hetay posxay isay .75, anday hetay posyay isay .25."
 
 # game/tutorial_atl.rpy:288
 translate piglatin tutorial_positions_5d5feb98_1:
 
     # e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top."
-    e "Niay otheray ordsway, itay'say 57ay%% ofay hetay ayway omfray hetay eftlay idesay, anday 52ay%% ofay hetay ayway omfray hetay optay."
+    e "Niay otheray ordsway, itay'say 75%% ofay hetay ayway omfray hetay eftlay idesay, anday 25%% ofay hetay ayway omfray hetay optay."
 
 # game/tutorial_atl.rpy:302
 translate piglatin tutorial_positions_e4380a83:
@@ -129,19 +129,19 @@ translate piglatin tutorial_positions_e4380a83:
 translate piglatin tutorial_positions_d1db1246:
 
     # e "For example, here we have an xanchor of 0.0 and a yanchor of 0.0. It's in the upper-left corner of the logo image."
-    e "Orfay exampleay, erehay eway avehay anay anchorxay ofay 0ay.0ay anday aay anchoryay ofay 0ay.0ay. Tiay'say inay hetay upperay-eftlay ornercay ofay hetay ogolay imageay."
+    e "Orfay exampleay, erehay eway avehay anay anchorxay ofay 0.0 anday aay anchoryay ofay 0.0. Tiay'say inay hetay upperay-eftlay ornercay ofay hetay ogolay imageay."
 
 # game/tutorial_atl.rpy:309
 translate piglatin tutorial_positions_6056873f:
 
     # e "When we increase the xanchor to 1.0, the anchor moves to the right corner of the image."
-    e "Henway eway increaseay hetay anchorxay otay 1ay.0ay, hetay anchoray ovesmay otay hetay ightray ornercay ofay hetay imageay."
+    e "Henway eway increaseay hetay anchorxay otay 1.0, hetay anchoray ovesmay otay hetay ightray ornercay ofay hetay imageay."
 
 # game/tutorial_atl.rpy:314
 translate piglatin tutorial_positions_7cdb8dcc:
 
     # e "Similarly, when both xanchor and yanchor are 1.0, the anchor is the bottom-right corner."
-    e "Imilarlysay, henway othbay anchorxay anday anchoryay areay 1ay.0ay, hetay anchoray isay hetay ottombay-ightray ornercay."
+    e "Imilarlysay, henway othbay anchorxay anday anchoryay areay 1.0, hetay anchoray isay hetay ottombay-ightray ornercay."
 
 # game/tutorial_atl.rpy:321
 translate piglatin tutorial_positions_03a07da8:
@@ -177,19 +177,19 @@ translate piglatin tutorial_positions_3b59b797:
 translate piglatin tutorial_positions_b8ebf9fe:
 
     # e "For example, when we set xalign to 0.0, things are aligned to the left side of the screen."
-    e "Orfay exampleay, henway eway etsay alignxay otay 0ay.0ay, hingstay areay aligneday otay hetay eftlay idesay ofay hetay creensay."
+    e "Orfay exampleay, henway eway etsay alignxay otay 0.0, hingstay areay aligneday otay hetay eftlay idesay ofay hetay creensay."
 
 # game/tutorial_atl.rpy:370
 translate piglatin tutorial_positions_8ce35d52:
 
     # e "When we set it to 1.0, then we're aligned to the right side of the screen."
-    e "Henway eway etsay itay otay 1ay.0ay, hentay eway'eray aligneday otay hetay ightray idesay ofay hetay creensay."
+    e "Henway eway etsay itay otay 1.0, hentay eway'eray aligneday otay hetay ightray idesay ofay hetay creensay."
 
 # game/tutorial_atl.rpy:375
 translate piglatin tutorial_positions_6745825f:
 
     # e "And when we set it to 0.5, we're back to the center of the screen."
-    e "Ndaay henway eway etsay itay otay 0ay.5ay, eway'eray ackbay otay hetay entercay ofay hetay creensay."
+    e "Ndaay henway eway etsay itay otay 0.5, eway'eray ackbay otay hetay entercay ofay hetay creensay."
 
 # game/tutorial_atl.rpy:377
 translate piglatin tutorial_positions_64428a07:
@@ -207,13 +207,13 @@ translate piglatin tutorial_positions_cfb77d42:
 translate piglatin tutorial_positions_cfc1723e:
 
     # e "The xcenter and ycenter properties position the center of the image. Here, with xcenter set to .75, the center of the image is three-quarters of the way to the right side of the screen."
-    e "Hetay centerxay anday centeryay ropertiespay ositionpay hetay entercay ofay hetay imageay. Erehay, ithway centerxay etsay otay .57ay, hetay entercay ofay hetay imageay isay hreetay-uartersqay ofay hetay ayway otay hetay ightray idesay ofay hetay creensay."
+    e "Hetay centerxay anday centeryay ropertiespay ositionpay hetay entercay ofay hetay imageay. Erehay, ithway centerxay etsay otay .75, hetay entercay ofay hetay imageay isay hreetay-uartersqay ofay hetay ayway otay hetay ightray idesay ofay hetay creensay."
 
 # game/tutorial_atl.rpy:389
 translate piglatin tutorial_positions_7728dbf9:
 
     # e "The difference between xalign and xcenter is more obvious when xcenter is 1.0, and the image is halfway off the right side of the screen."
-    e "Hetay ifferenceday etweenbay alignxay anday centerxay isay oremay obviousay henway centerxay isay 1ay.0ay, anday hetay imageay isay alfwayhay offay hetay ightray idesay ofay hetay creensay."
+    e "Hetay ifferenceday etweenbay alignxay anday centerxay isay oremay obviousay henway centerxay isay 1.0, anday hetay imageay isay alfwayhay offay hetay ightray idesay ofay hetay creensay."
 
 # game/tutorial_atl.rpy:397
 translate piglatin tutorial_positions_1b1cedc6:
@@ -369,7 +369,7 @@ translate piglatin tutorial_atl_60f2a5e8:
 translate piglatin tutorial_atl_146cf4c4:
 
     # e "If we were to write repeat 2 instead, the animation would loop twice, then stop."
-    e "Fiay eway ereway otay riteway epeatray 2ay insteaday, hetay animationay ouldway ooplay wicetay, hentay opstay."
+    e "Fiay eway ereway otay riteway epeatray 2 insteaday, hetay animationay ouldway ooplay wicetay, hentay opstay."
 
 # game/tutorial_atl.rpy:551
 translate piglatin tutorial_atl_d90b1838:
@@ -627,7 +627,7 @@ translate piglatin transform_properties_e7e22d28:
 translate piglatin transform_properties_f34abd82:
 
     # e "The xpan and ypan properties can be used to pan over a displayable, given an angle in degrees, with 0 being the center."
-    e "Hetay panxay anday panyay ropertiespay ancay ebay useday otay anpay overay aay isplayableday, ivengay anay angleay inay egreesday, ithway 0ay eingbay hetay entercay."
+    e "Hetay panxay anday panyay ropertiespay ancay ebay useday otay anpay overay aay isplayableday, ivengay anay angleay inay egreesday, ithway 0 eingbay hetay entercay."
 
 # game/tutorial_atl.rpy:927
 translate piglatin transform_properties_bfa3b139:
@@ -639,13 +639,13 @@ translate piglatin strings:
 
     # game/tutorial_atl.rpy:270
     old "xpos 1.0 ypos .5"
-    new "posxay 1ay.0ay posyay .5ay"
+    new "posxay 1.0 posyay .5"
 
     # game/tutorial_atl.rpy:270
     old "xpos .75 ypos .25"
-    new "posxay .57ay posyay .52ay"
+    new "posxay .75 posyay .25"
 
     # game/tutorial_atl.rpy:270
     old "xpos .25 ypos .33"
-    new "posxay .52ay posyay .33ay"
+    new "posxay .25 posyay .33"
 

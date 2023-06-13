@@ -351,7 +351,7 @@ translate piglatin bar_displayables_946746c2:
 translate piglatin bar_displayables_af3a51b8:
 
     # e "The value property gives a BarValue, which is an object that determines the bar's value and range. Here, a StaticValue sets the range to 100 and the value to 66, making a bar that's two thirds full."
-    e "Hetay aluevay ropertypay ivesgay aay Arvaluebay, hichway isay anay objectay hattay eterminesday hetay arbay'say aluevay anday angeray. Erehay, aay Taticvaluesay etssay hetay angeray otay 001ay anday hetay aluevay otay 66ay, akingmay aay arbay hattay'say wotay hirdstay ullfay."
+    e "Hetay aluevay ropertypay ivesgay aay Arvaluebay, hichway isay anay objectay hattay eterminesday hetay arbay'say aluevay anday angeray. Erehay, aay Taticvaluesay etssay hetay angeray otay 100 anday hetay aluevay otay 66, akingmay aay arbay hattay'say wotay hirdstay ullfay."
 
 # game/tutorial_screen_displayables.rpy:581
 translate piglatin bar_displayables_62f8b0ab:
