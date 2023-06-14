@@ -1654,6 +1654,12 @@ def Character(name=NotSet, kind=None, **properties):
     `screen`
         The name of the screen that is used to display the dialogue.
 
+    `retain`
+        If not true, an unused tag is generated for each line of dialogue,
+        and the screens are shown non-transiently. Call :func:`renpy.clear_retain`
+        to remove all retaint screens. This is almost always used with
+        :doc:`bubble`.
+
     Keyword arguments beginning with ``show_`` have the prefix
     stripped off, and are passed to the screen as arguments. For
     example, the value of ``show_myflag`` will become the value of
