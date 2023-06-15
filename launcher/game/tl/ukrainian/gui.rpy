@@ -437,6 +437,5 @@ translate ukrainian strings:
 
     # gui/game/gui.rpy:14
     old "## Enable checks for invalid or unstable properties in screens or transforms"
-    # Automatic translation.
-    new "## Увімкнути перевірку на невірні або нестабільні властивості в екранах або перетвореннях"
+    new "## Увімкнути перевірку недійсних або нестабільних властивостей у екранах або перетвореннях"
 
