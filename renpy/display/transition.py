@@ -378,8 +378,8 @@ class Dissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        width = min(top.width, bottom.width)
-        height = min(top.height, bottom.height)
+        width = max(top.width, bottom.width)
+        height = max(top.height, bottom.height)
 
         rv = renpy.display.render.Render(width, height)
 

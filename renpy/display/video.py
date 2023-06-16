@@ -452,6 +452,10 @@ class Movie(renpy.display.core.Displayable):
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop, force=True)
 
+    def ensure_channels(self):
+        self.ensure_channel(self.channel)
+        self.ensure_channel(self.mask_channel)
+
     def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, group=None, **properties):
 
         global movie_channel_serial
@@ -486,8 +490,7 @@ class Movie(renpy.display.core.Displayable):
 
         self.side_mask = side_mask
 
-        self.ensure_channel(self.channel)
-        self.ensure_channel(self.mask_channel)
+        self.ensure_channels()
 
         self.image = renpy.easy.displayable_or_none(image)
         self.start_image = renpy.easy.displayable_or_none(start_image)
@@ -507,6 +510,8 @@ class Movie(renpy.display.core.Displayable):
             reset_channels.add(self.channel)
 
     def render(self, width, height, st, at):
+
+        self.ensure_channels()
 
         if self._play and not (renpy.game.preferences.video_image_fallback is True):
             if channel_movie.get(self.channel, None) is not self:
@@ -575,6 +580,9 @@ class Movie(renpy.display.core.Displayable):
         return rv
 
     def play(self, old):
+
+        self.ensure_channels()
+
         if old is None:
             old_play = None
         else:
@@ -595,6 +603,7 @@ class Movie(renpy.display.core.Displayable):
                     renpy.audio.music.stop(channel=self.mask_channel, fadeout=0) # type: ignore
 
     def stop(self):
+        self.ensure_channels()
 
         if self._play:
             if renpy.audio.music.channel_defined(self.channel):
@@ -605,6 +614,9 @@ class Movie(renpy.display.core.Displayable):
                     renpy.audio.music.stop(channel=self.mask_channel, fadeout=0) # type: ignore
 
     def per_interact(self):
+
+        self.ensure_channels()
+
         displayable_channels[(self.channel, self.mask_channel)].append(self)
         renpy.display.render.redraw(self, 0)
 
