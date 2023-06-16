@@ -947,6 +947,10 @@ class MultiBox(Container):
 
         spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
 
+        # Suppress trailing space, as in practicality we want one fewer than
+        # the number of children.
+        spacings[-1] = 0
+
         box_wrap = self.style.box_wrap
         box_wrap_spacing = self.style.box_wrap_spacing
         xfill = self.style.xfill
@@ -962,9 +966,12 @@ class MultiBox(Container):
 
         # The children to layout.
         children = list(self.children)
+
         if self.style.box_reverse:
             children.reverse()
-            spacings.reverse()
+
+            # Leave the supressed trailing space in place.
+            spacings[:-1] = spacings[-2::-1]
 
         # a list of (child, x, y, w, h, surf) tuples that are turned into
         # calls to child.place().
