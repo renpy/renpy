@@ -4270,6 +4270,45 @@ def get_say_image_tag():
     return renpy.store._side_image_attributes[0]
 
 
+class LastSay(tuple):
+    """
+    Object containing info about the last say statement.
+    """
+
+# Returns a LastSay object.
+def last_say():
+    """
+    :doc: other
+
+    Returns a `LastSay` object containing information about the last say
+    statement. This object has the following fields on it:
+
+    ``"who"``
+        A `Character` object of the speaker.
+
+    ``"what"``
+        A string with the dialogue spoken.
+
+    ``"args"``
+        A tuple of arguments passed to the last say statement.
+
+    ``"kwargs"``
+        A dictionary of keyword arguments passed to the last say statement.
+    """
+
+    who = renpy.store._last_say_who
+    what = renpy.store._last_say_what
+    args = renpy.store._last_say_args
+    kwargs = renpy.store._last_say_kwargs
+
+    ls = LastSay((who, what, args, kwargs))
+    ls.who = eval_who(who)
+    ls.what = what
+    ls.args = args
+    ls.kwargs = kwargs
+
+    return ls
+
 def is_skipping():
     """
     :doc: other
