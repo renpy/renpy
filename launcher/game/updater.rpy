@@ -52,7 +52,7 @@ init python:
         if state is not None:
             base_name = state.get("sdk", {}).get('base_name', '')
 
-            if "-nightly-" in base_name:
+            if "+nightly" in base_name:
                 dlc_url = "http://nightly.renpy.org/{}/updates.json".format(base_name[6:])
 
         return renpy.invoke_in_new_context(updater.update, dlc_url, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart)
