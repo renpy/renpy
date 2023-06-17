@@ -4272,10 +4272,11 @@ def get_say_image_tag():
 
 class LastSay():
     """
+    :undocumented:
     Object containing info about the last say statement.
+    Returned by the last_say function.
     """
 
-# Returns a LastSay object.
 def last_say():
     """
     :doc: other
