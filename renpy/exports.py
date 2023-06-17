@@ -4280,19 +4280,21 @@ def last_say():
     """
     :doc: other
 
-    Returns a `LastSay` object containing information about the last say
-    statement. This object has the following fields on it:
+    Returns a `LastSay` object containing information about 
+    the last :ref:`say statement <say-statement>`.
 
-    ``"who"``
+    This object has the following fields on it:
+
+    .. attribute:: who
         A `Character` object of the speaker.
 
-    ``"what"``
+    .. attribute:: what
         A string with the dialogue spoken.
 
-    ``"args"``
+    .. attribute:: args
         A tuple of arguments passed to the last say statement.
 
-    ``"kwargs"``
+    .. attribute:: kwargs
         A dictionary of keyword arguments passed to the last say statement.
     """
 
