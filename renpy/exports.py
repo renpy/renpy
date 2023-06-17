@@ -4489,3 +4489,15 @@ def request_permission(permission):
         return False
 
     return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8")) # type: ignore
+
+
+def clear_retain(layer="screens", prefix="_retain"):
+    """
+    :doc: other
+
+    Clears all retained screens
+    """
+
+    for i in get_showing_tags(layer):
+        if i.startswith(prefix):
+            hide_screen(i)

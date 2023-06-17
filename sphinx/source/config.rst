@@ -1793,7 +1793,7 @@ Rarely or Internally Used
 
     The complete path to the directory in which the game is
     saved. This should only be set in a ``python early`` block. See also
-    config.save_directory, which generates the default value for this
+    :var:`config.save_directory`, which generates the default value for this
     if it is not set during a ``python early`` block.
 
 .. var:: config.scene = renpy.scene

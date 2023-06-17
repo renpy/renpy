@@ -35,11 +35,11 @@ translate ukrainian strings:
 
     # game/android.rpy:34
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Щоб створити пакети Android, завантажте RAPT, розархівуйте його та помістіть у каталог Ren'Py. Потім перезапустіть лаунчер Ren'Py."
+    new "Щоб створити пакети Android, завантажте RAPT, розархівуйте його та помістіть у теку Ren'Py. Потім перезапустіть лаунчер Ren'Py."
 
     # game/android.rpy:35
     old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Для створення пакетів Android у Windows потрібен 64-розрядний/x64 Java 8 Development Kit. JDK відрізняється від JRE, тому можливо, що у вас є Java без JDK.\n\nБудь ласка, {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}завантажте та встановіть JDK{/a}, а потім перезапустіть лаунчер Ren'Py."
+    new "Для створення пакетів Android у Windows потрібен 64-розрядний/x64 Java [JDK_REQUIREMENT] Development Kit. JDK відрізняється від JRE, тому можливо, що у вас є Java без JDK.\n\nБудь ласка, {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}завантажте та встановіть JDK{/a}, а потім перезапустіть лаунчер Ren'Py."
 
     # game/android.rpy:36
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -135,12 +135,11 @@ translate ukrainian strings:
 
     # game/android.rpy:266
     old "Copying Android files to distributions directory."
-    new "Копіювання файлів Android в каталог дистрибутивів."
+    new "Копіювання файлів Android в теку дистрибутивів."
 
     # game/android.rpy:335
     old "Android: [project.current.display_name!q]"
-    # Automatic translation.
-    new "Андроїд: [project.current.display_name!q]"
+    new "Android: [project.current.display_name!q]"
 
     # game/android.rpy:355
     old "Emulation:"
@@ -156,23 +155,23 @@ translate ukrainian strings:
 
     # game/android.rpy:372
     old "Television"
-    new "Телебачення"
+    new "Телевізор"
 
     # game/android.rpy:384
     old "Build:"
-    new "Створити:"
+    new "Зібрати:"
 
     # game/android.rpy:391
     old "Install SDK & Create Keys"
-    new "Встановити SDK і створити ключі"
+    new "Установити SDK і створити ключі"
 
     # game/android.rpy:395
     old "Configure"
-    new "Налаштування"
+    new "Налаштувати"
 
     # game/android.rpy:401
     old "Play Bundle"
-    new "Пакетна гра"
+    new "Пакет гри"
 
     # game/android.rpy:406
     old "Universal APK"
@@ -184,7 +183,7 @@ translate ukrainian strings:
 
     # game/android.rpy:417
     old "Build & Install"
-    new "Створити та встановити"
+    new "Створити й встановити"
 
     # game/android.rpy:421
     old "Build, Install & Launch"
@@ -260,7 +259,7 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:7
     old "{} is not a directory."
-    new "{} не є каталогом."
+    new "{} не є текою."
 
     # game/androidstrings.rpy:8
     old "{} does not contain a Ren'Py game."
@@ -276,7 +275,7 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:12
     old "Creating assets directory."
-    new "Створення каталогу ресурсів."
+    new "Створення теки ресурсів."
 
     # game/androidstrings.rpy:13
     old "Packaging internal data."
@@ -480,7 +479,7 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:64
     old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
-    new "Я відкрив каталог, що містить android.keystore і bundle.keystore. Створіть їх резервні копії та зберігайте в безпечному місці."
+    new "Відкрито теку, яка містить android.keystore і bundle.keystore. Створіть їх резервні копії та збережіть в безпечному місці."
 
     # game/androidstrings.rpy:65
     old "It looks like you're ready to start packaging games."
@@ -488,11 +487,11 @@ translate ukrainian strings:
 
     # game/choose_directory.rpy:67
     old "Select Projects Directory"
-    new "Виберіть каталог проєктів"
+    new "Виберіть теку проєктів"
 
     # game/choose_directory.rpy:79
     old "The selected projects directory is not writable."
-    new "Вибраний каталог проєктів не доступний для запису."
+    new "Вибрана тека проєктів не доступна для запису."
 
     # game/choose_theme.rpy:304
     old "Could not change the theme. Perhaps options.rpy was changed too much."
@@ -504,7 +503,7 @@ translate ukrainian strings:
 
     # game/choose_theme.rpy:426
     old "Choose Theme"
-    new "Вибрати Тему"
+    new "Вибрати тему"
 
     # game/choose_theme.rpy:439
     old "Theme"
@@ -596,7 +595,7 @@ translate ukrainian strings:
 
     # game/distribute_gui.rpy:171
     old "Directory Name:"
-    new "Назва каталогу:"
+    new "Назва теки:"
 
     # game/distribute_gui.rpy:175
     old "Executable Name:"
@@ -728,8 +727,7 @@ translate ukrainian strings:
 
     # game/editor.rpy:245
     old "None"
-    # Automatic translation.
-    new "Ні."
+    new "Немає"
 
     # game/editor.rpy:245
     old "Prevents Ren'Py from opening a text editor."
@@ -769,7 +767,6 @@ translate ukrainian strings:
 
     # game/front_page.rpy:114
     old "[p.name!q] (template)"
-    # Automatic translation.
     new "[p.name!q] (шаблон)"
 
     # game/front_page.rpy:116
@@ -790,7 +787,7 @@ translate ukrainian strings:
 
     # game/front_page.rpy:157
     old "Open Directory"
-    new "Відкрити каталог"
+    new "Відкрити теку"
 
     # game/front_page.rpy:162
     old "game"
@@ -990,7 +987,7 @@ translate ukrainian strings:
 
     # game/install.rpy:185
     old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
-    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} додає підтримку відображення моделей Live2D. Помістіть CubismSdkForNative-4-{i}version{/i}.zip у каталог Ren'Py SDK і натисніть «Встановити». Розповсюдження гри за допомогою Live2D вимагає від вас прийняти ліцензію від Live2D, Inc."
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} додає підтримку відображення моделей Live2D. Помістіть CubismSdkForNative-4-{i}version{/i}.zip у теку Ren'Py SDK і натисніть «Встановити». Розповсюдження гри за допомогою Live2D вимагає від вас прийняти ліцензію від Live2D, Inc."
 
     # game/install.rpy:189
     old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
@@ -998,7 +995,7 @@ translate ukrainian strings:
 
     # game/install.rpy:194
     old "Open Ren'Py SDK Directory"
-    new "Відкрийте каталог Ren'Py SDK"
+    new "Відкрийте теку Ren'Py SDK"
 
     # game/installer.rpy:10
     old "Downloading [extension.download_file]."
@@ -1042,7 +1039,7 @@ translate ukrainian strings:
 
     # game/interface.rpy:269
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
-    new "Через обмеження формату пакетів імена файлів і каталогів, відмінні від ASCII, заборонені."
+    new "Через обмеження формату пакетів імена файлів і тек, відмінні від ASCII, заборонені."
 
     # game/interface.rpy:365
     old "ERROR"
@@ -1066,15 +1063,15 @@ translate ukrainian strings:
 
     # game/interface.rpy:437
     old "File and directory names may not contain / or \\."
-    new "Імена файлів і каталогів не можуть містити / або \\."
+    new "Назви файлів і тек не можуть містити / або \\."
 
     # game/interface.rpy:443
     old "File and directory names must consist of ASCII characters."
-    new "Імена файлів і каталогів повинні складатися з символів ASCII."
+    new "Назви файлів і тек повинні бути зі символів ASCII."
 
     # game/interface.rpy:511
     old "PROCESSING"
-    new "ОБРОБКА"
+    new "ОБРОБЛЕННЯ"
 
     # game/interface.rpy:528
     old "QUESTION"
@@ -1086,11 +1083,11 @@ translate ukrainian strings:
 
     # game/ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Щоб створити пакети iOS, завантажте renios, розпакуйте його та помістіть у каталог Ren'Py. Потім перезапустіть лаунчер Ren'Py."
+    new "Щоб створити пакети iOS, завантажте renios, розпакуйте його та помістіть у теку Ren'Py. Потім перезапустіть лаунчер Ren'Py."
 
     # game/ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
-    new "Каталог, у якому будуть розміщені проєкти Xcode, не вибрано. Виберіть «Вибрати каталог», щоб вибрати його."
+    new "Тека, у якій будуть розміщені проєкти Xcode, не вибрано. Виберіть «Вибрати теку», аби вибрати її."
 
     # game/ios.rpy:30
     old "There is no Xcode project corresponding to the current Ren'Py project. Choose 'Create Xcode Project' to create one."
@@ -1110,7 +1107,7 @@ translate ukrainian strings:
 
     # game/ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
-    new "Вибирає каталог, де будуть розміщені проєкти Xcode."
+    new "Вибирає теку, де будуть розміщені проєкти Xcode."
 
     # game/ios.rpy:37
     old "Creates an Xcode project corresponding to the current Ren'Py project."
@@ -1126,7 +1123,7 @@ translate ukrainian strings:
 
     # game/ios.rpy:41
     old "Opens the directory containing Xcode projects."
-    new "Відкриває каталог, що містить проєкти Xcode."
+    new "Відкриває теку, яка містить проєкти Xcode."
 
     # game/ios.rpy:139
     old "The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"
@@ -1146,7 +1143,7 @@ translate ukrainian strings:
 
     # game/ios.rpy:322
     old "Select Xcode Projects Directory"
-    new "Виберіть каталог проєктів Xcode"
+    new "Виберіть теку проєктів Xcode"
 
     # game/ios.rpy:326
     old "Create Xcode Project"
@@ -1162,7 +1159,7 @@ translate ukrainian strings:
 
     # game/ios.rpy:358
     old "Open Xcode Projects Directory"
-    new "Відкрити каталог проєктів Xcode"
+    new "Відкрити теку проєктів Xcode"
 
     # game/ios.rpy:379
     old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
@@ -1174,15 +1171,15 @@ translate ukrainian strings:
 
     # game/ios.rpy:404
     old "XCODE PROJECTS DIRECTORY"
-    new "КАТАЛОГ ПРОЄКТІВ XCODE"
+    new "ТЕКА ПРОЄКТІВ XCODE"
 
     # game/ios.rpy:404
     old "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "Виберіть каталог проєктів Xcode за допомогою засобу вибору каталогу.\n{b}Можливо, засіб вибору каталогу відкрився за цим вікном.{/b}"
+    new "Виберіть теку проєктів Xcode за допомогою засобу вибору теки.\n{b}Можливо, засіб вибору теки відкрився за цим вікном.{/b}"
 
     # game/ios.rpy:409
     old "Ren'Py has set the Xcode Projects Directory to:"
-    new "Ren'Py встановив каталог проєктів Xcode на:"
+    new "Ren'Py встановив теку проєктів Xcode в:"
 
     # game/itch.rpy:45
     old "Downloading the itch.io butler."
@@ -1266,7 +1263,6 @@ translate ukrainian strings:
 
     # game/navigation.rpy:204
     old "TODOs"
-    # Automatic translation.
     new "Список справ"
 
     # game/navigation.rpy:243
@@ -1303,7 +1299,7 @@ translate ukrainian strings:
 
     # game/new_project.rpy:63
     old "The projects directory could not be set. Giving up."
-    new "Не вдалося встановити каталог проєктів. Залиште."
+    new "Не вдалося встановити теку проєктів. Залиште."
 
     # game/new_project.rpy:70
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
@@ -1363,7 +1359,7 @@ translate ukrainian strings:
 
     # game/preferences.rpy:131
     old "Projects Directory:"
-    new "Каталог проєктів:"
+    new "Тека проєктів:"
 
     # game/preferences.rpy:138
     old "[persistent.projects_directory!q]"
@@ -1371,7 +1367,7 @@ translate ukrainian strings:
 
     # game/preferences.rpy:140
     old "Projects directory: [text]"
-    new "Каталог проєктів: [text]"
+    new "Тека проєктів: [text]"
 
     # game/preferences.rpy:142
     old "Not Set"
@@ -1411,7 +1407,7 @@ translate ukrainian strings:
 
     # game/preferences.rpy:219
     old "Large fonts"
-    new "Більші шрифти"
+    new "Великі шрифти"
 
     # game/preferences.rpy:222
     old "Console output"
@@ -1511,19 +1507,19 @@ translate ukrainian strings:
 
     # game/project.rpy:794
     old "PROJECTS DIRECTORY"
-    new "КАТАЛОГ ПРОЄКТІВ"
+    new "ТЕКА ПРОЄКТІВ"
 
     # game/project.rpy:794
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "Виберіть каталог проєктів за допомогою засобу вибору каталогу.\n{b}Можливо, засіб вибору каталогу відкрився за цим вікном.{/b}"
+    new "Виберіть теку проєктів за допомогою засобу вибору теки.\n{b}Можливо, засіб вибору теки відкрився за цим вікном.{/b}"
 
     # game/project.rpy:794
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
-    new "Цей лаунчер скануватиме проєкти в цьому каталозі, створюватиме нові проєкти в цьому каталозі та розміщуватиме вбудовані проєкти в цей каталог."
+    new "Цей лаунчер скануватиме проєкти в цьому каталозі, створюватиме нові проєкти в цьому каталозі та розміщуватиме вбудовані проєкти в цю теку."
 
     # game/project.rpy:799
     old "Ren'Py has set the projects directory to:"
-    new "Ren'Py встановив каталог проєктів в:"
+    new "Ren'Py встановив теку проєктів в:"
 
     # game/translations.rpy:91
     old "Translations: [project.current.display_name!q]"
@@ -1795,7 +1791,7 @@ translate ukrainian strings:
 
     # game/web.rpy:310
     old "Open build directory"
-    new "Відкрити каталог створення"
+    new "Відкрити теку створення"
 
     # game/web.rpy:332
     old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
@@ -1821,47 +1817,38 @@ translate ukrainian strings:
 
     # game/android.rpy:39
     old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
-    # Automatic translation.
-    new "RAPT встановлено, але ключ не налаштовано. Згенеруйте нові ключі або скопіюйте android.keystore та bundle.keystore до базового каталогу."
+    new "RAPT встановлено, але ключ не налаштовано. Згенеруйте нові ключі або скопіюйте android.keystore та bundle.keystore до базової теки."
 
     # game/android.rpy:46
     old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    # Automatic translation.
-    new "Спроби емулювати телевізійну Android-приставку на базі телевізора.\n\nКлавішам зі стрілками відповідає ввід контролера, клавіші Enter - кнопка вибору, Escape - кнопка меню, а кнопка PageUp - кнопка \"Назад\"."
+    new "Спроби емуляції телевізійної консолі Android.\n\nВведення контролера зіставляється з клавішами зі стрілками, Enter зіставляється з кнопкою вибору, Escape зіставляється з кнопкою меню, а PageUp зіставляється з кнопкою «Назад»."
 
     # game/android.rpy:48
     old "Downloads and installs the Android SDK and supporting packages."
-    # Automatic translation.
     new "Завантажує та встановлює Android SDK та пакети підтримки."
 
     # game/android.rpy:49
     old "Generates the keys required to sign the package."
-    # Automatic translation.
-    new "Генерує ключі, необхідні для підписання пакунка."
+    new "Генерує ключі, необхідні для підпису пакета."
 
     # game/android.rpy:383
     old "Install SDK"
-    # Automatic translation.
-    new "Інсталяція SDK"
+    new "Установити SDK"
 
     # game/android.rpy:387
     old "Generate Keys"
-    # Automatic translation.
-    new "Згенеруйте ключі"
+    new "Згенерувати ключі"
 
     # game/androidstrings.rpy:32
     old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
-    # Automatic translation.
-    new "Скільки оперативної пам'яті (в ГБ) потрібно виділити Gradle?\nЦе має бути додатне ціле число."
+    new "Скільки оперативної пам’яті (у Гб) потрібно виділити Gradle?\nЦе має бути ціле додатне число."
 
     # game/androidstrings.rpy:33
     old "The RAM size must contain only numbers and be positive."
-    # Automatic translation.
-    new "Розмір оперативної пам'яті повинен містити тільки числа і бути додатнім."
+    new "Розмір оперативної пам’яті повинен містити тільки числа і бути додатнім."
 
     # game/androidstrings.rpy:38
     old "Which app store would you like to support in-app purchasing through?"
-    # Automatic translation.
     new "Через який магазин додатків ви хотіли б підтримувати внутрішні покупки?"
 
     # game/androidstrings.rpy:39
@@ -1874,28 +1861,23 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:41
     old "Both, in one app."
-    # Automatic translation.
-    new "І те, і інше в одному додатку."
+    new "Обох, в одному додатку."
 
     # game/androidstrings.rpy:42
     old "Neither."
-    # Automatic translation.
-    new "Ні те, ні інше."
+    new "Жодного."
 
     # game/androidstrings.rpy:63
     old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
-    # Automatic translation.
-    new "Я знайшов файл android.keystore у каталозі rapt. Ви хочете використовувати цей файл?"
+    new "Знайдено файл android.keystore у теці rapt. Бажаєте використовувати цей файл?"
 
     # game/androidstrings.rpy:66
     old "\n\nSaying 'No' will prevent key creation."
-    # Automatic translation.
-    new "\n\nЯкщо ви скажете \"Ні\", то не зможете створити ключ."
+    new "\n\nЯкщо ви оберете «Ні», то не зможете створити ключ."
 
     # game/androidstrings.rpy:69
     old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
-    # Automatic translation.
-    new "Я знайшов файл bundle.keystore у каталозі rapt. Ви хочете використовувати цей файл?"
+    new "Знайдено файл bundle.keystore у теці rapt. Бажаєте використовувати цей файл?"
 
     # game/distribute_gui.rpy:231
     old "(DLC)"
@@ -1903,12 +1885,10 @@ translate ukrainian strings:
 
     # game/project.rpy:46
     old "Lint checks your game for potential mistakes, and gives you statistics."
-    # Automatic translation.
-    new "Lint перевіряє вашу гру на наявність потенційних помилок і надає статистику."
+    new "Lint перевіряє вашу гру на наявність потенційних помилок і надає вам статистику."
 
     # game/web.rpy:485
-    old "Creating package..."
-    # Automatic translation.
+    old "Creating package..."  
     new "Створення пакету..."
 
 
@@ -1916,6 +1896,5 @@ translate ukrainian strings:
 
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
-    # Automatic translation.
-    new "Нічна збірка виправлень до релізної версії Ren'Py."
+    new "Рання збірка виправлень до релізної версії Ren'Py."
 

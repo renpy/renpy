@@ -289,13 +289,9 @@ movie_channel_serial = 0
 class Movie(renpy.display.core.Displayable):
     """
     :doc: movie
+    :args: (*, size=None, channel="movie", play=None, side_mask=False, mask=None, mask_channel=None, start_image=None, image=None, play_callback=None, loop=True, group=None, **properties)
 
     This is a displayable that shows the current movie.
-
-    `fps`
-        The framerate that the movie should be shown at. (This is currently
-        ignored, but the parameter is kept for backwards compatibility.
-        The framerate is auto-detected.)
 
     `size`
         This should be specified as either a tuple giving the width and
@@ -386,6 +382,11 @@ class Movie(renpy.display.core.Displayable):
         the previous frame, the last frame from that movie will be used for
         this movie. This can prevent flashes of transparency when switching
         between two movies.
+
+    `keep_last_frame`
+        If true, and the movie has ended, the last frame will be displayed,
+        rather than the movie being hidden. This only works if `loop` is
+        false. (This behavior will also occur if `group` is set.)
     """
 
     fullscreen = False
@@ -452,7 +453,13 @@ class Movie(renpy.display.core.Displayable):
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop, force=True)
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, group=None, **properties):
+    def ensure_channels(self):
+        self.ensure_channel(self.channel)
+        self.ensure_channel(self.mask_channel)
+
+    keep_last_frame_serial = 0
+
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, group=None, keep_last_frame=False, **properties):
 
         global movie_channel_serial
 
@@ -486,13 +493,16 @@ class Movie(renpy.display.core.Displayable):
 
         self.side_mask = side_mask
 
-        self.ensure_channel(self.channel)
-        self.ensure_channel(self.mask_channel)
+        self.ensure_channels()
 
         self.image = renpy.easy.displayable_or_none(image)
         self.start_image = renpy.easy.displayable_or_none(start_image)
 
         self.play_callback = play_callback
+
+        if group is None and keep_last_frame:
+            group = "_keep_last_frame_" + str(Movie.keep_last_frame_serial)
+            Movie.keep_last_frame_serial += 1
 
         self.group = group
 
@@ -507,6 +517,8 @@ class Movie(renpy.display.core.Displayable):
             reset_channels.add(self.channel)
 
     def render(self, width, height, st, at):
+
+        self.ensure_channels()
 
         if self._play and not (renpy.game.preferences.video_image_fallback is True):
             if channel_movie.get(self.channel, None) is not self:
@@ -575,6 +587,9 @@ class Movie(renpy.display.core.Displayable):
         return rv
 
     def play(self, old):
+
+        self.ensure_channels()
+
         if old is None:
             old_play = None
         else:
@@ -595,6 +610,7 @@ class Movie(renpy.display.core.Displayable):
                     renpy.audio.music.stop(channel=self.mask_channel, fadeout=0) # type: ignore
 
     def stop(self):
+        self.ensure_channels()
 
         if self._play:
             if renpy.audio.music.channel_defined(self.channel):
@@ -605,6 +621,9 @@ class Movie(renpy.display.core.Displayable):
                     renpy.audio.music.stop(channel=self.mask_channel, fadeout=0) # type: ignore
 
     def per_interact(self):
+
+        self.ensure_channels()
+
         displayable_channels[(self.channel, self.mask_channel)].append(self)
         renpy.display.render.redraw(self, 0)
 

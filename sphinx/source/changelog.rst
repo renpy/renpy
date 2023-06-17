@@ -21,16 +21,29 @@ where ``xxx`` is the name of the future feature. For example::
 
     rpy python annotations
 
+Retained Bubbles
+----------------
+
+The speech bubble feature that was added in Ren'Py 8.1 now has a new way to
+retain speech bubbles, so that the bubbles pop up one at a time, and
+remain displayed on the screen until explicitly cleared, similar to
+dialouge in motion comics. See  the :ref:`speech bubble documentation <retained-bubbles>`_
+for more information.
+
+Features
+--------
+
+:class:`Movie` now takes a `keep_last_frame` parameter. When true, this
+causes a non-looping movie to display its last frame after the movie
+ends.
+
 Other Changes
 -------------
 
-When a file causes an autorealod, Ren'Py will check the directory containing
+When a file causes an autoreload, Ren'Py will check the directory containing
 the file and all parent directories for git lock files. The autoreload will
 be deferred until the lock files are removed when the git operation
 completes.
-
-The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
-when it used to only disable :var:`config.mouse`.
 
 
 .. _renpy-8.1.1:
@@ -54,6 +67,9 @@ this problem is documented in :ref:`incompatible changes <android-key-migration>
 
 Fixes
 -----
+
+The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
+when it used to only disable :var:`config.mouse`.
 
 Web audio now treats the end time as a time, not a duration.
 
@@ -79,8 +95,11 @@ now diagnoses this error, and :var:`config.ex_rollback_classes` lets you
 suppress the error. The error is only shown to developers, and is otherwise
 silently ignored.
 
-Other
------
+Other Changes
+-------------
+
+The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
+when it used to only disable :var:`config.mouse`.
 
 ATL Transitions now use the animation timebase. This is generally the same
 behavior as before, until the interaction restarts, in which case the
@@ -2661,8 +2680,8 @@ First, Ren'Py now uses `future <https://python-future.org/>`_ to provide
 standard library compatibility. It's now possible to import modules using
 their Python 3 names, when a renaming has occured.
 
-When a .rpy file begins with the new ``rpy python 3``, the file is compiled
-in a Python 3 compatibility mode. The two changes this causes are:
+When a .rpy file begins with the new ``rpy python 3`` statement, the file is
+compiled in a Python 3 compatibility mode. The two changes this causes are:
 
 * Ren'Py will compile the file in a mode that attempts to emulate Python 3
   semantics, including the change to division. In Python 3, ``1/2`` is equal

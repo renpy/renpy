@@ -221,6 +221,9 @@ def upgrade_savefile(fn):
     if signing_keys is None:
         return
 
+    atime = os.path.getatime(fn)
+    mtime = os.path.getmtime(fn)
+
     with zipfile.ZipFile(fn, "a") as zf:
 
         if "signatures" in zf.namelist():
@@ -228,6 +231,8 @@ def upgrade_savefile(fn):
 
         log = zf.read("log")
         zf.writestr("signatures", sign_data(log))
+
+    os.utime(fn, (atime, mtime))
 
 def upgrade_all_savefiles():
 

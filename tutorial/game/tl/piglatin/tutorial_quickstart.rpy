@@ -459,19 +459,19 @@ translate piglatin tutorial_simple_positions_61c1b124:
 translate piglatin tutorial_simple_positions_67ebea97:
 
     # e "An xalign of 0.0 is the left side."
-    e "Naay alignxay ofay 0ay.0ay isay hetay eftlay idesay."
+    e "Naay alignxay ofay 0.0 isay hetay eftlay idesay."
 
 # game/tutorial_quickstart.rpy:315
 translate piglatin tutorial_simple_positions_bd4f56d8:
 
     # e "0.5 is the center."
-    e "0ay.5ay isay hetay entercay."
+    e "0.5 isay hetay entercay."
 
 # game/tutorial_quickstart.rpy:324
 translate piglatin tutorial_simple_positions_fb2c48f2:
 
     # e "And 1.0 is the right. The decimal place is important and has to be there. Just 1 by itself won't work the same."
-    e "Ndaay 1ay.0ay isay hetay ightray. Hetay ecimalday aceplay isay importantay anday ashay otay ebay heretay. Ustjay 1ay ybay itselfay onway'tay orkway hetay amesay."
+    e "Ndaay 1.0 isay hetay ightray. Hetay ecimalday aceplay isay importantay anday ashay otay ebay heretay. Ustjay 1 ybay itselfay onway'tay orkway hetay amesay."
 
 # game/tutorial_quickstart.rpy:333
 translate piglatin tutorial_simple_positions_8eebc9a7:
@@ -483,7 +483,7 @@ translate piglatin tutorial_simple_positions_8eebc9a7:
 translate piglatin tutorial_simple_positions_4cd917f6:
 
     # e "The yalign property is the same way, with 0.0 being the top of the screen and 1.0 being the bottom. Since most sprites stick to the bottom, it's almost always 1.0."
-    e "Hetay alignyay ropertypay isay hetay amesay ayway, ithway 0ay.0ay eingbay hetay optay ofay hetay creensay anday 1ay.0ay eingbay hetay ottombay. Incesay ostmay pritessay ickstay otay hetay ottombay, itay'say almostay alwaysay 1ay.0ay."
+    e "Hetay alignyay ropertypay isay hetay amesay ayway, ithway 0.0 eingbay hetay optay ofay hetay creensay anday 1.0 eingbay hetay ottombay. Incesay ostmay pritessay ickstay otay hetay ottombay, itay'say almostay alwaysay 1.0."
 
 # game/tutorial_quickstart.rpy:341
 translate piglatin tutorial_simple_positions_fbd1a3eb:
