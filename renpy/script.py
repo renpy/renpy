@@ -466,7 +466,8 @@ class Script(object):
                         b = "division"
                     if b in __future__.all_feature_names:
                         renpy.python.futured_files[i.filename] |= getattr(__future__, b).compiler_flag
-                    # invalid names are silently ignored
+                    else:
+                        raise Exception("Unknown __future__ : {!r}.".format(b))
 
         # Take the translations.
         self.translator.take_translates(all_stmts)
