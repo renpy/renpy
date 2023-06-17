@@ -4270,7 +4270,7 @@ def get_say_image_tag():
     return renpy.store._side_image_attributes[0]
 
 
-class LastSay(tuple):
+class LastSay():
     """
     Object containing info about the last say statement.
     """
@@ -4301,7 +4301,7 @@ def last_say():
     args = renpy.store._last_say_args
     kwargs = renpy.store._last_say_kwargs
 
-    ls = LastSay((who, what, args, kwargs))
+    ls = LastSay()
     ls.who = eval_who(who)
     ls.what = what
     ls.args = args
