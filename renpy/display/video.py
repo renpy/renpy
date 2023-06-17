@@ -382,6 +382,11 @@ class Movie(renpy.display.core.Displayable):
         the previous frame, the last frame from that movie will be used for
         this movie. This can prevent flashes of transparency when switching
         between two movies.
+
+    `keep_last_frame`
+        If true, and the movie has ended, the last frame will be displayed,
+        rather than the movie being hidden. This only works if `loop` is
+        false. (This behavior will also occur if `group` is set.)
     """
 
     fullscreen = False
@@ -452,7 +457,9 @@ class Movie(renpy.display.core.Displayable):
         self.ensure_channel(self.channel)
         self.ensure_channel(self.mask_channel)
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, group=None, **properties):
+    keep_last_frame_serial = 0
+
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, group=None, keep_last_frame=False, **properties):
 
         global movie_channel_serial
 
@@ -492,6 +499,10 @@ class Movie(renpy.display.core.Displayable):
         self.start_image = renpy.easy.displayable_or_none(start_image)
 
         self.play_callback = play_callback
+
+        if group is None and keep_last_frame:
+            group = "_keep_last_frame_" + str(Movie.keep_last_frame_serial)
+            Movie.keep_last_frame_serial += 1
 
         self.group = group
 

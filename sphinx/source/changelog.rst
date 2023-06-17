@@ -19,6 +19,13 @@ remain displayed on the screen until explicitly cleared, similar to
 dialouge in motion comics. See  the :ref:`speech bubble documentation <retained-bubbles>`_
 for more information.
 
+Features
+--------
+
+:class:`Movie` now takes a `keep_last_frame` parameter. When true, this
+causes a non-looping movie to display its last frame after the movie
+ends.
+
 
 Other Changes
 -------------
