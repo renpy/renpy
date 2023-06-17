@@ -128,7 +128,11 @@ init -1500 python in _console:
     import sys
     import traceback
     import store
-    import pydoc
+    try:
+        import pydoc
+    except ImportError:
+        # Web2 does not have pydoc, help() will fail but game will load at least
+        pass
 
     from reprlib import Repr
     class PrettyRepr(Repr):
