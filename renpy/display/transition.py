@@ -320,16 +320,13 @@ class Pixellate(Transition):
 class Dissolve(Transition):
     """
     :doc: transition function
-    :args: (time, *, alpha=False, time_warp=None, mipmap=None)
+    :args: (time, *, time_warp=None, mipmap=None)
     :name: Dissolve
 
     Returns a transition that dissolves from the old scene to the new scene.
 
     `time`
         The time the dissolve will take.
-
-    `alpha`
-        Ignored.
 
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a
