@@ -127,7 +127,7 @@ init -1400 python:
         """
         :doc: transition_family
 
-        This defines a family of move transitions, similar to the move and ease
+        This defines a family of :class:`move transitions <MoveTransition>`, similar to the move and ease
         transitions. For a given `prefix`, this defines the transitions:
 
         * *prefix*- A transition that takes `delay` seconds to move images that
@@ -147,6 +147,7 @@ init -1400 python:
             Time warp functions that are given a time from 0.0 to 1.0 representing
             the fraction of the move that is complete, and return a value in the same
             range giving the fraction of a linear move that is complete.
+            See :ref:`warpers <warpers>` for more information.
 
             This can be used to define functions that ease the images around,
             rather than moving them at a constant speed.
@@ -155,7 +156,9 @@ init -1400 python:
             newly shown images, and newly hidden images, respectively.
 
         `old`
-            If true, the transitions to move the old displayables, rather than the new ones.
+            If true, when a tag gets its image changed during the transition,
+            the old image will be used in preference to the new one. Otherwise,
+            the new images will be used.
 
         `layers`
             The layers the transition will apply to.
@@ -166,7 +169,6 @@ init -1400 python:
             # with "move".
             init python:
                 define.move_transitions("move", 0.5)
-
         """
 
         moves = {

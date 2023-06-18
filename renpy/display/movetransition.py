@@ -461,21 +461,23 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
     `enter`
         If not None, images entering the scene will also be moved. The value
         of `enter` should be a transform that is applied to the image to
-        get its starting position.
+        get it in its starting position.
 
     `leave`
-        If not None, images leaving the scene will also be move. The value
+        If not None, images leaving the scene will also be moved. The value
         of `leave` should be a transform that is applied to the image to
-        get its ending position.
+        get it in its ending position.
 
     `old`
-        If true, the old image will be used in preference to the new one.
+        If true, when a tag gets its image changed during the transition,
+        the old image will be used in preference to the new one. Otherwise,
+        the new images will be used.
 
     `layers`
         A list of layers that moves are applied to.
 
     `time_warp`
-        A time warp function that's applied to the interpolation. This
+        A :ref:`time warp function <warpers>` that's applied to the interpolation. This
         takes a number between 0.0 and 1.0, and should return a number in
         the same range.
 
@@ -484,7 +486,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
     `leave_time_warp`
         A time warp function that's applied to images leaving the scene.
-
     """
 
     use_old = old
