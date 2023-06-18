@@ -4273,7 +4273,7 @@ def get_say_image_tag():
 class LastSay():
     """
     :undocumented:
-    Object containing info about the last say statement.
+    Object containing info about the last dialogue line.
     Returned by the last_say function.
     """
 
@@ -4281,16 +4281,15 @@ def last_say():
     """
     :doc: other
 
-    Returns a `LastSay` object containing information about 
-    the last :ref:`say statement <say-statement>`.
-
+    Returns an object containing information about the last :doc:`dialogue <dialogue>` entry. 
     This object has the following fields on it:
 
     .. attribute:: who
-        A `Character` object of the speaker.
+        A :func:`Character` object of the speaker.
 
     .. attribute:: what
-        A string with the dialogue spoken.
+        A string with the dialogue spoken. This may be None if dialogue
+        hasn't been shown yet, for example at the start of the game.
 
     .. attribute:: args
         A tuple of arguments passed to the last say statement.
