@@ -455,27 +455,34 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
     Returns a transition that interpolates the position of images (with the
     same tag) in the old and new scenes.
 
+    As only layers have tags, MoveTransitions can only be applied to a single
+    layer or all layers at once, using the with statement. It will not work
+    in other contexts, like ATL, :doc:`ComposeTransition`, or other ways of
+    applying transitions.
+
     `delay`
         The time it takes for the interpolation to finish.
 
     `enter`
         If not None, images entering the scene will also be moved. The value
         of `enter` should be a transform that is applied to the image to
-        get its starting position.
+        get it in its starting position.
 
     `leave`
-        If not None, images leaving the scene will also be move. The value
+        If not None, images leaving the scene will also be moved. The value
         of `leave` should be a transform that is applied to the image to
-        get its ending position.
+        get it in its ending position.
 
     `old`
-        If true, the old image will be used in preference to the new one.
+        If true, when a tag gets its image changed during the transition,
+        the old image will be used in preference to the new one. Otherwise,
+        the new images will be used.
 
     `layers`
         A list of layers that moves are applied to.
 
     `time_warp`
-        A time warp function that's applied to the interpolation. This
+        A :ref:`time warp function <warpers>` that's applied to the interpolation. This
         takes a number between 0.0 and 1.0, and should return a number in
         the same range.
 
@@ -484,8 +491,15 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
     `leave_time_warp`
         A time warp function that's applied to images leaving the scene.
-
     """
+
+    if not (hasattr(old_widget, 'scene_list') or hasattr(old_widget, 'layers')):
+        if renpy.config.developer:
+            raise Exception("MoveTransition can only be applied to one or all layers, not %s." % type(old_widget).__name__)
+
+    if not (hasattr(new_widget, 'scene_list') or hasattr(new_widget, 'layers')):
+        if renpy.config.developer:
+            raise Exception("MoveTransition can only be applied to one or all layers, not %s." % type(new_widget).__name__)
 
     use_old = old
 

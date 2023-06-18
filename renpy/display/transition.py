@@ -102,7 +102,7 @@ class MultipleTransition(Transition):
     after the other.
 
     `args`
-        A *list* containing an odd number of items. The first, third, and
+        A **list** containing an odd number of items. The first, third, and
         other odd-numbered items must be scenes, and the even items
         must be transitions. A scene can be one of:
 
@@ -111,6 +111,8 @@ class MultipleTransition(Transition):
         * True, to use the new scene.
 
         Almost always, the first argument will be False and the last True.
+
+        Note that this is a single parameter taking a list, this is not ``*args``.
 
     The transitions in `args` are applied in order. For each transition,
     the old scene is the screen preceding it, and the new scene is the
@@ -129,7 +131,7 @@ class MultipleTransition(Transition):
     def __init__(self, args, old_widget=None, new_widget=None, **properties):
 
         if len(args) % 2 != 1 or len(args) < 3:
-            raise Exception("MultipleTransition requires an odd number of arguments, and at least 3 arguments.")
+            raise Exception("MultipleTransition requires an odd number of items, and at least 3 items.")
 
         self.transitions = [ ]
 
@@ -320,16 +322,13 @@ class Pixellate(Transition):
 class Dissolve(Transition):
     """
     :doc: transition function
-    :args: (time, *, alpha=False, time_warp=None, mipmap=None)
+    :args: (time, *, time_warp=None, mipmap=None)
     :name: Dissolve
 
     Returns a transition that dissolves from the old scene to the new scene.
 
     `time`
         The time the dissolve will take.
-
-    `alpha`
-        Ignored.
 
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a

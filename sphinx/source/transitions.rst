@@ -43,6 +43,9 @@ statement. For example::
     their new locations. An instance of the :func:`MoveTransition`
     transition class.
 
+    Move transitions, and similar transitions like ease, can only be applied
+    to one or all layers, not individual displayables.
+
 .. var:: moveinright
 
     Also: **moveinleft, moveintop, moveinbottom**
