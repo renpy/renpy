@@ -44,7 +44,10 @@ statement. For example::
     transition class.
 
     Move transitions, and similar transitions like ease, can only be applied
-    to one or all layers, not individual displayables.
+    to a single layer or all layers at once, using the
+    :ref:`with statement <with-statement>`. It will not work in other contexts
+    such as :ref:`ATL <expression-statement>`, :func:`ComposeTransition`,
+    or other ways of applying transitions.
 
 .. var:: moveinright
 
