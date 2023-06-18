@@ -456,9 +456,9 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
     same tag) in the old and new scenes.
 
     As only layers have tags, MoveTransitions can only be applied to a single
-    layer or all layers at once, using the with statement. It will not work
-    in other contexts, like ATL, :doc:`ComposeTransition`, or other ways of
-    applying transitions.
+    layer or all layers at once, using the :ref:`with statement <with-statement>`.
+    It will not work in other contexts such as :ref:`ATL <expression-statement>`,
+    :func:`ComposeTransition`, or other ways of applying transitions.
 
     `delay`
         The time it takes for the interpolation to finish.
@@ -493,13 +493,10 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
         A time warp function that's applied to images leaving the scene.
     """
 
-    if not (hasattr(old_widget, 'scene_list') or hasattr(old_widget, 'layers')):
-        if renpy.config.developer:
-            raise Exception("MoveTransition can only be applied to one or all layers, not %s." % type(old_widget).__name__)
-
-    if not (hasattr(new_widget, 'scene_list') or hasattr(new_widget, 'layers')):
-        if renpy.config.developer:
-            raise Exception("MoveTransition can only be applied to one or all layers, not %s." % type(new_widget).__name__)
+    if renpy.config.developer:
+        for widget in (old_widget, new_widget):
+            if not (hasattr(widget, 'scene_list') or hasattr(widget, 'layers')):
+                raise Exception("MoveTransition can only be applied to one or all layers, not %s." % type(widget).__name__)
 
     use_old = old
 
