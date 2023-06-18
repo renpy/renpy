@@ -2037,6 +2037,9 @@ class Adjustment(renpy.object.Object):
         if self.animation_start is None:
             self.animation_start = st
 
+        if st < self.animation_start:
+            st += self.animation_start + self.animation_delay # type: ignore
+
         done = (st - self.animation_start) / self.animation_delay
         done = self.animation_warper(done)
 
