@@ -98,18 +98,22 @@ def compile_event(key, keydown):
         mouse = True
         rv = "(ev.type == %d" % pygame.MOUSEBUTTONUP
 
+        if not keydown:
+            return "(False)"
+
     elif part[0] == "mousedown":
         mouse = True
-        rv = "(ev.type == %d" % pygame.MOUSEBUTTONDOWN
+
+        if keydown:
+            rv = "(ev.type == %d" % pygame.MOUSEBUTTONDOWN
+        else:
+            rv = "(ev.type == %d" % pygame.MOUSEBUTTONUP
 
     elif keydown:
         rv = "(ev.type == %d" % pygame.KEYDOWN
 
     else:
         rv = "(ev.type == %d" % pygame.KEYUP
-
-    if mouse and not keydown:
-        return
 
     if not mouse:
 
