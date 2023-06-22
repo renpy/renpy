@@ -22,7 +22,7 @@ for more information.
 Features
 --------
 
-The :tt:`nw` text tag can now take a value, which a number of seconds
+The :tt:`nw` text tag can now take a value, which is a number of seconds
 to wait before the line containing the tag is automatically dismissed.
 The common construct "{w=2}{nw}" can now be written as "{nw=2}".
 
