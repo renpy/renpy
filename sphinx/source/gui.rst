@@ -258,7 +258,7 @@ buttons.
 
     The color used for the text of unfocused choice buttons.
 
-.. var:: gui.choice_text_hover_color = '#0066cc'
+.. var:: gui.choice_button_text_hover_color = '#0066cc'
 
     The color used for the text of focused choice buttons.
 
