@@ -420,19 +420,43 @@ Dialogue Text Tags
 
 Text tags that only apply to dialogue are:
 
-.. text-tag:: done
+.. text-tag:: w
 
-    Text after the done tag is not displayed. Why would you want this?
-    It's to allow text to avoid jumping around when :propref:`adjust_spacing`
-    is True.
+    The wait tag is a self-closing tag that waits for the user to
+    click to continue. If it is given an argument, the argument is
+    interpreted as a number, and the wait automatically ends after
+    that many seconds have passed. ::
 
-    When the done tag is present, the line of dialogue is not added to the
-    history buffer. If the nw tag is present, it should be before the done
-    tag.::
+        "Line 1{w} Line 1{w=1.0} Line 1"
 
-        g "Looks like they're{nw}{done} playing with their trebuchet again."
+.. text-tag:: p
+
+    The paragraph pause tag is a self-closing tag that terminates the
+    current paragraph, and waits for the user to click to continue. If
+    it is given an argument, the argument is interpreted as a number,
+    and the wait automatically ends after that many seconds have
+    passed. ::
+
+        "Line 1{p}Line 2{p=1.0}Line 3"
+
+.. text-tag:: nw
+
+    The no-wait tag is a self-closing tag that causes the current line
+    of dialogue to automatically dismiss itself once the end of line
+    has been displayed. ::
+
+        g "Looks like they're{nw}"
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
+
+    If it is given an argument, the argument is interpreted as a number,
+    and the wait automatically ends after that many seconds have passed. ::
+
+        g "I'm gonna fall in a few seconds!{nw=2}"
+        show g_gone
+
+    The no-wait tag will wait for self-voicing to complete before
+    advancing.
 
 .. text-tag:: fast
 
@@ -447,38 +471,19 @@ Text tags that only apply to dialogue are:
     If present, the {fast} tag will cause voice to be sustained from
     the previous line.
 
-.. text-tag:: nw
+.. text-tag:: done
 
-    The no-wait tag is a self-closing tag that causes the current line
-    of dialogue to automatically dismiss itself once the end of line
-    has been displayed. ::
+    Text after the done tag is not displayed. Why would you want this?
+    It's to allow text to avoid jumping around when :propref:`adjust_spacing`
+    is True.
 
-        g "Looks like they're{nw}"
+    When the done tag is present, the line of dialogue is not added to the
+    history buffer. If the nw tag is present, it should be before the done
+    tag.::
+
+        g "Looks like they're{nw}{done} playing with their trebuchet again."
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
-
-    The no-wait tag will wait for self-voicing to complete before
-    advancing.
-
-.. text-tag:: p
-
-    The paragraph pause tag is a self-closing tag that terminates the
-    current paragraph, and waits for the user to click to continue. If
-    it is given an argument, the argument is interpreted as a number,
-    and the wait automatically ends after that many seconds have
-    passed. ::
-
-        "Line 1{p}Line 2{p=1.0}Line 3"
-
-.. text-tag:: w
-
-    The wait tag is a self-closing tag that waits for the user to
-    click to continue. If it is given an argument, the argument is
-    interpreted as a number, and the wait automatically ends after
-    that many seconds have passed. ::
-
-        "Line 1{w} Line 1{w=1.0} Line 1"
-
 
 .. text-tag:: clear
 
