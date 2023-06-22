@@ -118,6 +118,12 @@ rather than all files. To look for all files in game/images, use::
 
     define config.search_prefixes += [ "images/" ]
 
+The paths that are searched consider the purpose of the file, rather than the
+type or extensions. So ``renpy.loadable("dlc.jpg")`` won't look for game/images/dlc.jpg.
+If you'd like to find that file, write ``renpy.loadable("images/dlc.jpg")``. If you'd
+like to search for a file that can be in either game/ or game/images, write
+``renpy.loadable("dlc.jpg", "images")``.
+
 
 **Android** Android has been changed so that the ``android.keystore`` file and
 ``bundle.keystore`` file are expected to be found in the project's base
