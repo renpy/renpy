@@ -86,16 +86,11 @@ class DialogueTextTags(object):
                     self.text += quoted
                     continue
 
-                if tag in ("p", "w"):
-                    if not less_pauses:
-                        self.pause_start.append(len(self.text))
-                        self.pause_end.append(len(self.text))
-                        self.pause_delay.append(value)
-
-                elif tag == "nw":
+                if tag == "nw":
                     self.no_wait = True
 
-                    if value and not less_pauses:
+                if tag in ("p", "w") or (tag == "nw" and value):
+                    if not less_pauses:
                         self.pause_start.append(len(self.text))
                         self.pause_end.append(len(self.text))
                         self.pause_delay.append(value)
