@@ -458,7 +458,15 @@ Text tags that only apply to dialogue are:
         g "Looks like they're{fast} playing with their trebuchet again."
 
     The no-wait tag will wait for self-voicing to complete before
-    advancing.
+    advancing. ::
+
+        g "Looks like they're{nw=2}"
+        show trebuchet
+        extend " playing with their trebuchet again."
+
+    If the no-wait tag is given an argument, the argument is interpreted
+    as a number of seconds to wait before automatically dismissing the line.
+    This wait will occur before the check for self-voicing to finish.
 
 .. text-tag:: p
 

@@ -95,6 +95,11 @@ class DialogueTextTags(object):
                 elif tag == "nw":
                     self.no_wait = True
 
+                    if value is not None and not less_pauses:
+                        self.pause_start.append(len(self.text))
+                        self.pause_end.append(len(self.text))
+                        self.pause_delay.append(value)
+
                 elif tag == "fast":
                     self.pause_start = [ len(self.text) ]
                     self.pause_end = [ ]
