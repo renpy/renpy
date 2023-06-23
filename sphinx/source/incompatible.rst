@@ -27,6 +27,30 @@ report any issues. When reporting issues, please determine the hardware
 (device and GPU), os and driver versions, and year of manufacture.
 
 
+.. _incompatible-8.2.0:
+.. _incompatible-7.7.0:
+
+8.2.0 / 7.7.0
+--------------
+
+**Box Reverse** The :propref:`box_reverse` style property has changed its
+behavior in two ways:
+
+* Spaces is offered to displayablesin the order the displables are presented in
+  the screen, where previously the space was offered in reverse order. This can change the sizes of some
+  displayables.
+
+* A hbox that has :propref:`box_wrap` set will wrap from top to
+  bottom, rather than bottom to top. A vbox with :propref:`box_wrap`
+  set will wrap from left to right, rather than left to right.
+
+The goal of these changes is to make the behavior of box_reverse more useful
+for laying out interfaces in right-to-left languages. To revert these changes,
+add to your game::
+
+    define config.simple_box_reverse = True
+
+
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
 

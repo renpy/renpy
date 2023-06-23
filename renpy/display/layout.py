@@ -962,7 +962,7 @@ class MultiBox(Container):
 
         # The children to layout.
         children = list(self.children)
-        if self.style.box_reverse:
+        if self.style.box_reverse and renpy.config.simple_box_reverse:
             children.reverse()
             spacings.reverse()
 
@@ -1134,9 +1134,20 @@ class MultiBox(Container):
         if not yfill:
             height = max(yminimum, maxy)
 
+        if self.style.box_reverse and not renpy.config.simple_box_reverse:
+            new_placements = [ ]
+
+            for child, x, y, w, h, surf in placements:
+                if layout == "vertical":
+                    new_placements.append((child, x, height - y - h, w, h, surf))
+                else:
+                    new_placements.append((child, width - x - w, y, w, h, surf))
+
+            placements = new_placements
+
         rv = renpy.display.render.Render(width, height)
 
-        if self.style.box_reverse ^ self.style.order_reverse:
+        if self.style.order_reverse ^ (self.style.box_reverse and renpy.config.simple_box_reverse):
             placements.reverse()
 
         for child, x, y, w, h, surf in placements:
