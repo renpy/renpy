@@ -22,8 +22,8 @@ for more information.
 Features
 --------
 
-The new :var:`config.history_spacing` variable controls the spacing between
-history entries.
+The new :var:`gui.history_spacing` variable controls the spacing between
+history entries in newly created games.
 
 The :tt:`nw` text tag can now take a value, which is a number of seconds
 to wait before the line containing the tag is automatically dismissed.
@@ -40,12 +40,12 @@ Other Changes
 To make it more useful for making interfaces compatible with right-to-left languages,
 the :propref:`box_reverse` style property has changed its
 behavior in two ways:
-* Spaces is offered to displayablesin the order the displables are presented in
-  the screen, where previously the space was offered in reverse order. This can change the sizes of some
-  displayables.
+* Space is offered to displayables in the order the displayables are presented in
+  the screen, where previously the space was offered in reverse order when
+  :propref:`box_reverse` was enabled. This can change the sizes of some displayables.
 * A hbox that has :propref:`box_wrap` set will wrap from top to
   bottom, rather than bottom to top. A vbox with :propref:`box_wrap`
-  set will wrap from left to right, rather than left to right.
+  set will wrap from left to right, rather than right to left.
 
 When a file causes an autoreload, Ren'Py will check the directory containing
 the file and all parent directories for git lock files. The autoreload will
