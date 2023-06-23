@@ -842,6 +842,9 @@ def show_layer_statement(l, loc):
 
     layer = l.require(l.name)
 
+    if layer == "None":
+        layer = None
+
     if l.keyword("at"):
         at_list = parse_simple_expression_list(l)
     else:
@@ -865,6 +868,9 @@ def show_layer_statement(l, loc):
 def camera_statement(l, loc):
 
     layer = l.name() or 'master'
+
+    if layer == "None":
+        layer = None
 
     if l.keyword("at"):
         at_list = parse_simple_expression_list(l)
