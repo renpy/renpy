@@ -1087,6 +1087,10 @@ sets the number of blocks of dialogue Ren'Py will keep at history.
     config.history_length may need to be lowered significantly when this
     is None.
 
+.. var:: gui.history_spacing = 0
+
+    The amount of space to leave between history entries, in pixels.
+
 .. var:: gui.history_name_xpos = 0.5
 .. var:: gui.history_text_xpos = 0.5
 
