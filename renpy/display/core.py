@@ -3921,7 +3921,7 @@ class Interface(object):
                 new_widget=new_d)
 
             if not isinstance(trans, Displayable):
-                raise Exception("Expected transition to be a displayable, not a %r" % trans)
+                raise Exception("Expected transition to return a displayable, not a {!r}".format(trans))
 
             if isinstance(trans, renpy.display.transform.Transform) and isinstance(old_trans, renpy.display.transform.Transform):
                 trans.take_state(old_trans)
@@ -3973,7 +3973,7 @@ class Interface(object):
             trans = instantiate_transition(None, old_root, layers_root)
 
             if not isinstance(trans, Displayable):
-                raise Exception("Expected transition to be a displayable, not a %r" % trans)
+                raise Exception("Expected transition to return a displayable, not a {!r}".format(trans))
 
             transition_time = self.transition_time.get(None, None)
             root_widget.add(trans, transition_time, transition_time)
