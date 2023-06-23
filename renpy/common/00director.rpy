@@ -1369,11 +1369,11 @@ init python in director:
                 continue
 
             if i & 1:
-                v = int(v)
+                v = "%08d" % int(v)
 
             rv.append(v)
 
-        return tuple(rv)
+        return "".join(rv)
 
 init 2202 python hide in director:
 
