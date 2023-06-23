@@ -36,13 +36,13 @@ report any issues. When reporting issues, please determine the hardware
 **Box Reverse** The :propref:`box_reverse` style property has changed its
 behavior in two ways:
 
-* Spaces is offered to displayablesin the order the displables are presented in
-  the screen, where previously the space was offered in reverse order. This can change the sizes of some
-  displayables.
+* Space is offered to displayables in the order the displayables are presented in
+  the screen, where previously the space was offered in reverse order when
+  :propref:`box_reverse` was enabled. This can change the sizes of some displayables.
 
 * A hbox that has :propref:`box_wrap` set will wrap from top to
   bottom, rather than bottom to top. A vbox with :propref:`box_wrap`
-  set will wrap from left to right, rather than left to right.
+  set will wrap from left to right, rather than right to left.
 
 The goal of these changes is to make the behavior of box_reverse more useful
 for laying out interfaces in right-to-left languages. To revert these changes,
