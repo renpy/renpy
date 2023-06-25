@@ -219,6 +219,9 @@ class absolute(float):
     def __divmod__(self, value):
         return self//value, self%value
 
+    def __rdivmod__(self, value):
+        return value//self, value%self
+
 for fn in (
     '__coerce__', # PY2
     '__div__', # PY2
@@ -247,7 +250,7 @@ for fn in (
     '__pos__',
     '__pow__',
     '__radd__',
-    '__rdivmod__',
+    # '__rdivmod__', # special-cased above, tuple of floats
     '__rfloordiv__',
     '__rmod__',
     '__rmul__',
