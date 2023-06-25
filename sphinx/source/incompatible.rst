@@ -51,6 +51,22 @@ add to your game::
     define config.simple_box_reverse = True
 
 
+**build.itch_channels** That variable was always documented as a dict but was
+mistakenly implemented as a list of tuples. It's now truly a dict. If you
+were using list operations on it, you'll need to change your code::
+
+    # formerly
+    $ build.itch_channels.append(("pattern", "channel"))
+    $ build.itch_channels.extend([("pattern", "channel")])
+    define build.itch_channels += [("pattern", "channel")]
+
+    # now
+    $ build.itch_channels["pattern"] = "channel"
+    $ build.itch_channels.update({"pattern": "channel"})
+    define build.itch_channels["pattern"] = "channel"
+    define build.itch_channels |= {"pattern": "channel"}
+
+
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
 
