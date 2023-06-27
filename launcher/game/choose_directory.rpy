@@ -57,11 +57,6 @@ init python:
         if path:
             default_path = path
             path = None
-        else:
-            try:
-                default_path = os.path.dirname(os.path.abspath(config.renpy_base))
-            except Exception:
-                default_path = os.path.abspath(config.renpy_base)
 
         if _renpytfd:
             path = _renpytfd.selectFolderDialog(__("Select Projects Directory"), default_path)
@@ -73,14 +68,16 @@ init python:
             path = default_path
             is_default = True
 
+            if path is None or not os.path.isdir(path):
+                interface.error(_("No directory was selected, but one is required."))
+
+            return path, is_default
+
         path = renpy.fsdecode(path)
 
-        if (not os.path.isdir(path)) or (not directory_is_writable(path)):
-            interface.error(_("The selected projects directory is not writable."))
-            path = default_path
-            is_default = True
-
-        if is_default and (not directory_is_writable(path)):
-            path = os.path.expanduser("~")
+        if not os.path.isdir(path):
+            interface.error(_("The selected directory does not exist."))
+        elif not directory_is_writable(path):
+            interface.error(_("The selected directory is not writable."))
 
         return path, is_default
