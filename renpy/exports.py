@@ -1935,6 +1935,7 @@ def reload_script():
     s = get_screen("menu")
 
     session = renpy.session
+    session["_reload"] = True
 
     # If one of these variables is already in session, we're recovering from
     # a failed reload.
