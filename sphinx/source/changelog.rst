@@ -54,6 +54,10 @@ silently ignored.
 Other Changes
 -------------
 
+Ren'Py will disable text input methods when text editing is not possible, which
+makes it possible to use the space key to advance the game even if an input
+method that uses the space key is active.
+
 The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
 when it used to only disable :var:`config.mouse`.
 
