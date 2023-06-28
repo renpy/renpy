@@ -1497,7 +1497,7 @@ class Camera(Node):
         self.atl = atl
 
     def diff_info(self):
-        return (ShowLayer, self.layer)
+        return (Camera, self.layer)
 
     def execute(self):
         next_node(self.next)

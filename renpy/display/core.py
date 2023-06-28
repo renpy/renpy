@@ -219,6 +219,9 @@ class absolute(float):
     def __divmod__(self, value):
         return self//value, self%value
 
+    def __rdivmod__(self, value):
+        return value//self, value%self
+
 for fn in (
     '__coerce__', # PY2
     '__div__', # PY2
@@ -247,7 +250,7 @@ for fn in (
     '__pos__',
     '__pow__',
     '__radd__',
-    '__rdivmod__',
+    # '__rdivmod__', # special-cased above, tuple of floats
     '__rfloordiv__',
     '__rmod__',
     '__rmul__',
@@ -2513,6 +2516,8 @@ class Interface(object):
 
             pygame.event.set_blocked(i)
 
+        pygame.event.set_blocked(pygame.TEXTINPUT)
+
         # Fix a problem with fullscreen and maximized.
         if renpy.game.preferences.fullscreen:
             renpy.game.preferences.maximized = False
@@ -2707,6 +2712,7 @@ class Interface(object):
         # Stop the resizing.
         pygame.key.stop_text_input() # @UndefinedVariable
         pygame.key.set_text_input_rect(None) # @UndefinedVariable
+        pygame.event.set_blocked(pygame.TEXTINPUT)
         self.text_rect = None
         self.old_text_rect = None
         self.display_reset = False
@@ -3492,6 +3498,7 @@ class Interface(object):
                 rect = (x0, y0, x1 - x0, y1 - y0)
 
                 pygame.key.set_text_input_rect(rect) # @UndefinedVariable
+                pygame.event.set_allowed(pygame.TEXTINPUT)
 
             if not self.old_text_rect or not_shown:
                 pygame.key.start_text_input() # @UndefinedVariable
@@ -3508,6 +3515,7 @@ class Interface(object):
             if self.old_text_rect:
                 pygame.key.stop_text_input() # @UndefinedVariable
                 pygame.key.set_text_input_rect(None) # @UndefinedVariable
+                pygame.event.set_blocked(pygame.TEXTINPUT)
 
                 if self.touch_keyboard:
                     renpy.exports.hide_screen('_touch_keyboard', layer='screens')
@@ -3921,7 +3929,7 @@ class Interface(object):
                 new_widget=new_d)
 
             if not isinstance(trans, Displayable):
-                raise Exception("Expected transition to be a displayable, not a %r" % trans)
+                raise Exception("Expected transition to return a displayable, not a {!r}".format(trans))
 
             if isinstance(trans, renpy.display.transform.Transform) and isinstance(old_trans, renpy.display.transform.Transform):
                 trans.take_state(old_trans)
@@ -3973,7 +3981,7 @@ class Interface(object):
             trans = instantiate_transition(None, old_root, layers_root)
 
             if not isinstance(trans, Displayable):
-                raise Exception("Expected transition to be a displayable, not a %r" % trans)
+                raise Exception("Expected transition to return a displayable, not a {!r}".format(trans))
 
             transition_time = self.transition_time.get(None, None)
             root_widget.add(trans, transition_time, transition_time)

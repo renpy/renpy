@@ -47,6 +47,24 @@ you can add the following line at the top of your files::
     rpy python annotations
 
 
+**Box Reverse** The :propref:`box_reverse` style property has changed its
+behavior in two ways:
+
+* Space is offered to displayables in the order the displayables are presented in
+  the screen, where previously the space was offered in reverse order when
+  :propref:`box_reverse` was enabled. This can change the sizes of some displayables.
+
+* A hbox that has :propref:`box_wrap` set will wrap from top to
+  bottom, rather than bottom to top. A vbox with :propref:`box_wrap`
+  set will wrap from left to right, rather than right to left.
+
+The goal of these changes is to make the behavior of box_reverse more useful
+for laying out interfaces in right-to-left languages. To revert these changes,
+add to your game::
+
+    define config.simple_box_reverse = True
+
+
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
 
@@ -136,6 +154,12 @@ will need to be updated to reflect the new keysyms.
 rather than all files. To look for all files in game/images, use::
 
     define config.search_prefixes += [ "images/" ]
+
+The paths that are searched consider the purpose of the file, rather than the
+type or extensions. So ``renpy.loadable("dlc.jpg")`` won't look for game/images/dlc.jpg.
+If you'd like to find that file, write ``renpy.loadable("images/dlc.jpg")``. If you'd
+like to search for a file that can be in either game/ or game/images, write
+``renpy.loadable("dlc.jpg", "images")``.
 
 
 **Android** Android has been changed so that the ``android.keystore`` file and

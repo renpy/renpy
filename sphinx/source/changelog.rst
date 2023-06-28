@@ -27,11 +27,18 @@ Retained Bubbles
 The speech bubble feature that was added in Ren'Py 8.1 now has a new way to
 retain speech bubbles, so that the bubbles pop up one at a time, and
 remain displayed on the screen until explicitly cleared, similar to
-dialouge in motion comics. See  the :ref:`speech bubble documentation <retained-bubbles>`_
+dialouge in motion comics. See  the :ref:`speech bubble documentation <retained-bubbles>`
 for more information.
 
 Features
 --------
+
+The new :var:`gui.history_spacing` variable controls the spacing between
+history entries in newly created games.
+
+The :tt:`nw` text tag can now take a value, which is a number of seconds
+to wait before the line containing the tag is automatically dismissed.
+The common construct "{w=2}{nw}" can now be written as "{nw=2}".
 
 :class:`Movie` now takes a `keep_last_frame` parameter. When true, this
 causes a non-looping movie to display its last frame after the movie
@@ -39,6 +46,16 @@ ends.
 
 Other Changes
 -------------
+
+To make it more useful for making interfaces compatible with right-to-left languages,
+the :propref:`box_reverse` style property has changed its
+behavior in two ways:
+* Space is offered to displayables in the order the displayables are presented in
+  the screen, where previously the space was offered in reverse order when
+  :propref:`box_reverse` was enabled. This can change the sizes of some displayables.
+* A hbox that has :propref:`box_wrap` set will wrap from top to
+  bottom, rather than bottom to top. A vbox with :propref:`box_wrap`
+  set will wrap from left to right, rather than right to left.
 
 When a file causes an autoreload, Ren'Py will check the directory containing
 the file and all parent directories for git lock files. The autoreload will
@@ -97,6 +114,10 @@ silently ignored.
 
 Other Changes
 -------------
+
+Ren'Py will disable text input methods when text editing is not possible, which
+makes it possible to use the space key to advance the game even if an input
+method that uses the space key is active.
 
 The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
 when it used to only disable :var:`config.mouse`.

@@ -43,6 +43,12 @@ statement. For example::
     their new locations. An instance of the :func:`MoveTransition`
     transition class.
 
+    Move transitions, and similar transitions like ease, can only be applied
+    to a single layer or all layers at once, using the
+    :ref:`with statement <with-statement>`. It will not work in other contexts
+    such as :ref:`ATL <expression-statement>`, :func:`ComposeTransition`,
+    or other ways of applying transitions.
+
 .. var:: moveinright
 
     Also: **moveinleft, moveintop, moveinbottom**

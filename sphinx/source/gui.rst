@@ -258,7 +258,7 @@ buttons.
 
     The color used for the text of unfocused choice buttons.
 
-.. var:: gui.choice_text_hover_color = '#0066cc'
+.. var:: gui.choice_button_text_hover_color = '#0066cc'
 
     The color used for the text of focused choice buttons.
 
@@ -1086,6 +1086,10 @@ sets the number of blocks of dialogue Ren'Py will keep at history.
     the height of a history entry to vary at the cost of performance –
     config.history_length may need to be lowered significantly when this
     is None.
+
+.. var:: gui.history_spacing = 0
+
+    The amount of space to leave between history entries, in pixels.
 
 .. var:: gui.history_name_xpos = 0.5
 .. var:: gui.history_text_xpos = 0.5
