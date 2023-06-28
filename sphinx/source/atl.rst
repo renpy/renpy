@@ -240,7 +240,7 @@ An important special case is that the pause warper, followed by a time and
 nothing else, causes ATL execution to pause for that amount of time.
 
 Some properties can have values of multiple types. For example, the :propref:`xpos`
-property can be an int, float, or absolute. The behavior is undefined when an
+property can be an int, float, or :term:`absolute <position>`. The behavior is undefined when an
 interpolation has old and new property values of different types.
 
 Time Statement
@@ -686,7 +686,7 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, an ``absolute``, or a
+When the type is given as position, it may be an int, an :term:`absolute <position>`, or a
 float. If it's a float, it's interpreted as a fraction of the size of the
 containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
 
@@ -1217,10 +1217,10 @@ Deprecated Transform Properties
     number of pixels, instead of a fraction of the width and height of
     the source image.
 
-    If an absolute number of pixel is to be expressed, ``absolute`` instances
-    should be provided to the :tpref:`crop` property instead of using the
+    If an absolute number of pixel is to be expressed, :term:`absolute <position>`
+    instances should be provided to the :tpref:`crop` property instead of using the
     crop_relative property. If necessary, values of dubious type can be wrapped
-    in the ``absolute`` callable.
+    in the :term:`absolute <position>` callable.
 
 .. transform-property:: size
 
