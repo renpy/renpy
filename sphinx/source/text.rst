@@ -192,7 +192,6 @@ General Text Tags
 
 Tags that apply to all text are:
 
-.. _a-tag:
 .. text-tag:: a
 
     The anchor tag creates a hyperlink between itself and its closing
