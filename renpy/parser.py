@@ -810,6 +810,7 @@ def scene_statement(l, loc):
     rv = parse_with(l, stmt)
 
     if l.match(':'):
+        l.expect_block('scene statement')
         stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         l.expect_noblock('scene statement')
@@ -827,6 +828,7 @@ def show_statement(l, loc):
     rv = parse_with(l, stmt)
 
     if l.match(':'):
+        l.expect_block('show statement')
         stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         l.expect_noblock('show statement')
@@ -848,6 +850,7 @@ def show_layer_statement(l, loc):
         at_list = [ ]
 
     if l.match(':'):
+        l.expect_block('show layer statement')
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         atl = None
@@ -872,6 +875,7 @@ def camera_statement(l, loc):
         at_list = [ ]
 
     if l.match(':'):
+        l.expect_block('camera statement')
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         atl = None
@@ -913,6 +917,7 @@ def image_statement(l, loc):
 
     if l.match(':'):
         l.expect_eol()
+        l.expect_block('image statement')
         expr = None
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
@@ -1040,6 +1045,7 @@ def transform_statement(l, loc):
 
     l.require(':')
     l.expect_eol()
+    l.expect_block('transform statement')
 
     atl = renpy.atl.parse_atl(l.subblock_lexer())
 

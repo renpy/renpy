@@ -33,6 +33,19 @@ report any issues. When reporting issues, please determine the hardware
 8.2.0 / 7.7.0
 --------------
 
+**Empty ATL Blocks Forbidden** Previously, Ren'Py would allow an empty ATL block.
+Now it will report that a block is required. You'll need to change::
+
+    show eileen happy:
+    "..."
+
+to::
+
+    show eileen happy
+    "..."
+
+In the unlikely case that you have an empty ATL block.
+
 **Box Reverse** The :propref:`box_reverse` style property has changed its
 behavior in two ways:
 

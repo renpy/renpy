@@ -37,6 +37,9 @@ ends.
 Other Changes
 -------------
 
+Ren'Py will now produce an error when an ATL block is present, but the block is
+empty. (For example, ``show eileen happy:`` with no indented lines following it.)
+
 To make it more useful for making interfaces compatible with right-to-left languages,
 the :propref:`box_reverse` style property has changed its
 behavior in two ways:
