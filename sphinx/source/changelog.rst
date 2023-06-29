@@ -43,6 +43,7 @@ empty. (For example, ``show eileen happy:`` with no indented lines following it.
 To make it more useful for making interfaces compatible with right-to-left languages,
 the :propref:`box_reverse` style property has changed its
 behavior in two ways:
+
 * Space is offered to displayables in the order the displayables are presented in
   the screen, where previously the space was offered in reverse order when
   :propref:`box_reverse` was enabled. This can change the sizes of some displayables.
