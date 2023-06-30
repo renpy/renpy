@@ -1398,6 +1398,9 @@ ex_rollback_classes = [ ]
 # Should we revert to the old behavior of box_reverse?
 simple_box_reverse = False
 
+# If True, positional-only parameters are allowed in ATL transform signatures.
+atl_pos_only = False
+
 
 del os
 del collections
