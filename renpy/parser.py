@@ -743,7 +743,7 @@ def jump_statement(l, loc):
     l.expect_noblock('jump statement')
 
     if l.keyword('expression'):
-        expression = True
+        expression = l.global_label or True
         target = l.require(l.simple_expression)
     else:
         expression = False
@@ -760,7 +760,7 @@ def call_statement(l, loc):
     l.expect_noblock('call statement')
 
     if l.keyword('expression'):
-        expression = True
+        expression = l.global_label or True
         target = l.require(l.simple_expression)
 
     else:

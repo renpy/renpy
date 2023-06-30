@@ -1722,6 +1722,9 @@ class Call(Node):
         if self.expression:
             label = renpy.python.py_eval(label)
 
+            if (self.expression is not True) and isinstance(label, str) and label.startswith("."):
+                label = self.expression + label
+
         rv = renpy.game.context().call(label, return_site=self.next.name)
         next_node(rv)
         renpy.game.context().abnormal = True
@@ -1747,6 +1750,9 @@ class Call(Node):
                 label = renpy.python.py_eval(label)
             except Exception:
                 return [ ]
+
+            if (self.expression is not True) and isinstance(label, str) and label.startswith("."):
+                label = self.expression + label
 
             if not renpy.game.script.has_label(label):
                 return [ ]
@@ -1989,6 +1995,9 @@ class Jump(Node):
         if self.expression:
             target = renpy.python.py_eval(target)
 
+            if (self.expression is not True) and isinstance(target, str) and target.startswith("."):
+                target = self.expression + target
+
         rv = renpy.game.script.lookup(target)
         renpy.game.context().abnormal = True
 
@@ -2007,6 +2016,9 @@ class Jump(Node):
                 label = renpy.python.py_eval(label)
             except Exception:
                 return [ ]
+
+            if (self.expression is not True) and isinstance(label, str) and label.startswith("."):
+                label = self.expression + label
 
             if not renpy.game.script.has_label(label):
                 return [ ]
