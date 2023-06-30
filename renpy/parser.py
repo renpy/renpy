@@ -1041,7 +1041,6 @@ def transform_statement(l, loc):
     parameters = parse_parameters(l)
 
     if parameters:
-        print(parameters)
         if parameters.extrapos:
             l.error("the transform statement does not take *args")
         if parameters.extrakw:
