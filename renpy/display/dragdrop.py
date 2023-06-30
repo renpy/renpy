@@ -597,7 +597,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
             self.target_at = at + self.target_at_delay
             self.target_at_delay = 0
             redraw(self, 0)
-        elif at >= self.target_at:
+        elif self.target_at <= at or self.target_at <= self.at:
             # Snap complete
             self.x = self.target_x
             self.y = self.target_y
