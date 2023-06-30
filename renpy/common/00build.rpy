@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -457,15 +457,15 @@ init -1500 python in build:
     itch_project = None
 
     # Maps from files to itch.io channels.
-    itch_channels = [
-        ( "*-all.zip", "win-osx-linux" ),
-        ( "*-market.zip", "win-osx-linux" ),
-        ( "*-pc.zip", "win-linux" ),
-        ( "*-win.zip", "win" ),
-        ( "*-mac.zip", "osx" ),
-        ( "*-linux.tar.bz2", "linux" ),
-        ( "*-release.apk", "android" ),
-    ]
+    itch_channels = {
+        "*-all.zip" : "win-osx-linux",
+        "*-market.zip" : "win-osx-linux",
+        "*-pc.zip" : "win-linux",
+        "*-win.zip" : "win",
+        "*-mac.zip" : "osx",
+        "*-linux.tar.bz2" : "linux",
+        "*-release.apk" : "android",
+    }
 
     # Should we include the old Ren'Py themes?
     include_old_themes = True
