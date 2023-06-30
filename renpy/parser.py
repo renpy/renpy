@@ -743,7 +743,7 @@ def jump_statement(l, loc):
     l.expect_noblock('jump statement')
 
     if l.keyword('expression'):
-        expression = l.global_label or True
+        expression = True
         target = l.require(l.simple_expression)
     else:
         expression = False
@@ -752,7 +752,7 @@ def jump_statement(l, loc):
     l.expect_eol()
     l.advance()
 
-    return ast.Jump(loc, target, expression)
+    return ast.Jump(loc, target, expression, (expression and l.global_label or ""))
 
 
 @statement("call")
@@ -760,7 +760,7 @@ def call_statement(l, loc):
     l.expect_noblock('call statement')
 
     if l.keyword('expression'):
-        expression = l.global_label or True
+        expression = True
         target = l.require(l.simple_expression)
 
     else:
@@ -773,7 +773,7 @@ def call_statement(l, loc):
 
     arguments = parse_arguments(l)
 
-    rv = [ ast.Call(loc, target, expression, arguments) ] # type: list[ast.Call|ast.Label|ast.Pass]
+    rv = [ ast.Call(loc, target, expression, arguments, (expression and l.global_label or "")) ] # type: list[ast.Call|ast.Label|ast.Pass]
 
     if l.keyword('from'):
         name = l.require(l.label_name_declare)

@@ -1697,19 +1697,22 @@ class Call(Node):
         'label',
         'arguments',
         'expression',
+        'global_label',
         ]
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.arguments = None
+        self.global_label = ""
         return self
 
-    def __init__(self, loc, label, expression, arguments):
+    def __init__(self, loc, label, expression, arguments, global_label=""):
 
         super(Call, self).__init__(loc)
         self.label = label
         self.expression = expression
         self.arguments = arguments
+        self.global_label = global_label
 
     def diff_info(self):
         return (Call, self.label, self.expression)
@@ -1722,8 +1725,8 @@ class Call(Node):
         if self.expression:
             label = renpy.python.py_eval(label)
 
-            if (self.expression is not True) and isinstance(label, str) and label.startswith("."):
-                label = self.expression + label
+            if isinstance(label, str) and label.startswith("."):
+                label = self.global_label + label
 
         rv = renpy.game.context().call(label, return_site=self.next.name)
         next_node(rv)
@@ -1751,8 +1754,8 @@ class Call(Node):
             except Exception:
                 return [ ]
 
-            if (self.expression is not True) and isinstance(label, str) and label.startswith("."):
-                label = self.expression + label
+            if isinstance(label, str) and label.startswith("."):
+                label = self.global_label + label
 
             if not renpy.game.script.has_label(label):
                 return [ ]
@@ -1972,13 +1975,20 @@ class Jump(Node):
     __slots__ = [
         'target',
         'expression',
+        'global_label',
         ]
 
-    def __init__(self, loc, target, expression):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
+        self.global_label = ""
+        return self
+
+    def __init__(self, loc, target, expression, global_label=""):
         super(Jump, self).__init__(loc)
 
         self.target = target
         self.expression = expression
+        self.global_label = global_label
 
     def diff_info(self):
         return (Jump, self.target, self.expression)
@@ -1995,8 +2005,8 @@ class Jump(Node):
         if self.expression:
             target = renpy.python.py_eval(target)
 
-            if (self.expression is not True) and isinstance(target, str) and target.startswith("."):
-                target = self.expression + target
+            if isinstance(target, str) and target.startswith("."):
+                target = self.global_label + target
 
         rv = renpy.game.script.lookup(target)
         renpy.game.context().abnormal = True
@@ -2017,8 +2027,8 @@ class Jump(Node):
             except Exception:
                 return [ ]
 
-            if (self.expression is not True) and isinstance(label, str) and label.startswith("."):
-                label = self.expression + label
+            if isinstance(label, str) and label.startswith("."):
+                label = self.global_label + label
 
             if not renpy.game.script.has_label(label):
                 return [ ]
