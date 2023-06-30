@@ -16,7 +16,7 @@ Retained Bubbles
 The speech bubble feature that was added in Ren'Py 8.1 now has a new way to
 retain speech bubbles, so that the bubbles pop up one at a time, and
 remain displayed on the screen until explicitly cleared, similar to
-dialouge in motion comics. See  the :ref:`speech bubble documentation <retained-bubbles>`
+dialogue in motion comics. See the :ref:`speech bubble documentation <retained-bubbles>`
 for more information.
 
 Features
