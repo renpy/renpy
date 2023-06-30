@@ -198,57 +198,6 @@ class MultipleTransition(Transition):
         return rv
 
 
-def Fade(out_time,
-         hold_time,
-         in_time,
-         old_widget=None,
-         new_widget=None,
-         color=None,
-         widget=None,
-         alpha=False,
-         ):
-    """
-    :doc: transition function
-    :args: (out_time, hold_time, in_time, *, color="#000")
-    :name: Fade
-
-    Returns a transition that takes `out_time` seconds to fade to
-    a screen filled with `color`, holds at that screen for `hold_time`
-    seconds, and then takes `in_time` to fade to then new screen.
-
-    ::
-
-        # Fade to black and back.
-        define fade = Fade(0.5, 0.0, 0.5)
-
-        # Hold at black for a bit.
-        define fadehold = Fade(0.5, 1.0, 0.5)
-
-        # Camera flash - quickly fades to white, then back to the scene.
-        define flash = Fade(0.1, 0.0, 0.5, color="#fff")
-    """
-
-    dissolve = renpy.curry.curry(Dissolve)
-    notrans = renpy.curry.curry(NoTransition)
-
-    widget = renpy.easy.displayable_or_none(widget)
-
-    if color:
-        widget = renpy.display.image.Solid(color)
-
-    if not widget:
-        widget = renpy.display.image.Solid((0, 0, 0, 255))
-
-    args = [ False, dissolve(out_time, alpha=alpha), widget ]
-
-    if hold_time:
-        args.extend([ notrans(hold_time), widget, ])
-
-    args.extend([dissolve(in_time, alpha=alpha), True ])
-
-    return MultipleTransition(args, old_widget=old_widget, new_widget=new_widget)
-
-
 class Pixellate(Transition):
     """
     :doc: transition function

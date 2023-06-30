@@ -333,6 +333,50 @@ init -1400 python:
 init -1400:
     image black = Solid("#000")
 
+    transform Fade(out_time, hold_time, in_time, old_widget=None, new_widget=None, color=None, widget=None, alpha=None):
+        delay out_time+hold_time+in_time
+        contains:
+            old_widget
+            pause out_time
+            new_widget with Dissolve(hold_time)
+        contains:
+            (Solid(color) if color else (widget or "#000"))
+            alpha 0
+            easein out_time alpha 1
+            pause hold_time
+            easeout in_time alpha 0
+
+    python:
+        Fade.__doc__ = """
+            :doc: transition function
+            :args: (out_time, hold_time, in_time, *, color="#000")
+            :name: Fade
+
+            Returns a transition that takes `out_time` seconds to fade to
+            a screen filled with `color`, holds at that screen for `hold_time`
+            seconds, and then takes `in_time` to fade to then new screen.
+
+            If the color is transparent, the scene will be visible underneath
+            and will dissolve from the old scene to the new scene during the hold.
+
+            ::
+
+                # Fade to black and back.
+                define fade = Fade(0.5, 0.0, 0.5)
+
+                # Hold at black for a bit.
+                define fadehold = Fade(0.5, 1.0, 0.5)
+
+                # Camera flash - quickly fades to white, then back to the scene.
+                define flash = Fade(0.1, 0.0, 0.5, color="#fff")
+
+                # Obscure the scene, transition, then reveal the new one.
+                define fadeobscure = Fade(1, 1, 1, color="#000a")
+        """
+
+        # pickle compat
+        renpy.renpy.display.transition.Fade = Fade
+
     # Simple transitions.
     define fade = Fade(.5, 0, .5) # Fade to black and back.
     define dissolve = Dissolve(0.5)
