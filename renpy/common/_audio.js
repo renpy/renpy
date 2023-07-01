@@ -139,7 +139,7 @@ let start_playing = (c) => {
     }
 
     if (p.end >= 0) {
-        p.source.start(0, p.start, p.end);
+        p.source.start(0, p.start, p.end - p.start);
     } else {
         p.source.start(0, p.start);
     }
@@ -287,7 +287,7 @@ let video_start = (c) => {
             c.playing.source.stop(context.currentTime + p.fadeout);
         } catch (e) {
         }
-    
+
     }
 
     setValue(c.relative_volume.gain, p.relative_volume);

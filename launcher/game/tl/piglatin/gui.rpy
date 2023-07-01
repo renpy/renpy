@@ -123,15 +123,15 @@ translate piglatin strings:
 
     # gui/game/gui.rpy:103
     old "## The placement of the textbox vertically on the screen. 0.0 is the top, 0.5 is center, and 1.0 is the bottom."
-    new "## Hetay acementplay ofay hetay extboxtay erticallyvay onay hetay creensay. 0ay.0ay isay hetay optay, 0ay.5ay isay entercay, anday 1ay.0ay isay hetay ottombay."
+    new "## Hetay acementplay ofay hetay extboxtay erticallyvay onay hetay creensay. 0.0 isay hetay optay, 0.5 isay entercay, anday 1.0 isay hetay ottombay."
 
     # gui/game/gui.rpy:108
     old "## The placement of the speaking character's name, relative to the textbox. These can be a whole number of pixels from the left or top, or 0.5 to center."
-    new "## Hetay acementplay ofay hetay peakingsay aracterchay'say amenay, elativeray otay hetay extboxtay. Hesetay ancay ebay aay holeway umbernay ofay ixelspay omfray hetay eftlay oray optay, oray 0ay.5ay otay entercay."
+    new "## Hetay acementplay ofay hetay peakingsay aracterchay'say amenay, elativeray otay hetay extboxtay. Hesetay ancay ebay aay holeway umbernay ofay ixelspay omfray hetay eftlay oray optay, oray 0.5 otay entercay."
 
     # gui/game/gui.rpy:113
     old "## The horizontal alignment of the character's name. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
-    new "## Hetay orizontalhay alignmentay ofay hetay aracterchay'say amenay. Histay ancay ebay 0ay.0ay orfay eftlay-aligneday, 0ay.5ay orfay enteredcay, anday 1ay.0ay orfay ightray-aligneday."
+    new "## Hetay orizontalhay alignmentay ofay hetay aracterchay'say amenay. Histay ancay ebay 0.0 orfay eftlay-aligneday, 0.5 orfay enteredcay, anday 1.0 orfay ightray-aligneday."
 
     # gui/game/gui.rpy:117
     old "## The width, height, and borders of the box containing the character's name, or None to automatically size it."
@@ -147,7 +147,7 @@ translate piglatin strings:
 
     # gui/game/gui.rpy:131
     old "## The placement of dialogue relative to the textbox. These can be a whole number of pixels relative to the left or top side of the textbox, or 0.5 to center."
-    new "## Hetay acementplay ofay ialogueday elativeray otay hetay extboxtay. Hesetay ancay ebay aay holeway umbernay ofay ixelspay elativeray otay hetay eftlay oray optay idesay ofay hetay extboxtay, oray 0ay.5ay otay entercay."
+    new "## Hetay acementplay ofay ialogueday elativeray otay hetay extboxtay. Hesetay ancay ebay aay holeway umbernay ofay ixelspay elativeray otay hetay eftlay oray optay idesay ofay hetay extboxtay, oray 0.5 otay entercay."
 
     # gui/game/gui.rpy:137
     old "## The maximum width of dialogue text, in pixels."
@@ -155,7 +155,7 @@ translate piglatin strings:
 
     # gui/game/gui.rpy:140
     old "## The horizontal alignment of the dialogue text. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
-    new "## Hetay orizontalhay alignmentay ofay hetay ialogueday exttay. Histay ancay ebay 0ay.0ay orfay eftlay-aligneday, 0ay.5ay orfay enteredcay, anday 1ay.0ay orfay ightray-aligneday."
+    new "## Hetay orizontalhay alignmentay ofay hetay ialogueday exttay. Histay ancay ebay 0.0 orfay eftlay-aligneday, 0.5 orfay enteredcay, anday 1.0 orfay ightray-aligneday."
 
     # gui/game/gui.rpy:145
     old "## Buttons"
@@ -191,7 +191,7 @@ translate piglatin strings:
 
     # gui/game/gui.rpy:173
     old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
-    new "## Hetay orizontalhay alignmentay ofay hetay uttonbay exttay. (0ay.0ay isay eftlay, 0ay.5ay isay entercay, 1ay.0ay isay ightray)."
+    new "## Hetay orizontalhay alignmentay ofay hetay uttonbay exttay. (0.0 isay eftlay, 0.5 isay entercay, 1.0 isay ightray)."
 
     # gui/game/gui.rpy:178
     old "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."

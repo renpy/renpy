@@ -321,6 +321,10 @@ class Rollback(renpy.object.Object):
 
         # Add in objects reachable through the context.
         reached(self.context.info, reachable, wait)
+        reached(self.context.music, reachable, wait)
+        reached(self.context.movie, reachable, wait)
+        reached(self.context.modes, reachable, wait)
+
         for d in self.context.dynamic_stack:
             for v in d.values():
                 reached(v, reachable, wait)

@@ -1919,7 +1919,7 @@ def utter_restart(keep_renderer=False):
 
 def reload_script():
     """
-    :doc: other
+    :doc: reload
 
     Causes Ren'Py to save the game, reload the script, and then load the
     save.
@@ -1935,6 +1935,7 @@ def reload_script():
     s = get_screen("menu")
 
     session = renpy.session
+    session["_reload"] = True
 
     # If one of these variables is already in session, we're recovering from
     # a failed reload.
@@ -3782,11 +3783,11 @@ def set_mouse_pos(x, y, duration=0):
 
 def set_autoreload(autoreload):
     """
-    :doc: other
+    :doc: reload
 
     Sets the autoreload flag, which determines if the game will be
     automatically reloaded after file changes. Autoreload will not be
-    fully enabled until the game is reloaded with :func:`renpy.utter_restart`.
+    fully enabled until the game is reloaded with :func:`renpy.reload_script`.
     """
 
     renpy.autoreload = autoreload
@@ -3794,7 +3795,7 @@ def set_autoreload(autoreload):
 
 def get_autoreload():
     """
-    :doc: other
+    :doc: reload
 
     Gets the autoreload flag.
     """
@@ -4489,3 +4490,15 @@ def request_permission(permission):
         return False
 
     return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8")) # type: ignore
+
+
+def clear_retain(layer="screens", prefix="_retain"):
+    """
+    :doc: other
+
+    Clears all retained screens
+    """
+
+    for i in get_showing_tags(layer):
+        if i.startswith(prefix):
+            hide_screen(i)

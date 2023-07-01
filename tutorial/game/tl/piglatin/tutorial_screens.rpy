@@ -255,7 +255,7 @@ translate piglatin screens_properties_6706e266:
 translate piglatin screens_properties_f7a2c73d:
 
     # e "By default, a screen has a zorder of 0. When two screens have the same zorder number, the screen that is shown second is closer to the player."
-    e "Ybay efaultday, aay creensay ashay aay orderzay ofay 0ay. Henway wotay creenssay avehay hetay amesay orderzay umbernay, hetay creensay hattay isay ownshay econdsay isay oserclay otay hetay ayerplay."
+    e "Ybay efaultday, aay creensay ashay aay orderzay ofay 0. Henway wotay creenssay avehay hetay amesay orderzay umbernay, hetay creensay hattay isay ownshay econdsay isay oserclay otay hetay ayerplay."
 
 # game/tutorial_screens.rpy:454
 translate piglatin screens_properties_78433eb8:

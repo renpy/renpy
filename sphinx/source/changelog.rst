@@ -4,6 +4,62 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.2.0:
+.. _renpy-7.7.0:
+
+8.2.0 / 7.7.0
+=============
+
+Retained Bubbles
+----------------
+
+The speech bubble feature that was added in Ren'Py 8.1 now has a new way to
+retain speech bubbles, so that the bubbles pop up one at a time, and
+remain displayed on the screen until explicitly cleared, similar to
+dialogue in motion comics. See the :ref:`speech bubble documentation <retained-bubbles>`
+for more information.
+
+Features
+--------
+
+The new :var:`gui.history_spacing` variable controls the spacing between
+history entries in newly created games.
+
+The :tt:`nw` text tag can now take a value, which is a number of seconds
+to wait before the line containing the tag is automatically dismissed.
+The common construct "{w=2}{nw}" can now be written as "{nw=2}".
+
+:class:`Movie` now takes a `keep_last_frame` parameter. When true, this
+causes a non-looping movie to display its last frame after the movie
+ends.
+
+
+Other Changes
+-------------
+
+Ren'Py will now produce an error when an ATL block is present, but the block is
+empty. (For example, ``show eileen happy:`` with no indented lines following it.)
+
+To make it more useful for making interfaces compatible with right-to-left languages,
+the :propref:`box_reverse` style property has changed its
+behavior in two ways:
+
+* Space is offered to displayables in the order the displayables are presented in
+  the screen, where previously the space was offered in reverse order when
+  :propref:`box_reverse` was enabled. This can change the sizes of some displayables.
+* A hbox that has :propref:`box_wrap` set will wrap from top to
+  bottom, rather than bottom to top. A vbox with :propref:`box_wrap`
+  set will wrap from left to right, rather than right to left.
+
+When a file causes an autoreload, Ren'Py will check the directory containing
+the file and all parent directories for git lock files. The autoreload will
+be deferred until the lock files are removed when the git operation
+completes.
+
+
+.. _renpy-8.1.1:
+.. _renpy-7.6.1:
+
 8.1.1 / 7.6.1
 =============
 
@@ -20,15 +76,65 @@ having their APKs rejected for having different keys. This was caused by
 an old release of Ren'Py that used the APK key for bundles. A solution to
 this problem is documented in :ref:`incompatible changes <android-key-migration>`.
 
-
 Fixes
 -----
+
+The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
+when it used to only disable :var:`config.mouse`.
+
+Web audio now treats the end time as a time, not a duration.
+
+An issue with that prevented audio volumes and pan from participating
+in rollback has been fixed.
+
+Fix an issue where Live2D could select an image despite all of the
+required attributes not being present.
+
+Support for start, end, and loop times in videos has been
+restored.
+
+Hotspots can no longer be const when the images used by the imagemap
+the hotspots come from are not const.
+
+An issue with non-resizable windows on macOS has been fixed.
+
+An issue with linting fonts in the font directory has been fixed.
 
 In some cases, when a class that inherited from the object class was changed
 to no longer inherit from the object class, Ren'Py would crash. Ren'Py
 now diagnoses this error, and :var:`config.ex_rollback_classes` lets you
 suppress the error. The error is only shown to developers, and is otherwise
 silently ignored.
+
+Other Changes
+-------------
+
+Ren'Py will disable text input methods when text editing is not possible, which
+makes it possible to use the space key to advance the game even if an input
+method that uses the space key is active.
+
+The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
+when it used to only disable :var:`config.mouse`.
+
+ATL Transitions now use the animation timebase. This is generally the same
+behavior as before, until the interaction restarts, in which case the
+transition would often incorrectly restart.
+
+Ren'Py will produce an error if an object that inherited from store.object
+in an old save is loaded, and no longer inherits from store.object, which
+would break rollback.
+
+Preferences no longer have defaults, meaning all preferences can be
+changed using the ``default`` statement.
+
+The absolute type, used to represent absolute amounts of pixels, now
+ensures the result of mathematically operations with integers and
+floats remain absolutes. This fixes a class of problems where
+operations performed on absolutes could produce the incorrect
+type, leasing to layout problems.
+
+Live2D now checks for a motion after evaluating an `attribute_filter`,
+and does not sustain the previous motions if a new motion is present.
 
 
 .. _renpy-8.1.0:
@@ -2589,8 +2695,8 @@ First, Ren'Py now uses `future <https://python-future.org/>`_ to provide
 standard library compatibility. It's now possible to import modules using
 their Python 3 names, when a renaming has occured.
 
-When a .rpyc file begins with the new ``rpy python 3``, the file is compiled
-in a Python 3 compatibility mode. The two changes this causes are:
+When a .rpy file begins with the new ``rpy python 3`` statement, the file is
+compiled in a Python 3 compatibility mode. The two changes this causes are:
 
 * Ren'Py will compile the file in a mode that attempts to emulate Python 3
   semantics, including the change to division. In Python 3, ``1/2`` is equal

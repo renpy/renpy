@@ -51,11 +51,11 @@ translate piglatin strings:
 
     # renpy/common/00gltest.rpy:181
     old "60"
-    new "06ay"
+    new "60"
 
     # renpy/common/00gltest.rpy:185
     old "30"
-    new "03ay"
+    new "30"
 
     # renpy/common/00gltest.rpy:191
     old "Tearing"

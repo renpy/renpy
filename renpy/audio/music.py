@@ -111,17 +111,16 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
             loop_is_filenames = (c.loop == filenames)
 
-            c.dequeue()
-
             if fadeout is None:
                 fadeout = renpy.config.fadeout_audio
 
             if if_changed and c.get_playing() in filenames:
                 fadein = 0
-                loop_only = loop_is_filenames
+                if not loop_is_filenames:
+                    c.dequeue()
             else:
+                c.dequeue()
                 c.fadeout(fadeout)
-                loop_only = False
 
             if renpy.config.skip_sounds and renpy.config.skipping and (not loop):
                 enqueue = False
@@ -129,7 +128,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
                 enqueue = True
 
             if enqueue:
-                c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight, loop_only=loop_only, relative_volume=relative_volume)
+                c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight, relative_volume=relative_volume)
 
             t = get_serial()
             ctx.last_changed = t

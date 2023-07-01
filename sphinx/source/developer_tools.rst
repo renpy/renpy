@@ -72,6 +72,11 @@ new effect.
 
 Shift+R reloading does not work in a replay.
 
+The following functions implement the same behavior in pure python. Note that
+they are only meant to be used in developer mode.
+
+.. include:: inc/reload
+
 .. _style-inspector:
 
 Shift+I Style Inspecting

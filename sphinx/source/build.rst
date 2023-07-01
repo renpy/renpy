@@ -21,9 +21,10 @@ Linux
     are found in the sdkarm Ren'Py package.)
 
 Macintosh
-    A zip file containing a Macintosh application targeting Macintosh
-    OS X on Intel processors. Game data will be included inside the
-    application, which appears to the user as a single file.
+    A zip file containing a Macintosh application targeting macOS
+    OS X on Intel and Apple Silicon processors. Game data will be
+    included inside the application, which appears to the user
+    as a single file. The updater does not work with this package.
 
 Windows
      A zip file targeting Windows x86_64.

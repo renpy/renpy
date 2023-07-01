@@ -668,7 +668,7 @@ class Channel(object):
             renpysound.dequeue(self.number, True)
             renpysound.stop(self.number)
 
-    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
+    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, relative_volume=1.0):
 
         with lock:
 
@@ -676,22 +676,20 @@ class Channel(object):
                 filename, _, _ = self.split_filename(filename, False)
                 renpy.game.persistent._seen_audio[str(filename)] = True # type: ignore
 
-            if not loop_only:
+            if tight is None:
+                tight = self.tight
 
-                if tight is None:
-                    tight = self.tight
+            self.keep_queue += 1
 
-                self.keep_queue += 1
+            for filename in filenames:
+                qe = QueueEntry(filename, fadein, tight, False, relative_volume)
+                self.queue.append(qe)
 
-                for filename in filenames:
-                    qe = QueueEntry(filename, fadein, tight, False, relative_volume)
-                    self.queue.append(qe)
+                # Only fade the first thing in.
+                fadein = 0
 
-                    # Only fade the first thing in.
-                    fadein = 0
-
-                self.wait_stop = synchro_start
-                self.synchro_start = synchro_start
+            self.wait_stop = synchro_start
+            self.synchro_start = synchro_start
 
             if loop:
                 self.loop = list(filenames)

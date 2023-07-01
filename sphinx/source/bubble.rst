@@ -39,6 +39,23 @@ the corresponding line is brighter. If the values are being inherited from
 a prior line of dialogue or the default, the button is dimmed out. Right
 clicking on a button will prevent the current line from setting the value.
 
+.. _retained-bubbles:
+
+Retained Bubbles
+----------------
+
+Ren'Py supports a mode in which bubbles are retained between lines of
+dialogue, so they pop up one by one, until the previous bubbles are
+cleared from the screen. To enable this mode, set a bubble character's
+`retain` property to True::
+
+    define e = Character(None, image="eileen", kind=bubble, retain=True)
+
+Once that's done, the bubbles will keep popping up. Each bubble will
+need to be placed individually, so bubbles don't overlap. In the bubble editor,
+pressing the "(clear retained bubbles)" button will remove all of the
+retained bubbles from the screen, except for the most recent.
+
 Tips
 ----
 

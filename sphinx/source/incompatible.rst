@@ -27,6 +27,59 @@ report any issues. When reporting issues, please determine the hardware
 (device and GPU), os and driver versions, and year of manufacture.
 
 
+.. _incompatible-8.2.0:
+.. _incompatible-7.7.0:
+
+8.2.0 / 7.7.0
+--------------
+
+**Empty ATL Blocks Forbidden** Previously, Ren'Py would allow an empty ATL block.
+Now it will report that a block is required. You'll need to change::
+
+    show eileen happy:
+    "..."
+
+to::
+
+    show eileen happy
+    "..."
+
+In the unlikely case that you have an empty ATL block.
+
+**Box Reverse** The :propref:`box_reverse` style property has changed its
+behavior in two ways:
+
+* Space is offered to displayables in the order the displayables are presented in
+  the screen, where previously the space was offered in reverse order when
+  :propref:`box_reverse` was enabled. This can change the sizes of some displayables.
+
+* A hbox that has :propref:`box_wrap` set will wrap from top to
+  bottom, rather than bottom to top. A vbox with :propref:`box_wrap`
+  set will wrap from left to right, rather than right to left.
+
+The goal of these changes is to make the behavior of box_reverse more useful
+for laying out interfaces in right-to-left languages. To revert these changes,
+add to your game::
+
+    define config.simple_box_reverse = True
+
+
+**build.itch_channels** That variable was always documented as a dict but was
+mistakenly implemented as a list of tuples. It's now truly a dict. If you
+were using list operations on it, you'll need to change your code::
+
+    # formerly
+    $ build.itch_channels.append(("pattern", "channel"))
+    $ build.itch_channels.extend([("pattern", "channel")])
+    define build.itch_channels += [("pattern", "channel")]
+
+    # now
+    $ build.itch_channels["pattern"] = "channel"
+    $ build.itch_channels.update({"pattern": "channel"})
+    define build.itch_channels["pattern"] = "channel"
+    define build.itch_channels |= {"pattern": "channel"}
+
+
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
 
@@ -117,6 +170,12 @@ will need to be updated to reflect the new keysyms.
 rather than all files. To look for all files in game/images, use::
 
     define config.search_prefixes += [ "images/" ]
+
+The paths that are searched consider the purpose of the file, rather than the
+type or extensions. So ``renpy.loadable("dlc.jpg")`` won't look for game/images/dlc.jpg.
+If you'd like to find that file, write ``renpy.loadable("images/dlc.jpg")``. If you'd
+like to search for a file that can be in either game/ or game/images, write
+``renpy.loadable("dlc.jpg", "images")``.
 
 
 **Android** Android has been changed so that the ``android.keystore`` file and

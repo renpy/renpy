@@ -295,7 +295,7 @@ translate piglatin strings:
 
     # gui/game/screens.rpy:668
     old "## range(1, 10) gives the numbers from 1 to 9."
-    new "## angeray(1ay, 01ay) ivesgay hetay umbersnay omfray 1ay otay 9ay."
+    new "## angeray(1, 10) ivesgay hetay umbersnay omfray 1 otay 9."
 
     # gui/game/screens.rpy:672
     old ">"
@@ -672,3 +672,4 @@ translate piglatin strings:
     # gui/game/screens.rpy:1526
     old "Menu"
     new "Enumay"
+

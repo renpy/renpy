@@ -39,7 +39,7 @@ translate piglatin strings:
 
     # game/android.rpy:37
     old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Aay 46ay-itbay/64xay Avajay [JDK_REQUIREMENT] Evelopmentday Itkay isay equiredray otay uildbay Ndroidaay ackagespay onay Indowsway. Hetay Dkjay isay ifferentday omfray hetay Rejay, osay itay'say ossiblepay ouyay avehay Avajay ithoutway avinghay hetay Dkjay.\n\nLeasepay {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}ownloadday anday installay hetay Dkjay{/a}, hentay estartray hetay Enray'Ypay auncherlay."
+    new "Aay 64-itbay/64xay Avajay [JDK_REQUIREMENT] Evelopmentday Itkay isay equiredray otay uildbay Ndroidaay ackagespay onay Indowsway. Hetay Dkjay isay ifferentday omfray hetay Rejay, osay itay'say ossiblepay ouyay avehay Avajay ithoutway avinghay hetay Dkjay.\n\nLeasepay {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}ownloadday anday installay hetay Dkjay{/a}, hentay estartray hetay Enray'Ypay auncherlay."
 
     # game/android.rpy:38
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -107,11 +107,11 @@ translate piglatin strings:
 
     # game/android.rpy:57
     old "Pairs with a device over Wi-Fi, on Android 11+."
-    new "Airspay ithway aay eviceday overay Iway-Ifay, onay Ndroidaay 11ay+."
+    new "Airspay ithway aay eviceday overay Iway-Ifay, onay Ndroidaay 11+."
 
     # game/android.rpy:58
     old "Connects to a device over Wi-Fi, on Android 11+."
-    new "Onnectscay otay aay eviceday overay Iway-Ifay, onay Ndroidaay 11ay+."
+    new "Onnectscay otay aay eviceday overay Iway-Ifay, onay Ndroidaay 11+."
 
     # game/android.rpy:59
     old "Disconnects a device connected over Wi-Fi."
@@ -123,11 +123,11 @@ translate piglatin strings:
 
     # game/android.rpy:63
     old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
-    new "Uildsbay anay Ndroidaay Ppaay Undlebay (Bbaay), intendeday otay ebay uploadeday otay Ooglegay Laypay. Histay ancay includeay upay otay GB2ay ofay ataday."
+    new "Uildsbay anay Ndroidaay Ppaay Undlebay (Bbaay), intendeday otay ebay uploadeday otay Ooglegay Laypay. Histay ancay includeay upay otay 2GB ofay ataday."
 
     # game/android.rpy:64
     old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
-    new "Uildsbay aay Niversaluay Pkaay ackagepay, intendeday orfay ideloadingsay anday oresstay otheray hantay Ooglegay Laypay. Histay ancay includeay upay otay GB2ay ofay ataday."
+    new "Uildsbay aay Niversaluay Pkaay ackagepay, intendeday orfay ideloadingsay anday oresstay otheray hantay Ooglegay Laypay. Histay ancay includeay upay otay 2GB ofay ataday."
 
     # game/android.rpy:258
     old "Copying Android files to distributions directory."
@@ -423,7 +423,7 @@ translate piglatin strings:
 
     # game/androidstrings.rpy:49
     old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
-    new "Hetay ersionvay ofay Avajay onay ouryay omputercay oesday otnay appearay otay ebay Dkjay 8ay, hichway isay hetay onlyay ersionvay upportedsay ybay hetay Ndroidaay Dksay. Fiay ouyay eednay otay installay Dkjay 8ay, ouyay ancay ownloadday itay omfray:\n\n{a=https://adoptium.net/?variant=openjdk8}ttpshay://adoptiumay.etnay/?ariantvay=openjdk8ay{/a}\n\nOuyay ancay alsoay etsay hetay Ava_homejay environmentay ariablevay otay useay aay ifferentday ersionvay ofay Avajay."
+    new "Hetay ersionvay ofay Avajay onay ouryay omputercay oesday otnay appearay otay ebay Dkjay 8, hichway isay hetay onlyay ersionvay upportedsay ybay hetay Ndroidaay Dksay. Fiay ouyay eednay otay installay Dkjay 8, ouyay ancay ownloadday itay omfray:\n\n{a=https://adoptium.net/?variant=openjdk8}ttpshay://adoptiumay.etnay/?ariantvay=openjdk8ay{/a}\n\nOuyay ancay alsoay etsay hetay Ava_homejay environmentay ariablevay otay useay aay ifferentday ersionvay ofay Avajay."
 
     # game/androidstrings.rpy:50
     old "The JDK is present and working. Good!"
@@ -711,7 +711,7 @@ translate piglatin strings:
 
     # game/editor.rpy:169
     old "Up to 110 MB download required."
-    new "Puay otay 101ay Bmay ownloadday equiredray."
+    new "Puay otay 110 Bmay ownloadday equiredray."
 
     # game/editor.rpy:182
     old "A modern and approachable text editor."
@@ -723,7 +723,7 @@ translate piglatin strings:
 
     # game/editor.rpy:196
     old "Up to 150 MB download required."
-    new "Puay otay 501ay Bmay ownloadday equiredray."
+    new "Puay otay 150 Bmay ownloadday equiredray."
 
     # game/editor.rpy:211
     old "jEdit"
@@ -735,7 +735,7 @@ translate piglatin strings:
 
     # game/editor.rpy:211
     old "1.8 MB download required."
-    new "1ay.8ay Bmay ownloadday equiredray."
+    new "1.8 Bmay ownloadday equiredray."
 
     # game/editor.rpy:211
     old "This may have occured because Java is not installed on this system."
@@ -820,26 +820,6 @@ translate piglatin strings:
     # game/front_page.rpy:157
     old "Open Directory"
     new "Penoay Irectoryday"
-
-    # game/front_page.rpy:162
-    old "game"
-    new "amegay"
-
-    # game/front_page.rpy:163
-    old "base"
-    new "asebay"
-
-    # game/front_page.rpy:164
-    old "images"
-    new "imagesay"
-
-    # game/front_page.rpy:165
-    old "audio"
-    new "audioay"
-
-    # game/front_page.rpy:166
-    old "gui"
-    new "uigay"
 
     # game/front_page.rpy:171
     old "Edit File"
@@ -939,11 +919,11 @@ translate piglatin strings:
 
     # game/gui7.rpy:333
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
-    new "Hatway esolutionray ouldshay hetay rojectpay useay? Lthoughaay Enray'Ypay ancay calesay hetay indowway upay anday ownday, histay isay hetay initialay izesay ofay hetay indowway, hetay izesay atay hichway assetsay ouldshay ebay rawnday, anday hetay izesay atay hichway hetay assetsay illway ebay atay heirtay arpestshay.\n\nHetay efaultday ofay [default_size[]]x0ay[default_size[]]1ay isay aay easonableray ompromisecay."
+    new "Hatway esolutionray ouldshay hetay rojectpay useay? Lthoughaay Enray'Ypay ancay calesay hetay indowway upay anday ownday, histay isay hetay initialay izesay ofay hetay indowway, hetay izesay atay hichway assetsay ouldshay ebay rawnday, anday hetay izesay atay hichway hetay assetsay illway ebay atay heirtay arpestshay.\n\nHetay efaultday ofay [default_size[0]]xay[default_size[1]] isay aay easonableray ompromisecay."
 
     # game/gui7.rpy:333
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
-    new "Ustomcay. Hetay Uigay isay optimizeday orfay aay 61ay:9ay aspectay atioray."
+    new "Ustomcay. Hetay Uigay isay optimizeday orfay aay 16:9 aspectay atioray."
 
     # game/gui7.rpy:350
     old "WIDTH"
@@ -1019,7 +999,7 @@ translate piglatin strings:
 
     # game/install.rpy:182
     old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
-    new "Hetay {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Ubismcay Dksay orfay Ativenay{/a} addsay upportsay orfay isplayingday Ive2dlay odelsmay. Lacepay Ubismsdkfornativecay-4ay-{i}ersionvay{/i}.ipzay inay hetay Enray'Ypay Dksay irectoryday, anday hentay ickclay Nstalliay. Istributingday aay amegay ithway Ive2dlay equiresray ouyay otay acceptay aay icenselay omfray Ive2dlay, Nciay."
+    new "Hetay {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Ubismcay Dksay orfay Ativenay{/a} addsay upportsay orfay isplayingday Ive2dlay odelsmay. Lacepay Ubismsdkfornativecay-4-{i}ersionvay{/i}.ipzay inay hetay Enray'Ypay Dksay irectoryday, anday hentay ickclay Nstalliay. Istributingday aay amegay ithway Ive2dlay equiresray ouyay otay acceptay aay icenselay omfray Ive2dlay, Nciay."
 
     # game/install.rpy:186
     old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
@@ -1671,11 +1651,11 @@ translate piglatin strings:
 
     # game/updater.rpy:64
     old "Release (Ren'Py 8, Python 3)"
-    new "Eleaseray (Enray'Ypay 8ay, Ythonpay 3ay)"
+    new "Eleaseray (Enray'Ypay 8, Ythonpay 3)"
 
     # game/updater.rpy:65
     old "Release (Ren'Py 7, Python 2)"
-    new "Eleaseray (Enray'Ypay 7ay, Ythonpay 2ay)"
+    new "Eleaseray (Enray'Ypay 7, Ythonpay 2)"
 
     # game/updater.rpy:66
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -1687,11 +1667,11 @@ translate piglatin strings:
 
     # game/updater.rpy:69
     old "Prerelease (Ren'Py 8, Python 3)"
-    new "Rereleasepay (Enray'Ypay 8ay, Ythonpay 3ay)"
+    new "Rereleasepay (Enray'Ypay 8, Ythonpay 3)"
 
     # game/updater.rpy:70
     old "Prerelease (Ren'Py 7, Python 2)"
-    new "Rereleasepay (Enray'Ypay 7ay, Ythonpay 2ay)"
+    new "Rereleasepay (Enray'Ypay 7, Ythonpay 2)"
 
     # game/updater.rpy:71
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1706,102 +1686,118 @@ translate piglatin strings:
     new "Xperimentaleay ersionsvay ofay Enray'Ypay. Ouyay ouldnshay'tay electsay histay annelchay unlessay askeday ybay aay Enray'Ypay eveloperday."
 
     # game/updater.rpy:76
+    old "Nightly Fix"
+    new "Ightlynay Ixfay"
+
+    # game/updater.rpy:77
+    old "Nightly Fix (Ren'Py 8, Python 3)"
+    new "Ightlynay Ixfay (Enray'Ypay 8, Ythonpay 3)"
+
+    # game/updater.rpy:78
+    old "Nightly Fix (Ren'Py 7, Python 2)"
+    new "Ightlynay Ixfay (Enray'Ypay 7, Ythonpay 2)"
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    new "Aay ightlynay uildbay ofay ixesfay otay hetay eleaseray ersionvay ofay Enray'Ypay."
+
+    # game/updater.rpy:81
     old "Nightly"
     new "Ightlynay"
 
-    # game/updater.rpy:77
+    # game/updater.rpy:82
     old "Nightly (Ren'Py 8, Python 3)"
-    new "Ightlynay (Enray'Ypay 8ay, Ythonpay 3ay)"
+    new "Ightlynay (Enray'Ypay 8, Ythonpay 3)"
 
-    # game/updater.rpy:78
+    # game/updater.rpy:83
     old "Nightly (Ren'Py 7, Python 2)"
-    new "Ightlynay (Enray'Ypay 7ay, Ythonpay 2ay)"
+    new "Ightlynay (Enray'Ypay 7, Ythonpay 2)"
 
-    # game/updater.rpy:79
+    # game/updater.rpy:84
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
     new "Hetay eedingblay edgeay ofay Enray'Ypay evelopmentday. Histay aymay avehay hetay atestlay eaturesfay, oray ightmay otnay unray atay allay."
 
-    # game/updater.rpy:97
+    # game/updater.rpy:102
     old "Select Update Channel"
     new "Electsay Pdateuay Hannelcay"
 
-    # game/updater.rpy:108
+    # game/updater.rpy:113
     old "The update channel controls the version of Ren'Py the updater will download."
     new "Hetay updateay annelchay ontrolscay hetay ersionvay ofay Enray'Ypay hetay updateray illway ownloadday."
 
-    # game/updater.rpy:116
+    # game/updater.rpy:121
     old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/doc/html/changelog.html}Iewvay angechay oglay{/a}"
 
-    # game/updater.rpy:118
+    # game/updater.rpy:123
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Iewvay angechay oglay{/a}"
 
-    # game/updater.rpy:124
+    # game/updater.rpy:129
     old "• This version is installed and up-to-date."
     new "• Histay ersionvay isay installeday anday upay-otay-ateday."
 
-    # game/updater.rpy:136
+    # game/updater.rpy:141
     old "%B %d, %Y"
     new "%Bay %day, %Yay"
 
-    # game/updater.rpy:158
+    # game/updater.rpy:163
     old "An error has occured:"
     new "Naay erroray ashay occureday:"
 
-    # game/updater.rpy:160
+    # game/updater.rpy:165
     old "Checking for updates."
     new "Heckingcay orfay updatesay."
 
-    # game/updater.rpy:162
+    # game/updater.rpy:167
     old "Ren'Py is up to date."
     new "Enray'Ypay isay upay otay ateday."
 
-    # game/updater.rpy:164
+    # game/updater.rpy:169
     old "[u.version] is now available. Do you want to install it?"
     new "[u.version] isay ownay availableay. Oday ouyay antway otay installay itay?"
 
-    # game/updater.rpy:166
+    # game/updater.rpy:171
     old "Preparing to download the update."
     new "Reparingpay otay ownloadday hetay updateay."
 
-    # game/updater.rpy:168
+    # game/updater.rpy:173
     old "Downloading the update."
     new "Ownloadingday hetay updateay."
 
-    # game/updater.rpy:170
+    # game/updater.rpy:175
     old "Unpacking the update."
     new "Npackinguay hetay updateay."
 
-    # game/updater.rpy:172
+    # game/updater.rpy:177
     old "Finishing up."
     new "Inishingfay upay."
 
-    # game/updater.rpy:174
+    # game/updater.rpy:179
     old "The update has been installed. Ren'Py will restart."
     new "Hetay updateay ashay eenbay installeday. Enray'Ypay illway estartray."
 
-    # game/updater.rpy:176
+    # game/updater.rpy:181
     old "The update has been installed."
     new "Hetay updateay ashay eenbay installeday."
 
-    # game/updater.rpy:178
+    # game/updater.rpy:183
     old "The update was cancelled."
     new "Hetay updateay asway ancelledcay."
 
-    # game/updater.rpy:195
+    # game/updater.rpy:200
     old "Ren'Py Update"
     new "Enray'Ypay Pdateuay"
 
-    # game/updater.rpy:201
+    # game/updater.rpy:206
     old "Proceed"
     new "Roceedpay"
 
-    # game/updater.rpy:215
+    # game/updater.rpy:220
     old "Fetching the list of update channels"
     new "Etchingfay hetay istlay ofay updateay annelschay"
 
-    # game/updater.rpy:220
+    # game/updater.rpy:225
     old "downloading the list of update channels"
     new "ownloadingday hetay istlay ofay updateay annelschay"
 

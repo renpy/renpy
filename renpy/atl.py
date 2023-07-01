@@ -301,12 +301,6 @@ class Context(object):
 
             for i in variables:
                 if self.context.get(i, NotInContext) != other.context.get(i, NotInContext):
-
-                    # Ignore the arguments given to ATL Transitions, which
-                    # will change each time an interaction restarts. (See #4167.)
-                    if i in ("new_widget", "old_widget"):
-                        continue
-
                     return False
 
             return True
@@ -398,6 +392,13 @@ class ATLTransformBase(renpy.object.Object):
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
+    @property
+    def transition(self):
+        """
+        Returns true if this is likely to be an ATL transition.
+        """
+
+        return "new_widget" in self.context.context
 
     def _handles_event(self, event):
 
@@ -596,6 +597,9 @@ class ATLTransformBase(renpy.object.Object):
 
     def execute(self, trans, st, at):
 
+        if self.state.debug:
+            print("A", st)
+
         if self.done:
             return None
 
@@ -639,7 +643,7 @@ class ATLTransformBase(renpy.object.Object):
         if (self.atl_st_offset is None) or (st - self.atl_st_offset) < 0:
             self.atl_st_offset = st
 
-        if self.atl.animation:
+        if self.atl.animation or self.transition:
             timebase = at
         else:
             timebase = st - self.atl_st_offset
@@ -1362,7 +1366,7 @@ class Interpolation(Statement):
 
         complete = warper(complete)
 
-        if state is None:
+        if state is None or len(state) != 6:
 
             # Create a new transform state, and apply the property
             # changes to it.

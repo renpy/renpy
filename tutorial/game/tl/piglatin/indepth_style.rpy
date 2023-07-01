@@ -333,7 +333,7 @@ translate piglatin style_text_5a0c2c02:
 translate piglatin style_text_430c1959:
 
     # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered." id style_text_430c1959
-    e "Hetay extaligntay ropertypay ontrolscay hetay ositioningpay ofay ultiplemay ineslay ofay exttay insideay hetay exttay isplayableday. Orfay exampleay, 0ay.5ay eansmay enteredcay." id style_text_430c1959
+    e "Hetay extaligntay ropertypay ontrolscay hetay ositioningpay ofay ultiplemay ineslay ofay exttay insideay hetay exttay isplayableday. Orfay exampleay, 0.5 eansmay enteredcay." id style_text_430c1959
 
 # game/indepth_style.rpy:445
 translate piglatin style_text_19aa0833:
@@ -345,7 +345,7 @@ translate piglatin style_text_19aa0833:
 translate piglatin style_text_efc3c392:
 
     # e "When both textalign and xalign are set to 1.0, the text is properly right-justified." id style_text_efc3c392
-    e "Henway othbay extaligntay anday alignxay areay etsay otay 1ay.0ay, hetay exttay isay roperlypay ightray-ustifiedjay." id style_text_efc3c392
+    e "Henway othbay extaligntay anday alignxay areay etsay otay 1.0, hetay exttay isay roperlypay ightray-ustifiedjay." id style_text_efc3c392
 
 # game/indepth_style.rpy:464
 translate piglatin style_text_43be63b9:
@@ -705,11 +705,11 @@ translate piglatin strings:
 
     # game/indepth_style.rpy:20
     old "Button 1"
-    new "Uttonbay 1ay"
+    new "Uttonbay 1"
 
     # game/indepth_style.rpy:22
     old "Button 2"
-    new "Uttonbay 2ay"
+    new "Uttonbay 2"
 
     # game/indepth_style.rpy:66
     old "Style basics."

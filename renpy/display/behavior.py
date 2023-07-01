@@ -98,18 +98,22 @@ def compile_event(key, keydown):
         mouse = True
         rv = "(ev.type == %d" % pygame.MOUSEBUTTONUP
 
+        if not keydown:
+            return "(False)"
+
     elif part[0] == "mousedown":
         mouse = True
-        rv = "(ev.type == %d" % pygame.MOUSEBUTTONDOWN
+
+        if keydown:
+            rv = "(ev.type == %d" % pygame.MOUSEBUTTONDOWN
+        else:
+            rv = "(ev.type == %d" % pygame.MOUSEBUTTONUP
 
     elif keydown:
         rv = "(ev.type == %d" % pygame.KEYDOWN
 
     else:
         rv = "(ev.type == %d" % pygame.KEYUP
-
-    if mouse and not keydown:
-        return
 
     if not mouse:
 
@@ -2037,6 +2041,10 @@ class Adjustment(renpy.object.Object):
         if self.animation_start is None:
             self.animation_start = st
 
+        if st < self.animation_start:
+            self.end_animation(instantly=True)
+            return 0
+
         done = (st - self.animation_start) / self.animation_delay
         done = self.animation_warper(done)
 
@@ -2196,6 +2204,9 @@ class Bar(renpy.display.core.Displayable):
                 return renpy.display.render.Render(width, height)
             elif self.style.unscrollable == "insensitive":
                 self.set_style_prefix("insensitive_", True)
+        else:
+            if self.style.prefix == "insensitive_":
+                self.set_style_prefix("idle_", True)
 
         self.hidden = False
 
@@ -2854,7 +2865,7 @@ class WebInput(renpy.display.core.Displayable):
 
     @staticmethod
     def post_find_focusable():
-        if not renpy.emscripten:
+        if PY2 or not renpy.emscripten:
             return
 
         if WebInput.active is None:
