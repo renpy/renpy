@@ -363,10 +363,47 @@ init -1400:
     define pushup = PushMove(1.0, "pushup")
     define pushdown = PushMove(1.0, "pushdown")
 
-    # Zoom-based transitions. Legacy - nowadays, these are probably best done with ATL.
+    # Zoom-based transitions.
     define zoomin = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
     define zoomout = OldMoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
     define zoominout = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0), leave_factory=ZoomInOut(1.0, 0.01))
+
+    # Factories for the zooms.
+    define Zoomin = renpy.partial(OldMoveTransition, enter_factory=ZoomInOut(.01, 1.))
+    define Zoomout = renpy.partial(OldMoveTransition, leave_factory=ZoomInOut(1., .01))
+    define Zoominout = renpy.partial(OldMoveTransition, enter_factory=ZoomInOut(.01, 1.), leave_factory=ZoomInOut(1., .01))
+    python:
+        Zoomin.__doc__ = """
+            :doc: transition function
+            :args: (delay, *, old=False, layers=['master'])
+
+            This zooms in images being newly shown.
+
+            `delay`
+                How long the transition should take.
+
+            `old`
+                If true, when a tag gets its image changed during the transition,
+                the old image will be used in preference to the new one. Otherwise,
+                the new images will be used.
+
+            `layers`
+                A list of layers that moves are applied to.
+        """
+        Zoomout.__doc__ = """
+            :doc: transition function
+            :args: (delay, *, old=False, layers=['master'])
+
+            This zooms out images being hidden. The parameters are the same
+            as for :func:`Zoomin`.
+        """
+        Zoominout.__doc__ = """
+            :doc: transition function
+            :args: (delay, *, old=False, layers=['master'])
+
+            This zooms in images being newly shown, and zooms out images being
+            hidden. The parameters are the same as for :func:`Zoomin`.
+        """
 
     # These shake the screen up and down for a quarter second.
     # The delay needs to be an integer multiple of the period.

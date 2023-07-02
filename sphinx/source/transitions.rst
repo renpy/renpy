@@ -73,15 +73,18 @@ statement. For example::
 
 .. var:: zoomin
 
-    This zooms in entering images, taking 0.5 seconds to do so.
+    This zooms in entering images, taking 0.5 seconds to do so. An instance of
+    the :func:`Zoomin` transition class.
 
 .. var:: zoomout
 
-    This zooms out leaving images, taking 0.5 seconds to do so.
+    This zooms out leaving images, taking 0.5 seconds to do so. An instance of
+    the :func:`Zoomout` transition class.
 
 .. var:: zoominout
 
     This zooms in entering images and zooms out leaving images, taking 0.5 seconds to do so.
+    An instance of the :func:`Zoominout` transition class.
 
 .. var:: vpunch
 
