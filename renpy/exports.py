@@ -4285,11 +4285,13 @@ def last_say():
     """
     :doc: other
 
-    Returns an object containing information about the last :doc:`dialogue <dialogue>` entry.
-    This object has the following fields on it:
+    Returns an object containing information about the last say statement. This
+    While this can be called in a say statement, if the say statement is using
+    a normal Character, the information will be about the current say statement.
 
     `who`
-        A :func:`Character` object of the speaker.
+        The speaker. This is usually a :func:`Character` object, but this
+        is not required.
 
     `what`
         A string with the dialogue spoken. This may be None if dialogue

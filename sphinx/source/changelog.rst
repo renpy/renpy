@@ -22,6 +22,9 @@ for more information.
 Features
 --------
 
+The new :func:`renpy.last_say` function returns information about the
+last say statement to run.
+
 The new :func:`iap.request_review` function allows the game to request
 that the player review the game on Google Play and the Apple App Store.
 
