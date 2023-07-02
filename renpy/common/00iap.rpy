@@ -111,6 +111,13 @@ init -1500 python in iap:
 
             return
 
+        def request_review(self):
+            """
+            Called to request that the user review the application.
+            """
+
+            return False
+
     class AndroidBackend(object):
         """
         The IAP backend that is used when IAP is supported.
@@ -180,6 +187,9 @@ init -1500 python in iap:
         def get_price(self, p):
             identifier = self.identifier(p)
             return self.store.getPrice(identifier)
+
+        def request_review(self):
+            return self.store.requestReview()
 
         def init(self):
             restore(False)
@@ -292,6 +302,9 @@ init -1500 python in iap:
                     rv = rv.decode("utf-8")
 
             return rv
+
+        def request_review(self):
+            return False
 
         def init(self):
             self.helper.validateProductIdentifiersInBackground()
@@ -540,6 +553,19 @@ init -1500 python in iap:
         """
 
         return backend.get_store_name()
+
+    def request_review():
+        """
+        :doc: iap
+
+        When called, the app store is asked to request a review from the user.
+        This returns true if the request was successful, and false if the
+        request was not. Note that a successful request does not mean that
+        the user will be asked to review the app, as app stores determine
+        if the user is actually asked.
+
+        This is supported on Google Play, but not other app stores.
+        """
 
     def missing_products():
         """
