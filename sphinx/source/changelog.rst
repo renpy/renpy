@@ -23,7 +23,7 @@ Features
 --------
 
 The new :func:`iap.request_review` function allows the game to request
-that the player review the game on the Google Play
+that the player review the game on Google Play and the Apple App Store.
 
 The new :var:`gui.history_spacing` variable controls the spacing between
 history entries in newly created games.

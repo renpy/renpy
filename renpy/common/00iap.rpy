@@ -304,7 +304,8 @@ init -1500 python in iap:
             return rv
 
         def request_review(self):
-            return False
+            self.helper.requestReview()
+            return True
 
         def init(self):
             self.helper.validateProductIdentifiersInBackground()
@@ -564,7 +565,7 @@ init -1500 python in iap:
         the user will be asked to review the app, as app stores determine
         if the user is actually asked.
 
-        This is supported on Google Play, but not other app stores.
+        This is supported on Google Play and the Apple App Store, only.
         """
 
     def missing_products():
