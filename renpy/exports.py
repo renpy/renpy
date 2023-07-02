@@ -2832,19 +2832,19 @@ def scry():
     future of the current statement. Right now, the scry object has the
     following fields:
 
-    ``nvl_clear``
+    `nvl_clear`
         Is true if an ``nvl clear`` statement will execute before the
         next interaction.
 
-    ``say``
+    `say`
         Is true if an ``say`` statement will execute before the
         next interaction.
 
-    ``menu_with_caption``
+    `menu_with_caption`
         Is true if a ``menu`` statement with a caption will execute
         before the next interaction.
 
-    ``who``
+    `who`
         If a ``say`` or ``menu-with-caption`` statement will execute
         before the next interaction, this is the character object it will use.
 
@@ -4285,20 +4285,20 @@ def last_say():
     """
     :doc: other
 
-    Returns an object containing information about the last :doc:`dialogue <dialogue>` entry. 
+    Returns an object containing information about the last :doc:`dialogue <dialogue>` entry.
     This object has the following fields on it:
 
-    .. attribute:: who
+    `who`
         A :func:`Character` object of the speaker.
 
-    .. attribute:: what
+    `what`
         A string with the dialogue spoken. This may be None if dialogue
         hasn't been shown yet, for example at the start of the game.
 
-    .. attribute:: args
+    `args`
         A tuple of arguments passed to the last say statement.
 
-    .. attribute:: kwargs
+    `kwargs`
         A dictionary of keyword arguments passed to the last say statement.
     """
 
