@@ -33,6 +33,10 @@ The common construct "{w=2}{nw}" can now be written as "{nw=2}".
 causes a non-looping movie to display its last frame after the movie
 ends.
 
+The ``jump expression`` statement can now take a local label name of the form
+".local_name". Previously, only "global_name" or "global_name.local_name" were
+allowed.
+
 
 Other Changes
 -------------

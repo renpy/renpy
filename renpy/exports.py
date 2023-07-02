@@ -2019,6 +2019,9 @@ def call(label, *args, **kwargs):
     `label` to occur. When the jump returns, control will be passed
     to the statement following the current statement.
 
+    The label must be either of the form "global_name" or "global_name.local_name".
+    The form ".local_name" is not allowed.
+
     `from_current`
         If true, control will return to the current statement, rather than
         the statement following the current statement. (This will lead to
