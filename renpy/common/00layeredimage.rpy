@@ -922,10 +922,10 @@ python early in layeredimage:
 
         if not l.match(':'):
             l.expect_eol()
-            l.expect_noblock('attribute')
+            l.expect_noblock('always')
             return
 
-        l.expect_block('attribute')
+        l.expect_block('always')
         l.expect_eol()
 
         ll = l.subblock_lexer()
@@ -938,7 +938,7 @@ python early in layeredimage:
 
             line(ll)
             ll.expect_eol()
-            ll.expect_noblock('attribute')
+            ll.expect_noblock('always')
 
         if a.image is None:
             l.error("The always statement must have a displayable.")
