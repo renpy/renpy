@@ -883,7 +883,8 @@ python early in layeredimage:
         ll = l.subblock_lexer()
 
         while ll.advance():
-            line(ll)
+            if not l.keyword("pass"):
+                line(ll)
             ll.expect_eol()
             ll.expect_noblock('attribute')
 
@@ -926,7 +927,8 @@ python early in layeredimage:
         ll = l.subblock_lexer()
 
         while ll.advance():
-            line(ll)
+            if not l.keyword("pass"):
+                line(ll)
             ll.expect_eol()
             ll.expect_noblock('attribute')
 
@@ -954,12 +956,14 @@ python early in layeredimage:
             ll = l.subblock_lexer()
 
             while ll.advance():
-                if ll.keyword("attribute"):
-                    parse_attribute(ll, rv)
-                    continue
+                if not ll.keyword("pass"):
 
-                while parse_property(ll, rv, [ "auto" ] + LAYER_PROPERTIES):
-                    pass
+                    if ll.keyword("attribute"):
+                        parse_attribute(ll, rv)
+                        continue
+
+                    while parse_property(ll, rv, [ "auto" ] + LAYER_PROPERTIES):
+                        pass
 
                 ll.expect_eol()
                 ll.expect_noblock('group property')
@@ -988,23 +992,24 @@ python early in layeredimage:
 
         while ll.advance():
 
+            if not ll.keyword("pass"):
 
-            while True:
+                while True:
 
-                if parse_property(ll, rv, LAYER_PROPERTIES):
-                    continue
+                    if parse_property(ll, rv, LAYER_PROPERTIES):
+                        continue
 
-                image = ll.simple_expression()
+                    image = ll.simple_expression()
 
-                if image is not None:
+                    if image is not None:
 
-                    if rv.image is not None:
-                        ll.error('A condition can only have one displayable, two found.')
+                        if rv.image is not None:
+                            ll.error('A condition can only have one displayable, two found.')
 
-                    rv.image = image
-                    continue
+                        rv.image = image
+                        continue
 
-                break
+                    break
 
             ll.expect_noblock("condition properties")
             ll.expect_eol()
@@ -1058,6 +1063,11 @@ python early in layeredimage:
         rv = RawLayeredImage(name)
 
         while not ll.eob:
+
+            if ll.keyword("pass"):
+                ll.expect_noblock("pass")
+                ll.expect_eol()
+                ll.advance()
 
             if ll.keyword('attribute'):
 
