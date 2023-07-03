@@ -4281,13 +4281,25 @@ class LastSay():
     Returned by the last_say function.
     """
 
+    def __init__(self, who, what, args, kwargs):
+        self._who = who
+        self.what = what
+        self.args = args
+        self.kwargs = kwargs
+
+    @property
+    def who(self):
+        return eval_who(self._who)
+
 def last_say():
     """
     :doc: other
 
-    Returns an object containing information about the last say statement. This
-    While this can be called in a say statement, if the say statement is using
-    a normal Character, the information will be about the current say statement.
+    Returns an object containing information about the last say statement.
+
+    While this can be called during a say statement, if the say statement is using
+    a normal Character, the information will be about the *current* say statement,
+    instead of the preceding one.
 
     `who`
         The speaker. This is usually a :func:`Character` object, but this
@@ -4302,20 +4314,20 @@ def last_say():
 
     `kwargs`
         A dictionary of keyword arguments passed to the last say statement.
+
+    .. warning::
+
+        Like other similar functions, the object this returns is meant to be used
+        in the short term after the function is called. Including it in save data
+        or making it participate in rollback is not advised.
     """
 
-    who = renpy.store._last_say_who
-    what = renpy.store._last_say_what
-    args = renpy.store._last_say_args
-    kwargs = renpy.store._last_say_kwargs
-
-    ls = LastSay()
-    ls.who = eval_who(who)
-    ls.what = what
-    ls.args = args
-    ls.kwargs = kwargs
-
-    return ls
+    return LastSay(
+        who = renpy.store._last_say_who,
+        what = renpy.store._last_say_what,
+        args = renpy.store._last_say_args,
+        kwargs = renpy.store._last_say_kwargs,
+    )
 
 def is_skipping():
     """
