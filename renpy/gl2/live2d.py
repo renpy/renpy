@@ -494,7 +494,7 @@ def update_states():
         s.mark = False
 
 
-class Live2D(renpy.display.core.Displayable):
+class Live2D(renpy.display.displayable.Displayable):
 
     nosave = [ "common_cache" ]
 

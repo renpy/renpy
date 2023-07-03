@@ -579,7 +579,7 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
 
     layer = default_layer(layer, key)
 
-    if isinstance(what, renpy.display.core.Displayable):
+    if isinstance(what, renpy.display.displayable.Displayable):
         base = img = what
 
     else:
@@ -714,7 +714,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if tt is not None:
             at_list = renpy.easy.to_list(tt, copy=True)
 
-    if isinstance(what, renpy.display.core.Displayable):
+    if isinstance(what, renpy.display.displayable.Displayable):
 
         if renpy.config.wrap_shown_transforms and isinstance(what, renpy.display.motion.Transform):
             base = img = renpy.display.image.ImageReference(what, style='image_placement')
@@ -733,7 +733,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if not base.find_target() and renpy.config.missing_show:
             result = renpy.config.missing_show(name, what, layer)
 
-            if isinstance(result, renpy.display.core.Displayable):
+            if isinstance(result, renpy.display.displayable.Displayable):
                 base = img = result
             elif result:
                 return
@@ -3144,7 +3144,7 @@ def is_pixel_opaque(d, width, height, st, at, x, y):
     return bool(render(renpy.easy.displayable(d), width, height, st, at).is_pixel_opaque(x, y))
 
 
-class Displayable(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
+class Displayable(renpy.display.displayable.Displayable, renpy.revertable.RevertableObject):
     pass
 
 

@@ -94,7 +94,7 @@ def get_poi(state):
         height = renpy.config.screen_height
 
         placement = (d.xpos, d.ypos, d.xanchor, d.yanchor, d.xoffset, d.yoffset, True)
-        xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
+        xplacement, yplacement = renpy.display.displayable.place(width, height, width, height, placement)
 
         return (xplacement + width / 2, yplacement + height / 2, d.zpos + z11)
 
@@ -644,7 +644,7 @@ cdef class RenderTransform:
             zrotate = state.zrotate or 0
 
         placement = (state.xpos, state.ypos, state.xanchor, state.yanchor, state.xoffset, state.yoffset, True)
-        xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
+        xplacement, yplacement = renpy.display.displayable.place(width, height, width, height, placement)
 
         if poi:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
@@ -764,7 +764,7 @@ cdef class RenderTransform:
 
         if poi:
             placement = self.transform.get_placement()
-            xplacement, yplacement = renpy.display.core.place(self.widtho, self.heighto, width, height, placement)
+            xplacement, yplacement = renpy.display.displayable.place(self.widtho, self.heighto, width, height, placement)
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
             a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )

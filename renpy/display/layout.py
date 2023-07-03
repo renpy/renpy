@@ -71,7 +71,7 @@ def xyminimums(style, width, height):
     return xminimum, yminimum
 
 
-class Null(renpy.display.core.Displayable):
+class Null(renpy.display.displayable.Displayable):
     """
     :doc: disp_imagelike
     :name: Null
@@ -101,7 +101,7 @@ class Null(renpy.display.core.Displayable):
         return rv
 
 
-class Container(renpy.display.core.Displayable):
+class Container(renpy.display.displayable.Displayable):
     """
     This is the base class for containers that can have one or more
     children.
@@ -128,7 +128,7 @@ class Container(renpy.display.core.Displayable):
     def __init__(self, *args, **properties):
 
         self.children = self._list_type() # type: list
-        self.child = None # type: renpy.display.core.Displayable|None
+        self.child = None # type: renpy.display.displayable.Displayable|None
         self.offsets = self._list_type() # type: list[tuple[int, int]]
 
         for i in args:
@@ -1426,7 +1426,7 @@ def dynamic_displayable_compat(st, at, expr):
     return child, None
 
 
-class DynamicDisplayable(renpy.display.core.Displayable):
+class DynamicDisplayable(renpy.display.displayable.Displayable):
     """
     :doc: disp_dynamic
 
@@ -1975,7 +1975,7 @@ class Side(Container):
         return rv
 
 
-class Alpha(renpy.display.core.Displayable):
+class Alpha(renpy.display.displayable.Displayable):
 
     def __init__(self, start, end, time, child=None, repeat=False, bounce=False,
                  anim_timebase=False, time_warp=None, **properties):

@@ -345,7 +345,7 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
 # New Move Transition (since 6.14)
 
 
-class MoveInterpolate(renpy.display.core.Displayable):
+class MoveInterpolate(renpy.display.displayable.Displayable):
     """
     This displayable has two children. It interpolates between the positions
     of its two children to place them on the screen.

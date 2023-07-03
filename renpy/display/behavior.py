@@ -799,7 +799,7 @@ class SayBehavior(renpy.display.layout.Null):
         return None
 
 
-class DismissBehavior(renpy.display.core.Displayable):
+class DismissBehavior(renpy.display.displayable.Displayable):
     """
     This is used to implement the dismiss screen language statement.
     """
@@ -1313,7 +1313,7 @@ def input_post_per_interact():
             i.caret_pos = len(content)
 
 
-class CaretBlink(renpy.display.core.Displayable):
+class CaretBlink(renpy.display.displayable.Displayable):
     """
     A displayable that renders the caret.
     """
@@ -2062,7 +2062,7 @@ class Adjustment(renpy.object.Object):
             return 0
 
 
-class Bar(renpy.display.core.Displayable):
+class Bar(renpy.display.displayable.Displayable):
     """
     Implements a bar that can display an integer value, and respond
     to clicks on that value.
@@ -2582,7 +2582,7 @@ class Timer(renpy.display.layout.Null):
         return run(self.function, *self.args, **self.kwargs)
 
 
-class MouseArea(renpy.display.core.Displayable):
+class MouseArea(renpy.display.displayable.Displayable):
 
     # The offset between st and at.
     at_st_offset = 0
@@ -2644,7 +2644,7 @@ class MouseArea(renpy.display.core.Displayable):
             run(self.unhovered)
 
 
-class OnEvent(renpy.display.core.Displayable):
+class OnEvent(renpy.display.displayable.Displayable):
     """
     This is a displayable that runs an action in response to a transform
     event. It's used to implement the screen language on statement.
@@ -2836,7 +2836,7 @@ class AreaPicker(renpy.display.layout.Container):
 
 
 
-class WebInput(renpy.display.core.Displayable):
+class WebInput(renpy.display.displayable.Displayable):
     """
     A displayable meant to pull input from an input tag in the web browser.
     """

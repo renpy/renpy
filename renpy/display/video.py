@@ -286,7 +286,7 @@ def default_play_callback(old, new): # @UnusedVariable
 # A serial number that's used to generated movie channels.
 movie_channel_serial = 0
 
-class Movie(renpy.display.core.Displayable):
+class Movie(renpy.display.displayable.Displayable):
     """
     :doc: movie
     :args: (*, size=None, channel="movie", play=None, side_mask=False, mask=None, mask_channel=None, start_image=None, image=None, play_callback=None, loop=True, group=None, **properties)

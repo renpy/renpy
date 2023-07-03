@@ -408,7 +408,7 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
     return rv
 
 
-class ZoomCommon(renpy.display.core.Displayable):
+class ZoomCommon(renpy.display.displayable.Displayable):
 
     def __init__(self,
                  time, child,
@@ -577,7 +577,7 @@ class SizeZoom(ZoomCommon):
         return 0, 0, width, height, zw, zh
 
 
-class RotoZoom(renpy.display.core.Displayable):
+class RotoZoom(renpy.display.displayable.Displayable):
 
     transform = None
 

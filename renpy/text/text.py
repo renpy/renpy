@@ -163,7 +163,7 @@ class DrawInfo(object):
     surface = None # type: Optional[pygame_sdl2.surface.Surface]
     override_color = None # type: Optional[tuple[int, int, int, int]]
     outline = 0 # type: float
-    displayable_blits = None # type: Optional[list[tuple[renpy.display.core.Displayable, int, int]]]
+    displayable_blits = None # type: Optional[list[tuple[renpy.display.displayable.Displayable, int, int]]]
 
 class TextSegment(object):
     """
@@ -1528,7 +1528,7 @@ VERT_REVERSE = renpy.display.matrix.Matrix2D(0, -1, 1, 0)
 VERT_FORWARD = renpy.display.matrix.Matrix2D(0, 1, -1, 0)
 
 
-class Text(renpy.display.core.Displayable):
+class Text(renpy.display.displayable.Displayable):
 
     """
     :name: Text
@@ -1607,7 +1607,7 @@ class Text(renpy.display.core.Displayable):
 
             # Check that the text is all text-able things.
             for i in text:
-                if not isinstance(i, (basestring, renpy.display.core.Displayable)):
+                if not isinstance(i, (basestring, renpy.display.displayable.Displayable)):
                     if renpy.config.developer:
                         raise Exception("Cannot display {0!r} as text.".format(i))
                     else:
@@ -2284,7 +2284,7 @@ class Text(renpy.display.core.Displayable):
                 if self.slow and t > st:
                     continue
 
-                xo, yo = renpy.display.core.place(
+                xo, yo = renpy.display.displayable.place(
                     width,
                     ascent,
                     width,
@@ -2347,7 +2347,7 @@ class Text(renpy.display.core.Displayable):
             elif isinstance(i, basestring):
                 tokens.extend(textsupport.tokenize(str(i)))
 
-            elif isinstance(i, renpy.display.core.Displayable):
+            elif isinstance(i, renpy.display.displayable.Displayable):
                 tokens.append((DISPLAYABLE, i))
 
             else:

@@ -31,7 +31,7 @@ from renpy.display.render import render, Render
 from renpy.display.matrix import Matrix2D
 
 
-class Solid(renpy.display.core.Displayable):
+class Solid(renpy.display.displayable.Displayable):
     """
     :doc: disp_imagelike
 
@@ -139,7 +139,7 @@ class Borders(object):
             )
 
 
-class Frame(renpy.display.core.Displayable):
+class Frame(renpy.display.displayable.Displayable):
     """
     :doc: disp_imagelike
     :args: (image, left=0, top=0, right=None, bottom=None, *, tile=False, **properties)
@@ -585,7 +585,7 @@ class Frame(renpy.display.core.Displayable):
         return rv
 
 
-class FileCurrentScreenshot(renpy.display.core.Displayable):
+class FileCurrentScreenshot(renpy.display.displayable.Displayable):
     """
     :doc: file_action_function
 

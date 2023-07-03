@@ -58,7 +58,7 @@ def default_drop_allowable(drop, drags):
     return True
 
 
-class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
+class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObject):
     """
     :doc: drag_drop class
     :args: (d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragging=None, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=..., clicked=None, hovered=None, unhovered=None, mouse_drop=False, **properties)
@@ -382,7 +382,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         self.target_at_delay = 0
 
         # The displayable we were last dropping on.
-        self.last_drop = None # type: renpy.display.core.Displayable|None
+        self.last_drop = None # type: renpy.display.displayable.Displayable|None
 
         # Did we move over the course of this drag?
         self.drag_moved = False
