@@ -1083,7 +1083,7 @@ python early in layeredimage:
                 ll.expect_eol()
                 ll.advance()
 
-            if ll.keyword('attribute'):
+            elif ll.keyword('attribute'):
 
                 parse_attribute(ll, rv)
                 ll.advance()
