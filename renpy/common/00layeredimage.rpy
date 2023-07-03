@@ -1,4 +1,4 @@
-init offset = -100
+﻿init offset = -100
 
 python early in layeredimage:
 
@@ -841,7 +841,11 @@ python early in layeredimage:
         if name == "auto" or name == "default" or name == "multiple":
             expr = "True"
         elif name == "at":
-            expr = l.require(l.comma_expression)
+            if l.keyword("transform"):
+                name = "atl_transform"
+                expr = renpy.atl.parse_atl(l.subblock_lexer())
+            else:
+                expr = l.require(l.comma_expression)
         else:
             expr = l.require(l.simple_expression)
 
@@ -881,6 +885,9 @@ python early in layeredimage:
 
         line(l)
 
+        if a.atl_transform:
+            l.expect_eol()
+            return
         if not l.match(':'):
             l.expect_eol()
             l.expect_noblock('attribute')
@@ -900,7 +907,8 @@ python early in layeredimage:
 
             line(ll)
             ll.expect_eol()
-            ll.expect_noblock('attribute')
+            if not a.atl_transform:
+                ll.expect_noblock('attribute')
 
         return
 
@@ -930,6 +938,9 @@ python early in layeredimage:
 
         line(l)
 
+        if a.atl_transform:
+            l.expect_eol()
+            return
         if not l.match(':'):
             l.expect_eol()
             l.expect_noblock('always')
@@ -948,7 +959,8 @@ python early in layeredimage:
 
             line(ll)
             ll.expect_eol()
-            ll.expect_noblock('always')
+            if not a.atl_transform:
+                ll.expect_noblock('always')
 
         if a.image is None:
             l.error("The always statement must have a displayable.")
@@ -966,12 +978,18 @@ python early in layeredimage:
         while parse_property(l, rv, [ "auto", "prefix", "variant", "multiple" ] + LAYER_PROPERTIES):
             pass
 
+        if rv.atl_transform:
+            l.expect_eol()
+            return
+
         if l.match(':'):
 
             l.expect_eol()
             l.expect_block("group")
 
             ll = l.subblock_lexer()
+
+            got_atl_transform = False
 
             while ll.advance():
                 if ll.keyword("pass"):
@@ -987,7 +1005,10 @@ python early in layeredimage:
                     pass
 
                 ll.expect_eol()
-                ll.expect_noblock('group property')
+                if (not got_atl_transform) and rv.atl_transform:
+                    got_atl_transform = True
+                else:
+                    ll.expect_noblock('group property')
 
         else:
             l.expect_eol()
@@ -1010,6 +1031,8 @@ python early in layeredimage:
         ll = l.subblock_lexer()
 
         rv = RawCondition(condition)
+
+        got_atl_transform = False
 
         while ll.advance():
 
@@ -1035,7 +1058,10 @@ python early in layeredimage:
 
                 break
 
-            ll.expect_noblock("condition properties")
+            if (not got_atl_transform) and rv.atl_transform:
+                got_atl_transform = True
+            else:
+                ll.expect_noblock("condition properties")
             ll.expect_eol()
 
 
@@ -1086,6 +1112,8 @@ python early in layeredimage:
         name = " ".join(name)
         rv = RawLayeredImage(name)
 
+        got_atl_transform = False
+
         while not ll.eob:
 
             if ll.keyword("pass"):
@@ -1121,7 +1149,10 @@ python early in layeredimage:
                     ):
                     pass
 
-                ll.expect_noblock('statement')
+                if (not got_atl_transform) and rv.atl_transform:
+                    got_atl_transform = True
+                else:
+                    ll.expect_noblock('statement')
                 ll.expect_eol()
                 ll.advance()
 
