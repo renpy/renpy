@@ -2,8 +2,9 @@
 
 python early in layeredimage:
 
-    from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
     from collections import OrderedDict, defaultdict
+    from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
+    from renpy.display.transform import ATLTransform
 
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
     ATL_PROPERTIES_SET = set(ATL_PROPERTIES)
@@ -242,12 +243,12 @@ python early in layeredimage:
 
 
     class RawAttribute(object):
+        atl_transform = None
 
         def __init__(self, name):
             self.name = name
             self.image = None
             self.properties = OrderedDict()
-            self.atl_transform = None
 
         def execute(self, group=None, group_properties=None):
             if group_properties is None:
@@ -262,10 +263,15 @@ python early in layeredimage:
             group_args = { k : v for k, v in group_properties.items() if k in ATL_PROPERTIES_SET }
             properties.update({ k : eval(v) for k, v in self.properties.items() })
 
-            return [ Attribute(group, self.name, image, group_args=group_args, atl_transform=self.atl_transform, **properties) ]
+            atl_transform = self.atl_transform
+            if atl_transform:
+                atl_transform = ATLTransform(atl_transform)
+
+            return [ Attribute(group, self.name, image, group_args=group_args, atl_transform=atl_transform, **properties) ]
 
 
     class RawAttributeGroup(object):
+        atl_transform = None
 
         def __init__(self, image_name, group):
 
@@ -273,13 +279,12 @@ python early in layeredimage:
             self.group = group
             self.properties = OrderedDict()
             self.children = [ ]
-            self.atl_transform = None
 
         def execute(self):
 
             properties = { k : eval(v) for k, v in self.properties.items() }
             if self.atl_transform:
-                properties["atl_transform"] = self.atl_transform
+                properties["atl_transform"] = ATLTransform(self.atl_transform)
 
             auto = properties.pop("auto", False)
             variant = properties.get("variant", None)
@@ -387,16 +392,21 @@ python early in layeredimage:
 
 
     class RawCondition(object):
+        atl_transform = None
 
         def __init__(self, condition):
             self.condition = condition
             self.image = None
             self.properties = OrderedDict()
-            self.atl_transform = None
 
         def execute(self):
             properties = { k : eval(v) for k, v in self.properties.items() }
-            return [ Condition(self.condition, eval(self.image), atl_transform=self.atl_transform, **properties) ]
+
+            atl_transform = self.atl_transform
+            if atl_transform:
+                atl_transform = ATLTransform(atl_transform)
+
+            return [ Condition(self.condition, eval(self.image), atl_transform=atl_transform, **properties) ]
 
 
     class ConditionGroup(Layer):
@@ -500,11 +510,11 @@ python early in layeredimage:
             return self.image
 
     class RawAlways(object):
+        atl_transform = None
 
         def __init__(self):
             self.image = None
             self.properties = OrderedDict()
-            self.atl_transform = None
 
         def execute(self):
 
@@ -514,7 +524,12 @@ python early in layeredimage:
                 image = None
 
             properties = { k : eval(v) for k, v in self.properties.items() }
-            return [ Always(image, atl_transform=self.atl_transform, **properties) ]
+
+            atl_transform = self.atl_transform
+            if atl_transform:
+                atl_transform = ATLTransform(atl_transform)
+
+            return [ Always(image, atl_transform=atl_transform, **properties) ]
 
     class LayeredImage(object):
         """
@@ -796,12 +811,12 @@ python early in layeredimage:
             return tuple(rv)
 
     class RawLayeredImage(object):
+        atl_transform = None
 
         def __init__(self, name):
             self.name = name
             self.children = [ ]
             self.properties = OrderedDict()
-            self.atl_transform = None
 
         def execute(self):
             properties = { k : eval(v) for k, v in self.properties.items() }
@@ -810,9 +825,13 @@ python early in layeredimage:
             for i in self.children:
                 l.extend(i.execute())
 
+            atl_transform = self.atl_transform
+            if atl_transform:
+                atl_transform = ATLTransform(atl_transform)
+
             renpy.image(
                 self.name,
-                LayeredImage(l, name=self.name.replace(" ", "_"), atl_transform=self.atl_transform, **properties),
+                LayeredImage(l, name=self.name.replace(" ", "_"), atl_transform=atl_transform, **properties),
             )
 
     def execute_layeredimage(rai):
@@ -823,6 +842,17 @@ python early in layeredimage:
         """
         Parses a property, returns True if one is found.
         """
+
+        if "at" in names:
+            if l.match("at transform"):
+                if o.atl_transform is not None:
+                    l.error("Duplicate 'at transform' clause")
+
+                l.require(":")
+                l.expect_eol()
+                l.expect_block("ATL block")
+                o.atl_transform = renpy.atl.parse_atl(l.subblock_lexer())
+                return True
 
         checkpoint = l.checkpoint()
 
@@ -841,11 +871,7 @@ python early in layeredimage:
         if name == "auto" or name == "default" or name == "multiple":
             expr = "True"
         elif name == "at":
-            if l.keyword("transform"):
-                name = "atl_transform"
-                expr = renpy.atl.parse_atl(l.subblock_lexer())
-            else:
-                expr = l.require(l.comma_expression)
+            expr = l.require(l.comma_expression)
         else:
             expr = l.require(l.simple_expression)
 
