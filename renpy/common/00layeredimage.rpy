@@ -883,7 +883,7 @@ python early in layeredimage:
         ll = l.subblock_lexer()
 
         while ll.advance():
-            if not l.keyword("pass"):
+            if not ll.keyword("pass"):
                 line(ll)
             ll.expect_eol()
             ll.expect_noblock('attribute')
@@ -927,7 +927,7 @@ python early in layeredimage:
         ll = l.subblock_lexer()
 
         while ll.advance():
-            if not l.keyword("pass"):
+            if not ll.keyword("pass"):
                 line(ll)
             ll.expect_eol()
             ll.expect_noblock('attribute')
