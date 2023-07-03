@@ -2851,6 +2851,12 @@ def scry():
     The scry object has a next() method, which returns the scry object of
     the statement after the current one, if only one statement will execute
     after the this one. Otherwise, it returns None.
+
+    .. warning::
+
+        Like other similar functions, the object this returns is meant to be used
+        in the short term after the function is called. Including it in save data
+        or making it participate in rollback is not advised.
     """
 
     name = renpy.game.context().current
