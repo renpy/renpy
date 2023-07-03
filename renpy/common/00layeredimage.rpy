@@ -1,4 +1,4 @@
-﻿init offset = -100
+init offset = -100
 
 python early in layeredimage:
 
@@ -96,9 +96,11 @@ python early in layeredimage:
 
         group_args = {}
 
-        def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], group_args={}, **kwargs):
+        def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], group_args={}, atl_transform=None, **kwargs):
 
             self.at = renpy.easy.to_list(at)
+            if atl_transform is not None:
+                self.at.append(atl_transform)
             self.if_all = renpy.easy.to_list(if_all)
             self.if_any = renpy.easy.to_list(if_any)
             self.if_not = renpy.easy.to_list(if_not)
@@ -199,12 +201,12 @@ python early in layeredimage:
         to generate an image filename.
         """
 
-        def __init__(self, group, attribute, image=None, default=False, group_args={}, **kwargs):
+        def __init__(self, group, attribute, image=None, default=False, **kwargs):
 
             prefix = kwargs.pop("prefix", None)
             variant = kwargs.pop("variant", None)
 
-            super(Attribute, self).__init__(group_args=group_args, **kwargs)
+            super(Attribute, self).__init__(**kwargs)
 
             self.group = group
 
@@ -245,6 +247,7 @@ python early in layeredimage:
             self.name = name
             self.image = None
             self.properties = OrderedDict()
+            self.atl_transform = None
 
         def execute(self, group=None, group_properties=None):
             if group_properties is None:
@@ -259,7 +262,7 @@ python early in layeredimage:
             group_args = { k : v for k, v in group_properties.items() if k in ATL_PROPERTIES_SET }
             properties.update({ k : eval(v) for k, v in self.properties.items() })
 
-            return [ Attribute(group, self.name, image, group_args=group_args, **properties) ]
+            return [ Attribute(group, self.name, image, group_args=group_args, atl_transform=self.atl_transform, **properties) ]
 
 
     class RawAttributeGroup(object):
@@ -270,10 +273,13 @@ python early in layeredimage:
             self.group = group
             self.properties = OrderedDict()
             self.children = [ ]
+            self.atl_transform = None
 
         def execute(self):
 
             properties = { k : eval(v) for k, v in self.properties.items() }
+            if self.atl_transform:
+                properties["atl_transform"] = self.atl_transform
 
             auto = properties.pop("auto", False)
             variant = properties.get("variant", None)
@@ -386,10 +392,11 @@ python early in layeredimage:
             self.condition = condition
             self.image = None
             self.properties = OrderedDict()
+            self.atl_transform = None
 
         def execute(self):
             properties = { k : eval(v) for k, v in self.properties.items() }
-            return [ Condition(self.condition, eval(self.image), **properties) ]
+            return [ Condition(self.condition, eval(self.image), atl_transform=self.atl_transform, **properties) ]
 
 
     class ConditionGroup(Layer):
@@ -497,6 +504,7 @@ python early in layeredimage:
         def __init__(self):
             self.image = None
             self.properties = OrderedDict()
+            self.atl_transform = None
 
         def execute(self):
 
@@ -506,7 +514,7 @@ python early in layeredimage:
                 image = None
 
             properties = { k : eval(v) for k, v in self.properties.items() }
-            return [ Always(image, **properties) ]
+            return [ Always(image, atl_transform=self.atl_transform, **properties) ]
 
     class LayeredImage(object):
         """
@@ -577,7 +585,7 @@ python early in layeredimage:
         transform_args = { }
         offer_screen = None
 
-        def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, offer_screen=None, **kwargs):
+        def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, offer_screen=None, atl_transform=None, **kwargs):
 
             self.name = name
             self.image_format = image_format
@@ -595,6 +603,8 @@ python early in layeredimage:
                 self.add(i)
 
             self.at = renpy.easy.to_list(at)
+            if atl_transform is not None:
+                self.at.append(atl_transform)
 
             kwargs.setdefault("xfit", True)
             kwargs.setdefault("yfit", True)
@@ -791,10 +801,10 @@ python early in layeredimage:
             self.name = name
             self.children = [ ]
             self.properties = OrderedDict()
+            self.atl_transform = None
 
         def execute(self):
             properties = { k : eval(v) for k, v in self.properties.items() }
-
 
             l = [ ]
             for i in self.children:
@@ -802,7 +812,7 @@ python early in layeredimage:
 
             renpy.image(
                 self.name,
-                LayeredImage(l, name=self.name.replace(" ", "_"), **properties),
+                LayeredImage(l, name=self.name.replace(" ", "_"), atl_transform=self.atl_transform, **properties),
             )
 
     def execute_layeredimage(rai):
