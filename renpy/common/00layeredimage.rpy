@@ -90,6 +90,18 @@ python early in layeredimage:
 
         return image
 
+    def resolve_image(img):
+        """
+        Takes whatever the parser sets as the image attribute of Raw classes,
+        and returns None or a displayable-able.
+        """
+        if img is None:
+            return None
+        elif isinstance(img, renpy.atl.RawBlock):
+            return ATLTransform(img)
+        else:
+            return eval(img)
+
     class Layer(object):
         """
         Base class for our layers.
@@ -254,11 +266,6 @@ python early in layeredimage:
             if group_properties is None:
                 group_properties = {}
 
-            if self.image:
-                image = eval(self.image)
-            else:
-                image = None
-
             properties = { k : v for k, v in group_properties.items() if k not in ATL_PROPERTIES_SET }
             group_args = { k : v for k, v in group_properties.items() if k in ATL_PROPERTIES_SET }
             properties.update({ k : eval(v) for k, v in self.properties.items() })
@@ -267,7 +274,7 @@ python early in layeredimage:
             if atl_transform:
                 atl_transform = ATLTransform(atl_transform)
 
-            return [ Attribute(group, self.name, image, group_args=group_args, atl_transform=atl_transform, **properties) ]
+            return [ Attribute(group, self.name, resolve_image(self.image), group_args=group_args, atl_transform=atl_transform, **properties) ]
 
 
     class RawAttributeGroup(object):
@@ -406,7 +413,7 @@ python early in layeredimage:
             if atl_transform:
                 atl_transform = ATLTransform(atl_transform)
 
-            return [ Condition(self.condition, eval(self.image), atl_transform=atl_transform, **properties) ]
+            return [ Condition(self.condition, resolve_image(self.image), atl_transform=atl_transform, **properties) ]
 
 
     class ConditionGroup(Layer):
@@ -518,18 +525,13 @@ python early in layeredimage:
 
         def execute(self):
 
-            if self.image:
-                image = eval(self.image)
-            else:
-                image = None
-
             properties = { k : eval(v) for k, v in self.properties.items() }
 
             atl_transform = self.atl_transform
             if atl_transform:
                 atl_transform = ATLTransform(atl_transform)
 
-            return [ Always(image, atl_transform=atl_transform, **properties) ]
+            return [ Always(resolve_image(self.image), atl_transform=atl_transform, **properties) ]
 
     class LayeredImage(object):
         """
