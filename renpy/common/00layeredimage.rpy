@@ -840,6 +840,14 @@ python early in layeredimage:
         rai.execute()
 
 
+    def count_blocks(o):
+        """
+        Counts the number of block-taking clauses that ended up in o.
+        Currently there are two : the "at transform:" block and the "image:" block.
+        Not counting blocks making other Raw classes (attributes, groups...).
+        """
+        return isinstance(getattr(o, "image", None), renpy.atl.RawBlock) + (o.atl_transform is not None)
+
     def parse_property(l, o, names):
         """
         Parses a property, returns True if one is found.
@@ -898,6 +906,11 @@ python early in layeredimage:
 
                 if l.match('null'):
                     image = "Null()"
+                elif l.keyword("image"):
+                    l.require(":")
+                    l.expect_eol()
+                    l.expect_block("ATL block")
+                    image = renpy.atl.parse_atl(l.subblock_lexer())
                 else:
                     image = l.simple_expression()
 
@@ -913,7 +926,7 @@ python early in layeredimage:
 
         line(l)
 
-        if a.atl_transform:
+        if count_blocks(a):
             l.expect_eol()
             return
         if not l.match(':'):
@@ -927,6 +940,8 @@ python early in layeredimage:
 
         ll = l.subblock_lexer()
 
+        blocks_found = 0
+
         while ll.advance():
             if ll.keyword("pass"):
                 ll.expect_eol()
@@ -934,8 +949,13 @@ python early in layeredimage:
                 continue
 
             line(ll)
+            newblocks = count_blocks(a)
+
             ll.expect_eol()
-            if not a.atl_transform:
+            if blocks_found < newblocks:
+                # the last line() contained a block
+                blocks_found = newblocks
+            else:
                 ll.expect_noblock('attribute')
 
         return
