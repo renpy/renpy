@@ -99,7 +99,7 @@ python early in layeredimage:
 
         def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], group_args={}, atl_transform=None, **kwargs):
 
-            self.at = renpy.easy.to_list(at)
+            self.at = renpy.easy.to_list(at, copy=True)
             if atl_transform is not None:
                 self.at.append(atl_transform)
             self.if_all = renpy.easy.to_list(if_all)
@@ -617,7 +617,7 @@ python early in layeredimage:
             for i in attributes:
                 self.add(i)
 
-            self.at = renpy.easy.to_list(at)
+            self.at = renpy.easy.to_list(at, copy=True)
             if atl_transform is not None:
                 self.at.append(atl_transform)
 
