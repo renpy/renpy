@@ -972,7 +972,14 @@ python early in layeredimage:
                 if parse_property(l, a, LAYER_PROPERTIES):
                     continue
 
-                image = l.simple_expression()
+                if l.keyword("image"):
+                    l.require(":")
+                    l.expect_eol()
+                    l.expect_block("ATL block")
+                    image = renpy.atl.parse_atl(l.subblock_lexer())
+                else:
+                    image = l.simple_expression()
+
                 if image is not None:
 
                     if a.image is not None:
@@ -986,7 +993,7 @@ python early in layeredimage:
 
         line(l)
 
-        if a.atl_transform:
+        if count_blocks(a):
             l.expect_eol()
             return
         if not l.match(':'):
@@ -999,6 +1006,8 @@ python early in layeredimage:
 
         ll = l.subblock_lexer()
 
+        blocks_found = 0
+
         while ll.advance():
             if ll.keyword("pass"):
                 ll.expect_eol()
@@ -1006,8 +1015,13 @@ python early in layeredimage:
                 continue
 
             line(ll)
+            newblocks = count_blocks(a)
+
             ll.expect_eol()
-            if not a.atl_transform:
+            if blocks_found < newblocks:
+                # the last line() contained a block
+                blocks_found = newblocks
+            else:
                 ll.expect_noblock('always')
 
         if a.image is None:
