@@ -1094,7 +1094,7 @@ python early in layeredimage:
 
         rv = RawCondition(condition)
 
-        got_atl_transform = False
+        blocks_found = 0
 
         while ll.advance():
 
@@ -1108,7 +1108,13 @@ python early in layeredimage:
                 if parse_property(ll, rv, LAYER_PROPERTIES):
                     continue
 
-                image = ll.simple_expression()
+                if ll.keyword("image"):
+                    ll.require(":")
+                    ll.expect_eol()
+                    ll.expect_block("ATL block")
+                    image = renpy.atl.parse_atl(ll.subblock_lexer())
+                else:
+                    image = ll.simple_expression()
 
                 if image is not None:
 
@@ -1120,8 +1126,10 @@ python early in layeredimage:
 
                 break
 
-            if (not got_atl_transform) and rv.atl_transform:
-                got_atl_transform = True
+            newblocks = count_blocks(rv)
+
+            if blocks_found < newblocks:
+                blocks_found = newblocks
             else:
                 ll.expect_noblock("condition properties")
             ll.expect_eol()
