@@ -1105,6 +1105,12 @@ def get_screen(name, layer=None):
     .. attribute:: zorder
 
         The zorder the screen is being displayed at.
+
+    .. warning::
+
+        Like other similar functions, the object this returns is meant to be used
+        in the short term after the function is called. Including it in save data
+        or making it participate in rollback is not advised.
     """
 
     if layer is None:
