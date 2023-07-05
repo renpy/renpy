@@ -649,7 +649,7 @@ Occasionally Used
 .. var:: config.hyperlink_protocol = "call_in_new_context"
 
     The protocol that is used for hyperlinks that do not have a protocol
-    assigned to them. See :ref:`the a text tag <a-tag>` for a description
+    assigned to them. See the :tt:`a` text tag for a description
     as to what the possible protocols mean.
 
 .. var:: config.image_cache_size = None

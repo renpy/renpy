@@ -3035,7 +3035,7 @@ problems when ``window show`` is in effect.
 
 When a :func:`Call` with `from_current` set to true occurs during a
 multi-part statement (like a menu with dialogue), control is restored
-to the first part of that multi-part statement (thus causing the dialouge
+to the first part of that multi-part statement (thus causing the dialogue
 to be displayed).
 
 More functions now use a tag's default layer.

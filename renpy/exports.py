@@ -1594,7 +1594,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
 
     roll_forward = renpy.exports.roll_forward_info()
 
-    if roll_forward not in [ True, False ]:
+    if type(roll_forward) not in (bool, renpy.game.CallException, renpy.game.JumpException):
         roll_forward = None
 
     if (delay is not None) and renpy.game.after_rollback and not renpy.config.pause_after_rollback:

@@ -233,6 +233,8 @@ Some sample interpolations are::
 
         # The same thing, using a block.
         linear 2.0:
+        # The same thing, using a block.
+        linear 2.0:
             xalign 1.0
             yalign 1.0
 

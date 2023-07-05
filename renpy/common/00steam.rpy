@@ -874,7 +874,7 @@ init -1499 python in achievement:
             renpy.write_log("Initialized steam.")
 
         except Exception as e:
-            renpy.write_log("Faled to initialize steam: %r", e)
+            renpy.write_log("Failed to initialize steam: %r", e)
             steam = None
             steamapi = None
 
