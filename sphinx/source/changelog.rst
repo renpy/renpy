@@ -10,14 +10,19 @@ Changelog (Ren'Py 7.x-)
 8.2.0 / 7.7.0
 =============
 
-Retained Bubbles
-----------------
+Speech Bubble Improvements
+--------------------------
 
 The speech bubble feature that was added in Ren'Py 8.1 now has a new way to
 retain speech bubbles, so that the bubbles pop up one at a time, and
 remain displayed on the screen until explicitly cleared, similar to
 dialogue in motion comics. See the :ref:`speech bubble documentation <retained-bubbles>`
 for more information.
+
+The new :var:`bubble.properties_callback` variable can be given a function
+that filter the list of bubble property names based on the image tag
+that's speaking. This makes it possible to have bubbles that are
+specific to some but not all characters.
 
 Features
 --------
