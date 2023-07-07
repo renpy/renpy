@@ -59,7 +59,7 @@ init python:
             path = None
 
         if _renpytfd:
-            default_path = path
+            default_path = ''
             path = _renpytfd.selectFolderDialog(__("Select Projects Directory"), default_path)
 
         is_default = False
