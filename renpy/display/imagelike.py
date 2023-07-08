@@ -75,6 +75,11 @@ class Solid(renpy.display.core.Displayable):
 
         rv = Render(width, height)
 
+        minw, minh = renpy.display.draw.draw_to_virt.transform(1, 1)
+
+        width = max(width, minw)
+        height = max(height, minh)
+
         if color is None or width <= 0 or height <= 0:
             return rv
 
