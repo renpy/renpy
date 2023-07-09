@@ -75,6 +75,12 @@ class Solid(renpy.display.displayable.Displayable):
 
         rv = Render(width, height)
 
+        if width and height:
+            minw, minh = renpy.display.draw.draw_to_virt.transform(1, 1)
+
+            width = max(width, minw)
+            height = max(height, minh)
+
         if color is None or width <= 0 or height <= 0:
             return rv
 
@@ -273,15 +279,22 @@ class Frame(renpy.display.displayable.Displayable):
         width = max(self.style.xminimum, width)
         height = max(self.style.yminimum, height)
 
+        # The size of the final displayable.
+        dw = width
+        dh = height
+
+        if width and height:
+            minw, minh = renpy.display.draw.draw_to_virt.transform(1, 1)
+
+            width = max(width, minw)
+            height = max(height, minh)
+
         image = self.style.child or self.image
         crend = render(image, width, height, st, at)
 
         sw, sh = crend.get_size()
         sw = int(sw)
         sh = int(sh)
-
-        dw = int(width)
-        dh = int(height)
 
         bw = self.left + self.right
         bh = self.top + self.bottom
