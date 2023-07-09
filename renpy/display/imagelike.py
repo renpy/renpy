@@ -279,9 +279,16 @@ class Frame(renpy.display.core.Displayable):
         width = max(self.style.xminimum, width)
         height = max(self.style.yminimum, height)
 
+
         # The size of the final displayable.
-        dw = width
-        dh = height
+        if self.tile:
+
+            dw = width
+            dh = height
+        else:
+            dw = width
+            dh = height
+
 
         if width and height:
             minw, minh = renpy.display.draw.draw_to_virt.transform(1, 1)
