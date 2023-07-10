@@ -283,8 +283,8 @@ class Frame(renpy.display.core.Displayable):
         # The size of the final displayable.
         if self.tile:
 
-            dw = width
-            dh = height
+            dw = int(width)
+            dh = int(height)
         else:
             dw = width
             dh = height
