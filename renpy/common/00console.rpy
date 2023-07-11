@@ -612,7 +612,7 @@ init -1500 python in _console:
             self.lines.append(line)
 
             indent = get_indent(line)
-            if indent or line.startswith("@"):
+            if indent or line.startswith("@") or line.endswith("\\"):
                 self.lines.append(indent)
                 return
 
@@ -1109,7 +1109,7 @@ screen _console:
                 hbox:
                     spacing 4
 
-                    if (line[:1] != " ") and (last_line[:1] != "@"):
+                    if (line[:1] != " ") and (last_line[:1] != "@") and (last_line[-1:] != "\\"):
                         text "> " style "_console_prompt"
                     else:
                         text "... " style "_console_prompt"
@@ -1121,7 +1121,7 @@ screen _console:
             hbox:
                 spacing 4
 
-                if (default[:1] != " ") and (last_line[:1] != "@"):
+                if (default[:1] != " ") and (last_line[:1] != "@") and (last_line[-1:] != "\\"):
                     text "> " style "_console_prompt"
                 else:
                     text "... " style "_console_prompt"
