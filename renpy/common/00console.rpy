@@ -612,7 +612,7 @@ init -1500 python in _console:
             self.lines.append(line)
 
             indent = get_indent(line)
-            if indent:
+            if indent or line.startswith("@"):
                 self.lines.append(indent)
                 return
 
@@ -1103,21 +1103,25 @@ screen _console:
 
             has vbox
 
+            $ last_line = ""
+
             for line in lines:
                 hbox:
                     spacing 4
 
-                    if line[:1] != " ":
+                    if (line[:1] != " ") and (last_line[:1] != "@"):
                         text "> " style "_console_prompt"
                     else:
                         text "... " style "_console_prompt"
 
                     text "[line!q]" style "_console_input_text"
 
+                $ last_line = line
+
             hbox:
                 spacing 4
 
-                if default[:1] != " ":
+                if (default[:1] != " ") and (last_line[:1] != "@"):
                     text "> " style "_console_prompt"
                 else:
                     text "... " style "_console_prompt"
