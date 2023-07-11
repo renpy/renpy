@@ -1,4 +1,4 @@
-﻿# console.rpy
+# console.rpy
 # Ren'Py console
 # Copyright (C) 2012-2017 Shiz, C, delta, PyTom
 #
@@ -593,7 +593,7 @@ init -1500 python in _console:
                     else:
                         break
 
-                if s.rstrip().endswith(":"):
+                if s.partition("#")[0].rstrip().endswith(":"):
                     rv += "    "
 
                 if not s.rstrip():
