@@ -929,6 +929,11 @@ both horizontal and vertical positions.
     coordinates. This is measured in degrees, with 0 being to the top
     of the screen, and 90 being to the right.
 
+    Ren'Py clamps this angle to between 0 and 360 degrees, including 0 but
+    not 360. If a value is set outside this range, it will be set to the
+    equivalent angle in this range before being used. (Setting this to
+    -10 is the equivalent of setting it to 350.)
+
 .. transform-property:: radius
 
     :type: position
@@ -956,6 +961,11 @@ both horizontal and vertical positions.
 
     The angle component of the ploar coordinates of the anchor. This is specified
     in degrees, with 0 being to the top and 90 being to the right.
+
+    Ren'Py clamps this angle to between 0 and 360 degrees, including 0 but
+    not 360. If a value is set outside this range, it will be set to the
+    equivalent angle in this range before being used. (Setting this to
+    -10 is the equivalent of setting it to 350.)
 
 .. transform-property:: anchorradius
 
