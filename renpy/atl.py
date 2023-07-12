@@ -1486,6 +1486,7 @@ class Interpolation(Statement):
 
                     if has_anchorangle:
                         last_anchorangle = trans.state.anchorangle or trans.state.last_anchorangle
+                        anchorangle = (last_anchorangle, newts.last_anchorangle)
 
                     if has_anchorradius:
                         anchorradius = (trans.state.anchorradius, newts.anchorradius)
