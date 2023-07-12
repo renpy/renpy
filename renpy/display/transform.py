@@ -76,6 +76,18 @@ def first_not_none(*args):
     return args[-1]
 
 
+def limit_angle(n):
+    """
+    Limits an angle to the range 0 and 360 degrees.
+    """
+
+    n = n % 360
+
+    if n < 0:
+        n += 360
+
+    return n
+
 class TransformState(renpy.object.Object):
 
     last_angle = 0.0
@@ -327,7 +339,11 @@ class TransformState(renpy.object.Object):
     def get_angle(self):
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-        angle, _radius = self.cartesian_to_polar_pos(xpos, ypos)
+        angle, radius = self.cartesian_to_polar_pos(xpos, ypos)
+
+        if radius == 0 and self.last_angle is not None:
+            angle = self.last_angle
+
         return angle
 
     def get_radius(self):
@@ -345,7 +361,7 @@ class TransformState(renpy.object.Object):
         return self.radius_type(radius)
 
     def set_angle(self, angle):
-        self.last_angle = angle
+        self.last_angle = limit_angle(angle)
 
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
@@ -376,7 +392,11 @@ class TransformState(renpy.object.Object):
     def get_anchorangle(self):
         xanchor = first_not_none(self.xanchor, self.inherited_xanchor, 0)
         yanchor = first_not_none(self.yanchor, self.inherited_yanchor, 0)
-        angle, _radius = self.cartesian_to_polar_anchor(xanchor, yanchor)
+        angle, radius = self.cartesian_to_polar_anchor(xanchor, yanchor)
+
+        if radius == 0 and self.last_anchorangle is not None:
+            angle = self.last_anchorangle
+
         return angle
 
     def get_anchorradius(self):
@@ -387,7 +407,7 @@ class TransformState(renpy.object.Object):
         return self.radius_type(radius)
 
     def set_anchorangle(self, angle):
-        self.last_anchorangle = angle
+        self.last_anchorangle = limit_angle(angle)
 
         xanchor = first_not_none(self.xanchor, self.inherited_xanchor, 0)
         yanchor = first_not_none(self.yanchor, self.inherited_yanchor, 0)

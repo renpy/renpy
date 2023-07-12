@@ -52,6 +52,15 @@ allowed.
 Other Changes
 -------------
 
+Ren'Py now enforces that the angles given to the :tpref:`angle` and :tpref:`anchorangle`
+properties are in the range 0 to 360 degrees, inclusive of 0 but not of 360.
+Previously, angles outside this range  gave undefined behavior, now the angles
+will be clamped to this range. A 360 degree change will no longer cause motion,
+but will instead be treated as a 0 degree change.
+
+When animating :tpref:`angle` and :tpref:`anchorangle` with ATL, if a direction
+is not supplied, the shortest arc will be used, even if it passes through 0.
+
 Ren'Py will now produce an error when an ATL block is present, but the block is
 empty. (For example, ``show eileen happy:`` with no indented lines following it.)
 
