@@ -578,6 +578,10 @@ def register_sl_displayable(*args, **kwargs):
 
         These correspond to groups of :doc:`style_properties`. Group can
         also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
+    
+    .. method:: :: copy_properties(name)
+
+        Adds all styles and positional/keyword arguments that can be passed to the `name` screen statement.
     """
 
     kwargs.setdefault("unique", False)
