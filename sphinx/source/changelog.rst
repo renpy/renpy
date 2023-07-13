@@ -151,8 +151,8 @@ would break rollback.
 Preferences no longer have defaults, meaning all preferences can be
 changed using the ``default`` statement.
 
-The absolute type, used to represent absolute amounts of pixels, now
-ensures the result of mathematically operations with integers and
+The :term:`absolute <position>` type, used to represent absolute amounts of pixels,
+now ensures the result of mathematically operations with integers and
 floats remain absolutes. This fixes a class of problems where
 operations performed on absolutes could produce the incorrect
 type, leasing to layout problems.

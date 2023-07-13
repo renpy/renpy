@@ -159,9 +159,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
     `drag_handle`
         A (x, y, width, height) tuple, giving the position of the drag
-        handle within the child. In this tuple, integers are considered
-        to be a literal number of pixels, while floats are relative to
-        the size of the child.
+        handle within the child. This tuple takes :term:`positions <position>`.
 
     `drag_joined`
         This is called with the current Drag as an argument. It's
@@ -612,16 +610,16 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             fx, fy, fw, fh = self.drag_handle
 
-            if isinstance(fx, float):
+            if type(fx) is float:
                 fx = int(fx * cw)
 
-            if isinstance(fy, float):
+            if type(fy) is float:
                 fy = int(fy * ch)
 
-            if isinstance(fw, float):
+            if type(fw) is float:
                 fw = int(fw * cw)
 
-            if isinstance(fh, float):
+            if type(fh) is float:
                 fh = int(fh * ch)
 
             mask = self.style.focus_mask

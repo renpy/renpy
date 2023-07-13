@@ -227,14 +227,14 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         width, height = d._offer_size
 
     if xmaximum is not None:
-        if isinstance(xmaximum, float):
-            width = width * xmaximum
+        if type(xmaximum) is float:
+            width = min(width * xmaximum, width)
         else:
             width = min(xmaximum, width)
 
     if ymaximum is not None:
-        if isinstance(ymaximum, float):
-            height = height * ymaximum
+        if type(ymaximum) is float:
+            height = min(height * ymaximum, height)
         else:
             height = min(ymaximum, height)
 

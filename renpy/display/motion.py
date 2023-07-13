@@ -328,7 +328,7 @@ class Revolver(object):
             if x is None:
                 x = 0
 
-            if isinstance(x, float):
+            if type(x) is float:
                 return int(x * r)
             else:
                 return x
