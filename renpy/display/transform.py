@@ -222,16 +222,14 @@ class TransformState(renpy.object.Object):
 
     yalign = property(get_yalign, set_yalign)
 
-    def scale(self, value, available):
+    @staticmethod
+    def scale(value, available):
         """
         Converts value to a float, scaled by the available area, if
         required.
         """
 
-        if type(value) is float:
-            return value * available
-
-        return 1.0 * value
+        return float(absolute.compute_raw(value, available))
 
     def cartesian_to_polar_pos(self, x, y):
         """
@@ -371,8 +369,7 @@ class TransformState(renpy.object.Object):
     def set_radius(self, radius):
         self.radius_type = type(radius)
 
-        if type(radius) is float:
-            radius = self.scale(radius, min(self.available_width, self.available_height))
+        radius = self.scale(radius, min(self.available_width, self.available_height))
 
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
@@ -1027,10 +1024,8 @@ class Transform(Container):
                 cw, ch = self.child_size
                 rw, rh = self.render_size
 
-                if xanchor.__class__ is float:
-                    xanchor *= cw
-                if yanchor.__class__ is float:
-                    yanchor *= ch
+                xanchor = absolute.compute_raw(xanchor, cw)
+                yanchor = absolute.compute_raw(yanchor, ch)
 
                 xanchor -= cw / 2.0
                 yanchor -= ch / 2.0
@@ -1040,8 +1035,8 @@ class Transform(Container):
                 xanchor += rw / 2.0
                 yanchor += rh / 2.0
 
-                xanchor = renpy.display.core.absolute(xanchor)
-                yanchor = renpy.display.core.absolute(yanchor)
+                xanchor = absolute(xanchor)
+                yanchor = absolute(yanchor)
 
                 rv = (xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel)
 
