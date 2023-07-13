@@ -210,7 +210,7 @@ class absolute(float):
     This represents an absolute float coordinate.
     """
 
-    slots = ()
+    __slots__ = ()
 
     def __repr__(self):
         return "absolute({})".format(float.__repr__(self))
@@ -220,6 +220,25 @@ class absolute(float):
 
     def __rdivmod__(self, value):
         return value//self, value%self
+
+    @staticmethod
+    def compute_raw(value, room):
+        """
+        Converts a position from one of the many supported position types
+        into an absolute number of pixels, without regard for the return type.
+        """
+        if isinstance(value, (absolute, int)):
+            return value
+        elif isinstance(value, float):
+            return value * room
+        raise TypeError("Value {} of type {} not recognized as a position.".format(value, type(value)))
+
+    @staticmethod
+    def compute(value, room):
+        """
+        Does the same, but converts the result to the absolute type.
+        """
+        return absolute(absolute.compute_raw(value, room))
 
 for fn in (
     '__coerce__', # PY2
