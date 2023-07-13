@@ -633,12 +633,6 @@ Occasionally Used
 
     If true, the current dialogue will appear in the history screen.
 
-.. var:: config.hw_video = False
-
-    If true, hardware video playback will be used on mobile platforms. This
-    may be faster, but only some formats are supported and only fullscreen video
-    is available. If false, software playback will be used.
-
 .. var:: config.hyperlink_handlers = { ... }
 
     A dictionary mapping a hyperlink protocol to the handler for that

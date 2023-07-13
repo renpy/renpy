@@ -62,14 +62,7 @@ to use the :func:`renpy.movie_cutscene` function. This function displays the
 movie fullscreen until it either ends, or the player clicks to dismiss
 it. ::
 
-        $ renpy.movie_cutscene("On_Your_Mark.webm")
-
-On mobile platforms, such as Android and iOS, hardware video decoding is
-used when :var:`config.hw_video` is changed to True. This can be faster, but the list of
-supported movie formats depends on the
-platform. See for instance
-`Android's supported media formats <https://developer.android.com/guide/topics/media/media-formats>`_.
-A quick way to test if your videos are supported is to copy them to your target device and play them with its default video player.
+    $ renpy.movie_cutscene("On_Your_Mark.webm")
 
 Movie Displayables and Movie Sprites
 ------------------------------------

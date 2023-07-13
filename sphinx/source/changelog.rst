@@ -52,6 +52,10 @@ allowed.
 Other Changes
 -------------
 
+The non-default hardware video playback path has been removed from android
+and ios. This path hadn't been the defaults since 2020, as it supported
+a subset of the video formats Ren'Py supports.
+
 Ren'Py now enforces that the angles given to the :tpref:`angle` and :tpref:`anchorangle`
 properties are in the range 0 to 360 degrees, inclusive of 0 but not of 360.
 Previously, angles outside this range  gave undefined behavior, now the angles

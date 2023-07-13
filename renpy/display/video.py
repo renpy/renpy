@@ -506,9 +506,6 @@ class Movie(renpy.display.displayable.Displayable):
 
         self.group = group
 
-        if (self.channel == "movie") and (renpy.config.hw_video) and renpy.mobile:
-            raise Exception("Movie(channel='movie') doesn't work on mobile when config.hw_video is true. (Use a different channel argument.)")
-
     def _handles_event(self, event):
         return event == "show"
 
@@ -714,7 +711,7 @@ def frequent():
 
         return False
 
-    elif fullscreen and not ((renpy.android or renpy.ios) and renpy.config.hw_video):
+    elif fullscreen:
 
         c = renpy.audio.audio.get_channel("movie")
 
