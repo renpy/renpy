@@ -210,7 +210,7 @@ class absolute(float):
     This represents an absolute float coordinate.
     """
 
-    slots = ()
+    __slots__ = ()
 
     def __repr__(self):
         return "absolute({})".format(float.__repr__(self))
