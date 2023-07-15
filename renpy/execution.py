@@ -974,7 +974,7 @@ def run_context(top):
 
 def reset_all_contexts():
     """
-    :doc: other
+    :doc: context
 
     This pops all contexts off the context stack, resetting the dynamic variables
     as it does so. When this is done, a new context is created, the current statement
