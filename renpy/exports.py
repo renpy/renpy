@@ -109,7 +109,7 @@ from renpy.memory import profile_memory, diff_memory, profile_rollback
 
 from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH as TEXT_PARAGRAPH, DISPLAYABLE as TEXT_DISPLAYABLE
 
-from renpy.execution import not_infinite_loop
+from renpy.execution import not_infinite_loop, reset_all_contexts
 
 from renpy.sl2.slparser import CustomParser as register_sl_statement, register_sl_displayable
 

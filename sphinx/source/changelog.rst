@@ -27,6 +27,11 @@ specific to some but not all characters.
 Features
 --------
 
+The new :func:`renpy.reset_all_contexts` function removes all contexts
+from the stack, and creates a new context that continues at the next
+statement. It can be used to fully reset the game upon load or when
+an error happens.
+
 The new :func:`renpy.last_say` function returns information about the
 last say statement to run.
 
