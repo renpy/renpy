@@ -34,7 +34,7 @@ def place(width, height, sw, sh, placement):
         The width and height of the area the image will be
         placed in.
 
-    `size`
+    `sw`, `sh`
         The size of the image to be placed.
 
     `placement`
@@ -42,6 +42,8 @@ def place(width, height, sw, sh, placement):
     """
 
     xpos, ypos, xanchor, yanchor, xoffset, yoffset, _subpixel = placement
+
+    compute_raw = renpy.display.core.absolute.compute_raw
 
     if xpos is None:
         xpos = 0
@@ -56,20 +58,15 @@ def place(width, height, sw, sh, placement):
     if yoffset is None:
         yoffset = 0
 
-    # We need to use type, since isinstance(absolute(0), float).
-    if xpos.__class__ is float:
-        xpos *= width
+    xpos = compute_raw(xpos, width)
 
-    if xanchor.__class__ is float:
-        xanchor *= sw
+    xanchor = compute_raw(xanchor, sw)
 
     x = xpos + xoffset - xanchor
 
-    if ypos.__class__ is float:
-        ypos *= height
+    ypos = compute_raw(ypos, height)
 
-    if yanchor.__class__ is float:
-        yanchor *= sh
+    yanchor = compute_raw(yanchor, sh)
 
     y = ypos + yoffset - yanchor
 
