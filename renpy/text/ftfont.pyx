@@ -392,6 +392,7 @@ cdef class FTFont:
         cdef FT_Face face
         cdef FT_Glyph g
         cdef FT_BitmapGlyph bg
+        cdef FT_Bitmap bitmap
         cdef FT_Matrix shear
 
         cdef int error
@@ -422,53 +423,84 @@ cdef class FTFont:
 
         rv.index = index
 
-        error = FT_Load_Glyph(face, index, self.hinting)
+        error = FT_Load_Glyph(face, index, self.hinting | FT_LOAD_COLOR)
         if error:
             raise FreetypeError(error)
 
-        error = FT_Get_Glyph(face.glyph, &g)
+        g = NULL
 
-        if error:
-            raise FreetypeError(error)
+        if face.glyph.format != FT_GLYPH_FORMAT_BITMAP:
 
-        if g.format != FT_GLYPH_FORMAT_BITMAP:
+            if not self.italic and glyph_rotate == 0 and self.stroker == NULL:
 
-            if self.italic:
-                shear.xx = 1 << 16
-                shear.xy = (207 << 16) // 1000 # taken from SDL_ttf.
-                shear.yx = 0
-                shear.yy = 1 << 16
-
-                FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
-
-            if glyph_rotate != 0:
-                metrics = face.glyph.metrics
-                # move the origin for vertical layout
-                if glyph_rotate == 1:
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
+                if self.antialias:
+                    FT_Render_Glyph(face.glyph, FT_RENDER_MODE_NORMAL)
                 else:
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance // 2, -face.bbox.yMax)
-                shear.xx = 0
-                shear.xy = -(1 << 16)
-                shear.yx = 1 << 16
-                shear.yy = 0
-                FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
-                # set vertical baseline to a half of the height
-                FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.yMax + face.bbox.yMin) // 2)
+                    FT_Render_Glyph(face.glyph, FT_RENDER_MODE_MONO)
 
-            if self.stroker != NULL:
-                # FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
-                FT_Glyph_Stroke(&g, self.stroker, 1)
+                bitmap = face.glyph.bitmap
 
-            if self.antialias:
-                FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_NORMAL, NULL, 1)
+                rv.bitmap_left = face.glyph.bitmap_left + self.expand // 2
+                rv.bitmap_top = face.glyph.bitmap_top - self.expand // 2
+
             else:
-                FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_MONO, NULL, 1)
+                error = FT_Get_Glyph(face.glyph, &g)
 
-        bg = <FT_BitmapGlyph> g
+                if g:
+                    print("g is good")
+                else:
+                    print("g is no good.")
 
-        if bg.bitmap.pixel_mode != FT_PIXEL_MODE_GRAY:
-            FT_Bitmap_Convert(library, &(bg.bitmap), &(rv.bitmap), 4)
+                if error:
+                    raise FreetypeError(error)
+
+                if self.italic:
+                    shear.xx = 1 << 16
+                    shear.xy = (207 << 16) // 1000 # taken from SDL_ttf.
+                    shear.yx = 0
+                    shear.yy = 1 << 16
+
+                    FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
+
+                if glyph_rotate != 0:
+                    metrics = face.glyph.metrics
+                    # move the origin for vertical layout
+                    if glyph_rotate == 1:
+                        FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
+                    else:
+                        FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance // 2, -face.bbox.yMax)
+                    shear.xx = 0
+                    shear.xy = -(1 << 16)
+                    shear.yx = 1 << 16
+                    shear.yy = 0
+                    FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
+                    # set vertical baseline to a half of the height
+                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.yMax + face.bbox.yMin) // 2)
+
+                if self.stroker != NULL:
+                    # FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
+                    FT_Glyph_Stroke(&g, self.stroker, 1)
+
+                if self.antialias:
+                    FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_NORMAL, NULL, 1)
+                else:
+                    FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_MONO, NULL, 1)
+
+                bg = <FT_BitmapGlyph> g
+                bitmap = bg.bitmap
+
+                rv.bitmap_left = bg.left + self.expand // 2
+                rv.bitmap_top = bg.top - self.expand // 2
+
+        else:
+
+            bitmap = face.glyph.bitmap
+
+            rv.bitmap_left = face.glyph.bitmap_left + self.expand // 2
+            rv.bitmap_top = face.glyph.bitmap_top - self.expand // 2
+
+        if bitmap.pixel_mode != FT_PIXEL_MODE_GRAY and bitmap.pixel_mode != FT_PIXEL_MODE_BGRA:
+            FT_Bitmap_Convert(library, &(bitmap), &(rv.bitmap), 4)
 
             # Freetype gives us a bitmap where values range from 0 to 1.
             for y from 0 <= y < rv.bitmap.rows:
@@ -477,7 +509,7 @@ cdef class FTFont:
                         rv.bitmap.buffer[ y * rv.bitmap.pitch + x ] = 255
 
         else:
-            FT_Bitmap_Copy(library, &(bg.bitmap), &(rv.bitmap))
+            FT_Bitmap_Copy(library, &(bitmap), &(rv.bitmap))
 
         if self.bold:
             overhang = face.size.metrics.y_ppem // 10
@@ -491,7 +523,6 @@ cdef class FTFont:
         else:
             overhang = 0
 
-
         # rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
         if glyph_rotate == 1:
             rv.advance = face.glyph.metrics.vertAdvance / 64.0 + self.expand + overhang
@@ -501,12 +532,10 @@ cdef class FTFont:
         else:
             rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
 
-        rv.bitmap_left = bg.left + self.expand // 2
-        rv.bitmap_top = bg.top - self.expand // 2
-
         rv.width = rv.bitmap.width + rv.bitmap_left
 
-        FT_Done_Glyph(g)
+        if g != NULL:
+            FT_Done_Glyph(g)
 
         return rv
 
