@@ -725,6 +725,7 @@ cdef class FTFont:
         cdef SDL_Surface *surf
         cdef unsigned int Sr, Sb, Sg, Sa
         cdef unsigned int Dr, Db, Dg, Da
+        cdef unsigned int Gr, Gb, Gg, Ga
         cdef unsigned int rshift, gshift, bshift, ashift
         cdef unsigned int fixed
         cdef unsigned int alpha
@@ -797,36 +798,66 @@ cdef class FTFont:
 
             if glyph.draw:
 
-                for py from 0 <= py < rows:
+                if cache.bitmap.pixel_mode == FT_PIXEL_MODE_BGRA:
 
-                    if bmy < 0:
+                    for py from 0 <= py < rows:
+
+                        if bmy < 0:
+                            bmy += 1
+                            continue
+
+                        line = pixels + bmy * pitch + bmx * 4
+                        gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
+
+                        for px from 0 <= px < width:
+
+                            Gb = gline[0]
+                            Gg = gline[1]
+                            Gr = gline[2]
+                            Ga = gline[3]
+
+                            line[0] = line[0] * (1 - Ga) // 255 + Gr
+                            line[1] = line[1] * (1 - Ga) // 255 + Gg
+                            line[2] = line[2] * (1 - Ga) // 255 + Gb
+                            line[3] = line[3] * (1 - Ga) // 255 + Ga
+
+                            gline += 4
+                            line += 4
+
                         bmy += 1
-                        continue
 
-                    line = pixels + bmy * pitch + bmx * 4
-                    gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
+                else:
 
-                    for px from 0 <= px < width:
+                    for py from 0 <= py < rows:
 
-                        alpha = gline[0]
+                        if bmy < 0:
+                            bmy += 1
+                            continue
 
-                        # Modulate Sa by the glyph's alpha.
+                        line = pixels + bmy * pitch + bmx * 4
+                        gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
 
-                        alpha = (alpha * Sa + Sa) >> 8
+                        for px from 0 <= px < width:
 
-                        # Only draw if we increase the alpha - a cheap way to
-                        # allow overlapping characters.
-                        if line[3] < alpha:
+                            alpha = gline[0]
 
-                            line[0] = Sr
-                            line[1] = Sg
-                            line[2] = Sb
-                            line[3] = alpha
+                            # Modulate Sa by the glyph's alpha.
 
-                        gline += 1
-                        line += 4
+                            alpha = (alpha * Sa + Sa) >> 8
 
-                    bmy += 1
+                            # Only draw if we increase the alpha - a cheap way to
+                            # allow overlapping characters.
+                            if line[3] < alpha:
+
+                                line[0] = Sr
+                                line[1] = Sg
+                                line[2] = Sb
+                                line[3] = alpha
+
+                            gline += 1
+                            line += 4
+
+                        bmy += 1
 
             # Underlining.
             if underline:
