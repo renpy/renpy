@@ -888,7 +888,10 @@ class Layout(object):
                 self.make_alignment_grid(surf)
 
             renpy.display.draw.mutated_surface(surf)
-            tex = renpy.display.draw.load_texture(surf, properties={ "mipmap" : renpy.config.mipmap_text if (style.mipmap is None) else style.mipmap })
+            tex = renpy.display.draw.load_texture(surf, properties={
+                "mipmap" : renpy.config.mipmap_text if (style.mipmap is None) else style.mipmap,
+                "premultiplied" : True,
+                })
 
             self.textures[key] = tex
 
