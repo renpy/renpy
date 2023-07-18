@@ -446,11 +446,6 @@ cdef class FTFont:
             else:
                 error = FT_Get_Glyph(face.glyph, &g)
 
-                if g:
-                    print("g is good")
-                else:
-                    print("g is no good.")
-
                 if error:
                     raise FreetypeError(error)
 
@@ -847,12 +842,19 @@ cdef class FTFont:
 
                             # Only draw if we increase the alpha - a cheap way to
                             # allow overlapping characters.
-                            if line[3] < alpha:
 
+                            if alpha == 255:
                                 line[0] = Sr
                                 line[1] = Sg
                                 line[2] = Sb
                                 line[3] = alpha
+
+                            elif alpha:
+
+                                line[0] = (line[0] * (1 - alpha) + Sr * alpha) // 255
+                                line[1] = (line[1] * (1 - alpha) + Sg * alpha) // 255
+                                line[2] = (line[2] * (1 - alpha) + Sb * alpha) // 255
+                                line[3] = line[3] * (1 - alpha) // 255 + alpha
 
                             gline += 1
                             line += 4
