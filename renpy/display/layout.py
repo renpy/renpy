@@ -31,7 +31,11 @@ import renpy
 from renpy.display.render import render, Render
 
 
-compute_raw = renpy.display.core.absolute.compute_raw
+if PY2:
+    def compute_raw(value, room):
+        return renpy.display.core.absolute.compute_raw(value, room)
+else:
+    compute_raw = renpy.display.core.absolute.compute_raw
 
 
 def xyminimums(style, width, height):
