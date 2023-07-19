@@ -620,7 +620,7 @@ init -1100:
         key "game_menu" action Return(False)
 
     screen sync_error(message):
-        style "sync"
+        style_prefix "sync"
         modal True
         zorder 100
 
