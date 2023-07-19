@@ -140,25 +140,6 @@ API Reference
 
 .. include:: inc/statement_register
 
-.. decorator:: renpy.register_decorator
-
-    A class decorator which registers a new statement.
-
-    The name of the statement will be the class name unless a ``name``
-    class attribute is present, which should be a string.
-
-    The `parse` parameter to :func:`renpy.register_statement` should
-    either be the class constructor itself, or a method named ``parse``
-    (likely a class method or static method) returning an instance of
-    the class.
-
-    For the `execute` parameter, Ren'Py will look for a method named
-    ``execute`` on the class, or if it is not found, will use the class's
-    ``__call__`` method to call like a function the object created by `parse`.
-
-    All other parameters to :func:`renpy.register_statement` should be set as
-    class attributes or methods with the same name.
-
 
 Lexer object
 ~~~~~~~~~~~~

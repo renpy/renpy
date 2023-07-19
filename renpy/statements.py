@@ -310,7 +310,7 @@ def register(
     parsers.add(name, parse_data)
 
 # import inspect # only works in py3
-# register_params = frozenset(inspect.signature(renpy.register_statement).parameters) - {"name", "parse", "execute"}
+# register_params = frozenset(inspect.signature(register).parameters) - {"name", "parse", "execute"}
 register_params = frozenset((
     # "name", # special-cased
     # "parse", # special-cased
@@ -337,20 +337,25 @@ register_params = frozenset((
 ))
 def register_decorator(cls):
     """
-    (documented in sphinx)
+    :doc: statement_register decorator
+    :args:
 
-    A class decorator which registers a new Creator-defined statement.
+    A class decorator which registers a new statement.
 
-    The "parse" parameter of renpy.register_statement should be either the
-    class constructor itself or a method named "parse" (likely a classmethod
-    or a staticmethod) returning an instance of the class. The name of the
-    statement will be the class name unless a "name" class attribute is
-    present, which should be a string. Instead of the "execute" parameter,
-    Ren'Py will look for a method named "execute", or in its absence, the
-    class's `__call__` method to call the object like a function.
+    The name of the statement will be the class name unless a ``name``
+    class attribute is present, which should be a string.
 
-    All other parameters to the register_statement function can be set as
-    class attributes or functions with the same name.
+    The `parse` parameter to :func:`renpy.register_statement` should
+    either be the class constructor itself, or a method named ``parse``
+    (likely a class method or static method) returning an instance of
+    the class.
+
+    For the `execute` parameter, Ren'Py will look for a method named
+    ``execute`` on the class, or if it is not found, will use the class's
+    ``__call__`` method to call like a function the object created by `parse`.
+
+    All other parameters to :func:`renpy.register_statement` should be set as
+    class attributes or methods with the same name.
     """
     name = getattr(cls, "name", cls.__name__)
     parse = getattr(cls, "parse", cls)
