@@ -515,6 +515,7 @@ init -1100 python in _sync:
 init -1100:
 
     screen sync_confirm():
+        style_prefix "sync"
         modal True
         zorder 100
 
@@ -544,6 +545,7 @@ init -1100:
         key "game_menu" action Return(False)
 
     screen sync_prompt(prompt):
+        style_prefix "sync"
         modal True
         zorder 100
 
@@ -582,6 +584,7 @@ init -1100:
 
 
     screen sync_success(sync_id):
+        style_prefix "sync"
         modal True
         zorder 100
 
@@ -617,6 +620,7 @@ init -1100:
         key "game_menu" action Return(False)
 
     screen sync_error(message):
+        style "sync"
         modal True
         zorder 100
 

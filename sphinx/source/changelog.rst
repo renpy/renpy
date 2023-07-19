@@ -142,6 +142,9 @@ silently ignored.
 Other Changes
 -------------
 
+The Ren'Py sync screens now use styles prefixed with ``sync``, allowing
+basic customization without having to edit the screens.
+
 Ren'Py will disable text input methods when text editing is not possible, which
 makes it possible to use the space key to advance the game even if an input
 method that uses the space key is active.
