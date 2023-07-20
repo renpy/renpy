@@ -109,7 +109,7 @@ from renpy.memory import profile_memory, diff_memory, profile_rollback
 
 from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH as TEXT_PARAGRAPH, DISPLAYABLE as TEXT_DISPLAYABLE
 
-from renpy.execution import not_infinite_loop
+from renpy.execution import not_infinite_loop, reset_all_contexts
 
 from renpy.sl2.slparser import CustomParser as register_sl_statement, register_sl_displayable
 
@@ -579,7 +579,7 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
 
     layer = default_layer(layer, key)
 
-    if isinstance(what, renpy.display.core.Displayable):
+    if isinstance(what, renpy.display.displayable.Displayable):
         base = img = what
 
     else:
@@ -714,7 +714,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if tt is not None:
             at_list = renpy.easy.to_list(tt, copy=True)
 
-    if isinstance(what, renpy.display.core.Displayable):
+    if isinstance(what, renpy.display.displayable.Displayable):
 
         if renpy.config.wrap_shown_transforms and isinstance(what, renpy.display.motion.Transform):
             base = img = renpy.display.image.ImageReference(what, style='image_placement')
@@ -733,7 +733,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if not base.find_target() and renpy.config.missing_show:
             result = renpy.config.missing_show(name, what, layer)
 
-            if isinstance(result, renpy.display.core.Displayable):
+            if isinstance(result, renpy.display.displayable.Displayable):
                 base = img = result
             elif result:
                 return
@@ -1594,7 +1594,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
 
     roll_forward = renpy.exports.roll_forward_info()
 
-    if roll_forward not in [ True, False ]:
+    if type(roll_forward) not in (bool, renpy.game.CallException, renpy.game.JumpException):
         roll_forward = None
 
     if (delay is not None) and renpy.game.after_rollback and not renpy.config.pause_after_rollback:
@@ -1919,7 +1919,7 @@ def utter_restart(keep_renderer=False):
 
 def reload_script():
     """
-    :doc: other
+    :doc: reload
 
     Causes Ren'Py to save the game, reload the script, and then load the
     save.
@@ -1935,6 +1935,7 @@ def reload_script():
     s = get_screen("menu")
 
     session = renpy.session
+    session["_reload"] = True
 
     # If one of these variables is already in session, we're recovering from
     # a failed reload.
@@ -2017,6 +2018,9 @@ def call(label, *args, **kwargs):
     Causes the current Ren'Py statement to terminate, and a jump to a
     `label` to occur. When the jump returns, control will be passed
     to the statement following the current statement.
+
+    The label must be either of the form "global_name" or "global_name.local_name".
+    The form ".local_name" is not allowed.
 
     `from_current`
         If true, control will return to the current statement, rather than
@@ -2821,30 +2825,45 @@ def scry():
     """
     :doc: other
 
-    Returns the scry object for the current statement.
+    Returns the scry object for the current statement. Returns None if
+    there are no statements executing.
 
     The scry object tells Ren'Py about things that must be true in the
     future of the current statement. Right now, the scry object has the
     following fields:
 
-    ``nvl_clear``
+    `nvl_clear`
         Is true if an ``nvl clear`` statement will execute before the
         next interaction.
 
-    ``say``
+    `say`
         Is true if an ``say`` statement will execute before the
         next interaction.
 
-    ``menu_with_caption``
+    `menu_with_caption`
         Is true if a ``menu`` statement with a caption will execute
         before the next interaction.
 
-    ``who``
+    `who`
         If a ``say`` or ``menu-with-caption`` statement will execute
         before the next interaction, this is the character object it will use.
+
+    The scry object has a next() method, which returns the scry object of
+    the statement after the current one, if only one statement will execute
+    after the this one. Otherwise, it returns None.
+
+    .. warning::
+
+        Like other similar functions, the object this returns is meant to be used
+        in the short term after the function is called. Including it in save data
+        or making it participate in rollback is not advised.
     """
 
     name = renpy.game.context().current
+
+    if name is None:
+        return None
+
     node = renpy.game.script.lookup(name)
     return node.scry()
 
@@ -3131,7 +3150,7 @@ def is_pixel_opaque(d, width, height, st, at, x, y):
     return bool(render(renpy.easy.displayable(d), width, height, st, at).is_pixel_opaque(x, y))
 
 
-class Displayable(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
+class Displayable(renpy.display.displayable.Displayable, renpy.revertable.RevertableObject):
     pass
 
 
@@ -3773,11 +3792,11 @@ def set_mouse_pos(x, y, duration=0):
 
 def set_autoreload(autoreload):
     """
-    :doc: other
+    :doc: reload
 
     Sets the autoreload flag, which determines if the game will be
     automatically reloaded after file changes. Autoreload will not be
-    fully enabled until the game is reloaded with :func:`renpy.utter_restart`.
+    fully enabled until the game is reloaded with :func:`renpy.reload_script`.
     """
 
     renpy.autoreload = autoreload
@@ -3785,7 +3804,7 @@ def set_autoreload(autoreload):
 
 def get_autoreload():
     """
-    :doc: other
+    :doc: reload
 
     Gets the autoreload flag.
     """
@@ -4261,6 +4280,61 @@ def get_say_image_tag():
     return renpy.store._side_image_attributes[0]
 
 
+class LastSay():
+    """
+    :undocumented:
+    Object containing info about the last dialogue line.
+    Returned by the last_say function.
+    """
+
+    def __init__(self, who, what, args, kwargs):
+        self._who = who
+        self.what = what
+        self.args = args
+        self.kwargs = kwargs
+
+    @property
+    def who(self):
+        return eval_who(self._who)
+
+def last_say():
+    """
+    :doc: other
+
+    Returns an object containing information about the last say statement.
+
+    While this can be called during a say statement, if the say statement is using
+    a normal Character, the information will be about the *current* say statement,
+    instead of the preceding one.
+
+    `who`
+        The speaker. This is usually a :func:`Character` object, but this
+        is not required.
+
+    `what`
+        A string with the dialogue spoken. This may be None if dialogue
+        hasn't been shown yet, for example at the start of the game.
+
+    `args`
+        A tuple of arguments passed to the last say statement.
+
+    `kwargs`
+        A dictionary of keyword arguments passed to the last say statement.
+
+    .. warning::
+
+        Like other similar functions, the object this returns is meant to be used
+        in the short term after the function is called. Including it in save data
+        or making it participate in rollback is not advised.
+    """
+
+    return LastSay(
+        who = renpy.store._last_say_who,
+        what = renpy.store._last_say_what,
+        args = renpy.store._last_say_args,
+        kwargs = renpy.store._last_say_kwargs,
+    )
+
 def is_skipping():
     """
     :doc: other
@@ -4480,6 +4554,18 @@ def request_permission(permission):
         return False
 
     return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8")) # type: ignore
+
+
+def clear_retain(layer="screens", prefix="_retain"):
+    """
+    :doc: other
+
+    Clears all retained screens
+    """
+
+    for i in get_showing_tags(layer):
+        if i.startswith(prefix):
+            hide_screen(i)
 
 
 def confirm(message, yes=None, no=None):

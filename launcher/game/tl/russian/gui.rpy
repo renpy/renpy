@@ -433,3 +433,11 @@ translate russian strings:
     old "## NVL-mode."
     new "## Режим NVL."
 
+
+translate russian strings:
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    # Automatic translation.
+    new "## Включить проверку на недопустимые или нестабильные свойства в экранах или преобразованиях"
+

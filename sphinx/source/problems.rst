@@ -18,14 +18,6 @@ start. To fix this problem, start the control panel, select "Region and Language
 Options", "Advanced", and change the Language for non-Unicode programs.
 
 
-OS X 10.9 Mavericks
--------------------
-
-A bug in OS X 10.9 Mavericks prevents Ren'Py from starting when launched
-on a non-primary display. Until Apple fixes this bug, please launch Ren'Py from
-the the primary display.
-
-
 64-Bit Linux Problems
 ----------------------
 

@@ -98,7 +98,7 @@ label itch:
 
         for fn in os.listdir(destination):
 
-            for pattern, channel in reversed(build['itch_channels']):
+            for pattern, channel in reversed(build['itch_channels'].items()):
                 if fnmatch.fnmatch(fn, pattern):
                     break
             else:

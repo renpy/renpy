@@ -408,11 +408,11 @@ style main_menu_version:
 ## This lays out the basic common structure of a game menu screen. It's called
 ## with the screen title, and displays the background, title, and navigation.
 ##
-## The scroll parameter can be None, or one of "viewport" or "vpgrid". When
-## this screen is intended to be used with one or more children, which are
+## The scroll parameter can be None, or one of "viewport" or "vpgrid".
+## This screen is intended to be used with one or more children, which are
 ## transcluded (placed) inside it.
 
-screen game_menu(title, scroll=None, yinitial=0.0):
+screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
 
     style_prefix "game_menu"
 
@@ -445,6 +445,8 @@ screen game_menu(title, scroll=None, yinitial=0.0):
                         side_yfill True
 
                         vbox:
+                            spacing spacing
+
                             transclude
 
                 elif scroll == "vpgrid":
@@ -459,6 +461,8 @@ screen game_menu(title, scroll=None, yinitial=0.0):
                         pagekeys True
 
                         side_yfill True
+
+                        spacing spacing
 
                         transclude
 
@@ -888,7 +892,7 @@ screen history():
     ## Avoid predicting this screen, as it can be very large.
     predict False
 
-    use game_menu(_("History"), scroll=("vpgrid" if gui.history_height else "viewport"), yinitial=1.0):
+    use game_menu(_("History"), scroll=("vpgrid" if gui.history_height else "viewport"), yinitial=1.0, spacing=gui.history_spacing):
 
         style_prefix "history"
 
@@ -1459,6 +1463,7 @@ style bubble_what:
     color "#000"
 
 define bubble.frame = Frame("gui/bubble.png", 55, 55, 55, 95)
+define bubble.thoughtframe = Frame("gui/thoughtbubble.png", 55, 55, 55, 55)
 
 define bubble.properties = {
     "bottom_left" : {
@@ -1480,6 +1485,10 @@ define bubble.properties = {
         "window_background" : Transform(bubble.frame, xzoom=-1, yzoom=-1),
         "window_top_padding" : 27,
     },
+
+    "thought" : {
+        "window_background" : bubble.thoughtframe,
+    }
 }
 
 define bubble.expand_area = {
@@ -1487,6 +1496,7 @@ define bubble.expand_area = {
     "bottom_right" : (0, 0, 0, 22),
     "top_left" : (0, 22, 0, 0),
     "top_right" : (0, 22, 0, 0),
+    "thought" : (0, 0, 0, 0),
 }
 
 

@@ -94,7 +94,7 @@ def get_poi(state):
         height = renpy.config.screen_height
 
         placement = (d.xpos, d.ypos, d.xanchor, d.yanchor, d.xoffset, d.yoffset, True)
-        xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
+        xplacement, yplacement = renpy.display.displayable.place(width, height, width, height, placement)
 
         return (xplacement + width / 2, yplacement + height / 2, d.zpos + z11)
 
@@ -392,13 +392,13 @@ cdef class RenderTransform:
         ysize = state.ysize
 
         if xsize is not None:
-            if (type(xsize) is float) and renpy.config.relative_transform_size:
-                xsize *= self.widtho
+            if renpy.config.relative_transform_size:
+                xsize = absolute.compute_raw(xsize, self.widtho)
             self.widtho = xsize
 
         if ysize is not None:
-            if (type(ysize) is float) and renpy.config.relative_transform_size:
-                ysize *= self.heighto
+            if renpy.config.relative_transform_size:
+                ysize = absolute.compute_raw(ysize, self.heighto)
             self.heighto = ysize
 
         self.cr = render(child, self.widtho, self.heighto, st - self.transform.child_st_base, at)
@@ -644,7 +644,7 @@ cdef class RenderTransform:
             zrotate = state.zrotate or 0
 
         placement = (state.xpos, state.ypos, state.xanchor, state.yanchor, state.xoffset, state.yoffset, True)
-        xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
+        xplacement, yplacement = renpy.display.displayable.place(width, height, width, height, placement)
 
         if poi:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
@@ -753,18 +753,13 @@ cdef class RenderTransform:
                 manchory = height / 2.0
 
             else:
-                manchorx, manchory = state.matrixanchor
-
-                if type(manchorx) is float:
-                    manchorx *= width
-                if type(manchory) is float:
-                    manchory *= height
+                manchorx, manchory = map(absolute.compute_raw, state.matrixanchor, (width, height))
 
             m = Matrix.offset(-manchorx, -manchory, 0.0)
 
         if poi:
             placement = self.transform.get_placement()
-            xplacement, yplacement = renpy.display.core.place(self.widtho, self.heighto, width, height, placement)
+            xplacement, yplacement = renpy.display.displayable.place(self.widtho, self.heighto, width, height, placement)
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
             a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
@@ -833,12 +828,7 @@ cdef class RenderTransform:
                 manchory = self.height / 2.0
 
             else:
-                manchorx, manchory = state.matrixanchor
-
-                if type(manchorx) is float:
-                    manchorx *= self.width
-                if type(manchory) is float:
-                    manchory *= self.height
+                manchorx, manchory = map(absolute.compute_raw, state.matrixanchor, (self.width, self.height))
 
             m = Matrix.offset(-manchorx, -manchory, 0.0)
             m = mt * m
@@ -950,6 +940,9 @@ cdef class RenderTransform:
 
         self.widtho = widtho
         self.heighto = heighto
+
+        self.state.available_width = widtho
+        self.state.available_height = heighto
 
         transform = self.transform
         state = self.state

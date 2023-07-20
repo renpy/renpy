@@ -233,7 +233,8 @@
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "The command is being run in a new operating system console window."
+    # Automatic translation.
+    new "Η εντολή εκτελείται σε ένα νέο παράθυρο κονσόλας του λειτουργικού συστήματος."
 
     # distribute.rpy:443
     old "Scanning project files..."
@@ -261,19 +262,23 @@
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "Unpacking the Macintosh application for signing..."
+    # Automatic translation.
+    new "Αποσυσκευασία της εφαρμογής Macintosh για υπογραφή..."
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
-    new "Signing the Macintosh application..."
+    # Automatic translation.
+    new "Υπογραφή της εφαρμογής Macintosh..."
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
-    new "Creating the Macintosh DMG..."
+    # Automatic translation.
+    new "Δημιουργία του Macintosh DMG..."
 
     # distribute.rpy:1091
     old "Signing the Macintosh DMG..."
-    new "Signing the Macintosh DMG..."
+    # Automatic translation.
+    new "Υπογραφή του DMG του Macintosh..."
 
     # distribute.rpy:1248
     old "Writing the [variant] [format] package."
@@ -317,7 +322,8 @@
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Upload to itch.io"
+    # Automatic translation.
+    new "Ανέβασμα στο itch.io"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
@@ -425,7 +431,8 @@
 
     # front_page.rpy:147
     old "[p.name!q] (template)"
-    new "[p.name!q] (template)"
+    # Automatic translation.
+    new "[p.name!q] (πρότυπο)"
 
     # front_page.rpy:149
     old "Select project [text]."
@@ -481,7 +488,8 @@
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "Change/Update GUI"
+    # Automatic translation.
+    new "Αλλαγή/ενημέρωση GUI"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -525,23 +533,28 @@
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
-    new "Select Accent and Background Colors"
+    # Automatic translation.
+    new "Επιλογή χρωμάτων έμφασης και φόντου"
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
+    # Automatic translation.
+    new "Κάντε κλικ στο συνδυασμό χρωμάτων που επιθυμείτε να χρησιμοποιήσετε και, στη συνέχεια, κάντε κλικ στο κουμπί Συνέχεια. Αυτά τα χρώματα μπορούν να αλλάξουν και να προσαρμοστούν αργότερα."
 
     # gui7.rpy:294
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
+    # Automatic translation.
+    new "{b}Προειδοποίηση{/b}\nΗ συνέχιση θα αντικαταστήσει τις προσαρμοσμένες εικόνες της γραμμής, του κουμπιού, της υποδοχής αποθήκευσης, της γραμμής κύλισης και του ρυθμιστικού.\n\nΤι θα θέλατε να κάνετε;"
 
     # gui7.rpy:294
     old "Choose new colors, then regenerate image files."
-    new "Choose new colors, then regenerate image files."
+    # Automatic translation.
+    new "Επιλέξτε νέα χρώματα και, στη συνέχεια, αναδημιουργήστε αρχεία εικόνας."
 
     # gui7.rpy:294
     old "Regenerate the image files using the colors in gui.rpy."
-    new "Regenerate the image files using the colors in gui.rpy."
+    # Automatic translation.
+    new "Αναδημιουργήστε τα αρχεία εικόνας χρησιμοποιώντας τα χρώματα στο gui.rpy."
 
     # gui7.rpy:314
     old "PROJECT NAME"
@@ -565,15 +578,18 @@
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
-    new "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    # Automatic translation.
+    new "Ποια ανάλυση θα πρέπει να χρησιμοποιεί το έργο; Παρόλο που το Ren'Py μπορεί να κλιμακώσει το παράθυρο προς τα πάνω και προς τα κάτω, αυτό είναι το αρχικό μέγεθος του παραθύρου, το μέγεθος στο οποίο θα πρέπει να σχεδιαστούν τα στοιχεία και το μέγεθος στο οποίο τα στοιχεία θα είναι πιο ευκρινή.\n\nΗ προεπιλογή [default_size[0]]x[default_size[1]] είναι ένας λογικός συμβιβασμός."
 
     # gui7.rpy:389
     old "Creating the new project..."
-    new "Creating the new project..."
+    # Automatic translation.
+    new "Δημιουργία του νέου έργου..."
 
     # gui7.rpy:391
     old "Updating the project..."
-    new "Updating the project..."
+    # Automatic translation.
+    new "Ενημέρωση του έργου..."
 
     # interface.rpy:107
     old "Documentation"
@@ -737,27 +753,33 @@
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "The built distributions could not be found. Please choose 'Build' and try again."
+    # Automatic translation.
+    new "Οι ενσωματωμένες διανομές δεν βρέθηκαν. Παρακαλούμε επιλέξτε 'Build' και προσπαθήστε ξανά."
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "No uploadable files were found. Please choose 'Build' and try again."
+    # Automatic translation.
+    new "Δεν βρέθηκαν αρχεία που μπορούν να μεταφορτωθούν. Παρακαλούμε επιλέξτε 'Build' και δοκιμάστε ξανά."
 
     # itch.rpy:99
     old "The butler program was not found."
-    new "The butler program was not found."
+    # Automatic translation.
+    new "Το πρόγραμμα Butler δεν βρέθηκε."
 
     # itch.rpy:99
     old "Please install the itch.io app, which includes butler, and try again."
-    new "Please install the itch.io app, which includes butler, and try again."
+    # Automatic translation.
+    new "Εγκαταστήστε την εφαρμογή itch.io, η οποία περιλαμβάνει τον Butler, και δοκιμάστε ξανά."
 
     # itch.rpy:108
     old "The name of the itch project has not been set."
-    new "The name of the itch project has not been set."
+    # Automatic translation.
+    new "Το όνομα του έργου itch δεν έχει οριστεί."
 
     # itch.rpy:108
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
+    # Automatic translation.
+    new "Παρακαλούμε {a=https://itch.io/game/new}δημιουργήστε το έργο σας{/a}, στη συνέχεια προσθέστε μια γραμμή όπως \n{vspace=5}define build.itch_project = \"όνομα χρήστη/όνομα παιχνιδιού\"\n{vspace=5} στο options.rpy."
 
     # mobilebuild.rpy:109
     old "{a=%s}%s{/a}"
@@ -829,23 +851,28 @@
 
     # new_project.rpy:38
     old "New GUI Interface"
-    new "New GUI Interface"
+    # Automatic translation.
+    new "Νέα διεπαφή GUI"
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "Both interfaces have been translated to your language."
+    # Automatic translation.
+    new "Και οι δύο διεπαφές έχουν μεταφραστεί στη γλώσσα σας."
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "Only the new GUI has been translated to your language."
+    # Automatic translation.
+    new "Μόνο το νέο GUI έχει μεταφραστεί στη γλώσσα σας."
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "Only the legacy theme interface has been translated to your language."
+    # Automatic translation.
+    new "Μόνο η διεπαφή του παλαιού θέματος έχει μεταφραστεί στη γλώσσα σας."
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new "Neither interface has been translated to your language."
+    # Automatic translation.
+    new "Καμία από τις δύο διεπαφές δεν έχει μεταφραστεί στη γλώσσα σας."
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
@@ -853,11 +880,13 @@
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
+    # Automatic translation.
+    new "Ποια διεπαφή θα θέλατε να χρησιμοποιήσετε; Το νέο γραφικό περιβάλλον χρήστη έχει μοντέρνα εμφάνιση, υποστηρίζει ευρείες οθόνες και κινητές συσκευές και είναι ευκολότερο στην προσαρμογή. Τα παλαιότερα θέματα ενδέχεται να είναι απαραίτητα για να εργαστείτε με παλαιότερο κώδικα παραδείγματος.\n\n[language_support!t]\n\nΑν έχετε αμφιβολίες, επιλέξτε το νέο γραφικό περιβάλλον και, στη συνέχεια, κάντε κλικ στο κουμπί Συνέχεια κάτω δεξιά."
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
-    new "Legacy Theme Interface"
+    # Automatic translation.
+    new "Διασύνδεση Legacy Theme"
 
     # new_project.rpy:90
     old "Choose Project Template"
@@ -993,11 +1022,13 @@
 
     # translations.rpy:63
     old "Translations: [project.current.name!q]"
-    new "Translations: [project.current.name!q]"
+    # Automatic translation.
+    new "Μεταφράσεις: [project.current.name!q]"
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "The language to work with. This should only contain lower-case ASCII characters and underscores."
+    # Automatic translation.
+    new "Η γλώσσα με την οποία θα εργαστείτε. Θα πρέπει να περιέχει μόνο πεζούς χαρακτήρες ASCII και υπογράμμιση."
 
     # translations.rpy:130
     old "Generate empty strings for translations"
@@ -1005,31 +1036,38 @@
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
+    # Automatic translation.
+    new "Δημιουργεί ή ενημερώνει αρχεία μετάφρασης. Τα αρχεία τοποθετούνται στο game/tl/[persistent.translate_language!q]."
 
     # translations.rpy:168
     old "Extract String Translations"
-    new "Extract String Translations"
+    # Automatic translation.
+    new "Απόσπασμα μεταφράσεων συμβολοσειράς"
 
     # translations.rpy:170
     old "Merge String Translations"
-    new "Merge String Translations"
+    # Automatic translation.
+    new "Συγχώνευση μεταφράσεων συμβολοσειρών"
 
     # translations.rpy:175
     old "Replace existing translations"
-    new "Replace existing translations"
+    # Automatic translation.
+    new "Αντικατάσταση υφιστάμενων μεταφράσεων"
 
     # translations.rpy:176
     old "Reverse languages"
-    new "Reverse languages"
+    # Automatic translation.
+    new "Αντίστροφες γλώσσες"
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Update Default Interface Translations"
+    # Automatic translation.
+    new "Ενημέρωση προεπιλεγμένων μεταφράσεων διασύνδεσης"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
+    # Automatic translation.
+    new "Η εντολή extract σας επιτρέπει να εξαγάγετε μεταφράσεις συμβολοσειρών από ένα υπάρχον έργο σε ένα προσωρινό αρχείο.\n\nΗ εντολή merge συγχωνεύει τις μεταφράσεις που έχουν εξαχθεί σε ένα άλλο έργο."
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1041,23 +1079,28 @@
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py is extracting string translations..."
+    # Automatic translation.
+    new "Η Ren'Py εξάγει μεταφράσεις συμβολοσειρών..."
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py has finished extracting [language] string translations."
+    # Automatic translation.
+    new "Η Ren'Py ολοκλήρωσε την εξαγωγή των μεταφράσεων των συμβολοσειρών [language]."
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py is merging string translations..."
+    # Automatic translation.
+    new "Το Ren'Py συγχωνεύει μεταφράσεις συμβολοσειρών..."
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py has finished merging [language] string translations."
+    # Automatic translation.
+    new "Ο Ren'Py ολοκλήρωσε τη συγχώνευση των μεταφράσεων του [language]."
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Updating default interface translations..."
+    # Automatic translation.
+    new "Ενημέρωση προεπιλεγμένων μεταφράσεων διεπαφής..."
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
@@ -1186,3 +1229,992 @@
     # updater.rpy:195
     old "Proceed"
     new "Συνέχισε"
+
+translate greek strings:
+
+    # game/add_file.rpy:37
+    old "The file name may not be empty."
+    # Automatic translation.
+    new "Το όνομα του αρχείου δεν πρέπει να είναι κενό."
+
+    # game/android.rpy:37
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    # Automatic translation.
+    new "Για τη δημιουργία πακέτων Android στα Windows απαιτείται ένα 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit. Το JDK είναι διαφορετικό από το JRE, οπότε είναι πιθανό να έχετε Java χωρίς να έχετε το JDK.\n\nΠαρακαλούμε {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}κατεβάστε και εγκαταστήστε το JDK{/a}, στη συνέχεια επανεκκινήστε τον εκτοξευτή Ren'Py."
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "Το RAPT έχει εγκατασταθεί, αλλά δεν έχει ρυθμιστεί ένα κλειδί. Παρακαλούμε δημιουργήστε νέα κλειδιά ή αντιγράψτε τα αρχεία android.keystore και bundle.keystore στον βασικό κατάλογο."
+
+    # game/android.rpy:41
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    # Automatic translation.
+    new "Παρακαλούμε επιλέξτε αν θέλετε ένα Play Bundle (για το Google Play) ή ένα Universal APK (για Sideloading και άλλα καταστήματα εφαρμογών)."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "Προσπαθεί να μιμηθεί μια τηλεοπτική κονσόλα Android.\n\nΗ είσοδος του ελεγκτή αντιστοιχίζεται στα πλήκτρα βέλους, το Enter αντιστοιχίζεται στο κουμπί επιλογής, το Escape αντιστοιχίζεται στο κουμπί μενού και το PageUp αντιστοιχίζεται στο κουμπί επιστροφής."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "Λήψη και εγκατάσταση του Android SDK και των υποστηρικτικών πακέτων."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "Δημιουργεί τα κλειδιά που απαιτούνται για την υπογραφή του πακέτου."
+
+    # game/android.rpy:56
+    old "Lists the connected devices."
+    # Automatic translation.
+    new "Εμφανίζει τις συνδεδεμένες συσκευές."
+
+    # game/android.rpy:57
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Συνδυάζεται με μια συσκευή μέσω Wi-Fi, σε Android 11+."
+
+    # game/android.rpy:58
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Συνδέεται σε μια συσκευή μέσω Wi-Fi, σε Android 11+."
+
+    # game/android.rpy:59
+    old "Disconnects a device connected over Wi-Fi."
+    # Automatic translation.
+    new "Αποσυνδέει μια συσκευή που είναι συνδεδεμένη μέσω Wi-Fi."
+
+    # game/android.rpy:61
+    old "Removes Android temporary files."
+    # Automatic translation.
+    new "Αφαιρεί τα προσωρινά αρχεία του Android."
+
+    # game/android.rpy:63
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "Κατασκευάζει ένα πακέτο εφαρμογών Android (ABB), το οποίο προορίζεται να μεταφορτωθεί στο Google Play. Αυτό μπορεί να περιλαμβάνει έως και 2 GB δεδομένων."
+
+    # game/android.rpy:64
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "Κατασκευάζει ένα πακέτο APK γενικής χρήσης, που προορίζεται για παράλληλη φόρτωση και για καταστήματα εκτός του Google Play. Αυτό μπορεί να περιλαμβάνει έως και 2 GB δεδομένων."
+
+    # game/android.rpy:327
+    old "Android: [project.current.display_name!q]"
+    new "Android: [project.current.display_name!q]"
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "Εγκαταστήστε το SDK"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "Δημιουργία κλειδιών"
+
+    # game/android.rpy:397
+    old "Play Bundle"
+    new "Play Bundle"
+
+    # game/android.rpy:402
+    old "Universal APK"
+    new "Universal APK"
+
+    # game/android.rpy:452
+    old "List Devices"
+    # Automatic translation.
+    new "Λίστα συσκευών"
+
+    # game/android.rpy:456
+    old "Wi-Fi Debugging Pair"
+    # Automatic translation.
+    new "Ζεύγος αποσφαλμάτωσης Wi-Fi"
+
+    # game/android.rpy:460
+    old "Wi-Fi Debugging Connect"
+    # Automatic translation.
+    new "Αποσφαλμάτωση Wi-Fi Connect"
+
+    # game/android.rpy:464
+    old "Wi-Fi Debugging Disconnect"
+    # Automatic translation.
+    new "Αποσύνδεση εντοπισμού σφαλμάτων Wi-Fi"
+
+    # game/android.rpy:468
+    old "Clean"
+    # Automatic translation.
+    new "Καθαρό"
+
+    # game/android.rpy:573
+    old "Wi-Fi Pairing Code"
+    # Automatic translation.
+    new "Κωδικός σύζευξης Wi-Fi"
+
+    # game/android.rpy:573
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    # Automatic translation.
+    new "Εάν υποστηρίζεται, μπορείτε να το βρείτε στις επιλογές \"Επιλογές προγραμματιστή\", \"Ασύρματη αποσφαλμάτωση\", \"Ζεύξη συσκευής με κωδικό ζεύξης\"."
+
+    # game/android.rpy:580
+    old "Pairing Host & Port"
+    # Automatic translation.
+    new "Σύζευξη κεντρικού υπολογιστή & θύρας"
+
+    # game/android.rpy:596
+    old "IP Address & Port"
+    # Automatic translation.
+    new "Διεύθυνση IP & θύρα"
+
+    # game/android.rpy:596
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    # Automatic translation.
+    new "Εάν υποστηρίζεται, μπορείτε να το βρείτε στις επιλογές \"Επιλογές προγραμματιστή\", \"Ασύρματη αποσφαλμάτωση\"."
+
+    # game/android.rpy:612
+    old "This can be found in 'List Devices'."
+    # Automatic translation.
+    new "Αυτό μπορείτε να το βρείτε στην ενότητα 'Λίστα συσκευών'."
+
+    # game/android.rpy:632
+    old "Cleaning up Android project."
+    # Automatic translation.
+    new "Καθαρισμός του έργου Android."
+
+    # game/androidstrings.rpy:7
+    old "{} is not a directory."
+    # Automatic translation.
+    new "{} δεν είναι κατάλογος."
+
+    # game/androidstrings.rpy:8
+    old "{} does not contain a Ren'Py game."
+    # Automatic translation.
+    new "{} δεν περιέχει παιχνίδι Ren'Py."
+
+    # game/androidstrings.rpy:10
+    old "Run configure before attempting to build the app."
+    # Automatic translation.
+    new "Εκτελέστε το configure πριν προσπαθήσετε να δημιουργήσετε την εφαρμογή."
+
+    # game/androidstrings.rpy:11
+    old "Updating project."
+    # Automatic translation.
+    new "Ενημέρωση έργου."
+
+    # game/androidstrings.rpy:12
+    old "Creating assets directory."
+    # Automatic translation.
+    new "Δημιουργία καταλόγου περιουσιακών στοιχείων."
+
+    # game/androidstrings.rpy:13
+    old "Packaging internal data."
+    # Automatic translation.
+    new "Συσκευασία εσωτερικών δεδομένων."
+
+    # game/androidstrings.rpy:14
+    old "I'm using Gradle to build the package."
+    # Automatic translation.
+    new "Χρησιμοποιώ το Gradle για την κατασκευή του πακέτου."
+
+    # game/androidstrings.rpy:15
+    old "The build seems to have failed."
+    # Automatic translation.
+    new "Η κατασκευή φαίνεται να έχει αποτύχει."
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    # Automatic translation.
+    new "Εγκαθιστώ το πακέτο."
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    # Automatic translation.
+    new "Η εγκατάσταση του πακέτου φαίνεται να απέτυχε."
+
+    # game/androidstrings.rpy:18
+    old "Launching app."
+    # Automatic translation.
+    new "Εκκίνηση της εφαρμογής."
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    # Automatic translation.
+    new "Η εκκίνηση της εφαρμογής φαίνεται να έχει αποτύχει."
+
+    # game/androidstrings.rpy:20
+    old "The build seems to have succeeded."
+    # Automatic translation.
+    new "Η κατασκευή φαίνεται να έχει πετύχει."
+
+    # game/androidstrings.rpy:21
+    old "What is the full name of your application? This name will appear in the list of installed applications."
+    # Automatic translation.
+    new "Ποιο είναι το πλήρες όνομα της αίτησής σας; Αυτό το όνομα θα εμφανίζεται στη λίστα των εγκατεστημένων εφαρμογών."
+
+    # game/androidstrings.rpy:22
+    old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
+    # Automatic translation.
+    new "Ποιο είναι το σύντομο όνομα της εφαρμογής σας; Αυτό το όνομα θα χρησιμοποιείται στον εκκινητή και για συντομεύσεις εφαρμογών."
+
+    # game/androidstrings.rpy:23
+    old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
+    # Automatic translation.
+    new "Ποιο είναι το όνομα του πακέτου;\n\nΣυνήθως έχει τη μορφή com.domain.program ή com.domain.email.program. Μπορεί να περιέχει μόνο γράμματα ASCII και τελείες. Πρέπει να περιέχει τουλάχιστον μία τελεία."
+
+    # game/androidstrings.rpy:24
+    old "The package name may not be empty."
+    # Automatic translation.
+    new "Το όνομα του πακέτου δεν πρέπει να είναι κενό."
+
+    # game/androidstrings.rpy:25
+    old "The package name may not contain spaces."
+    # Automatic translation.
+    new "Το όνομα του πακέτου δεν πρέπει να περιέχει κενά."
+
+    # game/androidstrings.rpy:26
+    old "The package name must contain at least one dot."
+    # Automatic translation.
+    new "Το όνομα του πακέτου πρέπει να περιέχει τουλάχιστον μία τελεία."
+
+    # game/androidstrings.rpy:27
+    old "The package name may not contain two dots in a row, or begin or end with a dot."
+    # Automatic translation.
+    new "Το όνομα του πακέτου δεν μπορεί να περιέχει δύο τελείες στη σειρά ή να αρχίζει ή να τελειώνει με τελεία."
+
+    # game/androidstrings.rpy:28
+    old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
+    # Automatic translation.
+    new "Κάθε μέρος του ονόματος του πακέτου πρέπει να αρχίζει με ένα γράμμα και να περιέχει μόνο γράμματα, αριθμούς και υπογράμμιση."
+
+    # game/androidstrings.rpy:29
+    old "{} is a Java keyword, and can't be used as part of a package name."
+    # Automatic translation.
+    new "{} είναι μια λέξη-κλειδί της Java και δεν μπορεί να χρησιμοποιηθεί ως μέρος ενός ονόματος πακέτου."
+
+    # game/androidstrings.rpy:30
+    old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
+    # Automatic translation.
+    new "Ποια είναι η έκδοση της εφαρμογής;\n\nΑυτή θα πρέπει να είναι η αναγνώσιμη από τον άνθρωπο εκδοχή που θα παρουσιάζατε σε ένα άτομο. Πρέπει να περιέχει μόνο αριθμούς και τελείες."
+
+    # game/androidstrings.rpy:31
+    old "The version number must contain only numbers and dots."
+    # Automatic translation.
+    new "Ο αριθμός έκδοσης πρέπει να περιέχει μόνο αριθμούς και τελείες."
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "Πόση μνήμη RAM (σε GB) θέλετε να διαθέσετε στο Gradle;\nΠρέπει να είναι θετικός ακέραιος αριθμός."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "Το μέγεθος RAM πρέπει να περιέχει μόνο αριθμούς και να είναι θετικό."
+
+    # game/androidstrings.rpy:34
+    old "How would you like your application to be displayed?"
+    # Automatic translation.
+    new "Πώς θα θέλατε να εμφανίζεται η αίτησή σας;"
+
+    # game/androidstrings.rpy:35
+    old "In landscape orientation."
+    # Automatic translation.
+    new "Σε οριζόντιο προσανατολισμό."
+
+    # game/androidstrings.rpy:36
+    old "In portrait orientation."
+    # Automatic translation.
+    new "Σε κατακόρυφο προσανατολισμό."
+
+    # game/androidstrings.rpy:37
+    old "In the user's preferred orientation."
+    # Automatic translation.
+    new "Στον προτιμώμενο προσανατολισμό του χρήστη."
+
+    # game/androidstrings.rpy:38
+    old "Which app store would you like to support in-app purchasing through?"
+    # Automatic translation.
+    new "Από ποιο κατάστημα εφαρμογών θα θέλατε να υποστηρίζετε τις αγορές εντός εφαρμογής;"
+
+    # game/androidstrings.rpy:39
+    old "Google Play."
+    new "Google Play."
+
+    # game/androidstrings.rpy:40
+    old "Amazon App Store."
+    new "Amazon App Store."
+
+    # game/androidstrings.rpy:41
+    old "Both, in one app."
+    # Automatic translation.
+    new "Και τα δύο, σε μία εφαρμογή."
+
+    # game/androidstrings.rpy:42
+    old "Neither."
+    # Automatic translation.
+    new "Ούτε."
+
+    # game/androidstrings.rpy:43
+    old "Do you want to automatically update the Java source code?"
+    # Automatic translation.
+    new "Θέλετε να ενημερώνετε αυτόματα τον πηγαίο κώδικα Java;"
+
+    # game/androidstrings.rpy:44
+    old "Yes. This is the best choice for most projects."
+    # Automatic translation.
+    new "Ναι. Αυτή είναι η καλύτερη επιλογή για τα περισσότερα έργα."
+
+    # game/androidstrings.rpy:45
+    old "No. This may require manual updates when Ren'Py or the project configuration changes."
+    # Automatic translation.
+    new "Όχι. Αυτό μπορεί να απαιτεί χειροκίνητες ενημερώσεις όταν αλλάζει η Ren'Py ή η διαμόρφωση του έργου."
+
+    # game/androidstrings.rpy:46
+    old "Unknown configuration variable: {}"
+    # Automatic translation.
+    new "Άγνωστη μεταβλητή διαμόρφωσης: {}"
+
+    # game/androidstrings.rpy:47
+    old "I'm compiling a short test program, to see if you have a working JDK on your system."
+    # Automatic translation.
+    new "Μεταγλωττίζω ένα σύντομο δοκιμαστικό πρόγραμμα, για να δω αν έχετε ένα λειτουργικό JDK στο σύστημά σας."
+
+    # game/androidstrings.rpy:48
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    # Automatic translation.
+    new "Δεν μπόρεσα να χρησιμοποιήσω το javac για τη μεταγλώττιση ενός δοκιμαστικού αρχείου. Αν δεν έχετε εγκαταστήσει ακόμα το Java Development Kit, παρακαλούμε κατεβάστε το από τη διεύθυνση:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nΤο JDK είναι διαφορετικό από το JRE, οπότε είναι πιθανό να έχετε Java χωρίς να έχετε το JDK. Βεβαιωθείτε ότι έχετε εγκαταστήσει τα \"κλειδιά μητρώου της JavaSoft (Oracle)\".\n\nΧωρίς ένα λειτουργικό JDK, δεν μπορώ να συνεχίσω."
+
+    # game/androidstrings.rpy:49
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    # Automatic translation.
+    new "Η έκδοση της Java στον υπολογιστή σας δεν φαίνεται να είναι η JDK 8, η οποία είναι η μόνη έκδοση που υποστηρίζεται από το Android SDK. Εάν πρέπει να εγκαταστήσετε το JDK 8, μπορείτε να το κατεβάσετε από τη διεύθυνση:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nΜπορείτε επίσης να ορίσετε τη μεταβλητή περιβάλλοντος JAVA_HOME για να χρησιμοποιήσετε μια διαφορετική έκδοση της Java."
+
+    # game/androidstrings.rpy:50
+    old "The JDK is present and working. Good!"
+    # Automatic translation.
+    new "Το JDK είναι παρόν και λειτουργεί. Ωραία!"
+
+    # game/androidstrings.rpy:51
+    old "The Android SDK has already been unpacked."
+    # Automatic translation.
+    new "Το Android SDK έχει ήδη αποσυμπιεστεί."
+
+    # game/androidstrings.rpy:52
+    old "Do you accept the Android SDK Terms and Conditions?"
+    # Automatic translation.
+    new "Αποδέχεστε τους Όρους και Προϋποθέσεις του Android SDK;"
+
+    # game/androidstrings.rpy:53
+    old "I'm downloading the Android SDK. This might take a while."
+    # Automatic translation.
+    new "Κατεβάζω το Android SDK. Αυτό μπορεί να πάρει λίγο χρόνο."
+
+    # game/androidstrings.rpy:54
+    old "I'm extracting the Android SDK."
+    # Automatic translation.
+    new "Εξαγάγω το Android SDK."
+
+    # game/androidstrings.rpy:55
+    old "I've finished unpacking the Android SDK."
+    # Automatic translation.
+    new "Τελείωσα την αποσυσκευασία του Android SDK."
+
+    # game/androidstrings.rpy:56
+    old "I'm about to download and install the required Android packages. This might take a while."
+    # Automatic translation.
+    new "Είμαι έτοιμος να κατεβάσω και να εγκαταστήσω τα απαιτούμενα πακέτα Android. Αυτό μπορεί να πάρει λίγο χρόνο."
+
+    # game/androidstrings.rpy:57
+    old "I was unable to accept the Android licenses."
+    # Automatic translation.
+    new "Δεν μπόρεσα να αποδεχτώ τις άδειες Android."
+
+    # game/androidstrings.rpy:59
+    old "I was unable to install the required Android packages."
+    # Automatic translation.
+    new "Δεν μπόρεσα να εγκαταστήσω τα απαιτούμενα πακέτα Android."
+
+    # game/androidstrings.rpy:60
+    old "I've finished installing the required Android packages."
+    # Automatic translation.
+    new "Έχω ολοκληρώσει την εγκατάσταση των απαιτούμενων πακέτων Android."
+
+    # game/androidstrings.rpy:61
+    old "It looks like you're ready to start packaging games."
+    # Automatic translation.
+    new "Φαίνεται ότι είστε έτοιμοι να αρχίσετε να πακετάρετε παιχνίδια."
+
+    # game/androidstrings.rpy:62
+    old "Please enter your name or the name of your organization."
+    # Automatic translation.
+    new "Παρακαλώ εισάγετε το όνομά σας ή το όνομα του οργανισμού σας."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Βρήκα ένα αρχείο android.keystore στον κατάλογο rapt. Θέλετε να χρησιμοποιήσετε αυτό το αρχείο;"
+
+    # game/androidstrings.rpy:64
+    old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "Μπορώ να δημιουργήσω ένα κλειδί υπογραφής εφαρμογής για εσάς. Αυτό το κλειδί είναι απαραίτητο για τη δημιουργία του Universal APK για sideloading και καταστήματα εκτός του Google Play.\n\nΘέλετε να δημιουργήσετε ένα κλειδί;"
+
+    # game/androidstrings.rpy:65
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    # Automatic translation.
+    new "Θα δημιουργήσω το κλειδί στο αρχείο android.keystore.\n\nΠρέπει να δημιουργήσετε αντίγραφα ασφαλείας αυτού του αρχείου. Αν το χάσετε, δεν θα μπορέσετε να αναβαθμίσετε την εφαρμογή σας.\n\nΠρέπει επίσης να φυλάξετε το κλειδί. Εάν κακόβουλοι άνθρωποι αποκτήσουν αυτό το αρχείο, θα μπορούσαν να δημιουργήσουν ψεύτικες εκδόσεις της εφαρμογής σας και ενδεχομένως να κλέψουν τα δεδομένα των χρηστών σας.\n\nΘα δημιουργήσετε αντίγραφο ασφαλείας του android.keystore και θα το φυλάξετε σε ασφαλές μέρος;"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\nΗ απάντηση \"Όχι\" θα αποτρέψει τη δημιουργία κλειδιού."
+
+    # game/androidstrings.rpy:67
+    old "Could not create android.keystore. Is keytool in your path?"
+    # Automatic translation.
+    new "Δεν μπόρεσε να δημιουργήσει το android.keystore. Είναι το keytool στη διαδρομή σας;"
+
+    # game/androidstrings.rpy:68
+    old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
+    # Automatic translation.
+    new "Έχω ολοκληρώσει τη δημιουργία του android.keystore. Παρακαλούμε δημιουργήστε αντίγραφα ασφαλείας και φυλάξτε το σε ασφαλές μέρος."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Βρήκα ένα αρχείο bundle.keystore στον κατάλογο rapt. Θέλετε να χρησιμοποιήσετε αυτό το αρχείο;"
+
+    # game/androidstrings.rpy:70
+    old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "Μπορώ να δημιουργήσω ένα κλειδί υπογραφής δέσμης για εσάς. Αυτό το κλειδί απαιτείται για τη δημιουργία ενός Android App Bundle (AAB) για μεταφόρτωση στο Google Play.\n\nΘέλετε να δημιουργήσετε ένα κλειδί;"
+
+    # game/androidstrings.rpy:71
+    old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
+    # Automatic translation.
+    new "Θα δημιουργήσω το κλειδί στο αρχείο bundle.keystore.\n\nΠρέπει να δημιουργήσετε αντίγραφα ασφαλείας αυτού του αρχείου. Αν το χάσετε, δεν θα μπορέσετε να αναβαθμίσετε την εφαρμογή σας.\n\nΠρέπει επίσης να φυλάξετε το κλειδί. Εάν κακόβουλοι άνθρωποι αποκτήσουν αυτό το αρχείο, θα μπορούσαν να δημιουργήσουν ψεύτικες εκδόσεις της εφαρμογής σας και ενδεχομένως να κλέψουν τα δεδομένα των χρηστών σας.\n\nΘα δημιουργήσετε αντίγραφο ασφαλείας του bundle.keystore και θα το φυλάξετε σε ασφαλές μέρος;"
+
+    # game/androidstrings.rpy:73
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    # Automatic translation.
+    new "Δεν μπόρεσε να δημιουργήσει το bundle.keystore. Είναι το keytool στη διαδρομή σας;"
+
+    # game/androidstrings.rpy:74
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    # Automatic translation.
+    new "Άνοιξα τον κατάλογο που περιέχει το android.keystore και το bundle.keystore. Παρακαλούμε δημιουργήστε αντίγραφα ασφαλείας και φυλάξτε τα σε ασφαλές μέρος."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    # Automatic translation.
+    new "Επιλέξτε Κατάλογος Έργων"
+
+    # game/choose_directory.rpy:79
+    old "The selected projects directory is not writable."
+    # Automatic translation.
+    new "Ο επιλεγμένος κατάλογος έργων δεν είναι εγγράψιμος."
+
+    # game/choose_theme.rpy:508
+    old "changing the theme"
+    # Automatic translation.
+    new "αλλαγή του θέματος"
+
+    # game/distribute.rpy:1278
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    # Automatic translation.
+    new "Υπογραφή της εφαρμογής Macintosh...\n(Αυτό μπορεί να πάρει πολύ χρόνο.)"
+
+    # game/distribute.rpy:1745
+    old "Copying files..."
+    # Automatic translation.
+    new "Αντιγραφή αρχείων..."
+
+    # game/distribute_gui.rpy:157
+    old "Build Distributions: [project.current.display_name!q]"
+    # Automatic translation.
+    new "Κατασκευάστε διανομές: [project.current.display_name!q]"
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    # Automatic translation.
+    new "Ενημέρωση παλαιού παιχνιδιού"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    # Automatic translation.
+    new "Το Ren'Py εκτελείται από έναν φάκελο που επιτρέπεται μόνο για ανάγνωση. Ορισμένες λειτουργίες δεν θα λειτουργούν."
+
+    # game/dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    # Automatic translation.
+    new "Αυτό οφείλεται πιθανώς στο γεγονός ότι το Ren'Py εκτελείται απευθείας από εικόνα δίσκου Macintosh. Για να το διορθώσετε αυτό, τερματίστε αυτόν τον εκκινητή, αντιγράψτε ολόκληρο το φάκελο %s κάπου αλλού στον υπολογιστή σας και εκτελέστε ξανά το Ren'Py."
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    # Automatic translation.
+    new "Ένας σύγχρονος επεξεργαστής με πολλές επεκτάσεις, συμπεριλαμβανομένης της προηγμένης ενσωμάτωσης του Ren'Py."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    # Automatic translation.
+    new "Ένας σύγχρονος επεξεργαστής με πολλές επεκτάσεις, συμπεριλαμβανομένης της προηγμένης ενσωμάτωσης του Ren'Py.\n{a=jump:reinstall_vscode}Αναβαθμίστε το Visual Studio Code στην τελευταία έκδοση.{/a}"
+
+    # game/editor.rpy:169
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:169
+    old "Up to 110 MB download required."
+    # Automatic translation.
+    new "Απαιτείται λήψη έως 110 MB."
+
+    # game/editor.rpy:182
+    old "A modern and approachable text editor."
+    # Automatic translation.
+    new "Ένας σύγχρονος και προσιτός επεξεργαστής κειμένου."
+
+    # game/editor.rpy:196
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:196
+    old "Up to 150 MB download required."
+    # Automatic translation.
+    new "Απαιτείται λήψη έως 150 MB."
+
+    # game/editor.rpy:211
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:220
+    old "Visual Studio Code (System)"
+    # Automatic translation.
+    new "Visual Studio Code (σύστημα)"
+
+    # game/editor.rpy:220
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    # Automatic translation.
+    new "Χρησιμοποιεί ένα αντίγραφο του Visual Studio Code που έχετε εγκαταστήσει εκτός του Ren'Py. Συνιστάται να εγκαταστήσετε την επέκταση language-renpy για να προσθέσετε υποστήριξη για αρχεία Ren'Py."
+
+    # game/editor.rpy:226
+    old "System Editor"
+    # Automatic translation.
+    new "Επεξεργαστής συστήματος"
+
+    # game/editor.rpy:245
+    old "None"
+    # Automatic translation.
+    new "Κανένα"
+
+    # game/editor.rpy:352
+    old "Edit [text]."
+    # Automatic translation.
+    new "Επεξεργασία [text]."
+
+    # game/front_page.rpy:58
+    old "PROJECTS:"
+    # Automatic translation.
+    new "ΕΡΓΑ:"
+
+    # game/front_page.rpy:165
+    old "audio"
+    new "audio"
+
+    # game/front_page.rpy:182
+    old "Open project"
+    # Automatic translation.
+    new "Ανοιχτό έργο"
+
+    # game/front_page.rpy:188
+    old "Actions"
+    # Automatic translation.
+    new "Δράσεις"
+
+    # game/front_page.rpy:219
+    old "Web"
+    # Automatic translation.
+    new "Ιστοσελίδα"
+
+    # game/front_page.rpy:219
+    old "(Beta)"
+    new "(Beta)"
+
+    # game/gui7.rpy:302
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    # Automatic translation.
+    new "{size=-4}\n\nΑυτό δεν θα αντικαταστήσει τα gui/main_menu.png, gui/game_menu.png και gui/window_icon.png, αλλά θα δημιουργήσει αρχεία που δεν υπάρχουν.{/size}"
+
+    # game/gui7.rpy:333
+    old "Custom. The GUI is optimized for a 16:9 aspect ratio."
+    # Automatic translation.
+    new "Προσαρμοσμένο. Το γραφικό περιβάλλον είναι βελτιστοποιημένο για αναλογία διαστάσεων 16:9."
+
+    # game/gui7.rpy:350
+    old "WIDTH"
+    # Automatic translation.
+    new "ΠΛΑΤΟΣ"
+
+    # game/gui7.rpy:350
+    old "Please enter the width of your game, in pixels."
+    # Automatic translation.
+    new "Εισάγετε το πλάτος του παιχνιδιού σας, σε pixels."
+
+    # game/gui7.rpy:360
+    old "The width must be a number."
+    # Automatic translation.
+    new "Το πλάτος πρέπει να είναι ένας αριθμός."
+
+    # game/gui7.rpy:366
+    old "HEIGHT"
+    # Automatic translation.
+    new "ΥΨΟΣ"
+
+    # game/gui7.rpy:366
+    old "Please enter the height of your game, in pixels."
+    # Automatic translation.
+    new "Εισάγετε το ύψος του παιχνιδιού σας, σε pixels."
+
+    # game/gui7.rpy:376
+    old "The height must be a number."
+    # Automatic translation.
+    new "Το ύψος πρέπει να είναι ένας αριθμός."
+
+    # game/gui7.rpy:424
+    old "creating a new project"
+    # Automatic translation.
+    new "δημιουργία ενός νέου έργου"
+
+    # game/gui7.rpy:428
+    old "activating the new project"
+    # Automatic translation.
+    new "ενεργοποίηση του νέου έργου"
+
+    # game/install.rpy:33
+    old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
+    # Automatic translation.
+    new "Δεν ήταν δυνατή η εγκατάσταση του [name!t], καθώς δεν βρέθηκε ένα αρχείο που να ταιριάζει με το [zipglob] στον κατάλογο του SDK Ren'Py."
+
+    # game/install.rpy:79
+    old "Successfully installed [name!t]."
+    # Automatic translation.
+    new "Εγκαταστάθηκε επιτυχώς το [name!t]."
+
+    # game/install.rpy:111
+    old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
+    # Automatic translation.
+    new "Αυτή η οθόνη σας επιτρέπει να εγκαταστήσετε βιβλιοθήκες που δεν μπορούν να διανεμηθούν με το Ren'Py. Ορισμένες από αυτές τις βιβλιοθήκες μπορεί να απαιτούν να συμφωνήσετε με μια άδεια τρίτου μέρους πριν χρησιμοποιηθούν ή διανεμηθούν."
+
+    # game/install.rpy:117
+    old "Install Steam Support"
+    # Automatic translation.
+    new "Εγκαταστήστε την υποστήριξη Steam"
+
+    # game/install.rpy:126
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    # Automatic translation.
+    new "Πριν εγκαταστήσετε την υποστήριξη του Steam, βεβαιωθείτε ότι είστε συνεργάτης του Steam {a=https://partner.steamgames.com/}{/a} ."
+
+    # game/install.rpy:138
+    old "Steam support has already been installed."
+    # Automatic translation.
+    new "Η υποστήριξη Steam έχει ήδη εγκατασταθεί."
+
+    # game/install.rpy:142
+    old "Install Live2D Cubism SDK for Native"
+    # Automatic translation.
+    new "Εγκαταστήστε το Live2D Cubism SDK for Native"
+
+    # game/install.rpy:156
+    old "Install Libraries"
+    # Automatic translation.
+    new "Εγκατάσταση βιβλιοθηκών"
+
+    # game/install.rpy:182
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    # Automatic translation.
+    new "Το {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} προσθέτει υποστήριξη για την εμφάνιση μοντέλων Live2D. Τοποθετήστε το CubismSdkForNative-4-{i}έκδοση{/i}.zip στον κατάλογο Ren'Py SDK και, στη συνέχεια, κάντε κλικ στην επιλογή Install. Η διανομή ενός παιχνιδιού με το Live2D απαιτεί την αποδοχή μιας άδειας χρήσης από τη Live2D, Inc."
+
+    # game/install.rpy:186
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    # Automatic translation.
+    new "Το Live2D στο Ren'Py δεν υποστηρίζει το Web, το Android x86_64 (συμπεριλαμβανομένων των εξομοιωτών και του Chrome OS) και πρέπει να προστεθεί χειροκίνητα στα έργα iOS. Το Live2D πρέπει να επανεγκατασταθεί μετά την αναβάθμιση του Ren'Py ή την εγκατάσταση υποστήριξης Android."
+
+    # game/install.rpy:191
+    old "Open Ren'Py SDK Directory"
+    # Automatic translation.
+    new "Ανοίξτε τον κατάλογο του Ren'Py SDK"
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    # Automatic translation.
+    new "Λήψη [extension.download_file]."
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    # Automatic translation.
+    new "Δεν ήταν δυνατή η λήψη του [extension.download_file] από το [extension.download_url]:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    # Automatic translation.
+    new "Το αρχείο [extension.download_file] που κατεβάσατε από το [extension.download_url] δεν είναι σωστό."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/interface.rpy:141
+    old "Ren'Py Sponsor Information"
+    # Automatic translation.
+    new "Πληροφορίες χορηγού Ren'Py"
+
+    # game/interface.rpy:385
+    old "opening the log file"
+    # Automatic translation.
+    new "ανοίγοντας το αρχείο καταγραφής"
+
+    # game/ios.rpy:269
+    old "iOS: [project.current.display_name!q]"
+    new "iOS: [project.current.display_name!q]"
+
+    # game/ios.rpy:379
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    # Automatic translation.
+    new "Υπάρχουν γνωστά προβλήματα με τον προσομοιωτή iOS στην Apple Silicon. Παρακαλούμε δοκιμάστε σε συσκευές x86_64 ή iOS."
+
+    # game/itch.rpy:45
+    old "Downloading the itch.io butler."
+    # Automatic translation.
+    new "Κατεβάζοντας τον μπάτλερ του itch.io."
+
+    # game/navigation.rpy:168
+    old "Navigate: [project.current.display_name!q]"
+    # Automatic translation.
+    new "Πλοήγηση: [project.current.display_name!q]"
+
+    # game/new_project.rpy:81
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
+    # Automatic translation.
+    new "Θα δημιουργήσετε ένα γλωσσικό έργο [new_project_language]{#this substitution may be localized}. Αλλάξτε τη γλώσσα εκκίνησης στις προτιμήσεις για να δημιουργήσετε ένα έργο σε άλλη γλώσσα."
+
+    # game/preferences.rpy:106
+    old "General"
+    # Automatic translation.
+    new "Γενικά"
+
+    # game/preferences.rpy:107
+    old "Options"
+    # Automatic translation.
+    new "Επιλογές"
+
+    # game/preferences.rpy:224
+    old "Sponsor message"
+    # Automatic translation.
+    new "Μήνυμα χορηγού"
+
+    # game/preferences.rpy:227
+    old "Daily check for update"
+    # Automatic translation.
+    new "Καθημερινός έλεγχος για ενημέρωση"
+
+    # game/preferences.rpy:246
+    old "Launcher Theme:"
+    # Automatic translation.
+    new "Θέμα εκτοξευτή:"
+
+    # game/preferences.rpy:250
+    old "Default theme"
+    # Automatic translation.
+    new "Προεπιλεγμένο θέμα"
+
+    # game/preferences.rpy:251
+    old "Dark theme"
+    # Automatic translation.
+    new "Σκοτεινό θέμα"
+
+    # game/preferences.rpy:252
+    old "Custom theme"
+    # Automatic translation.
+    new "Προσαρμοσμένο θέμα"
+
+    # game/preferences.rpy:256
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    # Automatic translation.
+    new "Πληροφορίες σχετικά με τη δημιουργία ενός προσαρμοσμένου θέματος μπορείτε να βρείτε στη διεύθυνση {a=https://www.renpy.org/doc/html/skins.html}στην Τεκμηρίωση Ren'Py{/a}."
+
+    # game/preferences.rpy:273
+    old "Install Libraries:"
+    # Automatic translation.
+    new "Εγκατάσταση βιβλιοθηκών:"
+
+    # game/preferences.rpy:300
+    old "Reset window size"
+    # Automatic translation.
+    new "Επαναφορά μεγέθους παραθύρου"
+
+    # game/preferences.rpy:301
+    old "Clean temporary files"
+    # Automatic translation.
+    new "Καθαρισμός προσωρινών αρχείων"
+
+    # game/preferences.rpy:308
+    old "Cleaning temporary files..."
+    # Automatic translation.
+    new "Καθαρισμός προσωρινών αρχείων..."
+
+    # game/preferences.rpy:338
+    old "{#in language font}Welcome! Please choose a language"
+    # Automatic translation.
+    new "{#in language font}Καλώς ήρθατε! Παρακαλώ επιλέξτε μια γλώσσα"
+
+    # game/preferences.rpy:373
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    # Automatic translation.
+    new "{#in language font}Ξεκινήστε να χρησιμοποιείτε το Ren'Py στο [lang_name]"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "Το Lint ελέγχει το παιχνίδι σας για πιθανά λάθη και σας παρέχει στατιστικά στοιχεία."
+
+    # game/project.rpy:283
+    old "This may be because the project is not writeable."
+    # Automatic translation.
+    new "Αυτό μπορεί να οφείλεται στο γεγονός ότι το έργο δεν είναι εγγράψιμο."
+
+    # game/translations.rpy:91
+    old "Translations: [project.current.display_name!q]"
+    # Automatic translation.
+    new "Μεταφράσεις: [project.current.display_name!q]"
+
+    # game/translations.rpy:342
+    old "Extract Dialogue: [project.current.display_name!q]"
+    # Automatic translation.
+    new "Απόσπασμα διαλόγου: [project.current.display_name!q]"
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    # Automatic translation.
+    new "Γλώσσα (ή Καμία για την προεπιλεγμένη γλώσσα):"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Έκδοση (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "Έκδοση (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "Prerelease (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "Prerelease (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Κάθε βράδυ (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "Νυχτερινή (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:108
+    old "The update channel controls the version of Ren'Py the updater will download."
+    # Automatic translation.
+    new "Το κανάλι ενημέρωσης ελέγχει την έκδοση του Ren'Py που θα κατεβάσει το πρόγραμμα ενημέρωσης."
+
+    # game/updater.rpy:116
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/doc/html/changelog.html}Προβολή αρχείου καταγραφής αλλαγών{/a}"
+
+    # game/updater.rpy:118
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/dev-doc/html/changelog.html}Προβολή αρχείου καταγραφής αλλαγών{/a}"
+
+    # game/updater.rpy:124
+    old "• This version is installed and up-to-date."
+    # Automatic translation.
+    new "- Αυτή η έκδοση είναι εγκατεστημένη και ενημερωμένη."
+
+    # game/updater.rpy:136
+    old "%B %d, %Y"
+    new "%B %d, %Y"
+
+    # game/updater.rpy:215
+    old "Fetching the list of update channels"
+    # Automatic translation.
+    new "Λήψη της λίστας των καναλιών ενημέρωσης"
+
+    # game/updater.rpy:220
+    old "downloading the list of update channels"
+    # Automatic translation.
+    new "Λήψη του καταλόγου των καναλιών ενημέρωσης"
+
+    # game/web.rpy:428
+    old "Preparing progressive download"
+    # Automatic translation.
+    new "Προετοιμασία προοδευτικής λήψης"
+
+    # game/web.rpy:485
+    old "Creating package..."
+    # Automatic translation.
+    new "Δημιουργία πακέτου..."
+
+    # game/web.rpy:505
+    old "Web: [project.current.display_name!q]"
+    new "Web: [project.current.display_name!q]"
+
+    # game/web.rpy:535
+    old "Build Web Application"
+    # Automatic translation.
+    new "Κατασκευάστε εφαρμογή Web"
+
+    # game/web.rpy:536
+    old "Build and Open in Browser"
+    # Automatic translation.
+    new "Κατασκευή και άνοιγμα σε πρόγραμμα περιήγησης"
+
+    # game/web.rpy:537
+    old "Open in Browser"
+    # Automatic translation.
+    new "Άνοιγμα σε πρόγραμμα περιήγησης"
+
+    # game/web.rpy:538
+    old "Open build directory"
+    # Automatic translation.
+    new "Άνοιγμα καταλόγου κατασκευής"
+
+    # game/web.rpy:560
+    old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    # Automatic translation.
+    new "Εικόνες και μουσική μπορούν να μεταφορτωθούν κατά την αναπαραγωγή. Θα δημιουργηθεί ένα αρχείο 'progressive_download.txt' ώστε να μπορείτε να ρυθμίσετε αυτή τη συμπεριφορά."
+
+    # game/web.rpy:568
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    # Automatic translation.
+    new "Πριν συσκευάσετε εφαρμογές ιστού, θα πρέπει να κατεβάσετε το RenPyWeb, την υποστήριξη ιστού της Ren'Py. Θα θέλατε να κατεβάσετε το RenPyWeb τώρα;"
+
+
+translate greek strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ένα νυχτερινό build με διορθώσεις στην έκδοση κυκλοφορίας του Ren'Py."
+

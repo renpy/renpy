@@ -339,7 +339,6 @@ init python:
         build.classify_renpy(pattern + "/**.rpymc", binary)
 
         build.classify_renpy(pattern + "/**/" + renpy.script.BYTECODE_FILE, binary)
-        build.classify_renpy(pattern + "/**/cache/bytecode-311.rpyb", "web")
         build.classify_renpy(pattern + "/**/cache/bytecode-*.rpyb", None)
 
         build.classify_renpy(pattern + "/**/cache/*", binary)
@@ -355,6 +354,7 @@ init python:
 
     build.classify_renpy("gui/game/gui/", "source")
     build.classify_renpy("gui/game/gui/bubble.png", "source")
+    build.classify_renpy("gui/game/gui/thoughtbubble.png", "source")
     build.classify_renpy("gui/game/gui/*", None)
 
     source_and_binary("launcher", py=False)
@@ -395,6 +395,7 @@ init python:
     build.classify_renpy("module/pysdlsound/*.pyx", "source")
     build.classify_renpy("module/fribidi-src/**", "source")
     build.classify_renpy("module/tinyfiledialogs/**", "source")
+    build.classify_renpy("module/libhydrogen/**", "source")
 
     # all-platforms binary.
     build.classify_renpy("lib/**/*steam_api*", "steam")

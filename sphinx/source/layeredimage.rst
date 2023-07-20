@@ -284,7 +284,9 @@ case for ``multiple`` groups in which the name doesn't have any use or impact.
 
 The name may be followed by the ``auto`` keyword. If it's present, after any
 attributes in the group have been declared, Ren'Py will scan its list of images
-for those that match the group's pattern (see :ref:`below <layeredimage-pattern>`).
+for those that match the group's pattern (see :ref:`below <layeredimage-pattern>`),
+with the specificity that in that case, a multiple group's name _is_ part if the
+pattern, and that the ``format_function`` passed to the layeredimage is ignored.
 Any images that are found, except those corresponding to explicitly declared
 attributes, are then added to the group as if declared using the ``attribute``
 statement inside the group's block. See the :ref:`layeredimage-examples` section

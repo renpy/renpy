@@ -97,7 +97,7 @@ can then change it again.)
 .. var:: preferences.mouse_move = True
 
     If True, the mouse will automatically move to a selected button. If False,
-    it will not. The equivalent of the "automatic mouse move" preference.
+    it will not. The equivalent of the "automatic move" preference.
 
 .. var:: preferences.show_empty_window = True
 
@@ -149,9 +149,9 @@ can then change it again.)
 
 .. var:: preferences.system_cursor = False
 
-    If True, the system cursor is forced to be used, ignoring the
-    :var:`config.mouse` value. If False, it will not. The equivalent of the
-    "system cursor" preference.
+    If True, the system cursor is forced to be used, ignoring the value of
+    :var:`config.mouse` and :var:`config.mouse_displayable`. If False, it
+    will not. The equivalent of the "system cursor" preference.
 
 .. var:: preferences.audio_when_minimized = True
 
@@ -195,13 +195,13 @@ See :ref:`volume` for more details about mixers.
         are "main", "music", "sfx", and "voice" ("main" being a special mixer).
 
     `volume`
-        A number between 0.0 and 1.0, where 0.0 is -60 dB (power), and 1.0 is 0 dB
+        A number between 0.0 and 1.0, where 0.0 is -40 dB (power), and 1.0 is 0 dB
         (power).
 
 .. function:: preferences.get_mixer(mixer)
 
     Gets the volume for `mixer`. If the mixer is muted, this returns
-    0.0. The is returns a number between 0.0 and 1.0, where 0.0 is -60 dB
+    0.0. The is returns a number between 0.0 and 1.0, where 0.0 is -40 dB
     (power) and 1.0 is 0 dB (power).
 
 .. function:: preferences.set_mute(mixer, mute)

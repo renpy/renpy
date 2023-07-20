@@ -41,7 +41,7 @@ init python:
         except Exception:
             return False
 
-    def choose_directory(path):
+    def choose_directory(default_path):
         """
         Pops up a directory chooser.
 
@@ -54,33 +54,31 @@ init python:
         rather than user choice.
         """
 
-        if path:
-            default_path = path
-            path = None
-        else:
-            try:
-                default_path = os.path.dirname(os.path.abspath(config.renpy_base))
-            except Exception:
-                default_path = os.path.abspath(config.renpy_base)
-
         if _renpytfd:
             path = _renpytfd.selectFolderDialog(__("Select Projects Directory"), default_path)
+        else:
+            path = None
 
-        is_default = False
+            if default_path is None:
+                try:
+                    default_path = os.path.dirname(os.path.abspath(config.renpy_base))
+                except Exception:
+                    default_path = os.path.abspath(config.renpy_base)
 
         # Path being None or "" means nothing was selected.
         if not path:
-            path = default_path
-            is_default = True
 
+            if default_path is None or not os.path.isdir(default_path) or not directory_is_writable(default_path):
+                interface.error(_("No directory was selected, but one is required."))
+
+            return default_path, True
+
+        # Apply more thorough checks to an explicit path.
         path = renpy.fsdecode(path)
 
-        if (not os.path.isdir(path)) or (not directory_is_writable(path)):
-            interface.error(_("The selected projects directory is not writable."))
-            path = default_path
-            is_default = True
+        if not os.path.isdir(path):
+            interface.error(_("The selected directory does not exist."))
+        elif not directory_is_writable(path):
+            interface.error(_("The selected directory is not writable."))
 
-        if is_default and (not directory_is_writable(path)):
-            path = os.path.expanduser("~")
-
-        return path, is_default
+        return path, False

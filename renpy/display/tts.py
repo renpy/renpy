@@ -170,8 +170,7 @@ def init():
         if isinstance(pattern, basestring):
             pattern = r'\b' + re.escape(pattern) + r'\b'
             pattern = re.compile(pattern, re.IGNORECASE)
-            replacement = re.escape(replacement)
-
+            replacement = replacement.replace("\\", "\\\\")
 
         tts_substitutions.append((pattern, replacement))
 

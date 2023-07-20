@@ -262,7 +262,7 @@ def image_exists_precise(name):
         if rest:
 
             try:
-                da = renpy.display.core.DisplayableArguments()
+                da = renpy.display.displayable.DisplayableArguments()
                 da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs)
                 da.args = tuple(i for i in name[1:] if i in rest)
                 da.lint = True
@@ -339,7 +339,7 @@ def check_displayable(what, d):
     files = [ ]
 
     try:
-        if isinstance(d, renpy.display.core.Displayable):
+        if isinstance(d, renpy.display.displayable.Displayable):
             d.visit_all(lambda a: a.predict_one())
     except Exception:
         pass
@@ -376,8 +376,8 @@ def check_show(node, precise):
 
     layer = renpy.exports.default_layer(layer, tag or name)
 
-    if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
-        report("Uses layer '%s', which is not in config.layers.", layer)
+    if layer not in renpy.display.core.layers:
+        report("Uses layer '%s', which is not defined.", layer)
 
     image_exists(name, expression, tag, precise=precise)
 
@@ -404,8 +404,8 @@ def check_hide(node):
 
     layer = renpy.exports.default_layer(layer, tag)
 
-    if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
-        report("Uses layer '%s', which is not in config.layers.", layer)
+    if layer not in renpy.display.core.layers:
+        report("Uses layer '%s', which is not defined.", layer)
 
     if tag not in image_prefixes:
         report("The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.", tag)
@@ -683,9 +683,9 @@ def check_style(name, s):
                     for f in set(v.map.values()):
                         check_file(name, f, directory="fonts")
                 else:
-                    check_file(name, v, directory="images")
+                    check_file(name, v, directory="fonts")
 
-            if isinstance(v, renpy.display.core.Displayable):
+            if isinstance(v, renpy.display.displayable.Displayable):
                 check_style_property_displayable(name, k, v)
 
 

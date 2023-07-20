@@ -1021,7 +1021,8 @@
 
     # ios.rpy:312
     old "Open Xcode Projects Directory"
-    new "Open Xcode Projects Directory"
+    # Automatic translation.
+    new "Открыть каталог проектов Xcode"
 
     # ios.rpy:345
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
@@ -2018,3 +2019,83 @@
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
     new "Ночной (Ren'Py 7, Python 2)"
+
+translate russian strings:
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "RAPT был установлен, но ключ не был настроен. Пожалуйста, сгенерируйте новые ключи или скопируйте android.keystore и bundle.keystore в базовый каталог."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "Попытка эмуляции телевизионной консоли Android.\n\nВвод контроллера отображается на клавиши со стрелками, Enter отображается на кнопку выбора, Escape отображается на кнопку меню, а PageUp отображается на кнопку назад."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "Загружает и устанавливает Android SDK и вспомогательные пакеты."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "Генерирует ключи, необходимые для подписания пакета."
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "Установите SDK"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "Генерировать ключи"
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "Сколько оперативной памяти (в ГБ) вы хотите выделить для Gradle?\nЭто должно быть целое положительное число."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "Размер оперативной памяти должен содержать только числа и быть положительным."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Я нашел файл android.keystore в каталоге rapt. Вы хотите использовать этот файл?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\nОтвет \"Нет\" не позволит создать ключ."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Я нашел файл bundle.keystore в каталоге rapt. Вы хотите использовать этот файл?"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "Lint проверяет вашу игру на наличие потенциальных ошибок и выдает статистику."
+
+    # game/web.rpy:485
+    old "Creating package..."
+    # Automatic translation.
+    new "Создание пакета..."
+
+
+translate russian strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ночная сборка исправлений к релизной версии Ren'Py."
+

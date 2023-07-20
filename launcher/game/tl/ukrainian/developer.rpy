@@ -88,3 +88,22 @@ translate ukrainian strings:
     # renpy/common/00console.rpy:784
     old "stack: print the return stack"
     new "stack: виводить стек повернення (return stack)"
+
+translate ukrainian strings:
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    new "Переглядач постійних даних"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    new "Редактор мовних бульбашок (Shift+B)"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    new "help: показати цю довідку\n help <expr>: показати підпис та документацію <expr>"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"  
+    new "У довідці можуть відображатися недокументовані функції. Будь ласка, перевірте, чи функцію або\nклас, який ви хочете використати, задокументовано.\n\n"
+

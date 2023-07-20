@@ -219,9 +219,9 @@ keys for your package.
 When creating Android keys, Ren'Py will back them up to the same place it
 backs up script files. This isn't a substitute for making your own backups.
 
-If you'd like to use your own keys, configure your game, edit android.json
-to set update_keys to False, and then edit local.properties and bundle
-properties in rapt/project to point to your own keystore files.
+If you'd like to use your own keys, configure your game, edit ``android.json``
+to set update_keystores to false, and then edit ``local.properties`` and
+``bundle.properties`` in ``rapt/project`` to point to your own keystore files.
 
 Step 4: Configure Your Game
 ---------------------------

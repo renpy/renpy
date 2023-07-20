@@ -46,8 +46,7 @@ giving a character name, or a Character object. In the latter case,
 the character object is used to control how the dialogue is shown.
 
 The final form consists of a string and a with clause which has a
-transition. In this case, th
-e string is shown and a screen is shaken
+transition. In this case, the string is shown and a screen is shaken
 at the same time.
 
 
@@ -451,3 +450,5 @@ See Also
 
 :doc:`statement_equivalents` : how to use most of the features described here in
 a python context, although with some drawbacks and limitations.
+
+:func:`renpy.last_say` : provides information about the last say statement.

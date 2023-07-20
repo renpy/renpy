@@ -235,3 +235,66 @@
      # _errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "errors.txt 파일을 디스코드(Discord) 마크다운으로 클립보드에 복사합니다."
+
+translate korean strings:
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    # Automatic translation.
+    new "Force GL 렌더러"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    # Automatic translation.
+    new "포스 앵글 렌더러"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    # Automatic translation.
+    new "Force GLES 렌더러"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    # Automatic translation.
+    new "Force GL2 렌더러"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    # Automatic translation.
+    new "Force ANGLE2 렌더러"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    # Automatic translation.
+    new "Force GLES2 렌더러"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    # Automatic translation.
+    new "사용(차단 목록 없음)"
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    # Automatic translation.
+    new "이 게임은 초기화할 수 없는 GL2를 사용해야 합니다."
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    # Automatic translation.
+    new "{a=edit:1:log.txt}log.txt{/a} 파일에는 컴퓨터의 문제점을 파악하는 데 도움이 되는 정보가 포함되어 있을 수 있습니다."
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    # Automatic translation.
+    new "이 문제를 해결하는 방법에 대한 자세한 내용은 {a=[url]}문서{/a} 에서 확인할 수 있습니다."
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    # Automatic translation.
+    new "렌더링 옵션 변경"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    # Automatic translation.
+    new "'[control!s]' [kind] 을 누르거나 이동합니다."
+

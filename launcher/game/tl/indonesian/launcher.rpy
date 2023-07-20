@@ -129,7 +129,8 @@
 
     # android.rpy:353
     old "Build:"
-    new "Build:"
+    # Automatic translation.
+    new "Bangun:"
 
     # android.rpy:361
     old "Install SDK & Create Keys"
@@ -305,7 +306,8 @@
 
     # distribute_gui.rpy:193
     old "Edit options.rpy"
-    new "Edit options.rpy"
+    # Automatic translation.
+    new "Edit opsi.rpy"
 
     # distribute_gui.rpy:194
     old "Add from clauses to calls, once"
@@ -437,7 +439,8 @@
 
     # front_page.rpy:166
     old "The Question"
-    new "The Question"
+    # Automatic translation.
+    new "Pertanyaan"
 
     # front_page.rpy:182
     old "Active Project"
@@ -605,7 +608,8 @@
 
     # interface.rpy:327
     old "ERROR"
-    new "ERROR"
+    # Automatic translation.
+    new "KESALAHAN"
 
     # interface.rpy:356
     old "While [what!qt], an error occured:"
@@ -813,7 +817,8 @@
 
     # navigation.rpy:202
     old "TODOs"
-    new "TODOs"
+    # Automatic translation.
+    new "TODO"
 
     # navigation.rpy:241
     old "+ Add script file"
@@ -893,7 +898,8 @@
 
     # preferences.rpy:117
     old "Text editor: [text]"
-    new "Text editor: [text]"
+    # Automatic translation.
+    new "Editor teks: [text]"
 
     # preferences.rpy:133
     old "Update Channel:"
@@ -1025,7 +1031,8 @@
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Update Default Interface Translations"
+    # Automatic translation.
+    new "Memperbarui Terjemahan Antarmuka Default"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
@@ -1057,7 +1064,8 @@
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Updating default interface translations..."
+    # Automatic translation.
+    new "Memperbarui terjemahan antarmuka default..."
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
@@ -1105,7 +1113,8 @@
 
     # updater.rpy:91
     old "Release"
-    new "Release"
+    # Automatic translation.
+    new "Lepaskan"
 
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -1129,7 +1138,8 @@
 
     # updater.rpy:126
     old "Nightly"
-    new "Nightly"
+    # Automatic translation.
+    new "Setiap malam."
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
@@ -1325,3 +1335,844 @@ translate indonesian strings:
     # web.rpy:194
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Sebelum membangun renpy ke versi web,kamu perlu mengunduh RenpyWeb (Ren'Py's web support),unduh sekarang?"
+
+translate indonesian strings:
+
+    # game/add_file.rpy:37
+    old "The file name may not be empty."
+    # Automatic translation.
+    new "Nama file tidak boleh kosong."
+
+    # game/android.rpy:37
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    # Automatic translation.
+    new "Sebuah 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit diperlukan untuk membuat paket Android di Windows. JDK berbeda dengan JRE, jadi mungkin saja Anda memiliki Java tanpa memiliki JDK.\n\nSilakan {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}unduh dan instal JDK{/a}, lalu mulai ulang peluncur Ren'Py."
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "RAPT telah diinstal, tetapi kunci belum dikonfigurasi. Buatlah kunci baru, atau salin android.keystore dan bundle.keystore ke direktori dasar."
+
+    # game/android.rpy:41
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    # Automatic translation.
+    new "Pilihlah apakah Anda menginginkan Play Bundle (untuk Google Play), atau APK Universal (untuk sideload dan toko aplikasi lainnya)."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "Mencoba meniru konsol Android berbasis televisi.\n\nInput pengontrol dipetakan ke tombol panah, Enter dipetakan ke tombol pilih, Escape dipetakan ke tombol menu, dan PageUp dipetakan ke tombol kembali."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "Mengunduh dan menginstal Android SDK dan paket-paket pendukung."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "Menghasilkan kunci yang diperlukan untuk menandatangani paket."
+
+    # game/android.rpy:56
+    old "Lists the connected devices."
+    # Automatic translation.
+    new "Mencantumkan daftar perangkat yang tersambung."
+
+    # game/android.rpy:57
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Memasangkan dengan perangkat melalui Wi-Fi, pada Android 11+."
+
+    # game/android.rpy:58
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Menghubungkan ke perangkat melalui Wi-Fi, pada Android 11+."
+
+    # game/android.rpy:59
+    old "Disconnects a device connected over Wi-Fi."
+    # Automatic translation.
+    new "Memutuskan sambungan perangkat yang tersambung melalui Wi-Fi."
+
+    # game/android.rpy:61
+    old "Removes Android temporary files."
+    # Automatic translation.
+    new "Menghapus file sementara Android."
+
+    # game/android.rpy:63
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "Membuat Android App Bundle (ABB), yang dimaksudkan untuk diunggah ke Google Play. Ini dapat mencakup hingga 2GB data."
+
+    # game/android.rpy:64
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "Membuat paket APK Universal, yang ditujukan untuk sideload dan toko selain Google Play. Ini dapat mencakup hingga 2GB data."
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "Instal SDK"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "Hasilkan Kunci"
+
+    # game/android.rpy:397
+    old "Play Bundle"
+    new "Play Bundle"
+
+    # game/android.rpy:402
+    old "Universal APK"
+    new "Universal APK"
+
+    # game/android.rpy:452
+    old "List Devices"
+    # Automatic translation.
+    new "Daftar Perangkat"
+
+    # game/android.rpy:456
+    old "Wi-Fi Debugging Pair"
+    # Automatic translation.
+    new "Pasangan Debugging Wi-Fi"
+
+    # game/android.rpy:460
+    old "Wi-Fi Debugging Connect"
+    # Automatic translation.
+    new "Menghubungkan Debugging Wi-Fi"
+
+    # game/android.rpy:464
+    old "Wi-Fi Debugging Disconnect"
+    # Automatic translation.
+    new "Memutuskan sambungan debug Wi-Fi"
+
+    # game/android.rpy:468
+    old "Clean"
+    # Automatic translation.
+    new "Bersih"
+
+    # game/android.rpy:573
+    old "Wi-Fi Pairing Code"
+    # Automatic translation.
+    new "Kode Pemasangan Wi-Fi"
+
+    # game/android.rpy:573
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    # Automatic translation.
+    new "Jika didukung, hal ini dapat ditemukan di 'Opsi pengembang', 'Debugging nirkabel', 'Pasangkan perangkat dengan kode pemasangan'."
+
+    # game/android.rpy:580
+    old "Pairing Host & Port"
+    # Automatic translation.
+    new "Memasangkan Host & Port"
+
+    # game/android.rpy:596
+    old "IP Address & Port"
+    # Automatic translation.
+    new "Alamat IP & Port"
+
+    # game/android.rpy:596
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    # Automatic translation.
+    new "Jika didukung, hal ini dapat ditemukan di 'Opsi pengembang', 'Debugging nirkabel'."
+
+    # game/android.rpy:612
+    old "This can be found in 'List Devices'."
+    # Automatic translation.
+    new "Ini dapat ditemukan di 'Daftar Perangkat'."
+
+    # game/android.rpy:632
+    old "Cleaning up Android project."
+    # Automatic translation.
+    new "Membersihkan proyek Android."
+
+    # game/androidstrings.rpy:7
+    old "{} is not a directory."
+    # Automatic translation.
+    new "{} bukanlah sebuah direktori."
+
+    # game/androidstrings.rpy:8
+    old "{} does not contain a Ren'Py game."
+    # Automatic translation.
+    new "{} tidak mengandung permainan Ren'Py."
+
+    # game/androidstrings.rpy:10
+    old "Run configure before attempting to build the app."
+    # Automatic translation.
+    new "Jalankan konfigurasi sebelum mencoba membangun aplikasi."
+
+    # game/androidstrings.rpy:11
+    old "Updating project."
+    # Automatic translation.
+    new "Memperbarui proyek."
+
+    # game/androidstrings.rpy:12
+    old "Creating assets directory."
+    # Automatic translation.
+    new "Membuat direktori aset."
+
+    # game/androidstrings.rpy:13
+    old "Packaging internal data."
+    # Automatic translation.
+    new "Mengemas data internal."
+
+    # game/androidstrings.rpy:14
+    old "I'm using Gradle to build the package."
+    # Automatic translation.
+    new "Saya menggunakan Gradle untuk membangun paket."
+
+    # game/androidstrings.rpy:15
+    old "The build seems to have failed."
+    # Automatic translation.
+    new "Tampaknya pembangunannya gagal."
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    # Automatic translation.
+    new "Saya sedang memasang bundelnya."
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    # Automatic translation.
+    new "Pemasangan bundel tampaknya gagal."
+
+    # game/androidstrings.rpy:18
+    old "Launching app."
+    # Automatic translation.
+    new "Meluncurkan aplikasi."
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    # Automatic translation.
+    new "Peluncuran aplikasi tampaknya gagal."
+
+    # game/androidstrings.rpy:20
+    old "The build seems to have succeeded."
+    # Automatic translation.
+    new "Tampaknya pembangunannya telah berhasil."
+
+    # game/androidstrings.rpy:21
+    old "What is the full name of your application? This name will appear in the list of installed applications."
+    # Automatic translation.
+    new "Apa nama lengkap aplikasi Anda? Nama ini akan muncul di daftar aplikasi yang terinstal."
+
+    # game/androidstrings.rpy:22
+    old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
+    # Automatic translation.
+    new "Apa nama singkat aplikasi Anda? Nama ini akan digunakan di peluncur, dan untuk pintasan aplikasi."
+
+    # game/androidstrings.rpy:23
+    old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
+    # Automatic translation.
+    new "Apa nama paketnya?\n\nBiasanya berbentuk com.domain.program atau com.domain.email.program. Nama domain ini hanya boleh berisi huruf dan titik ASCII. Setidaknya harus mengandung satu titik."
+
+    # game/androidstrings.rpy:24
+    old "The package name may not be empty."
+    # Automatic translation.
+    new "Nama paket tidak boleh kosong."
+
+    # game/androidstrings.rpy:25
+    old "The package name may not contain spaces."
+    # Automatic translation.
+    new "Nama paket tidak boleh mengandung spasi."
+
+    # game/androidstrings.rpy:26
+    old "The package name must contain at least one dot."
+    # Automatic translation.
+    new "Nama paket harus mengandung setidaknya satu titik."
+
+    # game/androidstrings.rpy:27
+    old "The package name may not contain two dots in a row, or begin or end with a dot."
+    # Automatic translation.
+    new "Nama paket tidak boleh mengandung dua titik berturut-turut, atau diawali atau diakhiri dengan titik."
+
+    # game/androidstrings.rpy:28
+    old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
+    # Automatic translation.
+    new "Setiap bagian dari nama paket harus dimulai dengan huruf, dan hanya terdiri dari huruf, angka, dan garis bawah."
+
+    # game/androidstrings.rpy:29
+    old "{} is a Java keyword, and can't be used as part of a package name."
+    # Automatic translation.
+    new "{} adalah kata kunci Java, dan tidak dapat digunakan sebagai bagian dari nama paket."
+
+    # game/androidstrings.rpy:30
+    old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
+    # Automatic translation.
+    new "Apa versi aplikasi ini?\n\nIni harus merupakan versi yang dapat dibaca manusia yang akan Anda tunjukkan kepada seseorang. Hanya berisi angka dan titik."
+
+    # game/androidstrings.rpy:31
+    old "The version number must contain only numbers and dots."
+    # Automatic translation.
+    new "Nomor versi hanya boleh berisi angka dan titik."
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "Berapa banyak RAM (dalam GB) yang ingin Anda alokasikan untuk Gradle?\nIni harus berupa bilangan bulat positif."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "Ukuran RAM harus hanya berisi angka dan positif."
+
+    # game/androidstrings.rpy:34
+    old "How would you like your application to be displayed?"
+    # Automatic translation.
+    new "Bagaimana Anda ingin aplikasi Anda ditampilkan?"
+
+    # game/androidstrings.rpy:35
+    old "In landscape orientation."
+    # Automatic translation.
+    new "Dalam orientasi lanskap."
+
+    # game/androidstrings.rpy:36
+    old "In portrait orientation."
+    # Automatic translation.
+    new "Dalam orientasi potret."
+
+    # game/androidstrings.rpy:37
+    old "In the user's preferred orientation."
+    # Automatic translation.
+    new "Dalam orientasi pilihan pengguna."
+
+    # game/androidstrings.rpy:38
+    old "Which app store would you like to support in-app purchasing through?"
+    # Automatic translation.
+    new "Toko aplikasi mana yang ingin Anda dukung untuk pembelian dalam aplikasi?"
+
+    # game/androidstrings.rpy:39
+    old "Google Play."
+    new "Google Play."
+
+    # game/androidstrings.rpy:40
+    old "Amazon App Store."
+    new "Amazon App Store."
+
+    # game/androidstrings.rpy:41
+    old "Both, in one app."
+    # Automatic translation.
+    new "Keduanya, dalam satu aplikasi."
+
+    # game/androidstrings.rpy:42
+    old "Neither."
+    # Automatic translation.
+    new "Tidak juga."
+
+    # game/androidstrings.rpy:43
+    old "Do you want to automatically update the Java source code?"
+    # Automatic translation.
+    new "Apakah Anda ingin memperbarui kode sumber Java secara otomatis?"
+
+    # game/androidstrings.rpy:44
+    old "Yes. This is the best choice for most projects."
+    # Automatic translation.
+    new "Ya, ini adalah pilihan terbaik untuk sebagian besar proyek."
+
+    # game/androidstrings.rpy:45
+    old "No. This may require manual updates when Ren'Py or the project configuration changes."
+    # Automatic translation.
+    new "Tidak. Hal ini mungkin memerlukan pembaruan manual ketika Ren'Py atau konfigurasi proyek berubah."
+
+    # game/androidstrings.rpy:46
+    old "Unknown configuration variable: {}"
+    # Automatic translation.
+    new "Variabel konfigurasi yang tidak diketahui: {}"
+
+    # game/androidstrings.rpy:47
+    old "I'm compiling a short test program, to see if you have a working JDK on your system."
+    # Automatic translation.
+    new "Saya sedang menyusun sebuah program uji coba singkat, untuk melihat apakah Anda memiliki JDK yang berfungsi di sistem Anda."
+
+    # game/androidstrings.rpy:48
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    # Automatic translation.
+    new "Saya tidak dapat menggunakan javac untuk mengkompilasi berkas uji coba. Jika Anda belum menginstal Java Development Kit, silakan unduh dari:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nJDK berbeda dengan JRE, jadi mungkin saja Anda memiliki Java tanpa memiliki JDK. Pastikan Anda telah menginstal 'JavaSoft (Oracle) registry keys'.\n\nTanpa JDK yang berfungsi, saya tidak bisa melanjutkan."
+
+    # game/androidstrings.rpy:49
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    # Automatic translation.
+    new "Versi Java di komputer Anda tampaknya bukan JDK 8, yang merupakan satu-satunya versi yang didukung oleh Android SDK. Jika Anda perlu menginstal JDK 8, Anda dapat mengunduhnya dari:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nAnda juga dapat mengatur variabel lingkungan JAVA_HOME untuk menggunakan versi Java yang berbeda."
+
+    # game/androidstrings.rpy:50
+    old "The JDK is present and working. Good!"
+    # Automatic translation.
+    new "JDK hadir dan berfungsi. Bagus!"
+
+    # game/androidstrings.rpy:51
+    old "The Android SDK has already been unpacked."
+    # Automatic translation.
+    new "SDK Android telah dibongkar."
+
+    # game/androidstrings.rpy:52
+    old "Do you accept the Android SDK Terms and Conditions?"
+    # Automatic translation.
+    new "Apakah Anda menerima Syarat dan Ketentuan Android SDK?"
+
+    # game/androidstrings.rpy:53
+    old "I'm downloading the Android SDK. This might take a while."
+    # Automatic translation.
+    new "Saya sedang mengunduh Android SDK. Ini mungkin akan memakan waktu cukup lama."
+
+    # game/androidstrings.rpy:54
+    old "I'm extracting the Android SDK."
+    # Automatic translation.
+    new "Saya mengekstrak SDK Android."
+
+    # game/androidstrings.rpy:55
+    old "I've finished unpacking the Android SDK."
+    # Automatic translation.
+    new "Saya sudah selesai membongkar Android SDK."
+
+    # game/androidstrings.rpy:56
+    old "I'm about to download and install the required Android packages. This might take a while."
+    # Automatic translation.
+    new "Saya akan mengunduh dan menginstal paket Android yang diperlukan. Ini mungkin akan memakan waktu cukup lama."
+
+    # game/androidstrings.rpy:57
+    old "I was unable to accept the Android licenses."
+    # Automatic translation.
+    new "Saya tidak dapat menerima lisensi Android."
+
+    # game/androidstrings.rpy:59
+    old "I was unable to install the required Android packages."
+    # Automatic translation.
+    new "Saya tidak dapat menginstal paket Android yang diperlukan."
+
+    # game/androidstrings.rpy:60
+    old "I've finished installing the required Android packages."
+    # Automatic translation.
+    new "Saya sudah selesai menginstal paket Android yang diperlukan."
+
+    # game/androidstrings.rpy:61
+    old "It looks like you're ready to start packaging games."
+    # Automatic translation.
+    new "Sepertinya Anda sudah siap untuk mulai mengemas game."
+
+    # game/androidstrings.rpy:62
+    old "Please enter your name or the name of your organization."
+    # Automatic translation.
+    new "Masukkan nama Anda atau nama organisasi Anda."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Saya menemukan file android.keystore di direktori rapt. Apakah Anda ingin menggunakan file ini?"
+
+    # game/androidstrings.rpy:64
+    old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "Saya dapat membuat kunci penandatanganan aplikasi untuk Anda. Kunci ini diperlukan untuk membuat APK Universal untuk sideload dan toko selain Google Play.\n\nApakah Anda ingin membuat kunci?"
+
+    # game/androidstrings.rpy:65
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    # Automatic translation.
+    new "Saya akan membuat kunci di file android.keystore.\n\nAnda perlu mencadangkan file ini. Jika Anda kehilangan file tersebut, Anda tidak akan dapat meningkatkan aplikasi Anda.\n\nAnda juga perlu menyimpan kunci dengan aman. Jika orang jahat mendapatkan file ini, mereka dapat membuat versi palsu dari aplikasi Anda, dan berpotensi mencuri data pengguna.\n\nApakah Anda akan membuat cadangan android.keystore, dan menyimpannya di tempat yang aman?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\nMengatakan 'Tidak' akan mencegah pembuatan kunci."
+
+    # game/androidstrings.rpy:67
+    old "Could not create android.keystore. Is keytool in your path?"
+    # Automatic translation.
+    new "Tidak dapat membuat android.keystore. Apakah keytool ada di jalur Anda?"
+
+    # game/androidstrings.rpy:68
+    old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
+    # Automatic translation.
+    new "Saya telah selesai membuat android.keystore. Silakan cadangkan, dan simpan di tempat yang aman."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Saya menemukan file bundle.keystore di direktori rapt. Apakah Anda ingin menggunakan file ini?"
+
+    # game/androidstrings.rpy:70
+    old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "Saya bisa membuatkan kunci penandatanganan bundel untuk Anda. Kunci ini diperlukan untuk membuat Android App Bundle (AAB) untuk diunggah ke Google Play.\n\nApakah Anda ingin membuat kunci?"
+
+    # game/androidstrings.rpy:71
+    old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
+    # Automatic translation.
+    new "Saya akan membuat kunci di file bundle.keystore.\n\nAnda perlu mencadangkan file ini. Jika Anda kehilangan file tersebut, Anda tidak akan dapat meningkatkan aplikasi Anda.\n\nAnda juga perlu menyimpan kunci dengan aman. Jika orang jahat mendapatkan file ini, mereka dapat membuat versi palsu dari aplikasi Anda, dan berpotensi mencuri data pengguna.\n\nApakah Anda akan membuat cadangan bundle.keystore, dan menyimpannya di tempat yang aman?"
+
+    # game/androidstrings.rpy:73
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    # Automatic translation.
+    new "Tidak dapat membuat bundle.keystore. Apakah keytool ada di jalur Anda?"
+
+    # game/androidstrings.rpy:74
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    # Automatic translation.
+    new "Saya telah membuka direktori yang berisi android.keystore dan bundle.keystore. Silakan cadangkan, dan simpan di tempat yang aman."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    # Automatic translation.
+    new "Pilih Direktori Proyek"
+
+    # game/choose_theme.rpy:508
+    old "changing the theme"
+    # Automatic translation.
+    new "mengubah tema"
+
+    # game/distribute.rpy:1745
+    old "Copying files..."
+    # Automatic translation.
+    new "Menyalin file..."
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    # Automatic translation.
+    new "Perbarui game lama"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    # Automatic translation.
+    new "Ren'Py berjalan dari folder read only. Beberapa fungsionalitas tidak akan berfungsi."
+
+    # game/dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    # Automatic translation.
+    new "Hal ini mungkin disebabkan karena Ren'Py berjalan langsung dari image drive Macintosh. Untuk memperbaikinya, keluar dari peluncur ini, salin seluruh folder %s di tempat lain pada komputer Anda, dan jalankan Ren'Py lagi."
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    # Automatic translation.
+    new "Editor modern dengan banyak ekstensi termasuk integrasi Ren'Py yang canggih."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    # Automatic translation.
+    new "Editor modern dengan banyak ekstensi termasuk integrasi Ren'Py yang canggih.\n{a=jump:reinstall_vscode}Tingkatkan Visual Studio Code ke versi terbaru.{/a}"
+
+    # game/editor.rpy:169
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:169
+    old "Up to 110 MB download required."
+    # Automatic translation.
+    new "Diperlukan unduhan hingga 110 MB."
+
+    # game/editor.rpy:182
+    old "A modern and approachable text editor."
+    # Automatic translation.
+    new "Editor teks yang modern dan mudah didekati."
+
+    # game/editor.rpy:196
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:196
+    old "Up to 150 MB download required."
+    # Automatic translation.
+    new "Diperlukan unduhan hingga 150 MB."
+
+    # game/editor.rpy:211
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:220
+    old "Visual Studio Code (System)"
+    # Automatic translation.
+    new "Kode Visual Studio (Sistem)"
+
+    # game/editor.rpy:220
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    # Automatic translation.
+    new "Menggunakan salinan Kode Visual Studio yang telah Anda instal di luar Ren'Py. Anda disarankan untuk menginstal ekstensi language-renpy untuk menambahkan dukungan untuk file Ren'Py."
+
+    # game/editor.rpy:226
+    old "System Editor"
+    # Automatic translation.
+    new "Editor Sistem"
+
+    # game/editor.rpy:245
+    old "None"
+    # Automatic translation.
+    new "Tidak ada"
+
+    # game/editor.rpy:352
+    old "Edit [text]."
+    new "Edit [text]."
+
+    # game/front_page.rpy:165
+    old "audio"
+    new "audio"
+
+    # game/front_page.rpy:182
+    old "Open project"
+    # Automatic translation.
+    new "Proyek terbuka"
+
+    # game/front_page.rpy:188
+    old "Actions"
+    # Automatic translation.
+    new "Tindakan"
+
+    # game/front_page.rpy:219
+    old "Web"
+    new "Web"
+
+    # game/front_page.rpy:219
+    old "(Beta)"
+    new "(Beta)"
+
+    # game/gui7.rpy:302
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    # Automatic translation.
+    new "{size=-4}\n\nIni tidak akan menimpa gui/main_menu.png, gui/game_menu.png, dan gui/window_icon.png, tetapi akan membuat file yang tidak ada.{/size}"
+
+    # game/gui7.rpy:333
+    old "Custom. The GUI is optimized for a 16:9 aspect ratio."
+    # Automatic translation.
+    new "Kustom. GUI dioptimalkan untuk rasio aspek 16:9."
+
+    # game/gui7.rpy:424
+    old "creating a new project"
+    # Automatic translation.
+    new "membuat proyek baru"
+
+    # game/gui7.rpy:428
+    old "activating the new project"
+    # Automatic translation.
+    new "mengaktifkan proyek baru"
+
+    # game/install.rpy:33
+    old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
+    # Automatic translation.
+    new "Tidak dapat menginstal [name!t], karena file yang cocok dengan [zipglob] tidak ditemukan di direktori Ren'Py SDK."
+
+    # game/install.rpy:79
+    old "Successfully installed [name!t]."
+    # Automatic translation.
+    new "Berhasil diinstal [name!t]."
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    # Automatic translation.
+    new "Mengunduh [extension.download_file]."
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    # Automatic translation.
+    new "Tidak dapat mengunduh [extension.download_file] dari [extension.download_url]:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    # Automatic translation.
+    new "File yang diunduh [extension.download_file] dari [extension.download_url] tidak benar."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/interface.rpy:385
+    old "opening the log file"
+    # Automatic translation.
+    new "membuka file log"
+
+    # game/ios.rpy:379
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    # Automatic translation.
+    new "Ada beberapa masalah yang diketahui dengan simulator iOS pada Apple Silicon. Silakan uji pada perangkat x86_64 atau iOS."
+
+    # game/itch.rpy:45
+    old "Downloading the itch.io butler."
+    # Automatic translation.
+    new "Mengunduh butler itch.io."
+
+    # game/preferences.rpy:106
+    old "General"
+    # Automatic translation.
+    new "Umum"
+
+    # game/preferences.rpy:107
+    old "Options"
+    # Automatic translation.
+    new "Pilihan"
+
+    # game/preferences.rpy:227
+    old "Daily check for update"
+    # Automatic translation.
+    new "Pemeriksaan harian untuk pembaruan"
+
+    # game/preferences.rpy:246
+    old "Launcher Theme:"
+    # Automatic translation.
+    new "Tema Peluncur:"
+
+    # game/preferences.rpy:250
+    old "Default theme"
+    # Automatic translation.
+    new "Tema default"
+
+    # game/preferences.rpy:251
+    old "Dark theme"
+    # Automatic translation.
+    new "Tema gelap"
+
+    # game/preferences.rpy:252
+    old "Custom theme"
+    # Automatic translation.
+    new "Tema khusus"
+
+    # game/preferences.rpy:256
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    # Automatic translation.
+    new "Informasi tentang membuat tema khusus dapat ditemukan di {a=https://www.renpy.org/doc/html/skins.html}dalam Dokumentasi Ren'Py{/a}."
+
+    # game/preferences.rpy:273
+    old "Install Libraries:"
+    # Automatic translation.
+    new "Instal Perpustakaan:"
+
+    # game/preferences.rpy:301
+    old "Clean temporary files"
+    # Automatic translation.
+    new "Bersihkan file sementara"
+
+    # game/preferences.rpy:308
+    old "Cleaning temporary files..."
+    # Automatic translation.
+    new "Membersihkan file sementara..."
+
+    # game/preferences.rpy:338
+    old "{#in language font}Welcome! Please choose a language"
+    # Automatic translation.
+    new "{#in language font}Selamat datang! Silakan pilih bahasa"
+
+    # game/preferences.rpy:373
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    # Automatic translation.
+    new "{#in language font}Mulai menggunakan Ren'Py di [lang_name]"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "Lint memeriksa permainan Anda untuk potensi kesalahan, dan memberi Anda statistik."
+
+    # game/project.rpy:283
+    old "This may be because the project is not writeable."
+    # Automatic translation.
+    new "Hal ini mungkin karena proyek ini tidak dapat ditulis."
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    # Automatic translation.
+    new "Bahasa (atau Tidak Ada untuk bahasa default):"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Rilis (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "Rilis (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Prarilis (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "Prarilis (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Malam hari (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "Malam hari (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:108
+    old "The update channel controls the version of Ren'Py the updater will download."
+    # Automatic translation.
+    new "Saluran pembaruan mengontrol versi Ren'Py yang akan diunduh oleh pembaru."
+
+    # game/updater.rpy:116
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/doc/html/changelog.html}Lihat log perubahan{/a}"
+
+    # game/updater.rpy:118
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/dev-doc/html/changelog.html}Lihat log perubahan{/a}"
+
+    # game/updater.rpy:124
+    old "• This version is installed and up-to-date."
+    # Automatic translation.
+    new "- Versi ini sudah terinstal dan terbaru."
+
+    # game/updater.rpy:136
+    old "%B %d, %Y"
+    new "%B %d, %Y"
+
+    # game/updater.rpy:215
+    old "Fetching the list of update channels"
+    # Automatic translation.
+    new "Mengambil daftar saluran pembaruan"
+
+    # game/updater.rpy:220
+    old "downloading the list of update channels"
+    # Automatic translation.
+    new "mengunduh daftar saluran pembaruan"
+
+    # game/web.rpy:485
+    old "Creating package..."
+    # Automatic translation.
+    new "Membuat paket..."
+
+    # game/web.rpy:505
+    old "Web: [project.current.display_name!q]"
+    new "Web: [project.current.display_name!q]"
+
+    # game/web.rpy:535
+    old "Build Web Application"
+    # Automatic translation.
+    new "Membangun Aplikasi Web"
+
+    # game/web.rpy:536
+    old "Build and Open in Browser"
+    # Automatic translation.
+    new "Membangun dan Membuka di Browser"
+
+    # game/web.rpy:537
+    old "Open in Browser"
+    # Automatic translation.
+    new "Buka di Browser"
+
+    # game/web.rpy:538
+    old "Open build directory"
+    # Automatic translation.
+    new "Buka direktori build"
+
+    # game/web.rpy:560
+    old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    # Automatic translation.
+    new "Gambar dan musik dapat diunduh saat bermain. File 'progressive_download.txt' akan dibuat sehingga Anda dapat mengonfigurasi perilaku ini."
+
+
+translate indonesian strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Perbaikan versi malam hari untuk versi rilis Ren'Py."
+

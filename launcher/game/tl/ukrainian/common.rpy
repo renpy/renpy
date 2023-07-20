@@ -919,3 +919,126 @@ translate ukrainian strings:
     # renpy/common/00preferences.rpy:535
     old "mute main"
     new "режим без звуку"
+
+translate ukrainian strings:
+
+    # renpy/common/00accessibility.rpy:186
+    old "Disable"
+    new "Вимкнути"
+
+    # renpy/common/00accessibility.rpy:209
+    old "Debug"
+    new "Налагодження"
+
+    # renpy/common/00action_other.rpy:721
+    old "Open [text] directory."
+    new "Відкрити теку [text]."
+
+    # renpy/common/00director.rpy:1745
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    new "Клацніть, аби увімкнути атрибут, клацніть ПКМ, аби увімкнути від’ємний атрибут."
+
+    # renpy/common/00director.rpy:1768
+    old "Click to set transform, right click to add to transform list."
+    new "Клацніть, щоб встановити трансформацію, клацніть ПКМ, щоб додати до списку трансформацій."
+
+    # renpy/common/00director.rpy:1789
+    old "Click to set, right click to add to behind list."
+    new "Клацніть, щоб встановити, клацніть ПКМ, щоб додати до списку."
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    new "Це збереження було створено на іншому пристрої. Зловмисно створені файли збережень можуть завдати шкоди вашому комп'ютеру. Чи довіряєте ви творцю цього збереження і всім, хто міг змінити файл?"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    new "Чи довіряєте ви пристрою, на якому було створено збереження? Ви повинні вибрати \"Так\", тільки якщо ви є єдиним користувачем пристрою."
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    new "звук при розфокусуванні"
+
+    # renpy/common/00preferences.rpy:537
+    old "web cache preload"
+    new "попереднє завантаження веб-кешу"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    new "голос після ігрового меню"
+
+    # renpy/common/00speechbubble.rpy:344
+    old "Speech Bubble Editor"
+    new "Редактор мовних бульбашок"
+
+    # renpy/common/00speechbubble.rpy:349
+    old "(hide)"
+    new "(приховати)"
+
+    # renpy/common/00sync.rpy:70
+    old "Sync downloaded."
+    new "Синхронізацію завантажено."
+
+    # renpy/common/00sync.rpy:190
+    old "Could not connect to the Ren'Py Sync server."
+    new "Не вдалося підключитися до сервера Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:192
+    old "The Ren'Py Sync server timed out."
+    new "Сервер Ren'Py Sync вийшов з ладу."
+
+    # renpy/common/00sync.rpy:194
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    new "Під час підключення до сервера Ren'Py Sync виникла невідома помилка."
+
+    # renpy/common/00sync.rpy:267
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    new "Сервер Ren'Py Sync не має копії цієї синхронізації. Ідентифікатор синхронізації може бути недійсним або його термін дії закінчився."
+
+    # renpy/common/00sync.rpy:409
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    new "Будь ласка, введіть згенерований вами ідентифікатор синхронізації.\nНіколи не вводьте ідентифікатор синхронізації, який ви не створювали."
+
+    # renpy/common/00sync.rpy:428
+    old "The sync ID is not in the correct format."
+    new "Ідентифікатор синхронізації має неправильний формат."
+
+    # renpy/common/00sync.rpy:448
+    old "The sync could not be decrypted."
+    new "Синхронізацію не вдалося розшифрувати."
+
+    # renpy/common/00sync.rpy:471
+    old "The sync belongs to a different game."
+    new "Синхронізація належить до іншої гри."
+
+    # renpy/common/00sync.rpy:476
+    old "The sync contains a file with an invalid name."
+    new "Синхронізація містить файл з невірною назвою."
+
+    # renpy/common/00sync.rpy:529
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    new "Це завантажить ваші збереження на сервер синхронізації {a=https://sync.renpy.org}Ren'Py Sync{/a}.\nБажаєте продовжити?"
+
+    # renpy/common/00sync.rpy:558
+    old "Enter Sync ID"
+    new "Уведіть ідентифікатор синхронізації"
+
+    # renpy/common/00sync.rpy:569
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    new "Зв’язок зі сервером синхронізації {a=https://sync.renpy.org}Ren'Py Sync{/a}."
+
+    # renpy/common/00sync.rpy:596
+    old "Sync Success"
+    new "Успішна синхронізація"
+
+    # renpy/common/00sync.rpy:599
+    old "The Sync ID is:"
+    new "Ідентифікатор синхронізації:"
+
+    # renpy/common/00sync.rpy:605
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    new "Ви можете використовувати цей ідентифікатор, щоб завантажити збереження на інший пристрій.\nЦя синхронізація закінчиться через годину.\nRen'Py Sync підтримується {a=https://www.renpy.org/sponsors.html}спонсорами Ren'Py{/a}."
+
+    # renpy/common/00sync.rpy:631
+    old "Sync Error"
+    new "Помилка синхронізації"
+

@@ -87,7 +87,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:255
     old "Auto"
-    new "Авто"
+    new "Авто."
 
     # gui/game/screens.rpy:256
     old "Save"
@@ -103,7 +103,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:259
     old "Prefs"
-    new "Опції"
+    new "Налаштування"
 
     # gui/game/screens.rpy:262
     old "## This code ensures that the quick_menu screen is displayed in-game, whenever the player has not explicitly hidden the interface."
@@ -135,7 +135,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:314
     old "End Replay"
-    new "Кінець повтору"
+    new "Закінчити повтору"
 
     # gui/game/screens.rpy:318
     old "Main Menu"
@@ -194,12 +194,12 @@ translate ukrainian strings:
     new "## Це описує базову структуру екрана меню гри. Він викликається за допомогою заголовка екрана та відображає фон, заголовок і навігацію."
 
     # gui/game/screens.rpy:411
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## Параметр прокручування може бути None або одним із \"viewport\" чи \"vpgrid\". Коли цей екран призначений для використання з одним або декількома об'єктами, які включені (розміщені) всередині нього."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## Параметр прокручування може бути None або одним із \"viewport\" чи \"vpgrid\". Цей екран призначений для використання з одним або декількома об'єктами, які включені (розміщені) всередині нього."
 
     # gui/game/screens.rpy:429
     old "## Reserve space for the navigation section."
-    new "## Зарезервуйте місце для розділу навігації."
+    new "## Зарезервування місця для розділу навігації."
 
     # gui/game/screens.rpy:471
     old "Return"
@@ -207,7 +207,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:534
     old "## About screen"
-    new "## Про екран"
+    new "## Екран «Про гру»"
 
     # gui/game/screens.rpy:536
     old "## This screen gives credit and copyright information about the game and Ren'Py."
@@ -231,7 +231,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:562
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
-    new "Створено за допомогою {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
+    new "Зроблено з {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
 
     # gui/game/screens.rpy:573
     old "## Load and Save screens"
@@ -251,7 +251,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:598
     old "Automatic saves"
-    new "Авто збереження"
+    new "Автозбереження"
 
     # gui/game/screens.rpy:598
     old "Quick saves"
@@ -267,7 +267,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:620
     old "## The grid of file slots."
-    new "## Сітка слотів для файлів."
+    new "## Сітка комірок для файлів."
 
     # gui/game/screens.rpy:640
     old "{#file_time}%A, %B %d %Y, %H:%M"
@@ -275,7 +275,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:640
     old "empty slot"
-    new "порожній слот"
+    new "порожня комірка"
 
     # gui/game/screens.rpy:648
     old "## Buttons to access other pages."
@@ -315,11 +315,11 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:726
     old "Display"
-    new "Дисплей"
+    new "Режим показу"
 
     # gui/game/screens.rpy:727
     old "Window"
-    new "Вікно"
+    new "У вікні"
 
     # gui/game/screens.rpy:728
     old "Fullscreen"
@@ -327,7 +327,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:733
     old "Unseen Text"
-    new "Невидимий текст"
+    new "Непрочитаний текст"
 
     # gui/game/screens.rpy:734
     old "After Choices"
@@ -347,7 +347,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:752
     old "Auto-Forward Time"
-    new "Час авто-переадресації"
+    new "Швидкість авточитання"
 
     # gui/game/screens.rpy:759
     old "Music Volume"
@@ -355,7 +355,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:766
     old "Sound Volume"
-    new "Гучність звуку"
+    new "Гучність ефектів"
 
     # gui/game/screens.rpy:772
     old "Test"
@@ -415,7 +415,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:975
     old "Mouse"
-    new "Мишка"
+    new "Миша"
 
     # gui/game/screens.rpy:978
     old "Gamepad"
@@ -431,7 +431,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:995
     old "Space"
-    new "Space"
+    new "Пробіл"
 
     # gui/game/screens.rpy:996
     old "Advances dialogue without selecting choices."
@@ -439,7 +439,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:999
     old "Arrow Keys"
-    new "Клавіші cтрілок"
+    new "Стрілки"
 
     # gui/game/screens.rpy:1000
     old "Navigate the interface."
@@ -491,7 +491,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1028
     old "Takes a screenshot."
-    new "Робить скріншот."
+    new "Робить знімок екрана."
 
     # gui/game/screens.rpy:1032
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
@@ -503,15 +503,15 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1042
     old "Left Click"
-    new "Лівий клік"
+    new "ЛКМ"
 
     # gui/game/screens.rpy:1046
     old "Middle Click"
-    new "Середній клік"
+    new "СКМ"
 
     # gui/game/screens.rpy:1050
     old "Right Click"
-    new "Правий клік"
+    new "ПКМ"
 
     # gui/game/screens.rpy:1054
     old "Mouse Wheel Up\nClick Rollback Side"
@@ -523,19 +523,19 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1065
     old "Right Trigger\nA/Bottom Button"
-    new "Правий тригер\nA/нижня кнопка"
+    new "Правий тригер\nA/Нижня кнопка"
 
     # gui/game/screens.rpy:1069
     old "Left Trigger\nLeft Shoulder"
-    new "Лівий тригер\nЛіве плече"
+    new "Лівий тригер\nЛівий бампер"
 
     # gui/game/screens.rpy:1073
     old "Right Shoulder"
-    new "Праве плече"
+    new "Правий бампер"
 
     # gui/game/screens.rpy:1078
     old "D-Pad, Sticks"
-    new "D-Pad, стіки"
+    new "D-Pad, Стіки"
 
     # gui/game/screens.rpy:1082
     old "Start, Guide"
@@ -547,7 +547,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1089
     old "Calibrate"
-    new "Калібрувати"
+    new "Відкалібрувати"
 
     # gui/game/screens.rpy:1117
     old "## Additional screens"
@@ -653,3 +653,29 @@ translate ukrainian strings:
     old "Menu"
     new "Меню"
 
+
+translate ukrainian strings:
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    
+    new "Вивантажити синхронізацію"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    
+    new "Завантажити синхронізацію"
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    
+    new "## Екран з бульбашками"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    
+    new "## Екран бульбашок використовується для показу діалогу гравцеві під час використання мовних бульбашок. Екран бульбашок має ті самі параметри, що й екран слів, має створювати елемент відображення з ідентифікатором \"what\", а також може створювати елементи відображення з ідентифікаторами \"namebox\", \"who\" і \"window\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"

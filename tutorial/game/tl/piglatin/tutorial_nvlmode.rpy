@@ -81,7 +81,7 @@ translate piglatin after_nvl_menu_d43b28d1:
 translate piglatin after_nvl_menu_f056c7ad:
 
     # nvle "Text tags like {{w}{w} work in NVL-mode."
-    nvle "Exttay agstay ikelay {{}way{w} orkway inay Vlnay-odemay."
+    nvle "Exttay agstay ikelay {{w}{w} orkway inay Vlnay-odemay."
 
 # game/tutorial_nvlmode.rpy:79
 translate piglatin after_nvl_menu_750cd9a1:

@@ -433,3 +433,11 @@ translate turkish strings:
     old "## NVL-mode."
     new "## NVL-modu."
 
+
+translate turkish strings:
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    # Automatic translation.
+    new "## Ekranlarda veya dönüşümlerde geçersiz veya kararsız özellikler için kontrolleri etkinleştirin"
+

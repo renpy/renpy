@@ -227,4 +227,4 @@
     # renpy/common/_developer/developer.rpym:70
     old "Speech Bubble Editor (Shift+B)"
     new "Editor de burbujas de diálogo (Mayús+B)"
-    
+

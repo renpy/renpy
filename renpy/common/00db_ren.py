@@ -111,13 +111,16 @@ class JSONDB(_object):
     For example, this can store information associated with each
     say statement, that can change how a say statement is displayed.
 
-    JSONDBs are not intended for data that is changed after the game
-    has been released. :doc:`persistent` or normal save files are
+    JSONDBs are not intended for data that is changed through or because
+    of the player's actions. :doc:`persistent` or normal save files are
     better choices for that data.
 
     The database should only contain data that Python can serialize to
     JSON. This includes lists, dictionaries (with strings as keys),
-    strings, numbers, True, False, and None.
+    strings, numbers, True, False, and None. See
+    `the Python documentation <https://docs.python.org/3/library/json.html#encoders-and-decoders>`__
+    about interoperability, how data converts between the two formats,
+    and the various associated pitfalls.
 
     The two levels of the database are dictionaries both keyed by strings.
     The first level is read only - when a key on the first level dictionary

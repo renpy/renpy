@@ -39,6 +39,23 @@ the corresponding line is brighter. If the values are being inherited from
 a prior line of dialogue or the default, the button is dimmed out. Right
 clicking on a button will prevent the current line from setting the value.
 
+.. _retained-bubbles:
+
+Retained Bubbles
+----------------
+
+Ren'Py supports a mode in which bubbles are retained between lines of
+dialogue, so they pop up one by one, until the previous bubbles are
+cleared from the screen. To enable this mode, set a bubble character's
+`retain` property to True::
+
+    define e = Character(None, image="eileen", kind=bubble, retain=True)
+
+Once that's done, the bubbles will keep popping up. Each bubble will
+need to be placed individually, so bubbles don't overlap. In the bubble editor,
+pressing the "(clear retained bubbles)" button will remove all of the
+retained bubbles from the screen, except for the most recent.
+
 Tips
 ----
 
@@ -139,6 +156,14 @@ The ``bubble`` namespace contains the following variables:
     be cycled through in the speech bubble editor. If the names of the sets of properties
     are not given, the properties are cycled through in alphabetical order.
 
+.. var:: bubble.properties_callback = None
+
+    If not None, this should be a function that takes an image tag, and returns
+    a list or tuple of property names that should be used for that image tag, in
+    the order those names should be cycled through. This takes precendence over
+    bubble.properties_order, and can be used to customize the list of bubble
+    properties by character.
+
 .. var:: bubble.expand_area = { ... }
 
     This is a map from the name of a set of properties to a (left, top, right, bottom)
@@ -187,3 +212,105 @@ It's separate from the say screen as it uses its own set of styles, including
 ``bubble_window``, ``bubble_what``, ``bubble_namebox``, and ``bubble_who``.
 These styles can be customized directly to avoid having to set a property
 in all of the sets of properties in :var:`bubble.properties`.
+
+
+Adding Bubble Support to a Game
+-------------------------------
+
+Games made before the release of Ren'Py 8.1 won't include the default screens
+and settings required for the speech bubble system. There are two things you
+need to do to fix this. First, download:
+
+* https://raw.githubusercontent.com/renpy/renpy/master/gui/game/gui/bubble.png
+* https://raw.githubusercontent.com/renpy/renpy/master/gui/game/gui/thoughtbubble.png
+
+And place the files in the ``game/gui`` directory of your game. Then, add this to
+the end of screens.rpy::
+
+    ## Bubble screen ###############################################################
+    ##
+    ## The bubble screen is used to display dialogue to the player when using
+    ## speech bubbles. The bubble screen takes the same parameters as the say
+    ## screen, must create a displayable with the id of "what", and can create
+    ## displayables with the "namebox", "who", and "window" ids.
+    ##
+    ## https://www.renpy.org/doc/html/bubble.html#bubble-screen
+
+    screen bubble(who, what):
+        style_prefix "bubble"
+
+        window:
+            id "window"
+
+            if who is not None:
+
+                window:
+                    id "namebox"
+                    style "bubble_namebox"
+
+                    text who:
+                        id "who"
+
+            text what:
+                id "what"
+
+    style bubble_window is empty
+    style bubble_namebox is empty
+    style bubble_who is default
+    style bubble_what is default
+
+    style bubble_window:
+        xpadding 30
+        top_padding 5
+        bottom_padding 5
+
+    style bubble_namebox:
+        xalign 0.5
+
+    style bubble_who:
+        xalign 0.5
+        textalign 0.5
+        color "#000"
+
+    style bubble_what:
+        align (0.5, 0.5)
+        text_align 0.5
+        layout "subtitle"
+        color "#000"
+
+    define bubble.frame = Frame("gui/bubble.png", 55, 55, 55, 95)
+    define bubble.thoughtframe = Frame("gui/thoughtbubble.png", 55, 55, 55, 55)
+
+    define bubble.properties = {
+        "bottom_left" : {
+            "window_background" : Transform(bubble.frame, xzoom=1, yzoom=1),
+            "window_bottom_padding" : 27,
+        },
+
+        "bottom_right" : {
+            "window_background" : Transform(bubble.frame, xzoom=-1, yzoom=1),
+            "window_bottom_padding" : 27,
+        },
+
+        "top_left" : {
+            "window_background" : Transform(bubble.frame, xzoom=1, yzoom=-1),
+            "window_top_padding" : 27,
+        },
+
+        "top_right" : {
+            "window_background" : Transform(bubble.frame, xzoom=-1, yzoom=-1),
+            "window_top_padding" : 27,
+        },
+
+        "thought" : {
+            "window_background" : bubble.thoughtframe,
+        }
+    }
+
+    define bubble.expand_area = {
+        "bottom_left" : (0, 0, 0, 22),
+        "bottom_right" : (0, 0, 0, 22),
+        "top_left" : (0, 22, 0, 0),
+        "top_right" : (0, 22, 0, 0),
+        "thought" : (0, 0, 0, 0),
+    }

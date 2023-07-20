@@ -80,7 +80,7 @@ cdef extern from "renpysound_core.h":
     void RPS_set_video(int channel, int video)
 
     void RPS_sample_surfaces(object, object)
-    void RPS_init(int freq, int stereo, int samples, int status, int equal_mono)
+    void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int linear_fades)
     void RPS_quit()
 
     void RPS_periodic()
@@ -372,7 +372,7 @@ def set_video(channel, video, loop=False):
     else:
         RPS_set_video(channel, NO_VIDEO)
 
-def init(freq, stereo, samples, status=False, equal_mono=False):
+def init(freq, stereo, samples, status=False, equal_mono=False, linear_fades=False):
     """
     Initializes the audio system with the given parameters. The parameter are
     just informational - the audio system should be able to play all supported
@@ -389,7 +389,13 @@ def init(freq, stereo, samples, status=False, equal_mono=False):
 
     `status`
         If true, the sound system will print errors out to the console.
-    `
+
+    `equal_mono`
+        If true, the sound system will play mono files at the same volume as
+        stereo files.
+
+    `linear_fades`
+        If true, the sound system will use linear fades.
     """
 
     if status:
@@ -397,7 +403,7 @@ def init(freq, stereo, samples, status=False, equal_mono=False):
     else:
         status = 0
 
-    RPS_init(freq, stereo, samples, status, equal_mono)
+    RPS_init(freq, stereo, samples, status, equal_mono, linear_fades)
     check_error()
 
 def quit(): # @ReservedAssignment

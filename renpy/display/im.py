@@ -622,7 +622,7 @@ def free_memory():
     cache.clear()
 
 
-class ImageBase(renpy.display.core.Displayable):
+class ImageBase(renpy.display.displayable.Displayable):
     """
     This is the base class for all of the various kinds of images that
     we can possibly have.
@@ -2004,7 +2004,7 @@ def image(arg, loose=False, **properties):
     elif loose:
         return arg
 
-    if isinstance(arg, renpy.display.core.Displayable):
+    if isinstance(arg, renpy.display.displayable.Displayable):
         raise Exception("Expected an image, but got a general displayable.")
     else:
         raise Exception("Could not construct image from argument.")

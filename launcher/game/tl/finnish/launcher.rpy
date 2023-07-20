@@ -425,7 +425,8 @@
 
     # front_page.rpy:147
     old "[p.name!q] (template)"
-    new "[p.name!q] (template)"
+    # Automatic translation.
+    new "[p.name!q] (malli)"
 
     # front_page.rpy:149
     old "Select project [text]."
@@ -437,7 +438,8 @@
 
     # front_page.rpy:166
     old "The Question"
-    new "The Question"
+    # Automatic translation.
+    new "Kysymys"
 
     # front_page.rpy:182
     old "Active Project"
@@ -1186,3 +1188,945 @@
     # updater.rpy:195
     old "Proceed"
     new "Jatka"
+
+translate finnish strings:
+
+    # game/add_file.rpy:37
+    old "The file name may not be empty."
+    # Automatic translation.
+    new "Tiedoston nimi ei saa olla tyhjä."
+
+    # game/android.rpy:37
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    # Automatic translation.
+    new "Android-pakettien rakentamiseen Windowsissa tarvitaan 64-bittinen/x64 Java [JDK_REQUIREMENT] Development Kit. JDK on eri asia kuin JRE, joten on mahdollista, että sinulla on Java ilman JDK:ta.\n\nLataa ja asenna JDK {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}{/a} ja käynnistä sitten Ren'Py-launcher uudelleen."
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "RAPT on asennettu, mutta avainta ei ole määritetty. Luo uudet avaimet tai kopioi android.keystore ja bundle.keystore perushakemistoon."
+
+    # game/android.rpy:41
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    # Automatic translation.
+    new "Valitse, haluatko Play Bundlen (Google Playta varten) vai Universal APK:n (sivulatausta ja muita sovelluskauppoja varten)."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "Yritetään emuloida televisioon perustuvaa Android-konsolia.\n\nOhjaimen syöttö on yhdistetty nuolinäppäimiin, Enter on yhdistetty valintapainikkeeseen, Escape on yhdistetty valikkopainikkeeseen ja PageUp on yhdistetty takaisin-painikkeeseen."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "Lataa ja asentaa Android SDK:n ja tukipaketit."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "Luo paketin allekirjoittamiseen tarvittavat avaimet."
+
+    # game/android.rpy:56
+    old "Lists the connected devices."
+    # Automatic translation.
+    new "Luettelee liitetyt laitteet."
+
+    # game/android.rpy:57
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Pariliitos laitteen kanssa Wi-Fi-yhteyden kautta Android 11+ -käyttöjärjestelmässä."
+
+    # game/android.rpy:58
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Muodostaa yhteyden laitteeseen Wi-Fi-yhteyden kautta Android 11+ -käyttöjärjestelmässä."
+
+    # game/android.rpy:59
+    old "Disconnects a device connected over Wi-Fi."
+    new "Katkaisee yhteyden Wi-Fi-yhteyden kautta yhdistetyn laitteeseen."
+
+    # game/android.rpy:61
+    old "Removes Android temporary files."
+    # Automatic translation.
+    new "Poistaa Androidin väliaikaiset tiedostot."
+
+    # game/android.rpy:63
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "Rakentaa Android-sovelluspaketin (ABB), joka on tarkoitus ladata Google Play -palveluun. Tämä voi sisältää enintään 2 Gt dataa."
+
+    # game/android.rpy:64
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    new "Rakentaa universaalin APK-paketin, joka on tarkoitettu sivulataukseen ja muihin kauppoihin kuin Google Play'hin. Tämä voi sisältää enintään 2 Gt dataa."
+
+    # game/android.rpy:327
+    old "Android: [project.current.display_name!q]"
+    new "Android: [project.current.display_name!q]"
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "Asenna SDK"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "Luo avaimet"
+
+    # game/android.rpy:397
+    old "Play Bundle"
+    new "Play-kaupan paketti"
+
+    # game/android.rpy:402
+    old "Universal APK"
+    new "Universal APK"
+
+    # game/android.rpy:452
+    old "List Devices"
+    new "Listaa laitteet"
+
+    # game/android.rpy:456
+    old "Wi-Fi Debugging Pair"
+    # Automatic translation.
+    new "Wi-Fi-vianmäärityspari"
+
+    # game/android.rpy:460
+    old "Wi-Fi Debugging Connect"
+    new "Wi-Fi-vianmäärityksen yhdistäminen"
+
+    # game/android.rpy:464
+    old "Wi-Fi Debugging Disconnect"
+    # Automatic translation.
+    new "Wi-Fi-vianmäärityksen katkaisu"
+
+    # game/android.rpy:468
+    old "Clean"
+    new "Puhdista"
+
+    # game/android.rpy:573
+    old "Wi-Fi Pairing Code"
+    # Automatic translation.
+    new "Wi-Fi-pariliitäntäkoodi"
+
+    # game/android.rpy:573
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    # Automatic translation.
+    new "Jos tämä on tuettu, se löytyy kohdasta \"Kehittäjän asetukset\", \"Langaton virheenkorjaus\", \"Laitteen pariliitos pariliitoskoodilla\"."
+
+    # game/android.rpy:580
+    old "Pairing Host & Port"
+    # Automatic translation.
+    new "Isännän ja sataman yhdistäminen"
+
+    # game/android.rpy:596
+    old "IP Address & Port"
+    # Automatic translation.
+    new "IP-osoite ja portti"
+
+    # game/android.rpy:596
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    # Automatic translation.
+    new "Jos tämä on tuettu, se löytyy kohdasta 'Kehitysasetukset', 'Langaton virheenkorjaus'."
+
+    # game/android.rpy:612
+    old "This can be found in 'List Devices'."
+    new "Tämä löytyy kohdasta 'listaa laitteet'."
+
+    # game/android.rpy:632
+    old "Cleaning up Android project."
+    # Automatic translation.
+    new "Android-projektin siivoaminen."
+
+    # game/androidstrings.rpy:7
+    old "{} is not a directory."
+    # Automatic translation.
+    new "{} ei ole hakemisto."
+
+    # game/androidstrings.rpy:8
+    old "{} does not contain a Ren'Py game."
+    # Automatic translation.
+    new "{} ei sisällä Ren'Py-peliä."
+
+    # game/androidstrings.rpy:10
+    old "Run configure before attempting to build the app."
+    # Automatic translation.
+    new "Suorita configure ennen sovelluksen rakentamista."
+
+    # game/androidstrings.rpy:11
+    old "Updating project."
+    # Automatic translation.
+    new "Projektin päivittäminen."
+
+    # game/androidstrings.rpy:12
+    old "Creating assets directory."
+    new "Materiaalihakemiston luominen."
+
+    # game/androidstrings.rpy:13
+    old "Packaging internal data."
+    # Automatic translation.
+    new "Pakkauksen sisäiset tiedot."
+
+    # game/androidstrings.rpy:14
+    old "I'm using Gradle to build the package."
+    # Automatic translation.
+    new "Käytän Gradlea paketin rakentamiseen."
+
+    # game/androidstrings.rpy:15
+    old "The build seems to have failed."
+    # Automatic translation.
+    new "Rakentaminen näyttää epäonnistuneen."
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    # Automatic translation.
+    new "Asennan paketin."
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    new "Paketin asentaminen näyttää epäonnistuneen."
+
+    # game/androidstrings.rpy:18
+    old "Launching app."
+    new "Sovellus käynnistyy."
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    # Automatic translation.
+    new "Sovelluksen käynnistäminen näyttää epäonnistuneen."
+
+    # game/androidstrings.rpy:20
+    old "The build seems to have succeeded."
+    # Automatic translation.
+    new "Rakentaminen näyttää onnistuneen."
+
+    # game/androidstrings.rpy:21
+    old "What is the full name of your application? This name will appear in the list of installed applications."
+    new "Mikä on sovelluksesi koko nimi? Tämä nimi näkyy asennettujen sovellusten luettelossa."
+
+    # game/androidstrings.rpy:22
+    old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
+    # Automatic translation.
+    new "Mikä on sovelluksesi lyhyt nimi? Tätä nimeä käytetään käynnistysohjelmassa ja sovelluksen pikakuvakkeissa."
+
+    # game/androidstrings.rpy:23
+    old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
+    # Automatic translation.
+    new "Mikä on paketin nimi?\n\nTämä on yleensä muotoa com.domain.program tai com.domain.email.program. Se voi sisältää vain ASCII-kirjaimia ja pisteitä. Sen on sisällettävä vähintään yksi piste."
+
+    # game/androidstrings.rpy:24
+    old "The package name may not be empty."
+    # Automatic translation.
+    new "Paketin nimi ei saa olla tyhjä."
+
+    # game/androidstrings.rpy:25
+    old "The package name may not contain spaces."
+    # Automatic translation.
+    new "Paketin nimi ei saa sisältää välilyöntejä."
+
+    # game/androidstrings.rpy:26
+    old "The package name must contain at least one dot."
+    # Automatic translation.
+    new "Paketin nimessä on oltava vähintään yksi piste."
+
+    # game/androidstrings.rpy:27
+    old "The package name may not contain two dots in a row, or begin or end with a dot."
+    # Automatic translation.
+    new "Paketin nimi ei saa sisältää kahta pistettä peräkkäin eikä alkaa tai päättyä pisteeseen."
+
+    # game/androidstrings.rpy:28
+    old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
+    # Automatic translation.
+    new "Paketin nimen jokaisen osan on alettava kirjaimella, ja sen on sisällettävä vain kirjaimia, numeroita ja alleviivauksia."
+
+    # game/androidstrings.rpy:29
+    old "{} is a Java keyword, and can't be used as part of a package name."
+    # Automatic translation.
+    new "{} on Javan avainsana, eikä sitä voi käyttää osana paketin nimeä."
+
+    # game/androidstrings.rpy:30
+    old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
+    new "Mikä on sovelluksen versio?\n\nTämän pitäisi olla ihmisen luettava versio, jonka voisi näyttää henkilölle. Sen on sisällettävä vain numeroita ja pisteitä."
+
+    # game/androidstrings.rpy:31
+    old "The version number must contain only numbers and dots."
+    # Automatic translation.
+    new "Versionumero saa sisältää vain numeroita ja pisteitä."
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "Kuinka paljon RAM-muistia (gigatavuina) haluat varata Gradlelle?\nTämän on oltava positiivinen kokonaisluku."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "RAM-koon on sisällettävä vain numeroita ja oltava positiivinen."
+
+    # game/androidstrings.rpy:34
+    old "How would you like your application to be displayed?"
+    # Automatic translation.
+    new "Miten haluat, että sovelluksesi näytetään?"
+
+    # game/androidstrings.rpy:35
+    old "In landscape orientation."
+    # Automatic translation.
+    new "Maisemasuunnassa."
+
+    # game/androidstrings.rpy:36
+    old "In portrait orientation."
+    # Automatic translation.
+    new "Pystysuunnassa."
+
+    # game/androidstrings.rpy:37
+    old "In the user's preferred orientation."
+    # Automatic translation.
+    new "Käyttäjän haluamassa suunnassa."
+
+    # game/androidstrings.rpy:38
+    old "Which app store would you like to support in-app purchasing through?"
+    # Automatic translation.
+    new "Minkä sovelluskaupan kautta haluaisit tukea sovelluksen sisäisiä ostoja?"
+
+    # game/androidstrings.rpy:39
+    old "Google Play."
+    new "Google Playn."
+
+    # game/androidstrings.rpy:40
+    old "Amazon App Store."
+    new "Amazon App Storen."
+
+    # game/androidstrings.rpy:41
+    old "Both, in one app."
+    new "Molempien yhdessä sovelluksessa."
+
+    # game/androidstrings.rpy:42
+    old "Neither."
+    new "En kummankaan."
+
+    # game/androidstrings.rpy:43
+    old "Do you want to automatically update the Java source code?"
+    # Automatic translation.
+    new "Haluatko päivittää Javan lähdekoodin automaattisesti?"
+
+    # game/androidstrings.rpy:44
+    old "Yes. This is the best choice for most projects."
+    # Automatic translation.
+    new "Kyllä. Tämä on paras valinta useimpiin hankkeisiin."
+
+    # game/androidstrings.rpy:45
+    old "No. This may require manual updates when Ren'Py or the project configuration changes."
+    # Automatic translation.
+    new "Ei. Tämä saattaa vaatia manuaalisia päivityksiä, kun Ren'Py tai projektin kokoonpano muuttuu."
+
+    # game/androidstrings.rpy:46
+    old "Unknown configuration variable: {}"
+    # Automatic translation.
+    new "Tuntematon konfiguraatiomuuttuja: {}"
+
+    # game/androidstrings.rpy:47
+    old "I'm compiling a short test program, to see if you have a working JDK on your system."
+    new "Rakennan lyhyen testiohjelman nähdäkseni, onko järjestelmässäsi toimiva JDK."
+
+    # game/androidstrings.rpy:48
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    # Automatic translation.
+    new "En pystynyt kääntämään testitiedostoa javacin avulla. Jos et ole vielä asentanut Java Development Kitiä, lataa se osoitteesta:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nJDK on eri asia kuin JRE, joten on mahdollista, että sinulla on Java ilman JDK:ta. Varmista, että olet asentanut 'JavaSoft (Oracle) registry keys'.\n\nIlman toimivaa JDK:ta en voi jatkaa."
+
+    # game/androidstrings.rpy:49
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    # Automatic translation.
+    new "Tietokoneessasi oleva Java-versio ei näytä olevan JDK 8, joka on ainoa Android SDK:n tukema versio. Jos sinun on asennettava JDK 8, voit ladata sen osoitteesta:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nVoit myös asettaa JAVA_HOME-ympäristömuuttujan käyttämään eri Java-versiota."
+
+    # game/androidstrings.rpy:50
+    old "The JDK is present and working. Good!"
+    # Automatic translation.
+    new "JDK on läsnä ja toimii. Hyvä!"
+
+    # game/androidstrings.rpy:51
+    old "The Android SDK has already been unpacked."
+    # Automatic translation.
+    new "Android SDK on jo purettu."
+
+    # game/androidstrings.rpy:52
+    old "Do you accept the Android SDK Terms and Conditions?"
+    # Automatic translation.
+    new "Hyväksytkö Android SDK:n käyttöehdot?"
+
+    # game/androidstrings.rpy:53
+    old "I'm downloading the Android SDK. This might take a while."
+    # Automatic translation.
+    new "Lataan Android SDK:n. Tämä saattaa kestää jonkin aikaa."
+
+    # game/androidstrings.rpy:54
+    old "I'm extracting the Android SDK."
+    # Automatic translation.
+    new "Puran Android SDK:n."
+
+    # game/androidstrings.rpy:55
+    old "I've finished unpacking the Android SDK."
+    # Automatic translation.
+    new "Olen purkanut Android SDK:n pakkauksen."
+
+    # game/androidstrings.rpy:56
+    old "I'm about to download and install the required Android packages. This might take a while."
+    # Automatic translation.
+    new "Aion ladata ja asentaa tarvittavat Android-paketit. Tämä saattaa kestää jonkin aikaa."
+
+    # game/androidstrings.rpy:57
+    old "I was unable to accept the Android licenses."
+    # Automatic translation.
+    new "En pystynyt hyväksymään Android-lisenssejä."
+
+    # game/androidstrings.rpy:59
+    old "I was unable to install the required Android packages."
+    # Automatic translation.
+    new "En saanut asennettua tarvittavia Android-paketteja."
+
+    # game/androidstrings.rpy:60
+    old "I've finished installing the required Android packages."
+    # Automatic translation.
+    new "Olen saanut asennettua tarvittavat Android-paketit."
+
+    # game/androidstrings.rpy:61
+    old "It looks like you're ready to start packaging games."
+    # Automatic translation.
+    new "Näyttää siltä, että olet valmis aloittamaan pelien pakkaamisen."
+
+    # game/androidstrings.rpy:62
+    old "Please enter your name or the name of your organization."
+    # Automatic translation.
+    new "Kirjoita nimesi tai organisaatiosi nimi."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Löysin android.keystore-tiedoston rapt-hakemistosta. Haluatko käyttää tätä tiedostoa?"
+
+    # game/androidstrings.rpy:64
+    old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "Voin luoda sinulle sovelluksen allekirjoitusavaimen. Tätä avainta tarvitaan luodaksesi Universal APK:n sivulatausta ja muita kauppoja kuin Google Playta varten.\n\nHaluatko luoda avaimen?"
+
+    # game/androidstrings.rpy:65
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    # Automatic translation.
+    new "Luon avaimen android.keystore-tiedostoon.\n\nSinun on varmuuskopioitava tämä tiedosto. Jos kadotat sen, et voi päivittää sovellusta.\n\nSinun on myös pidettävä avain turvassa. Jos pahat ihmiset saavat tämän tiedoston haltuunsa, he voivat tehdä sovelluksestasi väärennettyjä versioita ja mahdollisesti varastaa käyttäjien tietoja.\n\nTeetkö varmuuskopion android.keystore-tiedostosta ja säilytät sen turvallisessa paikassa?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\nJos sanot \"Ei\", avaimen luominen estyy."
+
+    # game/androidstrings.rpy:67
+    old "Could not create android.keystore. Is keytool in your path?"
+    # Automatic translation.
+    new "Ei voitu luoda android.keystore. Onko keytool polussasi?"
+
+    # game/androidstrings.rpy:68
+    old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
+    # Automatic translation.
+    new "Olen saanut valmiiksi android.keystoren luomisen. Varmuuskopioi se ja säilytä se turvallisessa paikassa."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Löysin bundle.keystore-tiedoston rapt-hakemistosta. Haluatko käyttää tätä tiedostoa?"
+
+    # game/androidstrings.rpy:70
+    old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
+    new "Voin luoda sinulle paketin allekirjoitusavaimen. Tätä avainta tarvitaan Android-sovelluspaketin (AAB) rakentamiseen Google Playyn lataamista varten.\n\nHaluatko luoda avaimen?"
+
+    # game/androidstrings.rpy:71
+    old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
+    # Automatic translation.
+    new "Luon avaimen bundle.keystore-tiedostoon.\n\nSinun on varmuuskopioitava tämä tiedosto. Jos kadotat sen, et voi päivittää sovellusta.\n\nSinun on myös pidettävä avain turvassa. Jos pahat ihmiset saavat tämän tiedoston haltuunsa, he voivat tehdä sovelluksestasi väärennettyjä versioita ja mahdollisesti varastaa käyttäjien tietoja.\n\nTeetkö varmuuskopion bundle.keystore-tiedostosta ja säilytät sen turvallisessa paikassa?"
+
+    # game/androidstrings.rpy:73
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    # Automatic translation.
+    new "Ei voitu luoda bundle.keystore. Onko keytool polussasi?"
+
+    # game/androidstrings.rpy:74
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    # Automatic translation.
+    new "Olen avannut hakemiston, joka sisältää android.keystore ja bundle.keystore. Varmuuskopioi ne ja säilytä ne turvallisessa paikassa."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    # Automatic translation.
+    new "Valitse projektit Hakemisto"
+
+    # game/choose_directory.rpy:79
+    old "The selected projects directory is not writable."
+    # Automatic translation.
+    new "Valittuun projektihakemistoon ei voi kirjoittaa."
+
+    # game/choose_theme.rpy:508
+    old "changing the theme"
+    # Automatic translation.
+    new "teeman muuttaminen"
+
+    # game/distribute.rpy:1278
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new "Macintosh-sovellusta allekirjoitetaan...\n(Tämä voi kestää kauan.)"
+
+    # game/distribute.rpy:1745
+    old "Copying files..."
+    new "Tiedostoja kopioidaan..."
+
+    # game/distribute_gui.rpy:157
+    old "Build Distributions: [project.current.display_name!q]"
+    # Automatic translation.
+    new "Rakenna jakelut: [project.current.display_name!q]"
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    new "Päivitä old-game"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    # Automatic translation.
+    new "Ren'Py toimii vain lukuoikeuksilla varustetusta kansiosta. Jotkin toiminnot eivät toimi."
+
+    # game/dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    # Automatic translation.
+    new "Tämä johtuu luultavasti siitä, että Ren'Py toimii suoraan Macintosh-aseman kuvasta. Voit korjata tämän lopettamalla tämän käynnistysohjelman, kopioimalla koko %s-kansion jonnekin muualle tietokoneellesi ja käynnistämällä Ren'Py:n uudelleen."
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    # Automatic translation.
+    new "Nykyaikainen editori, jossa on monia laajennuksia, mukaan lukien edistynyt Ren'Py-integraatio."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    # Automatic translation.
+    new "Nykyaikainen editori, jossa on monia laajennuksia, mukaan lukien edistynyt Ren'Py-integraatio.\n{a=jump:reinstall_vscode}Päivitä Visual Studio Code uusimpaan versioon.{/a}"
+
+    # game/editor.rpy:169
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:169
+    old "Up to 110 MB download required."
+    # Automatic translation.
+    new "Jopa 110 Mt:n lataus vaaditaan."
+
+    # game/editor.rpy:182
+    old "A modern and approachable text editor."
+    # Automatic translation.
+    new "Moderni ja helposti lähestyttävä tekstieditori."
+
+    # game/editor.rpy:196
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:196
+    old "Up to 150 MB download required."
+    new "Jopa 150 Mt:n lataus vaaditaan."
+
+    # game/editor.rpy:211
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:220
+    old "Visual Studio Code (System)"
+    # Automatic translation.
+    new "Visual Studio Code (järjestelmä)"
+
+    # game/editor.rpy:220
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    new "Käyttää kopiota Visual Studio Code -ohjelmasta, jonka olet asentanut Ren'Py:n ulkopuolelle. On suositeltavaa asentaa language-renpy -laajennus lisätäksesi tuen Ren'Py-tiedostoille."
+
+    # game/editor.rpy:226
+    old "System Editor"
+    new "Järjestelmän editori"
+
+    # game/editor.rpy:245
+    old "None"
+    # Automatic translation.
+    new "Ei ole"
+
+    # game/editor.rpy:352
+    old "Edit [text]."
+    # Automatic translation.
+    new "Muokkaa [text]."
+
+    # game/front_page.rpy:58
+    old "PROJECTS:"
+    new "PROJEKTIT:"
+
+    # game/front_page.rpy:165
+    old "audio"
+    new "audio"
+
+    # game/front_page.rpy:182
+    old "Open project"
+    new "Avaa projekti"
+
+    # game/front_page.rpy:188
+    old "Actions"
+    # Automatic translation.
+    new "Toimet"
+
+    # game/front_page.rpy:219
+    old "Web"
+    new "Web"
+
+    # game/front_page.rpy:219
+    old "(Beta)"
+    new "(Beta)"
+
+    # game/gui7.rpy:302
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    # Automatic translation.
+    new "{size=-4}\n\nTämä ei korvaa tiedostoja gui/main_menu.png, gui/game_menu.png ja gui/window_icon.png, vaan luo tiedostoja, joita ei ole olemassa.{/size}"
+
+    # game/gui7.rpy:333
+    old "Custom. The GUI is optimized for a 16:9 aspect ratio."
+    # Automatic translation.
+    new "Mukautettu. Käyttöliittymä on optimoitu 16:9-kuvasuhteelle."
+
+    # game/gui7.rpy:350
+    old "WIDTH"
+    # Automatic translation.
+    new "LEVEYS"
+
+    # game/gui7.rpy:350
+    old "Please enter the width of your game, in pixels."
+    # Automatic translation.
+    new "Kirjoita pelisi leveys pikseleinä."
+
+    # game/gui7.rpy:360
+    old "The width must be a number."
+    # Automatic translation.
+    new "Leveyden on oltava numero."
+
+    # game/gui7.rpy:366
+    old "HEIGHT"
+    # Automatic translation.
+    new "KORKEUS"
+
+    # game/gui7.rpy:366
+    old "Please enter the height of your game, in pixels."
+    # Automatic translation.
+    new "Anna pelisi korkeus pikseleinä."
+
+    # game/gui7.rpy:376
+    old "The height must be a number."
+    # Automatic translation.
+    new "Korkeuden on oltava numero."
+
+    # game/gui7.rpy:424
+    old "creating a new project"
+    new "uutta projektia luodaan"
+
+    # game/gui7.rpy:428
+    old "activating the new project"
+    new "uutta projektia aktivoidaan"
+
+    # game/install.rpy:33
+    old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
+    # Automatic translation.
+    new "[name!t] ei voitu asentaa, koska Ren'Py SDK -hakemistosta ei löytynyt [zipglob] -nimistä tiedostoa."
+
+    # game/install.rpy:79
+    old "Successfully installed [name!t]."
+    new "[name!t] asennettu onnistuneesti."
+
+    # game/install.rpy:111
+    old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
+    # Automatic translation.
+    new "Tällä näytöllä voit asentaa kirjastoja joita ei voi jakaa Ren'Py:n mukana. Jotkin näistä kirjastoista saattavat vaatia, että hyväksyt kolmannen osapuolen lisenssin ennen käyttöä tai jakelua."
+
+    # game/install.rpy:117
+    old "Install Steam Support"
+    # Automatic translation.
+    new "Asenna Steam-tuki"
+
+    # game/install.rpy:126
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    # Automatic translation.
+    new "Ennen kuin asennat Steam-tuen, varmista, että olet {a=https://partner.steamgames.com/}Steam-kumppani{/a}."
+
+    # game/install.rpy:138
+    old "Steam support has already been installed."
+    # Automatic translation.
+    new "Steam-tuki on jo asennettu."
+
+    # game/install.rpy:142
+    old "Install Live2D Cubism SDK for Native"
+    new "Asenna Live2D Cubism SDK for Native"
+
+    # game/install.rpy:156
+    old "Install Libraries"
+    # Automatic translation.
+    new "Asenna kirjastot"
+
+    # game/install.rpy:182
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    # Automatic translation.
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} lisää tuen Live2D-mallien näyttämiselle. Aseta CubismSdkForNative-4-{i}versio{/i}.zip-tiedosto Ren'Py SDK -hakemistoon ja napsauta sitten Install. Pelin levittäminen Live2D:n avulla edellyttää, että hyväksyt Live2D, Inc:n lisenssin."
+
+    # game/install.rpy:186
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    # Automatic translation.
+    new "Ren'Py:n Live2D ei tue Webiä, Android x86_64:ää (mukaan lukien emulaattorit ja Chrome OS), ja se on lisättävä iOS-projekteihin manuaalisesti. Live2D on asennettava uudelleen Ren'Py:n päivittämisen tai Android-tuen asentamisen jälkeen."
+
+    # game/install.rpy:191
+    old "Open Ren'Py SDK Directory"
+    # Automatic translation.
+    new "Avaa Ren'Py SDK-hakemisto"
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    new "Ladataan [extension.download_file]."
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    # Automatic translation.
+    new "Ei voitu ladata [extension.download_file] osoitteesta [extension.download_url]:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    # Automatic translation.
+    new "Ladattu tiedosto [extension.download_file] osoitteesta [extension.download_url] ei ole oikein."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/interface.rpy:141
+    old "Ren'Py Sponsor Information"
+    new "Ren'Pyn sponsoritiedot"
+
+    # game/interface.rpy:385
+    old "opening the log file"
+    # Automatic translation.
+    new "lokitiedostoa avataan"
+
+    # game/ios.rpy:269
+    old "iOS: [project.current.display_name!q]"
+    new "iOS: [project.current.display_name!q]"
+
+    # game/ios.rpy:379
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    # Automatic translation.
+    new "Apple Siliconin iOS-simulaattorissa on tunnettuja ongelmia. Testaa x86_64- tai iOS-laitteilla."
+
+    # game/itch.rpy:45
+    old "Downloading the itch.io butler."
+    new "Ladataan itch.io'n butler-ohjelmaa."
+
+    # game/navigation.rpy:168
+    old "Navigate: [project.current.display_name!q]"
+    # Automatic translation.
+    new "Navigoi: [project.current.display_name!q]"
+
+    # game/new_project.rpy:81
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
+    new "Luot [new_project_language]{#this substitution may be localized} -kielisen projektin. Vaihda käynnistyskieli asetuksissa, jos haluat luoda projektin toisella kielellä."
+
+    # game/preferences.rpy:106
+    old "General"
+    # Automatic translation.
+    new "Yleistä"
+
+    # game/preferences.rpy:107
+    old "Options"
+    new "Asetukset"
+
+    # game/preferences.rpy:224
+    old "Sponsor message"
+    new "Sponsoriviesti"
+
+    # game/preferences.rpy:227
+    old "Daily check for update"
+    # Automatic translation.
+    new "Päivittäinen päivityksen tarkistus"
+
+    # game/preferences.rpy:246
+    old "Launcher Theme:"
+    new "Käynnistimen Teema:"
+
+    # game/preferences.rpy:250
+    old "Default theme"
+    # Automatic translation.
+    new "Oletusteema"
+
+    # game/preferences.rpy:251
+    old "Dark theme"
+    # Automatic translation.
+    new "Tumma teema"
+
+    # game/preferences.rpy:252
+    old "Custom theme"
+    # Automatic translation.
+    new "Mukautettu teema"
+
+    # game/preferences.rpy:256
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    new "Tietoa mukautetun teeman luomisesta löytyy {a=https://www.renpy.org/doc/html/skins.html}Ren'Pyn dokumentaatiosta{/a}."
+
+    # game/preferences.rpy:273
+    old "Install Libraries:"
+    # Automatic translation.
+    new "Asenna kirjastot:"
+
+    # game/preferences.rpy:300
+    old "Reset window size"
+    new "Palauta ikkunan oletuskoko"
+
+    # game/preferences.rpy:301
+    old "Clean temporary files"
+    new "Poista väliaikaiset tiedostot"
+
+    # game/preferences.rpy:308
+    old "Cleaning temporary files..."
+    new "Poistetaan väliaikaisia tiedostoja..."
+
+    # game/preferences.rpy:338
+    old "{#in language font}Welcome! Please choose a language"
+    # Automatic translation.
+    new "{#in language font}Tervetuloa! Valitse kieli"
+
+    # game/preferences.rpy:373
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    new "{#in language font}Aloita Ren'Py:n käyttö kielellä [lang_name]"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "Lint tarkistaa pelisi mahdollisten virheiden varalta ja antaa tilastoja."
+
+    # game/project.rpy:283
+    old "This may be because the project is not writeable."
+    # Automatic translation.
+    new "Tämä voi johtua siitä, että projekti ei ole kirjoitettavissa."
+
+    # game/translations.rpy:91
+    old "Translations: [project.current.display_name!q]"
+    # Automatic translation.
+    new "Käännökset: [project.current.display_name!q]"
+
+    # game/translations.rpy:342
+    old "Extract Dialogue: [project.current.display_name!q]"
+    new "Kerää dialogi: [project.current.display_name!q]"
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    # Automatic translation.
+    new "Kieli (tai Ei mitään oletuskieleksi):"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Julkaisu (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "Julkaisu (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "Esijulkaisu (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "Esijulkaisu (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    new "Nightly (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "Nightly (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:108
+    old "The update channel controls the version of Ren'Py the updater will download."
+    # Automatic translation.
+    new "Päivityskanava ohjaa Ren'Py-version, jonka päivitysohjelma lataa."
+
+    # game/updater.rpy:116
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/doc/html/changelog.html}Näytä muutosloki{/a}"
+
+    # game/updater.rpy:118
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/dev-doc/html/changelog.html}Näytä muutosloki{/a}"
+
+    # game/updater.rpy:124
+    old "• This version is installed and up-to-date."
+    # Automatic translation.
+    new "- Tämä versio on asennettu ja ajan tasalla."
+
+    # game/updater.rpy:136
+    old "%B %d, %Y"
+    new "%B %d, %Y"
+
+    # game/updater.rpy:215
+    old "Fetching the list of update channels"
+    new "Haetaan päivityskanavien luetteloa"
+
+    # game/updater.rpy:220
+    old "downloading the list of update channels"
+    new "ladataan päivityskanavien luetteloa"
+
+    # game/web.rpy:428
+    old "Preparing progressive download"
+    new "Valmistellaan progressiivista latausta"
+
+    # game/web.rpy:485
+    old "Creating package..."
+    new "Luodaan pakettia..."
+
+    # game/web.rpy:505
+    old "Web: [project.current.display_name!q]"
+    new "Web: [project.current.display_name!q]"
+
+    # game/web.rpy:535
+    old "Build Web Application"
+    # Automatic translation.
+    new "Rakenna web-sovellus"
+
+    # game/web.rpy:536
+    old "Build and Open in Browser"
+    # Automatic translation.
+    new "Rakenna ja avaa selaimessa"
+
+    # game/web.rpy:537
+    old "Open in Browser"
+    # Automatic translation.
+    new "Avaa selaimessa"
+
+    # game/web.rpy:538
+    old "Open build directory"
+    # Automatic translation.
+    new "Avaa rakennushakemisto"
+
+    # game/web.rpy:560
+    old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    # Automatic translation.
+    new "Kuvia ja musiikkia voi ladata toiston aikana. Progressive_download.txt-tiedosto luodaan, jotta voit määrittää tämän käyttäytymisen."
+
+    # game/web.rpy:568
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    # Automatic translation.
+    new "Ennen verkkosovellusten pakkaamista sinun on ladattava RenPyWeb, Ren'Pyn verkkotuki. Haluatko ladata RenPyWebin nyt?"
+
+
+translate finnish strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Yöllinen versio, joka sisältää korjauksia Ren'Pyn julkaisuversioon."
+

@@ -83,7 +83,8 @@ translate polish strings:
 
     # renpy/common/00accessibility.rpy:175
     old "Off"
-    new "Off"
+    # Automatic translation.
+    new "Poza"
 
     # renpy/common/00accessibility.rpy:179
     old "Text-to-speech"
@@ -327,7 +328,8 @@ translate polish strings:
 
     # renpy/common/00director.rpy:1561
     old "(statement)"
-    new "(statement)"
+    # Automatic translation.
+    new "(oświadczenie)"
 
     # renpy/common/00director.rpy:1562
     old "(tag)"
@@ -335,7 +337,8 @@ translate polish strings:
 
     # renpy/common/00director.rpy:1563
     old "(attributes)"
-    new "(attributes)"
+    # Automatic translation.
+    new "(atrybuty)"
 
     # renpy/common/00director.rpy:1564
     old "(transform)"
@@ -347,7 +350,8 @@ translate polish strings:
 
     # renpy/common/00director.rpy:1601
     old "(channel)"
-    new "(channel)"
+    # Automatic translation.
+    new "(kanał)"
 
     # renpy/common/00director.rpy:1602
     old "(filename)"
@@ -571,7 +575,8 @@ translate polish strings:
 
     # renpy/common/00preferences.rpy:446
     old "gl framerate"
-    new "gl framerate"
+    # Automatic translation.
+    new "framerate gl"
 
     # renpy/common/00preferences.rpy:449
     old "gl tearing"
@@ -699,7 +704,8 @@ translate polish strings:
 
     # renpy/common/_developer/developer.rpym:90
     old "[name] [attributes] (hidden)"
-    new "[name] [attributes] (hidden)"
+    # Automatic translation.
+    new "[name] [attributes] (ukryte)"
 
     # renpy/common/_developer/developer.rpym:94
     old "[name] [attributes]"
@@ -791,11 +797,13 @@ translate polish strings:
 
     # renpy/common/_developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        (no properties affect the displayable)"
+    # Automatic translation.
+    new "        (żadne właściwości nie mają wpływu na wyświetlanie)"
 
     # renpy/common/_developer/inspector.rpym:147
     old "        (default properties omitted)"
-    new "        (default properties omitted)"
+    # Automatic translation.
+    new "        (pominięto właściwości domyślne)"
 
     # renpy/common/_developer/inspector.rpym:185
     old "<repr() failed>"
@@ -904,3 +912,164 @@ translate polish strings:
     # renpy/common/00gallery.rpy:613
     old "return"
     new "powrót"
+
+translate polish strings:
+
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    # Automatic translation.
+    new "Tekst o wysokim kontraście"
+
+    # renpy/common/00director.rpy:1745
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    # Automatic translation.
+    new "Kliknij, aby przełączyć atrybut, kliknij prawym przyciskiem, aby przełączyć negatywny atrybut."
+
+    # renpy/common/00director.rpy:1768
+    old "Click to set transform, right click to add to transform list."
+    # Automatic translation.
+    new "Kliknij, aby ustawić transformację, kliknij prawym przyciskiem myszy, aby dodać do listy transformacji."
+
+    # renpy/common/00director.rpy:1789
+    old "Click to set, right click to add to behind list."
+    # Automatic translation.
+    new "Kliknij, aby ustawić, kliknij prawym przyciskiem myszy, aby dodać do listy za."
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    # Automatic translation.
+    new "Ten zapis został utworzony na innym urządzeniu. Złośliwie skonstruowane pliki zapisu mogą uszkodzić Twój komputer. Czy ufasz twórcy tego zapisu i wszystkim, którzy mogli zmienić plik?"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    # Automatic translation.
+    new "Czy ufasz urządzeniu, na którym utworzono zapis? Powinieneś wybrać tak tylko wtedy, gdy jesteś jedynym użytkownikiem urządzenia."
+
+    # renpy/common/00preferences.rpy:510
+    old "high contrast text"
+    # Automatic translation.
+    new "tekst o wysokim kontraście"
+
+    # renpy/common/00preferences.rpy:519
+    old "audio when minimized"
+    # Automatic translation.
+    new "dźwięk po zminimalizowaniu"
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    # Automatic translation.
+    new "dźwięk przy braku skupienia"
+
+    # renpy/common/00preferences.rpy:537
+    old "web cache preload"
+    new "web cache preload"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    # Automatic translation.
+    new "głos po menu gry"
+
+    # renpy/common/00preferences.rpy:571
+    old "main volume"
+    # Automatic translation.
+    new "wolumen główny"
+
+    # renpy/common/00preferences.rpy:575
+    old "mute main"
+    # Automatic translation.
+    new "wyciszenie główne"
+
+    # renpy/common/00speechbubble.rpy:344
+    old "Speech Bubble Editor"
+    # Automatic translation.
+    new "Edytor bąbelków mowy"
+
+    # renpy/common/00speechbubble.rpy:349
+    old "(hide)"
+    new "(hide)"
+
+    # renpy/common/00sync.rpy:70
+    old "Sync downloaded."
+    # Automatic translation.
+    new "Synchronizacja pobrana."
+
+    # renpy/common/00sync.rpy:190
+    old "Could not connect to the Ren'Py Sync server."
+    # Automatic translation.
+    new "Nie można połączyć się z serwerem Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:192
+    old "The Ren'Py Sync server timed out."
+    # Automatic translation.
+    new "Serwer Ren'Py Sync przestał działać."
+
+    # renpy/common/00sync.rpy:194
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    # Automatic translation.
+    new "Podczas łączenia się z serwerem Ren'Py Sync wystąpił nieznany błąd."
+
+    # renpy/common/00sync.rpy:267
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    # Automatic translation.
+    new "Serwer Ren'Py Sync nie ma kopii tej synchronizacji. Identyfikator synchronizacji może być nieprawidłowy lub upłynął czas jej trwania."
+
+    # renpy/common/00sync.rpy:409
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    # Automatic translation.
+    new "Proszę wprowadzić wygenerowany identyfikator synchronizacji.\nNigdy nie wprowadzaj identyfikatora synchronizacji, którego sam nie stworzyłeś."
+
+    # renpy/common/00sync.rpy:428
+    old "The sync ID is not in the correct format."
+    # Automatic translation.
+    new "Identyfikator synchronizacji nie jest w prawidłowym formacie."
+
+    # renpy/common/00sync.rpy:448
+    old "The sync could not be decrypted."
+    # Automatic translation.
+    new "Synchronizacja nie mogła zostać odszyfrowana."
+
+    # renpy/common/00sync.rpy:471
+    old "The sync belongs to a different game."
+    # Automatic translation.
+    new "Synchronizacja należy do innej gry."
+
+    # renpy/common/00sync.rpy:476
+    old "The sync contains a file with an invalid name."
+    # Automatic translation.
+    new "Synchronizacja zawiera plik o nieprawidłowej nazwie."
+
+    # renpy/common/00sync.rpy:529
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    # Automatic translation.
+    new "Spowoduje to przesłanie twoich zapisów na serwer {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nCzy chcesz kontynuować?"
+
+    # renpy/common/00sync.rpy:558
+    old "Enter Sync ID"
+    # Automatic translation.
+    new "Wprowadź Sync ID"
+
+    # renpy/common/00sync.rpy:569
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    # Automatic translation.
+    new "Spowoduje to skontaktowanie się z serwerem {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+
+    # renpy/common/00sync.rpy:596
+    old "Sync Success"
+    # Automatic translation.
+    new "Sukces synchronizacji"
+
+    # renpy/common/00sync.rpy:599
+    old "The Sync ID is:"
+    # Automatic translation.
+    new "Sync ID to:"
+
+    # renpy/common/00sync.rpy:605
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    # Automatic translation.
+    new "Możesz użyć tego identyfikatora, aby pobrać swój save na inne urządzenie.\nTa synchronizacja wygaśnie za godzinę.\nRen'Py Sync jest wspierany przez {a=https://www.renpy.org/sponsors.html}Sponsorów Ren'Py{/a}."
+
+    # renpy/common/00sync.rpy:631
+    old "Sync Error"
+    # Automatic translation.
+    new "Błąd synchronizacji"
+

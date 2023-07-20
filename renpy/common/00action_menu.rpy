@@ -30,6 +30,8 @@ init -1500 python:
         "load" : "(not _in_replay)",
         }
 
+    __NoShowTransition = renpy.object.Sentinel("NoShowTransition")
+
     @renpy.pure
     class ShowMenu(Action, DictEquality):
         """
@@ -62,11 +64,11 @@ init -1500 python:
 
         Extra arguments and keyword arguments are passed on to the screen
         """
-        transition = None  # For save compatability; see renpy#2376
+        transition = None  # For save compatibility; see renpy#2376
 
         def __init__(self, screen=None, *args, **kwargs):
             self.screen = screen
-            self.transition = kwargs.pop("_transition", None)
+            self.transition = kwargs.pop("_transition", __NoShowTransition)
             self.args = args
             self.kwargs = kwargs
 
@@ -79,6 +81,10 @@ init -1500 python:
             if not self.get_sensitive():
                 return
 
+            transition = self.transition
+            if transition is __NoShowTransition:
+                transition = config.intra_transition
+
             orig_screen = screen = self.screen or store._game_menu_screen
 
             if not (renpy.has_screen(screen) or renpy.has_label(screen)):
@@ -90,12 +96,12 @@ init -1500 python:
 
                 if renpy.has_screen(screen):
 
-                    renpy.transition(self.transition or config.intra_transition)
+                    renpy.transition(transition)
                     renpy.show_screen(screen, _transient=True, *self.args, **self.kwargs)
                     renpy.restart_interaction()
 
                 elif renpy.has_label(screen):
-                    renpy.transition(config.intra_transition)
+                    renpy.transition(transition)
 
                     ui.layer("screens")
                     ui.remove_above(None)

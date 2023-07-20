@@ -301,12 +301,6 @@ class Context(object):
 
             for i in variables:
                 if self.context.get(i, NotInContext) != other.context.get(i, NotInContext):
-
-                    # Ignore the arguments given to ATL Transitions, which
-                    # will change each time an interaction restarts. (See #4167.)
-                    if i in ("new_widget", "old_widget"):
-                        continue
-
                     return False
 
             return True
@@ -398,6 +392,13 @@ class ATLTransformBase(renpy.object.Object):
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
+    @property
+    def transition(self):
+        """
+        Returns true if this is likely to be an ATL transition.
+        """
+
+        return "new_widget" in self.context.context
 
     def _handles_event(self, event):
 
@@ -596,6 +597,9 @@ class ATLTransformBase(renpy.object.Object):
 
     def execute(self, trans, st, at):
 
+        if self.state.debug:
+            print("A", st)
+
         if self.done:
             return None
 
@@ -639,7 +643,7 @@ class ATLTransformBase(renpy.object.Object):
         if (self.atl_st_offset is None) or (st - self.atl_st_offset) < 0:
             self.atl_st_offset = st
 
-        if self.atl.animation:
+        if self.atl.animation or self.transition:
             timebase = at
         else:
             timebase = st - self.atl_st_offset
@@ -979,22 +983,32 @@ class Block(Statement):
     def visit(self):
         return [ j for i in self.statements for j in i.visit() ]
 
-incompatible_props = {"alignaround" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
-                      "align" : {"xanchor", "yanchor", "xpos", "ypos"},
-                      "anchor" : {"xanchor", "yanchor"},
-                      "angle" : {"xpos", "ypos"},
-                      "around" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
-                      "offset" : {"xoffset", "yoffset"},
-                      "pos" : {"xpos", "ypos"},
-                      "radius" : {"xpos", "ypos"},
-                      "size" : {"xsize", "ysize"},
-                      "xalign" : {"xpos", "xanchor"},
-                      "xcenter" : {"xpos", "xanchor"},
-                      "xycenter" : {"xpos", "ypos", "xanchor", "yanchor"},
-                      "xysize" : {"xsize", "ysize"},
-                      "yalign" : {"ypos", "yanchor"},
-                      "ycenter" : {"ypos", "yanchor"},
-                      }
+# A list of properties
+incompatible_props = {
+    "alignaround" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
+    "align" : {"xanchor", "yanchor", "xpos", "ypos"},
+    "anchor" : {"xanchor", "yanchor"},
+    "angle" : {"xpos", "ypos"},
+    "anchorangle" : {"xangle", "yangle"},
+    "around" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
+    "offset" : {"xoffset", "yoffset"},
+    "pos" : {"xpos", "ypos"},
+    "radius" : {"xpos", "ypos"},
+    "anchorradius" : {"xanchor", "yanchor"},
+    "size" : {"xsize", "ysize"},
+    "xalign" : {"xpos", "xanchor"},
+    "xcenter" : {"xpos", "xanchor"},
+    "xycenter" : {"xpos", "ypos", "xanchor", "yanchor"},
+    "xysize" : {"xsize", "ysize"},
+    "yalign" : {"ypos", "yanchor"},
+    "ycenter" : {"ypos", "yanchor"},
+    }
+
+# A list of sets of pairs of properties that do not conflict.
+compatible_pairs = [
+    {"radius", "angle"},
+    {"anchorradius", "anchorangle"}
+]
 
 # This can become one of four things:
 #
@@ -1045,6 +1059,14 @@ class RawMultipurpose(RawStatement):
             old = None
 
         self.properties.append((name, exprs))
+
+        if old is not None:
+            pair = { old, name }
+
+            for i in compatible_pairs:
+                if pair == i:
+                    old = None
+
         return old
 
     def add_expression(self, expr, with_clause):
@@ -1344,7 +1366,7 @@ class Interpolation(Statement):
 
         complete = warper(complete)
 
-        if state is None:
+        if state is None or len(state) != 6:
 
             # Create a new transform state, and apply the property
             # changes to it.
@@ -1353,22 +1375,35 @@ class Interpolation(Statement):
 
             has_angle = False
             has_radius = False
+            has_anchorangle = False
+            has_anchorradius = False
 
             for k, v in self.properties:
                 setattr(newts, k, v)
 
                 if k == "angle":
-                    newts.last_angle = v
                     has_angle = True
 
                 elif k == "radius":
                     has_radius = True
 
+                elif k == "anchorangle":
+                    has_anchorangle = True
+
+                elif k == "anchorradius":
+                    has_anchorradius = True
+
             # Now, the things we change linearly are in the difference
             # between the new and old states.
             linear = trans.state.diff(newts)
 
-            revolution = None
+            # Angle and radius need to go after the linear changes, as
+            # around or alignaround must be set first.
+            angle = None
+            radius = None
+            anchorangle = None
+            anchorradius = None
+
             splines = [ ]
 
             revdir = self.revolution
@@ -1399,43 +1434,79 @@ class Interpolation(Statement):
                     startradius = trans.state.radius
                     endradius = newts.radius
 
-                    # Make sure the revolution is in the appropriate direction,
+                    startanchorangle = trans.state.anchorangle
+                    endanchorangle = newts.anchorangle
+                    startanchorradius = trans.state.anchorradius
+                    endanchorradius = newts.anchorradius
+
+                    # Make sure the angle is in the appropriate direction,
                     # and contains an appropriate number of circles.
 
                     if revdir == "clockwise":
                         if endangle < startangle:
                             startangle -= 360
 
+                        if endanchorangle < startanchorangle:
+                            startanchorangle -= 360
+
                         startangle -= circles * 360
+                        startanchorangle -= circles * 360
 
                     elif revdir == "counterclockwise":
                         if endangle > startangle:
                             startangle += 360
 
+                        if endanchorangle > startanchorangle:
+                            startanchorangle += 360
+
                         startangle += circles * 360
+                        startanchorangle += circles * 360
 
-                    if has_radius:
-                        linear["radius"] = (startradius, endradius)
+                    has_radius = True
+                    has_angle = True
+                    has_anchorangle = True
+                    has_anchorradius = True
 
-                    # Store the revolution.
-                    if has_angle:
-                        revolution = (startangle, endangle)
+                    radius = (startradius, endradius)
+                    angle = (startangle, endangle)
+                    anchorradius = (startanchorradius, endanchorradius)
+                    anchorangle = (startanchorangle, endanchorangle)
 
                 else:
 
                     if has_angle:
-                        last_angle = trans.state.last_angle or trans.state.angle
-                        revolution = (last_angle, newts.last_angle)
+                        start = trans.state.angle
+                        end = newts.last_angle
+
+                        if end - start > 180:
+                            start += 360
+                        if end - start < -180:
+                            start -= 360
+
+                        angle = (start, end)
 
                     if has_radius:
-                        linear["radius"] = (trans.state.radius, newts.radius)
+                        radius = (trans.state.radius, newts.radius)
 
+                    if has_anchorangle:
+                        start = trans.state.anchorangle
+                        end = newts.last_anchorangle
+
+                        if end - start > 180:
+                            start += 360
+                        if end - start < -180:
+                            start -= 360
+
+                        anchorangle = (start, end)
+
+                    if has_anchorradius:
+                        anchorradius = (trans.state.anchorradius, newts.anchorradius)
 
             # Figure out the splines.
             for name, values in self.splines:
                 splines.append((name, [ getattr(trans.state, name) ] + values))
 
-            state = (linear, revolution, splines)
+            state = (linear, angle, radius, anchorangle, anchorradius, splines)
 
             # Ensure that we set things, even if they don't actually
             # change from the old state.
@@ -1444,10 +1515,11 @@ class Interpolation(Statement):
                     setattr(trans.state, k, v)
 
         else:
-            linear, revolution, splines = state
+            linear, angle, radius, anchorangle, anchorradius, splines = state
 
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.items():
+
             if k == "orientation":
                 if old is None:
                     old = (0.0, 0.0, 0.0)
@@ -1463,13 +1535,28 @@ class Interpolation(Statement):
 
             setattr(trans.state, k, value)
 
-        # Handle the revolution.
-        if revolution is not None:
-            startangle, endangle = revolution[:2]
+        # Handle the angle.
+        if angle is not None:
+            startangle, endangle = angle[:2]
 
             angle = interpolate(complete, startangle, endangle, float)
-            trans.state.last_angle = angle
             trans.state.angle = angle
+
+        if radius is not None:
+            startradius, endradius = radius
+            trans.state.radius = interpolate(complete, startradius, endradius, position)
+
+        if anchorangle is not None:
+            startangle, endangle = anchorangle[:2]
+
+            angle = interpolate(complete, startangle, endangle, float)
+            trans.state.anchorangle = angle
+
+        if anchorradius is not None:
+            startradius, endradius = anchorradius
+            trans.state.anchorradius = interpolate(complete, startradius, endradius, position)
+
+
 
         # Handle any splines we might have.
         for name, values in splines:

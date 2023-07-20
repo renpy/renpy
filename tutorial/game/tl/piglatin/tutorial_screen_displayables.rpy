@@ -351,7 +351,7 @@ translate piglatin bar_displayables_946746c2:
 translate piglatin bar_displayables_af3a51b8:
 
     # e "The value property gives a BarValue, which is an object that determines the bar's value and range. Here, a StaticValue sets the range to 100 and the value to 66, making a bar that's two thirds full."
-    e "Hetay aluevay ropertypay ivesgay aay Arvaluebay, hichway isay anay objectay hattay eterminesday hetay arbay'say aluevay anday angeray. Erehay, aay Taticvaluesay etssay hetay angeray otay 001ay anday hetay aluevay otay 66ay, akingmay aay arbay hattay'say wotay hirdstay ullfay."
+    e "Hetay aluevay ropertypay ivesgay aay Arvaluebay, hichway isay anay objectay hattay eterminesday hetay arbay'say aluevay anday angeray. Erehay, aay Taticvaluesay etssay hetay angeray otay 100 anday hetay aluevay otay 66, akingmay aay arbay hattay'say wotay hirdstay ullfay."
 
 # game/tutorial_screen_displayables.rpy:581
 translate piglatin bar_displayables_62f8b0ab:
@@ -611,31 +611,13 @@ translate piglatin viewport_displayables_54dd6e7b:
     # e "The xinitial and yinitial properties set the initial amount of scrolling, as a fraction of the amount that can be scrolled."
     e "Hetay initialxay anday initialyay ropertiespay etsay hetay initialay amountay ofay crollingsay, asay aay actionfray ofay hetay amountay hattay ancay ebay crolledsay."
 
-# game/tutorial_screen_displayables.rpy:885
-translate piglatin viewport_displayables_c047efb5:
-
-    # e "Finally, there's the child_size property. To explain what it does, I first have to show you what happens when we don't have it."
-    e "Inallyfay, heretay'say hetay ild_sizechay ropertypay. Otay explainay hatway itay oesday, Iay irstfay avehay otay owshay ouyay hatway appenshay henway eway onday'tay avehay itay."
-
-# game/tutorial_screen_displayables.rpy:887
-translate piglatin viewport_displayables_c563019f:
-
-    # e "As you can see, the text wraps. That's because Ren'Py is offering it space that isn't big enough."
-    e "Saay ouyay ancay eesay, hetay exttay rapsway. Hattay'say ecausebay Enray'Ypay isay offeringay itay pacesay hattay isnay'tay igbay enoughay."
-
-# game/tutorial_screen_displayables.rpy:909
-translate piglatin viewport_displayables_4bcf0ad0:
-
-    # e "When we give the screen a child_size, it offers more space to its children, allowing scrolling. It takes a horizontal and vertical size. If one component is None, it takes the size of the viewport."
-    e "Henway eway ivegay hetay creensay aay ild_sizechay, itay offersay oremay pacesay otay itsay ildrenchay, allowingay crollingsay. Tiay akestay aay orizontalhay anday erticalvay izesay. Fiay oneay omponentcay isay Onenay, itay akestay hetay izesay ofay hetay iewportvay."
-
-# game/tutorial_screen_displayables.rpy:936
+# game/tutorial_screen_displayables.rpy:890
 translate piglatin viewport_displayables_ae4ff821:
 
     # e "Finally, there's the vpgrid displayable. It combines a viewport and a grid into a single displayable, except it's more efficient than either, since it doesn't have to draw every child."
     e "Inallyfay, heretay'say hetay pgridvay isplayableday. Tiay ombinescay aay iewportvay anday aay idgray intoay aay inglesay isplayableday, exceptay itay'say oremay efficientay hantay eitheray, incesay itay oesnday'tay avehay otay rawday everyay ildchay."
 
-# game/tutorial_screen_displayables.rpy:938
+# game/tutorial_screen_displayables.rpy:892
 translate piglatin viewport_displayables_71fa0b8f:
 
     # e "It takes the cols and rows properties, which give the number of rows and columns of children. If one is omitted, Ren'Py figures it out from the other and the number of children."
@@ -758,8 +740,4 @@ translate piglatin strings:
     # game/tutorial_screen_displayables.rpy:541
     old "You clicked the other button."
     new "Ouyay ickedclay hetay otheray uttonbay."
-
-    # game/tutorial_screen_displayables.rpy:880
-    old "This text is wider than the viewport."
-    new "Histay exttay isay iderway hantay hetay iewportvay."
 

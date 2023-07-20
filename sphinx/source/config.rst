@@ -633,12 +633,6 @@ Occasionally Used
 
     If true, the current dialogue will appear in the history screen.
 
-.. var:: config.hw_video = False
-
-    If true, hardware video playback will be used on mobile platforms. This
-    may be faster, but only some formats are supported and only fullscreen video
-    is available. If false, software playback will be used.
-
 .. var:: config.hyperlink_handlers = { ... }
 
     A dictionary mapping a hyperlink protocol to the handler for that
@@ -649,7 +643,7 @@ Occasionally Used
 .. var:: config.hyperlink_protocol = "call_in_new_context"
 
     The protocol that is used for hyperlinks that do not have a protocol
-    assigned to them. See :ref:`the a text tag <a-tag>` for a description
+    assigned to them. See the :tt:`a` text tag for a description
     as to what the possible protocols mean.
 
 .. var:: config.image_cache_size = None
@@ -1378,6 +1372,16 @@ Rarely or Internally Used
     main use of this is to allow libraries to gain access to resources
     that need an initializd gui, like OpenGL functions.
 
+.. var:: config.ex_rollback_classes = [ ]
+
+    A list of class objects that should not generate a warning that
+    the object supported rollback in the past, but do not now. If you
+    have intentionally removed rollack support from a class, place
+    the class object in this list and the warning will be suppressed.
+
+    Chances are, you don't want to use this - you want to add ``object``
+    to the list of base types for your class.
+
 .. var:: config.fadeout_audio = 0.016
 
     The default audio fadeout time that's used to fade out audio, when
@@ -1783,7 +1787,7 @@ Rarely or Internally Used
 
     The complete path to the directory in which the game is
     saved. This should only be set in a ``python early`` block. See also
-    config.save_directory, which generates the default value for this
+    :var:`config.save_directory`, which generates the default value for this
     if it is not set during a ``python early`` block.
 
 .. var:: config.scene = renpy.scene

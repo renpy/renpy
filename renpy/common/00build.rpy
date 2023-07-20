@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -345,11 +345,14 @@ init -1500 python in build:
             dmg
                 A Macintosh DMG containing the files.
             app-zip
-                A zip file containing a macintosh application.
+                A zip file containing a macintosh application. This format
+                doesn't support the Ren'Py updater.
             app-directory
-                A directory containing the mac app.
+                A directory containing the mac app. This format
+                doesn't support the Ren'Py updater.
             app-dmg
-                A macintosh drive image containing a dmg. (Mac only.)
+                A macintosh drive image containing a dmg. (Mac only.) This format
+                doesn't support the Ren'Py updater.
             bare-zip
                 A zip file without :var:`build.directory_name`
                 prepended.
@@ -457,15 +460,15 @@ init -1500 python in build:
     itch_project = None
 
     # Maps from files to itch.io channels.
-    itch_channels = [
-        ( "*-all.zip", "win-osx-linux" ),
-        ( "*-market.zip", "win-osx-linux" ),
-        ( "*-pc.zip", "win-linux" ),
-        ( "*-win.zip", "win" ),
-        ( "*-mac.zip", "osx" ),
-        ( "*-linux.tar.bz2", "linux" ),
-        ( "*-release.apk", "android" ),
-    ]
+    itch_channels = {
+        "*-all.zip" : "win-osx-linux",
+        "*-market.zip" : "win-osx-linux",
+        "*-pc.zip" : "win-linux",
+        "*-win.zip" : "win",
+        "*-mac.zip" : "osx",
+        "*-linux.tar.bz2" : "linux",
+        "*-release.apk" : "android",
+    }
 
     # Should we include the old Ren'Py themes?
     include_old_themes = True

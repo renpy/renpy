@@ -28,6 +28,7 @@ from typing import Any
 import renpy
 import renpy.gl2.live2dmotion
 from renpy.gl2.gl2shadercache import register_shader
+from renpy.display.core import absolute
 
 try:
     import renpy.gl2.live2dmodel as live2dmodel
@@ -122,6 +123,14 @@ def init():
         vec4 color = texture2D(tex0, v_tex_coord);
         vec4 mask = texture2D(tex1, v_mask_coord);
         gl_FragColor = color * (1.0 - mask.a);
+    """)
+
+    register_shader("live2d.colors", variables="""
+        uniform vec4 u_multiply;
+        uniform vec4 u_screen;
+    """, fragment_250="""
+        gl_FragColor.rgb = gl_FragColor.rgb * u_multiply.rgb;
+        gl_FragColor.rgb = (gl_FragColor.rgb + u_screen.rgb * gl_FragColor.a) - (gl_FragColor.rgb * u_screen.rgb);
     """)
 
     register_shader("live2d.flip_texture", variables="""
@@ -486,7 +495,7 @@ def update_states():
         s.mark = False
 
 
-class Live2D(renpy.display.core.Displayable):
+class Live2D(renpy.display.displayable.Displayable):
 
     nosave = [ "common_cache" ]
 
@@ -657,13 +666,6 @@ class Live2D(renpy.display.core.Displayable):
         # Chose all motions.
         rv = [ i for i in attributes if i in common.motions ]
 
-        # If there are no motions, choose the last one from the optional attributes.
-        if not rv:
-            sustain = True
-            rv = [ i for i in optional if i in common.motions ]
-        else:
-            sustain = False
-
         # Choose the first expression.
         for i in list(attributes) + list(optional):
             if i in common.expressions:
@@ -671,9 +673,16 @@ class Live2D(renpy.display.core.Displayable):
                 break
 
         # Choose all possible nonexclusive attributes.
-        for i in sorted(list(attributes) + list(optional)):
+        for i in sorted(list(attributes)):
             if i in common.nonexclusive:
                 rv.append(i)
+
+        for i in sorted(list(optional)):
+            if i in common.nonexclusive:
+                rv.append(i)
+
+        if set(attributes) - set(rv):
+            return None
 
         rv = tuple(rv)
 
@@ -682,8 +691,9 @@ class Live2D(renpy.display.core.Displayable):
             if not isinstance(rv, tuple):
                 rv = tuple(rv)
 
-        if sustain:
-            rv = ("_sustain",) + rv
+        # If there are no motions, take the optional motions and sustain those.
+        if not any(i in common.motions for i in rv):
+            rv = ( "_sustain", ) + tuple(i for i in optional if i in common.motions) + rv
 
         return rv
 
@@ -932,15 +942,9 @@ class Live2D(renpy.display.core.Displayable):
 
         zoom = self.zoom
 
-        def s(n):
-            if isinstance(n, float):
-                return n * sh
-            else:
-                return n
-
         if zoom is None:
-            top = s(self.top)
-            base = s(self.base)
+            top = absolute.compute_raw(self.top, sh)
+            base = absolute.compute_raw(self.base, sh)
 
             size = max(base - top, 1.0)
 

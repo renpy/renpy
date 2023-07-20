@@ -27,7 +27,7 @@ translate piglatin text_5e1a6ee8:
 translate piglatin text_38c63ec8:
 
     # e "Text tags are contained in braces, like the {{b} tag above. When a text tag takes a closing tag, the closing tag begins with a slash, like {{/b} does."
-    e "Exttay agstay areay ontainedcay inay acesbray, ikelay hetay {{}bay agtay aboveay. Henway aay exttay agtay akestay aay osingclay agtay, hetay osingclay agtay eginsbay ithway aay ashslay, ikelay {{}/bay oesday."
+    e "Exttay agstay areay ontainedcay inay acesbray, ikelay hetay {{bay} agtay aboveay. Henway aay exttay agtay akestay aay osingclay agtay, hetay osingclay agtay eginsbay ithway aay ashslay, ikelay {{/b} oesday."
 
 # game/indepth_text.rpy:39
 translate piglatin text_1760f9c8:
@@ -75,7 +75,7 @@ translate piglatin after_a_label_22c4339a:
 translate piglatin after_a_label_d43417d7:
 
     # e "Sometimes, changing to a bold font looks better than using the {{b} tag."
-    e "Ometimessay, angingchay otay aay oldbay ontfay ookslay etterbay hantay usingay hetay {{}bay agtay."
+    e "Ometimessay, angingchay otay aay oldbay ontfay ookslay etterbay hantay usingay hetay {{b} agtay."
 
 # game/indepth_text.rpy:71
 translate piglatin after_a_label_f24052f9:

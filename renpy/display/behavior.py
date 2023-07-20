@@ -98,18 +98,22 @@ def compile_event(key, keydown):
         mouse = True
         rv = "(ev.type == %d" % pygame.MOUSEBUTTONUP
 
+        if not keydown:
+            return "(False)"
+
     elif part[0] == "mousedown":
         mouse = True
-        rv = "(ev.type == %d" % pygame.MOUSEBUTTONDOWN
+
+        if keydown:
+            rv = "(ev.type == %d" % pygame.MOUSEBUTTONDOWN
+        else:
+            rv = "(ev.type == %d" % pygame.MOUSEBUTTONUP
 
     elif keydown:
         rv = "(ev.type == %d" % pygame.KEYDOWN
 
     else:
         rv = "(ev.type == %d" % pygame.KEYUP
-
-    if mouse and not keydown:
-        return
 
     if not mouse:
 
@@ -795,7 +799,7 @@ class SayBehavior(renpy.display.layout.Null):
         return None
 
 
-class DismissBehavior(renpy.display.core.Displayable):
+class DismissBehavior(renpy.display.displayable.Displayable):
     """
     This is used to implement the dismiss screen language statement.
     """
@@ -1309,7 +1313,7 @@ def input_post_per_interact():
             i.caret_pos = len(content)
 
 
-class CaretBlink(renpy.display.core.Displayable):
+class CaretBlink(renpy.display.displayable.Displayable):
     """
     A displayable that renders the caret.
     """
@@ -2037,6 +2041,10 @@ class Adjustment(renpy.object.Object):
         if self.animation_start is None:
             self.animation_start = st
 
+        if st < self.animation_start:
+            self.end_animation(instantly=True)
+            return 0
+
         done = (st - self.animation_start) / self.animation_delay
         done = self.animation_warper(done)
 
@@ -2054,7 +2062,7 @@ class Adjustment(renpy.object.Object):
             return 0
 
 
-class Bar(renpy.display.core.Displayable):
+class Bar(renpy.display.displayable.Displayable):
     """
     Implements a bar that can display an integer value, and respond
     to clicks on that value.
@@ -2196,6 +2204,9 @@ class Bar(renpy.display.core.Displayable):
                 return renpy.display.render.Render(width, height)
             elif self.style.unscrollable == "insensitive":
                 self.set_style_prefix("insensitive_", True)
+        else:
+            if self.style.prefix == "insensitive_":
+                self.set_style_prefix("idle_", True)
 
         self.hidden = False
 
@@ -2571,7 +2582,7 @@ class Timer(renpy.display.layout.Null):
         return run(self.function, *self.args, **self.kwargs)
 
 
-class MouseArea(renpy.display.core.Displayable):
+class MouseArea(renpy.display.displayable.Displayable):
 
     # The offset between st and at.
     at_st_offset = 0
@@ -2633,7 +2644,7 @@ class MouseArea(renpy.display.core.Displayable):
             run(self.unhovered)
 
 
-class OnEvent(renpy.display.core.Displayable):
+class OnEvent(renpy.display.displayable.Displayable):
     """
     This is a displayable that runs an action in response to a transform
     event. It's used to implement the screen language on statement.
@@ -2825,7 +2836,7 @@ class AreaPicker(renpy.display.layout.Container):
 
 
 
-class WebInput(renpy.display.core.Displayable):
+class WebInput(renpy.display.displayable.Displayable):
     """
     A displayable meant to pull input from an input tag in the web browser.
     """
@@ -2854,7 +2865,7 @@ class WebInput(renpy.display.core.Displayable):
 
     @staticmethod
     def post_find_focusable():
-        if not renpy.emscripten:
+        if PY2 or not renpy.emscripten:
             return
 
         if WebInput.active is None:

@@ -752,7 +752,7 @@ def jump_statement(l, loc):
     l.expect_eol()
     l.advance()
 
-    return ast.Jump(loc, target, expression)
+    return ast.Jump(loc, target, expression, (expression and l.global_label or ""))
 
 
 @statement("call")
@@ -773,7 +773,7 @@ def call_statement(l, loc):
 
     arguments = parse_arguments(l)
 
-    rv = [ ast.Call(loc, target, expression, arguments) ] # type: list[ast.Call|ast.Label|ast.Pass]
+    rv = [ ast.Call(loc, target, expression, arguments, (expression and l.global_label or "")) ] # type: list[ast.Call|ast.Label|ast.Pass]
 
     if l.keyword('from'):
         name = l.require(l.label_name_declare)
@@ -810,6 +810,7 @@ def scene_statement(l, loc):
     rv = parse_with(l, stmt)
 
     if l.match(':'):
+        l.expect_block('scene statement')
         stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         l.expect_noblock('scene statement')
@@ -827,6 +828,7 @@ def show_statement(l, loc):
     rv = parse_with(l, stmt)
 
     if l.match(':'):
+        l.expect_block('show statement')
         stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         l.expect_noblock('show statement')
@@ -848,6 +850,7 @@ def show_layer_statement(l, loc):
         at_list = [ ]
 
     if l.match(':'):
+        l.expect_block('show layer statement')
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         atl = None
@@ -872,6 +875,7 @@ def camera_statement(l, loc):
         at_list = [ ]
 
     if l.match(':'):
+        l.expect_block('camera statement')
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         atl = None
@@ -913,6 +917,7 @@ def image_statement(l, loc):
 
     if l.match(':'):
         l.expect_eol()
+        l.expect_block('image statement')
         expr = None
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
@@ -1040,6 +1045,7 @@ def transform_statement(l, loc):
 
     l.require(':')
     l.expect_eol()
+    l.expect_block('transform statement')
 
     atl = renpy.atl.parse_atl(l.subblock_lexer())
 
@@ -1164,7 +1170,15 @@ def init_statement(l, loc):
         try:
             l.init = True
 
-            block = [ parse_statement(l) ]
+            checkpoint = l.checkpoint()
+
+            stmt = parse_statement(l)
+
+            if not isinstance(stmt, ast.Node):
+                l.revert(checkpoint)
+                l.error("init expects a block or statement")
+
+            block = [ stmt ]
 
         finally:
             l.init = old_init
@@ -1761,7 +1775,7 @@ def report_parse_errors():
     renpy.display.error.report_parse_errors(full_text, error_fn)
 
     try:
-        if renpy.game.args.command == "run": # type: ignore
+        if renpy.game.args.command == "run" or renpy.game.args.errors_in_editor: # type: ignore
             renpy.exports.launch_editor([ error_fn ], 1, transient=True)
     except Exception:
         pass

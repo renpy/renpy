@@ -476,7 +476,8 @@ init -1500 python:
         :doc: other_action
 
         Move the mouse pointer to `x`, `y`. If the device does not have a mouse
-        pointer or _preferences.mouse_move is False, this does nothing.
+        pointer or if the :var:`"automatic move" preference <preferences.mouse_move>`
+        is False, this does nothing.
 
         `duration`
             The time it will take to perform the move, in seconds. During
@@ -697,10 +698,8 @@ init -1500 python:
                 amount = delta * adjustment.step
             elif self.amount == "page":
                 amount = delta * adjustment.page
-            elif isinstance(self.amount, float) and not isinstance(self.amount, absolute):
-                amount = delta * self.amount * adjustment.range
             else:
-                amount = delta * self.amount
+                amount = absolute.compute_raw(delta*self.amount, adjustment.range)
 
             if self.delay == 0.0:
                 adjustment.change(adjustment.value + amount)

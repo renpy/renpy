@@ -99,7 +99,8 @@ translate italian strings:
 
     # _developer/inspector.rpym:139
     old "displayable:"
-    new "displayable:"
+    # Automatic translation.
+    new "visualizzabile:"
 
     # _developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
@@ -176,4 +177,111 @@ translate italian strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <label>: salta alla label"
+
+
+translate italian strings:
+
+    # renpy/common/_developer/developer.rpym:43
+    old "Interactive Director (D)"
+    # Automatic translation.
+    new "Direttore interattivo (D)"
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    # Automatic translation.
+    new "Visualizzatore persistente"
+
+    # renpy/common/_developer/developer.rpym:59
+    old "Show Image Load Log (F4)"
+    # Automatic translation.
+    new "Mostra registro caricamento immagini (F4)"
+
+    # renpy/common/_developer/developer.rpym:62
+    old "Hide Image Load Log (F4)"
+    # Automatic translation.
+    new "Nascondere il registro di caricamento dell'immagine (F4)"
+
+    # renpy/common/_developer/developer.rpym:65
+    old "Image Attributes"
+    # Automatic translation.
+    new "Attributi dell'immagine"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    # Automatic translation.
+    new "Editor di bolle vocali (Shift+B)"
+
+    # renpy/common/_developer/developer.rpym:97
+    old "[name] [attributes] (hidden)"
+    # Automatic translation.
+    new "[name] [attributes] (nascosto)"
+
+    # renpy/common/_developer/developer.rpym:101
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:162
+    old "Hide deleted"
+    # Automatic translation.
+    new "Nascondi cancellato"
+
+    # renpy/common/_developer/developer.rpym:162
+    old "Show deleted"
+    # Automatic translation.
+    new "Mostra cancellata"
+
+    # renpy/common/_developer/developer.rpym:389
+    old "Type to filter: "
+    # Automatic translation.
+    new "Tipo da filtrare: "
+
+    # renpy/common/_developer/developer.rpym:507
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    # Automatic translation.
+    new "Texture: [tex_count] ([tex_size_mb:.1f] MB)"
+
+    # renpy/common/_developer/developer.rpym:511
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    # Automatic translation.
+    new "Cache immagini: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    # Automatic translation.
+    new "help: mostra questo aiuto\n help <expr>: mostra la firma e la documentazione di <expr>"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    # Automatic translation.
+    new "La guida potrebbe visualizzare funzioni non documentate. Verificate che la funzione o\nLa classe che si vuole utilizzare è documentata.\n\n"
+
+    # renpy/common/00console.rpy:854
+    old "stack: print the return stack"
+    # Automatic translation.
+    new "stack: stampare lo stack di ritorno"
+
+    # renpy/common/00console.rpy:908
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    # Automatic translation.
+    new "watch <expression>: guardare un'espressione python\n watch short: rende breve la rappresentazione delle espressioni tracciate (default)\n watch long: rende la rappresentazione delle espressioni tracciate come è"
+
+    # renpy/common/00console.rpy:1028
+    old "short: Shorten the representation of objects on the console (default)."
+    # Automatic translation.
+    new "short: Accorcia la rappresentazione degli oggetti sulla console (impostazione predefinita)."
+
+    # renpy/common/00console.rpy:1032
+    old "long: Print the full representation of objects on the console."
+    # Automatic translation.
+    new "long: Stampa la rappresentazione completa degli oggetti sulla console."
+
+    # renpy/common/00console.rpy:1036
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    # Automatic translation.
+    new "escape: Abilita l'escape dei simboli unicode nelle stringhe unicode."
+
+    # renpy/common/00console.rpy:1040
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    # Automatic translation.
+    new "unescape: Disabilita l'escape dei simboli unicode nelle stringhe unicode e le stampa così come sono (impostazione predefinita)."
 

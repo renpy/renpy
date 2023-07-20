@@ -208,7 +208,6 @@ init -1100 python:
         if version <= (7, 3, 5):
             config.side_image_requires_attributes = False
             config.window_functions_set_auto = False
-            config.hw_video = True
             config.who_what_sub_compat = 0
 
         if version <= (7, 4, 0):
@@ -269,6 +268,7 @@ init -1100 python:
             config.scry_extend = False
             config.fadeout_audio = 0.0
             config.at_transform_compare_full_context = True
+            config.linear_fades = True
 
             if version > (6, 99, 5):
                 config.search_prefixes.append("images/")
@@ -291,6 +291,10 @@ init -1100 python:
             store.iap._constant = True
             store.layeredimage._constant = True
             store.updater._constant = True
+
+        if _compat_versions(version, (7, 6, 99), (8, 1, 99)):
+            config.simple_box_reverse = True
+            build.itch_channels = list(build.itch_channels.items())
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

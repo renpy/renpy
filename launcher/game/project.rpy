@@ -128,6 +128,7 @@ init python in project:
             data.setdefault("add_from", True)
             data.setdefault("force_recompile", True)
             data.setdefault("android_build", "Release")
+            data.setdefault("tutorial", False)
 
             if "renamed_all" not in data:
                 dp = data["packages"]
