@@ -118,9 +118,9 @@ init -1500 python:
 
     def __nvl_screen_dialogue():
         """
-         Returns widget_properties and dialogue for the current NVL
-         mode screen.
-         """
+        Returns widget_properties and dialogue for the current NVL
+        mode screen.
+        """
 
         dialogue = [ ]
         kwargs = { }
@@ -189,8 +189,8 @@ init -1500 python:
 
     def __nvl_show_screen(screen_name, **scope):
         """
-         Shows an nvl-mode screen. Returns the "what" widget.
-         """
+        Shows an nvl-mode screen. Returns the "what" widget.
+        """
 
         widget_properties, dialogue, show_args = __nvl_screen_dialogue()
         scope.update(show_args)
@@ -202,7 +202,7 @@ init -1500 python:
 
     def nvl_show_core(who=None, what=None, multiple=None):
 
-         # Screen version.
+        # Screen version.
         if renpy.has_screen("nvl"):
             return __nvl_show_screen("nvl", items=[ ])
 
@@ -381,12 +381,56 @@ init -1500 python:
             renpy.display_say(
                 who,
                 what,
-                nvl_show_core,
+                self.do_show,
                 checkpoint=checkpoint,
                 multiple=multiple,
                 **display_args)
 
             self.pop_nvl_list()
+
+        def do_show(self, who, what, multiple=None, extra_properties=None, retain=None):
+            screen, show_args, who_args, what_args, window_args, properties = self.get_show_properties(extra_properties)
+
+            show_args = dict(show_args)
+
+            if multiple is not None:
+                show_args["multiple"] = multiple
+
+            if retain:
+                show_args["retain"] = retain
+
+            # Screen version.
+            if screen and renpy.has_screen(screen):
+                return __nvl_show_screen(screen, items=[ ])
+            elif renpy.has_screen("nvl"):
+                return __nvl_show_screen("nvl", items=[ ])
+
+            if renpy.in_rollback():
+                nvl_window = __s(style.nvl_window)['rollback']
+                nvl_vbox = __s(style.nvl_vbox)['rollback']
+            else:
+                nvl_window = __s(style.nvl_window)
+                nvl_vbox = __s(style.nvl_vbox)
+
+            ui.window(style=nvl_window)
+            ui.vbox(style=nvl_vbox)
+
+            rv = None
+
+            for i in nvl_list:
+                if not i:
+                    continue
+
+                who, what, kw = i
+                kw = dict(kw)
+                kw.setdefault("show_say_vbox_properties",  { 'box_layout' : 'horizontal' }),
+                rv = config.nvl_show_display_say(who, what, variant=nvl_variant, **kw)
+
+            ui.close()
+
+            renpy.shown_window()
+
+            return rv
 
         def do_done(self, who, what, multiple=None):
 
