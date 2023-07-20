@@ -477,7 +477,12 @@ init -1400 python hide:
 
     @layout
     def yesno_screen(message, yes=None, no=None):
-        # :undocumented: for renpy.confirm
+        """
+        :undocumented:
+
+        renpy.confirm is a better alternative in a python context,
+        or the Confirm action in a screen context.
+        """
 
         if config.confirm_screen and renpy.has_screen('confirm'):
             screen = "confirm"
