@@ -372,7 +372,7 @@ def call_replay(label, scope={}):
 
     Calls a label as a memory.
 
-    Keyword arguments are used to set the initial values of variables in the
+    The `scope` argument is used to set the initial values of variables in the
     memory context.
     """
 

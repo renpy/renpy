@@ -52,8 +52,8 @@ class SpriteCache(renpy.object.Object):
     # If true, then the render is simple enough it can just be appended to
     # the manager's render's children list.
 
-    child = None # type: renpy.display.core.Displayable|None
-    child_copy = None # type: renpy.display.core.Displayable|None
+    child = None # type: renpy.display.displayable.Displayable|None
+    child_copy = None # type: renpy.display.displayable.Displayable|None
     st = 0.0 # type: float|None
     render = None # type: renpy.display.render.Render|None
 
@@ -91,7 +91,7 @@ class Sprite(renpy.object.Object):
     zorder = 0 # type: int|float
 
 
-    child = None # type: renpy.display.core.Displayable|None
+    child = None # type: renpy.display.displayable.Displayable|None
     render = None # type: renpy.display.render.Render|None
     live = True # type: bool
     manager = None # type: SpriteManager|None
@@ -145,7 +145,7 @@ class Sprite(renpy.object.Object):
         self.events = False
 
 
-class SpriteManager(renpy.display.core.Displayable):
+class SpriteManager(renpy.display.displayable.Displayable):
     """
     :doc: sprites class
 
@@ -349,7 +349,7 @@ class SpriteManager(renpy.display.core.Displayable):
         self.children = [ ]
 
 
-class Particles(renpy.display.core.Displayable, renpy.rollback.NoRollback):
+class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback):
     """
     Supports particle motion, using the old API.
     """

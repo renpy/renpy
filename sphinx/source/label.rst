@@ -72,6 +72,10 @@ evaluated, and the string so computed is used as the label name of the
 statement to jump to. If the ``expression`` keyword is not present, the label
 name of the statement to jump to must be explicitly given.
 
+A local label name can be passed, either with ``expression`` or without,
+and either with the global label prepended ("global_label.local_label"),
+or starting with a dot (".local_label").
+
 Unlike call, jump does not push the next statement onto a stack. As a
 result, there's no way to return to where you've jumped from. ::
 
@@ -94,6 +98,10 @@ If the ``expression`` keyword is present, the expression following it is evaluat
 string so computed is used as the name of the label to call. If the
 ``expression`` keyword is not present, the name of the statement to call must be
 explicitly given.
+
+A local label name can be passed, either with ``expression`` or without,
+and either with the global label prepended ("global_label.local_label"),
+or starting with a dot (".local_label").
 
 If the optional ``from`` clause is present, it has the effect of including a label
 statement with the given name as the statement immediately following the call

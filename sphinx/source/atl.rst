@@ -233,6 +233,8 @@ Some sample interpolations are::
 
         # The same thing, using a block.
         linear 2.0:
+        # The same thing, using a block.
+        linear 2.0:
             xalign 1.0
             yalign 1.0
 
@@ -240,7 +242,7 @@ An important special case is that the pause warper, followed by a time and
 nothing else, causes ATL execution to pause for that amount of time.
 
 Some properties can have values of multiple types. For example, the :propref:`xpos`
-property can be an int, float, or absolute. The behavior is undefined when an
+property can be an int, float, or :term:`absolute <position>`. The behavior is undefined when an
 interpolation has old and new property values of different types.
 
 Time Statement
@@ -687,7 +689,7 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, an ``absolute``, or a
+When the type is given as position, it may be an int, an :term:`absolute <position>`, or a
 float. If it's a float, it's interpreted as a fraction of the size of the
 containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
 
@@ -927,6 +929,11 @@ both horizontal and vertical positions.
     coordinates. This is measured in degrees, with 0 being to the top
     of the screen, and 90 being to the right.
 
+    Ren'Py clamps this angle to between 0 and 360 degrees, including 0 but
+    not 360. If a value is set outside this range, it will be set to the
+    equivalent angle in this range before being used. (Setting this to
+    -10 is the equivalent of setting it to 350.)
+
 .. transform-property:: radius
 
     :type: position
@@ -954,6 +961,11 @@ both horizontal and vertical positions.
 
     The angle component of the ploar coordinates of the anchor. This is specified
     in degrees, with 0 being to the top and 90 being to the right.
+
+    Ren'Py clamps this angle to between 0 and 360 degrees, including 0 but
+    not 360. If a value is set outside this range, it will be set to the
+    equivalent angle in this range before being used. (Setting this to
+    -10 is the equivalent of setting it to 350.)
 
 .. transform-property:: anchorradius
 
@@ -1218,10 +1230,10 @@ Deprecated Transform Properties
     number of pixels, instead of a fraction of the width and height of
     the source image.
 
-    If an absolute number of pixel is to be expressed, ``absolute`` instances
-    should be provided to the :tpref:`crop` property instead of using the
+    If an absolute number of pixel is to be expressed, :term:`absolute <position>`
+    instances should be provided to the :tpref:`crop` property instead of using the
     crop_relative property. If necessary, values of dubious type can be wrapped
-    in the ``absolute`` callable.
+    in the :term:`absolute <position>` callable.
 
 .. transform-property:: size
 

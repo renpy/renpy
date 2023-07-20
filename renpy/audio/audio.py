@@ -790,20 +790,6 @@ class Channel(object):
         return renpysound.video_ready(self.number)
 
 
-# Use unconditional imports so these files get compiled during the build
-# process.
-
-
-try:
-    from renpy.audio.androidhw import AndroidVideoChannel
-except Exception:
-    pass
-
-try:
-    from renpy.audio.ioshw import IOSVideoChannel
-except Exception:
-    pass
-
 # A list of channels we know about.
 all_channels = [ ]
 
@@ -880,12 +866,7 @@ def register_channel(name,
     if not force and not renpy.game.context().init_phase and (" " not in name):
         raise Exception("Can't register channel outside of init phase.")
 
-    if renpy.android and renpy.config.hw_video and name == "movie":
-        c = AndroidVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
-    elif renpy.ios and renpy.config.hw_video and name == "movie":
-        c = IOSVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
-    else:
-        c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie, framedrop=framedrop)
+    c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie, framedrop=framedrop)
 
     c.mixer = mixer
 

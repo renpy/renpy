@@ -392,6 +392,7 @@ cdef class FTFont:
         cdef FT_Face face
         cdef FT_Glyph g
         cdef FT_BitmapGlyph bg
+        cdef FT_Bitmap bitmap
         cdef FT_Matrix shear
 
         cdef int error
@@ -422,53 +423,79 @@ cdef class FTFont:
 
         rv.index = index
 
-        error = FT_Load_Glyph(face, index, self.hinting)
+        error = FT_Load_Glyph(face, index, self.hinting | FT_LOAD_COLOR)
         if error:
             raise FreetypeError(error)
 
-        error = FT_Get_Glyph(face.glyph, &g)
+        g = NULL
 
-        if error:
-            raise FreetypeError(error)
+        if face.glyph.format != FT_GLYPH_FORMAT_BITMAP:
 
-        if g.format != FT_GLYPH_FORMAT_BITMAP:
+            if not self.italic and glyph_rotate == 0 and self.stroker == NULL:
 
-            if self.italic:
-                shear.xx = 1 << 16
-                shear.xy = (207 << 16) // 1000 # taken from SDL_ttf.
-                shear.yx = 0
-                shear.yy = 1 << 16
-
-                FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
-
-            if glyph_rotate != 0:
-                metrics = face.glyph.metrics
-                # move the origin for vertical layout
-                if glyph_rotate == 1:
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
+                if self.antialias:
+                    FT_Render_Glyph(face.glyph, FT_RENDER_MODE_NORMAL)
                 else:
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance // 2, -face.bbox.yMax)
-                shear.xx = 0
-                shear.xy = -(1 << 16)
-                shear.yx = 1 << 16
-                shear.yy = 0
-                FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
-                # set vertical baseline to a half of the height
-                FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.yMax + face.bbox.yMin) // 2)
+                    FT_Render_Glyph(face.glyph, FT_RENDER_MODE_MONO)
 
-            if self.stroker != NULL:
-                # FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
-                FT_Glyph_Stroke(&g, self.stroker, 1)
+                bitmap = face.glyph.bitmap
 
-            if self.antialias:
-                FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_NORMAL, NULL, 1)
+                rv.bitmap_left = face.glyph.bitmap_left + self.expand // 2
+                rv.bitmap_top = face.glyph.bitmap_top - self.expand // 2
+
             else:
-                FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_MONO, NULL, 1)
+                error = FT_Get_Glyph(face.glyph, &g)
 
-        bg = <FT_BitmapGlyph> g
+                if error:
+                    raise FreetypeError(error)
 
-        if bg.bitmap.pixel_mode != FT_PIXEL_MODE_GRAY:
-            FT_Bitmap_Convert(library, &(bg.bitmap), &(rv.bitmap), 4)
+                if self.italic:
+                    shear.xx = 1 << 16
+                    shear.xy = (207 << 16) // 1000 # taken from SDL_ttf.
+                    shear.yx = 0
+                    shear.yy = 1 << 16
+
+                    FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
+
+                if glyph_rotate != 0:
+                    metrics = face.glyph.metrics
+                    # move the origin for vertical layout
+                    if glyph_rotate == 1:
+                        FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
+                    else:
+                        FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance // 2, -face.bbox.yMax)
+                    shear.xx = 0
+                    shear.xy = -(1 << 16)
+                    shear.yx = 1 << 16
+                    shear.yy = 0
+                    FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
+                    # set vertical baseline to a half of the height
+                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.yMax + face.bbox.yMin) // 2)
+
+                if self.stroker != NULL:
+                    # FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
+                    FT_Glyph_Stroke(&g, self.stroker, 1)
+
+                if self.antialias:
+                    FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_NORMAL, NULL, 1)
+                else:
+                    FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_MONO, NULL, 1)
+
+                bg = <FT_BitmapGlyph> g
+                bitmap = bg.bitmap
+
+                rv.bitmap_left = bg.left + self.expand // 2
+                rv.bitmap_top = bg.top - self.expand // 2
+
+        else:
+
+            bitmap = face.glyph.bitmap
+
+            rv.bitmap_left = face.glyph.bitmap_left + self.expand // 2
+            rv.bitmap_top = face.glyph.bitmap_top - self.expand // 2
+
+        if bitmap.pixel_mode != FT_PIXEL_MODE_GRAY and bitmap.pixel_mode != FT_PIXEL_MODE_BGRA:
+            FT_Bitmap_Convert(library, &(bitmap), &(rv.bitmap), 4)
 
             # Freetype gives us a bitmap where values range from 0 to 1.
             for y from 0 <= y < rv.bitmap.rows:
@@ -477,7 +504,7 @@ cdef class FTFont:
                         rv.bitmap.buffer[ y * rv.bitmap.pitch + x ] = 255
 
         else:
-            FT_Bitmap_Copy(library, &(bg.bitmap), &(rv.bitmap))
+            FT_Bitmap_Copy(library, &(bitmap), &(rv.bitmap))
 
         if self.bold:
             overhang = face.size.metrics.y_ppem // 10
@@ -491,7 +518,6 @@ cdef class FTFont:
         else:
             overhang = 0
 
-
         # rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
         if glyph_rotate == 1:
             rv.advance = face.glyph.metrics.vertAdvance / 64.0 + self.expand + overhang
@@ -501,12 +527,10 @@ cdef class FTFont:
         else:
             rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
 
-        rv.bitmap_left = bg.left + self.expand // 2
-        rv.bitmap_top = bg.top - self.expand // 2
-
         rv.width = rv.bitmap.width + rv.bitmap_left
 
-        FT_Done_Glyph(g)
+        if g != NULL:
+            FT_Done_Glyph(g)
 
         return rv
 
@@ -696,6 +720,7 @@ cdef class FTFont:
         cdef SDL_Surface *surf
         cdef unsigned int Sr, Sb, Sg, Sa
         cdef unsigned int Dr, Db, Dg, Da
+        cdef unsigned int Gr, Gb, Gg, Ga
         cdef unsigned int rshift, gshift, bshift, ashift
         cdef unsigned int fixed
         cdef unsigned int alpha
@@ -768,36 +793,73 @@ cdef class FTFont:
 
             if glyph.draw:
 
-                for py from 0 <= py < rows:
+                if cache.bitmap.pixel_mode == FT_PIXEL_MODE_BGRA:
 
-                    if bmy < 0:
+                    for py from 0 <= py < rows:
+
+                        if bmy < 0:
+                            bmy += 1
+                            continue
+
+                        line = pixels + bmy * pitch + bmx * 4
+                        gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
+
+                        for px from 0 <= px < width:
+
+                            Gb = gline[0]
+                            Gg = gline[1]
+                            Gr = gline[2]
+                            Ga = gline[3]
+
+                            line[0] = line[0] * (1 - Ga) // 255 + Gr
+                            line[1] = line[1] * (1 - Ga) // 255 + Gg
+                            line[2] = line[2] * (1 - Ga) // 255 + Gb
+                            line[3] = line[3] * (1 - Ga) // 255 + Ga
+
+                            gline += 4
+                            line += 4
+
                         bmy += 1
-                        continue
 
-                    line = pixels + bmy * pitch + bmx * 4
-                    gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
+                else:
 
-                    for px from 0 <= px < width:
+                    for py from 0 <= py < rows:
 
-                        alpha = gline[0]
+                        if bmy < 0:
+                            bmy += 1
+                            continue
 
-                        # Modulate Sa by the glyph's alpha.
+                        line = pixels + bmy * pitch + bmx * 4
+                        gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
 
-                        alpha = (alpha * Sa + Sa) >> 8
+                        for px from 0 <= px < width:
 
-                        # Only draw if we increase the alpha - a cheap way to
-                        # allow overlapping characters.
-                        if line[3] < alpha:
+                            alpha = gline[0]
 
-                            line[0] = Sr
-                            line[1] = Sg
-                            line[2] = Sb
-                            line[3] = alpha
+                            # Modulate Sa by the glyph's alpha.
 
-                        gline += 1
-                        line += 4
+                            alpha = (alpha * Sa + Sa) >> 8
 
-                    bmy += 1
+                            # Only draw if we increase the alpha - a cheap way to
+                            # allow overlapping characters.
+
+                            if alpha == 255:
+                                line[0] = Sr
+                                line[1] = Sg
+                                line[2] = Sb
+                                line[3] = alpha
+
+                            elif alpha:
+
+                                line[0] = (line[0] * (1 - alpha) + Sr * alpha) // 255
+                                line[1] = (line[1] * (1 - alpha) + Sg * alpha) // 255
+                                line[2] = (line[2] * (1 - alpha) + Sb * alpha) // 255
+                                line[3] = line[3] * (1 - alpha) // 255 + alpha
+
+                            gline += 1
+                            line += 4
+
+                        bmy += 1
 
             # Underlining.
             if underline:

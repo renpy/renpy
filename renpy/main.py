@@ -475,7 +475,7 @@ def main():
             if dn is None:
                 continue
 
-            if not os.path.isfile(os.path.join(dn, fn + ".rpy")):
+            if not os.path.isfile(os.path.join(dn, fn + ".rpy")) and not os.path.isfile(os.path.join(dn, fn + "_ren.py")):
 
                 try:
                     name = os.path.join(dn, fn + ".rpyc")

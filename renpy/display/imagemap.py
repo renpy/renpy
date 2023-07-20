@@ -36,7 +36,7 @@ from renpy.display.render import render
 cached = set()
 
 
-class ImageMapCrop(renpy.display.core.Displayable):
+class ImageMapCrop(renpy.display.displayable.Displayable):
     """
     This handles the cropping of uncached imagemap components.
     """
@@ -55,7 +55,7 @@ class ImageMapCrop(renpy.display.core.Displayable):
         return cr.subsurface(self.rect)
 
 
-class ImageCacheCrop(renpy.display.core.Displayable):
+class ImageCacheCrop(renpy.display.displayable.Displayable):
     """
     This handles the cropping of an imagemap component.
     """

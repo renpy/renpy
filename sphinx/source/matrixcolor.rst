@@ -52,7 +52,9 @@ directly or computed.
 
 These values are applied to the red (R), green (G), blue (B), and alpha (A)
 channels of the original color to make a new color, (R', G', B', A'). The
-formulas to do this are::
+formulas to do this are:
+
+.. code-block:: none
 
     R' = R * a + G * b + B * c + A * d
     G' = R * e + G * f + B * g + A * h

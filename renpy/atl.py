@@ -1382,19 +1382,16 @@ class Interpolation(Statement):
                 setattr(newts, k, v)
 
                 if k == "angle":
-                    newts.last_angle = v
                     has_angle = True
 
                 elif k == "radius":
                     has_radius = True
 
                 elif k == "anchorangle":
-                    newts.last_anchorangle = v
                     has_anchorangle = True
 
                 elif k == "anchorradius":
                     has_anchorradius = True
-
 
             # Now, the things we change linearly are in the difference
             # between the new and old states.
@@ -1478,14 +1475,29 @@ class Interpolation(Statement):
                 else:
 
                     if has_angle:
-                        last_angle = trans.state.angle or trans.state.last_angle
-                        angle = (last_angle, newts.last_angle)
+                        start = trans.state.angle
+                        end = newts.last_angle
+
+                        if end - start > 180:
+                            start += 360
+                        if end - start < -180:
+                            start -= 360
+
+                        angle = (start, end)
 
                     if has_radius:
                         radius = (trans.state.radius, newts.radius)
 
                     if has_anchorangle:
-                        last_anchorangle = trans.state.anchorangle or trans.state.last_anchorangle
+                        start = trans.state.anchorangle
+                        end = newts.last_anchorangle
+
+                        if end - start > 180:
+                            start += 360
+                        if end - start < -180:
+                            start -= 360
+
+                        anchorangle = (start, end)
 
                     if has_anchorradius:
                         anchorradius = (trans.state.anchorradius, newts.anchorradius)

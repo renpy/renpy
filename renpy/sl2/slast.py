@@ -105,7 +105,7 @@ class SLContext(renpy.ui.Addable):
 
         # A list of child displayables that will be added to an outer
         # displayable.
-        self.children = [ ] # type: list[renpy.display.core.Displayable]
+        self.children = [ ] # type: list[renpy.display.displayable.Displayable]
 
         # A map from keyword arguments to their values.
         self.keywords = { } # type: Optional[dict[str, Any]]
@@ -610,7 +610,7 @@ class SLCache(object):
     def __init__(self):
 
         # The displayable object created.
-        self.displayable = None # type: Optional[renpy.display.core.Displayable]
+        self.displayable = None # type: Optional[renpy.display.displayable.Displayable]
 
         # The positional arguments that were used to create the displayable.
         self.positional = None # type: Any
@@ -619,7 +619,7 @@ class SLCache(object):
         self.keywords = None # type: Optional[dict[str, Any]]
 
         # A list of the children that were added to self.displayable.
-        self.children = None # type: Optional[list[renpy.display.core.Displayable]]
+        self.children = None # type: Optional[list[renpy.display.displayable.Displayable]]
 
         # The outermost old transform.
         self.outer_transform = None # type: Optional[Any]
