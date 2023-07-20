@@ -528,6 +528,11 @@ change_renpy_executable()
                 self.reporter.info(_("Scanning project files..."))
                 project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
 
+            if project.data['tutorial']:
+                self.reporter.info(_("Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."), pause=True)
+                self.log.close()
+                return
+
             if project.data['force_recompile']:
                 import compileall
 

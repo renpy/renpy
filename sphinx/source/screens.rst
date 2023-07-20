@@ -1540,7 +1540,7 @@ following properties:
     * Properties beginning with ``viewport_`` are passed to the viewport.
     * Properties beginning with ``side_`` are passed to the side.
     * Properties beginning with ``scrollbar_`` are passed to the horizontal scrollbar, if it exists.
-    * Properties beginning with ``vscrollbar_`` are passed to the verical scrollbar, if it exists.
+    * Properties beginning with ``vscrollbar_`` are passed to the vertical scrollbar, if it exists.
 
     Unprefixed properties are also accepted. :ref:`position-style-properties` are
     passed to the side, while other unprefixed properties are supplied to the

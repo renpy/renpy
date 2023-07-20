@@ -345,11 +345,14 @@ init -1500 python in build:
             dmg
                 A Macintosh DMG containing the files.
             app-zip
-                A zip file containing a macintosh application.
+                A zip file containing a macintosh application. This format
+                doesn't support the Ren'Py updater.
             app-directory
-                A directory containing the mac app.
+                A directory containing the mac app. This format
+                doesn't support the Ren'Py updater.
             app-dmg
-                A macintosh drive image containing a dmg. (Mac only.)
+                A macintosh drive image containing a dmg. (Mac only.) This format
+                doesn't support the Ren'Py updater.
             bare-zip
                 A zip file without :var:`build.directory_name`
                 prepended.

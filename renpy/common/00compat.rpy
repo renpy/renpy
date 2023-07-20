@@ -208,7 +208,6 @@ init -1100 python:
         if version <= (7, 3, 5):
             config.side_image_requires_attributes = False
             config.window_functions_set_auto = False
-            config.hw_video = True
             config.who_what_sub_compat = 0
 
         if version <= (7, 4, 0):

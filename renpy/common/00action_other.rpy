@@ -698,10 +698,8 @@ init -1500 python:
                 amount = delta * adjustment.step
             elif self.amount == "page":
                 amount = delta * adjustment.page
-            elif isinstance(self.amount, float) and not isinstance(self.amount, absolute):
-                amount = delta * self.amount * adjustment.range
             else:
-                amount = delta * self.amount
+                amount = absolute.compute_raw(delta*self.amount, adjustment.range)
 
             if self.delay == 0.0:
                 adjustment.change(adjustment.value + amount)

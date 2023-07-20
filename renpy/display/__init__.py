@@ -72,6 +72,7 @@ if 1 == 0:
     from . import behavior
     from . import controller
     from . import core
+    from . import displayable
     from . import dragdrop
     from . import emulator
     from . import error
@@ -93,6 +94,7 @@ if 1 == 0:
     from . import pgrender
     from . import predict
     from . import presplash
+    from . import quaternion
     from . import render
     from . import scale
     from . import screen

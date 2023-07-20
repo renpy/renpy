@@ -290,7 +290,7 @@ class Script(object):
         script_files = self.script_files
 
         # Sort script files by filename.
-        # We need this key to prevet possible crash when comparing None to str
+        # We need this key to prevent possible crash when comparing None to str
         # during sorting
         script_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
 
@@ -412,6 +412,10 @@ class Script(object):
         stmts = renpy.parser.parse(filename, filedata, linenumber=linenumber)
 
         if stmts is None:
+            return None, None
+
+        renpy.parser.release_deferred_errors()
+        if renpy.parser.parse_errors:
             return None, None
 
         self.assign_names(stmts, filename)

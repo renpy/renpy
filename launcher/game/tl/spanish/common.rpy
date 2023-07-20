@@ -889,3 +889,8 @@ translate spanish strings:
     # renpy/common/00sync.rpy:619
     old "Sync Error"
     new "Error de sincronización"
+
+    # renpy/common/00speechbubble.rpy:391
+    old "(clear retained bubbles)"
+    new "(borrar burbujas retenidas)"
+

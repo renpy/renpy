@@ -10,8 +10,8 @@ Changelog (Ren'Py 7.x-)
 8.2.0 / 7.7.0
 =============
 
-Retained Bubbles
-----------------
+Speech Bubble Improvements
+--------------------------
 
 The speech bubble feature that was added in Ren'Py 8.1 now has a new way to
 retain speech bubbles, so that the bubbles pop up one at a time, and
@@ -19,8 +19,24 @@ remain displayed on the screen until explicitly cleared, similar to
 dialogue in motion comics. See the :ref:`speech bubble documentation <retained-bubbles>`
 for more information.
 
+The new :var:`bubble.properties_callback` variable can be given a function
+that filter the list of bubble property names based on the image tag
+that's speaking. This makes it possible to have bubbles that are
+specific to some but not all characters.
+
 Features
 --------
+
+The new :func:`renpy.reset_all_contexts` function removes all contexts
+from the stack, and creates a new context that continues at the next
+statement. It can be used to fully reset the game upon load or when
+an error happens.
+
+The new :func:`renpy.last_say` function returns information about the
+last say statement to run.
+
+The new :func:`iap.request_review` function allows the game to request
+that the player review the game on Google Play and the Apple App Store.
 
 The new :var:`gui.history_spacing` variable controls the spacing between
 history entries in newly created games.
@@ -33,9 +49,26 @@ The common construct "{w=2}{nw}" can now be written as "{nw=2}".
 causes a non-looping movie to display its last frame after the movie
 ends.
 
+The ``jump expression`` statement can now take a local label name of the form
+".local_name". Previously, only "global_name" or "global_name.local_name" were
+allowed.
+
 
 Other Changes
 -------------
+
+The non-default hardware video playback path has been removed from android
+and ios. This path hadn't been the defaults since 2020, as it supported
+a subset of the video formats Ren'Py supports.
+
+Ren'Py now enforces that the angles given to the :tpref:`angle` and :tpref:`anchorangle`
+properties are in the range 0 to 360 degrees, inclusive of 0 but not of 360.
+Previously, angles outside this range  gave undefined behavior, now the angles
+will be clamped to this range. A 360 degree change will no longer cause motion,
+but will instead be treated as a 0 degree change.
+
+When animating :tpref:`angle` and :tpref:`anchorangle` with ATL, if a direction
+is not supplied, the shortest arc will be used, even if it passes through 0.
 
 Ren'Py will now produce an error when an ATL block is present, but the block is
 empty. (For example, ``show eileen happy:`` with no indented lines following it.)
@@ -109,6 +142,9 @@ silently ignored.
 Other Changes
 -------------
 
+The Ren'Py sync screens now use styles prefixed with ``sync``, allowing
+basic customization without having to edit the screens.
+
 Ren'Py will disable text input methods when text editing is not possible, which
 makes it possible to use the space key to advance the game even if an input
 method that uses the space key is active.
@@ -127,8 +163,8 @@ would break rollback.
 Preferences no longer have defaults, meaning all preferences can be
 changed using the ``default`` statement.
 
-The absolute type, used to represent absolute amounts of pixels, now
-ensures the result of mathematically operations with integers and
+The :term:`absolute <position>` type, used to represent absolute amounts of pixels,
+now ensures the result of mathematically operations with integers and
 floats remain absolutes. This fixes a class of problems where
 operations performed on absolutes could produce the incorrect
 type, leasing to layout problems.
@@ -3025,7 +3061,7 @@ problems when ``window show`` is in effect.
 
 When a :func:`Call` with `from_current` set to true occurs during a
 multi-part statement (like a menu with dialogue), control is restored
-to the first part of that multi-part statement (thus causing the dialouge
+to the first part of that multi-part statement (thus causing the dialogue
 to be displayed).
 
 More functions now use a tag's default layer.
