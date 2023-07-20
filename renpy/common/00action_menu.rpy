@@ -213,6 +213,7 @@ init -1500 python:
             self.confirm = confirm
 
         def __call__(self):
+            global _confirm_quit
 
             confirm = self.confirm
 
@@ -223,7 +224,8 @@ init -1500 python:
                 if config.autosave_on_quit:
                     renpy.force_autosave()
 
-                layout.yesno_screen(layout.QUIT, Quit(False))
+                layout.yesno_screen(layout.QUIT, Quit(False), SetVariable("_confirm_quit", _confirm_quit))
+                _confirm_quit = False
 
             else:
                 renpy.quit(save=True)
