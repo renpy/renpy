@@ -4583,8 +4583,5 @@ def confirm(message):
     See :func:`Confirm` for a similar Action.
     """
     Return = renpy.store.Return
-    SetDict = renpy.store.SetDict
-    rv = {}
-    renpy.store.layout.yesno_screen(message, yes=[SetDict(rv, "val", True), Return()], no=[SetDict(rv, "val", False), Return()])
-    renpy.ui.interact()
-    return rv["val"]
+    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False))
+    return renpy.ui.interact()
