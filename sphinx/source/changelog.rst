@@ -27,6 +27,9 @@ specific to some but not all characters.
 Features
 --------
 
+The new :func:`renpy.confirm` function provides a way of using
+the confirmation screen from within Python.
+
 The new :func:`renpy.reset_all_contexts` function removes all contexts
 from the stack, and creates a new context that continues at the next
 statement. It can be used to fully reset the game upon load or when
@@ -108,6 +111,7 @@ We've received reports of games uploaded to the Google Play as bundles
 having their APKs rejected for having different keys. This was caused by
 an old release of Ren'Py that used the APK key for bundles. A solution to
 this problem is documented in :ref:`incompatible changes <android-key-migration>`.
+
 
 Fixes
 -----
