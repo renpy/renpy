@@ -87,6 +87,8 @@ init label _errorhandling:
         slow_abortable False
         hinting "auto"
         adjust_spacing True
+        emoji_font "TwemojiCOLORv0.ttf"
+        prefer_emoji True
 
         # Window properties
         background None
