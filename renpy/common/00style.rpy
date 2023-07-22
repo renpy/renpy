@@ -170,7 +170,7 @@ init -1800:
         # hyperlink_functions is set in 00defaults.rpy
         hinting "auto"
         adjust_spacing True
-        emoji_font "TwemojiCOLORv0.ttf"
+        emoji_font "TwemojiCOLRv0.ttf"
         prefer_emoji True
 
         # Window properties
