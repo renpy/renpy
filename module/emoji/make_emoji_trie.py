@@ -51,12 +51,12 @@ def load():
         d = emoji
 
         for i in codepoints.strip().split():
-            i = int(i, 16)
+            i = chr(int(i, 16))
             d = d[i]
 
-        d[0] = level
+        d[''] = level
 
-    emoji[0] = 0
+    emoji[''] = 0
 
 
 def merge(d):
@@ -145,9 +145,9 @@ def generate(f, d):
     for k in sorted(d.keys()):
         v = d[k]
         if type(v) is int:
-            l.append(f"{k}: {v},")
+            l.append(f"'{k}': {v},")
         else:
-            l.append(f"{k}: {v.name},")
+            l.append(f"'{k}': {v.name},")
 
     l.append("}")
 
@@ -172,7 +172,7 @@ def main():
 # in an emoji font.
 #
 # Each trie node is a dictionary mapping codepoints to other dictionaries.
-# If a codepoint is not present in the dictionarly, look up the -1 key
+# If a codepoint is not present in the dictionarly, look up the '' key
 # in the dictionary to find what it maps to. (It will be one of the constants
 # below.
 #
