@@ -10,6 +10,7 @@ class trie_node(dict):
 
     def __missing__(self, key):
         self[key] = trie_node()
+        self[key][''] = 0
         return self[key]
 
     @property
