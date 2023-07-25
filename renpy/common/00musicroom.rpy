@@ -409,7 +409,7 @@ init -1500 python:
             if filename is None:
                 return
 
-            if self.single_track:
+            if self.single_track or filename not in self.filenames:
                 self.play(None, offset=0, queue=True)
             else:
                 self.play(None, offset=1, queue=True)
