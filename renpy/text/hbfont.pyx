@@ -37,6 +37,75 @@ import renpy.config
 cdef extern from "ftsupport.h":
     char *freetype_error_to_string(int error)
 
+cdef extern from "hb.h":
+
+    ctypedef int hb_bool_t
+
+    enum hb_direction_t:
+        HB_DIRECTION_INVALID
+        HB_DIRECTION_LTR
+        HB_DIRECTION_RTL
+        HB_DIRECTION_TTB
+        HB_DIRECTION_BTT
+
+    ctypedef unsigned int hb_codepoint_t
+
+    ctypedef void (*hb_destroy_func_t)(void *)
+    ctypedef int hb_position_t
+
+    # hb-buffer
+    struct hb_glyph_info_t:
+        hb_codepoint_t codepoint;
+        uint32_t       cluster;
+
+    struct hb_glyph_position_t:
+        hb_position_t  x_advance
+        hb_position_t  y_advance
+        hb_position_t  x_offset
+        hb_position_t  y_offset
+
+    struct hb_buffer_t
+
+    hb_buffer_t *hb_buffer_create()
+
+    void hb_buffer_reset(hb_buffer_t *)
+
+    void hb_buffer_destroy(hb_buffer_t *)
+
+    void hb_buffer_add_utf8 (
+        hb_buffer_t *buffer,
+        const char *text,
+        int text_length,
+        unsigned int item_offset,
+        int item_length)
+
+    void hb_buffer_set_direction (hb_buffer_t *buffer, hb_direction_t direction)
+    void hb_buffer_guess_segment_properties(hb_buffer_t *buffer)
+
+    hb_glyph_info_t *hb_buffer_get_glyph_infos (hb_buffer_t *buffer, unsigned int *length);
+    hb_glyph_position_t *hb_buffer_get_glyph_positions (hb_buffer_t *buffer, unsigned int *length);
+
+    # hb-face
+    struct hb_font_t
+    void hb_font_destroy(hb_font_t *)
+
+    struct hb_feature_t
+
+    # hb-shape
+    void hb_shape (
+        hb_font_t *font,
+        hb_buffer_t *buffer,
+        const hb_feature_t *features,
+        unsigned int num_features);
+
+
+
+cdef extern from "hb-ft.h":
+    hb_font_t *hb_ft_font_create(FT_Face ft_face, hb_destroy_func_t *destroy)
+    hb_bool_t hb_ft_hb_font_changed(hb_font_t *font)
+    void hb_ft_font_set_funcs(hb_font_t *font)
+
+
 # The freetype library object we use.
 cdef FT_Library library
 
@@ -157,6 +226,7 @@ cdef class FTFace:
         FT_StreamRec stream
         FT_Open_Args open_args
         FT_Face face
+        hb_font_t *hb_font
 
         float size
 
@@ -205,6 +275,12 @@ cdef class FTFace:
 
         # The size the face is at.
         self.size = -1
+
+        hb_font = NULL
+
+    def __deinit__(self):
+        if self.hb_font:
+            hb_font_destroy(self.hb_font)
 
 cdef class FTFont:
 
@@ -323,6 +399,12 @@ cdef class FTFont:
             error = FT_Set_Char_Size(face, 0, <int> (self.size * 64), 0, 0)
             if error:
                 raise FreetypeError(error)
+
+            if self.face_object.hb_font == NULL:
+                self.face_object.hb_font = hb_ft_font_create(face, NULL)
+                hb_ft_font_set_funcs(self.face_object.hb_font)
+            else:
+                hb_ft_hb_font_changed(self.face_object.hb_font)
 
         if not self.has_setup:
 
@@ -514,7 +596,6 @@ cdef class FTFont:
 
         return rv
 
-
     def glyphs(self, unicode s):
         """
         Sizes s, returning a list of Glyph objects.
@@ -536,7 +617,41 @@ cdef class FTFont:
 
         cdef float min_advance, next_min_advance
 
+        cdef hb_buffer_t *hb
+        cdef hb_glyph_info_t *glyph_info
+        cdef hb_glyph_position_t *glyph_pos
+        cdef unsigned int glyph_count
+
         self.setup()
+
+        # Start Harfbuzz
+
+        hb = hb_buffer_create()
+        utf8_s = s.encode("utf-8")
+        hb_buffer_add_utf8(hb, utf8_s, len(utf8_s), 0, len(utf8_s));
+        hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
+        hb_buffer_guess_segment_properties(hb)
+
+        hb_shape(self.face_object.hb_font, hb, NULL, 0)
+        glyph_info = hb_buffer_get_glyph_infos(hb, &glyph_count);
+        glyph_pos = hb_buffer_get_glyph_positions(hb, &glyph_count);
+
+        # print("---", s, glyph_count)
+
+        # for 0 <= i < glyph_count:
+        #     print(
+        #         glyph_info[i].codepoint,
+        #         glyph_pos[i].x_advance,
+        #         glyph_pos[i].y_advance,
+        #         glyph_pos[i].x_offset,
+        #         glyph_pos[i].y_offset,
+        #     )
+
+        hb_buffer_destroy(hb)
+
+
+        # End Harfbuzz.
+
 
         len_s = len(s)
 
