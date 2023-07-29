@@ -501,7 +501,7 @@ def parse_arguments(l):
         state = l.checkpoint()
 
         if not (expect_starred or expect_doublestarred):
-            name = l.name()
+            name = l.word()
 
             if name and l.match(r'='):
                 if name in names:
