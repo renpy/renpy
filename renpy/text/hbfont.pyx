@@ -79,11 +79,25 @@ cdef extern from "hb.h":
         unsigned int item_offset,
         int item_length)
 
+    void hb_buffer_add_utf32 (hb_buffer_t *buffer,
+        const uint32_t *text,
+        int text_length,
+        unsigned int item_offset,
+        int item_length)
+
     void hb_buffer_set_direction (hb_buffer_t *buffer, hb_direction_t direction)
     void hb_buffer_guess_segment_properties(hb_buffer_t *buffer)
 
     hb_glyph_info_t *hb_buffer_get_glyph_infos (hb_buffer_t *buffer, unsigned int *length);
     hb_glyph_position_t *hb_buffer_get_glyph_positions (hb_buffer_t *buffer, unsigned int *length);
+    
+    enum hb_buffer_cluster_level_t:
+        HB_BUFFER_CLUSTER_LEVEL_MONOTONE_GRAPHEMES
+        HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS
+        HB_BUFFER_CLUSTER_LEVEL_CHARACTERS
+        HB_BUFFER_CLUSTER_LEVEL_DEFAULT
+
+    void hb_buffer_set_cluster_level(hb_buffer_t *buffer, hb_buffer_cluster_level_t cluster_level)
 
     # hb-face
     struct hb_font_t
@@ -97,12 +111,12 @@ cdef extern from "hb.h":
         hb_buffer_t *buffer,
         const hb_feature_t *features,
         unsigned int num_features);
-
+    
 
 
 cdef extern from "hb-ft.h":
     hb_font_t *hb_ft_font_create(FT_Face ft_face, hb_destroy_func_t *destroy)
-    hb_bool_t hb_ft_hb_font_changed(hb_font_t *font)
+    hb_bool_t hb_ft_font_changed(hb_font_t *font)
     void hb_ft_font_set_funcs(hb_font_t *font)
 
 
@@ -288,7 +302,6 @@ cdef class FTFont:
 
         FTFace face_object
         FT_Face face
-        TTGSUBTable gsubtable
 
         # A cache of various properties.
         float size
@@ -329,16 +342,12 @@ cdef class FTFont:
             self.cache[i].index = -1
             FT_Bitmap_New(&(self.cache[i].bitmap))
 
-        init_gsubtable(&self.gsubtable)
-
     def __dealloc__(self):
         for i from 0 <= i < 256:
             FT_Bitmap_Done(library, &(self.cache[i].bitmap))
 
         if self.stroker != NULL:
             FT_Stroker_Done(self.stroker)
-
-        free_gsubtable(&self.gsubtable)
 
 
     def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting):
@@ -360,8 +369,6 @@ cdef class FTFont:
         self.outline = outline
         self.antialias = antialias
         self.vertical = vertical
-
-        LoadGSUBTable(&self.gsubtable, self.face)
 
         if outline == 0:
             self.stroker = NULL;
@@ -404,7 +411,7 @@ cdef class FTFont:
                 self.face_object.hb_font = hb_ft_font_create(face, NULL)
                 hb_ft_font_set_funcs(self.face_object.hb_font)
             else:
-                hb_ft_hb_font_changed(self.face_object.hb_font)
+                hb_ft_font_changed(self.face_object.hb_font)
 
         if not self.has_setup:
 
@@ -464,20 +471,9 @@ cdef class FTFont:
         cdef int overhang
         cdef FT_Glyph_Metrics metrics
 
-        cdef int x, y, glyph_rotate
+        cdef int x, y
 
         face = self.face
-
-        if self.vertical:
-            if GetVerticalGlyph(&self.gsubtable, index, &vindex) == 0:
-                index = vindex
-            if self.face.face_flags & 32 == 32: # FT_HAS_VERTICAL(face)
-                glyph_rotate = 1
-            else:
-                # font doesn't have vertical metrics (simulate it)
-                glyph_rotate = 2
-        else:
-            glyph_rotate = 0
 
         rv = &(self.cache[index & 255])
         if rv.index == index:
@@ -493,7 +489,7 @@ cdef class FTFont:
 
         if face.glyph.format != FT_GLYPH_FORMAT_BITMAP:
 
-            if not self.italic and glyph_rotate == 0 and self.stroker == NULL:
+            if not self.italic and not self.vertical and self.stroker == NULL:
 
                 if self.antialias:
                     FT_Render_Glyph(face.glyph, FT_RENDER_MODE_NORMAL)
@@ -519,13 +515,13 @@ cdef class FTFont:
 
                     FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
 
-                if glyph_rotate != 0:
+                if self.vertical:
                     metrics = face.glyph.metrics
                     # move the origin for vertical layout
-                    if glyph_rotate == 1:
-                        FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
-                    else:
-                        FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance // 2, -face.bbox.yMax)
+                    # if self.vertical:
+                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
+                    # else:
+                    #     FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance // 2, -face.bbox.yMax)
                     shear.xx = 0
                     shear.xy = -(1 << 16)
                     shear.yx = 1 << 16
@@ -580,15 +576,6 @@ cdef class FTFont:
         else:
             overhang = 0
 
-        # rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
-        if glyph_rotate == 1:
-            rv.advance = face.glyph.metrics.vertAdvance / 64.0 + self.expand + overhang
-        elif glyph_rotate == 2:
-            # rv.advance = (face.ascender - face.descender) / 64.0 + self.expand + overhang
-            rv.advance = self.lineskip + overhang
-        else:
-            rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
-
         rv.width = rv.bitmap.width + rv.bitmap_left
 
         if g != NULL:
@@ -624,117 +611,61 @@ cdef class FTFont:
 
         self.setup()
 
+        rv = [ ]
+
         # Start Harfbuzz
 
         hb = hb_buffer_create()
-        utf8_s = s.encode("utf-8")
-        hb_buffer_add_utf8(hb, utf8_s, len(utf8_s), 0, len(utf8_s));
+        utf32_s = s.encode("utf-32")
+
+        hb_buffer_add_utf32(hb, <const uint32_t *> ((<const char *> utf32_s) + 4), len(s), 0, len(s));
+
         hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
         hb_buffer_guess_segment_properties(hb)
+        hb_buffer_set_cluster_level(hb, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS)
 
         hb_shape(self.face_object.hb_font, hb, NULL, 0)
+
         glyph_info = hb_buffer_get_glyph_infos(hb, &glyph_count);
         glyph_pos = hb_buffer_get_glyph_positions(hb, &glyph_count);
 
-        # print("---", s, glyph_count)
-
-        # for 0 <= i < glyph_count:
-        #     print(
-        #         glyph_info[i].codepoint,
-        #         glyph_pos[i].x_advance,
-        #         glyph_pos[i].y_advance,
-        #         glyph_pos[i].x_offset,
-        #         glyph_pos[i].y_offset,
-        #     )
-
-        hb_buffer_destroy(hb)
-
-
-        # End Harfbuzz.
-
-
-        len_s = len(s)
-
+        print("---", s, len(s), glyph_count)
         face = self.face
         g = face.glyph
 
-        rv = [ ]
-
-        if len_s:
-
-            next_min_advance = 0
-
-            next_c = s[0]
-            vs_offset = 1
-
-            if len_s > vs_offset and is_vs(s[vs_offset]):
-                vs = s[vs_offset]
-                next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
-
-                # Fallback to 0 if variation doesn't exist
-                if next_index == 0:
-                    vs = 0
-                    next_index = FT_Get_Char_Index(face, next_c)
-            else:
-                vs = 0
-                next_index = FT_Get_Char_Index(face, next_c)
-
-        for i from 0 <= i < len_s:
-
-            c = next_c
-            index = next_index
-            min_advance = next_min_advance
+        for 0 <= i < glyph_count:
+            print(
+                glyph_info[i].codepoint,
+                glyph_info[i].cluster,
+                glyph_pos[i].x_advance / 64,
+                # glyph_pos[i].y_advance,
+                # glyph_pos[i].x_offset,
+                # glyph_pos[i].y_offset,
+            )
 
             cache = self.get_glyph(index)
 
             gl = Glyph.__new__(Glyph)
 
-            gl.character = c
-            gl.variation = vs
+            gl.character = ord(s[glyph_info[i].cluster])
+            gl.glyph = glyph_info[i].codepoint
+
             gl.ascent = self.ascent
-            gl.width = cache.width
+            gl.width = 0
             gl.line_spacing = self.lineskip
             gl.draw = True
 
-            if i < len_s - 1:
+            gl.x_offset = glyph_pos[i].x_offset / 64.0
+            gl.y_offset = glyph_pos[i].y_offset / 64.0
 
-                next_c = s[i + 1]
-                vs_offset = 2
-
-                if i < len_s - vs_offset and is_vs(s[i + vs_offset]):
-                    vs = s[i + vs_offset]
-                    next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
-
-                    # Fallback to 0 if variation doesn't exist
-                    if next_index == 0:
-                        vs = 0
-                        next_index = FT_Get_Char_Index(face, next_c)
-                else:
-                    vs = 0
-                    next_index = FT_Get_Char_Index(face, next_c)
-
-                error = FT_Get_Kerning(face, index, next_index, FT_KERNING_DEFAULT, &kerning)
-                if error:
-                    raise FreetypeError(error)
-
-                kern = FT_ROUND(kerning.x)
-
-                if cache.advance + kern > min_advance:
-                    gl.advance = cache.advance + kern
-                else:
-                    gl.advance = min_advance
-
-                next_min_advance = cache.advance - gl.advance
-
+            if self.vertical:
+                gl.advance = glyph_pos[i].y_advance / 64.0
             else:
-                gl.advance = cache.advance
-
-            if is_zerowidth(gl.character):
-                gl.width = 0
-                gl.advance = 0
-                gl.draw = False
+                gl.advance = glyph_pos[i].x_advance / 64.0
 
             rv.append(gl)
+
+        hb_buffer_destroy(hb)
 
         return rv
 
@@ -851,12 +782,7 @@ cdef class FTFont:
             underline_x = x - glyph.delta_x_offset
             underline_end = x + <int> glyph.advance + expand
 
-            if glyph.variation == 0:
-                index = FT_Get_Char_Index(face, glyph.character)
-            else:
-                index = FT_Face_GetCharVariantIndex(face, glyph.character, glyph.variation)
-
-            cache = self.get_glyph(index)
+            cache = self.get_glyph(glyph.glyph)
 
             # with nogil used to be here, but it slowed things down.
 
