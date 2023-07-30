@@ -162,7 +162,7 @@ init 1 python in editor:
             elif renpy.arch == "armv7l":
                 arch = "arm"
             else:
-                arch = "x86_64"
+                arch = "x64"
 
             installed = os.path.exists(os.path.join(config.renpy_base, "vscode/VSCode-linux-" + arch))
 
