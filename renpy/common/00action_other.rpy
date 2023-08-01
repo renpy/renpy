@@ -607,7 +607,7 @@ init -1500 python:
         The sensitivity and selectedness of this action match those
         of the `yes` action.
 
-        See :func:`layout.yesno_screen` for a function version of this action.
+        See :func:`renpy.confirm` for a function version of this action.
         """
 
 

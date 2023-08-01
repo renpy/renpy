@@ -87,6 +87,9 @@ include("libswscale/swscale.h", directory="ffmpeg", optional=True) or include("l
 include("GL/glew.h")
 include("pygame_sdl2/pygame_sdl2.h", directory="python{}.{}".format(sys.version_info.major, sys.version_info.minor))
 
+if "RENPY_HARFBUZZ" in os.environ:
+    include("hb.h", directory="harfbuzz")
+
 library("SDL2")
 library("png")
 library("avformat")
@@ -196,6 +199,13 @@ cython(
     "renpy.text.ftfont",
     [ "ftsupport.c", "ttgsubtable.c" ],
     libs=sdl + [ 'freetype', 'z', 'm' ])
+
+if "RENPY_HARFBUZZ" in os.environ:
+    cython(
+        "renpy.text.hbfont",
+        [ "ftsupport.c", "ttgsubtable.c" ],
+        libs=sdl + [ 'harfbuzz', 'freetype', 'z', 'm' ])
+
 
 generate_all_cython()
 find_unnecessary_gen()

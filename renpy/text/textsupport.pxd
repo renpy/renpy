@@ -46,6 +46,9 @@ cdef class Glyph:
         public unsigned int character
         public unsigned int variation
 
+        # The glyph number (when selected directly).
+        public unsigned int glyph
+
         # Controls splitting of this glyph, based on where we are in the
         # the line.
         public split_t split
@@ -60,6 +63,9 @@ cdef class Glyph:
         # The width and advance of the font.
         public float width
         public float advance
+
+        public float x_offset
+        public float y_offset
 
         # The time when this glyph should be shown.
         public float time

@@ -32,7 +32,13 @@ except Exception:
     pass
 
 import renpy
-import renpy.text.ftfont as ftfont
+import os
+
+if "RENPY_HARFBUZZ" in os.environ:
+    import renpy.text.hbfont as ftfont
+else:
+    import renpy.text.ftfont as ftfont
+
 import renpy.text.textsupport as textsupport
 
 ftfont.init() # @UndefinedVariable

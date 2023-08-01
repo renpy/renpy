@@ -568,6 +568,8 @@ init -1500 python in iap:
         This is supported on Google Play and the Apple App Store, only.
         """
 
+        return backend.request_review()
+
     def missing_products():
         """
         Determines if any products are missing from persistent._iap_purchases

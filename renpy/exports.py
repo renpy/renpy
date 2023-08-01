@@ -4566,3 +4566,22 @@ def clear_retain(layer="screens", prefix="_retain"):
     for i in get_showing_tags(layer):
         if i.startswith(prefix):
             hide_screen(i)
+
+
+def confirm(message):
+    """
+    :doc: other
+
+    This causes the a yes/no prompt screen with the given message
+    to be displayed, and dismissed when the player hits yes or no.
+
+    Returns True if the player hits yes, and False if the player hits no.
+
+    `message`
+        The message that will be displayed.
+
+    See :func:`Confirm` for a similar Action.
+    """
+    Return = renpy.store.Return
+    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False))
+    return renpy.ui.interact()

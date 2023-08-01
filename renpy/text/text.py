@@ -35,6 +35,7 @@ import renpy.text.textsupport as textsupport
 import renpy.text.texwrap as texwrap
 import renpy.text.font as font
 import renpy.text.extras as extras
+from renpy.text.emoji_trie import emoji, UNQUALIFIED
 
 from _renpybidi import log2vis, WRTL, RTL, ON # @UnresolvedImport
 
@@ -198,6 +199,7 @@ class TextSegment(object):
             self.hinting = source.hinting
             self.outline_color = source.outline_color
             self.ignore = source.ignore
+            self.default_font = source
 
         else:
             self.hyperlink = 0
@@ -205,6 +207,7 @@ class TextSegment(object):
             self.ruby_top = False
             self.ruby_bottom = False
             self.ignore = False
+            self.default_font = True
 
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
@@ -981,6 +984,73 @@ class Layout(object):
     def unscale_pair(self, x, y):
         return x / self.oversample, y / self.oversample
 
+    def create_text_segments(self, text, ts, style):
+        """
+        Creates one or more text segements, splitting out emoji. This
+        will also use subsegment to handle font groups.
+        """
+
+        if not ts.default_font:
+            return ts.subsegment(text)
+
+        rv = [ ]
+
+        required_level = UNQUALIFIED if style.prefer_emoji else UNQUALIFIED + 1
+
+        # The start of the current run.
+        run_start = 0
+
+        # Does the current run contain emoji?
+        run_is_emoji = False
+
+        len_text = len(text)
+
+        i = 0
+
+        while i < len_text:
+
+            start = i
+
+            if text[i] in emoji:
+                d = emoji
+
+                while i < len_text and text[i] in d:
+                    d = d[text[i]]
+                    i += 1
+
+                is_emoji = d[''] >= required_level
+
+            else:
+                is_emoji = False
+                i += 1
+
+            end = i
+
+            if run_is_emoji != is_emoji:
+
+                if run_start != start:
+                    if run_is_emoji:
+                        nts = TextSegment(ts)
+                        nts.font = style.emoji_font
+                    else:
+                        nts = ts
+
+                    rv.extend(nts.subsegment(text[run_start:start]))
+
+                run_start = start
+
+            run_is_emoji = is_emoji
+
+        if run_is_emoji:
+            nts = TextSegment(ts)
+            nts.font = style.emoji_font
+        else:
+            nts = ts
+
+        rv.extend(nts.subsegment(text[run_start:]))
+
+        return rv
+
     def segment(self, tokens, style, renders, text_displayable):
         """
         Breaks the text up into segments. This creates a list of paragraphs,
@@ -1045,7 +1115,8 @@ class Layout(object):
                         if text != u"\u200b":
                             text = text_displayable.mask * len(text)
 
-                    line.extend(tss[-1].subsegment(text))
+                    line.extend(self.create_text_segments(text, tss[-1], style))
+
                     continue
 
                 elif type == DISPLAYABLE:
@@ -1187,7 +1258,10 @@ class Layout(object):
 
                 elif tag == "font":
                     value = renpy.config.font_name_map.get(value, value)
-                    push().font = value
+
+                    ts = push()
+                    ts.font = value
+                    ts.default_font = False
 
                 elif tag == "size":
 

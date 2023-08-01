@@ -2073,7 +2073,7 @@ class AdjustTimes(Container):
 
     def event(self, ev, x, y, st):
         st, _ = self.adjusted_times()
-        Container.event(self, ev, x, y, st)
+        return Container.event(self, ev, x, y, st)
 
     def get_placement(self):
         return self.child.get_placement()
