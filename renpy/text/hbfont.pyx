@@ -99,11 +99,14 @@ cdef extern from "hb.h":
 
     void hb_buffer_set_cluster_level(hb_buffer_t *buffer, hb_buffer_cluster_level_t cluster_level)
 
-    # hb-face
+    # hb-font
     struct hb_font_t
+
     void hb_font_destroy(hb_font_t *)
 
     struct hb_feature_t
+
+    void hb_font_set_scale(hb_font_t *font, int x_scale, int y_scale)
 
     # hb-shape
     void hb_shape (
@@ -118,6 +121,7 @@ cdef extern from "hb-ft.h":
     hb_font_t *hb_ft_font_create(FT_Face ft_face, hb_destroy_func_t *destroy)
     hb_bool_t hb_ft_font_changed(hb_font_t *font)
     void hb_ft_font_set_funcs(hb_font_t *font)
+    void hb_ft_font_set_load_flags (hb_font_t *font, int load_flags)
 
 
 # The freetype library object we use.
@@ -240,7 +244,6 @@ cdef class FTFace:
         FT_StreamRec stream
         FT_Open_Args open_args
         FT_Face face
-        hb_font_t *hb_font
 
         float size
 
@@ -290,12 +293,6 @@ cdef class FTFace:
         # The size the face is at.
         self.size = -1
 
-        hb_font = NULL
-
-    def __deinit__(self):
-        if self.hb_font:
-            hb_font_destroy(self.hb_font)
-
 cdef class FTFont:
 
     cdef:
@@ -336,6 +333,9 @@ cdef class FTFont:
 
         # The hinting flag to use.
         int hinting
+
+        # The font harfbuzz uses.
+        hb_font_t *hb_font
 
     def __cinit__(self):
         for i from 0 <= i < 256:
@@ -388,6 +388,14 @@ cdef class FTFont:
         else:
             self.hinting = FT_LOAD_FORCE_AUTOHINT
 
+
+        FT_Set_Char_Size(self.face_object.face, 0, <int> (self.size * 64), 0, 0)
+
+        self.hb_font = hb_ft_font_create(self.face_object.face, NULL)
+        hb_ft_font_set_funcs(self.hb_font)
+        hb_font_set_scale(self.hb_font, <int> (self.size * 64), <int> (self.size * 64))
+        hb_ft_font_set_load_flags(self.hb_font, self.hinting | FT_LOAD_COLOR)
+
     cdef setup(self):
         """
         Changes the parameters of the face to match this font.
@@ -407,11 +415,8 @@ cdef class FTFont:
             if error:
                 raise FreetypeError(error)
 
-            if self.face_object.hb_font == NULL:
-                self.face_object.hb_font = hb_ft_font_create(face, NULL)
-                hb_ft_font_set_funcs(self.face_object.hb_font)
-            else:
-                hb_ft_font_changed(self.face_object.hb_font)
+            hb_ft_font_changed(self.hb_font)
+
 
         if not self.has_setup:
 
@@ -624,24 +629,24 @@ cdef class FTFont:
         hb_buffer_guess_segment_properties(hb)
         hb_buffer_set_cluster_level(hb, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS)
 
-        hb_shape(self.face_object.hb_font, hb, NULL, 0)
+        hb_shape(self.hb_font, hb, NULL, 0)
 
         glyph_info = hb_buffer_get_glyph_infos(hb, &glyph_count);
         glyph_pos = hb_buffer_get_glyph_positions(hb, &glyph_count);
 
-        print("---", s, len(s), glyph_count)
         face = self.face
         g = face.glyph
 
         for 0 <= i < glyph_count:
-            print(
-                glyph_info[i].codepoint,
-                glyph_info[i].cluster,
-                glyph_pos[i].x_advance / 64,
-                # glyph_pos[i].y_advance,
-                # glyph_pos[i].x_offset,
-                # glyph_pos[i].y_offset,
-            )
+            # print(
+            #     repr(s[glyph_info[i].cluster]),
+            #     glyph_info[i].codepoint,
+            #     glyph_info[i].cluster,
+            #     glyph_pos[i].x_advance / 64,
+            #     # glyph_pos[i].y_advance,
+            #     glyph_pos[i].x_offset / 64,
+            #     # glyph_pos[i].y_offset,
+            # )
 
             cache = self.get_glyph(index)
 
