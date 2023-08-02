@@ -193,6 +193,7 @@ style_properties = sorted_dict(
     right_margin=None,
     right_padding=None,
     ruby_style=None,
+    shaper=None,
     size=None,
     size_group=None,
     slow_abortable=None,

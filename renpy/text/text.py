@@ -199,7 +199,8 @@ class TextSegment(object):
             self.hinting = source.hinting
             self.outline_color = source.outline_color
             self.ignore = source.ignore
-            self.default_font = source
+            self.default_font = source.default_font
+            self.shaper = source.shaper
 
         else:
             self.hyperlink = 0
@@ -246,6 +247,8 @@ class TextSegment(object):
             self.cps = renpy.game.preferences.text_cps
 
         self.cps = self.cps * style.slow_cps_multiplier
+        
+        self.shaper = style.shaper
 
     # From here down is the public glyph API.
 
@@ -257,7 +260,7 @@ class TextSegment(object):
         if self.ignore:
             return [ ]
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper)
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
@@ -289,7 +292,7 @@ class TextSegment(object):
             color = self.color
             black_color = self.black_color
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper)
         fo.draw(di.surface, xo, yo, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
@@ -354,7 +357,7 @@ class TextSegment(object):
         origin point.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper)
         return fo.bounds(glyphs, bounds)
 
 

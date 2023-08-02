@@ -172,6 +172,7 @@ init -1800:
         adjust_spacing True
         emoji_font "TwemojiCOLRv0.ttf"
         prefer_emoji True
+        shaper "freetype"
 
         # Window properties
         background None

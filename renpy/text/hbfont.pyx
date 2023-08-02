@@ -192,11 +192,11 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
     Seeks to offset, and then reads count bytes from the stream into buffer.
     """
 
-    cdef FTFace face
+    cdef HBFace face
     cdef char *cbuf
     cdef unsigned long i
 
-    face = <FTFace> stream.descriptor.pointer
+    face = <HBFace> stream.descriptor.pointer
     f = face.f
 
     if face.offset != offset:
@@ -235,7 +235,7 @@ cdef void close_func(FT_Stream stream):
     return
 
 
-cdef class FTFace:
+cdef class HBFace:
     """
     Represents a freetype face.
     """
@@ -293,11 +293,11 @@ cdef class FTFace:
         # The size the face is at.
         self.size = -1
 
-cdef class FTFont:
+cdef class HBFont:
 
     cdef:
 
-        FTFace face_object
+        HBFace face_object
         FT_Face face
 
         # A cache of various properties.
@@ -638,15 +638,15 @@ cdef class FTFont:
         g = face.glyph
 
         for 0 <= i < glyph_count:
-            # print(
-            #     repr(s[glyph_info[i].cluster]),
-            #     glyph_info[i].codepoint,
-            #     glyph_info[i].cluster,
-            #     glyph_pos[i].x_advance / 64,
-            #     # glyph_pos[i].y_advance,
-            #     glyph_pos[i].x_offset / 64,
-            #     # glyph_pos[i].y_offset,
-            # )
+            print(
+                repr(s[glyph_info[i].cluster]),
+                glyph_info[i].codepoint,
+                glyph_info[i].cluster,
+                glyph_pos[i].x_advance / 64,
+                glyph_pos[i].y_advance,
+                glyph_pos[i].x_offset / 64,
+                glyph_pos[i].y_offset,
+            )
 
             cache = self.get_glyph(index)
 
