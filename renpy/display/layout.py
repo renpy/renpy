@@ -2228,55 +2228,50 @@ class AlphaMask(Container):
     The `child` and `mask` parameters may be arbitrary displayables. The
     size of the AlphaMask is the size of `child`.
 
+    `alpha_over` is a float that ranges from 0.0 to 1.0.
+    At `0.0`, nothing changes. At `1.0`, the behavior is swapped (`child` is opaque where `mask` is transparent).
+
     Note that this takes different arguments from :func:`im.AlphaMask`,
     which uses the mask's red channel.
     """
 
-    def __init__(self, child, mask, **properties):
-        super(AlphaMask, self).__init__(**properties)
+    alpha_over = 0.0
 
+    def __init__(self, child, mask, alpha_over=0.0, **properties):
+        super(AlphaMask, self).__init__(**properties)
+        
         self.mask = renpy.easy.displayable(mask)
         self.add(self.mask)
         self.add(child)
-        self.null = None
-
-    def visit(self):
-        return [ self.mask, self.child ]
-
+        self.alpha_over = min(max(float(alpha_over), 0.0), 1.0)
+    
     def render(self, width, height, st, at):
-
         cr = renpy.display.render.render(self.child, width, height, st, at)
         w, h = cr.get_size()
-
+        
         mr = renpy.display.render.Render(w, h)
         mr.place(self.mask, main=False)
-
-        if self.null is None:
-            self.null = Fixed()
-
-        nr = renpy.display.render.render(self.null, w, h, st, at)
-
+        
         rv = renpy.display.render.Render(w, h)
-
-        rv.operation = renpy.display.render.IMAGEDISSOLVE
-        rv.operation_alpha = True
+        
+        rv.operation = renpy.display.render.DISSOLVE
+        rv.operation_alpha = 1.0
         rv.operation_complete = 256.0 / (256.0 + 256.0)
         rv.operation_parameter = 256
-
+        
         rv.mesh = True
-        rv.add_shader("renpy.imagedissolve")
-        rv.add_uniform("u_renpy_dissolve_offset", 0)
-        rv.add_uniform("u_renpy_dissolve_multiplier", 1.0)
+        rv.add_shader("renpy.alphamask")
+        rv.add_uniform("u_alpha_over", self.alpha_over)
         rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
-
-        rv.blit(mr, (0, 0))
-        rv.blit(nr, (0, 0), focus=False, main=False)
+        
+        rv.blit(mr, (0, 0), main=False, focus=False)
         rv.blit(cr, (0, 0))
-
-        self.offsets = [ (0, 0), (0, 0) ]
-
+        
+        self.offsets = [(0, 0), (0, 0)]
         return rv
 
+    def visit(self):
+        return [self.mask, self.child]
 
 class NearRect(Container):
     """
