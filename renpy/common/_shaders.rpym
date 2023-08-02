@@ -157,6 +157,25 @@ init python:
         gl_FragColor = vec4(src.r * mask.r, src.g * mask.r, src.b * mask.r, mask.r);
     """)
 
+    renpy.register_shader("renpy.alphamask", variables="""
+        uniform float u_alpha_over;
+        uniform sampler2D tex0;
+        uniform sampler2D tex1;
+        attribute vec2 a_tex_coord;
+        varying vec2 v_tex_coord;
+    """, vertex_200="""
+        v_tex_coord = a_tex_coord;
+    """, fragment_500="""
+        vec4 source = texture2D(tex0, v_tex_coord.xy);
+        vec4 mask = texture2D(tex1, v_tex_coord.xy);
+
+        float alpha = source.a * mask.a;
+        float reversed_alpha = 1.0 - alpha;
+        float final_alpha = mix(alpha, reversed_alpha, u_alpha_over);
+
+        gl_FragColor = vec4(source.rgb * final_alpha, final_alpha);
+    """)
+
 init python hide:
     from operator import mul
 
