@@ -873,7 +873,7 @@ A bar can customized by editing the following images:
 gui/bar/left.png, gui/bar/bottom.png
     Images that are used for the filled section of horizontal and vertical bars.
 
-gui/bar/right.pbg, gui/bar/top.png
+gui/bar/right.png, gui/bar/top.png
     Images that are used for the filled section of horizontal and vertical bars.
 
 There are also the usual variables that control bars:
