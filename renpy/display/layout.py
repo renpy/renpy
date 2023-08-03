@@ -2229,7 +2229,8 @@ class AlphaMask(Container):
     size of the AlphaMask is the size of `child`.
 
     `alpha_over` is a float that ranges from 0.0 to 1.0.
-    At `0.0`, nothing changes. At `1.0`, the behavior is swapped (`child` is opaque where `mask` is transparent).
+    At `0.0`, the behavior stays the same and the child gets masked.
+    At `1.0`, the behavior is swapped (`child` is opaque where `mask` is transparent).
 
     Note that this takes different arguments from :func:`im.AlphaMask`,
     which uses the mask's red channel.
