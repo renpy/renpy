@@ -143,6 +143,7 @@ init python:
         gl_FragColor = texture2D(tex0, v_tex_coord.xy, -1.0);
     """)
 
+    # used by Movie
     renpy.register_shader("renpy.alpha_mask", variables="""
         uniform sampler2D tex0;
         uniform sampler2D tex1;
@@ -157,6 +158,7 @@ init python:
         gl_FragColor = vec4(src.r * mask.r, src.g * mask.r, src.b * mask.r, mask.r);
     """)
 
+    # used by AlphaMask
     renpy.register_shader("renpy.alphamask", variables="""
         uniform float u_alpha_over;
         uniform sampler2D tex0;
