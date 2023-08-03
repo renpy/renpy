@@ -1438,7 +1438,7 @@ def say(who, what, *args, **kwargs):
     `who`
         Either the character that will say something, None for the narrator,
         or a string giving the character name. In the latter case, the
-        :func:`say` is used to create the speaking character.
+        :var:`say` store function is called.
 
     `what`
         A string giving the line to say. Percent-substitutions are performed
@@ -1455,6 +1455,7 @@ def say(who, what, *args, **kwargs):
         e "Hello, world."
         $ renpy.say(e, "Hello, world.")
         $ e("Hello, world.") # when e is not a string
+        $ say(e, "Hello, world.") # when e is a string
     """
 
     if renpy.config.old_substitutions:
