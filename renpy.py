@@ -207,7 +207,7 @@ def path_to_renpy_base():
     Returns the absolute path to thew Ren'Py base directory.
     """
 
-    renpy_base = os.path.dirname(os.path.realpath(sys.argv[0]))
+    renpy_base = os.path.dirname(os.path.abspath(__file__))
     renpy_base = os.path.abspath(renpy_base)
 
     return renpy_base
