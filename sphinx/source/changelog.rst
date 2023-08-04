@@ -153,25 +153,18 @@ Ren'Py will disable text input methods when text editing is not possible, which
 makes it possible to use the space key to advance the game even if an input
 method that uses the space key is active.
 
-The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
-when it used to only disable :var:`config.mouse`.
-
 ATL Transitions now use the animation timebase. This is generally the same
 behavior as before, until the interaction restarts, in which case the
 transition would often incorrectly restart.
-
-Ren'Py will produce an error if an object that inherited from store.object
-in an old save is loaded, and no longer inherits from store.object, which
-would break rollback.
 
 Preferences no longer have defaults, meaning all preferences can be
 changed using the ``default`` statement.
 
 The :term:`absolute <position>` type, used to represent absolute amounts of pixels,
-now ensures the result of mathematically operations with integers and
-floats remain absolutes. This fixes a class of problems where
+now ensures the result of mathematical operations with integers and
+floats remain absolute numbers. This fixes a class of problems where
 operations performed on absolutes could produce the incorrect
-type, leasing to layout problems.
+type, leading to layout problems.
 
 Live2D now checks for a motion after evaluating an `attribute_filter`,
 and does not sustain the previous motions if a new motion is present.
