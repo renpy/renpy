@@ -206,7 +206,7 @@ them can be a problem.
     without a character name.
 
 ``name_only``
-    A character that is used to display dialogue in which the
+    A character that is used for dialogue in which the
     character name is given as a string. This character is copied to a
     new character with the given name, and then that new character is
     used to display the dialogue.

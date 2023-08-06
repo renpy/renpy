@@ -2991,8 +2991,9 @@ def pop_call():
     :doc: label
     :name: renpy.pop_call
 
-    Pops the current call from the call stack, without returning to
-    the location.
+    Pops the current call from the call stack, without returning to the
+    location. Also reverts the values of :func:`dynamic <renpy.dynamic>`
+    variables, the same way the Ren'Py return statement would.
 
     This can be used if a label that is called decides not to return
     to its caller.
