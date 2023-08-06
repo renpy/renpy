@@ -2442,7 +2442,7 @@ def context_dynamic(*variables):
 
     This can be given one or more variable names as arguments. This makes
     the variables dynamically scoped to the current context. The variables will
-    be reset to their original value when the call returns.
+    be reset to their original value when returning to the prior context.
 
     An example call is::
 
