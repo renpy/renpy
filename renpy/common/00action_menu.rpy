@@ -60,7 +60,7 @@ init -1500 python:
         * ShowMenu("stats")
 
         ShowMenu without an argument will enter the game menu at the
-        default screen, taken from _game_menu_screen.
+        default screen, taken from :var:`_game_menu_screen`.
 
         Extra arguments and keyword arguments are passed on to the screen
         """
