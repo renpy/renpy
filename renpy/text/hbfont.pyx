@@ -90,7 +90,7 @@ cdef extern from "hb.h":
 
     hb_glyph_info_t *hb_buffer_get_glyph_infos (hb_buffer_t *buffer, unsigned int *length);
     hb_glyph_position_t *hb_buffer_get_glyph_positions (hb_buffer_t *buffer, unsigned int *length);
-    
+
     enum hb_buffer_cluster_level_t:
         HB_BUFFER_CLUSTER_LEVEL_MONOTONE_GRAPHEMES
         HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS
@@ -114,7 +114,7 @@ cdef extern from "hb.h":
         hb_buffer_t *buffer,
         const hb_feature_t *features,
         unsigned int num_features);
-    
+
 
 
 cdef extern from "hb-ft.h":
@@ -865,10 +865,12 @@ cdef class HBFont:
 
                             elif alpha:
 
-                                line[0] = (line[0] * (1 - alpha) + Sr * alpha) // 255
-                                line[1] = (line[1] * (1 - alpha) + Sg * alpha) // 255
-                                line[2] = (line[2] * (1 - alpha) + Sb * alpha) // 255
-                                line[3] = line[3] * (1 - alpha) // 255 + alpha
+                                alpha = alpha + line[3] * (255 - alpha) // 255
+
+                                line[0] = Sr * alpha // 255
+                                line[1] = Sg * alpha // 255
+                                line[2] = Sb * alpha // 255
+                                line[3] = alpha
 
                             gline += 1
                             line += 4

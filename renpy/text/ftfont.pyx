@@ -851,10 +851,12 @@ cdef class FTFont:
 
                             elif alpha:
 
-                                line[0] = (line[0] * (1 - alpha) + Sr * alpha) // 255
-                                line[1] = (line[1] * (1 - alpha) + Sg * alpha) // 255
-                                line[2] = (line[2] * (1 - alpha) + Sb * alpha) // 255
-                                line[3] = line[3] * (1 - alpha) // 255 + alpha
+                                alpha = alpha + line[3] * (255 - alpha) // 255
+
+                                line[0] = Sr * alpha // 255
+                                line[1] = Sg * alpha // 255
+                                line[2] = Sb * alpha // 255
+                                line[3] = alpha
 
                             gline += 1
                             line += 4
