@@ -82,7 +82,7 @@ For example, if we have::
 
 And the dialogue identifier is ``demo_minigame_03fc91ef``, then when
 the corresponding line is shown, Ren'Py will look for the file
-``voice/demo_minigame_03fc91ef.ogg``. If the file exists, Ren'Py will
+:file:`voice/demo_minigame_03fc91ef.ogg`. If the file exists, Ren'Py will
 play it.
 
 Multilingual Voice
@@ -96,13 +96,13 @@ following dialogue::
     voice "omelette.ogg"
     e "I like scrambled eggs with cheese..."
 
-Placing the english version in "game/omelette.ogg" and the french translation
-in "game/tl/french/omelette.ogg" will make Ren'Py use the french version when
+Placing the english version in :file:`game/omelette.ogg` and the french translation
+in :file:`game/tl/french/omelette.ogg` will make Ren'Py use the french version when
 the french language is activated in the game.
 
 It works just the same for automatic voice, as long as the filepath of the
-translation file starting from "game/tl/<language>/" matches the filepath of
-the original file starting from "game/"
+translation file starting from :file:`game/tl/{<language>}/` matches the filepath of
+the original file starting from :file:`game/`\ .
 
 Voice Functions
 ---------------
