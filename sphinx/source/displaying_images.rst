@@ -50,7 +50,7 @@ and ``happy``.
 A displayable is something that can be shown on the screen. The most
 common thing to show is a static image, which can be specified by
 giving the filename of the image, as a string. In the example above,
-we might use "mary_beach_night_happy.png" as the filename.
+we might use :file:`mary_beach_night_happy.png` as the filename.
 However, an image may refer to :doc:`any displayable Ren'Py supports
 <displayables>`, not just static images. Thus, the same statements
 that are used to display images can also be used for animations, solid
@@ -147,8 +147,8 @@ and :var:`config.physical_height` to allow a game to be remade with higher
 resolution graphics.
 
 Oversampling is automatically enabled if the image ends with an '@' followed
-by a number, before the extension. For example, "eileen happy@2.png" is
-2x oversampled, and "eileen happy@3x.png" will be 3x oversampled. Oversampling
+by a number, before the extension. For example, :file:`eileen happy@2.png` is
+2x oversampled, and :file:`eileen happy@3x.png` will be 3x oversampled. Oversampling
 can also be enabled by giving the `oversample` keyword argument to :func:`Image`.
 
 .. _image-statement:
