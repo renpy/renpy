@@ -41,7 +41,7 @@ try:
     import renpy.text.hbfont as hbfont
     hbfont.init()
 except ImportError:
-    pass
+    hbfont = None
 
 import renpy.text.textsupport as textsupport
 
@@ -697,6 +697,9 @@ last_scale = 1.0
 
 
 def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper):
+
+    if hbfont is None:
+        shaper = "freetype"
 
     # If the scale changed, invalidate caches of scaled fonts.
     global last_scale
