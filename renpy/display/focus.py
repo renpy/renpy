@@ -422,7 +422,7 @@ def before_interact(roots):
     grab = replaced_by.get(id(grab), None)
 
     if override is not None:
-        d = renpy.exports.get_displayable(base=True, *override) # type: ignore
+        d = renpy.exports.get_displayable(*override, base=True) # type: ignore
 
         if (d is not None) and (current is not d) and not grab:
             current = d

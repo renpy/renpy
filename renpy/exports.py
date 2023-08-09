@@ -2387,7 +2387,7 @@ def do_reshow_say(who, what, interact=False, *args, **kwargs):
     if who is not None:
         who = renpy.python.py_eval(who)
 
-    say(who, what, interact=interact, *args, **kwargs)
+    say(who, what, *args, interact=interact, **kwargs)
 
 
 curried_do_reshow_say = curry(do_reshow_say)
@@ -3340,7 +3340,7 @@ def call_screen(_screen_name, *args, **kwargs):
     if "_with_none" in kwargs:
         with_none = kwargs.pop("_with_none")
 
-    show_screen(_screen_name, _transient=True, *args, **kwargs)
+    show_screen(_screen_name, *args, _transient=True, **kwargs)
 
     roll_forward = renpy.exports.roll_forward_info()
 

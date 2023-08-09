@@ -97,7 +97,7 @@ init -1500 python:
                 if renpy.has_screen(screen):
 
                     renpy.transition(transition)
-                    renpy.show_screen(screen, _transient=True, *self.args, **self.kwargs)
+                    renpy.show_screen(screen, *self.args, _transient=True, **self.kwargs)
                     renpy.restart_interaction()
 
                 elif renpy.has_label(screen):

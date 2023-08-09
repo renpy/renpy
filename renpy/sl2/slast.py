@@ -2045,7 +2045,7 @@ class SLUse(SLNode):
             args = [ ]
             kwargs = { }
 
-        renpy.display.screen.use_screen(self.target, _name=name, _scope=context.scope, *args, **kwargs)
+        renpy.display.screen.use_screen(self.target, *args, _name=name, _scope=context.scope, **kwargs)
 
     def execute(self, context):
 
