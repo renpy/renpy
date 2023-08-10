@@ -115,8 +115,8 @@ Execution of a block terminates when all statements in the block have
 terminated.
 
 If an ATL statement requires evaluation of an expression, such evaluation
-occurs when the transform is first added to the scene list. (Such as when
-using a ``show`` statement or ``ui`` function.)
+occurs when the transform is first executed. (Such as when using a ``show``
+statement or displaying the transform as part of a screen.)
 
 ATL Statements
 ==============
@@ -143,9 +143,9 @@ The interpolation statement is the main way that ATL controls transformations.
 
 The first part of the interpolation statement is used to select a function
 that time-warps the interpolation. (That is, a function from linear time to
-non-linear time.) This can either be done by giving the name of a warper
-registered with ATL, or by giving the
-keyword "warp" followed by an
+non-linear time, see :ref:`warpers` for more information about warpers.)
+This can either be done by giving the name of a warper registered with ATL,
+or by giving the keyword "warp" followed by an
 expression giving a function. Either case is followed by a number, giving the
 number of seconds the interpolation should take. ::
 
@@ -163,8 +163,6 @@ number of seconds the interpolation should take. ::
         xpos 0
         warp my_warpers[0] 5 xpos 520
         warp my_warper 3 xpos 100
-
-See :ref:`warpers` for more information about warpers.
 
 If no warp function is given, the interpolation is instantaneous. Otherwise,
 it persists for the amount of time given, and at least one frame.
@@ -240,8 +238,8 @@ An important special case is that the pause warper, followed by a time and
 nothing else, causes ATL execution to pause for that amount of time.
 
 Some properties can have values of multiple types. For example, the :propref:`xpos`
-property can be an int, float, or absolute. The behavior is undefined when an
-interpolation has old and new property values of different types.
+property can be an int, float, or absolute, other properties can be None. The behavior
+is undefined when an interpolation has old and new property values of different types.
 
 Time Statement
 --------------
@@ -331,7 +329,6 @@ two sets of choice statements that would otherwise be back-to-back.
 
 Repeat Statement
 ----------------
-
 
 The ``repeat`` statement is a simple statement that causes the block containing it
 to resume execution from the beginning. If the expression is present, then it
@@ -570,6 +567,9 @@ This function should not have side effects other
 than changing the Transform object in the first argument, and may be
 called at any time with any value to enable prediction.
 
+Note that ``function`` is not a transform property and that it doesn't
+have the exact same meaning as :func:`Transform`\ 's `function` parameter.
+
 ::
 
     init python:
@@ -643,7 +643,7 @@ amount of time. (If the statement has 0 duration, then t is 1.0 when it runs.)
 t' should start at 0.0 and end at 1.0, but can be greater or less.
 
 ``pause``
-    Pause, then jump to the new value. If t == 1.0, t = 1.0. Otherwise, t'
+    Pause, then jump to the new value. If t == 1.0, t' = 1.0. Otherwise, t'
     = 0.0.
 
 ``linear``
@@ -691,9 +691,8 @@ float. If it's a float, it's interpreted as a fraction of the size of the
 containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
 
 Note that not all properties are independent. For example, :propref:`xalign` and :propref:`xpos`
-both update some of the same underlying data. In a parallel statement, only
-one block should adjust horizontal position, and one should adjust vertical
-positions. (These may be the same block.) The angle and radius properties set
+both update some of the same underlying data. In a parallel statement, not more than
+one block should adjust properties sharing the same data. The angle and radius properties set
 both horizontal and vertical positions.
 
 .. transform-property:: pos
@@ -992,7 +991,7 @@ both horizontal and vertical positions.
     :default: None
 
     If not None, gives the lower right corner of the crop box. Cropt takes
-    priority over corners. When a float, and crop_relativer is enabled, this
+    priority over corners. When a float, and crop_relative is enabled, this
     is relative to the size of the child.
 
 .. transform-property:: xysize
@@ -1086,7 +1085,7 @@ both horizontal and vertical positions.
     :default: 0.0
 
     If this transform is being used as a transition, then this is the
-    duration of the transition.
+    duration of the transition. See :ref:`atl-transitions`.
 
 .. transform-property:: events
 
@@ -1094,7 +1093,7 @@ both horizontal and vertical positions.
     :default: True
 
     If true, events are passed to the child of this transform. If false,
-    events are blocked. (This can be used in ATL transforms to prevent
+    events are blocked. (This can be used in ATL transitions to prevent
     events from reaching the old_widget.)
 
 .. transform-property:: xpan
@@ -1281,7 +1280,7 @@ The following events can be triggered automatically:
     Python equivalent.
 
     Note that this isn't triggered when the transform is eliminated via
-    the scene statement or exiting the context it exists in, such as when
+    the scene statement or exiting the :ref:`context` it exists in, such as when
     exiting the game menu.
 
 ``replaced``
@@ -1349,7 +1348,7 @@ multiple ways - for example, :tpref:`xalign` sets xpos and xanchor.
 
 Finally, when a ``show`` statement does not include an ``at`` clause, the
 same displayables are used, so no inheritence is necessary. To prevent inheritance,
-show and then hide the displayable.
+hide and then show the displayable again.
 
 .. _atl-transitions:
 
@@ -1357,11 +1356,11 @@ ATL Transitions
 ===============
 
 It's possible to use an ATL transform to define a transition. These transitions
-accept the `old_widget` and `new_widget` arguments, which are given displayables
+need to accept the `old_widget` and `new_widget` arguments, which are given displayables
 that are transitioned from and to, respectively.
 
 An ATL transition must set the :tpref:`delay` property to the number of seconds
-the transition lasts for. It may user the :tpref:`events` property to prevent
+the transition lasts for. It may use the :tpref:`events` property to prevent
 the old displayable from receiving events. ::
 
     transform spin(duration=1.0, new_widget=None, old_widget=None):
