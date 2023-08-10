@@ -429,6 +429,7 @@ cdef class HBFont:
             self.ascent = FT_CEIL(int(face.size.metrics.ascender * vextent_scale))
             self.descent = FT_FLOOR(int(face.size.metrics.descender * vextent_scale))
 
+
             if self.descent > 0:
                 self.descent = -self.descent
 
@@ -436,12 +437,6 @@ cdef class HBFont:
             self.descent -= self.expand
 
             self.height = self.ascent - self.descent
-
-            # This is probably more correct, but isn't what 6.12.1 did.
-            # self.lineskip = FT_CEIL(face.size.metrics.height) + self.expand
-
-            # if self.height > self.lineskip:
-            #     self.lineskip = self.height
 
             self.lineskip = <int> self.height * renpy.game.preferences.font_line_spacing
 
@@ -521,19 +516,12 @@ cdef class HBFont:
                     FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
 
                 if self.vertical:
-                    metrics = face.glyph.metrics
-                    # move the origin for vertical layout
-                    # if self.vertical:
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
-                    # else:
-                    #     FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance // 2, -face.bbox.yMax)
                     shear.xx = 0
                     shear.xy = -(1 << 16)
                     shear.yx = 1 << 16
                     shear.yy = 0
                     FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
-                    # set vertical baseline to a half of the height
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.yMax + face.bbox.yMin) // 2)
+                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.xMax - face.bbox.xMin) // 2)
 
                 if self.stroker != NULL:
                     # FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
@@ -625,7 +613,11 @@ cdef class HBFont:
 
         hb_buffer_add_utf32(hb, <const uint32_t *> ((<const char *> utf32_s) + 4), len(s), 0, len(s));
 
-        hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
+        if self.vertical:
+            hb_buffer_set_direction(hb, HB_DIRECTION_TTB)
+        else:
+            hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
+
         hb_buffer_guess_segment_properties(hb)
         hb_buffer_set_cluster_level(hb, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS)
 
@@ -638,15 +630,15 @@ cdef class HBFont:
         g = face.glyph
 
         for 0 <= i < glyph_count:
-            print(
-                repr(s[glyph_info[i].cluster]),
-                glyph_info[i].codepoint,
-                glyph_info[i].cluster,
-                glyph_pos[i].x_advance / 64,
-                glyph_pos[i].y_advance,
-                glyph_pos[i].x_offset / 64,
-                glyph_pos[i].y_offset,
-            )
+            # print(
+            #     repr(s[glyph_info[i].cluster]),
+            #     glyph_info[i].codepoint,
+            #     glyph_info[i].cluster,
+            #     glyph_pos[i].x_advance / 64,
+            #     glyph_pos[i].y_advance / 64,
+            #     glyph_pos[i].x_offset / 64,
+            #     glyph_pos[i].y_offset / 64,
+            # )
 
             cache = self.get_glyph(index)
 
@@ -660,12 +652,13 @@ cdef class HBFont:
             gl.line_spacing = self.lineskip
             gl.draw = True
 
-            gl.x_offset = glyph_pos[i].x_offset / 64.0
-            gl.y_offset = glyph_pos[i].y_offset / 64.0
-
             if self.vertical:
-                gl.advance = glyph_pos[i].y_advance / 64.0
+                gl.x_offset = -glyph_pos[i].y_offset / 64.0
+                gl.y_offset = -glyph_pos[i].x_offset / 64.0
+                gl.advance = -glyph_pos[i].y_advance / 64.0
             else:
+                gl.x_offset = glyph_pos[i].x_offset / 64.0
+                gl.y_offset = glyph_pos[i].y_offset / 64.0
                 gl.advance = glyph_pos[i].x_advance / 64.0
 
             rv.append(gl)
@@ -781,8 +774,8 @@ cdef class HBFont:
             if glyph.split == SPLIT_INSTEAD:
                 continue
 
-            x = <int> (glyph.x + xo)
-            y = <int> (glyph.y + yo)
+            x = <int> (glyph.x + xo + glyph.x_offset)
+            y = <int> (glyph.y + yo + glyph.y_offset)
 
             underline_x = x - glyph.delta_x_offset
             underline_end = x + <int> glyph.advance + expand
