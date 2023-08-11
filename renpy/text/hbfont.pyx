@@ -585,7 +585,6 @@ cdef class HBFont:
         cdef list rv
         cdef int len_s
         cdef FT_ULong c, next_c, vs
-        cdef FT_UInt index, next_index
         cdef int error
         cdef Glyph gl
         cdef FT_Vector kerning
@@ -639,8 +638,6 @@ cdef class HBFont:
             #     glyph_pos[i].x_offset / 64,
             #     glyph_pos[i].y_offset / 64,
             # )
-
-            cache = self.get_glyph(index)
 
             gl = Glyph.__new__(Glyph)
 
