@@ -247,7 +247,7 @@ class TextSegment(object):
             self.cps = renpy.game.preferences.text_cps
 
         self.cps = self.cps * style.slow_cps_multiplier
-        
+
         self.shaper = style.shaper
 
     # From here down is the public glyph API.
@@ -993,7 +993,7 @@ class Layout(object):
         will also use subsegment to handle font groups.
         """
 
-        if not ts.default_font:
+        if not ts.default_font or (style.emoji_font is None):
             return ts.subsegment(text)
 
         rv = [ ]

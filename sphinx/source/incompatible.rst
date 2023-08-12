@@ -33,6 +33,24 @@ report any issues. When reporting issues, please determine the hardware
 8.2.0 / 7.7.0
 --------------
 
+**Text Changes** The way Ren'Py handles text has changed in several ways. A big one is
+the switch to using harfbuzz for shaping (in Ren'Py 8), and bytecode
+hinting, which may change the letterforms. The positioning of vertical
+text has also been changed by harfbuzz rendering.
+
+To revert these changes, include in your game::
+
+    style default:
+        shaper "freetype"
+        hinting True
+
+Ren'Py will automatically use an Emoji font when required. To disable this,
+add::
+
+    style default:
+        emoji_font None
+
+
 **Polar Coordinate Changes** Ren'Py now enforces that the angles given to
 the :tpref:`angle` and :tpref:`anchorangle`
 properties are in the range 0 to 360 degrees, inclusive of 0 but not of 360.
