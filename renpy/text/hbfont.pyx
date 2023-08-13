@@ -699,18 +699,10 @@ cdef class HBFont:
             if glyph.split == SPLIT_INSTEAD:
                 continue
 
-            if glyph.character == 0x200b:
-                continue
+            cache = self.get_glyph(glyph.glyph)
 
-            if glyph.variation == 0:
-                index = FT_Get_Char_Index(face, glyph.character)
-            else:
-                index = FT_Face_GetCharVariantIndex(face, glyph.character, glyph.variation)
-
-            cache = self.get_glyph(index)
-
-            bmx = <int> (glyph.x + .5) + cache.bitmap_left
-            bmy = glyph.y - cache.bitmap_top
+            bmx = <int> (glyph.x + .5 + glyph.x_offset) + cache.bitmap_left
+            bmy = <int> (glyph.y + glyph.y_offset) - cache.bitmap_top
 
             if bmx < x:
                 x = bmx
