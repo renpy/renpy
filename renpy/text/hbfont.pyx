@@ -107,6 +107,7 @@ cdef extern from "hb.h":
     struct hb_feature_t
 
     void hb_font_set_scale(hb_font_t *font, int x_scale, int y_scale)
+    void hb_font_set_synthetic_slant(hb_font_t *font, float slant)
 
     # hb-shape
     void hb_shape (
@@ -394,6 +395,10 @@ cdef class HBFont:
         self.hb_font = hb_ft_font_create(self.face_object.face, NULL)
         hb_ft_font_set_funcs(self.hb_font)
         hb_font_set_scale(self.hb_font, <int> (self.size * 64), <int> (self.size * 64))
+
+        if self.italic:
+            hb_font_set_synthetic_slant(self.hb_font, .207)
+
         hb_ft_font_set_load_flags(self.hb_font, self.hinting | FT_LOAD_COLOR)
 
     cdef setup(self):
