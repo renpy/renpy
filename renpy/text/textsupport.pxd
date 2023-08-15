@@ -32,7 +32,6 @@ cdef enum ruby_t:
 
 cdef class Glyph:
 
-    # The character this glyph represents.
     cdef:
 
         # The x and y coordinates of the placed character.
@@ -45,6 +44,9 @@ cdef class Glyph:
         # The character we use.
         public unsigned int character
         public unsigned int variation
+
+        # The glyph number (when selected directly).
+        public unsigned int glyph
 
         # Controls splitting of this glyph, based on where we are in the
         # the line.
@@ -60,6 +62,9 @@ cdef class Glyph:
         # The width and advance of the font.
         public float width
         public float advance
+
+        public float x_offset
+        public float y_offset
 
         # The time when this glyph should be shown.
         public float time
