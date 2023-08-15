@@ -300,7 +300,6 @@ init -1100 python:
             style.default.shaper = "freetype"
             style.default.hinting = "auto"
 
-
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
