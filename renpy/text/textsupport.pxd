@@ -32,7 +32,6 @@ cdef enum ruby_t:
 
 cdef class Glyph:
 
-    # The character this glyph represents.
     cdef:
 
         # The x and y coordinates of the placed character.
