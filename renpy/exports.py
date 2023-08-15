@@ -3500,6 +3500,8 @@ def display_notify(message):
 
     hide_screen('notify')
     show_screen('notify', message=message)
+    renpy.display.tts.notify_text = renpy.text.extras.filter_alt_text(message)
+
     restart_interaction()
 
 
