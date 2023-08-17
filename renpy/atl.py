@@ -308,6 +308,8 @@ class Context(object):
         except Exception:
             return True
 
+        return False
+
 
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
@@ -447,8 +449,15 @@ class ATLTransformBase(renpy.object.Object):
         # a way that would affect the execution of the ATL.
 
         if t.atl.constant != GLOBAL_CONST:
-            if not self.context.variables_equal(t.context, t.atl.find_loaded_variables()):
+
+            if not deep_compare(self.block, t.block):
                 return
+
+            # if t.atl.constant == NOT_CONST:
+            #     return
+
+            # if not self.context.variables_equal(t.context, t.atl.find_loaded_variables()):
+            #     return
 
         self.done = t.done
         self.block = t.block
@@ -596,9 +605,6 @@ class ATLTransformBase(renpy.object.Object):
         return block
 
     def execute(self, trans, st, at):
-
-        if self.state.debug:
-            print("A", st)
 
         if self.done:
             return None
@@ -2300,3 +2306,24 @@ def parse_atl(l):
         old = new
 
     return RawBlock(block_loc, merged, animation)
+
+def deep_compare(a, b):
+    """
+    Compares two trees of ATL statements for equality.
+    """
+
+    if type(a) != type(b):
+        return False
+
+    if isinstance(a, (list, tuple)):
+        return all(deep_compare(i, j) for i, j in zip(a, b))
+
+    if isinstance(a, Statement):
+
+        for k, v in a.__dict__.items():
+            if not deep_compare(v, getattr(b, k)):
+                return False
+
+        return True
+
+    return a == b
