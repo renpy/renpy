@@ -242,23 +242,10 @@ def compile_all():
 
     for i in compile_queue:
 
-        i.atl.find_loaded_variables()
-
         if i.atl.constant == GLOBAL_CONST:
             i.compile()
 
     compile_queue = [ ]
-
-def find_loaded_variables(expr):
-    """
-    Returns the set of variables that are loaded by the given expression.
-    """
-
-    if expr is None:
-        return set()
-
-    ast = renpy.pyanalysis.ccache.ast_eval(expr)
-    return renpy.python.find_loaded_variables(ast)
 
 
 # Used to indicate that a variable is not in the context.
@@ -285,28 +272,6 @@ class Context(object):
     def __ne__(self, other):
         return not (self == other)
 
-    def variables_equal(self, other, variables):
-        """
-        Returns true if the variables in `variables` are equal in
-        this context and `other`. False if they are not equal.
-
-        Returns True if any variable cannot be compared.
-        """
-
-        try:
-
-            if renpy.config.at_transform_compare_full_context:
-                if self.context != other.context:
-                    return False
-
-            for i in variables:
-                if self.context.get(i, NotInContext) != other.context.get(i, NotInContext):
-                    return False
-
-            return True
-
-        except Exception:
-            return True
 
 
 # This is intended to be subclassed by ATLTransform. It takes care of
@@ -447,7 +412,8 @@ class ATLTransformBase(renpy.object.Object):
         # a way that would affect the execution of the ATL.
 
         if t.atl.constant != GLOBAL_CONST:
-            if not self.context.variables_equal(t.context, t.atl.find_loaded_variables()):
+
+            if not deep_compare(self.block, t.block):
                 return
 
         self.done = t.done
@@ -597,9 +563,6 @@ class ATLTransformBase(renpy.object.Object):
 
     def execute(self, trans, st, at):
 
-        if self.state.debug:
-            print("A", st)
-
         if self.done:
             return None
 
@@ -704,12 +667,6 @@ class RawStatement(object):
 
         self.constant = NOT_CONST
 
-    def find_loaded_variables(self):
-        """
-        Returns the set of variables that are loaded by this statement.
-        """
-
-        raise Exception("find_loaded_variables not implemented.")
 
 # The base class for compiled ATL Statements.
 
@@ -767,10 +724,6 @@ class RawBlock(RawStatement):
     # If this block uses only constant values we can once compile it
     # and use this value for all ATLTransform that use us as an atl.
     compiled_block = None
-
-    # If this is the outermost ATL of a parse, a set giving the variables
-    # that are loaded by this block.
-    loaded_variable_cache = None
 
 
     def __init__(self, loc, statements, animation):
@@ -833,20 +786,6 @@ class RawBlock(RawStatement):
             constant = min(constant, i.constant)
 
         self.constant = constant
-
-    def find_loaded_variables(self):
-
-        if self.loaded_variable_cache is not None:
-            return self.loaded_variable_cache
-
-        variables = set()
-
-        for i in self.statements:
-            variables.update(i.find_loaded_variables())
-
-        self.loaded_variable_cache = variables
-
-        return variables
 
 
 # A compiled ATL block.
@@ -1186,26 +1125,6 @@ class RawMultipurpose(RawStatement):
 
         self.constant = constant
 
-    def find_loaded_variables(self):
-        rv = set()
-
-        rv.update(find_loaded_variables(self.warp_function))
-        rv.update(find_loaded_variables(self.duration))
-        rv.update(find_loaded_variables(self.circles))
-
-        for _name, expr in self.properties:
-            rv.update(find_loaded_variables(expr))
-
-        for _name, exprs in self.splines:
-            for expr in exprs:
-                rv.update(find_loaded_variables(expr))
-
-        for expr, withexpr in self.expressions:
-            rv.update(find_loaded_variables(expr))
-            rv.update(find_loaded_variables(withexpr))
-
-        return rv
-
     def predict(self, ctx):
 
         for i, _j in self.expressions:
@@ -1241,9 +1160,6 @@ class RawContainsExpr(RawStatement):
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.expression)
 
-    def find_loaded_variables(self):
-        return find_loaded_variables(self.expression)
-
 
 # This allows us to have multiple ATL transforms as children.
 class RawChild(RawStatement):
@@ -1277,14 +1193,6 @@ class RawChild(RawStatement):
             constant = min(constant, i.constant)
 
         self.constant = constant
-
-    def find_loaded_variables(self):
-        rv = set()
-
-        for i in self.children:
-            rv.update(i.find_loaded_variables())
-
-        return rv
 
 
 # This changes the child of this statement, optionally with a transition.
@@ -1595,9 +1503,6 @@ class RawRepeat(RawStatement):
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.repeats)
 
-    def find_loaded_variables(self):
-        return find_loaded_variables(self.repeats)
-
 class Repeat(Statement):
 
     def __init__(self, loc, repeats):
@@ -1635,13 +1540,6 @@ class RawParallel(RawStatement):
 
         self.constant = constant
 
-    def find_loaded_variables(self):
-        rv = set()
-
-        for i in self.blocks:
-            rv.update(i.find_loaded_variables())
-
-        return rv
 
 
 class Parallel(Statement):
@@ -1723,15 +1621,6 @@ class RawChoice(RawStatement):
 
         self.constant = constant
 
-    def find_loaded_variables(self):
-        rv = set()
-
-        for chance, block in self.choices:
-            rv.update(find_loaded_variables(chance))
-            rv.update(block.find_loaded_variables())
-
-        return rv
-
 
 class Choice(Statement):
 
@@ -1801,9 +1690,6 @@ class RawTime(RawStatement):
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.time)
 
-    def find_loaded_variables(self):
-        return find_loaded_variables(self.time)
-
 
 class Time(Statement):
 
@@ -1850,15 +1736,6 @@ class RawOn(RawStatement):
             constant = min(constant, block.constant)
 
         self.constant = constant
-
-    def find_loaded_variables(self):
-        rv = set()
-
-        for block in self.handlers.values():
-            rv.update(block.find_loaded_variables())
-
-        return rv
-
 
 class On(Statement):
 
@@ -1968,9 +1845,6 @@ class RawEvent(RawStatement):
     def mark_constant(self, analysis):
         self.constant = GLOBAL_CONST
 
-    def find_loaded_variables(self):
-        return set()
-
 
 class Event(Statement):
 
@@ -1996,9 +1870,6 @@ class RawFunction(RawStatement):
 
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.expr)
-
-    def find_loaded_variables(self):
-        return find_loaded_variables(self.expr)
 
 
 class Function(Statement):
@@ -2311,3 +2182,24 @@ def parse_atl(l):
         old = new
 
     return RawBlock(block_loc, merged, animation)
+
+def deep_compare(a, b):
+    """
+    Compares two trees of ATL statements for equality.
+    """
+
+    if type(a) != type(b):
+        return False
+
+    if isinstance(a, (list, tuple)):
+        return all(deep_compare(i, j) for i, j in zip(a, b))
+
+    if isinstance(a, Statement):
+
+        for k, v in a.__dict__.items():
+            if not deep_compare(v, getattr(b, k)):
+                return False
+
+        return True
+
+    return a == b

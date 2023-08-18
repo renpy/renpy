@@ -308,7 +308,7 @@ class SMAnimation(renpy.display.displayable.Displayable):
         for edges in self.edges.values():
             args.extend(edges)
 
-        return SMAnimation(self.initial, delay=self.delay, *args, **self.properties)
+        return SMAnimation(self.initial, *args, delay=self.delay, **self.properties)
 
 
 def Animation(*args, **kwargs):

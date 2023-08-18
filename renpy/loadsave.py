@@ -36,6 +36,7 @@ import types
 import shutil
 import os
 import sys
+import time
 
 import renpy
 from json import dumps as json_dumps
@@ -436,7 +437,13 @@ def save(slotname, extra_info='', mutate_flag=False):
 
     screenshot = renpy.game.interface.get_screenshot()
 
-    json = { "_save_name" : extra_info, "_renpy_version" : list(renpy.version_tuple), "_version" : renpy.config.version }
+    json = {
+        "_save_name" : extra_info,
+        "_renpy_version" : list(renpy.version_tuple),
+        "_version" : renpy.config.version,
+        "_game_runtime" : renpy.exports.get_game_runtime(),
+        "_ctime" : time.time(),
+        }
 
     for i in renpy.config.save_json_callbacks:
         i(json)
