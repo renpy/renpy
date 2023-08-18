@@ -650,7 +650,6 @@ cdef class HBFont:
             gl.glyph = glyph_info[i].codepoint
 
             gl.ascent = self.ascent
-            gl.width = 0
             gl.line_spacing = self.lineskip
             gl.draw = True
 
@@ -662,6 +661,8 @@ cdef class HBFont:
                 gl.x_offset = glyph_pos[i].x_offset / 64.0
                 gl.y_offset = glyph_pos[i].y_offset / 64.0
                 gl.advance = glyph_pos[i].x_advance / 64.0
+
+            gl.width = gl.advance
 
             rv.append(gl)
 
