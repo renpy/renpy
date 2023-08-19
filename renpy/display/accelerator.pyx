@@ -690,6 +690,9 @@ cdef class RenderTransform:
                 ypoi = math.degrees(ypoi)
                 zpoi = math.degrees(zpoi)
 
+        if xplacement or yplacement or state.zpos:
+            self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
+
         if poi or orientation or xyz_rotate:
             m = Matrix.offset(-width / 2, -height / 2, -z11)
 
@@ -706,9 +709,6 @@ cdef class RenderTransform:
             m = Matrix.offset(width / 2, height / 2, z11) * m
 
             self.reverse = m * self.reverse
-
-        if xplacement or yplacement or state.zpos:
-            self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
 
         if state.rotate is not None:
             m = Matrix.offset(-width / 2, -height / 2, 0.0)
