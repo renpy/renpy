@@ -30,9 +30,10 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import renpy
 import string
 import os
+import re
 
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
-
+find_display_tags_regex = re.compile(r"([{[[].*?[]}])")
 
 class Formatter(string.Formatter):
     """
@@ -214,7 +215,11 @@ class Formatter(string.Formatter):
             value = value.lower()
 
         if "c" in conversion and value:
-            value = value[0].upper() + value[1:]
+            # find first text only group not in {} tags to get position of the first
+            # printable word then capitalize that word
+            groups = find_display_tags_regex.sub("||", value).strip("||").split("||", 1)[0].split(None)
+            position = next(re.finditer(groups[0], value))
+            value = value[:position.start()] + value[position.start():position.end()].capitalize() + value[position.end():]
 
         return value
 
