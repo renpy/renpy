@@ -19,7 +19,10 @@ invoked. If the action returns a value, then the value is returned
 from an interaction.
 
 A list of actions can usually be provided in lieu of a single action,
-in which case the actions in the list are run in order.
+in which case the actions in the list are run in order. A list of
+actions is sensitive if all of the actions are sensitive, and selected
+if any of them are ; that unless :func:`SensitiveIf` or :func:`SelectedIf`,
+respectively, is part of the list.
 
 Control Actions
 ---------------
