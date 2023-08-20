@@ -261,6 +261,10 @@ init python in project:
             environ["RENPY_LAUNCHER_LANGUAGE"] = _preferences.language or "english"
             environ.update(env)
 
+            # Filter out system PYTHON* environment variables.
+            if hasattr(sys, "renpy_executable"):
+                environ = { k : v for k, v in environ.items() if not k.startswith("PYTHON") }
+
             encoded_environ = { }
 
             for k, v in environ.items():
