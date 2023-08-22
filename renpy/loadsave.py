@@ -565,6 +565,9 @@ def force_autosave(take_screenshot=False, block=False):
     if renpy.game.after_rollback or renpy.exports.in_rollback():
         return
 
+    if not renpy.store._autosave:
+        return
+
     # That is, autosave is running.
     if not autosave_not_running.is_set():
         return
