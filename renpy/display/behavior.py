@@ -1903,6 +1903,19 @@ class Adjustment(renpy.object.Object):
         self.ranged = ranged
         self.force_step = force_step
 
+    def viewport_replaces(self, replaces): # type: (Adjustment) -> None
+        if replaces is self:
+            return
+
+        self.range = replaces.range
+        self.value = replaces.value
+
+        self.animation_amplitude = replaces.animation_amplitude
+        self.animation_target = replaces.animation_target
+        self.animation_start = replaces.animation_start
+        self.animation_delay = replaces.animation_delay
+        self.animation_warper = replaces.animation_warper
+
     def round_value(self, value, release):
         # Prevent deadlock border points
         if value <= 0:
