@@ -10,6 +10,44 @@ Changelog (Ren'Py 7.x-)
 8.2.0 / 7.7.0
 =============
 
+Emoji and Other Text Improvements
+---------------------------------
+
+Ren'Py's text handing has gotten an overhaul in this release, with the
+intent of supporting Emoji and scripts that require complext text shaping,
+like Indic languages. This required many changes.
+
+The first was a change in Ren'Py's defaults to enable bytecode hinting of
+fonts. This may cause some of the fonts to change shape slightly, but
+is required to allow script-like fonts to combine properly.
+
+The second change is only enabled in Ren'Py 8, and that's the use of the
+Harfbuzz library to shape text. Harfbuzz is used reorder and select different
+glyphs based on the context they're in and the language of the text provided.
+
+Next, Ren'Py has gained the ability to render fonts that use the COLR section
+to provide color glyphs. These are general fonts used for Emoji. Ren'Py ships
+with a font that contains the Twiemoji image, which covers a majority of the
+Emoji in use.
+
+Ren'Py now automatically switches to the Emoji font when it encounters Emoji
+characters in text. The supported characters are those in the `Emoji 15 <https://unicode.org/Public/emoji/15.0/emoji-test.txt>`_
+set. Harfbuzz support is required to render joining sequences of Emoji,
+including things like gender and skin-tone modifiers, so you'll need Ren'Py 8
+to have those work. This switching occurrs when a font tag is not being
+used.
+
+The new :propref:`emoji_font`, :propref:`prefer_emoji` and :propref:`shaper`
+style properties help control these new text rendering features.
+
+Fundamentally, you can include Emoji into your game by typing it into your
+script as character dialogue. For example::
+
+    e "I'm feeling 😃 today."
+
+Text in Indic languages should also be supported, but you'll need to find a
+font that supports the language you're using.
+
 Speech Bubble Improvements
 --------------------------
 
@@ -26,6 +64,14 @@ specific to some but not all characters.
 
 Features
 --------
+
+The new :func:`renpy.confirm` function provides a way of using
+the confirmation screen from within Python.
+
+The new :func:`renpy.reset_all_contexts` function removes all contexts
+from the stack, and creates a new context that continues at the next
+statement. It can be used to fully reset the game upon load or when
+an error happens.
 
 The new :func:`renpy.last_say` function returns information about the
 last say statement to run.
@@ -104,6 +150,7 @@ having their APKs rejected for having different keys. This was caused by
 an old release of Ren'Py that used the APK key for bundles. A solution to
 this problem is documented in :ref:`incompatible changes <android-key-migration>`.
 
+
 Fixes
 -----
 
@@ -137,29 +184,25 @@ silently ignored.
 Other Changes
 -------------
 
+The Ren'Py sync screens now use styles prefixed with ``sync``, allowing
+basic customization without having to edit the screens.
+
 Ren'Py will disable text input methods when text editing is not possible, which
 makes it possible to use the space key to advance the game even if an input
 method that uses the space key is active.
-
-The "system cursor" :func:`Preference` now applies to :var:`config.mouse_displayable`,
-when it used to only disable :var:`config.mouse`.
 
 ATL Transitions now use the animation timebase. This is generally the same
 behavior as before, until the interaction restarts, in which case the
 transition would often incorrectly restart.
 
-Ren'Py will produce an error if an object that inherited from store.object
-in an old save is loaded, and no longer inherits from store.object, which
-would break rollback.
-
 Preferences no longer have defaults, meaning all preferences can be
 changed using the ``default`` statement.
 
 The :term:`absolute <position>` type, used to represent absolute amounts of pixels,
-now ensures the result of mathematically operations with integers and
-floats remain absolutes. This fixes a class of problems where
+now ensures the result of mathematical operations with integers and
+floats remain absolute numbers. This fixes a class of problems where
 operations performed on absolutes could produce the incorrect
-type, leasing to layout problems.
+type, leading to layout problems.
 
 Live2D now checks for a motion after evaluating an `attribute_filter`,
 and does not sustain the previous motions if a new motion is present.

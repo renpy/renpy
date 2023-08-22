@@ -34,10 +34,96 @@ import sys
 
 import renpy.config
 
-cdef bint _use_ucs2 = (sys.maxunicode == 0xffff)
-
 cdef extern from "ftsupport.h":
     char *freetype_error_to_string(int error)
+
+cdef extern from "hb.h":
+
+    ctypedef int hb_bool_t
+
+    enum hb_direction_t:
+        HB_DIRECTION_INVALID
+        HB_DIRECTION_LTR
+        HB_DIRECTION_RTL
+        HB_DIRECTION_TTB
+        HB_DIRECTION_BTT
+
+    ctypedef unsigned int hb_codepoint_t
+
+    ctypedef void (*hb_destroy_func_t)(void *)
+    ctypedef int hb_position_t
+
+    # hb-buffer
+    struct hb_glyph_info_t:
+        hb_codepoint_t codepoint;
+        uint32_t       cluster;
+
+    struct hb_glyph_position_t:
+        hb_position_t  x_advance
+        hb_position_t  y_advance
+        hb_position_t  x_offset
+        hb_position_t  y_offset
+
+    struct hb_buffer_t
+
+    hb_buffer_t *hb_buffer_create()
+
+    void hb_buffer_reset(hb_buffer_t *)
+
+    void hb_buffer_destroy(hb_buffer_t *)
+
+    void hb_buffer_add_utf8 (
+        hb_buffer_t *buffer,
+        const char *text,
+        int text_length,
+        unsigned int item_offset,
+        int item_length)
+
+    void hb_buffer_add_utf32 (hb_buffer_t *buffer,
+        const uint32_t *text,
+        int text_length,
+        unsigned int item_offset,
+        int item_length)
+
+    void hb_buffer_set_direction (hb_buffer_t *buffer, hb_direction_t direction)
+    void hb_buffer_guess_segment_properties(hb_buffer_t *buffer)
+
+    hb_glyph_info_t *hb_buffer_get_glyph_infos (hb_buffer_t *buffer, unsigned int *length);
+    hb_glyph_position_t *hb_buffer_get_glyph_positions (hb_buffer_t *buffer, unsigned int *length);
+
+    enum hb_buffer_cluster_level_t:
+        HB_BUFFER_CLUSTER_LEVEL_MONOTONE_GRAPHEMES
+        HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS
+        HB_BUFFER_CLUSTER_LEVEL_CHARACTERS
+        HB_BUFFER_CLUSTER_LEVEL_DEFAULT
+
+    void hb_buffer_set_cluster_level(hb_buffer_t *buffer, hb_buffer_cluster_level_t cluster_level)
+
+    # hb-font
+    struct hb_font_t
+
+    void hb_font_destroy(hb_font_t *)
+
+    struct hb_feature_t
+
+    void hb_font_set_scale(hb_font_t *font, int x_scale, int y_scale)
+    void hb_font_set_synthetic_slant(hb_font_t *font, float slant)
+
+    # hb-shape
+    void hb_shape (
+        hb_font_t *font,
+        hb_buffer_t *buffer,
+        const hb_feature_t *features,
+        unsigned int num_features);
+
+
+
+cdef extern from "hb-ft.h":
+    hb_font_t *hb_ft_font_create(FT_Face ft_face, hb_destroy_func_t *destroy)
+    hb_bool_t hb_ft_font_changed(hb_font_t *font)
+    void hb_ft_font_set_funcs(hb_font_t *font)
+    void hb_ft_font_set_load_flags (hb_font_t *font, int load_flags)
+
 
 # The freetype library object we use.
 cdef FT_Library library
@@ -81,21 +167,6 @@ cdef bint is_vs(unsigned int char):
 
     return False
 
-cdef int is_ucs2_surrogate(unsigned int char):
-    if _use_ucs2:
-        if 0xd800 <= char <= 0xdbff:
-            # High
-            return 2
-        elif 0xdc00 <= char <= 0xdfff:
-            # Low
-            return 1
-        else:
-            # Not a surrogate
-            return 0
-    else:
-        # skip when not using UCS-2
-        return 0
-
 cdef bint is_zerowidth(unsigned int char):
     if char == 0x200b: # Zero-width space.
         return True
@@ -115,9 +186,6 @@ cdef bint is_zerowidth(unsigned int char):
     if is_vs(char): # Variation sequences
         return True
 
-    if is_ucs2_surrogate(char) == 1: # Low surrogate pair (width is calculated when a high surrogate is read)
-        return True
-
     return False
 
 cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count):
@@ -125,11 +193,11 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
     Seeks to offset, and then reads count bytes from the stream into buffer.
     """
 
-    cdef FTFace face
+    cdef HBFace face
     cdef char *cbuf
     cdef unsigned long i
 
-    face = <FTFace> stream.descriptor.pointer
+    face = <HBFace> stream.descriptor.pointer
     f = face.f
 
     if face.offset != offset:
@@ -168,7 +236,7 @@ cdef void close_func(FT_Stream stream):
     return
 
 
-cdef class FTFace:
+cdef class HBFace:
     """
     Represents a freetype face.
     """
@@ -226,13 +294,12 @@ cdef class FTFace:
         # The size the face is at.
         self.size = -1
 
-cdef class FTFont:
+cdef class HBFont:
 
     cdef:
 
-        FTFace face_object
+        HBFace face_object
         FT_Face face
-        TTGSUBTable gsubtable
 
         # A cache of various properties.
         float size
@@ -268,12 +335,13 @@ cdef class FTFont:
         # The hinting flag to use.
         int hinting
 
+        # The font harfbuzz uses.
+        hb_font_t *hb_font
+
     def __cinit__(self):
         for i from 0 <= i < 256:
             self.cache[i].index = -1
             FT_Bitmap_New(&(self.cache[i].bitmap))
-
-        init_gsubtable(&self.gsubtable)
 
     def __dealloc__(self):
         for i from 0 <= i < 256:
@@ -281,8 +349,6 @@ cdef class FTFont:
 
         if self.stroker != NULL:
             FT_Stroker_Done(self.stroker)
-
-        free_gsubtable(&self.gsubtable)
 
 
     def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting):
@@ -305,8 +371,6 @@ cdef class FTFont:
         self.antialias = antialias
         self.vertical = vertical
 
-        LoadGSUBTable(&self.gsubtable, self.face)
-
         if outline == 0:
             self.stroker = NULL;
             self.expand = 0
@@ -324,6 +388,18 @@ cdef class FTFont:
             self.hinting = FT_LOAD_NO_HINTING
         else:
             self.hinting = FT_LOAD_FORCE_AUTOHINT
+
+
+        FT_Set_Char_Size(self.face_object.face, 0, <int> (self.size * 64), 0, 0)
+
+        self.hb_font = hb_ft_font_create(self.face_object.face, NULL)
+        hb_ft_font_set_funcs(self.hb_font)
+        hb_font_set_scale(self.hb_font, <int> (self.size * 64), <int> (self.size * 64))
+
+        if self.italic:
+            hb_font_set_synthetic_slant(self.hb_font, .207)
+
+        hb_ft_font_set_load_flags(self.hb_font, self.hinting | FT_LOAD_COLOR)
 
     cdef setup(self):
         """
@@ -344,6 +420,9 @@ cdef class FTFont:
             if error:
                 raise FreetypeError(error)
 
+            hb_ft_font_changed(self.hb_font)
+
+
         if not self.has_setup:
 
             self.has_setup = True
@@ -355,6 +434,7 @@ cdef class FTFont:
             self.ascent = FT_CEIL(int(face.size.metrics.ascender * vextent_scale))
             self.descent = FT_FLOOR(int(face.size.metrics.descender * vextent_scale))
 
+
             if self.descent > 0:
                 self.descent = -self.descent
 
@@ -362,12 +442,6 @@ cdef class FTFont:
             self.descent -= self.expand
 
             self.height = self.ascent - self.descent
-
-            # This is probably more correct, but isn't what 6.12.1 did.
-            # self.lineskip = FT_CEIL(face.size.metrics.height) + self.expand
-
-            # if self.height > self.lineskip:
-            #     self.lineskip = self.height
 
             self.lineskip = <int> self.height * renpy.game.preferences.font_line_spacing
 
@@ -402,20 +476,9 @@ cdef class FTFont:
         cdef int overhang
         cdef FT_Glyph_Metrics metrics
 
-        cdef int x, y, glyph_rotate
+        cdef int x, y
 
         face = self.face
-
-        if self.vertical:
-            if GetVerticalGlyph(&self.gsubtable, index, &vindex) == 0:
-                index = vindex
-            if self.face.face_flags & 32 == 32: # FT_HAS_VERTICAL(face)
-                glyph_rotate = 1
-            else:
-                # font doesn't have vertical metrics (simulate it)
-                glyph_rotate = 2
-        else:
-            glyph_rotate = 0
 
         rv = &(self.cache[index & 255])
         if rv.index == index:
@@ -431,7 +494,7 @@ cdef class FTFont:
 
         if face.glyph.format != FT_GLYPH_FORMAT_BITMAP:
 
-            if not self.italic and glyph_rotate == 0 and self.stroker == NULL:
+            if not self.italic and not self.vertical and self.stroker == NULL:
 
                 if self.antialias:
                     FT_Render_Glyph(face.glyph, FT_RENDER_MODE_NORMAL)
@@ -457,20 +520,13 @@ cdef class FTFont:
 
                     FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
 
-                if glyph_rotate != 0:
-                    metrics = face.glyph.metrics
-                    # move the origin for vertical layout
-                    if glyph_rotate == 1:
-                        FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
-                    else:
-                        FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance // 2, -face.bbox.yMax)
+                if self.vertical:
                     shear.xx = 0
                     shear.xy = -(1 << 16)
                     shear.yx = 1 << 16
                     shear.yy = 0
                     FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
-                    # set vertical baseline to a half of the height
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.yMax + face.bbox.yMin) // 2)
+                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.xMax - face.bbox.xMin) // 2)
 
                 if self.stroker != NULL:
                     # FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
@@ -518,22 +574,12 @@ cdef class FTFont:
         else:
             overhang = 0
 
-        # rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
-        if glyph_rotate == 1:
-            rv.advance = face.glyph.metrics.vertAdvance / 64.0 + self.expand + overhang
-        elif glyph_rotate == 2:
-            # rv.advance = (face.ascender - face.descender) / 64.0 + self.expand + overhang
-            rv.advance = self.lineskip + overhang
-        else:
-            rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
-
         rv.width = rv.bitmap.width + rv.bitmap_left
 
         if g != NULL:
             FT_Done_Glyph(g)
 
         return rv
-
 
     def glyphs(self, unicode s):
         """
@@ -544,7 +590,6 @@ cdef class FTFont:
         cdef list rv
         cdef int len_s
         cdef FT_ULong c, next_c, vs
-        cdef FT_UInt index, next_index
         cdef int error
         cdef Glyph gl
         cdef FT_Vector kerning
@@ -556,102 +601,72 @@ cdef class FTFont:
 
         cdef float min_advance, next_min_advance
 
+        cdef hb_buffer_t *hb
+        cdef hb_glyph_info_t *glyph_info
+        cdef hb_glyph_position_t *glyph_pos
+        cdef unsigned int glyph_count
+
         self.setup()
 
-        len_s = len(s)
+        rv = [ ]
+
+        # Start Harfbuzz
+
+        hb = hb_buffer_create()
+        utf32_s = s.encode("utf-32")
+
+        hb_buffer_add_utf32(hb, <const uint32_t *> ((<const char *> utf32_s) + 4), len(s), 0, len(s));
+
+        if self.vertical:
+            hb_buffer_set_direction(hb, HB_DIRECTION_TTB)
+        else:
+            hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
+
+        hb_buffer_guess_segment_properties(hb)
+        hb_buffer_set_cluster_level(hb, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS)
+
+        hb_shape(self.hb_font, hb, NULL, 0)
+
+        glyph_info = hb_buffer_get_glyph_infos(hb, &glyph_count);
+        glyph_pos = hb_buffer_get_glyph_positions(hb, &glyph_count);
 
         face = self.face
         g = face.glyph
 
-        rv = [ ]
-
-        if len_s:
-
-            next_min_advance = 0
-
-            if len_s > 1 and is_ucs2_surrogate(s[0]) == 2 and is_ucs2_surrogate(s[1]) == 1:
-                next_c = ((<FT_ULong> s[0]) & 0b1111111111) << 10
-                next_c |= (<FT_ULong> s[1]) & 0b1111111111
-                next_c += 0x10000
-                vs_offset = 2
-            else:
-                next_c = s[0]
-                vs_offset = 1
-
-            if is_ucs2_surrogate(s[0]) != 1 and len_s > vs_offset and is_vs(s[vs_offset]):
-                vs = s[vs_offset]
-                next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
-
-                # Fallback to 0 if variation doesn't exist
-                if next_index == 0:
-                    vs = 0
-                    next_index = FT_Get_Char_Index(face, next_c)
-            else:
-                vs = 0
-                next_index = FT_Get_Char_Index(face, next_c)
-
-        for i from 0 <= i < len_s:
-
-            c = next_c
-            index = next_index
-            min_advance = next_min_advance
-
-            cache = self.get_glyph(index)
+        for 0 <= i < glyph_count:
+            # print(
+            #     repr(s[glyph_info[i].cluster]),
+            #     glyph_info[i].codepoint,
+            #     glyph_info[i].cluster,
+            #     glyph_pos[i].x_advance / 64,
+            #     glyph_pos[i].y_advance / 64,
+            #     glyph_pos[i].x_offset / 64,
+            #     glyph_pos[i].y_offset / 64,
+            # )
 
             gl = Glyph.__new__(Glyph)
 
-            gl.character = c
-            gl.variation = vs
+            gl.character = ord(s[glyph_info[i].cluster])
+            gl.glyph = glyph_info[i].codepoint
+
             gl.ascent = self.ascent
-            gl.width = cache.width
             gl.line_spacing = self.lineskip
             gl.draw = True
 
-            if i < len_s - 1:
-
-                if i < len_s - 2 and is_ucs2_surrogate(s[i + 1]) == 2 and is_ucs2_surrogate(s[i + 2]) == 1:
-                    next_c = ((<FT_ULong> s[i + 1]) & 0b1111111111) << 10
-                    next_c |= (<FT_ULong> s[i + 2]) & 0b1111111111
-                    next_c += 0x10000
-                    vs_offset = 3
-                else:
-                    next_c = s[i + 1]
-                    vs_offset = 2
-
-                if is_ucs2_surrogate(s[i + 1]) != 1 and i < len_s - vs_offset and is_vs(s[i + vs_offset]):
-                    vs = s[i + vs_offset]
-                    next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
-
-                    # Fallback to 0 if variation doesn't exist
-                    if next_index == 0:
-                        vs = 0
-                        next_index = FT_Get_Char_Index(face, next_c)
-                else:
-                    vs = 0
-                    next_index = FT_Get_Char_Index(face, next_c)
-
-                error = FT_Get_Kerning(face, index, next_index, FT_KERNING_DEFAULT, &kerning)
-                if error:
-                    raise FreetypeError(error)
-
-                kern = FT_ROUND(kerning.x)
-
-                if cache.advance + kern > min_advance:
-                    gl.advance = cache.advance + kern
-                else:
-                    gl.advance = min_advance
-
-                next_min_advance = cache.advance - gl.advance
-
+            if self.vertical:
+                gl.x_offset = -glyph_pos[i].y_offset / 64.0
+                gl.y_offset = -glyph_pos[i].x_offset / 64.0
+                gl.advance = -glyph_pos[i].y_advance / 64.0
             else:
-                gl.advance = cache.advance
+                gl.x_offset = glyph_pos[i].x_offset / 64.0
+                gl.y_offset = glyph_pos[i].y_offset / 64.0
+                gl.advance = glyph_pos[i].x_advance / 64.0
 
-            if is_zerowidth(gl.character):
-                gl.width = 0
-                gl.advance = 0
-                gl.draw = False
+            gl.width = gl.advance
 
             rv.append(gl)
+
+        hb_buffer_destroy(hb)
 
         return rv
 
@@ -685,18 +700,10 @@ cdef class FTFont:
             if glyph.split == SPLIT_INSTEAD:
                 continue
 
-            if glyph.character == 0x200b:
-                continue
+            cache = self.get_glyph(glyph.glyph)
 
-            if glyph.variation == 0:
-                index = FT_Get_Char_Index(face, glyph.character)
-            else:
-                index = FT_Face_GetCharVariantIndex(face, glyph.character, glyph.variation)
-
-            cache = self.get_glyph(index)
-
-            bmx = <int> (glyph.x + .5) + cache.bitmap_left
-            bmy = glyph.y - cache.bitmap_top
+            bmx = <int> (glyph.x + .5 + glyph.x_offset) + cache.bitmap_left
+            bmy = <int> (glyph.y + glyph.y_offset) - cache.bitmap_top
 
             if bmx < x:
                 x = bmx
@@ -762,18 +769,13 @@ cdef class FTFont:
             if glyph.split == SPLIT_INSTEAD:
                 continue
 
-            x = <int> (glyph.x + xo)
-            y = <int> (glyph.y + yo)
+            x = <int> (glyph.x + xo + glyph.x_offset)
+            y = <int> (glyph.y + yo + glyph.y_offset)
 
             underline_x = x - glyph.delta_x_offset
             underline_end = x + <int> glyph.advance + expand
 
-            if glyph.variation == 0:
-                index = FT_Get_Char_Index(face, glyph.character)
-            else:
-                index = FT_Face_GetCharVariantIndex(face, glyph.character, glyph.variation)
-
-            cache = self.get_glyph(index)
+            cache = self.get_glyph(glyph.glyph)
 
             # with nogil used to be here, but it slowed things down.
 

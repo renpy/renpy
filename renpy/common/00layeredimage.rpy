@@ -423,7 +423,7 @@ python early in layeredimage:
             args.append(None)
             args.append(Null())
 
-            return ConditionSwitch(predict_all=predict_all, *args)
+            return ConditionSwitch(*args, predict_all=predict_all)
 
     class RawConditionGroup(object):
 

@@ -128,6 +128,7 @@ init python in project:
             data.setdefault("add_from", True)
             data.setdefault("force_recompile", True)
             data.setdefault("android_build", "Release")
+            data.setdefault("tutorial", False)
 
             if "renamed_all" not in data:
                 dp = data["packages"]
@@ -260,6 +261,10 @@ init python in project:
             environ = dict(os.environ)
             environ["RENPY_LAUNCHER_LANGUAGE"] = _preferences.language or "english"
             environ.update(env)
+
+            # Filter out system PYTHON* environment variables.
+            if hasattr(sys, "renpy_executable"):
+                environ = { k : v for k, v in environ.items() if not k.startswith("PYTHON") }
 
             encoded_environ = { }
 

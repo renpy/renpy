@@ -424,11 +424,11 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         linear move.
         """
 
-        if (type(x) is float) and self.parent_width is not None:
-            x = int(x * self.parent_width)
+        if self.parent_width is not None:
+            x = int(absolute.compute_raw(x, self.parent_width))
 
-        if (type(y) is float) and self.parent_height is not None:
-            y = int(y * self.parent_height)
+        if self.parent_height is not None:
+            y = int(absolute.compute_raw(y, self.parent_height))
 
         self.target_x = x
         self.target_y = y
@@ -609,18 +609,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         if self.draggable or self.clicked is not None:
 
             fx, fy, fw, fh = self.drag_handle
-
-            if type(fx) is float:
-                fx = int(fx * cw)
-
-            if type(fy) is float:
-                fy = int(fy * ch)
-
-            if type(fw) is float:
-                fw = int(fw * cw)
-
-            if type(fh) is float:
-                fh = int(fh * ch)
+            fx = int(absolute.compute_raw(fx, cw))
+            fy = int(absolute.compute_raw(fy, ch))
+            fw = int(absolute.compute_raw(fw, cw))
+            fh = int(absolute.compute_raw(fh, ch))
 
             mask = self.style.focus_mask
 

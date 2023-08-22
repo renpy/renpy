@@ -607,7 +607,7 @@ init -1500 python:
         The sensitivity and selectedness of this action match those
         of the `yes` action.
 
-        See :func:`layout.yesno_screen` for a function version of this action.
+        See :func:`renpy.confirm` for a function version of this action.
         """
 
 
@@ -698,10 +698,8 @@ init -1500 python:
                 amount = delta * adjustment.step
             elif self.amount == "page":
                 amount = delta * adjustment.page
-            elif type(self.amount) is float:
-                amount = delta * self.amount * adjustment.range
             else:
-                amount = delta * self.amount
+                amount = absolute.compute_raw(delta*self.amount, adjustment.range)
 
             if self.delay == 0.0:
                 adjustment.change(adjustment.value + amount)

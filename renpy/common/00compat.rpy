@@ -232,7 +232,6 @@ init -1100 python:
 
         if version <= (7, 4, 8):
             config.relative_transform_size = False
-            config.tts_front_to_back = False
 
         if version <= (7, 4, 10):
             config.always_unfocus = False
@@ -292,9 +291,14 @@ init -1100 python:
             store.layeredimage._constant = True
             store.updater._constant = True
 
+        if _compat_versions(version, (7, 6, 1), (8, 1, 1)):
+            config.tts_front_to_back = False
+
         if _compat_versions(version, (7, 6, 99), (8, 1, 99)):
             config.simple_box_reverse = True
             build.itch_channels = list(build.itch_channels.items())
+            style.default.shaper = "freetype"
+            style.default.hinting = "auto"
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

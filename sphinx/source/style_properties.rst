@@ -469,6 +469,12 @@ Text Style Properties
     the font is rendered in this color. When using an image-based
     font, white is mapped to this color.
 
+.. style-property:: emoji_font string
+
+    The font that's used to render Emoji characters. This is automatically
+    used when a sequence of one or more Emoji are encountered, and no
+    font text tag is in use.
+
 .. style-property:: first_indent int
 
     The amount that the first line of text in a paragraph is indented
@@ -646,6 +652,12 @@ Text Style Properties
 
         The window scaling factor is always above 1.
 
+.. style-property:: prefer_emoji boolean
+
+    Some unicode characters have both Emoji and non-Emjoji presentations. This
+    style property chooses if such characters are given the Emoji presentation
+    or not.
+
 .. style-property:: rest_indent int
 
     Specifies the number of pixels the second and later lines in a
@@ -655,6 +667,12 @@ Text Style Properties
 
     If not None, this should be a style object. The style that's used for
     ruby text.
+
+.. style-property:: shaper "harfbuzz" or "freetype".
+
+    The shaper used on text. This should be one of "harfbuzz" or "freetype".
+    The harfbuzz shape is more capable but only works on Ren'Py 8, while
+    "freetype"
 
 .. style-property:: slow_abortable boolean
 

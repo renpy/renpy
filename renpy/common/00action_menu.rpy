@@ -60,7 +60,7 @@ init -1500 python:
         * ShowMenu("stats")
 
         ShowMenu without an argument will enter the game menu at the
-        default screen, taken from _game_menu_screen.
+        default screen, taken from :var:`_game_menu_screen`.
 
         Extra arguments and keyword arguments are passed on to the screen
         """
@@ -97,7 +97,7 @@ init -1500 python:
                 if renpy.has_screen(screen):
 
                     renpy.transition(transition)
-                    renpy.show_screen(screen, _transient=True, *self.args, **self.kwargs)
+                    renpy.show_screen(screen, *self.args, _transient=True, **self.kwargs)
                     renpy.restart_interaction()
 
                 elif renpy.has_label(screen):

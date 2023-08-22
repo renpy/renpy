@@ -227,16 +227,10 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         width, height = d._offer_size
 
     if xmaximum is not None:
-        if type(xmaximum) is float:
-            width = min(width * xmaximum, width)
-        else:
-            width = min(xmaximum, width)
+        width = min(renpy.display.core.absolute.compute_raw(xmaximum, width), width)
 
     if ymaximum is not None:
-        if type(ymaximum) is float:
-            height = min(height * ymaximum, height)
-        else:
-            height = min(ymaximum, height)
+        height = min(renpy.display.core.absolute.compute_raw(ymaximum, height), height)
 
     if width < 0:
         width = 0

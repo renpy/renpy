@@ -2456,6 +2456,7 @@ hidden. This allows them to be used for overlay purposes.
     if rare_case:
         show rare_screen nopredict
 
+.. _hide-screen-statement:
 
 Hide Screen
 -----------
@@ -2498,6 +2499,8 @@ Similar to the ``show screen`` statement, ``hide screen`` also takes the
     hide screen overlay_screen
     $ screen_name = "some_screen"
     hide screen expression screen_name
+
+.. _call-screen-statement:
 
 Call Screen
 -----------

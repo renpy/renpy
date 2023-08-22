@@ -32,10 +32,19 @@ except Exception:
     pass
 
 import renpy
+import os
+
 import renpy.text.ftfont as ftfont
+ftfont.init()
+
+try:
+    import renpy.text.hbfont as hbfont
+    hbfont.init()
+except ImportError:
+    hbfont = None
+
 import renpy.text.textsupport as textsupport
 
-ftfont.init() # @UndefinedVariable
 
 WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
@@ -613,14 +622,16 @@ def register_bmfont(name=None, size=None, bold=False, italics=False, underline=F
     image_fonts[(name, size, bold, italics)] = bmf
 
 
-# A map from face name to ftfont.FTFace
+# A map from face name, shaper to ftfont.FTFace or hbfont.HBFace.
 face_cache = { }
 
 
-def load_face(fn):
+def load_face(fn, shaper):
 
-    if fn in face_cache:
-        return face_cache[fn]
+    key = (fn, shaper)
+
+    if key in face_cache:
+        return face_cache[key]
 
     orig_fn = fn
 
@@ -661,9 +672,13 @@ def load_face(fn):
     if font_file is None:
         raise Exception("Could not find font {0!r}.".format(orig_fn))
 
-    rv = ftfont.FTFace(font_file, index, orig_fn) # @UndefinedVariable
+    if shaper == "harfbuzz":
+        rv = hbfont.HBFace(font_file, index, orig_fn) # @UndefinedVariable
+    else:
+        rv = ftfont.FTFace(font_file, index, orig_fn) # @UndefinedVariable
 
-    face_cache[orig_fn] = rv
+
+    face_cache[key] = rv
 
     return rv
 
@@ -681,7 +696,10 @@ font_cache = { }
 last_scale = 1.0
 
 
-def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale):
+def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper):
+
+    if hbfont is None:
+        shaper = "freetype"
 
     # If the scale changed, invalidate caches of scaled fonts.
     global last_scale
@@ -711,15 +729,19 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
         return rv
 
     # Check for a cached TTF.
-    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale)
+    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper)
 
     rv = font_cache.get(key, None)
     if rv is not None:
         return rv
 
     # Load a TTF.
-    face = load_face(fn)
-    rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) # @UndefinedVariable
+    face = load_face(fn, shaper)
+
+    if shaper == "harfbuzz":
+        rv = hbfont.HBFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) # @UndefinedVariable
+    else:
+        rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) # @UndefinedVariable
 
     font_cache[key] = rv
 

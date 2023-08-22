@@ -109,7 +109,7 @@ from renpy.memory import profile_memory, diff_memory, profile_rollback
 
 from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH as TEXT_PARAGRAPH, DISPLAYABLE as TEXT_DISPLAYABLE
 
-from renpy.execution import not_infinite_loop
+from renpy.execution import not_infinite_loop, reset_all_contexts
 
 from renpy.sl2.slparser import CustomParser as register_sl_statement, register_sl_displayable
 
@@ -1438,7 +1438,7 @@ def say(who, what, *args, **kwargs):
     `who`
         Either the character that will say something, None for the narrator,
         or a string giving the character name. In the latter case, the
-        :func:`say` is used to create the speaking character.
+        :var:`say` store function is called.
 
     `what`
         A string giving the line to say. Percent-substitutions are performed
@@ -1455,6 +1455,7 @@ def say(who, what, *args, **kwargs):
         e "Hello, world."
         $ renpy.say(e, "Hello, world.")
         $ e("Hello, world.") # when e is not a string
+        $ say(e, "Hello, world.") # when e is a string
     """
 
     if renpy.config.old_substitutions:
@@ -2386,7 +2387,7 @@ def do_reshow_say(who, what, interact=False, *args, **kwargs):
     if who is not None:
         who = renpy.python.py_eval(who)
 
-    say(who, what, interact=interact, *args, **kwargs)
+    say(who, what, *args, interact=interact, **kwargs)
 
 
 curried_do_reshow_say = curry(do_reshow_say)
@@ -3000,8 +3001,9 @@ def pop_call():
     :doc: label
     :name: renpy.pop_call
 
-    Pops the current call from the call stack, without returning to
-    the location.
+    Pops the current call from the call stack, without returning to the
+    location. Also reverts the values of :func:`dynamic <renpy.dynamic>`
+    variables, the same way the Ren'Py return statement would.
 
     This can be used if a label that is called decides not to return
     to its caller.
@@ -3338,7 +3340,7 @@ def call_screen(_screen_name, *args, **kwargs):
     if "_with_none" in kwargs:
         with_none = kwargs.pop("_with_none")
 
-    show_screen(_screen_name, _transient=True, *args, **kwargs)
+    show_screen(_screen_name, *args, _transient=True, **kwargs)
 
     roll_forward = renpy.exports.roll_forward_info()
 
@@ -3508,6 +3510,8 @@ def display_notify(message):
 
     hide_screen('notify')
     show_screen('notify', message=message)
+    renpy.display.tts.notify_text = renpy.text.extras.filter_alt_text(message)
+
     restart_interaction()
 
 
@@ -4566,3 +4570,22 @@ def clear_retain(layer="screens", prefix="_retain"):
     for i in get_showing_tags(layer):
         if i.startswith(prefix):
             hide_screen(i)
+
+
+def confirm(message):
+    """
+    :doc: other
+
+    This causes the a yes/no prompt screen with the given message
+    to be displayed, and dismissed when the player hits yes or no.
+
+    Returns True if the player hits yes, and False if the player hits no.
+
+    `message`
+        The message that will be displayed.
+
+    See :func:`Confirm` for a similar Action.
+    """
+    Return = renpy.store.Return
+    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False))
+    return renpy.ui.interact()
