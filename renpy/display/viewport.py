@@ -120,6 +120,9 @@ class Viewport(renpy.display.layout.Container):
         self.yoffset = offsets[1] if (offsets[1] is not None) else yinitial
 
         if isinstance(replaces, Viewport) and replaces.offsets:
+            self.xadjustment.viewport_replaces(replaces.xadjustment)
+            self.yadjustment.viewport_replaces(replaces.yadjustment)
+
             self.xadjustment.range = replaces.xadjustment.range
             self.xadjustment.value = replaces.xadjustment.value
             self.yadjustment.range = replaces.yadjustment.range
@@ -128,9 +131,11 @@ class Viewport(renpy.display.layout.Container):
             self.yoffset = replaces.yoffset
             self.drag_position = replaces.drag_position
             self.drag_position_time = replaces.drag_position_time
+            self.drag_speed = replaces.drag_speed
         else:
             self.drag_position = None # type: tuple[int, int]|None
             self.drag_position_time = None # type: float|None
+            self.drag_speed = None
 
         self.child_width, self.child_height = child_size
 
