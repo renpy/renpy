@@ -73,6 +73,7 @@ init -1500 python:
     class SelectedIf(Action, DictEquality):
         """
         :doc: other_action
+        :args: (action, /)
 
         This indicates that one action in a list of actions should be used
         to determine if a button is selected. This only makes sense
@@ -106,6 +107,7 @@ init -1500 python:
     class SensitiveIf(Action, DictEquality):
         """
         :doc: other_action
+        :args: (action, /)
 
         This indicates that one action in a list of actions should be used
         to determine if a button is sensitive. This only makes sense
