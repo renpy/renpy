@@ -3903,6 +3903,12 @@ def set_return_stack(stack):
 
     Statement names may be strings (for labels) or opaque tuples (for
     non-label statements).
+
+    The most common use of this is to use::
+
+        renpy.set_return_stack([])
+
+    to clear the return stack.
     """
 
     renpy.game.context().set_return_stack(stack)
