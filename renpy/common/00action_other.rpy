@@ -876,6 +876,24 @@ init -1500 python:
 
         return current.screen_name[0]
 
+    @renpy.pure
+    class CopyToClipboard(Action):
+        """
+        :doc: other_action
+
+        Copies the string `s` to the system clipboard, if possible. This
+        should work on desktop and mobile platforms, but will not work
+        on the web.
+        """
+
+        def __init__(self, s):
+            self.s = s
+
+        def __call__(self):
+            import pygame.scrap
+            pygame.scrap.put(pygame.SCRAP_TEXT, self.s.encode("utf-8"))
+
+
 init -1500:
 
     transform _notify_transform:

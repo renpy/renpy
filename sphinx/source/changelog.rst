@@ -65,6 +65,8 @@ specific to some but not all characters.
 Features
 --------
 
+The new :func:`CopyToClipboard` action copies text to the clipboard.
+
 The new :func:`renpy.confirm` function provides a way of using
 the confirmation screen from within Python.
 
