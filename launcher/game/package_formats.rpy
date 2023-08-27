@@ -207,7 +207,7 @@ init python in distribute:
                 If true, times will be forced to the epoch.
             """
 
-            self.tarfile = tarfile.open(filename, mode)
+            self.tarfile = tarfile.open(filename, mode, format=tarfile.PAX_FORMAT)
             self.tarfile.dereference = True
             self.notime = notime
 
