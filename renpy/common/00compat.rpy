@@ -294,6 +294,7 @@ init -1100 python:
 
         if _compat_versions(version, (7, 6, 1), (8, 1, 1)):
             config.tts_front_to_back = False
+            _greedy_rollback = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

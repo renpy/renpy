@@ -49,6 +49,13 @@ and rolled-back when rollback occurs.
     This is set to None at the start of the splashscreen, and restored to its
     original value when the splashscreen ends.
 
+.. var:: _greedy_rollback = True
+
+    Determines if the game performs a greedy rollback after a load. A greedy
+    rollback will rollback to just after the last statement that interacted,
+    rather than to just before the statement that the game was in during
+    the load.
+
 .. var:: _history = True
 
     If true, Ren'Py will record dialogue history when a line is shown. (Note
