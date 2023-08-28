@@ -183,6 +183,13 @@ class Viewport(renpy.display.layout.Container):
         self.xadjustment.register(self)
         self.yadjustment.register(self)
 
+    def set_style_prefix(self, prefix, root):
+        """
+        Do not change the style of children when the viewport is focused.
+        """
+
+        return
+
     def update_offsets(self, cw, ch, st):
         """
         This is called by render once we know the width (`cw`) and height (`ch`)
