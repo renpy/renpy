@@ -413,6 +413,10 @@ class ATLTransformBase(renpy.object.Object):
 
         if t.atl.constant != GLOBAL_CONST:
 
+            block = self.get_block()
+            if block is None:
+                block = self.compile()
+
             if not deep_compare(self.block, t.block):
                 return
 
@@ -2183,12 +2187,16 @@ def deep_compare(a, b):
     if isinstance(a, (list, tuple)):
         return all(deep_compare(i, j) for i, j in zip(a, b))
 
+    if isinstance(a, dict):
+        if len(a) != len(b):
+            return False
+
+        return all((k in b) and deep_compare(a[k], b[k]) for k in a)
+
     if isinstance(a, Statement):
+        return deep_compare(a.__dict__, b.__dict__)
 
-        for k, v in a.__dict__.items():
-            if not deep_compare(v, getattr(b, k)):
-                return False
-
+    try:
+        return a == b
+    except Exception:
         return True
-
-    return a == b
