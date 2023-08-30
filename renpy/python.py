@@ -449,9 +449,9 @@ class WrapNode(ast.NodeTransformer):
         a larger scope, no cell is generated.
         """
 
-        node = self.generic_visit(node)
-
         variables = list(sorted(find_loaded_variables(node)))
+
+        node = self.generic_visit(node)
 
         lambda_args = [ ]
         call_args =[ ]
