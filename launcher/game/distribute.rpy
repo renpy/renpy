@@ -753,12 +753,12 @@ change_renpy_executable()
                         break
 
                 else:
-                    print(str(match_name), "doesn't match anything.", file=self.log)
+                    print(str(match_names[0]), "doesn't match anything.", file=self.log)
 
                     pattern = None
                     file_list = None
 
-                print(str(match_name), "matches", str(pattern), "(" + str(file_list) + ").", file=self.log)
+                print(str(match_names[0]), "matches", str(pattern), "(" + str(file_list) + ").", file=self.log)
 
                 if file_list is None:
                     return
