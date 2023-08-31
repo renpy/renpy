@@ -40,12 +40,12 @@ init -1510 python:
 
             elif self.action == "disable":
 
-                if current is self.input_value:
+                if current == self.input_value:
                     renpy.set_editable_input_value(self.input_value, False)
 
             elif self.action == "toggle":
 
-                if current is self.input_value and editable:
+                if current == self.input_value and editable:
                     renpy.set_editable_input_value(self.input_value, False)
                 else:
                     renpy.set_editable_input_value(self.input_value, True)
@@ -56,7 +56,7 @@ init -1510 python:
 
             current, editable = renpy.get_editable_input_value()
 
-            rv = (current is self.input_value) and editable
+            rv = (current == self.input_value) and editable
 
             if self.action == "disable":
                 rv = not rv
