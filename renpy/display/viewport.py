@@ -183,6 +183,13 @@ class Viewport(renpy.display.layout.Container):
         self.xadjustment.register(self)
         self.yadjustment.register(self)
 
+    def set_style_prefix(self, prefix, root):
+        """
+        Do not change the style of children when the viewport is focused.
+        """
+
+        return
+
     def update_offsets(self, cw, ch, st):
         """
         This is called by render once we know the width (`cw`) and height (`ch`)
@@ -659,13 +666,13 @@ class VPGrid(Viewport):
             yspacing = self.style.spacing
 
         if renpy.config.relative_spacing:
-            xspacing = renpy.display.layout.scale(xspacing, width)
-            yspacing = renpy.display.layout.scale(yspacing, height)
+            xspacing = renpy.display.layout.compute_raw(xspacing, width)
+            yspacing = renpy.display.layout.compute_raw(yspacing, height)
 
-        left_margin = renpy.display.layout.scale(self.style.left_margin, width)
-        right_margin = renpy.display.layout.scale(self.style.right_margin, width)
-        top_margin = renpy.display.layout.scale(self.style.top_margin, height)
-        bottom_margin = renpy.display.layout.scale(self.style.bottom_margin, height)
+        left_margin = renpy.display.layout.compute_raw(self.style.left_margin, width)
+        right_margin = renpy.display.layout.compute_raw(self.style.right_margin, width)
+        top_margin = renpy.display.layout.compute_raw(self.style.top_margin, height)
+        bottom_margin = renpy.display.layout.compute_raw(self.style.bottom_margin, height)
 
         rend = renpy.display.render.render(self.children[0], child_width, child_height, st, at)
         cw, ch = rend.get_size()

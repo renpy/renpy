@@ -728,29 +728,37 @@ change_renpy_executable()
                 is_dir = os.path.isdir(path)
 
                 if is_dir:
-                    match_name = name + "/"
+                    match_names = [ name + "/", name ]
                 else:
-                    match_name = name
+                    match_names = [ name ]
 
                 for pattern, file_list in patterns:
 
-                    if match(match_name, pattern):
+                    matched = False
 
-                        # When we have ('test/**', None), avoid excluding test.
-                        if (not file_list) and is_dir:
-                            new_pattern = pattern.rstrip("*")
-                            if (pattern != new_pattern) and match(match_name, new_pattern):
-                                continue
+                    for match_name in match_names:
 
+                        if match(match_name, pattern):
+
+                            # When we have ('test/**', None), avoid excluding test.
+                            if (not file_list) and is_dir:
+                                new_pattern = pattern.rstrip("*")
+                                if (pattern != new_pattern) and match(match_name, new_pattern):
+                                    continue
+
+                            matched = True
+                            break
+
+                    if matched:
                         break
 
                 else:
-                    print(str(match_name), "doesn't match anything.", file=self.log)
+                    print(str(match_names[0]), "doesn't match anything.", file=self.log)
 
                     pattern = None
                     file_list = None
 
-                print(str(match_name), "matches", str(pattern), "(" + str(file_list) + ").", file=self.log)
+                print(str(match_names[0]), "matches", str(pattern), "(" + str(file_list) + ").", file=self.log)
 
                 if file_list is None:
                     return

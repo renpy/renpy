@@ -595,7 +595,7 @@ cdef class HBFont:
         cdef FT_Vector kerning
         cdef int kern
         cdef float advance
-        cdef int i
+        cdef unsigned int i
         cdef int vs_offset
         cdef glyph_cache *cache
 
