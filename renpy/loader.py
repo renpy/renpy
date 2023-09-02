@@ -987,19 +987,26 @@ class RenpyImporter(object):
         if self.translate(fullname):
             return self
 
-    def load_module(self, fullname):
+    def load_module(self, fullname, mode="full"):
+        """
+        Loads a module. Possible modes include "is_package", "get_source", "get_code", or "full".
+        """
 
         filename = self.translate(fullname, self.prefix)
+
+        if mode == "is_package":
+            return filename.endswith("__init__.py")
 
         pyname = pystr(fullname)
 
         mod = sys.modules.setdefault(pyname, types.ModuleType(pyname))
         mod.__name__ = pyname
-        mod.__file__ = filename
+        mod.__file__ = renpy.config.gamedir + "/" + filename
         mod.__loader__ = self
+        mod.__package__ = fullname.rpartition(".")[0]
 
-        if filename.endswith("__init__.py"):
-            mod.__path__ = [ filename[:-len("__init__.py")] ]
+        if mod.__file__.endswith("__init__.py"):
+            mod.__path__ = [ mod.__file__[:-len("__init__.py")] ]
 
         for encoding in [ "utf-8", "latin-1" ]:
 
@@ -1011,17 +1018,35 @@ class RenpyImporter(object):
                 source = source.encode("raw_unicode_escape")
                 source = source.replace(b"\r", b"")
 
+                if mode == "get_source":
+                    return source
+
                 code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
                 break
             except Exception:
                 if encoding == "latin-1":
                     raise
 
+        if mode == "get_code":
+            return code # type: ignore
+
         exec(code, mod.__dict__) # type: ignore
 
         return sys.modules[fullname]
 
+    def is_package(self, fullname):
+        return self.load_module(fullname, "is_package")
+
+    def get_source(self, fullname):
+        return self.load_module(fullname, "get_source")
+
+    def get_code(self, fullname):
+        return self.load_module(fullname, "get_code")
+
     def get_data(self, filename):
+        if filename.startswith(renpy.config.gamedir + "/"):
+            filename = filename[len(renpy.config.gamedir) + 1:]
+
         return load(filename).read()
 
 
