@@ -1003,7 +1003,7 @@ class RenpyImporter(object):
         mod.__name__ = pyname
         mod.__file__ = renpy.config.gamedir + "/" + filename
         mod.__loader__ = self
-        mod.__package__ = fullname.rpartition(".")[0]
+        mod.__package__ = pystr(fullname.rpartition(".")[0])
 
         if mod.__file__.endswith("__init__.py"):
             mod.__path__ = [ mod.__file__[:-len("__init__.py")] ]
