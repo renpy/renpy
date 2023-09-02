@@ -995,11 +995,11 @@ class RenpyImporter(object):
 
         mod = sys.modules.setdefault(pyname, types.ModuleType(pyname))
         mod.__name__ = pyname
-        mod.__file__ = filename
+        mod.__file__ = renpy.config.gamedir + "/" + filename
         mod.__loader__ = self
 
-        if filename.endswith("__init__.py"):
-            mod.__path__ = [ filename[:-len("__init__.py")] ]
+        if mod.__file__.endswith("__init__.py"):
+            mod.__path__ = [ mod.__file__[:-len("__init__.py")] ]
 
         for encoding in [ "utf-8", "latin-1" ]:
 
