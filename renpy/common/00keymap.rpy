@@ -152,6 +152,9 @@ init -1600 python:
         profile_once = [ 'K_F8' ],
         memory_profile = [ 'K_F7' ],
 
+        quick_save = [ 'K_F5' ],
+        quick_load = [ 'K_F6' ],
+
     )
 
     config.default_keymap = { k : _list(v) for k, v in config.keymap.items() }
@@ -445,6 +448,8 @@ init -1100 python:
         performance = ToggleScreen("_performance"),
         accessibility = ToggleScreen("_accessibility"),
         bubble_editor = bubble.ToggleShown(),
+        quick_save = QuickSave(),
+        quick_load = QuickLoad(),
         )
 
     config.underlay = [ _default_keymap ]
