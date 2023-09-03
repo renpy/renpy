@@ -209,6 +209,34 @@ Labels & Control Flow Functions
 .. _context:
 
 Contexts
----------
+--------
+
+Concepts are one of the tools by which Ren'Py organizes what's going on in a game.
+A context contains much of the changeable and saveable state of the game, including:
+
+* the currently running Ren'Py statement,
+* the call stack, as described above, and the names and former values of dynamic
+  variables created by :func:`renpy.dynamic`,
+* the images currently being shown (and informations about them like their attributes,
+  the transforms applied to them and so on),
+* the screens being shown, and the variables inside them,
+* the audio that is playing or queued.
+
+Most of the time there is only one context at play, and only one instance of each
+of these elements exists. That is notoriously not what happens when entering the
+game menu: all things shown are replaced by the game menu, and everything
+is restored when you go back to playing. The game menu is the most common situation
+where Ren'Py creates a new context, and that new context is destroyed when you quit
+the game menu and return to the first context.
+
+Ren'Py also creates new contexts as part of :ref:`replay` and when
+:func:`hiding the interface <HideInterface>`.
+
+The creation of :ref:`screen language <screens>` has considerably lessened the need
+for creating contexts.
+
+Rollback is only enabled in the base context (meaning, when there is only
+one context), and saving only catches the content of the base context - another
+reason why the game menu uses contexts.
 
 .. include:: inc/context
