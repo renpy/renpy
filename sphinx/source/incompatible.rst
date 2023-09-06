@@ -135,7 +135,7 @@ this produced an error message like::
 
         SHA1: ...
 
-Whine this can be cause by other problems (like simply using entirely incorrect
+While this can be cause by other problems (like simply using entirely incorrect
 keys), one potential fix is:
 
 1. In your project's base directory, rename ``bundle.keystore`` to ``bundle.keystore.bak``.
