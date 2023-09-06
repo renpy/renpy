@@ -457,7 +457,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
     As only layers have tags, MoveTransitions can only be applied to a single
     layer or all layers at once, using the with statement. It will not work
-    in other contexts, like ATL, :doc:`ComposeTransition`, or other ways of
+    in other contexts, like ATL, :func:`ComposeTransition`, or other ways of
     applying transitions.
 
     `delay`
