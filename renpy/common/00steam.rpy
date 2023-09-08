@@ -572,9 +572,13 @@ init -1499 python in _renpysteam:
     # Should the layers be shifted so the baseline is in view?
     keyboard_shift = True
 
-    # Where the basline is shifted to on the screen. This is a floating point number,
+    # Where the baseline is shifted to on the screen. This is a floating point number,
     # with 0.0 being the top of the screen and 1.0 being the bottom.
     keyboard_baseline = 0.5
+
+    # The textarea given to steam. This is scaled using the usual
+    # position rules.
+    keyboard_text_area = (0.0, 0.0, 1.0, 0.5)
 
     def prime_keyboard():
         global keyboard_primed
@@ -600,10 +604,19 @@ init -1499 python in _renpysteam:
         _KeyboardShift.text_rect = keyboard_text_rect
 
         if keyboard_primed and (keyboard_showing is None) and keyboard_text_rect:
-            x, y, w, h = (int(i) for i in keyboard_text_rect)
 
-            if keyboard_shift:
-                y  = int(renpy.exports.get_physical_size()[1] * keyboard_baseline) - h
+            pw, ph = renpy.exports.get_physical_size()
+
+            def scale(n, available):
+                if type(n) == float:
+                    n = n * available
+
+                return int(n)
+
+            x = scale(keyboard_text_area[0], pw)
+            y = scale(keyboard_text_area[1], ph)
+            w = scale(keyboard_text_area[2], pw)
+            h = scale(keyboard_text_area[3], ph)
 
             steamapi.SteamUtils().ShowFloatingGamepadTextInput(
                 steamapi.k_EFloatingGamepadTextInputModeModeSingleLine,
