@@ -5,6 +5,23 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.1.3:
+.. _renpy-7.6.3:
+
+8.1.2 / 7.6.2
+=============
+
+Changes
+-------
+
+Ren'Py now considers :var:`config.gl2` to be true on macOS. This is because
+there are several fixes for window resizing on newer versions of macOS
+in the gl2 renderer that are not present in the gl renderer.
+
+MMX acceleration for video playback has been re-enabled on Windows and
+Linux.
+
+
 .. _renpy-8.1.2:
 .. _renpy-7.6.2:
 
@@ -54,9 +71,6 @@ On the web browser, the ``"display" : "window"`` preference now disables
 fullscreen mode.
 
 It is now possible to bind mouse buttons to skipping.
-
-MMX acceleration for video playback has been re-enabled on Windows and
-Linux.
 
 Fixes
 -----
