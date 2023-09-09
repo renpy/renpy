@@ -2035,7 +2035,7 @@ class Interface(object):
             if i in renderers:
                 gl2_renderers.append(i + "2")
 
-        if renpy.config.gl2:
+        if renpy.config.gl2 or renpy.macintosh:
             renderers = gl2_renderers + renderers
 
             # Prevent a performance warning if the renderer
