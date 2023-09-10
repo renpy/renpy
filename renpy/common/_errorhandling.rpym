@@ -85,7 +85,7 @@ init label _errorhandling:
         slow_cps None
         slow_cps_multiplier 1.0
         slow_abortable False
-        hinting "bytecode"
+        hinting "auto"
         adjust_spacing True
         emoji_font "TwemojiCOLRv0.ttf"
         prefer_emoji True
