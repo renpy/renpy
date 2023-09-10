@@ -26,6 +26,7 @@ from typing import Optional
 
 import renpy
 import os
+import os.path
 import sys
 import types
 import threading
@@ -1048,8 +1049,14 @@ class RenpyImporter(object):
         return self.load_module(fullname, "get_code")
 
     def get_data(self, filename):
-        if filename.startswith(renpy.config.gamedir + "/"):
-            filename = filename[len(renpy.config.gamedir) + 1:]
+
+        filename = os.path.normpath(filename).replace('\\', '/')
+
+        _check_prefix = "{0}/".format(
+            os.path.normpath(renpy.config.gamedir).replace('\\', '/')
+        )
+        if filename.startswith(_check_prefix):
+            filename = filename[len(_check_prefix):]
 
         return load(filename).read()
 
