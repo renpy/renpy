@@ -713,9 +713,6 @@ class RollbackLog(renpy.object.Object):
         if hard:
             self.retain_after_load_flag = False
 
-        if self.current.checkpoint:
-            return
-
         if not renpy.game.context().rollback:
             return
 
