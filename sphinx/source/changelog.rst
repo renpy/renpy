@@ -17,9 +17,10 @@ Ren'Py's text handing has gotten an overhaul in this release, with the
 intent of supporting Emoji and scripts that require complext text shaping,
 like Indic languages. This required many changes.
 
-The first was a change in Ren'Py's defaults to enable bytecode hinting of
-fonts. This may cause some of the fonts to change shape slightly, but
-is required to allow script-like fonts to combine properly.
+The first was a change in the way Ren'Py handles font autohinting, to take
+advantage of more information in the fonts. This may cause some of the
+fonts to change shape slightly, but is required to allow script-like
+fonts to combine properly.
 
 The second change is only enabled in Ren'Py 8, and that's the use of the
 Harfbuzz library to shape text. Harfbuzz is used reorder and select different
@@ -47,6 +48,9 @@ script as character dialogue. For example::
 
 Text in Indic languages should also be supported, but you'll need to find a
 font that supports the language you're using.
+
+There is a new :propref:`hinting` mode "auto-light", that performs autohinting
+in the vertical but not horizontal direction.
 
 Speech Bubble Improvements
 --------------------------

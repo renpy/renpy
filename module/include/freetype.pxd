@@ -397,6 +397,12 @@ cdef extern from "pyfreetype.h":
         FT_LOAD_NO_AUTOHINT
         FT_LOAD_COLOR
 
+        FT_LOAD_TARGET_NORMAL
+        FT_LOAD_TARGET_LIGHT
+        FT_LOAD_TARGET_MONO
+        FT_LOAD_TARGET_LCD
+        FT_LOAD_TARGET_LCD_V
+
     FT_Error FT_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 flags)
     FT_Error FT_Load_Char(FT_Face face, FT_ULong char_code, FT_Int32 flags)
 

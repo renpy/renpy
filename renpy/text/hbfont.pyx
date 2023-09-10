@@ -382,13 +382,16 @@ cdef class HBFont:
 
         self.has_setup = False
 
-        if hinting == "bytecode":
-            self.hinting = FT_LOAD_NO_AUTOHINT
-        elif hinting == "none" or hinting is None:
-            self.hinting = FT_LOAD_NO_HINTING
+        if hinting == "none" or hinting is None:
+            self.hinting = FT_LOAD_NO_HINTING | FT_LOAD_TARGET_NORMAL
+        elif hinting == "bytecode":
+            self.hinting = FT_LOAD_NO_AUTOHINT | FT_LOAD_TARGET_NORMAL
+        elif hinting == "auto-light":
+            self.hinting = FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_LIGHT
+        elif hinting == "auto":
+            self.hinting = FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_NORMAL
         else:
-            self.hinting = FT_LOAD_FORCE_AUTOHINT
-
+            self.hinting = FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_NORMAL
 
         FT_Set_Char_Size(self.face_object.face, 0, <int> (self.size * 64), 0, 0)
 

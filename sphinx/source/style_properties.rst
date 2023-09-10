@@ -738,6 +738,9 @@ Text Style Properties
 
     "auto"
         The default, forces use of the Freetype auto hinter.
+    "auto-light"
+        Forces the use of the freetype auto hinter in light mode, which only
+        hints vertically.
     "bytecode"
         Uses bytecode hinting information found in the font.
     "none"

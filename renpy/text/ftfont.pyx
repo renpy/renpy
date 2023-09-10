@@ -316,14 +316,19 @@ cdef class FTFont:
             FT_Stroker_Set(self.stroker, outline * 64, FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0)
             self.expand = outline * 2
 
-        self.has_setup = False
 
-        if hinting == "bytecode":
-            self.hinting = FT_LOAD_NO_AUTOHINT
-        elif hinting == "none" or hinting is None:
-            self.hinting = FT_LOAD_NO_HINTING
+        if hinting == "none" or hinting is None:
+            self.hinting = FT_LOAD_NO_HINTING | FT_LOAD_TARGET_NORMAL
+        elif hinting == "bytecode":
+            self.hinting = FT_LOAD_NO_AUTOHINT | FT_LOAD_TARGET_NORMAL
+        elif hinting == "auto-light":
+            self.hinting = FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_LIGHT
+        elif hinting == "auto":
+            self.hinting = FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_NORMAL
         else:
-            self.hinting = FT_LOAD_FORCE_AUTOHINT
+            self.hinting = FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_NORMAL
+
+
 
     cdef setup(self):
         """
