@@ -146,10 +146,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         None.
 
     `clicked`
-        A callback this is called, with no arguments, when the Drag is
-        clicked without being moved. A droppable can also be focused
-        and clicked.  If the callback returns a value other than None,
-        that value is returned as the result of the interaction.
+        A callback that is called when the Drag is clicked without being moved.
+        It is called with one argument, the Drag being clicked on. A droppable
+        can also be focused and clicked. If the callback returns a value other
+        than None, that value is returned as the result of the interaction.
 
     `alternate`
         An action that is run when the Drag is right-clicked (on the
@@ -729,8 +729,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             if self.clicked is not None and map_event(ev, "drag_deactivate"):
 
                 self.click_time = None
-
-                rv = run(self.clicked)
+                try:
+                    rv = self.clicked(self)
+                except TypeError:
+                    rv = run(self.clicked)
                 if rv is not None:
                     return rv
 
@@ -865,7 +867,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
                 # Call the clicked callback.
                 if self.clicked:
-                    rv = run(self.clicked)
+                    try:
+                        rv = self.clicked(self)
+                    except TypeError:
+                        rv = run(self.clicked)
                     if rv is not None:
                         self.grab_x = None
                         self.grab_y = None
