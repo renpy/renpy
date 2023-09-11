@@ -833,10 +833,6 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             self.set_style_prefix("hover_", True)
 
-            self.grab_x = None
-            self.grab_y = None
-            self.last_drop = None
-
             if self.drag_moved:
 
                 # Call the drag callback.
@@ -844,12 +840,18 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
                 if drag.dragged is not None:
                     rv = run(drag.dragged, joined, drop)
                     if rv is not None:
+                        self.grab_x = None
+                        self.grab_y = None
+                        self.last_drop = None
                         return rv
 
                 # Call the drop callback.
                 if drop is not None and drop.dropped is not None: # type: ignore
                     rv = run(drop.dropped, drop, joined) # type: ignore
                     if rv is not None:
+                        self.grab_x = None
+                        self.grab_y = None
+                        self.last_drop = None
                         return rv
 
             else:
@@ -858,7 +860,14 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
                 if self.clicked:
                     rv = run(self.clicked)
                     if rv is not None:
+                        self.grab_x = None
+                        self.grab_y = None
+                        self.last_drop = None
                         return rv
+
+            self.grab_x = None
+            self.grab_y = None
+            self.last_drop = None
 
         if handled:
             raise renpy.display.core.IgnoreEvent()
