@@ -166,7 +166,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         expected to return a list of [ (drag, x, y) ] tuples, giving
         the draggables to drag as a unit. `x` and `y` are the offsets
         of the drags relative to each other, they are not relative
-        to the corner of this drag.
+        to the corner of this drag. `drag` is either the Drag object
+        to be joined or the drag_name of such a Drag.
 
     `drag_offscreen`
         Determines the conditions under which the drag is allowed
