@@ -660,14 +660,20 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
         joined = [ ] # typing
 
+        def get_drag_from_name(name):
+            if isinstance(name, Drag):
+                return name
+            else:
+                return self.drag_group.get_child_by_name(name)
+
         if grabbed:
             joined_offsets = self.drag_joined(self)
-            joined = [ i[0] for i in joined_offsets ] # type: list[Drag]
+            joined = [ get_drag_from_name(i[0]) for i in joined_offsets ] # type: list[Drag]
 
         elif self.draggable and map_event(ev, "drag_activate"):
 
             joined_offsets = self.drag_joined(self)
-            joined = [ i[0] for i in joined_offsets ] # type: list[Drag]
+            joined = [ get_drag_from_name(i[0]) for i in joined_offsets ] # type: list[Drag]
 
             if not joined:
                 raise renpy.display.core.IgnoreEvent()
