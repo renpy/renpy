@@ -735,6 +735,12 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
     if rv is not None:
         return rv
 
+    if hinting is True:
+        hinting = renpy.config.font_hinting.get(fn, True)
+
+    if hinting is True:
+        hinting = renpy.config.font_hinting.get(fn, "auto")
+
     # Load a TTF.
     face = load_face(fn, shaper)
 

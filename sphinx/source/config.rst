@@ -565,6 +565,15 @@ Occasionally Used
     The user can progress forward through the rollback buffer by
     clicking.
 
+.. var:: config.font_hinting = { None : "auto" }
+
+    This is a dictionary from a string containing the font filename to a string
+    giving one of the font hinting modes in :propref:`hinting`. When
+    :propref:`hinting` is True, the value is looked up in this dictionary,
+    and the resulting mode is used.
+
+    If no key is found, None is looked up, and the resulting mode is used.
+
 .. var:: config.font_name_map = { }
 
     This is a map from (font name) to (font filepath/fontgroup). Font names

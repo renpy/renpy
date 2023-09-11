@@ -746,6 +746,9 @@ Text Style Properties
     "none"
         Does not hint the font.
 
+    This may also be True, in which case the value is looked up in
+    :var:`config.font_hinting`.
+
 
 .. _window-style-properties:
 
