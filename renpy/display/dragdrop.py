@@ -688,8 +688,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
                     break
 
             self.drag_moved = False
-            self.start_x = par_x
-            self.start_y = par_y
+            self.start_x = par_x - self.grab_x
+            self.start_y = par_y - self.grab_y
 
             grabbed = True
 
@@ -736,7 +736,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             handled = True
 
-            if (not self.drag_moved) and (self.start_x != par_x or self.start_y != par_y):
+            if (not self.drag_moved) and (self.start_x != (par_x - self.grab_x)
+                    or self.start_y != (par_y - self.grab_y)):
                 self.drag_moved = True
                 self.click_time = None
 
