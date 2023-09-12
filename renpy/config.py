@@ -1398,6 +1398,8 @@ ex_rollback_classes = [ ]
 # Should we revert to the old behavior of box_reverse?
 simple_box_reverse = False
 
+# A map from font name to the hinting for the font.
+font_hinting = { None : "auto" }
 
 del os
 del collections

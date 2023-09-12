@@ -52,6 +52,14 @@ font that supports the language you're using.
 There is a new :propref:`hinting` mode "auto-light", that performs autohinting
 in the vertical but not horizontal direction.
 
+The new :var:`config.font_hinting` variable makes it possible to enable
+font hinting on a per-font basis, while the style system can be used to
+control hinting per-use. For example::
+
+    define config.font_hinting["MyFont.tff"] = "bytecode"
+
+enables bytecode hinting for MyFont.ttf.
+
 Speech Bubble Improvements
 --------------------------
 
