@@ -379,6 +379,13 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         # The duration of a new snap animation to execute starting at
         # the next render() call
         self.target_at_delay = 0
+        # The warper used for the snap animation
+        self.snap_warper = None
+        # The time at which the current snap animation started
+        self.snap_time = 0
+        # The starting x and y coordinates of the current snap animation
+        self.snap_start_x = 0
+        self.snap_start_y = 0
 
         # The displayable we were last dropping on.
         self.last_drop = None # type: renpy.display.displayable.Displayable|None
@@ -397,6 +404,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             self.target_y = replaces.target_y
             self.target_at = replaces.target_at
             self.target_at_delay = replaces.target_at_delay
+            self.snap_warper = replaces.snap_warper
+            self.snap_time = replaces.snap_time
+            self.snap_start_x = replaces.snap_start_x
+            self.snap_start_y = replaces.snap_start_y
             self.grab_x = replaces.grab_x
             self.grab_y = replaces.grab_y
             self.last_x = replaces.last_x
@@ -415,14 +426,14 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
     def _draggable(self):
         return self.draggable
 
-    def snap(self, x, y, delay=0):
+    def snap(self, x, y, delay=0, warper=None):
         """
         :doc: drag_drop method
 
         Changes the position of the drag. If the drag is not showing,
         then the position change is instantaneous. Otherwise, the
-        position change takes `delay` seconds, and is animated as a
-        linear move.
+        position change takes `delay` seconds and an optional warper. If no
+        warper is provided, the transition is linear.
         """
 
         if self.parent_width is not None:
@@ -436,6 +447,9 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
         if self.x is not None:
             self.target_at_delay = delay
+            self.snap_warper = warper
+            self.snap_start_x = self.x
+            self.snap_start_y = self.y
         else:
             self.target_at = self.at
             self.x = x
@@ -596,6 +610,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             # Snap starts now
             self.target_at = at + self.target_at_delay
             self.target_at_delay = 0
+            # Record when the snap started
+            self.snap_time = at
             redraw(self, 0)
         elif self.target_at <= at or self.target_at <= self.at:
             # Snap complete
@@ -603,9 +619,12 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             self.y = self.target_y
         else:
             # Snap in progress
-            done = (at - self.at) / (self.target_at - self.at)
-            self.x = absolute(self.x + done * (self.target_x - self.x)) # type: ignore
-            self.y = absolute(self.y + done * (self.target_y - self.y)) # type: ignore
+            done = (at - self.snap_time) / (self.target_at - self.snap_time)
+            if self.snap_warper is not None:
+                done = self.snap_warper(done)
+            self.x = absolute((self.target_x-self.snap_start_x)*done + self.snap_start_x) # type: ignore
+            self.y = absolute((self.target_y-self.snap_start_y)*done + self.snap_start_y) # type: ignore
+
             redraw(self, 0)
 
         if self.draggable or self.clicked is not None:
