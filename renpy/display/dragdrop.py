@@ -157,6 +157,15 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         be necessary to increase :var:`config.longpress_duration` if
         this triggers to early on mobile platforms.
 
+    `hovered`
+        An action to run when the drag gains focus.
+
+    `unhovered`
+        An action to run when the drag loses focus.
+
+    `tooltip`
+        A tooltip to display when the drag is hovered over.
+
     `drag_handle`
         A (x, y, width, height) tuple, giving the position of the drag
         handle within the child. This tuple takes :term:`positions <position>`.
@@ -263,6 +272,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
     `start_x`, `start_y`
         The drag start position of the Drag relative to its parent, in pixels.
+
+    `grab_x`, `grab_y`
+        The x and y positions, relative to its parent, where the drag was
+        picked up, in pixels.
 
     `w`, `h`
         The width and height of the Drag's child, in pixels.
