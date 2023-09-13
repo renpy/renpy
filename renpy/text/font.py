@@ -696,7 +696,7 @@ font_cache = { }
 last_scale = 1.0
 
 
-def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance=None, axis=None):
+def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, axis):
 
     if hbfont is None:
         shaper = "freetype"
