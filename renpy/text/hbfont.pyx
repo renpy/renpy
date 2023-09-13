@@ -383,9 +383,9 @@ cdef class HBFace:
 
             for 0 <= i < self.mm_var.num_axis:
                 if i >= 16:
-                    continue
+                    break
 
-                self.variations.axis[self.mm_var.axis[i].name.decode("utf-8").lower()] = Axis(
+                self.variations.axis[self.mm_var.axis[i].name.decode("utf-8").casefold()] = Axis(
                     i,
                     self.mm_var.axis[i].minimum / 65536.0,
                     self.mm_var.axis[i].default / 65536.0,
@@ -395,7 +395,7 @@ cdef class HBFace:
             for 0 < i < self.mm_var.num_namedstyles:
                 text_length = 256
                 if hb_ot_name_get_utf8(hb_face, self.mm_var.namedstyle[i].strid, NULL, &text_length, text):
-                    self.variations.instance[text[0:text_length].decode("utf-8").lower()] = i
+                    self.variations.instance[text[0:text_length].decode("utf-8").casefold()] = i
 
             hb_face_destroy(hb_face)
 
@@ -539,8 +539,8 @@ cdef class HBFont:
 
         # If we have a known instance, use it.
 
-        if instance and instance.lower() in variations.instance:
-            index = variations.instance[instance.lower()]
+        if instance and instance.casefold() in variations.instance:
+            index = variations.instance[instance.casefold()]
             for 0 <= i < min(fo.mm_var.num_axis, 16):
                 coords[i] = fo.mm_var.namedstyle[index].coords[i]
 
@@ -557,7 +557,7 @@ cdef class HBFont:
 
             for k, value in axis.items():
 
-                k = k.lower()
+                k = k.casefold()
                 if k in variations.axis:
                     ax = variations.axis[k]
 
