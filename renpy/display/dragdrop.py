@@ -395,10 +395,12 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         # The warper used for the snap animation
         self.snap_warper = None
         # The time at which the current snap animation started
-        self.snap_time = 0
+        self.snap_start = 0
         # The starting x and y coordinates of the current snap animation
         self.snap_start_x = 0
         self.snap_start_y = 0
+        # True if the drag is in the middle of a snapping animation
+        self.snapping = False
 
         # The displayable we were last dropping on.
         self.last_drop = None # type: renpy.display.displayable.Displayable|None
@@ -418,9 +420,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             self.target_at = replaces.target_at
             self.target_at_delay = replaces.target_at_delay
             self.snap_warper = replaces.snap_warper
-            self.snap_time = replaces.snap_time
+            self.snap_start = replaces.snap_start
             self.snap_start_x = replaces.snap_start_x
             self.snap_start_y = replaces.snap_start_y
+            self.snapping = replaces.snapping
             self.grab_x = replaces.grab_x
             self.grab_y = replaces.grab_y
             self.last_x = replaces.last_x
@@ -463,6 +466,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             self.snap_warper = warper
             self.snap_start_x = self.x
             self.snap_start_y = self.y
+            self.snapping = True
         else:
             self.target_at = self.at
             self.x = x
@@ -624,15 +628,18 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             self.target_at = at + self.target_at_delay
             self.target_at_delay = 0
             # Record when the snap started
-            self.snap_time = at
+            self.snap_start = at
             redraw(self, 0)
         elif self.target_at <= at or self.target_at <= self.at:
             # Snap complete
             self.x = self.target_x
             self.y = self.target_y
+            self.snap_warper = None
+            self.snap_start = 0
+            self.snapping = False
         else:
             # Snap in progress
-            done = (at - self.snap_time) / (self.target_at - self.snap_time)
+            done = (at - self.snap_start) / (self.target_at - self.snap_start)
             if self.snap_warper is not None:
                 done = self.snap_warper(done)
             self.x = absolute((self.target_x-self.snap_start_x)*done + self.snap_start_x) # type: ignore
@@ -686,6 +693,16 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         par_y = int(self.last_y + y)
 
         grabbed = (renpy.display.focus.get_grab() is self)
+
+        if grabbed and self.snapping:
+            # Set the start x/y to the original target x/y, since that's
+            # where it was snapping to.
+            self.snapping = False
+            self.start_x = self.target_x
+            self.start_y = self.target_y
+            self.snap_warper = None
+            self.snap_start = 0
+
 
         if (self.alternate is not None) and renpy.display.touch and map_event(ev, "drag_activate"):
             self.click_time = st
@@ -772,6 +789,14 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             return self.child.event(ev, x, y, st)
 
+
+        if self.last_drop is not None and self.last_drop.snapping:
+            # Last drop is currently moving; should not be considered
+            # droppable at the moment.
+            self.last_drop.set_style_prefix("idle_", True)
+            self.last_drop = None
+            redraw(self, 0)
+
         # Handle moves by moving things relative to the grab point.
         if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
 
@@ -850,12 +875,15 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         else:
             drop = None
 
-        if drop is not self.last_drop:
+        # New drop, or no longer on the last drop
+        if drop != self.last_drop and (drop is None
+                or (drop is not None and not drop.snapping)):
 
             if self.last_drop is not None:
                 self.last_drop.set_style_prefix("idle_", True)
 
             self.last_drop = drop # type: ignore
+
 
         if self.drag_moved:
             self.update_style_prefix()
