@@ -648,3 +648,7 @@ cdef extern from "pyfreetype.h":
     FT_Error FT_Done_MM_Var(FT_Library library, FT_MM_Var *amaster)
 
     FT_Error FT_Set_Named_Instance(FT_Face, FT_UInt instance_index)
+
+    FT_Error FT_Set_Var_Design_Coordinates( FT_Face    face,
+                                FT_UInt    num_coords,
+                                FT_Fixed*  coords )

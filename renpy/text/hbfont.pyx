@@ -317,7 +317,12 @@ cdef class HBFace:
         FT_MM_Var *mm_var
 
         # Information about the variations, in Python.
-        object variations
+        public object variations
+
+        # Used to keep from switching instance and axis when not
+        # required.
+        public object current_instance
+        public object current_axis
 
     def __dealloc__(self):
         if self.mm_var:
@@ -331,7 +336,6 @@ cdef class HBFace:
 
         cdef char text[256]
         cdef unsigned int text_length
-
 
         # The filename.
         self.fn = fn
@@ -368,6 +372,7 @@ cdef class HBFace:
 
         # Variations.
         self.mm_var = NULL
+        self.variations = None
 
         rv = FT_Get_MM_Var(self.face, &(self.mm_var))
         if rv == 0:
@@ -377,6 +382,9 @@ cdef class HBFace:
             hb_face = hb_ft_face_create(self.face, NULL)
 
             for 0 <= i < self.mm_var.num_axis:
+                if i >= 16:
+                    continue
+
                 self.variations.axis[self.mm_var.axis[i].name.decode("utf-8")] = Axis(
                     i,
                     self.mm_var.axis[i].minimum / 65536.0,
@@ -436,6 +444,12 @@ cdef class HBFont:
         # The font harfbuzz uses.
         hb_font_t *hb_font
 
+        # For a variable font, the instance to use.
+        object instance
+
+        # For a variable font, the values for all non-default axes.
+        object axis
+
 
     def __cinit__(self):
         for i from 0 <= i < 256:
@@ -450,7 +464,10 @@ cdef class HBFont:
             FT_Stroker_Done(self.stroker)
 
 
-    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting):
+    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting, instance, axis):
+
+        self.face_object = face
+        self.face = self.face_object.face
 
         if size < 1:
             size = 1
@@ -458,10 +475,19 @@ cdef class HBFont:
         if bold:
             antialias = True
 
-        size = size * renpy.config.ftfont_scale.get(face.fn, 1.0) * renpy.game.preferences.font_size
+        if instance is None and face.variations:
+            if bold >= 1.0:
+                if "Bold" in face.variations.instance:
+                    bold = 0.0
+                    instance = "Bold"
+            else:
+                if "Regular" in face.variations.instance:
+                    instance = "Regular"
 
-        self.face_object = face
-        self.face = self.face_object.face
+        self.instance = instance
+        self.axis = axis
+
+        size = size * renpy.config.ftfont_scale.get(face.fn, 1.0) * renpy.game.preferences.font_size
 
         self.size = size
         self.bold = bold
@@ -503,6 +529,51 @@ cdef class HBFont:
 
         hb_ft_font_set_load_flags(self.hb_font, self.hinting | FT_LOAD_COLOR)
 
+    cdef setup_variations(self):
+        cdef FT_Fixed coords[16]
+
+        fo = self.face_object
+        axis = self.axis
+        instance = self.instance
+        variations = fo.variations
+
+        if axis == fo.current_axis and instance == fo.current_instance:
+            return
+
+        # If we have a known instance, use it.
+
+        if instance and instance in variations.instance:
+            index = variations.instance[instance]
+            for 0 <= i < min(fo.mm_var.num_axis, 16):
+                coords[i] = fo.mm_var.namedstyle[index].coords[i]
+
+        else:
+
+            # Otherwise, use per-axis defaults.
+
+            for k, v in variations.axis.items():
+                coords[v.index] = int(v.default * 65536)
+
+        if axis:
+
+            # If we have per-axis information, use that.
+
+            for k, v in variations.axis.items():
+                if v.index >= 16:
+                    continue
+
+                if k in axis:
+
+                    value = axis[k]
+                    if value < v.minimum:
+                        value = v.minimum
+                    elif value > v.maximum:
+                        value = v.maximum
+
+                    coords[v.index] = int(value * 65536)
+
+        FT_Set_Var_Design_Coordinates(self.face, min(fo.mm_var.num_axis, 16), coords)
+
     cdef setup(self):
         """
         Changes the parameters of the face to match this font.
@@ -514,6 +585,9 @@ cdef class HBFont:
         cdef float ascent_scale
 
         face = self.face
+
+        if self.face_object.variations:
+            self.setup_variations()
 
         if self.face_object.size != self.size:
             self.face_object.size = self.size
