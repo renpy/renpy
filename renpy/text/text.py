@@ -201,6 +201,8 @@ class TextSegment(object):
             self.ignore = source.ignore
             self.default_font = source.default_font
             self.shaper = source.shaper
+            self.instance = source.instance
+            self.axis = source.instance
 
         else:
             self.hyperlink = 0
@@ -250,6 +252,9 @@ class TextSegment(object):
 
         self.shaper = style.shaper
 
+        self.axis = style.axis
+        self.instance = style.instance
+
     # From here down is the public glyph API.
 
     def glyphs(self, s, layout):
@@ -260,7 +265,7 @@ class TextSegment(object):
         if self.ignore:
             return [ ]
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
@@ -292,7 +297,7 @@ class TextSegment(object):
             color = self.color
             black_color = self.black_color
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
         fo.draw(di.surface, xo, yo, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
@@ -357,7 +362,7 @@ class TextSegment(object):
         origin point.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
         return fo.bounds(glyphs, bounds)
 
 
@@ -1361,6 +1366,26 @@ class Layout(object):
 
                 elif tag == "noalt":
                     ts = push()
+
+                elif tag == "instance":
+                    ts = push()
+                    ts.instance = value.lower()
+                    ts.axis = None
+
+                elif tag.startswith("axis:"):
+                    ts = push()
+                    if ts.axis:
+                        ts.axis = dict(ts.axis)
+                    else:
+                        ts.axis = { }
+
+                    try:
+                        value = float(value)
+                    except (TypeError, ValueError):
+                        raise
+
+                    axis = tag.partition(":")[2].lower()
+                    ts.axis[axis] = float(value)
 
                 elif tag[0] == "#":
                     pass
