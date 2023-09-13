@@ -1367,6 +1367,26 @@ class Layout(object):
                 elif tag == "noalt":
                     ts = push()
 
+                elif tag == "instance":
+                    ts = push()
+                    ts.instance = value.lower()
+                    ts.axis = None
+
+                elif tag.startswith("axis:"):
+                    ts = push()
+                    if ts.axis:
+                        ts.axis = dict(ts.axis)
+                    else:
+                        ts.axis = { }
+
+                    try:
+                        value = float(value)
+                    except (TypeError, ValueError):
+                        raise
+
+                    axis = tag.partition(":")[2].lower()
+                    ts.axis[axis] = float(value)
+
                 elif tag[0] == "#":
                     pass
 
