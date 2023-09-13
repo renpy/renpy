@@ -385,7 +385,7 @@ cdef class HBFace:
                 if i >= 16:
                     continue
 
-                self.variations.axis[self.mm_var.axis[i].name.decode("utf-8")] = Axis(
+                self.variations.axis[self.mm_var.axis[i].name.decode("utf-8").lower()] = Axis(
                     i,
                     self.mm_var.axis[i].minimum / 65536.0,
                     self.mm_var.axis[i].default / 65536.0,
@@ -395,7 +395,7 @@ cdef class HBFace:
             for 0 < i < self.mm_var.num_namedstyles:
                 text_length = 256
                 if hb_ot_name_get_utf8(hb_face, self.mm_var.namedstyle[i].strid, NULL, &text_length, text):
-                    self.variations.instance[text[0:text_length].decode("utf-8")] = i
+                    self.variations.instance[text[0:text_length].decode("utf-8").lower()] = i
 
             hb_face_destroy(hb_face)
 
@@ -476,12 +476,12 @@ cdef class HBFont:
 
         if instance is None and face.variations:
             if bold >= 1.0:
-                if "Bold" in face.variations.instance:
+                if "bold" in face.variations.instance:
                     bold = 0.0
-                    instance = "Bold"
+                    instance = "bold"
             else:
-                if "Regular" in face.variations.instance:
-                    instance = "Regular"
+                if "regular" in face.variations.instance:
+                    instance = "regular"
 
         if bold:
             antialias = True
@@ -539,8 +539,8 @@ cdef class HBFont:
 
         # If we have a known instance, use it.
 
-        if instance and instance in variations.instance:
-            index = variations.instance[instance]
+        if instance and instance.lower() in variations.instance:
+            index = variations.instance[instance.lower()]
             for 0 <= i < min(fo.mm_var.num_axis, 16):
                 coords[i] = fo.mm_var.namedstyle[index].coords[i]
 
@@ -555,20 +555,21 @@ cdef class HBFont:
 
             # If we have per-axis information, use that.
 
-            for k, v in variations.axis.items():
+            for k, value in axis.items():
 
-                if k in axis:
+                k = k.lower()
+                if k in variations.axis:
+                    ax = variations.axis[k]
 
-                    if v.index >= 16:
+                    if ax.index >= 16:
                         continue
 
-                    value = axis[k]
-                    if value < v.minimum:
-                        value = v.minimum
-                    elif value > v.maximum:
-                        value = v.maximum
+                    if value < ax.minimum:
+                        value = ax.minimum
+                    elif value > ax.maximum:
+                        value = ax.maximum
 
-                    coords[v.index] = int(value * 65536)
+                    coords[ax.index] = int(value * 65536)
 
         FT_Set_Var_Design_Coordinates(self.face, min(fo.mm_var.num_axis, 16), coords)
 
