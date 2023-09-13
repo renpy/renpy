@@ -277,6 +277,11 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         The x and y positions, relative to its parent, where the drag was
         picked up, in pixels.
 
+    `snapping`
+        True if this Drag is in the middle of a snapping animation. Drags which
+        are currently snapping cannot be dragged onto, but they can still be
+        grabbed and dragged.
+
     `w`, `h`
         The width and height of the Drag's child, in pixels.
     """
@@ -535,7 +540,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         self.set_style_prefix("idle_", True)
 
         # Set the style for joined_set
-        for i in [i[0] for i in self.drag_joined(self)]:
+        for i in [self.get_drag_from_name(i[0]) for i in self.drag_joined(self)]:
             i.set_style_prefix("selected_hover_", True)
 
         if self.last_drop is not None:
@@ -683,6 +688,12 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
         return rv
 
+    def get_drag_from_name(self, name):
+        if isinstance(name, Drag):
+            return name
+        else:
+            return self.drag_group.get_child_by_name(name)
+
     def event(self, ev, x, y, st):
 
         if not self.is_focused():
@@ -710,20 +721,14 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
         joined = [ ] # typing
 
-        def get_drag_from_name(name):
-            if isinstance(name, Drag):
-                return name
-            else:
-                return self.drag_group.get_child_by_name(name)
-
         if grabbed:
             joined_offsets = self.drag_joined(self)
-            joined = [ get_drag_from_name(i[0]) for i in joined_offsets ] # type: list[Drag]
+            joined = [ self.get_drag_from_name(i[0]) for i in joined_offsets ] # type: list[Drag]
 
         elif self.draggable and map_event(ev, "drag_activate"):
 
             joined_offsets = self.drag_joined(self)
-            joined = [ get_drag_from_name(i[0]) for i in joined_offsets ] # type: list[Drag]
+            joined = [ self.get_drag_from_name(i[0]) for i in joined_offsets ] # type: list[Drag]
 
             if not joined:
                 raise renpy.display.core.IgnoreEvent()
@@ -738,7 +743,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             # If we're not the only thing we're joined with, we
             # might need to adjust our grab point.
             for i, xo, yo in joined_offsets:
-                if i is self:
+                if self.get_drag_from_name(i) is self:
                     self.grab_x += xo
                     self.grab_y += yo
                     break
@@ -813,6 +818,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             if self.drag_moved:
                 for i, xo, yo in joined_offsets: # type: ignore
+                    i = self.get_drag_from_name(i)
 
                     new_x = int(par_x - self.grab_x + xo) # type: ignore
                     new_y = int(par_y - self.grab_y + yo) # type: ignore
