@@ -784,7 +784,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
                 self.click_time = None
                 try:
-                    rv = self.clicked(self)
+                    rv = run(self.clicked, self)
                 except TypeError:
                     rv = run(self.clicked)
                 if rv is not None:
