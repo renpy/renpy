@@ -463,6 +463,8 @@ cdef class HBFont:
         if self.stroker != NULL:
             FT_Stroker_Done(self.stroker)
 
+        if self.hb_font:
+            hb_font_destroy(self.hb_font)
 
     def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting, instance, axis):
 
@@ -472,9 +474,6 @@ cdef class HBFont:
         if size < 1:
             size = 1
 
-        if bold:
-            antialias = True
-
         if instance is None and face.variations:
             if bold >= 1.0:
                 if "Bold" in face.variations.instance:
@@ -483,6 +482,9 @@ cdef class HBFont:
             else:
                 if "Regular" in face.variations.instance:
                     instance = "Regular"
+
+        if bold:
+            antialias = True
 
         self.instance = instance
         self.axis = axis
@@ -520,14 +522,6 @@ cdef class HBFont:
 
         FT_Set_Char_Size(self.face_object.face, 0, <int> (self.size * 64), 0, 0)
 
-        self.hb_font = hb_ft_font_create(self.face_object.face, NULL)
-        hb_ft_font_set_funcs(self.hb_font)
-        hb_font_set_scale(self.hb_font, <int> (self.size * 64), <int> (self.size * 64))
-
-        if self.italic:
-            hb_font_set_synthetic_slant(self.hb_font, .207)
-
-        hb_ft_font_set_load_flags(self.hb_font, self.hinting | FT_LOAD_COLOR)
 
     cdef setup_variations(self):
         cdef FT_Fixed coords[16]
@@ -539,6 +533,9 @@ cdef class HBFont:
 
         if axis == fo.current_axis and instance == fo.current_instance:
             return
+
+        fo.current_axis = axis
+        fo.current_instance = instance
 
         # If we have a known instance, use it.
 
@@ -552,17 +549,18 @@ cdef class HBFont:
             # Otherwise, use per-axis defaults.
 
             for k, v in variations.axis.items():
-                coords[v.index] = int(v.default * 65536)
+                coords[v.index] = int(v.default * 65536 + 1)
 
         if axis:
 
             # If we have per-axis information, use that.
 
             for k, v in variations.axis.items():
-                if v.index >= 16:
-                    continue
 
                 if k in axis:
+
+                    if v.index >= 16:
+                        continue
 
                     value = axis[k]
                     if value < v.minimum:
@@ -596,9 +594,6 @@ cdef class HBFont:
             if error:
                 raise FreetypeError(error)
 
-            hb_ft_font_changed(self.hb_font)
-
-
         if not self.has_setup:
 
             self.has_setup = True
@@ -609,7 +604,6 @@ cdef class HBFont:
 
             self.ascent = FT_CEIL(int(face.size.metrics.ascender * vextent_scale))
             self.descent = FT_FLOOR(int(face.size.metrics.descender * vextent_scale))
-
 
             if self.descent > 0:
                 self.descent = -self.descent
@@ -631,6 +625,17 @@ cdef class HBFont:
                 self.underline_height = 1
 
             self.underline_height += self.expand
+
+            self.hb_font = hb_ft_font_create(self.face_object.face, NULL)
+
+            hb_ft_font_set_funcs(self.hb_font)
+
+            hb_font_set_scale(self.hb_font, <int> (self.size * 64), <int> (self.size * 64))
+
+            if self.italic:
+                hb_font_set_synthetic_slant(self.hb_font, .207)
+
+            hb_ft_font_set_load_flags(self.hb_font, self.hinting | FT_LOAD_COLOR)
 
         return
 
