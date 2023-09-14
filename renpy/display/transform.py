@@ -884,7 +884,7 @@ class Transform(Container):
         self.active = True
 
         if self.state.last_events != self.state.events:
-            if self.state.events:
+            if self.state.events and renpy.game.interface is not None:
                 renpy.game.interface.timeout(0)
             self.state.last_events = self.state.events
 
@@ -1094,7 +1094,7 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         self.active = True
 
         if self.state.last_events != self.state.events:
-            if self.state.events:
+            if self.state.events and renpy.game.interface is not None:
                 renpy.game.interface.timeout(0)
             self.state.last_events = self.state.events
 
