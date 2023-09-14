@@ -294,6 +294,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         The x and y positions, relative to its parent, where the drag was
         picked up, in pixels.
 
+    `last_drop`
+        The last Drag that the current Drag can be dropped on if released,
+        or None if no valid Drag currently exists.
+
     `snapping`
         True if this Drag is in the middle of a snapping animation. Drags which
         are currently snapping cannot be dragged onto, but they can still be
