@@ -299,9 +299,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         or None if no valid Drag currently exists.
 
     `snapping`
-        True if this Drag is in the middle of a snapping animation. Drags which
-        are currently snapping cannot be dragged onto, but they can still be
-        grabbed and dragged.
+        True if this Drag is in the middle of a snapping animation.
 
     `w`, `h`
         The width and height of the Drag's child, in pixels.
