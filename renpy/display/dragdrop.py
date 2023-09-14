@@ -263,6 +263,23 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         The first is the Drag which determines its sensitivity.
         The second is a list of Drags that are being dragged.
 
+    `snapped`
+        A callback (or list of callbacks) that is called when the Drag completes
+        a snap animation. It is called with four arguments. The first is the
+        Drag which was undergoing the snap animation. The second and third are
+        the x and y coordinates where the Drag was set to snap to. The fourth
+        is a boolean which is True if the snap animation was successfully
+        completed, and False if it was interrupted (e.g. from being grabbed in
+        the middle of snapping). For example, the following function sets
+        the drag's start_x and start_y position to its intended end position
+        if the snap animation was interrupted::
+
+            def snapped_callback(drag, x, y, completed):
+                if not completed:
+                    drag.start_x = x
+                    drag.start_y = y
+
+
     Except for `d`, all of the parameters are available as fields (with
     the same name) on the Drag object. In addition, after the drag has
     been rendered, the following fields become available:
@@ -406,6 +423,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         self.snap_start_y = 0
         # True if the drag is in the middle of a snapping animation
         self.snapping = False
+        # A callback which is run when the drag completes a snap animation
+        self.snapped = properties.get("snapped", None)
 
         # The displayable we were last dropping on.
         self.last_drop = None # type: renpy.display.displayable.Displayable|None
@@ -641,6 +660,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             self.y = self.target_y
             self.snap_warper = None
             self.snap_start = 0
+            if self.snapping:
+                run(self.snapped, self, self.target_x, self.target_y, True)
             self.snapping = False
         else:
             # Snap in progress
@@ -706,14 +727,11 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         grabbed = (renpy.display.focus.get_grab() is self)
 
         if grabbed and self.snapping:
-            # Set the start x/y to the original target x/y, since that's
-            # where it was snapping to.
+            # Stop the snap, since it was picked up
             self.snapping = False
-            self.start_x = self.target_x
-            self.start_y = self.target_y
+            run(self.snapped, self, self.target_x, self.target_y, False)
             self.snap_warper = None
             self.snap_start = 0
-
 
         if (self.alternate is not None) and renpy.display.touch and map_event(ev, "drag_activate"):
             self.click_time = st
@@ -795,13 +813,6 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             return self.child.event(ev, x, y, st)
 
 
-        if self.last_drop is not None and self.last_drop.snapping:
-            # Last drop is currently moving; should not be considered
-            # droppable at the moment.
-            self.last_drop.set_style_prefix("idle_", True)
-            self.last_drop = None
-            redraw(self, 0)
-
         # Handle moves by moving things relative to the grab point.
         if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
 
@@ -881,9 +892,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         else:
             drop = None
 
-        # New drop, or no longer on the last drop
-        if drop != self.last_drop and (drop is None
-                or (drop is not None and not drop.snapping)):
+        if drop is not self.last_drop:
 
             if self.last_drop is not None:
                 self.last_drop.set_style_prefix("idle_", True)
