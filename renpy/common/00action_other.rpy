@@ -710,7 +710,7 @@ init -1500 python:
 
 
     @renpy.pure
-    class SetViewportScroll(Action, DictEquality):
+    class ScrollViewport(Action, DictEquality):
         """
         :doc: other_action
 
