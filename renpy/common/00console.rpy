@@ -717,7 +717,7 @@ init -1500 python in _console:
                     pass
                 else:
                     result = renpy.python.py_eval(code)
-                    if persistent._console_short:
+                    if persistent._console_short and not getattr(result, "_console_always_long", False):
                         he.result = aRepr.repr(result)
                     else:
                         he.result = repr(result)

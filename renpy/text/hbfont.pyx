@@ -271,6 +271,9 @@ class Variations:
     Represents the variations of a font.
     """
 
+    # Ensure this isn't shortened by the console.
+    _console_always_long = True
+
     def __init__(self):
         # A map fron a named instance name to its index.
         self.instance = { }
@@ -279,9 +282,6 @@ class Variations:
         self.axis = { }
 
     def __repr__(self):
-        return "<Variations instance={!r} axes={!r}>".format(self.instance, self.axis)
-
-    def dump(self):
         rv = [ ]
 
         for k in self.instance:
