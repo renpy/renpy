@@ -32,7 +32,7 @@ with a font that contains the Twiemoji image, which covers a majority of the
 Emoji in use.
 
 Ren'Py now automatically switches to the Emoji font when it encounters Emoji
-characters in text. The supported characters are those in the `Emoji 15 <https://unicode.org/Public/emoji/15.0/emoji-test.txt>`_
+characters in text. The supported characters are those in the `Emoji 15.1 <https://unicode.org/Public/emoji/15.1/emoji-test.txt>`_
 set. Harfbuzz support is required to render joining sequences of Emoji,
 including things like gender and skin-tone modifiers, so you'll need Ren'Py 8
 to have those work. This switching occurrs when a font tag is not being
