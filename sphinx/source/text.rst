@@ -822,3 +822,64 @@ necessary.
 
 Whenever text is displayed that overflows the available area, Ren'Py
 will log an error to the text_overflow.txt file.
+
+.. _variable-fonts:
+
+Variable Fonts
+==============
+
+Ren'Py has support for OpenType variable fonts. These fonts may support
+multiple axes, such as weight and width, and based on the value of these
+axes, the display of the font can change. Variable fonts may also have
+named instances, which provide different values for the axes. For example,
+the "bold" named instance will likely provide the bold version of a  font,
+while "regular" will be a more normal version.
+
+Variable fonts require the use of the harfbuzz text shaper, controlled by
+the :propref:`shaper` style property. Once this is set, the :propref:`instance`
+property selects a named instance, while the :propref:`axis` property sets
+the value of one or more axes.
+
+These can also be set in the gui system. For example one can use::
+
+    define gui.text_font = "nunito.ttf"
+    define gui.text_instance = "light"
+    define gui.text_axis = {"width" : 125}
+
+Will start with the light instance, and make it wide.
+
+If no instance is given, Ren'Py will default to "regular" for non-bold text,
+and "bold" for bold text.
+
+There are two text tags that support the use of variable fonts.
+
+.. text-tag:: instance
+
+    The instance tag changes the instance that is being used. For example::
+
+        "This is {instance=heavy}heavy{/instance} text."
+
+    When the instance tag is used, the axis properties are overriden.
+
+.. text-tag:: axis
+
+    The axis tag changes the value of one or more axes. For example::
+
+        "This is {axis:width=125}wide{/axis} text."
+
+    The axis tag can be used multiple times, and the values will be combined.
+
+        "This is {axis:width=125}{axis:weight=200}wide and bold{/axis}{/axis} text."
+
+    The value of on the right side of the equals is expected to be a floating
+    point number.
+
+To get the availabe instances and axes of a font, use the :func:`renpy.variable_font_info
+function. This function is intended to be called from the console. To access it, hit
+shift+O to open the console, and then type::
+
+    renpy.variable_font_info("nunito.ttf")
+
+This will display information for the nunito.ttf font.
+
+.. include:: inc/variable_fonts
