@@ -10,44 +10,66 @@ Changelog (Ren'Py 7.x-)
 8.2.0 / 7.7.0
 =============
 
-Emoji and Other Text Improvements
----------------------------------
 
-Ren'Py's text handing has gotten an overhaul in this release, with the
-intent of supporting Emoji and scripts that require complext text shaping,
-like Indic languages. This required many changes.
+Harfbuzz Integration
+--------------------
 
-The first was a change in the way Ren'Py handles font autohinting, to take
-advantage of more information in the fonts. This may cause some of the
-fonts to change shape slightly, but is required to allow script-like
-fonts to combine properly.
+Ren'Py now uses the Harfbuzz library to perform text shaping. On all
+versions of Ren'Py, Harfbuzz is used to supply additional information
+to the freetype authinter.
 
-The second change is only enabled in Ren'Py 8, and that's the use of the
-Harfbuzz library to shape text. Harfbuzz is used reorder and select different
-glyphs based on the context they're in and the language of the text provided.
+On Ren'Py 8, Harfbuzz is also used to shape text, reordering and selecting
+gtlphs based on the context they're in and the language of the text provided.
+This is required to support scripts that require complex text shaping,
+such as Brahmic/Indic scripts. (You'll need to provide a font that
+supports the appropriate language.)
 
-Next, Ren'Py has gained the ability to render fonts that use the COLR section
-to provide color glyphs. These are general fonts used for Emoji. Ren'Py ships
-with a font that contains the Twiemoji image, which covers a majority of the
-Emoji in use.
+The new :propref:`shaper` style property controls the shaper used to text,
+for compatibility with older versions of Ren'Py.
 
-Ren'Py now automatically switches to the Emoji font when it encounters Emoji
-characters in text. The supported characters are those in the `Emoji 15.1 <https://unicode.org/Public/emoji/15.1/emoji-test.txt>`_
-set. Harfbuzz support is required to render joining sequences of Emoji,
+
+Emoji-Related Text Improvements
+-------------------------------
+
+Next, Ren'Py has gained the ability to render fonts that use the COLRv0 standard
+to provide color glyphs. Ren'Py ships with a font that contains the Twiemoji images,
+which covers a majority of the Emoji in use (but not all of them).
+
+Ren'Py will automatically switch to the Emoji font when it encounters Emoji
+characters in text. The supported characters are those in the
+`Emoji 15.1 <https://unicode.org/Public/emoji/15.1/emoji-test.txt>`_ standard.
+
+Ren'Py 8 with Harfbuzz shaping is required to render joining sequences of Emoji,
 including things like gender and skin-tone modifiers, so you'll need Ren'Py 8
 to have those work. This switching occurrs when a font tag is not being
 used.
 
-The new :propref:`emoji_font`, :propref:`prefer_emoji` and :propref:`shaper`
-style properties help control these new text rendering features.
+The new :propref:`emoji_font`, :propref:`prefer_emoji` style properties control
+Emoji font selection.
 
 Fundamentally, you can include Emoji into your game by typing it into your
 script as character dialogue. For example::
 
     e "I'm feeling 😃 today."
 
-Text in Indic languages should also be supported, but you'll need to find a
-font that supports the language you're using.
+Variable Fonts
+--------------
+
+Ren'Py now supports OpenType variable fonts. These are fonts that use
+one or more axes of variablity to change how the font is rendered. For
+example, a font may have the "weight" axis, which controls how bold the
+font is, and the "width" axis, which controls how wide the font is.
+
+Variable font support required Ren'Py 8 and the harfbuzz shaper to work.
+
+To support variable fonts, Ren'Py has added the :propref:`instance` and
+:propref:`axis` style properties, and the :tt:`instance` and :tt:`axis`
+text tags, as well as the :func:`renpy.variable_font_info` function.
+
+See the :ref:`variable fonts documentation <variable-fonts>` for more information.
+
+Font Hinting
+------------
 
 There is a new :propref:`hinting` mode "auto-light", that performs autohinting
 in the vertical but not horizontal direction.
