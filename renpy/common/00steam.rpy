@@ -560,7 +560,7 @@ init -1499 python in _renpysteam:
     ################################################################## Keyboard
 
     # True to show the keyboard once, False otherwise.
-    keyboard_mode = "always"
+    keyboard_mode = "once"
 
     # True if this is the start of a new interaction, and so the keyboard
     # should be shown if a text box appears.
@@ -570,7 +570,7 @@ init -1499 python in _renpysteam:
     keyboard_showing = None
 
     # Should the layers be shifted so the baseline is in view?
-    keyboard_shift = True
+    keyboard_shift = False
 
     # Where the baseline is shifted to on the screen. This is a floating point number,
     # with 0.0 being the top of the screen and 1.0 being the bottom.
@@ -578,7 +578,7 @@ init -1499 python in _renpysteam:
 
     # The textarea given to steam. This is scaled using the usual
     # position rules.
-    keyboard_text_area = (0.0, 0.0, 1.0, 0.5)
+    keyboard_text_area = (0.0, 0.5, 1.0, 0.5)
 
     def prime_keyboard():
         global keyboard_primed
