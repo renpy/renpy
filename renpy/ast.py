@@ -2645,20 +2645,20 @@ class Default(Node):
         if self.varname in defaults_set:
             if start and renpy.config.developer:
                 raise Exception("{}.{} is being given a default a second time.".format(self.store, self.varname))
-            return
 
-        # do the variable shadowing if not in this case, for compatibility reasons
-        if start and (renpy.config.developer is True):
-            fullname = '.'.join((self.store, self.varname))
-            if fullname in renpy.python.store_dicts:
-                raise Exception("{} is being given a default, but a store with that name already exists.".format(fullname))
+        else:
+            # do the variable shadowing if not in this case, for compatibility reasons
+            if start and (renpy.config.developer is True):
+                fullname = '.'.join((self.store, self.varname))
+                if fullname in renpy.python.store_dicts:
+                    raise Exception("{} is being given a default, but a store with that name already exists.".format(fullname))
 
-        if start or (self.varname not in d.ever_been_changed):
-            d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
+            if start or (self.varname not in d.ever_been_changed):
+                d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
 
-        d.ever_been_changed.add(self.varname)
+            d.ever_been_changed.add(self.varname)
 
-        defaults_set.add(self.varname)
+            defaults_set.add(self.varname)
 
     def report_traceback(self, name, last):
         return [ (self.filename, self.linenumber, name, None) ]
