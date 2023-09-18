@@ -777,6 +777,8 @@ class Context(renpy.object.Object):
         rv.last_abnormal = self.last_abnormal
         rv.abnormal_stack = list(self.abnormal_stack)
 
+        rv.interacting = False
+
         return rv
 
     def predict_call(self, label, return_site):
