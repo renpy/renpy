@@ -2660,6 +2660,9 @@ class Default(Node):
 
             defaults_set.add(self.varname)
 
+        if (not start) and (self.operator == "|="):
+            d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode) | d[self.varname]
+
     def report_traceback(self, name, last):
         return [ (self.filename, self.linenumber, name, None) ]
 
