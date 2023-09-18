@@ -1004,7 +1004,12 @@ def default_statement(l, loc):
         store = store + "." + name
         name = l.require(l.word)
 
-    l.require('=')
+    if l.match(r'\|='):
+        operator = "|="
+    else:
+        l.require('=')
+        operator = "="
+
     expr = l.rest()
 
     if not expr:
@@ -1012,7 +1017,7 @@ def default_statement(l, loc):
 
     l.expect_noblock('default statement')
 
-    rv = ast.Default(loc, store, name, expr)
+    rv = ast.Default(loc, store, name, operator, expr)
 
     if not l.init:
         rv = ast.Init(loc, [ rv ], priority + l.init_offset)

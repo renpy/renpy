@@ -2589,19 +2589,22 @@ class Default(Node):
         'varname',
         'code',
         'store',
+        'operator',
         ]
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.store = 'store'
+        self.operator = '='
         return self
 
-    def __init__(self, loc, store, name, expr):
+    def __init__(self, loc, store, name, operator, expr):
 
         super(Default, self).__init__(loc)
 
         self.store = store
         self.varname = name
+        self.operator = operator
         self.code = PyCode(expr, loc=loc, mode='eval')
 
     def diff_info(self):
