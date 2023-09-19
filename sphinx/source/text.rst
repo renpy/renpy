@@ -874,7 +874,7 @@ There are two text tags that support the use of variable fonts.
     The value of on the right side of the equals is expected to be a floating
     point number.
 
-To get the availabe instances and axes of a font, use the :func:`renpy.variable_font_info`
+To get the available instances and axes of a font, use the :func:`renpy.variable_font_info`
 function. This function is intended to be called from the console. To access it, hit
 shift+O to open the console, and then type::
 
