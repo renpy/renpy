@@ -22,7 +22,7 @@ MMX acceleration for video playback has been re-enabled on Windows and
 Linux.
 
 The way the Steam Deck keyboard is shown has changed. They keyboard
-is now show, once, when a text input is displayed. By default, the
+is now shown, once, when a text input is displayed. By default, the
 keyboard is shown at the top of the screen, and the keyboard will
 only be shown once. If it's hidden (for example, the Steam button
 is pressed), the player needs to hit Steam+X to show it. This works
