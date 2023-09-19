@@ -410,7 +410,7 @@ init 1100 python hide:
             config.layers.append('screens')
 
     if "Fullscreen" in config.translations:
-        fs = _("Fullscreen")
+        fs = __("Fullscreen")
         config.translations.setdefault("Fullscreen 4:3", fs + " 4:3")
         config.translations.setdefault("Fullscreen 16:9", fs + " 16:9")
         config.translations.setdefault("Fullscreen 16:10", fs + " 16:10")

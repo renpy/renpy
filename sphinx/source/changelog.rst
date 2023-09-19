@@ -170,7 +170,7 @@ completes.
 .. _renpy-8.1.3:
 .. _renpy-7.6.3:
 
-8.1.2 / 7.6.2
+8.1.3 / 7.6.3
 =============
 
 Changes
@@ -182,6 +182,27 @@ in the gl2 renderer that are not present in the gl renderer.
 
 MMX acceleration for video playback has been re-enabled on Windows and
 Linux.
+
+The way the Steam Deck keyboard is shown has changed. They keyboard
+is now show, once, when a text input is displayed. By default, the
+keyboard is shown at the top of the screen, and the keyboard will
+only be shown once. If it's hidden (for example, the Steam button
+is pressed), the player needs to hit Steam+X to show it. This works
+around issues with the Steam Deck.
+
+The 32-bit windows Live2D library will be installed into Ren'Py 7.
+You may need to reinstall Live2D to get this library.
+
+Fixes
+-----
+
+An issue that prevented keys from being bound to text (for example,
+keysyms like "r" rather than "K_r") has been fixed.
+
+There have been several documentation fixes.
+
+An issue with rollback not working at the start of the game has been
+fixed.
 
 
 .. _renpy-8.1.2:
