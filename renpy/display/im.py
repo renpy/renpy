@@ -712,8 +712,9 @@ class Image(ImageBase):
     """
 
     is_svg = False
+    dpi = 96
 
-    def __init__(self, filename, **properties):
+    def __init__(self, filename, dpi=96, **properties):
         """
         @param filename: The filename that the image will be loaded from.
         """
@@ -731,6 +732,7 @@ class Image(ImageBase):
 
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
+        self.dpi = dpi
 
 
     def _repr_info(self):
@@ -777,8 +779,8 @@ class Image(ImageBase):
             if self.is_svg:
                 width, height = surf.get_size()
 
-                width = int(width * renpy.display.draw.draw_per_virt)
-                height = int(height * renpy.display.draw.draw_per_virt)
+                width = int(width * renpy.display.draw.draw_per_virt * self.dpi / 96)
+                height = int(height * renpy.display.draw.draw_per_virt * self.dpi / 96)
 
                 filelike = renpy.loader.load(self.filename, directory="images")
 
@@ -1951,7 +1953,7 @@ def image(arg, loose=False, **properties):
     """
     :doc: im_image
     :name: Image
-    :args: (filename, *, optimize_bounds=True, oversample=1, **properties)
+    :args: (filename, *, optimize_bounds=True, oversample=1, dpi=96, **properties)
 
     Loads an image from a file. `filename` is a
     string giving the name of the file.
@@ -1970,6 +1972,11 @@ def image(arg, loose=False, **properties):
         with more pixels than its logical size would imply. For example, if
         an image file is 2048x2048 and oversample is 2, then the image will
         be treated as a 1024x1024 image for the purpose of layout.
+
+    `dpi`
+        The DPI of an SVG image. This defaults to 96, but that can be
+        increased to render the SVG larger, and decreased to render
+        it smaller.
     """
 
     """

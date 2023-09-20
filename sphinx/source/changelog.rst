@@ -99,6 +99,9 @@ specific to some but not all characters.
 Features
 --------
 
+The virtual dpi of an SVG file can be set with the new `dpi`
+parameter to :func:`Image`.
+
 The new :func:`CopyToClipboard` action copies text to the clipboard.
 
 The new :func:`renpy.confirm` function provides a way of using
