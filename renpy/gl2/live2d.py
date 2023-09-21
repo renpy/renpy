@@ -661,6 +661,9 @@ class Live2D(renpy.display.displayable.Displayable):
 
     def _choose_attributes(self, tag, attributes, optional):
 
+        # Filter out _sustain.
+        attributes = [ i for i in attributes if i != "_sustain" ]
+
         common = self.common
 
         # Chose all motions.
