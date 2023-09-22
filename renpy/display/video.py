@@ -249,29 +249,26 @@ def get_movie_texture_web(channel, mask_channel, side_mask, mipmap):
     return tex, new
 
 
-def render_movie(channel, width, height, group=None):
-    tex, _new = get_movie_texture(channel)
+def resize_movie(r, width, height):
 
-    if group is not None:
-        if tex is None:
-            tex = group_texture.get(group, None)
-        else:
-            group_texture[group] = tex
-
-    if tex is None:
+    if r is None:
         return None
 
-    sw, sh = tex.get_size()
+    rv = renpy.display.render.Render(width, height)
 
-    scale = min(1.0 * width / sw, 1.0 * height / sh)
+    sw, sh = r.get_size()
+
+    if not (sw and sh):
+        return rv
+
+    scale = min(1.0 * width / sw, 1.0 * height / sh) # type: float
 
     dw = scale * sw
     dh = scale * sh
 
-    rv = renpy.display.render.Render(width, height)
     rv.forward = renpy.display.matrix.Matrix2D(1.0 / scale, 0.0, 0.0, 1.0 / scale)
     rv.reverse = renpy.display.matrix.Matrix2D(scale, 0.0, 0.0, scale)
-    rv.blit(tex, (int((width - dw) / 2), int((height - dh) / 2)))
+    rv.blit(r, (int((width - dw) / 2), int((height - dh) / 2)))
 
     return rv
 
@@ -539,42 +536,31 @@ class Movie(renpy.display.displayable.Displayable):
 
             return rv
 
-        if self.size is None:
+        tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask, self.style.mipmap)
 
-            tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask, self.style.mipmap)
-
-            if self.group is not None:
-                if tex is None:
-                    tex = group_texture.get(self.group, None)
-                else:
-                    group_texture[self.group] = tex
-
-            if (not not_playing) and (tex is not None):
-                width, height = tex.get_size()
-
-                rv = renpy.display.render.Render(width, height)
-                rv.blit(tex, (0, 0))
-
-            elif (not not_playing) and (self.start_image is not None):
-                surf = renpy.display.render.render(self.start_image, width, height, st, at)
-                w, h = surf.get_size()
-                rv = renpy.display.render.Render(w, h)
-                rv.blit(surf, (0, 0))
-
+        if self.group is not None:
+            if tex is None:
+                tex = group_texture.get(self.group, None)
             else:
-                rv = renpy.display.render.Render(0, 0)
+                group_texture[self.group] = tex
+
+        if (not not_playing) and (tex is not None):
+            width, height = tex.get_size()
+
+            rv = renpy.display.render.Render(width, height)
+            rv.blit(tex, (0, 0))
+
+        elif (not not_playing) and (self.start_image is not None):
+            surf = renpy.display.render.render(self.start_image, width, height, st, at)
+            w, h = surf.get_size()
+            rv = renpy.display.render.Render(w, h)
+            rv.blit(surf, (0, 0))
 
         else:
+            rv = renpy.display.render.Render(0, 0)
 
-            w, h = self.size
-
-            if not playing:
-                rv = None
-            else:
-                rv = render_movie(self.channel, w, h, group=self.group)
-
-            if rv is None:
-                rv = renpy.display.render.Render(w, h)
+        if self.size is not None:
+            rv = resize_movie(rv, self.size[0], self.size[1])
 
         # Usually we get redrawn when the frame is ready - but we want
         # the movie to disappear if it's ended, or if it hasn't started

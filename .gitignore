@@ -127,3 +127,6 @@ CubismSdkForNative-4-*.zip
 # Works in progress, throwaway scripts, etc.
 /scratch
 /*-dists
+/c
+/cg
+/.vscode/launch.json
