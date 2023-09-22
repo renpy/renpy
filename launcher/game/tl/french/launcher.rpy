@@ -2147,3 +2147,23 @@
     # game/androidstrings.rpy:69
     old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
     new "J'ai trouvé un fichier bundle.keystore dans le dossier \"rapt\". Voulez-vous l'utiliser ?"
+
+    # game/choose_directory.rpy:72
+    old "No directory was selected, but one is required."
+    new "Un chemin d'accès est nécessaire, mais aucun n'a été fourni."
+
+    # game/choose_directory.rpy:80
+    old "The selected directory does not exist."
+    new "Le dossier sélectionné n'existe pas."
+
+    # game/choose_directory.rpy:82
+    old "The selected directory is not writable."
+    new "Le dossier sélectionné n'est pas ouvert en écriture."
+
+    # game/distribute.rpy:554
+    old "This may be derived from build.name and config.version or build.version."
+    new "Cette variable peut être dérivée de build.name, et de config.version ou build.version."
+
+    # game/new_project.rpy:66
+    old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
+    new "Attention : vous utilisez Ren'Py 7. Il est recommandé d'utiliser Ren'Py 8 pour de nouveaux projets."
