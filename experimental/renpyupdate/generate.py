@@ -60,6 +60,9 @@ class BlockGenerator(object):
         entry to the filelist.
         """
 
+        if self.new_rpu is None:
+            return
+
         self.new_rpu.close()
         self.new_rpu = None
 

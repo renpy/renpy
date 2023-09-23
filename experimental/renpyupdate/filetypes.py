@@ -30,12 +30,23 @@ class Segment(object):
         # COMPRESS_* constants.
         self.compressed = compressed
 
+    def __eq__(self, other):
+        if not isinstance(other, Segment):
+            return False
+
+        return self.offset == other.offset and self.size == other.size and self.hash == other.hash and self.compressed == other.compressed
+
     def to_json(self):
         return {
             "offset" : self.offset,
             "size" : self.size,
             "hash" : self.hash,
             "compressed" : self.compressed }
+
+    @staticmethod
+    def from_json(d):
+        rv = Segment(d["offset"], d["size"], d["hash"], d["compressed"])
+        return rv
 
 
 class Directory(object):
@@ -48,6 +59,11 @@ class Directory(object):
 
     def to_json(self):
         return { "name" : self.name }
+
+    @staticmethod
+    def from_json(d):
+        rv = Directory(d["name"])
+        return rv
 
 class File(object):
     """
@@ -79,6 +95,11 @@ class File(object):
             "mtime" : self.mtime,
             "xbit" : self.xbit,
         }
+
+    @staticmethod
+    def from_json(d):
+        rv = File(d["name"], segments=[ Segment.from_json(i) for i in d["segments"] ], mtime=d["mtime"], xbit=d["xbit"])
+        return rv
 
     def scan_segments(self, f, offset, size):
         """
@@ -170,6 +191,15 @@ class File(object):
 
             self.scan_segments(f, 0, size)
 
+    def add_data_filename(self, path):
+        """
+        Sets the data_filename of this file to the name of the file, relative
+        to `path`.
+        """
+
+        self.data_filename = os.path.join(path, self.name)
+
+
 class FileList(object):
     """
     Represents a list of files and directories.
@@ -187,7 +217,15 @@ class FileList(object):
             "blocks" : [ i.to_json() for i in self.blocks ],
         }
 
-    def scan(self, root):
+    @staticmethod
+    def from_json(d):
+        rv = FileList()
+        rv.directories = [ Directory.from_json(i) for i in d["directories"] ]
+        rv.files = [ File.from_json(i) for i in d["files"] ]
+        rv.blocks = [ File.from_json(i) for i in d["blocks"] ]
+        return rv
+
+    def scan(self, root, data_filename=True):
         """
         Scan a directory, recursively, and add the files and directories
         found to this file test. This is intended for testing. This does
@@ -203,7 +241,7 @@ class FileList(object):
             for fn in files:
                 fn = os.path.join(dn, fn)
                 relfn = os.path.relpath(fn, root)
-                f = File(relfn, data_filename=fn)
+                f = File(relfn, data_filename=fn if data_filename else None)
                 self.files.append(f)
 
         self.directories.sort(key=lambda x : x.name)
@@ -216,3 +254,12 @@ class FileList(object):
 
         data = json.dumps(self.to_json()).encode("utf-8")
         return zlib.compress(data, 3)
+
+    @staticmethod
+    def decode(data):
+        """
+        Decode the file list from a file.
+        """
+
+        data = zlib.decompress(data)
+        return FileList.from_json(json.loads(data.decode("utf-8")))
