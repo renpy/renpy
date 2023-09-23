@@ -4,21 +4,7 @@ import os
 import pickle
 import zlib
 
-def hash_data(data):
-    """
-    Given `data` (bytes), returns a hexadecimal hash of the data.
-    """
-
-    h = hashlib.sha256()
-    h.update(data)
-    return h.hexdigest()
-
-def dump(d):
-    """
-    Dumps a dictionary to a JSON string.
-    """
-
-    print(json.dumps(d, indent=2))
+from .util import dump, hash_data
 
 COMPRESS_NONE = 0
 COMPRESS_ZLIB = 1
@@ -192,16 +178,20 @@ class FileList(object):
     def __init__(self):
         self.directories = [ ]
         self.files = [ ]
+        self.blocks = [ ]
 
     def to_json(self):
         return {
             "directories" : [ i.to_json() for i in self.directories ],
-            "files" : [ i.to_json() for i in self.files ]
+            "files" : [ i.to_json() for i in self.files ],
+            "blocks" : [ i.to_json() for i in self.blocks ],
         }
 
     def scan(self, root):
         """
-        Scan a directory, recursively.
+        Scan a directory, recursively, and add the files and directories
+        found to this file test. This is intended for testing. This does
+        not call .scan on the files.
         """
 
         for dn, dirs, files in os.walk(root):
@@ -214,16 +204,15 @@ class FileList(object):
                 fn = os.path.join(dn, fn)
                 relfn = os.path.relpath(fn, root)
                 f = File(relfn, data_filename=fn)
-                f.scan()
                 self.files.append(f)
 
         self.directories.sort(key=lambda x : x.name)
         self.files.sort(key=lambda x : x.name)
 
+    def encode(self):
+        """
+        Encode the file list into a file.
+        """
 
-if __name__ == "__main__":
-    import sys
-
-    fl = FileList()
-    fl.scan(sys.argv[1])
-    dump(fl.to_json())
+        data = json.dumps(self.to_json()).encode("utf-8")
+        return zlib.compress(data, 3)
