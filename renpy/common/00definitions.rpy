@@ -105,22 +105,9 @@ init -1400 python:
 
     _define = define = object()
 
-    # Ease images around. These are basically cosine-warped moves.
-    def _ease_out_time_warp(x):
-        import math
-        return 1.0 - math.cos(x * math.pi / 2.0)
-
-    def _ease_in_time_warp(x):
-        import math
-        return math.cos((1.0 - x) * math.pi / 2.0)
-
-    def _ease_time_warp(x):
-        import math
-        return .5 - math.cos(math.pi * x) / 2.0
-
-    # Back up the move transition, so that if MoveTransition gets replaced by
-    # renpy.compat, this still works.
-    __MoveTransition = MoveTransition
+    _ease_out_time_warp = _warper.easeout
+    _ease_in_time_warp = _warper.easein
+    _ease_time_warp = _warper.ease
 
     # This defines a family of move transitions, using the old-style methods.
     def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
@@ -176,7 +163,8 @@ init -1400 python:
                 delay,
                 old=old,
                 layers=layers,
-                time_warp=time_warp),
+                time_warp=time_warp,
+                ),
 
             "inright" : MoveTransition(
                 delay,
