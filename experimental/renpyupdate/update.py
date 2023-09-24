@@ -15,11 +15,43 @@ class Update(object):
         self.new_files = [ i for j in self.newlists for i in j.files ]
         self.old_files = [ i for j in self.oldlists for i in j.files ]
 
+        self.find_incomplete_files()
         self.scan_old_files()
         self.remove_identical_files()
 
     def log(self, message, *args):
         print(message % args)
+
+    def rename(self, old, new):
+        try:
+            os.rename(old, new)
+        except:
+            os.unlink(new)
+            os.rename(old, new)
+
+    def find_incomplete_files(self):
+        """
+        Scan a directory, recursively, and add the files and directories
+        found to this file test. This is intended for testing. This does
+        not call .scan on the files.
+        """
+
+        root = self.targetdir
+
+        for dn, dirs, files in os.walk(root):
+
+            for fn in files:
+                fn = os.path.join(dn, fn)
+
+                if not fn.endswith(".new.rpu"):
+                    continue
+
+                oldfn = fn[:-len(".new.rpu")] + ".old.rpu"
+                self.rename(fn, oldfn)
+
+                relfn = os.path.relpath(oldfn, root)
+                f = filetypes.File(relfn, data_filename=oldfn)
+                self.old_files.append(f)
 
     def scan_old_files(self):
         """

@@ -186,8 +186,11 @@ class File(object):
             f.seek(0)
 
             if self.name.endswith(".rpa") and start[:8] == b'RPA-3.0 ':
-                self.scan_rpa(f, size)
-                return
+                try:
+                    self.scan_rpa(f, size)
+                    return
+                except Exception:
+                    pass
 
             self.scan_segments(f, 0, size)
 
