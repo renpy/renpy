@@ -1,5 +1,6 @@
 import argparse
 import os
+import zlib
 
 from . import filetypes
 
@@ -15,22 +16,22 @@ class Plan(object):
     This represents a plan for updating a single segment.
     """
 
-    def __init__(self, block, source_filename, source_size, source_offset, compressed, target_filename, target_size, target_offset, hash):
-        # Is source_fn a blockfile that might need to be downloaded?
+    def __init__(self, block, old_filename, old_offset, old_size, compressed, new_filename, new_offset, new_size, hash):
+        # Is old_filename a blockfile that might need to be downloaded?
         self.block = block
 
         # The source filename, size, and offset.
-        self.source_filename = source_filename
-        self.source_size = source_size
-        self.source_offset = source_offset
+        self.old_filename = old_filename
+        self.old_offset = old_offset
+        self.old_size = old_size
 
         # If true, the source information is compressed.
         self.compressed = compressed
 
         # The target filename, size, and offset.
-        self.target_filename = target_filename
-        self.target_size = target_size
-        self.target_offset = target_offset
+        self.new_filename = new_filename
+        self.new_offset = new_offset
+        self.new_size = new_size
 
         # The hash.
         self.hash = hash
@@ -44,6 +45,7 @@ class Update(object):
         self.sourcedir = rpudir
         self.newlists = newlists
 
+        self.new_directories = [ i for j in self.newlists for i in j.directories ]
         self.new_files = [ i for j in self.newlists for i in j.files ]
         self.old_files = [ i for j in self.oldlists for i in j.files ]
         self.block_files = [ i for j in self.newlists for i in j.blocks ]
@@ -51,11 +53,23 @@ class Update(object):
         # A list of plan objects.
         self.plan = [ ]
 
+        # A cache for the destiation filename and file pointer.
+        self.destination_filename = None
+        self.destination_fp = None
+
+        self.make_directories()
         self.write_padding()
         self.find_incomplete_files()
         self.scan_old_files()
         self.remove_identical_files()
         self.create_plan()
+        self.execute_plan()
+
+        if self.destination_fp is not None:
+            self.destination_fp.close()
+
+        self.rename_new_files()
+
 
     def log(self, message, *args):
         print(message % args)
@@ -66,6 +80,18 @@ class Update(object):
         except:
             os.unlink(new)
             os.rename(old, new)
+
+    def make_directories(self):
+        """
+        Creates the directories in self.new_directories.
+        """
+
+        directories = list(self.new_directories)
+        directories.sort(key=lambda i : i.name)
+
+        for d in directories:
+            if not os.path.exists(os.path.join(self.targetdir, d.name)):
+                os.makedirs(os.path.join(self.targetdir, d.name))
 
     def find_incomplete_files(self):
         """
@@ -169,6 +195,7 @@ class Update(object):
         plan = [ ]
 
         for target_file in self.new_files:
+
             for target_segment in target_file.segments:
                 block, source_file, source_segment = segment_locations.get(target_segment.hash, (False, None, None))
 
@@ -188,9 +215,108 @@ class Update(object):
                     target_segment.hash,
                     ))
 
-        plan.sort(key=lambda p : (p.block, p.source_filename, p.source_offset, p.source_size))
+        plan.sort(key=lambda p : (p.block, p.old_filename, p.old_offset, p.old_size))
 
         self.log("Created a plan with %d entries.", len(plan))
+
+        self.plan = plan
+
+
+    def write_destination(self, filename, offset, data):
+        """
+        Writes data to the destination file at the given offset.
+        """
+
+        filename = os.path.join(self.targetdir, filename + ".new.rpu")
+
+        if self.destination_filename != filename:
+            if self.destination_fp is not None:
+                self.destination_fp.close()
+
+            self.destination_filename = filename
+            if os.path.exists(filename):
+                self.destination_fp = open(os.path.join(self.targetdir, filename), "r+b")
+            else:
+                self.destination_fp = open(os.path.join(self.targetdir, filename), "wb")
+
+        self.destination_fp.seek(offset)
+        self.destination_fp.write(data)
+
+    def execute_file_plan(self, plan):
+        """
+        This executes the plan for one source file.
+        """
+
+        old_filename = plan[0].old_filename
+        block = plan[0].block
+
+        # TODO: Download block file contents, if needed.
+
+        if block:
+            old_filename = os.path.join(self.sourcedir, old_filename)
+
+        # From here on, source_filename must point to a complete file on disk.
+
+        with open(old_filename, "rb") as f:
+
+            hash = None
+            data = b''
+
+            for p in plan:
+
+                self.log("%s (%d, %d)\n  -> %s (%d, %d)", p.old_filename, p.old_offset, p.old_size, p.new_filename, p.new_offset, p.new_size)
+
+                if hash != p.hash:
+                    f.seek(p.old_offset)
+                    data = f.read(p.old_size)
+
+                    if p.compressed == filetypes.COMPRESS_ZLIB:
+                        data = zlib.decompress(data)
+
+                    hash = filetypes.hash_data(data)
+
+                    if hash != p.hash:
+                        self.log("Hash mismatch on %s offset %d size %d.", p.old_filename, p.old_offset, p.old_size)
+                        raise UpdateError("Hash mismatch on %s offset %d size %d." % (p.old_filename, p.old_offset, p.old_size))
+
+                self.write_destination(p.new_filename, p.new_offset, data)
+
+        # TODO: Once we make it here, we're done with source_filename, so it's okay to clean
+        # that file up.
+
+    def execute_plan(self):
+        """
+        This executes the full plan, one file at a time.
+        """
+
+        queue = [ ]
+        old_key = (False, None)
+
+        for p in self.plan:
+            key = (p.block, p.old_filename)
+
+            if key != old_key:
+                if queue:
+                    self.execute_file_plan(queue)
+
+                queue = [ ]
+
+                old_key = key
+
+            queue.append(p)
+
+        if queue:
+            self.execute_file_plan(queue)
+
+    def rename_new_files(self):
+        """
+        Renames the new files to final names.
+        """
+
+        for f in self.new_files:
+            filename = os.path.join(self.targetdir, f.name)
+            if os.path.exists(filename + ".new.rpu"):
+                self.rename(filename + ".new.rpu", filename)
 
 
 def main():
