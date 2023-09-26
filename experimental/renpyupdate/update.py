@@ -3,7 +3,6 @@ import os
 
 from . import filetypes
 
-
 class Update(object):
 
     def __init__(self, rpudir, newlists, targetdir, oldlists):
@@ -15,6 +14,7 @@ class Update(object):
         self.new_files = [ i for j in self.newlists for i in j.files ]
         self.old_files = [ i for j in self.oldlists for i in j.files ]
 
+        self.write_padding()
         self.find_incomplete_files()
         self.scan_old_files()
         self.remove_identical_files()
@@ -52,6 +52,22 @@ class Update(object):
                 relfn = os.path.relpath(oldfn, root)
                 f = filetypes.File(relfn, data_filename=oldfn)
                 self.old_files.append(f)
+
+    def write_padding(self):
+        """
+        Writes a file containing the padding for RPAs, so it's
+        not necessary to download a block file just for that.
+        """
+
+        padding = b"Made with Ren'Py."
+
+        fn = os.path.join(self.targetdir, "_padding.old.rpa")
+        with open(fn, "wb") as f:
+            f.write(padding)
+
+        f = filetypes.File("_padding.old.rpa", data_filename=fn)
+        self.old_files.append(f)
+
 
     def scan_old_files(self):
         """
@@ -93,7 +109,6 @@ class Update(object):
         self.log("%d files are new/changed.", len(new_files))
 
         self.new_files = new_files
-
 
 
 def main():
