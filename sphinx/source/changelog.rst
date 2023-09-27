@@ -82,6 +82,17 @@ control hinting per-use. For example::
 
 enables bytecode hinting for MyFont.ttf.
 
+Text Interpolation Improvements
+-------------------------------
+
+The text interpolation system can now be told to evaluate callables by
+providing the ``f`` conversion flag. It will call the function with no
+arguments, and interpolate the result. For example::
+
+    e "I'm talking to you from [renpy.version!f]!"
+
+would interpolate the result of ``renpy.version()`` into the dialogue.
+
 Speech Bubble Improvements
 --------------------------
 

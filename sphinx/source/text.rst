@@ -105,9 +105,25 @@ formatting syntax. Ren'Py uses [ to introduce string formatting
 because { was taken by text tags.
 
 Along with the ``!s`` and ``!r`` conversion flags supported by Python, Ren'Py
-supports several more flags. The ``!q`` conversion flag ensures that
-text tags are properly quoted, so that displaying a string will not
-introduce unwanted formatting constructs. For example::
+supports several more flags.
+
+The ``!f`` conversion flag will cause the value being interpolated to be
+treated as a callable, Ren'Py will call that value with no arguments to
+get a new value to interpolate. For example::
+
+    init python:
+        def name():
+            if flag:
+                return "Alice"
+            else:
+                return "Bob"
+
+    default flag = False
+
+    g "My name is [name!f]." # Will display "My name is Bob."
+
+The ``!q`` flag ensures that text tags are properly quoted, so that
+displaying a string will not introduce unwanted formatting constructs::
 
     g "Don't pull a fast one on me, [playername!q]."
 
@@ -142,6 +158,7 @@ It should be noted that:
 
 The transformations are done in the following order:
 
+#. ``f`` (function evaluation)
 #. ``r``/``s`` (repr or str)
 #. ``t`` (translate)
 #. ``i`` (recursive interpolation)

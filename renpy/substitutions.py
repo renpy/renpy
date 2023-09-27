@@ -178,8 +178,16 @@ class Formatter(string.Formatter):
         if not conversion:
             raise ValueError("Conversion specifier can't be empty.")
 
-        if set(conversion) - set("rstqulci!"):
-            raise ValueError("Unknown symbols in conversion specifier, this must use only the \"rstqulci\".")
+        if set(conversion) - set("frstqulci!"):
+            raise ValueError("Unknown symbols in conversion specifier, this must use only the \"frstqulci\".")
+
+        if "f" in conversion:
+            try:
+                value = value()
+                conversion = conversion.replace("f", "")
+            except Exception:
+                if renpy.config.developer:
+                    raise
 
         if "r" in conversion:
             value = repr(value)
