@@ -132,15 +132,16 @@ screen update_channel(channels):
 
                         hbox:
                             spacing 7
-                            textbutton c["channel"]  action action
+                            textbutton c["channel"] action action
 
 
 
                         add HALF_SPACER
 
                         $ date = _strftime(__("%B %d, %Y"), time.localtime(c["timestamp"]))
+                        $ pretty = c["pretty_version"]
 
-                        text "[date] • [c[pretty_version]] [current!t]" style "l_small_text"
+                        text "[date] • [pretty] [current!t]" style "l_small_text"
 
                         add HALF_SPACER
 
