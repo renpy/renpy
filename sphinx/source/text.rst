@@ -104,6 +104,21 @@ Ren'Py's string interpolation is taken from the :pep:`3101` string
 formatting syntax. Ren'Py uses [ to introduce string formatting
 because { was taken by text tags.
 
+If the value being interpolated is callable, Ren'Py will call that
+value with no arguments to get a new value to interpolate. For example::
+
+    init python:
+        def name():
+            if flag:
+                return "Alice"
+            else:
+                return "Bob"
+
+    default flag = False
+
+    label start:
+        "My name is [name]." # Will display "My name is Bob."
+
 Along with the ``!s`` and ``!r`` conversion flags supported by Python, Ren'Py
 supports several more flags. The ``!q`` conversion flag ensures that
 text tags are properly quoted, so that displaying a string will not

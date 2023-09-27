@@ -1401,6 +1401,9 @@ simple_box_reverse = False
 # A map from font name to the hinting for the font.
 font_hinting = { None : "auto" }
 
+# Should interpolated functions be called for a value?
+interpolate_calls_functions = True
+
 del os
 del collections
 
