@@ -82,12 +82,6 @@ control hinting per-use. For example::
 
 enables bytecode hinting for MyFont.ttf.
 
-Text Interpolation Improvements
--------------------------------
-
-When the text interpolation system is given a callable, it will now call
-that function with no arguments, and interpolate the result.
-
 Speech Bubble Improvements
 --------------------------
 

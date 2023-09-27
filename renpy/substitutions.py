@@ -172,12 +172,6 @@ class Formatter(string.Formatter):
     def convert_field(self, value, conversion):
         value, kwargs = value
 
-        if callable(value) and renpy.config.interpolate_calls_functions:
-            try:
-                value = value()
-            except Exception:
-                pass
-
         if conversion is None:
             return value
 
