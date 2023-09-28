@@ -120,7 +120,7 @@ def correct_type(v, b, ty):
         return ty(v)
 
 
-def interpolate(t, a, b, type): # @ReservedAssignment
+def interpolate(t, a, b, typ): # @ReservedAssignment
     """
     Linearly interpolate the arguments.
     """
@@ -137,10 +137,10 @@ def interpolate(t, a, b, type): # @ReservedAssignment
         if a is None:
             a = [ None ] * len(b)
 
-        if not isinstance(type, tuple):
-            type = (type,) * len(b)
+        if not isinstance(typ, tuple):
+            typ = (typ,) * len(b)
 
-        return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
+        return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, typ))
 
     # If something is callable, call it and return the result.
     elif callable(b):
@@ -154,7 +154,7 @@ def interpolate(t, a, b, type): # @ReservedAssignment
         if a is None:
             a = 0
 
-        return correct_type(a + t * (b - a), b, type)
+        return correct_type(a + t * (b - a), b, typ)
 
 # Interpolate the value of a spline. This code is based on Aenakume's code,
 # from 00splines.rpy.
