@@ -62,7 +62,7 @@ def write_multipart(f, headers, content):
         write_range(f, part_headers, part_content)
 
 
-def download_ranges(url, ranges, destination):
+def download_ranges(url, ranges, destination, progress_callback=None):
     """
     `url`
         The URL to download from.
@@ -73,9 +73,17 @@ def download_ranges(url, ranges, destination):
 
     `destination`
         The file to write to.
+
+    `progress_callback`
+        A function that will be called with the number of bytes downloaded
+        and the total number of bytes to download. (This is not perfect, as
+        the
+
     """
 
     ranges = byte_ranges(ranges)
+    total_size = sum(end - start + 1 for start, end in ranges)
+    downloaded = 0
 
     with open(destination, "ab") as destination_file:
 
@@ -85,20 +93,31 @@ def download_ranges(url, ranges, destination):
 
             headers = { 'Range' : 'bytes=' + ', '.join('%d-%d' % (start, end) for start, end in current) }
 
-            r = requests.get(url, headers=headers)
+            r = requests.get(url, headers=headers, stream=True)
             r.raise_for_status()
+
+            blocks = [ ]
+
+            while True:
+                b = r.raw.read(128 * 1024)
+
+                if not b:
+                    break
+
+                blocks.append(b)
+                downloaded += len(b)
+                if progress_callback is not None:
+                    progress_callback(min(downloaded, total_size), total_size)
+
+            content = b"".join(blocks)
 
             if r.status_code == 206:
                 if r.headers.get("Content-Type", "").startswith("multipart/byteranges"):
-                    write_multipart(destination_file, r.headers, r.content)
+                    write_multipart(destination_file, r.headers, content)
                 else:
-                    write_range(destination_file, r.headers, r.content)
+                    write_range(destination_file, r.headers, content)
             else:
                 destination_file.seek(0)
                 destination_file.truncate()
-                destination_file.write(r.content)
+                destination_file.write(content)
                 break
-
-if __name__ == "__main__":
-    download_ranges("http://share.renpy.org/who_nose.jpg", [ (0, 100), (200, 100), (400, 100) ], "/tmp/who_nose.jpg")
-    download_ranges("http://share.renpy.org/who_nose.jpg", [ (100, 100) ], "/tmp/who_nose.jpg")
