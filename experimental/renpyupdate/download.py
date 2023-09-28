@@ -1,5 +1,7 @@
 import requests
 import re
+import os
+
 
 def byte_ranges(ranges):
     """
@@ -32,8 +34,10 @@ def write_range(f, headers, content):
     total = int(m.group(3))
 
     f.seek(start)
-    f.write(content[:end - start + 1])
+    f.write(content)
     f.truncate(total)
+
+    return [ (start, end) ]
 
 
 def write_multipart(f, headers, content):
@@ -44,6 +48,8 @@ def write_multipart(f, headers, content):
     end_boundary = b"\r\n--" + separator + b"--\r\n"
 
     content = content.split(end_boundary, 1)[0]
+
+    rv = [ ]
 
     for part in content.split(boundary):
 
@@ -59,8 +65,9 @@ def write_multipart(f, headers, content):
             k, v = i.split(": ", 1)
             part_headers[k] = v
 
-        write_range(f, part_headers, part_content)
+        rv.append(write_range(f, part_headers, part_content))
 
+    return rv
 
 def download_ranges(url, ranges, destination, progress_callback=None):
     """
@@ -85,13 +92,18 @@ def download_ranges(url, ranges, destination, progress_callback=None):
     total_size = sum(end - start + 1 for start, end in ranges)
     downloaded = 0
 
-    with open(destination, "ab") as destination_file:
+    if os.path.exists(destination):
+        mode = "r+b"
+    else:
+        mode = "wb"
+
+    with open(destination, mode) as destination_file:
 
         while ranges:
-            current = ranges[:10]
-            ranges = ranges[10:]
 
-            headers = { 'Range' : 'bytes=' + ', '.join('%d-%d' % (start, end) for start, end in current) }
+            old_ranges = list(ranges)
+
+            headers = { 'Range' : 'bytes=' + ', '.join('%d-%d' % (start, end) for start, end in ranges[:10]) }
 
             r = requests.get(url, headers=headers, stream=True)
             r.raise_for_status()
@@ -113,9 +125,16 @@ def download_ranges(url, ranges, destination, progress_callback=None):
 
             if r.status_code == 206:
                 if r.headers.get("Content-Type", "").startswith("multipart/byteranges"):
-                    write_multipart(destination_file, r.headers, content)
+                    got_ranges = write_multipart(destination_file, r.headers, content)
                 else:
-                    write_range(destination_file, r.headers, content)
+                    got_ranges = write_range(destination_file, r.headers, content)
+
+                for i in got_ranges:
+                    ranges.remove(i)
+
+                if old_ranges == ranges:
+                    raise Exception("No progress made.")
+
             else:
                 destination_file.seek(0)
                 destination_file.truncate()

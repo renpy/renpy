@@ -1,8 +1,11 @@
+import requests
+
 import argparse
 import os
 import zlib
 
 from . import filetypes
+from . import download
 
 class UpdateError(Exception):
     """
@@ -37,12 +40,14 @@ class Plan(object):
         self.hash = hash
 
 
+
 class Update(object):
 
-    def __init__(self, rpudir, newlists, targetdir, oldlists):
+    def __init__(self, url, newlists, targetdir, oldlists):
+        self.url = url
+
         self.targetdir = targetdir
         self.oldlists = oldlists
-        self.sourcedir = rpudir
         self.newlists = newlists
 
         self.new_directories = [ i for j in self.newlists for i in j.directories ]
@@ -57,6 +62,8 @@ class Update(object):
         self.destination_filename = None
         self.destination_fp = None
 
+        os.makedirs(os.path.join(self.targetdir, "update"))
+
         self.make_directories()
         self.write_padding()
         self.find_incomplete_files()
@@ -69,7 +76,6 @@ class Update(object):
             self.destination_fp.close()
 
         self.rename_new_files()
-
 
     def log(self, message, *args):
         print(message % args)
@@ -132,7 +138,6 @@ class Update(object):
         f = filetypes.File("_padding.old.rpa", data_filename=fn)
         self.old_files.append(f)
 
-
     def scan_old_files(self):
         """
         Scans the old files, generating a list of segments.
@@ -173,7 +178,6 @@ class Update(object):
         self.log("%d files are new/changed.", len(new_files))
 
         self.new_files = new_files
-
 
     def create_plan(self):
         """
@@ -221,7 +225,6 @@ class Update(object):
 
         self.plan = plan
 
-
     def write_destination(self, filename, offset, data):
         """
         Writes data to the destination file at the given offset.
@@ -242,6 +245,21 @@ class Update(object):
         self.destination_fp.seek(offset)
         self.destination_fp.write(data)
 
+    def download_block_file(self, filename, plan):
+        """
+        Downloads the portions of the block file that are needed.
+        """
+
+        ranges = { (i.old_offset, i.old_size) for i in plan }
+        ranges = list(ranges)
+
+        url = self.url + "/" + filename
+        filename = os.path.join(self.targetdir, "update", filename)
+
+        download.download_ranges(url, ranges, filename)
+
+        return filename
+
     def execute_file_plan(self, plan):
         """
         This executes the plan for one source file.
@@ -253,7 +271,7 @@ class Update(object):
         # TODO: Download block file contents, if needed.
 
         if block:
-            old_filename = os.path.join(self.sourcedir, old_filename)
+            old_filename = self.download_block_file(old_filename, plan)
 
         # From here on, source_filename must point to a complete file on disk.
 
@@ -264,7 +282,7 @@ class Update(object):
 
             for p in plan:
 
-                self.log("%s (%d, %d)\n  -> %s (%d, %d)", p.old_filename, p.old_offset, p.old_size, p.new_filename, p.new_offset, p.new_size)
+                self.log("%s (%d, %d)\n  -> %s (%d, %d) %s", p.old_filename, p.old_offset, p.old_size, p.new_filename, p.new_offset, p.new_size, "compressed" if p.compressed else "")
 
                 if hash != p.hash:
                     f.seek(p.old_offset)
@@ -283,6 +301,9 @@ class Update(object):
 
         # TODO: Once we make it here, we're done with source_filename, so it's okay to clean
         # that file up.
+
+        if block:
+            os.unlink(old_filename)
 
     def execute_plan(self):
         """
@@ -321,7 +342,7 @@ class Update(object):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("sourcedir")
+    ap.add_argument("url")
     ap.add_argument("targetdir")
 
     args = ap.parse_args()
@@ -329,13 +350,13 @@ def main():
     targetlist = filetypes.FileList()
     targetlist.scan(args.targetdir, data_filename=False)
 
-    with open(os.path.join(args.sourcedir, "game.index.rpu"), "rb") as f:
-        sourcelist = filetypes.FileList.decode(f.read())
+    resp = requests.get(args.url + "/game.index.rpu")
+    sourcelist = filetypes.FileList.decode(resp.content)
 
     # from .util import dump
     # dump(sourcelist.to_json())
 
-    Update(args.sourcedir, [ sourcelist ], args.targetdir, [ targetlist ])
+    Update(args.url, [ sourcelist ], args.targetdir, [ targetlist ])
 
 if __name__ == "__main__":
     main()
