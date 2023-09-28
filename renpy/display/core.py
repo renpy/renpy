@@ -149,7 +149,7 @@ def get_time():
 
 def get_size():
     """
-    Returns the screen size. Always returns at least 256, 256, to make sure
+    Returns the screen size. Always returns at least (256, 256), to make sure
     that we don't divide by zero.
     """
 
@@ -191,7 +191,7 @@ class EndInteraction(Exception):
 
 def absolute_wrap(func):
     """
-    Wraps func_name into a method of absolute. The wrapped method
+    Wraps func into a method of absolute. The wrapped method
     converts a float result back to absolute.
     """
 
@@ -227,7 +227,9 @@ class absolute(float):
         Converts a position from one of the many supported position types
         into an absolute number of pixels, without regard for the return type.
         """
-        if isinstance(value, (absolute, int)):
+        if isinstance(value, mixed_coordinate):
+            return value.relative * room + value.absolute
+        elif isinstance(value, (absolute, int)):
             return value
         elif isinstance(value, float):
             return value * room
@@ -292,6 +294,35 @@ for fn in (
         setattr(absolute, fn, absolute_wrap(f))
 
 del absolute_wrap, fn, f # type: ignore
+
+
+class mixed_coordinate(complex): # will not keep that name
+    """
+    A combination of relative and absolute coordinates.
+
+    Implemented as a subclass of the complex type.
+    The "real" part is the absolute, the "imag" part is the relative.
+    """
+    __slots__ = ()
+
+    @classmethod
+    def from_position(cls, other):
+        if isinstance(other, cls):
+            return other
+        elif type(other) is float:
+            return cls(0, other)
+        else:
+            return cls(other, 0)
+
+    # why not
+    compute = absolute.compute
+
+    @property
+    def absolute(self):
+        return absolute(self.real)
+
+    # copy the member descriptor, faster
+    relative = complex.imag
 
 
 class SceneListEntry(renpy.object.Object):
