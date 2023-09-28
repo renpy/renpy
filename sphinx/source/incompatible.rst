@@ -33,13 +33,6 @@ report any issues. When reporting issues, please determine the hardware
 8.2.0 / 7.7.0
 --------------
 
-**Interpolation Changes** Ren'Py will now automatically call a function
-that's being interpolated with no arguments. To prevent this, add
-
-    define config.interpolate_calls_functions = False
-
-to your game.
-
 **Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
 different glyphs than would have been produced differently, and may change
 the spacing of text. The positioning of vertical text has also been
