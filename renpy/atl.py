@@ -66,7 +66,13 @@ def instant(t):
     return 1.0
 
 
-position = renpy.object.Sentinel("position")
+# property types
+
+def position(x):
+    # should be position_or_none, but kept as-is for pickle reasons
+    if x is None:
+        return None
+    return renpy.display.core.mixed_coordinate.from_position(x)
 
 
 def any_object(x):
@@ -106,20 +112,6 @@ def mesh(x):
 PROPERTIES = { }
 
 
-def correct_type(v, b, ty):
-    """
-    Corrects the type of v to match ty. b is used to inform the match.
-    """
-
-    if ty is position:
-        if v is None:
-            return None
-        else:
-            return type(b)(v)
-    else:
-        return ty(v)
-
-
 def interpolate(t, a, b, typ): # @ReservedAssignment
     """
     Linearly interpolate the arguments.
@@ -154,7 +146,7 @@ def interpolate(t, a, b, typ): # @ReservedAssignment
         if a is None:
             a = 0
 
-        return correct_type(a + t * (b - a), b, typ)
+        return typ(a + t * (b - a))
 
 # Interpolate the value of a spline. This code is based on Aenakume's code,
 # from 00splines.rpy.
@@ -212,7 +204,7 @@ def interpolate_spline(t, spline):
 
             rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
 
-    return correct_type(rv, spline[-1], position)
+    return position(rv)
 
 
 def get_catmull_rom_value(t, p_1, p0, p1, p2):
