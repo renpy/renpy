@@ -105,7 +105,7 @@ class SLContext(renpy.ui.Addable):
 
         # A list of child displayables that will be added to an outer
         # displayable.
-        self.children = [ ] # type: list[renpy.display.core.Displayable]
+        self.children = [ ] # type: list[renpy.display.displayable.Displayable]
 
         # A map from keyword arguments to their values.
         self.keywords = { } # type: Optional[dict[str, Any]]
@@ -340,6 +340,29 @@ class SLNode(object):
         formatted = text.format(*args)
 
         profile_log.write("%s", "    {}{}{} ({}:{})".format(const_type, prefix, formatted, self.location[0], self.location[1]))
+
+
+def analyze_keywords(node, analysis, conditional=GLOBAL_CONST):
+    """
+    Analyzes the keywords that can be applied to this statement,
+    including those provided by if statements.
+    """
+
+    rv = GLOBAL_CONST
+
+    for _, expr in node.keyword:
+        rv = min(rv, analysis.is_constant_expr(expr), conditional)
+
+    for n in node.children:
+        if isinstance(n, SLIf):
+
+            for cond, block in n.entries:
+                if cond is not None:
+                    conditional = min(conditional, analysis.is_constant_expr(cond))
+
+                rv = min(rv, analyze_keywords(block, analysis, conditional))
+
+    return rv
 
 
 # A sentinel used to indicate a keyword argument was not given.
@@ -587,7 +610,7 @@ class SLCache(object):
     def __init__(self):
 
         # The displayable object created.
-        self.displayable = None # type: Optional[renpy.display.core.Displayable]
+        self.displayable = None # type: Optional[renpy.display.displayable.Displayable]
 
         # The positional arguments that were used to create the displayable.
         self.positional = None # type: Any
@@ -596,7 +619,7 @@ class SLCache(object):
         self.keywords = None # type: Optional[dict[str, Any]]
 
         # A list of the children that were added to self.displayable.
-        self.children = None # type: Optional[list[renpy.display.core.Displayable]]
+        self.children = None # type: Optional[list[renpy.display.displayable.Displayable]]
 
         # The outermost old transform.
         self.outer_transform = None # type: Optional[Any]
@@ -739,12 +762,7 @@ class SLDisplayable(SLBlock):
     def analyze(self, analysis):
 
         if self.imagemap:
-
-            const = GLOBAL_CONST
-
-            for _k, expr in self.keyword:
-                const = min(const, analysis.is_constant_expr(expr))
-
+            const = analyze_keywords(self, analysis)
             analysis.push_control(imagemap=(const != GLOBAL_CONST))
 
         if self.hotspot:
@@ -1154,7 +1172,8 @@ class SLDisplayable(SLBlock):
         cache.children = ctx.children
         cache.style_prefix = context.style_prefix
 
-        transform = transform # type: ignore
+        if not transform:
+            transform = None
 
         if (transform is not None) and (d is not NO_DISPLAYABLE):
             if reused and (transform == cache.raw_transform):
@@ -2026,7 +2045,7 @@ class SLUse(SLNode):
             args = [ ]
             kwargs = { }
 
-        renpy.display.screen.use_screen(self.target, _name=name, _scope=context.scope, *args, **kwargs)
+        renpy.display.screen.use_screen(self.target, *args, _name=name, _scope=context.scope, **kwargs)
 
     def execute(self, context):
 

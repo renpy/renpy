@@ -72,6 +72,10 @@ evaluated, and the string so computed is used as the label name of the
 statement to jump to. If the ``expression`` keyword is not present, the label
 name of the statement to jump to must be explicitly given.
 
+A local label name can be passed, either with ``expression`` or without,
+and either with the global label prepended ("global_label.local_label"),
+or starting with a dot (".local_label").
+
 Unlike call, jump does not push the next statement onto a stack. As a
 result, there's no way to return to where you've jumped from. ::
 
@@ -94,6 +98,10 @@ If the ``expression`` keyword is present, the expression following it is evaluat
 string so computed is used as the name of the label to call. If the
 ``expression`` keyword is not present, the name of the statement to call must be
 explicitly given.
+
+A local label name can be passed, either with ``expression`` or without,
+and either with the global label prepended ("global_label.local_label"),
+or starting with a dot (".local_label").
 
 If the optional ``from`` clause is present, it has the effect of including a label
 statement with the given name as the statement immediately following the call
@@ -209,6 +217,33 @@ Labels & Control Flow Functions
 .. _context:
 
 Contexts
----------
+--------
+
+Contexts are used internally by Ren'Py to manage the changeable and saveable
+state of the game. Contexts include:
+
+* the currently running Ren'Py statement,
+* the call stack, as described above, and the names and former values of dynamic
+  variables created by :func:`renpy.dynamic`,
+* the images currently being shown (and informations about them like their attributes,
+  the transforms applied to them and so on),
+* the screens being shown, and the variables inside them,
+* the audio that is playing or queued.
+
+Most of the time there is only one context at play, and only one instance of each
+of these elements exists. This changes when entering the main or game game menus;
+everything above can be changed, and will be restored when leaving the menu
+context. Some of these changes are automatic, like the screens layer being
+cleared when entering a context.
+
+Ren'Py also creates new contexts as part of :ref:`replay` and when
+:func:`hiding the interface <HideInterface>`.
+
+The creation of :ref:`screen language <screens>` has considerably lessened the need
+for creating contexts.
+
+Rollback is only enabled in the base context (meaning, when there is only
+one context), and only the base context is saved, which is why the game menu
+uses a context.
 
 .. include:: inc/context

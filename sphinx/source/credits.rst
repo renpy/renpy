@@ -12,6 +12,7 @@ missing some names in my logs. If this applies to you, please
 accept my apologies and email pytom at bishoujo.us so I can fix
 the omission in future versions.
 
+* Abdul
 * Absinthe
 * Adam Trzypolski
 * Aenakume
@@ -36,6 +37,7 @@ the omission in future versions.
 * Bbs3223474
 * Ben Wright
 * BlackDragonHunt/Mangagamer
+* Brainos
 * Bryan Tsang
 * Carl
 * Capntrips
@@ -53,6 +55,7 @@ the omission in future versions.
 * Craig P. Donson
 * 被诅咒的章鱼
 * DaFool
+* Daniel Brookman
 * Daniel Conley
 * Daniel Luque
 * David Gowers
@@ -78,6 +81,7 @@ the omission in future versions.
 * Enerccio
 * Eniko
 * Eric Ahn
+* Erufailon4
 * Evilantishad0w
 * Felix Lampe
 * Franck_v
@@ -120,6 +124,7 @@ the omission in future versions.
 * Jeremy Rand
 * Jesusaves
 * Joaquin Garmendia Cabrera
+* Joseph Boyd
 * Joshua Fehler
 * Joshua Stone
 * Julian Uy
@@ -163,6 +168,7 @@ the omission in future versions.
 * Maxwell Paul Brickner
 * Meithal
 * Merumelu
+* Michael
 * Midgethetree
 * mikey (ATP Projects)
 * Morgan Willcock
@@ -227,6 +233,7 @@ the omission in future versions.
 * Susnux
 * Sylvain Beucler
 * Tey
+* The66F95
 * Thuong Nguyen Huu
 * Tichq
 * Tlm-2501

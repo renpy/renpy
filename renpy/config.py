@@ -1117,6 +1117,7 @@ gl_set_attributes = None
 # The blacklist of controllers with known problems.
 controller_blocklist = [
     "030000007e0500000920", # Nintendo Pro Controller (needs init to work.)
+    "030000006d0400000000", # Razer Xbox 360 Controller (#4622)
 ]
 
 # Should dissolve transitions be mipmapped by default?
@@ -1209,7 +1210,7 @@ raise_image_exceptions = True
 relative_transform_size = True
 
 # Should tts of layers be from front to back?
-tts_front_to_back = False
+tts_front_to_back = True
 
 # Should live2d loading be logged to log.txt
 log_live2d_loading = False
@@ -1275,7 +1276,7 @@ modal_blocks_pause = True
 modal_blocks_timer = False
 
 # The range, in decibels, of the volume mixers.
-volume_db_range = 60
+volume_db_range = 40
 
 # An alias -> font map.
 font_name_map = {}
@@ -1385,8 +1386,20 @@ display_start_callbacks = [ ]
 # If not None, the size of the sound buffer, in bytes.
 sound_buffer_size = None
 
+# If True, the default volumes are considered to be quadratic.
+quadratic_volumes = False
+
 # If true, fades will be linear rather than logarithmic.
 linear_fades = False
+
+# Classes that used to participate in rollback, but no longer do.
+ex_rollback_classes = [ ]
+
+# Should we revert to the old behavior of box_reverse?
+simple_box_reverse = False
+
+# A map from font name to the hinting for the font.
+font_hinting = { None : "auto" }
 
 del os
 del collections

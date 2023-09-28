@@ -11,8 +11,11 @@ python early in layeredimage:
     # The properties for attribute layers.
     LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + ATL_PROPERTIES
 
+    # The properties passed to the Fixed wrapping the layeredimage.
+    FIXED_PROPERTIES = renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names
+
     # This is the default value for predict_all given to conditions.
-    predict_all = False
+    predict_all = None
 
     def format_function(what, name, group, variant, attribute, image, image_format, **kwargs):
         """
@@ -420,7 +423,7 @@ python early in layeredimage:
             args.append(None)
             args.append(Null())
 
-            return ConditionSwitch(predict_all=predict_all, *args)
+            return ConditionSwitch(*args, predict_all=predict_all)
 
     class RawConditionGroup(object):
 
@@ -516,7 +519,7 @@ python early in layeredimage:
 
         `attributes`
             This must be a list of Attribute, Condition, ConditionGroup or
-            :func:`renpy.Displayable` objects. Each one
+            :doc:`displayable <displayables>` objects. Each one
             reflects a displayable that may or may not be displayed as part
             of the image. The items in this list are in back-to-front order,
             with the first item further from the viewer and the last
@@ -596,7 +599,7 @@ python early in layeredimage:
             kwargs.setdefault("xfit", True)
             kwargs.setdefault("yfit", True)
 
-            self.transform_args = {k : kwargs.pop(k) for k, v in list(kwargs.items()) if k not in (renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names)}
+            self.transform_args = {k : kwargs.pop(k) for k, v in list(kwargs.items()) if k not in FIXED_PROPERTIES}
             self.fixed_args = kwargs
 
         def format(self, what, attribute=None, group=None, variant=None, image=None):
@@ -616,6 +619,16 @@ python early in layeredimage:
                 image_format=self.image_format)
 
         def add(self, a):
+            """
+            :doc: li
+
+            `a`
+                An Attribute, Condition, ConditionGroup or :doc:`displayable <displayables>`
+                object.
+
+            This method adds the provided layer to the list of layers of the layeredimage,
+            as if it had been passed in the `attributes` argument to the constructor.
+            """
 
             if not isinstance(a, Layer):
                 a = Always(a)

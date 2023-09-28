@@ -262,10 +262,6 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
     information to the player (like a confirmation prompt) from inside
     an event handler.
 
-    A context maintains the state of the display (including what screens
-    and images are being shown) and the audio system. Both are restored
-    when the context returns.
-
     Additional arguments and keyword arguments are passed to the
     callable.
 
@@ -372,7 +368,7 @@ def call_replay(label, scope={}):
 
     Calls a label as a memory.
 
-    Keyword arguments are used to set the initial values of variables in the
+    The `scope` argument is used to set the initial values of variables in the
     memory context.
     """
 

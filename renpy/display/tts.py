@@ -170,8 +170,7 @@ def init():
         if isinstance(pattern, basestring):
             pattern = r'\b' + re.escape(pattern) + r'\b'
             pattern = re.compile(pattern, re.IGNORECASE)
-            replacement = re.escape(replacement)
-
+            replacement = replacement.replace("\\", "\\\\")
 
         tts_substitutions.append((pattern, replacement))
 
@@ -234,6 +233,9 @@ def set_root(d):
 old_self_voicing = False
 
 
+# The text used to show a notification.
+notify_text = None
+
 def displayable(d):
     """
     Causes the TTS system to read the text of the displayable `d`.
@@ -242,6 +244,7 @@ def displayable(d):
     global old_self_voicing
     global last
     global last_raw
+    global notify_text
 
     self_voicing = renpy.game.preferences.self_voicing
 
@@ -282,6 +285,11 @@ def displayable(d):
                 return
             else:
                 d = root
+
+    if notify_text and not s.startswith(notify_text):
+        s = notify_text + ": " + s
+        notify_text = None
+
 
 
     if s != last_raw:

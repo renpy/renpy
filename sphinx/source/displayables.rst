@@ -114,14 +114,14 @@ SVG Images
 Ren'Py supports many SVG 1.0 images, using the NanoSVG library.
 Some unsupported features include:
 
-* Text elements are ignored. If the text is convered into a path, it will
+* Text elements are ignored. If the text is converted into a path, it will
   be rendered.
 * Embedded bitmaps are ignored.
 * Scripts are ignored.
 * Animations are ignored.
 
 A list of features NanoSVG supports may be found
-`here <https://core.tcl-lang.org/tips/doc/trunk/tip/507.md>`_.
+`here <https://core.tcl-lang.org/tips/doc/trunk/tip/507.md>`__.
 
 It's recommended to convert everything in an SVG image that will not
 render properly into paths.

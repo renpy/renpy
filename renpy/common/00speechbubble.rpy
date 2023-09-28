@@ -61,6 +61,10 @@ init -1150 python in bubble:
     # The property group names, in order.
     properties_order = [ ]
 
+    # If not None, a function that takes the character's image tag, and returns
+    # the list of property names that are allowed for that image tag.
+    properties_callback = None
+
     # A map from property name to the (left, top, right, bottom) number of pixels
     # areas with that property are expanded by. If a property is not in this
     # map, None is tried.
@@ -74,6 +78,9 @@ init -1150 python in bubble:
     # so should not be set.
     frame = None
     thoughtframe = None
+
+    # The layer that retained screens are placed on.
+    retain_layer = "screens"
 
     class ToggleShown(Action):
         def __call__(self):
@@ -151,10 +158,18 @@ init -1150 python in bubble:
                 int(default_area[3] * ygrid)
             ]
 
-            return {
+            rv = {
                 "area" : default_area_rect,
-                "properties" : properties_order[0]
             }
+
+
+            if properties_callback is not None:
+                rv["properties"] = properties_callback(image_tag)[0]
+            else:
+                rv["properties"] = properties_order[0]
+
+            return rv
+
 
         def expand_area(self, area, properties_key):
             """
@@ -178,8 +193,16 @@ init -1150 python in bubble:
 
             return (x, y, w, h)
 
+        def do_add(self, who, what, multiple=False):
 
-        def do_show(self, who, what, multiple=None, extra_properties=None):
+            tlid = renpy.get_translation_identifier()
+
+            if tlid is not None:
+
+                if db[tlid].get("clear_retain", False):
+                    renpy.clear_retain(layer=retain_layer)
+
+        def do_show(self, who, what, multiple=None, retain=None, extra_properties=None):
 
             if extra_properties is None:
                 extra_properties = { }
@@ -188,7 +211,7 @@ init -1150 python in bubble:
 
             image_tag = self.image_tag
 
-            if image_tag not in tag_properties:
+            if retain or (image_tag not in tag_properties):
                 tag_properties[image_tag] = self.bubble_default_properties(image_tag)
 
             tlid = renpy.get_translation_identifier()
@@ -204,7 +227,7 @@ init -1150 python in bubble:
             extra_properties.update(properties.get(properties_key, { }))
             extra_properties[area_property] = self.expand_area(tag_properties[image_tag]["area"], properties_key)
 
-            return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, extra_properties=extra_properties)
+            return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, retain=retain, extra_properties=extra_properties)
 
     class CycleBubbleProperty(Action):
         """
@@ -223,20 +246,45 @@ init -1150 python in bubble:
 
             current = tag_properties[self.image_tag]["properties"]
 
+            if properties_callback is not None:
+                properties = properties_callback(self.image_tag)
+            else:
+                properties = properties_order
+
             try:
-                idx = properties_order.index(current)
+                idx = properties.index(current)
             except ValueError:
                 idx = 0
 
-            idx = (idx + 1) % len(properties_order)
+            idx = (idx + 1) % len(properties)
 
-            db[self.tlid]["properties"] = properties_order[idx]
+            db[self.tlid]["properties"] = properties[idx]
             renpy.rollback(checkpoints=0, force=True, greedy=True)
 
         def alternate(self):
             if "properties" in db[self.tlid]:
                 del db[self.tlid]["properties"]
                 renpy.rollback(checkpoints=0, force=True, greedy=True)
+
+
+    class ToggleClearRetain(Action):
+        """
+        This is an action that causes the clear_retain property to be toggled.
+        """
+
+        def __init__(self, tlid):
+            self.tlid = tlid
+
+        def get_selected(self):
+            return db[self.tlid].get("clear_retain", False)
+
+        def __call__(self):
+            db[self.tlid]["clear_retain"] = not db[self.tlid].get("clear_retain", False)
+            renpy.rollback(checkpoints=0, force=True, greedy=True)
+
+        def alternate(self):
+            self()
+
 
     class SetWindowArea(Action):
         """
@@ -356,6 +404,18 @@ screen _bubble_editor():
 
                     null height gui._scale(5)
 
+                    if bubble.current_dialogue and renpy.get_screen("_retain_0", layer=bubble.retain_layer):
+                        textbutton _("(clear retained bubbles)"):
+                            style "_default"
+                            text_color "#ddd8"
+                            text_selected_idle_color "#ddd"
+                            text_hover_color "#fff"
+                            text_size gui._scale(16)
+
+                            action bubble.ToggleClearRetain(bubble.current_dialogue[0][1])
+
+                        null height gui._scale(5)
+
                     for image_tag, properties in bubble.GetCurrentDialogue():
 
                         hbox:
@@ -364,7 +424,7 @@ screen _bubble_editor():
                             text "[image_tag!q]":
                                 style "_default"
                                 color "#fff"
-                                size gui._scale(15)
+                                size gui._scale(16)
 
                             for prop, action in properties:
                                 textbutton "[prop!q]":
@@ -374,7 +434,9 @@ screen _bubble_editor():
                                     text_color "#ddd8"
                                     text_selected_idle_color "#ddd"
                                     text_hover_color "#fff"
-                                    text_size gui._scale(15)
+                                    text_size gui._scale(16)
+
+
 
 
 screen _bubble_window_area_editor(action):

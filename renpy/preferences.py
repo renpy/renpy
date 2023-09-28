@@ -80,10 +80,10 @@ Preference("fullscreen", False)
 Preference("skip_unseen", False)
 Preference("text_cps", 0, (int, float))
 Preference("afm_time", 0, (int, float))
-Preference("afm_enable", True)
+Preference("afm_enable", False)
 Preference("using_afm_enable", False)
 Preference("voice_sustain", False)
-Preference("mouse_move", False)
+Preference("mouse_move", True)
 Preference("show_empty_window", True)
 
 # Should we wait for the voice to stop?
@@ -289,7 +289,6 @@ class Preferences(renpy.object.Object):
             return 0.0
 
         return self.volumes[mixer]
-
 
     def set_mixer(self, mixer, volume):
         if volume > 0:

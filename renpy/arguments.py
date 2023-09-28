@@ -151,19 +151,12 @@ class ArgumentParser(argparse.ArgumentParser):
         else:
             self.group.add_argument(*args, **kwargs)
 
-    def parse_args(self, *args, **kwargs):
-        rv = argparse.ArgumentParser.parse_args(self, *args, **kwargs)
-
-        if rv.command in compile_commands:
-            rv.compile = True
-
-        if renpy.session.get("compile", False):
-            rv.compile = True
-
-        return rv
 
     def parse_known_args(self, *args, **kwargs):
         args, rest = argparse.ArgumentParser.parse_known_args(self, *args, **kwargs)
+
+        if renpy.session.get("_reload", False):
+            args.compile = False
 
         if args.command in compile_commands:
             args.compile = True
@@ -195,7 +188,7 @@ def run():
 
     args = renpy.game.args = ap.parse_args()
 
-    if args.warp:
+    if args.warp and not renpy.session.get("_reload", False):
         renpy.warp.warp_spec = args.warp
 
     if args.profile_display: # @UndefinedVariable

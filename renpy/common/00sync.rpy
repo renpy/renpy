@@ -354,8 +354,11 @@ init -1100 python in _sync:
 
             total_size = 0
 
-            if renpy.config.save_directory:
-                zf.writestr("save_directory", renpy.config.save_directory)
+            sd = renpy.config.save_directory
+            if sd:
+                if PY2:
+                    sd = sd.encode("utf-8")
+                zf.writestr("save_directory", sd)
 
             persistent = location.path("persistent")[1]
 
@@ -512,6 +515,7 @@ init -1100 python in _sync:
 init -1100:
 
     screen sync_confirm():
+        style_prefix "sync"
         modal True
         zorder 100
 
@@ -541,6 +545,7 @@ init -1100:
         key "game_menu" action Return(False)
 
     screen sync_prompt(prompt):
+        style_prefix "sync"
         modal True
         zorder 100
 
@@ -579,6 +584,7 @@ init -1100:
 
 
     screen sync_success(sync_id):
+        style_prefix "sync"
         modal True
         zorder 100
 
@@ -614,6 +620,7 @@ init -1100:
         key "game_menu" action Return(False)
 
     screen sync_error(message):
+        style_prefix "sync"
         modal True
         zorder 100
 

@@ -47,7 +47,7 @@ class Texture(object):
         return Texture(d, self.focus, self.main, self.fit)
 
 
-class Model(renpy.display.core.Displayable):
+class Model(renpy.display.displayable.Displayable):
     """
     :doc: model_displayable class
 

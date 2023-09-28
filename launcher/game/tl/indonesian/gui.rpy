@@ -159,195 +159,233 @@ translate indonesian strings:
 
     # gui.rpy:148
     old "## These variables, along with the image files in gui/button, control aspects of how buttons are displayed."
-    new "## These variables, along with the image files in gui/button, control aspects of how buttons are displayed."
+    # Automatic translation.
+    new "## Variabel-variabel ini, bersama dengan file gambar di gui/button, mengontrol aspek-aspek bagaimana tombol ditampilkan."
 
     # gui.rpy:151
     old "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
-    new "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
+    # Automatic translation.
+    new "## Lebar dan tinggi tombol, dalam piksel. Jika tidak ada, Ren'Py akan menghitung ukuran."
 
     # gui.rpy:155
     old "## The borders on each side of the button, in left, top, right, bottom order."
-    new "## The borders on each side of the button, in left, top, right, bottom order."
+    # Automatic translation.
+    new "## Batas di setiap sisi tombol, dalam urutan kiri, atas, kanan, bawah."
 
     # gui.rpy:158
     old "## If True, the background image will be tiled. If False, the background image will be linearly scaled."
-    new "## If True, the background image will be tiled. If False, the background image will be linearly scaled."
+    # Automatic translation.
+    new "## Jika Benar, gambar latar belakang akan dibuat ubin. Jika Salah, gambar latar belakang akan diskalakan secara linier."
 
     # gui.rpy:162
     old "## The font used by the button."
-    new "## The font used by the button."
+    # Automatic translation.
+    new "## Font yang digunakan oleh tombol."
 
     # gui.rpy:165
     old "## The size of the text used by the button."
-    new "## The size of the text used by the button."
+    # Automatic translation.
+    new "## Ukuran teks yang digunakan oleh tombol."
 
     # gui.rpy:179
     old "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."
-    new "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."
+    # Automatic translation.
+    new "## Variabel-variabel ini mengganti pengaturan untuk berbagai jenis tombol. Silakan lihat dokumentasi gui untuk mengetahui jenis tombol yang tersedia, dan untuk apa tombol tersebut digunakan."
 
     # gui.rpy:183
     old "## These customizations are used by the default interface:"
-    new "## These customizations are used by the default interface:"
+    # Automatic translation.
+    new "## Kustomisasi ini digunakan oleh antarmuka default:"
 
     # gui.rpy:198
     old "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
-    new "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
+    # Automatic translation.
+    new "## Anda juga dapat menambahkan kustomisasi Anda sendiri, dengan menambahkan variabel yang diberi nama yang tepat. Sebagai contoh, Anda dapat menghapus baris berikut ini untuk mengatur lebar tombol navigasi."
 
     # gui.rpy:205
     old "## Choice Buttons"
-    new "## Choice Buttons"
-
-    # gui.rpy:207
-    old "## Choice buttons are used in the in-game menus."
-    new "## Choice buttons are used in the in-game menus."
+    # Automatic translation.
+    new "## Tombol Pilihan"
 
     # gui.rpy:220
     old "## File Slot Buttons"
-    new "## File Slot Buttons"
+    # Automatic translation.
+    new "## Tombol Slot File"
 
     # gui.rpy:222
     old "## A file slot button is a special kind of button. It contains a thumbnail image, and text describing the contents of the save slot. A save slot uses image files in gui/button, like the other kinds of buttons."
-    new "## A file slot button is a special kind of button. It contains a thumbnail image, and text describing the contents of the save slot. A save slot uses image files in gui/button, like the other kinds of buttons."
+    # Automatic translation.
+    new "## Tombol slot file adalah jenis tombol khusus. Tombol ini berisi gambar mini, dan teks yang menjelaskan isi slot penyimpanan. Slot penyimpanan menggunakan file gambar dalam gui/tombol, seperti jenis tombol lainnya."
 
     # gui.rpy:226
     old "## The save slot button."
-    new "## The save slot button."
+    # Automatic translation.
+    new "## Tombol simpan slot."
 
     # gui.rpy:234
     old "## The width and height of thumbnails used by the save slots."
-    new "## The width and height of thumbnails used by the save slots."
+    # Automatic translation.
+    new "## Lebar dan tinggi gambar mini yang digunakan oleh slot penyimpanan."
 
     # gui.rpy:238
     old "## The number of columns and rows in the grid of save slots."
-    new "## The number of columns and rows in the grid of save slots."
+    # Automatic translation.
+    new "## Jumlah kolom dan baris dalam kisi-kisi slot penyimpanan."
 
     # gui.rpy:243
     old "## Positioning and Spacing"
-    new "## Positioning and Spacing"
+    # Automatic translation.
+    new "## Pemosisian dan Spasi"
 
     # gui.rpy:245
     old "## These variables control the positioning and spacing of various user interface elements."
-    new "## These variables control the positioning and spacing of various user interface elements."
+    # Automatic translation.
+    new "## Variabel-variabel ini mengontrol pemosisian dan jarak berbagai elemen antarmuka pengguna."
 
     # gui.rpy:248
     old "## The position of the left side of the navigation buttons, relative to the left side of the screen."
-    new "## The position of the left side of the navigation buttons, relative to the left side of the screen."
+    # Automatic translation.
+    new "## Posisi sisi kiri tombol navigasi, relatif terhadap sisi kiri layar."
 
     # gui.rpy:252
     old "## The vertical position of the skip indicator."
-    new "## The vertical position of the skip indicator."
+    # Automatic translation.
+    new "## Posisi vertikal indikator lompatan."
 
     # gui.rpy:255
     old "## The vertical position of the notify screen."
-    new "## The vertical position of the notify screen."
+    # Automatic translation.
+    new "## Posisi vertikal layar notifikasi."
 
     # gui.rpy:258
     old "## The spacing between menu choices."
-    new "## The spacing between menu choices."
-
-    # gui.rpy:261
-    old "## Buttons in the navigation section of the main and game menus."
-    new "## Buttons in the navigation section of the main and game menus."
+    # Automatic translation.
+    new "## Jarak spasi di antara pilihan menu."
 
     # gui.rpy:264
     old "## Controls the amount of spacing between preferences."
-    new "## Controls the amount of spacing between preferences."
+    # Automatic translation.
+    new "## Mengontrol jumlah spasi di antara preferensi."
 
     # gui.rpy:267
     old "## Controls the amount of spacing between preference buttons."
-    new "## Controls the amount of spacing between preference buttons."
+    # Automatic translation.
+    new "## Mengontrol jumlah spasi di antara tombol preferensi."
 
     # gui.rpy:270
     old "## The spacing between file page buttons."
-    new "## The spacing between file page buttons."
+    # Automatic translation.
+    new "## Jarak antara tombol halaman file."
 
     # gui.rpy:273
     old "## The spacing between file slots."
-    new "## The spacing between file slots."
+    # Automatic translation.
+    new "## Jarak antara slot file."
 
     # gui.rpy:277
     old "## Frames"
-    new "## Frames"
+    # Automatic translation.
+    new "## Frame"
 
     # gui.rpy:279
     old "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
-    new "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
+    # Automatic translation.
+    new "## Variabel ini mengontrol tampilan frame yang dapat berisi komponen antarmuka pengguna ketika overlay atau jendela tidak ada."
 
     # gui.rpy:282
     old "## Generic frames that are introduced by player code."
-    new "## Generic frames that are introduced by player code."
+    # Automatic translation.
+    new "## Bingkai umum yang diperkenalkan oleh kode pemutar."
 
     # gui.rpy:285
     old "## The frame that is used as part of the confirm screen."
-    new "## The frame that is used as part of the confirm screen."
+    # Automatic translation.
+    new "## Bingkai yang digunakan sebagai bagian dari layar konfirmasi."
 
     # gui.rpy:288
     old "## The frame that is used as part of the skip screen."
-    new "## The frame that is used as part of the skip screen."
+    # Automatic translation.
+    new "## Bingkai yang digunakan sebagai bagian dari layar lewati."
 
     # gui.rpy:291
     old "## The frame that is used as part of the notify screen."
-    new "## The frame that is used as part of the notify screen."
+    # Automatic translation.
+    new "## Bingkai yang digunakan sebagai bagian dari layar pemberitahuan."
 
     # gui.rpy:294
     old "## Should frame backgrounds be tiled?"
-    new "## Should frame backgrounds be tiled?"
+    # Automatic translation.
+    new "## Haruskah latar belakang bingkai dibuat berubin?"
 
     # gui.rpy:298
     old "## Bars, Scrollbars, and Sliders"
-    new "## Bars, Scrollbars, and Sliders"
+    # Automatic translation.
+    new "## Bilah, Bilah Gulir, dan Geser"
 
     # gui.rpy:300
     old "## These control the look and size of bars, scrollbars, and sliders."
-    new "## These control the look and size of bars, scrollbars, and sliders."
+    # Automatic translation.
+    new "## Ini mengontrol tampilan dan ukuran bilah, bilah gulir, dan penggeser."
 
     # gui.rpy:302
     old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written code."
-    new "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written code."
+    # Automatic translation.
+    new "## GUI default hanya menggunakan slider dan scrollbar vertikal. Semua bilah lainnya hanya digunakan dalam kode yang ditulis oleh pembuat."
 
     # gui.rpy:305
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
-    new "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
+    # Automatic translation.
+    new "## Ketinggian bilah horizontal, bilah gulir, dan penggeser. Lebar bilah vertikal, bilah gulir, dan penggeser."
 
     # gui.rpy:311
     old "## True if bar images should be tiled. False if they should be linearly scaled."
-    new "## True if bar images should be tiled. False if they should be linearly scaled."
+    # Automatic translation.
+    new "## Benar jika gambar batang harus diubin. Salah jika gambar harus diskalakan secara linier."
 
     # gui.rpy:316
     old "## Horizontal borders."
-    new "## Horizontal borders."
+    # Automatic translation.
+    new "## Batas horizontal."
 
     # gui.rpy:321
     old "## Vertical borders."
-    new "## Vertical borders."
+    # Automatic translation.
+    new "## Batas vertikal."
 
     # gui.rpy:326
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
-    new "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
+    # Automatic translation.
+    new "## Apa yang harus dilakukan dengan scrollbar yang tidak dapat digulir di gui. \"hide\" menyembunyikannya, sedangkan None tidak menampilkannya."
 
     # gui.rpy:331
     old "## History"
-    new "## History"
+    # Automatic translation.
+    new "## Sejarah"
 
     # gui.rpy:333
     old "## The history screen displays dialogue that the player has already dismissed."
-    new "## The history screen displays dialogue that the player has already dismissed."
+    # Automatic translation.
+    new "## Layar riwayat menampilkan dialog yang telah diberhentikan oleh pemain."
 
     # gui.rpy:335
     old "## The number of blocks of dialogue history Ren'Py will keep."
-    new "## The number of blocks of dialogue history Ren'Py will keep."
+    # Automatic translation.
+    new "## Jumlah blok riwayat dialog yang akan disimpan Ren'Py."
 
     # gui.rpy:338
     old "## The height of a history screen entry, or None to make the height variable at the cost of performance."
-    new "## The height of a history screen entry, or None to make the height variable at the cost of performance."
+    # Automatic translation.
+    new "## Ketinggian entri layar riwayat, atau Tidak Ada untuk membuat variabel ketinggian dengan mengorbankan kinerja."
 
     # gui.rpy:342
     old "## The position, width, and alignment of the label giving the name of the speaking character."
-    new "## The position, width, and alignment of the label giving the name of the speaking character."
+    # Automatic translation.
+    new "## Posisi, lebar, dan perataan label yang memberikan nama karakter yang berbicara."
 
     # gui.rpy:349
     old "## The position, width, and alignment of the dialogue text."
-    new "## The position, width, and alignment of the dialogue text."
+    # Automatic translation.
+    new "## Posisi, lebar, dan perataan teks dialog."
 
     # gui.rpy:356
     old "## NVL-Mode"
@@ -355,61 +393,68 @@ translate indonesian strings:
 
     # gui.rpy:358
     old "## The NVL-mode screen displays the dialogue spoken by NVL-mode characters."
-    new "## The NVL-mode screen displays the dialogue spoken by NVL-mode characters."
+    # Automatic translation.
+    new "## Layar mode NVL menampilkan dialog yang diucapkan oleh karakter mode NVL."
 
     # gui.rpy:360
     old "## The borders of the background of the NVL-mode background window."
-    new "## The borders of the background of the NVL-mode background window."
+    # Automatic translation.
+    new "## Batas latar belakang jendela latar belakang mode NVL."
 
     # gui.rpy:363
     old "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
-    new "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
+    # Automatic translation.
+    new "## Ketinggian entri mode NVL. Atur ini ke None (Tidak Ada) agar entri menyesuaikan tinggi secara dinamis."
 
     # gui.rpy:367
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
-    new "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
+    # Automatic translation.
+    new "## Spasi antara entri mode NVL ketika gui.nvl_height adalah None, dan antara entri mode NVL dan menu mode NVL."
 
     # gui.rpy:384
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
-    new "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
+    # Automatic translation.
+    new "## Posisi, lebar, dan perataan teks nvl_thought (teks yang diucapkan oleh karakter nvl_narrator)."
 
     # gui.rpy:391
     old "## The position of nvl menu_buttons."
-    new "## The position of nvl menu_buttons."
+    # Automatic translation.
+    new "## Posisi tombol menu nvl."
 
     # gui.rpy:403
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
-    new "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
+    # Automatic translation.
+    new "## Ini meningkatkan ukuran tombol cepat agar lebih mudah disentuh pada tablet dan ponsel."
 
     # gui.rpy:409
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
-    new "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
-
-    # gui.rpy:413
-    old "## Font sizes."
-    new "## Font sizes."
+    # Automatic translation.
+    new "## Ini mengubah ukuran dan spasi berbagai elemen GUI untuk memastikan elemen-elemen tersebut mudah terlihat pada ponsel."
 
     # gui.rpy:421
     old "## Adjust the location of the textbox."
-    new "## Adjust the location of the textbox."
+    # Automatic translation.
+    new "## Sesuaikan lokasi kotak teks."
 
     # gui.rpy:427
     old "## Change the size and spacing of items in the game menu."
-    new "## Change the size and spacing of items in the game menu."
+    # Automatic translation.
+    new "## Mengubah ukuran dan spasi item dalam menu permainan."
 
     # gui.rpy:436
     old "## File button layout."
-    new "## File button layout."
+    # Automatic translation.
+    new "## Tata letak tombol file."
 
     # gui.rpy:440
     old "## NVL-mode."
-    new "## NVL-mode."
+    # Automatic translation.
+    new "## Mode NVL."
 
     # gui.rpy:456
     old "## Quick buttons."
-    new "## Quick buttons."
-
-translate indonesian strings:
+    # Automatic translation.
+    new "## Tombol cepat."
 
     # gui.rpy:17
     old "## GUI Configuration Variables"
@@ -458,3 +503,15 @@ translate indonesian strings:
     old "## Change the size and spacing of various things."
     new "## Ubah ukuran dan jarak dari berbagai hal."
 
+
+translate indonesian strings:
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    # Automatic translation.
+    new "## Mengaktifkan pemeriksaan untuk properti yang tidak valid atau tidak stabil di layar atau transformasi"
+
+    # gui/game/gui.rpy:368
+    old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    # Automatic translation.
+    new "## Jumlah maksimum entri mode NVL yang akan ditampilkan Ren'Py. Ketika lebih banyak entri daripada ini akan ditampilkan, entri tertua akan dihapus."

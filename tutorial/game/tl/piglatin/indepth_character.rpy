@@ -111,7 +111,7 @@ translate piglatin demo_character_ed690751:
 translate piglatin demo_character_8dfa6426:
 
     # e4 "Setting the who_bold, what_italic, and what_size properties makes the name bold, and the dialogue text italic at a size of 20 pixels."
-    e4 "Ettingsay hetay ho_boldway, hat_italicway, anday hat_sizeway ropertiespay akesmay hetay amenay oldbay, anday hetay ialogueday exttay italicay atay aay izesay ofay 02ay ixelspay."
+    e4 "Ettingsay hetay ho_boldway, hat_italicway, anday hat_sizeway ropertiespay akesmay hetay amenay oldbay, anday hetay ialogueday exttay italicay atay aay izesay ofay 20 ixelspay."
 
 # game/indepth_character.rpy:76
 translate piglatin demo_character_20e83c32:
@@ -141,13 +141,13 @@ translate piglatin demo_character_e9ac7482:
 translate piglatin demo_character_ea72d988:
 
     # e6 "When the outline size is 0 and the offsets are given, what_outlines can also act as a drop-shadow behind the text."
-    e6 "Henway hetay outlineay izesay isay 0ay anday hetay offsetsay areay ivengay, hat_outlinesway ancay alsoay actay asay aay ropday-adowshay ehindbay hetay exttay."
+    e6 "Henway hetay outlineay izesay isay 0 anday hetay offsetsay areay ivengay, hat_outlinesway ancay alsoay actay asay aay ropday-adowshay ehindbay hetay exttay."
 
 # game/indepth_character.rpy:99
 translate piglatin demo_character_8d35ebcd:
 
     # e7 "The what_xalign and what_textalign properties control the alignment of text, with 0.0 being left, 0.5 being center, and 1.0 being right."
-    e7 "Hetay hat_xalignway anday hat_textalignway ropertiespay ontrolcay hetay alignmentay ofay exttay, ithway 0ay.0ay eingbay eftlay, 0ay.5ay eingbay entercay, anday 1ay.0ay eingbay ightray."
+    e7 "Hetay hat_xalignway anday hat_textalignway ropertiespay ontrolcay hetay alignmentay ofay exttay, ithway 0.0 eingbay eftlay, 0.5 eingbay entercay, anday 1.0 eingbay ightray."
 
 # game/indepth_character.rpy:101
 translate piglatin demo_character_7c75906c:

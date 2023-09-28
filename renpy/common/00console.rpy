@@ -1,4 +1,4 @@
-﻿# console.rpy
+# console.rpy
 # Ren'Py console
 # Copyright (C) 2012-2017 Shiz, C, delta, PyTom
 #
@@ -128,7 +128,11 @@ init -1500 python in _console:
     import sys
     import traceback
     import store
-    import pydoc
+    try:
+        import pydoc
+    except ImportError:
+        # Web2 does not have pydoc, help() will fail but game will load at least
+        pass
 
     from reprlib import Repr
     class PrettyRepr(Repr):
@@ -589,7 +593,7 @@ init -1500 python in _console:
                     else:
                         break
 
-                if s.rstrip().endswith(":"):
+                if s.partition("#")[0].rstrip().endswith(":"):
                     rv += "    "
 
                 if not s.rstrip():
@@ -608,7 +612,7 @@ init -1500 python in _console:
             self.lines.append(line)
 
             indent = get_indent(line)
-            if indent:
+            if indent or line.startswith("@") or line.endswith("\\"):
                 self.lines.append(indent)
                 return
 
@@ -713,7 +717,7 @@ init -1500 python in _console:
                     pass
                 else:
                     result = renpy.python.py_eval(code)
-                    if persistent._console_short:
+                    if persistent._console_short and not getattr(result, "_console_always_long", False):
                         he.result = aRepr.repr(result)
                     else:
                         he.result = repr(result)
@@ -1099,21 +1103,25 @@ screen _console:
 
             has vbox
 
+            $ last_line = ""
+
             for line in lines:
                 hbox:
                     spacing 4
 
-                    if line[:1] != " ":
+                    if (line[:1] != " ") and (last_line[:1] != "@") and (last_line[-1:] != "\\"):
                         text "> " style "_console_prompt"
                     else:
                         text "... " style "_console_prompt"
 
                     text "[line!q]" style "_console_input_text"
 
+                $ last_line = line
+
             hbox:
                 spacing 4
 
-                if default[:1] != " ":
+                if (default[:1] != " ") and (last_line[:1] != "@") and (last_line[-1:] != "\\"):
                     text "> " style "_console_prompt"
                 else:
                     text "... " style "_console_prompt"

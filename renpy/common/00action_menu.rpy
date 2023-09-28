@@ -30,17 +30,21 @@ init -1500 python:
         "load" : "(not _in_replay)",
         }
 
+    __NoShowTransition = renpy.object.Sentinel("NoShowTransition")
+
     @renpy.pure
     class ShowMenu(Action, DictEquality):
         """
         :doc: menu_action
+        :args: (screen=_game_menu_screen, *args, _transition=config.intra_transition, **kwargs)
 
         Causes us to enter the game menu, if we're not there already. If we
         are in the game menu, then this shows a screen or jumps to a label.
 
         `screen` is usually the name of a screen, which is shown using
-        the screen mechanism. If the screen doesn't exist, then "_screen"
-        is appended to it, and that label is jumped to.
+        the screen mechanism with the ``*args`` and ``**kwargs`` passed to
+        the screen. If the screen doesn't exist, then "_screen" is appended
+        to it, and that label is jumped to, ignoring `args` and `kwargs`.
 
         If the optional keyword argument `_transition` is given, the
         menu will change screens using the provided transition.
@@ -58,15 +62,15 @@ init -1500 python:
         * ShowMenu("stats")
 
         ShowMenu without an argument will enter the game menu at the
-        default screen, taken from _game_menu_screen.
+        default screen, taken from :var:`_game_menu_screen`.
 
         Extra arguments and keyword arguments are passed on to the screen
         """
-        transition = None  # For save compatability; see renpy#2376
+        transition = None  # For save compatibility; see renpy#2376
 
         def __init__(self, screen=None, *args, **kwargs):
             self.screen = screen
-            self.transition = kwargs.pop("_transition", None)
+            self.transition = kwargs.pop("_transition", __NoShowTransition)
             self.args = args
             self.kwargs = kwargs
 
@@ -79,6 +83,10 @@ init -1500 python:
             if not self.get_sensitive():
                 return
 
+            transition = self.transition
+            if transition is __NoShowTransition:
+                transition = config.intra_transition
+
             orig_screen = screen = self.screen or store._game_menu_screen
 
             if not (renpy.has_screen(screen) or renpy.has_label(screen)):
@@ -90,12 +98,12 @@ init -1500 python:
 
                 if renpy.has_screen(screen):
 
-                    renpy.transition(self.transition or config.intra_transition)
-                    renpy.show_screen(screen, _transient=True, *self.args, **self.kwargs)
+                    renpy.transition(transition)
+                    renpy.show_screen(screen, *self.args, _transient=True, **self.kwargs)
                     renpy.restart_interaction()
 
                 elif renpy.has_label(screen):
-                    renpy.transition(config.intra_transition)
+                    renpy.transition(transition)
 
                     ui.layer("screens")
                     ui.remove_above(None)

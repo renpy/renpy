@@ -196,7 +196,7 @@ init -1500 python:
         :func:`renpy.show_screen` function.
         """
 
-        return Show(screen, transition, _transient=True, *args, **kwargs)
+        return Show(screen, transition, *args, _transient=True, **kwargs)
 
     @renpy.pure
     class Hide(Action, DictEquality):

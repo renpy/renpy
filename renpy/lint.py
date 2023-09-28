@@ -262,7 +262,7 @@ def image_exists_precise(name):
         if rest:
 
             try:
-                da = renpy.display.core.DisplayableArguments()
+                da = renpy.display.displayable.DisplayableArguments()
                 da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs)
                 da.args = tuple(i for i in name[1:] if i in rest)
                 da.lint = True
@@ -339,7 +339,7 @@ def check_displayable(what, d):
     files = [ ]
 
     try:
-        if isinstance(d, renpy.display.core.Displayable):
+        if isinstance(d, renpy.display.displayable.Displayable):
             d.visit_all(lambda a: a.predict_one())
     except Exception:
         pass
@@ -443,6 +443,9 @@ def quote_text(s):
 
 
 def text_checks(s):
+
+    if renpy.config.say_menu_text_filter is not None:
+        s = renpy.config.say_menu_text_filter(s)
 
     msg = renpy.text.extras.check_text_tags(s)
     if msg:
@@ -683,9 +686,9 @@ def check_style(name, s):
                     for f in set(v.map.values()):
                         check_file(name, f, directory="fonts")
                 else:
-                    check_file(name, v, directory="images")
+                    check_file(name, v, directory="fonts")
 
-            if isinstance(v, renpy.display.core.Displayable):
+            if isinstance(v, renpy.display.displayable.Displayable):
                 check_style_property_displayable(name, k, v)
 
 

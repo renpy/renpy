@@ -609,6 +609,8 @@ OPERATORS = [
     '/',
     '%',
     '~',
+    '@',
+    ':=',
     ]
 
 ESCAPED_OPERATORS = [

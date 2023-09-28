@@ -11,31 +11,31 @@ label screen_displayables_menu:
         e "What would you like to know about?"
 
         "Common properties all displayables share.":
-            call screen_displayable_properties
+            call screen_displayable_properties from _call_screen_displayable_properties
 
         "Adding images and other displayables.":
-            call add_displayable
+            call add_displayable from _call_add_displayable
 
         "Text.":
-            call text_displayable
+            call text_displayable from _call_text_displayable
 
         "Boxes and other layouts.":
-            call layout_displayables
+            call layout_displayables from _call_layout_displayables
 
         "Windows and frames.":
-            call window_displayables
+            call window_displayables from _call_window_displayables
 
         "Buttons.":
-            call button_displayables
+            call button_displayables from _call_button_displayables
 
         "Bars.":
-            call bar_displayables
+            call bar_displayables from _call_bar_displayables
 
         "Viewports.":
-            call viewport_displayables
+            call viewport_displayables from _call_viewport_displayables
 
         "Imagemaps.":
-            call imagemap_displayables
+            call imagemap_displayables from _call_imagemap_displayables
 
         "That's all for now.":
             return

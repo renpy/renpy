@@ -11,7 +11,8 @@ translate italian strings:
 
     # screens.rpy:91
     old "## Say screen"
-    new "## Say screen"
+    # Automatic translation.
+    new "## Dire schermo"
 
     # screens.rpy:93
     old "## The say screen is used to display dialogue to the player. It takes two parameters, who and what, which are the name of the speaking character and the text to be displayed, respectively. (The who parameter can be None if no name is given.)"
@@ -27,7 +28,8 @@ translate italian strings:
 
     # screens.rpy:169
     old "## Input screen"
-    new "## Input screen"
+    # Automatic translation.
+    new "## Schermata di ingresso"
 
     # screens.rpy:171
     old "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
@@ -43,7 +45,8 @@ translate italian strings:
 
     # screens.rpy:205
     old "## Choice screen"
-    new "## Choice screen"
+    # Automatic translation.
+    new "## Schermata di scelta"
 
     # screens.rpy:207
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
@@ -59,7 +62,8 @@ translate italian strings:
 
     # screens.rpy:244
     old "## Quick Menu screen"
-    new "## Quick Menu screen"
+    # Automatic translation.
+    new "## Schermata del menu rapido"
 
     # screens.rpy:246
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
@@ -103,7 +107,8 @@ translate italian strings:
 
     # screens.rpy:291
     old "## Navigation screen"
-    new "## Navigation screen"
+    # Automatic translation.
+    new "## Schermata di navigazione"
 
     # screens.rpy:293
     old "## This screen is included in the main and game menus, and provides navigation to other menus, and to start the game."
@@ -151,7 +156,8 @@ translate italian strings:
 
     # screens.rpy:350
     old "## Main Menu screen"
-    new "## Main Menu screen"
+    # Automatic translation.
+    new "## Schermata del menu principale"
 
     # screens.rpy:352
     old "## Used to display the main menu when Ren'Py starts."
@@ -167,14 +173,15 @@ translate italian strings:
 
     # screens.rpy:413
     old "## Game Menu screen"
-    new "## Game Menu screen"
+    # Automatic translation.
+    new "## Schermata del menu di gioco"
 
     # screens.rpy:415
     old "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
     new "## Costruisce la struttura comune di tutti gli screen game menu. Viene avviato nella schermata del titolo, e mostra lo sfondo, il titolo e la navigazione."
 
     # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     new "## Il parametro 'scroll' può essere None, oppure uno fra \"viewport\" o \"vpgrid\". Questo screen è creato per essere usato con uno o più figli, che sono trasclusi (piazzati) dentro di esso."
 
     # screens.rpy:476
@@ -183,7 +190,8 @@ translate italian strings:
 
     # screens.rpy:539
     old "## About screen"
-    new "## About screen"
+    # Automatic translation.
+    new "## Informazioni sullo schermo"
 
     # screens.rpy:541
     old "## This screen gives credit and copyright information about the game and Ren'Py."
@@ -215,7 +223,8 @@ translate italian strings:
 
     # screens.rpy:582
     old "## Load and Save screens"
-    new "## Load and Save screens"
+    # Automatic translation.
+    new "## Schermate di caricamento e salvataggio"
 
     # screens.rpy:584
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
@@ -275,7 +284,8 @@ translate italian strings:
 
     # screens.rpy:711
     old "## Preferences screen"
-    new "## Preferences screen"
+    # Automatic translation.
+    new "## Schermata delle preferenze"
 
     # screens.rpy:713
     old "## The preferences screen allows the player to configure the game to better suit themselves."
@@ -359,7 +369,8 @@ translate italian strings:
 
     # screens.rpy:882
     old "## History screen"
-    new "## History screen"
+    # Automatic translation.
+    new "## Schermata della storia"
 
     # screens.rpy:884
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
@@ -387,7 +398,8 @@ translate italian strings:
 
     # screens.rpy:965
     old "## Help screen"
-    new "## Help screen"
+    # Automatic translation.
+    new "## Schermata di aiuto"
 
     # screens.rpy:967
     old "## A screen that gives information about key and mouse bindings. It uses other screens (keyboard_help, mouse_help, and gamepad_help) to display the actual help."
@@ -455,7 +467,8 @@ translate italian strings:
 
     # screens.rpy:1027
     old "Page Up"
-    new "Page Up"
+    # Automatic translation.
+    new "Pagina su"
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
@@ -463,7 +476,8 @@ translate italian strings:
 
     # screens.rpy:1031
     old "Page Down"
-    new "Page Down"
+    # Automatic translation.
+    new "Pagina giù"
 
     # screens.rpy:1032
     old "Rolls forward to later dialogue."
@@ -523,11 +537,13 @@ translate italian strings:
 
     # screens.rpy:1085
     old "D-Pad, Sticks"
-    new "D-Pad, Sticks"
+    # Automatic translation.
+    new "D-Pad, bastoni"
 
     # screens.rpy:1089
     old "Start, Guide"
-    new "Start, Guide"
+    # Automatic translation.
+    new "Avvio, Guida"
 
     # screens.rpy:1090
     old "Access the game menu."
@@ -547,7 +563,8 @@ translate italian strings:
 
     # screens.rpy:1128
     old "## Confirm screen"
-    new "## Confirm screen"
+    # Automatic translation.
+    new "## Conferma la schermata"
 
     # screens.rpy:1130
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
@@ -575,7 +592,8 @@ translate italian strings:
 
     # screens.rpy:1191
     old "## Skip indicator screen"
-    new "## Skip indicator screen"
+    # Automatic translation.
+    new "## Schermata dell'indicatore di salto"
 
     # screens.rpy:1193
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
@@ -595,7 +613,8 @@ translate italian strings:
 
     # screens.rpy:1247
     old "## Notify screen"
-    new "## Notify screen"
+    # Automatic translation.
+    new "## Schermata di notifica"
 
     # screens.rpy:1249
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
@@ -607,7 +626,8 @@ translate italian strings:
 
     # screens.rpy:1286
     old "## NVL screen"
-    new "## NVL screen"
+    # Automatic translation.
+    new "## Schermo NVL"
 
     # screens.rpy:1288
     old "## This screen is used for NVL-mode dialogue and menus."
@@ -676,3 +696,74 @@ translate italian strings:
     # screens.rpy:1079
     old "Left Trigger\nLeft Shoulder"
     new "Grilletto Sinistro\nLaterale Sinistro"
+
+translate italian strings:
+
+    # gui/game/screens.rpy:120
+    old "## Make the namebox available for styling through the Character object."
+    # Automatic translation.
+    new "## Rendere la casella dei nomi disponibile per lo styling attraverso l'oggetto Character."
+
+    # gui/game/screens.rpy:173
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new "## https://www.renpy.org/doc/html/screen_special.html#input"
+
+    # gui/game/screens.rpy:206
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new "## https://www.renpy.org/doc/html/screen_special.html#choice"
+
+    # gui/game/screens.rpy:329
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    # Automatic translation.
+    new "## Il pulsante di abbandono è vietato su iOS e non è necessario su Android e sul Web."
+
+    # gui/game/screens.rpy:348
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "Sincronizzazione del caricamento"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "Scarica Sync"
+
+    # gui/game/screens.rpy:921
+    old "## This determines what tags are allowed to be displayed on the history screen."
+    # Automatic translation.
+    new "## Determina quali tag possono essere visualizzati nella schermata della cronologia."
+
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    # Automatic translation.
+    new "Apre il menu di accessibilità."
+
+    # gui/game/screens.rpy:1139
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+
+    # gui/game/screens.rpy:1248
+    old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
+    # Automatic translation.
+    new "## Dobbiamo usare un carattere che contenga il glifo NERO TRIANGOLO PICCOLO IN PUNTA DESTRA."
+
+    # gui/game/screens.rpy:1296
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    # Automatic translation.
+    new "## Schermo a bolle"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## La schermata bubble è usata per visualizzare il dialogo al giocatore quando si usano le bolle vocali. Lo schermo a bolle prende gli stessi parametri dello schermo say, deve creare un visualizzabile con l'id \"what\" e può creare visualizzabili con gli id \"namebox\", \"who\" e \"window\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"

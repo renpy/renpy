@@ -390,7 +390,7 @@
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
-    new "viewport"
+    new "fenêtre déroulante"
 
     # renpy/common/00accessibility.rpy:35
     old "horizontal scroll"
@@ -486,7 +486,7 @@
 
     # renpy/common/00director.rpy:1561
     old "(statement)"
-    new "(statement)"
+    new "(instruction)"
 
     # renpy/common/00director.rpy:1562
     old "(tag)"
@@ -506,7 +506,8 @@
 
     # renpy/common/00director.rpy:1601
     old "(channel)"
-    new "(channel)"
+    # Automatic translation.
+    new "(canal)"
 
     # renpy/common/00director.rpy:1602
     old "(filename)"
@@ -730,7 +731,7 @@
 
     # renpy/common/_developer/developer.rpym:57
     old "Show Image Load Log (F4)"
-    new "Montrer le log ne chargement des images (F4)"
+    new "Afficher le log de chargement des images (F4)"
 
     # renpy/common/_developer/developer.rpym:60
     old "Hide Image Load Log (F4)"

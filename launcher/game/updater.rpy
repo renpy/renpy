@@ -52,7 +52,7 @@ init python:
         if state is not None:
             base_name = state.get("sdk", {}).get('base_name', '')
 
-            if "-nightly-" in base_name:
+            if "+nightly" in base_name:
                 dlc_url = "http://nightly.renpy.org/{}/updates.json".format(base_name[6:])
 
         return renpy.invoke_in_new_context(updater.update, dlc_url, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart)
@@ -72,6 +72,11 @@ init python:
 
     _("Experimental")
     _("Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer.")
+
+    _("Nightly Fix")
+    _("Nightly Fix (Ren'Py 8, Python 3)")
+    _("Nightly Fix (Ren'Py 7, Python 2)")
+    _("A nightly build of fixes to the release version of Ren'Py.")
 
     _("Nightly")
     _("Nightly (Ren'Py 8, Python 3)")
@@ -127,15 +132,16 @@ screen update_channel(channels):
 
                         hbox:
                             spacing 7
-                            textbutton c["channel"]  action action
+                            textbutton c["channel"] action action
 
 
 
                         add HALF_SPACER
 
                         $ date = _strftime(__("%B %d, %Y"), time.localtime(c["timestamp"]))
+                        $ pretty = c["pretty_version"]
 
-                        text "[date] • [c[pretty_version]] [current!t]" style "l_small_text"
+                        text "[date] • [pretty] [current!t]" style "l_small_text"
 
                         add HALF_SPACER
 

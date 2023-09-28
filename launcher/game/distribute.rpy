@@ -528,6 +528,11 @@ change_renpy_executable()
                 self.reporter.info(_("Scanning project files..."))
                 project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
 
+            if project.data['tutorial']:
+                self.reporter.info(_("Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."), pause=True)
+                self.log.close()
+                return
+
             if project.data['force_recompile']:
                 import compileall
 
@@ -551,7 +556,10 @@ change_renpy_executable()
             self.pretty_version = build['version']
 
             if (" " in self.base_name) or (":" in self.base_name) or (";" in self.base_name):
-                reporter.info(_("Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."), pause=True)
+                reporter.info(
+                    _("Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."),
+                    submessage=_("This may be derived from build.name and config.version or build.version."),
+                    pause=True)
                 self.log.close()
                 return
 
@@ -720,29 +728,37 @@ change_renpy_executable()
                 is_dir = os.path.isdir(path)
 
                 if is_dir:
-                    match_name = name + "/"
+                    match_names = [ name + "/", name ]
                 else:
-                    match_name = name
+                    match_names = [ name ]
 
                 for pattern, file_list in patterns:
 
-                    if match(match_name, pattern):
+                    matched = False
 
-                        # When we have ('test/**', None), avoid excluding test.
-                        if (not file_list) and is_dir:
-                            new_pattern = pattern.rstrip("*")
-                            if (pattern != new_pattern) and match(match_name, new_pattern):
-                                continue
+                    for match_name in match_names:
 
+                        if match(match_name, pattern):
+
+                            # When we have ('test/**', None), avoid excluding test.
+                            if (not file_list) and is_dir:
+                                new_pattern = pattern.rstrip("*")
+                                if (pattern != new_pattern) and match(match_name, new_pattern):
+                                    continue
+
+                            matched = True
+                            break
+
+                    if matched:
                         break
 
                 else:
-                    print(str(match_name), "doesn't match anything.", file=self.log)
+                    print(str(match_names[0]), "doesn't match anything.", file=self.log)
 
                     pattern = None
                     file_list = None
 
-                print(str(match_name), "matches", str(pattern), "(" + str(file_list) + ").", file=self.log)
+                print(str(match_names[0]), "matches", str(pattern), "(" + str(file_list) + ").", file=self.log)
 
                 if file_list is None:
                     return

@@ -217,11 +217,6 @@ dialogue.
 
     Sets the size of character names.
 
-.. var:: gui.textbox_height = 278
-
-    The height of the textbox. This should be the same height as the height
-    of gui/textbox.png.
-
 By default, the character name label uses the accent color. The color can
 be easily changed when defining a character::
 
@@ -263,7 +258,7 @@ buttons.
 
     The color used for the text of unfocused choice buttons.
 
-.. var:: gui.choice_text_hover_color = '#0066cc'
+.. var:: gui.choice_button_text_hover_color = '#0066cc'
 
     The color used for the text of focused choice buttons.
 
@@ -878,7 +873,7 @@ A bar can customized by editing the following images:
 gui/bar/left.png, gui/bar/bottom.png
     Images that are used for the filled section of horizontal and vertical bars.
 
-gui/bar/right.pbg, gui/bar/top.png
+gui/bar/right.png, gui/bar/top.png
     Images that are used for the filled section of horizontal and vertical bars.
 
 There are also the usual variables that control bars:
@@ -982,12 +977,12 @@ The textbox (or window) is the window the dialogue is displayed in. In addition
 to changing gui/textbox.png, the following variables control how the textbox
 is displayed.
 
-.. var: gui.textbox_height = 278
+.. var:: gui.textbox_height = 278
 
     The height of the textbox window, which should also be the height of gui/
     textbox.png.
 
-.. var: gui.textbox_yalign = 1.0
+.. var:: gui.textbox_yalign = 1.0
 
     The placement of the textbox vertically on the screen. 0.0 is the top,
     0.5 is center, and 1.0 is the bottom.
@@ -1091,6 +1086,10 @@ sets the number of blocks of dialogue Ren'Py will keep at history.
     the height of a history entry to vary at the cost of performance –
     config.history_length may need to be lowered significantly when this
     is None.
+
+.. var:: gui.history_spacing = 0
+
+    The amount of space to leave between history entries, in pixels.
 
 .. var:: gui.history_name_xpos = 0.5
 .. var:: gui.history_text_xpos = 0.5

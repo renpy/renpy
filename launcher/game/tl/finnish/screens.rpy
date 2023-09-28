@@ -75,7 +75,8 @@ translate finnish strings:
 
     # screens.rpy:263
     old "Skip"
-    new "Skip"
+    # Automatic translation.
+    new "Ohita"
 
     # screens.rpy:264
     old "Auto"
@@ -407,7 +408,8 @@ translate finnish strings:
 
     # screens.rpy:1003
     old "Enter"
-    new "Enter"
+    # Automatic translation.
+    new "Kirjoita"
 
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
@@ -455,7 +457,8 @@ translate finnish strings:
 
     # screens.rpy:1027
     old "Page Up"
-    new "Page Up"
+    # Automatic translation.
+    new "Sivu ylös"
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
@@ -640,4 +643,134 @@ translate finnish strings:
     # screens.rpy:1429
     old "Menu"
     new "Valikko"
+
+
+translate finnish strings:
+
+    # gui/game/screens.rpy:114
+    old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
+    # Automatic translation.
+    new "## Jos sivulla on kuva, näytä se tekstin yläpuolella. Älä näytä puhelinmuunnoksessa - siinä ei ole tilaa."
+
+    # gui/game/screens.rpy:120
+    old "## Make the namebox available for styling through the Character object."
+    # Automatic translation.
+    new "## Tee nimilaatikosta muotoiltavissa oleva Character-olio."
+
+    # gui/game/screens.rpy:173
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new "## https://www.renpy.org/doc/html/screen_special.html#input"
+
+    # gui/game/screens.rpy:206
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new "## https://www.renpy.org/doc/html/screen_special.html#choice"
+
+    # gui/game/screens.rpy:241
+    old "## Ensure this appears on top of other screens."
+    # Automatic translation.
+    new "## Varmista, että tämä näkyy muiden näyttöjen yläpuolella."
+
+    # gui/game/screens.rpy:280
+    old "## Main and Game Menu Screens"
+    # Automatic translation.
+    new "## Pää- ja pelivalikon näytöt"
+
+    # gui/game/screens.rpy:329
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    # Automatic translation.
+    new "## Lopeta-painike on kielletty iOS:ssä ja tarpeeton Androidissa ja Webissä."
+
+    # gui/game/screens.rpy:348
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+
+    # gui/game/screens.rpy:352
+    old "## This ensures that any other menu screen is replaced."
+    # Automatic translation.
+    new "## Näin varmistetaan, että kaikki muut valikkonäytöt korvataan."
+
+    # gui/game/screens.rpy:357
+    old "## This empty frame darkens the main menu."
+    # Automatic translation.
+    new "## Tämä tyhjä kehys tummentaa päävalikon."
+
+    # gui/game/screens.rpy:429
+    old "## Reserve space for the navigation section."
+    # Automatic translation.
+    new "## Varaa tilaa navigointiosuudelle."
+
+    # gui/game/screens.rpy:608
+    old "## The page name, which can be edited by clicking on a button."
+    # Automatic translation.
+    new "## Sivun nimi, jota voidaan muokata napsauttamalla painiketta."
+
+    # gui/game/screens.rpy:668
+    old "## range(1, 10) gives the numbers from 1 to 9."
+    # Automatic translation.
+    new "## range(1, 10) antaa numerot 1-9."
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "Lataa synkronointi"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "Lataa Sync"
+
+    # gui/game/screens.rpy:921
+    old "## This determines what tags are allowed to be displayed on the history screen."
+    # Automatic translation.
+    new "## Tämä määrittää, mitä tunnisteita saa näyttää historiaruudulla."
+
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    # Automatic translation.
+    new "Avaa saavutettavuusvalikon."
+
+    # gui/game/screens.rpy:1082
+    old "Left Trigger\nLeft Shoulder"
+    # Automatic translation.
+    new "Vasen liipaisin\nVasen olkapää"
+
+    # gui/game/screens.rpy:1139
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+
+    # gui/game/screens.rpy:1248
+    old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
+    # Automatic translation.
+    new "## Meidän on käytettävä fonttia, jossa on BLACK RIGHT-POINTING SMALL TRIANGLE -lyhenne."
+
+    # gui/game/screens.rpy:1296
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+
+    # gui/game/screens.rpy:1320
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    # Automatic translation.
+    new "## Näyttää valikon, jos se on annettu. Valikko saatetaan näyttää virheellisesti, jos config.narrator_menu on asetettu arvoon True."
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    # Automatic translation.
+    new "## Kupla näyttö"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## Puhekuplaikkunaa käytetään näyttämään dialogi pelaajalle, kun käytetään puhekuplia. Bubble screen ottaa samat parametrit kuin say screen, sen on luotava displayable, jonka id on \"what\", ja se voi luoda displayables, joiden id:t ovat \"namebox\", \"who\" ja \"window\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+
+
+translate finnish strings:
+
+    # gui/game/screens.rpy:411
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    # Automatic translation.
+    new "## Selausparametri voi olla None tai jokin seuraavista: \"viewport\" tai \"vpgrid\". Tämä ruutu on tarkoitettu käytettäväksi yhden tai useamman lapsen kanssa, jotka siirretään (sijoitetaan) sen sisään."
 

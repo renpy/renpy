@@ -475,7 +475,7 @@ def main():
             if dn is None:
                 continue
 
-            if not os.path.isfile(os.path.join(dn, fn + ".rpy")):
+            if not os.path.isfile(os.path.join(dn, fn + ".rpy")) and not os.path.isfile(os.path.join(dn, fn + "_ren.py")):
 
                 try:
                     name = os.path.join(dn, fn + ".rpyc")
@@ -670,13 +670,19 @@ def main():
                     run(restart)
                 finally:
                     restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
-                    renpy.persistent.update(True)
-                    renpy.persistent.save_on_quit_MP()
+
+            except renpy.game.QuitException:
+
+                renpy.audio.audio.fadeout_all()
+                raise
 
             except game.FullRestartException as e:
                 restart = e.reason
 
             finally:
+
+                renpy.persistent.update(True)
+                renpy.persistent.save_on_quit_MP()
 
                 # Reset live2d if it exists.
                 try:

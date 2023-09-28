@@ -31,16 +31,11 @@ import renpy
 from renpy.display.render import render, Render
 
 
-def scale(num, base):
-    """
-    If num is a float, multiplies it by base and returns that. Otherwise,
-    returns num unchanged.
-    """
-
-    if type(num) is float:
-        return num * base
-    else:
-        return num
+if PY2:
+    def compute_raw(value, room):
+        return renpy.display.core.absolute.compute_raw(value, room)
+else:
+    compute_raw = renpy.display.core.absolute.compute_raw
 
 
 def xyminimums(style, width, height):
@@ -58,7 +53,7 @@ def xyminimums(style, width, height):
         if (type(xmaximum) is float) and xmaximum and renpy.config.adjust_minimums:
             xminimum = xminimum / xmaximum
 
-        xminimum = xminimum * width
+    xminimum = compute_raw(xminimum, width)
 
     if type(yminimum) is float:
         ymaximum = style.ymaximum
@@ -66,12 +61,12 @@ def xyminimums(style, width, height):
         if (type(ymaximum) is float) and ymaximum and renpy.config.adjust_minimums:
             yminimum = yminimum / ymaximum
 
-        yminimum = yminimum * height
+    yminimum = compute_raw(yminimum, height)
 
     return xminimum, yminimum
 
 
-class Null(renpy.display.core.Displayable):
+class Null(renpy.display.displayable.Displayable):
     """
     :doc: disp_imagelike
     :name: Null
@@ -101,7 +96,7 @@ class Null(renpy.display.core.Displayable):
         return rv
 
 
-class Container(renpy.display.core.Displayable):
+class Container(renpy.display.displayable.Displayable):
     """
     This is the base class for containers that can have one or more
     children.
@@ -128,7 +123,7 @@ class Container(renpy.display.core.Displayable):
     def __init__(self, *args, **properties):
 
         self.children = self._list_type() # type: list
-        self.child = None # type: renpy.display.core.Displayable|None
+        self.child = None # type: renpy.display.displayable.Displayable|None
         self.offsets = self._list_type() # type: list[tuple[int, int]]
 
         for i in args:
@@ -213,6 +208,8 @@ class Container(renpy.display.core.Displayable):
 
         if child._duplicatable:
             self._duplicatable = True
+
+        renpy.display.render.invalidate(self)
 
     def _clear(self):
         self.child = None
@@ -467,13 +464,13 @@ class Grid(Container):
             yspacing = self.style.spacing
 
         if renpy.config.relative_spacing:
-            xspacing = renpy.display.layout.scale(xspacing, width)
-            yspacing = renpy.display.layout.scale(yspacing, height)
+            xspacing = compute_raw(xspacing, width)
+            yspacing = compute_raw(yspacing, height)
 
-        left_margin = scale(self.style.left_margin, width)
-        right_margin = scale(self.style.right_margin, width)
-        top_margin = scale(self.style.top_margin, height)
-        bottom_margin = scale(self.style.bottom_margin, height)
+        left_margin = compute_raw(self.style.left_margin, width)
+        right_margin = compute_raw(self.style.right_margin, width)
+        top_margin = compute_raw(self.style.top_margin, height)
+        bottom_margin = compute_raw(self.style.bottom_margin, height)
 
         # For convenience and speed.
         cols = self.cols
@@ -815,11 +812,11 @@ class MultiBox(Container):
 
         minx = self.style.xminimum
         if minx is not None:
-            width = max(width, scale(minx, width))
+            width = max(width, compute_raw(minx, width))
 
         miny = self.style.yminimum
         if miny is not None:
-            height = max(height, scale(miny, height))
+            height = max(height, compute_raw(miny, height))
 
         if self.first and adjust_times:
             self.update_times()
@@ -962,7 +959,7 @@ class MultiBox(Container):
 
         # The children to layout.
         children = list(self.children)
-        if self.style.box_reverse:
+        if self.style.box_reverse and renpy.config.simple_box_reverse:
             children.reverse()
             spacings.reverse()
 
@@ -1134,9 +1131,20 @@ class MultiBox(Container):
         if not yfill:
             height = max(yminimum, maxy)
 
+        if self.style.box_reverse and not renpy.config.simple_box_reverse:
+            new_placements = [ ]
+
+            for child, x, y, w, h, surf in placements:
+                if layout == "vertical":
+                    new_placements.append((child, x, height - y - h, w, h, surf))
+                else:
+                    new_placements.append((child, width - x - w, y, w, h, surf))
+
+            placements = new_placements
+
         rv = renpy.display.render.Render(width, height)
 
-        if self.style.box_reverse ^ self.style.order_reverse:
+        if self.style.order_reverse ^ (self.style.box_reverse and renpy.config.simple_box_reverse):
             placements.reverse()
 
         for child, x, y, w, h, surf in placements:
@@ -1291,17 +1299,17 @@ class Window(Container):
         width = max(xminimum, width)
         height = max(yminimum, height)
 
-        left_margin = scale(style.left_margin, width)
-        left_padding = scale(style.left_padding, width)
+        left_margin = compute_raw(style.left_margin, width)
+        left_padding = compute_raw(style.left_padding, width)
 
-        right_margin = scale(style.right_margin, width)
-        right_padding = scale(style.right_padding, width)
+        right_margin = compute_raw(style.right_margin, width)
+        right_padding = compute_raw(style.right_padding, width)
 
-        top_margin = scale(style.top_margin, height)
-        top_padding = scale(style.top_padding, height)
+        top_margin = compute_raw(style.top_margin, height)
+        top_padding = compute_raw(style.top_padding, height)
 
-        bottom_margin = scale(style.bottom_margin, height)
-        bottom_padding = scale(style.bottom_padding, height)
+        bottom_margin = compute_raw(style.bottom_margin, height)
+        bottom_padding = compute_raw(style.bottom_padding, height)
 
         # c for combined.
         cxmargin = left_margin + right_margin
@@ -1415,7 +1423,7 @@ def dynamic_displayable_compat(st, at, expr):
     return child, None
 
 
-class DynamicDisplayable(renpy.display.core.Displayable):
+class DynamicDisplayable(renpy.display.displayable.Displayable):
     """
     :doc: disp_dynamic
 
@@ -1964,7 +1972,7 @@ class Side(Container):
         return rv
 
 
-class Alpha(renpy.display.core.Displayable):
+class Alpha(renpy.display.displayable.Displayable):
 
     def __init__(self, start, end, time, child=None, repeat=False, bounce=False,
                  anim_timebase=False, time_warp=None, **properties):
@@ -2067,7 +2075,7 @@ class AdjustTimes(Container):
 
     def event(self, ev, x, y, st):
         st, _ = self.adjusted_times()
-        Container.event(self, ev, x, y, st)
+        return Container.event(self, ev, x, y, st)
 
     def get_placement(self):
         return self.child.get_placement()
@@ -2379,11 +2387,8 @@ class NearRect(Container):
             layout_y = py - ch
 
         # Initial x positioning - using a variant of the layout algorithm.
-        if isinstance(xpos, float):
-            xpos = xpos * pw
-
-        if isinstance(xanchor, float):
-            xanchor = xanchor * cw
+        xpos = compute_raw(xpos, pw)
+        xanchor = compute_raw(xanchor, cw)
 
         layout_x = px + xpos - xanchor
 

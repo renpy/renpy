@@ -1185,7 +1185,7 @@
 
     # updater.rpy:91
     old "Release"
-    new "Lanzamiento"
+    new "Estable"
 
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -1193,7 +1193,7 @@
 
     # updater.rpy:102
     old "Prerelease"
-    new "Prelanzamiento"
+    new "Preliminar"
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1267,8 +1267,6 @@
     old "Proceed"
     new "Continuar"
 
-translate spanish strings:
-
     # game/add_file.rpy:37
     old "The file name may not be empty."
     new "El nombre del archivo no puede estar vacío."
@@ -1279,11 +1277,11 @@ translate spanish strings:
 
     # game/android.rpy:50
     old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
-    new "Selecciona la versión de depuración, a la que se puedes acceder a través de Android Studio. Cambiar entre las compilaciones de depuración y de versión requiere una desinstalación de su dispositivo."
+    new "Selecciona la versión de depuración, a la que se puedes acceder a través de Android Studio. Cambiar entre las compilaciones de depuración y estable requiere una desinstalación de su dispositivo."
 
     # game/android.rpy:51
     old "Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device."
-    new "Selecciona la versión de lanzamiento, que se puede cargar en las tiendas. Cambiar entre las compilaciones de depuración y de versión requiere una desinstalación de su dispositivo."
+    new "Selecciona la versión estable, que se puede cargar en las tiendas. Cambiar entre las compilaciones de depuración y estable requiere una desinstalación de su dispositivo."
 
     # game/androidstrings.rpy:7
     old "{} is not a directory."
@@ -2007,7 +2005,7 @@ translate spanish strings:
 
     # game/web.rpy:344
     old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
-    new "Restauraremos el soporte en una versión futura de Ren'Py 8. Hasta entonces, use Ren'Py 7 para soporte web."
+    new "Restauraremos el soporte en una versión estable futura de Ren'Py 8. Hasta entonces, use Ren'Py 7 para soporte web."
 
     # game/preferences.rpy:104
     old "General"
@@ -2047,11 +2045,11 @@ translate spanish strings:
 
     # game/updater.rpy:77
     old "Nightly (Ren'Py 8, Python 3)"
-    new "Nightly (Ren'Py 8, Python 3)"
+    new "Nocturna (Ren'Py 8, Python 3)"
 
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
-    new "Nightly (Ren'Py 7, Python 2)"
+    new "Nocturna (Ren'Py 7, Python 2)"
 
     # game/preferences.rpy:327
     old "{#in language font}Welcome! Please choose a language"
@@ -2116,3 +2114,39 @@ translate spanish strings:
     # game/androidstrings.rpy:69
     old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
     new "He encontrado un archivo bundle.keystore en el directorio rapt. ¿Quieres usar este archivo?"
+    
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    new "Compilación nocturna de correcciones para la versión estable de Ren'Py."
+
+    # game/updater.rpy:76
+    old "Nightly Fix"
+    new "Correciones nocturnas"
+
+    # game/updater.rpy:77
+    old "Nightly Fix (Ren'Py 8, Python 3)"
+    new "Correciones nocturnas (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly Fix (Ren'Py 7, Python 2)"
+    new "Correciones nocturnas (Ren'Py 7, Python 2)"
+
+    # game/choose_directory.rpy:72
+    old "No directory was selected, but one is required."
+    new "No se seleccionó un directorio, pero uno requerido."
+
+    # game/choose_directory.rpy:79
+    old "The selected directory does not exist."
+    new "El directorio seleccionado no existe."
+
+    # game/choose_directory.rpy:81
+    old "The selected directory is not writable."
+    new "No se puede escribir en el directorio seleccionado."
+
+    # game/distribute.rpy:554
+    old "This may be derived from build.name and config.version or build.version."
+    new "Puede derivarse de build.name y config.version o build.version."
+
+    # game/distribute.rpy:532
+    old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
+    new "La compilación de distribuciones falló:\n\nEl proyecto es el Tutorial de Ren'Py, que no puede ser distribuido fuera de Ren'Py. Considera usar The Question como proyecto de prueba."

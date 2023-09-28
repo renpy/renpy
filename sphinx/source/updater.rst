@@ -2,8 +2,8 @@ Web Updater
 ===========
 
 Ren'Py includes an updater that can automatically download and install
-updates to a Ren'Py game hosted at a website. This can be useful in
-keeping a large game up to date.
+updates to a Ren'Py game from a web host. The updates work on Windows
+and Linux, but not macOS, Android, or iOS.
 
 The Ren'Py updater works by automatically performing the following
 steps:
@@ -32,7 +32,8 @@ The updater requires that you provide your own hosting. You should be
 able to download the update files by going to the appropriate URL
 directly, and your server must support HTTP range queries.
 
-HTTPS is not supported for patching.
+HTTPS is not supported for patching, but will download the entire
+file, not the patch.
 
 (This means paying for web hosting, as "sharing" sites tend not to
 support the required features.)

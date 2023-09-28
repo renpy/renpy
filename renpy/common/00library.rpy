@@ -178,34 +178,47 @@ init -1700 python:
 
     config.extend_interjection = "{fast}"
 
-    def extend(what, interact=True, *args, **kwargs):
-        who = _last_say_who
-        who = renpy.eval_who(who)
+    class _Extend(object):
 
-        if who is None:
-            who = narrator
-        elif isinstance(who, basestring):
-            who = Character(who, kind=name_only)
+        def get_who(self):
 
-        # This ensures extend works even with NVL mode.
-        who.do_extend()
+            who = _last_say_who
+            who = renpy.eval_who(who)
 
-        what = _last_say_what + config.extend_interjection + _last_raw_what
+            if who is None:
+                who = narrator
+            elif isinstance(who, basestring):
+                who = Character(who, kind=name_only)
 
-        args = args + _last_say_args
-        kw = dict(_last_say_kwargs)
-        kw.update(kwargs)
-        kw["interact"] = interact and kw.get("interact", True)
+            return who
 
-        renpy.exports.say(who, what, *args, **kw)
-        store._last_say_what = what
+        def __call__(self, what, interact=True, *args, **kwargs):
+            who = self.get_who()
 
-    extend.record_say = False
+            # This ensures extend works even with NVL mode.
+            who.do_extend()
 
-    def _extend_get_extend_text(what):
-        return config.extend_interjection + what
+            what = _last_say_what + config.extend_interjection + _last_raw_what
 
-    extend.get_extend_text = _extend_get_extend_text
+            args = args + _last_say_args
+            kw = dict(_last_say_kwargs)
+            kw.update(kwargs)
+            kw["interact"] = interact and kw.get("interact", True)
+
+            renpy.exports.say(who, what, *args, **kw)
+            store._last_say_what = what
+
+        record_say = False
+
+        def get_extend_text(self, what):
+            return config.extend_interjection + what
+
+        @property
+        def statement_name(self):
+            who = self.get_who()
+            return getattr(who, "statement_name", "say")
+
+    extend = _Extend()
 
 
     ##########################################################################
@@ -288,24 +301,6 @@ init -1700 python:
                 return
 
     config.expensive_predict_callbacks.append(_predict_screens)
-
-
-    ##########################################################################
-    # Name-only say statements.
-
-    # This character is copied when a name-only say statement is called.
-    name_only = adv
-
-    def predict_say(who, what):
-        who = Character(who, kind=name_only)
-        try:
-            who.predict(what)
-        except Exception:
-            pass
-
-    def say(who, what, interact=True, *args, **kwargs):
-        who = Character(who, kind=name_only)
-        who(what, interact=interact, *args, **kwargs)
 
 
     ##########################################################################

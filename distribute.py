@@ -94,6 +94,8 @@ def main():
     ap.add_argument("--vc-version-only", action="store_true")
     ap.add_argument("--link-directories", action="store_true")
     ap.add_argument("--append-version", action="store_true")
+    ap.add_argument("--nightly", action="store_true")
+    ap.add_argument("--print-version", action="store_true")
 
     args = ap.parse_args()
 
@@ -101,8 +103,14 @@ def main():
     link_directory("renios")
     link_directory("web")
 
-    if args.link_directories:
+    import renpy.versions
+    renpy.versions.generate_vc_version(nightly=args.nightly)
+
+    if args.link_directories or args.vc_version_only:
         return
+
+    if not os.path.abspath(sys.executable).startswith(ROOT + "/lib"):
+        raise Exception("Distribute must be run with the python in lib/.")
 
     if args.sign:
         os.environ["RENPY_MAC_IDENTITY"] = "Developer ID Application: Tom Rothamel (XHTE5H7Z79)"
@@ -110,62 +118,38 @@ def main():
     if PY2 and not sys.flags.optimize:
         raise Exception("Not running with python optimization.")
 
-    if not os.path.abspath(sys.executable).startswith(ROOT + "/lib"):
-        raise Exception("Distribute must be run with the python in lib/.")
-
-    # Revision updating is done early, so we can do it even if the rest
-    # of the program fails.
-
-    # Determine the version. We grab the current revision, and if any
-    # file has changed, bump it by 1.
-    import renpy
-
-    if args.version is None:
-        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
-
     try:
-        s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", ]).decode("utf-8").strip()
-        parts = s.strip().split("-")
-        dirty = "dirty" in parts
+        vc_version_base = os.path.splitext(renpy.vc_version.__file__)[0]
 
-        commits_per_day = collections.defaultdict(int)
+        # Delete the .pyc and .pyo files, as reload can choose one of them instead
+        # of the new .py file.
+        for fn in [ vc_version_base + ".pyc", vc_version_base + ".pyo" ]:
+            if os.path.exists(fn):
+                os.unlink(fn)
 
-        for i in subprocess.check_output([ "git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d" ]).decode("utf-8").split():
-            commits_per_day[i[2:]] += 1
-
-        if dirty:
-            key = time.strftime("%Y%m%d")[2:]
-            vc_version = "{}{:02d}".format(key, commits_per_day[key] + 1)
-        else:
-            key = max(commits_per_day.keys())
-            vc_version = "{}{:02d}".format(key, commits_per_day[key])
+        reload(renpy.vc_version)
     except Exception:
-        vc_version = 0
+        import renpy.vc_version
 
-    with open("renpy/vc_version.py", "w") as f:
-        import socket
-        official = socket.gethostname() == "eileen"
-        nightly = args.version and "nightly" in args.version
+    # A normal reload is fine, as renpy/__init__.py won't change.
+    reload(renpy)
 
-        f.write("vc_version = {}\n".format(vc_version))
-        f.write("official = {}\n".format(official))
-        f.write("nightly = {}\n".format(nightly))
-
-    if args.vc_version_only:
+    if args.print_version:
+        print(renpy.version_only)
         return
 
-    try:
-        reload(sys.modules['renpy.vc_version']) # @UndefinedVariable
-    except Exception:
-        import renpy.vc_version # @UnusedImport
-
-    reload(sys.modules['renpy'])
+    if args.version is None:
+        if args.nightly:
+            args.version = renpy.version_only
+        else:
+            args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
 
     if args.append_version:
         args.version += "-"  + renpy.version_only
 
     # Check that the versions match.
     full_version = renpy.version_only # @UndefinedVariable
+
     if "-" not in args.version \
             and not full_version.startswith(args.version):
         raise Exception("The command-line and Ren'Py versions do not match.")
@@ -268,7 +252,7 @@ def main():
             "-q",
             "egg_info",
             "--tag-build",
-            "-for-renpy-" + args.version,
+            "+renpy" + args.version,
             "sdist",
             "-d",
             os.path.abspath(destination)

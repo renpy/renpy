@@ -22,8 +22,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
 import collections
+import re
 
 import renpy
 
@@ -249,29 +249,26 @@ def get_movie_texture_web(channel, mask_channel, side_mask, mipmap):
     return tex, new
 
 
-def render_movie(channel, width, height, group=None):
-    tex, _new = get_movie_texture(channel)
+def resize_movie(r, width, height):
 
-    if group is not None:
-        if tex is None:
-            tex = group_texture.get(group, None)
-        else:
-            group_texture[group] = tex
-
-    if tex is None:
+    if r is None:
         return None
 
-    sw, sh = tex.get_size()
+    rv = renpy.display.render.Render(width, height)
 
-    scale = min(1.0 * width / sw, 1.0 * height / sh)
+    sw, sh = r.get_size()
+
+    if not (sw and sh):
+        return rv
+
+    scale = min(1.0 * width / sw, 1.0 * height / sh) # type: float
 
     dw = scale * sw
     dh = scale * sh
 
-    rv = renpy.display.render.Render(width, height)
     rv.forward = renpy.display.matrix.Matrix2D(1.0 / scale, 0.0, 0.0, 1.0 / scale)
     rv.reverse = renpy.display.matrix.Matrix2D(scale, 0.0, 0.0, scale)
-    rv.blit(tex, (int((width - dw) / 2), int((height - dh) / 2)))
+    rv.blit(r, (int((width - dw) / 2), int((height - dh) / 2)))
 
     return rv
 
@@ -286,16 +283,12 @@ def default_play_callback(old, new): # @UnusedVariable
 # A serial number that's used to generated movie channels.
 movie_channel_serial = 0
 
-class Movie(renpy.display.core.Displayable):
+class Movie(renpy.display.displayable.Displayable):
     """
     :doc: movie
+    :args: (*, size=None, channel="movie", play=None, side_mask=False, mask=None, mask_channel=None, start_image=None, image=None, play_callback=None, loop=True, group=None, **properties)
 
     This is a displayable that shows the current movie.
-
-    `fps`
-        The framerate that the movie should be shown at. (This is currently
-        ignored, but the parameter is kept for backwards compatibility.
-        The framerate is auto-detected.)
 
     `size`
         This should be specified as either a tuple giving the width and
@@ -386,6 +379,11 @@ class Movie(renpy.display.core.Displayable):
         the previous frame, the last frame from that movie will be used for
         this movie. This can prevent flashes of transparency when switching
         between two movies.
+
+    `keep_last_frame`
+        If true, and the movie has ended, the last frame will be displayed,
+        rather than the movie being hidden. This only works if `loop` is
+        false. (This behavior will also occur if `group` is set.)
     """
 
     fullscreen = False
@@ -413,6 +411,9 @@ class Movie(renpy.display.core.Displayable):
         """
 
         if isinstance(name, basestring):
+            m = re.match(r'<.*>(.*)$', name)
+            if m:
+                name = m.group(1)
             return renpy.loader.loadable(name, directory="audio")
         else:
             return any(renpy.loader.loadable(i, directory="audio") for i in name)
@@ -449,7 +450,13 @@ class Movie(renpy.display.core.Displayable):
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop, force=True)
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, group=None, **properties):
+    def ensure_channels(self):
+        self.ensure_channel(self.channel)
+        self.ensure_channel(self.mask_channel)
+
+    keep_last_frame_serial = 0
+
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, group=None, keep_last_frame=False, **properties):
 
         global movie_channel_serial
 
@@ -483,18 +490,18 @@ class Movie(renpy.display.core.Displayable):
 
         self.side_mask = side_mask
 
-        self.ensure_channel(self.channel)
-        self.ensure_channel(self.mask_channel)
+        self.ensure_channels()
 
         self.image = renpy.easy.displayable_or_none(image)
         self.start_image = renpy.easy.displayable_or_none(start_image)
 
         self.play_callback = play_callback
 
-        self.group = group
+        if group is None and keep_last_frame:
+            group = "_keep_last_frame_" + str(Movie.keep_last_frame_serial)
+            Movie.keep_last_frame_serial += 1
 
-        if (self.channel == "movie") and (renpy.config.hw_video) and renpy.mobile:
-            raise Exception("Movie(channel='movie') doesn't work on mobile when config.hw_video is true. (Use a different channel argument.)")
+        self.group = group
 
     def _handles_event(self, event):
         return event == "show"
@@ -504,6 +511,8 @@ class Movie(renpy.display.core.Displayable):
             reset_channels.add(self.channel)
 
     def render(self, width, height, st, at):
+
+        self.ensure_channels()
 
         if self._play and not (renpy.game.preferences.video_image_fallback is True):
             if channel_movie.get(self.channel, None) is not self:
@@ -527,42 +536,31 @@ class Movie(renpy.display.core.Displayable):
 
             return rv
 
-        if self.size is None:
+        tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask, self.style.mipmap)
 
-            tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask, self.style.mipmap)
-
-            if self.group is not None:
-                if tex is None:
-                    tex = group_texture.get(self.group, None)
-                else:
-                    group_texture[self.group] = tex
-
-            if (not not_playing) and (tex is not None):
-                width, height = tex.get_size()
-
-                rv = renpy.display.render.Render(width, height)
-                rv.blit(tex, (0, 0))
-
-            elif (not not_playing) and (self.start_image is not None):
-                surf = renpy.display.render.render(self.start_image, width, height, st, at)
-                w, h = surf.get_size()
-                rv = renpy.display.render.Render(w, h)
-                rv.blit(surf, (0, 0))
-
+        if self.group is not None:
+            if tex is None:
+                tex = group_texture.get(self.group, None)
             else:
-                rv = renpy.display.render.Render(0, 0)
+                group_texture[self.group] = tex
+
+        if (not not_playing) and (tex is not None):
+            width, height = tex.get_size()
+
+            rv = renpy.display.render.Render(width, height)
+            rv.blit(tex, (0, 0))
+
+        elif (not not_playing) and (self.start_image is not None):
+            surf = renpy.display.render.render(self.start_image, width, height, st, at)
+            w, h = surf.get_size()
+            rv = renpy.display.render.Render(w, h)
+            rv.blit(surf, (0, 0))
 
         else:
+            rv = renpy.display.render.Render(0, 0)
 
-            w, h = self.size
-
-            if not playing:
-                rv = None
-            else:
-                rv = render_movie(self.channel, w, h, group=self.group)
-
-            if rv is None:
-                rv = renpy.display.render.Render(w, h)
+        if self.size is not None:
+            rv = resize_movie(rv, self.size[0], self.size[1])
 
         # Usually we get redrawn when the frame is ready - but we want
         # the movie to disappear if it's ended, or if it hasn't started
@@ -572,6 +570,9 @@ class Movie(renpy.display.core.Displayable):
         return rv
 
     def play(self, old):
+
+        self.ensure_channels()
+
         if old is None:
             old_play = None
         else:
@@ -586,22 +587,26 @@ class Movie(renpy.display.core.Displayable):
                     default_play_callback(old, self)
 
             else:
-                renpy.audio.music.stop(channel=self.channel)
+                renpy.audio.music.stop(channel=self.channel, fadeout=0)
 
                 if self.mask:
-                    renpy.audio.music.stop(channel=self.mask_channel) # type: ignore
+                    renpy.audio.music.stop(channel=self.mask_channel, fadeout=0) # type: ignore
 
     def stop(self):
+        self.ensure_channels()
 
         if self._play:
             if renpy.audio.music.channel_defined(self.channel):
-                renpy.audio.music.stop(channel=self.channel)
+                renpy.audio.music.stop(channel=self.channel, fadeout=0)
 
             if self.mask:
                 if renpy.audio.music.channel_defined(self.mask_channel):
-                    renpy.audio.music.stop(channel=self.mask_channel) # type: ignore
+                    renpy.audio.music.stop(channel=self.mask_channel, fadeout=0) # type: ignore
 
     def per_interact(self):
+
+        self.ensure_channels()
+
         displayable_channels[(self.channel, self.mask_channel)].append(self)
         renpy.display.render.redraw(self, 0)
 
@@ -692,7 +697,7 @@ def frequent():
 
         return False
 
-    elif fullscreen and not ((renpy.android or renpy.ios) and renpy.config.hw_video):
+    elif fullscreen:
 
         c = renpy.audio.audio.get_channel("movie")
 

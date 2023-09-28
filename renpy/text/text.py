@@ -35,6 +35,7 @@ import renpy.text.textsupport as textsupport
 import renpy.text.texwrap as texwrap
 import renpy.text.font as font
 import renpy.text.extras as extras
+from renpy.text.emoji_trie import emoji, UNQUALIFIED
 
 from _renpybidi import log2vis, WRTL, RTL, ON # @UnresolvedImport
 
@@ -163,7 +164,7 @@ class DrawInfo(object):
     surface = None # type: Optional[pygame_sdl2.surface.Surface]
     override_color = None # type: Optional[tuple[int, int, int, int]]
     outline = 0 # type: float
-    displayable_blits = None # type: Optional[list[tuple[renpy.display.core.Displayable, int, int]]]
+    displayable_blits = None # type: Optional[list[tuple[renpy.display.displayable.Displayable, int, int]]]
 
 class TextSegment(object):
     """
@@ -198,6 +199,10 @@ class TextSegment(object):
             self.hinting = source.hinting
             self.outline_color = source.outline_color
             self.ignore = source.ignore
+            self.default_font = source.default_font
+            self.shaper = source.shaper
+            self.instance = source.instance
+            self.axis = source.axis
 
         else:
             self.hyperlink = 0
@@ -205,6 +210,7 @@ class TextSegment(object):
             self.ruby_top = False
             self.ruby_bottom = False
             self.ignore = False
+            self.default_font = True
 
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
@@ -244,6 +250,11 @@ class TextSegment(object):
 
         self.cps = self.cps * style.slow_cps_multiplier
 
+        self.shaper = style.shaper
+
+        self.axis = style.axis
+        self.instance = style.instance
+
     # From here down is the public glyph API.
 
     def glyphs(self, s, layout):
@@ -254,7 +265,7 @@ class TextSegment(object):
         if self.ignore:
             return [ ]
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
@@ -286,7 +297,7 @@ class TextSegment(object):
             color = self.color
             black_color = self.black_color
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
         fo.draw(di.surface, xo, yo, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
@@ -351,7 +362,7 @@ class TextSegment(object):
         origin point.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
         return fo.bounds(glyphs, bounds)
 
 
@@ -888,7 +899,10 @@ class Layout(object):
                 self.make_alignment_grid(surf)
 
             renpy.display.draw.mutated_surface(surf)
-            tex = renpy.display.draw.load_texture(surf, properties={ "mipmap" : renpy.config.mipmap_text if (style.mipmap is None) else style.mipmap })
+            tex = renpy.display.draw.load_texture(surf, properties={
+                "mipmap" : renpy.config.mipmap_text if (style.mipmap is None) else style.mipmap,
+                "premultiplied" : True,
+                })
 
             self.textures[key] = tex
 
@@ -978,6 +992,73 @@ class Layout(object):
     def unscale_pair(self, x, y):
         return x / self.oversample, y / self.oversample
 
+    def create_text_segments(self, text, ts, style):
+        """
+        Creates one or more text segements, splitting out emoji. This
+        will also use subsegment to handle font groups.
+        """
+
+        if not ts.default_font or (style.emoji_font is None):
+            return ts.subsegment(text)
+
+        rv = [ ]
+
+        required_level = UNQUALIFIED if style.prefer_emoji else UNQUALIFIED + 1
+
+        # The start of the current run.
+        run_start = 0
+
+        # Does the current run contain emoji?
+        run_is_emoji = False
+
+        len_text = len(text)
+
+        i = 0
+
+        while i < len_text:
+
+            start = i
+
+            if text[i] in emoji:
+                d = emoji
+
+                while i < len_text and text[i] in d:
+                    d = d[text[i]]
+                    i += 1
+
+                is_emoji = d[''] >= required_level
+
+            else:
+                is_emoji = False
+                i += 1
+
+            end = i
+
+            if run_is_emoji != is_emoji:
+
+                if run_start != start:
+                    if run_is_emoji:
+                        nts = TextSegment(ts)
+                        nts.font = style.emoji_font
+                    else:
+                        nts = ts
+
+                    rv.extend(nts.subsegment(text[run_start:start]))
+
+                run_start = start
+
+            run_is_emoji = is_emoji
+
+        if run_is_emoji:
+            nts = TextSegment(ts)
+            nts.font = style.emoji_font
+        else:
+            nts = ts
+
+        rv.extend(nts.subsegment(text[run_start:]))
+
+        return rv
+
     def segment(self, tokens, style, renders, text_displayable):
         """
         Breaks the text up into segments. This creates a list of paragraphs,
@@ -1042,7 +1123,8 @@ class Layout(object):
                         if text != u"\u200b":
                             text = text_displayable.mask * len(text)
 
-                    line.extend(tss[-1].subsegment(text))
+                    line.extend(self.create_text_segments(text, tss[-1], style))
+
                     continue
 
                 elif type == DISPLAYABLE:
@@ -1184,7 +1266,10 @@ class Layout(object):
 
                 elif tag == "font":
                     value = renpy.config.font_name_map.get(value, value)
-                    push().font = value
+
+                    ts = push()
+                    ts.font = value
+                    ts.default_font = False
 
                 elif tag == "size":
 
@@ -1281,6 +1366,26 @@ class Layout(object):
 
                 elif tag == "noalt":
                     ts = push()
+
+                elif tag == "instance":
+                    ts = push()
+                    ts.instance = value.lower()
+                    ts.axis = None
+
+                elif tag.startswith("axis:"):
+                    ts = push()
+                    if ts.axis:
+                        ts.axis = dict(ts.axis)
+                    else:
+                        ts.axis = { }
+
+                    try:
+                        value = float(value)
+                    except (TypeError, ValueError):
+                        raise
+
+                    axis = tag.partition(":")[2].lower()
+                    ts.axis[axis] = float(value)
 
                 elif tag[0] == "#":
                     pass
@@ -1528,7 +1633,7 @@ VERT_REVERSE = renpy.display.matrix.Matrix2D(0, -1, 1, 0)
 VERT_FORWARD = renpy.display.matrix.Matrix2D(0, 1, -1, 0)
 
 
-class Text(renpy.display.core.Displayable):
+class Text(renpy.display.displayable.Displayable):
 
     """
     :name: Text
@@ -1607,7 +1712,7 @@ class Text(renpy.display.core.Displayable):
 
             # Check that the text is all text-able things.
             for i in text:
-                if not isinstance(i, (basestring, renpy.display.core.Displayable)):
+                if not isinstance(i, (basestring, renpy.display.displayable.Displayable)):
                     if renpy.config.developer:
                         raise Exception("Cannot display {0!r} as text.".format(i))
                     else:
@@ -2284,7 +2389,7 @@ class Text(renpy.display.core.Displayable):
                 if self.slow and t > st:
                     continue
 
-                xo, yo = renpy.display.core.place(
+                xo, yo = renpy.display.displayable.place(
                     width,
                     ascent,
                     width,
@@ -2347,7 +2452,7 @@ class Text(renpy.display.core.Displayable):
             elif isinstance(i, basestring):
                 tokens.extend(textsupport.tokenize(str(i)))
 
-            elif isinstance(i, renpy.display.core.Displayable):
+            elif isinstance(i, renpy.display.displayable.Displayable):
                 tokens.append((DISPLAYABLE, i))
 
             else:

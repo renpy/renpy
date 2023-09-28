@@ -146,7 +146,8 @@ cdef class GL2Draw:
         # Are we maximized?
         old_surface = pygame.display.get_surface()
         if old_surface is not None:
-            maximized = old_surface.get_flags() & pygame.WINDOW_MAXIMIZED
+            flags = old_surface.get_flags()
+            maximized = (flags & pygame.WINDOW_MAXIMIZED) and not (flags & (pygame.WINDOW_FULLSCREEN|pygame.WINDOW_FULLSCREEN_DESKTOP))
         else:
             maximized = renpy.game.preferences.maximized
 
@@ -451,7 +452,7 @@ cdef class GL2Draw:
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
         # Are we maximized?
-        maximized = bool(pygame.display.get_window().get_window_flags() & pygame.WINDOW_MAXIMIZED)
+        maximized = bool(pygame.display.get_window().get_window_flags() & pygame.WINDOW_MAXIMIZED) and not fullscreen and renpy.config.gl_resize
 
         # See if we've ever set the screen position, and if not, center the window.
         if not fullscreen and not maximized:
@@ -565,10 +566,10 @@ cdef class GL2Draw:
         width = max(width, 256)
         height = max(height, 256)
 
-        if pygame.display.get_window().get_window_flags() & pygame.WINDOW_FULLSCREEN:
-            maximized = renpy.game.preferences.maximized
-        else:
+        if fullscreen:
             maximized = False
+        else:
+            maximized = renpy.game.preferences.maximized
 
         pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen, maximized=maximized)
 
