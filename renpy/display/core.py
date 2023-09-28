@@ -305,6 +305,15 @@ class mixed_coordinate(complex): # will not keep that name
     """
     __slots__ = ()
 
+    def __new__(cls, absolute=0, relative=None, /):
+        """
+        If passed two parameters, takes them as an absolute and a relative.
+        If passed only one parameter, converts it.
+        """
+        if relative is None:
+            return cls.from_position(absolute)
+        return super().__new__(cls, absolute, relative)
+
     @classmethod
     def from_position(cls, other):
         if isinstance(other, cls):
@@ -323,6 +332,9 @@ class mixed_coordinate(complex): # will not keep that name
 
     # copy the member descriptor, faster
     relative = complex.imag
+
+    def __repr__(self):
+        return "mixed_coordinate(absolute={}, relative={})".format(self.real, self.imag)
 
 
 class SceneListEntry(renpy.object.Object):
