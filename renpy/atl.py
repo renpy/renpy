@@ -146,6 +146,11 @@ def interpolate(t, a, b, typ): # @ReservedAssignment
         if a is None:
             a = 0
 
+        mixed = renpy.display.core.mixed_coordinate
+        if typ in (position, mixed):
+            a = mixed.from_position(a)
+            b = mixed.from_position(b)
+
         return typ(a + t * (b - a))
 
 # Interpolate the value of a spline. This code is based on Aenakume's code,
