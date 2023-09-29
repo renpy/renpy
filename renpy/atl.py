@@ -67,26 +67,28 @@ def instant(t):
 
 
 
-class position(complex):
+class position:
     """
     A combination of relative and absolute coordinates.
-
-    Implemented as a subclass of the complex type.
-    The "real" part is the absolute, the "imag" part is the relative.
     """
-    __slots__ = ()
+    __slots__ = ('absolute', 'relative')
 
-    def __new__(cls, absolute=0, relative=None, /):
+    def __new__(cls, absolute=0, relative=None):
         """
         If passed two parameters, takes them as an absolute and a relative.
         If passed only one parameter, converts it.
+        Using __new__ so that passing a position returns it unchanged.
         """
         if relative is None:
-            return cls.from_position(absolute)
-        return super().__new__(cls, absolute, relative)
+            self = cls.from_any(absolute)
+        else:
+            self = object.__new__(cls)
+            self.absolute = absolute
+            self.relative = relative
+        return self
 
     @classmethod
-    def from_position(cls, other):
+    def from_any(cls, other):
         if isinstance(other, cls):
             return other
         elif type(other) is float:
@@ -94,21 +96,49 @@ class position(complex):
         else:
             return cls(other, 0)
 
-    @property
-    def absolute(self):
-        return renpy.display.core.absolute(self.real)
+    def __add__(self, other):
+        if isinstance(other, position):
+            return position(self.absolute + other.absolute, self.relative + other.relative)
+        # elif isinstance(other, (int, float)):
+        #     return self + position.from_any(other)
+        return NotImplemented
 
-    # copy the member descriptor, faster
-    relative = complex.imag
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        return self + -other
+
+    def __rsub__(self, other):
+        return other + -self
+
+    def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            return position(self.absolute * other, self.relative * other)
+        return NotImplemented
+
+    __rmul__ = __mul__
+
+    def __truediv__(self, other):
+        if isinstance(other, (int, float)):
+            return self * (1/other)
+        return NotImplemented
+
+    __div__ = __truediv__ # PY2
+
+    def __pos__(self):
+        return position(renpy.display.core.absolute(self.absolute), float(self.relative))
+
+    def __neg__(self):
+        return -1 * self
 
     def __repr__(self):
-        return "position(absolute={}, relative={})".format(self.real, self.imag)
+        return "position(absolute={}, relative={})".format(self.absolute, self.relative)
 
 
 def position_or_none(x):
     if x is None:
         return None
-    return position.from_position(x)
+    return position.from_any(x)
 
 
 def any_object(x):
@@ -184,8 +214,8 @@ def interpolate(t, a, b, typ):
 
         if typ in (position_or_none, position):
             if renpy.config.mixed_position:
-                a = position.from_position(a)
-                b = position.from_position(b)
+                a = position.from_any(a)
+                b = position.from_any(b)
             else:
                 typ = type(b)
 
