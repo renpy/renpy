@@ -106,7 +106,6 @@ class position(complex):
 
 
 def position_or_none(x):
-    # should be position_or_none, but kept as-is for pickle reasons
     if x is None:
         return None
     return position.from_position(x)
@@ -144,8 +143,8 @@ def mesh(x):
     return bool(x)
 
 
-# A dictionary giving property names and the corresponding default
-# values. This is massively added to by renpy.display.transform.
+# A dictionary giving property names and the corresponding type or
+# function. This is massively added to by renpy.display.transform.
 PROPERTIES = { }
 
 
@@ -192,9 +191,9 @@ def interpolate(t, a, b, typ):
 
         return typ(a + t * (b - a))
 
+
 # Interpolate the value of a spline. This code is based on Aenakume's code,
 # from 00splines.rpy.
-
 
 def interpolate_spline(t, spline):
 
