@@ -68,7 +68,7 @@ def instant(t):
 
 # property types
 
-def position(x):
+def position_or_none(x):
     # should be position_or_none, but kept as-is for pickle reasons
     if x is None:
         return None
@@ -1453,7 +1453,7 @@ class Interpolation(Statement):
 
         if radius is not None:
             startradius, endradius = radius
-            trans.state.radius = interpolate(complete, startradius, endradius, position)
+            trans.state.radius = interpolate(complete, startradius, endradius, position_or_none)
 
         if anchorangle is not None:
             startangle, endangle = anchorangle[:2]
@@ -1463,7 +1463,7 @@ class Interpolation(Statement):
 
         if anchorradius is not None:
             startradius, endradius = anchorradius
-            trans.state.anchorradius = interpolate(complete, startradius, endradius, position)
+            trans.state.anchorradius = interpolate(complete, startradius, endradius, position_or_none)
 
 
 

@@ -211,7 +211,7 @@ class Interpolate(object):
 
     def __call__(self, t, sizes=(None, None, None, None)):
 
-        return renpy.atl.interpolate(t, tuple(self.start), tuple(self.end), renpy.atl.position)
+        return renpy.atl.interpolate(t, tuple(self.start), tuple(self.end), renpy.atl.position_or_none)
 
 
 def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
