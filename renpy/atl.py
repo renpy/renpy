@@ -94,9 +94,6 @@ class position(complex):
         else:
             return cls(other, 0)
 
-    # why not
-    compute = renpy.display.core.absolute.compute
-
     @property
     def absolute(self):
         return renpy.display.core.absolute(self.real)
