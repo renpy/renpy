@@ -149,7 +149,7 @@ def mesh(x):
 PROPERTIES = { }
 
 
-def interpolate(t, a, b, typ): # @ReservedAssignment
+def interpolate(t, a, b, typ):
     """
     Linearly interpolate the arguments.
     """
@@ -184,8 +184,11 @@ def interpolate(t, a, b, typ): # @ReservedAssignment
             a = 0
 
         if typ in (position_or_none, position):
-            a = position.from_position(a)
-            b = position.from_position(b)
+            if renpy.config.mixed_position:
+                a = position.from_position(a)
+                b = position.from_position(b)
+            else:
+                typ = type(b)
 
         return typ(a + t * (b - a))
 

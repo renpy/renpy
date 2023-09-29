@@ -1401,6 +1401,10 @@ simple_box_reverse = False
 # A map from font name to the hinting for the font.
 font_hinting = { None : "auto" }
 
+# Should ATL interpolation handle mixed position types,
+# at the cost of returning instances of the position type ?
+mixed_position = True
+
 # Should interpolated functions be called for a value?
 interpolate_calls_functions = True
 
