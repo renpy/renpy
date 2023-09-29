@@ -36,6 +36,7 @@ import atexit
 import pygame_sdl2 as pygame
 import renpy
 
+from renpy.atl import position
 from renpy.display.displayable import Displayable, DisplayableArguments, place
 
 import_time = time.time()
@@ -227,7 +228,7 @@ class absolute(float):
         Converts a position from one of the many supported position types
         into an absolute number of pixels, without regard for the return type.
         """
-        if isinstance(value, mixed_coordinate):
+        if isinstance(value, position):
             return value.relative * room + value.absolute
         elif isinstance(value, (absolute, int)):
             return value
@@ -294,47 +295,6 @@ for fn in (
         setattr(absolute, fn, absolute_wrap(f))
 
 del absolute_wrap, fn, f # type: ignore
-
-
-class mixed_coordinate(complex): # will not keep that name
-    """
-    A combination of relative and absolute coordinates.
-
-    Implemented as a subclass of the complex type.
-    The "real" part is the absolute, the "imag" part is the relative.
-    """
-    __slots__ = ()
-
-    def __new__(cls, absolute=0, relative=None, /):
-        """
-        If passed two parameters, takes them as an absolute and a relative.
-        If passed only one parameter, converts it.
-        """
-        if relative is None:
-            return cls.from_position(absolute)
-        return super().__new__(cls, absolute, relative)
-
-    @classmethod
-    def from_position(cls, other):
-        if isinstance(other, cls):
-            return other
-        elif type(other) is float:
-            return cls(0, other)
-        else:
-            return cls(other, 0)
-
-    # why not
-    compute = absolute.compute
-
-    @property
-    def absolute(self):
-        return absolute(self.real)
-
-    # copy the member descriptor, faster
-    relative = complex.imag
-
-    def __repr__(self):
-        return "mixed_coordinate(absolute={}, relative={})".format(self.real, self.imag)
 
 
 class SceneListEntry(renpy.object.Object):

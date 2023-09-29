@@ -66,13 +66,53 @@ def instant(t):
     return 1.0
 
 
-# property types
+
+class position(complex):
+    """
+    A combination of relative and absolute coordinates.
+
+    Implemented as a subclass of the complex type.
+    The "real" part is the absolute, the "imag" part is the relative.
+    """
+    __slots__ = ()
+
+    def __new__(cls, absolute=0, relative=None, /):
+        """
+        If passed two parameters, takes them as an absolute and a relative.
+        If passed only one parameter, converts it.
+        """
+        if relative is None:
+            return cls.from_position(absolute)
+        return super().__new__(cls, absolute, relative)
+
+    @classmethod
+    def from_position(cls, other):
+        if isinstance(other, cls):
+            return other
+        elif type(other) is float:
+            return cls(0, other)
+        else:
+            return cls(other, 0)
+
+    # why not
+    compute = renpy.display.core.absolute.compute
+
+    @property
+    def absolute(self):
+        return renpy.display.core.absolute(self.real)
+
+    # copy the member descriptor, faster
+    relative = complex.imag
+
+    def __repr__(self):
+        return "position(absolute={}, relative={})".format(self.real, self.imag)
+
 
 def position_or_none(x):
     # should be position_or_none, but kept as-is for pickle reasons
     if x is None:
         return None
-    return renpy.display.core.mixed_coordinate.from_position(x)
+    return position.from_position(x)
 
 
 def any_object(x):
@@ -146,10 +186,9 @@ def interpolate(t, a, b, typ): # @ReservedAssignment
         if a is None:
             a = 0
 
-        mixed = renpy.display.core.mixed_coordinate
-        if typ in (position, mixed):
-            a = mixed.from_position(a)
-            b = mixed.from_position(b)
+        if typ in (position_or_none, position):
+            a = position.from_position(a)
+            b = position.from_position(b)
 
         return typ(a + t * (b - a))
 
@@ -209,7 +248,7 @@ def interpolate_spline(t, spline):
 
             rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
 
-    return position(rv)
+    return position_or_none(rv)
 
 
 def get_catmull_rom_value(t, p_1, p0, p1, p2):
