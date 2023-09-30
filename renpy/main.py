@@ -252,8 +252,9 @@ def choose_variants():
         renpy.config.variants.insert(0, 'web') # type: ignore
 
         # mobile
-        userAgent = emscripten.run_script_string(r'''navigator.userAgent''')
-        mobile = re.search('Mobile|Android|iPad|iPhone', userAgent)
+        mobile = emscripten.run_script_int(
+            r'''/Mobile|Android|iPad|iPhone/.test(navigator.userAgent)
+            || (navigator.userAgent.indexOf("Mac") != -1 && navigator.maxTouchPoints > 1)''')
         if mobile:
             renpy.config.variants.insert(0, 'mobile') # type: ignore
         # Reserve android/ios for when the OS API is exposed
