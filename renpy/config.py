@@ -1401,6 +1401,12 @@ simple_box_reverse = False
 # A map from font name to the hinting for the font.
 font_hinting = { None : "auto" }
 
+# A map of exact-match text interpolation aliases.
+interpolate_aliases = { }
+
+# Should text interpolations be treated as Python expressions?
+interpolate_exprs = True
+
 del os
 del collections
 

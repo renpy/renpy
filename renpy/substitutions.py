@@ -25,13 +25,13 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
-
 import renpy
 import string
 import os
 
+
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
+flags = frozenset('arstiqulc!f')
 
 
 class Formatter(string.Formatter):
@@ -50,170 +50,211 @@ class Formatter(string.Formatter):
 
         # States for the parse state machine.
         LITERAL = 0
-        OPEN_BRACKET = 1
-        VALUE = 3
-        FORMAT = 4
-        CONVERSION = 5
+        EXPRESSION = 1
+        CONVERSION = 2
+        FORMAT = 3
+
+        # Conversion flags that we accept.
+        FLAGS = flags
+
+        # Markers and offsets for slicing.
+        pos = -1
+        size = len(s) + pos
+        cut = 0
+        mark = 0
 
         # The depth of brackets we've seen.
-        bracket_depth = 0
+        brackets = 0
+        parens = 0
 
         # The parts we've seen.
-        literal = ''
-        value = ''
-        format = '' # @ReservedAssignment
-        conversion = None
+        lit = ''
+        expr = None
+        conv = None
+        fmt = None
 
         state = LITERAL
 
-        for c in s:
+        while pos < size:
+            pos += 1
+            c = s[pos]
 
-            if state == LITERAL:
+            if state is LITERAL:
                 if c == '[':
-                    state = OPEN_BRACKET
-                    continue
-                else:
-                    literal += c
-                    continue
+                    lit += s[cut:pos]
+                    cut = pos + 1
 
-            elif state == OPEN_BRACKET:
-                if c == '[':
-                    literal += c
-                    state = LITERAL
-                    continue
+                    if c == s[pos+1:pos+2]:
+                        pos += 1
+                    else:
+                        state = EXPRESSION
 
-                else:
-                    value = c
-                    state = VALUE
-                    bracket_depth = 0
-                    continue
+            elif state is EXPRESSION:
+                if c == '(':
+                    parens += 1
 
-            elif state == VALUE:
+                elif c == ')':
+                    if not parens:
+                        break
 
-                if c == '[':
-                    bracket_depth += 1
-                    value += c
-                    continue
+                    parens -= 1
+
+                elif c == '"' or c == "'":
+                    chars = 1
+                    found = 0
+
+                    if c * 2 == s[pos+1:pos+3]:
+                        chars += 2
+                        pos += 2
+
+                    while pos < size:
+                        pos += 1
+                        n = s[pos]
+
+                        if n == c:
+                            found += 1
+
+                            if found == chars:
+                                break
+
+                        else:
+                            found = 0
+
+                elif parens:
+                    pass
+
+                elif c == '[':
+                    brackets += 1
 
                 elif c == ']':
-
-                    if bracket_depth:
-                        bracket_depth -= 1
-                        value += c
-                        continue
-
+                    if brackets:
+                        brackets -= 1
                     else:
-                        yield (literal, value, format, conversion)
+                        yield lit, s[cut:pos], fmt or '', conv
+                        cut = pos + 1
                         state = LITERAL
-                        literal = ''
-                        value = ''
-                        format = '' # @ReservedAssignment
-                        conversion = None
-                        continue
+                        lit = ''
+
+                elif c == '!':
+                    if s[pos+1:pos+2] != '=':
+                        state = CONVERSION
+                        expr = s[cut:pos]
+                        mark = cut
+                        cut = pos + 1
 
                 elif c == ':':
                     state = FORMAT
-                    continue
+                    expr = s[cut:pos]
+                    cut = pos + 1
+                    fmt = ''
 
-                elif c == '!':
-                    state = CONVERSION
-                    conversion = ''
-                    continue
-
-                else:
-                    value += c
-                    continue
-
-            elif state == FORMAT:
-
+            elif state is CONVERSION:
                 if c == ']':
-                    yield (literal, value, format, conversion)
+                    yield lit, expr, fmt or '', s[cut:pos]
+                    cut = pos + 1
                     state = LITERAL
-                    literal = ''
-                    value = ''
-                    format = '' # @ReservedAssignment
-                    conversion = None
-                    continue
+                    lit = ''
+                    expr = None
+                    fmt = None
 
-                elif c == '!':
-                    state = CONVERSION
-                    conversion = ''
-                    continue
+                elif c == ':':
+                    state = FORMAT
+                    conv = s[cut:pos]
+                    cut = pos + 1
+                    fmt = ''
 
-                else:
-                    format += c
-                    continue
+                elif c not in FLAGS:
+                    if fmt is None:
+                        raise ValueError('Invalid conversion specifier')
 
-            elif state == CONVERSION:
+                    state = FORMAT
+                    pos = cut
+                    cut = mark
+
+            elif state is FORMAT:
                 if c == ']':
-                    yield (literal, value, format, conversion)
+                    yield lit, expr, s[cut:pos], conv
+                    cut = pos + 1
                     state = LITERAL
-                    literal = ''
-                    value = ''
-                    format = '' # @ReservedAssignment
-                    conversion = None
-                    continue
+                    lit = ''
+                    expr = None
+                    conv = None
 
-                else:
-                    conversion += c
-                    continue
+                elif conv is None and c == '!':
+                    state = CONVERSION
+                    fmt = s[cut:pos]
+                    mark = cut
+                    cut = pos + 1
 
-        if state != LITERAL:
-            raise Exception("String {0!r} ends with an open format operation.".format(s))
+        if state is not LITERAL:
+            raise Exception("String {!r} ends with an open format operation.".format(s))
 
-        if literal:
-            yield (literal, None, None, None)
+        if cut <= size:
+            lit += s[cut:]
 
-    def get_field(self, field_name, args, kwargs):
-        obj, arg_used = super(Formatter, self).get_field(field_name, args, kwargs)
+        if lit:
+            yield (lit, None, None, None)
 
-        return (obj, kwargs), arg_used
+    def get_field(self, expr, args, kwargs):
+        return (expr, kwargs), None
 
-    def convert_field(self, value, conversion):
-        value, kwargs = value
+    def convert_field(self, expr, conv):
+        expr, scope = expr
 
-        if conversion is None:
+        expr = renpy.config.interpolate_aliases.get(expr, expr)
+        code = renpy.config.interpolate_exprs
+
+        if conv and 'f' in conv:
+            code = True
+            conv = None if conv == 'f' else conv.replace('f', '')
+
+        if code:
+            value = renpy.python.py_eval(expr, {}, scope)
+        else:
+            value, _ = super(Formatter, self).get_field(expr, (), scope)
+
+        if conv is None:
             return value
 
-        if not conversion:
+        if not conv:
             raise ValueError("Conversion specifier can't be empty.")
 
-        if set(conversion) - set("rstqulci!"):
-            raise ValueError("Unknown symbols in conversion specifier, this must use only the \"rstqulci\".")
+        conv = set(conv)
 
-        if "r" in conversion:
+        if 'r' in conv:
             value = repr(value)
-            conversion = conversion.replace("r", "")
-        elif "s" in conversion:
-            value = str(value)
-            conversion = conversion.replace("s", "")
+            conv.discard('r')
 
-        if not conversion:
+        elif 's' in conv:
+            value = str(value)
+            conv.discard('s')
+
+        if not conv:
             return value
 
         # All conversion symbols below assume we have a string.
         if not isinstance(value, basestring):
             value = str(value)
 
-        if "t" in conversion:
+        if 't' in conv:
             value = renpy.translation.translate_string(value)
 
-        if "i" in conversion:
+        if 'i' in conv:
             try:
-                value = self.vformat(value, (), kwargs)
+                value = self.vformat(value, (), scope)
             except RuntimeError: # PY3 RecursionError
-                raise ValueError("Substitution {!r} refers to itself in a loop.".format(value))
+                raise ValueError('Substitution {!r} refers to itself in a loop.'.format(value))
 
-        if "q" in conversion:
-            value = value.replace("{", "{{")
+        if 'q' in conv:
+            value = value.replace('{', '{{')
 
-        if "u" in conversion:
+        if 'u' in conv:
             value = value.upper()
 
-        if "l" in conversion:
+        if 'l' in conv:
             value = value.lower()
 
-        if "c" in conversion and value:
+        if 'c' in conv and value:
             value = value[0].upper() + value[1:]
 
         return value
