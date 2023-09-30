@@ -137,7 +137,7 @@ Preference("self_voicing_volume_drop", 0.5)
 Preference("emphasize_audio", False)
 
 # Is the gamepad enabled?
-Preference("pad_enabled", True)
+Preference("pad_enabled", True, (bool, str))
 
 # The side of the screen used for rollback. ("left", "right", or "disable")
 Preference("mobile_rollback_side", "disable")
@@ -278,7 +278,7 @@ class Preferences(renpy.object.Object):
     def set_mixer(self, mixer, volume):
         if volume > 0:
             volume = renpy.config.volume_db_range * volume - renpy.config.volume_db_range
-            volume = 10 ** (volume / 20)     
+            volume = 10 ** (volume / 20)
 
         self.set_volume(mixer, volume)
 
