@@ -82,6 +82,20 @@ control hinting per-use. For example::
 
 enables bytecode hinting for MyFont.ttf.
 
+Interpolation Improvements
+--------------------------
+
+When a variable is interpolated into a string, and the interpolation namespace
+exists, that namespace will be searched for the values to interpolate. For
+example, ::
+
+    define t = "Not shown."
+    define interpolate.t = "Shown."
+
+    label start:
+        e "[t]" # Will show "Shown."
+
+
 Speech Bubble Improvements
 --------------------------
 

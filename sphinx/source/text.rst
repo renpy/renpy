@@ -84,10 +84,11 @@ displayed. For example, if the player's name is stored in the
 
     g "Welcome to the Nekomimi Institute, [playername]!"
 
-Ren'Py will interpolate variables found in the global store. When
-using a text widget in a screen, Ren'Py will also interpolate screen
-local variables. (This can be overridden by supplying an explicit
-scope argument to the Text displayable.)
+Ren'Py will search for variables in the following order:
+
+* When used in a screen, screen-local variables.
+* Variables found in the ``interpolate`` namespace.
+* Variables found in the global namespace.
 
 Ren'Py isn't limited to interpolating simple variables. It can also
 interpolate fields and components of tuples. So it's possible to have::
