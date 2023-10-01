@@ -130,7 +130,7 @@ class Formatter(string.Formatter):
                     if brackets:
                         brackets -= 1
                     else:
-                        yield lit, s[cut:pos], fmt or '', conv
+                        yield lit, s[cut:pos], '', None
                         cut = pos + 1
                         state = LITERAL
                         lit = ''
@@ -146,7 +146,6 @@ class Formatter(string.Formatter):
                     state = FORMAT
                     expr = s[cut:pos]
                     cut = pos + 1
-                    fmt = ''
 
             elif state is CONVERSION:
                 if c == ']':
@@ -161,7 +160,6 @@ class Formatter(string.Formatter):
                     state = FORMAT
                     conv = s[cut:pos]
                     cut = pos + 1
-                    fmt = ''
 
                 elif c not in FLAGS:
                     if fmt is None:
