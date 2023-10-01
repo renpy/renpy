@@ -39,8 +39,6 @@ class Plan(object):
         # The hash.
         self.hash = hash
 
-
-
 class Update(object):
 
     def __init__(self, url, newlists, targetdir, oldlists):
@@ -55,6 +53,14 @@ class Update(object):
         self.old_files = [ i for j in self.oldlists for i in j.files ]
         self.block_files = [ i for j in self.newlists for i in j.blocks ]
 
+        # The total number of bytes to download, and the number of bytes downloaded.
+        self.download_total = 0
+        self.download_done = 0
+
+        # The total number of bytes to write, and the number of bytes written.
+        self.write_total = 0
+        self.write_done = 0
+
         # A list of plan objects.
         self.plan = [ ]
 
@@ -64,18 +70,35 @@ class Update(object):
 
         os.makedirs(os.path.join(self.targetdir, "update"))
 
+        self.progress("Starting up.", 0.0)
+
         self.make_directories()
         self.write_padding()
         self.find_incomplete_files()
         self.scan_old_files()
         self.remove_identical_files()
         self.create_plan()
+        self.compute_totals()
         self.execute_plan()
 
         if self.destination_fp is not None:
             self.destination_fp.close()
 
         self.rename_new_files()
+
+    def progress(self, message, done):
+        """
+        Called to report progress.
+
+        `message`
+            A human readable message.
+
+        `done`
+            The amount of progress that is done, between 0.0 and 1.0.
+        """
+
+        print("Progress: %s: %f.4" % (message, 100.0 * done))
+
 
     def log(self, message, *args):
         print(message % args)
@@ -143,11 +166,20 @@ class Update(object):
         Scans the old files, generating a list of segments.
         """
 
-        # TODO: Progress
+        total = 0
+        done = 0
 
         for i in self.old_files:
             i.add_data_filename(self.targetdir)
+            total += os.path.getsize(i.data_filename)
+
+        total = max(1, total)
+
+        for i in self.old_files:
             i.scan()
+            done += os.path.getsize(i.data_filename)
+
+            self.progress("Scanning existing files.", done / total)
 
     def remove_identical_files(self):
         """
@@ -225,6 +257,32 @@ class Update(object):
 
         self.plan = plan
 
+    def compute_totals(self):
+        """
+        Computes the total number of bytes to download and write.
+        """
+
+        self.download_total = 0
+        self.write_total = 0
+
+        download_set = set()
+
+        for p in self.plan:
+            self.write_total += p.new_size
+
+            if p.block:
+
+                key = (p.old_filename, p.old_offset, p.old_size)
+
+                if key not in download_set:
+                    download_set.add(key)
+                    self.download_total += p.old_size
+
+
+        # Make sure we can't divide by zero.
+        self.download_total = max(self.download_total, 1)
+        self.write_total = max(self.write_total, 1)
+
     def write_destination(self, filename, offset, data):
         """
         Writes data to the destination file at the given offset.
@@ -245,6 +303,18 @@ class Update(object):
         self.destination_fp.seek(offset)
         self.destination_fp.write(data)
 
+        self.write_done += len(data)
+        self.download_patch_progress()
+
+    def download_patch_progress(self):
+
+        done = 0.5 * self.download_done / self.download_total
+        done += 0.5 * self.write_done / self.write_total
+
+        done = min(done, 1.0)
+
+        self.progress("Downloading and patching.", done)
+
     def download_block_file(self, filename, plan):
         """
         Downloads the portions of the block file that are needed.
@@ -256,7 +326,13 @@ class Update(object):
         url = self.url + "/" + filename
         filename = os.path.join(self.targetdir, "update", filename)
 
-        download.download_ranges(url, ranges, filename)
+        old_download_done = self.download_done
+
+        def download_progress(done, total):
+            self.download_done = old_download_done + done
+            self.download_patch_progress()
+
+        download.download_ranges(url, ranges, filename, download_progress)
 
         return filename
 
@@ -267,8 +343,6 @@ class Update(object):
 
         old_filename = plan[0].old_filename
         block = plan[0].block
-
-        # TODO: Download block file contents, if needed.
 
         if block:
             old_filename = self.download_block_file(old_filename, plan)
