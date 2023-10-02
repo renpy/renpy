@@ -434,7 +434,7 @@ _window_subtitle
 """.split():
 
         # _history, history_list, and _version are set later, so aren't included.
-        renpy.lint.renpy_builtins.remove(i)
+        renpy.lint.renpy_builtins.discard(i)
 
     del i
 
