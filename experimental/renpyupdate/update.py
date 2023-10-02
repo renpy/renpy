@@ -1,11 +1,12 @@
-import requests
-
 import argparse
 import os
+import time
 import zlib
 
-from . import filetypes
-from . import download
+import requests
+
+from . import download, filetypes
+
 
 class UpdateError(Exception):
     """
@@ -68,23 +69,36 @@ class Update(object):
         self.destination_filename = None
         self.destination_fp = None
 
-        os.makedirs(os.path.join(self.targetdir, "update"))
 
-        self.progress("Starting up.", 0.0)
+        self.updatedir = os.path.join(self.targetdir, "update")
+        self.blockdir = os.path.join(self.updatedir, "block")
+        self.deleteddir = os.path.join(self.updatedir, "deleted")
 
-        self.make_directories()
-        self.write_padding()
-        self.find_incomplete_files()
-        self.scan_old_files()
-        self.remove_identical_files()
-        self.create_plan()
-        self.compute_totals()
-        self.execute_plan()
+        os.makedirs(self.updatedir, exist_ok=True)
+        os.makedirs(self.blockdir, exist_ok=True)
+        os.makedirs(self.deleteddir, exist_ok=True)
 
-        if self.destination_fp is not None:
-            self.destination_fp.close()
+        with open(os.path.join(self.updatedir, "log.txt"), "a") as logfile:
+            self.logfile = logfile
 
-        self.rename_new_files()
+            print("-" * 80, file=self.logfile)
+            print("Starting update at %s." % time.ctime(), file=self.logfile)
+
+            self.progress("Starting up.", 0.0)
+
+            self.make_directories()
+            self.write_padding()
+            self.find_incomplete_files()
+            self.scan_old_files()
+            self.remove_identical_files()
+            self.create_plan()
+            self.compute_totals()
+            self.execute_plan()
+
+            if self.destination_fp is not None:
+                self.destination_fp.close()
+
+            self.rename_new_files()
 
     def progress(self, message, done):
         """
@@ -97,17 +111,44 @@ class Update(object):
             The amount of progress that is done, between 0.0 and 1.0.
         """
 
-        print("Progress: %s: %f.4" % (message, 100.0 * done))
-
+        print("Progress: %s: %.4f" % (message, 100.0 * done))
 
     def log(self, message, *args):
-        print(message % args)
+        print(message % args, file=self.logfile)
+
+    def delete(self, filename):
+        """
+        Try very hard to delete `filename`. If it can't be deleted, move it
+        to the deleted directory, to be cleaned up the next time the game
+        starts.
+        """
+
+        if not os.path.exists(filename):
+            return
+
+        try:
+            os.unlink(filename)
+            return
+        except:
+            pass
+
+        basename = os.path.basename(filename)
+
+        serial = 0
+
+        while True:
+            serial += 1
+            new = os.path.join(self.deleteddir, "%s.delete.%d.rpu" % (basename, serial))
+
+            if not os.path.exists(new):
+                os.rename(filename, new)
+                break
 
     def rename(self, old, new):
         try:
             os.rename(old, new)
         except:
-            os.unlink(new)
+            self.delete(new)
             os.rename(old, new)
 
     def make_directories(self):
@@ -373,11 +414,8 @@ class Update(object):
 
                 self.write_destination(p.new_filename, p.new_offset, data)
 
-        # TODO: Once we make it here, we're done with source_filename, so it's okay to clean
-        # that file up.
-
         if block:
-            os.unlink(old_filename)
+            self.delete(old_filename)
 
     def execute_plan(self):
         """
