@@ -25,11 +25,10 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
-
 import renpy
 import string
 import os
+
 
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
 formatter = string.Formatter()
