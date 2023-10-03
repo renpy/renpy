@@ -42,13 +42,14 @@ class Plan(object):
 
 class Update(object):
 
-    def __init__(self, url, newlists, targetdir, oldlists):
+    def __init__(self, url, newlists, targetdir, oldlists, aggressive_removal=False):
         self.url = url
 
         self.targetdir = targetdir
         self.oldlists = oldlists
         self.newlists = newlists
 
+        self.old_directories = [ i for j in self.oldlists for i in j.directories ]
         self.new_directories = [ i for j in self.newlists for i in j.directories ]
         self.new_files = [ i for j in self.newlists for i in j.files ]
         self.old_files = [ i for j in self.oldlists for i in j.files ]
@@ -65,11 +66,17 @@ class Update(object):
         # A list of plan objects.
         self.plan = [ ]
 
-        # A cache for the destiation filename and file pointer.
+        # A cache for the destination filename and file pointer.
         self.destination_filename = None
         self.destination_fp = None
 
+        # Should removal of old files be done ASAP, or at the end?
+        self.aggressive_removal = aggressive_removal
 
+        # The set of files to remove.
+        self.removals = set() # type: set[str]
+
+        # The various directories.
         self.updatedir = os.path.join(self.targetdir, "update")
         self.blockdir = os.path.join(self.updatedir, "block")
         self.deleteddir = os.path.join(self.updatedir, "deleted")
@@ -90,6 +97,8 @@ class Update(object):
             self.write_padding()
             self.find_incomplete_files()
             self.scan_old_files()
+            self.prepare_new_files()
+            self.find_removals()
             self.remove_identical_files()
             self.create_plan()
             self.compute_totals()
@@ -99,6 +108,7 @@ class Update(object):
                 self.destination_fp.close()
 
             self.rename_new_files()
+            self.remove_old_files()
 
     def progress(self, message, done):
         """
@@ -222,6 +232,14 @@ class Update(object):
 
             self.progress("Scanning existing files.", done / total)
 
+    def prepare_new_files(self):
+        """
+        Prepares the new files.
+        """
+
+        for i in self.new_files:
+            i.add_data_filename(self.targetdir)
+
     def remove_identical_files(self):
         """
         Removes from self.source_files any file that exists and is identical
@@ -286,7 +304,7 @@ class Update(object):
                     source_segment.offset,
                     source_segment.size,
                     source_segment.compressed,
-                    target_file.name,
+                    target_file.data_filename,
                     target_segment.offset,
                     target_segment.size,
                     target_segment.hash,
@@ -324,12 +342,22 @@ class Update(object):
         self.download_total = max(self.download_total, 1)
         self.write_total = max(self.write_total, 1)
 
+    def find_removals(self):
+        """
+        Find the set of files that exist in old but not in new.
+        """
+
+        old = { i.data_filename for i in self.old_files }
+        new = { i.data_filename for i in self.new_files }
+
+        self.removals = old - new
+
     def write_destination(self, filename, offset, data):
         """
         Writes data to the destination file at the given offset.
         """
 
-        filename = os.path.join(self.targetdir, filename + ".new.rpu")
+        filename = filename + ".new.rpu"
 
         if self.destination_filename != filename:
             if self.destination_fp is not None:
@@ -415,7 +443,12 @@ class Update(object):
                 self.write_destination(p.new_filename, p.new_offset, data)
 
         if block:
+            self.log("Blockfile delete %s.", old_filename)
             self.delete(old_filename)
+        else:
+            if self.aggressive_removal and old_filename in self.removals:
+                self.log("Aggressively delete %s.", old_filename)
+                self.delete(old_filename)
 
     def execute_plan(self):
         """
@@ -450,6 +483,24 @@ class Update(object):
             filename = os.path.join(self.targetdir, f.name)
             if os.path.exists(filename + ".new.rpu"):
                 self.rename(filename + ".new.rpu", filename)
+
+    def remove_old_files(self):
+        """
+        Removes the old files and directories.
+        """
+
+        for i in self.removals:
+            self.log("Final delete %s.", i)
+            self.delete(i)
+
+        directories = set(i.name for i in self.old_directories) - set(i.name for i in self.new_directories)
+
+        for i in reversed(sorted(directories)):
+            self.log("Remove directory %s.", i)
+            try:
+                os.rmdir(os.path.join(self.targetdir, i))
+            except:
+                pass
 
 
 def main():
