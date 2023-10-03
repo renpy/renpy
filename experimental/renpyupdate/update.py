@@ -107,6 +107,7 @@ class Update(object):
             if self.destination_fp is not None:
                 self.destination_fp.close()
 
+            self.create_empty_new_files()
             self.rename_new_files()
             self.remove_old_files()
 
@@ -473,6 +474,17 @@ class Update(object):
 
         if queue:
             self.execute_file_plan(queue)
+
+    def create_empty_new_files(self):
+        """
+        Creates new files that do not have any data.
+        """
+
+        for i in self.new_files:
+            if not i.segments:
+                self.log("Create empty file %s.", i.data_filename)
+                with open(i.data_filename + ".new.rpu", "wb") as f:
+                    pass
 
     def rename_new_files(self):
         """
