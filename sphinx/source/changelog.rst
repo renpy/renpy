@@ -88,6 +88,16 @@ enables bytecode hinting for MyFont.ttf.
 Text Interpolation Improvements
 -------------------------------
 
+Interpolations in strings are now treated as Python expressions, rather than
+simple fields. While not identical, this concept will feel familiar to those
+that have worked with Python f-strings. This allows for some logic to be
+incorporated directly::
+
+    default exp = 1000
+
+    label start:
+        e "I am level [exp // 225]!" # Will show "I am level 4!"
+
 When a variable is interpolated into a string, and the interpolation namespace
 exists, that namespace will be searched for the values to interpolate. For
 example, ::
