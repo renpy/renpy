@@ -31,6 +31,7 @@ import os
 
 
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
+flags = frozenset('rstiqulc!')
 formatter = string.Formatter()
 
 
@@ -192,43 +193,46 @@ def parse(s):
         yield (literal, None, None, None)
 
 
-def convert(value, conversion, kwargs):
-    if set(conversion) - set("rstqulci!"):
-        raise ValueError("Unknown symbols in conversion specifier, this must use only the \"rstqulci\".")
+def convert(value, conv, scope):
+    conv = set(conv)
 
-    if "r" in conversion:
+    if conv - flags:
+        raise ValueError('Unknown symbols in conversion specifier.')
+
+    if 'r' in conv:
         value = repr(value)
-        conversion = conversion.replace("r", "")
-    elif "s" in conversion:
-        value = str(value)
-        conversion = conversion.replace("s", "")
+        conv.discard('r')
 
-    if not conversion:
+    elif 's' in conv:
+        value = str(value)
+        conv.discard('s')
+
+    if not conv:
         return value
 
     # All conversion symbols below assume we have a string.
     if not isinstance(value, basestring):
         value = str(value)
 
-    if "t" in conversion:
+    if 't' in conv:
         value = renpy.translation.translate_string(value)
 
-    if "i" in conversion:
+    if 'i' in conv:
         try:
-            value = interpolate(value, kwargs)
+            value = interpolate(value, scope)
         except RuntimeError: # PY3 RecursionError
-            raise ValueError("Substitution {!r} refers to itself in a loop.".format(value))
+            raise ValueError('Substitution {!r} refers to itself in a loop.'.format(value))
 
-    if "q" in conversion:
-        value = value.replace("{", "{{")
+    if 'q' in conv:
+        value = value.replace('{', '{{')
 
-    if "u" in conversion:
+    if 'u' in conv:
         value = value.upper()
 
-    if "l" in conversion:
+    if 'l' in conv:
         value = value.lower()
 
-    if "c" in conversion:
+    if 'c' in conv:
         value = value[:1].capitalize() + value[1:]
 
     return value
