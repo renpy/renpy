@@ -191,7 +191,7 @@ def interpolate(s, scope):
     """
     Formats a string using Ren'Py's formatting rules. Ren'Py uses square
     brackets to denote interpolation, but is otherwise similar to native
-    f-strings, with some caveats and additional conversions available.
+    f-strings, with a few caveats and additional conversions available.
     """
 
     rv = ''
@@ -213,22 +213,32 @@ def interpolate(s, scope):
         if not code:
             raise ValueError('expected expression')
 
+        evaluate = 'f' in conv
+
+        if evaluate:
+            conv = conv.replace('f', '')
+        else:
+            evaluate = renpy.config.interpolate_exprs
+
         if code[-1] == '=':
             rv += expr
             code = code[:-1]
 
-            if not fmt:
-                conv += 'r'
+            if not conv and fmt is None:
+                conv = 'r'
 
-        expr = renpy.config.interpolate_aliases.get(expr, expr)
+        code = renpy.config.interpolate_aliases.get(code, code)
 
-        if renpy.config.interpolate_exprs or 'f' in conv:
+        if evaluate:
             value = renpy.python.py_eval(code, {}, scope)
         else:
             value, _ = formatter.get_field(code, (), scope)
 
-        if conv and conv != 'f':
+        if conv:
             value = convert(value, conv, scope)
+
+        if fmt is None:
+            fmt = ''
 
         rv += format(value, fmt)
 
@@ -240,12 +250,10 @@ def convert(value, conv, scope):
 
     if 'r' in conv:
         value = repr(value)
-        conv.discard('f')
         conv.discard('r')
 
     elif 's' in conv:
         value = str(value)
-        conv.discard('f')
         conv.discard('s')
 
     if not conv:
