@@ -194,34 +194,43 @@ class Formatter(string.Formatter):
             yield (lit, None, None, None)
 
     def get_field(self, expr, args, kwargs):
+        if not expr:
+            raise ValueError("Interpolation expression can't be empty.")
+
         return (expr, kwargs), None
 
     def convert_field(self, expr, conv):
+        if not conv and conv is not None:
+            raise ValueError("Conversion specifier can't be empty.")
+
         expr, scope = expr
+        conv = set(conv) if conv else set()
 
         expr = renpy.config.interpolate_aliases.get(expr, expr)
         code = renpy.config.interpolate_exprs
 
-        if conv and 'f' in conv:
+        if 'f' in conv:
             code = True
-            conv = None if conv == 'f' else conv.replace('f', '')
+            conv.discard('f')
+
+        if expr[-1] == '=':
+            expr = expr[:-1]
+            conv.update('r=')
 
         if code:
             value = renpy.python.py_eval(expr, {}, scope)
         else:
             value, _ = super(Formatter, self).get_field(expr, (), scope)
 
-        if conv is None:
-            return value
-
         if not conv:
-            raise ValueError("Conversion specifier can't be empty.")
-
-        conv = set(conv)
+            return value
 
         if 'r' in conv:
             value = repr(value)
             conv.discard('r')
+
+            if '=' in conv:
+                return expr + '=' + value
 
         elif 's' in conv:
             value = str(value)
