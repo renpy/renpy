@@ -200,7 +200,7 @@ def interpolate(s, scope):
         if lit:
             rv += lit
 
-        if not expr:
+        if expr is None:
             continue
 
         if conv is None:
