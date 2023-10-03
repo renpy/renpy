@@ -44,7 +44,7 @@ def interpolate(s, scope):
 
     rv = ''
 
-    for lit, name, fmt, conv in parse(s):
+    for lit, name, conv, fmt in parse(s):
         if lit:
             rv += lit
 
@@ -71,133 +71,162 @@ def interpolate(s, scope):
 
 def parse(s):
     """
-    Parses s according to Ren'Py string formatting rules. Returns a list
-    of (literal_text, field_name, format, replacement) tuples, just like
-    the similarly named method in string.Formatter.
+    Parses s according to Ren'Py string formatting rules. Emits a series
+    of (literal, expression, conversion, format) tuples.
     """
 
     # States for the parse state machine.
     LITERAL = 0
-    OPEN_BRACKET = 1
-    VALUE = 3
-    FORMAT = 4
-    CONVERSION = 5
+    EXPRESSION = 1
+    CONVERSION = 2
+    FORMAT = 3
+
+    # Conversion flags that we accept.
+    FLAGS = flags
+
+    # Markers and offsets for slicing.
+    pos = -1
+    size = len(s) + pos
+    cut = 0
+    mark = 0
 
     # The depth of brackets we've seen.
-    bracket_depth = 0
+    brackets = 0
+    parens = 0
 
     # The parts we've seen.
-    literal = ''
-    value = ''
-    format = '' # @ReservedAssignment
-    conversion = None
+    lit = ''
+    expr = None
+    conv = None
+    fmt = None
 
     state = LITERAL
 
-    for c in s:
+    while pos < size:
+        pos += 1
+        c = s[pos]
 
-        if state == LITERAL:
+        if state is LITERAL:
             if c == '[':
-                state = OPEN_BRACKET
-                continue
-            else:
-                literal += c
-                continue
+                lit += s[cut:pos]
+                cut = pos + 1
 
-        elif state == OPEN_BRACKET:
-            if c == '[':
-                literal += c
-                state = LITERAL
-                continue
+                if c == s[pos+1:pos+2]:
+                    pos += 1
+                else:
+                    state = EXPRESSION
 
-            else:
-                value = c
-                state = VALUE
-                bracket_depth = 0
-                continue
+        elif state is EXPRESSION:
+            if c == '(':
+                parens += 1
 
-        elif state == VALUE:
+            elif c == ')':
+                if not parens:
+                    break
 
-            if c == '[':
-                bracket_depth += 1
-                value += c
-                continue
+                parens -= 1
+
+            elif c == '"' or c == "'":
+                chars = 1
+                found = 0
+
+                if c * 2 == s[pos+1:pos+3]:
+                    chars += 2
+                    pos += 2
+
+                while pos < size:
+                    pos += 1
+                    n = s[pos]
+
+                    if n == c:
+                        found += 1
+
+                        if found == chars:
+                            break
+
+                    else:
+                        if n == '\\':
+                            pos += 1
+
+                        found = 0
+
+            elif parens:
+                pass
+
+            elif c == '[':
+                brackets += 1
 
             elif c == ']':
-
-                if bracket_depth:
-                    bracket_depth -= 1
-                    value += c
-                    continue
-
+                if brackets:
+                    brackets -= 1
                 else:
-                    yield (literal, value, format, conversion)
+                    yield lit, s[cut:pos], None, None
+                    cut = pos + 1
                     state = LITERAL
-                    literal = ''
-                    value = ''
-                    format = '' # @ReservedAssignment
-                    conversion = None
-                    continue
+                    lit = ''
+
+            elif c == '!':
+                if s[pos+1:pos+2] == '=':
+                    pos += 1
+                else:
+                    state = CONVERSION
+                    expr = s[cut:pos]
+                    cut = pos + 1
 
             elif c == ':':
                 state = FORMAT
-                continue
+                expr = s[cut:pos]
+                cut = pos + 1
 
-            elif c == '!':
-                state = CONVERSION
-                conversion = ''
-                continue
-
-            else:
-                value += c
-                continue
-
-        elif state == FORMAT:
-
+        elif state is CONVERSION:
             if c == ']':
-                yield (literal, value, format, conversion)
+                yield lit, expr, s[cut:pos], fmt
+                cut = pos + 1
                 state = LITERAL
-                literal = ''
-                value = ''
-                format = '' # @ReservedAssignment
-                conversion = None
-                continue
+                lit = ''
+                expr = None
+                fmt = None
 
-            elif c == '!':
-                state = CONVERSION
-                conversion = ''
-                continue
+            elif c == ':':
+                state = FORMAT
+                conv = s[cut:pos]
+                cut = pos + 1
 
-            else:
-                format += c
-                continue
+            elif c not in FLAGS:
+                if fmt is None:
+                    raise ValueError('invalid conversion {!r}'.format(c))
 
-        elif state == CONVERSION:
+                state = FORMAT
+                pos = cut
+                cut = mark
+
+        elif state is FORMAT:
             if c == ']':
-                yield (literal, value, format, conversion)
+                yield lit, expr, conv, s[cut:pos]
+                cut = pos + 1
                 state = LITERAL
-                literal = ''
-                value = ''
-                format = '' # @ReservedAssignment
-                conversion = None
-                continue
+                lit = ''
+                expr = None
+                conv = None
 
-            else:
-                conversion += c
-                continue
+            elif conv is None and c == '!':
+                state = CONVERSION
+                fmt = s[cut:pos]
+                mark = cut
+                cut = pos + 1
 
-    if state != LITERAL:
-        raise Exception("String {0!r} ends with an open format operation.".format(s))
+    if state is not LITERAL:
+        raise Exception('String {!r} ends with an open format operation.'.format(s))
 
-    if literal:
-        yield (literal, None, None, None)
+    if cut <= size:
+        lit += s[cut:]
+
+    if lit:
+        yield lit, None, None, None
 
 
 def convert(value, conv, scope):
     conv = set(conv)
-
-    if conv - flags:
-        raise ValueError('Unknown symbols in conversion specifier.')
 
     if 'r' in conv:
         value = repr(value)
