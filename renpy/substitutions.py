@@ -56,10 +56,22 @@ def interpolate(s, scope):
         elif not conv:
             raise ValueError('conversion specifier cannot be empty')
 
+        code = expr.strip()
+
+        if not code:
+            raise ValueError('expected expression')
+
+        if code[-1] == '=':
+            rv += expr
+            code = code[:-1]
+
+            if not conv and fmt is None:
+                conv = 'r'
+
         if renpy.config.interpolate_exprs:
-            value = renpy.python.py_eval(expr, {}, scope)
+            value = renpy.python.py_eval(code, {}, scope)
         else:
-            value, _ = formatter.get_field(expr, (), scope)
+            value, _ = formatter.get_field(code, (), scope)
 
         if conv:
             value = convert(value, conv, scope)
