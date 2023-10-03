@@ -32,243 +32,251 @@ import os
 
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
 flags = frozenset('arstiqulc!f')
+formatter = string.Formatter()
 
 
-class Formatter(string.Formatter):
+def parse(s):
     """
-    A string formatter that uses Ren'Py's formatting rules. Ren'Py uses
-    square brackets to introduce formatting, and it supports a q conversion
-    that quotes the text being shown to the user.
+    Parses s according to Ren'Py string formatting rules. Emits a series
+    of (literal, expression, conversion, format) tuples.
     """
 
-    def parse(self, s):
-        """
-        Parses s according to Ren'Py string formatting rules. Returns a list
-        of (literal_text, field_name, format, replacement) tuples, just like
-        the method we're overriding.
-        """
+    # States for the parse state machine.
+    LITERAL = 0
+    EXPRESSION = 1
+    CONVERSION = 2
+    FORMAT = 3
 
-        # States for the parse state machine.
-        LITERAL = 0
-        EXPRESSION = 1
-        CONVERSION = 2
-        FORMAT = 3
+    # Conversion flags that we accept.
+    FLAGS = flags
 
-        # Conversion flags that we accept.
-        FLAGS = flags
+    # Markers and offsets for slicing.
+    pos = -1
+    size = len(s) + pos
+    cut = 0
+    mark = 0
 
-        # Markers and offsets for slicing.
-        pos = -1
-        size = len(s) + pos
-        cut = 0
-        mark = 0
+    # The depth of brackets we've seen.
+    brackets = 0
+    parens = 0
 
-        # The depth of brackets we've seen.
-        brackets = 0
-        parens = 0
+    # The parts we've seen.
+    lit = ''
+    expr = None
+    conv = None
+    fmt = None
 
-        # The parts we've seen.
-        lit = ''
-        expr = None
-        conv = None
-        fmt = None
+    state = LITERAL
 
-        state = LITERAL
+    while pos < size:
+        pos += 1
+        c = s[pos]
 
-        while pos < size:
-            pos += 1
-            c = s[pos]
+        if state is LITERAL:
+            if c == '[':
+                lit += s[cut:pos]
+                cut = pos + 1
 
-            if state is LITERAL:
-                if c == '[':
-                    lit += s[cut:pos]
-                    cut = pos + 1
+                if c == s[pos+1:pos+2]:
+                    pos += 1
+                else:
+                    state = EXPRESSION
 
-                    if c == s[pos+1:pos+2]:
-                        pos += 1
+        elif state is EXPRESSION:
+            if c == '(':
+                parens += 1
+
+            elif c == ')':
+                if not parens:
+                    break
+
+                parens -= 1
+
+            elif c == '"' or c == "'":
+                chars = 1
+                found = 0
+
+                if c * 2 == s[pos+1:pos+3]:
+                    chars += 2
+                    pos += 2
+
+                while pos < size:
+                    pos += 1
+                    n = s[pos]
+
+                    if n == c:
+                        found += 1
+
+                        if found == chars:
+                            break
+
                     else:
-                        state = EXPRESSION
+                        found = 0
 
-            elif state is EXPRESSION:
-                if c == '(':
-                    parens += 1
+            elif parens:
+                pass
 
-                elif c == ')':
-                    if not parens:
-                        break
+            elif c == '[':
+                brackets += 1
 
-                    parens -= 1
-
-                elif c == '"' or c == "'":
-                    chars = 1
-                    found = 0
-
-                    if c * 2 == s[pos+1:pos+3]:
-                        chars += 2
-                        pos += 2
-
-                    while pos < size:
-                        pos += 1
-                        n = s[pos]
-
-                        if n == c:
-                            found += 1
-
-                            if found == chars:
-                                break
-
-                        else:
-                            found = 0
-
-                elif parens:
-                    pass
-
-                elif c == '[':
-                    brackets += 1
-
-                elif c == ']':
-                    if brackets:
-                        brackets -= 1
-                    else:
-                        yield lit, s[cut:pos], '', None
-                        cut = pos + 1
-                        state = LITERAL
-                        lit = ''
-
-                elif c == '!':
-                    if s[pos+1:pos+2] != '=':
-                        state = CONVERSION
-                        expr = s[cut:pos]
-                        mark = cut
-                        cut = pos + 1
-
-                elif c == ':':
-                    state = FORMAT
-                    expr = s[cut:pos]
-                    cut = pos + 1
-
-            elif state is CONVERSION:
-                if c == ']':
-                    yield lit, expr, fmt or '', s[cut:pos]
+            elif c == ']':
+                if brackets:
+                    brackets -= 1
+                else:
+                    yield lit, s[cut:pos], None, None
                     cut = pos + 1
                     state = LITERAL
                     lit = ''
-                    expr = None
-                    fmt = None
 
-                elif c == ':':
-                    state = FORMAT
-                    conv = s[cut:pos]
-                    cut = pos + 1
-
-                elif c not in FLAGS:
-                    if fmt is None:
-                        raise ValueError('Invalid conversion specifier')
-
-                    state = FORMAT
-                    pos = cut
-                    cut = mark
-
-            elif state is FORMAT:
-                if c == ']':
-                    yield lit, expr, s[cut:pos], conv
-                    cut = pos + 1
-                    state = LITERAL
-                    lit = ''
-                    expr = None
-                    conv = None
-
-                elif conv is None and c == '!':
+            elif c == '!':
+                if s[pos+1:pos+2] != '=':
                     state = CONVERSION
-                    fmt = s[cut:pos]
+                    expr = s[cut:pos]
                     mark = cut
                     cut = pos + 1
 
-        if state is not LITERAL:
-            raise Exception("String {!r} ends with an open format operation.".format(s))
+            elif c == ':':
+                state = FORMAT
+                expr = s[cut:pos]
+                cut = pos + 1
 
-        if cut <= size:
-            lit += s[cut:]
+        elif state is CONVERSION:
+            if c == ']':
+                yield lit, expr, s[cut:pos], fmt
+                cut = pos + 1
+                state = LITERAL
+                lit = ''
+                expr = None
+                fmt = None
 
+            elif c == ':':
+                state = FORMAT
+                conv = s[cut:pos]
+                cut = pos + 1
+
+            elif c not in FLAGS:
+                if fmt is None:
+                    raise ValueError('invalid conversion specifier')
+
+                state = FORMAT
+                pos = cut
+                cut = mark
+
+        elif state is FORMAT:
+            if c == ']':
+                yield lit, expr, conv, s[cut:pos]
+                cut = pos + 1
+                state = LITERAL
+                lit = ''
+                expr = None
+                conv = None
+
+            elif conv is None and c == '!':
+                state = CONVERSION
+                fmt = s[cut:pos]
+                mark = cut
+                cut = pos + 1
+
+    if state is not LITERAL:
+        raise Exception('String {!r} ends with an open format operation.'.format(s))
+
+    if cut <= size:
+        lit += s[cut:]
+
+    if lit:
+        yield lit, None, None, None
+
+
+def interpolate(s, scope):
+    """
+    Formats a string using Ren'Py's formatting rules. Ren'Py uses square
+    brackets to denote interpolation, but is otherwise similar to native
+    f-strings, with some caveats and additional conversions available.
+    """
+
+    rv = ''
+
+    for lit, expr, conv, fmt in parse(s):
         if lit:
-            yield (lit, None, None, None)
+            rv += lit
 
-    def get_field(self, expr, args, kwargs):
         if not expr:
-            raise ValueError("Interpolation expression can't be empty.")
+            continue
 
-        return (expr, kwargs), None
+        if conv is None:
+            conv = ''
+        elif not conv:
+            raise ValueError('conversion specifier cannot be empty')
 
-    def convert_field(self, expr, conv):
-        if not conv and conv is not None:
-            raise ValueError("Conversion specifier can't be empty.")
+        code = expr.strip()
 
-        expr, scope = expr
-        conv = set(conv) if conv else set()
+        if not code:
+            raise ValueError('expected expression')
+
+        if code[-1] == '=':
+            rv += expr
+            code = code[:-1]
+
+            if not fmt:
+                conv += 'r'
 
         expr = renpy.config.interpolate_aliases.get(expr, expr)
-        code = renpy.config.interpolate_exprs
 
-        if 'f' in conv:
-            code = True
-            conv.discard('f')
-
-        if expr[-1] == '=':
-            expr = expr[:-1]
-            conv.update('r=')
-
-        if code:
-            value = renpy.python.py_eval(expr, {}, scope)
+        if renpy.config.interpolate_exprs or 'f' in conv:
+            value = renpy.python.py_eval(code, {}, scope)
         else:
-            value, _ = super(Formatter, self).get_field(expr, (), scope)
+            value, _ = formatter.get_field(code, (), scope)
 
-        if not conv:
-            return value
+        if conv and conv != 'f':
+            value = convert(value, conv, scope)
 
-        if 'r' in conv:
-            value = repr(value)
-            conv.discard('r')
+        rv += format(value, fmt)
 
-            if '=' in conv:
-                return expr + '=' + value
+    return rv
 
-        elif 's' in conv:
-            value = str(value)
-            conv.discard('s')
 
-        if not conv:
-            return value
+def convert(value, conv, scope):
+    conv = set(conv)
 
-        # All conversion symbols below assume we have a string.
-        if not isinstance(value, basestring):
-            value = str(value)
+    if 'r' in conv:
+        value = repr(value)
+        conv.discard('f')
+        conv.discard('r')
 
-        if 't' in conv:
-            value = renpy.translation.translate_string(value)
+    elif 's' in conv:
+        value = str(value)
+        conv.discard('f')
+        conv.discard('s')
 
-        if 'i' in conv:
-            try:
-                value = self.vformat(value, (), scope)
-            except RuntimeError: # PY3 RecursionError
-                raise ValueError('Substitution {!r} refers to itself in a loop.'.format(value))
-
-        if 'q' in conv:
-            value = value.replace('{', '{{')
-
-        if 'u' in conv:
-            value = value.upper()
-
-        if 'l' in conv:
-            value = value.lower()
-
-        if 'c' in conv and value:
-            value = value[0].upper() + value[1:]
-
+    if not conv:
         return value
 
+    # All conversion symbols below assume we have a string.
+    if not isinstance(value, basestring):
+        value = str(value)
 
-# The instance of Formatter we use.
-formatter = Formatter()
+    if 't' in conv:
+        value = renpy.translation.translate_string(value)
+
+    if 'i' in conv:
+        try:
+            value = interpolate(value, scope)
+        except RuntimeError: # PY3 RecursionError
+            raise ValueError('interpolation cannot be self-referential')
+
+    if 'q' in conv:
+        value = value.replace('{', '{{')
+
+    if 'u' in conv:
+        value = value.upper()
+
+    if 'l' in conv:
+        value = value.lower()
+
+    if 'c' in conv and value:
+        value = value[0].upper() + value[1:]
+
+    return value
 
 
 class MultipleDict(object):
@@ -332,7 +340,7 @@ def substitute(s, scope=None, force=False, translate=True):
         kwargs = dicts[0]
 
     try:
-        s = formatter.vformat(s, (), kwargs) # type: ignore
+        s = interpolate(s, kwargs) # type: ignore
     except Exception:
         if renpy.display.predict.predicting: # @UndefinedVariable
             return " ", True
