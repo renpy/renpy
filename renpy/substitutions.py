@@ -37,18 +37,18 @@ formatter = string.Formatter()
 
 def interpolate(s, scope):
     """
-    A string formatter that uses Ren'Py's formatting rules. Ren'Py uses
-    square brackets to introduce formatting, and it supports a q conversion
-    that quotes the text being shown to the user.
+    Formats a string using Ren'Py's formatting rules. Ren'Py uses square
+    brackets to denote interpolation, but is otherwise similar to native
+    f-strings, with a few caveats and additional conversions available.
     """
 
     rv = ''
 
-    for lit, name, conv, fmt in parse(s):
+    for lit, expr, conv, fmt in parse(s):
         if lit:
             rv += lit
 
-        if name is None:
+        if expr is None:
             continue
 
         if conv is None:
@@ -56,7 +56,10 @@ def interpolate(s, scope):
         elif not conv:
             raise ValueError('conversion specifier cannot be empty')
 
-        value, _ = formatter.get_field(name, (), scope)
+        if renpy.config.interpolate_exprs:
+            value = renpy.python.py_eval(expr, {}, scope)
+        else:
+            value, _ = formatter.get_field(expr, (), scope)
 
         if conv:
             value = convert(value, conv, scope)
