@@ -3,9 +3,7 @@ import json
 import os
 import zlib
 
-from . import filetypes
-from .util import dump, hash_list
-
+from . import common
 
 class BlockGenerator(object):
     """
@@ -66,11 +64,11 @@ class BlockGenerator(object):
         self.new_rpu.close()
         self.new_rpu = None
 
-        filename = hash_list([ i.hash for i in self.segments ]) + ".rpu"
+        filename = common.hash_list([ i.hash for i in self.segments ]) + ".rpu"
 
         os.rename(self.path("new.rpu"), self.path(filename))
 
-        self.filelist.blocks.append(filetypes.File(filename, segments=self.segments))
+        self.filelist.blocks.append(common.File(filename, segments=self.segments))
         self.segments = [ ]
 
     def generate_segment(self, f, seg):
@@ -92,10 +90,10 @@ class BlockGenerator(object):
 
         offset = self.new_rpu.tell()
         size = len(data)
-        compressed = filetypes.COMPRESS_NONE
+        compressed = common.COMPRESS_NONE
 
         self.new_rpu.write(data)
-        self.segments.append(filetypes.Segment(offset, size, seg.hash, compressed))
+        self.segments.append(common.Segment(offset, size, seg.hash, compressed))
 
         if self.new_rpu.tell() > self.max_rpu_size:
             self.close_new_rpu()
@@ -134,7 +132,7 @@ def main():
     for i in targetdir.glob("*.rpu"):
         i.unlink()
 
-    fl = filetypes.FileList()
+    fl = common.FileList()
     fl.scan(args.sourcedir)
 
     BlockGenerator("game", fl, args.targetdir)

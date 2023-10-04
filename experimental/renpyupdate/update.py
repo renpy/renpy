@@ -5,7 +5,8 @@ import zlib
 
 import requests
 
-from . import download, filetypes
+from . import download
+from . import common
 
 
 class UpdateError(Exception):
@@ -197,7 +198,7 @@ class Update(object):
                 self.rename(fn, oldfn)
 
                 relfn = os.path.relpath(oldfn, root)
-                f = filetypes.File(relfn, data_filename=oldfn)
+                f = common.File(relfn, data_filename=oldfn)
                 self.old_files.append(f)
 
     def write_padding(self):
@@ -212,7 +213,7 @@ class Update(object):
         with open(fn, "wb") as f:
             f.write(padding)
 
-        f = filetypes.File("_padding.old.rpa", data_filename=fn)
+        f = common.File("_padding.old.rpa", data_filename=fn)
         self.old_files.append(f)
 
     def scan_old_files(self):
@@ -434,10 +435,10 @@ class Update(object):
                     f.seek(p.old_offset)
                     data = f.read(p.old_size)
 
-                    if p.compressed == filetypes.COMPRESS_ZLIB:
+                    if p.compressed == common.COMPRESS_ZLIB:
                         data = zlib.decompress(data)
 
-                    hash = filetypes.hash_data(data)
+                    hash = common.hash_data(data)
 
                     if hash != p.hash:
                         self.log("Hash mismatch on %s offset %d size %d.", p.old_filename, p.old_offset, p.old_size)
@@ -535,11 +536,11 @@ def main():
 
     args = ap.parse_args()
 
-    targetlist = filetypes.FileList()
+    targetlist = common.FileList()
     targetlist.scan(args.targetdir, data_filename=False)
 
     resp = requests.get(args.url + "/game.index.rpu")
-    sourcelist = filetypes.FileList.decode(resp.content)
+    sourcelist = common.FileList.decode(resp.content)
 
     # from .util import dump
     # dump(sourcelist.to_json())
