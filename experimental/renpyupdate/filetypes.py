@@ -92,13 +92,12 @@ class File(object):
         return {
             "name" : self.name,
             "segments" : [ i.to_json() for i in self.segments ],
-            "mtime" : self.mtime,
             "xbit" : self.xbit,
         }
 
     @staticmethod
     def from_json(d):
-        rv = File(d["name"], segments=[ Segment.from_json(i) for i in d["segments"] ], mtime=d["mtime"], xbit=d["xbit"])
+        rv = File(d["name"], segments=[ Segment.from_json(i) for i in d["segments"] ], xbit=d["xbit"])
         return rv
 
     def scan_segments(self, f, offset, size):
@@ -244,7 +243,13 @@ class FileList(object):
             for fn in files:
                 fn = os.path.join(dn, fn)
                 relfn = os.path.relpath(fn, root)
-                f = File(relfn, data_filename=fn if data_filename else None)
+
+                if data_filename:
+                    xbit = os.access(fn, os.X_OK)
+                else:
+                    xbit = False
+
+                f = File(relfn, data_filename=fn if data_filename else None, xbit=xbit)
                 self.files.append(f)
 
         self.directories.sort(key=lambda x : x.name)

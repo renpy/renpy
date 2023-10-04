@@ -110,6 +110,8 @@ class Update(object):
             self.create_empty_new_files()
             self.rename_new_files()
             self.remove_old_files()
+            self.set_xbit()
+
 
     def progress(self, message, done):
         """
@@ -514,6 +516,17 @@ class Update(object):
             except:
                 pass
 
+    def set_xbit(self):
+        """
+        Sets the executable bit on files that require it.
+        """
+
+        for i in self.new_files:
+            if i.xbit:
+                try:
+                    os.chmod(i.data_filename, 0o755)
+                except:
+                    raise UpdateError("Could not set the executable bit on %s." % i.data_filename)
 
 def main():
     ap = argparse.ArgumentParser()
