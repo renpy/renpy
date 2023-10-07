@@ -268,6 +268,19 @@ class FileList(object):
             "blocks" : [ i.to_json() for i in self.blocks ],
         }
 
+    def add_directory(self, name):
+        """
+        Called from the launcher to add a directory to this file list.
+        """
+        self.directories.append(Directory(name))
+
+    def add_file(self, name, path, xbit):
+        """
+        Called from the launcher to add a file to this file list.
+        """
+
+        self.files.append(File(name, data_filename=path, xbit=xbit))
+
     @staticmethod
     def from_json(d):
         rv = FileList()

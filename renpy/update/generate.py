@@ -36,6 +36,9 @@ class BlockGenerator(object):
 
     def __init__(self, name, filelist, targetdir, max_rpu_size=50 * 1024 * 1024):
 
+        # A name that will be prefixed to the update.
+        self.name = name
+
         # The filelist being created.
         self.filelist = filelist
 
@@ -54,11 +57,16 @@ class BlockGenerator(object):
         # If new.rpu is open, a file object for it.
         self.new_rpu = None
 
+        # Clean out files in the target directory starting with .name.
+        for i in os.listdir(targetdir):
+            if i.startswith(self.name + "-") and i.endswith(".rpu"):
+                os.unlink(os.path.join(targetdir, i))
+
         # The filelist being created.
         self.generate()
 
         # Write the filelist to a file.
-        with open(self.path(name + ".index.rpu"), "wb") as f:
+        with open(self.path(self.name + ".files.rpu"), "wb") as f:
             f.write(self.filelist.encode())
 
     def path(self, name):
@@ -75,6 +83,7 @@ class BlockGenerator(object):
 
         if self.new_rpu is None:
             self.new_rpu = open(self.path("new.rpu"), "wb")
+            self.new_rpu.write(b"RPU-BLOCK-1.0\r\n")
 
     def close_new_rpu(self):
         """
@@ -88,7 +97,7 @@ class BlockGenerator(object):
         self.new_rpu.close()
         self.new_rpu = None
 
-        filename = common.hash_list([ i.hash for i in self.segments ]) + ".rpu"
+        filename = self.name + "-" + common.hash_list([ i.hash for i in self.segments ]) + ".rpu"
 
         os.rename(self.path("new.rpu"), self.path(filename))
 
