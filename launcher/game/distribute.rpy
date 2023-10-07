@@ -1600,24 +1600,42 @@ change_renpy_executable()
 
             def add_variant(variant):
 
-                digest = self.build_cache[self.base_name + "-" + variant + ".update"][0]
-
-                sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
-
                 index[variant] = {
                     "version" : self.update_versions[variant],
                     "pretty_version" : self.pretty_version,
-                    "digest" : digest,
-                    "zsync_url" : self.base_name + "-" + variant + ".zsync",
-                    "sums_url" : self.base_name + "-" + variant + ".sums",
-                    "sums_size" : sums_size,
-                    "json_url" : self.base_name + "-" + variant + ".update.json",
-                    }
+                    "renpy_version" : renpy.version_only,
+                }
 
-                fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
+                if "update" in self.build["update_formats"]:
 
-                if os.path.exists(fn):
-                    os.unlink(fn)
+                    digest = self.build_cache[self.base_name + "-" + variant + ".update"][0]
+                    sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
+
+                    index[variant].update({
+                        "digest" : digest,
+                        "zsync_url" : self.base_name + "-" + variant + ".zsync",
+                        "sums_url" : self.base_name + "-" + variant + ".sums",
+                        "sums_size" : sums_size,
+                        "json_url" : self.base_name + "-" + variant + ".update.json",
+                        })
+
+                    fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
+
+                    if os.path.exists(fn):
+                        os.unlink(fn)
+
+                if "rpu" in self.build["update_formats"]:
+
+                    rpu_size = 0
+
+                    rpu_dir = os.path.join(self.destination, "rpu")
+
+                    for i in os.listdir(rpu_dir):
+                        rpu_size += os.path.getsize(os.path.join(rpu_dir, i))
+
+                    index[variant]["rpu_url"] = "rpu/" + variant + ".files.rpu"
+                    index[variant]["rpu_digest"] = self.build_cache["rpu/" + variant + ".files.rpu"][0]
+                    index[variant]["rpu_size"] = rpu_size
 
             for p in packages:
                 if p["update"]:
