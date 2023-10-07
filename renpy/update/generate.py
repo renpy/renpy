@@ -119,6 +119,9 @@ class BlockGenerator(object):
 
         # TODO: Determine if we should compress the data.
 
+        if self.new_rpu and self.new_rpu.tell() + len(data) > self.max_rpu_size:
+            self.close_new_rpu()
+
         self.open_new_rpu()
 
         offset = self.new_rpu.tell()
@@ -127,9 +130,6 @@ class BlockGenerator(object):
 
         self.new_rpu.write(data)
         self.segments.append(common.Segment(offset, size, seg.hash, compressed))
-
-        if self.new_rpu.tell() > self.max_rpu_size:
-            self.close_new_rpu()
 
     def generate(self):
 
