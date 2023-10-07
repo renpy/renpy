@@ -194,7 +194,7 @@ init python in distribute:
 
             self.zipfile.write_with_info(zi, path)
 
-        def close(self):
+        def close(self, progress=None):
             self.zipfile.close()
 
 
@@ -242,7 +242,7 @@ init python in distribute:
         def add_directory(self, name, path):
             self.add_file(name, path, True)
 
-        def close(self):
+        def close(self, progress=None):
             self.tarfile.close()
 
 
@@ -255,7 +255,7 @@ init python in distribute:
 
             TarPackage.__init__(self, filename, "w", notime=True)
 
-        def close(self):
+        def close(self, progress=None):
             TarPackage.close(self)
 
             cmd = [
@@ -314,7 +314,7 @@ init python in distribute:
             fn = os.path.join(self.path, name)
             self.mkdir(fn)
 
-        def close(self):
+        def close(self, progress=None):
             return
 
 
@@ -331,7 +331,7 @@ init python in distribute:
         def add_directory(self, name, path):
             self.dp.add_directory(name, path)
 
-        def close(self):
+        def close(self, progress=None):
             self.dp.close()
 
             if os.path.exists(self.path):
@@ -355,7 +355,7 @@ init python in distribute:
             self.make_dmg = make_dmg
             DirectoryPackage.__init__(self, path)
 
-        def close(self):
+        def close(self, progress=None):
             DirectoryPackage.close(self)
             self.make_dmg()
 
@@ -378,10 +378,10 @@ init python in distribute:
         def add_directory(self, name, _path):
             self.file_list.add_directory(name)
 
-        def close(self):
+        def close(self, progress=None):
             import renpy.update.generate
 
-            renpy.update.generate.BlockGenerator(self.variant, self.file_list, self.directory)
+            renpy.update.generate.BlockGenerator(self.variant, self.file_list, self.directory, progress)
 
 
     parallel_threads = [ ]
@@ -401,7 +401,7 @@ init python in distribute:
         def add_directory(self, name, path):
             self.worklist.append((True, name, path, True))
 
-        def close(self):
+        def close(self, progress=None):
             t = threading.Thread(target=self.run)
             t.start()
 

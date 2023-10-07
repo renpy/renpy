@@ -1573,13 +1573,13 @@ change_renpy_executable()
 
             self.reporter.progress_done()
 
-
             if format == "update":
-                # Build the zsync file.
-
                 self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
 
-            pkg.close()
+            def close_progress(done, total):
+                self.reporter.progress(_("Finishing the [variant] [format] package."), done, total, variant=variant, format=format)
+
+            pkg.close(close_progress)
 
             if done is not None:
                 done()

@@ -34,7 +34,7 @@ class BlockGenerator(object):
     This generates the block file containing the segments for an update.
     """
 
-    def __init__(self, name, filelist, targetdir, max_rpu_size=50 * 1024 * 1024):
+    def __init__(self, name, filelist, targetdir, progress=None, max_rpu_size=50 * 1024 * 1024):
 
         # A name that will be prefixed to the update.
         self.name = name
@@ -56,6 +56,9 @@ class BlockGenerator(object):
 
         # If new.rpu is open, a file object for it.
         self.new_rpu = None
+
+        # The progress reporter.
+        self.progress = progress
 
         # Clean out files in the target directory starting with .name.
         for i in os.listdir(targetdir):
@@ -140,7 +143,11 @@ class BlockGenerator(object):
         files.sort(key=lambda x: (x.mtime, x.name))
         files.reverse()
 
-        for file in files:
+        for i, file in enumerate(files):
+
+            if self.progress:
+                self.progress(i + 1, len(files))
+
             file.scan()
 
             with open(file.data_filename or file.name, "rb") as f:
