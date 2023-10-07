@@ -33,7 +33,6 @@ init python in distribute:
 
     from zipfile import crc32
 
-
     # Since the long type doesn't exist on py3, define it here
     if not PY2:
         long = int
@@ -246,6 +245,7 @@ init python in distribute:
         def close(self):
             self.tarfile.close()
 
+
     class UpdatePackage(TarPackage):
 
         def __init__(self, filename, basename, destination):
@@ -283,7 +283,6 @@ init python in distribute:
                         sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
 
 
-
     class DirectoryPackage(object):
 
         def mkdir(self, path):
@@ -318,6 +317,7 @@ init python in distribute:
         def close(self):
             return
 
+
     class ExternalZipPackage(object):
 
         def __init__(self, path):
@@ -350,7 +350,6 @@ init python in distribute:
             shutil.rmtree(self.directory)
 
 
-
     class DMGPackage(DirectoryPackage):
         def __init__(self, path, make_dmg):
             self.make_dmg = make_dmg
@@ -359,6 +358,30 @@ init python in distribute:
         def close(self):
             DirectoryPackage.close(self)
             self.make_dmg()
+
+
+    class RPUPackage(object):
+
+        def __init__(self, directory, variant):
+            import renpy.update.common
+
+            self.directory = directory + "/rpu"
+            self.variant = variant
+            self.file_list = renpy.update.common.FileList()
+
+            if not os.path.exists(self.directory):
+                os.mkdir(self.directory)
+
+        def add_file(self, name, path, xbit):
+            self.file_list.add_file(name, path, xbit)
+
+        def add_directory(self, name, _path):
+            self.file_list.add_directory(name)
+
+        def close(self):
+            import renpy.update.generate
+
+            renpy.update.generate.BlockGenerator(self.variant, self.file_list, self.directory)
 
 
     parallel_threads = [ ]

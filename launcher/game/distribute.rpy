@@ -681,11 +681,12 @@ change_renpy_executable()
                         dlc=p["dlc"])
 
                 if self.build_update and p["update"]:
-                    self.make_package(
-                        p["name"],
-                        "update",
-                        p["file_lists"],
-                        dlc=p["dlc"])
+                    for update_format in self.build["update_formats"]:
+                        self.make_package(
+                            p["name"],
+                            update_format,
+                            p["file_lists"],
+                            dlc=p["dlc"])
 
             wait_parallel_threads()
 
@@ -1425,6 +1426,7 @@ change_renpy_executable()
 
             FORMATS = {
                 "update" : (".update", False, False, False),
+                "rpu" : ("", False, False, False),
 
                 "tar.bz2" : (".tar.bz2", False, False, True),
                 "zip" : (".zip", False, False, True),
@@ -1479,7 +1481,7 @@ change_renpy_executable()
                 with open(update_fn, "wb" if PY2 else "w") as f:
                     json.dump(update, f, indent=2)
 
-                if (not dlc) or (format == "update"):
+                if (not dlc) or (format in { "update", "rpu" }):
                     fl.append(File("update", None, True, False))
                     fl.append(File("update/current.json", update_fn, False, False))
 
@@ -1492,6 +1494,10 @@ change_renpy_executable()
 
             full_filename = filename + ext
             path += ext
+
+            if format == "rpu":
+                full_filename = "rpu/" + variant + ".files.rpu"
+                path = self.destination + "/" + full_filename
 
             if self.build['renpy']:
                 fl_hash = fl.hash(self)
@@ -1529,6 +1535,8 @@ change_renpy_executable()
                 pkg = TarPackage(path, "w:bz2")
             elif format == "update":
                 pkg = UpdatePackage(path, filename, self.destination)
+            elif format == "rpu":
+                pkg = RPUPackage(self.destination, variant)
             elif format == "zip" or format == "app-zip" or format == "bare-zip":
                 if self.build['renpy']:
                     pkg = ExternalZipPackage(path)

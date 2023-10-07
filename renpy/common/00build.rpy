@@ -506,6 +506,9 @@ init -1500 python in build:
     # Should the sdk-fonts directory be renamed to game?
     _sdk_fonts = False
 
+    # Which update formats should be built?
+    update_formats = [ "update" ]
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -588,6 +591,8 @@ init -1500 python in build:
         rv["android_permissions"] = android_permissions
 
         rv["_sdk_fonts"] = _sdk_fonts
+
+        rv["update_formats"] = update_formats
 
         return rv
 
