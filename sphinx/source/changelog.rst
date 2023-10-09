@@ -113,6 +113,16 @@ specific to some but not all characters.
 Features
 --------
 
+A new 'Show Filename and Line' option is avilable from the
+shift+D developer menu. When enabled, this will cause the
+filename and line number of the current statement to be
+displayed. Clicking on the filename and line will open
+the file in the default text editor, at the given line,
+if possible.
+
+The new :func:`EditFile` action attempts to open a file and
+line in a text editor.
+
 The virtual dpi of an SVG file can be set with the new `dpi`
 parameter to :func:`Image`.
 

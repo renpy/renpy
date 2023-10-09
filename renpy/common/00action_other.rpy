@@ -893,6 +893,38 @@ init -1500 python:
             import pygame.scrap
             pygame.scrap.put(pygame.SCRAP_TEXT, self.s.encode("utf-8"))
 
+    @renpy.pure
+    class EditFile(Action):
+        """
+        :doc: other_action
+
+        Requests Ren'Py to open the given file in a text editor, if possible.
+        This will work on some platforms but not others.
+
+        `filename`
+            If given, the filename to open. If None, the current filename
+            and line number are used, with `line` being ignored.
+
+        `line`
+            The line number to open the file at.
+        """
+
+        def __init__(self, filename=None, line=1):
+            self.filename = filename
+            self.line = line
+
+        def __call__(self):
+
+            filename = self.filename
+            line = self.line
+
+            if filename is None:
+                filename, line = renpy.get_filename_line()
+
+            try:
+                renpy.launch_editor([ filename ], line)
+            except Exception:
+                pass
 
 init -1500:
 
