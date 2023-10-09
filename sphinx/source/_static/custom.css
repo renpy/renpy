@@ -17,6 +17,10 @@
     }
 }
 
+html[data-theme="dark"] .wy-body-for-nav {
+    color: #101010;
+}
+
 /* Highlighting */
 
 
