@@ -2433,6 +2433,9 @@ class Layer(AdjustTimes):
     `clipping`
         If False, the layer's contents may exceed its bounds, otherwise
         anything exceeding the bounds will be trimmed.
+
+        An entry in config.layer_clipping will cause this option to be
+        ignored, and clipping to occur as specified by that config.
     """
 
     # Used to store layer_transitions when processing this layer.
