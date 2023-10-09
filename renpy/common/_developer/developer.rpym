@@ -77,6 +77,13 @@ screen _developer:
                     textbutton _("Speech Bubble Editor (Shift+B)"):
                         action [ SetField(bubble.shown, "value", True), Hide("_developer") ]
 
+                if not renpy.get_screen("_filename_and_line"):
+                    textbutton _("Show Filename and Line"):
+                        action Show("_filename_and_line")
+                else:
+                    textbutton _("Hide Filename and Line"):
+                        action Hide("_filename_and_line")
+
         hbox:
             spacing gui._scale(25)
 
@@ -589,6 +596,50 @@ screen _translation_identifier():
                     size 14
 
     timer 10.0 action SetScreenVariable("show_help", False)
+
+
+screen _filename_and_line():
+
+    zorder 1500
+    style_prefix ""
+
+    # Should help be shown?
+    default help = True
+
+    # The filename and line to show.
+    $ filename, line = renpy.get_filename_line()
+
+    timer 3 action SetScreenVariable("help", False)
+
+    drag:
+        draggable True
+        focus_mask None
+        xpos 0
+        ypos 0
+
+        frame:
+            style "empty"
+            background "#0004"
+            xpadding 5
+            ypadding 5
+            xminimum 200
+
+            has vbox
+
+            textbutton "[filename]:[line]":
+                padding (0, 0)
+                text_color "#fff"
+                text_hover_color "#bdf"
+                text_size 14
+
+                action EditFile(filename, line)
+
+            if help:
+                null height 10
+
+                text _("Click to open in editor."):
+                    size 14
+                    color "#fff"
 
 
 init 1000 python hide:
