@@ -393,7 +393,7 @@ that the keyword arguments are described in the documentation.
 Python is a lot more powerful than we have space for in this manual.
 To learn Python in more detail, we recommend starting with the Python
 tutorial, which is available from
-`python.org <http://docs.python.org/release/2.7/tutorial/index.html>`_.
+`python.org <https://docs.python.org/tutorial/index.html>`__.
 While we don't think a deep knowledge of Python is necessary to work
 with Ren'Py, the basics of Python statements and expressions is
 often helpful.
