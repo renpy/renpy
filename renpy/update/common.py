@@ -268,6 +268,40 @@ class FileList(object):
             "blocks" : [ i.to_json() for i in self.blocks ],
         }
 
+    @staticmethod
+    def from_json(d):
+        rv = FileList()
+        rv.directories = [ Directory.from_json(i) for i in d["directories"] ]
+        rv.files = [ File.from_json(i) for i in d["files"] ]
+        rv.blocks = [ File.from_json(i) for i in d["blocks"] ]
+        return rv
+
+    def to_current_json(self):
+        """
+        Returns a JSON representation of the file list that can be used
+        in the current.json files.
+        """
+
+        return {
+            "directories" : [ i.name for i in self.directories ],
+            "files" : [ i.name for i in self.files ],
+            "xbit" : [ i.name for i in self.files if i.xbit ],
+        }
+
+    @staticmethod
+    def from_current_json(d):
+        xbit = set(d["xbit"])
+
+        rv = FileList()
+
+        for i in d["directories"]:
+            rv.directories.append(Directory(i))
+
+        for i in d["files"]:
+            rv.files.append(File(i, xbit=i in xbit))
+
+        return rv
+
     def add_directory(self, name):
         """
         Called from the launcher to add a directory to this file list.
@@ -281,13 +315,6 @@ class FileList(object):
 
         self.files.append(File(name, data_filename=path, xbit=xbit))
 
-    @staticmethod
-    def from_json(d):
-        rv = FileList()
-        rv.directories = [ Directory.from_json(i) for i in d["directories"] ]
-        rv.files = [ File.from_json(i) for i in d["files"] ]
-        rv.blocks = [ File.from_json(i) for i in d["blocks"] ]
-        return rv
 
     def scan(self, root, data_filename=True):
         """
