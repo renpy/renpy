@@ -1877,7 +1877,7 @@ class Tile(ImageBase):
         (:var:`config.screen_width`, :var:`config.screen_height`).
 
     .. deprecated:: 7.4.0
-        Use :func:`Tile(im, size=size, **properties) <Tile>`.
+        Use :func:`Tile(im, xysize=size, **properties) <Tile>`.
     """
 
     def __init__(self, im, size=None, **properties):
