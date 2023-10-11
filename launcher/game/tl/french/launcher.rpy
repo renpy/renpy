@@ -1590,7 +1590,7 @@
 
     # game/gui7.rpy:339
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
-    new "Personnalisé. Le GUI est optimié pour un ratio de cadre 16:9."
+    new "Personnalisé. Le GUI est optimisé pour un ratio de cadre 16:9."
 
     # game/gui7.rpy:355
     old "WIDTH"
