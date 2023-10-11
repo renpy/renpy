@@ -1513,8 +1513,9 @@ Rarely or Internally Used
     upper-left corner of the layer, with height and width giving the
     layer size.
 
-    If a layer is not mentioned in config.layer_clipping, then it is
-    assumed to take up the full screen.
+    If a layer is not mentioned in config.layer_clipping, then it will
+    take up the full size of its container. Typically this will be the
+    screen, unless being shown inside a :class:`Layer` displayable.
 
 .. var:: config.layeredimage_offer_screen = True
 
