@@ -110,8 +110,12 @@ that filter the list of bubble property names based on the image tag
 that's speaking. This makes it possible to have bubbles that are
 specific to some but not all characters.
 
-Features
---------
+Developer Tools
+---------------
+
+There is a new "Skip splashscreen" option in Options section
+of the launcher preferences. When checked, this will cause
+games launched to skip the splashscreen label when starting.
 
 A new 'Show Filename and Line' option is avilable from the
 shift+D developer menu. When enabled, this will cause the
@@ -120,6 +124,10 @@ displayed. Clicking on the filename and line will open
 the file in the default text editor, at the given line,
 if possible.
 
+
+
+Features
+--------
 The new :func:`EditFile` action attempts to open a file and
 line in a text editor.
 

@@ -245,7 +245,6 @@ init python:
     # Build both kinds of updates.
     build.update_kinds = [ "update", "rpu" ]
 
-
     # Allow empty directories, so we can distribute the images directory.
     build.exclude_empty_directories = False
 

@@ -492,7 +492,7 @@ init python in interface:
             The amount of time to pause for after showing the message.
         """
 
-        common(title, store.INTERACTION_COLOR, message, submessage=None, pause=pause, show_screen=True, **kwargs)
+        common(title, store.INTERACTION_COLOR, message, submessage=submessage, pause=pause, show_screen=True, **kwargs)
         renpy.pause(pause)
 
     def processing(message, submessage=None, complete=None, total=None, **kwargs):

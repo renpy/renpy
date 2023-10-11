@@ -260,6 +260,10 @@ init python in project:
 
             environ = dict(os.environ)
             environ["RENPY_LAUNCHER_LANGUAGE"] = _preferences.language or "english"
+
+            if persistent.skip_splashscreen:
+                environ["RENPY_SKIP_SPLASHSCREEN"] = "1"
+
             environ.update(env)
 
             # Filter out system PYTHON* environment variables.
@@ -766,7 +770,12 @@ init python in project:
             blurb = LAUNCH_BLURBS[persistent.blurb % len(LAUNCH_BLURBS)]
             persistent.blurb += 1
 
-            interface.interaction(_("Launching"), blurb, pause=2.5)
+            if persistent.skip_splashscreen:
+                submessage = _("Splashscreen skipped in launcher preferences.")
+            else:
+                submessage = None
+
+            interface.interaction(_("Launching"), blurb, submessage=submessage, pause=2.5)
 
 
         def __call__(self):
