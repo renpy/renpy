@@ -243,7 +243,7 @@ init python:
     build.include_update = True
 
     # Build both kinds of updates.
-    build.update_kinds = [ "update", "rpu" ]
+    build.update_formats = [ "update", "rpu" ]
 
     # Allow empty directories, so we can distribute the images directory.
     build.exclude_empty_directories = False
