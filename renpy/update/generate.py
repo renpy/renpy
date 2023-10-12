@@ -120,16 +120,21 @@ class BlockGenerator(object):
         f.seek(seg.offset)
         data = f.read(seg.size)
 
-        # TODO: Determine if we should compress the data.
-
         if self.new_rpu and self.new_rpu.tell() + len(data) > self.max_rpu_size:
             self.close_new_rpu()
 
         self.open_new_rpu()
 
+        compressed = common.COMPRESS_NONE
+
+        cdata = zlib.compress(data, level=3)
+
+        if len(cdata) < len(data) * .95:
+            data = cdata
+            compressed = common.COMPRESS_ZLIB
+
         offset = self.new_rpu.tell()
         size = len(data)
-        compressed = common.COMPRESS_NONE
 
         self.new_rpu.write(data)
         self.segments.append(common.Segment(offset, size, seg.hash, compressed))

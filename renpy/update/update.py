@@ -563,7 +563,7 @@ def main():
     targetlist = common.FileList()
     targetlist.scan(args.targetdir, data_filename=False)
 
-    resp = requests.get(args.url + "/game.index.rpu")
+    resp = requests.get(args.url + "/game.files.rpu")
     sourcelist = common.FileList.decode(resp.content)
 
     # from .util import dump
