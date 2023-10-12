@@ -85,7 +85,7 @@ class BlockGenerator(object):
         """
 
         if self.new_rpu is None:
-            self.new_rpu = open(self.path("new.rpu"), "wb")
+            self.new_rpu = open(self.path(self.name + "-new.rpu"), "wb")
             self.new_rpu.write(b"RPU-BLOCK-1.0\r\n")
 
     def close_new_rpu(self):
@@ -102,7 +102,7 @@ class BlockGenerator(object):
 
         filename = self.name + "-" + common.hash_list([ i.hash for i in self.segments ]) + ".rpu"
 
-        os.rename(self.path("new.rpu"), self.path(filename))
+        os.rename(self.path(self.name + "-new.rpu"), self.path(filename))
 
         self.filelist.blocks.append(common.File(filename, segments=self.segments))
         self.segments = [ ]
