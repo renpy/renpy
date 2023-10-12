@@ -127,7 +127,7 @@ class BlockGenerator(object):
 
         compressed = common.COMPRESS_NONE
 
-        cdata = zlib.compress(data, level=3)
+        cdata = zlib.compress(data, 3)
 
         if len(cdata) < len(data) * .95:
             data = cdata
