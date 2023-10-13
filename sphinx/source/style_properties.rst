@@ -718,8 +718,12 @@ Text Style Properties
 .. style-property:: shaper "harfbuzz" or "freetype".
 
     The shaper used on text. This should be one of "harfbuzz" or "freetype".
-    The harfbuzz shape is more capable but only works on Ren'Py 8, while
-    "freetype"
+    The harfbuzz shaper is more capable but only works on Ren'Py 8, while
+    "freetype" works in Ren'Py 7 as well.
+
+    The shaper takes a series of characters and turns it into a series of
+    positioned glyphs. This is used for things like ligatures, Indic/Bhramic
+    languages, and combining emjoi.
 
 .. style-property:: size int
 
