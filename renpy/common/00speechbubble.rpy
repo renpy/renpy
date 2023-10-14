@@ -315,14 +315,14 @@ init 1050 python hide:
                     raise Exception("bubble.properties[{!r}] contains a value that can't be serialized to JSON: {!r}".format(k, i))
 
         if bubble.active:
-            config.overlay_screens.append("_bubble_editor")
+            config.always_shown_screens.append("_bubble_editor")
 
 
 
 screen _bubble_editor():
     zorder 1050
 
-    if bubble.shown.value:
+    if bubble.shown.value and not _menu:
 
         drag:
             draggable True
