@@ -832,6 +832,9 @@ class Count(object):
         self.words += len(s.split())
         self.characters += len(s)
 
+    def tuple(self):
+        return (self.blocks, self.words, self.characters)
+
 
 def common(n):
     """
@@ -852,21 +855,32 @@ def report_character_stats(charastats):
 
     rv = [ "Character statistics (for default language):" ]
 
-    count_to_char = collections.defaultdict(list)
-
-    for char, count in charastats.items():
-        count_to_char[count].append(char)
-
-    for count, chars in sorted(count_to_char.items(), reverse=True):
-        chars.sort()
-
-        start = humanize_listing(chars, singular_suffix=" has ", plural_suffix=" have ")
-
-        rv.append(
-            " * " + start + humanize(count) +
-            (" block " if count == 1 else " blocks ") + "of dialogue" +
-            (" each." if len(chars) > 1 else ".")
+    if args.words_char_count:
+        for char in sorted(charastats, key=lambda char: charastats[char].tuple(), reverse=True):
+            count = charastats[char]
+            rv.append(
+                " * " + char
+                + " has " + humanize(count.blocks) + " blocks of dialogue, "
+                + "containing " + humanize(count.words) + " words and "
+                + humanize(count.characters) + " characters."
             )
+
+    else:
+        nblocks_to_char = collections.defaultdict(list)
+
+        for char, count in charastats.items():
+            nblocks_to_char[count.blocks].append(char)
+
+        for count, chars in sorted(nblocks_to_char.items(), reverse=True):
+            chars.sort()
+
+            start = humanize_listing(chars, singular_suffix=" has ", plural_suffix=" have ")
+
+            rv.append(
+                " * " + start + humanize(count) +
+                (" block " if count == 1 else " blocks ") + "of dialogue" +
+                (" each." if len(chars) > 1 else ".")
+                )
 
     return rv
 
@@ -1021,7 +1035,7 @@ def lint():
     ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errros, 1 if lint errors are found.")
     ap.add_argument("--orphan-tl", action="store_true", help="If given, orphan translations are reported.")
     ap.add_argument("--builtins-parameters", action="store_true", help="If given, renpy or python builtin names in renpy statement parameters are reported.")
-    # ap.add_argument("--words-char-count", action="store_true", help="If given, the number of words and characters for each character is reported.")
+    ap.add_argument("--words-char-count", action="store_true", help="If given, the number of words and characters for each character is reported.")
 
     global args
     args = ap.parse_args()
@@ -1056,7 +1070,7 @@ def lint():
     # The current count.
     counts = collections.defaultdict(Count)
 
-    charastats = collections.defaultdict(int)
+    charastats = collections.defaultdict(Count)
 
     # The current language.
     language = None
@@ -1102,7 +1116,7 @@ def lint():
 
             counts[language].add(node.what)
             if language is None:
-                charastats[node.who or 'narrator' ] += 1
+                charastats[node.who or 'narrator'].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
