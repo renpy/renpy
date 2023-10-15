@@ -32,6 +32,12 @@ import requests
 from . import download
 from . import common
 
+# Constants from 00updater.py.
+PREPARING = "PREPARING"
+DOWNLOADING = "DOWNLOADING"
+UNPACKING = "UNPACKING"
+FINISHING = "FINISHING"
+
 
 class UpdateError(Exception):
     """
@@ -67,7 +73,7 @@ class Plan(object):
 
 class Update(object):
 
-    def __init__(self, url, newlists, targetdir, oldlists, progress_callback=None, aggressive_removal=False):
+    def __init__(self, url, newlists, targetdir, oldlists, progress_callback=None, logfile=None, aggressive_removal=False):
         self.url = url
 
         self.targetdir = targetdir
@@ -98,6 +104,9 @@ class Update(object):
         # Should removal of old files be done ASAP, or at the end?
         self.aggressive_removal = aggressive_removal
 
+        # The progress callback.
+        self.progress_callback = progress_callback
+
         # The set of files to remove.
         self.removals = set() # type: set[str]
 
@@ -110,33 +119,41 @@ class Update(object):
         os.makedirs(self.blockdir, exist_ok=True)
         os.makedirs(self.deleteddir, exist_ok=True)
 
-        with open(os.path.join(self.updatedir, "log.txt"), "a") as logfile:
+        if logfile is None:
+            self.logfile = open(os.path.join(self.updatedir, "log.txt"), "a")
+        else:
             self.logfile = logfile
 
-            print("-" * 80, file=self.logfile)
-            print("Starting update at %s." % time.ctime(), file=self.logfile)
+        self.logfile = logfile
 
-            self.progress("Starting up.", 0.0)
+        print("-" * 80, file=self.logfile)
+        print("Starting update at %s." % time.ctime(), file=self.logfile)
 
-            self.make_directories()
-            self.write_padding()
-            self.find_incomplete_files()
-            self.scan_old_files()
-            self.prepare_new_files()
-            self.find_removals()
-            self.remove_identical_files()
-            self.create_plan()
-            self.compute_totals()
-            self.execute_plan()
+        self.progress(PREPARING, 0.0)
 
-            if self.destination_fp is not None:
-                self.destination_fp.close()
+        self.make_directories()
+        self.write_padding()
+        self.find_incomplete_files()
+        self.scan_old_files()
+        self.prepare_new_files()
+        self.find_removals()
+        self.remove_identical_files()
+        self.create_plan()
+        self.compute_totals()
+        self.execute_plan()
 
-            self.create_empty_new_files()
-            self.rename_new_files()
-            self.remove_old_files()
-            self.set_xbit()
+        if self.destination_fp is not None:
+            self.destination_fp.close()
 
+        self.progress(FINISHING, 0.0)
+
+        self.create_empty_new_files()
+        self.rename_new_files()
+        self.remove_old_files()
+        self.set_xbit()
+
+        if logfile is None:
+            self.logfile.close()
 
     def progress(self, message, done):
         """
@@ -149,7 +166,10 @@ class Update(object):
             The amount of progress that is done, between 0.0 and 1.0.
         """
 
-        print("Progress: %s: %.4f" % (message, 100.0 * done))
+        if self.progress_callback is not None:
+            self.progress_callback(message, done)
+        else:
+            print("Progress: %s: %.4f" % (message, 100.0 * done))
 
     def log(self, message, *args):
         print(message % args, file=self.logfile)
@@ -267,7 +287,7 @@ class Update(object):
             i.scan()
             done += os.path.getsize(i.data_filename)
 
-            self.progress("Scanning existing files.", done / total)
+            self.progress(PREPARING, done / total)
 
     def prepare_new_files(self):
         """
@@ -419,7 +439,7 @@ class Update(object):
 
         done = min(done, 1.0)
 
-        self.progress("Downloading and patching.", done)
+        self.progress(DOWNLOADING, done)
 
     def download_block_file(self, filename, plan):
         """
@@ -562,6 +582,7 @@ class Update(object):
                 except:
                     raise UpdateError("Could not set the executable bit on %s." % i.data_filename)
 
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("url")
@@ -574,9 +595,6 @@ def main():
 
     resp = requests.get(args.url + "/game.files.rpu")
     sourcelist = common.FileList.decode(resp.content)
-
-    # from .util import dump
-    # dump(sourcelist.to_json())
 
     Update(args.url, [ sourcelist ], args.targetdir, [ targetlist ])
 

@@ -527,6 +527,20 @@ init -1500 python in updater:
             from renpy.update.common import FileList
             return FileList.from_json(json.loads(data))
 
+        def rpu_progress(self, state, progress):
+            """
+            Called by the rpu code to update the progress.
+            """
+
+            old_state = self.state
+
+            self.state = state
+            self.progress = progress
+
+            if state != old_state or progress == 1.0 or progress == 0.0:
+                renpy.restart_interaction()
+
+
         def rpu_update(self):
             """
             Perform an update using the .rpu files.
@@ -552,16 +566,15 @@ init -1500 python in updater:
                 module_lists[i] = fl
                 source_file_lists.append(fl)
 
-
             # 3. Update.
-            self.state = self.DOWNLOADING
-            renpy.restart_interaction()
 
             Update(
                 urlparse.urljoin(self.url, "rpu"),
                 source_file_lists,
                 self.base,
                 target_file_lists,
+                progress_callback=self.rpu_progress,
+                logfile=self.log
             )
 
             # 4. Update the new state.
