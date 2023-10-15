@@ -19,14 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+default persistent.show_edit_funcs = True
+default persistent.windows_console = False
+default persistent.lint_options = { # the ones which should be enabled by default
+    "--orphan-tl",
+}
+
 init python:
     from math import ceil
-
-    if persistent.show_edit_funcs is None:
-        persistent.show_edit_funcs = True
-
-    if persistent.windows_console is None:
-        persistent.windows_console = False
 
     def scan_translations(piglatin=True):
 
@@ -334,8 +334,15 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            textbutton _("Orphan translations") style "l_checkbox" action [NullAction()] # default True
-                            textbutton _("Parameters overriding builtin names") style "l_checkbox" action [NullAction()] # default False
+                            textbutton _("Orphan translations"):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--orphan-tl")
+                            # textbutton _("Parameters overriding builtin names"):
+                            #     style "l_checkbox"
+                            #     action ToggleSetMembership(persistent.lint_options, "--builtins-parameters")
+                            # textbutton _("Word count and character count for speaking characters"):
+                            #     style "l_checkbox"
+                            #     action ToggleSetMembership(persistent.lint_options, "--words-char-count")
 
                             add SPACER
 

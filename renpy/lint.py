@@ -970,6 +970,9 @@ def lint():
     ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
     ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errros, 1 if lint errors are found.")
+    ap.add_argument("--orphan-tl", action="store_true", help="If given, orphan translations are reported.")
+    # ap.add_argument("--builtins-parameters", action="store_true", help="If given, renpy or python builtin names in renpy statement parameters are reported.")
+    # ap.add_argument("--words-char-count", action="store_true", help="If given, the number of words and characters for each character is reported.")
 
     args = ap.parse_args()
 
@@ -1073,7 +1076,7 @@ def lint():
         elif isinstance(node, renpy.ast.Label):
             check_label(node)
 
-        elif isinstance(node, renpy.ast.Translate):
+        elif isinstance(node, renpy.ast.Translate) and args.orphan_tl:
             language = node.language
             if language is None:
                 none_language_ids.add(node.identifier)
@@ -1103,7 +1106,8 @@ def lint():
     check_styles()
     check_filename_encodings()
     check_unreachables(all_stmts)
-    check_orphan_translations(none_language_ids, translated_ids)
+    if args.orphan_tl:
+        check_orphan_translations(none_language_ids, translated_ids)
 
     for f in renpy.config.lint_hooks:
         f()
