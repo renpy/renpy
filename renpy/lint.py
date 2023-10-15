@@ -692,7 +692,47 @@ def check_style(name, s):
                 check_style_property_displayable(name, k, v)
 
 
+def check_parameters(kind, node_name, parameter_info):
+    """
+    `kind`
+        What we're parsing the parameters of, for the error message.
+        "screen", "label", "function", "ATL transform"...
+
+    `node_name`
+        The name of the (kind) we're defining.
+
+    `parameter_info`
+        The ParameterInfo we're scanning, or None.
+    """
+
+    if parameter_info is None:
+        return
+
+    names = [p[0] for p in parameter_info.parameters]
+    if parameter_info.extrakw:
+        names.extend(parameter_info.extrakw)
+    if parameter_info.extrapos:
+        names.extend(parameter_info.extrapos)
+
+    rv = [name for name in names if (name in python_builtins) or (name in renpy_builtins)]
+
+    if len(rv) == 1:
+        name = rv[0]
+        report("In {0} {1!r}, the {2!r} parameter replaces a built-in name from either Python or Ren'Py, which may cause problems.".format(kind, node_name, name))
+        if not "_" in name:
+            add("This can be fixed by naming it '{}_'".format(name))
+    elif rv:
+        last = rv.pop()
+        prettyprevious = ", ".join(repr(name) for name in rv)
+        report("In {0} {1!r}, the {2} and {3!r} parameters replace built-in names from either Python or Ren'Py, which may cause problems.".format(kind,
+                                                                                                                                                  node_name,
+                                                                                                                                                  prettyprevious,
+                                                                                                                                                  last))
+
+
 def check_label(node):
+
+    check_parameters("label", node.name, node.parameters)
 
     def add_arg(n):
         if n is None:
@@ -718,6 +758,8 @@ def check_screen(node):
         report("The screen %s has not been given a parameter list.", node.screen.name)
         add("This can be fixed by writing 'screen %s():' instead.", node.screen.name)
 
+    check_parameters("screen", node.screen.name, node.screen.parameters)
+
 
 def check_styles():
     for full_name, s in renpy.style.styles.items(): # @UndefinedVariable
@@ -731,6 +773,10 @@ def check_styles():
 def check_init(node):
     if not (-999 <= node.priority <= 999):
         report("The init priority ({}) is not in the -999 to 999 range.".format(node.priority))
+
+
+def check_transform(node):
+    check_parameters("ATL transform", node.varname, node.parameters)
 
 
 def humanize(n):
@@ -1100,6 +1146,9 @@ def lint():
 
         elif isinstance(node, renpy.ast.Init):
             check_init(node)
+
+        elif isinstance(node, renpy.ast.Transform):
+            check_transform(node)
 
     report_node = None
 
