@@ -67,7 +67,7 @@ class Plan(object):
 
 class Update(object):
 
-    def __init__(self, url, newlists, targetdir, oldlists, aggressive_removal=False):
+    def __init__(self, url, newlists, targetdir, oldlists, progress_callback=None, aggressive_removal=False):
         self.url = url
 
         self.targetdir = targetdir
@@ -248,9 +248,18 @@ class Update(object):
         total = 0
         done = 0
 
+        existing = [ ]
+
         for i in self.old_files:
             i.add_data_filename(self.targetdir)
+
+            if not os.path.exists(i.data_filename):
+                continue
+
+            existing.append(i)
             total += os.path.getsize(i.data_filename)
+
+        self.old_files = existing
 
         total = max(1, total)
 

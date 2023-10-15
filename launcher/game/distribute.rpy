@@ -1481,7 +1481,7 @@ change_renpy_executable()
                 with open(update_fn, "wb" if PY2 else "w") as f:
                     json.dump(update, f, indent=2)
 
-                if (not dlc) or (format in { "update", "rpu" }):
+                if (not dlc) or (format == "update"):
                     fl.append(File("update", None, True, False))
                     fl.append(File("update/current.json", update_fn, False, False))
 

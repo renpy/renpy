@@ -500,12 +500,91 @@ init -1500 python in updater:
                 raise UpdateError(_("No update methods found."))
 
 
+        def fetch_files_rpu(self, module):
+            """
+            Fetches the rpu file list for the given module.
+            """
+
+            import requests, zlib
+
+            url = urlparse.urljoin(self.url, self.updates[module]["rpu_url"])
+
+            try:
+                resp = requests.get(url)
+                resp.raise_for_status()
+            except Exception as e:
+                raise UpdateError(__("Could not download file list: ") + str(e))
+
+            if hashlib.sha256(resp.content).hexdigest() != self.updates[module]["rpu_digest"]:
+                raise UpdateError(__("File list digest does not match."))
+
+            data = zlib.decompress(resp.content)
+
+            for i in json.loads(data)['files']:
+                if "current" in i["name"]:
+                    print(i)
+
+            from renpy.update.common import FileList
+            return FileList.from_json(json.loads(data))
+
         def rpu_update(self):
             """
             Perform an update using the .rpu files.
             """
 
-            raise UpdateError("RPU Update not yet implemented.")
+            from renpy.update.common import FileList
+            from renpy.update.update import Update
+
+            # 1. Load the current files.
+
+            target_file_lists = [ ]
+
+            for i in self.modules:
+                target_file_lists.append(FileList.from_current_json(self.current_state[i]))
+
+            # 2. Fetch the file lists.
+
+            source_file_lists = [ ]
+            module_lists = { }
+
+            for i in self.modules:
+                fl = self.fetch_files_rpu(i)
+                module_lists[i] = fl
+                source_file_lists.append(fl)
+
+
+            # 3. Update.
+            self.state = self.DOWNLOADING
+            renpy.restart_interaction()
+
+            Update(
+                urlparse.urljoin(self.url, "rpu"),
+                source_file_lists,
+                self.base,
+                target_file_lists,
+            )
+
+            # 4. Update the new state.
+            for i in self.modules:
+                d = module_lists[i].to_current_json()
+                d["version"] = self.updates[i]["version"]
+                self.new_state[i] = d
+
+            # 5. Finish up.
+
+            self.message = None
+            self.progress = None
+            self.can_proceed = True
+            self.can_cancel = False
+
+            persistent._update_version[self.url] = None
+
+            if self.restart:
+                self.state = self.DONE
+            else:
+                self.state = self.DONE_NO_RESTART
+
+            renpy.restart_interaction()
 
         def zsync_update(self):
 
@@ -829,7 +908,6 @@ init -1500 python in updater:
             d = json.load(f)
             d[name]["version"] = 0
             self.current_state.update(d)
-
 
         def check_versions(self):
             """
