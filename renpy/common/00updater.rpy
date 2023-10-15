@@ -464,12 +464,50 @@ init -1500 python in updater:
             # Disable autoreload.
             renpy.set_autoreload(False)
 
-            # Perform the update.
             self.new_state = dict(self.current_state)
             renpy.restart_interaction()
 
             self.progress = 0.0
             self.state = self.PREPARING
+
+            import os
+
+            has_rpu = False
+            has_zsync = False
+
+            for i in self.modules:
+
+                for d in self.updates:
+                    if "rpu_url" in self.updates[d]:
+                        has_rpu = True
+                    if "zsync_url" in self.updates[d]:
+                        has_zsync = True
+
+            if has_rpu and has_zsync:
+
+                if "RPU_UPDATE" in os.environ:
+                    self.rpu_update()
+                else:
+                    self.zsync_update()
+
+            elif has_rpu:
+                self.rpu_update()
+
+            elif has_zsync:
+                self.zsync_update()
+
+            else:
+                raise UpdateError(_("No update methods found."))
+
+
+        def rpu_update(self):
+            """
+            Perform an update using the .rpu files.
+            """
+
+            raise UpdateError("RPU Update not yet implemented.")
+
+        def zsync_update(self):
 
             if self.patch:
                 for i in self.modules:
