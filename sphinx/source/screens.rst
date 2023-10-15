@@ -1052,7 +1052,7 @@ One use of nearrect is for dropdown menus::
 
             has vbox
 
-            # This is the button that is clicked to enable the dropdown,
+            # This is the button that is clicked to enable the dropdown
             textbutton "Difficulty: [difficulty]":
 
                 # This action captures the focus rectangle, and in doing so,
@@ -1063,7 +1063,7 @@ One use of nearrect is for dropdown menus::
                 action Return()
 
         # All sorts of other screen elements could be here, but the nearrect needs
-        # be at the top level, and the last thing show, apart from its child.
+        # to be at the top level, and the last thing shown, apart from its child.
 
         # Only if the focus has been captured, display the dropdown.
         # You could also use showif instead of basic if
