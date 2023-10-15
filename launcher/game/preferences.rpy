@@ -337,9 +337,9 @@ screen preferences():
                             textbutton _("Orphan translations"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--orphan-tl")
-                            # textbutton _("Parameters overriding builtin names"):
-                            #     style "l_checkbox"
-                            #     action ToggleSetMembership(persistent.lint_options, "--builtins-parameters")
+                            textbutton _("Parameters overriding builtin names"):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--builtins-parameters")
                             # textbutton _("Word count and character count for speaking characters"):
                             #     style "l_checkbox"
                             #     action ToggleSetMembership(persistent.lint_options, "--words-char-count")

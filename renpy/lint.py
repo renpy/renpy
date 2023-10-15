@@ -732,7 +732,8 @@ def check_parameters(kind, node_name, parameter_info):
 
 def check_label(node):
 
-    check_parameters("label", node.name, node.parameters)
+    if args.builtins_parameters:
+        check_parameters("label", node.name, node.parameters)
 
     def add_arg(n):
         if n is None:
@@ -758,7 +759,8 @@ def check_screen(node):
         report("The screen %s has not been given a parameter list.", node.screen.name)
         add("This can be fixed by writing 'screen %s():' instead.", node.screen.name)
 
-    check_parameters("screen", node.screen.name, node.screen.parameters)
+    if args.builtins_parameters:
+        check_parameters("screen", node.screen.name, node.screen.parameters)
 
 
 def check_styles():
@@ -776,7 +778,8 @@ def check_init(node):
 
 
 def check_transform(node):
-    check_parameters("ATL transform", node.varname, node.parameters)
+    if args.builtins_parameters:
+        check_parameters("ATL transform", node.varname, node.parameters)
 
 
 def humanize(n):
@@ -1017,9 +1020,10 @@ def lint():
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
     ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errros, 1 if lint errors are found.")
     ap.add_argument("--orphan-tl", action="store_true", help="If given, orphan translations are reported.")
-    # ap.add_argument("--builtins-parameters", action="store_true", help="If given, renpy or python builtin names in renpy statement parameters are reported.")
+    ap.add_argument("--builtins-parameters", action="store_true", help="If given, renpy or python builtin names in renpy statement parameters are reported.")
     # ap.add_argument("--words-char-count", action="store_true", help="If given, the number of words and characters for each character is reported.")
 
+    global args
     args = ap.parse_args()
 
     if args.filename:
