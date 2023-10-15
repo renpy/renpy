@@ -860,7 +860,7 @@ def report_character_stats(charastats):
             count = charastats[char]
             rv.append(
                 " * " + char
-                + " has " + humanize(count.blocks) + " blocks of dialogue, "
+                + " has " + humanize(count.blocks) + (" block " if count.blocks == 1 else " blocks ") + "of dialogue, "
                 + "containing " + humanize(count.words) + " words and "
                 + humanize(count.characters) + " characters."
             )
@@ -871,14 +871,14 @@ def report_character_stats(charastats):
         for char, count in charastats.items():
             nblocks_to_char[count.blocks].append(char)
 
-        for count, chars in sorted(nblocks_to_char.items(), reverse=True):
+        for nblocks, chars in sorted(nblocks_to_char.items(), reverse=True):
             chars.sort()
 
             start = humanize_listing(chars, singular_suffix=" has ", plural_suffix=" have ")
 
             rv.append(
-                " * " + start + humanize(count) +
-                (" block " if count == 1 else " blocks ") + "of dialogue" +
+                " * " + start + humanize(nblocks) +
+                (" block " if nblocks == 1 else " blocks ") + "of dialogue" +
                 (" each." if len(chars) > 1 else ".")
                 )
 
