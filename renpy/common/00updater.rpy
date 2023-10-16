@@ -253,7 +253,7 @@ init -1500 python in updater:
         # The update was cancelled.
         CANCELLED = "CANCELLED"
 
-        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True):
+        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True, prefer_rpu=False):
             """
             Takes the same arguments as update().
             """
@@ -311,6 +311,9 @@ init -1500 python in updater:
 
             # Do we prompt for confirmation?
             self.confirm = confirm
+
+            # Should rpu updates be preferred?
+            self.prefer_rpu = prefer_rpu
 
             # The base path of the game that we're updating, and the path to the update
             # directory underneath it.
@@ -475,6 +478,8 @@ init -1500 python in updater:
             has_rpu = False
             has_zsync = False
 
+            prefer_rpu = self.prefer_rpu or "RPU_UPDATE" in os.environ
+
             for i in self.modules:
 
                 for d in self.updates:
@@ -485,7 +490,7 @@ init -1500 python in updater:
 
             if has_rpu and has_zsync:
 
-                if "RPU_UPDATE" in os.environ:
+                if prefer_rpu:
                     self.rpu_update()
                 else:
                     self.zsync_update()
@@ -1573,7 +1578,7 @@ init -1500 python in updater:
         return not not get_installed_packages(base)
 
 
-    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True):
+    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True, prefer_rpu=False):
         """
         :doc: updater
 
@@ -1619,12 +1624,16 @@ init -1500 python in updater:
             changed data. If false, Ren'Py will download a complete copy of
             the game, and update from that. This is set to false automatically
             when the url does not begin with "http:".
+
+        `prefer_rpu`
+            If True, Ren'Py will prefer the RPU format for updates, if both
+            zsync and RPU are available.
         """
 
         global installed_packages_cache
         installed_packages_cache = None
 
-        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm, patch=patch)
+        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm, patch=patch, prefer_rpu=prefer_rpu)
         ui.timer(.1, repeat=True, action=renpy.restart_interaction)
         renpy.call_screen("updater", u=u)
 
