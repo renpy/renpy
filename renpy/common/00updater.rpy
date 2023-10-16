@@ -520,10 +520,6 @@ init -1500 python in updater:
 
             data = zlib.decompress(resp.content)
 
-            for i in json.loads(data)['files']:
-                if "current" in i["name"]:
-                    print(i)
-
             from renpy.update.common import FileList
             return FileList.from_json(json.loads(data))
 

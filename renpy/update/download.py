@@ -89,7 +89,7 @@ def write_multipart(f, headers, content):
             k, v = i.split(": ", 1)
             part_headers[k] = v
 
-        rv.append(write_range(f, part_headers, part_content))
+        rv.extend(write_range(f, part_headers, part_content))
 
     return rv
 
