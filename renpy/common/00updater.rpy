@@ -917,9 +917,26 @@ init -1500 python in updater:
                     future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
 
         def add_dlc_state(self, name):
-            url = urlparse.urljoin(self.url, self.updates[name]["json_url"])
-            f = urlopen(url)
-            d = json.load(f)
+
+            has_rpu = "rpu_url" in self.updates[name]
+            has_zsync = "zsync_url" in self.updates[name]
+
+            prefer_rpu = self.prefer_rpu or "RPU_UPDATE" in os.environ
+
+            if has_rpu and has_zsync:
+                if prefer_rpu:
+                    has_zsync = False
+                else:
+                    has_rpu = False
+
+            if has_rpu:
+                fl = self.fetch_files_rpu(name)
+                d = { name : fl.to_current_json() }
+            else:
+                url = urlparse.urljoin(self.url, self.updates[name]["json_url"])
+                f = urlopen(url)
+                d = json.load(f)
+
             d[name]["version"] = 0
             self.current_state.update(d)
 
