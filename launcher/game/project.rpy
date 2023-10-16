@@ -55,11 +55,11 @@ init python in project:
 
         def __init__(self, path, name=None):
 
-            if name is None:
-                name = os.path.basename(path)
-
             while path.endswith("/"):
                 path = path[:-1]
+
+            if name is None:
+                name = os.path.basename(path)
 
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
