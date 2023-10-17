@@ -92,7 +92,7 @@ will be. Their behavior is relatively simple to grasp:
 
 .. include:: inc/generated_data_action
 
-These other data actions do not follow the pattern above. Some of them are related to the ``set`` type,
+The following data actions do not follow the pattern above. Some of them are related to Python's ``set`` type,
 not to be confused with the Set- actions above.
 
 .. include:: inc/data_action
