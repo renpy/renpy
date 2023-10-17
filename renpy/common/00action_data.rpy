@@ -352,7 +352,7 @@ init -1600 python hide:
             doc = ":doc: generated_data_action"
 
             if not PY2:
-                from inspect import signature, Signature
+                from inspect import signature, Signature, Parameter
 
                 params = []
                 for bas in (accessor, manager):
@@ -360,6 +360,10 @@ init -1600 python hide:
                     for k, param in enumerate(sig.parameters.values()):
                         if k and (param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)):
                             params.append(param)
+
+                if manager is Cycle:
+                    params.append(Parameter("reverse", Parameter.KEYWORD_ONLY, default=False))
+                    params.append(Parameter("loop", Parameter.KEYWORD_ONLY, default=True))
 
                 doc += "\n:args: " + str(Signature(parameters=params)) + "\n\nSee :ref:`data-actions`."
 

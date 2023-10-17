@@ -83,7 +83,9 @@ will be. Their behavior is relatively simple to grasp:
 * The :abbr:`Cycle- (CycleVariable, CycleScreenVariable, CycleLocalVariable, CycleField, CycleDict)`
   actions cycle through the provided `values`, which must be a non-empty sequence (a list,
   tuple or range). If the target's value is not in the sequence at the time the action runs, it is set to
-  the first value in the sequence.
+  the first value in the sequence. The `loop` parameter (defaulting to True) determines what happens when
+  the `values` run out : if True it's started from the beginning, if False it raises an exception. The
+  `reverse` parameter (defaulting to False) reverses the passed `values` sequence.
 * The :abbr:`Increment- (IncrementVariable, IncrementScreenVariable, IncrementLocalVariable, IncrementField, IncrementDict)`
   actions add `amount` to their target, which defaults to 1 but may be of any type
   compatible with the target. ``target = target + amount``
