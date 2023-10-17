@@ -213,7 +213,7 @@ init -1600 python hide:
         def get_selected(self):
             try:
                 val = self.current_value()
-            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError): # __FieldNotFound ?
+            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError, __FieldNotFound):
                 return False
 
             return val == self.value
@@ -251,7 +251,7 @@ init -1600 python hide:
         def get_selected(self):
             try:
                 val = self.current_value()
-            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError): # __FieldNotFound ?
+            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError, __FieldNotFound):
                 return False
 
             tv = self.true_value
@@ -307,7 +307,7 @@ init -1600 python hide:
 
             try:
                 value = self.current_value()
-            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError): # __FieldNotFound ?
+            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError, __FieldNotFound):
                 return False
 
             if value in values:
@@ -335,7 +335,7 @@ init -1600 python hide:
         def get_sensitive(self):
             try:
                 value = self.current_value()
-            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError): # __FieldNotFound ?
+            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError, __FieldNotFound):
                 return False
 
             try:
