@@ -206,6 +206,9 @@ def create_store(name):
     Creates the store with `name`.
     """
 
+    if name == "store.store":
+        raise NameError('Cannot create a substore named "store".')
+
     parent, _, var = name.rpartition('.')
 
     if parent:
