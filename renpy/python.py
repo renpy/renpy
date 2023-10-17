@@ -207,7 +207,7 @@ def create_store(name):
     """
 
     if name == "store.store":
-        raise NameError('Cannot create a substore named "store".')
+        raise NameError('Namespaces may not begin with "store".')
 
     parent, _, var = name.rpartition('.')
 
