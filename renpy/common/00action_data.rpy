@@ -24,6 +24,9 @@ init -1600 python:
     __Sentinel = object()
 
     class __FieldNotFound(Exception):
+        """
+        raised by Field's current_value (and Variable's) when it fails to retrieve the field
+        """
         def __init__(self, kind=None, name=None):
             super(__FieldNotFound, self).__init__("The {!r} {} does not exist.".format(name, kind))
 
@@ -42,6 +45,9 @@ init -1600 python:
         return rv
 
     class __SetFieldError(Exception):
+        """
+        raised by Field's __call__ (and Variable's) when it fails to set the field
+        """
         def __init__(self, kind=None, name=None):
             super(__SetFieldError, self).__init__("The {!r} {} cannot be set.".format(name, kind))
 
@@ -54,14 +60,22 @@ init -1600 python:
         except Exception:
             raise __SetFieldError(kind, name)
 
-    # never raised outside of this file, always excepted by return (in __call__) or return False (in get_selected)
-    class __NoCurrentScreen(Exception): pass
+    class __NoCurrentScreen(Exception):
+        """
+        raised by ScreenVariable.current_value when it fails to find the screen
+        always excepted (with return False in get_selected and get_sensitive) or avoided (in __call__)
+        """
 
-    # never raised outside of this file, always excepted by return (in __call__) or return False (in get_selected)
-    class __ScreenVariableNameError(KeyError): pass
+    class __ScreenVariableNameError(KeyError):
+        """
+        raised by ScreenVariable.current_value when it fails to retrieve the variable
+        always excepted (with return False in get_selected and get_sensitive) or avoided (in __call__)
+        """
 
-    # when Dict fails to retrieve the index/key
     class __LookupError(LookupError):
+        """
+        raised by Dict's current_value (and LocalVariable's) when it fails to retrieve the index/key
+        """
         def __init__(self, kind=None, name=None):
             super(__LookupError, self).__init__("The {!r} {} does not exist.".format(name, kind))
 
@@ -74,7 +88,7 @@ init -1600 python hide:
 
     # Accessor mixins : manage how the data is accessed
     # defines a __call__ which gets the value to set from the value_to_set() method
-    # defines a current_value() method which returns the current value of the accessed data or raise __FieldNotFound
+    # defines a current_value() method which returns the current value of the accessed data or raise one of the above exceptions
     # may define the `kind` class attribute, which is used in error messages
     class Field(Accessor):
         """
