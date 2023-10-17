@@ -501,7 +501,7 @@ def parse_arguments(l):
         state = l.checkpoint()
 
         if not (expect_starred or expect_doublestarred):
-            name = l.name()
+            name = l.word()
 
             if name and l.match(r'='):
                 if name in names:
@@ -752,7 +752,7 @@ def jump_statement(l, loc):
     l.expect_eol()
     l.advance()
 
-    return ast.Jump(loc, target, expression)
+    return ast.Jump(loc, target, expression, (expression and l.global_label or ""))
 
 
 @statement("call")
@@ -773,7 +773,7 @@ def call_statement(l, loc):
 
     arguments = parse_arguments(l)
 
-    rv = [ ast.Call(loc, target, expression, arguments) ] # type: list[ast.Call|ast.Label|ast.Pass]
+    rv = [ ast.Call(loc, target, expression, arguments, (expression and l.global_label or "")) ] # type: list[ast.Call|ast.Label|ast.Pass]
 
     if l.keyword('from'):
         name = l.require(l.label_name_declare)

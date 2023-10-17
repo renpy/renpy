@@ -658,7 +658,7 @@ cdef class GLDraw:
         rv = self.texture_cache.get(surf, None)
 
         if rv is None:
-            rv = gltexture.texture_grid_from_surface(surf, transient)
+            rv = gltexture.texture_grid_from_surface(surf, transient, properties)
             self.texture_cache[surf] = rv
             self.ready_texture_queue.add(rv)
 

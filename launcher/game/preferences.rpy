@@ -64,6 +64,9 @@ default persistent.daily_update_check_once = False
 # Keep the default update check from triggering until tomorrow.
 default persistent.last_update_check = datetime.date.today()
 
+# Should we try to skip the splashscreen?
+default persistent.skip_splashscreen = False
+
 init python:
     if not persistent.daily_update_check_once:
         persistent.daily_update_check_once = True
@@ -211,15 +214,28 @@ screen preferences():
                             style "l_indent"
                             has vbox
 
+                            text _("Game Options:")
+
+                            add HALF_SPACER
+
+                            if renpy.windows:
+                                textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
+
+                            textbutton _("Skip splashscreen") style "l_checkbox" action ToggleField(persistent, "skip_splashscreen")
+
+                        add SPACER
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+                            has vbox
+
                             text _("Launcher Options:")
 
                             add HALF_SPACER
 
                             textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
                             textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
-
-                            if renpy.windows:
-                                textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
 
                             textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 

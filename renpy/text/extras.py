@@ -37,7 +37,9 @@ text_tags = dict(
     alpha=True,
     alt=True,
     art=True,
+    axis=True,
     done=False,
+    instance=True,
     image=False,
     p=False,
     w=False,
@@ -100,6 +102,9 @@ def check_text_tags(s):
             continue
 
         # Strip off arguments for tags.
+        text = text.partition('=')[0]
+        text = text.partition(':')[0]
+
         if text.find('=') != -1:
             text = text[:text.find('=')]
 

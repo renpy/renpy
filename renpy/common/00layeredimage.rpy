@@ -15,7 +15,7 @@ python early in layeredimage:
     FIXED_PROPERTIES = renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names
 
     # This is the default value for predict_all given to conditions.
-    predict_all = False
+    predict_all = None
 
     def format_function(what, name, group, variant, attribute, image, image_format, **kwargs):
         """
@@ -423,7 +423,7 @@ python early in layeredimage:
             args.append(None)
             args.append(Null())
 
-            return ConditionSwitch(predict_all=predict_all, *args)
+            return ConditionSwitch(*args, predict_all=predict_all)
 
     class RawConditionGroup(object):
 

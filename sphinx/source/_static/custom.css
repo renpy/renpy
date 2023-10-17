@@ -3,7 +3,7 @@
 }
 
 @media only screen and (min-width: 481px) {
-    div[role="search"] {
+    [role="search"] {
         top: 12.944px;
         margin-bottom: 12.944px;
         width: 274.125px;

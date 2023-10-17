@@ -86,7 +86,8 @@ statement. For example::
 .. var:: vpunch
 
     When invoked, this transition shakes the screen vertically for a
-    quarter second.
+    quarter second. Imitating and customizing this transition and
+    :var:`hpunch` is best done using :ref:`atl-transitions`.
 
 .. var:: hpunch
 

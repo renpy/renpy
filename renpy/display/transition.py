@@ -33,14 +33,14 @@ import renpy
 from renpy.display.render import render
 
 
-class Transition(renpy.display.core.Displayable):
+class Transition(renpy.display.displayable.Displayable):
     """
     This is the base class of most transitions. It takes care of event
     dispatching.
     """
 
-    new_widget = None # type:renpy.display.core.Displayable|None
-    old_widget = None # type:renpy.display.core.Displayable|None
+    new_widget = None # type:renpy.display.displayable.Displayable|None
+    old_widget = None # type:renpy.display.displayable.Displayable|None
 
     def __init__(self, delay, **properties):
         super(Transition, self).__init__(**properties)
@@ -158,7 +158,7 @@ class MultipleTransition(Transition):
         self.events = False
 
     def visit(self):
-        return [ i for i in self.screens if isinstance(i, renpy.display.core.Displayable)] + self.transitions
+        return [ i for i in self.screens if isinstance(i, renpy.display.displayable.Displayable)] + self.transitions
 
     def event(self, ev, x, y, st):
 

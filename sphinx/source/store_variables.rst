@@ -49,6 +49,13 @@ and rolled-back when rollback occurs.
     This is set to None at the start of the splashscreen, and restored to its
     original value when the splashscreen ends.
 
+.. var:: _greedy_rollback = True
+
+    Determines if the game performs a greedy rollback after a load. A greedy
+    rollback will rollback to just after the last statement that interacted,
+    rather than to just before the statement that the game was in during
+    the load.
+
 .. var:: _history = True
 
     If true, Ren'Py will record dialogue history when a line is shown. (Note
@@ -122,16 +129,20 @@ and rolled-back when rollback occurs.
 
     Controls if rollback is allowed.
 
-.. var:: say = ...
+.. var:: say : Callable
 
-    A function that is called by Ren'Py to display dialogue. This is called
-    with three arguments. The first argument (`who`) is the character saying the
-    dialogue (or None for the narrator). The second argument (`what`) is what dialogue
-    is being said.
+    A function that is called by Ren'Py to display dialogue, when a string is
+    used in place of the speaking character::
 
-    The third argument must be a keyword argument named `interact` and defaulting
-    to True. If true, the say function will wait for a click. If false, it will
-    immediately return with the dialogue displayed on the screen.
+        define e = Character("Eileen", who_color="#0f0")
+
+        label start:
+            "Eileen" "My name is Eileen." # will call the say function
+            e "I like trains !" # will not call the say function
+
+    This function should have the same signature as :func:`renpy.say`.
+    It should not call :func:`renpy.say` but rather use the other
+    :doc:`say statement equivalents <statement_equivalents>`.
 
     It's rare to call this function directly, as one can simply call a character
     with dialogue. This variable mostly exists to be redefined, as a way of

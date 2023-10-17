@@ -204,13 +204,27 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
 # the launcher, usually.)
 def path_to_renpy_base():
     """
-    Returns the absolute path to thew Ren'Py base directory.
+    Returns the absolute path to the Ren'Py base directory.
     """
 
-    renpy_base = os.path.dirname(os.path.realpath(sys.argv[0]))
+    renpy_base = os.path.dirname(os.path.abspath(__file__))
     renpy_base = os.path.abspath(renpy_base)
 
     return renpy_base
+
+def path_to_logdir(basedir):
+    """
+    Returns the absolute path to the log directory.
+    `basedir`
+        The base directory (config.basedir)
+    """
+
+    import renpy # @UnresolvedImport
+
+    if renpy.android:
+        return os.environ['ANDROID_PUBLIC']
+
+    return basedir
 
 ##############################################################################
 

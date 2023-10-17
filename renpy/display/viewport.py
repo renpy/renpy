@@ -120,6 +120,9 @@ class Viewport(renpy.display.layout.Container):
         self.yoffset = offsets[1] if (offsets[1] is not None) else yinitial
 
         if isinstance(replaces, Viewport) and replaces.offsets:
+            self.xadjustment.viewport_replaces(replaces.xadjustment)
+            self.yadjustment.viewport_replaces(replaces.yadjustment)
+
             self.xadjustment.range = replaces.xadjustment.range
             self.xadjustment.value = replaces.xadjustment.value
             self.yadjustment.range = replaces.yadjustment.range
@@ -128,9 +131,11 @@ class Viewport(renpy.display.layout.Container):
             self.yoffset = replaces.yoffset
             self.drag_position = replaces.drag_position
             self.drag_position_time = replaces.drag_position_time
+            self.drag_speed = replaces.drag_speed
         else:
             self.drag_position = None # type: tuple[int, int]|None
             self.drag_position_time = None # type: float|None
+            self.drag_speed = None
 
         self.child_width, self.child_height = child_size
 
@@ -177,6 +182,13 @@ class Viewport(renpy.display.layout.Container):
     def per_interact(self):
         self.xadjustment.register(self)
         self.yadjustment.register(self)
+
+    def set_style_prefix(self, prefix, root):
+        """
+        Do not change the style of children when the viewport is focused.
+        """
+
+        return
 
     def update_offsets(self, cw, ch, st):
         """
@@ -648,13 +660,13 @@ class VPGrid(Viewport):
             yspacing = self.style.spacing
 
         if renpy.config.relative_spacing:
-            xspacing = renpy.display.layout.scale(xspacing, width)
-            yspacing = renpy.display.layout.scale(yspacing, height)
+            xspacing = renpy.display.layout.compute_raw(xspacing, width)
+            yspacing = renpy.display.layout.compute_raw(yspacing, height)
 
-        left_margin = renpy.display.layout.scale(self.style.left_margin, width)
-        right_margin = renpy.display.layout.scale(self.style.right_margin, width)
-        top_margin = renpy.display.layout.scale(self.style.top_margin, height)
-        bottom_margin = renpy.display.layout.scale(self.style.bottom_margin, height)
+        left_margin = renpy.display.layout.compute_raw(self.style.left_margin, width)
+        right_margin = renpy.display.layout.compute_raw(self.style.right_margin, width)
+        top_margin = renpy.display.layout.compute_raw(self.style.top_margin, height)
+        bottom_margin = renpy.display.layout.compute_raw(self.style.bottom_margin, height)
 
         rend = renpy.display.render.render(self.children[0], child_width, child_height, st, at)
         cw, ch = rend.get_size()

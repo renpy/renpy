@@ -565,6 +565,15 @@ Occasionally Used
     The user can progress forward through the rollback buffer by
     clicking.
 
+.. var:: config.font_hinting = { None : "auto" }
+
+    This is a dictionary from a string containing the font filename to a string
+    giving one of the font hinting modes in :propref:`hinting`. When
+    :propref:`hinting` is True, the value is looked up in this dictionary,
+    and the resulting mode is used.
+
+    If no key is found, None is looked up, and the resulting mode is used.
+
 .. var:: config.font_name_map = { }
 
     This is a map from (font name) to (font filepath/fontgroup). Font names
@@ -633,12 +642,6 @@ Occasionally Used
 
     If true, the current dialogue will appear in the history screen.
 
-.. var:: config.hw_video = False
-
-    If true, hardware video playback will be used on mobile platforms. This
-    may be faster, but only some formats are supported and only fullscreen video
-    is available. If false, software playback will be used.
-
 .. var:: config.hyperlink_handlers = { ... }
 
     A dictionary mapping a hyperlink protocol to the handler for that
@@ -649,7 +652,7 @@ Occasionally Used
 .. var:: config.hyperlink_protocol = "call_in_new_context"
 
     The protocol that is used for hyperlinks that do not have a protocol
-    assigned to them. See :ref:`the a text tag <a-tag>` for a description
+    assigned to them. See the :tt:`a` text tag for a description
     as to what the possible protocols mean.
 
 .. var:: config.image_cache_size = None
@@ -1513,8 +1516,9 @@ Rarely or Internally Used
     upper-left corner of the layer, with height and width giving the
     layer size.
 
-    If a layer is not mentioned in config.layer_clipping, then it is
-    assumed to take up the full screen.
+    If a layer is not mentioned in config.layer_clipping, then it will
+    take up the full size of its container. Typically this will be the
+    screen, unless being shown inside a :class:`Layer` displayable.
 
 .. var:: config.layeredimage_offer_screen = True
 

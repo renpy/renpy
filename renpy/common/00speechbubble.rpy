@@ -61,6 +61,10 @@ init -1150 python in bubble:
     # The property group names, in order.
     properties_order = [ ]
 
+    # If not None, a function that takes the character's image tag, and returns
+    # the list of property names that are allowed for that image tag.
+    properties_callback = None
+
     # A map from property name to the (left, top, right, bottom) number of pixels
     # areas with that property are expanded by. If a property is not in this
     # map, None is tried.
@@ -154,10 +158,18 @@ init -1150 python in bubble:
                 int(default_area[3] * ygrid)
             ]
 
-            return {
+            rv = {
                 "area" : default_area_rect,
-                "properties" : properties_order[0]
             }
+
+
+            if properties_callback is not None:
+                rv["properties"] = properties_callback(image_tag)[0]
+            else:
+                rv["properties"] = properties_order[0]
+
+            return rv
+
 
         def expand_area(self, area, properties_key):
             """
@@ -234,14 +246,19 @@ init -1150 python in bubble:
 
             current = tag_properties[self.image_tag]["properties"]
 
+            if properties_callback is not None:
+                properties = properties_callback(self.image_tag)
+            else:
+                properties = properties_order
+
             try:
-                idx = properties_order.index(current)
+                idx = properties.index(current)
             except ValueError:
                 idx = 0
 
-            idx = (idx + 1) % len(properties_order)
+            idx = (idx + 1) % len(properties)
 
-            db[self.tlid]["properties"] = properties_order[idx]
+            db[self.tlid]["properties"] = properties[idx]
             renpy.rollback(checkpoints=0, force=True, greedy=True)
 
         def alternate(self):
@@ -346,14 +363,14 @@ init 1050 python hide:
                     raise Exception("bubble.properties[{!r}] contains a value that can't be serialized to JSON: {!r}".format(k, i))
 
         if bubble.active:
-            config.overlay_screens.append("_bubble_editor")
+            config.always_shown_screens.append("_bubble_editor")
 
 
 
 screen _bubble_editor():
     zorder 1050
 
-    if bubble.shown.value:
+    if bubble.shown.value and not _menu:
 
         drag:
             draggable True

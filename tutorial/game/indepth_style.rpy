@@ -68,25 +68,25 @@ label styles_menu:
         e "What would you like to know about styles?"
 
         "Style basics.":
-            call style_basics
+            call style_basics from _call_style_basics
 
         "General style properties.":
-            call style_general
+            call style_general from _call_style_general
 
         "Text style properties.":
-            call style_text
+            call style_text from _call_style_text
 
         "Window and Button style properties.":
-            call style_button
+            call style_button from _call_style_button
 
         "Bar style properties.":
-            call style_bar
+            call style_bar from _call_style_bar
 
         "Box, Grid, and Fixed style properties.":
-            call style_box
+            call style_box from _call_style_box
 
         "The Displayable Inspector.":
-            call style_inspector
+            call style_inspector from _call_style_inspector
 
         "That's all I want to know.":
             return

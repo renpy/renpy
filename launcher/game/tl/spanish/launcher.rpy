@@ -2130,3 +2130,23 @@
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
     new "Correciones nocturnas (Ren'Py 7, Python 2)"
+
+    # game/choose_directory.rpy:72
+    old "No directory was selected, but one is required."
+    new "No se seleccionó un directorio, pero uno requerido."
+
+    # game/choose_directory.rpy:79
+    old "The selected directory does not exist."
+    new "El directorio seleccionado no existe."
+
+    # game/choose_directory.rpy:81
+    old "The selected directory is not writable."
+    new "No se puede escribir en el directorio seleccionado."
+
+    # game/distribute.rpy:554
+    old "This may be derived from build.name and config.version or build.version."
+    new "Puede derivarse de build.name y config.version o build.version."
+
+    # game/distribute.rpy:532
+    old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
+    new "La compilación de distribuciones falló:\n\nEl proyecto es el Tutorial de Ren'Py, que no puede ser distribuido fuera de Ren'Py. Considera usar The Question como proyecto de prueba."

@@ -402,9 +402,8 @@ adv = ADVCharacter(None,
 
                 kind=False)
 
-# predict_say and who are defined in 00library.rpy, but we add default
-# versions here in case there is a problem with initialization. (And
-# for pickling purposes.)
+# This character is copied when a name-only say statement is called.
+name_only = adv
 
 
 def predict_say(who, what):
@@ -417,8 +416,7 @@ def predict_say(who, what):
 
 def say(who, what, interact=True, *args, **kwargs):
     who = Character(who, kind=adv)
-    who(what, interact=interact, *args, **kwargs)
-
+    who(what, *args, interact=interact, **kwargs)
 
 # Used by renpy.reshow_say and extend.
 _last_say_who = None

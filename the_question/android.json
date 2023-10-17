@@ -16,7 +16,7 @@
         "INTERNET"
     ],
     "source": false,
-    "store": "none",
+    "store": "all",
     "update_always": true,
     "update_icons": true,
     "update_keystores": true,

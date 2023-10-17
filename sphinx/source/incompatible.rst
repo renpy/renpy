@@ -33,6 +33,36 @@ report any issues. When reporting issues, please determine the hardware
 8.2.0 / 7.7.0
 --------------
 
+**Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
+different glyphs than would have been produced differently, and may change
+the spacing of text. The positioning of vertical text has also been
+changed by harfbuzz rendering.
+
+To revert this changes, include in your game::
+
+    style default:
+        shaper "freetype"
+
+Ren'Py will automatically use an Emoji font when required. To disable this,
+add::
+
+    style default:
+        emoji_font None
+
+
+**Polar Coordinate Changes** Ren'Py now enforces that the angles given to
+the :tpref:`angle` and :tpref:`anchorangle`
+properties are in the range 0 to 360 degrees, inclusive of 0 but not of 360.
+Previously, angles outside this range  gave undefined behavior, now the angles
+will be clamped to this range. A 360 degree change will no longer cause motion,
+but will instead be treated as a 0 degree change.
+
+When animating :tpref:`angle` and :tpref:`anchorangle` with ATL, if a direction
+is not supplied, the shortest arc will be used, even if it passes through 0.
+
+There is not a compatibility define for these changes, as they are unlikely to
+affect the visible behavior of games in practice.
+
 **Empty ATL Blocks Forbidden** Previously, Ren'Py would allow an empty ATL block.
 Now it will report that a block is required. You'll need to change::
 
@@ -104,7 +134,7 @@ this produced an error message like::
 
         SHA1: ...
 
-Whine this can be cause by other problems (like simply using entirely incorrect
+While this can be cause by other problems (like simply using entirely incorrect
 keys), one potential fix is:
 
 1. In your project's base directory, rename ``bundle.keystore`` to ``bundle.keystore.bak``.

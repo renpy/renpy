@@ -274,22 +274,20 @@ These displayables are used to create certain visual effects.
 .. include:: inc/disp_effects
 
 Image Manipulators
--------------------
+------------------
 
-An :doc:`image manipulator <im>` is a displayable that takes an image or image
-manipulator, and either loads it or performs an operation on it.
-Image manipulators can only take images or other
-image manipulators as input.
+:doc:`Image manipulators <im>` are an historic kind of displayables that
+apply transformations or operations exclusively to other images or image
+manipulators - to the exclusion of the other kinds of displayables.
 
 An image manipulator can be used any place a displayable can, but not
 vice-versa. An :func:`Image` is a kind of image manipulator, so an
 Image can be used whenever an image manipulator is required.
 
-The use of image manipulators is
-historic. A number of image manipulators that had been documented in the
-past should no longer be used, as they suffer from inherent problems.
-In any case except for :func:`im.Data`, the :func:`Transform` displayable provides
-similar functionality in a more general manner, while fixing the problems.
+Their use is historic. A number of image manipulators that had been documented
+in a distant past should no longer be used, as they suffer from inherent
+problems, and in general (except for :func:`im.Data`), the :func:`Transform`
+displayable provides similar functionality while fixing the problems.
 
 For the list of image manipulators, see the :doc:`image manipulator <im>`
 documentation.

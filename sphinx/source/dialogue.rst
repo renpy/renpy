@@ -46,8 +46,7 @@ giving a character name, or a Character object. In the latter case,
 the character object is used to control how the dialogue is shown.
 
 The final form consists of a string and a with clause which has a
-transition. In this case, th
-e string is shown and a screen is shaken
+transition. In this case, the string is shown and a screen is shaken
 at the same time.
 
 
@@ -207,7 +206,7 @@ them can be a problem.
     without a character name.
 
 ``name_only``
-    A character that is used to display dialogue in which the
+    A character that is used for dialogue in which the
     character name is given as a string. This character is copied to a
     new character with the given name, and then that new character is
     used to display the dialogue.
@@ -451,3 +450,5 @@ See Also
 
 :doc:`statement_equivalents` : how to use most of the features described here in
 a python context, although with some drawbacks and limitations.
+
+:func:`renpy.last_say` : provides information about the last say statement.

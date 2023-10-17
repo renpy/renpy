@@ -206,6 +206,9 @@ def create_store(name):
     Creates the store with `name`.
     """
 
+    if name == "store.store":
+        raise NameError('Namespaces may not begin with "store".')
+
     parent, _, var = name.rpartition('.')
 
     if parent:
@@ -449,9 +452,9 @@ class WrapNode(ast.NodeTransformer):
         a larger scope, no cell is generated.
         """
 
-        node = self.generic_visit(node)
-
         variables = list(sorted(find_loaded_variables(node)))
+
+        node = self.generic_visit(node)
 
         lambda_args = [ ]
         call_args =[ ]

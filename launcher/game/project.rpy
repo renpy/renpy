@@ -55,11 +55,11 @@ init python in project:
 
         def __init__(self, path, name=None):
 
-            if name is None:
-                name = os.path.basename(path)
-
             while path.endswith("/"):
                 path = path[:-1]
+
+            if name is None:
+                name = os.path.basename(path)
 
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
@@ -128,6 +128,7 @@ init python in project:
             data.setdefault("add_from", True)
             data.setdefault("force_recompile", True)
             data.setdefault("android_build", "Release")
+            data.setdefault("tutorial", False)
 
             if "renamed_all" not in data:
                 dp = data["packages"]
@@ -259,7 +260,15 @@ init python in project:
 
             environ = dict(os.environ)
             environ["RENPY_LAUNCHER_LANGUAGE"] = _preferences.language or "english"
+
+            if persistent.skip_splashscreen:
+                environ["RENPY_SKIP_SPLASHSCREEN"] = "1"
+
             environ.update(env)
+
+            # Filter out system PYTHON* environment variables.
+            if hasattr(sys, "renpy_executable"):
+                environ = { k : v for k, v in environ.items() if not k.startswith("PYTHON") }
 
             encoded_environ = { }
 
@@ -761,7 +770,12 @@ init python in project:
             blurb = LAUNCH_BLURBS[persistent.blurb % len(LAUNCH_BLURBS)]
             persistent.blurb += 1
 
-            interface.interaction(_("Launching"), blurb, pause=2.5)
+            if persistent.skip_splashscreen:
+                submessage = _("Splashscreen skipped in launcher preferences.")
+            else:
+                submessage = None
+
+            interface.interaction(_("Launching"), blurb, submessage=submessage, pause=2.5)
 
 
         def __call__(self):
