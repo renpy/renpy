@@ -69,7 +69,7 @@ init -1600 python:
     class __ScreenVariableNameError(KeyError):
         """
         raised by ScreenVariable.current_value when it fails to retrieve the variable
-        always excepted (with return False in get_selected and get_sensitive) or avoided (in __call__)
+        excepted with return False in get_selected and get_sensitive, but raised in __call__
         """
 
     class __LookupError(LookupError):
