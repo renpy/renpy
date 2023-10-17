@@ -361,12 +361,13 @@ init -1600 python hide:
                         if k and (param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)):
                             params.append(param)
 
-                doc += "\n:args: " + str(Signature(parameters=params))
+                doc += "\n:args: " + str(Signature(parameters=params)) + "\n\nSee :ref:`data-actions`."
 
-            clsdict = python_dict(identity_fields=manager.identity_fields + accessor.identity_fields,
-                                  equality_fields=manager.equality_fields + accessor.equality_fields,
-                                  __doc__=doc,
-                                  )
+            clsdict = python_dict(
+                identity_fields=manager.identity_fields + accessor.identity_fields,
+                equality_fields=manager.equality_fields + accessor.equality_fields,
+                __doc__=doc,
+            )
 
             cls = type(name, (accessor, manager, Action, FieldEquality), clsdict)
 

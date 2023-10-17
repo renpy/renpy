@@ -28,6 +28,8 @@ These are actions that manage screens, interaction results, and control flow.
 
 .. include:: inc/control_action
 
+.. _data-actions:
+
 Data Actions
 ------------
 
