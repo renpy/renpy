@@ -23,13 +23,6 @@ init -1600 python:
 
     __Sentinel = object()
 
-    class __FieldNotFound(Exception):
-        """
-        raised by Field's current_value (and Variable's) when it fails to retrieve the field
-        """
-        def __init__(self, kind=None, name=None):
-            super(__FieldNotFound, self).__init__("The {!r} {} does not exist.".format(name, kind))
-
     def _get_field(obj, name, kind):
 
         if not name:
@@ -40,16 +33,9 @@ init -1600 python:
         for i in name.split("."):
             rv = getattr(rv, i, __Sentinel)
             if rv is __Sentinel:
-                raise __FieldNotFound(kind, name)
+                raise Exception("The {!r} {} does not exist.".format(name, kind))
 
         return rv
-
-    class __SetFieldError(Exception):
-        """
-        raised by Field's __call__ (and Variable's) when it fails to set the field
-        """
-        def __init__(self, kind=None, name=None):
-            super(__SetFieldError, self).__init__("The {!r} {} cannot be set.".format(name, kind))
 
     def _set_field(obj, name, value, kind):
         fields, _, attr = name.rpartition(".")
@@ -58,26 +44,7 @@ init -1600 python:
         try:
             setattr(obj, attr, value)
         except Exception:
-            raise __SetFieldError(kind, name)
-
-    class __NoCurrentScreen(Exception):
-        """
-        raised by ScreenVariable.current_value when it fails to find the screen
-        always excepted (with return False in get_selected and get_sensitive) or avoided (in __call__)
-        """
-
-    class __ScreenVariableNameError(KeyError):
-        """
-        raised by ScreenVariable.current_value when it fails to retrieve the variable
-        excepted with return False in get_selected and get_sensitive, but raised in __call__
-        """
-
-    class __LookupError(LookupError):
-        """
-        raised by Dict's current_value (and LocalVariable's) when it fails to retrieve the index/key
-        """
-        def __init__(self, kind=None, name=None):
-            super(__LookupError, self).__init__("The {!r} {} does not exist.".format(name, kind))
+            raise Exception("The {!r} {} cannot be set.".format(name, kind))
 
 
 init -1600 python hide:
@@ -88,7 +55,7 @@ init -1600 python hide:
 
     # Accessor mixins : manage how the data is accessed
     # defines a __call__ which gets the value to set from the value_to_set() method
-    # defines a current_value() method which returns the current value of the accessed data or raise one of the above exceptions
+    # defines a current_value() method which returns the current value of the accessed data or raise an exception
     # may define the `kind` class attribute, which is used in error messages
     class Field(Accessor):
         """
@@ -144,7 +111,7 @@ init -1600 python hide:
             try:
                 return self.dict[self.key]
             except LookupError as e:
-                raise __LookupError(self.kind, key) # from e # PY3 only
+                raise Exception("The {!r} {} does not exist.".format(key, self.kind)) # from e # PY3 only
 
     class ScreenVariable(Accessor):
         """
@@ -159,7 +126,7 @@ init -1600 python hide:
             super(ScreenVariable, self).__init__(*args, **kwargs)
             self.name = name
 
-        def __call__(self): # prevents NoCurrentScreen (even though it doesn't explicitly catches it)
+        def __call__(self):
             cs = renpy.current_screen()
 
             if cs is None:
@@ -171,11 +138,11 @@ init -1600 python hide:
         def current_value(self):
             cs = renpy.current_screen()
             if cs is None:
-                raise __NoCurrentScreen
+                raise Exception("No current screen.")
 
-            rv = cs.scope.get(self.name, __ScreenVariableNameError)
-            if rv is __ScreenVariableNameError:
-                raise __ScreenVariableNameError(self.name)
+            rv = cs.scope.get(self.name, __Sentinel)
+            if rv is __Sentinel:
+                raise Exception("The {!r} {} does not exist.".format(self.name, self.kind))
 
             return rv
 
@@ -213,7 +180,7 @@ init -1600 python hide:
         def get_selected(self):
             try:
                 val = self.current_value()
-            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError, __FieldNotFound):
+            except Exception:
                 return False
 
             return val == self.value
@@ -251,7 +218,7 @@ init -1600 python hide:
         def get_selected(self):
             try:
                 val = self.current_value()
-            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError, __FieldNotFound):
+            except Exception:
                 return False
 
             tv = self.true_value
@@ -307,7 +274,7 @@ init -1600 python hide:
 
             try:
                 value = self.current_value()
-            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError, __FieldNotFound):
+            except Exception:
                 return False
 
             if value in values:
@@ -335,7 +302,7 @@ init -1600 python hide:
         def get_sensitive(self):
             try:
                 value = self.current_value()
-            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError, __FieldNotFound):
+            except Exception:
                 return False
 
             try:
