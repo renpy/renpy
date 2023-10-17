@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -130,10 +130,7 @@ init -1600 python hide:
             try:
                 return self.dict[self.key]
             except LookupError as e:
-                if PY2:
-                    raise __LookupError(self.kind, key)
-                else:
-                    raise __LookupError(self.kind, key) from e
+                raise __LookupError(self.kind, key) # from e # PY3 only
 
     class ScreenVariable(Accessor):
         """
