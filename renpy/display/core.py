@@ -120,6 +120,10 @@ null = None
 time_base = 0.0
 time_mult = 1.0
 
+# Mouse management.
+relx = 0
+rely = 0
+
 
 def init_layers():
     global layers, sticky_layers, null
@@ -3850,10 +3854,16 @@ class Interface(object):
         renpy.display.screen.updated_screens.clear()
 
         # Clear some events.
-        pygame.event.clear((pygame.MOUSEMOTION,
-                            PERIODIC,
+        pygame.event.clear((PERIODIC,
                             TIMEEVENT,
                             REDRAW))
+
+        # Accumulate relative mouse movement from otherwise obsolete events.
+        global relx, rely
+        for ev in pygame.event.get(pygame.MOUSEMOTION):
+            xr, yr = ev.rel
+            relx += xr
+            rely += yr
 
         # Add a single TIMEEVENT to the queue.
         self.post_time_event()
@@ -4449,9 +4459,19 @@ class Interface(object):
 
                 # Merge mousemotion events.
                 if ev.type == pygame.MOUSEMOTION:
-                    evs = pygame.event.get([pygame.MOUSEMOTION])
-                    if len(evs):
-                        ev = evs[-1]
+                    xr, yr = ev.rel
+                    relx += xr
+                    rely += yr
+
+                    for ev in pygame.event.get(pygame.MOUSEMOTION):
+                        xr, yr = ev.rel
+                        relx += xr
+                        rely += yr
+
+                    # Event is now the most recent mouse move due to loop.
+                    ev.rel = relx, rely
+                    relx = 0
+                    rely = 0
 
                     if renpy.windows:
                         self.mouse_focused = True
