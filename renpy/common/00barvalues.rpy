@@ -202,12 +202,15 @@ init -1500 python:
     @renpy.pure
     class DictValue(__GenericValue):
         docdic = dict(
-            desc="A bar value that allows the user to adjust the value of a key in a dict.",
+            desc="""
+            A bar value that allows the user to adjust the value of a key in a
+            dict, or of an element in list.
+            """,
             params="""
             `dict`
-                The dict.
+                The dict, or the list.
             `key`
-                The key.
+                The key, or the index when using a list.
             """,
             target="value of the key",
         )
