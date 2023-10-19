@@ -917,10 +917,14 @@ init -1500 python in updater:
 
                     url = urlparse.urljoin(self.url, "updates.ecdsa")
                     f = urlopen(url)
-                    signature = f.read()
 
-                    if verifying_key.verify(signature, updates_json):
-                        verified = True
+                    while True:
+                        signature = f.read(64)
+                        if not signature:
+                            break
+
+                        if verifying_key.verify(signature, updates_json):
+                            verified = True
 
                     self.log.write("Verified with ECDSA.\n")
 
