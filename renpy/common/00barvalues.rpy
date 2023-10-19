@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -112,304 +112,198 @@ init -1500 python:
                 self.old_value = other.value
                 self.start_time = None
 
-    @renpy.pure
-    class DictValue(BarValue, FieldEquality):
+    class __GenericValue(BarValue, FieldEquality):
         """
         :doc: value
+        {args}
 
-        A value that allows the user to adjust the value of a key
-        in a dict.
+        {desc}
 
-        `dict`
-            The dict.
-        `key`
-            The key.
+        {params}
         `range`
             The range to adjust over.
         `max_is_zero`
-            If True, then when the value of a key is zero, the value of the
-            bar will be range, and all other values will be shifted down by 1.
+            If True, then when the {target} is zero, the value of the bar will
+            be `range`, and all other values will be shifted down by 1.
             This works both ways - when the bar is set to the maximum, the
-            value of a key is set to 0.
+            {target} is set to 0.
 
+            This is used internally, for some preferences.
         `style`
-            The styles of the bar created.
+            The styles of the created bar.
         `offset`
             An offset to add to the value.
         `step`
             The amount to change the bar by. If None, defaults to 1/10th of
             the bar.
         `action`
-            If not None, an action to call when the field has changed.
+            If not None, an action to call when the {target} is changed.
         """
 
+        # pickle defaults
         offset = 0
         action = None
         force_step = False
 
-        identity_fields = [ 'dict' ]
-        equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step' ]
+        identity_fields = ()
+        equality_fields = ('range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step')
 
-        def __init__(self, dict, key, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
+        def __init__(self, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
+            self.range = range
+            self.max_is_zero = max_is_zero
+            self.style = style
+            self.offset = offset
+            self.force_step = force_step
+            if step is None:
+                if isinstance(range, float):
+                    step = range / 10.0
+                else:
+                    step = max(range // 10, 1)
+            self.step = step
+            self.action = action
+
+        def changed(self, value):
+
+            if self.max_is_zero:
+                if value == self.range:
+                    value = 0
+                else:
+                    value = value + 1
+
+            value += self.offset
+
+            self.set_value(value)
+            renpy.restart_interaction()
+
+            return renpy.run(self.action)
+
+        def get_adjustment(self):
+            value = self.get_value()
+
+            value -= self.offset
+
+            if self.max_is_zero:
+                if value == 0:
+                    value = self.range
+                else:
+                    value = value - 1
+
+            return ui.adjustment(
+                range=self.range,
+                value=value,
+                changed=self.changed,
+                step=self.step,
+                force_step=self.force_step,
+            )
+
+        def get_style(self):
+            return self.style, "v" + self.style
+
+    @renpy.pure
+    class DictValue(__GenericValue):
+        docdic = dict(
+            desc="A bar value that allows the user to adjust the value of a key in a dict.",
+            params="""
+            `dict`
+                The dict.
+            `key`
+                The key.
+            """,
+            target="value of a key",
+        )
+
+        identity_fields = ('dict',)
+        equality_fields = __GenericValue.equality_fields + ('key',)
+
+        def __init__(self, dict, key, *args, **kwargs):
             self.dict = dict
             self.key = key
-            self.range = range
-            self.max_is_zero = max_is_zero
-            self.style = style
-            self.offset = offset
-            self.force_step = force_step
+            super().__init__(*args, **kwargs)
 
-            if step is None:
-                if isinstance(range, float):
-                    step = range / 10.0
-                else:
-                    step = max(range / 10, 1)
-
-            self.step = step
-            self.action = action
-
-        def changed(self, value):
-
-            if self.max_is_zero:
-                if value == self.range:
-                    value = 0
-                else:
-                    value = value + 1
-
-            value += self.offset
-
-            self.dict[self.key] = value
-            renpy.restart_interaction()
-
-            return renpy.run(self.action)
-
-        def get_adjustment(self):
-
+        def get_value(self):
             value = self.dict[self.key]
 
-            value -= self.offset
+            return value
 
-            if self.max_is_zero:
-                if value == 0:
-                    value = self.range
-                else:
-                    value = value - 1
-
-            return ui.adjustment(
-                range=self.range,
-                value=value,
-                changed=self.changed,
-                step=self.step,
-                force_step=self.force_step,
-            )
-
-        def get_style(self):
-            return self.style, "v" + self.style
+        def set_value(self, value):
+            self.dict[self.key] = value
 
     @renpy.pure
-    class FieldValue(BarValue, FieldEquality):
-        """
-        :doc: value
-        :args: (self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False)
+    class FieldValue(__GenericValue):
+        docdic = dict(
+            desc="A bar value that allows the user to adjust the value of a field on an object.",
+            params="""
+            `object`
+                The object.
+            `field`
+                The field name, a string.
+            """,
+            target="field",
+        )
 
-        A bar value that allows the user to adjust the value of a field
-        on an object.
-
-        `object`
-            The object.
-        `field`
-            The field, a string.
-        `range`
-            The range to adjust over.
-        `max_is_zero`
-            If True, then when the field is zero, the value of the
-            bar will be range, and all other values will be shifted
-            down by 1. This works both ways - when the bar is set to
-            the maximum, the field is set to 0.
-
-            This is used internally, for some preferences.
-        `style`
-            The styles of the bar created.
-        `offset`
-            An offset to add to the value.
-        `step`
-            The amount to change the bar by. If None, defaults to 1/10th of
-            the bar.
-        `action`
-            If not None, an action to call when the field has changed.
-        """
-
-        offset = 0
-        action = None
-        force_step = False
         kind = "field"
 
-        identity_fields = [ 'object', ]
-        equality_fields = [ 'range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step', 'field' ]
+        identity_fields = ('object',)
+        equality_fields = __GenericValue.equality_fields + ("field",)
 
-        def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False, kind="field"):
+        def __init__(self, object, field, *args, **kwargs):
             self.object = object
             self.field = field
-            self.range = range
-            self.max_is_zero = max_is_zero
-            self.style = style
-            self.offset = offset
-            self.force_step = force_step
-            self.kind = kind
+            super().__init__(*args, **kwargs)
 
-            if step is None:
-                if isinstance(range, float):
-                    step = range / 10.0
-                else:
-                    step = max(range / 10, 1)
-
-            self.step = step
-            self.action = action
-
-        def changed(self, value):
-
-            if self.max_is_zero:
-                if value == self.range:
-                    value = 0
-                else:
-                    value = value + 1
-
-            value += self.offset
-
-            _set_field(self.object, self.field, value, "field")
-            renpy.restart_interaction()
-
-            return renpy.run(self.action)
-
-        def get_adjustment(self):
-
+        def get_value(self):
             value = _get_field(self.object, self.field, "field")
 
-            value -= self.offset
+            return value
 
-            if self.max_is_zero:
-                if value == 0:
-                    value = self.range
-                else:
-                    value = value - 1
-
-            return ui.adjustment(
-                range=self.range,
-                value=value,
-                changed=self.changed,
-                step=self.step,
-                force_step=self.force_step,
-            )
-
-        def get_style(self):
-            return self.style, "v" + self.style
+        def set_value(self, value):
+            _set_field(self.object, self.field, value, "field")
 
     @renpy.pure
-    def VariableValue(variable, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
-        """
-        :doc: value
+    class VariableValue(FieldValue):
+        docdic = dict(
+            desc="A bar value that allows the user to adjust the value of a variable in the default store.",
+            params="""
+            `variable`
+                The `variable` parameter must be a string, and can be a simple
+                name like "strength", or one with dots separating the variable
+                from fields, like "hero.strength" or
+                "persistent.show_cutscenes".
+            """,
+            target="variable",
+        )
 
-        A bar value that allows the user to adjust the value of a variable
-        in the default store.
+        kind="variable"
 
-        `variable`
-            The `variable` parameter must be a string, and can be a simple name like "strength", or
-            one with dots separating the variable from fields, like "hero.strength"
-            or "persistent.show_cutscenes".
-        `range`
-            The range to adjust over.
-        `max_is_zero`
-            If True, then when the field is zero, the value of the
-            bar will be range, and all other values will be shifted
-            down by 1. This works both ways - when the bar is set to
-            the maximum, the field is set to 0.
-
-            This is used internally, for some preferences.
-        `style`
-            The styles of the bar created.
-        `offset`
-            An offset to add to the value.
-        `step`
-            The amount to change the bar by. If None, defaults to 1/10th of
-            the bar.
-        `action`
-            If not None, an action to call when the field has changed.
-        """
-
-        return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step, action=action, force_step=force_step, kind="variable")
+        def __init__(self, variable, *args, **kwargs):
+            super().__init__(store, variable, *args, **kwargs)
 
     @renpy.pure
-    class ScreenVariableValue(BarValue, FieldEquality):
-        """
-        :doc: value
+    class ScreenVariableValue(__GenericValue):
+        docdic = dict(
+            desc="""
+            A bar value that adjusts the value of a variable in a screen.
 
-        A bar value that adjusts the value of a variable in a screen.
+            In a ``use``\ d screen, this targets a variable in the context of
+            the screen containing the ``use``\ d one(s). To target variables
+            within a ``use``\ d screen, and only in that case, use
+            :func:`LocalVariableValue` instead.
+            """,
+            params="""
+            `variable`
+                A string giving the name of the variable to adjust.
+            """,
+            target="variable",
+        )
 
-        `variable`
-            A string giving the name of the variable to adjust.
-        `range`
-            The range to adjust over.
-        `max_is_zero`
-            If True, then when the field is zero, the value of the
-            bar will be range, and all other values will be shifted
-            down by 1. This works both ways - when the bar is set to
-            the maximum, the field is set to 0.
+        identity_fields = ()
+        equality_fields = __GenericValue.equality_fields + ('variable',)
 
-            This is used internally, for some preferences.
-        `style`
-            The styles of the bar created.
-        `offset`
-            An offset to add to the value.
-        `step`
-            The amount to change the bar by. If None, defaults to 1/10th of
-            the bar.
-        `action`
-            If not None, an action to call when the field has changed.
-         """
-
-        action = None
-        offset = 0
-        force_step = False
-
-        identity_fields = [  ]
-        equality_fields = [ 'variable', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step' ]
-
-        def __init__(self, variable, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
+        def __init__(self, variable, *args, **kwargs):
             self.variable = variable
-            self.range = range
-            self.max_is_zero = max_is_zero
-            self.style = style
-            self.offset = offset
-            self.force_step = force_step
+            super().__init__(*args, **kwargs)
 
-            if step is None:
-                if isinstance(range, float):
-                    step = range / 10.0
-                else:
-                    step = max(range / 10, 1)
-
-            self.step = step
-            self.action = action
-
-        def changed(self, value):
-
-            cs = renpy.current_screen()
-
-            if self.max_is_zero:
-                if value == self.range:
-                    value = 0
-                else:
-                    value = value + 1
-
-            value += self.offset
-
-            cs.scope[self.variable] = value
-            renpy.restart_interaction()
-
-            return renpy.run(self.action)
-
-        def get_adjustment(self):
-
+        def get_value(self):
             cs = renpy.current_screen()
 
             if (cs is None) or (self.variable not in cs.scope):
@@ -417,24 +311,65 @@ init -1500 python:
 
             value = cs.scope[self.variable]
 
-            value -= self.offset
+            return value
 
-            if self.max_is_zero:
-                if value == 0:
-                    value = self.range
-                else:
-                    value = value - 1
+        def set_value(self, value):
+            cs = renpy.current_screen()
+            cs.scope[self.variable] = value
 
-            return ui.adjustment(
-                range=self.range,
-                value=value,
-                changed=self.changed,
-                step=self.step,
-                force_step=self.force_step,
-            )
+    # unpure
+    class LocalVariableValue(DictValue):
+        docdic = dict(
+            desc="""
+            A bar value that adjusts the value of a variable in a
+            ``use``\ d screen.
 
-        def get_style(self):
-            return self.style, "v" + self.style
+            To target a variable in a top-level screen, prefer using
+            :func:`ScreenVariableValue`.
+
+            For more information, see :ref:`sl-use`.
+
+            This must be created in the context that the variable is set in -
+            it can't be passed in from somewhere else.
+            """,
+            params="""
+            `variable`
+                A string giving the name of the variable to adjust.
+            """,
+            target="variable",
+        )
+
+        def __init__(self, variable, *args, **kwargs):
+            super().__init__(sys._getframe(1).f_locals, variable, *args, **kwargs)
+
+init -1500 python hide:
+    import inspect
+
+    docbase = inspect.cleandoc(__GenericValue.__doc__)
+    __GenericValue.__doc__ = None
+
+    for value in (DictValue, FieldValue, VariableValue, ScreenVariableValue, LocalVariableValue):
+        docdic = value.docdic
+        del value.docdic
+
+        if PY2:
+            docdic["args"] = ""
+        else:
+            params = []
+            for k, param in enumerate(inspect.signature(value.__init__).parameters.values()):
+                if k and (param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)):
+                    params.append(param)
+
+            params.extend(tuple(inspect.signature(__GenericValue.__init__).parameters.values())[1:])
+
+            docdic["args"] = ":args: " + str(inspect.Signature(parameters=params))
+
+        docdic["desc"] = inspect.cleandoc(docdic["desc"])
+        docdic["params"] = inspect.cleandoc(docdic["params"])
+
+        value.__doc__ = docbase.format(**docdic)
+
+init -1500 python:
 
     @renpy.pure
     class MixerValue(BarValue, DictEquality):
