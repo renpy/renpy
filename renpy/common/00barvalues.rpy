@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -215,6 +215,8 @@ init -1500 python:
             target="value of the key",
         )
 
+        kind = "key or index"
+
         identity_fields = ('dict',)
         equality_fields = __GenericValue.equality_fields + ('key',)
 
@@ -229,7 +231,10 @@ init -1500 python:
             return value
 
         def set_value(self, value):
-            self.dict[self.key] = value
+            try:
+                self.dict[self.key] = value
+            except LookupError as e:
+                raise Exception("The {!r} {} does not exist".format(self.key, self.kind)) # from e # PY3 only
 
     @renpy.pure
     class FieldValue(__GenericValue):
@@ -342,6 +347,8 @@ init -1500 python:
             target="variable",
         )
 
+        kind = "local variable"
+
         def __init__(self, variable, *args, **kwargs):
             super().__init__(sys._getframe(1).f_locals, variable, *args, **kwargs)
 
@@ -349,7 +356,7 @@ init -1500 python hide:
     import inspect
 
     docbase = inspect.cleandoc(__GenericValue.__doc__)
-    __GenericValue.__doc__ = None
+    __GenericValue.__doc__ = None # del is illegal for __doc__
 
     for value in (DictValue, FieldValue, VariableValue, ScreenVariableValue, LocalVariableValue):
         docdic = value.docdic
