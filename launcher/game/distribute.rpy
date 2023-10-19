@@ -584,6 +584,9 @@ change_renpy_executable()
             self.include_update = build['include_update']
             self.build_update = self.include_update and build_update
 
+            if self.include_update:
+                self.make_key_pem()
+
             # The various executables, which change names based on self.executable_name.
             self.app = self.executable_name + ".app"
             self.exe = self.executable_name + ".exe"
@@ -1485,6 +1488,9 @@ change_renpy_executable()
                     fl.append(File("update", None, True, False))
                     fl.append(File("update/current.json", update_fn, False, False))
 
+                    if not dlc:
+                        fl.append(File("update/key.pem", self.temp_filename("key.pem"), False, False))
+
             # If we're not an update file, prepend the directory.
             if (not dlc) and prepend:
                 fl.prepend_directory(filename)
@@ -1645,6 +1651,17 @@ change_renpy_executable()
             with open(fn, "wb" if PY2 else "w") as f:
                 json.dump(index, f, indent=2)
 
+        def make_key_pem(self):
+            import ecdsa
+
+            update_pem = os.path.join(self.project.path, "update.pem")
+
+            with open(update_pem, "rb") as f:
+                signing_key = ecdsa.SigningKey.from_pem(f.read())
+
+            key_pem = self.temp_filename("key.pem")
+            with open(key_pem, "wb") as f:
+                f.write(signing_key.verifying_key.to_pem())
 
         def save_build_cache(self):
             if not self.build['renpy']:
