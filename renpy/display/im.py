@@ -732,6 +732,8 @@ class Image(ImageBase):
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
 
+        self.is_svg = filename.lower().endswith(".svg")
+        self.pixel_perfect = self.is_svg
 
     def _repr_info(self):
         return repr(self.filename)
@@ -771,19 +773,23 @@ class Image(ImageBase):
                 # avoid size-related exceptions (e.g. Crop on a smaller placeholder)
                 surf = renpy.display.pgrender.transform_scale(surf, force_size)
 
-            self.is_svg = filename.lower().endswith(".svg")
-            self.pixel_perfect = self.is_svg
-
             if self.is_svg:
                 width, height = surf.get_size()
 
                 width = int(width * renpy.display.draw.draw_per_virt)
                 height = int(height * renpy.display.draw.draw_per_virt)
 
-                filelike = renpy.loader.load(self.filename, directory="images")
+                if filename != self.filename:
 
-                with filelike as f:
-                    surf = renpy.display.pgrender.load_image(filelike, filename, size=(width, height))
+                    # This should only run for placeholder images.
+                    surf = renpy.display.pgrender.transform_scale(surf, (width, height))
+
+                else:
+
+                    filelike = renpy.loader.load(self.filename, directory="images")
+
+                    with filelike as f:
+                        surf = renpy.display.pgrender.load_image(filelike, filename, size=(width, height))
 
             return surf
 
