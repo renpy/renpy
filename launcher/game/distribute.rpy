@@ -1479,7 +1479,7 @@ change_renpy_executable()
 
             update_fn = os.path.join(self.destination, filename + ".update.json")
 
-            if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
+            if self.include_update and not format.startswith("app-"):
 
                 with open(update_fn, "wb" if PY2 else "w") as f:
                     json.dump(update, f, indent=2)
