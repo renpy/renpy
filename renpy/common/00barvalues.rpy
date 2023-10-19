@@ -209,7 +209,7 @@ init -1500 python:
             `key`
                 The key.
             """,
-            target="value of a key",
+            target="value of the key",
         )
 
         identity_fields = ('dict',)
