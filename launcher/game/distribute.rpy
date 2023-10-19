@@ -1647,9 +1647,24 @@ change_renpy_executable()
                 if p["update"]:
                     add_variant(p["name"])
 
+            update_data = json.dumps(index, indent=2)
+
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
             with open(fn, "wb" if PY2 else "w") as f:
-                json.dump(index, f, indent=2)
+                f.write(update_data)
+
+            # Write the signed file.
+            import ecdsa
+
+            update_pem = os.path.join(self.project.path, "update.pem")
+
+            with open(update_pem, "rb") as f:
+                signing_key = ecdsa.SigningKey.from_pem(f.read())
+
+            fn = renpy.fsencode(os.path.join(self.destination, "updates.ecdsa"))
+            with open(fn, "wb") as f:
+                f.write(signing_key.sign(update_data.encode("utf-8")))
+
 
         def make_key_pem(self):
             import ecdsa
