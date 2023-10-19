@@ -894,27 +894,73 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "updates.json")
             urlretrieve(self.url, fn)
 
-            with open(fn, "r") as f:
-                self.updates = json.load(f)
-
             with open(fn, "rb") as f:
                 updates_json = f.read()
 
-            if self.public_key is not None:
-                fn = os.path.join(self.updatedir, "updates.json.sig")
-                urlretrieve(self.url + ".sig", fn)
+            # Was updates.json verified?
+            verified = False
 
-                with open(fn, "rb") as f:
-                    import codecs
-                    signature = codecs.decode(f.read(), "base64")
+            # Does updates.json need to be verified?
+            require_verified = False
+
+            # New-style ECDSA signature.
+            key = os.path.join(self.updatedir, "key.pem")
+            if os.path.exists(key):
+                require_verified = True
+
+                self.log.write("Verifying with ECDSA.\n")
 
                 try:
-                    rsa.verify(updates_json, signature, self.public_key)
-                except Exception:
-                    raise UpdateError(_("Could not verify update signature."))
 
-                if "monkeypatch" in self.updates:
-                    future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
+                    import ecdsa
+                    verifying_key = ecdsa.VerifyingKey.from_pem(open(key, "rb").read())
+
+                    url = urlparse.urljoin(self.url, "updates.ecdsa")
+                    f = urlopen(url)
+                    signature = f.read()
+
+                    if verifying_key.verify(signature, updates_json):
+                        verified = True
+
+                    self.log.write("Verified with ECDSA.\n")
+
+                except Exception:
+                    if self.log:
+                        import traceback
+                        traceback.print_exc(None, self.log)
+
+            # Old-style RSA signature.
+            if self.public_key is not None:
+                require_verified = True
+
+                self.log.write("Verifying with RSA.\n")
+
+                try:
+
+                    fn = os.path.join(self.updatedir, "updates.json.sig")
+                    urlretrieve(self.url + ".sig", fn)
+
+                    with open(fn, "rb") as f:
+                        import codecs
+                        signature = codecs.decode(f.read(), "base64")
+
+                    rsa.verify(updates_json, signature, self.public_key)
+                    verified = True
+
+                    self.log.write("Verified with RSA.\n")
+
+                except Exception:
+                    if self.log:
+                        import traceback
+                        traceback.print_exc(None, self.log)
+
+            if require_verified and not verified:
+                raise UpdateError(_("Could not verify update signature."))
+
+            self.updates = json.loads(updates_json)
+
+            if verified and "monkeypatch" in self.updates:
+                future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
 
         def add_dlc_state(self, name):
 
