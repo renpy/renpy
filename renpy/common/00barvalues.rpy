@@ -223,7 +223,7 @@ init -1500 python:
         def __init__(self, dict, key, *args, **kwargs):
             self.dict = dict
             self.key = key
-            super().__init__(*args, **kwargs)
+            super(DictValue, self).__init__(*args, **kwargs)
 
         def get_value(self):
             value = self.dict[self.key]
@@ -257,7 +257,7 @@ init -1500 python:
         def __init__(self, object, field, *args, **kwargs):
             self.object = object
             self.field = field
-            super().__init__(*args, **kwargs)
+            super(FieldValue, self).__init__(*args, **kwargs)
 
         def get_value(self):
             value = _get_field(self.object, self.field, self.kind)
@@ -284,7 +284,7 @@ init -1500 python:
         kind = "variable"
 
         def __init__(self, variable, *args, **kwargs):
-            super().__init__(store, variable, *args, **kwargs)
+            super(VariableValue, self).__init__(store, variable, *args, **kwargs)
 
     @renpy.pure
     class ScreenVariableValue(__GenericValue):
@@ -309,7 +309,7 @@ init -1500 python:
 
         def __init__(self, variable, *args, **kwargs):
             self.variable = variable
-            super().__init__(*args, **kwargs)
+            super(ScreenVariableValue, self).__init__(*args, **kwargs)
 
         def get_value(self):
             cs = renpy.current_screen()
@@ -350,21 +350,19 @@ init -1500 python:
         kind = "local variable"
 
         def __init__(self, variable, *args, **kwargs):
-            super().__init__(sys._getframe(1).f_locals, variable, *args, **kwargs)
+            super(LocalVariableValue, self).__init__(sys._getframe(1).f_locals, variable, *args, **kwargs)
 
 init -1500 python hide:
-    import inspect
+    if not PY2:
+        import inspect
 
-    docbase = inspect.cleandoc(__GenericValue.__doc__)
-    __GenericValue.__doc__ = None # del is illegal for __doc__
+        docbase = inspect.cleandoc(__GenericValue.__doc__)
+        __GenericValue.__doc__ = None # del is illegal for __doc__
 
-    for value in (DictValue, FieldValue, VariableValue, ScreenVariableValue, LocalVariableValue):
-        docdic = value.docdic
-        del value.docdic
+        for value in (DictValue, FieldValue, VariableValue, ScreenVariableValue, LocalVariableValue):
+            docdic = value.docdic
+            del value.docdic
 
-        if PY2:
-            docdic["args"] = ""
-        else:
             params = []
             for k, param in enumerate(inspect.signature(value.__init__).parameters.values()):
                 if k and (param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)):
@@ -374,10 +372,10 @@ init -1500 python hide:
 
             docdic["args"] = ":args: " + str(inspect.Signature(parameters=params))
 
-        docdic["desc"] = inspect.cleandoc(docdic["desc"])
-        docdic["params"] = inspect.cleandoc(docdic["params"])
+            docdic["desc"] = inspect.cleandoc(docdic["desc"])
+            docdic["params"] = inspect.cleandoc(docdic["params"])
 
-        value.__doc__ = docbase.format(**docdic)
+            value.__doc__ = docbase.format(**docdic)
 
 init -1500 python:
 
