@@ -314,8 +314,10 @@ init -1500 python:
         def get_value(self):
             cs = renpy.current_screen()
 
-            if (cs is None) or (self.variable not in cs.scope):
-                raise Exception("{} is not defined in the {} screen.".format(self.variable, cs.screen_name))
+            if cs is None:
+                raise Exception("No current screen.")
+            if self.variable not in cs.scope:
+                raise Exception("The {!r} variable is not defined in the {} screen.".format(self.variable, cs.screen_name))
 
             value = cs.scope[self.variable]
 
