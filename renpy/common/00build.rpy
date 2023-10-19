@@ -159,6 +159,7 @@ init -1500 python in build:
         ("*.dll", None),
         ("*.manifest", None),
         ("*.keystore", None),
+        ("update.pem", None),
 
         ("lib/", None),
         ("renpy/", None),
