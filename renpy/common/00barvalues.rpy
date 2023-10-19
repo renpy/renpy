@@ -252,12 +252,12 @@ init -1500 python:
             super().__init__(*args, **kwargs)
 
         def get_value(self):
-            value = _get_field(self.object, self.field, "field")
+            value = _get_field(self.object, self.field, self.kind)
 
             return value
 
         def set_value(self, value):
-            _set_field(self.object, self.field, value, "field")
+            _set_field(self.object, self.field, value, self.kind)
 
     @renpy.pure
     class VariableValue(FieldValue):
@@ -273,7 +273,7 @@ init -1500 python:
             target="variable",
         )
 
-        kind="variable"
+        kind = "variable"
 
         def __init__(self, variable, *args, **kwargs):
             super().__init__(store, variable, *args, **kwargs)
