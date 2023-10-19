@@ -103,6 +103,9 @@ cache/
 # Pygame_sdl2.
 /pygame_sdl2
 
+# Updater.
+update.pem
+
 # Steam.
 steam_appid.txt
 /steamapi.py
