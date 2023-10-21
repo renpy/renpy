@@ -115,9 +115,7 @@ class PersistentBackend(Backend):
         if name not in self.stat_max:
             if config.developer:
                 raise Exception(
-                    "To report progress, you must register {} with a stat_max.".format(
-                        name
-                    )
+                    "To report progress, you must register {} with a stat_max.".format(name)
                 )
             else:
                 return
