@@ -236,6 +236,7 @@ class Rollback(renpy.object.Object):
 
     identifier = None
     not_greedy = False
+    checkpointing_suspended = False
 
     def __init__(self):
 
@@ -268,6 +269,9 @@ class Rollback(renpy.object.Object):
         # True if this is a not-greedy checkpoint, which should end
         # rollbacks that occur in greedy mode.
         self.not_greedy = False
+
+        # The value of checkpointing_suspended when this checkpoint was created.
+        self.checkpointing_suspended = renpy.game.log.checkpointing_suspended
 
         # A unique identifier for this rollback object.
 
@@ -418,6 +422,7 @@ class Rollback(renpy.object.Object):
         """
 
         renpy.game.contexts = renpy.game.contexts[:-1] + [ self.context ]
+        renpy.game.log.checkpointing_suspended = self.checkpointing_suspended
 
 
 class RollbackLog(renpy.object.Object):
@@ -873,9 +878,6 @@ class RollbackLog(renpy.object.Object):
         # give up.
         if checkpoints and (self.rollback_limit <= 0) and (not force):
             return
-
-        self.suspend_checkpointing(False)
-        # will always rollback to before suspension
 
         self.purge_unreachable(self.get_roots())
 
