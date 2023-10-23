@@ -709,6 +709,7 @@ class RollbackLog(renpy.object.Object):
 
         if self.checkpointing_suspended:
             hard = False
+            self.current.not_greedy = True
 
         if hard:
             self.retain_after_load_flag = False
@@ -1101,7 +1102,9 @@ class RollbackLog(renpy.object.Object):
 
         # Now, rollback to an acceptable point.
 
-        greedy = renpy.session.pop("_greedy_rollback", True)
+        greedy = getattr(renpy.store, "_greedy_rollback", True)
+        greedy = renpy.session.pop("_greedy_rollback", greedy)
+
         self.rollback(0, force=True, label=label, greedy=greedy, on_load=True)
 
         # Because of the rollback, we never make it this far.
