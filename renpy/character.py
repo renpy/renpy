@@ -492,6 +492,9 @@ def display_say(
 
         # Clears out transients.
         renpy.exports.with_statement(None)
+
+        renpy.exports.checkpoint(True, hard=checkpoint)
+
         return
 
     # If we're not interacting, call the noniteractive_callbacks.
