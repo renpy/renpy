@@ -280,6 +280,10 @@ init python in director:
 
         return show_director
 
+    def after_load():
+        state.mode = "lines"
+
+    config.after_load_callbacks.append(after_load)
 
     def interact():
         """
