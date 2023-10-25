@@ -113,33 +113,6 @@ init -1500 python:
                 self.start_time = None
 
     class __GenericValue(BarValue, FieldEquality):
-        """
-        :doc: value
-        {args}
-
-        {desc}
-
-        {params}
-        `range`
-            The range to adjust over.
-        `max_is_zero`
-            If True, then when the {target} is zero, the value of the bar will
-            be `range`, and all other values will be shifted down by 1.
-            This works both ways - when the bar is set to the maximum, the
-            {target} is set to 0.
-
-            This is used internally, for some preferences.
-        `style`
-            The styles of the created bar.
-        `offset`
-            An offset to add to the value.
-        `step`
-            The amount to change the bar by. If None, defaults to 1/10th of
-            the bar.
-        `action`
-            If not None, an action to call when the {target} is changed.
-        """
-
         # pickle defaults
         offset = 0
         action = None
@@ -201,19 +174,19 @@ init -1500 python:
 
     @renpy.pure
     class DictValue(__GenericValue):
-        docdic = dict(
-            desc="""
-            A bar value that allows the user to adjust the value of a key in a
-            dict, or of an element in list.
-            """,
-            params="""
-            `dict`
-                The dict, or the list.
-            `key`
-                The key, or the index when using a list.
-            """,
-            target="value of the key",
-        )
+        """
+        :doc: value
+        {args}
+
+        A bar value that allows the user to adjust the value of a key in
+        a dict, or of an element in list.
+
+        `dict`
+            The dict, or the list.
+        `key`
+            The key, or the index when using a list.
+        {params}
+        """
 
         kind = "key or index"
 
@@ -238,16 +211,19 @@ init -1500 python:
 
     @renpy.pure
     class FieldValue(__GenericValue):
-        docdic = dict(
-            desc="A bar value that allows the user to adjust the value of a field on an object.",
-            params="""
-            `object`
-                The object.
-            `field`
-                The field name, a string.
-            """,
-            target="field",
-        )
+        """
+        :doc: value
+        {args}
+
+        A bar value that allows the user to adjust the value of a field
+        on an object.
+
+        `object`
+            The object.
+        `field`
+            The field name, a string.
+        {params}
+        """
 
         kind = "field"
 
@@ -269,17 +245,19 @@ init -1500 python:
 
     @renpy.pure
     class VariableValue(FieldValue):
-        docdic = dict(
-            desc="A bar value that allows the user to adjust the value of a variable in the default store.",
-            params="""
-            `variable`
-                The `variable` parameter must be a string, and can be a simple
-                name like "strength", or one with dots separating the variable
-                from fields, like "hero.strength" or
-                "persistent.show_cutscenes".
-            """,
-            target="variable",
-        )
+        """
+        :doc: value
+        {args}
+
+        A bar value that allows the user to adjust the value of a variable in
+        the default store.
+
+        `variable`
+            The `variable` parameter must be a string, and can be a simple
+            name like "strength", or one with dots separating the variable
+            from fields, like "hero.strength" or "persistent.show_cutscenes".
+        {params}
+        """
 
         kind = "variable"
 
@@ -288,21 +266,23 @@ init -1500 python:
 
     @renpy.pure
     class ScreenVariableValue(__GenericValue):
-        docdic = dict(
-            desc="""
-            A bar value that adjusts the value of a variable in a screen.
+        """
+        :doc: value
+        {args}
 
-            In a ``use``\ d screen, this targets a variable in the context of
-            the screen containing the ``use``\ d one(s). To target variables
-            within a ``use``\ d screen, and only in that case, use
-            :func:`LocalVariableValue` instead.
-            """,
-            params="""
-            `variable`
-                A string giving the name of the variable to adjust.
-            """,
-            target="variable",
-        )
+        A bar value that adjusts the value of a variable in a screen.
+
+        In a ``use``\ d screen, this targets a variable in the context of
+        the screen containing the ``use``\ d one(s). To target variables
+        within a ``use``\ d screen, and only in that case, use
+        :func:`LocalVariableValue` instead.
+
+        `variable`
+            A string giving the name of the variable to adjust.
+        {params}
+        """
+
+        kind = "screen variable"
 
         identity_fields = ()
         equality_fields = __GenericValue.equality_fields + ('variable',)
@@ -329,25 +309,25 @@ init -1500 python:
 
     # unpure
     class LocalVariableValue(DictValue):
-        docdic = dict(
-            desc="""
-            A bar value that adjusts the value of a variable in a
-            ``use``\ d screen.
+        """
+        :doc: value
+        {args}
 
-            To target a variable in a top-level screen, prefer using
-            :func:`ScreenVariableValue`.
+        A bar value that adjusts the value of a variable in a ``use``\ d
+        screen.
 
-            For more information, see :ref:`sl-use`.
+        To target a variable in a top-level screen, prefer using
+        :func:`ScreenVariableValue`.
 
-            This must be created in the context that the variable is set in -
-            it can't be passed in from somewhere else.
-            """,
-            params="""
-            `variable`
-                A string giving the name of the variable to adjust.
-            """,
-            target="variable",
-        )
+        For more information, see :ref:`sl-use`.
+
+        This must be created in the context that the variable is set in
+        - it can't be passed in from somewhere else.
+
+        `variable`
+            A string giving the name of the variable to adjust.
+        {params}
+        """
 
         kind = "local variable"
 
@@ -355,30 +335,46 @@ init -1500 python:
             super(LocalVariableValue, self).__init__(sys._getframe(1).f_locals, variable, *args, **kwargs)
 
 init -1500 python hide:
-    if config.generating_documentation:
-        import inspect
-        import itertools
+    if not config.generating_documentation:
+        return
 
-        docbase = inspect.cleandoc(__GenericValue.__doc__)
-        __GenericValue.__doc__ = None # del is illegal for __doc__
+    import inspect
+    import itertools
 
-        for value in (DictValue, FieldValue, VariableValue, ScreenVariableValue, LocalVariableValue):
-            docdic = value.docdic
-            del value.docdic
+    suffix = inspect.cleandoc("""
+    `range`
+        The range to adjust over.
+    `max_is_zero`
+        If True, then when the {kind}'s value is zero, the value of the
+        bar will be `range`, and all other values will be shifted down
+        by 1. This works both ways - when the bar is set to the maximum,
+        the value of the {kind} is set to 0.
 
-            params = []
-            for param in itertools.islice(inspect.signature(value.__init__).parameters.values(), 1, None):
-                if param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
-                    params.append(param)
+        This is used internally, for some preferences.
+    `style`
+        The styles of the created bar.
+    `offset`
+        An offset to add to the value.
+    `step`
+        The amount to change the bar by. If None, defaults to 1/10th of
+        the bar.
+    `action`
+        If not None, an action to call when the {kind}'s value is changed.
+    """)
 
-            params.extend(itertools.islice(inspect.signature(__GenericValue.__init__).parameters.values(), 1, None))
+    for value in (DictValue, FieldValue, VariableValue, ScreenVariableValue, LocalVariableValue):
+        docstr = inspect.cleandoc(value.__doc__)
 
-            docdic["args"] = ":args: " + str(inspect.Signature(parameters=params))
+        params = []
+        for param in itertools.islice(inspect.signature(value.__init__).parameters.values(), 1, None):
+            if param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
+                params.append(param)
 
-            docdic["desc"] = inspect.cleandoc(docdic["desc"])
-            docdic["params"] = inspect.cleandoc(docdic["params"])
+        params.extend(itertools.islice(inspect.signature(__GenericValue.__init__).parameters.values(), 1, None))
 
-            value.__doc__ = docbase.format(**docdic)
+        value.__doc__ = docstr.format(**{
+            'args': ":args: " + str(inspect.Signature(parameters=params)),
+            'params': suffix.format(**{'kind': value.kind})})
 
 init -1500 python:
 
