@@ -1401,6 +1401,10 @@ simple_box_reverse = False
 # A map from font name to the hinting for the font.
 font_hinting = { None : "auto" }
 
+# Should we execute costly tasks which are
+# avoidable when not generating the documentation ?
+generating_documentation = False
+
 del os
 del collections
 

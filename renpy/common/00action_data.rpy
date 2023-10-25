@@ -318,7 +318,7 @@ init -1600 python hide:
             name = manager.__name__ + accessor.__name__
             doc = ":doc: generated_data_action"
 
-            if not PY2:
+            if config.generating_documentation:
                 from inspect import signature, Signature, Parameter
 
                 params = []
@@ -335,8 +335,8 @@ init -1600 python hide:
                 doc += "\n:args: " + str(Signature(parameters=params)) + "\n\nSee :ref:`data-actions`."
 
             clsdict = python_dict(
-                identity_fields=manager.identity_fields + accessor.identity_fields,
-                equality_fields=manager.equality_fields + accessor.equality_fields,
+                identity_fields=manager.identity_fields+accessor.identity_fields,
+                equality_fields=manager.equality_fields+accessor.equality_fields,
                 __doc__=doc,
             )
 

@@ -134,7 +134,7 @@ and a data accessor that describes the kind of data to change (-Variable, -Scree
 
 There are two new managers:
 
-* the Cycle- actions (CycleVariable, CycleLocalVariable, CycleField...)
+* The Cycle- actions (CycleVariable, CycleLocalVariable, CycleField...)
   take a list of values and each time the action is run (i.e each time
   the button is clicked), the target value is set to be the next element in
   the list.
