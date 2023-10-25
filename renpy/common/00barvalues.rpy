@@ -355,7 +355,7 @@ init -1500 python:
             super(LocalVariableValue, self).__init__(sys._getframe(1).f_locals, variable, *args, **kwargs)
 
 init -1500 python hide:
-    if not PY2:
+    if config.generating_documentation:
         import inspect
 
         docbase = inspect.cleandoc(__GenericValue.__doc__)
