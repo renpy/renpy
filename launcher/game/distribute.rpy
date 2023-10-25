@@ -1656,22 +1656,23 @@ change_renpy_executable()
             # Write the signed file.
             import ecdsa
 
-            update_pem = os.path.join(self.project.path, "update.pem")
-
-            with open(update_pem, "rb") as f:
+            with open(self.find_update_pem(), "rb") as f:
                 signing_key = ecdsa.SigningKey.from_pem(f.read())
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.ecdsa"))
             with open(fn, "wb") as f:
                 f.write(signing_key.sign(update_data.encode("utf-8")))
 
+        def find_update_pem(self):
+            if self.build['renpy']:
+                return os.path.join(config.renpy_base, "update.pem")
+            else:
+                return os.path.join(self.project.path, "update.pem")
 
         def make_key_pem(self):
             import ecdsa
 
-            update_pem = os.path.join(self.project.path, "update.pem")
-
-            with open(update_pem, "rb") as f:
+            with open(self.find_update_pem(), "rb") as f:
                 signing_key = ecdsa.SigningKey.from_pem(f.read())
 
             key_pem = self.temp_filename("key.pem")

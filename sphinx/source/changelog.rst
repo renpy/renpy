@@ -124,10 +124,27 @@ displayed. Clicking on the filename and line will open
 the file in the default text editor, at the given line,
 if possible.
 
+Data Actions
+------------
 
+The :ref:`data-actions` are now presented and explained in a more
+condensed manner. These actions have been reimplemented using a data
+manager that describes what to do with the data (Set-, Toggle-, Cycle-, Increment-)
+and a data accessor that describes the kind of data to change (-Variable, -ScreenVariable,  -LocalVariable, -Field, -Dict).
+
+There are two new managers:
+
+* The Cycle- actions (CycleVariable, CycleLocalVariable, CycleField...)
+  take a list of values and each time the action is run (i.e each time
+  the button is clicked), the target value is set to be the next element in
+  the list.
+* The Increment- actions (IncrementVariable, IncrementDict, IncrementField...)
+  add a certain value (by default, 1) to the target value. These can also be used
+  to decrement the field.
 
 Features
 --------
+
 The new :func:`EditFile` action attempts to open a file and
 line in a text editor.
 

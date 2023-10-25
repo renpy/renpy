@@ -15,11 +15,11 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
 
     简体中文的文档请参考这里：
 
-        https://renpy.cn/doc/
+        https://doc.renpy.cn/zh-CN/
 
     繁體中文的文件請參考這裡：
 
-        https://renpy.cn/doc-tw/
+        https://doc.renpy.cn/zh-TW/
 
 .. toctree::
     :maxdepth: 3

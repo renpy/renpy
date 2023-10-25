@@ -208,6 +208,7 @@ init -1500 python in build:
         ("web-presplash.png", "web"),
         ("web-presplash.jpg", "web"),
         ("web-presplash.webp", "web"),
+        ("web-icon.png", "web"),
         ("progressive_download.txt", "web"),
 
         ("steam_appid.txt", None),

@@ -123,6 +123,8 @@ from renpy.lint import try_compile, try_eval
 from renpy.gl2.gl2shadercache import register_shader
 from renpy.gl2.live2d import has_live2d
 
+from renpy.bootstrap import get_alternate_base
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")

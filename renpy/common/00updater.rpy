@@ -567,6 +567,13 @@ init -1500 python in updater:
                 module_lists[i] = fl
                 source_file_lists.append(fl)
 
+            # 2.5 Remove the version.json file.
+
+            version_json = os.path.join(self.updatedir, "version.json")
+
+            if os.path.exists(version_json):
+                os.unlink(version_json)
+
             # 3. Update.
 
             Update(
@@ -582,6 +589,8 @@ init -1500 python in updater:
             for i in self.modules:
                 d = module_lists[i].to_current_json()
                 d["version"] = self.updates[i]["version"]
+                d["renpy_version"] = self.updates[i]["renpy_version"]
+                d["pretty_version"] = self.updates[i]["pretty_version"]
                 self.new_state[i] = d
 
             # 5. Finish up.
@@ -592,6 +601,19 @@ init -1500 python in updater:
             self.can_cancel = False
 
             persistent._update_version[self.url] = None
+
+            # 6. Write the version.json file.
+            version_state = { }
+
+            for i in self.modules:
+                version_state[i] = {
+                    "version" : self.updates[i]["version"],
+                    "renpy_version" : self.updates[i]["renpy_version"],
+                    "pretty_version" : self.updates[i]["pretty_version"]
+                    }
+
+                with open(os.path.join(self.updatedir, "version.json"), "w") as f:
+                    json.dump(version_state, f)
 
             if self.restart:
                 self.state = self.DONE
