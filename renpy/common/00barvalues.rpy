@@ -357,6 +357,7 @@ init -1500 python:
 init -1500 python hide:
     if config.generating_documentation:
         import inspect
+        import itertools
 
         docbase = inspect.cleandoc(__GenericValue.__doc__)
         __GenericValue.__doc__ = None # del is illegal for __doc__
@@ -366,11 +367,11 @@ init -1500 python hide:
             del value.docdic
 
             params = []
-            for k, param in enumerate(inspect.signature(value.__init__).parameters.values()):
-                if k and (param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)):
+            for param in itertools.islice(inspect.signature(value.__init__).parameters.values(), 1, None):
+                if param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
                     params.append(param)
 
-            params.extend(tuple(inspect.signature(__GenericValue.__init__).parameters.values())[1:])
+            params.extend(itertools.islice(inspect.signature(__GenericValue.__init__).parameters.values()), 1, None)
 
             docdic["args"] = ":args: " + str(inspect.Signature(parameters=params))
 
