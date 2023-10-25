@@ -128,18 +128,19 @@ Data Actions
 ------------
 
 The :ref:`data-actions` are now presented and explained in a more
-condensed manner. They also have been reimplemented under the hood using
-a logic of considering each action as the combination of a data accessor
-and a data manager.
+condensed manner. They actions have been reimplemented using a data
+manager that describes what to do with the data (Set-, Toggle-, Cycle-, Increment-)
+and a data accessor that describes the kind of data to change (-Variable, -ScreenVariable,  -LocalVariable, -Field, -Dict).
 
-In addition, there are 2 new accessors, yielding 10 new actions in total:
+There are two new managers:
 
-- the Cycle- actions (CycleVariable, CycleLocalVariable, CycleField...)
+* the Cycle- actions (CycleVariable, CycleLocalVariable, CycleField...)
   take a list of values and each time the action is run (i.e each time
   the button is clicked), the target value is set to be the next element in
   the list.
-- The Increment- actions (IncrementVariable, IncrementDict, IncrementField...)
-  add a certain value (by default, 1) to the target value.
+* The Increment- actions (IncrementVariable, IncrementDict, IncrementField...)
+  add a certain value (by default, 1) to the target value. These can also be used
+  to decrement the field.
 
 Features
 --------
