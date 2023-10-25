@@ -371,7 +371,7 @@ init -1500 python hide:
                 if param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
                     params.append(param)
 
-            params.extend(itertools.islice(inspect.signature(__GenericValue.__init__).parameters.values()), 1, None)
+            params.extend(itertools.islice(inspect.signature(__GenericValue.__init__).parameters.values(), 1, None))
 
             docdic["args"] = ":args: " + str(inspect.Signature(parameters=params))
 
