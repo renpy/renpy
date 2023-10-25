@@ -176,16 +176,15 @@ init -1500 python:
     class DictValue(__GenericValue):
         """
         :doc: value
-        {args}
+        :args: {args}
 
         A bar value that allows the user to adjust the value of a key in
-        a dict, or of an element in list.
+        a dict, or of an element at a particular index in a list.
 
         `dict`
             The dict, or the list.
         `key`
             The key, or the index when using a list.
-        {params}
         """
 
         kind = "key or index"
@@ -213,7 +212,7 @@ init -1500 python:
     class FieldValue(__GenericValue):
         """
         :doc: value
-        {args}
+        :args: {args}
 
         A bar value that allows the user to adjust the value of a field
         on an object.
@@ -222,7 +221,6 @@ init -1500 python:
             The object.
         `field`
             The field name, a string.
-        {params}
         """
 
         kind = "field"
@@ -247,7 +245,7 @@ init -1500 python:
     class VariableValue(FieldValue):
         """
         :doc: value
-        {args}
+        :args: {args}
 
         A bar value that allows the user to adjust the value of a variable in
         the default store.
@@ -256,7 +254,6 @@ init -1500 python:
             The `variable` parameter must be a string, and can be a simple
             name like "strength", or one with dots separating the variable
             from fields, like "hero.strength" or "persistent.show_cutscenes".
-        {params}
         """
 
         kind = "variable"
@@ -268,7 +265,7 @@ init -1500 python:
     class ScreenVariableValue(__GenericValue):
         """
         :doc: value
-        {args}
+        :args: {args}
 
         A bar value that adjusts the value of a variable in a screen.
 
@@ -279,10 +276,9 @@ init -1500 python:
 
         `variable`
             A string giving the name of the variable to adjust.
-        {params}
         """
 
-        kind = "screen variable"
+        kind = "screen variable" # not used in error messages, only in doc-gen
 
         identity_fields = ()
         equality_fields = __GenericValue.equality_fields + ('variable',)
@@ -311,7 +307,7 @@ init -1500 python:
     class LocalVariableValue(DictValue):
         """
         :doc: value
-        {args}
+        :args: {args}
 
         A bar value that adjusts the value of a variable in a ``use``\ d
         screen.
@@ -326,7 +322,6 @@ init -1500 python:
 
         `variable`
             A string giving the name of the variable to adjust.
-        {params}
         """
 
         kind = "local variable"
@@ -335,46 +330,45 @@ init -1500 python:
             super(LocalVariableValue, self).__init__(sys._getframe(1).f_locals, variable, *args, **kwargs)
 
 init -1500 python hide:
-    if not config.generating_documentation:
-        return
+    if config.generating_documentation:
+        import inspect
+        import itertools
 
-    import inspect
-    import itertools
+        generic_params = tuple(inspect.signature(__GenericValue.__init__).parameters.values())[1:]
+        suffix = inspect.cleandoc("""
+        `range`
+            The range to adjust over.
+        `max_is_zero`
+            If True, then when the {kind}'s value is zero, the value of the
+            bar will be `range`, and all other values will be shifted down
+            by 1. This works both ways - when the bar is set to the maximum,
+            the value of the {kind} is set to 0.
 
-    suffix = inspect.cleandoc("""
-    `range`
-        The range to adjust over.
-    `max_is_zero`
-        If True, then when the {kind}'s value is zero, the value of the
-        bar will be `range`, and all other values will be shifted down
-        by 1. This works both ways - when the bar is set to the maximum,
-        the value of the {kind} is set to 0.
+            This is used internally, for some preferences.
+        `style`
+            The styles of the created bar.
+        `offset`
+            An offset to add to the value.
+        `step`
+            The amount to change the bar by. If None, defaults to 1/10th of
+            the bar.
+        `action`
+            If not None, an action to call when the {kind}'s value is changed.
+        """)
 
-        This is used internally, for some preferences.
-    `style`
-        The styles of the created bar.
-    `offset`
-        An offset to add to the value.
-    `step`
-        The amount to change the bar by. If None, defaults to 1/10th of
-        the bar.
-    `action`
-        If not None, an action to call when the {kind}'s value is changed.
-    """)
+        for value in (DictValue, FieldValue, VariableValue, ScreenVariableValue, LocalVariableValue):
+            docstr = inspect.cleandoc(value.__doc__)
 
-    for value in (DictValue, FieldValue, VariableValue, ScreenVariableValue, LocalVariableValue):
-        docstr = inspect.cleandoc(value.__doc__)
+            params = []
+            for param in itertools.islice(inspect.signature(value.__init__).parameters.values(), 1, None):
+                if param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
+                    params.append(param)
 
-        params = []
-        for param in itertools.islice(inspect.signature(value.__init__).parameters.values(), 1, None):
-            if param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
-                params.append(param)
+            params.extend(generic_params)
 
-        params.extend(itertools.islice(inspect.signature(__GenericValue.__init__).parameters.values(), 1, None))
-
-        value.__doc__ = docstr.format(**{
-            'args': ":args: " + str(inspect.Signature(parameters=params)),
-            'params': suffix.format(**{'kind': value.kind})})
+            value.__doc__ = (docstr+"\n"+suffix).format(
+                args=inspect.Signature(parameters=params),
+                kind=value.kind)
 
 init -1500 python:
 
