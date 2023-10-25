@@ -128,7 +128,7 @@ Data Actions
 ------------
 
 The :ref:`data-actions` are now presented and explained in a more
-condensed manner. They actions have been reimplemented using a data
+condensed manner. These actions have been reimplemented using a data
 manager that describes what to do with the data (Set-, Toggle-, Cycle-, Increment-)
 and a data accessor that describes the kind of data to change (-Variable, -ScreenVariable,  -LocalVariable, -Field, -Dict).
 
