@@ -210,7 +210,7 @@ init -1100 python in _sync:
                 f.write(content)
 
             fetch_id = emscripten.run_script_int(
-                """fetchFile("PUT", "{url}", "/sync.data", null)""".format(url=url))
+                """fetchFile("PUT", "{url}", "/sync.data", null, "application/octet-string")""".format(url=url))
 
             status = "PENDING"
             message = "Pending."
