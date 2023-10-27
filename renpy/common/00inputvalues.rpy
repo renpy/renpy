@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -117,32 +117,35 @@ init -1510 python:
             else:
                 return None
 
-    class ScreenVariableInputValue(InputValue, FieldEquality):
+    class __GenericInputValue(InputValue, FieldEquality):
+        """
+        Not subclassable by creators, not documented, meant to factorize
+        common features of the documented input value classes.
+        """
+
+        equality_fields = ("default", "returnable")
+
+        def __init__(self, default=True, returnable=False):
+            self.default = default
+            self.returnable = returnable
+
+    class ScreenVariableInputValue(__GenericInputValue):
         """
         :doc: input_value
+        :args: {args}
 
         An input value that updates variable.
 
         `variable`
             A string giving the name of the variable to update.
-
-        `default`
-            If true, this input can be editable by default.
-
-        `returnable`
-            If true, the value of this input will be returned when the
-            user presses enter.
         """
 
-        identity_fields = [ 'screen' ]
-        equality_fields = [ "variable", "returnable" ]
+        identity_fields = ("screen",)
+        equality_fields = __GenericInputValue.equality_fields+("variable",)
 
-        def __init__(self, variable, default=True, returnable=False):
+        def __init__(self, variable, *args, **kwargs):
+            super(ScreenVariableInputValue, self).__init__(*args, **kwargs)
             self.variable = variable
-
-            self.default = default
-            self.returnable = returnable
-
             self.screen = renpy.current_screen()
 
         def get_text(self):
@@ -155,34 +158,26 @@ init -1510 python:
             renpy.restart_interaction()
 
     @renpy.pure
-    class FieldInputValue(InputValue, FieldEquality):
+    class FieldInputValue(__GenericInputValue):
         """
         :doc: input_value
+        :args: {args}
 
         An input value that updates `field` on `object`.
 
         `field`
             A string giving the name of the field.
-
-        `default`
-            If true, this input can be editable by default.
-
-        `returnable`
-            If true, the value of this input will be returned when the
-            user presses enter.
         """
 
-        identity_fields = [ "object"]
-        equality_fields = [ "field", "returnable" ]
+        identity_fields = ("object",)
+        equality_fields = __GenericInputValue.equality_fields+("field",)
 
         kind = "field"
 
-        def __init__(self, object, field, default=True, returnable=False):
+        def __init__(self, object, field, *args, **kwargs):
+            super(FieldInputValue, self).__init__(*args, **kwargs)
             self.object = object
             self.field = field
-
-            self.default = default
-            self.returnable = returnable
 
         def get_text(self):
             return _get_field(self.object, self.field, self.kind)
@@ -195,7 +190,7 @@ init -1510 python:
     class VariableInputValue(FieldInputValue):
         """
         :doc: input_value
-        :args: (variable, default=True, returnable=False)
+        :args: {args}
 
         An input value that updates `variable`.
 
@@ -205,13 +200,6 @@ init -1510 python:
             The `variable` parameter must be a string, and can be a simple name like "strength", or
             one with dots separating the variable from fields, like "hero.strength"
             or "persistent.show_cutscenes".
-
-        `default`
-            If true, this input can be editable by default.
-
-        `returnable`
-            If true, the value of this input will be returned when the
-            user presses enter.
         """
 
         __version__ = 1
@@ -228,31 +216,23 @@ init -1510 python:
             super(VariableInputValue, self).__init__(store, variable, *args, **kwargs)
 
     @renpy.pure
-    class DictInputValue(InputValue, FieldEquality):
+    class DictInputValue(__GenericInputValue):
         """
         :doc: input_value
+        :args: {args}
 
         An input value that updates ``dict[key]``.
 
         `dict` may be a dict object or a list.
-
-        `default`
-            If true, this input can be editable by default.
-
-        `returnable`
-            If true, the value of this input will be returned when the
-            user presses enter.
         """
 
         identity_fields = ("dict",)
-        equality_fields = ("key", "returnable")
+        equality_fields = __GenericInputValue.equality_fields+("key",)
 
-        def __init__(self, dict, key, default=True, returnable=False):
+        def __init__(self, dict, key, *args, **kwargs):
+            super(DictInputValue, self).__init__(*args, **kwargs)
             self.dict = dict
             self.key = key
-
-            self.default = default
-            self.returnable = returnable
 
         def get_text(self):
             return self.dict[self.key]
@@ -265,7 +245,7 @@ init -1510 python:
     class LocalVariableInputValue(DictInputValue):
         """
         :doc: input_value
-        :args: (variable, default=True, returnable=False)
+        :args: {args}
 
         An input value that updates a local variable in a ``use``\ d screen.
 
@@ -279,11 +259,6 @@ init -1510 python:
 
         `variable`
             A string giving the name of the variable to update.
-        `default`
-            If true, this input can be editable by default.
-        `returnable`
-            If true, the value of this input will be returned when the
-            user presses enter.
         """
 
         def __init__(self, variable, *args, **kwargs):
@@ -294,3 +269,31 @@ init -1510 python:
                 return super(LocalVariableInputValue, self).get_text()
             except LookupError:
                 raise Exception("The {!r} local variable does not exist.".format(self.key)) # from e # PY3 only
+
+init -1510 python hide:
+    if not PY2:
+        import inspect
+        import itertools
+
+        generic_params = tuple(inspect.signature(__GenericInputValue.__init__).parameters.values())[1:]
+        suffix = inspect.cleandoc("""
+        `default`
+            If true, this input can be editable by default.
+        `returnable`
+            If true, the value of this input will be returned when the
+            user presses enter.
+        """)
+
+        for ivalue in (ScreenVariableInputValue, FieldInputValue, VariableInputValue, DictInputValue, LocalVariableInputValue):
+            docstr = inspect.cleandoc(ivalue.__doc__)
+
+            params = []
+            for param in itertools.islice(inspect.signature(ivalue.__init__).parameters.values(), 1, None):
+                if param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
+                    params.append(param)
+
+            params.extend(generic_params)
+
+            ivalue.__doc__ = (docstr+"\n"+suffix).format(
+                args=inspect.Signature(parameters=params),
+            )
