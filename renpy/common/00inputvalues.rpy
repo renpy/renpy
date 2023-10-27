@@ -232,7 +232,9 @@ init -1510 python:
         """
         :doc: input_value
 
-        An input value that updates `key` in `dict`.
+        An input value that updates ``dict[key]``.
+
+        `dict` may be a dict object or a list.
 
         `default`
             If true, this input can be editable by default.
@@ -242,8 +244,8 @@ init -1510 python:
             user presses enter.
         """
 
-        identity_fields = [ "dict", "key" ]
-        equality_fields = [ "returnable" ]
+        identity_fields = ("dict",)
+        equality_fields = ("key", "returnable")
 
         def __init__(self, dict, key, default=True, returnable=False):
             self.dict = dict
