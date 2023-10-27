@@ -852,7 +852,7 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
     if roll_forward is not None:
         default = roll_forward
 
-    wi = renpy.display.behavior.WebInput(prompt, default, length=length, allow=allow, exclude=exclude, mask=mask)
+    wi = renpy.display.behavior.WebInput(substitute(prompt), default, length=length, allow=allow, exclude=exclude, mask=mask)
     renpy.ui.add(wi)
 
     renpy.exports.shown_window()
