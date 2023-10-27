@@ -4663,9 +4663,14 @@ def fetch_emscripten(url, method, data, content_type, timeout):
         if data is not None:
             f.write(data)
 
-    fetch_id = emscripten.run_script_int(
-        """fetchFile("{method}, "{url}", "{fn}", "{fn}", "{content_type}")""".format(
-            method=method, url=url, fn=fn, content_type=content_type))
+    url = url.replace('"' , '\\"')
+
+    if method == "GET" or method == "HEAD":
+        command = """fetchFile("{method}", "{url}", null, "{fn}", null)""".format( method=method, url=url, fn=fn, content_type=content_type)
+    else:
+        command = """fetchFile("{method}", "{url}", "{fn}", "{fn}", "{content_type}")""".format( method=method, url=url, fn=fn, content_type=content_type)
+
+    fetch_id = emscripten.run_script_int(command)
 
     status = "PENDING"
     message = "Pending."
@@ -4680,14 +4685,18 @@ def fetch_emscripten(url, method, data, content_type, timeout):
         if status != "PENDING":
             break
 
-    os.unlink("/sync.data")
+    try:
 
-    if status == "OK":
-        with open("/sync.data", "rb") as f:
-            data = f.read()
+        if status == "OK":
+            with open(fn, "rb") as f:
+                return f.read()
 
-    else:
-        return FetchError(message)
+        else:
+            return FetchError(message)
+
+    finally:
+        os.unlink(fn)
+
 
 
 def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes"):
