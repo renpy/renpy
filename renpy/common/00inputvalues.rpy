@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -134,7 +134,12 @@ init -1510 python:
         :doc: input_value
         :args: {args}
 
-        An input value that updates variable.
+        An input value that updates a variable in a screen.
+
+        In a ``use``\ d screen, this targets a variable in the context of the
+        screen containing the ``use``\ d one(s). To target variables within a
+        ``use``\ d screen, and only in that case, use
+        :func:`LocalVariableInputValue` instead.
 
         `variable`
             A string giving the name of the variable to update.
