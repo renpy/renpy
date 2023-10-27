@@ -19,14 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+default persistent.show_edit_funcs = True
+default persistent.windows_console = False
+default persistent.lint_options = { # the ones which should be enabled by default
+    "--orphan-tl",
+}
+
 init python:
     from math import ceil
-
-    if persistent.show_edit_funcs is None:
-        persistent.show_edit_funcs = True
-
-    if persistent.windows_console is None:
-        persistent.windows_console = False
 
     def scan_translations(piglatin=True):
 
@@ -74,6 +74,14 @@ init python:
 
 
 default preference_tab = "general"
+define preference_tabs = {
+    "general" : _("General"),
+    "options" : _("Options"),
+    "theme" : _("Theme"),
+    "install" : _("Install Libraries"),
+    "actions" : _("Actions"),
+    "lint" : _("Lint Options"),
+    }
 
 screen preferences():
 
@@ -101,17 +109,12 @@ screen preferences():
 
                     has vbox
 
-                    # Projects directory selection.
                     add SEPARATOR2
 
                     add HALF_SPACER
 
-                    textbutton _("General") action SetVariable("preference_tab", "general") style "l_list"
-                    textbutton _("Options") action SetVariable("preference_tab", "options") style "l_list"
-                    textbutton _("Theme") action SetVariable("preference_tab", "theme") style "l_list"
-                    textbutton _("Install Libraries") action SetVariable("preference_tab", "install") style "l_list"
-                    textbutton _("Actions") action SetVariable("preference_tab", "actions") style "l_list"
-
+                    for i, l in preference_tabs.items():
+                        textbutton l action SetVariable("preference_tab", i) style "l_list"
 
                 if preference_tab == "general":
 
@@ -122,7 +125,6 @@ screen preferences():
 
                         has vbox
 
-                        # Projects directory selection.
                         add SEPARATOR2
 
 
@@ -242,7 +244,6 @@ screen preferences():
                             if ability.can_update:
                                 textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
 
-
                 elif preference_tab == "theme":
 
                     frame:
@@ -252,7 +253,6 @@ screen preferences():
 
                         has vbox
 
-                        # Projects directory selection.
                         add SEPARATOR2
 
                         frame:
@@ -292,7 +292,6 @@ screen preferences():
 
                             use install_preferences
 
-
                 elif preference_tab == "actions":
 
                     frame:
@@ -315,6 +314,39 @@ screen preferences():
                             textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
                             textbutton _("Reset window size") style "l_nonbox" action Preference("display", 1.0)
                             textbutton _("Clean temporary files") style "l_nonbox" action Jump("clean_tmp")
+
+                elif preference_tab == "lint":
+
+                    frame:
+                        style "l_indent"
+                        xmaximum TWOTHIRDS
+                        xfill True
+
+                        has vbox
+
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+                            has vbox
+
+                            text _("Lint toggles:")
+
+                            add HALF_SPACER
+
+                            textbutton _("Orphan translations"):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--orphan-tl")
+                            textbutton _("Parameters overriding builtin names"):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--builtins-parameters")
+                            textbutton _("Word count and character count for speaking characters"):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--words-char-count")
+
+                            add SPACER
+
+                            textbutton _("Check Script (Lint)") action Jump("lint")
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
