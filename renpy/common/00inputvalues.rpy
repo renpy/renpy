@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -260,3 +260,37 @@ init -1510 python:
         def set_text(self, s):
             self.dict[self.key] = s
             renpy.restart_interaction()
+
+    # not pure
+    class LocalVariableInputValue(DictInputValue):
+        """
+        :doc: input_value
+        :args: (variable, default=True, returnable=False)
+
+        An input value that updates a local variable in a ``use``\ d screen.
+
+        To target a variable in a top-level screen, prefer using
+        :func:`ScreenVariableInputValue`.
+
+        For more information, see :ref:`sl-use`.
+
+        This must be created in the context that the variable is set in - it
+        can't be passed in from somewhere else.
+
+        `variable`
+            A string giving the name of the variable to update.
+        `default`
+            If true, this input can be editable by default.
+        `returnable`
+            If true, the value of this input will be returned when the
+            user presses enter.
+        """
+
+        def __init__(self, variable, *args, **kwargs):
+            super(LocalVariableInputValue, self).__init__(sys._getframe(1).f_locals, variable, *args, **kwargs)
+
+        def get_text(self):
+            try:
+                return super(LocalVariableInputValue, self).get_text()
+            except LookupError:
+                raise Exception("The {!r} local variable does not exist.".format(self.key)) # from e # PY3 only
