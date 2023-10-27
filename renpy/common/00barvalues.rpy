@@ -436,36 +436,6 @@ init -1500 python:
         def get_style(self):
             return self.style, "v" + self.style
 
-    def LocalVariableValue(name, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
-        """
-        :doc: value
-
-        A bar value that adjusts the value of a variable in the current
-        local context.
-
-        This function is only useful in a screen that has been ``use``\ d by
-        another screen, as it provides a way of setting the value of a
-        variable inside the used screen. In all other cases,
-        :func:`ScreenVariableValue` should be preferred, as it allows more
-        of the screen to be cached.
-
-        For more information, see :ref:`sl-use`.
-
-        This must be created in the context that the variable is set
-        in - it can't be passed in from somewhere else.
-        """
-        return DictValue(
-            dict=sys._getframe(1).f_locals,
-            key=name,
-            range=range,
-            max_is_zero=max_is_zero,
-            style=style,
-            offset=offset,
-            step=step, 
-            action=action,
-            force_step=force_step
-        )
-
     @renpy.pure
     class MixerValue(BarValue, DictEquality):
         """
