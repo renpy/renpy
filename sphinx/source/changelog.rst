@@ -142,6 +142,8 @@ There are two new managers:
   add a certain value (by default, 1) to the target value. These can also be used
   to decrement the field.
 
+There is also now a :class:`LocalVariableValue` bar value, for completeness.
+
 HTTPS/HTTP Fetch
 ----------------
 
