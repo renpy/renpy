@@ -2759,9 +2759,9 @@ def iconify():
 
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
-curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
+curried_call_in_new_context = curry(call_in_new_context)
 invoke_in_new_context = renpy.game.invoke_in_new_context
-curried_invoke_in_new_context = renpy.curry.curry(renpy.game.invoke_in_new_context)
+curried_invoke_in_new_context = curry(invoke_in_new_context)
 call_replay = renpy.game.call_replay
 
 renpy_pure("curried_call_in_new_context")

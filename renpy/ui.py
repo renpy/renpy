@@ -29,8 +29,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional
-
 import sys
 
 import renpy
@@ -42,9 +40,7 @@ from renpy.display.behavior import is_selected, is_sensitive
 
 class Action(renpy.object.Object):
     """
-    This can be passed to the clicked method of a button or hotspot. It is
-    called when the action is selected. The other methods determine if the
-    action should be displayed insensitive or disabled.
+    Subclassable by creators, documented in Sphinx.
     """
 
     # Alt text.
@@ -66,12 +62,12 @@ class Action(renpy.object.Object):
         return
 
     def __call__(self):
-        raise Exception("Not implemented")
+        raise NotImplementedError
 
 
 class BarValue(renpy.object.Object):
     """
-    This can be passed to the value method of bar and hotbar.
+    Subclassable by creators, documented in Sphinx.
     """
 
     # Alt text.
@@ -86,7 +82,7 @@ class BarValue(renpy.object.Object):
         return
 
     def get_adjustment(self): # type: (BarValue) -> renpy.display.behavior.Adjustment
-        raise Exception("Not implemented")
+        raise NotImplementedError
 
     def get_style(self):
         return "bar", "vbar"

@@ -79,16 +79,19 @@ init -1510 python:
 
     @renpy.pure
     class InputValue(renpy.object.Object):
+        """
+        Subclassable by creators, documented in Sphinx.
+        """
 
         default = True
         editable = True
         returnable = False
 
         def get_text(self):
-            raise Exception("Not implemented.")
+            raise NotImplementedError
 
         def set_text(self, s):
-            raise Exception("Not implemented.")
+            raise NotImplementedError
 
         def enter(self):
             if self.returnable:

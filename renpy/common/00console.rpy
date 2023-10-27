@@ -1,4 +1,4 @@
-# console.rpy
+﻿# console.rpy
 # Ren'Py console
 # Copyright (C) 2012-2017 Shiz, C, delta, PyTom
 #
