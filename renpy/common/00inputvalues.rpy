@@ -276,7 +276,7 @@ init -1510 python:
                 raise Exception("The {!r} local variable does not exist.".format(self.key)) # from e # PY3 only
 
 init -1510 python hide:
-    if not PY2:
+    if config.generating_documentation:
         import inspect
         import itertools
 
