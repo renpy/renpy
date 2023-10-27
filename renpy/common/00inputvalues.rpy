@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -117,44 +117,6 @@ init -1510 python:
             else:
                 return None
 
-    @renpy.pure
-    class VariableInputValue(InputValue, FieldEquality):
-        """
-        :doc: input_value
-
-        An input value that updates `variable`.
-
-        `variable`
-            A string giving the name of the variable to update.
-
-            The `variable` parameter must be a string, and can be a simple name like "strength", or
-            one with dots separating the variable from fields, like "hero.strength"
-            or "persistent.show_cutscenes".
-
-        `default`
-            If true, this input can be editable by default.
-
-        `returnable`
-            If true, the value of this input will be returned when the
-            user presses enter.
-        """
-
-        identity_fields = [ ]
-        equality_fields = [ "variable", "returnable" ]
-
-        def __init__(self, variable, default=True, returnable=False):
-            self.variable = variable
-
-            self.default = default
-            self.returnable = returnable
-
-        def get_text(self):
-            return _get_field(store, self.variable, "variable")
-
-        def set_text(self, s):
-            _set_field(store, self.variable, s, "variable")
-            renpy.restart_interaction()
-
     class ScreenVariableInputValue(InputValue, FieldEquality):
         """
         :doc: input_value
@@ -213,6 +175,8 @@ init -1510 python:
         identity_fields = [ "object"]
         equality_fields = [ "field", "returnable" ]
 
+        kind = "field"
+
         def __init__(self, object, field, default=True, returnable=False):
             self.object = object
             self.field = field
@@ -221,11 +185,47 @@ init -1510 python:
             self.returnable = returnable
 
         def get_text(self):
-            return _get_field(self.object, self.field, "field")
+            return _get_field(self.object, self.field, self.kind)
 
         def set_text(self, s):
-            _set_field(self.object, self.field, s, "field")
+            _set_field(self.object, self.field, s, self.kind)
             renpy.restart_interaction()
+
+    @renpy.pure
+    class VariableInputValue(FieldInputValue):
+        """
+        :doc: input_value
+        :args: (variable, default=True, returnable=False)
+
+        An input value that updates `variable`.
+
+        `variable`
+            A string giving the name of the variable to update.
+
+            The `variable` parameter must be a string, and can be a simple name like "strength", or
+            one with dots separating the variable from fields, like "hero.strength"
+            or "persistent.show_cutscenes".
+
+        `default`
+            If true, this input can be editable by default.
+
+        `returnable`
+            If true, the value of this input will be returned when the
+            user presses enter.
+        """
+
+        __version__ = 1
+
+        kind = "variable"
+
+        def after_upgrade(self, version):
+            if version < 1:
+                self.field = self.variable
+                self.object = store
+                del self.variable
+
+        def __init__(self, variable, *args, **kwargs):
+            super(VariableInputValue, self).__init__(store, variable, *args, **kwargs)
 
     @renpy.pure
     class DictInputValue(InputValue, FieldEquality):
