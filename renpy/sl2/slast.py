@@ -2410,6 +2410,8 @@ class SLCustomUse(SLNode):
         # If we have any children, pass them to (possible) transclude
         if self.block.children:
             ctx.transclude = self.block
+        else:
+            ctx.transclude = None
 
         try:
             ast.execute(ctx)
