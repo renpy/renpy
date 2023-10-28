@@ -179,7 +179,7 @@ init 1 python in editor:
         fei.append(e)
 
         # Atom.
-        AD = _("A modern and approachable text editor.")
+        AD = _("Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended.")
 
         if renpy.windows:
             dlc = "atom-windows"
@@ -191,7 +191,9 @@ init 1 python in editor:
             dlc = "atom-linux"
             installed = os.path.exists(os.path.join(config.renpy_base, "atom/atom-linux-" + platform.machine()))
 
-        if not (renpy.arch in [ "aarch64", "armv7l" ]):
+        installed = installed or 'RENPY_ATOM' in os.environ
+
+        if installed and not (renpy.arch in [ "aarch64", "armv7l" ]):
 
             e = FancyEditorInfo(
                 1,
@@ -201,7 +203,7 @@ init 1 python in editor:
                 _("Up to 150 MB download required."),
                 None)
 
-            e.installed = e.installed and (installed or 'RENPY_ATOM' in os.environ)
+            e.installed = e.installed and installed
 
             fei.append(e)
 
