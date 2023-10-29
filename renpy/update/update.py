@@ -73,7 +73,32 @@ class Plan(object):
 
 class Update(object):
 
-    def __init__(self, url, newlists, targetdir, oldlists, progress_callback=None, logfile=None, aggressive_removal=False):
+    def __init__(self, url, newlists, targetdir, oldlists, progress_callback=None, logfile=None, aggressive_removal=False, size_callback=None):
+        """
+        `url`
+            The url that's used as a base to download pack files from.
+
+        `newlists`
+            A list of one or more new file lists.
+
+        `targetdir`
+            The directory to update.
+
+        `oldlists`
+            A list of one or more old file lists.
+
+        `progress_callback`
+            A function that's called to report progress. It takes two arguments,
+            a message and a float between 0.0 and 1.0.
+
+        `logfile`
+            A file to log to. If None, a file is created in the target directory.
+
+        `aggressive_removal`
+            If true, files that are not in the new file list are removed as soon
+            as they are no longer needed.
+        """
+
         self.url = url
 
         self.targetdir = targetdir
@@ -85,6 +110,10 @@ class Update(object):
         self.new_files = [ i for j in self.newlists for i in j.files ]
         self.old_files = [ i for j in self.oldlists for i in j.files ]
         self.block_files = [ i for j in self.newlists for i in j.blocks ]
+
+        # The total number of bytes that will be used on disk when the downloads
+        # are complete.
+        self.disk_total = 0
 
         # The total number of bytes to download, and the number of bytes downloaded.
         self.download_total = 0
@@ -126,12 +155,13 @@ class Update(object):
 
         self.logfile = logfile
 
+        self.size_callback = size_callback
+
         print("-" * 80, file=self.logfile)
         print("Starting update at %s." % time.ctime(), file=self.logfile)
 
         self.progress(PREPARING, 0.0)
 
-        self.make_directories()
         self.write_padding()
         self.find_incomplete_files()
         self.scan_old_files()
@@ -140,6 +170,17 @@ class Update(object):
         self.remove_identical_files()
         self.create_plan()
         self.compute_totals()
+
+        if self.size_callback is not None:
+            if not self.size_callback(self.download_total, self.disk_total):
+                self.log("Size callback returned false.")
+
+                if logfile is None:
+                    self.logfile.close()
+
+                return
+
+        self.make_directories()
         self.execute_plan()
 
         if self.destination_fp is not None:
@@ -294,8 +335,13 @@ class Update(object):
         Prepares the new files.
         """
 
+        self.disk_total = 0
+
         for i in self.new_files:
             i.add_data_filename(self.targetdir)
+
+            for s in i.segments:
+                self.disk_total += s.size
 
     def remove_identical_files(self):
         """
