@@ -428,7 +428,7 @@ init -1500 python in updater:
             self.test_write()
             self.check_updates()
 
-            pretty_version = self.check_versions()
+            self.pretty_version = self.check_versions()
 
             if not self.modules:
                 self.can_cancel = False
@@ -438,34 +438,13 @@ init -1500 python in updater:
                 renpy.restart_interaction()
                 return
 
-            persistent._update_version[self.url] = pretty_version
+            persistent._update_version[self.url] = self.pretty_version
 
             if self.check_only:
                 renpy.restart_interaction()
                 return
 
-            if self.confirm and (not self.add):
-
-                # Confirm with the user that the update is available.
-                with self.condition:
-                    self.can_cancel = True
-                    self.can_proceed = True
-                    self.state = self.UPDATE_AVAILABLE
-                    self.version = pretty_version
-
-                    renpy.restart_interaction()
-
-                    while True:
-                        if self.cancelled or self.proceeded:
-                            break
-
-                        self.condition.wait()
-
-            if self.cancelled:
-                raise UpdateCancelled()
-
-            self.can_cancel = True
-            self.can_proceed = False
+            # Confirm goes here.
 
             # Disable autoreload.
             renpy.set_autoreload(False)
@@ -508,6 +487,35 @@ init -1500 python in updater:
                 raise UpdateError(_("No update methods found."))
 
 
+        def prompt_confirm(self):
+            """
+            Prompts the user to confirm the update. Returns if the update
+            should proceed, or raises UpdateCancelled if it should not.
+            """
+
+            if self.confirm and (not self.add):
+
+                # Confirm with the user that the update is available.
+                with self.condition:
+                    self.can_cancel = True
+                    self.can_proceed = True
+                    self.state = self.UPDATE_AVAILABLE
+                    self.version = self.pretty_version
+
+                    renpy.restart_interaction()
+
+                    while True:
+                        if self.cancelled or self.proceeded:
+                            break
+
+                        self.condition.wait()
+
+            if self.cancelled:
+                raise UpdateCancelled()
+
+            self.can_cancel = True
+            self.can_proceed = False
+
         def fetch_files_rpu(self, module):
             """
             Fetches the rpu file list for the given module.
@@ -544,7 +552,6 @@ init -1500 python in updater:
             if state != old_state or progress == 1.0 or progress == 0.0:
                 renpy.restart_interaction()
 
-
         def rpu_update(self):
             """
             Perform an update using the .rpu files.
@@ -570,16 +577,9 @@ init -1500 python in updater:
                 module_lists[i] = fl
                 source_file_lists.append(fl)
 
-            # 2.5 Remove the version.json file.
+            # 3. Compute the update, and confirm it.
 
-            version_json = os.path.join(self.updatedir, "version.json")
-
-            if os.path.exists(version_json):
-                os.unlink(version_json)
-
-            # 3. Update.
-
-            Update(
+            u = Update(
                 urlparse.urljoin(self.url, "rpu"),
                 source_file_lists,
                 self.base,
@@ -588,7 +588,20 @@ init -1500 python in updater:
                 logfile=self.log
             )
 
-            # 4. Update the new state.
+            self.prompt_confirm()
+            self.can_cancel = False
+
+            # 4. Remove the version.json file.
+
+            version_json = os.path.join(self.updatedir, "version.json")
+
+            if os.path.exists(version_json):
+                os.unlink(version_json)
+
+            # 5. Apply the update.
+            u.update()
+
+            # 6. Update the new state.
             for i in self.modules:
                 d = module_lists[i].to_current_json()
                 d["version"] = self.updates[i]["version"]
@@ -596,7 +609,7 @@ init -1500 python in updater:
                 d["pretty_version"] = self.updates[i]["pretty_version"]
                 self.new_state[i] = d
 
-            # 5. Finish up.
+            # 7. Finish up.
 
             self.message = None
             self.progress = None
@@ -605,7 +618,7 @@ init -1500 python in updater:
 
             persistent._update_version[self.url] = None
 
-            # 6. Write the version.json file.
+            # 8. Write the version.json file.
             version_state = { }
 
             for i in self.modules:
@@ -626,6 +639,8 @@ init -1500 python in updater:
             renpy.restart_interaction()
 
         def zsync_update(self):
+
+            self.prompt_confirm()
 
             if self.patch:
                 for i in self.modules:

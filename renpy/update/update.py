@@ -73,7 +73,7 @@ class Plan(object):
 
 class Update(object):
 
-    def __init__(self, url, newlists, targetdir, oldlists, progress_callback=None, logfile=None, aggressive_removal=False, size_callback=None):
+    def __init__(self, url, newlists, targetdir, oldlists, progress_callback=None, logfile=None, aggressive_removal=False):
         """
         `url`
             The url that's used as a base to download pack files from.
@@ -148,14 +148,7 @@ class Update(object):
         os.makedirs(self.blockdir, exist_ok=True)
         os.makedirs(self.deleteddir, exist_ok=True)
 
-        if logfile is None:
-            self.logfile = open(os.path.join(self.updatedir, "log.txt"), "a")
-        else:
-            self.logfile = logfile
-
         self.logfile = logfile
-
-        self.size_callback = size_callback
 
         print("-" * 80, file=self.logfile)
         print("Starting update at %s." % time.ctime(), file=self.logfile)
@@ -171,17 +164,14 @@ class Update(object):
         self.create_plan()
         self.compute_totals()
 
-        if self.size_callback is not None:
-            if not self.size_callback(self.download_total, self.disk_total):
-                self.log("Size callback returned false.")
-
-                if logfile is None:
-                    self.logfile.close()
-
-                return
+    def update(self):
+        """
+        Called to actually perform the update.
+        """
 
         self.make_directories()
         self.execute_plan()
+
 
         if self.destination_fp is not None:
             self.destination_fp.close()
@@ -192,9 +182,6 @@ class Update(object):
         self.rename_new_files()
         self.remove_old_files()
         self.set_xbit()
-
-        if logfile is None:
-            self.logfile.close()
 
     def progress(self, message, done):
         """
@@ -213,7 +200,8 @@ class Update(object):
             print("Progress: %s: %.4f" % (message, 100.0 * done))
 
     def log(self, message, *args):
-        print(message % args, file=self.logfile)
+        if self.logfile is not None:
+            print(message % args, file=self.logfile)
 
     def delete(self, filename):
         """
