@@ -10,10 +10,10 @@ elements that make up statements.
 Files
 =====
 
-The script of a Ren'Py game is made up of all the files found under
-the :file:`game/` directory ending with the .rpy extension. Ren'Py will
-consider each of these files (in the Unicode order of their paths),
-and will use the contents of the files as the script.
+The script of a Ren'Py game is made up of all the files found under the
+:file:`game/` directory ending with the :file:`.rpy` extension. Ren'Py will
+consider each of these files (in the Unicode order of their paths), and will
+use the contents of the files as the script.
 
 Generally, there's no difference between a script written in one big file and a
 script broken into multiple files. Control can be transferred within the script
@@ -140,15 +140,15 @@ using other delimiters.
 
 ::
 
-   "This statement, and the if statement that follows, is part of a block."
+    "This statement, and the if statement that follows, are part of a block."
 
-   if True:
+    if True:
 
-       "But this statement is part of a new block."
+        "But this statement is part of a new block."
 
-       "This is also part of that new block."
+        "This is also part of that new block."
 
-   "This is part of the first block, again."
+    "This is part of the first block, again."
 
 
 .. _elements-of-statements:
@@ -217,7 +217,7 @@ Ren'Py statements are made of a few basic parts.
 
     .. note::
 
-        This concerns strings found *directly* in Ren'Py script, such as in
+        This applies to strings found *directly* in Ren'Py script, such as in
         :ref:`say-statement` or :doc:`menus`. Strings found inside
         :ref:`python statements <python-statement>`, or in expressions (see
         below), follow ordinary Python rules.
