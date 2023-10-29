@@ -1,5 +1,3 @@
-.. _labels-control-flow:
-
 Labels & Control Flow
 =====================
 
