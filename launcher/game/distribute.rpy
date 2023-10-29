@@ -684,7 +684,7 @@ change_renpy_executable()
                         dlc=p["dlc"])
 
                 if self.build_update and p["update"]:
-                    for update_format in self.build["update_formats"]:
+                    for update_format in self.list_update_formats():
                         self.make_package(
                             p["name"],
                             update_format,
@@ -707,6 +707,23 @@ change_renpy_executable()
 
             if open_directory:
                 renpy.run(store.OpenDirectory(self.destination, absolute=True))
+
+        def list_update_formats(self):
+            """
+            Returns a list of update formats to build.
+            """
+
+            rv = [ ]
+
+            for update_format in self.build["update_formats"]:
+                if update_format == "rpu":
+                    rv.append("rpu")
+                elif update_format == "zsync":
+                    rv.append("update")
+                else:
+                    raise Exception("Unknown update format: " + update_format)
+
+            return rv
 
         def scan_and_classify(self, directory, patterns):
             """

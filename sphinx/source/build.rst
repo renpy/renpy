@@ -420,3 +420,11 @@ The following variables provide further control of the build process:
 
     This is a dictionary mapping strings to strings, that can be used to
     add or override keys in the mac's Info.plist file.
+
+.. var:: build.update_formats = [ "rpu" ]
+
+
+    This is a list of formats that the updater will build. The default,
+    "rpu" is supported from Ren'Py 7.7 and 8.2 on. If you need to support
+    updating using the earlier zsync-based updates, add "zsync' to the
+    list.

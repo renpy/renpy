@@ -509,7 +509,7 @@ init -1500 python in build:
     _sdk_fonts = False
 
     # Which update formats should be built?
-    update_formats = [ "update" ]
+    update_formats = [ "rpu" ]
 
     # This function is called by the json_dump command to dump the build data
     # into the json file.
