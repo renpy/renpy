@@ -253,7 +253,7 @@ init -1500 python in updater:
         # The update was cancelled.
         CANCELLED = "CANCELLED"
 
-        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True, prefer_rpu=False):
+        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True, prefer_rpu=False, size_only=False, allow_empty=False):
             """
             Takes the same arguments as update().
             """
@@ -315,6 +315,9 @@ init -1500 python in updater:
             # Should rpu updates be preferred?
             self.prefer_rpu = prefer_rpu
 
+            # Should the update be allowed even if current.json is empty?
+            self.allow_empty = allow_empty
+
             # The base path of the game that we're updating, and the path to the update
             # directory underneath it.
 
@@ -346,6 +349,9 @@ init -1500 python in updater:
             # A list of files that have to be moved into place. This is a list of filenames,
             # where each file is moved from <file>.new to <file>.
             self.moves = [ ]
+
+            if self.allow_empty:
+                os.makedirs(self.updatedir, exist_ok=True)
 
             if public_key is not None:
                 with renpy.open_file(public_key, False) as f:
@@ -417,9 +423,6 @@ init -1500 python in updater:
             """
             Performs the update.
             """
-
-            if getattr(renpy, "mobile", False):
-                raise UpdateError(_("The Ren'Py Updater is not supported on mobile devices."))
 
             self.load_state()
             self.test_write()
@@ -888,6 +891,10 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "current.json")
 
             if not os.path.exists(fn):
+                if self.allow_empty:
+                    self.current_state = { }
+                    return
+
                 raise UpdateError(_("Either this project does not support updating, or the update status file was deleted."))
 
             with open(fn, "r") as f:
@@ -926,7 +933,11 @@ init -1500 python in updater:
             require_verified = False
 
             # New-style ECDSA signature.
-            key = os.path.join(self.updatedir, "key.pem")
+            key = os.path.join(config.basedir, "update", "key.pem")
+
+            if not os.path.exists(key):
+                key = os.path.join(self.updatedir, "key.pem")
+
             if os.path.exists(key):
                 require_verified = True
 
@@ -1667,7 +1678,7 @@ init -1500 python in updater:
         return not not get_installed_packages(base)
 
 
-    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True, prefer_rpu=False):
+    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True, prefer_rpu=False, allow_empty=False):
         """
         :doc: updater
 
@@ -1714,15 +1725,22 @@ init -1500 python in updater:
             the game, and update from that. This is set to false automatically
             when the url does not begin with "http:".
 
+            This is ignored if the RPU update format is being used.
+
         `prefer_rpu`
             If True, Ren'Py will prefer the RPU format for updates, if both
             zsync and RPU are available.
+
+        `allow_empty`
+            If True, Ren'Py will allow the update to proceed even if the
+            base directory does not contain update information. (`add` must
+            be provided in this case.)
         """
 
         global installed_packages_cache
         installed_packages_cache = None
 
-        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm, patch=patch, prefer_rpu=prefer_rpu)
+        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm, patch=patch, prefer_rpu=prefer_rpu, allow_empty=allow_empty)
         ui.timer(.1, repeat=True, action=renpy.restart_interaction)
         renpy.call_screen("updater", u=u)
 
