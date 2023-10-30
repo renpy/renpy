@@ -269,7 +269,9 @@ screen preferences():
 
                             add SPACER
 
-                            text _("Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}.")
+                            default skins_url = interface.get_doc_url("skins.html")
+
+                            text _("Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}.")
 
                 elif preference_tab == "install":
 
