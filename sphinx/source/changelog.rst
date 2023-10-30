@@ -142,7 +142,8 @@ There are two new managers:
   add a certain value (by default, 1) to the target value. These can also be used
   to decrement the field.
 
-There is also now a :class:`LocalVariableValue` bar value, for completeness.
+The :class:`LocalVariableValue` bar value and :class:`LocalVariableInputValue` input
+values have been added, for completeness.
 
 HTTPS/HTTP Fetch
 ----------------
@@ -197,6 +198,9 @@ ends.
 The ``jump expression`` statement can now take a local label name of the form
 ".local_name". Previously, only "global_name" or "global_name.local_name" were
 allowed.
+
+:ref:`creator-defined-sl` can now copy all properties from other screen
+language statements.
 
 
 Other Changes
