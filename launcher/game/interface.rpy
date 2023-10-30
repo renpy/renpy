@@ -31,18 +31,16 @@ init python in interface:
     RENPY_URL = "http://www.renpy.org"
     DOC_PATH = os.path.join(config.renpy_base, "doc/")
     DOC_URL = "http://www.renpy.org/doc/html/"
+    DOC_LOCAL_URL = "file:///" + DOC_PATH
 
-    if os.path.exists(DOC_PATH):
-        DOC_LOCAL_URL = "file:///" + DOC_PATH
-    else:
-        DOC_LOCAL_URL = None
+    local_doc_exists = os.path.exists(DOC_PATH)
 
     def get_doc_url(page):
         """
         Returns the URL to the documentation page.
         """
 
-        if DOC_LOCAL_URL is not None:
+        if local_doc_exists:
             return DOC_LOCAL_URL + page
         else:
             return DOC_URL + page
