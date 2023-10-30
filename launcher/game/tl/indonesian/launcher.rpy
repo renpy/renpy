@@ -2026,9 +2026,9 @@ translate indonesian strings:
     new "Tema khusus"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
     # Automatic translation.
-    new "Informasi tentang membuat tema khusus dapat ditemukan di {a=https://www.renpy.org/doc/html/skins.html}dalam Dokumentasi Ren'Py{/a}."
+    new "Informasi tentang membuat tema khusus dapat ditemukan di {a=[skins_url]}dalam Dokumentasi Ren'Py{/a}."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2175,4 +2175,3 @@ translate indonesian strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Perbaikan versi malam hari untuk versi rilis Ren'Py."
-

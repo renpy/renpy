@@ -1970,9 +1970,9 @@ translate polish strings:
     new "Launcher Theme:"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
     # Automatic translation.
-    new "Informacje o tworzeniu niestandardowego motywu można znaleźć {a=https://www.renpy.org/doc/html/skins.html}w Dokumentacji Ren'Py{/a}."
+    new "Informacje o tworzeniu niestandardowego motywu można znaleźć {a=[skins_url]}w Dokumentacji Ren'Py{/a}."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2062,4 +2062,3 @@ translate polish strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Nocna kompilacja poprawek do wydanej wersji Ren'Py."
-

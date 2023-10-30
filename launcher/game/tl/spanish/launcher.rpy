@@ -2020,8 +2020,8 @@
     new "Tema del lanzdor"
 
     # game/preferences.rpy:254
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "Puedes encontrar información sobre cómo crear un tema personalizado {a=https://www.renpy.org/doc/html/skins.html}en la documentación de Ren'Py{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "Puedes encontrar información sobre cómo crear un tema personalizado {a=[skins_url]}en la documentación de Ren'Py{/a}."
 
     # game/preferences.rpy:271
     old "Install Libraries:"
@@ -2114,7 +2114,7 @@
     # game/androidstrings.rpy:69
     old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
     new "He encontrado un archivo bundle.keystore en el directorio rapt. ¿Quieres usar este archivo?"
-    
+
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
     new "Compilación nocturna de correcciones para la versión estable de Ren'Py."
