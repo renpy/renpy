@@ -21,12 +21,27 @@
 
 default persistent.show_edit_funcs = True
 default persistent.windows_console = False
-default persistent.lint_options = { # the ones which should be enabled by default
-    "--orphan-tl",
+
+define all_lint_options = {
+    "--orphan-tl": _("Orphan translations"),
+    "--builtins-parameters": _("Parameters overriding builtin names"),
+    "--words-char-count": _("Word count and character count for speaking characters"),
 }
+default persistent.lint_options = {}
 
 init python:
     from math import ceil
+
+    if isinstance(persistent.lint_options, set): # legacy
+        persistent.lint_options = dict.fromkeys(persistent.lint_options, True)
+    if all_lint_options.keys() != persistent.lint_options.keys(): # every time the option list changes, the dict needs to be updated
+        linto = dict.fromkeys(all_lint_options, False)
+        linto.update({ # the ones which should be enabled by default
+            "--orphan-tl":True,
+        })
+        linto.update(persistent.lint_options)
+        persistent.lint_options = linto
+        del linto
 
     def scan_translations(piglatin=True):
 
@@ -334,15 +349,10 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            textbutton _("Orphan translations"):
-                                style "l_checkbox"
-                                action ToggleSetMembership(persistent.lint_options, "--orphan-tl")
-                            textbutton _("Parameters overriding builtin names"):
-                                style "l_checkbox"
-                                action ToggleSetMembership(persistent.lint_options, "--builtins-parameters")
-                            textbutton _("Word count and character count for speaking characters"):
-                                style "l_checkbox"
-                                action ToggleSetMembership(persistent.lint_options, "--words-char-count")
+                            for option, desc in all_lint_options.items():
+                                textbutton desc:
+                                    style "l_checkbox"
+                                    action ToggleDict(persistent.lint_options, option)
 
                             add SPACER
 
