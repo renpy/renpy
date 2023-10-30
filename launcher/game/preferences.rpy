@@ -24,6 +24,7 @@ default persistent.windows_console = False
 default persistent.lint_options = { # the ones which should be enabled by default
     "--orphan-tl",
 }
+default persistent.use_web_doc = False
 
 init python:
     from math import ceil
@@ -238,6 +239,9 @@ screen preferences():
 
                             textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
                             textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
+
+                            if interface.local_doc_exists:
+                                textbutton _("Link the web version of the documentation") style "l_checkbox" action ToggleField(persistent, "use_web_doc")
 
                             textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 

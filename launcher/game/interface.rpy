@@ -40,7 +40,7 @@ init python in interface:
         Returns the URL to the documentation page.
         """
 
-        if local_doc_exists:
+        if local_doc_exists and not persistent.use_web_doc:
             return DOC_LOCAL_URL + page
         else:
             return DOC_URL + page
