@@ -492,7 +492,7 @@ class Update(object):
             self.download_done = old_download_done + done
             self.download_patch_progress()
 
-        download.download_ranges(url, ranges, filename, download_progress)
+        download.download(url, ranges, filename, download_progress)
 
         return filename
 

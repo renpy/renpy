@@ -108,8 +108,7 @@ def download_ranges(url, ranges, destination, progress_callback=None):
     `progress_callback`
         A function that will be called with the number of bytes downloaded
         and the total number of bytes to download. (This is not perfect, as
-        the
-
+        headers will add overhead.)
     """
 
     ranges = byte_ranges(ranges)
@@ -157,10 +156,74 @@ def download_ranges(url, ranges, destination, progress_callback=None):
                     ranges.remove(i)
 
                 if old_ranges == ranges:
-                    raise Exception("No progress made.")
+                    # No progrsss being made, fail things.
+                    return False
 
             else:
                 destination_file.seek(0)
                 destination_file.truncate()
                 destination_file.write(content)
                 break
+
+    if not ranges:
+        return True
+    else:
+        return False
+
+
+
+
+def download(url, ranges, destination, progress_callback=None):
+    """
+    Downloads the file. First tries to use ranges, and if that fails
+    downloads the entire file.
+
+    `url`
+        The URL to download from.
+
+    `ranges`
+        A list of (offset, size) pairs, where together the offset and size
+        represent a range that needs to be downloaded.
+
+    `destination`
+        The file to write to.
+
+    `progress_callback`
+        A function that will be called with the number of bytes downloaded
+        and the total number of bytes to download. (This is not perfect, as
+        headers will add overhead.)
+    """
+
+
+    try:
+        if download_ranges(url, ranges, destination, progress_callback=progress_callback):
+            return
+    except Exception:
+        pass
+
+    # This isn't the good path. Try to muscle along by downloading the entire
+    # file.
+
+    total_size = sum(i[1] for i in ranges)
+    downloaded = 0
+
+    r = requests.get(url, stream=True)
+    r.raise_for_status()
+
+    blocks = [ ]
+
+    while True:
+        b = r.raw.read(128 * 1024)
+
+        if not b:
+            break
+
+        blocks.append(b)
+        downloaded += len(b)
+        if progress_callback is not None:
+            progress_callback(min(downloaded, total_size), total_size)
+
+    content = b"".join(blocks)
+
+    with open(destination, "wb") as f:
+        f.write(content)
