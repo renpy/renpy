@@ -223,8 +223,6 @@ init 1 python in editor:
 
         e.installed = e.installed and os.path.exists(os.path.join(config.renpy_base, "jedit"))
 
-        print(e.installed)
-
         fei.append(e)
 
         fei.append(FancyEditorInfo(
