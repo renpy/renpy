@@ -1,5 +1,3 @@
-.. _building-distributions:
-
 Building Distributions
 ======================
 
@@ -27,22 +25,22 @@ Macintosh
     as a single file. The updater does not work with this package.
 
 Windows
-     A zip file targeting Windows x86_64.
+    A zip file targeting Windows x86_64.
 
 Windows, Mac, and Linux for Markets
-     A distribution that contains the information required to run on
-     software markets like itch.io and Steam. This isn't meant to be
-     run directly (and probably won't work on the Mac), but should be
-     fed to the app store upload process.
+    A distribution that contains the information required to run on
+    software markets like itch.io and Steam. This isn't meant to be
+    run directly (and probably won't work on the Mac), but should be
+    fed to the app store upload process.
 
 .. warning::
 
-  The zip and tar.bz2 files that Ren'Py produces contain permissions
-  information that must be present for Ren'Py to run on Linux and
-  Macintosh.
+    The zip and tar.bz2 files that Ren'Py produces contain permissions
+    information that must be present for Ren'Py to run on Linux and
+    Macintosh.
 
-  Unpacking and re-packing a zip file on Windows and then running it
-  on Linux or Macintosh is not supported.
+    Unpacking and re-packing a zip file on Windows and then running it
+    on Linux or Macintosh is not supported.
 
 Basic Configuration
 -------------------
@@ -63,31 +61,31 @@ use.
 
 .. var:: build.directory_name = "..."
 
-   This is used to create the names of directories in the archive
-   files. For example, if this is set to "mygame-1.0", the Linux
-   version of the project will unpack to "mygame-1.0-linux".
+    This is used to create the names of directories in the archive
+    files. For example, if this is set to "mygame-1.0", the Linux
+    version of the project will unpack to "mygame-1.0-linux".
 
-   This is also used to determine the name of the directory in
-   which the package files are placed. For example, if you set
-   build.directory_name to mygame-1.0, the archive files will
-   be placed in mygame-1.0-dists in the directory above the base
-   directory.
+    This is also used to determine the name of the directory in
+    which the package files are placed. For example, if you set
+    build.directory_name to mygame-1.0, the archive files will
+    be placed in mygame-1.0-dists in the directory above the base
+    directory.
 
-   This variable should not contain special characters like spaces,
-   colons, and semicolons. If not set, it defaults to :var:`build.name`
-   a dash, and :var:`config.version`.
+    This variable should not contain special characters like spaces,
+    colons, and semicolons. If not set, it defaults to :var:`build.name`
+    a dash, and :var:`config.version`.
 
 .. var:: build.executable_name = "..."
 
-   This variable controls the name of the executables that the user
-   clicks on to start the game.
+    This variable controls the name of the executables that the user
+    clicks on to start the game.
 
-   This variable should not contain special characters like spaces,
-   colons, and semicolons. If not set, it defaults to :var:`build.name`.
+    This variable should not contain special characters like spaces,
+    colons, and semicolons. If not set, it defaults to :var:`build.name`.
 
-   For example, if this is set to "mygame", the user will be able
-   to run mygame.exe on Windows, mygame.app on Macintosh, and
-   mygame.sh on Linux.
+    For example, if this is set to "mygame", the user will be able
+    to run mygame.exe on Windows, mygame.app on Macintosh, and
+    mygame.sh on Linux.
 
 .. _special-files:
 
@@ -173,15 +171,15 @@ must match at least one character.
 
 For example::
 
-     # Include README.txt
-     build.classify("README.txt", "all")
+    # Include README.txt
+    build.classify("README.txt", "all")
 
-     # But exclude all other txt files.
-     build.classify("**.txt", None)
+    # But exclude all other txt files.
+    build.classify("**.txt", None)
 
-     # Add png and jpg files in the game directory into an archive.
-     build.classify("game/**.png", "archive")
-     build.classify("game/**.jpg", "archive")
+    # Add png and jpg files in the game directory into an archive.
+    build.classify("game/**.png", "archive")
+    build.classify("game/**.jpg", "archive")
 
 Documentation
 -------------
