@@ -638,7 +638,7 @@ renpyAudio.get_pos = (channel) => {
     let p = c.playing;
 
     if (p === null) {
-        return 0;
+        return -1;
     }
 
     let rv = p.start;
@@ -658,6 +658,10 @@ renpyAudio.get_pos = (channel) => {
 renpyAudio.get_duration = (channel) => {
     let c = get_channel(channel);
     let p = c.playing;
+
+    if (p === null) {
+        return 0;
+    }
 
     if (c.video) {
         if (c.video_el) {
