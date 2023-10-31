@@ -2420,12 +2420,15 @@ def dynamic(*variables, **kwargs):
     variables dynamically scoped to the current call. When the call returns, the
     variables will be reset to the value they had when this function was called.
 
+    Variables in :ref:`named stores <named-stores>` are supported.
+
     If the variables are given as keyword arguments, the value of the argument
     is assigned to the variable name.
 
     Example calls are::
 
         $ renpy.dynamic("x", "y", "z")
+        $ renpy.dynamic("mystore.serial_number")
         $ renpy.dynamic(players=2, score=0)
     """
 
@@ -2440,13 +2443,17 @@ def context_dynamic(*variables):
     """
     :doc: context
 
-    This can be given one or more variable names as arguments. This makes
-    the variables dynamically scoped to the current context. The variables will
-    be reset to their original value when returning to the prior context.
+    This can be given one or more variable names as arguments. This makes the
+    variables dynamically scoped to the current context. When returning to the
+    prior context, the variables will be reset to the value they had when this
+    function was called.
 
-    An example call is::
+    Variables in :ref:`named stores <named-stores>` are supported.
+
+    Example calls are::
 
         $ renpy.context_dynamic("x", "y", "z")
+        $ renpy.context_dynamic("mystore.serial_number")
     """
 
     renpy.game.context().make_dynamic(variables, context=True)
