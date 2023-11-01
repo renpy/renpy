@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -344,7 +344,7 @@ screen preferences():
 
                             add SPACER
 
-                            textbutton _("Check Script (Lint)") action Jump("lint")
+                            textbutton _("Check Script (Lint)") action Call("lint")
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"

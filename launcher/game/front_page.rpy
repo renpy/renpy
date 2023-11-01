@@ -195,7 +195,7 @@ screen front_page_project:
                 has vbox
 
                 textbutton _("Navigate Script") action Jump("navigation")
-                textbutton _("Check Script (Lint)") action Jump("lint")
+                textbutton _("Check Script (Lint)") action Call("lint")
 
                 if project.current.exists("game/gui.rpy"):
                     textbutton _("Change/Update GUI") action Jump("change_gui")
@@ -267,7 +267,7 @@ label lint:
         e.open(lint_fn)
         e.end()
 
-    jump front_page
+    return
 
 label rmpersistent:
 
