@@ -1032,7 +1032,8 @@ def lint():
 
     ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
-    ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errros, 1 if lint errors are found.")
+    ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint erros, 1 if lint errors are found.")
+
     ap.add_argument("--no-orphan-tl", dest="orphan_tl", action="store_false", help="If not given, orphan translations are reported.")
     ap.add_argument("--builtins-parameters", action="store_true", help="If given, renpy or python builtin names in renpy statement parameters are reported.")
     ap.add_argument("--words-char-count", action="store_true", help="If given, the number of words and characters for each character is reported.")
