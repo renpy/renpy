@@ -332,13 +332,13 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            textbutton _("Orphan translations"):
+                            textbutton _("Check for orphan/obsolete translations"):
                                 style "l_checkbox"
                                 action InvertSelected(ToggleSetMembership(persistent.lint_options, "--no-orphan-tl"))
-                            textbutton _("Parameters overriding builtin names"):
+                            textbutton _("Check for parameters overriding builtin names"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--builtins-parameters")
-                            textbutton _("Word count and character count for speaking characters"):
+                            textbutton _("Print word and character counts for speaking characters"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--words-char-count")
 
