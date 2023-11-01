@@ -126,7 +126,7 @@ def check_text_tags(s, check_unclosed=False):
             tag_stack.append(text)
 
     if check_unclosed and tag_stack:
-            return "One or more text tags were left open at the end of the string: " + ", ".join([ "'" + i + "'" for i in tag_stack])
+            return "One or more text tags were left open at the end of the string: " + ", ".join(repr(i) for i in tag_stack)
 
     return None
 
