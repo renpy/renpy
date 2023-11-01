@@ -259,11 +259,6 @@ label _persistent_viewer:
 
 
 # Not used any more, but may be in save files.
-init -1050 python:
-    config.missing_background = "black"
-
-
-# Not used any more, but may be in save files.
 screen _missing_images:
     pass
 

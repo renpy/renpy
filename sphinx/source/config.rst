@@ -745,13 +745,6 @@ Occasionally Used
     shown for at least this amount of time. The image may be shown longer
     if Ren'Py takes longer to start up.
 
-.. var:: config.missing_background = "black"
-
-    This is the background that is used when :var:`config.developer` is True
-    and an undefined image is used in a :ref:`scene statement
-    <scene-statement>`. This should be an image name (a string), not a
-    displayable.
-
 .. var:: config.mode_callbacks = [ ... ]
 
     A list of callbacks called when entering a mode. For more documentation,
