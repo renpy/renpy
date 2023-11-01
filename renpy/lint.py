@@ -447,7 +447,7 @@ def text_checks(s):
     if renpy.config.say_menu_text_filter is not None:
         s = renpy.config.say_menu_text_filter(s)
 
-    msg = renpy.text.extras.check_text_tags(s)
+    msg = renpy.text.extras.check_text_tags(s, check_unclosed=args.check_unclosed_tags)
     if msg:
         report("%s (in %s)", msg, quote_text(s))
 
@@ -1036,6 +1036,7 @@ def lint():
     ap.add_argument("--orphan-tl", action="store_true", help="If given, orphan translations are reported.")
     ap.add_argument("--builtins-parameters", action="store_true", help="If given, renpy or python builtin names in renpy statement parameters are reported.")
     ap.add_argument("--words-char-count", action="store_true", help="If given, the number of words and characters for each character is reported.")
+    ap.add_argument("--check-unclosed-tags", action="store_true", help="If given, unclosed text tags are reported.")
 
     global args
     args = ap.parse_args()
