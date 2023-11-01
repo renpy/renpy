@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -72,14 +72,14 @@ init python:
 
 
 default preference_tab = "general"
-define preference_tabs = {
-    "general" : _("General"),
-    "options" : _("Options"),
-    "theme" : _("Theme"),
-    "install" : _("Install Libraries"),
-    "actions" : _("Actions"),
-    "lint" : _("Lint Options"),
-    }
+define preference_tabs = (
+    ("general", _("General")),
+    ("options", _("Options")),
+    ("theme", _("Theme")),
+    ("install", _("Install Libraries")),
+    ("actions", _("Actions")),
+    ("lint", _("Lint")),
+)
 
 screen preferences():
 
@@ -111,7 +111,7 @@ screen preferences():
 
                     add HALF_SPACER
 
-                    for i, l in preference_tabs.items():
+                    for i, l in preference_tabs:
                         textbutton l action SetVariable("preference_tab", i) style "l_list"
 
                 if preference_tab == "general":
