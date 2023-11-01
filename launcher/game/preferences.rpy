@@ -21,9 +21,7 @@
 
 default persistent.show_edit_funcs = True
 default persistent.windows_console = False
-default persistent.lint_options = { # the ones which should be enabled by default
-    "--orphan-tl",
-}
+default persistent.lint_options = set()
 
 init python:
     from math import ceil
@@ -336,7 +334,7 @@ screen preferences():
 
                             textbutton _("Orphan translations"):
                                 style "l_checkbox"
-                                action ToggleSetMembership(persistent.lint_options, "--orphan-tl")
+                                action InvertSelected(ToggleSetMembership(persistent.lint_options, "--no-orphan-tl"))
                             textbutton _("Parameters overriding builtin names"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--builtins-parameters")
