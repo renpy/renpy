@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -273,7 +273,7 @@ screen preferences():
 
                             add SPACER
 
-                            default skins_url = interface.get_doc_url("skins.html")
+                            $ skins_url = interface.get_doc_url("skins.html")
 
                             text _("Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}.")
 

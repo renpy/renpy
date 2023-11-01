@@ -22,7 +22,7 @@
 ################################################################################
 # Interface actions.
 init python in interface:
-    from store import OpenURL, config, Return, _preferences
+    from store import OpenURL, config, Return, _preferences, persistent
     import store
 
     import os.path
