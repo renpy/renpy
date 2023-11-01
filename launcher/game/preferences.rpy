@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -241,7 +241,7 @@ screen preferences():
                             textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
 
                             if interface.local_doc_exists:
-                                textbutton _("Link the web version of the documentation") style "l_checkbox" action ToggleField(persistent, "use_web_doc")
+                                textbutton _("Prefer the web documentation") style "l_checkbox" action ToggleField(persistent, "use_web_doc")
 
                             textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
