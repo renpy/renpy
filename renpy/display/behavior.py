@@ -1404,6 +1404,12 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             changed = value.set_text
             default = value.get_text()
 
+        if default is None:
+            if value is not None:
+                raise Exception("The data accessed by an InputValue must not be None.")
+            else:
+                raise Exception("The default value of an input must not be None.")
+
         self.default = str(default)
         self.content = self.default
 
