@@ -1629,7 +1629,7 @@ change_renpy_executable()
                     "renpy_version" : renpy.version_only,
                 }
 
-                if "update" in self.build["update_formats"]:
+                if "zsync" in self.build["update_formats"]:
 
                     digest = self.build_cache[self.base_name + "-" + variant + ".update"][0]
                     sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
