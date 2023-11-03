@@ -312,6 +312,9 @@ screen preferences():
                             add HALF_SPACER
 
                             textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
+                            textbutton _("Open projects.txt"):
+                                style "l_nonbox"
+                                action editor.EditAbsolute(os.path.join(project.manager.projects_directory, "projects.txt"))
                             textbutton _("Reset window size") style "l_nonbox" action Preference("display", 1.0)
                             textbutton _("Clean temporary files") style "l_nonbox" action Jump("clean_tmp")
 
