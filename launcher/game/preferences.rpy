@@ -343,6 +343,9 @@ screen preferences():
                             textbutton _("Word count and character count for speaking characters"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--words-char-count")
+                            textbutton _("Unclosed text tags"):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--unclosed-text-tags")
 
                             add SPACER
 
