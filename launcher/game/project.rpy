@@ -559,6 +559,10 @@ init python in project:
 
                     for path in f:
                         path = path.strip()
+
+                        if path.startswith("#"):
+                            continue
+
                         if len(path) > 0:
                             self.scan_directory_direct(path)
 
