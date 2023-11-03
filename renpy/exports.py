@@ -4676,7 +4676,7 @@ def fetch_emscripten(url, method, data, content_type, timeout):
     message = "Pending."
 
     start = time.time()
-    while start - time.time() < timeout:
+    while time.time() - start < timeout:
         renpy.exports.pause(0)
 
         result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
