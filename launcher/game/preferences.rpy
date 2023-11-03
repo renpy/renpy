@@ -345,7 +345,7 @@ screen preferences():
                                 action ToggleSetMembership(persistent.lint_options, "--words-char-count")
                             textbutton _("Unclosed text tags"):
                                 style "l_checkbox"
-                                action ToggleSetMembership(persistent.lint_options, "--unclosed-text-tags")
+                                action ToggleSetMembership(persistent.lint_options, "--check-unclosed-tags")
 
                             add SPACER
 
