@@ -12,7 +12,9 @@ missing some names in my logs. If this applies to you, please
 accept my apologies and email pytom at bishoujo.us so I can fix
 the omission in future versions.
 
+* Abdul
 * Absinthe
+* Adam Trzypolski
 * Aenakume
 * Ajkahn96
 * Aleema
@@ -20,6 +22,7 @@ the omission in future versions.
 * Alex
 * Alexandre Tranchant
 * Alisha Taylor
+* Altskop
 * Andrej
 * Andrí Wilford
 * Andy_kl
@@ -28,10 +31,13 @@ the omission in future versions.
 * Arowana-vx
 * Asfdfdfd
 * Auro-Cyanide
+* Awakening
+* Ayowel
 * Baekansi
 * Bbs3223474
 * Ben Wright
 * BlackDragonHunt/Mangagamer
+* Brainos
 * Bryan Tsang
 * Carl
 * Capntrips
@@ -39,14 +45,17 @@ the omission in future versions.
 * CensoredUsername (C)
 * Charles Surett
 * Cherie Davidson
+* Chrisclone
 * Chris Mear
 * Christian Koepp
 * Civalin
+* Clinton Nguyen
 * CobaltCore
 * CodePsy
 * Craig P. Donson
 * 被诅咒的章鱼
 * DaFool
+* Daniel Brookman
 * Daniel Conley
 * Daniel Luque
 * David Gowers
@@ -56,6 +65,7 @@ the omission in future versions.
 * Denzil
 * Derik
 * Diapolo10
+* DinakiS
 * Dogtopus
 * Doomfest
 * Donghyeok Tak
@@ -71,14 +81,17 @@ the omission in future versions.
 * Enerccio
 * Eniko
 * Eric Ahn
+* Erufailon4
 * Evilantishad0w
 * Felix Lampe
 * Franck_v
 * Frédéric Chapoton
+* Galo223344
 * GanstaKingofSA
 * Gas
 * George Economidis
 * GimmiRuski
+* Gio
 * GiovanH
 * Giuseppe Bertone
 * GNCanva
@@ -87,6 +100,7 @@ the omission in future versions.
 * Gregory Pease
 * Grey
 * Gustavo Carvalho
+* Haelwenn (lanodan) Monnier
 * Hanaka
 * Helloise
 * Hentai Senshi
@@ -107,13 +121,17 @@ the omission in future versions.
 * Jan Beich
 * Jan Masek
 * Javimat
+* Jeremy Rand
+* Jesusaves
 * Joaquin Garmendia Cabrera
+* Joseph Boyd
 * Joshua Fehler
 * Joshua Stone
 * Julian Uy
 * Julvenzor
 * Jürg Billeter
 * Kalawore
+* Kassy
 * Kapil Gain
 * Kathryn
 * Kevin Turner
@@ -131,6 +149,7 @@ the omission in future versions.
 * Lee Yunseok
 * Lent1
 * Lezalith
+* Llyama
 * LoafyLemon
 * Loliconazter
 * Liu Wenyuan
@@ -149,6 +168,7 @@ the omission in future versions.
 * Maxwell Paul Brickner
 * Meithal
 * Merumelu
+* Michael
 * Midgethetree
 * mikey (ATP Projects)
 * Morgan Willcock
@@ -157,15 +177,18 @@ the omission in future versions.
 * Mugenjohncel (Uncle Mugen)
 * Muhammad Nur Hidayat Yasuyoshi
 * Multimokia
+* NattyanTV
 * Neotus
 * Neyunse
 * NetGenSuperstar
 * 逆转咸鱼
 * NoJoker
 * Nolanlemahn
+* Noriverwater
 * Numerlor
 * Nxcrft
 * Nyaatrap
+* Oscar Six
 * Oshi-Shinobu
 * Patrick Dawson
 * Paul J Martinez
@@ -196,10 +219,12 @@ the omission in future versions.
 * Saamkhaih Kyakya
 * SahabandhSthabara
 * Saltome
+* Sandra "Maxi" Molina
 * Sapphi
 * Scout
 * Sergey Musiyenko
 * Shayne Officer
+* Shawna-p
 * Shehriyar Qureshi
 * Shiz
 * Siege-Wizard
@@ -208,19 +233,25 @@ the omission in future versions.
 * Susnux
 * Sylvain Beucler
 * Tey
+* The66F95
 * Thuong Nguyen Huu
 * Tichq
 * Tlm-2501
 * Tmrwiz
+* Totally a booplicate
+* Vadim Karpenko
+* Valery Iwanofu
 * Viliam Búr
 * Vollschauer
 * William Tumeo
 * Winter Wolves
 * Xavi-Mat
+* Xareyli
 * Xela
 * Zedraxlo
 * Zhangning
 * Zigmut
+* ねゆんせ
 * 琴梨梨
 
 And your lead developer,

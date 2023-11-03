@@ -135,11 +135,13 @@ translate russian strings:
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Skip (A)"
+    # Automatic translation.
+    new "Пропуск (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "Back (B)"
+    # Automatic translation.
+    new "Спина (B)"
 
     # _errorhandling.rpym:529
     old "Open"

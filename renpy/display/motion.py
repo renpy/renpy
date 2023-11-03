@@ -319,6 +319,7 @@ class Revolver(object):
         self.child = child
 
     def __call__(self, t, rect):
+        absolute = renpy.display.core.absolute
 
         (w, h, cw, ch) = rect
 
@@ -328,10 +329,7 @@ class Revolver(object):
             if x is None:
                 x = 0
 
-            if isinstance(x, float):
-                return int(x * r)
-            else:
-                return x
+            return absolute.compute_raw(x, r)
 
         if self.pos is None:
             pos = self.child.get_placement()
@@ -370,7 +368,7 @@ class Revolver(object):
         nx = nx - xcor + xaround
         ny = ny - ycor + yaround
 
-        return (renpy.display.core.absolute(nx), renpy.display.core.absolute(ny), 0, 0)
+        return (absolute(nx), absolute(ny), 0, 0)
 
 
 def Revolve(start, end, time, child, around=(0.5, 0.5), cor=(0.5, 0.5), pos=None, **properties):
@@ -408,7 +406,7 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
     return rv
 
 
-class ZoomCommon(renpy.display.core.Displayable):
+class ZoomCommon(renpy.display.displayable.Displayable):
 
     def __init__(self,
                  time, child,
@@ -577,7 +575,7 @@ class SizeZoom(ZoomCommon):
         return 0, 0, width, height, zw, zh
 
 
-class RotoZoom(renpy.display.core.Displayable):
+class RotoZoom(renpy.display.displayable.Displayable):
 
     transform = None
 

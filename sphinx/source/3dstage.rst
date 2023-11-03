@@ -88,7 +88,7 @@ default. This is usually done with::
         perspective True
 
 though it's possible that you'll want to include a default camera position, as
-described below. 
+described below.
 
 Alternatively, you can provide a specific layer name to enable the 3D stage only
 for that layer. ::
@@ -142,11 +142,11 @@ displayable in the x and y axes. Of course, transforms can also be used. ::
 If you try this, you'll see an empty space around the background. That's
 because by moving it back, it becomes smaller, and doesn't fill the screen.
 Ren'Py has an easy way of fixing this problem - :tpref:`zzoom`. Setting
-the tpref:`zzoom` property to True will scale an image by the amount it was shrunk
+the :tpref:`zzoom` property to True will scale an image by the amount it was shrunk
 due to having a negative zpos. It's useful for backgrounds. ::
 
     transform zbg:
-        zpos -100 zzoom False
+        zpos -100 zzoom True
 
 It's also possible to use ATL to vary zpos, just like you would xpos and
 ypos. ::
@@ -302,8 +302,6 @@ Transform Properties
 
 The following transform properties are used by the 3D Stage.
 
-    :tpref:`perspective`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
-
 .. transform-property:: matrixanchor
 
     :type: (position, position)
@@ -313,8 +311,81 @@ The following transform properties are used by the 3D Stage.
     variables are floats, this is relative to the size of the child, otherwise
     it's absolute pixels.
 
-    This sets the location of the (0, 0, 0) point that matrixtransform applies
-    its transform to.
+    This sets the location of the (0, 0, 0) point that point_to, orientation,
+    xrotate, yrotate, zrotate and matrixtransform apply their transforms to.
+
+.. transform-property:: point_to
+
+    :type: (float, float, float), Camera, or None
+    :default: None
+
+    This gives a position to which to point. The camera or the
+    displayable being transformed are rotated to face that point,
+    even if the position of the camera or the displayable is changed.
+
+    If this is None, no point-of-interest rotation is applied.
+
+    If this is not None, this is a 3-tuple or an instance of :func:`Camera`.
+    An (x, y, z) format tuple represents the position of the point of interest.
+    An instance of Camera means to point at the camera.
+
+    Note point_to isn't updated automatically. so, you should write like below if
+    you want it is updated::
+
+        # eileen always faces to the camera.
+        show eileen happy at center:
+            point_to Camera()
+            0
+            repeat
+
+    .. include:: inc/point_to_camera
+
+.. transform-property:: orientation
+
+    :type: (float, float, float) or None
+    :default: None
+
+    This rotates the camera or the displayable. The three values are the
+    x, y, and z rotations, in degrees. The rotations are applied in x, y, z
+    order for displayables, and z, y, x order for the camera.
+
+    When interpolation is used with orientation, the shortest path is taken
+    between the old and new orientations.
+
+    If this is None, no orientation is applied.
+
+.. transform-property:: xrotate
+
+    :type: float or None
+    :default: None
+
+    This rotates the camera or the displayable around the x axis. The value is
+    the rotation, in degrees. Rotations are applied to displayables in x, y, z
+    order. Rotations are applied to the camera in z, y, x order.
+
+    If this is None, no x-axis rotation is applied.
+
+.. transform-property:: yrotate
+
+    :type: float or None
+    :default: None
+
+    This rotates the camera or the displayable around the y axis. The value is
+    the rotation, in degrees. Rotations are applied to displayables in x, y, z
+    order. Rotations are applied to the camera in z, y, x order.
+
+    If this is None, no y-axis rotation is applied.
+
+.. transform-property:: zrotate
+
+    :type: float or None
+    :default: None
+
+    This rotates the camera or the displayable around the z axis. The value is
+    the rotation, in degrees. Rotations are applied to displayables in x, y, z
+    order. Rotations are applied to the camera in z, y, x order.
+
+    If this is None, no z-axis rotation is applied.
 
 .. transform-property:: matrixtransform
 

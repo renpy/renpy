@@ -257,6 +257,9 @@ init -1200 python:
             is true.
         """
 
+        if developer and config.developer:
+            return True
+
         return renpy.display.controller.exists()
 
 

@@ -199,8 +199,7 @@ translate japanese strings:
 
     # gui.rpy:183
     old "## These customizations are used by the default interface:"
-    new "## デフォルトのインターフェースには、radio、check、confirm、page、quick、navigation、choice、slot、test、help、nvl のボタンが用意されています。\
-radio と check は環境設定の各項目のボタン（デフォルトでは同じ画像）。confirm は確認画面の選択肢、page は セーブ・ロード画面のページ切り替え、quick はクイックメニュー、 navigation はゲームメニューのメニュー切り替えに使うボタンです。"
+    new "## デフォルトのインターフェースには、radio、check、confirm、page、quick、navigation、choice、slot、test、help、nvl のボタンが用意されています。radio と check は環境設定の各項目のボタン（デフォルトでは同じ画像）。confirm は確認画面の選択肢、page は セーブ・ロード画面のページ切り替え、quick はクイックメニュー、 navigation はゲームメニューのメニュー切り替えに使うボタンです。"
 
     # gui.rpy:198
     old "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
@@ -458,3 +457,9 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
     old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
     new "## NVL モードにおける、一度に表示されるエントリー（１台詞）の最大数。この値以上のエントリーを表示しようとすると、一番古いエントリーが取り除かれます。"
 
+
+translate japanese strings:
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    new "## スクリーンやトランスフォームのプロパティが無効または不安定であることをチェックできるようにする。"

@@ -37,7 +37,7 @@ cdef class TextureLoader:
 
     # The total size (in bytes) of all the textures that have been allocated
     # but not deallocated.
-    cdef int total_texture_size
+    cdef object total_texture_size
 
     # The program used for fast texture loading
     cdef Program ftl_program

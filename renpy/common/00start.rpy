@@ -172,12 +172,9 @@ label _splashscreen:
     python:
 
         if config.splashscreen_suppress_overlay:
-            renpy.dynamic("suppress_overlay", "_confirm_quit")
-            suppress_overlay = True
-            _confirm_quit = False
+            renpy.dynamic(suppress_overlay=True, _confirm_quit=False)
 
-        renpy.dynamic("_autosave")
-        _autosave = False
+        renpy.dynamic(_autosave=False)
 
     jump expression "splashscreen"
 
@@ -297,8 +294,7 @@ label _main_menu(_main_menu_screen="_main_menu_screen"):
 
         _enter_menu()
 
-        renpy.dynamic("_load_prompt")
-        _load_prompt = False
+        renpy.dynamic(_load_prompt=False)
 
         renpy.context()._main_menu = True
         store.main_menu = True

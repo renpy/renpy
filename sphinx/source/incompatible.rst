@@ -12,12 +12,184 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+Pending Deprecations
+--------------------
+
+These are changes that will take effect in a future version of Ren'Py.
+
+Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1 is
+released, in May 2024.
+
+The original OpenGL renderer will be removed 1 year after Ren'Py 8.1 is
+released, in May 2024. If your game sets config.gl2 to False, you should
+set it to True, and make sure your game runs well. If it doesn't, please
+report any issues. When reporting issues, please determine the hardware
+(device and GPU), os and driver versions, and year of manufacture.
+
+
+.. _incompatible-8.2.0:
+.. _incompatible-7.7.0:
+
+8.2.0 / 7.7.0
+--------------
+
+**Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
+different glyphs than would have been produced differently, and may change
+the spacing of text. The positioning of vertical text has also been
+changed by harfbuzz rendering.
+
+To revert this changes, include in your game::
+
+    style default:
+        shaper "freetype"
+
+Ren'Py will automatically use an Emoji font when required. To disable this,
+add::
+
+    style default:
+        emoji_font None
+
+
+**Polar Coordinate Changes** Ren'Py now enforces that the angles given to
+the :tpref:`angle` and :tpref:`anchorangle`
+properties are in the range 0 to 360 degrees, inclusive of 0 but not of 360.
+Previously, angles outside this range  gave undefined behavior, now the angles
+will be clamped to this range. A 360 degree change will no longer cause motion,
+but will instead be treated as a 0 degree change.
+
+When animating :tpref:`angle` and :tpref:`anchorangle` with ATL, if a direction
+is not supplied, the shortest arc will be used, even if it passes through 0.
+
+There is not a compatibility define for these changes, as they are unlikely to
+affect the visible behavior of games in practice.
+
+**Empty ATL Blocks Forbidden** Previously, Ren'Py would allow an empty ATL block.
+Now it will report that a block is required. You'll need to change::
+
+    show eileen happy:
+    "..."
+
+to::
+
+    show eileen happy
+    "..."
+
+In the unlikely case that you have an empty ATL block.
+
+**Box Reverse** The :propref:`box_reverse` style property has changed its
+behavior in two ways:
+
+* Space is offered to displayables in the order the displayables are presented in
+  the screen, where previously the space was offered in reverse order when
+  :propref:`box_reverse` was enabled. This can change the sizes of some displayables.
+
+* A hbox that has :propref:`box_wrap` set will wrap from top to
+  bottom, rather than bottom to top. A vbox with :propref:`box_wrap`
+  set will wrap from left to right, rather than right to left.
+
+The goal of these changes is to make the behavior of box_reverse more useful
+for laying out interfaces in right-to-left languages. To revert these changes,
+add to your game::
+
+    define config.simple_box_reverse = True
+
+
+**build.itch_channels** That variable was always documented as a dict but was
+mistakenly implemented as a list of tuples. It's now truly a dict. If you
+were using list operations on it, you'll need to change your code::
+
+    # formerly
+    $ build.itch_channels.append(("pattern", "channel"))
+    $ build.itch_channels.extend([("pattern", "channel")])
+    define build.itch_channels += [("pattern", "channel")]
+
+    # now
+    $ build.itch_channels["pattern"] = "channel"
+    $ build.itch_channels.update({"pattern": "channel"})
+    define build.itch_channels["pattern"] = "channel"
+    define build.itch_channels |= {"pattern": "channel"}
+
+
+.. _incompatible-8.1.1:
+.. _incompatible-7.6.1:
+
+8.1.1 / 7.6.1
+-------------
+
+
+.. _android-key-migration:
+
+**Android Key Migration** We've received reports of games uploaded to the Google Play as bundles
+having their APKs rejected for having different keys. This was caused by
+an old release of Ren'Py that used the APK key for bundles. In the Play Console,
+this produced an error message like::
+
+
+    You uploaded an APK that is not signed with the upload certificate. You must use
+    the same certificate. The upload certificate has fingerprint:
+
+        SHA1: ...
+
+    and the certificate used to sign the APK you uploaded has fingerprint:
+
+        SHA1: ...
+
+While this can be cause by other problems (like simply using entirely incorrect
+keys), one potential fix is:
+
+1. In your project's base directory, rename ``bundle.keystore`` to ``bundle.keystore.bak``.
+2. In your project's base directory, copy ``android.keystore`` to ``bundle.keystore``.
+
+Then rebuild and re-upload your bundle.
+
 
 .. _incompatible-8.1.0:
 .. _incompatible-7.6.0:
 
 8.1.0 / 7.6.0
 -------------
+
+**Speech Bubbles** Adding bubble support to an existing game requires
+adding files and script to the game. The :doc:`bubble` documentation
+includes the required changes.
+
+
+**Live2D** Ren'Py now requires Live2D Cubism 4 SDK for Native R6_2 or later.
+It may refuse to run if an older version is used.
+
+
+**Texture Memory** Ren'Py now accounts for texture memory more precisely.
+In general, games can raise :var:`config.image_cache_size_mb` by 33%, and
+use the same amount of memory.
+
+
+**Audio Fadeout** When audio is stopped or changed using ``play``, there is now
+a default fadeout of 0.016 seconds, to prevent pops. This is controlled by
+the :var:`config.fadeout_audio` variable. To disable the fadeout::
+
+    define config.fadeout_audio = 0.0
+
+Fading is now logarithmic, which sounds smoother to the human ear as it matches
+the way ears perceive sound. To revert to the old linear fades::
+
+    define config.linear_fades = True
+
+
+**Translate None** Ren'Py will now produce an error when encountering an explicit
+``translate None`` statement that does not translate strings, styles, or python.
+These should be rare, in practice. The recommended change is to replace::
+
+    translate None start_abcd1234:
+        e "This is a test"
+
+with::
+
+    e "This is a test" id start_abcd1234
+
+This change can also be reverted with::
+
+    define config.check_translate_none = False
+
 
 **Keymap** The :doc:`keymap <keymap>` has changed substantially, which means that
 if your game changes the default keymap - usually a bad idea - it
@@ -29,12 +201,22 @@ rather than all files. To look for all files in game/images, use::
 
     define config.search_prefixes += [ "images/" ]
 
+The paths that are searched consider the purpose of the file, rather than the
+type or extensions. So ``renpy.loadable("dlc.jpg")`` won't look for game/images/dlc.jpg.
+If you'd like to find that file, write ``renpy.loadable("images/dlc.jpg")``. If you'd
+like to search for a file that can be in either game/ or game/images, write
+``renpy.loadable("dlc.jpg", "images")``.
+
 
 **Android** Android has been changed so that the ``android.keystore`` file and
 ``bundle.keystore`` file are expected to be found in the project's base
 directory, and not in the rapt directory. This allows projects to be
 built with different keys, and helps ensure the same keys are used
 with multiple Android versions.
+
+If you'd like to use your own keys, configure your game, edit ``android.json``
+to set update_keystores to false, and then edit ``local.properties`` and
+``bundle.properties`` in ``rapt/project`` to point to your own keystore files.
 
 The android configuration file has been renamed from ``.android.json`` to
 ``android.json``. Ren'Py will automatically create the new file if the old
@@ -106,15 +288,39 @@ the store can be set to non-constant with (for example)::
 
     define audio._constant = False
 
-**Mixer volumes** now must be specified using a new format, where 0.0 is -60 dB (power)
+**Mixer volumes** now must be specified using a new format, where 0.0 is -40 dB (power)
 and 1.0 is 0 dB (power). To use the old format, where the samples were multiplied
 by volume ** 2, use::
 
-    define config.quadratic_volume = True
+    define config.quadratic_volumes = True
 
 Alternatively, you can determine new default volumes for :var:`config.default_music_volume`,
 :var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` variables. If any
 of these is 0.0 or 1.0, it can be left unchanged.
+
+**At Transform and Global Variables** An at transform block that uses a global variable
+is not re-evaluated when the variable changes. This matches the behavior
+for ATL that is not in screens.
+
+The recommended fix is to capture the global variable into a local, by changing::
+
+    screen test():
+        test "Test":
+            at transform:
+                xpos global_xpos
+
+to::
+
+    screen test():
+        $ local_xpos = global_xpos
+
+        test "Test":
+            at transform:
+                xpos local_xpos
+
+This change can be reverted with::
+
+    define config.at_transform_compare_full_context = True
 
 
 .. _incompatible-8.0.2:

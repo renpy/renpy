@@ -159,16 +159,24 @@ class Context(renpy.object.Object):
 
     def __repr__(self):
 
-        if not self.current:
-            return "<Context>"
+        try:
 
-        node = renpy.game.script.lookup(self.current)
+            if self.current is not None:
 
-        return "<Context: {}:{} {!r}>".format(
-            node.filename,
-            node.linenumber,
-            node.diff_info(),
-            )
+                node = renpy.game.script.lookup(self.current)
+
+                return "<Context: {}:{} {!r}>".format(
+                    node.filename,
+                    node.linenumber,
+                    node.diff_info(),
+                    )
+
+        except Exception:
+            pass
+
+        return "<Context>"
+
+
 
     def after_upgrade(self, version):
         if version < 1:
@@ -333,6 +341,9 @@ class Context(renpy.object.Object):
         # The translate identifier of the last say statement with
         # interact = False.
         self.deferred_translate_identifier = None
+
+        # When adding something here, consider if it needs to be added in
+        # renpy.rollback.Rollback.purge_unreachable.
 
     def replace_node(self, old, new):
 
@@ -766,6 +777,8 @@ class Context(renpy.object.Object):
         rv.last_abnormal = self.last_abnormal
         rv.abnormal_stack = list(self.abnormal_stack)
 
+        rv.interacting = False
+
         return rv
 
     def predict_call(self, label, return_site):
@@ -960,3 +973,41 @@ def run_context(top):
         except Exception:
             context.pop_all_dynamic()
             raise
+
+def reset_all_contexts():
+    """
+    :doc: context
+
+    This pops all contexts off the context stack, resetting the dynamic variables
+    as it does so. When this is done, a new context is created, the current statement
+    ends, and the game continues from the next statement. This will put Ren'Py
+    into the state it was at startup, with the exception of data and the start
+    point.
+
+    This can be used to reset everything about the game - shown image, playing music,
+    etc, as if the game started from the beginning.
+
+    Because of how completely this resets Ren'Py, this function immediately ends the
+    current statement.
+
+    This is mainly intended for use in an after_load label, where it can bring the
+    game back to the state it was in when it started. It's then up to the game to
+    re-establish the scene, music, etc, and it can then jump to the label it wants
+    to continue at.
+    """
+
+
+    old = renpy.game.context()
+
+    if old.next_node is None:
+        raise Exception("The renpy.reset_all_contexts function can only be called as the last thing in a python statement.")
+
+    while renpy.game.contexts:
+        c = renpy.game.contexts.pop()
+        c.pop_all_dynamic()
+
+    c = Context(True)
+    c.goto_label(old.next_node.name)
+
+    renpy.game.contexts.append(c)
+    raise renpy.game.RestartTopContext()

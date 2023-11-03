@@ -65,9 +65,13 @@ def clear_capture_focus(name="default"):
     :doc: other
 
     Clear the captured focus with `name`.
+    If `name` is None, clear all captured focuses.
     """
 
-    focus_storage.pop(name, None)
+    if name is None:
+        focus_storage.clear()
+    else:
+        focus_storage.pop(name, None)
 
 
 def get_focus_rect(name="default"):
@@ -223,6 +227,8 @@ def get_mouse():
     if focused is None:
         return None
     else:
+        if isinstance(focused, renpy.display.behavior.Button): # this affects Button and all its subclasses (like Imagebutton)
+            return focused.style.mouse or "button" # prioritize button style over default keyword
         return focused.style.mouse
 
 
@@ -416,7 +422,7 @@ def before_interact(roots):
     grab = replaced_by.get(id(grab), None)
 
     if override is not None:
-        d = renpy.exports.get_displayable(base=True, *override) # type: ignore
+        d = renpy.exports.get_displayable(*override, base=True) # type: ignore
 
         if (d is not None) and (current is not d) and not grab:
             current = d

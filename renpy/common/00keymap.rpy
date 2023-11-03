@@ -54,6 +54,7 @@ init -1600 python:
         choose_renderer = ['alt_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
         accessibility = [ 'K_a' ],
+        bubble_editor = [ 'alt_K_b', 'shift_K_b' ],
 
         # Accessibility.
         self_voicing = [ 'alt_K_v', 'K_v' ],
@@ -83,13 +84,14 @@ init -1600 python:
         # Input.
         input_backspace = [ 'any_K_BACKSPACE' ],
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
+        input_next_line = [ 'shift_K_RETURN', 'shift_K_KP_ENTER' ],
         input_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
         input_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
         input_up = [ 'any_K_UP', 'any_KP_UP' ],
         input_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
         input_delete = [ 'any_K_DELETE', 'any_KP_DELETE' ],
         input_home = [ 'K_HOME', 'KP_HOME', 'meta_K_LEFT' ],
-        input_end = [ 'K_END', 'KP_HOME', 'meta_K_RIGHT' ],
+        input_end = [ 'K_END', 'KP_END', 'meta_K_RIGHT' ],
         input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c', 'meta_noshift_K_c' ],
         input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v', 'meta_noshift_K_v' ],
         input_jump_word_left = [ 'osctrl_K_LEFT', 'osctrl_KP_LEFT' ],
@@ -296,7 +298,7 @@ init -1600 python:
         dest = config.renpy_base
 
         if renpy.macapp:
-            dest = os.path.expanduser(b"~/Desktop")
+            dest = os.path.expanduser("~/Desktop")
 
         pattern = renpy.store._screenshot_pattern or config.screenshot_pattern
 
@@ -415,8 +417,7 @@ screen _progress:
 
 init -1100 python:
 
-    # The default keymap. We might also want to put some of this into
-    # the launcher.
+    # The default keymap.
     _default_keymap = renpy.Keymap(
         rollback = renpy.rollback,
         screenshot = _screenshot,
@@ -443,6 +444,7 @@ init -1100 python:
         director = director.Start(),
         performance = ToggleScreen("_performance"),
         accessibility = ToggleScreen("_accessibility"),
+        bubble_editor = bubble.ToggleShown(),
         )
 
     config.underlay = [ _default_keymap ]

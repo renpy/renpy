@@ -221,6 +221,9 @@ def upgrade_savefile(fn):
     if signing_keys is None:
         return
 
+    atime = os.path.getatime(fn)
+    mtime = os.path.getmtime(fn)
+
     with zipfile.ZipFile(fn, "a") as zf:
 
         if "signatures" in zf.namelist():
@@ -228,6 +231,8 @@ def upgrade_savefile(fn):
 
         log = zf.read("log")
         zf.writestr("signatures", sign_data(log))
+
+    os.utime(fn, (atime, mtime))
 
 def upgrade_all_savefiles():
 
@@ -281,10 +286,10 @@ def init_tokens():
             if kind == "signing-key":
                 sk = ecdsa.SigningKey.from_der(key)
                 if sk is not None and sk.verifying_key is not None:
-                    signing_keys.append(sk.to_der())
+                    signing_keys.append(sk.to_der()) # type: ignore
                     verifying_keys.append(sk.verifying_key.to_der())
             elif kind == "verifying-key":
-                verifying_keys.append(key)
+                verifying_keys.append(key) # type: ignore
 
     # Process config.save_token_keys
 
@@ -293,7 +298,7 @@ def init_tokens():
         k = base64.b64decode(tk)
         try:
             vk = ecdsa.VerifyingKey.from_der(k)
-            verifying_keys.append(k)
+            verifying_keys.append(k) # type: ignore
         except Exception:
             try:
                 sk = ecdsa.SigningKey.from_der(k)

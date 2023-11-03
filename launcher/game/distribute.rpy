@@ -528,6 +528,11 @@ change_renpy_executable()
                 self.reporter.info(_("Scanning project files..."))
                 project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
 
+            if project.data['tutorial']:
+                self.reporter.info(_("Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."), pause=True)
+                self.log.close()
+                return
+
             if project.data['force_recompile']:
                 import compileall
 
@@ -551,7 +556,10 @@ change_renpy_executable()
             self.pretty_version = build['version']
 
             if (" " in self.base_name) or (":" in self.base_name) or (";" in self.base_name):
-                reporter.info(_("Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."), pause=True)
+                reporter.info(
+                    _("Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."),
+                    submessage=_("This may be derived from build.name and config.version or build.version."),
+                    pause=True)
                 self.log.close()
                 return
 
@@ -575,6 +583,9 @@ change_renpy_executable()
 
             self.include_update = build['include_update']
             self.build_update = self.include_update and build_update
+
+            if self.include_update:
+                self.make_key_pem()
 
             # The various executables, which change names based on self.executable_name.
             self.app = self.executable_name + ".app"
@@ -673,11 +684,12 @@ change_renpy_executable()
                         dlc=p["dlc"])
 
                 if self.build_update and p["update"]:
-                    self.make_package(
-                        p["name"],
-                        "update",
-                        p["file_lists"],
-                        dlc=p["dlc"])
+                    for update_format in self.list_update_formats():
+                        self.make_package(
+                            p["name"],
+                            update_format,
+                            p["file_lists"],
+                            dlc=p["dlc"])
 
             wait_parallel_threads()
 
@@ -695,6 +707,23 @@ change_renpy_executable()
 
             if open_directory:
                 renpy.run(store.OpenDirectory(self.destination, absolute=True))
+
+        def list_update_formats(self):
+            """
+            Returns a list of update formats to build.
+            """
+
+            rv = [ ]
+
+            for update_format in self.build["update_formats"]:
+                if update_format == "rpu":
+                    rv.append("rpu")
+                elif update_format == "zsync":
+                    rv.append("update")
+                else:
+                    raise Exception("Unknown update format: " + update_format)
+
+            return rv
 
         def scan_and_classify(self, directory, patterns):
             """
@@ -720,29 +749,37 @@ change_renpy_executable()
                 is_dir = os.path.isdir(path)
 
                 if is_dir:
-                    match_name = name + "/"
+                    match_names = [ name + "/", name ]
                 else:
-                    match_name = name
+                    match_names = [ name ]
 
                 for pattern, file_list in patterns:
 
-                    if match(match_name, pattern):
+                    matched = False
 
-                        # When we have ('test/**', None), avoid excluding test.
-                        if (not file_list) and is_dir:
-                            new_pattern = pattern.rstrip("*")
-                            if (pattern != new_pattern) and match(match_name, new_pattern):
-                                continue
+                    for match_name in match_names:
 
+                        if match(match_name, pattern):
+
+                            # When we have ('test/**', None), avoid excluding test.
+                            if (not file_list) and is_dir:
+                                new_pattern = pattern.rstrip("*")
+                                if (pattern != new_pattern) and match(match_name, new_pattern):
+                                    continue
+
+                            matched = True
+                            break
+
+                    if matched:
                         break
 
                 else:
-                    print(str(match_name), "doesn't match anything.", file=self.log)
+                    print(str(match_names[0]), "doesn't match anything.", file=self.log)
 
                     pattern = None
                     file_list = None
 
-                print(str(match_name), "matches", str(pattern), "(" + str(file_list) + ").", file=self.log)
+                print(str(match_names[0]), "matches", str(pattern), "(" + str(file_list) + ").", file=self.log)
 
                 if file_list is None:
                     return
@@ -1409,6 +1446,7 @@ change_renpy_executable()
 
             FORMATS = {
                 "update" : (".update", False, False, False),
+                "rpu" : ("", False, False, False),
 
                 "tar.bz2" : (".tar.bz2", False, False, True),
                 "zip" : (".zip", False, False, True),
@@ -1458,7 +1496,7 @@ change_renpy_executable()
 
             update_fn = os.path.join(self.destination, filename + ".update.json")
 
-            if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
+            if self.include_update and not format.startswith("app-"):
 
                 with open(update_fn, "wb" if PY2 else "w") as f:
                     json.dump(update, f, indent=2)
@@ -1466,6 +1504,9 @@ change_renpy_executable()
                 if (not dlc) or (format == "update"):
                     fl.append(File("update", None, True, False))
                     fl.append(File("update/current.json", update_fn, False, False))
+
+                    if not dlc:
+                        fl.append(File("update/key.pem", self.temp_filename("key.pem"), False, False))
 
             # If we're not an update file, prepend the directory.
             if (not dlc) and prepend:
@@ -1476,6 +1517,10 @@ change_renpy_executable()
 
             full_filename = filename + ext
             path += ext
+
+            if format == "rpu":
+                full_filename = "rpu/" + variant + ".files.rpu"
+                path = self.destination + "/" + full_filename
 
             if self.build['renpy']:
                 fl_hash = fl.hash(self)
@@ -1513,6 +1558,8 @@ change_renpy_executable()
                 pkg = TarPackage(path, "w:bz2")
             elif format == "update":
                 pkg = UpdatePackage(path, filename, self.destination)
+            elif format == "rpu":
+                pkg = RPUPackage(self.destination, variant)
             elif format == "zip" or format == "app-zip" or format == "bare-zip":
                 if self.build['renpy']:
                     pkg = ExternalZipPackage(path)
@@ -1549,13 +1596,13 @@ change_renpy_executable()
 
             self.reporter.progress_done()
 
-
             if format == "update":
-                # Build the zsync file.
-
                 self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
 
-            pkg.close()
+            def close_progress(done, total):
+                self.reporter.progress(_("Finishing the [variant] [format] package."), done, total, variant=variant, format=format)
+
+            pkg.close(close_progress)
 
             if done is not None:
                 done()
@@ -1576,33 +1623,78 @@ change_renpy_executable()
 
             def add_variant(variant):
 
-                digest = self.build_cache[self.base_name + "-" + variant + ".update"][0]
-
-                sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
-
                 index[variant] = {
                     "version" : self.update_versions[variant],
                     "pretty_version" : self.pretty_version,
-                    "digest" : digest,
-                    "zsync_url" : self.base_name + "-" + variant + ".zsync",
-                    "sums_url" : self.base_name + "-" + variant + ".sums",
-                    "sums_size" : sums_size,
-                    "json_url" : self.base_name + "-" + variant + ".update.json",
-                    }
+                    "renpy_version" : renpy.version_only,
+                }
 
-                fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
+                if "zsync" in self.build["update_formats"]:
 
-                if os.path.exists(fn):
-                    os.unlink(fn)
+                    digest = self.build_cache[self.base_name + "-" + variant + ".update"][0]
+                    sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
+
+                    index[variant].update({
+                        "digest" : digest,
+                        "zsync_url" : self.base_name + "-" + variant + ".zsync",
+                        "sums_url" : self.base_name + "-" + variant + ".sums",
+                        "sums_size" : sums_size,
+                        "json_url" : self.base_name + "-" + variant + ".update.json",
+                        })
+
+                    fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
+
+                    if os.path.exists(fn):
+                        os.unlink(fn)
+
+                if "rpu" in self.build["update_formats"]:
+
+                    rpu_size = 0
+
+                    rpu_dir = os.path.join(self.destination, "rpu")
+
+                    for i in os.listdir(rpu_dir):
+                        rpu_size += os.path.getsize(os.path.join(rpu_dir, i))
+
+                    index[variant]["rpu_url"] = "rpu/" + variant + ".files.rpu"
+                    index[variant]["rpu_digest"] = self.build_cache["rpu/" + variant + ".files.rpu"][0]
+                    index[variant]["rpu_size"] = rpu_size
 
             for p in packages:
                 if p["update"]:
                     add_variant(p["name"])
 
+            update_data = json.dumps(index, indent=2)
+
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
             with open(fn, "wb" if PY2 else "w") as f:
-                json.dump(index, f, indent=2)
+                f.write(update_data)
 
+            # Write the signed file.
+            import ecdsa
+
+            with open(self.find_update_pem(), "rb") as f:
+                signing_key = ecdsa.SigningKey.from_pem(f.read())
+
+            fn = renpy.fsencode(os.path.join(self.destination, "updates.ecdsa"))
+            with open(fn, "wb") as f:
+                f.write(signing_key.sign(update_data.encode("utf-8")))
+
+        def find_update_pem(self):
+            if self.build['renpy']:
+                return os.path.join(config.renpy_base, "update.pem")
+            else:
+                return os.path.join(self.project.path, "update.pem")
+
+        def make_key_pem(self):
+            import ecdsa
+
+            with open(self.find_update_pem(), "rb") as f:
+                signing_key = ecdsa.SigningKey.from_pem(f.read())
+
+            key_pem = self.temp_filename("key.pem")
+            with open(key_pem, "wb") as f:
+                f.write(signing_key.verifying_key.to_pem())
 
         def save_build_cache(self):
             if not self.build['renpy']:

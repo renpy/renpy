@@ -227,16 +227,10 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         width, height = d._offer_size
 
     if xmaximum is not None:
-        if isinstance(xmaximum, float):
-            width = width * xmaximum
-        else:
-            width = min(xmaximum, width)
+        width = min(renpy.display.core.absolute.compute_raw(xmaximum, width), width)
 
     if ymaximum is not None:
-        if isinstance(ymaximum, float):
-            height = height * ymaximum
-        else:
-            height = min(ymaximum, height)
+        height = min(renpy.display.core.absolute.compute_raw(ymaximum, height), height)
 
     if width < 0:
         width = 0
@@ -414,10 +408,7 @@ def redraw_time():
 
 def redraw(d, when):
     """
-    :doc: udd_utility
-
-    Causes the displayable `d` to be redrawn after `when` seconds have
-    elapsed.
+    Documented in cdd.rst.
     """
 
     if not renpy.game.interface:

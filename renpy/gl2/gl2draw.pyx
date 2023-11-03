@@ -76,6 +76,9 @@ vsync = True
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
 
+# The default position of the window.
+default_position = (pygame.WINDOWPOS_CENTERED, pygame.WINDOWPOS_CENTERED)
+
 cdef class GL2Draw:
 
     def __init__(self, name):
@@ -121,6 +124,9 @@ cdef class GL2Draw:
         # The shader cache,
         self.shader_cache = None
 
+        # Has the position of this window ever been set?
+        self.ever_set_position = False
+
     def get_texture_size(self):
         """
         Returns the amount of memory locked up in textures.
@@ -140,9 +146,10 @@ cdef class GL2Draw:
         # Are we maximized?
         old_surface = pygame.display.get_surface()
         if old_surface is not None:
-            maximized = old_surface.get_flags() & pygame.WINDOW_MAXIMIZED
+            flags = old_surface.get_flags()
+            maximized = (flags & pygame.WINDOW_MAXIMIZED) and not (flags & (pygame.WINDOW_FULLSCREEN|pygame.WINDOW_FULLSCREEN_DESKTOP))
         else:
-            maximized = False
+            maximized = renpy.game.preferences.maximized
 
         # Information about the virtual size.
         vwidth, vheight = self.virtual_size
@@ -370,6 +377,10 @@ cdef class GL2Draw:
                 self.window = None
 
         if self.window is None:
+
+            if renpy.game.preferences.maximized:
+                window_flags |= pygame.WINDOW_MAXIMIZED
+
             try:
                 renpy.display.log.write("Windowed mode.")
                 self.window = pygame.display.set_mode((pwidth, pheight), window_flags)
@@ -440,21 +451,34 @@ cdef class GL2Draw:
         # Are we in fullscreen mode?
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
+        # Are we maximized?
+        maximized = bool(pygame.display.get_window().get_window_flags() & pygame.WINDOW_MAXIMIZED) and not fullscreen and renpy.config.gl_resize
+
+        # See if we've ever set the screen position, and if not, center the window.
+        if not fullscreen and not maximized:
+            if not self.ever_set_position:
+                self.ever_set_position = True
+                pygame.display.get_window().set_position(default_position)
+
         # Get the size of the created screen.
         pwidth, pheight = renpy.display.core.get_size()
-
-        renpy.game.preferences.fullscreen = fullscreen
-        renpy.game.interface.fullscreen = fullscreen
 
         vwidth, vheight = self.virtual_size
 
         self.physical_size = (pwidth, pheight)
         self.drawable_size = pygame.display.get_drawable_size()
 
-        if not fullscreen:
-            renpy.game.preferences.physical_size = self.get_physical_size()
-
         renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
+
+        # Update the preferences.
+        renpy.game.preferences.fullscreen = fullscreen
+        renpy.game.interface.fullscreen = fullscreen
+
+        if not fullscreen:
+            renpy.game.preferences.maximized = maximized
+
+        if not fullscreen and not maximized:
+            renpy.game.preferences.physical_size = self.get_physical_size()
 
         if renpy.config.adjust_view_size is not None:
             view_width, view_height = renpy.config.adjust_view_size(pwidth, pheight)
@@ -542,8 +566,12 @@ cdef class GL2Draw:
         width = max(width, 256)
         height = max(height, 256)
 
-        pygame.display.get_window().restore()
-        pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen)
+        if fullscreen:
+            maximized = False
+        else:
+            maximized = renpy.game.preferences.maximized
+
+        pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen, maximized=maximized)
 
     def update(self, force=False):
         """
@@ -567,6 +595,18 @@ cdef class GL2Draw:
         """
         Called when terminating the use of the OpenGL context.
         """
+
+        global default_position
+
+        # Are we in fullscreen mode?
+        fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+
+        # Are we maximized?
+        maximized = bool(pygame.display.get_window().get_window_flags() & pygame.WINDOW_MAXIMIZED)
+
+        # See if we've ever set the screen position, and if not, center the window.
+        if not fullscreen and not maximized:
+            default_position = pygame.display.get_position()
 
         self.kill_textures()
 
@@ -611,11 +651,14 @@ cdef class GL2Draw:
 
         # Generate the framebuffer.
         glGenFramebuffers(1, &self.fbo)
+        glGenFramebuffers(1, &self.fbo_1px)
 
         glGenRenderbuffers(1, &self.color_renderbuffer)
+        glGenRenderbuffers(1, &self.color_renderbuffer_1px)
 
         if renpy.config.depth_size:
             glGenRenderbuffers(1, &self.depth_renderbuffer)
+            glGenRenderbuffers(1, &self.depth_renderbuffer_1px)
 
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
         glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
@@ -642,6 +685,7 @@ cdef class GL2Draw:
         self.texture_loader.max_texture_width = width
         self.texture_loader.max_texture_height = height
 
+        # Full-size fbo.
         self.change_fbo(self.fbo)
 
         glBindRenderbuffer(GL_RENDERBUFFER, self.color_renderbuffer)
@@ -672,6 +716,37 @@ cdef class GL2Draw:
                 GL_RENDERBUFFER,
                 self.depth_renderbuffer)
 
+        # 1px fbo.
+        self.change_fbo(self.fbo_1px)
+
+        glBindRenderbuffer(GL_RENDERBUFFER, self.color_renderbuffer_1px)
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8,  1, 1)
+
+        glFramebufferRenderbuffer(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            GL_RENDERBUFFER,
+            self.color_renderbuffer_1px)
+
+        if renpy.config.depth_size:
+
+            glBindRenderbuffer(GL_RENDERBUFFER, self.depth_renderbuffer_1px)
+
+            if self.gles:
+                if renpy.config.depth_size >= 24:
+                    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1, 1)
+                else:
+                    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 1, 1)
+
+            else:
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1, 1)
+
+            glFramebufferRenderbuffer(
+                GL_FRAMEBUFFER,
+                GL_DEPTH_ATTACHMENT,
+                GL_RENDERBUFFER,
+                self.depth_renderbuffer_1px)
+
         glBindRenderbuffer(GL_RENDERBUFFER, default_renderbuffer)
         self.change_fbo(self.default_fbo)
 
@@ -680,11 +755,19 @@ cdef class GL2Draw:
 
         self.change_fbo(self.default_fbo)
 
+        # Full-size fbo.
         glDeleteFramebuffers(1, &self.fbo)
         glDeleteRenderbuffers(1, &self.color_renderbuffer)
 
         if renpy.config.depth_size:
             glDeleteRenderbuffers(1, &self.depth_renderbuffer)
+
+        # 1px fbo.
+        glDeleteFramebuffers(1, &self.fbo_1px)
+        glDeleteRenderbuffers(1, &self.color_renderbuffer_1px)
+
+        if renpy.config.depth_size:
+            glDeleteRenderbuffers(1, &self.depth_renderbuffer_1px)
 
 
     def can_block(self):
@@ -940,7 +1023,7 @@ cdef class GL2Draw:
         self.load_all_textures(what)
 
         # Switch to the right FBO, and the right viewport.
-        self.change_fbo(self.fbo)
+        self.change_fbo(self.fbo_1px)
 
         # Set up the viewport.
         glViewport(0, 0, 1, 1)
@@ -1149,7 +1232,7 @@ cdef class GL2DrawingContext:
         """
 
         cdef float halfwidth
-        cdef float halfheigh
+        cdef float halfheight
 
         # This is the equivalent of projecting (0, 0, 0, 1), and getting x and y.
         cdef float sx = transform.xdw
@@ -1174,9 +1257,6 @@ cdef class GL2DrawingContext:
 
         if model.reverse is not IDENTITY:
              transform = transform * model.reverse
-
-        if properties["pixel_perfect"]:
-            transform = self.correct_pixel_perfect(transform)
 
         # If a clip polygon is in place, clip the mesh with it.
         if clip_polygon is not None:
@@ -1271,10 +1351,13 @@ cdef class GL2DrawingContext:
 
         has_reverse = (r.reverse is not None) and (r.reverse is not IDENTITY)
 
+        if r.properties and r.properties.get("pixel_perfect", False) and properties["pixel_perfect"] is None:
+            transform = self.correct_pixel_perfect(transform)
+
         if has_reverse or r.properties:
             properties = self.merge_properties(properties, r.properties)
 
-        if has_reverse and (properties["pixel_perfect"] is None):
+        if has_reverse:
             properties["pixel_perfect"] = False
 
         if r.shaders is not None:

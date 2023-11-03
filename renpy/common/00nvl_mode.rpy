@@ -349,7 +349,7 @@ init -1500 python:
             while config.nvl_list_length and (len(nvl_list) + 1 > config.nvl_list_length):
                 nvl_list.pop(0)
 
-        def do_display(self, who, what, multiple=None, **display_args):
+        def do_display(self, who, what, multiple=None, retain=None, **display_args):
 
             renpy.translation.check_language()
 

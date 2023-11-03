@@ -86,6 +86,7 @@ include("libavcodec/avcodec.h", directory="ffmpeg", optional=True) or include("l
 include("libswscale/swscale.h", directory="ffmpeg", optional=True) or include("libswscale/swscale.h") # type: ignore
 include("GL/glew.h")
 include("pygame_sdl2/pygame_sdl2.h", directory="python{}.{}".format(sys.version_info.major, sys.version_info.minor))
+include("hb.h", directory="harfbuzz")
 
 library("SDL2")
 library("png")
@@ -165,6 +166,7 @@ for p in generate_styles.prefixes:
 cython("renpy.display.matrix")
 cython("renpy.display.render", libs=[ 'z', 'm' ])
 cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
+cython("renpy.display.quaternion", libs=[ 'm' ])
 
 cython("renpy.uguu.gl", libs=sdl)
 cython("renpy.uguu.uguu", libs=sdl)
@@ -195,6 +197,13 @@ cython(
     "renpy.text.ftfont",
     [ "ftsupport.c", "ttgsubtable.c" ],
     libs=sdl + [ 'freetype', 'z', 'm' ])
+
+if not (PY2 and emscripten):
+
+    cython(
+        "renpy.text.hbfont",
+        [ "ftsupport.c" ],
+        libs=sdl + [ 'harfbuzz', 'freetype', 'z', 'm' ])
 
 generate_all_cython()
 find_unnecessary_gen()

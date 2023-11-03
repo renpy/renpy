@@ -64,7 +64,7 @@ When the list is given, the item of it is played in order.
 
 The ``fadein`` and ``fadeout`` clauses are optional. Fadeout gives the fadeout
 time for currently playing music, in seconds, while fadein gives the time
-it takes to fade in the new music. If fadeout is not given, :var:`config.fade_music`
+it takes to fade in the new music. If fadeout is not given, :var:`config.fadeout_audio`
 is used.
 
 The ``loop`` and ``noloop`` clauses are also optional. The loop clause causes
@@ -117,8 +117,8 @@ Stop Statement
 --------------
 
 The ``stop`` statement begins with the keyword ``stop``, followed by the the name of a
-channel to stop sound on. It may optionally have a ``fadeout``
-clause. ::
+channel to stop sound on. It may optionally have a ``fadeout`` clause. If the
+fadeout clause is not given, :var:`config.fadeout_audio` is used. ::
 
         stop sound
         stop music fadeout 1.0
@@ -239,9 +239,9 @@ For example, if the main volume is 80% (or 0.8), the mixer's volume is 100%,
 the channel volume is 50% (0.5) and the track's relative volume is 25% (0.25),
 the resulting volume is .8\*1.\*.5\*.25 = .1, so 10%.
 
-The mixers' volumes can be set using :func:`preferences.set_volume`, using the
+The mixers' volumes can be set using :func:`preferences.set_mixer`, using the
 :func:`SetMixer` action, or using the :func:`Preference` action with the
-"mixer <mixer> volume" key.
+``"mixer <mixer> volume"`` key.
 The "audio" and "sound" channels relate to the "sfx" mixer, the "music" channel
 to the "music" mixer and the "voice" channel to the "voice" mixer.
 Every channel additionally relates to the "main" mixer, as shown above.

@@ -431,3 +431,26 @@
     # gui.rpy:457
     old "## NVL-mode."
     new "## NVL-모드."
+
+translate korean strings:
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    # Automatic translation.
+    new "## 화면 또는 트랜스폼에서 유효하지 않거나 불안정한 프로퍼티 검사 활성화"
+
+    # gui/game/gui.rpy:287
+    old "## Generic frames."
+    # Automatic translation.
+    new "## 일반 프레임."
+
+    # gui/game/gui.rpy:307
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    # Automatic translation.
+    new "## 기본 GUI는 슬라이더와 세로 스크롤 막대만 사용합니다. 다른 모든 막대는 제작자가 작성한 화면에서만 사용됩니다."
+
+    # gui/game/gui.rpy:446
+    old "## Change the size and spacing of various things."
+    # Automatic translation.
+    new "## 다양한 사물의 크기와 간격을 변경합니다."
+

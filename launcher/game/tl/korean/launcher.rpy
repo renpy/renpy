@@ -36,8 +36,8 @@
     new "안드로이드 패키지를 만드려면, RAPT 파일을 내려받고 렌파이 디렉터리 안에 압축 해제하세요. 그다음 렌파이를 재시작하세요."
 
     # game/android.rpy:31
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "윈도우에서 안드로이드 패키지를 만드려면 64비트 JDK가 필요합니다. JDK는 JRE와 다르므로 PC에 JDK가 없는 자바가 설치되어 있을 수 있습니다.\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK를 내려받아 설치한 뒤{/a}, 렌파이를 재시작해주세요."
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "윈도우에서 안드로이드 패키지를 만드려면 64비트 JDK가 필요합니다. JDK는 JRE와 다르므로 PC에 JDK가 없는 자바가 설치되어 있을 수 있습니다.\n\n{a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}JDK를 내려받아 설치한 뒤{/a}, 렌파이를 재시작해주세요."
 
     # game/android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -1666,3 +1666,493 @@
     # game/install.rpy:176
     old "Open Ren'Py SDK Directory"
     new "렌파이 SDK 디렉터리 열기"
+
+translate korean strings:
+
+    # game/add_file.rpy:37
+    old "The file name may not be empty."
+    # Automatic translation.
+    new "파일 이름이 비어 있지 않을 수 있습니다."
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "RAPT가 설치되었지만 키가 구성되지 않았습니다. 새 키를 생성하거나 android.keystore 및 bundle.keystore를 기본 디렉터리에 복사하세요."
+
+    # game/android.rpy:41
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    # Automatic translation.
+    new "Play 번들(Google Play용) 또는 유니버설 APK(사이드 로딩 및 기타 앱 스토어용)를 원하는지 선택하세요."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "텔레비전 기반 Android 콘솔을 에뮬레이트하려고 시도합니다.\n\n컨트롤러 입력은 화살표 키에 매핑되고, Enter는 선택 버튼에 매핑되며, Escape는 메뉴 버튼에 매핑되고, PageUp은 뒤로 가기 버튼에 매핑됩니다."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "Android SDK 및 지원 패키지를 다운로드하고 설치합니다."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "패키지에 서명하는 데 필요한 키를 생성합니다."
+
+    # game/android.rpy:56
+    old "Lists the connected devices."
+    # Automatic translation.
+    new "연결된 장치를 나열합니다."
+
+    # game/android.rpy:57
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Android 11 이상에서 Wi-Fi를 통해 장치와 페어링합니다."
+
+    # game/android.rpy:58
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Android 11 이상에서 Wi-Fi를 통해 장치에 연결합니다."
+
+    # game/android.rpy:59
+    old "Disconnects a device connected over Wi-Fi."
+    # Automatic translation.
+    new "Wi-Fi를 통해 연결된 장치의 연결을 해제합니다."
+
+    # game/android.rpy:61
+    old "Removes Android temporary files."
+    # Automatic translation.
+    new "Android 임시 파일을 제거합니다."
+
+    # game/android.rpy:63
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "Google Play에 업로드할 Android 앱 번들(ABB)을 빌드합니다. 여기에는 최대 2GB의 데이터가 포함될 수 있습니다."
+
+    # game/android.rpy:64
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "사이드로드 및 구글 플레이 이외의 스토어용 유니버설 APK 패키지를 빌드합니다. 여기에는 최대 2GB의 데이터가 포함될 수 있습니다."
+
+    # game/android.rpy:327
+    old "Android: [project.current.display_name!q]"
+    new "Android: [project.current.display_name!q]"
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "SDK 설치"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "키 생성"
+
+    # game/android.rpy:397
+    old "Play Bundle"
+    new "Play Bundle"
+
+    # game/android.rpy:402
+    old "Universal APK"
+    new "Universal APK"
+
+    # game/android.rpy:452
+    old "List Devices"
+    # Automatic translation.
+    new "장치 목록"
+
+    # game/android.rpy:456
+    old "Wi-Fi Debugging Pair"
+    # Automatic translation.
+    new "Wi-Fi 디버깅 페어"
+
+    # game/android.rpy:460
+    old "Wi-Fi Debugging Connect"
+    # Automatic translation.
+    new "Wi-Fi 디버깅 연결"
+
+    # game/android.rpy:464
+    old "Wi-Fi Debugging Disconnect"
+    # Automatic translation.
+    new "Wi-Fi 디버깅 연결 해제"
+
+    # game/android.rpy:468
+    old "Clean"
+    # Automatic translation.
+    new "청소"
+
+    # game/android.rpy:573
+    old "Wi-Fi Pairing Code"
+    # Automatic translation.
+    new "Wi-Fi 페어링 코드"
+
+    # game/android.rpy:573
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    # Automatic translation.
+    new "지원되는 경우 '개발자 옵션', '무선 디버깅', '페어링 코드가 있는 장치 페어링'에서 확인할 수 있습니다."
+
+    # game/android.rpy:580
+    old "Pairing Host & Port"
+    # Automatic translation.
+    new "호스트 및 포트 페어링"
+
+    # game/android.rpy:596
+    old "IP Address & Port"
+    # Automatic translation.
+    new "IP 주소 및 포트"
+
+    # game/android.rpy:596
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    # Automatic translation.
+    new "지원되는 경우 '개발자 옵션'의 '무선 디버깅'에서 확인할 수 있습니다."
+
+    # game/android.rpy:612
+    old "This can be found in 'List Devices'."
+    # Automatic translation.
+    new "'장치 목록'에서 찾을 수 있습니다."
+
+    # game/android.rpy:632
+    old "Cleaning up Android project."
+    # Automatic translation.
+    new "Android 프로젝트 정리."
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    # Automatic translation.
+    new "번들을 설치 중입니다."
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    # Automatic translation.
+    new "번들 설치에 실패한 것 같습니다."
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    # Automatic translation.
+    new "앱 실행에 실패한 것 같습니다."
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "Gradle에 얼마나 많은 RAM(GB)을 할당하시겠습니까?\n이 값은 양의 정수여야 합니다."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "RAM 크기는 숫자만 포함해야 하며 양수여야 합니다."
+
+    # game/androidstrings.rpy:43
+    old "Do you want to automatically update the Java source code?"
+    # Automatic translation.
+    new "Java 소스 코드를 자동으로 업데이트하시겠습니까?"
+
+    # game/androidstrings.rpy:48
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    # Automatic translation.
+    new "javac을 사용하여 테스트 파일을 컴파일할 수 없습니다. 아직 Java 개발 키트를 설치하지 않은 경우 다음에서 다운로드하세요:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nJDK는 JRE와 다르므로 JDK가 없어도 Java를 사용할 수 있습니다. '자바소프트(오라클) 레지스트리 키'를 설치했는지 확인하세요.\n\n작동하는 JDK가 없으면 계속할 수 없습니다."
+
+    # game/androidstrings.rpy:49
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    # Automatic translation.
+    new "컴퓨터의 Java 버전이 Android SDK에서 지원하는 유일한 버전인 JDK 8이 아닌 것 같습니다. JDK 8을 설치해야 하는 경우 다음에서 다운로드할 수 있습니다:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\n다른 버전의 Java를 사용하도록 JAVA_HOME 환경 변수를 설정할 수도 있습니다."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "랩트 디렉터리에서 android.keystore 파일을 찾았습니다. 이 파일을 사용하시겠습니까?"
+
+    # game/androidstrings.rpy:64
+    old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "애플리케이션 서명 키를 생성해 드릴 수 있습니다. 이 키는 사이드 로딩 및 Google Play 이외의 스토어용 범용 APK를 생성하는 데 필요합니다.\n\n키를 생성하시겠습니까?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\n'아니요'라고 말하면 키 생성을 방지할 수 있습니다."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "랩트 디렉터리에서 bundle.keystore 파일을 찾았습니다. 이 파일을 사용하시겠습니까?"
+
+    # game/androidstrings.rpy:70
+    old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "번들 서명 키를 생성해 드릴 수 있습니다. 이 키는 Google Play에 업로드할 Android 앱 번들(AAB)을 빌드하는 데 필요합니다.\n\n키를 생성하시겠습니까?"
+
+    # game/androidstrings.rpy:71
+    old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
+    # Automatic translation.
+    new "번들 키스토어 파일에 키를 생성합니다.\n\n이 파일을 백업해야 합니다. 이 파일을 분실하면 애플리케이션을 업그레이드할 수 없습니다.\n\n또한 키를 안전하게 보관해야 합니다. 악의적인 사람이 이 파일을 입수하면 애플리케이션의 가짜 버전을 만들어 사용자의 데이터를 도용할 수 있습니다.\n\nbundle.keystore의 백업을 만들어 안전한 곳에 보관하시겠습니까?"
+
+    # game/androidstrings.rpy:73
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    # Automatic translation.
+    new "bundle.keystore를 만들 수 없습니다. 경로에 keytool이 있나요?"
+
+    # game/androidstrings.rpy:74
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    # Automatic translation.
+    new "android.keystore와 bundle.keystore가 포함된 디렉터리를 열었습니다. 백업하여 안전한 곳에 보관하세요."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    # Automatic translation.
+    new "프로젝트 디렉터리 선택"
+
+    # game/distribute.rpy:1745
+    old "Copying files..."
+    # Automatic translation.
+    new "파일 복사 중..."
+
+    # game/distribute_gui.rpy:157
+    old "Build Distributions: [project.current.display_name!q]"
+    # Automatic translation.
+    new "배포 빌드: [project.current.display_name!q]"
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    # Automatic translation.
+    new "이전 게임 업데이트"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    # Automatic translation.
+    new "고급 Ren'Py 통합을 포함한 다양한 확장 기능을 갖춘 최신 편집기입니다."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    # Automatic translation.
+    new "고급 Ren'Py 통합을 포함한 다양한 확장 기능을 갖춘 최신 편집기입니다.\n{a=jump:reinstall_vscode}Visual Studio 코드를 최신 버전으로 업그레이드합니다.{/a}"
+
+    # game/editor.rpy:169
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:169
+    old "Up to 110 MB download required."
+    # Automatic translation.
+    new "최대 110MB 다운로드가 필요합니다."
+
+    # game/editor.rpy:182
+    old "A modern and approachable text editor."
+    # Automatic translation.
+    new "현대적이고 친근한 텍스트 편집기."
+
+    # game/editor.rpy:196
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:211
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:220
+    old "Visual Studio Code (System)"
+    # Automatic translation.
+    new "Visual Studio 코드(시스템)"
+
+    # game/editor.rpy:220
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    # Automatic translation.
+    new "Ren'Py 외부에 설치한 Visual Studio Code 사본을 사용합니다. Ren'Py 파일에 대한 지원을 추가하려면 언어-renpy 확장자를 설치하는 것이 좋습니다."
+
+    # game/front_page.rpy:219
+    old "(Beta)"
+    # Automatic translation.
+    new "(베타)"
+
+    # game/gui7.rpy:302
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    # Automatic translation.
+    new "{size=-4}\n\n이렇게 하면 gui/main_menu.png, gui/game_menu.png, gui/window_icon.png를 덮어쓰지는 않지만 존재하지 않는 파일을 생성합니다.{/size}"
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    # Automatic translation.
+    new "다운로드 [extension.download_file]."
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    # Automatic translation.
+    new "[extension.download_url] 에서 [extension.download_file] 을 다운로드할 수 없습니다:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    # Automatic translation.
+    new "[extension.download_url] 에서 다운로드한 파일 [extension.download_file] 이 올바르지 않습니다."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/ios.rpy:269
+    old "iOS: [project.current.display_name!q]"
+    new "iOS: [project.current.display_name!q]"
+
+    # game/ios.rpy:379
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    # Automatic translation.
+    new "Apple Silicon의 iOS 시뮬레이터에 알려진 문제가 있습니다. x86_64 또는 iOS 기기에서 테스트하세요."
+
+    # game/navigation.rpy:168
+    old "Navigate: [project.current.display_name!q]"
+    # Automatic translation.
+    new "탐색: [project.current.display_name!q]"
+
+    # game/new_project.rpy:81
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
+    # Automatic translation.
+    new "[new_project_language]{#this substitution may be localized} 언어 프로젝트를 생성합니다. 다른 언어로 프로젝트를 만들려면 환경설정에서 런처 언어를 변경합니다."
+
+    # game/preferences.rpy:106
+    old "General"
+    # Automatic translation.
+    new "일반"
+
+    # game/preferences.rpy:107
+    old "Options"
+    # Automatic translation.
+    new "옵션"
+
+    # game/preferences.rpy:227
+    old "Daily check for update"
+    # Automatic translation.
+    new "매일 업데이트 확인"
+
+    # game/preferences.rpy:246
+    old "Launcher Theme:"
+    # Automatic translation.
+    new "런처 테마:"
+
+    # game/preferences.rpy:250
+    old "Default theme"
+    # Automatic translation.
+    new "기본 테마"
+
+    # game/preferences.rpy:251
+    old "Dark theme"
+    # Automatic translation.
+    new "어두운 테마"
+
+    # game/preferences.rpy:252
+    old "Custom theme"
+    # Automatic translation.
+    new "사용자 지정 테마"
+
+    # game/preferences.rpy:256
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    new "사용자 지정 테마를 만드는 방법에 대한 정보는 {a=https://www.renpy.org/doc/html/skins.html}Ren'Py 문서{/a} 에서 확인할 수 있습니다."
+
+    # game/preferences.rpy:273
+    old "Install Libraries:"
+    # Automatic translation.
+    new "라이브러리를 설치합니다:"
+
+    # game/preferences.rpy:301
+    old "Clean temporary files"
+    # Automatic translation.
+    new "임시 파일 정리"
+
+    # game/preferences.rpy:308
+    old "Cleaning temporary files..."
+    # Automatic translation.
+    new "임시 파일 정리 중..."
+
+    # game/preferences.rpy:338
+    old "{#in language font}Welcome! Please choose a language"
+    # Automatic translation.
+    new "{#in language font}환영합니다! 언어를 선택해 주세요."
+
+    # game/preferences.rpy:373
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    # Automatic translation.
+    new "{#in language font}다음에서 Ren'Py 사용 시작 [lang_name]"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "Lint는 게임에서 잠재적인 실수를 확인하고 통계를 제공합니다."
+
+    # game/project.rpy:283
+    old "This may be because the project is not writeable."
+    # Automatic translation.
+    new "프로젝트가 쓰기 불가능하기 때문일 수 있습니다."
+
+    # game/translations.rpy:91
+    old "Translations: [project.current.display_name!q]"
+    # Automatic translation.
+    new "번역: [project.current.display_name!q]"
+
+    # game/translations.rpy:342
+    old "Extract Dialogue: [project.current.display_name!q]"
+    # Automatic translation.
+    new "대화 추출: [project.current.display_name!q]"
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    # Automatic translation.
+    new "언어(또는 기본 언어의 경우 없음)를 선택합니다:"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "릴리스(Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "릴리스(Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "사전 출시(Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "사전 출시(Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "야간(렌파이 8, 파이썬 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "야간(렌파이 7, 파이썬 2)"
+
+    # game/updater.rpy:116
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/doc/html/changelog.html}변경 로그 보기{/a}"
+
+    # game/updater.rpy:118
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/dev-doc/html/changelog.html}변경 로그 보기{/a}"
+
+    # game/web.rpy:485
+    old "Creating package..."
+    # Automatic translation.
+    new "패키지 만들기..."
+
+    # game/web.rpy:560
+    old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    # Automatic translation.
+    new "재생 중에 이미지와 음악을 다운로드할 수 있습니다. 이 동작을 구성할 수 있도록 'progressive_download.txt' 파일이 생성됩니다."
+
+translate korean strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ren'Py 릴리스 버전에 대한 수정 사항이 포함된 야간 빌드입니다."
+

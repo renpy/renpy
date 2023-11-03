@@ -206,6 +206,9 @@ def create_store(name):
     Creates the store with `name`.
     """
 
+    if name == "store.store":
+        raise NameError('Namespaces may not begin with "store".')
+
     parent, _, var = name.rpartition('.')
 
     if parent:
@@ -404,6 +407,33 @@ class StarredVariables(ast.NodeVisitor):
 # starred assignment.
 find_starred_variables = StarredVariables().find
 
+class WrapFormattedValue(ast.NodeTransformer):
+    """
+    This walks through the children of a FormattedValue, to look for
+    nodes with the __name syntax, and format those nodes.
+    """
+
+    def visit_Name(self, node):
+
+        name = node.id
+
+        if not name.startswith("__"):
+            return node
+
+        name = name[2:]
+
+        if (not name) or ("__" in name):
+            return node
+
+        prefix = renpy.lexer.munge_filename(compile_filename)
+
+        name = prefix + name
+
+        return ast.Name(id=name, ctx=node.ctx, lineno=node.lineno, col_offset=node.col_offset, end_lineno=node.end_lineno, end_col_offset=node.end_col_offset)
+
+wrap_formatted_value = WrapFormattedValue().visit
+
+
 class WrapNode(ast.NodeTransformer):
 
 
@@ -422,9 +452,9 @@ class WrapNode(ast.NodeTransformer):
         a larger scope, no cell is generated.
         """
 
-        node = self.generic_visit(node)
-
         variables = list(sorted(find_loaded_variables(node)))
+
+        node = self.generic_visit(node)
 
         lambda_args = [ ]
         call_args =[ ]
@@ -696,6 +726,10 @@ class WrapNode(ast.NodeTransformer):
             kwargs=None)
 
 
+    def visit_FormattedValue(self, n):
+        n = wrap_formatted_value(n)
+        return self.generic_visit(n)
+
 wrap_node = WrapNode()
 
 
@@ -899,6 +933,9 @@ def quote_eval(s):
     return "".join(rv[:-2])
 
 
+# The filename being compiled.
+compile_filename = ""
+
 def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None):
     """
     Compiles the given source code using the supplied codegenerator.
@@ -924,6 +961,8 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         Rather than returning compiled bytecode, returns the AST object
         that would be used.
     """
+
+    global compile_filename
 
     if ast_node:
         cache = False
@@ -974,6 +1013,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         source = quote_eval(source)
 
     line_offset = lineno - 1
+    compile_filename = filename
 
     try:
 

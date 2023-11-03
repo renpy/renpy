@@ -319,7 +319,7 @@ def wrap_render(child, w, h, st, at):
     return rv
 
 
-class ImageReference(renpy.display.core.Displayable):
+class ImageReference(renpy.display.displayable.Displayable):
     """
     ImageReference objects are used to reference images by their name,
     which is a tuple of strings corresponding to the name used to define
@@ -348,7 +348,7 @@ class ImageReference(renpy.display.core.Displayable):
         super(ImageReference, self).__init__(**properties)
 
         self.name = name
-        self.target = None # type: renpy.display.core.Displayable|None
+        self.target = None # type: renpy.display.displayable.Displayable|None
 
     def _repr_info(self):
         return repr(self.name)
@@ -379,7 +379,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         name = self.name
 
-        if isinstance(name, renpy.display.core.Displayable):
+        if isinstance(name, renpy.display.displayable.Displayable):
             self.target = name
             return True
 
@@ -452,7 +452,7 @@ class ImageReference(renpy.display.core.Displayable):
         rv = self._copy(args)
         rv.target = None
 
-        if isinstance(rv.name, renpy.display.core.Displayable):
+        if isinstance(rv.name, renpy.display.displayable.Displayable):
             if rv.name._duplicatable:
                 rv.name = rv.name._duplicate(args)
 
@@ -484,7 +484,7 @@ class ImageReference(renpy.display.core.Displayable):
 
     def _handles_event(self, event):
         if self.target is None:
-            return False
+            self.find_target()
 
         return self.target._handles_event(event)
 
@@ -542,7 +542,7 @@ class ImageReference(renpy.display.core.Displayable):
         return [ self.target ]
 
 
-class DynamicImage(renpy.display.core.Displayable):
+class DynamicImage(renpy.display.displayable.Displayable):
     """
     :doc: disp_imagelike
     :args: (name)
@@ -555,10 +555,10 @@ class DynamicImage(renpy.display.core.Displayable):
     nosave = [ 'raw_target' ]
 
     # The target that this image currently resolves to.
-    target = None # type: renpy.display.core.Displayable|None
+    target = None # type: renpy.display.displayable.Displayable|None
 
     # The raw target that the image resolves to, before it has been parameterized.
-    raw_target = None # type: renpy.display.core.Displayable|None
+    raw_target = None # type: renpy.display.displayable.Displayable|None
 
     # Have we been locked, so we never change?
     locked = False
@@ -688,7 +688,7 @@ class DynamicImage(renpy.display.core.Displayable):
         if not update:
             return True
 
-        raw_target = target # type: renpy.display.core.Displayable
+        raw_target = target # type: renpy.display.displayable.Displayable
         old_target = self.target
 
         if raw_target._duplicatable:
@@ -745,7 +745,7 @@ class DynamicImage(renpy.display.core.Displayable):
 
     def _handles_event(self, event):
         if self.target is None:
-            return False
+            self.find_target()
 
         return self.target._handles_event(event)
 
@@ -1006,7 +1006,8 @@ class ShownImageInfo(renpy.object.Object):
 
             if ca:
                 ca_required = [ i for i in required if i not in attrs ]
-                ca_optional = [ i for i in optional if i not in attrs ]
+                ca_optional = [ i for i in optional if i not in attrs if i not in required ]
+
                 newattrs = ca(tag, ca_required, ca_optional)
 
                 if newattrs is None:
@@ -1014,18 +1015,20 @@ class ShownImageInfo(renpy.object.Object):
 
                 attrs = attrs + newattrs
 
-            num_required = 0
+            else:
 
-            for i in attrs:
-                if i in required:
-                    num_required += 1
+                num_required = 0
+
+                for i in attrs:
+                    if i in required:
+                        num_required += 1
+                        continue
+
+                # We don't have any not-found attributes. But we might not
+                # have all of the attributes.
+
+                if num_required != len(required):
                     continue
-
-            # We don't have any not-found attributes. But we might not
-            # have all of the attributes.
-
-            if num_required != len(required):
-                continue
 
             len_attrs = len(set(attrs))
 

@@ -40,8 +40,8 @@
     new "Android paketleri derlemek için lütfen RAPT'ı indirin, açın ve Ren'Py klasörüne atın. Ardından Ren'Py'ı yeniden başlatın."
 
     # android.rpy:31
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Windows'ta Android paketleri derlemek için bir 64-bit/x64 Java 8 Development Kit gerekir. JDK, JRE'den farklıdır, bu yüzden JDK olmayan bir Java kurulumunuz olabilir.\n\nLütfen JDK'yı {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}indirin ve kurun{/a}, ardından Ren'Py'ı yeniden başlatın."
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Windows'ta Android paketleri derlemek için bir 64-bit/x64 Java 8 Development Kit gerekir. JDK, JRE'den farklıdır, bu yüzden JDK olmayan bir Java kurulumunuz olabilir.\n\nLütfen JDK'yı {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}indirin ve kurun{/a}, ardından Ren'Py'ı yeniden başlatın."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -1461,7 +1461,8 @@
 
     # updater.rpy:118
     old "%B %d, %Y"
-    new "%B %d, %Y"
+    # Automatic translation.
+    new "B %d, %Y"
 
     # updater.rpy:140
     old "An error has occured:"
@@ -1518,3 +1519,587 @@
     # updater.rpy:188
     old "Fetching the list of update channels"
     new "Güncelleme kanalı listesi alınıyor"
+
+translate turkish strings:
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "RAPT yüklendi, ancak bir anahtar yapılandırılmadı. Lütfen yeni anahtarlar oluşturun veya android.keystore ve bundle.keystore dosyalarını temel dizine kopyalayın."
+
+    # game/android.rpy:41
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    # Automatic translation.
+    new "Lütfen bir Play Bundle (Google Play için) veya bir Universal APK (yandan yükleme ve diğer uygulama mağazaları için) istediğinizi seçin."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "Televizyon tabanlı bir Android konsolu taklit etmeye çalışır.\n\nKontrolör girişi ok tuşlarıyla, Enter seçim düğmesiyle, Escape menü düğmesiyle ve PageUp geri düğmesiyle eşleştirilir."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "Android SDK'yı ve destekleyici paketleri indirir ve yükler."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "Paketi imzalamak için gereken anahtarları oluşturur."
+
+    # game/android.rpy:56
+    old "Lists the connected devices."
+    # Automatic translation.
+    new "Bağlı cihazları listeler."
+
+    # game/android.rpy:57
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Android 11+'da Wi-Fi üzerinden bir cihazla eşleşir."
+
+    # game/android.rpy:58
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Android 11+'da Wi-Fi üzerinden bir cihaza bağlanır."
+
+    # game/android.rpy:59
+    old "Disconnects a device connected over Wi-Fi."
+    # Automatic translation.
+    new "Wi-Fi üzerinden bağlı bir cihazın bağlantısını keser."
+
+    # game/android.rpy:61
+    old "Removes Android temporary files."
+    # Automatic translation.
+    new "Android geçici dosyalarını kaldırır."
+
+    # game/android.rpy:63
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "Google Play'e yüklenmek üzere bir Android Uygulama Paketi (ABB) oluşturur. Bu, 2 GB'a kadar veri içerebilir."
+
+    # game/android.rpy:64
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "Yan yükleme ve Google Play dışındaki mağazalar için tasarlanmış bir Evrensel APK paketi oluşturur. Bu, 2 GB'a kadar veri içerebilir."
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "SDK'yı yükleyin"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "Anahtar Oluşturma"
+
+    # game/android.rpy:397
+    old "Play Bundle"
+    new "Play Bundle"
+
+    # game/android.rpy:402
+    old "Universal APK"
+    new "Universal APK"
+
+    # game/android.rpy:452
+    old "List Devices"
+    # Automatic translation.
+    new "Cihazları Listele"
+
+    # game/android.rpy:456
+    old "Wi-Fi Debugging Pair"
+    # Automatic translation.
+    new "Wi-Fi Hata Ayıklama Çifti"
+
+    # game/android.rpy:460
+    old "Wi-Fi Debugging Connect"
+    # Automatic translation.
+    new "Wi-Fi Hata Ayıklama Bağlantısı"
+
+    # game/android.rpy:464
+    old "Wi-Fi Debugging Disconnect"
+    # Automatic translation.
+    new "Wi-Fi Hata Ayıklama Bağlantısı Kesildi"
+
+    # game/android.rpy:468
+    old "Clean"
+    # Automatic translation.
+    new "Temiz"
+
+    # game/android.rpy:573
+    old "Wi-Fi Pairing Code"
+    # Automatic translation.
+    new "Wi-Fi Eşleştirme Kodu"
+
+    # game/android.rpy:573
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    # Automatic translation.
+    new "Destekleniyorsa bu, 'Geliştirici seçenekleri', 'Kablosuz hata ayıklama', 'Cihazı eşleştirme koduyla eşleştir' bölümlerinde bulunabilir."
+
+    # game/android.rpy:580
+    old "Pairing Host & Port"
+    # Automatic translation.
+    new "Ana Bilgisayar ve Bağlantı Noktası Eşleştirme"
+
+    # game/android.rpy:596
+    old "IP Address & Port"
+    # Automatic translation.
+    new "IP Adresi ve Bağlantı Noktası"
+
+    # game/android.rpy:596
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    # Automatic translation.
+    new "Destekleniyorsa, bu özellik 'Geliştirici seçenekleri', 'Kablosuz hata ayıklama' bölümünde bulunabilir."
+
+    # game/android.rpy:612
+    old "This can be found in 'List Devices'."
+    # Automatic translation.
+    new "Bu, 'Aygıtları Listele' bölümünde bulunabilir."
+
+    # game/android.rpy:632
+    old "Cleaning up Android project."
+    # Automatic translation.
+    new "Android projesini temizleme."
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    # Automatic translation.
+    new "Paketi yüklüyorum."
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    # Automatic translation.
+    new "Paketin yüklenmesi başarısız olmuş gibi görünüyor."
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    # Automatic translation.
+    new "Uygulamayı başlatmak başarısız olmuş gibi görünüyor."
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "Gradle için ne kadar RAM (GB cinsinden) ayırmak istiyorsunuz?\nBu pozitif bir tam sayı olmalıdır."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "RAM boyutu yalnızca sayı içermeli ve pozitif olmalıdır."
+
+    # game/androidstrings.rpy:43
+    old "Do you want to automatically update the Java source code?"
+    # Automatic translation.
+    new "Java kaynak kodunu otomatik olarak güncellemek istiyor musunuz?"
+
+    # game/androidstrings.rpy:48
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    # Automatic translation.
+    new "Bir test dosyasını derlemek için javac kullanamadım. Java Geliştirme Kitini henüz yüklemediyseniz, lütfen şu adresten indirin:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nJDK, JRE'den farklıdır, bu nedenle JDK'ya sahip olmadan Java'ya sahip olmanız mümkündür. Lütfen 'JavaSoft (Oracle) kayıt defteri anahtarlarını' yüklediğinizden emin olun.\n\nÇalışan bir JDK olmadan devam edemem."
+
+    # game/androidstrings.rpy:49
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    # Automatic translation.
+    new "Bilgisayarınızdaki Java sürümü, Android SDK tarafından desteklenen tek sürüm olan JDK 8 gibi görünmüyor. JDK 8'i yüklemeniz gerekiyorsa, şu adresten indirebilirsiniz:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nFarklı bir Java sürümü kullanmak için JAVA_HOME ortam değişkenini de ayarlayabilirsiniz."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Rapt dizininde bir android.keystore dosyası buldum. Bu dosyayı kullanmak istiyor musunuz?"
+
+    # game/androidstrings.rpy:64
+    old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "Sizin için bir uygulama imzalama anahtarı oluşturabilirim. Bu anahtar, yan yükleme ve Google Play dışındaki mağazalar için Evrensel APK oluşturmak için gereklidir.\n\nBir anahtar mı oluşturmak istiyorsunuz?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\n'Hayır' demek anahtar oluşturulmasını engelleyecektir."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Rapt dizininde bir bundle.keystore dosyası buldum. Bu dosyayı kullanmak istiyor musunuz?"
+
+    # game/androidstrings.rpy:70
+    old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "Sizin için bir paket imzalama anahtarı oluşturabilirim. Bu anahtar, Google Play'e yüklenmek üzere bir Android Uygulama Paketi (AAB) oluşturmak için gereklidir.\n\nBir anahtar mı oluşturmak istiyorsunuz?"
+
+    # game/androidstrings.rpy:71
+    old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
+    # Automatic translation.
+    new "Anahtarı bundle.keystore dosyasında oluşturacağım.\n\nBu dosyayı yedeklemeniz gerekir. Kaybederseniz, uygulamanızı yükseltmeniz mümkün olmayacaktır.\n\nAyrıca anahtarı güvende tutmanız gerekir. Kötü niyetli kişiler bu dosyayı ele geçirirse, uygulamanızın sahte sürümlerini oluşturabilir ve potansiyel olarak kullanıcılarınızın verilerini çalabilirler.\n\nbundle.keystore dosyasının yedeğini alıp güvenli bir yerde saklayacak mısınız?"
+
+    # game/androidstrings.rpy:73
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    # Automatic translation.
+    new "Bundle.keystore oluşturulamadı. keytool yolunuzda mı?"
+
+    # game/androidstrings.rpy:74
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    # Automatic translation.
+    new "android.keystore ve bundle.keystore dosyalarını içeren dizini açtım. Lütfen bunları yedekleyin ve güvenli bir yerde saklayın."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    # Automatic translation.
+    new "Projeler Dizinini Seçin"
+
+    # game/choose_theme.rpy:508
+    old "changing the theme"
+    # Automatic translation.
+    new "tema deği̇şti̇rme"
+
+    # game/distribute.rpy:1745
+    old "Copying files..."
+    # Automatic translation.
+    new "Dosyalar kopyalanıyor..."
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    # Automatic translation.
+    new "Eski oyunu güncelle"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    # Automatic translation.
+    new "Gelişmiş Ren'Py entegrasyonu da dahil olmak üzere birçok uzantıya sahip modern bir editör."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    # Automatic translation.
+    new "Gelişmiş Ren'Py entegrasyonu da dahil olmak üzere birçok uzantıya sahip modern bir editör.\n{a=jump:reinstall_vscode}Visual Studio Code'u en son sürüme yükseltin.{/a}"
+
+    # game/editor.rpy:169
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:169
+    old "Up to 110 MB download required."
+    # Automatic translation.
+    new "110 MB'a kadar indirme gereklidir."
+
+    # game/editor.rpy:182
+    old "A modern and approachable text editor."
+    # Automatic translation.
+    new "Modern ve ulaşılabilir bir metin editörü."
+
+    # game/editor.rpy:196
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:211
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:220
+    old "Visual Studio Code (System)"
+    # Automatic translation.
+    new "Visual Studio Code (Sistem)"
+
+    # game/editor.rpy:220
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    # Automatic translation.
+    new "Ren'Py dışında yüklediğiniz Visual Studio Code'un bir kopyasını kullanır. Ren'Py dosyalarına destek eklemek için language-renpy uzantısını yüklemeniz önerilir."
+
+    # game/front_page.rpy:165
+    old "audio"
+    new "audio"
+
+    # game/front_page.rpy:219
+    old "Web"
+    new "Web"
+
+    # game/front_page.rpy:219
+    old "(Beta)"
+    new "(Beta)"
+
+    # game/gui7.rpy:302
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    # Automatic translation.
+    new "{size=-4}\n\nBu, gui/main_menu.png, gui/game_menu.png ve gui/window_icon.png dosyalarının üzerine yazmaz, ancak var olmayan dosyaları oluşturur.{/size}"
+
+    # game/gui7.rpy:424
+    old "creating a new project"
+    # Automatic translation.
+    new "yeni bir proje oluşturma"
+
+    # game/gui7.rpy:428
+    old "activating the new project"
+    # Automatic translation.
+    new "yeni projenin etkinleştirilmesi"
+
+    # game/install.rpy:33
+    old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
+    # Automatic translation.
+    new "Ren'Py SDK dizininde [zipglob] ile eşleşen bir dosya bulunamadığından [name!t] yüklenemedi."
+
+    # game/install.rpy:79
+    old "Successfully installed [name!t]."
+    # Automatic translation.
+    new "[name!t] başarıyla yüklendi."
+
+    # game/install.rpy:111
+    old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
+    # Automatic translation.
+    new "Bu ekran Ren'Py ile dağıtılamayan kütüphaneleri yüklemenizi sağlar. Bu kütüphanelerden bazıları kullanılmadan veya dağıtılmadan önce üçüncü taraf lisansını kabul etmenizi gerektirebilir."
+
+    # game/install.rpy:117
+    old "Install Steam Support"
+    # Automatic translation.
+    new "Steam Desteğini Yükleyin"
+
+    # game/install.rpy:126
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    # Automatic translation.
+    new "Steam desteğini yüklemeden önce lütfen {a=https://partner.steamgames.com/}Steam ortağı{/a} olduğunuzdan emin olun."
+
+    # game/install.rpy:138
+    old "Steam support has already been installed."
+    # Automatic translation.
+    new "Steam desteği çoktan yüklendi."
+
+    # game/install.rpy:142
+    old "Install Live2D Cubism SDK for Native"
+    # Automatic translation.
+    new "Native için Live2D Cubism SDK'yı yükleyin"
+
+    # game/install.rpy:156
+    old "Install Libraries"
+    # Automatic translation.
+    new "Kütüphaneleri Kurun"
+
+    # game/install.rpy:182
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    # Automatic translation.
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} Live2D modellerini görüntülemek için destek ekler. CubismSdkForNative-4-{i}sürüm{/i}.zip dosyasını Ren'Py SDK dizinine yerleştirin ve ardından Yükle'ye tıklayın. Live2D ile bir oyun dağıtmak için Live2D, Inc. şirketinin lisansını kabul etmeniz gerekir."
+
+    # game/install.rpy:186
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    # Automatic translation.
+    new "Ren'Py'deki Live2D Web'i, Android x86_64'ü (emülatörler ve Chrome OS dahil) desteklemez ve iOS projelerine manuel olarak eklenmelidir. Ren'Py yükseltildikten veya Android desteği yüklendikten sonra Live2D yeniden yüklenmelidir."
+
+    # game/install.rpy:191
+    old "Open Ren'Py SDK Directory"
+    # Automatic translation.
+    new "Ren'Py SDK Dizinini Açın"
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    # Automatic translation.
+    new "İndiriliyor [extension.download_file]."
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    # Automatic translation.
+    new "[extension.download_file] [extension.download_url] adresinden indirilemedi:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    # Automatic translation.
+    new "[extension.download_url] adresinden indirilen [extension.download_file] dosyası doğru değil."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/interface.rpy:385
+    old "opening the log file"
+    # Automatic translation.
+    new "günlük dosyasının açılması"
+
+    # game/interface.rpy:407
+    old "While [what!qt], an error occured:"
+    # Automatic translation.
+    new "[what!qt] adresindeyken bir hata oluştu:"
+
+    # game/ios.rpy:379
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    # Automatic translation.
+    new "Apple Silicon'da iOS simülatörüyle ilgili bilinen sorunlar var. Lütfen x86_64 veya iOS cihazlarında test edin."
+
+    # game/preferences.rpy:106
+    old "General"
+    # Automatic translation.
+    new "Genel"
+
+    # game/preferences.rpy:107
+    old "Options"
+    # Automatic translation.
+    new "Seçenekler"
+
+    # game/preferences.rpy:227
+    old "Daily check for update"
+    # Automatic translation.
+    new "Güncelleme için günlük kontrol"
+
+    # game/preferences.rpy:246
+    old "Launcher Theme:"
+    # Automatic translation.
+    new "Başlatıcı Teması:"
+
+    # game/preferences.rpy:250
+    old "Default theme"
+    # Automatic translation.
+    new "Varsayılan tema"
+
+    # game/preferences.rpy:251
+    old "Dark theme"
+    # Automatic translation.
+    new "Koyu tema"
+
+    # game/preferences.rpy:252
+    old "Custom theme"
+    # Automatic translation.
+    new "Özel tema"
+
+    # game/preferences.rpy:256
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    # Automatic translation.
+    new "Özel bir tema oluşturma hakkında bilgi {a=https://www.renpy.org/doc/html/skins.html}Ren'Py Belgelerinde{/a} bulunabilir."
+
+    # game/preferences.rpy:273
+    old "Install Libraries:"
+    # Automatic translation.
+    new "Kütüphaneleri Kurun:"
+
+    # game/preferences.rpy:300
+    old "Reset window size"
+    # Automatic translation.
+    new "Pencere boyutunu sıfırla"
+
+    # game/preferences.rpy:301
+    old "Clean temporary files"
+    # Automatic translation.
+    new "Geçici dosyaları temizleyin"
+
+    # game/preferences.rpy:308
+    old "Cleaning temporary files..."
+    # Automatic translation.
+    new "Geçici dosyaları temizleme..."
+
+    # game/preferences.rpy:338
+    old "{#in language font}Welcome! Please choose a language"
+    # Automatic translation.
+    new "{#in language font}Hoş geldiniz! Lütfen bir dil seçin"
+
+    # game/preferences.rpy:373
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    # Automatic translation.
+    new "{#in language font}Ren'Py'i kullanmaya başlayın [lang_name]"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "Lint oyununuzu olası hatalara karşı kontrol eder ve size istatistikler verir."
+
+    # game/project.rpy:283
+    old "This may be because the project is not writeable."
+    # Automatic translation.
+    new "Bunun nedeni projenin yazılabilir olmaması olabilir."
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    # Automatic translation.
+    new "Dil (veya varsayılan dil için Yok):"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Yayın (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "Yayın (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Ön sürüm (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "Ön sürüm (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Gece (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "Nightly (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:116
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/doc/html/changelog.html}Değişiklik günlüğünü görüntüle{/a}"
+
+    # game/updater.rpy:118
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/dev-doc/html/changelog.html}Değişiklik günlüğünü görüntüle{/a}"
+
+    # game/updater.rpy:220
+    old "downloading the list of update channels"
+    # Automatic translation.
+    new "güncelleme kanallarının listesini indirme"
+
+    # game/web.rpy:428
+    old "Preparing progressive download"
+    # Automatic translation.
+    new "Aşamalı indirme hazırlanıyor"
+
+    # game/web.rpy:485
+    old "Creating package..."
+    # Automatic translation.
+    new "Paket oluşturma..."
+
+    # game/web.rpy:505
+    old "Web: [project.current.display_name!q]"
+    new "Web: [project.current.display_name!q]"
+
+    # game/web.rpy:535
+    old "Build Web Application"
+    # Automatic translation.
+    new "Web Uygulaması Oluşturma"
+
+    # game/web.rpy:536
+    old "Build and Open in Browser"
+    # Automatic translation.
+    new "Oluştur ve Tarayıcıda Aç"
+
+    # game/web.rpy:537
+    old "Open in Browser"
+    # Automatic translation.
+    new "Tarayıcıda Aç"
+
+    # game/web.rpy:538
+    old "Open build directory"
+    # Automatic translation.
+    new "Yapı dizinini açın"
+
+    # game/web.rpy:560
+    old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    # Automatic translation.
+    new "Görüntüler ve müzik oynatılırken indirilebilir. Bu davranışı yapılandırabilmeniz için bir 'progressive_download.txt' dosyası oluşturulacaktır."
+
+    # game/web.rpy:568
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    # Automatic translation.
+    new "Web uygulamalarını paketlemeden önce, Ren'Py'nin web desteği olan RenPyWeb'i indirmeniz gerekir. RenPyWeb'i şimdi indirmek ister misiniz?"
+
+
+translate turkish strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Ren'Py'nin sürümüne yönelik düzeltmelerden oluşan bir gece derlemesi."
+

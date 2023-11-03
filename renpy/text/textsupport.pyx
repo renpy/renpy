@@ -641,7 +641,7 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
         elif g.split == SPLIT_BEFORE:
             x = start_x + rest_indent
 
-        g.x = <short> (x + .5)
+        g.x = <int> (x + .5)
 
         if maxx < x + g.width:
             maxx = x + g.width
@@ -1104,15 +1104,15 @@ def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w,
     if w <= 0 or h <= 0:
         return
 
-    cdef short old_x_offset = 0
-    cdef short x_offset
+    cdef int old_x_offset = 0
+    cdef int x_offset
 
     for g in glyphs:
 
-        x_offset = <short> (dx * g.x / w)
+        x_offset = int(dx * g.x / w)
 
         g.x += x_offset
-        g.y += <short> (dy * g.y / h)
+        g.y += int(dy * g.y / h)
 
         if x_offset > old_x_offset:
             g.delta_x_offset = x_offset - old_x_offset
@@ -1122,12 +1122,15 @@ def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w,
     for l in lines:
         end = l.y + l.height
 
+        if end > 32767:
+            break
+
         l.y += int(dy * l.y / h)
         end += int(dy * end / h)
 
         l.height = end - l.y
 
-def offset_glyphs(list glyphs, short x, short y):
+def offset_glyphs(list glyphs, int x, int y):
     cdef Glyph g
 
     if x == 0 and y == 0:
@@ -1136,5 +1139,3 @@ def offset_glyphs(list glyphs, short x, short y):
     for g in glyphs:
         g.x += x
         g.y += y
-
-"This exists to force a recompile for Ren'Py 8.0.2 and 7.5.2."

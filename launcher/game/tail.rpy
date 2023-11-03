@@ -22,6 +22,7 @@
 
 init python:
 
+
     class FileTail(object):
 
         def __init__(self, filename, lines=8):
@@ -30,6 +31,11 @@ init python:
             self.lines = lines
 
         def update(self):
+
+            def filter_text(s):
+                if "Unknown chunk type '200'" in s:
+                    return False
+                return True
 
             try:
                 with open(self.filename) as f:
@@ -48,6 +54,9 @@ init python:
 
                         if "\r" in l:
                             _head, _sep, l = l.rpartition("\r")
+
+                        if not filter_text(l):
+                            continue
 
                         while l:
                             newtext.append(l[:100])

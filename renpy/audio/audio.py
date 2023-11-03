@@ -61,6 +61,8 @@ def get_serial():
     return (unique, serial)
 
 
+AudioNotReady = renpy.object.Sentinel("AudioNotReady")
+
 def load(fn):
     """
     Returns a file-like object for the given filename.
@@ -71,13 +73,14 @@ def load(fn):
     except renpy.webloader.DownloadNeeded as exception:
         if exception.rtype == 'music':
             renpy.webloader.enqueue(exception.relpath, 'music', None)
+            return AudioNotReady  # Try again later
         elif exception.rtype == 'voice':
-            # prediction failed, too late
-            pass
+            renpy.webloader.enqueue(exception.relpath, 'voice', None)
+            return AudioNotReady  # Try again later
         elif exception.rtype == 'video':
             # Video files are downloaded by the browser, so return
             # the file name instead of a file-like object
-            return 'url:' + renpy.config.web_video_base + "/" + fn
+            return 'url:' + renpy.config.web_video_base + "/" + exception.relpath
 
         # temporary 1s placeholder, will retry loading when looping:
         rv = open(os.path.join(renpy.config.commondir, '_dl_silence.ogg'), 'rb') # type: ignore
@@ -110,14 +113,14 @@ class AudioData(str):
 
     def __new__(cls, data, filename):
         rv = str.__new__(cls, filename)
-        rv.data = data
+        rv.data = data # type: ignore
         return rv
 
     def __init__(self, data, filename):
         pass
 
     def __reduce__(self):
-        return(AudioData, (self.data, str(self)))
+        return(AudioData, (self.data, str(self))) # type: ignore
 
 
 class QueueEntry(object):
@@ -294,8 +297,8 @@ class Channel(object):
             else:
                 self.movie = renpy.audio.renpysound.NODROP_VIDEO
 
-            if getattr(renpysound, 'is_webaudio', False):
-                renpysound.set_movie_channel(self.number, True)
+            if renpysound.is_webaudio:
+                renpysound.set_movie_channel(self.number, True) # type: ignore
         else:
             self.movie = renpy.audio.renpysound.NO_VIDEO
 
@@ -445,6 +448,9 @@ class Channel(object):
         # mixer is muted.
         force_stop = self.context.force_stop or (renpy.game.preferences.mute.get(self.mixer, False) and self.stop_on_mute)
 
+        if global_pause and not self.loop:
+            force_stop = True
+
         if self.playing and force_stop:
             renpysound.stop(self.number)
             self.playing = False
@@ -464,6 +470,9 @@ class Channel(object):
         # per call, to prevent memory leaks with really short sound
         # files. So this loop will only execute once, in practice.
         while True:
+
+            if global_pause:
+                break
 
             if self._number is not None:
                 depth = renpysound.queue_depth(self.number)
@@ -520,15 +529,19 @@ class Channel(object):
                     continue
 
                 if isinstance(topq.filename, AudioData):
-                    topf = io.BytesIO(topq.filename.data)
+                    topf = io.BytesIO(topq.filename.data) # type: ignore
                 else:
                     topf = load(filename)
+                    if topf is AudioNotReady:
+                        # File is not ready, try again on the next periodic pass.
+                        self.queue.insert(0, topq)
+                        break
 
-                if renpysound.is_webaudio and self.movie != renpy.audio.renpysound.NO_VIDEO:
+                if self.movie != renpy.audio.renpysound.NO_VIDEO:
                     # Let the browser handle the video loop if any
                     renpysound.set_video(self.number, self.movie, loop=(len(self.loop) == 1))
                 else:
-                    renpysound.set_video(self.number, self.movie)
+                    renpysound.set_video(self.number, self.movie, loop=False)
 
                 if depth == 0:
                     renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume) # type:ignore
@@ -667,16 +680,16 @@ class Channel(object):
 
                 if tight is None:
                     tight = self.tight
-
+    
                 self.keep_queue += 1
-
+    
                 for filename in filenames:
                     qe = QueueEntry(filename, fadein, tight, False, relative_volume)
                     self.queue.append(qe)
-
+    
                     # Only fade the first thing in.
                     fadein = 0
-
+    
                 self.wait_stop = synchro_start
                 self.synchro_start = synchro_start
 
@@ -684,6 +697,9 @@ class Channel(object):
                 self.loop = list(filenames)
             else:
                 self.loop = [ ]
+
+        with periodic_condition:
+            periodic_condition.notify()
 
     def get_playing(self):
 
@@ -775,19 +791,6 @@ class Channel(object):
 
         return renpysound.video_ready(self.number)
 
-# Use unconditional imports so these files get compiled during the build
-# process.
-
-
-try:
-    from renpy.audio.androidhw import AndroidVideoChannel
-except Exception:
-    pass
-
-try:
-    from renpy.audio.ioshw import IOSVideoChannel
-except Exception:
-    pass
 
 # A list of channels we know about.
 all_channels = [ ]
@@ -865,12 +868,7 @@ def register_channel(name,
     if not force and not renpy.game.context().init_phase and (" " not in name):
         raise Exception("Can't register channel outside of init phase.")
 
-    if renpy.android and renpy.config.hw_video and name == "movie":
-        c = AndroidVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
-    elif renpy.ios and renpy.config.hw_video and name == "movie":
-        c = IOSVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
-    else:
-        c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie, framedrop=framedrop)
+    c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie, framedrop=framedrop)
 
     c.mixer = mixer
 
@@ -955,10 +953,10 @@ def init():
         mix_ok = False
         return
 
-    renpysound.is_webaudio = False
     if renpy.emscripten and renpy.config.webaudio:
         # Importing webaudio hooks all public functions of renpysound
         import renpy.audio.webaudio as webaudio
+
         renpysound.is_webaudio = True
 
         if webaudio.can_play_types(renpy.config.webaudio_required_types):
@@ -978,11 +976,14 @@ def init():
             bufsize = 8192 # works for me
             # bufsize = 16384  # jitter/silence right after starting a sound
 
+        if renpy.config.sound_buffer_size is not None:
+            bufsize = renpy.config.sound_buffer_size
+
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
 
         try:
-            renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono)
+            renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono, renpy.config.linear_fades)
             pcm_ok = True
         except Exception:
 
@@ -1020,6 +1021,17 @@ def init():
             periodic_thread.start()
         else:
             periodic_thread = None
+
+def fadeout_all():
+    """
+    Called to fade out all playing audio as the game quits or restarts.
+    """
+
+    for c in all_channels:
+        c.dequeue()
+        c.fadeout(renpy.config.fadeout_audio)
+
+    periodic()
 
 
 def quit(): # @ReservedAssignment
@@ -1226,7 +1238,7 @@ def interact():
 
                 if c.loop:
                     if not filenames or c.get_playing() not in filenames:
-                        c.fadeout(renpy.config.context_fadeout_music or renpy.config.fade_music)
+                        c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
 
                 if filenames:
                     c.enqueue(filenames, loop=True, synchro_start=False, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)

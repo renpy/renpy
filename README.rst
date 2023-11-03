@@ -50,7 +50,7 @@ your system. On Ubuntu and Debian, these dependencies can be installed with
 the command::
 
     sudo apt install virtualenvwrapper python3-dev libavcodec-dev libavformat-dev \
-        libswresample-dev libswscale-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
+        libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
         libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev
 
 Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
@@ -112,7 +112,7 @@ link in a nightly build, or compile the modules as described above. You'll
 also need the `Sphinx <https://www.sphinx-doc.org>`_ documentation generator.
 If you have pip working, install Sphinx using::
 
-    pip install -U sphinx sphinx-bootstrap-theme
+    pip install -U sphinx sphinx_rtd_theme sphinx_rtd_dark_mode
 
 Once Sphinx is installed, change into the ``sphinx`` directory inside the
 Ren'Py checkout and run::

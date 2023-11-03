@@ -1,5 +1,13 @@
 ﻿translate schinese strings:
 
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    new "持久化数据查看器"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    new "对话气泡编辑器（Shift+B）"
+
     # renpy/common/00console.rpy:492
     old "Press <esc> to exit console. Type help for help.\n"
     new "按 Esc 来退出控制台。输入 help 来查看帮助。\n"
@@ -12,9 +20,9 @@
     old "Ren'Py script disabled."
     new "Ren'Py 脚本已禁用。"
 
-    # renpy/common/00console.rpy:747
-    old "help: show this help"
-    new "help：显示此帮助信息"
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    new "help：显示此帮助信息\n help <表达式>：显示 <表达式> 的签名和文档"
 
     # renpy/common/00console.rpy:752
     old "commands:\n"
@@ -83,3 +91,8 @@
     # renpy/common/00console.rpy:967
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
     new "unescape：禁止转义 Unicode 字符串中的 Unicode 符号，并按原样打印（默认）。"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    new "帮助功能可能会显示未记录文档的函数。请确认您想使用的函数或类是否已经被记录文档。\n\n"
+

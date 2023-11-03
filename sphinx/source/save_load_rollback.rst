@@ -207,6 +207,7 @@ to a variable::
 
 will run fine.
 
+.. _save-functions:
 
 Save Functions and Variables
 ============================

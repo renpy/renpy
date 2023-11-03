@@ -2,6 +2,20 @@
     max-width: 1080px;
 }
 
+@media only screen and (min-width: 481px) {
+    [role="search"] {
+        top: 12.944px;
+        margin-bottom: 12.944px;
+        width: 274.125px;
+        position: fixed;
+        z-index: 1;
+    }
+
+    .wy-side-nav-search {
+        padding-top: 41.944px;
+        padding-bottom: 0px !important;
+    }
+}
 
 /* Highlighting */
 
@@ -66,6 +80,11 @@ html[data-theme='dark'] .highlight .na {
     color: #9cdcfe !important;
 }
 
+html[data-theme='dark'].writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt {
+    background: #0f0f0f;
+    color: #959595;
+    border-color: #2b2b2b;
+}
 
 dt.sig {
     display: block !important;

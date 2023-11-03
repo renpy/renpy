@@ -356,9 +356,9 @@ class PyExpr(str):
 
     def __new__(cls, s, filename, linenumber, py=3):
         self = str.__new__(cls, s)
-        self.filename = filename
-        self.linenumber = linenumber
-        self.py = py
+        self.filename = filename # type: ignore
+        self.linenumber = linenumber # type: ignore
+        self.py = py # type: ignore
 
         # Queue the string for precompilation.
         if self and (renpy.game.script.all_pyexpr is not None):
@@ -486,6 +486,9 @@ def chain_block(block, next): # @ReservedAssignment
     block[-1].chain(next)
 
 
+DoesNotExtend = renpy.object.Sentinel("DoesNotExtend")
+
+
 class Scry(object):
     """
     This is used to store information about the future, if we know it. Unlike
@@ -498,6 +501,10 @@ class Scry(object):
     say = False # type: bool|None
     menu_with_caption = False # type: bool|None
     who = None # type: str|None
+
+    # Text that will be added to the current say statment by a call to
+    # extend.
+    extend_text = None # type: str|None|renpy.object.Sentinel
 
     # By default, all attributes are None.
     def __getattr__(self, name):
@@ -922,9 +929,10 @@ class Say(Node):
         rv.say = True
 
         if self.interact:
-            renpy.exports.scry_say(who, rv)
+            renpy.exports.scry_say(who, self.what, rv)
         else:
             rv.interacts = False # type: ignore
+            rv.extend_text = DoesNotExtend
 
         return rv
 
@@ -1030,9 +1038,7 @@ class Label(Node):
 
         values = apply_arguments(self.parameters, renpy.store._args, renpy.store._kwargs)
 
-        for k, v in values.items():
-            renpy.exports.dynamic(k)
-            setattr(renpy.store, k, v)
+        renpy.exports.dynamic(**values)
 
         renpy.store._args = None
         renpy.store._kwargs = None
@@ -1449,7 +1455,7 @@ class Camera(Node):
         self.atl = atl
 
     def diff_info(self):
-        return (ShowLayer, self.layer)
+        return (Camera, self.layer)
 
     def execute(self):
         next_node(self.next)
@@ -1649,19 +1655,22 @@ class Call(Node):
         'label',
         'arguments',
         'expression',
+        'global_label',
         ]
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.arguments = None
+        self.global_label = ""
         return self
 
-    def __init__(self, loc, label, expression, arguments):
+    def __init__(self, loc, label, expression, arguments, global_label=""):
 
         super(Call, self).__init__(loc)
         self.label = label
         self.expression = expression
         self.arguments = arguments
+        self.global_label = global_label
 
     def diff_info(self):
         return (Call, self.label, self.expression)
@@ -1673,6 +1682,9 @@ class Call(Node):
         label = self.label
         if self.expression:
             label = renpy.python.py_eval(label)
+
+            if isinstance(label, str) and label.startswith("."):
+                label = self.global_label + label
 
         rv = renpy.game.context().call(label, return_site=self.next.name)
         next_node(rv)
@@ -1699,6 +1711,9 @@ class Call(Node):
                 label = renpy.python.py_eval(label)
             except Exception:
                 return [ ]
+
+            if isinstance(label, str) and label.startswith("."):
+                label = self.global_label + label
 
             if not renpy.game.script.has_label(label):
                 return [ ]
@@ -1918,13 +1933,20 @@ class Jump(Node):
     __slots__ = [
         'target',
         'expression',
+        'global_label',
         ]
 
-    def __init__(self, loc, target, expression):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
+        self.global_label = ""
+        return self
+
+    def __init__(self, loc, target, expression, global_label=""):
         super(Jump, self).__init__(loc)
 
         self.target = target
         self.expression = expression
+        self.global_label = global_label
 
     def diff_info(self):
         return (Jump, self.target, self.expression)
@@ -1940,6 +1962,9 @@ class Jump(Node):
         target = self.target
         if self.expression:
             target = renpy.python.py_eval(target)
+
+            if isinstance(target, str) and target.startswith("."):
+                target = self.global_label + target
 
         rv = renpy.game.script.lookup(target)
         renpy.game.context().abnormal = True
@@ -1959,6 +1984,9 @@ class Jump(Node):
                 label = renpy.python.py_eval(label)
             except Exception:
                 return [ ]
+
+            if isinstance(label, str) and label.startswith("."):
+                label = self.global_label + label
 
             if not renpy.game.script.has_label(label):
                 return [ ]
@@ -2273,6 +2301,41 @@ class UserStatement(Node):
 
         return False
 
+    def reachable(self, is_reachable):
+        """
+        This is used by lint to find statements reachable from or through
+        this statement.
+        """
+
+        rv = self.call(
+            "reachable",
+            is_reachable,
+            self.name,
+            self.next.name if self.next is not None else None,
+            self.code_block[0].name if self.code_block else None,
+            )
+
+        if rv is None:
+
+            rv = set()
+
+            if self.call("label"):
+                rv.add(self.name)
+                is_reachable = True
+
+            if is_reachable:
+
+                if self.code_block:
+                    rv.add(self.code_block[0].name)
+
+                for i in self.subparses:
+                    if i.block:
+                        rv.add(i.block[0].name)
+
+                if self.next:
+                    rv.add(self.next.name)
+
+        return rv
 
 class PostUserStatement(Node):
 
@@ -2352,6 +2415,7 @@ EARLY_CONFIG = {
     "version",
     "save_token_keys",
     "check_conflicting_properties",
+    "check_translate_none",
 }
 
 define_statements = [ ]

@@ -44,6 +44,12 @@ init -1100 python:
     config.sync_server = "https://sync.renpy.org"
 
     class UploadSync(Action):
+        """
+        :doc: sync
+
+        This action begins the process of uploading the most recent
+        saves to the Ren'Py Sync server.
+        """
 
         def __call__(self):
             renpy.invoke_in_new_context(_sync.upload)
@@ -52,6 +58,12 @@ init -1100 python:
             return config.has_sync
 
     class DownloadSync(Action):
+        """
+        :doc: sync
+
+        This action begins the process of downloading a Sync from the
+        Ren'Py Sync server.
+        """
 
         def __call__(self):
             if renpy.invoke_in_new_context(_sync.download):
@@ -198,7 +210,7 @@ init -1100 python in _sync:
                 f.write(content)
 
             fetch_id = emscripten.run_script_int(
-                """fetchFile("PUT", "{url}", "/sync.data", null)""".format(url=url))
+                """fetchFile("PUT", "{url}", "/sync.data", null, "application/octet-string")""".format(url=url))
 
             status = "PENDING"
             message = "Pending."
@@ -221,7 +233,7 @@ init -1100 python in _sync:
                 return None
 
 
-        def download_content(hashed, url):
+        def download_content(url):
             import emscripten
             import time
             import os
@@ -342,8 +354,11 @@ init -1100 python in _sync:
 
             total_size = 0
 
-            if renpy.config.save_directory:
-                zf.writestr("save_directory", renpy.config.save_directory)
+            sd = renpy.config.save_directory
+            if sd:
+                if PY2:
+                    sd = sd.encode("utf-8")
+                zf.writestr("save_directory", sd)
 
             persistent = location.path("persistent")[1]
 
@@ -500,6 +515,7 @@ init -1100 python in _sync:
 init -1100:
 
     screen sync_confirm():
+        style_prefix "sync"
         modal True
         zorder 100
 
@@ -529,6 +545,7 @@ init -1100:
         key "game_menu" action Return(False)
 
     screen sync_prompt(prompt):
+        style_prefix "sync"
         modal True
         zorder 100
 
@@ -567,6 +584,7 @@ init -1100:
 
 
     screen sync_success(sync_id):
+        style_prefix "sync"
         modal True
         zorder 100
 
@@ -602,6 +620,7 @@ init -1100:
         key "game_menu" action Return(False)
 
     screen sync_error(message):
+        style_prefix "sync"
         modal True
         zorder 100
 

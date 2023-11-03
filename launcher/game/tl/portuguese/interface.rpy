@@ -58,7 +58,8 @@
 
     # game/interface.rpy:299
     old "ERROR"
-    new "ERROR"
+    # Automatic translation.
+    new "ERRO"
 
     # game/interface.rpy:328
     old "While [what!qt], an error occured:"

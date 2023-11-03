@@ -26,6 +26,7 @@ from typing import Optional
 
 import renpy
 import os
+import os.path
 import sys
 import types
 import threading
@@ -67,34 +68,20 @@ def get_path(fn):
 
 # Asset Loading
 
+apks = [ ]
+game_apks = [ ]
 
 if renpy.android:
     import android.apk # type: ignore
 
-    expansion = os.environ.get("ANDROID_EXPANSION", None)
-    if expansion is not None:
-        print("Using expansion file", expansion)
+    if renpy.config.renpy_base == renpy.config.basedir:
+        # Read the game data from the APK.
 
-        apks = [
-            android.apk.APK(apk=expansion, prefix='assets/x-game/'),
-            android.apk.APK(apk=expansion, prefix='assets/x-renpy/x-common/'),
-            ]
+        apks.append(android.apk.APK(prefix='assets/x-game/'))
+        game_apks.append(apks[0])
 
-        game_apks = [ apks[0] ]
+    apks.append(android.apk.APK(prefix='assets/x-renpy/x-common/'))
 
-    else:
-        print("Not using expansion file.")
-
-        apks = [
-            android.apk.APK(prefix='assets/x-game/'),
-            android.apk.APK(prefix='assets/x-renpy/x-common/'),
-            ]
-
-        game_apks = [ apks[0] ]
-
-else:
-    apks = [ ]
-    game_apks = [ ]
 
 # Files on disk should be checked before archives. Otherwise, among
 # other things, using a new version of bytecode.rpyb will break.
@@ -955,7 +942,7 @@ class RenpyImporter(object):
     def __init__(self, prefix=""):
         self.prefix = prefix
 
-    def translate(self, fullname, prefix=None): # type: (str, Optional[str]) -> str
+    def translate(self, fullname, prefix=None): # type: (str, Optional[str]) -> str|None
 
         if prefix is None:
             prefix = self.prefix
@@ -987,19 +974,30 @@ class RenpyImporter(object):
         if self.translate(fullname):
             return self
 
-    def load_module(self, fullname):
+    def load_module(self, fullname, mode="full"):
+        """
+        Loads a module. Possible modes include "is_package", "get_source", "get_code", or "full".
+        """
 
         filename = self.translate(fullname, self.prefix)
+
+        if mode == "is_package":
+            return filename.endswith("__init__.py")
 
         pyname = pystr(fullname)
 
         mod = sys.modules.setdefault(pyname, types.ModuleType(pyname))
         mod.__name__ = pyname
-        mod.__file__ = filename
+        mod.__file__ = renpy.config.gamedir + "/" + filename
         mod.__loader__ = self
 
         if filename.endswith("__init__.py"):
-            mod.__path__ = [ filename[:-len("__init__.py")] ]
+            mod.__package__ = pystr(fullname)
+        else:
+            mod.__package__ = pystr(fullname.rpartition(".")[0])
+
+        if mod.__file__.endswith("__init__.py"):
+            mod.__path__ = [ mod.__file__[:-len("__init__.py")] ]
 
         for encoding in [ "utf-8", "latin-1" ]:
 
@@ -1011,17 +1009,41 @@ class RenpyImporter(object):
                 source = source.encode("raw_unicode_escape")
                 source = source.replace(b"\r", b"")
 
+                if mode == "get_source":
+                    return source
+
                 code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
                 break
             except Exception:
                 if encoding == "latin-1":
                     raise
 
+        if mode == "get_code":
+            return code # type: ignore
+
         exec(code, mod.__dict__) # type: ignore
 
         return sys.modules[fullname]
 
+    def is_package(self, fullname):
+        return self.load_module(fullname, "is_package")
+
+    def get_source(self, fullname):
+        return self.load_module(fullname, "get_source")
+
+    def get_code(self, fullname):
+        return self.load_module(fullname, "get_code")
+
     def get_data(self, filename):
+
+        filename = os.path.normpath(filename).replace('\\', '/')
+
+        _check_prefix = "{0}/".format(
+            os.path.normpath(renpy.config.gamedir).replace('\\', '/')
+        )
+        if filename.startswith(_check_prefix):
+            filename = filename[len(_check_prefix):]
+
         return load(filename).read()
 
 
@@ -1142,11 +1164,36 @@ def auto_thread_function():
                     if auto_mtime(fn) != auto_mtimes[fn]:
                         needs_autoreload.add(fn)
 
+def check_git_index_lock():
+    """
+    Checks to see if the git index lock is present.
+    """
+
+    to_check = set(os.path.dirname(i) for i in needs_autoreload)
+    added = set(to_check)
+
+    while to_check:
+        dn = to_check.pop()
+
+        if os.path.exists(os.path.join(dn, ".git", "index.lock")):
+            return True
+
+        parent = os.path.dirname(dn)
+        if parent not in added:
+            added.add(parent)
+            to_check.add(os.path.dirname(dn))
+
+    return False
+
 
 def check_autoreload():
     """
     Checks to see if autoreload is required.
     """
+
+    # Defer loading while the git index lock is present.
+    if needs_autoreload and check_git_index_lock():
+        return
 
     while needs_autoreload:
         fn = next(iter(needs_autoreload))

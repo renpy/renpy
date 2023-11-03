@@ -58,7 +58,7 @@ def default_drop_allowable(drop, drags):
     return True
 
 
-class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
+class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObject):
     """
     :doc: drag_drop class
     :args: (d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragging=None, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=..., clicked=None, hovered=None, unhovered=None, mouse_drop=False, **properties)
@@ -159,9 +159,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
     `drag_handle`
         A (x, y, width, height) tuple, giving the position of the drag
-        handle within the child. In this tuple, integers are considered
-        to be a literal number of pixels, while floats are relative to
-        the size of the child.
+        handle within the child. This tuple takes :term:`positions <position>`.
 
     `drag_joined`
         This is called with the current Drag as an argument. It's
@@ -382,7 +380,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         self.target_at_delay = 0
 
         # The displayable we were last dropping on.
-        self.last_drop = None # type: renpy.display.core.Displayable|None
+        self.last_drop = None # type: renpy.display.displayable.Displayable|None
 
         # Did we move over the course of this drag?
         self.drag_moved = False
@@ -426,11 +424,11 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         linear move.
         """
 
-        if (type(x) is float) and self.parent_width is not None:
-            x = int(x * self.parent_width)
+        if self.parent_width is not None:
+            x = int(absolute.compute_raw(x, self.parent_width))
 
-        if (type(y) is float) and self.parent_height is not None:
-            y = int(y * self.parent_height)
+        if self.parent_height is not None:
+            y = int(absolute.compute_raw(y, self.parent_height))
 
         self.target_x = x
         self.target_y = y
@@ -459,6 +457,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
             raise Exception("Drag expects either zero or one children.")
 
         self.child = renpy.easy.displayable(d)
+        renpy.display.render.invalidate(self)
 
     def _clear(self):
         self.child = None
@@ -471,8 +470,8 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         Changes the child of this drag to `d`.
         """
 
-        d.per_interact()
         self.child = renpy.easy.displayable(d)
+        self.child.per_interact()
         renpy.display.render.invalidate(self)
 
     def top(self):
@@ -597,7 +596,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
             self.target_at = at + self.target_at_delay
             self.target_at_delay = 0
             redraw(self, 0)
-        elif at >= self.target_at:
+        elif self.target_at <= at or self.target_at <= self.at:
             # Snap complete
             self.x = self.target_x
             self.y = self.target_y
@@ -611,18 +610,10 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         if self.draggable or self.clicked is not None:
 
             fx, fy, fw, fh = self.drag_handle
-
-            if isinstance(fx, float):
-                fx = int(fx * cw)
-
-            if isinstance(fy, float):
-                fy = int(fy * ch)
-
-            if isinstance(fw, float):
-                fw = int(fw * cw)
-
-            if isinstance(fh, float):
-                fh = int(fh * ch)
+            fx = int(absolute.compute_raw(fx, cw))
+            fy = int(absolute.compute_raw(fy, ch))
+            fw = int(absolute.compute_raw(fw, cw))
+            fh = int(absolute.compute_raw(fh, ch))
 
             mask = self.style.focus_mask
 
@@ -946,6 +937,7 @@ class DragGroup(renpy.display.layout.MultiBox):
         super(DragGroup, self).add(child)
 
         self.sorted = False
+        renpy.display.render.invalidate(self)
 
     def remove(self, child):
         """

@@ -30,6 +30,21 @@ draggable represents a window that the user places on the screen. If
 you need to refer to the drags after they've been created, then it's
 often better to create Drags directly, and add them to a DragGroup.
 
+Dropping
+--------
+
+There are two ways Ren'Py can process a drop:
+
+* If `mouse_drop` is true, the drag will be dropped onto the droppable
+  that is directly below the mouse cursor.
+* If `mouse_drop` is false, the default, the drop will occur onto
+  the droppable that most fully overlaps with the drag.
+
+Unlike when starting a drag, where `focus_mask` is used, dropping considers
+the entire rectangular areas of the draggable and droppable, including any
+transparent pixels. You may need to design your drag and drop displayables
+to take this into account, by being generally rectangular in shape.
+
 Displayables
 ------------
 
@@ -89,28 +104,33 @@ send a character to a location::
             # Our detectives.
             drag:
                 drag_name "Ivy"
-                child "ivy.png"
                 droppable False
                 dragged detective_dragged
                 xpos 100 ypos 100
+
+                add "ivy.png"
             drag:
                 drag_name "Zack"
-                child "zack.png"
                 droppable False
                 dragged detective_dragged
                 xpos 150 ypos 100
 
+                add "zack.png"
+
             # The cities they can go to.
             drag:
                 drag_name "London"
-                child "london.png"
                 draggable False
                 xpos 450 ypos 140
+
+                add "london.png"
+
             drag:
                 drag_name "Paris"
                 draggable False
-                child "paris.png"
                 xpos 500 ypos 280
+
+                add "paris.png"
 
     label send_detective:
         "We need to investigate! Who should we send, and where should they go?"

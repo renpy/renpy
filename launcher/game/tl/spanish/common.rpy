@@ -785,7 +785,7 @@ translate spanish strings:
     # renpy/common/00speechbubble.rpy:304
     old "(hide)"
     new "(ocultar)"
-    
+
     # renpy/common/00gui.rpy:455
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
     new "Este archivo se creó en otro dispositivo. Los archivos de guardado maliciosamente creados pueden dañar tu computadora. Confías en el creador de este archivo y en todos los que podrían haberlo modificado?"
@@ -889,3 +889,8 @@ translate spanish strings:
     # renpy/common/00sync.rpy:619
     old "Sync Error"
     new "Error de sincronización"
+
+    # renpy/common/00speechbubble.rpy:391
+    old "(clear retained bubbles)"
+    new "(borrar burbujas retenidas)"
+

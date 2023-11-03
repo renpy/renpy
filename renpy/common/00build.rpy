@@ -159,6 +159,7 @@ init -1500 python in build:
         ("*.dll", None),
         ("*.manifest", None),
         ("*.keystore", None),
+        ("update.pem", None),
 
         ("lib/", None),
         ("renpy/", None),
@@ -207,6 +208,7 @@ init -1500 python in build:
         ("web-presplash.png", "web"),
         ("web-presplash.jpg", "web"),
         ("web-presplash.webp", "web"),
+        ("web-icon.png", "web"),
         ("progressive_download.txt", "web"),
 
         ("steam_appid.txt", None),
@@ -345,11 +347,14 @@ init -1500 python in build:
             dmg
                 A Macintosh DMG containing the files.
             app-zip
-                A zip file containing a macintosh application.
+                A zip file containing a macintosh application. This format
+                doesn't support the Ren'Py updater.
             app-directory
-                A directory containing the mac app.
+                A directory containing the mac app. This format
+                doesn't support the Ren'Py updater.
             app-dmg
-                A macintosh drive image containing a dmg. (Mac only.)
+                A macintosh drive image containing a dmg. (Mac only.) This format
+                doesn't support the Ren'Py updater.
             bare-zip
                 A zip file without :var:`build.directory_name`
                 prepended.
@@ -456,6 +461,17 @@ init -1500 python in build:
     # The itch.io project name.
     itch_project = None
 
+    # Maps from files to itch.io channels.
+    itch_channels = {
+        "*-all.zip" : "win-osx-linux",
+        "*-market.zip" : "win-osx-linux",
+        "*-pc.zip" : "win-linux",
+        "*-win.zip" : "win",
+        "*-mac.zip" : "osx",
+        "*-linux.tar.bz2" : "linux",
+        "*-release.apk" : "android",
+    }
+
     # Should we include the old Ren'Py themes?
     include_old_themes = True
 
@@ -491,6 +507,9 @@ init -1500 python in build:
 
     # Should the sdk-fonts directory be renamed to game?
     _sdk_fonts = False
+
+    # Which update formats should be built?
+    update_formats = [ "rpu" ]
 
     # This function is called by the json_dump command to dump the build data
     # into the json file.
@@ -552,6 +571,8 @@ init -1500 python in build:
         if itch_project:
             rv["itch_project"] = itch_project
 
+        rv["itch_channels"] = itch_channels
+
         if mac_identity:
             rv["mac_identity"] = mac_identity
             rv["mac_codesign_command"] = mac_codesign_command
@@ -572,6 +593,8 @@ init -1500 python in build:
         rv["android_permissions"] = android_permissions
 
         rv["_sdk_fonts"] = _sdk_fonts
+
+        rv["update_formats"] = update_formats
 
         return rv
 

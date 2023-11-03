@@ -23,7 +23,7 @@ translate japanese strings:
 
     # options.rpy:17
     old "Ren'Py 7 Default GUI"
-    new "Ren'Py 7 Default GUI"
+    new "Ren'Py 7 デフォルトのGUI"
 
     # options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
@@ -118,8 +118,8 @@ translate japanese strings:
     new "## プラットフォームごとの Ren'Py がゲームのセーブデータを作成する場所を制御します。セーブファイルは以下の場所に作成されます："
 
     # options.rpy:134
-    old "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
-    new "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
+    old "## Windows: %APPDATA%\\RenPy\\<config.save_directory>"
+    new "## Windows: %APPDATA%\\RenPy\\<config.save_directory>"
 
     # options.rpy:136
     old "## Macintosh: $HOME/Library/RenPy/<config.save_directory>"
@@ -208,3 +208,16 @@ translate japanese strings:
     # gui/game/options.rpy:47
     old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
     new "## これらの3つの変数は、特に、どのミキサーがデフォルトでプレーヤーに表示されるかを制御します。これらのいずれかをFalseに設定すると、適切なミキサーが非表示になります。"
+
+translate japanese strings:
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new "## アプリ内課金を行うには、Google Playのライセンスキーが必要です。Google Play開発者コンソールの「収益化」→「収益化のセットアップ」→「ライセンス」で確認することができます。"
+
+translate japanese strings:
+
+    # gui/game/options.rpy:140
+    old "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
+    new "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
+

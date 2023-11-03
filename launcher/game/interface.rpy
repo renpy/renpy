@@ -200,7 +200,15 @@ screen common:
                 add SPACER
 
                 for v, l in choices:
-                    textbutton l action SetScreenVariable("selected", v)
+                    textbutton l:
+                        action SetScreenVariable("selected", v)
+                        selected_background REVERSE_IDLE
+                        selected_hover_background REVERSE_HOVER
+                        xpadding 20
+                        size_group "choice"
+                        text_selected_idle_color REVERSE_TEXT
+                        text_selected_hover_color REVERSE_TEXT
+                        text_xalign 0.5
 
                 if selected is not None:
                     $ continue_ = Return(selected)
@@ -484,7 +492,7 @@ init python in interface:
             The amount of time to pause for after showing the message.
         """
 
-        common(title, store.INTERACTION_COLOR, message, submessage=None, pause=pause, show_screen=True, **kwargs)
+        common(title, store.INTERACTION_COLOR, message, submessage=submessage, pause=pause, show_screen=True, **kwargs)
         renpy.pause(pause)
 
     def processing(message, submessage=None, complete=None, total=None, **kwargs):

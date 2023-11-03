@@ -159,11 +159,11 @@ screen front_page_project:
                 frame style "l_indent":
                     has vbox
 
-                    textbutton _("game") action OpenDirectory(os.path.join(p.path, "game"), absolute=True)
-                    textbutton _("base") action OpenDirectory(os.path.join(p.path, "."), absolute=True)
-                    textbutton _("images") action OpenDirectory(os.path.join(p.path, "game/images"), absolute=True)
-                    textbutton _("audio") action OpenDirectory(os.path.join(p.path, "game/audio"), absolute=True)
-                    textbutton _("gui") action OpenDirectory(os.path.join(p.path, "game/gui"), absolute=True)
+                    textbutton "game" action OpenDirectory(os.path.join(p.path, "game"), absolute=True)
+                    textbutton "base" action OpenDirectory(os.path.join(p.path, "."), absolute=True)
+                    textbutton "images" action OpenDirectory(os.path.join(p.path, "game/images"), absolute=True)
+                    textbutton "audio" action OpenDirectory(os.path.join(p.path, "game/audio"), absolute=True)
+                    textbutton "gui" action OpenDirectory(os.path.join(p.path, "game/gui"), absolute=True)
 
             vbox:
                 if persistent.show_edit_funcs:
@@ -259,7 +259,7 @@ label lint:
         interface.processing(_("Checking script for potential problems..."))
         lint_fn = project.current.temp_filename("lint.txt")
 
-        project.current.launch([ 'lint', lint_fn ], wait=True)
+        project.current.launch([ 'lint', lint_fn, ] + list(persistent.lint_options), wait=True)
 
         e = renpy.editor.editor
         e.begin(True)

@@ -39,7 +39,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:38
     old "## A short name for the game used for executables and directories in the built distribution. This must be ASCII-only, and must not contain spaces, colons, or semicolons."
-    new "## Коротка назва гри, яка використовується для виконуваних файлів і каталогів у вбудованому дистрибутиві. Це має бути лише ASCII і не повинно містити пробілів, двокрапки чи крапки з комою."
+    new "## Коротка назва гри, яка використовується для виконуваних файлів і тек у вбудованому дистрибутиві. Це має бути лише ASCII і не повинно містити пробілів, двокрапки чи крапки з комою."
 
     # gui/game/options.rpy:45
     old "## Sounds and music"
@@ -115,7 +115,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:135
     old "## Save directory"
-    new "## Зберегти каталог"
+    new "## Зберегти теку"
 
     # gui/game/options.rpy:137
     old "## Controls the platform-specific place Ren'Py will place the save files for this game. The save files will be placed in:"
@@ -155,7 +155,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:166
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
-    new "## Наступні функції приймають шаблони файлів. Шаблони файлів не чутливі до регістру та зіставляються зі шляхом відносно основного каталогу, з / без нього на початку. Якщо збігається декілька шаблонів, використовується перший."
+    new "## Наступні функції приймають шаблони файлів. Шаблони файлів не чутливі до регістру та зіставляються зі шляхом відносно основної теки, з / без нього на початку. Якщо збігається декілька шаблонів, використовується перший."
 
     # gui/game/options.rpy:171
     old "## In a pattern:"
@@ -163,19 +163,19 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:173
     old "## / is the directory separator."
-    new "## / є роздільником каталогу."
+    new "## / є роздільником теки."
 
     # gui/game/options.rpy:175
     old "## * matches all characters, except the directory separator."
-    new "## * відповідає всім символам, крім роздільника каталогу."
+    new "## * відповідає всім символам, крім роздільника теки."
 
     # gui/game/options.rpy:177
     old "## ** matches all characters, including the directory separator."
-    new "## ** відповідає всім символам, включаючи роздільник каталогу."
+    new "## ** відповідає всім символам, включаючи роздільник теки."
 
     # gui/game/options.rpy:179
     old "## For example, \"*.txt\" matches txt files in the base directory, \"game/**.ogg\" matches ogg files in the game directory or any of its subdirectories, and \"**.psd\" matches psd files anywhere in the project."
-    new "## Наприклад, \"*.txt\" відповідає файлам txt у базовому каталозі, \"game/**.ogg\" відповідає файлам ogg у каталозі гри або будь-якому з його підкаталогів, а \"**.psd \" відповідає файлам psd будь-де в проєкті."
+    new "## Наприклад, \"*.txt\" відповідає файлам txt у базовому каталозі, \"game/**.ogg\" відповідає файлам ogg у каталозі гри або будь-якому з його під-тек, а \"**.psd \" відповідає файлам psd будь-де в проєкті."
 
     # gui/game/options.rpy:183
     old "## Classify files as None to exclude them from the built distributions."
@@ -196,4 +196,11 @@ translate ukrainian strings:
     # gui/game/options.rpy:210
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Ім’я користувача та назва проєкту, пов’язані з проєктом itch.io, розділені скісною рискою."
+
+
+translate ukrainian strings:
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new "## Для здійснення покупок у додатку потрібен ліцензійний ключ Google Play. Його можна знайти в консолі розробника Google Play у розділі \"Монетизація\" > \"Налаштування монетизації\" > \"Ліцензування\"."
 

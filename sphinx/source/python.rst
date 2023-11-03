@@ -147,7 +147,8 @@ Define Statement
 ----------------
 
 The ``define`` statement sets a single variable to a value at init time.
-For example::
+The variable is treated as constant, and should not be changed after
+being set. For example::
 
     define e = Character("Eileen")
 
@@ -355,6 +356,14 @@ The following stores are declared constant by default::
     updater
 
 
+.. _jsondb:
+
+JSONDB
+------
+
+.. include:: inc/jsondb
+
+
 .. _python-modules:
 
 First and Third-Party Python Modules and Packages
@@ -365,16 +374,16 @@ and packages – ones written for the game – can be placed directly
 into the game directory. Third party packages can be placed into the
 game/python-packages directory.
 
-For example, to install the requests package, one can change into the
+For example, to install the python-dateutil package, one can change into the
 game's base directory, and run the command::
 
-    pip install --target game/python-packages requests
+    pip install --target game/python-packages python-dateutil
 
 In either case, the module or package can be imported from an init python
 block::
 
     init python:
-        import requests
+        import dateutil.parser
 
 .. warning::
 
@@ -382,3 +391,7 @@ block::
     to work. Python imported from .py files is not. As a result,
     objects created in Python will not work with rollback, and
     probably should not be changed after creation.
+
+    Not all Python packages are compatible with Ren'Py. It's up to you
+    to audit the packages you install and make sure the packages will
+    work.

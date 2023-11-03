@@ -80,10 +80,10 @@ Preference("fullscreen", False)
 Preference("skip_unseen", False)
 Preference("text_cps", 0, (int, float))
 Preference("afm_time", 0, (int, float))
-Preference("afm_enable", True)
+Preference("afm_enable", False)
 Preference("using_afm_enable", False)
 Preference("voice_sustain", False)
-Preference("mouse_move", False)
+Preference("mouse_move", True)
 Preference("show_empty_window", True)
 
 # Should we wait for the voice to stop?
@@ -137,7 +137,7 @@ Preference("self_voicing_volume_drop", 0.5)
 Preference("emphasize_audio", False)
 
 # Is the gamepad enabled?
-Preference("pad_enabled", True)
+Preference("pad_enabled", True, (bool, str))
 
 # The side of the screen used for rollback. ("left", "right", or "disable")
 Preference("mobile_rollback_side", "disable")
@@ -181,6 +181,9 @@ Preference("web_cache_preload", False)
 
 # Should the voice continue to play after the user enters the game menu.
 Preference("voice_after_game_menu", False)
+
+# Should the game be maximized?
+Preference("maximized", False)
 
 class Preferences(renpy.object.Object):
     """
@@ -232,6 +235,7 @@ class Preferences(renpy.object.Object):
         audio_when_unfocused = True
         web_cache_preload = False
         voice_after_game_menu = False
+        maximized = False
 
     def init(self):
         """
@@ -286,7 +290,6 @@ class Preferences(renpy.object.Object):
 
         return self.volumes[mixer]
 
-
     def set_mixer(self, mixer, volume):
         if volume > 0:
             volume = renpy.config.volume_db_range * volume - renpy.config.volume_db_range
@@ -319,7 +322,7 @@ class Preferences(renpy.object.Object):
         return self.mute[mixer]
 
     def init_mixers(self):
-        for i in renpy.audio.music.get_all_mixers() + ["main"]:
+        for i in renpy.audio.music.get_all_mixers() + ["main", "voice"]:
             self.volumes.setdefault(i, 1.0)
             self.mute.setdefault(i, False)
 

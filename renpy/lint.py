@@ -21,7 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from typing import Any
 
 import codecs
 import time
@@ -262,7 +262,7 @@ def image_exists_precise(name):
         if rest:
 
             try:
-                da = renpy.display.core.DisplayableArguments()
+                da = renpy.display.displayable.DisplayableArguments()
                 da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs)
                 da.args = tuple(i for i in name[1:] if i in rest)
                 da.lint = True
@@ -339,7 +339,7 @@ def check_displayable(what, d):
     files = [ ]
 
     try:
-        if isinstance(d, renpy.display.core.Displayable):
+        if isinstance(d, renpy.display.displayable.Displayable):
             d.visit_all(lambda a: a.predict_one())
     except Exception:
         pass
@@ -376,8 +376,8 @@ def check_show(node, precise):
 
     layer = renpy.exports.default_layer(layer, tag or name)
 
-    if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
-        report("Uses layer '%s', which is not in config.layers.", layer)
+    if layer not in renpy.display.core.layers:
+        report("Uses layer '%s', which is not defined.", layer)
 
     image_exists(name, expression, tag, precise=precise)
 
@@ -404,8 +404,8 @@ def check_hide(node):
 
     layer = renpy.exports.default_layer(layer, tag)
 
-    if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
-        report("Uses layer '%s', which is not in config.layers.", layer)
+    if layer not in renpy.display.core.layers:
+        report("Uses layer '%s', which is not defined.", layer)
 
     if tag not in image_prefixes:
         report("The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.", tag)
@@ -444,7 +444,10 @@ def quote_text(s):
 
 def text_checks(s):
 
-    msg = renpy.text.extras.check_text_tags(s)
+    if renpy.config.say_menu_text_filter is not None:
+        s = renpy.config.say_menu_text_filter(s)
+
+    msg = renpy.text.extras.check_text_tags(s, check_unclosed=args.check_unclosed_tags)
     if msg:
         report("%s (in %s)", msg, quote_text(s))
 
@@ -683,13 +686,54 @@ def check_style(name, s):
                     for f in set(v.map.values()):
                         check_file(name, f, directory="fonts")
                 else:
-                    check_file(name, v, directory="images")
+                    check_file(name, v, directory="fonts")
 
-            if isinstance(v, renpy.display.core.Displayable):
+            if isinstance(v, renpy.display.displayable.Displayable):
                 check_style_property_displayable(name, k, v)
 
 
+def check_parameters(kind, node_name, parameter_info):
+    """
+    `kind`
+        What we're parsing the parameters of, for the error message.
+        "screen", "label", "function", "ATL transform"...
+
+    `node_name`
+        The name of the (kind) we're defining.
+
+    `parameter_info`
+        The ParameterInfo we're scanning, or None.
+    """
+
+    if parameter_info is None:
+        return
+
+    names = [p[0] for p in parameter_info.parameters]
+    if parameter_info.extrakw:
+        names.extend(parameter_info.extrakw)
+    if parameter_info.extrapos:
+        names.extend(parameter_info.extrapos)
+
+    rv = [name for name in names if (name in python_builtins) or (name in renpy_builtins)]
+
+    if len(rv) == 1:
+        name = rv[0]
+        report("In {0} {1!r}, the {2!r} parameter replaces a built-in name from either Python or Ren'Py, which may cause problems.".format(kind, node_name, name))
+        if not "_" in name:
+            add("This can be fixed by naming it '{}_'".format(name))
+    elif rv:
+        last = rv.pop()
+        prettyprevious = ", ".join(repr(name) for name in rv)
+        report("In {0} {1!r}, the {2} and {3!r} parameters replace built-in names from either Python or Ren'Py, which may cause problems.".format(kind,
+                                                                                                                                                  node_name,
+                                                                                                                                                  prettyprevious,
+                                                                                                                                                  last))
+
+
 def check_label(node):
+
+    if args.builtins_parameters:
+        check_parameters("label", node.name, node.parameters)
 
     def add_arg(n):
         if n is None:
@@ -715,6 +759,9 @@ def check_screen(node):
         report("The screen %s has not been given a parameter list.", node.screen.name)
         add("This can be fixed by writing 'screen %s():' instead.", node.screen.name)
 
+    if args.builtins_parameters:
+        check_parameters("screen", node.screen.name, node.screen.parameters)
+
 
 def check_styles():
     for full_name, s in renpy.style.styles.items(): # @UndefinedVariable
@@ -728,6 +775,11 @@ def check_styles():
 def check_init(node):
     if not (-999 <= node.priority <= 999):
         report("The init priority ({}) is not in the -999 to 999 range.".format(node.priority))
+
+
+def check_transform(node):
+    if args.builtins_parameters:
+        check_parameters("ATL transform", node.varname, node.parameters)
 
 
 def humanize(n):
@@ -780,6 +832,9 @@ class Count(object):
         self.words += len(s.split())
         self.characters += len(s)
 
+    def tuple(self):
+        return (self.blocks, self.words, self.characters)
+
 
 def common(n):
     """
@@ -800,45 +855,109 @@ def report_character_stats(charastats):
 
     rv = [ "Character statistics (for default language):" ]
 
-    count_to_char = collections.defaultdict(list)
-
-    for char, count in charastats.items():
-        count_to_char[count].append(char)
-
-    for count, chars in sorted(count_to_char.items(), reverse=True):
-        chars.sort()
-
-        start = humanize_listing(chars, singular_suffix=" has ", plural_suffix=" have ")
-
-        rv.append(
-            " * " + start + humanize(count) +
-            (" block " if count == 1 else " blocks ") + "of dialogue" +
-            (" each." if len(chars) > 1 else ".")
+    if args.words_char_count:
+        for char in sorted(charastats, key=lambda char: charastats[char].tuple(), reverse=True):
+            count = charastats[char]
+            rv.append(
+                " * " + char
+                + " has " + humanize(count.blocks) + (" block " if count.blocks == 1 else " blocks ") + "of dialogue, "
+                + "containing " + humanize(count.words) + " words and "
+                + humanize(count.characters) + " characters."
             )
+
+    else:
+        nblocks_to_char = collections.defaultdict(list)
+
+        for char, count in charastats.items():
+            nblocks_to_char[count.blocks].append(char)
+
+        for nblocks, chars in sorted(nblocks_to_char.items(), reverse=True):
+            chars.sort()
+
+            start = humanize_listing(chars, singular_suffix=" has ", plural_suffix=" have ")
+
+            rv.append(
+                " * " + start + humanize(nblocks) +
+                (" block " if nblocks == 1 else " blocks ") + "of dialogue" +
+                (" each." if len(chars) > 1 else ".")
+                )
 
     return rv
 
 
 def check_unreachables(all_nodes):
-    all_nodes = [node for node in all_nodes if not common(node)]
-
-    unreachable = set(all_nodes)
-
-    to_check = {node for node in all_nodes if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)) or isinstance(node, renpy.ast.Translate) and node.language is not None}
-    # reachable nodes whose children haven't yet been checked
 
     def add_block(block):
         next = block[0]
         if next in unreachable:
             to_check.add(next)
 
+    def add_names(names):
+        for name in names:
+
+            if name is None:
+                continue
+
+            if name is True:
+                continue
+
+            if isinstance(name, renpy.lexer.SubParse):
+                if name.block:
+                    add_block(name.block)
+                continue
+
+            node = renpy.game.script.lookup(name)
+
+            if node is None:
+                continue
+
+            if node in unreachable:
+                to_check.add(node)
+
+    # All nodes, outside of common.
+    all_nodes = [node for node in all_nodes if not common(node)]
+
+    # Unreachable nodes - this set shrinks as nodes become reachable.
+    unreachable = set(all_nodes)
+
+    # Weakly reachable nodes - nodes that are reachable, but don't
+    # make their next reachable.
+    weakly_reachable = set()
+
+    # The worklist of reachable nodes that haven't been checked yet.
+    to_check = set()
+
     for node in all_nodes:
-        if isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
+        if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)):
+            to_check.add(node)
+
+        elif isinstance(node, renpy.ast.Translate):
+            if node.language is not None:
+                to_check.add(node)
+
+        elif isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
             # the block of these ones is always reachable, but their next is reachable only if they are themselves reachable
             add_block(node.block)
+            weakly_reachable.add(node)
+            # Init and TranslateBlock nodes are meant to be unreachable, but we had to check them
+            # because if they are reachable, what follows them is too and must not be flagged as unreachable
+
+        elif isinstance(node, (renpy.ast.Return, renpy.ast.EndTranslate)):
+            weakly_reachable.add(node)
+            # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes
+            # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place,
+            # and EndTranslate nodes from explicit translate blocks are naturally unreachable
+
+        elif isinstance(node, renpy.ast.UserStatement):
+            reach = node.reachable(False)
+
+            if True in reach:
+                weakly_reachable.add(node)
+
+            add_names(reach)
 
     while to_check:
-        node = to_check.pop()
+        node = to_check.pop() # type: Any
         unreachable.remove(node)
 
         if isinstance(node, renpy.ast.While):
@@ -865,20 +984,14 @@ def check_unreachables(all_nodes):
                 add_block(block)
 
         elif isinstance(node, renpy.ast.UserStatement):
-            if node.code_block is not None:
-                add_block(node.code_block)
-
-            for i in node.subparses:
-                add_block(i.block)
+            add_names(node.reachable(True))
+            continue
 
         next = node.next
         if next in unreachable:
             to_check.add(next)
 
-    locations = sorted(set((node.filename, node.linenumber) for node in unreachable if not isinstance(node, (renpy.ast.Return, renpy.ast.EndTranslate, renpy.ast.Init, renpy.ast.TranslateBlock))))
-    # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes
-    # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place, and EndTranslate nodes from explicit translate blocks are naturally unreachable
-    # Init and TranslateBlock nodes are meant to be unreachable, but we had to check them because if they are reachable, what follows them is too and must not be flagged as unreachable
+    locations = sorted(set((node.filename, node.linenumber) for node in (unreachable - weakly_reachable)))
 
     locadict = collections.defaultdict(list)
     for filename, linenumber in locations:
@@ -920,7 +1033,12 @@ def lint():
     ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
     ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errros, 1 if lint errors are found.")
+    ap.add_argument("--orphan-tl", action="store_true", help="If given, orphan translations are reported.")
+    ap.add_argument("--builtins-parameters", action="store_true", help="If given, renpy or python builtin names in renpy statement parameters are reported.")
+    ap.add_argument("--words-char-count", action="store_true", help="If given, the number of words and characters for each character is reported.")
+    ap.add_argument("--check-unclosed-tags", action="store_true", help="If given, unclosed text tags are reported.")
 
+    global args
     args = ap.parse_args()
 
     if args.filename:
@@ -953,7 +1071,7 @@ def lint():
     # The current count.
     counts = collections.defaultdict(Count)
 
-    charastats = collections.defaultdict(int)
+    charastats = collections.defaultdict(Count)
 
     # The current language.
     language = None
@@ -999,7 +1117,7 @@ def lint():
 
             counts[language].add(node.what)
             if language is None:
-                charastats[node.who or 'narrator' ] += 1
+                charastats[node.who or 'narrator'].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -1023,7 +1141,7 @@ def lint():
         elif isinstance(node, renpy.ast.Label):
             check_label(node)
 
-        elif isinstance(node, renpy.ast.Translate):
+        elif isinstance(node, renpy.ast.Translate) and args.orphan_tl:
             language = node.language
             if language is None:
                 none_language_ids.add(node.identifier)
@@ -1048,12 +1166,16 @@ def lint():
         elif isinstance(node, renpy.ast.Init):
             check_init(node)
 
+        elif isinstance(node, renpy.ast.Transform):
+            check_transform(node)
+
     report_node = None
 
     check_styles()
     check_filename_encodings()
     check_unreachables(all_stmts)
-    check_orphan_translations(none_language_ids, translated_ids)
+    if args.orphan_tl:
+        check_orphan_translations(none_language_ids, translated_ids)
 
     for f in renpy.config.lint_hooks:
         f()

@@ -126,7 +126,7 @@ def interpolate(t, a, b, type): # @ReservedAssignment
     """
 
     # Deal with booleans, nones, etc.
-    if b is None or isinstance(b, (bool, basestring, renpy.display.matrix.Matrix)):
+    if b is None or isinstance(b, (bool, basestring, renpy.display.matrix.Matrix, renpy.display.transform.Camera)):
         if t >= 1.0:
             return b
         else:
@@ -228,7 +228,7 @@ def get_catmull_rom_value(t, p_1, p0, p1, p2):
         +(t - 1) * t * t * p2) / 2)
 
 
-# A list of atl transforms that may need to be compile.
+# A list of atl transforms that may need to be compiled.
 compile_queue = [ ]
 
 
@@ -241,10 +241,15 @@ def compile_all():
     global compile_queue
 
     for i in compile_queue:
+
         if i.atl.constant == GLOBAL_CONST:
             i.compile()
 
     compile_queue = [ ]
+
+
+# Used to indicate that a variable is not in the context.
+NotInContext = renpy.object.Sentinel("NotInContext")
 
 
 # This is the context used when compiling an ATL statement. It stores the
@@ -288,9 +293,17 @@ class ATLTransformBase(renpy.object.Object):
     def __init__(self, atl, context, parameters):
 
         # The constructor will be called by atltransform.
-
         if parameters is None:
             parameters = ATLTransformBase.parameters
+        else:
+
+            # Apply the default parameters.
+            context = context.copy()
+            
+            for k, p in parameters.parameters.items():
+                v = p.default
+                if v not in (None, p.empty):
+                    context[k] = renpy.python.py_eval(v, locals=context)
 
         # The parameters that we take.
         self.parameters = parameters
@@ -344,6 +357,14 @@ class ATLTransformBase(renpy.object.Object):
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
+    @property
+    def transition(self):
+        """
+        Returns true if this is likely to be an ATL transition.
+        """
+
+        return "new_widget" in self.context.context
+
     def _handles_event(self, event):
 
         if (event == "replaced") and (self.atl_state is None):
@@ -387,13 +408,17 @@ class ATLTransformBase(renpy.object.Object):
         elif t.atl is not self.atl:
             return
 
-        # Important to do it this way, so we use __eq__. The exception handling
-        # optimistically assumes that uncomparable objects are the same.
-        try:
-            if not (t.context == self.context):
+        # Only take the execution state if the contexts haven't changed in
+        # a way that would affect the execution of the ATL.
+
+        if t.atl.constant != GLOBAL_CONST:
+
+            block = self.get_block()
+            if block is None:
+                block = self.compile()
+
+            if not deep_compare(self.block, t.block):
                 return
-        except Exception:
-            pass
 
         self.done = t.done
         self.block = t.block
@@ -422,11 +447,6 @@ class ATLTransformBase(renpy.object.Object):
         _args = kwargs.pop("_args", None)
 
         context = self.context.context.copy()
-
-        for k, p in self.parameters.parameters.items():
-            v = p.default
-            if v not in (None, p.empty):
-                context[k] = renpy.python.py_eval(v)
 
         positional = list(self.parameters.positional)
         args = list(args)
@@ -590,7 +610,7 @@ class ATLTransformBase(renpy.object.Object):
         if (self.atl_st_offset is None) or (st - self.atl_st_offset) < 0:
             self.atl_st_offset = st
 
-        if self.atl.animation:
+        if self.atl.animation or self.transition:
             timebase = at
         else:
             timebase = st - self.atl_st_offset
@@ -651,6 +671,7 @@ class RawStatement(object):
 
         self.constant = NOT_CONST
 
+
 # The base class for compiled ATL Statements.
 
 
@@ -707,6 +728,7 @@ class RawBlock(RawStatement):
     # If this block uses only constant values we can once compile it
     # and use this value for all ATLTransform that use us as an atl.
     compiled_block = None
+
 
     def __init__(self, loc, statements, animation):
 
@@ -904,22 +926,32 @@ class Block(Statement):
     def visit(self):
         return [ j for i in self.statements for j in i.visit() ]
 
-incompatible_props = {"alignaround" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
-                      "align" : {"xanchor", "yanchor", "xpos", "ypos"},
-                      "anchor" : {"xanchor", "yanchor"},
-                      "angle" : {"xpos", "ypos"},
-                      "around" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
-                      "offset" : {"xoffset", "yoffset"},
-                      "pos" : {"xpos", "ypos"},
-                      "radius" : {"xpos", "ypos"},
-                      "size" : {"xsize", "ysize"},
-                      "xalign" : {"xpos", "xanchor"},
-                      "xcenter" : {"xpos", "xanchor"},
-                      "xycenter" : {"xpos", "ypos", "xanchor", "yanchor"},
-                      "xysize" : {"xsize", "ysize"},
-                      "yalign" : {"ypos", "yanchor"},
-                      "ycenter" : {"ypos", "yanchor"},
-                      }
+# A list of properties
+incompatible_props = {
+    "alignaround" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
+    "align" : {"xanchor", "yanchor", "xpos", "ypos"},
+    "anchor" : {"xanchor", "yanchor"},
+    "angle" : {"xpos", "ypos"},
+    "anchorangle" : {"xangle", "yangle"},
+    "around" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
+    "offset" : {"xoffset", "yoffset"},
+    "pos" : {"xpos", "ypos"},
+    "radius" : {"xpos", "ypos"},
+    "anchorradius" : {"xanchor", "yanchor"},
+    "size" : {"xsize", "ysize"},
+    "xalign" : {"xpos", "xanchor"},
+    "xcenter" : {"xpos", "xanchor"},
+    "xycenter" : {"xpos", "ypos", "xanchor", "yanchor"},
+    "xysize" : {"xsize", "ysize"},
+    "yalign" : {"ypos", "yanchor"},
+    "ycenter" : {"ypos", "yanchor"},
+    }
+
+# A list of sets of pairs of properties that do not conflict.
+compatible_pairs = [
+    {"radius", "angle"},
+    {"anchorradius", "anchorangle"}
+]
 
 # This can become one of four things:
 #
@@ -970,6 +1002,14 @@ class RawMultipurpose(RawStatement):
             old = None
 
         self.properties.append((name, exprs))
+
+        if old is not None:
+            pair = { old, name }
+
+            for i in compatible_pairs:
+                if pair == i:
+                    old = None
+
         return old
 
     def add_expression(self, expr, with_clause):
@@ -1238,7 +1278,7 @@ class Interpolation(Statement):
 
         complete = warper(complete)
 
-        if state is None:
+        if state is None or len(state) != 6:
 
             # Create a new transform state, and apply the property
             # changes to it.
@@ -1246,25 +1286,42 @@ class Interpolation(Statement):
             newts.take_state(trans.state)
 
             has_angle = False
+            has_radius = False
+            has_anchorangle = False
+            has_anchorradius = False
 
             for k, v in self.properties:
                 setattr(newts, k, v)
 
                 if k == "angle":
-                    newts.last_angle = v
                     has_angle = True
+
+                elif k == "radius":
+                    has_radius = True
+
+                elif k == "anchorangle":
+                    has_anchorangle = True
+
+                elif k == "anchorradius":
+                    has_anchorradius = True
 
             # Now, the things we change linearly are in the difference
             # between the new and old states.
             linear = trans.state.diff(newts)
 
-            revolution = None
+            # Angle and radius need to go after the linear changes, as
+            # around or alignaround must be set first.
+            angle = None
+            radius = None
+            anchorangle = None
+            anchorradius = None
+
             splines = [ ]
 
             revdir = self.revolution
             circles = self.circles
 
-            if (revdir or (has_angle and renpy.config.automatic_polar_motion)) and (newts.xaround is not None):
+            if (revdir or ((has_angle or has_radius) and renpy.config.automatic_polar_motion)) and (newts.xaround is not None):
 
                 # Remove various irrelevant motions.
                 for i in [ 'xpos', 'ypos',
@@ -1289,34 +1346,79 @@ class Interpolation(Statement):
                     startradius = trans.state.radius
                     endradius = newts.radius
 
-                    # Make sure the revolution is in the appropriate direction,
+                    startanchorangle = trans.state.anchorangle
+                    endanchorangle = newts.anchorangle
+                    startanchorradius = trans.state.anchorradius
+                    endanchorradius = newts.anchorradius
+
+                    # Make sure the angle is in the appropriate direction,
                     # and contains an appropriate number of circles.
 
                     if revdir == "clockwise":
                         if endangle < startangle:
                             startangle -= 360
 
+                        if endanchorangle < startanchorangle:
+                            startanchorangle -= 360
+
                         startangle -= circles * 360
+                        startanchorangle -= circles * 360
 
                     elif revdir == "counterclockwise":
                         if endangle > startangle:
                             startangle += 360
 
-                        startangle += circles * 360
+                        if endanchorangle > startanchorangle:
+                            startanchorangle += 360
 
-                    # Store the revolution.
-                    revolution = (startangle, endangle, startradius, endradius)
+                        startangle += circles * 360
+                        startanchorangle += circles * 360
+
+                    has_radius = True
+                    has_angle = True
+                    has_anchorangle = True
+                    has_anchorradius = True
+
+                    radius = (startradius, endradius)
+                    angle = (startangle, endangle)
+                    anchorradius = (startanchorradius, endanchorradius)
+                    anchorangle = (startanchorangle, endanchorangle)
 
                 else:
 
-                    last_angle = trans.state.last_angle or trans.state.angle
-                    revolution = (last_angle, newts.last_angle, trans.state.radius, newts.radius)
+                    if has_angle:
+                        start = trans.state.angle
+                        end = newts.last_angle
+
+                        if end - start > 180:
+                            start += 360
+                        if end - start < -180:
+                            start -= 360
+
+                        angle = (start, end)
+
+                    if has_radius:
+                        radius = (trans.state.radius, newts.radius)
+
+                    if has_anchorangle:
+                        start = trans.state.anchorangle
+                        end = newts.last_anchorangle
+
+                        if end - start > 180:
+                            start += 360
+                        if end - start < -180:
+                            start -= 360
+
+                        anchorangle = (start, end)
+
+                    if has_anchorradius:
+                        anchorradius = (trans.state.anchorradius, newts.anchorradius)
 
             # Figure out the splines.
             for name, values in self.splines:
                 splines.append((name, [ getattr(trans.state, name) ] + values))
 
-            state = (linear, revolution, splines)
+            state = (linear, angle, radius, anchorangle, anchorradius, splines)
 
             # Ensure that we set things, even if they don't actually
             # change from the old state.
@@ -1325,23 +1427,48 @@ class Interpolation(Statement):
                     setattr(trans.state, k, v)
 
         else:
-            linear, revolution, splines = state
+            linear, angle, radius, anchorangle, anchorradius, splines = state
 
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.items():
-            value = interpolate(complete, old, new, PROPERTIES[k])
+
+            if k == "orientation":
+                if old is None:
+                    old = (0.0, 0.0, 0.0)
+                if new is not None:
+                    value = renpy.display.quaternion.euler_slerp(complete, old, new)
+                elif complete >= 1:
+                    value = None
+                else:
+                    value = old
+
+            else:
+                value = interpolate(complete, old, new, PROPERTIES[k])
 
             setattr(trans.state, k, value)
 
-        # Handle the revolution.
-        if revolution is not None:
-            startangle, endangle, startradius, endradius = revolution
+        # Handle the angle.
+        if angle is not None:
+            startangle, endangle = angle[:2]
 
             angle = interpolate(complete, startangle, endangle, float)
-            trans.state.last_angle = angle
             trans.state.angle = angle
 
-            trans.state.radius = interpolate(complete, startradius, endradius, float)
+        if radius is not None:
+            startradius, endradius = radius
+            trans.state.radius = interpolate(complete, startradius, endradius, position)
+
+        if anchorangle is not None:
+            startangle, endangle = anchorangle[:2]
+
+            angle = interpolate(complete, startangle, endangle, float)
+            trans.state.anchorangle = angle
+
+        if anchorradius is not None:
+            startradius, endradius = anchorradius
+            trans.state.anchorradius = interpolate(complete, startradius, endradius, position)
+
+
 
         # Handle any splines we might have.
         for name, values in splines:
@@ -1380,7 +1507,6 @@ class RawRepeat(RawStatement):
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.repeats)
 
-
 class Repeat(Statement):
 
     def __init__(self, loc, repeats):
@@ -1417,6 +1543,7 @@ class RawParallel(RawStatement):
             constant = min(constant, i.constant)
 
         self.constant = constant
+
 
 
 class Parallel(Statement):
@@ -1613,7 +1740,6 @@ class RawOn(RawStatement):
             constant = min(constant, block.constant)
 
         self.constant = constant
-
 
 class On(Statement):
 
@@ -1981,6 +2107,8 @@ def parse_atl(l):
                         knots.append(ll.require(ll.simple_expression))
 
                     if knots:
+                        if prop == "orientation":
+                            raise Exception("Orientation doesn't support spline.")
                         knots.append(expr)
                         rm.add_spline(prop, knots)
                     else:
@@ -2058,3 +2186,28 @@ def parse_atl(l):
         old = new
 
     return RawBlock(block_loc, merged, animation)
+
+def deep_compare(a, b):
+    """
+    Compares two trees of ATL statements for equality.
+    """
+
+    if type(a) != type(b):
+        return False
+
+    if isinstance(a, (list, tuple)):
+        return all(deep_compare(i, j) for i, j in zip(a, b))
+
+    if isinstance(a, dict):
+        if len(a) != len(b):
+            return False
+
+        return all((k in b) and deep_compare(a[k], b[k]) for k in a)
+
+    if isinstance(a, Statement):
+        return deep_compare(a.__dict__, b.__dict__)
+
+    try:
+        return a == b
+    except Exception:
+        return True

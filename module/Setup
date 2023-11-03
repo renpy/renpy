@@ -21,6 +21,7 @@ renpy.styledata.style_selected_activate_functions gen/renpy.styledata.style_sele
 renpy.display.matrix gen/renpy.display.matrix.c
 renpy.display.render gen/renpy.display.render.c
 renpy.display.accelerator gen/renpy.display.accelerator.c
+renpy.display.quaternion gen/renpy.display.quaternion.c
 renpy.uguu.gl gen/renpy.uguu.gl.c
 renpy.uguu.uguu gen/renpy.uguu.uguu.c
 renpy.gl.gldraw gen/renpy.gl.gldraw.c
@@ -40,3 +41,4 @@ renpy.gl2.live2dmodel gen/renpy.gl2.live2dmodel.c
 renpy.text.textsupport gen/renpy.text.textsupport.c
 renpy.text.texwrap gen/renpy.text.texwrap.c
 renpy.text.ftfont gen/renpy.text.ftfont.c ftsupport.c ttgsubtable.c
+renpy.text.hbfont gen/renpy.text.hbfont.c

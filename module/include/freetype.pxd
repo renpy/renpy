@@ -88,6 +88,7 @@ cdef extern from "pyfreetype.h":
         FT_PIXEL_MODE_GRAY4,
         FT_PIXEL_MODE_LCD,
         FT_PIXEL_MODE_LCD_V,
+        FT_PIXEL_MODE_BGRA,
 
         FT_PIXEL_MODE_MAX
 
@@ -394,6 +395,13 @@ cdef extern from "pyfreetype.h":
         FT_LOAD_LINEAR_DESIGN
         FT_LOAD_SBITS_ONLY
         FT_LOAD_NO_AUTOHINT
+        FT_LOAD_COLOR
+
+        FT_LOAD_TARGET_NORMAL
+        FT_LOAD_TARGET_LIGHT
+        FT_LOAD_TARGET_MONO
+        FT_LOAD_TARGET_LCD
+        FT_LOAD_TARGET_LCD_V
 
     FT_Error FT_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 flags)
     FT_Error FT_Load_Char(FT_Face face, FT_ULong char_code, FT_Int32 flags)
@@ -515,7 +523,7 @@ cdef extern from "pyfreetype.h":
     FT_Error FT_Bitmap_Embolden(FT_Library lib, FT_Bitmap *bitmap, FT_Pos xStrength, FT_Pos yStrength)
     FT_Error FT_Bitmap_Convert(FT_Library lib, FT_Bitmap *source, FT_Bitmap *target, FT_Int alignment)
 
-# Additions by Tom Rothame.
+# Additions by Tom Rothamel.
 
     cdef struct FT_MemoryRec_
     ctypedef FT_MemoryRec_ *FT_Memory
@@ -605,3 +613,42 @@ cdef extern from "pyfreetype.h":
     cdef FT_Long FT_CEIL(FT_Long)
     cdef FT_Long FT_FLOOR(FT_Long)
     cdef FT_Long FT_ROUND(FT_Long)
+
+    # Multiple Masters
+
+    cdef struct FT_Var_Axis_:
+        FT_String*  name
+
+        FT_Fixed    minimum
+        FT_Fixed    default "def"
+        FT_Fixed    maximum
+
+        FT_ULong    tag
+        FT_UInt     strid
+
+    ctypedef FT_Var_Axis_ FT_Var_Axis
+
+    cdef struct FT_Var_Named_Style_:
+        FT_Fixed*  coords
+        FT_UInt    strid
+        FT_UInt    psid
+
+    ctypedef FT_Var_Named_Style_ FT_Var_Named_Style
+
+    cdef struct FT_MM_Var_:
+        FT_UInt              num_axis
+        FT_UInt              num_designs
+        FT_UInt              num_namedstyles
+        FT_Var_Axis*         axis
+        FT_Var_Named_Style*  namedstyle
+
+    ctypedef FT_MM_Var_ FT_MM_Var
+
+    FT_Error FT_Get_MM_Var(FT_Face face, FT_MM_Var **amaster)
+    FT_Error FT_Done_MM_Var(FT_Library library, FT_MM_Var *amaster)
+
+    FT_Error FT_Set_Named_Instance(FT_Face, FT_UInt instance_index)
+
+    FT_Error FT_Set_Var_Design_Coordinates( FT_Face    face,
+                                FT_UInt    num_coords,
+                                FT_Fixed*  coords )

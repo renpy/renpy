@@ -52,7 +52,8 @@ STYLE_PREFIXES = [
 parser = None
 
 # The names of all statements known to SL.
-statement_names = set()
+# a map of "parser_name": Parser
+statements = dict()
 
 # A list of statements that are valid anywhere a child can be placed.
 all_child_statements = [ ]
@@ -153,7 +154,7 @@ class Parser(object):
         self.keyword = { }
         self.children = { }
 
-        statement_names.add(name)
+        statements[name] = self
 
         # True if this parser takes "as".
         self.variable = False
@@ -277,10 +278,22 @@ class Parser(object):
             if name not in self.keyword:
                 if name == "continue" or name == "break":
                     l.error("The %s statement may only appear inside a for statement, or an if statement inside a for statement." % name)
-                elif name in statement_names:
+                elif name in statements:
                     l.error('The %s statement is not a valid child of the %s statement.' % (name, self.name))
                 else:
                     l.error('%r is not a keyword argument or valid child of the %s statement.' % (name, self.name))
+
+            if name == "at" and l.keyword("transform"):
+
+                if target.atl_transform is not None:
+                    l.error("More than one 'at transform' block is given.")
+
+                l.require(":")
+                l.expect_eol()
+                l.expect_block("ATL block")
+                expr = renpy.atl.parse_atl(l.subblock_lexer())
+                target.atl_transform = expr
+                return
 
             if name in seen_keywords:
                 l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
@@ -288,15 +301,10 @@ class Parser(object):
             if incomprop:
                 l.deferred_error("check_conflicting_properties", 'keyword argument {!r} is incompatible with {!r}.'.format(name, incomprop))
 
-            seen_keywords.add(name)
+            if name == "at" and target.atl_transform:
+                l.error("The 'at' property must occur before the 'at transform' block.")
 
-            if name == "at" and block and l.keyword("transform"):
-                l.require(":")
-                l.expect_eol()
-                l.expect_block("ATL block")
-                expr = renpy.atl.parse_atl(l.subblock_lexer())
-                target.atl_transform = expr
-                return
+            seen_keywords.add(name)
 
             expr = l.comma_expression()
             if expr is None:
@@ -330,7 +338,8 @@ class Parser(object):
                     break
 
                 if l.eol():
-                    l.expect_noblock(self.name)
+                    if not target.atl_transform:
+                        l.expect_noblock(self.name)
                     block = False
                     break
 
@@ -437,6 +446,29 @@ class Parser(object):
                 Keyword(prefix + prop.name)
             else:
                 PrefixStyle(prefix, prop.name)
+
+        return self
+    
+    def copy_properties(self, name):
+        global parser
+        parser = self
+
+        parser_to_copy = statements.get(name, None)
+        if parser_to_copy is None:
+            raise Exception("{!r} is not a known screen statement".format(name))
+    
+        for p in parser_to_copy.positional:
+            Positional(p.name)
+        
+        for v in set(parser_to_copy.keyword.values()):
+            if isinstance(v, Keyword):
+                Keyword(v.name)
+
+            elif isinstance(v, Style):
+                Style(v.name)
+
+            elif isinstance(v, PrefixStyle):
+                PrefixStyle(v.prefix, v.name)
 
         return self
 
@@ -546,6 +578,10 @@ def register_sl_displayable(*args, **kwargs):
 
         These correspond to groups of :doc:`style_properties`. Group can
         also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
+    
+    .. method:: copy_properties(name)
+
+        Adds all styles and positional/keyword arguments that can be passed to the `name` screen statement.
     """
 
     kwargs.setdefault("unique", False)
@@ -573,7 +609,7 @@ class DisplayableParser(Parser):
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False,
                  pass_context=False, imagemap=False, replaces=False, default_keywords={},
-                 hotspot=False, default_properties=True, unique=False): # type: (str, Callable, str, int|Literal["many"]|renpy.object.Sentinel, bool, bool, bool, bool, dict[str, Any], bool, bool, bool) -> None
+                 hotspot=False, default_properties=True, unique=False): # type: (str, Callable, str|None, int|Literal["many"]|renpy.object.Sentinel, bool, bool, bool, bool, dict[str, Any], bool, bool, bool) -> None
         """
         `scope`
             If true, the scope is passed into the displayable function as a keyword

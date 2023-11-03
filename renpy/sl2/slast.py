@@ -81,7 +81,7 @@ def compile_expr(loc, node):
 
     expr = ast.Expression(body=node)
     renpy.python.fix_locations(expr, 1, 0)
-    return compile(expr, filename, "eval", flags, 1)
+    return compile(expr, filename, "eval", flags, True)
 
 class SLContext(renpy.ui.Addable):
     """
@@ -105,7 +105,7 @@ class SLContext(renpy.ui.Addable):
 
         # A list of child displayables that will be added to an outer
         # displayable.
-        self.children = [ ] # type: list[renpy.display.core.Displayable]
+        self.children = [ ] # type: list[renpy.display.displayable.Displayable]
 
         # A map from keyword arguments to their values.
         self.keywords = { } # type: Optional[dict[str, Any]]
@@ -342,6 +342,29 @@ class SLNode(object):
         profile_log.write("%s", "    {}{}{} ({}:{})".format(const_type, prefix, formatted, self.location[0], self.location[1]))
 
 
+def analyze_keywords(node, analysis, conditional=GLOBAL_CONST):
+    """
+    Analyzes the keywords that can be applied to this statement,
+    including those provided by if statements.
+    """
+
+    rv = GLOBAL_CONST
+
+    for _, expr in node.keyword:
+        rv = min(rv, analysis.is_constant_expr(expr), conditional)
+
+    for n in node.children:
+        if isinstance(n, SLIf):
+
+            for cond, block in n.entries:
+                if cond is not None:
+                    conditional = min(conditional, analysis.is_constant_expr(cond))
+
+                rv = min(rv, analyze_keywords(block, analysis, conditional))
+
+    return rv
+
+
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = renpy.object.Sentinel("NotGiven")
 
@@ -354,6 +377,9 @@ class SLBlock(SLNode):
 
     # RawBlock from parse or None if not present.
     atl_transform = None
+
+    # The actual transform created from the atl transform.
+    transform = None
 
     def __init__(self, loc):
         SLNode.__init__(self, loc)
@@ -439,6 +465,9 @@ class SLBlock(SLNode):
             const = self.atl_transform.constant
             self.constant = min(self.constant, const)
 
+            self.transform = renpy.display.transform.ATLTransform(self.atl_transform)
+            renpy.atl.compile_queue.append(self.transform)
+
         was_last_keyword = False
         for i in self.children:
             if i.has_keyword:
@@ -485,7 +514,18 @@ class SLBlock(SLNode):
 
         if self.atl_transform is not None:
             transform = ATLTransform(self.atl_transform, context=context.scope)
-            context.keywords["at"] = transform
+            transform.parent_transform = self.transform # type: ignore
+
+            if "at" in context.keywords:
+                try:
+                    at_list = list(context.keywords["at"])
+                except TypeError:
+                    at_list = [ context.keywords["at"] ]
+
+                at_list.append(transform)
+                context.keywords["at"] = at_list
+            else:
+                context.keywords["at"] = transform
 
         style_prefix = context.keywords.pop("style_prefix", NotGiven)
 
@@ -570,7 +610,7 @@ class SLCache(object):
     def __init__(self):
 
         # The displayable object created.
-        self.displayable = None # type: Optional[renpy.display.core.Displayable]
+        self.displayable = None # type: Optional[renpy.display.displayable.Displayable]
 
         # The positional arguments that were used to create the displayable.
         self.positional = None # type: Any
@@ -579,7 +619,7 @@ class SLCache(object):
         self.keywords = None # type: Optional[dict[str, Any]]
 
         # A list of the children that were added to self.displayable.
-        self.children = None # type: Optional[list[renpy.display.core.Displayable]]
+        self.children = None # type: Optional[list[renpy.display.displayable.Displayable]]
 
         # The outermost old transform.
         self.outer_transform = None # type: Optional[Any]
@@ -722,12 +762,7 @@ class SLDisplayable(SLBlock):
     def analyze(self, analysis):
 
         if self.imagemap:
-
-            const = GLOBAL_CONST
-
-            for _k, expr in self.keyword:
-                const = min(const, analysis.is_constant_expr(expr))
-
+            const = analyze_keywords(self, analysis)
             analysis.push_control(imagemap=(const != GLOBAL_CONST))
 
         if self.hotspot:
@@ -1137,7 +1172,8 @@ class SLDisplayable(SLBlock):
         cache.children = ctx.children
         cache.style_prefix = context.style_prefix
 
-        transform = transform # type: ignore
+        if not transform:
+            transform = None
 
         if (transform is not None) and (d is not NO_DISPLAYABLE):
             if reused and (transform == cache.raw_transform):
@@ -2009,7 +2045,7 @@ class SLUse(SLNode):
             args = [ ]
             kwargs = { }
 
-        renpy.display.screen.use_screen(self.target, _name=name, _scope=context.scope, *args, **kwargs)
+        renpy.display.screen.use_screen(self.target, *args, _name=name, _scope=context.scope, **kwargs)
 
     def execute(self, context):
 
@@ -2048,14 +2084,12 @@ class SLUse(SLNode):
 
             ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
 
-            if use_id in ctx.old_use_cache:
-                ctx.updating = True
-
             ctx.new_use_cache[use_id] = ctx.new_cache
 
         else:
 
             ctx.old_cache = context.old_cache.get(self.serial, None) or { }
+
 
         if not isinstance(ctx.old_cache, dict):
             ctx.old_cache = { }
@@ -2076,11 +2110,14 @@ class SLUse(SLNode):
             args = [ ]
             kwargs = { }
 
+        scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+        if not ctx.updating:
+            scope.clear()
+
         # Apply the arguments to the parameters (if present) or to the scope of the used screen.
         if ast.parameters is not None:
             new_scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.update(new_scope)
 
         else:
@@ -2088,7 +2125,6 @@ class SLUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.clear()
             scope.update(context.scope)
             scope.update(kwargs)
@@ -2332,9 +2368,6 @@ class SLCustomUse(SLNode):
 
             ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
 
-            if use_id in ctx.old_use_cache:
-                ctx.updating = True
-
             ctx.new_use_cache[use_id] = ctx.new_cache
 
         else:
@@ -2348,11 +2381,14 @@ class SLCustomUse(SLNode):
 
         ast = self.ast
 
+        scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+        if not ctx.updating:
+            scope.clear()
+
         # Apply the arguments to the parameters (if present) or to the scope of the used screen.
         if ast.parameters is not None:
             new_scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.update(new_scope)
 
         else:
@@ -2360,7 +2396,6 @@ class SLCustomUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.clear()
             scope.update(context.scope)
             scope.update(kwargs)
@@ -2375,6 +2410,8 @@ class SLCustomUse(SLNode):
         # If we have any children, pass them to (possible) transclude
         if self.block.children:
             ctx.transclude = self.block
+        else:
+            ctx.transclude = None
 
         try:
             ast.execute(ctx)

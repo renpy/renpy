@@ -177,3 +177,135 @@ translate italian strings:
     old "Copies the errors.txt file to the clipboard."
     new "Copia il file errors.txt negli appunti."
 
+
+translate italian strings:
+
+    # renpy/common/00gltest.rpy:89
+    old "Renderer"
+    new "Renderer"
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    # Automatic translation.
+    new "Forza il renderizzatore GL"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    # Automatic translation.
+    new "Rendering angolare della forza"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    # Automatic translation.
+    new "Forza il renderizzatore GLES"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    # Automatic translation.
+    new "Rendering Force GL2"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    # Automatic translation.
+    new "Forza il renderizzatore ANGLE2"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    # Automatic translation.
+    new "Forza il renderizzatore GLES2"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    # Automatic translation.
+    new "Abilitazione (nessuna lista di blocco)"
+
+    # renpy/common/00gltest.rpy:159
+    old "Powersave"
+    # Automatic translation.
+    new "Risparmio energetico"
+
+    # renpy/common/00gltest.rpy:173
+    old "Framerate"
+    new "Framerate"
+
+    # renpy/common/00gltest.rpy:177
+    old "Screen"
+    # Automatic translation.
+    new "Schermo"
+
+    # renpy/common/00gltest.rpy:181
+    old "60"
+    new "60"
+
+    # renpy/common/00gltest.rpy:185
+    old "30"
+    new "30"
+
+    # renpy/common/00gltest.rpy:191
+    old "Tearing"
+    new "Tearing"
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    # Automatic translation.
+    new "Questo gioco richiede l'uso di GL2 che non può essere inizializzato."
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    # Automatic translation.
+    new "Il file {a=edit:1:log.txt}log.txt{/a} può contenere informazioni che aiutano a determinare il problema del computer."
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    # Automatic translation.
+    new "Maggiori dettagli su come risolvere questo problema sono disponibili nella documentazione di {a=[url]}{/a} ."
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    # Automatic translation.
+    new "Modifica delle opzioni di rendering"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    # Automatic translation.
+    new "Premere o spostare il pulsante '[control!s]'[kind]."
+
+    # renpy/common/_errorhandling.rpym:555
+    old "Open"
+    # Automatic translation.
+    new "Aperto"
+
+    # renpy/common/_errorhandling.rpym:559
+    old "Copy BBCode"
+    # Automatic translation.
+    new "Copiare il codice BBC"
+
+    # renpy/common/_errorhandling.rpym:561
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    # Automatic translation.
+    new "Copia il file traceback.txt negli appunti come BBcode per forum come https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:563
+    old "Copy Markdown"
+    # Automatic translation.
+    new "Copiare Markdown"
+
+    # renpy/common/_errorhandling.rpym:565
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    # Automatic translation.
+    new "Copia il file traceback.txt negli appunti come Markdown per Discord."
+
+    # renpy/common/_errorhandling.rpym:626
+    old "Ignores the exception, allowing you to continue."
+    # Automatic translation.
+    new "Ignora l'eccezione, consentendo di continuare."
+
+    # renpy/common/_errorhandling.rpym:637
+    old "Console"
+    new "Console"
+
+    # renpy/common/_errorhandling.rpym:639
+    old "Opens a console to allow debugging the problem."
+    # Automatic translation.
+    new "Apre una console per consentire il debug del problema."
+

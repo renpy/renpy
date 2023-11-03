@@ -343,15 +343,15 @@ translate japanese strings:
 
     # 00director.rpy:1469
     old "(statement)"
-    new "(statement)"
+    new "(ステートメント)"
 
     # 00director.rpy:1470
     old "(tag)"
-    new "(tag)"
+    new "(タグ)"
 
     # 00director.rpy:1471
     old "(attributes)"
-    new "(attributes)"
+    new "(属性)"
 
     # 00director.rpy:1472
     old "(transform)"
@@ -363,11 +363,11 @@ translate japanese strings:
 
     # 00director.rpy:1509
     old "(channel)"
-    new "(channel)"
+    new "(チャンネル)"
 
     # 00director.rpy:1510
     old "(filename)"
-    new "(filename)"
+    new "(ファイル名)"
 
     # 00director.rpy:1535
     old "Change"
@@ -431,7 +431,7 @@ translate japanese strings:
 
     # _developer\developer.rpym:569
     old "{size_mb:,.1f} MB in {count} textures."
-    new "{size_mb:,.1f} MB in {count} textures."
+    new "{count}つのテクスチャーで{size_mb:,.1f}MB。"
 
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
@@ -603,7 +603,7 @@ translate japanese strings:
 
     # 00preferences.rpy:337
     old "voice sustain"
-    new "voice sustain"
+    new "ボイスの持続"
 
     # 00preferences.rpy:346
     old "self voicing"
@@ -755,7 +755,7 @@ translate japanese strings:
 
     # renpy/common/_developer/developer.rpym:90
     old "[name] [attributes] (hidden)"
-    new "[name] [attributes] (hidden)"
+    new "[name] [attributes] (非表示)"
 
     # renpy/common/_developer/developer.rpym:94
     old "[name] [attributes]"
@@ -808,4 +808,115 @@ translate japanese strings:
     # renpy/common/00preferences.rpy:531
     old "mute main"
     new "メインをミュート"
+
+
+translate japanese strings:
+
+    # renpy/common/00director.rpy:1745
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    new "クリックすると属性が切り替わり、右クリックすると負の属性が切り替わります。"
+
+    # renpy/common/00director.rpy:1768
+    old "Click to set transform, right click to add to transform list."
+    new "クリックでトランスフォームを設定し、右クリックでトランスフォームリストに追加します。"
+
+    # renpy/common/00director.rpy:1789
+    old "Click to set, right click to add to behind list."
+    new "クリックで設定、右クリックで背後のリストに追加します。"
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    new "このセーブデータは、別のデバイスで作成されたものです。悪意を持って作成されたセーブデータは、あなたのコンピューターに害を及ぼす可能性があります。このセーブデータの作成者と、セーブデータを変更した可能性のあるすべての人を信用しますか？"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    new "セーブデータが作成されたデバイスを信頼しますか？あなたがそのデバイスの唯一のユーザーである場合のみ、「はい」を選択するべきです。"
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    new "バックグラウンドでの音声"
+
+    # renpy/common/00preferences.rpy:537
+    old "web cache preload"
+    new "ウェブキャッシュプリロード"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    new "ゲームメニュー後のボイス"
+
+    # renpy/common/00speechbubble.rpy:344
+    old "Speech Bubble Editor"
+    new "スピーチバブルエディター"
+
+    # renpy/common/00speechbubble.rpy:349
+    old "(hide)"
+    new "(非表示)"
+
+    # renpy/common/00sync.rpy:70
+    old "Sync downloaded."
+    new "同期をダウンロードしました。"
+
+    # renpy/common/00sync.rpy:190
+    old "Could not connect to the Ren'Py Sync server."
+    new "Ren'Py Syncサーバーに接続できませんでした。"
+
+    # renpy/common/00sync.rpy:192
+    old "The Ren'Py Sync server timed out."
+    new "Ren'Py Syncサーバーがタイムアウトしました。"
+
+    # renpy/common/00sync.rpy:194
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    new "Ren'Py Syncサーバーへの接続中に不明なエラーが発生しました。"
+
+    # renpy/common/00sync.rpy:267
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    new "Ren'Py Syncサーバーに、この同期のコピーがありません。同期IDが無効であるか、タイムアウトした可能性があります。"
+
+    # renpy/common/00sync.rpy:409
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    new "生成した同期IDを入力してください。\n自分で作成したものでない同期IDは絶対に入力しないでください。"
+
+    # renpy/common/00sync.rpy:428
+    old "The sync ID is not in the correct format."
+    new "同期IDが正しい形式ではありません。"
+
+    # renpy/common/00sync.rpy:448
+    old "The sync could not be decrypted."
+    new "同期を復号化することができませんでした。"
+
+    # renpy/common/00sync.rpy:471
+    old "The sync belongs to a different game."
+    new "同期は別のゲームに属しています。"
+
+    # renpy/common/00sync.rpy:476
+    old "The sync contains a file with an invalid name."
+    new "同期に不正な名前のファイルが含まれています。"
+
+    # renpy/common/00sync.rpy:529
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    new "これは、{a=https://sync.renpy.org}Ren'Py Sync Server{/a} にセーブをアップロードします。\n続けますか？"
+
+    # renpy/common/00sync.rpy:558
+    old "Enter Sync ID"
+    new "同期IDを入力する"
+
+    # renpy/common/00sync.rpy:569
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    new "これは、{a=https://sync.renpy.org}Ren'Py Sync Server{/a} に連絡します。"
+
+    # renpy/common/00sync.rpy:596
+    old "Sync Success"
+    new "同期成功"
+
+    # renpy/common/00sync.rpy:599
+    old "The Sync ID is:"
+    new "同期IDは"
+
+    # renpy/common/00sync.rpy:605
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    new "このIDを使って、セーブデータを別の端末でダウンロードすることができます。\nこの同期は1時間後に期限切れとなります。\nRen'Py Sync は{a=https://www.renpy.org/sponsors.html}Ren'Py のスポンサー{/a} によってサポートされています。"
+
+    # renpy/common/00sync.rpy:631
+    old "Sync Error"
+    new "同期エラー"
 

@@ -40,8 +40,8 @@
     new "Aby zbudować pakiet dla Androida, pobierz RAPT, rozpakuj i umieść w katalogu Ren'Py. Następnie uruchom ponownie program Ren'py."
 
     # game/android.rpy:31
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Tworzenie pakietów dla systemu Android w systemie Windows wymaga pakietu 64-bit/x64 Java Development Kit. JDK różni się od JRE, istnieje możliwość, że posiadasz Javę bez JDK.\n\n{a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}Pobierz i zainstaluj JDK{/a}, a następnie uruchom ponownie program Ren'py."
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Tworzenie pakietów dla systemu Android w systemie Windows wymaga pakietu 64-bit/x64 Java Development Kit. JDK różni się od JRE, istnieje możliwość, że posiadasz Javę bez JDK.\n\n{a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}Pobierz i zainstaluj JDK{/a}, a następnie uruchom ponownie program Ren'py."
 
     # game/android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -689,7 +689,8 @@
 
     # game/front_page.rpy:147
     old "[p.name!q] (template)"
-    new "[p.name!q] (template)"
+    # Automatic translation.
+    new "[p.name!q] (szablon)"
 
     # game/front_page.rpy:149
     old "Select project [text]."
@@ -1654,3 +1655,411 @@
     # game/web.rpy:347
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Zanim zaczniesz pakować aplikacje internetowe, musisz pobrać pakiet RenPyWeb (wsparcie internetowe Ren'Py). Czy chcesz teraz pobrać RenPyWeb?"
+
+translate polish strings:
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "RAPT został zainstalowany, ale klucz nie został skonfigurowany. Proszę wygenerować nowe klucze lub skopiować android.keystore i bundle.keystore do katalogu podstawowego."
+
+    # game/android.rpy:41
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    # Automatic translation.
+    new "Wybierz, czy chcesz Play Bundle (dla Google Play), czy Universal APK (dla sideloading i innych sklepów z aplikacjami)."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "Próby emulacji telewizyjnej konsoli Android.\n\nWejście kontrolera jest mapowane do klawiszy strzałek, Enter jest mapowany do przycisku wyboru, Escape jest mapowany do przycisku menu, a PageUp jest mapowany do przycisku wstecz."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "Pobiera i instaluje Android SDK i pakiety wspierające."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "Generuje klucze wymagane do podpisania pakietu."
+
+    # game/android.rpy:56
+    old "Lists the connected devices."
+    # Automatic translation.
+    new "Wyświetla listę podłączonych urządzeń."
+
+    # game/android.rpy:57
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Paruje się z urządzeniem przez Wi-Fi, w systemie Android 11+."
+
+    # game/android.rpy:58
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    # Automatic translation.
+    new "Łączy się z urządzeniem przez Wi-Fi, w systemie Android 11+."
+
+    # game/android.rpy:59
+    old "Disconnects a device connected over Wi-Fi."
+    # Automatic translation.
+    new "Odłącza urządzenie połączone przez sieć Wi-Fi."
+
+    # game/android.rpy:61
+    old "Removes Android temporary files."
+    # Automatic translation.
+    new "Usuwa pliki tymczasowe systemu Android."
+
+    # game/android.rpy:63
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "Buduje pakiet aplikacji na Androida (ABB), przeznaczony do przesłania do Google Play. Może on zawierać do 2GB danych."
+
+    # game/android.rpy:64
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    # Automatic translation.
+    new "Buduje uniwersalny pakiet APK, przeznaczony do sideloading i sklepów innych niż Google Play. Może ona zawierać do 2GB danych."
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "Zainstaluj SDK"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "Generowanie kluczy"
+
+    # game/android.rpy:397
+    old "Play Bundle"
+    new "Play Bundle"
+
+    # game/android.rpy:402
+    old "Universal APK"
+    new "Universal APK"
+
+    # game/android.rpy:452
+    old "List Devices"
+    # Automatic translation.
+    new "Lista urządzeń"
+
+    # game/android.rpy:456
+    old "Wi-Fi Debugging Pair"
+    # Automatic translation.
+    new "Para debugowania Wi-Fi"
+
+    # game/android.rpy:460
+    old "Wi-Fi Debugging Connect"
+    # Automatic translation.
+    new "Debugowanie Wi-Fi Połącz"
+
+    # game/android.rpy:464
+    old "Wi-Fi Debugging Disconnect"
+    # Automatic translation.
+    new "Odłączenie debugowania Wi-Fi"
+
+    # game/android.rpy:468
+    old "Clean"
+    # Automatic translation.
+    new "Czysta"
+
+    # game/android.rpy:573
+    old "Wi-Fi Pairing Code"
+    # Automatic translation.
+    new "Kod parowania Wi-Fi"
+
+    # game/android.rpy:573
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    # Automatic translation.
+    new "Jeśli jest obsługiwany, można go znaleźć w \"Opcje dewelopera\", \"Bezprzewodowe debugowanie\", \"Sparuj urządzenie za pomocą kodu parowania\"."
+
+    # game/android.rpy:580
+    old "Pairing Host & Port"
+    # Automatic translation.
+    new "Parowanie hosta i portu"
+
+    # game/android.rpy:596
+    old "IP Address & Port"
+    # Automatic translation.
+    new "Adres IP i port"
+
+    # game/android.rpy:596
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    # Automatic translation.
+    new "Jeśli jest obsługiwane, można to znaleźć w \"Opcje dewelopera\", \"Bezprzewodowe debugowanie\"."
+
+    # game/android.rpy:612
+    old "This can be found in 'List Devices'."
+    # Automatic translation.
+    new "Można to znaleźć w \"List Devices\"."
+
+    # game/android.rpy:632
+    old "Cleaning up Android project."
+    # Automatic translation.
+    new "Czyszczenie projektu Android."
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    # Automatic translation.
+    new "Instaluję bundle."
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    # Automatic translation.
+    new "Wygląda na to, że instalacja pakietu zakończyła się niepowodzeniem."
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    # Automatic translation.
+    new "Wydaje się, że uruchomienie aplikacji nie powiodło się."
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "Ile pamięci RAM (w GB) chcesz przeznaczyć na Gradle?\nMusi to być dodatnia liczba całkowita."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "Rozmiar RAM musi zawierać tylko liczby i być dodatni."
+
+    # game/androidstrings.rpy:48
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    # Automatic translation.
+    new "Nie udało mi się użyć javac do skompilowania pliku testowego. Jeśli jeszcze nie zainstalowałeś Java Development Kit, pobierz go z:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nJDK różni się od JRE, więc możliwe jest, że masz Javę bez posiadania JDK. Upewnij się, że zainstalowałeś \"klucze rejestru JavaSoft (Oracle)\".\n\nBez działającego JDK nie mogę kontynuować."
+
+    # game/androidstrings.rpy:49
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    # Automatic translation.
+    new "Wersja Javy na twoim komputerze nie wydaje się być JDK 8, która jest jedyną wersją obsługiwaną przez Android SDK. Jeśli potrzebujesz zainstalować JDK 8, możesz go pobrać z:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nMożesz również ustawić zmienną środowiskową JAVA_HOME, aby użyć innej wersji Javy."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Znalazłem plik android.keystore w katalogu rapt. Czy chcesz użyć tego pliku?"
+
+    # game/androidstrings.rpy:64
+    old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "Mogę stworzyć dla ciebie klucz do podpisywania aplikacji. Ten klucz jest wymagany do stworzenia uniwersalnego APK dla sideloading i sklepów innych niż Google Play.\n\nChcesz stworzyć klucz?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\nPowiedzenie \"Nie\" uniemożliwi utworzenie klucza."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Znalazłem plik bundle.keystore w katalogu rapt. Czy chcesz użyć tego pliku?"
+
+    # game/androidstrings.rpy:70
+    old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
+    # Automatic translation.
+    new "Mogę stworzyć dla Ciebie klucz do podpisywania pakietów. Klucz ten jest wymagany do stworzenia pakietu aplikacji na Androida (AAB) w celu przesłania go do Google Play.\n\nChcesz stworzyć klucz?"
+
+    # game/androidstrings.rpy:71
+    old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
+    # Automatic translation.
+    new "Stworzę klucz w pliku bundle.keystore.\n\nMusisz wykonać kopię zapasową tego pliku. Jeśli go stracisz, nie będziesz mógł uaktualnić swojej aplikacji.\n\nMusisz również zachować klucz w bezpiecznym miejscu. Jeśli źli ludzie dostaną ten plik, mogliby stworzyć fałszywe wersje twojej aplikacji i potencjalnie wykraść dane twoich użytkowników.\n\nCzy zrobisz kopię zapasową bundle.keystore i przechowasz ją w bezpiecznym miejscu?"
+
+    # game/androidstrings.rpy:73
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    # Automatic translation.
+    new "Nie można utworzyć magazynu kluczy bundle.keystore. Czy keytool jest w twojej ścieżce?"
+
+    # game/androidstrings.rpy:74
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    # Automatic translation.
+    new "Otworzyłem katalog zawierający android.keystore i bundle.keystore. Proszę zrobić kopię zapasową i przechowywać je w bezpiecznym miejscu."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    # Automatic translation.
+    new "Wybierz katalog projektów"
+
+    # game/distribute.rpy:1745
+    old "Copying files..."
+    # Automatic translation.
+    new "Kopiowanie plików..."
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    # Automatic translation.
+    new "Aktualizacja starej gry"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    # Automatic translation.
+    new "Nowoczesny edytor z wieloma rozszerzeniami, w tym zaawansowaną integracją Ren'Py."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    # Automatic translation.
+    new "Nowoczesny edytor z wieloma rozszerzeniami, w tym zaawansowaną integracją Ren'Py.\n{a=jump:reinstall_vscode}Uaktualnienie Visual Studio Code do najnowszej wersji.{/a}"
+
+    # game/editor.rpy:169
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:169
+    old "Up to 110 MB download required."
+    # Automatic translation.
+    new "Wymagane pobranie do 110 MB."
+
+    # game/editor.rpy:182
+    old "A modern and approachable text editor."
+    # Automatic translation.
+    new "Nowoczesny i przystępny edytor tekstu."
+
+    # game/editor.rpy:196
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:211
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:220
+    old "Visual Studio Code (System)"
+    new "Visual Studio Code (System)"
+
+    # game/editor.rpy:220
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    # Automatic translation.
+    new "Używa kopii Visual Studio Code, która została zainstalowana poza Ren'Py. Zalecane jest zainstalowanie rozszerzenia language-renpy, aby dodać obsługę plików Ren'Py."
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    # Automatic translation.
+    new "Pobieranie [extension.download_file]."
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    # Automatic translation.
+    new "Nie można było pobrać [extension.download_file] z [extension.download_url]:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    # Automatic translation.
+    new "Pobrany plik [extension.download_file] ze strony [extension.download_url] nie jest poprawny."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/preferences.rpy:106
+    old "General"
+    # Automatic translation.
+    new "Ogólne"
+
+    # game/preferences.rpy:107
+    old "Options"
+    # Automatic translation.
+    new "Opcje"
+
+    # game/preferences.rpy:227
+    old "Daily check for update"
+    # Automatic translation.
+    new "Codzienne sprawdzanie aktualizacji"
+
+    # game/preferences.rpy:246
+    old "Launcher Theme:"
+    new "Launcher Theme:"
+
+    # game/preferences.rpy:256
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    # Automatic translation.
+    new "Informacje o tworzeniu niestandardowego motywu można znaleźć {a=https://www.renpy.org/doc/html/skins.html}w Dokumentacji Ren'Py{/a}."
+
+    # game/preferences.rpy:273
+    old "Install Libraries:"
+    # Automatic translation.
+    new "Zainstaluj biblioteki:"
+
+    # game/preferences.rpy:301
+    old "Clean temporary files"
+    # Automatic translation.
+    new "Wyczyść pliki tymczasowe"
+
+    # game/preferences.rpy:308
+    old "Cleaning temporary files..."
+    # Automatic translation.
+    new "Czyszczenie plików tymczasowych..."
+
+    # game/preferences.rpy:338
+    old "{#in language font}Welcome! Please choose a language"
+    # Automatic translation.
+    new "{#in language font}Witam! Proszę wybrać język"
+
+    # game/preferences.rpy:373
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    # Automatic translation.
+    new "{#in language font}Zacznij używać Ren'Py w [lang_name]"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "Lint sprawdza Twoją grę pod kątem potencjalnych błędów i podaje statystyki."
+
+    # game/project.rpy:283
+    old "This may be because the project is not writeable."
+    # Automatic translation.
+    new "Może to być spowodowane tym, że projekt nie jest możliwy do zapisania."
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    # Automatic translation.
+    new "Język (lub Brak dla języka domyślnego):"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Wydanie (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "Wydanie (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "Prerelease (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "Prerelease (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    new "Nightly (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "Nightly (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:116
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/doc/html/changelog.html}Wyświetl dziennik zmian{/a}"
+
+    # game/updater.rpy:118
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    # Automatic translation.
+    new "- {a=https://www.renpy.org/dev-doc/html/changelog.html}Wyświetl dziennik zmian{/a}"
+
+    # game/web.rpy:485
+    old "Creating package..."
+    # Automatic translation.
+    new "Tworzenie pakietu..."
+
+
+translate polish strings:
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    # Automatic translation.
+    new "Nocna kompilacja poprawek do wydanej wersji Ren'Py."
+

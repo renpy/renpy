@@ -409,3 +409,71 @@ translate finnish strings:
     old "## Quick buttons."
     new "## Pikavalikko."
 
+
+translate finnish strings:
+
+    # gui/game/gui.rpy:5
+    old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
+    # Automatic translation.
+    new "## Init offset -lauseke saa aikaan sen, että tässä tiedostossa olevat alustamislausekkeet suoritetaan ennen minkä tahansa muun tiedoston init-lausekkeita."
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    # Automatic translation.
+    new "## Ota käyttöön virheellisten tai epävakaiden ominaisuuksien tarkistukset näytöissä tai muunnoksissa."
+
+    # gui/game/gui.rpy:19
+    old "## GUI Configuration Variables"
+    # Automatic translation.
+    new "## GUI-konfiguraatiomuuttujat"
+
+    # gui/game/gui.rpy:167
+    old "## The color of button text in various states."
+    # Automatic translation.
+    new "## Painikkeen tekstin väri eri tiloissa."
+
+    # gui/game/gui.rpy:173
+    old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
+    # Automatic translation.
+    new "## Painikkeen tekstin vaakasuora kohdistus. (0.0 on vasen, 0.5 on keskellä, 1.0 on oikea)."
+
+    # gui/game/gui.rpy:278
+    old "## The position of the main menu text."
+    # Automatic translation.
+    new "## Päävalikon tekstin sijainti."
+
+    # gui/game/gui.rpy:287
+    old "## Generic frames."
+    # Automatic translation.
+    new "## Yleiset kehykset."
+
+    # gui/game/gui.rpy:307
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    # Automatic translation.
+    new "## Oletusarvoinen graafinen käyttöliittymä käyttää vain liukusäätimiä ja pystysuuntaisia vierityspalkkeja. Kaikkia muita palkkeja käytetään vain luojan kirjoittamissa näytöissä."
+
+    # gui/game/gui.rpy:368
+    old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    # Automatic translation.
+    new "## NVL-tilan merkintöjen enimmäismäärä, jonka Ren'Py näyttää. Kun näytetään tätä enemmän merkintöjä, vanhin merkintä poistetaan."
+
+    # gui/game/gui.rpy:405
+    old "## Localization"
+    # Automatic translation.
+    new "## Lokalisointi"
+
+    # gui/game/gui.rpy:407
+    old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    # Automatic translation.
+    new "## Tämä säätää, missä kohtaa rivinvaihto sallitaan. Oletusarvo sopii useimmille kielille. Luettelo käytettävissä olevista arvoista löytyy osoitteesta https://www.renpy.org/doc/html/style_properties.html#style-property-language."
+
+    # gui/game/gui.rpy:415
+    old "## Mobile devices"
+    # Automatic translation.
+    new "## Mobiililaitteet"
+
+    # gui/game/gui.rpy:446
+    old "## Change the size and spacing of various things."
+    # Automatic translation.
+    new "## Muuta eri asioiden kokoa ja välejä."
+

@@ -76,6 +76,12 @@ cdef extern from "Live2DCubismCore.h":
         float X
         float Y
 
+    ctypedef struct csmVector4:
+        float X
+        float Y
+        float Z
+        float W
+
     ctypedef void (__stdcall *csmLogFunction)(const char* message)
 
 include "live2dcsm.pxi"
@@ -173,6 +179,8 @@ cdef class Live2DModel:
     cdef const csmVector2 **drawable_vertex_uvs
     cdef const int *drawable_index_counts
     cdef const unsigned short **drawable_indices
+    cdef const csmVector4 *drawable_multiply_colors
+    cdef const csmVector4 *drawable_screen_colors
 
     cdef public dict parameters
     cdef public dict parts
@@ -248,6 +256,8 @@ cdef class Live2DModel:
         self.drawable_vertex_uvs = csmGetDrawableVertexUvs(self.model)
         self.drawable_index_counts = csmGetDrawableIndexCounts(self.model)
         self.drawable_indices = csmGetDrawableIndices(self.model)
+        self.drawable_multiply_colors = csmGetDrawableMultiplyColors(self.model)
+        self.drawable_screen_colors = csmGetDrawableScreenColors(self.model)
 
         self.parameters = { }
 
@@ -339,6 +349,27 @@ cdef class Live2DModel:
 
         self.parameter_values[parameter.index] = old + weight * (value - old)
 
+    def blend_opacity(self, name, blend, value, weight=1.0):
+
+        part = self.parts.get(name, None)
+
+        if part is None:
+            for i in self.opacity_groups.get(name, [ ]):
+                self.blend_opacity(i, blend, value, weight=weight)
+            return
+
+        old = self.part_opacities[part.index]
+
+        if blend == "Multiply":
+            value = old * value
+        elif blend == "Add":
+            value = old + value
+        elif blend == "Overwrite":
+            value = value
+
+        self.part_opacities[part.index] = old + weight * (value - old)
+
+
     def get_size(self):
         return (self.pixel_size.X, self.pixel_size.Y)
 
@@ -351,7 +382,7 @@ cdef class Live2DModel:
         cdef Render m
         cdef Render rv
 
-        shaders = ("renpy.texture", "live2d.flip_texture")
+        shaders = ("renpy.texture", "live2d.flip_texture", "live2d.colors")
         mask_shaders = ("live2d.mask", "live2d.flip_texture")
         inverted_mask_shaders = ("live2d.inverted_mask", "live2d.flip_texture")
 
@@ -383,10 +414,21 @@ cdef class Live2DModel:
             0, 0, 0, 1, ])
 
         rv = Render(w, h)
+
         renders = [ ]
         raw_renders = [ ]
+        mask_renders = [ ]
+
+        cdef csmVector4 multiply
+        cdef csmVector4 screen
 
         for 0 <= i < self.drawable_count:
+
+            multiply = self.drawable_multiply_colors[i]
+            screen = self.drawable_screen_colors[i]
+
+            multiply_tuple = (multiply.X, multiply.Y, multiply.Z, multiply.W)
+            screen_tuple = (screen.X, screen.Y, screen.Z, screen.W)
 
             mesh = Mesh2(TEXTURE_LAYOUT, self.drawable_vertex_counts[i], self.drawable_index_counts[i] // 3)
 
@@ -396,15 +438,38 @@ cdef class Live2DModel:
 
             mesh.triangles = self.drawable_index_counts[i] // 3
             memcpy(mesh.triangle, self.drawable_indices[i],  sizeof(unsigned short) * mesh.triangles * 3)
+
+            tex = textures[self.drawable_texture_indices[i]]
+
+            # Create a render that can be used as a mask.
+            mr = Render(ppu * 2, ppu * 2)
+            mr.reverse = reverse
+            mr.forward = forward
+            mr.mesh = mesh
+
+            mr.add_uniform("u_multiply", multiply_tuple)
+            mr.add_uniform("u_screen", screen_tuple)
+
+            for s in shaders:
+                mr.add_shader(s)
+
+            mr.blit(tex, (0, 0))
+
+            mask_renders.append(mr)
+
+            # Create the render that is actually drawn.
             r = Render(ppu * 2, ppu * 2)
             r.reverse = reverse
             r.forward = forward
             r.mesh = mesh
 
+            r.add_uniform("u_multiply", multiply_tuple)
+            r.add_uniform("u_screen", screen_tuple)
+
             for s in shaders:
                 r.add_shader(s)
 
-            r.blit(textures[self.drawable_texture_indices[i]], (0, 0))
+            r.blit(tex, (0, 0))
 
             raw_renders.append(r)
 
@@ -419,21 +484,18 @@ cdef class Live2DModel:
 
                 if alpha != 1.0:
 
-                    ar = renpy.display.render.Render(r.width, r.height)
-                    ar.blit(r, (0, 0))
-
-                    ar.add_shader("renpy.alpha")
-                    ar.add_uniform("u_renpy_alpha", alpha)
-                    ar.add_uniform("u_renpy_over", 1.0)
-
-                    r = ar
+                    r.add_shader("renpy.alpha")
+                    r.add_uniform("u_renpy_alpha", alpha)
+                    r.add_uniform("u_renpy_over", 1.0)
 
                 renders.append((self.drawable_render_orders[i], r))
-
 
         multi_masks = { }
 
         for 0 <= i < self.drawable_count:
+
+            multiply = self.drawable_multiply_colors[i]
+            screen = self.drawable_screen_colors[i]
 
             if self.drawable_mask_counts[i] == 0:
                 continue
@@ -441,7 +503,7 @@ cdef class Live2DModel:
             r = raw_renders[i]
 
             if self.drawable_mask_counts[i] == 1:
-                m = raw_renders[self.drawable_masks[i][0]]
+                m = mask_renders[self.drawable_masks[i][0]]
             else:
 
                 key = [ ]
@@ -457,7 +519,7 @@ cdef class Live2DModel:
                     m = renpy.display.render.Render(ppu * 2, ppu * 2)
 
                     for j in key:
-                        m.blit(raw_renders[j], (0, 0))
+                        m.blit(mask_renders[j], (0, 0))
 
                     multi_masks[key] = m
 

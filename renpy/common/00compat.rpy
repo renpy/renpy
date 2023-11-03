@@ -208,7 +208,6 @@ init -1100 python:
         if version <= (7, 3, 5):
             config.side_image_requires_attributes = False
             config.window_functions_set_auto = False
-            config.hw_video = True
             config.who_what_sub_compat = 0
 
         if version <= (7, 4, 0):
@@ -233,7 +232,6 @@ init -1100 python:
 
         if version <= (7, 4, 8):
             config.relative_transform_size = False
-            config.tts_front_to_back = False
 
         if version <= (7, 4, 10):
             config.always_unfocus = False
@@ -250,14 +248,14 @@ init -1100 python:
             config.atl_function_always_blocks = True
 
         if version <= (7, 4, 11):
-            config.timer_blocks_pause = False
+            config.modal_blocks_timer = False
             config.modal_blocks_pause = False
         elif _compat_versions(version, (7, 5, 1), (8, 0, 1)):
-            config.timer_blocks_pause = True
+            config.modal_blocks_timer = True
             config.modal_blocks_pause = False
         elif _compat_versions(version, (7, 5, 2), (8, 0, 2)):
             config.modal_blocks_pause = True
-            config.timer_blocks_pause = True
+            config.modal_blocks_timer = True
 
         if _compat_versions(version, (7, 5, 3), (8, 0, 3)):
             config.quadratic_volumes = True
@@ -266,6 +264,10 @@ init -1100 python:
             config.lenticular_bracket_ruby = False
             config.preserve_volume_when_muted = True
             config.history_current_dialogue = False
+            config.scry_extend = False
+            config.fadeout_audio = 0.0
+            config.at_transform_compare_full_context = True
+            config.linear_fades = True
 
             if version > (6, 99, 5):
                 config.search_prefixes.append("images/")
@@ -289,6 +291,14 @@ init -1100 python:
             store.layeredimage._constant = True
             store.updater._constant = True
 
+        if _compat_versions(version, (7, 6, 1), (8, 1, 1)):
+            config.tts_front_to_back = False
+            _greedy_rollback = False
+
+        if _compat_versions(version, (7, 6, 99), (8, 1, 99)):
+            config.simple_box_reverse = True
+            build.itch_channels = list(build.itch_channels.items())
+            style.default.shaper = "freetype"
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
@@ -302,12 +312,14 @@ python early hide:
         script_version = ast.literal_eval(script_version)
 
         config.early_script_version = script_version
+        config.early_developer = not script_version
 
         if script_version <= (7, 2, 2):
             config.keyword_after_python = True
 
     except Exception:
         config.early_script_version = None
+        config.early_developer = True
         pass
 
 
@@ -398,7 +410,7 @@ init 1100 python hide:
             config.layers.append('screens')
 
     if "Fullscreen" in config.translations:
-        fs = _("Fullscreen")
+        fs = __("Fullscreen")
         config.translations.setdefault("Fullscreen 4:3", fs + " 4:3")
         config.translations.setdefault("Fullscreen 16:9", fs + " 16:9")
         config.translations.setdefault("Fullscreen 16:10", fs + " 16:10")
@@ -413,3 +425,6 @@ init 1100 python hide:
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
         config.default_afm_enable = None
+
+    if config.fade_music is not None:
+        config.fadeout_audio = config.fade_music

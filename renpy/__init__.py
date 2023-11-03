@@ -75,39 +75,28 @@ from collections import namedtuple
 
 # Version numbers.
 try:
-    from renpy.vc_version import vc_version, official, nightly
+    from renpy.vc_version import official, nightly, version_name, version
 except ImportError:
-    vc_version = 0
-    official = False
-    nightly = False
+    import renpy.versions
+    version_dict = renpy.versions.get_version()
+
+    official = version_dict["official"]
+    nightly = version_dict["nightly"]
+    version_name = version_dict["version_name"]
+    version = version_dict["version"]
 
 official = official and getattr(site, "renpy_build_official", False)
 
 VersionTuple = namedtuple("VersionTuple", ["major", "minor", "patch", "commit"])
-
-if PY2:
-
-    # The tuple giving the version number.
-    version_tuple = VersionTuple(7, 6, 0, vc_version)
-
-    # The name of this version.
-    version_name = "TBD"
-
-else:
-
-    # The tuple giving the version number.
-    version_tuple = VersionTuple(8, 1, 0, vc_version)
-
-    # The name of this version.
-    version_name = "TBD"
+version_tuple = VersionTuple(*(int(i) for i in version.split(".")))
 
 # A string giving the version number only (8.0.1.123), with a suffix if needed.
 version_only = ".".join(str(i) for i in version_tuple)
 
 if not official:
-    version_only += "u"
+    version_only += "+unofficial"
 elif nightly:
-    version_only += "n"
+    version_only += "+nightly"
 
 # A verbose string giving the version.
 version = "Ren'Py " + version_only
@@ -263,6 +252,8 @@ name_blacklist = {
     "renpy.webloader.queue_lock",
     "renpy.persistent.MP_instances",
     "renpy.exports.sdl_dll",
+    "renpy.sl2.slast.serial",
+    "renpy.gl2.gl2draw.default_position",
     }
 
 class Backup(_object):
@@ -286,9 +277,6 @@ class Backup(_object):
 
         # A map from module to the set of names in that module.
         self.names = { }
-
-        if mobile:
-            return
 
         for m in sys.modules.values():
             if m is None:
@@ -446,11 +434,12 @@ def import_all():
     import renpy.script
     import renpy.statements
     import renpy.util
+    import renpy.versions
 
     global plog
     plog = renpy.performance.log # type:ignore
 
-    import renpy.styledata # @UnresolvedImport
+    import renpy.styledata
 
     import renpy.style
     renpy.styledata.import_style_functions()
@@ -465,14 +454,15 @@ def import_all():
     import renpy.translation.extract
     import renpy.translation.merge
 
-    import renpy.display # @UnresolvedImport @Reimport
+    import renpy.display
 
     import renpy.display.presplash
     import renpy.display.pgrender
     import renpy.display.scale
     import renpy.display.module
-    import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
-    import renpy.display.core # object @UnresolvedImport
+    import renpy.display.render
+    import renpy.display.displayable
+    import renpy.display.core
     import renpy.display.swdraw
 
     import renpy.text
@@ -492,13 +482,13 @@ def import_all():
     import renpy.display.layout
     import renpy.display.viewport
     import renpy.display.transform
-    import renpy.display.motion # layout @UnresolvedImport
-    import renpy.display.behavior # layout @UnresolvedImport
-    import renpy.display.transition # core, layout @UnresolvedImport
-    import renpy.display.movetransition # core @UnresolvedImport
+    import renpy.display.motion
+    import renpy.display.behavior
+    import renpy.display.transition
+    import renpy.display.movetransition
     import renpy.display.im
     import renpy.display.imagelike
-    import renpy.display.image # core, behavior, im, imagelike @UnresolvedImport
+    import renpy.display.image
     import renpy.display.video
     import renpy.display.focus
     import renpy.display.anim
@@ -514,6 +504,7 @@ def import_all():
     import renpy.display.tts
     import renpy.display.gesture
     import renpy.display.model
+    import renpy.display.quaternion
 
     import renpy.display.error
 
@@ -543,7 +534,7 @@ def import_all():
     import renpy.memory
 
     import renpy.exports
-    import renpy.character # depends on exports. @UnresolvedImport
+    import renpy.character
 
     import renpy.add_from
     import renpy.dump
@@ -556,8 +547,8 @@ def import_all():
     import renpy.gl2.gl2texture
     import renpy.gl2.live2d
 
-    import renpy.minstore # depends on lots. @UnresolvedImport
-    import renpy.defaultstore # depends on everything. @UnresolvedImport
+    import renpy.minstore
+    import renpy.defaultstore
 
     import renpy.test
     import renpy.test.testmouse
@@ -577,8 +568,7 @@ def import_all():
 
     global backup
 
-    if not mobile:
-        backup = Backup()
+    backup = Backup()
 
     post_import()
 
@@ -624,8 +614,8 @@ def reload_all():
     returned.
     """
 
-    if mobile:
-        raise Exception("Reloading is not supported on mobile platforms.")
+    # if mobile:
+    #     raise Exception("Reloading is not supported on mobile platforms.")
 
     import renpy
 
@@ -706,6 +696,7 @@ if 1 == 0:
     from . import dump
     from . import easy
     from . import editor
+    from . import encryption
     from . import error
     from . import execution
     from . import exports
@@ -750,5 +741,6 @@ if 1 == 0:
     from . import ui
     from . import util
     from . import vc_version
+    from . import versions
     from . import warp
     from . import webloader

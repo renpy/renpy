@@ -367,10 +367,14 @@ Here's a very simple ctc screen::
 
         zorder 100
 
-        text _("Click to Continue"):
-            size 12
+        hbox:
             xalign 0.98
             yalign 0.98
+
+            add arg
+
+            text _("Click to Continue"):
+                size 12
 
 
 
@@ -707,7 +711,7 @@ The ``confirm`` screen is used to ask yes/no choices of the
 user. It takes the following parameters:
 
 `message`
-    The message to display to the user. This is one of:
+    The message to display to the user. At least the following messages are used by Ren'Py:
 
     * gui.ARE_YOU_SURE - "Are you sure?" This should be the default if the message is unknown.
     * gui.DELETE_SAVE - "Are you sure you want to delete this save?"
@@ -719,7 +723,9 @@ user. It takes the following parameters:
     * gui.SLOW_SKIP - "Are you sure you want to begin skipping?"
     * gui.FAST_SKIP_SEEN - "Are you sure you want to skip to the next choice?"
     * gui.FAST_SKIP_UNSEEN - "Are you sure you want to skip unseen dialogue to the next choice?"
-
+    * UNKNOWN_TOKEN - This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's
+      creator and everyone who could have changed the file?
+    * TRUST_TOKEN - Do you trust the device the save was created on? You should only choose yes if you are the device's sole user.
 
     The values of the variables are strings, which means they can be
     displayed using a text displayable.
@@ -732,6 +738,8 @@ user. It takes the following parameters:
 
 Until Ren'Py 6.99.10, this screen was known as the ``yesno_prompt`` screen.
 If no ``confirm`` screen is present, ``yesno_prompt`` is used instead.
+
+This screen will also be called by the :func:`renpy.confirm` function and the :func:`Confirm` action.
 
 ::
 

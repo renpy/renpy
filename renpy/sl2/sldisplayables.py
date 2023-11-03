@@ -188,6 +188,7 @@ Keyword("pixel_width")
 Keyword("value")
 Keyword("mask")
 Keyword("caret_blink")
+Keyword("multiline")
 Style("caret")
 add(text_properties)
 

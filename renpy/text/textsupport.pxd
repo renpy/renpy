@@ -32,19 +32,21 @@ cdef enum ruby_t:
 
 cdef class Glyph:
 
-    # The character this glyph represents.
     cdef:
 
         # The x and y coordinates of the placed character.
-        public short x, y
+        public int x, y
 
         # The change in the amount this character was shifted to the right
         # when adjusting placement.
-        public short delta_x_offset
+        public int delta_x_offset
 
         # The character we use.
         public unsigned int character
         public unsigned int variation
+
+        # The glyph number (when selected directly).
+        public unsigned int glyph
 
         # Controls splitting of this glyph, based on where we are in the
         # the line.
@@ -54,12 +56,15 @@ cdef class Glyph:
         public ruby_t ruby
 
         # The ascent and spacing of the font.
-        public short ascent
-        public short line_spacing
+        public int ascent
+        public int line_spacing
 
         # The width and advance of the font.
         public float width
         public float advance
+
+        public float x_offset
+        public float y_offset
 
         # The time when this glyph should be shown.
         public float time
@@ -76,10 +81,10 @@ cdef class Line:
     cdef:
 
         # The y coordinate of this line.
-        public short y
+        public int y
 
         # The height of this line.
-        public short height
+        public int height
 
         # The list of glyphs on this line.
         public list glyphs

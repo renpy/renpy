@@ -108,6 +108,32 @@ there is significant overhead, as a rule of thumb, each pixel in the
 image cache consumes 4 bytes of main memory and 4 bytes of video
 memory.
 
+SVG Images
+----------
+
+Ren'Py supports many SVG 1.0 images, using the NanoSVG library.
+Some unsupported features include:
+
+* Text elements are ignored. If the text is converted into a path, it will
+  be rendered.
+* Embedded bitmaps are ignored.
+* Scripts are ignored.
+* Animations are ignored.
+
+A list of features NanoSVG supports may be found
+`here <https://core.tcl-lang.org/tips/doc/trunk/tip/507.md>`__.
+
+It's recommended to convert everything in an SVG image that will not
+render properly into paths.
+
+Ren'Py will render SVG images as if the virtual screen was 96dpi.
+If the window is enlarged or shrunk, the SVG image will be scaled
+up or down, respectively, and :ref:`oversampling <oversampling>` will
+be used to ensture the image is rendered at the correct virtual
+size.
+
+This ensures the SVG will be rendered sharp if it is not scaled.
+
 Image-Like Displayables
 -----------------------
 
@@ -248,22 +274,20 @@ These displayables are used to create certain visual effects.
 .. include:: inc/disp_effects
 
 Image Manipulators
--------------------
+------------------
 
-An :doc:`image manipulator <im>` is a displayable that takes an image or image
-manipulator, and either loads it or performs an operation on it.
-Image manipulators can only take images or other
-image manipulators as input.
+:doc:`Image manipulators <im>` are an historic kind of displayables that
+apply transformations or operations exclusively to other images or image
+manipulators - to the exclusion of the other kinds of displayables.
 
 An image manipulator can be used any place a displayable can, but not
 vice-versa. An :func:`Image` is a kind of image manipulator, so an
 Image can be used whenever an image manipulator is required.
 
-The use of image manipulators is
-historic. A number of image manipulators that had been documented in the
-past should no longer be used, as they suffer from inherent problems.
-In any case except for :func:`im.Data`, the :func:`Transform` displayable provides
-similar functionality in a more general manner, while fixing the problems.
+Their use is historic. A number of image manipulators that had been documented
+in a distant past should no longer be used, as they suffer from inherent
+problems, and in general (except for :func:`im.Data`), the :func:`Transform`
+displayable provides similar functionality while fixing the problems.
 
 For the list of image manipulators, see the :doc:`image manipulator <im>`
 documentation.

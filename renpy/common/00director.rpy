@@ -280,6 +280,10 @@ init python in director:
 
         return show_director
 
+    def after_load():
+        state.mode = "lines"
+
+    config.after_load_callbacks.append(after_load)
 
     def interact():
         """
@@ -1369,11 +1373,11 @@ init python in director:
                 continue
 
             if i & 1:
-                v = int(v)
+                v = "%08d" % int(v)
 
             rv.append(v)
 
-        return tuple(rv)
+        return "".join(rv)
 
 init 2202 python hide in director:
 
@@ -1766,6 +1770,7 @@ screen director_transform(state):
         null height 14
 
         text _("Click to set transform, right click to add to transform list.")
+        text _("Customize director.transforms to add more transforms.")
 
         use director_footer(state)
 
@@ -1785,6 +1790,8 @@ screen director_behind(state):
                     alternate director.ToggleList(state.behind, t)
                     style "director_button"
                     ypadding 0
+
+        null height 14
 
         text _("Click to set, right click to add to behind list.")
 
@@ -1806,6 +1813,11 @@ screen director_with(state):
                     style "director_button"
                     ypadding 0
 
+        null height 14
+
+        text _("Click to set.")
+        text _("Customize director.transitions to add more transitions.")
+
         use director_footer(state)
 
 
@@ -1823,6 +1835,11 @@ screen director_channel(state):
                     action director.SetChannel(c)
                     style "director_button"
                     ypadding 0
+
+        null height 14
+
+        text _("Click to set.")
+        text _("Customize director.audio_channels to add more channels.")
 
         use director_footer(state)
 

@@ -131,6 +131,9 @@ class ParseError(Exception):
     def __unicode__(self):
         return self.message
 
+    def defer(self, queue):
+        renpy.parser.deferred_parse_errors[queue].append(self.message)
+
 # Something to hold the expected line number.
 
 
@@ -175,6 +178,10 @@ lllword = re.compile(r'__(\w+)|\w+| +|.', re.S)
 def munge_filename(fn):
     # The prefix that's used when __ is found in the file.
     rv = os.path.basename(fn)
+
+    if rv.endswith("_ren.py"):
+        rv = rv[:-7]
+
     rv = os.path.splitext(rv)[0]
     rv = rv.replace(" ", "_")
 
@@ -602,6 +609,8 @@ OPERATORS = [
     '/',
     '%',
     '~',
+    '@',
+    ':=',
     ]
 
 ESCAPED_OPERATORS = [
@@ -798,7 +807,7 @@ class Lexer(object):
         if (self.line == -1) and self.block:
             self.filename, self.number, self.text, self.subblock = self.block[0]
 
-        renpy.parser.deferred_parse_errors[queue].append(ParseError(self.filename, self.number, msg, self.text, self.pos).message)
+        ParseError(self.filename, self.number, msg, self.text, self.pos).defer(queue)
 
     def eol(self):
         """
@@ -857,7 +866,7 @@ class Lexer(object):
 
     def string(self):
         """
-        Lexes a string, and returns the string to the user, or None if
+        Lexes a non-triple-quoted string, and returns the string to the user, or None if
         no string could be found. This also takes care of expanding
         escapes and collapsing whitespace.
 
@@ -919,6 +928,9 @@ class Lexer(object):
         This is about the same as the double-quoted strings, except that
         runs of whitespace with multiple newlines are turned into a single
         newline.
+
+        Except in the case of a raw string where this returns a simple string,
+        this returns a list of strings.
         """
 
         s = self.match(r'r?"""([^\\"]|\\.|"(?!""))*"""')
@@ -964,16 +976,26 @@ class Lexer(object):
 
             s = re.sub(r' *\n *', '\n', s)
 
+            mondel = self.monologue_delimiter
+
+            if mondel:
+                sl = s.split(mondel)
+            else:
+                sl = [s]
+
             rv = [ ]
 
-            for s in s.split(self.monologue_delimiter):
+            for s in sl:
                 s = s.strip()
 
                 if not s:
                     continue
 
                 # Collapse runs of whitespace into single spaces.
-                s = re.sub(r'[ \n]+', ' ', s)
+                if mondel:
+                    s = re.sub(r'[ \n]+', ' ', s)
+                else:
+                    s = re.sub(r' +', ' ', s)
 
                 s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
 
@@ -1128,42 +1150,31 @@ class Lexer(object):
             return False
 
         old_pos = self.pos
-        c = self.text[self.pos]
 
-        # Allow unicode, raw, and formatted strings.
-        for mod in ('u', 'r', 'f'):
-            if c != mod:
-                continue
 
-            self.pos += 1
+        # Delimiter.
+        start = self.match(r'[urfURF]*("""|\'\'\'|"|\')')
 
-            if self.pos == len(self.text):
-                self.pos = old_pos
-                return False
-
-            c = self.text[self.pos]
-
-        if c not in ('"', "'"):
+        if not start:
             self.pos = old_pos
             return False
 
-        delim = c
+        delim = start.lstrip('urfURF')
 
+        # String contents.
         while True:
-            self.pos += 1
-
             if self.eol():
                 self.error("end of line reached while parsing string.")
 
-            c = self.text[self.pos]
-
-            if c == delim:
+            if self.match(delim):
                 break
 
-            if c == '\\':
+            if self.match(r'\\'):
                 self.pos += 1
+                continue
 
-        self.pos += 1
+            self.match(r'.[^\'"\\]*')
+
         return True
 
     def dotted_name(self):

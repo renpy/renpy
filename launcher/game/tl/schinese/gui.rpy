@@ -431,3 +431,8 @@
     # gui/game/gui.rpy:461
     old "## NVL-mode."
     new "## NVL 模式。"
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    new "## 启用对屏幕或变换中无效或不稳定属性的检查"
+

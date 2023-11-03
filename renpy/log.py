@@ -239,6 +239,7 @@ class StdioRedirector(object):
     def __init__(self):
         self.buffer = ''
         self.log = open("log", developer=False, append=False, flush=True)
+        self.encoding = "utf-8"
 
     def write(self, s):
 

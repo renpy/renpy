@@ -42,7 +42,7 @@ cdef class GL2Model:
 
         for i in self.uniforms.itervalues():
             if isinstance(i, GLTexture):
-                i.load_gltexture()
+                i.load()
 
     def program_uniforms(self, shader):
         """
@@ -118,4 +118,3 @@ cdef class GL2Model:
             rv.forward = Matrix.cscale(reciprocal_factor, reciprocal_factor, reciprocal_factor) * rv.forward
 
         return rv
-

@@ -76,6 +76,7 @@ text_property_names = [
     "color",
     "drop_shadow",
     "drop_shadow_color",
+    "emoji_font",
     "first_indent",
     "font",
     "size",
@@ -92,8 +93,10 @@ text_property_names = [
     "newline_indent",
     "outlines",
     "outline_scaling",
+    "prefer_emoji",
     "rest_indent",
     "ruby_style",
+    "shaper",
     "slow_cps",
     "slow_cps_multiplier",
     "slow_abortable",
@@ -105,6 +108,8 @@ text_property_names = [
     "hinting",
     "adjust_spacing",
     "mipmap",
+    "axis",
+    "instance",
     ]
 
 text_properties = [ Style(i) for i in text_property_names ]

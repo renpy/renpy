@@ -27,7 +27,7 @@ default bubble.tag_properties = { }
 # on the screen now.
 default bubble.current_dialogue = [ ]
 
-init -1050 python in bubble:
+init -1150 python in bubble:
 
     from store import config, ADVCharacter, Character, JSONDB, Action, Frame, NoRollback
 
@@ -41,13 +41,14 @@ init -1050 python in bubble:
     # The path to the json file the bubble database is stored in.
     db_filename = "bubble.json"
 
-    # The number of rows and columns in the bubble database.
+    # The number of rows and columns in the grid that is used to position
+    # speech bubbles.
     cols = 24
     rows = 24
 
     # The default window area rectangle. This is expressed as squares, where units
     # are defined by the rows and columns.
-    default_area = (0, 18, 24, 6)
+    default_area = (15, 1, 8, 5)
 
     # The property that the area is supplied as.
     area_property = "window_area"
@@ -55,17 +56,42 @@ init -1050 python in bubble:
     # Additional properties that the player can use to customize the bubble.
     # This is a map from a property name to a list of choices that are cycled
     # through.
-    properties = {
-        "default" : { }
-    }
+    properties = { }
 
     # The property group names, in order.
-    properties_order = [ "default" ]
+    properties_order = [ ]
+
+    # If not None, a function that takes the character's image tag, and returns
+    # the list of property names that are allowed for that image tag.
+    properties_callback = None
+
+    # A map from property name to the (left, top, right, bottom) number of pixels
+    # areas with that property are expanded by. If a property is not in this
+    # map, None is tried.
+    expand_area = { }
 
     # This is set to the JSONDB object that stores the bubble database,
-    # or None if the databse doesn't exist yet.
+    # or None if the database doesn't exist yet.
     db = None
 
+    # These are not used directly, but are used by the default screens.rpy, and
+    # so should not be set.
+    frame = None
+    thoughtframe = None
+
+    # The layer that retained screens are placed on.
+    retain_layer = "screens"
+
+    class ToggleShown(Action):
+        def __call__(self):
+            if not active and not shown.value:
+                return
+
+            shown.value = not shown.value
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            return shown.value
 
     def scene_callback(layer):
         global tag_properties
@@ -117,6 +143,9 @@ init -1050 python in bubble:
             for the given image tag.
             """
 
+            if not properties_order:
+                raise Exception("A speech bubble is being used, but bubble.properties has not been set.")
+
             rv = { }
 
             xgrid = config.screen_width / cols
@@ -129,12 +158,51 @@ init -1050 python in bubble:
                 int(default_area[3] * ygrid)
             ]
 
-            return {
+            rv = {
                 "area" : default_area_rect,
-                "properties" : properties_order[0]
             }
 
-        def do_show(self, who, what, multiple=None, extra_properties=None):
+
+            if properties_callback is not None:
+                rv["properties"] = properties_callback(image_tag)[0]
+            else:
+                rv["properties"] = properties_order[0]
+
+            return rv
+
+
+        def expand_area(self, area, properties_key):
+            """
+            This is called to expand the area of a bubble. It is given the
+            area, and the properties key, and returns a new area.
+            """
+
+            x, y, w, h = area
+
+            expand = expand_area.get(properties_key, None) or expand_area.get(None, None)
+
+            if expand is None:
+                return area
+
+            left, top, right, bottom = expand
+
+            x = x - left
+            y = y - top
+            w = w + left + right
+            h = h + top + bottom
+
+            return (x, y, w, h)
+
+        def do_add(self, who, what, multiple=False):
+
+            tlid = renpy.get_translation_identifier()
+
+            if tlid is not None:
+
+                if db[tlid].get("clear_retain", False):
+                    renpy.clear_retain(layer=retain_layer)
+
+        def do_show(self, who, what, multiple=None, retain=None, extra_properties=None):
 
             if extra_properties is None:
                 extra_properties = { }
@@ -143,7 +211,7 @@ init -1050 python in bubble:
 
             image_tag = self.image_tag
 
-            if image_tag not in tag_properties:
+            if retain or (image_tag not in tag_properties):
                 tag_properties[image_tag] = self.bubble_default_properties(image_tag)
 
             tlid = renpy.get_translation_identifier()
@@ -157,9 +225,9 @@ init -1050 python in bubble:
             properties_key = tag_properties[image_tag]["properties"]
 
             extra_properties.update(properties.get(properties_key, { }))
-            extra_properties[area_property] = tag_properties[image_tag]["area"]
+            extra_properties[area_property] = self.expand_area(tag_properties[image_tag]["area"], properties_key)
 
-            return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, extra_properties=extra_properties)
+            return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, retain=retain, extra_properties=extra_properties)
 
     class CycleBubbleProperty(Action):
         """
@@ -178,20 +246,45 @@ init -1050 python in bubble:
 
             current = tag_properties[self.image_tag]["properties"]
 
+            if properties_callback is not None:
+                properties = properties_callback(self.image_tag)
+            else:
+                properties = properties_order
+
             try:
-                idx = properties_order.index(current)
+                idx = properties.index(current)
             except ValueError:
                 idx = 0
 
-            idx = (idx + 1) % len(properties_order)
+            idx = (idx + 1) % len(properties)
 
-            db[self.tlid]["properties"] = properties_order[idx]
+            db[self.tlid]["properties"] = properties[idx]
             renpy.rollback(checkpoints=0, force=True, greedy=True)
 
         def alternate(self):
             if "properties" in db[self.tlid]:
                 del db[self.tlid]["properties"]
                 renpy.rollback(checkpoints=0, force=True, greedy=True)
+
+
+    class ToggleClearRetain(Action):
+        """
+        This is an action that causes the clear_retain property to be toggled.
+        """
+
+        def __init__(self, tlid):
+            self.tlid = tlid
+
+        def get_selected(self):
+            return db[self.tlid].get("clear_retain", False)
+
+        def __call__(self):
+            db[self.tlid]["clear_retain"] = not db[self.tlid].get("clear_retain", False)
+            renpy.rollback(checkpoints=0, force=True, greedy=True)
+
+        def alternate(self):
+            self()
+
 
     class SetWindowArea(Action):
         """
@@ -270,14 +363,14 @@ init 1050 python hide:
                     raise Exception("bubble.properties[{!r}] contains a value that can't be serialized to JSON: {!r}".format(k, i))
 
         if bubble.active:
-            config.overlay_screens.append("_bubble_editor")
+            config.always_shown_screens.append("_bubble_editor")
 
 
 
 screen _bubble_editor():
     zorder 1050
 
-    if bubble.shown.value:
+    if bubble.shown.value and not _menu:
 
         drag:
             draggable True
@@ -311,6 +404,18 @@ screen _bubble_editor():
 
                     null height gui._scale(5)
 
+                    if bubble.current_dialogue and renpy.get_screen("_retain_0", layer=bubble.retain_layer):
+                        textbutton _("(clear retained bubbles)"):
+                            style "_default"
+                            text_color "#ddd8"
+                            text_selected_idle_color "#ddd"
+                            text_hover_color "#fff"
+                            text_size gui._scale(16)
+
+                            action bubble.ToggleClearRetain(bubble.current_dialogue[0][1])
+
+                        null height gui._scale(5)
+
                     for image_tag, properties in bubble.GetCurrentDialogue():
 
                         hbox:
@@ -319,7 +424,7 @@ screen _bubble_editor():
                             text "[image_tag!q]":
                                 style "_default"
                                 color "#fff"
-                                size gui._scale(15)
+                                size gui._scale(16)
 
                             for prop, action in properties:
                                 textbutton "[prop!q]":
@@ -329,7 +434,9 @@ screen _bubble_editor():
                                     text_color "#ddd8"
                                     text_selected_idle_color "#ddd"
                                     text_hover_color "#fff"
-                                    text_size gui._scale(15)
+                                    text_size gui._scale(16)
+
+
 
 
 screen _bubble_window_area_editor(action):

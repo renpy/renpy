@@ -142,21 +142,12 @@ def test_texture_sizes(Environ environ, draw):
 
 
         with nogil:
-            if tex_format == GL_RGBA:
 
-                for i from 0 <= i < size * size:
-                    bitmap[i * 4 + 0] = 0xff # r
-                    bitmap[i * 4 + 1] = 0x00 # g
-                    bitmap[i * 4 + 2] = 0x00 # b
-                    bitmap[i * 4 + 3] = 0xff # a
-
-            else:
-
-                for i from 0 <= i < size * size:
-                    bitmap[i * 4 + 0] = 0x00 # b
-                    bitmap[i * 4 + 1] = 0x00 # g
-                    bitmap[i * 4 + 2] = 0xff # r
-                    bitmap[i * 4 + 3] = 0xff # a
+            for i from 0 <= i < size * size:
+                bitmap[i * 4 + 0] = 0xff # r
+                bitmap[i * 4 + 1] = 0x00 # g
+                bitmap[i * 4 + 2] = 0x00 # b
+                bitmap[i * 4 + 3] = 0xff # a
 
         # Create a texture of the given size.
         glActiveTexture(GL_TEXTURE0)
@@ -367,7 +358,8 @@ cdef class TextureCore:
 
 
     def load_surface(self, surf, x, y, w, h,
-                     border_left, border_top, border_right, border_bottom):
+                     border_left, border_top, border_right, border_bottom,
+                     properties):
 
         """
         Loads a pygame surface into this texture rectangle.
@@ -379,7 +371,8 @@ cdef class TextureCore:
 
         self.premult = premultiply(
             surf, x, y, w, h,
-            border_left, border_top, border_right, border_bottom)
+            border_left, border_top, border_right, border_bottom,
+            properties.get("premultiplied", False))
 
         self.premult_size = (w, h)
 
@@ -894,7 +887,7 @@ def compute_tiling(width, max_size, min_fill_factor):
     return row, tiles
 
 
-def texture_grid_from_surface(surf, transient):
+def texture_grid_from_surface(surf, transient, properties):
     """
     This takes a Surface and turns it into a TextureGrid.
     """
@@ -931,7 +924,8 @@ def texture_grid_from_surface(surf, transient):
 
             tex = alloc_texture(texwidth, texheight)
             tex.load_surface(surf, x, y, width, height,
-                             border_x, border_y, border_x, border_y)
+                             border_x, border_y, border_x, border_y,
+                             properties)
 
             row.append(tex)
 
@@ -1201,12 +1195,17 @@ def premultiply(
     int y,
     int w,
     int h,
-    bint border_left, bint border_top, bint border_right, bint border_bottom):
+    bint border_left, bint border_top, bint border_right, bint border_bottom,
+    bint premultiplied):
 
     """
     Creates a string containing the premultiplied image data for
     for the (x, y, w, h) box inside pysurf. The various border_
     parameters control the addition of a border on the sides.
+
+    `premultipled`
+        If true, the data has been premultiplied already, and
+        should be simply copied.
     """
 
     # Iterator y and x.
@@ -1272,7 +1271,18 @@ def premultiply(
             # Advance to the next row.
             pixels += surf.pitch
 
-            if tex_format == GL_RGBA:
+            if premultiplied:
+
+                while p < pend:
+                    op[0] = p[0]
+                    op[1] = p[1]
+                    op[2] = p[2]
+                    op[3] = p[3]
+
+                    p += 4
+                    op += 4
+
+            else:
 
                 # RGBA path.
 
@@ -1296,36 +1306,6 @@ def premultiply(
 
                         (<unsigned int *> op)[0] = (<unsigned int *> p)[0]
                         op[3] = 255
-
-                        p += 4
-                        op += 4
-
-            else:
-
-                # BGRA Path.
-
-                if alpha:
-
-                    while p < pend:
-
-                        a = p[3]
-
-                        op[0] = (p[2] * a + a) >> 8 # b
-                        op[1] = (p[1] * a + a) >> 8 # g
-                        op[2] = (p[0] * a + a) >> 8 # r
-                        op[3] = a
-
-                        p += 4
-                        op += 4
-
-                else:
-
-                    while p < pend:
-
-                        op[0] = p[2] # b
-                        op[1] = p[1] # g
-                        op[2] = p[0] # r
-                        op[3] = 0xff # a
 
                         p += 4
                         op += 4
