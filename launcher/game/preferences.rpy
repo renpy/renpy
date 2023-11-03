@@ -55,6 +55,25 @@ init python:
             renpy.session["launcher_start_label"] = "preferences"
             renpy.utter_restart()
 
+    class EnsureProjectsTxt(Action):
+        """
+        Ensures the projects.txt file exists before it's opened.
+        """
+
+        def __call__(self):
+            fn = os.path.join(project.manager.projects_directory, "projects.txt")
+
+            if os.path.exists(fn):
+                return
+
+            with open(fn, "w") as f:
+                f.write("""\
+# This file can be used to add projects not in the projects directory
+# by listing the full path to each project, one per line.
+
+""")
+
+
 default persistent.legacy = False
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
@@ -314,7 +333,10 @@ screen preferences():
                             textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
                             textbutton _("Open projects.txt"):
                                 style "l_nonbox"
-                                action editor.EditAbsolute(os.path.join(project.manager.projects_directory, "projects.txt"))
+                                action [
+                                    EnsureProjectsTxt(),
+                                    editor.EditAbsolute(os.path.join(project.manager.projects_directory, "projects.txt"))
+                                ]
                             textbutton _("Reset window size") style "l_nonbox" action Preference("display", 1.0)
                             textbutton _("Clean temporary files") style "l_nonbox" action Jump("clean_tmp")
 
