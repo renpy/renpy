@@ -318,6 +318,16 @@ init -1500 python in updater:
             # Should the update be allowed even if current.json is empty?
             self.allow_empty = allow_empty
 
+            # Public attributes set by the RPU updater
+            self.new_disk_size = None
+            self.old_disk_size = None
+
+            self.download_total = None
+            self.download_done = None
+
+            self.write_total = None
+            self.write_done = None
+
             # The base path of the game that we're updating, and the path to the update
             # directory underneath it.
 
@@ -537,12 +547,31 @@ init -1500 python in updater:
             data = zlib.decompress(resp.content)
 
             from renpy.update.common import FileList
+
+
             return FileList.from_json(json.loads(data))
+
+        def rpu_copy_fields(self):
+            """
+            Copy fields from the rpu object.
+            """
+
+            self.old_disk_total = self.u.old_disk_total
+            self.new_disk_total = self.u.new_disk_total
+
+            self.download_total = self.u.download_total
+            self.download_done = self.u.download_done
+
+            self.write_total = self.u.write_total
+            self.write_done = self.u.write_done
+
 
         def rpu_progress(self, state, progress):
             """
             Called by the rpu code to update the progress.
             """
+
+            self.rpu_copy_fields()
 
             old_state = self.state
 
@@ -579,7 +608,7 @@ init -1500 python in updater:
 
             # 3. Compute the update, and confirm it.
 
-            u = Update(
+            self.u = Update(
                 urlparse.urljoin(self.url, "rpu"),
                 source_file_lists,
                 self.base,
@@ -587,6 +616,10 @@ init -1500 python in updater:
                 progress_callback=self.rpu_progress,
                 logfile=self.log
             )
+
+            self.u.init()
+
+            self.rpu_copy_fields()
 
             self.prompt_confirm()
             self.can_cancel = False
@@ -599,7 +632,7 @@ init -1500 python in updater:
                 os.unlink(version_json)
 
             # 5. Apply the update.
-            u.update()
+            self.u.update()
 
             # 6. Update the new state.
             for i in self.modules:
@@ -1867,7 +1900,8 @@ init -1500 python in updater:
     renpy.arguments.register_command("update", update_command)
 
 init -1500:
-    screen updater:
+
+    screen updater(u):
 
         add "#000"
 
