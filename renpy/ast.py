@@ -81,6 +81,7 @@ class ParameterInfo(inspect.Signature):
         `first_kwonly` is the name of the first keyword-only parameter.
         """
 
+        Parameter = inspect.Parameter
         pars = []
         posonly_found = (last_posonly is None)
         now_kw_only = False
@@ -89,35 +90,35 @@ class ParameterInfo(inspect.Signature):
         # long-time nonsense in atl.py
         if (not parameters) and positional:
             print("Legacy curryfied atl : {!r} positionals were not part of parameters".format(positional))
-            parameters = [(name, inspect.Parameter.empty) for name in positional]
+            parameters = [(name, Parameter.empty) for name in positional]
 
         for name, default in parameters:
             if name == first_kwonly:
                 now_kw_only = True
                 if extrapos is not None:
-                    pars.append(inspect.Parameter(extrapos, inspect.Parameter.VAR_POSITIONAL))
+                    pars.append(Parameter(extrapos, Parameter.VAR_POSITIONAL))
 
             if now_kw_only:
-                kind = inspect.Parameter.KEYWORD_ONLY
+                kind = Parameter.KEYWORD_ONLY
             elif not posonly_found:
-                kind = inspect.Parameter.POSITIONAL_ONLY
+                kind = Parameter.POSITIONAL_ONLY
                 # if name not in positional:
                 #     elist.append(Exception("Parameter {} found to be positional-only, but was apparently not positional at all".format(name)))
             else:
-                kind = inspect.Parameter.POSITIONAL_OR_KEYWORD
+                kind = Parameter.POSITIONAL_OR_KEYWORD
                 # if name not in positional:
                 #     elist.append(Exception("Parameter {} found to be positional-or-keyword, but was apparently not positional at all".format(name)))
 
-            pars.append(inspect.Parameter(name, kind, default=default))
+            pars.append(Parameter(name, kind, default=default or Parameter.empty))
 
             if name == last_posonly:
                 posonly_found = True
 
         if (not now_kw_only) and (extrapos is not None):
-            pars.append(inspect.Parameter(extrapos, inspect.Parameter.VAR_POSITIONAL))
+            pars.append(Parameter(extrapos, Parameter.VAR_POSITIONAL))
 
         if extrakw is not None:
-            pars.append(inspect.Parameter(extrakw, inspect.Parameter.VAR_KEYWORD))
+            pars.append(Parameter(extrakw, Parameter.VAR_KEYWORD))
 
         rv = cls(pars)
         # if elist:
