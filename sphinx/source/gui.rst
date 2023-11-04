@@ -398,6 +398,12 @@ fonts used for text. These fonts should also be placed in the game directory.
     The font used for text for user interface elements, like the main and
     game menus, buttons, and so on.
 
+.. var:: gui.system_font = "DejaVuSans.ttf"
+
+    The font used for system text, like exception messages and the shift+A
+    accessibility menu. This should be able to handle both ASCII and the
+    game's translated language.
+
 .. var:: gui.glyph_font = "DejaVuSans.ttf"
 
     A font used for certain glyphs, such as the arrow glyphs used by the skip
