@@ -115,7 +115,7 @@ screen update_channel(channels):
                     for c in channels:
 
                         if c["split_version"] != list(renpy.version_tuple) or allow_repair_update:
-                            $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False, force=allow_repair_update, prefer_rpu=c.get("prefer_rpu", False))]
+                            $ action = [ SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False, force=allow_repair_update, prefer_rpu=persistent.prefer_rpu) ]
 
                             if c["channel"].startswith("Release"):
                                 $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")
