@@ -159,58 +159,47 @@ class ParameterInfo(inspect.Signature):
                 return n
         return None
 
-    @property
-    def eval(self):
+    def apply_defaults(self, mapp):
         """
-        Returns a copy of self where the default values of the parameters
-        are the actual values and not the strings that eval to them.
-        Returns a Signature object, not a ParameterInfo (for that reason).
+        From a mapping representing the inner scope of the callable after binding,
+        this mutates the mapping to apply the evaluated default values of the parameters.
+        This is where the evaluation of the default values occurs.
+        Evaluation occurs lazily : the default value of parameters already passed
+        is not calculated.
         """
-
-        params_str = self.parameters.values()
-        param_eval = []
-        for p in params_str:
-            if p.default is not p.empty:
-                p = p.replace(default=renpy.python.py_eval(p.default))
-            param_eval.append(p)
-        return inspect.Signature(parameters=param_eval)
+        # code inspired from stdlib's inspect.BoundArguments.apply_defaults
+        # but optimized as not to create a new dict
+        # (because ordering doesn't matter to us)
+        # resulting in 5x shorter execution time
+        for name, param in self.parameters.items():
+            if name not in mapp:
+                if param.default not in (None, param.empty):
+                    val = renpy.python.py_eval(param.default)
+                elif param.kind == param.VAR_POSITIONAL:
+                    val = ()
+                elif param.kind == param.VAR_KEYWORD:
+                    val = renpy.python.RevertableDict()
+                else:
+                    # result of a partial bind
+                    continue
+                mapp[name] = val
+        return mapp
 
     def apply(self, args, kwargs, ignore_errors=False, partial=False):
         """
-        Contrary to the former ParameterInfo method, *all* default values are evaluated at call time
-        (instead of only those actually needed), which could cause different behaviors
-        in some particularly ugly edge cases where evaluation of parameters cause side-effects,
-        (arg=next(some_iterable)) or (arg1=ls.pop(), arg2=ls) for example.
-        This method still exists so that when ignore_errors, the parameters aren't evaluated twice.
+        Takes args and kwargs, and returns a mapping corresponding to the
+        inner scope of the callable as a result of that call.
         """
-        ev = self.eval
 
-        rv = None
-        if not partial:
+        # that implementation of ignore_errors can and will be improved
+        if ignore_errors:
             try:
-                rv = ev.bind(*args, **kwargs)
+                self.apply(args, kwargs, ignore_errors=False, partial=partial)
             except Exception:
-                if ignore_errors:
-                    rv = None
-                else:
-                    raise
-        if rv is None: # either partial or (not partial and ignore_errors)
-            try:
-                rv = ev.bind_partial(*args, **kwargs)
-            except Exception:
-                if ignore_errors:
-                    return {}
-                else:
-                    raise
+                return {}
 
-        rv.apply_defaults()
-        return rv.arguments
-
-    def bind(self, *args, **kwargs):
-        return self.eval.bind(*args, **kwargs)
-
-    def bind_partial(self, *args, **kwargs):
-        return self.eval.bind_partial(*args, **kwargs)
+        rv = (self.bind_partial if partial else self.bind)(*args, **kwargs).arguments
+        return self.apply_defaults(rv)
 
     # vaguely inspired by renpy.object.Object
     __version__ = 1
