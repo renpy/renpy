@@ -194,15 +194,13 @@ class ParameterInfo(inspect.Signature):
         Improvements on the original inspect.Signature._bind :
         - manages _ignore_extra_kwargs (near the end of the method)
         - avoids creating a BoundArguments object, just returns the scope dict
+        - ignore_errors
         - applies the defaults automatically (and lazily, as per the above)
         """
 
-        # that implementation of ignore_errors can and will be improved
-        if ignore_errors:
-            try:
-                self.apply(args, kwargs, ignore_errors=False, partial=partial)
-            except Exception:
-                return {}
+        def _raise(exct, msg, *argz, **kwargz):
+            if ignore_errors:
+                raise exct(msg.format(*argz, **kwargz)) from None
 
         # code mostly taken from stdlib's inspect.Signature._bind
         arguments = {}
@@ -231,10 +229,9 @@ class ParameterInfo(inspect.Signature):
                         break
                     elif param.name in kwargs:
                         if param.kind == param.POSITIONAL_ONLY:
-                            msg = '{arg!r} parameter is positional only, ' \
-                                    'but was passed as a keyword'
-                            msg = msg.format(arg=param.name)
-                            raise TypeError(msg) from None
+                            _raise(TypeError,
+                                "{arg!r} parameter is positional only, but was passed as a keyword",
+                                arg=param.name)
                         parameters_ex = (param,)
                         break
                     elif (param.kind == param.VAR_KEYWORD or
@@ -247,7 +244,7 @@ class ParameterInfo(inspect.Signature):
                     else:
                         # No default, not VAR_KEYWORD, not VAR_POSITIONAL,
                         # not in `kwargs`
-                        if partial:
+                        if partial or ignore_errors:
                             parameters_ex = (param,)
                             break
                         else:
@@ -263,13 +260,14 @@ class ParameterInfo(inspect.Signature):
                 try:
                     param = next(parameters)
                 except StopIteration:
-                    raise TypeError('too many positional arguments') from None
+                    _raise(TypeError, 'too many positional arguments')
+                    break
                 else:
                     if param.kind in (param.VAR_KEYWORD, param.KEYWORD_ONLY):
                         # Looks like we have no parameter for this positional
                         # argument
-                        raise TypeError(
-                            'too many positional arguments') from None
+                        _raise(TypeError, 'too many positional arguments')
+                        break
 
                     if param.kind == param.VAR_POSITIONAL:
                         # We have an '*args'-like argument, let's fill it with
@@ -281,9 +279,10 @@ class ParameterInfo(inspect.Signature):
                         break
 
                     if param.name in kwargs and param.kind != param.POSITIONAL_ONLY:
-                        raise TypeError(
-                            'multiple values for argument {arg!r}'.format(
-                                arg=param.name)) from None
+                        _raise(TypeError,
+                            'multiple values for argument {arg!r}',
+                            arg=param.name)
+                        break
 
                     arguments[param.name] = arg_val
 
@@ -310,7 +309,7 @@ class ParameterInfo(inspect.Signature):
                 # if it has a default value, or it is an '*args'-like
                 # parameter, left alone by the processing of positional
                 # arguments.
-                if (not partial and param.kind != param.VAR_POSITIONAL and
+                if (not (partial or ignore_errors) and param.kind != param.VAR_POSITIONAL and
                                                     param.default is param.empty):
                     raise TypeError('missing a required argument: {arg!r}'. \
                                     format(arg=param_name)) from None
@@ -320,9 +319,10 @@ class ParameterInfo(inspect.Signature):
                     # This should never happen in case of a properly built
                     # Signature object (but let's have this check here
                     # to ensure correct behaviour just in case)
-                    raise TypeError('{arg!r} parameter is positional only, '
-                                    'but was passed as a keyword'. \
-                                    format(arg=param.name))
+                    _raise(TypeError,
+                        "{arg!r} parameter is positional only, but was passed as a keyword",
+                        arg=param.name)
+                    continue
 
                 arguments[param_name] = arg_val
 
@@ -330,7 +330,7 @@ class ParameterInfo(inspect.Signature):
             if kwargs_param is not None:
                 # Process our '**kwargs'-like parameter
                 arguments[kwargs_param.name] = kwargs
-            elif not kwargs.pop('_ignore_extra_kwargs', False):
+            elif not (ignore_errors or kwargs.pop('_ignore_extra_kwargs', False)):
                 raise TypeError(
                     'got an unexpected keyword argument {arg!r}'.format(
                         arg=next(iter(kwargs))))
