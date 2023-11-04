@@ -35,6 +35,7 @@ import renpy
 
 import hashlib
 import inspect
+from itertools import chain as _chain
 import re
 import time
 
@@ -189,6 +190,11 @@ class ParameterInfo(inspect.Signature):
         """
         Takes args and kwargs, and returns a mapping corresponding to the
         inner scope of the callable as a result of that call.
+
+        Improvements on the original inspect.Signature._bind :
+        - manages _ignore_extra_kwargs (near the end of the method)
+        - avoids creating a BoundArguments object, just returns the scope dict
+        - applies the defaults automatically (and lazily, as per the above)
         """
 
         # that implementation of ignore_errors can and will be improved
@@ -198,8 +204,139 @@ class ParameterInfo(inspect.Signature):
             except Exception:
                 return {}
 
-        rv = (self.bind_partial if partial else self.bind)(*args, **kwargs).arguments
-        return self.apply_defaults(rv)
+        # code mostly taken from stdlib's inspect.Signature._bind
+        arguments = {}
+
+        parameters = iter(self.parameters.values())
+        parameters_ex = ()
+        arg_vals = iter(args)
+
+        while True:
+            # Let's iterate through the positional arguments and corresponding
+            # parameters
+            try:
+                arg_val = next(arg_vals)
+            except StopIteration:
+                # No more positional arguments
+                try:
+                    param = next(parameters)
+                except StopIteration:
+                    # No more parameters. That's it. Just need to check that
+                    # we have no `kwargs` after this while loop
+                    break
+                else:
+                    if param.kind == param.VAR_POSITIONAL:
+                        # That's OK, just empty *args.  Let's start parsing
+                        # kwargs
+                        break
+                    elif param.name in kwargs:
+                        if param.kind == param.POSITIONAL_ONLY:
+                            msg = '{arg!r} parameter is positional only, ' \
+                                    'but was passed as a keyword'
+                            msg = msg.format(arg=param.name)
+                            raise TypeError(msg) from None
+                        parameters_ex = (param,)
+                        break
+                    elif (param.kind == param.VAR_KEYWORD or
+                                                param.default is not param.empty):
+                        # That's fine too - we have a default value for this
+                        # parameter.  So, lets start parsing `kwargs`, starting
+                        # with the current parameter
+                        parameters_ex = (param,)
+                        break
+                    else:
+                        # No default, not VAR_KEYWORD, not VAR_POSITIONAL,
+                        # not in `kwargs`
+                        if partial:
+                            parameters_ex = (param,)
+                            break
+                        else:
+                            if param.kind == param.KEYWORD_ONLY:
+                                argtype = ' keyword-only'
+                            else:
+                                argtype = ''
+                            msg = 'missing a required{argtype} argument: {arg!r}'
+                            msg = msg.format(arg=param.name, argtype=argtype)
+                            raise TypeError(msg) from None
+            else:
+                # We have a positional argument to process
+                try:
+                    param = next(parameters)
+                except StopIteration:
+                    raise TypeError('too many positional arguments') from None
+                else:
+                    if param.kind in (param.VAR_KEYWORD, param.KEYWORD_ONLY):
+                        # Looks like we have no parameter for this positional
+                        # argument
+                        raise TypeError(
+                            'too many positional arguments') from None
+
+                    if param.kind == param.VAR_POSITIONAL:
+                        # We have an '*args'-like argument, let's fill it with
+                        # all positional arguments we have left and move on to
+                        # the next phase
+                        values = [arg_val]
+                        values.extend(arg_vals)
+                        arguments[param.name] = tuple(values)
+                        break
+
+                    if param.name in kwargs and param.kind != param.POSITIONAL_ONLY:
+                        raise TypeError(
+                            'multiple values for argument {arg!r}'.format(
+                                arg=param.name)) from None
+
+                    arguments[param.name] = arg_val
+
+        # Now, we iterate through the remaining parameters to process
+        # keyword arguments
+        kwargs_param = None
+        for param in _chain(parameters_ex, parameters):
+            if param.kind == param.VAR_KEYWORD:
+                # Memorize that we have a '**kwargs'-like parameter
+                kwargs_param = param
+                continue
+
+            if param.kind == param.VAR_POSITIONAL:
+                # Named arguments don't refer to '*args'-like parameters.
+                # We only arrive here if the positional arguments ended
+                # before reaching the last parameter before *args.
+                continue
+
+            param_name = param.name
+            try:
+                arg_val = kwargs.pop(param_name)
+            except KeyError:
+                # We have no value for this parameter.  It's fine though,
+                # if it has a default value, or it is an '*args'-like
+                # parameter, left alone by the processing of positional
+                # arguments.
+                if (not partial and param.kind != param.VAR_POSITIONAL and
+                                                    param.default is param.empty):
+                    raise TypeError('missing a required argument: {arg!r}'. \
+                                    format(arg=param_name)) from None
+
+            else:
+                if param.kind == param.POSITIONAL_ONLY:
+                    # This should never happen in case of a properly built
+                    # Signature object (but let's have this check here
+                    # to ensure correct behaviour just in case)
+                    raise TypeError('{arg!r} parameter is positional only, '
+                                    'but was passed as a keyword'. \
+                                    format(arg=param.name))
+
+                arguments[param_name] = arg_val
+
+        if kwargs:
+            if kwargs_param is not None:
+                # Process our '**kwargs'-like parameter
+                arguments[kwargs_param.name] = kwargs
+            elif not kwargs.pop('_ignore_extra_kwargs', False):
+                raise TypeError(
+                    'got an unexpected keyword argument {arg!r}'.format(
+                        arg=next(iter(kwargs))))
+
+        return self.apply_defaults(arguments)
+
 
     # vaguely inspired by renpy.object.Object
     __version__ = 1
