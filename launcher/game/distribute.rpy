@@ -524,6 +524,9 @@ change_renpy_executable()
             # dictionaries.
             data = project.data
 
+            # Reset the RPU update builder.
+            RPUPackage.reset()
+
             if scan:
                 self.reporter.info(_("Scanning project files..."))
                 project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])

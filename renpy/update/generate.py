@@ -26,51 +26,49 @@ import argparse
 import json
 import os
 import zlib
+import threading
 
 from . import common
+
 
 class BlockGenerator(object):
     """
     This generates the block file containing the segments for an update.
     """
 
-    def __init__(self, name, filelist, targetdir, progress=None, max_rpu_size=50 * 1024 * 1024):
+    def __init__(self, targetdir, max_rpu_size=50 * 1024 * 1024):
 
-        # A name that will be prefixed to the update.
-        self.name = name
-
-        # The filelist being created.
-        self.filelist = filelist
-
-        # The current segment list.
-        self.segments = [ ]
+        # Used to lock generation.
+        self.lock = threading.Lock()
 
         # The target directory in which the segments will be stored.
         self.targetdir = targetdir
 
-        # The hashes that have been seen alread,.
-        self.seen_hashes = set()
+        # A map from hash to segment object.
+        self.seen_hashes = dict()
 
         # The maximum size of an rpu file.
         self.max_rpu_size = max_rpu_size
 
-        # If new.rpu is open, a file object for it.
-        self.new_rpu = None
-
-        # The progress reporter.
-        self.progress = progress
-
-        # Clean out files in the target directory starting with .name.
+        # Clean out files in the target directory.
         for i in os.listdir(targetdir):
-            if i.startswith(self.name + "-") and i.endswith(".rpu"):
-                os.unlink(os.path.join(targetdir, i))
+            os.unlink(os.path.join(targetdir, i))
+
+        # The following variables are changed by each call to generate. ########
 
         # The filelist being created.
-        self.generate()
+        self.filelist = None
 
-        # Write the filelist to a file.
-        with open(self.path(self.name + ".files.rpu"), "wb") as f:
-            f.write(self.filelist.encode())
+        # The current segment list.
+        self.segments = [ ]
+
+        # The set of hashes seen while processing the current file list.
+        self.current_seen_hashes = set()
+
+        # The following field is changed quite a bit. ##########################
+
+        # If new.rpu is open, a file object for it.
+        self.new_rpu = None
 
     def path(self, name):
         """
@@ -85,7 +83,7 @@ class BlockGenerator(object):
         """
 
         if self.new_rpu is None:
-            self.new_rpu = open(self.path(self.name + "-new.rpu"), "wb")
+            self.new_rpu = open(self.path("new.rpu"), "wb")
             self.new_rpu.write(b"RPU-BLOCK-1.0\r\n")
 
     def close_new_rpu(self):
@@ -100,11 +98,13 @@ class BlockGenerator(object):
         self.new_rpu.close()
         self.new_rpu = None
 
-        filename = self.name + "-" + common.hash_list([ i.hash for i in self.segments ]) + ".rpu"
+        filename = common.hash_list([ i.hash for i in self.segments ]) + ".rpu"
 
-        os.rename(self.path(self.name + "-new.rpu"), self.path(filename))
+        os.rename(self.path("new.rpu"), self.path(filename))
 
-        self.filelist.blocks.append(common.File(filename, segments=self.segments))
+        if self.filelist is not None:
+            self.filelist.blocks.append(common.File(filename, segments=self.segments))
+
         self.segments = [ ]
 
     def generate_segment(self, f, seg):
@@ -112,10 +112,14 @@ class BlockGenerator(object):
         Generates a segment into new.rpu.
         """
 
-        if seg.hash in self.seen_hashes:
+        if seg.hash in self.current_seen_hashes:
             return
 
-        self.seen_hashes.add(seg.hash)
+        self.current_seen_hashes.add(seg.hash)
+
+        if seg.hash in self.seen_hashes:
+            self.segments.append(self.seen_hashes[seg.hash])
+            return
 
         f.seek(seg.offset)
         data = f.read(seg.size)
@@ -137,29 +141,43 @@ class BlockGenerator(object):
         size = len(data)
 
         self.new_rpu.write(data)
-        self.segments.append(common.Segment(offset, size, seg.hash, compressed))
 
-    def generate(self):
+        seg = common.Segment(offset, size, seg.hash, compressed)
+        self.seen_hashes[seg.hash] = seg
+        self.segments.append(seg)
 
-        # Create a list of files by reverse mtime. The idea is that the newer
-        # files will appear before the older ones, and so we won't have to pull
-        # from older files to create a new one.
-        files = list(self.filelist.files)
-        files.sort(key=lambda x: (x.mtime, x.name))
-        files.reverse()
+    def generate(self, name, filelist, progress=None):
 
-        for i, file in enumerate(files):
+        with self.lock:
 
-            if self.progress:
-                self.progress(i + 1, len(files))
+            self.filelist = common.FileList()
 
-            file.scan()
+            self.segments = [ ]
+            self.current_seen_hashes = set()
 
-            with open(file.data_filename or file.name, "rb") as f:
-                for seg in file.segments:
-                    self.generate_segment(f, seg)
+            # Create a list of files by reverse mtime. The idea is that the newer
+            # files will appear before the older ones, and so we won't have to pull
+            # from older files to create a new one.
+            files = list(filelist.files)
+            files.sort(key=lambda x: (x.mtime, x.name))
+            files.reverse()
 
-        self.close_new_rpu()
+            for i, file in enumerate(files):
+
+                if progress:
+                    progress(i + 1, len(files))
+
+                file.scan()
+
+                with open(file.data_filename or file.name, "rb") as f:
+                    for seg in file.segments:
+                        self.generate_segment(f, seg)
+
+            self.close_new_rpu()
+
+            # Write the filelist to a file.
+            with open(self.path(name + ".files.rpu"), "wb") as f:
+                f.write(self.filelist.encode())
 
 
 def main():
