@@ -120,67 +120,67 @@ can be used to customize the screen:
 
 .. class:: update.Updater
 
-   .. field:: state
+   .. attribute:: state
 
       The current state of the updater. See the example above for possible
       values and their meanings. The values are all constants on the Updater
       obect.
 
-   .. field:: message
+   .. attribute:: message
 
       If not None, a message to display to the user.
 
-   .. field:: progress
+   .. attribute:: progress
 
       If not None, the progress of the current operation, as a float between
       0.0 and 1.0.
 
-   .. field:: can_proceed
+   .. attribute:: can_proceed
 
       If True, the screen is being asked to display a button that will allow
       the user to proceed with the update.
 
-   .. field:: proceed
+   .. attribute:: proceed
 
       If can_proceed is True, this is the action that should be invoked when
       the user presses the proceed button.
 
-   .. field:: can_cancel
+   .. attribute:: can_cancel
 
       If True, the screen is being asked to display a button that will allow
       the user to cancel the update.
 
-   .. field:: cancel
+   .. attribute:: cancel
 
       If can_cancel is True, this is the action that should be invoked when
       the user presses the cancel button.
 
-   .. field:: old_disk_total
+   .. attribute:: old_disk_total
 
       If not None, an integer giving the total number of bytes on the disk
       the game consumed at the start of the update.
 
-   .. field:: new_disk_total
+   .. attribute:: new_disk_total
 
       If not None, an integer giving the total number of bytes on the disk
       the game will consume at the end of the update.
 
-   .. field:: download_total
+   .. attribute:: download_total
 
       If not None, an integer giving the total number of bytes that will be
       downloaded during the update.
 
-   .. field:: download_done
+   .. attribute:: download_done
 
       If not None, an integer giving the number of bytes that have been
       downloaded during the update, so far.
 
-   .. field:: write_total
+   .. attribute:: write_total
 
       If not None, an integer giving the total number of bytes that will be
       written to disk during the update.
 
-   .. field:: write_done
+   .. attribute:: write_done
 
       If not None, an integer giving the number of bytes that have been
       written to disk during the update, so far.
