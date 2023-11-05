@@ -1034,7 +1034,7 @@ def transform_statement(l, loc):
 
     parameters = parse_parameters(l)
 
-    if parameters and (parameters.extrakw or parameters.extrapos):
+    if parameters and (parameters.extrakw or parameters.extrapos): # awaiting reform
         l.error('transform statement does not take a variable number of parameters')
 
     l.require(':')
