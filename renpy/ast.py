@@ -406,7 +406,22 @@ class Signature(object):
         return self.apply_defaults(arguments)
 
     def __eq__(self, other):
-        return (self is other) or (isinstance(other, ParameterInfo) and (self.parameters == other.parameters))
+        if self is other:
+            return True
+        if not isinstance(other, Signature):
+            return False
+
+        # non-kw-only parameters must be the same in the same order
+        paramself = tuple(param for param in self.parameters.values() if param.kind != param.KEYWORD_ONLY)
+        if paramself != tuple(param for param in other.parameters.values() if param.kind != param.KEYWORD_ONLY):
+            return False
+
+        # kw-only parameters must be the same
+        kw_paramself = {param.name: param for param in self.parameters.values() if param.kind == param.KEYWORD_ONLY}
+        if kw_paramself != {param.name: param for param in other.parameters.values() if param.kind == param.KEYWORD_ONLY}:
+            return False
+
+        return True
 
     def __str__(self):
         result = []
