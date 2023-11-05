@@ -200,7 +200,7 @@ class ParameterInfo(inspect.Signature):
         """
 
         def _raise(exct, msg, *argz, **kwargz):
-            if ignore_errors:
+            if not ignore_errors:
                 raise exct(msg.format(*argz, **kwargz)) from None
 
         # code mostly taken from stdlib's inspect.Signature._bind
