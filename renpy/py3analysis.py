@@ -586,12 +586,6 @@ class Analysis(object):
         for name in parameters.parameters:
             self.mark_not_constant(name)
 
-        if parameters.extrapos is not None:
-            self.mark_not_constant(parameters.extrapos)
-
-        if parameters.extrakw is not None:
-            self.mark_not_constant(parameters.extrakw)
-
 
 class PyAnalysis(ast.NodeVisitor):
     """
