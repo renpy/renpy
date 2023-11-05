@@ -34,7 +34,6 @@ from typing import Optional, Any
 import renpy
 
 import hashlib
-import inspect
 from itertools import chain as _chain
 import re
 import time
@@ -59,17 +58,70 @@ def next_node(n):
     renpy.game.context().next_node = n
 
 
-class ParameterInfo(inspect.Signature):
+class Parameter(object):
+    __slots__ = ("name", "kind", "default",)
+
+    POSITIONAL_ONLY, POSITIONAL_OR_KEYWORD, VAR_POSITIONAL, KEYWORD_ONLY, VAR_KEYWORD = range(5)
+
+    empty = None
+
+    def __init__(self, name, kind, default=empty):
+        self.name = name
+        self.kind = kind
+        self.default = default # type: str|None
+
+    def replace(self, **kwargs):
+        d = dict(name=self.name, kind=self.kind, default=self.default)
+        d.update(kwargs)
+        return Parameter(**d)
+
+    def __str__(self):
+        kind = self.kind
+        formatted = self.name
+
+        if self.default is not self.empty:
+            formatted += "=" + self.default # type: ignore
+
+        if kind == self.VAR_POSITIONAL:
+            formatted = "*" + formatted
+        elif kind == self.VAR_KEYWORD:
+            formatted = "**" + formatted
+
+        return formatted
+
+    def __repr__(self):
+        return "<Parameter {}>".format(self)
+
+    def __eq__(self, other):
+        return (self is other) or (isinstance(other, Parameter) and (self.name == other.name) and (self.kind == other.kind) and (self.default == other.default))
+
+if PY2:
+    from collections import OrderedDict as _sig_mapping_type
+else:
+    _sig_mapping_type = dict
+
+class ParameterInfo(object):
     """
     This class is used to store information about parameters (to a label, screen, ATL...)
+    It has the same interface as inspect.Signature for the most part.
     """
 
-    __slots__ = ()
+    __slots__ = ("parameters",)
+
+    def __init__(self, parameters=None):
+        if parameters is None:
+            self.parameters = _sig_mapping_type()
+        else:
+            self.parameters = _sig_mapping_type((param.name, param) for param in parameters)
 
     @classmethod
-    def legacy(cls, parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
+    def legacy(cls, *args, **kwargs):
+        return cls(cls.legacy_params(*args, **kwargs))
+
+    @staticmethod
+    def legacy_params(parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
         """
-        Creates a ParameterInfo object from the legacy parameters format.
+        Creates a list of Parameter from the legacy parameters format.
 
         `parameters` is a list of (name, default) pairs, where default is None
         for required parameters and a string for optional parameters.
@@ -81,11 +133,9 @@ class ParameterInfo(inspect.Signature):
         `first_kwonly` is the name of the first keyword-only parameter.
         """
 
-        Parameter = inspect.Parameter
         pars = []
         posonly_found = (last_posonly is None)
         now_kw_only = False
-        # elist = []
 
         # long-time nonsense in atl.py
         if (not parameters) and positional:
@@ -102,12 +152,8 @@ class ParameterInfo(inspect.Signature):
                 kind = Parameter.KEYWORD_ONLY
             elif not posonly_found:
                 kind = Parameter.POSITIONAL_ONLY
-                # if name not in positional:
-                #     elist.append(Exception("Parameter {} found to be positional-only, but was apparently not positional at all".format(name)))
             else:
                 kind = Parameter.POSITIONAL_OR_KEYWORD
-                # if name not in positional:
-                #     elist.append(Exception("Parameter {} found to be positional-or-keyword, but was apparently not positional at all".format(name)))
 
             pars.append(Parameter(name, kind, default=default or Parameter.empty))
 
@@ -120,25 +166,40 @@ class ParameterInfo(inspect.Signature):
         if extrakw is not None:
             pars.append(Parameter(extrakw, Parameter.VAR_KEYWORD))
 
-        rv = cls(pars)
-        # if elist:
-        #     raise ExceptionGroup("Had some problems with parameters", elist)
-        return rv
+        return pars
 
     @classmethod
-    def from_legacy_state(cls, param_info):
+    def params_from_legacy_state(cls, param_info):
         """
-        Creates a ParameterInfo object from the vars() of a legacy ParameterInfo object.
+        Creates a Parameter list from the vars() of a legacy (V0) ParameterInfo object.
         """
         positional_only = param_info["positional_only"]
         last_posonly = positional_only[-1][0] if positional_only else None
         keyword_only = param_info["keyword_only"]
         first_kwonly = keyword_only[0][0] if keyword_only else None
-        return cls.legacy(param_info["parameters"], param_info["positional"], param_info["extrapos"], param_info["extrakw"], last_posonly, first_kwonly)
+        return cls.legacy_params(param_info["parameters"], param_info["positional"], param_info["extrapos"], param_info["extrakw"], last_posonly, first_kwonly)
+
+    if False:
+        def __getstate__(self):
+            # default behavior for slots and no __dict__ : None for the __dict__, and a dict for the slots
+            return (None, {
+                "parameters":self.parameters,
+            })
+
+    def __setstate__(self, state):
+        if isinstance(state, dict):
+            # legacy state
+            self.__init__(self.params_from_legacy_state(state))
+        else:
+            # default behavior on py3, could be a super() call but this is faster and py2-compatible
+            self.parameters = state[1]["parameters"]
+
 
     @property
     def positional(self):
-        # legacy accessor for obsolete attribute
+        """
+        Legacy accessor for obsolete attribute
+        """
         rv = []
         for n, p in self.parameters.items():
             if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD):
@@ -147,7 +208,9 @@ class ParameterInfo(inspect.Signature):
 
     @property
     def extrapos(self):
-        # legacy accessor for obsolete attribute
+        """
+        Legacy accessor for obsolete attribute
+        """
         for n, p in self.parameters.items():
             if p.kind == p.VAR_POSITIONAL:
                 return n
@@ -155,7 +218,9 @@ class ParameterInfo(inspect.Signature):
 
     @property
     def extrakw(self):
-        # legacy accessor for obsolete attribute
+        """
+        Legacy accessor for obsolete attribute
+        """
         for n, p in self.parameters.items():
             if p.kind == p.VAR_KEYWORD:
                 return n
@@ -203,7 +268,7 @@ class ParameterInfo(inspect.Signature):
 
         def _raise(exct, msg, *argz, **kwargz):
             if not ignore_errors:
-                raise exct(msg.format(*argz, **kwargz)) from None
+                raise exct(msg.format(*argz, **kwargz)) # from None
 
         # code mostly taken from stdlib's inspect.Signature._bind
         arguments = {}
@@ -257,7 +322,7 @@ class ParameterInfo(inspect.Signature):
                                 argtype = ''
                             msg = 'missing a required{argtype} argument: {arg!r}'
                             msg = msg.format(arg=param.name, argtype=argtype)
-                            raise TypeError(msg) from None
+                            raise TypeError(msg) # from None
             else:
                 # We have a positional argument to process
                 try:
@@ -315,7 +380,7 @@ class ParameterInfo(inspect.Signature):
                 if (not (partial or ignore_errors) and param.kind != param.VAR_POSITIONAL and
                                                     param.default is param.empty):
                     raise TypeError('missing a required argument: {arg!r}'. \
-                                    format(arg=param_name)) from None
+                                    format(arg=param_name)) # from None
 
             else:
                 if param.kind == param.POSITIONAL_ONLY:
@@ -340,31 +405,50 @@ class ParameterInfo(inspect.Signature):
 
         return self.apply_defaults(arguments)
 
+    def __eq__(self, other):
+        return (self is other) or (isinstance(other, ParameterInfo) and (self.parameters == other.parameters))
 
-    # vaguely inspired by renpy.object.Object
-    __version__ = 1
+    def __str__(self):
+        result = []
+        render_pos_only_separator = False
+        render_kw_only_separator = True
+        for param in self.parameters.values():
+            formatted = str(param)
 
-    def __reduce__(self):
-        # d should be empty, left in case Signature changes its __reduce__ in the future
-        a, b, c, *d = super().__reduce__()
-        c["__version__"] = self.__version__
-        return a, b, c, *d
+            kind = param.kind
 
-    def __setstate__(self, state):
-        version = state.pop("__version__", 0)
+            if kind == Parameter.POSITIONAL_ONLY:
+                render_pos_only_separator = True
+            elif render_pos_only_separator:
+                # It's not a positional-only parameter, and the flag
+                # is set to 'True' (there were pos-only params before.)
+                result.append('/')
+                render_pos_only_separator = False
 
-        if version < 1:
-            parameters = []
-            for n, ds in state["parameters"]:
-                if ds is None:
-                    ds = inspect.Parameter.empty
-                parameters.append((n, ds))
-            state["parameters"] = parameters
+            if kind == Parameter.VAR_POSITIONAL:
+                # OK, we have an '*args'-like parameter, so we won't need
+                # a '*' to separate keyword-only arguments
+                render_kw_only_separator = False
+            elif kind == Parameter.KEYWORD_ONLY and render_kw_only_separator:
+                # We have a keyword-only parameter to render and we haven't
+                # rendered an '*args'-like parameter before, so add a '*'
+                # separator to the parameters list ("foo(arg1, *, arg2)" case)
+                result.append('*')
+                # This condition should be only triggered once, so
+                # reset the flag
+                render_kw_only_separator = False
 
-            self._parameters = self.from_legacy_state(state)._parameters
-            state = {"_return_annotation": self.empty}
+            result.append(formatted)
 
-        super().__setstate__(state)
+        if render_pos_only_separator:
+            # There were only positional-only parameters, hence the
+            # flag was not reset to 'False'
+            result.append('/')
+
+        return "({})".format(", ".join(result))
+
+    def __repr__(self):
+        return "<Signature {}>".format(self)
 
 def apply_arguments(parameters, args, kwargs, ignore_errors=False):
 

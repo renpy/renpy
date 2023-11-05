@@ -26,11 +26,11 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import collections
-from inspect import Parameter
 import time
 
 import renpy
 import renpy.ast as ast
+Parameter = ast.Parameter
 
 from renpy.lexer import (
     list_logical_lines,
