@@ -708,26 +708,25 @@ def check_parameters(kind, node_name, parameter_info):
     if parameter_info is None:
         return
 
-    names = [p[0] for p in parameter_info.parameters]
-    if parameter_info.extrakw:
-        names.extend(parameter_info.extrakw)
-    if parameter_info.extrapos:
-        names.extend(parameter_info.extrapos)
+    names = set(parameter_info.parameters)
 
-    rv = [name for name in names if (name in python_builtins) or (name in renpy_builtins)]
+    for cat, builtins in (("Python", python_builtins), ("Ren'Py", renpy_builtins)):
+        rv = names & builtins
 
-    if len(rv) == 1:
-        name = rv[0]
-        report("In {0} {1!r}, the {2!r} parameter replaces a built-in name from either Python or Ren'Py, which may cause problems.".format(kind, node_name, name))
-        if not "_" in name:
-            add("This can be fixed by naming it '{}_'".format(name))
-    elif rv:
-        last = rv.pop()
-        prettyprevious = ", ".join(repr(name) for name in rv)
-        report("In {0} {1!r}, the {2} and {3!r} parameters replace built-in names from either Python or Ren'Py, which may cause problems.".format(kind,
-                                                                                                                                                  node_name,
-                                                                                                                                                  prettyprevious,
-                                                                                                                                                  last))
+        if len(rv) == 1:
+            name = rv.pop()
+            report("In {0} {1!r}, the {2!r} parameter replaces a {3} built-in name, which may cause problems.".format(kind, node_name, name, cat))
+            if not "_" in name:
+                add("This can be fixed by naming it '{}_'".format(name))
+        elif rv:
+            last = rv.pop()
+            prettyprevious = ", ".join(repr(name) for name in rv)
+            report("In {0} {1!r}, the {2} and {3!r} parameters replace {4} built-in names, which may cause problems.".format(
+                kind,
+                node_name,
+                prettyprevious,
+                last,
+                cat))
 
 
 def check_label(node):
@@ -748,9 +747,6 @@ def check_label(node):
 
         for i in pi.parameters:
             add_arg(i)
-
-        add_arg(pi.extrapos)
-        add_arg(pi.extrakw)
 
 
 def check_screen(node):
