@@ -362,7 +362,7 @@ def parse_parameters(l):
 
     def name_parsed(name):
         if name in parameters:
-            l.error("duplicate argument {}".format(name))
+            l.error("duplicate parameter name {!r}".format(name))
 
     while not l.match(r'\)'):
 
@@ -373,14 +373,14 @@ def parse_parameters(l):
             parameters[extrakw] = Parameter(extrakw, Parameter.VAR_KEYWORD)
 
             if l.match(r'='):
-                l.error("var-keyword argument cannot have a default value")
+                l.error("a var-keyword parameter (**{}) cannot have a default value".format(extrakw))
 
             # Allow trailing comma
             l.match(r',')
 
             # extrakw is always last parameter
             if not l.match(r'\)'):
-                l.error("arguments cannot follow var-keyword argument")
+                l.error("no parameter can follow a var-keyword parameter (**{})".format(extrakw))
 
             break
 
@@ -403,7 +403,7 @@ def parse_parameters(l):
                 parameters[extrapos] = Parameter(extrapos, Parameter.VAR_POSITIONAL)
 
                 if l.match(r'='):
-                    l.error("var-positional argument cannot have a default value")
+                    l.error("a var-positional parameter (*{}) cannot have a default value".format(extrapos))
 
             else:
                 missing_kwonly = True
@@ -420,7 +420,7 @@ def parse_parameters(l):
                 l.error("/ may appear only once")
 
             elif not parameters:
-                l.error("at least one argument must precede /")
+                l.error("at least one parameter must precede /")
 
             # All previous parameters are actually positional-only
             parameters = collections.OrderedDict((k, p.replace(kind=p.POSITIONAL_ONLY)) for k, p in parameters.items())
@@ -441,10 +441,10 @@ def parse_parameters(l):
                 now_default = True
 
                 if not default:
-                    l.error("empty parameter default")
+                    l.error("empty default value for parameter {!r}".format(name))
 
             elif now_default:
-                l.error("non-default argument follows default argument")
+                l.error("non-default parameter {!r} follows a default parameter".format(name))
 
             name_parsed(name)
             parameters[name] = Parameter(name, kind=kind, default=default)
@@ -455,7 +455,7 @@ def parse_parameters(l):
         l.require(r',')
 
     if missing_kwonly:
-        l.error("named arguments must follow bare *")
+        l.error("a bare * must be followed by a parameter")
 
     return renpy.ast.ParameterInfo(parameters.values())
 
