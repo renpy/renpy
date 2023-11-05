@@ -100,7 +100,7 @@ if PY2:
 else:
     _sig_mapping_type = dict
 
-class ParameterInfo(object):
+class Signature(object):
     """
     This class is used to store information about parameters (to a label, screen, ATL...)
     It has the same interface as inspect.Signature for the most part.
@@ -449,6 +449,8 @@ class ParameterInfo(object):
 
     def __repr__(self):
         return "<Signature {}>".format(self)
+
+ParameterInfo = Signature
 
 def apply_arguments(parameters, args, kwargs, ignore_errors=False):
 
