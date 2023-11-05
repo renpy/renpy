@@ -421,8 +421,12 @@ The following variables provide further control of the build process:
 
 .. var:: build.update_formats = [ "rpu" ]
 
-
     This is a list of formats that the updater will build. The default,
     "rpu" is supported from Ren'Py 7.7 and 8.2 on. If you need to support
     updating using the earlier zsync-based updates, add "zsync' to the
     list.
+
+.. var:: build.game_only_update = False
+
+    If true, :var:`build.include_update` is enabled, and
+    the "Game-Only Update for Mobile" package becomes available.

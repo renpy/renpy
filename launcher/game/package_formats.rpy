@@ -393,6 +393,22 @@ init python in distribute:
             RPUPackage.generator = None
 
 
+    class NullPackage(object):
+        """
+        A package format that doesn't create an output file,
+        only updates.
+        """
+
+        def add_file(self, name, path, xbit):
+            return
+
+        def add_directory(self, name, _path):
+            return
+
+        def close(self, progress=None):
+            return
+
+
     parallel_threads = [ ]
 
     class ParallelPackage(object):
