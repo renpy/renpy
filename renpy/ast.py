@@ -199,6 +199,8 @@ class ParameterInfo(inspect.Signature):
         - applies the defaults automatically (and lazily, as per the above)
         """
 
+        kwargs = dict(kwargs)
+
         def _raise(exct, msg, *argz, **kwargz):
             if not ignore_errors:
                 raise exct(msg.format(*argz, **kwargz)) from None
@@ -372,13 +374,7 @@ def apply_arguments(parameters, args, kwargs, ignore_errors=False):
         else:
             return { }
 
-    # because Label.execute likes to pass None as args or kwargs...
-    if args is None:
-        args = ()
-    if kwargs is None:
-        kwargs = {}
-
-    return parameters.apply(args, kwargs, ignore_errors)
+    return parameters.apply(args or (), kwargs or {}, ignore_errors)
 
 
 class ArgumentInfo(renpy.object.Object):
