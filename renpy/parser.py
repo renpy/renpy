@@ -392,7 +392,7 @@ def parse_parameters(l):
             now_kwonly = True
             kind = Parameter.KEYWORD_ONLY
 
-            # we can have defaulted pos-or-kw and then a required kw-only
+            # we can have a defaulted pos-or-kw and then a required kw-only
             now_default = False
 
             extrapos = l.name()
@@ -443,7 +443,7 @@ def parse_parameters(l):
                 if not default:
                     l.error("empty default value for parameter {!r}".format(name))
 
-            elif now_default:
+            elif now_default and not now_kwonly:
                 l.error("non-default parameter {!r} follows a default parameter".format(name))
 
             name_parsed(name)

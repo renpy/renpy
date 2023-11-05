@@ -488,8 +488,8 @@ class ArgumentInfo(renpy.object.Object):
 
     def __init__(self, arguments, starred_indexes=None, doublestarred_indexes=None):
 
-        # A list of (keyword, expression) pairs. If an argument doesn't
-        # have a keyword, it's thought of as positional.
+        # A list of (keyword, expression) pairs.
+        # If the keyword is None, the argument is thought of as positional.
         self.arguments = arguments
 
         # Indexes of arguments to be considered as * unpacking
