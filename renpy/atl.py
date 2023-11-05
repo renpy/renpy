@@ -299,10 +299,10 @@ class ATLTransformBase(renpy.object.Object):
 
             # Apply the default parameters.
             context = context.copy()
-            
+
             for k, p in parameters.parameters.items():
                 v = p.default
-                if v not in (None, p.empty):
+                if v is not None:
                     context[k] = renpy.python.py_eval(v, locals=context)
 
         # The parameters that we take.

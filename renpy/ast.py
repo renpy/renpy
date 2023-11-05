@@ -79,7 +79,7 @@ class Parameter(object):
         kind = self.kind
         formatted = self.name
 
-        if self.default is not self.empty:
+        if self.default is not None:
             formatted += "=" + self.default # type: ignore
 
         if kind == self.VAR_POSITIONAL:
@@ -240,7 +240,7 @@ class Signature(object):
         # resulting in 5x shorter execution time
         for name, param in self.parameters.items():
             if name not in mapp:
-                if param.default not in (None, param.empty):
+                if param.default is not None:
                     val = renpy.python.py_eval(param.default)
                 elif param.kind == param.VAR_POSITIONAL:
                     val = ()
