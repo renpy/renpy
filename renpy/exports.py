@@ -4713,7 +4713,7 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
 
     `method`
         The method to use. Generally one of "GET", "POST", or "PUT", but other
-        HTTP methdos are possible. If `data` or `json` are not None, defaults to
+        HTTP methods are possible. If `data` or `json` are not None, defaults to
         "POST", otherwise defaults to GET.
 
     `data`
