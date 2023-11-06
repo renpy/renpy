@@ -166,17 +166,6 @@ class Signature(object):
 
         return pars
 
-    @classmethod
-    def params_from_legacy_state(cls, param_info):
-        """
-        Creates a Parameter list from the vars() of a legacy (V0) ParameterInfo object.
-        """
-        positional_only = param_info["positional_only"]
-        last_posonly = positional_only[-1][0] if positional_only else None
-        keyword_only = param_info["keyword_only"]
-        first_kwonly = keyword_only[0][0] if keyword_only else None
-        return cls.legacy_params(param_info["parameters"], param_info["positional"], param_info["extrapos"], param_info["extrakw"], last_posonly, first_kwonly)
-
     if False:
         def __getstate__(self):
             # default behavior for slots and no __dict__ : None for the __dict__, and a dict for the slots
@@ -187,7 +176,11 @@ class Signature(object):
     def __setstate__(self, state):
         if isinstance(state, dict):
             # legacy state
-            self.__init__(self.params_from_legacy_state(state))
+            positional_only = state["positional_only"]
+            last_posonly = positional_only[-1][0] if positional_only else None
+            keyword_only = state["keyword_only"]
+            first_kwonly = keyword_only[0][0] if keyword_only else None
+            self.__init__(self.legacy_params(state["parameters"], state["positional"], state["extrapos"], state["extrakw"], last_posonly, first_kwonly))
         else:
             # default behavior on py3, could be a super() call but this is faster and py2-compatible
             self.parameters = state[1]["parameters"]
