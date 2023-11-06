@@ -253,7 +253,7 @@ init -1500 python in updater:
         # The update was cancelled.
         CANCELLED = "CANCELLED"
 
-        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True, prefer_rpu=True, size_only=False, allow_empty=False):
+        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True, prefer_rpu=True, size_only=False, allow_empty=False, done_pause=True):
             """
             Takes the same arguments as update().
             """
@@ -317,6 +317,9 @@ init -1500 python in updater:
 
             # Should the update be allowed even if current.json is empty?
             self.allow_empty = allow_empty
+
+            # Should the user be asked to proceed when done.
+            self.done_pause = done_pause
 
             # Public attributes set by the RPU updater
             self.new_disk_size = None
@@ -548,8 +551,8 @@ init -1500 python in updater:
 
             from renpy.update.common import FileList
 
-
-            return FileList.from_json(json.loads(data))
+            rv = FileList.from_json(json.loads(data))
+            return rv
 
         def rpu_copy_fields(self):
             """
@@ -642,16 +645,7 @@ init -1500 python in updater:
                 d["pretty_version"] = self.updates[i]["pretty_version"]
                 self.new_state[i] = d
 
-            # 7. Finish up.
-
-            self.message = None
-            self.progress = None
-            self.can_proceed = True
-            self.can_cancel = False
-
-            persistent._update_version[self.url] = None
-
-            # 8. Write the version.json file.
+            # 7. Write the version.json file.
             version_state = { }
 
             for i in self.modules:
@@ -664,10 +658,19 @@ init -1500 python in updater:
                 with open(os.path.join(self.updatedir, "version.json"), "w") as f:
                     json.dump(version_state, f)
 
+            # 8. Finish up.
+
+            persistent._update_version[self.url] = None
+
             if self.restart:
                 self.state = self.DONE
             else:
                 self.state = self.DONE_NO_RESTART
+
+            self.message = None
+            self.progress = None
+            self.can_proceed = self.done_pause
+            self.can_cancel = False
 
             renpy.restart_interaction()
 
@@ -714,17 +717,17 @@ init -1500 python in updater:
             self.save_state()
             self.clean_new()
 
-            self.message = None
-            self.progress = None
-            self.can_proceed = True
-            self.can_cancel = False
-
             persistent._update_version[self.url] = None
 
             if self.restart:
                 self.state = self.DONE
             else:
                 self.state = self.DONE_NO_RESTART
+
+            self.message = None
+            self.progress = None
+            self.can_proceed = self.done_pause
+            self.can_cancel = False
 
             renpy.restart_interaction()
 
@@ -811,11 +814,6 @@ init -1500 python in updater:
 
             time.sleep(1.5)
 
-            self.message = None
-            self.progress = None
-            self.can_proceed = True
-            self.can_cancel = False
-
             persistent._update_version[self.url] = None
 
             if self.restart:
@@ -823,16 +821,32 @@ init -1500 python in updater:
             else:
                 self.state = self.DONE_NO_RESTART
 
+            self.message = None
+            self.progress = None
+            self.can_proceed = self.done_pause
+            self.can_cancel = False
+
             renpy.restart_interaction()
 
             return
 
-        def proceed(self):
+        def periodic(self):
+            """
+            Called periodically by the screen.
+            """
+
+            renpy.restart_interaction()
+
+            if self.state == self.DONE or self.state == self.DONE_NO_RESTART:
+                if not self.done_pause:
+                    return self.proceed(force=True)
+
+        def proceed(self, force=False):
             """
             Causes the upgraded to proceed with the next step in the process.
             """
 
-            if not self.can_proceed:
+            if not self.can_proceed and not force:
                 return
 
             if self.state == self.UPDATE_NOT_AVAILABLE:
@@ -845,7 +859,10 @@ init -1500 python in updater:
                 renpy.full_restart()
 
             elif self.state == self.DONE:
-                renpy.quit(relaunch=True)
+                if self.restart == "utter":
+                    renpy.utter_restart()
+                else:
+                    renpy.quit(relaunch=True)
 
             elif self.state == self.DONE_NO_RESTART:
                 return True
@@ -1726,7 +1743,7 @@ init -1500 python in updater:
         return not not get_installed_packages(base)
 
 
-    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True, prefer_rpu=True, allow_empty=False):
+    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True, prefer_rpu=True, allow_empty=False, done_pause=True, screen="updater"):
         """
         :doc: updater
 
@@ -1761,7 +1778,9 @@ init -1500 python in updater:
             for dlc.
 
         `restart`
-            Restart the game after the update.
+            If true, the game will be re-run when the update completes. If
+            "utter", :func:`renpy.utter_restart` will be called instead. If False,
+            the update will simply end.c
 
         `confirm`
             Should Ren'Py prompt the user to confirm the update? If False, the
@@ -1783,14 +1802,21 @@ init -1500 python in updater:
             If True, Ren'Py will allow the update to proceed even if the
             base directory does not contain update information. (`add` must
             be provided in this case.)
+
+        `done_pause`
+            If true, the game will pause after the update is complete. If false,
+            it will immediately proceed (either to a restart, or a return).
+
+        `screen`
+            The name of the screen to use.
         """
 
         global installed_packages_cache
         installed_packages_cache = None
 
-        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm, patch=patch, prefer_rpu=prefer_rpu, allow_empty=allow_empty)
-        ui.timer(.1, repeat=True, action=renpy.restart_interaction)
-        renpy.call_screen("updater", u=u)
+        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm, patch=patch, prefer_rpu=prefer_rpu, allow_empty=allow_empty, done_pause=done_pause)
+        ui.timer(.1, repeat=True, action=u.periodic)
+        renpy.call_screen(screen, u=u)
 
 
     @renpy.pure
