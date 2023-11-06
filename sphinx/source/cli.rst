@@ -194,6 +194,23 @@ Update Old Game
 This command will copy .rpyc files from <base>/game to <base>/old-game.
 
 
+Web Build
+-------------
+
+::
+
+    ./renpy.sh launcher web_build <base> [ options... ]
+
+
+This builds a release of the game for web. It's assumed that the
+launcher has been used to install web support and that any configuration
+files (such as ``progressive_download.txt``) are in place.
+
+.. option:: --destination <directory>
+
+    The directory to place the web root in.
+
+
 Launcher Commands
 =================
 
