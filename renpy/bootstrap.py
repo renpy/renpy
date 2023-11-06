@@ -260,19 +260,10 @@ def bootstrap(renpy_base):
         sys.stderr.write("Base directory %r does not exist. Giving up.\n" % (basedir,))
         sys.exit(1)
 
-    # Potentially use an alternate base directory.
-    try:
-        basedir = get_alternate_base(basedir)
-    except Exception:
-        import traceback
-        traceback.print_exc()
-
     # Make game/ on Android.
     if renpy.android:
         if not os.path.exists(basedir + "/game"):
             os.mkdir(basedir + "/game", 0o777)
-
-    gamedir = renpy.__main__.path_to_gamedir(basedir, name)
 
     sys.path.insert(0, basedir)
 
@@ -305,6 +296,8 @@ You may be using a system install of python. Please run {0}.sh,
 
         raise
 
+    gamedir = renpy.__main__.path_to_gamedir(basedir, name)
+
     # If we're not given a command, show the presplash.
     if args.command == "run" and not renpy.mobile:
         import renpy.display.presplash # @Reimport
@@ -330,12 +323,28 @@ You may be using a system install of python. Please run {0}.sh,
     renpy.loader.init_importer()
 
     exit_status = None
+    original_basedir = basedir
+    original_sys_path = list(sys.path)
 
     try:
         while exit_status is None:
             exit_status = 1
 
             try:
+
+                # Potentially use an alternate base directory.
+                try:
+                    basedir = get_alternate_base(original_basedir)
+                except Exception:
+                    import traceback
+                    traceback.print_exc()
+
+                gamedir = renpy.__main__.path_to_gamedir(basedir, name)
+
+                sys.path = list(original_sys_path)
+                if basedir not in sys.path:
+                    sys.path.insert(0, basedir)
+
                 renpy.game.args = args
                 renpy.config.renpy_base = renpy_base
                 renpy.config.basedir = basedir
