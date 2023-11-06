@@ -33,6 +33,7 @@ from typing import Optional, Any
 
 import renpy
 
+import collections
 import hashlib
 from itertools import chain as _chain
 import re
@@ -95,11 +96,6 @@ class Parameter(object):
     def __eq__(self, other):
         return (self is other) or (isinstance(other, Parameter) and (self.name == other.name) and (self.kind == other.kind) and (self.default == other.default))
 
-if PY2:
-    from collections import OrderedDict as _sig_mapping_type
-else:
-    _sig_mapping_type = dict
-
 class Signature(object):
     """
     This class is used to store information about parameters (to a label, screen, ATL...)
@@ -110,9 +106,10 @@ class Signature(object):
 
     def __init__(self, parameters=None):
         if parameters is None:
-            self.parameters = _sig_mapping_type()
+            self.parameters = {}
         else:
-            self.parameters = _sig_mapping_type((param.name, param) for param in parameters)
+            # when in PY3-only, turn this into MappingProxyType o dict
+            self.parameters = collections.OrderedDict((param.name, param) for param in parameters)
 
     @classmethod
     def legacy(cls, *args, **kwargs):
