@@ -4389,6 +4389,17 @@ def add_to_all_stores(name, value):
             ns[name] = value
 
 
+def is_in_test():
+    """
+    :doc: other
+
+    Returns True if Ren'py is currently executing a testcase.
+    This always returns False at init time.
+    """
+
+    return (renpy.test.testexecution.node is not None)
+
+
 def get_zorder_list(layer):
     """
     :doc: image_func
@@ -4521,6 +4532,19 @@ def set_focus(screen, id, layer="screens"): # @ReservedAssignment
     renpy.display.focus.override = (screen, id, layer)
     renpy.display.interface.last_event = None
     restart_interaction()
+
+
+def has_default_focus():
+    """
+    :doc: other
+
+    Returns true if the game can be advanced by clicking or pressing the
+    spacebar.
+
+    For example, it is True in a dialogue or a pause, and False in places
+    like the Game Menu.
+    """
+    return any(f.x is None for f in renpy.display.focus.focus_list)
 
 
 def check_permission(permission):

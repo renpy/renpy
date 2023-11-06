@@ -1346,6 +1346,14 @@ Rarely or Internally Used
     controller GUID (which cand be found in log.txt), and if matched,
     prevent the controller from being initialized.
 
+.. var:: config.end_testcase_callbacks = [ ... ]
+
+    A list of functions that are called (without any arguments) when
+    execution of testcases end - in a good way or not. This is intended
+    to free resources as well as cleaning up anything that may have been
+    modified for the purpose of the test, such as persistent or save
+    data.
+
 .. var:: config.exception_handler = None
 
     If not None, this should be a function that takes three arguments:

@@ -84,6 +84,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    launcher
    developer_tools
    director
+   testcases
 
 
 .. toctree::

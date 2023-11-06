@@ -35,13 +35,19 @@ def find_focus(pattern):
     If `pattern` is None, returns a random coordinate that will trigger the
     default focus.
 
-    If `pattern` could not be found, returns None, None.
+    If `pattern` could not be found, returns None.
     """
+
+    if pattern is not None:
+        pattern = pattern.casefold()
 
     def match(f):
 
         if pattern is None:
             if f.x is None:
+                # one focus, at most, ever branches here
+                # the main "click to continue" one
+                # it's the only one, if any, to be retained in the matching list
                 return "default"
             else:
                 return None
@@ -51,38 +57,34 @@ def find_focus(pattern):
         else:
             t = f.widget._tts_all()
 
-        if pattern.lower() in t.lower():
+        if pattern in t.casefold():
             return t
         else:
             return None
 
-    # A list of alt_text, focus pairs.
-    matching = [ ]
+    # {focus : (len(alt), alt)}
+    matching = {}
 
     for f in renpy.display.focus.focus_list:
 
         alt = match(f)
 
         if alt is not None:
-            matching.append((alt, f))
-
-    if not matching:
-        return None
+            matching[f] = (len(alt), alt)
 
     # This gets the matching displayable with the shortest alt text, which
     # is likely what we want.
-    matching.sort(key=lambda a : (len(a[0]), a[0]))
-    return matching[0][1]
+    return min(matching, key=matching.get, default=None) # type: ignore
 
 
 def relative_position(x, posx, width):
     if posx is not None:
-        if isinstance(posx, float):
-            x = int(posx * (width - 1))
+        if type(posx) is float:
+            x = posx * (width - 1)
         else:
             x = posx
 
-    return int(x)
+    return x
 
 
 def find_position(f, position):
@@ -105,8 +107,8 @@ def find_position(f, position):
 
     if f is None:
         return (
-            relative_position(x, posx, renpy.config.screen_width),
-            relative_position(y, posy, renpy.config.screen_height),
+            int(relative_position(x, posx, renpy.config.screen_width)),
+            int(relative_position(y, posy, renpy.config.screen_height)),
             )
 
     orig_f = f
@@ -119,13 +121,10 @@ def find_position(f, position):
         f.w = renpy.config.screen_width
         f.h = renpy.config.screen_height
 
-    x = relative_position(x, posx, f.w) + f.x
-    y = relative_position(y, posy, f.h) + f.y
+    x = int(relative_position(x-f.x, posx, f.w) + f.x)
+    y = int(relative_position(y-f.y, posy, f.h) + f.y)
 
-    for _i in range(100):
-
-        x = int(x)
-        y = int(y)
+    for _i in range(renpy.test.testast._test.focus_trials):
 
         nf = renpy.display.render.focus_at_point(x, y)
 
@@ -139,7 +138,4 @@ def find_position(f, position):
         x = random.randrange(f.x, f.x + f.w)
         y = random.randrange(f.y, f.y + f.h)
 
-    else:
-        print()
-
-        raise Exception("Could not locate the displayable.")
+    raise Exception("Could not locate the displayable.")

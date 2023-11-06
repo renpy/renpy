@@ -42,6 +42,9 @@ class TestSettings(renpy.object.Object):
         # How long should we wait for a transition before we proceed?
         self.transition_timeout = 5.0
 
+        # How many times should we try to find a good spot to place the mouse?
+        self.focus_trials = 100
+
 _test = TestSettings()
 
 
@@ -49,7 +52,7 @@ class Node(object):
     """
     An AST node for a test script.
     """
-
+    __slots__ = ("filename", "linenumber")
     def __init__(self, loc):
         self.filename, self.linenumber = loc
 
@@ -60,6 +63,7 @@ class Node(object):
         This is expected to return a state, or None to advance to the next
         node.
         """
+        return True
 
     def execute(self, state, t):
         """
@@ -71,14 +75,12 @@ class Node(object):
         `t`
             The time since start was called.
         """
-
         return state
 
     def ready(self):
         """
         Returns True if this node is ready to execute, or False otherwise.
         """
-
         return True
 
     def report(self):
@@ -86,21 +88,26 @@ class Node(object):
         Reports the location of this statement. This should only be called
         in the execute method of leaf nodes of the test tree.
         """
-
         renpy.test.testexecution.node_loc = (self.filename, self.linenumber)
 
 
-class Pattern(Node):
+class Clause(Node):
+    __slots__ = ()
 
-    position = None
-    always = False
+    def __repr__(self):
+        return "<{} test clause>".format(type(self).__name__.lower())
+
+
+class PatternException(ValueError):pass
+
+class Pattern(Clause):
+    __slots__ = ("pattern", "position", "always")
 
     def __init__(self, loc, pattern=None):
-        Node.__init__(self, loc)
+        super(Pattern, self).__init__(loc)
         self.pattern = pattern
-
-    def start(self):
-        return True
+        self.position = None
+        self.always = False
 
     def execute(self, state, t):
 
@@ -121,11 +128,10 @@ class Pattern(Node):
         else:
             x, y = renpy.test.testfocus.find_position(f, position)
 
-        if x is None:
+        if None in (x, y):
             if self.pattern:
-                return state
-            else:
-                x, y = renpy.exports.get_mouse_pos()
+                raise PatternException("The given {!r} pattern was not resolved to a target".format(self.pattern))
+            x, y = renpy.exports.get_mouse_pos()
 
         return self.perform(x, y, state, t)
 
@@ -136,16 +142,12 @@ class Pattern(Node):
 
         f = renpy.test.testfocus.find_focus(self.pattern)
 
-        if f is not None:
-            return True
-        else:
-            return False
+        return (f is not None)
 
     def perform(self, x, y, state, t):
         return None
 
 class Click(Pattern):
-
     # The number of the button to click.
     button = 1
 
@@ -155,20 +157,17 @@ class Click(Pattern):
 
 
 class Move(Pattern):
-
+    __slots__ = ()
     def perform(self, x, y, state, t):
         move_mouse(x, y)
         return None
 
 
-class Scroll(Node):
-
+class Scroll(Clause):
+    __slots__ = "pattern"
     def __init__(self, loc, pattern=None):
-        Node.__init__(self, loc)
+        super(Scroll, self).__init__(loc)
         self.pattern = pattern
-
-    def start(self):
-        return True
 
     def execute(self, state, t):
 
@@ -206,18 +205,15 @@ class Scroll(Node):
             return False
 
 
-class Drag(Node):
-
+class Drag(Clause):
+    __slots__ = ("points", "pattern", "button", "steps")
     def __init__(self, loc, points):
-        Node.__init__(self, loc)
+        super(Drag, self).__init__(loc)
         self.points = points
 
         self.pattern = None
         self.button = 1
         self.steps = 10
-
-    def start(self):
-        return True
 
     def execute(self, state, t):
 
@@ -241,7 +237,7 @@ class Drag(Node):
             points = [ renpy.test.testfocus.find_position(f, i) for i in points ]
 
             if len(points) < 2:
-                raise Exception("A drag requires at least two points.")
+                raise ValueError("A drag requires at least two points.")
 
             interpoints = [ ]
 
@@ -294,8 +290,8 @@ class Drag(Node):
 
 
 class Type(Pattern):
-
-    interval = .01
+    __slots__ = "keys"
+    # interval = .01 # unused
 
     def __init__(self, loc, keys):
         Pattern.__init__(self, loc)
@@ -318,10 +314,13 @@ class Type(Pattern):
         return state + 1
 
 
-class Action(Node):
-
+class Action(Clause):
+    """
+    This is for the `run` keyword
+    """
+    __slots__ = "expr"
     def __init__(self, loc, expr):
-        Node.__init__(self, loc)
+        super(Action, self).__init__(loc)
         self.expr = expr
 
     def start(self):
@@ -345,10 +344,10 @@ class Action(Node):
         return renpy.display.behavior.is_sensitive(action)
 
 
-class Pause(Node):
-
+class Pause(Clause):
+    __slots__ = "expr"
     def __init__(self, loc, expr):
-        Node.__init__(self, loc)
+        super(Pause, self).__init__(loc)
         self.expr = expr
 
     def start(self):
@@ -364,23 +363,138 @@ class Pause(Node):
             return None
 
 
-class Label(Node):
-
+class Label(Clause):
+    __slots__ = "name"
     def __init__(self, loc, name):
-        Node.__init__(self, loc)
+        super(Label, self).__init__(loc)
         self.name = name
 
-    def start(self):
-        return True
-
     def execute(self, state, t):
-        if self.name in renpy.test.testexecution.labels:
-            return None
-        else:
-            return state
+        return None
 
     def ready(self):
         return self.name in renpy.test.testexecution.labels
+
+
+class Eval(Clause):
+    __slots__ = ("expr", "evaluated")
+    def __init__(self, loc, expr):
+        super(Eval, self).__init__(loc)
+        self.expr = expr
+        self.evaluated = False
+
+    def execute(self, state, t):
+        if not self.evaluated: # check if this is necessary
+            self.ready()
+        return None
+
+    def ready(self):
+        rv = bool(renpy.python.py_eval(self.expr))
+        self.evaluated = True
+        return rv
+
+class Pass(Clause):
+    __slots__ = ()
+    def execute(self, state, t):
+        return None
+
+
+################################################################################
+# Boolean proxy clauses
+
+class Not(Clause):
+    __slots__ = "clause"
+    def __init__(self, loc, clause):
+        super(Not, self).__init__(loc)
+        self.clause = clause
+
+    def start(self):
+        return self.clause.start()
+
+    def execute(self, state, t):
+        # return self.clause.execute(state, t)
+        return None
+
+    def ready(self):
+        return not self.clause.ready()
+
+class Binary(Clause):
+    __slots__ = ("left", "right",
+                 "left_ready", "right_ready",
+                 "left_state", "right_state")
+
+    def __init__(self, loc, left, right):
+        super(Binary, self).__init__(loc)
+        self.left = left
+        self.right = right
+        self.left_ready = self.right_ready = None
+
+    def start(self):
+        self.left_state = self.left.start()
+        self.right_state = self.right.start()
+        return self.state()
+
+class And(Binary):
+    __slots__ = ()
+
+    def state(self):
+        if (self.left_state is None) and (self.right_state is None):
+            return None
+        return True
+
+    def execute(self, state, t):
+        """
+        Executes both if both are ready, otherwise the left one.
+        """
+        self.ready()
+
+        if self.left_state is not None:
+            self.left_state = self.left.execute(self.left_state, t)
+
+        if self.left_ready and self.right_ready and (self.right_state is not None):
+            self.right_state = self.right.execute(self.right_state, t)
+
+        return self.state()
+
+    def ready(self):
+        """
+        Memorizes the computed values.
+        Effectively returns self.left.ready() and self.right.ready().
+        """
+        self.left_ready = self.left.ready()
+        self.right_ready = self.right.ready()
+        return self.left_ready and self.right_ready
+
+class Or(Binary):
+    __slots__ = ()
+
+    def state(self):
+        if (self.left_state is None) or (self.right_state is None):
+            return None
+        return True
+
+    def execute(self, state, t):
+        """
+        Executes the ready one(s), if any, otherwise the right one.
+        """
+        self.ready()
+
+        if self.left_ready and (self.left_state is not None):
+            self.left_state = self.left.execute(self.left_state, t)
+
+        if (self.right_ready or not self.left_ready) and (self.right_state is not None):
+            self.right_state = self.right.execute(self.right_state, t)
+
+        return self.state()
+
+    def ready(self):
+        """
+        Memorizes the computed values.
+        Effectively returns self.left.ready() or self.right.ready().
+        """
+        self.left_ready = self.left.ready()
+        self.right_ready = self.right.ready()
+        return self.left_ready or self.right_ready
 
 
 ################################################################################
@@ -388,10 +502,10 @@ class Label(Node):
 
 class Until(Node):
     """
-    Executes `left` repeatedly until `right` is ready, then executes `right`
-    once before quitting.
+    Executes `left` repeatedly until `right` is ready (and unless it already is),
+    then executes `right` once before quitting.
     """
-
+    __slots__ = ("left", "right")
     def __init__(self, loc, left, right):
         Node.__init__(self, loc)
         self.left = left
@@ -403,7 +517,7 @@ class Until(Node):
     def execute(self, state, t):
         child, child_state, start = state
 
-        if self.right.ready() and not (child is self.right):
+        if self.right.ready() and (child is not self.right):
             child = self.right
             child_state = None
 
@@ -431,7 +545,7 @@ class If(Node):
     If `condition` is ready, runs the block. Otherwise, goes to the next
     statement.
     """
-
+    __slots__ = ("condition", "block")
     def __init__(self, loc, condition, block):
         Node.__init__(self, loc)
 
@@ -459,10 +573,11 @@ class If(Node):
 
 
 class Python(Node):
-
-    def __init__(self, loc, code):
+    __slots__ = ("code", "hide")
+    def __init__(self, loc, code, hide=False):
         Node.__init__(self, loc)
         self.code = code
+        self.hide = hide
 
     def start(self):
         renpy.test.testexecution.action = self
@@ -478,35 +593,31 @@ class Python(Node):
             return None
 
     def __call__(self):
-        renpy.python.py_exec_bytecode(self.code.bytecode)
+        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
 
+
+class AssertError(AssertionError):pass
 
 class Assert(Node):
-
-    def __init__(self, loc, expr):
+    __slots__ = "clause"
+    def __init__(self, loc, clause):
         Node.__init__(self, loc)
-        self.expr = expr
-
-    def start(self):
-        renpy.test.testexecution.action = self
-        return True
+        self.clause = clause
 
     def execute(self, state, t):
 
         self.report()
 
-        if renpy.test.testexecution.action:
-            return True
-        else:
-            return None
+        if not self.clause.ready():
+            raise AssertError("On line {}:{}, assertion of {} failed.".format(self.filename,
+                                                                              self.linenumber,
+                                                                              self.clause))
 
-    def __call__(self):
-        if not renpy.python.py_eval(self.expr):
-            raise Exception("On line {}:{}, assertion {} failed.".format(self.filename, self.linenumber, self.expr))
+        return None
 
 
 class Jump(Node):
-
+    __slots__ = "target"
     def __init__(self, loc, target):
         Node.__init__(self, loc)
 
@@ -518,7 +629,7 @@ class Jump(Node):
 
 
 class Call(Node):
-
+    __slots__ = "target"
     def __init__(self, loc, target):
         Node.__init__(self, loc)
 
@@ -544,7 +655,7 @@ class Call(Node):
 # Control structures.
 
 class Block(Node):
-
+    __slots__ = "block"
     def __init__(self, loc, block):
         Node.__init__(self, loc)
         self.block = block
@@ -569,3 +680,8 @@ class Block(Node):
             i += 1
 
         return i, start, s
+
+class Exit(Node):
+    __slots__ = ()
+    def execute(self, state, t):
+        raise renpy.game.QuitException

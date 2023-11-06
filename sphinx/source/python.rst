@@ -62,6 +62,7 @@ behavior:
    default store, the Python will execute in the store with that
    name.
 
+.. _dollar-line:
 
 One-line Python Statement
 -------------------------
