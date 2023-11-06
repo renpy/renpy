@@ -44,11 +44,14 @@ class BlockGenerator(object):
         # The target directory in which the segments will be stored.
         self.targetdir = targetdir
 
-        # A map from hash to segment object.
-        self.seen_hashes = dict()
+        # The hashes that have been seen before.
+        self.seen_hashes = set()
 
         # The maximum size of an rpu file.
         self.max_rpu_size = max_rpu_size
+
+        # All the blocks that have been generated.
+        self.blocks = [ ]
 
         # Clean out files in the target directory.
         for i in os.listdir(targetdir):
@@ -61,9 +64,6 @@ class BlockGenerator(object):
 
         # The current segment list.
         self.segments = [ ]
-
-        # The set of hashes seen while processing the current file list.
-        self.current_seen_hashes = set()
 
         # The following field is changed quite a bit. ##########################
 
@@ -102,8 +102,7 @@ class BlockGenerator(object):
 
         os.rename(self.path("new.rpu"), self.path(filename))
 
-        if self.filelist is not None:
-            self.filelist.blocks.append(common.File(filename, segments=self.segments))
+        self.blocks.append(common.File(filename, segments=self.segments))
 
         self.segments = [ ]
 
@@ -112,14 +111,10 @@ class BlockGenerator(object):
         Generates a segment into new.rpu.
         """
 
-        if seg.hash in self.current_seen_hashes:
-            return
-
-        self.current_seen_hashes.add(seg.hash)
-
         if seg.hash in self.seen_hashes:
-            self.segments.append(self.seen_hashes[seg.hash])
             return
+
+        self.seen_hashes.add(seg.hash)
 
         f.seek(seg.offset)
         data = f.read(seg.size)
@@ -143,17 +138,13 @@ class BlockGenerator(object):
         self.new_rpu.write(data)
 
         seg = common.Segment(offset, size, seg.hash, compressed)
-        self.seen_hashes[seg.hash] = seg
         self.segments.append(seg)
 
     def generate(self, name, filelist, progress=None):
 
         with self.lock:
 
-            self.filelist = common.FileList()
-
-            self.segments = [ ]
-            self.current_seen_hashes = set()
+            self.filelist = filelist
 
             # Create a list of files by reverse mtime. The idea is that the newer
             # files will appear before the older ones, and so we won't have to pull
@@ -175,30 +166,8 @@ class BlockGenerator(object):
 
             self.close_new_rpu()
 
+            self.filelist.blocks = self.blocks
+
             # Write the filelist to a file.
             with open(self.path(name + ".files.rpu"), "wb") as f:
                 f.write(self.filelist.encode())
-
-
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("sourcedir")
-    ap.add_argument("targetdir")
-
-    args = ap.parse_args()
-
-    from pathlib import Path
-
-    targetdir = Path(args.targetdir)
-    targetdir.mkdir(exist_ok=True)
-
-    for i in targetdir.glob("*.rpu"):
-        i.unlink()
-
-    fl = common.FileList()
-    fl.scan(args.sourcedir)
-
-    BlockGenerator("game", fl, args.targetdir)
-
-if __name__ == "__main__":
-    main()
