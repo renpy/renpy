@@ -67,6 +67,7 @@ class Parameter(object):
     empty = None
 
     def __init__(self, name, kind, default=empty):
+        # default should only be passed by keyword, todo when PY3-only
         self.name = name
         self.kind = kind
         self.default = default # type: str|None
