@@ -253,7 +253,7 @@ init -1500 python in updater:
         # The update was cancelled.
         CANCELLED = "CANCELLED"
 
-        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True, prefer_rpu=True, size_only=False, allow_empty=False, done_pause=True):
+        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True, prefer_rpu=True, size_only=False, allow_empty=False, done_pause=True, allow_cancel=True):
             """
             Takes the same arguments as update().
             """
@@ -320,6 +320,9 @@ init -1500 python in updater:
 
             # Should the user be asked to proceed when done.
             self.done_pause = done_pause
+
+            # Should the user be allowed to cancel the update?
+            self.allow_cancel = False
 
             # Public attributes set by the RPU updater
             self.new_disk_size = None
@@ -397,8 +400,8 @@ init -1500 python in updater:
                     self.update()
 
             except UpdateCancelled as e:
-                self.can_cancel = True
-                self.can_proceed = False
+                self.can_cancel = False
+                self.can_proceed = True
                 self.progress = None
                 self.message = None
                 self.state = self.CANCELLED
@@ -409,8 +412,8 @@ init -1500 python in updater:
 
             except UpdateError as e:
                 self.message = e.args[0]
-                self.can_cancel = True
-                self.can_proceed = False
+                self.can_cancel = False
+                self.can_proceed = True
                 self.state = self.ERROR
 
                 if self.log:
@@ -419,8 +422,8 @@ init -1500 python in updater:
 
             except Exception as e:
                 self.message = _type(e).__name__ + ": " + unicode(e)
-                self.can_cancel = True
-                self.can_proceed = False
+                self.can_cancel = False
+                self.can_proceed = True
                 self.state = self.ERROR
 
                 if self.log:
@@ -506,11 +509,13 @@ init -1500 python in updater:
             should proceed, or raises UpdateCancelled if it should not.
             """
 
-            if self.confirm and (not self.add):
+            if self.confirm:
+
+                self.progress = None
 
                 # Confirm with the user that the update is available.
                 with self.condition:
-                    self.can_cancel = True
+                    self.can_cancel = self.allow_cancel
                     self.can_proceed = True
                     self.state = self.UPDATE_AVAILABLE
                     self.version = self.pretty_version
@@ -526,7 +531,7 @@ init -1500 python in updater:
             if self.cancelled:
                 raise UpdateCancelled()
 
-            self.can_cancel = True
+            self.can_cancel = False
             self.can_proceed = False
 
         def fetch_files_rpu(self, module):
@@ -625,6 +630,7 @@ init -1500 python in updater:
             self.rpu_copy_fields()
 
             self.prompt_confirm()
+
             self.can_cancel = False
 
             # 4. Remove the version.json file.
@@ -677,6 +683,7 @@ init -1500 python in updater:
         def zsync_update(self):
 
             self.prompt_confirm()
+            self.can_cancel = self.allow_cancel
 
             if self.patch:
                 for i in self.modules:
@@ -770,21 +777,7 @@ init -1500 python in updater:
 
             # Confirm with the user that the update is available.
 
-            if self.confirm:
-
-                with self.condition:
-                    self.can_cancel = True
-                    self.can_proceed = True
-                    self.state = self.UPDATE_AVAILABLE
-                    self.version = pretty_version
-
-                    while True:
-                        if self.cancelled or self.proceeded:
-                            break
-
-                        self.condition.wait()
-
-            self.can_proceed = False
+            self.prompt_confirm()
 
             if self.cancelled:
                 raise UpdateCancelled()
@@ -1743,7 +1736,7 @@ init -1500 python in updater:
         return not not get_installed_packages(base)
 
 
-    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True, prefer_rpu=True, allow_empty=False, done_pause=True, screen="updater"):
+    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True, prefer_rpu=True, allow_empty=False, done_pause=True, allow_cancel=True, screen="updater"):
         """
         :doc: updater
 
@@ -1807,6 +1800,10 @@ init -1500 python in updater:
             If true, the game will pause after the update is complete. If false,
             it will immediately proceed (either to a restart, or a return).
 
+        `allow_cancel`
+            If true, the user will be allowed to cancel the update. If false,
+            the user will not be allowed to cancel the update.
+
         `screen`
             The name of the screen to use.
         """
@@ -1814,7 +1811,22 @@ init -1500 python in updater:
         global installed_packages_cache
         installed_packages_cache = None
 
-        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm, patch=patch, prefer_rpu=prefer_rpu, allow_empty=allow_empty, done_pause=done_pause)
+        u = Updater(
+            url=url,
+            base=base,
+            force=force,
+            public_key=public_key,
+            simulate=simulate,
+            add=add,
+            restart=restart,
+            confirm=confirm,
+            patch=patch,
+            prefer_rpu=prefer_rpu,
+            allow_empty=allow_empty,
+            done_pause=done_pause,
+            allow_cancel=allow_cancel,
+        )
+
         ui.timer(.1, repeat=True, action=u.periodic)
         renpy.call_screen(screen, u=u)
 
