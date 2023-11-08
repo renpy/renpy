@@ -460,8 +460,6 @@ init -1500 python in updater:
                 renpy.restart_interaction()
                 return
 
-            # Confirm goes here.
-
             # Disable autoreload.
             renpy.set_autoreload(False)
 
@@ -522,11 +520,11 @@ init -1500 python in updater:
 
                     renpy.restart_interaction()
 
-                    while True:
+                    while self.confirm:
                         if self.cancelled or self.proceeded:
                             break
 
-                        self.condition.wait()
+                        self.condition.wait(.1)
 
             if self.cancelled:
                 raise UpdateCancelled()
@@ -842,14 +840,8 @@ init -1500 python in updater:
             if not self.can_proceed and not force:
                 return
 
-            if self.state == self.UPDATE_NOT_AVAILABLE:
-                renpy.full_restart()
-
-            elif self.state == self.ERROR:
-                renpy.full_restart()
-
-            elif self.state == self.CANCELLED:
-                renpy.full_restart()
+            if self.state == self.UPDATE_NOT_AVAILABLE or self.state == self.ERROR or self.state == self.CANCELLED:
+                return False
 
             elif self.state == self.DONE:
                 if self.restart == "utter":
@@ -1828,7 +1820,12 @@ init -1500 python in updater:
         )
 
         ui.timer(.1, repeat=True, action=u.periodic)
-        renpy.call_screen(screen, u=u)
+
+        if not renpy.call_screen(screen, u=u):
+            renpy.full_restart()
+        else:
+            return
+
 
 
     @renpy.pure
@@ -1937,6 +1934,69 @@ init -1500 python in updater:
 
     renpy.arguments.register_command("update", update_command)
 
+
+    # The update object that's being used to update the game.
+    downloader = None
+    downloader_kwargs = None
+
+    def start_game_download(url, **kwargs):
+        """
+        :doc: downloader
+
+        Starts downloading the game data from `url`. This begins the process
+        of determining what needs to be download, and returns an Update object.
+        """
+
+        default_kargs = dict(
+            url=url,
+            base=renpy.get_alternate_base(config.basedir, True),
+            add=["gameonly"],
+            prefer_rpu=True,
+            restart="utter",
+            allow_empty=True,
+            allow_cancel=False,
+            done_pause=False,
+        )
+
+        for k, v in default_kargs.items():
+            kwargs.setdefault(k, v)
+
+        global downloader
+        global downloader_kwargs
+
+        downloader_kwargs = kwargs
+        downloader = Updater(confirm=True, **kwargs)
+
+        return downloader
+
+    def continue_game_download(screen="downloader"):
+        """
+        :doc: downloader
+
+        Continues downloading the game data. This will loop until the
+        download is complete, or the user exits the game.
+        """
+
+        global downloader
+
+        # Avoid showing the update_available screen.
+
+        downloader.confirm = False
+
+        while downloader.state == downloader.UPDATE_AVAILABLE:
+            renpy.pause(.1)
+
+        # Loop, attempting to download the game until the download
+        # completes or the player gives up.
+
+        while True:
+
+            ui.timer(.1, repeat=True, action=downloader.periodic)
+            renpy.call_screen(screen, u=downloader)
+
+            downloader = Updater(confirm=False, **downloader_kwargs)
+
+
 init -1500:
 
     screen updater(u):
@@ -1995,3 +2055,58 @@ init -1500:
 
                 if u.can_cancel:
                     textbutton _("Cancel") action u.cancel
+
+
+    screen downloader(u):
+
+        style_prefix "downloader"
+
+        frame:
+
+            has vbox
+
+            label _("Downloading Game Data")
+
+            if u.state == u.CHECKING or u.state == u.PREPARING:
+                text _("Preparing to download the game data.")
+            elif u.state == u.DOWNLOADING or u.state == u.UNPACKING:
+                text _("Downloading the game data.")
+            elif u.state == u.FINISHING or u.state == u.DONE:
+                text _("The game data has been downloaded.")
+            else: # An error or unknown state.
+                text _("An error occured when trying to download game data:")
+
+                if u.message is not None:
+                    text "[u.message!q]"
+
+                text _("This game cannot be run until the game data has been downloaded.")
+
+            if u.progress is not None:
+                null height gui._scale(10)
+                bar value (u.progress or 0.0) range 1.0 style "_bar"
+
+            if u.can_proceed:
+                textbutton _("Retry") action u.proceed
+
+    style downloader_frame:
+        xalign 0.5
+        xsize 0.5
+        xpadding gui._scale(20)
+
+        ypos .25
+        ypadding gui._scale(20)
+
+    style downloader_vbox:
+        xfill True
+        spacing gui._scale(10)
+
+    style downloader_text:
+        xalign 0.5
+        text_align 0.5
+        layout "subtitle"
+
+    style downloader_label:
+        xalign 0.5
+
+    style downloader_button:
+        xalign 0.5
