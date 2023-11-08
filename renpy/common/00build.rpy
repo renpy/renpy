@@ -168,6 +168,7 @@ init -1500 python in build:
         ("update/", None),
 
         ("old-game/", None),
+        ("base/", None),
 
         ("icon.ico", None),
         ("icon.icns", None),

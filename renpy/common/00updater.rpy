@@ -2065,8 +2065,6 @@ init -1500:
 
             has vbox
 
-            label _("Downloading Game Data")
-
             if u.state == u.CHECKING or u.state == u.PREPARING:
                 text _("Preparing to download the game data.")
             elif u.state == u.DOWNLOADING or u.state == u.UNPACKING:
@@ -2083,7 +2081,7 @@ init -1500:
 
             if u.progress is not None:
                 null height gui._scale(10)
-                bar value (u.progress or 0.0) range 1.0 style "_bar"
+                bar value (u.progress or 0.0) range 1.0
 
             if u.can_proceed:
                 textbutton _("Retry") action u.proceed
