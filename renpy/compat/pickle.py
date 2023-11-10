@@ -96,12 +96,13 @@ else:
 
     class PersistentPickler(pickle.Pickler):
         def reducer_override(self, obj):
-            if renpy.persistent.safe_types is not None:
+            safe_types = renpy.persistent.safe_types
+            if safe_types is not None:
                 t = obj
                 if not isinstance(obj, type):
                     t = type(obj)
 
-                if t.__module__.startswith("store") and (t not in renpy.persistent.safe_types):
+                if t.__module__.startswith("store") and (t not in safe_types):
                     raise TypeError("Cannot save {} : Type {} is not safe for persistent saving.".format(obj, t))
 
             return NotImplemented # lets normal reducing take place
