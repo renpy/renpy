@@ -3939,14 +3939,16 @@ def invoke_in_thread(fn, *args, **kwargs):
     stopped when Ren'Py is shutting down.
 
     This thread is very limited in what it can do with the Ren'Py API.
-    Changing store variables is allowed, as is calling the :func:`renpy.queue_event`
+    Changing store variables is allowed, as are calling calling the following
+    functions:
+
+    * :func:`renpy.restart_interaction`
+    * :func:`renpy.invoke_in_main_thread`
+    * :func:`renpy.queue_event`
+
+         :func:`renpy.queue_event`
     function. Most other portions of the Ren'Py API are expected to be called from
     the main thread.
-
-    The primary use of this function is to place accesss to a web API in a second
-    thread, and then update variables with the results of that call, by storing
-    the result in variables and then relying on the interaction restart to cause
-    screens to display those variables.
 
     This does not work on the web platform, except for immediately returning
     without an error.
@@ -3967,6 +3969,24 @@ def invoke_in_thread(fn, *args, **kwargs):
     t = threading.Thread(target=run)
     t.daemon = True
     t.start()
+
+
+def invoke_in_main_thread(fn, *args, **kwargs):
+    """
+    :doc: other
+
+    This runs the given function with the given arguments in the main
+    thread, if it is not already running in the main thread. The function
+    runs in an interaction context similar to an event handler.
+
+    This may not be called during the init phase.
+    """
+
+    if renpy.game.context().init_phase:
+        raise Exception("invoke_in_main_thread may not be called during the init phase.")
+
+    renpy.display.interface.invoke_queue.append((fn, args, kwargs))
+    restart_interaction()
 
 
 def cancel_gesture():

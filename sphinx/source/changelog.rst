@@ -202,6 +202,10 @@ allowed.
 :ref:`creator-defined-sl` can now copy all properties from other screen
 language statements.
 
+The new :func:`renpy.invoke_in_main_thread` function can be used by a Python
+thread to invoke a function in the main Ren'Py thread. (Most Ren'Py functions
+can only be called from the main thread.)
+
 
 Other Changes
 -------------

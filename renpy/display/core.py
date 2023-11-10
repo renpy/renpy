@@ -1733,6 +1733,10 @@ class Interface(object):
         # modifiers to be used with mouse and other events.
         self.mod = 0
 
+        # A queue of functions to invoke at the start of the next interaction.
+        # Set by renpy.exports.invoke_in_main_thread.
+        self.invoke_queue = [ ]
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -3186,6 +3190,13 @@ class Interface(object):
         """
 
         renpy.plog(1, "start interact_core")
+
+        # Process the invoke queue.
+        while self.invoke_queue:
+            fn, args, kwargs = self.invoke_queue.pop(0)
+            rv = fn(*args, **kwargs)
+            if rv is not None:
+                return False, rv
 
         # Check to see if the language has changed.
         renpy.translation.check_language()
