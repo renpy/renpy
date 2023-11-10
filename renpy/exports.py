@@ -3946,8 +3946,7 @@ def invoke_in_thread(fn, *args, **kwargs):
     * :func:`renpy.invoke_in_main_thread`
     * :func:`renpy.queue_event`
 
-         :func:`renpy.queue_event`
-    function. Most other portions of the Ren'Py API are expected to be called from
+    Most other portions of the Ren'Py API are expected to be called from
     the main thread.
 
     This does not work on the web platform, except for immediately returning
