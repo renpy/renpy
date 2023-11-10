@@ -58,8 +58,6 @@ if PY2:
         else:
             return pickle.dumps(o, PROTOCOL)
 
-    persistent_dumps = dumps
-
 else:
 
     import functools
@@ -94,19 +92,6 @@ else:
 
             return super().find_class(module, name)
 
-    class PersistentPickler(pickle.Pickler):
-        def reducer_override(self, obj):
-            safe_types = renpy.persistent.safe_types
-            if safe_types is not None:
-                t = obj
-                if not isinstance(obj, type):
-                    t = type(obj)
-
-                if t.__module__.startswith("store") and (t not in safe_types):
-                    raise TypeError("Cannot save {} : Type {} is not safe for persistent saving.".format(obj, t))
-
-            return NotImplemented # lets normal reducing take place
-
     def load(f):
         up = Unpickler(f, fix_imports=True, encoding="utf-8", errors="surrogateescape")
         return up.load()
@@ -119,11 +104,3 @@ else:
 
     def dumps(o, highest=False):
         return pickle.dumps(o, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
-
-    def persistent_dumps(o, highest=False):
-        if renpy.config.developer:
-            b = io.BytesIO()
-            PersistentPickler(b, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL).dump(o)
-            return b.getvalue()
-        else:
-            return dumps(o, highest)
