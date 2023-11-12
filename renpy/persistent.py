@@ -440,6 +440,9 @@ def save():
     Saves the persistent data to disk.
     """
 
+    if not renpy.config.save_persistent:
+        return
+
     if not should_save_persistent:
         return
 
