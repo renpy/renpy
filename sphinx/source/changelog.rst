@@ -162,6 +162,10 @@ function. While the Requests library still remains supported on Desktop and Mobi
 Features
 --------
 
+When the top left pixels of :ref:`presplash <presplash>` image is
+transparent, the presplash will be displayed in a window that uses
+1-bit transparency.
+
 The new :func:`EditFile` action attempts to open a file and
 line in a text editor.
 
