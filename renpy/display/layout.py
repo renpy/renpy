@@ -2292,7 +2292,7 @@ class NearRect(Container):
         the nearrect. If there is not room on one side, the opposite side is
         used. By default, the preferred side is "bottom".
 
-    `flip_offsets`
+    `invert_offsets`
         If True and there isn't enough space on the preferred side, multiply the
         offsets by -1 since the child will be on the opposite side of the
         rectangle. False by default.
@@ -2301,7 +2301,7 @@ class NearRect(Container):
     possible_positions = set(["left", "top", "right", "bottom"])
 
     def __init__(self, child=None, rect=None, focus=None, preferred_side=False,
-                flip_offsets=False, replaces=None, **properties):
+                invert_offsets=False, replaces=None, **properties):
 
         super(NearRect, self).__init__(**properties)
 
@@ -2316,7 +2316,7 @@ class NearRect(Container):
         self.preferred_side = preferred_side or "bottom"
         if properties.pop('prefer_top', False):
             self.preferred_side = "top"
-        self.flip_offsets = flip_offsets
+        self.invert_offsets = invert_offsets
 
         if not self.preferred_side in NearRect.possible_positions:
             raise Exception("preferred_side used with impossible position '%s'." % (self.preferred_side,))
@@ -2446,7 +2446,7 @@ class NearRect(Container):
                 layout_y = 0
 
         # Apply offsets.
-        if self.flip_offsets and not on_preferred_side:
+        if self.invert_offsets and not on_preferred_side:
             xoffset *= -1
             yoffset *= -1
         layout_x += xoffset

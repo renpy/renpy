@@ -516,6 +516,8 @@ DisplayableParser("nearrect", renpy.display.layout.NearRect, "default", 1, repla
 Keyword("rect")
 Keyword("focus")
 Keyword("prefer_top")
+Keyword("preferred_side")
+Keyword("invert_offsets")
 
 DisplayableParser("dismiss", renpy.display.behavior.DismissBehavior , "default", 0)
 Keyword("action")
