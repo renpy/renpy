@@ -1767,6 +1767,13 @@ Rarely or Internally Used
     second and later interactions caused by a line of dialogue with
     pauses in it. Used to sustain voice through pauses.
 
+
+.. var:: config.save = True
+
+    If True, Ren'Py will allow the user to save the game. If False,
+    Ren'Py will not allow the user to save the game, and will not show
+    existing saves.
+
 .. var:: config.save_dump = False
 
     If set to True, Ren'Py will create the file save_dump.txt whenever it
