@@ -1752,7 +1752,8 @@ Rarely or Internally Used
 
 .. var:: config.say_layer = "screens"
 
-    The layer the say screen is shown on.
+    The layer the say screen is shown on. This layer should be in
+    :var:`config.context_clear_layers`.
 
 .. var:: config.say_menu_text_filter = None
 
