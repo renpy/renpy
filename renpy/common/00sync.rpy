@@ -519,7 +519,8 @@ init -1100:
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -549,7 +550,8 @@ init -1100:
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -588,7 +590,8 @@ init -1100:
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -624,7 +627,8 @@ init -1100:
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -647,3 +651,7 @@ init -1100:
 
         ## Right-click and escape answer "no".
         key "game_menu" action Return(False)
+
+
+    style sync_overlay is empty:
+        background "gui/overlay/confirm.png"
