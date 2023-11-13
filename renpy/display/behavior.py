@@ -2023,7 +2023,7 @@ class Adjustment(renpy.object.Object):
     def inertia_warper(self, done):
         if done < 0.0:
             done = 0.0
-        elif done > 1.0
+        elif done > 1.0:
             done = 1.0
 
         return 1.0 - math.exp(-done * 6)
