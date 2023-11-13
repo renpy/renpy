@@ -206,10 +206,23 @@ def compile_event(key, keydown):
 event_cache = { }
 keyup_cache = { }
 
+def init_keymap():
+    """
+    Initializes the keymap cache. This is called by the display module.
+    """
+
+    for binding_list in renpy.config.pad_bindings.values():
+        for binding in binding_list:
+            renpy.config.keymap.setdefault(binding, [ ])
+
+    for key in renpy.config.keymap:
+        compile_event(key, True)
+        compile_event(key, False)
+
 
 def clear_keymap_cache():
     """
-    :doc: keymap
+    :undocumented:
 
     Clears the keymap cache. This allows changes to :var:`config.keymap` to
     take effect without restarting Ren'Py.
@@ -2021,6 +2034,11 @@ class Adjustment(renpy.object.Object):
             renpy.display.render.invalidate(d)
 
     def inertia_warper(self, done):
+        if done < 0.0:
+            done = 0.0
+        elif done > 1.0:
+            done = 1.0
+
         return 1.0 - math.exp(-done * 6)
 
     def animate(self, amplitude, delay, warper):

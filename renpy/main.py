@@ -531,7 +531,6 @@ def main():
     renpy.savelocation.init()
 
     try:
-
         # Init save slots and save tokens.
         renpy.loadsave.init()
         renpy.savetoken.upgrade_all_savefiles()
@@ -629,6 +628,9 @@ def main():
         # Make a clean copy of the store.
         renpy.python.make_clean_stores()
         log_clock("Making clean stores.")
+
+        # Init the keymap.
+        renpy.display.behavior.init_keymap()
 
         gc.collect(2)
 
