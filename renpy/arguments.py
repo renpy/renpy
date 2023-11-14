@@ -261,6 +261,7 @@ def bootstrap():
     """
 
     clean_epic_arguments()
+    clean_macos_garbage()
 
     ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
@@ -326,5 +327,20 @@ def clean_epic_arguments():
 
     global epic_arguments
     epic_arguments = sys.argv[1:]
+
+    sys.argv = [ sys.argv[0] ]
+
+
+# On macOS a file with the quarantine flag will cause an error on game start:
+# error: unrecognized arguments: -psn_0_some_number_here
+# Let's ignore this -psn argument
+
+def clean_macos_garbage():
+
+    for i in sys.argv[1:]:
+        if i.lower().startswith("-psn"):
+            break
+    else:
+        return
 
     sys.argv = [ sys.argv[0] ]
