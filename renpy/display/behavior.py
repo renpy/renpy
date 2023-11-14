@@ -215,9 +215,12 @@ def init_keymap():
         for binding in binding_list:
             renpy.config.keymap.setdefault(binding, [ ])
 
-    for key in renpy.config.keymap:
-        compile_event(key, True)
-        compile_event(key, False)
+    for keysym in renpy.config.keymap:
+        check_code = eval("lambda ev : " + compile_event(keysym, True), globals())
+        event_cache[keysym] = check_code
+
+        check_code = eval("lambda ev : " + compile_event(keysym, False), globals())
+        keyup_cache[keysym] = check_code
 
 
 def clear_keymap_cache():
