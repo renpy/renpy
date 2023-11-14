@@ -2298,6 +2298,9 @@ class NearRect(Container):
         rectangle. False by default.
     """
 
+    preferred_side = "bottom"
+    invert_offsets = False
+
     possible_positions = set(["left", "top", "right", "bottom"])
 
     def __init__(self, child=None, rect=None, focus=None, preferred_side=False,
