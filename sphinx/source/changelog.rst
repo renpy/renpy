@@ -214,6 +214,10 @@ can only be called from the main thread.)
 Other Changes
 -------------
 
+On controllers (including the Steam Deck), the function of the B button
+has changed to show and hide the game menu. The previous behavior of the
+B button, selecting a button's alternate function, has been moved to X.
+
 The non-default hardware video playback path has been removed from android
 and ios. This path hadn't been the defaults since 2020, as it supported
 a subset of the video formats Ren'Py supports.
