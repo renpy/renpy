@@ -250,6 +250,10 @@ def get_movie_texture_web(channel, mask_channel, side_mask, mipmap):
 
 
 def resize_movie(r, width, height):
+    """
+    A utility function to resize a Render or texture to the given
+    dimensions.
+    """
 
     if r is None:
         return None
@@ -271,6 +275,15 @@ def resize_movie(r, width, height):
     rv.blit(r, (int((width - dw) / 2), int((height - dh) / 2)))
 
     return rv
+
+
+def render_movie(channel, width, height):
+    """
+    Called from the Draw objects to render and scale a fullscreen movie.
+    """
+
+    tex, _new = get_movie_texture(channel)
+    return resize_movie(tex, width, height)
 
 
 def default_play_callback(old, new): # @UnusedVariable
@@ -341,7 +354,8 @@ class Movie(renpy.display.displayable.Displayable):
         to create a slimmed-down mobile version that does not use movie
         sprites.) Users can also choose to fall back to this image as a
         preference if video is too taxing for their system. The image will
-        also be used if the video plays, and then the movie ends.
+        also be used if the video plays, and then the movie ends, unless
+        `group` is given.
 
     `play_callback`
         If not None, a function that's used to start the movies playing.

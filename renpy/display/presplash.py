@@ -62,6 +62,9 @@ class ProgressBar(object):
     def get_size(self):
         return (self.width, self.height)
 
+    def get_at(self, pos):
+        return self.background.get_at(pos)
+
     def draw(self, target, done):
         width = self.width * min(done, 1)
         foreground = self.foreground.subsurface(0, 0, width, self.height)
@@ -119,11 +122,17 @@ def start(basedir, gamedir):
     x = bounds[0] + bounds[2] // 2 - sw // 2
     y = bounds[1] + bounds[3] // 2 - sh // 2
 
+    if presplash.get_at((0, 0))[3] == 0:
+        shape = presplash
+    else:
+        shape = None
+
     window = pygame_sdl2.display.Window(
         sys.argv[0],
         (sw, sh),
         flags=pygame_sdl2.WINDOW_BORDERLESS,
-        pos=(x, y))
+        pos=(x, y),
+        shape=shape)
 
     if presplash_fn:
         presplash = presplash.convert_alpha(window.get_surface())

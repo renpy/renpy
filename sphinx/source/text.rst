@@ -84,10 +84,11 @@ displayed. For example, if the player's name is stored in the
 
     g "Welcome to the Nekomimi Institute, [playername]!"
 
-Ren'Py will interpolate variables found in the global store. When
-using a text widget in a screen, Ren'Py will also interpolate screen
-local variables. (This can be overridden by supplying an explicit
-scope argument to the Text displayable.)
+Ren'Py will search for variables in the following order:
+
+* When used in a screen, screen-local variables.
+* Variables found in the ``interpolate`` namespace.
+* Variables found in the global namespace.
 
 Ren'Py isn't limited to interpolating simple variables. It can also
 interpolate fields and components of tuples. So it's possible to have::
@@ -103,21 +104,6 @@ will display a floating point number to two decimal places::
 Ren'Py's string interpolation is taken from the :pep:`3101` string
 formatting syntax. Ren'Py uses [ to introduce string formatting
 because { was taken by text tags.
-
-If the value being interpolated is callable, Ren'Py will call that
-value with no arguments to get a new value to interpolate. For example::
-
-    init python:
-        def name():
-            if flag:
-                return "Alice"
-            else:
-                return "Bob"
-
-    default flag = False
-
-    label start:
-        "My name is [name]." # Will display "My name is Bob."
 
 Along with the ``!s`` and ``!r`` conversion flags supported by Python, Ren'Py
 supports several more flags. The ``!q`` conversion flag ensures that

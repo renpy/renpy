@@ -745,13 +745,6 @@ Occasionally Used
     shown for at least this amount of time. The image may be shown longer
     if Ren'Py takes longer to start up.
 
-.. var:: config.missing_background = "black"
-
-    This is the background that is used when :var:`config.developer` is True
-    and an undefined image is used in a :ref:`scene statement
-    <scene-statement>`. This should be an image name (a string), not a
-    displayable.
-
 .. var:: config.mode_callbacks = [ ... ]
 
     A list of callbacks called when entering a mode. For more documentation,
@@ -1516,8 +1509,9 @@ Rarely or Internally Used
     upper-left corner of the layer, with height and width giving the
     layer size.
 
-    If a layer is not mentioned in config.layer_clipping, then it is
-    assumed to take up the full screen.
+    If a layer is not mentioned in config.layer_clipping, then it will
+    take up the full size of its container. Typically this will be the
+    screen, unless being shown inside a :class:`Layer` displayable.
 
 .. var:: config.layeredimage_offer_screen = True
 
@@ -1758,7 +1752,8 @@ Rarely or Internally Used
 
 .. var:: config.say_layer = "screens"
 
-    The layer the say screen is shown on.
+    The layer the say screen is shown on. This layer should be in
+    :var:`config.context_clear_layers`.
 
 .. var:: config.say_menu_text_filter = None
 
@@ -1773,6 +1768,12 @@ Rarely or Internally Used
     second and later interactions caused by a line of dialogue with
     pauses in it. Used to sustain voice through pauses.
 
+.. var:: config.save = True
+
+    If True, Ren'Py will allow the user to save the game. If False,
+    Ren'Py will not allow the user to save the game, and will not show
+    existing saves.
+
 .. var:: config.save_dump = False
 
     If set to True, Ren'Py will create the file save_dump.txt whenever it
@@ -1786,6 +1787,12 @@ Rarely or Internally Used
     If True, the mobile app will save its state when it loses focus. The state
     is saved in a way that allows it to be automatically loaded (and the game
     to resume its place) when the app starts again.
+
+.. var:: config.save_persistent = True
+
+    If True, Ren'Py will save persistent data. If False,
+    persistent data will not be saved, and changes to persistent will be
+    lost when the game ends.
 
 .. var:: config.save_physical_size = True
 

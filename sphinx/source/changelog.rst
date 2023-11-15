@@ -82,11 +82,19 @@ control hinting per-use. For example::
 
 enables bytecode hinting for MyFont.ttf.
 
-Text Interpolation Improvements
--------------------------------
+Interpolation Improvements
+--------------------------
 
-When the text interpolation system is given a callable, it will now call
-that function with no arguments, and interpolate the result.
+When a variable is interpolated into a string, and the interpolation namespace
+exists, that namespace will be searched for the values to interpolate. For
+example, ::
+
+    define t = "Not shown."
+    define interpolate.t = "Shown."
+
+    label start:
+        e "[t]" # Will show "Shown."
+
 
 Speech Bubble Improvements
 --------------------------
@@ -128,8 +136,64 @@ example, you can now tell something to be ``xsize position(-10, .5)``, and the
 displayable will make the displayable take half of the horizontal space offered
 to it, minus 10 pixels.
 
+Developer Tools
+---------------
+
+There is a new "Skip splashscreen" option in Options section
+of the launcher preferences. When checked, this will cause
+games launched to skip the splashscreen label when starting.
+
+A new 'Show Filename and Line' option is avilable from the
+shift+D developer menu. When enabled, this will cause the
+filename and line number of the current statement to be
+displayed. Clicking on the filename and line will open
+the file in the default text editor, at the given line,
+if possible.
+
+Data Actions
+------------
+
+The :ref:`data-actions` are now presented and explained in a more
+condensed manner. These actions have been reimplemented using a data
+manager that describes what to do with the data (Set-, Toggle-, Cycle-, Increment-)
+and a data accessor that describes the kind of data to change (-Variable, -ScreenVariable,  -LocalVariable, -Field, -Dict).
+
+There are two new managers:
+
+* The Cycle- actions (CycleVariable, CycleLocalVariable, CycleField...)
+  take a list of values and each time the action is run (i.e each time
+  the button is clicked), the target value is set to be the next element in
+  the list.
+* The Increment- actions (IncrementVariable, IncrementDict, IncrementField...)
+  add a certain value (by default, 1) to the target value. These can also be used
+  to decrement the field.
+
+The :class:`LocalVariableValue` bar value and :class:`LocalVariableInputValue` input
+values have been added, for completeness.
+
+HTTPS/HTTP Fetch
+----------------
+
+Ren'Py now has better support for :doc:`fetch`, using the new renpy.fetch
+function. While the Requests library still remains supported on Desktop and Mobile,
+(it's used internally by Ren'Py), the new fetch function:
+
+* Support GET, POST, and PUT requests for HTTPS and HTTP URLs.
+* Supports fetching from the web platform, subject to the rules of the web platform.
+* Will not block the game while downloading.
+* Can take data as either bytes or objects that be encoded to JSON.
+* Can return data as bytes, as string, or objects decoded from JSON.
+
+
 Features
 --------
+
+When the top left pixels of :ref:`presplash <presplash>` image is
+transparent, the presplash will be displayed in a window that uses
+1-bit transparency.
+
+The new :func:`EditFile` action attempts to open a file and
+line in a text editor.
 
 The virtual dpi of an SVG file can be set with the new `dpi`
 parameter to :func:`Image`.
@@ -165,9 +229,20 @@ The ``jump expression`` statement can now take a local label name of the form
 ".local_name". Previously, only "global_name" or "global_name.local_name" were
 allowed.
 
+:ref:`creator-defined-sl` can now copy all properties from other screen
+language statements.
+
+The new :func:`renpy.invoke_in_main_thread` function can be used by a Python
+thread to invoke a function in the main Ren'Py thread. (Most Ren'Py functions
+can only be called from the main thread.)
+
 
 Other Changes
 -------------
+
+On controllers (including the Steam Deck), the function of the B button
+has changed to show and hide the game menu. The previous behavior of the
+B button, selecting a button's alternate function, has been moved to X.
 
 The non-default hardware video playback path has been removed from android
 and ios. This path hadn't been the defaults since 2020, as it supported

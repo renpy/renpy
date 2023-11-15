@@ -300,7 +300,6 @@ init -1100 python:
             build.itch_channels = list(build.itch_channels.items())
             style.default.shaper = "freetype"
             config.mixed_position = False
-            config.interpolate_calls_functions = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

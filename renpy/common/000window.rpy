@@ -107,6 +107,9 @@ init -1200 python:
         if not store._window_auto:
             return
 
+        if statement == 'menu' and menu == nvl_menu:
+            statement = 'menu-nvl'
+
         if statement in config.window_auto_hide:
             _window_hide(auto=True)
 

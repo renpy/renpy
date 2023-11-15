@@ -206,6 +206,9 @@ def create_store(name):
     Creates the store with `name`.
     """
 
+    if name == "store.store":
+        raise NameError('Namespaces may not begin with "store".')
+
     parent, _, var = name.rpartition('.')
 
     if parent:

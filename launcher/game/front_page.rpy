@@ -259,7 +259,7 @@ label lint:
         interface.processing(_("Checking script for potential problems..."))
         lint_fn = project.current.temp_filename("lint.txt")
 
-        project.current.launch([ 'lint', lint_fn ], wait=True)
+        project.current.launch([ 'lint', lint_fn, ] + list(persistent.lint_options), wait=True)
 
         e = renpy.editor.editor
         e.begin(True)

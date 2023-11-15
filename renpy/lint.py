@@ -447,7 +447,7 @@ def text_checks(s):
     if renpy.config.say_menu_text_filter is not None:
         s = renpy.config.say_menu_text_filter(s)
 
-    msg = renpy.text.extras.check_text_tags(s)
+    msg = renpy.text.extras.check_text_tags(s, check_unclosed=args.check_unclosed_tags)
     if msg:
         report("%s (in %s)", msg, quote_text(s))
 
@@ -692,7 +692,48 @@ def check_style(name, s):
                 check_style_property_displayable(name, k, v)
 
 
+def check_parameters(kind, node_name, parameter_info):
+    """
+    `kind`
+        What we're parsing the parameters of, for the error message.
+        "screen", "label", "function", "ATL transform"...
+
+    `node_name`
+        The name of the (kind) we're defining.
+
+    `parameter_info`
+        The ParameterInfo we're scanning, or None.
+    """
+
+    if parameter_info is None:
+        return
+
+    names = [p[0] for p in parameter_info.parameters]
+    if parameter_info.extrakw:
+        names.extend(parameter_info.extrakw)
+    if parameter_info.extrapos:
+        names.extend(parameter_info.extrapos)
+
+    rv = [name for name in names if (name in python_builtins) or (name in renpy_builtins)]
+
+    if len(rv) == 1:
+        name = rv[0]
+        report("In {0} {1!r}, the {2!r} parameter replaces a built-in name from either Python or Ren'Py, which may cause problems.".format(kind, node_name, name))
+        if not "_" in name:
+            add("This can be fixed by naming it '{}_'".format(name))
+    elif rv:
+        last = rv.pop()
+        prettyprevious = ", ".join(repr(name) for name in rv)
+        report("In {0} {1!r}, the {2} and {3!r} parameters replace built-in names from either Python or Ren'Py, which may cause problems.".format(kind,
+                                                                                                                                                  node_name,
+                                                                                                                                                  prettyprevious,
+                                                                                                                                                  last))
+
+
 def check_label(node):
+
+    if args.builtins_parameters:
+        check_parameters("label", node.name, node.parameters)
 
     def add_arg(n):
         if n is None:
@@ -718,6 +759,9 @@ def check_screen(node):
         report("The screen %s has not been given a parameter list.", node.screen.name)
         add("This can be fixed by writing 'screen %s():' instead.", node.screen.name)
 
+    if args.builtins_parameters:
+        check_parameters("screen", node.screen.name, node.screen.parameters)
+
 
 def check_styles():
     for full_name, s in renpy.style.styles.items(): # @UndefinedVariable
@@ -731,6 +775,11 @@ def check_styles():
 def check_init(node):
     if not (-999 <= node.priority <= 999):
         report("The init priority ({}) is not in the -999 to 999 range.".format(node.priority))
+
+
+def check_transform(node):
+    if args.builtins_parameters:
+        check_parameters("ATL transform", node.varname, node.parameters)
 
 
 def humanize(n):
@@ -783,6 +832,9 @@ class Count(object):
         self.words += len(s.split())
         self.characters += len(s)
 
+    def tuple(self):
+        return (self.blocks, self.words, self.characters)
+
 
 def common(n):
     """
@@ -803,21 +855,32 @@ def report_character_stats(charastats):
 
     rv = [ "Character statistics (for default language):" ]
 
-    count_to_char = collections.defaultdict(list)
-
-    for char, count in charastats.items():
-        count_to_char[count].append(char)
-
-    for count, chars in sorted(count_to_char.items(), reverse=True):
-        chars.sort()
-
-        start = humanize_listing(chars, singular_suffix=" has ", plural_suffix=" have ")
-
-        rv.append(
-            " * " + start + humanize(count) +
-            (" block " if count == 1 else " blocks ") + "of dialogue" +
-            (" each." if len(chars) > 1 else ".")
+    if args.words_char_count:
+        for char in sorted(charastats, key=lambda char: charastats[char].tuple(), reverse=True):
+            count = charastats[char]
+            rv.append(
+                " * " + char
+                + " has " + humanize(count.blocks) + (" block " if count.blocks == 1 else " blocks ") + "of dialogue, "
+                + "containing " + humanize(count.words) + " words and "
+                + humanize(count.characters) + " characters."
             )
+
+    else:
+        nblocks_to_char = collections.defaultdict(list)
+
+        for char, count in charastats.items():
+            nblocks_to_char[count.blocks].append(char)
+
+        for nblocks, chars in sorted(nblocks_to_char.items(), reverse=True):
+            chars.sort()
+
+            start = humanize_listing(chars, singular_suffix=" has ", plural_suffix=" have ")
+
+            rv.append(
+                " * " + start + humanize(nblocks) +
+                (" block " if nblocks == 1 else " blocks ") + "of dialogue" +
+                (" each." if len(chars) > 1 else ".")
+                )
 
     return rv
 
@@ -970,7 +1033,12 @@ def lint():
     ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
     ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errros, 1 if lint errors are found.")
+    ap.add_argument("--orphan-tl", action="store_true", help="If given, orphan translations are reported.")
+    ap.add_argument("--builtins-parameters", action="store_true", help="If given, renpy or python builtin names in renpy statement parameters are reported.")
+    ap.add_argument("--words-char-count", action="store_true", help="If given, the number of words and characters for each character is reported.")
+    ap.add_argument("--check-unclosed-tags", action="store_true", help="If given, unclosed text tags are reported.")
 
+    global args
     args = ap.parse_args()
 
     if args.filename:
@@ -1003,7 +1071,7 @@ def lint():
     # The current count.
     counts = collections.defaultdict(Count)
 
-    charastats = collections.defaultdict(int)
+    charastats = collections.defaultdict(Count)
 
     # The current language.
     language = None
@@ -1049,7 +1117,7 @@ def lint():
 
             counts[language].add(node.what)
             if language is None:
-                charastats[node.who or 'narrator' ] += 1
+                charastats[node.who or 'narrator'].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -1073,7 +1141,7 @@ def lint():
         elif isinstance(node, renpy.ast.Label):
             check_label(node)
 
-        elif isinstance(node, renpy.ast.Translate):
+        elif isinstance(node, renpy.ast.Translate) and args.orphan_tl:
             language = node.language
             if language is None:
                 none_language_ids.add(node.identifier)
@@ -1098,12 +1166,16 @@ def lint():
         elif isinstance(node, renpy.ast.Init):
             check_init(node)
 
+        elif isinstance(node, renpy.ast.Transform):
+            check_transform(node)
+
     report_node = None
 
     check_styles()
     check_filename_encodings()
     check_unreachables(all_stmts)
-    check_orphan_translations(none_language_ids, translated_ids)
+    if args.orphan_tl:
+        check_orphan_translations(none_language_ids, translated_ids)
 
     for f in renpy.config.lint_hooks:
         f()

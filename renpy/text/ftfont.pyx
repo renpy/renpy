@@ -878,9 +878,9 @@ cdef class FTFont:
                     for px from underline_x <= px < underline_end:
                         line = pixels + py * pitch + px * 4
 
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
+                        line[0] = Sr * Sa // 255
+                        line[1] = Sg * Sa // 255
+                        line[2] = Sb * Sa // 255
                         line[3] = Sa
 
             # Strikethrough.
@@ -894,7 +894,7 @@ cdef class FTFont:
                     for px from underline_x <= px < underline_end:
                         line = pixels + py * pitch + px * 4
 
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
+                        line[0] = Sr * Sa // 255
+                        line[1] = Sg * Sa // 255
+                        line[2] = Sb * Sa // 255
                         line[3] = Sa

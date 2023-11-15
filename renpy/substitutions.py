@@ -172,12 +172,6 @@ class Formatter(string.Formatter):
     def convert_field(self, value, conversion):
         value, kwargs = value
 
-        if callable(value) and renpy.config.interpolate_calls_functions:
-            try:
-                value = value()
-            except Exception:
-                pass
-
         if conversion is None:
             return value
 
@@ -275,10 +269,19 @@ def substitute(s, scope=None, force=False, translate=True):
 
     old_s = s
 
+
+    dicts = [ renpy.store.__dict__ ]
+
+    if "store.interpolate" in renpy.python.store_dicts:
+        dicts.insert(0, renpy.python.store_dicts["store.interpolate"])
+
     if scope is not None:
-        kwargs = MultipleDict(scope, renpy.store.__dict__) # @UndefinedVariable
+        dicts.insert(0, scope)
+
+    if dicts:
+        kwargs = MultipleDict(*dicts)
     else:
-        kwargs = renpy.store.__dict__ # @UndefinedVariable
+        kwargs = dicts[0]
 
     try:
         s = formatter.vformat(s, (), kwargs) # type: ignore

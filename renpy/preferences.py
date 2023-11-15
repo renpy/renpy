@@ -137,7 +137,7 @@ Preference("self_voicing_volume_drop", 0.5)
 Preference("emphasize_audio", False)
 
 # Is the gamepad enabled?
-Preference("pad_enabled", True)
+Preference("pad_enabled", True, (bool, str))
 
 # The side of the screen used for rollback. ("left", "right", or "disable")
 Preference("mobile_rollback_side", "disable")

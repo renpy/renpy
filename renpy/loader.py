@@ -68,34 +68,20 @@ def get_path(fn):
 
 # Asset Loading
 
+apks = [ ]
+game_apks = [ ]
 
 if renpy.android:
     import android.apk # type: ignore
 
-    expansion = os.environ.get("ANDROID_EXPANSION", None)
-    if expansion is not None:
-        print("Using expansion file", expansion)
+    if renpy.config.renpy_base == renpy.config.basedir:
+        # Read the game data from the APK.
 
-        apks = [
-            android.apk.APK(apk=expansion, prefix='assets/x-game/'),
-            android.apk.APK(apk=expansion, prefix='assets/x-renpy/x-common/'),
-            ]
+        apks.append(android.apk.APK(prefix='assets/x-game/'))
+        game_apks.append(apks[0])
 
-        game_apks = [ apks[0] ]
+    apks.append(android.apk.APK(prefix='assets/x-renpy/x-common/'))
 
-    else:
-        print("Not using expansion file.")
-
-        apks = [
-            android.apk.APK(prefix='assets/x-game/'),
-            android.apk.APK(prefix='assets/x-renpy/x-common/'),
-            ]
-
-        game_apks = [ apks[0] ]
-
-else:
-    apks = [ ]
-    game_apks = [ ]
 
 # Files on disk should be checked before archives. Otherwise, among
 # other things, using a new version of bytecode.rpyb will break.

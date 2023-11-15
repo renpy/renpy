@@ -1,11 +1,60 @@
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 import hashlib
 import json
 import os
 import pickle
 import zlib
 
-from .util import dump, hash_data
+def hash_data(data):
+    """
+    Given `data` (bytes), returns a hexadecimal hash of the data.
+    """
 
+    h = hashlib.sha256()
+    h.update(data)
+    return h.hexdigest()
+
+
+def hash_list(data):
+    """
+    Hashes a list of strings.
+    """
+
+    return hash_data("\n".join(data).encode("utf-8"))
+
+
+def dump(d):
+    """
+    Dumps a dictionary to a JSON string.
+    """
+
+    print(json.dumps(d, indent=2))
+
+
+# Constants used for the compressed field of segments.
 COMPRESS_NONE = 0
 COMPRESS_ZLIB = 1
 
@@ -92,13 +141,12 @@ class File(object):
         return {
             "name" : self.name,
             "segments" : [ i.to_json() for i in self.segments ],
-            "mtime" : self.mtime,
             "xbit" : self.xbit,
         }
 
     @staticmethod
     def from_json(d):
-        rv = File(d["name"], segments=[ Segment.from_json(i) for i in d["segments"] ], mtime=d["mtime"], xbit=d["xbit"])
+        rv = File(d["name"], segments=[ Segment.from_json(i) for i in d["segments"] ], xbit=d["xbit"])
         return rv
 
     def scan_segments(self, f, offset, size):
@@ -228,6 +276,46 @@ class FileList(object):
         rv.blocks = [ File.from_json(i) for i in d["blocks"] ]
         return rv
 
+    def to_current_json(self):
+        """
+        Returns a JSON representation of the file list that can be used
+        in the current.json files.
+        """
+
+        return {
+            "directories" : [ i.name for i in self.directories ],
+            "files" : [ i.name for i in self.files ],
+            "xbit" : [ i.name for i in self.files if i.xbit ],
+        }
+
+    @staticmethod
+    def from_current_json(d):
+        xbit = set(d["xbit"])
+
+        rv = FileList()
+
+        for i in d["directories"]:
+            rv.directories.append(Directory(i))
+
+        for i in d["files"]:
+            rv.files.append(File(i, xbit=i in xbit))
+
+        return rv
+
+    def add_directory(self, name):
+        """
+        Called from the launcher to add a directory to this file list.
+        """
+        self.directories.append(Directory(name))
+
+    def add_file(self, name, path, xbit):
+        """
+        Called from the launcher to add a file to this file list.
+        """
+
+        self.files.append(File(name, data_filename=path, xbit=xbit))
+
+
     def scan(self, root, data_filename=True):
         """
         Scan a directory, recursively, and add the files and directories
@@ -244,7 +332,13 @@ class FileList(object):
             for fn in files:
                 fn = os.path.join(dn, fn)
                 relfn = os.path.relpath(fn, root)
-                f = File(relfn, data_filename=fn if data_filename else None)
+
+                if data_filename:
+                    xbit = os.access(fn, os.X_OK)
+                else:
+                    xbit = False
+
+                f = File(relfn, data_filename=fn if data_filename else None, xbit=xbit)
                 self.files.append(f)
 
         self.directories.sort(key=lambda x : x.name)
