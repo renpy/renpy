@@ -122,7 +122,7 @@ novel kinds of value a style property can expect.
             sides of the containing area, while 1.0 is on the right or bottom
             side.
 
-        .. function:: absolute(value)
+        .. function:: absolute(value, /)
 
             For example, ``absolute(100.25)``, or ``absolute(a+b)`` when both
             ``a`` and ``b`` may be floats or ints.
@@ -137,8 +137,8 @@ novel kinds of value a style property can expect.
 
             A combination of `absolute`, which will be treated as an absolute
             position, and `relative`, which will be treated as a relative
-            position, as discussed above. The two components are added together
-            to form the final position.
+            position, both being as described above. The two components are
+            added together to form the final position.
 
             Both parameters should always be passed, otherwise unspecified
             results may occur.
@@ -158,7 +158,7 @@ novel kinds of value a style property can expect.
         example:
 
         * ``"#f00"`` and ``"#ff0000"`` represent an opaque red color.
-        * ``"#0f08"`` and ``#00ff0080"`` represent a semi-transparent green
+        * ``"#0f08"`` and ``"#00ff0080"`` represent a semi-transparent green
           color.
 
         The color triples are the same as used in HTML.
