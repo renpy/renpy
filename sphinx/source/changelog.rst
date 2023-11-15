@@ -82,8 +82,8 @@ control hinting per-use. For example::
 
 enables bytecode hinting for MyFont.ttf.
 
-Interpolation Improvements
---------------------------
+Text Interpolation Improvements
+-------------------------------
 
 When a variable is interpolated into a string, and the interpolation namespace
 exists, that namespace will be searched for the values to interpolate. For
