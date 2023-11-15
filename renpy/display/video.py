@@ -354,7 +354,8 @@ class Movie(renpy.display.displayable.Displayable):
         to create a slimmed-down mobile version that does not use movie
         sprites.) Users can also choose to fall back to this image as a
         preference if video is too taxing for their system. The image will
-        also be used if the video plays, and then the movie ends.
+        also be used if the video plays, and then the movie ends, unless
+        `group` is given.
 
     `play_callback`
         If not None, a function that's used to start the movies playing.
