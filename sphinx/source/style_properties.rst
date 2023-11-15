@@ -105,10 +105,10 @@ novel kinds of value a style property can expect.
 
     position
         Positions are used to specify locations relative to the upper-left
-        corner of the containing area. (For positions, the containing area is
-        given by the layout the displayable is in, if one is given, or the screen
-        otherwise. For anchors, the containing area is the size of the
-        displayable itself.)
+        corner of the containing area. (For placement and size, the containing
+        area is given by the layout the displayable is in, if one is given, or
+        the screen otherwise. For anchors, the containing area is the size of
+        the displayable itself.)
 
         The way a position value is interpreted depends on the type of the
         value:
