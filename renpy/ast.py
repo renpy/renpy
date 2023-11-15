@@ -1883,15 +1883,17 @@ class Menu(Node):
 
         next_node(self.next)
 
-        if self.has_caption or renpy.config.choice_empty_window:
-            statement_name("menu-with-caption")
-        else:
-            statement_name("menu")
-
         if self.arguments is not None:
             args, kwargs = self.arguments.evaluate()
         else:
             args = kwargs = None
+
+        if self.has_caption or renpy.config.choice_empty_window:
+            statement_name("menu-with-caption")
+        elif kwargs is not None and kwargs.get('nvl') is True:
+            statement_name("menu-nvl")
+        else:
+            statement_name("menu")
 
         choices = [ ]
         narration = [ ]
