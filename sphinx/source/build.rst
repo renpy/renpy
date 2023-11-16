@@ -331,11 +331,38 @@ Build Functions
 
 .. include:: inc/build
 
+Build Info
+----------
+
+There are two variables that can be used to provide information about
+the build.
+
+.. var:: info = { }
+
+    This variable lets you store information that will be placed into
+    the game/cache/build_info.json file in the built game. When the built
+    game starts, game/cache/build_info.json is loaded and the contents
+    placed into this variable.
+
+    Generally, you'll want to check that a field does not exist, and
+    set it, using setdefault.
+
+    For example, this stores the name of the computer that built the
+    game in the build_info.json file::
+
+        python hide:
+            import socket
+            build.info.setdefault("build_host", socket.gethostname())
+
+    The information in this variable needs to be of types that can be
+    placed in JSON files.
+
+
+
 Advanced Configuration
 ----------------------
 
 The following variables provide further control of the build process:
-
 
 .. var:: build.allow_integrated_gpu = True
 

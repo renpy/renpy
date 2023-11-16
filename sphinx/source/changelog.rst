@@ -162,6 +162,9 @@ function. While the Requests library still remains supported on Desktop and Mobi
 Features
 --------
 
+The new :var:`build.info` variable lets you store information at
+build time, and read it back in the distributed game.
+
 When the top left pixels of :ref:`presplash <presplash>` image is
 transparent, the presplash will be displayed in a window that uses
 1-bit transparency.

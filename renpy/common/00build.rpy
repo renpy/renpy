@@ -520,6 +520,9 @@ init -1500 python in build:
     # Should the gameonly update be available?
     game_only_update = False
 
+    # If not None, information about the game that is stored in build_info.json.
+    info = { }
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -614,7 +617,19 @@ init -1500 python in build:
 
         rv["update_formats"] = update_formats
 
+        rv["info"] = info
+
         return rv
+
+init -1500 python hide:
+
+    import json
+
+    try:
+        with renpy.open_file("cache/build_info.json", "utf-8") as f:
+            build.info = json.load(f)
+    except:
+        pass
 
 init 1500 python in build:
 
