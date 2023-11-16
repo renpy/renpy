@@ -217,6 +217,9 @@ init -1500 python in build:
         ("game/" + renpy.script.BYTECODE_FILE, "all"),
         ("game/cache/bytecode-311.rpyb", "web"),
         ("game/cache/bytecode-*.rpyb", None),
+        ("game/cache/build_info.json", None),
+        ("game/cache/build_time.txt", None),
+
     ])
 
 
@@ -520,6 +523,9 @@ init -1500 python in build:
     # Should the gameonly update be available?
     game_only_update = False
 
+    # The time at which the game was built.
+    time = None
+
     # If not None, information about the game that is stored in build_info.json.
     info = { }
 
@@ -628,6 +634,12 @@ init -1500 python hide:
     try:
         with renpy.open_file("cache/build_info.json", "utf-8") as f:
             build.info = json.load(f)
+    except:
+        pass
+
+    try:
+        with renpy.open_file("cache/build_time.txt", "utf-8") as f:
+            build.time = float(f.read())
     except:
         pass
 

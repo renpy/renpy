@@ -337,6 +337,12 @@ Build Info
 There are two variables that can be used to provide information about
 the build.
 
+.. var:: time = None
+
+    This variable defaults to None, but if your game has been built,
+    it will be set to the time the game was built, in seconds since
+    January 1, 1970.
+
 .. var:: info = { }
 
     This variable lets you store information that will be placed into

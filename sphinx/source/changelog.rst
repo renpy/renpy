@@ -162,6 +162,8 @@ function. While the Requests library still remains supported on Desktop and Mobi
 Features
 --------
 
+The new :var:`build.time` variable is set to the time the game was built.
+
 The new :var:`build.info` variable lets you store information at
 build time, and read it back in the distributed game.
 
