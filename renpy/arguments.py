@@ -261,7 +261,7 @@ def bootstrap():
     """
 
     clean_epic_arguments()
-    clean_macos_garbage()
+    clean_macos_arguments()
 
     ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
@@ -335,7 +335,7 @@ def clean_epic_arguments():
 # error: unrecognized arguments: -psn_0_some_number_here
 # Let's ignore this -psn argument
 
-def clean_macos_garbage():
+def clean_macos_arguments():
 
     for i in sys.argv[1:]:
         if i.lower().startswith("-psn"):
