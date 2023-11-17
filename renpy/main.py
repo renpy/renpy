@@ -355,8 +355,6 @@ def main():
 
     gc.set_threshold(*renpy.config.gc_thresholds)
 
-    log_clock("Bootstrap to the start of init.init.")
-
     renpy.game.exception_info = 'Before loading the script.'
 
     # Clear the line cache, since the script may have changed.
