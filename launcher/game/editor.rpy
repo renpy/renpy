@@ -590,7 +590,35 @@ label reinstall_vscode:
 
     jump editor_preference
 
-
 label editor_preference:
     call screen editor
     jump preferences
+
+default persistent.ignore_obsolete_editor = set()
+
+# This label is called when the launcher starts, to check if the editor
+# is obsolete, and let them change it.
+label editor_check:
+
+    if persistent.editor in persistent.ignore_obsolete_editor:
+        jump post_editor_check
+
+    if persistent.editor == "Atom":
+        $ result = interface.choice(
+            _("The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."), [
+                ( "select", _("Select editor now.")),
+                ( "ignore", _("Ignore until next launch.")),
+                ( "block", _("Do not ask again.")),
+            ], "select")
+
+    else:
+        jump post_editor_check
+
+    if result == "select":
+        $ renpy.pop_call()
+        jump editor_preference
+
+    elif result == "block":
+        $ persistent.ignore_obsolete_editor.add(persistent.editor)
+
+    jump post_editor_check
