@@ -442,7 +442,7 @@ def main():
 
     load_build_info()
 
-    log_clock("Early init.")
+    log_clock("Early init")
 
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -476,7 +476,7 @@ def main():
     renpy.config.init_system_styles()
     renpy.style.build_styles() # @UndefinedVariable
 
-    log_clock("Loading error handling.")
+    log_clock("Loading error handling")
 
     # If recompiling everything, remove orphan .rpyc files.
     # Otherwise, will fail in case orphan .rpyc have same
@@ -503,7 +503,7 @@ def main():
 
     # Load all .rpy files.
     renpy.game.script.load_script() # sets renpy.game.script.
-    log_clock("Loading script.")
+    log_clock("Loading script")
 
     if renpy.game.args.command == 'load-test': # type: ignore
         start = time.time()
@@ -546,12 +546,12 @@ def main():
         # Init save slots and save tokens.
         renpy.loadsave.init()
         renpy.savetoken.upgrade_all_savefiles()
-        log_clock("Loading save slot metadata.")
+        log_clock("Loading save slot metadata")
 
         # Load persistent data from all save locations.
         renpy.persistent.update()
         game.preferences = game.persistent._preferences
-        log_clock("Loading persistent.")
+        log_clock("Loading persistent")
 
         # Clear the list of seen statements in this game.
         game.seen_session = { }
@@ -603,19 +603,19 @@ def main():
 
         game.persistent._virtual_size = renpy.config.screen_width, renpy.config.screen_height # type: ignore
 
-        log_clock("Running init code.")
+        log_clock("Running init code")
 
         renpy.pyanalysis.load_cache()
-        log_clock("Loading analysis data.")
+        log_clock("Loading analysis data")
 
         # Analyze the script and compile ATL.
         renpy.game.script.analyze()
         renpy.atl.compile_all()
-        log_clock("Analyze and compile ATL.")
+        log_clock("Analyze and compile ATL")
 
         renpy.savelocation.init()
         renpy.loadsave.init()
-        log_clock("Reloading save slot metadata.")
+        log_clock("Reloading save slot metadata")
 
         # Index the archive files. We should not have loaded an image
         # before this point. (As pygame will not have been initialized.)
@@ -631,15 +631,15 @@ def main():
 
         renpy.dump.dump(False)
         renpy.game.script.make_backups()
-        log_clock("Dump and make backups.")
+        log_clock("Dump and make backups")
 
         # Initialize image cache.
         renpy.display.im.cache.init()
-        log_clock("Cleaning cache.")
+        log_clock("Cleaning cache")
 
         # Make a clean copy of the store.
         renpy.python.make_clean_stores()
-        log_clock("Making clean stores.")
+        log_clock("Making clean stores")
 
         # Init the keymap.
         renpy.display.behavior.init_keymap()
@@ -662,7 +662,7 @@ def main():
         else:
             gc.set_threshold(700, 10, 10)
 
-        log_clock("Initial gc.")
+        log_clock("Initial gc")
 
         # Start debugging file opens.
         renpy.debug.init_main_thread_open()
@@ -670,7 +670,7 @@ def main():
         # (Perhaps) Initialize graphics.
         if not game.interface:
             renpy.display.core.Interface()
-            log_clock("Creating interface object.")
+            log_clock("Creating interface object")
 
         # Start things running.
         restart = None

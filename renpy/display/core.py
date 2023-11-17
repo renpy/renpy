@@ -1849,7 +1849,7 @@ class Interface(object):
         if renpy.emscripten and renpy.game.preferences.web_cache_preload:
             emscripten.run_script("loadCache()")
 
-        renpy.main.log_clock("Interface start.")
+        renpy.main.log_clock("Interface start")
 
         self.started = True
 
