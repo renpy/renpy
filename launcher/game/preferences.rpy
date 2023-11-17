@@ -184,10 +184,7 @@ screen preferences():
                             add HALF_SPACER
 
                             frame style "l_indent":
-                                if persistent.editor:
-                                    textbutton persistent.editor action Jump("editor_preference") alt _("Text editor: [text]")
-                                else:
-                                    textbutton _("Not Set") action Jump("editor_preference") alt _("Text editor: [text]")
+                                textbutton (persistent.editor or _("Not Set")) action Jump("editor_preference") alt _("Text editor: [text]")
 
                         add SPACER
 

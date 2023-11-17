@@ -112,7 +112,7 @@ init 1 python in editor:
         editor is installed or not.
         """
 
-        def __init__(self, priority, name, description=None, dlc=None, dldescription=None, error_message=None):
+        def __init__(self, priority, name, description=None, dlc=None, dldescription=None, error_message=None, deprecated=False):
             # The priority of the editor. Lower priorities will come later
             # in the list.
             self.priority = priority
@@ -134,6 +134,9 @@ init 1 python in editor:
 
             # An error message to display if the editor failed to start.
             self.error_message = error_message
+
+            # If the editor is considered deprecated for use with Ren'Py.
+            self.deprecated = deprecated
 
     def fancy_scan_editors():
         """
@@ -179,7 +182,7 @@ init 1 python in editor:
         fei.append(e)
 
         # Atom.
-        AD = _("A modern and approachable text editor.")
+        AD = _("Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended.")
 
         if renpy.windows:
             dlc = "atom-windows"
@@ -199,23 +202,28 @@ init 1 python in editor:
                 AD,
                 "extension:atom",
                 _("Up to 150 MB download required."),
-                None)
+                None,
+                deprecated=True,
+                )
 
             e.installed = e.installed and (installed or 'RENPY_ATOM' in os.environ)
 
             fei.append(e)
 
         # jEdit - Only present if it exists on system.
-        if os.path.exists(os.path.join(config.renpy_base, "jedit")):
+        e = FancyEditorInfo(
+            2,
+            _("jEdit"),
+            _("JEdit is deprecated, using another editor is recommended."),
+            "jedit",
+            _("1.8 MB download required."),
+            _("This may have occured because Java is not installed on this system."),
+            deprecated=True,
+            )
 
-            fei.append(FancyEditorInfo(
-                2,
-                _("jEdit"),
-                _("A mature editor that requires Java."),
-                "jedit",
-                _("1.8 MB download required."),
-                _("This may have occured because Java is not installed on this system."),
-                ))
+        e.installed = e.installed and os.path.exists(os.path.join(config.renpy_base, "jedit"))
+
+        fei.append(e)
 
         fei.append(FancyEditorInfo(
             3,
@@ -253,7 +261,7 @@ init 1 python in editor:
         # If we're in a linux distro or something, assume all editors work.
         if not updater.can_update():
             for i in fei:
-                if i.dlc and not i.dlc.startswith("extension:"):
+                if i.dlc and not i.dlc.startswith("extension:") and not i.deprecated:
                     i.installed = True
 
     def fancy_activate_editor(default=False):
@@ -549,6 +557,9 @@ screen editor:
 
                         for fe in editor.fancy_editors:
 
+                            if fe.deprecated and not fe.installed:
+                                continue
+
                             add SPACER
 
                             textbutton fe.name action editor.SelectEditor(fe.name)
@@ -560,7 +571,10 @@ screen editor:
                                 has vbox
 
                                 if fe.description:
-                                    text fe.description style "l_small_text"
+                                    text fe.description:
+                                        style "l_small_text"
+                                        if fe.deprecated:
+                                            color ERROR_COLOR
 
                                 if not fe.installed:
                                     add HALF_SPACER
