@@ -30,6 +30,7 @@ import time
 import zipfile
 import gc
 import linecache
+import json
 
 import renpy
 import renpy.game as game
@@ -337,6 +338,19 @@ def android_searchpath():
     print("Android search paths:" , " ".join(renpy.config.searchpath))
 
 
+def load_build_info():
+    """
+    Loads cache/build_info.json, and uses it to initialize the
+    renpy.game.build_info dictionary.
+    """
+
+    try:
+        f = renpy.exports.open_file("cache/build_info.json", "utf-8")
+        renpy.game.build_info = json.load(f)
+    except Exception:
+        renpy.game.build_info = { "info" : { } }
+
+
 def main():
 
     gc.set_threshold(*renpy.config.gc_thresholds)
@@ -369,8 +383,6 @@ def main():
 
     if (renpy.android or renpy.ios) and not renpy.config.log_to_stdout:
         print("Version:", renpy.version)
-
-    log_clock("Early init.")
 
     # Note the game directory.
     game.basepath = renpy.config.gamedir
@@ -430,7 +442,9 @@ def main():
     # Start auto-loading.
     renpy.loader.auto_init()
 
-    log_clock("Loader init.")
+    load_build_info()
+
+    log_clock("Early init.")
 
     # Initialize the log.
     game.log = renpy.python.RollbackLog()

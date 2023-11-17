@@ -968,6 +968,7 @@ change_renpy_executable()
                     self.add_file("all", "game/script_version.txt", script_version_txt)
 
             if self.build["info"]:
+
                 build_info_json = self.temp_filename("build_info.json")
 
                 with open(build_info_json, "w") as f:
@@ -975,12 +976,6 @@ change_renpy_executable()
 
                 self.add_file("all", "game/cache/build_info.json", build_info_json)
 
-            build_time_txt = self.temp_filename("build_time.txt")
-
-            with open(build_time_txt, "w") as f:
-                f.write(unicode(time.time()))
-
-            self.add_file("all", "game/cache/build_time.txt", build_time_txt)
 
         def add_file_list_hash(self, list_name):
             """

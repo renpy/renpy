@@ -335,7 +335,8 @@ Build Info
 ----------
 
 There are two variables that can be used to provide information about
-the build.
+the build. This information is used to generate the game/cache/build_info.json
+file, which is loaded as Ren'Py starts.
 
 .. var:: time = None
 
@@ -361,8 +362,8 @@ the build.
             build.info.setdefault("build_host", socket.gethostname())
 
     The information in this variable needs to be of types that can be
-    placed in JSON files.
-
+    placed in JSON files. (That is, None, booleans, strings,
+    numbers, lists, and dictionaries)
 
 
 Advanced Configuration

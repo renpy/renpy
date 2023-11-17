@@ -24,7 +24,7 @@
 
 init -1500 python in build:
 
-    from store import config
+    from store import config, store
 
     import sys, os
 
@@ -524,14 +524,16 @@ init -1500 python in build:
     game_only_update = False
 
     # The time at which the game was built.
-    time = None
+    time = store.renpy.game.build_info.get("time", None)
 
-    # If not None, information about the game that is stored in build_info.json.
-    info = { }
+    # Information about the game that is stored in cache/build_info.json.
+    info = store.renpy.game.build_info.get("info", { })
 
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
+        import time
+
         global include_update
 
         rv = { }
@@ -623,25 +625,15 @@ init -1500 python in build:
 
         rv["update_formats"] = update_formats
 
-        rv["info"] = info
+        rv["info"] = {
+            "info" : info,
+            "time" : time.time(),
+            "name" : config.name,
+            "version" : config.version,
+            }
 
         return rv
 
-init -1500 python hide:
-
-    import json
-
-    try:
-        with renpy.open_file("cache/build_info.json", "utf-8") as f:
-            build.info = json.load(f)
-    except:
-        pass
-
-    try:
-        with renpy.open_file("cache/build_time.txt", "utf-8") as f:
-            build.time = float(f.read())
-    except:
-        pass
 
 init 1500 python in build:
 
