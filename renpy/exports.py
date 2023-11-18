@@ -1542,7 +1542,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=None):
     """
     :doc: se_pause
-    :args: (delay=None, *, hard=False, predict=False, modal=None)
+    :args: (delay=None, *, predict=False, modal=None, hard=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -1551,6 +1551,19 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         If given, the number of seconds Ren'Py should pause for.
 
     The following should be given as keyword arguments:
+
+    `predict`
+        If True, Ren'Py will only end the pause when all prediction, including
+        prediction scheduled with :func:`renpy.start_predict` and
+        :func:`renpy.start_predict_screen`, has been finished.
+
+        This also causes Ren'Py to prioritize prediction over display smoothness
+        for the duration of the pause. Because of that, it's recommended to not
+        display animations during prediction.
+
+    `modal`
+        If True or None, the pause will not end when a modal screen is being displayed.
+        If False, the pause will end while a modal screen is being displayed.
 
     `hard`
         This must be given as a keyword argument. When True, Ren'Py may prevent
@@ -1569,19 +1582,6 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         player.
 
         tl;dr - Don't use renpy.pause with hard=True.
-
-    `predict`
-        If True, Ren'Py will end the pause when all prediction, including
-        prediction scheduled with :func:`renpy.start_predict` and
-        :func:`renpy.start_predict_screen`, has been finished.
-
-        This also causes Ren'Py to prioritize prediction over display smoothness
-        for the duration of the pause. Because of that, it's recommended to not
-        display animations during prediction.
-
-    `modal`
-        If True or None, the pause will not end when a modal screen is being displayed.
-        If False, the pause will end while a modal screen is being displayed.
     """
 
     if renpy.config.skipping == "fast":
