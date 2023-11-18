@@ -487,8 +487,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.update()
 
     def set_transform_event(self, event):
-        super(ScreenDisplayable, self).set_transform_event(event)
-        self.current_transform_event = event
+        try:
+            push_current_screen(self)
+            super(ScreenDisplayable, self).set_transform_event(event)
+            self.current_transform_event = event
+        finally:
+            pop_current_screen()
 
     def find_focusable(self, callback, focus_name):
 
@@ -552,8 +556,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             hid = self.copy()
 
-            for i in self.child.children:
-                i.set_transform_event(kind)
+            try:
+                push_current_screen(self)
+
+                for i in self.child.children:
+                    i.set_transform_event(kind)
+            finally:
+                pop_current_screen()
+
 
         hid.phase = HIDE
         hid.copied_from = self
@@ -702,8 +712,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         if self.current_transform_event:
 
-            for i in self.child.children:
-                i.set_transform_event(self.current_transform_event)
+            try:
+                push_current_screen(self)
+
+                for i in self.child.children:
+                    i.set_transform_event(self.current_transform_event)
+
+            finally:
+                pop_current_screen()
 
             self.current_transform_event = None
 
