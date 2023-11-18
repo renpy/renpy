@@ -1020,7 +1020,9 @@ cdef class RenderTransform:
 
         pos = (self.xo, self.yo)
 
-        if state.subpixel:
+        if state.alpha <= 0.0:
+            rv.depends_on(self.cr, focus=True)
+        elif state.subpixel:
             rv.subpixel_blit(self.cr, pos)
         else:
             rv.blit(self.cr, pos)
