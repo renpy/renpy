@@ -23,6 +23,7 @@ cdef enum split_t:
     SPLIT_NONE
     SPLIT_BEFORE
     SPLIT_INSTEAD
+    SPLIT_IGNORE
 
 cdef enum ruby_t:
     RUBY_NONE
