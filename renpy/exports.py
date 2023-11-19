@@ -3975,8 +3975,20 @@ def invoke_in_main_thread(fn, *args, **kwargs):
     :doc: other
 
     This runs the given function with the given arguments in the main
-    thread, if it is not already running in the main thread. The function
-    runs in an interaction context similar to an event handler.
+    thread. The function runs in an interaction context similar to an
+    event handler. This is meant to be called from a separate thread,
+    whose creation is handled by :func:`renpy.invoke_in_thread`.
+
+    If several functions are scheduled to be invoked, it is guaranteed
+    that they will be run in the order in which they have been scheduled::
+
+        def ran_in_a_thread():
+            renpy.invoke_in_main_thread(a)
+            renpy.invoke_in_main_thread(b)
+
+    In this example, it is guaranteed that ``b`` will not be called
+    before the call to ``a`` returns. This is (by definition) not
+    guaranteed at all in the case of :func:`renpy.invoke_in_thread`.
 
     This may not be called during the init phase.
     """
