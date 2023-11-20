@@ -127,6 +127,9 @@ cdef class GL2Draw:
         # Has the position of this window ever been set?
         self.ever_set_position = False
 
+        # Was the window maximized the last time update was called?
+        self.maximized = False
+
     def get_texture_size(self):
         """
         Returns the amount of memory locked up in textures.
@@ -578,12 +581,21 @@ cdef class GL2Draw:
         Documented in renderer.
         """
 
-        fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+        flags = pygame.display.get_window().get_window_flags()
+        fullscreen = bool(flags & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+        maximized = bool(flags & pygame.WINDOW_MAXIMIZED)
 
         size = renpy.display.core.get_size()
         drawable_size = pygame.display.get_drawable_size()
 
-        if force or (fullscreen != renpy.display.interface.fullscreen) or (size != self.physical_size) or (drawable_size != self.drawable_size):
+        if (
+            (force) or
+            (fullscreen != renpy.display.interface.fullscreen) or
+            (size != self.physical_size) or
+            (drawable_size != self.drawable_size) or
+            (self.maximized != maximized)
+        ):
+            self.maximized = maximized
             renpy.display.interface.before_resize()
             self.on_resize()
 
