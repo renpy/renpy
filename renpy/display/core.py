@@ -1804,6 +1804,39 @@ class Interface(object):
             renpy.display.log.exception()
             return 1.0
 
+    def get_total_display_size(self):
+        """
+        Gets the total size of all the displays in the system.
+        """
+
+        minx = 0
+        miny = 0
+        maxx = 0
+        maxy = 0
+
+        for i in range(pygame.display.get_num_video_displays()):
+            r = pygame.display.get_display_bounds(i)
+            minx = min(minx, r[0])
+            miny = min(miny, r[1])
+            maxx = max(maxx, r[0] + r[2])
+            maxy = max(maxy, r[1] + r[3])
+
+        return (minx, miny, maxx - minx, maxy - miny)
+
+    def on_move(self, pos):
+        """
+        Called when the player moves the window.
+        """
+
+        if not (renpy.windows or renpy.macintosh or renpy.linux):
+            return
+
+        if renpy.game.preferences.fullscreen or renpy.game.preferences.maximized:
+            return
+
+        renpy.game.preferences.window_position = pos
+        renpy.game.preferences.window_position_screen_size = self.get_total_display_size()
+
     def start(self):
         """
         Starts the interface, by opening a window and setting the mode.
@@ -3868,6 +3901,11 @@ class Interface(object):
 
                     renpy.game.interface.force_redraw = True
 
+                    continue
+
+                # Handle window moves.
+                if ev.type == pygame.WINDOWMOVED:
+                    self.on_move(ev.pos)
                     continue
 
                 # If we're ignoring touch events, and get a mouse up, stop
