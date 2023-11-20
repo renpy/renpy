@@ -71,10 +71,11 @@ Text displayables
 
 Alternative text
     Alternative text is supplied by a displayable's :propref:`alt` style
-    property. It can also be supplied by actions supplied to buttons
-    and values supplied to bars. Explicitly supplied alternative takes
-    precedence over text supplied by actions or values, and both take
-    precedence over text extracted from Text displayables.
+    property. It can also be supplied by instances of the :class:`Action`
+    and :class:`BarValue` classes.
+    Explicitly supplied alternative text takes precedence over text
+    supplied by Actions or BarValues, and both take precedence over
+    text extracted from Text displayables.
 
     Alternative text is translated using Ren'Py's string translation
     mechanism. Alternative text takes precedence over text extracted
