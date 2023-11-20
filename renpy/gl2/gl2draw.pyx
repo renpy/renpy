@@ -298,6 +298,12 @@ cdef class GL2Draw:
 
         default = (pygame.WINDOWPOS_CENTERED, pygame.WINDOWPOS_CENTERED)
 
+        if "RENPY_CENTER_WINDOW" in os.environ:
+            return default
+
+        if renpy.display.interface.safe_mode:
+            return default
+
         if not (renpy.linux or renpy.windows or renpy.macintosh):
             return default
 
