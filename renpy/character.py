@@ -1117,7 +1117,7 @@ class ADVCharacter(object):
         renpy.game.context().say_attributes = None
 
         temporary_attrs = renpy.game.context().temporary_attributes
-        renpy.game.context().say_attributes = None
+        renpy.game.context().temporary_attributes = None
 
         if interact:
             if temporary_attrs:
