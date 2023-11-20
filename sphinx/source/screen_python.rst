@@ -28,65 +28,72 @@ sensitive, and when it is selected.
 
 .. class:: Action
 
-   To define a new action, inherit from this class. Override the
-   methods in this class to change the behavior of the action.
+    To define a new action, inherit from this class. Override the
+    methods in this class to change the behavior of the action.
 
-   .. method:: __call__(self)
+    .. method:: __call__(self)
 
-       This is the method that is called when the action is
-       activated. In many cases, returning a non-None value from the
-       action will cause the current interaction to end.
+        This is the method that is called when the action is
+        activated. In many cases, returning a non-None value from the
+        action will cause the current interaction to end.
 
-       This method must be overridden, as the default method will
-       raise a NotImplemented exception (and hence cause Ren'Py to
-       report an error).
+        This method must be overridden, as the default method will
+        raise a NotImplemented exception (and hence cause Ren'Py to
+        report an error).
 
-   .. method:: get_sensitive(self)
+    .. method:: get_sensitive(self)
 
-       This is called to determine if the button with this action
-       should be sensitive. It should return true if the button is
-       sensitive.
+        This is called to determine if the button with this action
+        should be sensitive. It should return true if the button is
+        sensitive.
 
-       Note that __call__ can be called, even if this returns False.
+        Note that __call__ can be called, even if this returns False.
 
-       The default implementation returns True.
+        The default implementation returns True.
 
-   .. method:: get_selected(self)
+    .. method:: get_selected(self)
 
-       This should return true if the button should be rendered as a
-       selected button, and false otherwise.
+        This should return true if the button should be rendered as a
+        selected button, and false otherwise.
 
-       The default implemention returns False.
+        The default implemention returns False.
 
-   .. method:: get_tooltip(self)
+    .. method:: get_tooltip(self)
 
-       This gets a default tooltip for this button, if a specific
-       tooltip is not assigned. It should return the tooltip value,
-       or None if a tooltip is not known.
+        This gets a default tooltip for this button, if a specific
+        tooltip is not assigned. It should return the tooltip value,
+        or None if a tooltip is not known.
 
-       This defaults to returning None.
+        This defaults to returning None.
 
-   .. method:: periodic(self, st)
+    .. method:: periodic(self, st)
 
-       This method is called once at the start of each interaction,
-       and then is called periodically thereafter. If it returns a
-       number, it will be called before that many seconds elapse, but
-       it might be called sooner.
+        This method is called once at the start of each interaction,
+        and then is called periodically thereafter. If it returns a
+        number, it will be called before that many seconds elapse, but
+        it might be called sooner.
 
-       The main use of this is to call
-       :func:`renpy.restart_interaction` if the value of
-       get_selected or get_sensitive should change.
+        The main use of this is to call
+        :func:`renpy.restart_interaction` if the value of
+        get_selected or get_sensitive should change.
 
-       It takes one argument:
+        It takes one argument:
 
-       `st`
-           The number of seconds since the screen or displayable this
-           action is associated with was first shown.
+        `st`
+            The number of seconds since the screen or displayable this
+            action is associated with was first shown.
 
-   .. method:: unhovered(self)
+    .. method:: unhovered(self)
 
-       When the action is used as the `hovered` parameter to a button (or
-       similar object), this method is called when the object loses focus.
+        When the action is used as the `hovered` parameter to a button (or
+        similar object), this method is called when the object loses focus.
+
+    .. attribute:: alt
+
+        The text-to-speech text used for buttons that use this Action, if
+        the button does not have the :propref:`alt` property set. This can
+        set to a string in the class, in the constructor, it or it can be
+        a Python property that returns a string.
 
 To run an action from Python, use :func:`renpy.run`.
 
@@ -152,6 +159,13 @@ the adjustment and styles.
        :func:`AnimatedValue` does. To do this, get_adjustment should
        store the adjustment, and periodic should call the
        adjustment's changed method.
+
+    .. attribute:: alt
+
+        The text-to-speech text used for bars that use this BarValue, if
+        the bar does not have the :propref:`alt` property set. This can
+        set to a string in the class, in the constructor, it or it can be
+        a Python property that returns a string.
 
 
 InputValue
