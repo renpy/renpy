@@ -92,4 +92,7 @@ cdef class GL2Draw:
     # The current FBO.
     cdef public GLuint current_fbo
 
+    # Was the window maximized?
+    cdef public bint maximized
+
     cdef void change_fbo(self, GLuint fbo)
