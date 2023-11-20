@@ -145,6 +145,9 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     except Exception:
         return
 
+    if file is None:
+        raise ValueError("Cannot play None.")
+
     call("stop", channel)
     call("queue", channel, file, name, paused, fadein, tight, start, end, relative_volume)
 
@@ -163,6 +166,9 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
             file = file.name
     except Exception:
         return
+
+    if file is None:
+        raise ValueError("Cannot play None.")
 
     call("queue", channel, file, name, False, fadein, tight, start, end, relative_volume)
 
