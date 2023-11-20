@@ -219,11 +219,14 @@ can only be called from the main thread.)
 Other Changes
 -------------
 
-On PC platforms (Windows, Mac, and Linux), when the window containing
-the game moves, it's position will be store. The window's position will
-be restored when the game is restarted, if the total size of all virtual
-desktops is the game, and the window is fully contained on the virtual
-screen.
+On PC platforms (Windows, Mac, and Linux), when the game window moves,
+its position is stored. The window's position will be restored when the
+game is run again, if:
+
+* The layout of the player's monitors hasn't changed.
+* The window is fully contained on the player's monitors.
+
+Otherwise, the window will be centered on the primary monitor.
 
 On controllers (including the Steam Deck), the function of the B button
 has changed to show and hide the game menu. The previous behavior of the
