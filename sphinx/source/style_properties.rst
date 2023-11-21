@@ -445,6 +445,16 @@ Text Style Properties
     If not None, this should be a style object. The style that's used for
     alternate ruby text.
 
+.. style-property:: axis dict or None
+
+    This allows the axes of a :ref:`variable font <variable-fonts>` to be
+    set. If not None, this should be a dictionary mapping axis names to
+    values. For example::
+
+        style default:
+            font "VariableFont.ttf"
+            axis { "weight" : 500, "width" : 95 }
+
 .. style-property:: black_color color
 
     When rendering an image-based font, black will be mapped to this
@@ -491,11 +501,48 @@ Text Style Properties
     image-based font, this should be the name used to register the
     font.
 
-.. style-property:: size int
+.. style-property:: hinting str
 
-    The size of the font on the screen. While this is nominally in
-    pixels, font files may have creative interpretations of this
-    value.
+    Controls how the font will be hinted. This should be one of the following
+    strings:
+
+    "auto"
+        The default, forces use of the Freetype auto hinter.
+    "auto-light"
+        Forces the use of the freetype auto hinter in light mode, which only
+        hints vertically.
+    "bytecode"
+        Uses bytecode hinting information found in the font.
+    "none"
+        Does not hint the font.
+
+    This may also be True, in which case the value is looked up in
+    :var:`config.font_hinting`.
+
+.. style-property:: hyperlink_functions tuple of (function, function, function)
+
+    This is a tuple of three functions relating to hyperlinks in text.
+
+    The first item is the hyperlink style function. When called with a single
+    argument, the argument of the hyperlink, it must return a style object to
+    use for the hyperlink, such as ``style.hyperlink_text``. Note that a
+    style object is not a string.
+
+    The second item is the hyperlink clicked function. This function is called
+    when a hyperlink is chosen by the user. If it returns a value other than
+    None, the interaction returns that value.
+
+    The third item is the hyperlink focus function. This function is called
+    with the argument of the hyperlink when the hyperlink gains focus, and
+    with None when it loses focus. If it returns a value other than None,
+    the interaction returns that value.
+
+.. style-property:: instance string or None
+
+    When using a :ref:`variable font <variable-fonts>`, this can be
+    a string giving a named instance of the font to use. For example,
+    if the font has a "Bold" instance, this can be set to "Bold" to
+    use that instance.
 
 .. style-property:: italic boolean
 
@@ -671,8 +718,18 @@ Text Style Properties
 .. style-property:: shaper "harfbuzz" or "freetype".
 
     The shaper used on text. This should be one of "harfbuzz" or "freetype".
-    The harfbuzz shape is more capable but only works on Ren'Py 8, while
-    "freetype"
+    The harfbuzz shaper is more capable but only works on Ren'Py 8, while
+    "freetype" works in Ren'Py 7 as well.
+
+    The shaper takes a series of characters and turns it into a series of
+    positioned glyphs. This is used for things like ligatures, Indic/Bhramic
+    languages, and combining emjoi.
+
+.. style-property:: size int
+
+    The size of the font on the screen. While this is nominally in
+    pixels, font files may have creative interpretations of this
+    value.
 
 .. style-property:: slow_abortable boolean
 
@@ -709,40 +766,9 @@ Text Style Properties
 
     If True, an underline will be added to the text.
 
-.. style-property:: hyperlink_functions tuple of (function, function, function)
-
-    This is a tuple of three functions relating to hyperlinks in text.
-
-    The first item is the hyperlink style function. When called with a single
-    argument, the argument of the hyperlink, it must return a style object to
-    use for the hyperlink, such as ``style.hyperlink_text``. Note that a
-    style object is not a string.
-
-    The second item is the hyperlink clicked function. This function is called
-    when a hyperlink is chosen by the user. If it returns a value other than
-    None, the interaction returns that value.
-
-    The third item is the hyperlink focus function. This function is called
-    with the argument of the hyperlink when the hyperlink gains focus, and
-    with None when it loses focus. If it returns a value other than None,
-    the interaction returns that value.
-
 .. style-property:: vertical boolean
 
     If True, the text will be rendered vertically.
-
-.. style-property:: hinting str
-
-    Controls how the font will be hinted. This should be one of the following
-    strings:
-
-    "auto"
-        The default, forces use of the Freetype auto hinter.
-    "bytecode"
-        Uses bytecode hinting information found in the font.
-    "none"
-        Does not hint the font.
-
 
 .. _window-style-properties:
 

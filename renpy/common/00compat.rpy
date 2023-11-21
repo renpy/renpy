@@ -299,7 +299,6 @@ init -1100 python:
             config.simple_box_reverse = True
             build.itch_channels = list(build.itch_channels.items())
             style.default.shaper = "freetype"
-            style.default.hinting = "auto"
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
@@ -411,7 +410,7 @@ init 1100 python hide:
             config.layers.append('screens')
 
     if "Fullscreen" in config.translations:
-        fs = _("Fullscreen")
+        fs = __("Fullscreen")
         config.translations.setdefault("Fullscreen 4:3", fs + " 4:3")
         config.translations.setdefault("Fullscreen 16:9", fs + " 16:9")
         config.translations.setdefault("Fullscreen 16:10", fs + " 16:10")

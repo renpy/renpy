@@ -7,23 +7,23 @@ translate ukrainian strings:
 
     # 00gltest.rpy:74
     old "Automatically Choose"
-    new "Вибрати автоматично"
+    new "Обрати автоматично"
 
     # 00gltest.rpy:79
     old "Force Angle/DirectX Renderer"
-    new "Примусова візуалізація Angle/DirectX"
+    new "Візуалізація Angle/DirectX"
 
     # 00gltest.rpy:83
     old "Force OpenGL Renderer"
-    new "Примусова візуалізація OpenGL"
+    new "Візуалізація OpenGL"
 
     # 00gltest.rpy:87
     old "Force Software Renderer"
-    new "Примусова програмна візуалізація"
+    new "Програмна візуалізація"
 
     # 00gltest.rpy:93
     old "NPOT"
-    new "NPOT (OpenGL 2+)"
+    new "NPOT"
 
     # 00gltest.rpy:97
     old "Enable"
@@ -51,7 +51,7 @@ translate ukrainian strings:
 
     # 00gltest.rpy:163
     old "Tearing"
-    new "Розривання кадрів"
+    new "Розрив кадрів"
 
     # 00gltest.rpy:179
     old "Changes will take effect the next time this program is run."
@@ -79,11 +79,11 @@ translate ukrainian strings:
 
     # 00gltest.rpy:229
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "Графічні драйвера застаріли чи працюють неправильно. Це може призвести до повільного або неправильного відображення графіки. Оновлення DirectX може вирішити цю проблему."
+    new "Графічні драйвери можуть бути застарілими або працювати неправильно. Це може призвести до повільного або некоректного відображення графіки. Оновлення DirectX може вирішити цю проблему."
 
     # 00gltest.rpy:231
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "Графічні драйвера застаріли чи працюють неправильно. Це може призвести до повільного або неправильного відображення графіки."
+    new "Графічні драйвери можуть бути застарілими або працювати неправильно. Це може призвести до повільного або некоректного відображення графіки."
 
     # 00gltest.rpy:236
     old "Update DirectX"
@@ -91,7 +91,7 @@ translate ukrainian strings:
 
     # 00gltest.rpy:242
     old "Continue, Show this warning again"
-    new "Продовжити, показати знову"
+    new "Продовжити, показувати знову"
 
     # 00gltest.rpy:246
     old "Continue, Don't show warning again"
@@ -103,11 +103,11 @@ translate ukrainian strings:
 
     # 00gltest.rpy:268
     old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "Запущено веб-налаштування DirectX. Вона може згорнутися на панелі завдань. Будь ласка, дотримуйтесь підказок для встановлення DirectX."
+    new "Запущено вебналаштування DirectX. Вона може згорнутися на панелі завдань. Будь ласка, дотримуйтесь підказок для встановлення DirectX."
 
     # 00gltest.rpy:272
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}Примітка:{/b} Інсталятор DirectX за замовчуванням намагається встановити панель інструментів Bing. Якщо ви цього не хочете, зніміть відповідну галочку."
+    new "{b}Нотатка:{/b} Програма вебналаштування DirectX від Microsoft за стандартом встановлює панель інструментів Bing. Якщо вам не потрібна ця панель, зніміть позначку у відповідному полі."
 
     # 00gltest.rpy:276
     old "When setup finishes, please click below to restart this program."
@@ -119,11 +119,11 @@ translate ukrainian strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Виберіть геймпад для калібрування"
+    new "Оберіть ґеймпад для калібрування"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "Геймпадів не виявлено"
+    new "Ґеймпадів не виявлено"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
@@ -131,7 +131,7 @@ translate ukrainian strings:
 
     # 00gamepad.rpy:58
     old "Press or move the [control!s] [kind]."
-    new "Натисніть або перемістіть [control!s] [kind]."
+    new "Натисніть або рухніть [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -167,7 +167,7 @@ translate ukrainian strings:
 
     # _errorhandling.rpym:584
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Спроба відкоту до попереднього часу, що дозволяє зберегти або вибрати інший варіант."
+    new "Спроба відкату до попереднього часу, що дозволяє зберегти або вибрати інший варіант."
 
     # _errorhandling.rpym:587
     old "Ignore"
@@ -203,7 +203,7 @@ translate ukrainian strings:
 
     # _errorhandling.rpym:638
     old "Parsing the script failed."
-    new "Опрацювання скрипту завершилося невдало."
+    new "Розбір скрипта не вдався."
 
     # _errorhandling.rpym:664
     old "Opens the errors.txt file in a text editor."
@@ -219,7 +219,7 @@ translate ukrainian strings:
 
     # _errorhandling.rpym:544
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Копіює файл traceback.txt у буфер обміну як BBCode для форумів типу https://lemmasoft.renai.us/."
+    new "Копіює файл traceback.txt у буфер обміну як BBCode для форумів як https://lemmasoft.renai.us/."
 
     # _errorhandling.rpym:546
     old "Copy Markdown"
@@ -231,35 +231,35 @@ translate ukrainian strings:
 
     # _errorhandling.rpym:683
     old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Копіює файл errors.txt у буфер обміну як BBCode для форумів типу https://lemmasoft.renai.us/."
+    new "Копіює файл errors.txt у буфер обміну як BBCode для форумів як https://lemmasoft.renai.us/."
 
     # _errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
-    new "Копіює файл errors.txt у буфер обміну як Markdown для Дискорду."
+    new "Копіює файл errors.txt у буфер обміну як Markdown для Discord."
 
     # renpy/common/00gltest.rpy:100
     old "Force GL Renderer"
-    new "Примусова візуалізація GL"
+    new "Візуалізація GL"
 
     # renpy/common/00gltest.rpy:105
     old "Force ANGLE Renderer"
-    new "Примусова візуалізація ANGLE"
+    new "Візуалізація ANGLE"
 
     # renpy/common/00gltest.rpy:110
     old "Force GLES Renderer"
-    new "Примусова візуалізація GLES"
+    new "Візуалізація GLES"
 
     # renpy/common/00gltest.rpy:116
     old "Force GL2 Renderer"
-    new "Примусова візуалізація GL2"
+    new "Візуалізація GL2"
 
     # renpy/common/00gltest.rpy:121
     old "Force ANGLE2 Renderer"
-    new "Примусова візуалізація ANGLE2"
+    new "Візуалізація ANGLE2"
 
     # renpy/common/00gltest.rpy:126
     old "Force GLES2 Renderer"
-    new "Примусова візуалізація GLES2"
+    new "Візуалізація GLES2"
 
     # renpy/common/00gltest.rpy:245
     old "This game requires use of GL2 that can't be initialised."
@@ -271,11 +271,11 @@ translate ukrainian strings:
 
     # renpy/common/00gltest.rpy:273
     old "Change render options"
-    new "Змінити налаштування рендерингу"
+    new "Змінити параметри візцалізації"
 
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
-    new "Натисніть або посуньте [kind] '[control!s]'"
+    new "Натисніть або рухніть '[control!s]' [kind]."
 
     # renpy/common/00gltest.rpy:136
     old "Enable (No Blocklist)"

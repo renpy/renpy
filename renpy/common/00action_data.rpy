@@ -21,10 +21,7 @@
 
 init -1600 python:
 
-    ##########################################################################
-    # Functions that set variables or fields.
-
-    __FieldNotFound = object()
+    __Sentinel = object()
 
     def _get_field(obj, name, kind):
 
@@ -34,372 +31,323 @@ init -1600 python:
         rv = obj
 
         for i in name.split("."):
-            rv = getattr(rv, i, __FieldNotFound)
-            if rv is __FieldNotFound:
-                raise NameError("The {} {} does not exist.".format(kind, name))
+            rv = getattr(rv, i, __Sentinel)
+            if rv is __Sentinel:
+                raise Exception("The {!r} {} does not exist.".format(name, kind))
 
         return rv
 
     def _set_field(obj, name, value, kind):
         fields, _, attr = name.rpartition(".")
+        obj = _get_field(obj, fields, kind)
 
         try:
-            obj = _get_field(obj, fields, kind)
             setattr(obj, attr, value)
         except Exception:
-            raise NameError("The {} {} does not exist.".format(kind, name))
+            raise Exception("The {!r} {} cannot be set.".format(name, kind))
 
-    @renpy.pure
-    class SetField(Action, FieldEquality):
+
+init -1600 python hide:
+
+    Accessor = Manager = python_object
+    # clarify the role of each class without adding to the mro
+    # and without having ancestors placed between RevertableObject and python_object in the mro
+
+    # Accessor mixins : manage how the data is accessed
+    # defines a __call__ which gets the value to set from the value_to_set() method
+    # defines a current_value() method which returns the current value of the accessed data or raise an exception
+    # may define the `kind` class attribute, which is used in error messages
+    class Field(Accessor):
         """
-        :doc: data_action
-        :args: (object, field, value)
-
-        Causes the a field on an object to be set to a given value.
-        `object` is the object, `field` is a string giving the name of the
-        field to set, and `value` is the value to set it to.
+        An Accessor mixin class for Actions setting a field on an object.
         """
 
-        identity_fields = [ "object" ]
-        equality_fields = [ "field", "value" ]
-
+        identity_fields = ("object",)
+        equality_fields = ("field",)
         kind = "field"
 
-        def __init__(self, object, field, value, kind="field"):
+        def __init__(self, object, field, *args, **kwargs):
+            super(Field, self).__init__(*args, **kwargs)
             self.object = object
             self.field = field
-            self.value = value
-            self.kind = kind
 
         def __call__(self):
-            _set_field(self.object, self.field, self.value, self.kind)
+            _set_field(self.object, self.field, self.value_to_set(), self.kind)
             renpy.restart_interaction()
 
-        def get_selected(self):
-            return _get_field(self.object, self.field, self.kind) == self.value
+        def current_value(self):
+            return _get_field(self.object, self.field, self.kind)
 
-    @renpy.pure
-    def SetVariable(name, value):
+    class Variable(Field):
         """
-        :doc: data_action
-
-        Causes the variable called `name` to be set to `value`.
-
-        The `name` argument must be a string, and can be a simple name like "strength", or
-        one with dots separating the variable from fields, like "hero.strength"
-        or "persistent.show_cutscenes".
+        An Accessor mixin class for Actions setting a global variable.
         """
 
-        return SetField(store, name, value, kind="variable")
+        kind = "global variable"
 
-    @renpy.pure
-    class SetDict(Action, FieldEquality):
+        def __init__(self, name, *args, **kwargs):
+            super(Variable, self).__init__(store, name, *args, **kwargs)
+
+    class Dict(Accessor):
         """
-        :doc: data_action
-
-        Causes the value of `key` in `dict` to be set to `value`.
-        This also works with lists, where `key` is the index at which
-        the value will be set.
+        An Accessor mixin class for Actions setting an index on a sequence or a key on a mapping.
         """
 
-        identity_fields = [ "dict" ]
-        equality_fields = [ "key", "value" ]
+        identity_fields = ("dict",)
+        equality_fields = ("key",)
+        kind = "key or index"
 
-        def __init__(self, dict, key, value):
+        def __init__(self, dict, key, *args, **kwargs):
+            super(Dict, self).__init__(*args, **kwargs)
             self.dict = dict
             self.key = key
-            self.value = value
 
         def __call__(self):
-            self.dict[self.key] = self.value
+            self.dict[self.key] = self.value_to_set()
             renpy.restart_interaction()
 
-        def get_selected(self):
-            if self.key not in self.dict:
-                return False
+        def current_value(self):
+            key = self.key
+            try:
+                return self.dict[self.key]
+            except LookupError as e:
+                raise Exception("The {!r} {} does not exist.".format(key, self.kind)) # from e # PY3 only
 
-            return self.dict[self.key] == self.value
-
-
-    @renpy.pure
-    class SetScreenVariable(Action, FieldEquality):
+    class ScreenVariable(Accessor):
         """
-        :doc: data_action
-
-        Causes the variable called `name` associated with the current screen
-        to be set to `value`.
-        In a ``use``\ d screen, this action sets the variable in the context
-        of the screen containing the ``use``\ d one(s).
-        To set variables within a ``use``\ d screen, and only in that
-        case, use :func:`SetLocalVariable` instead.
+        An Accessor mixin class for Actions setting a screen variable.
         """
 
-        identity_fields = [ "value" ]
-        equality_fields = [ "name" ]
+        identity_fields = ()
+        equality_fields = ("name",)
+        kind = "screen variable"
 
-        def __init__(self, name, value):
+        def __init__(self, name, *args, **kwargs):
+            super(ScreenVariable, self).__init__(*args, **kwargs)
             self.name = name
-            self.value = value
 
         def __call__(self):
-
             cs = renpy.current_screen()
 
             if cs is None:
                 return
 
-            cs.scope[self.name] = self.value
+            cs.scope[self.name] = self.value_to_set()
             renpy.restart_interaction()
 
-        def get_selected(self):
-
+        def current_value(self):
             cs = renpy.current_screen()
-
             if cs is None:
-                return False
+                raise Exception("No current screen.")
 
-            if self.name not in cs.scope:
-                return False
-
-            return cs.scope[self.name] == self.value
-
-    # Not pure.
-    def SetLocalVariable(name, value):
-        """
-        :doc: data_action
-
-        Causes the variable called `name` to be set to `value` in the current
-        local context.
-
-        This function is only useful in a screen that has been ``use``\ d by
-        another screen, as it provides a way of setting the value of a
-        variable inside the used screen. In all other cases,
-        :func:`SetScreenVariable` should be preferred, as it allows more
-        of the screen to be cached.
-
-        For more information, see :ref:`sl-use`.
-
-        This must be created in the context that the variable is set
-        in - it can't be passed in from somewhere else.
-        """
-
-        return SetDict(sys._getframe(1).f_locals, name, value)
-
-
-    @renpy.pure
-    class ToggleField(Action, FieldEquality):
-        """
-        :doc: data_action
-        :args: (object, field, true_value=None, false_value=None)
-
-        Toggles `field` on `object`. Toggling means to invert the boolean
-        value of that field when the action is performed.
-
-        `true_value`
-            If not None, then this is the true value we use.
-        `false_value`
-            If not None, then this is the false value we use.
-        """
-
-        identity_fields = [ "object"]
-        equality_fields = [ "field", "true_value", "false_value"  ]
-
-        kind = "field"
-
-        def __init__(self, object, field, true_value=None, false_value=None, kind="field"):
-            self.object = object
-            self.field = field
-            self.true_value = true_value
-            self.false_value = false_value
-            self.kind = kind
-
-        def __call__(self):
-            value = _get_field(self.object, self.field, self.kind)
-
-            if self.true_value is not None:
-                value = (value == self.true_value)
-
-            value = not value
-
-            if self.true_value is not None:
-                if value:
-                    value = self.true_value
-                else:
-                    value = self.false_value
-
-            _set_field(self.object, self.field, value, self.kind)
-            renpy.restart_interaction()
-
-        def get_selected(self):
-            rv = _get_field(self.object, self.field, self.kind)
-
-            if self.true_value is not None:
-                rv = (rv == self.true_value)
+            rv = cs.scope.get(self.name, __Sentinel)
+            if rv is __Sentinel:
+                raise Exception("The {!r} {} does not exist.".format(self.name, self.kind))
 
             return rv
 
-
-    @renpy.pure
-    def ToggleVariable(variable, true_value=None, false_value=None):
+    class LocalVariable(Dict):
         """
-        :doc: data_action
-
-        Toggles the variable whose name is given in `variable`.
-
-        The `variable` argument must be a string, and can be a simple name like "strength", or
-        one with dots separating the variable from fields, like "hero.strength"
-        or "persistent.show_cutscenes".
-
-
-        `true_value`
-            If not None, then this is the true value used.
-        `false_value`
-            If not None, then this is the false value used.
+        An Accessor mixin class for Actions setting a local variable.
         """
 
-        return ToggleField(store, variable, true_value=true_value, false_value=false_value, kind="variable")
+        kind = "local variable"
 
+        def __init__(self, name, *args, **kwargs):
+            super(LocalVariable, self).__init__(sys._getframe(1).f_locals,
+                                                name,
+                                                *args, **kwargs)
 
-    @renpy.pure
-    class ToggleDict(Action, FieldEquality):
+    # Manager mixins : manage what value gets written
+    # defines a value_to_set() method which returns the value to be set
+    # may define get_selected and such methods
+    # both of these may call the current_value() method
+    class Set(Manager):
         """
-        :doc: data_action
-
-        Toggles the value of `key` in `dict`. It also works on
-        lists, in which case `key` is the index of the value to toggle.
-        Toggling means to invert the value when the action is performed.
-
-        `true_value`
-            If not None, then this is the true value used.
-        `false_value`
-            If not None, then this is the false value used.
+        A Manager mixin class for Actions setting a single value
         """
 
-        identity_fields = [ "dict", ]
-        equality_fields = [ "key", "true_value", "false_value" ]
+        identity_fields = ()
+        equality_fields = ("value",)
 
-        def __init__(self, dict, key, true_value=None, false_value=None):
-            self.dict = dict
-            self.key = key
-            self.true_value = true_value
-            self.false_value = false_value
+        def __init__(self, value, *args, **kwargs):
+            super(Set, self).__init__(*args, **kwargs)
+            self.value = value
 
-        def __call__(self):
-            value = self.dict[self.key]
-
-            if self.true_value is not None:
-                value = (value == self.true_value)
-
-            value = not value
-
-            if self.true_value is not None:
-                if value:
-                    value = self.true_value
-                else:
-                    value = self.false_value
-
-            self.dict[self.key] = value
-            renpy.restart_interaction()
+        def value_to_set(self):
+            return self.value
 
         def get_selected(self):
             try:
-                rv = self.dict[self.key]
-            except (KeyError, IndexError):
+                val = self.current_value()
+            except Exception:
                 return False
 
-            if self.true_value is not None:
-                rv = (rv == self.true_value)
+            return val == self.value
 
-            return rv
-
-    # Not pure.
-    def ToggleLocalVariable(name, true_value=None, false_value=None):
+    class Toggle(Manager):
         """
-        :doc: data_action
-
-        Toggles the value of the variable called `name` in the current local context.
-
-        This function is only useful in a screen that has been ``use``\ d by
-        another screen, as it provides a way of setting the value of a
-        variable inside the used screen. In all other cases,
-        :func:`ToggleScreenVariable` should be preferred, as it allows more
-        of the screen to be cached.
-
-        For more information, see :ref:`sl-use`.
-
-        This must be created in the context that the variable is set
-        in - it can't be passed in from somewhere else.
-
-        `true_value`
-            If not None, then this is the true value used.
-        `false_value`
-            If not None, then this is the false value used.
+        A Manager mixin class for Actions toggling between two values.
         """
 
-        return ToggleDict(sys._getframe(1).f_locals, name, true_value=true_value, false_value=false_value)
+        identity_fields = ()
+        equality_fields = ("true_value", "false_value")
 
-    @renpy.pure
-    class ToggleScreenVariable(Action, FieldEquality):
-        """
-        :doc: data_action
-
-        Toggles the value of the variable called `name` in the current screen.
-        In a ``use``\ d screen, this action accesses and sets the given variable
-        in the context of the screen containing the ``use``\ d one(s).
-        To access and set variables within a ``use``\ d screen, and only in that
-        case, use :func:`ToggleLocalVariable` instead.
-
-        `true_value`
-            If not None, then this is the true value used.
-        `false_value`
-            If not None, then this is the false value used.
-        """
-
-        equality_fields = [ "name", "true_value", "false_value" ]
-
-        def __init__(self, name, true_value=None, false_value=None):
-            self.name = name
+        def __init__(self, true_value=None, false_value=None, *args, **kwargs):
+            super(Toggle, self).__init__(*args, **kwargs)
             self.true_value = true_value
             self.false_value = false_value
 
-        def __call__(self):
-            cs = renpy.current_screen()
+        def value_to_set(self):
+            value = self.current_value()
 
-            if cs is None:
-                return
-
-            value = cs.scope[self.name]
-
-            if self.true_value is not None:
-                value = (value == self.true_value)
+            tv = self.true_value
+            if tv is not None:
+                value = (value == tv)
 
             value = not value
 
-            if self.true_value is not None:
+            if tv is not None:
                 if value:
-                    value = self.true_value
+                    return tv
                 else:
-                    value = self.false_value
+                    return self.false_value
 
-            cs.scope[self.name] = value
-            renpy.restart_interaction()
+            return value
 
         def get_selected(self):
-            cs = renpy.current_screen()
-
-            if cs is None:
+            try:
+                val = self.current_value()
+            except Exception:
                 return False
 
-            if self.name not in cs.scope:
+            tv = self.true_value
+            if tv is not None:
+                return val == tv
+
+            return bool(val)
+
+    class Cycle(Manager):
+        """
+        A Manager mixin class for Actions cycling through a list of values.
+
+        Warning : the provided values must not be duplicated, otherwise some values can never be set.
+        """
+
+        identity_fields = ()
+        equality_fields = ("values", "loop")
+
+        def __init__(self, values, *args, **kwargs):
+            if kwargs.pop("reverse", False):
+                values = values[::-1]
+                # the reversed builtin returns a non-indexable iterator
+                # and we only support sequences anyway - iterators are not picklable
+            self.loop = kwargs.pop("loop", True)
+
+            super(Cycle, self).__init__(*args, **kwargs)
+
+            self.values = renpy.easy.to_tuple(values)
+
+        def value_to_set(self):
+            values = self.values
+            value = self.current_value()
+
+            if value in values:
+                idx = values.index(value) + 1
+
+                lnv = len(values)
+                if self.loop and idx >= lnv:
+                    idx -= lnv
+
+            else:
+                idx = 0
+
+            return values[idx]
+
+        def get_sensitive(self):
+            values = self.values
+            if not values:
                 return False
 
-            rv = cs.scope[self.name]
+            if self.loop:
+                return True
 
-            if self.true_value is not None:
-                rv = (rv == self.true_value)
+            try:
+                value = self.current_value()
+            except Exception:
+                return False
+
+            if value in values:
+                idx = values.index(value)+1
+                if idx >= len(values):
+                    return False
+
+            return True
+
+    class Increment(Manager):
+        """
+        A Manager mixin class for Actions incrementing a value by a set amount.
+        """
+
+        identity_fields = ()
+        equality_fields = ("amount",)
+
+        def __init__(self, amount=1, *args, **kwargs):
+            super(Increment, self).__init__(*args, **kwargs)
+            self.amount = amount
+
+        def value_to_set(self):
+            return self.current_value() + self.amount
+
+        def get_sensitive(self):
+            try:
+                value = self.current_value()
+            except Exception:
+                return False
+
+            try:
+                value + self.amount
+            except Exception:
+                return False
+
+            return True
 
 
-            return rv
+    for accessor in (Field, Variable, Dict, ScreenVariable, LocalVariable):
+        for manager in (Set, Toggle, Cycle, Increment):
+            name = manager.__name__ + accessor.__name__
+            doc = ":doc: generated_data_action"
+
+            if config.generating_documentation:
+                from inspect import signature, Signature, Parameter
+
+                params = []
+                for bas in (accessor, manager):
+                    sig = signature(bas.__init__)
+                    for k, param in enumerate(sig.parameters.values()):
+                        if k and (param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)):
+                            params.append(param)
+
+                if manager is Cycle:
+                    params.append(Parameter("reverse", Parameter.KEYWORD_ONLY, default=False))
+                    params.append(Parameter("loop", Parameter.KEYWORD_ONLY, default=True))
+
+                doc += "\n:args: " + str(Signature(parameters=params)) + "\n\nSee :ref:`data-actions`."
+
+            clsdict = python_dict(
+                identity_fields=manager.identity_fields+accessor.identity_fields,
+                equality_fields=manager.equality_fields+accessor.equality_fields,
+                __doc__=doc,
+            )
+
+            cls = type(name, (accessor, manager, Action, FieldEquality), clsdict)
+
+            if accessor is not LocalVariable:
+                renpy.pure(name)
+            setattr(store, name, cls)
+
+
+init -1600 python:
 
     @renpy.pure
     class AddToSet(Action, FieldEquality):

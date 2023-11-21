@@ -12,6 +12,7 @@ missing some names in my logs. If this applies to you, please
 accept my apologies and email pytom at bishoujo.us so I can fix
 the omission in future versions.
 
+* Abdul
 * Absinthe
 * Adam Trzypolski
 * Aenakume
@@ -54,6 +55,7 @@ the omission in future versions.
 * Craig P. Donson
 * 被诅咒的章鱼
 * DaFool
+* Daniel Brookman
 * Daniel Conley
 * Daniel Luque
 * David Gowers
@@ -122,6 +124,7 @@ the omission in future versions.
 * Jeremy Rand
 * Jesusaves
 * Joaquin Garmendia Cabrera
+* Joseph Boyd
 * Joshua Fehler
 * Joshua Stone
 * Julian Uy
@@ -165,6 +168,7 @@ the omission in future versions.
 * Maxwell Paul Brickner
 * Meithal
 * Merumelu
+* Michael
 * Midgethetree
 * mikey (ATP Projects)
 * Morgan Willcock

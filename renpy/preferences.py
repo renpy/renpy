@@ -137,7 +137,7 @@ Preference("self_voicing_volume_drop", 0.5)
 Preference("emphasize_audio", False)
 
 # Is the gamepad enabled?
-Preference("pad_enabled", True)
+Preference("pad_enabled", True, (bool, str))
 
 # The side of the screen used for rollback. ("left", "right", or "disable")
 Preference("mobile_rollback_side", "disable")
@@ -184,6 +184,12 @@ Preference("voice_after_game_menu", False)
 
 # Should the game be maximized?
 Preference("maximized", False)
+
+# The position of the window.
+Preference("window_position", None, (tuple, type(None)))
+
+# The size of screen that window_position was set for.
+Preference("window_position_screen_size", None, (tuple, type(None)))
 
 class Preferences(renpy.object.Object):
     """
@@ -236,6 +242,8 @@ class Preferences(renpy.object.Object):
         web_cache_preload = False
         voice_after_game_menu = False
         maximized = False
+        window_position = (0, 0)
+        window_position_screen_size = (0, 0, 7680, 2160)
 
     def init(self):
         """

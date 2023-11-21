@@ -168,7 +168,7 @@ init -1800:
         ruby_style style.ruby_text
         altruby_style style.altruby_text
         # hyperlink_functions is set in 00defaults.rpy
-        hinting "bytecode"
+        hinting True
         adjust_spacing True
         emoji_font "TwemojiCOLRv0.ttf"
         prefer_emoji True

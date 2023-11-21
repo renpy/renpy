@@ -1398,6 +1398,19 @@ ex_rollback_classes = [ ]
 # Should we revert to the old behavior of box_reverse?
 simple_box_reverse = False
 
+# A map from font name to the hinting for the font.
+font_hinting = { None : "auto" }
+
+# Should we execute costly tasks which are
+# avoidable when not generating the documentation ?
+generating_documentation = False
+
+# Is the user allowed to save, or to see the existing save files?
+save = True
+
+# Should the persistent file be updated?
+save_persistent = True
+
 
 del os
 del collections

@@ -336,6 +336,10 @@ init -1700 python:
 
 
 init -1000 python:
+
+    # Not used, may be in old save files.
+    config.missing_background = "black"
+
     # Set developer to the auto default.
     config.original_developer = "auto"
 

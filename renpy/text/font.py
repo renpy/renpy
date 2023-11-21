@@ -696,7 +696,7 @@ font_cache = { }
 last_scale = 1.0
 
 
-def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper):
+def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, axis):
 
     if hbfont is None:
         shaper = "freetype"
@@ -729,17 +729,23 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
         return rv
 
     # Check for a cached TTF.
-    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper)
+    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, None if axis is None else tuple(sorted(axis.items())))
 
     rv = font_cache.get(key, None)
     if rv is not None:
         return rv
 
+    if hinting is True:
+        hinting = renpy.config.font_hinting.get(fn, True)
+
+    if hinting is True:
+        hinting = renpy.config.font_hinting.get(None, "auto")
+
     # Load a TTF.
     face = load_face(fn, shaper)
 
     if shaper == "harfbuzz":
-        rv = hbfont.HBFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) # @UndefinedVariable
+        rv = hbfont.HBFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting, instance, axis) # @UndefinedVariable
     else:
         rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) # @UndefinedVariable
 
@@ -762,7 +768,48 @@ def load_fonts():
         i.load()
 
     for i in renpy.config.preload_fonts:
-        load_face(i)
+        load_face(i, "harfbuzz")
+
+
+def variable_font_info(font):
+    """
+    :doc: variable_fonts
+
+    Returns information about a variable font, or None if the font is not
+    variable.
+
+    `font`
+        The filename containing the font.
+
+    The return value is an object with the following fields:
+
+    `instance`
+        A dictionary where the keys are the names of the named instances
+        of the font. (For example, 'light', 'regular', 'bold', and 'heavy'.)
+        The values can be ignored.
+
+    `axis`
+        A dictionary that maps the names of the axes of the font to objects
+        with the following fields:
+
+        `minimum`
+            The minimum value of the axis.
+        `default`
+            The default value of the axis.
+        `maximum`
+            The maximum value of the axis.
+
+    The object returned by this function and the data inside it should not
+    be changed.
+
+    This function may only be called after the Ren'Py display has initialized,
+    and is intended to be called from the console, where it will print in
+    a human-readable form.
+    """
+
+    face = load_face(font, "harfbuzz")
+
+    return face.variations
 
 
 class FontGroup(object):

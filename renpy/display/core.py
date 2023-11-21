@@ -1733,6 +1733,10 @@ class Interface(object):
         # modifiers to be used with mouse and other events.
         self.mod = 0
 
+        # A queue of functions to invoke at the start of the next interaction.
+        # Set by renpy.exports.invoke_in_main_thread.
+        self.invoke_queue = [ ]
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -1800,6 +1804,39 @@ class Interface(object):
             renpy.display.log.exception()
             return 1.0
 
+    def get_total_display_size(self):
+        """
+        Gets the total size of all the displays in the system.
+        """
+
+        minx = 0
+        miny = 0
+        maxx = 0
+        maxy = 0
+
+        for i in range(pygame.display.get_num_video_displays()):
+            r = pygame.display.get_display_bounds(i)
+            minx = min(minx, r[0])
+            miny = min(miny, r[1])
+            maxx = max(maxx, r[0] + r[2])
+            maxy = max(maxy, r[1] + r[3])
+
+        return (minx, miny, maxx - minx, maxy - miny)
+
+    def on_move(self, pos):
+        """
+        Called when the player moves the window.
+        """
+
+        if not (renpy.windows or renpy.macintosh or renpy.linux):
+            return
+
+        if renpy.game.preferences.fullscreen or renpy.game.preferences.maximized:
+            return
+
+        renpy.game.preferences.window_position = pos
+        renpy.game.preferences.window_position_screen_size = self.get_total_display_size()
+
     def start(self):
         """
         Starts the interface, by opening a window and setting the mode.
@@ -1845,7 +1882,7 @@ class Interface(object):
         if renpy.emscripten and renpy.game.preferences.web_cache_preload:
             emscripten.run_script("loadCache()")
 
-        renpy.main.log_clock("Interface start.")
+        renpy.main.log_clock("Interface start")
 
         self.started = True
 
@@ -1936,8 +1973,6 @@ class Interface(object):
                 continue
 
             pygame.event.set_blocked(i)
-
-        pygame.event.set_blocked(pygame.TEXTINPUT)
 
         # Fix a problem with fullscreen and maximized.
         if renpy.game.preferences.fullscreen:
@@ -2035,7 +2070,7 @@ class Interface(object):
             if i in renderers:
                 gl2_renderers.append(i + "2")
 
-        if renpy.config.gl2:
+        if renpy.config.gl2 or renpy.macintosh:
             renderers = gl2_renderers + renderers
 
             # Prevent a performance warning if the renderer
@@ -2133,7 +2168,6 @@ class Interface(object):
         # Stop the resizing.
         pygame.key.stop_text_input() # @UndefinedVariable
         pygame.key.set_text_input_rect(None) # @UndefinedVariable
-        pygame.event.set_blocked(pygame.TEXTINPUT)
         self.text_rect = None
         self.old_text_rect = None
         self.display_reset = False
@@ -2919,7 +2953,6 @@ class Interface(object):
                 rect = (x0, y0, x1 - x0, y1 - y0)
 
                 pygame.key.set_text_input_rect(rect) # @UndefinedVariable
-                pygame.event.set_allowed(pygame.TEXTINPUT)
 
             if not self.old_text_rect or not_shown:
                 pygame.key.start_text_input() # @UndefinedVariable
@@ -2936,7 +2969,6 @@ class Interface(object):
             if self.old_text_rect:
                 pygame.key.stop_text_input() # @UndefinedVariable
                 pygame.key.set_text_input_rect(None) # @UndefinedVariable
-                pygame.event.set_blocked(pygame.TEXTINPUT)
 
                 if self.touch_keyboard:
                     renpy.exports.hide_screen('_touch_keyboard', layer='screens')
@@ -3191,6 +3223,13 @@ class Interface(object):
         """
 
         renpy.plog(1, "start interact_core")
+
+        # Process the invoke queue.
+        while self.invoke_queue:
+            fn, args, kwargs = self.invoke_queue.pop(0)
+            rv = fn(*args, **kwargs)
+            if rv is not None:
+                return False, rv
 
         # Check to see if the language has changed.
         renpy.translation.check_language()
@@ -3862,6 +3901,11 @@ class Interface(object):
 
                     renpy.game.interface.force_redraw = True
 
+                    continue
+
+                # Handle window moves.
+                if ev.type == pygame.WINDOWMOVED:
+                    self.on_move(ev.pos)
                     continue
 
                 # If we're ignoring touch events, and get a mouse up, stop

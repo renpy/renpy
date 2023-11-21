@@ -33,16 +33,15 @@ report any issues. When reporting issues, please determine the hardware
 8.2.0 / 7.7.0
 --------------
 
-**Text Changes** The way Ren'Py handles text has changed in several ways. A big one is
-the switch to using harfbuzz for shaping (in Ren'Py 8), and bytecode
-hinting, which may change the letterforms. The positioning of vertical
-text has also been changed by harfbuzz rendering.
+**Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
+different glyphs than would have been produced differently, and may change
+the spacing of text. The positioning of vertical text has also been
+changed by harfbuzz rendering.
 
-To revert these changes, include in your game::
+To revert this changes, include in your game::
 
     style default:
         shaper "freetype"
-        hinting True
 
 Ren'Py will automatically use an Emoji font when required. To disable this,
 add::
@@ -135,7 +134,7 @@ this produced an error message like::
 
         SHA1: ...
 
-Whine this can be cause by other problems (like simply using entirely incorrect
+While this can be cause by other problems (like simply using entirely incorrect
 keys), one potential fix is:
 
 1. In your project's base directory, rename ``bundle.keystore`` to ``bundle.keystore.bak``.

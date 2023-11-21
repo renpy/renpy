@@ -76,9 +76,6 @@ vsync = True
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
 
-# The default position of the window.
-default_position = (pygame.WINDOWPOS_CENTERED, pygame.WINDOWPOS_CENTERED)
-
 cdef class GL2Draw:
 
     def __init__(self, name):
@@ -127,6 +124,9 @@ cdef class GL2Draw:
         # Has the position of this window ever been set?
         self.ever_set_position = False
 
+        # Was the window maximized the last time update was called?
+        self.maximized = False
+
     def get_texture_size(self):
         """
         Returns the amount of memory locked up in textures.
@@ -142,6 +142,11 @@ cdef class GL2Draw:
         *Internal* Determines the 'best' physical size to use, and returns
         it.
         """
+
+        limit_physical_size = True
+
+        if physical_size and renpy.game.preferences.window_position_screen_size == renpy.game.interface.get_total_display_size():
+            limit_physical_size = False
 
         # Are we maximized?
         old_surface = pygame.display.get_surface()
@@ -194,12 +199,14 @@ cdef class GL2Draw:
 
         if (not renpy.mobile) and (not maximized):
 
-            # Limit to the visible area
-            pwidth = min(visible_w, pwidth)
-            pheight = min(visible_h, pheight)
+            if limit_physical_size:
 
-            pwidth = min(pwidth, head_w)
-            pheight = min(pheight, head_h)
+                # Limit to the visible area
+                pwidth = min(visible_w, pwidth)
+                pheight = min(visible_h, pheight)
+
+                pwidth = min(pwidth, head_w)
+                pheight = min(pheight, head_h)
 
             # Has to be a one-liner as the two values depend on each other.
             pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
@@ -278,6 +285,43 @@ cdef class GL2Draw:
 
         if renpy.config.gl_set_attributes is not None:
             renpy.config.gl_set_attributes()
+
+
+    def get_window_position(self, physical_size=None):
+        """
+        Determines the position of the window, based on what's stored
+        in preferences.
+
+        The stored position is used only when the total display size hasn't
+        changed, and the window would not overlap the edge of the screen.
+        """
+
+        default = (pygame.WINDOWPOS_CENTERED, pygame.WINDOWPOS_CENTERED)
+
+        if "RENPY_CENTER_WINDOW" in os.environ:
+            return default
+
+        if renpy.display.interface.safe_mode:
+            return default
+
+        if not (renpy.linux or renpy.windows or renpy.macintosh):
+            return default
+
+        if renpy.game.preferences.window_position_screen_size != renpy.game.interface.get_total_display_size():
+            return default
+
+        pos = renpy.game.preferences.window_position
+        rect = renpy.game.interface.get_total_display_size()
+
+        if pos[0] < rect[0] or pos[1] < rect[1]:
+            return default
+
+        if physical_size is not None:
+            pwidth, pheight = physical_size
+            if pos[0] + pwidth > rect[2] and pos[1] + pheight > rect[3]:
+                return default
+
+        return pos
 
     def init(self, virtual_size):
         """
@@ -380,10 +424,15 @@ cdef class GL2Draw:
 
             if renpy.game.preferences.maximized:
                 window_flags |= pygame.WINDOW_MAXIMIZED
+            else:
+                self.ever_set_position = True
+
+            pos = self.get_window_position((pwidth, pheight))
 
             try:
                 renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth, pheight), window_flags)
+                self.window = pygame.display.set_mode((pwidth, pheight), window_flags, pos=pos)
+
 
             except pygame.error as e:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
@@ -454,11 +503,12 @@ cdef class GL2Draw:
         # Are we maximized?
         maximized = bool(pygame.display.get_window().get_window_flags() & pygame.WINDOW_MAXIMIZED) and not fullscreen and renpy.config.gl_resize
 
+
         # See if we've ever set the screen position, and if not, center the window.
         if not fullscreen and not maximized:
             if not self.ever_set_position:
                 self.ever_set_position = True
-                pygame.display.get_window().set_position(default_position)
+                pygame.display.get_window().set_position(self.get_window_position())
 
         # Get the size of the created screen.
         pwidth, pheight = renpy.display.core.get_size()
@@ -578,12 +628,21 @@ cdef class GL2Draw:
         Documented in renderer.
         """
 
-        fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+        flags = pygame.display.get_window().get_window_flags()
+        fullscreen = bool(flags & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+        maximized = bool(flags & pygame.WINDOW_MAXIMIZED)
 
         size = renpy.display.core.get_size()
         drawable_size = pygame.display.get_drawable_size()
 
-        if force or (fullscreen != renpy.display.interface.fullscreen) or (size != self.physical_size) or (drawable_size != self.drawable_size):
+        if (
+            (force) or
+            (fullscreen != renpy.display.interface.fullscreen) or
+            (size != self.physical_size) or
+            (drawable_size != self.drawable_size) or
+            (self.maximized != maximized)
+        ):
+            self.maximized = maximized
             renpy.display.interface.before_resize()
             self.on_resize()
 
@@ -595,18 +654,6 @@ cdef class GL2Draw:
         """
         Called when terminating the use of the OpenGL context.
         """
-
-        global default_position
-
-        # Are we in fullscreen mode?
-        fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
-
-        # Are we maximized?
-        maximized = bool(pygame.display.get_window().get_window_flags() & pygame.WINDOW_MAXIMIZED)
-
-        # See if we've ever set the screen position, and if not, center the window.
-        if not fullscreen and not maximized:
-            default_position = pygame.display.get_position()
 
         self.kill_textures()
 

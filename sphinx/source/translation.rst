@@ -381,11 +381,15 @@ change language-related variables and styles. For example::
     translate piglatin style default:
         font "stonecutter.ttf"
 
-More usually, the font used for dialogue is set with :var:`gui.text_font`, which
-can be customized using::
+More usually, the font used for dialogue is set with :var:`gui.text_font`.
+The font used for system text, like the exception screen, the accessibility menu,
+and the gui menu, can be customized with :var:`gui.system_font`. The system font
+should be able to express both ASCII and the translated language. Together, these
+can be customized with.
 
     translate piglatin python:
         gui.text_font = "stonecutter.ttf"
+        gui.system_font = "Noto Sans.ttf"
 
 When a language is activated – either at the start of the game, or
 after a language change – Ren'Py resets the styles to their contents

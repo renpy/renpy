@@ -457,6 +457,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             raise Exception("Drag expects either zero or one children.")
 
         self.child = renpy.easy.displayable(d)
+        renpy.display.render.invalidate(self)
 
     def _clear(self):
         self.child = None
@@ -936,6 +937,7 @@ class DragGroup(renpy.display.layout.MultiBox):
         super(DragGroup, self).add(child)
 
         self.sorted = False
+        renpy.display.render.invalidate(self)
 
     def remove(self, child):
         """

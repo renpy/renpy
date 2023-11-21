@@ -108,6 +108,8 @@ text_property_names = [
     "hinting",
     "adjust_spacing",
     "mipmap",
+    "axis",
+    "instance",
     ]
 
 text_properties = [ Style(i) for i in text_property_names ]
