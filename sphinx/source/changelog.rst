@@ -162,6 +162,10 @@ function. While the Requests library still remains supported on Desktop and Mobi
 Features
 --------
 
+The new :var:`renpy.get_screen_variable` and :var:`renpy.get_screen_variable`
+make it possible to access screen variables, especially in :class:`Action`
+subclasses.
+
 The new :var:`build.time` variable is set to the time the game was built.
 
 The new :var:`build.info` variable lets you store information at
