@@ -260,6 +260,8 @@ screen preferences():
 
                             textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
+                            textbutton _("Restore window position") style "l_checkbox" action Preference("restore window position", "toggle")
+
                             if ability.can_update:
                                 textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
                                 textbutton _("Prefer RPU updates") style "l_checkbox" action ToggleField(persistent, "prefer_rpu")

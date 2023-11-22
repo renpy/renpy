@@ -191,6 +191,9 @@ Preference("window_position", None, (tuple, type(None)))
 # The size of screen that window_position was set for.
 Preference("window_position_screen_size", None, (tuple, type(None)))
 
+# Should the window position be restored?
+Preference("restore_window_position", True)
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
@@ -244,6 +247,7 @@ class Preferences(renpy.object.Object):
         maximized = False
         window_position = (0, 0)
         window_position_screen_size = (0, 0, 7680, 2160)
+        restore_window_position = True
 
     def init(self):
         """

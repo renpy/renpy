@@ -310,6 +310,9 @@ cdef class GL2Draw:
         if renpy.game.preferences.window_position_screen_size != renpy.game.interface.get_total_display_size():
             return default
 
+        if not renpy.game.preferences.restore_window_position:
+            return default
+
         pos = renpy.game.preferences.window_position
         rect = renpy.game.interface.get_total_display_size()
 
