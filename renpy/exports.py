@@ -78,7 +78,7 @@ from renpy.display.image import get_registered_image
 
 from renpy.display.im import load_surface, load_image, load_rgba
 
-from renpy.display.tts import speak as alt
+from renpy.display.tts import speak as alt, speak_extra_alt
 
 from renpy.curry import curry, partial
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop

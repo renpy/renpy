@@ -60,6 +60,7 @@ init -1600 python:
         self_voicing = [ 'alt_K_v', 'K_v' ],
         clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
+        extra_voicing = [ '?' ],
 
         # Say.
         rollforward = [ 'any_K_PAGEDOWN', 'any_KP_PAGEDOWN', 'mousedown_5', ],
@@ -440,6 +441,7 @@ init -1100 python:
         self_voicing = Preference("self voicing", "toggle"),
         clipboard_voicing = Preference("clipboard voicing", "toggle"),
         debug_voicing = Preference("debug voicing", "toggle"),
+        extra_voicing = renpy.exports.speak_extra_alt,
         progress_screen = _progress_screen,
         director = director.Start(),
         performance = ToggleScreen("_performance"),

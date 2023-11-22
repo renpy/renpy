@@ -234,6 +234,26 @@ def speak(s, translate=True, force=False):
     tts(s)
 
 
+def speak_extra_alt():
+    """
+    :undocumented:
+
+    If the current displayable has the extra_alt property, and self-voicing
+    is enabled, then this will speak the extra_alt property.
+    """
+
+    d = renpy.display.focus.get_focused()
+
+    if d is None:
+        return
+
+    s = d.style.extra_alt
+    if s is None:
+        return
+
+    speak(s)
+
+
 def set_root(d):
     global root
     root = d

@@ -108,8 +108,11 @@ Alternative text
     In screens, displayables may be given the :scpref:`group_alt` property,
     which is used to give a group prefix that is spoken the first time a displayable
     with the same group prefix is focused, but will not be spoken again until a
-    displayable with a different group prefix is focused. For example::
+    displayable with a different group prefix is focused.
 
+    Displayables may also be given the :scpref:`extra_alt` property, which is spoken
+    when the '?' key is pressed while the displayable is focused. This is intended
+    for more detail information about how a group of controls works.
 
 Descriptive Text
     Descriptive text is text that is displayed (and spoken) by the narrator if
