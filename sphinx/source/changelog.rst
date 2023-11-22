@@ -158,12 +158,25 @@ function. While the Requests library still remains supported on Desktop and Mobi
 * Can take data as either bytes or objects that be encoded to JSON.
 * Can return data as bytes, as string, or objects decoded from JSON.
 
+Accessibility
+-------------
 
-Features
---------
+The new :scpref:`group_alt` property available on screen language
+displayables allows the creator to specify text that is spoken the first
+time one of a group of related displayables is spoken.
+
+The new :scpref:`extra_alt` property available on screen language
+displayables allows the creator to specify text that is spoken when the
+'?' key is pressed, to provide additional information about the displayable.
+
+Both of these properties are inherited by the children of the displayable,
+unless they are overridden by a more specific value in the child.
 
 The new :func:`renpy.alt` function can be used to speak text using
 the self-voicing system.
+
+Features
+--------
 
 The new :var:`renpy.get_screen_variable` and :var:`renpy.get_screen_variable`
 make it possible to access screen variables, especially in :class:`Action`
