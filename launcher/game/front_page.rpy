@@ -46,7 +46,7 @@ screen front_page:
             right_margin 2
 
             top_padding 20
-            bottom_padding 26
+            bottom_padding 13
 
             side "t c b":
 
