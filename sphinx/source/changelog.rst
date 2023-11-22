@@ -162,6 +162,9 @@ function. While the Requests library still remains supported on Desktop and Mobi
 Features
 --------
 
+The new :func:`renpy.alt` function can be used to speak text using
+the self-voicing system.
+
 The new :var:`renpy.get_screen_variable` and :var:`renpy.get_screen_variable`
 make it possible to access screen variables, especially in :class:`Action`
 subclasses.

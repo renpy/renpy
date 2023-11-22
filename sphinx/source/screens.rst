@@ -213,6 +213,18 @@ expression. It takes the following properties:
     and :func:`Return` actions, it's safe to enable `roll_forward`. Other
     actions may have side-effects that will not occur during the roll_forward.
 
+.. screen-property:: group_alt
+
+    This is used to supply a group prefix to the :doc:`self_voicing` system.
+    When self-voicing is enabled, the group prefix is spoken the first time
+    a displayable with the same group prefix is focued. It is not spoken when
+    another displayable with the same group prefix is focused, until a
+    displayable with a different group prefix (or none at all) has become
+    focused,
+
+    The group prefix is inherited by all of this displayables children.
+
+
 ::
 
    screen hello_world():

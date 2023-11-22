@@ -67,6 +67,10 @@ filename = '<screen language>'
 # A log that's used for profiling information.
 profile_log = renpy.log.open("profile_screen", developer=True, append=False, flush=False)
 
+# The names of sticky style properties. These are properties that are
+# inherited by children, unless overridden.
+STICKY_PROPERTIES = [ "group_alt", "extra_alt" ]
+
 
 def compile_expr(loc, node):
     """
@@ -173,6 +177,10 @@ class SLContext(renpy.ui.Addable):
         # The old and new generations of the use_cache.
         self.new_use_cache = { } # type: dict[Any, Any]
         self.old_use_cache = { } # type: dict[Any, Any]
+
+        # A map from a sticky property to its value.
+        self.sticky = { } # type: dict[str, Any]
+
 
     def add(self, d, key):
         self.children.append(d)
@@ -976,6 +984,13 @@ class SLDisplayable(SLBlock):
                     keywords["style"] = style_suffix
                 else:
                     keywords["style"] = ctx.style_prefix + "_" + style_suffix
+
+            for k in STICKY_PROPERTIES:
+                if k in keywords:
+                    ctx.sticky = dict(ctx.sticky)
+                    ctx.sticky[k] = keywords[k]
+
+            keywords.update(ctx.sticky)
 
             old_d = cache.displayable
             if old_d:
