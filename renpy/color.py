@@ -163,18 +163,15 @@ class Color(tuple):
             if isinstance(c, Color):
                 return c
 
-            try:
-                c = tuple(c)
-            except Exception:
-                pass
-            else:
-                lenc = len(c)
+            c = tuple(c)
 
-                if lenc == 4:
-                    return tuple.__new__(cls, c)
+            lenc = len(c)
 
-                if lenc == 3:
-                    return tuple.__new__(cls, c + (int(255 * alpha),))
+            if lenc == 4:
+                return tuple.__new__(cls, c)
+
+            if lenc == 3:
+                return tuple.__new__(cls, c + (int(255 * alpha),))
 
         if hsv is not None:
             rgb = colorsys.hsv_to_rgb(*hsv)
