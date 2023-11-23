@@ -1804,24 +1804,16 @@ class Interface(object):
             renpy.display.log.exception()
             return 1.0
 
-    def get_total_display_size(self):
+    def get_display_layout(self):
         """
-        Gets the total size of all the displays in the system.
+        Get the display layout. A list of rectangles that have monitors in them.
         """
 
-        minx = 0
-        miny = 0
-        maxx = 0
-        maxy = 0
-
+        rv = [ ]
         for i in range(pygame.display.get_num_video_displays()):
-            r = pygame.display.get_display_bounds(i)
-            minx = min(minx, r[0])
-            miny = min(miny, r[1])
-            maxx = max(maxx, r[0] + r[2])
-            maxy = max(maxy, r[1] + r[3])
-
-        return (minx, miny, maxx - minx, maxy - miny)
+            rv.append(pygame.display.get_display_bounds(i))
+        
+        return tuple(rv)
 
     def on_move(self, pos):
         """
@@ -1835,7 +1827,7 @@ class Interface(object):
             return
 
         renpy.game.preferences.window_position = pos
-        renpy.game.preferences.window_position_screen_size = self.get_total_display_size()
+        renpy.game.preferences.window_position_layout = self.get_display_layout()
 
     def start(self):
         """
