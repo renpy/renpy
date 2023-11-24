@@ -352,6 +352,7 @@ def parse_parameters(l):
 
     # Name of parameter that is double starred
     extrakw = None
+    annotations = { }
 
     # Name of parameter that is last positional-only
     last_posonly = None
@@ -373,6 +374,8 @@ def parse_parameters(l):
             names.add(name)
 
     while True:
+
+        annotation = None
 
         if l.match(r'\)'):
             break
@@ -436,6 +439,10 @@ def parse_parameters(l):
                 pending_kwonly = False
                 first_kwonly = name
 
+            if l.match(r':'):
+                l.skip_whitespace()
+                annotation = l.require(l.delimited_python("=,)"))
+
             default = None
 
             if l.match(r'='):
@@ -455,6 +462,8 @@ def parse_parameters(l):
             if add_positional:
                 positional.append(name)
 
+        annotations[name] = annotation
+
         if l.match(r'\)'):
             break
 
@@ -463,7 +472,7 @@ def parse_parameters(l):
     if pending_kwonly and extrapos is None:
         l.error("named arguments must follow bare *")
 
-    return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw, last_posonly, first_kwonly)
+    return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw, last_posonly, first_kwonly, annotations)
 
 
 def parse_arguments(l):

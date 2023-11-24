@@ -66,7 +66,7 @@ class ParameterInfo(object):
     positional_only = [ ]
     keyword_only = [ ]
 
-    def __init__(self, parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
+    def __init__(self, parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None, annotations=None):
 
         # A list of (parameter name, default value) pairs.
         # The default value is either None (if there is none)
@@ -115,6 +115,9 @@ class ParameterInfo(object):
 
             rv.reverse()
             self.keyword_only = rv
+
+        # A dict that stores annotations for every parameter
+        self.annotations = annotations
 
     def apply(self, args, kwargs, ignore_errors=False):
         """
