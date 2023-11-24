@@ -175,6 +175,17 @@ unless they are overridden by a more specific value in the child.
 The new :func:`renpy.alt` function can be used to speak text using
 the self-voicing system.
 
+\_\_future\_\_ in python
+------------------------
+
+Ren'Py now allows creators to pass
+`\_\_future\_\_ compiler directives <https://docs.python.org/reference/simple_stmts.html#future>`__
+for Python code run in Ren'Py. This is done using the ``rpy python xxx``
+statement at the top of the .rpy file(s) on which you want them to apply,
+where ``xxx`` is the name of the future feature. For example::
+
+    rpy python annotations
+
 Features
 --------
 

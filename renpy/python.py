@@ -35,6 +35,7 @@ import ast
 # Import the future module itself.
 import __future__
 
+import collections
 import marshal
 import random
 import weakref
@@ -799,15 +800,9 @@ new_compile_flags = (old_compile_flags
                       | __future__.unicode_literals.compiler_flag
                       )
 
-py3_compile_flags = (new_compile_flags |
-                      __future__.division.compiler_flag)
-
-if not PY2:
-    py3_compile_flags |= __future__.annotations.compiler_flag
-
-# The set of files that should be compiled under Python 2 with Python 3
-# semantics.
-py3_files = set()
+# A set of __future__ flag overrides for each file.
+# Like a defaultdict(int), but better (missing key accesses don't clog it up).
+futured_files = collections.Counter()
 
 # A cache for the results of py_compile.
 py_compile_cache = { }
@@ -1022,9 +1017,10 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         else:
             py_mode = mode
 
-        if (not PY2) or (filename in py3_files):
+        flags = futured_files[filename]
+        if (not PY2) or flags:
 
-            flags = py3_compile_flags
+            flags |= new_compile_flags
 
             try:
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
