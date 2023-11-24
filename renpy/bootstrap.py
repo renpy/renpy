@@ -121,10 +121,81 @@ def mac_start(fn):
 
 def popen_del(self, *args, **kwargs):
     """
-    Fix an issue where the __del__ method of popen doesn't wor,
+    Fix an issue where the __del__ method of popen doesn't work.
     """
 
     return
+
+def get_alternate_base(basedir, always=False):
+    """
+    :undocumented:
+
+    Tries to find an alternate base directory. This exists in a writable
+    location, and is intended for use by a game that downloads its assets
+    to the device (generally for ios or android, where the assets may be
+    too big for the app store).
+    """
+
+    # Determine the alternate base directory location.
+
+    if renpy.android:
+        altbase = os.path.join(os.environ["ANDROID_PRIVATE"], "base")
+
+    elif renpy.ios:
+        from pyobjus import autoclass # type: ignore
+        from pyobjus.objc_py_types import enum # type: ignore
+
+        NSSearchPathDirectory = enum("NSSearchPathDirectory", NSApplicationSupportDirectory=14)
+        NSSearchPathDomainMask = enum("NSSearchPathDomainMask", NSUserDomainMask=1)
+
+        NSFileManager = autoclass('NSFileManager')
+        manager = NSFileManager.defaultManager()
+        url = manager.URLsForDirectory_inDomains_(
+            NSSearchPathDirectory.NSApplicationSupportDirectory,
+            NSSearchPathDomainMask.NSUserDomainMask,
+            ).lastObject()
+
+        # url.path seems to change type based on iOS version, for some reason.
+        try:
+            altbase = url.path().UTF8String()
+        except Exception:
+            altbase = url.path.UTF8String()
+
+        if isinstance(altbase, bytes):
+            altbase = altbase.decode("utf-8")
+
+    else:
+        altbase = os.path.join(basedir, "base")
+
+    if always:
+        return altbase
+
+    # Check to see if there's a game in there created with the
+    # current version of Ren'Py.
+
+    def ver(s):
+        """
+        Returns the first three components of a version string.
+        """
+
+        return tuple(int(i) for i in s.split(".")[:3])
+
+    import json
+
+    version_json = os.path.join(altbase, "update", "version.json")
+
+    if not os.path.exists(version_json):
+        return basedir
+
+    with open(version_json, "r") as f:
+        modules = json.load(f)
+
+        for v in modules.values():
+            if ver(v["renpy_version"]) != ver(renpy.version_only):
+                return basedir
+
+    return altbase
+
 
 def bootstrap(renpy_base):
 
@@ -194,8 +265,6 @@ def bootstrap(renpy_base):
         if not os.path.exists(basedir + "/game"):
             os.mkdir(basedir + "/game", 0o777)
 
-    gamedir = renpy.__main__.path_to_gamedir(basedir, name)
-
     sys.path.insert(0, basedir)
 
     if renpy.macintosh:
@@ -227,6 +296,8 @@ You may be using a system install of python. Please run {0}.sh,
 
         raise
 
+    gamedir = renpy.__main__.path_to_gamedir(basedir, name)
+
     # If we're not given a command, show the presplash.
     if args.command == "run" and not renpy.mobile:
         import renpy.display.presplash # @Reimport
@@ -252,22 +323,35 @@ You may be using a system install of python. Please run {0}.sh,
     renpy.loader.init_importer()
 
     exit_status = None
+    original_basedir = basedir
+    original_sys_path = list(sys.path)
 
     try:
         while exit_status is None:
             exit_status = 1
 
             try:
+
+                # Potentially use an alternate base directory.
+                try:
+                    basedir = get_alternate_base(original_basedir)
+                except Exception:
+                    import traceback
+                    traceback.print_exc()
+
+                gamedir = renpy.__main__.path_to_gamedir(basedir, name)
+
+                sys.path = list(original_sys_path)
+                if basedir not in sys.path:
+                    sys.path.insert(0, basedir)
+
                 renpy.game.args = args
                 renpy.config.renpy_base = renpy_base
                 renpy.config.basedir = basedir
                 renpy.config.gamedir = gamedir
                 renpy.config.args = [ ] # type: ignore
 
-                if renpy.android:
-                    renpy.config.logdir = os.environ['ANDROID_PUBLIC']
-                else:
-                    renpy.config.logdir = basedir
+                renpy.config.logdir = renpy.__main__.path_to_logdir(basedir)
 
                 if not os.path.exists(renpy.config.logdir):
                     os.makedirs(renpy.config.logdir, 0o777)

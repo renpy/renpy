@@ -47,6 +47,49 @@ you can add the following line at the top of your files::
     rpy python annotations
 
 
+**Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
+different glyphs than would have been produced differently, and may change
+the spacing of text. The positioning of vertical text has also been
+changed by harfbuzz rendering.
+
+To revert this changes, include in your game::
+
+    style default:
+        shaper "freetype"
+
+Ren'Py will automatically use an Emoji font when required. To disable this,
+add::
+
+    style default:
+        emoji_font None
+
+
+**Polar Coordinate Changes** Ren'Py now enforces that the angles given to
+the :tpref:`angle` and :tpref:`anchorangle`
+properties are in the range 0 to 360 degrees, inclusive of 0 but not of 360.
+Previously, angles outside this range  gave undefined behavior, now the angles
+will be clamped to this range. A 360 degree change will no longer cause motion,
+but will instead be treated as a 0 degree change.
+
+When animating :tpref:`angle` and :tpref:`anchorangle` with ATL, if a direction
+is not supplied, the shortest arc will be used, even if it passes through 0.
+
+There is not a compatibility define for these changes, as they are unlikely to
+affect the visible behavior of games in practice.
+
+**Empty ATL Blocks Forbidden** Previously, Ren'Py would allow an empty ATL block.
+Now it will report that a block is required. You'll need to change::
+
+    show eileen happy:
+    "..."
+
+to::
+
+    show eileen happy
+    "..."
+
+In the unlikely case that you have an empty ATL block.
+
 **Box Reverse** The :propref:`box_reverse` style property has changed its
 behavior in two ways:
 
@@ -63,6 +106,22 @@ for laying out interfaces in right-to-left languages. To revert these changes,
 add to your game::
 
     define config.simple_box_reverse = True
+
+
+**build.itch_channels** That variable was always documented as a dict but was
+mistakenly implemented as a list of tuples. It's now truly a dict. If you
+were using list operations on it, you'll need to change your code::
+
+    # formerly
+    $ build.itch_channels.append(("pattern", "channel"))
+    $ build.itch_channels.extend([("pattern", "channel")])
+    define build.itch_channels += [("pattern", "channel")]
+
+    # now
+    $ build.itch_channels["pattern"] = "channel"
+    $ build.itch_channels.update({"pattern": "channel"})
+    define build.itch_channels["pattern"] = "channel"
+    define build.itch_channels |= {"pattern": "channel"}
 
 
 .. _incompatible-8.1.1:
@@ -88,7 +147,7 @@ this produced an error message like::
 
         SHA1: ...
 
-Whine this can be cause by other problems (like simply using entirely incorrect
+While this can be cause by other problems (like simply using entirely incorrect
 keys), one potential fix is:
 
 1. In your project's base directory, rename ``bundle.keystore`` to ``bundle.keystore.bak``.

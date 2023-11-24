@@ -304,24 +304,6 @@ init -1700 python:
 
 
     ##########################################################################
-    # Name-only say statements.
-
-    # This character is copied when a name-only say statement is called.
-    name_only = adv
-
-    def predict_say(who, what):
-        who = Character(who, kind=name_only)
-        try:
-            who.predict(what)
-        except Exception:
-            pass
-
-    def say(who, what, interact=True, *args, **kwargs):
-        who = Character(who, kind=name_only)
-        who(what, interact=interact, *args, **kwargs)
-
-
-    ##########################################################################
     # Constant stores.
     #
     # Set _constant on many default stores.
@@ -354,6 +336,10 @@ init -1700 python:
 
 
 init -1000 python:
+
+    # Not used, may be in old save files.
+    config.missing_background = "black"
+
     # Set developer to the auto default.
     config.original_developer = "auto"
 

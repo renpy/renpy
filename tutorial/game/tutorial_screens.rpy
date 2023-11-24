@@ -173,22 +173,22 @@ label screens_menu:
         e "What would you like to know about screens?"
 
         "What screens can do.":
-            call screens_demo
+            call screens_demo from _call_screens_demo
 
         "How to show screens.":
-            call screens_showing
+            call screens_showing from _call_screens_showing
 
         "Passing parameters to screens.":
-            call screens_parameters
+            call screens_parameters from _call_screens_parameters
 
         "Screen properties.":
-            call screens_properties
+            call screens_properties from _call_screens_properties
 
         "Special screen statements.":
-            call screens_control
+            call screens_control from _call_screens_control
 
         "Using other screens.":
-            call screen_use
+            call screen_use from _call_screen_use
 
         "That's it.":
             return

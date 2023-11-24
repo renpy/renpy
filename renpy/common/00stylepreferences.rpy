@@ -130,6 +130,8 @@ init -1500 python:
 
         Sets the selected alternative for the style preference.
 
+        The `update` event is triggered when this function is called.
+
         `preference`
             A string giving the name of the style preference.
 
@@ -165,6 +167,8 @@ init -1500 python:
         :doc: style_preferences
 
         An action that causes `alternative` to become the selected alternative for the given style preference.
+
+        The `update` event is triggered when this action is called.
 
         `preference`
             A string giving the name of the style preference.

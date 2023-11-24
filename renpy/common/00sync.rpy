@@ -210,7 +210,7 @@ init -1100 python in _sync:
                 f.write(content)
 
             fetch_id = emscripten.run_script_int(
-                """fetchFile("PUT", "{url}", "/sync.data", null)""".format(url=url))
+                """fetchFile("PUT", "{url}", "/sync.data", null, "application/octet-string")""".format(url=url))
 
             status = "PENDING"
             message = "Pending."
@@ -484,7 +484,11 @@ init -1100 python in _sync:
 
                 zi = zf.getinfo(fn)
 
-                timestamp = datetime.datetime(*zi.date_time).timestamp()
+                if PY2:
+                    epoch = datetime.datetime.utcfromtimestamp(0)
+                    timestamp = (datetime.datetime(*zi.date_time) - epoch).total_seconds()
+                else:
+                    timestamp = datetime.datetime(*zi.date_time).timestamp()
 
                 data = zf.read(fn)
 
@@ -515,10 +519,12 @@ init -1100 python in _sync:
 init -1100:
 
     screen sync_confirm():
+        style_prefix "sync"
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -544,10 +550,12 @@ init -1100:
         key "game_menu" action Return(False)
 
     screen sync_prompt(prompt):
+        style_prefix "sync"
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -582,10 +590,12 @@ init -1100:
 
 
     screen sync_success(sync_id):
+        style_prefix "sync"
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -617,10 +627,12 @@ init -1100:
         key "game_menu" action Return(False)
 
     screen sync_error(message):
+        style_prefix "sync"
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -643,3 +655,7 @@ init -1100:
 
         ## Right-click and escape answer "no".
         key "game_menu" action Return(False)
+
+
+    style sync_overlay is empty:
+        background "gui/overlay/confirm.png"

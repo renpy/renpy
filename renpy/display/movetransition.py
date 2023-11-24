@@ -345,7 +345,7 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
 # New Move Transition (since 6.14)
 
 
-class MoveInterpolate(renpy.display.core.Displayable):
+class MoveInterpolate(renpy.display.displayable.Displayable):
     """
     This displayable has two children. It interpolates between the positions
     of its two children to place them on the screen.
@@ -457,7 +457,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
     As only layers have tags, MoveTransitions can only be applied to a single
     layer or all layers at once, using the :ref:`with statement <with-statement>`.
-    It will not work in other contexts such as :ref:`ATL <expression-statement>`,
+    It will not work in other contexts such as :ref:`ATL <expression-atl-statement>`,
     :func:`ComposeTransition`, or other ways of applying transitions.
 
     `delay`

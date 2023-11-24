@@ -42,7 +42,7 @@ class Editor(renpy.editor.Editor):
                 elif renpy.arch == "armv7l":
                     arch = "arm"
                 else:
-                    arch = "x86_64"
+                    arch = "x64"
 
                 code = os.path.join(RENPY_VSCODE, "VSCode-linux-" + arch, "bin", "code")
             else:

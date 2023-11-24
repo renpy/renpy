@@ -668,7 +668,7 @@ class Channel(object):
             renpysound.dequeue(self.number, True)
             renpysound.stop(self.number)
 
-    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, relative_volume=1.0):
+    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
 
         with lock:
 
@@ -676,20 +676,22 @@ class Channel(object):
                 filename, _, _ = self.split_filename(filename, False)
                 renpy.game.persistent._seen_audio[str(filename)] = True # type: ignore
 
-            if tight is None:
-                tight = self.tight
+            if not loop_only:
 
-            self.keep_queue += 1
-
-            for filename in filenames:
-                qe = QueueEntry(filename, fadein, tight, False, relative_volume)
-                self.queue.append(qe)
-
-                # Only fade the first thing in.
-                fadein = 0
-
-            self.wait_stop = synchro_start
-            self.synchro_start = synchro_start
+                if tight is None:
+                    tight = self.tight
+    
+                self.keep_queue += 1
+    
+                for filename in filenames:
+                    qe = QueueEntry(filename, fadein, tight, False, relative_volume)
+                    self.queue.append(qe)
+    
+                    # Only fade the first thing in.
+                    fadein = 0
+    
+                self.wait_stop = synchro_start
+                self.synchro_start = synchro_start
 
             if loop:
                 self.loop = list(filenames)
@@ -790,20 +792,6 @@ class Channel(object):
         return renpysound.video_ready(self.number)
 
 
-# Use unconditional imports so these files get compiled during the build
-# process.
-
-
-try:
-    from renpy.audio.androidhw import AndroidVideoChannel
-except Exception:
-    pass
-
-try:
-    from renpy.audio.ioshw import IOSVideoChannel
-except Exception:
-    pass
-
 # A list of channels we know about.
 all_channels = [ ]
 
@@ -880,12 +868,7 @@ def register_channel(name,
     if not force and not renpy.game.context().init_phase and (" " not in name):
         raise Exception("Can't register channel outside of init phase.")
 
-    if renpy.android and renpy.config.hw_video and name == "movie":
-        c = AndroidVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
-    elif renpy.ios and renpy.config.hw_video and name == "movie":
-        c = IOSVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
-    else:
-        c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie, framedrop=framedrop)
+    c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie, framedrop=framedrop)
 
     c.mixer = mixer
 

@@ -156,6 +156,14 @@ The ``bubble`` namespace contains the following variables:
     be cycled through in the speech bubble editor. If the names of the sets of properties
     are not given, the properties are cycled through in alphabetical order.
 
+.. var:: bubble.properties_callback = None
+
+    If not None, this should be a function that takes an image tag, and returns
+    a list or tuple of property names that should be used for that image tag, in
+    the order those names should be cycled through. This takes precendence over
+    bubble.properties_order, and can be used to customize the list of bubble
+    properties by character.
+
 .. var:: bubble.expand_area = { ... }
 
     This is a map from the name of a set of properties to a (left, top, right, bottom)

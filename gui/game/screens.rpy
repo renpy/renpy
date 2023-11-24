@@ -1090,13 +1090,12 @@ screen gamepad_help():
         label _("Right Shoulder")
         text _("Rolls forward to later dialogue.")
 
-
     hbox:
         label _("D-Pad, Sticks")
         text _("Navigate the interface.")
 
     hbox:
-        label _("Start, Guide")
+        label _("Start, Guide, B/Right Button")
         text _("Accesses the game menu.")
 
     hbox:

@@ -65,10 +65,24 @@ screen _developer:
                 textbutton _("Image Attributes"):
                     action ui.callsinnewcontext("_image_attributes")
 
+                if not renpy.get_screen("_translation_identifier"):
+                    textbutton _("Show Translation Identifiers"):
+                        action Show("_translation_identifier")
+                else:
+                    textbutton _("Hide Translation Identifiers"):
+                        action Hide("_translation_identifier")
+
                 if bubble.active:
 
                     textbutton _("Speech Bubble Editor (Shift+B)"):
                         action [ SetField(bubble.shown, "value", True), Hide("_developer") ]
+
+                if not renpy.get_screen("_filename_and_line"):
+                    textbutton _("Show Filename and Line"):
+                        action Show("_filename_and_line")
+                else:
+                    textbutton _("Hide Filename and Line"):
+                        action Hide("_filename_and_line")
 
         hbox:
             spacing gui._scale(25)
@@ -242,11 +256,6 @@ label _persistent_viewer:
                           all_entries=entries, deleted_entries=None)
 
     return
-
-
-# Not used any more, but may be in save files.
-init -1050 python:
-    config.missing_background = "black"
 
 
 # Not used any more, but may be in save files.
@@ -530,6 +539,102 @@ screen _image_load_log():
                     size 14
 
     timer 10.0 action SetScreenVariable("show_help", False)
+
+
+screen _translation_identifier():
+    zorder 1500
+
+    default show_copy = False
+    default show_help = True
+
+    style_prefix ""
+
+    python:
+        identifier = renpy.get_translation_identifier()
+        copy = None
+
+        if identifier:
+            copy = (SetScreenVariable("show_copy", True),
+                    Function(pygame_sdl2.scrap.put,
+                             pygame_sdl2.scrap.SCRAP_TEXT,
+                             identifier.encode("utf8")))
+
+    drag:
+        draggable True
+        focus_mask None
+        xpos 0
+        ypos 0
+
+        frame:
+            style "empty"
+            background "#0004"
+            xpadding 5
+            ypadding 5
+
+            has vbox
+
+            textbutton "[identifier]":
+                action copy
+                padding (0, 0)
+                text_color "#fff"
+                text_hover_color "#bdf"
+                text_size 14
+
+            if show_copy:
+                text _("\n{color=#fff}Copied to clipboard.{/color}"):
+                    size 14
+
+                timer 2.0 action SetScreenVariable("show_copy", False)
+
+            elif show_help:
+                text _("\n{color=#fff}Click to copy.\nDrag to move.{/color}"):
+                    size 14
+
+    timer 10.0 action SetScreenVariable("show_help", False)
+
+
+screen _filename_and_line():
+
+    zorder 1500
+    style_prefix ""
+
+    # Should help be shown?
+    default help = True
+
+    # The filename and line to show.
+    $ filename, line = renpy.get_filename_line()
+
+    timer 3 action SetScreenVariable("help", False)
+
+    drag:
+        draggable True
+        focus_mask None
+        xpos 0
+        ypos 0
+
+        frame:
+            style "empty"
+            background "#0004"
+            xpadding 5
+            ypadding 5
+            xminimum 200
+
+            has vbox
+
+            textbutton "[filename]:[line]":
+                padding (0, 0)
+                text_color "#fff"
+                text_hover_color "#bdf"
+                text_size 14
+
+                action EditFile(filename, line)
+
+            if help:
+                null height 10
+
+                text _("Click to open in editor."):
+                    size 14
+                    color "#fff"
 
 
 init 1000 python hide:

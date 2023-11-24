@@ -622,7 +622,7 @@ def free_memory():
     cache.clear()
 
 
-class ImageBase(renpy.display.core.Displayable):
+class ImageBase(renpy.display.displayable.Displayable):
     """
     This is the base class for all of the various kinds of images that
     we can possibly have.
@@ -712,8 +712,9 @@ class Image(ImageBase):
     """
 
     is_svg = False
+    dpi = 96
 
-    def __init__(self, filename, **properties):
+    def __init__(self, filename, dpi=96, **properties):
         """
         @param filename: The filename that the image will be loaded from.
         """
@@ -731,7 +732,10 @@ class Image(ImageBase):
 
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
+        self.dpi = dpi
 
+        self.is_svg = filename.lower().endswith(".svg")
+        self.pixel_perfect = self.is_svg
 
     def _repr_info(self):
         return repr(self.filename)
@@ -771,19 +775,23 @@ class Image(ImageBase):
                 # avoid size-related exceptions (e.g. Crop on a smaller placeholder)
                 surf = renpy.display.pgrender.transform_scale(surf, force_size)
 
-            self.is_svg = filename.lower().endswith(".svg")
-            self.pixel_perfect = self.is_svg
-
             if self.is_svg:
                 width, height = surf.get_size()
 
-                width = int(width * renpy.display.draw.draw_per_virt)
-                height = int(height * renpy.display.draw.draw_per_virt)
+                width = int(width * renpy.display.draw.draw_per_virt * self.dpi / 96)
+                height = int(height * renpy.display.draw.draw_per_virt * self.dpi / 96)
 
-                filelike = renpy.loader.load(self.filename, directory="images")
+                if filename != self.filename:
 
-                with filelike as f:
-                    surf = renpy.display.pgrender.load_image(filelike, filename, size=(width, height))
+                    # This should only run for placeholder images.
+                    surf = renpy.display.pgrender.transform_scale(surf, (width, height))
+
+                else:
+
+                    filelike = renpy.loader.load(self.filename, directory="images")
+
+                    with filelike as f:
+                        surf = renpy.display.pgrender.load_image(filelike, filename, size=(width, height))
 
             return surf
 
@@ -1012,8 +1020,9 @@ class FactorScale(ImageBase):
 
         image logo doubled = im.FactorScale("logo.png", 1.5)
 
-    The same effect can now be achieved with the :tpref:`zoom` or the
-    :tpref:`xzoom` and :tpref:`yzoom` transform properties.
+    .. deprecated:: 7.4.0
+        Use the :tpref:`zoom`, or the
+        :tpref:`xzoom` and :tpref:`yzoom` transform properties.
     """
 
     def __init__(self, im, width, height=None, bilinear=True, **properties):
@@ -1073,9 +1082,9 @@ class Flip(ImageBase):
 
         image eileen flip = im.Flip("eileen_happy.png", vertical=True)
 
-    The same effect can now be achieved by setting
-    :tpref:`xzoom` (for horizontal flip)
-    or :tpref:`yzoom` (for vertical flip) to a negative value.
+    .. deprecated:: 7.4.0
+        Set :tpref:`xzoom` (for horizontal flip)
+        or :tpref:`yzoom` (for vertical flip) to a negative value.
     """
 
     def __init__(self, im, horizontal=False, vertical=False, **properties):
@@ -1165,7 +1174,8 @@ class Crop(ImageBase):
 
         image logo crop = im.Crop("logo.png", (0, 0, 100, 307))
 
-    The same effect can now be achieved by setting the :tpref:`crop` transform property.
+    .. deprecated:: 7.4.0
+        Use the :tpref:`crop` transform property.
     """
 
     def __init__(self, im, x, y=None, w=None, h=None, **properties):
@@ -1365,7 +1375,8 @@ class Blur(ImageBase):
 
         image logo blurred = im.Blur("logo.png", 1.5)
 
-    The same effect can now be achieved with the :tpref:`blur` transform property.
+    .. deprecated:: 7.4.0
+        Use the :tpref:`blur` transform property.
     """
 
     def __init__(self, im, xrad, yrad=None, **properties):
@@ -1427,6 +1438,10 @@ class MatrixColor(ImageBase):
 
     The components of the transformed color are clamped to the
     range [0.0, 1.0].
+
+    .. deprecated:: 7.4.0
+        Use ``Transform(im, matrixcolor=matrix, **properties)``.
+        See :func:`Transform` and :tpref:`matrixcolor`.
     """
 
     def __init__(self, im, matrix, **properties):
@@ -1475,6 +1490,9 @@ class matrix(tuple):
     `matrix` is a 20 or 25 element list or tuple. If it is 20 elements
     long, it is padded with (0, 0, 0, 0, 1) to make a 5x5 matrix,
     suitable for multiplication.
+
+    .. deprecated:: 7.4.0
+        Use :class:`Matrix`.
     """
 
     def __new__(cls, *args):
@@ -1567,8 +1585,9 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an identity matrix, one that does not change color or
         alpha.
 
-        A suitable equivalent for the :tpref:`matrixcolor` transform property
-        is IdentityMatrix().
+        .. deprecated:: 7.4.0
+            Use :func:`IdentityMatrix() <IdentityMatrix>`
+            with the :tpref:`matrixcolor` transform property.
         """
 
         return matrix(1, 0, 0, 0, 0,
@@ -1598,8 +1617,9 @@ im.matrix(%f, %f, %f, %f, %f.
             mostly sensitive to green, more of the green channel is
             kept then the other two channels.
 
-        A suitable equivalent for the :tpref:`matrixcolor` transform property
-        is SaturationMatrix(value, desat).
+        .. deprecated:: 7.4.0
+            Use :func:`SaturationMatrix(value, desat) <SaturationMatrix>`
+            with the :tpref:`matrixcolor` transform property.
         """
 
         r, g, b = desat
@@ -1622,8 +1642,9 @@ im.matrix(%f, %f, %f, %f, %f.
         grayscale). This is equivalent to calling
         im.matrix.saturation(0).
 
-        A suitable equivalent for the :tpref:`matrixcolor` transform property
-        is SaturationMatrix(0).
+        .. deprecated:: 7.4.0
+            Use :func:`SaturationMatrix(0) <SaturationMatrix>`
+            with the :tpref:`matrixcolor` transform property.
         """
 
         return matrix.saturation(0.0)
@@ -1641,8 +1662,9 @@ im.matrix(%f, %f, %f, %f, %f.
         the value of the red channel is 100, the transformed color
         will have a red value of 50.)
 
-        A suitable equivalent for the :tpref:`matrixcolor` transform property
-        is TintMatrix(Color((r, g, b))).
+        .. deprecated:: 7.4.0
+            Use :func:`TintMatrix(Color((r, g, b))) <TintMatrix>`
+            with the :tpref:`matrixcolor` transform property.
         """
 
         return matrix(r, 0, 0, 0, 0,
@@ -1659,8 +1681,9 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that inverts the red, green, and blue
         channels of the image without changing the alpha channel.
 
-        A suitable equivalent for the :tpref:`matrixcolor` transform property
-        is InvertMatrix(1.0).
+        .. deprecated:: 7.4.0
+            Use :func:`InvertMatrix(1.0) <InvertMatrix>`
+            with the :tpref:`matrixcolor` transform property.
         """
 
         return matrix(-1, 0, 0, 0, 1,
@@ -1681,8 +1704,9 @@ im.matrix(%f, %f, %f, %f, %f.
             a number between -1 and 1, with -1 the darkest possible
             image and 1 the brightest.
 
-        A suitable equivalent for the :tpref:`matrixcolor` transform property
-        is BrightnessMatrix(b).
+        .. deprecated:: 7.4.0
+            Use :func:`BrightnessMatrix(b) <BrightnessMatrix>`
+            with the :tpref:`matrixcolor` transform property.
         """
 
         return matrix(1, 0, 0, 0, b,
@@ -1699,8 +1723,9 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that alters the opacity of an image. An
         `o` of 0.0 is fully transparent, while 1.0 is fully opaque.
 
-        A suitable equivalent for the :tpref:`matrixcolor` transform property
-        is OpacityMatrix(o).
+        .. deprecated:: 7.4.0
+            Use :func:`OpacityMatrix(o) <OpacityMatrix>`
+            with the :tpref:`matrixcolor` transform property.
         """
 
         return matrix(1, 0, 0, 0, 0,
@@ -1718,8 +1743,9 @@ im.matrix(%f, %f, %f, %f, %f.
         be greater than 0.0, with values between 0.0 and 1.0 decreasing contrast, and
         values greater than 1.0 increasing contrast.
 
-        A suitable equivalent for the :tpref:`matrixcolor` transform property
-        is ContrastMatrix(c).
+        .. deprecated:: 7.4.0
+            Use :func:`ContrastMatrix(c) <ContrastMatrix>`
+            with the :tpref:`matrixcolor` transform property.
         """
 
         return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5)
@@ -1734,8 +1760,9 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that rotates the hue by `h` degrees, while
         preserving luminosity.
 
-        A suitable equivalent for the :tpref:`matrixcolor` transform property
-        is HueMatrix(h).
+        .. deprecated:: 7.4.0
+            Use :func:`HueMatrix(h) <HueMatrix>`
+            with the :tpref:`matrixcolor` transform property.
         """
 
         h = h * math.pi / 180
@@ -1769,8 +1796,9 @@ im.matrix(%f, %f, %f, %f, %f.
                 im.matrix.colorize("#f00", "#00f"))
 
 
-        A suitable equivalent for the :tpref:`matrixcolor` transform property
-        is ColorizeMatrix(black_color, white_color).
+        .. deprecated:: 7.4.0
+            Use :func:`ColorizeMatrix(black_color, white_color) <ColorizeMatrix>`
+            with the :tpref:`matrixcolor` transform property.
         """
 
         (r0, g0, b0, _a0) = renpy.easy.color(black_color) # type: ignore
@@ -1797,8 +1825,9 @@ def Grayscale(im, desat=(0.2126, 0.7152, 0.0722), **properties):
     An image manipulator that creates a desaturated version of the image
     manipulator `im`.
 
-    The same effect can now be achieved by supplying SaturationMatrix(0)
-    to the :tpref:`matrixcolor` transform property.
+    .. deprecated:: 7.4.0
+        Set the :tpref:`matrixcolor` transform property to
+        :func:`SaturationMatrix(0) <SaturationMatrix>`.
     """
 
     return MatrixColor(im, matrix.saturation(0.0, desat), **properties)
@@ -1812,8 +1841,9 @@ def Sepia(im, tint=(1.0, .94, .76), desat=(0.2126, 0.7152, 0.0722), **properties
     An image manipulator that creates a sepia-toned version of the image
     manipulator `im`.
 
-    The same effect can now be achieved by supplying SepiaMatrix()
-    to the :tpref:`matrixcolor` transform property.
+    .. deprecated:: 7.4.0
+        Set the :tpref:`matrixcolor` transform property to
+        :func:`SepiaMatrix() <SepiaMatrix>`
     """
 
     return MatrixColor(im, matrix.saturation(0.0, desat) * matrix.tint(tint[0], tint[1], tint[2]), **properties)
@@ -1854,8 +1884,8 @@ class Tile(ImageBase):
         If not None, a (width, height) tuple. If None, this defaults to
         (:var:`config.screen_width`, :var:`config.screen_height`).
 
-    The same effect can now be achieved using the :func:`Tile`
-    displayable, with ``Tile(im, size=size)``.
+    .. deprecated:: 7.4.0
+        Use :func:`Tile(im, xysize=size, **properties) <Tile>`.
     """
 
     def __init__(self, im, size=None, **properties):
@@ -1951,7 +1981,7 @@ def image(arg, loose=False, **properties):
     """
     :doc: im_image
     :name: Image
-    :args: (filename, *, optimize_bounds=True, oversample=1, **properties)
+    :args: (filename, *, optimize_bounds=True, oversample=1, dpi=96, **properties)
 
     Loads an image from a file. `filename` is a
     string giving the name of the file.
@@ -1970,6 +2000,11 @@ def image(arg, loose=False, **properties):
         with more pixels than its logical size would imply. For example, if
         an image file is 2048x2048 and oversample is 2, then the image will
         be treated as a 1024x1024 image for the purpose of layout.
+
+    `dpi`
+        The DPI of an SVG image. This defaults to 96, but that can be
+        increased to render the SVG larger, and decreased to render
+        it smaller.
     """
 
     """
@@ -2004,7 +2039,7 @@ def image(arg, loose=False, **properties):
     elif loose:
         return arg
 
-    if isinstance(arg, renpy.display.core.Displayable):
+    if isinstance(arg, renpy.display.displayable.Displayable):
         raise Exception("Expected an image, but got a general displayable.")
     else:
         raise Exception("Could not construct image from argument.")

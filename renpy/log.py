@@ -137,14 +137,19 @@ class LogFile(object):
                 self.write('=' * 78)
                 self.write('')
 
-            self.write("%s", time.ctime())
+            self.write("%s UTC", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))
             try:
                 self.write("%s", platform.platform())
             except Exception:
                 self.write("Unknown platform.")
             self.write("%s", renpy.version)
-            self.write("%s %s", renpy.config.name, renpy.config.version)
             self.write("")
+
+            if "name" in renpy.game.build_info:
+                self.write("%s", renpy.game.build_info["name"])
+                self.write("%s", renpy.game.build_info["version"])
+                self.write("Built at %s UTC", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(renpy.game.build_info["time"])))
+                self.write("")
 
             return True
 
@@ -239,6 +244,7 @@ class StdioRedirector(object):
     def __init__(self):
         self.buffer = ''
         self.log = open("log", developer=False, append=False, flush=True)
+        self.encoding = "utf-8"
 
     def write(self, s):
 

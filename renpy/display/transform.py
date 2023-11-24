@@ -76,6 +76,18 @@ def first_not_none(*args):
     return args[-1]
 
 
+def limit_angle(n):
+    """
+    Limits an angle to the range 0 and 360 degrees.
+    """
+
+    n = n % 360
+
+    if n < 0:
+        n += 360
+
+    return n
+
 class TransformState(renpy.object.Object):
 
     last_angle = 0.0
@@ -210,16 +222,14 @@ class TransformState(renpy.object.Object):
 
     yalign = property(get_yalign, set_yalign)
 
-    def scale(self, value, available):
+    @staticmethod
+    def scale(value, available):
         """
         Converts value to a float, scaled by the available area, if
         required.
         """
 
-        if type(value) is float:
-            return value * available
-
-        return 1.0 * value
+        return float(absolute.compute_raw(value, available))
 
     def cartesian_to_polar_pos(self, x, y):
         """
@@ -327,7 +337,11 @@ class TransformState(renpy.object.Object):
     def get_angle(self):
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-        angle, _radius = self.cartesian_to_polar_pos(xpos, ypos)
+        angle, radius = self.cartesian_to_polar_pos(xpos, ypos)
+
+        if radius == 0 and self.last_angle is not None:
+            angle = self.last_angle
+
         return angle
 
     def get_radius(self):
@@ -345,7 +359,7 @@ class TransformState(renpy.object.Object):
         return self.radius_type(radius)
 
     def set_angle(self, angle):
-        self.last_angle = angle
+        self.last_angle = limit_angle(angle)
 
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
@@ -355,8 +369,7 @@ class TransformState(renpy.object.Object):
     def set_radius(self, radius):
         self.radius_type = type(radius)
 
-        if type(radius) is float:
-            radius = self.scale(radius, min(self.available_width, self.available_height))
+        radius = self.scale(radius, min(self.available_width, self.available_height))
 
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
@@ -376,7 +389,11 @@ class TransformState(renpy.object.Object):
     def get_anchorangle(self):
         xanchor = first_not_none(self.xanchor, self.inherited_xanchor, 0)
         yanchor = first_not_none(self.yanchor, self.inherited_yanchor, 0)
-        angle, _radius = self.cartesian_to_polar_anchor(xanchor, yanchor)
+        angle, radius = self.cartesian_to_polar_anchor(xanchor, yanchor)
+
+        if radius == 0 and self.last_anchorangle is not None:
+            angle = self.last_anchorangle
+
         return angle
 
     def get_anchorradius(self):
@@ -387,7 +404,7 @@ class TransformState(renpy.object.Object):
         return self.radius_type(radius)
 
     def set_anchorangle(self, angle):
-        self.last_anchorangle = angle
+        self.last_anchorangle = limit_angle(angle)
 
         xanchor = first_not_none(self.xanchor, self.inherited_xanchor, 0)
         yanchor = first_not_none(self.yanchor, self.inherited_yanchor, 0)
@@ -884,7 +901,7 @@ class Transform(Container):
         self.active = True
 
         if self.state.last_events != self.state.events:
-            if self.state.events:
+            if self.state.events and renpy.game.interface is not None:
                 renpy.game.interface.timeout(0)
             self.state.last_events = self.state.events
 
@@ -1007,10 +1024,8 @@ class Transform(Container):
                 cw, ch = self.child_size
                 rw, rh = self.render_size
 
-                if xanchor.__class__ is float:
-                    xanchor *= cw
-                if yanchor.__class__ is float:
-                    yanchor *= ch
+                xanchor = absolute.compute_raw(xanchor, cw)
+                yanchor = absolute.compute_raw(yanchor, ch)
 
                 xanchor -= cw / 2.0
                 yanchor -= ch / 2.0
@@ -1020,8 +1035,8 @@ class Transform(Container):
                 xanchor += rw / 2.0
                 yanchor += rh / 2.0
 
-                xanchor = renpy.display.core.absolute(xanchor)
-                yanchor = renpy.display.core.absolute(yanchor)
+                xanchor = absolute(xanchor)
+                yanchor = absolute(yanchor)
 
                 rv = (xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel)
 
@@ -1094,7 +1109,7 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         self.active = True
 
         if self.state.last_events != self.state.events:
-            if self.state.events:
+            if self.state.events and renpy.game.interface is not None:
                 renpy.game.interface.timeout(0)
             self.state.last_events = self.state.events
 
