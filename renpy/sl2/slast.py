@@ -78,7 +78,7 @@ def compile_expr(loc, node):
     """
 
     filename = loc[0]
-    flags = renpy.python.new_compile_flags | renpy.python.futured_files[filename]
+    flags = renpy.python.new_compile_flags | renpy.python.file_compiler_flags.get(filename, 0)
 
     expr = ast.Expression(body=node)
     renpy.python.fix_locations(expr, 1, 0)

@@ -469,7 +469,7 @@ class Script(object):
                     if b == "3":
                         b = "division"
                     if b in __future__.all_feature_names:
-                        renpy.python.futured_files[i.filename] |= getattr(__future__, b).compiler_flag
+                        renpy.python.file_compiler_flags[i.filename] |= getattr(__future__, b).compiler_flag
                     else:
                         raise Exception("Unknown __future__ : {!r}.".format(b))
 
@@ -937,7 +937,7 @@ class Script(object):
 
             key = i.get_hash() + MAGIC
 
-            flags = renpy.python.futured_files[i.location[0]]
+            flags = renpy.python.file_compiler_flags.get(i.location[0], 0)
             if flags:
                 if flags == __future__.division.compiler_flag:
                     # avoid triggering a recompile

@@ -801,8 +801,7 @@ new_compile_flags = (old_compile_flags
                       )
 
 # A set of __future__ flag overrides for each file.
-# Like a defaultdict(int), but better (missing key accesses don't clog it up).
-futured_files = collections.Counter()
+file_compiler_flags = collections.defaultdict(int)
 
 # A cache for the results of py_compile.
 py_compile_cache = { }
@@ -1017,7 +1016,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         else:
             py_mode = mode
 
-        flags = futured_files[filename]
+        flags = file_compiler_flags.get(filename, 0)
         if (not PY2) or flags:
 
             flags |= new_compile_flags
