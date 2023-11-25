@@ -33,6 +33,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import argparse
 import os
 import sys
+import time
 
 import renpy
 
@@ -117,6 +118,10 @@ class ArgumentParser(argparse.ArgumentParser):
         self.add_argument(
             "--compile", action='store_true', dest='compile',
             help='Forces all .rpy scripts to be recompiled before proceeding.')
+
+        self.add_argument(
+            "--rpyc-version", action='store', type=int, default=int(time.time()),
+            help='The integer version number to use when compiling .rpyc files. Defaults to the current epoch time.')
 
         self.add_argument(
             "--keep-orphan-rpyc", action="store_true",
