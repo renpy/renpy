@@ -359,6 +359,9 @@ class SceneLists(renpy.object.Object):
             if i not in self.camera_list:
                 self.camera_list[i] = (None, [ ])
 
+        self.layer_at_list.setdefault(None, (None, [ ]))
+        self.camera_list.setdefault(None, (None, [ ]))
+
     def after_upgrade(self, version):
 
         if version < 1:
@@ -473,6 +476,9 @@ class SceneLists(renpy.object.Object):
 
             self.music = None
             self.focused = None
+
+        self.layer_at_list[None] = (None, [ ])
+        self.camera_list[None] = (None, [ ])
 
     def replace_transient(self, prefix="hide"): # type: (str|None) -> None
         """
@@ -3430,7 +3436,7 @@ class Interface(object):
                 old_root.layers[layer] = d
                 old_root.add(d)
 
-            trans = instantiate_transition(None, old_root, layers_root)
+            trans = instantiate_transition(None, old_root, renpy.defaultstore.At(layers_root, *scene_lists.layer_at_list[None][1], *scene_lists.camera_list[None][1]))
 
             if not isinstance(trans, Displayable):
                 raise Exception("Expected transition to return a displayable, not a {!r}".format(trans))
@@ -3456,7 +3462,7 @@ class Interface(object):
                 focus_roots.append(pb)
 
         else:
-            root_widget.add(layers_root)
+            root_widget.add(renpy.defaultstore.At(layers_root, *scene_lists.layer_at_list[None][1], *scene_lists.camera_list[None][1]))
 
         # Add top_layers to the root_widget.
         for layer in renpy.config.top_layers:
