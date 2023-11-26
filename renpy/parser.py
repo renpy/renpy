@@ -1039,13 +1039,13 @@ def transform_statement(l, loc):
         for p in parameters.parameters.values():
             if p.kind == p.POSITIONAL_ONLY and not found_pos_only:
                 found_pos_only = True
-                l.deferred_error("atl_pos_only", "the transform statement does not take positional-only parameters")
+                l.deferred_error("atl_pos_only", "the transform statement does not take positional-only parameters ({} is not allowed)".format(p))
             elif p.kind == p.VAR_POSITIONAL:
-                l.error("the transform statement does not take *args")
+                l.error("the transform statement does not take *args ({} is not allowed)".format(p))
             elif p.kind == p.VAR_KEYWORD:
-                l.error("the transform statement does not take **kwargs")
+                l.error("the transform statement does not take **kwargs ({} is not allowed)".format(p))
             elif (p.kind == p.KEYWORD_ONLY) and (p.default is p.empty):
-                l.error("the transform statement does not take required keyword-only parameters")
+                l.error("the transform statement does not take required keyword-only parameters ({} is not allowed)".format(p))
 
     l.require(':')
     l.expect_eol()
