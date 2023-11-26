@@ -79,8 +79,8 @@ cdef class TextureLoader:
         self.total_texture_size = 0
         self.texture_load_queue = weakref.WeakSet()
 
-        if not self.draw.gles:
-            glGetFloatv(MAX_TEXTURE_MAX_ANISOTROPY_EXT, &self.max_anisotropy)
+        self.max_anisotropy = 1.0
+        glGetFloatv(MAX_TEXTURE_MAX_ANISOTROPY_EXT, &self.max_anisotropy)
 
     def quit(self):
         """
@@ -591,7 +591,7 @@ cdef class GLTexture(GL2Model):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
 
-        if (not self.loader.draw.gles) and properties.get("anisotropic", True):
+        if properties.get("anisotropic", True) and self.loader.max_anisotropy > 1.0:
             glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, self.loader.max_anisotropy)
 
         # Store the texture size that was loaded.
