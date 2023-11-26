@@ -503,7 +503,7 @@ def parse_arguments(l):
         if not (expect_starred or expect_doublestarred):
             name = l.word()
 
-            if name and l.match(r'='):
+            if name and l.match(r'=') and not l.match('='):
                 if name in names:
                     l.error("keyword argument repeated: '%s'" % name)
                 else:
