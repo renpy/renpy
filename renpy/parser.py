@@ -1034,8 +1034,16 @@ def transform_statement(l, loc):
 
     parameters = parse_parameters(l)
 
-    if parameters and (parameters.extrakw or parameters.extrapos): # awaiting reform
-        l.error('transform statement does not take a variable number of parameters')
+    if parameters:
+        for p in parameters.parameters.values():
+            if p.kind == p.POSITIONAL_ONLY:
+                l.deferred_error("atl_pos_only", "the transform statement does not take positional-only parameters")
+            elif p.kind == p.VAR_POSITIONAL:
+                l.error("the transform statement does not take *args")
+            elif p.kind == p.VAR_KEYWORD:
+                l.error("the transform statement does not take **kwargs")
+            elif (p.kind == p.KEYWORD_ONLY) and (p.default is p.empty):
+                l.error("the transform statement does not take required keyword-only parameters")
 
     l.require(':')
     l.expect_eol()
@@ -1699,12 +1707,6 @@ def release_deferred_errors():
         """
         parse_errors.extend(pop(queue))
 
-    # Unconditionally releases the deferred_test queue.
-    release("deferred_test")
-
-    # Unconditionally ignores the deferred_experimentation
-    pop("deferred_experimentation")
-
     if renpy.config.check_conflicting_properties:
         release("check_conflicting_properties")
     else:
@@ -1719,6 +1721,11 @@ def release_deferred_errors():
         release("duplicate_id")
     else:
         pop("duplicate_id")
+
+    if renpy.config.atl_pos_only:
+        pop("atl_pos_only")
+    else:
+        release("atl_pos_only")
 
     if deferred_parse_errors:
         raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))

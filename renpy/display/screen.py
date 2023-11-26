@@ -1347,7 +1347,7 @@ def show_screen(_screen_name, *_args, **kwargs):
         d.cache = cache_get(screen, _args, kwargs)
         d.phase = SHOW
 
-    sls = renpy.display.core.scene_lists()
+    sls = renpy.display.scenelists.scene_lists()
 
     sls.add(_layer, d, _tag, zorder=_zorder, transient=_transient, keep_st=True, name=name)
     sls.shown.predict_show(_layer, (_tag,), True)
@@ -1440,7 +1440,7 @@ def hide_screen(tag, layer=None):
     screen = get_screen(tag, layer)
 
 
-    sls = renpy.display.core.scene_lists()
+    sls = renpy.display.scenelists.scene_lists()
 
     if screen is not None:
         sls.remove(layer, screen.tag)
