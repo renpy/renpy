@@ -214,7 +214,7 @@ class Formatter(string.Formatter):
             value = value.lower()
 
         if "c" in conversion:
-            value = value.capitalize()
+            value = value[:1].capitalize() + value[1:]
 
         return value
 
