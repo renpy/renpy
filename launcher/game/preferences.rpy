@@ -86,6 +86,9 @@ default persistent.last_update_check = datetime.date.today()
 # Should we try to skip the splashscreen?
 default persistent.skip_splashscreen = False
 
+# Should we prefer rpu updates?
+default persistent.prefer_rpu = True
+
 init python:
     if not persistent.daily_update_check_once:
         persistent.daily_update_check_once = True
@@ -181,10 +184,7 @@ screen preferences():
                             add HALF_SPACER
 
                             frame style "l_indent":
-                                if persistent.editor:
-                                    textbutton persistent.editor action Jump("editor_preference") alt _("Text editor: [text]")
-                                else:
-                                    textbutton _("Not Set") action Jump("editor_preference") alt _("Text editor: [text]")
+                                textbutton (persistent.editor or _("Not Set")) action Jump("editor_preference") alt _("Text editor: [text]")
 
                         add SPACER
 
@@ -260,8 +260,11 @@ screen preferences():
 
                             textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
+                            textbutton _("Restore window position") style "l_checkbox" action Preference("restore window position", "toggle")
+
                             if ability.can_update:
                                 textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
+                                textbutton _("Prefer RPU updates") style "l_checkbox" action ToggleField(persistent, "prefer_rpu")
 
                 elif preference_tab == "theme":
 

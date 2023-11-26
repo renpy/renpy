@@ -1323,7 +1323,7 @@ def _hotspot(spot, style='hotspot', **properties):
     properties.setdefault("ymaximum", h)
 
     if imagemap.alpha:
-        focus_mask = True
+        focus_mask = hover
     else:
         focus_mask = None
 

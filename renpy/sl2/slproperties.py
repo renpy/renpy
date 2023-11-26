@@ -61,7 +61,7 @@ position_property_names = [
     "debug",
     ]
 
-position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
+position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip"), Keyword("group_alt"), Keyword("extra_alt") ] # type: ignore
 text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ] # type: ignore
 side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
 viewport_position_properties = [ PrefixStyle("viewport_", i) for i in position_property_names ] # type: ignore

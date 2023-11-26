@@ -432,6 +432,10 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
             continue
 
+        if new_type == BC_CL or new_type == BC_CP:
+            g.split = SPLIT_IGNORE
+            continue
+
         # Figure out the type of break opportunity we have here.
         # ^ Prohibited break.
         # % Indirect break.
@@ -493,7 +497,7 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
     """
 
     cdef Glyph g, split_g
-    cdef float width, x, splitx, gwidth
+    cdef float width, x, splitx, gwidth, ignored
 
     width = first_width
     split_g = None
@@ -505,12 +509,19 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
     # The x position after splitting the line.
     splitx = 0
 
+    # The amount of x position ignored with SPLIT_IGNORE.
+    ignored = 0
+
     for g in glyphs:
 
         if g.ruby == RUBY_TOP:
             continue
 
         if g.ruby == RUBY_ALT:
+            continue
+
+        if g.split == SPLIT_IGNORE:
+            ignored += g.advance
             continue
 
         # If the x coordinate is greater than the width of the screen,
@@ -520,8 +531,10 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
             split_g = None
             width = rest_width
 
-        x += g.advance
-        splitx += g.advance
+        x += g.advance + ignored
+        splitx += g.advance + ignored
+
+        ignored = 0
 
         if g.split == SPLIT_INSTEAD:
             if split_g is not None:
@@ -627,6 +640,9 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
 
         if g.ruby == RUBY_ALT:
             continue
+
+        if g.split == SPLIT_IGNORE:
+            g.split = SPLIT_NONE
 
         if g.split != SPLIT_NONE and old_g:
             # When a glyph is at the end of the line, set its advance to

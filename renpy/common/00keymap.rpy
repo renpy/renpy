@@ -60,6 +60,7 @@ init -1600 python:
         self_voicing = [ 'alt_K_v', 'K_v' ],
         clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
+        extra_voicing = [ '?' ],
 
         # Say.
         rollforward = [ 'any_K_PAGEDOWN', 'any_KP_PAGEDOWN', 'mousedown_5', ],
@@ -151,7 +152,6 @@ init -1600 python:
         image_load_log = [ 'K_F4' ],
         profile_once = [ 'K_F8' ],
         memory_profile = [ 'K_F7' ],
-
     )
 
     config.default_keymap = { k : _list(v) for k, v in config.keymap.items() }
@@ -170,13 +170,14 @@ init -1600 python:
         "pad_start_press" : [ "game_menu", ],
 
         "pad_y_press" : [ "hide_windows", ],
+        "pad_x_press" : [ "button_alternate" ],
 
         "pad_rightshoulder_press" : [ "rollforward", ],
         "repeat_pad_rightshoulder_press" : [ "rollforward", ],
 
         "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
         "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
-        "pad_b_press" : [ "button_alternate" ],
+        "pad_b_press" : [ "game_menu" ],
 
         "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
         "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
@@ -440,6 +441,7 @@ init -1100 python:
         self_voicing = Preference("self voicing", "toggle"),
         clipboard_voicing = Preference("clipboard voicing", "toggle"),
         debug_voicing = Preference("debug voicing", "toggle"),
+        extra_voicing = renpy.exports.speak_extra_alt,
         progress_screen = _progress_screen,
         director = director.Start(),
         performance = ToggleScreen("_performance"),

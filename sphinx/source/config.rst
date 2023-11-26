@@ -1752,7 +1752,8 @@ Rarely or Internally Used
 
 .. var:: config.say_layer = "screens"
 
-    The layer the say screen is shown on.
+    The layer the say screen is shown on. This layer should be in
+    :var:`config.context_clear_layers`.
 
 .. var:: config.say_menu_text_filter = None
 
@@ -1767,6 +1768,12 @@ Rarely or Internally Used
     second and later interactions caused by a line of dialogue with
     pauses in it. Used to sustain voice through pauses.
 
+.. var:: config.save = True
+
+    If True, Ren'Py will allow the user to save the game. If False,
+    Ren'Py will not allow the user to save the game, and will not show
+    existing saves.
+
 .. var:: config.save_dump = False
 
     If set to True, Ren'Py will create the file save_dump.txt whenever it
@@ -1780,6 +1787,12 @@ Rarely or Internally Used
     If True, the mobile app will save its state when it loses focus. The state
     is saved in a way that allows it to be automatically loaded (and the game
     to resume its place) when the app starts again.
+
+.. var:: config.save_persistent = True
+
+    If True, Ren'Py will save persistent data. If False,
+    persistent data will not be saved, and changes to persistent will be
+    lost when the game ends.
 
 .. var:: config.save_physical_size = True
 

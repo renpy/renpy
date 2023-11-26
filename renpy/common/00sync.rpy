@@ -484,7 +484,11 @@ init -1100 python in _sync:
 
                 zi = zf.getinfo(fn)
 
-                timestamp = datetime.datetime(*zi.date_time).timestamp()
+                if PY2:
+                    epoch = datetime.datetime.utcfromtimestamp(0)
+                    timestamp = (datetime.datetime(*zi.date_time) - epoch).total_seconds()
+                else:
+                    timestamp = datetime.datetime(*zi.date_time).timestamp()
 
                 data = zf.read(fn)
 
@@ -519,7 +523,8 @@ init -1100:
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -549,7 +554,8 @@ init -1100:
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -588,7 +594,8 @@ init -1100:
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -624,7 +631,8 @@ init -1100:
         modal True
         zorder 100
 
-        add "gui/overlay/confirm.png"
+        frame:
+            style "sync_overlay"
 
         frame:
             xalign .5
@@ -647,3 +655,7 @@ init -1100:
 
         ## Right-click and escape answer "no".
         key "game_menu" action Return(False)
+
+
+    style sync_overlay is empty:
+        background "gui/overlay/confirm.png"

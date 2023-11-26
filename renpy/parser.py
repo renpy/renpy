@@ -497,7 +497,7 @@ def parse_arguments(l):
         if not (expect_starred or expect_doublestarred):
             name = l.word()
 
-            if name and l.match(r'='):
+            if name and l.match(r'=') and not l.match('='):
                 if name in names:
                     l.error("keyword argument repeated: '%s'" % name)
                 else:
@@ -1450,14 +1450,20 @@ def style_statement(l, loc):
 
 
 @statement("rpy python")
-def rpy_python_3(l, loc):
+def rpy_python(l, loc):
 
-    l.require('3')
+    rv = []
+
+    while (not rv) or l.match(","):
+
+        r = l.match("3") # for compatibility with old code.
+        if not r:
+            r = l.require(l.word, "__future__ name")
+
+        rv.append(ast.RPY(loc, ("python", r)))
 
     l.expect_eol()
     l.expect_noblock("rpy statement")
-
-    rv = ast.RPY(loc, ("python", "3"))
 
     l.advance()
     return rv

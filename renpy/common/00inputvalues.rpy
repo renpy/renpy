@@ -228,7 +228,8 @@ init -1510 python:
 
         An input value that updates ``dict[key]``.
 
-        `dict` may be a dict object or a list.
+        `dict`
+            May be a dict object or a list.
         """
 
         identity_fields = ("dict",)

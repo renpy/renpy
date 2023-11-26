@@ -395,6 +395,9 @@ def save(slotname, extra_info='', mutate_flag=False):
     :func:`renpy.take_screenshot` should be called before this function.
     """
 
+    if not renpy.config.save:
+        return
+
     # Update persistent file, if needed. This is for the web and mobile
     # platforms, to make sure the persistent file is updated whenever the
     # game is saved. (But not auto-saved, for performance reasons.)

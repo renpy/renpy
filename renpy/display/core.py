@@ -1733,6 +1733,10 @@ class Interface(object):
         # modifiers to be used with mouse and other events.
         self.mod = 0
 
+        # A queue of functions to invoke at the start of the next interaction.
+        # Set by renpy.exports.invoke_in_main_thread.
+        self.invoke_queue = [ ]
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -1800,6 +1804,31 @@ class Interface(object):
             renpy.display.log.exception()
             return 1.0
 
+    def get_display_layout(self):
+        """
+        Get the display layout. A list of rectangles that have monitors in them.
+        """
+
+        rv = [ ]
+        for i in range(pygame.display.get_num_video_displays()):
+            rv.append(pygame.display.get_display_bounds(i))
+        
+        return tuple(rv)
+
+    def on_move(self, pos):
+        """
+        Called when the player moves the window.
+        """
+
+        if not (renpy.windows or renpy.macintosh or renpy.linux):
+            return
+
+        if renpy.game.preferences.fullscreen or renpy.game.preferences.maximized:
+            return
+
+        renpy.game.preferences.window_position = pos
+        renpy.game.preferences.window_position_layout = self.get_display_layout()
+
     def start(self):
         """
         Starts the interface, by opening a window and setting the mode.
@@ -1845,7 +1874,7 @@ class Interface(object):
         if renpy.emscripten and renpy.game.preferences.web_cache_preload:
             emscripten.run_script("loadCache()")
 
-        renpy.main.log_clock("Interface start.")
+        renpy.main.log_clock("Interface start")
 
         self.started = True
 
@@ -3187,6 +3216,13 @@ class Interface(object):
 
         renpy.plog(1, "start interact_core")
 
+        # Process the invoke queue.
+        while self.invoke_queue:
+            fn, args, kwargs = self.invoke_queue.pop(0)
+            rv = fn(*args, **kwargs)
+            if rv is not None:
+                return False, rv
+
         # Check to see if the language has changed.
         renpy.translation.check_language()
 
@@ -3857,6 +3893,11 @@ class Interface(object):
 
                     renpy.game.interface.force_redraw = True
 
+                    continue
+
+                # Handle window moves.
+                if ev.type == pygame.WINDOWMOVED:
+                    self.on_move(ev.pos)
                     continue
 
                 # If we're ignoring touch events, and get a mouse up, stop

@@ -524,6 +524,9 @@ change_renpy_executable()
             # dictionaries.
             data = project.data
 
+            # Reset the RPU update builder.
+            RPUPackage.reset()
+
             if scan:
                 self.reporter.info(_("Scanning project files..."))
                 project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
@@ -963,6 +966,16 @@ change_renpy_executable()
                         f.write(unicode(repr(renpy.renpy.version_tuple[:-1])))
 
                     self.add_file("all", "game/script_version.txt", script_version_txt)
+
+            if self.build["info"]:
+
+                build_info_json = self.temp_filename("build_info.json")
+
+                with open(build_info_json, "w") as f:
+                    json.dump(self.build["info"], f)
+
+                self.add_file("all", "game/cache/build_info.json", build_info_json)
+
 
         def add_file_list_hash(self, list_name):
             """
@@ -1459,6 +1472,8 @@ change_renpy_executable()
 
                 "bare-tar.bz2" : (".tar.bz2", False, False, False),
                 "bare-zip" : (".zip", False, False, False),
+
+                "null" : ( "", True, False, False),
             }
 
             if format not in FORMATS:
@@ -1560,6 +1575,8 @@ change_renpy_executable()
                 pkg = UpdatePackage(path, filename, self.destination)
             elif format == "rpu":
                 pkg = RPUPackage(self.destination, variant)
+            elif format == "null":
+                pkg = NullPackage()
             elif format == "zip" or format == "app-zip" or format == "bare-zip":
                 if self.build['renpy']:
                     pkg = ExternalZipPackage(path)
@@ -1648,17 +1665,8 @@ change_renpy_executable()
                         os.unlink(fn)
 
                 if "rpu" in self.build["update_formats"]:
-
-                    rpu_size = 0
-
-                    rpu_dir = os.path.join(self.destination, "rpu")
-
-                    for i in os.listdir(rpu_dir):
-                        rpu_size += os.path.getsize(os.path.join(rpu_dir, i))
-
                     index[variant]["rpu_url"] = "rpu/" + variant + ".files.rpu"
                     index[variant]["rpu_digest"] = self.build_cache["rpu/" + variant + ".files.rpu"][0]
-                    index[variant]["rpu_size"] = rpu_size
 
             for p in packages:
                 if p["update"]:

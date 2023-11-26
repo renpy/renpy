@@ -1405,6 +1405,13 @@ font_hinting = { None : "auto" }
 # avoidable when not generating the documentation ?
 generating_documentation = False
 
+# Is the user allowed to save, or to see the existing save files?
+save = True
+
+# Should the persistent file be updated?
+save_persistent = True
+
+
 del os
 del collections
 

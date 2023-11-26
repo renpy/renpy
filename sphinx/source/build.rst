@@ -331,11 +331,45 @@ Build Functions
 
 .. include:: inc/build
 
+Build Info
+----------
+
+There are two variables that can be used to provide information about
+the build. This information is used to generate the game/cache/build_info.json
+file, which is loaded as Ren'Py starts.
+
+.. var:: time = None
+
+    This variable defaults to None, but if your game has been built,
+    it will be set to the time the game was built, in seconds since
+    January 1, 1970.
+
+.. var:: info = { }
+
+    This variable lets you store information that will be placed into
+    the game/cache/build_info.json file in the built game. When the built
+    game starts, game/cache/build_info.json is loaded and the contents
+    placed into this variable.
+
+    Generally, you'll want to check that a field does not exist, and
+    set it, using setdefault.
+
+    For example, this stores the name of the computer that built the
+    game in the build_info.json file::
+
+        python hide:
+            import socket
+            build.info.setdefault("build_host", socket.gethostname())
+
+    The information in this variable needs to be of types that can be
+    placed in JSON files. (That is, None, booleans, strings,
+    numbers, lists, and dictionaries)
+
+
 Advanced Configuration
 ----------------------
 
 The following variables provide further control of the build process:
-
 
 .. var:: build.allow_integrated_gpu = True
 
@@ -421,8 +455,12 @@ The following variables provide further control of the build process:
 
 .. var:: build.update_formats = [ "rpu" ]
 
-
     This is a list of formats that the updater will build. The default,
     "rpu" is supported from Ren'Py 7.7 and 8.2 on. If you need to support
     updating using the earlier zsync-based updates, add "zsync' to the
     list.
+
+.. var:: build.game_only_update = False
+
+    If true, :var:`build.include_update` is enabled, and
+    the "Game-Only Update for Mobile" package becomes available.
