@@ -1035,8 +1035,10 @@ def transform_statement(l, loc):
     parameters = parse_parameters(l)
 
     if parameters:
+        found_pos_only = False
         for p in parameters.parameters.values():
-            if p.kind == p.POSITIONAL_ONLY:
+            if p.kind == p.POSITIONAL_ONLY and not found_pos_only:
+                found_pos_only = True
                 l.deferred_error("atl_pos_only", "the transform statement does not take positional-only parameters")
             elif p.kind == p.VAR_POSITIONAL:
                 l.error("the transform statement does not take *args")
