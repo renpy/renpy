@@ -299,7 +299,7 @@ def retain_after_load():
     renpy.game.log.retain_after_load()
 
 
-scene_lists = renpy.display.core.scene_lists
+scene_lists = renpy.display.scenelists.scene_lists
 
 
 def count_displayables_in_layer(layer):
@@ -4430,7 +4430,7 @@ def get_zorder_list(layer):
     Returns a list of (tag, zorder) pairs for `layer`.
     """
 
-    return renpy.display.core.scene_lists().get_zorder_list(layer)
+    return scene_lists().get_zorder_list(layer)
 
 
 def change_zorder(layer, tag, zorder):
@@ -4440,7 +4440,7 @@ def change_zorder(layer, tag, zorder):
     Changes the zorder of `tag` on `layer` to `zorder`.
     """
 
-    return renpy.display.core.scene_lists().change_zorder(layer, tag, zorder)
+    return scene_lists().change_zorder(layer, tag, zorder)
 
 
 sdl_dll = False

@@ -463,6 +463,7 @@ def import_all():
     import renpy.display.render
     import renpy.display.displayable
     import renpy.display.core
+    import renpy.display.scenelists
     import renpy.display.swdraw
 
     import renpy.text
@@ -739,6 +740,7 @@ if 1 == 0:
     from . import translation
     from . import uguu
     from . import ui
+    from . import update
     from . import util
     from . import vc_version
     from . import versions
