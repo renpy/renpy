@@ -165,9 +165,9 @@ Here's an example::
             add g.make_button("title", "title.png", xalign=0.5, yalign=0.5)
 
 
-            # The screen is responsible for returning to the main menu. It could also
-            # navigate to other gallery screens.
-            textbutton "Return" action Return() xalign 0.5 yalign 0.5
+         # The screen is responsible for returning to the main menu. It could also
+         # navigate to other gallery screens.
+         textbutton "Return" action Return() xalign 0.5 yalign 0.5
 
 Step 4 will vary based on how your game is structured, but one way of
 accomplishing it is to add the following line::
