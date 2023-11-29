@@ -1102,6 +1102,9 @@ def lint():
     check_unreachables(all_stmts)
     check_orphan_translations(none_language_ids, translated_ids)
 
+    if not renpy.config.check_conflicting_properties:
+        print("It is advised to set config.check_conflicting_properties to True.")
+
     for f in renpy.config.lint_hooks:
         f()
 
