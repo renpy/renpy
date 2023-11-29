@@ -28,6 +28,11 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import gc
 import io
 import re
+import time
+import sys
+import threading
+import fnmatch
+import os
 
 import renpy
 
@@ -133,11 +138,6 @@ renpy_pure("known_languages")
 renpy_pure("check_text_tags")
 renpy_pure("filter_text_tags")
 renpy_pure("split_properties")
-
-import time
-import sys
-import threading
-import fnmatch
 
 
 # The number of bits in the architecture.
@@ -2347,7 +2347,6 @@ def log(msg):
     try:
 
         if not logfile:
-            import os
             logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), "a")
 
             if not logfile.tell():
@@ -4354,6 +4353,8 @@ def get_sdl_dll():
     If this can not be done, None is returned.
     """
 
+
+
     global sdl_dll
 
     if sdl_dll is not False:
@@ -4361,7 +4362,9 @@ def get_sdl_dll():
 
     try:
 
-        DLLS = [ None, "librenpython.dll", "librenpython.dylib", "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
+        lib = os.path.dirname(sys.executable) + "/"
+
+        DLLS = [ None, lib + "librenpython.dll", lib + "librenpython.dylib", lib + "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
 
         import ctypes
 
@@ -4371,7 +4374,7 @@ def get_sdl_dll():
                 dll = ctypes.cdll[i]
                 # See if it has SDL_GetError..
                 dll.SDL_GetError
-            except Exception:
+            except Exception as e:
                 continue
 
             sdl_dll = dll
