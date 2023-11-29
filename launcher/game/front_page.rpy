@@ -264,6 +264,8 @@ label lint:
         lint_fn = project.current.temp_filename("lint.txt")
 
         persistent.lint_options.discard("--orphan-tl") # compat
+        persistent.lint_options.discard("--builtins-parameters") # compat
+
         project.current.launch([ 'lint', lint_fn, ] + list(persistent.lint_options), wait=True)
 
         e = renpy.editor.editor

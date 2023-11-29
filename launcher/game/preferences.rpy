@@ -363,19 +363,15 @@ screen preferences():
                             textbutton _("Check for orphan/obsolete translations"):
                                 style "l_checkbox"
                                 action InvertSelected(ToggleSetMembership(persistent.lint_options, "--no-orphan-tl"))
-                            textbutton _("Check for parameters overriding builtin names"):
+                            textbutton _("Check parameters shadowing reserved names"):
                                 style "l_checkbox"
-                                action ToggleSetMembership(persistent.lint_options, "--builtins-parameters")
+                                action ToggleSetMembership(persistent.lint_options, "--reserved-parameters")
                             textbutton _("Print word and character counts for speaking characters"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--words-char-count")
                             textbutton _("Unclosed text tags"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--check-unclosed-tags")
-
-                            add SPACER
-
-                            textbutton _("Check Script (Lint)") action Call("lint")
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
