@@ -195,7 +195,7 @@ screen front_page_project:
                 has vbox
 
                 textbutton _("Navigate Script") action Jump("navigation")
-                textbutton _("Check Script (Lint)") action Jump("lint")
+                textbutton _("Check Script (Lint)") action Call("lint")
 
                 if project.current.exists("game/gui.rpy"):
                     textbutton _("Change/Update GUI") action Jump("change_gui")
@@ -263,6 +263,7 @@ label lint:
         interface.processing(_("Checking script for potential problems..."))
         lint_fn = project.current.temp_filename("lint.txt")
 
+        persistent.lint_options.discard("--orphan-tl") # compat
         project.current.launch([ 'lint', lint_fn, ] + list(persistent.lint_options), wait=True)
 
         e = renpy.editor.editor
@@ -270,7 +271,7 @@ label lint:
         e.open(lint_fn)
         e.end()
 
-    jump front_page
+    return
 
 label rmpersistent:
 

@@ -21,9 +21,7 @@
 
 default persistent.show_edit_funcs = True
 default persistent.windows_console = False
-default persistent.lint_options = { # the ones which should be enabled by default
-    "--orphan-tl",
-}
+default persistent.lint_options = set()
 
 init python:
     from math import ceil
@@ -96,14 +94,14 @@ init python:
 
 
 default preference_tab = "general"
-define preference_tabs = {
-    "general" : _("General"),
-    "options" : _("Options"),
-    "theme" : _("Theme"),
-    "install" : _("Install Libraries"),
-    "actions" : _("Actions"),
-    "lint" : _("Lint Options"),
-    }
+define preference_tabs = (
+    ("general", _("General")),
+    ("options", _("Options")),
+    ("theme", _("Theme")),
+    ("install", _("Install Libraries")),
+    ("actions", _("Actions")),
+    ("lint", _("Lint")),
+)
 
 screen preferences():
 
@@ -135,7 +133,7 @@ screen preferences():
 
                     add HALF_SPACER
 
-                    for i, l in preference_tabs.items():
+                    for i, l in preference_tabs:
                         textbutton l action SetVariable("preference_tab", i) style "l_list"
 
                 if preference_tab == "general":
@@ -362,13 +360,13 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            textbutton _("Orphan translations"):
+                            textbutton _("Check for orphan/obsolete translations"):
                                 style "l_checkbox"
-                                action ToggleSetMembership(persistent.lint_options, "--orphan-tl")
-                            textbutton _("Parameters overriding builtin names"):
+                                action InvertSelected(ToggleSetMembership(persistent.lint_options, "--no-orphan-tl"))
+                            textbutton _("Check for parameters overriding builtin names"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--builtins-parameters")
-                            textbutton _("Word count and character count for speaking characters"):
+                            textbutton _("Print word and character counts for speaking characters"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--words-char-count")
                             textbutton _("Unclosed text tags"):
@@ -377,7 +375,7 @@ screen preferences():
 
                             add SPACER
 
-                            textbutton _("Check Script (Lint)") action Jump("lint")
+                            textbutton _("Check Script (Lint)") action Call("lint")
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
