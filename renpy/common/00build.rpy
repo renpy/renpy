@@ -24,7 +24,7 @@
 
 init -1500 python in build:
 
-    from store import config
+    from store import config, store
 
     import sys, os
 
@@ -217,6 +217,9 @@ init -1500 python in build:
         ("game/" + renpy.script.BYTECODE_FILE, "all"),
         ("game/cache/bytecode-311.rpyb", "web"),
         ("game/cache/bytecode-*.rpyb", None),
+        ("game/cache/build_info.json", None),
+        ("game/cache/build_time.txt", None),
+
     ])
 
 
@@ -520,9 +523,17 @@ init -1500 python in build:
     # Should the gameonly update be available?
     game_only_update = False
 
+    # The time at which the game was built.
+    time = store.renpy.game.build_info.get("time", None)
+
+    # Information about the game that is stored in cache/build_info.json.
+    info = store.renpy.game.build_info.get("info", { })
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
+        import time
+
         global include_update
 
         rv = { }
@@ -614,7 +625,15 @@ init -1500 python in build:
 
         rv["update_formats"] = update_formats
 
+        rv["info"] = {
+            "info" : info,
+            "time" : time.time(),
+            "name" : config.name,
+            "version" : config.version,
+            }
+
         return rv
+
 
 init 1500 python in build:
 

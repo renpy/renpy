@@ -67,6 +67,7 @@ from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen
 from renpy.display.screen import has_screen, get_screen, get_displayable, get_widget, ScreenProfile as profile_screen
 from renpy.display.screen import get_displayable_properties, get_widget_properties
+from renpy.display.screen import get_screen_variable, set_screen_variable
 
 from renpy.display.focus import focus_coordinates, capture_focus, clear_capture_focus, get_focus_rect
 from renpy.display.predict import screen as predict_screen
@@ -76,6 +77,8 @@ from renpy.display.image import get_available_image_tags, get_available_image_at
 from renpy.display.image import get_registered_image
 
 from renpy.display.im import load_surface, load_image, load_rgba
+
+from renpy.display.tts import speak as alt, speak_extra_alt
 
 from renpy.curry import curry, partial
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
@@ -296,7 +299,7 @@ def retain_after_load():
     renpy.game.log.retain_after_load()
 
 
-scene_lists = renpy.display.core.scene_lists
+scene_lists = renpy.display.scenelists.scene_lists
 
 
 def count_displayables_in_layer(layer):
@@ -3975,8 +3978,20 @@ def invoke_in_main_thread(fn, *args, **kwargs):
     :doc: other
 
     This runs the given function with the given arguments in the main
-    thread, if it is not already running in the main thread. The function
-    runs in an interaction context similar to an event handler.
+    thread. The function runs in an interaction context similar to an
+    event handler. This is meant to be called from a separate thread,
+    whose creation is handled by :func:`renpy.invoke_in_thread`.
+
+    If a single thread schedules multiple functions to be invoked, it is guaranteed
+    that they will be run in the order in which they have been scheduled::
+
+        def ran_in_a_thread():
+            renpy.invoke_in_main_thread(a)
+            renpy.invoke_in_main_thread(b)
+
+    In this example, it is guaranteed that ``a`` will return before
+    ``b`` is called. The order of calls made from different threads is not
+    guaranteed.
 
     This may not be called during the init phase.
     """
@@ -4415,7 +4430,7 @@ def get_zorder_list(layer):
     Returns a list of (tag, zorder) pairs for `layer`.
     """
 
-    return renpy.display.core.scene_lists().get_zorder_list(layer)
+    return scene_lists().get_zorder_list(layer)
 
 
 def change_zorder(layer, tag, zorder):
@@ -4425,7 +4440,7 @@ def change_zorder(layer, tag, zorder):
     Changes the zorder of `tag` on `layer` to `zorder`.
     """
 
-    return renpy.display.core.scene_lists().change_zorder(layer, tag, zorder)
+    return scene_lists().change_zorder(layer, tag, zorder)
 
 
 sdl_dll = False

@@ -101,6 +101,9 @@ preferences = None # type: Any
 # Current id of the AST node in script initcode
 initcode_ast_id = 0
 
+# The build_info.
+build_info = { "info" : { } }
+
 
 class ExceptionInfo(object):
     """

@@ -1172,7 +1172,7 @@ class Button(renpy.display.layout.Window):
     def _tts_all(self):
         rv = self._tts_common(alt(self.action))
 
-        if self.is_selected():
+        if self.is_selected() and (self.style.alt == self.style._hovered_alt()):
             rv += " " + renpy.minstore.__("selected")
 
         return rv
@@ -2719,6 +2719,7 @@ class OnEvent(renpy.display.displayable.Displayable):
             return False
 
     def set_transform_event(self, event):
+
         if self.is_event(event):
             rv = run(self.action)
 

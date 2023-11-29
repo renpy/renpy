@@ -298,6 +298,7 @@ init -1100 python:
         if _compat_versions(version, (7, 6, 99), (8, 1, 99)):
             config.simple_box_reverse = True
             build.itch_channels = list(build.itch_channels.items())
+            config.atl_pos_only = True
             style.default.shaper = "freetype"
             config.mixed_position = False
 

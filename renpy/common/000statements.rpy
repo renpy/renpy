@@ -694,7 +694,7 @@ python early hide:
         layer = p.get("layer", None)
         if (
             layer is not None
-            and layer not in renpy.display.core.layers
+            and layer not in renpy.display.scenelists.layers
         ):
             renpy.error("Screen is being shown on unknown layer %s." % layer)
 
@@ -702,7 +702,7 @@ python early hide:
         layer = p.get("layer", None)
         if (
             layer is not None
-            and layer not in renpy.display.core.layers
+            and layer not in renpy.display.scenelists.layers
         ):
             renpy.error("Screen is being hidden on unknown layer %s." % layer)
 

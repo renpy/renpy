@@ -184,9 +184,45 @@ function. While the Requests library still remains supported on Desktop and Mobi
 * Can take data as either bytes or objects that be encoded to JSON.
 * Can return data as bytes, as string, or objects decoded from JSON.
 
+Accessibility
+-------------
+
+The new :scpref:`group_alt` property available on screen language
+displayables allows the creator to specify text that is spoken the first
+time one of a group of related displayables is spoken.
+
+The new :scpref:`extra_alt` property available on screen language
+displayables allows the creator to specify text that is spoken when the
+'?' key is pressed, to provide additional information about the displayable.
+
+Both of these properties are inherited by the children of the displayable,
+unless they are overridden by a more specific value in the child.
+
+The new :func:`renpy.alt` function can be used to speak text using
+the self-voicing system.
+
+\_\_future\_\_ in python
+------------------------
+
+Ren'Py now allows creators to pass
+`\_\_future\_\_ compiler directives <https://docs.python.org/reference/simple_stmts.html#future>`__
+for Python code run in Ren'Py. This is done using the ``rpy python xxx``
+statement at the top of the .rpy file(s) on which you want them to apply,
+where ``xxx`` is the name of the future feature. For example::
+
+    rpy python annotations
 
 Features
 --------
+
+The new :var:`renpy.get_screen_variable` and :var:`renpy.get_screen_variable`
+make it possible to access screen variables, especially in :class:`Action`
+subclasses.
+
+The new :var:`build.time` variable is set to the time the game was built.
+
+The new :var:`build.info` variable lets you store information at
+build time, and read it back in the distributed game.
 
 When the top left pixels of :ref:`presplash <presplash>` image is
 transparent, the presplash will be displayed in a window that uses
@@ -239,6 +275,15 @@ can only be called from the main thread.)
 
 Other Changes
 -------------
+
+On PC platforms (Windows, Mac, and Linux), when the game window moves,
+its position is stored. The window's position will be restored when the
+game is run again, if:
+
+* The layout of the player's monitors hasn't changed.
+* The window is fully contained on the player's monitors.
+
+Otherwise, the window will be centered on the primary monitor.
 
 On controllers (including the Steam Deck), the function of the B button
 has changed to show and hide the game menu. The previous behavior of the

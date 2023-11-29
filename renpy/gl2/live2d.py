@@ -482,7 +482,7 @@ def update_states():
 
         state.cycle_new = True
 
-    sls = renpy.display.core.scene_lists()
+    sls = renpy.display.scenelists.scene_lists()
 
     for d in sls.get_all_displayables(current=True):
         if d is not None:
