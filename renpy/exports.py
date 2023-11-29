@@ -28,6 +28,11 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import gc
 import io
 import re
+import time
+import sys
+import threading
+import fnmatch
+import os
 
 import renpy
 
@@ -77,6 +82,8 @@ from renpy.display.image import get_available_image_tags, get_available_image_at
 from renpy.display.image import get_registered_image
 
 from renpy.display.im import load_surface, load_image, load_rgba
+
+from renpy.display.tts import speak as alt, speak_extra_alt
 
 from renpy.curry import curry, partial
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
@@ -137,11 +144,6 @@ renpy_pure("known_languages")
 renpy_pure("check_text_tags")
 renpy_pure("filter_text_tags")
 renpy_pure("split_properties")
-
-import time
-import sys
-import threading
-import fnmatch
 
 
 # The number of bits in the architecture.
@@ -297,7 +299,7 @@ def retain_after_load():
     renpy.game.log.retain_after_load()
 
 
-scene_lists = renpy.display.core.scene_lists
+scene_lists = renpy.display.scenelists.scene_lists
 
 
 def count_displayables_in_layer(layer):
@@ -2355,7 +2357,6 @@ def log(msg):
     try:
 
         if not logfile:
-            import os
             logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), "a")
 
             if not logfile.tell():
@@ -3980,16 +3981,16 @@ def invoke_in_main_thread(fn, *args, **kwargs):
     event handler. This is meant to be called from a separate thread,
     whose creation is handled by :func:`renpy.invoke_in_thread`.
 
-    If several functions are scheduled to be invoked, it is guaranteed
+    If a single thread schedules multiple functions to be invoked, it is guaranteed
     that they will be run in the order in which they have been scheduled::
 
         def ran_in_a_thread():
             renpy.invoke_in_main_thread(a)
             renpy.invoke_in_main_thread(b)
 
-    In this example, it is guaranteed that ``b`` will not be called
-    before the call to ``a`` returns. This is (by definition) not
-    guaranteed at all in the case of :func:`renpy.invoke_in_thread`.
+    In this example, it is guaranteed that ``a`` will return before
+    ``b`` is called. The order of calls made from different threads is not
+    guaranteed.
 
     This may not be called during the init phase.
     """
@@ -4428,7 +4429,7 @@ def get_zorder_list(layer):
     Returns a list of (tag, zorder) pairs for `layer`.
     """
 
-    return renpy.display.core.scene_lists().get_zorder_list(layer)
+    return scene_lists().get_zorder_list(layer)
 
 
 def change_zorder(layer, tag, zorder):
@@ -4438,7 +4439,7 @@ def change_zorder(layer, tag, zorder):
     Changes the zorder of `tag` on `layer` to `zorder`.
     """
 
-    return renpy.display.core.scene_lists().change_zorder(layer, tag, zorder)
+    return scene_lists().change_zorder(layer, tag, zorder)
 
 
 sdl_dll = False
@@ -4454,6 +4455,8 @@ def get_sdl_dll():
     If this can not be done, None is returned.
     """
 
+
+
     global sdl_dll
 
     if sdl_dll is not False:
@@ -4461,7 +4464,9 @@ def get_sdl_dll():
 
     try:
 
-        DLLS = [ None, "librenpython.dll", "librenpython.dylib", "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
+        lib = os.path.dirname(sys.executable) + "/"
+
+        DLLS = [ None, lib + "librenpython.dll", lib + "librenpython.dylib", lib + "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
 
         import ctypes
 
@@ -4471,7 +4476,7 @@ def get_sdl_dll():
                 dll = ctypes.cdll[i]
                 # See if it has SDL_GetError..
                 dll.SDL_GetError
-            except Exception:
+            except Exception as e:
                 continue
 
             sdl_dll = dll
@@ -4686,8 +4691,6 @@ def fetch_emscripten(url, method, data, content_type, timeout):
     """
 
     import emscripten
-    import time
-    import os
 
     fn = "/req-" + str(time.time()) + ".data"
 

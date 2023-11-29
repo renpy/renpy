@@ -145,7 +145,7 @@ cdef class GL2Draw:
 
         limit_physical_size = True
 
-        if physical_size and renpy.game.preferences.window_position_screen_size == renpy.game.interface.get_total_display_size():
+        if physical_size and renpy.game.preferences.window_position_layout == renpy.game.interface.get_display_layout():
             limit_physical_size = False
 
         # Are we maximized?
@@ -307,21 +307,29 @@ cdef class GL2Draw:
         if not (renpy.linux or renpy.windows or renpy.macintosh):
             return default
 
-        if renpy.game.preferences.window_position_screen_size != renpy.game.interface.get_total_display_size():
+        if not renpy.game.preferences.restore_window_position:
+            return default
+
+        layout = renpy.game.interface.get_display_layout()
+
+        if renpy.game.preferences.window_position_layout != layout:
             return default
 
         pos = renpy.game.preferences.window_position
-        rect = renpy.game.interface.get_total_display_size()
 
-        if pos[0] < rect[0] or pos[1] < rect[1]:
-            return default
+        for rect in layout:        
 
-        if physical_size is not None:
-            pwidth, pheight = physical_size
-            if pos[0] + pwidth > rect[2] and pos[1] + pheight > rect[3]:
-                return default
+            if pos[0] < rect[0] or pos[1] < rect[1]:
+                continue
 
-        return pos
+            if physical_size is not None:
+                pwidth, pheight = physical_size
+                if pos[0] + pwidth > rect[2] and pos[1] + pheight > rect[3]:
+                    continue
+
+            return pos
+
+        return default
 
     def init(self, virtual_size):
         """

@@ -31,7 +31,21 @@ report any issues. When reporting issues, please determine the hardware
 .. _incompatible-7.7.0:
 
 8.2.0 / 7.7.0
---------------
+-------------
+
+**Stringified annotations and the aborted future of PEP 563** Since Ren'Py
+version 8.0.2, Python code in Ren'Py 8 was always compiled using the
+``from __future__ import annotations`` directive, with no possible opt-out
+for creators.
+
+Given that this change will most likely not be implemented by default in future
+versions of Python, we rolled that change back.
+
+In order to keep using the ``annotations`` future for stringified annotations,
+you can add the following line at the top of your files::
+
+    rpy python annotations
+
 
 **Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
 different glyphs than would have been produced differently, and may change
@@ -109,13 +123,22 @@ were using list operations on it, you'll need to change your code::
     define build.itch_channels["pattern"] = "channel"
     define build.itch_channels |= {"pattern": "channel"}
 
+**New position type** The new :func:`position` type has been added to the list
+of :term:`position` types. As a result, it can be returned by the
+:func:`renpy.get_placement` function at any time, even in cases when it
+previously returned another type or if you don't use the new type anywhere in
+your game.
+
+To prevent this, add to your game::
+
+    define config.mixed_position = False
+
 
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
 
 8.1.1 / 7.6.1
 -------------
-
 
 .. _android-key-migration:
 

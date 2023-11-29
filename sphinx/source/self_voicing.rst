@@ -105,6 +105,15 @@ Alternative text
 
         define thought = Character(None, what_italic=True, what_alt="I think, [text]")
 
+    In screens, displayables may be given the :scpref:`group_alt` property,
+    which is used to give a group prefix that is spoken the first time a displayable
+    with the same group prefix is focused, but will not be spoken again until a
+    displayable with a different group prefix is focused.
+
+    Displayables may also be given the :scpref:`extra_alt` property, which is spoken
+    when the '?' key is pressed while the displayable is focused. This is intended
+    for more detail information about how a group of controls works.
+
 Descriptive Text
     Descriptive text is text that is displayed (and spoken) by the narrator if
     self-voicing is enabled. The text is not displayed if self-voicing is
@@ -141,3 +150,11 @@ to speak text from the voices on a platform.
 A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
 display the text that would be voiced on the screen for development
 purposes.
+
+
+Python
+------
+
+The following functions are provided by the self-voicing system:
+
+.. include:: inc/self_voicing

@@ -123,10 +123,12 @@ init python:
         return os.path.join(persistent.xcode_projects_directory, xcode_name(p.name))
 
     def ios_create(p=None, gui=True, target=None):
-        project.current.update_dump(force=True, gui=gui)
+        if p is None:
+            p = project.current
+        p.update_dump(force=True, gui=gui)
 
-        name = project.current.dump.get("name", None)
-        version = project.current.dump.get("version", None)
+        name = p.dump.get("name", None)
+        version = p.dump.get("version", None)
 
         dest = xcode_project(p, target)
 

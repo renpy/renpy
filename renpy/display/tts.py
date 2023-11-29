@@ -96,6 +96,9 @@ def default_tts_function(s):
     if not s:
         return
 
+    if not renpy.game.preferences.self_voicing:
+        return
+
     if renpy.game.preferences.self_voicing == "clipboard":
         try:
             pygame.scrap.put(pygame.scrap.SCRAP_TEXT, s.encode("utf-8"))
@@ -112,7 +115,6 @@ def default_tts_function(s):
 
     amplitude = renpy.game.preferences.get_mixer("voice")
     amplitude_100 = int(amplitude * 100)
-
 
     if "RENPY_TTS_COMMAND" in os.environ:
 
@@ -212,7 +214,14 @@ def tts(s):
 
 def speak(s, translate=True, force=False):
     """
-    This is called by the system to queue the speaking of message `s`.
+    :doc: self_voicing
+
+    This queues `s` to be spoken. If `translate` is true, then the string
+    will be translated before it is spoken. If `force` is true, then the
+    string will be spoken even if self-voicing is disabled.
+
+    This is intended for accsesibility purposes, and should not be used
+    for gameplay purposes.
     """
 
     if not force and not renpy.game.preferences.self_voicing:
@@ -221,7 +230,28 @@ def speak(s, translate=True, force=False):
     if translate:
         s = renpy.translation.translate_string(s)
 
+    s = apply_substitutions(s)
     tts(s)
+
+
+def speak_extra_alt():
+    """
+    :undocumented:
+
+    If the current displayable has the extra_alt property, and self-voicing
+    is enabled, then this will speak the extra_alt property.
+    """
+
+    d = renpy.display.focus.get_focused()
+
+    if d is None:
+        return
+
+    s = d.style.extra_alt
+    if s is None:
+        return
+
+    speak(s)
 
 
 def set_root(d):
@@ -232,9 +262,12 @@ def set_root(d):
 # The old value of the self_voicing preference.
 old_self_voicing = False
 
-
 # The text used to show a notification.
 notify_text = None
+
+# The last group_alt value used.
+last_group_alt = None
+
 
 def displayable(d):
     """
@@ -245,6 +278,7 @@ def displayable(d):
     global last
     global last_raw
     global notify_text
+    global last_group_alt
 
     self_voicing = renpy.game.preferences.self_voicing
 
@@ -286,11 +320,16 @@ def displayable(d):
             else:
                 d = root
 
+    group_alt = d.style.group_alt
+    if group_alt and group_alt != last_group_alt:
+        group = renpy.translation.translate_string(group_alt)
+        s = group + ": " + s
+
+    last_group_alt = group_alt
+
     if notify_text and not s.startswith(notify_text):
         s = notify_text + ": " + s
         notify_text = None
-
-
 
     if s != last_raw:
         last_raw = s

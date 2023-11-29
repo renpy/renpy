@@ -1398,8 +1398,15 @@ ex_rollback_classes = [ ]
 # Should we revert to the old behavior of box_reverse?
 simple_box_reverse = False
 
+# If True, positional-only parameters are allowed in ATL transform signatures.
+atl_pos_only = False
+
 # A map from font name to the hinting for the font.
 font_hinting = { None : "auto" }
+
+# Should ATL interpolation handle mixed position types,
+# at the cost of returning instances of the position type ?
+mixed_position = True
 
 # Should we execute costly tasks which are
 # avoidable when not generating the documentation ?

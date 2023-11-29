@@ -32,7 +32,7 @@ import types # @UnresolvedImport
 import renpy
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
-from renpy.atl import position, any_object, bool_or_none, float_or_none, matrix, mesh
+from renpy.atl import position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
 from renpy.display.core import absolute
 
 class Camera(renpy.object.Object):
@@ -1181,15 +1181,15 @@ add_property("additive", float, 0.0)
 add_property("alpha", float, 1.0)
 add_property("blend", any_object, None)
 add_property("blur", float_or_none, None)
-add_property("corner1", (position, position), None)
-add_property("corner2", (position, position), None)
-add_property("crop", (position, position, position, position), None)
+add_property("corner1", (position_or_none, position_or_none), None)
+add_property("corner2", (position_or_none, position_or_none), None)
+add_property("crop", (position_or_none, position_or_none, position_or_none, position_or_none), None)
 add_property("crop_relative", bool_or_none, None)
 add_property("debug", any_object, None)
 add_property("delay", float, 0)
 add_property("events", bool, True)
 add_property("fit", str, None)
-add_property("matrixanchor", (position, position), None)
+add_property("matrixanchor", (position_or_none, position_or_none), None)
 add_property("matrixcolor", matrix, None)
 add_property("matrixtransform", matrix, None)
 add_property("maxsize", (int, int), None)
@@ -1211,22 +1211,22 @@ add_property("transform_anchor", bool, False)
 add_property("zoom", float, 1.0)
 
 add_property("xanchoraround", float, 0.5)
-add_property("xanchor", position, None, diff=4)
-add_property("xaround", position, 0.0)
+add_property("xanchor", position_or_none, None, diff=4)
+add_property("xaround", position_or_none, 0.0)
 add_property("xoffset", float, 0.0)
 add_property("xpan", float_or_none, None)
-add_property("xpos", position, None, diff=4)
-add_property("xsize", position, None)
+add_property("xpos", position_or_none, None, diff=4)
+add_property("xsize", position_or_none, None)
 add_property("xtile", int, 1)
 add_property("xzoom", float, 1.0)
 
 add_property("yanchoraround", float, 0.5)
-add_property("yanchor", position, None, diff=4)
-add_property("yaround", position, 0.0)
+add_property("yanchor", position_or_none, None, diff=4)
+add_property("yaround", position_or_none, 0.0)
 add_property("yoffset", float, 0.0)
 add_property("ypan", float_or_none, None)
-add_property("ypos", position, None, diff=4)
-add_property("ysize", position, None)
+add_property("ypos", position_or_none, None, diff=4)
+add_property("ysize", position_or_none, None)
 add_property("ytile", int, 1)
 add_property("yzoom", float, 1.0)
 
@@ -1246,21 +1246,21 @@ add_gl_property("gl_texture_wrap")
 ALIASES = {
     "alignaround" : (float, float),
     "align" : (float, float),
-    "anchor" : (position, position),
+    "anchor" : (position_or_none, position_or_none),
     "anchorangle" : float,
-    "anchorradius" : position,
+    "anchorradius" : position_or_none,
     "angle" : float,
-    "around" : (position, position),
+    "around" : (position_or_none, position_or_none),
     "offset" : (int, int),
-    "pos" : (position, position),
-    "radius" : position,
+    "pos" : (position_or_none, position_or_none),
+    "radius" : position_or_none,
     "size" : (int, int),
     "xalign" : float,
-    "xcenter" : position,
-    "xycenter" : (position, position),
-    "xysize" : (position, position),
+    "xcenter" : position_or_none,
+    "xycenter" : (position_or_none, position_or_none),
+    "xysize" : (position_or_none, position_or_none),
     "yalign" : float,
-    "ycenter" : position,
+    "ycenter" : position_or_none,
     }
 
 renpy.atl.PROPERTIES.update(ALIASES)
