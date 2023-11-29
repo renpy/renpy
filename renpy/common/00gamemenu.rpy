@@ -107,7 +107,7 @@ init -1700 python:
         store._history = False
         store._menu = True
         store._side_image_attributes = None
-        store._side_image_attributes_reset = False
+        store._side_image_attribute_reset = False
 
         store.mouse_visible = True
         store.suppress_overlay = True
