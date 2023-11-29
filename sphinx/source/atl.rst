@@ -304,17 +304,17 @@ There are three things the first simple expression may evaluate to:
         linear 1.0 xalign 1.0
 
     image atl example:
-         # Display logo_base.png
-         "logo_base.png"
+        # Display logo_base.png
+        "logo_base.png"
 
-         # Pause for 1.0 seconds.
-         1.0
+        # Pause for 1.0 seconds.
+        1.0
 
-         # Show logo_bw.png, with a dissolve.
-         "logo_bw.png" with Dissolve(0.5, alpha=True)
+        # Show logo_bw.png, with a dissolve.
+        "logo_bw.png" with Dissolve(0.5, alpha=True)
 
-         # Run the move_right transform.
-         move_right
+        # Run the move_right transform.
+        move_right
 
 Pass Statement
 --------------
@@ -685,7 +685,7 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, an :term:`absolute <position>`, or a
+When the type is given as position, it may be an int, an :func:`absolute`, or a
 float. If it's a float, it's interpreted as a fraction of the size of the
 containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
 
@@ -1225,10 +1225,10 @@ Deprecated Transform Properties
     number of pixels, instead of a fraction of the width and height of
     the source image.
 
-    If an absolute number of pixel is to be expressed, :term:`absolute <position>`
+    If an absolute number of pixel is to be expressed, :func:`absolute`
     instances should be provided to the :tpref:`crop` property instead of using the
     crop_relative property. If necessary, values of dubious type can be wrapped
-    in the :term:`absolute <position>` callable.
+    in the :func:`absolute` callable.
 
 .. transform-property:: size
 

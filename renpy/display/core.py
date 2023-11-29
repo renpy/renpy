@@ -36,7 +36,8 @@ import atexit
 import pygame_sdl2 as pygame
 import renpy
 
-from renpy.display.displayable import Displayable, DisplayableArguments
+from renpy.atl import position
+from renpy.display.displayable import Displayable, DisplayableArguments, place
 from renpy.display.scenelists import SceneListEntry, SceneLists
 
 import_time = time.time()
@@ -135,7 +136,7 @@ def get_time():
 
 def get_size():
     """
-    Returns the screen size. Always returns at least 256, 256, to make sure
+    Returns the screen size. Always returns at least (256, 256), to make sure
     that we don't divide by zero.
     """
 
@@ -177,7 +178,7 @@ class EndInteraction(Exception):
 
 def absolute_wrap(func):
     """
-    Wraps func_name into a method of absolute. The wrapped method
+    Wraps func into a method of absolute. The wrapped method
     converts a float result back to absolute.
     """
 
@@ -213,7 +214,9 @@ class absolute(float):
         Converts a position from one of the many supported position types
         into an absolute number of pixels, without regard for the return type.
         """
-        if isinstance(value, (absolute, int)):
+        if isinstance(value, position):
+            return value.relative * room + value.absolute
+        elif isinstance(value, (absolute, int)):
             return value
         elif isinstance(value, float):
             return value * room

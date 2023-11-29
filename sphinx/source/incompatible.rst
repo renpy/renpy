@@ -123,6 +123,16 @@ were using list operations on it, you'll need to change your code::
     define build.itch_channels["pattern"] = "channel"
     define build.itch_channels |= {"pattern": "channel"}
 
+**New position type** The new :func:`position` type has been added to the list
+of :term:`position` types. As a result, it can be returned by the
+:func:`renpy.get_placement` function at any time, even in cases when it
+previously returned another type or if you don't use the new type anywhere in
+your game.
+
+To prevent this, add to your game::
+
+    define config.mixed_position = False
+
 
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
