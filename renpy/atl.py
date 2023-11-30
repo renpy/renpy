@@ -67,7 +67,7 @@ def instant(t):
 
 
 
-class position:
+class position(object):
     """
     A combination of relative and absolute coordinates.
     """
