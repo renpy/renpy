@@ -4,7 +4,7 @@
 Android
 =======
 
-Ren'Py support devices running the Android operating system, such as
+Ren'Py supports devices running the Android operating system, such as
 smartphones and tablets. While these devices do not support 100% of
 Ren'Py's functionality, with minimal modification visual novels can be
 packaged and ported to these devices.
@@ -252,7 +252,7 @@ Play Bundle
     only be room for one in each of the four pack files.
 
 Universal APK
-    Universal APK release are suitable for direct installation onto
+    Universal APK releases are suitable for direct installation onto
     Android devices, either through Ren'Py, ADB, non-Play app stores,
     or sideloading through the web.
 
@@ -330,7 +330,7 @@ android-downloading.jpg
 Pyjnius
 =======
 
-When running on Android, a version of the `Pyjnius <https://pyjnius.readthedocs.io/en/stable/>`__
+When running on Android, a version of the `Pyjnius <https://pyjnius.readthedocs.io/en/latest/>`__
 library is available. This allows advanced creators to call into the Android
 libraries.
 
