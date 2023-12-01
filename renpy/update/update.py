@@ -111,9 +111,11 @@ class Update(object):
         self.old_files = [ i for j in self.oldlists for i in j.files ]
         self.block_files = [ i for j in self.newlists for i in j.blocks ]
 
-        # The total number of bytes that will be used on disk when the downloads
-        # are complete.
-        self.disk_total = 0
+        # The total number of bytes that will be used on disk before and after
+        # the update.
+
+        self.old_disk_total = 0
+        self.new_disk_total = 0
 
         # The total number of bytes to download, and the number of bytes downloaded.
         self.download_total = 0
@@ -144,11 +146,16 @@ class Update(object):
         self.blockdir = os.path.join(self.updatedir, "block")
         self.deleteddir = os.path.join(self.updatedir, "deleted")
 
+        self.logfile = logfile
+
+    def init(self):
+        """
+        Called to initialize the update.
+        """
+
         os.makedirs(self.updatedir, exist_ok=True)
         os.makedirs(self.blockdir, exist_ok=True)
         os.makedirs(self.deleteddir, exist_ok=True)
-
-        self.logfile = logfile
 
         print("-" * 80, file=self.logfile)
         print("Starting update at %s." % time.ctime(), file=self.logfile)
@@ -318,18 +325,21 @@ class Update(object):
 
             self.progress(PREPARING, done / total)
 
+        self.old_disk_total = done
+
+
     def prepare_new_files(self):
         """
         Prepares the new files.
         """
 
-        self.disk_total = 0
+        self.new_disk_total = 0
 
         for i in self.new_files:
             i.add_data_filename(self.targetdir)
 
             for s in i.segments:
-                self.disk_total += s.size
+                self.new_disk_total += s.size
 
     def remove_identical_files(self):
         """

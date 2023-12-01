@@ -1707,7 +1707,7 @@ translate ukrainian strings:
 
     # game/updater.rpy:135
     old "%B %d, %Y"
-    new "%B %d, %Y"
+    new "%d %B, %Y"
 
     # game/updater.rpy:157
     old "An error has occured:"

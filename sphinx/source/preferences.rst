@@ -181,6 +181,12 @@ can then change it again.)
     voice will be stopped when the game menu is shown. The equivalent of the
     "voice after menu" preference.
 
+.. var:: preferences.restore_window_position = True
+
+    If True, Ren'Py will attempt to restore the window position when the game
+    is restarted. If False, Ren'Py will not attempt to restore the window
+    position. The equivalent of the "restore window position" preference.
+
 Mixer Functions
 ---------------
 

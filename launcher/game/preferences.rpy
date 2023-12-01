@@ -21,9 +21,7 @@
 
 default persistent.show_edit_funcs = True
 default persistent.windows_console = False
-default persistent.lint_options = { # the ones which should be enabled by default
-    "--orphan-tl",
-}
+default persistent.lint_options = set()
 default persistent.use_web_doc = False
 
 init python:
@@ -56,6 +54,25 @@ init python:
             renpy.session["launcher_start_label"] = "preferences"
             renpy.utter_restart()
 
+    class EnsureProjectsTxt(Action):
+        """
+        Ensures the projects.txt file exists before it's opened.
+        """
+
+        def __call__(self):
+            fn = os.path.join(project.manager.projects_directory, "projects.txt")
+
+            if os.path.exists(fn):
+                return
+
+            with open(fn, "w") as f:
+                f.write("""\
+# This file can be used to add projects not in the projects directory
+# by listing the full path to each project, one per line.
+
+""")
+
+
 default persistent.legacy = False
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
@@ -68,6 +85,9 @@ default persistent.last_update_check = datetime.date.today()
 # Should we try to skip the splashscreen?
 default persistent.skip_splashscreen = False
 
+# Should we prefer rpu updates?
+default persistent.prefer_rpu = True
+
 init python:
     if not persistent.daily_update_check_once:
         persistent.daily_update_check_once = True
@@ -75,14 +95,14 @@ init python:
 
 
 default preference_tab = "general"
-define preference_tabs = {
-    "general" : _("General"),
-    "options" : _("Options"),
-    "theme" : _("Theme"),
-    "install" : _("Install Libraries"),
-    "actions" : _("Actions"),
-    "lint" : _("Lint Options"),
-    }
+define preference_tabs = (
+    ("general", _("General")),
+    ("options", _("Options")),
+    ("theme", _("Theme")),
+    ("install", _("Install Libraries")),
+    ("actions", _("Actions")),
+    ("lint", _("Lint")),
+)
 
 screen preferences():
 
@@ -114,7 +134,7 @@ screen preferences():
 
                     add HALF_SPACER
 
-                    for i, l in preference_tabs.items():
+                    for i, l in preference_tabs:
                         textbutton l action SetVariable("preference_tab", i) style "l_list"
 
                 if preference_tab == "general":
@@ -163,10 +183,7 @@ screen preferences():
                             add HALF_SPACER
 
                             frame style "l_indent":
-                                if persistent.editor:
-                                    textbutton persistent.editor action Jump("editor_preference") alt _("Text editor: [text]")
-                                else:
-                                    textbutton _("Not Set") action Jump("editor_preference") alt _("Text editor: [text]")
+                                textbutton (persistent.editor or _("Not Set")) action Jump("editor_preference") alt _("Text editor: [text]")
 
                         add SPACER
 
@@ -245,8 +262,11 @@ screen preferences():
 
                             textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
+                            textbutton _("Restore window position") style "l_checkbox" action Preference("restore window position", "toggle")
+
                             if ability.can_update:
                                 textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
+                                textbutton _("Prefer RPU updates") style "l_checkbox" action ToggleField(persistent, "prefer_rpu")
 
                 elif preference_tab == "theme":
 
@@ -318,6 +338,12 @@ screen preferences():
                             add HALF_SPACER
 
                             textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
+                            textbutton _("Open projects.txt"):
+                                style "l_nonbox"
+                                action [
+                                    EnsureProjectsTxt(),
+                                    editor.EditAbsolute(os.path.join(project.manager.projects_directory, "projects.txt"))
+                                ]
                             textbutton _("Reset window size") style "l_nonbox" action Preference("display", 1.0)
                             textbutton _("Clean temporary files") style "l_nonbox" action Jump("clean_tmp")
 
@@ -340,19 +366,18 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            textbutton _("Orphan translations"):
+                            textbutton _("Check for orphan/obsolete translations"):
                                 style "l_checkbox"
-                                action ToggleSetMembership(persistent.lint_options, "--orphan-tl")
-                            textbutton _("Parameters overriding builtin names"):
+                                action InvertSelected(ToggleSetMembership(persistent.lint_options, "--no-orphan-tl"))
+                            textbutton _("Check parameters shadowing reserved names"):
                                 style "l_checkbox"
-                                action ToggleSetMembership(persistent.lint_options, "--builtins-parameters")
-                            textbutton _("Word count and character count for speaking characters"):
+                                action ToggleSetMembership(persistent.lint_options, "--reserved-parameters")
+                            textbutton _("Print word and character counts for speaking characters"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--words-char-count")
-
-                            add SPACER
-
-                            textbutton _("Check Script (Lint)") action Jump("lint")
+                            textbutton _("Unclosed text tags"):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--check-unclosed-tags")
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"

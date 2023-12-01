@@ -362,6 +362,8 @@ init python in distribute:
 
     class RPUPackage(object):
 
+        generator = None
+
         def __init__(self, directory, variant):
             import renpy.update.common
 
@@ -381,7 +383,30 @@ init python in distribute:
         def close(self, progress=None):
             import renpy.update.generate
 
-            renpy.update.generate.BlockGenerator(self.variant, self.file_list, self.directory, progress)
+            if RPUPackage.generator is None:
+                RPUPackage.generator = renpy.update.generate.BlockGenerator(self.directory)
+
+            RPUPackage.generator.generate(self.variant, self.file_list, progress)
+
+        @staticmethod
+        def reset():
+            RPUPackage.generator = None
+
+
+    class NullPackage(object):
+        """
+        A package format that doesn't create an output file,
+        only updates.
+        """
+
+        def add_file(self, name, path, xbit):
+            return
+
+        def add_directory(self, name, _path):
+            return
+
+        def close(self, progress=None):
+            return
 
 
     parallel_threads = [ ]

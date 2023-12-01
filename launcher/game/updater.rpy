@@ -55,7 +55,7 @@ init python:
             if "+nightly" in base_name:
                 dlc_url = "http://nightly.renpy.org/{}/updates.json".format(base_name[6:])
 
-        return renpy.invoke_in_new_context(updater.update, dlc_url, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart)
+        return renpy.invoke_in_new_context(updater.update, dlc_url, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart, confirm=False)
 
     # Strings so they can be translated.
 
@@ -115,7 +115,7 @@ screen update_channel(channels):
                     for c in channels:
 
                         if c["split_version"] != list(renpy.version_tuple) or allow_repair_update:
-                            $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False, force=allow_repair_update, prefer_rpu=c.get("prefer_rpu", False))]
+                            $ action = [ SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False, force=allow_repair_update, prefer_rpu=persistent.prefer_rpu) ]
 
                             if c["channel"].startswith("Release"):
                                 $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")

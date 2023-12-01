@@ -206,10 +206,26 @@ def compile_event(key, keydown):
 event_cache = { }
 keyup_cache = { }
 
+def init_keymap():
+    """
+    Initializes the keymap cache. This is called by the display module.
+    """
+
+    for binding_list in renpy.config.pad_bindings.values():
+        for binding in binding_list:
+            renpy.config.keymap.setdefault(binding, [ ])
+
+    for keysym in renpy.config.keymap:
+        check_code = eval("lambda ev : " + compile_event(keysym, True), globals())
+        event_cache[keysym] = check_code
+
+        check_code = eval("lambda ev : " + compile_event(keysym, False), globals())
+        keyup_cache[keysym] = check_code
+
 
 def clear_keymap_cache():
     """
-    :doc: keymap
+    :undocumented:
 
     Clears the keymap cache. This allows changes to :var:`config.keymap` to
     take effect without restarting Ren'Py.
@@ -1156,7 +1172,7 @@ class Button(renpy.display.layout.Window):
     def _tts_all(self):
         rv = self._tts_common(alt(self.action))
 
-        if self.is_selected():
+        if self.is_selected() and (self.style.alt == self.style._hovered_alt()):
             rv += " " + renpy.minstore.__("selected")
 
         return rv
@@ -1403,6 +1419,12 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             self.value = value
             changed = value.set_text
             default = value.get_text()
+
+        if default is None:
+            if value is not None:
+                raise Exception("The data accessed by an InputValue must not be None.")
+            else:
+                raise Exception("The default value of an input must not be None.")
 
         self.default = str(default)
         self.content = self.default
@@ -2015,6 +2037,11 @@ class Adjustment(renpy.object.Object):
             renpy.display.render.invalidate(d)
 
     def inertia_warper(self, done):
+        if done < 0.0:
+            done = 0.0
+        elif done > 1.0:
+            done = 1.0
+
         return 1.0 - math.exp(-done * 6)
 
     def animate(self, amplitude, delay, warper):
@@ -2692,6 +2719,7 @@ class OnEvent(renpy.display.displayable.Displayable):
             return False
 
     def set_transform_event(self, event):
+
         if self.is_event(event):
             rv = run(self.action)
 

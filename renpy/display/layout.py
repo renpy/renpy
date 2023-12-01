@@ -2287,12 +2287,24 @@ class NearRect(Container):
     `rect`
         The rectangle to place the child near.
 
-    `prefer_top`
-        If true, the child is placed above the rectangle, if there is
-        room.
+    `preferred_side`
+        One of "left", "top", "right", "bottom" to prefer that position for
+        the nearrect. If there is not room on one side, the opposite side is
+        used. By default, the preferred side is "bottom".
+
+    `invert_offsets`
+        If True and there isn't enough space on the preferred side, multiply the
+        offsets by -1 since the child will be on the opposite side of the
+        rectangle. False by default.
     """
 
-    def __init__(self, child=None, rect=None, focus=None, prefer_top=False, replaces=None, **properties):
+    preferred_side = "bottom"
+    invert_offsets = False
+
+    possible_positions = set(["left", "top", "right", "bottom"])
+
+    def __init__(self, child=None, rect=None, focus=None, preferred_side=False,
+                invert_offsets=False, replaces=None, **properties):
 
         super(NearRect, self).__init__(**properties)
 
@@ -2304,7 +2316,13 @@ class NearRect(Container):
 
         self.parent_rect = rect
         self.focus_rect = focus
-        self.prefer_top = prefer_top
+        self.preferred_side = preferred_side or "bottom"
+        if properties.pop('prefer_top', False):
+            self.preferred_side = "top"
+        self.invert_offsets = invert_offsets
+
+        if not self.preferred_side in NearRect.possible_positions:
+            raise Exception("preferred_side used with impossible position '%s'." % (self.preferred_side,))
 
         if replaces is not None:
             self.hide_parent_rect = replaces.hide_parent_rect
@@ -2331,7 +2349,6 @@ class NearRect(Container):
             self.parent_rect = rect
             renpy.display.render.redraw(self, 0)
 
-
     def render(self, width, height, st, at):
 
         rv = renpy.display.render.Render(width, height)
@@ -2345,10 +2362,14 @@ class NearRect(Container):
         px, py, pw, ph = rect
 
         # Determine the available area.
-        avail_w = width
-        avail_h = max(py, height - py - ph)
+        if self.preferred_side in ("top", "bottom"):
+            avail_w = width
+            avail_h = max(py, height - py - ph)
+        else:
+            avail_w = max(px, width - px - pw)
+            avail_h = height
 
-        # Render thje child, and get its size.
+        # Render the child, and get its size.
         cr = renpy.display.render.render(self.child, avail_w, avail_h, st, at)
         cw, ch = cr.get_size()
 
@@ -2367,7 +2388,7 @@ class NearRect(Container):
             return rv
 
         # Work out the placement.
-        xpos, _ypos, xanchor, _yanchor, xoffset, yoffset, _subpixel = self.child.get_placement()
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset, _subpixel = self.child.get_placement()
 
         if xpos is None:
             xpos = 0
@@ -2377,29 +2398,60 @@ class NearRect(Container):
             xoffset = 0
         if yoffset is None:
             yoffset = 0
+        if ypos is None:
+            ypos = 0
+        if yanchor is None:
+            yanchor = 0
 
-        # Y positioning.
-        if self.prefer_top and (ch < py):
+        ## Determine position
+        on_preferred_side = True
+        if self.preferred_side == "top" and (ch < py):
             layout_y = py - ch
-        elif ch <= (height - py - ph):
+        elif self.preferred_side == "left" and (cw < px):
+            layout_x = px - cw
+        elif self.preferred_side in ("top", "bottom") and ch <= (height - py - ph):
             layout_y = py + ph
-        else:
+            on_preferred_side = self.preferred_side == "bottom"
+        elif self.preferred_side in ("left", "right") and cw <= (width - px - pw):
+            layout_x = px + pw
+            on_preferred_side = self.preferred_side == "right"
+        ## Lastly, if there's no space, just put it above/left of the rectangle
+        elif self.preferred_side in ("top", "bottom"):
             layout_y = py - ch
+            on_preferred_side = self.preferred_side == "top"
+        else:
+            layout_x = px - cw
+            on_preferred_side = self.preferred_side == "left"
 
         # Initial x positioning - using a variant of the layout algorithm.
         xpos = compute_raw(xpos, pw)
         xanchor = compute_raw(xanchor, cw)
+        ypos = compute_raw(ypos, ph)
+        yanchor = compute_raw(yanchor, ch)
 
-        layout_x = px + xpos - xanchor
+        if self.preferred_side in ("top", "bottom"):
+            layout_x = px + xpos - xanchor
 
-        # Final x positioning - make sure the child fits inside the screen.
-        if layout_x + cw > width:
-            layout_x = width - cw
+            # Final x positioning - make sure the child fits inside the screen.
+            if layout_x + cw > width:
+                layout_x = width - cw
 
-        if layout_x < 0:
-            layout_x = 0
+            if layout_x < 0:
+                layout_x = 0
+        else:
+            layout_y = py + ypos - yanchor
+
+            # Final y positioning - make sure the child fits inside the screen.
+            if layout_y + ch > height:
+                layout_y = height - ch
+
+            if layout_y < 0:
+                layout_y = 0
 
         # Apply offsets.
+        if self.invert_offsets and not on_preferred_side:
+            xoffset *= -1
+            yoffset *= -1
         layout_x += xoffset
         layout_y += yoffset
 

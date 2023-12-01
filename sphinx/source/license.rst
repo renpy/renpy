@@ -43,7 +43,7 @@ Ren'Py binaries can include source code from the following projects:
 * Freetype (Zlib License)
 * Fribidi (GNU LGPL)
 * ffmpeg (GNU LGPL) (libav in some older versions, also GNU LGPL)
-* libjpeg-turbo (GNU LGPL)
+* libjpeg-turbo (IJG License, Modified BSD License, Zlib License)
 * libpng (PNG License)
 * zlib (Zlib License)
 * bzip2 (Bzip2 License)
@@ -70,6 +70,9 @@ on is located in one of the following repositories:
 * https://github.com/renpy/pygame_sdl2 (Pygame_SDL2)
 * https://github.com/renpy/renpy-build (Dependencies)
 * https://github.com/renpy/renpyweb (Web)
+
+Ren'Py Build will download source code from other git repositories
+as needed.
 
 And for releases before Ren'Py 7.4:
 
@@ -1853,3 +1856,44 @@ libavif Licenses
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+IJG License
+------------
+
+::
+
+    The authors make NO WARRANTY or representation, either express or implied,
+    with respect to this software, its quality, accuracy, merchantability, or
+    fitness for a particular purpose.  This software is provided "AS IS", and you,
+    its user, assume the entire risk as to its quality and accuracy.
+
+    This software is copyright (C) 1991-1998, Thomas G. Lane.
+    All Rights Reserved except as specified below.
+
+    Permission is hereby granted to use, copy, modify, and distribute this
+    software (or portions thereof) for any purpose, without fee, subject to these
+    conditions:
+    (1) If any part of the source code for this software is distributed, then this
+    README file must be included, with this copyright and no-warranty notice
+    unaltered; and any additions, deletions, or changes to the original files
+    must be clearly indicated in accompanying documentation.
+    (2) If only executable code is distributed, then the accompanying
+    documentation must state that "this software is based in part on the work of
+    the Independent JPEG Group".
+    (3) Permission for use of this software is granted only if the user accepts
+    full responsibility for any undesirable consequences; the authors accept
+    NO LIABILITY for damages of any kind.
+
+    These conditions apply to any software derived from or based on the IJG code,
+    not just to the unmodified library.  If you use our work, you ought to
+    acknowledge us.
+
+    Permission is NOT granted for the use of any IJG author's name or company name
+    in advertising or publicity relating to this software or products derived from
+    it.  This software may be referred to only as "the Independent JPEG Group's
+    software".
+
+    We specifically permit and encourage the use of this software as the basis of
+    commercial products, provided that all warranty or liability claims are
+    assumed by the product vendor.

@@ -82,8 +82,8 @@ control hinting per-use. For example::
 
 enables bytecode hinting for MyFont.ttf.
 
-Interpolation Improvements
---------------------------
+Text Interpolation Improvements
+-------------------------------
 
 When a variable is interpolated into a string, and the interpolation namespace
 exists, that namespace will be searched for the values to interpolate. For
@@ -109,6 +109,32 @@ The new :var:`bubble.properties_callback` variable can be given a function
 that filter the list of bubble property names based on the image tag
 that's speaking. This makes it possible to have bubbles that are
 specific to some but not all characters.
+
+Position types and ATL interpolation
+------------------------------------
+
+ATL interpolations, which are statements such as ``linear 1. xpos .6`` (and
+have nothing to do with text interpolation), now accept interpolation between
+positions of different types. This allows the following, which was previously
+documented against and didn't work::
+
+    transform mixed:
+        xycenter (520, 300)
+        easein 3. align (.0, .0)
+
+    label muxed:
+        show a at Transform(pos=(.5, .6))
+
+        "..."
+
+        show a at Transform(pos=(520, 150))
+
+As part of the implementation of this new feature, there is a new
+:term:`position` type, called :class:`position`, which enables you to provide
+both a absolute and a relative component to place or size a displayable. For
+example, you can now tell something to be ``xsize position(-10, .5)``, and the
+displayable will make the displayable take half of the horizontal space offered
+to it, minus 10 pixels.
 
 Developer Tools
 ---------------
@@ -142,7 +168,8 @@ There are two new managers:
   add a certain value (by default, 1) to the target value. These can also be used
   to decrement the field.
 
-There is also now a :class:`LocalVariableValue` bar value, for completeness.
+The :class:`LocalVariableValue` bar value and :class:`LocalVariableInputValue` input
+values have been added, for completeness.
 
 HTTPS/HTTP Fetch
 ----------------
@@ -157,9 +184,49 @@ function. While the Requests library still remains supported on Desktop and Mobi
 * Can take data as either bytes or objects that be encoded to JSON.
 * Can return data as bytes, as string, or objects decoded from JSON.
 
+Accessibility
+-------------
+
+The new :scpref:`group_alt` property available on screen language
+displayables allows the creator to specify text that is spoken the first
+time one of a group of related displayables is spoken.
+
+The new :scpref:`extra_alt` property available on screen language
+displayables allows the creator to specify text that is spoken when the
+'?' key is pressed, to provide additional information about the displayable.
+
+Both of these properties are inherited by the children of the displayable,
+unless they are overridden by a more specific value in the child.
+
+The new :func:`renpy.alt` function can be used to speak text using
+the self-voicing system.
+
+\_\_future\_\_ in python
+------------------------
+
+Ren'Py now allows creators to pass
+`\_\_future\_\_ compiler directives <https://docs.python.org/reference/simple_stmts.html#future>`__
+for Python code run in Ren'Py. This is done using the ``rpy python xxx``
+statement at the top of the .rpy file(s) on which you want them to apply,
+where ``xxx`` is the name of the future feature. For example::
+
+    rpy python annotations
 
 Features
 --------
+
+The new :var:`renpy.get_screen_variable` and :var:`renpy.get_screen_variable`
+make it possible to access screen variables, especially in :class:`Action`
+subclasses.
+
+The new :var:`build.time` variable is set to the time the game was built.
+
+The new :var:`build.info` variable lets you store information at
+build time, and read it back in the distributed game.
+
+When the top left pixels of :ref:`presplash <presplash>` image is
+transparent, the presplash will be displayed in a window that uses
+1-bit transparency.
 
 The new :func:`EditFile` action attempts to open a file and
 line in a text editor.
@@ -198,9 +265,29 @@ The ``jump expression`` statement can now take a local label name of the form
 ".local_name". Previously, only "global_name" or "global_name.local_name" were
 allowed.
 
+:ref:`creator-defined-sl` can now copy all properties from other screen
+language statements.
+
+The new :func:`renpy.invoke_in_main_thread` function can be used by a Python
+thread to invoke a function in the main Ren'Py thread. (Most Ren'Py functions
+can only be called from the main thread.)
+
 
 Other Changes
 -------------
+
+On PC platforms (Windows, Mac, and Linux), when the game window moves,
+its position is stored. The window's position will be restored when the
+game is run again, if:
+
+* The layout of the player's monitors hasn't changed.
+* The window is fully contained on the player's monitors.
+
+Otherwise, the window will be centered on the primary monitor.
+
+On controllers (including the Steam Deck), the function of the B button
+has changed to show and hide the game menu. The previous behavior of the
+B button, selecting a button's alternate function, has been moved to X.
 
 The non-default hardware video playback path has been removed from android
 and ios. This path hadn't been the defaults since 2020, as it supported
@@ -422,7 +509,7 @@ transition would often incorrectly restart.
 Preferences no longer have defaults, meaning all preferences can be
 changed using the ``default`` statement.
 
-The :term:`absolute <position>` type, used to represent absolute amounts of pixels,
+The :func:`absolute` type, used to represent absolute amounts of pixels,
 now ensures the result of mathematical operations with integers and
 floats remain absolute numbers. This fixes a class of problems where
 operations performed on absolutes could produce the incorrect

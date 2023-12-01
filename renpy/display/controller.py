@@ -217,7 +217,7 @@ class PadEvent(object):
         post_event(self.control, self.state, True)
 
 
-# A map from the pade event name to the pad event object.
+# A map from the pad event name to the pad event object.
 pad_events = { }
 
 

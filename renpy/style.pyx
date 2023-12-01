@@ -570,6 +570,13 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
+    def _hover_alt(self):
+        """
+        Returns the value of the alt property in the hover state. Use by button TTS.
+        """
+
+        return self._get_unoffset(HOVER_PREFIX + ALT_INDEX)
+
     def inspect(StyleCore self):
         """
         Inspects this style.

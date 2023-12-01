@@ -71,10 +71,11 @@ Text displayables
 
 Alternative text
     Alternative text is supplied by a displayable's :propref:`alt` style
-    property. It can also be supplied by actions supplied to buttons
-    and values supplied to bars. Explicitly supplied alternative takes
-    precedence over text supplied by actions or values, and both take
-    precedence over text extracted from Text displayables.
+    property. It can also be supplied by instances of the :class:`Action`
+    and :class:`BarValue` classes.
+    Explicitly supplied alternative text takes precedence over text
+    supplied by Actions or BarValues, and both take precedence over
+    text extracted from Text displayables.
 
     Alternative text is translated using Ren'Py's string translation
     mechanism. Alternative text takes precedence over text extracted
@@ -103,6 +104,15 @@ Alternative text
     via self voicing::
 
         define thought = Character(None, what_italic=True, what_alt="I think, [text]")
+
+    In screens, displayables may be given the :scpref:`group_alt` property,
+    which is used to give a group prefix that is spoken the first time a displayable
+    with the same group prefix is focused, but will not be spoken again until a
+    displayable with a different group prefix is focused.
+
+    Displayables may also be given the :scpref:`extra_alt` property, which is spoken
+    when the '?' key is pressed while the displayable is focused. This is intended
+    for more detail information about how a group of controls works.
 
 Descriptive Text
     Descriptive text is text that is displayed (and spoken) by the narrator if
@@ -140,3 +150,11 @@ to speak text from the voices on a platform.
 A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
 display the text that would be voiced on the screen for development
 purposes.
+
+
+Python
+------
+
+The following functions are provided by the self-voicing system:
+
+.. include:: inc/self_voicing

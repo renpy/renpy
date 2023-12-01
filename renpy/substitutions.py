@@ -213,8 +213,8 @@ class Formatter(string.Formatter):
         if "l" in conversion:
             value = value.lower()
 
-        if "c" in conversion and value:
-            value = value[0].upper() + value[1:]
+        if "c" in conversion:
+            value = value[:1].capitalize() + value[1:]
 
         return value
 

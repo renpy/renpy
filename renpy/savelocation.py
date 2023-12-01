@@ -424,6 +424,9 @@ class MultiLocation(object):
         mtime. Returns None if the slot is empty.
         """
 
+        if not renpy.config.save:
+            return None
+
         mtime = -1
         location = None
 
@@ -452,6 +455,9 @@ class MultiLocation(object):
 
     def save(self, slotname, record):
 
+        if not renpy.config.save:
+            return
+
         saved = False
 
         for l in self.active_locations():
@@ -462,6 +468,9 @@ class MultiLocation(object):
             raise Exception("Not saved - no valid save locations.")
 
     def list(self):
+        if not renpy.config.save:
+            return [ ]
+
         rv = set()
 
         for l in self.active_locations():
@@ -470,6 +479,9 @@ class MultiLocation(object):
         return list(rv)
 
     def list_files(self):
+
+        if not renpy.config.save:
+            return [ ]
 
         rv = [ ]
 
@@ -520,14 +532,23 @@ class MultiLocation(object):
         return l.load(slotname) # type: ignore
 
     def unlink(self, slotname):
+        if not renpy.config.save:
+            return
+
         for l in self.active_locations():
             l.unlink(slotname)
 
     def rename(self, old, new):
+        if not renpy.config.save:
+            return
+
         for l in self.active_locations():
             l.rename(old, new)
 
     def copy(self, old, new):
+        if not renpy.config.save:
+            return
+
         for l in self.active_locations():
             l.copy(old, new)
 

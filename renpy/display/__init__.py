@@ -97,6 +97,7 @@ if 1 == 0:
     from . import quaternion
     from . import render
     from . import scale
+    from . import scenelists
     from . import screen
     from . import swdraw
     from . import transform

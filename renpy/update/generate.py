@@ -26,51 +26,49 @@ import argparse
 import json
 import os
 import zlib
+import threading
 
 from . import common
+
 
 class BlockGenerator(object):
     """
     This generates the block file containing the segments for an update.
     """
 
-    def __init__(self, name, filelist, targetdir, progress=None, max_rpu_size=50 * 1024 * 1024):
+    def __init__(self, targetdir, max_rpu_size=50 * 1024 * 1024):
 
-        # A name that will be prefixed to the update.
-        self.name = name
-
-        # The filelist being created.
-        self.filelist = filelist
-
-        # The current segment list.
-        self.segments = [ ]
+        # Used to lock generation.
+        self.lock = threading.Lock()
 
         # The target directory in which the segments will be stored.
         self.targetdir = targetdir
 
-        # The hashes that have been seen alread,.
+        # The hashes that have been seen before.
         self.seen_hashes = set()
 
         # The maximum size of an rpu file.
         self.max_rpu_size = max_rpu_size
 
-        # If new.rpu is open, a file object for it.
-        self.new_rpu = None
+        # All the blocks that have been generated.
+        self.blocks = [ ]
 
-        # The progress reporter.
-        self.progress = progress
-
-        # Clean out files in the target directory starting with .name.
+        # Clean out files in the target directory.
         for i in os.listdir(targetdir):
-            if i.startswith(self.name + "-") and i.endswith(".rpu"):
-                os.unlink(os.path.join(targetdir, i))
+            os.unlink(os.path.join(targetdir, i))
+
+        # The following variables are changed by each call to generate. ########
 
         # The filelist being created.
-        self.generate()
+        self.filelist = None
 
-        # Write the filelist to a file.
-        with open(self.path(self.name + ".files.rpu"), "wb") as f:
-            f.write(self.filelist.encode())
+        # The current segment list.
+        self.segments = [ ]
+
+        # The following field is changed quite a bit. ##########################
+
+        # If new.rpu is open, a file object for it.
+        self.new_rpu = None
 
     def path(self, name):
         """
@@ -85,7 +83,7 @@ class BlockGenerator(object):
         """
 
         if self.new_rpu is None:
-            self.new_rpu = open(self.path(self.name + "-new.rpu"), "wb")
+            self.new_rpu = open(self.path("new.rpu"), "wb")
             self.new_rpu.write(b"RPU-BLOCK-1.0\r\n")
 
     def close_new_rpu(self):
@@ -100,11 +98,12 @@ class BlockGenerator(object):
         self.new_rpu.close()
         self.new_rpu = None
 
-        filename = self.name + "-" + common.hash_list([ i.hash for i in self.segments ]) + ".rpu"
+        filename = common.hash_list([ i.hash for i in self.segments ]) + ".rpu"
 
-        os.rename(self.path(self.name + "-new.rpu"), self.path(filename))
+        os.rename(self.path("new.rpu"), self.path(filename))
 
-        self.filelist.blocks.append(common.File(filename, segments=self.segments))
+        self.blocks.append(common.File(filename, segments=self.segments))
+
         self.segments = [ ]
 
     def generate_segment(self, f, seg):
@@ -137,50 +136,38 @@ class BlockGenerator(object):
         size = len(data)
 
         self.new_rpu.write(data)
-        self.segments.append(common.Segment(offset, size, seg.hash, compressed))
 
-    def generate(self):
+        seg = common.Segment(offset, size, seg.hash, compressed)
+        self.segments.append(seg)
 
-        # Create a list of files by reverse mtime. The idea is that the newer
-        # files will appear before the older ones, and so we won't have to pull
-        # from older files to create a new one.
-        files = list(self.filelist.files)
-        files.sort(key=lambda x: (x.mtime, x.name))
-        files.reverse()
+    def generate(self, name, filelist, progress=None):
 
-        for i, file in enumerate(files):
+        with self.lock:
 
-            if self.progress:
-                self.progress(i + 1, len(files))
+            self.filelist = filelist
 
-            file.scan()
+            # Create a list of files by reverse mtime. The idea is that the newer
+            # files will appear before the older ones, and so we won't have to pull
+            # from older files to create a new one.
+            files = list(filelist.files)
+            files.sort(key=lambda x: (x.mtime, x.name))
+            files.reverse()
 
-            with open(file.data_filename or file.name, "rb") as f:
-                for seg in file.segments:
-                    self.generate_segment(f, seg)
+            for i, file in enumerate(files):
 
-        self.close_new_rpu()
+                if progress:
+                    progress(i + 1, len(files))
 
+                file.scan()
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("sourcedir")
-    ap.add_argument("targetdir")
+                with open(file.data_filename or file.name, "rb") as f:
+                    for seg in file.segments:
+                        self.generate_segment(f, seg)
 
-    args = ap.parse_args()
+            self.close_new_rpu()
 
-    from pathlib import Path
+            self.filelist.blocks = self.blocks
 
-    targetdir = Path(args.targetdir)
-    targetdir.mkdir(exist_ok=True)
-
-    for i in targetdir.glob("*.rpu"):
-        i.unlink()
-
-    fl = common.FileList()
-    fl.scan(args.sourcedir)
-
-    BlockGenerator("game", fl, args.targetdir)
-
-if __name__ == "__main__":
-    main()
+            # Write the filelist to a file.
+            with open(self.path(name + ".files.rpu"), "wb") as f:
+                f.write(self.filelist.encode())

@@ -28,6 +28,11 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import gc
 import io
 import re
+import time
+import sys
+import threading
+import fnmatch
+import os
 
 import renpy
 
@@ -67,6 +72,7 @@ from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen
 from renpy.display.screen import has_screen, get_screen, get_displayable, get_widget, ScreenProfile as profile_screen
 from renpy.display.screen import get_displayable_properties, get_widget_properties
+from renpy.display.screen import get_screen_variable, set_screen_variable
 
 from renpy.display.focus import focus_coordinates, capture_focus, clear_capture_focus, get_focus_rect
 from renpy.display.predict import screen as predict_screen
@@ -76,6 +82,8 @@ from renpy.display.image import get_available_image_tags, get_available_image_at
 from renpy.display.image import get_registered_image
 
 from renpy.display.im import load_surface, load_image, load_rgba
+
+from renpy.display.tts import speak as alt, speak_extra_alt
 
 from renpy.curry import curry, partial
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
@@ -136,11 +144,6 @@ renpy_pure("known_languages")
 renpy_pure("check_text_tags")
 renpy_pure("filter_text_tags")
 renpy_pure("split_properties")
-
-import time
-import sys
-import threading
-import fnmatch
 
 
 # The number of bits in the architecture.
@@ -296,7 +299,7 @@ def retain_after_load():
     renpy.game.log.retain_after_load()
 
 
-scene_lists = renpy.display.core.scene_lists
+scene_lists = renpy.display.scenelists.scene_lists
 
 
 def count_displayables_in_layer(layer):
@@ -2354,7 +2357,6 @@ def log(msg):
     try:
 
         if not logfile:
-            import os
             logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), "a")
 
             if not logfile.tell():
@@ -3939,14 +3941,15 @@ def invoke_in_thread(fn, *args, **kwargs):
     stopped when Ren'Py is shutting down.
 
     This thread is very limited in what it can do with the Ren'Py API.
-    Changing store variables is allowed, as is calling the :func:`renpy.queue_event`
-    function. Most other portions of the Ren'Py API are expected to be called from
-    the main thread.
+    Changing store variables is allowed, as are calling calling the following
+    functions:
 
-    The primary use of this function is to place accesss to a web API in a second
-    thread, and then update variables with the results of that call, by storing
-    the result in variables and then relying on the interaction restart to cause
-    screens to display those variables.
+    * :func:`renpy.restart_interaction`
+    * :func:`renpy.invoke_in_main_thread`
+    * :func:`renpy.queue_event`
+
+    Most other portions of the Ren'Py API are expected to be called from
+    the main thread.
 
     This does not work on the web platform, except for immediately returning
     without an error.
@@ -3967,6 +3970,36 @@ def invoke_in_thread(fn, *args, **kwargs):
     t = threading.Thread(target=run)
     t.daemon = True
     t.start()
+
+
+def invoke_in_main_thread(fn, *args, **kwargs):
+    """
+    :doc: other
+
+    This runs the given function with the given arguments in the main
+    thread. The function runs in an interaction context similar to an
+    event handler. This is meant to be called from a separate thread,
+    whose creation is handled by :func:`renpy.invoke_in_thread`.
+
+    If a single thread schedules multiple functions to be invoked, it is guaranteed
+    that they will be run in the order in which they have been scheduled::
+
+        def ran_in_a_thread():
+            renpy.invoke_in_main_thread(a)
+            renpy.invoke_in_main_thread(b)
+
+    In this example, it is guaranteed that ``a`` will return before
+    ``b`` is called. The order of calls made from different threads is not
+    guaranteed.
+
+    This may not be called during the init phase.
+    """
+
+    if renpy.game.context().init_phase:
+        raise Exception("invoke_in_main_thread may not be called during the init phase.")
+
+    renpy.display.interface.invoke_queue.append((fn, args, kwargs))
+    restart_interaction()
 
 
 def cancel_gesture():
@@ -4396,7 +4429,7 @@ def get_zorder_list(layer):
     Returns a list of (tag, zorder) pairs for `layer`.
     """
 
-    return renpy.display.core.scene_lists().get_zorder_list(layer)
+    return scene_lists().get_zorder_list(layer)
 
 
 def change_zorder(layer, tag, zorder):
@@ -4406,7 +4439,7 @@ def change_zorder(layer, tag, zorder):
     Changes the zorder of `tag` on `layer` to `zorder`.
     """
 
-    return renpy.display.core.scene_lists().change_zorder(layer, tag, zorder)
+    return scene_lists().change_zorder(layer, tag, zorder)
 
 
 sdl_dll = False
@@ -4422,6 +4455,8 @@ def get_sdl_dll():
     If this can not be done, None is returned.
     """
 
+
+
     global sdl_dll
 
     if sdl_dll is not False:
@@ -4429,7 +4464,9 @@ def get_sdl_dll():
 
     try:
 
-        DLLS = [ None, "librenpython.dll", "librenpython.dylib", "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
+        lib = os.path.dirname(sys.executable) + "/"
+
+        DLLS = [ None, lib + "librenpython.dll", lib + "librenpython.dylib", lib + "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
 
         import ctypes
 
@@ -4439,7 +4476,7 @@ def get_sdl_dll():
                 dll = ctypes.cdll[i]
                 # See if it has SDL_GetError..
                 dll.SDL_GetError
-            except Exception:
+            except Exception as e:
                 continue
 
             sdl_dll = dll
@@ -4654,8 +4691,6 @@ def fetch_emscripten(url, method, data, content_type, timeout):
     """
 
     import emscripten
-    import time
-    import os
 
     fn = "/req-" + str(time.time()) + ".data"
 
@@ -4676,7 +4711,7 @@ def fetch_emscripten(url, method, data, content_type, timeout):
     message = "Pending."
 
     start = time.time()
-    while start - time.time() < timeout:
+    while time.time() - start < timeout:
         renpy.exports.pause(0)
 
         result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
@@ -4713,7 +4748,7 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
 
     `method`
         The method to use. Generally one of "GET", "POST", or "PUT", but other
-        HTTP methdos are possible. If `data` or `json` are not None, defaults to
+        HTTP methods are possible. If `data` or `json` are not None, defaults to
         "POST", otherwise defaults to GET.
 
     `data`
@@ -4737,7 +4772,7 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
         decodes the result as JSON. (Other exceptions may be generated by the decoding
         process.)
 
-    While waiting for `timeout` to pass, this will repeatedly call :func:`renpy.pause`(0),
+    While waiting for `timeout` to pass, this will repeatedly call :func:`renpy.pause`\ (0),
     so Ren'Py doesn't lock up. It may make sense to display a screen to the user
     to let them know what is going on.
 
