@@ -82,6 +82,10 @@ cdef class TextureLoader:
         self.max_anisotropy = 1.0
         glGetFloatv(MAX_TEXTURE_MAX_ANISOTROPY_EXT, &self.max_anisotropy)
 
+        if not renpy.emscripten and not self.draw.angle:
+            glGenBuffers(1, &self.pixel_buffer)
+
+
     def quit(self):
         """
         Gets rid of this TextureLoader.
@@ -94,6 +98,9 @@ cdef class TextureLoader:
             glDeleteTextures(1, texnums)
 
         self.allocated = set()
+
+        if not renpy.emscripten and not self.draw.angle:
+            glDeleteBuffers(1, &self.pixel_buffer)
 
     def get_texture_size(self):
         """
@@ -410,7 +417,6 @@ cdef class GLTexture(GL2Model):
         cdef GLuint premultiplied
         cdef Program program
         cdef SDL_Surface *s
-        cdef GLuint pixel_buffer
 
         if self.loaded:
             return
@@ -447,13 +453,11 @@ cdef class GLTexture(GL2Model):
 
         if not renpy.emscripten and not draw.angle:
 
-            glGenBuffers(1, &pixel_buffer)
-            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, self.loader.pixel_buffer)
             glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STATIC_DRAW)
             glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, <void *> 0)
             glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER)
-            glDeleteBuffers(1, &pixel_buffer)
 
         else:
             glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
@@ -502,7 +506,6 @@ cdef class GLTexture(GL2Model):
         cdef GLuint premultiplied
         cdef Program program
         cdef SDL_Surface *s
-        cdef GLuint pixel_buffer
 
         if self.loaded:
             return
@@ -530,13 +533,11 @@ cdef class GLTexture(GL2Model):
 
         if not renpy.emscripten and not draw.angle:
 
-            glGenBuffers(1, &pixel_buffer)
-            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, self.loader.pixel_buffer)
             glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STATIC_DRAW)
             glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, <void *> 0)
             glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER)
-            glDeleteBuffers(1, &pixel_buffer)
 
         else:
 
@@ -551,7 +552,6 @@ cdef class GLTexture(GL2Model):
 
         self.loaded = True
         self.surface = None
-
 
 
     def allocate_texture(GLTexture self, GLuint tex, int tw, int th, properties={}):
