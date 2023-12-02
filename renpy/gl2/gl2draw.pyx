@@ -317,7 +317,7 @@ cdef class GL2Draw:
 
         pos = renpy.game.preferences.window_position
 
-        for rect in layout:        
+        for rect in layout:
 
             if pos[0] < rect[0] or pos[1] < rect[1]:
                 continue
@@ -1064,15 +1064,13 @@ cdef class GL2Draw:
 
         return rv
 
-    def is_pixel_opaque(self, what, x, y):
+    def is_pixel_opaque(self, what):
         """
         Returns true if the pixel is not 100% transparent.
+
+        `what`
+            A 1x1 Render.
         """
-
-        if x < 0 or y < 0 or x >= what.width or y >= what.height:
-            return 0
-
-        what = what.subsurface((x, y, 1, 1))
 
         # Load all the textures and RTTs.
         self.load_all_textures(what)

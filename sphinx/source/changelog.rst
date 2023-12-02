@@ -276,6 +276,10 @@ can only be called from the main thread.)
 Other Changes
 -------------
 
+The pixel transparency test used by :propref:`focus_mask` will now
+only involve the GPU if inside the bounding box of non-transparent pixels,
+improving performance in some cases.
+
 Ren'Py now uses the GL2 renderer by default on all platforms, and ignores
 the config.gl2 variable. This is because of issues with the old GL renderer
 that are not present in the GL2 renderer. On ancient hardware, it's still
