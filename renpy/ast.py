@@ -127,6 +127,9 @@ class ParameterInfo(object):
             best job it can.
         """
 
+        if not renpy.config.developer:
+            ignore_errors = True
+
         rv = { }
 
         if args is None:
@@ -286,6 +289,9 @@ class ParameterInfo(object):
 
 
 def apply_arguments(parameters, args, kwargs, ignore_errors=False):
+
+    if not renpy.config.developer:
+        ignore_errors = True
 
     if parameters is None:
         if (args or kwargs) and not ignore_errors:
