@@ -1180,19 +1180,19 @@ class Interface(object):
         renderers = gl2_renderers + renderers
 
         # Prevent a performance warning if the renderer
-        # is taken from old persistent data
-        if renderer not in gl2_renderers:
+        # is taken from old persistent data.
+        if renderer not in gl2_renderers and (renpy.macintosh or renpy.android or renpy.config.gl2):
             renderer = "auto"
+
+        # Software renderer is the last hope for PC .
+        if not (renpy.android or renpy.ios or renpy.emscripten):
+            renderers = renderers + [ "sw" ]
 
         if renderer in renderers:
             renderers = [ renderer, "sw" ]
 
         if renderer == "sw":
             renderers = [ "sw" ]
-
-        # Software renderer is the last hope for PC and mac.
-        if not (renpy.android or renpy.ios or renpy.emscripten):
-            renderers = renderers + [ "sw" ]
 
         if self.safe_mode:
             renderers = [ "sw" ]
