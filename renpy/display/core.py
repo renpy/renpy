@@ -1157,9 +1157,6 @@ class Interface(object):
         Figures out the list of draw constructors to try.
         """
 
-        if "RENPY_RENDERER" in os.environ:
-            renpy.config.gl2 = False
-
         renderer = renpy.game.preferences.renderer
         renderer = os.environ.get("RENPY_RENDERER", renderer)
         renderer = renpy.session.get("renderer", renderer)
@@ -1180,16 +1177,12 @@ class Interface(object):
             if i in renderers:
                 gl2_renderers.append(i + "2")
 
-        if renpy.config.gl2 or renpy.macintosh:
-            renderers = gl2_renderers + renderers
+        renderers = gl2_renderers + renderers
 
-            # Prevent a performance warning if the renderer
-            # is taken from old persistent data
-            if renderer not in gl2_renderers:
-                renderer = "auto"
-
-        else:
-            renderers = renderers + gl2_renderers
+        # Prevent a performance warning if the renderer
+        # is taken from old persistent data
+        if renderer not in gl2_renderers:
+            renderer = "auto"
 
         if renderer in renderers:
             renderers = [ renderer, "sw" ]

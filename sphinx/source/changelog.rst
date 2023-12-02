@@ -276,6 +276,12 @@ can only be called from the main thread.)
 Other Changes
 -------------
 
+Ren'Py now uses the GL2 renderer by default on all platforms, and ignores
+the config.gl2 variable. This is because of issues with the old GL renderer
+that are not present in the GL2 renderer. On ancient hardware, it's still
+possible to use the GL renderer by pressing shift+G and enabling it
+directly.
+
 On PC platforms (Windows, Mac, and Linux), when the game window moves,
 its position is stored. The window's position will be restored when the
 game is run again, if:
