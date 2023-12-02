@@ -101,18 +101,38 @@ screen _image_attributes():
         has side "c b":
             spacing gui._scale(10)
 
+        viewport:
+            scrollbars "both"
+            child_size (4000, 0)
+            yfill True
+            xfill True
+            mousewheel True
 
-        vbox:
-            label _("Image Attributes")
+            vbox:
+                label _("Image Attributes")
 
+                for l in renpy.display.scenelists.layers:
 
-            for name in renpy.get_hidden_tags():
-                $ attributes = " ".join(renpy.get_attributes(name))
-                text _("[name] [attributes] (hidden)")
+                    $ hidden = renpy.get_hidden_tags(l)
+                    $ showing = renpy.get_showing_tags(l)
 
-            for name in renpy.get_showing_tags():
-                $ attributes = " ".join(renpy.get_attributes(name))
-                text _("[name] [attributes]")
+                    if not hidden and not showing:
+                        continue
+
+                    if l in renpy.config.context_clear_layers:
+                        continue
+
+                    text _("Layer [l]:")
+
+                    for name in hidden:
+                        $ attributes = " ".join(renpy.get_attributes(name, layer=l))
+                        text _("    [name] [attributes] (hidden)")
+
+                    for name in showing:
+                        $ attributes = " ".join(renpy.get_attributes(name, layer=l))
+                        text _("    [name] [attributes]")
+
+                    text " "
 
         hbox:
             spacing gui._scale(25)

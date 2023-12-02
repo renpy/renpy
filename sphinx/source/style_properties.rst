@@ -105,10 +105,10 @@ novel kinds of value a style property can expect.
 
     position
         Positions are used to specify locations relative to the upper-left
-        corner of the containing area. (For positions, the containing area is
-        given by the layout the displayable is in, if one is given, or the screen
-        otherwise. For anchors, the containing area is the size of the
-        displayable itself.)
+        corner of the containing area. (For placement and size, the containing
+        area is given by the layout the displayable is in, if one is given, or
+        the screen otherwise. For anchors, the containing area is the size of
+        the displayable itself.)
 
         The way a position value is interpreted depends on the type of the
         value:
@@ -121,9 +121,27 @@ novel kinds of value a style property can expect.
             containing area. For example, 0.5 is a point halfway between the
             sides of the containing area, while 1.0 is on the right or bottom
             side.
-        absolute (like absolute(100.25))
-            An ``absolute`` number is interpreted as the number of pixels from the
-            left or top side of the screen, when using subpixel-precise rendering.
+
+        .. function:: absolute(value, /)
+
+            For example, ``absolute(100.25)``, or ``absolute(a+b)`` when both
+            ``a`` and ``b`` may be floats or ints.
+
+            An ``absolute`` number is interpreted as the number of pixels from
+            the left or top side of the screen, when using subpixel-precise
+            rendering.
+
+        .. function:: position(absolute, relative, /)
+
+            For example, ``position(-10, .5)``.
+
+            A combination of `absolute`, which will be treated as an absolute
+            position, and `relative`, which will be treated as a relative
+            position, both being as described above. The two components are
+            added together to form the final position.
+
+            Both parameters should always be passed, otherwise unspecified
+            results may occur.
 
     displayable
         Any displayable. If a displayable contains a "[prefix\_]" substitution,
@@ -140,7 +158,7 @@ novel kinds of value a style property can expect.
         example:
 
         * ``"#f00"`` and ``"#ff0000"`` represent an opaque red color.
-        * ``"#0f08"`` and ``#00ff0080"`` represent a semi-transparent green
+        * ``"#0f08"`` and ``"#00ff0080"`` represent a semi-transparent green
           color.
 
         The color triples are the same as used in HTML.

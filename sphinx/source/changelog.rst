@@ -82,8 +82,8 @@ control hinting per-use. For example::
 
 enables bytecode hinting for MyFont.ttf.
 
-Interpolation Improvements
---------------------------
+Text Interpolation Improvements
+-------------------------------
 
 When a variable is interpolated into a string, and the interpolation namespace
 exists, that namespace will be searched for the values to interpolate. For
@@ -109,6 +109,32 @@ The new :var:`bubble.properties_callback` variable can be given a function
 that filter the list of bubble property names based on the image tag
 that's speaking. This makes it possible to have bubbles that are
 specific to some but not all characters.
+
+Position types and ATL interpolation
+------------------------------------
+
+ATL interpolations, which are statements such as ``linear 1. xpos .6`` (and
+have nothing to do with text interpolation), now accept interpolation between
+positions of different types. This allows the following, which was previously
+documented against and didn't work::
+
+    transform mixed:
+        xycenter (520, 300)
+        easein 3. align (.0, .0)
+
+    label muxed:
+        show a at Transform(pos=(.5, .6))
+
+        "..."
+
+        show a at Transform(pos=(520, 150))
+
+As part of the implementation of this new feature, there is a new
+:term:`position` type, called :class:`position`, which enables you to provide
+both a absolute and a relative component to place or size a displayable. For
+example, you can now tell something to be ``xsize position(-10, .5)``, and the
+displayable will make the displayable take half of the horizontal space offered
+to it, minus 10 pixels.
 
 Developer Tools
 ---------------
@@ -483,7 +509,7 @@ transition would often incorrectly restart.
 Preferences no longer have defaults, meaning all preferences can be
 changed using the ``default`` statement.
 
-The :term:`absolute <position>` type, used to represent absolute amounts of pixels,
+The :func:`absolute` type, used to represent absolute amounts of pixels,
 now ensures the result of mathematical operations with integers and
 floats remain absolute numbers. This fixes a class of problems where
 operations performed on absolutes could produce the incorrect

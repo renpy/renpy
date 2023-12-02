@@ -1404,6 +1404,10 @@ atl_pos_only = False
 # A map from font name to the hinting for the font.
 font_hinting = { None : "auto" }
 
+# Should ATL interpolation handle mixed position types,
+# at the cost of returning instances of the position type ?
+mixed_position = True
+
 # Should we execute costly tasks which are
 # avoidable when not generating the documentation ?
 generating_documentation = False

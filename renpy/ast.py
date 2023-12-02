@@ -255,6 +255,9 @@ class Signature(object):
         - applies the defaults automatically (and lazily, as per the above)
         """
 
+        if not renpy.config.developer:
+            ignore_errors = True
+
         kwargs = dict(kwargs)
 
         def _raise(exct, msg, *argz, **kwargz):
@@ -449,6 +452,9 @@ class Signature(object):
 ParameterInfo = Signature
 
 def apply_arguments(parameters, args, kwargs, ignore_errors=False):
+
+    if not renpy.config.developer:
+        ignore_errors = True
 
     if parameters is None:
         if (args or kwargs) and not ignore_errors:

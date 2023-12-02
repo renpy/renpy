@@ -66,7 +66,79 @@ def instant(t):
     return 1.0
 
 
-position = renpy.object.Sentinel("position")
+
+class position(object):
+    """
+    A combination of relative and absolute coordinates.
+    """
+    __slots__ = ('absolute', 'relative')
+
+    def __new__(cls, absolute=0, relative=None):
+        """
+        If passed two parameters, takes them as an absolute and a relative.
+        If passed only one parameter, converts it.
+        Using __new__ so that passing a position returns it unchanged.
+        """
+        if relative is None:
+            self = cls.from_any(absolute)
+        else:
+            self = object.__new__(cls)
+            self.absolute = absolute
+            self.relative = relative
+        return self
+
+    @classmethod
+    def from_any(cls, other):
+        if isinstance(other, cls):
+            return other
+        elif type(other) is float:
+            return cls(0, other)
+        else:
+            return cls(other, 0)
+
+    def __add__(self, other):
+        if isinstance(other, position):
+            return position(self.absolute + other.absolute, self.relative + other.relative)
+        # elif isinstance(other, (int, float)):
+        #     return self + position.from_any(other)
+        return NotImplemented
+
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        return self + -other
+
+    def __rsub__(self, other):
+        return other + -self
+
+    def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            return position(self.absolute * other, self.relative * other)
+        return NotImplemented
+
+    __rmul__ = __mul__
+
+    def __truediv__(self, other):
+        if isinstance(other, (int, float)):
+            return self * (1/other)
+        return NotImplemented
+
+    __div__ = __truediv__ # PY2
+
+    def __pos__(self):
+        return position(renpy.display.core.absolute(self.absolute), float(self.relative))
+
+    def __neg__(self):
+        return -1 * self
+
+    def __repr__(self):
+        return "position(absolute={}, relative={})".format(self.absolute, self.relative)
+
+
+def position_or_none(x):
+    if x is None:
+        return None
+    return position.from_any(x)
 
 
 def any_object(x):
@@ -101,26 +173,12 @@ def mesh(x):
     return bool(x)
 
 
-# A dictionary giving property names and the corresponding default
-# values. This is massively added to by renpy.display.transform.
+# A dictionary giving property names and the corresponding type or
+# function. This is massively added to by renpy.display.transform.
 PROPERTIES = { }
 
 
-def correct_type(v, b, ty):
-    """
-    Corrects the type of v to match ty. b is used to inform the match.
-    """
-
-    if ty is position:
-        if v is None:
-            return None
-        else:
-            return type(b)(v)
-    else:
-        return ty(v)
-
-
-def interpolate(t, a, b, type): # @ReservedAssignment
+def interpolate(t, a, b, typ):
     """
     Linearly interpolate the arguments.
     """
@@ -137,10 +195,10 @@ def interpolate(t, a, b, type): # @ReservedAssignment
         if a is None:
             a = [ None ] * len(b)
 
-        if not isinstance(type, tuple):
-            type = (type,) * len(b)
+        if not isinstance(typ, tuple):
+            typ = (typ,) * len(b)
 
-        return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
+        return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, typ))
 
     # If something is callable, call it and return the result.
     elif callable(b):
@@ -154,11 +212,19 @@ def interpolate(t, a, b, type): # @ReservedAssignment
         if a is None:
             a = 0
 
-        return correct_type(a + t * (b - a), b, type)
+        if typ in (position_or_none, position):
+            if renpy.config.mixed_position:
+                a = position.from_any(a)
+                b = position.from_any(b)
+                return (1-t)*a + t*b # same result, faster execution
+            else:
+                typ = type(b)
+
+        return typ(a + t * (b - a))
+
 
 # Interpolate the value of a spline. This code is based on Aenakume's code,
 # from 00splines.rpy.
-
 
 def interpolate_spline(t, spline):
 
@@ -212,7 +278,7 @@ def interpolate_spline(t, spline):
 
             rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
 
-    return correct_type(rv, spline[-1], position)
+    return position_or_none(rv)
 
 
 def get_catmull_rom_value(t, p_1, p0, p1, p2):
@@ -1456,7 +1522,7 @@ class Interpolation(Statement):
 
         if radius is not None:
             startradius, endradius = radius
-            trans.state.radius = interpolate(complete, startradius, endradius, position)
+            trans.state.radius = interpolate(complete, startradius, endradius, position_or_none)
 
         if anchorangle is not None:
             startangle, endangle = anchorangle[:2]
@@ -1466,7 +1532,7 @@ class Interpolation(Statement):
 
         if anchorradius is not None:
             startradius, endradius = anchorradius
-            trans.state.anchorradius = interpolate(complete, startradius, endradius, position)
+            trans.state.anchorradius = interpolate(complete, startradius, endradius, position_or_none)
 
 
 
