@@ -33,6 +33,7 @@ from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
 from renpy.display.behavior import map_event, run, run_unhovered
 
+import weakref
 
 def default_drag_group():
     """
@@ -271,12 +272,13 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
     focusable = True
 
-    drag_group = None
     old_position = None
     drag_offscreen = False
     activated = None
     alternate = None
     dragging = None
+
+    drag_group_weakref = None
 
     # The time a click started, or None if a click is not in progress.
     click_time = None
@@ -413,6 +415,20 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
     @property
     def _draggable(self):
         return self.draggable
+
+    @property
+    def drag_group(self):
+        if self.drag_group_weakref is not None:
+            return self.drag_group_weakref()
+        else:
+            return None
+
+    @drag_group.setter
+    def drag_group(self, value):
+        if value is None:
+            self.drag_group_weakref = None
+        else:
+            self.drag_group_weakref = weakref.ref(value)
 
     def snap(self, x, y, delay=0):
         """
