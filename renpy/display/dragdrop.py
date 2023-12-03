@@ -930,7 +930,8 @@ class DragGroup(renpy.display.layout.MultiBox):
         """
         :doc: drag_drop method
 
-        Adds `child`, which must be a Drag, to this DragGroup.
+        Adds `child`, which must be a Drag, to this DragGroup. This child
+        will be added above all other children of this DragGroup.
         """
 
         if not isinstance(child, Drag):
@@ -940,6 +941,12 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         self.sorted = False
         renpy.display.render.invalidate(self)
+
+        if isinstance(child, Drag):
+            child.drag_group = self
+
+            if renpy.config.drag_group_add_top:
+                child.top()
 
     def remove(self, child):
         """

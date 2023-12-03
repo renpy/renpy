@@ -133,6 +133,13 @@ To prevent this, add to your game::
 
     define config.mixed_position = False
 
+**Drag Group Add Changes** Adding a displayable to a :class:`DragGroup` now
+adds it above the other displayables in the group, rather than below them.
+
+To change this, add to your game::
+
+    define config.drag_group_add_top = False
+
 
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:

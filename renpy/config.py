@@ -1418,6 +1418,8 @@ save = True
 # Should the persistent file be updated?
 save_persistent = True
 
+# Should new drags be added to the top of a drag group.
+drag_group_add_top = True
 
 del os
 del collections
