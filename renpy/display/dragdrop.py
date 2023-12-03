@@ -859,6 +859,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
                     if rv is not None:
                         return rv
 
+            self.drag_moved = False
+
         if handled:
             raise renpy.display.core.IgnoreEvent()
 
