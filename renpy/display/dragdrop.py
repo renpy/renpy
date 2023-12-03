@@ -147,16 +147,25 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         None.
 
     `clicked`
-        A callback this is called, with no arguments, when the Drag is
-        clicked without being moved. A droppable can also be focused
-        and clicked.  If the callback returns a value other than None,
-        that value is returned as the result of the interaction.
+        A callback that is called when the Drag is clicked without being moved.
+        It is called with one argument, the Drag being clicked on. A droppable
+        can also be focused and clicked. If the callback returns a value other
+        than None, that value is returned as the result of the interaction.
 
     `alternate`
         An action that is run when the Drag is right-clicked (on the
         desktop) or long-pressed without moving (on mobile). It may
         be necessary to increase :var:`config.longpress_duration` if
         this triggers to early on mobile platforms.
+
+    `hovered`
+        An action to run when the drag gains focus.
+
+    `unhovered`
+        An action to run when the drag loses focus.
+
+    `tooltip`
+        A tooltip to display when the drag is hovered over.
 
     `drag_handle`
         A (x, y, width, height) tuple, giving the position of the drag
@@ -167,7 +176,8 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         expected to return a list of [ (drag, x, y) ] tuples, giving
         the draggables to drag as a unit. `x` and `y` are the offsets
         of the drags relative to each other, they are not relative
-        to the corner of this drag.
+        to the corner of this drag. `drag` is either the Drag object
+        to be joined or the drag_name of such a Drag.
 
     `drag_offscreen`
         Determines the conditions under which the drag is allowed
@@ -254,6 +264,23 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         The first is the Drag which determines its sensitivity.
         The second is a list of Drags that are being dragged.
 
+    `snapped`
+        A callback (or list of callbacks) that is called when the Drag completes
+        a snap animation. It is called with four arguments. The first is the
+        Drag which was undergoing the snap animation. The second and third are
+        the x and y coordinates where the Drag was set to snap to. The fourth
+        is a boolean which is True if the snap animation was successfully
+        completed, and False if it was interrupted (e.g. from being grabbed in
+        the middle of snapping). For example, the following function sets
+        the drag's start_x and start_y position to its intended end position
+        if the snap animation was interrupted::
+
+            def snapped_callback(drag, x, y, completed):
+                if not completed:
+                    drag.start_x = x
+                    drag.start_y = y
+
+
     Except for `d`, all of the parameters are available as fields (with
     the same name) on the Drag object. In addition, after the drag has
     been rendered, the following fields become available:
@@ -263,6 +290,17 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
     `start_x`, `start_y`
         The drag start position of the Drag relative to its parent, in pixels.
+
+    `grab_x`, `grab_y`
+        The x and y positions, relative to its parent, where the drag was
+        picked up, in pixels.
+
+    `last_drop`
+        The last Drag that the current Drag can be dropped on if released,
+        or None if no valid Drag currently exists.
+
+    `snapping`
+        True if this Drag is in the middle of a snapping animation.
 
     `w`, `h`
         The width and height of the Drag's child, in pixels.
@@ -380,6 +418,17 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         # The duration of a new snap animation to execute starting at
         # the next render() call
         self.target_at_delay = 0
+        # The warper used for the snap animation
+        self.snap_warper = None
+        # The time at which the current snap animation started
+        self.snap_start = 0
+        # The starting x and y coordinates of the current snap animation
+        self.snap_start_x = 0
+        self.snap_start_y = 0
+        # True if the drag is in the middle of a snapping animation
+        self.snapping = False
+        # A callback which is run when the drag completes a snap animation
+        self.snapped = properties.get("snapped", None)
 
         # The displayable we were last dropping on.
         self.last_drop = None # type: renpy.display.displayable.Displayable|None
@@ -398,6 +447,11 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             self.target_y = replaces.target_y
             self.target_at = replaces.target_at
             self.target_at_delay = replaces.target_at_delay
+            self.snap_warper = replaces.snap_warper
+            self.snap_start = replaces.snap_start
+            self.snap_start_x = replaces.snap_start_x
+            self.snap_start_y = replaces.snap_start_y
+            self.snapping = replaces.snapping
             self.grab_x = replaces.grab_x
             self.grab_y = replaces.grab_y
             self.last_x = replaces.last_x
@@ -430,14 +484,14 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         else:
             self.drag_group_weakref = weakref.ref(value)
 
-    def snap(self, x, y, delay=0):
+    def snap(self, x, y, delay=0, warper=None):
         """
         :doc: drag_drop method
 
         Changes the position of the drag. If the drag is not showing,
         then the position change is instantaneous. Otherwise, the
-        position change takes `delay` seconds, and is animated as a
-        linear move.
+        position change takes `delay` seconds and an optional warper. If no
+        warper is provided, the transition is linear.
         """
 
         if self.parent_width is not None:
@@ -451,6 +505,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
         if self.x is not None:
             self.target_at_delay = delay
+            self.snap_warper = warper
+            self.snap_start_x = self.x
+            self.snap_start_y = self.y
+            self.snapping = True
         else:
             self.target_at = self.at
             self.x = x
@@ -519,7 +577,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         self.set_style_prefix("idle_", True)
 
         # Set the style for joined_set
-        for i in [i[0] for i in self.drag_joined(self)]:
+        for i in [self.get_drag_from_name(i[0]) for i in self.drag_joined(self)]:
             i.set_style_prefix("selected_hover_", True)
 
         if self.last_drop is not None:
@@ -611,16 +669,26 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             # Snap starts now
             self.target_at = at + self.target_at_delay
             self.target_at_delay = 0
+            # Record when the snap started
+            self.snap_start = at
             redraw(self, 0)
         elif self.target_at <= at or self.target_at <= self.at:
             # Snap complete
             self.x = self.target_x
             self.y = self.target_y
+            self.snap_warper = None
+            self.snap_start = 0
+            if self.snapping:
+                run(self.snapped, self, self.target_x, self.target_y, True)
+            self.snapping = False
         else:
             # Snap in progress
-            done = (at - self.at) / (self.target_at - self.at)
-            self.x = absolute(self.x + done * (self.target_x - self.x)) # type: ignore
-            self.y = absolute(self.y + done * (self.target_y - self.y)) # type: ignore
+            done = (at - self.snap_start) / (self.target_at - self.snap_start)
+            if self.snap_warper is not None:
+                done = self.snap_warper(done)
+            self.x = absolute((self.target_x-self.snap_start_x)*done + self.snap_start_x) # type: ignore
+            self.y = absolute((self.target_y-self.snap_start_y)*done + self.snap_start_y) # type: ignore
+
             redraw(self, 0)
 
         if self.draggable or self.clicked is not None:
@@ -659,6 +727,12 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
         return rv
 
+    def get_drag_from_name(self, name):
+        if isinstance(name, Drag):
+            return name
+        else:
+            return self.drag_group.get_child_by_name(name)
+
     def event(self, ev, x, y, st):
 
         if not self.is_focused():
@@ -670,6 +744,13 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
         grabbed = (renpy.display.focus.get_grab() is self)
 
+        if grabbed and self.snapping:
+            # Stop the snap, since it was picked up
+            self.snapping = False
+            run(self.snapped, self, self.target_x, self.target_y, False)
+            self.snap_warper = None
+            self.snap_start = 0
+
         if (self.alternate is not None) and renpy.display.touch and map_event(ev, "drag_activate"):
             self.click_time = st
             renpy.game.interface.timeout(renpy.config.longpress_duration)
@@ -678,12 +759,12 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
         if grabbed:
             joined_offsets = self.drag_joined(self)
-            joined = [ i[0] for i in joined_offsets ] # type: list[Drag]
+            joined = [ self.get_drag_from_name(i[0]) for i in joined_offsets ] # type: list[Drag]
 
         elif self.draggable and map_event(ev, "drag_activate"):
 
             joined_offsets = self.drag_joined(self)
-            joined = [ i[0] for i in joined_offsets ] # type: list[Drag]
+            joined = [ self.get_drag_from_name(i[0]) for i in joined_offsets ] # type: list[Drag]
 
             if not joined:
                 raise renpy.display.core.IgnoreEvent()
@@ -698,14 +779,14 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             # If we're not the only thing we're joined with, we
             # might need to adjust our grab point.
             for i, xo, yo in joined_offsets:
-                if i is self:
+                if self.get_drag_from_name(i) is self:
                     self.grab_x += xo
                     self.grab_y += yo
                     break
 
             self.drag_moved = False
-            self.start_x = par_x
-            self.start_y = par_y
+            self.start_x = par_x - self.grab_x
+            self.start_y = par_y - self.grab_y
 
             grabbed = True
 
@@ -738,8 +819,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             if self.clicked is not None and map_event(ev, "drag_deactivate"):
 
                 self.click_time = None
-
-                rv = run(self.clicked)
+                try:
+                    rv = run(self.clicked, self)
+                except TypeError:
+                    rv = run(self.clicked)
                 if rv is not None:
                     return rv
 
@@ -747,12 +830,14 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             return self.child.event(ev, x, y, st)
 
+
         # Handle moves by moving things relative to the grab point.
         if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
 
             handled = True
 
-            if (not self.drag_moved) and (self.start_x != par_x or self.start_y != par_y):
+            if (not self.drag_moved) and (self.start_x != (par_x - self.grab_x)
+                    or self.start_y != (par_y - self.grab_y)):
                 self.drag_moved = True
                 self.click_time = None
 
@@ -762,6 +847,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             if self.drag_moved:
                 for i, xo, yo in joined_offsets: # type: ignore
+                    i = self.get_drag_from_name(i)
 
                     new_x = int(par_x - self.grab_x + xo) # type: ignore
                     new_y = int(par_y - self.grab_y + yo) # type: ignore
@@ -831,6 +917,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             self.last_drop = drop # type: ignore
 
+
         if self.drag_moved:
             self.update_style_prefix()
 
@@ -848,8 +935,6 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             self.set_style_prefix("hover_", True)
 
-            self.grab_x = None
-            self.grab_y = None
             self.last_drop = None
 
             if self.drag_moved:
@@ -859,22 +944,33 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
                 if drag.dragged is not None:
                     rv = run(drag.dragged, joined, drop)
                     if rv is not None:
+                        self.grab_x = None
+                        self.grab_y = None
                         return rv
 
                 # Call the drop callback.
                 if drop is not None and drop.dropped is not None: # type: ignore
                     rv = run(drop.dropped, drop, joined) # type: ignore
                     if rv is not None:
+                        self.grab_x = None
+                        self.grab_y = None
                         return rv
 
             else:
 
                 # Call the clicked callback.
                 if self.clicked:
-                    rv = run(self.clicked)
+                    try:
+                        rv = self.clicked(self)
+                    except TypeError:
+                        rv = run(self.clicked)
                     if rv is not None:
+                        self.grab_x = None
+                        self.grab_y = None
                         return rv
 
+            self.grab_x = None
+            self.grab_y = None
             self.drag_moved = False
 
         if handled:

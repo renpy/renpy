@@ -2002,7 +2002,7 @@ Drag
 ----
 
 Creates a :class:`Drag` that can be dragged around the screen. With the
-acception of `d`, which is supplied by the screen language, this takes
+exception of `d`, which is supplied by the screen language, this takes
 all properties defined in that class.
 
 It also takes the following properties:
