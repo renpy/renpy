@@ -231,6 +231,9 @@ def init():
     disk, so that we can configure the savelocation system.
     """
 
+    if renpy.config.early_developer and not PY2:
+        init_debug_pickler()
+
     filename = os.path.join(renpy.config.savedir, "persistent.new") # type: ignore
     persistent = load(filename)
 
@@ -246,6 +249,34 @@ def init():
         backup[k] = safe_deepcopy(v)
 
     return persistent
+
+
+def init_debug_pickler():
+    import io, pickle
+
+    safe_types = set()
+
+    for d in renpy.python.store_dicts.values():
+        for v in d.values():
+            if isinstance(v, type):
+                safe_types.add(v)
+
+    class DebugPickler(pickle.Pickler):
+        def reducer_override(self, obj):
+            t = obj if isinstance(obj, type) else type(obj)
+
+            if t not in safe_types and t.__module__.startswith("store"):
+                cls = (t.__module__ + '.' + t.__qualname__)[6:]
+                raise TypeError("{} is not safe for use in persistent.".format(cls))
+
+            return NotImplemented # lets normal reducing take place
+
+    global dumps
+
+    def dumps(o):
+        b = io.BytesIO()
+        DebugPickler(b, renpy.compat.pickle.PROTOCOL).dump(o)
+        return b.getvalue()
 
 
 # A map from field name to merge function.
@@ -408,6 +439,9 @@ def save():
     """
     Saves the persistent data to disk.
     """
+
+    if not renpy.config.save_persistent:
+        return
 
     if not should_save_persistent:
         return

@@ -235,6 +235,10 @@ init -1500 python:
         * Preference("voice after game menu", "disable") - Will cause the voice to stop being played when entering the game menu.
         * Preference("voice after game menu", "toggle") - Will toggle the voice after game menu state.
 
+        * Preference("restore window position", "enable") - Will cause the window position to be restored when the game is started.
+        * Preference("restore window position", "disable") - Will cause the window position to not be restored when the game is started.
+        * Preference("restore window position", "toggle") - Will toggle the restore window position state.
+
         Values that can be used with bars are:
 
         * Preference("text speed")
@@ -561,6 +565,15 @@ init -1500 python:
                     return SetField(_preferences, "voice_after_game_menu", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "voice_after_game_menu")
+
+            elif name == _("restore window position"):
+
+                if value == "enable":
+                    return SetField(_preferences, "restore_window_position", True)
+                elif value == "disable":
+                    return SetField(_preferences, "restore_window_position", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "restore_window_position")
 
             mixer_names = {
                 "main" : "main",

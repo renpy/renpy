@@ -296,6 +296,38 @@ All user interface statements take the following common properties:
     The default focus is only used when the last interaction was not
     a mouse click, mouse movement, or touch.
 
+.. screen-property:: extra_alt
+
+    This is used to specify extra alt text for :doc:`self_voicing`.
+    If defined, the extra alt text is spoken to the player when the
+    '?' key is pressed, and self-voicing ie enabled.
+
+    The ``extra_alt`` is inherited by all children of the displayable,
+    unless they have a more specific ``extra_alt`` set.
+
+    Extra alt text is intended to provide vision-impaired players with
+    additional information about groups of displayables.
+
+.. screen-property:: focus
+
+    Takes a string or integer, and gives a name to the displayable
+    for focus purposes. Ren'Py looks for structural similarity between
+    focus names when deciding with displayable to give focus to at the
+    start of an interaction. If a box is given a focus name, and the
+    third button in that box is focused at the end of an interaction,
+    the third button of a box with the same will be highlighted at
+    the start of the next interaction.
+
+.. screen-property:: group_alt
+
+    This is used to specify a group prefix for :doc:`self_voicing`.
+    When self-voicing is enabled, a group prefix is spoken the first time a displayable
+    with the same group prefix is focused, but will not be spoken again until a
+    displayable with a different group prefix is focused.
+
+    The ``group_alt`` is inherited by all children of the displayable,
+    unless they have a more specific ``group_alt`` set.
+
 .. screen-property:: id
 
     An identifier for the user-interface statement. When a screen is
@@ -352,16 +384,6 @@ All user interface statements take the following common properties:
     If no style prefix is in use, this is used directly as the name of
     the style. A style suffix applies to a single displayable only, not
     a displayable and all children.
-
-.. screen-property:: focus
-
-    Takes a string or integer, and gives a name to the displayable
-    for focus purposes. Ren'Py looks for structural similarity between
-    focus names when deciding with displayable to give focus to at the
-    start of an interaction. If a box is given a focus name, and the
-    third button in that box is focused at the end of an interaction,
-    the third button of a box with the same will be highlighted at
-    the start of the next interaction.
 
 .. screen-property:: tooltip
 
@@ -1128,7 +1150,7 @@ One use of nearrect is for dropdown menus::
 
             has vbox
 
-            # This is the button that is clicked to enable the dropdown,
+            # This is the button that is clicked to enable the dropdown
             textbutton "Difficulty: [difficulty]":
 
                 # This action captures the focus rectangle, and in doing so,
@@ -1139,7 +1161,7 @@ One use of nearrect is for dropdown menus::
                 action Return()
 
         # All sorts of other screen elements could be here, but the nearrect needs
-        # be at the top level, and the last thing show, apart from its child.
+        # to be at the top level, and the last thing shown, apart from its child.
 
         # Only if the focus has been captured, display the dropdown.
         # You could also use showif instead of basic if

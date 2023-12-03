@@ -278,9 +278,6 @@ class Backup(_object):
         # A map from module to the set of names in that module.
         self.names = { }
 
-        if mobile:
-            return
-
         for m in sys.modules.values():
             if m is None:
                 continue
@@ -466,6 +463,7 @@ def import_all():
     import renpy.display.render
     import renpy.display.displayable
     import renpy.display.core
+    import renpy.display.scenelists
     import renpy.display.swdraw
 
     import renpy.text
@@ -571,8 +569,7 @@ def import_all():
 
     global backup
 
-    if not mobile:
-        backup = Backup()
+    backup = Backup()
 
     post_import()
 
@@ -618,8 +615,8 @@ def reload_all():
     returned.
     """
 
-    if mobile:
-        raise Exception("Reloading is not supported on mobile platforms.")
+    # if mobile:
+    #     raise Exception("Reloading is not supported on mobile platforms.")
 
     import renpy
 
@@ -743,6 +740,7 @@ if 1 == 0:
     from . import translation
     from . import uguu
     from . import ui
+    from . import update
     from . import util
     from . import vc_version
     from . import versions

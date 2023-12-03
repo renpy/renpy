@@ -271,6 +271,9 @@ class Variations:
     Represents the variations of a font.
     """
 
+    # Ensure this isn't shortened by the console.
+    _console_always_long = True
+
     def __init__(self):
         # A map fron a named instance name to its index.
         self.instance = { }
@@ -279,9 +282,6 @@ class Variations:
         self.axis = { }
 
     def __repr__(self):
-        return "<Variations instance={!r} axes={!r}>".format(self.instance, self.axis)
-
-    def dump(self):
         rv = [ ]
 
         for k in self.instance:
@@ -1057,9 +1057,9 @@ cdef class HBFont:
                     for px from underline_x <= px < underline_end:
                         line = pixels + py * pitch + px * 4
 
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
+                        line[0] = Sr * Sa // 255
+                        line[1] = Sg * Sa // 255
+                        line[2] = Sb * Sa // 255
                         line[3] = Sa
 
             # Strikethrough.
@@ -1073,7 +1073,7 @@ cdef class HBFont:
                     for px from underline_x <= px < underline_end:
                         line = pixels + py * pitch + px * 4
 
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
+                        line[0] = Sr * Sa // 255
+                        line[1] = Sg * Sa // 255
+                        line[2] = Sb * Sa // 255
                         line[3] = Sa

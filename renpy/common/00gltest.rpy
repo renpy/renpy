@@ -335,8 +335,6 @@ init -1500 python:
         if renpy.mobile:
             return
 
-        renpy.renpy.display.log.write("Performance test:")
-
         # This will cause the screen to start displaying.
         ui.pausebehavior(0)
         ui.interact(suppress_underlay=True, suppress_overlay=True)

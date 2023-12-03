@@ -424,6 +424,8 @@ init -1500 python:
                 return False
             elif (self.page or persistent._file_page) == "auto":
                 return False
+            elif not config.save:
+                return False
             else:
                 return True
 

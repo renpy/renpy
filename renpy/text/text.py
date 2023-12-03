@@ -202,7 +202,7 @@ class TextSegment(object):
             self.default_font = source.default_font
             self.shaper = source.shaper
             self.instance = source.instance
-            self.axis = source.instance
+            self.axis = source.axis
 
         else:
             self.hyperlink = 0

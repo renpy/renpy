@@ -883,6 +883,11 @@ python early in layeredimage:
         ll = l.subblock_lexer()
 
         while ll.advance():
+            if ll.keyword("pass"):
+                ll.expect_eol()
+                ll.expect_noblock("pass")
+                continue
+
             line(ll)
             ll.expect_eol()
             ll.expect_noblock('attribute')
@@ -917,18 +922,23 @@ python early in layeredimage:
 
         if not l.match(':'):
             l.expect_eol()
-            l.expect_noblock('attribute')
+            l.expect_noblock('always')
             return
 
-        l.expect_block('attribute')
+        l.expect_block('always')
         l.expect_eol()
 
         ll = l.subblock_lexer()
 
         while ll.advance():
+            if ll.keyword("pass"):
+                ll.expect_eol()
+                ll.expect_noblock("pass")
+                continue
+
             line(ll)
             ll.expect_eol()
-            ll.expect_noblock('attribute')
+            ll.expect_noblock('always')
 
         if a.image is None:
             l.error("The always statement must have a displayable.")
@@ -954,6 +964,11 @@ python early in layeredimage:
             ll = l.subblock_lexer()
 
             while ll.advance():
+                if ll.keyword("pass"):
+                    ll.expect_eol()
+                    ll.expect_noblock("pass")
+                    continue
+
                 if ll.keyword("attribute"):
                     parse_attribute(ll, rv)
                     continue
@@ -987,7 +1002,12 @@ python early in layeredimage:
         rv = RawCondition(condition)
 
         while ll.advance():
-
+            # not necessary : the if/elif/else blocks require a displayable,
+            # so they can't be empty in the first place anyway
+            # if ll.keyword("pass"):
+            #     ll.expect_eol()
+            #     ll.expect_noblock("pass")
+            #     continue
 
             while True:
 
@@ -1076,6 +1096,11 @@ python early in layeredimage:
 
             elif ll.keyword('always'):
                 parse_always(ll, rv)
+                ll.advance()
+
+            elif ll.keyword("pass"):
+                ll.expect_noblock("pass")
+                ll.expect_eol()
                 ll.advance()
 
             else:

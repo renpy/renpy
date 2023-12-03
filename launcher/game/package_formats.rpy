@@ -33,7 +33,6 @@ init python in distribute:
 
     from zipfile import crc32
 
-
     # Since the long type doesn't exist on py3, define it here
     if not PY2:
         long = int
@@ -195,7 +194,7 @@ init python in distribute:
 
             self.zipfile.write_with_info(zi, path)
 
-        def close(self):
+        def close(self, progress=None):
             self.zipfile.close()
 
 
@@ -243,8 +242,9 @@ init python in distribute:
         def add_directory(self, name, path):
             self.add_file(name, path, True)
 
-        def close(self):
+        def close(self, progress=None):
             self.tarfile.close()
+
 
     class UpdatePackage(TarPackage):
 
@@ -255,7 +255,7 @@ init python in distribute:
 
             TarPackage.__init__(self, filename, "w", notime=True)
 
-        def close(self):
+        def close(self, progress=None):
             TarPackage.close(self)
 
             cmd = [
@@ -281,7 +281,6 @@ init python in distribute:
                             break
 
                         sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
-
 
 
     class DirectoryPackage(object):
@@ -315,8 +314,9 @@ init python in distribute:
             fn = os.path.join(self.path, name)
             self.mkdir(fn)
 
-        def close(self):
+        def close(self, progress=None):
             return
+
 
     class ExternalZipPackage(object):
 
@@ -331,7 +331,7 @@ init python in distribute:
         def add_directory(self, name, path):
             self.dp.add_directory(name, path)
 
-        def close(self):
+        def close(self, progress=None):
             self.dp.close()
 
             if os.path.exists(self.path):
@@ -350,15 +350,63 @@ init python in distribute:
             shutil.rmtree(self.directory)
 
 
-
     class DMGPackage(DirectoryPackage):
         def __init__(self, path, make_dmg):
             self.make_dmg = make_dmg
             DirectoryPackage.__init__(self, path)
 
-        def close(self):
+        def close(self, progress=None):
             DirectoryPackage.close(self)
             self.make_dmg()
+
+
+    class RPUPackage(object):
+
+        generator = None
+
+        def __init__(self, directory, variant):
+            import renpy.update.common
+
+            self.directory = directory + "/rpu"
+            self.variant = variant
+            self.file_list = renpy.update.common.FileList()
+
+            if not os.path.exists(self.directory):
+                os.mkdir(self.directory)
+
+        def add_file(self, name, path, xbit):
+            self.file_list.add_file(name, path, xbit)
+
+        def add_directory(self, name, _path):
+            self.file_list.add_directory(name)
+
+        def close(self, progress=None):
+            import renpy.update.generate
+
+            if RPUPackage.generator is None:
+                RPUPackage.generator = renpy.update.generate.BlockGenerator(self.directory)
+
+            RPUPackage.generator.generate(self.variant, self.file_list, progress)
+
+        @staticmethod
+        def reset():
+            RPUPackage.generator = None
+
+
+    class NullPackage(object):
+        """
+        A package format that doesn't create an output file,
+        only updates.
+        """
+
+        def add_file(self, name, path, xbit):
+            return
+
+        def add_directory(self, name, _path):
+            return
+
+        def close(self, progress=None):
+            return
 
 
     parallel_threads = [ ]
@@ -378,7 +426,7 @@ init python in distribute:
         def add_directory(self, name, path):
             self.worklist.append((True, name, path, True))
 
-        def close(self):
+        def close(self, progress=None):
             t = threading.Thread(target=self.run)
             t.start()
 

@@ -313,7 +313,7 @@ class Context(renpy.object.Object):
             oldsl = None
             self.images = renpy.display.image.ShownImageInfo(None)
 
-        self.scene_lists = renpy.display.core.SceneLists(oldsl, self.images)
+        self.scene_lists = renpy.display.scenelists.SceneLists(oldsl, self.images)
 
         for i in renpy.config.context_copy_remove_screens:
             self.scene_lists.remove("screens", i, None)
@@ -776,6 +776,8 @@ class Context(renpy.object.Object):
         rv.abnormal = self.abnormal
         rv.last_abnormal = self.last_abnormal
         rv.abnormal_stack = list(self.abnormal_stack)
+
+        rv.interacting = False
 
         return rv
 

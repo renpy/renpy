@@ -3,10 +3,11 @@
 }
 
 @media only screen and (min-width: 481px) {
-    div[role="search"] {
+    [role="search"] {
         top: 12.944px;
         margin-bottom: 12.944px;
         width: 274.125px;
+        padding-right: 1em;
         position: fixed;
         z-index: 1;
     }
@@ -14,6 +15,15 @@
     .wy-side-nav-search {
         padding-top: 41.944px;
         padding-bottom: 0px !important;
+        padding-right: 2.5em !important;
+    }
+
+    .wy-nav-side {
+        padding-bottom: 0px;
+    }
+
+    .wy-side-scroll {
+        width: 100%;
     }
 }
 

@@ -487,8 +487,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.update()
 
     def set_transform_event(self, event):
-        super(ScreenDisplayable, self).set_transform_event(event)
-        self.current_transform_event = event
+        try:
+            push_current_screen(self)
+            super(ScreenDisplayable, self).set_transform_event(event)
+            self.current_transform_event = event
+        finally:
+            pop_current_screen()
 
     def find_focusable(self, callback, focus_name):
 
@@ -552,8 +556,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             hid = self.copy()
 
-            for i in self.child.children:
-                i.set_transform_event(kind)
+            try:
+                push_current_screen(self)
+
+                for i in self.child.children:
+                    i.set_transform_event(kind)
+            finally:
+                pop_current_screen()
+
 
         hid.phase = HIDE
         hid.copied_from = self
@@ -702,8 +712,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         if self.current_transform_event:
 
-            for i in self.child.children:
-                i.set_transform_event(self.current_transform_event)
+            try:
+                push_current_screen(self)
+
+                for i in self.child.children:
+                    i.set_transform_event(self.current_transform_event)
+
+            finally:
+                pop_current_screen()
 
             self.current_transform_event = None
 
@@ -1136,6 +1152,80 @@ def get_screen(name, layer=None):
     return None
 
 
+def get_screen_variable(name, screen=None, layer=None):
+    """
+    :doc: screens
+    :args: (name, *, screen=None, layer=None)
+
+    Returns the value of a variable in the scope of a screen.
+
+    `name`
+        The name of the variable to return.
+
+    `screen`
+        The name of the screen to return the variable from. If None,
+        the current screen is used. (The current screen is only defined
+        when updating a screen, and in actions that are run inside the
+        screen.)
+
+    `layer`
+        The layer to find the screen on, if `screen` is not None.
+    """
+
+    if screen is None:
+        s = current_screen()
+        if s is None:
+            raise ValueError("There is no current screen.")
+
+    else:
+        s = get_screen(screen, layer)
+        if s is None:
+            raise ValueError("Screen %s is not showing." % (name,))
+
+    if name not in s.scope:
+        raise NameError("Screen %s does not have a variable named %s." % (screen.name, name))
+
+    return s.scope[name]
+
+def set_screen_variable(name, value, screen=None, layer=None):
+    """
+    :doc: screens
+    :args: (name, value, *, screen=None, layer=None)
+
+    Sets a variable to a value in the scope of a screen. Note that this
+    will not immediately update the variable's value - call
+    :func:`renpy.restart_interaction` to cause the screen to be updated.
+
+    `name`
+        The name of the variable to set. This should be a variable
+        created with the :ref:`sl-default` statement, as optimization
+        may prevent changes to other variables from being visible.
+
+    `value`
+        The value to set the variable to.
+
+    `screen`
+        The name of the screen to return the variable from. If None,
+        the current screen is used. (The current screen is only defined
+        when updating a screen, and in actions that are run inside the
+        screen.)
+
+    `layer`
+        The layer to find the screen on, if `screen` is not None.
+    """
+    if screen is None:
+        s = current_screen()
+        if s is None:
+            raise ValueError("There is no current screen.")
+
+    else:
+        s = get_screen(screen, layer)
+        if s is None:
+            raise ValueError("Screen %s is not showing." % (name,))
+
+    s.scope[name] = value
+
+
 def has_screen(name):
     """
     Returns true if a screen with the given name exists.
@@ -1254,7 +1344,7 @@ def show_screen(_screen_name, *_args, **kwargs):
         d.cache = cache_get(screen, _args, kwargs)
         d.phase = SHOW
 
-    sls = renpy.display.core.scene_lists()
+    sls = renpy.display.scenelists.scene_lists()
 
     sls.add(_layer, d, _tag, zorder=_zorder, transient=_transient, keep_st=True, name=name)
     sls.shown.predict_show(_layer, (_tag,), True)
@@ -1347,7 +1437,7 @@ def hide_screen(tag, layer=None):
     screen = get_screen(tag, layer)
 
 
-    sls = renpy.display.core.scene_lists()
+    sls = renpy.display.scenelists.scene_lists()
 
     if screen is not None:
         sls.remove(layer, screen.tag)

@@ -1457,7 +1457,34 @@ cdef class Render:
         if x < 0 or y < 0 or x >= self.width or y >= self.height:
             return False
 
-        return renpy.display.draw.is_pixel_opaque(self, x, y)
+        what = self.subsurface((x, y, 1, 1))
+
+        if what.is_fully_transparent():
+            return False
+
+        return renpy.display.draw.is_pixel_opaque(what)
+
+    def is_fully_transparent(self):
+        """
+        Returns true if we are sure this pixel is fully transparent.
+
+        This is intended to help optimize is_pixel_opaque, by making
+        the draw unnecessary if there is no child render at the given
+        location. It can be wrong, so long as it errs by returning
+        False.
+        """
+
+        if self.alpha == 0:
+            return True
+
+        for (child, xo, yo, focus, main) in self.children:
+            if isinstance(child, Render):
+                if not child.is_fully_transparent():
+                    return False
+            else:
+                return False
+
+        return True
 
 
     def fill(self, color):

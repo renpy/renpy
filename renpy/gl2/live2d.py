@@ -482,7 +482,7 @@ def update_states():
 
         state.cycle_new = True
 
-    sls = renpy.display.core.scene_lists()
+    sls = renpy.display.scenelists.scene_lists()
 
     for d in sls.get_all_displayables(current=True):
         if d is not None:
@@ -660,6 +660,9 @@ class Live2D(renpy.display.displayable.Displayable):
         return [ i for i in common.attributes if i in available ]
 
     def _choose_attributes(self, tag, attributes, optional):
+
+        # Filter out _sustain.
+        attributes = [ i for i in attributes if i != "_sustain" ]
 
         common = self.common
 

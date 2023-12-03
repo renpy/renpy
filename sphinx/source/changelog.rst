@@ -10,44 +10,66 @@ Changelog (Ren'Py 7.x-)
 8.2.0 / 7.7.0
 =============
 
-Emoji and Other Text Improvements
----------------------------------
 
-Ren'Py's text handing has gotten an overhaul in this release, with the
-intent of supporting Emoji and scripts that require complext text shaping,
-like Indic languages. This required many changes.
+Harfbuzz Integration
+--------------------
 
-The first was a change in the way Ren'Py handles font autohinting, to take
-advantage of more information in the fonts. This may cause some of the
-fonts to change shape slightly, but is required to allow script-like
-fonts to combine properly.
+Ren'Py now uses the Harfbuzz library to perform text shaping. On all
+versions of Ren'Py, Harfbuzz is used to supply additional information
+to the freetype authinter.
 
-The second change is only enabled in Ren'Py 8, and that's the use of the
-Harfbuzz library to shape text. Harfbuzz is used reorder and select different
-glyphs based on the context they're in and the language of the text provided.
+On Ren'Py 8, Harfbuzz is also used to shape text, reordering and selecting
+gtlphs based on the context they're in and the language of the text provided.
+This is required to support scripts that require complex text shaping,
+such as Brahmic/Indic scripts. (You'll need to provide a font that
+supports the appropriate language.)
 
-Next, Ren'Py has gained the ability to render fonts that use the COLR section
-to provide color glyphs. These are general fonts used for Emoji. Ren'Py ships
-with a font that contains the Twiemoji image, which covers a majority of the
-Emoji in use.
+The new :propref:`shaper` style property controls the shaper used to text,
+for compatibility with older versions of Ren'Py.
 
-Ren'Py now automatically switches to the Emoji font when it encounters Emoji
-characters in text. The supported characters are those in the `Emoji 15 <https://unicode.org/Public/emoji/15.0/emoji-test.txt>`_
-set. Harfbuzz support is required to render joining sequences of Emoji,
+
+Emoji-Related Text Improvements
+-------------------------------
+
+Next, Ren'Py has gained the ability to render fonts that use the COLRv0 standard
+to provide color glyphs. Ren'Py ships with a font that contains the Twiemoji images,
+which covers a majority of the Emoji in use (but not all of them).
+
+Ren'Py will automatically switch to the Emoji font when it encounters Emoji
+characters in text. The supported characters are those in the
+`Emoji 15.1 <https://unicode.org/Public/emoji/15.1/emoji-test.txt>`_ standard.
+
+Ren'Py 8 with Harfbuzz shaping is required to render joining sequences of Emoji,
 including things like gender and skin-tone modifiers, so you'll need Ren'Py 8
 to have those work. This switching occurrs when a font tag is not being
 used.
 
-The new :propref:`emoji_font`, :propref:`prefer_emoji` and :propref:`shaper`
-style properties help control these new text rendering features.
+The new :propref:`emoji_font`, :propref:`prefer_emoji` style properties control
+Emoji font selection.
 
 Fundamentally, you can include Emoji into your game by typing it into your
 script as character dialogue. For example::
 
     e "I'm feeling 😃 today."
 
-Text in Indic languages should also be supported, but you'll need to find a
-font that supports the language you're using.
+Variable Fonts
+--------------
+
+Ren'Py now supports OpenType variable fonts. These are fonts that use
+one or more axes of variablity to change how the font is rendered. For
+example, a font may have the "weight" axis, which controls how bold the
+font is, and the "width" axis, which controls how wide the font is.
+
+Variable font support required Ren'Py 8 and the harfbuzz shaper to work.
+
+To support variable fonts, Ren'Py has added the :propref:`instance` and
+:propref:`axis` style properties, and the :tt:`instance` and :tt:`axis`
+text tags, as well as the :func:`renpy.variable_font_info` function.
+
+See the :ref:`variable fonts documentation <variable-fonts>` for more information.
+
+Font Hinting
+------------
 
 There is a new :propref:`hinting` mode "auto-light", that performs autohinting
 in the vertical but not horizontal direction.
@@ -59,6 +81,20 @@ control hinting per-use. For example::
     define config.font_hinting["MyFont.tff"] = "bytecode"
 
 enables bytecode hinting for MyFont.ttf.
+
+Text Interpolation Improvements
+-------------------------------
+
+When a variable is interpolated into a string, and the interpolation namespace
+exists, that namespace will be searched for the values to interpolate. For
+example, ::
+
+    define t = "Not shown."
+    define interpolate.t = "Shown."
+
+    label start:
+        e "[t]" # Will show "Shown."
+
 
 Speech Bubble Improvements
 --------------------------
@@ -74,8 +110,129 @@ that filter the list of bubble property names based on the image tag
 that's speaking. This makes it possible to have bubbles that are
 specific to some but not all characters.
 
+Position types and ATL interpolation
+------------------------------------
+
+ATL interpolations, which are statements such as ``linear 1. xpos .6`` (and
+have nothing to do with text interpolation), now accept interpolation between
+positions of different types. This allows the following, which was previously
+documented against and didn't work::
+
+    transform mixed:
+        xycenter (520, 300)
+        easein 3. align (.0, .0)
+
+    label muxed:
+        show a at Transform(pos=(.5, .6))
+
+        "..."
+
+        show a at Transform(pos=(520, 150))
+
+As part of the implementation of this new feature, there is a new
+:term:`position` type, called :class:`position`, which enables you to provide
+both a absolute and a relative component to place or size a displayable. For
+example, you can now tell something to be ``xsize position(-10, .5)``, and the
+displayable will make the displayable take half of the horizontal space offered
+to it, minus 10 pixels.
+
+Developer Tools
+---------------
+
+There is a new "Skip splashscreen" option in Options section
+of the launcher preferences. When checked, this will cause
+games launched to skip the splashscreen label when starting.
+
+A new 'Show Filename and Line' option is avilable from the
+shift+D developer menu. When enabled, this will cause the
+filename and line number of the current statement to be
+displayed. Clicking on the filename and line will open
+the file in the default text editor, at the given line,
+if possible.
+
+Data Actions
+------------
+
+The :ref:`data-actions` are now presented and explained in a more
+condensed manner. These actions have been reimplemented using a data
+manager that describes what to do with the data (Set-, Toggle-, Cycle-, Increment-)
+and a data accessor that describes the kind of data to change (-Variable, -ScreenVariable,  -LocalVariable, -Field, -Dict).
+
+There are two new managers:
+
+* The Cycle- actions (CycleVariable, CycleLocalVariable, CycleField...)
+  take a list of values and each time the action is run (i.e each time
+  the button is clicked), the target value is set to be the next element in
+  the list.
+* The Increment- actions (IncrementVariable, IncrementDict, IncrementField...)
+  add a certain value (by default, 1) to the target value. These can also be used
+  to decrement the field.
+
+The :class:`LocalVariableValue` bar value and :class:`LocalVariableInputValue` input
+values have been added, for completeness.
+
+HTTPS/HTTP Fetch
+----------------
+
+Ren'Py now has better support for :doc:`fetch`, using the new renpy.fetch
+function. While the Requests library still remains supported on Desktop and Mobile,
+(it's used internally by Ren'Py), the new fetch function:
+
+* Support GET, POST, and PUT requests for HTTPS and HTTP URLs.
+* Supports fetching from the web platform, subject to the rules of the web platform.
+* Will not block the game while downloading.
+* Can take data as either bytes or objects that be encoded to JSON.
+* Can return data as bytes, as string, or objects decoded from JSON.
+
+Accessibility
+-------------
+
+The new :scpref:`group_alt` property available on screen language
+displayables allows the creator to specify text that is spoken the first
+time one of a group of related displayables is spoken.
+
+The new :scpref:`extra_alt` property available on screen language
+displayables allows the creator to specify text that is spoken when the
+'?' key is pressed, to provide additional information about the displayable.
+
+Both of these properties are inherited by the children of the displayable,
+unless they are overridden by a more specific value in the child.
+
+The new :func:`renpy.alt` function can be used to speak text using
+the self-voicing system.
+
+\_\_future\_\_ in python
+------------------------
+
+Ren'Py now allows creators to pass
+`\_\_future\_\_ compiler directives <https://docs.python.org/reference/simple_stmts.html#future>`__
+for Python code run in Ren'Py. This is done using the ``rpy python xxx``
+statement at the top of the .rpy file(s) on which you want them to apply,
+where ``xxx`` is the name of the future feature. For example::
+
+    rpy python annotations
+
 Features
 --------
+
+The new :var:`renpy.get_screen_variable` and :var:`renpy.get_screen_variable`
+make it possible to access screen variables, especially in :class:`Action`
+subclasses.
+
+The new :var:`build.time` variable is set to the time the game was built.
+
+The new :var:`build.info` variable lets you store information at
+build time, and read it back in the distributed game.
+
+When the top left pixels of :ref:`presplash <presplash>` image is
+transparent, the presplash will be displayed in a window that uses
+1-bit transparency.
+
+The new :func:`EditFile` action attempts to open a file and
+line in a text editor.
+
+The virtual dpi of an SVG file can be set with the new `dpi`
+parameter to :func:`Image`.
 
 The new :func:`CopyToClipboard` action copies text to the clipboard.
 
@@ -108,9 +265,39 @@ The ``jump expression`` statement can now take a local label name of the form
 ".local_name". Previously, only "global_name" or "global_name.local_name" were
 allowed.
 
+:ref:`creator-defined-sl` can now copy all properties from other screen
+language statements.
+
+The new :func:`renpy.invoke_in_main_thread` function can be used by a Python
+thread to invoke a function in the main Ren'Py thread. (Most Ren'Py functions
+can only be called from the main thread.)
+
 
 Other Changes
 -------------
+
+The pixel transparency test used by :propref:`focus_mask` will now
+only involve the GPU if inside the bounding box of non-transparent pixels,
+improving performance in some cases.
+
+Ren'Py now uses the GL2 renderer by default on all platforms, and ignores
+the config.gl2 variable. This is because of issues with the old GL renderer
+that are not present in the GL2 renderer. On ancient hardware, it's still
+possible to use the GL renderer by pressing shift+G and enabling it
+directly.
+
+On PC platforms (Windows, Mac, and Linux), when the game window moves,
+its position is stored. The window's position will be restored when the
+game is run again, if:
+
+* The layout of the player's monitors hasn't changed.
+* The window is fully contained on the player's monitors.
+
+Otherwise, the window will be centered on the primary monitor.
+
+On controllers (including the Steam Deck), the function of the B button
+has changed to show and hide the game menu. The previous behavior of the
+B button, selecting a button's alternate function, has been moved to X.
 
 The non-default hardware video playback path has been removed from android
 and ios. This path hadn't been the defaults since 2020, as it supported
@@ -148,7 +335,7 @@ completes.
 .. _renpy-8.1.3:
 .. _renpy-7.6.3:
 
-8.1.2 / 7.6.2
+8.1.3 / 7.6.3
 =============
 
 Changes
@@ -160,6 +347,27 @@ in the gl2 renderer that are not present in the gl renderer.
 
 MMX acceleration for video playback has been re-enabled on Windows and
 Linux.
+
+The way the Steam Deck keyboard is shown has changed. They keyboard
+is now shown, once, when a text input is displayed. By default, the
+keyboard is shown at the top of the screen, and the keyboard will
+only be shown once. If it's hidden (for example, the Steam button
+is pressed), the player needs to hit Steam+X to show it. This works
+around issues with the Steam Deck.
+
+The 32-bit windows Live2D library will be installed into Ren'Py 7.
+You may need to reinstall Live2D to get this library.
+
+Fixes
+-----
+
+An issue that prevented keys from being bound to text (for example,
+keysyms like "r" rather than "K_r") has been fixed.
+
+There have been several documentation fixes.
+
+An issue with rollback not working at the start of the game has been
+fixed.
 
 
 .. _renpy-8.1.2:
@@ -311,7 +519,7 @@ transition would often incorrectly restart.
 Preferences no longer have defaults, meaning all preferences can be
 changed using the ``default`` statement.
 
-The :term:`absolute <position>` type, used to represent absolute amounts of pixels,
+The :func:`absolute` type, used to represent absolute amounts of pixels,
 now ensures the result of mathematical operations with integers and
 floats remain absolute numbers. This fixes a class of problems where
 operations performed on absolutes could produce the incorrect
@@ -778,7 +986,7 @@ clicking on the attribute name.
 
 The :func:`Text` displayable now takes a new `tokenized` argument. When
 true, the Text displayable expects to take a list of tokens taken from
-a :ref:`custom text tag <custom-text-tags>`.
+a :doc:`custom text tag <custom_text_tags>`.
 
 Two new layers are now part of Ren'Py. The "top" layer is displayed above
 all other layers, and does not participate in transitions. This makes

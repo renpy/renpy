@@ -33,6 +33,7 @@ from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
 from renpy.display.behavior import map_event, run, run_unhovered
 
+import weakref
 
 def default_drag_group():
     """
@@ -309,12 +310,13 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
     focusable = True
 
-    drag_group = None
     old_position = None
     drag_offscreen = False
     activated = None
     alternate = None
     dragging = None
+
+    drag_group_weakref = None
 
     # The time a click started, or None if a click is not in progress.
     click_time = None
@@ -467,6 +469,20 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
     @property
     def _draggable(self):
         return self.draggable
+
+    @property
+    def drag_group(self):
+        if self.drag_group_weakref is not None:
+            return self.drag_group_weakref()
+        else:
+            return None
+
+    @drag_group.setter
+    def drag_group(self, value):
+        if value is None:
+            self.drag_group_weakref = None
+        else:
+            self.drag_group_weakref = weakref.ref(value)
 
     def snap(self, x, y, delay=0, warper=None):
         """
@@ -955,6 +971,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
             self.grab_x = None
             self.grab_y = None
+            self.drag_moved = False
 
         if handled:
             raise renpy.display.core.IgnoreEvent()
@@ -1025,7 +1042,8 @@ class DragGroup(renpy.display.layout.MultiBox):
         """
         :doc: drag_drop method
 
-        Adds `child`, which must be a Drag, to this DragGroup.
+        Adds `child`, which must be a Drag, to this DragGroup. This child
+        will be added above all other children of this DragGroup.
         """
 
         if not isinstance(child, Drag):
@@ -1035,6 +1053,12 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         self.sorted = False
         renpy.display.render.invalidate(self)
+
+        if isinstance(child, Drag):
+            child.drag_group = self
+
+            if renpy.config.drag_group_add_top:
+                child.top()
 
     def remove(self, child):
         """

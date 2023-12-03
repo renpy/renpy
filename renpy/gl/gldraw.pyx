@@ -1097,15 +1097,13 @@ cdef class GLDraw:
         return rv
 
 
-    def is_pixel_opaque(self, what, x, y):
+    def is_pixel_opaque(self, what):
         """
         Returns true if the pixel is not 100% transparent.
+
+        `what`
+            A 1x1 Render.
         """
-
-        if x < 0 or y < 0 or x >= what.width or y >= what.height:
-            return 0
-
-        what = what.subsurface((x, y, 1, 1))
 
         reverse = IDENTITY
 

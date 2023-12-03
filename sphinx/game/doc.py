@@ -90,7 +90,7 @@ def sl2_keywords():
 
     rv = set()
 
-    for i in renpy.sl2.slparser.statement_names:
+    for i in sorted(renpy.sl2.slparser.statements):
         rv.add(i)
 
     rv.remove("icon")
