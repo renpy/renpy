@@ -461,6 +461,17 @@ if "RENPY_FORCE_SUBFILE" in os.environ:
 
         return RWopsIO(name, base=0, length=length)
 
+
+if "RENPY_FORCE_BUFFER" in os.environ:
+
+    def open_file(name, mode):
+
+        with open(name, mode) as f:
+            data = f.read()
+
+        return RWopsIO.from_buffer(data, name=name)
+
+
 # A list of callbacks to open an open python file object of the given type.
 file_open_callbacks = [ ]
 
@@ -568,7 +579,7 @@ def load_from_archive(name):
                     f.seek(offset)
                     data.append(f.read(dlen))
 
-                return io.BytesIO(b''.join(data))
+                return io.BufferedReader(RWopsIO.from_buffer(b''.join(data), name=name))
 
     return None
 
