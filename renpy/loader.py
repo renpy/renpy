@@ -451,25 +451,28 @@ def listdirfiles(common=True):
 
 open_file = RWopsIO # type: ignore
 
-if "RENPY_FORCE_SUBFILE" in os.environ:
+if "RENPY_TEST_RWOPS" in os.environ:
 
     def open_file(name, mode):
         with RWopsIO(name, mode) as f:
+            data = f.read(1024)
             f.seek(0, 2)
             length = f.tell()
-            f.seek(0, 0)
 
-        return RWopsIO(name, base=0, length=length)
+        try:
 
+            a = RWopsIO.from_buffer(data, name=name)
 
-if "RENPY_FORCE_BUFFER" in os.environ:
+            if length <= 1024:
+                return a
 
-    def open_file(name, mode):
+            b = RWopsIO(name, mode, base=1024, length=length - 1024)
+            rv = RWopsIO.from_split(a, b, name=name)
+            return rv
 
-        with open(name, mode) as f:
-            data = f.read()
-
-        return RWopsIO.from_buffer(data, name=name)
+        except Exception:
+            import traceback
+            traceback.print_exc()
 
 
 # A list of callbacks to open an open python file object of the given type.
@@ -569,8 +572,10 @@ def load_from_archive(name):
                 rv = RWopsIO(afn, "rb", base=offset, length=dlen)
                 return io.BufferedReader(rv)
             else:
-                raise ValueError("Subfile with start temporarily not supported.")
-                # rv = SubFile(afn, offset, dlen, start)
+                a = RWopsIO.from_buffer(start, name=name)
+                b = RWopsIO(afn, "rb", base=offset, length=dlen)
+                rv = RWopsIO.from_split(a, b, name=name)
+                rv = io.BufferedReader(rv)
 
         # Compatibility path.
         else:
