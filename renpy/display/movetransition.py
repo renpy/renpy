@@ -398,15 +398,13 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
 
     def child_placement(self, child):
 
+        absolute = renpy.display.core.absolute
+
         def based(v, base):
             if v is None:
                 return 0
-            elif isinstance(v, int):
-                return v
-            elif isinstance(v, renpy.display.core.absolute):
-                return v
             else:
-                return v * base
+                return absolute.compute(v, base)
 
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = child.get_placement()
 
@@ -429,8 +427,16 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
 
         absolute = renpy.display.core.absolute
 
-        def I(a, b):
-            return absolute(a + done * (b - a))
+        # see atl.py
+        if renpy.config.mixed_position:
+            position_from_any = renpy.atl.position.from_any
+            def I(a, b):
+                a = position_from_any(a)
+                b = position_from_any(b)
+                return (1-t)*a + t*b
+        else:
+            def I(a, b):
+                return absolute(a + done * (b - a))
 
         old_xpos, old_ypos, old_xanchor, old_yanchor, old_xoffset, old_yoffset, old_subpixel = self.child_placement(self.old)
         new_xpos, new_ypos, new_xanchor, new_yanchor, new_xoffset, new_yoffset, new_subpixel = self.child_placement(self.new)
