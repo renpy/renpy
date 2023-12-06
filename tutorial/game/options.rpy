@@ -222,3 +222,5 @@ init python hide:
             ("gui/mouse0.png", 0, 0),
         ] * (10 * 20)
 }
+
+define config.defer_tl_scripts = True

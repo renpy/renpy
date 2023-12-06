@@ -2466,6 +2466,7 @@ EARLY_CONFIG = {
     "save_token_keys",
     "check_conflicting_properties",
     "check_translate_none",
+    "defer_tl_scripts",
 }
 
 define_statements = [ ]

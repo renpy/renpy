@@ -161,6 +161,16 @@ class Script(object):
 
         self.duplicate_labels = [ ]
 
+        # A list of initcode, priority, statement pairs.
+        self.initcode = [ ]
+
+        # A set of (fn, dir) tuples for scripts that have already been
+        # loaded.
+        self.loaded_scripts = set()
+
+        # A set of languages to load.
+        self.load_languages = set()
+
     def choose_backupdir(self):
 
         if renpy.mobile:
@@ -286,6 +296,34 @@ class Script(object):
             if (fn, dir) not in target:
                 target.append((fn, dir))
 
+    def script_filter(self, fn, dir):
+        """
+        This determines if a script file should be loaded.
+        during this call to load_script.
+        """
+
+        if not renpy.config.defer_tl_scripts:
+            return True
+
+        if (renpy.game.args.command != "run") or renpy.game.args.compile or renpy.game.args.lint:
+            return True
+
+        parts = fn.split("/")
+
+        if parts[0] == 'tl':
+            if len(parts) <= 2:
+                return True
+
+            if parts[1] == "None":
+                return True
+
+            if parts[1] in self.load_languages:
+                return True
+
+            return False
+
+        return True
+
     def load_script(self):
 
         script_files = self.script_files
@@ -298,6 +336,7 @@ class Script(object):
         initcode = [ ]
 
         count = 0
+        skipped = 0
 
         for fn, dir in script_files: # @ReservedAssignment
 
@@ -308,13 +347,27 @@ class Script(object):
             # our process as unresponsive by OS
             renpy.display.presplash.pump_window()
 
+            if (fn, dir) in self.loaded_scripts:
+                continue
+
+            if not self.script_filter(fn, dir):
+                skipped += 1
+                continue
+
+            self.loaded_scripts.add((fn, dir))
+
             self.load_appropriate_file(".rpyc", [ "_ren.py", ".rpy" ], dir, fn, initcode)
+
+        if skipped:
+            renpy.display.log.write("{} script files skipped.".format(skipped))
 
         initcode.sort(key=lambda i: i[0])
 
-        self.initcode = initcode
+        self.initcode.extend(initcode)
 
         self.translator.chain_translates()
+
+        return initcode
 
     def load_module(self, name):
 

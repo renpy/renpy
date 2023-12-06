@@ -2981,6 +2981,60 @@ def load_string(s, filename="<string>"):
         renpy.game.exception_info = old_exception_info
 
 
+def load_language(language):
+    """
+    :undocumented:
+
+    (Here because of commonality with load_string and load_module.)
+
+    Load the script files in tl/language, if not loaded. Runs any
+    init code found during the process.
+"""
+
+    if language is None:
+        return
+
+    if renpy.config.defer_tl_scripts:
+        return
+
+    if language in renpy.game.script.load_languages:
+        return
+
+    old_exception_info = renpy.game.exception_info
+
+    try:
+
+        old_locked = renpy.config.locked
+        renpy.config.locked = False
+
+        renpy.game.script.load_languages.add(language)
+
+        initcode = renpy.game.script.load_script()
+
+        context = renpy.execution.Context(False)
+        context.init_phase = True
+        renpy.game.contexts.append(context)
+
+        for _prio, node in initcode:
+            if isinstance(node, renpy.ast.Node):
+                renpy.game.context().run(node)
+            else:
+                node()
+
+        context.pop_all_dynamic()
+        renpy.game.contexts.pop()
+
+        renpy.config.locked = old_locked
+
+        if not renpy.game.context().init_phase:
+            renpy.game.script.analyze()
+
+        renpy.game.script.update_bytecode()
+
+    finally:
+        renpy.game.exception_info = old_exception_info
+
+
 def include_module(name):
     """
     :doc: other

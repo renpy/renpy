@@ -1421,6 +1421,9 @@ save_persistent = True
 # Should new drags be added to the top of a drag group.
 drag_group_add_top = True
 
+# Should loading of tl scripts be deferred?
+defer_tl_scripts = False
+
 del os
 del collections
 

@@ -81,6 +81,14 @@ class ScriptTranslator(object):
         # in that file.
         self.additional_strings = collections.defaultdict(list)
 
+        # Scan for languages.
+
+        for i in renpy.exports.list_files():
+            parts = i.split("/")
+            if parts[0] == "tl":
+                if len(parts) >= 3 and parts[1] != "None":
+                    self.languages.add(parts[1])
+
     def count_translates(self):
         """
         Return the number of dialogue blocks in the game.
@@ -668,6 +676,8 @@ def change_language(language, force=False):
 
     if old_language != language:
         clean_data()
+
+    renpy.exports.load_language(language)
 
     renpy.game.preferences.language = language
     if old_language == language and not force:
