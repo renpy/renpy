@@ -457,6 +457,11 @@ Occasionally Used
     While this defaults to False, it's set to True when :func:`gui.init`
     is called.
 
+.. var:: config.defer_tl_scripts = Fasle
+
+    When True, avoids loading scripts in the tl directory until the
+    language is selected. See :ref:`deferred-translations`.
+
 .. var:: config.developer = "auto"
 
     If set to True, developer mode is enabled. Developer mode gives
