@@ -30,6 +30,7 @@ import time
 
 import renpy
 import renpy.ast as ast
+Parameter = ast.Parameter
 
 from renpy.lexer import (
     list_logical_lines,
@@ -343,127 +344,120 @@ def parse_parameters(l):
         return None
 
     # Result list of parameters, by (name, default value) pairs
-    parameters = [ ]
+    parameters = collections.OrderedDict()
 
-    positional = [ ]
+    # Encountered a slash
+    got_slash = False
 
-    # Name of parameter that is starred
-    extrapos = None
+    # Encountered a star or a *args
+    now_kwonly = False
 
-    # Name of parameter that is double starred
-    extrakw = None
+    kind = Parameter.POSITIONAL_OR_KEYWORD
 
-    # Name of parameter that is last positional-only
-    last_posonly = None
+    # Got a lone * and no parameter after it
+    missing_kwonly = False
 
-    # Name of parameter that is first keyword-only
-    first_kwonly = None
+    # Encountered a defaulted parameter
+    now_default = False
 
-    add_positional = True
+    def name_parsed(name):
+        if name in parameters:
+            l.error("duplicate parameter name {!r}".format(name))
 
-    pending_kwonly = False
-
-    has_default = False
-
-    names = set()
-    def name_parsed(name, value):
-        if name in names:
-            l.error("duplicate argument '%s'" % name)
-        else:
-            names.add(name)
-
-    while True:
-
-        if l.match(r'\)'):
-            break
+    while not l.match(r'\)'):
 
         if l.match(r'\*\*'):
 
             extrakw = l.require(l.name)
+            name_parsed(extrakw)
+            parameters[extrakw] = Parameter(extrakw, Parameter.VAR_KEYWORD)
 
             if l.match(r'='):
-                l.error("var-keyword argument cannot have default value")
-
-            name_parsed(extrakw, None)
+                l.error("a var-keyword parameter (**{}) cannot have a default value".format(extrakw))
 
             # Allow trailing comma
             l.match(r',')
 
             # extrakw is always last parameter
             if not l.match(r'\)'):
-                l.error("arguments cannot follow var-keyword argument")
+                l.error("no parameter can follow a var-keyword parameter (**{})".format(extrakw))
 
             break
 
         elif l.match(r'\*'):
 
-            if first_kwonly or pending_kwonly:
+            if now_kwonly:
                 l.error("* may appear only once")
 
-            add_positional = False
+            now_kwonly = True
+            kind = Parameter.KEYWORD_ONLY
 
-            pending_kwonly = True
+            # we can have a defaulted pos-or-kw and then a required kw-only
+            now_default = False
 
             extrapos = l.name()
 
             if extrapos is not None:
-                if l.match(r'='):
-                    l.error("var-positional argument cannot have default value")
 
-                name_parsed(extrapos, None)
+                name_parsed(extrapos)
+                parameters[extrapos] = Parameter(extrapos, Parameter.VAR_POSITIONAL)
+
+                if l.match(r'='):
+                    l.error("a var-positional parameter (*{}) cannot have a default value".format(extrapos))
+
+            else:
+                missing_kwonly = True
 
         elif l.match(r'/\*'):
             l.error("expected comma between / and *")
 
         elif l.match('/'):
 
-            if first_kwonly or pending_kwonly:
+            if now_kwonly:
                 l.error("/ must be ahead of *")
 
-            elif last_posonly is not None:
+            elif got_slash:
                 l.error("/ may appear only once")
 
             elif not parameters:
-                l.error("at least one argument must precede /")
+                l.error("at least one parameter must precede /")
 
-            last_posonly = parameters[-1][0]
+            # All previous parameters are actually positional-only
+            parameters = collections.OrderedDict((k, p.replace(kind=p.POSITIONAL_ONLY)) for k, p in parameters.items())
+
+            got_slash = True
 
         else:
 
             name = l.require(l.name)
 
-            if pending_kwonly:
-                pending_kwonly = False
-                first_kwonly = name
+            missing_kwonly = False
 
-            default = None
+            default = Parameter.empty
 
             if l.match(r'='):
                 l.skip_whitespace()
                 default = l.delimited_python("),").strip()
-                has_default = True
+                now_default = True
 
                 if not default:
-                    l.error("empty parameter default")
+                    l.error("empty default value for parameter {!r}".format(name))
 
-            elif first_kwonly is None and has_default:
-                l.error("non-default argument follows default argument")
+            elif now_default and not now_kwonly:
+                l.error("non-default parameter {!r} follows a default parameter".format(name))
 
-            name_parsed(name, default)
-            parameters.append((name, default))
-
-            if add_positional:
-                positional.append(name)
+            name_parsed(name)
+            parameters[name] = Parameter(name, kind=kind, default=default)
 
         if l.match(r'\)'):
             break
 
         l.require(r',')
 
-    if pending_kwonly and extrapos is None:
-        l.error("named arguments must follow bare *")
+    if missing_kwonly:
+        l.error("a bare * must be followed by a parameter")
 
-    return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw, last_posonly, first_kwonly)
+    return renpy.ast.ParameterInfo(parameters.values())
 
 
 def parse_arguments(l):
@@ -1041,15 +1035,17 @@ def transform_statement(l, loc):
     parameters = parse_parameters(l)
 
     if parameters:
-        if parameters.extrapos:
-            l.error("the transform statement does not take *args")
-        if parameters.extrakw:
-            l.error("the transform statement does not take **kwargs")
-        if parameters.positional_only:
-            l.deferred_error("atl_pos_only", "the transform statement does not take positional-only parameters")
-        for _p, v in parameters.keyword_only:
-            if v is None:
-                l.error("the transform statement does not take required keyword-only parameters")
+        found_pos_only = False
+        for p in parameters.parameters.values():
+            if p.kind == p.POSITIONAL_ONLY and not found_pos_only:
+                found_pos_only = True
+                l.deferred_error("atl_pos_only", "the transform statement does not take positional-only parameters ({} is not allowed)".format(p))
+            elif p.kind == p.VAR_POSITIONAL:
+                l.error("the transform statement does not take *args ({} is not allowed)".format(p))
+            elif p.kind == p.VAR_KEYWORD:
+                l.error("the transform statement does not take **kwargs ({} is not allowed)".format(p))
+            elif (p.kind == p.KEYWORD_ONLY) and (p.default is p.empty):
+                l.error("the transform statement does not take required keyword-only parameters ({} is not allowed)".format(p))
 
     l.require(':')
     l.expect_eol()

@@ -33,7 +33,9 @@ from typing import Optional, Any
 
 import renpy
 
+import collections
 import hashlib
+from itertools import chain as _chain
 import re
 import time
 
@@ -57,236 +59,397 @@ def next_node(n):
     renpy.game.context().next_node = n
 
 
-class ParameterInfo(object):
+class Parameter(object):
+    __slots__ = ("name", "kind", "default",)
+
+    POSITIONAL_ONLY, POSITIONAL_OR_KEYWORD, VAR_POSITIONAL, KEYWORD_ONLY, VAR_KEYWORD = range(5)
+
+    empty = None
+
+    def __init__(self, name, kind, default=empty):
+        # default should only be passed by keyword, todo when PY3-only
+        self.name = name
+        self.kind = kind
+        self.default = default # type: str|None
+
+    def replace(self, **kwargs):
+        d = dict(name=self.name, kind=self.kind, default=self.default)
+        d.update(kwargs)
+        return Parameter(**d)
+
+    def __str__(self):
+        kind = self.kind
+        formatted = self.name
+
+        if self.default is not None:
+            formatted += "=" + self.default # type: ignore
+
+        if kind == self.VAR_POSITIONAL:
+            formatted = "*" + formatted
+        elif kind == self.VAR_KEYWORD:
+            formatted = "**" + formatted
+
+        return formatted
+
+    def __repr__(self):
+        return "<Parameter {}>".format(self)
+
+    def __eq__(self, other):
+        return (self is other) or (isinstance(other, Parameter) and (self.name == other.name) and (self.kind == other.kind) and (self.default == other.default))
+
+class Signature(object):
     """
-    This class is used to store information about parameters to a
-    label.
+    This class is used to store information about parameters (to a label, screen, ATL...)
+    It has the same interface as inspect.Signature for the most part.
     """
 
-    positional_only = [ ]
-    keyword_only = [ ]
+    __slots__ = ("parameters",)
 
-    def __init__(self, parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
-
-        # A list of (parameter name, default value) pairs.
-        # The default value is either None (if there is none)
-        # or a string which when evaluated results in the actual value
-        self.parameters = parameters
-
-        # A list, giving the names of the positional parameters
-        # to this function, in order.
-        self.positional = positional
-
-        # A variable that takes the extra positional arguments, if
-        # any. None if no such variable exists.
-        # If there is *args, this is "args".
-        self.extrapos = extrapos
-
-        # A variable that takes the extra keyword arguments, if
-        # any. None if no such variable exists.
-        # If there is **properties, this is "properties".
-        self.extrakw = extrakw
-
-        # The parameters which are positional-only, see
-        # https://www.python.org/dev/peps/pep-0570/
-        # Empty if / not present.
-        if last_posonly is None:
-            self.positional_only = [ ]
+    def __init__(self, parameters=None):
+        if parameters is None:
+            self.parameters = {}
         else:
-            rv = [ ]
-            for param in parameters:
-                rv.append(param)
-                if param[0] == last_posonly:
-                    break
+            # when in PY3-only, turn this into MappingProxyType o dict
+            self.parameters = collections.OrderedDict((param.name, param) for param in parameters)
 
-            self.positional_only = rv
+    @classmethod
+    def legacy(cls, *args, **kwargs):
+        return cls(cls.legacy_params(*args, **kwargs))
 
-        # The parameters which are keyword-only, see
-        # https://www.python.org/dev/peps/pep-3102/
-        # Empty if * nor *args are present, or if there are no parameters after them.
-        if first_kwonly is None:
-            self.keyword_only = [ ]
-        else:
-            rv = [ ]
-            for param in reversed(parameters):
-                rv.append(param)
-                if param[0] == first_kwonly:
-                    break
-
-            rv.reverse()
-            self.keyword_only = rv
-
-    def apply(self, args, kwargs, ignore_errors=False):
+    @staticmethod
+    def legacy_params(parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
         """
-        Applies `args` and `kwargs` to these parameters. Returns
-        a dictionary that can be used to update an enclosing
-        scope.
+        Creates a list of Parameter from the legacy parameters format.
 
-        `ignore_errors`
-            If true, errors will be ignored, and this function will do the
-            best job it can.
+        `parameters` is a list of (name, default) pairs, where default is None
+        for required parameters and a string for optional parameters.
+        `positional` is a list of parameter names that are either
+        positional-only or positional-or-keyword.
+        `extrapos` is None or the name of the parameter that collects extra positional, like *args.
+        `extrakw` is None or the name of the parameter that collects extra keyword arguments, like **kwargs.
+        `last_posonly` is the name of the last positional-only parameter.
+        `first_kwonly` is the name of the first keyword-only parameter.
+        """
+
+        pars = []
+        posonly_found = (last_posonly is None)
+        now_kw_only = False
+
+        # long-time nonsense in atl.py
+        if (not parameters) and positional:
+            print("Legacy curryfied atl : {!r} positionals were not part of parameters".format(positional))
+            parameters = [(name, Parameter.empty) for name in positional]
+
+        for name, default in parameters:
+            if name == first_kwonly:
+                now_kw_only = True
+                if extrapos is not None:
+                    pars.append(Parameter(extrapos, Parameter.VAR_POSITIONAL))
+
+            if now_kw_only:
+                kind = Parameter.KEYWORD_ONLY
+            elif not posonly_found:
+                kind = Parameter.POSITIONAL_ONLY
+            else:
+                kind = Parameter.POSITIONAL_OR_KEYWORD
+
+            pars.append(Parameter(name, kind, default=default or Parameter.empty))
+
+            if name == last_posonly:
+                posonly_found = True
+
+        if (not now_kw_only) and (extrapos is not None):
+            pars.append(Parameter(extrapos, Parameter.VAR_POSITIONAL))
+
+        if extrakw is not None:
+            pars.append(Parameter(extrakw, Parameter.VAR_KEYWORD))
+
+        return pars
+
+    if False:
+        def __getstate__(self):
+            # default behavior for slots and no __dict__ : None for the __dict__, and a dict for the slots
+            return (None, {
+                "parameters":self.parameters,
+            })
+
+    def __setstate__(self, state):
+        if isinstance(state, dict):
+            # legacy state
+            positional_only = state["positional_only"]
+            last_posonly = positional_only[-1][0] if positional_only else None
+            keyword_only = state["keyword_only"]
+            first_kwonly = keyword_only[0][0] if keyword_only else None
+            self.__init__(self.legacy_params(state["parameters"], state["positional"], state["extrapos"], state["extrakw"], last_posonly, first_kwonly))
+        else:
+            # default behavior on py3, could be a super() call but this is faster and py2-compatible
+            self.parameters = state[1]["parameters"]
+
+
+    @property
+    def positional(self):
+        """
+        Legacy accessor for obsolete attribute
+        """
+        rv = []
+        for n, p in self.parameters.items():
+            if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD):
+                rv.append(n)
+        return tuple(rv)
+
+    @property
+    def extrapos(self):
+        """
+        Legacy accessor for obsolete attribute
+        """
+        for n, p in self.parameters.items():
+            if p.kind == p.VAR_POSITIONAL:
+                return n
+        return None
+
+    @property
+    def extrakw(self):
+        """
+        Legacy accessor for obsolete attribute
+        """
+        for n, p in self.parameters.items():
+            if p.kind == p.VAR_KEYWORD:
+                return n
+        return None
+
+    def apply_defaults(self, mapp):
+        """
+        From a mapping representing the inner scope of the callable after binding,
+        this mutates the mapping to apply the evaluated default values of the parameters.
+        This is where the evaluation of the default values occurs.
+        Evaluation occurs lazily : the default value of parameters already passed
+        is not calculated.
+        """
+        # code inspired from stdlib's inspect.BoundArguments.apply_defaults
+        # but optimized as not to create a new dict
+        # (because ordering doesn't matter to us)
+        # resulting in 5x shorter execution time
+        for name, param in self.parameters.items():
+            if name not in mapp:
+                if param.default is not None:
+                    val = renpy.python.py_eval(param.default)
+                elif param.kind == param.VAR_POSITIONAL:
+                    val = ()
+                elif param.kind == param.VAR_KEYWORD:
+                    val = renpy.python.RevertableDict()
+                else:
+                    # result of a partial bind
+                    continue
+                mapp[name] = val
+        return mapp
+
+    def apply(self, args, kwargs, ignore_errors=False, partial=False):
+        """
+        Takes args and kwargs, and returns a mapping corresponding to the
+        inner scope of the callable as a result of that call.
+
+        Improvements on the original inspect.Signature._bind :
+        - manages _ignore_extra_kwargs (near the end of the method)
+        - avoids creating a BoundArguments object, just returns the scope dict
+        - ignore_errors
+        - applies the defaults automatically (and lazily, as per the above)
         """
 
         if not renpy.config.developer:
             ignore_errors = True
 
-        rv = { }
+        kwargs = dict(kwargs)
 
-        if args is None:
-            args = [ ]
-
-        if kwargs is None:
-            kwargs = renpy.python.RevertableDict()
-        else:
-            # Prevent original kwargs changes
-            kwargs = kwargs.copy()
-
-        parameters = self.parameters
-        # Handle empty parameters in a fast way
-        if not parameters:
-
-            if self.extrakw:
-                rv[self.extrakw] = kwargs
-
-            elif kwargs and (not ignore_errors):
-                if not kwargs.pop("_ignore_extra_kwargs", False):
-                    raise TypeError(
-                        "Unexpected keyword arguments: %s" %
-                        ", ".join("'%s'" % i for i in kwargs))
-
-            if self.extrapos:
-                rv[self.extrapos] = tuple(args)
-
-            elif args and (not ignore_errors):
-                raise TypeError("Too many arguments in call (expected 0, got %d)." % len(args))
-
-            return rv
-
-        # Fill positional-only slots and check whether its passed as keyword
-        slots = iter(self.positional_only)
-        argsi = iter(args)
-        missed_pos = [ ]
-        posonly_keyword = [ ]
-        for value in argsi:
-            try:
-                name, _ = next(slots)
-            except StopIteration:
-                argsi = iter([ value ] + list(argsi))
-                break
-
-            if name in kwargs:
-                posonly_keyword.append(name)
-
-            rv[name] = value
-
-        # Some parameters left
-        else:
-            for name, default in slots:
-                if name in kwargs:
-                    posonly_keyword.append(name)
-
-                if default is not None:
-                    rv[name] = renpy.python.py_eval(default)
-                else:
-                    missed_pos.append(name)
-
-            argsi = iter([])
-
-        # Report positional-only as keyword if we have not **kwargs
-        if posonly_keyword and self.extrakw is None:
+        def _raise(exct, msg, *argz, **kwargz):
             if not ignore_errors:
-                raise TypeError(
-                    "Some positional-only arguments passed as keyword arguments: %s" %
-                    ", ".join("'%s'" % i for i in posonly_keyword))
-            else:
-                for name in posonly_keyword:
-                    kwargs.pop(name)
+                raise exct(msg.format(*argz, **kwargz)) # from None
 
-        # Fill positional_or_keyword slots with left args
-        poskw_slots = parameters[len(self.positional_only):-len(self.keyword_only) or None]
-        slots = iter(poskw_slots)
-        extraargs = [ ]
-        duplicated_names = [ ]
-        for value in argsi:
+        # code mostly taken from stdlib's inspect.Signature._bind
+        arguments = {}
+
+        parameters = iter(self.parameters.values())
+        parameters_ex = ()
+        arg_vals = iter(args)
+
+        while True:
+            # Let's iterate through the positional arguments and corresponding
+            # parameters
             try:
-                name, _ = next(slots)
+                arg_val = next(arg_vals)
             except StopIteration:
-                extraargs = [ value ] + list(argsi)
-                break
-
-            rv[name] = value
-
-            if name in kwargs:
-                kwargs.pop(name)
-                duplicated_names.append(name)
-
-        # Some parameters left
-        else:
-            for name, default in slots:
-                if name in kwargs:
-                    rv[name] = kwargs.pop(name)
-                elif default is not None:
-                    rv[name] = renpy.python.py_eval(default)
+                # No more positional arguments
+                try:
+                    param = next(parameters)
+                except StopIteration:
+                    # No more parameters. That's it. Just need to check that
+                    # we have no `kwargs` after this while loop
+                    break
                 else:
-                    missed_pos.append(name)
-
-        # Report missing positional parameters
-        if missed_pos and (not ignore_errors):
-            raise TypeError(
-                "Missing required positional arguments: %s" %
-                ", ".join("'%s'" % i for i in missed_pos))
-
-        if self.extrapos:
-            rv[self.extrapos] = tuple(extraargs)
-
-        # Report extra positional arguments
-        elif extraargs and (not ignore_errors):
-            positional = self.positional_only + poskw_slots
-            required = len([i for i in positional if i[1] is None])
-            total = len(positional)
-
-            if total == required:
-                expected = str(total)
+                    if param.kind == param.VAR_POSITIONAL:
+                        # That's OK, just empty *args.  Let's start parsing
+                        # kwargs
+                        break
+                    elif param.name in kwargs:
+                        if param.kind == param.POSITIONAL_ONLY:
+                            _raise(TypeError,
+                                "{arg!r} parameter is positional only, but was passed as a keyword",
+                                arg=param.name)
+                        parameters_ex = (param,)
+                        break
+                    elif (param.kind == param.VAR_KEYWORD or
+                                                param.default is not param.empty):
+                        # That's fine too - we have a default value for this
+                        # parameter.  So, lets start parsing `kwargs`, starting
+                        # with the current parameter
+                        parameters_ex = (param,)
+                        break
+                    else:
+                        # No default, not VAR_KEYWORD, not VAR_POSITIONAL,
+                        # not in `kwargs`
+                        if partial or ignore_errors:
+                            parameters_ex = (param,)
+                            break
+                        else:
+                            if param.kind == param.KEYWORD_ONLY:
+                                argtype = ' keyword-only'
+                            else:
+                                argtype = ''
+                            msg = 'missing a required{argtype} argument: {arg!r}'
+                            msg = msg.format(arg=param.name, argtype=argtype)
+                            raise TypeError(msg) # from None
             else:
-                expected = "from %d to %d" % (required, total)
+                # We have a positional argument to process
+                try:
+                    param = next(parameters)
+                except StopIteration:
+                    _raise(TypeError, 'too many positional arguments')
+                    break
+                else:
+                    if param.kind in (param.VAR_KEYWORD, param.KEYWORD_ONLY):
+                        # Looks like we have no parameter for this positional
+                        # argument
+                        _raise(TypeError, 'too many positional arguments')
+                        break
 
-            raise TypeError(
-                "Too many arguments in call (expected %s, got %d)." %
-                (expected, len(args)))
+                    if param.kind == param.VAR_POSITIONAL:
+                        # We have an '*args'-like argument, let's fill it with
+                        # all positional arguments we have left and move on to
+                        # the next phase
+                        values = [arg_val]
+                        values.extend(arg_vals)
+                        arguments[param.name] = tuple(values)
+                        break
 
-        # Report duplicated positional parameters
-        if duplicated_names and (not ignore_errors):
-            raise TypeError(
-                "Got multiple values for arguments: %s" %
-                ", ".join("'%s'" % i for i in duplicated_names))
+                    if param.name in kwargs and param.kind != param.POSITIONAL_ONLY:
+                        _raise(TypeError,
+                            'multiple values for argument {arg!r}',
+                            arg=param.name)
+                        break
 
-        # Fill keyword-only parameters
-        missed_kw = [ ]
-        for name, default in self.keyword_only:
-            if name in kwargs:
-                rv[name] = kwargs.pop(name)
-            elif default is not None:
-                rv[name] = renpy.python.py_eval(default)
+                    arguments[param.name] = arg_val
+
+        # Now, we iterate through the remaining parameters to process
+        # keyword arguments
+        kwargs_param = None
+        for param in _chain(parameters_ex, parameters):
+            if param.kind == param.VAR_KEYWORD:
+                # Memorize that we have a '**kwargs'-like parameter
+                kwargs_param = param
+                continue
+
+            if param.kind == param.VAR_POSITIONAL:
+                # Named arguments don't refer to '*args'-like parameters.
+                # We only arrive here if the positional arguments ended
+                # before reaching the last parameter before *args.
+                continue
+
+            param_name = param.name
+            try:
+                arg_val = kwargs.pop(param_name)
+            except KeyError:
+                # We have no value for this parameter.  It's fine though,
+                # if it has a default value, or it is an '*args'-like
+                # parameter, left alone by the processing of positional
+                # arguments.
+                if (not (partial or ignore_errors) and param.kind != param.VAR_POSITIONAL and
+                                                    param.default is param.empty):
+                    raise TypeError('missing a required argument: {arg!r}'. \
+                                    format(arg=param_name)) # from None
+
             else:
-                missed_kw.append(name)
+                if param.kind == param.POSITIONAL_ONLY:
+                    # This should never happen in case of a properly built
+                    # Signature object (but let's have this check here
+                    # to ensure correct behaviour just in case)
+                    _raise(TypeError,
+                        "{arg!r} parameter is positional only, but was passed as a keyword",
+                        arg=param.name)
+                    continue
 
-        # Report missing keyword-only parameters
-        if missed_kw and (not ignore_errors):
-            raise TypeError(
-                "Missing required keyword-only arguments: %s" %
-                ", ".join("'%s'" % i for i in missed_kw))
+                arguments[param_name] = arg_val
 
-        if self.extrakw:
-            rv[self.extrakw] = kwargs
-
-        elif kwargs and (not ignore_errors):
-            if not kwargs.pop("_ignore_extra_kwargs", False):
+        if kwargs:
+            if kwargs_param is not None:
+                # Process our '**kwargs'-like parameter
+                arguments[kwargs_param.name] = kwargs
+            elif not (ignore_errors or kwargs.pop('_ignore_extra_kwargs', False)):
                 raise TypeError(
-                    "Unexpected keyword arguments: %s" %
-                    ", ".join("'%s'" % i for i in kwargs))
+                    'got an unexpected keyword argument {arg!r}'.format(
+                        arg=next(iter(kwargs))))
 
-        return rv
+        return self.apply_defaults(arguments)
 
+    def __eq__(self, other):
+        if self is other:
+            return True
+        if not isinstance(other, Signature):
+            return False
+
+        return tuple(self.parameters.values()) == tuple(other.parameters.values())
+
+    def __str__(self):
+        result = []
+        render_pos_only_separator = False
+        render_kw_only_separator = True
+        for param in self.parameters.values():
+            formatted = str(param)
+
+            kind = param.kind
+
+            if kind == Parameter.POSITIONAL_ONLY:
+                render_pos_only_separator = True
+            elif render_pos_only_separator:
+                # It's not a positional-only parameter, and the flag
+                # is set to 'True' (there were pos-only params before.)
+                result.append('/')
+                render_pos_only_separator = False
+
+            if kind == Parameter.VAR_POSITIONAL:
+                # OK, we have an '*args'-like parameter, so we won't need
+                # a '*' to separate keyword-only arguments
+                render_kw_only_separator = False
+            elif kind == Parameter.KEYWORD_ONLY and render_kw_only_separator:
+                # We have a keyword-only parameter to render and we haven't
+                # rendered an '*args'-like parameter before, so add a '*'
+                # separator to the parameters list ("foo(arg1, *, arg2)" case)
+                result.append('*')
+                # This condition should be only triggered once, so
+                # reset the flag
+                render_kw_only_separator = False
+
+            result.append(formatted)
+
+        if render_pos_only_separator:
+            # There were only positional-only parameters, hence the
+            # flag was not reset to 'False'
+            result.append('/')
+
+        return "({})".format(", ".join(result))
+
+    def __repr__(self):
+        return "<Signature {}>".format(self)
+
+ParameterInfo = Signature
 
 def apply_arguments(parameters, args, kwargs, ignore_errors=False):
 
@@ -299,7 +462,7 @@ def apply_arguments(parameters, args, kwargs, ignore_errors=False):
         else:
             return { }
 
-    return parameters.apply(args, kwargs, ignore_errors)
+    return parameters.apply(args or (), kwargs or {}, ignore_errors)
 
 
 class ArgumentInfo(renpy.object.Object):
@@ -327,8 +490,8 @@ class ArgumentInfo(renpy.object.Object):
 
     def __init__(self, arguments, starred_indexes=None, doublestarred_indexes=None):
 
-        # A list of (keyword, expression) pairs. If an argument doesn't
-        # have a keyword, it's thought of as positional.
+        # A list of (keyword, expression) pairs.
+        # If the keyword is None, the argument is thought of as positional.
         self.arguments = arguments
 
         # Indexes of arguments to be considered as * unpacking
@@ -382,7 +545,7 @@ class ArgumentInfo(renpy.object.Object):
         return "(" + ", ".join(l) + ")"
 
 
-EMPTY_PARAMETERS = ParameterInfo([ ], [ ], None, None, None, None)
+EMPTY_PARAMETERS = ParameterInfo()
 EMPTY_ARGUMENTS = ArgumentInfo([ ], None, None)
 
 

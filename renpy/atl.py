@@ -339,13 +339,12 @@ class Context(object):
         return not (self == other)
 
 
-
-# This is intended to be subclassed by ATLTransform. It takes care of
-# managing ATL execution, which allows ATLTransform itself to not care
-# much about the contents of this file.
-
-
 class ATLTransformBase(renpy.object.Object):
+    """
+    This is intended to be subclassed by ATLTransform. It takes care of
+    managing ATL execution, which allows ATLTransform itself to not care
+    much about the contents of this file.
+    """
 
     # Compatibility with older saves.
     parameters = renpy.ast.EMPTY_PARAMETERS
@@ -367,7 +366,8 @@ class ATLTransformBase(renpy.object.Object):
             # Apply the default parameters.
             context = context.copy()
 
-            for k, v in parameters.parameters:
+            for k, p in parameters.parameters.items():
+                v = p.default
                 if v is not None:
                     context[k] = renpy.python.py_eval(v, locals=context)
 
@@ -561,7 +561,7 @@ class ATLTransformBase(renpy.object.Object):
             child = child._duplicate(_args)
 
         # Create a new ATL Transform.
-        parameters = renpy.ast.ParameterInfo([ ], positional, None, None)
+        parameters = renpy.ast.ParameterInfo.legacy([ ], positional, None, None)
 
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,

@@ -467,7 +467,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return " ".join(self.screen_name)
 
     def _repr_info(self):
-        return self.name
+        rv = self.name
+        p = self.screen.parameters
+        if p is not None:
+            rv += str(p)
+        return rv
 
     def visit(self):
         return [ self.child ]
@@ -1067,7 +1071,6 @@ def define_screen(*args, **kwargs):
 
     `variant`
         String. Gives the variant of the screen to use.
-
     """
 
     Screen(*args, **kwargs)
