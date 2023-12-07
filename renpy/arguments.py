@@ -119,6 +119,10 @@ class ArgumentParser(argparse.ArgumentParser):
             help='Forces all .rpy scripts to be recompiled before proceeding.')
 
         self.add_argument(
+            "--compile-python", action='store_true', dest='compile_python',
+            help='Forces all Python to be recompiled, rather than read from game/cache/bytecode-*.rpyb.')
+
+        self.add_argument(
             "--keep-orphan-rpyc", action="store_true",
             help="Prevents the compile command from deleting orphan rpyc files.")
 

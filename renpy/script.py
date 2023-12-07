@@ -959,6 +959,9 @@ class Script(object):
         Init/Loads the bytecode cache.
         """
 
+        if renpy.game.args.compile_python:
+            return
+
         # Load the oldcache.
         try:
             with renpy.loader.load(BYTECODE_FILE) as f:
