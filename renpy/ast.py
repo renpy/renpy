@@ -137,7 +137,6 @@ class Signature(object):
 
         # long-time nonsense in atl.py
         if (not parameters) and positional:
-            print("Legacy curryfied atl : {!r} positionals were not part of parameters".format(positional))
             parameters = [(name, Parameter.empty) for name in positional]
 
         for name, default in parameters:
