@@ -396,7 +396,7 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
 
         return cr
 
-    def _child_placement(self, child):
+    def child_placement(self, child):
         """
         The values of the returned tuple are numbers of pixels of negligible type
         (except subpixel which is boolean)
@@ -434,8 +434,8 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
         def I(a, b):
             return absolute(a + done * (b - a))
 
-        old_xpos, old_ypos, old_xanchor, old_yanchor, old_xoffset, old_yoffset, old_subpixel = self._child_placement(self.old)
-        new_xpos, new_ypos, new_xanchor, new_yanchor, new_xoffset, new_yoffset, new_subpixel = self._child_placement(self.new)
+        old_xpos, old_ypos, old_xanchor, old_yanchor, old_xoffset, old_yoffset, old_subpixel = self.child_placement(self.old)
+        new_xpos, new_ypos, new_xanchor, new_yanchor, new_xoffset, new_yoffset, new_subpixel = self.child_placement(self.new)
 
         xpos = I(old_xpos, new_xpos)
         ypos = I(old_ypos, new_ypos)
