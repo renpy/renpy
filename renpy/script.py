@@ -978,6 +978,8 @@ class Script(object):
         cache. Clears out self.all_pycode.
         """
 
+        renpy.python.compile_warnings = [ ]
+
         for i in self.all_pyexpr:
             try:
                 renpy.python.py_compile(i, 'eval')
@@ -1000,6 +1002,8 @@ class Script(object):
                     key += b"_py3"
                 else:
                     key += b"_flags" + str(flags).encode("utf-8")
+
+            warnings_key = ("warnings", key)
 
             code = self.bytecode_oldcache.get(key, None)
 
@@ -1039,6 +1043,15 @@ class Script(object):
 
                 renpy.game.exception_info = old_ei
 
+                if renpy.python.compile_warnings:
+                    self.bytecode_newcache[warnings_key] = renpy.python.compile_warnings
+                    renpy.python.compile_warnings = [ ]
+
+            else:
+
+                if warnings_key in self.bytecode_oldcache:
+                    self.bytecode_newcache[warnings_key] = self.bytecode_oldcache[warnings_key]
+
             self.bytecode_newcache[key] = code
             i.bytecode = marshal.loads(code) # type: ignore
 
@@ -1063,6 +1076,7 @@ class Script(object):
                 os.unlink(fn)
             except Exception:
                 pass
+
 
     def lookup(self, label):
         """
