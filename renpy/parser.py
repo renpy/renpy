@@ -30,7 +30,8 @@ import time
 
 import renpy
 import renpy.ast as ast
-Parameter = ast.Parameter
+
+from renpy.parameter import Parameter
 
 from renpy.lexer import (
     list_logical_lines,
@@ -457,7 +458,7 @@ def parse_parameters(l):
     if missing_kwonly:
         l.error("a bare * must be followed by a parameter")
 
-    return renpy.ast.ParameterInfo(parameters.values())
+    return renpy.parameter.Signature(parameters.values())
 
 
 def parse_arguments(l):
@@ -521,7 +522,7 @@ def parse_arguments(l):
         l.require(r',')
         index += 1
 
-    return renpy.ast.ArgumentInfo(arguments, starred_indexes, doublestarred_indexes)
+    return renpy.parameter.ArgumentInfo(arguments, starred_indexes, doublestarred_indexes)
 
 ##############################################################################
 # The parse trie.
