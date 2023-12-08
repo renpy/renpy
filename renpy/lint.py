@@ -997,7 +997,7 @@ def check_unreachables(all_nodes):
         if len(linenumbers) > 10:
             linenumbers = linenumbers[:9]
             linenumbers.append("others")
-        report("{} : this file contains unreachable statements at {}.".format(filename,
+        report("{}: This file contains unreachable statements at {}.".format(filename,
                                                                               humanize_listing(linenumbers,
                                                                                                singular_prefix="line ",
                                                                                                plural_prefix="lines ")))
@@ -1014,10 +1014,32 @@ def check_orphan_translations(none_lang_identifiers, translation_identifiers):
         # if len(linenumbers) > 10:
         #     linenumbers = linenumbers[:9]
         #     linenumbers.append("others")
-        report("{} : this file contains orphan translations at {}.".format(filename,
+        report("{}: This file contains orphan translations at {}.".format(filename,
                                                                            humanize_listing(linenumbers,
                                                                                             singular_prefix="line ",
                                                                                             plural_prefix="lines ")))
+
+
+def check_python_warnings():
+    """
+    Reports Python warnings.
+    """
+
+    warnings = [ ]
+
+    for k, v in renpy.game.script.bytecode_newcache.items():
+        if isinstance(k, tuple) and k[0] == "warnings":
+            warnings.extend(v)
+
+    if not warnings:
+        return
+
+    print("\n\nPython Warnings:")
+
+    warnings.sort()
+
+    for filename, line, text in warnings:
+        print("\n" + text, end='')
 
 
 def lint():
@@ -1170,9 +1192,12 @@ def lint():
 
     check_styles()
     check_filename_encodings()
+
     check_unreachables(all_stmts)
     if args.orphan_tl:
         check_orphan_translations(none_language_ids, translated_ids)
+
+    check_python_warnings()
 
     for f in renpy.config.lint_hooks:
         f()

@@ -1077,7 +1077,6 @@ class Script(object):
             except Exception:
                 pass
 
-
     def lookup(self, label):
         """
         Looks up the given label in the game. If the label is not found,
