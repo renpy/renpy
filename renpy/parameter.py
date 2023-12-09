@@ -187,7 +187,7 @@ class Signature(object):
                 return n
         return None
 
-    def apply_defaults(self, mapp):
+    def apply_defaults(self, mapp, scope=None):
         """
         From a mapping representing the inner scope of the callable after binding,
         this mutates the mapping to apply the evaluated default values of the parameters.
@@ -196,13 +196,13 @@ class Signature(object):
         is not calculated.
         """
         # code inspired from stdlib's inspect.BoundArguments.apply_defaults
-        # but optimized as not to create a new dict
+        # but optimized as to mutate the dict in-place
         # (because ordering doesn't matter to us)
         # resulting in 5x shorter execution time
         for name, param in self.parameters.items():
             if name not in mapp:
                 if param.default is not None:
-                    val = renpy.python.py_eval(param.default)
+                    val = renpy.python.py_eval(param.default, locals=scope)
                 elif param.kind == param.VAR_POSITIONAL:
                     val = ()
                 elif param.kind == param.VAR_KEYWORD:
@@ -211,7 +211,6 @@ class Signature(object):
                     # result of a partial bind
                     continue
                 mapp[name] = val
-        return mapp
 
     def apply(self, args, kwargs, ignore_errors=False, partial=False, apply_defaults=True):
         """
