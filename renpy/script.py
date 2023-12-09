@@ -732,10 +732,13 @@ class Script(object):
 
                 for mergefn in [ oldrpycfn, rpycfn ]:
 
+                    old_all_pyexpr = self.all_pyexpr
+                    self.record_pycode = False
+                    self.all_pyexpr = None
+
                     # See if we have a corresponding .rpyc file. If so, then
                     # we want to try to upgrade our .rpy file with it.
                     try:
-                        self.record_pycode = False
 
                         with open(mergefn, "rb") as rpycf:
                             bindata = self.read_rpyc_data(rpycf, 1)
@@ -750,6 +753,7 @@ class Script(object):
                         pass
                     finally:
                         self.record_pycode = True
+                        self.all_pyexpr = old_all_pyexpr
 
                 self.assign_names(stmts, renpy.lexer.elide_filename(fullfn))
 
