@@ -213,7 +213,7 @@ class Signature(object):
                 mapp[name] = val
         return mapp
 
-    def apply(self, args, kwargs, ignore_errors=False, partial=False):
+    def apply(self, args, kwargs, ignore_errors=False, partial=False, apply_defaults=True):
         """
         Takes args and kwargs, and returns a mapping corresponding to the
         inner scope of the callable as a result of that call.
@@ -367,7 +367,9 @@ class Signature(object):
                     'got an unexpected keyword argument {arg!r}'.format(
                         arg=next(iter(kwargs))))
 
-        return self.apply_defaults(arguments)
+        if apply_defaults:
+            self.apply_defaults(arguments)
+        return arguments
 
     def __eq__(self, other):
         if self is other:
