@@ -41,24 +41,30 @@ class Parameter(object):
         # default should only be passed by keyword, todo when PY3-only
         self.name = name
         self.kind = kind
-        self.default = default # type: str|None
+        self.default = default
+
+    @property
+    def has_default(self):
+        return self.default is not self.empty
+
+    def default_value(self, locals=None, globals=None):
+        return renpy.python.py_eval(self.default, locals=locals, globals=globals)
 
     def replace(self, **kwargs):
         d = dict(name=self.name, kind=self.kind, default=self.default)
         d.update(kwargs)
-        return Parameter(**d)
+        return type(self)(**d)
 
     def __str__(self):
         kind = self.kind
         formatted = self.name
 
-        if self.default is not None:
-            formatted += "=" + self.default # type: ignore
-
         if kind == self.VAR_POSITIONAL:
             formatted = "*" + formatted
         elif kind == self.VAR_KEYWORD:
             formatted = "**" + formatted
+        elif self.default is not self.empty:
+            formatted += "=" + self.default # type: ignore
 
         return formatted
 
@@ -67,6 +73,32 @@ class Parameter(object):
 
     def __eq__(self, other):
         return (self is other) or (isinstance(other, Parameter) and (self.name == other.name) and (self.kind == other.kind) and (self.default == other.default))
+
+class ValuedParameter(Parameter):
+    __slots__ = ()
+
+    class empty: pass # singleton, should be picklable
+
+    def __init__(self, name, kind, default=empty):
+        # default should only be passed by keyword, todo when PY3-only
+        # this method is redefined in order to change default's default value
+        super(ValuedParameter, self).__init__(name, kind, default)
+
+    def default_value(self, *args, **kwargs):
+        return self.default
+
+    def __str__(self):
+        kind = self.kind
+        formatted = self.name
+
+        if kind == self.VAR_POSITIONAL:
+            formatted = "*" + formatted
+        elif kind == self.VAR_KEYWORD:
+            formatted = "**" + formatted
+        elif self.default is not self.empty:
+            formatted = "{}={!r}".format(formatted, self.default)
+
+        return formatted
 
 class Signature(object):
     """
@@ -201,8 +233,8 @@ class Signature(object):
         # resulting in 5x shorter execution time
         for name, param in self.parameters.items():
             if name not in mapp:
-                if param.default is not None:
-                    val = renpy.python.py_eval(param.default, locals=scope)
+                if param.has_default:
+                    val = param.default_value(locals=scope)
                 elif param.kind == param.VAR_POSITIONAL:
                     val = ()
                 elif param.kind == param.VAR_KEYWORD:
