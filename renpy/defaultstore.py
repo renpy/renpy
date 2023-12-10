@@ -333,13 +333,15 @@ def At(d, *args):
             repeat
 
         image birds = At("birds.png", birds_transform)
-        """
+    """
 
     rv = renpy.easy.displayable(d)
 
     for i in args:
 
         if isinstance(i, renpy.display.motion.Transform):
+            # fails to set the child if the transform has a **kwargs parameter and no child parameter
+            # intended corner-case
             rv = i(child=rv)
         else:
             rv = i(rv)
