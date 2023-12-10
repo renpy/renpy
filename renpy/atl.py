@@ -544,12 +544,12 @@ class ATLTransformBase(renpy.object.Object):
 
         if (child_param is None) or (child_param.kind not in {ValuedParameter.POSITIONAL_OR_KEYWORD, ValuedParameter.KEYWORD_ONLY}):
             # if kwargs_param is None:
-                child = kwargs.pop("child", None)
+                child = kwargs.pop("child", child)
         else:
-            child = kwargs.get("child", None)
+            child = kwargs.get("child", child)
         if (old_widget_param is not None) and (old_widget_param.kind in {ValuedParameter.POSITIONAL_OR_KEYWORD, ValuedParameter.KEYWORD_ONLY}):
             # if getattr(signature.parameters.get("new_widget", None), "kind", None) in {ValuedParameter.POSITIONAL_OR_KEYWORD, ValuedParameter.KEYWORD_ONLY}: # Gamma-ter
-            child = kwargs.get("old_widget", None)
+            child = kwargs.get("old_widget", child)
 
         new_scope = signature.apply(args, kwargs, partial=True, apply_defaults=False)
 
