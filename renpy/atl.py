@@ -380,7 +380,7 @@ class ATLTransformBase(renpy.object.Object):
         else:
             context = context.copy()
             # Apply the default parameters.
-            parameters.apply_defaults(context, locals=context)
+            parameters.apply_defaults(context, scope=context)
 
         # The parameters that we take.
         self.parameters = parameters
