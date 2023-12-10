@@ -515,6 +515,11 @@ class ArgumentInfo(renpy.object.Object):
 
         return "(" + ", ".join(l) + ")"
 
+    __str__ = get_code
+
+    def __repr__(self):
+        return "<ArgumentInfo {}>".format(self)
+
 
 EMPTY_PARAMETERS = ParameterInfo()
 EMPTY_ARGUMENTS = ArgumentInfo([ ], None, None)
