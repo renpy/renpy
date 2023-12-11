@@ -26,6 +26,8 @@ python early:
 
 
 init -1499 python in _renpysteam:
+    # Do not participate in saves.
+    _constant = True
 
     import collections
     import time

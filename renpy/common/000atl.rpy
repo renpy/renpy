@@ -23,6 +23,8 @@
 # early, so Ren'Py knows about them when parsing other files.
 
 python early in _warper:
+    # Do not participate in saves.
+    _constant = True
 
     from renpy.atl import pause, instant
 

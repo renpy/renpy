@@ -23,6 +23,8 @@
 # distributions.
 
 init -1500 python in build:
+    # Do not participate in saves.
+    _constant = True
 
     from store import config, store
 
