@@ -278,7 +278,12 @@ def interpolate_spline(t, spline):
 
             rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
 
-    return position_or_none(rv)
+    if rv is None:
+        return None
+    # elif renpy.config.mixed_position:
+    #     return position.from_any(a)
+    else: # legacy
+        return type(spline[-1])(rv)
 
 
 def get_catmull_rom_value(t, p_1, p0, p1, p2):
