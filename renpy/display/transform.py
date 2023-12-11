@@ -334,6 +334,14 @@ class TransformState(renpy.object.Object):
     around = property(get_around, set_around)
     alignaround = property(get_around, set_alignaround)
 
+    def get_anchoraround(self):
+        return (self.xanchoraround, self.yanchoraround)
+
+    def set_anchoraround(self, value):
+        self.xanchoraround, self.yanchoraround = value
+
+    anchoraround = property(get_anchoraround, set_anchoraround)
+
     def get_angle(self):
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
@@ -1248,6 +1256,7 @@ ALIASES = {
     "align" : (float, float),
     "anchor" : (position_or_none, position_or_none),
     "anchorangle" : float,
+    "anchoraround" : (position_or_none, position_or_none),
     "anchorradius" : position_or_none,
     "angle" : float,
     "around" : (position_or_none, position_or_none),
