@@ -4510,13 +4510,9 @@ def get_sdl_dll():
     """
     :doc: sdl
 
-    This returns a ctypes.cdll object that refers to the library that contains
-    the instance of SDL2 that Ren'Py is using.
-
-    If this can not be done, None is returned.
+    :return: A ctypes.cdll object that refers to the library that contains
+    the instance of SDL2 that Ren'Py is using. If this can not be done, None is returned.
     """
-
-
 
     global sdl_dll
 
@@ -4554,8 +4550,10 @@ def get_sdl_window_pointer():
     """
     :doc: sdl
 
-    Returns a pointer (of type ctypes.c_void_p) to the main window, or None
-    if the main window is not displayed, or some other problem occurs.
+    :return: A pointer to the main window or None if the main window is not
+    displayed (or some other problem occurs).
+
+    :rtype: ctypes.c_void_p | None
     """
 
     try:
