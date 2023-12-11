@@ -41,7 +41,7 @@ characters in text. The supported characters are those in the
 
 Ren'Py 8 with Harfbuzz shaping is required to render joining sequences of Emoji,
 including things like gender and skin-tone modifiers, so you'll need Ren'Py 8
-to have those work. This switching occurrs when a font tag is not being
+to have those work. This switching occurs when a font tag is not being
 used.
 
 The new :propref:`emoji_font`, :propref:`prefer_emoji` style properties control
@@ -56,7 +56,7 @@ Variable Fonts
 --------------
 
 Ren'Py now supports OpenType variable fonts. These are fonts that use
-one or more axes of variablity to change how the font is rendered. For
+one or more axes of variability to change how the font is rendered. For
 example, a font may have the "weight" axis, which controls how bold the
 font is, and the "width" axis, which controls how wide the font is.
 
@@ -143,7 +143,7 @@ There is a new "Skip splashscreen" option in Options section
 of the launcher preferences. When checked, this will cause
 games launched to skip the splashscreen label when starting.
 
-A new 'Show Filename and Line' option is avilable from the
+A new 'Show Filename and Line' option is available from the
 shift+D developer menu. When enabled, this will cause the
 filename and line number of the current statement to be
 displayed. Clicking on the filename and line will open
@@ -292,7 +292,7 @@ Other Changes
 
 Fullscreen is disabled when running on the Safari web browser, due to
 multiple issues with fullscreen mode on that browser. (This includes
-browers on iOS that are thin wrappers around Safari.)
+browsers on iOS that are thin wrappers around Safari.)
 
 The pixel transparency test used by :propref:`focus_mask` will now
 only involve the GPU if inside the bounding box of non-transparent pixels,
@@ -422,7 +422,7 @@ PYTHON* variables are filtered from the environment when launching a
 Ren'Py project from the launcher.
 
 In self-voicing mode, Ren'Py will try to ensure that self-voicing
-notificatons are fully spoken to the player, even if the notification
+notifications are fully spoken to the player, even if the notification
 window fades away.
 
 Self voicing now speaks screens closer to the player before those
@@ -690,7 +690,7 @@ These releases add support for two new image formats:
   does not support text in SVG files.) Ren'Py will automatically oversample
   (or undersample) SVGs when the game is scaled, to ensure the SVGs remain
   sharp at any resolution, similar to the way it oversamples text. This makes
-  svgs a reasonable choice for interface elemnts that need to remain sharp.
+  svgs a reasonable choice for interface elements that need to remain sharp.
 
 This release of Ren'Py also adds support for oversampling raster images,
 like PNG, JPEG, WebP, and AVIF. For these images, oversampling is done
@@ -1316,7 +1316,7 @@ while not getting in the way of mouse users.
 Other Improvements
 ------------------
 
-Ren'Py will now warn when encoutering an explicit ``translate None`` statement
+Ren'Py will now warn when encountering an explicit ``translate None`` statement
 that does not translate strings, styles, or python.
 
 Ren'Py will now predict dialogue followed by the :ref:`extend <extend>` special
@@ -1630,7 +1630,7 @@ go to definition, function signatures, error diagnostics, outlining,
 and more.
 
 Visual Studio Code also has a large system of extensions, including
-spell-checkers, that can be used with with the Ren'Py Language extension.
+spell-checkers, that can be used with the Ren'Py Language extension.
 
 Visual Studio Code can be activated by going to the editor preferences
 and choosing to download it. It's also possible to configure Ren'Py
@@ -2177,9 +2177,9 @@ and highlight the update button if one exists.
 Camera/Perspective Improvements
 -------------------------------
 
-Using the ``camera`` statement in non-trival manners, such as to apply
+Using the ``camera`` statement in non-trivial manners, such as to apply
 perspective, could cause problems with several transitions, most notably
-the move transitions. This has been fixed, and so these transions should
+the move transitions. This has been fixed, and so these transitions should
 work.
 
 Operations that required the taking of a subsurface (for
@@ -2446,7 +2446,7 @@ This displayable doesn't support 3D, yet, but that's expected in the future.
 Other Improvements
 ------------------
 
-The Atom text editor has been updated, and the language-renpy plugin assoicated
+The Atom text editor has been updated, and the language-renpy plugin associated
 with it has been updated to support the new keywords introduced in recent
 versions of Ren'Py.
 
@@ -2740,7 +2740,7 @@ The player can now choose to ingore image files that cannot be loaded.
 
 The new :func:`renpy.get_sdl_dll` and :func:`renpy.get_sdl_window_pointer`
 functions make it possible to access the SDL DLL using ctypes. This may
-make it possible to implement funcitonality that is in SDL, but Ren'Py
+make it possible to implement functionality that is in SDL, but Ren'Py
 does not provide access to.
 
 Clicking now ends a transition introduced with :func:`renpy.transition`,
@@ -2787,7 +2787,7 @@ Values of the :tpref:`blur` transform property between 0 and 1 now work properly
 
 The {done} text tag now works as defined.
 
-Ren'Py is better at checking for GL load failuires and falling back to older
+Ren'Py is better at checking for GL load failures and falling back to older
 libraries.
 
 Apps built for macOS should enable HighDPI mode.
@@ -2897,7 +2897,7 @@ statement id::
 Live2D
 ------
 
-Live2D support has has a `default_fade` argument added, which can change the
+Live2D support has a `default_fade` argument added, which can change the
 default duration of fades at the start and end of motions and expressions.
 
 An issue with Live2D that manifested as a tuple error has been fixed.
@@ -3048,7 +3048,7 @@ for 4K monitors are used on 1080P and smaller displays.
 
 For this release, the Model-Based Renderer is opt in, with that opt-in
 controlled by the :var:`config.gl2` variable. As we gain more experience
-with it, it is indended to be come the default Ren'Py renderer.
+with it, it is intended to be come the default Ren'Py renderer.
 
 Live2D
 ------
@@ -3084,7 +3084,7 @@ to a layer, to recolor the entire layer - making it possible to push your
 game into sepia or black-and-white without needing a separate set of
 images.
 
-There are a few difference between the image manipulator and the the
+There are a few difference between the image manipulator and the
 transform property versions of matrixcolor, as the new version uses
 4x4 matrices and premultiplied alpha color, so the new property can't
 use the same matrices. Instead, there are number of new :ref:`ColorMatrix <colormatrix>`
@@ -3127,7 +3127,7 @@ systems needed to build Ren'Py with a single build platform that handles
 every platform except for webasm. The change in build system also involved
 updating all  of the libraries that Ren'Py uses to newer versions.
 
-As a result of this, the list of platforms that Ren'Py offically supports
+As a result of this, the list of platforms that Ren'Py officially supports
 has changed slightly. Here's the latest list of what is supported:
 
 .. list-table::
@@ -3328,7 +3328,7 @@ Other Changes
 
 The ``audio`` directory, which automatically defines
 names in the :ref:`audio namespace <audio-namespace>`, has been made
-visible in the launcher, and is added to newly-createrd projects.
+visible in the launcher, and is added to newly-created projects.
 
 The new :var:`config.exception_handler` callback allows an application to
 replace Ren'Py's exception handling system in its entirety.
@@ -3403,7 +3403,7 @@ to Android 19 (Android 4.4 KitKat).
 The web port of Ren'Py has seen a number of changes:
 
 * :ref:`Screen variants <screen-variants>` are now detected and set.
-* Fullscreen support has been improved, though the user may need to click to enable fullscren.
+* Fullscreen support has been improved, though the user may need to click to enable fullscreen.
 * Leaving the web page is detected, so persistent data may be saved.
 * 'game.zip' can now be renamed. 'DEFAULT_GAME_FILENAME' in index.html controls this.
 * Portable HTTP requests (native+renpyweb): see https://github.com/renpy/renpyweb/blob/master/utils/asyncrequest.rpy
@@ -3479,7 +3479,7 @@ release.
 Translations
 ------------
 
-Update the spanish translation.
+Update the Spanish translation.
 
 
 .. _renpy-7.3.1:
@@ -3491,7 +3491,7 @@ Changes
 -------
 
 Descriptive text (text that is intended to be show when self-voicing is
-enabled, so that scenes can be described to the vision impared) has been
+enabled, so that scenes can be described to the vision impaired) has been
 updated. Descriptive text is now accessed using the ``alt`` character
 (the old ``sv`` character has been retained as an alias.) It's also now
 possible to display descriptive text using a custom character, rather than
@@ -4036,7 +4036,7 @@ system, and use it to set the language. Please see
 :var:`config.enable_language_autodetect` and the :ref:`Translation <translation>`
 documentation for how this works.
 
-The French, German, Korean, Russian, and Simplifed Chinese translations
+The French, German, Korean, Russian, and Simplified Chinese translations
 have been updated.
 
 Fixes
