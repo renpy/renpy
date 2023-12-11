@@ -1685,6 +1685,16 @@ Rarely or Internally Used
     If false, :func:`renpy.pause` is always, used by the ``pause`` statement.
     If true, when given a delay, ``pause`` is equivalent to ``with Pause(...)``.
 
+.. var:: config.pass_controller_events = False
+
+    If true, pygame-like CONTROLLER events are passed to Displayables event
+    handlers. If not, those are consumed by Ren'Py.
+
+.. var:: config.pass_joystick_events = False
+
+    If true, pygame-like JOYSTICK events are passed to Displayables event
+    handlers. If not, those are consumed by Ren'Py.
+
 .. var:: config.per_frame_screens = [ ... ]
 
     This is a list of strings giving the name of screens that are updated

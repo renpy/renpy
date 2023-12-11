@@ -225,6 +225,10 @@ explains how to enable it and caveats that apply.
 Features
 --------
 
+The new :var:`config.pass_controller_events` and newly-documented
+:var:`config.pass_joystick_events` variables allow the game to access
+controller and joystick events directly.
+
 The new :var:`renpy.get_screen_variable` and :var:`renpy.get_screen_variable`
 make it possible to access screen variables, especially in :class:`Action`
 subclasses.
