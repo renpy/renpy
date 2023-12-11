@@ -59,7 +59,7 @@ def _scene_show_hide_transition_callback(statement):
     if _after_scene_show_hide:
         _after_scene_show_hide = False
 
-        if _scene_show_hide_transition:
+        if _scene_show_hide_transition and not renpy.game.after_rollback:
             renpy.with_statement(_scene_show_hide_transition)
 
         return
