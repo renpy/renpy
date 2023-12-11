@@ -286,6 +286,10 @@ can only be called from the main thread.)
 Other Changes
 -------------
 
+Fullscreen is disabled when running on the Safari web browser, due to
+multiple issues with fullscreen mode on that browser. (This includes
+browers on iOS that are thin wrappers around Safari.)
+
 The pixel transparency test used by :propref:`focus_mask` will now
 only involve the GPU if inside the bounding box of non-transparent pixels,
 improving performance in some cases.

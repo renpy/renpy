@@ -4883,3 +4883,14 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
         return content.decode("utf-8")
     elif result == "json":
         return _json.loads(content)
+
+
+def can_fullscreen():
+    """
+    :doc: other
+
+    Returns True if the current platform supports fullscreen mode, False
+    otherwise.
+    """
+
+    return renpy.display.can_fullscreen

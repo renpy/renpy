@@ -708,6 +708,9 @@ class Interface(object):
         # The displayable that an ongoing transition is transitioning from.
         self.transition_from = { }
 
+        # Can the interface go fullscreen?
+        self.can_fullscreen = True
+
         # Init layers.
         renpy.display.scenelists.init_layers()
 
@@ -2724,6 +2727,10 @@ class Interface(object):
                             needs_redraw = True
 
                     # Check for a fullscreen change.
+
+                    if not renpy.display.can_fullscreen:
+                        renpy.game.preferences.fullscreen = False
+
                     if renpy.game.preferences.fullscreen != self.fullscreen:
                         renpy.display.draw.resize()
 
