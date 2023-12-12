@@ -20,6 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1500 python in iap:
+    # Do not participate in saves.
+    _constant = True
 
     from store import persistent, Action
     import time

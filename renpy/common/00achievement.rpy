@@ -21,6 +21,9 @@
 
 
 init -1500 python in achievement:
+    # Do not participate in saves.
+    _constant = True
+
     from store import persistent, renpy, config, Action
 
     # A list of backends that have been registered.

@@ -1,6 +1,8 @@
 ﻿init offset = -100
 
 python early in layeredimage:
+    # Do not participate in saves.
+    _constant = True
 
     from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
     from collections import OrderedDict, defaultdict
