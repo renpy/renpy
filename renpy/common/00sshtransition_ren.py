@@ -50,6 +50,12 @@ def _scene_show_hide_transition_callback(statement):
     global _after_scene_show_hide
 
     if statement in config.scene_show_hide_statements:
+        if renpy.get_filename_line()[0].startswith("renpy/common/"):
+            return
+
+        if renpy.context()._menu:
+            return
+
         _after_scene_show_hide = True
         return
 
