@@ -82,7 +82,7 @@ cdef class TextureLoader:
         self.max_anisotropy = 1.0
         glGetFloatv(MAX_TEXTURE_MAX_ANISOTROPY_EXT, &self.max_anisotropy)
 
-        if not renpy.emscripten and not self.draw.angle:
+        if not renpy.emscripten and not renpy.windows:
             glGenBuffers(1, &self.pixel_buffer)
 
 
@@ -99,7 +99,7 @@ cdef class TextureLoader:
 
         self.allocated = set()
 
-        if not renpy.emscripten and not self.draw.angle:
+        if not renpy.emscripten and not renpy.windows:
             glDeleteBuffers(1, &self.pixel_buffer)
 
     def get_texture_size(self):
@@ -451,7 +451,7 @@ cdef class GLTexture(GL2Model):
         # But it doesn't seem to work with ANGLE or emscripten, so we avoid using PBOs when
         # angle is in use.
 
-        if not renpy.emscripten and not draw.angle:
+        if not renpy.emscripten and not renpy.windows:
 
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, self.loader.pixel_buffer)
             glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STATIC_DRAW)
@@ -531,7 +531,7 @@ cdef class GLTexture(GL2Model):
         # But it doesn't seem to work with ANGLE or emscripten, so we avoid using PBOs when
         # angle is in use.
 
-        if not renpy.emscripten and not draw.angle:
+        if not renpy.emscripten and not renpy.windows:
 
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, self.loader.pixel_buffer)
             glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STATIC_DRAW)
