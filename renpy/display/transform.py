@@ -413,15 +413,15 @@ class TransformState(renpy.object.Object):
 
         return absolute_vector, relative_vector
 
-    def get_anchorangle(self):
-        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = self.get_anchor_polar_vector()
+    def get_anchorangle(self, polar_vectors=None):
+        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = polar_vectors or self.get_anchor_polar_vector()
 
         absolute_radius = math.hypot(absolute_vector_x, absolute_vector_y)
+        relative_radius = math.hypot(relative_vector_x, relative_vector_y)
         absolute_angle = math.atan2(absolute_vector_x, -absolute_vector_y) / math.pi * 180
+        relative_angle = math.atan2(relative_vector_x, -relative_vector_y) / math.pi * 180
         if absolute_angle < 0:
             absolute_angle += 360
-        relative_radius = math.hypot(relative_vector_x, relative_vector_y)
-        relative_angle = math.atan2(relative_vector_x, -relative_vector_y) / math.pi * 180
         if relative_angle < 0:
             relative_angle += 360
 
@@ -432,8 +432,8 @@ class TransformState(renpy.object.Object):
 
         return DualAngle(absolute_angle, relative_angle)
 
-    def get_anchorradius(self):
-        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = self.get_anchor_polar_vector()
+    def get_anchorradius(self, polar_vectors=None):
+        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = polar_vectors or self.get_anchor_polar_vector()
 
         return position(
             absolute=math.hypot(absolute_vector_x, absolute_vector_y), # type: ignore
@@ -449,7 +449,6 @@ class TransformState(renpy.object.Object):
 
         self.last_absolute_anchorangle = limit_angle(absolute_anchorangle)
         self.last_relative_anchorangle = limit_angle(relative_anchorangle)
-
 
         anchorradius = self.anchorradius
 
