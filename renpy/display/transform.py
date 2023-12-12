@@ -32,7 +32,7 @@ import types # @UnresolvedImport
 import renpy
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
-from renpy.atl import position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
+from renpy.atl import dualangle_or_float_or_none, position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
 from renpy.display.core import absolute
 
 class Camera(renpy.object.Object):
@@ -91,7 +91,8 @@ def limit_angle(n):
 class TransformState(renpy.object.Object):
 
     last_angle = 0.0
-    last_anchorangle = 0.0
+    last_relative_anchorangle = 0.0
+    last_absolute_anchorangle = 0.0
     last_events = True
 
     available_width = 0
@@ -125,7 +126,8 @@ class TransformState(renpy.object.Object):
             d[k] = getattr(ts, k)
 
         self.last_angle = ts.last_angle
-        self.last_anchorangle = ts.last_anchorangle
+        self.last_absolute_anchorangle = ts.last_absolute_anchorangle
+        self.last_relative_anchorangle = ts.last_relative_anchorangle
         self.last_events = ts.last_events
 
         self.available_width = ts.available_width
@@ -395,40 +397,106 @@ class TransformState(renpy.object.Object):
     # Anchor polar motions.
 
     def get_anchorangle(self):
-        xanchor = first_not_none(self.xanchor, self.inherited_xanchor, 0)
-        yanchor = first_not_none(self.yanchor, self.inherited_yanchor, 0)
-        angle, radius = self.cartesian_to_polar_anchor(xanchor, yanchor)
+        xanchoraround = position.from_any(self.xanchoraround)
+        yanchoraround = position.from_any(self.yanchoraround)
+        xanchor = position.from_any(first_not_none(self.xanchor, self.inherited_xanchor, 0))
+        yanchor = position.from_any(first_not_none(self.yanchor, self.inherited_yanchor, 0))
 
-        if radius == 0 and self.last_anchorangle is not None:
-            angle = self.last_anchorangle
+        absolute_vector = (xanchor.absolute-xanchoraround.absolute, yanchor.absolute-yanchoraround.absolute)
+        relative_vector = (xanchor.relative-xanchoraround.relative, yanchor.relative-yanchoraround.relative)
 
-        return angle
+        absolute_radius = math.hypot(absolute_vector[0], absolute_vector[1])
+        absolute_angle = math.atan2(absolute_vector[0], -absolute_vector[1]) / math.pi * 180
+        if absolute_angle < 0:
+            absolute_angle += 360
+        relative_radius = math.hypot(relative_vector[0], relative_vector[1])
+        relative_angle = math.atan2(relative_vector[0], -relative_vector[1]) / math.pi * 180
+        if relative_angle < 0:
+            relative_angle += 360
+
+        if (absolute_radius == 0) and (self.last_absolute_anchorangle is not None):
+            absolute_angle = self.last_absolute_anchorangle
+        if (relative_radius == 0) and (self.last_relative_anchorangle is not None):
+            relative_angle = self.last_relative_anchorangle
+
+        return DualAngle(absolute_angle, relative_angle)
 
     def get_anchorradius(self):
-        xanchor = first_not_none(self.xanchor, self.inherited_xanchor, 0)
-        yanchor = first_not_none(self.yanchor, self.inherited_yanchor, 0)
-        _angle, radius = self.cartesian_to_polar_anchor(xanchor, yanchor)
+        xanchoraround = position.from_any(self.xanchoraround)
+        yanchoraround = position.from_any(self.yanchoraround)
+        xanchor = position.from_any(first_not_none(self.xanchor, self.inherited_xanchor, 0))
+        yanchor = position.from_any(first_not_none(self.yanchor, self.inherited_yanchor, 0))
 
-        return self.radius_type(radius)
+        return position(
+            absolute=math.hypot(xanchor.absolute-xanchoraround.absolute, yanchor.absolute-yanchoraround.absolute),
+            relative=math.hypot(xanchor.relative-xanchoraround.relative, yanchor.relative-yanchoraround.relative),
+        )
 
     def set_anchorangle(self, angle):
-        self.last_anchorangle = limit_angle(angle)
+        if isinstance(angle, DualAngle):
+            absolute_angle = angle.absolute
+            relative_angle = angle.relative
+        else:
+            absolute_angle = relative_angle = angle
 
-        xanchor = first_not_none(self.xanchor, self.inherited_xanchor, 0)
-        yanchor = first_not_none(self.yanchor, self.inherited_yanchor, 0)
-        _angle, radius = self.cartesian_to_polar_anchor(xanchor, yanchor)
-        self.xanchor, self.yanchor = self.polar_to_cartesian_anchor(angle, radius)
+        self.last_absolute_anchorangle = limit_angle(absolute_angle)
+        self.last_relative_anchorangle = limit_angle(relative_angle)
+
+
+        anchorradius = self.anchorradius
+        xanchoraround = position.from_any(self.xanchoraround)
+        yanchoraround = position.from_any(self.yanchoraround)
+
+        absolute_angle = absolute_angle * math.pi / 180
+        relative_angle = relative_angle * math.pi / 180
+
+        absolute_dx = anchorradius.absolute * math.sin(absolute_angle)
+        absolute_dy = -anchorradius.absolute * math.cos(absolute_angle)
+        relative_dx = anchorradius.relative * math.sin(relative_angle)
+        relative_dy = -anchorradius.relative * math.cos(relative_angle)
+
+        self.xanchor = position(
+            absolute=xanchoraround.absolute + absolute_dx,
+            relative=xanchoraround.relative + relative_dx,
+        )
+        self.yanchor = position(
+            absolute=yanchoraround.absolute + absolute_dy,
+            relative=yanchoraround.relative + relative_dy,
+        )
 
     def set_anchorradius(self, radius):
-        xanchor = first_not_none(self.xanchor, self.inherited_xanchor, 0)
-        yanchor = first_not_none(self.yanchor, self.inherited_yanchor, 0)
-        angle, old_radius = self.cartesian_to_polar_anchor(xanchor, yanchor)
+        # these two may be optimized by a common function
+        anchorangle = self.anchorangle
+        old_anchorradius = self.anchorradius
+        old_absolute_anchorradius = old_anchorradius.absolute
+        old_relative_anchorradius = old_anchorradius.relative
+        absolute_angle = anchorangle.absolute
+        relative_angle = anchorangle.relative
 
-        # Deal with the angle becoming 0.0 when the radius is 0.0.
-        if not old_radius and self.last_anchorangle is not None:
-            angle = self.last_anchorangle
+        if (not old_absolute_anchorradius) and (self.last_absolute_anchorangle is not None):
+            absolute_angle = self.last_absolute_anchorangle
+        if (not old_relative_anchorradius) and (self.last_relative_anchorangle is not None):
+            relative_angle = self.last_relative_anchorangle
 
-        self.xanchor, self.yanchor = self.polar_to_cartesian_anchor(angle, radius)
+        xanchoraround = position.from_any(self.xanchoraround)
+        yanchoraround = position.from_any(self.yanchoraround)
+
+        absolute_angle = absolute_angle * math.pi / 180
+        relative_angle = relative_angle * math.pi / 180
+
+        absolute_dx = radius.absolute * math.sin(absolute_angle)
+        absolute_dy = -radius.absolute * math.cos(absolute_angle)
+        relative_dx = radius.relative * math.sin(relative_angle)
+        relative_dy = -radius.relative * math.cos(relative_angle)
+
+        self.xanchor = position(
+            absolute=xanchoraround.absolute + absolute_dx,
+            relative=xanchoraround.relative + relative_dx,
+        )
+        self.yanchor = position(
+            absolute=yanchoraround.absolute + absolute_dy,
+            relative=yanchoraround.relative + relative_dy,
+        )
 
     anchorangle = property(get_anchorangle, set_anchorangle)
     anchorradius = property(get_anchorradius, set_anchorradius)
@@ -1255,7 +1323,7 @@ ALIASES = {
     "alignaround" : (float, float),
     "align" : (float, float),
     "anchor" : (position_or_none, position_or_none),
-    "anchorangle" : float,
+    "anchorangle" : dualangle_or_float_or_none,
     "anchoraround" : (position_or_none, position_or_none),
     "anchorradius" : position_or_none,
     "angle" : float,
