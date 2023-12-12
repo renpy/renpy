@@ -460,13 +460,14 @@ class TransformState(renpy.object.Object):
         )
 
     def set_anchorradius(self, anchorradius):
-        # these two may be optimized by a common function
-        anchorangle = self.anchorangle
-        old_anchorradius = self.anchorradius
-        old_absolute_anchorradius = old_anchorradius.absolute
-        old_relative_anchorradius = old_anchorradius.relative
+        polar_vectors = self.get_anchor_polar_vector()
+        anchorangle = self.get_anchorangle(polar_vectors)
+        old_anchorradius = self.get_anchorradius(polar_vectors)
+
         absolute_anchorangle = anchorangle.absolute
         relative_anchorangle = anchorangle.relative
+        old_absolute_anchorradius = old_anchorradius.absolute
+        old_relative_anchorradius = old_anchorradius.relative
 
         if (not old_absolute_anchorradius) and (self.last_absolute_anchorangle is not None):
             absolute_anchorangle = self.last_absolute_anchorangle
