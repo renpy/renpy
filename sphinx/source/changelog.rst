@@ -222,6 +222,18 @@ present.
 This is disabled by default. The documentation on :ref:`deferred-translations`
 explains how to enable it and caveats that apply.
 
+Scene, Show, and Hide Transition
+--------------------------------
+
+The new scene, show, and hide transitions makes it possible to
+automatically perform a transition after sequences of scene, show,
+and hide statements that are not followed by a with statement, or
+a window show transition.
+
+This is controlled by the new :var:`_scene_show_hide_transition` variable,
+and documented at :ref:`scene-show-hide-transition`.
+
+
 Features
 --------
 

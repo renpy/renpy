@@ -208,6 +208,7 @@ These control transitions between various screens.
     The transition used by the window show statement when no
     transition has been explicitly specified.
 
+.. seealso: :ref:`scene-show-hide-transition`
 
 Preference Defaults
 -------------------
