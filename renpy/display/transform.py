@@ -283,45 +283,6 @@ class TransformState(renpy.object.Object):
 
         return x, y
 
-    def cartesian_to_polar_anchor(self, x, y):
-        """
-        Converts cartesian coordinates to polar coordinates.
-        """
-
-        xaround = self.xanchoraround
-        yaround = self.yanchoraround
-
-        dx = x - xaround
-        dy = y - yaround
-
-        radius = math.hypot(dx, dy)
-        angle = math.atan2(dx, -dy) / math.pi * 180
-
-        if angle < 0:
-            angle += 360
-
-        return angle, type(xaround)(radius)
-
-    def polar_to_cartesian_anchor(self, angle, radius):
-        """
-        Converts polar coordinates to cartesian coordinates.
-        Assumes that xanchoraround, yanchoraround, and radius
-        are all in the same units.
-        """
-
-        xaround = self.xanchoraround
-        yaround = self.yanchoraround
-
-        angle = angle * math.pi / 180
-
-        dx = radius * math.sin(angle)
-        dy = -radius * math.cos(angle)
-
-        x = type(xaround)(xaround + dx)
-        y = type(xaround)(yaround + dy)
-
-        return x, y
-
     def get_around(self):
         return (self.xaround, self.yaround)
 
