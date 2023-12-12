@@ -434,60 +434,62 @@ class TransformState(renpy.object.Object):
 
     def set_anchorangle(self, angle):
         if isinstance(angle, DualAngle):
-            absolute_angle = angle.absolute
-            relative_angle = angle.relative
+            absolute_anchorangle = angle.absolute
+            relative_anchorangle = angle.relative
         else:
-            absolute_angle = relative_angle = angle
+            absolute_anchorangle = relative_anchorangle = angle
 
-        self.last_absolute_anchorangle = limit_angle(absolute_angle)
-        self.last_relative_anchorangle = limit_angle(relative_angle)
+        self.last_absolute_anchorangle = limit_angle(absolute_anchorangle)
+        self.last_relative_anchorangle = limit_angle(relative_anchorangle)
 
 
         anchorradius = self.anchorradius
-        xanchoraround = position.from_any(self.xanchoraround)
-        yanchoraround = position.from_any(self.yanchoraround)
 
-        absolute_angle = absolute_angle * math.pi / 180
-        relative_angle = relative_angle * math.pi / 180
-
-        absolute_dx = anchorradius.absolute * math.sin(absolute_angle)
-        absolute_dy = -anchorradius.absolute * math.cos(absolute_angle)
-        relative_dx = anchorradius.relative * math.sin(relative_angle)
-        relative_dy = -anchorradius.relative * math.cos(relative_angle)
-
-        self.xanchor = position(
-            absolute=xanchoraround.absolute + absolute_dx,
-            relative=xanchoraround.relative + relative_dx,
-        )
-        self.yanchor = position(
-            absolute=yanchoraround.absolute + absolute_dy,
-            relative=yanchoraround.relative + relative_dy,
+        self.set_anchor_from_angle_and_radius(
+            absolute_anchorangle,
+            relative_anchorangle,
+            anchorradius.absolute,
+            anchorradius.relative,
         )
 
-    def set_anchorradius(self, radius):
+    def set_anchorradius(self, anchorradius):
         # these two may be optimized by a common function
         anchorangle = self.anchorangle
         old_anchorradius = self.anchorradius
         old_absolute_anchorradius = old_anchorradius.absolute
         old_relative_anchorradius = old_anchorradius.relative
-        absolute_angle = anchorangle.absolute
-        relative_angle = anchorangle.relative
+        absolute_anchorangle = anchorangle.absolute
+        relative_anchorangle = anchorangle.relative
 
         if (not old_absolute_anchorradius) and (self.last_absolute_anchorangle is not None):
-            absolute_angle = self.last_absolute_anchorangle
+            absolute_anchorangle = self.last_absolute_anchorangle
         if (not old_relative_anchorradius) and (self.last_relative_anchorangle is not None):
-            relative_angle = self.last_relative_anchorangle
+            relative_anchorangle = self.last_relative_anchorangle
+
+        self.set_anchor_from_angle_and_radius(
+            absolute_anchorangle,
+            relative_anchorangle,
+            anchorradius.absolute,
+            anchorradius.relative,
+        )
+
+    def set_anchor_from_angle_and_radius(self,
+            absolute_anchorangle,
+            relative_anchorangle,
+            absolute_anchorradius,
+            relative_anchorradius,
+        ):
 
         xanchoraround = position.from_any(self.xanchoraround)
         yanchoraround = position.from_any(self.yanchoraround)
 
-        absolute_angle = absolute_angle * math.pi / 180
-        relative_angle = relative_angle * math.pi / 180
+        absolute_anchorangle = absolute_anchorangle * math.pi / 180
+        relative_anchorangle = relative_anchorangle * math.pi / 180
 
-        absolute_dx = radius.absolute * math.sin(absolute_angle)
-        absolute_dy = -radius.absolute * math.cos(absolute_angle)
-        relative_dx = radius.relative * math.sin(relative_angle)
-        relative_dy = -radius.relative * math.cos(relative_angle)
+        absolute_dx = absolute_anchorradius * math.sin(absolute_anchorangle)
+        absolute_dy = -absolute_anchorradius * math.cos(absolute_anchorangle)
+        relative_dx = relative_anchorradius * math.sin(relative_anchorangle)
+        relative_dy = -relative_anchorradius * math.cos(relative_anchorangle)
 
         self.xanchor = position(
             absolute=xanchoraround.absolute + absolute_dx,
