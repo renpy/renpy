@@ -375,6 +375,12 @@ class TransformState(renpy.object.Object):
         return absolute_vector, relative_vector
 
     def get_anchorangle(self, polar_vectors=None):
+        """
+        Returns a DualAngle object, from the oriented angle in degrees, with 0 as the top direction and 90 as the right,
+        of the vector going from (xanchoraround, yanchoraround) to (xanchor, yanchor).
+        The absolute part of the angle is the angle between the absolute parts of the vectors,
+        and the relative part, of the relative parts.
+        """
         (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = polar_vectors or self.get_anchor_polar_vector()
 
         absolute_radius = math.hypot(absolute_vector_x, absolute_vector_y)
@@ -394,6 +400,10 @@ class TransformState(renpy.object.Object):
         return DualAngle(absolute_angle, relative_angle)
 
     def get_anchorradius(self, polar_vectors=None):
+        """
+        Returns the distance between (xanchoraround, yanchoraround) and (xanchor, yanchor),
+        as a position object.
+        """
         (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = polar_vectors or self.get_anchor_polar_vector()
 
         return position(
@@ -402,6 +412,11 @@ class TransformState(renpy.object.Object):
         )
 
     def set_anchorangle(self, angle):
+        """
+        Computes the anchorradius (as a position object),
+        and set xanchor and yanchor such that the anchorradius (both the absolute and relative parts)
+        remain the same, and the anchorangle (as explained above) is the given one.
+        """
         if isinstance(angle, DualAngle):
             absolute_anchorangle = angle.absolute
             relative_anchorangle = angle.relative
@@ -413,7 +428,7 @@ class TransformState(renpy.object.Object):
 
         anchorradius = self.anchorradius
 
-        self.set_anchor_from_angle_and_radius(
+        self.set_anchor_from_anchorangle_and_anchorradius(
             absolute_anchorangle,
             relative_anchorangle,
             anchorradius.absolute,
@@ -421,6 +436,11 @@ class TransformState(renpy.object.Object):
         )
 
     def set_anchorradius(self, anchorradius):
+        """
+        Computes the anchorangle (as a DualAngle object),
+        and set xanchor and yanchor such that the anchorangle stays the same,
+        and the anchorradius (as explained above) is the given one.
+        """
         polar_vectors = self.get_anchor_polar_vector()
         anchorangle = self.get_anchorangle(polar_vectors)
         old_anchorradius = self.get_anchorradius(polar_vectors)
@@ -435,14 +455,14 @@ class TransformState(renpy.object.Object):
         if (not old_relative_anchorradius) and (self.last_relative_anchorangle is not None):
             relative_anchorangle = self.last_relative_anchorangle
 
-        self.set_anchor_from_angle_and_radius(
+        self.set_anchor_from_anchorangle_and_anchorradius(
             absolute_anchorangle,
             relative_anchorangle,
             anchorradius.absolute,
             anchorradius.relative,
         )
 
-    def set_anchor_from_angle_and_radius(self,
+    def set_anchor_from_anchorangle_and_anchorradius(self,
             absolute_anchorangle,
             relative_anchorangle,
             absolute_anchorradius,
