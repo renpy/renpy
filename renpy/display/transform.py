@@ -233,56 +233,6 @@ class TransformState(renpy.object.Object):
 
         return float(absolute.compute_raw(value, available))
 
-    def cartesian_to_polar_pos(self, x, y):
-        """
-        Converts cartesian coordinates to polar coordinates.
-        """
-
-        x = self.scale(x, self.available_width)
-        y = self.scale(y, self.available_height)
-
-        xaround = self.scale(self.xaround, self.available_width)
-        yaround = self.scale(self.yaround, self.available_height)
-
-        dx = x - xaround
-        dy = y - yaround
-
-        radius = math.hypot(dx, dy)
-        angle = math.atan2(dx, -dy) / math.pi * 180
-
-        if angle < 0:
-            angle += 360
-
-        return angle, radius
-
-
-    def polar_to_cartesian_pos(self, angle, radius):
-        """
-        Converts polar coordinates to cartesian coordinates.
-        """
-
-        xaround = self.scale(self.xaround, self.available_width)
-        yaround = self.scale(self.yaround, self.available_height)
-
-        angle = angle * math.pi / 180
-
-        dx = radius * math.sin(angle)
-        dy = -radius * math.cos(angle)
-
-        x = absolute(xaround + dx)
-        y = absolute(yaround + dy)
-
-        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
-        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-
-        if type(xpos) is float:
-            x = float(x / self.available_width)
-
-        if type(ypos) is float:
-            y = float(y / self.available_height)
-
-        return x, y
-
     def get_around(self):
         return (self.xaround, self.yaround)
 
@@ -305,53 +255,66 @@ class TransformState(renpy.object.Object):
 
     anchoraround = property(get_anchoraround, set_anchoraround)
 
-    def get_angle(self):
-        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
-        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-        angle, radius = self.cartesian_to_polar_pos(xpos, ypos)
+    def get_pos_polar_vector(self):
+        xpos = self.scale(first_not_none(self.xpos, self.inherited_xpos, 0), self.available_width)
+        ypos = self.scale(first_not_none(self.ypos, self.inherited_ypos, 0), self.available_height)
 
-        if radius == 0 and self.last_angle is not None:
+        xaround = self.scale(self.xaround, self.available_width)
+        yaround = self.scale(self.yaround, self.available_height)
+
+        return (xpos - xaround, ypos - yaround)
+
+    def get_angle(self, vector=None):
+        vector_x, vector_y = vector or self.get_pos_polar_vector()
+
+        radius = math.hypot(vector_x, vector_y)
+        angle = math.atan2(vector_x, -vector_y) / math.pi * 180
+
+        if angle < 0:
+            angle += 360
+
+        if (radius == 0) and (self.last_angle is not None):
             angle = self.last_angle
 
         return angle
 
-    def get_radius(self):
-        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
-        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-        _angle, radius = self.cartesian_to_polar_pos(xpos, ypos)
+    def get_radius(self, vector=None):
+        vector_x, vector_y = vector or self.get_pos_polar_vector()
 
-        if self.radius_type is float:
-            divisor = min(self.available_width, self.available_height)
-            if divisor:
-                radius = radius / divisor
-            else:
-                radius = 0.0
-
-        return self.radius_type(radius)
+        return absolute(math.hypot(vector_x, vector_y))
 
     def set_angle(self, angle):
         self.last_angle = limit_angle(angle)
 
-        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
-        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-        _angle, radius = self.cartesian_to_polar_pos(xpos, ypos)
-        self.xpos, self.ypos = self.polar_to_cartesian_pos(angle, radius)
+        radius = self.get_radius()
+
+        self.set_pos_from_angle_and_radius(angle, radius)
 
     def set_radius(self, radius):
-        self.radius_type = type(radius)
-
         radius = self.scale(radius, min(self.available_width, self.available_height))
 
-        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
-        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-        angle, old_radius = self.cartesian_to_polar_pos(xpos, ypos)
+        vector = self.get_pos_polar_vector()
+        angle = self.get_angle(vector)
+        old_radius = self.get_radius(vector)
 
         # Deal with the angle becoming 0.0 when the radius is 0.0.
-        if not old_radius and self.last_angle is not None:
+        if (not old_radius) and (self.last_angle is not None):
             angle = self.last_angle
 
-        self.xpos, self.ypos = self.polar_to_cartesian_pos(angle, radius)
+        self.set_pos_from_angle_and_radius(angle, radius)
 
+    def set_pos_from_angle_and_radius(self, angle, radius):
+        xaround = self.scale(self.xaround, self.available_width)
+        yaround = self.scale(self.yaround, self.available_height)
+
+        angle = angle * math.pi / 180
+
+        dx = radius * math.sin(angle)
+        dy = -radius * math.cos(angle)
+
+        self.xpos = absolute(xaround + dx)
+        self.ypos = absolute(yaround + dy)
+    
     angle = property(get_angle, set_angle)
     radius = property(get_radius, set_radius)
 
