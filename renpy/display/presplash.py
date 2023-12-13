@@ -176,6 +176,9 @@ def pump_window():
         if ev.type == pygame_sdl2.QUIT:
             raise renpy.game.QuitException(relaunch=False, status=0)
 
+# Becomes true when the presplash is done.
+done = False
+
 
 def end():
     """
@@ -183,6 +186,9 @@ def end():
     """
 
     global window
+    global done
+
+    done = True
 
     if renpy.emscripten:
         emscripten.run_script(r"""presplashEnd();""")
@@ -232,6 +238,9 @@ def progress(kind, done, total):
     global progress_kind
 
     if not renpy.emscripten:
+        return
+
+    if done:
         return
 
     if not PY2:

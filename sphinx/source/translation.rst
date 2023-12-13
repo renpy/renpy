@@ -400,6 +400,30 @@ Finally, it rebuilds styles, allowing the changes to take effect.
 
 Style translations may be added to any .rpy file.
 
+.. _deferred-translations:
+
+Deferred Translation Loading
+============================
+
+For a large game, loading all translations can take a long time. To speed
+up these games, Ren'Py supports deferred translations. To enable deferred
+translations, add::
+
+    define config.defer_tl_scripts = True
+
+To your options.rpy file, or any file that loads before the translation
+scripts.
+
+When True, this variable will prevent Ren'Py from loading script files
+found in directories named tl/`language` as it initializes. Instead,
+it will load these files when the language is first activated,
+either at game start or when Ren'Py switches to the language.
+
+Because the tl/`language` directories are not loaded at init time, these
+files should not contain any statements that are executed at init time,
+like ``init`` blocks or ``python`` blocks, ``screen``, ``image``, ``transform``,
+and other statements. The files should consist entirely of ``translate``,
+``translate python``, and ``translate style`` blocks.
 
 Default Language
 ================

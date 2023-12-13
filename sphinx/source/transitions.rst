@@ -225,6 +225,41 @@ and hides, consider changing options.rpy to have::
 
 This works because the dialogue window exists entirely on the screens layer.
 
+
+.. _scene-show-hide-transition:
+
+Automatic Transitions after Scene, Show, and Hide
+=================================================
+
+Ren'Py can automatically show a transition after a series of scene, show,
+and hide statements. This transition can be enabled by setting the
+:var:`_scene_show_hide_transition` variable to the transition to be used.
+
+The transition will occur after one or more ``scene``, ``show``, or ``hide`` statements,
+provided the statement are not followed by a  with statement, or a transition
+caused by :ref`dialogue window management <dialogue-window-management>`, like
+the various ``window`` statements. It's also disabled when in a menu context.
+
+For example::
+
+    define _scene_show_hide_transition = Dissolve(0.25)
+
+    label start:
+        scene bg washington
+        show eileen happy
+
+        "The transition won't show here, because the dialogue window transitioned in."
+
+        show lucy mad at right
+
+        "The transition will happen here."
+
+        hide lucy mad
+        show eileen vhappy
+
+        "And it will happen here, as well."
+
+
 See Also
 ========
 

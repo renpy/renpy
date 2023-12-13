@@ -66,9 +66,12 @@ init -1200 python:
         if _preferences.show_empty_window and (not renpy.game.after_rollback):
             renpy.with_statement(None)
             store._window = True
+
             renpy.with_statement(trans)
         else:
             store._window = True
+
+        store._after_scene_show_hide = None
 
     def _window_hide(trans=False, auto=False):
         """
@@ -101,6 +104,8 @@ init -1200 python:
             renpy.with_statement(trans)
         else:
             store._window = False
+
+        store._after_scene_show_hide = None
 
     def _window_auto_callback(statement):
 

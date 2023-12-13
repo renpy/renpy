@@ -274,7 +274,11 @@ init -1500 python:
 
             if name == _("display"):
                 if value == "fullscreen":
-                    return SetField(_preferences, "fullscreen", True)
+                    if renpy.can_fullscreen():
+                        return SetField(_preferences, "fullscreen", True)
+                    else:
+                        return None
+
                 elif value == "window":
                     if renpy.variant("web"):
                         # Only fullscreen and non-fullscreen modes for Web

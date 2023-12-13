@@ -47,6 +47,14 @@ touch = False
 # The pygame.display.Info object, which we want to survive a reload.
 info = None
 
+can_fullscreen = True
+if renpy.emscripten:
+    import emscripten
+
+    # Checks to see if safari is the browser.
+    if emscripten.run_script_int("(/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) ? 1 : 0"):
+        can_fullscreen = False
+
 
 def get_info():
     global info
@@ -57,7 +65,6 @@ def get_info():
         info = pygame.display.Info()
 
     return info
-
 
 # Logs we use.
 log = renpy.log.open("log", developer=False, append=False)

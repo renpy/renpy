@@ -22,7 +22,8 @@
 # This file contains code that creates a few new statements.
 
 init -1200 python in audio:
-    pass
+    # Do not participate in saves.
+    _constant = True
 
 init -1200 python:
 

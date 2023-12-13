@@ -373,7 +373,7 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
         self.child_height = 0
 
         # The delay and st.
-        self.delay = delay
+        self.delay = delay # type: int|float
         self.st = 0
 
     def render(self, width, height, st, at):
@@ -397,16 +397,18 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
         return cr
 
     def child_placement(self, child):
+        """
+        The values of the returned tuple are numbers of pixels of negligible type
+        (except subpixel which is boolean)
+        """
+
+        absolute = renpy.display.core.absolute
 
         def based(v, base):
             if v is None:
                 return 0
-            elif isinstance(v, int):
-                return v
-            elif isinstance(v, renpy.display.core.absolute):
-                return v
             else:
-                return v * base
+                return absolute.compute_raw(v, base)
 
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = child.get_placement()
 
@@ -419,10 +421,10 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
 
     def get_placement(self):
 
-        if self.st > self.delay: # type: ignore
+        if self.st > self.delay:
             done = 1.0
         else:
-            done = self.st / self.delay # type: ignore
+            done = self.st / self.delay
 
         if self.time_warp is not None:
             done = self.time_warp(done)

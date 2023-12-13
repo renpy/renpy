@@ -119,10 +119,7 @@ def relative(n, base, limit):
     while a float is interpreted as a fraction of the limit).
     """
 
-    if isinstance(n, (int, absolute)):
-        return n
-    else:
-        return min(int(n * base), limit)
+    return min(int(absolute.compute_raw(n, base)), limit)
 
 cdef class RenderTransform:
     """

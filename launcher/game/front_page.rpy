@@ -265,6 +265,7 @@ label lint:
 
         persistent.lint_options.discard("--orphan-tl") # compat
         persistent.lint_options.discard("--builtins-parameters") # compat
+        persistent.lint_options.discard("--words-char-count") # compat
 
         project.current.launch([ 'lint', lint_fn, ] + list(persistent.lint_options), wait=True)
 

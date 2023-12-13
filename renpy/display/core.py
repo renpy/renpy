@@ -117,6 +117,10 @@ null = None
 time_base = 0.0
 time_mult = 1.0
 
+# Mouse management.
+relx = 0
+rely = 0
+
 
 
 def init_time():
@@ -704,6 +708,9 @@ class Interface(object):
         # The displayable that an ongoing transition is transitioning from.
         self.transition_from = { }
 
+        # Can the interface go fullscreen?
+        self.can_fullscreen = True
+
         # Init layers.
         renpy.display.scenelists.init_layers()
 
@@ -957,6 +964,9 @@ class Interface(object):
         if self.started:
             return
 
+        if renpy.emscripten:
+            renpy.game.preferences.fullscreen = False
+
         # Avoid starting on Android if we don't have focus.
         if renpy.android:
             self.check_android_start()
@@ -1157,9 +1167,6 @@ class Interface(object):
         Figures out the list of draw constructors to try.
         """
 
-        if "RENPY_RENDERER" in os.environ:
-            renpy.config.gl2 = False
-
         renderer = renpy.game.preferences.renderer
         renderer = os.environ.get("RENPY_RENDERER", renderer)
         renderer = renpy.session.get("renderer", renderer)
@@ -1180,26 +1187,22 @@ class Interface(object):
             if i in renderers:
                 gl2_renderers.append(i + "2")
 
-        if renpy.config.gl2 or renpy.macintosh:
-            renderers = gl2_renderers + renderers
+        renderers = gl2_renderers + renderers
 
-            # Prevent a performance warning if the renderer
-            # is taken from old persistent data
-            if renderer not in gl2_renderers:
-                renderer = "auto"
+        # Prevent a performance warning if the renderer
+        # is taken from old persistent data.
+        if renderer not in gl2_renderers and (renpy.macintosh or renpy.android or renpy.config.gl2):
+            renderer = "auto"
 
-        else:
-            renderers = renderers + gl2_renderers
+        # Software renderer is the last hope for PC .
+        if not (renpy.android or renpy.ios or renpy.emscripten):
+            renderers = renderers + [ "sw" ]
 
         if renderer in renderers:
             renderers = [ renderer, "sw" ]
 
         if renderer == "sw":
             renderers = [ "sw" ]
-
-        # Software renderer is the last hope for PC and mac.
-        if not (renpy.android or renpy.ios or renpy.emscripten):
-            renderers = renderers + [ "sw" ]
 
         if self.safe_mode:
             renderers = [ "sw" ]
@@ -2425,10 +2428,16 @@ class Interface(object):
         renpy.display.screen.updated_screens.clear()
 
         # Clear some events.
-        pygame.event.clear((pygame.MOUSEMOTION,
-                            PERIODIC,
+        pygame.event.clear((PERIODIC,
                             TIMEEVENT,
                             REDRAW))
+
+        # Accumulate relative mouse movement from otherwise obsolete events.
+        global relx, rely
+        for ev in pygame.event.get(pygame.MOUSEMOTION):
+            xr, yr = ev.rel
+            relx += xr
+            rely += yr
 
         # Add a single TIMEEVENT to the queue.
         self.post_time_event()
@@ -2718,6 +2727,10 @@ class Interface(object):
                             needs_redraw = True
 
                     # Check for a fullscreen change.
+
+                    if not renpy.display.can_fullscreen:
+                        renpy.game.preferences.fullscreen = False
+
                     if renpy.game.preferences.fullscreen != self.fullscreen:
                         renpy.display.draw.resize()
 
@@ -3029,9 +3042,19 @@ class Interface(object):
 
                 # Merge mousemotion events.
                 if ev.type == pygame.MOUSEMOTION:
-                    evs = pygame.event.get([pygame.MOUSEMOTION])
-                    if len(evs):
-                        ev = evs[-1]
+                    xr, yr = ev.rel
+                    relx += xr
+                    rely += yr
+
+                    for ev in pygame.event.get(pygame.MOUSEMOTION):
+                        xr, yr = ev.rel
+                        relx += xr
+                        rely += yr
+
+                    # Event is now the most recent mouse move due to loop.
+                    ev.rel = relx, rely
+                    relx = 0
+                    rely = 0
 
                     if renpy.windows:
                         self.mouse_focused = True

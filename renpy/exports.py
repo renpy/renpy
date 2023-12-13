@@ -2429,12 +2429,15 @@ def dynamic(*variables, **kwargs):
     variables dynamically scoped to the current call. When the call returns, the
     variables will be reset to the value they had when this function was called.
 
+    Variables in :ref:`named stores <named-stores>` are supported.
+
     If the variables are given as keyword arguments, the value of the argument
     is assigned to the variable name.
 
     Example calls are::
 
         $ renpy.dynamic("x", "y", "z")
+        $ renpy.dynamic("mystore.serial_number")
         $ renpy.dynamic(players=2, score=0)
     """
 
@@ -2449,13 +2452,17 @@ def context_dynamic(*variables):
     """
     :doc: context
 
-    This can be given one or more variable names as arguments. This makes
-    the variables dynamically scoped to the current context. The variables will
-    be reset to their original value when returning to the prior context.
+    This can be given one or more variable names as arguments. This makes the
+    variables dynamically scoped to the current context. When returning to the
+    prior context, the variables will be reset to the value they had when this
+    function was called.
 
-    An example call is::
+    Variables in :ref:`named stores <named-stores>` are supported.
+
+    Example calls are::
 
         $ renpy.context_dynamic("x", "y", "z")
+        $ renpy.context_dynamic("mystore.serial_number")
     """
 
     renpy.game.context().make_dynamic(variables, context=True)
@@ -2976,6 +2983,60 @@ def load_string(s, filename="<string>"):
         renpy.game.script.analyze()
 
         return stmts[0].name
+
+    finally:
+        renpy.game.exception_info = old_exception_info
+
+
+def load_language(language):
+    """
+    :undocumented:
+
+    (Here because of commonality with load_string and load_module.)
+
+    Load the script files in tl/language, if not loaded. Runs any
+    init code found during the process.
+"""
+
+    if language is None:
+        return
+
+    if renpy.config.defer_tl_scripts:
+        return
+
+    if language in renpy.game.script.load_languages:
+        return
+
+    old_exception_info = renpy.game.exception_info
+
+    try:
+
+        old_locked = renpy.config.locked
+        renpy.config.locked = False
+
+        renpy.game.script.load_languages.add(language)
+
+        initcode = renpy.game.script.load_script()
+
+        context = renpy.execution.Context(False)
+        context.init_phase = True
+        renpy.game.contexts.append(context)
+
+        for _prio, node in initcode:
+            if isinstance(node, renpy.ast.Node):
+                renpy.game.context().run(node)
+            else:
+                node()
+
+        context.pop_all_dynamic()
+        renpy.game.contexts.pop()
+
+        renpy.config.locked = old_locked
+
+        if not renpy.game.context().init_phase:
+            renpy.game.script.analyze()
+
+        renpy.game.script.update_bytecode()
 
     finally:
         renpy.game.exception_info = old_exception_info
@@ -4449,13 +4510,9 @@ def get_sdl_dll():
     """
     :doc: sdl
 
-    This returns a ctypes.cdll object that refers to the library that contains
-    the instance of SDL2 that Ren'Py is using.
-
-    If this can not be done, None is returned.
+    Returns a ctypes.cdll object that refers to the library that contains
+    the instance of SDL2 that Ren'Py is using. If this fails, None is returned.
     """
-
-
 
     global sdl_dll
 
@@ -4493,15 +4550,17 @@ def get_sdl_window_pointer():
     """
     :doc: sdl
 
-    Returns a pointer (of type ctypes.c_void_p) to the main window, or None
-    if the main window is not displayed, or some other problem occurs.
+    :rtype: ctypes.c_void_p | None
+
+    Returns a pointer to the main window, or None if the main window is not
+    displayed (or some other problem occurs).
     """
 
     try:
         window = pygame_sdl2.display.get_window()
 
         if window is None:
-            return
+            return None
 
         return window.get_sdl_window_pointer()
 
@@ -4822,3 +4881,14 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
         return content.decode("utf-8")
     elif result == "json":
         return _json.loads(content)
+
+
+def can_fullscreen():
+    """
+    :doc: other
+
+    Returns True if the current platform supports fullscreen mode, False
+    otherwise.
+    """
+
+    return renpy.display.can_fullscreen

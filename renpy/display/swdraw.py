@@ -872,48 +872,12 @@ class SWDraw(object):
 
         return rv
 
-    def is_pixel_opaque(self, what, x, y):
+    def is_pixel_opaque(self, what):
+        """
+        Not implemented for swdraw - always return True.
+        """
 
-        # Special case ImageDissolve/AlphaMask for speed and correctness
-        # reasons.
-        #
-        # This doesn't work perfectly, but this should be a rare case and
-        # swdraw is going away.
-        if what.operation == IMAGEDISSOLVE:
-            a0 = self.is_pixel_opaque(what.children[0][0], x, y)
-            a2 = self.is_pixel_opaque(what.children[2][0], x, y)
-
-            return a0 * a2
-
-        if x < 0 or y < 0 or x >= what.width or y >= what.height:
-            return 0
-
-        for (child, xo, yo, _focus, _main) in what.children:
-            cx = x - xo
-            cy = y - yo
-
-            if what.forward:
-                cx, cy = what.forward.transform(cx, cy)
-
-            if isinstance(child, renpy.display.render.Render):
-                if self.is_pixel_opaque(child, x, y):
-                    return True
-
-            else:
-                cx = int(cx)
-                cy = int(cy)
-
-                if cx < 0 or cy < 0:
-                    return False
-
-                cw, ch = child.get_size()
-                if cx >= cw or cy >= ch:
-                    return False
-
-                if not child.get_masks()[3] or child.get_at((cx, cy))[3]:
-                    return True
-
-        return False
+        return True
 
     def mutated_surface(self, surf):
         """

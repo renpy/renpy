@@ -74,6 +74,9 @@ screen _gamepad_control(name, control, kind, mappings, back, i, total):
 
 
 init -1200 python in _gamepad:
+    # Do not participate in saves.
+    _constant = True
+
     from pygame_sdl2 import JOYHATMOTION, JOYAXISMOTION, JOYBUTTONDOWN
     import pygame_sdl2
     import os

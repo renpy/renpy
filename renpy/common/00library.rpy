@@ -304,24 +304,6 @@ init -1700 python:
 
 
     ##########################################################################
-    # Constant stores.
-    #
-    # Set _constant on many default stores.
-
-    _errorhandling._constant = True
-    _gamepad._constant = True
-    _renpysteam._constant = True
-    _warper._constant = True
-    audio._constant = True
-    achievement._constant = True
-    build._constant = True
-    director._constant = True
-    iap._constant = True
-    layeredimage._constant = True
-    updater._constant = True
-
-
-    ##########################################################################
     # Misc.
 
     # Should we display tiles in places of transparency while in developer

@@ -683,6 +683,9 @@ quit_on_mobile_background = False
 # Should Ren'Py pass the raw joystick (not controller) events.?
 pass_joystick_events = False
 
+# Should Ren'Py pass the controller events?
+pass_controller_events = False
+
 # A list of screens that should be shown when the overlay is enabled.
 overlay_screens = [ ]
 
@@ -1418,6 +1421,11 @@ save = True
 # Should the persistent file be updated?
 save_persistent = True
 
+# Should new drags be added to the top of a drag group.
+drag_group_add_top = True
+
+# Should loading of tl scripts be deferred?
+defer_tl_scripts = False
 
 del os
 del collections

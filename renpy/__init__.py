@@ -411,6 +411,7 @@ def import_all():
         import renpy.py2analysis
 
     import renpy.pyanalysis
+    import renpy.parameter
 
     import renpy.ast
     import renpy.atl
@@ -714,6 +715,7 @@ if 1 == 0:
     from . import memory
     from . import minstore
     from . import object
+    from . import parameter
     from . import parser
     from . import performance
     from . import persistent

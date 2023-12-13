@@ -90,16 +90,40 @@ def add(msg, *args):
         print(msg)
 
 
-def humanize_listing(l, singular_prefix="", plural_prefix="", singular_suffix="", plural_suffix=""):
+def problem_listing(header, problems):
     """
-    Formats a list of strings into a humanized enumeration.
+    Prints out a list of problems, organized by file, in a terse list.
     """
-    if len(l) == 1:
-        return singular_prefix + l[0] + singular_suffix
-    elif len(l) == 2:
-        return plural_prefix + l[0] + " and " + l[1] + plural_suffix
-    else:
-        return plural_prefix + ", ".join(l[:-1]) + ", and " + l[-1] + plural_suffix
+
+    if not problems:
+        return
+
+    problems.sort()
+
+    print()
+    print()
+    print(header)
+
+    by_file = collections.defaultdict(list)
+
+    for filename, line, message in problems:
+        by_file[filename].append((line, message))
+
+    for filename, file_problems in sorted(by_file.items()):
+        print()
+        print("{}:".format(filename))
+
+        if args.all_problems:
+
+            for line, message in file_problems[:4]:
+                print("    * line {:>5d} {}".format(line, message))
+
+            if len(file_problems) > 4:
+                print("    * and {} more.".format(len(file_problems) - 4))
+
+        else:
+            for line, message in file_problems:
+                print("    * line {:>5d} {}".format(line, message))
 
 
 # Tries to evaluate an expression, announcing an error if it fails.
@@ -708,26 +732,25 @@ def check_parameters(kind, node_name, parameter_info):
     if parameter_info is None:
         return
 
-    names = [p[0] for p in parameter_info.parameters]
-    if parameter_info.extrakw:
-        names.extend(parameter_info.extrakw)
-    if parameter_info.extrapos:
-        names.extend(parameter_info.extrapos)
+    names = set(parameter_info.parameters)
 
-    rv = [name for name in names if (name in python_builtins) or (name in renpy_builtins)]
+    for cat, builtins in (("Python", python_builtins), ("Ren'Py", renpy_builtins)):
+        rv = names & builtins
 
-    if len(rv) == 1:
-        name = rv[0]
-        report("In {0} {1!r}, the {2!r} parameter replaces a built-in name from either Python or Ren'Py, which may cause problems.".format(kind, node_name, name))
-        if not "_" in name:
-            add("This can be fixed by naming it '{}_'".format(name))
-    elif rv:
-        last = rv.pop()
-        prettyprevious = ", ".join(repr(name) for name in rv)
-        report("In {0} {1!r}, the {2} and {3!r} parameters replace built-in names from either Python or Ren'Py, which may cause problems.".format(kind,
-                                                                                                                                                  node_name,
-                                                                                                                                                  prettyprevious,
-                                                                                                                                                  last))
+        if len(rv) == 1:
+            name = rv.pop()
+            report("In {0} {1!r}, the {2!r} parameter replaces a {3} built-in name, which may cause problems.".format(kind, node_name, name, cat))
+            if not "_" in name:
+                add("This can be fixed by naming it '{}_'".format(name))
+        elif rv:
+            last = rv.pop()
+            prettyprevious = ", ".join(repr(name) for name in rv)
+            report("In {0} {1!r}, the {2} and {3!r} parameters replace {4} built-in names, which may cause problems.".format(
+                kind,
+                node_name,
+                prettyprevious,
+                last,
+                cat))
 
 
 def check_label(node):
@@ -746,11 +769,8 @@ def check_label(node):
 
     if pi is not None:
 
-        for i, _ in pi.parameters:
+        for i in pi.parameters:
             add_arg(i)
-
-        add_arg(pi.extrapos)
-        add_arg(pi.extrakw)
 
 
 def check_screen(node):
@@ -853,37 +873,22 @@ def report_character_stats(charastats):
     Returns a list of character stat lines.
     """
 
-    rv = [ "Character statistics (for default language):" ]
+    rv = [ "", "Character Statistics (for default language):", ]
 
-    if args.words_char_count:
-        for char in sorted(charastats, key=lambda char: charastats[char].tuple(), reverse=True):
-            count = charastats[char]
-            rv.append(
-                " * " + char
-                + " has " + humanize(count.blocks) + (" block " if count.blocks == 1 else " blocks ") + "of dialogue, "
-                + "containing " + humanize(count.words) + " words and "
-                + humanize(count.characters) + " characters."
-            )
+    bullets = [ ]
 
-    else:
-        nblocks_to_char = collections.defaultdict(list)
+    for char in sorted(charastats, key=lambda char: charastats[char].tuple(), reverse=True):
+        count = charastats[char]
+        bullets.append(
+            " * " + char
+            + " has " + humanize(count.blocks) + (" block " if count.blocks == 1 else " blocks ") + "of dialogue, "
+            + "containing " + humanize(count.words) + " words and "
+            + humanize(count.characters) + " characters."
+        )
 
-        for char, count in charastats.items():
-            nblocks_to_char[count.blocks].append(char)
-
-        for nblocks, chars in sorted(nblocks_to_char.items(), reverse=True):
-            chars.sort()
-
-            start = humanize_listing(chars, singular_suffix=" has ", plural_suffix=" have ")
-
-            rv.append(
-                " * " + start + humanize(nblocks) +
-                (" block " if nblocks == 1 else " blocks ") + "of dialogue" +
-                (" each." if len(chars) > 1 else ".")
-                )
+    rv.append(bullets)
 
     return rv
-
 
 def check_unreachables(all_nodes):
 
@@ -992,36 +997,50 @@ def check_unreachables(all_nodes):
             to_check.add(next)
 
     locations = sorted(set((node.filename, node.linenumber) for node in (unreachable - weakly_reachable)))
-
-    locadict = collections.defaultdict(list)
-    for filename, linenumber in locations:
-        locadict[filename].append(str(linenumber))
-
-    for filename, linenumbers in locadict.items():
-        if len(linenumbers) > 10:
-            linenumbers = linenumbers[:9]
-            linenumbers.append("others")
-        report("{} : this file contains unreachable statements at {}.".format(filename,
-                                                                              humanize_listing(linenumbers,
-                                                                                               singular_prefix="line ",
-                                                                                               plural_prefix="lines ")))
+    problems = [ (filename, linenumber, "") for filename, linenumber in locations ]
+    problem_listing("Unreachable Statements:", problems)
 
 
 def check_orphan_translations(none_lang_identifiers, translation_identifiers):
+
+    def header():
+        print("")
+        print("")
+        print("Orphan Translations:")
+        print()
+
+
+    problems = [ ]
+
     faulty = collections.defaultdict(list) # filename : [linenumbers]
     for id, nodes in translation_identifiers.items():
         if id not in none_lang_identifiers:
             for node in nodes:
-                faulty[node.filename].append("{} (id {})".format(node.linenumber, id))
+                problems.append((node.filename, node.linenumber, "(id {})".format(id)))
 
-    for filename, linenumbers in faulty.items():
-        # if len(linenumbers) > 10:
-        #     linenumbers = linenumbers[:9]
-        #     linenumbers.append("others")
-        report("{} : this file contains orphan translations at {}.".format(filename,
-                                                                           humanize_listing(linenumbers,
-                                                                                            singular_prefix="line ",
-                                                                                            plural_prefix="lines ")))
+    problem_listing("Orphan Translations:", problems)
+
+
+def check_python_warnings():
+    """
+    Reports Python warnings.
+    """
+
+    warnings = [ ]
+
+    for k, v in renpy.game.script.bytecode_newcache.items():
+        if isinstance(k, tuple) and k[0] == "warnings":
+            warnings.extend(v)
+
+    if not warnings:
+        return
+
+    print("\n\nPython Warnings:")
+
+    warnings.sort()
+
+    for filename, line, text in warnings:
+        print("\n" + text, end='')
 
 
 def lint():
@@ -1032,12 +1051,15 @@ def lint():
 
     ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
+
     ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errors, 1 if lint errors are found.")
 
     ap.add_argument("--no-orphan-tl", dest="orphan_tl", action="store_false", help="If not given, orphan translations are reported.")
     ap.add_argument("--reserved-parameters", action="store_true", help="If given, renpy or python reserved names in renpy statement parameters are reported.")
-    ap.add_argument("--words-char-count", action="store_true", help="If given, the number of words and characters for each character is reported.")
+    ap.add_argument("--by-character", action="store_true", help="If given, the count of blocks, words, and characters for each character is reported.")
     ap.add_argument("--check-unclosed-tags", action="store_true", help="If given, unclosed text tags are reported.")
+
+    ap.add_argument("--all-problems", action="store_true", help="If given, all problems of a kind are reported, not just the first ten.")
 
     global args
     args = ap.parse_args()
@@ -1174,9 +1196,13 @@ def lint():
 
     check_styles()
     check_filename_encodings()
+
     check_unreachables(all_stmts)
+
     if args.orphan_tl:
         check_orphan_translations(none_language_ids, translated_ids)
+
+    check_python_warnings()
 
     for f in renpy.config.lint_hooks:
         f()
@@ -1222,8 +1248,8 @@ characters per block. """.format(
     lines.append("The game contains {0} menus, {1} images, and {2} screens.".format(
         humanize(menu_count), humanize(image_count), humanize(screen_count)))
 
-    if renpy.config.developer and renpy.config.lint_character_statistics:
-        lines.append(report_character_stats(charastats))
+    if args.by_character:
+        lines.extend(report_character_stats(charastats))
 
     # Format the lines and lists of lines.
     for l in lines:
