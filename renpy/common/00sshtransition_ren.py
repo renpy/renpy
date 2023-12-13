@@ -35,7 +35,7 @@ init -1150 python:
 config.scene_show_hide_statements = [ "scene", "show", "hide" ]
 
 # Statements that are considered with statements.
-config.with_statements = [ "with" ]
+config.scene_show_hide_end_statements = [ "with", "window show", "window hide", "window auto" ]
 
 # The transition to use after show, scene, and hide statements.
 _scene_show_hide_transition = None
@@ -59,7 +59,8 @@ def _scene_show_hide_transition_callback(statement):
         _after_scene_show_hide = True
         return
 
-    if statement in config.with_statements:
+    if statement in config.scene_show_hide_end_statements:
+        _after_scene_show_hide = False
         return
 
     if _after_scene_show_hide:
