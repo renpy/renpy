@@ -299,6 +299,7 @@ def take_focuses():
         change_focus(global_focus, True)
 
 
+
 def focus_coordinates():
     """
     :doc: other
@@ -712,7 +713,16 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
     if not current:
 
+        focus_extreme(xmul, ymul, wmul, hmul)
+        current = get_focused()
+
+        if current is not None:
+            return
+
         for f in focus_list:
+
+            if f.x is False:
+                continue
 
             if not f.widget.style.keyboard_focus:
                 continue
@@ -760,6 +770,9 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
             placeless = f
             continue
 
+        if f.x is False:
+            continue
+
         if not condition(from_focus, f):
             continue
 
@@ -802,6 +815,9 @@ def focus_ordered(delta):
 
         if f.x is None:
             placeless = f
+            continue
+
+        if f.x is False:
             continue
 
         if f.arg is not None:
