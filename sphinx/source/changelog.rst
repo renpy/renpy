@@ -237,7 +237,11 @@ and documented at :ref:`scene-show-hide-transition`.
 Features
 --------
 
-The new :class:`MultiRevertable` class makes it possible define a class
+The new :class:`defaultdict` class, which exists in the default Ren'Py
+namespaces, is similar to Python's collections.defaultdict, while
+participating in rollback.
+
+The new :class:`MultiRevertable` class makes it possible to define a class
 that is both a revertable object and a revertable data structure (like
 list, set, or dict.)
 

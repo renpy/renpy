@@ -40,6 +40,9 @@ list = __renpy__list__ # @ReservedAssignment
 from renpy.revertable import RevertableDict as __renpy__dict__
 dict = __renpy__dict__ # @ReservedAssignment
 
+from renpy.revertable import RevertableDefaultDict as __renpy_defaultdict__
+defaultdict = __renpy_defaultdict__
+
 from renpy.revertable import RevertableSet as __renpy__set__
 set = __renpy__set__ # @ReservedAssignment
 Set = __renpy__set__

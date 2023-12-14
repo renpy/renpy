@@ -366,6 +366,34 @@ class RevertableDict(dict):
             self[k] = v
 
 
+class RevertableDefaultDict(RevertableDict):
+    """
+    :doc: rollbackclasses
+    :args: (default_factory, /, *args, **kwargs)
+
+    This is a revertable version of collections.defaultdict. It takes a
+    factory function. If a key is accessed that does not exist, the `default_factory`
+    function is called with the key as an argument, and the result is
+    returned.
+
+    While the default_factory attribute is present on this object, it does not
+    participate in rollback, and so should not be changed.
+    """
+
+    def __init__(self, default_factory=None, *args, **kwargs):
+        self.default_factory = default_factory
+        super(RevertableDefaultDict, self).__init__(*args, **kwargs)
+
+    def __missing__(self, key):
+        if self.default_factory is None:
+            raise KeyError(key)
+
+        rv = self.default_factory()
+        self[key] = rv
+        return rv
+
+
+
 class RevertableSet(set):
 
     def __setstate__(self, state):
