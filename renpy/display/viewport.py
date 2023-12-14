@@ -294,8 +294,10 @@ class Viewport(renpy.display.layout.Container):
 
         rv = rv.subsurface((0, 0, width, height), focus=True)
 
-        if self.draggable or self.arrowkeys:
+        if self.arrowkeys:
             rv.add_focus(self, None, 0, 0, width, height)
+        elif self.draggable:
+            rv.add_focus(self, None, False, False, False, False)
 
         return rv
 
