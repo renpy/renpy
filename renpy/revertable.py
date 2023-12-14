@@ -369,6 +369,7 @@ class RevertableDict(dict):
 class RevertableDefaultDict(RevertableDict):
     """
     :doc: rollbackclasses
+    :name: defaultdict
     :args: (default_factory, /, *args, **kwargs)
 
     This is a revertable version of collections.defaultdict. It takes a
@@ -511,6 +512,7 @@ class RevertableObject(object):
 class MultiRevertable(object):
     """
     :doc: rollbackclasses
+    :name: MultiRevertable
 
     MultiRevertable is a mixin class that allows an object to inherit
     from more than one kind of revertable object. To use it, from MultiRevertable,
