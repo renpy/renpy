@@ -1040,9 +1040,6 @@ class Transform(Container):
 
                 rv = (xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel)
 
-        if self.state.debug:
-            print(rv)
-
         return rv
 
     def update(self):
