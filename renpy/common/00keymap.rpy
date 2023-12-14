@@ -53,10 +53,10 @@ init -1600 python:
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = ['alt_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
-        accessibility = [ 'K_a' ],
         bubble_editor = [ 'alt_K_b', 'shift_K_b' ],
 
         # Accessibility.
+        accessibility = [ 'shift_K_a' ],
         self_voicing = [ 'alt_K_v', 'K_v' ],
         clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
