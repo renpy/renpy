@@ -548,3 +548,11 @@ For example::
         $ o.value += 1
 
         "o.value is [o.value]. It will increase each time you rollback and then click ahead."
+
+Rollback-Supporting Classes
+===========================
+
+The following classes exist to help support the use of rollback in your
+game. They may be useful in some circumstances.
+
+.. include:: inc/rollbackclasses

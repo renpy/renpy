@@ -237,6 +237,10 @@ and documented at :ref:`scene-show-hide-transition`.
 Features
 --------
 
+The new :class:`MultiRevertable` class makes it possible define a class
+that is both a revertable object and a revertable data structure (like
+list, set, or dict.)
+
 The new :var:`config.pass_controller_events` and newly-documented
 :var:`config.pass_joystick_events` variables allow the game to access
 controller and joystick events directly.

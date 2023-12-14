@@ -49,6 +49,8 @@ from renpy.revertable import RevertableObject as object # @UnusedImport
 from renpy.revertable import revertable_range as range # @UnusedImport
 from renpy.revertable import revertable_sorted as sorted # @UnusedImport
 
+from renpy.revertable import MultiRevertable
+
 import renpy.ui as ui # @UnusedImport
 from renpy.translation import translate_string as __ # @UnusedImport
 

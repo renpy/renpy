@@ -480,6 +480,49 @@ class RevertableObject(object):
         self.__dict__.update(compressed)
 
 
+class MultiRevertable(object):
+    """
+    :doc: rollbackclasses
+
+    MultiRevertable is a mixin class that allows an object to inherit
+    from more than one kind of revertable object. To use it, from MultiRevertable,
+    then from the revertable classes you want to inherit from.
+
+    For example::
+
+        class MyDict(MultiRevertable, dict, object):
+            pass
+
+    will create an class that will rollback both its dict contents and
+    object fields.
+    """
+
+    def _rollback_types(self):
+        rv = [ ]
+
+        for i in self.__class__.__mro__:
+
+            if i is MultiRevertable:
+                continue
+
+            if "_rollback" in i.__dict__:
+                rv.append(i)
+
+        return rv
+
+    def _clean(self):
+        return tuple(i._clean(self) for i in self._rollback_types())
+
+    def _compress(self, clean):
+        return tuple(i._compress(self, c) for i, c in zip(self._rollback_types(), clean))
+
+    def _rollback(self, compressed):
+
+        for i, c in zip(self._rollback_types(), compressed):
+            i._rollback(self, c)
+
+
+
 def checkpointing(method):
 
     @_method_wrapper(method)
