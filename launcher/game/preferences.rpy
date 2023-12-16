@@ -46,8 +46,6 @@ init python:
         bound = ceil(len(rv)/3.)
         return (rv[:bound], rv[bound:2*bound], rv[2*bound:])
 
-    show_legacy = os.path.exists(os.path.join(config.renpy_base, "templates", "english", "game", "script.rpy"))
-
     class RestartAtPreferences(Action):
         def __call__(self):
             renpy.session["launcher_start_label"] = "preferences"
@@ -72,7 +70,6 @@ init python:
 """)
 
 
-default persistent.legacy = False
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
 default persistent.daily_update_check = True
