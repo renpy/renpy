@@ -294,12 +294,11 @@ class TransformState(renpy.object.Object):
         radius = self.scale(radius, min(self.available_width, self.available_height))
 
         vector = self.get_pos_polar_vector()
-        angle = self.get_angle(vector)
-        old_radius = self.get_radius(vector)
-
-        # Deal with the angle becoming 0.0 when the radius is 0.0.
-        if (not old_radius) and (self.last_angle is not None):
+        # Deal with the angle becoming 0.0 when the radius would be 0.0.
+        if not any(vector) and (self.last_angle is not None):
             angle = self.last_angle
+        else:
+            angle = self.get_angle(vector)
 
         self.set_pos_from_angle_and_radius(angle, radius)
 
@@ -314,7 +313,7 @@ class TransformState(renpy.object.Object):
 
         self.xpos = absolute(xaround + dx)
         self.ypos = absolute(yaround + dy)
-    
+
     angle = property(get_angle, set_angle)
     radius = property(get_radius, set_radius)
 
@@ -410,12 +409,10 @@ class TransformState(renpy.object.Object):
 
         absolute_anchorangle = anchorangle.absolute
         relative_anchorangle = anchorangle.relative
-        old_absolute_anchorradius = old_anchorradius.absolute
-        old_relative_anchorradius = old_anchorradius.relative
 
-        if (not old_absolute_anchorradius) and (self.last_absolute_anchorangle is not None):
+        if (not old_anchorradius.absolute) and (self.last_absolute_anchorangle is not None):
             absolute_anchorangle = self.last_absolute_anchorangle
-        if (not old_relative_anchorradius) and (self.last_relative_anchorangle is not None):
+        if (not old_anchorradius.relative) and (self.last_relative_anchorangle is not None):
             relative_anchorangle = self.last_relative_anchorangle
 
         self.set_anchor_from_anchorangle_and_anchorradius(
