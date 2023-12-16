@@ -25,6 +25,7 @@ from gui7.parameters import GuiParameters
 
 import renpy.arguments
 import os
+import shutil
 
 
 def finish(p):
@@ -50,9 +51,21 @@ def generate_gui(p):
 
 def generate_minimal(p):
 
-    # The equivalent of things that happen in ImageGenerator.generate_all.
-    os.makedirs(p.prefix, 0o777)
+    # Copy the template over.
+    os.makedirs(os.path.dirname(p.prefix), 0o777)
+    shutil.copytree(p.template, p.prefix)
 
+    # Prune directories.
+    shutil.rmtree(os.path.join(p.prefix, "cache"))
+    shutil.rmtree(os.path.join(p.prefix, "saves"))
+    shutil.rmtree(os.path.join(p.prefix, "tl"))
+
+    # Prune files to be regenerated.
+    os.unlink(os.path.join(p.prefix, "gui.rpy"))
+    os.unlink(os.path.join(p.prefix, "screens.rpy"))
+    os.unlink(os.path.join(p.prefix, "options.rpy"))
+
+    # Generate files.
     CodeGenerator(p).generate_code("gui.rpy")
     CodeGenerator(p).generate_code("screens.rpy")
     CodeGenerator(p).generate_code("options.rpy")
