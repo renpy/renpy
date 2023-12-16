@@ -307,6 +307,20 @@ thread to invoke a function in the main Ren'Py thread. (Most Ren'Py functions
 can only be called from the main thread.)
 
 
+Launcher Changes
+----------------
+
+The launcher now supports :doc:`template-projects`. These are
+indended for use by projects that replace the default GUI.
+If a template project is selected when creating a new project,
+Ren'Py will copy the template project and update the name and translations,
+but will not make other changes to script files and images.
+
+The launcher has been slightly redesigned to reduce the amount of
+whitespace, allowing more options to appear on some screens while
+still providing room for translations.
+
+
 Other Changes
 -------------
 
