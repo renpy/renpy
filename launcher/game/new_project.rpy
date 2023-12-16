@@ -45,6 +45,16 @@ label new_project:
         interface.info(_("You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."), cancel=Jump("front_page"))
 
     python:
+        if project.manager.templates:
+            gui_kind, gui_template_path = interface.choice(
+                _("Please select a template project to use."),
+                [ ( ("new_gui_project", None), _("Do not use a template project.") ) ] +
+                [ ( ("new_template_project", p.path ), p.name) for p in project.manager.templates ],
+                ("new_gui_project", None),
+                cancel=Jump("front_page"),
+            )
+
+    python:
         project_name = ""
         while True:
             project_name = interface.input(
