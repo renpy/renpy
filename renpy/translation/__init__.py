@@ -113,6 +113,7 @@ class ScriptTranslator(object):
         Menu = renpy.ast.Menu
         UserStatement = renpy.ast.UserStatement
         Translate = renpy.ast.Translate
+        TranslateSay = renpy.ast.TranslateSay
 
         filename = renpy.lexer.unelide_filename(nodes[0].filename)
         filename = os.path.normpath(os.path.abspath(filename))
@@ -166,7 +167,7 @@ class ScriptTranslator(object):
                 for s in strings:
                     self.additional_strings[filename].append((n.linenumber, s))
 
-            elif type_n is Translate:
+            elif type_n is Translate or type_n is TranslateSay:
 
                 if n.language is None:
                     if n.identifier in self.default_translates:
@@ -200,7 +201,10 @@ class ScriptTranslator(object):
             translate = self.language_translates[identifier, language]
             next_node = self.default_translates[identifier].after
 
-            renpy.ast.chain_block(translate.block, next_node)
+            if isinstance(translate, renpy.ast.TranslateSay):
+                translate.chain(next_node)
+            else:
+                renpy.ast.chain_block(translate.block, next_node)
 
         self.chain_worklist = unchained
 
@@ -220,6 +224,14 @@ class ScriptTranslator(object):
 
         if tl is None:
             tl = self.default_translates[identifier]
+
+        if isinstance(tl, renpy.ast.TranslateSay):
+            if tl.language is not None:
+                return tl
+            else:
+                return None
+        else:
+            return tl.block[0]
 
         return tl.block[0]
 
@@ -334,6 +346,42 @@ class Restructurer(object):
 
         return [ tl, ed ]
 
+
+    def combine_translate(self, node):
+        """
+        If we have a Translate containing a Say statement and an EndTranslate,
+        combine them into a TranslateSay statement.
+        """
+
+        if not isinstance(node, renpy.ast.Translate):
+            return node
+
+        if not len(node.block) == 1:
+            return node
+
+        if not isinstance(node.block[0], renpy.ast.Say):
+            return node
+
+        say = node.block[0]
+
+        rv = renpy.ast.TranslateSay(
+            (say.filename, say.linenumber),
+            say.who,
+            say.what,
+            say.with_,
+            interact=say.interact,
+            attributes=say.attributes,
+            arguments=say.arguments,
+            temporary_attributes=say.temporary_attributes,
+            identifier=node.identifier,
+            language=node.language,
+            alternate=node.alternate)
+
+        rv.name = say.name
+
+        return rv
+
+
     def callback(self, children):
         """
         This should be called with a list of statements. It restructures the statements
@@ -378,6 +426,8 @@ class Restructurer(object):
             nodes = self.create_translate(group)
             new_children.extend(nodes)
             group = [ ]
+
+        new_children = [ self.combine_translate(node) for node in new_children ]
 
         children[:] = new_children
 

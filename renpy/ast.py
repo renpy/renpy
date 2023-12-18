@@ -2472,6 +2472,96 @@ class Translate(Node):
         return callback(self.block)
 
 
+class TranslateSay(Say):
+    """
+    A node that combines a translate and a say statement.
+    """
+
+    translatable = True
+    translation_relevant = True
+
+    __slots__ = [
+        "identifier",
+        "alternate",
+        "language",
+        "block",
+        "after",
+        ]
+
+    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None, identifier=None, language=None, alternate=None):
+        super(TranslateSay, self).__init__(loc, who, what, with_, interact, attributes, arguments, temporary_attributes)
+
+        self.identifier = identifier
+        self.alternate = alternate
+        self.language = language
+
+    def diff_info(self):
+        if self.language is None:
+            return Say.diff_info(self)
+        else:
+            return (TranslateSay, self.identifier, self.language)
+
+    def chain(self, next):
+        Say.chain(self, next)
+        self.after = next
+
+    def replace_next(self, old, new):
+        Say.replace_next(self, old, new)
+
+        if self.after is old:
+            self.after = new
+
+    def lookup(self):
+        return renpy.game.script.translator.lookup_translate(self.identifier, getattr(self, "alternate", None))
+
+    def execute(self):
+
+        next_node(self.next)
+
+        if self.identifier not in renpy.game.persistent._seen_translates: # type: ignore
+            renpy.game.persistent._seen_translates.add(self.identifier) # type: ignore
+            renpy.game.seen_translates_count += 1
+            renpy.game.new_translates_count += 1
+
+        renpy.game.context().translate_identifier = self.identifier
+        renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
+
+        # Potentially, jump to a translation.
+        node = self.lookup()
+
+        if node is not None:
+            next_node(self.lookup())
+            return
+
+        # Otherwise, say the text.
+
+        Say.execute(self)
+
+        # Perform the equivalent of an endtranslate block.
+        renpy.game.context().translate_identifier = None
+        renpy.game.context().alternate_translate_identifier = None
+
+    def predict(self):
+        node = self.lookup()
+        if node is None:
+            return self.next
+        else:
+            return [ node ]
+
+    def scry(self):
+        rv = Scry()
+
+        node = self.lookup()
+
+        if node is None:
+            rv._next = self.next
+        else:
+            rv._next = node
+
+        rv._next = self.lookup()
+        return rv
+
+
 class EndTranslate(Node):
     """
     A node added implicitly after each translate block. It's responsible for

@@ -43,6 +43,9 @@ def create_dialogue_map(language):
     rv = { }
 
     def get_text(t):
+        if isinstance(t, renpy.ast.Say):
+            return t.what
+
         for i in t.block:
             if isinstance(i, renpy.ast.Say):
                 return i.what
