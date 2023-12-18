@@ -427,9 +427,26 @@ class Restructurer(object):
             new_children.extend(nodes)
             group = [ ]
 
+        # Combine translate and say into TranslateSay.
         new_children = [ self.combine_translate(node) for node in new_children ]
 
-        children[:] = new_children
+        # Remove EndTranslater when not required.
+
+        new_new_children = [ ]
+
+        old_node = None
+
+        for node in new_children:
+
+            if isinstance(old_node, renpy.ast.TranslateSay) and isinstance(node, renpy.ast.EndTranslate):
+                old_node.next = node.next
+                old_node = None
+                continue
+
+            new_new_children.append(node)
+            old_node = node
+
+        children[:] = new_new_children
 
 
 def restructure(children):
