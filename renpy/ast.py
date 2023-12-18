@@ -42,6 +42,7 @@ import sys
 from renpy.parameter import Parameter, Signature, ParameterInfo, ArgumentInfo, \
     apply_arguments, EMPTY_PARAMETERS, EMPTY_ARGUMENTS
 
+
 def statement_name(name):
     """
     Reports the name of this statement to systems like window auto.
@@ -2372,6 +2373,7 @@ class Screen(Node):
         self.screen.define((self.filename, self.linenumber))
         renpy.dump.screens.append((self.screen.name, self.filename, self.linenumber))
 
+
 ################################################################################
 # Translations
 ################################################################################
@@ -2437,8 +2439,6 @@ class Translate(Node):
 
     def execute(self):
 
-        statement_name("translate")
-
         if self.language is not None:
             next_node(self.next)
             raise Exception("Translation nodes cannot be run directly.")
@@ -2485,7 +2485,6 @@ class EndTranslate(Node):
 
     def execute(self):
         next_node(self.next)
-        statement_name("end translate")
 
         renpy.game.context().translate_identifier = None
         renpy.game.context().alternate_translate_identifier = None
@@ -2518,7 +2517,6 @@ class TranslateString(Node):
 
     def execute(self):
         next_node(self.next)
-        statement_name("translate string")
 
         newloc = getattr(self, "newloc", (self.filename, self.linenumber + 1))
         renpy.translation.add_string_translation(self.language, self.old, self.new, newloc)
@@ -2556,7 +2554,6 @@ class TranslatePython(Node):
 
     def execute(self):
         next_node(self.next)
-        statement_name("translate_python")
 
     # def early_execute(self):
     #    renpy.python.create_store(self.store)
@@ -2596,7 +2593,6 @@ class TranslateBlock(Node):
 
     def execute(self):
         next_node(self.next)
-        statement_name("translate_block")
 
     def restructure(self, callback):
         callback(self.block)

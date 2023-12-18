@@ -141,6 +141,11 @@ To change this, add to your game::
     define config.drag_group_add_top = False
 
 
+**Translate Statements and config.statement_callbacks** Translate statements
+(including internal statements that Ren'Py automatically generates) will no
+longer cause :var:`config.statement_callbacks` to be called.
+
+
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
 
