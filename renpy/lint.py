@@ -1204,6 +1204,9 @@ def lint():
 
     check_python_warnings()
 
+    if not renpy.config.check_conflicting_properties:
+        print("It is advised to set config.check_conflicting_properties to True.")
+
     for f in renpy.config.lint_hooks:
         f()
 
