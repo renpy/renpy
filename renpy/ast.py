@@ -494,13 +494,14 @@ class Say(Node):
         super(Say, self).__init__(loc)
 
         if who is not None:
-            self.who = who.strip()
-
             # True if who is a simple enough expression we can just look it up.
-            if re.match(renpy.lexer.word_regexp + "$", self.who):
+            if re.match(renpy.lexer.word_regexp + r"\s*$", who):
                 self.who_fast = True
+                self.who = who.strip()
             else:
                 self.who_fast = False
+                self.who = who
+
         else:
             self.who = None
             self.who_fast = False
