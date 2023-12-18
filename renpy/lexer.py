@@ -26,6 +26,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import codecs
 import re
+import sys
 import os
 import time
 import contextlib
@@ -1041,6 +1042,9 @@ class Lexer(object):
         rv = self.match(word_regexp)
         self.word_cache = rv
         self.word_cache_newpos = self.pos
+
+        if rv:
+            rv = sys.intern(rv)
 
         return rv
 

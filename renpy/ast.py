@@ -36,6 +36,7 @@ import renpy
 import hashlib
 import re
 import time
+import sys
 
 
 from renpy.parameter import Parameter, Signature, ParameterInfo, ArgumentInfo, \
@@ -497,7 +498,7 @@ class Say(Node):
             # True if who is a simple enough expression we can just look it up.
             if re.match(renpy.lexer.word_regexp + r"\s*$", who):
                 self.who_fast = True
-                self.who = who.strip()
+                self.who = sys.intern(who.strip())
             else:
                 self.who_fast = False
                 self.who = who
