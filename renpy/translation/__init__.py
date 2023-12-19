@@ -376,6 +376,7 @@ class Restructurer(object):
             alternate=node.alternate)
 
         rv.name = say.name
+        rv.explicit_identifier = say.explicit_identifier
 
         return rv
 

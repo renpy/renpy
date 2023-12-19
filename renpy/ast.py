@@ -477,6 +477,7 @@ class Say(Node):
         'temporary_attributes',
         'rollback',
         'identifier',
+        'explicit_identifier',
         ]
 
     def diff_info(self):
@@ -489,6 +490,7 @@ class Say(Node):
         self.arguments = None
         self.temporary_attributes = None
         self.rollback = "normal"
+        self.explicit_identifier = False
         return self
 
     def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None, identifier=None):
@@ -523,6 +525,7 @@ class Say(Node):
         # If given, write in the identifier.
         if identifier is not None:
             self.identifier = identifier
+            self.explicit_identifier = True
 
     def get_code(self, dialogue_filter=None):
         rv = [ ]
@@ -546,7 +549,7 @@ class Say(Node):
         if not self.interact:
             rv.append("nointeract")
 
-        if getattr(self, "identifier", None):
+        if getattr(self, "identifier", None) and self.explicit_identifier:
             rv.append("id")
             rv.append(getattr(self, "identifier", None))
 
@@ -2517,7 +2520,6 @@ class TranslateSay(Say):
     def execute(self):
 
         next_node(self.next)
-
 
         if self.language is None:
 

@@ -92,7 +92,7 @@ def generate_gui_command():
     ap.add_argument("--replace-code", default=False, action="store_true", help="True if an existing gui.rpy file should be overwritten.")
     ap.add_argument("--update-code", default=False, action="store_true", help="True if an existing gui.rpy file should be updated.")
 
-    ap.add_argument("--minimal", default=None, action="store_true", help="Only update option.rpy and translations.")
+    ap.add_argument("--minimal", default=False, action="store_true", help="Only update option.rpy and translations.")
 
     args = ap.parse_args()
 

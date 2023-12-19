@@ -237,8 +237,13 @@ class DialogueFile(object):
             tl = None
             if self.language is not None:
                 tl = translator.language_translates.get((identifier, self.language), None)
+
+
             if tl is None:
-                block = t.block
+                tl = t
+
+            if isinstance(tl, renpy.ast.TranslateSay):
+                block = [ tl ]
             else:
                 block = tl.block
 
