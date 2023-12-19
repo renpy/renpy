@@ -212,15 +212,20 @@ where ``xxx`` is the name of the future feature. For example::
 
     rpy python annotations
 
-Deferred Translation Loading
-----------------------------
+Translation Improvements
+------------------------
 
-Ren'Py can now defer loading translations until they're needed. This can
-improve startup time, when the game is large and many languages are
-present.
+For most dialogue, Ren'Py will now create one third the number of objects
+to support translations. This helps reduce startup time and reduce memory
+usage.
 
-This is disabled by default. The documentation on :ref:`deferred-translations`
+In addition, Ren'Py can now defer loading translations until a translation
+is  needed. This can improve startup time when the game is large and
+many languages are present.
+
+Deferred translation loading is disabled by default. The documentation on :ref:`deferred-translations`
 explains how to enable it and caveats that apply.
+
 
 Scene, Show, and Hide Transition
 --------------------------------
