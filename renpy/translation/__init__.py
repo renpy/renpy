@@ -233,8 +233,6 @@ class ScriptTranslator(object):
         else:
             return tl.block[0]
 
-        return tl.block[0]
-
 
 def encode_say_string(s):
     """
