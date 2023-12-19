@@ -940,6 +940,10 @@ def check_unreachables(all_nodes):
             if node.language is not None:
                 to_check.add(node)
 
+        elif isinstance(node, renpy.ast.TranslateSay):
+            if node.language is not None:
+                to_check.add(node)
+
         elif isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
             # the block of these ones is always reachable, but their next is reachable only if they are themselves reachable
             add_block(node.block)
@@ -1164,7 +1168,7 @@ def lint():
         elif isinstance(node, renpy.ast.Label):
             check_label(node)
 
-        elif isinstance(node, renpy.ast.Translate) and args.orphan_tl:
+        elif isinstance(node, (renpy.ast.Translate, renpy.ast.TranslateSay)) and args.orphan_tl:
             language = node.language
             if language is None:
                 none_language_ids.add(node.identifier)
