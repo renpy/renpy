@@ -45,7 +45,7 @@ def register(
         scry=None,
         block=False,
         init=False,
-        translatable=False,
+        translatable=False, # Not used.
         execute_init=None,
         init_priority=0,
         label=None,
@@ -134,6 +134,13 @@ def register(
         You probably don't want this if you have an `execute_init` function,
         as wrapping the statement in an init block will cause the `execute_init`
         and `execute` functions to be called at the same time.
+
+    `translatable`
+        If set to true, the statement will be included in a translation
+        block, generally the block containing the succeding say statement.
+        This may only be set to true for one-line statements. It's used
+        for statements like ``nvl clear`` and ``voice``, which may need
+        to be changed with dialogue.
 
     `init_priority`
         An integer that determines the priority of initialization of the
@@ -282,7 +289,6 @@ def register(
                 l.advance()
 
             rv = renpy.ast.UserStatement(loc, text, subblock, parsed)
-            rv.translatable = translatable
             rv.translation_relevant = bool(translation_strings)
             rv.code_block = code_block
             rv.subparses = l.subparses

@@ -52,6 +52,7 @@ script as character dialogue. For example::
 
     e "I'm feeling 😃 today."
 
+
 Variable Fonts
 --------------
 
@@ -68,6 +69,7 @@ text tags, as well as the :func:`renpy.variable_font_info` function.
 
 See the :ref:`variable fonts documentation <variable-fonts>` for more information.
 
+
 Font Hinting
 ------------
 
@@ -81,6 +83,7 @@ control hinting per-use. For example::
     define config.font_hinting["MyFont.tff"] = "bytecode"
 
 enables bytecode hinting for MyFont.ttf.
+
 
 Text Interpolation Improvements
 -------------------------------
@@ -110,6 +113,7 @@ that filter the list of bubble property names based on the image tag
 that's speaking. This makes it possible to have bubbles that are
 specific to some but not all characters.
 
+
 Position types and ATL interpolation
 ------------------------------------
 
@@ -136,6 +140,7 @@ example, you can now tell something to be ``xsize position(-10, .5)``, and the
 displayable will make the displayable take half of the horizontal space offered
 to it, minus 10 pixels.
 
+
 Developer Tools
 ---------------
 
@@ -149,6 +154,7 @@ filename and line number of the current statement to be
 displayed. Clicking on the filename and line will open
 the file in the default text editor, at the given line,
 if possible.
+
 
 Data Actions
 ------------
@@ -171,6 +177,7 @@ There are two new managers:
 The :class:`LocalVariableValue` bar value and :class:`LocalVariableInputValue` input
 values have been added, for completeness.
 
+
 HTTPS/HTTP Fetch
 ----------------
 
@@ -183,6 +190,7 @@ function. While the Requests library still remains supported on Desktop and Mobi
 * Will not block the game while downloading.
 * Can take data as either bytes or objects that be encoded to JSON.
 * Can return data as bytes, as string, or objects decoded from JSON.
+
 
 Accessibility
 -------------
@@ -201,6 +209,7 @@ unless they are overridden by a more specific value in the child.
 The new :func:`renpy.alt` function can be used to speak text using
 the self-voicing system.
 
+
 \_\_future\_\_ in python
 ------------------------
 
@@ -211,6 +220,7 @@ statement at the top of the .rpy file(s) on which you want them to apply,
 where ``xxx`` is the name of the future feature. For example::
 
     rpy python annotations
+
 
 Translation Improvements
 ------------------------
