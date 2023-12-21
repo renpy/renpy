@@ -546,6 +546,9 @@ class RollbackLog(renpy.object.Object):
 
         # If the log is too long, prune it.
         while len(self.log) > renpy.config.rollback_length:
+            if self.log[0].hard_checkpoint:
+                self.rollback_limit -= 1
+
             self.log.pop(0)
 
         # check for the end of fixed rollback
