@@ -443,12 +443,11 @@ class RollbackLog(renpy.object.Object):
     (weakref to object, information needed to rollback that object)
     """
 
-    __version__ = 5
+    __version__ = 6
 
     nosave = [ 'old_store', 'mutated', 'identifier_cache' ]
     identifier_cache = None
     force_checkpoint = False
-    rollback_block = 0
 
     def __init__(self):
 
@@ -508,6 +507,11 @@ class RollbackLog(renpy.object.Object):
                         nrbl += 1
 
                 self.rollback_limit = nrbl
+
+        if version < 6:
+            hard = sum(e.hard_checkpoint for e in self.log)
+            self.rollback_block = max(0, hard - self.rollback_limit)
+            self.rollback_limit = hard - self.rollback_block
 
     def begin(self, force=False):
         """
