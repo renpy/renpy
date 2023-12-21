@@ -1052,6 +1052,9 @@ class Interface(object):
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
 
+        # Clear out any pending events.
+        pygame.event.get()
+
         for i in renpy.config.display_start_callbacks:
             i()
 
