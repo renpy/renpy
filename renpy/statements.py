@@ -289,6 +289,7 @@ def register(
                 l.advance()
 
             rv = renpy.ast.UserStatement(loc, text, subblock, parsed)
+            rv.translatable = translatable
             rv.translation_relevant = bool(translation_strings)
             rv.code_block = code_block
             rv.subparses = l.subparses
