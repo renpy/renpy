@@ -448,6 +448,7 @@ class RollbackLog(renpy.object.Object):
     nosave = [ 'old_store', 'mutated', 'identifier_cache' ]
     identifier_cache = None
     force_checkpoint = False
+    rollback_block = 0
 
     def __init__(self):
 
@@ -457,6 +458,7 @@ class RollbackLog(renpy.object.Object):
         self.current = None
         self.mutated = { }
         self.rollback_limit = 0
+        self.rollback_block = 0
         self.rollback_is_fixed = False
         self.checkpointing_suspended = False
         self.fixed_rollback_boundary = None
@@ -546,10 +548,11 @@ class RollbackLog(renpy.object.Object):
 
         # If the log is too long, prune it.
         while len(self.log) > renpy.config.rollback_length:
-            if self.log[0].hard_checkpoint:
-                self.rollback_limit -= 1
-
-            self.log.pop(0)
+            if self.log.pop(0).hard_checkpoint:
+                if self.rollback_block:
+                    self.rollback_block -= 1
+                else:
+                    self.rollback_limit -= 1
 
         # check for the end of fixed rollback
         if len(self.log) >= 2:
@@ -779,12 +782,14 @@ class RollbackLog(renpy.object.Object):
         through this checkpoint.
         """
 
+        self.rollback_block += self.rollback_limit
         self.rollback_limit = 0
         if self.current is not None:
             self.current.not_greedy = True
         renpy.game.context().force_checkpoint = True
 
         if purge:
+            self.rollback_block = 0
             del self.log[:]
 
     def retain_after_load(self):
