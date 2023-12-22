@@ -141,7 +141,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
     try:
         if not isinstance(file, basestring):
-            file = file.name
+            file = file.raw.name
     except Exception:
         return
 
@@ -163,7 +163,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
 
     try:
         if not isinstance(file, basestring):
-            file = file.name
+            file = file.raw.name
     except Exception:
         return
 
