@@ -278,7 +278,16 @@ init python:
 
 
         with interface.nolinks():
-            rapt.build.build(rapt_interface, dist, p.path, bundle=bundle, install=install, launch=launch, finished=finished, permissions=p.dump['build']['android_permissions'])
+            rapt.build.build(
+                rapt_interface,
+                dist,
+                p.path,
+                bundle=bundle,
+                install=install,
+                launch=launch,
+                finished=finished,
+                permissions=p.dump['build']['android_permissions'],
+                version=p.dump['build']['version'])
 
 
     def android_build_argument(cmd):
