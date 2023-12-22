@@ -143,6 +143,8 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         if not isinstance(file, basestring):
             file = file.raw.name
     except Exception:
+        if renpy.config.debug_sound:
+            raise
         return
 
     if file is None:
@@ -165,6 +167,8 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
         if not isinstance(file, basestring):
             file = file.raw.name
     except Exception:
+        if renpy.config.debug_sound:
+            raise
         return
 
     if file is None:
