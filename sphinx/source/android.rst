@@ -156,9 +156,9 @@ The Java Development Kit (JDK) contains several tools that are used by
 RAPT, including the tools used to generate keys and sign
 packages. It can be downloaded from:
 
-    https://adoptopenjdk.net/releases.html?variant=openjdk8&jvmVariant=hotspot
+    https://adoptopenjdk.net/releases.html
 
-You'll need version 8 of the JDK.
+You'll need version 17 or later the JDK.
 
 Please note that the developer-focused JDK is different from the
 user-focused JRE, and you'll need the JDK to create Android packages.
@@ -219,10 +219,6 @@ keys for your package.
 When creating Android keys, Ren'Py will back them up to the same place it
 backs up script files. This isn't a substitute for making your own backups.
 
-If you'd like to use your own keys, configure your game, edit ``android.json``
-to set update_keystores to false, and then edit ``local.properties`` and
-``bundle.properties`` in ``rapt/project`` to point to your own keystore files.
-
 Step 4: Configure Your Game
 ---------------------------
 
@@ -230,9 +226,8 @@ Before building a package, you must give Ren'Py some information
 about the Android build of your game. To do this, choose "Configure"
 from the Android screen of the Ren'Py launcher.
 
-If you need to change the information – for example, if you release a
-new version of your game – you can re-run the configure command. Your
-previous choices will be remembered.
+If you need to change the information you can re-run the configure command.
+Your previous choices will be remembered.
 
 Step 5: Build and Install the Package
 -------------------------------------

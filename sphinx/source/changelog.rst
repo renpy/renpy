@@ -249,6 +249,13 @@ This is controlled by the new :var:`_scene_show_hide_transition` variable,
 and documented at :ref:`scene-show-hide-transition`.
 
 
+Android
+-------
+
+The version on android is now taken from :var:`build.version`, which
+defaults to :var:`config.version`.
+
+
 Features
 --------
 
