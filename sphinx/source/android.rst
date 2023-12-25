@@ -157,8 +157,9 @@ RAPT, including the tools used to generate keys and sign
 packages. It can be downloaded from:
 
     https://adoptopenjdk.net/releases.html
+    https://adoptium.net/temurin/releases/?version=21
 
-You'll need version 17 or later the JDK.
+You'll need version 21 of the JDK.
 
 Please note that the developer-focused JDK is different from the
 user-focused JRE, and you'll need the JDK to create Android packages.
