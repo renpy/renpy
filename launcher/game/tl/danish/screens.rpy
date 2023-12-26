@@ -54,7 +54,7 @@
 
     # gui/game/screens.rpy:202
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    new "## Denne skærm bruges til at vise valg i spillet præsenteret af menu-erklæringen. Den ene parameter, items, er en liste af objekter, hver med caption- og action-felter."
+    new "## Denne skærm bruges til at vise valg i spillet præsenteret af menu-sætningen. Den ene parameter, items, er en liste af objekter, hver med caption- og action-felter."
 
     # gui/game/screens.rpy:206
     old "## https://www.renpy.org/doc/html/screen_special.html#choice"
@@ -182,7 +182,7 @@
 
     # gui/game/screens.rpy:361
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
-    new "## Erklæringen use inkluderer en anden skærm inde i denne. Det faktiske indhold af hovedmenuen er i navigationsskærmen."
+    new "## Sætningen use inkluderer en anden skærm inde i denne. Det faktiske indhold af hovedmenuen er i navigationsskærmen."
 
     # gui/game/screens.rpy:406
     old "## Game Menu screen"
@@ -218,7 +218,7 @@
 
     # gui/game/screens.rpy:546
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
-    new "## Denne use-erklæring inkluderer game_menu-skærmen inde i denne. Barnet vbox inkluderes derefter inde i visningsporten inde i game_menu-skærmen."
+    new "## Denne use-sætning inkluderer game_menu-skærmen inde i denne. Barnet vbox inkluderes derefter inde i visningsporten inde i game_menu-skærmen."
 
     # gui/game/screens.rpy:556
     old "Version [config.version!t]\n"

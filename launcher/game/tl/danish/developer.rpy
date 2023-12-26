@@ -174,11 +174,11 @@
 
     # renpy/common/00console.rpy:836
     old " <renpy script statement>: run the statement\n"
-    new " <renpy-script-erklæring>: kør erklæringen\n"
+    new " <renpy-script-ordre>: kør ordren\n"
 
     # renpy/common/00console.rpy:838
     old " <python expression or statement>: run the expression or statement"
-    new " <python-udtryk eller -erklæring>: kør udtrykket eller erklæringen"
+    new " <python-udtryk eller -ordre>: kør udtrykket eller ordren"
 
     # renpy/common/00console.rpy:846
     old "clear: clear the console history"

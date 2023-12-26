@@ -690,7 +690,7 @@
 
     # game/distribute_gui.rpy:257
     old "Adding from clauses to call statements that do not have them."
-    new "Tilføjer from-sætninger til kalderklæringer, der ikke har dem."
+    new "Tilføjer from-sætninger til kaldeordrer, der ikke har dem."
 
     # game/distribute_gui.rpy:281
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."

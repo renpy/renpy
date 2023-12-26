@@ -342,7 +342,7 @@
 
     # renpy/common/00director.rpy:1584
     old "(statement)"
-    new "(erklæring)"
+    new "(sætning)"
 
     # renpy/common/00director.rpy:1585
     old "(tag)"
@@ -386,7 +386,7 @@
 
     # renpy/common/00director.rpy:1697
     old "Statement:"
-    new "Erklæring:"
+    new "Sætning:"
 
     # renpy/common/00director.rpy:1718
     old "Tag:"

@@ -82,7 +82,7 @@
 
     # gui/game/options.rpy:97
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."
-    new "## Der findes ingen variabel til at angive overgangen, der bruges, når spillet startes. Brug i stedet en with-erklæring efter visning af den første scene."
+    new "## Der findes ingen variabel til at angive overgangen, der bruges, når spillet startes. Brug i stedet en with-sætning efter visning af den første scene."
 
     # gui/game/options.rpy:102
     old "## Window management"
@@ -90,11 +90,11 @@
 
     # gui/game/options.rpy:104
     old "## This controls when the dialogue window is displayed. If \"show\", it is always displayed. If \"hide\", it is only displayed when dialogue is present. If \"auto\", the window is hidden before scene statements and shown again once dialogue is displayed."
-    new "## Dette kontrollerer, hvornår dialogvinduet vises. Ved \"show\" vises det altid. Ved \"hide\" vises det kun, når dialog er til stede. Ved \"auto\" skjules vinduet før scene-erklæringer og vises igen, når dialog vises."
+    new "## Dette kontrollerer, hvornår dialogvinduet vises. Ved \"show\" vises det altid. Ved \"hide\" vises det kun, når dialog er til stede. Ved \"auto\" skjules vinduet før scene-sætninger og vises igen, når dialog vises."
 
     # gui/game/options.rpy:109
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
-    new "## Efter spillet er startet, kan dette ændres med erklæringerne \"window show\", \"window hide\", og \"window auto\"."
+    new "## Efter spillet er startet, kan dette ændres med sætningerne \"window show\", \"window hide\", og \"window auto\"."
 
     # gui/game/options.rpy:115
     old "## Transitions used to show and hide the dialogue window"
