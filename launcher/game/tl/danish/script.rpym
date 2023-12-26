@@ -26,7 +26,7 @@ label start:
 
     e "Du har oprettet et nyt Ren'Py-spil."
 
-    e "Nå du har tilføjet en historie, billeder og musik, kan du sende det ud i verden!"
+    e "Når du har tilføjet en historie, billeder og musik, kan du sende det ud i verden!"
 
     # Dette afslutter spillet.
 
