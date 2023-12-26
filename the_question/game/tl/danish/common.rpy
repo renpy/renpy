@@ -1014,7 +1014,7 @@
 
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
-    new "Tryk eller bevæg '[control!s]' [kind]" #x -en på?
+    new "Tryk eller bevæg '[control!s]' [kind]."
 
     # renpy/common/00gamepad.rpy:68
     old "Skip (A)"
