@@ -11,7 +11,7 @@ define e = Character("Eileen")
 label start:
 
     # Vis en baggrund. Der bruges som standard en stedfortræder, men du kan
-    # tilføje en fil (kaldt enten "bg room.png" ellerr "bg room.jpg") til
+    # tilføje en fil (kaldt enten "bg room.png" eller "bg room.jpg") til
     # mappen images for at vise den.
 
     scene bg room
