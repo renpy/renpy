@@ -1096,10 +1096,6 @@
     old "Parsing the script failed."
     new "Fortolkning af manuskript mislykkedes."
 
-# TODO: Translation updated at 2023-12-26 03:35
-
-translate danish strings:
-
     # renpy/common/00director.rpy:1776
     old "Customize director.transforms to add more transforms."
     new "Tilpas director.transforms for at tilføje flere transformationer."
