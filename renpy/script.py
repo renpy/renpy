@@ -706,7 +706,7 @@ class Script(object):
                 if not dir:
                     raise Exception("Cannot load rpy/rpym/ren.py file %s from inside an archive." % fn)
 
-                base, _, game = dir.rpartition("/")
+                base, _, game = dir.replace("\\", "/").rpartition("/")
                 olddir = base + "/old-" + game
 
                 fullfn = dir + "/" + fn
