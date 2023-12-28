@@ -62,6 +62,11 @@ static int rwops_read(void *opaque, uint8_t *buf, int buf_size) {
     SDL_RWops *rw = (SDL_RWops *) opaque;
 
     int rv = rw->read(rw, buf, 1, buf_size);
+
+	if (rv == 0) {
+		return AVERROR_EOF;
+	}
+
     return rv;
 
 }

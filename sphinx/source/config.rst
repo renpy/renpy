@@ -921,6 +921,8 @@ Occasionally Used
             return s
         config.replace_text = replace_text
 
+    .. seealso:: :var:`config.say_menu_text_filter`
+
 .. var:: config.replay_scope = { "_game_menu_screen" : "preferences", ... }
 
     A dictionary mapping variables in the default store to the values
@@ -1777,6 +1779,10 @@ Rarely or Internally Used
     in strings in the :ref:`say <say-statement>` and :doc:`menu
     <menus>` statements. It is expected to return new
     (or the same) strings to replace them.
+
+    This runs very early in the say and menu statement processing, before
+    translation and substitutions are applied. For a filter that runs later,
+    see :var:`config.replace_text`.
 
 .. var:: config.say_sustain_callbacks = [ ... ]
 

@@ -3001,7 +3001,7 @@ def load_language(language):
     if language is None:
         return
 
-    if renpy.config.defer_tl_scripts:
+    if not renpy.config.defer_tl_scripts:
         return
 
     if language in renpy.game.script.load_languages:
