@@ -858,14 +858,14 @@ class RenpyImporter(object):
                 source = load(filename).read().decode(encoding)
                 if source and source[0] == u'\ufeff':
                     source = source[1:]
-                source = source.encode("raw_unicode_escape")
-                source = source.replace(b"\r", b"")
 
                 if mode == "get_source":
                     return source
 
                 code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
+
                 break
+
             except Exception:
                 if encoding == "latin-1":
                     raise
