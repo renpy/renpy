@@ -526,26 +526,6 @@ def load_from_filesystem(name):
 file_open_callbacks.append(load_from_filesystem)
 
 
-def load_from_apk(name):
-    """
-    Returns an open python file object of the given type from the apk.
-    """
-
-    for apk in apks:
-        prefixed_name = "/".join("x-" + i for i in name.split("/"))
-
-        try:
-            return apk.open(prefixed_name)
-        except IOError:
-            pass
-
-    return None
-
-
-if renpy.android:
-    file_open_callbacks.append(load_from_apk)
-
-
 def load_from_archive(name):
     """
     Returns an open python file object of the given type from an archive file.
@@ -590,6 +570,26 @@ def load_from_archive(name):
 
 
 file_open_callbacks.append(load_from_archive)
+
+
+def load_from_apk(name):
+    """
+    Returns an open python file object of the given type from the apk.
+    """
+
+    for apk in apks:
+        prefixed_name = "/".join("x-" + i for i in name.split("/"))
+
+        try:
+            return apk.open(prefixed_name)
+        except IOError:
+            pass
+
+    return None
+
+
+if renpy.android:
+    file_open_callbacks.append(load_from_apk)
 
 
 def load_from_remote_file(name):
