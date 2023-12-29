@@ -532,6 +532,10 @@ class Keymap(renpy.display.layout.Null):
 
     def event(self, ev, x, y, st):
 
+        # This field is created by Button.
+        if getattr(ev, "_suppressed", False):
+            return
+
         for name, action in self.keymap.items():
 
             if map_event(ev, name):
@@ -1101,9 +1105,21 @@ class Button(renpy.display.layout.Window):
         # If we have a child, try passing the event to it. (For keyboard
         # events, this only happens if we're focused.)
         if (not (ev.type in KEY_EVENTS)) or self.style.key_events:
-            rv = super(Button, self).event(ev, x, y, st)
-            if rv is not None:
-                return rv
+                rv = super(Button, self).event(ev, x, y, st)
+                if rv is not None:
+                    return rv
+        else:
+
+            # Used to prevent keymaps (the key statement) from reacting to
+            # this event. This is consumed by Keymap.
+            try:
+                ev._suppressed = True
+
+                rv = super(Button, self).event(ev, x, y, st)
+                if rv is not None:
+                    return rv
+            finally:
+                ev._suppressed = False
 
         if (self.keysym is not None) and (self.clicked is not None):
             if map_event(ev, self.keysym):
