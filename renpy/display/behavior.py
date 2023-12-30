@@ -1864,6 +1864,12 @@ class Adjustment(renpy.object.Object):
     # The warper applied to the animation.
     animation_warper = None # type (float) -> float|None
 
+    # This causes the interaction to restart when the adjustment hits a limit
+    # it hadn't reach before. It's intended for use by the Scroll action, which
+    # will set this to true for adjustments it may change.
+    restart_interaction_at_limit = False
+
+
     def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
         """
         The following parameters correspond to fields or properties on
@@ -1924,7 +1930,7 @@ class Adjustment(renpy.object.Object):
 
             Changes the value of the adjustment to `value`, updating
             any bars and viewports that use the adjustment.
-         """
+        """
 
         super(Adjustment, self).__init__()
 
@@ -2035,6 +2041,17 @@ class Adjustment(renpy.object.Object):
             value = self._range
 
         if value != self._value:
+
+            if self.restart_interaction_at_limit:
+                value_0 = value == 0
+                _value_0 = self._value == 0
+
+                value_range = value == self._range
+                _value_range = self._value == self._range
+
+                if value_0 != _value_0 or value_range != _value_range:
+                    renpy.exports.restart_interaction()
+
             self._value = value
             for d in adj_registered.setdefault(self, [ ]):
                 renpy.display.render.redraw(d, 0)
