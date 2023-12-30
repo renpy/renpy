@@ -342,6 +342,9 @@ The launcher has been slightly redesigned to reduce the amount of
 whitespace, allowing more options to appear on some screens while
 still providing room for translations.
 
+A :doc:`cli` has been documented, making it possible to build Ren'Py
+projects from the command line.
+
 
 Other Changes
 -------------
