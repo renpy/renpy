@@ -112,10 +112,6 @@ class Cache(object):
         # Is the preload_thread alive?
         self.keep_preloading = True
 
-        # A map from image object to surface, only for objects that have
-        # been pinned into memory.
-        self.pin_cache = { }
-
         # Images that we tried, and failed, to preload.
         self.preload_blacklist = set()
 
@@ -212,7 +208,6 @@ class Cache(object):
         self.lock.acquire()
 
         self.preloads = [ ]
-        self.pin_cache = { }
         self.cache = { }
         self.first_preload_in_tick = True
 
@@ -321,15 +316,11 @@ class Cache(object):
         # Otherwise, we load the image ourselves.
         if ce is None:
 
-            if image in self.pin_cache:
-                surf = self.pin_cache[image]
-            else:
-
-                if not predict:
-                    with renpy.game.ExceptionInfo("While loading %r:", image):
-                        surf = image.load()
-                else:
+            if not predict:
+                with renpy.game.ExceptionInfo("While loading %r:", image):
                     surf = image.load()
+            else:
+                surf = image.load()
 
             w, h = size = surf.get_size()
 
@@ -563,39 +554,6 @@ class Cache(object):
 
         with self.lock:
             self.cleanout()
-
-        # If we have time, preload pinned images.
-        if self.keep_preloading and not renpy.game.less_memory:
-
-            workset = set(renpy.store._cache_pin_set)
-
-            # Remove things that are not in the workset from the pin cache,
-            # and remove things that are in the workset from pin cache.
-            for i in list(self.pin_cache.keys()):
-
-                if i in workset:
-                    workset.remove(i)
-                else:
-                    surf = self.pin_cache[i]
-
-                    del self.pin_cache[i]
-
-            # For each image in the worklist...
-            for image in workset:
-
-                if image in self.preload_blacklist:
-                    continue
-
-                # If we have normal preloads, break out.
-                if self.preloads:
-                    break
-
-                try:
-                    surf = image.load()
-                    self.pin_cache[image] = surf
-                    renpy.display.draw.load_texture(surf)
-                except Exception:
-                    self.preload_blacklist.add(image)
 
     def add_load_log(self, filename):
 
