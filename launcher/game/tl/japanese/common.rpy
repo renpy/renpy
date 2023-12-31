@@ -920,3 +920,63 @@ translate japanese strings:
     old "Sync Error"
     new "同期エラー"
 
+    # renpy/common/00director.rpy:1776
+    old "Customize director.transforms to add more transforms."
+    new "director.transform を設定して transform を追加できます。"
+
+    # renpy/common/00director.rpy:1821
+    old "Click to set."
+    new "クリックで設定します"
+
+    # renpy/common/00director.rpy:1822
+    old "Customize director.transitions to add more transitions."
+    new "director.transitions を設定してトランジションを追加できます。"
+
+    # renpy/common/00director.rpy:1845
+    old "Customize director.audio_channels to add more channels."
+    new "director.audio_channels を設定してチャンネルを追加できます"
+
+    # renpy/common/00preferences.rpy:573
+    old "restore window position"
+    new "ウィンドウ位置を復元する"
+
+    # renpy/common/00speechbubble.rpy:408
+    old "(clear retained bubbles)"
+    new "(保持されている吹き出しをクリアします)"
+
+    # renpy/common/00updater.rpy:504
+    old "No update methods found."
+    new "update メソッドが見付かりません"
+
+    # renpy/common/00updater.rpy:551
+    old "Could not download file list: "
+    new "ファイルリストがダウンロードできません : "
+
+    # renpy/common/00updater.rpy:554
+    old "File list digest does not match."
+    new "File listの要約がマッチしません"
+
+    # renpy/common/00updater.rpy:2072
+    old "Preparing to download the game data."
+    new "ゲームデータのダウンロードを準備します。"
+
+    # renpy/common/00updater.rpy:2074
+    old "Downloading the game data."
+    new "ゲームデータをダウンロードしています"
+
+    # renpy/common/00updater.rpy:2076
+    old "The game data has been downloaded."
+    new "ゲームデータがダウンロードされました"
+
+    # renpy/common/00updater.rpy:2078
+    old "An error occured when trying to download game data:"
+    new "ゲームデータダウンロード中にエラーが発生しました:"
+
+    # renpy/common/00updater.rpy:2083
+    old "This game cannot be run until the game data has been downloaded."
+    new "このゲームはゲームデータのダウンロードまでは実行できません"
+
+    # renpy/common/00updater.rpy:2090
+    old "Retry"
+    new "リトライ"
+

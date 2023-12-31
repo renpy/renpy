@@ -5,7 +5,7 @@ translate japanese strings:
 
     # game/options.rpy:15
     old "The Question"
-    new "The Question"
+    new "ザ・クエスチョン"
 
     # game/options.rpy:26
     old "Ren'Py 7+ Edition"

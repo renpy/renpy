@@ -263,7 +263,7 @@ translate japanese strings:
 
     # game/screens.rpy:1064
     old "Enter"
-    new "Enter"
+    new "エンター"
 
     # game/screens.rpy:1065
     old "Advances dialogue and activates the interface."
@@ -271,7 +271,7 @@ translate japanese strings:
 
     # game/screens.rpy:1068
     old "Space"
-    new "Space"
+    new "スペース"
 
     # game/screens.rpy:1069
     old "Advances dialogue without selecting choices."
@@ -287,7 +287,7 @@ translate japanese strings:
 
     # game/screens.rpy:1076
     old "Escape"
-    new "Escape"
+    new "ESC"
 
     # game/screens.rpy:1077
     old "Accesses the game menu."
