@@ -112,11 +112,13 @@ The Web platform natively uses a default presplash image. To override it, you ca
 an image named `web-presplash`, `.jpg`, `.png` or `.webp`, and it will replace
 the default.
 
+The `.webp` format allows for an animated presplash image, if that's required.
+
 Icon
 ---------
 
 The Web page icon can be customized by putting an image file with the name `web-icon.png`
-in the base directory of your project. This image must have a minimum resolution of 
+in the base directory of your project. This image must have a minimum resolution of
 512x512 and its width and height must be equal.
 If no custom image is given, the default Ren'Py icon is used.
 
