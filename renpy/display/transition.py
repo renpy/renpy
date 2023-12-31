@@ -57,6 +57,12 @@ class Transition(renpy.display.displayable.Displayable):
     def visit(self):
         return [ self.new_widget, self.old_widget ] # E1101
 
+    def get_placement(self):
+        if renpy.config.transitions_use_child_placement:
+            return self.new_widget.get_placement()
+        else:
+            return super(Transition, self).get_placement()
+
 
 def null_render(d, width, height, st, at):
 

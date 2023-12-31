@@ -146,6 +146,17 @@ To change this, add to your game::
 longer cause :var:`config.statement_callbacks` to be called.
 
 
+**Transitions Use Child Placements** If the child of a transitions provides
+placement information, that will be used by the transition itself. This
+only makes sense when the transition is used by an ATL transition, and both
+the old and new children provide the same placement information.
+
+To disable this, add to your game::
+
+    define config.transition_use_child_placement = false
+
+
+
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
 

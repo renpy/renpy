@@ -1427,6 +1427,8 @@ drag_group_add_top = True
 # Should loading of tl scripts be deferred?
 defer_tl_scripts = False
 
+# Should transitions take placement from child displayables?
+transitions_use_child_placement = True
 
 del os
 del collections
