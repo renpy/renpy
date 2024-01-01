@@ -964,7 +964,7 @@ class Interface(object):
         if self.started:
             return
 
-        if renpy.emscripten:
+        if PY2 and renpy.emscripten:
             renpy.game.preferences.fullscreen = False
 
         # Avoid starting on Android if we don't have focus.
@@ -2735,7 +2735,14 @@ class Interface(object):
                         renpy.game.preferences.fullscreen = False
 
                     if renpy.game.preferences.fullscreen != self.fullscreen:
-                        renpy.display.draw.resize()
+                        if (not PY2) and renpy.emscripten:
+                            if renpy.game.preferences.fullscreen:
+                                emscripten.run_script("setFullscreen(true);")
+                            else:
+                                emscripten.run_script("setFullscreen(false);")
+
+                        else:
+                            renpy.display.draw.resize()
 
                     # Ask if the game has changed size.
                     if renpy.display.draw.update(force=self.display_reset):
