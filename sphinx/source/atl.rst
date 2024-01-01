@@ -694,6 +694,9 @@ both update some of the same underlying data. In a parallel statement, not more 
 one block should adjust properties sharing the same data. The angle and radius properties set
 both horizontal and vertical positions.
 
+Positioning
+-----------
+
 .. transform-property:: pos
 
     :type: (position, position)
@@ -810,6 +813,27 @@ both horizontal and vertical positions.
     Equivalent to setting ypos to the value of this property, and
     yanchor to 0.5.
 
+.. transform-property:: subpixel
+
+    :type: boolean
+    :default: False
+
+    If True, causes the child to be placed using subpixel positioning.
+
+    Subpixel positioning effects the colors (including transparency)
+    that are drawn into pixels, but not which pixels are drawn. When
+    subpixel positoning is used in combination with movement (the usual
+    case), the image should have transparent borders in the directions
+    it might be moved in, if those edges are visible on the screen.
+
+    For example, if a character sprite is being moved horizontally,
+    it makes sense to have transparent borders on the left and right.
+    These might not be necessary when panning over a background that
+    extends outside the visible area, as the edges will not be seen.
+
+Rotation
+--------
+
 .. transform-property:: rotate
 
     :type: float or None
@@ -842,6 +866,9 @@ both horizontal and vertical positions.
    and rotated as the child is transformed. Effectively, this makes the
    anchor the point that the child is rotated and scaled around.
 
+Zoom and Flip
+-------------
+
 .. transform-property:: zoom
 
     :type: float
@@ -866,6 +893,9 @@ both horizontal and vertical positions.
 
    This causes the displayable to be vertically zoomed by the supplied
    factor. A negative value causes the image to be flipped vertically.
+
+Pixel Effects
+-------------
 
 .. transform-property:: nearest
 
@@ -905,6 +935,29 @@ both horizontal and vertical positions.
     an opaque surface. (Complex operations, like viewport, :func:`Flatten`, :func:`Frame`,
     and certain transitions may cause problems with additive blending.)
 
+.. transform-property:: matrixcolor
+
+    :type: None or Matrix or MatrixColor
+    :default: None
+
+    If not None, the value of this property is used to recolor everything
+    that children of this transform draw. Interpolation is only supported
+    when MatrixColors are used, and the MatrixColors are structurally similar.
+    See :doc:`matrixcolor` for more information.
+
+.. transform-property:: blur
+
+    :type: None or float
+    :default: None
+
+    This blurs the child of this transform by `blur` pixels, up to the border
+    of the displayable. The precise details of the blurring may change
+    between Ren'Py versions, and the blurring may exhibit artifacts,
+    especially when the image being blurred is changing.
+
+Polar Positioning
+-----------------
+
 .. transform-property:: around
 
     :type: (position, position)
@@ -914,7 +967,6 @@ both horizontal and vertical positions.
     relative to the upper-left of the containing area. The :tpref:`angle` and
     :tpref:`radius` properties can then be used to specify a position
     using polar coordinates.
-
 
 .. transform-property:: angle
 
@@ -939,6 +991,9 @@ both horizontal and vertical positions.
 
     If a float, this will be scaled to the smaller of the width and height
     available to the transform.
+
+Polar Positioning of the Anchor
+-------------------------------
 
 .. transform-property:: anchoraround
 
@@ -969,11 +1024,8 @@ both horizontal and vertical positions.
     The radius component of the polar coordinates of the anchor. This will have the same
     type as :tpref:`anchoraround` and :tpref:`anchor`.
 
-.. transform-property:: alignaround
-
-    :type: (float, float)
-
-    This sets :tpref:`around` and :tpref:`anchoraround` to the same value.
+Cropping and Resizing
+---------------------
 
 .. transform-property:: crop
 
@@ -1070,40 +1122,8 @@ both horizontal and vertical positions.
          - As for ``cover``, but will never decrease the size of the
            displayable.
 
-.. transform-property:: subpixel
-
-    :type: boolean
-    :default: False
-
-    If True, causes the child to be placed using subpixel positioning.
-
-    Subpixel positioning effects the colors (including transparency)
-    that are drawn into pixels, but not which pixels are drawn. When
-    subpixel positoning is used in combination with movement (the usual
-    case), the image should have transparent borders in the directions
-    it might be moved in, if those edges are visible on the screen.
-
-    For example, if a character sprite is being moved horizontally,
-    it makes sense to have transparent borders on the left and right.
-    These might not be necessary when panning over a background that
-    extends outside the visible area, as the edges will not be seen.
-
-.. transform-property:: delay
-
-    :type: float
-    :default: 0.0
-
-    If this transform is being used as a transition, then this is the
-    duration of the transition. See :ref:`atl-transitions`.
-
-.. transform-property:: events
-
-    :type: boolean
-    :default: True
-
-    If true, events are passed to the child of this transform. If false,
-    events are blocked. (This can be used in ATL transitions to prevent
-    events from reaching the old_widget.)
+Panning and Tiling
+------------------
 
 .. transform-property:: xpan
 
@@ -1139,26 +1159,30 @@ both horizontal and vertical positions.
 
     The number of times to tile the image vertically.
 
-.. transform-property:: matrixcolor
+Transitions
+-----------
 
-    :type: None or Matrix or MatrixColor
-    :default: None
+See :ref:`atl-transitions`.
 
-    If not None, the value of this property is used to recolor everything
-    that children of this transform draw. Interpolation is only supported
-    when MatrixColors are used, and the MatrixColors are structurally similar.
-    See :doc:`matrixcolor` for more information.
+.. transform-property:: delay
 
-.. transform-property:: blur
+    :type: float
+    :default: 0.0
 
-    :type: None or float
-    :default: None
+    If this transform is being used as a transition, then this is the
+    duration of the transition. See :ref:`atl-transitions`.
 
-    This blurs the child of this transform by `blur` pixels, up to the border
-    of the displayable. The precise details of the blurring may change
-    between Ren'Py versions, and the blurring may exhibit artifacts,
-    especially when the image being blurred is changing.
+.. transform-property:: events
 
+    :type: boolean
+    :default: True
+
+    If true, events are passed to the child of this transform. If false,
+    events are blocked. (This can be used in ATL transitions to prevent
+    events from reaching the old_widget.)
+
+Other
+-----
 
 .. transform-property:: show_cancels_hide
 
@@ -1184,6 +1208,9 @@ GL Properties:
 
 Uniforms:
     Properties beginning with ``u_`` are uniforms that can be used by :ref:`custom shaders <custom-shaders>`.
+
+Property Order
+-------------
 
 These properties are applied in the following order:
 
@@ -1215,6 +1242,12 @@ Deprecated Transform Properties
     The following properties should not be used in modern games, as they may
     conflict with more recent features. They are only kept here for compatibility,
     along with the new way of achieving the same behavior.
+
+.. transform-property:: alignaround
+
+    :type: (float, float)
+
+    This sets :tpref:`anchor`, :tpref:`around`, and :tpref:`anchoraround` to the same value.
 
 .. transform-property:: crop_relative
 
@@ -1302,8 +1335,8 @@ The following events can be triggered automatically:
     the game is loaded and when styles or translations change.
 
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``, ``insensitive``, ``selected_insensitive``
-   Triggered when button containing this transform, or a button contained
-   by this transform, enters the named state.
+    Triggered when button containing this transform, or a button contained
+    by this transform, enters the named state.
 
 
 .. _replacing-transforms:
