@@ -708,9 +708,6 @@ class Interface(object):
         # The displayable that an ongoing transition is transitioning from.
         self.transition_from = { }
 
-        # Can the interface go fullscreen?
-        self.can_fullscreen = True
-
         # Init layers.
         renpy.display.scenelists.init_layers()
 
