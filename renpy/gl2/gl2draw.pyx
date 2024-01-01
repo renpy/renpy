@@ -655,7 +655,7 @@ cdef class GL2Draw:
 
         flags = pygame.display.get_window().get_window_flags()
 
-        if (not PY2) and renpy.emscripten:
+        if renpy.emscripten:
             fullscreen = bool(emscripten.run_script_int("isFullscreen()"))
         else:
             fullscreen = bool(flags & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
