@@ -25,8 +25,6 @@ from __future__ import print_function
 
 DEF ANGLE = False
 
-from renpy.compat import PY2
-
 from libc.stdlib cimport malloc, free
 from sdl2 cimport *
 from renpy.uguu.gl cimport *
@@ -370,7 +368,7 @@ cdef class GL2Draw:
 
         if renpy.android or renpy.ios:
             fullscreen = True
-        elif (not PY2) and renpy.emscripten:
+        elif renpy.emscripten:
             fullscreen = False
         else:
             fullscreen = renpy.game.preferences.fullscreen
@@ -520,7 +518,7 @@ cdef class GL2Draw:
             pygame.display.get_window().recreate_gl_context(always=renpy.emscripten)
 
         # Are we in fullscreen mode?
-        if (not PY2) and renpy.emscripten:
+        if renpy.emscripten:
             fullscreen = bool(emscripten.run_script_int("isFullscreen()"))
         else:
             fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
@@ -620,7 +618,7 @@ cdef class GL2Draw:
 
         fullscreen = renpy.game.preferences.fullscreen
 
-        if not PY2 and renpy.emscripten:
+        if renpy.emscripten:
             fullscreen = False
         elif renpy.android or renpy.ios:
             fullscreen = True

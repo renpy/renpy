@@ -961,9 +961,6 @@ class Interface(object):
         if self.started:
             return
 
-        if PY2 and renpy.emscripten:
-            renpy.game.preferences.fullscreen = False
-
         # Avoid starting on Android if we don't have focus.
         if renpy.android:
             self.check_android_start()
