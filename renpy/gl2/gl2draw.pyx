@@ -464,6 +464,9 @@ cdef class GL2Draw:
             self.quit()
             return False
 
+        if renpy.emscripten:
+            emscripten.webgl_enable_extension("EXT_texture_filter_anisotropic")
+
         # Load uguu, and init GL.
         renpy.uguu.gl.clear_missing_functions()
         renpy.uguu.gl.load()
