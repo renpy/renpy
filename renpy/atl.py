@@ -135,10 +135,48 @@ class position(object):
         return "position(absolute={}, relative={})".format(self.absolute, self.relative)
 
 
+class DualAngle(object):
+    def __init__(self, absolute, relative): # for tests, convert to PY2 after
+        self.absolute = absolute
+        self.relative = relative
+
+    @classmethod
+    def from_any(cls, other):
+        if isinstance(other, cls):
+            return other
+        elif type(other) is float:
+            return cls(other, other)
+        raise TypeError("Cannot convert {} to DualAngle".format(type(other)))
+
+    def __add__(self, other):
+        if isinstance(other, DualAngle):
+            return DualAngle(self.absolute + other.absolute, self.relative + other.relative)
+        return NotImplemented
+
+    def __sub__(self, other):
+        return self + -other
+
+    def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            return DualAngle(self.absolute * other, self.relative * other)
+        return NotImplemented
+
+    __rmul__ = __mul__
+
+    def __neg__(self):
+        return -1 * self
+
+
 def position_or_none(x):
     if x is None:
         return None
     return position.from_any(x)
+
+
+def dualangle_or_float_or_none(x):
+    if x is None:
+        return None
+    return DualAngle.from_any(x)
 
 
 def any_object(x):
@@ -278,7 +316,12 @@ def interpolate_spline(t, spline):
 
             rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
 
-    return position_or_none(rv)
+    if rv is None:
+        return None
+    # elif renpy.config.mixed_position:
+    #     return position.from_any(a)
+    else: # legacy
+        return type(spline[-1])(rv)
 
 
 def get_catmull_rom_value(t, p_1, p0, p1, p2):
@@ -1377,10 +1420,10 @@ class Interpolation(Statement):
 
             # Angle and radius need to go after the linear changes, as
             # around or alignaround must be set first.
-            angle = None
-            radius = None
-            anchorangle = None
-            anchorradius = None
+            angles = None
+            radii = None
+            anchorangles = None
+            anchorradii = None
 
             splines = [ ]
 
@@ -1413,7 +1456,11 @@ class Interpolation(Statement):
                     endradius = newts.radius
 
                     startanchorangle = trans.state.anchorangle
+                    startanchorangle_absolute = startanchorangle.absolute
+                    startanchorangle_relative = startanchorangle.relative
                     endanchorangle = newts.anchorangle
+                    endanchorangle_absolute = endanchorangle.absolute
+                    endanchorangle_relative = endanchorangle.relative
                     startanchorradius = trans.state.anchorradius
                     endanchorradius = newts.anchorradius
 
@@ -1424,31 +1471,40 @@ class Interpolation(Statement):
                         if endangle < startangle:
                             startangle -= 360
 
-                        if endanchorangle < startanchorangle:
-                            startanchorangle -= 360
+                        if endanchorangle_absolute < startanchorangle_absolute:
+                            endanchorangle_absolute -= 360
+                        if endanchorangle_relative < startanchorangle_relative:
+                            endanchorangle_relative -= 360
 
                         startangle -= circles * 360
-                        startanchorangle -= circles * 360
+                        startanchorangle_absolute -= circles * 360
+                        startanchorangle_relative -= circles * 360
 
                     elif revdir == "counterclockwise":
                         if endangle > startangle:
                             startangle += 360
 
-                        if endanchorangle > startanchorangle:
-                            startanchorangle += 360
+                        if endanchorangle_absolute > startanchorangle_absolute:
+                            endanchorangle_absolute += 360
+                        if endanchorangle_relative > startanchorangle_relative:
+                            endanchorangle_relative += 360
 
                         startangle += circles * 360
-                        startanchorangle += circles * 360
+                        startanchorangle_absolute += circles * 360
+                        startanchorangle_relative += circles * 360
 
                     has_radius = True
                     has_angle = True
                     has_anchorangle = True
                     has_anchorradius = True
 
-                    radius = (startradius, endradius)
-                    angle = (startangle, endangle)
-                    anchorradius = (startanchorradius, endanchorradius)
-                    anchorangle = (startanchorangle, endanchorangle)
+                    radii = (startradius, endradius)
+                    angles = (startangle, endangle)
+                    anchorradii = (startanchorradius, endanchorradius)
+                    anchorangles = (
+                        DualAngle(startanchorangle_absolute, startanchorangle_relative),
+                        DualAngle(endanchorangle_absolute, endanchorangle_relative),
+                    )
 
                 else:
 
@@ -1461,30 +1517,40 @@ class Interpolation(Statement):
                         if end - start < -180:
                             start -= 360
 
-                        angle = (start, end)
+                        angles = (start, end)
 
                     if has_radius:
-                        radius = (trans.state.radius, newts.radius)
+                        radii = (trans.state.radius, newts.radius)
 
                     if has_anchorangle:
                         start = trans.state.anchorangle
-                        end = newts.last_anchorangle
+                        start_absolute = start.absolute
+                        start_relative = start.relative
+                        end_absolute = newts.last_absolute_anchorangle
+                        end_relative = newts.last_relative_anchorangle
 
-                        if end - start > 180:
-                            start += 360
-                        if end - start < -180:
-                            start -= 360
+                        if end_absolute - start_absolute > 180:
+                            start_absolute += 360
+                        if end_absolute - start_absolute < -180:
+                            start_absolute -= 360
+                        if end_relative - start_relative > 180:
+                            start_relative += 360
+                        if end_relative - start_relative < -180:
+                            start_relative -= 360
 
-                        anchorangle = (start, end)
+                        anchorangles = (
+                            DualAngle(start_absolute, start_relative),
+                            DualAngle(end_absolute, end_relative),
+                        )
 
                     if has_anchorradius:
-                        anchorradius = (trans.state.anchorradius, newts.anchorradius)
+                        anchorradii = (trans.state.anchorradius, newts.anchorradius)
 
             # Figure out the splines.
             for name, values in self.splines:
                 splines.append((name, [ getattr(trans.state, name) ] + values))
 
-            state = (linear, angle, radius, anchorangle, anchorradius, splines)
+            state = (linear, angles, radii, anchorangles, anchorradii, splines)
 
             # Ensure that we set things, even if they don't actually
             # change from the old state.
@@ -1493,7 +1559,7 @@ class Interpolation(Statement):
                     setattr(trans.state, k, v)
 
         else:
-            linear, angle, radius, anchorangle, anchorradius, splines = state
+            linear, angles, radii, anchorangles, anchorradii, splines = state
 
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.items():
@@ -1514,24 +1580,24 @@ class Interpolation(Statement):
             setattr(trans.state, k, value)
 
         # Handle the angle.
-        if angle is not None:
-            startangle, endangle = angle[:2]
+        if angles is not None:
+            startangle, endangle = angles[:2]
 
             angle = interpolate(complete, startangle, endangle, float)
             trans.state.angle = angle
 
-        if radius is not None:
-            startradius, endradius = radius
+        if radii is not None:
+            startradius, endradius = radii
             trans.state.radius = interpolate(complete, startradius, endradius, position_or_none)
 
-        if anchorangle is not None:
-            startangle, endangle = anchorangle[:2]
+        if anchorangles is not None:
+            startangle, endangle = anchorangles[:2]
 
-            angle = interpolate(complete, startangle, endangle, float)
-            trans.state.anchorangle = angle
+            anchorangle = interpolate(complete, startangle, endangle, dualangle_or_float_or_none)
+            trans.state.anchorangle = anchorangle
 
-        if anchorradius is not None:
-            startradius, endradius = anchorradius
+        if anchorradii is not None:
+            startradius, endradius = anchorradii
             trans.state.anchorradius = interpolate(complete, startradius, endradius, position_or_none)
 
 
