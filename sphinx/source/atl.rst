@@ -217,7 +217,7 @@ Some sample interpolations are::
         pause 1.0
 
         # Set the location to circle around.
-        alignaround (.5, .5)
+        anchor (0.5, 0.5)
 
         # Use circular motion to bring us to spiral out to the top of
         # the screen. Take 2 seconds to do so.
@@ -995,6 +995,12 @@ Polar Positioning
 Polar Positioning of the Anchor
 -------------------------------
 
+.. note::
+
+    While using polar coordinates to position the anchor is possible, it's
+    often more convenient to simply set :tpref:`anchor` to (0.5, 0.5), and
+    position the center of your displayable.
+
 .. transform-property:: anchoraround
 
     :type: (position, position)
@@ -1228,7 +1234,7 @@ These properties are applied in the following order:
 #. matrixtransform, matrixanchor
 #. zzoom
 #. perspective
-#. nearest, blend, alpha, additive, shader.
+#. nearest, blend, alpha, additive, shader
 #. matrixcolor
 #. GL Properties, Uniforms
 #. position properties
@@ -1248,6 +1254,7 @@ Deprecated Transform Properties
     :type: (float, float)
 
     This sets :tpref:`anchor`, :tpref:`around`, and :tpref:`anchoraround` to the same value.
+
 
 .. transform-property:: crop_relative
 
