@@ -60,6 +60,7 @@ from renpy.translation import translate_string as __ # @UnusedImport
 from renpy.python import store_eval as eval
 
 from renpy.display.core import absolute
+from renpy.atl import position
 
 import renpy
 globals()["renpy"] = renpy.exports
@@ -185,6 +186,7 @@ __all__ = [
     'list',
     'object',
     'open',
+    'position',
     'print',
     'python_dict',
     'python_list',
@@ -198,7 +200,7 @@ __all__ = [
     'tobytes',
     'ui',
     'unicode',
-    ]
+]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ] # type: ignore
