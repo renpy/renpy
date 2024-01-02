@@ -342,7 +342,7 @@ can only be called from the main thread.)
 Launcher Changes
 ----------------
 
-The launcher now supports :doc:`template-projects`. These are
+The launcher now supports :doc:`template_projects`. These are
 indended for use by projects that replace the default GUI.
 If a template project is selected when creating a new project,
 Ren'Py will copy the template project and update the name and translations,

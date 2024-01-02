@@ -285,8 +285,8 @@ expression.
 There are three things the first simple expression may evaluate to:
 
 * If it's an ATL transform, and that ATL transform has **not** been supplied
-  a child (through being called as a transform or transition, or
-  with a `child` or `old_widget` argument), the ATL transform is
+  a child (through being called as a transform, or
+  with a `child` argument), the ATL transform is
   included at the location of the expression. The ``with`` clause is ignored.
 
 * If it's an integer or floating point number,  it's taken as a number of
@@ -1218,7 +1218,7 @@ Uniforms:
     Properties beginning with ``u_`` are uniforms that can be used by :ref:`custom shaders <custom-shaders>`.
 
 Property Order
--------------
+--------------
 
 These properties are applied in the following order:
 
