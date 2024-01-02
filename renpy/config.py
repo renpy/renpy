@@ -1411,6 +1411,9 @@ font_hinting = { None : "auto" }
 # at the cost of returning instances of the position type ?
 mixed_position = True
 
+# Should text interpolations be treated as Python expressions?
+interpolate_exprs = True
+
 # Should we execute costly tasks which are
 # avoidable when not generating the documentation ?
 generating_documentation = False

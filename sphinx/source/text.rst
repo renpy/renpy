@@ -91,18 +91,17 @@ Ren'Py will search for variables in the following order:
 * Variables found in the global namespace.
 
 Ren'Py isn't limited to interpolating simple variables. It can also
-interpolate fields and components of tuples. So it's possible to have::
+interpolate any valid Python expression. So it's possible to have::
 
     g "My first name is [player.names[0]]."
 
 It's possible to apply formatting when displaying numbers. This
 will display a floating point number to two decimal places::
 
-    $ percent = 100.0 * points / max_points
-    g "I like you [percent:.2] percent!"
+    g "I like you [100.0 * points / max_points:.2] percent!"
 
-Ren'Py's string interpolation is taken from the :pep:`3101` string
-formatting syntax. Ren'Py uses [ to introduce string formatting
+Ren'Py's string formatting is taken from the :pep:`3101` string
+formatting syntax. Ren'Py uses [ to introduce string interpolation
 because { was taken by text tags.
 
 Along with the ``!s`` and ``!r`` conversion flags supported by Python, Ren'Py

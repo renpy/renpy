@@ -63,6 +63,18 @@ add::
     style default:
         emoji_font None
 
+**Interpolation Changes** Interpolations in strings are now treated as Python
+expressions, this results in mostly equivelent behaviour when interpreting
+fields except when item getters are in use. For example::
+
+    # Previously
+    e "[player[money]]" #=> player['money']
+    # But now
+    e "[player[money]]" #=> player[money]
+
+To revert this behaviour, add the following to your game::
+
+    define config.interpolate_exprs = False
 
 **Polar Coordinate Changes** Ren'Py now enforces that the angles given to
 the :tpref:`angle` and :tpref:`anchorangle`
