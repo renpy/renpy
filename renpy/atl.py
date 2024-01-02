@@ -290,7 +290,6 @@ def interpolate_spline(t, spline):
         rv = t_pp * spline[0] + t_p * spline[1] + t2 * spline[2]
 
     elif lenspline == 4:
-
         t_ppp = (1.0 - t) ** 3
         t_pp = 3 * t * (1.0 - t) ** 2
         t_p = 3 * t ** 2 * (1.0 - t)
@@ -298,28 +297,30 @@ def interpolate_spline(t, spline):
 
         rv = t_ppp * spline[0] + t_pp * spline[1] + t_p * spline[2] + t3 * spline[3]
 
+    elif t <= 0.0:
+        rv = spline[0]
+    elif t >= 1.0:
+        rv = spline[ -1]
+
     else:
+        # Catmull-Rom (re-adjust the control points)
+        spline = [
+            spline[1],
+            spline[0]
+        ] + list(spline[2:-2]) + [
+            spline[-1],
+            spline[-2]
+        ]
 
-        if t <= 0.0 or t >= 1.0:
+        inner_spline_count = float(lenspline - 3)
 
-            rv = spline[0 if t <= 0.0 else -1]
+        # determine which spline values are relevant
+        sector = int(t // (1.0 / inner_spline_count) + 1)
 
-        else:
+        # determine t for this sector
+        t = (t % (1.0 / inner_spline_count)) * inner_spline_count
 
-            # Catmull-Rom (re-adjust the control points)
-            spline = ([spline[1], spline[0]]
-                    +list(spline[2:-2])
-                    +[spline[-1], spline[-2]])
-
-            inner_spline_count = float(lenspline - 3)
-
-            # determine which spline values are relevant
-            sector = int(t // (1.0 / inner_spline_count) + 1)
-
-            # determine t for this sector
-            t = (t % (1.0 / inner_spline_count)) * inner_spline_count
-
-            rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
+        rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
 
     if mixed_position:
         return rv
