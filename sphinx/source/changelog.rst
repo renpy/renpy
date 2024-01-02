@@ -1001,6 +1001,23 @@ The following translations had manual updates:
 * Japanese
 * Ukrainian
 
+.. _conflicting_properties:
+
+Conflicting properties
+----------------------
+
+Setting two conflicting style or transform properties at the same time, for
+example :propref:`xalign` and :propref:`pos`, or :tpref:`ycenter` and
+:tpref:`yanchor`, has always been undefined. The actual behavior has always been
+changing across versions of Ren'Py, in particular between Python 2 and Python 3.
+
+The new :var:`config.check_conflicting_properties` variable makes Ren'Py raise
+an error when such a conflict is detected. Due to a mistake in the former
+default input screen, this variable is only enabled in newly-created projects.
+Nonetheless, it is strongly advised to :ref:`define <define-statement>` it to
+True in all projects, to fix all revealed conflicts, and to keep it to True
+afterwards.
+
 More New Features
 -----------------
 
@@ -1119,12 +1136,6 @@ cleared of all the attributes attached to it. The previous way to do this was
 to hide and show the image again, which had the consequence of also resetting
 the placement of the image on the screen. It is not the case with this function.
 
-The new ``config.check_conflicting_properties`` variable, which is disabled
-in existing games but enabled in newly created games, enables you to check for
-conflicting style or transform properties being set concurrently. This is
-dangerous as the resulting behavior is undefined and may vary between platforms
-and versions of Ren'Py.
-
 The new :var:`config.font_name_map` variable allows you to name font files or
 :ref:`fontgroup`, so that it becomes easier to use them in {font} tags.
 Previously, there was no way to use a fontgroup in a {font} tag.
@@ -1148,10 +1159,6 @@ will now produce circular, rather than oval motion, with radius using the
 minimum of the available wdith and height to scale distances expressed as
 heights. The new :tpref:`anchoraround`, :tpref:`anchorradius`, and :tpref:`anchorangle`
 properties can position the anchor using polar coordinates.
-
-Ren'Py will now produce errors when a screen sets two conflicting
-properties, like :propref:`align`, and :propref:`xalign`. Previously,
-the behavior of this was undefined.
 
 Lint will now check your game for statements that can never be reached,
 and will report the statements.

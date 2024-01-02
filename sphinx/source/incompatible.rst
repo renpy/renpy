@@ -195,6 +195,28 @@ Then rebuild and re-upload your bundle.
 8.1.0 / 7.6.0
 -------------
 
+**Conflicting properties** The former default input screen, which may have found
+its way into your game, contains conflicting style properties. The fix for that
+is as follows:
+
+.. code-block:: diff
+
+    +define config.check_conflicting_properties = True
+
+     screen input(prompt):
+         style_prefix "input"
+         window:
+
+             vbox:
+    -            xalign gui.dialogue_text_xalign
+    +            xanchor gui.dialogue_text_xalign
+                 xpos gui.dialogue_xpos
+                 xsize gui.dialogue_width
+                 ypos gui.dialogue_ypos
+                 text prompt style "input_prompt"
+                 input id "input"
+
+
 **Speech Bubbles** Adding bubble support to an existing game requires
 adding files and script to the game. The :doc:`bubble` documentation
 includes the required changes.
