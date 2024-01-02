@@ -337,9 +337,9 @@ class Dissolve(Transition):
         The time the dissolve will take.
 
     `time_warp`
-        A function that adjusts the timeline. If not None, this should be a
-        function that takes a fractional time between 0.0 and 1.0, and returns
-        a number in the same range.
+        A :ref:`function that adjusts the timeline <warpers>`. If not None, this
+        should be a function that takes a fractional time between 0.0 and 1.0,
+        and returns a number in the same range.
 
     `mipmap`
         When the dissolve will be scaled to less than half its natural size,
@@ -442,9 +442,9 @@ class ImageDissolve(Transition):
         If True, black pixels will dissolve in before white pixels.
 
     `time_warp`
-        A function that adjusts the timeline. If not None, this should be a
-        function that takes a fractional time between 0.0 and 1.0, and returns
-        a number in the same range.
+        A :ref:`function that adjusts the timeline <warpers>`. If not None, this
+        should be a function that takes a fractional time between 0.0 and 1.0,
+        and returns a number in the same range.
 
     `mipmap`
         When the dissolve will be scaled to less than half its natural size,
