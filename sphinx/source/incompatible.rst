@@ -63,6 +63,18 @@ add::
     style default:
         emoji_font None
 
+**Interpolation Changes** Interpolations in strings are now treated as Python
+expressions, this results in mostly equivelent behaviour when interpreting
+fields except when item getters are in use. For example::
+
+    # Previously
+    e "[player[money]]" #=> player['money']
+    # But now
+    e "[player[money]]" #=> player[money]
+
+To revert this behaviour, add the following to your game::
+
+    define config.interpolate_exprs = False
 
 **Polar Coordinate Changes** Ren'Py now enforces that the angles given to
 the :tpref:`angle` and :tpref:`anchorangle`
@@ -141,6 +153,22 @@ To change this, add to your game::
     define config.drag_group_add_top = False
 
 
+**Translate Statements and config.statement_callbacks** Translate statements
+(including internal statements that Ren'Py automatically generates) will no
+longer cause :var:`config.statement_callbacks` to be called.
+
+
+**Transitions Use Child Placements** If the child of a transitions provides
+placement information, that will be used by the transition itself. This
+only makes sense when the transition is used by an ATL transition, and both
+the old and new children provide the same placement information.
+
+To disable this, add to your game::
+
+    define config.transition_use_child_placement = false
+
+
+
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
 
@@ -178,6 +206,28 @@ Then rebuild and re-upload your bundle.
 
 8.1.0 / 7.6.0
 -------------
+
+**Conflicting properties** The former default input screen, which may have found
+its way into your game, contains conflicting style properties. The fix for that
+is as follows:
+
+.. code-block:: diff
+
+    +define config.check_conflicting_properties = True
+
+     screen input(prompt):
+         style_prefix "input"
+         window:
+
+             vbox:
+    -            xalign gui.dialogue_text_xalign
+    +            xanchor gui.dialogue_text_xalign
+                 xpos gui.dialogue_xpos
+                 xsize gui.dialogue_width
+                 ypos gui.dialogue_ypos
+                 text prompt style "input_prompt"
+                 input id "input"
+
 
 **Speech Bubbles** Adding bubble support to an existing game requires
 adding files and script to the game. The :doc:`bubble` documentation

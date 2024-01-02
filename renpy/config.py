@@ -683,6 +683,9 @@ quit_on_mobile_background = False
 # Should Ren'Py pass the raw joystick (not controller) events.?
 pass_joystick_events = False
 
+# Should Ren'Py pass the controller events?
+pass_controller_events = False
+
 # A list of screens that should be shown when the overlay is enabled.
 overlay_screens = [ ]
 
@@ -1408,6 +1411,9 @@ font_hinting = { None : "auto" }
 # at the cost of returning instances of the position type ?
 mixed_position = True
 
+# Should text interpolations be treated as Python expressions?
+interpolate_exprs = True
+
 # Should we execute costly tasks which are
 # avoidable when not generating the documentation ?
 generating_documentation = False
@@ -1423,6 +1429,9 @@ drag_group_add_top = True
 
 # Should loading of tl scripts be deferred?
 defer_tl_scripts = False
+
+# Should transitions take placement from child displayables?
+transitions_use_child_placement = True
 
 del os
 del collections

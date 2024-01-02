@@ -1054,11 +1054,10 @@ class DragGroup(renpy.display.layout.MultiBox):
         self.sorted = False
         renpy.display.render.invalidate(self)
 
-        if isinstance(child, Drag):
-            child.drag_group = self
+        child.drag_group = self
 
-            if renpy.config.drag_group_add_top:
-                child.top()
+        if renpy.config.drag_group_add_top:
+            child.top()
 
     def remove(self, child):
         """

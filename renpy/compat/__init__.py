@@ -192,6 +192,16 @@ if PY2:
 
         subprocess.Popen = Popen
 
+################################################################################
+# Intern
+
+if PY2:
+    intern_cache = {}
+
+    def intern(s):
+        return intern_cache.setdefault(s, s)
+
+    sys.intern = intern
 
 ################################################################################
 # Export functions.

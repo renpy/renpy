@@ -21,6 +21,9 @@
 
 # This code applies an update.
 init -1500 python in updater:
+    # Do not participate in saves.
+    _constant = True
+
     from store import renpy, config, Action, DictEquality, persistent
     import store.build as build
 

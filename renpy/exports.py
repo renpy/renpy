@@ -842,9 +842,6 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
 
     renpy.exports.mode('input')
 
-    # Take the user out of fullscreen during input.
-    renpy.game.preferences.fullscreen = False
-
     prompt = renpy.text.extras.filter_text_tags(prompt, allow=set())
 
     roll_forward = renpy.exports.roll_forward_info()
@@ -2062,7 +2059,7 @@ def warp_to_line(warp_spec):
     """
 
     renpy.warp.warp_spec = warp_spec
-    renpy.warp.warp()
+    full_restart()
 
 
 def screenshot(filename):
@@ -3001,7 +2998,7 @@ def load_language(language):
     if language is None:
         return
 
-    if renpy.config.defer_tl_scripts:
+    if not renpy.config.defer_tl_scripts:
         return
 
     if language in renpy.game.script.load_languages:
@@ -3232,40 +3229,13 @@ def get_roll_forward():
 
 def cache_pin(*args):
     """
-    :undocumented: Cache pin is deprecated.
+    :undocumented: Cache pinning has been removed.
     """
-
-    new_pins = renpy.revertable.RevertableSet()
-
-    for i in args:
-
-        im = renpy.easy.displayable(i)
-
-        if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot pin non-image-manipulator %r" % im)
-
-        new_pins.add(im)
-
-    renpy.store._cache_pin_set = new_pins | renpy.store._cache_pin_set
-
 
 def cache_unpin(*args):
     """
-    :undocumented: Cache pin is deprecated.
+    :undocumented: Cache pinning has been removed
     """
-
-    new_pins = renpy.revertable.RevertableSet()
-
-    for i in args:
-
-        im = renpy.easy.displayable(i)
-
-        if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot unpin non-image-manipulator %r" % im)
-
-        new_pins.add(im)
-
-    renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
 def expand_predict(d):
@@ -4510,13 +4480,9 @@ def get_sdl_dll():
     """
     :doc: sdl
 
-    This returns a ctypes.cdll object that refers to the library that contains
-    the instance of SDL2 that Ren'Py is using.
-
-    If this can not be done, None is returned.
+    Returns a ctypes.cdll object that refers to the library that contains
+    the instance of SDL2 that Ren'Py is using. If this fails, None is returned.
     """
-
-
 
     global sdl_dll
 
@@ -4554,15 +4520,17 @@ def get_sdl_window_pointer():
     """
     :doc: sdl
 
-    Returns a pointer (of type ctypes.c_void_p) to the main window, or None
-    if the main window is not displayed, or some other problem occurs.
+    :rtype: ctypes.c_void_p | None
+
+    Returns a pointer to the main window, or None if the main window is not
+    displayed (or some other problem occurs).
     """
 
     try:
         window = pygame_sdl2.display.get_window()
 
         if window is None:
-            return
+            return None
 
         return window.get_sdl_window_pointer()
 
@@ -4883,3 +4851,14 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
         return content.decode("utf-8")
     elif result == "json":
         return _json.loads(content)
+
+
+def can_fullscreen():
+    """
+    :doc: other
+
+    Returns True if the current platform supports fullscreen mode, False
+    otherwise.
+    """
+
+    return renpy.display.can_fullscreen

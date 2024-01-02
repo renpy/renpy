@@ -28,6 +28,9 @@ init offset = -1101
 default persistent._director_bottom = False
 
 init python in director:
+    # Do not participate in saves.
+    _constant = True
+
     from store import Action, config
     import store
 

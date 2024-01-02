@@ -51,9 +51,6 @@ cdef class TextureLoader:
 
     cdef GLfloat max_anisotropy
 
-    # The pixel buffer, for non-angle platforms.
-    cdef GLuint pixel_buffer
-
 
 cdef class GLTexture(GL2Model):
 

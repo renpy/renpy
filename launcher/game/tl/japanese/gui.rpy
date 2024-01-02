@@ -458,8 +458,11 @@ translate japanese strings:
     new "## NVL モードにおける、一度に表示されるエントリー（１台詞）の最大数。この値以上のエントリーを表示しようとすると、一番古いエントリーが取り除かれます。"
 
 
-translate japanese strings:
-
     # gui/game/gui.rpy:14
     old "## Enable checks for invalid or unstable properties in screens or transforms"
     new "## スクリーンやトランスフォームのプロパティが無効または不安定であることをチェックできるようにする。"
+
+    # gui/game/gui.rpy:347
+    old "## Additional space to add between history screen entries."
+    new "## history screen の追加の行間を設定します。"
+

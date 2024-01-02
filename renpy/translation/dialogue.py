@@ -43,6 +43,9 @@ def create_dialogue_map(language):
     rv = { }
 
     def get_text(t):
+        if isinstance(t, renpy.ast.Say):
+            return t.what
+
         for i in t.block:
             if isinstance(i, renpy.ast.Say):
                 return i.what
@@ -234,8 +237,13 @@ class DialogueFile(object):
             tl = None
             if self.language is not None:
                 tl = translator.language_translates.get((identifier, self.language), None)
+
+
             if tl is None:
-                block = t.block
+                tl = t
+
+            if isinstance(tl, renpy.ast.TranslateSay):
+                block = [ tl ]
             else:
                 block = tl.block
 

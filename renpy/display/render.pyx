@@ -1175,8 +1175,12 @@ cdef class Render:
         `arg` - an argument.
 
         The rest of the parameters are a rectangle giving the portion of
-        this region corresponding to the focus. If they are all None, than
-        this focus is assumed to be the singular full-screen focus.
+        this region corresponding to the focus.
+
+
+        If they are all None, than this focus is assumed to be the singular full-screen focus.
+        If they are all False, this focus can be grabbed, but will not be focused by mouse
+        or keyboard focus.
         """
 
         if isinstance(mask, Render) and mask is not self:
@@ -1245,8 +1249,8 @@ cdef class Render:
 
             for (d, arg, xo, yo, w, h, mx, my, mask) in self.focuses:
 
-                if xo is None:
-                    focuses.append(renpy.display.focus.Focus(d, arg, None, None, None, None, screen))
+                if xo is None or xo is False:
+                    focuses.append(renpy.display.focus.Focus(d, arg, xo, yo, w, h, screen))
                     continue
 
                 x1, y1 = transform.transform(xo, yo)
@@ -1352,7 +1356,7 @@ cdef class Render:
         if (rv is None) and (self.focuses):
             for (d, arg, xo, yo, w, h, mx, my, mask) in reversed(self.focuses):
 
-                if xo is None:
+                if xo is None or xo is False:
                     continue
 
                 elif mx is not None:

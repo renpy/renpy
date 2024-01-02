@@ -1046,6 +1046,9 @@ class Interface(object):
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
 
+        # Clear out any pending events.
+        pygame.event.get()
+
         for i in renpy.config.display_start_callbacks:
             i()
 
@@ -2721,8 +2724,19 @@ class Interface(object):
                             needs_redraw = True
 
                     # Check for a fullscreen change.
+
+                    if not renpy.display.can_fullscreen:
+                        renpy.game.preferences.fullscreen = False
+
                     if renpy.game.preferences.fullscreen != self.fullscreen:
-                        renpy.display.draw.resize()
+                        if (not PY2) and renpy.emscripten:
+                            if renpy.game.preferences.fullscreen:
+                                emscripten.run_script("setFullscreen(true);")
+                            else:
+                                emscripten.run_script("setFullscreen(false);")
+
+                        else:
+                            renpy.display.draw.resize()
 
                     # Ask if the game has changed size.
                     if renpy.display.draw.update(force=self.display_reset):

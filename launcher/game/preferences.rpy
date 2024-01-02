@@ -46,8 +46,6 @@ init python:
         bound = ceil(len(rv)/3.)
         return (rv[:bound], rv[bound:2*bound], rv[2*bound:])
 
-    show_legacy = os.path.exists(os.path.join(config.renpy_base, "templates", "english", "game", "script.rpy"))
-
     class RestartAtPreferences(Action):
         def __call__(self):
             renpy.session["launcher_start_label"] = "preferences"
@@ -72,7 +70,6 @@ init python:
 """)
 
 
-default persistent.legacy = False
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
 default persistent.daily_update_check = True
@@ -366,12 +363,15 @@ screen preferences():
                             textbutton _("Check parameters shadowing reserved names"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--reserved-parameters")
-                            textbutton _("Print word and character counts for speaking characters"):
+                            textbutton _("Print block, word, and character counts by speaking character."):
                                 style "l_checkbox"
-                                action ToggleSetMembership(persistent.lint_options, "--words-char-count")
+                                action ToggleSetMembership(persistent.lint_options, "--by-character")
                             textbutton _("Unclosed text tags"):
                                 style "l_checkbox"
                                 action ToggleSetMembership(persistent.lint_options, "--check-unclosed-tags")
+                            textbutton _("Show all unreachable blocks and orphaned translations."):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--all-problems")
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"

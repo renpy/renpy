@@ -201,9 +201,6 @@ translate japanese strings:
     old "stack: print the return stack"
     new "stack: リターンスタックの出力"
 
-
-translate japanese strings:
-
     # renpy/common/_developer/developer.rpym:51
     old "Persistent Viewer"
     new "永続データビューア"
@@ -219,4 +216,44 @@ translate japanese strings:
     # renpy/common/00console.rpy:813
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
     new "ヘルプでは、文書化されていない機能が表示されることがあります。ドキュメントで使用したい関数や\nクラスを確認してください。\n\n"
+
+    # renpy/common/_developer/developer.rpym:69
+    old "Show Translation Identifiers"
+    new "飜訳識別子を表示します"
+
+    # renpy/common/_developer/developer.rpym:72
+    old "Hide Translation Identifiers"
+    new "飜訳識別子を非表示します"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Filename and Line"
+    new "ファイル名と行を表示します"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Filename and Line"
+    new "ファイル名と行を非表示します"
+
+    # renpy/common/_developer/developer.rpym:127
+    old "Layer [l]:"
+    new "Layer [l]:"
+
+    # renpy/common/_developer/developer.rpym:131
+    old "    [name] [attributes] (hidden)"
+    new "    [name] [attributes] (hidden)"
+
+    # renpy/common/_developer/developer.rpym:135
+    old "    [name] [attributes]"
+    new "    [name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:606
+    old "\n{color=#fff}Copied to clipboard.{/color}"
+    new "\n{color=#fff}クリップボードにコピー{/color}"
+
+    # renpy/common/_developer/developer.rpym:612
+    old "\n{color=#fff}クリックでコピー.\nドラッグで移動します{/color}"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:657
+    old "Click to open in editor."
+    new "エディターで開く"
 

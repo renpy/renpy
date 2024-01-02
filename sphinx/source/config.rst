@@ -208,6 +208,7 @@ These control transitions between various screens.
     The transition used by the window show statement when no
     transition has been explicitly specified.
 
+.. seealso:: :ref:`scene-show-hide-transition`
 
 Preference Defaults
 -------------------
@@ -919,6 +920,8 @@ Occasionally Used
             s = s.replace('...', u'\u2026') # ellipsis
             return s
         config.replace_text = replace_text
+
+    .. seealso:: :var:`config.say_menu_text_filter`
 
 .. var:: config.replay_scope = { "_game_menu_screen" : "preferences", ... }
 
@@ -1685,6 +1688,16 @@ Rarely or Internally Used
     If false, :func:`renpy.pause` is always, used by the ``pause`` statement.
     If true, when given a delay, ``pause`` is equivalent to ``with Pause(...)``.
 
+.. var:: config.pass_controller_events = False
+
+    If true, pygame-like CONTROLLER events are passed to Displayables event
+    handlers. If not, those are consumed by Ren'Py.
+
+.. var:: config.pass_joystick_events = False
+
+    If true, pygame-like JOYSTICK events are passed to Displayables event
+    handlers. If not, those are consumed by Ren'Py.
+
 .. var:: config.per_frame_screens = [ ... ]
 
     This is a list of strings giving the name of screens that are updated
@@ -1766,6 +1779,10 @@ Rarely or Internally Used
     in strings in the :ref:`say <say-statement>` and :doc:`menu
     <menus>` statements. It is expected to return new
     (or the same) strings to replace them.
+
+    This runs very early in the say and menu statement processing, before
+    translation and substitutions are applied. For a filter that runs later,
+    see :var:`config.replace_text`.
 
 .. var:: config.say_sustain_callbacks = [ ... ]
 

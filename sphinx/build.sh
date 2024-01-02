@@ -10,7 +10,7 @@ cd "$SPHINX"
 mkdir -p source/inc
 
 # Run a Ren'Py game that generates documentation.
-python ../renpy.py . || ../renpy.sh .
+python ../renpy.py . || ../renpy3.sh .
 
 # Clear out generated images.
 rm -Rf ../doc-web/_images || true

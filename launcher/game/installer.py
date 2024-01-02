@@ -459,7 +459,7 @@ def manifest(url, renpy=False, insecure=False):
         with open(_path("temp:manifest.py.sig"), "rb") as f:
             sig = f.read()
 
-        key = ecdsa.VerifyingKey.from_pem(_renpy.exports.file("renpy_ecdsa_public.pem").read())
+        key = ecdsa.VerifyingKey.from_pem(_renpy.exports.open_file("renpy_ecdsa_public.pem").read())
 
         if not key.verify(sig, manifest):
             error(_("The manifest signature is not valid."))

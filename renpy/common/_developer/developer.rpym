@@ -91,6 +91,8 @@ screen _developer:
                 action Hide("_developer")
                 size_group "developer"
 
+    key "developer" action Hide("_developer")
+
 
 screen _image_attributes():
 

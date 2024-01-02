@@ -52,6 +52,7 @@ pure_functions = {
     "_",
     "_p",
     "absolute",
+    "position",
     "__renpy__list__",
     "__renpy__dict__",
     "__renpy__set__",
@@ -86,7 +87,7 @@ pure_functions = {
     "renpy.version_tuple",
     "renpy.version_name",
     "renpy.license",
-    }
+}
 
 constants = { "config", "style" } | always_constants | pure_functions
 

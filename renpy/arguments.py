@@ -192,7 +192,8 @@ def run():
 
     args = renpy.game.args = ap.parse_args()
 
-    if args.warp and not renpy.session.get("_reload", False):
+    if args.warp and not renpy.session.get("_warped", False):
+        renpy.session["_warped"] = True
         renpy.warp.warp_spec = args.warp
 
     if args.profile_display: # @UndefinedVariable

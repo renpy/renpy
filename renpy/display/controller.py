@@ -241,9 +241,14 @@ def event(ev):
     the event has been processed and should be ignored.
     """
 
+    if renpy.config.pass_controller_events:
+        rv = ev
+    else:
+        rv = None
+
     if ev.type == CONTROLLERDEVICEADDED:
         start(ev.which)
-        return None
+        return rv
 
     elif ev.type == CONTROLLERDEVICEREMOVED:
         for k, v in controllers.items():
@@ -251,7 +256,7 @@ def event(ev):
                 quit(k)
                 break
 
-        return None
+        return rv
 
     elif ev.type == CONTROLLERAXISMOTION:
 
@@ -278,7 +283,7 @@ def event(ev):
 
             controller_event(get_string_for_axis(ev.axis), pos)
 
-        return None
+        return rv
 
     elif ev.type in (CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP):
 
@@ -288,7 +293,7 @@ def event(ev):
             pr = "release"
 
         controller_event(get_string_for_button(ev.button), pr)
-        return None
+        return rv
 
     elif ev.type in (
             pygame.JOYAXISMOTION,
