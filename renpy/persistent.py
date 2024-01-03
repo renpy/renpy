@@ -79,6 +79,8 @@ class Persistent(object):
             self._chosen.clear()
             self._seen_audio.clear()
 
+        renpy.exports.execute_default_statement()
+
     def _update(self):
         """
         Updates the persistent data to be the latest version of

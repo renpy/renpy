@@ -2107,6 +2107,7 @@ def create_store(name):
 
 class StoreNamespace(object):
     pure = True
+    repeat_at_default_time = False
 
     def __init__(self, store):
         self.store = store
@@ -2306,9 +2307,12 @@ class Default(Node):
         ns, special = get_namespace(self.store)
 
         if special:
-
             value = renpy.python.py_eval_bytecode(self.code.bytecode)
             ns.set_default(self.varname, value)
+
+            if getattr(ns, "repeat_at_default_time", False):
+                default_statements.append(self)
+
             return
 
         default_statements.append(self)
@@ -2319,6 +2323,16 @@ class Default(Node):
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
     def execute_default(self, start):
+
+        # Handle special namespaces.
+        ns, special = get_namespace(self.store)
+
+        if special:
+            value = renpy.python.py_eval_bytecode(self.code.bytecode)
+            ns.set_default(self.varname, value)
+            return
+
+        # Handle normal namespaces.
         d = renpy.python.store_dicts[self.store]
 
         defaults_set = d.get("_defaults_set", None)
