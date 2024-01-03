@@ -2549,7 +2549,7 @@ class TranslateSay(Say):
     def predict(self):
         node = self.lookup()
         if node is None:
-            return self.next
+            return [ self.next ]
         else:
             return [ node ]
 
