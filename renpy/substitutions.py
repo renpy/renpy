@@ -28,12 +28,14 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import renpy
 import string
 import os
+import re
 
 
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
 flags = frozenset('rstiqulc!')
 formatter = string.Formatter()
 
+SIMPLE_NAME = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_]*$')
 
 def interpolate(s, scope):
     """
@@ -69,7 +71,10 @@ def interpolate(s, scope):
                 conv = 'r'
 
         if renpy.config.interpolate_exprs:
-            value = renpy.python.py_eval(code, {}, scope)
+            if (code in scope) and SIMPLE_NAME.match(code):
+                value = scope[code]
+            else:
+                value = renpy.python.py_eval(code, {}, scope)
         else:
             value, _ = formatter.get_field(code, (), scope)
 
@@ -293,6 +298,13 @@ class MultipleDict(object):
                 return d[key]
 
         raise NameError("Name '{}' is not defined.".format(key))
+
+    def __contains__(self, key):
+        for d in self.dicts:
+            if key in d:
+                return True
+
+        return False
 
 
 def substitute(s, scope=None, force=False, translate=True):
