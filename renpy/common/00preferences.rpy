@@ -64,6 +64,19 @@ init -1500 python:
 
     _m1_00screen__DisplayAction = __DisplayAction
 
+
+    @renpy.pure
+    class __ResetPreferences(Action, DictEquality):
+
+        def __call__(self):
+            _preferences.reset()
+            _preferences.init_mixers()
+            persistent._preference_default = { }
+            renpy.exports.execute_default_statement()
+            _apply_default_preferences()
+            renpy.restart_interaction()
+
+
     config.always_has_joystick = False
 
     @renpy.pure
@@ -261,6 +274,7 @@ init -1500 python:
 
         * Preference("renderer menu") - Show the renderer menu.
         * Preference("accessibility menu") - Show the accessibility menu.
+        * Preference("reset") - Reset preferences to defaults.
 
         These screens are intended for internal use, and are not customizable.
         """
@@ -578,6 +592,9 @@ init -1500 python:
                     return SetField(_preferences, "restore_window_position", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "restore_window_position")
+
+            elif name == _("reset"):
+                return __ResetPreferences()
 
             mixer_names = {
                 "main" : "main",

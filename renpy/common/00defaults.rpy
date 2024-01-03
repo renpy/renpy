@@ -62,6 +62,60 @@ init -1500 python:
     # If not None, the default value of set_volume (voice)
     config.default_voice_volume = 1.0
 
+    def _apply_default_preferences():
+
+        if not persistent._set_preferences:
+            persistent._set_preferences = True
+
+            if config.default_fullscreen is not None:
+                _preferences.fullscreen = config.default_fullscreen
+
+            if config.default_text_cps is not None:
+                _preferences.text_cps = config.default_text_cps
+
+            if config.default_afm_time is not None:
+                _preferences.afm_time = config.default_afm_time
+
+            if config.enable_language_autodetect:
+                locale, region = renpy.translation.detect_user_locale()
+                if locale is not None:
+                    lang_name = config.locale_to_language_function(locale, region)
+                    if lang_name is not None:
+                        config.default_language = lang_name
+
+            if config.default_language is not None:
+                _preferences.language = config.default_language
+
+            if config.default_wait_for_voice is not None:
+                _preferences.wait_voice = config.default_wait_for_voice
+
+            if config.default_voice_sustain is not None:
+                _preferences.voice_sustain = config.default_voice_sustain
+
+            if config.default_mouse_move is not None:
+                _preferences.mouse_move = config.default_mouse_move
+
+            if config.default_afm_enable is not None:
+                _preferences.afm_enable = config.default_afm_enable or _preferences.afm_enable
+
+            if config.default_show_empty_window is not None:
+                _preferences.show_empty_window = config.default_show_empty_window
+
+            if config.default_emphasize_audio is not None:
+                _preferences.emphasize_audio = config.default_emphasize_audio
+
+            _preferences.set_volume('music', vol(config.default_music_volume))
+            _preferences.set_volume('sfx', vol(config.default_sfx_volume))
+            _preferences.set_volume('voice', vol(config.default_voice_volume))
+
+        # Use default_afm_enable to decide if we use the afm_enable
+        # preference.
+        if config.default_afm_enable is not None:
+            _preferences.using_afm_enable = True
+        else:
+            _preferences.afm_enable = True
+            _preferences.using_afm_enable = False
+
 init 1500 python hide:
 
     def vol(n):
@@ -85,57 +139,7 @@ init 1500 python hide:
 
         persistent._linearized_volumes = True
 
-    if not persistent._set_preferences:
-        persistent._set_preferences = True
-
-        if config.default_fullscreen is not None:
-            _preferences.fullscreen = config.default_fullscreen
-
-        if config.default_text_cps is not None:
-            _preferences.text_cps = config.default_text_cps
-
-        if config.default_afm_time is not None:
-            _preferences.afm_time = config.default_afm_time
-
-        if config.enable_language_autodetect:
-            locale, region = renpy.translation.detect_user_locale()
-            if locale is not None:
-                lang_name = config.locale_to_language_function(locale, region)
-                if lang_name is not None:
-                    config.default_language = lang_name
-
-        if config.default_language is not None:
-            _preferences.language = config.default_language
-
-        if config.default_wait_for_voice is not None:
-            _preferences.wait_voice = config.default_wait_for_voice
-
-        if config.default_voice_sustain is not None:
-            _preferences.voice_sustain = config.default_voice_sustain
-
-        if config.default_mouse_move is not None:
-            _preferences.mouse_move = config.default_mouse_move
-
-        if config.default_afm_enable is not None:
-            _preferences.afm_enable = config.default_afm_enable or _preferences.afm_enable
-
-        if config.default_show_empty_window is not None:
-            _preferences.show_empty_window = config.default_show_empty_window
-
-        if config.default_emphasize_audio is not None:
-            _preferences.emphasize_audio = config.default_emphasize_audio
-
-        _preferences.set_volume('music', vol(config.default_music_volume))
-        _preferences.set_volume('sfx', vol(config.default_sfx_volume))
-        _preferences.set_volume('voice', vol(config.default_voice_volume))
-
-    # Use default_afm_enable to decide if we use the afm_enable
-    # preference.
-    if config.default_afm_enable is not None:
-        _preferences.using_afm_enable = True
-    else:
-        _preferences.afm_enable = True
-        _preferences.using_afm_enable = False
+    _apply_default_preferences()
 
     error = _preferences.check()
 

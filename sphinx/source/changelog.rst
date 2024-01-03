@@ -269,6 +269,9 @@ defaults to :var:`config.version`.
 Features
 --------
 
+It is now possible to reset the preferences to their default values
+by calling :func:`Preference` with "reset" as the argument.
+
 The new :class:`defaultdict` class, which exists in the default Ren'Py
 namespaces, is similar to Python's collections.defaultdict, while
 participating in rollback.
@@ -358,6 +361,10 @@ projects from the command line.
 
 Other Changes
 -------------
+
+:func:`persistent._clear` will re-run default statements that update
+persistent variables, making it possible to avoid persistent becoming
+entirely de-initialized.
 
 The pixel transparency test used by :propref:`focus_mask` will now
 only involve the GPU if inside the bounding box of non-transparent pixels,

@@ -78,7 +78,7 @@ python early hide:
     class _PreferencesNamespace(object):
         pure = False
         allow_child_namespaces = False
-        repeat_at_default_time = False
+        repeat_at_default_time = True
 
         def set(self, name, value):
             raise Exception("The define statement can not be used with the preferences namespace.")

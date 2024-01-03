@@ -258,6 +258,14 @@ class Preferences(renpy.object.Object):
             if not hasattr(self, p.name):
                 setattr(self, p.name, copy.copy(p.default))
 
+    def reset(self):
+        """
+        Resets the preferences to their default values.
+        """
+
+        for p in all_preferences:
+            setattr(self, p.name, copy.copy(p.default))
+
     def check(self):
         """
         Checks that preferences have the right types.
