@@ -76,6 +76,13 @@ To revert this behaviour, add the following to your game::
 
     define config.interpolate_exprs = False
 
+To help other developers work while you're migrating your game to the new
+behavior, there is a fallback mode that will first try the new behavior, and
+then fall back to the old behavior if the new behavior fails. To enable this,
+add the following to your game::
+
+    define config.interpolate_exprs = "fallback"
+
 **Polar Coordinate Changes** Ren'Py now enforces that the angles given to
 the :tpref:`angle` and :tpref:`anchorangle`
 properties are in the range 0 to 360 degrees, inclusive of 0 but not of 360.

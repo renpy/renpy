@@ -74,7 +74,17 @@ def interpolate(s, scope):
             if (code in scope) and SIMPLE_NAME.match(code):
                 value = scope[code]
             else:
-                value = renpy.python.py_eval(code, {}, scope)
+                try:
+                    value = renpy.python.py_eval(code, {}, scope)
+                except Exception as e:
+                    if renpy.config.interpolate_exprs == "fallback":
+                        try:
+                            value, _ = formatter.get_field(code, (), scope)
+                        except Exception:
+                            raise e
+                    else:
+                        raise e
+
         else:
             value, _ = formatter.get_field(code, (), scope)
 
