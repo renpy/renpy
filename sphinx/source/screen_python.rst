@@ -38,7 +38,7 @@ sensitive, and when it is selected.
         action will cause the current interaction to end.
 
         This method must be overridden, as the default method will
-        raise a NotImplemented exception (and hence cause Ren'Py to
+        raise a NotImplementedError (and hence cause Ren'Py to
         report an error).
 
     .. method:: get_sensitive(self)
@@ -92,7 +92,7 @@ sensitive, and when it is selected.
 
         The text-to-speech text used for buttons that use this Action, if
         the button does not have the :propref:`alt` property set. This can
-        set to a string in the class, in the constructor, it or it can be
+        set to a string in the class, or in the constructor, or it can be
         a Python property that returns a string.
 
 To run an action from Python, use :func:`renpy.run`.
@@ -120,7 +120,7 @@ the adjustment and styles.
         way.
 
         This method must be overridden, as the default method will
-        raise NotImplemented (and hence cause Ren'Py to report an
+        raise NotImplementedError (and hence cause Ren'Py to report an
         error).
 
     .. method:: get_style(self)
@@ -134,11 +134,11 @@ the adjustment and styles.
 
     .. method:: get_tooltip(self)
 
-       This gets a default tooltip for this button, if a specific
-       tooltip is not assigned. It should return the tooltip value,
-       or None if a tooltip is not known.
+        This gets a default tooltip for this button, if a specific
+        tooltip is not assigned. It should return the tooltip value,
+        or None if a tooltip is not known.
 
-       This defaults to returning None.
+        This defaults to returning None.
 
     .. method:: replaces(self, other)
 
@@ -150,21 +150,21 @@ the adjustment and styles.
 
     .. method:: periodic(self, st)
 
-       This method is called once at the start of each interaction. If
-       it returns a number of seconds, it will be called before that
-       many seconds elapse, but it might be called sooner. It is
-       called after get_adjustment.
+        This method is called once at the start of each interaction. If
+        it returns a number of seconds, it will be called before that
+        many seconds elapse, but it might be called sooner. It is
+        called after get_adjustment.
 
-       It can be used to update the value of the bar over time, like
-       :func:`AnimatedValue` does. To do this, get_adjustment should
-       store the adjustment, and periodic should call the
-       adjustment's changed method.
+        It can be used to update the value of the bar over time, like
+        :func:`AnimatedValue` does. To do this, get_adjustment should
+        store the adjustment, and periodic should call the
+        adjustment's changed method.
 
     .. attribute:: alt
 
         The text-to-speech text used for bars that use this BarValue, if
         the bar does not have the :propref:`alt` property set. This can
-        set to a string in the class, in the constructor, it or it can be
+        set to a string in the class, or in the constructor, or it can be
         a Python property that returns a string.
 
 
@@ -204,7 +204,7 @@ the enter key being pressed.
 
         Called when the user presses enter. If this returns a non-None
         value, that value is returned from the interacton. This may also
-        raise renpy.IgnoreEvent() to ignore the press. Otherwise, the
+        raise :exc:`renpy.IgnoreEvent` to ignore the press. Otherwise, the
         enter-press is propagated to other displayables.
 
     The following actions are available as methods on InputValue:

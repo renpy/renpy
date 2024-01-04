@@ -988,8 +988,7 @@ Polar Positioning
     :type: position
 
     The radius component of the position given in polar
-    coordiates. The type of this is the type the radius was last set to,
-    defaulting to absolute pixels.
+    coordinates.
 
     If a float, this will be scaled to the smaller of the width and height
     available to the transform.
@@ -1256,7 +1255,6 @@ Deprecated Transform Properties
     :type: (float, float)
 
     This sets :tpref:`anchor`, :tpref:`around`, and :tpref:`anchoraround` to the same value.
-
 
 .. transform-property:: crop_relative
 
