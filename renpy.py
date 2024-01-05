@@ -267,7 +267,7 @@ def predefined_searchpath(commondir):
     if commondir and os.path.isdir(commondir):
         searchpath.append(commondir)
 
-    if renpy.mobile:
+    if renpy.android or renpy.ios:
         print("Mobile search paths:" , " ".join(searchpath))
 
     return searchpath
