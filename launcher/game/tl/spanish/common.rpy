@@ -908,7 +908,7 @@ translate spanish strings:
 
     # renpy/common/00director.rpy:1845
     old "Customize director.audio_channels to add more channels."
-    new ""Modifica director.audio_channels para añadir más canales."
+    new "Modifica director.audio_channels para añadir más canales."
 
     # renpy/common/00preferences.rpy:587
     old "restore window position"
@@ -953,4 +953,3 @@ translate spanish strings:
     # renpy/common/00updater.rpy:2090
     old "Retry"
     new "Reintentar"
-
