@@ -386,7 +386,7 @@ class SceneLists(renpy.object.Object):
                 self.sticky_tags[key] = layer
 
         if key and name:
-            self.shown.predict_show(layer, name)
+            self.shown.predict_show(layer, (key,) + name[1:])
 
         if transient:
             self.additional_transient.append((layer, key))
