@@ -728,6 +728,12 @@ Text Style Properties
     Specifies the number of pixels the second and later lines in a
     paragraph are indented by.
 
+.. style-property:: ruby_line_leading int
+
+    The number of pixels of spacing to include above each line that
+    contains :ref:`ruby text <ruby-text>`. This is in addition to
+    :propref:`line_leading`.
+
 .. style-property:: ruby_style style or None
 
     If not None, this should be a style object. The style that's used for

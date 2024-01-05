@@ -165,6 +165,7 @@ init -1800:
         slow_cps None
         slow_cps_multiplier 1.0
         slow_abortable False
+        ruby_line_leading 0
         ruby_style style.ruby_text
         altruby_style style.altruby_text
         # hyperlink_functions is set in 00defaults.rpy

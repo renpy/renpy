@@ -269,6 +269,10 @@ defaults to :var:`config.version`.
 Features
 --------
 
+The new :propref:`ruby_line_leading` style property controls additional
+line leading on lines that contain ruby text (furigana). This will generally
+use less space than the existing :propref:`line_leading` property.
+
 It is now possible to reset the preferences to their default values
 by calling :func:`Preference` with "reset" as the argument.
 

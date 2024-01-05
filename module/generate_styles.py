@@ -195,6 +195,7 @@ style_properties = sorted_dict(
     rest_indent=None,
     right_margin=None,
     right_padding=None,
+    ruby_line_leading=None,
     ruby_style=None,
     shaper=None,
     size=None,
