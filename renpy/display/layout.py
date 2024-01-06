@@ -131,6 +131,18 @@ class Container(renpy.display.displayable.Displayable):
 
         super(Container, self).__init__(**properties)
 
+    def set_transform_event(self, event):
+        """
+        Sets the transform event of this displayable to event.
+        """
+
+        super(Container, self).set_transform_event(event)
+
+        if renpy.config.containers_pass_transform_events:
+
+            for i in self.children:
+                i.set_transform_event(event)
+
     def _handles_event(self, event):
         for i in self.children:
             if i._handles_event(event):

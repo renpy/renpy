@@ -172,8 +172,17 @@ the old and new children provide the same placement information.
 
 To disable this, add to your game::
 
-    define config.transition_use_child_placement = false
+    define config.transition_use_child_placement = False
 
+**Containers pass Transform Events**
+Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
+pass transform events (like hover and idle) to their children, meaning that
+children of a button can have their own transforms to respond to those
+events.
+
+To disable this, add to your game::
+
+    define containers_pass_transform_events = True
 
 
 .. _incompatible-8.1.1:

@@ -370,6 +370,11 @@ projects from the command line.
 Other Changes
 -------------
 
+Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
+pass transform events (like hover and idle) to their children, meaning that
+children of a button can have their own transforms to respond to those
+events.
+
 :func:`persistent._clear` will re-run default statements that update
 persistent variables, making it possible to avoid persistent becoming
 entirely de-initialized.

@@ -304,6 +304,7 @@ init -1100 python:
             config.drag_group_add_top = False
             config.transitions_use_child_placement = True
             config.interpolate_exprs = False
+            config.containers_pass_transform_events = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

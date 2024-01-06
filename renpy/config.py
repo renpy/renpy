@@ -1433,6 +1433,9 @@ defer_tl_scripts = False
 # Should transitions take placement from child displayables?
 transitions_use_child_placement = True
 
+# Should containiers pass transform events to their children?
+containers_pass_transform_events = True
+
 del os
 del collections
 
