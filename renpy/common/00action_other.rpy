@@ -478,7 +478,8 @@ init -1500 python:
         :doc: other_action
 
         Move the mouse pointer to `x`, `y`. If the device does not have a mouse
-        pointer or if the :var:`"automatic move" preference <preferences.mouse_move>`
+        pointer, it is not possible for Ren'Py to move that pointer,
+        or if the :var:`"automatic move" preference <preferences.mouse_move>`
         is False, this does nothing.
 
         `duration`
