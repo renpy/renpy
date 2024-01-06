@@ -269,6 +269,10 @@ defaults to :var:`config.version`.
 Features
 --------
 
+The new :class:`Continue` action will load the last save (by default,
+including autosaves and quick saves). This is intended for use from the
+main menu to continue the game, especially a linear visual novel.
+
 The new :propref:`ruby_line_leading` style property controls additional
 line leading on lines that contain ruby text (furigana). This will generally
 use less space than the existing :propref:`line_leading` property.
