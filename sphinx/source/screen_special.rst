@@ -719,6 +719,7 @@ user. It takes the following parameters:
     * gui.LOADING - "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     * gui.QUIT - "Are you sure you want to quit?"
     * gui.MAIN_MENU - "Are you sure you want to return to the main\nmenu? This will lose unsaved progress."
+    * gui.CONTINUE - "Are you sure you want to continue where you left off?"
     * gui.END_REPLAY - "Are you sure you want to end the replay?"
     * gui.SLOW_SKIP - "Are you sure you want to begin skipping?"
     * gui.FAST_SKIP_SEEN - "Are you sure you want to skip to the next choice?"
