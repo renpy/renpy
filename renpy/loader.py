@@ -533,7 +533,7 @@ def load_from_archive(name):
             continue
 
         try:
-            afn = transfn(prefix)
+            afn = open_file(transfn(prefix), "rb")
         except Exception:
             if renpy.android:
                 afn = load_from_apk(prefix)
@@ -542,7 +542,7 @@ def load_from_archive(name):
 
         data = [ ]
 
-        with open_file(afn, "rb") as f:
+        with afn as f:
             for t in index[name]:
                 if len(t) == 2:
                     offset, dlen = t
