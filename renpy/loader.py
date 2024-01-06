@@ -233,11 +233,9 @@ def index_archives():
 
     for prefix in renpy.config.archives:
         for ext in archive_extensions:
-            fn = None
             f = None
             try:
-                fn = transfn(prefix + ext)
-                f = open(fn, "rb")
+                f = load(prefix + ext)
             except Exception:
                 continue
             with f:
@@ -534,37 +532,31 @@ def load_from_archive(name):
         if not name in index:
             continue
 
-        afn = transfn(prefix)
+        try:
+            afn = transfn(prefix)
+        except Exception:
+            if renpy.android:
+                afn = load_from_apk(prefix)
+            else:
+                raise
 
         data = [ ]
 
-        # Direct path.
-        if len(index[name]) == 1:
+        with open_file(afn, "rb") as f:
+            for t in index[name]:
+                if len(t) == 2:
+                    offset, dlen = t
+                    start = b''
+                else:
+                    offset, dlen, start = t
 
-            t = index[name][0]
-            if len(t) == 2:
-                offset, dlen = t
-                start = b''
-            else:
-                offset, dlen, start = t
+                if start:
+                    data.append(start)
 
-            if start == None or len(start) == 0:
-                rv = RWopsIO(afn, "rb", base=offset, length=dlen)
-                return io.BufferedReader(rv)
-            else:
-                a = RWopsIO.from_buffer(start, name=name)
-                b = RWopsIO(afn, "rb", base=offset, length=dlen)
-                rv = RWopsIO.from_split(a, b, name=name)
-                rv = io.BufferedReader(rv)
+                f.seek(offset)
+                data.append(f.read(dlen))
 
-        # Compatibility path.
-        else:
-            with open(afn, "rb") as f:
-                for offset, dlen in index[name]:
-                    f.seek(offset)
-                    data.append(f.read(dlen))
-
-                return io.BufferedReader(RWopsIO.from_buffer(b''.join(data), name=name))
+            return io.BufferedReader(RWopsIO.from_buffer(b''.join(data), name=name))
 
     return None
 

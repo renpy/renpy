@@ -382,6 +382,18 @@ def main():
 
             renpy.config.archives.append(base)
 
+    # Find archives in game apks
+    for apk in renpy.loader.game_apks:
+        for i in apk.list():
+            base, ext = os.path.splitext(i)
+
+            # Check if the archive does not have any of the extensions in archive_extensions
+            if not (ext in archive_extensions):
+                continue
+
+            # Slice 'x-' & append
+            renpy.config.archives.append("/".join(i[2:] for i in base.split("/")))
+
     renpy.config.archives.reverse()
 
     # Initialize archives.
