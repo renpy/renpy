@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -36,15 +36,13 @@ init -1500 python:
     class ShowMenu(Action, DictEquality):
         """
         :doc: menu_action
-        :args: (screen=_game_menu_screen, *args, _transition=config.intra_transition, **kwargs)
 
         Causes us to enter the game menu, if we're not there already. If we
         are in the game menu, then this shows a screen or jumps to a label.
 
         `screen` is usually the name of a screen, which is shown using
-        the screen mechanism with the ``*args`` and ``**kwargs`` passed to
-        the screen. If the screen doesn't exist, then "_screen" is appended
-        to it, and that label is jumped to, ignoring `args` and `kwargs`.
+        the screen mechanism. If the screen doesn't exist, then "_screen"
+        is appended to it, and that label is jumped to.
 
         If the optional keyword argument `_transition` is given, the
         menu will change screens using the provided transition.
@@ -135,7 +133,41 @@ init -1500 python:
                 return eval(config.show_menu_enable[screen])
             else:
                 return True
+                
+    @renpy.pure
+    class Continue(Action, DictEquality):
+        """
+        :doc: menu_action
+        
+        Causes the last save to be loaded.
+        The purpose of this is to load the player's last save 
+        from the main menu.
+        
+        `regexp`
+            If present, will be used in `renpy.newest_slot`. 
 
+        `confirm`
+            If true, causes Ren'Py to ask the user if he want to continue where he
+            leave it.
+        """
+
+        def __init__(self, regexp=r"(?!_reload).+", confirm=False):
+            self.regexp = regexp
+            self.confirm = confirm
+
+        def __call__(self):
+            recent_save = renpy.newest_slot(self.regexp)
+
+            if self.confirm:
+                layout.yesno_screen(layout.CONTINUE, Continue(self.regexp, False))
+            else:
+                if recent_save:
+                    renpy.load(recent_save)
+                
+        def get_sensitive(self): 
+            if _in_replay:
+                return False
+            return renpy.newest_slot(self.regexp) is not None
     @renpy.pure
     class Start(Action, DictEquality):
         """
