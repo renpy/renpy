@@ -299,10 +299,10 @@ class MouseMove(object):
 
         if duration is not None:
             self.duration = duration
+            self.start_x, self.start_y = renpy.display.draw.get_mouse_pos()
         else:
-            self.duration = 0
-
-        self.start_x, self.start_y = renpy.display.draw.get_mouse_pos()
+            self.duration = 4/60.0
+            self.start_x, self.start_y = x, y
 
         self.end_x = x
         self.end_y = y
