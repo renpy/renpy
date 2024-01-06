@@ -36,13 +36,17 @@ init -1500 python:
     class ShowMenu(Action, DictEquality):
         """
         :doc: menu_action
-
+        :args: (screen=_game_menu_screen, *args, _transition=config.intra_transition, **kwargs)
+        
         Causes us to enter the game menu, if we're not there already. If we
         are in the game menu, then this shows a screen or jumps to a label.
 
         `screen` is usually the name of a screen, which is shown using
         the screen mechanism. If the screen doesn't exist, then "_screen"
         is appended to it, and that label is jumped to.
+        the screen mechanism with the ``*args`` and ``**kwargs`` passed to
+        the screen. If the screen doesn't exist, then "_screen" is appended
+        to it, and that label is jumped to, ignoring `args` and `kwargs`.
 
         If the optional keyword argument `_transition` is given, the
         menu will change screens using the provided transition.
