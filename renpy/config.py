@@ -1433,8 +1433,12 @@ defer_tl_scripts = False
 # Should transitions take placement from child displayables?
 transitions_use_child_placement = True
 
-# Should containiers pass transform events to their children?
+# Should containers pass transform events to their children?
 containers_pass_transform_events = True
+
+# Should the say screens be given the replace event for the second and
+# later pauses?
+say_replace_event = True
 
 del os
 del collections

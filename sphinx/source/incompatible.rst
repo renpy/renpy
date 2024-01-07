@@ -158,7 +158,6 @@ To change this, add to your game::
 
     define config.drag_group_add_top = False
 
-
 **Translate Statements and config.statement_callbacks** Translate statements
 (including internal statements that Ren'Py automatically generates) will no
 longer cause :var:`config.statement_callbacks` to be called.
@@ -181,6 +180,13 @@ events.
 To disable this, add to your game::
 
     define containers_pass_transform_events = True
+
+**Say Screens are supplied the Replace Event.** Say screens are now supplied
+the "replace" (rather than "show") event for the second and subsequent pauses.
+
+To disable this, add to your game::
+
+    define config.say_replace_event = False
 
 
 .. _incompatible-8.1.1:
