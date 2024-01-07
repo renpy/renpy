@@ -370,6 +370,11 @@ projects from the command line.
 Other Changes
 -------------
 
+Hide and replace transform events that are applied to screens are now always
+allowed to run to completion, even if the same screen is shown again. This
+makes it possible to use transform events with screens that may be shown
+again immediately, like the say or bubble screens.
+
 Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
 pass transform events (like hover and idle) to their children, meaning that
 children of a button can have their own transforms to respond to those

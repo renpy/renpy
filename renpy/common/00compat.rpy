@@ -306,6 +306,7 @@ init -1100 python:
             config.interpolate_exprs = False
             config.containers_pass_transform_events = False
             config.say_replace_event = False
+            config.screens_never_cancel_hide = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

@@ -1440,6 +1440,9 @@ containers_pass_transform_events = True
 # later pauses?
 say_replace_event = True
 
+# Will screens never cancel hide and replace events?
+screens_never_cancel_hide = True
+
 del os
 del collections
 

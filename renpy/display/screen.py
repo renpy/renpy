@@ -536,6 +536,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     def _hide(self, st, at, kind):
 
+        if kind == "cancel" and renpy.config.screens_never_cancel_hide:
+            return self
+
         if self.phase == HIDE:
             hid = self
         else:

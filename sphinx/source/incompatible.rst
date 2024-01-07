@@ -171,7 +171,7 @@ To disable this, add to your game::
 
     define config.transition_use_child_placement = False
 
-**Containers pass Transform Events**
+**Containers Pass Transform Events**
 Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
 pass transform events (like hover and idle) to their children, meaning that
 children of a button can have their own transforms to respond to those
@@ -181,12 +181,21 @@ To disable this, add to your game::
 
     define containers_pass_transform_events = True
 
-**Say Screens are supplied the Replace Event.** Say screens are now supplied
-the "replace" (rather than "show") event for the second and subsequent pauses.
+**Say Screens Are Supplied the Replace Event.** Say screens are now supplied
+the "replace" (rather than "show") transform event for the second and subsequent pauses.
 
 To disable this, add to your game::
 
     define config.say_replace_event = False
+
+**Re-showing A Screen No Longer Cancels a Hide Event** Previously, if a screen
+was hidden and re-shown, a hide or replace transform event associated with the same
+screen would be cancelled, and the hiding or replaced screen would instantly
+disappear. Now, the event will be allowed to run to completion.
+
+To disable this, add to your game::
+
+    define config.screens_never_cancel_hide = False
 
 
 .. _incompatible-8.1.1:
