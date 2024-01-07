@@ -123,6 +123,10 @@ that filter the list of bubble property names based on the image tag
 that's speaking. This makes it possible to have bubbles that are
 specific to some but not all characters.
 
+Several changes work together to make it possible to apply a transform that
+animates speech bubble show and hide. An example of this is included in the
+:ref:`bubble-screen` documentation.
+
 
 Position types and ATL interpolation
 ------------------------------------
