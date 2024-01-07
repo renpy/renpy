@@ -675,7 +675,7 @@ def display_say(
             # What text is (screen, id, layer) tuple if we're using a screen.
             if isinstance(what_text, tuple):
                 # If this is not the first pause, set the transform event to "replace".
-                if i != 0:
+                if i != 0 and renpy.config.say_replace_event:
                     screen_displayable = renpy.display.screen.get_screen(what_text[0], what_text[2])
                     if screen_displayable is not None:
                         screen_displayable.set_transform_event("replace")
