@@ -69,21 +69,21 @@ statements are called, and the properties given to those statements.
 The following layers are defined as part of Ren'Py:
 
 master
-     This is the default layer that is used by the scene, show, and
-     hide statements. It's generally used for backgrounds and
-     character sprites.
+    This is the default layer that is used by the scene, show, and
+    hide statements. It's generally used for backgrounds and
+    character sprites.
 
 transient
-     The default layer used by ui functions. This layer is cleared at
-     the end of each interaction.
+    The default layer used by ui functions. This layer is cleared at
+    the end of each interaction.
 
 screens
-     This layer is used by the screen system.
+    This layer is used by the screen system.
 
 overlay
-     The default layer used when a ui function is called from within
-     an overlay function. This layer is cleared when an interaction is
-     restarted.
+    The default layer used when a ui function is called from within
+    an overlay function. This layer is cleared when an interaction is
+    restarted.
 
 Additional layers can be defined by calling :func:`renpy.add_layer`, and
 using the various layer-related :doc:`configuration variables <config>`.
@@ -170,9 +170,9 @@ displayable. For example::
         "eileen_happy.png",
         )
 
-When an image is not directly in the game directory, you'll need to
-give the directories underneath it. For example, if the image is in
-game/eileen/happy.png, then you can write::
+When an image file is not directly in the game directory, you'll need to
+give the directories underneath it. For example, if the image is at
+:file:`game/eileen/happy.png`, then you can write::
 
     image eileen happy = "eileen/happy.png"
 
@@ -290,14 +290,14 @@ As shown above, attributes can be set, added and replaced.
 
 They can also be removed using the minus sign::
 
-     # show susan being neutral
-     show susan
+    # show susan being neutral
+    show susan
 
-     # show susan being happy
-     show susan happy
+    # show susan being happy
+    show susan happy
 
-     # show susan being neutral again
-     show susan -happy
+    # show susan being neutral again
+    show susan -happy
 
 Show expression
 ---------------
@@ -538,20 +538,20 @@ it from occurring.
 The window itself is displayed by calling :var:`config.empty_window`. It defaults to
 having the narrator say an empty string. ::
 
-        show bg washington
-        show eileen happy
-        with dissolve
+    show bg washington
+    show eileen happy
+    with dissolve
 
-        window show dissolve
+    window show dissolve
 
-        "I can say stuff..."
+    "I can say stuff..."
 
-        show eileen happy at right
-        with move
+    show eileen happy at right
+    with move
 
-        "... and move, while keeping the window shown."
+    "... and move, while keeping the window shown."
 
-        window hide dissolve
+    window hide dissolve
 
 Image Functions
 ===============

@@ -681,8 +681,8 @@ followed by an at-sign and the file name. For example, "0\@font.ttc" is
 the first font in a collection, "1\@font.ttc" the second, and so on.
 
 When looking for a font files, if the file is not found, Ren'Py will search
-in the ``game/fonts`` directory. For example, when looking for test.ttf, Ren'Py
-will first search for ``game/test.ttf``, and then for ``game/fonts/test.ttf``.
+in the :file:`game/fonts` directory. For example, when looking for "test.ttf", Ren'Py
+will first search for :file:`game/test.ttf`, and then for :file:`game/fonts/test.ttf`.
 
 Font Replacement
 ----------------
@@ -760,7 +760,7 @@ points, and the first range to cover a point is used.
 For example::
 
     style default:
-         font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
+        font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
 
 .. include:: inc/font_group
 

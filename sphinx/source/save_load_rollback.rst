@@ -45,8 +45,8 @@ In this example::
     default c = 17
 
     label start:
-         $ b = 1
-         $ o.value = 42
+        $ b = 1
+        $ o.value = 42
 
 only `b` and `c` will be saved. `A` will not be saved because it does not change once
 the game begins. `O` is not saved because it does not change – the object it
@@ -108,20 +108,20 @@ This can be a problem in Python-defined statements. In::
 
     python:
 
-         i = 0
+        i = 0
 
-         while i < 10:
+        while i < 10:
 
-              i += 1
+            i += 1
 
-              narrator("The count is now [i].")
+            narrator("The count is now [i].")
 
 if the user saves and loads in the middle, the loop will begin anew. Using
 Ren'Py script – rather than Python – to loop avoids this problem.::
 
-   $ i = 0
+    $ i = 0
 
-   while i < 10:
+    while i < 10:
 
         $ i += 1
 
@@ -160,7 +160,7 @@ This may not be an exhaustive list.
 
 Objects that can't be pickled can still be used, provided that their use
 is combined to namespaces that aren't saved by Ren'Py (like init variables,
-namespaces inside functions,  or ``python hide`` blocks.)
+namespaces inside functions, or ``python hide`` blocks.)
 
 For example, using a file object like::
 

@@ -28,12 +28,12 @@ the English translation.
 Translation Files
 -----------------
 
-The translation files live in launcher/game/tl/`language`/. With the
-exception of script.rpy, all files consist of string translations that
+The translation files live in :file:`launcher/game/tl/{language}/`. With the
+exception of :file:`script.rpy`, all files consist of string translations that
 can be translated using the :ref:`string translation <string-translations>`
 syntax. Some strings might begin with "## ". These are comments that
-are translated, wrapped, and included in the options.rpy and gui.rpy
-files.
+are translated, wrapped, and included in the :file:`options.rpy` and
+:file:`gui.rpy` files.
 
 The translation files are:
 
@@ -105,15 +105,15 @@ Changing Fonts
 
 Ren'Py ships with a default font (DejaVuSans) that covers most western
 languages, but other fonts are often needed. A font can be configured by
-editing launcher/game/tl/language/style.rpy, and adding::
+editing :file:`launcher/game/tl/language/style.rpy`, and adding::
 
     init python:
         translate_font("language", "myfont.ttf")
 
 Where "language" is the language in question (for example, "japanese"), and
 "myfont.ttf" is the font that should be used (for example, "MTLc3m.ttf").
-The font file should be placed in the launcher/game/tl/language directory,
-so it can be found by the launcher.
+The font file should be placed in the :file:`launcher/game/tl/language`
+directory, so it can be found by the launcher.
 
 
 

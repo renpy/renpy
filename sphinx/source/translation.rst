@@ -252,43 +252,43 @@ menus, and for strings enclosed inside the ``_()`` function. It will then
 place the strings inside a ``translate strings`` block. For example, if we
 have the following script::
 
-  define e = Character(_("Eileen"))
+    define e = Character(_("Eileen"))
 
-  # ...
+    # ...
 
-  menu:
+    menu:
 
-       "Go West":
-          # ...
+        "Go West":
+            # ...
 
-       "Head East":
-          # ...
+        "Head East":
+            # ...
 
 Ren'Py will generate::
 
-  translate piglatin strings:
+    translate piglatin strings:
 
-      old "Eileen"
-      new ""
+        old "Eileen"
+        new ""
 
-      old "Go West"
-      new ""
+        old "Go West"
+        new ""
 
-      old "Head East"
-      new ""
+        old "Head East"
+        new ""
 
 Which can then be translated::
 
-  translate piglatin strings:
+    translate piglatin strings:
 
-      old "Eileen"
-      new "Eileenway"
+        old "Eileen"
+        new "Eileenway"
 
-      old "Go West"
-      new "Ogay Estway"
+        old "Go West"
+        new "Ogay Estway"
 
-      old "Head East"
-      new "Eadhay Eastway"
+        old "Head East"
+        new "Eadhay Eastway"
 
 String translations are also applied to dialogue strings that are not
 translated as dialogue.
@@ -308,8 +308,8 @@ language. This can be used to when the game is written in a non-English
 language, to translate the Ren'Py user interface. ::
 
     translate None strings:
-         old "Start Game"
-         new "Artstay Amegay"
+        old "Start Game"
+        new "Artstay Amegay"
 
 Translating Substitutions
 -------------------------
@@ -318,12 +318,12 @@ String substitutions can be translated using the ``!t`` conversion
 flag. So the following will be translatable using a combination of
 the dialogue and string translation systems::
 
-  if mood_points > 5:
-      $ mood = _("great")
-  else:
-      $ mood = _("awful")
+    if mood_points > 5:
+        $ mood = _("great")
+    else:
+        $ mood = _("awful")
 
-  "I'm feeling [mood!t]."
+    "I'm feeling [mood!t]."
 
 .. _extract-merge-translations:
 
