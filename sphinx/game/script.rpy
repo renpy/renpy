@@ -1,4 +1,6 @@
-﻿
+﻿python early:
+    config.generating_documentation = True
+
 init 1000000 python:
     import doc
     import shaderdoc

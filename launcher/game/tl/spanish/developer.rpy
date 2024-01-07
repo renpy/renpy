@@ -228,3 +228,42 @@
     old "Speech Bubble Editor (Shift+B)"
     new "Editor de burbujas de diálogo (Mayús+B)"
 
+    # renpy/common/_developer/developer.rpym:69
+    old "Show Translation Identifiers"
+    new "Mostrar identificadores de traducción"
+
+    # renpy/common/_developer/developer.rpym:72
+    old "Hide Translation Identifiers"
+    new "Ocultar identificadores de traducción"
+
+    # renpy/common/_developer/developer.rpym:582
+    old "\n{color=#fff}Copied to clipboard.{/color}"
+    new "\n{color=#fff}Copiado en el portapapeles.{/color}"
+
+    # renpy/common/_developer/developer.rpym:588
+    old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
+    new "\n{color=#fff}Haz clic para copiar.\nArrastre para mover.{/color}"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Filename and Line"
+    new "Mostrar nombre de archivo y línea"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Filename and Line"
+    new "Ocultar nombre de archivo y línea"
+
+    # renpy/common/_developer/developer.rpym:127
+    old "Layer [l]:"
+    new "Capa [l]:"
+
+    # renpy/common/_developer/developer.rpym:131
+    old "    [name] [attributes] (hidden)"
+    new "    [name] [attributes] (ocultar)"
+
+    # renpy/common/_developer/developer.rpym:135
+    old "    [name] [attributes]"
+    new "    [name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:657
+    old "Click to open in editor."
+    new "Haz clic para abrir en el editor."

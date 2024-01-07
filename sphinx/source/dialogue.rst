@@ -450,3 +450,5 @@ See Also
 
 :doc:`statement_equivalents` : how to use most of the features described here in
 a python context, although with some drawbacks and limitations.
+
+:func:`renpy.last_say` : provides information about the last say statement.

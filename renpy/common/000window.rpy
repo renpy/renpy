@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -66,9 +66,12 @@ init -1200 python:
         if _preferences.show_empty_window and (not renpy.game.after_rollback):
             renpy.with_statement(None)
             store._window = True
+
             renpy.with_statement(trans)
         else:
             store._window = True
+
+        store._after_scene_show_hide = None
 
     def _window_hide(trans=False, auto=False):
         """
@@ -102,10 +105,15 @@ init -1200 python:
         else:
             store._window = False
 
+        store._after_scene_show_hide = None
+
     def _window_auto_callback(statement):
 
         if not store._window_auto:
             return
+
+        if statement == 'menu' and menu == nvl_menu:
+            statement = 'menu-nvl'
 
         if statement in config.window_auto_hide:
             _window_hide(auto=True)

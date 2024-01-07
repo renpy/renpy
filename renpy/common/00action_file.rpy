@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -291,6 +291,23 @@ init -1500 python:
 
         Such Json data is added to a save slot by callbacks registered using
         :var:`config.save_json_callbacks`.
+
+        By default, the following keys are defined:
+
+        `_save_name`
+            The value of :var:`save_name` when the game was saved.
+
+        `_renpy_version`
+            The version of Ren'Py the save was created with.
+
+        `_version`
+            The value of :var:`config.version` when the save was created.
+
+        `_game_runtime`
+            The result of calling :func:`renpy.get_game_runtime`.
+
+        `_ctime`
+            The time the save was created, in seconds since January 1, 1970, UTC.
         """
 
         json = renpy.slot_json(__slotname(name, page, slot))
@@ -406,6 +423,8 @@ init -1500 python:
             elif main_menu:
                 return False
             elif (self.page or persistent._file_page) == "auto":
+                return False
+            elif not config.save:
                 return False
             else:
                 return True

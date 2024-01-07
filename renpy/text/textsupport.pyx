@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -432,6 +432,10 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
             continue
 
+        if new_type == BC_CL or new_type == BC_CP:
+            g.split = SPLIT_IGNORE
+            continue
+
         # Figure out the type of break opportunity we have here.
         # ^ Prohibited break.
         # % Indirect break.
@@ -493,7 +497,7 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
     """
 
     cdef Glyph g, split_g
-    cdef float width, x, splitx, gwidth
+    cdef float width, x, splitx, gwidth, ignored
 
     width = first_width
     split_g = None
@@ -505,12 +509,19 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
     # The x position after splitting the line.
     splitx = 0
 
+    # The amount of x position ignored with SPLIT_IGNORE.
+    ignored = 0
+
     for g in glyphs:
 
         if g.ruby == RUBY_TOP:
             continue
 
         if g.ruby == RUBY_ALT:
+            continue
+
+        if g.split == SPLIT_IGNORE:
+            ignored += g.advance
             continue
 
         # If the x coordinate is greater than the width of the screen,
@@ -520,8 +531,10 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
             split_g = None
             width = rest_width
 
-        x += g.advance
-        splitx += g.advance
+        x += g.advance + ignored
+        splitx += g.advance + ignored
+
+        ignored = 0
 
         if g.split == SPLIT_INSTEAD:
             if split_g is not None:
@@ -628,6 +641,9 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
         if g.ruby == RUBY_ALT:
             continue
 
+        if g.split == SPLIT_IGNORE:
+            g.split = SPLIT_NONE
+
         if g.split != SPLIT_NONE and old_g:
             # When a glyph is at the end of the line, set its advance to
             # be its width. (This makes things like strikeout and underline
@@ -658,7 +674,7 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
 
     return maxx
 
-def place_vertical(list glyphs, int y, int spacing, int leading):
+def place_vertical(list glyphs, int y, int spacing, int leading, int ruby_line_leading):
     """
     Vertically places the non-ruby glyphs. Returns a list of line end heights,
     and the y-value for the top of the next line.
@@ -669,6 +685,8 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
     cdef int pos, sol, len_glyphs, i
     cdef int ascent, line_spacing
     cdef bint end_line
+    cdef bint has_ruby
+    cdef int line_leading
 
     if not glyphs:
         return [ ], y
@@ -695,13 +713,17 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
 
         if end_line:
 
+            has_ruby = False
+
             for i from sol <= i < pos:
                 gg = glyphs[i]
 
                 if gg.ruby == RUBY_TOP:
+                    has_ruby = True
                     continue
 
                 if gg.ruby == RUBY_ALT:
+                    has_ruby = True
                     continue
 
                 if gg.ascent:
@@ -713,7 +735,26 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
                     gg.y = y
                     gg.ascent = ascent
 
-            l = Line(y - leading, leading + line_spacing + spacing, glyphs[sol:pos])
+            # Line leading is the combination of line_leading and ruby_line_leading, if the latter
+            # is required.
+            line_leading = leading
+
+            if has_ruby:
+                y += ruby_line_leading
+                line_leading += ruby_line_leading
+
+                for i from sol <= i < pos:
+                    gg = glyphs[i]
+
+                    if gg.ruby == RUBY_TOP:
+                        continue
+
+                    if gg.ruby == RUBY_ALT:
+                        continue
+
+                    gg.y += ruby_line_leading
+
+            l = Line(y - line_leading, line_leading + line_spacing + spacing, glyphs[sol:pos])
             rv.append(l)
 
             y += line_spacing

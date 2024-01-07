@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,7 +25,17 @@ from gui7.parameters import GuiParameters
 
 import renpy.arguments
 import os
+import shutil
 
+
+def finish(p):
+
+    for dn in [ "images", "audio" ]:
+
+            fulldn = os.path.join(p.prefix, dn)
+
+            if not os.path.exists(fulldn):
+                os.mkdir(fulldn)
 
 def generate_gui(p):
 
@@ -36,12 +46,32 @@ def generate_gui(p):
     CodeGenerator(p).copy_script("script.rpy")
     CodeGenerator(p).copy_files()
 
-    for dn in [ "images", "audio" ]:
+    finish(p)
 
-        fulldn = os.path.join(p.prefix, dn)
 
-        if not os.path.exists(fulldn):
-            os.mkdir(fulldn)
+def generate_minimal(p):
+
+    # Copy the template over.
+    os.makedirs(os.path.dirname(p.prefix), 0o777)
+    shutil.copytree(p.template, p.prefix)
+
+    # Prune directories.
+    shutil.rmtree(os.path.join(p.prefix, "cache"))
+    shutil.rmtree(os.path.join(p.prefix, "saves"))
+    shutil.rmtree(os.path.join(p.prefix, "tl"))
+
+    # Prune files to be regenerated.
+    os.unlink(os.path.join(p.prefix, "gui.rpy"))
+    os.unlink(os.path.join(p.prefix, "screens.rpy"))
+    os.unlink(os.path.join(p.prefix, "options.rpy"))
+
+    # Generate files.
+    CodeGenerator(p).generate_code("gui.rpy")
+    CodeGenerator(p).generate_code("screens.rpy")
+    CodeGenerator(p).generate_code("options.rpy")
+    CodeGenerator(p).copy_files()
+
+    finish(p)
 
 
 def generate_gui_command():
@@ -60,7 +90,9 @@ def generate_gui_command():
     ap.add_argument("--start", default=False, action="store_true", help="Starts a new project, replacing images and code.")
     ap.add_argument("--replace-images", default=False, action="store_true", help="True if existing images should be overwritten.")
     ap.add_argument("--replace-code", default=False, action="store_true", help="True if an existing gui.rpy file should be overwritten.")
-    ap.add_argument("--update-code", default=False, action="store_true", help="True if an existing gui.rpy file should be update.")
+    ap.add_argument("--update-code", default=False, action="store_true", help="True if an existing gui.rpy file should be updated.")
+
+    ap.add_argument("--minimal", default=False, action="store_true", help="Only update option.rpy and translations.")
 
     args = ap.parse_args()
 
@@ -69,10 +101,16 @@ def generate_gui_command():
         args.replace_code = True
         args.update_code = True
 
+    if args.minimal:
+        args.replace_code = True
+        args.update_code = True
+
     prefix = os.path.join(args.target, "game")
 
-    if not os.path.isdir(prefix):
-        ap.error("{} does not appear to be a Ren'Py game.".format(prefix))
+    if os.path.exists(args.target):
+
+        if not os.path.isdir(prefix):
+            ap.error("{} does not appear to be a Ren'Py game.".format(prefix))
 
     template = os.path.join(args.template, "game")
 
@@ -94,6 +132,9 @@ def generate_gui_command():
         os.path.basename(args.target),
         )
 
-    generate_gui(p)
+    if args.minimal:
+        generate_minimal(p)
+    else:
+        generate_gui(p)
 
 renpy.arguments.register_command("generate_gui", generate_gui_command)

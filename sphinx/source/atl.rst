@@ -115,8 +115,8 @@ Execution of a block terminates when all statements in the block have
 terminated.
 
 If an ATL statement requires evaluation of an expression, such evaluation
-occurs when the transform is first added to the scene list. (Such as when
-using a ``show`` statement or ``ui`` function.)
+occurs when the transform is first executed. (Such as when using a ``show``
+statement or displaying the transform as part of a screen.)
 
 ATL Statements
 ==============
@@ -143,9 +143,9 @@ The interpolation statement is the main way that ATL controls transformations.
 
 The first part of the interpolation statement is used to select a function
 that time-warps the interpolation. (That is, a function from linear time to
-non-linear time.) This can either be done by giving the name of a warper
-registered with ATL, or by giving the
-keyword "warp" followed by an
+non-linear time, see :ref:`warpers` for more information about warpers.)
+This can either be done by giving the name of a warper registered with ATL,
+or by giving the keyword "warp" followed by an
 expression giving a function. Either case is followed by a number, giving the
 number of seconds the interpolation should take. ::
 
@@ -163,8 +163,6 @@ number of seconds the interpolation should take. ::
         xpos 0
         warp my_warpers[0] 5 xpos 520
         warp my_warper 3 xpos 100
-
-See :ref:`warpers` for more information about warpers.
 
 If no warp function is given, the interpolation is instantaneous. Otherwise,
 it persists for the amount of time given, and at least one frame.
@@ -219,7 +217,7 @@ Some sample interpolations are::
         pause 1.0
 
         # Set the location to circle around.
-        alignaround (.5, .5)
+        anchor (0.5, 0.5)
 
         # Use circular motion to bring us to spiral out to the top of
         # the screen. Take 2 seconds to do so.
@@ -228,9 +226,11 @@ Some sample interpolations are::
         # Use a spline motion to move us around the screen.
         linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
 
-        # Changes xalign and yalign at thje same time.
+        # Changes xalign and yalign at the same time.
         linear 2.0 xalign 1.0 yalign 1.0
 
+        # The same thing, using a block.
+        linear 2.0:
         # The same thing, using a block.
         linear 2.0:
             xalign 1.0
@@ -238,10 +238,6 @@ Some sample interpolations are::
 
 An important special case is that the pause warper, followed by a time and
 nothing else, causes ATL execution to pause for that amount of time.
-
-Some properties can have values of multiple types. For example, the :propref:`xpos`
-property can be an int, float, or absolute. The behavior is undefined when an
-interpolation has old and new property values of different types.
 
 Time Statement
 --------------
@@ -274,6 +270,7 @@ increase in order.
         time 4.0
         "bg washington"
 
+.. _expression-atl-statement:
 
 Expression Statement
 --------------------
@@ -288,8 +285,8 @@ expression.
 There are three things the first simple expression may evaluate to:
 
 * If it's an ATL transform, and that ATL transform has **not** been supplied
-  a child (through being called as a transform or transition, or
-  with a `child` or `old_widget` argument), the ATL transform is
+  a child (through being called as a transform, or
+  with a `child` argument), the ATL transform is
   included at the location of the expression. The ``with`` clause is ignored.
 
 * If it's an integer or floating point number,  it's taken as a number of
@@ -307,17 +304,17 @@ There are three things the first simple expression may evaluate to:
         linear 1.0 xalign 1.0
 
     image atl example:
-         # Display logo_base.png
-         "logo_base.png"
+        # Display logo_base.png
+        "logo_base.png"
 
-         # Pause for 1.0 seconds.
-         1.0
+        # Pause for 1.0 seconds.
+        1.0
 
-         # Show logo_bw.png, with a dissolve.
-         "logo_bw.png" with Dissolve(0.5, alpha=True)
+        # Show logo_bw.png, with a dissolve.
+        "logo_bw.png" with Dissolve(0.5, alpha=True)
 
-         # Run the move_right transform.
-         move_right
+        # Run the move_right transform.
+        move_right
 
 Pass Statement
 --------------
@@ -331,7 +328,6 @@ two sets of choice statements that would otherwise be back-to-back.
 
 Repeat Statement
 ----------------
-
 
 The ``repeat`` statement is a simple statement that causes the block containing it
 to resume execution from the beginning. If the expression is present, then it
@@ -570,6 +566,9 @@ This function should not have side effects other
 than changing the Transform object in the first argument, and may be
 called at any time with any value to enable prediction.
 
+Note that ``function`` is not a transform property and that it doesn't
+have the exact same meaning as :func:`Transform`\ 's `function` parameter.
+
 ::
 
     init python:
@@ -643,21 +642,20 @@ amount of time. (If the statement has 0 duration, then t is 1.0 when it runs.)
 t' should start at 0.0 and end at 1.0, but can be greater or less.
 
 ``pause``
-    Pause, then jump to the new value. If t == 1.0, t = 1.0. Otherwise, t'
-    = 0.0.
+    Pause, then jump to the new value. If ``t == 1.0``, ``t' = 1.0``. Otherwise,
+    ``t' = 0.0``.
 
 ``linear``
-    Linear interpolation. t' = t
+    Linear interpolation. ``t' = t``
 
 ``ease``
-    Start slow, speed up, then slow down. t' = .5 - math.cos(math.pi
-    * t) / 2.0
+    Start slow, speed up, then slow down. ``t' = .5 - math.cos(math.pi * t) / 2.0``
 
 ``easein``
-    Start fast, then slow down. t' = math.cos((1.0 - t) * math.pi / 2.0
+    Start fast, then slow down. ``t' = math.cos((1.0 - t) * math.pi / 2.0)``
 
 ``easeout``
-    Start slow, then speed up. t' = 1.0 - math.cos(t * math.pi / 2.0)
+    Start slow, then speed up. ``t' = 1.0 - math.cos(t * math.pi / 2.0)``
 
 In addition, most of Robert Penner's easing functions are supported. To
 make the names match those above, the functions have been renamed
@@ -667,7 +665,10 @@ http://www.easings.net/.
 .. include:: inc/easings
 
 These warpers can be accessed in the ``_warper`` read-only module, which contains
-the functions listed above.
+the functions listed above. It is useful for things in Ren'Py which take a
+time-warping function, such as :func:`Dissolve`, which you can use like::
+
+    with Dissolve(1, time_warp=_warper.easein_quad)
 
 New warpers can be defined using the ``renpy.atl_warper`` decorator, in a ``python
 early`` block. It should be placed in a file that is parsed before any file
@@ -686,15 +687,17 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, an ``absolute``, or a
+When the type is given as position, it may be an int, an :func:`absolute`, or a
 float. If it's a float, it's interpreted as a fraction of the size of the
 containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
 
 Note that not all properties are independent. For example, :propref:`xalign` and :propref:`xpos`
-both update some of the same underlying data. In a parallel statement, only
-one block should adjust horizontal position, and one should adjust vertical
-positions. (These may be the same block.) The angle and radius properties set
+both update some of the same underlying data. In a parallel statement, not more than
+one block should adjust properties sharing the same data. The angle and radius properties set
 both horizontal and vertical positions.
+
+Positioning
+-----------
 
 .. transform-property:: pos
 
@@ -812,6 +815,27 @@ both horizontal and vertical positions.
     Equivalent to setting ypos to the value of this property, and
     yanchor to 0.5.
 
+.. transform-property:: subpixel
+
+    :type: boolean
+    :default: False
+
+    If True, causes the child to be placed using subpixel positioning.
+
+    Subpixel positioning effects the colors (including transparency)
+    that are drawn into pixels, but not which pixels are drawn. When
+    subpixel positoning is used in combination with movement (the usual
+    case), the image should have transparent borders in the directions
+    it might be moved in, if those edges are visible on the screen.
+
+    For example, if a character sprite is being moved horizontally,
+    it makes sense to have transparent borders on the left and right.
+    These might not be necessary when panning over a background that
+    extends outside the visible area, as the edges will not be seen.
+
+Rotation
+--------
+
 .. transform-property:: rotate
 
     :type: float or None
@@ -844,6 +868,9 @@ both horizontal and vertical positions.
    and rotated as the child is transformed. Effectively, this makes the
    anchor the point that the child is rotated and scaled around.
 
+Zoom and Flip
+-------------
+
 .. transform-property:: zoom
 
     :type: float
@@ -868,6 +895,9 @@ both horizontal and vertical positions.
 
    This causes the displayable to be vertically zoomed by the supplied
    factor. A negative value causes the image to be flipped vertically.
+
+Pixel Effects
+-------------
 
 .. transform-property:: nearest
 
@@ -907,6 +937,29 @@ both horizontal and vertical positions.
     an opaque surface. (Complex operations, like viewport, :func:`Flatten`, :func:`Frame`,
     and certain transitions may cause problems with additive blending.)
 
+.. transform-property:: matrixcolor
+
+    :type: None or Matrix or MatrixColor
+    :default: None
+
+    If not None, the value of this property is used to recolor everything
+    that children of this transform draw. Interpolation is only supported
+    when MatrixColors are used, and the MatrixColors are structurally similar.
+    See :doc:`matrixcolor` for more information.
+
+.. transform-property:: blur
+
+    :type: None or float
+    :default: None
+
+    This blurs the child of this transform by `blur` pixels, up to the border
+    of the displayable. The precise details of the blurring may change
+    between Ren'Py versions, and the blurring may exhibit artifacts,
+    especially when the image being blurred is changing.
+
+Polar Positioning
+-----------------
+
 .. transform-property:: around
 
     :type: (position, position)
@@ -917,7 +970,6 @@ both horizontal and vertical positions.
     :tpref:`radius` properties can then be used to specify a position
     using polar coordinates.
 
-
 .. transform-property:: angle
 
     :type: float
@@ -926,16 +978,29 @@ both horizontal and vertical positions.
     coordinates. This is measured in degrees, with 0 being to the top
     of the screen, and 90 being to the right.
 
+    Ren'Py clamps this angle to between 0 and 360 degrees, including 0 but
+    not 360. If a value is set outside this range, it will be set to the
+    equivalent angle in this range before being used. (Setting this to
+    -10 is the equivalent of setting it to 350.)
+
 .. transform-property:: radius
 
     :type: position
 
     The radius component of the position given in polar
-    coordiates. The type of this is the type the radius was last set to,
-    defaulting to absolute pixels.
+    coordinates.
 
     If a float, this will be scaled to the smaller of the width and height
     available to the transform.
+
+Polar Positioning of the Anchor
+-------------------------------
+
+.. note::
+
+    While using polar coordinates to position the anchor is possible, it's
+    often more convenient to simply set :tpref:`anchor` to (0.5, 0.5), and
+    position the center of your displayable.
 
 .. transform-property:: anchoraround
 
@@ -954,6 +1019,11 @@ both horizontal and vertical positions.
     The angle component of the ploar coordinates of the anchor. This is specified
     in degrees, with 0 being to the top and 90 being to the right.
 
+    Ren'Py clamps this angle to between 0 and 360 degrees, including 0 but
+    not 360. If a value is set outside this range, it will be set to the
+    equivalent angle in this range before being used. (Setting this to
+    -10 is the equivalent of setting it to 350.)
+
 .. transform-property:: anchorradius
 
     :type: (position)
@@ -961,11 +1031,8 @@ both horizontal and vertical positions.
     The radius component of the polar coordinates of the anchor. This will have the same
     type as :tpref:`anchoraround` and :tpref:`anchor`.
 
-.. transform-property:: alignaround
-
-    :type: (float, float)
-
-    This sets :tpref:`around` and :tpref:`anchoraround` to the same value.
+Cropping and Resizing
+---------------------
 
 .. transform-property:: crop
 
@@ -992,7 +1059,7 @@ both horizontal and vertical positions.
     :default: None
 
     If not None, gives the lower right corner of the crop box. Cropt takes
-    priority over corners. When a float, and crop_relativer is enabled, this
+    priority over corners. When a float, and crop_relative is enabled, this
     is relative to the size of the child.
 
 .. transform-property:: xysize
@@ -1062,40 +1129,8 @@ both horizontal and vertical positions.
          - As for ``cover``, but will never decrease the size of the
            displayable.
 
-.. transform-property:: subpixel
-
-    :type: boolean
-    :default: False
-
-    If True, causes the child to be placed using subpixel positioning.
-
-    Subpixel positioning effects the colors (including transparency)
-    that are drawn into pixels, but not which pixels are drawn. When
-    subpixel positoning is used in combination with movement (the usual
-    case), the image should have transparent borders in the directions
-    it might be moved in, if those edges are visible on the screen.
-
-    For example, if a character sprite is being moved horizontally,
-    it makes sense to have transparent borders on the left and right.
-    These might not be necessary when panning over a background that
-    extends outside the visible area, as the edges will not be seen.
-
-.. transform-property:: delay
-
-    :type: float
-    :default: 0.0
-
-    If this transform is being used as a transition, then this is the
-    duration of the transition.
-
-.. transform-property:: events
-
-    :type: boolean
-    :default: True
-
-    If true, events are passed to the child of this transform. If false,
-    events are blocked. (This can be used in ATL transforms to prevent
-    events from reaching the old_widget.)
+Panning and Tiling
+------------------
 
 .. transform-property:: xpan
 
@@ -1131,26 +1166,30 @@ both horizontal and vertical positions.
 
     The number of times to tile the image vertically.
 
-.. transform-property:: matrixcolor
+Transitions
+-----------
 
-    :type: None or Matrix or MatrixColor
-    :default: None
+See :ref:`atl-transitions`.
 
-    If not None, the value of this property is used to recolor everything
-    that children of this transform draw. Interpolation is only supported
-    when MatrixColors are used, and the MatrixColors are structurally similar.
-    See :doc:`matrixcolor` for more information.
+.. transform-property:: delay
 
-.. transform-property:: blur
+    :type: float
+    :default: 0.0
 
-    :type: None or float
-    :default: None
+    If this transform is being used as a transition, then this is the
+    duration of the transition. See :ref:`atl-transitions`.
 
-    This blurs the child of this transform by `blur` pixels, up to the border
-    of the displayable. The precise details of the blurring may change
-    between Ren'Py versions, and the blurring may exhibit artifacts,
-    especially when the image being blurred is changing.
+.. transform-property:: events
 
+    :type: boolean
+    :default: True
+
+    If true, events are passed to the child of this transform. If false,
+    events are blocked. (This can be used in ATL transitions to prevent
+    events from reaching the old_widget.)
+
+Other
+-----
 
 .. transform-property:: show_cancels_hide
 
@@ -1177,6 +1216,9 @@ GL Properties:
 Uniforms:
     Properties beginning with ``u_`` are uniforms that can be used by :ref:`custom shaders <custom-shaders>`.
 
+Property Order
+--------------
+
 These properties are applied in the following order:
 
 #. mesh, blur
@@ -1193,7 +1235,7 @@ These properties are applied in the following order:
 #. matrixtransform, matrixanchor
 #. zzoom
 #. perspective
-#. nearest, blend, alpha, additive, shader.
+#. nearest, blend, alpha, additive, shader
 #. matrixcolor
 #. GL Properties, Uniforms
 #. position properties
@@ -1208,6 +1250,12 @@ Deprecated Transform Properties
     conflict with more recent features. They are only kept here for compatibility,
     along with the new way of achieving the same behavior.
 
+.. transform-property:: alignaround
+
+    :type: (float, float)
+
+    This sets :tpref:`anchor`, :tpref:`around`, and :tpref:`anchoraround` to the same value.
+
 .. transform-property:: crop_relative
 
     :type: boolean
@@ -1217,10 +1265,10 @@ Deprecated Transform Properties
     number of pixels, instead of a fraction of the width and height of
     the source image.
 
-    If an absolute number of pixel is to be expressed, ``absolute`` instances
-    should be provided to the :tpref:`crop` property instead of using the
+    If an absolute number of pixel is to be expressed, :func:`absolute`
+    instances should be provided to the :tpref:`crop` property instead of using the
     crop_relative property. If necessary, values of dubious type can be wrapped
-    in the ``absolute`` callable.
+    in the :func:`absolute` callable.
 
 .. transform-property:: size
 
@@ -1281,7 +1329,7 @@ The following events can be triggered automatically:
     Python equivalent.
 
     Note that this isn't triggered when the transform is eliminated via
-    the scene statement or exiting the context it exists in, such as when
+    the scene statement or exiting the :ref:`context` it exists in, such as when
     exiting the game menu.
 
 ``replaced``
@@ -1294,8 +1342,8 @@ The following events can be triggered automatically:
     the game is loaded and when styles or translations change.
 
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``, ``insensitive``, ``selected_insensitive``
-   Triggered when button containing this transform, or a button contained
-   by this transform, enters the named state.
+    Triggered when button containing this transform, or a button contained
+    by this transform, enters the named state.
 
 
 .. _replacing-transforms:
@@ -1349,7 +1397,7 @@ multiple ways - for example, :tpref:`xalign` sets xpos and xanchor.
 
 Finally, when a ``show`` statement does not include an ``at`` clause, the
 same displayables are used, so no inheritence is necessary. To prevent inheritance,
-show and then hide the displayable.
+hide and then show the displayable again.
 
 .. _atl-transitions:
 
@@ -1357,11 +1405,11 @@ ATL Transitions
 ===============
 
 It's possible to use an ATL transform to define a transition. These transitions
-accept the `old_widget` and `new_widget` arguments, which are given displayables
+need to accept the `old_widget` and `new_widget` arguments, which are given displayables
 that are transitioned from and to, respectively.
 
 An ATL transition must set the :tpref:`delay` property to the number of seconds
-the transition lasts for. It may user the :tpref:`events` property to prevent
+the transition lasts for. It may use the :tpref:`events` property to prevent
 the old displayable from receiving events. ::
 
     transform spin(duration=1.0, new_widget=None, old_widget=None):

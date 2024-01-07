@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -452,6 +452,7 @@ init -1400 python hide:
     layout.LOADING = "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     layout.QUIT = "Are you sure you want to quit?"
     layout.MAIN_MENU = "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
+    layout.CONTINUE = "Are you sure you want to continue where you left off?"
     layout.END_REPLAY = "Are you sure you want to end the replay?"
     layout.SLOW_SKIP = "Are you sure you want to begin skipping?"
     layout.FAST_SKIP_SEEN = "Are you sure you want to skip to the next choice?"
@@ -478,23 +479,12 @@ init -1400 python hide:
     @layout
     def yesno_screen(message, yes=None, no=None):
         """
-        :doc: other
+        :undocumented:
 
-        This causes the a yes/no prompt screen with the given message
-        to be displayed. The screen will be hidden when the user hits
-        yes or no.
-
-        `message`
-            The message that will be displayed.
-
-        `yes`
-            An action that is run when the user chooses yes.
-
-        `no`
-            An action that is run when the user chooses no.
-
-        See :func:`Confirm` for an equivalent Action.
+        renpy.confirm is a better alternative in a python context,
+        or the Confirm action in a screen context.
         """
+
         if config.confirm_screen and renpy.has_screen('confirm'):
             screen = "confirm"
         elif renpy.has_screen("yesno_prompt"):

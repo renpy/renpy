@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,10 @@
 
 define gui.project_system_font = None
 define gui.asian = False
+
+# This is set in new_project before new_template_project is called,
+# and provides the full path to the template project.
+default gui_template_path = None
 
 init -1 python:
 
@@ -446,5 +450,54 @@ label gui_generate_images:
         interface.processing(_("Updating the project..."))
         project.current.launch([ 'gui_images' ], env={ "RENPY_VARIANT" : "small phone" }, wait=True)
         project.current.launch([ 'gui_images' ], wait=True)
+
+    jump front_page
+
+label new_template_project:
+
+    # Unused in new_template_project.
+    $ gui_size = (1920, 1080)
+    $ gui_color = (DARK_COLORS[0], "#000000", False)
+
+    python hide:
+
+        width, height = gui_size
+        accent, boring, light = gui_color
+
+        prefix = os.path.join(project_dir, "game")
+        template = os.path.join(gui_template_path, "game")
+
+        # Most of this isn't actually used.
+        p = gui7.GuiParameters(
+            prefix,
+            template,
+            width,
+            height,
+            accent,
+            boring,
+            light,
+            _preferences.language,
+            False,
+            True,
+            True,
+            project_name,
+            )
+
+        interface.processing(_("Creating the new project..."))
+
+        with interface.error_handling(_("creating a new project")):
+            gui7.generate_minimal(p)
+
+        # Activate the project.
+        with interface.error_handling(_("activating the new project")):
+            project.manager.scan()
+            project.Select(project.manager.get(project_name))()
+
+    call update_renpy_strings_common
+
+    python hide:
+        if gui.project_system_font:
+            with open(os.path.join(project.current.gamedir, "tl/None/common.rpym"), "ab") as f:
+                f.write("define gui.system_font = {!r}\r\n".format(gui.project_system_font).encode("utf-8"))
 
     jump front_page

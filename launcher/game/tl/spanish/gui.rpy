@@ -435,3 +435,9 @@
     # gui/game/gui.rpy:14
     old "## Enable checks for invalid or unstable properties in screens or transforms"
     new "## Habilitar comprobaciones de propiedades no válidas o inestables en pantallas o transformaciones."
+
+    # gui/game/gui.rpy:347
+    old "## Additional space to add between history screen entries."
+    new "## Espacio adicional para añadir entre las entradas de la pantalla de historial."
+
+

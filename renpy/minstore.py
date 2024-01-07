@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -40,6 +40,9 @@ list = __renpy__list__ # @ReservedAssignment
 from renpy.revertable import RevertableDict as __renpy__dict__
 dict = __renpy__dict__ # @ReservedAssignment
 
+from renpy.revertable import RevertableDefaultDict as __renpy_defaultdict__
+defaultdict = __renpy_defaultdict__
+
 from renpy.revertable import RevertableSet as __renpy__set__
 set = __renpy__set__ # @ReservedAssignment
 Set = __renpy__set__
@@ -49,12 +52,15 @@ from renpy.revertable import RevertableObject as object # @UnusedImport
 from renpy.revertable import revertable_range as range # @UnusedImport
 from renpy.revertable import revertable_sorted as sorted # @UnusedImport
 
+from renpy.revertable import MultiRevertable
+
 import renpy.ui as ui # @UnusedImport
 from renpy.translation import translate_string as __ # @UnusedImport
 
 from renpy.python import store_eval as eval
 
 from renpy.display.core import absolute
+from renpy.atl import position
 
 import renpy
 globals()["renpy"] = renpy.exports
@@ -180,6 +186,7 @@ __all__ = [
     'list',
     'object',
     'open',
+    'position',
     'print',
     'python_dict',
     'python_list',
@@ -193,7 +200,7 @@ __all__ = [
     'tobytes',
     'ui',
     'unicode',
-    ]
+]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ] # type: ignore

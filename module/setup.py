@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -86,6 +86,7 @@ include("libavcodec/avcodec.h", directory="ffmpeg", optional=True) or include("l
 include("libswscale/swscale.h", directory="ffmpeg", optional=True) or include("libswscale/swscale.h") # type: ignore
 include("GL/glew.h")
 include("pygame_sdl2/pygame_sdl2.h", directory="python{}.{}".format(sys.version_info.major, sys.version_info.minor))
+include("hb.h", directory="harfbuzz")
 
 library("SDL2")
 library("png")
@@ -196,6 +197,13 @@ cython(
     "renpy.text.ftfont",
     [ "ftsupport.c", "ttgsubtable.c" ],
     libs=sdl + [ 'freetype', 'z', 'm' ])
+
+if not (PY2 and emscripten):
+
+    cython(
+        "renpy.text.hbfont",
+        [ "ftsupport.c" ],
+        libs=sdl + [ 'harfbuzz', 'freetype', 'z', 'm' ])
 
 generate_all_cython()
 find_unnecessary_gen()

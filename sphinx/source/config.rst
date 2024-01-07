@@ -208,6 +208,7 @@ These control transitions between various screens.
     The transition used by the window show statement when no
     transition has been explicitly specified.
 
+.. seealso:: :ref:`scene-show-hide-transition`
 
 Preference Defaults
 -------------------
@@ -457,6 +458,11 @@ Occasionally Used
     While this defaults to False, it's set to True when :func:`gui.init`
     is called.
 
+.. var:: config.defer_tl_scripts = Fasle
+
+    When True, avoids loading scripts in the tl directory until the
+    language is selected. See :ref:`deferred-translations`.
+
 .. var:: config.developer = "auto"
 
     If set to True, developer mode is enabled. Developer mode gives
@@ -565,6 +571,15 @@ Occasionally Used
     The user can progress forward through the rollback buffer by
     clicking.
 
+.. var:: config.font_hinting = { None : "auto" }
+
+    This is a dictionary from a string containing the font filename to a string
+    giving one of the font hinting modes in :propref:`hinting`. When
+    :propref:`hinting` is True, the value is looked up in this dictionary,
+    and the resulting mode is used.
+
+    If no key is found, None is looked up, and the resulting mode is used.
+
 .. var:: config.font_name_map = { }
 
     This is a map from (font name) to (font filepath/fontgroup). Font names
@@ -632,12 +647,6 @@ Occasionally Used
 .. var:: config.history_current_dialogue = True
 
     If true, the current dialogue will appear in the history screen.
-
-.. var:: config.hw_video = False
-
-    If true, hardware video playback will be used on mobile platforms. This
-    may be faster, but only some formats are supported and only fullscreen video
-    is available. If false, software playback will be used.
 
 .. var:: config.hyperlink_handlers = { ... }
 
@@ -741,13 +750,6 @@ Occasionally Used
     amount of time has been reached, it will sleep to ensure the image is
     shown for at least this amount of time. The image may be shown longer
     if Ren'Py takes longer to start up.
-
-.. var:: config.missing_background = "black"
-
-    This is the background that is used when :var:`config.developer` is True
-    and an undefined image is used in a :ref:`scene statement
-    <scene-statement>`. This should be an image name (a string), not a
-    displayable.
 
 .. var:: config.mode_callbacks = [ ... ]
 
@@ -918,6 +920,8 @@ Occasionally Used
             s = s.replace('...', u'\u2026') # ellipsis
             return s
         config.replace_text = replace_text
+
+    .. seealso:: :var:`config.say_menu_text_filter`
 
 .. var:: config.replay_scope = { "_game_menu_screen" : "preferences", ... }
 
@@ -1513,8 +1517,9 @@ Rarely or Internally Used
     upper-left corner of the layer, with height and width giving the
     layer size.
 
-    If a layer is not mentioned in config.layer_clipping, then it is
-    assumed to take up the full screen.
+    If a layer is not mentioned in config.layer_clipping, then it will
+    take up the full size of its container. Typically this will be the
+    screen, unless being shown inside a :class:`Layer` displayable.
 
 .. var:: config.layeredimage_offer_screen = True
 
@@ -1683,6 +1688,16 @@ Rarely or Internally Used
     If false, :func:`renpy.pause` is always, used by the ``pause`` statement.
     If true, when given a delay, ``pause`` is equivalent to ``with Pause(...)``.
 
+.. var:: config.pass_controller_events = False
+
+    If true, pygame-like CONTROLLER events are passed to Displayables event
+    handlers. If not, those are consumed by Ren'Py.
+
+.. var:: config.pass_joystick_events = False
+
+    If true, pygame-like JOYSTICK events are passed to Displayables event
+    handlers. If not, those are consumed by Ren'Py.
+
 .. var:: config.per_frame_screens = [ ... ]
 
     This is a list of strings giving the name of screens that are updated
@@ -1755,7 +1770,8 @@ Rarely or Internally Used
 
 .. var:: config.say_layer = "screens"
 
-    The layer the say screen is shown on.
+    The layer the say screen is shown on. This layer should be in
+    :var:`config.context_clear_layers`.
 
 .. var:: config.say_menu_text_filter = None
 
@@ -1764,11 +1780,21 @@ Rarely or Internally Used
     <menus>` statements. It is expected to return new
     (or the same) strings to replace them.
 
+    This runs very early in the say and menu statement processing, before
+    translation and substitutions are applied. For a filter that runs later,
+    see :var:`config.replace_text`.
+
 .. var:: config.say_sustain_callbacks = [ ... ]
 
     A list of functions that are called, without arguments, before the
     second and later interactions caused by a line of dialogue with
     pauses in it. Used to sustain voice through pauses.
+
+.. var:: config.save = True
+
+    If True, Ren'Py will allow the user to save the game. If False,
+    Ren'Py will not allow the user to save the game, and will not show
+    existing saves.
 
 .. var:: config.save_dump = False
 
@@ -1783,6 +1809,12 @@ Rarely or Internally Used
     If True, the mobile app will save its state when it loses focus. The state
     is saved in a way that allows it to be automatically loaded (and the game
     to resume its place) when the app starts again.
+
+.. var:: config.save_persistent = True
+
+    If True, Ren'Py will save persistent data. If False,
+    persistent data will not be saved, and changes to persistent will be
+    lost when the game ends.
 
 .. var:: config.save_physical_size = True
 

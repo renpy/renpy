@@ -3,7 +3,7 @@
 # This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
 
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -85,8 +85,11 @@ def path_to_common(renpy_base):
         The absolute path to the Ren'Py base directory, the directory
         containing this file.
     """
+    path = renpy_base + "/renpy/common"
 
-    return renpy_base + "/renpy/common"
+    if os.path.isdir(path):
+        return path
+    return None
 
 
 def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
@@ -204,13 +207,70 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
 # the launcher, usually.)
 def path_to_renpy_base():
     """
-    Returns the absolute path to thew Ren'Py base directory.
+    Returns the absolute path to the Ren'Py base directory.
     """
 
-    renpy_base = os.path.dirname(os.path.realpath(sys.argv[0]))
+    renpy_base = os.path.dirname(os.path.abspath(__file__))
     renpy_base = os.path.abspath(renpy_base)
 
     return renpy_base
+
+def path_to_logdir(basedir):
+    """
+    Returns the absolute path to the log directory.
+    `basedir`
+        The base directory (config.basedir)
+    """
+
+    import renpy # @UnresolvedImport
+
+    if renpy.android:
+        return os.environ['ANDROID_PUBLIC']
+
+    return basedir
+
+def predefined_searchpath(commondir):
+    import renpy # @UnresolvedImport
+
+    # The default gamedir, in private.
+    searchpath = [ renpy.config.gamedir ]
+
+    if renpy.android:
+        # The public android directory.
+        if "ANDROID_PUBLIC" in os.environ:
+            android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
+
+            if os.path.exists(android_game):
+                searchpath.insert(0, android_game)
+
+        # Asset packs.
+        packs = [
+            "ANDROID_PACK_FF1", "ANDROID_PACK_FF2",
+            "ANDROID_PACK_FF3", "ANDROID_PACK_FF4",
+        ]
+
+        for i in packs:
+            if i not in os.environ:
+                continue
+
+            assets = os.environ[i]
+
+            for i in [ "renpy/common", "game" ]:
+                dn = os.path.join(assets, i)
+                if os.path.isdir(dn):
+                    searchpath.append(dn)
+    else:
+        # Add path from env variable, if any
+        if "RENPY_SEARCHPATH" in os.environ:
+            searchpath.extend(os.environ["RENPY_SEARCHPATH"].split("::"))
+
+    if commondir and os.path.isdir(commondir):
+        searchpath.append(commondir)
+
+    if renpy.android or renpy.ios:
+        print("Mobile search paths:" , " ".join(searchpath))
+
+    return searchpath
 
 ##############################################################################
 

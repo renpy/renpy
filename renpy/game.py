@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -100,6 +100,9 @@ preferences = None # type: Any
 
 # Current id of the AST node in script initcode
 initcode_ast_id = 0
+
+# The build_info.
+build_info = { "info" : { } }
 
 
 class ExceptionInfo(object):
@@ -261,10 +264,6 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
     It's generally used to call a Python function that needs to display
     information to the player (like a confirmation prompt) from inside
     an event handler.
-
-    A context maintains the state of the display (including what screens
-    and images are being shown) and the audio system. Both are restored
-    when the context returns.
 
     Additional arguments and keyword arguments are passed to the
     callable.

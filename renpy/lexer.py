@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,6 +26,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import codecs
 import re
+import sys
 import os
 import time
 import contextlib
@@ -609,6 +610,8 @@ OPERATORS = [
     '/',
     '%',
     '~',
+    '@',
+    ':=',
     ]
 
 ESCAPED_OPERATORS = [
@@ -864,7 +867,7 @@ class Lexer(object):
 
     def string(self):
         """
-        Lexes a string, and returns the string to the user, or None if
+        Lexes a non-triple-quoted string, and returns the string to the user, or None if
         no string could be found. This also takes care of expanding
         escapes and collapsing whitespace.
 
@@ -926,6 +929,9 @@ class Lexer(object):
         This is about the same as the double-quoted strings, except that
         runs of whitespace with multiple newlines are turned into a single
         newline.
+
+        Except in the case of a raw string where this returns a simple string,
+        this returns a list of strings.
         """
 
         s = self.match(r'r?"""([^\\"]|\\.|"(?!""))*"""')
@@ -1036,6 +1042,9 @@ class Lexer(object):
         rv = self.match(word_regexp)
         self.word_cache = rv
         self.word_cache_newpos = self.pos
+
+        if rv:
+            rv = sys.intern(rv)
 
         return rv
 

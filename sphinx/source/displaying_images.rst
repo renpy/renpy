@@ -477,6 +477,10 @@ is equivalent to::
     show lucy mad at right
     with dissolve
 
+Note that even though this applies to the :ref:`show-screen-statement`
+and :ref:`hide-screen-statement` statements too,
+:ref:`call-screen-statement` works a bit differently.
+
 .. _camera:
 
 Camera and Show Layer Statements

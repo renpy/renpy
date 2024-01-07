@@ -41,3 +41,4 @@ renpy.gl2.live2dmodel gen/renpy.gl2.live2dmodel.c
 renpy.text.textsupport gen/renpy.text.textsupport.c
 renpy.text.texwrap gen/renpy.text.texwrap.c
 renpy.text.ftfont gen/renpy.text.ftfont.c ftsupport.c ttgsubtable.c
+renpy.text.hbfont gen/renpy.text.hbfont.c

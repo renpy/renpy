@@ -381,11 +381,15 @@ change language-related variables and styles. For example::
     translate piglatin style default:
         font "stonecutter.ttf"
 
-More usually, the font used for dialogue is set with :var:`gui.text_font`, which
-can be customized using::
+More usually, the font used for dialogue is set with :var:`gui.text_font`.
+The font used for system text, like the exception screen, the accessibility menu,
+and the gui menu, can be customized with :var:`gui.system_font`. The system font
+should be able to express both ASCII and the translated language. Together, these
+can be customized with.
 
     translate piglatin python:
         gui.text_font = "stonecutter.ttf"
+        gui.system_font = "Noto Sans.ttf"
 
 When a language is activated – either at the start of the game, or
 after a language change – Ren'Py resets the styles to their contents
@@ -396,6 +400,30 @@ Finally, it rebuilds styles, allowing the changes to take effect.
 
 Style translations may be added to any .rpy file.
 
+.. _deferred-translations:
+
+Deferred Translation Loading
+============================
+
+For a large game, loading all translations can take a long time. To speed
+up these games, Ren'Py supports deferred translations. To enable deferred
+translations, add::
+
+    define config.defer_tl_scripts = True
+
+To your :file:`options.rpy` file, or any file that loads before the translation
+scripts.
+
+When True, this variable will prevent Ren'Py from loading script files
+found in directories named :file:`tl/{language}` as it initializes. Instead,
+it will load these files when the language is first activated,
+either at game start or when Ren'Py switches to the language.
+
+Because the :file:`tl/{language}` directories are not loaded at init time, these
+files should not contain any statements that are executed at init time,
+like ``init`` blocks or ``python`` blocks, ``screen``, ``image``, ``transform``,
+and other statements. The files should consist entirely of ``translate``,
+``translate python``, and ``translate style`` blocks.
 
 Default Language
 ================
@@ -425,13 +453,13 @@ The main way to switch languages is with the Language action.
 The Language action can be used to add a language preference to the
 preferences screen::
 
-            frame:
-                style_prefix "pref"
-                has vbox
+    frame:
+        style_prefix "pref"
+        has vbox
 
-                label _("Language")
-                textbutton "English" action Language(None)
-                textbutton "Igpay Atinlay" action Language("piglatin")
+        label _("Language")
+        textbutton "English" action Language(None)
+        textbutton "Igpay Atinlay" action Language("piglatin")
 
 There are two translation-related functions:
 
@@ -442,18 +470,18 @@ translation:
 
 .. function:: _(s)
 
-   (Single underscore) Returns `s` unchanged. Ren'Py will scan for
-   strings enclosed in this function, and add them to the list of
-   translatable strings. The strings will not be translated until
-   they are displayed.
+    (Single underscore) Returns `s` unchanged. Ren'Py will scan for
+    strings enclosed in this function, and add them to the list of
+    translatable strings. The strings will not be translated until
+    they are displayed.
 
 .. function:: __(s)
 
-   (Double underscore) Returns `s` immediately translated into the
-   current language. Strings enclosed in this function will be added
-   to the list of translatable strings. Note that the string may be
-   double-translated, if it matches a string translation when it
-   is displayed.
+    (Double underscore) Returns `s` immediately translated into the
+    current language. Strings enclosed in this function will be added
+    to the list of translatable strings. Note that the string may be
+    double-translated, if it matches a string translation when it
+    is displayed.
 
 .. include:: inc/underscore_p
 
@@ -465,11 +493,9 @@ of the game.
 
 .. var:: _preferences.language
 
-  The name of the current language, or None if the default language is
-  being used. This should be treated as a read-only variable. To
-  change the language, call :func:`renpy.change_language`.
-
-
+    The name of the current language, or None if the default language is
+    being used. This should be treated as a read-only variable. To
+    change the language, call :func:`renpy.change_language`.
 
 
 Unsanctioned Translations

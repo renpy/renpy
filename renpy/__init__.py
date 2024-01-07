@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -278,9 +278,6 @@ class Backup(_object):
         # A map from module to the set of names in that module.
         self.names = { }
 
-        if mobile:
-            return
-
         for m in sys.modules.values():
             if m is None:
                 continue
@@ -414,6 +411,7 @@ def import_all():
         import renpy.py2analysis
 
     import renpy.pyanalysis
+    import renpy.parameter
 
     import renpy.ast
     import renpy.atl
@@ -442,7 +440,7 @@ def import_all():
     global plog
     plog = renpy.performance.log # type:ignore
 
-    import renpy.styledata # @UnresolvedImport
+    import renpy.styledata
 
     import renpy.style
     renpy.styledata.import_style_functions()
@@ -457,14 +455,16 @@ def import_all():
     import renpy.translation.extract
     import renpy.translation.merge
 
-    import renpy.display # @UnresolvedImport @Reimport
+    import renpy.display
 
     import renpy.display.presplash
     import renpy.display.pgrender
     import renpy.display.scale
     import renpy.display.module
-    import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
-    import renpy.display.core # object @UnresolvedImport
+    import renpy.display.render
+    import renpy.display.displayable
+    import renpy.display.core
+    import renpy.display.scenelists
     import renpy.display.swdraw
 
     import renpy.text
@@ -484,13 +484,13 @@ def import_all():
     import renpy.display.layout
     import renpy.display.viewport
     import renpy.display.transform
-    import renpy.display.motion # layout @UnresolvedImport
-    import renpy.display.behavior # layout @UnresolvedImport
-    import renpy.display.transition # core, layout @UnresolvedImport
-    import renpy.display.movetransition # core @UnresolvedImport
+    import renpy.display.motion
+    import renpy.display.behavior
+    import renpy.display.transition
+    import renpy.display.movetransition
     import renpy.display.im
     import renpy.display.imagelike
-    import renpy.display.image # core, behavior, im, imagelike @UnresolvedImport
+    import renpy.display.image
     import renpy.display.video
     import renpy.display.focus
     import renpy.display.anim
@@ -536,7 +536,7 @@ def import_all():
     import renpy.memory
 
     import renpy.exports
-    import renpy.character # depends on exports. @UnresolvedImport
+    import renpy.character
 
     import renpy.add_from
     import renpy.dump
@@ -549,8 +549,8 @@ def import_all():
     import renpy.gl2.gl2texture
     import renpy.gl2.live2d
 
-    import renpy.minstore # depends on lots. @UnresolvedImport
-    import renpy.defaultstore # depends on everything. @UnresolvedImport
+    import renpy.minstore
+    import renpy.defaultstore
 
     import renpy.test
     import renpy.test.testmouse
@@ -570,8 +570,7 @@ def import_all():
 
     global backup
 
-    if not mobile:
-        backup = Backup()
+    backup = Backup()
 
     post_import()
 
@@ -617,8 +616,8 @@ def reload_all():
     returned.
     """
 
-    if mobile:
-        raise Exception("Reloading is not supported on mobile platforms.")
+    # if mobile:
+    #     raise Exception("Reloading is not supported on mobile platforms.")
 
     import renpy
 
@@ -699,6 +698,7 @@ if 1 == 0:
     from . import dump
     from . import easy
     from . import editor
+    from . import encryption
     from . import error
     from . import execution
     from . import exports
@@ -715,6 +715,7 @@ if 1 == 0:
     from . import memory
     from . import minstore
     from . import object
+    from . import parameter
     from . import parser
     from . import performance
     from . import persistent
@@ -741,7 +742,9 @@ if 1 == 0:
     from . import translation
     from . import uguu
     from . import ui
+    from . import update
     from . import util
     from . import vc_version
+    from . import versions
     from . import warp
     from . import webloader

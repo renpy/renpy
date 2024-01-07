@@ -731,7 +731,7 @@
 
     # renpy/common/_developer/developer.rpym:57
     old "Show Image Load Log (F4)"
-    new "Montrer le log ne chargement des images (F4)"
+    new "Afficher le log de chargement des images (F4)"
 
     # renpy/common/_developer/developer.rpym:60
     old "Hide Image Load Log (F4)"

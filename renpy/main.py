@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,6 +30,7 @@ import time
 import zipfile
 import gc
 import linecache
+import json
 
 import renpy
 import renpy.game as game
@@ -252,8 +253,9 @@ def choose_variants():
         renpy.config.variants.insert(0, 'web') # type: ignore
 
         # mobile
-        userAgent = emscripten.run_script_string(r'''navigator.userAgent''')
-        mobile = re.search('Mobile|Android|iPad|iPhone', userAgent)
+        mobile = emscripten.run_script_int(
+            r'''/Mobile|Android|iPad|iPhone/.test(navigator.userAgent)
+            || (navigator.userAgent.indexOf("Mac") != -1 && navigator.maxTouchPoints > 1)''')
         if mobile:
             renpy.config.variants.insert(0, 'mobile') # type: ignore
         # Reserve android/ios for when the OS API is exposed
@@ -299,48 +301,22 @@ def choose_variants():
         renpy.config.variants.insert(0, 'large') # type: ignore
 
 
-def android_searchpath():
+def load_build_info():
     """
-    Determines the searchpath on Android.
+    Loads cache/build_info.json, and uses it to initialize the
+    renpy.game.build_info dictionary.
     """
 
-    # The default gamedir, in private.
-    renpy.config.searchpath = [ renpy.config.gamedir ]
-
-    # The public android directory.
-    if "ANDROID_PUBLIC" in os.environ:
-        android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
-
-        if os.path.exists(android_game):
-            renpy.config.searchpath.insert(0, android_game)
-
-    # Asset packs.
-    packs = [
-        "ANDROID_PACK_FF1",
-        "ANDROID_PACK_FF2",
-        "ANDROID_PACK_FF3",
-        "ANDROID_PACK_FF4",
-    ]
-
-    for i in packs:
-        if i not in os.environ:
-            continue
-
-        assets = os.environ[i]
-
-        for i in [ "renpy/common", "game" ]:
-            dn = os.path.join(assets, i)
-            if os.path.isdir(dn):
-                renpy.config.searchpath.append(dn)
-
-    print("Android search paths:" , " ".join(renpy.config.searchpath))
+    try:
+        f = renpy.exports.open_file("cache/build_info.json", "utf-8")
+        renpy.game.build_info = json.load(f)
+    except Exception:
+        renpy.game.build_info = { "info" : { } }
 
 
 def main():
 
     gc.set_threshold(*renpy.config.gc_thresholds)
-
-    log_clock("Bootstrap to the start of init.init.")
 
     renpy.game.exception_info = 'Before loading the script.'
 
@@ -369,32 +345,17 @@ def main():
     if (renpy.android or renpy.ios) and not renpy.config.log_to_stdout:
         print("Version:", renpy.version)
 
-    log_clock("Early init.")
-
     # Note the game directory.
     game.basepath = renpy.config.gamedir
-    renpy.config.searchpath = [ renpy.config.gamedir ]
-
-    # Find the common directory.
-    commondir = renpy.__main__.path_to_common(renpy.config.renpy_base) # E1101 @UndefinedVariable
-
-    if os.path.isdir(commondir):
-        renpy.config.searchpath.append(commondir)
-        renpy.config.commondir = commondir
-    else:
-        renpy.config.commondir = None
-
-    # Add path from env variable, if any
-    if "RENPY_SEARCHPATH" in os.environ:
-        renpy.config.searchpath.extend(os.environ["RENPY_SEARCHPATH"].split("::"))
-
-    if renpy.android:
-        renpy.config.commondir = None
-
-        android_searchpath()
+    renpy.config.commondir = renpy.__main__.path_to_common(renpy.config.renpy_base) # E1101 @UndefinedVariable
+    renpy.config.searchpath = renpy.__main__.predefined_searchpath(renpy.config.commondir) # E1101 @UndefinedVariable
 
     # Load Ren'Py extensions.
     for dir in renpy.config.searchpath: # @ReservedAssignment
+
+        if not os.path.isdir(dir):
+            continue
+
         for fn in sorted(os.listdir(dir)):
             if fn.lower().endswith(".rpe"):
                 load_rpe(dir + "/" + fn)
@@ -429,7 +390,9 @@ def main():
     # Start auto-loading.
     renpy.loader.auto_init()
 
-    log_clock("Loader init.")
+    load_build_info()
+
+    log_clock("Early init")
 
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -463,7 +426,7 @@ def main():
     renpy.config.init_system_styles()
     renpy.style.build_styles() # @UndefinedVariable
 
-    log_clock("Loading error handling.")
+    log_clock("Loading error handling")
 
     # If recompiling everything, remove orphan .rpyc files.
     # Otherwise, will fail in case orphan .rpyc have same
@@ -490,7 +453,7 @@ def main():
 
     # Load all .rpy files.
     renpy.game.script.load_script() # sets renpy.game.script.
-    log_clock("Loading script.")
+    log_clock("Loading script")
 
     if renpy.game.args.command == 'load-test': # type: ignore
         start = time.time()
@@ -530,16 +493,15 @@ def main():
     renpy.savelocation.init()
 
     try:
-
         # Init save slots and save tokens.
         renpy.loadsave.init()
         renpy.savetoken.upgrade_all_savefiles()
-        log_clock("Loading save slot metadata.")
+        log_clock("Loading save slot metadata")
 
         # Load persistent data from all save locations.
         renpy.persistent.update()
         game.preferences = game.persistent._preferences
-        log_clock("Loading persistent.")
+        log_clock("Loading persistent")
 
         # Clear the list of seen statements in this game.
         game.seen_session = { }
@@ -591,19 +553,19 @@ def main():
 
         game.persistent._virtual_size = renpy.config.screen_width, renpy.config.screen_height # type: ignore
 
-        log_clock("Running init code.")
+        log_clock("Running init code")
 
         renpy.pyanalysis.load_cache()
-        log_clock("Loading analysis data.")
+        log_clock("Loading analysis data")
 
         # Analyze the script and compile ATL.
         renpy.game.script.analyze()
         renpy.atl.compile_all()
-        log_clock("Analyze and compile ATL.")
+        log_clock("Analyze and compile ATL")
 
         renpy.savelocation.init()
         renpy.loadsave.init()
-        log_clock("Reloading save slot metadata.")
+        log_clock("Reloading save slot metadata")
 
         # Index the archive files. We should not have loaded an image
         # before this point. (As pygame will not have been initialized.)
@@ -619,15 +581,18 @@ def main():
 
         renpy.dump.dump(False)
         renpy.game.script.make_backups()
-        log_clock("Dump and make backups.")
+        log_clock("Dump and make backups")
 
         # Initialize image cache.
         renpy.display.im.cache.init()
-        log_clock("Cleaning cache.")
+        log_clock("Cleaning cache")
 
         # Make a clean copy of the store.
         renpy.python.make_clean_stores()
-        log_clock("Making clean stores.")
+        log_clock("Making clean stores")
+
+        # Init the keymap.
+        renpy.display.behavior.init_keymap()
 
         gc.collect(2)
 
@@ -647,7 +612,7 @@ def main():
         else:
             gc.set_threshold(700, 10, 10)
 
-        log_clock("Initial gc.")
+        log_clock("Initial gc")
 
         # Start debugging file opens.
         renpy.debug.init_main_thread_open()
@@ -655,7 +620,7 @@ def main():
         # (Perhaps) Initialize graphics.
         if not game.interface:
             renpy.display.core.Interface()
-            log_clock("Creating interface object.")
+            log_clock("Creating interface object")
 
         # Start things running.
         restart = None

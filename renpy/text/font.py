@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,10 +32,19 @@ except Exception:
     pass
 
 import renpy
+import os
+
 import renpy.text.ftfont as ftfont
+ftfont.init()
+
+try:
+    import renpy.text.hbfont as hbfont
+    hbfont.init()
+except ImportError:
+    hbfont = None
+
 import renpy.text.textsupport as textsupport
 
-ftfont.init() # @UndefinedVariable
 
 WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
@@ -613,14 +622,16 @@ def register_bmfont(name=None, size=None, bold=False, italics=False, underline=F
     image_fonts[(name, size, bold, italics)] = bmf
 
 
-# A map from face name to ftfont.FTFace
+# A map from face name, shaper to ftfont.FTFace or hbfont.HBFace.
 face_cache = { }
 
 
-def load_face(fn):
+def load_face(fn, shaper):
 
-    if fn in face_cache:
-        return face_cache[fn]
+    key = (fn, shaper)
+
+    if key in face_cache:
+        return face_cache[key]
 
     orig_fn = fn
 
@@ -661,9 +672,13 @@ def load_face(fn):
     if font_file is None:
         raise Exception("Could not find font {0!r}.".format(orig_fn))
 
-    rv = ftfont.FTFace(font_file, index, orig_fn) # @UndefinedVariable
+    if shaper == "harfbuzz":
+        rv = hbfont.HBFace(font_file, index, orig_fn) # @UndefinedVariable
+    else:
+        rv = ftfont.FTFace(font_file, index, orig_fn) # @UndefinedVariable
 
-    face_cache[orig_fn] = rv
+
+    face_cache[key] = rv
 
     return rv
 
@@ -681,7 +696,10 @@ font_cache = { }
 last_scale = 1.0
 
 
-def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale):
+def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, axis):
+
+    if hbfont is None:
+        shaper = "freetype"
 
     # If the scale changed, invalidate caches of scaled fonts.
     global last_scale
@@ -711,15 +729,25 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
         return rv
 
     # Check for a cached TTF.
-    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale)
+    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, None if axis is None else tuple(sorted(axis.items())))
 
     rv = font_cache.get(key, None)
     if rv is not None:
         return rv
 
+    if hinting is True:
+        hinting = renpy.config.font_hinting.get(fn, True)
+
+    if hinting is True:
+        hinting = renpy.config.font_hinting.get(None, "auto")
+
     # Load a TTF.
-    face = load_face(fn)
-    rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) # @UndefinedVariable
+    face = load_face(fn, shaper)
+
+    if shaper == "harfbuzz":
+        rv = hbfont.HBFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting, instance, axis) # @UndefinedVariable
+    else:
+        rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) # @UndefinedVariable
 
     font_cache[key] = rv
 
@@ -740,7 +768,48 @@ def load_fonts():
         i.load()
 
     for i in renpy.config.preload_fonts:
-        load_face(i)
+        load_face(i, "harfbuzz")
+
+
+def variable_font_info(font):
+    """
+    :doc: variable_fonts
+
+    Returns information about a variable font, or None if the font is not
+    variable.
+
+    `font`
+        The filename containing the font.
+
+    The return value is an object with the following fields:
+
+    `instance`
+        A dictionary where the keys are the names of the named instances
+        of the font. (For example, 'light', 'regular', 'bold', and 'heavy'.)
+        The values can be ignored.
+
+    `axis`
+        A dictionary that maps the names of the axes of the font to objects
+        with the following fields:
+
+        `minimum`
+            The minimum value of the axis.
+        `default`
+            The default value of the axis.
+        `maximum`
+            The maximum value of the axis.
+
+    The object returned by this function and the data inside it should not
+    be changed.
+
+    This function may only be called after the Ren'Py display has initialized,
+    and is intended to be called from the console, where it will print in
+    a human-readable form.
+    """
+
+    face = load_face(font, "harfbuzz")
+
+    return face.variations
 
 
 class FontGroup(object):

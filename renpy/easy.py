@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -58,9 +58,9 @@ def lookup_displayable_prefix(d):
     return displayable(fn(arg))
 
 
-def displayable_or_none(d, scope=None, dynamic=True): # type: (Any, dict|None, bool) -> renpy.display.core.Displayable|None
+def displayable_or_none(d, scope=None, dynamic=True): # type: (Any, dict|None, bool) -> renpy.display.displayable.Displayable|None
 
-    if isinstance(d, renpy.display.core.Displayable):
+    if isinstance(d, renpy.display.displayable.Displayable):
         return d
 
     if d is None:
@@ -99,7 +99,7 @@ def displayable_or_none(d, scope=None, dynamic=True): # type: (Any, dict|None, b
     raise Exception("Not a displayable: %r" % (d,))
 
 
-def displayable(d, scope=None): # type(d, dict|None=None) -> renpy.display.core.Displayable|None
+def displayable(d, scope=None): # type(d, dict|None=None) -> renpy.display.displayable.Displayable|None
     """
     :doc: udd_utility
     :name: renpy.displayable
@@ -109,7 +109,7 @@ def displayable(d, scope=None): # type(d, dict|None=None) -> renpy.display.core.
     rules.
     """
 
-    if isinstance(d, renpy.display.core.Displayable):
+    if isinstance(d, renpy.display.displayable.Displayable):
         return d
 
     if isinstance(d, basestring):
@@ -145,7 +145,7 @@ def displayable(d, scope=None): # type(d, dict|None=None) -> renpy.display.core.
     raise Exception("Not a displayable: %r" % (d,))
 
 
-def dynamic_image(d, scope=None, prefix=None, search=None): # type: (Any, dict|None, str|None, list|None) -> renpy.display.core.Displayable|None
+def dynamic_image(d, scope=None, prefix=None, search=None): # type: (Any, dict|None, str|None, list|None) -> renpy.display.displayable.Displayable|None
     """
     Substitutes a scope into `d`, then returns a displayable.
 

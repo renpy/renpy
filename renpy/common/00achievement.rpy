@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,9 @@
 
 
 init -1500 python in achievement:
+    # Do not participate in saves.
+    _constant = True
+
     from store import persistent, renpy, config, Action
 
     # A list of backends that have been registered.

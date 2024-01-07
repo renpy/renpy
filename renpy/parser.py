@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,6 +30,8 @@ import time
 
 import renpy
 import renpy.ast as ast
+
+from renpy.parameter import Parameter
 
 from renpy.lexer import (
     list_logical_lines,
@@ -343,127 +345,120 @@ def parse_parameters(l):
         return None
 
     # Result list of parameters, by (name, default value) pairs
-    parameters = [ ]
+    parameters = collections.OrderedDict()
 
-    positional = [ ]
+    # Encountered a slash
+    got_slash = False
 
-    # Name of parameter that is starred
-    extrapos = None
+    # Encountered a star or a *args
+    now_kwonly = False
 
-    # Name of parameter that is double starred
-    extrakw = None
+    kind = Parameter.POSITIONAL_OR_KEYWORD
 
-    # Name of parameter that is last positional-only
-    last_posonly = None
+    # Got a lone * and no parameter after it
+    missing_kwonly = False
 
-    # Name of parameter that is first keyword-only
-    first_kwonly = None
+    # Encountered a defaulted parameter
+    now_default = False
 
-    add_positional = True
+    def name_parsed(name):
+        if name in parameters:
+            l.error("duplicate parameter name {!r}".format(name))
 
-    pending_kwonly = False
-
-    has_default = False
-
-    names = set()
-    def name_parsed(name, value):
-        if name in names:
-            l.error("duplicate argument '%s'" % name)
-        else:
-            names.add(name)
-
-    while True:
-
-        if l.match(r'\)'):
-            break
+    while not l.match(r'\)'):
 
         if l.match(r'\*\*'):
 
             extrakw = l.require(l.name)
+            name_parsed(extrakw)
+            parameters[extrakw] = Parameter(extrakw, Parameter.VAR_KEYWORD)
 
             if l.match(r'='):
-                l.error("var-keyword argument cannot have default value")
-
-            name_parsed(extrakw, None)
+                l.error("a var-keyword parameter (**{}) cannot have a default value".format(extrakw))
 
             # Allow trailing comma
             l.match(r',')
 
             # extrakw is always last parameter
             if not l.match(r'\)'):
-                l.error("arguments cannot follow var-keyword argument")
+                l.error("no parameter can follow a var-keyword parameter (**{})".format(extrakw))
 
             break
 
         elif l.match(r'\*'):
 
-            if first_kwonly or pending_kwonly:
+            if now_kwonly:
                 l.error("* may appear only once")
 
-            add_positional = False
+            now_kwonly = True
+            kind = Parameter.KEYWORD_ONLY
 
-            pending_kwonly = True
+            # we can have a defaulted pos-or-kw and then a required kw-only
+            now_default = False
 
             extrapos = l.name()
 
             if extrapos is not None:
-                if l.match(r'='):
-                    l.error("var-positional argument cannot have default value")
 
-                name_parsed(extrapos, None)
+                name_parsed(extrapos)
+                parameters[extrapos] = Parameter(extrapos, Parameter.VAR_POSITIONAL)
+
+                if l.match(r'='):
+                    l.error("a var-positional parameter (*{}) cannot have a default value".format(extrapos))
+
+            else:
+                missing_kwonly = True
 
         elif l.match(r'/\*'):
             l.error("expected comma between / and *")
 
         elif l.match('/'):
 
-            if first_kwonly or pending_kwonly:
+            if now_kwonly:
                 l.error("/ must be ahead of *")
 
-            elif last_posonly is not None:
+            elif got_slash:
                 l.error("/ may appear only once")
 
             elif not parameters:
-                l.error("at least one argument must precede /")
+                l.error("at least one parameter must precede /")
 
-            last_posonly = parameters[-1][0]
+            # All previous parameters are actually positional-only
+            parameters = collections.OrderedDict((k, p.replace(kind=p.POSITIONAL_ONLY)) for k, p in parameters.items())
+
+            got_slash = True
 
         else:
 
             name = l.require(l.name)
 
-            if pending_kwonly:
-                pending_kwonly = False
-                first_kwonly = name
+            missing_kwonly = False
 
-            default = None
+            default = Parameter.empty
 
             if l.match(r'='):
                 l.skip_whitespace()
                 default = l.delimited_python("),").strip()
-                has_default = True
+                now_default = True
 
                 if not default:
-                    l.error("empty parameter default")
+                    l.error("empty default value for parameter {!r}".format(name))
 
-            elif first_kwonly is None and has_default:
-                l.error("non-default argument follows default argument")
+            elif now_default and not now_kwonly:
+                l.error("non-default parameter {!r} follows a default parameter".format(name))
 
-            name_parsed(name, default)
-            parameters.append((name, default))
-
-            if add_positional:
-                positional.append(name)
+            name_parsed(name)
+            parameters[name] = Parameter(name, kind=kind, default=default)
 
         if l.match(r'\)'):
             break
 
         l.require(r',')
 
-    if pending_kwonly and extrapos is None:
-        l.error("named arguments must follow bare *")
+    if missing_kwonly:
+        l.error("a bare * must be followed by a parameter")
 
-    return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw, last_posonly, first_kwonly)
+    return renpy.parameter.Signature(parameters.values())
 
 
 def parse_arguments(l):
@@ -501,9 +496,9 @@ def parse_arguments(l):
         state = l.checkpoint()
 
         if not (expect_starred or expect_doublestarred):
-            name = l.name()
+            name = l.word()
 
-            if name and l.match(r'='):
+            if name and l.match(r'=') and not l.match('='):
                 if name in names:
                     l.error("keyword argument repeated: '%s'" % name)
                 else:
@@ -527,7 +522,7 @@ def parse_arguments(l):
         l.require(r',')
         index += 1
 
-    return renpy.ast.ArgumentInfo(arguments, starred_indexes, doublestarred_indexes)
+    return renpy.parameter.ArgumentInfo(arguments, starred_indexes, doublestarred_indexes)
 
 ##############################################################################
 # The parse trie.
@@ -752,7 +747,7 @@ def jump_statement(l, loc):
     l.expect_eol()
     l.advance()
 
-    return ast.Jump(loc, target, expression)
+    return ast.Jump(loc, target, expression, (expression and l.global_label or ""))
 
 
 @statement("call")
@@ -773,7 +768,7 @@ def call_statement(l, loc):
 
     arguments = parse_arguments(l)
 
-    rv = [ ast.Call(loc, target, expression, arguments) ] # type: list[ast.Call|ast.Label|ast.Pass]
+    rv = [ ast.Call(loc, target, expression, arguments, (expression and l.global_label or "")) ] # type: list[ast.Call|ast.Label|ast.Pass]
 
     if l.keyword('from'):
         name = l.require(l.label_name_declare)
@@ -810,6 +805,7 @@ def scene_statement(l, loc):
     rv = parse_with(l, stmt)
 
     if l.match(':'):
+        l.expect_block('scene statement')
         stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         l.expect_noblock('scene statement')
@@ -827,6 +823,7 @@ def show_statement(l, loc):
     rv = parse_with(l, stmt)
 
     if l.match(':'):
+        l.expect_block('show statement')
         stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         l.expect_noblock('show statement')
@@ -848,6 +845,7 @@ def show_layer_statement(l, loc):
         at_list = [ ]
 
     if l.match(':'):
+        l.expect_block('show layer statement')
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         atl = None
@@ -872,6 +870,7 @@ def camera_statement(l, loc):
         at_list = [ ]
 
     if l.match(':'):
+        l.expect_block('camera statement')
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         atl = None
@@ -913,6 +912,7 @@ def image_statement(l, loc):
 
     if l.match(':'):
         l.expect_eol()
+        l.expect_block('image statement')
         expr = None
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
@@ -1035,11 +1035,22 @@ def transform_statement(l, loc):
 
     parameters = parse_parameters(l)
 
-    if parameters and (parameters.extrakw or parameters.extrapos):
-        l.error('transform statement does not take a variable number of parameters')
+    if parameters:
+        found_pos_only = False
+        for p in parameters.parameters.values():
+            if p.kind == p.POSITIONAL_ONLY and not found_pos_only:
+                found_pos_only = True
+                l.deferred_error("atl_pos_only", "the transform statement does not take positional-only parameters ({} is not allowed)".format(p))
+            elif p.kind == p.VAR_POSITIONAL:
+                l.error("the transform statement does not take *args ({} is not allowed)".format(p))
+            elif p.kind == p.VAR_KEYWORD:
+                l.error("the transform statement does not take **kwargs ({} is not allowed)".format(p))
+            elif (p.kind == p.KEYWORD_ONLY) and (p.default is p.empty):
+                l.error("the transform statement does not take required keyword-only parameters ({} is not allowed)".format(p))
 
     l.require(':')
     l.expect_eol()
+    l.expect_block('transform statement')
 
     atl = renpy.atl.parse_atl(l.subblock_lexer())
 
@@ -1450,14 +1461,20 @@ def style_statement(l, loc):
 
 
 @statement("rpy python")
-def rpy_python_3(l, loc):
+def rpy_python(l, loc):
 
-    l.require('3')
+    rv = []
+
+    while (not rv) or l.match(","):
+
+        r = l.match("3") # for compatibility with old code.
+        if not r:
+            r = l.require(l.word, "__future__ name")
+
+        rv.append(ast.RPY(loc, ("python", r)))
 
     l.expect_eol()
     l.expect_noblock("rpy statement")
-
-    rv = ast.RPY(loc, ("python", "3"))
 
     l.advance()
     return rv
@@ -1693,12 +1710,6 @@ def release_deferred_errors():
         """
         parse_errors.extend(pop(queue))
 
-    # Unconditionally releases the deferred_test queue.
-    release("deferred_test")
-
-    # Unconditionally ignores the deferred_experimentation
-    pop("deferred_experimentation")
-
     if renpy.config.check_conflicting_properties:
         release("check_conflicting_properties")
     else:
@@ -1713,6 +1724,11 @@ def release_deferred_errors():
         release("duplicate_id")
     else:
         pop("duplicate_id")
+
+    if renpy.config.atl_pos_only:
+        pop("atl_pos_only")
+    else:
+        release("atl_pos_only")
 
     if deferred_parse_errors:
         raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))

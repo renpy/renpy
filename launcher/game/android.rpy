@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,10 +31,9 @@ init python:
     ANDROID_NO_BUNDLE = 6
     ANDROID_OK = 7
 
-    JDK_REQUIREMENT=8
+    JDK_REQUIREMENT = 42
 
     NO_RAPT_TEXT = _("To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher.")
-    NO_JDK_TEXT = _("A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher.")
     NO_SDK_TEXT = _("RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this.")
     NO_KEY_TEXT = _("RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory.")
     NO_CONFIG_TEXT = _("The current project has not been configured. Use \"Configure\" to configure it before building.")
@@ -99,8 +98,11 @@ init python:
         rapt.plat.renpy = True
         rapt.plat.translate = __
 
+        JDK_REQUIREMENT = rapt.plat.jdk_requirement
+
     else:
         rapt = None
+
 
     def AndroidState():
         """
@@ -109,8 +111,6 @@ init python:
 
         if RAPT_PATH is None:
             return ANDROID_NO_RAPT
-        if renpy.windows and not "JAVA_HOME" in os.environ:
-            return ANDROID_NO_JDK
         if not os.path.exists(rapt.plat.adb):
             return ANDROID_NO_SDK
         if not rapt.keys.keys_exist(project.current.path):
@@ -133,8 +133,6 @@ init python:
 
         if state == ANDROID_NO_RAPT:
             return NO_RAPT_TEXT
-        if state == ANDROID_NO_JDK:
-            return NO_JDK_TEXT
         if state == ANDROID_NO_SDK:
             return NO_SDK_TEXT
         if state == ANDROID_NO_KEY:
@@ -280,7 +278,16 @@ init python:
 
 
         with interface.nolinks():
-            rapt.build.build(rapt_interface, dist, p.path, bundle=bundle, install=install, launch=launch, finished=finished, permissions=p.dump['build']['android_permissions'])
+            rapt.build.build(
+                rapt_interface,
+                dist,
+                p.path,
+                bundle=bundle,
+                install=install,
+                launch=launch,
+                finished=finished,
+                permissions=p.dump['build']['android_permissions'],
+                version=p.dump['build']['version'])
 
 
     def android_build_argument(cmd):

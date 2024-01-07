@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,6 +28,7 @@ from typing import Any
 import renpy
 import renpy.gl2.live2dmotion
 from renpy.gl2.gl2shadercache import register_shader
+from renpy.display.core import absolute
 
 try:
     import renpy.gl2.live2dmodel as live2dmodel
@@ -481,7 +482,7 @@ def update_states():
 
         state.cycle_new = True
 
-    sls = renpy.display.core.scene_lists()
+    sls = renpy.display.scenelists.scene_lists()
 
     for d in sls.get_all_displayables(current=True):
         if d is not None:
@@ -494,7 +495,7 @@ def update_states():
         s.mark = False
 
 
-class Live2D(renpy.display.core.Displayable):
+class Live2D(renpy.display.displayable.Displayable):
 
     nosave = [ "common_cache" ]
 
@@ -659,6 +660,9 @@ class Live2D(renpy.display.core.Displayable):
         return [ i for i in common.attributes if i in available ]
 
     def _choose_attributes(self, tag, attributes, optional):
+
+        # Filter out _sustain.
+        attributes = [ i for i in attributes if i != "_sustain" ]
 
         common = self.common
 
@@ -941,15 +945,9 @@ class Live2D(renpy.display.core.Displayable):
 
         zoom = self.zoom
 
-        def s(n):
-            if isinstance(n, float):
-                return n * sh
-            else:
-                return n
-
         if zoom is None:
-            top = s(self.top)
-            base = s(self.base)
+            top = absolute.compute_raw(self.top, sh)
+            base = absolute.compute_raw(self.base, sh)
 
             size = max(base - top, 1.0)
 

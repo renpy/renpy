@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -236,6 +236,7 @@ class Rollback(renpy.object.Object):
 
     identifier = None
     not_greedy = False
+    checkpointing_suspended = False
 
     def __init__(self):
 
@@ -268,6 +269,9 @@ class Rollback(renpy.object.Object):
         # True if this is a not-greedy checkpoint, which should end
         # rollbacks that occur in greedy mode.
         self.not_greedy = False
+
+        # The value of checkpointing_suspended when this checkpoint was created.
+        self.checkpointing_suspended = renpy.game.log.checkpointing_suspended
 
         # A unique identifier for this rollback object.
 
@@ -418,6 +422,7 @@ class Rollback(renpy.object.Object):
         """
 
         renpy.game.contexts = renpy.game.contexts[:-1] + [ self.context ]
+        renpy.game.log.checkpointing_suspended = self.checkpointing_suspended
 
 
 class RollbackLog(renpy.object.Object):
@@ -438,7 +443,7 @@ class RollbackLog(renpy.object.Object):
     (weakref to object, information needed to rollback that object)
     """
 
-    __version__ = 5
+    __version__ = 6
 
     nosave = [ 'old_store', 'mutated', 'identifier_cache' ]
     identifier_cache = None
@@ -452,6 +457,7 @@ class RollbackLog(renpy.object.Object):
         self.current = None
         self.mutated = { }
         self.rollback_limit = 0
+        self.rollback_block = 0
         self.rollback_is_fixed = False
         self.checkpointing_suspended = False
         self.fixed_rollback_boundary = None
@@ -502,6 +508,11 @@ class RollbackLog(renpy.object.Object):
 
                 self.rollback_limit = nrbl
 
+        if version < 6:
+            hard = sum(e.hard_checkpoint for e in self.log)
+            self.rollback_block = max(0, hard - self.rollback_limit)
+            self.rollback_limit = hard - self.rollback_block
+
     def begin(self, force=False):
         """
         Called before a node begins executing, to indicate that the
@@ -541,7 +552,11 @@ class RollbackLog(renpy.object.Object):
 
         # If the log is too long, prune it.
         while len(self.log) > renpy.config.rollback_length:
-            self.log.pop(0)
+            if self.log.pop(0).hard_checkpoint:
+                if self.rollback_block:
+                    self.rollback_block -= 1
+                else:
+                    self.rollback_limit -= 1
 
         # check for the end of fixed rollback
         if len(self.log) >= 2:
@@ -709,12 +724,10 @@ class RollbackLog(renpy.object.Object):
 
         if self.checkpointing_suspended:
             hard = False
+            self.current.not_greedy = True
 
         if hard:
             self.retain_after_load_flag = False
-
-        if self.current.checkpoint:
-            return
 
         if not renpy.game.context().rollback:
             return
@@ -773,12 +786,14 @@ class RollbackLog(renpy.object.Object):
         through this checkpoint.
         """
 
+        self.rollback_block += self.rollback_limit
         self.rollback_limit = 0
         if self.current is not None:
             self.current.not_greedy = True
         renpy.game.context().force_checkpoint = True
 
         if purge:
+            self.rollback_block = 0
             del self.log[:]
 
     def retain_after_load(self):
@@ -875,9 +890,6 @@ class RollbackLog(renpy.object.Object):
         # give up.
         if checkpoints and (self.rollback_limit <= 0) and (not force):
             return
-
-        self.suspend_checkpointing(False)
-        # will always rollback to before suspension
 
         self.purge_unreachable(self.get_roots())
 
@@ -1104,7 +1116,9 @@ class RollbackLog(renpy.object.Object):
 
         # Now, rollback to an acceptable point.
 
-        greedy = renpy.session.pop("_greedy_rollback", False)
+        greedy = getattr(renpy.store, "_greedy_rollback", True)
+        greedy = renpy.session.pop("_greedy_rollback", greedy)
+
         self.rollback(0, force=True, label=label, greedy=greedy, on_load=True)
 
         # Because of the rollback, we never make it this far.

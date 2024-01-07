@@ -398,6 +398,12 @@ fonts used for text. These fonts should also be placed in the game directory.
     The font used for text for user interface elements, like the main and
     game menus, buttons, and so on.
 
+.. var:: gui.system_font = "DejaVuSans.ttf"
+
+    The font used for system text, like exception messages and the shift+A
+    accessibility menu. This should be able to handle both ASCII and the
+    game's translated language.
+
 .. var:: gui.glyph_font = "DejaVuSans.ttf"
 
     A font used for certain glyphs, such as the arrow glyphs used by the skip
@@ -1086,6 +1092,10 @@ sets the number of blocks of dialogue Ren'Py will keep at history.
     the height of a history entry to vary at the cost of performance –
     config.history_length may need to be lowered significantly when this
     is None.
+
+.. var:: gui.history_spacing = 0
+
+    The amount of space to leave between history entries, in pixels.
 
 .. var:: gui.history_name_xpos = 0.5
 .. var:: gui.history_text_xpos = 0.5

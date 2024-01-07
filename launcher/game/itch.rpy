@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -98,7 +98,7 @@ label itch:
 
         for fn in os.listdir(destination):
 
-            for pattern, channel in reversed(build['itch_channels']):
+            for pattern, channel in reversed(build['itch_channels'].items()):
                 if fnmatch.fnmatch(fn, pattern):
                     break
             else:

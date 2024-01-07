@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -61,7 +61,7 @@ position_property_names = [
     "debug",
     ]
 
-position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
+position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip"), Keyword("group_alt"), Keyword("extra_alt") ] # type: ignore
 text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ] # type: ignore
 side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
 viewport_position_properties = [ PrefixStyle("viewport_", i) for i in position_property_names ] # type: ignore
@@ -76,6 +76,7 @@ text_property_names = [
     "color",
     "drop_shadow",
     "drop_shadow_color",
+    "emoji_font",
     "first_indent",
     "font",
     "size",
@@ -92,8 +93,10 @@ text_property_names = [
     "newline_indent",
     "outlines",
     "outline_scaling",
+    "prefer_emoji",
     "rest_indent",
     "ruby_style",
+    "shaper",
     "slow_cps",
     "slow_cps_multiplier",
     "slow_abortable",
@@ -105,6 +108,8 @@ text_property_names = [
     "hinting",
     "adjust_spacing",
     "mipmap",
+    "axis",
+    "instance",
     ]
 
 text_properties = [ Style(i) for i in text_property_names ]

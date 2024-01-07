@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,16 +31,11 @@ import renpy
 from renpy.display.render import render, Render
 
 
-def scale(num, base):
-    """
-    If num is a float, multiplies it by base and returns that. Otherwise,
-    returns num unchanged.
-    """
-
-    if type(num) is float:
-        return num * base
-    else:
-        return num
+if PY2:
+    def compute_raw(value, room):
+        return renpy.display.core.absolute.compute_raw(value, room)
+else:
+    compute_raw = renpy.display.core.absolute.compute_raw
 
 
 def xyminimums(style, width, height):
@@ -58,7 +53,7 @@ def xyminimums(style, width, height):
         if (type(xmaximum) is float) and xmaximum and renpy.config.adjust_minimums:
             xminimum = xminimum / xmaximum
 
-        xminimum = xminimum * width
+    xminimum = compute_raw(xminimum, width)
 
     if type(yminimum) is float:
         ymaximum = style.ymaximum
@@ -66,12 +61,12 @@ def xyminimums(style, width, height):
         if (type(ymaximum) is float) and ymaximum and renpy.config.adjust_minimums:
             yminimum = yminimum / ymaximum
 
-        yminimum = yminimum * height
+    yminimum = compute_raw(yminimum, height)
 
     return xminimum, yminimum
 
 
-class Null(renpy.display.core.Displayable):
+class Null(renpy.display.displayable.Displayable):
     """
     :doc: disp_imagelike
     :name: Null
@@ -101,7 +96,7 @@ class Null(renpy.display.core.Displayable):
         return rv
 
 
-class Container(renpy.display.core.Displayable):
+class Container(renpy.display.displayable.Displayable):
     """
     This is the base class for containers that can have one or more
     children.
@@ -128,13 +123,25 @@ class Container(renpy.display.core.Displayable):
     def __init__(self, *args, **properties):
 
         self.children = self._list_type() # type: list
-        self.child = None # type: renpy.display.core.Displayable|None
+        self.child = None # type: renpy.display.displayable.Displayable|None
         self.offsets = self._list_type() # type: list[tuple[int, int]]
 
         for i in args:
             self.add(i)
 
         super(Container, self).__init__(**properties)
+
+    def set_transform_event(self, event):
+        """
+        Sets the transform event of this displayable to event.
+        """
+
+        super(Container, self).set_transform_event(event)
+
+        if renpy.config.containers_pass_transform_events:
+
+            for i in self.children:
+                i.set_transform_event(event)
 
     def _handles_event(self, event):
         for i in self.children:
@@ -213,6 +220,8 @@ class Container(renpy.display.core.Displayable):
 
         if child._duplicatable:
             self._duplicatable = True
+
+        renpy.display.render.invalidate(self)
 
     def _clear(self):
         self.child = None
@@ -467,13 +476,13 @@ class Grid(Container):
             yspacing = self.style.spacing
 
         if renpy.config.relative_spacing:
-            xspacing = renpy.display.layout.scale(xspacing, width)
-            yspacing = renpy.display.layout.scale(yspacing, height)
+            xspacing = compute_raw(xspacing, width)
+            yspacing = compute_raw(yspacing, height)
 
-        left_margin = scale(self.style.left_margin, width)
-        right_margin = scale(self.style.right_margin, width)
-        top_margin = scale(self.style.top_margin, height)
-        bottom_margin = scale(self.style.bottom_margin, height)
+        left_margin = compute_raw(self.style.left_margin, width)
+        right_margin = compute_raw(self.style.right_margin, width)
+        top_margin = compute_raw(self.style.top_margin, height)
+        bottom_margin = compute_raw(self.style.bottom_margin, height)
 
         # For convenience and speed.
         cols = self.cols
@@ -815,11 +824,11 @@ class MultiBox(Container):
 
         minx = self.style.xminimum
         if minx is not None:
-            width = max(width, scale(minx, width))
+            width = max(width, compute_raw(minx, width))
 
         miny = self.style.yminimum
         if miny is not None:
-            height = max(height, scale(miny, height))
+            height = max(height, compute_raw(miny, height))
 
         if self.first and adjust_times:
             self.update_times()
@@ -962,7 +971,7 @@ class MultiBox(Container):
 
         # The children to layout.
         children = list(self.children)
-        if self.style.box_reverse:
+        if self.style.box_reverse and renpy.config.simple_box_reverse:
             children.reverse()
             spacings.reverse()
 
@@ -1134,9 +1143,20 @@ class MultiBox(Container):
         if not yfill:
             height = max(yminimum, maxy)
 
+        if self.style.box_reverse and not renpy.config.simple_box_reverse:
+            new_placements = [ ]
+
+            for child, x, y, w, h, surf in placements:
+                if layout == "vertical":
+                    new_placements.append((child, x, height - y - h, w, h, surf))
+                else:
+                    new_placements.append((child, width - x - w, y, w, h, surf))
+
+            placements = new_placements
+
         rv = renpy.display.render.Render(width, height)
 
-        if self.style.box_reverse ^ self.style.order_reverse:
+        if self.style.order_reverse ^ (self.style.box_reverse and renpy.config.simple_box_reverse):
             placements.reverse()
 
         for child, x, y, w, h, surf in placements:
@@ -1291,17 +1311,17 @@ class Window(Container):
         width = max(xminimum, width)
         height = max(yminimum, height)
 
-        left_margin = scale(style.left_margin, width)
-        left_padding = scale(style.left_padding, width)
+        left_margin = compute_raw(style.left_margin, width)
+        left_padding = compute_raw(style.left_padding, width)
 
-        right_margin = scale(style.right_margin, width)
-        right_padding = scale(style.right_padding, width)
+        right_margin = compute_raw(style.right_margin, width)
+        right_padding = compute_raw(style.right_padding, width)
 
-        top_margin = scale(style.top_margin, height)
-        top_padding = scale(style.top_padding, height)
+        top_margin = compute_raw(style.top_margin, height)
+        top_padding = compute_raw(style.top_padding, height)
 
-        bottom_margin = scale(style.bottom_margin, height)
-        bottom_padding = scale(style.bottom_padding, height)
+        bottom_margin = compute_raw(style.bottom_margin, height)
+        bottom_padding = compute_raw(style.bottom_padding, height)
 
         # c for combined.
         cxmargin = left_margin + right_margin
@@ -1415,7 +1435,7 @@ def dynamic_displayable_compat(st, at, expr):
     return child, None
 
 
-class DynamicDisplayable(renpy.display.core.Displayable):
+class DynamicDisplayable(renpy.display.displayable.Displayable):
     """
     :doc: disp_dynamic
 
@@ -1964,7 +1984,7 @@ class Side(Container):
         return rv
 
 
-class Alpha(renpy.display.core.Displayable):
+class Alpha(renpy.display.displayable.Displayable):
 
     def __init__(self, start, end, time, child=None, repeat=False, bounce=False,
                  anim_timebase=False, time_warp=None, **properties):
@@ -2279,12 +2299,24 @@ class NearRect(Container):
     `rect`
         The rectangle to place the child near.
 
-    `prefer_top`
-        If true, the child is placed above the rectangle, if there is
-        room.
+    `preferred_side`
+        One of "left", "top", "right", "bottom" to prefer that position for
+        the nearrect. If there is not room on one side, the opposite side is
+        used. By default, the preferred side is "bottom".
+
+    `invert_offsets`
+        If True and there isn't enough space on the preferred side, multiply the
+        offsets by -1 since the child will be on the opposite side of the
+        rectangle. False by default.
     """
 
-    def __init__(self, child=None, rect=None, focus=None, prefer_top=False, replaces=None, **properties):
+    preferred_side = "bottom"
+    invert_offsets = False
+
+    possible_positions = set(["left", "top", "right", "bottom"])
+
+    def __init__(self, child=None, rect=None, focus=None, preferred_side=False,
+                invert_offsets=False, replaces=None, **properties):
 
         super(NearRect, self).__init__(**properties)
 
@@ -2296,7 +2328,13 @@ class NearRect(Container):
 
         self.parent_rect = rect
         self.focus_rect = focus
-        self.prefer_top = prefer_top
+        self.preferred_side = preferred_side or "bottom"
+        if properties.pop('prefer_top', False):
+            self.preferred_side = "top"
+        self.invert_offsets = invert_offsets
+
+        if not self.preferred_side in NearRect.possible_positions:
+            raise Exception("preferred_side used with impossible position '%s'." % (self.preferred_side,))
 
         if replaces is not None:
             self.hide_parent_rect = replaces.hide_parent_rect
@@ -2323,7 +2361,6 @@ class NearRect(Container):
             self.parent_rect = rect
             renpy.display.render.redraw(self, 0)
 
-
     def render(self, width, height, st, at):
 
         rv = renpy.display.render.Render(width, height)
@@ -2337,10 +2374,14 @@ class NearRect(Container):
         px, py, pw, ph = rect
 
         # Determine the available area.
-        avail_w = width
-        avail_h = max(py, height - py - ph)
+        if self.preferred_side in ("top", "bottom"):
+            avail_w = width
+            avail_h = max(py, height - py - ph)
+        else:
+            avail_w = max(px, width - px - pw)
+            avail_h = height
 
-        # Render thje child, and get its size.
+        # Render the child, and get its size.
         cr = renpy.display.render.render(self.child, avail_w, avail_h, st, at)
         cw, ch = cr.get_size()
 
@@ -2359,7 +2400,7 @@ class NearRect(Container):
             return rv
 
         # Work out the placement.
-        xpos, _ypos, xanchor, _yanchor, xoffset, yoffset, _subpixel = self.child.get_placement()
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset, _subpixel = self.child.get_placement()
 
         if xpos is None:
             xpos = 0
@@ -2369,32 +2410,60 @@ class NearRect(Container):
             xoffset = 0
         if yoffset is None:
             yoffset = 0
+        if ypos is None:
+            ypos = 0
+        if yanchor is None:
+            yanchor = 0
 
-        # Y positioning.
-        if self.prefer_top and (ch < py):
+        ## Determine position
+        on_preferred_side = True
+        if self.preferred_side == "top" and (ch < py):
             layout_y = py - ch
-        elif ch <= (height - py - ph):
+        elif self.preferred_side == "left" and (cw < px):
+            layout_x = px - cw
+        elif self.preferred_side in ("top", "bottom") and ch <= (height - py - ph):
             layout_y = py + ph
-        else:
+            on_preferred_side = self.preferred_side == "bottom"
+        elif self.preferred_side in ("left", "right") and cw <= (width - px - pw):
+            layout_x = px + pw
+            on_preferred_side = self.preferred_side == "right"
+        ## Lastly, if there's no space, just put it above/left of the rectangle
+        elif self.preferred_side in ("top", "bottom"):
             layout_y = py - ch
+            on_preferred_side = self.preferred_side == "top"
+        else:
+            layout_x = px - cw
+            on_preferred_side = self.preferred_side == "left"
 
         # Initial x positioning - using a variant of the layout algorithm.
-        if isinstance(xpos, float):
-            xpos = xpos * pw
+        xpos = compute_raw(xpos, pw)
+        xanchor = compute_raw(xanchor, cw)
+        ypos = compute_raw(ypos, ph)
+        yanchor = compute_raw(yanchor, ch)
 
-        if isinstance(xanchor, float):
-            xanchor = xanchor * cw
+        if self.preferred_side in ("top", "bottom"):
+            layout_x = px + xpos - xanchor
 
-        layout_x = px + xpos - xanchor
+            # Final x positioning - make sure the child fits inside the screen.
+            if layout_x + cw > width:
+                layout_x = width - cw
 
-        # Final x positioning - make sure the child fits inside the screen.
-        if layout_x + cw > width:
-            layout_x = width - cw
+            if layout_x < 0:
+                layout_x = 0
+        else:
+            layout_y = py + ypos - yanchor
 
-        if layout_x < 0:
-            layout_x = 0
+            # Final y positioning - make sure the child fits inside the screen.
+            if layout_y + ch > height:
+                layout_y = height - ch
+
+            if layout_y < 0:
+                layout_y = 0
 
         # Apply offsets.
+        if self.invert_offsets and not on_preferred_side:
+            xoffset *= -1
+            yoffset *= -1
         layout_x += xoffset
         layout_y += yoffset
 
@@ -2419,6 +2488,7 @@ class NearRect(Container):
 class Layer(AdjustTimes):
     """
     :doc: disp_layer
+    :args: (layer, *, clipping=True, **properties)
 
     This allows a layer to be shown as a displayable on another layer.
     Intended for use with detached layers.
@@ -2431,6 +2501,9 @@ class Layer(AdjustTimes):
     `clipping`
         If False, the layer's contents may exceed its bounds, otherwise
         anything exceeding the bounds will be trimmed.
+
+        An entry in config.layer_clipping will cause this option to be
+        ignored, and clipping to occur as specified by that config.
     """
 
     # Used to store layer_transitions when processing this layer.

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -349,7 +349,7 @@ init -1500 python:
             while config.nvl_list_length and (len(nvl_list) + 1 > config.nvl_list_length):
                 nvl_list.pop(0)
 
-        def do_display(self, who, what, multiple=None, **display_args):
+        def do_display(self, who, what, multiple=None, retain=None, **display_args):
 
             renpy.translation.check_language()
 

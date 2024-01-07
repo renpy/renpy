@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -73,6 +73,7 @@ init -1500 python:
     class SelectedIf(Action, DictEquality):
         """
         :doc: other_action
+        :args: (action, /)
 
         This indicates that one action in a list of actions should be used
         to determine if a button is selected. This only makes sense
@@ -106,6 +107,7 @@ init -1500 python:
     class SensitiveIf(Action, DictEquality):
         """
         :doc: other_action
+        :args: (action, /)
 
         This indicates that one action in a list of actions should be used
         to determine if a button is sensitive. This only makes sense
@@ -476,7 +478,8 @@ init -1500 python:
         :doc: other_action
 
         Move the mouse pointer to `x`, `y`. If the device does not have a mouse
-        pointer or if the :var:`"automatic move" preference <preferences.mouse_move>`
+        pointer, if it is not possible for Ren'Py to move that pointer,
+        or if the :var:`"automatic move" preference <preferences.mouse_move>`
         is False, this does nothing.
 
         `duration`
@@ -607,7 +610,7 @@ init -1500 python:
         The sensitivity and selectedness of this action match those
         of the `yes` action.
 
-        See :func:`layout.yesno_screen` for a function version of this action.
+        See :func:`renpy.confirm` for a function version of this action.
         """
 
 
@@ -666,12 +669,12 @@ init -1500 python:
             self.amount = amount
             self.delay = delay
 
-        def __call__(self):
+
+        def get_adjustment_and_delta(self):
 
             d = renpy.get_widget(None, self.id)
-
             if d is None:
-                raise Exception("There is no displayable with the id {}.".format(self.id))
+                return None, +1
 
             if self.direction == "increase":
                 delta = +1
@@ -694,14 +697,35 @@ init -1500 python:
             else:
                 raise Exception("Unknown scroll direction: {}".format(self.direction))
 
+            return adjustment, delta
+
+        def get_sensitive(self):
+
+            adjustment, delta = self.get_adjustment_and_delta()
+
+            if adjustment is None:
+                return False
+
+            adjustment.restart_interaction_at_limit = True
+
+            if delta > 0:
+                return adjustment.value < adjustment.range
+            else:
+                return adjustment.value > 0
+
+        def __call__(self):
+
+            adjustment, delta = self.get_adjustment_and_delta()
+
+            if adjustment is None:
+                raise Exception("There is no displayable with the id {}.".format(self.id))
+
             if self.amount == "step":
                 amount = delta * adjustment.step
             elif self.amount == "page":
                 amount = delta * adjustment.page
-            elif isinstance(self.amount, float) and not isinstance(self.amount, absolute):
-                amount = delta * self.amount * adjustment.range
             else:
-                amount = delta * self.amount
+                amount = absolute.compute_raw(delta*self.amount, adjustment.range)
 
             if self.delay == 0.0:
                 adjustment.change(adjustment.value + amount)
@@ -875,6 +899,56 @@ init -1500 python:
             return None
 
         return current.screen_name[0]
+
+    @renpy.pure
+    class CopyToClipboard(Action):
+        """
+        :doc: other_action
+
+        Copies the string `s` to the system clipboard, if possible. This
+        should work on desktop and mobile platforms, but will not work
+        on the web.
+        """
+
+        def __init__(self, s):
+            self.s = s
+
+        def __call__(self):
+            import pygame.scrap
+            pygame.scrap.put(pygame.SCRAP_TEXT, self.s.encode("utf-8"))
+
+    @renpy.pure
+    class EditFile(Action):
+        """
+        :doc: other_action
+
+        Requests Ren'Py to open the given file in a text editor, if possible.
+        This will work on some platforms but not others.
+
+        `filename`
+            If given, the filename to open. If None, the current filename
+            and line number are used, with `line` being ignored.
+
+        `line`
+            The line number to open the file at.
+        """
+
+        def __init__(self, filename=None, line=1):
+            self.filename = filename
+            self.line = line
+
+        def __call__(self):
+
+            filename = self.filename
+            line = self.line
+
+            if filename is None:
+                filename, line = renpy.get_filename_line()
+
+            try:
+                renpy.launch_editor([ filename ], line)
+            except Exception:
+                pass
 
 init -1500:
 

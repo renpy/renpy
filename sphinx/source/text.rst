@@ -84,24 +84,24 @@ displayed. For example, if the player's name is stored in the
 
     g "Welcome to the Nekomimi Institute, [playername]!"
 
-Ren'Py will interpolate variables found in the global store. When
-using a text widget in a screen, Ren'Py will also interpolate screen
-local variables. (This can be overridden by supplying an explicit
-scope argument to the Text displayable.)
+Ren'Py will search for variables in the following order:
+
+* When used in a screen, screen-local variables.
+* Variables found in the ``interpolate`` namespace.
+* Variables found in the global namespace.
 
 Ren'Py isn't limited to interpolating simple variables. It can also
-interpolate fields and components of tuples. So it's possible to have::
+interpolate any valid Python expression. So it's possible to have::
 
     g "My first name is [player.names[0]]."
 
 It's possible to apply formatting when displaying numbers. This
 will display a floating point number to two decimal places::
 
-    $ percent = 100.0 * points / max_points
-    g "I like you [percent:.2] percent!"
+    g "I like you [100.0 * points / max_points:.2] percent!"
 
-Ren'Py's string interpolation is taken from the :pep:`3101` string
-formatting syntax. Ren'Py uses [ to introduce string formatting
+Ren'Py's string formatting is taken from the :pep:`3101` string
+formatting syntax. Ren'Py uses [ to introduce string interpolation
 because { was taken by text tags.
 
 Along with the ``!s`` and ``!r`` conversion flags supported by Python, Ren'Py
@@ -419,19 +419,43 @@ Dialogue Text Tags
 
 Text tags that only apply to dialogue are:
 
-.. text-tag:: done
+.. text-tag:: w
 
-    Text after the done tag is not displayed. Why would you want this?
-    It's to allow text to avoid jumping around when :propref:`adjust_spacing`
-    is True.
+    The wait tag is a self-closing tag that waits for the user to
+    click to continue. If it is given an argument, the argument is
+    interpreted as a number, and the wait automatically ends after
+    that many seconds have passed. ::
 
-    When the done tag is present, the line of dialogue is not added to the
-    history buffer. If the nw tag is present, it should be before the done
-    tag.::
+        "Line 1{w} Line 1{w=1.0} Line 1"
 
-        g "Looks like they're{nw}{done} playing with their trebuchet again."
+.. text-tag:: p
+
+    The paragraph pause tag is a self-closing tag that terminates the
+    current paragraph, and waits for the user to click to continue. If
+    it is given an argument, the argument is interpreted as a number,
+    and the wait automatically ends after that many seconds have
+    passed. ::
+
+        "Line 1{p}Line 2{p=1.0}Line 3"
+
+.. text-tag:: nw
+
+    The no-wait tag is a self-closing tag that causes the current line
+    of dialogue to automatically dismiss itself once the end of line
+    has been displayed. ::
+
+        g "Looks like they're{nw}"
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
+
+    If it is given an argument, the argument is interpreted as a number,
+    and the wait automatically ends after that many seconds have passed. ::
+
+        g "I'm gonna fall in a few seconds!{nw=2}"
+        show g_gone
+
+    The no-wait tag will wait for self-voicing to complete before
+    advancing.
 
 .. text-tag:: fast
 
@@ -446,38 +470,19 @@ Text tags that only apply to dialogue are:
     If present, the {fast} tag will cause voice to be sustained from
     the previous line.
 
-.. text-tag:: nw
+.. text-tag:: done
 
-    The no-wait tag is a self-closing tag that causes the current line
-    of dialogue to automatically dismiss itself once the end of line
-    has been displayed. ::
+    Text after the done tag is not displayed. Why would you want this?
+    It's to allow text to avoid jumping around when :propref:`adjust_spacing`
+    is True.
 
-        g "Looks like they're{nw}"
+    When the done tag is present, the line of dialogue is not added to the
+    history buffer. If the nw tag is present, it should be before the done
+    tag.::
+
+        g "Looks like they're{nw}{done} playing with their trebuchet again."
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
-
-    The no-wait tag will wait for self-voicing to complete before
-    advancing.
-
-.. text-tag:: p
-
-    The paragraph pause tag is a self-closing tag that terminates the
-    current paragraph, and waits for the user to click to continue. If
-    it is given an argument, the argument is interpreted as a number,
-    and the wait automatically ends after that many seconds have
-    passed. ::
-
-        "Line 1{p}Line 2{p=1.0}Line 3"
-
-.. text-tag:: w
-
-    The wait tag is a self-closing tag that waits for the user to
-    click to continue. If it is given an argument, the argument is
-    interpreted as a number, and the wait automatically ends after
-    that many seconds have passed. ::
-
-        "Line 1{w} Line 1{w=1.0} Line 1"
-
 
 .. text-tag:: clear
 
@@ -598,8 +603,8 @@ steps required for your game to support ruby text.
 First, you must set up styles for the ruby text. The following style
 changes are required:
 
-1. The :propref:`line_leading` property must be used to leave enough
-   vertical space for the ruby text.
+1. One of the :propref:`line_leading` or :propref:`ruby_line_leading` properties
+   must be used to leave enough vertical space for the ruby text.
 2. A new named style must be created. The properties of this style,
    such as :propref:`size` should be set in a fashion appropriate
    for ruby text.
@@ -616,11 +621,11 @@ For example::
         yoffset -20
 
     style say_dialogue:
-        line_leading 12
+        ruby_line_leading 12
         ruby_style style.ruby_style
 
     style history_text:
-        line_leading 12
+        ruby_line_leading 12
         ruby_style style.ruby_style
 
 (Use ``style.style_name`` to refer to a style for this purpose.)
@@ -817,3 +822,64 @@ necessary.
 
 Whenever text is displayed that overflows the available area, Ren'Py
 will log an error to the text_overflow.txt file.
+
+.. _variable-fonts:
+
+Variable Fonts
+==============
+
+Ren'Py has support for OpenType variable fonts. These fonts may support
+multiple axes, such as weight and width, and based on the value of these
+axes, the display of the font can change. Variable fonts may also have
+named instances, which provide different values for the axes. For example,
+the "bold" named instance will likely provide the bold version of a  font,
+while "regular" will be a more normal version.
+
+Variable fonts require the use of the harfbuzz text shaper, controlled by
+the :propref:`shaper` style property. Once this is set, the :propref:`instance`
+property selects a named instance, while the :propref:`axis` property sets
+the value of one or more axes.
+
+These can also be set in the gui system. For example one can use::
+
+    define gui.text_font = "nunito.ttf"
+    define gui.text_instance = "light"
+    define gui.text_axis = {"width" : 125}
+
+Will start with the light instance, and make it wide.
+
+If no instance is given, Ren'Py will default to "regular" for non-bold text,
+and "bold" for bold text.
+
+There are two text tags that support the use of variable fonts.
+
+.. text-tag:: instance
+
+    The instance tag changes the instance that is being used. For example::
+
+        "This is {instance=heavy}heavy{/instance} text."
+
+    When the instance tag is used, the axis properties are overriden.
+
+.. text-tag:: axis
+
+    The axis tag changes the value of one or more axes. For example::
+
+        "This is {axis:width=125}wide{/axis} text."
+
+    The axis tag can be used multiple times, and the values will be combined.
+
+        "This is {axis:width=125}{axis:weight=200}wide and bold{/axis}{/axis} text."
+
+    The value of on the right side of the equals is expected to be a floating
+    point number.
+
+To get the available instances and axes of a font, use the :func:`renpy.variable_font_info`
+function. This function is intended to be called from the console. To access it, hit
+shift+O to open the console, and then type::
+
+    renpy.variable_font_info("nunito.ttf")
+
+This will display information for the nunito.ttf font.
+
+.. include:: inc/variable_fonts

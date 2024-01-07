@@ -176,7 +176,7 @@ class, we'll present them with the `self` parameter.
         of the interaction. If the event method returns None, the event
         is passed on to other displayables.
 
-        To ignore the event without returning None, raise :class:`renpy.IgnoreEvent`.
+        To ignore the event without returning None, raise :exc:`renpy.IgnoreEvent`.
 
         The event method exists on other displayables, allowing the
         creator-defined displayable to pass on the event.

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,12 +32,12 @@ import renpy
 ################################################################################
 
 STRING_RE = r"""(?x)
-\b_[_p]?\s*\(\s*[uU]?(
+\b_[_p]?\s*(\((?:[\s\\\n]*[uU]?(?:
 \"\"\"(?:\\.|\\\n|\"{1,2}|[^\\"])*?\"\"\"
 |'''(?:\\.|\\\n|\'{1,2}|[^\\'])*?'''
 |"(?:\\.|\\\n|[^\\"])*"
 |'(?:\\.|\\\n|[^\\'])*'
-)\s*\)
+))+\s*\))
 """
 
 REGULAR_PRIORITIES = [
@@ -136,7 +136,6 @@ def scan_strings(filename):
 
             if s is not None:
                 s = s.strip()
-                s = "u" + s
                 s = eval(s)
 
                 if m.group(0).startswith("_p"):

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -137,7 +137,7 @@ Preference("self_voicing_volume_drop", 0.5)
 Preference("emphasize_audio", False)
 
 # Is the gamepad enabled?
-Preference("pad_enabled", True)
+Preference("pad_enabled", True, (bool, str))
 
 # The side of the screen used for rollback. ("left", "right", or "disable")
 Preference("mobile_rollback_side", "disable")
@@ -185,11 +185,20 @@ Preference("voice_after_game_menu", False)
 # Should the game be maximized?
 Preference("maximized", False)
 
+# The position of the window.
+Preference("window_position", None, (tuple, type(None)))
+
+# The virtual desktop layout that the window position was valid for.
+Preference("window_position_layout", None, (tuple, type(None)))
+
+# Should the window position be restored?
+Preference("restore_window_position", True)
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = len(all_preferences) + 2
+    __version__ = len(all_preferences) + 3
 
     # Default values, for typing purposes.
     if 1 == 0:
@@ -236,6 +245,9 @@ class Preferences(renpy.object.Object):
         web_cache_preload = False
         voice_after_game_menu = False
         maximized = False
+        window_position = (0, 0)
+        window_position_layout = ( (0, 0, 1920, 1080), )
+        restore_window_position = True
 
     def init(self):
         """
@@ -245,6 +257,14 @@ class Preferences(renpy.object.Object):
         for p in all_preferences:
             if not hasattr(self, p.name):
                 setattr(self, p.name, copy.copy(p.default))
+
+    def reset(self):
+        """
+        Resets the preferences to their default values.
+        """
+
+        for p in all_preferences:
+            setattr(self, p.name, copy.copy(p.default))
 
     def check(self):
         """

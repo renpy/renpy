@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -304,24 +304,6 @@ init -1700 python:
 
 
     ##########################################################################
-    # Constant stores.
-    #
-    # Set _constant on many default stores.
-
-    _errorhandling._constant = True
-    _gamepad._constant = True
-    _renpysteam._constant = True
-    _warper._constant = True
-    audio._constant = True
-    achievement._constant = True
-    build._constant = True
-    director._constant = True
-    iap._constant = True
-    layeredimage._constant = True
-    updater._constant = True
-
-
-    ##########################################################################
     # Misc.
 
     # Should we display tiles in places of transparency while in developer
@@ -336,6 +318,10 @@ init -1700 python:
 
 
 init -1000 python:
+
+    # Not used, may be in old save files.
+    config.missing_background = "black"
+
     # Set developer to the auto default.
     config.original_developer = "auto"
 

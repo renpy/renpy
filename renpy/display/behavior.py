@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -206,10 +206,26 @@ def compile_event(key, keydown):
 event_cache = { }
 keyup_cache = { }
 
+def init_keymap():
+    """
+    Initializes the keymap cache. This is called by the display module.
+    """
+
+    for binding_list in renpy.config.pad_bindings.values():
+        for binding in binding_list:
+            renpy.config.keymap.setdefault(binding, [ ])
+
+    for keysym in renpy.config.keymap:
+        check_code = eval("lambda ev : " + compile_event(keysym, True), globals())
+        event_cache[keysym] = check_code
+
+        check_code = eval("lambda ev : " + compile_event(keysym, False), globals())
+        keyup_cache[keysym] = check_code
+
 
 def clear_keymap_cache():
     """
-    :doc: keymap
+    :undocumented:
 
     Clears the keymap cache. This allows changes to :var:`config.keymap` to
     take effect without restarting Ren'Py.
@@ -519,6 +535,10 @@ class Keymap(renpy.display.layout.Null):
 
     def event(self, ev, x, y, st):
 
+        # This field is created by Button.
+        if getattr(ev, "_suppressed", False):
+            return
+
         for name, action in self.keymap.items():
 
             if map_event(ev, name):
@@ -799,7 +819,7 @@ class SayBehavior(renpy.display.layout.Null):
         return None
 
 
-class DismissBehavior(renpy.display.core.Displayable):
+class DismissBehavior(renpy.display.displayable.Displayable):
     """
     This is used to implement the dismiss screen language statement.
     """
@@ -1088,9 +1108,21 @@ class Button(renpy.display.layout.Window):
         # If we have a child, try passing the event to it. (For keyboard
         # events, this only happens if we're focused.)
         if (not (ev.type in KEY_EVENTS)) or self.style.key_events:
-            rv = super(Button, self).event(ev, x, y, st)
-            if rv is not None:
-                return rv
+                rv = super(Button, self).event(ev, x, y, st)
+                if rv is not None:
+                    return rv
+        else:
+
+            # Used to prevent keymaps (the key statement) from reacting to
+            # this event. This is consumed by Keymap.
+            try:
+                ev._suppressed = True
+
+                rv = super(Button, self).event(ev, x, y, st)
+                if rv is not None:
+                    return rv
+            finally:
+                ev._suppressed = False
 
         if (self.keysym is not None) and (self.clicked is not None):
             if map_event(ev, self.keysym):
@@ -1156,7 +1188,7 @@ class Button(renpy.display.layout.Window):
     def _tts_all(self):
         rv = self._tts_common(alt(self.action))
 
-        if self.is_selected():
+        if self.is_selected() and (self.style.alt == self.style._hover_alt()):
             rv += " " + renpy.minstore.__("selected")
 
         return rv
@@ -1313,7 +1345,7 @@ def input_post_per_interact():
             i.caret_pos = len(content)
 
 
-class CaretBlink(renpy.display.core.Displayable):
+class CaretBlink(renpy.display.displayable.Displayable):
     """
     A displayable that renders the caret.
     """
@@ -1403,6 +1435,12 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             self.value = value
             changed = value.set_text
             default = value.get_text()
+
+        if default is None:
+            if value is not None:
+                raise Exception("The data accessed by an InputValue must not be None.")
+            else:
+                raise Exception("The default value of an input must not be None.")
 
         self.default = str(default)
         self.content = self.default
@@ -1826,6 +1864,12 @@ class Adjustment(renpy.object.Object):
     # The warper applied to the animation.
     animation_warper = None # type (float) -> float|None
 
+    # This causes the interaction to restart when the adjustment hits a limit
+    # it hadn't reach before. It's intended for use by the Scroll action, which
+    # will set this to true for adjustments it may change.
+    restart_interaction_at_limit = False
+
+
     def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
         """
         The following parameters correspond to fields or properties on
@@ -1886,7 +1930,7 @@ class Adjustment(renpy.object.Object):
 
             Changes the value of the adjustment to `value`, updating
             any bars and viewports that use the adjustment.
-         """
+        """
 
         super(Adjustment, self).__init__()
 
@@ -1902,6 +1946,19 @@ class Adjustment(renpy.object.Object):
         self.adjustable = adjustable
         self.ranged = ranged
         self.force_step = force_step
+
+    def viewport_replaces(self, replaces): # type: (Adjustment) -> None
+        if replaces is self:
+            return
+
+        self.range = replaces.range
+        self.value = replaces.value
+
+        self.animation_amplitude = replaces.animation_amplitude
+        self.animation_target = replaces.animation_target
+        self.animation_start = replaces.animation_start
+        self.animation_delay = replaces.animation_delay
+        self.animation_warper = replaces.animation_warper
 
     def round_value(self, value, release):
         # Prevent deadlock border points
@@ -1984,6 +2041,17 @@ class Adjustment(renpy.object.Object):
             value = self._range
 
         if value != self._value:
+
+            if self.restart_interaction_at_limit:
+                value_0 = value == 0
+                _value_0 = self._value == 0
+
+                value_range = value == self._range
+                _value_range = self._value == self._range
+
+                if value_0 != _value_0 or value_range != _value_range:
+                    renpy.exports.restart_interaction()
+
             self._value = value
             for d in adj_registered.setdefault(self, [ ]):
                 renpy.display.render.redraw(d, 0)
@@ -2002,6 +2070,11 @@ class Adjustment(renpy.object.Object):
             renpy.display.render.invalidate(d)
 
     def inertia_warper(self, done):
+        if done < 0.0:
+            done = 0.0
+        elif done > 1.0:
+            done = 1.0
+
         return 1.0 - math.exp(-done * 6)
 
     def animate(self, amplitude, delay, warper):
@@ -2062,7 +2135,7 @@ class Adjustment(renpy.object.Object):
             return 0
 
 
-class Bar(renpy.display.core.Displayable):
+class Bar(renpy.display.displayable.Displayable):
     """
     Implements a bar that can display an integer value, and respond
     to clicks on that value.
@@ -2114,7 +2187,9 @@ class Bar(renpy.display.core.Displayable):
 
                 self.value = value
                 adjustment = value.get_adjustment()
-                renpy.game.interface.timeout(0)
+
+                if renpy.game.interface is not None:
+                    renpy.game.interface.timeout(0)
 
                 tooltip = value.get_tooltip()
                 if tooltip is not None:
@@ -2582,7 +2657,7 @@ class Timer(renpy.display.layout.Null):
         return run(self.function, *self.args, **self.kwargs)
 
 
-class MouseArea(renpy.display.core.Displayable):
+class MouseArea(renpy.display.displayable.Displayable):
 
     # The offset between st and at.
     at_st_offset = 0
@@ -2644,7 +2719,7 @@ class MouseArea(renpy.display.core.Displayable):
             run(self.unhovered)
 
 
-class OnEvent(renpy.display.core.Displayable):
+class OnEvent(renpy.display.displayable.Displayable):
     """
     This is a displayable that runs an action in response to a transform
     event. It's used to implement the screen language on statement.
@@ -2677,6 +2752,7 @@ class OnEvent(renpy.display.core.Displayable):
             return False
 
     def set_transform_event(self, event):
+
         if self.is_event(event):
             rv = run(self.action)
 
@@ -2836,7 +2912,7 @@ class AreaPicker(renpy.display.layout.Container):
 
 
 
-class WebInput(renpy.display.core.Displayable):
+class WebInput(renpy.display.displayable.Displayable):
     """
     A displayable meant to pull input from an input tag in the web browser.
     """

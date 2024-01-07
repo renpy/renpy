@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -228,11 +228,11 @@ init python:
                 return f_rule
         return False
 
-    def generate_pwa_icons(p, destination):
+    def generate_web_icons(p, destination):
         """
-        Checks if the pwa_icon.png file exists in the game folder and generates
+        Checks if the web-icon.png file exists in the game folder and generates
         required icons for PWA in subdirectory icons/ in the destination folder.
-        If no pwa_icon.png is found, the default Ren'Py icon is used instead in
+        If no web-icon.png is found, the default Ren'Py icon is used instead in
         the web folder, if exists.
         """
         # Check if there's a custom icon in the game directory
@@ -430,7 +430,7 @@ init python:
 
         # Copy the files from WEB_PATH to destination.
         for fn in os.listdir(WEB_PATH):
-            if fn in { "game.zip", "hash.txt", "index.html", "pwa_icon.png" }:
+            if fn in { "game.zip", "hash.txt", "index.html", "web-icon.png" }:
                 continue
 
             shutil.copy(os.path.join(WEB_PATH, fn), os.path.join(destination, fn))
@@ -466,7 +466,7 @@ init python:
             f.write(html)
 
         if not PY2:
-            generate_pwa_icons(p, destination)
+            generate_web_icons(p, destination)
             prepare_pwa_files(p, destination)
 
         # Zip up the game.

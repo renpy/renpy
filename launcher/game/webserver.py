@@ -265,7 +265,9 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
 
 
 def run():
-    server = http.server.HTTPServer(("127.0.0.1", 8042), WebHandler)
+    bind_address = os.environ.get("RENPY_WEBSERVER_BIND_ADDRESS", "127.0.0.1")
+
+    server = http.server.HTTPServer((bind_address, 8042), WebHandler)
     server.serve_forever()
 
 

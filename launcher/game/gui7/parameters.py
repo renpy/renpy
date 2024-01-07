@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -61,7 +61,11 @@ class GuiParameters(object):
             self.muted_color = self.accent_color.shade(.4)
             self.hover_muted_color = self.accent_color.shade(.6)
 
-        self.menu_color = self.accent_color.replace_hsv_saturation(.25).replace_value(.5)
+        if light:
+            self.menu_color = self.accent_color.replace_hsv_saturation(.25).replace_value(.75)
+        else:
+            self.menu_color = self.accent_color.replace_hsv_saturation(.25).replace_value(.25)
+
         self.title_color = self.accent_color.replace_hsv_saturation(.5).replace_value(1.0)
 
         if light:

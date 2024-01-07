@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -355,8 +355,8 @@ style l_left_button_text is l_right_button_text
 style l_root is l_default:
     background BACKGROUND
     xpadding 10
-    top_padding 64
-    bottom_padding 128
+    top_padding 32
+    bottom_padding 120
 
 # An inner window.
 style l_window is l_default:

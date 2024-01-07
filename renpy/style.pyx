@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -569,6 +569,13 @@ cdef class StyleCore:
                 v = self._get_unoffset(i + j)
                 if v is not None:
                     pd(v)
+
+    def _hover_alt(self):
+        """
+        Returns the value of the alt property in the hover state. Use by button TTS.
+        """
+
+        return self._get_unoffset(HOVER_PREFIX + ALT_INDEX)
 
     def inspect(StyleCore self):
         """

@@ -117,14 +117,23 @@ how things could look below:
     .. figure:: presplash/presplash_background_2.png
         :width: 100%
 
-        An slightly more elaborate example of how the progress bar background
+        A slightly more elaborate example of how the progress bar background
         could look.
 
     .. figure:: presplash/presplash_foreground_2.png
         :width: 100%
 
-        An slightly more elaborate example of how the progress bar foreground
+        A slightly more elaborate example of how the progress bar foreground
         could look.
+
+Transparent Presplash
+---------------------
+
+If the top-left pixel of the presplash background image is transparent, the
+presplash window will be transparent as well. 1-bit transparency is used,
+with pixels with 0 alpha being transparent, and all other pixels being
+opaque.
+
 
 Mobile and Web Presplash Screens
 --------------------------------

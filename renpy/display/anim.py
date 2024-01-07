@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -55,7 +55,7 @@ class State(object):
         Position object, that modifies the position of the image.
         """
 
-        if image and not isinstance(image, renpy.display.core.Displayable):
+        if image and not isinstance(image, renpy.display.displayable.Displayable):
             image = renpy.easy.displayable(image)
 
         self.name = name
@@ -125,7 +125,7 @@ class Edge(object):
             sma.edges.setdefault(self.old, []).append(self)
 
 
-class SMAnimation(renpy.display.core.Displayable):
+class SMAnimation(renpy.display.displayable.Displayable):
     """
     This creates a state-machine animation. Such an animation is
     created by randomly traversing the edges between states in a
@@ -308,7 +308,7 @@ class SMAnimation(renpy.display.core.Displayable):
         for edges in self.edges.values():
             args.extend(edges)
 
-        return SMAnimation(self.initial, delay=self.delay, *args, **self.properties)
+        return SMAnimation(self.initial, *args, delay=self.delay, **self.properties)
 
 
 def Animation(*args, **kwargs):
@@ -322,7 +322,7 @@ def Animation(*args, **kwargs):
     return TransitionAnimation(*newargs, **kwargs)
 
 
-class TransitionAnimation(renpy.display.core.Displayable):
+class TransitionAnimation(renpy.display.displayable.Displayable):
     """
     A displayable that draws an animation with each frame separated
     by a transition.
@@ -409,7 +409,7 @@ class TransitionAnimation(renpy.display.core.Displayable):
         return self.images
 
 
-class Blink(renpy.display.core.Displayable):
+class Blink(renpy.display.displayable.Displayable):
 
     def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5, # @ReservedAssignment
                  high=1.0, low=0.0, offset=0.0, anim_timebase=False, **properties):

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -47,6 +47,9 @@ touch = False
 # The pygame.display.Info object, which we want to survive a reload.
 info = None
 
+# True if the platform can go fullscreen. (Right now, this is true for
+# all platforms.)
+can_fullscreen = True
 
 def get_info():
     global info
@@ -57,7 +60,6 @@ def get_info():
         info = pygame.display.Info()
 
     return info
-
 
 # Logs we use.
 log = renpy.log.open("log", developer=False, append=False)
@@ -72,6 +74,7 @@ if 1 == 0:
     from . import behavior
     from . import controller
     from . import core
+    from . import displayable
     from . import dragdrop
     from . import emulator
     from . import error
@@ -93,8 +96,10 @@ if 1 == 0:
     from . import pgrender
     from . import predict
     from . import presplash
+    from . import quaternion
     from . import render
     from . import scale
+    from . import scenelists
     from . import screen
     from . import swdraw
     from . import transform

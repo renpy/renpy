@@ -1,6 +1,8 @@
 ﻿init offset = -100
 
 python early in layeredimage:
+    # Do not participate in saves.
+    _constant = True
 
     from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
     from collections import OrderedDict, defaultdict
@@ -15,7 +17,7 @@ python early in layeredimage:
     FIXED_PROPERTIES = renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names
 
     # This is the default value for predict_all given to conditions.
-    predict_all = False
+    predict_all = None
 
     def format_function(what, name, group, variant, attribute, image, image_format, **kwargs):
         """
@@ -423,7 +425,7 @@ python early in layeredimage:
             args.append(None)
             args.append(Null())
 
-            return ConditionSwitch(predict_all=predict_all, *args)
+            return ConditionSwitch(*args, predict_all=predict_all)
 
     class RawConditionGroup(object):
 
@@ -883,6 +885,11 @@ python early in layeredimage:
         ll = l.subblock_lexer()
 
         while ll.advance():
+            if ll.keyword("pass"):
+                ll.expect_eol()
+                ll.expect_noblock("pass")
+                continue
+
             line(ll)
             ll.expect_eol()
             ll.expect_noblock('attribute')
@@ -917,18 +924,23 @@ python early in layeredimage:
 
         if not l.match(':'):
             l.expect_eol()
-            l.expect_noblock('attribute')
+            l.expect_noblock('always')
             return
 
-        l.expect_block('attribute')
+        l.expect_block('always')
         l.expect_eol()
 
         ll = l.subblock_lexer()
 
         while ll.advance():
+            if ll.keyword("pass"):
+                ll.expect_eol()
+                ll.expect_noblock("pass")
+                continue
+
             line(ll)
             ll.expect_eol()
-            ll.expect_noblock('attribute')
+            ll.expect_noblock('always')
 
         if a.image is None:
             l.error("The always statement must have a displayable.")
@@ -954,6 +966,11 @@ python early in layeredimage:
             ll = l.subblock_lexer()
 
             while ll.advance():
+                if ll.keyword("pass"):
+                    ll.expect_eol()
+                    ll.expect_noblock("pass")
+                    continue
+
                 if ll.keyword("attribute"):
                     parse_attribute(ll, rv)
                     continue
@@ -987,7 +1004,12 @@ python early in layeredimage:
         rv = RawCondition(condition)
 
         while ll.advance():
-
+            # not necessary : the if/elif/else blocks require a displayable,
+            # so they can't be empty in the first place anyway
+            # if ll.keyword("pass"):
+            #     ll.expect_eol()
+            #     ll.expect_noblock("pass")
+            #     continue
 
             while True:
 
@@ -1076,6 +1098,11 @@ python early in layeredimage:
 
             elif ll.keyword('always'):
                 parse_always(ll, rv)
+                ll.advance()
+
+            elif ll.keyword("pass"):
+                ll.expect_noblock("pass")
+                ll.expect_eol()
                 ll.advance()
 
             else:

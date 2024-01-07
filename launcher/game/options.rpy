@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -242,9 +242,11 @@ init python:
     # allows the updater to run.
     build.include_update = True
 
+    # Build both kinds of updates.
+    build.update_formats = [ "zsync", "rpu" ]
+
     # Allow empty directories, so we can distribute the images directory.
     build.exclude_empty_directories = False
-
 
     # Mac signing options.
     import os

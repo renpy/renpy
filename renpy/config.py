@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -683,6 +683,9 @@ quit_on_mobile_background = False
 # Should Ren'Py pass the raw joystick (not controller) events.?
 pass_joystick_events = False
 
+# Should Ren'Py pass the controller events?
+pass_controller_events = False
+
 # A list of screens that should be shown when the overlay is enabled.
 overlay_screens = [ ]
 
@@ -891,7 +894,7 @@ profile_time = 1.0 / 50.0
 # What event do we check to see if the profile needs to be printed?
 profile_to_event = "flip"
 
-# Should we instantly zap transient displayables, or properly hide them?
+# Should unhandled events be ignored?
 fast_unhandled_event = True
 
 # Should a fast path be used when displaying empty windows.
@@ -1210,7 +1213,7 @@ raise_image_exceptions = True
 relative_transform_size = True
 
 # Should tts of layers be from front to back?
-tts_front_to_back = False
+tts_front_to_back = True
 
 # Should live2d loading be logged to log.txt
 log_live2d_loading = False
@@ -1394,6 +1397,51 @@ linear_fades = False
 
 # Classes that used to participate in rollback, but no longer do.
 ex_rollback_classes = [ ]
+
+# Should we revert to the old behavior of box_reverse?
+simple_box_reverse = False
+
+# If True, positional-only parameters are allowed in ATL transform signatures.
+atl_pos_only = False
+
+# A map from font name to the hinting for the font.
+font_hinting = { None : "auto" }
+
+# Should ATL interpolation handle mixed position types,
+# at the cost of returning instances of the position type ?
+mixed_position = True
+
+# Should text interpolations be treated as Python expressions?
+interpolate_exprs = True
+
+# Should we execute costly tasks which are
+# avoidable when not generating the documentation ?
+generating_documentation = False
+
+# Is the user allowed to save, or to see the existing save files?
+save = True
+
+# Should the persistent file be updated?
+save_persistent = True
+
+# Should new drags be added to the top of a drag group.
+drag_group_add_top = True
+
+# Should loading of tl scripts be deferred?
+defer_tl_scripts = False
+
+# Should transitions take placement from child displayables?
+transitions_use_child_placement = True
+
+# Should containers pass transform events to their children?
+containers_pass_transform_events = True
+
+# Should the say screens be given the replace event for the second and
+# later pauses?
+say_replace_event = True
+
+# Will screens never cancel hide and replace events?
+screens_never_cancel_hide = True
 
 del os
 del collections

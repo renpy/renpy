@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,6 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1500 python in iap:
+    # Do not participate in saves.
+    _constant = True
 
     from store import persistent, Action
     import time
@@ -111,6 +113,13 @@ init -1500 python in iap:
 
             return
 
+        def request_review(self):
+            """
+            Called to request that the user review the application.
+            """
+
+            return False
+
     class AndroidBackend(object):
         """
         The IAP backend that is used when IAP is supported.
@@ -180,6 +189,9 @@ init -1500 python in iap:
         def get_price(self, p):
             identifier = self.identifier(p)
             return self.store.getPrice(identifier)
+
+        def request_review(self):
+            return self.store.requestReview()
 
         def init(self):
             restore(False)
@@ -292,6 +304,10 @@ init -1500 python in iap:
                     rv = rv.decode("utf-8")
 
             return rv
+
+        def request_review(self):
+            self.helper.requestReview()
+            return True
 
         def init(self):
             self.helper.validateProductIdentifiersInBackground()
@@ -540,6 +556,21 @@ init -1500 python in iap:
         """
 
         return backend.get_store_name()
+
+    def request_review():
+        """
+        :doc: iap
+
+        When called, the app store is asked to request a review from the user.
+        This returns true if the request was successful, and false if the
+        request was not. Note that a successful request does not mean that
+        the user will be asked to review the app, as app stores determine
+        if the user is actually asked.
+
+        This is supported on Google Play and the Apple App Store, only.
+        """
+
+        return backend.request_review()
 
     def missing_products():
         """

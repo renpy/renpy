@@ -27,12 +27,182 @@ report any issues. When reporting issues, please determine the hardware
 (device and GPU), os and driver versions, and year of manufacture.
 
 
+.. _incompatible-8.2.0:
+.. _incompatible-7.7.0:
+
+8.2.0 / 7.7.0
+-------------
+
+**Stringified annotations and the aborted future of PEP 563** Since Ren'Py
+version 8.0.2, Python code in Ren'Py 8 was always compiled using the
+``from __future__ import annotations`` directive, with no possible opt-out
+for creators.
+
+Given that this change will most likely not be implemented by default in future
+versions of Python, we rolled that change back.
+
+In order to keep using the ``annotations`` future for stringified annotations,
+you can add the following line at the top of your files::
+
+    rpy python annotations
+
+
+**Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
+different glyphs than would have been produced differently, and may change
+the spacing of text. The positioning of vertical text has also been
+changed by harfbuzz rendering.
+
+To revert this changes, include in your game::
+
+    style default:
+        shaper "freetype"
+
+Ren'Py will automatically use an Emoji font when required. To disable this,
+add::
+
+    style default:
+        emoji_font None
+
+**Interpolation Changes** Interpolations in strings are now treated as Python
+expressions, this results in mostly equivelent behaviour when interpreting
+fields except when item getters are in use. For example::
+
+    # Previously
+    e "[player[money]]" #=> player['money']
+    # But now
+    e "[player[money]]" #=> player[money]
+
+To revert this behaviour, add the following to your game::
+
+    define config.interpolate_exprs = False
+
+To help other developers work while you're migrating your game to the new
+behavior, there is a fallback mode that will first try the new behavior, and
+then fall back to the old behavior if the new behavior fails. To enable this,
+add the following to your game::
+
+    define config.interpolate_exprs = "fallback"
+
+**Polar Coordinate Changes** Ren'Py now enforces that the angles given to
+the :tpref:`angle` and :tpref:`anchorangle`
+properties are in the range 0 to 360 degrees, inclusive of 0 but not of 360.
+Previously, angles outside this range  gave undefined behavior, now the angles
+will be clamped to this range. A 360 degree change will no longer cause motion,
+but will instead be treated as a 0 degree change.
+
+When animating :tpref:`angle` and :tpref:`anchorangle` with ATL, if a direction
+is not supplied, the shortest arc will be used, even if it passes through 0.
+
+There is not a compatibility define for these changes, as they are unlikely to
+affect the visible behavior of games in practice.
+
+**Empty ATL Blocks Forbidden** Previously, Ren'Py would allow an empty ATL block.
+Now it will report that a block is required. You'll need to change::
+
+    show eileen happy:
+    "..."
+
+to::
+
+    show eileen happy
+    "..."
+
+In the unlikely case that you have an empty ATL block.
+
+**Box Reverse** The :propref:`box_reverse` style property has changed its
+behavior in two ways:
+
+* Space is offered to displayables in the order the displayables are presented in
+  the screen, where previously the space was offered in reverse order when
+  :propref:`box_reverse` was enabled. This can change the sizes of some displayables.
+
+* A hbox that has :propref:`box_wrap` set will wrap from top to
+  bottom, rather than bottom to top. A vbox with :propref:`box_wrap`
+  set will wrap from left to right, rather than right to left.
+
+The goal of these changes is to make the behavior of box_reverse more useful
+for laying out interfaces in right-to-left languages. To revert these changes,
+add to your game::
+
+    define config.simple_box_reverse = True
+
+**build.itch_channels** That variable was always documented as a dict but was
+mistakenly implemented as a list of tuples. It's now truly a dict. If you
+were using list operations on it, you'll need to change your code::
+
+    # formerly
+    $ build.itch_channels.append(("pattern", "channel"))
+    $ build.itch_channels.extend([("pattern", "channel")])
+    define build.itch_channels += [("pattern", "channel")]
+
+    # now
+    $ build.itch_channels["pattern"] = "channel"
+    $ build.itch_channels.update({"pattern": "channel"})
+    define build.itch_channels["pattern"] = "channel"
+    define build.itch_channels |= {"pattern": "channel"}
+
+**New position type** The new :func:`position` type has been added to the list
+of :term:`position` types. As a result, it can be returned by the
+:func:`renpy.get_placement` function at any time, even in cases when it
+previously returned another type or if you don't use the new type anywhere in
+your game.
+
+To prevent this, add to your game::
+
+    define config.mixed_position = False
+
+**Drag Group Add Changes** Adding a displayable to a :class:`DragGroup` now
+adds it above the other displayables in the group, rather than below them.
+
+To change this, add to your game::
+
+    define config.drag_group_add_top = False
+
+**Translate Statements and config.statement_callbacks** Translate statements
+(including internal statements that Ren'Py automatically generates) will no
+longer cause :var:`config.statement_callbacks` to be called.
+
+**Transitions Use Child Placements** If the child of a transitions provides
+placement information, that will be used by the transition itself. This
+only makes sense when the transition is used by an ATL transition, and both
+the old and new children provide the same placement information.
+
+To disable this, add to your game::
+
+    define config.transition_use_child_placement = False
+
+**Containers Pass Transform Events**
+Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
+pass transform events (like hover and idle) to their children, meaning that
+children of a button can have their own transforms to respond to those
+events.
+
+To disable this, add to your game::
+
+    define containers_pass_transform_events = True
+
+**Say Screens Are Supplied the Replace Event.** Say screens are now supplied
+the "replace" (rather than "show") transform event for the second and subsequent pauses.
+
+To disable this, add to your game::
+
+    define config.say_replace_event = False
+
+**Re-showing A Screen No Longer Cancels a Hide Event** Previously, if a screen
+was hidden and re-shown, a hide or replace transform event associated with the same
+screen would be cancelled, and the hiding or replaced screen would instantly
+disappear. Now, the event will be allowed to run to completion.
+
+To disable this, add to your game::
+
+    define config.screens_never_cancel_hide = False
+
+
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
 
 8.1.1 / 7.6.1
 -------------
-
 
 .. _android-key-migration:
 
@@ -51,7 +221,7 @@ this produced an error message like::
 
         SHA1: ...
 
-Whine this can be cause by other problems (like simply using entirely incorrect
+While this can be cause by other problems (like simply using entirely incorrect
 keys), one potential fix is:
 
 1. In your project's base directory, rename ``bundle.keystore`` to ``bundle.keystore.bak``.
@@ -65,6 +235,28 @@ Then rebuild and re-upload your bundle.
 
 8.1.0 / 7.6.0
 -------------
+
+**Conflicting properties** The former default input screen, which may have found
+its way into your game, contains conflicting style properties. The fix for that
+is as follows:
+
+.. code-block:: diff
+
+    +define config.check_conflicting_properties = True
+
+     screen input(prompt):
+         style_prefix "input"
+         window:
+
+             vbox:
+    -            xalign gui.dialogue_text_xalign
+    +            xanchor gui.dialogue_text_xalign
+                 xpos gui.dialogue_xpos
+                 xsize gui.dialogue_width
+                 ypos gui.dialogue_ypos
+                 text prompt style "input_prompt"
+                 input id "input"
+
 
 **Speech Bubbles** Adding bubble support to an existing game requires
 adding files and script to the game. The :doc:`bubble` documentation
@@ -117,6 +309,12 @@ will need to be updated to reflect the new keysyms.
 rather than all files. To look for all files in game/images, use::
 
     define config.search_prefixes += [ "images/" ]
+
+The paths that are searched consider the purpose of the file, rather than the
+type or extensions. So ``renpy.loadable("dlc.jpg")`` won't look for game/images/dlc.jpg.
+If you'd like to find that file, write ``renpy.loadable("images/dlc.jpg")``. If you'd
+like to search for a file that can be in either game/ or game/images, write
+``renpy.loadable("dlc.jpg", "images")``.
 
 
 **Android** Android has been changed so that the ``android.keystore`` file and

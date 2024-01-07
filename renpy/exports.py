@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,6 +28,11 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import gc
 import io
 import re
+import time
+import sys
+import threading
+import fnmatch
+import os
 
 import renpy
 
@@ -67,6 +72,7 @@ from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen
 from renpy.display.screen import has_screen, get_screen, get_displayable, get_widget, ScreenProfile as profile_screen
 from renpy.display.screen import get_displayable_properties, get_widget_properties
+from renpy.display.screen import get_screen_variable, set_screen_variable
 
 from renpy.display.focus import focus_coordinates, capture_focus, clear_capture_focus, get_focus_rect
 from renpy.display.predict import screen as predict_screen
@@ -76,6 +82,8 @@ from renpy.display.image import get_available_image_tags, get_available_image_at
 from renpy.display.image import get_registered_image
 
 from renpy.display.im import load_surface, load_image, load_rgba
+
+from renpy.display.tts import speak as alt, speak_extra_alt
 
 from renpy.curry import curry, partial
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
@@ -107,9 +115,10 @@ from renpy.text.extras import check_text_tags
 
 from renpy.memory import profile_memory, diff_memory, profile_rollback
 
+from renpy.text.font import variable_font_info
 from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH as TEXT_PARAGRAPH, DISPLAYABLE as TEXT_DISPLAYABLE
 
-from renpy.execution import not_infinite_loop
+from renpy.execution import not_infinite_loop, reset_all_contexts
 
 from renpy.sl2.slparser import CustomParser as register_sl_statement, register_sl_displayable
 
@@ -122,6 +131,8 @@ from renpy.lint import try_compile, try_eval
 from renpy.gl2.gl2shadercache import register_shader
 from renpy.gl2.live2d import has_live2d
 
+from renpy.bootstrap import get_alternate_base
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
@@ -133,11 +144,6 @@ renpy_pure("known_languages")
 renpy_pure("check_text_tags")
 renpy_pure("filter_text_tags")
 renpy_pure("split_properties")
-
-import time
-import sys
-import threading
-import fnmatch
 
 
 # The number of bits in the architecture.
@@ -293,7 +299,7 @@ def retain_after_load():
     renpy.game.log.retain_after_load()
 
 
-scene_lists = renpy.display.core.scene_lists
+scene_lists = renpy.display.scenelists.scene_lists
 
 
 def count_displayables_in_layer(layer):
@@ -579,7 +585,7 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
 
     layer = default_layer(layer, key)
 
-    if isinstance(what, renpy.display.core.Displayable):
+    if isinstance(what, renpy.display.displayable.Displayable):
         base = img = what
 
     else:
@@ -714,7 +720,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if tt is not None:
             at_list = renpy.easy.to_list(tt, copy=True)
 
-    if isinstance(what, renpy.display.core.Displayable):
+    if isinstance(what, renpy.display.displayable.Displayable):
 
         if renpy.config.wrap_shown_transforms and isinstance(what, renpy.display.motion.Transform):
             base = img = renpy.display.image.ImageReference(what, style='image_placement')
@@ -733,7 +739,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if not base.find_target() and renpy.config.missing_show:
             result = renpy.config.missing_show(name, what, layer)
 
-            if isinstance(result, renpy.display.core.Displayable):
+            if isinstance(result, renpy.display.displayable.Displayable):
                 base = img = result
             elif result:
                 return
@@ -836,9 +842,6 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
 
     renpy.exports.mode('input')
 
-    # Take the user out of fullscreen during input.
-    renpy.game.preferences.fullscreen = False
-
     prompt = renpy.text.extras.filter_text_tags(prompt, allow=set())
 
     roll_forward = renpy.exports.roll_forward_info()
@@ -849,7 +852,7 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
     if roll_forward is not None:
         default = roll_forward
 
-    wi = renpy.display.behavior.WebInput(prompt, default, length=length, allow=allow, exclude=exclude, mask=mask)
+    wi = renpy.display.behavior.WebInput(substitute(prompt), default, length=length, allow=allow, exclude=exclude, mask=mask)
     renpy.ui.add(wi)
 
     renpy.exports.shown_window()
@@ -1936,6 +1939,7 @@ def reload_script():
     s = get_screen("menu")
 
     session = renpy.session
+    session["_reload"] = True
 
     # If one of these variables is already in session, we're recovering from
     # a failed reload.
@@ -2019,6 +2023,9 @@ def call(label, *args, **kwargs):
     `label` to occur. When the jump returns, control will be passed
     to the statement following the current statement.
 
+    The label must be either of the form "global_name" or "global_name.local_name".
+    The form ".local_name" is not allowed.
+
     `from_current`
         If true, control will return to the current statement, rather than
         the statement following the current statement. (This will lead to
@@ -2052,7 +2059,7 @@ def warp_to_line(warp_spec):
     """
 
     renpy.warp.warp_spec = warp_spec
-    renpy.warp.warp()
+    full_restart()
 
 
 def screenshot(filename):
@@ -2347,7 +2354,6 @@ def log(msg):
     try:
 
         if not logfile:
-            import os
             logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), "a")
 
             if not logfile.tell():
@@ -2383,7 +2389,7 @@ def do_reshow_say(who, what, interact=False, *args, **kwargs):
     if who is not None:
         who = renpy.python.py_eval(who)
 
-    say(who, what, interact=interact, *args, **kwargs)
+    say(who, what, *args, interact=interact, **kwargs)
 
 
 curried_do_reshow_say = curry(do_reshow_say)
@@ -2420,12 +2426,15 @@ def dynamic(*variables, **kwargs):
     variables dynamically scoped to the current call. When the call returns, the
     variables will be reset to the value they had when this function was called.
 
+    Variables in :ref:`named stores <named-stores>` are supported.
+
     If the variables are given as keyword arguments, the value of the argument
     is assigned to the variable name.
 
     Example calls are::
 
         $ renpy.dynamic("x", "y", "z")
+        $ renpy.dynamic("mystore.serial_number")
         $ renpy.dynamic(players=2, score=0)
     """
 
@@ -2440,13 +2449,17 @@ def context_dynamic(*variables):
     """
     :doc: context
 
-    This can be given one or more variable names as arguments. This makes
-    the variables dynamically scoped to the current context. The variables will
-    be reset to their original value when the call returns.
+    This can be given one or more variable names as arguments. This makes the
+    variables dynamically scoped to the current context. When returning to the
+    prior context, the variables will be reset to the value they had when this
+    function was called.
 
-    An example call is::
+    Variables in :ref:`named stores <named-stores>` are supported.
+
+    Example calls are::
 
         $ renpy.context_dynamic("x", "y", "z")
+        $ renpy.context_dynamic("mystore.serial_number")
     """
 
     renpy.game.context().make_dynamic(variables, context=True)
@@ -2752,9 +2765,9 @@ def iconify():
 
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
-curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
+curried_call_in_new_context = curry(call_in_new_context)
 invoke_in_new_context = renpy.game.invoke_in_new_context
-curried_invoke_in_new_context = renpy.curry.curry(renpy.game.invoke_in_new_context)
+curried_invoke_in_new_context = curry(invoke_in_new_context)
 call_replay = renpy.game.call_replay
 
 renpy_pure("curried_call_in_new_context")
@@ -2829,25 +2842,31 @@ def scry():
     future of the current statement. Right now, the scry object has the
     following fields:
 
-    ``nvl_clear``
+    `nvl_clear`
         Is true if an ``nvl clear`` statement will execute before the
         next interaction.
 
-    ``say``
+    `say`
         Is true if an ``say`` statement will execute before the
         next interaction.
 
-    ``menu_with_caption``
+    `menu_with_caption`
         Is true if a ``menu`` statement with a caption will execute
         before the next interaction.
 
-    ``who``
+    `who`
         If a ``say`` or ``menu-with-caption`` statement will execute
         before the next interaction, this is the character object it will use.
 
     The scry object has a next() method, which returns the scry object of
     the statement after the current one, if only one statement will execute
     after the this one. Otherwise, it returns None.
+
+    .. warning::
+
+        Like other similar functions, the object this returns is meant to be used
+        in the short term after the function is called. Including it in save data
+        or making it participate in rollback is not advised.
     """
 
     name = renpy.game.context().current
@@ -2961,6 +2980,60 @@ def load_string(s, filename="<string>"):
         renpy.game.script.analyze()
 
         return stmts[0].name
+
+    finally:
+        renpy.game.exception_info = old_exception_info
+
+
+def load_language(language):
+    """
+    :undocumented:
+
+    (Here because of commonality with load_string and load_module.)
+
+    Load the script files in tl/language, if not loaded. Runs any
+    init code found during the process.
+"""
+
+    if language is None:
+        return
+
+    if not renpy.config.defer_tl_scripts:
+        return
+
+    if language in renpy.game.script.load_languages:
+        return
+
+    old_exception_info = renpy.game.exception_info
+
+    try:
+
+        old_locked = renpy.config.locked
+        renpy.config.locked = False
+
+        renpy.game.script.load_languages.add(language)
+
+        initcode = renpy.game.script.load_script()
+
+        context = renpy.execution.Context(False)
+        context.init_phase = True
+        renpy.game.contexts.append(context)
+
+        for _prio, node in initcode:
+            if isinstance(node, renpy.ast.Node):
+                renpy.game.context().run(node)
+            else:
+                node()
+
+        context.pop_all_dynamic()
+        renpy.game.contexts.pop()
+
+        renpy.config.locked = old_locked
+
+        if not renpy.game.context().init_phase:
+            renpy.game.script.analyze()
+
+        renpy.game.script.update_bytecode()
 
     finally:
         renpy.game.exception_info = old_exception_info
@@ -3142,7 +3215,7 @@ def is_pixel_opaque(d, width, height, st, at, x, y):
     return bool(render(renpy.easy.displayable(d), width, height, st, at).is_pixel_opaque(x, y))
 
 
-class Displayable(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
+class Displayable(renpy.display.displayable.Displayable, renpy.revertable.RevertableObject):
     pass
 
 
@@ -3156,40 +3229,13 @@ def get_roll_forward():
 
 def cache_pin(*args):
     """
-    :undocumented: Cache pin is deprecated.
+    :undocumented: Cache pinning has been removed.
     """
-
-    new_pins = renpy.revertable.RevertableSet()
-
-    for i in args:
-
-        im = renpy.easy.displayable(i)
-
-        if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot pin non-image-manipulator %r" % im)
-
-        new_pins.add(im)
-
-    renpy.store._cache_pin_set = new_pins | renpy.store._cache_pin_set
-
 
 def cache_unpin(*args):
     """
-    :undocumented: Cache pin is deprecated.
+    :undocumented: Cache pinning has been removed
     """
-
-    new_pins = renpy.revertable.RevertableSet()
-
-    for i in args:
-
-        im = renpy.easy.displayable(i)
-
-        if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot unpin non-image-manipulator %r" % im)
-
-        new_pins.add(im)
-
-    renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
 def expand_predict(d):
@@ -3330,7 +3376,7 @@ def call_screen(_screen_name, *args, **kwargs):
     if "_with_none" in kwargs:
         with_none = kwargs.pop("_with_none")
 
-    show_screen(_screen_name, _transient=True, *args, **kwargs)
+    show_screen(_screen_name, *args, _transient=True, **kwargs)
 
     roll_forward = renpy.exports.roll_forward_info()
 
@@ -3500,6 +3546,8 @@ def display_notify(message):
 
     hide_screen('notify')
     show_screen('notify', message=message)
+    renpy.display.tts.notify_text = renpy.text.extras.filter_alt_text(message)
+
     restart_interaction()
 
 
@@ -3901,6 +3949,12 @@ def set_return_stack(stack):
 
     Statement names may be strings (for labels) or opaque tuples (for
     non-label statements).
+
+    The most common use of this is to use::
+
+        renpy.set_return_stack([])
+
+    to clear the return stack.
     """
 
     renpy.game.context().set_return_stack(stack)
@@ -3918,14 +3972,15 @@ def invoke_in_thread(fn, *args, **kwargs):
     stopped when Ren'Py is shutting down.
 
     This thread is very limited in what it can do with the Ren'Py API.
-    Changing store variables is allowed, as is calling the :func:`renpy.queue_event`
-    function. Most other portions of the Ren'Py API are expected to be called from
-    the main thread.
+    Changing store variables is allowed, as are calling calling the following
+    functions:
 
-    The primary use of this function is to place accesss to a web API in a second
-    thread, and then update variables with the results of that call, by storing
-    the result in variables and then relying on the interaction restart to cause
-    screens to display those variables.
+    * :func:`renpy.restart_interaction`
+    * :func:`renpy.invoke_in_main_thread`
+    * :func:`renpy.queue_event`
+
+    Most other portions of the Ren'Py API are expected to be called from
+    the main thread.
 
     This does not work on the web platform, except for immediately returning
     without an error.
@@ -3946,6 +4001,36 @@ def invoke_in_thread(fn, *args, **kwargs):
     t = threading.Thread(target=run)
     t.daemon = True
     t.start()
+
+
+def invoke_in_main_thread(fn, *args, **kwargs):
+    """
+    :doc: other
+
+    This runs the given function with the given arguments in the main
+    thread. The function runs in an interaction context similar to an
+    event handler. This is meant to be called from a separate thread,
+    whose creation is handled by :func:`renpy.invoke_in_thread`.
+
+    If a single thread schedules multiple functions to be invoked, it is guaranteed
+    that they will be run in the order in which they have been scheduled::
+
+        def ran_in_a_thread():
+            renpy.invoke_in_main_thread(a)
+            renpy.invoke_in_main_thread(b)
+
+    In this example, it is guaranteed that ``a`` will return before
+    ``b`` is called. The order of calls made from different threads is not
+    guaranteed.
+
+    This may not be called during the init phase.
+    """
+
+    if renpy.game.context().init_phase:
+        raise Exception("invoke_in_main_thread may not be called during the init phase.")
+
+    renpy.display.interface.invoke_queue.append((fn, args, kwargs))
+    restart_interaction()
 
 
 def cancel_gesture():
@@ -4272,6 +4357,61 @@ def get_say_image_tag():
     return renpy.store._side_image_attributes[0]
 
 
+class LastSay():
+    """
+    :undocumented:
+    Object containing info about the last dialogue line.
+    Returned by the last_say function.
+    """
+
+    def __init__(self, who, what, args, kwargs):
+        self._who = who
+        self.what = what
+        self.args = args
+        self.kwargs = kwargs
+
+    @property
+    def who(self):
+        return eval_who(self._who)
+
+def last_say():
+    """
+    :doc: other
+
+    Returns an object containing information about the last say statement.
+
+    While this can be called during a say statement, if the say statement is using
+    a normal Character, the information will be about the *current* say statement,
+    instead of the preceding one.
+
+    `who`
+        The speaker. This is usually a :func:`Character` object, but this
+        is not required.
+
+    `what`
+        A string with the dialogue spoken. This may be None if dialogue
+        hasn't been shown yet, for example at the start of the game.
+
+    `args`
+        A tuple of arguments passed to the last say statement.
+
+    `kwargs`
+        A dictionary of keyword arguments passed to the last say statement.
+
+    .. warning::
+
+        Like other similar functions, the object this returns is meant to be used
+        in the short term after the function is called. Including it in save data
+        or making it participate in rollback is not advised.
+    """
+
+    return LastSay(
+        who = renpy.store._last_say_who,
+        what = renpy.store._last_say_what,
+        args = renpy.store._last_say_args,
+        kwargs = renpy.store._last_say_kwargs,
+    )
+
 def is_skipping():
     """
     :doc: other
@@ -4320,7 +4460,7 @@ def get_zorder_list(layer):
     Returns a list of (tag, zorder) pairs for `layer`.
     """
 
-    return renpy.display.core.scene_lists().get_zorder_list(layer)
+    return scene_lists().get_zorder_list(layer)
 
 
 def change_zorder(layer, tag, zorder):
@@ -4330,7 +4470,7 @@ def change_zorder(layer, tag, zorder):
     Changes the zorder of `tag` on `layer` to `zorder`.
     """
 
-    return renpy.display.core.scene_lists().change_zorder(layer, tag, zorder)
+    return scene_lists().change_zorder(layer, tag, zorder)
 
 
 sdl_dll = False
@@ -4340,10 +4480,8 @@ def get_sdl_dll():
     """
     :doc: sdl
 
-    This returns a ctypes.cdll object that refers to the library that contains
-    the instance of SDL2 that Ren'Py is using.
-
-    If this can not be done, None is returned.
+    Returns a ctypes.cdll object that refers to the library that contains
+    the instance of SDL2 that Ren'Py is using. If this fails, None is returned.
     """
 
     global sdl_dll
@@ -4353,7 +4491,9 @@ def get_sdl_dll():
 
     try:
 
-        DLLS = [ None, "librenpython.dll", "librenpython.dylib", "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
+        lib = os.path.dirname(sys.executable) + "/"
+
+        DLLS = [ None, lib + "librenpython.dll", lib + "librenpython.dylib", lib + "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
 
         import ctypes
 
@@ -4363,7 +4503,7 @@ def get_sdl_dll():
                 dll = ctypes.cdll[i]
                 # See if it has SDL_GetError..
                 dll.SDL_GetError
-            except Exception:
+            except Exception as e:
                 continue
 
             sdl_dll = dll
@@ -4380,15 +4520,17 @@ def get_sdl_window_pointer():
     """
     :doc: sdl
 
-    Returns a pointer (of type ctypes.c_void_p) to the main window, or None
-    if the main window is not displayed, or some other problem occurs.
+    :rtype: ctypes.c_void_p | None
+
+    Returns a pointer to the main window, or None if the main window is not
+    displayed (or some other problem occurs).
     """
 
     try:
         window = pygame_sdl2.display.get_window()
 
         if window is None:
-            return
+            return None
 
         return window.get_sdl_window_pointer()
 
@@ -4491,3 +4633,232 @@ def request_permission(permission):
         return False
 
     return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8")) # type: ignore
+
+
+def clear_retain(layer="screens", prefix="_retain"):
+    """
+    :doc: other
+
+    Clears all retained screens
+    """
+
+    for i in get_showing_tags(layer):
+        if i.startswith(prefix):
+            hide_screen(i)
+
+
+def confirm(message):
+    """
+    :doc: other
+
+    This causes the a yes/no prompt screen with the given message
+    to be displayed, and dismissed when the player hits yes or no.
+
+    Returns True if the player hits yes, and False if the player hits no.
+
+    `message`
+        The message that will be displayed.
+
+    See :func:`Confirm` for a similar Action.
+    """
+    Return = renpy.store.Return
+    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False))
+    return renpy.ui.interact()
+
+
+class FetchError(Exception):
+    """
+    :undocumented:
+
+    The type of errors raised by :func:`renpy.fetch`.
+    """
+
+    pass
+
+
+def fetch_requests(url, method, data, content_type, timeout):
+    """
+    :undocumented:
+
+    Used by fetch on non-emscripten systems.
+
+    Returns either a bytes object, or a FetchError.
+    """
+
+    import threading
+    import requests
+
+    # Because we don't have nonlocal yet.
+    resp = [ None ]
+
+    def make_request():
+        try:
+            r = requests.request(method, url, data=data, timeout=timeout, headers={ "Content-Type" : content_type } if data is not None else {})
+            r.raise_for_status()
+            resp[0] = r.content # type: ignore
+        except Exception as e:
+            resp[0] = FetchError(str(e)) # type: ignore
+
+    t = threading.Thread(target=make_request)
+    t.start()
+
+    while resp[0] is None:
+        renpy.exports.pause(0)
+
+    t.join()
+
+    return resp[0]
+
+
+def fetch_emscripten(url, method, data, content_type, timeout):
+    """
+    :undocumented:
+
+    Used by fetch on emscripten systems.
+
+    Returns either a bytes object, or a FetchError.
+    """
+
+    import emscripten
+
+    fn = "/req-" + str(time.time()) + ".data"
+
+    with open(fn, "wb") as f:
+        if data is not None:
+            f.write(data)
+
+    url = url.replace('"' , '\\"')
+
+    if method == "GET" or method == "HEAD":
+        command = """fetchFile("{method}", "{url}", null, "{fn}", null)""".format( method=method, url=url, fn=fn, content_type=content_type)
+    else:
+        command = """fetchFile("{method}", "{url}", "{fn}", "{fn}", "{content_type}")""".format( method=method, url=url, fn=fn, content_type=content_type)
+
+    fetch_id = emscripten.run_script_int(command)
+
+    status = "PENDING"
+    message = "Pending."
+
+    start = time.time()
+    while time.time() - start < timeout:
+        renpy.exports.pause(0)
+
+        result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
+        status, _ignored, message = result.partition(" ")
+
+        if status != "PENDING":
+            break
+
+    try:
+
+        if status == "OK":
+            with open(fn, "rb") as f:
+                return f.read()
+
+        else:
+            return FetchError(message)
+
+    finally:
+        os.unlink(fn)
+
+
+
+def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes"):
+    """
+    :doc: fetch
+
+    This performs an HTTP (or HTTPS) request to the given URL, and returns
+    the content of that request. If it fails, raises a FetchError exception,
+    with text that describes the failure. (But may not be suitable for
+    presentation to the user.)
+
+    `url`
+        The URL to fetch.
+
+    `method`
+        The method to use. Generally one of "GET", "POST", or "PUT", but other
+        HTTP methods are possible. If `data` or `json` are not None, defaults to
+        "POST", otherwise defaults to GET.
+
+    `data`
+        If not None, a byte string of data to send with the request.
+
+    `json`
+        If not None, a JSON object to send with the request. This takes precendence
+        over `data`.
+
+    `content_type`
+        The content type of the data. If not given, defaults to "application/json"
+        if `json` is not None, or "application/octet-stream" otherwise. Only
+        used on a POST or PUT request.
+
+    `timeout`
+        The number of seconds to wait for the request to complete.
+
+    `result`
+        How to process the result. If "bytes", returns the raw bytes of the result.
+        If "text", decodes the result using UTF-8 and returns a unicode string. If "json",
+        decodes the result as JSON. (Other exceptions may be generated by the decoding
+        process.)
+
+    While waiting for `timeout` to pass, this will repeatedly call :func:`renpy.pause`\ (0),
+    so Ren'Py doesn't lock up. It may make sense to display a screen to the user
+    to let them know what is going on.
+
+    This function should work on all platforms. However, on the web platform,
+    requests going to a different origin than the game will fail unless allowed
+    by CORS.
+    """
+
+    import json as _json
+
+
+    if data is not None and json is not None:
+        raise FetchError("data and json arguments are mutually exclusive.")
+
+    if result not in ( "bytes", "text", "json" ):
+        raise FetchError("result must be one of 'bytes', 'text', or 'json'.")
+
+    if renpy.game.context().init_phase:
+        raise FetchError("renpy.fetch may not be called during init.")
+
+    if method is None:
+        if data is not None or json is not None:
+            method = "POST"
+        else:
+            method = "GET"
+
+    if content_type is None:
+        if json is not None:
+            content_type = "application/json"
+        else:
+            content_type = "application/octet-stream"
+
+    if json is not None:
+        data = _json.dumps(json).encode("utf-8")
+
+    if renpy.emscripten:
+        content = fetch_emscripten(url, method, data, content_type, timeout)
+    else:
+        content = fetch_requests(url, method, data, content_type, timeout)
+
+    if isinstance(content, Exception):
+        raise content # type: ignore
+
+    if result == "bytes":
+        return content
+    elif result == "text":
+        return content.decode("utf-8")
+    elif result == "json":
+        return _json.loads(content)
+
+
+def can_fullscreen():
+    """
+    :doc: other
+
+    Returns True if the current platform supports fullscreen mode, False
+    otherwise.
+    """
+
+    return renpy.display.can_fullscreen

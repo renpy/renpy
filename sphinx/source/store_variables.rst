@@ -49,6 +49,13 @@ and rolled-back when rollback occurs.
     This is set to None at the start of the splashscreen, and restored to its
     original value when the splashscreen ends.
 
+.. var:: _greedy_rollback = True
+
+    Determines if the game performs a greedy rollback after a load. A greedy
+    rollback will rollback to just after the last statement that interacted,
+    rather than to just before the statement that the game was in during
+    the load.
+
 .. var:: _history = True
 
     If true, Ren'Py will record dialogue history when a line is shown. (Note
@@ -144,6 +151,14 @@ and rolled-back when rollback occurs.
 .. var:: save_name = ""
 
     A save name that is included with saves.
+
+.. var:: _scene_show_hide_transition = None
+
+    If not None, this is a transition that will be performed using the
+    with statement after a series of scene, show, and hide statements
+    that are not followed by a with statement, or by a window transition.
+
+    .. seealso:: :ref:`scene-show-hide-transition`
 
 .. var:: _screenshot_pattern = None
 

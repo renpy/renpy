@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -94,6 +94,11 @@ class DialogueTextTags(object):
 
                 elif tag == "nw":
                     self.no_wait = True
+
+                    if value is not None and not less_pauses:
+                        self.pause_start.append(len(self.text))
+                        self.pause_end.append(len(self.text))
+                        self.pause_delay.append(value)
 
                 elif tag == "fast":
                     self.pause_start = [ len(self.text) ]
@@ -240,6 +245,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                      layer=None,
                      properties={},
                      multiple=None,
+                     retain=None,
                      **kwargs):
     """
     This is called (by default) by renpy.display_say to add the
@@ -269,6 +275,11 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     or displayable rather than a text string.
 
     @param kwargs: Additional keyword arguments should be ignored.
+
+    `retain`
+        If not None, the screen should be retained (not transient),
+        and the screen should be given the value of this argument as
+        its tag.
 
     This function is required to return the ui.text() widget
     displaying the what text.
@@ -305,7 +316,10 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
         tag = screen
 
-        if multiple:
+        if retain:
+            tag = retain
+
+        elif multiple:
 
             if renpy.display.screen.has_screen("multiple_" + screen):
                 screen = "multiple_" + screen
@@ -325,7 +339,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         renpy.display.screen.show_screen(
             screen,
             _widget_properties=props,
-            _transient=True,
+            _transient=not retain,
             _tag=tag,
             who=who,
             what=what,
@@ -439,7 +453,8 @@ def display_say(
         ctc_force=False,
         advance=True,
         multiple=None,
-        dtt=None):
+        dtt=None,
+        retain=False):
 
     global afm_text_queue
 
@@ -477,6 +492,9 @@ def display_say(
 
         # Clears out transients.
         renpy.exports.with_statement(None)
+
+        renpy.exports.checkpoint(True, hard=checkpoint)
+
         return
 
     # If we're not interacting, call the noniteractive_callbacks.
@@ -537,6 +555,19 @@ def display_say(
         pause_delay = dtt.pause_delay
 
     exception = None
+
+
+    retain_tag = "_retain_0"
+    retain_count = -1
+
+    if retain:
+
+        while True:
+            retain_count += 1
+            retain_tag = "_retain_{}".format(retain_count)
+
+            if not renpy.exports.get_screen(retain_tag):
+                break
 
     if dtt.fast:
         for i in renpy.config.say_sustain_callbacks:
@@ -629,12 +660,26 @@ def display_say(
                     extend_text = "{done}" + extend_text
 
             # Show the text.
-            if multiple:
-                what_text = show_function(who, what_string, multiple=multiple)
-            else:
-                what_text = show_function(who, what_string)
 
+            show_args = { }
+
+            if multiple:
+                show_args["multiple"] = multiple
+
+            if retain:
+                show_args["retain"] = retain_tag
+
+            what_text = show_function(who, what_string, **show_args)
+
+
+            # What text is (screen, id, layer) tuple if we're using a screen.
             if isinstance(what_text, tuple):
+                # If this is not the first pause, set the transform event to "replace".
+                if i != 0 and renpy.config.say_replace_event:
+                    screen_displayable = renpy.display.screen.get_screen(what_text[0], what_text[2])
+                    if screen_displayable is not None:
+                        screen_displayable.set_transform_event("replace")
+
                 what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
 
             if not multiple:
@@ -859,6 +904,7 @@ class ADVCharacter(object):
             callback=d('callback'),
             type=d('type'),
             advance=d('advance'),
+            retain=d('retain'),
             )
 
         self._statement_name = properties.pop("statement_name", None)
@@ -959,34 +1005,27 @@ class ADVCharacter(object):
         return screen, show_args, who_args, what_args, window_args, properties
 
 
-    def do_show(self, who, what, multiple=None, extra_properties=None):
+    def do_show(self, who, what, multiple=None, extra_properties=None, retain=None):
 
         screen, show_args, who_args, what_args, window_args, properties = self.get_show_properties(extra_properties)
 
+        show_args = dict(show_args)
+
         if multiple is not None:
+            show_args["multiple"] = multiple
 
-            return self.show_function(
-                who,
-                what,
-                who_args=who_args,
-                what_args=what_args,
-                window_args=window_args,
-                screen=screen,
-                properties=properties,
-                multiple=multiple,
-                **show_args)
+        if retain:
+            show_args["retain"] = retain
 
-        else:
-
-            return self.show_function(
-                who,
-                what,
-                who_args=who_args,
-                what_args=what_args,
-                window_args=window_args,
-                screen=screen,
-                properties=properties,
-                **show_args)
+        return self.show_function(
+            who,
+            what,
+            who_args=who_args,
+            what_args=what_args,
+            window_args=window_args,
+            screen=screen,
+            properties=properties,
+            **show_args)
 
 
     # This is called after the last interaction is done.
@@ -1089,7 +1128,7 @@ class ADVCharacter(object):
         renpy.game.context().say_attributes = None
 
         temporary_attrs = renpy.game.context().temporary_attributes
-        renpy.game.context().say_attributes = None
+        renpy.game.context().temporary_attributes = None
 
         if interact:
             if temporary_attrs:
@@ -1630,6 +1669,12 @@ def Character(name=NotSet, kind=None, **properties):
 
     `screen`
         The name of the screen that is used to display the dialogue.
+
+    `retain`
+        If not true, an unused tag is generated for each line of dialogue,
+        and the screens are shown non-transiently. Call :func:`renpy.clear_retain`
+        to remove all retaint screens. This is almost always used with
+        :doc:`bubble`.
 
     Keyword arguments beginning with ``show_`` have the prefix
     stripped off, and are passed to the screen as arguments. For

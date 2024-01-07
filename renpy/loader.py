@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,6 +26,7 @@ from typing import Optional
 
 import renpy
 import os
+import os.path
 import sys
 import types
 import threading
@@ -34,7 +35,7 @@ import re
 import io
 import unicodedata
 
-from pygame_sdl2.rwobject import RWops_from_file, RWops_create_subfile
+from pygame_sdl2.rwobject import RWopsIO
 
 from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded
@@ -67,34 +68,20 @@ def get_path(fn):
 
 # Asset Loading
 
+apks = [ ]
+game_apks = [ ]
 
 if renpy.android:
     import android.apk # type: ignore
 
-    expansion = os.environ.get("ANDROID_EXPANSION", None)
-    if expansion is not None:
-        print("Using expansion file", expansion)
+    if renpy.config.renpy_base == renpy.config.basedir:
+        # Read the game data from the APK.
 
-        apks = [
-            android.apk.APK(apk=expansion, prefix='assets/x-game/'),
-            android.apk.APK(apk=expansion, prefix='assets/x-renpy/x-common/'),
-            ]
+        apks.append(android.apk.APK(prefix='assets/x-game/'))
+        game_apks.append(apks[0])
 
-        game_apks = [ apks[0] ]
+    apks.append(android.apk.APK(prefix='assets/x-renpy/x-common/'))
 
-    else:
-        print("Not using expansion file.")
-
-        apks = [
-            android.apk.APK(prefix='assets/x-game/'),
-            android.apk.APK(prefix='assets/x-renpy/x-common/'),
-            ]
-
-        game_apks = [ apks[0] ]
-
-else:
-    apks = [ ]
-    game_apks = [ ]
 
 # Files on disk should be checked before archives. Otherwise, among
 # other things, using a new version of bytecode.rpyb will break.
@@ -461,181 +448,32 @@ def listdirfiles(common=True):
         return list(game_files)
 
 
-class SubFile(object):
-    closed = False
 
-    def __init__(self, fn, base, length, start):
-        self.fn = fn
+open_file = RWopsIO # type: ignore
 
-        self.f = None
-
-        self.base = base
-        self.offset = 0
-        self.length = length
-        self.start = start
-
-        if not self.start:
-            self.name = fn
-        else:
-            self.name = None
-
-    def open(self):
-        self.f = open(self.fn, "rb")
-        self.f.seek(self.base)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, _type, value, tb):
-        self.close()
-        return False
-
-    def read(self, length=None):
-
-        if self.f is None:
-            self.open()
-
-        maxlength = self.length - self.offset
-
-        if length is not None:
-            length = min(length, maxlength)
-        else:
-            length = maxlength
-
-        rv1 = self.start[self.offset:self.offset + length]
-        length -= len(rv1)
-        self.offset += len(rv1)
-
-        if length:
-            rv2 = self.f.read(length)
-            self.offset += len(rv2)
-        else:
-            rv2 = b""
-
-        return (rv1 + rv2)
-
-    def readable(self):
-        return True
-
-    def readline(self, length=None):
-
-        if self.f is None:
-            self.open()
-
-        maxlength = self.length - self.offset
-        if length is not None:
-            length = min(length, maxlength)
-        else:
-            length = maxlength
-
-        # If we're in the start, then read the line ourselves.
-        if self.offset < len(self.start):
-            rv = b''
-
-            while length:
-                c = self.read(1) # type: bytes
-                rv += c
-                if c == b'\n':
-                    break
-                length -= 1
-
-            return rv
-
-        # Otherwise, let the system read the line all at once.
-        rv = self.f.readline(length)
-
-        self.offset += len(rv)
-
-        return rv
-
-    def readlines(self, length=None):
-        rv = [ ]
-
-        while True:
-            l = self.readline(length)
-
-            if not l:
-                break
-
-            if length is not None:
-                length -= len(l)
-                if length < 0:
-                    break
-
-            rv.append(l)
-
-        return rv
-
-    def seekable(self):
-        return True
-
-    def writable(self):
-        return False
-
-    def xreadlines(self):
-        return self
-
-    def __iter__(self):
-        return self
-
-    def __next__(self): # @ReservedAssignment
-        rv = self.readline()
-
-        if not rv:
-            raise StopIteration()
-
-        return rv
-
-    next = __next__
-
-    def flush(self):
-        return
-
-    def seek(self, offset, whence=0):
-
-        if self.f is None:
-            self.open()
-
-        if whence == 1:
-            offset = self.offset + offset
-        elif whence == 2:
-            offset = self.length + offset
-
-        if offset > self.length:
-            offset = self.length
-
-        self.offset = offset
-
-        offset = offset - len(self.start)
-        if offset < 0:
-            offset = 0
-
-        self.f.seek(offset + self.base)
-
-    def tell(self):
-        return self.offset
-
-    def close(self):
-        if self.f is not None:
-            self.f.close()
-            self.f = None
-
-    def write(self, s):
-        raise Exception("Write not supported by SubFile")
-
-
-open_file = RWops_from_file # type: ignore
-
-if "RENPY_FORCE_SUBFILE" in os.environ:
+if "RENPY_TEST_RWOPS" in os.environ:
 
     def open_file(name, mode):
-        f = RWops_from_file(name, mode)
+        with RWopsIO(name, mode) as f:
+            data = f.read(1024)
+            f.seek(0, 2)
+            length = f.tell()
 
-        f.seek(0, 2)
-        length = f.tell()
-        f.seek(0, 0)
+        try:
 
-        return RWops_create_subfile(f, 0, length)
+            a = RWopsIO.from_buffer(data, name=name)
+
+            if length <= 1024:
+                return a
+
+            b = RWopsIO(name, mode, base=1024, length=length - 1024)
+            rv = RWopsIO.from_split(a, b, name=name)
+            return rv
+
+        except Exception:
+            import traceback
+            traceback.print_exc()
+
 
 # A list of callbacks to open an open python file object of the given type.
 file_open_callbacks = [ ]
@@ -688,26 +526,6 @@ def load_from_filesystem(name):
 file_open_callbacks.append(load_from_filesystem)
 
 
-def load_from_apk(name):
-    """
-    Returns an open python file object of the given type from the apk.
-    """
-
-    for apk in apks:
-        prefixed_name = "/".join("x-" + i for i in name.split("/"))
-
-        try:
-            return apk.open(prefixed_name)
-        except IOError:
-            pass
-
-    return None
-
-
-if renpy.android:
-    file_open_callbacks.append(load_from_apk)
-
-
 def load_from_archive(name):
     """
     Returns an open python file object of the given type from an archive file.
@@ -731,10 +549,13 @@ def load_from_archive(name):
                 offset, dlen, start = t
 
             if start == None or len(start) == 0:
-                rw = RWops_from_file(afn, "rb")
-                rv = RWops_create_subfile(rw, offset, dlen)
+                rv = RWopsIO(afn, "rb", base=offset, length=dlen)
+                return io.BufferedReader(rv)
             else:
-                rv = SubFile(afn, offset, dlen, start)
+                a = RWopsIO.from_buffer(start, name=name)
+                b = RWopsIO(afn, "rb", base=offset, length=dlen)
+                rv = RWopsIO.from_split(a, b, name=name)
+                rv = io.BufferedReader(rv)
 
         # Compatibility path.
         else:
@@ -743,14 +564,32 @@ def load_from_archive(name):
                     f.seek(offset)
                     data.append(f.read(dlen))
 
-                rv = io.BytesIO(b''.join(data))
-
-        return rv
+                return io.BufferedReader(RWopsIO.from_buffer(b''.join(data), name=name))
 
     return None
 
 
 file_open_callbacks.append(load_from_archive)
+
+
+def load_from_apk(name):
+    """
+    Returns an open python file object of the given type from the apk.
+    """
+
+    for apk in apks:
+        prefixed_name = "/".join("x-" + i for i in name.split("/"))
+
+        try:
+            return apk.open(prefixed_name)
+        except IOError:
+            pass
+
+    return None
+
+
+if renpy.android:
+    file_open_callbacks.append(load_from_apk)
 
 
 def load_from_remote_file(name):
@@ -987,19 +826,30 @@ class RenpyImporter(object):
         if self.translate(fullname):
             return self
 
-    def load_module(self, fullname):
+    def load_module(self, fullname, mode="full"):
+        """
+        Loads a module. Possible modes include "is_package", "get_source", "get_code", or "full".
+        """
 
         filename = self.translate(fullname, self.prefix)
+
+        if mode == "is_package":
+            return filename.endswith("__init__.py")
 
         pyname = pystr(fullname)
 
         mod = sys.modules.setdefault(pyname, types.ModuleType(pyname))
         mod.__name__ = pyname
-        mod.__file__ = filename
+        mod.__file__ = renpy.config.gamedir + "/" + filename
         mod.__loader__ = self
 
         if filename.endswith("__init__.py"):
-            mod.__path__ = [ filename[:-len("__init__.py")] ]
+            mod.__package__ = pystr(fullname)
+        else:
+            mod.__package__ = pystr(fullname.rpartition(".")[0])
+
+        if mod.__file__.endswith("__init__.py"):
+            mod.__path__ = [ mod.__file__[:-len("__init__.py")] ]
 
         for encoding in [ "utf-8", "latin-1" ]:
 
@@ -1008,20 +858,44 @@ class RenpyImporter(object):
                 source = load(filename).read().decode(encoding)
                 if source and source[0] == u'\ufeff':
                     source = source[1:]
-                source = source.encode("raw_unicode_escape")
-                source = source.replace(b"\r", b"")
+
+                if mode == "get_source":
+                    return source
 
                 code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
+
                 break
+
             except Exception:
                 if encoding == "latin-1":
                     raise
+
+        if mode == "get_code":
+            return code # type: ignore
 
         exec(code, mod.__dict__) # type: ignore
 
         return sys.modules[fullname]
 
+    def is_package(self, fullname):
+        return self.load_module(fullname, "is_package")
+
+    def get_source(self, fullname):
+        return self.load_module(fullname, "get_source")
+
+    def get_code(self, fullname):
+        return self.load_module(fullname, "get_code")
+
     def get_data(self, filename):
+
+        filename = os.path.normpath(filename).replace('\\', '/')
+
+        _check_prefix = "{0}/".format(
+            os.path.normpath(renpy.config.gamedir).replace('\\', '/')
+        )
+        if filename.startswith(_check_prefix):
+            filename = filename[len(_check_prefix):]
+
         return load(filename).read()
 
 
@@ -1142,11 +1016,36 @@ def auto_thread_function():
                     if auto_mtime(fn) != auto_mtimes[fn]:
                         needs_autoreload.add(fn)
 
+def check_git_index_lock():
+    """
+    Checks to see if the git index lock is present.
+    """
+
+    to_check = set(os.path.dirname(i) for i in needs_autoreload)
+    added = set(to_check)
+
+    while to_check:
+        dn = to_check.pop()
+
+        if os.path.exists(os.path.join(dn, ".git", "index.lock")):
+            return True
+
+        parent = os.path.dirname(dn)
+        if parent not in added:
+            added.add(parent)
+            to_check.add(os.path.dirname(dn))
+
+    return False
+
 
 def check_autoreload():
     """
     Checks to see if autoreload is required.
     """
+
+    # Defer loading while the git index lock is present.
+    if needs_autoreload and check_git_index_lock():
+        return
 
     while needs_autoreload:
         fn = next(iter(needs_autoreload))

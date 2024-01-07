@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -208,7 +208,6 @@ init -1100 python:
         if version <= (7, 3, 5):
             config.side_image_requires_attributes = False
             config.window_functions_set_auto = False
-            config.hw_video = True
             config.who_what_sub_compat = 0
 
         if version <= (7, 4, 0):
@@ -233,7 +232,6 @@ init -1100 python:
 
         if version <= (7, 4, 8):
             config.relative_transform_size = False
-            config.tts_front_to_back = False
 
         if version <= (7, 4, 10):
             config.always_unfocus = False
@@ -292,6 +290,23 @@ init -1100 python:
             store.iap._constant = True
             store.layeredimage._constant = True
             store.updater._constant = True
+
+        if _compat_versions(version, (7, 6, 1), (8, 1, 1)):
+            config.tts_front_to_back = False
+            _greedy_rollback = False
+
+        if _compat_versions(version, (7, 6, 99), (8, 1, 99)):
+            config.simple_box_reverse = True
+            build.itch_channels = list(build.itch_channels.items())
+            config.atl_pos_only = True
+            style.default.shaper = "freetype"
+            config.mixed_position = False
+            config.drag_group_add_top = False
+            config.transitions_use_child_placement = True
+            config.interpolate_exprs = False
+            config.containers_pass_transform_events = False
+            config.say_replace_event = False
+            config.screens_never_cancel_hide = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
@@ -403,7 +418,7 @@ init 1100 python hide:
             config.layers.append('screens')
 
     if "Fullscreen" in config.translations:
-        fs = _("Fullscreen")
+        fs = __("Fullscreen")
         config.translations.setdefault("Fullscreen 4:3", fs + " 4:3")
         config.translations.setdefault("Fullscreen 16:9", fs + " 16:9")
         config.translations.setdefault("Fullscreen 16:10", fs + " 16:10")
