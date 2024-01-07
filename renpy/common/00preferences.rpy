@@ -436,9 +436,9 @@ init -1500 python:
             elif name == _("self voicing"):
 
                 if value == "enable":
-                    return SetField(_preferences, "self_voicing", True)
+                    return SetField(_preferences, "self_voicing", True), _("self voicing enable")
                 elif value == "disable":
-                    return SetField(_preferences, "self_voicing", False)
+                    return SetField(_preferences, "self_voicing", False), _("self voicing disable")
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing", true_value=True, false_value=False)
 
@@ -453,18 +453,18 @@ init -1500 python:
             elif name == _("clipboard voicing"):
 
                 if value == "enable":
-                    return SetField(_preferences, "self_voicing", "clipboard")
+                    return SetField(_preferences, "self_voicing", "clipboard"), _("clipboard voicing enable")
                 elif value == "disable":
-                    return SetField(_preferences, "self_voicing", False)
+                    return SetField(_preferences, "self_voicing", False), _("clipboard voicing disable")
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing", true_value="clipboard", false_value=False)
 
             elif name == _("debug voicing"):
 
                 if value == "enable":
-                    return SetField(_preferences, "self_voicing", "debug")
+                    return SetField(_preferences, "self_voicing", "debug"), _("debug voicing enable")
                 elif value == "disable":
-                    return SetField(_preferences, "self_voicing", False)
+                    return SetField(_preferences, "self_voicing", False), _("debug voicing disable")
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing", true_value="debug", false_value=False)
 
@@ -659,9 +659,17 @@ init -1500 python:
                 alt = None
 
             if alt is not None:
-                rv.alt = __(alt)
+                alt = __(alt)
             else:
-                rv.alt = __(name) + " [text]"
+                alt = __(name) + " [text]"
+
+            if isinstance(rv, list):
+                rv[0].alt = alt
+            else:
+                rv.alt = alt
+
+
+
 
         return rv
 

@@ -117,6 +117,7 @@ screen _accessibility():
 
     frame:
         style_group ""
+        alt _("Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars.")
 
         has side "c b":
             spacing gui._scale(10)

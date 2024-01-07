@@ -126,7 +126,6 @@ add to your game::
 
     define config.simple_box_reverse = True
 
-
 **build.itch_channels** That variable was always documented as a dict but was
 mistakenly implemented as a list of tuples. It's now truly a dict. If you
 were using list operations on it, you'll need to change your code::
@@ -163,7 +162,6 @@ To change this, add to your game::
 **Translate Statements and config.statement_callbacks** Translate statements
 (including internal statements that Ren'Py automatically generates) will no
 longer cause :var:`config.statement_callbacks` to be called.
-
 
 **Transitions Use Child Placements** If the child of a transitions provides
 placement information, that will be used by the transition itself. This
