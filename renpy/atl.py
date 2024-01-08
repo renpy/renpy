@@ -1494,11 +1494,6 @@ class Interpolation(Statement):
                         startanchorangle_absolute += circles * 360
                         startanchorangle_relative += circles * 360
 
-                    has_radius = True
-                    has_angle = True
-                    has_anchorangle = True
-                    has_anchorradius = True
-
                     radii = (startradius, endradius)
                     angles = (startangle, endangle)
                     anchorradii = (startanchorradius, endanchorradius)
