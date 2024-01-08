@@ -277,6 +277,9 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
 
     restart_context = False
 
+    if renpy.game.log.current is not None:
+        renpy.game.log.complete()
+
     renpy.display.focus.clear_focus()
 
     context = renpy.execution.Context(False, contexts[-1], clear=True)
@@ -327,6 +330,9 @@ def call_in_new_context(label, *args, **kwargs):
     Use this to begin a second interaction with the user while
     inside an interaction.
     """
+
+    if renpy.game.log.current is not None:
+        renpy.game.log.complete()
 
     renpy.display.focus.clear_focus()
 
