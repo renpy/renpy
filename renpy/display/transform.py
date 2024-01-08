@@ -521,15 +521,12 @@ class TransformState(renpy.object.Object):
     xcenter = property(get_xcenter, set_xcenter)
     ycenter = property(get_ycenter, set_ycenter)
 
-    def get_xycenter(self):
-        return self.xcenter, self.ycenter
-
     def set_xycenter(self, value):
         if value is None:
             value = (None, None)
         self.xcenter, self.ycenter = value
 
-    xycenter = property(get_xycenter, set_xycenter)
+    xycenter = property(get_pos, set_xycenter)
 
 
 class Proxy(object):
