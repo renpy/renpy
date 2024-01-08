@@ -154,7 +154,7 @@
 
     # renpy/common/_errorhandling.rpym:594
     old "An exception has occurred."
-    new "En undtagelse er opståer."
+    new "En undtagelse er opstået."
 
     # renpy/common/_errorhandling.rpym:617
     old "Rollback"

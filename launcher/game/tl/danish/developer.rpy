@@ -22,7 +22,7 @@
 
     # renpy/common/_developer/developer.rpym:51
     old "Persistent Viewer"
-    new "Visning af vedvarende data"
+    new "Vedvarende data-viser"
 
     # renpy/common/_developer/developer.rpym:53
     old "Image Location Picker"

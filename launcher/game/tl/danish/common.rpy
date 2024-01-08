@@ -590,7 +590,7 @@
 
     # renpy/common/00preferences.rpy:440
     old "debug voicing"
-    new "fejlsøg oplæsning"
+    new "oplæsning af fejlsøgning"
 
     # renpy/common/00preferences.rpy:449
     old "emphasize audio"
@@ -939,4 +939,40 @@
     # renpy/common/00updater.rpy:2090
     old "Retry"
     new "Prøv igen"
+
+    # renpy/common/00accessibility.rpy:120
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
+    new "Tilgængelighedsmenu. Brug op- og ned-piletasterne til at navigere og retur til at aktivere knapper og bjælker."
+
+    # renpy/common/00gui.rpy:454
+    old "Are you sure you want to continue where you left off?"
+    new "Vil du gerne fortsætte fra hvor du slap?"
+
+    # renpy/common/00preferences.rpy:439
+    old "self voicing enable"
+    new "aktivér automatisk oplæsning"
+
+    # renpy/common/00preferences.rpy:441
+    old "self voicing disable"
+    new "deaktiver automatisk oplæsning"
+
+    # renpy/common/00preferences.rpy:456
+    old "clipboard voicing enable"
+    new "aktivér oplæsning af udklipsholder"
+
+    # renpy/common/00preferences.rpy:458
+    old "clipboard voicing disable"
+    new "deaktiver oplæsning af udklipsholder"
+
+    # renpy/common/00preferences.rpy:465
+    old "debug voicing enable"
+    new "aktivér oplæsning af fejlsøgning"
+
+    # renpy/common/00preferences.rpy:467
+    old "debug voicing disable"
+    new "deaktiver oplæsning af fejlsøgning"
+
+    # renpy/common/00preferences.rpy:596
+    old "reset"
+    new "nulstil"
 

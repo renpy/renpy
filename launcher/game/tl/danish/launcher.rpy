@@ -102,7 +102,7 @@
 
     # game/android.rpy:56
     old "Lists the connected devices."
-    new "Oplister de forbundne enheder."
+    new "Oplister de tilsluttede enheder."
 
     # game/android.rpy:57
     old "Pairs with a device over Wi-Fi, on Android 11+."
