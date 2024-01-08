@@ -94,6 +94,10 @@ label _after_load:
 
         _init_language()
 
+        # Older save games could have this set to non-None, so reset it.
+        _side_image_attributes = None
+
+
     python hide:
 
         for i in config.after_load_callbacks:
