@@ -165,9 +165,9 @@ Here's an example::
             add g.make_button("title", "title.png", xalign=0.5, yalign=0.5)
 
 
-         # The screen is responsible for returning to the main menu. It could also
-         # navigate to other gallery screens.
-         textbutton "Return" action Return() xalign 0.5 yalign 0.5
+        # The screen is responsible for returning to the main menu. It could also
+        # navigate to other gallery screens.
+        textbutton "Return" action Return() xalign 0.5 yalign 0.5
 
 Step 4 will vary based on how your game is structured, but one way of
 accomplishing it is to add the following line::
@@ -303,38 +303,38 @@ is invoked from a black screen.
 
 For example::
 
-      "And finally, I met the wizard himself."
+        "And finally, I met the wizard himself."
 
-  label meaning_of_life:
+    label meaning_of_life:
 
-      scene revelation
+        scene revelation
 
-      "Mage" "What is the meaning of life, you say?"
+        "Mage" "What is the meaning of life, you say?"
 
-      "Mage" "I've thought about it long and hard. A long time, I've
-              spent pondering that very thing."
+        "Mage" "I've thought about it long and hard. A long time, I've
+                spent pondering that very thing."
 
-      "Mage" "And I'll say - the answer - the meaning of life
-              itself..."
+        "Mage" "And I'll say - the answer - the meaning of life
+                itself..."
 
-      "Mage" "Is forty-three."
+        "Mage" "Is forty-three."
 
-      $ renpy.end_replay()
+        $ renpy.end_replay()
 
-      "Mage" "Something like that, anyway."
+        "Mage" "Something like that, anyway."
 
 With the sequence defined like that, the replay can be invoked with the
 Replay action::
 
-  textbutton "The meaning of life" action Replay("meaning_of_life")
+    textbutton "The meaning of life" action Replay("meaning_of_life")
 
 There is one store variable used by replay mode:
 
 .. var:: _in_replay
 
-   When in replay mode, this is sent to the label at which replay
-   mode was started - the label that was called, not the one the
-   call originated from. Outside of replay mode, this is None.
+    When in replay mode, this is sent to the label at which replay
+    mode was started - the label that was called, not the one the
+    call originated from. Outside of replay mode, this is None.
 
 In addition, :var:`config.enter_replay_transition` and
 :var:`config.exit_replay_transition` are used when entering and exiting

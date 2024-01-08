@@ -381,8 +381,8 @@ following example::
         group eyes variant "blue":
             attribute closed
 
-The attribute is linked to the image ``"augustina_work_eyes_blue_closed"``. That
-can resolve to an image file named "augustina_work_eyes_blue_closed.png", but it
+The attribute is linked to the image "augustina_work_eyes_blue_closed". That
+can resolve to an image file named :file:`augustina_work_eyes_blue_closed.png`, but it
 can also be defined explicitly using the :ref:`image-statement` for example.
 
 If you want a ``multiple`` group's name to be included in the pattern, you can

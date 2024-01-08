@@ -223,8 +223,8 @@ the next prefix.
 The style prefix is passed through displayables that do not take user input,
 including containers, transforms, and frames.
 
-As an example of how this can be used, if the files "idle\_button.png" and
-"hover\_button.png" exist (and no other files ending in "button.png" do)::
+As an example of how this can be used, if the files :file:`idle_button.png` and
+:file:`hover_button.png` exist (and no other files ending in :file:`button.png` do)::
 
     style button:
         background "[prefix_]button.png"

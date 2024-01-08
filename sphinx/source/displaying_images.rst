@@ -50,7 +50,7 @@ and ``happy``.
 A displayable is something that can be shown on the screen. The most
 common thing to show is a static image, which can be specified by
 giving the filename of the image, as a string. In the example above,
-we might use "mary_beach_night_happy.png" as the filename.
+we might use :file:`mary_beach_night_happy.png` as the filename.
 However, an image may refer to :doc:`any displayable Ren'Py supports
 <displayables>`, not just static images. Thus, the same statements
 that are used to display images can also be used for animations, solid
@@ -69,21 +69,21 @@ statements are called, and the properties given to those statements.
 The following layers are defined as part of Ren'Py:
 
 master
-     This is the default layer that is used by the scene, show, and
-     hide statements. It's generally used for backgrounds and
-     character sprites.
+    This is the default layer that is used by the scene, show, and
+    hide statements. It's generally used for backgrounds and
+    character sprites.
 
 transient
-     The default layer used by ui functions. This layer is cleared at
-     the end of each interaction.
+    The default layer used by ui functions. This layer is cleared at
+    the end of each interaction.
 
 screens
-     This layer is used by the screen system.
+    This layer is used by the screen system.
 
 overlay
-     The default layer used when a ui function is called from within
-     an overlay function. This layer is cleared when an interaction is
-     restarted.
+    The default layer used when a ui function is called from within
+    an overlay function. This layer is cleared when an interaction is
+    restarted.
 
 Additional layers can be defined by calling :func:`renpy.add_layer`, and
 using the various layer-related :doc:`configuration variables <config>`.
@@ -147,8 +147,8 @@ and :var:`config.physical_height` to allow a game to be remade with higher
 resolution graphics.
 
 Oversampling is automatically enabled if the image ends with an '@' followed
-by a number, before the extension. For example, "eileen happy@2.png" is
-2x oversampled, and "eileen happy@3x.png" will be 3x oversampled. Oversampling
+by a number, before the extension. For example, :file:`eileen happy@2.png` is
+2x oversampled, and :file:`eileen happy@3x.png` will be 3x oversampled. Oversampling
 can also be enabled by giving the `oversample` keyword argument to :func:`Image`.
 
 .. _image-statement:
@@ -170,9 +170,9 @@ displayable. For example::
         "eileen_happy.png",
         )
 
-When an image is not directly in the game directory, you'll need to
-give the directories underneath it. For example, if the image is in
-game/eileen/happy.png, then you can write::
+When an image file is not directly in the game directory, you'll need to
+give the directories underneath it. For example, if the image is at
+:file:`game/eileen/happy.png`, then you can write::
 
     image eileen happy = "eileen/happy.png"
 
@@ -290,14 +290,14 @@ As shown above, attributes can be set, added and replaced.
 
 They can also be removed using the minus sign::
 
-     # show susan being neutral
-     show susan
+    # show susan being neutral
+    show susan
 
-     # show susan being happy
-     show susan happy
+    # show susan being happy
+    show susan happy
 
-     # show susan being neutral again
-     show susan -happy
+    # show susan being neutral again
+    show susan -happy
 
 Show expression
 ---------------
@@ -538,20 +538,20 @@ it from occurring.
 The window itself is displayed by calling :var:`config.empty_window`. It defaults to
 having the narrator say an empty string. ::
 
-        show bg washington
-        show eileen happy
-        with dissolve
+    show bg washington
+    show eileen happy
+    with dissolve
 
-        window show dissolve
+    window show dissolve
 
-        "I can say stuff..."
+    "I can say stuff..."
 
-        show eileen happy at right
-        with move
+    show eileen happy at right
+    with move
 
-        "... and move, while keeping the window shown."
+    "... and move, while keeping the window shown."
 
-        window hide dissolve
+    window hide dissolve
 
 Image Functions
 ===============

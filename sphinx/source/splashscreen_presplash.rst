@@ -60,7 +60,7 @@ Adding a Presplash
 
 A presplash is an image shown while Ren'py is reading the scripts and
 launching the game. To show such and image while the engine is starting up,
-create an image file named `presplash.png` (or `presplash.jpg`), and save it
+create an image file named :file:`presplash.png` (or :file:`presplash.jpg`), and save it
 into the game directory.
 
 presplash.png
@@ -95,8 +95,8 @@ presplash_foreground.png
     actual progress bar.
     This may contain transparency.
 
-The way this works is that Ren'Py will first show `presplash_background.png` and
-subsequently will render `presplash_foreground.png` on top, revealing it from
+The way this works is that Ren'Py will first show :file:`presplash_background.png` and
+subsequently will render :file:`presplash_foreground.png` on top, revealing it from
 left to right as the loading progresses.
 
 The theming of the bar is completely up to you, but you can find two examples of
