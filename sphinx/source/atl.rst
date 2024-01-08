@@ -965,16 +965,16 @@ Polar Positioning
     :type: (position, position)
     :default: (0.0, 0.0)
 
-    If not None, specifies the center of the polar coordinate position
-    relative to the upper-left of the containing area. The :tpref:`angle` and
-    :tpref:`radius` properties can then be used to specify a position
-    using polar coordinates.
+    This specifies the starting point, relative to the upper-left corner of the
+    containing area, from where the polar vector (computed from :tpref:`angle`
+    and :tpref:`radius`) will be drawn. The sum of the two gives the resulting
+    :tpref:`pos`.
 
 .. transform-property:: angle
 
     :type: float
 
-    This gives the angle portion of a position specified in polar
+    This gives the angle component of a position specified in polar
     coordinates. This is measured in degrees, with 0 being to the top
     of the screen, and 90 being to the right.
 
@@ -987,8 +987,7 @@ Polar Positioning
 
     :type: position
 
-    The radius component of the position given in polar
-    coordinates.
+    The radius component of the position given in polar coordinates.
 
     If a float, this will be scaled to the smaller of the width and height
     available to the transform.
@@ -1006,17 +1005,16 @@ Polar Positioning of the Anchor
 
     :type: (position, position)
 
-    This, in conjunction with :tpref:`anchorangle`, and :tpref:`anchorradius`,
-    can be used to specify the anchor point of the transform in polar coordinates.
-
-    This should be in the same units as :tpref:`anchor`, do not mix relative and
-    absolute coordinates.
+    This specifies the starting point, relative to the upper-left corner of the
+    displayable, from where the polar vector (computed from :tpref:`anchorangle`
+    and :tpref:`anchorradius`) will be drawn. The sum of the two gives the
+    resulting :tpref:`anchor`.
 
 .. transform-property:: anchorangle
 
     :type: (float)
 
-    The angle component of the ploar coordinates of the anchor. This is specified
+    The angle component of the polar coordinates of the anchor. This is specified
     in degrees, with 0 being to the top and 90 being to the right.
 
     Ren'Py clamps this angle to between 0 and 360 degrees, including 0 but
@@ -1028,8 +1026,12 @@ Polar Positioning of the Anchor
 
     :type: (position)
 
-    The radius component of the polar coordinates of the anchor. This will have the same
-    type as :tpref:`anchoraround` and :tpref:`anchor`.
+    The radius component of the polar coordinates of the anchor.
+
+    If a float, it is scaled horizontally and vertically to the size and shape
+    of the displayable : if the height is not equal to the width, a radius that
+    is not strictly absolute will result in elliptical motion when varying the
+    anchorangle.
 
 Cropping and Resizing
 ---------------------
