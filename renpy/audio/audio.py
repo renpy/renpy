@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -680,16 +680,16 @@ class Channel(object):
 
                 if tight is None:
                     tight = self.tight
-    
+
                 self.keep_queue += 1
-    
+
                 for filename in filenames:
                     qe = QueueEntry(filename, fadein, tight, False, relative_volume)
                     self.queue.append(qe)
-    
+
                     # Only fade the first thing in.
                     fadein = 0
-    
+
                 self.wait_stop = synchro_start
                 self.synchro_start = synchro_start
 
@@ -1236,9 +1236,8 @@ def interact():
                 filenames = ctx.last_filenames
                 tight = ctx.last_tight
 
-                if c.loop:
-                    if not filenames or c.get_playing() not in filenames:
-                        c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
+                if c.loop != filenames:
+                    c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
 
                 if filenames:
                     c.enqueue(filenames, loop=True, synchro_start=False, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)

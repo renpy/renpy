@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -144,7 +144,7 @@ class StoreDict(dict):
 
         self.old = DictItems(self)
 
-    def get_changes(self, cycle):
+    def get_changes(self, cycle, previous):
         """
         For every key that has changed since begin() was called, returns a
         dictionary mapping the key to its value when begin was called, or
@@ -156,6 +156,11 @@ class StoreDict(dict):
         `cycle`
             If true, this cycles the old changes to the new changes. If
             False, does not.
+
+        `previous`
+            The result of a call to this from a previous cycle. The result
+            from a previous run take precedence over the current run. None
+            if this is the first run.
         """
 
         if self.get("_constant", False):
@@ -163,6 +168,9 @@ class StoreDict(dict):
 
         new = DictItems(self)
         rv = find_changes(self.old, new, deleted)
+
+        if previous is not None:
+            rv.update(previous)
 
         if cycle:
             self.old = new

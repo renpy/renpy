@@ -88,6 +88,16 @@ enables bytecode hinting for MyFont.ttf.
 Text Interpolation Improvements
 -------------------------------
 
+Interpolations in strings are now treated as Python expressions, rather than
+simple fields. While not identical, this concept will feel familiar to those
+that have worked with Python f-strings. This allows for some logic to be
+incorporated directly::
+
+    default exp = 1000
+
+    label start:
+        e "I am level [exp // 225]!" # Will show "I am level 4!"
+
 When a variable is interpolated into a string, and the interpolation namespace
 exists, that namespace will be searched for the values to interpolate. For
 example, ::
@@ -112,6 +122,10 @@ The new :var:`bubble.properties_callback` variable can be given a function
 that filter the list of bubble property names based on the image tag
 that's speaking. This makes it possible to have bubbles that are
 specific to some but not all characters.
+
+Several changes work together to make it possible to apply a transform that
+animates speech bubble show and hide. An example of this is included in the
+:ref:`bubble-screen` documentation.
 
 
 Position types and ATL interpolation
@@ -259,6 +273,17 @@ defaults to :var:`config.version`.
 Features
 --------
 
+The new :class:`Continue` action will load the last save (by default,
+including autosaves and quick saves). This is intended for use from the
+main menu to continue the game, especially a linear visual novel.
+
+The new :propref:`ruby_line_leading` style property controls additional
+line leading on lines that contain ruby text (furigana). This will generally
+use less space than the existing :propref:`line_leading` property.
+
+It is now possible to reset the preferences to their default values
+by calling :func:`Preference` with "reset" as the argument.
+
 The new :class:`defaultdict` class, which exists in the default Ren'Py
 namespaces, is similar to Python's collections.defaultdict, while
 participating in rollback.
@@ -332,7 +357,7 @@ can only be called from the main thread.)
 Launcher Changes
 ----------------
 
-The launcher now supports :doc:`template-projects`. These are
+The launcher now supports :doc:`template_projects`. These are
 indended for use by projects that replace the default GUI.
 If a template project is selected when creating a new project,
 Ren'Py will copy the template project and update the name and translations,
@@ -342,13 +367,26 @@ The launcher has been slightly redesigned to reduce the amount of
 whitespace, allowing more options to appear on some screens while
 still providing room for translations.
 
+A :doc:`cli` has been documented, making it possible to build Ren'Py
+projects from the command line.
+
 
 Other Changes
 -------------
 
-Fullscreen is disabled when running on the Safari web browser, due to
-multiple issues with fullscreen mode on that browser. (This includes
-browsers on iOS that are thin wrappers around Safari.)
+Hide and replace transform events that are applied to screens are now always
+allowed to run to completion, even if the same screen is shown again. This
+makes it possible to use transform events with screens that may be shown
+again immediately, like the say or bubble screens.
+
+Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
+pass transform events (like hover and idle) to their children, meaning that
+children of a button can have their own transforms to respond to those
+events.
+
+:func:`persistent._clear` will re-run default statements that update
+persistent variables, making it possible to avoid persistent becoming
+entirely de-initialized.
 
 The pixel transparency test used by :propref:`focus_mask` will now
 only involve the GPU if inside the bounding box of non-transparent pixels,
@@ -1002,6 +1040,23 @@ The following translations had manual updates:
 * Japanese
 * Ukrainian
 
+.. _conflicting_properties:
+
+Conflicting properties
+----------------------
+
+Setting two conflicting style or transform properties at the same time, for
+example :propref:`xalign` and :propref:`pos`, or :tpref:`ycenter` and
+:tpref:`yanchor`, has always been undefined. The actual behavior has always been
+changing across versions of Ren'Py, in particular between Python 2 and Python 3.
+
+The new :var:`config.check_conflicting_properties` variable makes Ren'Py raise
+an error when such a conflict is detected. Due to a mistake in the former
+default input screen, this variable is only enabled in newly-created projects.
+Nonetheless, it is strongly advised to :ref:`define <define-statement>` it to
+True in all projects, to fix all revealed conflicts, and to keep it to True
+afterwards.
+
 More New Features
 -----------------
 
@@ -1120,12 +1175,6 @@ cleared of all the attributes attached to it. The previous way to do this was
 to hide and show the image again, which had the consequence of also resetting
 the placement of the image on the screen. It is not the case with this function.
 
-The new ``config.check_conflicting_properties`` variable, which is disabled
-in existing games but enabled in newly created games, enables you to check for
-conflicting style or transform properties being set concurrently. This is
-dangerous as the resulting behavior is undefined and may vary between platforms
-and versions of Ren'Py.
-
 The new :var:`config.font_name_map` variable allows you to name font files or
 :ref:`fontgroup`, so that it becomes easier to use them in {font} tags.
 Previously, there was no way to use a fontgroup in a {font} tag.
@@ -1149,10 +1198,6 @@ will now produce circular, rather than oval motion, with radius using the
 minimum of the available wdith and height to scale distances expressed as
 heights. The new :tpref:`anchoraround`, :tpref:`anchorradius`, and :tpref:`anchorangle`
 properties can position the anchor using polar coordinates.
-
-Ren'Py will now produce errors when a screen sets two conflicting
-properties, like :propref:`align`, and :propref:`xalign`. Previously,
-the behavior of this was undefined.
 
 Lint will now check your game for statements that can never be reached,
 and will report the statements.

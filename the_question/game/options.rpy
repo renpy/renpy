@@ -214,3 +214,7 @@ init python:
 ## by a slash.
 
 define build.itch_project = "renpytom/the-question"
+
+
+# Enable the console.
+define config.console = True

@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -61,6 +61,11 @@ from renpy.gl2.gl2model cimport GL2Model
 from renpy.gl2.gl2texture import Texture, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
 
+try:
+    import emscripten
+except ImportError:
+    emscripten = None
+
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 DISSOLVE = renpy.display.render.DISSOLVE
@@ -75,6 +80,8 @@ vsync = True
 
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
+
+
 
 cdef class GL2Draw:
 
@@ -126,6 +133,9 @@ cdef class GL2Draw:
 
         # Was the window maximized the last time update was called?
         self.maximized = False
+
+        # The old value of fullscreen.
+        self.old_fullscreen = False
 
     def get_texture_size(self):
         """
@@ -358,6 +368,8 @@ cdef class GL2Draw:
 
         if renpy.android or renpy.ios:
             fullscreen = True
+        elif renpy.emscripten:
+            fullscreen = False
         else:
             fullscreen = renpy.game.preferences.fullscreen
 
@@ -452,6 +464,9 @@ cdef class GL2Draw:
             self.quit()
             return False
 
+        if renpy.emscripten:
+            emscripten.webgl_enable_extension("EXT_texture_filter_anisotropic")
+
         # Load uguu, and init GL.
         renpy.uguu.gl.clear_missing_functions()
         renpy.uguu.gl.load()
@@ -506,17 +521,18 @@ cdef class GL2Draw:
             pygame.display.get_window().recreate_gl_context(always=renpy.emscripten)
 
         # Are we in fullscreen mode?
-        fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+        if renpy.emscripten:
+            fullscreen = bool(emscripten.run_script_int("isFullscreen()"))
+        else:
+            fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
         # Are we maximized?
         maximized = bool(pygame.display.get_window().get_window_flags() & pygame.WINDOW_MAXIMIZED) and not fullscreen and renpy.config.gl_resize
 
-
         # See if we've ever set the screen position, and if not, center the window.
-        if not fullscreen and not maximized:
-            if not self.ever_set_position:
-                self.ever_set_position = True
-                pygame.display.get_window().set_position(self.get_window_position())
+        if not fullscreen and not maximized and not self.ever_set_position and not renpy.emscripten:
+            self.ever_set_position = True
+            pygame.display.get_window().set_position(self.get_window_position())
 
         # Get the size of the created screen.
         pwidth, pheight = renpy.display.core.get_size()
@@ -605,7 +621,9 @@ cdef class GL2Draw:
 
         fullscreen = renpy.game.preferences.fullscreen
 
-        if renpy.android or renpy.ios:
+        if renpy.emscripten:
+            fullscreen = False
+        elif renpy.android or renpy.ios:
             fullscreen = True
 
         if renpy.game.preferences.physical_size:
@@ -618,9 +636,11 @@ cdef class GL2Draw:
         width *= self.dpi_scale
         height *= self.dpi_scale
 
-        max_w, max_h = self.info["max_window_size"]
-        width = min(width, max_w)
-        height = min(height, max_h)
+        if not renpy.android or renpy.ios or renpy.emscripten:
+            max_w, max_h = self.info["max_window_size"]
+            width = min(width, max_w)
+            height = min(height, max_h)
+
         width = max(width, 256)
         height = max(height, 256)
 
@@ -637,7 +657,12 @@ cdef class GL2Draw:
         """
 
         flags = pygame.display.get_window().get_window_flags()
-        fullscreen = bool(flags & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+
+        if renpy.emscripten:
+            fullscreen = bool(emscripten.run_script_int("isFullscreen()"))
+        else:
+            fullscreen = bool(flags & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+
         maximized = bool(flags & pygame.WINDOW_MAXIMIZED)
 
         size = renpy.display.core.get_size()
@@ -650,6 +675,7 @@ cdef class GL2Draw:
             (drawable_size != self.drawable_size) or
             (self.maximized != maximized)
         ):
+
             self.maximized = maximized
             renpy.display.interface.before_resize()
             self.on_resize()

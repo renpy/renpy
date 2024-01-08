@@ -99,7 +99,7 @@ let linearRampToValue = (param, start, end, duration) => {
 /**
  * Given an audio parameter, sets it to the given value.
  */
-let setValue= (param, value) => {
+let setValue = (param, value) => {
     param.cancelScheduledValues(context.currentTime);
     param.setValueAtTime(value, context.currentTime);
 }
@@ -572,6 +572,11 @@ renpyAudio.fadeout = (channel, delay) => {
 renpyAudio.queue_depth = (channel) => {
     let rv = 0;
     let c = get_channel(channel);
+
+    // Try to resume the audio context if it's not running.
+    if (context.state != "running") {
+        context.resume();
+    }
 
     if (c.playing !== null) {
         rv += 1;

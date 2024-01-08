@@ -157,9 +157,10 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
 
 .. toctree::
    :maxdepth: 1
-   :caption: Library Developer Documentation
+   :caption: Library and Tool Developer Documentation
 
    template_projects
+   cli
 
 
 .. toctree::

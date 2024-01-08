@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -451,11 +451,12 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
 def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=None, old=False, layers=[ 'master' ], time_warp=None, enter_time_warp=None, leave_time_warp=None):
     """
     :doc: transition function
-    :args: (delay, *, enter=None, leave=None, old=False, layers=['master'], time_warp=None, enter_time_warp=None, leave_time_warp=None)
+    :args: (delay, *, enter=None, leave=None, old=False, layers=['master'], time_warp=_warper.linear, enter_time_warp=_warper.linear, leave_time_warp=_warper.linear)
     :name: MoveTransition
 
-    Returns a transition that interpolates the position of images (with the
-    same tag) in the old and new scenes.
+    With these transitions, images changing position between the old and new
+    scenes will be interpolated, which means their movement will be smooth
+    instead of instantaneous.
 
     As only layers have tags, MoveTransitions can only be applied to a single
     layer or all layers at once, using the :ref:`with statement <with-statement>`.
@@ -465,16 +466,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
     `delay`
         The time it takes for the interpolation to finish.
 
-    `enter`
-        If not None, images entering the scene will also be moved. The value
-        of `enter` should be a transform that is applied to the image to
-        get it in its starting position.
-
-    `leave`
-        If not None, images leaving the scene will also be moved. The value
-        of `leave` should be a transform that is applied to the image to
-        get it in its ending position.
-
     `old`
         If true, when a tag gets its image changed during the transition,
         the old image will be used in preference to the new one. Otherwise,
@@ -483,16 +474,62 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
     `layers`
         A list of layers that moves are applied to.
 
+    The two following parameters take transforms, which should not be animated
+    over time.
+
+    `enter`
+        If not None, images entering the scene will also be moved. The transform
+        will be applied to the image to get it in its starting position.
+
+    `leave`
+        If not None, images leaving the scene will also be moved. The transform
+        will be applied to the image to get it in its ending position.
+
+    The three following parameters take :ref:`time warp functions <warpers>`,
+    which take a number between 0.0 and 1.0, and should return a number in the
+    same range.
+
     `time_warp`
-        A :ref:`time warp function <warpers>` that's applied to the interpolation. This
-        takes a number between 0.0 and 1.0, and should return a number in
-        the same range.
+        A time warp function that's applied to the images changing position
+        between the old and new scenes.
 
     `enter_time_warp`
         A time warp function that's applied to images entering the scene.
 
     `leave_time_warp`
         A time warp function that's applied to images leaving the scene.
+
+    ::
+
+        define longer_easein = MoveTransition(3.0, enter=offscreenright, enter_time_warp=_warper.easein)
+
+    In the following code, "a" will be leaving the scene (using `leave` and
+    `leave_time_warp`), "b" will be changing position (using `time_warp`), and
+    "c" will be entering (using `enter` and `enter_time_warp`). Because the same
+    tag is applied before and after, "d" will not be counted as entering or
+    leaving, but as changing position.
+
+    ::
+
+        define some_move_trans = MoveTransition(...)
+
+        label start:
+            show a
+            show b at left
+            show ugly_eileen as d at right
+            e "This is a dialogue !"
+
+            hide a
+            show b at right
+            show c
+            show pretty_eileen as d at left
+            with some_move_trans
+
+    During the time when "d" is changing position, whether ugly or pretty eileen
+    will be shown depends on the value of `old` : if `old` is False, the
+    default, ugly_eileen will instantly turn into pretty_eileen and then move,
+    and if `old` is True, ugly_eileen will move and then instantly turn into
+    pretty_eileen.
     """
 
     if renpy.config.developer:

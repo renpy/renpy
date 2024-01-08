@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -894,7 +894,7 @@ profile_time = 1.0 / 50.0
 # What event do we check to see if the profile needs to be printed?
 profile_to_event = "flip"
 
-# Should we instantly zap transient displayables, or properly hide them?
+# Should unhandled events be ignored?
 fast_unhandled_event = True
 
 # Should a fast path be used when displaying empty windows.
@@ -1411,6 +1411,9 @@ font_hinting = { None : "auto" }
 # at the cost of returning instances of the position type ?
 mixed_position = True
 
+# Should text interpolations be treated as Python expressions?
+interpolate_exprs = True
+
 # Should we execute costly tasks which are
 # avoidable when not generating the documentation ?
 generating_documentation = False
@@ -1427,6 +1430,18 @@ drag_group_add_top = True
 # Should loading of tl scripts be deferred?
 defer_tl_scripts = False
 
+# Should transitions take placement from child displayables?
+transitions_use_child_placement = True
+
+# Should containers pass transform events to their children?
+containers_pass_transform_events = True
+
+# Should the say screens be given the replace event for the second and
+# later pauses?
+say_replace_event = True
+
+# Will screens never cancel hide and replace events?
+screens_never_cancel_hide = True
 
 del os
 del collections

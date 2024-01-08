@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -39,7 +39,7 @@ always_constants = { 'True', 'False', 'None' }
 
 # The set of names that should be treated as pure functions.
 pure_functions = {
-    # Python builtins.
+    # Python 2 builtins.
     "abs", "all", "any", "apply", "bin", "bool", "bytes", "callable", "chr",
     "cmp", "dict", "divmod",
     "filter", "float", "frozenset",
@@ -48,12 +48,11 @@ pure_functions = {
     "range", "reduce", "repr", "round", "set", "sorted",
     "str", "sum", "tuple", "unichr", "unicode", "vars", "zip",
 
-    # enumerator and reversed return iterators at the moment.
-
     # minstore.py
     "_",
     "_p",
     "absolute",
+    "position",
     "__renpy__list__",
     "__renpy__dict__",
     "__renpy__set__",
@@ -88,7 +87,7 @@ pure_functions = {
     "renpy.version_tuple",
     "renpy.version_name",
     "renpy.license",
-    }
+}
 
 constants = { "config", "style" } | always_constants | pure_functions
 

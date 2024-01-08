@@ -591,8 +591,8 @@ Occasionally Used
     This is a map from (font, bold, italics) to (font, bold, italics),
     used to replace a font with one that's specialized as having bold
     and/or italics. For example, if you wanted to have everything
-    using an italic version of "Vera.ttf" use "VeraIt.ttf" instead,
-    you could write::
+    using an italic version of :file:`Vera.ttf` use :file:`VeraIt.ttf`
+    instead, you could write::
 
         init python:
             config.font_replacement_map["Vera.ttf", False, True] = ("VeraIt.ttf", False, False)
@@ -610,8 +610,8 @@ Occasionally Used
 
     The color that the window is cleared to before images are drawn.
     This is mainly seen as the color of the letterbox or pillarbox
-    edges drawn when aspect ratio of the window or monitor in fullscreen
-    mode) does not match the aspect ratio of the game.
+    edges drawn when aspect ratio of the window (or monitor in
+    fullscreen mode) does not match the aspect ratio of the game.
 
 .. var:: config.gl_lod_bias = -0.5
 
@@ -1251,8 +1251,8 @@ Rarely or Internally Used
     At startup, Ren'Py will automatically populate this variable with
     the names of all archives found in the game directory, sorted in
     reverse ascii order. For example, if Ren'Py finds the files
-    data.rpa, patch01.rpa, and patch02.rpa, this variable will be
-    populated with ``['patch02', 'patch01', 'data']``.
+    :file:`data.rpa`, :file:`patch01.rpa`, and :file:`patch02.rpa`,
+    this variable will be populated with ``['patch02', 'patch01', 'data']``.
 
 .. var:: config.at_exit_callbacks = [ ]
 
@@ -1351,7 +1351,7 @@ Rarely or Internally Used
 
     A list of strings, where each string is matched against the GUID
     of a game controller. These strings are mached as a prefix to the
-    controller GUID (which cand be found in log.txt), and if matched,
+    controller GUID (which cand be found in :file:`log.txt`), and if matched,
     prevent the controller from being initialized.
 
 .. var:: config.exception_handler = None
@@ -1425,7 +1425,7 @@ Rarely or Internally Used
 
 .. var:: config.gamedir = ...
 
-    The full path leading to the game's ``game/`` directory. This is a
+    The full path leading to the game's :file:`game/` directory. This is a
     read-only variable. There is no guarantee that any file will be there,
     typically on platforms such as android.
 
@@ -1685,8 +1685,8 @@ Rarely or Internally Used
 
 .. var:: config.pause_with_transition = False
 
-    If false, :func:`renpy.pause` is always, used by the ``pause`` statement.
-    If true, when given a delay, ``pause`` is equivalent to ``with Pause(...)``.
+    If false, :func:`renpy.pause` is always used by the ``pause`` statement.
+    If true, when given a delay, ``pause 5`` is equivalent to ``with Pause(5)``.
 
 .. var:: config.pass_controller_events = False
 
@@ -1980,7 +1980,7 @@ Rarely or Internally Used
     A string that is formatted with the string argument to the voice
     statement to produce the filename that is played to the user. For
     example, if this is "{filename}.ogg", the ``voice "test"`` statement
-    will play test.ogg.
+    will play :file:`test.ogg`.
 
 .. var:: config.web_video_base = "./game"
 

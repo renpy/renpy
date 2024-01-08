@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -478,7 +478,8 @@ init -1500 python:
         :doc: other_action
 
         Move the mouse pointer to `x`, `y`. If the device does not have a mouse
-        pointer or if the :var:`"automatic move" preference <preferences.mouse_move>`
+        pointer, if it is not possible for Ren'Py to move that pointer,
+        or if the :var:`"automatic move" preference <preferences.mouse_move>`
         is False, this does nothing.
 
         `duration`
@@ -668,12 +669,12 @@ init -1500 python:
             self.amount = amount
             self.delay = delay
 
-        def __call__(self):
+
+        def get_adjustment_and_delta(self):
 
             d = renpy.get_widget(None, self.id)
-
             if d is None:
-                raise Exception("There is no displayable with the id {}.".format(self.id))
+                return None, +1
 
             if self.direction == "increase":
                 delta = +1
@@ -695,6 +696,29 @@ init -1500 python:
                 adjustment = d.yadjustment
             else:
                 raise Exception("Unknown scroll direction: {}".format(self.direction))
+
+            return adjustment, delta
+
+        def get_sensitive(self):
+
+            adjustment, delta = self.get_adjustment_and_delta()
+
+            if adjustment is None:
+                return False
+
+            adjustment.restart_interaction_at_limit = True
+
+            if delta > 0:
+                return adjustment.value < adjustment.range
+            else:
+                return adjustment.value > 0
+
+        def __call__(self):
+
+            adjustment, delta = self.get_adjustment_and_delta()
+
+            if adjustment is None:
+                raise Exception("There is no displayable with the id {}.".format(self.id))
 
             if self.amount == "step":
                 amount = delta * adjustment.step

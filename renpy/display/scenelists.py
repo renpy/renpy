@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -386,7 +386,7 @@ class SceneLists(renpy.object.Object):
                 self.sticky_tags[key] = layer
 
         if key and name:
-            self.shown.predict_show(layer, name)
+            self.shown.predict_show(layer, (key,) + name[1:])
 
         if transient:
             self.additional_transient.append((layer, key))

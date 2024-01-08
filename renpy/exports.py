@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -841,9 +841,6 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
     """
 
     renpy.exports.mode('input')
-
-    # Take the user out of fullscreen during input.
-    renpy.game.preferences.fullscreen = False
 
     prompt = renpy.text.extras.filter_text_tags(prompt, allow=set())
 
@@ -3232,40 +3229,13 @@ def get_roll_forward():
 
 def cache_pin(*args):
     """
-    :undocumented: Cache pin is deprecated.
+    :undocumented: Cache pinning has been removed.
     """
-
-    new_pins = renpy.revertable.RevertableSet()
-
-    for i in args:
-
-        im = renpy.easy.displayable(i)
-
-        if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot pin non-image-manipulator %r" % im)
-
-        new_pins.add(im)
-
-    renpy.store._cache_pin_set = new_pins | renpy.store._cache_pin_set
-
 
 def cache_unpin(*args):
     """
-    :undocumented: Cache pin is deprecated.
+    :undocumented: Cache pinning has been removed
     """
-
-    new_pins = renpy.revertable.RevertableSet()
-
-    for i in args:
-
-        im = renpy.easy.displayable(i)
-
-        if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot unpin non-image-manipulator %r" % im)
-
-        new_pins.add(im)
-
-    renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
 def expand_predict(d):
@@ -3639,19 +3609,27 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
 
     It begins by determining a set of image attributes. If `image_tag` is
     given, it gets the image attributes from the tag. Otherwise, it gets
-    them from the currently showing character. If no attributes are available
-    for the tag, this returns None.
+    them from the image property suplied to the currently showing character.
+    If no attributes are available, this returns None.
 
-    It then looks up an image with the tag `prefix_tag`, and the image tage (either
-    from `image_tag` or the currently showing character) and the set of image
-    attributes as attributes. If such an image exists, it's returned.
+    It then looks up an image with the tag `prefix_tag`, and attributes
+    consisting of:
 
-    If not_showing is True, this only returns a side image if the image the
-    attributes are taken from is not on the screen. If Nome, the value
-    is taken from :var:`config.side_image_only_not_showing`.
+    * An image tag (either from `image_tag` or the image property supplied
+      to the currently showing character).
+    * The attributes.
 
-    If `layer` is None, uses the default layer for the currently showing
-    tag.
+    If such an image exists, it's returned.
+
+    `not_showing`
+        If not showing is True, this only returns a side image if an image
+        with the tag that the attributes are taken from is not currently
+        being shown. If False, it will always return an image, if possible.
+        If None, takes the value from :var:`config.side_image_only_not_showing`.
+
+    `layer`
+        If given, the layer to look for the image tag and attributes on. If
+        None, uses the default layer for the tag.
     """
 
     if not_showing is None:
@@ -3667,6 +3645,9 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
             return None
 
     else:
+
+        # Character will compute the appropriate attributes, and stores it
+        # in _side_image_attributes.
         attrs = renpy.store._side_image_attributes
 
     if not attrs:

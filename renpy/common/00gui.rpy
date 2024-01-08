@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -339,6 +339,8 @@ init -1150 python in gui:
         :name: gui.text_properties
         :doc: gui
 
+        Given a `kind` of button, returns a dictionary giving standard style
+        properties for that button. This sets:
         Given a `kind` of textbutton, returns a dictionary giving standard style
         properties for the text inside that button. This sets:
 
@@ -449,6 +451,7 @@ init -1150 python in gui:
     LOADING = _("Loading will lose unsaved progress.\nAre you sure you want to do this?")
     QUIT = _("Are you sure you want to quit?")
     MAIN_MENU = _("Are you sure you want to return to the main menu?\nThis will lose unsaved progress.")
+    CONTINUE = _("Are you sure you want to continue where you left off?")
     END_REPLAY = _("Are you sure you want to end the replay?")
     SLOW_SKIP = _("Are you sure you want to begin skipping?")
     FAST_SKIP_SEEN = _("Are you sure you want to skip to the next choice?")
