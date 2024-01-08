@@ -173,12 +173,6 @@ def position_or_none(x):
     return position.from_any(x)
 
 
-def dualangle_or_float_or_none(x):
-    if x is None:
-        return None
-    return DualAngle.from_any(x)
-
-
 def any_object(x):
     return x
 
@@ -1600,7 +1594,7 @@ class Interpolation(Statement):
         if anchorangles is not None:
             startangle, endangle = anchorangles[:2]
 
-            anchorangle = interpolate(complete, startangle, endangle, dualangle_or_float_or_none)
+            anchorangle = interpolate(complete, startangle, endangle, DualAngle.from_any)
             trans.state.anchorangle = anchorangle
 
         if anchorradii is not None:
