@@ -403,6 +403,8 @@ class TransformState(renpy.object.Object):
         and set xanchor and yanchor such that the anchorangle stays the same,
         and the anchorradius (as explained above) is the given one.
         """
+        anchorradius = position.from_any(anchorradius)
+
         polar_vectors = self.get_anchor_polar_vector()
         anchorangle = self.get_anchorangle(polar_vectors)
         old_anchorradius = self.get_anchorradius(polar_vectors)
