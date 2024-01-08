@@ -171,6 +171,8 @@ def dynamic_image(d, scope=None, prefix=None, search=None): # type: (Any, dict|N
             if renpy.config.missing_image_callback(name):
                 return True
 
+        return False
+
     for i in d:
 
         if not isinstance(i, basestring):

@@ -1256,10 +1256,10 @@ class ImageButton(Button):
                                           **properties)
 
     def visit(self):
-        if self.imagebutton_child is None:
-            return list(self.state_children.values())
-        else:
-            return list(self.state_children.values()) + [ self.imagebutton_child ]
+        rv = list(self.state_children.values())
+        if self.imagebutton_child is not None:
+            rv.append(self.imagebutton_child)
+        return rv
 
     def get_child(self):
 
