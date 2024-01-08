@@ -687,9 +687,9 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, an :func:`absolute`, or a
-float. If it's a float, it's interpreted as a fraction of the size of the
-containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
+When the type is given as a :term:`position`, its relative component is
+interpreted as a fraction of the size of the containing area (for
+:propref:`pos`) or of the displayable (for :propref:`anchor`).
 
 Note that not all properties are independent. For example, :propref:`xalign` and :propref:`xpos`
 both update some of the same underlying data. In a parallel statement, not more than
@@ -824,7 +824,7 @@ Positioning
 
     Subpixel positioning effects the colors (including transparency)
     that are drawn into pixels, but not which pixels are drawn. When
-    subpixel positoning is used in combination with movement (the usual
+    subpixel positioning is used in combination with movement (the usual
     case), the image should have transparent borders in the directions
     it might be moved in, if those edges are visible on the screen.
 
@@ -1298,16 +1298,12 @@ Circular Motion
 
 When an interpolation statement contains the ``clockwise`` or
 ``counterclockwise`` keywords, the interpolation will cause circular motion.
-Ren'Py will compare the start and end locations and figure out the polar
-coordinate center. Ren'Py will then compute the number of degrees it will
-take to go from the start angle to the end angle, in the specified direction
-of rotation. If the circles clause is given, Ren'Py will ensure that the
-appropriate number of circles will be made.
-
-Ren'Py will then interpolate the angle and radius properties, as appropriate,
-to cause the circular motion to happen. If the transform is in align mode,
-setting the angle and radius will set the align property. Otherwise, the pos
-property will be set.
+Ren'Py will compare the start and end locations (which are set by :tpref:`pos`,
+:tpref:`align`, :tpref:`angle` and :tpref:`radius`, ...) and figure out the
+polar coordinate center (which is :tpref:`around`). Ren'Py will then compute the
+number of degrees it will take to go from the start angle to the end angle, in
+the specified direction of rotation. If the circles clause is given, Ren'Py will
+ensure that the appropriate number of circles will be made.
 
 External Events
 ===============
