@@ -469,14 +469,11 @@ class TransformState(renpy.object.Object):
 
     anchor = property(get_anchor, set_anchor)
 
-    def get_align(self):
-        return self.xpos, self.ypos
-
     def set_align(self, value):
         self.xanchor, self.yanchor = value
         self.xpos, self.ypos = value
 
-    align = property(get_align, set_align)
+    align = property(get_pos, set_align)
 
     def get_offset(self):
         return self.xoffset, self.yoffset
