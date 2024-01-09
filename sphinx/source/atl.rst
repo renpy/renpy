@@ -1031,7 +1031,8 @@ Polar Positioning of the Anchor
     If a float, it is scaled horizontally and vertically to the size and shape
     of the displayable : if the height is not equal to the width, a radius that
     is not strictly absolute will result in elliptical motion when varying the
-    anchorangle.
+    anchorangle. For that reason, it is recommended to only pass ``int`` or
+    :func:`absolute` values to this property.
 
 Cropping and Resizing
 ---------------------
