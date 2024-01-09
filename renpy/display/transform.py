@@ -508,18 +508,18 @@ class TransformState(renpy.object.Object):
         self.xpos = value
         self.xanchor = 0.5
 
-    def get_xcenter(self):
+    def get_xpos(self):
         return self.xpos
 
     def set_ycenter(self, value):
         self.ypos = value
         self.yanchor = 0.5
 
-    def get_ycenter(self):
+    def get_ypos(self):
         return self.ypos
 
-    xcenter = property(get_xcenter, set_xcenter)
-    ycenter = property(get_ycenter, set_ycenter)
+    xcenter = property(get_xpos, set_xcenter)
+    ycenter = property(get_ypos, set_ycenter)
 
     def set_xycenter(self, value):
         if value is None:
