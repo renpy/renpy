@@ -1119,7 +1119,7 @@ screen mouse_help():
         text _("Accesses the game menu.")
 
     hbox:
-        label _("Mouse Wheel Up\nClick Rollback Side")
+        label _("Mouse Wheel Up")
         text _("Rolls back to earlier dialogue.")
 
     hbox:
