@@ -538,7 +538,7 @@
     new "Sağ Tıklama"
 
     # screens.rpy:1065
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "Fare Tekerleği Yukarı"
 
     # screens.rpy:1069

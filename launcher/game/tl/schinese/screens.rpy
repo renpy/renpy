@@ -517,7 +517,7 @@
     new "右键点击"
 
     # gui/game/screens.rpy:1054
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "鼠标滚轮上"
 
     # gui/game/screens.rpy:1058

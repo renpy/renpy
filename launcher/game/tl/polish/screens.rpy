@@ -534,7 +534,7 @@ translate polish strings:
     new "Prawy przycisk"
 
     # gui/game/screens.rpy:1063
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "Kółko myszy w górę"
 
     # gui/game/screens.rpy:1067

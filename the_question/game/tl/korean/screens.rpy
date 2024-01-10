@@ -349,7 +349,7 @@
     new "우클릭"
 
     # screens.rpy:1117
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "휠 위로"
 
     # screens.rpy:1121

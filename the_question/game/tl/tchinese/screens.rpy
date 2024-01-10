@@ -350,7 +350,7 @@ translate tchinese strings:
     new "右鍵點擊"
 
     # screens.rpy:1116
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "滑鼠滾輪上"
 
     # screens.rpy:1120

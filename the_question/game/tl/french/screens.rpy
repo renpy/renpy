@@ -349,7 +349,7 @@
     new "Bouton droit"
 
     # screens.rpy:1111
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "Molette de souris vers le haut"
 
     # screens.rpy:1115

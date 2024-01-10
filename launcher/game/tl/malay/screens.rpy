@@ -533,7 +533,7 @@
     new "Klik Kanan"
 
     # screens.rpy:1063
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "Tatal Ke Atas"
 
     # screens.rpy:1067

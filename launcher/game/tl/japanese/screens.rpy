@@ -525,7 +525,7 @@ translate japanese strings:
     new "右クリック"
 
     # screens.rpy:1062
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "マウスホイール上回転"
 
     # screens.rpy:1066

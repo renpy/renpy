@@ -494,7 +494,7 @@ translate arabic strings:
     new "النقر بالزر الأيمن"
 
     # screens.rpy:1062
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "تحريك عجلة الفأرة لأعلى"
 
     # screens.rpy:1066

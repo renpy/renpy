@@ -497,7 +497,7 @@ translate finnish strings:
     new "Hiiren Oikea Painike"
 
     # screens.rpy:1062
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "Hiiren Rulla Ylös"
 
     # screens.rpy:1066

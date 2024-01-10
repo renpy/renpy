@@ -508,7 +508,7 @@ translate italian strings:
     new "Click Destro"
 
     # screens.rpy:1062
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     new "Rotella Su"
 
     # screens.rpy:1066
