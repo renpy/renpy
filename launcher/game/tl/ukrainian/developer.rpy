@@ -104,6 +104,6 @@ translate ukrainian strings:
     new "help: показує цю довідку\n help <вираз>: показує підпис та документацію <виразу>"
 
     # renpy/common/00console.rpy:813
-    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"  
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
     new "У довідці можуть відображатися недокументовані функції. Будь ласка, перевірте, чи функцію або\nклас, який бажаєте використати, задокументовано.\n\n"
 

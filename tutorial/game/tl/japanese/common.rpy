@@ -1221,7 +1221,6 @@ translate japanese strings:
     old "Enable (No Blocklist)"
     new "有効 (ブロックリスト無効化)"
 
-# TODO: Translation updated at 2023-12-31 17:03
 
 translate japanese strings:
 
