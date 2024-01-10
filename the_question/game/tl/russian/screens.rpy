@@ -351,7 +351,7 @@ translate russian strings:
 
     # screens.rpy:1111
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Колёсико вверх\nКлик на сторону отката"
+    new "Колёсико вверх"
 
     # screens.rpy:1115
     old "Mouse Wheel Down"

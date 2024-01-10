@@ -348,7 +348,7 @@ translate czech strings:
 
     # game/screens.rpy:1121
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Kolečko Myši Nahoru\nKliknutí Přetočení Strana"
+    new "Kolečko Myši Nahoru"
 
     # game/screens.rpy:1125
     old "Mouse Wheel Down"

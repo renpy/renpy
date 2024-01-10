@@ -698,7 +698,7 @@
 
     # gui/game/screens.rpy:1063
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Molette vers le haut\nClic sur le côté du Rollback"
+    new "Molette vers le haut"
 
     # gui/game/screens.rpy:1078
     old "Left Trigger\nLeft Shoulder"

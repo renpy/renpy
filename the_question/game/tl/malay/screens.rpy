@@ -350,7 +350,7 @@
 
     # screens.rpy:1111
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Tatal Ke Atas\nKlik Sisi Undur"
+    new "Tatal Ke Atas"
 
     # screens.rpy:1115
     old "Mouse Wheel Down"

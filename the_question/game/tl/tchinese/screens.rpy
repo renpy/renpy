@@ -351,7 +351,7 @@ translate tchinese strings:
 
     # screens.rpy:1116
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "滑鼠滾輪上\n點擊回退控制區"
+    new "滑鼠滾輪上"
 
     # screens.rpy:1120
     old "Mouse Wheel Down"

@@ -283,7 +283,7 @@ translate ukrainian strings:
 
     # game/screens.rpy:1101
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Колесо миші вгору\nНатисніть сторону відкату"
+    new "Колесо миші вгору"
 
     # game/screens.rpy:1105
     old "Mouse Wheel Down"

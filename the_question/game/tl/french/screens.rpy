@@ -350,7 +350,7 @@
 
     # screens.rpy:1111
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Molette de souris vers le haut\nClic du côté rembobinage"
+    new "Molette de souris vers le haut"
 
     # screens.rpy:1115
     old "Mouse Wheel Down"

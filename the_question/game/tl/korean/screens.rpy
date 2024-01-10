@@ -350,7 +350,7 @@
 
     # screens.rpy:1117
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "휠 위로\n롤백 클릭"
+    new "휠 위로"
 
     # screens.rpy:1121
     old "Mouse Wheel Down"

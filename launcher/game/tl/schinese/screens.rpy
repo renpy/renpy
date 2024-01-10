@@ -518,7 +518,7 @@
 
     # gui/game/screens.rpy:1054
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "鼠标滚轮上\n点击回退操作区"
+    new "鼠标滚轮上"
 
     # gui/game/screens.rpy:1058
     old "Mouse Wheel Down"

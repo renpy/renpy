@@ -351,7 +351,7 @@ translate schinese strings:
 
     # screens.rpy:1122
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "鼠标滚轮上\n点击回退操作区"
+    new "鼠标滚轮上"
 
     # screens.rpy:1126
     old "Mouse Wheel Down"

@@ -523,7 +523,7 @@ translate piglatin strings:
 
     # gui/game/screens.rpy:1067
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Ousemay Heelway Puay\nLickcay Ollbackray Idesay"
+    new "Ousemay Heelway Puay"
 
     # gui/game/screens.rpy:1071
     old "Mouse Wheel Down"
