@@ -86,8 +86,8 @@ translate piglatin screens_demo_62c184f8:
 # game/tutorial_screens.rpy:265
 translate piglatin screens_showing_1b51e9a4:
 
-    # e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen, and its name is simple_screen." id screens_showing_1b51e9a4
-    e "Erehay'say anay exampleay ofay aay eryvay implesay creensay. Hetay creensay atementstay isay useday otay elltay Enray'Ypay histay isay aay creensay, anday itsay amenay isay imple_screensay." id screens_showing_1b51e9a4
+    # e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen, and its name is simple_screen."
+    e "Erehay'say anay exampleay ofay aay eryvay implesay creensay. Hetay creensay atementstay isay useday otay elltay Enray'Ypay histay isay aay creensay, anday itsay amenay isay imple_screensay."
 
 # game/tutorial_screens.rpy:267
 translate piglatin screens_showing_5a6bbad0:
