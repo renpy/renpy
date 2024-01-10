@@ -469,14 +469,11 @@ class TransformState(renpy.object.Object):
 
     anchor = property(get_anchor, set_anchor)
 
-    def get_align(self):
-        return self.xpos, self.ypos
-
     def set_align(self, value):
         self.xanchor, self.yanchor = value
         self.xpos, self.ypos = value
 
-    align = property(get_align, set_align)
+    align = property(get_pos, set_align)
 
     def get_offset(self):
         return self.xoffset, self.yoffset
@@ -508,28 +505,25 @@ class TransformState(renpy.object.Object):
         self.xpos = value
         self.xanchor = 0.5
 
-    def get_xcenter(self):
+    def get_xpos(self):
         return self.xpos
 
     def set_ycenter(self, value):
         self.ypos = value
         self.yanchor = 0.5
 
-    def get_ycenter(self):
+    def get_ypos(self):
         return self.ypos
 
-    xcenter = property(get_xcenter, set_xcenter)
-    ycenter = property(get_ycenter, set_ycenter)
-
-    def get_xycenter(self):
-        return self.xcenter, self.ycenter
+    xcenter = property(get_xpos, set_xcenter)
+    ycenter = property(get_ypos, set_ycenter)
 
     def set_xycenter(self, value):
         if value is None:
             value = (None, None)
         self.xcenter, self.ycenter = value
 
-    xycenter = property(get_xycenter, set_xycenter)
+    xycenter = property(get_pos, set_xycenter)
 
 
 class Proxy(object):

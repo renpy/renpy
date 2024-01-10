@@ -687,9 +687,9 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, an :func:`absolute`, or a
-float. If it's a float, it's interpreted as a fraction of the size of the
-containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
+When the type is given as a :term:`position`, its relative component is
+interpreted as a fraction of the size of the containing area (for
+:propref:`pos`) or of the displayable (for :propref:`anchor`).
 
 Note that not all properties are independent. For example, :propref:`xalign` and :propref:`xpos`
 both update some of the same underlying data. In a parallel statement, not more than
@@ -824,7 +824,7 @@ Positioning
 
     Subpixel positioning effects the colors (including transparency)
     that are drawn into pixels, but not which pixels are drawn. When
-    subpixel positoning is used in combination with movement (the usual
+    subpixel positioning is used in combination with movement (the usual
     case), the image should have transparent borders in the directions
     it might be moved in, if those edges are visible on the screen.
 
@@ -965,16 +965,16 @@ Polar Positioning
     :type: (position, position)
     :default: (0.0, 0.0)
 
-    If not None, specifies the center of the polar coordinate position
-    relative to the upper-left of the containing area. The :tpref:`angle` and
-    :tpref:`radius` properties can then be used to specify a position
-    using polar coordinates.
+    This specifies the starting point, relative to the upper-left corner of the
+    containing area, from where the polar vector (computed from :tpref:`angle`
+    and :tpref:`radius`) will be drawn. The sum of the two gives the resulting
+    :tpref:`pos`.
 
 .. transform-property:: angle
 
     :type: float
 
-    This gives the angle portion of a position specified in polar
+    This gives the angle component of a position specified in polar
     coordinates. This is measured in degrees, with 0 being to the top
     of the screen, and 90 being to the right.
 
@@ -987,8 +987,7 @@ Polar Positioning
 
     :type: position
 
-    The radius component of the position given in polar
-    coordinates.
+    The radius component of the position given in polar coordinates.
 
     If a float, this will be scaled to the smaller of the width and height
     available to the transform.
@@ -1006,17 +1005,16 @@ Polar Positioning of the Anchor
 
     :type: (position, position)
 
-    This, in conjunction with :tpref:`anchorangle`, and :tpref:`anchorradius`,
-    can be used to specify the anchor point of the transform in polar coordinates.
-
-    This should be in the same units as :tpref:`anchor`, do not mix relative and
-    absolute coordinates.
+    This specifies the starting point, relative to the upper-left corner of the
+    displayable, from where the polar vector (computed from :tpref:`anchorangle`
+    and :tpref:`anchorradius`) will be drawn. The sum of the two gives the
+    resulting :tpref:`anchor`.
 
 .. transform-property:: anchorangle
 
     :type: (float)
 
-    The angle component of the ploar coordinates of the anchor. This is specified
+    The angle component of the polar coordinates of the anchor. This is specified
     in degrees, with 0 being to the top and 90 being to the right.
 
     Ren'Py clamps this angle to between 0 and 360 degrees, including 0 but
@@ -1028,8 +1026,13 @@ Polar Positioning of the Anchor
 
     :type: (position)
 
-    The radius component of the polar coordinates of the anchor. This will have the same
-    type as :tpref:`anchoraround` and :tpref:`anchor`.
+    The radius component of the polar coordinates of the anchor.
+
+    If a float, it is scaled horizontally and vertically to the size and shape
+    of the displayable : if the height is not equal to the width, a radius that
+    is not strictly absolute will result in elliptical motion when varying the
+    anchorangle. For that reason, it is recommended to only pass ``int`` or
+    :func:`absolute` values to this property.
 
 Cropping and Resizing
 ---------------------
@@ -1296,16 +1299,12 @@ Circular Motion
 
 When an interpolation statement contains the ``clockwise`` or
 ``counterclockwise`` keywords, the interpolation will cause circular motion.
-Ren'Py will compare the start and end locations and figure out the polar
-coordinate center. Ren'Py will then compute the number of degrees it will
-take to go from the start angle to the end angle, in the specified direction
-of rotation. If the circles clause is given, Ren'Py will ensure that the
-appropriate number of circles will be made.
-
-Ren'Py will then interpolate the angle and radius properties, as appropriate,
-to cause the circular motion to happen. If the transform is in align mode,
-setting the angle and radius will set the align property. Otherwise, the pos
-property will be set.
+Ren'Py will compare the start and end locations (which are set by :tpref:`pos`,
+:tpref:`align`, :tpref:`angle` and :tpref:`radius`, ...) and figure out the
+polar coordinate center (which is :tpref:`around`). Ren'Py will then compute the
+number of degrees it will take to go from the start angle to the end angle, in
+the specified direction of rotation. If the circles clause is given, Ren'Py will
+ensure that the appropriate number of circles will be made.
 
 External Events
 ===============

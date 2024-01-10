@@ -1431,7 +1431,7 @@ class Interpolation(Statement):
             revdir = self.revolution
             circles = self.circles
 
-            if (revdir or ((has_angle or has_radius) and renpy.config.automatic_polar_motion)) and (newts.xaround is not None):
+            if revdir or ((has_angle or has_radius) and renpy.config.automatic_polar_motion) or has_anchorangle or has_anchorradius:
 
                 # Remove various irrelevant motions.
                 for i in [ 'xpos', 'ypos',
@@ -1445,8 +1445,8 @@ class Interpolation(Statement):
                 if revdir is not None:
 
                     # Ensure we rotate around the new point.
-                    trans.state.xaround = newts.xaround
-                    trans.state.yaround = newts.yaround
+                    trans.state.xaround = newts.xaround or .0
+                    trans.state.yaround = newts.yaround or .0
                     trans.state.xanchoraround = newts.xanchoraround
                     trans.state.yanchoraround = newts.yanchoraround
 
@@ -1493,11 +1493,6 @@ class Interpolation(Statement):
                         startangle += circles * 360
                         startanchorangle_absolute += circles * 360
                         startanchorangle_relative += circles * 360
-
-                    has_radius = True
-                    has_angle = True
-                    has_anchorangle = True
-                    has_anchorradius = True
 
                     radii = (startradius, endradius)
                     angles = (startangle, endangle)
