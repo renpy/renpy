@@ -48,8 +48,8 @@ class Version(object):
 
         py_branch_to_version[(python, branch)] = self
 
-Version("main", 3, "8.2.0", "TBD")
-Version("main", 2, "7.7.0", "TBD")
+Version("main", 3, "8.2.0", "32bit Sensation")
+Version("main", 2, "7.7.0", "64bit Sensation")
 
 Version("fix", 3, "8.1.4", "Where No One Has Gone Before")
 Version("fix", 2, "7.6.4", "To Boldy Go")
