@@ -195,7 +195,6 @@ function. While the Requests library still remains supported on Desktop and Mobi
 * Can take data as either bytes or objects that be encoded to JSON.
 * Can return data as bytes, as string, or objects decoded from JSON.
 
-
 Accessibility
 -------------
 
@@ -225,7 +224,6 @@ where ``xxx`` is the name of the future feature. For example::
 
     rpy python annotations
 
-
 Translation Improvements
 ------------------------
 
@@ -239,7 +237,6 @@ many languages are present.
 
 Deferred translation loading is disabled by default. The documentation on :ref:`deferred-translations`
 explains how to enable it and caveats that apply.
-
 
 Scene, Show, and Hide Transition
 --------------------------------
@@ -267,6 +264,26 @@ game that is downloaded to the device when the short game is run.
 
 The user-visible version on android is now taken from :var:`build.version`, which
 defaults to :var:`config.version`.
+
+Assets you place in the :file:`rapt/prototype` project will be placed into
+the built project.
+
+The files produced by the Android build process will include the version
+number in their name, making it easier to distinguish between builds.
+
+Web
+---
+
+The way Ren'Py goes fullscreen on the web platform has been changed, to
+improve compatibility with both desktop and mobile web browsers.
+
+Ren'Py now covers the game with a transparent div at start, to help the
+browser detect a click and allow audio to be played. It will proxy the
+click to the game and hide the div once this detection is finished.
+
+The :doc:`fetch` function is now supported on the web platform, allowing
+web pages to make HTTPS and HTTP requests, subject to the same rules (CORS)
+as other web pages.
 
 Updater
 -------
@@ -457,6 +474,9 @@ When a file causes an autoreload, Ren'Py will check the directory containing
 the file and all parent directories for git lock files. The autoreload will
 be deferred until the lock files are removed when the git operation
 completes.
+
+AV1 movies that contained an previously-unsupported colorspace conversion could
+cause Ren'Py to crash, and now will play properly.
 
 
 .. _renpy-8.1.3:
