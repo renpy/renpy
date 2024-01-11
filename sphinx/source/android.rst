@@ -262,6 +262,15 @@ application for testing.
 You may need to uninstall the app when switching between release modes.
 
 
+Very Large Games
+================
+
+It's possible to build games that are larger than 2 GB. This is done using
+the :doc:`downloader`, with a small game being included in the Play
+bundle or Universal APK, and the rest of the game being downloaded
+from a capable web server.
+
+
 Icon and Presplash Images
 =========================
 

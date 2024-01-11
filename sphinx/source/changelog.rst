@@ -10,7 +10,6 @@ Changelog (Ren'Py 7.x-)
 8.2.0 / 7.7.0
 =============
 
-
 Harfbuzz Integration
 --------------------
 
@@ -26,7 +25,6 @@ supports the appropriate language.)
 
 The new :propref:`shaper` style property controls the shaper used to text,
 for compatibility with older versions of Ren'Py.
-
 
 Emoji-Related Text Improvements
 -------------------------------
@@ -52,7 +50,6 @@ script as character dialogue. For example::
 
     e "I'm feeling 😃 today."
 
-
 Variable Fonts
 --------------
 
@@ -69,7 +66,6 @@ text tags, as well as the :func:`renpy.variable_font_info` function.
 
 See the :ref:`variable fonts documentation <variable-fonts>` for more information.
 
-
 Font Hinting
 ------------
 
@@ -83,7 +79,6 @@ control hinting per-use. For example::
     define config.font_hinting["MyFont.tff"] = "bytecode"
 
 enables bytecode hinting for MyFont.ttf.
-
 
 Text Interpolation Improvements
 -------------------------------
@@ -108,7 +103,6 @@ example, ::
     label start:
         e "[t]" # Will show "Shown."
 
-
 Speech Bubble Improvements
 --------------------------
 
@@ -126,7 +120,6 @@ specific to some but not all characters.
 Several changes work together to make it possible to apply a transform that
 animates speech bubble show and hide. An example of this is included in the
 :ref:`bubble-screen` documentation.
-
 
 Position types and ATL interpolation
 ------------------------------------
@@ -154,7 +147,6 @@ example, you can now tell something to be ``xsize position(-10, .5)``, and the
 displayable will make the displayable take half of the horizontal space offered
 to it, minus 10 pixels.
 
-
 Developer Tools
 ---------------
 
@@ -168,7 +160,6 @@ filename and line number of the current statement to be
 displayed. Clicking on the filename and line will open
 the file in the default text editor, at the given line,
 if possible.
-
 
 Data Actions
 ------------
@@ -190,7 +181,6 @@ There are two new managers:
 
 The :class:`LocalVariableValue` bar value and :class:`LocalVariableInputValue` input
 values have been added, for completeness.
-
 
 HTTPS/HTTP Fetch
 ----------------
@@ -262,13 +252,33 @@ a window show transition.
 This is controlled by the new :var:`_scene_show_hide_transition` variable,
 and documented at :ref:`scene-show-hide-transition`.
 
-
 Android
 -------
 
-The version on android is now taken from :var:`build.version`, which
+The Android build system has been updated to use recent versions of Gradle
+and the Android Gradle Plugin. This means that Ren'Py now supports and
+requires Java 21, the most recent long-term support version of Java.
+
+A series of changes have been made to Ren'Py to allow games larger than
+2GB to be be downloaded to a Android or iOS device. How to do this is
+documented at :doc:`downloader`. It fundamentally involves creating two
+games - a very short one that is downloaded to the device, and a larger
+game that is downloaded to the device when the short game is run.
+
+The user-visible version on android is now taken from :var:`build.version`, which
 defaults to :var:`config.version`.
 
+Updater
+-------
+
+The :doc:`Ren'Py Updater <updater>` has been rewritten to use a new
+format, and is implemented entirely in Ren'Py. That makes it compatible
+with more web hosts, and for the first time it support https.
+
+The updater will create a signing key when it is first run, and will sign
+generated updates with that key. When the updater is run, it will check
+that the updates are run with that key. This means it is no longer extra
+work to produce a secure update.
 
 Features
 --------
@@ -352,7 +362,6 @@ language statements.
 The new :func:`renpy.invoke_in_main_thread` function can be used by a Python
 thread to invoke a function in the main Ren'Py thread. (Most Ren'Py functions
 can only be called from the main thread.)
-
 
 Launcher Changes
 ----------------
