@@ -280,6 +280,13 @@ generated updates with that key. When the updater is run, it will check
 that the updates are run with that key. This means it is no longer extra
 work to produce a secure update.
 
+Translations
+------------
+
+There is a new Danish translation of the launcher and The Question.
+
+Many other translations have been updated.
+
 Features
 --------
 
@@ -378,7 +385,6 @@ still providing room for translations.
 
 A :doc:`cli` has been documented, making it possible to build Ren'Py
 projects from the command line.
-
 
 Other Changes
 -------------
