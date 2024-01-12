@@ -478,6 +478,10 @@ completes.
 AV1 movies that contained an previously-unsupported colorspace conversion could
 cause Ren'Py to crash, and now will play properly.
 
+The websockets package is now included in Ren'Py 8. This can be used to connect
+to websockets-based APIs from the desktop and mobile (but not web) ports of
+Ren'Py. As the package depends on Python 3, it's not included in Ren'Py 7.
+
 
 .. _renpy-8.1.3:
 .. _renpy-7.6.3:
