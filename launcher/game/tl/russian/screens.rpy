@@ -681,8 +681,6 @@ translate russian strings:
     old "Opens the accessibility menu."
     new "Открывает меню специальных возможностей."
 
-translate russian strings:
-
     # gui/game/screens.rpy:676
     old "Upload Sync"
     # Automatic translation.
@@ -707,11 +705,11 @@ translate russian strings:
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
 
-
-translate russian strings:
-
     # gui/game/screens.rpy:411
     old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     # Automatic translation.
     new "## Параметр scroll может быть None или один из \"viewport\" или \"vpgrid\". Этот экран предназначен для использования с одним или несколькими дочерними элементами, которые трансклюдируются (помещаются) внутрь него."
 
+    # gui/game/screens.rpy:1098
+    old "Start, Guide, B/Right Button"
+    new "Старт, Гид, B/кнопка вправо"
