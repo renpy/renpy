@@ -2613,7 +2613,6 @@ class Interface(object):
                 focus_roots.append(pb)
 
         else:
-            print("AAA")
             add_layers_to_root(layers_root)
 
         # Add top_layers to the root_widget.
