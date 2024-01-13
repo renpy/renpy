@@ -1187,6 +1187,7 @@ def display_menu(items,
                  screen="choice",
                  type="menu", # @ReservedAssignment
                  predict_only=False,
+                 layer=None,
                  **kwargs):
     """
     :doc: se_menu
@@ -1217,6 +1218,7 @@ def display_menu(items,
     menu_args, menu_kwargs = get_menu_args()
     screen = menu_kwargs.pop("screen", screen)
     with_none = menu_kwargs.pop("_with_none", with_none)
+    layer = menu_kwargs.pop("_layer", layer)
     mode = menu_kwargs.pop("_mode", type)
 
     if interact:
@@ -1307,10 +1309,11 @@ def display_menu(items,
 
             item_actions.append(me)
 
-        if type == "nvl":
-            layer = renpy.config.nvl_choice_layer
-        else:
-            layer = renpy.config.choice_layer
+        if not layer:
+            if type == "nvl":
+                layer = renpy.config.nvl_choice_layer
+            else:
+                layer = renpy.config.choice_layer
 
         show_screen(
             screen,
