@@ -939,6 +939,9 @@ class RollbackLog(renpy.object.Object):
             if rb.not_greedy:
                 break
 
+            if rb.retain_after_load:
+                break
+
             revlog.append(self.log.pop())
 
         # Decide if we're replacing the current context (rollback command),
