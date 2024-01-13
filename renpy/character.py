@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -671,7 +671,15 @@ def display_say(
 
             what_text = show_function(who, what_string, **show_args)
 
+
+            # What text is (screen, id, layer) tuple if we're using a screen.
             if isinstance(what_text, tuple):
+                # If this is not the first pause, set the transform event to "replace".
+                if i != 0 and renpy.config.say_replace_event:
+                    screen_displayable = renpy.display.screen.get_screen(what_text[0], what_text[2])
+                    if screen_displayable is not None:
+                        screen_displayable.set_transform_event("replace")
+
                 what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
 
             if not multiple:

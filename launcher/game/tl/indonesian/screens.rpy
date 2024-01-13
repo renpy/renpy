@@ -497,8 +497,8 @@ translate indonesian strings:
     new "Klik Kanan"
 
     # screens.rpy:1062
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Roda Mouse Atas\nKlik Arah Rollback"
+    old "Mouse Wheel Up"
+    new "Roda Mouse Atas"
 
     # screens.rpy:1066
     old "Mouse Wheel Down"

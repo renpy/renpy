@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,12 +28,14 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import renpy
 import string
 import os
+import re
 
 
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
 flags = frozenset('rstiqulc!')
 formatter = string.Formatter()
 
+SIMPLE_NAME = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_]*$')
 
 def interpolate(s, scope):
     """
@@ -69,7 +71,20 @@ def interpolate(s, scope):
                 conv = 'r'
 
         if renpy.config.interpolate_exprs:
-            value = renpy.python.py_eval(code, {}, scope)
+            if (code in scope) and SIMPLE_NAME.match(code):
+                value = scope[code]
+            else:
+                try:
+                    value = renpy.python.py_eval(code, {}, scope)
+                except Exception as e:
+                    if renpy.config.interpolate_exprs == "fallback":
+                        try:
+                            value, _ = formatter.get_field(code, (), scope)
+                        except Exception:
+                            raise e
+                    else:
+                        raise e
+
         else:
             value, _ = formatter.get_field(code, (), scope)
 
@@ -293,6 +308,13 @@ class MultipleDict(object):
                 return d[key]
 
         raise NameError("Name '{}' is not defined.".format(key))
+
+    def __contains__(self, key):
+        for d in self.dicts:
+            if key in d:
+                return True
+
+        return False
 
 
 def substitute(s, scope=None, force=False, translate=True):

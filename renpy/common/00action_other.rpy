@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -478,7 +478,8 @@ init -1500 python:
         :doc: other_action
 
         Move the mouse pointer to `x`, `y`. If the device does not have a mouse
-        pointer or if the :var:`"automatic move" preference <preferences.mouse_move>`
+        pointer, if it is not possible for Ren'Py to move that pointer,
+        or if the :var:`"automatic move" preference <preferences.mouse_move>`
         is False, this does nothing.
 
         `duration`

@@ -44,7 +44,7 @@ functionality is disabled, with the notable exception of Renpy's
 internal built-in strings, from the accessibility menu for example.
 Theses strings are not found in your project's code, yet they will
 still be included in the distributed version of the game. You can
-find them in the ``game/tl/None/common.rpym`` file, whose only
+find them in the :file:`game/tl/None/common.rpym` file, whose only
 purposes are 1) to provide translations to these strings when the None
 language is not english, and 2) to allow creators to customize these
 strings for their game.
@@ -65,7 +65,7 @@ the translation files.
 The translation files live in directories underneath the "tl"
 subdirectory of the game directory. For example, if you create a
 piglatin translation of the tutorial project, translation files will
-be placed under ``tutorial/game/tl/piglatin``.
+be placed under :file:`tutorial/game/tl/piglatin`.
 
 There will be one translation file created per game script file. The
 common.rpy file will also be created to contain translations of
@@ -252,43 +252,43 @@ menus, and for strings enclosed inside the ``_()`` function. It will then
 place the strings inside a ``translate strings`` block. For example, if we
 have the following script::
 
-  define e = Character(_("Eileen"))
+    define e = Character(_("Eileen"))
 
-  # ...
+    # ...
 
-  menu:
+    menu:
 
-       "Go West":
-          # ...
+        "Go West":
+            # ...
 
-       "Head East":
-          # ...
+        "Head East":
+            # ...
 
 Ren'Py will generate::
 
-  translate piglatin strings:
+    translate piglatin strings:
 
-      old "Eileen"
-      new ""
+        old "Eileen"
+        new ""
 
-      old "Go West"
-      new ""
+        old "Go West"
+        new ""
 
-      old "Head East"
-      new ""
+        old "Head East"
+        new ""
 
 Which can then be translated::
 
-  translate piglatin strings:
+    translate piglatin strings:
 
-      old "Eileen"
-      new "Eileenway"
+        old "Eileen"
+        new "Eileenway"
 
-      old "Go West"
-      new "Ogay Estway"
+        old "Go West"
+        new "Ogay Estway"
 
-      old "Head East"
-      new "Eadhay Eastway"
+        old "Head East"
+        new "Eadhay Eastway"
 
 String translations are also applied to dialogue strings that are not
 translated as dialogue.
@@ -308,8 +308,8 @@ language. This can be used to when the game is written in a non-English
 language, to translate the Ren'Py user interface. ::
 
     translate None strings:
-         old "Start Game"
-         new "Artstay Amegay"
+        old "Start Game"
+        new "Artstay Amegay"
 
 Translating Substitutions
 -------------------------
@@ -318,12 +318,12 @@ String substitutions can be translated using the ``!t`` conversion
 flag. So the following will be translatable using a combination of
 the dialogue and string translation systems::
 
-  if mood_points > 5:
-      $ mood = _("great")
-  else:
-      $ mood = _("awful")
+    if mood_points > 5:
+        $ mood = _("great")
+    else:
+        $ mood = _("awful")
 
-  "I'm feeling [mood!t]."
+    "I'm feeling [mood!t]."
 
 .. _extract-merge-translations:
 
@@ -363,12 +363,12 @@ text is in another language.
 
 Ren'Py handles this by looking in the translation directory for the
 image. For example, if the "piglatin" language is in use, and
-"library.png" is loaded, Ren'Py will use "game/tl/piglatin/library.png"
-in preference to "game/library.png".
+"library.png" is loaded, Ren'Py will use :file:`game/tl/piglatin/library.png`
+in preference to :file:`game/library.png`.
 
 If the file is in a directory under game, that directory should be
-included underneath the language. For example, the file "game/gui/main_menu.png"
-can be translated by creating the file "game/tl/piglatin/gui/main_menu.png".
+included underneath the language. For example, the file :file:`game/gui/main_menu.png`
+can be translated by creating the file :file:`game/tl/piglatin/gui/main_menu.png`.
 
 Style Translations
 ==================
@@ -411,15 +411,15 @@ translations, add::
 
     define config.defer_tl_scripts = True
 
-To your options.rpy file, or any file that loads before the translation
+To your :file:`options.rpy` file, or any file that loads before the translation
 scripts.
 
 When True, this variable will prevent Ren'Py from loading script files
-found in directories named tl/`language` as it initializes. Instead,
+found in directories named :file:`tl/{language}` as it initializes. Instead,
 it will load these files when the language is first activated,
 either at game start or when Ren'Py switches to the language.
 
-Because the tl/`language` directories are not loaded at init time, these
+Because the :file:`tl/{language}` directories are not loaded at init time, these
 files should not contain any statements that are executed at init time,
 like ``init`` blocks or ``python`` blocks, ``screen``, ``image``, ``transform``,
 and other statements. The files should consist entirely of ``translate``,
@@ -453,13 +453,13 @@ The main way to switch languages is with the Language action.
 The Language action can be used to add a language preference to the
 preferences screen::
 
-            frame:
-                style_prefix "pref"
-                has vbox
+    frame:
+        style_prefix "pref"
+        has vbox
 
-                label _("Language")
-                textbutton "English" action Language(None)
-                textbutton "Igpay Atinlay" action Language("piglatin")
+        label _("Language")
+        textbutton "English" action Language(None)
+        textbutton "Igpay Atinlay" action Language("piglatin")
 
 There are two translation-related functions:
 
@@ -470,18 +470,18 @@ translation:
 
 .. function:: _(s)
 
-   (Single underscore) Returns `s` unchanged. Ren'Py will scan for
-   strings enclosed in this function, and add them to the list of
-   translatable strings. The strings will not be translated until
-   they are displayed.
+    (Single underscore) Returns `s` unchanged. Ren'Py will scan for
+    strings enclosed in this function, and add them to the list of
+    translatable strings. The strings will not be translated until
+    they are displayed.
 
 .. function:: __(s)
 
-   (Double underscore) Returns `s` immediately translated into the
-   current language. Strings enclosed in this function will be added
-   to the list of translatable strings. Note that the string may be
-   double-translated, if it matches a string translation when it
-   is displayed.
+    (Double underscore) Returns `s` immediately translated into the
+    current language. Strings enclosed in this function will be added
+    to the list of translatable strings. Note that the string may be
+    double-translated, if it matches a string translation when it
+    is displayed.
 
 .. include:: inc/underscore_p
 
@@ -493,11 +493,9 @@ of the game.
 
 .. var:: _preferences.language
 
-  The name of the current language, or None if the default language is
-  being used. This should be treated as a read-only variable. To
-  change the language, call :func:`renpy.change_language`.
-
-
+    The name of the current language, or None if the default language is
+    being used. This should be treated as a read-only variable. To
+    change the language, call :func:`renpy.change_language`.
 
 
 Unsanctioned Translations
@@ -523,7 +521,7 @@ To create a string translation file, perform the following steps:
   value.
 * Play through the game until all text is seen.
 
-This will update the "game/tl/language/strings.rpy" file with a
+This will update the :file:`game/tl/language/strings.rpy` file with a
 translation template that contains all of the strings in it.
 
 If a game doesn't include support for changing the language, it may be

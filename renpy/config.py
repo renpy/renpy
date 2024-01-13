@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -552,6 +552,9 @@ say_layer = "screens"
 # The layer the choice screen is shown on.
 choice_layer = "screens"
 
+# The layer the choice screen is shown on, when passed (nvl=True).
+nvl_choice_layer = "screens"
+
 # If true, we will not use the .report_traceback method to produced
 # prettier tracebacks.
 raw_tracebacks = ("RENPY_RAW_TRACEBACKS" in os.environ)
@@ -894,7 +897,7 @@ profile_time = 1.0 / 50.0
 # What event do we check to see if the profile needs to be printed?
 profile_to_event = "flip"
 
-# Should we instantly zap transient displayables, or properly hide them?
+# Should unhandled events be ignored?
 fast_unhandled_event = True
 
 # Should a fast path be used when displaying empty windows.
@@ -1432,6 +1435,20 @@ defer_tl_scripts = False
 
 # Should transitions take placement from child displayables?
 transitions_use_child_placement = True
+
+# Should containers pass transform events to their children?
+containers_pass_transform_events = True
+
+# Should the say screens be given the replace event for the second and
+# later pauses?
+say_replace_event = True
+
+# Will screens never cancel hide and replace events?
+screens_never_cancel_hide = True
+
+# A list of transforms that are applied to entire layers.
+layer_transforms = { }
+
 
 del os
 del collections

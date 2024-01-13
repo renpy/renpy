@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2023-06-11 22:49
-
+﻿
 translate czech strings:
 
     # renpy/common/00accessibility.rpy:28
@@ -1098,7 +1097,6 @@ translate czech strings:
     old "Parsing the script failed."
     new "Selhal parsing skriptu."
 
-# TODO: Translation updated at 2023-06-17 01:59
 
 translate czech strings:
 

@@ -534,8 +534,8 @@ translate spanish strings:
     new "Clic derecho"
 
     # screens.rpy:1063
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Rueda del ratón arriba\nClic en lado de retroceso"
+    old "Mouse Wheel Up"
+    new "Rueda del ratón arriba"
 
     # screens.rpy:1067
     old "Mouse Wheel Down"
@@ -708,3 +708,7 @@ translate spanish strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+
+    # gui/game/screens.rpy:1098
+    old "Start, Guide, B/Right Button"
+    new "Inicio, Guía, B/Botón Derecho"

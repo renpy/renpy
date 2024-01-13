@@ -1888,7 +1888,7 @@ translate ukrainian strings:
     new "«Lint» перевіряє вашу гру на наявність потенційних помилок і надає вам статистику."
 
     # game/web.rpy:485
-    old "Creating package..."  
+    old "Creating package..."
     new "Створення пакету..."
 
 

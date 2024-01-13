@@ -48,7 +48,7 @@ Basic Configuration
 The build process can be configured by setting variables and calling
 function that live in the build namespace. This must be done from
 inside an ``init python`` block. The default settings for these configurations are
-set in ``options.rpy``.
+set in :file:`options.rpy`.
 
 There are a few basic variables and functions that many games will
 use.
@@ -95,15 +95,15 @@ Special Files
 There are two files that can be included in your game's base directory
 to customize the build.
 
-icon.ico
+:file:`icon.ico`
     The icon that is used on Windows.
 
-icon.icns
+:file:`icon.icns`
     The icon that is used on Macintosh.
 
 These icon files must be in specific formats. You'll need to use a
-program or web service (such as https://anyconv.com/png-to-ico-converter/ and https://anyconv.com/png-to-icns-converter/ ) to convert
-them.
+program or web service (such as https://anyconv.com/png-to-ico-converter/ and
+https://anyconv.com/png-to-icns-converter/ ) to convert them.
 
 Classifying and Ignoring Files
 ------------------------------
@@ -237,8 +237,8 @@ the file lists they will be included in. (It's rare to use anything
 but the all file list, however.) To use an archive, classify files
 into a list with its name.
 
-For example, the following will archive images in images.rpa, and
-game scripts into scripts.rpa::
+For example, the following will archive images in :file:`images.rpa`, and
+game scripts into :file:`scripts.rpa`::
 
     # Declare two archives.
     build.archive("scripts", "all")
@@ -269,15 +269,15 @@ old .rpyc files around. The .rpyc files contain information that is
 necessary to ensure that saves can be loaded, and omitting these
 files can cause problems.
 
-At the same time, Ren'Py  will update the .rpyc files in the game
+At the same time, Ren'Py will update the .rpyc files in the game
 directory when these files are changed, making the files unsuitable
 for inclusion in version control.
 
 To solve this problem, Ren'Py allows you to place the .rpyc files from
 a previous distribution into the old-game directory, which is alongside
-the game directory. The directory structure of old-game/ should match
-the directory structure of game/. For example, game/scripts/day1.rpyc
-should be moved to old-game/scripts/day1.rpyc. Files in old-game that are
+the game directory. The directory structure of :file:`old-game/` should match
+the directory structure of :file:`game/`. For example, :file:`game/scripts/day1.rpyc`
+should be moved to :file:`old-game/scripts/day1.rpyc`. Files in old-game that are
 not .rpyc files are ignored.
 
 The advantage of using old-game is that the old-game .rpyc files can be

@@ -274,8 +274,8 @@ translate french strings:
     new "Bouton droit"
 
     # screens.rpy:1089
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Molette de souris vers le haut\nClic du côté rembobinage"
+    old "Mouse Wheel Up"
+    new "Molette de souris vers le haut"
 
     # screens.rpy:1093
     old "Mouse Wheel Down"

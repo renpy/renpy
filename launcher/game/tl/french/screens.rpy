@@ -697,8 +697,8 @@
     new "## Ceci détermine quels tags peuvent être affichés sur le screen de l'historique."
 
     # gui/game/screens.rpy:1063
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Molette vers le haut\nClic sur le côté du Rollback"
+    old "Mouse Wheel Up"
+    new "Molette vers le haut"
 
     # gui/game/screens.rpy:1078
     old "Left Trigger\nLeft Shoulder"

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -759,7 +759,7 @@ class Layout(object):
 
             # Figure out the line height, line spacing, and the y coordinate of each
             # glyph.
-            l, y = textsupport.place_vertical(par_glyphs, y, self.scale_int(style.line_spacing), self.scale_int(style.line_leading))
+            l, y = textsupport.place_vertical(par_glyphs, y, self.scale_int(style.line_spacing), self.scale_int(style.line_leading), self.scale_int(style.ruby_line_leading))
             lines.extend(l)
 
             # Figure out the indent of the next paragraph.

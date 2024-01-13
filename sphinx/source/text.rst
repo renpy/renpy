@@ -603,8 +603,8 @@ steps required for your game to support ruby text.
 First, you must set up styles for the ruby text. The following style
 changes are required:
 
-1. The :propref:`line_leading` property must be used to leave enough
-   vertical space for the ruby text.
+1. One of the :propref:`line_leading` or :propref:`ruby_line_leading` properties
+   must be used to leave enough vertical space for the ruby text.
 2. A new named style must be created. The properties of this style,
    such as :propref:`size` should be set in a fashion appropriate
    for ruby text.
@@ -621,11 +621,11 @@ For example::
         yoffset -20
 
     style say_dialogue:
-        line_leading 12
+        ruby_line_leading 12
         ruby_style style.ruby_style
 
     style history_text:
-        line_leading 12
+        ruby_line_leading 12
         ruby_style style.ruby_style
 
 (Use ``style.style_name`` to refer to a style for this purpose.)
@@ -681,8 +681,8 @@ followed by an at-sign and the file name. For example, "0\@font.ttc" is
 the first font in a collection, "1\@font.ttc" the second, and so on.
 
 When looking for a font files, if the file is not found, Ren'Py will search
-in the ``game/fonts`` directory. For example, when looking for test.ttf, Ren'Py
-will first search for ``game/test.ttf``, and then for ``game/fonts/test.ttf``.
+in the :file:`game/fonts` directory. For example, when looking for "test.ttf", Ren'Py
+will first search for :file:`game/test.ttf`, and then for :file:`game/fonts/test.ttf`.
 
 Font Replacement
 ----------------
@@ -760,7 +760,7 @@ points, and the first range to cover a point is used.
 For example::
 
     style default:
-         font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
+        font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
 
 .. include:: inc/font_group
 

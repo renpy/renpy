@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -94,6 +94,7 @@ class SceneLists(renpy.object.Object):
     def after_setstate(self):
         self.camera_list = getattr(self, "camera_list", { })
         self.camera_transform = getattr(self, "camera_transform", { })
+        self.config_layer_transform = getattr(self, "config_layer_transform", { })
 
         for i in layers:
             if i not in self.layers:
@@ -103,6 +104,9 @@ class SceneLists(renpy.object.Object):
 
             if i not in self.camera_list:
                 self.camera_list[i] = (None, [ ])
+
+            if i not in self.config_layer_transform:
+                self.config_layer_transform[i] = [ ]
 
     def after_upgrade(self, version):
 
@@ -135,6 +139,7 @@ class SceneLists(renpy.object.Object):
 
         if version < 8:
             self.sticky_tags = { }
+
 
     def __init__(self, oldsl, shown):
 
@@ -174,6 +179,9 @@ class SceneLists(renpy.object.Object):
 
         # Same thing, but for the camera transform.
         self.camera_transform = { }
+
+        # Same thing, but for config.layer_transforms.
+        self.config_layer_transform = { }
 
         # A map from tag -> layer name, only for layers in config.sticky_layers.
         self.sticky_tags = { }
@@ -386,7 +394,7 @@ class SceneLists(renpy.object.Object):
                 self.sticky_tags[key] = layer
 
         if key and name:
-            self.shown.predict_show(layer, name)
+            self.shown.predict_show(layer, (key,) + name[1:])
 
         if transient:
             self.additional_transient.append((layer, key))
@@ -728,6 +736,35 @@ class SceneLists(renpy.object.Object):
             rv = f
 
         self.camera_transform[layer] = new_transform
+
+        # Handle config.layer_transforms.
+
+        at_list = renpy.config.layer_transforms.get(layer, [ ])
+
+        old_transform = self.config_layer_transform.get(layer, None)
+        new_transform = None
+
+        if at_list:
+
+            for a in at_list:
+
+                if isinstance(a, renpy.display.motion.Transform):
+                    rv = a(child=rv)
+                    new_transform = rv
+                else:
+                    rv = a(rv)
+
+            if (new_transform is not None):
+                self.transform_state(old_transform, new_transform, execution=True)
+
+            f = renpy.display.layout.MultiBox(layout='fixed')
+            f.add(rv, 0, 0)
+            f.layer_name = layer
+            f.untransformed_layer = d
+
+            rv = f
+
+        self.config_layer_transform[layer] = new_transform
 
         return rv
 

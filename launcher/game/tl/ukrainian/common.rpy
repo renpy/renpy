@@ -880,7 +880,7 @@ translate ukrainian strings:
     # renpy/common/00accessibility.rpy:191
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
     new "Параметри цього меню призначені для покращення доступності. Вони можуть працювати не з усіма іграми, а деякі комбінації параметрів можуть зробити гру неможливою для гри. Це не є проблемою гри або рушія. Для досягнення найкращих результатів при зміні шрифтів намагайтеся зберігати розмір тексту таким, яким він був спочатку."
-    
+
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing Volume Drop"
     new "Зменшити гучність синтезу мовлення"

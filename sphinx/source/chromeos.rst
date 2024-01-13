@@ -31,20 +31,23 @@ To install it:
     sudo apt update
     sudo apt dist-upgrade
 
-5. Restart your Chromebook, again.
+5. Install some the required dependencies, with:
 
-To install a version of Ren'Py, open a terminal and run::
+    sudo apt install libnss3 python3-tk
 
-    wget https://www.renpy.org/dl/7.4.0/renpy-7.5.0-sdkarm.tar.bz2
-    tar xaf renpy-7.5.0-sdkarm.tar.bz2
+To install a version of Ren'Py, open a terminal and run (changing the version as
+appropriate)::
+
+    wget https://www.renpy.org/dl/8.2.0/renpy-8.2.0-sdkarm.tar.bz2
+    tar xaf renpy-8.2.0-sdkarm.tar.bz2
 
 To run that version of Ren'Py, open a terminal and run::
 
-    cd ~/ab/renpy-7.5.0-sdkarm
+    cd ~/ab/renpy-8.2.0-sdkarm
     ./renpy.sh
 
-Note that this works with other versions of Ren'Py if you change 7.5.0
-for another version.
+Note that this works with other versions of Ren'Py if you change 8.2.0
+for a later versoon.
 
 A SDK installed in this way can be used to run games that do not natively
 support ARM chromebooks on an ARM chromebook. Just unpack the game into

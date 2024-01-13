@@ -1,0 +1,33 @@
+﻿# Spillets manuskript puttes i denne fil.
+
+# Erklær figurer brugt af dette spil. Farveargumentet farver
+# navnet på figuren.
+
+define e = Character("Eileen")
+
+
+# Spillet starter her.
+
+label start:
+
+    # Vis en baggrund. Der bruges som standard en stedfortræder, men du kan
+    # tilføje en fil (kaldt enten "bg room.png" eller "bg room.jpg") til
+    # mappen images for at vise den.
+
+    scene bg room
+
+    # Dette viser en figursprite. En stedfortræder bruges, men du kan
+    # erstatte den ved at tilføje en fil kaldt "eileen happy.png" til
+    # mappen images.
+
+    show eileen happy
+
+    # Disse viser linjer med dialog.
+
+    e "Du har oprettet et nyt Ren'Py-spil."
+
+    e "Når du har tilføjet en historie, billeder og musik, kan du sende det ud i verden!"
+
+    # Dette afslutter spillet.
+
+    return

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,12 +27,11 @@ from typing import Any
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 import math
-import types # @UnresolvedImport
 
 import renpy
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
-from renpy.atl import dualangle_or_float_or_none, position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
+from renpy.atl import position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
 from renpy.display.core import absolute
 
 class Camera(renpy.object.Object):
@@ -403,6 +402,8 @@ class TransformState(renpy.object.Object):
         and set xanchor and yanchor such that the anchorangle stays the same,
         and the anchorradius (as explained above) is the given one.
         """
+        anchorradius = position.from_any(anchorradius)
+
         polar_vectors = self.get_anchor_polar_vector()
         anchorangle = self.get_anchorangle(polar_vectors)
         old_anchorradius = self.get_anchorradius(polar_vectors)
@@ -468,14 +469,11 @@ class TransformState(renpy.object.Object):
 
     anchor = property(get_anchor, set_anchor)
 
-    def get_align(self):
-        return self.xpos, self.ypos
-
     def set_align(self, value):
         self.xanchor, self.yanchor = value
         self.xpos, self.ypos = value
 
-    align = property(get_align, set_align)
+    align = property(get_pos, set_align)
 
     def get_offset(self):
         return self.xoffset, self.yoffset
@@ -507,28 +505,25 @@ class TransformState(renpy.object.Object):
         self.xpos = value
         self.xanchor = 0.5
 
-    def get_xcenter(self):
+    def get_xpos(self):
         return self.xpos
 
     def set_ycenter(self, value):
         self.ypos = value
         self.yanchor = 0.5
 
-    def get_ycenter(self):
+    def get_ypos(self):
         return self.ypos
 
-    xcenter = property(get_xcenter, set_xcenter)
-    ycenter = property(get_ycenter, set_ycenter)
-
-    def get_xycenter(self):
-        return self.xcenter, self.ycenter
+    xcenter = property(get_xpos, set_xcenter)
+    ycenter = property(get_ypos, set_ycenter)
 
     def set_xycenter(self, value):
         if value is None:
             value = (None, None)
         self.xcenter, self.ycenter = value
 
-    xycenter = property(get_xycenter, set_xycenter)
+    xycenter = property(get_pos, set_xycenter)
 
 
 class Proxy(object):
@@ -1270,28 +1265,28 @@ add_gl_property("gl_pixel_perfect")
 add_gl_property("gl_texture_scaling")
 add_gl_property("gl_texture_wrap")
 
-ALIASES = {
-    "alignaround" : (float, float),
-    "align" : (float, float),
-    "anchor" : (position_or_none, position_or_none),
-    "anchorangle" : dualangle_or_float_or_none,
-    "anchoraround" : (position_or_none, position_or_none),
-    "anchorradius" : position_or_none,
-    "angle" : float,
-    "around" : (position_or_none, position_or_none),
-    "offset" : (int, int),
-    "pos" : (position_or_none, position_or_none),
-    "radius" : position_or_none,
-    "size" : (int, int),
-    "xalign" : float,
-    "xcenter" : position_or_none,
-    "xycenter" : (position_or_none, position_or_none),
-    "xysize" : (position_or_none, position_or_none),
-    "yalign" : float,
-    "ycenter" : position_or_none,
-    }
+ALIASES = (
+    "alignaround", # (float, float),
+    "align", # (float, float),
+    "anchor", # (position_or_none, position_or_none),
+    "anchorangle", # dualangle_or_float_or_none,
+    "anchoraround", # (position_or_none, position_or_none),
+    "anchorradius", # position_or_none,
+    "angle", # float,
+    "around", # (position_or_none, position_or_none),
+    "offset", # (int, int),
+    "pos", # (position_or_none, position_or_none),
+    "radius", # position_or_none,
+    "size", # (int, int),
+    "xalign", # float,
+    "xcenter", # position_or_none,
+    "xycenter", # (position_or_none, position_or_none),
+    "xysize", # (position_or_none, position_or_none),
+    "yalign", # float,
+    "ycenter", # position_or_none,
+)
 
-renpy.atl.PROPERTIES.update(ALIASES)
+renpy.atl.PROPERTIES.update(dict.fromkeys(ALIASES))
 
 for name in ALIASES:
     setattr(Transform, name, Proxy(name))

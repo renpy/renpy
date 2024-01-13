@@ -223,8 +223,8 @@ the next prefix.
 The style prefix is passed through displayables that do not take user input,
 including containers, transforms, and frames.
 
-As an example of how this can be used, if the files "idle\_button.png" and
-"hover\_button.png" exist (and no other files ending in "button.png" do)::
+As an example of how this can be used, if the files :file:`idle_button.png` and
+:file:`hover_button.png` exist (and no other files ending in :file:`button.png` do)::
 
     style button:
         background "[prefix_]button.png"
@@ -727,6 +727,12 @@ Text Style Properties
 
     Specifies the number of pixels the second and later lines in a
     paragraph are indented by.
+
+.. style-property:: ruby_line_leading int
+
+    The number of pixels of spacing to include above each line that
+    contains :ref:`ruby text <ruby-text>`. This is in addition to
+    :propref:`line_leading`.
 
 .. style-property:: ruby_style style or None
 

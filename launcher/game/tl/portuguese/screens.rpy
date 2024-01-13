@@ -590,7 +590,7 @@ translate portuguese strings:
     new "Clique com o botão direito do mouse"
 
     # gui/game/screens.rpy:1067
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     # Automatic translation.
     new "Roda do mouse para cima\nClique em Rollback Side"
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1187,6 +1187,7 @@ def display_menu(items,
                  screen="choice",
                  type="menu", # @ReservedAssignment
                  predict_only=False,
+                 _layer=None,
                  **kwargs):
     """
     :doc: se_menu
@@ -1207,6 +1208,14 @@ def display_menu(items,
     `screen`
         The name of the screen used to display the menu.
 
+    `type`
+        May be "menu" or "nvl". If "nvl", the menu is displayed in NVL mode.
+        Otherwise, it is displayed in ADV mode.
+
+    `_layer`
+        The layer to display the menu on. If not given, defaults to :var:`config.choice_layer`
+        for normal choice menus, and :var:`config.nvl_choice_layer` for NVL choice menus.
+
     Note that most Ren'Py games do not use menu captions, but use narration
     instead. To display a menu using narration, write::
 
@@ -1218,6 +1227,7 @@ def display_menu(items,
     screen = menu_kwargs.pop("screen", screen)
     with_none = menu_kwargs.pop("_with_none", with_none)
     mode = menu_kwargs.pop("_mode", type)
+    layer = menu_kwargs.pop("_layer", _layer)
 
     if interact:
         renpy.exports.mode(mode)
@@ -1307,12 +1317,18 @@ def display_menu(items,
 
             item_actions.append(me)
 
+        if layer is None:
+            if type == "nvl":
+                layer = renpy.config.nvl_choice_layer
+            else:
+                layer = renpy.config.choice_layer
+
         show_screen(
             screen,
             items=item_actions,
             _widget_properties=props,
             _transient=True,
-            _layer=renpy.config.choice_layer,
+            _layer=layer,
             *menu_args,
             **scope)
 
@@ -3609,19 +3625,27 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
 
     It begins by determining a set of image attributes. If `image_tag` is
     given, it gets the image attributes from the tag. Otherwise, it gets
-    them from the currently showing character. If no attributes are available
-    for the tag, this returns None.
+    them from the image property suplied to the currently showing character.
+    If no attributes are available, this returns None.
 
-    It then looks up an image with the tag `prefix_tag`, and the image tage (either
-    from `image_tag` or the currently showing character) and the set of image
-    attributes as attributes. If such an image exists, it's returned.
+    It then looks up an image with the tag `prefix_tag`, and attributes
+    consisting of:
 
-    If not_showing is True, this only returns a side image if the image the
-    attributes are taken from is not on the screen. If Nome, the value
-    is taken from :var:`config.side_image_only_not_showing`.
+    * An image tag (either from `image_tag` or the image property supplied
+      to the currently showing character).
+    * The attributes.
 
-    If `layer` is None, uses the default layer for the currently showing
-    tag.
+    If such an image exists, it's returned.
+
+    `not_showing`
+        If not showing is True, this only returns a side image if an image
+        with the tag that the attributes are taken from is not currently
+        being shown. If False, it will always return an image, if possible.
+        If None, takes the value from :var:`config.side_image_only_not_showing`.
+
+    `layer`
+        If given, the layer to look for the image tag and attributes on. If
+        None, uses the default layer for the tag.
     """
 
     if not_showing is None:
@@ -3637,6 +3661,9 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
             return None
 
     else:
+
+        # Character will compute the appropriate attributes, and stores it
+        # in _side_image_attributes.
         attrs = renpy.store._side_image_attributes
 
     if not attrs:

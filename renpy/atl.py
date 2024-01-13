@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -172,12 +172,6 @@ def position_or_none(x):
     if x is None:
         return None
     return position.from_any(x)
-
-
-def dualangle_or_float_or_none(x):
-    if x is None:
-        return None
-    return DualAngle.from_any(x)
 
 
 def any_object(x):
@@ -1484,7 +1478,7 @@ class Interpolation(Statement):
             revdir = self.revolution
             circles = self.circles
 
-            if (revdir or ((has_angle or has_radius) and renpy.config.automatic_polar_motion)) and (newts.xaround is not None):
+            if revdir or ((has_angle or has_radius) and renpy.config.automatic_polar_motion) or has_anchorangle or has_anchorradius:
 
                 # Remove various irrelevant motions.
                 for i in [ 'xpos', 'ypos',
@@ -1498,8 +1492,8 @@ class Interpolation(Statement):
                 if revdir is not None:
 
                     # Ensure we rotate around the new point.
-                    trans.state.xaround = newts.xaround
-                    trans.state.yaround = newts.yaround
+                    trans.state.xaround = newts.xaround or .0
+                    trans.state.yaround = newts.yaround or .0
                     trans.state.xanchoraround = newts.xanchoraround
                     trans.state.yanchoraround = newts.yanchoraround
 
@@ -1546,11 +1540,6 @@ class Interpolation(Statement):
                         startangle += circles * 360
                         startanchorangle_absolute += circles * 360
                         startanchorangle_relative += circles * 360
-
-                    has_radius = True
-                    has_angle = True
-                    has_anchorangle = True
-                    has_anchorradius = True
 
                     radii = (startradius, endradius)
                     angles = (startangle, endangle)
@@ -1647,7 +1636,7 @@ class Interpolation(Statement):
         if anchorangles is not None:
             startangle, endangle = anchorangles[:2]
 
-            anchorangle = interpolate(complete, startangle, endangle, dualangle_or_float_or_none)
+            anchorangle = interpolate(complete, startangle, endangle, DualAngle.from_any)
             trans.state.anchorangle = anchorangle
 
         if anchorradii is not None:
@@ -2078,8 +2067,8 @@ class Function(Statement):
         fr = self.function(trans, st if block else 0, trans.at)
 
         if (not block) and (fr is not None):
-           block = True
-           fr = self.function(trans, st, trans.at)
+            block = True
+            fr = self.function(trans, st, trans.at)
 
         if fr is not None:
             return "continue", True, fr

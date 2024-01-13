@@ -76,6 +76,13 @@ To revert this behaviour, add the following to your game::
 
     define config.interpolate_exprs = False
 
+To help other developers work while you're migrating your game to the new
+behavior, there is a fallback mode that will first try the new behavior, and
+then fall back to the old behavior if the new behavior fails. To enable this,
+add the following to your game::
+
+    define config.interpolate_exprs = "fallback"
+
 **Polar Coordinate Changes** Ren'Py now enforces that the angles given to
 the :tpref:`angle` and :tpref:`anchorangle`
 properties are in the range 0 to 360 degrees, inclusive of 0 but not of 360.
@@ -119,7 +126,6 @@ add to your game::
 
     define config.simple_box_reverse = True
 
-
 **build.itch_channels** That variable was always documented as a dict but was
 mistakenly implemented as a list of tuples. It's now truly a dict. If you
 were using list operations on it, you'll need to change your code::
@@ -152,11 +158,9 @@ To change this, add to your game::
 
     define config.drag_group_add_top = False
 
-
 **Translate Statements and config.statement_callbacks** Translate statements
 (including internal statements that Ren'Py automatically generates) will no
 longer cause :var:`config.statement_callbacks` to be called.
-
 
 **Transitions Use Child Placements** If the child of a transitions provides
 placement information, that will be used by the transition itself. This
@@ -165,8 +169,33 @@ the old and new children provide the same placement information.
 
 To disable this, add to your game::
 
-    define config.transition_use_child_placement = false
+    define config.transition_use_child_placement = False
 
+**Containers Pass Transform Events**
+Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
+pass transform events (like hover and idle) to their children, meaning that
+children of a button can have their own transforms to respond to those
+events.
+
+To disable this, add to your game::
+
+    define containers_pass_transform_events = True
+
+**Say Screens Are Supplied the Replace Event.** Say screens are now supplied
+the "replace" (rather than "show") transform event for the second and subsequent pauses.
+
+To disable this, add to your game::
+
+    define config.say_replace_event = False
+
+**Re-showing A Screen No Longer Cancels a Hide Event** Previously, if a screen
+was hidden and re-shown, a hide or replace transform event associated with the same
+screen would be cancelled, and the hiding or replaced screen would instantly
+disappear. Now, the event will be allowed to run to completion.
+
+To disable this, add to your game::
+
+    define config.screens_never_cancel_hide = False
 
 
 .. _incompatible-8.1.1:
