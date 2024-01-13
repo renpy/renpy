@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -503,12 +503,14 @@ class Live2D(renpy.display.displayable.Displayable):
     _duplicatable = True
     used_nonexclusive = None
 
-    def create_common(self, default_fade=1.0):
+    default_fade = 1.0
+
+    def create_common(self):
 
         rv = common_cache.get(self.filename, None)
 
         if rv is None:
-            rv = Live2DCommon(self.filename, default_fade)
+            rv = Live2DCommon(self.filename, self.default_fade)
             common_cache[self.filename] = rv
 
         self.common_cache = rv
@@ -520,7 +522,7 @@ class Live2D(renpy.display.displayable.Displayable):
         if self.common_cache is not None:
             return self.common_cache
 
-        return self.create_common(self.filename)
+        return self.create_common()
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
     def __init__(
@@ -563,8 +565,10 @@ class Live2D(renpy.display.displayable.Displayable):
         # The name of this displayable.
         self.name = None
 
+        self.default_fade = default_fade
+
         # Load the common data. Needed!
-        common = self.create_common(default_fade)
+        common = self.common
 
         if nonexclusive:
             common.apply_nonexclusive(nonexclusive)

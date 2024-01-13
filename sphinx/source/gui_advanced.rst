@@ -14,6 +14,10 @@ There are some Python functions that support the GUI.
 
 .. include:: inc/gui
 
+.. function:: gui.button_text_properties(kind=None, accent=False):
+
+    An obsolete alias for :func:`gui.text_properties`.
+
 More on gui.rebuild
 --------------------
 
@@ -99,7 +103,3 @@ that can be added to the preferences screen. ::
         textbutton _("Small") action gui.SetPreference("size", 20)
         textbutton _("Medium") action gui.SetPreference("size", 22)
         textbutton _("Big") action gui.SetPreference("size", 24)
-
-
-
-

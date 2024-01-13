@@ -517,8 +517,8 @@
     new "右键点击"
 
     # gui/game/screens.rpy:1054
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "鼠标滚轮上\n点击回退操作区"
+    old "Mouse Wheel Up"
+    new "鼠标滚轮上"
 
     # gui/game/screens.rpy:1058
     old "Mouse Wheel Down"
@@ -675,4 +675,4 @@
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-    
+

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2023-06-11 22:49
-
+﻿
 translate czech strings:
 
     # game/options.rpy:15

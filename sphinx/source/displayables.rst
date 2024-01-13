@@ -246,18 +246,18 @@ Boxes take :ref:`position-style-properties` and :ref:`box-style-properties`.
 
 ::
 
-   # Display two logos, to the left and right of each other.
-   image logo hbox = HBox("logo.png", "logo.png")
+    # Display two logos, to the left and right of each other.
+    image logo hbox = HBox("logo.png", "logo.png")
 
-   # Display two logos, one on top of the other.
-   image logo vbox = VBox("logo.png", "logo.png")
+    # Display two logos, one on top of the other.
+    image logo vbox = VBox("logo.png", "logo.png")
 
-   # Display two logos. Since both default to the upper-left
-   # corner of the screen, we need to use Image to place
-   # those logos on the screen.
-   image logo fixed = Fixed(
-       Image("logo.png", xalign=0.0, yalign=0.0),
-       Image("logo.png", xalign=1.0, yalign=1.0))
+    # Display two logos. Since both default to the upper-left
+    # corner of the screen, we need to use Image to place
+    # those logos on the screen.
+    image logo fixed = Fixed(
+        Image("logo.png", xalign=0.0, yalign=0.0),
+        Image("logo.png", xalign=1.0, yalign=1.0))
 
 
 The Grid layout displays its children in a grid on the screen. It takes
@@ -304,8 +304,8 @@ manually when the defaults are inappropriate. ::
     image sue = Placeholder("boy")
 
     label start:
-         show sue angry
-         "Sue" "How do you do? Now you gonna die!"
+        show sue angry
+        "Sue" "How do you do? Now you gonna die!"
 
 .. include:: inc/placeholder
 

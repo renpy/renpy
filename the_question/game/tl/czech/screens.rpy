@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2023-06-11 22:49
-
+﻿
 translate czech strings:
 
     # game/screens.rpy:248
@@ -347,8 +346,8 @@ translate czech strings:
     new "Pravé Tlačítko Myši"
 
     # game/screens.rpy:1121
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Kolečko Myši Nahoru\nKliknutí Přetočení Strana"
+    old "Mouse Wheel Up"
+    new "Kolečko Myši Nahoru"
 
     # game/screens.rpy:1125
     old "Mouse Wheel Down"

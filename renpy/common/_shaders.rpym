@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -155,6 +155,23 @@ init python:
         vec4 mask = texture2D(tex1, v_tex_coord.xy);
 
         gl_FragColor = vec4(src.r * mask.r, src.g * mask.r, src.b * mask.r, mask.r);
+    """)
+
+    renpy.register_shader("renpy.mask", variables="""
+        uniform float u_lod_bias;
+        uniform sampler2D tex0;
+        uniform sampler2D tex1;
+        uniform float u_renpy_mask_multiplier;
+        uniform float u_renpy_mask_offset;
+        attribute vec2 a_tex_coord;
+        varying vec2 v_tex_coord;
+    """, vertex_200="""
+        v_tex_coord = a_tex_coord;
+    """, fragment_200="""
+        vec4 src = texture2D(tex0, v_tex_coord.st, u_lod_bias);
+        vec4 mask = texture2D(tex1, v_tex_coord.st, u_lod_bias);
+
+        gl_FragColor = src * (mask.a * u_renpy_mask_multiplier + u_renpy_mask_offset);
     """)
 
 init python hide:

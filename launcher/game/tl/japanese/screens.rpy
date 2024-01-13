@@ -525,8 +525,8 @@ translate japanese strings:
     new "右クリック"
 
     # screens.rpy:1062
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "マウスホイール上回転\n画面サイドをタッチ"
+    old "Mouse Wheel Up"
+    new "マウスホイール上回転"
 
     # screens.rpy:1066
     old "Mouse Wheel Down"
@@ -704,8 +704,6 @@ translate japanese strings:
     new "## 指定されれば選択肢を表示します。config.narrator_menuがTrueだと、メニューは正常に表示されないでしょう。"
 
 
-translate japanese strings:
-
     # gui/game/screens.rpy:676
     old "Upload Sync"
     new "同期のアップロード"
@@ -725,3 +723,8 @@ translate japanese strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+
+    # gui/game/screens.rpy:1098
+    old "Start, Guide, B/Right Button"
+    new "スタート、ガイド、 B / Right ボタン"
+

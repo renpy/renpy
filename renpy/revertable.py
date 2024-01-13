@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -366,6 +366,35 @@ class RevertableDict(dict):
             self[k] = v
 
 
+class RevertableDefaultDict(RevertableDict):
+    """
+    :doc: rollbackclasses
+    :name: defaultdict
+    :args: (default_factory, /, *args, **kwargs)
+
+    This is a revertable version of collections.defaultdict. It takes a
+    factory function. If a key is accessed that does not exist, the `default_factory`
+    function is called with the key as an argument, and the result is
+    returned.
+
+    While the default_factory attribute is present on this object, it does not
+    participate in rollback, and so should not be changed.
+    """
+
+    def __init__(self, default_factory=None, *args, **kwargs):
+        self.default_factory = default_factory
+        super(RevertableDefaultDict, self).__init__(*args, **kwargs)
+
+    def __missing__(self, key):
+        if self.default_factory is None:
+            raise KeyError(key)
+
+        rv = self.default_factory()
+        self[key] = rv
+        return rv
+
+
+
 class RevertableSet(set):
 
     def __setstate__(self, state):
@@ -478,6 +507,50 @@ class RevertableObject(object):
     def _rollback(self, compressed):
         self.__dict__.clear()
         self.__dict__.update(compressed)
+
+
+class MultiRevertable(object):
+    """
+    :doc: rollbackclasses
+    :name: MultiRevertable
+
+    MultiRevertable is a mixin class that allows an object to inherit
+    from more than one kind of revertable object. To use it, from MultiRevertable,
+    then from the revertable classes you want to inherit from.
+
+    For example::
+
+        class MyDict(MultiRevertable, dict, object):
+            pass
+
+    will create an class that will rollback both its dict contents and
+    object fields.
+    """
+
+    def _rollback_types(self):
+        rv = [ ]
+
+        for i in self.__class__.__mro__:
+
+            if i is MultiRevertable:
+                continue
+
+            if "_rollback" in i.__dict__:
+                rv.append(i)
+
+        return rv
+
+    def _clean(self):
+        return tuple(i._clean(self) for i in self._rollback_types())
+
+    def _compress(self, clean):
+        return tuple(i._compress(self, c) for i, c in zip(self._rollback_types(), clean))
+
+    def _rollback(self, compressed):
+
+        for i, c in zip(self._rollback_types(), compressed):
+            i._rollback(self, c)
+
 
 
 def checkpointing(method):

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -467,7 +467,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return " ".join(self.screen_name)
 
     def _repr_info(self):
-        return self.name
+        rv = self.name
+        p = self.screen.parameters
+        if p is not None:
+            rv += str(p)
+        return rv
 
     def visit(self):
         return [ self.child ]
@@ -531,6 +535,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return self.child._handles_event(event)
 
     def _hide(self, st, at, kind):
+
+        if kind == "cancel" and renpy.config.screens_never_cancel_hide:
+            return self
 
         if self.phase == HIDE:
             hid = self
@@ -1067,7 +1074,6 @@ def define_screen(*args, **kwargs):
 
     `variant`
         String. Gives the variant of the screen to use.
-
     """
 
     Screen(*args, **kwargs)
@@ -1346,8 +1352,10 @@ def show_screen(_screen_name, *_args, **kwargs):
 
     sls = renpy.display.scenelists.scene_lists()
 
+
     sls.add(_layer, d, _tag, zorder=_zorder, transient=_transient, keep_st=True, name=name)
-    sls.shown.predict_show(_layer, (_tag,), True)
+    if not _transient:
+        sls.shown.predict_show(_layer, name, True)
 
 
 def predict_screen(_screen_name, *_args, **kwargs):

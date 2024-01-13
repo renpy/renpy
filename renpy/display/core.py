@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -116,6 +116,10 @@ null = None
 # Time management.
 time_base = 0.0
 time_mult = 1.0
+
+# Mouse management.
+relx = 0
+rely = 0
 
 
 
@@ -295,10 +299,10 @@ class MouseMove(object):
 
         if duration is not None:
             self.duration = duration
+            self.start_x, self.start_y = renpy.display.draw.get_mouse_pos()
         else:
-            self.duration = 0
-
-        self.start_x, self.start_y = renpy.display.draw.get_mouse_pos()
+            self.duration = 4/60.0
+            self.start_x, self.start_y = x, y
 
         self.end_x = x
         self.end_y = y
@@ -704,6 +708,9 @@ class Interface(object):
         # The displayable that an ongoing transition is transitioning from.
         self.transition_from = { }
 
+        # The previous root transform.
+        self.old_root_transform = None
+
         # Init layers.
         renpy.display.scenelists.init_layers()
 
@@ -1042,6 +1049,9 @@ class Interface(object):
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
 
+        # Clear out any pending events.
+        pygame.event.get()
+
         for i in renpy.config.display_start_callbacks:
             i()
 
@@ -1157,9 +1167,6 @@ class Interface(object):
         Figures out the list of draw constructors to try.
         """
 
-        if "RENPY_RENDERER" in os.environ:
-            renpy.config.gl2 = False
-
         renderer = renpy.game.preferences.renderer
         renderer = os.environ.get("RENPY_RENDERER", renderer)
         renderer = renpy.session.get("renderer", renderer)
@@ -1180,26 +1187,22 @@ class Interface(object):
             if i in renderers:
                 gl2_renderers.append(i + "2")
 
-        if renpy.config.gl2 or renpy.macintosh:
-            renderers = gl2_renderers + renderers
+        renderers = gl2_renderers + renderers
 
-            # Prevent a performance warning if the renderer
-            # is taken from old persistent data
-            if renderer not in gl2_renderers:
-                renderer = "auto"
+        # Prevent a performance warning if the renderer
+        # is taken from old persistent data.
+        if renderer not in gl2_renderers and (renpy.macintosh or renpy.android or renpy.config.gl2):
+            renderer = "auto"
 
-        else:
-            renderers = renderers + gl2_renderers
+        # Software renderer is the last hope for PC .
+        if not (renpy.android or renpy.ios or renpy.emscripten):
+            renderers = renderers + [ "sw" ]
 
         if renderer in renderers:
             renderers = [ renderer, "sw" ]
 
         if renderer == "sw":
             renderers = [ "sw" ]
-
-        # Software renderer is the last hope for PC and mac.
-        if not (renpy.android or renpy.ios or renpy.emscripten):
-            renderers = renderers + [ "sw" ]
 
         if self.safe_mode:
             renderers = [ "sw" ]
@@ -2425,10 +2428,16 @@ class Interface(object):
         renpy.display.screen.updated_screens.clear()
 
         # Clear some events.
-        pygame.event.clear((pygame.MOUSEMOTION,
-                            PERIODIC,
+        pygame.event.clear((PERIODIC,
                             TIMEEVENT,
                             REDRAW))
+
+        # Accumulate relative mouse movement from otherwise obsolete events.
+        global relx, rely
+        for ev in pygame.event.get(pygame.MOUSEMOTION):
+            xr, yr = ev.rel
+            relx += xr
+            rely += yr
 
         # Add a single TIMEEVENT to the queue.
         self.post_time_event()
@@ -2536,6 +2545,36 @@ class Interface(object):
         for layer in renpy.config.layers:
             add_layer(layers_root, layer)
 
+        def add_layers_to_root(d, st=None, at=None):
+            """
+            This adds layers_root to root_widget, perhaps transforming it
+            with config.layer_transforms[None]
+            """
+
+            at_list = renpy.config.layer_transforms.get(None, [ ])
+            if not at_list:
+                root_widget.add(d, st, at)
+                return
+
+            rv = renpy.display.layout.MultiBox(layout='fixed')
+            rv.add(d, st, at)
+
+            new_transform = None
+
+            for a in at_list:
+
+                if isinstance(a, renpy.display.motion.Transform):
+                    rv = a(child=rv)
+                    new_transform = rv
+                else:
+                    rv = a(rv)
+
+            if (new_transform is not None):
+                scene_lists.transform_state(self.old_root_transform, new_transform, execution=True)
+
+            self.old_root_transform = new_transform
+            root_widget.add(rv, 0, 0)
+
         # Add layers_root to root_widget, perhaps through a transition.
         if (self.ongoing_transition.get(None, None) and
                 not suppress_transition):
@@ -2554,7 +2593,7 @@ class Interface(object):
                 raise Exception("Expected transition to return a displayable, not a {!r}".format(trans))
 
             transition_time = self.transition_time.get(None, None)
-            root_widget.add(trans, transition_time, transition_time)
+            add_layers_to_root(trans, transition_time, transition_time)
 
             if (transition_time is None) and isinstance(trans, renpy.display.transform.Transform):
                 trans.update_state()
@@ -2574,7 +2613,7 @@ class Interface(object):
                 focus_roots.append(pb)
 
         else:
-            root_widget.add(layers_root)
+            add_layers_to_root(layers_root)
 
         # Add top_layers to the root_widget.
         for layer in renpy.config.top_layers:
@@ -2718,8 +2757,19 @@ class Interface(object):
                             needs_redraw = True
 
                     # Check for a fullscreen change.
+
+                    if not renpy.display.can_fullscreen:
+                        renpy.game.preferences.fullscreen = False
+
                     if renpy.game.preferences.fullscreen != self.fullscreen:
-                        renpy.display.draw.resize()
+                        if (not PY2) and renpy.emscripten:
+                            if renpy.game.preferences.fullscreen:
+                                emscripten.run_script("setFullscreen(true);")
+                            else:
+                                emscripten.run_script("setFullscreen(false);")
+
+                        else:
+                            renpy.display.draw.resize()
 
                     # Ask if the game has changed size.
                     if renpy.display.draw.update(force=self.display_reset):
@@ -3029,9 +3079,19 @@ class Interface(object):
 
                 # Merge mousemotion events.
                 if ev.type == pygame.MOUSEMOTION:
-                    evs = pygame.event.get([pygame.MOUSEMOTION])
-                    if len(evs):
-                        ev = evs[-1]
+                    xr, yr = ev.rel
+                    relx += xr
+                    rely += yr
+
+                    for ev in pygame.event.get(pygame.MOUSEMOTION):
+                        xr, yr = ev.rel
+                        relx += xr
+                        rely += yr
+
+                    # Event is now the most recent mouse move due to loop.
+                    ev.rel = relx, rely
+                    relx = 0
+                    rely = 0
 
                     if renpy.windows:
                         self.mouse_focused = True

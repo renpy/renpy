@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -297,6 +297,7 @@ def take_focuses():
 
     if (global_focus is not None) and (get_focused() is None):
         change_focus(global_focus, True)
+
 
 
 def focus_coordinates():
@@ -712,7 +713,16 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
     if not current:
 
+        focus_extreme(xmul, ymul, wmul, hmul)
+        current = get_focused()
+
+        if current is not None:
+            return
+
         for f in focus_list:
+
+            if f.x is False:
+                continue
 
             if not f.widget.style.keyboard_focus:
                 continue
@@ -760,6 +770,9 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
             placeless = f
             continue
 
+        if f.x is False:
+            continue
+
         if not condition(from_focus, f):
             continue
 
@@ -802,6 +815,9 @@ def focus_ordered(delta):
 
         if f.x is None:
             placeless = f
+            continue
+
+        if f.x is False:
             continue
 
         if f.arg is not None:

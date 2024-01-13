@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -257,6 +257,14 @@ class Preferences(renpy.object.Object):
         for p in all_preferences:
             if not hasattr(self, p.name):
                 setattr(self, p.name, copy.copy(p.default))
+
+    def reset(self):
+        """
+        Resets the preferences to their default values.
+        """
+
+        for p in all_preferences:
+            setattr(self, p.name, copy.copy(p.default))
 
     def check(self):
         """

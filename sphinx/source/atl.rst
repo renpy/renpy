@@ -217,7 +217,7 @@ Some sample interpolations are::
         pause 1.0
 
         # Set the location to circle around.
-        alignaround (.5, .5)
+        anchor (0.5, 0.5)
 
         # Use circular motion to bring us to spiral out to the top of
         # the screen. Take 2 seconds to do so.
@@ -285,8 +285,8 @@ expression.
 There are three things the first simple expression may evaluate to:
 
 * If it's an ATL transform, and that ATL transform has **not** been supplied
-  a child (through being called as a transform or transition, or
-  with a `child` or `old_widget` argument), the ATL transform is
+  a child (through being called as a transform, or
+  with a `child` argument), the ATL transform is
   included at the location of the expression. The ``with`` clause is ignored.
 
 * If it's an integer or floating point number,  it's taken as a number of
@@ -642,21 +642,20 @@ amount of time. (If the statement has 0 duration, then t is 1.0 when it runs.)
 t' should start at 0.0 and end at 1.0, but can be greater or less.
 
 ``pause``
-    Pause, then jump to the new value. If t == 1.0, t' = 1.0. Otherwise, t'
-    = 0.0.
+    Pause, then jump to the new value. If ``t == 1.0``, ``t' = 1.0``. Otherwise,
+    ``t' = 0.0``.
 
 ``linear``
-    Linear interpolation. t' = t
+    Linear interpolation. ``t' = t``
 
 ``ease``
-    Start slow, speed up, then slow down. t' = .5 - math.cos(math.pi
-    * t) / 2.0
+    Start slow, speed up, then slow down. ``t' = .5 - math.cos(math.pi * t) / 2.0``
 
 ``easein``
-    Start fast, then slow down. t' = math.cos((1.0 - t) * math.pi / 2.0
+    Start fast, then slow down. ``t' = math.cos((1.0 - t) * math.pi / 2.0)``
 
 ``easeout``
-    Start slow, then speed up. t' = 1.0 - math.cos(t * math.pi / 2.0)
+    Start slow, then speed up. ``t' = 1.0 - math.cos(t * math.pi / 2.0)``
 
 In addition, most of Robert Penner's easing functions are supported. To
 make the names match those above, the functions have been renamed
@@ -666,7 +665,10 @@ http://www.easings.net/.
 .. include:: inc/easings
 
 These warpers can be accessed in the ``_warper`` read-only module, which contains
-the functions listed above.
+the functions listed above. It is useful for things in Ren'Py which take a
+time-warping function, such as :func:`Dissolve`, which you can use like::
+
+    with Dissolve(1, time_warp=_warper.easein_quad)
 
 New warpers can be defined using the ``renpy.atl_warper`` decorator, in a ``python
 early`` block. It should be placed in a file that is parsed before any file
@@ -685,14 +687,17 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, an :func:`absolute`, or a
-float. If it's a float, it's interpreted as a fraction of the size of the
-containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
+When the type is given as a :term:`position`, its relative component is
+interpreted as a fraction of the size of the containing area (for
+:propref:`pos`) or of the displayable (for :propref:`anchor`).
 
 Note that not all properties are independent. For example, :propref:`xalign` and :propref:`xpos`
 both update some of the same underlying data. In a parallel statement, not more than
 one block should adjust properties sharing the same data. The angle and radius properties set
 both horizontal and vertical positions.
+
+Positioning
+-----------
 
 .. transform-property:: pos
 
@@ -810,6 +815,27 @@ both horizontal and vertical positions.
     Equivalent to setting ypos to the value of this property, and
     yanchor to 0.5.
 
+.. transform-property:: subpixel
+
+    :type: boolean
+    :default: False
+
+    If True, causes the child to be placed using subpixel positioning.
+
+    Subpixel positioning effects the colors (including transparency)
+    that are drawn into pixels, but not which pixels are drawn. When
+    subpixel positioning is used in combination with movement (the usual
+    case), the image should have transparent borders in the directions
+    it might be moved in, if those edges are visible on the screen.
+
+    For example, if a character sprite is being moved horizontally,
+    it makes sense to have transparent borders on the left and right.
+    These might not be necessary when panning over a background that
+    extends outside the visible area, as the edges will not be seen.
+
+Rotation
+--------
+
 .. transform-property:: rotate
 
     :type: float or None
@@ -842,6 +868,9 @@ both horizontal and vertical positions.
    and rotated as the child is transformed. Effectively, this makes the
    anchor the point that the child is rotated and scaled around.
 
+Zoom and Flip
+-------------
+
 .. transform-property:: zoom
 
     :type: float
@@ -866,6 +895,9 @@ both horizontal and vertical positions.
 
    This causes the displayable to be vertically zoomed by the supplied
    factor. A negative value causes the image to be flipped vertically.
+
+Pixel Effects
+-------------
 
 .. transform-property:: nearest
 
@@ -905,22 +937,44 @@ both horizontal and vertical positions.
     an opaque surface. (Complex operations, like viewport, :func:`Flatten`, :func:`Frame`,
     and certain transitions may cause problems with additive blending.)
 
+.. transform-property:: matrixcolor
+
+    :type: None or Matrix or MatrixColor
+    :default: None
+
+    If not None, the value of this property is used to recolor everything
+    that children of this transform draw. Interpolation is only supported
+    when MatrixColors are used, and the MatrixColors are structurally similar.
+    See :doc:`matrixcolor` for more information.
+
+.. transform-property:: blur
+
+    :type: None or float
+    :default: None
+
+    This blurs the child of this transform by `blur` pixels, up to the border
+    of the displayable. The precise details of the blurring may change
+    between Ren'Py versions, and the blurring may exhibit artifacts,
+    especially when the image being blurred is changing.
+
+Polar Positioning
+-----------------
+
 .. transform-property:: around
 
     :type: (position, position)
     :default: (0.0, 0.0)
 
-    If not None, specifies the center of the polar coordinate position
-    relative to the upper-left of the containing area. The :tpref:`angle` and
-    :tpref:`radius` properties can then be used to specify a position
-    using polar coordinates.
-
+    This specifies the starting point, relative to the upper-left corner of the
+    containing area, from where the polar vector (computed from :tpref:`angle`
+    and :tpref:`radius`) will be drawn. The sum of the two gives the resulting
+    :tpref:`pos`.
 
 .. transform-property:: angle
 
     :type: float
 
-    This gives the angle portion of a position specified in polar
+    This gives the angle component of a position specified in polar
     coordinates. This is measured in degrees, with 0 being to the top
     of the screen, and 90 being to the right.
 
@@ -933,28 +987,34 @@ both horizontal and vertical positions.
 
     :type: position
 
-    The radius component of the position given in polar
-    coordiates. The type of this is the type the radius was last set to,
-    defaulting to absolute pixels.
+    The radius component of the position given in polar coordinates.
 
     If a float, this will be scaled to the smaller of the width and height
     available to the transform.
+
+Polar Positioning of the Anchor
+-------------------------------
+
+.. note::
+
+    While using polar coordinates to position the anchor is possible, it's
+    often more convenient to simply set :tpref:`anchor` to (0.5, 0.5), and
+    position the center of your displayable.
 
 .. transform-property:: anchoraround
 
     :type: (position, position)
 
-    This, in conjunction with :tpref:`anchorangle`, and :tpref:`anchorradius`,
-    can be used to specify the anchor point of the transform in polar coordinates.
-
-    This should be in the same units as :tpref:`anchor`, do not mix relative and
-    absolute coordinates.
+    This specifies the starting point, relative to the upper-left corner of the
+    displayable, from where the polar vector (computed from :tpref:`anchorangle`
+    and :tpref:`anchorradius`) will be drawn. The sum of the two gives the
+    resulting :tpref:`anchor`.
 
 .. transform-property:: anchorangle
 
     :type: (float)
 
-    The angle component of the ploar coordinates of the anchor. This is specified
+    The angle component of the polar coordinates of the anchor. This is specified
     in degrees, with 0 being to the top and 90 being to the right.
 
     Ren'Py clamps this angle to between 0 and 360 degrees, including 0 but
@@ -966,14 +1026,16 @@ both horizontal and vertical positions.
 
     :type: (position)
 
-    The radius component of the polar coordinates of the anchor. This will have the same
-    type as :tpref:`anchoraround` and :tpref:`anchor`.
+    The radius component of the polar coordinates of the anchor.
 
-.. transform-property:: alignaround
+    If a float, it is scaled horizontally and vertically to the size and shape
+    of the displayable : if the height is not equal to the width, a radius that
+    is not strictly absolute will result in elliptical motion when varying the
+    anchorangle. For that reason, it is recommended to only pass ``int`` or
+    :func:`absolute` values to this property.
 
-    :type: (float, float)
-
-    This sets :tpref:`around` and :tpref:`anchoraround` to the same value.
+Cropping and Resizing
+---------------------
 
 .. transform-property:: crop
 
@@ -1070,40 +1132,8 @@ both horizontal and vertical positions.
          - As for ``cover``, but will never decrease the size of the
            displayable.
 
-.. transform-property:: subpixel
-
-    :type: boolean
-    :default: False
-
-    If True, causes the child to be placed using subpixel positioning.
-
-    Subpixel positioning effects the colors (including transparency)
-    that are drawn into pixels, but not which pixels are drawn. When
-    subpixel positoning is used in combination with movement (the usual
-    case), the image should have transparent borders in the directions
-    it might be moved in, if those edges are visible on the screen.
-
-    For example, if a character sprite is being moved horizontally,
-    it makes sense to have transparent borders on the left and right.
-    These might not be necessary when panning over a background that
-    extends outside the visible area, as the edges will not be seen.
-
-.. transform-property:: delay
-
-    :type: float
-    :default: 0.0
-
-    If this transform is being used as a transition, then this is the
-    duration of the transition. See :ref:`atl-transitions`.
-
-.. transform-property:: events
-
-    :type: boolean
-    :default: True
-
-    If true, events are passed to the child of this transform. If false,
-    events are blocked. (This can be used in ATL transitions to prevent
-    events from reaching the old_widget.)
+Panning and Tiling
+------------------
 
 .. transform-property:: xpan
 
@@ -1139,26 +1169,30 @@ both horizontal and vertical positions.
 
     The number of times to tile the image vertically.
 
-.. transform-property:: matrixcolor
+Transitions
+-----------
 
-    :type: None or Matrix or MatrixColor
-    :default: None
+See :ref:`atl-transitions`.
 
-    If not None, the value of this property is used to recolor everything
-    that children of this transform draw. Interpolation is only supported
-    when MatrixColors are used, and the MatrixColors are structurally similar.
-    See :doc:`matrixcolor` for more information.
+.. transform-property:: delay
 
-.. transform-property:: blur
+    :type: float
+    :default: 0.0
 
-    :type: None or float
-    :default: None
+    If this transform is being used as a transition, then this is the
+    duration of the transition. See :ref:`atl-transitions`.
 
-    This blurs the child of this transform by `blur` pixels, up to the border
-    of the displayable. The precise details of the blurring may change
-    between Ren'Py versions, and the blurring may exhibit artifacts,
-    especially when the image being blurred is changing.
+.. transform-property:: events
 
+    :type: boolean
+    :default: True
+
+    If true, events are passed to the child of this transform. If false,
+    events are blocked. (This can be used in ATL transitions to prevent
+    events from reaching the old_widget.)
+
+Other
+-----
 
 .. transform-property:: show_cancels_hide
 
@@ -1185,6 +1219,9 @@ GL Properties:
 Uniforms:
     Properties beginning with ``u_`` are uniforms that can be used by :ref:`custom shaders <custom-shaders>`.
 
+Property Order
+--------------
+
 These properties are applied in the following order:
 
 #. mesh, blur
@@ -1201,7 +1238,7 @@ These properties are applied in the following order:
 #. matrixtransform, matrixanchor
 #. zzoom
 #. perspective
-#. nearest, blend, alpha, additive, shader.
+#. nearest, blend, alpha, additive, shader
 #. matrixcolor
 #. GL Properties, Uniforms
 #. position properties
@@ -1215,6 +1252,12 @@ Deprecated Transform Properties
     The following properties should not be used in modern games, as they may
     conflict with more recent features. They are only kept here for compatibility,
     along with the new way of achieving the same behavior.
+
+.. transform-property:: alignaround
+
+    :type: (float, float)
+
+    This sets :tpref:`anchor`, :tpref:`around`, and :tpref:`anchoraround` to the same value.
 
 .. transform-property:: crop_relative
 
@@ -1256,16 +1299,12 @@ Circular Motion
 
 When an interpolation statement contains the ``clockwise`` or
 ``counterclockwise`` keywords, the interpolation will cause circular motion.
-Ren'Py will compare the start and end locations and figure out the polar
-coordinate center. Ren'Py will then compute the number of degrees it will
-take to go from the start angle to the end angle, in the specified direction
-of rotation. If the circles clause is given, Ren'Py will ensure that the
-appropriate number of circles will be made.
-
-Ren'Py will then interpolate the angle and radius properties, as appropriate,
-to cause the circular motion to happen. If the transform is in align mode,
-setting the angle and radius will set the align property. Otherwise, the pos
-property will be set.
+Ren'Py will compare the start and end locations (which are set by :tpref:`pos`,
+:tpref:`align`, :tpref:`angle` and :tpref:`radius`, ...) and figure out the
+polar coordinate center (which is :tpref:`around`). Ren'Py will then compute the
+number of degrees it will take to go from the start angle to the end angle, in
+the specified direction of rotation. If the circles clause is given, Ren'Py will
+ensure that the appropriate number of circles will be made.
 
 External Events
 ===============
@@ -1302,8 +1341,8 @@ The following events can be triggered automatically:
     the game is loaded and when styles or translations change.
 
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``, ``insensitive``, ``selected_insensitive``
-   Triggered when button containing this transform, or a button contained
-   by this transform, enters the named state.
+    Triggered when button containing this transform, or a button contained
+    by this transform, enters the named state.
 
 
 .. _replacing-transforms:

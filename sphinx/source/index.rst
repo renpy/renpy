@@ -21,6 +21,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
 
         https://doc.renpy.cn/zh-TW/
 
+
 .. toctree::
     :maxdepth: 3
     :caption: Getting Started
@@ -128,6 +129,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    ren_py
    fetch
 
+
 .. toctree::
    :maxdepth: 1
    :caption: Building, Updating, and Other Platforms
@@ -151,6 +153,14 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    problems
    environment_variables
    self_voicing
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Library and Tool Developer Documentation
+
+   template_projects
+   cli
 
 
 .. toctree::

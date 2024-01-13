@@ -514,8 +514,8 @@ translate ukrainian strings:
     new "ПКМ"
 
     # gui/game/screens.rpy:1054
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Коліщатко миші вгору\nСторона відкату"
+    old "Mouse Wheel Up"
+    new "Коліщатко миші вгору"
 
     # gui/game/screens.rpy:1058
     old "Mouse Wheel Down"

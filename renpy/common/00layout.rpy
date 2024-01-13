@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -452,6 +452,7 @@ init -1400 python hide:
     layout.LOADING = "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     layout.QUIT = "Are you sure you want to quit?"
     layout.MAIN_MENU = "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
+    layout.CONTINUE = "Are you sure you want to continue where you left off?"
     layout.END_REPLAY = "Are you sure you want to end the replay?"
     layout.SLOW_SKIP = "Are you sure you want to begin skipping?"
     layout.FAST_SKIP_SEEN = "Are you sure you want to skip to the next choice?"

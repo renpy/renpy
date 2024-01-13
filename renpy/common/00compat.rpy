@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -301,6 +301,12 @@ init -1100 python:
             config.atl_pos_only = True
             style.default.shaper = "freetype"
             config.mixed_position = False
+            config.drag_group_add_top = False
+            config.transitions_use_child_placement = True
+            config.interpolate_exprs = False
+            config.containers_pass_transform_events = False
+            config.say_replace_event = False
+            config.screens_never_cancel_hide = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

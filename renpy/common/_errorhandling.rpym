@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -81,6 +81,7 @@ init label _errorhandling:
         line_leading 0
         line_overlap_split 0
         layout "tex"
+        ruby_line_leading 0
         subtitle_width 0.9
         slow_cps None
         slow_cps_multiplier 1.0
@@ -307,10 +308,10 @@ init python:
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = ['alt_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
-        accessibility = [ 'K_a' ],
         bubble_editor = [ 'alt_K_b', 'shift_K_b' ],
 
         # Accessibility.
+        accessibility = [ 'shift_K_a' ],
         self_voicing = [ 'alt_K_v', 'K_v' ],
         clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
@@ -673,6 +674,8 @@ screen _exception_actions(traceback_fn, tt, *args):
 
 
 python early in _errorhandling:
+    # Do not participate in saves.
+    _constant = True
 
     # These enable various error handling modes.
     rollback = True

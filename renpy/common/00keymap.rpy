@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -53,10 +53,10 @@ init -1600 python:
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = ['alt_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
-        accessibility = [ 'K_a' ],
         bubble_editor = [ 'alt_K_b', 'shift_K_b' ],
 
         # Accessibility.
+        accessibility = [ 'shift_K_a' ],
         self_voicing = [ 'alt_K_v', 'K_v' ],
         clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],

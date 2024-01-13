@@ -86,8 +86,8 @@ translate piglatin add_displayable_7112a377:
 # game/tutorial_screen_displayables.rpy:176
 translate piglatin add_displayable_8ba81c26:
 
-    # e "An image can also be referred to by its filename, relative to the game directory." id add_displayable_8ba81c26
-    e "Naay imageay ancay alsoay ebay eferredray otay ybay itsay ilenamefay, elativeray otay hetay amegay irectoryday." id add_displayable_8ba81c26
+    # e "An image can also be referred to by its filename, relative to the game directory."
+    e "Naay imageay ancay alsoay ebay eferredray otay ybay itsay ilenamefay, elativeray otay hetay amegay irectoryday."
 
 # game/tutorial_screen_displayables.rpy:185
 translate piglatin add_displayable_1f5571e3:
@@ -128,8 +128,8 @@ translate piglatin text_displayable_9351d9dd:
 # game/tutorial_screen_displayables.rpy:236
 translate piglatin text_displayable_32d76ccb:
 
-    # e "When text is displayed in a screen using the text statement, variables defined in the screen take precedence over those defined outside it." id text_displayable_32d76ccb
-    e "Henway exttay isay isplayedday inay aay creensay usingay hetay exttay atementstay, ariablesvay efinedday inay hetay creensay aketay recedencepay overay hosetay efinedday outsideay itay." id text_displayable_32d76ccb
+    # e "When text is displayed in a screen using the text statement, variables defined in the screen take precedence over those defined outside it."
+    e "Henway exttay isay isplayedday inay aay creensay usingay hetay exttay atementstay, ariablesvay efinedday inay hetay creensay aketay recedencepay overay hosetay efinedday outsideay itay."
 
 # game/tutorial_screen_displayables.rpy:238
 translate piglatin text_displayable_7e84a5d1:
@@ -290,8 +290,8 @@ translate piglatin button_displayables_4c600d20:
 # game/tutorial_screen_displayables.rpy:473
 translate piglatin button_displayables_47af4bb9:
 
-    # e "A button takes another displayable as a child. Since that child can be a layout, it can take as many children as you want." id button_displayables_47af4bb9
-    e "Aay uttonbay akestay anotheray isplayableday asay aay ildchay. Incesay hattay ildchay ancay ebay aay ayoutlay, itay ancay aketay asay anymay ildrenchay asay ouyay antway." id button_displayables_47af4bb9
+    # e "A button takes another displayable as a child. Since that child can be a layout, it can take as many children as you want."
+    e "Aay uttonbay akestay anotheray isplayableday asay aay ildchay. Incesay hattay ildchay ancay ebay aay ayoutlay, itay ancay aketay asay anymay ildrenchay asay ouyay antway."
 
 # game/tutorial_screen_displayables.rpy:483
 translate piglatin button_displayables_d01adde3:
@@ -380,8 +380,8 @@ translate piglatin bar_displayables_1b037b21:
 # game/tutorial_screen_displayables.rpy:604
 translate piglatin bar_displayables_c2aa4725:
 
-    # e "The middle style is the 'slider' value. It's used for values the player is expected to adjust, like a volume preference." id bar_displayables_c2aa4725
-    e "Hetay iddlemay ylestay isay hetay 'iderslay' aluevay. Tiay'say useday orfay aluesvay hetay ayerplay isay expecteday otay adjustay, ikelay aay olumevay referencepay." id bar_displayables_c2aa4725
+    # e "The middle style is the 'slider' value. It's used for values the player is expected to adjust, like a volume preference."
+    e "Hetay iddlemay ylestay isay hetay 'iderslay' aluevay. Tiay'say useday orfay aluesvay hetay ayerplay isay expecteday otay adjustay, ikelay aay olumevay referencepay."
 
 # game/tutorial_screen_displayables.rpy:606
 translate piglatin bar_displayables_2fc44226:

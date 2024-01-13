@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,7 +29,7 @@ import pygame_sdl2
 from pygame_sdl2 import CONTROLLERDEVICEADDED, CONTROLLERDEVICEREMOVED
 from pygame_sdl2 import CONTROLLERAXISMOTION, CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP
 from pygame_sdl2.controller import Controller, get_string_for_axis, get_string_for_button
-import pygame_sdl2 as pygame
+pygame = pygame_sdl2
 
 import renpy
 
@@ -241,9 +241,14 @@ def event(ev):
     the event has been processed and should be ignored.
     """
 
+    if renpy.config.pass_controller_events:
+        rv = ev
+    else:
+        rv = None
+
     if ev.type == CONTROLLERDEVICEADDED:
         start(ev.which)
-        return None
+        return rv
 
     elif ev.type == CONTROLLERDEVICEREMOVED:
         for k, v in controllers.items():
@@ -251,7 +256,7 @@ def event(ev):
                 quit(k)
                 break
 
-        return None
+        return rv
 
     elif ev.type == CONTROLLERAXISMOTION:
 
@@ -278,7 +283,7 @@ def event(ev):
 
             controller_event(get_string_for_axis(ev.axis), pos)
 
-        return None
+        return rv
 
     elif ev.type in (CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP):
 
@@ -288,7 +293,7 @@ def event(ev):
             pr = "release"
 
         controller_event(get_string_for_button(ev.button), pr)
-        return None
+        return rv
 
     elif ev.type in (
             pygame.JOYAXISMOTION,

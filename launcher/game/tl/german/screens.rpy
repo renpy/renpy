@@ -572,7 +572,7 @@ translate german strings:
     new "Rechtsklick"
 
     # screens.rpy:1062
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     # Automatic translation.
     new "Mausrad nach oben\nKlicken Sie auf Rollback Seite"
 

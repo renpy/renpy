@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -63,6 +63,19 @@ init -1500 python:
             return self.get_size() == renpy.get_physical_size()
 
     _m1_00screen__DisplayAction = __DisplayAction
+
+
+    @renpy.pure
+    class __ResetPreferences(Action, DictEquality):
+
+        def __call__(self):
+            _preferences.reset()
+            _preferences.init_mixers()
+            persistent._preference_default = { }
+            renpy.exports.execute_default_statement()
+            _apply_default_preferences()
+            renpy.restart_interaction()
+
 
     config.always_has_joystick = False
 
@@ -261,6 +274,7 @@ init -1500 python:
 
         * Preference("renderer menu") - Show the renderer menu.
         * Preference("accessibility menu") - Show the accessibility menu.
+        * Preference("reset") - Reset preferences to defaults.
 
         These screens are intended for internal use, and are not customizable.
         """
@@ -274,7 +288,11 @@ init -1500 python:
 
             if name == _("display"):
                 if value == "fullscreen":
-                    return SetField(_preferences, "fullscreen", True)
+                    if renpy.can_fullscreen():
+                        return SetField(_preferences, "fullscreen", True)
+                    else:
+                        return None
+
                 elif value == "window":
                     if renpy.variant("web"):
                         # Only fullscreen and non-fullscreen modes for Web
@@ -418,9 +436,9 @@ init -1500 python:
             elif name == _("self voicing"):
 
                 if value == "enable":
-                    return SetField(_preferences, "self_voicing", True)
+                    return SetField(_preferences, "self_voicing", True), _("self voicing enable")
                 elif value == "disable":
-                    return SetField(_preferences, "self_voicing", False)
+                    return SetField(_preferences, "self_voicing", False), _("self voicing disable")
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing", true_value=True, false_value=False)
 
@@ -435,18 +453,18 @@ init -1500 python:
             elif name == _("clipboard voicing"):
 
                 if value == "enable":
-                    return SetField(_preferences, "self_voicing", "clipboard")
+                    return SetField(_preferences, "self_voicing", "clipboard"), _("clipboard voicing enable")
                 elif value == "disable":
-                    return SetField(_preferences, "self_voicing", False)
+                    return SetField(_preferences, "self_voicing", False), _("clipboard voicing disable")
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing", true_value="clipboard", false_value=False)
 
             elif name == _("debug voicing"):
 
                 if value == "enable":
-                    return SetField(_preferences, "self_voicing", "debug")
+                    return SetField(_preferences, "self_voicing", "debug"), _("debug voicing enable")
                 elif value == "disable":
-                    return SetField(_preferences, "self_voicing", False)
+                    return SetField(_preferences, "self_voicing", False), _("debug voicing disable")
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing", true_value="debug", false_value=False)
 
@@ -575,6 +593,9 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "restore_window_position")
 
+            elif name == _("reset"):
+                return __ResetPreferences()
+
             mixer_names = {
                 "main" : "main",
                 "music" : "music",
@@ -638,9 +659,17 @@ init -1500 python:
                 alt = None
 
             if alt is not None:
-                rv.alt = __(alt)
+                alt = __(alt)
             else:
-                rv.alt = __(name) + " [text]"
+                alt = __(name) + " [text]"
+
+            if isinstance(rv, list):
+                rv[0].alt = alt
+            else:
+                rv.alt = alt
+
+
+
 
         return rv
 

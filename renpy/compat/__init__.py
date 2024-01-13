@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -192,6 +192,16 @@ if PY2:
 
         subprocess.Popen = Popen
 
+################################################################################
+# Intern
+
+if PY2:
+    intern_cache = {}
+
+    def intern(s):
+        return intern_cache.setdefault(s, s)
+
+    sys.intern = intern
 
 ################################################################################
 # Export functions.

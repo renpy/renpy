@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -65,23 +65,13 @@ class CacheEntry(object):
         self.time = 0
 
     def size(self):
-        rv = 0
+        if renpy.config.cache_surfaces:
+            multiplier = 2.34 # 1 for the texture, 1 for the surface, .34 for mipmaps.
+        else:
+            multiplier = 1.34 # 1 for the texture, .34 for mipmaps.
 
-        if self.surf is not None:
-            rv += self.width * self.height
+        return int(self.bounds[2] * self.bounds[3] * multiplier)
 
-        if self.texture is not None:
-
-            has_mipmaps = getattr(self.texture, "has_mipmaps", None)
-
-            if has_mipmaps and has_mipmaps():
-                mipmap_multiplier = 1.34
-            else:
-                mipmap_multiplier = 1.0
-
-            rv += int(self.bounds[2] * self.bounds[3] * mipmap_multiplier)
-
-        return rv
 
 # This is the singleton image cache.
 
@@ -97,6 +87,9 @@ class Cache(object):
         # A map from Image object to CacheEntry.
         self.cache = { }
 
+        # The size of all entries in the cache, in pixels.
+        self.cache_size = 0
+
         # A list of Image objects that we want to preload.
         self.preloads = [ ]
 
@@ -111,10 +104,6 @@ class Cache(object):
 
         # Is the preload_thread alive?
         self.keep_preloading = True
-
-        # A map from image object to surface, only for objects that have
-        # been pinned into memory.
-        self.pin_cache = { }
 
         # Images that we tried, and failed, to preload.
         self.preload_blacklist = set()
@@ -157,15 +146,7 @@ class Cache(object):
         """
 
         with self.lock:
-            rv = sum(i.size() for i in self.cache.values())
-
-        # print("Total cache size: {:.1f}/{:.1f} MB (Textures {:.1f} MB)".format(
-        #     4.0 * rv / 1024 / 1024,
-        #     4.0 * self.cache_limit / 1024 / 1024,
-        #     1.0 * renpy.exports.get_texture_size()[0] / 1024 / 1024,
-        #     ))
-
-        return rv
+            return self.cache_size
 
     def get_current_size(self, generations):
         """
@@ -212,8 +193,10 @@ class Cache(object):
         self.lock.acquire()
 
         self.preloads = [ ]
-        self.pin_cache = { }
+
         self.cache = { }
+        self.cache_size = 0
+
         self.first_preload_in_tick = True
 
         self.added.clear()
@@ -321,15 +304,11 @@ class Cache(object):
         # Otherwise, we load the image ourselves.
         if ce is None:
 
-            if image in self.pin_cache:
-                surf = self.pin_cache[image]
-            else:
-
-                if not predict:
-                    with renpy.game.ExceptionInfo("While loading %r:", image):
-                        surf = image.load()
-                else:
+            if not predict:
+                with renpy.game.ExceptionInfo("While loading %r:", image):
                     surf = image.load()
+            else:
+                surf = image.load()
 
             w, h = size = surf.get_size()
 
@@ -348,16 +327,20 @@ class Cache(object):
             with self.lock:
 
                 ce = CacheEntry(image, surf, bounds)
-                self.cache[image] = ce
 
-                # Indicate that this surface had changed.
-                renpy.display.render.mutated_surface(ce.surf)
+                if image in self.cache:
+                    self.kill(self.cache[image])
+
+                self.cache[image] = ce
+                self.cache_size += ce.size()
 
                 if renpy.config.debug_image_cache:
                     if predict:
                         renpy.display.ic_log.write("Added %r (%.02f%%)", ce.what, 100.0 * self.get_total_size() / self.cache_limit)
                     else:
                         renpy.display.ic_log.write("Total Miss %r", ce.what)
+
+            renpy.display.render.mutated_surface(ce.surf)
 
         # Move it into the current generation.
 
@@ -404,7 +387,6 @@ class Cache(object):
             with self.lock:
                 self.kill(ce)
 
-        # Done. Return the surface or texture.
         return rv
 
     # This kills off a given cache entry.
@@ -414,6 +396,7 @@ class Cache(object):
         if ce.surf is not None:
             renpy.display.draw.mutated_surface(ce.surf)
 
+        self.cache_size -= ce.size()
         del self.cache[ce.what]
 
         if renpy.config.debug_image_cache:
@@ -563,39 +546,6 @@ class Cache(object):
 
         with self.lock:
             self.cleanout()
-
-        # If we have time, preload pinned images.
-        if self.keep_preloading and not renpy.game.less_memory:
-
-            workset = set(renpy.store._cache_pin_set)
-
-            # Remove things that are not in the workset from the pin cache,
-            # and remove things that are in the workset from pin cache.
-            for i in list(self.pin_cache.keys()):
-
-                if i in workset:
-                    workset.remove(i)
-                else:
-                    surf = self.pin_cache[i]
-
-                    del self.pin_cache[i]
-
-            # For each image in the worklist...
-            for image in workset:
-
-                if image in self.preload_blacklist:
-                    continue
-
-                # If we have normal preloads, break out.
-                if self.preloads:
-                    break
-
-                try:
-                    surf = image.load()
-                    self.pin_cache[image] = surf
-                    renpy.display.draw.load_texture(surf)
-                except Exception:
-                    self.preload_blacklist.add(image)
 
     def add_load_log(self, filename):
 

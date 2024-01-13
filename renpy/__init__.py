@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -411,6 +411,7 @@ def import_all():
         import renpy.py2analysis
 
     import renpy.pyanalysis
+    import renpy.parameter
 
     import renpy.ast
     import renpy.atl
@@ -714,6 +715,7 @@ if 1 == 0:
     from . import memory
     from . import minstore
     from . import object
+    from . import parameter
     from . import parser
     from . import performance
     from . import persistent

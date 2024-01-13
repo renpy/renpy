@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -265,6 +265,7 @@ label lint:
 
         persistent.lint_options.discard("--orphan-tl") # compat
         persistent.lint_options.discard("--builtins-parameters") # compat
+        persistent.lint_options.discard("--words-char-count") # compat
 
         project.current.launch([ 'lint', lint_fn, ] + list(persistent.lint_options), wait=True)
 

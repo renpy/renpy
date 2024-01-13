@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -78,6 +78,8 @@ class Persistent(object):
             self._seen_images.clear()
             self._chosen.clear()
             self._seen_audio.clear()
+
+        renpy.exports.execute_default_statement()
 
     def _update(self):
         """

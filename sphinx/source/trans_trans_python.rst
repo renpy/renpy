@@ -19,13 +19,13 @@ For example::
 
     init python:
 
-         # This is a transform that uses the right and
-         # left transforms.
-         def right_or_left(d):
-             if switch:
-                 return right(d)
-             else:
-                 return left(d)
+        # This is a transform that uses the right and
+        # left transforms.
+        def right_or_left(d):
+            if switch:
+                return right(d)
+            else:
+                return left(d)
 
 The Python equivalent of an ATL transform is a Transform object.
 
@@ -39,9 +39,10 @@ The Python equivalent of an ATL transform is a Transform object.
     `child`
         The child the transform applies to.
 
-    `function`
-        If not none, this is a function that is called when the transform
-        is rendered. The function is called with three arguments:
+    .. function:: function(trans, st, at, /) -> int|None
+
+        If not None, this function will be called when the transform
+        is rendered, with three positional arguments:
 
         * The transform object.
         * The shown timebase, in seconds.
@@ -60,7 +61,7 @@ The Python equivalent of an ATL transform is a Transform object.
     transform is drawn, and so may not be changed after the Transform object
     is created. Fields corresponding to other transform properties, however,
     can be set and changed afterwards, either within the function passed as
-    the ``function`` parameter, or immediately before calling the
+    the `function` parameter, or immediately before calling the
     :meth:`update` method.
 
     .. attribute:: hide_request

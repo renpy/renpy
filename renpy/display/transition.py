@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -56,6 +56,12 @@ class Transition(renpy.display.displayable.Displayable):
 
     def visit(self):
         return [ self.new_widget, self.old_widget ] # E1101
+
+    def get_placement(self):
+        if renpy.config.transitions_use_child_placement:
+            return self.new_widget.get_placement()
+        else:
+            return super(Transition, self).get_placement()
 
 
 def null_render(d, width, height, st, at):
@@ -331,9 +337,9 @@ class Dissolve(Transition):
         The time the dissolve will take.
 
     `time_warp`
-        A function that adjusts the timeline. If not None, this should be a
-        function that takes a fractional time between 0.0 and 1.0, and returns
-        a number in the same range.
+        A :ref:`function that adjusts the timeline <warpers>`. If not None, this
+        should be a function that takes a fractional time between 0.0 and 1.0,
+        and returns a number in the same range.
 
     `mipmap`
         When the dissolve will be scaled to less than half its natural size,
@@ -436,9 +442,9 @@ class ImageDissolve(Transition):
         If True, black pixels will dissolve in before white pixels.
 
     `time_warp`
-        A function that adjusts the timeline. If not None, this should be a
-        function that takes a fractional time between 0.0 and 1.0, and returns
-        a number in the same range.
+        A :ref:`function that adjusts the timeline <warpers>`. If not None, this
+        should be a function that takes a fractional time between 0.0 and 1.0,
+        and returns a number in the same range.
 
     `mipmap`
         When the dissolve will be scaled to less than half its natural size,

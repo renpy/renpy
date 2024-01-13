@@ -278,8 +278,8 @@ translate piglatin strings:
     new "Ightray Lickcay"
 
     # game/screens.rpy:1102
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Ousemay Heelway Puay\nLickcay Ollbackray Idesay"
+    old "Mouse Wheel Up"
+    new "Ousemay Heelway Puay"
 
     # game/screens.rpy:1106
     old "Mouse Wheel Down"

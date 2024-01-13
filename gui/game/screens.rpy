@@ -228,7 +228,7 @@ style choice_button is default:
     properties gui.button_properties("choice_button")
 
 style choice_button_text is default:
-    properties gui.button_text_properties("choice_button")
+    properties gui.text_properties("choice_button")
 
 
 ## Quick Menu screen ###########################################################
@@ -273,7 +273,7 @@ style quick_button:
     properties gui.button_properties("quick_button")
 
 style quick_button_text:
-    properties gui.button_text_properties("quick_button")
+    properties gui.text_properties("quick_button")
 
 
 ################################################################################
@@ -338,7 +338,7 @@ style navigation_button:
     properties gui.button_properties("navigation_button")
 
 style navigation_button_text:
-    properties gui.button_text_properties("navigation_button")
+    properties gui.text_properties("navigation_button")
 
 
 ## Main Menu screen ############################################################
@@ -709,13 +709,13 @@ style page_button:
     properties gui.button_properties("page_button")
 
 style page_button_text:
-    properties gui.button_text_properties("page_button")
+    properties gui.text_properties("page_button")
 
 style slot_button:
     properties gui.button_properties("slot_button")
 
 style slot_button_text:
-    properties gui.button_text_properties("slot_button")
+    properties gui.text_properties("slot_button")
 
 
 ## Preferences screen ##########################################################
@@ -850,7 +850,7 @@ style radio_button:
     foreground "gui/button/radio_[prefix_]foreground.png"
 
 style radio_button_text:
-    properties gui.button_text_properties("radio_button")
+    properties gui.text_properties("radio_button")
 
 style check_vbox:
     spacing gui.pref_button_spacing
@@ -860,7 +860,7 @@ style check_button:
     foreground "gui/button/check_[prefix_]foreground.png"
 
 style check_button_text:
-    properties gui.button_text_properties("check_button")
+    properties gui.text_properties("check_button")
 
 style slider_slider:
     xsize gui.scale(350)
@@ -871,7 +871,7 @@ style slider_button:
     left_margin gui.scale(10)
 
 style slider_button_text:
-    properties gui.button_text_properties("slider_button")
+    properties gui.text_properties("slider_button")
 
 style slider_vbox:
     xsize gui.scale(450)
@@ -1068,7 +1068,7 @@ screen mouse_help():
         text _("Accesses the game menu.")
 
     hbox:
-        label _("Mouse Wheel Up\nClick Rollback Side")
+        label _("Mouse Wheel Up")
         text _("Rolls back to earlier dialogue.")
 
     hbox:
@@ -1116,7 +1116,7 @@ style help_button:
     xmargin gui.scale(8)
 
 style help_button_text:
-    properties gui.button_text_properties("help_button")
+    properties gui.text_properties("help_button")
 
 style help_label:
     xsize gui.scale(250)
@@ -1194,7 +1194,7 @@ style confirm_button:
     properties gui.button_properties("confirm_button")
 
 style confirm_button_text:
-    properties gui.button_text_properties("confirm_button")
+    properties gui.text_properties("confirm_button")
 
 
 ## Skip indicator screen #######################################################
@@ -1407,7 +1407,7 @@ style nvl_button:
     xanchor gui.nvl_button_xalign
 
 style nvl_button_text:
-    properties gui.button_text_properties("nvl_button")
+    properties gui.text_properties("nvl_button")
 
 
 ## Bubble screen ###############################################################

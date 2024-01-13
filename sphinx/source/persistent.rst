@@ -154,6 +154,6 @@ And the second part::
     label start:
 
         if mp.beat_part_1:
-             e "I see you've beaten part 1, so welcome back!"
+            e "I see you've beaten part 1, so welcome back!"
         else:
-             e "Hmm, you haven't played part 1, why not try it first?"
+            e "Hmm, you haven't played part 1, why not try it first?"

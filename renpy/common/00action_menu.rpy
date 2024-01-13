@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -42,6 +42,8 @@ init -1500 python:
         are in the game menu, then this shows a screen or jumps to a label.
 
         `screen` is usually the name of a screen, which is shown using
+        the screen mechanism. If the screen doesn't exist, then "_screen"
+        is appended to it, and that label is jumped to.
         the screen mechanism with the ``*args`` and ``**kwargs`` passed to
         the screen. If the screen doesn't exist, then "_screen" is appended
         to it, and that label is jumped to, ignoring `args` and `kwargs`.
@@ -135,6 +137,47 @@ init -1500 python:
                 return eval(config.show_menu_enable[screen])
             else:
                 return True
+
+
+    @renpy.pure
+    class Continue(Action, DictEquality):
+        """
+        :doc: menu_action
+
+        Causes the last save to be loaded.
+        The purpose of this is to load the player's last save
+        from the main menu.
+
+        `regexp`
+            If present, will be used in `renpy.newest_slot`. The default
+            pattern will continue from any save, including quick saves and
+            auto saves. If you want to continue from only saves created by
+            the player, set this to ``r"\d"``.
+
+        `confirm`
+            If true, causes Ren'Py to ask the user if they want to continue
+            where they left off, if they are not at the main menu.
+        """
+
+        def __init__(self, regexp=r"[^_]", confirm=True):
+            self.regexp = regexp
+            self.confirm = confirm
+
+        def __call__(self):
+            if self.confirm and not main_menu:
+                layout.yesno_screen(layout.CONTINUE, Continue(self.regexp, False))
+                return
+
+            recent_save = renpy.newest_slot(self.regexp)
+
+            if recent_save:
+                renpy.load(recent_save)
+
+        def get_sensitive(self):
+            if _in_replay:
+                return False
+            return renpy.newest_slot(self.regexp) is not None
+
 
     @renpy.pure
     class Start(Action, DictEquality):

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -534,6 +534,10 @@ class Keymap(renpy.display.layout.Null):
         self.capture = capture
 
     def event(self, ev, x, y, st):
+
+        # This field is created by Button.
+        if getattr(ev, "_suppressed", False):
+            return
 
         for name, action in self.keymap.items():
 
@@ -1104,9 +1108,21 @@ class Button(renpy.display.layout.Window):
         # If we have a child, try passing the event to it. (For keyboard
         # events, this only happens if we're focused.)
         if (not (ev.type in KEY_EVENTS)) or self.style.key_events:
-            rv = super(Button, self).event(ev, x, y, st)
-            if rv is not None:
-                return rv
+                rv = super(Button, self).event(ev, x, y, st)
+                if rv is not None:
+                    return rv
+        else:
+
+            # Used to prevent keymaps (the key statement) from reacting to
+            # this event. This is consumed by Keymap.
+            try:
+                ev._suppressed = True
+
+                rv = super(Button, self).event(ev, x, y, st)
+                if rv is not None:
+                    return rv
+            finally:
+                ev._suppressed = False
 
         if (self.keysym is not None) and (self.clicked is not None):
             if map_event(ev, self.keysym):
@@ -1172,7 +1188,7 @@ class Button(renpy.display.layout.Window):
     def _tts_all(self):
         rv = self._tts_common(alt(self.action))
 
-        if self.is_selected() and (self.style.alt == self.style._hovered_alt()):
+        if self.is_selected() and (self.style.alt == self.style._hover_alt()):
             rv += " " + renpy.minstore.__("selected")
 
         return rv
@@ -1240,10 +1256,10 @@ class ImageButton(Button):
                                           **properties)
 
     def visit(self):
-        if self.imagebutton_child is None:
-            return list(self.state_children.values())
-        else:
-            return list(self.state_children.values()) + [ self.imagebutton_child ]
+        rv = list(self.state_children.values())
+        if self.imagebutton_child is not None:
+            rv.append(self.imagebutton_child)
+        return rv
 
     def get_child(self):
 
@@ -1848,6 +1864,12 @@ class Adjustment(renpy.object.Object):
     # The warper applied to the animation.
     animation_warper = None # type (float) -> float|None
 
+    # This causes the interaction to restart when the adjustment hits a limit
+    # it hadn't reach before. It's intended for use by the Scroll action, which
+    # will set this to true for adjustments it may change.
+    restart_interaction_at_limit = False
+
+
     def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
         """
         The following parameters correspond to fields or properties on
@@ -1908,7 +1930,7 @@ class Adjustment(renpy.object.Object):
 
             Changes the value of the adjustment to `value`, updating
             any bars and viewports that use the adjustment.
-         """
+        """
 
         super(Adjustment, self).__init__()
 
@@ -2019,6 +2041,17 @@ class Adjustment(renpy.object.Object):
             value = self._range
 
         if value != self._value:
+
+            if self.restart_interaction_at_limit:
+                value_0 = value == 0
+                _value_0 = self._value == 0
+
+                value_range = value == self._range
+                _value_range = self._value == self._range
+
+                if value_0 != _value_0 or value_range != _value_range:
+                    renpy.exports.restart_interaction()
+
             self._value = value
             for d in adj_registered.setdefault(self, [ ]):
                 renpy.display.render.redraw(d, 0)

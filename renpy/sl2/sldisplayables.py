@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -494,6 +494,7 @@ Keyword("drag_offscreen")
 Keyword("clicked")
 Keyword("hovered")
 Keyword("unhovered")
+Keyword("snapped")
 Keyword("focus_mask")
 Keyword("mouse_drop")
 Keyword("alternate")

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -488,13 +488,10 @@ init python in project:
             if self.projects_directory is not None:
                 self.scan_directory(self.projects_directory)
 
-
             self.scan_directory(config.renpy_base)
-            self.scan_directory(os.path.join(config.renpy_base, "templates"))
 
             self.projects.sort(key=lambda p : p.name.lower())
             self.templates.sort(key=lambda p : p.name.lower())
-
 
             # Select the default project.
             if persistent.active_project is not None:
@@ -601,6 +598,7 @@ init python in project:
             if project_type == "hidden":
                 pass
             elif project_type == "template":
+                self.projects.append(p)
                 self.templates.append(p)
             else:
                 self.projects.append(p)

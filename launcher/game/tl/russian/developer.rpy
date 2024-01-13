@@ -111,3 +111,42 @@ translate russian strings:
     # Automatic translation.
     new "В справке могут отображаться недокументированные функции. Пожалуйста, проверьте, что функция или\nкласс, который вы хотите использовать, документирован.\n\n"
 
+    # renpy/common/_developer/developer.rpym:69
+    old "Show Translation Identifiers"
+    new "Показывать идентификаторы перевода"
+
+    # renpy/common/_developer/developer.rpym:72
+    old "Hide Translation Identifiers"
+    new "Скрыть идентификаторы перевода"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Filename and Line"
+    new "Показывать имя файла и строку"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Filename and Line"
+    new "Скрыть имя файла и строку"
+
+    # renpy/common/_developer/developer.rpym:127
+    old "Layer [l]:"
+    new "Слой [l]:"
+
+    # renpy/common/_developer/developer.rpym:131
+    old "    [name] [attributes] (hidden)"
+    new "    [name] [attributes] (скрытый)"
+
+    # renpy/common/_developer/developer.rpym:135
+    old "    [name] [attributes]"
+    new "    [name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:606
+    old "\n{color=#fff}Copied to clipboard.{/color}"
+    new "\n{color=#fff}Скопировано в буфер обмена.{/color}"
+
+    # renpy/common/_developer/developer.rpym:612
+    old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
+    new "\n{color=#fff}Нажмите, чтобы скопировать.\nПеретащите, чтобы переместить.{/color}"
+
+    # renpy/common/_developer/developer.rpym:657
+    old "Click to open in editor."
+    new "Нажмите, чтобы открыть в текстовом редакторе."

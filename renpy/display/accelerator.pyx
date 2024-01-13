@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -119,10 +119,7 @@ def relative(n, base, limit):
     while a float is interpreted as a fraction of the limit).
     """
 
-    if isinstance(n, (int, absolute)):
-        return n
-    else:
-        return min(int(n * base), limit)
+    return min(int(absolute.compute_raw(n, base)), limit)
 
 cdef class RenderTransform:
     """

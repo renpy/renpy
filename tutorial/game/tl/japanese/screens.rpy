@@ -71,7 +71,7 @@ translate japanese strings:
 
     # game/screens.rpy:566
     old "Version [config.version!t]\n"
-    new "Version [config.version!t]\n"
+    new "バージョン [config.version!t]\n"
 
     # game/screens.rpy:572
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
@@ -187,7 +187,7 @@ translate japanese strings:
 
     # game/screens.rpy:1039
     old "Enter"
-    new "Enter"
+    new "エンター"
 
     # game/screens.rpy:1040
     old "Advances dialogue and activates the interface."
@@ -195,7 +195,7 @@ translate japanese strings:
 
     # game/screens.rpy:1043
     old "Space"
-    new "Space"
+    new "スペース"
 
     # game/screens.rpy:1044
     old "Advances dialogue without selecting choices."
@@ -211,7 +211,7 @@ translate japanese strings:
 
     # game/screens.rpy:1051
     old "Escape"
-    new "Escape"
+    new "ESC"
 
     # game/screens.rpy:1052
     old "Accesses the game menu."
@@ -274,8 +274,8 @@ translate japanese strings:
     new "右クリック"
 
     # game/screens.rpy:1098
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "マウスホイール上回転\n画面サイドをタッチ"
+    old "Mouse Wheel Up"
+    new "マウスホイール上回転"
 
     # game/screens.rpy:1102
     old "Mouse Wheel Down"

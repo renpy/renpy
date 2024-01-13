@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -52,6 +52,7 @@ pure_functions = {
     "_",
     "_p",
     "absolute",
+    "position",
     "__renpy__list__",
     "__renpy__dict__",
     "__renpy__set__",
@@ -86,7 +87,7 @@ pure_functions = {
     "renpy.version_tuple",
     "renpy.version_name",
     "renpy.license",
-    }
+}
 
 constants = { "config", "style" } | always_constants | pure_functions
 
@@ -583,14 +584,8 @@ class Analysis(object):
 
         # As we have parameters, analyze with those parameters.
 
-        for name, _default in parameters.parameters:
+        for name in parameters.parameters:
             self.mark_not_constant(name)
-
-        if parameters.extrapos is not None:
-            self.mark_not_constant(parameters.extrapos)
-
-        if parameters.extrakw is not None:
-            self.mark_not_constant(parameters.extrakw)
 
 
 class PyAnalysis(ast.NodeVisitor):

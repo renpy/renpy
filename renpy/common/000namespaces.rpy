@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,6 +24,7 @@ python early hide:
     class _ObjectNamespace(object):
         pure = True
         allow_child_namespaces = False
+        repeat_at_default_time = False
 
         def __init__(self, nso, name):
             self.nso = nso
@@ -41,6 +42,7 @@ python early hide:
     class _PersistentNamespace(object):
         pure = False
         allow_child_namespaces = False
+        repeat_at_default_time = True
 
         def set(self, name, value):
             if getattr(persistent, name) is None:
@@ -59,6 +61,7 @@ python early hide:
     class _ErrorNamespace(object):
         pure = False
         allow_child_namespaces = False
+        repeat_at_default_time = False
 
         def __init__(self, name):
             self.name = name
@@ -75,6 +78,7 @@ python early hide:
     class _PreferencesNamespace(object):
         pure = False
         allow_child_namespaces = False
+        repeat_at_default_time = True
 
         def set(self, name, value):
             raise Exception("The define statement can not be used with the preferences namespace.")
@@ -110,6 +114,7 @@ python early hide:
     class _GuiNamespace(object):
         pure = True
         allow_child_namespaces = True
+        repeat_at_default_time = False
 
         def set(self, name, value):
             setattr(gui, name, value)

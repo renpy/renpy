@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -443,7 +443,7 @@ class RollbackLog(renpy.object.Object):
     (weakref to object, information needed to rollback that object)
     """
 
-    __version__ = 5
+    __version__ = 6
 
     nosave = [ 'old_store', 'mutated', 'identifier_cache' ]
     identifier_cache = None
@@ -457,6 +457,7 @@ class RollbackLog(renpy.object.Object):
         self.current = None
         self.mutated = { }
         self.rollback_limit = 0
+        self.rollback_block = 0
         self.rollback_is_fixed = False
         self.checkpointing_suspended = False
         self.fixed_rollback_boundary = None
@@ -507,6 +508,11 @@ class RollbackLog(renpy.object.Object):
 
                 self.rollback_limit = nrbl
 
+        if version < 6:
+            hard = sum(e.hard_checkpoint for e in self.log)
+            self.rollback_block = max(0, hard - self.rollback_limit)
+            self.rollback_limit = hard - self.rollback_block
+
     def begin(self, force=False):
         """
         Called before a node begins executing, to indicate that the
@@ -546,7 +552,11 @@ class RollbackLog(renpy.object.Object):
 
         # If the log is too long, prune it.
         while len(self.log) > renpy.config.rollback_length:
-            self.log.pop(0)
+            if self.log.pop(0).hard_checkpoint:
+                if self.rollback_block:
+                    self.rollback_block -= 1
+                else:
+                    self.rollback_limit -= 1
 
         # check for the end of fixed rollback
         if len(self.log) >= 2:
@@ -599,7 +609,7 @@ class RollbackLog(renpy.object.Object):
         # Update self.current.stores with the changes from each store.
         # Also updates .ever_been_changed.
         for name, sd in renpy.python.store_dicts.items():
-            delta = sd.get_changes(begin)
+            delta = sd.get_changes(begin, self.current.stores.get(name, None))
             if delta:
                 self.current.stores[name], self.current.delta_ebc[name] = delta
 
@@ -776,12 +786,14 @@ class RollbackLog(renpy.object.Object):
         through this checkpoint.
         """
 
+        self.rollback_block += self.rollback_limit
         self.rollback_limit = 0
         if self.current is not None:
             self.current.not_greedy = True
         renpy.game.context().force_checkpoint = True
 
         if purge:
+            self.rollback_block = 0
             del self.log[:]
 
     def retain_after_load(self):
@@ -925,6 +937,9 @@ class RollbackLog(renpy.object.Object):
                 break
 
             if rb.not_greedy:
+                break
+
+            if rb.retain_after_load:
                 break
 
             revlog.append(self.log.pop())

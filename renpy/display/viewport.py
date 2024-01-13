@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -294,8 +294,10 @@ class Viewport(renpy.display.layout.Container):
 
         rv = rv.subsurface((0, 0, width, height), focus=True)
 
-        if self.draggable or self.arrowkeys:
+        if self.arrowkeys:
             rv.add_focus(self, None, 0, 0, width, height)
+        elif self.draggable:
+            rv.add_focus(self, None, False, False, False, False)
 
         return rv
 
@@ -394,14 +396,20 @@ class Viewport(renpy.display.layout.Container):
 
                 xspeed, yspeed = self.drag_speed
 
-                if xspeed and renpy.config.viewport_inertia_amplitude:
+                if xspeed and renpy.config.viewport_inertia_amplitude and not self.xadjustment.force_step:
                     self.xadjustment.inertia(renpy.config.viewport_inertia_amplitude * xspeed, renpy.config.viewport_inertia_time_constant, st)
+                elif self.xadjustment.force_step == "release":
+                    xvalue = self.xadjustment.round_value(old_xvalue, release=True)
+                    self.xadjustment.inertia(xvalue - old_xvalue, self.xadjustment.step / (renpy.config.screen_width * 2), st)
                 else:
                     xvalue = self.xadjustment.round_value(old_xvalue, release=True)
                     self.xadjustment.change(xvalue)
 
-                if yspeed and renpy.config.viewport_inertia_amplitude:
+                if yspeed and renpy.config.viewport_inertia_amplitude and not self.yadjustment.force_step:
                     self.yadjustment.inertia(renpy.config.viewport_inertia_amplitude * yspeed, renpy.config.viewport_inertia_time_constant, st)
+                elif self.yadjustment.force_step == "release":
+                    yvalue = self.yadjustment.round_value(old_yvalue, release=True)
+                    self.yadjustment.inertia(yvalue - old_yvalue, self.yadjustment.step / (renpy.config.screen_height * 2), st)
                 else:
                     yvalue = self.yadjustment.round_value(old_yvalue, release=True)
                     self.yadjustment.change(yvalue)

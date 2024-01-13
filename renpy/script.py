@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -161,6 +161,16 @@ class Script(object):
 
         self.duplicate_labels = [ ]
 
+        # A list of initcode, priority, statement pairs.
+        self.initcode = [ ]
+
+        # A set of (fn, dir) tuples for scripts that have already been
+        # loaded.
+        self.loaded_scripts = set()
+
+        # A set of languages to load.
+        self.load_languages = set()
+
     def choose_backupdir(self):
 
         if renpy.mobile:
@@ -286,6 +296,34 @@ class Script(object):
             if (fn, dir) not in target:
                 target.append((fn, dir))
 
+    def script_filter(self, fn, dir):
+        """
+        This determines if a script file should be loaded.
+        during this call to load_script.
+        """
+
+        if not renpy.config.defer_tl_scripts:
+            return True
+
+        if (renpy.game.args.command != "run") or renpy.game.args.compile or renpy.game.args.lint:
+            return True
+
+        parts = fn.split("/")
+
+        if parts[0] == 'tl':
+            if len(parts) <= 2:
+                return True
+
+            if parts[1] == "None":
+                return True
+
+            if parts[1] in self.load_languages:
+                return True
+
+            return False
+
+        return True
+
     def load_script(self):
 
         script_files = self.script_files
@@ -298,6 +336,7 @@ class Script(object):
         initcode = [ ]
 
         count = 0
+        skipped = 0
 
         for fn, dir in script_files: # @ReservedAssignment
 
@@ -308,13 +347,27 @@ class Script(object):
             # our process as unresponsive by OS
             renpy.display.presplash.pump_window()
 
+            if (fn, dir) in self.loaded_scripts:
+                continue
+
+            if not self.script_filter(fn, dir):
+                skipped += 1
+                continue
+
+            self.loaded_scripts.add((fn, dir))
+
             self.load_appropriate_file(".rpyc", [ "_ren.py", ".rpy" ], dir, fn, initcode)
+
+        if skipped:
+            renpy.display.log.write("{} script files skipped.".format(skipped))
 
         initcode.sort(key=lambda i: i[0])
 
-        self.initcode = initcode
+        self.initcode.extend(initcode)
 
         self.translator.chain_translates()
+
+        return initcode
 
     def load_module(self, name):
 
@@ -653,7 +706,7 @@ class Script(object):
                 if not dir:
                     raise Exception("Cannot load rpy/rpym/ren.py file %s from inside an archive." % fn)
 
-                base, _, game = dir.rpartition("/")
+                base, _, game = dir.replace("\\", "/").rpartition("/")
                 olddir = base + "/old-" + game
 
                 fullfn = dir + "/" + fn
@@ -679,10 +732,13 @@ class Script(object):
 
                 for mergefn in [ oldrpycfn, rpycfn ]:
 
+                    old_all_pyexpr = self.all_pyexpr
+                    self.record_pycode = False
+                    self.all_pyexpr = None
+
                     # See if we have a corresponding .rpyc file. If so, then
                     # we want to try to upgrade our .rpy file with it.
                     try:
-                        self.record_pycode = False
 
                         with open(mergefn, "rb") as rpycf:
                             bindata = self.read_rpyc_data(rpycf, 1)
@@ -697,6 +753,7 @@ class Script(object):
                         pass
                     finally:
                         self.record_pycode = True
+                        self.all_pyexpr = old_all_pyexpr
 
                 self.assign_names(stmts, renpy.lexer.elide_filename(fullfn))
 
@@ -906,6 +963,9 @@ class Script(object):
         Init/Loads the bytecode cache.
         """
 
+        if renpy.game.args.compile_python:
+            return
+
         # Load the oldcache.
         try:
             with renpy.loader.load(BYTECODE_FILE) as f:
@@ -921,6 +981,8 @@ class Script(object):
         Compiles the PyCode objects in self.all_pycode, updating the
         cache. Clears out self.all_pycode.
         """
+
+        renpy.python.compile_warnings = [ ]
 
         for i in self.all_pyexpr:
             try:
@@ -944,6 +1006,8 @@ class Script(object):
                     key += b"_py3"
                 else:
                     key += b"_flags" + str(flags).encode("utf-8")
+
+            warnings_key = ("warnings", key)
 
             code = self.bytecode_oldcache.get(key, None)
 
@@ -982,6 +1046,15 @@ class Script(object):
                     continue
 
                 renpy.game.exception_info = old_ei
+
+                if renpy.python.compile_warnings:
+                    self.bytecode_newcache[warnings_key] = renpy.python.compile_warnings
+                    renpy.python.compile_warnings = [ ]
+
+            else:
+
+                if warnings_key in self.bytecode_oldcache:
+                    self.bytecode_newcache[warnings_key] = self.bytecode_oldcache[warnings_key]
 
             self.bytecode_newcache[key] = code
             i.bytecode = marshal.loads(code) # type: ignore

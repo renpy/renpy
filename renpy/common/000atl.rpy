@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,6 +23,8 @@
 # early, so Ren'Py knows about them when parsing other files.
 
 python early in _warper:
+    # Do not participate in saves.
+    _constant = True
 
     from renpy.atl import pause, instant
 

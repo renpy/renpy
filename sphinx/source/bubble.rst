@@ -71,6 +71,8 @@ about them. These identifiers can change if:
 If you edit a scene, it's suggested that you replay through it to make sure
 the changes did not affect speech bubble placement.
 
+It's possible to apply transforms to the speech bubble by editing the :ref:`bubble-screen`.
+
 
 Configuration Variables
 -----------------------
@@ -184,6 +186,8 @@ The ``bubble`` namespace contains the following variables:
             "top_right" : (0, 22, 0, 0),
         }
 
+.. _bubble-screen:
+
 Bubble Screen
 -------------
 
@@ -212,6 +216,36 @@ It's separate from the say screen as it uses its own set of styles, including
 ``bubble_window``, ``bubble_what``, ``bubble_namebox``, and ``bubble_who``.
 These styles can be customized directly to avoid having to set a property
 in all of the sets of properties in :var:`bubble.properties`.
+
+If you'd like to apply effects to the speech bubble, you can do so by
+adding a transform to the bubble screen that accepts the show and hide
+transform events, like::
+
+    screen bubble(who, what):
+        style_prefix "bubble"
+
+        window:
+            id "window"
+
+            at transform:
+                on show:
+                    alpha 0.0
+                    linear .5 alpha 1.0
+
+                on hide:
+                    linear .5 alpha 0.0
+
+            if who is not None:
+
+                window:
+                    id "namebox"
+                    style "bubble_namebox"
+
+                    text who:
+                        id "who"
+
+            text what:
+                id "what"
 
 
 Adding Bubble Support to a Game

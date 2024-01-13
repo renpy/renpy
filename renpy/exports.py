@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -842,9 +842,6 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
 
     renpy.exports.mode('input')
 
-    # Take the user out of fullscreen during input.
-    renpy.game.preferences.fullscreen = False
-
     prompt = renpy.text.extras.filter_text_tags(prompt, allow=set())
 
     roll_forward = renpy.exports.roll_forward_info()
@@ -1190,6 +1187,7 @@ def display_menu(items,
                  screen="choice",
                  type="menu", # @ReservedAssignment
                  predict_only=False,
+                 _layer=None,
                  **kwargs):
     """
     :doc: se_menu
@@ -1210,6 +1208,14 @@ def display_menu(items,
     `screen`
         The name of the screen used to display the menu.
 
+    `type`
+        May be "menu" or "nvl". If "nvl", the menu is displayed in NVL mode.
+        Otherwise, it is displayed in ADV mode.
+
+    `_layer`
+        The layer to display the menu on. If not given, defaults to :var:`config.choice_layer`
+        for normal choice menus, and :var:`config.nvl_choice_layer` for NVL choice menus.
+
     Note that most Ren'Py games do not use menu captions, but use narration
     instead. To display a menu using narration, write::
 
@@ -1221,6 +1227,7 @@ def display_menu(items,
     screen = menu_kwargs.pop("screen", screen)
     with_none = menu_kwargs.pop("_with_none", with_none)
     mode = menu_kwargs.pop("_mode", type)
+    layer = menu_kwargs.pop("_layer", _layer)
 
     if interact:
         renpy.exports.mode(mode)
@@ -1310,12 +1317,18 @@ def display_menu(items,
 
             item_actions.append(me)
 
+        if layer is None:
+            if type == "nvl":
+                layer = renpy.config.nvl_choice_layer
+            else:
+                layer = renpy.config.choice_layer
+
         show_screen(
             screen,
             items=item_actions,
             _widget_properties=props,
             _transient=True,
-            _layer=renpy.config.choice_layer,
+            _layer=layer,
             *menu_args,
             **scope)
 
@@ -2062,7 +2075,7 @@ def warp_to_line(warp_spec):
     """
 
     renpy.warp.warp_spec = warp_spec
-    renpy.warp.warp()
+    full_restart()
 
 
 def screenshot(filename):
@@ -2429,12 +2442,15 @@ def dynamic(*variables, **kwargs):
     variables dynamically scoped to the current call. When the call returns, the
     variables will be reset to the value they had when this function was called.
 
+    Variables in :ref:`named stores <named-stores>` are supported.
+
     If the variables are given as keyword arguments, the value of the argument
     is assigned to the variable name.
 
     Example calls are::
 
         $ renpy.dynamic("x", "y", "z")
+        $ renpy.dynamic("mystore.serial_number")
         $ renpy.dynamic(players=2, score=0)
     """
 
@@ -2449,13 +2465,17 @@ def context_dynamic(*variables):
     """
     :doc: context
 
-    This can be given one or more variable names as arguments. This makes
-    the variables dynamically scoped to the current context. The variables will
-    be reset to their original value when returning to the prior context.
+    This can be given one or more variable names as arguments. This makes the
+    variables dynamically scoped to the current context. When returning to the
+    prior context, the variables will be reset to the value they had when this
+    function was called.
 
-    An example call is::
+    Variables in :ref:`named stores <named-stores>` are supported.
+
+    Example calls are::
 
         $ renpy.context_dynamic("x", "y", "z")
+        $ renpy.context_dynamic("mystore.serial_number")
     """
 
     renpy.game.context().make_dynamic(variables, context=True)
@@ -2981,6 +3001,60 @@ def load_string(s, filename="<string>"):
         renpy.game.exception_info = old_exception_info
 
 
+def load_language(language):
+    """
+    :undocumented:
+
+    (Here because of commonality with load_string and load_module.)
+
+    Load the script files in tl/language, if not loaded. Runs any
+    init code found during the process.
+"""
+
+    if language is None:
+        return
+
+    if not renpy.config.defer_tl_scripts:
+        return
+
+    if language in renpy.game.script.load_languages:
+        return
+
+    old_exception_info = renpy.game.exception_info
+
+    try:
+
+        old_locked = renpy.config.locked
+        renpy.config.locked = False
+
+        renpy.game.script.load_languages.add(language)
+
+        initcode = renpy.game.script.load_script()
+
+        context = renpy.execution.Context(False)
+        context.init_phase = True
+        renpy.game.contexts.append(context)
+
+        for _prio, node in initcode:
+            if isinstance(node, renpy.ast.Node):
+                renpy.game.context().run(node)
+            else:
+                node()
+
+        context.pop_all_dynamic()
+        renpy.game.contexts.pop()
+
+        renpy.config.locked = old_locked
+
+        if not renpy.game.context().init_phase:
+            renpy.game.script.analyze()
+
+        renpy.game.script.update_bytecode()
+
+    finally:
+        renpy.game.exception_info = old_exception_info
+
+
 def include_module(name):
     """
     :doc: other
@@ -3171,40 +3245,13 @@ def get_roll_forward():
 
 def cache_pin(*args):
     """
-    :undocumented: Cache pin is deprecated.
+    :undocumented: Cache pinning has been removed.
     """
-
-    new_pins = renpy.revertable.RevertableSet()
-
-    for i in args:
-
-        im = renpy.easy.displayable(i)
-
-        if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot pin non-image-manipulator %r" % im)
-
-        new_pins.add(im)
-
-    renpy.store._cache_pin_set = new_pins | renpy.store._cache_pin_set
-
 
 def cache_unpin(*args):
     """
-    :undocumented: Cache pin is deprecated.
+    :undocumented: Cache pinning has been removed
     """
-
-    new_pins = renpy.revertable.RevertableSet()
-
-    for i in args:
-
-        im = renpy.easy.displayable(i)
-
-        if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot unpin non-image-manipulator %r" % im)
-
-        new_pins.add(im)
-
-    renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
 def expand_predict(d):
@@ -3578,19 +3625,27 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
 
     It begins by determining a set of image attributes. If `image_tag` is
     given, it gets the image attributes from the tag. Otherwise, it gets
-    them from the currently showing character. If no attributes are available
-    for the tag, this returns None.
+    them from the image property suplied to the currently showing character.
+    If no attributes are available, this returns None.
 
-    It then looks up an image with the tag `prefix_tag`, and the image tage (either
-    from `image_tag` or the currently showing character) and the set of image
-    attributes as attributes. If such an image exists, it's returned.
+    It then looks up an image with the tag `prefix_tag`, and attributes
+    consisting of:
 
-    If not_showing is True, this only returns a side image if the image the
-    attributes are taken from is not on the screen. If Nome, the value
-    is taken from :var:`config.side_image_only_not_showing`.
+    * An image tag (either from `image_tag` or the image property supplied
+      to the currently showing character).
+    * The attributes.
 
-    If `layer` is None, uses the default layer for the currently showing
-    tag.
+    If such an image exists, it's returned.
+
+    `not_showing`
+        If not showing is True, this only returns a side image if an image
+        with the tag that the attributes are taken from is not currently
+        being shown. If False, it will always return an image, if possible.
+        If None, takes the value from :var:`config.side_image_only_not_showing`.
+
+    `layer`
+        If given, the layer to look for the image tag and attributes on. If
+        None, uses the default layer for the tag.
     """
 
     if not_showing is None:
@@ -3606,6 +3661,9 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
             return None
 
     else:
+
+        # Character will compute the appropriate attributes, and stores it
+        # in _side_image_attributes.
         attrs = renpy.store._side_image_attributes
 
     if not attrs:
@@ -4449,13 +4507,9 @@ def get_sdl_dll():
     """
     :doc: sdl
 
-    This returns a ctypes.cdll object that refers to the library that contains
-    the instance of SDL2 that Ren'Py is using.
-
-    If this can not be done, None is returned.
+    Returns a ctypes.cdll object that refers to the library that contains
+    the instance of SDL2 that Ren'Py is using. If this fails, None is returned.
     """
-
-
 
     global sdl_dll
 
@@ -4493,15 +4547,17 @@ def get_sdl_window_pointer():
     """
     :doc: sdl
 
-    Returns a pointer (of type ctypes.c_void_p) to the main window, or None
-    if the main window is not displayed, or some other problem occurs.
+    :rtype: ctypes.c_void_p | None
+
+    Returns a pointer to the main window, or None if the main window is not
+    displayed (or some other problem occurs).
     """
 
     try:
         window = pygame_sdl2.display.get_window()
 
         if window is None:
-            return
+            return None
 
         return window.get_sdl_window_pointer()
 
@@ -4822,3 +4878,14 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
         return content.decode("utf-8")
     elif result == "json":
         return _json.loads(content)
+
+
+def can_fullscreen():
+    """
+    :doc: other
+
+    Returns True if the current platform supports fullscreen mode, False
+    otherwise.
+    """
+
+    return renpy.display.can_fullscreen

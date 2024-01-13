@@ -152,6 +152,14 @@ and rolled-back when rollback occurs.
 
     A save name that is included with saves.
 
+.. var:: _scene_show_hide_transition = None
+
+    If not None, this is a transition that will be performed using the
+    with statement after a series of scene, show, and hide statements
+    that are not followed by a with statement, or by a window transition.
+
+    .. seealso:: :ref:`scene-show-hide-transition`
+
 .. var:: _screenshot_pattern = None
 
     If not None, this string is used in preference to :var:`config.screenshot_pattern`

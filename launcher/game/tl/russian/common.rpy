@@ -1059,3 +1059,98 @@ translate russian strings:
     # Automatic translation.
     new "Ошибка синхронизации"
 
+    # renpy/common/00accessibility.rpy:120
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
+    new "Меню специальных возможностей. Для навигации используйте стрелки вверх и вниз, а для активации кнопок и полос - клавишу Enter."
+
+    # renpy/common/00director.rpy:1776
+    old "Customize director.transforms to add more transforms."
+    new "Измените director.transforms, чтобы добавить больше трансформаций."
+
+    # renpy/common/00director.rpy:1821
+    old "Click to set."
+    new "Нажмите, чтобы установить."
+
+    # renpy/common/00director.rpy:1822
+    old "Customize director.transitions to add more transitions."
+    new "Измените director.transitions, чтобы добавить больше переходов."
+
+    # renpy/common/00director.rpy:1845
+    old "Customize director.audio_channels to add more channels."
+    new "Измените director.audio_channels, чтобы добавить больше каналов."
+
+    # renpy/common/00gui.rpy:454
+    old "Are you sure you want to continue where you left off?"
+    new "Вы уверены, что хотите продолжить с того места, на котором остановились?"
+
+    # renpy/common/00preferences.rpy:439
+    old "self voicing enable"
+    new "включить авто озвучивание"
+
+    # renpy/common/00preferences.rpy:441
+    old "self voicing disable"
+    new "отключить авто озвучивание"
+
+    # renpy/common/00preferences.rpy:456
+    old "clipboard voicing enable"
+    new "включить озвучивание буфера обмена"
+
+    # renpy/common/00preferences.rpy:458
+    old "clipboard voicing disable"
+    new "отключить озвучивание буфера обмена"
+
+    # renpy/common/00preferences.rpy:465
+    old "debug voicing enable"
+    new "включить дебаг озвучивания"
+
+    # renpy/common/00preferences.rpy:467
+    old "debug voicing disable"
+    new "отключить дебаг озвучивания"
+
+    # renpy/common/00preferences.rpy:587
+    old "restore window position"
+    new "восстановить положение окна"
+
+    # renpy/common/00preferences.rpy:596
+    old "reset"
+    new "сбросить"
+
+    # renpy/common/00speechbubble.rpy:408
+    old "(clear retained bubbles)"
+    new "(очистить сохранившиеся пузыри)"
+
+    # renpy/common/00updater.rpy:504
+    old "No update methods found."
+    new "Не найдено ни одного метода обновления."
+
+    # renpy/common/00updater.rpy:551
+    old "Could not download file list: "
+    new "Не удалось загрузить список файлов: "
+
+    # renpy/common/00updater.rpy:554
+    old "File list digest does not match."
+    new "Дайджест списка файлов не совпадает."
+
+    # renpy/common/00updater.rpy:2071
+    old "Preparing to download the game data."
+    new "Подготовка к загрузке данных игры."
+
+    # renpy/common/00updater.rpy:2073
+    old "Downloading the game data."
+    new "Загрузка данных игры."
+
+    # renpy/common/00updater.rpy:2075
+    old "The game data has been downloaded."
+    new "Данные игры загружены."
+
+    # renpy/common/00updater.rpy:2077
+    old "An error occured when trying to download game data:"
+    new "При попытке загрузить данные игры произошла ошибка:"
+
+    # renpy/common/00updater.rpy:2082
+    old "This game cannot be run until the game data has been downloaded."
+    new "Эту игру невозможно запустить до тех пор, пока не будут загружены данные игры."
+
+    # renpy/common/00updater.rpy:2089
+    old "Retry"
+    new "Повторить попытку"

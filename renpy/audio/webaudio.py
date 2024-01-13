@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -141,8 +141,10 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
     try:
         if not isinstance(file, basestring):
-            file = file.name
+            file = file.raw.name
     except Exception:
+        if renpy.config.debug_sound:
+            raise
         return
 
     if file is None:
@@ -163,8 +165,10 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
 
     try:
         if not isinstance(file, basestring):
-            file = file.name
+            file = file.raw.name
     except Exception:
+        if renpy.config.debug_sound:
+            raise
         return
 
     if file is None:
