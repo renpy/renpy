@@ -684,6 +684,16 @@ Occasionally Used
 
     If not False, sets the blinking period of the default caret, in seconds.
 
+.. var:: config.layer_transforms = { }
+
+    A dictionary mapping layer names to lists of transforms. Thee transforms
+    are applied last, after ``show layer``  and ``camera`` transforms have
+    already been applied.
+
+    If the layer name is None, then the transforms are applied to to the
+    combination of all layers in :var:`config.layers`, after any
+    transition has been applied.
+
 .. var:: config.lint_character_statistics = True
 
     If true, and :var:`config.developer` is true, the lint report will include

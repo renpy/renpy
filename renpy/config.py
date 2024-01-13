@@ -1446,6 +1446,10 @@ say_replace_event = True
 # Will screens never cancel hide and replace events?
 screens_never_cancel_hide = True
 
+# A list of transforms that are applied to entire layers.
+layer_transforms = { }
+
+
 del os
 del collections
 

@@ -708,6 +708,9 @@ class Interface(object):
         # The displayable that an ongoing transition is transitioning from.
         self.transition_from = { }
 
+        # The previous root transform.
+        self.old_root_transform = None
+
         # Init layers.
         renpy.display.scenelists.init_layers()
 
@@ -2542,6 +2545,36 @@ class Interface(object):
         for layer in renpy.config.layers:
             add_layer(layers_root, layer)
 
+        def add_layers_to_root(d, st=None, at=None):
+            """
+            This adds layers_root to root_widget, perhaps transforming it
+            with config.layer_transforms[None]
+            """
+
+            at_list = renpy.config.layer_transforms.get(None, [ ])
+            if not at_list:
+                root_widget.add(d, st, at)
+                return
+
+            rv = renpy.display.layout.MultiBox(layout='fixed')
+            rv.add(d, st, at)
+
+            new_transform = None
+
+            for a in at_list:
+
+                if isinstance(a, renpy.display.motion.Transform):
+                    rv = a(child=rv)
+                    new_transform = rv
+                else:
+                    rv = a(rv)
+
+            if (new_transform is not None):
+                scene_lists.transform_state(self.old_root_transform, new_transform, execution=True)
+
+            self.old_root_transform = new_transform
+            root_widget.add(rv, 0, 0)
+
         # Add layers_root to root_widget, perhaps through a transition.
         if (self.ongoing_transition.get(None, None) and
                 not suppress_transition):
@@ -2560,7 +2593,7 @@ class Interface(object):
                 raise Exception("Expected transition to return a displayable, not a {!r}".format(trans))
 
             transition_time = self.transition_time.get(None, None)
-            root_widget.add(trans, transition_time, transition_time)
+            add_layers_to_root(trans, transition_time, transition_time)
 
             if (transition_time is None) and isinstance(trans, renpy.display.transform.Transform):
                 trans.update_state()
@@ -2580,7 +2613,8 @@ class Interface(object):
                 focus_roots.append(pb)
 
         else:
-            root_widget.add(layers_root)
+            print("AAA")
+            add_layers_to_root(layers_root)
 
         # Add top_layers to the root_widget.
         for layer in renpy.config.top_layers:

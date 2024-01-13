@@ -307,6 +307,10 @@ Many other translations have been updated.
 Features
 --------
 
+The new :var:`config.layer_transforms` variable allows you to supply
+a list of transforms that will be applied to all layers, or to the
+combination of all layers in :var:`config.layers`.
+
 The new :class:`Continue` action will load the last save (by default,
 including autosaves and quick saves). This is intended for use from the
 main menu to continue the game, especially a linear visual novel.
