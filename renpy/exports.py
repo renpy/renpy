@@ -1307,12 +1307,19 @@ def display_menu(items,
 
             item_actions.append(me)
 
+        if "_layer" in scope:
+            layer = scope.pop("_layer")
+        elif type == "nvl":
+            layer = renpy.config.nvl_choice_layer
+        else:
+            layer = renpy.config.choice_layer
+
         show_screen(
             screen,
             items=item_actions,
             _widget_properties=props,
             _transient=True,
-            _layer=renpy.config.choice_layer,
+            _layer=layer,
             *menu_args,
             **scope)
 
