@@ -1187,6 +1187,7 @@ def display_menu(items,
                  screen="choice",
                  type="menu", # @ReservedAssignment
                  predict_only=False,
+                 _layer=None,
                  **kwargs):
     """
     :doc: se_menu
@@ -1207,6 +1208,14 @@ def display_menu(items,
     `screen`
         The name of the screen used to display the menu.
 
+    `type`
+        May be "menu" or "nvl". If "nvl", the menu is displayed in NVL mode.
+        Otherwise, it is displayed in ADV mode.
+
+    `_layer`
+        The layer to display the menu on. If not given, defaults to :var:`config.choice_layer`
+        for normal choice menus, and :var:`config.nvl_choice_layer` for NVL choice menus.
+
     Note that most Ren'Py games do not use menu captions, but use narration
     instead. To display a menu using narration, write::
 
@@ -1218,6 +1227,7 @@ def display_menu(items,
     screen = menu_kwargs.pop("screen", screen)
     with_none = menu_kwargs.pop("_with_none", with_none)
     mode = menu_kwargs.pop("_mode", type)
+    layer = menu_kwargs.pop("_layer", _layer)
 
     if interact:
         renpy.exports.mode(mode)
@@ -1307,12 +1317,11 @@ def display_menu(items,
 
             item_actions.append(me)
 
-        if "_layer" in scope:
-            layer = scope.pop("_layer")
-        elif type == "nvl":
-            layer = renpy.config.nvl_choice_layer
-        else:
-            layer = renpy.config.choice_layer
+        if layer is None:
+            if type == "nvl":
+                layer = renpy.config.nvl_choice_layer
+            else:
+                layer = renpy.config.choice_layer
 
         show_screen(
             screen,
