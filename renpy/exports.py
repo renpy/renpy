@@ -1542,7 +1542,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=None):
     """
     :doc: se_pause
-    :args: (delay=None, *, predict=False, modal=None, hard=False)
+    :args: (delay=None, *, predict=False, modal=True, hard=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -1553,35 +1553,39 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
     The following should be given as keyword arguments:
 
     `predict`
-        If True, Ren'Py will only end the pause when all prediction, including
-        prediction scheduled with :func:`renpy.start_predict` and
-        :func:`renpy.start_predict_screen`, has been finished.
+        If True, when all prediction - including prediction scheduled with
+        :func:`renpy.start_predict` and :func:`renpy.start_predict_screen` - has
+        been finished, the pause will be ended.
 
         This also causes Ren'Py to prioritize prediction over display smoothness
         for the duration of the pause. Because of that, it's recommended to not
         display animations during prediction.
 
+        The pause will still end by other means - when the user clicks or skips,
+        or when the delay expires (if any).
+
     `modal`
-        If True or None, the pause will not end when a modal screen is being displayed.
+        If True, a timed pause will not end (it will hold) when a modal screen
+        is being displayed.
         If False, the pause will end while a modal screen is being displayed.
 
     `hard`
-        This must be given as a keyword argument. When True, Ren'Py may prevent
-        the user from clicking to interrupt the pause. If the player enables
-        skipping, the hard pause will be skipped. There may be other circumstances
-        where the hard pause ends early or prevents Ren'Py from operating properly,
-        these will not be treated as bugs.
+        When True, Ren'Py may prevent the user from clicking to interrupt the
+        pause. If the player enables skipping, the hard pause will be skipped.
+        There may be other circumstances where the hard pause ends early or
+        prevents Ren'Py from operating properly, these will not be treated as
+        bugs.
 
         In general, using hard pauses is rude. When the user clicks to advance
-        the game, it's an explicit request - the user wishes the game to advance.
-        To override that request is to assume you understand what the player
-        wants more than the player does.
-
-        Calling renpy.pause guarantees that whatever is on the screen will be
-        displayed for at least one frame, and hence has been shown to the
-        player.
+        the game, it's an explicit request - the user wishes the game to
+        advance. To override that request is to assume you understand what the
+        player wants more than the player does.
 
         tl;dr - Don't use renpy.pause with hard=True.
+
+    Calling renpy.pause guarantees that whatever is on the screen will be
+    displayed for at least one frame, and hence has been shown to the
+    player.
     """
 
     if renpy.config.skipping == "fast":
