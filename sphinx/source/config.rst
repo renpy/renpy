@@ -686,7 +686,7 @@ Occasionally Used
 
 .. var:: config.layer_transforms = { }
 
-    A dictionary mapping layer names to lists of transforms. Thee transforms
+    A dictionary mapping layer names to lists of transforms. These transforms
     are applied last, after ``show layer``  and ``camera`` transforms have
     already been applied.
 
