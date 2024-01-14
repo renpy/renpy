@@ -18,15 +18,15 @@ Pending Deprecations
 These are changes that will take effect in a future version of Ren'Py.
 
 Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1 is
-released, attribute_filter May 2024.
+released, in May 2024.
 
 The original OpenGL renderer will be removed 1 year after Ren'Py 8.1 is
 released, after May 2024. Ren'Py 8.2 and 7.7 disable the :var:`config.gl2`
-flag, as GL2 will alwaye be used unles unless the player selects a different
+flag, as GL2 will always be used unless the player selects a different
 renderer.
 
 Support for Window 7, 8, and 8.1 will be dropped after May 2024, to allow the
-use of versions of Python that only support Python 10 and later.
+use of versions of Python that only support Windows 10 and later.
 
 
 .. _incompatible-8.2.0:
