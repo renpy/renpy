@@ -169,14 +169,14 @@ class StoreDict(dict):
         new = DictItems(self)
         rv = find_changes(self.old, new, deleted)
 
-        if previous is not None:
-            rv.update(previous)
-
         if cycle:
             self.old = new
 
         if rv is None:
-            return None
+            return previous
+
+        if previous is not None:
+            rv.update(previous)
 
         delta_ebc = set()
 
