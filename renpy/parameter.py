@@ -267,6 +267,8 @@ class Signature(object):
         - applies the defaults automatically (and lazily, as per the above)
         """
 
+        # when in PY3-only, uncomment the "from None" in the raise statements
+
         if not renpy.config.developer:
             ignore_errors = True
 
