@@ -169,11 +169,11 @@ class StoreDict(dict):
         new = DictItems(self)
         rv = find_changes(self.old, new, deleted)
 
+        if rv is None:
+            return None
+
         if cycle:
             self.old = new
-
-        if rv is None:
-            return previous
 
         if previous is not None:
             rv.update(previous)
