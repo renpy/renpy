@@ -23,7 +23,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional, Any
 from itertools import chain as _chain
 import collections
 
@@ -31,6 +30,13 @@ import renpy
 
 
 class Parameter(object):
+    """
+    The default value (if any) of this class of parameters is a string,
+    evaluable to the actual default value. This is how most Ren'Py callables
+    work (labels, transforms directly defined using the transform statement,
+    and screens), where the actual value is computed at the time of the call.
+    """
+
     __slots__ = ("name", "kind", "default",)
 
     POSITIONAL_ONLY, POSITIONAL_OR_KEYWORD, VAR_POSITIONAL, KEYWORD_ONLY, VAR_KEYWORD = range(5)
@@ -75,6 +81,11 @@ class Parameter(object):
         return (self is other) or (isinstance(other, Parameter) and (self.name == other.name) and (self.kind == other.kind) and (self.default == other.default))
 
 class ValuedParameter(Parameter):
+    """
+    This is a more python-classic parameter, in which the default value is the
+    final object itself, already evaluated.
+    """
+
     __slots__ = ()
 
     class empty: pass # singleton, should be picklable
