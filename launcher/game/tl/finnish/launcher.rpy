@@ -1969,8 +1969,8 @@ translate finnish strings:
     new "Mukautettu teema"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "Tietoa mukautetun teeman luomisesta löytyy {a=https://www.renpy.org/doc/html/skins.html}Ren'Pyn dokumentaatiosta{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "Tietoa mukautetun teeman luomisesta löytyy {a=[skins_url]}Ren'Pyn dokumentaatiosta{/a}."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2129,4 +2129,3 @@ translate finnish strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Yöllinen versio, joka sisältää korjauksia Ren'Pyn julkaisuversioon."
-

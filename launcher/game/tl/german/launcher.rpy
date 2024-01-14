@@ -1952,8 +1952,8 @@
     new "Benutzerdefiniertes Design"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "Informationen über benutzerdefinierte Designs können {a=https://www.renpy.org/doc/html/skins.html}in der Ren'Py-Dokumentation{/a} gefunden werden."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "Informationen über benutzerdefinierte Designs können {a=[skins_url]}in der Ren'Py-Dokumentation{/a} gefunden werden."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2208,4 +2208,3 @@ translate german strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Ein nächtlicher Build mit Korrekturen für die Release-Version von Ren'Py."
-

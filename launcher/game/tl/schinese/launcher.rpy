@@ -1425,8 +1425,8 @@
     new "自定义主题"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "有关创建自定义主题的信息可以{a=https://www.renpy.cn/doc/skins.html}在 Ren'Py 文档中找到{/a}。"
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "有关创建自定义主题的信息可以{a=[skins_url]}在 Ren'Py 文档中找到{/a}。"
 
     # game/preferences.rpy:273
     old "Install Libraries:"

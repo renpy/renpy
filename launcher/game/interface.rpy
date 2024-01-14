@@ -22,48 +22,42 @@
 ################################################################################
 # Interface actions.
 init python in interface:
-    from store import OpenURL, config, Return, _preferences
+    from store import OpenURL, config, Return, _preferences, persistent
     import store
 
     import os.path
     import contextlib
 
     RENPY_URL = "http://www.renpy.org"
-    DOC_PATH = os.path.join(config.renpy_base, "doc/index.html")
+    DOC_PATH = os.path.join(config.renpy_base, "doc/")
     DOC_URL = "http://www.renpy.org/doc/html/"
+    DOC_LOCAL_URL = "file:///" + DOC_PATH
 
-    LICENSE_PATH = os.path.join(config.renpy_base, "doc/license.html")
-    LICENSE_URL = "http://www.renpy.org/doc/html/license.html"
+    local_doc_exists = os.path.exists(DOC_PATH)
 
-    if os.path.exists(DOC_PATH):
-        DOC_LOCAL_URL = "file:///" + DOC_PATH
-    else:
-        DOC_LOCAL_URL = None
+    def get_doc_url(page):
+        """
+        Returns the URL to the documentation page.
+        """
 
-    if os.path.exists(LICENSE_PATH):
-        LICENSE_LOCAL_URL = "file:///" + LICENSE_PATH
-    else:
-        LICENSE_LOCAL_URL = None
+        if local_doc_exists and not persistent.use_web_doc:
+            return DOC_LOCAL_URL + page
+        else:
+            return DOC_URL + page
 
-    def OpenDocumentation():
+    def OpenDocumentation(page="index.html"):
         """
         An action that opens the documentation.
         """
 
-        if DOC_LOCAL_URL is not None:
-            return OpenURL(DOC_LOCAL_URL)
-        else:
-            return OpenURL(DOC_URL)
+        return OpenURL(get_doc_url(page))
 
     def OpenLicense():
         """
         An action that opens the license.
         """
 
-        if LICENSE_LOCAL_URL is not None:
-            return OpenURL(LICENSE_LOCAL_URL)
-        else:
-            return OpenURL(LICENSE_URL)
+        return OpenDocumentation("license.html")
 
     def get_sponsor_url():
         """

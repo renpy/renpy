@@ -2032,8 +2032,8 @@
     new "ランチャーテーマ:"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "カスタムテーマ作成情報は {a=https://www.renpy.org/doc/html/skins.html}Ren'Pyのドキュメント{/a}で読めます。"
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "カスタムテーマ作成情報は {a=[skins_url]}Ren'Pyのドキュメント{/a}で読めます。"
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2290,4 +2290,3 @@ translate japanese strings:
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
     new "Nightly Fix (Ren'Py 7, Python 2)"
-
