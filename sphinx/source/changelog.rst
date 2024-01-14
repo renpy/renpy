@@ -42,7 +42,7 @@ including things like gender and skin-tone modifiers, so you'll need Ren'Py 8
 to have those work. This switching occurs when a font tag is not being
 used.
 
-The new :propref:`emoji_font`, :propref:`prefer_emoji` style properties control
+The new :propref:`emoji_font` and :propref:`prefer_emoji` style properties control
 Emoji font selection.
 
 Fundamentally, you can include Emoji into your game by typing it into your
