@@ -41,7 +41,10 @@ init python in interface:
         """
 
         if local_doc_exists and not persistent.use_web_doc:
-            return DOC_LOCAL_URL + page
+            from urllib.parse import urljoin
+            from urllib.request import pathname2url
+
+            return urljoin('file:', pathname2url(DOC_PATH + page))
         else:
             return DOC_URL + page
 
