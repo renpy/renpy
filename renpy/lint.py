@@ -709,6 +709,8 @@ def check_style(name, s):
                 if isinstance(v, renpy.text.font.FontGroup):
                     for f in set(v.map.values()):
                         check_file(name, f, directory="fonts")
+                elif v is None and k.endswith("emoji_font"):
+                    pass
                 else:
                     check_file(name, v, directory="fonts")
 
