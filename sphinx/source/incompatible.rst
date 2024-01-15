@@ -181,7 +181,7 @@ events.
 
 To disable this, add to your game::
 
-    define containers_pass_transform_events = True
+    define config.containers_pass_transform_events = True
 
 **Say Screens Are Supplied the Replace Event.** Say screens are now supplied
 the "replace" (rather than "show") transform event for the second and subsequent pauses.
