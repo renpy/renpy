@@ -275,6 +275,9 @@ default_developer = False
 # A logfile that logging messages are sent to.
 log = None
 
+# Clear config.log at startup
+clear_log = False
+
 # Lint hooks.
 lint_hooks = [ ]
 

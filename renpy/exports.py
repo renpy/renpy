@@ -2370,7 +2370,12 @@ def log(msg):
     try:
 
         if not logfile:
-            logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), "a")
+            import os
+            if renpy.config.clear_log:
+                file_mode = "w"
+            else:
+                file_mode = "a"
+            logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), file_mode)
 
             if not logfile.tell():
                 logfile.write("\ufeff")
