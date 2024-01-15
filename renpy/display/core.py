@@ -2552,11 +2552,13 @@ class Interface(object):
             """
 
             at_list = renpy.config.layer_transforms.get(None, [ ])
+
             if not at_list:
                 root_widget.add(d, st, at)
                 return
 
             rv = renpy.display.layout.MultiBox(layout='fixed')
+            rv.adjust_times = True
             rv.add(d, st, at)
 
             new_transform = None
