@@ -138,7 +138,7 @@ class Container(renpy.display.displayable.Displayable):
 
         super(Container, self).set_transform_event(event)
 
-        if renpy.config.containers_pass_transform_events:
+        if event in renpy.config.containers_pass_transform_events:
 
             for i in self.children:
                 i.set_transform_event(event)
