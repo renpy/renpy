@@ -1267,7 +1267,7 @@ add_gl_property("gl_texture_wrap")
 
 ALIASES = {
     "alignaround" : (float, float),
-    "align" : (float, float),
+    "align" : (position_or_none, position_or_none), # document as (float, float)
     "anchor" : (position_or_none, position_or_none),
     "anchorangle" : dualangle_or_float_or_none,
     "anchoraround" : (position_or_none, position_or_none),
@@ -1278,11 +1278,11 @@ ALIASES = {
     "pos" : (position_or_none, position_or_none),
     "radius" : position_or_none,
     "size" : (int, int),
-    "xalign" : float,
+    "xalign" : position_or_none, # document as float,
     "xcenter" : position_or_none,
     "xycenter" : (position_or_none, position_or_none),
     "xysize" : (position_or_none, position_or_none),
-    "yalign" : float,
+    "yalign" : position_or_none, # document as float
     "ycenter" : position_or_none,
     }
 
