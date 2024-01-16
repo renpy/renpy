@@ -1595,7 +1595,7 @@ class Interface(object):
 
         layers = list(self.ongoing_transition)
 
-        for l in renpy.display.scenelists.layers:
+        for l in layers:
             if l is None:
                 self.ongoing_transition.pop(None, None)
                 self.instantiated_transition.pop(None, None)
