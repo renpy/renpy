@@ -187,6 +187,11 @@ let pause_playing = (c) => {
     } catch (e) {
     }
 
+    let source = context.createBufferSource();
+    source.buffer = p.buffer;
+    source.onended = () => { on_end(c); };
+    p.source = source;
+
     p.start += (context.currentTime - p.started);
     p.started = null;
 }
@@ -614,6 +619,7 @@ renpyAudio.pause = (channel) => {
 
 renpyAudio.unpause = (channel) => {
     let c = get_channel(channel);
+    c.paused = false;
     if (c.video) {
         video_start(c);
     } else {
