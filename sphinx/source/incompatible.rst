@@ -175,13 +175,13 @@ To disable this, add to your game::
 
 **Containers Pass Transform Events**
 Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
-pass transform events (like hover and idle) to their children, meaning that
-children of a button can have their own transforms to respond to those
+pass some transform events (hover, idle, insensitive, selected_hover, and selected_idle)
+to their children, meaning that children of a button can have their own transforms to respond to those
 events.
 
 To disable this, add to your game::
 
-    define config.containers_pass_transform_events = ()
+    define config.containers_pass_transform_events = set()
 
 **Say Screens Are Supplied the Replace Event.** Say screens are now supplied
 the "replace" (rather than "show") transform event for the second and subsequent pauses.
