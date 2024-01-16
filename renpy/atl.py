@@ -173,6 +173,12 @@ def position_or_none(x):
     return position.from_any(x)
 
 
+def dualangle_or_float_or_none(x):
+    if x is None:
+        return None
+    return DualAngle.from_any(x)
+
+
 def any_object(x):
     return x
 
@@ -258,17 +264,17 @@ def interpolate(t, a, b, typ):
 # Interpolate the value of a spline. This code is based on Aenakume's code,
 # from 00splines.rpy.
 
-def interpolate_spline(t, spline):
+def interpolate_spline(t, spline, typ):
 
     if isinstance(spline[-1], tuple):
-        return tuple(interpolate_spline(t, i) for i in zip(*spline))
+        return tuple(interpolate_spline(t, i, ty) for i, ty in zip(zip(*spline), typ))
 
     if spline[0] is None:
         return spline[-1]
 
-    mixed_position = renpy.config.mixed_position
-    if mixed_position:
+    if renpy.config.mixed_position and typ in (position_or_none, position):
         spline = [position_or_none(i) for i in spline]
+
     lenspline = len(spline)
 
     if lenspline == 2:
@@ -316,10 +322,7 @@ def interpolate_spline(t, spline):
 
         rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
 
-    if mixed_position:
-        return rv
-    # legacy
-    elif rv is None:
+    if rv is None:
         return None
     else:
         return type(spline[-1])(rv)
@@ -1589,7 +1592,7 @@ class Interpolation(Statement):
         if anchorangles is not None:
             startangle, endangle = anchorangles[:2]
 
-            anchorangle = interpolate(complete, startangle, endangle, DualAngle.from_any)
+            anchorangle = interpolate(complete, startangle, endangle, dualangle_or_float_or_none)
             trans.state.anchorangle = anchorangle
 
         if anchorradii is not None:
@@ -1600,7 +1603,7 @@ class Interpolation(Statement):
 
         # Handle any splines we might have.
         for name, values in splines:
-            value = interpolate_spline(complete, values)
+            value = interpolate_spline(complete, values, PROPERTIES[name])
             setattr(trans.state, name, value)
 
         if (st >= self.duration) and (not force_frame):

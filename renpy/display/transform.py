@@ -31,7 +31,7 @@ import math
 import renpy
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
-from renpy.atl import position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
+from renpy.atl import dualangle_or_float_or_none, position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
 from renpy.display.core import absolute
 
 class Camera(renpy.object.Object):
@@ -1265,28 +1265,28 @@ add_gl_property("gl_pixel_perfect")
 add_gl_property("gl_texture_scaling")
 add_gl_property("gl_texture_wrap")
 
-ALIASES = (
-    "alignaround", # (float, float),
-    "align", # (float, float),
-    "anchor", # (position_or_none, position_or_none),
-    "anchorangle", # dualangle_or_float_or_none,
-    "anchoraround", # (position_or_none, position_or_none),
-    "anchorradius", # position_or_none,
-    "angle", # float,
-    "around", # (position_or_none, position_or_none),
-    "offset", # (int, int),
-    "pos", # (position_or_none, position_or_none),
-    "radius", # position_or_none,
-    "size", # (int, int),
-    "xalign", # float,
-    "xcenter", # position_or_none,
-    "xycenter", # (position_or_none, position_or_none),
-    "xysize", # (position_or_none, position_or_none),
-    "yalign", # float,
-    "ycenter", # position_or_none,
-)
+ALIASES = {
+    "alignaround" : (float, float),
+    "align" : (position_or_none, position_or_none), # document as (float, float)
+    "anchor" : (position_or_none, position_or_none),
+    "anchorangle" : dualangle_or_float_or_none,
+    "anchoraround" : (position_or_none, position_or_none),
+    "anchorradius" : position_or_none,
+    "angle" : float,
+    "around" : (position_or_none, position_or_none),
+    "offset" : (int, int),
+    "pos" : (position_or_none, position_or_none),
+    "radius" : position_or_none,
+    "size" : (int, int),
+    "xalign" : position_or_none, # document as float,
+    "xcenter" : position_or_none,
+    "xycenter" : (position_or_none, position_or_none),
+    "xysize" : (position_or_none, position_or_none),
+    "yalign" : position_or_none, # document as float
+    "ycenter" : position_or_none,
+    }
 
-renpy.atl.PROPERTIES.update(dict.fromkeys(ALIASES))
+renpy.atl.PROPERTIES.update(ALIASES)
 
 for name in ALIASES:
     setattr(Transform, name, Proxy(name))
