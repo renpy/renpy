@@ -1235,7 +1235,7 @@ add_property("zoom", float, 1.0)
 add_property("xanchoraround", position_or_none, 0.5)
 add_property("xanchor", position_or_none, None, diff=4)
 add_property("xaround", position_or_none, 0.0)
-add_property("xoffset", float, 0.0)
+add_property("xoffset", absolute, 0.0)
 add_property("xpan", float_or_none, None)
 add_property("xpos", position_or_none, None, diff=4)
 add_property("xsize", position_or_none, None)
@@ -1245,7 +1245,7 @@ add_property("xzoom", float, 1.0)
 add_property("yanchoraround", position_or_none, 0.5)
 add_property("yanchor", position_or_none, None, diff=4)
 add_property("yaround", position_or_none, 0.0)
-add_property("yoffset", float, 0.0)
+add_property("yoffset", absolute, 0.0)
 add_property("ypan", float_or_none, None)
 add_property("ypos", position_or_none, None, diff=4)
 add_property("ysize", position_or_none, None)
@@ -1274,7 +1274,7 @@ ALIASES = {
     "anchorradius" : position_or_none,
     "angle" : float,
     "around" : (position_or_none, position_or_none),
-    "offset" : (int, int),
+    "offset" : (absolute, absolute),
     "pos" : (position_or_none, position_or_none),
     "radius" : position_or_none,
     "size" : (int, int),
