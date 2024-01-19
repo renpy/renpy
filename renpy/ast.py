@@ -2535,6 +2535,9 @@ class TranslateSay(Say):
 
         next_node(self.next)
 
+        renpy.game.context().translate_identifier = self.identifier
+        renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
+
         if self.language is None:
 
             if self.identifier not in renpy.game.persistent._seen_translates: # type: ignore
@@ -2542,13 +2545,10 @@ class TranslateSay(Say):
                 renpy.game.seen_translates_count += 1
                 renpy.game.new_translates_count += 1
 
-            renpy.game.context().translate_identifier = self.identifier
-            renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
-
             # Potentially, jump to a translation.
             node = self.lookup()
 
-            if node is not None:
+            if (node is not None) and (node is not self):
                 next_node(self.lookup())
                 return
 

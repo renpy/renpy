@@ -226,10 +226,7 @@ class ScriptTranslator(object):
             tl = self.default_translates[identifier]
 
         if isinstance(tl, renpy.ast.TranslateSay):
-            if tl.language is not None:
-                return tl
-            else:
-                return None
+            return tl
         else:
             return tl.block[0]
 
