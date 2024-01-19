@@ -901,7 +901,10 @@ class RollbackLog(renpy.object.Object):
             revlog.append(rb)
 
             if rb.hard_checkpoint:
-                self.rollback_limit -= 1
+                if self.rollback_limit:
+                    self.rollback_limit -= 1
+                elif self.rollback_block:
+                    self.rollback_block -= 1
 
             if rb.hard_checkpoint or (on_load and rb.checkpoint):
                 checkpoints -= 1
