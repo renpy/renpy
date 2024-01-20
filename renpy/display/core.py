@@ -1905,7 +1905,7 @@ class Interface(object):
 
         should_skip_save = renpy.store.main_menu or renpy.store._in_replay
         if renpy.config.save_on_mobile_background and not should_skip_save:
-            renpy.loadsave.save("_reload-1")
+            renpy.loadsave.save("_reload-1", include_screenshot=False)
 
         renpy.persistent.update(True)
         renpy.persistent.save_on_quit_MP()
@@ -1974,7 +1974,6 @@ class Interface(object):
 
         # # Wait for APP_DIDENTERBACKGROUND.
         # pygame.event.wait()
-
 
         print("Entered background. --------------------------------------------")
 
