@@ -136,19 +136,13 @@ class Signature(object):
 
         return pars
 
-    if False:
-        def __getstate__(self):
-            # default behavior for slots and no __dict__ : None for the __dict__, and a dict for the slots
-            return (None, {
-                "parameters":self.parameters,
-            })
 
     def __setstate__(self, state):
         if isinstance(state, dict):
             # legacy state
-            positional_only = state["positional_only"]
+            positional_only = state.get("positional_only", [ ])
             last_posonly = positional_only[-1][0] if positional_only else None
-            keyword_only = state["keyword_only"]
+            keyword_only = state.get("keyword_only", [ ])
             first_kwonly = keyword_only[0][0] if keyword_only else None
             self.__init__(self.legacy_params(state["parameters"], state["positional"], state["extrapos"], state["extrakw"], last_posonly, first_kwonly))
         else:
