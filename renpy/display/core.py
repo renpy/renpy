@@ -1945,11 +1945,17 @@ class Interface(object):
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
 
+        print("Pausing audio.")
+
         renpy.audio.audio.pause_all()
+
+        print("Disabling periodic events.")
 
         pygame.time.set_timer(PERIODIC, 0)
         pygame.time.set_timer(REDRAW, 0)
         pygame.time.set_timer(TIMEEVENT, 0)
+
+        print("Saving.")
 
         self.mobile_save()
 
@@ -1967,7 +1973,11 @@ class Interface(object):
 
             sys.exit(0)
 
+        print("Freeing memory.")
+
         renpy.exports.free_memory()
+
+        print("Releasing wakelock.")
 
         if renpy.android:
             android.wakelock(False)
