@@ -43,7 +43,7 @@ Building and Uploading the Main Game
 
 The main change you need to make to your main game is to add the line::
 
-    define config.build_only_update = True
+    define build.game_only_update = True
 
 to the top of your options.rpy file. That will add a new option that shows
 up to the launcher's Build Distributions screen,
