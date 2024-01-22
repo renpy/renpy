@@ -1170,13 +1170,6 @@ def lint():
         elif isinstance(node, renpy.ast.Label):
             check_label(node)
 
-        elif isinstance(node, (renpy.ast.Translate, renpy.ast.TranslateSay)) and args.orphan_tl:
-            language = node.language
-            if language is None:
-                none_language_ids.add(node.identifier)
-            else:
-                translated_ids[node.identifier].append(node)
-
         elif isinstance(node, renpy.ast.EndTranslate):
             language = None
 
@@ -1197,6 +1190,14 @@ def lint():
 
         elif isinstance(node, renpy.ast.Transform):
             check_transform(node)
+
+        # This has to be separate, as TranslateSay is a subclass of Say.
+        if isinstance(node, (renpy.ast.Translate, renpy.ast.TranslateSay)) and args.orphan_tl:
+            language = node.language
+            if language is None:
+                none_language_ids.add(node.identifier)
+            else:
+                translated_ids[node.identifier].append(node)
 
     report_node = None
 
