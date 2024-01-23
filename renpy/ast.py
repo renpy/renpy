@@ -2549,7 +2549,7 @@ class TranslateSay(Say):
             node = self.lookup()
 
             if (node is not None) and (node is not self):
-                next_node(self.lookup())
+                next_node(node)
                 return
 
         # Otherwise, say the text.
@@ -2562,22 +2562,21 @@ class TranslateSay(Say):
 
     def predict(self):
         node = self.lookup()
-        if node is None:
+
+        if node is None or node is self:
             return [ self.next ]
-        else:
-            return [ node ]
+
+        return [ node ]
 
     def scry(self):
-        rv = Scry()
-
         node = self.lookup()
 
-        if node is None:
-            rv._next = self.next
-        else:
-            rv._next = node
+        if node is None or node is self:
+            return Say.scry(self)
 
-        rv._next = self.lookup()
+        rv = Scry()
+        rv._next = self.next
+
         return rv
 
 
