@@ -408,3 +408,12 @@ You may be using a system install of python. Please run {0}.sh,
         # __del__ method during shutdown.
         if not renpy.emscripten:
             subprocess.Popen.__del__ = popen_del # type: ignore
+
+        if renpy.android:
+            from jnius import autoclass # type: ignore
+
+            # Avoid running Python shutdown, which can cause more harm than good. (#5280)
+            PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
+            System = autoclass("java.lang.System")
+            PythonSDLActivity.mActivity.finishAffinity()
+            System.exit(0)
