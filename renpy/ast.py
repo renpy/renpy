@@ -2569,13 +2569,13 @@ class TranslateSay(Say):
         return [ node ]
 
     def scry(self):
-        rv = Scry()
         node = self.lookup()
 
         if node is None or node is self:
-            rv._next = self.next
-        else:
-            rv._next = node
+            return Say.scry(self)
+
+        rv = Scry()
+        rv._next = self.next
 
         return rv
 
