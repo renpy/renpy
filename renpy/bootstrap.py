@@ -412,8 +412,9 @@ You may be using a system install of python. Please run {0}.sh,
         if renpy.android:
             from jnius import autoclass # type: ignore
 
+            import android
+            android.activity.finishAndRemoveTask()
+
             # Avoid running Python shutdown, which can cause more harm than good. (#5280)
-            PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
             System = autoclass("java.lang.System")
-            PythonSDLActivity.mActivity.finishAffinity()
             System.exit(0)
