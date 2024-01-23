@@ -122,7 +122,6 @@ relx = 0
 rely = 0
 
 
-
 def init_time():
     warp = os.environ.get("RENPY_TIMEWARP", "1.0")
 
@@ -1957,7 +1956,11 @@ class Interface(object):
 
         print("Saving.")
 
-        self.mobile_save()
+        try:
+            self.mobile_save()
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
 
         if renpy.config.quit_on_mobile_background:
 
@@ -1982,8 +1985,8 @@ class Interface(object):
         if renpy.android:
             android.wakelock(False)
 
-        # # Wait for APP_DIDENTERBACKGROUND.
-        # pygame.event.wait()
+            # Tell Android to end the onPause method.
+            android.activity.finishOnPause()
 
         print("Entered background. --------------------------------------------")
 
