@@ -1715,10 +1715,9 @@ Rarely or Internally Used
     so if you add a screen, append the name rather than replacing the list in
     its entirety.
 
-.. var:: config.periodic_callback = None
+.. var:: config.periodic_callbacks = [ ... ]
 
-    If not None, this should be a function. The function is called,
-    with no arguments, at around 20Hz.
+    This is a list of functions that are called, with no arguments, at around 20Hz.
 
 .. var:: config.play_channel = "audio"
 
