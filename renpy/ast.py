@@ -2564,7 +2564,7 @@ class TranslateSay(Say):
         node = self.lookup()
 
         if node is None or node is self:
-            return [ self.next ]
+            return Say.predict(self)
 
         return [ node ]
 
