@@ -502,6 +502,7 @@ class Live2D(renpy.display.displayable.Displayable):
     common_cache = None
     _duplicatable = True
     used_nonexclusive = None
+    properties = {}
 
     default_fade = 1.0
 
@@ -547,6 +548,7 @@ class Live2D(renpy.display.displayable.Displayable):
             default_fade=1.0,
             **properties):
 
+
         super(Live2D, self).__init__(**properties)
 
         self.filename = filename
@@ -566,6 +568,8 @@ class Live2D(renpy.display.displayable.Displayable):
         self.name = None
 
         self.default_fade = default_fade
+
+        self.properties = properties
 
         # Load the common data. Needed!
         common = self.common
@@ -642,7 +646,8 @@ class Live2D(renpy.display.displayable.Displayable):
             fade=self.fade,
             expression=expression,
             used_nonexclusive=used_nonexclusive,
-            sustain=sustain)
+            sustain=sustain,
+            **self.properties)
 
         rv.name = args.name
         rv._duplicatable = False
