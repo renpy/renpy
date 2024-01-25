@@ -389,13 +389,11 @@ cdef class RenderTransform:
         ysize = state.ysize
 
         if xsize is not None:
-            if renpy.config.relative_transform_size:
-                xsize = absolute.compute_raw(xsize, self.widtho)
+            xsize = absolute.compute_raw(xsize, self.widtho if renpy.config.relative_transform_size else 1 )
             self.widtho = xsize
 
         if ysize is not None:
-            if renpy.config.relative_transform_size:
-                ysize = absolute.compute_raw(ysize, self.heighto)
+            ysize = absolute.compute_raw(ysize, self.heighto if renpy.config.relative_transform_size else 1)
             self.heighto = ysize
 
         self.cr = render(child, self.widtho, self.heighto, st - self.transform.child_st_base, at)
