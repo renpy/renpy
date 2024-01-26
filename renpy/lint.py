@@ -1144,8 +1144,13 @@ def lint():
         elif isinstance(node, renpy.ast.Say):
             check_say(node)
 
-            counts[language].add(node.what)
-            if language is None:
+            if isinstance(node, renpy.ast.TranslateSay):
+                node_language = node.language
+            else:
+                node_language = language
+
+            counts[node_language].add(node.what)
+            if node_language is None:
                 charastats[node.who or 'narrator'].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
