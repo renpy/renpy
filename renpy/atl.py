@@ -27,6 +27,7 @@ import random
 import renpy
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
 
+from renpy.display.core import absolute
 
 def compiling(loc):
     file, number = loc # @ReservedAssignment
@@ -95,6 +96,22 @@ class position(object):
             return cls(0, other)
         else:
             return cls(other, 0)
+
+    def simplify(self):
+        """
+        Tries to represent this position as an int, float, or absolute, if
+        possible.
+        """
+
+        if self.relative == 0.0:
+            if self.absolute == int(self.absolute):
+                return int(self.absolute)
+            else:
+                return absolute(self.absolute)
+        elif self.absolute == 0:
+            return float(self.relative)
+        else:
+            return self
 
     def __add__(self, other):
         if isinstance(other, position):
