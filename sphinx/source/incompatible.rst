@@ -171,7 +171,7 @@ the old and new children provide the same placement information.
 
 To disable this, add to your game::
 
-    define config.transition_use_child_placement = False
+    define config.transitions_use_child_placement = False
 
 **Containers Pass Transform Events**
 Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
