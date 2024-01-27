@@ -127,6 +127,9 @@ def start(basedir, gamedir):
     else:
         shape = None
 
+    if isinstance(shape, ProgressBar):
+        shape = shape.background
+
     window = pygame_sdl2.display.Window(
         sys.argv[0],
         (sw, sh),
