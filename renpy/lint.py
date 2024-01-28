@@ -897,7 +897,7 @@ def check_unreachables(all_nodes):
     def add_block(block):
         next = block[0]
         if next in unreachable:
-            to_check.add(next)
+            add_to_check(next)
 
     def add_names(names):
         for name in names:
@@ -919,7 +919,7 @@ def check_unreachables(all_nodes):
                 continue
 
             if node in unreachable:
-                to_check.add(node)
+                add_to_check(node)
 
     # All nodes, outside of common.
     all_nodes = [node for node in all_nodes if not common(node)]
@@ -933,6 +933,8 @@ def check_unreachables(all_nodes):
 
     # The worklist of reachable nodes that haven't been checked yet.
     to_check = set()
+
+    add_to_check = to_check.add # type: ignore
 
     for node in all_nodes:
         if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)):
@@ -967,6 +969,16 @@ def check_unreachables(all_nodes):
 
             add_names(reach)
 
+    def add_to_check(node):
+        to_check.add(node)
+        if (isinstance(node, renpy.ast.Label)
+            and node.parameters is not None
+            and any((p.default == p.empty)
+                    and p.kind not in (p.VAR_POSITIONAL, p.VAR_KEYWORD)
+                    for p in node.parameters.parameters.values())
+            ):
+            report("Warning: label {} at {}:{} has required parameters but is reachable through script execution.".format(node.name, node.filename, node.linenumber))
+
     while to_check:
         node = to_check.pop() # type: Any
         unreachable.remove(node)
@@ -1000,7 +1012,7 @@ def check_unreachables(all_nodes):
 
         next = node.next
         if next in unreachable:
-            to_check.add(next)
+            add_to_check(next)
 
     locations = sorted(set((node.filename, node.linenumber) for node in (unreachable - weakly_reachable)))
     problems = [ (filename, linenumber, "") for filename, linenumber in locations ]
@@ -1008,13 +1020,6 @@ def check_unreachables(all_nodes):
 
 
 def check_orphan_translations(none_lang_identifiers, translation_identifiers):
-
-    def header():
-        print("")
-        print("")
-        print("Orphan Translations:")
-        print()
-
 
     problems = [ ]
 
