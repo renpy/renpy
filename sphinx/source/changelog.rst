@@ -334,8 +334,8 @@ The new :var:`config.pass_controller_events` and newly-documented
 :var:`config.pass_joystick_events` variables allow the game to access
 controller and joystick events directly.
 
-The new :var:`renpy.get_screen_variable` and :var:`renpy.get_screen_variable`
-make it possible to access screen variables, especially in :class:`Action`
+The new :var:`renpy.get_screen_variable` and :var:`renpy.set_screen_variable`
+functions make it possible to access screen variables, especially in :class:`Action`
 subclasses.
 
 The new :var:`build.time` variable is set to the time the game was built.
