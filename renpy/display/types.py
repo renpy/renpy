@@ -171,38 +171,50 @@ class position(object):
 
     def __add__(self, other):
         if isinstance(other, position):
-            return position(self.absolute + other.absolute, self.relative + other.relative)
-        # elif isinstance(other, (int, float)):
-        #     return self + position.from_any(other)
+            return position(self.absolute + other.absolute,
+                            self.relative + other.relative)
+
         return NotImplemented
 
     __radd__ = __add__
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
-            return position(self.absolute * other, self.relative * other)
+            return position(self.absolute * other,
+                            self.relative * other)
+
         return NotImplemented
 
     __rmul__ = __mul__
 
     def __neg__(self):
-        return -1 * self
+        return position(-self.absolute, -self.relative)
 
     def __pos__(self):
-        return position(renpy.display.types.absolute(self.absolute), float(self.relative))
+        return self
 
     def __repr__(self):
         return "position(absolute={}, relative={})".format(self.absolute, self.relative)
 
     def __rsub__(self, other):
-        return other + -self
+        if isinstance(other, position):
+            return position(other.absolute - self.absolute,
+                            other.relative - self.relative)
+
+        return NotImplemented
 
     def __sub__(self, other):
-        return self + -other
+        if isinstance(other, position):
+            return position(self.absolute - other.absolute,
+                            self.relative - other.relative)
+
+        return NotImplemented
 
     def __truediv__(self, other):
         if isinstance(other, (int, float)):
-            return self * (1/other)
+            return position(self.absolute / other,
+                            self.relative / other)
+
         return NotImplemented
 
     __div__ = __truediv__ # PY2
