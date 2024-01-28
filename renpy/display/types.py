@@ -244,39 +244,51 @@ class position(object):
 
 
 class DualAngle(object):
-    @classmethod
-    def from_any(cls, other):
-        if isinstance(other, cls):
-            return other
-        elif type(other) is float:
-            return cls(other, other)
-        raise TypeError("Cannot convert {} to DualAngle".format(type(other)))
-
-    def __init__(self, absolute, relative): # for tests, convert to PY2 after
+    def __init__(self, absolute, relative):
         self.absolute = absolute
         self.relative = relative
 
     def __add__(self, other):
         if isinstance(other, DualAngle):
-            return DualAngle(self.absolute + other.absolute, self.relative + other.relative)
+            return DualAngle(self.absolute + other.absolute,
+                             self.relative + other.relative)
+
         return NotImplemented
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
-            return DualAngle(self.absolute * other, self.relative * other)
+            return DualAngle(self.absolute * other,
+                             self.relative * other)
+
         return NotImplemented
 
     __rmul__ = __mul__
 
     def __neg__(self):
-        return -1 * self
+            return DualAngle(-self.absolute, -self.relative)
 
     def __sub__(self, other):
-        return self + -other
+        if isinstance(other, DualAngle):
+            return DualAngle(self.absolute - other.absolute,
+                             self.relative - other.relative)
+
+        return NotImplemented
 
 
 def any_object(x):
     return x
+
+
+def dualangle(x):
+    xt = type(x)
+
+    if xt is DualAngle:
+        return x
+
+    if xt is float:
+        return DualAngle(x, x)
+
+    raise TypeError("Cannot convert {} to DualAngle".format(xt))
 
 
 def matrix(x):
