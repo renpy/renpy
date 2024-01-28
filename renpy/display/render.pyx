@@ -874,7 +874,7 @@ cdef class Render:
 
     def get_size(self):
         """
-        Returns the size of this Render, a mostly ficticious value
+        Returns the size of this Render, a mostly fictitious value
         that's taken from the inputs to the constructor. (As in, we
         don't clip to this size.)
         """
