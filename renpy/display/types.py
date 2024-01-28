@@ -178,6 +178,15 @@ class position(object):
 
     __radd__ = __add__
 
+    def __eq__(self, other):
+        if isinstance(other, position):
+            return self.absolute == other.absolute and \
+                   self.relative == other.relative
+
+        simple = self.simplify()
+
+        return type(simple) is not position and simple == other
+
     def __mul__(self, other):
         if isinstance(other, (int, float)):
             return position(self.absolute * other,
