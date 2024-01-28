@@ -296,6 +296,12 @@ class position:
 
         return NotImplemented
 
+    def __rsub__(self, value: "position") -> "position":
+        if isinstance(value, position):
+            return position(value.absolute - self.absolute, value.relative - self.relative)
+
+        return NotImplemented
+
     def __mul__(self, value: int | float) -> "position":
         if isinstance(value, (int, float)):
             return position(self.absolute * value, self.relative * value)
