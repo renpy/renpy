@@ -227,10 +227,10 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         width, height = d._offer_size
 
     if xmaximum is not None:
-        width = min(renpy.display.core.absolute.compute_raw(xmaximum, width), width)
+        width = min(renpy.display.types.absolute.compute_raw(xmaximum, width), width)
 
     if ymaximum is not None:
-        height = min(renpy.display.core.absolute.compute_raw(ymaximum, height), height)
+        height = min(renpy.display.types.absolute.compute_raw(ymaximum, height), height)
 
     if width < 0:
         width = 0
@@ -857,8 +857,8 @@ cdef class Render:
 
         (xo, yo) = pos
 
-        xo = renpy.display.core.absolute(xo)
-        yo = renpy.display.core.absolute(yo)
+        xo = renpy.display.types.absolute(xo)
+        yo = renpy.display.types.absolute(yo)
 
         if index is None:
             self.children.append((source, xo, yo, focus, main))

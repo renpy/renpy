@@ -59,8 +59,7 @@ from renpy.translation import translate_string as __ # @UnusedImport
 
 from renpy.python import store_eval as eval
 
-from renpy.display.core import absolute
-from renpy.atl import position
+from renpy.display.types import absolute, position
 
 import renpy
 globals()["renpy"] = renpy.exports

@@ -26,7 +26,7 @@ import renpy
 import math
 from renpy.display.matrix cimport Matrix
 from renpy.display.render cimport Render, Matrix2D, render
-from renpy.display.core import absolute
+from renpy.display.types import absolute
 
 from sdl2 cimport *
 from pygame_sdl2 cimport *

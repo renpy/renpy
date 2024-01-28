@@ -86,8 +86,8 @@ class Sprite(renpy.object.Object):
     The methods of a Sprite object are:
         """
 
-    x = 0 # type: int|float|renpy.display.core.absolute
-    y = 0 # type: int|float|renpy.display.core.absolute
+    x = 0 # type: int|float|renpy.display.types.absolute
+    y = 0 # type: int|float|renpy.display.types.absolute
     zorder = 0 # type: int|float
 
 

@@ -31,8 +31,7 @@ import math
 import renpy
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
-from renpy.atl import position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
-from renpy.display.core import absolute
+from renpy.display.types import DualAngle, absolute, any_object, bool_or_none, float_or_none, matrix, mesh, position, position_or_none
 
 class Camera(renpy.object.Object):
     """

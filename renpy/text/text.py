@@ -957,7 +957,7 @@ class Layout(object):
         if n is None:
             return n
 
-        if isinstance(n, renpy.display.core.absolute):
+        if isinstance(n, renpy.display.types.absolute):
             return int(n)
 
         return round(n * self.oversample)
@@ -966,7 +966,7 @@ class Layout(object):
         if n is None:
             return n
 
-        if isinstance(n, renpy.display.core.absolute):
+        if isinstance(n, renpy.display.types.absolute):
             return int(n)
 
         if self.outline_step:

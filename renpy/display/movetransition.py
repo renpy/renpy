@@ -402,7 +402,7 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
         (except subpixel which is boolean)
         """
 
-        absolute = renpy.display.core.absolute
+        absolute = renpy.display.types.absolute
 
         def based(v, base):
             if v is None:
@@ -429,7 +429,7 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
         if self.time_warp is not None:
             done = self.time_warp(done)
 
-        absolute = renpy.display.core.absolute
+        absolute = renpy.display.types.absolute
 
         def I(a, b):
             return absolute(a + done * (b - a))
