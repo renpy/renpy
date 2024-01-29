@@ -167,8 +167,6 @@ class position(object):
 
         return self
 
-    from_any = classmethod(__new__)
-
     def __add__(self, other):
         if isinstance(other, position):
             return position(self.absolute + other.absolute,
@@ -312,4 +310,4 @@ def mesh(x):
 def position_or_none(x):
     if x is None:
         return None
-    return position.from_any(x)
+    return position(x)

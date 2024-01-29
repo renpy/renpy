@@ -324,10 +324,10 @@ class TransformState(renpy.object.Object):
         and the first element of each tuple is in x and the second in y.
         They represent the vector from the anchoraround point to the final anchor point.
         """
-        xanchoraround = position.from_any(self.xanchoraround)
-        yanchoraround = position.from_any(self.yanchoraround)
-        xanchor = position.from_any(first_not_none(self.xanchor, self.inherited_xanchor, 0))
-        yanchor = position.from_any(first_not_none(self.yanchor, self.inherited_yanchor, 0))
+        xanchoraround = position(self.xanchoraround)
+        yanchoraround = position(self.yanchoraround)
+        xanchor = position(first_not_none(self.xanchor, self.inherited_xanchor, 0))
+        yanchor = position(first_not_none(self.yanchor, self.inherited_yanchor, 0))
 
         absolute_vector = (xanchor.absolute-xanchoraround.absolute, yanchor.absolute-yanchoraround.absolute)
         relative_vector = (xanchor.relative-xanchoraround.relative, yanchor.relative-yanchoraround.relative)
@@ -401,7 +401,7 @@ class TransformState(renpy.object.Object):
         and set xanchor and yanchor such that the anchorangle stays the same,
         and the anchorradius (as explained above) is the given one.
         """
-        anchorradius = position.from_any(anchorradius)
+        anchorradius = position(anchorradius)
 
         polar_vectors = self.get_anchor_polar_vector()
         anchorangle = self.get_anchorangle(polar_vectors)
@@ -429,8 +429,8 @@ class TransformState(renpy.object.Object):
             relative_anchorradius,
         ):
 
-        xanchoraround = position.from_any(self.xanchoraround)
-        yanchoraround = position.from_any(self.yanchoraround)
+        xanchoraround = position(self.xanchoraround)
+        yanchoraround = position(self.yanchoraround)
 
         absolute_anchorangle = absolute_anchorangle * math.pi / 180
         relative_anchorangle = relative_anchorangle * math.pi / 180

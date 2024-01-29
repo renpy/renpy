@@ -108,8 +108,8 @@ def interpolate(t, a, b, typ):
 
         if typ in (position_or_none, position):
             if renpy.config.mixed_position:
-                a = position.from_any(a)
-                b = position.from_any(b)
+                a = position(a)
+                b = position(b)
                 return a + t * (b - a)
             else:
                 typ = type(b)
