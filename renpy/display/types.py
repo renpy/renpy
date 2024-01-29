@@ -60,25 +60,21 @@ class absolute(float):
         return "absolute({})".format(float.__repr__(self))
 
     @staticmethod
-    def compute_raw(value, room):
+    def compute(value, room):
         """
         Converts a position from one of the many supported position types
         into an absolute number of pixels, without regard for the return type.
         """
-        if isinstance(value, position):
-            return value.relative * room + value.absolute
-        elif isinstance(value, (absolute, int)):
-            return value
-        elif isinstance(value, float):
-            return value * room
-        raise TypeError("Value {} of type {} not recognized as a position.".format(value, type(value)))
 
-    @staticmethod
-    def compute(value, room):
-        """
-        Does the same, but converts the result to the absolute type.
-        """
-        return absolute(absolute.compute_raw(value, room))
+        typ = type(value)
+
+        if typ is float:
+            return value * room
+
+        if typ is position:
+            return value.relative * room + value.absolute
+
+        return value
 
 
 for fn in (

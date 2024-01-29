@@ -230,7 +230,7 @@ class TransformState(renpy.object.Object):
         required.
         """
 
-        return float(absolute.compute_raw(value, available))
+        return float(absolute.compute(value, available))
 
     def get_around(self):
         return (self.xaround, self.yaround)
@@ -1055,8 +1055,8 @@ class Transform(Container):
                 cw, ch = self.child_size
                 rw, rh = self.render_size
 
-                xanchor = absolute.compute_raw(xanchor, cw)
-                yanchor = absolute.compute_raw(yanchor, ch)
+                xanchor = absolute.compute(xanchor, cw)
+                yanchor = absolute.compute(yanchor, ch)
 
                 xanchor -= cw / 2.0
                 yanchor -= ch / 2.0

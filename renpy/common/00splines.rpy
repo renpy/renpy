@@ -60,7 +60,7 @@ init -1500 python:
             self.initialized = None
 
         def init_values(self, sizes):
-            to_abs_ = absolute.compute_raw
+            to_abs_ = absolute.compute
 
             def coord_(c):
 

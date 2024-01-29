@@ -31,11 +31,7 @@ import renpy
 from renpy.display.render import render, Render
 
 
-if PY2:
-    def compute_raw(value, room):
-        return renpy.display.types.absolute.compute_raw(value, room)
-else:
-    compute_raw = renpy.display.types.absolute.compute_raw
+compute = renpy.display.types.absolute.compute
 
 
 def xyminimums(style, width, height):
@@ -53,7 +49,7 @@ def xyminimums(style, width, height):
         if (type(xmaximum) is float) and xmaximum and renpy.config.adjust_minimums:
             xminimum = xminimum / xmaximum
 
-    xminimum = compute_raw(xminimum, width)
+    xminimum = compute(xminimum, width)
 
     if type(yminimum) is float:
         ymaximum = style.ymaximum
@@ -61,7 +57,7 @@ def xyminimums(style, width, height):
         if (type(ymaximum) is float) and ymaximum and renpy.config.adjust_minimums:
             yminimum = yminimum / ymaximum
 
-    yminimum = compute_raw(yminimum, height)
+    yminimum = compute(yminimum, height)
 
     return xminimum, yminimum
 
@@ -476,13 +472,13 @@ class Grid(Container):
             yspacing = self.style.spacing
 
         if renpy.config.relative_spacing:
-            xspacing = compute_raw(xspacing, width)
-            yspacing = compute_raw(yspacing, height)
+            xspacing = compute(xspacing, width)
+            yspacing = compute(yspacing, height)
 
-        left_margin = compute_raw(self.style.left_margin, width)
-        right_margin = compute_raw(self.style.right_margin, width)
-        top_margin = compute_raw(self.style.top_margin, height)
-        bottom_margin = compute_raw(self.style.bottom_margin, height)
+        left_margin = compute(self.style.left_margin, width)
+        right_margin = compute(self.style.right_margin, width)
+        top_margin = compute(self.style.top_margin, height)
+        bottom_margin = compute(self.style.bottom_margin, height)
 
         # For convenience and speed.
         cols = self.cols
@@ -829,11 +825,11 @@ class MultiBox(Container):
 
         minx = self.style.xminimum
         if minx is not None:
-            width = max(width, compute_raw(minx, width))
+            width = max(width, compute(minx, width))
 
         miny = self.style.yminimum
         if miny is not None:
-            height = max(height, compute_raw(miny, height))
+            height = max(height, compute(miny, height))
 
         if self.first and adjust_times:
             self.update_times()
@@ -1316,17 +1312,17 @@ class Window(Container):
         width = max(xminimum, width)
         height = max(yminimum, height)
 
-        left_margin = compute_raw(style.left_margin, width)
-        left_padding = compute_raw(style.left_padding, width)
+        left_margin = compute(style.left_margin, width)
+        left_padding = compute(style.left_padding, width)
 
-        right_margin = compute_raw(style.right_margin, width)
-        right_padding = compute_raw(style.right_padding, width)
+        right_margin = compute(style.right_margin, width)
+        right_padding = compute(style.right_padding, width)
 
-        top_margin = compute_raw(style.top_margin, height)
-        top_padding = compute_raw(style.top_padding, height)
+        top_margin = compute(style.top_margin, height)
+        top_padding = compute(style.top_padding, height)
 
-        bottom_margin = compute_raw(style.bottom_margin, height)
-        bottom_padding = compute_raw(style.bottom_padding, height)
+        bottom_margin = compute(style.bottom_margin, height)
+        bottom_padding = compute(style.bottom_padding, height)
 
         # c for combined.
         cxmargin = left_margin + right_margin
@@ -2437,10 +2433,10 @@ class NearRect(Container):
             on_preferred_side = self.preferred_side == "left"
 
         # Initial x positioning - using a variant of the layout algorithm.
-        xpos = compute_raw(xpos, pw)
-        xanchor = compute_raw(xanchor, cw)
-        ypos = compute_raw(ypos, ph)
-        yanchor = compute_raw(yanchor, ch)
+        xpos = compute(xpos, pw)
+        xanchor = compute(xanchor, cw)
+        ypos = compute(ypos, ph)
+        yanchor = compute(yanchor, ch)
 
         if self.preferred_side in ("top", "bottom"):
             layout_x = px + xpos - xanchor

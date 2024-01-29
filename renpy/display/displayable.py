@@ -43,7 +43,7 @@ def place(width, height, sw, sh, placement):
 
     xpos, ypos, xanchor, yanchor, xoffset, yoffset, _subpixel = placement
 
-    compute_raw = renpy.display.types.absolute.compute_raw
+    compute = renpy.display.types.absolute.compute
 
     if xpos is None:
         xpos = 0
@@ -58,15 +58,15 @@ def place(width, height, sw, sh, placement):
     if yoffset is None:
         yoffset = 0
 
-    xpos = compute_raw(xpos, width)
+    xpos = compute(xpos, width)
 
-    xanchor = compute_raw(xanchor, sw)
+    xanchor = compute(xanchor, sw)
 
     x = xpos + xoffset - xanchor
 
-    ypos = compute_raw(ypos, height)
+    ypos = compute(ypos, height)
 
-    yanchor = compute_raw(yanchor, sh)
+    yanchor = compute(yanchor, sh)
 
     y = ypos + yoffset - yanchor
 

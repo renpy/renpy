@@ -328,7 +328,7 @@ class Revolver(object):
             if x is None:
                 x = 0
 
-            return absolute.compute_raw(x, r)
+            return absolute.compute(x, r)
 
         if self.pos is None:
             pos = self.child.get_placement()

@@ -408,7 +408,7 @@ class MoveInterpolate(renpy.display.displayable.Displayable):
             if v is None:
                 return 0
             else:
-                return absolute.compute_raw(v, base)
+                return absolute.compute(v, base)
 
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = child.get_placement()
 

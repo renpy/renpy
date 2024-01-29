@@ -967,8 +967,8 @@ class Live2D(renpy.display.displayable.Displayable):
         zoom = self.zoom
 
         if zoom is None:
-            top = absolute.compute_raw(self.top, sh)
-            base = absolute.compute_raw(self.base, sh)
+            top = absolute.compute(self.top, sh)
+            base = absolute.compute(self.base, sh)
 
             size = max(base - top, 1.0)
 

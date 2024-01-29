@@ -725,7 +725,7 @@ init -1500 python:
             elif self.amount == "page":
                 amount = delta * adjustment.page
             else:
-                amount = absolute.compute_raw(delta*self.amount, adjustment.range)
+                amount = absolute.compute(delta * self.amount, adjustment.range)
 
             if self.delay == 0.0:
                 adjustment.change(adjustment.value + amount)
