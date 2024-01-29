@@ -367,10 +367,8 @@ class TransformState(renpy.object.Object):
         """
         (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = polar_vectors or self.get_anchor_polar_vector()
 
-        return position(
-            absolute=math.hypot(absolute_vector_x, absolute_vector_y), # type: ignore
-            relative=math.hypot(relative_vector_x, relative_vector_y),
-        )
+        return position(math.hypot(absolute_vector_x, absolute_vector_y),
+                        math.hypot(relative_vector_x, relative_vector_y)) # type: ignore
 
     def set_anchorangle(self, angle):
         """
@@ -441,14 +439,10 @@ class TransformState(renpy.object.Object):
         relative_dx = relative_anchorradius * math.sin(relative_anchorangle)
         relative_dy = -relative_anchorradius * math.cos(relative_anchorangle)
 
-        self.xanchor = position(
-            absolute=xanchoraround.absolute + absolute_dx,
-            relative=xanchoraround.relative + relative_dx,
-        )
-        self.yanchor = position(
-            absolute=yanchoraround.absolute + absolute_dy,
-            relative=yanchoraround.relative + relative_dy,
-        )
+        self.xanchor = position(xanchoraround.absolute + absolute_dx,
+                                xanchoraround.relative + relative_dx)
+        self.yanchor = position(yanchoraround.absolute + absolute_dy,
+                                yanchoraround.relative + relative_dy)
 
     anchorangle = property(get_anchorangle, set_anchorangle)
     anchorradius = property(get_anchorradius, set_anchorradius)
