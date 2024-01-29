@@ -51,10 +51,10 @@ class absolute(float):
     __slots__ = ()
 
     def __divmod__(self, value):
-        return self//value, self%value
+        return self // value, self % value
 
     def __rdivmod__(self, value):
-        return value//self, value%self
+        return value // self, value % self
 
     def __repr__(self):
         return "absolute({})".format(float.__repr__(self))

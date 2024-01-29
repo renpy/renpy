@@ -182,8 +182,8 @@ def interpolate_spline(t, spline, typ):
 
     if rv is None:
         return None
-    else:
-        return type(spline[-1])(rv)
+
+    return type(spline[-1])(rv)
 
 
 def get_catmull_rom_value(t, p_1, p0, p1, p2):
