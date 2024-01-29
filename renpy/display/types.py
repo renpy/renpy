@@ -279,18 +279,6 @@ def any_object(x):
     return x
 
 
-def bool_or_none(x):
-    if x is None:
-        return x
-    return bool(x)
-
-
-def float_or_none(x):
-    if x is None:
-        return x
-    return float(x)
-
-
 def matrix(x):
     if x is None:
         return None
@@ -305,9 +293,3 @@ def mesh(x):
         return x
 
     return bool(x)
-
-
-def position_or_none(x):
-    if x is None:
-        return None
-    return position(x)
