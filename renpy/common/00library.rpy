@@ -417,6 +417,7 @@ _quit_slot
 _rollback
 _skipping
 _window_subtitle
+_scene_show_hide_transition
 """.split():
 
         # _history, history_list, and _version are set later, so aren't included.

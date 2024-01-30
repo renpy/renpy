@@ -489,10 +489,6 @@ change_renpy_executable()
             # A map from a package to a unique update version hash.
             self.update_versions = { }
 
-            # Map from destination file with extension to (that file's hash,
-            # hash of the file list)
-            self.build_cache = { }
-
             # A map from file to its hash.
             self.hash_cache = { }
 
@@ -579,8 +575,6 @@ change_renpy_executable()
                     os.makedirs(self.destination)
                 except Exception:
                     pass
-
-                self.load_build_cache()
 
             self.packagedest = packagedest
 
@@ -698,9 +692,6 @@ change_renpy_executable()
 
             if self.build_update:
                 self.finish_updates(build_packages)
-
-            if not packagedest:
-                self.save_build_cache()
 
             # Finish up.
             self.log.close()
@@ -1537,20 +1528,6 @@ change_renpy_executable()
                 full_filename = "rpu/" + variant + ".files.rpu"
                 path = self.destination + "/" + full_filename
 
-            if self.build['renpy']:
-                fl_hash = fl.hash(self)
-            else:
-                fl_hash = '<not building renpy>'
-
-            file_hash, old_fl_hash = self.build_cache.get(full_filename, ("", ""))
-
-            if (not directory) and (old_fl_hash == fl_hash) and not(self.build['renpy'] and (variant == "sdk")):
-
-                if file_hash:
-                    self.build_cache[full_filename] = (file_hash, fl_hash)
-
-                return
-
             def done():
                 """
                 This is called when the build of the package is done, either
@@ -1565,9 +1542,6 @@ change_renpy_executable()
                     file_hash = hash_file(path)
                 else:
                     file_hash = ""
-
-                if file_hash:
-                    self.build_cache[full_filename] = (file_hash, fl_hash)
 
             if format == "tar.bz2" or format == "bare-tar.bz2":
                 pkg = TarPackage(path, "w:bz2")
@@ -1648,7 +1622,7 @@ change_renpy_executable()
 
                 if "zsync" in self.build["update_formats"]:
 
-                    digest = self.build_cache[self.base_name + "-" + variant + ".update"][0]
+                    digest = hash_file(self.destination + "/" + self.base_name + "-" + variant + ".update")
                     sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
 
                     index[variant].update({
@@ -1666,7 +1640,7 @@ change_renpy_executable()
 
                 if "rpu" in self.build["update_formats"]:
                     index[variant]["rpu_url"] = "rpu/" + variant + ".files.rpu"
-                    index[variant]["rpu_digest"] = self.build_cache["rpu/" + variant + ".files.rpu"][0]
+                    index[variant]["rpu_digest"] = hash_file(self.destination + "/rpu/" + variant + ".files.rpu")
 
             for p in packages:
                 if p["update"]:
@@ -1703,38 +1677,6 @@ change_renpy_executable()
             key_pem = self.temp_filename("key.pem")
             with open(key_pem, "wb") as f:
                 f.write(signing_key.verifying_key.to_pem())
-
-        def save_build_cache(self):
-            if not self.build['renpy']:
-                return
-
-            fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
-
-            with open(fn, "w", encoding="utf-8") as f:
-                for k, v in self.build_cache.items():
-                    l = "\t".join([k, v[0], v[1]]) + "\n"
-                    f.write(l)
-
-        def load_build_cache(self):
-            if not self.build['renpy']:
-                return
-
-            fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
-
-            if not os.path.exists(fn):
-                return
-
-            with open(fn, "rb") as f:
-                for l in f:
-                    if not l:
-                        continue
-
-                    l = l.decode("utf-8").rstrip()
-                    l = l.split("\t")
-
-                    self.build_cache[l[0]] = (l[1], l[2])
-
-            os.unlink(fn)
 
         def dump(self):
             for k, v in sorted(self.file_lists.items()):
