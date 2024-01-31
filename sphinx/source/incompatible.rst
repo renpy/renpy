@@ -27,6 +27,42 @@ report any issues. When reporting issues, please determine the hardware
 (device and GPU), os and driver versions, and year of manufacture.
 
 
+.. _incompatible-8.2.1:
+.. _incompatible-7.7.1:
+
+8.2.1 / 7.7.1
+-------------
+
+**How ATL sets the child from parameters** The rules as for how and when ATL
+transforms get their child set, based upon the parameters they accept and the
+arguments they are passed, has slightly changed. It is unlikely to have any
+impact on existing games, especially if you were only using documented features.
+
+- The `old_widget` parameter taking a value from a positional argument does not
+  set the child anymore. That was an undocumented misuse of
+  :ref:`atl-transitions`. ::
+
+    transform t(old_widget):
+        ...
+
+    t("eileen") # will no longer have a child set to the "eileen" image
+
+- A `child` keyword argument being passed to a transform having a `child`
+  parameter now sets the child, just as it would in a transform with no
+  `child` parameter, or if the `child` parameter got a value from a positional
+  argument. The documentation was ambiguous about this. ::
+
+    transform t1(child):
+        ...
+
+    transform t2(chile):
+        ...
+
+    t1(child="eileen") # will now have a child set to the "eileen" image, but previously didn't
+    t2(child="eileen") # the child is set, as before
+    t1("eileen") # the child is set, as before
+
+
 .. _incompatible-8.2.0:
 .. _incompatible-7.7.0:
 
@@ -45,7 +81,6 @@ In order to keep using the ``annotations`` future for stringified annotations,
 you can add the following line at the top of your files::
 
     rpy python annotations
-
 
 **Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
 different glyphs than would have been produced differently, and may change
@@ -196,34 +231,6 @@ disappear. Now, the event will be allowed to run to completion.
 To disable this, add to your game::
 
     define config.screens_never_cancel_hide = False
-
-**How ATL sets the child from parameters** The rules as for how and when ATL
-transforms get their child set, based upon the parameters they accept and the
-arguments they are passed, has slightly changed. It is unlikely to have any
-impact on existing games, especially if you were only using documented features.
-
-- The `old_widget` parameter taking a value from a positional argument does not
-  set the child anymore. That was not documented. ::
-
-    transform t(old_widget):
-        ...
-
-    t("eileen") # will no longer have a child set to the "eileen" image
-
-- A `child` keyword argument being passed to a transform having a `child`
-  parameter now sets the child, just as it would in a transform with no
-  `child` parameter, or if the `child` parameter got a value from a positional
-  argument. The documentation was ambiguous about this. ::
-
-    transform t1(child):
-        ...
-
-    transform t2(chile):
-        ...
-
-    t1(child="eileen") # will now have a child set to the "eileen" image, but previously didn't
-    t2(child="eileen") # the child is set, as before
-    t1("eileen") # the child is set, as before
 
 
 .. _incompatible-8.1.1:
