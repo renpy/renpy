@@ -302,9 +302,9 @@ init -1100 python:
             style.default.shaper = "freetype"
             config.mixed_position = False
             config.drag_group_add_top = False
-            config.transitions_use_child_placement = True
+            config.transitions_use_child_placement = False
             config.interpolate_exprs = False
-            config.containers_pass_transform_events = False
+            config.containers_pass_transform_events.clear()
             config.say_replace_event = False
             config.screens_never_cancel_hide = False
 

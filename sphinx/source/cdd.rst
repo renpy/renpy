@@ -294,6 +294,8 @@ the implicit `self` parameter.
        `pygame.draw <http://www.pygame.org/docs/ref/draw.html>`_
        functions, with the first parameter (the surface) omitted.
 
+       In Ren'Py, the arc and ellipse functions aren't implemented.
+
        Canvas objects also have a get_surface() method that returns the
        pygame Surface underlying the canvas.
 

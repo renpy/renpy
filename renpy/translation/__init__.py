@@ -226,10 +226,7 @@ class ScriptTranslator(object):
             tl = self.default_translates[identifier]
 
         if isinstance(tl, renpy.ast.TranslateSay):
-            if tl.language is not None:
-                return tl
-            else:
-                return None
+            return tl
         else:
             return tl.block[0]
 
@@ -1020,6 +1017,11 @@ locales = {
     "chs": "simplified_chinese",
     "cht": "traditional_chinese",
     "zh": "traditional_chinese",
+    "zh_tw" : "traditional_chinese",
+    "zh_cn" : "simplified_chinese",
+    "zh_hk" : "traditional_chinese",
+    "zh_sg" : "simplified_chinese",
+    "zh_mo" : "traditional_chinese",
 }
 
 

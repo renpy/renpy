@@ -4,6 +4,20 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.3.0:
+.. _renpy-7.8.0:
+
+8.3.0 / 7.8.0
+=============
+
+
+Features
+--------
+
+The Input displayable now takes an `action` property, which is an action that
+runs whenthe user presses enter with the text input active.
+
+
 .. _renpy-8.2.0:
 .. _renpy-7.7.0:
 
@@ -42,7 +56,7 @@ including things like gender and skin-tone modifiers, so you'll need Ren'Py 8
 to have those work. This switching occurs when a font tag is not being
 used.
 
-The new :propref:`emoji_font`, :propref:`prefer_emoji` style properties control
+The new :propref:`emoji_font` and :propref:`prefer_emoji` style properties control
 Emoji font selection.
 
 Fundamentally, you can include Emoji into your game by typing it into your
@@ -334,8 +348,8 @@ The new :var:`config.pass_controller_events` and newly-documented
 :var:`config.pass_joystick_events` variables allow the game to access
 controller and joystick events directly.
 
-The new :var:`renpy.get_screen_variable` and :var:`renpy.get_screen_variable`
-make it possible to access screen variables, especially in :class:`Action`
+The new :var:`renpy.get_screen_variable` and :var:`renpy.set_screen_variable`
+functions make it possible to access screen variables, especially in :class:`Action`
 subclasses.
 
 The new :var:`build.time` variable is set to the time the game was built.
@@ -416,9 +430,9 @@ makes it possible to use transform events with screens that may be shown
 again immediately, like the say or bubble screens.
 
 Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
-pass transform events (like hover and idle) to their children, meaning that
-children of a button can have their own transforms to respond to those
-events.
+pass some transform events (hover, idle, insensitive, selected_hover, and selected_idle)
+to their children, meaning that children of a button can have their own transforms
+to respond to those events.
 
 :func:`persistent._clear` will re-run default statements that update
 persistent variables, making it possible to avoid persistent becoming

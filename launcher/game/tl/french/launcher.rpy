@@ -2077,8 +2077,8 @@
     new "Thème du lanceur :"
 
     # game/preferences.rpy:254
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "Plus d'informations sur comment créer un thème personnalisé se trouvent {a=https://www.renpy.org/doc/html/skins.html}dans la documentation de Ren'Py{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "Plus d'informations sur comment créer un thème personnalisé se trouvent {a=[skins_url]}dans la documentation de Ren'Py{/a}."
 
     # game/preferences.rpy:271
     old "Install Libraries:"

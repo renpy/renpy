@@ -535,7 +535,16 @@ class Proxy(object):
         self.name = name
 
     def __get__(self, instance, owner):
-        return getattr(instance.state, self.name)
+
+        def simplify_position(v):
+            if isinstance(v, tuple):
+                return tuple(simplify_position(i) for i in v)
+            elif isinstance(v, position):
+                return v.simplify()
+            else:
+                return v
+
+        return simplify_position(getattr(instance.state, self.name))
 
     def __set__(self, instance, value):
         return setattr(instance.state, self.name, value)
@@ -1235,7 +1244,7 @@ add_property("zoom", float, 1.0)
 add_property("xanchoraround", position_or_none, 0.5)
 add_property("xanchor", position_or_none, None, diff=4)
 add_property("xaround", position_or_none, 0.0)
-add_property("xoffset", float, 0.0)
+add_property("xoffset", absolute, 0.0)
 add_property("xpan", float_or_none, None)
 add_property("xpos", position_or_none, None, diff=4)
 add_property("xsize", position_or_none, None)
@@ -1245,7 +1254,7 @@ add_property("xzoom", float, 1.0)
 add_property("yanchoraround", position_or_none, 0.5)
 add_property("yanchor", position_or_none, None, diff=4)
 add_property("yaround", position_or_none, 0.0)
-add_property("yoffset", float, 0.0)
+add_property("yoffset", absolute, 0.0)
 add_property("ypan", float_or_none, None)
 add_property("ypos", position_or_none, None, diff=4)
 add_property("ysize", position_or_none, None)
@@ -1265,28 +1274,28 @@ add_gl_property("gl_pixel_perfect")
 add_gl_property("gl_texture_scaling")
 add_gl_property("gl_texture_wrap")
 
-ALIASES = (
-    "alignaround", # (float, float),
-    "align", # (float, float),
-    "anchor", # (position_or_none, position_or_none),
-    "anchorangle", # dualangle_or_float_or_none,
-    "anchoraround", # (position_or_none, position_or_none),
-    "anchorradius", # position_or_none,
-    "angle", # float,
-    "around", # (position_or_none, position_or_none),
-    "offset", # (int, int),
-    "pos", # (position_or_none, position_or_none),
-    "radius", # position_or_none,
-    "size", # (int, int),
-    "xalign", # float,
-    "xcenter", # position_or_none,
-    "xycenter", # (position_or_none, position_or_none),
-    "xysize", # (position_or_none, position_or_none),
-    "yalign", # float,
-    "ycenter", # position_or_none,
-)
+ALIASES = {
+    "alignaround" : (float, float),
+    "align" : (position_or_none, position_or_none), # documented as (float, float)
+    "anchor" : (position_or_none, position_or_none),
+    "anchorangle" : DualAngle.from_any,
+    "anchoraround" : (position_or_none, position_or_none),
+    "anchorradius" : position_or_none,
+    "angle" : float,
+    "around" : (position_or_none, position_or_none),
+    "offset" : (absolute, absolute),
+    "pos" : (position_or_none, position_or_none),
+    "radius" : position_or_none,
+    "size" : (int, int),
+    "xalign" : position_or_none, # documented as float,
+    "xcenter" : position_or_none,
+    "xycenter" : (position_or_none, position_or_none),
+    "xysize" : (position_or_none, position_or_none),
+    "yalign" : position_or_none, # documented as float
+    "ycenter" : position_or_none,
+}
 
-renpy.atl.PROPERTIES.update(dict.fromkeys(ALIASES))
+renpy.atl.PROPERTIES.update(ALIASES)
 
 for name in ALIASES:
     setattr(Transform, name, Proxy(name))

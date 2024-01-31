@@ -2004,9 +2004,9 @@ translate italian strings:
     new "Tema personalizzato"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
     # Automatic translation.
-    new "Le informazioni sulla creazione di un tema personalizzato sono disponibili all'indirizzo {a=https://www.renpy.org/doc/html/skins.html}nella documentazione di Ren'Py{/a}."
+    new "Le informazioni sulla creazione di un tema personalizzato sono disponibili all'indirizzo {a=[skins_url]}nella documentazione di Ren'Py{/a}."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2176,4 +2176,3 @@ translate italian strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Una build notturna di correzioni alla versione di rilascio di Ren'Py."
-

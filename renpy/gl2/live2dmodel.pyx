@@ -407,11 +407,7 @@ cdef class Live2DModel:
             0, 0, 1, 0,
             0, 0, 0, 1, ])
 
-        forward = Matrix([
-            invppu, 0, 0, invppu,
-            0, -invppu, 0, invppu,
-            0, 0, 1, 0,
-            0, 0, 0, 1, ])
+        forward = reverse.inverse()
 
         rv = Render(w, h)
 

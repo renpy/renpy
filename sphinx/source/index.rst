@@ -142,6 +142,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    raspi
    iap
    updater
+   downloader
    gesture
 
 

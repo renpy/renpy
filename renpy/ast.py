@@ -2535,6 +2535,9 @@ class TranslateSay(Say):
 
         next_node(self.next)
 
+        renpy.game.context().translate_identifier = self.identifier
+        renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
+
         if self.language is None:
 
             if self.identifier not in renpy.game.persistent._seen_translates: # type: ignore
@@ -2542,14 +2545,11 @@ class TranslateSay(Say):
                 renpy.game.seen_translates_count += 1
                 renpy.game.new_translates_count += 1
 
-            renpy.game.context().translate_identifier = self.identifier
-            renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
-
             # Potentially, jump to a translation.
             node = self.lookup()
 
-            if node is not None:
-                next_node(self.lookup())
+            if (node is not None) and (node is not self):
+                next_node(node)
                 return
 
         # Otherwise, say the text.
@@ -2562,22 +2562,21 @@ class TranslateSay(Say):
 
     def predict(self):
         node = self.lookup()
-        if node is None:
-            return [ self.next ]
-        else:
-            return [ node ]
+
+        if node is None or node is self:
+            return Say.predict(self)
+
+        return [ node ]
 
     def scry(self):
-        rv = Scry()
-
         node = self.lookup()
 
-        if node is None:
-            rv._next = self.next
-        else:
-            rv._next = node
+        if node is None or node is self:
+            return Say.scry(self)
 
-        rv._next = self.lookup()
+        rv = Scry()
+        rv._next = self.next
+
         return rv
 
 

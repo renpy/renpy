@@ -377,7 +377,7 @@ class SaveRecord(object):
         self.first_filename = filename
 
 
-def save(slotname, extra_info='', mutate_flag=False):
+def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
     """
     :doc: loadsave
     :args: (filename, extra_info='')
@@ -438,7 +438,10 @@ def save(slotname, extra_info='', mutate_flag=False):
     if mutate_flag and renpy.revertable.mutate_flag:
         raise SaveAbort()
 
-    screenshot = renpy.game.interface.get_screenshot()
+    if include_screenshot:
+        screenshot = renpy.game.interface.get_screenshot()
+    else:
+        screenshot = None
 
     json = {
         "_save_name" : extra_info,

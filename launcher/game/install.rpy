@@ -102,7 +102,7 @@ label install_live2d:
                 (r".*/Core/dll/windows/x86/(Live2DCubismCore.dll)", _prefix + r"windows-i686/\1"),
            ])
 
-        install_from_zip("Live2D Cubism SDK for Native", "CubismSdkForNative-4-*.zip", patterns)
+        install_from_zip("Live2D Cubism SDK for Native", "CubismSdkForNative-[45]-*.zip", patterns)
 
     jump front_page
 

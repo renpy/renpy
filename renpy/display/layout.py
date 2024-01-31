@@ -138,7 +138,7 @@ class Container(renpy.display.displayable.Displayable):
 
         super(Container, self).set_transform_event(event)
 
-        if renpy.config.containers_pass_transform_events:
+        if event in renpy.config.containers_pass_transform_events:
 
             for i in self.children:
                 i.set_transform_event(event)
@@ -636,6 +636,8 @@ class MultiBox(Container):
     layer_name = None # type: str|None
     untransformed_layer = None # type: renpy.display.layout.MultiBox|None
 
+    adjust_times = False
+
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
         if spacing is not None:
@@ -658,6 +660,9 @@ class MultiBox(Container):
 
         # The scene list for this widget.
         self.scene_list = None
+
+        # Set this to true to force the box to adjust its children's times.
+        self.adjust_times = False
 
     def _clear(self):
         super(MultiBox, self)._clear()
@@ -817,7 +822,7 @@ class MultiBox(Container):
     def render(self, width, height, st, at):
 
         # Do we need to adjust the child times due to our being a layer?
-        if self.layer_name or (self.layers is not None):
+        if self.adjust_times or self.layer_name or (self.layers is not None):
             adjust_times = True
         else:
             adjust_times = False

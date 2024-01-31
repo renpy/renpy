@@ -769,7 +769,7 @@ Positioning
 
 .. transform-property:: offset
 
-    :type: (int, int)
+    :type: (absolute, absolute)
     :default: (0, 0)
 
     The number of pixels the displayable is offset by in each direction.
@@ -777,7 +777,7 @@ Positioning
 
 .. transform-property:: xoffset
 
-    :type: int
+    :type: absolute
     :default: 0
 
     The number of pixels the displayable is offset by in the horizontal
@@ -785,7 +785,7 @@ Positioning
 
 .. transform-property:: yoffset
 
-    :type: int
+    :type: absolute
     :default: 0
 
     The number of pixels the displayable is offset by in the vertical

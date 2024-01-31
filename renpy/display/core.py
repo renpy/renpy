@@ -122,7 +122,6 @@ relx = 0
 rely = 0
 
 
-
 def init_time():
     warp = os.environ.get("RENPY_TIMEWARP", "1.0")
 
@@ -1595,7 +1594,7 @@ class Interface(object):
 
         layers = list(self.ongoing_transition)
 
-        for l in renpy.display.scenelists.layers:
+        for l in layers:
             if l is None:
                 self.ongoing_transition.pop(None, None)
                 self.instantiated_transition.pop(None, None)
@@ -1905,7 +1904,7 @@ class Interface(object):
 
         should_skip_save = renpy.store.main_menu or renpy.store._in_replay
         if renpy.config.save_on_mobile_background and not should_skip_save:
-            renpy.loadsave.save("_reload-1")
+            renpy.loadsave.save("_reload-1", include_screenshot=False)
 
         renpy.persistent.update(True)
         renpy.persistent.save_on_quit_MP()
@@ -1945,13 +1944,23 @@ class Interface(object):
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
 
+        print("Pausing audio.")
+
         renpy.audio.audio.pause_all()
+
+        print("Disabling periodic events.")
 
         pygame.time.set_timer(PERIODIC, 0)
         pygame.time.set_timer(REDRAW, 0)
         pygame.time.set_timer(TIMEEVENT, 0)
 
-        self.mobile_save()
+        print("Saving.")
+
+        try:
+            self.mobile_save()
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
 
         if renpy.config.quit_on_mobile_background:
 
@@ -1967,14 +1976,17 @@ class Interface(object):
 
             sys.exit(0)
 
+        print("Freeing memory.")
+
         renpy.exports.free_memory()
+
+        print("Releasing wakelock.")
 
         if renpy.android:
             android.wakelock(False)
 
-        # # Wait for APP_DIDENTERBACKGROUND.
-        # pygame.event.wait()
-
+            # Tell Android to end the onPause method.
+            android.activity.finishOnPause()
 
         print("Entered background. --------------------------------------------")
 
@@ -2552,11 +2564,13 @@ class Interface(object):
             """
 
             at_list = renpy.config.layer_transforms.get(None, [ ])
+
             if not at_list:
                 root_widget.add(d, st, at)
                 return
 
             rv = renpy.display.layout.MultiBox(layout='fixed')
+            rv.adjust_times = True
             rv.add(d, st, at)
 
             new_transform = None

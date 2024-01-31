@@ -1438,8 +1438,8 @@ translate ukrainian strings:
     new "Користувацька тема"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "Інформацію про створення користувацької теми можна знайти у {a=https://www.renpy.org/doc/html/skins.html}документації Ren'Py{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "Інформацію про створення користувацької теми можна знайти у {a=[skins_url]}документації Ren'Py{/a}."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -1897,4 +1897,3 @@ translate ukrainian strings:
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
     new "Рання збірка виправлень до випуску версії Ren'Py."
-

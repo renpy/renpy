@@ -22,6 +22,7 @@
 default persistent.show_edit_funcs = True
 default persistent.windows_console = False
 default persistent.lint_options = set()
+default persistent.use_web_doc = False
 
 init python:
     from math import ceil
@@ -253,6 +254,9 @@ screen preferences():
                             textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
                             textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
 
+                            if interface.local_doc_exists:
+                                textbutton _("Prefer the web documentation") style "l_checkbox" action ToggleField(persistent, "use_web_doc")
+
                             textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
                             textbutton _("Restore window position") style "l_checkbox" action Preference("restore window position", "toggle")
@@ -286,7 +290,9 @@ screen preferences():
 
                             add SPACER
 
-                            text _("Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}.")
+                            $ skins_url = interface.get_doc_url("skins.html")
+
+                            text _("Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}.")
 
                 elif preference_tab == "install":
 
@@ -331,10 +337,12 @@ screen preferences():
                             textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
                             textbutton _("Open projects.txt"):
                                 style "l_nonbox"
-                                action [
-                                    EnsureProjectsTxt(),
-                                    editor.EditAbsolute(os.path.join(project.manager.projects_directory, "projects.txt"))
-                                ]
+                                if project.manager.projects_directory:
+                                    action [
+                                        EnsureProjectsTxt(),
+                                        editor.EditAbsolute(os.path.join(project.manager.projects_directory, "projects.txt"))
+                                    ]
+
                             textbutton _("Reset window size") style "l_nonbox" action Preference("display", 1.0)
                             textbutton _("Clean temporary files") style "l_nonbox" action Jump("clean_tmp")
 

@@ -152,6 +152,9 @@ def euler_slerp(double complete, old, new):
 
     st = sin(theta)
 
+    if st == 0:
+        return new
+
     sut = sin(theta * complete)
     sout = sin(theta * (1 - complete))
 

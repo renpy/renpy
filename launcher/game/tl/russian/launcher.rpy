@@ -1981,8 +1981,8 @@
     new "Тема лаунчера:"
 
     # game/preferences.rpy:254
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "Информацию о создании пользовательских тем можно найти {a=https://www.renpy.org/doc/html/skins.html}в документации Ren'Py{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "Информацию о создании пользовательских тем можно найти {a=[skins_url]}в документации Ren'Py{/a}."
 
     # game/preferences.rpy:271
     old "Install Libraries:"

@@ -1958,9 +1958,9 @@ translate turkish strings:
     new "Özel tema"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
     # Automatic translation.
-    new "Özel bir tema oluşturma hakkında bilgi {a=https://www.renpy.org/doc/html/skins.html}Ren'Py Belgelerinde{/a} bulunabilir."
+    new "Özel bir tema oluşturma hakkında bilgi {a=[skins_url]}Ren'Py Belgelerinde{/a} bulunabilir."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2102,4 +2102,3 @@ translate turkish strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Ren'Py'nin sürümüne yönelik düzeltmelerden oluşan bir gece derlemesi."
-

@@ -709,6 +709,8 @@ def check_style(name, s):
                 if isinstance(v, renpy.text.font.FontGroup):
                     for f in set(v.map.values()):
                         check_file(name, f, directory="fonts")
+                elif v is None and k.endswith("emoji_font"):
+                    pass
                 else:
                     check_file(name, v, directory="fonts")
 
@@ -1142,8 +1144,13 @@ def lint():
         elif isinstance(node, renpy.ast.Say):
             check_say(node)
 
-            counts[language].add(node.what)
-            if language is None:
+            if isinstance(node, renpy.ast.TranslateSay):
+                node_language = node.language
+            else:
+                node_language = language
+
+            counts[node_language].add(node.what)
+            if node_language is None:
                 charastats[node.who or 'narrator'].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
@@ -1168,13 +1175,6 @@ def lint():
         elif isinstance(node, renpy.ast.Label):
             check_label(node)
 
-        elif isinstance(node, (renpy.ast.Translate, renpy.ast.TranslateSay)) and args.orphan_tl:
-            language = node.language
-            if language is None:
-                none_language_ids.add(node.identifier)
-            else:
-                translated_ids[node.identifier].append(node)
-
         elif isinstance(node, renpy.ast.EndTranslate):
             language = None
 
@@ -1195,6 +1195,14 @@ def lint():
 
         elif isinstance(node, renpy.ast.Transform):
             check_transform(node)
+
+        # This has to be separate, as TranslateSay is a subclass of Say.
+        if isinstance(node, (renpy.ast.Translate, renpy.ast.TranslateSay)) and args.orphan_tl:
+            language = node.language
+            if language is None:
+                none_language_ids.add(node.identifier)
+            else:
+                translated_ids[node.identifier].append(node)
 
     report_node = None
 

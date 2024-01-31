@@ -2020,8 +2020,8 @@
     new "Tema del lanzdor"
 
     # game/preferences.rpy:254
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "Puedes encontrar información sobre cómo crear un tema personalizado {a=https://www.renpy.org/doc/html/skins.html}en la documentación de Ren'Py{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "Puedes encontrar información sobre cómo crear un tema personalizado {a=[skins_url]}en la documentación de Ren'Py{/a}."
 
     # game/preferences.rpy:271
     old "Install Libraries:"

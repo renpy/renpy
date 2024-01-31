@@ -28,7 +28,6 @@ import renpy
 from renpy.parameter import Signature, ValuedParameter
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
 
-
 def compiling(loc):
     file, number = loc # @ReservedAssignment
 
@@ -96,6 +95,22 @@ class position(object):
             return cls(0, other)
         else:
             return cls(other, 0)
+
+    def simplify(self):
+        """
+        Tries to represent this position as an int, float, or absolute, if
+        possible.
+        """
+
+        if self.relative == 0.0:
+            if self.absolute == int(self.absolute):
+                return int(self.absolute)
+            else:
+                return renpy.display.core.absolute(self.absolute)
+        elif self.absolute == 0:
+            return float(self.relative)
+        else:
+            return self
 
     def __add__(self, other):
         if isinstance(other, position):
@@ -259,17 +274,17 @@ def interpolate(t, a, b, typ):
 # Interpolate the value of a spline. This code is based on Aenakume's code,
 # from 00splines.rpy.
 
-def interpolate_spline(t, spline):
+def interpolate_spline(t, spline, typ):
 
     if isinstance(spline[-1], tuple):
-        return tuple(interpolate_spline(t, i) for i in zip(*spline))
+        return tuple(interpolate_spline(t, i, ty) for i, ty in zip(zip(*spline), typ))
 
     if spline[0] is None:
         return spline[-1]
 
-    mixed_position = renpy.config.mixed_position
-    if mixed_position:
+    if renpy.config.mixed_position and typ in (position_or_none, position):
         spline = [position_or_none(i) for i in spline]
+
     lenspline = len(spline)
 
     if lenspline == 2:
@@ -295,7 +310,7 @@ def interpolate_spline(t, spline):
     elif t <= 0.0:
         rv = spline[0]
     elif t >= 1.0:
-        rv = spline[ -1]
+        rv = spline[-1]
 
     else:
         # Catmull-Rom (re-adjust the control points)
@@ -317,10 +332,7 @@ def interpolate_spline(t, spline):
 
         rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
 
-    if mixed_position:
-        return rv
-    # legacy
-    elif rv is None:
+    if rv is None:
         return None
     else:
         return type(spline[-1])(rv)
@@ -1647,7 +1659,7 @@ class Interpolation(Statement):
 
         # Handle any splines we might have.
         for name, values in splines:
-            value = interpolate_spline(complete, values)
+            value = interpolate_spline(complete, values, PROPERTIES[name])
             setattr(trans.state, name, value)
 
         if (st >= self.duration) and (not force_frame):

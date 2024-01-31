@@ -1436,8 +1436,8 @@ defer_tl_scripts = False
 # Should transitions take placement from child displayables?
 transitions_use_child_placement = True
 
-# Should containers pass transform events to their children?
-containers_pass_transform_events = True
+# Which transform events should containers pass to their children?
+containers_pass_transform_events = {'hover', 'idle', 'insensitive', 'selected_hover', 'selected_idle' }
 
 # Should the say screens be given the replace event for the second and
 # later pauses?

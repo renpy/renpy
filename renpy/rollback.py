@@ -737,6 +737,8 @@ class RollbackLog(renpy.object.Object):
         if hard and (not self.current.hard_checkpoint):
             if self.rollback_limit < renpy.config.hard_rollback_limit:
                 self.rollback_limit += 1
+            else:
+                self.rollback_block += 1
 
             if hard == "not_greedy":
                 self.current.not_greedy = True
@@ -901,7 +903,10 @@ class RollbackLog(renpy.object.Object):
             revlog.append(rb)
 
             if rb.hard_checkpoint:
-                self.rollback_limit -= 1
+                if self.rollback_limit:
+                    self.rollback_limit -= 1
+                elif self.rollback_block:
+                    self.rollback_block -= 1
 
             if rb.hard_checkpoint or (on_load and rb.checkpoint):
                 checkpoints -= 1
@@ -937,6 +942,9 @@ class RollbackLog(renpy.object.Object):
                 break
 
             if rb.not_greedy:
+                break
+
+            if rb.retain_after_load:
                 break
 
             revlog.append(self.log.pop())

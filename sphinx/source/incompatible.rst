@@ -21,10 +21,12 @@ Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1 is
 released, in May 2024.
 
 The original OpenGL renderer will be removed 1 year after Ren'Py 8.1 is
-released, in May 2024. If your game sets config.gl2 to False, you should
-set it to True, and make sure your game runs well. If it doesn't, please
-report any issues. When reporting issues, please determine the hardware
-(device and GPU), os and driver versions, and year of manufacture.
+released, after May 2024. Ren'Py 8.2 and 7.7 disable the :var:`config.gl2`
+flag, as GL2 will always be used unless the player selects a different
+renderer.
+
+Support for Window 7, 8, and 8.1 will be dropped after May 2024, to allow the
+use of versions of Python that only support Windows 10 and later.
 
 
 .. _incompatible-8.2.1:
@@ -204,17 +206,17 @@ the old and new children provide the same placement information.
 
 To disable this, add to your game::
 
-    define config.transition_use_child_placement = False
+    define config.transitions_use_child_placement = False
 
 **Containers Pass Transform Events**
 Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
-pass transform events (like hover and idle) to their children, meaning that
-children of a button can have their own transforms to respond to those
+pass some transform events (hover, idle, insensitive, selected_hover, and selected_idle)
+to their children, meaning that children of a button can have their own transforms to respond to those
 events.
 
 To disable this, add to your game::
 
-    define containers_pass_transform_events = True
+    define config.containers_pass_transform_events = set()
 
 **Say Screens Are Supplied the Replace Event.** Say screens are now supplied
 the "replace" (rather than "show") transform event for the second and subsequent pauses.
