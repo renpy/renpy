@@ -4,6 +4,20 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.3.0:
+.. _renpy-7.8.0:
+
+8.3.0 / 7.8.0
+=============
+
+
+Features
+--------
+
+The Input displayable now takes an `action` property, which is an action that
+runs whenthe user presses enter with the text input active.
+
+
 .. _renpy-8.2.0:
 .. _renpy-7.7.0:
 
