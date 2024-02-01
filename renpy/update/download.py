@@ -126,9 +126,12 @@ def download_ranges(url, ranges, destination, progress_callback=None):
 
             old_ranges = list(ranges)
 
-            headers = { 'Range' : 'bytes=' + ', '.join('%d-%d' % (start, end) for start, end in ranges[:10]) }
+            headers = {
+                'Range' : 'bytes=' + ', '.join('%d-%d' % (start, end) for start, end in ranges[:10]),
+                "Accept-Encoding": "identity",
+                }
 
-            r = requests.get(url, headers=headers, stream=True)
+            r = requests.get(url, headers=headers, stream=True, timeout=10)
             r.raise_for_status()
 
             blocks = [ ]
@@ -207,7 +210,7 @@ def download(url, ranges, destination, progress_callback=None):
     total_size = sum(i[1] for i in ranges)
     downloaded = 0
 
-    r = requests.get(url, stream=True)
+    r = requests.get(url, stream=True, headers={"Accept-Encoding": "identity"}, timeout=10)
     r.raise_for_status()
 
     blocks = [ ]
