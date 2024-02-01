@@ -794,6 +794,23 @@ Text Style Properties
 
     If True, the text will be rendered vertically.
 
+.. style-property:: slow_effect None or string
+
+    This gives effect which is applied to a letter. If None, the default,
+    Letters are displayed one by one like a typewriter. If not None, This
+    should be the string giving one of the :var:`config.text_effects`.
+
+    :propref:`slow_effect_delay` should be also set simultaneously.
+
+.. style-properties:: slow_effect_delay float
+   This is the duration seconds which :propref:`slow_effect` takes to perform.
+   default is 0.0.
+
+.. style-properties:: always_effect boolean
+   If false, the default, :propref:`slow_effect` is only applied to slow texts
+   for :propref: `slow_effect_delay` seconds after a letter is shown. Otherwise,
+   it is applied always.
+
 .. _window-style-properties:
 
 Window Style Properties

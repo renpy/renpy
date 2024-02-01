@@ -1075,6 +1075,38 @@ Occasionally Used
     in this dictionary to find a zorder to use. If no zorder is found,
     0 is used.
 
+.. var:: config.text_effects = { }
+
+    A dictionary mapping text effect strings to a function.
+    When :propref:`slow_effect` is not None, that strings are looked up in this
+    dictionary. These functions takes three arguments, current time, time when
+    the letter begins to be shown and :propref:`slow_effect_delay` then return
+    a function that takes two arguments the letter's render and render the
+    letter is drawn on.
+
+    For example::
+
+        init python:
+            def letter_by_letter_fade(st, gt, duration):
+                def _effect(surf, render):
+                    render.absolute_blit(
+                        surf,
+                        (0, 0)
+                    )
+
+                    render.add_shader("renpy.alpha")
+                    render.add_uniform("u_renpy_over", 1.0)
+                    complete = (st - gt) / duration
+                    render.add_uniform("u_renpy_alpha", complete)
+
+                return _effect
+
+        define config.text_effects = {
+            ("letter_by_letter_fade", letter_by_letter_fade),
+        }
+
+    This fades one character at a time.
+
 .. var:: config.thumbnail_height = 75
 
     The height of the thumbnails that are taken when the game is

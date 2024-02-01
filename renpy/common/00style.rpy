@@ -168,6 +168,9 @@ init -1800:
         ruby_line_leading 0
         ruby_style style.ruby_text
         altruby_style style.altruby_text
+        slow_effect None
+        always_effect None
+        slow_effect_delay 0
         # hyperlink_functions is set in 00defaults.rpy
         hinting True
         adjust_spacing True

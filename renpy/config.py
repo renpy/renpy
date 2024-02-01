@@ -1449,6 +1449,9 @@ screens_never_cancel_hide = True
 # A list of transforms that are applied to entire layers.
 layer_transforms = { }
 
+# The effect which is applied to a character.
+text_effects = {}
+
 
 del os
 del collections

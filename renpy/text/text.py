@@ -48,12 +48,13 @@ class Blit(object):
     render. This is a rectangle with an associated alpha.
     """
 
-    def __init__(self, x, y, w, h, alpha=1.0, left=False, right=False, top=False, bottom=False):
+    def __init__(self, x, y, w, h, alpha=1.0, effect=None, left=False, right=False, top=False, bottom=False):
         self.x = x
         self.y = y
         self.w = w
         self.h = h
         self.alpha = alpha
+        self.effect = effect
 
         # True when the blit contains the left or right side of its row.
         self.left = left
@@ -567,6 +568,10 @@ class Layout(object):
         style = text.style
 
         self.line_overlap_split = self.scale_int(style.line_overlap_split)
+
+        self.slow_effect = style.slow_effect
+        self.slow_effect_delay = style.slow_effect_delay
+        self.always_effect = style.always_effect
 
         # Do we have any hyperlinks in this text? Set by segment.
         self.has_hyperlinks = False
@@ -1500,13 +1505,12 @@ class Layout(object):
 
         return outlines, right - left, bottom - top, -left, -top
 
-    def blits_typewriter(self, st):
+    def blits_slow(self, st, slow):
         """
         Given a st and an outline, returns a list of blit objects that
         can be used to blit those objects.
 
         This also sets the extreme points when creating a Blit.
-
         """
 
         width, max_height = self.size
@@ -1518,68 +1522,87 @@ class Layout(object):
 
         max_y = 0
         top = True
+        
+        if not self.always_effect:
+            
+            for l in self.lines:
 
+                if l.max_time + self.slow_effect_delay > st:
+                    break
+                
+                max_y = min(l.y + l.height + self.line_overlap_split, max_height)
+            
+            else:
+                l = None
+
+            if max_y:
+                rv.append(Blit(0, 0, width, max_y, top=top, left=True, right=True, bottom=(l is None)))
+                top = False
+            
+            if l is None:
+                return rv
+        
+        # Then go back through for any that *aren't* complete and blit as needed.
         for l in self.lines:
+            
+            if not self.always_effect and st > l.max_time + self.slow_effect_delay:
+                if top:
+                    top = False
+                continue
 
-            if l.max_time > st:
-                break
+            for g in l.glyphs:
+
+                if g.time == -1:
+                    continue
+
+                if g.time > st and slow:
+                    continue
+
+                if self.always_effect or (g.time + self.slow_effect_delay > st):
+                    if self.slow_effect is None:
+                        effect = None
+                    else:
+                        _effect = renpy.config.text_effects[self.slow_effect]
+                        effect = _effect(st, g.time, self.slow_effect_delay)
+                else:
+                    effect = None
+
+                left = False
+                right = False
+                if g is l.glyphs[0]:
+                    left = True
+                if g is l.glyphs[-1]:
+                    right = True
+
+                ly = min(l.y + l.height + self.line_overlap_split, max_height)
+
+
+                rv.append(Blit(g.x, l.y, g.width, ly - max_y, effect =
+                                               effect, left=left, right=right,
+                                               top=top, bottom=(l is self.lines[-1])))
 
             max_y = min(l.y + l.height + self.line_overlap_split, max_height)
-
-        else:
-            l = None
-
-        if max_y:
-            rv.append(Blit(0, 0, width, max_y, top=top, left=True, right=True, bottom=(l is None)))
-            top = False
-
-        if l is None:
-            return rv
-
-        # If l is not none, then we have a line for which max_time has not
-        # yet been reached. Blit it.
-
-        min_x = width
-        max_x = 0
-
-        left = False
-        right = False
-
-        for g in l.glyphs:
-
-            if g.time == -1:
-                continue
-
-            if g.time > st:
-                continue
-
-            if g is l.glyphs[0]:
-                left = True
-            if g is l.glyphs[-1]:
-                right = True
-
-            if g.x + g.advance > max_x:
-                max_x = g.x + g.advance
-
-            if g.x < min_x:
-                min_x = g.x
-
-        ly = min(l.y + l.height + self.line_overlap_split, max_height)
-
-        if min_x < max_x:
-            rv.append(Blit(min_x, max_y, max_x - min_x, ly - max_y, left=left, right=right, top=top, bottom=(l is self.lines[-1])))
+            if top:
+                top = False
 
         return rv
 
-    def redraw_typewriter(self, st):
+    def redraw_slow(self, st):
         """
         Return the time of the first glyph that should be shown after st.
         """
 
-        if st >= self.max_time:
-            return None
+        for l in self.lines:
+            if not l.glyphs:
+                continue
+
+            if l.max_time + self.slow_effect_delay > st:
+                break
+
         else:
-            return 0
+            return None
+
+        return 0
 
 
 # The maximum number of entries in the layout cache.
@@ -2297,13 +2320,12 @@ class Text(renpy.display.displayable.Displayable):
         w, h = layout.size
 
         # Get the list of blits we want to undertake.
-        if not self.slow:
+        if not self.slow and not layout.always_effect:
             blits = [ Blit(0, 0, w - layout.xborder, h - layout.yborder, left=True, right=True, top=True, bottom=True) ]
             redraw = None
         else:
-            # TODO: Make this changeable.
-            blits = layout.blits_typewriter(st)
-            redraw = layout.redraw_typewriter(st)
+            blits = layout.blits_slow(st, self.slow)
+            redraw = layout.redraw_slow(st)
 
         # Blit text layers.
         rv = renpy.display.render.Render(vw, vh)
@@ -2368,9 +2390,22 @@ class Text(renpy.display.displayable.Displayable):
                 else:
                     b_y += layout.add_top
 
+                surf = tex.subsurface((b_x, b_y, b_w, b_h))
+                char = renpy.display.render.Render(b_w, b_h)
+
+                if b.effect is not None:
+
+                    b.effect(surf, char)
+
+                else:
+                    char.absolute_blit(
+                        surf,
+                        (0, 0)
+                    )
+
                 # Blit.
                 rv.absolute_blit(
-                    tex.subsurface((b_x, b_y, b_w, b_h)),
+                    char,
                     layout.unscale_pair(b_x + xo + layout.xoffset - o - layout.add_left,
                                         b_y + yo + layout.yoffset - o - layout.add_top)
                     )
@@ -2399,7 +2434,22 @@ class Text(renpy.display.displayable.Displayable):
                 xo = x + xo + layout.xoffset
                 yo = y + yo + layout.yoffset
 
-                drend.absolute_blit(renders[d], (xo, yo))
+                if layout.always_effect or (t + layout.slow_effect_delay > st):
+                    if layout.slow_effect is None:
+                        effect = None
+                    else:
+                        _effect = renpy.config.text_effects[layout.slow_effect]
+                        effect = _effect(st, t, layout.slow_effect_delay)
+                else:
+                    effect = None
+
+                if effect is not None:
+                    char = renpy.display.render.Render(width, ascent)
+                    effect(renders[d], char)
+                    drend.absolute_blit(char, (xo, yo))
+                else:
+                    drend.absolute_blit(renders[d], (xo, yo))
+
                 self.displayable_offsets.append((d, xo, yo))
 
             rv.blit(drend, (0, 0))
@@ -2414,13 +2464,14 @@ class Text(renpy.display.displayable.Displayable):
 
                 rv.add_focus(self, hyperlink, h_x, h_y, h_w, h_h)
 
-        # Figure out if we need to redraw or call slow_done.
-        if self.slow:
-            if redraw is not None:
-                renpy.display.render.redraw(self, max(redraw, 0))
-            else:
-                self.slow = False
-                renpy.game.interface.timeout(0)
+        if self.slow and not layout.always_effect and redraw is not None:
+            renpy.display.render.redraw(self, max(redraw, 0))
+        elif layout.always_effect:
+            renpy.display.render.redraw(self, 0)
+
+        if self.slow and redraw is None:
+            self.slow = False
+            renpy.game.interface.timeout(0)
 
         rv.forward = layout.forward
         rv.reverse = layout.reverse
