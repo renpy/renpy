@@ -370,7 +370,8 @@ init -1500 python in updater:
             self.moves = [ ]
 
             if self.allow_empty:
-                os.makedirs(self.updatedir, exist_ok=True)
+                if not os.path.isdir(self.updatedir):
+                    os.makedirs(self.updatedir)
 
             if public_key is not None:
                 with renpy.open_file(public_key, False) as f:
