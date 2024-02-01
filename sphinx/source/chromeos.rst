@@ -20,7 +20,7 @@ you to develop Ren'Py games on your Chromebook.
 
 To install it:
 
-1. Install Linux for Chrombebook, as described at https://support.google.com/chromebook/answer/9145439?hl=en .
+1. Install Linux for Chromebook, as described at https://support.google.com/chromebook/answer/9145439?hl=en .
 
 2. Change the Crosstini GPU Support setting to enabled, by typing chrome://flags/#crostini-gpu-support, and choosing enable.
 
@@ -47,9 +47,9 @@ To run that version of Ren'Py, open a terminal and run::
     ./renpy.sh
 
 Note that this works with other versions of Ren'Py if you change 8.2.0
-for a later versoon.
+for a later version.
 
-A SDK installed in this way can be used to run games that do not natively
-support ARM chromebooks on an ARM chromebook. Just unpack the game into
+An SDK installed in this way can be used to run games that do not natively
+support ARM Chromebooks on an ARM Chromebook. Just unpack the game into
 the projects directory and hit refresh, then launch it through the
 Ren'Py launcher. (The projects directory can be set in preferences.)
