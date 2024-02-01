@@ -4,6 +4,23 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.2.1:
+.. _renpy-7.7.1:
+
+8.2.1 / 7.7.1
+=============
+
+Updater
+-------
+
+An issue with the updater that caused it to fail to sign updates when
+run on a Windows system has been fixed.
+
+The updater now forces the webserver to use the identity encoding, which
+improves compatibility with some web servers. The updater also times out
+if the server does not respond to a request within 10 seconds.
+
+
 .. _renpy-8.2.0:
 .. _renpy-7.7.0:
 
