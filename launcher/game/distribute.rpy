@@ -1648,8 +1648,11 @@ change_renpy_executable()
 
             update_data = json.dumps(index, indent=2)
 
+            if not isinstance(update_data, bytes):
+                update_data = update_data.encode("utf-8")
+
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
-            with open(fn, "wb" if PY2 else "w") as f:
+            with open(fn, "wb") as f:
                 f.write(update_data)
 
             # Write the signed file.
@@ -1660,7 +1663,7 @@ change_renpy_executable()
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.ecdsa"))
             with open(fn, "wb") as f:
-                f.write(signing_key.sign(update_data.encode("utf-8")))
+                f.write(signing_key.sign(update_data))
 
         def find_update_pem(self):
             if self.build['renpy']:
