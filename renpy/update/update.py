@@ -153,9 +153,13 @@ class Update(object):
         Called to initialize the update.
         """
 
-        os.makedirs(self.updatedir, exist_ok=True)
-        os.makedirs(self.blockdir, exist_ok=True)
-        os.makedirs(self.deleteddir, exist_ok=True)
+        def makedirs(dir):
+            if not os.path.isdir(dir):
+                os.makedirs(dir)
+
+        makedirs(self.updatedir)
+        makedirs(self.blockdir)
+        makedirs(self.deleteddir)
 
         print("-" * 80, file=self.logfile)
         print("Starting update at %s." % time.ctime(), file=self.logfile)

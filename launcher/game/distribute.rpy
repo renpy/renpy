@@ -61,7 +61,8 @@ init python in distribute:
             minor=sys.version_info.minor,
         )
 
-    # Going from 7.4 to 7.5 or 8.0, the library directory changed.
+    # * Going from 7.4 to 7.5 or 8.0, the library directory changed.
+    # * 7.7 called os.makedirs with exist_ok=True, even on Python 2.
     RENPY_PATCH = py("""\
 def change_renpy_executable():
     import sys, os, renpy, site
@@ -70,6 +71,17 @@ def change_renpy_executable():
         sys.renpy_executable = os.path.join(renpy.config.renpy_base, "lib", "py{major}-" + site.RENPY_PLATFORM, os.path.basename(sys.renpy_executable))
 
 change_renpy_executable()
+
+if sys.version_info.major == 2:
+    os.old_makedirs = getattr(os, "old_makedirs", os.makedirs)
+
+    def makedirs(name, mode=0o777, exist_ok=False):
+        if exist_ok and os.path.exists(name):
+            return
+
+        os.old_makedirs(name, mode)
+
+    os.makedirs = makedirs
 """)
 
     match_cache = { }
