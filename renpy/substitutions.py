@@ -359,12 +359,15 @@ def substitute(s, scope=None, force=False, translate=True):
     if "store.interpolate" in renpy.python.store_dicts:
         dicts.append(renpy.python.store_dicts["store.interpolate"])
 
-    kwargs = renpy.store.__dict__
-    if dicts:
-        kwargs = MultipleDict(*dicts, kwargs)
+    dicts.append(renpy.store.__dict__)
+
+    if len(dicts) == 1:
+        variables = dicts[0]
+    else:
+        variables = MultipleDict(*dicts)
 
     try:
-        s = interpolate(s, kwargs) # type: ignore
+        s = interpolate(s, variables) # type: ignore
     except Exception:
         if renpy.display.predict.predicting: # @UndefinedVariable
             return " ", True
