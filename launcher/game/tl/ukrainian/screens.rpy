@@ -27,7 +27,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:114
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
-    new "Якщо є бічне зображення, показуйте його над текстом. Не виводьте на мобільний варіант — немає місця."
+    new "## Якщо є бічне зображення, показуйте його над текстом. Не виводьте на мобільний варіант — немає місця."
 
     # gui/game/screens.rpy:120
     old "## Make the namebox available for styling through the Character object."
