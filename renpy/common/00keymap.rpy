@@ -411,7 +411,7 @@ screen _progress:
         ypos 0
 
         text "[new] [seen]/[total]":
-            size 14
+            size gui._scale(18)
             color "#fff"
             outlines [ (1, "#000", 0, 0) ]
             alt ""
