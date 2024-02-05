@@ -338,13 +338,13 @@ There are two variables that can be used to provide information about
 the build. This information is used to generate the game/cache/build_info.json
 file, which is loaded as Ren'Py starts.
 
-.. var:: time = None
+.. var:: build.time = None
 
     This variable defaults to None, but if your game has been built,
     it will be set to the time the game was built, in seconds since
     January 1, 1970.
 
-.. var:: info = { }
+.. var:: build.info = { }
 
     This variable lets you store information that will be placed into
     the game/cache/build_info.json file in the built game. When the built
