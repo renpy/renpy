@@ -4815,7 +4815,7 @@ def fetch_emscripten(url, method, data, content_type, timeout):
 
 
 
-def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes"):
+def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes", params=None):
     """
     :doc: fetch
 
@@ -4876,6 +4876,16 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
 
     if result not in ( "bytes", "text", "json" ):
         raise FetchError("result must be one of 'bytes', 'text', or 'json'.")
+
+    if params is not None:
+        if PY2:
+            import urllib
+            url += "?" + urllib.urlencode(params)
+        else:
+            import urllib.parse
+            url += "?" + urllib.parse.urlencode(params)
+
+    print(url)
 
     if method is None:
         if data is not None or json is not None:
