@@ -33,6 +33,10 @@ import sys
 import threading
 import fnmatch
 import os
+if PY2:
+    from urllib import urlencode as _urlencode
+else:
+    from urllib.parse import urlencode as _urlencode
 
 import renpy
 
@@ -4878,14 +4882,7 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
         raise FetchError("result must be one of 'bytes', 'text', or 'json'.")
 
     if params is not None:
-        if PY2:
-            import urllib
-            url += "?" + urllib.urlencode(params)
-        else:
-            import urllib.parse
-            url += "?" + urllib.parse.urlencode(params)
-
-    print(url)
+        url += "?" + _urlencode(params)
 
     if method is None:
         if data is not None or json is not None:
