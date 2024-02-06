@@ -33,6 +33,12 @@ The updater now forces the webserver to use the identity encoding, which
 improves compatibility with some web servers. The updater also times out
 if the server does not respond to a request within 10 seconds.
 
+Other Changes
+-------------
+
+:doc:`template_projects` are no longer required to have the same files
+as a standard Ren'Py project.
+
 
 .. _renpy-8.2.0:
 .. _renpy-7.7.0:
