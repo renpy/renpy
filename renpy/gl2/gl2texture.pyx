@@ -181,13 +181,18 @@ cdef class TextureLoader:
         size = surf.get_size()
         w, h = size
 
-        renpy.display.draw.ensure_fbo(size)
+        if renpy.config.gl_grow_fbo:
+            max_width = self.draw.max_fbo_size
+            max_height = self.draw.max_fbo_size
+        else:
+            max_width = self.draw.max_texture_width
+            max_height = self.draw.max_texture_height
 
-        if (w <= self.max_texture_width) and (h <= self.max_texture_height):
+        if (w <= max_width) and (h <= max_height):
             return self.load_one_surface(surf, 0, 0, 0, 0, properties)
 
-        htiles = self.texture_axis(w, self.max_texture_width, border)
-        vtiles = self.texture_axis(h, self.max_texture_height, border)
+        htiles = self.texture_axis(w, max_width, border)
+        vtiles = self.texture_axis(h, max_height, border)
 
         rv = renpy.display.render.Render(w, h)
 
@@ -418,6 +423,8 @@ cdef class GLTexture(GL2Model):
             return
 
         draw = self.loader.draw
+
+        draw.ensure_fbo((self.width, self.height))
 
         s = PySurface_AsSurface(self.surface)
 

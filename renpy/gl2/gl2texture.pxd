@@ -46,8 +46,8 @@ cdef class TextureLoader:
     cdef object texture_load_queue
 
     # The maximum size of a texture.
-    cdef GLint max_texture_width
-    cdef GLint max_texture_height
+    cdef public object max_texture_width
+    cdef public object max_texture_height
 
     cdef GLfloat max_anisotropy
 
