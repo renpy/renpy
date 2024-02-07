@@ -181,6 +181,8 @@ cdef class TextureLoader:
         size = surf.get_size()
         w, h = size
 
+        renpy.display.draw.ensure_fbo(size)
+
         if (w <= self.max_texture_width) and (h <= self.max_texture_height):
             return self.load_one_surface(surf, 0, 0, 0, 0, properties)
 

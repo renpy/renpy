@@ -96,3 +96,9 @@ cdef class GL2Draw:
     cdef public bint maximized
 
     cdef void change_fbo(self, GLuint fbo)
+
+    # The current size of the fbo.
+    cdef public tuple fbo_size
+
+    # The maximum size of the fbo.
+    cdef public int max_fbo_size
