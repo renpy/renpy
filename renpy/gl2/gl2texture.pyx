@@ -185,8 +185,8 @@ cdef class TextureLoader:
             max_width = self.draw.max_fbo_size
             max_height = self.draw.max_fbo_size
         else:
-            max_width = self.draw.max_texture_width
-            max_height = self.draw.max_texture_height
+            max_width = self.max_texture_width
+            max_height = self.max_texture_height
 
         if (w <= max_width) and (h <= max_height):
             return self.load_one_surface(surf, 0, 0, 0, 0, properties)
