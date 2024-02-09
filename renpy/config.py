@@ -1449,10 +1449,6 @@ screens_never_cancel_hide = True
 # A list of transforms that are applied to entire layers.
 layer_transforms = { }
 
-# Should the the FBO grow to fit the largest texture? This is only neended
-# if Live2D is active, and Live2D automatically enables it.
-gl_grow_fbo = False
-
 
 del os
 del collections

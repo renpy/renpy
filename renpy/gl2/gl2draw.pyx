@@ -611,7 +611,7 @@ cdef class GL2Draw:
         self.draw_transform = Matrix.cscreen_projection(self.drawable_viewport[2], self.drawable_viewport[3])
 
         self.shader_cache.load()
-        self.init_fbo(renpy.config.fbo_size)
+        self.init_fbo()
         self.texture_loader.init()
 
     def resize(self):
@@ -710,42 +710,13 @@ cdef class GL2Draw:
             glBindFramebuffer(GL_FRAMEBUFFER, fbo)
             self.current_fbo = fbo
 
-    def ensure_fbo(GL2Draw self, size):
-        """
-        *Internal*
-        Ensure that the FBO is at least as large as the given size.
-        """
 
-        if not renpy.config.gl_grow_fbo:
-            return
 
-        width, height = size
-
-        if width % 512:
-            width = width + 512 - width % 512
-
-        if height % 512:
-            height = height + 512 - height % 512
-
-        width = min(self.max_fbo_size, width)
-        height = min(self.max_fbo_size, height)
-
-        cur_width, cur_height = self.fbo_size
-
-        width = max(width, cur_width)
-        height = max(height, cur_height)
-
-        if width > cur_width or height > cur_height:
-            self.quit_fbo()
-            self.init_fbo((width, height))
-
-    def init_fbo(GL2Draw self, size):
+    def init_fbo(GL2Draw self):
         """
         *Internal*
         Create the FBO.
         """
-
-        self.fbo_size = size
 
         # Determine the width and height of textures and the renderbuffer.
         cdef GLint max_renderbuffer_size
@@ -775,18 +746,17 @@ cdef class GL2Draw:
 
         max_texture_size = max(max_texture_size, 1024)
         max_renderbuffer_size = max(max_renderbuffer_size, 1024)
-        self.max_fbo_size = max_fbo_size = min(max_texture_size, max_renderbuffer_size)
 
         # The number of pixels of additional border, so we can load textures with
         # higher pitch.
         BORDER = 64
 
-        width, height = size
+        width, height = renpy.config.fbo_size
 
         width = max(self.virtual_size[0] + BORDER, self.drawable_size[0] + BORDER, width)
-        width = min(width, max_fbo_size)
+        width = min(width, max_texture_size, max_renderbuffer_size)
         height = max(self.virtual_size[1] + BORDER, self.drawable_size[1] + BORDER, height)
-        height = min(height, max_fbo_size)
+        height = min(height, max_texture_size, max_renderbuffer_size)
 
         if "RENPY_MAX_TEXTURE_SIZE" in os.environ:
             width = height = int(os.environ["RENPY_MAX_TEXTURE_SIZE"])

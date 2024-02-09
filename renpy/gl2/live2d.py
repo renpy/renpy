@@ -68,8 +68,6 @@ def onetime_init():
 
     did_onetime_init = True
 
-    renpy.config.gl_grow_fbo = True
-
 
 did_init = False
 
