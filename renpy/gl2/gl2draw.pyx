@@ -504,21 +504,6 @@ cdef class GL2Draw:
 
         self.shader_cache = ShaderCache("cache/shaders.txt", self.gles)
 
-        # Determine the width and height of textures and the renderbuffer.
-        cdef GLint max_renderbuffer_size
-        cdef GLint max_texture_size
-
-        max_texture_size = 0
-        max_renderbuffer_size = 0
-
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
-        glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
-
-        max_texture_size = max(max_texture_size, 1024)
-        max_renderbuffer_size = max(max_renderbuffer_size, 1024)
-
-        self.max_fbo_size = min(max_texture_size, max_renderbuffer_size)
-
         # Initialize the texture loader.
         self.texture_loader = TextureLoader(self)
 
@@ -751,19 +736,8 @@ cdef class GL2Draw:
         height = max(height, cur_height)
 
         if width > cur_width or height > cur_height:
-
-            is_fbo = (self.fbo == self.current_fbo)
-            is_fbo_1px = (self.fbo_1px == self.current_fbo)
-
-            glFinish()
-
             self.quit_fbo()
             self.init_fbo((width, height))
-
-            if is_fbo:
-                self.change_fbo(self.fbo)
-            elif is_fbo_1px:
-                self.change_fbo(self.fbo_1px)
 
     def init_fbo(GL2Draw self, size):
         """
@@ -772,6 +746,10 @@ cdef class GL2Draw:
         """
 
         self.fbo_size = size
+
+        # Determine the width and height of textures and the renderbuffer.
+        cdef GLint max_renderbuffer_size
+        cdef GLint max_texture_size
 
         # Store the default FBO.
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &self.default_fbo);
@@ -792,6 +770,12 @@ cdef class GL2Draw:
             glGenRenderbuffers(1, &self.depth_renderbuffer)
             glGenRenderbuffers(1, &self.depth_renderbuffer_1px)
 
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
+        glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
+
+        max_texture_size = max(max_texture_size, 1024)
+        max_renderbuffer_size = max(max_renderbuffer_size, 1024)
+        self.max_fbo_size = max_fbo_size = min(max_texture_size, max_renderbuffer_size)
 
         # The number of pixels of additional border, so we can load textures with
         # higher pitch.
@@ -800,9 +784,9 @@ cdef class GL2Draw:
         width, height = size
 
         width = max(self.virtual_size[0] + BORDER, self.drawable_size[0] + BORDER, width)
-        width = min(width, self.max_fbo_size)
+        width = min(width, max_fbo_size)
         height = max(self.virtual_size[1] + BORDER, self.drawable_size[1] + BORDER, height)
-        height = min(height, self.max_fbo_size)
+        height = min(height, max_fbo_size)
 
         if "RENPY_MAX_TEXTURE_SIZE" in os.environ:
             width = height = int(os.environ["RENPY_MAX_TEXTURE_SIZE"])
