@@ -6,7 +6,7 @@
 The 3D Stage, named after the stages that plays are performed on, is a concept
 that allows displayables to be positioned in 3 dimensions. Ren'Py will then
 render the displayables with the proper perspective, and will also make the
-z dimension avalable, to make things like lighting and depth rendering
+z dimension available, to make things like lighting and depth rendering
 possible.
 
 Coordinates
@@ -66,7 +66,7 @@ smaller, while decreasing it will make everything bigger.
 
 Finally, :tpref:`perspective` and :var:`config.perspective` describe the
 near and far planes, defaulting to 100 and 100000, respectively. This
-means than when an image is closer than 100 z-units from the camera,
+means that when an image is closer than 100 z-units from the camera,
 it disappears, and it also disappears if it's more than 100,000 z-units
 away.
 
@@ -216,7 +216,7 @@ of the images being displayed.
 Ren'Py uses the :tpref:`matrixanchor` transform property to make applying a
 matrix easier. This defaults to (0.5, 0.5), and is translated to a pixel offset
 inside the image being transformed using the usual Ren'Py anchor rules. (If it's
-an integer or abolute, it's considered a number of pixels, otherwise it's a
+an integer or absolute, it's considered a number of pixels, otherwise it's a
 fraction of the size of the image.)
 
 Ren'Py applies the image by first shifting the image so the anchor is at (0, 0, 0).
@@ -246,7 +246,7 @@ the X axis.
 Structural Similarity
 ^^^^^^^^^^^^^^^^^^^^^^
 
-In ATL, interpolating a the :tpref:`matrixtransform` property requires the
+In ATL, interpolating the :tpref:`matrixtransform` property requires the
 use of TransformMatrixes that have structural similarity. That means the same
 types of TransformMatrix, multiplied together in the same order.
 
@@ -270,7 +270,7 @@ useful for animating changing transformations. It's also useful to have a way of
 taking common matrices and encapsulating them in a way that allows the
 matrix to be parameterized.
 
-The TransformMatrix is a base class that is is extended by a number of
+The TransformMatrix is a base class that is extended by a number of
 Matrix-creating classes. Instances of TransformMatrix are called by Ren'Py,
 and return Matrixes. TransformMatrix is well integrated with ATL, allowing
 for matrixtransform animations. ::
