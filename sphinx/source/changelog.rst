@@ -33,8 +33,19 @@ The updater now forces the webserver to use the identity encoding, which
 improves compatibility with some web servers. The updater also times out
 if the server does not respond to a request within 10 seconds.
 
+Live2D
+------
+
+Ren'Py will now automatically guess the size of the live2d textures,
+and adjust the maximum texture size the live2d library uses to match
+it.
+
 Other Changes
 -------------
+
+The renamed and newly-documented :var:`config.max_texture_size` variable
+make it possible to set the maximum texture size used by Ren'Py. This isn't
+useful for 2D textures, but may make sense for textures used by :class:`Model`.
 
 :doc:`template_projects` are no longer required to have the same files
 as a standard Ren'Py project.
