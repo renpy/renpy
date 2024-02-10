@@ -436,3 +436,6 @@ init 1100 python hide:
 
     if config.fade_music is not None:
         config.fadeout_audio = config.fade_music
+
+    config.max_texture_size = (max(config.max_texture_size[0], config.fbo_size[0]),
+                               max(config.max_texture_size[1], config.fbo_size[1]))

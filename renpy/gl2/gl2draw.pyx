@@ -751,7 +751,7 @@ cdef class GL2Draw:
         # higher pitch.
         BORDER = 64
 
-        width, height = renpy.config.fbo_size
+        width, height = renpy.config.max_texture_size
 
         width = max(self.virtual_size[0] + BORDER, self.drawable_size[0] + BORDER, width)
         width = min(width, max_texture_size, max_renderbuffer_size)
