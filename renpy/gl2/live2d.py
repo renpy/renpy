@@ -39,6 +39,7 @@ import sys
 import os
 import json
 import collections
+import re
 
 did_onetime_init = False
 
@@ -217,6 +218,15 @@ class Live2DCommon(object):
         self.textures = [ ]
 
         for i in self.model_json["FileReferences"]["Textures"]:
+
+            m = re.search(r'\.(\d+)/', i)
+            if m:
+                size = int(m.group(1))
+                renpy.config.max_texture_size = (
+                    max(renpy.config.max_texture_size[0], size),
+                    max(renpy.config.max_texture_size[1], size),
+                )
+
             im = renpy.easy.displayable(self.base + i)
             im = renpy.display.im.unoptimized_texture(im)
             self.textures.append(im)
