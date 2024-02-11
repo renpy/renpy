@@ -2097,7 +2097,7 @@ def unoptimized_texture(d):
     """
     :undocumented:
 
-            If `d` is an image manipulator, return an image manipulator that loads
+    If `d` is an image manipulator, return an image manipulator that loads
     the image without optimizing the bounds. Otherwise, return `d`.
     """
 
@@ -2105,6 +2105,21 @@ def unoptimized_texture(d):
         return UnoptimizedTexture(d)
     else:
         return d
+
+
+def render_for_texture(d, width, height, st, at):
+    """
+    :undocumented:
+
+    Attempts to render `d` for the purpose of getting the underlying texture,
+    rather than a Render. A render may be returned if `d` is not an UnoptimizedTexture
+    returned by unoptimized_texture.
+    """
+
+    if isinstance(d, UnoptimizedTexture):
+        return renpy.display.im.cache.get(d, texture=True)
+    else:
+        return renpy.display.render.render(d, width, height, st, at)
 
 
 def reset_module():

@@ -960,7 +960,7 @@ class Live2D(renpy.display.displayable.Displayable):
             renpy.display.render.redraw(self, min(redraws))
 
         # Get the textures.
-        textures = [ renpy.display.im.cache.get(d, texture=True) for d in common.textures ]
+        textures = [ renpy.display.im.render_for_texture(d, width, height, st, at) for d in common.textures ]
 
         sw, sh = model.get_size()
 
