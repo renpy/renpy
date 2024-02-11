@@ -32,6 +32,8 @@ class Texture(object):
             displayable = displayable._duplicate(None)
             displayable._unique()
 
+        displayable = renpy.display.im.unoptimized_texture(displayable)
+
         self.displayable = displayable
         self.focus = focus
         self.main = main
@@ -234,7 +236,8 @@ class Model(renpy.display.displayable.Displayable):
         if self.size is not None:
             width, height = self.size
 
-        renders = [ renpy.display.render.render(i.displayable, width, height, st, at) for i in self.textures ]
+
+        renders = [ renpy.display.im.render_for_texture(i.displayable, width, height, st, at) for i in self.textures ]
 
         for cr, t in zip(renders, self.textures):
             if t.fit:
