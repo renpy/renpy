@@ -4885,8 +4885,6 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
             import urllib.parse
             url += "?" + urllib.parse.urlencode(params)
 
-    print(url)
-
     if method is None:
         if data is not None or json is not None:
             method = "POST"
