@@ -282,6 +282,15 @@ class position:
         else:
             return self
 
+    def __eq__(self, other):
+        if isinstance(other, position):
+            return self.absolute == other.absolute and \
+                   self.relative == other.relative
+
+        simple = self.simplify()
+
+        return type(simple) is not position and simple == other
+
     def __add__(self, value: "position") -> "position":
         if isinstance(value, position):
             return position(self.absolute + value.absolute, self.relative + value.relative)
