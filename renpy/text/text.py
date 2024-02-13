@@ -2578,7 +2578,25 @@ class Text(renpy.display.displayable.Displayable):
         return new_tokens, displayables
 
 
-language_tailor = textsupport.language_tailor
+def language_tailor(chars, cls):
+    """
+    :doc: other
+
+    This can be used to override the line breaking class of a unicode
+    character. For
+    example, the linebreaking class of a character can be set to ID to
+    treat it as an ideograph, which allows breaks before and after that
+    character.
+
+    `chars`
+        A string containing each of the characters to tailor.
+
+    `cls`
+        A string giving a character class. This should be one of the classes defined in Table
+        1 of `UAX #14: Unicode Line Breaking Algorithm <http://www.unicode.org/reports/tr14/tr14-30.html>`_.
+    """
+    
+    return textsupport.language_tailor(chars, cls)
 
 # Compatibility, in case one of these was pickled.
 ParameterizedText = extras.ParameterizedText
