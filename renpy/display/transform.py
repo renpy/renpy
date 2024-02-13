@@ -31,7 +31,7 @@ import math
 import renpy
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
-from renpy.display.types import DualAngle, absolute, any_object, dualangle, matrix, mesh, position
+from renpy.display.types import absolute, any_object, dualangle, matrix, mesh, position
 
 
 class Camera(renpy.object.Object):
@@ -337,7 +337,7 @@ class TransformState(renpy.object.Object):
 
     def get_anchorangle(self, polar_vectors=None):
         """
-        Returns a DualAngle object, from the oriented angle in degrees, with 0 as the top direction and 90 as the right,
+        Returns a dualangle object, from the oriented angle in degrees, with 0 as the top direction and 90 as the right,
         of the vector going from (xanchoraround, yanchoraround) to (xanchor, yanchor).
         The absolute part of the angle is the angle between the absolute parts of the vectors,
         and the relative part, of the relative parts.
@@ -358,7 +358,7 @@ class TransformState(renpy.object.Object):
         if (relative_radius == 0) and (self.last_relative_anchorangle is not None):
             relative_angle = self.last_relative_anchorangle
 
-        return DualAngle(absolute_angle, relative_angle)
+        return dualangle(absolute_angle, relative_angle)
 
     def get_anchorradius(self, polar_vectors=None):
         """
@@ -378,7 +378,7 @@ class TransformState(renpy.object.Object):
         and set xanchor and yanchor such that the anchorradius (both the absolute and relative parts)
         remain the same, and the anchorangle (as explained above) is the given one.
         """
-        if isinstance(angle, DualAngle):
+        if isinstance(angle, dualangle):
             absolute_anchorangle = angle.absolute
             relative_anchorangle = angle.relative
         else:
@@ -398,7 +398,7 @@ class TransformState(renpy.object.Object):
 
     def set_anchorradius(self, anchorradius):
         """
-        Computes the anchorangle (as a DualAngle object),
+        Computes the anchorangle (as a dualangle object),
         and set xanchor and yanchor such that the anchorangle stays the same,
         and the anchorradius (as explained above) is the given one.
         """

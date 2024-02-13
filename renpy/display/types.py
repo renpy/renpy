@@ -243,21 +243,35 @@ class position(object):
             return self
 
 
-class DualAngle(object):
-    def __init__(self, absolute, relative):
+class dualangle(object):
+    def __new__(cls, absolute, relative=None):
+        if relative is None:
+            typ = type(absolute)
+
+            if typ is cls:
+                return absolute
+
+            if typ is not float:
+                raise TypeError("Cannot convert {} to dualangle".format(typ))
+
+            relative = absolute
+
+        self = object.__new__(cls)
         self.absolute = absolute
         self.relative = relative
 
+        return self
+
     def __add__(self, other):
-        if isinstance(other, DualAngle):
-            return DualAngle(self.absolute + other.absolute,
+        if isinstance(other, dualangle):
+            return dualangle(self.absolute + other.absolute,
                              self.relative + other.relative)
 
         return NotImplemented
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
-            return DualAngle(self.absolute * other,
+            return dualangle(self.absolute * other,
                              self.relative * other)
 
         return NotImplemented
@@ -265,11 +279,11 @@ class DualAngle(object):
     __rmul__ = __mul__
 
     def __neg__(self):
-            return DualAngle(-self.absolute, -self.relative)
+            return dualangle(-self.absolute, -self.relative)
 
     def __sub__(self, other):
-        if isinstance(other, DualAngle):
-            return DualAngle(self.absolute - other.absolute,
+        if isinstance(other, dualangle):
+            return dualangle(self.absolute - other.absolute,
                              self.relative - other.relative)
 
         return NotImplemented
@@ -277,18 +291,6 @@ class DualAngle(object):
 
 def any_object(x):
     return x
-
-
-def dualangle(x):
-    xt = type(x)
-
-    if xt is DualAngle:
-        return x
-
-    if xt is float:
-        return DualAngle(x, x)
-
-    raise TypeError("Cannot convert {} to DualAngle".format(xt))
 
 
 def matrix(x):

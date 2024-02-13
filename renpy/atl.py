@@ -26,7 +26,10 @@ import random
 
 import renpy
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
-from renpy.display.types import DualAngle, dualangle, position
+from renpy.display.types import dualangle, position
+
+
+DualAngle = dualangle # compat for 8.2
 
 
 def compiling(loc):
@@ -1356,8 +1359,8 @@ class Interpolation(Statement):
                     angles = (startangle, endangle)
                     anchorradii = (startanchorradius, endanchorradius)
                     anchorangles = (
-                        DualAngle(startanchorangle_absolute, startanchorangle_relative),
-                        DualAngle(endanchorangle_absolute, endanchorangle_relative),
+                        dualangle(startanchorangle_absolute, startanchorangle_relative),
+                        dualangle(endanchorangle_absolute, endanchorangle_relative),
                     )
 
                 else:
@@ -1393,8 +1396,8 @@ class Interpolation(Statement):
                             start_relative -= 360
 
                         anchorangles = (
-                            DualAngle(start_absolute, start_relative),
-                            DualAngle(end_absolute, end_relative),
+                            dualangle(start_absolute, start_relative),
+                            dualangle(end_absolute, end_relative),
                         )
 
                     if has_anchorradius:
