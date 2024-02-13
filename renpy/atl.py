@@ -29,9 +29,6 @@ from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
 from renpy.display.types import dualangle, position
 
 
-DualAngle = dualangle # compat for 8.2
-
-
 def compiling(loc):
     file, number = loc # @ReservedAssignment
 

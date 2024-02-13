@@ -163,6 +163,9 @@ class position(object):
 
         return self
 
+    def __getnewargs__(self):
+        return (0, 0)
+
     def __add__(self, other):
         if isinstance(other, position):
             return position(self.absolute + other.absolute,
@@ -257,6 +260,9 @@ class dualangle(object):
         self.relative = relative
 
         return self
+
+    def __getnewargs__(self):
+        return (0, 0)
 
     def __add__(self, other):
         if isinstance(other, dualangle):
