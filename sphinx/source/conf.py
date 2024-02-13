@@ -101,6 +101,10 @@ pygments_style = 'default'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
+# Ensure that the default argument values of functions will be not evaluated on
+# generating document.
+autodoc_preserve_defaults = True
+
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
