@@ -2579,9 +2579,11 @@ class Interface(object):
 
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
-                    new_transform = rv
                 else:
                     rv = a(rv)
+
+                if isinstance(rv, renpy.display.transform.Transform):
+                    new_transform = rv
 
             if (new_transform is not None):
                 scene_lists.transform_state(self.old_root_transform, new_transform, execution=True)
