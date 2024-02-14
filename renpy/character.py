@@ -671,7 +671,6 @@ def display_say(
 
             what_text = show_function(who, what_string, **show_args)
 
-
             # What text is (screen, id, layer) tuple if we're using a screen.
             if isinstance(what_text, tuple):
                 # If this is not the first pause, set the transform event to "replace".
@@ -679,6 +678,10 @@ def display_say(
                     screen_displayable = renpy.display.screen.get_screen(what_text[0], what_text[2])
                     if screen_displayable is not None:
                         screen_displayable.set_transform_event("replace")
+
+                        if not retain and not last_pause:
+                            sls = renpy.game.context().scene_lists
+                            sls.set_transient_prefix(what_text[2], what_text[0], "replaced")
 
                 what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
 
