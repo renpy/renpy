@@ -712,9 +712,11 @@ class SceneLists(renpy.object.Object):
 
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
-                    new_transform = rv
                 else:
                     rv = a(rv)
+
+                if isinstance(rv, renpy.display.motion.Transform):
+                    new_transform = rv
 
             if (new_transform is not None) and (renpy.config.keep_show_layer_state):
                 self.transform_state(old_transform, new_transform, execution=True)
@@ -741,9 +743,11 @@ class SceneLists(renpy.object.Object):
 
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
-                    new_transform = rv
                 else:
                     rv = a(rv)
+
+                if isinstance(rv, renpy.display.motion.Transform):
+                    new_transform = rv
 
             if (new_transform is not None):
                 self.transform_state(old_transform, new_transform, execution=True)
@@ -770,9 +774,11 @@ class SceneLists(renpy.object.Object):
 
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
-                    new_transform = rv
                 else:
                     rv = a(rv)
+
+                if isinstance(rv, renpy.display.motion.Transform):
+                    new_transform = rv
 
             if (new_transform is not None):
                 self.transform_state(old_transform, new_transform, execution=True)
