@@ -715,6 +715,8 @@ class SceneLists(renpy.object.Object):
                 else:
                     rv = a(rv)
 
+                rv._unique()
+
                 if isinstance(rv, renpy.display.motion.Transform):
                     new_transform = rv
 
@@ -746,6 +748,8 @@ class SceneLists(renpy.object.Object):
                 else:
                     rv = a(rv)
 
+                rv._unique()
+
                 if isinstance(rv, renpy.display.motion.Transform):
                     new_transform = rv
 
@@ -776,6 +780,8 @@ class SceneLists(renpy.object.Object):
                     rv = a(child=rv)
                 else:
                     rv = a(rv)
+
+                rv._unique()
 
                 if isinstance(rv, renpy.display.motion.Transform):
                     new_transform = rv

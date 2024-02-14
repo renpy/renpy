@@ -2582,6 +2582,8 @@ class Interface(object):
                 else:
                     rv = a(rv)
 
+                rv._unique()
+
                 if isinstance(rv, renpy.display.transform.Transform):
                     new_transform = rv
 
