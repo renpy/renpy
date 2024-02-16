@@ -329,6 +329,9 @@ modal_generation = 0
 # was called.
 old_max_default = 0
 
+# The name of the old max default focus.
+old_max_default_focus_name = None
+
 def mark_modal():
     global modal_generation
     modal_generation += 1
@@ -397,11 +400,13 @@ def before_interact(roots):
             defaults.sort(key=operator.itemgetter(0))
 
         max_default, max_default_focus, max_default_screen = defaults[-1]
+        max_default_focus_name = max_default_focus.full_focus_name
 
     else:
         max_default = 0
         max_default_focus = None
         max_default_screen = None
+        max_default_focus_name = None
 
     # Should we do the max_default logic?
     should_max_default = (renpy.display.interface.last_event is None) or (renpy.display.interface.last_event.type not in [ pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION ])
@@ -461,7 +466,7 @@ def before_interact(roots):
     # If nothing has focus, focus the default if the highest priority has changed,
     # or if the default is None.
     if (should_max_default and (max_default > 0) and (current is None) and
-        (renpy.display.interface.start_interact or (max_default != old_max_default))):
+        (renpy.display.interface.start_interact or (max_default_focus_name != old_max_default_focus_name))):
 
         current = max_default_focus
         set_focused(max_default_focus, None, max_default_screen)
