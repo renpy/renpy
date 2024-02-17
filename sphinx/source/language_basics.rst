@@ -187,6 +187,9 @@ Ren'Py statements are made of a few basic parts.
     image tag is ``mary``, while the image attributes are,
     ``beach``, ``night``, and ``happy``.
 
+    The words ``at``, ``as``, ``behind``, ``onlayer``, and ``zorder`` ,ay
+    not be used as parts of an image name.
+
 :dfn:`String`
     A string begins with a quote character (one of ", ', or \`), contains some
     sequence of characters, and ends with the same quote character.
