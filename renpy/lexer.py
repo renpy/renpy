@@ -577,6 +577,7 @@ IMAGE_KEYWORDS = {
     'behind',
     'at',
     'onlayer',
+    'with',
     'zorder',
 }
 

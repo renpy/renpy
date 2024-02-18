@@ -187,7 +187,7 @@ Ren'Py statements are made of a few basic parts.
     image tag is ``mary``, while the image attributes are,
     ``beach``, ``night``, and ``happy``.
 
-    The words ``at``, ``as``, ``behind``, ``onlayer``, and ``zorder`` ,ay
+    The words ``at``, ``as``, ``behind``, ``onlayer``, ``with``, and ``zorder``, may
     not be used as parts of an image name.
 
 :dfn:`String`
