@@ -81,7 +81,7 @@ def parse_image_name(l, string=False, nodash=False):
     if string:
         points.append(l.checkpoint())
 
-        s = l.simple_expression(image=True)
+        s = l.simple_expression()
 
         if s is not None:
             rv.append(str(s))
