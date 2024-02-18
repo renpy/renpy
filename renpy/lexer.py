@@ -751,6 +751,21 @@ class Lexer(object):
         self.skip_whitespace()
         return self.match_regexp(regexp)
 
+    def match_multiple(self, *regexps):
+        """
+        Matches multiple regular expressions. Return a tuple of matches
+        if all match, and if not returns None.
+        """
+
+        oldpos = self.pos
+
+        rv = tuple(self.match(i) for i in regexps)
+        if None in rv:
+            self.pos = oldpos
+            return None
+
+        return rv
+
     def keyword(self, word):
         """
         Matches a keyword at the current position. A keyword is a word
