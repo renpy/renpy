@@ -59,6 +59,7 @@ init python:
     if RENIOS_PATH:
         import renios.create
         import renios.image
+        import renios.interface
 
     def IOSState():
         if not RENIOS_PATH:
