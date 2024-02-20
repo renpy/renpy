@@ -564,7 +564,7 @@ def group_logical_lines(lines):
 # Note: We need to be careful with what's in here, because these
 # are banned in simple_expressions, where we might want to use
 # some of them.
-KEYWORDS = set([
+KEYWORDS = {
     '$',
     'as',
     'at',
@@ -594,7 +594,7 @@ IMAGE_KEYWORDS = {
     'with',
     'zorder',
     'transform',
-    ])
+}
 
 OPERATORS = [
     '<>',
