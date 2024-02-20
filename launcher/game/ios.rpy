@@ -136,7 +136,7 @@ init python:
         if gui:
             iface = MobileInterface("ios")
         else:
-            iface = rapt.interface.Interface()
+            iface = renios.interface.Interface()
 
         if os.path.exists(dest):
             if not iface.yesno(_("The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?")):
