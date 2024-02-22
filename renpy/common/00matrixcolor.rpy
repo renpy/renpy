@@ -38,6 +38,9 @@ init -1500 python:
 
         def __call__(self, other, done):
 
+            if isinstance(other, SplineMatrix):
+                other = other.matrix
+
             if type(other) is not type(self):
                 return self.get(self.value)
 
@@ -46,6 +49,58 @@ init -1500 python:
 
         def __mul__(self, other):
             return _MultiplyMatrix(self, other)
+
+
+    class SplineMatrix(_BaseMatrix):
+        """
+         :doc: colormatrix
+
+        A Matrix wrapper that uses a spline to interpolate between two
+        matrices. The spline is used to control how much of each of the
+        two matrices are used.
+
+        `matrix`
+            The matrix that will be interpolated to.
+
+        `spline`
+            The spline that is used for the interpolation. This must
+            be a list containing 3 or more floating point numbers. The
+            The first number is the starting amount (usually 0.0), the
+            last number is the ending amount (usually 1.0), and the values
+            in between are the knots:
+
+            * For a single knot (3-number list), a quadratic curve is used.
+            * For two knots (4-number list), a Bezier spline is used.
+            * For three or more knots, Catmull-Rom splines are used. For
+              Catmull-Rom splines, the first and last knots (second and
+              second-last numbers) are control nodes, and the other knots
+              are the amounts that the spline goes through.
+
+        For example, the following will use a quadratic curve to interpolate
+        from the start, towards the end, before returning back to the start. ::
+
+            show eileen happy:
+                center
+                matrixcolor BrightnessMatrix(0.0)
+                linear 2.0 matrixcolor SplineMatrix(BrightnessMatrix(1.0), [ 0.0, 1.0, 0.0 ])
+                repeat
+        """
+
+        def __init__(self, matrix, spline):
+            self.matrix = matrix
+            self.spline = spline
+
+        def __call__(self, other, done):
+
+            if type(other) is SplineMatrix:
+                other = other.matrix
+
+            if type(other) is not type(self.matrix):
+                return self.matrix(None, 1.0)
+
+            done = min(max(done, 0.0), 1.0)
+            done = renpy.atl.interpolate_spline(done, self.spline, float)
+            return self.matrix(other, done)
 
 
     class ColorMatrix(_BaseMatrix):
@@ -148,6 +203,9 @@ init -1500 python:
             self.color = Color(color)
 
         def __call__(self, other, done):
+
+            if type(other) is SplineMatrix:
+                other = other.matrix
 
             if type(other) is not type(self):
 

@@ -291,6 +291,8 @@ This method takes:
 Built-In TransformMatrix Subclasses
 -----------------------------------
 
+.. seealso:: :class:`SplineMatrix`, which works with TransformMatrix subclasses.
+
 The following is the list of TransformMatrix subclasses that are built into
 Ren'Py.
 

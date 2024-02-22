@@ -13,6 +13,9 @@ Changelog (Ren'Py 7.x-)
 Features
 --------
 
+The :class:`SplineMatrix` class has been added, which makes it posssible to
+transform matrices in a non-linear way.
+
 The Input displayable now takes an `action` property, which is an action that
 runs when the user presses enter with the text input active.
 

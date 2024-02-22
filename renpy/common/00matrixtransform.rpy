@@ -43,6 +43,9 @@ init -1400 python:
 
         def __call__(self, other, done):
 
+            if type(other) is TransformMatrix:
+                other = other.matrix
+
             if type(other) is not type(self):
                 return self.function(*self.args)
             else:
