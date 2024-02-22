@@ -1217,7 +1217,10 @@ class RawMultipurpose(RawStatement):
             values = [ ctx.eval(i) for i in exprs ]
 
             if not all(check_spline_types(i) for i in values):
-                raise Exception("%s: Spline interpolation requires position types." % name)
+                if name in { "matrixtransform", "matrixcolor" }:
+                    raise Exception("%s: Spline interpolation requires position types. (You may want to use SplineMatrix.)" % name)
+                else:
+                    raise Exception("%s: Spline interpolation requires position types." % name)
 
             splines.append((name, values))
 
