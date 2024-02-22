@@ -1150,6 +1150,15 @@ class RawMultipurpose(RawStatement):
 
         compiling(self.loc)
 
+        def check_spline_types(value):
+            if isinstance(value, (position, int, float)):
+                return True
+
+            if isinstance(value, tuple):
+                return all(check_spline_types(i) for i in value)
+
+            return False
+
         # Figure out what kind of statement we have. If there's no
         # interpolator, and no properties, than we have either a
         # call, or a child statement.
@@ -1206,6 +1215,9 @@ class RawMultipurpose(RawStatement):
                 raise Exception("ATL Property %s is unknown at runtime." % name)
 
             values = [ ctx.eval(i) for i in exprs ]
+
+            if not all(check_spline_types(i) for i in values):
+                raise Exception("%s: Spline interpolation requires position types." % name)
 
             splines.append((name, values))
 
@@ -1607,8 +1619,6 @@ class Interpolation(Statement):
         if anchorradii is not None:
             startradius, endradius = anchorradii
             trans.state.anchorradius = interpolate(complete, startradius, endradius, position_or_none)
-
-
 
         # Handle any splines we might have.
         for name, values in splines:
