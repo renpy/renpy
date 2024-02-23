@@ -19,6 +19,12 @@ transform matrices in a non-linear way.
 The Input displayable now takes an `action` property, which is an action that
 runs when the user presses enter with the text input active.
 
+Other Changes
+-------------
+
+The `synchro_start` option (documented as part of :func:`renpy.music.play`) is
+now True by default in that function, and in the ``play`` statement.
+
 
 .. _renpy-8.2.1:
 .. _renpy-7.7.1:

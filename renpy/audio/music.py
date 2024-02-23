@@ -34,7 +34,7 @@ from renpy.audio.audio import get_channel, get_serial
 from renpy.audio.audio import register_channel, alias_channel
 
 
-def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False, relative_volume=1.0):
+def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=True, fadein=0, tight=None, if_changed=False, relative_volume=1.0):
     """
     :doc: audio
 
