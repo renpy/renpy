@@ -256,9 +256,16 @@ def scan(name, o, prefix="", inclass=False):
     if doc[0] == ' ':
         print("Bad docstring for ", name, repr(doc))
 
+    # Cython-generated docstrings start with the function and arguments.
     if re.match(r'[\w\.]+\(', doc):
-        doc = doc.partition("\n\n")[2]
+        orig = doc
+
+        sig, _, doc = doc.partition("\n\n")
         doc = textwrap.dedent(doc)
+
+        if "(" in sig:
+            args = "(" + sig.partition("(")[2]
+
 
     # Break up the doc string, scan it for specials.
     lines = [ ]
