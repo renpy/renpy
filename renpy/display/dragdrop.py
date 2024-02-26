@@ -672,6 +672,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             # Record when the snap started
             self.snap_start = at
             redraw(self, 0)
+            self.snapping = True
         elif self.target_at <= at or self.target_at <= self.at:
             # Snap complete
             self.x = self.target_x
@@ -681,7 +682,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
             if self.snapping:
                 run(self.snapped, self, self.target_x, self.target_y, True)
             self.snapping = False
-        else:
+        elif self.snapping:
             # Snap in progress
             done = (at - self.snap_start) / (self.target_at - self.snap_start)
             if self.snap_warper is not None:
