@@ -19,6 +19,12 @@ transform matrices in a non-linear way.
 The Input displayable now takes an `action` property, which is an action that
 runs when the user presses enter with the text input active.
 
+Launcher Changes
+----------------
+
+Under navigation, the files view now has a checkbox that allows a creator to
+filter out translation files.
+
 Other Changes
 -------------
 
