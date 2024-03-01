@@ -238,7 +238,7 @@ cdef class Program:
 
         if status == GL_FALSE:
             glGetProgramInfoLog(program, 1024, NULL, error)
-            raise ShaderError((<object> error).decode("utf-8"))
+            raise ShaderError(repr((<object> error)))
 
         glDeleteShader(vertex)
         glDeleteShader(fragment)
