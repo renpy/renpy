@@ -773,10 +773,8 @@ cdef class HBFont:
                     shear.yx = 1 << 16
                     shear.yy = 0
                     FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.xMax - face.bbox.xMin) // 2)
 
                 if self.stroker != NULL:
-                    # FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
                     FT_Glyph_Stroke(&g, self.stroker, 1)
 
                 if self.antialias:
@@ -949,12 +947,8 @@ cdef class HBFont:
 
             cache = self.get_glyph(glyph.glyph)
 
-            if self.vertical:
-                bmx = <int> (glyph.x + .5 + glyph.x_offset) + cache.bitmap_top
-                bmy = <int> (glyph.y + glyph.y_offset) - cache.bitmap_left
-            else:
-                bmx = <int> (glyph.x + .5 + glyph.x_offset) + cache.bitmap_left
-                bmy = <int> (glyph.y + glyph.y_offset) - cache.bitmap_top
+            bmx = <int> (glyph.x + .5 + glyph.x_offset) + cache.bitmap_left
+            bmy = <int> (glyph.y + glyph.y_offset) - cache.bitmap_top
 
             if bmx < x:
                 x = bmx
@@ -1027,8 +1021,6 @@ cdef class HBFont:
             underline_end = x + <int> (glyph.advance + expand + .9999)
 
             cache = self.get_glyph(glyph.glyph)
-
-            # with nogil used to be here, but it slowed things down.
 
             bmx = <int> (x + .5) + cache.bitmap_left
             bmy = y - cache.bitmap_top
