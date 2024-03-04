@@ -949,8 +949,12 @@ cdef class HBFont:
 
             cache = self.get_glyph(glyph.glyph)
 
-            bmx = <int> (glyph.x + .5 + glyph.x_offset) + cache.bitmap_left
-            bmy = <int> (glyph.y + glyph.y_offset) - cache.bitmap_top
+            if self.vertical:
+                bmx = <int> (glyph.x + .5 + glyph.x_offset) + cache.bitmap_top
+                bmy = <int> (glyph.y + glyph.y_offset) - cache.bitmap_left
+            else:
+                bmx = <int> (glyph.x + .5 + glyph.x_offset) + cache.bitmap_left
+                bmy = <int> (glyph.y + glyph.y_offset) - cache.bitmap_top
 
             if bmx < x:
                 x = bmx
