@@ -38,6 +38,19 @@ now True by default in that function, and in the ``play`` statement.
 8.2.1 / 7.7.1
 =============
 
+Text
+----
+
+The Harfbuzz text shaper now reads more information using Harfbuzz. This
+will generally yield the same results, with small exceptions, such as
+the underline being in a slightly different place.
+
+Vertical text handling under the harfbuzz text shaper has been fixed to
+properly place the text. Porting those changes to the freetype shaper
+is not possible, so the freetype shaper no longer supports vertical text.
+
+See :tpref:`vertical` for more information.
+
 Updater
 -------
 
