@@ -794,6 +794,21 @@ Text Style Properties
 
     If True, the text will be rendered vertically.
 
+    There are multiple caveats:
+
+    * If :propref:`shaper` is harfbuzz, layout will likely be incorrect.
+
+    * Harfbuzz will convert horizontal forms to vertical forms if those
+      forms are present in the font.
+
+    * Characters will be laid out top to bottom, right to left, but will
+      not be rotated. This means that horizontal characters will be laid
+      out one on top of another.
+
+    * If vertical text information is not present in the font, it will be
+      synthesized, but may be incorrect. Generally, ideographic text works
+      better than non-ideographic text.
+
 .. _window-style-properties:
 
 Window Style Properties
