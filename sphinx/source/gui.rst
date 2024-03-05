@@ -4,6 +4,7 @@
 GUI Customization Guide
 =======================
 
+
 .. ifconfig:: not renpy_figures
 
     .. note::
