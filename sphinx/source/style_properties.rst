@@ -796,7 +796,7 @@ Text Style Properties
 
     There are multiple caveats:
 
-    * If :propref:`shaper` is harfbuzz, layout will likely be incorrect.
+    * If :propref:`shaper` is "freetype", vertical layout will likely be incorrect.
 
     * Harfbuzz will convert horizontal forms to vertical forms if those
       forms are present in the font.
