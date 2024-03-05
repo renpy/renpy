@@ -21,7 +21,7 @@ Vertical text handling under the harfbuzz text shaper has been fixed to
 properly place the text. Porting those changes to the freetype shaper
 is not possible, so the freetype shaper no longer supports vertical text.
 
-See :tpref:`vertical` for more information.
+See :propref:`vertical` for more information.
 
 Updater
 -------
@@ -46,10 +46,10 @@ Live2D.
 Fetch
 -----
 
-The :func:`renpy.fetch`` function now works during the image phase and
+The :func:`renpy.fetch` function now works during the image phase and
 during an interaction, as well as outside an interaction.
 
-The :func:`renpy.fetch`` function now takes a `params` argument, which
+The :func:`renpy.fetch` function now takes a `params` argument, which
 specifies parameters that will be added to the URL.
 
 Other Changes
