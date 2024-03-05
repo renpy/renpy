@@ -75,6 +75,12 @@ as a standard Ren'Py project.
 Other Fixes
 -----------
 
+An issue that could cause an Android device to reach a black screen when
+resuming from pause has been fixed.
+
+Ren'Py will now run from a directory with : in the name, on Linux and other
+platforms where that's legal.
+
 The use of :var:`config.layer_transforms` will no longer reset the timelines
 of transforms set with ``camera`` or ``show layer`` ``at``.
 
