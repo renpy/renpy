@@ -12,7 +12,7 @@ template project. If they do, the template project will be copied into
 the new project, and the following changes will be made:
 
 * The :var:`config.name`, :var:`config.save_directory`, and
-  :var:`config.build_name` variables will be set to the name of
+  :var:`build.name` variables will be set to the name of
   the new project.
 
 * The tl directory will be removed, and replaced with default translations
