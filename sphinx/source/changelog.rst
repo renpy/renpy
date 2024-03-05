@@ -40,8 +40,30 @@ Ren'Py will now automatically guess the size of the live2d textures,
 and adjust the maximum texture size the live2d library uses to match
 it.
 
+Ren'Py will avoid many render-to-texture operations when showing
+Live2D.
+
+Fetch
+-----
+
+The :func:`renpy.fetch`` function now works during the image phase and
+during an interaction, as well as outside an interaction.
+
+The :func:`renpy.fetch`` function now takes a `params` argument, which
+specifies parameters that will be added to the URL.
+
 Other Changes
 -------------
+
+When a textbox is replaced (using {w}), a ``replaced`` event is generated,
+rather than hide.
+
+Adding a new displayable with `default_focus` set will cause the
+displayable to be focused, if the keyboard or gamepad is used, even
+if the interaction does not restart.
+
+It's now possible to build an iOS app from the command line without
+installing rapt (Android support).
 
 The renamed and newly-documented :var:`config.max_texture_size` variable
 make it possible to set the maximum texture size used by Ren'Py. This isn't
@@ -49,6 +71,20 @@ useful for 2D textures, but may make sense for textures used by :class:`Model`.
 
 :doc:`template_projects` are no longer required to have the same files
 as a standard Ren'Py project.
+
+Other Fixes
+-----------
+
+The use of :var:`config.layer_transforms` will no longer reset the timelines
+of transforms set with ``camera`` or ``show layer`` ``at``.
+
+Lint no longer crashes when the a LayeredImage use a variable that isn't set.
+
+A crash when :tpref:`blur` was less than 0 has been prevented, by clamping
+the blur value.
+
+An issue that caused drags to block saving has been fixed.
+
 
 
 .. _renpy-8.2.0:
