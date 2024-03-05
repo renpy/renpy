@@ -209,7 +209,6 @@ init -1500 python:
 
         * Preference("gl powersave", True) - Drop framerate to allow for power savings.
         * Preference("gl powersave", False) - Do not drop framerate to allow for power savings.
-        * Preference("gl powersave", "auto") - Enable powersave when running on battery.
 
         * Preference("gl framerate", None) - Runs at the display framerate.
         * Preference("gl framerate", 60) - Runs at the given framerate.
