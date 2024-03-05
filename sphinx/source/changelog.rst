@@ -13,7 +13,7 @@ Changelog (Ren'Py 7.x-)
 Features
 --------
 
-The :class:`SplineMatrix` class has been added, which makes it posssible to
+The :class:`SplineMatrix` class has been added, which makes it possible to
 transform matrices in a non-linear way.
 
 The Input displayable now takes an `action` property, which is an action that
@@ -135,7 +135,7 @@ versions of Ren'Py, Harfbuzz is used to supply additional information
 to the freetype authinter.
 
 On Ren'Py 8, Harfbuzz is also used to shape text, reordering and selecting
-gtlphs based on the context they're in and the language of the text provided.
+glyphs based on the context they're in and the language of the text provided.
 This is required to support scripts that require complex text shaping,
 such as Brahmic/Indic scripts. (You'll need to provide a font that
 supports the appropriate language.)
