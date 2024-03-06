@@ -448,6 +448,7 @@ def display_say(
         with_none,
         callback,
         type, # @ReservedAssignment
+        what_suffix,
         checkpoint=True,
         ctc_timedpause=None,
         ctc_force=False,
@@ -542,8 +543,36 @@ def display_say(
     if not interact or renpy.game.preferences.self_voicing: # type: ignore
         all_at_once = True
 
-    if dtt is None:
+    extend_text = ""
+
+    # Predict extend statements, and add them to the text so that re-layout
+    # is not required.
+    if renpy.config.scry_extend:
+
+        scry = renpy.exports.scry()
+
+        if scry is not None:
+            scry = scry.next()
+
+        scry_count = 0
+
+        while scry and scry_count < 64:
+            if scry.extend_text is renpy.ast.DoesNotExtend:
+                break
+            elif scry.extend_text is not None:
+                extend_text += scry.extend_text
+
+            scry = scry.next()
+            scry_count += 1
+
+        if extend_text:
+            extend_text = "{done}" + extend_text
+
+    # If dialog will be extended, should parse the dialog without suffix.
+    if extend_text:
         dtt = DialogueTextTags(what)
+    elif dtt is None:
+        dtt = DialogueTextTags(what + what_suffix)
 
     if all_at_once:
         pause_start = [ dtt.pause_start[0] ]
@@ -633,31 +662,6 @@ def display_say(
 
             # Create the callback that is called when the slow text is done.
             slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause, dtt.no_wait)
-
-            extend_text = ""
-
-            # Predict extend statements, and add them to the text so that re-layout
-            # is not required.
-            if renpy.config.scry_extend:
-
-                scry = renpy.exports.scry()
-
-                if scry is not None:
-                    scry = scry.next()
-
-                scry_count = 0
-
-                while scry and scry_count < 64:
-                    if scry.extend_text is renpy.ast.DoesNotExtend:
-                        break
-                    elif scry.extend_text is not None:
-                        extend_text += scry.extend_text
-
-                    scry = scry.next()
-                    scry_count += 1
-
-                if extend_text:
-                    extend_text = "{done}" + extend_text
 
             # Show the text.
 
@@ -1291,6 +1295,41 @@ class ADVCharacter(object):
         # 7.4.5 on.
         else:
             return (sub(prefix) + sub(body) + sub(suffix))
+        
+    def prefix_body(self, thing, prefix, body):
+
+        def sub(s, scope=None, force=False, translate=True):
+            return renpy.substitutions.substitute(s, scope=scope, force=force, translate=translate)[0]
+
+        thingvar_quoted = "[[" + thing + "]"
+        thingvar = "[" + thing + "]"
+
+        if not renpy.config.new_substitutions:
+            return prefix + body
+
+        # Used before Ren'Py 7.4.
+        elif renpy.config.who_what_sub_compat == 0:
+            pattern = sub(prefix + thingvar_quoted)
+            return pattern.replace(thingvar, sub(body))
+
+        # Used from Ren'Py 7.4 to Ren'Py 7.4.4
+        elif renpy.config.who_what_sub_compat == 1:
+            pattern = sub(sub(prefix) + thingvar_quoted)
+            return pattern.replace(thingvar, sub(body))
+
+        # 7.4.5 on.
+        else:
+            return (sub(prefix) + sub(body))
+        
+    def suffix(self, suffix):
+
+        def sub(s, scope=None, force=False, translate=True):
+            return renpy.substitutions.substitute(s, scope=scope, force=force, translate=translate)[0]
+
+        if not renpy.config.new_substitutions:
+            return suffix
+
+        return sub(suffix)
 
     def __call__(self, what, interact=True, _call_done=True, multiple=None, **kwargs):
 
@@ -1376,22 +1415,24 @@ class ADVCharacter(object):
             if who is not None:
                 who = self.prefix_suffix("who", self.who_prefix, who, self.who_suffix)
 
-            what = self.prefix_suffix("what", self.what_prefix, what, self.what_suffix)
+            what = self.prefix_body("what", self.what_prefix, what)
+            what_suffix = self.suffix(self.what_suffix)
 
             # Run the add_function, to add this character to the
             # things like NVL-mode.
 
             if multiple is not None:
-                self.do_add(who, what, multiple=multiple)
+                self.do_add(who, what + what_suffix, multiple=multiple)
             else:
-                self.do_add(who, what)
+                self.do_add(who, what + what_suffix)
 
-            dtt = DialogueTextTags(what)
+            # If there is nothing to extend, then should parse with suffix.
+            dtt = DialogueTextTags(what + what_suffix)
 
             if renpy.config.history_current_dialogue:
-                self.add_history("current", who, what, multiple=multiple)
+                self.add_history("current", who, what + what_suffix, multiple=multiple)
 
-            self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
+            self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, what_suffix=what_suffix, **display_args)
 
             if renpy.config.history_current_dialogue:
                 self.pop_history()
@@ -1400,15 +1441,15 @@ class ADVCharacter(object):
             if _call_done and not dtt.has_done:
 
                 if multiple is not None:
-                    self.do_done(who, what, multiple=multiple)
+                    self.do_done(who, what + what_suffix, multiple=multiple)
                 else:
-                    self.do_done(who, what)
+                    self.do_done(who, what + what_suffix)
 
                 # Finally, log this line of dialogue.
                 if who and isinstance(who, basestring):
                     renpy.exports.log(who)
 
-                renpy.exports.log(what)
+                renpy.exports.log(what + what_suffix)
                 renpy.exports.log("")
 
         finally:
