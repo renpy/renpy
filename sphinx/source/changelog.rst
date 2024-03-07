@@ -28,6 +28,10 @@ filter out translation files.
 Other Changes
 -------------
 
+The :propref:`keyboard_focus_insets` style property makes it possible to
+have keyboard focus work with overlapping buttons, by artificially reducing
+the size of the buttons to remove the overlap, when determining keyboard focus.
+
 The `synchro_start` option (documented as part of :func:`renpy.music.play`) is
 now True by default in that function, and in the ``play`` statement.
 

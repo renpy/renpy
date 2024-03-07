@@ -135,6 +135,31 @@ class Focus(object):
 
         return False
 
+    def inset_rect(self):
+        """
+        Returns the rectangle with the keyboard focus insets applied.
+        """
+
+        x = self.x
+        y = self.y
+        w = self.w
+        h = self.h
+
+        insets = self.widget.style.keyboard_focus_insets
+
+        if insets is not None:
+            x += insets[0]
+            y += insets[1]
+            w -= insets[0] + insets[2]
+            h -= insets[1] + insets[3]
+
+        if w < 1:
+            w = 1
+        if h < 1:
+            h = 1
+
+        return x, y, w, h
+
 
 # The current focus argument.
 argument = None
@@ -752,10 +777,12 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
         focus_extreme(xmul, ymul, wmul, hmul)
         return
 
-    fx0 = from_focus.x + from_focus.w * from_x0
-    fy0 = from_focus.y + from_focus.h * from_y0
-    fx1 = from_focus.x + from_focus.w * from_x1
-    fy1 = from_focus.y + from_focus.h * from_y1
+    from_focus_x, from_focus_y, from_focus_w, from_focus_h = from_focus.inset_rect()
+
+    fx0 = from_focus_x + from_focus_w * from_x0
+    fy0 = from_focus_y + from_focus_h * from_y0
+    fx1 = from_focus_x + from_focus_w * from_x1
+    fy1 = from_focus_y + from_focus_h * from_y1
 
     placeless = None
     new_focus = None
@@ -781,10 +808,12 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
         if not condition(from_focus, f):
             continue
 
-        tx0 = f.x + f.w * to_x0
-        ty0 = f.y + f.h * to_y0
-        tx1 = f.x + f.w * to_x1
-        ty1 = f.y + f.h * to_y1
+        f_x, f_y, f_w, f_h = f.inset_rect()
+
+        tx0 = f_x + f_w * to_x0
+        ty0 = f_y + f_h * to_y0
+        tx1 = f_x + f_w * to_x1
+        ty1 = f_y + f_h * to_y1
 
         dist = line_dist(fx0, fy0, fx1, fy1,
                          tx0, ty0, tx1, ty1)

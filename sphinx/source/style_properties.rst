@@ -944,7 +944,18 @@ Button Style Properties
    If True, the default, this button can be focused using the keyboard focus
    mechanism, if it can be focused at all. If False, the keyboard focus
    mechanism will skip this button. (The keyboard focus mechanism is used
-   by keyboards and keyboard-like devices, such as joypads.)
+   by keyboards and keyboard-like devices, such as gamepads.)
+
+.. style-property:: keyboard_focus_insets (int, int, int, int) or None
+
+    If not None, this should be a tuple of four integers, giving the
+    number of pixels that are used to shrink the left, top, right, and
+    bottom sides of the focus rectangle, when it's used for keyboard
+    focus.
+
+    This can be useful when buttons overlap. The keyboard focus algorithm
+    doesn't work with overlapping buttons, and so this can be used to to
+    shrink the size of the buttons internally, allowing focus to work.
 
 .. style-property:: key_events boolean
 
