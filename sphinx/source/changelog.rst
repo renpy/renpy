@@ -28,6 +28,11 @@ filter out translation files.
 Other Changes
 -------------
 
+Bar Values that set values (like :class:`DictValue`, :class:`FieldValue`,
+:class:`VariableValue`, :class:`ScreenVariableValue`, and :class:`LocalVariableValue`)
+now take a `min` and `max` parameters, which can be used to directly set the bar's
+endpoints.
+
 The :propref:`keyboard_focus_insets` style property makes it possible to
 have keyboard focus work with overlapping buttons, by artificially reducing
 the size of the buttons to remove the overlap, when determining keyboard focus.
