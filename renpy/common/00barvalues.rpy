@@ -121,6 +121,8 @@ init -1500 python:
         identity_fields = ()
         equality_fields = ('range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step')
 
+        _max = max
+
         def __init__(self, range=None, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False, min=None, max=None):
 
             if max is not None and min is not None:
@@ -138,7 +140,7 @@ init -1500 python:
                 if isinstance(range, float):
                     step = range / 10.0
                 else:
-                    step = __builtins__.max(range // 10, 1)
+                    step = __GenericValue._max(range // 10, 1)
             self.step = step
             self.action = action
 
