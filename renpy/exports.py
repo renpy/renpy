@@ -4702,6 +4702,17 @@ def confirm(message):
     return renpy.ui.interact()
 
 
+try:
+    if PY2:
+        import urllib
+        proxies = urllib.getproxies()
+    else:
+        import urllib.request
+        proxies = urllib.request.getproxies()
+except Exception as e:
+    proxies = {}
+
+
 class FetchError(Exception):
     """
     :undocumented:
@@ -4750,7 +4761,7 @@ def fetch_requests(url, method, data, content_type, timeout):
 
     def make_request():
         try:
-            r = requests.request(method, url, data=data, timeout=timeout, headers={ "Content-Type" : content_type } if data is not None else {})
+            r = requests.request(method, url, data=data, timeout=timeout, headers={ "Content-Type" : content_type } if data is not None else {}, proxies=proxies)
             r.raise_for_status()
             resp[0] = r.content # type: ignore
         except Exception as e:
