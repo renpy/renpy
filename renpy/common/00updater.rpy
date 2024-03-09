@@ -45,12 +45,12 @@ init -1500 python in updater:
 
     def urlopen(url):
         import requests
-        return io.BytesIO(requests.get(url).content)
+        return io.BytesIO(requests.get(url, proxies=renpy.exports.proxies, timeout=15).content)
 
     def urlretrieve(url, fn):
         import requests
 
-        data = requests.get(url).content
+        data = requests.get(url, proxies=renpy.exports.proxies, timeout=15).content
 
         with open(fn, "wb") as f:
             f.write(data)
@@ -546,7 +546,7 @@ init -1500 python in updater:
             url = urlparse.urljoin(self.url, self.updates[module]["rpu_url"])
 
             try:
-                resp = requests.get(url)
+                resp = requests.get(url, proxies=renpy.exports.proxies, timeout=15)
                 resp.raise_for_status()
             except Exception as e:
                 raise UpdateError(__("Could not download file list: ") + str(e))
@@ -1418,7 +1418,7 @@ init -1500 python in updater:
             self.log.write("downloading %r\n" % url)
             self.log.flush()
 
-            resp = requests.get(url, stream=True)
+            resp = requests.get(url, stream=True, proxies=renpy.exports.proxies, timeout=15)
 
             if not resp.ok:
                 raise UpdateError(_("The update file was not downloaded."))

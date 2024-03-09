@@ -52,7 +52,7 @@ init python:
         with interface.error_handling(_("Downloading the itch.io butler.")):
             url = "https://broth.itch.ovh/butler/{}/LATEST/archive/default".format(platform)
 
-            response = requests.get(url, headers={'User-Agent' : "Renpy"})
+            response = requests.get(url, headers={'User-Agent' : "Renpy"}, proxies=renpy.proxies)
 
             with open(zip, "wb") as f:
                 f.write(response.content)

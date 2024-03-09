@@ -224,9 +224,9 @@ init python:
 
         if not quiet:
             with interface.error_handling(_("downloading the list of update channels")):
-                channels = requests.get(url).json()["releases"]
+                channels = requests.get(url, proxies=renpy.proxies).json()["releases"]
         else:
-            channels = requests.get(url).json()["releases"]
+            channels = requests.get(url, proxies=renpy.proxies).json()["releases"]
 
         persistent.has_update = False
 
