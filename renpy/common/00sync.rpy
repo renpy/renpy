@@ -180,135 +180,36 @@ init -1100 python in _sync:
         else:
             return key, hashed.hex()
 
-    def requests_error(e):
+    def verbose_error(e):
         import requests
 
         renpy.display.log.write("Sync error:")
         renpy.display.log.exception()
 
-        if isinstance(e, requests.exceptions.ConnectionError):
+        if isinstance(e.original_exception, requests.exceptions.ConnectionError):
             return _("Could not connect to the Ren'Py Sync server.")
-        elif isinstance(e, requests.exceptions.Timeout):
+        elif isinstance(e.original_exception, requests.exceptions.Timeout):
             return _("The Ren'Py Sync server timed out.")
         else:
             return _("An unknown error occurred while connecting to the Ren'Py Sync server.")
 
-    if renpy.emscripten:
+    def upload_content(content, url):
+        try:
+            renpy.fetch(url, method="PUT", data=content, timeout=15)
+        except renpy.Fetcherror as e:
+            return verbose_error(e)
 
-        def upload_content(content, url):
-            """
-            Uploads content to the sync server, using the given half-hash.
+        return None
 
-            Returns None on success, or an error message on failure.
-            """
+    def download_content(url):
+        try:
+            return False, renpy.fetch(url, timeout=15)
+        except renpy.FetchError as e:
 
-            import emscripten
-            import time
-            import os
-
-            with open("/sync.data", "wb") as f:
-                f.write(content)
-
-            fetch_id = emscripten.run_script_int(
-                """fetchFile("PUT", "{url}", "/sync.data", null, "application/octet-string")""".format(url=url))
-
-            status = "PENDING"
-            message = "Pending."
-
-            start = time.time()
-            while start - time.time() < 15:
-                renpy.pause(0)
-
-                result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
-                status, _ignored, message = result.partition(" ")
-
-                if status != "PENDING":
-                    break
-
-            os.unlink("/sync.data")
-
-            if status != "OK":
-                return message
-            else:
-                return None
-
-
-        def download_content(url):
-            import emscripten
-            import time
-            import os
-
-            fetch_id = emscripten.run_script_int(
-                """fetchFile("GET", "{url}", null, "/sync.data")""".format(url=url))
-
-            status = "PENDING"
-            message = "Pending."
-
-            start = time.time()
-            while start - time.time() < 15:
-                renpy.pause(0)
-
-                result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
-                status, _ignored, message = result.partition(" ")
-
-                if status != "PENDING":
-                    break
-
-            if status == "OK":
-                with open("/sync.data", "rb") as f:
-                    data = f.read()
-
-                os.unlink("/sync.data")
-
-                return False, data
-
-            else:
-                if "404" in message:
-                    return True, _("The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out.")
-                else:
-                    return True, message
-
-    else:
-
-        def upload_content(content, url):
-            """
-            Uploads content to the sync server, using the given half-hash.
-
-            Returns None on success, or an error message on failure.
-            """
-
-            import requests
-
-            try:
-                r = requests.put(url, data = content, timeout=15)
-            except Exception as e:
-                return requests_error(e)
-
-            if r.status_code != 200:
-                return r.text
-
-            return None
-
-        def download_content(url):
-            """
-            Downloads content from the sync server, using the given half-hash.
-
-            Returns True and an error message on errro, and False and the content on success.
-            """
-
-            import requests
-
-            try:
-                r = requests.get(url, timeout=15)
-            except Exception as e:
-                return True, requests_error(e)
-
-            if r.status_code == 404:
+            if e.status_code == 404:
                 return True, _("The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out.")
-            elif r.status_code != 200:
-                return True, r.text
 
-            return False, r.content
+            return True, verbose_error(e)
 
     def report_error(message):
         renpy.call_screen("sync_error", message)

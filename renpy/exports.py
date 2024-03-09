@@ -4720,6 +4720,17 @@ class FetchError(Exception):
     The type of errors raised by :func:`renpy.fetch`.
     """
 
+    def __init__(self, message, exception=None):
+        super(FetchError, self).__init__(message)
+
+        self.original_exception = exception
+
+        m = re.search(r'\d\d\d', message)
+        if m is not None:
+            self.status_code = int(m.group(0))
+        else:
+            self.status_code = None
+
     pass
 
 
@@ -4765,7 +4776,7 @@ def fetch_requests(url, method, data, content_type, timeout):
             r.raise_for_status()
             resp[0] = r.content # type: ignore
         except Exception as e:
-            resp[0] = FetchError(str(e)) # type: ignore
+            resp[0] = FetchError(str(e), e) # type: ignore
 
     t = threading.Thread(target=make_request)
     t.start()
@@ -4919,12 +4930,15 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
     if isinstance(content, Exception):
         raise content # type: ignore
 
-    if result == "bytes":
-        return content
-    elif result == "text":
-        return content.decode("utf-8")
-    elif result == "json":
-        return _json.loads(content)
+    try:
+        if result == "bytes":
+            return content
+        elif result == "text":
+            return content.decode("utf-8")
+        elif result == "json":
+            return _json.loads(content)
+    except Exception as e:
+        raise FetchError("Failed to decode the result: " + str(e), e)
 
 
 def can_fullscreen():
