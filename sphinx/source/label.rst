@@ -176,7 +176,7 @@ The following labels are used by Ren'Py:
     If it exists, this label is called when a game is loaded. It can be
     use to fix data when the game is updated. If data is changed by this
     label, :func:`renpy.block_rollback` should be called to prevent those
-    changes from being reverted inf the player rolls back past the load
+    changes from being reverted if the player rolls back past the load
     point.
 
 ``splashscreen``
