@@ -33,7 +33,7 @@ The transform statement  must be run at init time. If it is found outside an
 ``init`` block, then it is automatically placed inside an ``init`` block with a
 priority of 0. The transform may have a list of parameters, which must be
 supplied when it is called. Default values for the right-most parameters can
-be given by adding "=" and the value (e.g. "transform a (b, c=0):").
+be given by adding ``=`` and the value (e.g. ``transform a (b, c=0):``).
 
 `qualname` must be a set of dot-separated Python identifiers. The transform created
 by the ATL block is bound to this name, within the given
@@ -102,13 +102,13 @@ Each logical line in an ATL block must contain one or more ATL statements.
 
 There are two kinds of ATL statements: simple and complex. Simple statements
 do not take an ATL block. A single logical line may contain one or more ATL
-statements, separated by commas. A complex statement contains a block, must
-be on its own line. The first line of a complex statement always ends with a
+statements, separated by commas. A complex statement always contains a block, and
+must be on its own line. The first line of a complex statement always ends with a
 colon ``:``.
 
 By default, statements in a block are executed in the order in which they
 appear, starting with the first statement in the block. Execution terminates
-when the end of the block is reached. Time statements change this, as
+when the end of the block is reached. Th ``time`` statements change this, as
 described in the appropriate section below.
 
 Execution of a block terminates when all statements in the block have
@@ -633,11 +633,11 @@ Warpers
 =======
 
 A warper is a function that can change the amount of time an interpolation
-statement considers to have elapsed. The following warpers are defined by
-default. They are defined as functions from t to t', where t and t' are
-floating point numbers, with t ranging from 0.0 to 1.0 over the given
-amount of time. (If the statement has 0 duration, then t is 1.0 when it runs.)
-t' should start at 0.0 and end at 1.0, but can be greater or less.
+statement considers to have elapsed. They are defined as functions from t to t',
+where t and t' are floating point numbers, with t ranging from 0.0 to 1.0 over
+the given amount of time. (If the statement has 0 duration, then t is 1.0 when
+it runs.) t' should start at 0.0 and end at 1.0, but can be greater or less.
+The following warpers are defined by default.
 
 ``pause``
     Pause, then jump to the new value. If ``t == 1.0``, ``t' = 1.0``. Otherwise,
@@ -690,7 +690,7 @@ interpreted as a fraction of the size of the containing area (for
 :propref:`pos`) or of the displayable (for :propref:`anchor`).
 
 Note that not all properties are independent. For example, :propref:`xalign` and :propref:`xpos`
-both update some of the same underlying data. In a parallel statement, not more than
+both update some of the same underlying data. In a ``parallel`` statement, not more than
 one block should adjust properties sharing the same data. The angle and radius properties set
 both horizontal and vertical positions.
 
