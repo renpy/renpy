@@ -181,10 +181,13 @@ init -1100 python in _sync:
             return key, hashed.hex()
 
     def verbose_error(e):
-        import requests
-
         renpy.display.log.write("Sync error:")
         renpy.display.log.exception()
+
+        if renpy.emscripten:
+           return e.args[0]
+
+        import requests
 
         if isinstance(e.original_exception, requests.exceptions.ConnectionError):
             return _("Could not connect to the Ren'Py Sync server.")
@@ -196,7 +199,7 @@ init -1100 python in _sync:
     def upload_content(content, url):
         try:
             renpy.fetch(url, method="PUT", data=content, timeout=15)
-        except renpy.Fetcherror as e:
+        except renpy.FetchError as e:
             return verbose_error(e)
 
         return None

@@ -4731,8 +4731,6 @@ class FetchError(Exception):
         else:
             self.status_code = None
 
-    pass
-
 
 def fetch_pause():
     """
