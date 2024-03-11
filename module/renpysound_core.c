@@ -392,7 +392,7 @@ void (*RPS_generate_audio_c_function)(float *stream, int length) = NULL;
 static void callback(void *userdata, Uint8 *stream, int length) {
 
     // Convert the length to samples.
-    length /= 4;
+    length /= (2 * sizeof(float));
 
     float mix_buffer[length * 2];
     short stream_buffer[length * 2];
@@ -489,27 +489,29 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
     // Actually output the sound.
     for (int i = 0; i < length; i++) {
-        int left = mix_buffer[i * 2] * MAX_SHORT;
-        int right = mix_buffer[i * 2 + 1] * MAX_SHORT;
+        float left = mix_buffer[i * 2];
+        float right = mix_buffer[i * 2 + 1];
 
-        if (left > MAX_SHORT) {
-            left = MAX_SHORT;
-        }
-        if (left < MIN_SHORT) {
-            left = MIN_SHORT;
-        }
-        if (right > MAX_SHORT) {
-            right = MAX_SHORT;
-        }
-        if (right < MIN_SHORT) {
-            right = MIN_SHORT;
+
+        if (left > 1.0) {
+            left = 1.0;
         }
 
-        ((short *) stream)[i * 2] = left;
-        ((short *) stream)[i * 2 + 1] = right;
+        if (left < -1.0) {
+            left = -1.0;
+        }
+
+        if (right > 1.0) {
+            right = 1.0;
+        }
+
+        if (right < -1.0) {
+            right = -1.0;
+        }
+
+        ((float *) stream)[i * 2] = left;
+        ((float *) stream)[i * 2 + 1] = right;
     }
-
-
 }
 
 
@@ -1185,7 +1187,7 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
     }
 
     audio_spec.freq = freq;
-    audio_spec.format = AUDIO_S16SYS;
+    audio_spec.format = AUDIO_F32;
     audio_spec.channels = stereo;
     audio_spec.samples = samples;
     audio_spec.callback = callback;
