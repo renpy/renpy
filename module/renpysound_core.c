@@ -787,7 +787,6 @@ void RPS_stop(int channel) {
 
     }
 
-
     if (c->queued_audio_filter) {
         Py_DECREF(c->queued_audio_filter);
         c->queued_audio_filter = NULL;
