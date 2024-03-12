@@ -219,6 +219,12 @@ struct Channel {
     /* The relative volume of the playing stream. */
     float playing_relative_volume;
 
+    /**
+     * The AudioFilter that is currently in use on this channel. NULL
+     * if no filter is in use.
+     */
+    PyObject *playing_audio_filter;
+
     /* The queued up stream. */
     struct MediaState *queued;
 
@@ -236,6 +242,9 @@ struct Channel {
 
     /* The relative volume of the queued stream. */
     float queued_relative_volume;
+
+    /* The AudioFilter that is queued on this channel. */
+    PyObject *queued_audio_filter;
 
     /* Is this channel paused? */
     int paused;
@@ -279,6 +288,7 @@ struct Channel {
 
 struct Dying {
     struct MediaState *stream;
+    PyObject *audio_filter;
     struct Dying *next;
 };
 
@@ -440,6 +450,14 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 d = malloc(sizeof(struct Dying));
                 d->next = dying;
                 d->stream = c->playing;
+
+                // If there's a new audio filter, queue the old one for deallocation.
+                if (c->playing_audio_filter) {
+                    d->audio_filter = c->playing_audio_filter;
+                } else {
+                    d->audio_filter = NULL;
+                }
+
                 dying = d;
 
                 free(c->playing_name);
@@ -451,12 +469,15 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 c->playing_start_ms = c->queued_start_ms;
                 c->playing_relative_volume = c->queued_relative_volume;
 
+                c->playing_audio_filter = c->queued_audio_filter;
+
                 c->queued = NULL;
                 c->queued_name = NULL;
                 c->queued_fadein = 0;
                 c->queued_tight = 0;
                 c->queued_start_ms = 0;
                 c->queued_relative_volume = 1.0;
+                c->queued_audio_filter = NULL;
 
                 if (c->playing_fadein) {
                     old_tight = 0;
@@ -580,7 +601,7 @@ struct MediaState *load_stream(SDL_RWops *rw, const char *ext, double start, dou
 }
 
 
-void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, int paused, double start, double end, float relative_volume) {
+void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, int paused, double start, double end, float relative_volume, PyObject *audio_filter) {
 
     struct Channel *c;
 
@@ -601,6 +622,11 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
         c->playing_tight = 0;
         c->playing_start_ms = 0;
         c->playing_relative_volume = 1.0;
+
+        if (c->playing_audio_filter) {
+            Py_DECREF(c->playing_audio_filter);
+            c->queued_audio_filter = NULL;
+        }
     }
 
     if (c->queued) {
@@ -611,6 +637,11 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
         c->queued_tight = 0;
         c->queued_start_ms = 0;
         c->queued_relative_volume = 1.0;
+
+        if (c->queued_audio_filter) {
+            Py_DECREF(c->queued_audio_filter);
+            c->queued_audio_filter = NULL;
+        }
     }
 
     /* Allocate playing sample. */
@@ -629,6 +660,13 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
     c->playing_start_ms = (int) (start * 1000);
     c->playing_relative_volume = relative_volume;
 
+    if (audio_filter) {
+        c->playing_audio_filter = audio_filter;
+        Py_INCREF(c->playing_audio_filter);
+    } else {
+        c->playing_audio_filter = NULL;
+    }
+
     c->paused = paused;
 
     start_stream(c, 1);
@@ -638,7 +676,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
     error(SUCCESS);
 }
 
-void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, double start, double end, float relative_volume) {
+void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
 
     struct Channel *c;
 
@@ -650,7 +688,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
 
     /* If we're not playing, then we should play instead of queue. */
     if (!c->playing) {
-        RPS_play(channel, rw, ext, name, fadein, tight, 0, start, end, relative_volume);
+        RPS_play(channel, rw, ext, name, fadein, tight, 0, start, end, relative_volume, audio_filter);
         return;
     }
 
@@ -666,6 +704,11 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
         free(c->queued_name);
         c->queued_name = NULL;
         c->queued_tight = 0;
+    }
+
+    if (c->queued_audio_filter) {
+        Py_DECREF(c->queued_audio_filter);
+        c->queued_audio_filter = NULL;
     }
 
     /* Allocate queued sample. */
@@ -684,6 +727,13 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
 
     c->queued_start_ms = (int) (start * 1000);
     c->queued_relative_volume = relative_volume;
+
+    if (audio_filter) {
+        c->queued_audio_filter = audio_filter;
+        Py_INCREF(c->queued_audio_filter);
+    } else {
+        c->queued_audio_filter = NULL;
+    }
 
     UNLOCK_AUDIO();
 
@@ -721,6 +771,12 @@ void RPS_stop(int channel) {
         c->playing_relative_volume = 1.0;
     }
 
+    if (c->playing_audio_filter) {
+        Py_DECREF(c->playing_audio_filter);
+        c->playing_audio_filter = NULL;
+    }
+
+
     if (c->queued) {
         free_stream(c->queued);
         c->queued = NULL;
@@ -728,6 +784,13 @@ void RPS_stop(int channel) {
         c->queued_name = NULL;
         c->queued_start_ms = 0;
         c->queued_relative_volume = 1.0;
+
+    }
+
+
+    if (c->queued_audio_filter) {
+        Py_DECREF(c->queued_audio_filter);
+        c->queued_audio_filter = NULL;
     }
 
     UNLOCK_AUDIO();
@@ -765,6 +828,11 @@ void RPS_dequeue(int channel, int even_tight) {
     }
 
     c->queued_start_ms = 0;
+
+    if (c->queued_audio_filter) {
+        Py_DECREF(c->queued_audio_filter);
+        c->queued_audio_filter = NULL;
+    }
 
     UNLOCK_AUDIO();
 
@@ -1244,6 +1312,11 @@ void RPS_periodic() {
     while (d) {
         media_close(d->stream);
         struct Dying *next_d = d->next;
+
+        if (d->audio_filter) {
+            Py_DECREF(d->audio_filter);
+        }
+
         free(d);
         d = next_d;
     }

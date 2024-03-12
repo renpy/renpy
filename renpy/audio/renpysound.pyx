@@ -57,8 +57,8 @@ import_pygame_sdl2()
 
 cdef extern from "renpysound_core.h":
 
-    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int fadein, int tight, int paused, double start, double end, float volume)
-    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int fadein, int tight, double start, double end, float volume)
+    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int fadein, int tight, int paused, double start, double end, float volume, object audio_filter)
+    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int fadein, int tight, double start, double end, float volume, object audio_filter)
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
@@ -100,7 +100,7 @@ def check_error():
     if len(e):
         raise Exception(unicode(e, "utf-8", "replace"))
 
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
+def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -126,6 +126,9 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
     `relative_volume`
         A float giving the relative volume of the file.
+
+    `audio_filter`
+        The audio filter to apply when the file is being played.
     """
 
     cdef SDL_RWops *rw
@@ -146,10 +149,10 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_play(channel, rw, name, name, fadein * 1000, tight, pause, start, end, relative_volume)
+    RPS_play(channel, rw, name, name, fadein * 1000, tight, pause, start, end, relative_volume, audio_filter)
     check_error()
 
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
+def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -170,7 +173,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_queue(channel, rw, name, name, fadein * 1000, tight, start, end, relative_volume)
+    RPS_queue(channel, rw, name, name, fadein * 1000, tight, start, end, relative_volume, audio_filter)
     check_error()
 
 def stop(channel):

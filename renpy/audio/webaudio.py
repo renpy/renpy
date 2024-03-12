@@ -111,7 +111,7 @@ def proxy_call_both(func):
     return func
 
 @proxy_with_channel
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
+def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -137,6 +137,9 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
     `relative_volume`
         A number between 0 and 1 that controls the relative volume of this file
+
+    `audio_filter`
+        The audio filter to apply when the file is being played.
     """
 
     try:
@@ -155,7 +158,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
 
 @proxy_with_channel
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
+def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
