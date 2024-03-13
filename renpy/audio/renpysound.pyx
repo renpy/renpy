@@ -87,6 +87,10 @@ cdef extern from "renpysound_core.h":
     char *RPS_get_error()
 
     void (*RPS_generate_audio_c_function)(float *stream, int length)
+    void (*RPS_apply_audio_filter)(object, float *stream, int length, int channels)
+
+from renpy.audio.filter cimport get_apply_audio_filter
+RPS_apply_audio_filter = <void (*)(object, float *, int, int)> get_apply_audio_filter()
 
 def check_error():
     """

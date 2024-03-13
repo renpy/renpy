@@ -29,6 +29,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string.h>
 #include <pygame_sdl2/pygame_sdl2.h>
 
+apply_audio_filter_type RPS_apply_audio_filter = NULL;
+
 SDL_mutex *name_mutex;
 
 #ifdef __EMSCRIPTEN__
@@ -359,14 +361,11 @@ static void post_event(struct Channel *c) {
 #define ZERO_PAN 0.7071067811865476 // cos(PI / 4) and sin(PI / 4)
 
 
-static inline void mix_sample(struct Channel *c, short left_in, short right_in, float *left_out, float *right_out) {
+static inline void mix_sample(struct Channel *c, float left, float right, float *left_out, float *right_out) {
 
     tick_interpolate(&c->fade);
     tick_interpolate(&c->secondary_volume);
     tick_interpolate(&c->pan);
-
-    float left = left_in / 1.0 / -MIN_SHORT;
-    float right = right_in / 1.0 / -MIN_SHORT;
 
     float pan = get_interpolate(&c->pan);
 
@@ -406,6 +405,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
     float mix_buffer[length * 2];
     short stream_buffer[length * 2];
+    float float_buffer[length * 2];
 
     memset(mix_buffer, 0, length * 2 * sizeof(float));
 
@@ -490,10 +490,20 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 continue;
             }
 
+            for (int i = 0; i < read_length; i++) {
+                float_buffer[i * 2] = stream_buffer[i * 2] / 1.0 / -MIN_SHORT;
+                float_buffer[i * 2 + 1] = stream_buffer[i * 2 + 1] / 1.0 / -MIN_SHORT;
+            }
+
+
+            if (c->playing_audio_filter && c->playing_audio_filter != Py_None) {
+                RPS_apply_audio_filter(c->playing_audio_filter, float_buffer, 2, read_length);
+            }
+
             // We have some data in the buffer, so mix it.
             for (int i = 0; (i < read_length) && c->stop_samples; i++) {
 
-                mix_sample(c, stream_buffer[i * 2], stream_buffer[i * 2 + 1], &mix_buffer[mixed * 2], &mix_buffer[mixed * 2 + 1]);
+                mix_sample(c, float_buffer[i * 2], float_buffer[i * 2 + 1], &mix_buffer[mixed * 2], &mix_buffer[mixed * 2 + 1]);
 
                 if (c->stop_samples > 0) {
                     c->stop_samples--;
