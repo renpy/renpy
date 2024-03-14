@@ -495,7 +495,6 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 float_buffer[i * 2 + 1] = stream_buffer[i * 2 + 1] / 1.0 / -MIN_SHORT;
             }
 
-
             if (c->playing_audio_filter && c->playing_audio_filter != Py_None) {
                 RPS_apply_audio_filter(c->playing_audio_filter, float_buffer, 2, read_length);
             }
