@@ -681,13 +681,19 @@ class Channel(object):
             renpysound.stop(self.number)
 
 
-    def set_audio_filter(self, audio_filter):
+    def set_audio_filter(self, audio_filter, replace=False):
         """
         Sets the audio filter being applied to this channel to `audio_filter`.
         """
 
         with lock:
             self.context.audio_filter = audio_filter
+
+            if replace:
+                for q in self.queue:
+                    q.audio_filter = audio_filter
+
+                renpysound.replace_audio_filter(self.number, audio_filter)
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
 

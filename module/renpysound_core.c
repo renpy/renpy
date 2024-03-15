@@ -1172,6 +1172,42 @@ void RPS_set_secondary_volume(int channel, float vol2, float delay) {
     error(SUCCESS);
 }
 
+
+/**
+ * Replaces audio filters with the given PyObject.
+ */
+void RPS_replace_audio_filter(int channel, PyObject *new_filter) {
+
+    struct Channel *c;
+
+    if (check_channel(channel)) {
+        return;
+    }
+
+    c = &channels[channel];
+
+    LOCK_AUDIO();
+
+    if (c->playing_audio_filter) {
+        Py_DECREF(c->playing_audio_filter);
+        Py_INCREF(new_filter);
+        c->playing_audio_filter = new_filter;
+    }
+
+    if (c->queued_audio_filter) {
+        Py_DECREF(c->queued_audio_filter);
+        Py_INCREF(new_filter);
+        c->queued_audio_filter = new_filter;
+    }
+
+    UNLOCK_AUDIO();
+
+    error(SUCCESS);
+
+
+}
+
+
 PyObject *RPS_read_video(int channel) {
     struct Channel *c;
     SDL_Surface *surf = NULL;

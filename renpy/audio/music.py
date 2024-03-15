@@ -632,11 +632,16 @@ def channel_defined(channel):
         return False
 
 
-def set_audio_filter(channel, audio_filter):
+def set_audio_filter(channel, audio_filter, replace=False):
     """
     :doc: audio
 
     Sets the audio filter for sounds about to be queued to `audio_filter`.
+
+    `replace`
+        If True, the audio filter replaces the current audio filter immediately,
+        changing currenly playing sounds. If False, the audio filter will be used
+        the next time a sound is played or queued.
     """
 
     audio_filter = renpy.audio.filter.to_audio_filter(audio_filter)
@@ -645,7 +650,7 @@ def set_audio_filter(channel, audio_filter):
 
     try:
         c = renpy.audio.audio.get_channel(channel)
-        c.set_audio_filter(audio_filter)
+        c.set_audio_filter(audio_filter, replace=replace)
     except Exception:
         if renpy.config.debug_sound:
             raise

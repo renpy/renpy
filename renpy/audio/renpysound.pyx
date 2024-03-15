@@ -73,6 +73,7 @@ cdef extern from "renpysound_core.h":
     float RPS_get_volume(int channel)
     void RPS_set_pan(int channel, float pan, float delay)
     void RPS_set_secondary_volume(int channel, float vol2, float delay)
+    void RPS_replace_audio_filter(int channel, object audio_filter)
 
     void RPS_advance_time()
     int RPS_video_ready(int channel)
@@ -318,6 +319,15 @@ def set_secondary_volume(channel, volume, delay):
 
     RPS_set_secondary_volume(channel, volume, delay)
     check_error()
+
+
+def replace_audio_filter(channel, audio_filter):
+    """
+    Replaces the audio filter for `channel` with `audio_filter`.
+    """
+
+    RPS_replace_audio_filter(channel, audio_filter)
+
 
 def get_volume(channel):
     """

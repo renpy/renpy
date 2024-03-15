@@ -346,6 +346,14 @@ def set_secondary_volume(channel, volume, delay):
 
     call("set_secondary_volume", channel, volume, delay)
 
+@proxy_with_channel
+def replace_audio_filter(channel, audio_filter):
+    """
+    Replaces the audio filter for `channel` with `audio_filter`.
+    """
+
+    # call("replace_audio_filter", channel, audio_filter)
+
 
 @proxy_with_channel
 def get_volume(channel):
