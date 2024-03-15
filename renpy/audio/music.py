@@ -631,6 +631,25 @@ def channel_defined(channel):
     except Exception:
         return False
 
+
+def set_audio_filter(channel, audio_filter):
+    """
+    :doc: audio
+
+    Sets the audio filter for sounds about to be queued to `audio_filter`.
+    """
+
+    audio_filter = renpy.audio.filter.to_audio_filter(audio_filter)
+    if audio_filter.check_subchannels(2) != 2:
+        raise Exception("The final audio filter in a chain must return a result with two subchannels.")
+
+    try:
+        c = renpy.audio.audio.get_channel(channel)
+        c.set_audio_filter(audio_filter)
+    except Exception:
+        if renpy.config.debug_sound:
+            raise
+
 # Music change logic:
 
 # Use the queueing time to determine what should or should not be

@@ -680,12 +680,18 @@ class Channel(object):
             renpysound.dequeue(self.number, True)
             renpysound.stop(self.number)
 
-    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0, audio_filter=NotSet):
+
+    def set_audio_filter(self, audio_filter):
+        """
+        Sets the audio filter being applied to this channel to `audio_filter`.
+        """
 
         with lock:
+            self.context.audio_filter = audio_filter
 
-            if audio_filter is not NotSet:
-                self.context.audio_filter = audio_filter
+    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
+
+        with lock:
 
             for filename in filenames:
                 filename, _, _ = self.split_filename(filename, False)
