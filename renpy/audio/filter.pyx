@@ -22,6 +22,7 @@
 
 from libc.stdlib cimport calloc, free
 from libc.string cimport memcpy
+
 from cpython.object cimport PyObject
 
 
@@ -95,12 +96,72 @@ cdef void free_buffer(SampleBuffer *buf) nogil:
 
 cdef class AudioFilter:
 
+    def check_subchannels(self, int subchannels):
+        """
+        Checks if the filter can handle the given number of subchannels. This
+        should raise an exception if the number of subchannels is not supported,
+        and return the number of subchannels that the filter will return if is.
+        """
+
+        raise NotImplementedError("check_subchannels")
+
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
         """
         Applies the filter to the given samples.
         """
 
         return allocate_buffer(samples.subchannels, samples.length)
+
+
+cdef class SequenceFilter(AudioFilter):
+    """
+    A filter that applies a series of filters in sequence.
+    """
+
+    # The filters, in a Python list.
+    cdef list filters
+
+    # The filters, in a C array.
+    cdef PyObject *cfilters[8]
+
+    # The number of filter objects in the array.
+    cdef int filter_count
+
+    def __init__(self, filters):
+        filters = [ to_audio_filter(f) for f in filters ]
+
+        if len(filters) > 8:
+            split = len(filters) // 2
+            filters = [ SequenceFilter(filters[:split]), SequenceFilter(filters[split:]) ]
+
+        self.filters = filters
+
+        self.filter_count = len(filters)
+
+        for i, f in enumerate(filters):
+            self.filters[i] = f
+
+    def check_subchannels(self, int subchannels):
+
+        for f in self.filters:
+            subchannels = f.check_subchannels(subchannels)
+
+        return subchannels
+
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+
+        cdef SampleBuffer *result = allocate_buffer(samples.subchannels, samples.length)
+        cdef SampleBuffer *old_result = samples
+
+        for i in range(self.filter_count):
+            result = (<AudioFilter> self.cfilters[i]).apply(old_result)
+
+            if result != samples:
+                free_buffer(old_result)
+
+            old_result = result
+
+        return result
 
 
 cdef class LowpassFilter(AudioFilter):
@@ -110,6 +171,9 @@ cdef class LowpassFilter(AudioFilter):
     """
 
     cdef float last[SUBCHANNELS]
+
+    def check_subchannels(self, subchannels):
+        return subchannels
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
         """
@@ -134,7 +198,23 @@ cdef class LowpassFilter(AudioFilter):
 
         return result
 
-test_filter = LowpassFilter()
+
+def to_audio_filter(o):
+    """
+    Converts a Python object to an AudioFilter. This expands lists into
+    SequenceFilter objects, passes AudioFilter objects through, and raises
+    an exception for anything else.
+    """
+
+    if isinstance(o, AudioFilter):
+        return o
+
+    if isinstance(o, list):
+        return SequenceFilter(o)
+
+    raise TypeError("Expected an AudioFilter, got {!r}.".format(o))
+
+
 
 cdef void apply_audio_filter(AudioFilter af, float *samples, int subchannels, int length) nogil:
 
