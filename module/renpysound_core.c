@@ -102,7 +102,6 @@ static int initialized = 0;
 /** Should fades be linear rather than logarithmic? */
 static int linear_fades = 0;
 
-
 struct Interpolate {
     /* The number of samples that are finished so far. */
     unsigned int done;
@@ -1371,6 +1370,7 @@ void RPS_advance_time(void) {
 	media_advance_time();
 }
 
+
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba) {
     import_pygame_sdl2();
 
@@ -1379,6 +1379,11 @@ void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba) {
 			PySurface_AsSurface(rgba)
 		);
 
+}
+
+
+int RPS_get_sample_rate() {
+    return audio_spec.freq;
 }
 
 /*

@@ -85,6 +85,9 @@ cdef extern from "renpysound_core.h":
     void RPS_quit()
 
     void RPS_periodic()
+
+
+    int RPS_get_sample_rate()
     char *RPS_get_error()
 
     void (*RPS_generate_audio_c_function)(float *stream, int length)
@@ -445,6 +448,16 @@ def advance_time():
 
     RPS_advance_time()
 
+def get_sample_rate():
+    """
+    Returns the sample rate of the audio system.
+
+    This is not part of the  api shared with other audio implementations
+    """
+
+    return RPS_get_sample_rate()
+
+
 def set_generate_audio_c_function(fn):
     """
     This can be use to set a C function that totally replaces the Ren'Py
@@ -453,6 +466,8 @@ def set_generate_audio_c_function(fn):
     The function is expected to have the signature void (*)(short *buf, int samples,
     and fill buf with samples samples of audio, where each sample consists of two
     shorts.
+
+    This is not part of the  api shared with other audio implementations
     """
 
     global RPS_generate_audio_c_function
@@ -480,6 +495,7 @@ def sample_surfaces(rgb, rgba):
     rgba_surface = rgb
 
     RPS_sample_surfaces(rgb, rgba)
+
 
 # Is this the webaudio module?
 is_webaudio = False

@@ -56,6 +56,7 @@ void RPS_quit(void);
 void RPS_advance_time(void);
 void RPS_periodic(void);
 
+int RPS_get_sample_rate(void);
 char *RPS_get_error(void);
 
 extern void (*RPS_generate_audio_c_function)(float *stream, int length);
