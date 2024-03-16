@@ -91,6 +91,13 @@ Open build Directory
     This opens the folder containing the files produced by the build process.
 
 
+Generated folders
+-----------------
+Say, your project is in the renpy/projects/main/yourproject folder. Then you 
+will find a new renpy/projects/main/yourproject-1.0-dists folder. This folder
+contains a yourproject-1.0-web subfolder, and this subfolder's zipped version, 
+a yourproject-1.0-web.zip file.
+
 Uploading your Game
 -------------------
 
