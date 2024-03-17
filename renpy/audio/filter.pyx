@@ -25,6 +25,9 @@ from libc.string cimport memcpy
 
 from cpython.object cimport PyObject
 
+from libc.math cimport M_PI
+
+import math
 
 DEF SUBCHANNELS = 16
 
@@ -216,6 +219,205 @@ cdef class LowpassFilter(AudioFilter):
                 self.last[j] = v
 
         return result
+
+cdef class BiquadFilter(AudioFilter):
+    """
+    This is a biquad filter, based on the formulas at:
+
+    https://webaudio.github.io/Audio-EQ-Cookbook/Audio-EQ-Cookbook.txt
+
+    In this, x_0 is the input, x_1 is the input from the previous sample, and
+    x_2 is the input from two samples ago. y_0, y_1, and y_2 are the same for
+    the output.
+    """
+
+    cdef public object kind
+    cdef public float frequency
+    cdef public float q
+    cdef public float gain
+
+    # The last two samples of input data.
+    cdef float last_x_1[SUBCHANNELS]
+    cdef float last_x_2[SUBCHANNELS]
+
+    # The last two samples of output data.
+    cdef float last_y_1[SUBCHANNELS]
+    cdef float last_y_2[SUBCHANNELS]
+
+    # The coefficients.
+    cdef float cx0, cx1, cx2, cy1, cy2
+
+    cdef bint prepared
+
+    def __init__(self, kind, frequency=350, q=1.0, gain=0):
+
+        if kind not in { "lowpass", "highpass", "bandpass", "lowshelf", "highshelf", "peaking", "notch", "allpass" }:
+            raise ValueError("Invalid kind {!r}.".format(kind))
+
+        self.kind = kind
+        self.frequency = frequency
+        self.q = q
+        self.gain = gain
+
+    def check_subchannels(self, int subchannels):
+        return subchannels
+
+    def prepare(self, samplerate):
+
+        if self.prepared:
+            return
+
+        self.prepared = True
+
+        # The provided variables.
+        Fs = samplerate
+        f0 = self.frequency
+        dBgain = self.gain
+        Q = self.q
+
+        # Intermediates.
+        A = 10 ** (dBgain / 40)
+
+        w0 = 2 * M_PI * self.frequency / Fs
+
+        cos_w0 = math.cos(w0)
+        sin_w0 = math.sin(w0)
+
+        alpha = sin_w0 / (2 * Q)
+
+        two_sqrt_A_alpha = 2 * math.sqrt(A) * alpha
+
+        # The coefficients.
+        if self.kind == "lowpass":
+            b0 =  (1 - cos_w0)/2
+            b1 =   1 - cos_w0
+            b2 =  (1 - cos_w0)/2
+            a0 =   1 + alpha
+            a1 =  -2*cos_w0
+            a2 =   1 - alpha
+
+        elif self.kind == "highpass":
+
+            b0 =  (1 + cos_w0)/2
+            b1 = -(1 + cos_w0)
+            b2 =  (1 + cos_w0)/2
+            a0 =   1 + alpha
+            a1 =  -2*cos_w0
+            a2 =   1 - alpha
+
+        elif self.kind == "bandpass":
+
+            # (constant skirt gain, peak gain = Q)
+
+            b0 =   sin_w0/2
+            b1 =   0
+            b2 =  -sin_w0/2
+            a0 =   1 + alpha
+            a1 =  -2*cos_w0
+            a2 =   1 - alpha
+
+
+            # (constant 0 dB peak gain)
+
+            # b0 =   alpha
+            # b1 =   0
+            # b2 =  -alpha
+            # a0 =   1 + alpha
+            # a1 =  -2*cos_w0
+            # a2 =   1 - alpha
+
+
+        elif self.kind == "notch":
+
+            b0 =   1
+            b1 =  -2*cos_w0
+            b2 =   1
+            a0 =   1 + alpha
+            a1 =  -2*cos_w0
+            a2 =   1 - alpha
+
+
+        elif self.kind == "allpass":
+
+            b0 =   1 - alpha
+            b1 =  -2*cos_w0
+            b2 =   1 + alpha
+            a0 =   1 + alpha
+            a1 =  -2*cos_w0
+            a2 =   1 - alpha
+
+
+        elif self.kind == "peaking":
+
+            b0 =   1 + alpha*A
+            b1 =  -2*cos_w0
+            b2 =   1 - alpha*A
+            a0 =   1 + alpha/A
+            a1 =  -2*cos_w0
+            a2 =   1 - alpha/A
+
+        elif self.kind == "lowshelf":
+
+            b0 =    A*( (A+1) - (A-1)*cos_w0 + two_sqrt_A_alpha )
+            b1 =  2*A*( (A-1) - (A+1)*cos_w0                   )
+            b2 =    A*( (A+1) - (A-1)*cos_w0 - two_sqrt_A_alpha )
+            a0 =        (A+1) + (A-1)*cos_w0 + two_sqrt_A_alpha
+            a1 =   -2*( (A-1) + (A+1)*cos_w0                   )
+            a2 =        (A+1) + (A-1)*cos_w0 - two_sqrt_A_alpha
+
+
+        elif self.kind == "highshelf":
+
+            b0 =    A*( (A+1) + (A-1)*cos_w0 + two_sqrt_A_alpha )
+            b1 = -2*A*( (A-1) + (A+1)*cos_w0                   )
+            b2 =    A*( (A+1) + (A-1)*cos_w0 - two_sqrt_A_alpha )
+            a0 =        (A+1) - (A-1)*cos_w0 + two_sqrt_A_alpha
+            a1 =    2*( (A-1) - (A+1)*cos_w0                   )
+            a2 =        (A+1) - (A-1)*cos_w0 - two_sqrt_A_alpha
+
+        self.cx0 = b0 / a0
+        self.cx1 = b1 / a0
+        self.cx2 = b2 / a0
+
+        self.cy1 = a1 / a0
+        self.cy2 = a2 / a0
+
+
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+
+        cdef SampleBuffer *result = allocate_buffer(samples.subchannels, samples.length)
+        cdef int i, j
+        cdef float x0, x1, x2, y0, y1, y2
+
+
+        for j in range(samples.subchannels):
+
+            x1 = self.last_x_1[j]
+            x2 = self.last_x_2[j]
+
+            y1 = self.last_y_1[j]
+            y2 = self.last_y_2[j]
+
+            for i in range(samples.length):
+                x0 = samples.samples[i * samples.subchannels + j]
+                y0 = self.cx0 * x0 + self.cx1 * x1 + self.cx2 * x2 - self.cy1 * y1 - self.cy2 * y2
+
+                result.samples[i * samples.subchannels + j] = y0
+
+                x2 = x1
+                x1 = x0
+
+                y2 = y1
+                y1 = y0
+
+            self.last_x_1[j] = x1
+            self.last_x_2[j] = x2
+
+            self.last_y_1[j] = y1
+            self.last_y_2[j] = y2
+
+        return result
+
 
 
 def to_audio_filter(o):
