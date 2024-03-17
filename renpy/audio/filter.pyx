@@ -105,6 +105,17 @@ cdef class AudioFilter:
 
         raise NotImplementedError("check_subchannels")
 
+    def prepare(self, samplerate):
+        """
+        Prepares the filter for use at the given samplerate. This should be
+        called before apply. It should be called for all children of the filter.
+
+        Prepare may be called on the same filter multiple times, with the same
+        samplerate. It should be safe to call prepare multiple times.
+        """
+
+        raise NotImplementedError("prepare")
+
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
         """
         Applies the filter to the given samples.
@@ -148,6 +159,11 @@ cdef class SequenceFilter(AudioFilter):
 
         return subchannels
 
+    def prepare(self, int samplerate):
+
+        for f in self.filters:
+            f.prepare(samplerate)
+
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
 
         cdef SampleBuffer *result = allocate_buffer(samples.subchannels, samples.length)
@@ -174,6 +190,9 @@ cdef class LowpassFilter(AudioFilter):
 
     def check_subchannels(self, subchannels):
         return subchannels
+
+    def prepare(self, samplerate):
+        return
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
         """
