@@ -150,6 +150,8 @@ class MusicContext(renpy.revertable.RevertableObject):
 
     pause = False
     last_relative_volume = 1.0
+    audio_filter = None
+    raw_audio_filter = None
 
     def __init__(self):
 
@@ -189,6 +191,11 @@ class MusicContext(renpy.revertable.RevertableObject):
         # this channel.
         self.audio_filter = None
 
+        # The audio filter that was given to set_audio_filter. (This is usually
+        # wrapped int a Crossfade for use.)
+        self.raw_audio_filter = None
+
+
     def copy(self):
         """
         Returns a shallow copy of this context.
@@ -196,6 +203,8 @@ class MusicContext(renpy.revertable.RevertableObject):
 
         rv = MusicContext()
         rv.__dict__.update(self.__dict__)
+
+        self.audio_filter = self.raw_audio_filter
 
         return rv
 
@@ -681,19 +690,23 @@ class Channel(object):
             renpysound.stop(self.number)
 
 
-    def set_audio_filter(self, audio_filter, replace=False):
+    def set_audio_filter(self, audio_filter, replace=False, duration=0.016):
         """
         Sets the audio filter being applied to this channel to `audio_filter`.
         """
 
         with lock:
-            self.context.audio_filter = audio_filter
+
+            crossfade = renpy.audio.filter.Crossfade(self.context.raw_audio_filter, audio_filter, duration)
+
+            self.context.raw_audio_filter = audio_filter
+            self.context.audio_filter = crossfade
 
             if replace:
                 for q in self.queue:
-                    q.audio_filter = audio_filter
+                    q.audio_filter = crossfade
 
-                renpysound.replace_audio_filter(self.number, audio_filter)
+                renpysound.replace_audio_filter(self.number, crossfade)
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
 
