@@ -127,6 +127,24 @@ cdef class AudioFilter:
 
         return allocate_buffer(samples.subchannels, samples.length)
 
+
+cdef class Null(AudioFilter):
+    """
+    A Filter that returns its input.
+    """
+
+    def check_subchannels(self, int subchannels):
+        return subchannels
+
+    def prepare(self, int samplerate):
+        pass
+
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+        cdef SampleBuffer *result = allocate_buffer(samples.subchannels, samples.length)
+        memcpy(result.samples, samples.samples, samples.length * samples.subchannels * sizeof(float))
+        return result
+
+
 cdef class FilterList:
     """
     This is a list that stores some number of audio filters.
@@ -171,7 +189,10 @@ cdef class Sequence(AudioFilter):
 
     def __init__(self, filters):
 
-        filters = [ to_audio_filter(f) for f in filters ]
+        if not filters:
+            filters = [ Null() ]
+        else:
+            filters = [ to_audio_filter(f) for f in filters ]
 
         self.filters = FilterList(filters)
 
@@ -472,8 +493,8 @@ cdef class Crossfade(AudioFilter):
 
     def __init__(self, filter1, filter2, duration=0.05):
 
-        self.filter1 = to_audio_filter(filter1, True)
-        self.filter2 = to_audio_filter(filter2, True)
+        self.filter1 = to_audio_filter(filter1)
+        self.filter2 = to_audio_filter(filter2)
 
         self.duration = duration
 
@@ -481,15 +502,8 @@ cdef class Crossfade(AudioFilter):
         self.complete_samples = 0
 
     def check_subchannels(self, int subchannels):
-        if self.filter1 is not None:
-            sc1 = self.filter1.check_subchannels(subchannels)
-        else:
-            sc1 = subchannels
-
-        if self.filter2 is not None:
-            sc2 = self.filter2.check_subchannels(subchannels)
-        else:
-            sc2 = subchannels
+        sc1 = self.filter1.check_subchannels(subchannels)
+        sc2 = self.filter2.check_subchannels(subchannels)
 
         if sc1 != sc2:
             raise ValueError("Filter 1 has {} subchannels, filter 2 has {} subchannels.".format(sc1, sc2))
@@ -497,11 +511,8 @@ cdef class Crossfade(AudioFilter):
         return sc1
 
     def prepare(self, int samplerate):
-        if self.filter1 is not None:
-            self.filter1.prepare(samplerate)
-
-        if self.filter2 is not None:
-            self.filter2.prepare(samplerate)
+        self.filter1.prepare(samplerate)
+        self.filter2.prepare(samplerate)
 
         self.duration_samples = int(self.duration * samplerate)
 
@@ -513,19 +524,13 @@ cdef class Crossfade(AudioFilter):
         cdef int i, j
         cdef float done, s1, s2
 
-        if self.filter2 is not None:
-            result2 = self.filter2.apply(samples)
-        else:
-            result2 = samples
+        result2 = self.filter2.apply(samples)
 
         # Shortcut things if the fade is complete.
         if self.complete_samples >= self.duration_samples:
             return result2
 
-        if self.filter1 is not None:
-            result1 = self.filter1.apply(samples)
-        else:
-            result1 = samples
+        result1 = self.filter1.apply(samples)
 
         result = allocate_buffer(samples.subchannels, samples.length)
 
@@ -541,16 +546,13 @@ cdef class Crossfade(AudioFilter):
             if self.complete_samples < self.duration_samples:
                 self.complete_samples += 1
 
-        if (result1 != samples):
-            free_buffer(result1)
-
-        if result2 != samples:
-            free_buffer(result2)
+        free_buffer(result1)
+        free_buffer(result2)
 
         return result
 
 
-def to_audio_filter(o, none_okay=False):
+def to_audio_filter(o):
     """
     Converts a Python object to an AudioFilter. This expands lists into
     Sequence objects, passes AudioFilter objects through, and raises
@@ -562,9 +564,6 @@ def to_audio_filter(o, none_okay=False):
 
     if isinstance(o, list):
         return Sequence(o)
-
-    if none_okay and o is None:
-        return None
 
     raise TypeError("Expected an AudioFilter, got {!r}.".format(o))
 
@@ -584,8 +583,7 @@ cdef void apply_audio_filter(AudioFilter af, float *samples, int subchannels, in
 
     memcpy(samples, result_buffer.samples, length * subchannels * sizeof(float))
 
-    if result_buffer != input_buffer:
-        free_buffer(result_buffer)
+    free_buffer(result_buffer)
 
     free_buffer(input_buffer)
 

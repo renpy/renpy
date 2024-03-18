@@ -697,16 +697,24 @@ class Channel(object):
 
         with lock:
 
-            crossfade = renpy.audio.filter.Crossfade(self.context.raw_audio_filter, audio_filter, duration)
-
+            old_raw_audio_filter = self.context.raw_audio_filter
             self.context.raw_audio_filter = audio_filter
-            self.context.audio_filter = crossfade
+
+            if old_raw_audio_filter is None and audio_filter is None:
+                new_audio_filter = None
+            else:
+                new_audio_filter = renpy.audio.filter.Crossfade(
+                    old_raw_audio_filter or renpy.audio.filter.Null(),
+                    audio_filter or renpy.audio.filter.Null(),
+                    duration)
+
+            self.context.audio_filter = new_audio_filter
 
             if replace:
                 for q in self.queue:
-                    q.audio_filter = crossfade
+                    q.audio_filter = new_audio_filter
 
-                renpysound.replace_audio_filter(self.number, crossfade)
+                renpysound.replace_audio_filter(self.number, new_audio_filter)
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
 
