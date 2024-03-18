@@ -127,34 +127,53 @@ cdef class AudioFilter:
 
         return allocate_buffer(samples.subchannels, samples.length)
 
+cdef class FilterList:
+    """
+    This is a list that stores some number of audio filters.
+    """
+
+    # A list of the filters, as python objects.
+    cdef list list
+
+    # The filters.
+    cdef PyObject **filters
+
+    # The length of the list.
+    cdef int length
+
+    def __reduce__(self):
+        return (FilterList, (self.list,))
+
+    def __init__(self, filters):
+        self.list = list(filters)
+        self.length = len(filters)
+        self.filters = <PyObject **> calloc(self.length, sizeof(PyObject *))
+
+        for i, f in enumerate(filters):
+            self.filters[i] = <PyObject *> f
+
+    def __dealloc__(self):
+        free(self.filters)
+
+    cdef SampleBuffer *apply(self, int index, SampleBuffer *samples) nogil:
+        return (<AudioFilter> self.filters[index]).apply(samples)
+
+    def __iter__(self):
+        return iter(self.list)
+
 
 cdef class Sequence(AudioFilter):
     """
     A filter that applies a series of filters in sequence.
     """
 
-    # The filters, in a Python list.
-    cdef list filters
-
-    # The filters, in a C array.
-    cdef PyObject *cfilters[8]
-
-    # The number of filter objects in the array.
-    cdef int filter_count
+    cdef FilterList filters
 
     def __init__(self, filters):
+
         filters = [ to_audio_filter(f) for f in filters ]
 
-        if len(filters) > 8:
-            split = len(filters) // 2
-            filters = [ Sequence(filters[:split]), Sequence(filters[split:]) ]
-
-        self.filters = filters
-
-        self.filter_count = len(filters)
-
-        for i, f in enumerate(filters):
-            self.filters[i] = f
+        self.filters = FilterList(filters)
 
     def check_subchannels(self, int subchannels):
 
@@ -173,8 +192,8 @@ cdef class Sequence(AudioFilter):
         cdef SampleBuffer *result = allocate_buffer(samples.subchannels, samples.length)
         cdef SampleBuffer *old_result = samples
 
-        for i in range(self.filter_count):
-            result = (<AudioFilter> self.cfilters[i]).apply(old_result)
+        for i in range(self.filters.length):
+            result = self.filters.apply(i, old_result)
 
             if result != samples:
                 free_buffer(old_result)
@@ -539,7 +558,6 @@ def to_audio_filter(o, none_okay=False):
     """
 
     if isinstance(o, AudioFilter):
-        print("PATH 1", o)
         return o
 
     if isinstance(o, list):
