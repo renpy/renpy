@@ -552,6 +552,89 @@ cdef class Crossfade(AudioFilter):
         return result
 
 
+cdef class Mix(AudioFilter):
+    """
+    :doc: audio_filter
+
+    An AudioFilter that applies its input to one or more filters, and
+    then mixes the result of those filters together.
+    """
+
+    cdef FilterList filters
+
+    def __init__(self, *filters):
+        if not filters:
+            filters = [ Null() ]
+
+        filters = [ to_audio_filter(f) for f in filters ]
+        self.filters = FilterList(filters)
+
+    def check_subchannels(self, int subchannels):
+        child_subchannels = [ f.check_subchannels(subchannels) for f in self.filters ]
+        if len(set(child_subchannels)) != 1:
+            raise ValueError("All filters must have the same number of subchannels.")
+
+        return child_subchannels[0]
+
+    def prepare(self, int samplerate):
+        for f in self.filters:
+            f.prepare(samplerate)
+
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+
+            cdef SampleBuffer *result = NULL
+            cdef SampleBuffer *temp
+            cdef int i, j
+
+            for i in range(self.filters.length):
+                temp = self.filters.apply(i, samples)
+
+                if result == NULL:
+                    result = temp
+                else:
+                    for j in range(result.length * result.subchannels):
+                        result.samples[j] += temp.samples[j]
+
+                    free_buffer(temp)
+
+                return result
+
+
+cdef class Gain(AudioFilter):
+    """
+    :doc: audio_filter
+
+    An AudioFilter that applies its input to one or more filters, and
+    then multiplies the result by a gain.
+    """
+
+    cdef AudioFilter audio_filter
+    cdef float gain
+
+    def __init__(self, audio_filter, gain):
+        self.audio_filter = to_audio_filter(audio_filter)
+        self.gain = gain
+
+    def check_subchannels(self, int subchannels):
+        return self.audio_filter.check_subchannels(subchannels)
+
+    def prepare(self, int samplerate):
+        self.audio_filter.prepare(samplerate)
+
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+
+            cdef SampleBuffer *result
+            cdef int i, j
+
+            result = self.audio_filter.apply(samples)
+
+            for j in range(result.length * result.subchannels):
+                result.samples[j] *= self.gain
+
+            return result
+
+
+
 def to_audio_filter(o):
     """
     Converts a Python object to an AudioFilter. This expands lists into
