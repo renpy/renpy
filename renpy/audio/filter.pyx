@@ -127,7 +127,7 @@ cdef class AudioFilter:
         return allocate_buffer(samples.subchannels, samples.length)
 
 
-cdef class SequenceFilter(AudioFilter):
+cdef class Sequence(AudioFilter):
     """
     A filter that applies a series of filters in sequence.
     """
@@ -146,7 +146,7 @@ cdef class SequenceFilter(AudioFilter):
 
         if len(filters) > 8:
             split = len(filters) // 2
-            filters = [ SequenceFilter(filters[:split]), SequenceFilter(filters[split:]) ]
+            filters = [ Sequence(filters[:split]), Sequence(filters[split:]) ]
 
         self.filters = filters
 
@@ -429,7 +429,7 @@ cdef class Biquad(AudioFilter):
 def to_audio_filter(o):
     """
     Converts a Python object to an AudioFilter. This expands lists into
-    SequenceFilter objects, passes AudioFilter objects through, and raises
+    Sequence objects, passes AudioFilter objects through, and raises
     an exception for anything else.
     """
 
@@ -437,7 +437,7 @@ def to_audio_filter(o):
         return o
 
     if isinstance(o, list):
-        return SequenceFilter(o)
+        return Sequence(o)
 
     raise TypeError("Expected an AudioFilter, got {!r}.".format(o))
 
