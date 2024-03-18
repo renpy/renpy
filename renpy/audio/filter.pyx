@@ -183,53 +183,59 @@ cdef class SequenceFilter(AudioFilter):
         return result
 
 
-cdef class LowpassFilter(AudioFilter):
+cdef class Biquad(AudioFilter):
     """
-    A simple lowpass filter, for test purposes. This will be replaced by
-    BiQuadFilter.
+    :doc: audio_filter
+
+    The biquad filter implements a variety of common audio filters. This takes
+    three parameter, with `kind` controlling the type of filter, and the meaning
+    of `frequency`, `q`, and `gain` depending on the kind.
+
+    The following kinds of filters exist:
+
+    "lowpass", "highpass"
+        A lowpass or highpass filter, respectively. The `frequency` parameter
+        controls the cutoff frequency, and the `q` parameter controls the
+        sharpness of the cutoff. The `gain` parameter is ignored.
+
+    "bandpass"
+        A bandpass filter. The `frequency` parameter controls the center
+        frequency, and the `q` parameter controls the sharpness of the cutoff.
+        The `gain` parameter is ignored.
+
+    "lowshelf", "highshelf"
+        A lowshelf or highshelf filter, respectively. The `frequency` parameter
+        controls the center frequency. Frequencies higher or lower than `frequency`
+        get boosted by `gain` decibels, while other frequences are ignored. The
+        `q` parameter is not used.
+
+    "peaking"
+        Frequences inside a range surrounding `frequency` are boosted by `gain`
+        decibels. `q` controls the sharpness of the peak.
+
+    "notch"
+        The opposite of a bandpass filter. Frequences inside a range surrounding
+        `frequency` are ignored, while other frequences are passed through. `q`
+        controls the sharpness of the cutoff. The `gain` parameter is ignored.
+
+    "allpass"
+        A second-order allpass filter. Lets all frequencies through, but shifts
+        the phase of some frequencies. The `frequency` parameter controls the frequency
+        with the maximum group delay. `q` controls the sharpness of the phase shift.
+        `gain` is ignored.
+
+    This is meant to have similar effects to the biquad filter defined in the
+    Web Audio API, documented at `https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode`_.
+    It's implemented using the formulas from  `https://webaudio.github.io/Audio-EQ-Cookbook/Audio-EQ-Cookbook.txt`_.
     """
 
-    cdef float last[SUBCHANNELS]
+    # Based on:
 
-    def check_subchannels(self, subchannels):
-        return subchannels
+    # https://webaudio.github.io/Audio-EQ-Cookbook/Audio-EQ-Cookbook.txt
 
-    def prepare(self, samplerate):
-        return
-
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
-        """
-        Applies the filter to the given samples.
-        """
-
-        cdef int i, j, index
-        cdef float *data
-        cdef float v
-
-        result = allocate_buffer(samples.subchannels, samples.length)
-
-        for i in range(samples.length):
-            for j in range(samples.subchannels):
-                index = i * samples.subchannels + j
-
-                v = self.last[j]
-                v += (samples.samples[index] - v) * 0.05
-
-                result.samples[index] = v
-                self.last[j] = v
-
-        return result
-
-cdef class BiquadFilter(AudioFilter):
-    """
-    This is a biquad filter, based on the formulas at:
-
-    https://webaudio.github.io/Audio-EQ-Cookbook/Audio-EQ-Cookbook.txt
-
-    In this, x_0 is the input, x_1 is the input from the previous sample, and
-    x_2 is the input from two samples ago. y_0, y_1, and y_2 are the same for
-    the output.
-    """
+    # In this, x_0 is the input, x_1 is the input from the previous sample, and
+    # x_2 is the input from two samples ago. y_0, y_1, and y_2 are the same for
+    # the output.
 
     cdef public object kind
     cdef public float frequency
