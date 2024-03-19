@@ -30,8 +30,8 @@ import pygame_sdl2 as pygame
 
 import renpy
 from renpy.display.render import render, Render, redraw
-from renpy.display.core import absolute
 from renpy.display.behavior import map_event, run, run_unhovered
+from renpy.display.types import absolute
 
 import weakref
 
@@ -495,10 +495,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         """
 
         if self.parent_width is not None:
-            x = int(absolute.compute_raw(x, self.parent_width))
+            x = int(absolute.compute(x, self.parent_width))
 
         if self.parent_height is not None:
-            y = int(absolute.compute_raw(y, self.parent_height))
+            y = int(absolute.compute(y, self.parent_height))
 
         self.target_x = x
         self.target_y = y
@@ -695,10 +695,10 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
         if self.draggable or self.clicked is not None:
 
             fx, fy, fw, fh = self.drag_handle
-            fx = int(absolute.compute_raw(fx, cw))
-            fy = int(absolute.compute_raw(fy, ch))
-            fw = int(absolute.compute_raw(fw, cw))
-            fh = int(absolute.compute_raw(fh, ch))
+            fx = int(absolute.compute(fx, cw))
+            fy = int(absolute.compute(fy, ch))
+            fw = int(absolute.compute(fw, cw))
+            fh = int(absolute.compute(fh, ch))
 
             mask = self.style.focus_mask
 

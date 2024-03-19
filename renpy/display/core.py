@@ -36,9 +36,10 @@ import atexit
 import pygame_sdl2 as pygame
 import renpy
 
-from renpy.atl import position
 from renpy.display.displayable import Displayable, DisplayableArguments, place
 from renpy.display.scenelists import SceneListEntry, SceneLists
+from renpy.display.types import absolute # @UnusedImport
+
 
 import_time = time.time()
 
@@ -177,115 +178,6 @@ class EndInteraction(Exception):
 
     def __init__(self, value):
         self.value = value
-
-
-def absolute_wrap(func):
-    """
-    Wraps func into a method of absolute. The wrapped method
-    converts a float result back to absolute.
-    """
-
-    def wrapper(*args):
-        rv = func(*args)
-
-        if type(rv) is float:
-            return absolute(rv)
-        else:
-            return rv
-
-    return wrapper
-
-class absolute(float):
-    """
-    This represents an absolute float coordinate.
-    """
-
-    __slots__ = ()
-
-    def __repr__(self):
-        return "absolute({})".format(float.__repr__(self))
-
-    def __divmod__(self, value):
-        return self//value, self%value
-
-    def __rdivmod__(self, value):
-        return value//self, value%self
-
-    @staticmethod
-    def compute_raw(value, room):
-        """
-        Converts a position from one of the many supported position types
-        into an absolute number of pixels, without regard for the return type.
-        """
-        if isinstance(value, position):
-            return value.relative * room + value.absolute
-        elif isinstance(value, (absolute, int)):
-            return value
-        elif isinstance(value, float):
-            return value * room
-        raise TypeError("Value {} of type {} not recognized as a position.".format(value, type(value)))
-
-    @staticmethod
-    def compute(value, room):
-        """
-        Does the same, but converts the result to the absolute type.
-        """
-        return absolute(absolute.compute_raw(value, room))
-
-for fn in (
-    '__coerce__', # PY2
-    '__div__', # PY2
-    '__long__', # PY2
-    '__nonzero__', # PY2
-    '__rdiv__', # PY2
-
-    '__abs__',
-    '__add__',
-    # '__bool__', # non-float
-    '__ceil__',
-    # '__divmod__', # special-cased above, tuple of floats
-    # '__eq__', # non-float
-    '__floordiv__',
-    # '__format__', # non-float
-    # '__ge__', # non-float
-    # '__gt__', # non-float
-    # '__hash__', # non-float
-    # '__int__', # non-float
-    # '__le__', # non-float
-    # '__lt__', # non-float
-    '__mod__',
-    '__mul__',
-    # '__ne__', # non-float
-    '__neg__',
-    '__pos__',
-    '__pow__',
-    '__radd__',
-    # '__rdivmod__', # special-cased above, tuple of floats
-    '__rfloordiv__',
-    '__rmod__',
-    '__rmul__',
-    '__round__',
-    '__rpow__',
-    '__rsub__',
-    '__rtruediv__',
-    # '__str__', # non-float
-    '__sub__',
-    '__truediv__',
-    # '__trunc__', # non-float
-
-    # 'as_integer_ratio', # tuple of non-floats
-    'conjugate',
-    'fromhex',
-    # 'hex', # non-float
-    # 'is_integer', # non-float
-):
-    f = getattr(float, fn, None)
-    if f is not None: # for PY2-only and PY3-only methods
-        setattr(absolute, fn, absolute_wrap(f))
-
-del absolute_wrap, fn, f # type: ignore
-
-
 
 
 class MouseMove(object):

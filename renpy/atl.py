@@ -26,6 +26,8 @@ import random
 
 import renpy
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
+from renpy.display.types import dualangle, position
+
 
 def compiling(loc):
     file, number = loc # @ReservedAssignment
@@ -63,161 +65,6 @@ def pause(t):
 @atl_warper
 def instant(t):
     return 1.0
-
-
-
-class position(object):
-    """
-    A combination of relative and absolute coordinates.
-    """
-    __slots__ = ('absolute', 'relative')
-
-    def __new__(cls, absolute=0, relative=None):
-        """
-        If passed two parameters, takes them as an absolute and a relative.
-        If passed only one parameter, converts it.
-        Using __new__ so that passing a position returns it unchanged.
-        """
-        if relative is None:
-            self = cls.from_any(absolute)
-        else:
-            self = object.__new__(cls)
-            self.absolute = absolute
-            self.relative = relative
-        return self
-
-    @classmethod
-    def from_any(cls, other):
-        if isinstance(other, cls):
-            return other
-        elif type(other) is float:
-            return cls(0, other)
-        else:
-            return cls(other, 0)
-
-    def simplify(self):
-        """
-        Tries to represent this position as an int, float, or absolute, if
-        possible.
-        """
-
-        if self.relative == 0.0:
-            if self.absolute == int(self.absolute):
-                return int(self.absolute)
-            else:
-                return renpy.display.core.absolute(self.absolute)
-        elif self.absolute == 0:
-            return float(self.relative)
-        else:
-            return self
-
-    def __add__(self, other):
-        if isinstance(other, position):
-            return position(self.absolute + other.absolute, self.relative + other.relative)
-        # elif isinstance(other, (int, float)):
-        #     return self + position.from_any(other)
-        return NotImplemented
-
-    __radd__ = __add__
-
-    def __sub__(self, other):
-        return self + -other
-
-    def __rsub__(self, other):
-        return other + -self
-
-    def __mul__(self, other):
-        if isinstance(other, (int, float)):
-            return position(self.absolute * other, self.relative * other)
-        return NotImplemented
-
-    __rmul__ = __mul__
-
-    def __truediv__(self, other):
-        if isinstance(other, (int, float)):
-            return self * (1/other)
-        return NotImplemented
-
-    __div__ = __truediv__ # PY2
-
-    def __pos__(self):
-        return position(renpy.display.core.absolute(self.absolute), float(self.relative))
-
-    def __neg__(self):
-        return -1 * self
-
-    def __repr__(self):
-        return "position(absolute={}, relative={})".format(self.absolute, self.relative)
-
-
-class DualAngle(object):
-    def __init__(self, absolute, relative): # for tests, convert to PY2 after
-        self.absolute = absolute
-        self.relative = relative
-
-    @classmethod
-    def from_any(cls, other):
-        if isinstance(other, cls):
-            return other
-        elif type(other) is float:
-            return cls(other, other)
-        raise TypeError("Cannot convert {} to DualAngle".format(type(other)))
-
-    def __add__(self, other):
-        if isinstance(other, DualAngle):
-            return DualAngle(self.absolute + other.absolute, self.relative + other.relative)
-        return NotImplemented
-
-    def __sub__(self, other):
-        return self + -other
-
-    def __mul__(self, other):
-        if isinstance(other, (int, float)):
-            return DualAngle(self.absolute * other, self.relative * other)
-        return NotImplemented
-
-    __rmul__ = __mul__
-
-    def __neg__(self):
-        return -1 * self
-
-
-def position_or_none(x):
-    if x is None:
-        return None
-    return position.from_any(x)
-
-
-def any_object(x):
-    return x
-
-
-def bool_or_none(x):
-    if x is None:
-        return x
-    return bool(x)
-
-
-def float_or_none(x):
-    if x is None:
-        return x
-    return float(x)
-
-
-def matrix(x):
-    if x is None:
-        return None
-    elif callable(x):
-        return x
-    else:
-        return renpy.display.matrix.Matrix(x)
-
-
-def mesh(x):
-    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2.gl2mesh3.Mesh3, tuple)):
-        return x
-
-    return bool(x)
 
 
 # A dictionary giving property names and the corresponding type or
@@ -259,11 +106,10 @@ def interpolate(t, a, b, typ):
         if a is None:
             a = 0
 
-        if typ in (position_or_none, position):
+        if typ is position:
             if renpy.config.mixed_position:
-                a = position.from_any(a)
-                b = position.from_any(b)
-                return (1-t)*a + t*b # same result, faster execution
+                a = position(a)
+                b = position(b)
             else:
                 typ = type(b)
 
@@ -281,8 +127,8 @@ def interpolate_spline(t, spline, typ):
     if spline[0] is None:
         return spline[-1]
 
-    if renpy.config.mixed_position and typ in (position_or_none, position):
-        spline = [position_or_none(i) for i in spline]
+    if typ is position and renpy.config.mixed_position:
+        spline = [i if i is None else position(i) for i in spline]
 
     lenspline = len(spline)
 
@@ -333,8 +179,8 @@ def interpolate_spline(t, spline, typ):
 
     if rv is None:
         return None
-    else:
-        return type(spline[-1])(rv)
+
+    return type(spline[-1])(rv)
 
 
 def get_catmull_rom_value(t, p_1, p0, p1, p2):
@@ -1525,8 +1371,8 @@ class Interpolation(Statement):
                     angles = (startangle, endangle)
                     anchorradii = (startanchorradius, endanchorradius)
                     anchorangles = (
-                        DualAngle(startanchorangle_absolute, startanchorangle_relative),
-                        DualAngle(endanchorangle_absolute, endanchorangle_relative),
+                        dualangle(startanchorangle_absolute, startanchorangle_relative),
+                        dualangle(endanchorangle_absolute, endanchorangle_relative),
                     )
 
                 else:
@@ -1562,8 +1408,8 @@ class Interpolation(Statement):
                             start_relative -= 360
 
                         anchorangles = (
-                            DualAngle(start_absolute, start_relative),
-                            DualAngle(end_absolute, end_relative),
+                            dualangle(start_absolute, start_relative),
+                            dualangle(end_absolute, end_relative),
                         )
 
                     if has_anchorradius:
@@ -1611,17 +1457,17 @@ class Interpolation(Statement):
 
         if radii is not None:
             startradius, endradius = radii
-            trans.state.radius = interpolate(complete, startradius, endradius, position_or_none)
+            trans.state.radius = interpolate(complete, startradius, endradius, position)
 
         if anchorangles is not None:
             startangle, endangle = anchorangles[:2]
 
-            anchorangle = interpolate(complete, startangle, endangle, DualAngle.from_any)
+            anchorangle = interpolate(complete, startangle, endangle, dualangle)
             trans.state.anchorangle = anchorangle
 
         if anchorradii is not None:
             startradius, endradius = anchorradii
-            trans.state.anchorradius = interpolate(complete, startradius, endradius, position_or_none)
+            trans.state.anchorradius = interpolate(complete, startradius, endradius, position)
 
         # Handle any splines we might have.
         for name, values in splines:
