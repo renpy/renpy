@@ -210,18 +210,18 @@ cdef class Sequence(AudioFilter):
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
 
-        cdef SampleBuffer *result = allocate_buffer(samples.subchannels, samples.length)
+        cdef SampleBuffer *result
         cdef SampleBuffer *old_result = samples
 
         for i in range(self.filters.length):
             result = self.filters.apply(i, old_result)
 
-            if result != samples:
+            if old_result != samples:
                 free_buffer(old_result)
 
             old_result = result
 
-        return result
+        return old_result
 
 
 cdef class Biquad(AudioFilter):
@@ -563,10 +563,11 @@ cdef class Mix(AudioFilter):
     cdef FilterList filters
 
     def __init__(self, *filters):
+        filters = [ to_audio_filter(f) for f in filters ]
+
         if not filters:
             filters = [ Null() ]
 
-        filters = [ to_audio_filter(f) for f in filters ]
         self.filters = FilterList(filters)
 
     def check_subchannels(self, int subchannels):
@@ -582,14 +583,15 @@ cdef class Mix(AudioFilter):
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
 
-            cdef SampleBuffer *result = NULL
+            cdef SampleBuffer *result
             cdef SampleBuffer *temp
             cdef int i, j
 
             for i in range(self.filters.length):
+
                 temp = self.filters.apply(i, samples)
 
-                if result == NULL:
+                if i == 0:
                     result = temp
                 else:
                     for j in range(result.length * result.subchannels):
@@ -654,10 +656,13 @@ cdef class DelayBuffer:
     # The read index.
     cdef int read_index
 
-    def __init__(self, delay, sample_rate):
-        self.length = int(delay * sample_rate) + sample_rate
-        self.buffer = <float *> calloc(self.length, sizeof(float) * SUBCHANNELS)
-        self.write_index = int(delay * sample_rate)
+    def __init__(self, delay, sample_rate, subchannels):
+        samples = int((delay + 1) * sample_rate)
+
+        self.length = samples * subchannels
+
+        self.buffer = <float *> calloc(samples * subchannels, sizeof(float))
+        self.write_index = int(delay * sample_rate * subchannels)
         self.read_index = 0
 
     def __dealloc__(self):
@@ -692,25 +697,22 @@ cdef class Delay(AudioFilter):
 
     cdef DelayBuffer buffer
     cdef float delay
+    cdef int subchannels
 
     def __init__(self, delay):
         self.delay = delay
 
     def check_subchannels(self, int subchannels):
+        self.subchannels = subchannels
         return subchannels
 
     def prepare(self, int samplerate):
         if self.buffer is None:
-            self.buffer = DelayBuffer(self.delay, samplerate)
+            self.buffer = DelayBuffer(self.delay, samplerate, self.subchannels)
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
         self.buffer.queue(samples)
         return self.buffer.dequeue(samples.subchannels, samples.length)
-
-
-
-
-
 
 
 def to_audio_filter(o):
@@ -727,7 +729,6 @@ def to_audio_filter(o):
         return Sequence(o)
 
     raise TypeError("Expected an AudioFilter, got {!r}.".format(o))
-
 
 
 cdef void apply_audio_filter(AudioFilter af, float *samples, int subchannels, int length) nogil:
