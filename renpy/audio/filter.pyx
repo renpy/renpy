@@ -597,7 +597,7 @@ cdef class Mix(AudioFilter):
 
                     free_buffer(temp)
 
-                return result
+            return result
 
 
 cdef class Gain(AudioFilter):
@@ -611,27 +611,105 @@ cdef class Gain(AudioFilter):
     cdef AudioFilter audio_filter
     cdef float gain
 
-    def __init__(self, audio_filter, gain):
-        self.audio_filter = to_audio_filter(audio_filter)
+    def __init__(self, gain):
         self.gain = gain
 
     def check_subchannels(self, int subchannels):
-        return self.audio_filter.check_subchannels(subchannels)
+        return subchannels
 
     def prepare(self, int samplerate):
-        self.audio_filter.prepare(samplerate)
+        return
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
 
             cdef SampleBuffer *result
             cdef int i, j
 
-            result = self.audio_filter.apply(samples)
+            result = allocate_buffer(samples.subchannels, samples.length)
 
             for j in range(result.length * result.subchannels):
-                result.samples[j] *= self.gain
+                result.samples[j] = samples.samples[j] * self.gain
 
             return result
+
+
+cdef class DelayBuffer:
+    """
+    :undocumented:
+
+    This implements a buffer that delays its input by a certain number of samples.
+    It expects that the same number of samples will be added and removed each time
+    a filter is applied, but it doesn't enforce an order.
+    """
+
+    # The number of samples in the buffer.
+    cdef int length
+
+    # The samples stored in this buffer.
+    cdef float *buffer
+
+    # The write index.
+    cdef int write_index
+
+    # The read index.
+    cdef int read_index
+
+    def __init__(self, delay, sample_rate):
+        self.length = int(delay * sample_rate) + sample_rate
+        self.buffer = <float *> calloc(self.length, sizeof(float) * SUBCHANNELS)
+        self.write_index = int(delay * sample_rate)
+        self.read_index = 0
+
+    def __dealloc__(self):
+        free(self.buffer)
+
+    cdef void queue(self, SampleBuffer *samples) nogil:
+
+        cdef int i, j
+
+        for i in range(samples.length):
+            for j in range(samples.subchannels):
+                self.buffer[self.write_index] = samples.samples[i * samples.subchannels + j]
+                self.write_index = (self.write_index + 1) % self.length
+
+    cdef SampleBuffer * dequeue(self, int subchannels, int length) nogil:
+
+        cdef SampleBuffer *result = allocate_buffer(subchannels, length)
+        cdef int i, j
+
+        for i in range(length):
+            for j in range(subchannels):
+                result.samples[i * subchannels + j] = self.buffer[self.read_index]
+                self.read_index = (self.read_index + 1) % self.length
+
+        return result
+
+
+cdef class Delay(AudioFilter):
+    """
+    :doc: audio_filter
+    """
+
+    cdef DelayBuffer buffer
+    cdef float delay
+
+    def __init__(self, delay):
+        self.delay = delay
+
+    def check_subchannels(self, int subchannels):
+        return subchannels
+
+    def prepare(self, int samplerate):
+        if self.buffer is None:
+            self.buffer = DelayBuffer(self.delay, samplerate)
+
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+        self.buffer.queue(samples)
+        return self.buffer.dequeue(samples.subchannels, samples.length)
+
+
+
+
 
 
 
