@@ -30,7 +30,7 @@ from libc.stdio cimport printf
 
 import math
 
-DEF SUBCHANNELS = 16
+DEF SUBCHANNELS = 2
 
 # A list of samples that are being passed around through the filter system.
 # Sample i of channel j is at data[i * subchannels + j].
@@ -56,7 +56,7 @@ cdef struct SampleBuffer:
     SampleBuffer *next
 
 # A linked list of sample buffers with 0-16 subchannels.
-cdef SampleBuffer *free_buffers[SUBCHANNELS]
+cdef SampleBuffer *free_buffers[SUBCHANNELS+1]
 
 cdef SampleBuffer *allocate_buffer(int subchannels, int length) nogil:
     """
