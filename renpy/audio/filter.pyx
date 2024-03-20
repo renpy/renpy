@@ -613,8 +613,8 @@ cdef class Gain(AudioFilter):
     cdef AudioFilter audio_filter
     cdef float gain
 
-    def __init__(self, gain):
-        self.gain = gain
+    def __init__(self, db):
+        self.gain = 10 ** (db / 20)
 
     def check_subchannels(self, int subchannels):
         return subchannels
