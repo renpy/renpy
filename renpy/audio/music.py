@@ -632,25 +632,30 @@ def channel_defined(channel):
         return False
 
 
-def set_audio_filter(channel, audio_filter, replace=False):
+def set_audio_filter(channel, audio_filter, replace=False, duration=0.016):
     """
     :doc: audio
 
     Sets the audio filter for sounds about to be queued to `audio_filter`.
 
+    `audio_filter`
+        Must be a subtype of :class:`renpy.audio.filter.AudioFilter`,
+        or a list containing these subtypes or ``None``.
     `replace`
         If True, the audio filter replaces the current audio filter immediately,
         changing currenly playing sounds. If False, the audio filter will be used
         the next time a sound is played or queued.
+    `duration`
+        Duration of smooth replacement between filters.
     """
-
-    audio_filter = renpy.audio.filter.to_audio_filter(audio_filter)
-    if audio_filter.check_subchannels(2) != 2:
-        raise Exception("The final audio filter in a chain must return a result with two subchannels.")
+    if audio_filter is not None:
+        audio_filter = renpy.audio.filter.to_audio_filter(audio_filter)
+        if audio_filter.check_subchannels(2) != 2:
+            raise Exception("The final audio filter in a chain must return a result with two subchannels.")
 
     try:
         c = renpy.audio.audio.get_channel(channel)
-        c.set_audio_filter(audio_filter, replace=replace)
+        c.set_audio_filter(audio_filter, replace=replace, duration=duration)
     except Exception:
         if renpy.config.debug_sound:
             raise
