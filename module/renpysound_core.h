@@ -61,7 +61,7 @@ char *RPS_get_error(void);
 
 extern void (*RPS_generate_audio_c_function)(float *stream, int length);
 
-typedef void (* apply_audio_filter_type)(PyObject *, float *, int, int);
+typedef void (* apply_audio_filter_type)(PyObject *, float *, int, int, int);
 extern apply_audio_filter_type RPS_apply_audio_filter;
 
 #endif

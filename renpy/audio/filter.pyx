@@ -583,7 +583,7 @@ cdef class Mix(AudioFilter):
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
 
-            cdef SampleBuffer *result
+            cdef SampleBuffer *result = NULL
             cdef SampleBuffer *temp
             cdef int i, j
 
@@ -707,10 +707,17 @@ cdef class Delay(AudioFilter):
         return subchannels
 
     def prepare(self, int samplerate):
-        if self.buffer is None:
+        if self.buffer is None and self.delay > 0.01:
             self.buffer = DelayBuffer(self.delay, samplerate, self.subchannels)
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+        cdef SampleBuffer *result
+
+        if self.delay < 0.01:
+            result = allocate_buffer(samples.subchannels, samples.length)
+            memcpy(result.samples, samples.samples, samples.length * samples.subchannels * sizeof(float))
+            return result
+
         self.buffer.queue(samples)
         return self.buffer.dequeue(samples.subchannels, samples.length)
 
@@ -731,23 +738,31 @@ def to_audio_filter(o):
     raise TypeError("Expected an AudioFilter, got {!r}.".format(o))
 
 
-cdef void apply_audio_filter(AudioFilter af, float *samples, int subchannels, int length) nogil:
+cdef void apply_audio_filter(AudioFilter af, float *samples, int subchannels, int length, int samplerate) nogil:
 
     cdef SampleBuffer *input_buffer
     cdef SampleBuffer *result_buffer
     cdef int i, j
 
-    input_buffer = allocate_buffer(subchannels, length)
+    # We process data in 10ms chunks.
+    cdef int remaining = length
 
-    memcpy(input_buffer.samples, samples, length * subchannels * sizeof(float))
+    while remaining > 0:
+        length = min(remaining, samplerate // 100)
 
-    result_buffer = af.apply(input_buffer)
+        input_buffer = allocate_buffer(subchannels, length)
 
-    memcpy(samples, result_buffer.samples, length * subchannels * sizeof(float))
+        memcpy(input_buffer.samples, samples, length * subchannels * sizeof(float))
 
-    free_buffer(result_buffer)
+        result_buffer = af.apply(input_buffer)
 
-    free_buffer(input_buffer)
+        memcpy(samples, result_buffer.samples, length * subchannels * sizeof(float))
+
+        free_buffer(result_buffer)
+        free_buffer(input_buffer)
+
+        samples += length * subchannels
+        remaining -= length
 
     return
 
