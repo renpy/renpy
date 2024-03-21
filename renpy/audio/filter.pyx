@@ -707,7 +707,7 @@ cdef class Delay(AudioFilter):
         return subchannels
 
     def prepare(self, int samplerate):
-        if self.buffer is None and self.delay > 0.01:
+        if self.buffer is None and self.delay >= 0.01:
             self.buffer = DelayBuffer(self.delay, samplerate, self.subchannels)
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
@@ -721,6 +721,66 @@ cdef class Delay(AudioFilter):
         self.buffer.queue(samples)
         return self.buffer.dequeue(samples.subchannels, samples.length)
 
+
+cdef class Comb(AudioFilter):
+    """
+    :doc: audio_filter
+    """
+
+    cdef DelayBuffer buffer
+    cdef AudioFilter filter
+    cdef int subchannels
+    cdef float delay
+    cdef float gain
+
+    def __init__(self, delay, filter=None, gain=-6):
+        self.delay = delay
+        self.gain = 10 ** (gain / 20)
+
+        if filter is None:
+            filter = Null()
+
+        self.filter = to_audio_filter(filter)
+
+    def check_subchannels(self, int subchannels):
+        self.subchannels = subchannels
+
+        if self.filter.check_subchannels(subchannels) != subchannels:
+            raise ValueError("Filter must have the same number of subchannels as the comb filter.")
+
+        return subchannels
+
+    def prepare(self, int samplerate):
+        if self.buffer is None and self.delay > 0.01:
+            self.buffer = DelayBuffer(self.delay, samplerate, self.subchannels)
+
+        self.filter.prepare(samplerate)
+
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+
+        cdef SampleBuffer *result
+        cdef SampleBuffer *delayed
+        cdef SampleBuffer *filtered
+        cdef int i, j
+
+        if self.delay < 0.01:
+            result = allocate_buffer(samples.subchannels, samples.length)
+            memcpy(result.samples, samples.samples, samples.length * samples.subchannels * sizeof(float))
+            return result
+
+        delayed = self.buffer.dequeue(samples.subchannels, samples.length)
+        filtered = self.filter.apply(delayed)
+        result = allocate_buffer(samples.subchannels, samples.length)
+
+        for i in range(samples.length * samples.subchannels):
+            result.samples[i] = filtered.samples[i] * self.gain + samples.samples[i]
+
+        self.buffer.queue(result)
+
+        free_buffer(delayed)
+        free_buffer(filtered)
+
+        return result
 
 def to_audio_filter(o):
     """
