@@ -785,6 +785,28 @@ cdef class Comb(AudioFilter):
 
         return result
 
+
+def Reverb(
+    resonance=.7,
+    dampening=3000,
+    delay_times=[0.0353, 0.0367, 0.0338, 0.0322, 0.029, 0.0307, 0.0269, 0.0253],
+    allpass_frequences=[225, 556, 441, 341]):
+
+    comb_filters = [ ]
+
+    for i in delay_times:
+        comb_filters.append(Comb(i, [ Biquad('lowpass', dampening),  Multiply(resonance) ]))
+
+    rv = [ Mix(*comb_filters) ]
+
+    for i in allpass_frequences:
+        rv.append( Biquad("allpass", i) )
+
+    rv.append(Multiply(0.2))
+
+    return rv
+
+
 def to_audio_filter(o):
     """
     Converts a Python object to an AudioFilter. This expands lists into
