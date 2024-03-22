@@ -188,10 +188,12 @@ scrollbar_bar_properties = [ PrefixStyle("scrollbar_", i) for i in bar_property_
 vscrollbar_bar_properties = [ PrefixStyle("vscrollbar_", i) for i in bar_property_names ]
 
 box_property_names = [
+    "box_align",
     "box_layout",
     "box_wrap",
     "box_wrap_spacing",
     "box_reverse",
+    "justify",
     "order_reverse",
     "spacing",
     "first_spacing",
