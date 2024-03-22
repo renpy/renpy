@@ -591,7 +591,7 @@ cdef class Mix(AudioFilter):
 
                 temp = self.filters.apply(i, samples)
 
-                if i == 0:
+                if result == NULL:
                     result = temp
                 else:
                     for j in range(result.length * result.subchannels):
@@ -602,19 +602,18 @@ cdef class Mix(AudioFilter):
             return result
 
 
-cdef class Gain(AudioFilter):
+cdef class Multiply(AudioFilter):
     """
     :doc: audio_filter
 
-    An AudioFilter that applies its input to one or more filters, and
-    then multiplies the result by a gain.
+    An AudioFilter that multiplies its result by a constant multiplier.
     """
 
     cdef AudioFilter audio_filter
-    cdef float gain
+    cdef float multiplier
 
-    def __init__(self, db):
-        self.gain = 10 ** (db / 20)
+    def __init__(self, multiplier):
+        self.multiplier = multiplier
 
     def check_subchannels(self, int subchannels):
         return subchannels
@@ -630,9 +629,13 @@ cdef class Gain(AudioFilter):
             result = allocate_buffer(samples.subchannels, samples.length)
 
             for j in range(result.length * result.subchannels):
-                result.samples[j] = samples.samples[j] * self.gain
+                result.samples[j] = samples.samples[j] * self.multiplier
 
             return result
+
+
+def Gain(db):
+    return Multiply(10 ** (db / 20))
 
 
 cdef class DelayBuffer:
@@ -731,11 +734,11 @@ cdef class Comb(AudioFilter):
     cdef AudioFilter filter
     cdef int subchannels
     cdef float delay
-    cdef float gain
+    cdef float multiplier
 
-    def __init__(self, delay, filter=None, gain=-6):
+    def __init__(self, delay, filter=None, multiplier=1.0):
         self.delay = delay
-        self.gain = 10 ** (gain / 20)
+        self.multiplier = multiplier
 
         if filter is None:
             filter = Null()
@@ -773,7 +776,7 @@ cdef class Comb(AudioFilter):
         result = allocate_buffer(samples.subchannels, samples.length)
 
         for i in range(samples.length * samples.subchannels):
-            result.samples[i] = filtered.samples[i] * self.gain + samples.samples[i]
+            result.samples[i] = filtered.samples[i] * self.multiplier + samples.samples[i]
 
         self.buffer.queue(result)
 
