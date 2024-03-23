@@ -835,24 +835,32 @@ cdef class WetDry(AudioFilter):
 
 
 def Reverb(
-    resonance=.7,
-    dampening=3000,
-    delay_times=[0.0353, 0.0367, 0.0338, 0.0322, 0.029, 0.0307, 0.0269, 0.0253],
-    allpass_frequences=[225, 556, 441, 341]):
+    resonance=.5,
+    dampening=440,
+    wet=1.0,
+    dry=1.0,
+    delay_multiplier=1.0,
+    delay_times=[0.0253, 0.0269, 0.029, 0.0307, 0.0322, 0.0338, 0.0353, 0.0367],
+    allpass_frequences=[225, 556, 441, 341],
+    ):
+
+    # This prevents the reverb from going out of control.
+    resonance *= .85
+
+    # Apply delay_multiplier to the delay times.
+    delay_times = [ d * delay_multiplier for d in delay_times ]
 
     comb_filters = [ ]
 
     for i in delay_times:
-        comb_filters.append(Comb(i, [ Biquad('lowpass', dampening),  Multiply(resonance) ]))
+        comb_filters.append(Comb(i, Biquad('lowpass', dampening), resonance, False))
 
     rv = [ Mix(*comb_filters) ]
 
     for i in allpass_frequences:
         rv.append( Biquad("allpass", i) )
 
-    rv.append(Multiply(0.2))
-
-    return rv
+    return WetDry(rv, wet, dry)
 
 
 def to_audio_filter(o):
