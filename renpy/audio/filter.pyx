@@ -735,10 +735,14 @@ cdef class Comb(AudioFilter):
     cdef int subchannels
     cdef float delay
     cdef float multiplier
+    cdef bint wet
 
-    def __init__(self, delay, filter=None, multiplier=1.0):
+    def __init__(self, delay, filter=None, multiplier=1.0, wet=True):
+
+
         self.delay = delay
         self.multiplier = multiplier
+        self.wet = False
 
         if filter is None:
             filter = Null()
@@ -761,9 +765,9 @@ cdef class Comb(AudioFilter):
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
 
-        cdef SampleBuffer *result
         cdef SampleBuffer *delayed
-        cdef SampleBuffer *filtered
+        cdef SampleBuffer *result
+        cdef SampleBuffer *with_wet
         cdef int i, j
 
         if self.delay < 0.01:
@@ -773,14 +777,58 @@ cdef class Comb(AudioFilter):
 
         delayed = self.buffer.dequeue(samples.subchannels, samples.length)
         filtered = self.filter.apply(delayed)
+        with_wet = allocate_buffer(samples.subchannels, samples.length)
+
+        for i in range(samples.length * samples.subchannels):
+            filtered.samples[i] = filtered.samples[i] * self.multiplier
+            with_wet.samples[i] = filtered.samples[i] + samples.samples[i]
+
+        self.buffer.queue(with_wet)
+
+        free_buffer(delayed)
+
+        if self.wet:
+            free_buffer(filtered)
+            return with_wet
+        else:
+            free_buffer(with_wet)
+            return filtered
+
+
+cdef class WetDry(AudioFilter):
+    """
+    :doc: audio_filter
+    """
+
+    cdef AudioFilter filter
+    cdef float wet
+    cdef float dry
+
+    def __init__(self, filter, wet=1.0, dry=1.0):
+        self.filter = to_audio_filter(filter)
+        self.wet = wet
+        self.dry = dry
+
+
+    def check_subchannels(self, int subchannels):
+        subchannels = self.filter.check_subchannels(subchannels)
+        return subchannels
+
+    def prepare(self, int samplerate):
+        self.filter.prepare(samplerate)
+
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+
+        cdef SampleBuffer *result
+        cdef SampleBuffer *filtered
+        cdef int i, j
+
+        filtered = self.filter.apply(samples)
         result = allocate_buffer(samples.subchannels, samples.length)
 
         for i in range(samples.length * samples.subchannels):
-            result.samples[i] = filtered.samples[i] * self.multiplier + samples.samples[i]
+            result.samples[i] = samples.samples[i] * self.dry + filtered.samples[i] * self.wet
 
-        self.buffer.queue(result)
-
-        free_buffer(delayed)
         free_buffer(filtered)
 
         return result
