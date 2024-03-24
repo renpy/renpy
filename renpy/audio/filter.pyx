@@ -147,9 +147,6 @@ cdef class FilterList:
     # The length of the list.
     cdef int length
 
-    def __reduce__(self):
-        return (FilterList, (self.list,))
-
     def __init__(self, filters):
         self.list = list(filters)
         self.length = len(filters)
@@ -183,6 +180,9 @@ cdef class Sequence(AudioFilter):
             filters = [ to_audio_filter(f) for f in filters ]
 
         self.filters = FilterList(filters)
+
+    def __reduce__(self):
+        return (Sequence, (self.filters.list,))
 
     def prepare(self, int samplerate):
 
@@ -287,6 +287,9 @@ cdef class Biquad(AudioFilter):
         self.q = q
         self.gain = gain
 
+    def __reduce__(self):
+        return (Biquad, (self.kind, self.frequency, self.q, self.gain))
+
     def prepare(self, samplerate):
 
         if self.prepared:
@@ -341,7 +344,6 @@ cdef class Biquad(AudioFilter):
             a1 =  -2*cos_w0
             a2 =   1 - alpha
 
-
             # (constant 0 dB peak gain)
 
             # b0 =   alpha
@@ -350,7 +352,6 @@ cdef class Biquad(AudioFilter):
             # a0 =   1 + alpha
             # a1 =  -2*cos_w0
             # a2 =   1 - alpha
-
 
         elif self.kind == "notch":
 
@@ -361,7 +362,6 @@ cdef class Biquad(AudioFilter):
             a1 =  -2*cos_w0
             a2 =   1 - alpha
 
-
         elif self.kind == "allpass":
 
             b0 =   1 - alpha
@@ -370,7 +370,6 @@ cdef class Biquad(AudioFilter):
             a0 =   1 + alpha
             a1 =  -2*cos_w0
             a2 =   1 - alpha
-
 
         elif self.kind == "peaking":
 
@@ -389,7 +388,6 @@ cdef class Biquad(AudioFilter):
             a0 =        (A+1) + (A-1)*cos_w0 + two_sqrt_A_alpha
             a1 =   -2*( (A-1) + (A+1)*cos_w0                   )
             a2 =        (A+1) + (A-1)*cos_w0 - two_sqrt_A_alpha
-
 
         elif self.kind == "highshelf":
 
@@ -479,6 +477,9 @@ cdef class Crossfade(AudioFilter):
         self.duration_samples = 0
         self.complete_samples = 0
 
+    def __reduce__(self):
+        return (Crossfade, (self.filter1, self.filter2, self.duration))
+
     def prepare(self, int samplerate):
         self.filter1.prepare(samplerate)
         self.filter2.prepare(samplerate)
@@ -539,6 +540,9 @@ cdef class Mix(AudioFilter):
 
         self.filters = FilterList(filters)
 
+    def __reduce__(self):
+        return (Mix, (self.filters.list,))
+
     def prepare(self, int samplerate):
         for f in self.filters:
             f.prepare(samplerate)
@@ -571,11 +575,13 @@ cdef class Multiply(AudioFilter):
     An AudioFilter that multiplies its result by a constant multiplier.
     """
 
-    cdef AudioFilter audio_filter
     cdef float multiplier
 
     def __init__(self, multiplier):
         self.multiplier = multiplier
+
+    def __reduce__(self):
+        return (Multiply, (self.multiplier,))
 
     def prepare(self, int samplerate):
         return
@@ -681,6 +687,9 @@ cdef class Delay(AudioFilter):
         else:
             self.max_delay = max(delay)
 
+    def __reduce__(self):
+        return (Delay, (self.delay,))
+
     def prepare(self, int samplerate):
 
         if self.buffer is None and self.max_delay >= 0.01:
@@ -726,6 +735,9 @@ cdef class Comb(AudioFilter):
             filter = Null()
 
         self.filter = to_audio_filter(filter)
+
+    def __reduce__(self):
+        return (Comb, (self.delay, self.filter, self.multiplier, self.wet))
 
     def prepare(self, int samplerate):
         if self.buffer is None and self.max_delay >= 0.01:
@@ -778,6 +790,9 @@ cdef class WetDry(AudioFilter):
         self.filter = to_audio_filter(filter)
         self.wet = wet
         self.dry = dry
+
+    def __reduce__(self):
+        return (WetDry, (self.filter, self.wet, self.dry))
 
     def prepare(self, int samplerate):
         self.filter.prepare(samplerate)
