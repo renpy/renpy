@@ -654,19 +654,28 @@ cdef class DelayBuffer:
     cdef float *buffer
 
     # The write index.
-    cdef int write_index
+    cdef int write_index[SUBCHANNELS]
 
     # The read index.
-    cdef int read_index
+    cdef int read_index[SUBCHANNELS]
 
     def __init__(self, delay, sample_rate, subchannels):
-        samples = int((delay + 1) * sample_rate)
 
-        self.length = samples * subchannels
+        if not isinstance(delay, (list, tuple)):
+            delay = [ delay ] * subchannels
+        else:
+            if len(delay) != subchannels:
+                raise ValueError("Delay must be a single value or a list of values with the same length as the number of subchannels.")
+
+
+        samples = int((max(delay) + 1) * sample_rate)
+        self.length = samples
 
         self.buffer = <float *> calloc(samples * subchannels, sizeof(float))
-        self.write_index = int(delay * sample_rate * subchannels)
-        self.read_index = 0
+
+        for j in range(subchannels):
+            self.write_index[j] = int(delay[j] * sample_rate)
+            self.read_index[j] = 0
 
     def __dealloc__(self):
         free(self.buffer)
@@ -677,8 +686,8 @@ cdef class DelayBuffer:
 
         for i in range(samples.length):
             for j in range(samples.subchannels):
-                self.buffer[self.write_index] = samples.samples[i * samples.subchannels + j]
-                self.write_index = (self.write_index + 1) % self.length
+                self.buffer[self.write_index[j]] = samples.samples[i * samples.subchannels + j]
+                self.write_index[j] = (self.write_index[j] + 1) % self.length
 
     cdef SampleBuffer * dequeue(self, int subchannels, int length) nogil:
 
@@ -687,8 +696,8 @@ cdef class DelayBuffer:
 
         for i in range(length):
             for j in range(subchannels):
-                result.samples[i * subchannels + j] = self.buffer[self.read_index]
-                self.read_index = (self.read_index + 1) % self.length
+                result.samples[i * subchannels + j] = self.buffer[self.read_index[j]]
+                self.read_index[j] = (self.read_index[j] + 1) % self.length
 
         return result
 
@@ -699,24 +708,34 @@ cdef class Delay(AudioFilter):
     """
 
     cdef DelayBuffer buffer
-    cdef float delay
+    cdef object delay
+    cdef float max_delay
     cdef int subchannels
+
+    def __cinit__(self):
+        self.buffer = None
 
     def __init__(self, delay):
         self.delay = delay
+
+        if not isinstance(delay, (list, tuple)):
+            self.max_delay = delay
+        else:
+            self.max_delay = max(delay)
 
     def check_subchannels(self, int subchannels):
         self.subchannels = subchannels
         return subchannels
 
     def prepare(self, int samplerate):
-        if self.buffer is None and self.delay >= 0.01:
+
+        if self.buffer is None and self.max_delay >= 0.01:
             self.buffer = DelayBuffer(self.delay, samplerate, self.subchannels)
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
         cdef SampleBuffer *result
 
-        if self.delay < 0.01:
+        if self.max_delay < 0.01:
             result = allocate_buffer(samples.subchannels, samples.length)
             memcpy(result.samples, samples.samples, samples.length * samples.subchannels * sizeof(float))
             return result
@@ -733,14 +752,20 @@ cdef class Comb(AudioFilter):
     cdef DelayBuffer buffer
     cdef AudioFilter filter
     cdef int subchannels
-    cdef float delay
+    cdef object delay
+    cdef float max_delay
     cdef float multiplier
     cdef bint wet
 
     def __init__(self, delay, filter=None, multiplier=1.0, wet=True):
 
-
         self.delay = delay
+
+        if not isinstance(delay, (list, tuple)):
+            self.max_delay = delay
+        else:
+            self.max_delay = max(delay)
+
         self.multiplier = multiplier
         self.wet = False
 
@@ -758,7 +783,7 @@ cdef class Comb(AudioFilter):
         return subchannels
 
     def prepare(self, int samplerate):
-        if self.buffer is None and self.delay > 0.01:
+        if self.buffer is None and self.max_delay >= 0.01:
             self.buffer = DelayBuffer(self.delay, samplerate, self.subchannels)
 
         self.filter.prepare(samplerate)
@@ -770,7 +795,7 @@ cdef class Comb(AudioFilter):
         cdef SampleBuffer *with_wet
         cdef int i, j
 
-        if self.delay < 0.01:
+        if self.max_delay < 0.01:
             result = allocate_buffer(samples.subchannels, samples.length)
             memcpy(result.samples, samples.samples, samples.length * samples.subchannels * sizeof(float))
             return result
@@ -841,6 +866,7 @@ def Reverb(
     dry=1.0,
     delay_multiplier=1.0,
     delay_times=[0.0253, 0.0269, 0.029, 0.0307, 0.0322, 0.0338, 0.0353, 0.0367],
+    delay_subchannel=0.001,
     allpass_frequences=[225, 556, 441, 341],
     ):
 
@@ -853,7 +879,7 @@ def Reverb(
     comb_filters = [ ]
 
     for i in delay_times:
-        comb_filters.append(Comb(i, Biquad('lowpass', dampening), resonance, False))
+        comb_filters.append(Comb([ i, i + delay_subchannel ], Biquad('lowpass', dampening), resonance, False))
 
     rv = [ Mix(*comb_filters) ]
 
