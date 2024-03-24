@@ -650,8 +650,6 @@ def set_audio_filter(channel, audio_filter, replace=False, duration=0.016):
     """
     if audio_filter is not None:
         audio_filter = renpy.audio.filter.to_audio_filter(audio_filter)
-        if audio_filter.check_subchannels(2) != 2:
-            raise Exception("The final audio filter in a chain must return a result with two subchannels.")
 
     try:
         c = renpy.audio.audio.get_channel(channel)

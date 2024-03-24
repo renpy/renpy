@@ -100,15 +100,6 @@ cdef void free_buffer(SampleBuffer *buf) nogil:
 
 cdef class AudioFilter:
 
-    def check_subchannels(self, int subchannels):
-        """
-        Checks if the filter can handle the given number of subchannels. This
-        should raise an exception if the number of subchannels is not supported,
-        and return the number of subchannels that the filter will return if is.
-        """
-
-        raise NotImplementedError("check_subchannels")
-
     def prepare(self, samplerate):
         """
         Prepares the filter for use at the given samplerate. This should be
@@ -132,9 +123,6 @@ cdef class Null(AudioFilter):
     """
     A Filter that returns its input.
     """
-
-    def check_subchannels(self, int subchannels):
-        return subchannels
 
     def prepare(self, int samplerate):
         pass
@@ -195,13 +183,6 @@ cdef class Sequence(AudioFilter):
             filters = [ to_audio_filter(f) for f in filters ]
 
         self.filters = FilterList(filters)
-
-    def check_subchannels(self, int subchannels):
-
-        for f in self.filters:
-            subchannels = f.check_subchannels(subchannels)
-
-        return subchannels
 
     def prepare(self, int samplerate):
 
@@ -305,9 +286,6 @@ cdef class Biquad(AudioFilter):
         self.frequency = frequency
         self.q = q
         self.gain = gain
-
-    def check_subchannels(self, int subchannels):
-        return subchannels
 
     def prepare(self, samplerate):
 
@@ -501,15 +479,6 @@ cdef class Crossfade(AudioFilter):
         self.duration_samples = 0
         self.complete_samples = 0
 
-    def check_subchannels(self, int subchannels):
-        sc1 = self.filter1.check_subchannels(subchannels)
-        sc2 = self.filter2.check_subchannels(subchannels)
-
-        if sc1 != sc2:
-            raise ValueError("Filter 1 has {} subchannels, filter 2 has {} subchannels.".format(sc1, sc2))
-
-        return sc1
-
     def prepare(self, int samplerate):
         self.filter1.prepare(samplerate)
         self.filter2.prepare(samplerate)
@@ -570,13 +539,6 @@ cdef class Mix(AudioFilter):
 
         self.filters = FilterList(filters)
 
-    def check_subchannels(self, int subchannels):
-        child_subchannels = [ f.check_subchannels(subchannels) for f in self.filters ]
-        if len(set(child_subchannels)) != 1:
-            raise ValueError("All filters must have the same number of subchannels.")
-
-        return child_subchannels[0]
-
     def prepare(self, int samplerate):
         for f in self.filters:
             f.prepare(samplerate)
@@ -614,9 +576,6 @@ cdef class Multiply(AudioFilter):
 
     def __init__(self, multiplier):
         self.multiplier = multiplier
-
-    def check_subchannels(self, int subchannels):
-        return subchannels
 
     def prepare(self, int samplerate):
         return
@@ -710,7 +669,6 @@ cdef class Delay(AudioFilter):
     cdef DelayBuffer buffer
     cdef object delay
     cdef float max_delay
-    cdef int subchannels
 
     def __cinit__(self):
         self.buffer = None
@@ -723,14 +681,10 @@ cdef class Delay(AudioFilter):
         else:
             self.max_delay = max(delay)
 
-    def check_subchannels(self, int subchannels):
-        self.subchannels = subchannels
-        return subchannels
-
     def prepare(self, int samplerate):
 
         if self.buffer is None and self.max_delay >= 0.01:
-            self.buffer = DelayBuffer(self.delay, samplerate, self.subchannels)
+            self.buffer = DelayBuffer(self.delay, samplerate, SUBCHANNELS)
 
     cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
         cdef SampleBuffer *result
@@ -751,7 +705,6 @@ cdef class Comb(AudioFilter):
 
     cdef DelayBuffer buffer
     cdef AudioFilter filter
-    cdef int subchannels
     cdef object delay
     cdef float max_delay
     cdef float multiplier
@@ -774,17 +727,9 @@ cdef class Comb(AudioFilter):
 
         self.filter = to_audio_filter(filter)
 
-    def check_subchannels(self, int subchannels):
-        self.subchannels = subchannels
-
-        if self.filter.check_subchannels(subchannels) != subchannels:
-            raise ValueError("Filter must have the same number of subchannels as the comb filter.")
-
-        return subchannels
-
     def prepare(self, int samplerate):
         if self.buffer is None and self.max_delay >= 0.01:
-            self.buffer = DelayBuffer(self.delay, samplerate, self.subchannels)
+            self.buffer = DelayBuffer(self.delay, samplerate, SUBCHANNELS)
 
         self.filter.prepare(samplerate)
 
@@ -833,11 +778,6 @@ cdef class WetDry(AudioFilter):
         self.filter = to_audio_filter(filter)
         self.wet = wet
         self.dry = dry
-
-
-    def check_subchannels(self, int subchannels):
-        subchannels = self.filter.check_subchannels(subchannels)
-        return subchannels
 
     def prepare(self, int samplerate):
         self.filter.prepare(samplerate)
