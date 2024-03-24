@@ -121,7 +121,9 @@ cdef class AudioFilter:
 
 cdef class Null(AudioFilter):
     """
-    A Filter that returns its input.
+    :doc: audio_filter
+
+    An audio filter that passes it's input through to its output unchanged.
     """
 
     def prepare(self, int samplerate):
@@ -167,7 +169,11 @@ cdef class FilterList:
 
 cdef class Sequence(AudioFilter):
     """
-    A filter that applies a series of filters in sequence.
+    :doc: audio_filter
+
+    An AudioFilter that applies its input to a sequence of filters, in order.
+    This is used internally when a list of audiofilters is given, so it should
+    be rare to use this directly.
     """
 
     cdef FilterList filters
@@ -207,49 +213,11 @@ cdef class Sequence(AudioFilter):
 
 cdef class Biquad(AudioFilter):
     """
-    :doc: audio_filter
+    :undocumented:
 
-    The biquad filter implements a variety of common audio filters. This takes
-    three parameter, with `kind` controlling the type of filter, and the meaning
-    of `frequency`, `q`, and `gain` depending on the kind.
-
-    The following kinds of filters exist:
-
-    "lowpass", "highpass"
-        A lowpass or highpass filter, respectively. The `frequency` parameter
-        controls the cutoff frequency, and the `q` parameter controls the
-        sharpness of the cutoff. The `gain` parameter is ignored.
-
-    "bandpass"
-        A bandpass filter. The `frequency` parameter controls the center
-        frequency, and the `q` parameter controls the sharpness of the cutoff.
-        The `gain` parameter is ignored.
-
-    "lowshelf", "highshelf"
-        A lowshelf or highshelf filter, respectively. The `frequency` parameter
-        controls the center frequency. Frequencies higher or lower than `frequency`
-        get boosted by `gain` decibels, while other frequences are ignored. The
-        `q` parameter is not used.
-
-    "peaking"
-        Frequences inside a range surrounding `frequency` are boosted by `gain`
-        decibels. `q` controls the sharpness of the peak.
-
-    "notch"
-        The opposite of a bandpass filter. Frequences inside a range surrounding
-        `frequency` are ignored, while other frequences are passed through. `q`
-        controls the sharpness of the cutoff. The `gain` parameter is ignored.
-
-    "allpass"
-        A second-order allpass filter. Lets all frequencies through, but shifts
-        the phase of some frequencies. The `frequency` parameter controls the frequency
-        with the maximum group delay. `q` controls the sharpness of the phase shift.
-        `gain` is ignored.
-
-    This is meant to have similar effects to the biquad filter defined in the
-    Web Audio API, documented at `https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode`_.
-    It's implemented using the formulas from  `https://webaudio.github.io/Audio-EQ-Cookbook/Audio-EQ-Cookbook.txt`_.
+    Used internally to implement many filters.
     """
+
 
     # Based on:
 
@@ -442,6 +410,152 @@ cdef class Biquad(AudioFilter):
         return result
 
 
+def Lowpass(frequency=350, q=1.0):
+    """
+    :doc: audio_filter
+
+    A lowpass filter with 12/dB octave rolloff.
+
+    `frequency`
+        The cutoff frequency.
+
+    `q`
+        Controls how peaked the response will be in decibels. For this filter
+        type, this value is not a traditional Q, but is a resonance value in decibels.
+    """
+
+    return Biquad("lowpass", frequency=frequency, q=q)
+
+def Highpass(frequency=350, q=1.0):
+    """
+    :doc: audio_filter
+
+    A highpass filter with 12/dB octave rolloff.
+
+    `frequency`
+        The cutoff frequency.
+
+    `q`
+        Controls how peaked the response will be in decibels. For this filter
+        type, this value is not a traditional Q, but is a resonance value in decibels.
+    """
+
+    return Biquad("highpass", frequency=frequency, q=q)
+
+def Bandpass(frequency=350, q=1.0):
+    """
+    :doc: audio_filter
+
+    A bandpass filter.
+
+
+    `frequency`
+        The center frequency.
+
+    `q`
+        Controls the width of the band. The width becomes narrower as the
+        value of Q increases.
+    """
+
+
+    return Biquad("bandpass", frequency=frequency, q=q)
+
+
+def Lowshelf(frequency=350, gain=0):
+    """
+    :doc: audio_filter
+
+    A lowshelf filter that allows all frequencies through, but boosts those
+    below a certain frequency by a certain amount.
+
+    `frequency`
+        The upper frequency.
+
+    `gain`
+        The amount to boost the frequencies below the upper frequency,
+        in decibels.
+    """
+
+    return Biquad("lowshelf", frequency=frequency, gain=gain)
+
+
+def Highshelf(frequency=350, gain=0):
+    """
+    :doc: audio_filter
+
+    A highshelf filter that allows all frequencies through, but boosts those
+    above a certain frequency by a certain amount.
+
+    `frequency`
+        The lower frequency.
+
+    `gain`
+        The amount to boost the frequencies above the lower frequency,
+        in decibels.
+    """
+
+    return Biquad("highshelf", frequency=frequency, gain=gain)
+
+
+def Peaking(frequency=350, q=1.0, gain=0):
+    """
+    :doc: audio_filter
+
+    A peaking filter that allows all frequencies through, but boosts those
+    around a certain frequency by a certain amount.
+
+    `frequency`
+        The center frequency.
+
+    `q`
+        Controls the sharpness of the peak. The higher the value, the sharper
+        the peak.
+
+    `gain`
+        The amount to boost the frequencies around the center frequency,
+        in decibels.
+    """
+
+    return Biquad("peaking", frequency=frequency, q=q, gain=gain)
+
+
+def Notch(frequency=350, q=1.0):
+    """
+    :doc: audio_filter
+
+    The opposite of a bandpass filter. Frequencies inside a range surrounding
+    `frequency` are suppressed, while other frequences are passed through.
+
+    `frequency`
+        The center frequency.
+
+    `q`
+        Controls the width of the notch. The width becomes narrower as the
+        value of q increases.
+    """
+
+    return Biquad("notch", frequency=frequency, q=q)
+
+
+def Allpass(frequency=350, q=1.0):
+    """
+    :doc: audio_filter
+
+    An allpass filter allows all frequencies through, but changes the phase
+    relationship between the various frequencies.
+
+
+    `frequency`
+        The frequency at the center of the phase change.
+
+    `q`
+        Controls the sharpness of the phase shift. The higher the value, the
+        sharper the phase shift.
+    """
+
+    return Biquad("allpass", frequency=frequency, q=q)
+
+
 cdef class Crossfade(AudioFilter):
     """
     :undocumented:
@@ -526,8 +640,18 @@ cdef class Mix(AudioFilter):
     """
     :doc: audio_filter
 
-    An AudioFilter that applies its input to one or more filters, and
-    then mixes the result of those filters together.
+    An audio filter that splits its input into multiple streams, applies
+    each of its arguments to a stream, and mixes those streams by summing
+    them together.
+
+    For example::
+
+        init python:
+
+            import renpy.audio.filter as af
+
+            # This mixes the the unchanged input with a delay.
+            $ echo = af.Mix(af.Null(), af.Delay(.3))
     """
 
     cdef FilterList filters
@@ -572,7 +696,7 @@ cdef class Multiply(AudioFilter):
     """
     :doc: audio_filter
 
-    An AudioFilter that multiplies its result by a constant multiplier.
+    An audio filter that multiplies its input by `multiplier`.
     """
 
     cdef float multiplier
@@ -600,6 +724,10 @@ cdef class Multiply(AudioFilter):
 
 
 def Gain(db):
+    """
+    An audio filter that adjusts the gain of the input by `db` decibels.
+    """
+
     return Multiply(10 ** (db / 20))
 
 
@@ -670,6 +798,14 @@ cdef class DelayBuffer:
 cdef class Delay(AudioFilter):
     """
     :doc: audio_filter
+
+    This filter implements a delay. Samples that are provided to the input
+    emerge from the output after `delay` seconds.
+
+    `delay`
+        The delay, in seconds. If a list of delays is provided, each subchannel
+        will be delayed by the corresponding amount. Each delay must be at least
+        0.01 seconds.
     """
 
     cdef DelayBuffer buffer
@@ -710,6 +846,27 @@ cdef class Delay(AudioFilter):
 cdef class Comb(AudioFilter):
     """
     :doc: audio_filter
+
+    A comb filter. A comb filter consists of a delay that is filtered and
+    mutiplied, mixed with its input, and then fed back into the delay,
+    causing the filter to be applied multiple times.
+
+    `delay`
+        The delay, in seconds. If a list of delays is provided, each subchannel
+        will be delayed by the corresponding amount. Each delay must be at least
+        0.01 seconds.
+
+    `filter`
+        The filter to apply to the delayed signal. If None, the Null filter
+        is used.
+
+    `multiplier`
+        The amount to multiply the filtered signal by.
+
+    `wet`
+        If True, the output of the filter is the sum of the input and the
+        filtered and multiplied signal.  If False, the output is just the filtered
+        and muliplied signal.
     """
 
     cdef DelayBuffer buffer
@@ -780,6 +937,19 @@ cdef class Comb(AudioFilter):
 cdef class WetDry(AudioFilter):
     """
     :doc: audio_filter
+
+    A filter that mixes its input with the output of a filter.
+
+    `filter`
+        The filter to apply to the input.
+
+    `wet`
+        A multiplier, generally between 0.0 and 1.0, that controls the amount
+        of the filter that is mixed in.
+
+    `dry`
+        A multiplier, generally between 0.0 and 1.0, that controls the amount
+        of the input that is mixed in.
     """
 
     cdef AudioFilter filter
@@ -824,6 +994,47 @@ def Reverb(
     delay_subchannel=0.001,
     allpass_frequences=[225, 556, 441, 341],
     ):
+    """
+    :doc: audio_filter
+
+    An artificial reverb filter that simulates the sound of a room or hall,
+    somewhat inspired by Freeverb.
+
+    `resonance`
+        The amount of feedback in the reverb. This should be between 0 and 1.
+        Larger numbers make the reverb last longer. Too large values will
+        cause the reverb to go out of control.
+
+    `dampening`
+        This applies a lowpass filter to each reverberation, simulating
+        the lost of high frequences as sound passes through the air.
+
+    `wet`
+        A multiplier that is applied to the reverb signal before it is passed
+        to the output.
+
+    `dry`
+        A multiplier that is applied to the input signal before it is passed
+        to the output. Set this to 0.0 to only hear the reverb, not the original
+        sound.
+
+    `delay_multiplier`
+        A multiplier that is applied to the delay times. This can be used to
+        adjust the length of the reverb.
+
+    `delay_times`
+        A list of delay times, in seconds, that are used to create the early
+        reflections. These are used to create comb filters.
+
+    `delay_subchannel`
+        The amount of time, in seconds, that is added to each delay time to
+        create a second subchannel. This is used to create a stereo effect.
+
+    `allpass_frequences`
+        A list of frequences, in hertz, that are used to create allpass filters
+        that simulate late reflections.
+    """
+
 
     # This prevents the reverb from going out of control.
     resonance *= .85
@@ -846,6 +1057,8 @@ def Reverb(
 
 def to_audio_filter(o):
     """
+    :undocumented:
+
     Converts a Python object to an AudioFilter. This expands lists into
     Sequence objects, passes AudioFilter objects through, and raises
     an exception for anything else.
@@ -861,6 +1074,10 @@ def to_audio_filter(o):
 
 
 cdef void apply_audio_filter(AudioFilter af, float *samples, int subchannels, int length, int samplerate) nogil:
+    """
+    :undocumented:
+    """
+
 
     cdef SampleBuffer *input_buffer
     cdef SampleBuffer *result_buffer
