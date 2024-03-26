@@ -18,6 +18,7 @@ init 1000000 python:
     doc.scan_section("", renpy.store)
     doc.scan_section("renpy.", renpy)
     doc.scan_section("renpy.music.", renpy.music)
+    doc.scan_section("renpy.audio.filter.", renpy.audio.filter)
     doc.scan_section("theme.", theme)
     doc.scan_section("layout.", layout)
     doc.scan_section("define.", define)
