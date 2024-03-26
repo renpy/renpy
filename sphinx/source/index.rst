@@ -42,6 +42,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    python
    conditional
    audio
+   audio_filters
    movie
    voice
 
