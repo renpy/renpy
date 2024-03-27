@@ -220,6 +220,9 @@ struct Channel {
     /* The relative volume of the playing stream. */
     float playing_relative_volume;
 
+    /* The number of samples of silence to pad the playing stream with.*/
+    int playing_pad;
+
     /**
      * The AudioFilter that is currently in use on this channel. NULL
      * if no filter is in use.
@@ -323,6 +326,9 @@ static void start_stream(struct Channel* c, int reset_fade) {
     if (!c) return;
 
     c->pos = 0;
+    if (!c->queued) {
+        c->playing_pad = audio_spec.freq * 2;
+    }
 
     if (reset_fade) {
 
@@ -439,54 +445,72 @@ static void callback(void *userdata, Uint8 *stream, int length) {
             // If we're done with this stream, skip to the next.
             if (c->stop_samples == 0 || read_length == 0) {
 
-                int old_tight = c->playing_tight;
-                struct Dying *d;
+                if (!c->playing_audio_filter || c->playing_audio_filter == Py_None || c->queued) {
+                    c->playing_pad = 0;
+                }
 
-                post_event(c);
+                if (c->playing_pad > 0) {
 
-                LOCK_NAME()
+                    if (c->playing_pad > mixleft) {
+                        read_length = mixleft;
+                    } else {
+                        read_length = c->playing_pad;
+                    }
 
-                d = malloc(sizeof(struct Dying));
-                d->next = dying;
-                d->stream = c->playing;
+                    c->playing_pad -= read_length;
+                    memset(stream_buffer, 0, read_length * 2 * sizeof(short));
 
-                // If there's a new audio filter, queue the old one for deallocation.
-                if (c->playing_audio_filter) {
-                    d->audio_filter = c->playing_audio_filter;
                 } else {
-                    d->audio_filter = NULL;
+
+                    int old_tight = c->playing_tight;
+                    struct Dying *d;
+
+                    post_event(c);
+
+                    LOCK_NAME()
+
+                    d = malloc(sizeof(struct Dying));
+                    d->next = dying;
+                    d->stream = c->playing;
+
+                    // If there's a new audio filter, queue the old one for deallocation.
+                    if (c->playing_audio_filter) {
+                        d->audio_filter = c->playing_audio_filter;
+                    } else {
+                        d->audio_filter = NULL;
+                    }
+
+                    dying = d;
+
+                    free(c->playing_name);
+
+                    c->playing = c->queued;
+                    c->playing_name = c->queued_name;
+                    c->playing_fadein = c->queued_fadein;
+                    c->playing_tight = c->queued_tight;
+                    c->playing_start_ms = c->queued_start_ms;
+                    c->playing_relative_volume = c->queued_relative_volume;
+
+                    c->playing_audio_filter = c->queued_audio_filter;
+
+                    c->queued = NULL;
+                    c->queued_name = NULL;
+                    c->queued_fadein = 0;
+                    c->queued_tight = 0;
+                    c->queued_start_ms = 0;
+                    c->queued_relative_volume = 1.0;
+                    c->queued_audio_filter = NULL;
+
+                    if (c->playing_fadein) {
+                        old_tight = 0;
+                    }
+
+                    UNLOCK_NAME()
+
+                    start_stream(c, !old_tight);
+
+                    continue;
                 }
-
-                dying = d;
-
-                free(c->playing_name);
-
-                c->playing = c->queued;
-                c->playing_name = c->queued_name;
-                c->playing_fadein = c->queued_fadein;
-                c->playing_tight = c->queued_tight;
-                c->playing_start_ms = c->queued_start_ms;
-                c->playing_relative_volume = c->queued_relative_volume;
-
-                c->playing_audio_filter = c->queued_audio_filter;
-
-                c->queued = NULL;
-                c->queued_name = NULL;
-                c->queued_fadein = 0;
-                c->queued_tight = 0;
-                c->queued_start_ms = 0;
-                c->queued_relative_volume = 1.0;
-                c->queued_audio_filter = NULL;
-
-                if (c->playing_fadein) {
-                    old_tight = 0;
-                }
-
-                UNLOCK_NAME()
-
-                start_stream(c, !old_tight);
-
-                continue;
             }
 
             for (int i = 0; i < read_length; i++) {

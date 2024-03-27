@@ -30,6 +30,17 @@ Finally, you can remove a filter from a channel by passing None as the filter::
 
 (It's also possible to give None with `replace` set to True.)
 
+Silence Padding
+---------------
+
+When an audio filter is active and the last queued sound on a channel finises
+playing, Ren'Py will add 2 seconds of silence to the channel, to ensure that
+delay and reverb filters have time to finish playing.
+
+If you need more silence, it can be queued with::
+
+    queue sound "<silence 10">
+
 
 Audio Filters
 -------------
