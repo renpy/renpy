@@ -2209,7 +2209,7 @@ def parse_atl(l):
             # Now, look for properties and simple_expressions.
             while True:
 
-                if (warper is not None) and (not has_block) and ll.match(':'):
+                if ((warper is not None) or (warp_function is not None)) and (not has_block) and ll.match(':'):
                     ll.expect_eol()
                     ll.expect_block("ATL")
                     has_block = True
