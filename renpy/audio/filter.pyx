@@ -986,7 +986,7 @@ cdef class WetDry(AudioFilter):
 
 def Reverb(
     resonance=.5,
-    dampening=440,
+    dampening=880,
     wet=1.0,
     dry=1.0,
     delay_multiplier=1.0,
