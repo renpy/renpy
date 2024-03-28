@@ -4,6 +4,16 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+
+.. _renpy-8.2.2:
+.. _renpy-7.7.2:
+
+8.2.2 / 7.7.2
+=============
+
+The launcher no longer plays a stream of silence while it was running.
+
+
 .. _renpy-8.2.1:
 .. _renpy-7.7.1:
 
