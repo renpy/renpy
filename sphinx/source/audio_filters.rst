@@ -30,6 +30,22 @@ Finally, you can remove a filter from a channel by passing None as the filter::
 
 (It's also possible to give None with `replace` set to True.)
 
+
+Filter Reuse
+------------
+
+When a filter is set on a channel, it will filter all audio played on
+that channel. Specifically, the Comb, Delay, and Reverb filters will
+continue to output information from old audio files for some time
+after a new audio file has started playing, provided the filter is
+not changed.
+
+This means that Ren'Py is storing audio information inside the filter
+object. Because of this, it is generally not a good idea to share filter
+objects between channels, or to use a filter object multiple times with
+a single channel.
+
+
 Silence Padding
 ---------------
 
