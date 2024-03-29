@@ -250,6 +250,12 @@ cdef class Biquad(AudioFilter):
         if kind not in { "lowpass", "highpass", "bandpass", "lowshelf", "highshelf", "peaking", "notch", "allpass" }:
             raise ValueError("Invalid kind {!r}.".format(kind))
 
+        if q < 0.01:
+            q = 0.01
+
+        if frequency < 1:
+            frequency = 1
+
         self.kind = kind
         self.frequency = frequency
         self.q = q
