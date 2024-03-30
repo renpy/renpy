@@ -708,14 +708,14 @@ def loadable_core(name):
     return False
 
 
-def loadable(name, directory=None):
+def loadable(name, tl=True, directory=None):
 
     name = name.lstrip('/')
 
     if (renpy.config.loadable_callback is not None) and renpy.config.loadable_callback(name):
         return True
 
-    for p in get_prefixes(directory=directory):
+    for p in get_prefixes(tl=tl, directory=directory):
         if loadable_core(p + name):
             return True
 

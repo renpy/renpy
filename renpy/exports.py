@@ -2234,7 +2234,7 @@ def get_game_runtime():
 
 
 @renpy_pure
-def loadable(filename, directory=None):
+def loadable(filename, directory=None, tl=True):
     """
     :doc: file
 
@@ -2246,9 +2246,11 @@ def loadable(filename, directory=None):
         If not None, a directory to search in if the file is not found
         in the game directory. This will be prepended to filename, and
         the search tried again.
+    `tl`
+        If True, a translation subdirectory will be considered as well.
     """
 
-    return renpy.loader.loadable(filename, directory=directory)
+    return renpy.loader.loadable(filename, tl=tl, directory=directory)
 
 
 @renpy_pure
