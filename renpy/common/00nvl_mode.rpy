@@ -261,6 +261,7 @@ init -1500 python:
         """
 
         nvl_show_core()
+        renpy.with_statement(None)
         renpy.with_statement(with_)
         store._last_say_who = None
 
