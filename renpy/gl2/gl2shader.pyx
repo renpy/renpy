@@ -191,6 +191,8 @@ cdef class Program:
         This loads a shader into the GPU, and returns the number.
         """
 
+        original_source = source
+
         source = source.encode("utf-8")
 
         cdef GLuint shader
@@ -209,8 +211,14 @@ cdef class Program:
         glGetShaderiv(shader, GL_COMPILE_STATUS, &status)
 
         if status == GL_FALSE:
+
+            renpy.display.log.write("Error compiling shader %s:", self.name)
+
+            for i, l in enumerate(original_source.splitlines()):
+                renpy.display.log.write("%03d %s" % (i, l))
+
             glGetShaderInfoLog(shader, 1024, NULL, error)
-            raise ShaderError((<object> error).decode("utf-8"))
+            raise ShaderError((<object> error).decode("latin-1"))
 
         return shader
 
