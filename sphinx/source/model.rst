@@ -345,6 +345,11 @@ The following uniforms are made available to all Models.
     to the bottom-left corner of the window. u_viewport.pq is the width
     and height of the viewport.
 
+``vec2 u_drawable_size``
+    The size of the drawable are of the windows, in pixels, at the resolution
+    the game is running at. For example, if a 1280x720 game is scaled up to 
+    1980x1080, this will be (1920, 1080).
+
 ``sampler2D tex0``, ``sampler2D tex1``, ``sampler2D tex2``
     If textures are available, the corresponding samplers are placed in
     this variable.

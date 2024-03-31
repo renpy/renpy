@@ -1509,7 +1509,7 @@ cdef class GL2DrawingContext:
 
 
 # A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
-standard_uniforms = { "u_transform", "u_time", "u_random" }
+standard_uniforms = { "u_transform", "u_time", "u_random", "u_drawable_size" }
 
 _types = """
 standard_uniforms : set[str]

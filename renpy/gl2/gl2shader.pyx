@@ -268,6 +268,8 @@ cdef class Program:
         elif name == "u_viewport":
             glGetFloatv(GL_VIEWPORT, viewport)
             self.set_uniform("u_viewport", (viewport[0], viewport[1], viewport[2], viewport[3]))
+        elif name == "u_drawable_size":
+            self.set_uniform("u_drawable_size", renpy.display.draw.drawable_viewport[2:])
         else:
             raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
 
