@@ -118,6 +118,31 @@ cdef class AudioFilter:
 
         return allocate_buffer(samples.subchannels, samples.length)
 
+    def constructor(self, prefix):
+        """
+        Returns a text of a constructor call for this filter, using syntax
+        that will work in Python and Javascript.
+
+        `prefix`
+            The prefix to use for the constructor
+        """
+
+        args = self.__reduce__()[1]
+
+        arg_repr = [ ]
+
+        for i in args:
+            if isinstance(i, AudioFilter):
+                arg_repr.append(i.constructor(prefix))
+            else:
+                arg_repr.append(repr(i))
+
+        return "{}{}({})".format(prefix, self.__class__.__name__, ", ".join(arg_repr))
+
+
+    def __repr__(self):
+        return self.constructor("renpy.audio.filter.")
+
 
 cdef class Null(AudioFilter):
     """
