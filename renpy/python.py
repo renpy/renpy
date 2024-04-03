@@ -1286,4 +1286,4 @@ copyreg.pickle(types.ModuleType, module_pickle)
 # Allow weakrefs to be pickled, with the reference being broken during
 # unpickling.
 
-copyreg.pickle(weakref.ReferenceType, lambda r : "None")
+copyreg.pickle(weakref.ReferenceType, lambda r : ({}.update, ()))
