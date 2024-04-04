@@ -972,6 +972,9 @@ def check_unreachables(all_nodes):
 
             add_names(reach)
 
+        elif isinstance(node, renpy.ast.RPY):
+            weakly_reachable.add(node)
+
     while to_check:
         node = to_check.pop() # type: Any
         unreachable.remove(node)

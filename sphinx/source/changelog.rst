@@ -41,6 +41,18 @@ The `synchro_start` option (documented as part of :func:`renpy.music.play`) is
 now True by default in that function, and in the ``play`` statement.
 
 
+.. _renpy-8.2.2:
+.. _renpy-7.7.2:
+
+8.2.2 / 7.7.2
+=============
+
+The launcher no longer plays a stream of silence while it was running.
+
+When building a small games as an Android App Bundle, fast-forward packages were
+incorrectly included. This has been fixed.
+
+
 .. _renpy-8.2.1:
 .. _renpy-7.7.1:
 

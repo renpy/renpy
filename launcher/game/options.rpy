@@ -184,7 +184,10 @@ init -1 python hide:
     #####################
     # More customizations can go here.
 
-    config.sound = False
+    config.has_sound = False
+    config.has_music = False
+    config.has_voice = False
+    config.force_sound = False
     config.quit_action = Quit(confirm=False)
     config.window_icon = "images/logo.png"
     config.has_autosave = False
