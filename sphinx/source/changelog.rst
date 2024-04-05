@@ -28,6 +28,9 @@ filter out translation files.
 Other Changes
 -------------
 
+The :func:`renpy.fetch` function can now take user-specified headers that
+are supplied as part of the HTTP/HTTPS request.
+
 Bar Values that set values (like :class:`DictValue`, :class:`FieldValue`,
 :class:`VariableValue`, :class:`ScreenVariableValue`, and :class:`LocalVariableValue`)
 now take a `min` and `max` parameters, which can be used to directly set the bar's
