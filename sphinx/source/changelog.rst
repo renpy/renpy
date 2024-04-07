@@ -11,7 +11,18 @@ Changelog (Ren'Py 7.x-)
 8.2.2 / 7.7.2
 =============
 
-The launcher no longer plays a stream of silence while it was running.
+Fixes
+-----
+
+Ren'Py will now generate translations for strings in _ren.py files.
+
+Ren'Py now checks that achievment names are strings.
+
+An issue with weakref pickling on Ren'Py 7 has been fixed.
+
+The ``rpy`` statement is now considered to be always reachable.
+
+The launcher no longer plays a stream of silence while it is running.
 
 
 .. _renpy-8.2.1:
