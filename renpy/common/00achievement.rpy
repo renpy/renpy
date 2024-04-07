@@ -78,6 +78,10 @@ init -1500 python in achievement:
             if persistent._achievements is None:
                 persistent._achievements = _set()
 
+            for k in list(persistent._achievements):
+                if not isinstance(k, str):
+                    persistent._achievements.remove(k)
+
             if persistent._achievement_progress is None:
                 persistent._achievement_progress = _dict()
 
