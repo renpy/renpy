@@ -183,6 +183,10 @@ init -1500 python in achievement:
             not given, this defaults to 0.
         """
 
+        if config.developer:
+            if not isinstance(name, str):
+                raise TypeError("Achievement names must be strings.")
+
         for i in backends:
             i.register(name, **kwargs)
 
@@ -194,6 +198,10 @@ init -1500 python in achievement:
         granted.
         """
 
+        if config.developer:
+            if not isinstance(name, str):
+                raise TypeError("Achievement names must be strings.")
+
         if not has(name):
             for i in backends:
                 i.grant(name)
@@ -204,6 +212,10 @@ init -1500 python in achievement:
 
         Clears the achievement with `name`.
         """
+
+        if config.developer:
+            if not isinstance(name, str):
+                raise TypeError("Achievement names must be strings.")
 
         for i in backends:
             i.clear(name)
@@ -227,6 +239,10 @@ init -1500 python in achievement:
         the achievement is not known.
         """
 
+        if config.developer:
+            if not isinstance(name, str):
+                raise TypeError("Achievement names must be strings.")
+
         return persistent._achievement_progress.get(name, 0)
 
     def progress(name, complete, total=None):
@@ -246,6 +262,10 @@ init -1500 python in achievement:
             An integer giving the number of units completed towards the
             achievement.
         """
+
+        if config.developer:
+            if not isinstance(name, str):
+                raise TypeError("Achievement names must be strings.")
 
         if has(name):
             return
