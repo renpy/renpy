@@ -14,6 +14,9 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+List slicing is now allowed inside string interpolation. For example,
+``The first ten are: [long_list[:10]]`` will now work.
+
 Ren'Py will now generate translations for strings in _ren.py files.
 
 Ren'Py now checks that achievment names are strings.
