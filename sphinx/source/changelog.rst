@@ -50,7 +50,21 @@ now True by default in that function, and in the ``play`` statement.
 8.2.2 / 7.7.2
 =============
 
-The launcher no longer plays a stream of silence while it was running.
+Fixes
+-----
+
+List slicing is now allowed inside string interpolation. For example,
+``The first ten are: [long_list[:10]]`` will now work.
+
+Ren'Py will now generate translations for strings in _ren.py files.
+
+Ren'Py now checks that achievment names are strings.
+
+An issue with weakref pickling on Ren'Py 7 has been fixed.
+
+The ``rpy`` statement is now considered to be always reachable.
+
+The launcher no longer plays a stream of silence while it is running.
 
 When building a small games as an Android App Bundle, fast-forward packages were
 incorrectly included. This has been fixed.
