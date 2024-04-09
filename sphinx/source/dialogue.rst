@@ -106,7 +106,7 @@ For example::
 
     label start:
 
-        show eileen mad
+        show eileen concerned
         e "I'm a little upset at you."
 
         e happy "But it's just a passing thing."
@@ -117,15 +117,15 @@ is equivalent to::
 
     label start:
 
-        show eileen mad
+        show eileen concerned
         e "I'm a little upset at you."
 
         show eileen happy
         e "But it's just a passing thing."
 
-In the above example, the ``mad`` and ``happy`` replace one another.
+In the above example, the ``concerned`` and ``happy`` replace one another.
 But it is possible to revert to a ``happy``\ -less eileen without specifying
-the ``mad`` attribute. An attribute name prepended with the minus sign ( - )
+the ``concerned`` attribute. An attribute name prepended with the minus sign ( - )
 has that effect, just as it does with the :ref:`show statement <show-statement>`.
 
 For example::
@@ -135,7 +135,7 @@ For example::
     label start:
 
         show eileen
-        e mad "I'm a little upset at you."
+        e concerned "I'm a little upset at you."
 
         e happy "That's funny."
 
@@ -150,7 +150,7 @@ For example, the following code is equivalent to the previous example::
 
     label start:
 
-        show eileen mad
+        show eileen concerned
         e "I'm a little upset at you."
 
         e @ happy "That's funny."
@@ -164,7 +164,7 @@ the @, and temporary ones coming after. ::
 
 The minus sign can also be used after the @ sign::
 
-    e @ right -mad "My anger is temporarily suspended..."
+    e @ right -concerned "My anger is temporarily suspended..."
     e "HOWEVER !"
 
 To cause a transition to occur whenever the images are changed in this way, set

@@ -33,7 +33,7 @@ The transform statement  must be run at init time. If it is found outside an
 ``init`` block, then it is automatically placed inside an ``init`` block with a
 priority of 0. The transform may have a list of parameters, which must be
 supplied when it is called. Default values for the right-most parameters can
-be given by adding "=" and the value (e.g. "transform a (b, c=0):").
+be given by adding ``=`` and the value (e.g. ``transform a (b, c=0):``).
 
 `qualname` must be a set of dot-separated Python identifiers. The transform created
 by the ATL block is bound to this name, within the given
@@ -102,13 +102,13 @@ Each logical line in an ATL block must contain one or more ATL statements.
 
 There are two kinds of ATL statements: simple and complex. Simple statements
 do not take an ATL block. A single logical line may contain one or more ATL
-statements, separated by commas. A complex statement contains a block, must
-be on its own line. The first line of a complex statement always ends with a
+statements, separated by commas. A complex statement always contains a block, and
+must be on its own line. The first line of a complex statement always ends with a
 colon ``:``.
 
 By default, statements in a block are executed in the order in which they
 appear, starting with the first statement in the block. Execution terminates
-when the end of the block is reached. Time statements change this, as
+when the end of the block is reached. Th ``time`` statements change this, as
 described in the appropriate section below.
 
 Execution of a block terminates when all statements in the block have
@@ -231,8 +231,6 @@ Some sample interpolations are::
 
         # The same thing, using a block.
         linear 2.0:
-        # The same thing, using a block.
-        linear 2.0:
             xalign 1.0
             yalign 1.0
 
@@ -337,7 +335,7 @@ block ending with ``repeat 2`` will execute at most twice.)
 .. productionlist:: atl
     atl_repeat : "repeat" (`simple_expression`)?
 
-The repeat statement must be the last statement in a block.::
+The repeat statement must be the last statement in a block::
 
     show logo base:
         xalign 0.0
@@ -458,7 +456,7 @@ handle a single event name, or a comma-separated list of event names.
 The on statement is used to handle events. When an event is handled, handling
 of any other event ends and handing of the new event immediately starts. When
 an event handler ends without another event occurring, the ``default`` event
-is produced (unless were already handing the ``default`` event).
+is produced (unless we're already handing the ``default`` event).
 
 Execution of the on statement will never naturally end. (But it can be ended
 by the time statement, or an enclosing event handler.)
@@ -623,7 +621,7 @@ example::
         pause
 
 This example will cause Eileen to change expression when the first pause
-finishes, but will not cause her postion to change, as both animations
+finishes, but will not cause her position to change, as both animations
 share the same animation time, and hence will place her sprite in the same place.
 Without the animation statement, the position would reset when the player
 clicks.
@@ -635,11 +633,11 @@ Warpers
 =======
 
 A warper is a function that can change the amount of time an interpolation
-statement considers to have elapsed. The following warpers are defined by
-default. They are defined as functions from t to t', where t and t' are
-floating point numbers, with t ranging from 0.0 to 1.0 over the given
-amount of time. (If the statement has 0 duration, then t is 1.0 when it runs.)
-t' should start at 0.0 and end at 1.0, but can be greater or less.
+statement considers to have elapsed. They are defined as functions from t to t',
+where t and t' are floating point numbers, with t ranging from 0.0 to 1.0 over
+the given amount of time. (If the statement has 0 duration, then t is 1.0 when
+it runs.) t' should start at 0.0 and end at 1.0, but can be greater or less.
+The following warpers are defined by default.
 
 ``pause``
     Pause, then jump to the new value. If ``t == 1.0``, ``t' = 1.0``. Otherwise,
@@ -692,7 +690,7 @@ interpreted as a fraction of the size of the containing area (for
 :propref:`pos`) or of the displayable (for :propref:`anchor`).
 
 Note that not all properties are independent. For example, :propref:`xalign` and :propref:`xpos`
-both update some of the same underlying data. In a parallel statement, not more than
+both update some of the same underlying data. In a ``parallel`` statement, not more than
 one block should adjust properties sharing the same data. The angle and radius properties set
 both horizontal and vertical positions.
 
@@ -918,7 +916,7 @@ Pixel Effects
 
     The alpha transform is applied to each image comprising the child of
     the transform independently. This can lead to unexpected results when
-    the children overlap, such as as seeing a character through clothing.
+    the children overlap, such as seeing a character through clothing.
     The :func:`Flatten` displayable can help with these problems.
 
 .. transform-property:: additive
@@ -1029,7 +1027,7 @@ Polar Positioning of the Anchor
     The radius component of the polar coordinates of the anchor.
 
     If a float, it is scaled horizontally and vertically to the size and shape
-    of the displayable : if the height is not equal to the width, a radius that
+    of the displayable: if the height is not equal to the width, a radius that
     is not strictly absolute will result in elliptical motion when varying the
     anchorangle. For that reason, it is recommended to only pass ``int`` or
     :func:`absolute` values to this property.
@@ -1053,15 +1051,15 @@ Cropping and Resizing
     :default: None
 
     If not None, gives the upper-left corner of the crop box. Crop takes
-    priority over corners. When a float, and crop_relative is enabled,
-    this is relative to the size of the child.
+    priority over corners. When a float, and crop_relative is enabled, this 
+    is relative to the size of the child.
 
 .. transform-property:: corner2
 
     :type: None or (position, position)
     :default: None
 
-    If not None, gives the lower right corner of the crop box. Cropt takes
+    If not None, gives the lower-right corner of the crop box. Crop takes
     priority over corners. When a float, and crop_relative is enabled, this
     is relative to the size of the child.
 
@@ -1187,7 +1185,7 @@ See :ref:`atl-transitions`.
     :type: boolean
     :default: True
 
-    If true, events are passed to the child of this transform. If false,
+    If True, events are passed to the child of this transform. If False,
     events are blocked. (This can be used in ATL transitions to prevent
     events from reaching the old_widget.)
 
@@ -1341,7 +1339,7 @@ The following events can be triggered automatically:
     the game is loaded and when styles or translations change.
 
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``, ``insensitive``, ``selected_insensitive``
-    Triggered when button containing this transform, or a button contained
+    Triggered when a button containing this transform, or a button contained
     by this transform, enters the named state.
 
 
@@ -1350,7 +1348,7 @@ The following events can be triggered automatically:
 Replacing Transforms
 ====================
 
-When an an ATL transform or transform defined using the :func:`Transform` class
+When an ATL transform or transform defined using the :func:`Transform` class
 is replaced by another class, the properties of the transform that's being
 replaced are inherited by the transform that's replacing it.
 
@@ -1453,7 +1451,7 @@ contexts, if the parameter is in the parameter list.
             pause .2
             child      # Go back to the original child.
 
-    If can also be used to place the original child inside a ``contains``
+    It can also be used to place the original child inside a ``contains``
     block::
 
         transform marquee(width, height=1.0, duration=2.0, child=None):

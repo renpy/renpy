@@ -195,7 +195,7 @@ def parse(s):
                     state = LITERAL
                     lit = ''
 
-            elif c == '!':
+            elif c == '!' and brackets == 0 and parens == 0:
                 if s[pos+1:pos+2] == '=':
                     pos += 1
                 else:
@@ -203,7 +203,7 @@ def parse(s):
                     expr = s[cut:pos]
                     cut = pos + 1
 
-            elif c == ':':
+            elif c == ':' and brackets == 0 and parens == 0:
                 state = FORMAT
                 expr = s[cut:pos]
                 cut = pos + 1
@@ -351,21 +351,23 @@ def substitute(s, scope=None, force=False, translate=True):
     old_s = s
 
 
-    dicts = [ renpy.store.__dict__ ]
-
-    if "store.interpolate" in renpy.python.store_dicts:
-        dicts.insert(0, renpy.python.store_dicts["store.interpolate"])
+    dicts = []
 
     if scope is not None:
-        dicts.insert(0, scope)
+        dicts.append(scope)
 
-    if dicts:
-        kwargs = MultipleDict(*dicts)
+    if "store.interpolate" in renpy.python.store_dicts:
+        dicts.append(renpy.python.store_dicts["store.interpolate"])
+
+    dicts.append(renpy.store.__dict__)
+
+    if len(dicts) == 1:
+        variables = dicts[0]
     else:
-        kwargs = dicts[0]
+        variables = MultipleDict(*dicts)
 
     try:
-        s = interpolate(s, kwargs) # type: ignore
+        s = interpolate(s, variables) # type: ignore
     except Exception:
         if renpy.display.predict.predicting: # @UndefinedVariable
             return " ", True

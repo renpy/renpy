@@ -142,7 +142,10 @@ cython(
     "renpy.audio.renpysound",
     [ "renpysound_core.c", "ffmedia.c" ],
     libs=sdl + sound,
-    define_macros=macros)
+    define_macros=macros,
+    compile_args=[ "-Wno-deprecated-declarations" ] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [ ])
+
+cython("renpy.audio.filter")
 
 # renpy
 cython("renpy.lexersupport")

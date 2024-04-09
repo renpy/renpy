@@ -40,7 +40,7 @@ consists of the following things:
   per model. A texture is a rectangle containing image data that's been loaded
   on the GPU, either directly or using a render-to-texture operation.
 
-* A list of shader part names. Ren'Py uses these shader parts to created shaders,
+* A list of shader part names. Ren'Py uses these shader parts to create shaders,
   which are programs that are run on the GPU to render the model. Shader part
   names can be prefixed with a "-" to prevent that shader part from being used.
 
@@ -72,7 +72,7 @@ as described below.) A Render contains:
 Ren'Py draws the screen by performing a depth-first walk through the tree of
 Renders, until a Model is encountered. During this walk, Ren'Py updates a
 matrix transforming the location of the Model, a clipping polygon, and
-lists of shader parts, uniforms, and gl properties. When a Model is encountered
+lists of shader parts, uniforms, and GL properties. When a Model is encountered
 as part of this walk, the appropriate shader program is activated on the GPU,
 all information is transferred, and a drawing operation occurs.
 
@@ -104,7 +104,7 @@ Live2D
     one Model for each layer.
 
 :func:`Transform` and ATL
-    A Transform creates a model if :tpref:`mesh` is true, or if :tpref:`blur`
+    A Transform creates a model if :tpref:`mesh` is True, or if :tpref:`blur`
     is being used. In this case, the children of the Transform are rendered
     to textures, with the mesh of the first texture being used for the mesh
     associated with the model.
@@ -116,8 +116,8 @@ Live2D
 
 :class:`Render`
     A Transform creates a model if its ``mesh`` attribute is True.
-    is being used. In this case, the children of the Render are rendered
-    to textures, with the mesh of the first texture being used for
+    In this case, the children of the Render are rendered to
+    textures, with the mesh of the first texture being used for
     the mesh associated with the model.
 
 It's expected that Ren'Py will add more ways of creating models in the
@@ -137,11 +137,11 @@ leading "-". (So "-renpy.geometry" will cause itself and "renpy.geometry"
 to be removed.)
 
 Ren'Py then takes the list of shader parts, and retrieves lists of variables,
-functions, vertex shade parts, and fragment shader parts. These are, in turn,
+functions, vertex shader parts, and fragment shader parts. These are, in turn,
 used to generate the source code for shaders, with the parts of the vertex and
 fragement shaders being included in low-number to high-number priority order.
 
-This means that any variable created by one of the shader will be accessible
+This means that any variable created by one of the shaders will be accessible
 by every other fragment from any other shader in the list of shader parts.
 There is no scope like in Python functions to protect interference between
 shaders.
@@ -235,7 +235,7 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     If not None, this Transform will be rendered as a model. This means:
 
     * A mesh will be created. If this is a 2-component tuple, it's taken
-      as the number of points in the mesh, in the x and y directions. (Eacn
+      as the number of points in the mesh, in the x and y directions. (Each
       dimension must be at least 2.) If True, the mesh is taken from the
       child.
     * The child of this transform will be rendered to a texture.
@@ -246,15 +246,15 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     :type: None or tuple
     :default: None
 
-    If not None, this can either be a 2 or 4 component tuple. If mesh is
-    true and this is given, this applies padding to the size of the textues
-    applied to the the textures used by the mesh. A two component tuple applies
-    padding to the right and bottom, while a four component tuple applies
+    If not None, this can either be a 2 or 4-component tuple. If mesh is
+    True and this is given, this applies padding to the size of the textures
+    applied to the the textures used by the mesh. A 2-component tuple applies
+    padding to the right and bottom, while a 4-component tuple applies
     padding to the left, top, right, and bottom.
 
     This can be used, in conjunction with the ``gl_pixel_perfect`` property,
     to render text into a mesh. In Ren'Py, text is rendered at the screen
-    resoltution, which might overflow the boundaries of the texture that
+    resolution, which might overflow the boundaries of the texture that
     will be applied to the mesh. Adding a few pixels of padding makes the
     texture bigger, which will display all pixels. For example::
 
@@ -273,7 +273,7 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     :default: None
 
     If not None, a shader part name or list of shader part names that will be
-    applied to the  this Render (if a Model is created) or the Models reached
+    applied to this Render (if a Model is created) or the Models reached
     through this Render.
 
 .. transform-property:: blend
@@ -345,6 +345,11 @@ The following uniforms are made available to all Models.
     to the bottom-left corner of the window. u_viewport.pq is the width
     and height of the viewport.
 
+``vec2 u_drawable_size``
+    The size of the drawable are of the windows, in pixels, at the resolution
+    the game is running at. For example, if a 1280x720 game is scaled up to 
+    1980x1080, this will be (1920, 1080).
+
 ``sampler2D tex0``, ``sampler2D tex1``, ``sampler2D tex2``
     If textures are available, the corresponding samplers are placed in
     this variable.
@@ -398,11 +403,11 @@ function.
 ``gl_color_mask``
     This is expecting to be a 4-tuple of booleans, corresponding to the four
     channels of a pixel (red, green, blue, and alpha). If a given channel is
-    true, the draw operation will write to that pixel. Otherwise, it will
+    True, the draw operation will write to that pixel. Otherwise, it will
     not.
 
 ``gl_depth``
-    If true, this will clear the depth buffer, and then enable depth
+    If True, this will clear the depth buffer, and then enable depth
     rendering for this displayable and the children of this displayable.
 
     Note that drawing any pixel, even transparent pixels, will update
@@ -420,8 +425,8 @@ by a Transform with :tpref:`mesh` set, or by :func:`Model`, where these
 can be supplied the property method.
 
 ``gl_drawable_resolution``
-    If true or not set, the texture is rendered at the same resolution
-    as the window displaying the game. If false, it's rendered at the
+    If True or not set, the texture is rendered at the same resolution
+    as the window displaying the game. If False, it's rendered at the
     virtual resolution of the displayable.
 
 ``gl_anisotropic``
@@ -430,19 +435,19 @@ can be supplied the property method.
     texels (texture pixels) to be sampled when a texture is zoomed by a
     different amount in X and Y.
 
-    This defaults to true. Ren'Py sets this to False for certain effects,
+    This defaults to True. Ren'Py sets this to False for certain effects,
     like the Pixellate transition.
 
 ``gl_mipmap``
     If supplied, this determines if the textures supplied to a mesh are
-    created with mipmaps. This defaults to true.
+    created with mipmaps. This defaults to True.
 
 ``gl_texture_wrap``
     When supplied, this determines how the textures applied to a mesh
     are wrapped. This expects a 2-component tuple, where the first
     component is used to set GL_TEXTURE_WRAP_S and the second component
     is used to set GL_TEXTURE_WRAP_T, which conventionally are the X and Y
-    axes of the created textyure.
+    axes of the created texture.
 
     The values should be OpenGL constants imported from renpy.uguu::
 

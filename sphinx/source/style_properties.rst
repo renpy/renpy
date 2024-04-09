@@ -794,6 +794,21 @@ Text Style Properties
 
     If True, the text will be rendered vertically.
 
+    There are multiple caveats:
+
+    * If :propref:`shaper` is "freetype", vertical layout will likely be incorrect.
+
+    * Harfbuzz will convert horizontal forms to vertical forms if those
+      forms are present in the font.
+
+    * Characters will be laid out top to bottom, right to left, but will
+      not be rotated. This means that horizontal characters will be laid
+      out one on top of another.
+
+    * If vertical text information is not present in the font, it will be
+      synthesized, but may be incorrect. Generally, ideographic text works
+      better than non-ideographic text.
+
 .. _window-style-properties:
 
 Window Style Properties
@@ -929,7 +944,18 @@ Button Style Properties
    If True, the default, this button can be focused using the keyboard focus
    mechanism, if it can be focused at all. If False, the keyboard focus
    mechanism will skip this button. (The keyboard focus mechanism is used
-   by keyboards and keyboard-like devices, such as joypads.)
+   by keyboards and keyboard-like devices, such as gamepads.)
+
+.. style-property:: keyboard_focus_insets (int, int, int, int) or None
+
+    If not None, this should be a tuple of four integers, giving the
+    number of pixels that are used to shrink the left, top, right, and
+    bottom sides of the focus rectangle, when it's used for keyboard
+    focus.
+
+    This can be useful when buttons overlap. The keyboard focus algorithm
+    doesn't work with overlapping buttons, and so this can be used to to
+    shrink the size of the buttons internally, allowing focus to work.
 
 .. style-property:: key_events boolean
 

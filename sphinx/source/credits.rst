@@ -67,6 +67,8 @@ the omission in future versions.
 * Derik
 * Diapolo10
 * DinakiS
+* Dipesh Aggarwal
+* Do10HM
 * Dogtopus
 * Doomfest
 * Donghyeok Tak
@@ -113,6 +115,8 @@ the omission in future versions.
 * Huanxuantian
 * Hyper Sonic
 * Ian Leslie
+* Iivusly
+* ImJustAQ
 * JackkelDragon
 * Jackmcbarn
 * Jacob Kauffmann

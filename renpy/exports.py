@@ -34,6 +34,11 @@ import threading
 import fnmatch
 import os
 
+if PY2:
+    from urllib import urlencode as _urlencode
+else:
+    from urllib.parse import urlencode as _urlencode
+
 import renpy
 
 from renpy.pyanalysis import const, pure, not_const
@@ -2229,7 +2234,7 @@ def get_game_runtime():
 
 
 @renpy_pure
-def loadable(filename, directory=None):
+def loadable(filename, directory=None, tl=True):
     """
     :doc: file
 
@@ -2241,9 +2246,11 @@ def loadable(filename, directory=None):
         If not None, a directory to search in if the file is not found
         in the game directory. This will be prepended to filename, and
         the search tried again.
+    `tl`
+        If True, a translation subdirectory will be considered as well.
     """
 
-    return renpy.loader.loadable(filename, directory=directory)
+    return renpy.loader.loadable(filename, tl=tl, directory=directory)
 
 
 @renpy_pure
@@ -4697,6 +4704,17 @@ def confirm(message):
     return renpy.ui.interact()
 
 
+try:
+    if PY2:
+        import urllib
+        proxies = urllib.getproxies()
+    else:
+        import urllib.request
+        proxies = urllib.request.getproxies()
+except Exception as e:
+    proxies = {}
+
+
 class FetchError(Exception):
     """
     :undocumented:
@@ -4704,10 +4722,40 @@ class FetchError(Exception):
     The type of errors raised by :func:`renpy.fetch`.
     """
 
-    pass
+    def __init__(self, message, exception=None):
+        super(FetchError, self).__init__(message)
+
+        self.original_exception = exception
+
+        m = re.search(r'\d\d\d', message)
+        if m is not None:
+            self.status_code = int(m.group(0))
+        else:
+            self.status_code = None
 
 
-def fetch_requests(url, method, data, content_type, timeout):
+def fetch_pause():
+    """
+    Called by the fetch functions to pause for a short amount of time.
+    """
+
+    if renpy.game.context().init_phase:
+        return
+
+    if renpy.game.context().interacting:
+        import pygame_sdl2
+        pygame_sdl2.event.pump()
+        renpy.audio.audio.periodic()
+
+        if renpy.emscripten:
+            emscripten.sleep(0)
+
+        return
+
+    renpy.exports.pause(0)
+
+
+def fetch_requests(url, method, data, content_type, timeout, headers):
     """
     :undocumented:
 
@@ -4722,26 +4770,30 @@ def fetch_requests(url, method, data, content_type, timeout):
     # Because we don't have nonlocal yet.
     resp = [ None ]
 
+    if data is not None:
+        headers = dict(headers)
+        headers["Content-Type"] = content_type
+
     def make_request():
         try:
-            r = requests.request(method, url, data=data, timeout=timeout, headers={ "Content-Type" : content_type } if data is not None else {})
+            r = requests.request(method, url, data=data, timeout=timeout, headers=headers, proxies=proxies)
             r.raise_for_status()
             resp[0] = r.content # type: ignore
         except Exception as e:
-            resp[0] = FetchError(str(e)) # type: ignore
+            resp[0] = FetchError(str(e), e) # type: ignore
 
     t = threading.Thread(target=make_request)
     t.start()
 
     while resp[0] is None:
-        renpy.exports.pause(0)
+        fetch_pause()
 
     t.join()
 
     return resp[0]
 
 
-def fetch_emscripten(url, method, data, content_type, timeout):
+def fetch_emscripten(url, method, data, content_type, timeout, headers):
     """
     :undocumented:
 
@@ -4760,10 +4812,14 @@ def fetch_emscripten(url, method, data, content_type, timeout):
 
     url = url.replace('"' , '\\"')
 
+    import json
+    headers = json.dumps(headers)
+    headers = headers.replace("\\", "\\\\").replace('"', '\\"')
+
     if method == "GET" or method == "HEAD":
-        command = """fetchFile("{method}", "{url}", null, "{fn}", null)""".format( method=method, url=url, fn=fn, content_type=content_type)
+        command = """fetchFile("{method}", "{url}", null, "{fn}", null, "{headers}")""".format( method=method, url=url, fn=fn, content_type=content_type, headers=headers)
     else:
-        command = """fetchFile("{method}", "{url}", "{fn}", "{fn}", "{content_type}")""".format( method=method, url=url, fn=fn, content_type=content_type)
+        command = """fetchFile("{method}", "{url}", "{fn}", "{fn}", "{content_type}", "{headers}")""".format( method=method, url=url, fn=fn, content_type=content_type, headers=headers)
 
     fetch_id = emscripten.run_script_int(command)
 
@@ -4772,7 +4828,7 @@ def fetch_emscripten(url, method, data, content_type, timeout):
 
     start = time.time()
     while time.time() - start < timeout:
-        renpy.exports.pause(0)
+        fetch_pause()
 
         result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
         status, _ignored, message = result.partition(" ")
@@ -4794,7 +4850,7 @@ def fetch_emscripten(url, method, data, content_type, timeout):
 
 
 
-def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes"):
+def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes", params=None, headers={}):
     """
     :doc: fetch
 
@@ -4832,9 +4888,21 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
         decodes the result as JSON. (Other exceptions may be generated by the decoding
         process.)
 
-    While waiting for `timeout` to pass, this will repeatedly call :func:`renpy.pause`\ (0),
-    so Ren'Py doesn't lock up. It may make sense to display a screen to the user
-    to let them know what is going on.
+    `params`
+        A dictionary of parameters that are added to the URL as a query string.
+
+    `headers`
+        A dictionary of headers to send with the request.
+
+    This may be called from inside or outside of an interaction.
+
+    * Outside of an interation, while waiting for `timeout` to pass, this will
+      repeatedly call :func:`renpy.pause`\ (0),  so Ren'Py doesn't lock up. It
+      may make sense to display a screen to the user to let them know what is going on.
+
+    * Inside of an interaction (for example, inside an Action), this will block
+      the display system until the fetch request finishes or times out. It will try
+      to service the audio system, so audio will continue to play.
 
     This function should work on all platforms. However, on the web platform,
     requests going to a different origin than the game will fail unless allowed
@@ -4850,8 +4918,8 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
     if result not in ( "bytes", "text", "json" ):
         raise FetchError("result must be one of 'bytes', 'text', or 'json'.")
 
-    if renpy.game.context().init_phase:
-        raise FetchError("renpy.fetch may not be called during init.")
+    if params is not None:
+        url += "?" + _urlencode(params)
 
     if method is None:
         if data is not None or json is not None:
@@ -4869,19 +4937,22 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
         data = _json.dumps(json).encode("utf-8")
 
     if renpy.emscripten:
-        content = fetch_emscripten(url, method, data, content_type, timeout)
+        content = fetch_emscripten(url, method, data, content_type, timeout, headers=headers)
     else:
-        content = fetch_requests(url, method, data, content_type, timeout)
+        content = fetch_requests(url, method, data, content_type, timeout, headers=headers)
 
     if isinstance(content, Exception):
         raise content # type: ignore
 
-    if result == "bytes":
-        return content
-    elif result == "text":
-        return content.decode("utf-8")
-    elif result == "json":
-        return _json.loads(content)
+    try:
+        if result == "bytes":
+            return content
+        elif result == "text":
+            return content.decode("utf-8")
+        elif result == "json":
+            return _json.loads(content)
+    except Exception as e:
+        raise FetchError("Failed to decode the result: " + str(e), e)
 
 
 def can_fullscreen():

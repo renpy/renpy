@@ -55,15 +55,23 @@ def generate_minimal(p):
     os.makedirs(os.path.dirname(p.prefix), 0o777)
     shutil.copytree(p.template, p.prefix)
 
+    def delete(fn):
+        fn = os.path.join(p.prefix, fn)
+
+        if os.path.isdir(fn):
+            shutil.rmtree(fn)
+        elif os.path.exists(fn):
+            os.unlink(fn)
+
     # Prune directories.
-    shutil.rmtree(os.path.join(p.prefix, "cache"))
-    shutil.rmtree(os.path.join(p.prefix, "saves"))
-    shutil.rmtree(os.path.join(p.prefix, "tl"))
+    delete("cache")
+    delete("saves")
+    delete("tl")
 
     # Prune files to be regenerated.
-    os.unlink(os.path.join(p.prefix, "gui.rpy"))
-    os.unlink(os.path.join(p.prefix, "screens.rpy"))
-    os.unlink(os.path.join(p.prefix, "options.rpy"))
+    delete("gui.rpy")
+    delete("screens.rpy")
+    delete("options.rpy")
 
     # Generate files.
     CodeGenerator(p).generate_code("gui.rpy")

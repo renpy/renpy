@@ -585,7 +585,7 @@ static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
 		return NULL;
 	}
 
-	AVCodec *codec = NULL;
+	const AVCodec *codec = NULL;
 	AVCodecContext *codec_ctx = NULL;
 
 	codec_ctx = avcodec_alloc_context3(NULL);

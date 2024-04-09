@@ -520,6 +520,7 @@ init -1500 python in _console:
                 self.line_history.extend(persistent._console_line_history)
 
             self.first_time = True
+            self.did_short_warning = False
 
             self.reset()
 
@@ -719,6 +720,10 @@ init -1500 python in _console:
                     result = renpy.python.py_eval(code)
                     if persistent._console_short and not getattr(result, "_console_always_long", False):
                         he.result = aRepr.repr(result)
+
+                        if not self.did_short_warning and he.result != repr(result):
+                            self.did_short_warning = True
+                            he.result += "\n\n" + __("The console is using short representations. To disable this, type 'long', and to re-enable, type 'short'")
                     else:
                         he.result = repr(result)
 

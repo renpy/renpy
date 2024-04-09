@@ -919,6 +919,16 @@ The input statement takes no parameters, and the following properties:
     using keyboard (Shift+Enter by default,
     can be changed by modifying config.keymap['input_next_line']).
 
+.. screen-property:: action
+
+    If not None, an action that is run when enter is pressed and the
+    input is active. This overrides the default action of returning
+    the input value.
+
+    Generally, this is is used with a `value` that stores the input into
+    a variable, so the action can access it.
+
+
 
 It also takes:
 

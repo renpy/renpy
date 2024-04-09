@@ -39,6 +39,7 @@ import sys
 import os
 import json
 import collections
+import re
 
 did_onetime_init = False
 
@@ -217,7 +218,18 @@ class Live2DCommon(object):
         self.textures = [ ]
 
         for i in self.model_json["FileReferences"]["Textures"]:
-            self.textures.append(renpy.easy.displayable(self.base + i))
+
+            m = re.search(r'\.(\d+)/', i)
+            if m:
+                size = int(m.group(1))
+                renpy.config.max_texture_size = (
+                    max(renpy.config.max_texture_size[0], size),
+                    max(renpy.config.max_texture_size[1], size),
+                )
+
+            im = renpy.easy.displayable(self.base + i)
+            im = renpy.display.im.unoptimized_texture(im)
+            self.textures.append(im)
 
         # A map from the motion file name to the information about it.
         motion_files = { }
@@ -947,8 +959,8 @@ class Live2D(renpy.display.displayable.Displayable):
         if redraws:
             renpy.display.render.redraw(self, min(redraws))
 
-        # Render the textures.
-        textures = [ renpy.display.render.render(d, width, height, st, at) for d in common.textures ]
+        # Get the textures.
+        textures = [ renpy.display.im.render_for_texture(d, width, height, st, at) for d in common.textures ]
 
         sw, sh = model.get_size()
 

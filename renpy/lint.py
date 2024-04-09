@@ -234,13 +234,18 @@ def image_exists_imprecise(name):
         if [ i for i in banned if i in attrs ]:
             continue
 
-        li = getattr(d, "_list_attributes", None)
+        try:
 
-        if li is not None:
-            attrs = attrs | set(li(im[0], required))
+            li = getattr(d, "_list_attributes", None)
 
-        if [ i for i in required if i not in attrs ]:
-            continue
+            if li is not None:
+                attrs = attrs | set(li(im[0], required))
+
+            if [ i for i in required if i not in attrs ]:
+                continue
+
+        except Exception:
+            pass
 
         imprecise_cache.add(name)
         return True
@@ -968,6 +973,9 @@ def check_unreachables(all_nodes):
                 weakly_reachable.add(node)
 
             add_names(reach)
+
+        elif isinstance(node, renpy.ast.RPY):
+            weakly_reachable.add(node)
 
     def add_to_check(node):
         to_check.add(node)

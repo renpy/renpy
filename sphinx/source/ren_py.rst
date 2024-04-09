@@ -6,7 +6,7 @@ In more complicated games, it's possible to have files that consist of mostly
 Python, with a small number of Ren'Py statements, like ``init python:``, to
 introduce the Python code to Ren'Py. Ren'Py has an alternative way to write
 these Python-heavy files. Files with a name ending in ``_ren.py`` can be
-writen in Python syntax, which is then transformed to Ren'Py script and
+written in Python syntax, which is then transformed to Ren'Py script and
 processed.
 
 There are two main reasons to take advantage of this:
@@ -15,7 +15,7 @@ There are two main reasons to take advantage of this:
   needs to be placed before every line of Python.
 * Editors can open \_ren.py files using tools that are specialized for
   Python, allowing the editor to perform code analysis and refactoring
-  operations that aren't avalable for Python-in-Ren'Py.
+  operations that aren't available for Python-in-Ren'Py.
 
 Ren'Py in Python files have names that end with \_ren.py, for example,
 ``actions_ren.py``. These files are processed in the same unicode order

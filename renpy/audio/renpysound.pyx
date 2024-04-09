@@ -57,8 +57,8 @@ import_pygame_sdl2()
 
 cdef extern from "renpysound_core.h":
 
-    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int fadein, int tight, int paused, double start, double end, float volume)
-    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int fadein, int tight, double start, double end, float volume)
+    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int fadein, int tight, int paused, double start, double end, float volume, object audio_filter)
+    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int fadein, int tight, double start, double end, float volume, object audio_filter)
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
@@ -73,6 +73,7 @@ cdef extern from "renpysound_core.h":
     float RPS_get_volume(int channel)
     void RPS_set_pan(int channel, float pan, float delay)
     void RPS_set_secondary_volume(int channel, float vol2, float delay)
+    void RPS_replace_audio_filter(int channel, object audio_filter)
 
     void RPS_advance_time()
     int RPS_video_ready(int channel)
@@ -84,9 +85,17 @@ cdef extern from "renpysound_core.h":
     void RPS_quit()
 
     void RPS_periodic()
+
+    int RPS_get_sample_rate()
     char *RPS_get_error()
 
     void (*RPS_generate_audio_c_function)(float *stream, int length)
+    void (*RPS_apply_audio_filter)(object, float *stream, int length, int channels, int sample_rate)
+
+
+from renpy.audio.filter cimport get_apply_audio_filter
+RPS_apply_audio_filter = <void (*)(object, float *, int, int, int)> get_apply_audio_filter()
+
 
 def check_error():
     """
@@ -100,7 +109,8 @@ def check_error():
     if len(e):
         raise Exception(unicode(e, "utf-8", "replace"))
 
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
+
+def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -126,9 +136,15 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
     `relative_volume`
         A float giving the relative volume of the file.
+
+    `audio_filter`
+        The audio filter to apply when the file is being played.
     """
 
     cdef SDL_RWops *rw
+
+    if audio_filter is not None:
+        audio_filter.prepare(get_sample_rate())
 
     rw = RWopsFromPython(file)
 
@@ -146,10 +162,11 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_play(channel, rw, name, name, fadein * 1000, tight, pause, start, end, relative_volume)
+    RPS_play(channel, rw, name, name, fadein * 1000, tight, pause, start, end, relative_volume, audio_filter)
     check_error()
 
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
+
+def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -158,6 +175,9 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
     """
 
     cdef SDL_RWops *rw
+
+    if audio_filter is not None:
+        audio_filter.prepare(get_sample_rate())
 
     rw = RWopsFromPython(file)
 
@@ -170,8 +190,9 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_queue(channel, rw, name, name, fadein * 1000, tight, start, end, relative_volume)
+    RPS_queue(channel, rw, name, name, fadein * 1000, tight, start, end, relative_volume, audio_filter)
     check_error()
+
 
 def stop(channel):
     """
@@ -180,6 +201,7 @@ def stop(channel):
 
     RPS_stop(channel)
     check_error()
+
 
 def dequeue(channel, even_tight=False):
     """
@@ -192,6 +214,7 @@ def dequeue(channel, even_tight=False):
 
     RPS_dequeue(channel, even_tight)
 
+
 def queue_depth(channel):
     """
     Returns the queue depth of the channel. 0 if no file is playing, 1 if
@@ -200,6 +223,7 @@ def queue_depth(channel):
     """
 
     return RPS_queue_depth(channel)
+
 
 def playing_name(channel):
     """
@@ -214,6 +238,7 @@ def playing_name(channel):
 
     return rv
 
+
 def pause(channel):
     """
     Pauses `channel`.
@@ -221,6 +246,7 @@ def pause(channel):
 
     RPS_pause(channel, 1)
     check_error()
+
 
 def unpause(channel):
     """
@@ -230,12 +256,14 @@ def unpause(channel):
     RPS_pause(channel, 0)
     check_error()
 
+
 def unpause_all_at_start():
     """
     Unpauses all channels that are paused at the start.
     """
 
     RPS_unpause_all_at_start()
+
 
 def fadeout(channel, delay):
     """
@@ -245,6 +273,7 @@ def fadeout(channel, delay):
     RPS_fadeout(channel, int(delay * 1000))
     check_error()
 
+
 def busy(channel):
     """
     Returns true if `channel` is currently playing something, and false
@@ -252,6 +281,7 @@ def busy(channel):
     """
 
     return RPS_get_pos(channel) != -1
+
 
 def get_pos(channel):
     """
@@ -261,6 +291,7 @@ def get_pos(channel):
 
     return RPS_get_pos(channel) / 1000.0
 
+
 def get_duration(channel):
     """
     Returns the duration of the audio file playing in `channel`, in seconds, or
@@ -268,6 +299,7 @@ def get_duration(channel):
     """
 
     return RPS_get_duration(channel)
+
 
 def set_volume(channel, volume):
     """
@@ -281,6 +313,7 @@ def set_volume(channel, volume):
         RPS_set_volume(channel, volume)
 
     check_error()
+
 
 def set_pan(channel, pan, delay):
     """
@@ -299,6 +332,7 @@ def set_pan(channel, pan, delay):
     RPS_set_pan(channel, pan, delay)
     check_error()
 
+
 def set_secondary_volume(channel, volume, delay):
     """
     Sets the secondary volume for channel. This is linear, and is multiplied
@@ -312,12 +346,25 @@ def set_secondary_volume(channel, volume, delay):
     RPS_set_secondary_volume(channel, volume, delay)
     check_error()
 
+
+def replace_audio_filter(channel, audio_filter):
+    """
+    Replaces the audio filter for `channel` with `audio_filter`.
+    """
+
+    if audio_filter is not None:
+        audio_filter.prepare(get_sample_rate())
+
+    RPS_replace_audio_filter(channel, audio_filter)
+
+
 def get_volume(channel):
     """
     Gets the primary volume associated with `channel`.
     """
 
     return RPS_get_volume(channel)
+
 
 def video_ready(channel):
     """
@@ -326,6 +373,7 @@ def video_ready(channel):
     """
 
     return RPS_video_ready(channel)
+
 
 def read_video(channel):
     """
@@ -344,6 +392,7 @@ def read_video(channel):
     # This has to be set to the same number it is in ffmedia.c
     FRAME_PADDING = 4
     return rv.subsurface((FRAME_PADDING, FRAME_PADDING, w - FRAME_PADDING * 2, h - FRAME_PADDING * 2))
+
 
 # No video will be played from this channel.
 NO_VIDEO = 0
@@ -371,6 +420,7 @@ def set_video(channel, video, loop=False):
         RPS_set_video(channel, DROP_VIDEO)
     else:
         RPS_set_video(channel, NO_VIDEO)
+
 
 def init(freq, stereo, samples, status=False, equal_mono=False, linear_fades=False):
     """
@@ -406,12 +456,14 @@ def init(freq, stereo, samples, status=False, equal_mono=False, linear_fades=Fal
     RPS_init(freq, stereo, samples, status, equal_mono, linear_fades)
     check_error()
 
+
 def quit(): # @ReservedAssignment
     """
     De-initializes the audio system.
     """
 
     RPS_quit()
+
 
 def periodic():
     """
@@ -420,13 +472,24 @@ def periodic():
 
     RPS_periodic()
 
+
 def advance_time():
     """
     Called to advance time at the start of a frame.
     """
 
-
     RPS_advance_time()
+
+
+def get_sample_rate():
+    """
+    Returns the sample rate of the audio system.
+
+    This is not part of the  api shared with other audio implementations
+    """
+
+    return RPS_get_sample_rate()
+
 
 def set_generate_audio_c_function(fn):
     """
@@ -436,6 +499,8 @@ def set_generate_audio_c_function(fn):
     The function is expected to have the signature void (*)(short *buf, int samples,
     and fill buf with samples samples of audio, where each sample consists of two
     shorts.
+
+    This is not part of the  api shared with other audio implementations
     """
 
     global RPS_generate_audio_c_function
@@ -445,6 +510,7 @@ def set_generate_audio_c_function(fn):
         fn = ctypes.cast(fn, ctypes.c_void_p).value
 
     RPS_generate_audio_c_function = <void (*)(float *, int)> <uintptr_t> fn
+
 
 # Store the sample surfaces so they stay alive.
 rgb_surface = None
@@ -463,6 +529,7 @@ def sample_surfaces(rgb, rgba):
     rgba_surface = rgb
 
     RPS_sample_surfaces(rgb, rgba)
+
 
 # Is this the webaudio module?
 is_webaudio = False

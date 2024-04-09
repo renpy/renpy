@@ -190,7 +190,7 @@ def download(url, filename, hash=None):
 
     try:
 
-        response = requests.get(url, stream=True)
+        response = requests.get(url, stream=True, proxies=renpy.exports.proxies, timeout=15)
         response.raise_for_status()
 
         total_size = int(response.headers.get('content-length', 1))

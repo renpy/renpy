@@ -770,8 +770,8 @@ cdef class FTFont:
             x = <int> (glyph.x + xo)
             y = <int> (glyph.y + yo)
 
-            underline_x = x - glyph.delta_x_offset
-            underline_end = x + <int> glyph.advance + expand
+            underline_x = x - glyph.delta_x_adjustment
+            underline_end = x + <int> (glyph.advance + expand + .999)
 
             if glyph.variation == 0:
                 index = FT_Get_Char_Index(face, glyph.character)

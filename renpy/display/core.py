@@ -2579,9 +2579,13 @@ class Interface(object):
 
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
-                    new_transform = rv
                 else:
                     rv = a(rv)
+
+                rv._unique()
+
+                if isinstance(rv, renpy.display.transform.Transform):
+                    new_transform = rv
 
             if (new_transform is not None):
                 scene_lists.transform_state(self.old_root_transform, new_transform, execution=True)
@@ -2751,6 +2755,9 @@ class Interface(object):
 
                 # Check for autoreload.
                 renpy.loader.check_autoreload()
+
+                # Check for exec.py.
+                renpy.debug.run_exec_py()
 
                 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
                     renpy.webloader.process_downloaded_resources()

@@ -283,12 +283,11 @@ class Parser(object):
                 else:
                     l.error('%r is not a keyword argument or valid child of the %s statement.' % (name, self.name))
 
-            if name == "at" and l.keyword("transform"):
+            if name == "at" and l.match_multiple("transform", ":"):
 
                 if target.atl_transform is not None:
                     l.error("More than one 'at transform' block is given.")
 
-                l.require(":")
                 l.expect_eol()
                 l.expect_block("ATL block")
                 expr = renpy.atl.parse_atl(l.subblock_lexer())
@@ -448,7 +447,7 @@ class Parser(object):
                 PrefixStyle(prefix, prop.name)
 
         return self
-    
+
     def copy_properties(self, name):
         global parser
         parser = self
@@ -456,10 +455,10 @@ class Parser(object):
         parser_to_copy = statements.get(name, None)
         if parser_to_copy is None:
             raise Exception("{!r} is not a known screen statement".format(name))
-    
+
         for p in parser_to_copy.positional:
             Positional(p.name)
-        
+
         for v in set(parser_to_copy.keyword.values()):
             if isinstance(v, Keyword):
                 Keyword(v.name)
@@ -578,7 +577,7 @@ def register_sl_displayable(*args, **kwargs):
 
         These correspond to groups of :doc:`style_properties`. Group can
         also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
-    
+
     .. method:: copy_properties(name)
 
         Adds all styles and positional/keyword arguments that can be passed to the `name` screen statement.

@@ -1927,6 +1927,29 @@ class AlphaMask(ImageBase):
         return self.base.predict_files() + self.mask.predict_files()
 
 
+class UnoptimizedTexture(ImageBase):
+    """
+    :undocumented:
+
+    This is used by unoptimized_texture to force a texture to load without
+    optimizing the bounds.
+    """
+
+    def __init__(self, im, **properties):
+        super(UnoptimizedTexture, self).__init__(im, optimize_bounds=False, **properties)
+        self.image = image(im)
+
+    def get_hash(self):
+        return self.image.get_hash()
+
+    def load(self):
+        return self.image.load()
+
+    def predict_files(self):
+        return self.image.predict_files()
+
+
+
 def image(arg, loose=False, **properties):
     """
     :doc: im_image
@@ -2070,7 +2093,40 @@ def load_rgba(data, size):
     return renpy.display.draw.load_texture(surf)
 
 
+def unoptimized_texture(d):
+    """
+    :undocumented:
+
+    If `d` is an image manipulator, return an image manipulator that loads
+    the image without optimizing the bounds. Otherwise, return `d`.
+    """
+
+    if isinstance(d, ImageBase):
+        return UnoptimizedTexture(d)
+    else:
+        return d
+
+
+def render_for_texture(d, width, height, st, at):
+    """
+    :undocumented:
+
+    Attempts to render `d` for the purpose of getting the underlying texture,
+    rather than a Render. A render may be returned if `d` is not an UnoptimizedTexture
+    returned by unoptimized_texture.
+    """
+
+    if isinstance(d, UnoptimizedTexture):
+        return renpy.display.im.cache.get(d, texture=True)
+    else:
+        return renpy.display.render.render(d, width, height, st, at)
+
+
 def reset_module():
+    """
+    :undocumented:
+    """
+
     print("Resetting cache.")
 
     global cache

@@ -564,30 +564,23 @@ def group_logical_lines(lines):
 # Note: We need to be careful with what's in here, because these
 # are banned in simple_expressions, where we might want to use
 # some of them.
-KEYWORDS = set([
-    '$',
+KEYWORDS = {
     'as',
-    'at',
-    'behind',
-    'call',
-    'expression',
-    'hide',
     'if',
     'in',
-    'image',
-    'init',
-    'jump',
-    'menu',
-    'onlayer',
-    'python',
     'return',
-    'scene',
-    'show',
     'with',
     'while',
+}
+
+IMAGE_KEYWORDS = {
+    'behind',
+    'at',
+    'onlayer',
+    'with',
     'zorder',
     'transform',
-    ])
+}
 
 OPERATORS = [
     '<>',
@@ -758,6 +751,21 @@ class Lexer(object):
 
         self.skip_whitespace()
         return self.match_regexp(regexp)
+
+    def match_multiple(self, *regexps):
+        """
+        Matches multiple regular expressions. Return a tuple of matches
+        if all match, and if not returns None.
+        """
+
+        oldpos = self.pos
+
+        rv = tuple(self.match(i) for i in regexps)
+        if None in rv:
+            self.pos = oldpos
+            return None
+
+        return rv
 
     def keyword(self, word):
         """
@@ -1136,7 +1144,7 @@ class Lexer(object):
                 self.pos = oldpos
                 return None
 
-        if rv in KEYWORDS:
+        if (rv in KEYWORDS ) or (rv in IMAGE_KEYWORDS):
             self.pos = oldpos
             return None
 
@@ -1284,13 +1292,35 @@ class Lexer(object):
 
         return False
 
-    def simple_expression(self, comma=False, operator=True):
+    def simple_expression(self, comma=False, operator=True, image=False):
         """
         Tries to parse a simple_expression. Returns the text if it can, or
         None if it cannot.
+
+        If comma is True, then a comma is allowed to appear in the
+        expression.
+
+        If operator is True, then an operator is allowed to appear in
+        the expression.
+
+        If image is True, then the expression is being parsed as part of
+        an image, and so keywords that are special in the show/hide/scene
+        statements are not allowed.
         """
 
         start = self.pos
+
+        if image:
+            def lex_name():
+                oldpos = self.pos
+                n = self.name()
+                if n in IMAGE_KEYWORDS:
+                    self.pos = oldpos
+                    return None
+
+                return n
+        else:
+            lex_name = self.name
 
         # Operator.
         while True:
@@ -1304,7 +1334,7 @@ class Lexer(object):
             # We start with either a name, a python_string, or parenthesized
             # python
             if not (self.python_string() or
-                    self.name() or
+                    lex_name() or
                     self.float() or
                     self.parenthesised_python()):
 

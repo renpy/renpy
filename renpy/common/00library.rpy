@@ -304,6 +304,24 @@ init -1700 python:
 
 
     ##########################################################################
+    # Name-only say statements.
+
+    # This character is copied when a name-only say statement is called.
+    name_only = adv
+
+    def predict_say(who, what):
+        who = Character(who, kind=name_only)
+        try:
+            who.predict(what)
+        except Exception:
+            pass
+
+    def say(who, what, interact=True, *args, **kwargs):
+        who = Character(who, kind=name_only)
+        who(what, interact=interact, *args, **kwargs)
+
+
+    ##########################################################################
     # Misc.
 
     # Should we display tiles in places of transparency while in developer
@@ -417,6 +435,7 @@ _quit_slot
 _rollback
 _skipping
 _window_subtitle
+_scene_show_hide_transition
 """.split():
 
         # _history, history_list, and _version are set later, so aren't included.

@@ -121,7 +121,16 @@ init -1500 python:
         identity_fields = ()
         equality_fields = ('range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step')
 
-        def __init__(self, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
+        _max = max
+
+        def __init__(self, range=None, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False, min=None, max=None):
+
+            if max is not None and min is not None:
+                range = max - min
+                offset = min
+            elif range is None:
+                raise Exception("You must specify either range, or both max and min.")
+
             self.range = range
             self.max_is_zero = max_is_zero
             self.style = style
@@ -131,7 +140,7 @@ init -1500 python:
                 if isinstance(range, float):
                     step = range / 10.0
                 else:
-                    step = max(range // 10, 1)
+                    step = __GenericValue._max(range // 10, 1)
             self.step = step
             self.action = action
 
@@ -337,7 +346,8 @@ init -1500 python hide:
         generic_params = tuple(inspect.signature(__GenericValue.__init__).parameters.values())[1:]
         suffix = inspect.cleandoc("""
         `range`
-            The range to adjust over.
+            The range to adjust over. This must be specified if `max` and `min`
+            are not given.
         `max_is_zero`
             If True, then when the {kind}'s value is zero, the value of the
             bar will be `range`, and all other values will be shifted down
@@ -354,6 +364,12 @@ init -1500 python hide:
             the bar.
         `action`
             If not None, an action to call when the {kind}'s value is changed.
+        `min`
+            The minimum value of the bar. If both `min` and `max` are given,
+            `range` and `offset` are calculated from them.
+        `max`
+            The maximum value of the bar. If both `min` and `max` are given,
+            `range` and `offset` are calculated from them.
         """)
 
         for value in (DictValue, FieldValue, VariableValue, ScreenVariableValue, LocalVariableValue):

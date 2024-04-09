@@ -191,6 +191,8 @@ cdef class Program:
         This loads a shader into the GPU, and returns the number.
         """
 
+        original_source = source
+
         source = source.encode("utf-8")
 
         cdef GLuint shader
@@ -209,8 +211,14 @@ cdef class Program:
         glGetShaderiv(shader, GL_COMPILE_STATUS, &status)
 
         if status == GL_FALSE:
+
+            renpy.display.log.write("Error compiling shader %s:", self.name)
+
+            for i, l in enumerate(original_source.splitlines()):
+                renpy.display.log.write("%03d %s" % (i, l))
+
             glGetShaderInfoLog(shader, 1024, NULL, error)
-            raise ShaderError((<object> error).decode("utf-8"))
+            raise ShaderError((<object> error).decode("latin-1"))
 
         return shader
 
@@ -238,7 +246,7 @@ cdef class Program:
 
         if status == GL_FALSE:
             glGetProgramInfoLog(program, 1024, NULL, error)
-            raise ShaderError((<object> error).decode("utf-8"))
+            raise ShaderError(repr((<object> error)))
 
         glDeleteShader(vertex)
         glDeleteShader(fragment)
@@ -260,6 +268,8 @@ cdef class Program:
         elif name == "u_viewport":
             glGetFloatv(GL_VIEWPORT, viewport)
             self.set_uniform("u_viewport", (viewport[0], viewport[1], viewport[2], viewport[3]))
+        elif name == "u_drawable_size":
+            self.set_uniform("u_drawable_size", renpy.display.draw.drawable_viewport[2:])
         else:
             raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
 

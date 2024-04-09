@@ -89,7 +89,7 @@ class SceneLists(renpy.object.Object):
     things to the user.
     """
 
-    __version__ = 8
+    __version__ = 9
 
     def after_setstate(self):
         self.camera_list = getattr(self, "camera_list", { })
@@ -139,6 +139,9 @@ class SceneLists(renpy.object.Object):
 
         if version < 8:
             self.sticky_tags = { }
+
+        if version < 9:
+            self.additional_transient = [ (layer, tag, None) for layer, tag in self.additional_transient ] # type: ignore
 
 
     def __init__(self, oldsl, shown):
@@ -227,6 +230,23 @@ class SceneLists(renpy.object.Object):
             self.music = None
             self.focused = None
 
+    def set_transient_prefix(self, layer, tag, prefix):
+        """
+        Sets the transient prefix for the given tag on the given layer. This
+        can be used to have the "replaced" event delivered when the displayable
+        is hidden, and not the "hide" event.
+        """
+
+        l = [ ]
+
+        for ltp in self.additional_transient:
+            if ltp[0] == layer and ltp[1] == tag:
+                ltp = (ltp[0], ltp[1], prefix)
+
+            l.append(ltp)
+
+        self.additional_transient = l
+
     def replace_transient(self, prefix="hide"): # type: (str|None) -> None
         """
         Replaces the contents of the transient display list with
@@ -242,8 +262,8 @@ class SceneLists(renpy.object.Object):
         for i in renpy.config.transient_layers:
             self.clear(i, True)
 
-        for layer, tag in self.additional_transient:
-            self.remove(layer, tag, prefix=prefix)
+        for layer, tag, p in self.additional_transient:
+            self.remove(layer, tag, prefix=p if p is not None else prefix)
 
         self.additional_transient = [ ]
 
@@ -397,7 +417,7 @@ class SceneLists(renpy.object.Object):
             self.shown.predict_show(layer, (key,) + name[1:])
 
         if transient:
-            self.additional_transient.append((layer, key))
+            self.additional_transient.append((layer, key, None))
 
         l = self.layers[layer]
 
@@ -692,9 +712,13 @@ class SceneLists(renpy.object.Object):
 
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
-                    new_transform = rv
                 else:
                     rv = a(rv)
+
+                rv._unique()
+
+                if isinstance(rv, renpy.display.motion.Transform):
+                    new_transform = rv
 
             if (new_transform is not None) and (renpy.config.keep_show_layer_state):
                 self.transform_state(old_transform, new_transform, execution=True)
@@ -721,9 +745,13 @@ class SceneLists(renpy.object.Object):
 
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
-                    new_transform = rv
                 else:
                     rv = a(rv)
+
+                rv._unique()
+
+                if isinstance(rv, renpy.display.motion.Transform):
+                    new_transform = rv
 
             if (new_transform is not None):
                 self.transform_state(old_transform, new_transform, execution=True)
@@ -750,9 +778,13 @@ class SceneLists(renpy.object.Object):
 
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
-                    new_transform = rv
                 else:
                     rv = a(rv)
+
+                rv._unique()
+
+                if isinstance(rv, renpy.display.motion.Transform):
+                    new_transform = rv
 
             if (new_transform is not None):
                 self.transform_state(old_transform, new_transform, execution=True)

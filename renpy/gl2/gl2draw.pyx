@@ -751,7 +751,7 @@ cdef class GL2Draw:
         # higher pitch.
         BORDER = 64
 
-        width, height = renpy.config.fbo_size
+        width, height = renpy.config.max_texture_size
 
         width = max(self.virtual_size[0] + BORDER, self.drawable_size[0] + BORDER, width)
         width = min(width, max_texture_size, max_renderbuffer_size)
@@ -1509,7 +1509,7 @@ cdef class GL2DrawingContext:
 
 
 # A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
-standard_uniforms = { "u_transform", "u_time", "u_random" }
+standard_uniforms = { "u_transform", "u_time", "u_random", "u_drawable_size" }
 
 _types = """
 standard_uniforms : set[str]

@@ -31,16 +31,25 @@ cdef enum ruby_t:
     RUBY_TOP
     RUBY_ALT
 
+# A note: Ren'Py's text layout algorithm lays out all text horizontally, even
+# text that will eventually be displayed vertically - so when thinking about
+# vertical text, swap x and y, height and width. ascent and line spacing, etc.
+
+
 cdef class Glyph:
 
     cdef:
 
         # The x and y coordinates of the placed character.
-        public int x, y
+        public int x
+        public int y
 
-        # The change in the amount this character was shifted to the right
-        # when adjusting placement.
-        public int delta_x_offset
+
+        # This is the amount this character was shifted to the right when
+        # adjusting placement to match the virtual text, relative to the
+        # previous character in the line. This is used to draw underlines
+        # and strikethroughs in the right place.
+        public int delta_x_adjustment
 
         # The character we use.
         public unsigned int character
@@ -60,10 +69,13 @@ cdef class Glyph:
         public int ascent
         public int line_spacing
 
-        # The width and advance of the font.
+        # The width of the character.
         public float width
+
+        # The advance to the next character.
         public float advance
 
+        # The offsets of the character relative to the origin.
         public float x_offset
         public float y_offset
 
@@ -73,7 +85,7 @@ cdef class Glyph:
         # The hyperlink this is part of.
         public short hyperlink
 
-        # Should we draw this glyph.
+        # Should we draw this glyph?
         public bint draw
 
 

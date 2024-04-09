@@ -99,7 +99,7 @@ tutorial game::
 
             e "To play this game, you'll need to download some data. If you're not on WiFi, you could be charged for it. Tap the screen to proceed."
 
-        $ update.continue_game_download()
+        $ updater.continue_game_download()
 
 This is pretty simple, but there are a few things. The first is that it sets
 :var:`config.save` to False. This is important, as it disables saving and

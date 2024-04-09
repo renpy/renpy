@@ -1085,7 +1085,8 @@ touch_keyboard = os.environ.get("RENPY_TOUCH_KEYBOARD", False)
 
 # The size of the framebuffer Ren'Py creates, which doubles as the
 # largest texture size.
-fbo_size = (4096, 4096)
+max_texture_size = (4096, 4096)
+fbo_size = max_texture_size
 
 # Names to ignore the redefinition of.
 lint_ignore_redefine = [ "gui.about" ]
@@ -1448,6 +1449,9 @@ screens_never_cancel_hide = True
 
 # A list of transforms that are applied to entire layers.
 layer_transforms = { }
+
+# Should Ren'Py scan for exec.py?
+exec_py = True
 
 
 del os

@@ -237,8 +237,8 @@ and hide statements. This transition can be enabled by setting the
 
 The transition will occur after one or more ``scene``, ``show``, or ``hide`` statements,
 provided the statement are not followed by a  with statement, or a transition
-caused by :ref`dialogue window management <dialogue-window-management>`, like
-the various ``window`` statements. It's also disabled when in a menu context.
+caused by :ref:`dialogue-window-management`, like the various ``window`` statements.
+It's also disabled when in a menu context.
 
 For example::
 

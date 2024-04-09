@@ -4,6 +4,161 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.3.0:
+.. _renpy-7.8.0:
+
+8.3.0 / 7.8.0
+=============
+
+Features
+--------
+
+The :class:`SplineMatrix` class has been added, which makes it possible to
+transform matrices in a non-linear way.
+
+The Input displayable now takes an `action` property, which is an action that
+runs when the user presses enter with the text input active.
+
+Launcher Changes
+----------------
+
+Under navigation, the files view now has a checkbox that allows a creator to
+filter out translation files.
+
+Other Changes
+-------------
+
+The :func:`renpy.fetch` function can now take user-specified headers that
+are supplied as part of the HTTP/HTTPS request.
+
+Bar Values that set values (like :class:`DictValue`, :class:`FieldValue`,
+:class:`VariableValue`, :class:`ScreenVariableValue`, and :class:`LocalVariableValue`)
+now take a `min` and `max` parameters, which can be used to directly set the bar's
+endpoints.
+
+The :propref:`keyboard_focus_insets` style property makes it possible to
+have keyboard focus work with overlapping buttons, by artificially reducing
+the size of the buttons to remove the overlap, when determining keyboard focus.
+
+The `synchro_start` option (documented as part of :func:`renpy.music.play`) is
+now True by default in that function, and in the ``play`` statement.
+
+
+.. _renpy-8.2.2:
+.. _renpy-7.7.2:
+
+8.2.2 / 7.7.2
+=============
+
+Fixes
+-----
+
+List slicing is now allowed inside string interpolation. For example,
+``The first ten are: [long_list[:10]]`` will now work.
+
+Ren'Py will now generate translations for strings in _ren.py files.
+
+Ren'Py now checks that achievment names are strings.
+
+An issue with weakref pickling on Ren'Py 7 has been fixed.
+
+The ``rpy`` statement is now considered to be always reachable.
+
+The launcher no longer plays a stream of silence while it is running.
+
+When building a small games as an Android App Bundle, fast-forward packages were
+incorrectly included. This has been fixed.
+
+
+.. _renpy-8.2.1:
+.. _renpy-7.7.1:
+
+8.2.1 / 7.7.1
+=============
+
+Text
+----
+
+The Harfbuzz text shaper now reads more information using Harfbuzz. This
+will generally yield the same results, with small exceptions, such as
+the underline being in a slightly different place.
+
+Vertical text handling under the harfbuzz text shaper has been fixed to
+properly place the text. Porting those changes to the freetype shaper
+is not possible, so the freetype shaper no longer supports vertical text.
+
+See :propref:`vertical` for more information.
+
+Updater
+-------
+
+An issue with the updater that caused it to fail to sign updates when
+run on a Windows system has been fixed.
+
+The updater now forces the webserver to use the identity encoding, which
+improves compatibility with some web servers. The updater also times out
+if the server does not respond to a request within 10 seconds.
+
+Live2D
+------
+
+Ren'Py will now automatically guess the size of the live2d textures,
+and adjust the maximum texture size the live2d library uses to match
+it.
+
+Ren'Py will avoid many render-to-texture operations when showing
+Live2D.
+
+Fetch
+-----
+
+The :func:`renpy.fetch` function now works during the image phase and
+during an interaction, as well as outside an interaction.
+
+The :func:`renpy.fetch` function now takes a `params` argument, which
+specifies parameters that will be added to the URL.
+
+Other Changes
+-------------
+
+When a textbox is replaced (using {w}), a ``replaced`` event is generated,
+rather than hide.
+
+Adding a new displayable with `default_focus` set will cause the
+displayable to be focused, if the keyboard or gamepad is used, even
+if the interaction does not restart.
+
+It's now possible to build an iOS app from the command line without
+installing rapt (Android support).
+
+The renamed and newly-documented :var:`config.max_texture_size` variable
+make it possible to set the maximum texture size used by Ren'Py. This isn't
+useful for 2D textures, but may make sense for textures used by :class:`Model`.
+
+:doc:`template_projects` are no longer required to have the same files
+as a standard Ren'Py project.
+
+Other Fixes
+-----------
+
+An issue that could cause an Android device to reach a black screen when
+resuming from pause has been fixed.
+
+Ren'Py will now run from a directory with : in the name, on Linux and other
+platforms where that's legal.
+
+The use of :var:`config.layer_transforms` will no longer reset the timelines
+of transforms set with ``camera`` or ``show layer`` ``at``.
+
+Lint no longer crashes when the a LayeredImage use a variable that isn't set.
+
+A crash when :tpref:`blur` was less than 0 has been prevented, by clamping
+the blur value.
+
+An issue that caused drags to block saving has been fixed.
+
+
+
 .. _renpy-8.2.0:
 .. _renpy-7.7.0:
 
@@ -18,7 +173,7 @@ versions of Ren'Py, Harfbuzz is used to supply additional information
 to the freetype authinter.
 
 On Ren'Py 8, Harfbuzz is also used to shape text, reordering and selecting
-gtlphs based on the context they're in and the language of the text provided.
+glyphs based on the context they're in and the language of the text provided.
 This is required to support scripts that require complex text shaping,
 such as Brahmic/Indic scripts. (You'll need to provide a font that
 supports the appropriate language.)
@@ -334,8 +489,8 @@ The new :var:`config.pass_controller_events` and newly-documented
 :var:`config.pass_joystick_events` variables allow the game to access
 controller and joystick events directly.
 
-The new :var:`renpy.get_screen_variable` and :var:`renpy.get_screen_variable`
-make it possible to access screen variables, especially in :class:`Action`
+The new :var:`renpy.get_screen_variable` and :var:`renpy.set_screen_variable`
+functions make it possible to access screen variables, especially in :class:`Action`
 subclasses.
 
 The new :var:`build.time` variable is set to the time the game was built.

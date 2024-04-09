@@ -1282,3 +1282,11 @@ def module_unpickle(name):
 
 
 copyreg.pickle(types.ModuleType, module_pickle)
+
+# Allow weakrefs to be pickled, with the reference being broken during
+# unpickling.
+
+def construct_None(*args):
+    return None
+
+copyreg.pickle(weakref.ReferenceType, lambda r : (construct_None, tuple()))

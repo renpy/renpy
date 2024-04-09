@@ -30,7 +30,7 @@ cdef class Glyph:
 
     def __cinit__(self):
         self.variation = 0
-        self.delta_x_offset = 0
+        self.delta_x_adjustment = 0
 
     def __repr__(self):
         if self.variation == 0:
@@ -41,7 +41,7 @@ cdef class Glyph:
     _types = """
         x: int
         y: int
-        delta_x_offset : int
+        delta_x_adjustment : int
         character : int
         variation : int
         split : int
@@ -1139,26 +1139,26 @@ def copy_splits(list source, list dest):
         d.split = s.split
 
 
-def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w, double h):
+def adjust_glyph_spacing(list glyphs, list lines, double dx, double dy, double w, double h):
     cdef Glyph g
 
     if w <= 0 or h <= 0:
         return
 
-    cdef int old_x_offset = 0
-    cdef int x_offset
+    cdef int old_x_adjustment = 0
+    cdef int x_adjustment
 
     for g in glyphs:
 
-        x_offset = int(dx * g.x / w)
+        x_adjustment = int(dx * g.x / w)
 
-        g.x += x_offset
+        g.x += x_adjustment
         g.y += int(dy * g.y / h)
 
-        if x_offset > old_x_offset:
-            g.delta_x_offset = x_offset - old_x_offset
+        if x_adjustment > old_x_adjustment:
+            g.delta_x_adjustment = x_adjustment - old_x_adjustment
 
-        old_x_offset = x_offset
+        old_x_adjustment = x_adjustment
 
     for l in lines:
         end = l.y + l.height
@@ -1171,7 +1171,7 @@ def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w,
 
         l.height = end - l.y
 
-def offset_glyphs(list glyphs, int x, int y):
+def move_glyphs(list glyphs, int x, int y):
     cdef Glyph g
 
     if x == 0 and y == 0:

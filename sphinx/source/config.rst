@@ -729,6 +729,14 @@ Occasionally Used
 
     The number of seconds to take to fade in :var:`config.main_menu_music`.
 
+.. var:: config.max_texture_size = (4096, 4096)
+
+    The maximum size of an image that Ren'Py will load as a single texture.
+    This is important for 3d models, while 2d images will be split into
+    multiple textures if necessary.
+
+    Live2d will adjust this to fit the largest live2d texture.
+
 .. var:: config.menu_arguments_callback = None
 
     If not None, this should be a function that takes positional and/or

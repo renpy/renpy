@@ -28,6 +28,18 @@ renderer.
 Support for Window 7, 8, and 8.1 will be dropped after May 2024, to allow the
 use of versions of Python that only support Windows 10 and later.
 
+.. _incompatible-8.2.1:
+.. _incompatible-7.7.1:
+
+8.2.1 / 7.7.1
+--------------
+
+***Vertical Text** Vertical text had been improved in the harfbuzz shaper,
+with the text now being rendered in the correct place. This may cause
+position changes, but since the previous version was wildly incorrect,
+no compatibility define is provided.
+
+
 
 .. _incompatible-8.2.0:
 .. _incompatible-7.7.0:

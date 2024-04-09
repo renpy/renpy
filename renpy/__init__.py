@@ -518,6 +518,7 @@ def import_all():
     import renpy.audio.audio
     import renpy.audio.music
     import renpy.audio.sound
+    import renpy.audio.filter
 
     import renpy.ui
     import renpy.screenlang
