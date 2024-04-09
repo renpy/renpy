@@ -2756,6 +2756,9 @@ class Interface(object):
                 # Check for autoreload.
                 renpy.loader.check_autoreload()
 
+                # Check for exec.py.
+                renpy.debug.run_exec_py()
+
                 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
                     renpy.webloader.process_downloaded_resources()
 

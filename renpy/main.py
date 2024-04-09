@@ -594,6 +594,9 @@ def main():
         # Init the keymap.
         renpy.display.behavior.init_keymap()
 
+        # Init exec.py scanning.
+        renpy.debug.init_exec_py()
+
         gc.collect(2)
 
         if gc.garbage:

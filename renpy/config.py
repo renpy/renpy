@@ -1450,6 +1450,9 @@ screens_never_cancel_hide = True
 # A list of transforms that are applied to entire layers.
 layer_transforms = { }
 
+# Should Ren'Py scan for exec.py?
+exec_py = True
+
 
 del os
 del collections
