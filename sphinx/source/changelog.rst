@@ -19,11 +19,22 @@ transform matrices in a non-linear way.
 The Input displayable now takes an `action` property, which is an action that
 runs when the user presses enter with the text input active.
 
+
 Launcher Changes
 ----------------
 
 Under navigation, the files view now has a checkbox that allows a creator to
 filter out translation files.
+
+
+Exec.Py
+--------
+
+It's now possible to create a file named exec.py in the base directory of
+the game. If this file exists, it's loaded, deleted, and then run using ``exec``
+during an interaction context. This can be used to run Python code for debugging
+purposes.
+
 
 Other Changes
 -------------
