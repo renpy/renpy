@@ -23,9 +23,10 @@ runs when the user presses enter with the text input active.
 Launcher Changes
 ----------------
 
-Under navigation, the files view now has a checkbox that allows a creator to
-filter out translation files.
+Under Navigate Script, the TODOs button now has a count of TODOs next to it.
 
+Under Navigate Script, the files view now has a checkbox that allows a creator to
+filter out translation files.
 
 Exec.Py
 --------
