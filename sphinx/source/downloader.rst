@@ -46,9 +46,14 @@ The main change you need to make to your main game is to add the line::
     define build.game_only_update = True
 
 to the top of your options.rpy file. That will add a new option that shows
-up to the launcher's Build Distributions screen,
-"Game-Only Update for Mobile". Check that, uncheck everything else, and
-run the build process.
+up to the launcher's Build Distributions screen, "Game-Only Update for Mobile".
+
+
+In "Build Distributions", check "Game-Only Update for Mobile". Uncheck all other
+build packages. Under "Options", make sure "Build Updates" is set, and that
+the other options are set as you like. The defaults are fine.
+
+Then run the build process.
 
 When the game is finished building, you'll have everything you need. You'll
 want to upload the ``updates.json``, ``updates.ecdsa``, and everything in the
