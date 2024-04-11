@@ -76,6 +76,14 @@ else:
 
         return cls.__new__(cls, *args, **kwargs)
 
+    class make_dualangle:
+        def __new__(cls):
+            return renpy.display.types.dualangle(0, 0)
+
+    class make_position:
+        def __new__(cls):
+            return renpy.display.types.position(0, 0)
+
     class Unpickler(pickle.Unpickler):
         date = functools.partial(make_datetime, datetime.date)
         time = functools.partial(make_datetime, datetime.time)
@@ -89,6 +97,12 @@ else:
                     return self.time
                 elif name == "datetime":
                     return self.datetime
+
+            if module == "renpy.atl":
+                if name == "position":
+                    return make_position
+                elif name == "DualAngle":
+                    return make_dualangle
 
             return super().find_class(module, name)
 
