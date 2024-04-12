@@ -30,6 +30,8 @@ from libc.stdio cimport printf
 
 import math
 
+import renpy
+
 DEF SUBCHANNELS = 2
 
 # A list of samples that are being passed around through the filter system.
@@ -99,6 +101,16 @@ cdef void free_buffer(SampleBuffer *buf) nogil:
 
 
 cdef class AudioFilter:
+
+    def __dealloc__(self):
+        """
+        Deallocates the filter.
+        """
+
+        try:
+            renpy.audio.renpysound.deallocate_audio_filter(self)
+        except Exception:
+            pass
 
     def prepare(self, samplerate):
         """

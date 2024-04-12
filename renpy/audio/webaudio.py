@@ -355,6 +355,15 @@ def replace_audio_filter(channel, audio_filter):
     # call("replace_audio_filter", channel, audio_filter)
 
 
+def deallocate_audio_filter(audio_filter):
+    """
+    Called when an audio filter is about to be deallocated to release all
+    assocated resources.
+    """
+
+renpysound.deallocate_audio_filter = deallocate_audio_filter
+
+
 @proxy_with_channel
 def get_volume(channel):
     """

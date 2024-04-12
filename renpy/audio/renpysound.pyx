@@ -358,6 +358,15 @@ def replace_audio_filter(channel, audio_filter):
     RPS_replace_audio_filter(channel, audio_filter)
 
 
+def deallocate_audio_filter(audio_filter):
+    """
+    Called when an audio filter is about to be dealloica to release all
+    assocated resources.
+    """
+
+    # Does nothing on this backend, but is used on web audio.
+
+
 def get_volume(channel):
     """
     Gets the primary volume associated with `channel`.
