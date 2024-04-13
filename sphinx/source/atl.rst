@@ -1051,7 +1051,7 @@ Cropping and Resizing
     :default: None
 
     If not None, gives the upper-left corner of the crop box. Crop takes
-    priority over corners. When a float, and crop_relative is enabled, this 
+    priority over corners. When a float, and crop_relative is enabled, this
     is relative to the size of the child.
 
 .. transform-property:: corner2
@@ -1192,6 +1192,16 @@ See :ref:`atl-transitions`.
 Other
 -----
 
+.. transform-property:: fps
+
+    :type: float or None
+    :default: None
+
+    If not None, this alters time inside the transform so that it is
+    discrete. For example, if a transform has an fps of 15, then times
+    inside the transform will be rounded down to the nearest multiple of
+    0.1. This can be used to simulate a lower frame rate.
+
 .. transform-property:: show_cancels_hide
 
     :type: boolean
@@ -1222,6 +1232,7 @@ Property Order
 
 These properties are applied in the following order:
 
+#. fps
 #. mesh, blur
 #. tile
 #. pan

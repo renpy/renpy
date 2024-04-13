@@ -828,6 +828,21 @@ class Transform(Container):
 
         return False
 
+    def adjust_for_fps(self, st, at):
+
+        # The timebases, adjusted for fps.
+        fst = st
+        fat = at
+
+        if self.state.fps:
+            modulus = 1.0 / self.state.fps
+            fst += modulus / 2
+            fst -= fst % modulus
+            fat += modulus / 2
+            fat -= fat % modulus
+
+        return fst, fat
+
     def _hide(self, st, at, kind):
 
         if kind == "cancel":
@@ -871,10 +886,12 @@ class Transform(Container):
         d.hide_response = True
         d.replaced_response = True
 
+        fst, fat = self.adjust_for_fps(st, at)
+
         if d.function is not None:
-            d.function(d, st, at)
+            d.function(d, fst, fat)
         elif isinstance(d, ATLTransform):
-            d.execute(d, st, at)
+            d.execute(d, fst, fat)
 
         new_child = d.child._hide(st - self.st_offset, at - self.st_offset, kind)
 
@@ -918,12 +935,14 @@ class Transform(Container):
         self.hide_response = True
         self.replaced_response = True
 
+        fst, fat = self.adjust_for_fps(self.st, self.at)
+
         # If we have to, call the function that updates this transform.
         if self.arguments is not None:
-            self.default_function(self, self.st, self.at)
+            self.default_function(self, fst, fat)
 
         if self.function is not None:
-            fr = self.function(self, self.st, self.at)
+            fr = self.function(self, fst, fat)
 
             # Order a redraw, if necessary.
             if fr is not None:
@@ -1131,7 +1150,9 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         self.hide_response = True
         self.replaced_response = True
 
-        fr = self.execute(self, self.st, self.at)
+        fst, fat = self.adjust_for_fps(self.st, self.at)
+
+        fr = self.execute(self, fst, fat)
 
         # Order a redraw, if necessary.
         if fr is not None:
@@ -1220,6 +1241,7 @@ add_property("debug", any_object, None)
 add_property("delay", float, 0)
 add_property("events", bool, True)
 add_property("fit", str, None)
+add_property("fps", float_or_none, None)
 add_property("matrixanchor", (position_or_none, position_or_none), None)
 add_property("matrixcolor", matrix, None)
 add_property("matrixtransform", matrix, None)

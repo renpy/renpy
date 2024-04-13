@@ -37,6 +37,13 @@ during an interaction context. This can be used to run Python code for debugging
 purposes.
 
 
+Features
+--------
+
+Transform now supports the :tpref:`fps` property, which quantizes time inside
+the transform to a particular number of frames per second.
+
+
 Other Changes
 -------------
 
