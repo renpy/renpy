@@ -465,6 +465,9 @@ def load_script():
         js = renpy.loader.load("_audio.js").read().decode("utf-8")
         emscripten.run_script(js)
 
+        js = renpy.loader.load("_audio_filter.js").read().decode("utf-8")
+        emscripten.run_script(js)
+
     loaded = True
 
 
