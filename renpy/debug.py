@@ -109,6 +109,9 @@ def init_exec_py():
     Starts the thread that scans for exec.py.
     """
 
+    if renpy.emscripten:
+        return
+
     if not renpy.config.exec_py:
         return
 
