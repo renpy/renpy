@@ -56,8 +56,8 @@ renpyAudio.connectFilter = function (filter, source, destination) {
         return;
     }
 
-    for (let sourceNode of filter.inputs) {
-        source.connect(sourceNode);
+    for (let input of filter.inputs) {
+        source.connect(input);
     }
 
     for (let output of filter.outputs) {
@@ -75,8 +75,8 @@ renpyAudio.disconnectFilter = function (filter, source, destination) {
         return;
     }
 
-    for (let sourceNode of filter.inputs) {
-        source.disconnect(sourceNode);
+    for (let input of filter.inputs) {
+        source.disconnect(input);
     }
 
     for (let output of filter.outputs) {
@@ -87,6 +87,64 @@ renpyAudio.disconnectFilter = function (filter, source, destination) {
 
 renpyAudio.filter = { }
 let filter = renpyAudio.filter;
+
+/**
+ * Connects a filter to a filter.
+ */
+filter.filterToFilter = function (filter1, filter2) {
+    for (let output of filter1.outputs) {
+        for (let input of filter2.inputs) {
+            output.connect(input);
+        }
+    }
+}
+
+
+/**
+ * Connects a filter to a node.
+ */
+filter.filterToNode = function(filter, node) {
+    for (let output of filter.outputs) {
+        output.connect(node);
+    }
+};
+
+/**
+ * Connects a node to a filter.
+ */
+filter.nodeToFilter = function(node, filter) {
+    for (let input of filter.inputs) {
+        node.connect(input);
+    }
+}
+
+filter.Null = function() {
+    let node = new GainNode(renpyAudio.context, { gain: 1 });
+
+    return {
+        inputs: [ node ],
+        outputs: [ node ],
+    };
+}
+
+filter.Crossfade = function(afid1, afid2, t) {
+    let filter1 = renpyAudio.getFilter(afid1);
+    let filter2 = renpyAudio.getFilter(afid2);
+
+    let gain1 = new GainNode(renpyAudio.context, { gain: 1 });
+    let gain2 = new GainNode(renpyAudio.context, { gain: 0 });
+
+    filter.filterToNode(filter1, gain1);
+    filter.filterToNode(filter2, gain2);
+
+    gain1.gain.linearRampToValueAtTime(0, renpyAudio.context.currentTime + t);
+    gain2.gain.linearRampToValueAtTime(1, renpyAudio.context.currentTime + t);
+
+    return {
+        inputs: [ ...filter1.inputs, ...filter2.inputs ],
+        outputs: [gain1, gain2],
+    };
+};
 
 
 filter.Biquad = function(kind, frequency, Q, gain) {

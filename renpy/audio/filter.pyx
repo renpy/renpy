@@ -163,6 +163,9 @@ cdef class Null(AudioFilter):
     An audio filter that passes it's input through to its output unchanged.
     """
 
+    def __reduce__(self):
+        return (Null, ())
+
     def prepare(self, int samplerate):
         pass
 
@@ -619,7 +622,7 @@ cdef class Crossfade(AudioFilter):
     cdef public AudioFilter filter1
     cdef public AudioFilter filter2
 
-    cdef float duration
+    cdef public float duration
 
     cdef int duration_samples
     cdef int complete_samples

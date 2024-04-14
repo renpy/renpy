@@ -357,7 +357,9 @@ def replace_audio_filter(channel, audio_filter):
     Replaces the audio filter for `channel` with `audio_filter`.
     """
 
-    # call("replace_audio_filter", channel, audio_filter)
+    afid = load_audio_filter(audio_filter)
+
+    call("replace_audio_filter", channel, afid)
 
 
 # A map from the object id to the id of the audio filter.
@@ -376,8 +378,6 @@ def load_audio_filter(af):
     if af is None:
         return 0
 
-    if isinstance(af, renpy.audio.filter.Crossfade):
-        af = af.filter2
 
     objid = id(af)
 
@@ -390,7 +390,15 @@ def load_audio_filter(af):
 
     audio_filter_ids[objid] = afid
 
-    js = "renpyAudio.allocateFilter({}, {})".format(afid, af.constructor("renpyAudio.filter."))
+    if isinstance(af, renpy.audio.filter.Crossfade):
+        afid1 = load_audio_filter(af.filter1)
+        afid2 = load_audio_filter(af.filter2)
+        constructor = "renpyAudio.filter.Crossfade({}, {}, {})".format(afid1, afid2, af.duration)
+    else:
+        constructor = af.constructor("renpyAudio.filter.")
+
+
+    js = "renpyAudio.allocateFilter({}, {})".format(afid, constructor)
     print(js)
     emscripten.run_script(js)
 

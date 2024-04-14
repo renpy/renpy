@@ -721,9 +721,23 @@ renpyAudio.set_pan = (channel, pan, delay) => {
     linearRampToValue(control, control.value, pan, delay);
 };
 
-renpyAudio.tts = (s, v) => {
-    console.log("tts:", s, "volume:", v);
+renpyAudio.replace_audio_filter = (channel, afid) => {
+    let c = get_channel(channel);
+    let filter = renpyAudio.getFilter(afid);
 
+    if (c.playing) {
+        renpyAudio.disconnectFilter(c.playing.filter, c.playing.source, c.destination);
+        c.playing.filter = filter;
+        renpyAudio.connectFilter(filter, c.playing.source, c.destination);
+    }
+
+    if (c.queued) {
+        c.queued.filter = filter;
+    }
+}
+
+
+renpyAudio.tts = (s, v) => {
     v = v || 1.0;
 
     let u = new SpeechSynthesisUtterance(s);
