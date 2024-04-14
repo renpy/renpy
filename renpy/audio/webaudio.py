@@ -153,8 +153,10 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     if file is None:
         raise ValueError("Cannot play None.")
 
+    afid = load_audio_filter(audio_filter)
+
     call("stop", channel)
-    call("queue", channel, file, name, paused, fadein, tight, start, end, relative_volume)
+    call("queue", channel, file, name, paused, fadein, tight, start, end, relative_volume, afid)
 
 
 @proxy_with_channel
@@ -177,7 +179,9 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
     if file is None:
         raise ValueError("Cannot play None.")
 
-    call("queue", channel, file, name, False, fadein, tight, start, end, relative_volume)
+    afid = load_audio_filter(audio_filter)
+
+    call("queue", channel, file, name, False, fadein, tight, start, end, relative_volume, afid)
 
 
 @proxy_with_channel
@@ -346,6 +350,7 @@ def set_secondary_volume(channel, volume, delay):
 
     call("set_secondary_volume", channel, volume, delay)
 
+
 @proxy_with_channel
 def replace_audio_filter(channel, audio_filter):
     """
@@ -355,11 +360,57 @@ def replace_audio_filter(channel, audio_filter):
     # call("replace_audio_filter", channel, audio_filter)
 
 
+# A map from the object id to the id of the audio filter.
+audio_filter_ids = { }
+
+audio_filter_serial = 1
+
+
+def load_audio_filter(af):
+    """
+    Given an audio filter, loads it into the web audio filter system.
+    """
+
+    global audio_filter_serial
+
+    if af is None:
+        return 0
+
+    if isinstance(af, renpy.audio.filter.Crossfade):
+        af = af.filter2
+
+    objid = id(af)
+
+    if objid in audio_filter_ids:
+        return audio_filter_ids[objid]
+
+
+    afid = audio_filter_serial
+    audio_filter_serial += 1
+
+    audio_filter_ids[objid] = afid
+
+    js = "renpyAudio.allocateFilter({}, {})".format(afid, af.constructor("renpyAudio.filter."))
+    print(js)
+    emscripten.run_script(js)
+
+    return afid
+
+
 def deallocate_audio_filter(audio_filter):
     """
     Called when an audio filter is about to be deallocated to release all
     assocated resources.
     """
+
+    objid = id(audio_filter)
+
+    if objid in audio_filter_ids:
+        afid = audio_filter_ids[objid]
+        del audio_filter_ids[objid]
+
+    js = "renpyAudio.deallocateFilter({})".format(afid)
+    emscripten.run_script(js)
 
 renpysound.deallocate_audio_filter = deallocate_audio_filter
 

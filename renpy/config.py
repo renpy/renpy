@@ -57,7 +57,7 @@ sound = True
 debug = False
 
 # Ditto, but for sound operations
-debug_sound = None
+debug_sound = True
 
 # Is rollback enabled? (This only controls if the user-invoked
 # rollback command does anything)

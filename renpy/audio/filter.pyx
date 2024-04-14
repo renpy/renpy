@@ -616,8 +616,8 @@ cdef class Crossfade(AudioFilter):
     when changing the volume of a sound, or changing the pitch of a sound.
     """
 
-    cdef AudioFilter filter1
-    cdef AudioFilter filter2
+    cdef public AudioFilter filter1
+    cdef public AudioFilter filter2
 
     cdef float duration
 

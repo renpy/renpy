@@ -26,6 +26,8 @@ const DEBUG_OUT = false;
 
 const USE_FRAME_CB = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
 
+renpyAudio = { };
+
 /**
  * A map from channel to channel object.
  */
@@ -33,6 +35,7 @@ let channels = { };
 let next_chan_id = 0;
 
 let context = new AudioContext();
+renpyAudio.context = context;
 
 /**
  * Given a channel number, gets the channel object, creating a new channel
@@ -128,7 +131,8 @@ let start_playing = (c) => {
     }
 
     context.resume();
-    p.source.connect(c.destination);
+
+    renpyAudio.connectFilter(c.playing.filter, c.playing.source, c.destination);
 
     if (p.fadeout === null) {
         if (p.fadein > 0) {
@@ -209,7 +213,7 @@ let stop_playing = (c) => {
         } catch (e) {
         }
 
-        c.playing.source.disconnect();
+        renpyAudio.disconnectFilter(c.playing.filter, c.playing.source, c.destination);
     }
 
     c.playing = c.queued;
@@ -366,9 +370,8 @@ let on_video_end = (c) => {
     video_start(c);
 };
 
-renpyAudio = { };
 
-renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, relative_volume) => {
+renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, relative_volume, afid) => {
 
     const c = get_channel(channel);
 
@@ -389,6 +392,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
              fadeout: null,  // TODO?
              tight : tight,  // TODO?
              started_once: false,
+             filter : renpyAudio.getFilter(afid),
 
              period_stats: [0, 0],  // time sum, count
              fetch_stats: [0, 0],
@@ -461,6 +465,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
         tight : tight,
         started_once : false,
         file: file,
+        filter : renpyAudio.getFilter(afid),
     };
 
     function reuseBuffer(c) {
