@@ -168,6 +168,9 @@ def report_exception(e, editor=True):
     # Note: Doki Doki Literature club calls this as ("Words...", False).
     # For what it's worth.
 
+    # The sound system may not be ready during exception handling.
+    renpy.config.debug_sound = False
+
     import codecs
 
     type, _value, tb = sys.exc_info() # @ReservedAssignment

@@ -1751,6 +1751,9 @@ def report_parse_errors():
     if not parse_errors:
         return False
 
+    # The sound system may not be ready during exception handling.
+    renpy.config.debug_sound = False
+
     full_text = ""
 
     f, error_fn = renpy.error.open_error_file("errors.txt", "w")
