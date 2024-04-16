@@ -1198,7 +1198,7 @@ Other
     :default: None
 
     If not None, this alters time inside the transform so that it is
-    discrete. For example, if a transform has an fps of 15, then times
+    discrete. For example, if a transform has an fps of 10, then times
     inside the transform will be rounded down to the nearest multiple of
     0.1. This can be used to simulate a lower frame rate.
 
