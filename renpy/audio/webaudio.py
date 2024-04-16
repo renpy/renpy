@@ -362,10 +362,40 @@ def replace_audio_filter(channel, audio_filter):
     call("replace_audio_filter", channel, afid)
 
 
+def audio_filter_constructor(f):
+    """
+    Returns a text of a constructor call for this filter, using syntax
+    that will work in Python and Javascript.
+
+    `prefix`
+        The prefix to use for the constructor
+    """
+
+    args = f.__reduce__()[1]
+
+    arg_repr = [ ]
+
+    for i in args:
+        if isinstance(i, renpy.audio.filter.AudioFilter):
+            arg_repr.append(audio_filter_constructor(i))
+        elif i is True:
+            arg_repr.append("true")
+        elif i is False:
+            arg_repr.append("false")
+        else:
+            arg_repr.append(repr(i))
+
+
+    return "renpyAudio.filter.{}({})".format(f.__class__.__name__, ", ".join(arg_repr))
+
+
 # A map from the object id to the id of the audio filter.
 audio_filter_ids = { }
 
 audio_filter_serial = 1
+
+# A flag for debugging.
+print_audio_filter = False
 
 
 def load_audio_filter(af):
@@ -378,12 +408,10 @@ def load_audio_filter(af):
     if af is None:
         return 0
 
-
     objid = id(af)
 
     if objid in audio_filter_ids:
         return audio_filter_ids[objid]
-
 
     afid = audio_filter_serial
     audio_filter_serial += 1
@@ -395,11 +423,13 @@ def load_audio_filter(af):
         afid2 = load_audio_filter(af.filter2)
         constructor = "renpyAudio.filter.Crossfade({}, {}, {})".format(afid1, afid2, af.duration)
     else:
-        constructor = af.constructor("renpyAudio.filter.")
-
+        constructor = audio_filter_constructor(af)
 
     js = "renpyAudio.allocateFilter({}, {})".format(afid, constructor)
-    print(js)
+
+    if print_audio_filter:
+        print(js)
+
     emscripten.run_script(js)
 
     return afid
@@ -418,6 +448,10 @@ def deallocate_audio_filter(audio_filter):
         del audio_filter_ids[objid]
 
     js = "renpyAudio.deallocateFilter({})".format(afid)
+
+    if print_audio_filter:
+        print(js)
+
     emscripten.run_script(js)
 
 renpysound.deallocate_audio_filter = deallocate_audio_filter

@@ -130,29 +130,17 @@ cdef class AudioFilter:
 
         return allocate_buffer(samples.subchannels, samples.length)
 
-    def constructor(self, prefix):
-        """
-        Returns a text of a constructor call for this filter, using syntax
-        that will work in Python and Javascript.
-
-        `prefix`
-            The prefix to use for the constructor
-        """
-
+    def __repr__(self):
         args = self.__reduce__()[1]
 
         arg_repr = [ ]
 
         for i in args:
-            if isinstance(i, AudioFilter):
-                arg_repr.append(i.constructor(prefix))
-            else:
-                arg_repr.append(repr(i))
+            arg_repr.append(repr(i))
 
-        return "{}{}({})".format(prefix, self.__class__.__name__, ", ".join(arg_repr))
+        return "renpy.audio.filter.{}({})".format(self.__class__.__name__, ", ".join(arg_repr))
 
 
-    def __repr__(self):
         return self.constructor("renpy.audio.filter.")
 
 
@@ -218,7 +206,7 @@ cdef class Sequence(AudioFilter):
 
     cdef FilterList filters
 
-    def __init__(self, filters):
+    def __init__(self, *filters):
 
         if not filters:
             filters = [ Null() ]
@@ -228,7 +216,7 @@ cdef class Sequence(AudioFilter):
         self.filters = FilterList(filters)
 
     def __reduce__(self):
-        return (Sequence, (self.filters.list,))
+        return (Sequence, tuple(self.filters.list))
 
     def prepare(self, int samplerate):
 
@@ -711,7 +699,7 @@ cdef class Mix(AudioFilter):
         self.filters = FilterList(filters)
 
     def __reduce__(self):
-        return (Mix, (self.filters.list,))
+        return (Mix, tuple(self.filters.list))
 
     def prepare(self, int samplerate):
         for f in self.filters:
@@ -1114,7 +1102,7 @@ def to_audio_filter(o):
         return o
 
     if isinstance(o, list):
-        return Sequence(o)
+        return Sequence(*o)
 
     raise TypeError("Expected an AudioFilter, got {!r}.".format(o))
 

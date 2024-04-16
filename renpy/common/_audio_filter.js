@@ -160,3 +160,97 @@ filter.Biquad = function(kind, frequency, Q, gain) {
         outputs: [node],
     };
 };
+
+filter.Sequence = function(...filters) {
+    let first = filters[0];
+    let last = filters[filters.length - 1];
+
+    for (let i = 0; i < filters.length - 1; i++) {
+        filter.filterToFilter(filters[i], filters[i + 1]);
+    }
+
+    return {
+        inputs: first.inputs,
+        outputs: last.outputs,
+    };
+}
+
+filter.Mix = function(...filters) {
+    let inputs = [];
+    let outputs = [];
+
+    for (let f of filters) {
+        inputs.push(...f.inputs);
+        outputs.push(...f.outputs);
+    }
+
+    return {
+        inputs: inputs,
+        outputs: outputs,
+    };
+}
+
+filter.Multiply = function(factor) {
+    let node = new GainNode(renpyAudio.context, { gain: factor });
+
+    return {
+        inputs: [node],
+        outputs: [node],
+    };
+}
+
+
+filter.Delay = function(delay) {
+
+    if (typeof delay !== "number") {
+        delay = delay[0];
+    }
+
+    let node = new DelayNode(renpyAudio.context, { delayTime: delay });
+
+    return {
+        inputs: [node],
+        outputs: [node],
+    };
+}
+
+filter.Comb = function(delay, child, multiplier, wet) {
+    if (typeof delay !== "number") {
+        delay = delay[0];
+    }
+
+    let delayNode = new DelayNode(renpyAudio.context, { delayTime: delay });
+    let multiplierNode = new GainNode(renpyAudio.context, { gain: multiplier });
+
+
+    filter.nodeToFilter(delayNode, child);
+    filter.filterToNode(child, multiplierNode);
+    multiplierNode.connect(delayNode);
+
+    let rv = {
+        inputs: [ delayNode ],
+        outputs: [ multiplierNode ],
+    };
+
+    if (wet) {
+        let gainNode = new GainNode(renpyAudio.context, { gain: 1.0 - wet });
+        inputs.push(gainNode);
+        outputs.push(gainNode);
+    }
+
+
+    return rv;
+}
+
+
+filter.WetDry = function(child, wet, dry) {
+    let wetNode = new GainNode(renpyAudio.context, { gain: wet });
+    let dryNode = new GainNode(renpyAudio.context, { gain: dry });
+
+    filter.filterToNode(child, wetNode);
+
+    return {
+        inputs: [...child.inputs, dryNode],
+        outputs: [wetNode, dryNode],
+    };
+}
