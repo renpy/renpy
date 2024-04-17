@@ -40,6 +40,9 @@ purposes.
 Features
 --------
 
+:ref:`Ruby/Furigana text <ruby-text>` can now inherit its color from the parent text,
+by setting :propref:`color` to None.
+
 Transform now supports the :tpref:`fps` property, which quantizes time inside
 the transform to a particular number of frames per second.
 

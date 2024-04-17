@@ -619,6 +619,7 @@ For example::
     style ruby_style is default:
         size 12
         yoffset -20
+        color None # Use the same color as the parent text.
 
     style say_dialogue:
         ruby_line_leading 12

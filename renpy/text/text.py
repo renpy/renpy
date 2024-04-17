@@ -239,8 +239,8 @@ class TextSegment(object):
             self.underline = 0
 
         self.strikethrough = layout.scale_int(style.strikethrough)
-        self.color = style.color
-        self.black_color = style.black_color
+        self.color = style.color or self.color
+        self.black_color = style.black_color or self.black_color
         self.hyperlink = None
         self.kerning = layout.scale(style.kerning)
         self.outline_color = None
