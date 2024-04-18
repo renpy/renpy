@@ -11,6 +11,21 @@ Changelog (Ren'Py 7.x-)
 8.2.2 / 7.7.2
 =============
 
+
+NVL-Mode and Window
+-------------------
+
+The interaction of ``window auto`` and ``nvl`` mode, especially
+:var:`config.nvl_adv_transition` and :var:`config.adl_nvl_transition`,
+has been improved. The major change is that the latter transitions will
+now only occur if the window has not been shown or hidden, preventing
+double interactions from occuring.
+
+The (rarely used) ``nvl hide`` and ``nvl show`` statements now set the
+flag used by ``window auto``, preventing the window from being shown
+wince in a row by these statements.
+
+
 Fixes
 -----
 
