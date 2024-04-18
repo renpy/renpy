@@ -702,7 +702,6 @@ init -1500 python in _console:
                 # Try to run it as Ren'Py.
                 if self.can_renpy():
 
-                    # TODO: Can we run Ren'Py code?
                     name = renpy.load_string(code + "\nreturn")
 
                     if name is not None:
