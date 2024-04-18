@@ -51,7 +51,7 @@ init -1200 python:
 
         `auto`
             If True, this becomes the equivalent of the ``window auto show``
-            statment.
+            statement.
         """
 
         if config.window_functions_set_auto:
@@ -72,6 +72,8 @@ init -1200 python:
             store._window = True
 
         store._after_scene_show_hide = None
+
+        renpy.mode("window_show")
 
     def _window_hide(trans=False, auto=False):
         """
@@ -106,6 +108,8 @@ init -1200 python:
             store._window = False
 
         store._after_scene_show_hide = None
+
+        renpy.mode("window_hide")
 
     def _window_auto_callback(statement):
 

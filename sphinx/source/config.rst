@@ -96,8 +96,8 @@ These control transitions between various screens.
 
 .. var:: config.adv_nvl_transition = None
 
-    A transition that is used when showing NVL-mode text directly
-    after ADV-mode text.
+    A transition that is used to show the NVL-mode window when
+    showing ADV-mode text directly after NVL-mode text.
 
 .. var:: config.after_load_transition = None
 
@@ -155,8 +155,8 @@ These control transitions between various screens.
 
 .. var:: config.nvl_adv_transition = None
 
-    A transition that is used when showing ADV-mode text directly
-    after NVL-mode text.
+    A transition that is used to hide the NVL-mode window when
+    showing ADV-mode text directly after NVL-mode text.
 
 .. var:: config.say_attribute_transition = None
 
