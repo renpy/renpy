@@ -1054,6 +1054,42 @@ Occasionally Used
     lines. The attribute is not removed when the text apparition animation
     ends, but when the dialogue window gets dismissed.
 
+.. var:: config.statement_callbacks = [ ... ]
+
+    A list of functions that are called when a statement is executed.
+    These functions are generally called with the name of the statement
+    in question. However, there are some special statement names.
+
+    "say"
+        Normal say statements.
+
+    "say-bubble"
+        Say statements in bubble mode.
+
+    "say-nvl"
+        Say statements in NVL mode.
+
+    "say-bubble"
+        Say statements in bubble mode.
+
+    "say-centered"
+        Say statments using the :var:`centered` character.
+
+    "menu":
+        Normal menu statements.
+
+    "menu-nvl"
+        Menu statements in NVL mode.
+
+    "menu-with-caption"
+        Menu statements with a caption.
+
+    "menu-nvl-with-caption"
+        Menu statements with a caption in NVL mode.
+
+    There is a default callback in this list that is used to implement
+    ``window auto``.
+
 .. var:: config.tag_layer = { }
 
     A dictionary mapping image tag strings to layer name strings. When
@@ -1161,12 +1197,12 @@ Occasionally Used
 
         define config.web_input = renpy.variant("touch")
 
-.. var:: config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered", "say-bubble", ... ]
+.. var:: config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered", "say-bubble" ]
 
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.
 
-.. var:: config.window_auto_show = [ 'say', 'menu-with-caption', ... ]
+.. var:: config.window_auto_show = [ "say", "say-nvl", "menu-with-caption", "nvl-menu", "nvl-menu-with-caption" ]
 
     A list of statements that cause ``window auto`` to show the empty
     dialogue window.

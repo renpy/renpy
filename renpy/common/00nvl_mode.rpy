@@ -312,6 +312,8 @@ init -1500 python:
             else:
                 self.clear = kind.clear
 
+            properties.setdefault("statement_name", "say-nvl")
+
             ADVCharacter.__init__(
                 self,
                 who,

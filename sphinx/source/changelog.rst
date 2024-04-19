@@ -46,6 +46,9 @@ The launcher no longer plays a stream of silence while it is running.
 Other
 -----
 
+The statement callback system (:var:`config.statement_callbacks`) has been
+documented.
+
 The modes system (renpy.mode, config.mode_callbacks, etc) have become
 undocumented. This was likely not used by any game, and has been replaced
 by :var:`config.statement_callbacks`. Mode callbacks still work, but
