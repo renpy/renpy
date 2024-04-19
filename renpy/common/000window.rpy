@@ -29,7 +29,7 @@ init -1200 python:
     config.window = None
 
     # A list of statements that cause the window to be auto-shown.
-    config.window_auto_show = [ "say", "menu-with-caption" ]
+    config.window_auto_show = [ "say", "say-nvl", "menu-with-caption", "nvl-menu", "nvl-menu-with-caption" ]
 
     # A list of statements that cause the window to be auto-hidden.
     config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered", "say-bubble" ]
@@ -51,7 +51,7 @@ init -1200 python:
 
         `auto`
             If True, this becomes the equivalent of the ``window auto show``
-            statment.
+            statement.
         """
 
         if config.window_functions_set_auto:
@@ -72,6 +72,8 @@ init -1200 python:
             store._window = True
 
         store._after_scene_show_hide = None
+
+        renpy.mode("window_show")
 
     def _window_hide(trans=False, auto=False):
         """
@@ -106,6 +108,8 @@ init -1200 python:
             store._window = False
 
         store._after_scene_show_hide = None
+
+        renpy.mode("window_hide")
 
     def _window_auto_callback(statement):
 

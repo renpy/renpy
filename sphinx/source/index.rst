@@ -117,7 +117,6 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    trans_trans_python
    gui_advanced
    screen_python
-   modes
    cdd
    cds
    custom_text_tags

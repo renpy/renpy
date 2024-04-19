@@ -72,6 +72,21 @@ now True by default in that function, and in the ``play`` statement.
 8.2.2 / 7.7.2
 =============
 
+
+NVL-Mode and Window
+-------------------
+
+The interaction of ``window auto`` and ``nvl`` mode, especially
+:var:`config.nvl_adv_transition` and :var:`config.adl_nvl_transition`,
+has been improved. The major change is that the latter transitions will
+now only occur if the window has not been shown or hidden, preventing
+double interactions from occuring.
+
+The (rarely used) ``nvl hide`` and ``nvl show`` statements now set the
+flag used by ``window auto``, preventing the window from being shown
+wince in a row by these statements.
+
+
 Fixes
 -----
 
@@ -90,6 +105,18 @@ The launcher no longer plays a stream of silence while it is running.
 
 When building a small games as an Android App Bundle, fast-forward packages were
 incorrectly included. This has been fixed.
+
+
+Other
+-----
+
+The statement callback system (:var:`config.statement_callbacks`) has been
+documented.
+
+The modes system (renpy.mode, config.mode_callbacks, etc) have become
+undocumented. This was likely not used by any game, and has been replaced
+by :var:`config.statement_callbacks`. Mode callbacks still work, but
+shouldn't be used by new games.
 
 
 .. _renpy-8.2.1:

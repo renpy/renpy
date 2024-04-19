@@ -67,6 +67,9 @@ init -1500 python:
             if (name not in self.cursors) or (name == "default"):
                 name = getattr(store, "default_mouse", "default")
 
+            if name not in self.cursors:
+                name = "default"
+
             # Adjust st when the cursor changes.
             if (name != self.last_cursor) or (self.cursor is None):
                 self.last_cursor = name
