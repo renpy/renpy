@@ -3490,7 +3490,7 @@ def display_reset():
 
 def mode(mode):
     """
-    :doc: modes
+    :undocumented:
 
     Causes Ren'Py to enter the named mode, or stay in that mode if it's
     already in it.

@@ -769,14 +769,6 @@ Occasionally Used
     shown for at least this amount of time. The image may be shown longer
     if Ren'Py takes longer to start up.
 
-.. var:: config.mode_callbacks = [ ... ]
-
-    A list of callbacks called when entering a mode. For more documentation,
-    see the section on :doc:`modes`.
-
-    The default value includes a callback that implements :var:`config.adv_nvl_transition`
-    and :var:`config.nvl_adv_transition`.
-
 .. var:: config.mouse = None
 
     This variable controls the use of user-defined mouse cursors. If

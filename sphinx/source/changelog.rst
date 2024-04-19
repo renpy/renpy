@@ -43,6 +43,15 @@ The ``rpy`` statement is now considered to be always reachable.
 The launcher no longer plays a stream of silence while it is running.
 
 
+Other
+-----
+
+The modes system (renpy.mode, config.mode_callbacks, etc) have become
+undocumented. This was likely not used by any game, and has been replaced
+by :var:`config.statement_callbacks`. Mode callbacks still work, but
+shouldn't be used by new games.
+
+
 .. _renpy-8.2.1:
 .. _renpy-7.7.1:
 
