@@ -37,6 +37,25 @@ during an interaction context. This can be used to run Python code for debugging
 purposes.
 
 
+Window Statement Changes
+------------------------
+
+There have been a changes to the ``window`` statment:
+
+* ``window show`` and ``window hide`` no longer disable the automatic window
+  management that Ren'Py does. Instead, these statements will immediately
+  show or hide the window, without changing automatic window management.
+
+* The new ``window auto False`` statement will disable automatic window
+  management, and the new ``window auto True`` statement will re-enable it.
+  (The existing ``window auto`` statement wil also work, but ``window auto True``
+  is preferred.)
+
+The intent behind this is to make ``window hide`` more useful, as it can
+be used to hide the window for effects without disabling automatic window
+management.
+
+
 Features
 --------
 

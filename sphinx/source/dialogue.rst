@@ -273,19 +273,18 @@ non-dialogue interactions.
     the transition is omitted, :var:`config.window_hide_transition` is
     used.
 
-``window auto``
+``window auto True``
     This enables automatic management of the window. The window is shown
     before statements listed in :var:`config.window_auto_show` – by default,
     say statements. The window is hidden before statements listed in
     :var:`config.window_auto_hide` – by default, ``scene`` and ``call screen``
     statements, and ``menu`` statements without a caption.
-    (Only statements are considered, not statement equivalent
-    functions.)
 
-``window auto hide``, ``window auto show``
-    These statements show or hide the window, with an optional transition,
-    like ``window show`` or ``window hide`` do. However, unlike those
-    statements, this keeps automatic management enabled.
+    Only statements are considered, not statement equivalent functions.
+
+``window auto False``
+    This disables automatic management of the window. The window is not
+    shown or hidden automatically.
 
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
@@ -304,7 +303,7 @@ For example::
     pause                # the window is hidden during this pause.
 
 
-    window auto
+    window auto True
 
     "The window is automatically shown before this line of dialogue."
     pause                # the window is shown during this pause.
@@ -312,12 +311,12 @@ For example::
     scene bg washington  # the window is hidden before the scene change.
     with dissolve
 
-    window auto show     # Shows the window before it normally would be shown.
+    window show     # Shows the window before it normally would be shown.
 
     show eileen
     with dissolve
 
-    "Without window auto show, the window would have been shown here."
+    "Without window show, the window would have been shown here."
 
 Dialogue window management is subject to the "show empty window"
 :func:`Preference`. If the preference is disabled, the statements above

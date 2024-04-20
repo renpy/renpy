@@ -28,6 +28,20 @@ renderer.
 Support for Window 7, 8, and 8.1 will be dropped after May 2024, to allow the
 use of versions of Python that only support Windows 10 and later.
 
+.. _incompatible-8.3.0:
+.. _incompatible-7.8.0:
+
+8.3.0 / 7.8.0
+-------------
+
+**Window Statement** The ``window show`` annd ``window hide`` statements
+no longer disable the ``window auto`` flag. If you'd like to do this, then
+either use the new ``window auto False`` statement, or change your game
+to include:
+
+    define config.window_functions_set_auto = True
+
+
 .. _incompatible-8.2.1:
 .. _incompatible-7.7.1:
 

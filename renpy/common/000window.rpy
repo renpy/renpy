@@ -34,7 +34,8 @@ init -1200 python:
     # A list of statements that cause the window to be auto-hidden.
     config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered", "say-bubble" ]
 
-    config.window_functions_set_auto = True
+    # Compat, with a fairly complicated history, this defaulted to True in the past.
+    config.window_functions_set_auto = False
 
     _window_auto = False
 
@@ -187,10 +188,15 @@ python early hide:
         if l.keyword('hide'):
             hide = l.simple_expression() or "False"
             rv["hide"] = hide
+            rv["auto"] = "True"
 
         elif l.keyword('show'):
             show = l.simple_expression() or "False"
             rv["show"] = show
+            rv["auto"] = "True"
+
+        else:
+            rv["auto"] = l.simple_expression() or "True"
 
         if not l.eol():
             renpy.error('expected end of line')
@@ -207,6 +213,10 @@ python early hide:
         if "show" in p:
             trans = eval(p["show"])
             _window_show(trans, auto=True)
+
+        if "auto" in p:
+            store._window_auto = eval(p["auto"])
+
 
     def warp_true(p):
         return True

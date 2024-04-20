@@ -207,7 +207,6 @@ init -1100 python:
 
         if version <= (7, 3, 5):
             config.side_image_requires_attributes = False
-            config.window_functions_set_auto = False
             config.who_what_sub_compat = 0
 
         if version <= (7, 4, 0):
@@ -307,6 +306,10 @@ init -1100 python:
             config.containers_pass_transform_events.clear()
             config.say_replace_event = False
             config.screens_never_cancel_hide = False
+
+        if ((7, 4, 0) <= version) and _compat_versions(version, (7, 7, 99), (8, 2, 99)):
+            config.window_functions_set_auto = True
+
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
