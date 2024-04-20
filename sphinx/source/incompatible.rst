@@ -37,9 +37,15 @@ use of versions of Python that only support Windows 10 and later.
 **Window Statement** The ``window show`` annd ``window hide`` statements
 no longer disable the ``window auto`` flag. If you'd like to do this, then
 either use the new ``window auto False`` statement, or change your game
-to include:
+to include::
 
     define config.window_functions_set_auto = True
+
+When a ``window show`` occurs after ``window hide``, Ren'Py will look forward
+to the next say statement to determine the type of thr window to show. Previously,
+it looked back to the last say statement. To revert this change, include::
+
+    define config.window_next = False
 
 
 .. _incompatible-8.2.1:

@@ -37,7 +37,11 @@ init -1200 python:
     # Compat, with a fairly complicated history, this defaulted to True in the past.
     config.window_functions_set_auto = False
 
+    # Compat for window_next.
+    config.window_next = True
+
     _window_auto = False
+    _window_next = True
 
     def _window_show(trans=False, auto=False):
         """
@@ -109,6 +113,7 @@ init -1200 python:
             store._window = False
 
         store._after_scene_show_hide = None
+        store._window_next = config.window_next
 
         renpy.mode("window_hide")
 
@@ -125,6 +130,10 @@ init -1200 python:
 
         if statement in config.window_auto_show:
             _window_show(auto=True)
+
+
+        if statement == "say" or statement.startswith("say-"):
+            store._window_next = False
 
     config.statement_callbacks.append(_window_auto_callback)
 
@@ -238,3 +247,7 @@ python early hide:
                              parse=parse_window_auto,
                              execute=execute_window_auto,
                              warp=warp_true)
+
+
+init 1200 python:
+    _window_next = config.window_next

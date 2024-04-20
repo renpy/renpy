@@ -143,10 +143,10 @@ init -1700 python:
 
             # When running in a say statement or menu-with-caption, scry for
             # the next say statement, and get the window from that.
-            if scry.say or scry.menu_with_caption:
+            if scry.say or scry.menu_with_caption or store._window_next:
                 who = None
 
-                for i in range(10):
+                for i in range(20):
                     if scry.say:
                         who = scry.who
                         break

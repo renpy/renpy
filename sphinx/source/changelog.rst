@@ -55,6 +55,10 @@ The intent behind this is to make ``window hide`` more useful, as it can
 be used to hide the window for effects without disabling automatic window
 management.
 
+When a ``window show`` occurs after ``window hide``, Ren'Py will look forward
+to the next say statement to determine the type of thr window to show. Previously,
+it looked back to the last say statement.
+
 
 Features
 --------
