@@ -26,9 +26,15 @@ SOLID_LAYOUT = AttributeLayout()
 
 # The layout of a mesh used with a texture.
 TEXTURE_LAYOUT = AttributeLayout()
-TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2)
+TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
 
-
+# The layout of a mesh used with text.
+TEXT_LAYOUT = AttributeLayout()
+TEXT_LAYOUT.add_attribute("a_tex_coord", 2) # # The texture coordinate.
+TEXT_LAYOUT.add_attribute("a_center_position", 2) # Position of the vertex center.
+TEXT_LAYOUT.add_attribute("a_vertex_time", 1) # The time this vertex should be shown.
+TEXT_LAYOUT.add_attribute("a_minimum_time", 1) # The minimum time any vertex in this text should be shown.
+TEXT_LAYOUT.add_attribute("a_maximum_time", 1) # The maximum time any vertex in this text should be shown.
 
 cdef class Mesh:
 

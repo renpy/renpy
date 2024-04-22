@@ -5,7 +5,7 @@ from libc.math cimport hypot
 
 from renpy.gl2.gl2polygon cimport Polygon, Point2
 from renpy.gl2.gl2mesh cimport Mesh, AttributeLayout
-from renpy.gl2.gl2mesh import SOLID_LAYOUT, TEXTURE_LAYOUT
+from renpy.gl2.gl2mesh import SOLID_LAYOUT, TEXTURE_LAYOUT, TEXT_LAYOUT
 
 cdef class Mesh2(Mesh):
 
@@ -212,6 +212,107 @@ cdef class Mesh2(Mesh):
 
         return rv
 
+    @staticmethod
+    def text_mesh(int glyphs):
+        """
+        Creates a mesh that can hold `glyphs` glyphs.
+        """
+
+        cdef Mesh2 rv = Mesh2(TEXT_LAYOUT, glyphs * 4, glyphs * 2)
+
+        rv.points = 0
+        rv.triangles = 0
+
+        return rv
+
+    def add_glyph(Mesh2 self,
+        double cx, double cy,
+        double p0x, double p0y, double p0u, double p0v, double p0t,
+        double p1x, double p1y, double p1u, double p1v, double p1t,
+        double p2x, double p2y, double p2u, double p2v, double p2t,
+        double p3x, double p3y, double p3u, double p3v, double p3t,
+        ):
+        """
+        Adds a glyph to a mesh created by `text_mesh`.
+
+        `cx`, `cy`
+            The center of the glyph.
+
+        `p0x`, `p0y`
+            The center of the first point.
+
+        `p0u`, `p0v`
+            The texture coordinates of the first point.
+
+        `p0t`
+            The time the first point should be shown.
+
+        The p1, p2, and p3 arguments are similar.
+        """
+
+        if self.layout is not TEXT_LAYOUT:
+            raise ValueError("This mesh is not a text mesh.")
+
+        cdef double mint = min(p0t, p1t, p2t, p3t)
+        cdef double maxt = max(p0t, p1t, p2t, p3t)
+
+        cdef int point = self.points
+        cdef int attribute = self.points * self.layout.stride
+
+        self.point[point + 0].y = p0y
+        self.point[point + 1].x = p1x
+        self.point[point + 1].y = p1y
+        self.point[point + 0].x = p0x
+        self.point[point + 2].x = p2x
+        self.point[point + 2].y = p2y
+        self.point[point + 3].x = p3x
+        self.point[point + 3].y = p3y
+
+        self.attribute[attribute + 0] = p0u
+        self.attribute[attribute + 1] = p0v
+        self.attribute[attribute + 2] = cx
+        self.attribute[attribute + 3] = cy
+        self.attribute[attribute + 4] = p0t
+        self.attribute[attribute + 5] = mint
+        self.attribute[attribute + 6] = maxt
+
+        self.attribute[attribute + 7] = p1u
+        self.attribute[attribute + 8] = p1v
+        self.attribute[attribute + 9] = cx
+        self.attribute[attribute + 10] = cy
+        self.attribute[attribute + 11] = p1t
+        self.attribute[attribute + 12] = mint
+        self.attribute[attribute + 13] = maxt
+
+        self.attribute[attribute + 14] = p2u
+        self.attribute[attribute + 15] = p2v
+        self.attribute[attribute + 16] = cx
+        self.attribute[attribute + 17] = cy
+        self.attribute[attribute + 18] = p2t
+        self.attribute[attribute + 19] = mint
+        self.attribute[attribute + 20] = maxt
+
+        self.attribute[attribute + 21] = p3u
+        self.attribute[attribute + 22] = p3v
+        self.attribute[attribute + 23] = cx
+        self.attribute[attribute + 24] = cy
+        self.attribute[attribute + 25] = p3t
+        self.attribute[attribute + 26] = mint
+        self.attribute[attribute + 27] = maxt
+
+        cdef int triangle = self.triangles * 3
+
+        self.triangle[triangle + 0] = point + 0
+        self.triangle[triangle + 1] = point + 1
+        self.triangle[triangle + 2] = point + 2
+
+        self.triangle[triangle + 3] = point + 0
+        self.triangle[triangle + 4] = point + 2
+        self.triangle[triangle + 5] = point + 3
+
+        self.points += 4
+        self.triangles += 2
+
     cpdef Mesh2 crop(Mesh2 self, Polygon p):
         """
         Crops this mesh against Polygon `p`, and returns a new Mesh2.
@@ -242,10 +343,6 @@ cdef class Mesh2(Mesh):
             return (0.0, 0.0, 0.0, 1.0)
         else:
             return (self.point[0].x, self.point[0].y, 0.0, 1.0)
-
-
-
-
 
 
 ###############################################################################
