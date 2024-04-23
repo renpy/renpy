@@ -133,6 +133,9 @@ incorrectly included. This has been fixed.
 Other
 -----
 
+When filtering text tags (with :func:`renpy.filter_text_tags` or places that
+call it), the axis tag is now handled correctly.
+
 The statement callback system (:var:`config.statement_callbacks`) has been
 documented.
 

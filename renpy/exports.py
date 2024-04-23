@@ -3610,6 +3610,9 @@ def vibrate(duration):
     is only supported on Android.
     """
 
+    if duration < 0.01:
+        duration = 0.01
+
     if renpy.android:
         import android # @UnresolvedImport
         android.vibrate(duration)
