@@ -58,8 +58,9 @@ cdef class Glyph:
 
 cdef class Line:
 
-    def __init__(self, int y, int height, list glyphs):
+    def __init__(self, int y, int baseline, int height, list glyphs):
         self.y = y
+        self.baseline = baseline
         self.height = height
         self.glyphs = glyphs
         self.eop = False
@@ -70,6 +71,7 @@ cdef class Line:
     _types = """
         y : int
         height : int
+        baseline: int
         glyphs : list[Glyph]
         max_time : float
         eop : bool
@@ -754,7 +756,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading, int ruby_line_l
 
                     gg.y += ruby_line_leading
 
-            l = Line(y - line_leading, line_leading + line_spacing + spacing, glyphs[sol:pos])
+            l = Line(y - line_leading, y + ascent, line_leading + line_spacing + spacing, glyphs[sol:pos])
             rv.append(l)
 
             y += line_spacing
@@ -785,7 +787,6 @@ def place_vertical(list glyphs, int y, int spacing, int leading, int ruby_line_l
             line_spacing = g.line_spacing
 
         pos += 1
-
 
     rv[-1].eop = True
     return rv, y - leading

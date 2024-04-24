@@ -99,6 +99,9 @@ cdef class Line:
         # The height of this line.
         public int height
 
+        # The y coordinate of the baseline of this line.
+        public int baseline
+
         # The list of glyphs on this line.
         public list glyphs
 
