@@ -1630,10 +1630,6 @@ def Character(name=NotSet, kind=None, **properties):
         unable to move past the say statement unless an alternate means
         (such as a jump hyperlink or screen) is provided.
 
-    `mode`
-        A string giving the mode to enter when this character
-        speaks. See the section on :ref:`modes <modes>` for more details.
-
     `callback`
         A function that is called when events occur while the
         character is speaking. See the section on

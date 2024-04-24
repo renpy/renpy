@@ -34,7 +34,7 @@ List slicing is now allowed inside string interpolation. For example,
 
 Ren'Py will now generate translations for strings in _ren.py files.
 
-Ren'Py now checks that achievment names are strings.
+Ren'Py now checks that achievement names are strings.
 
 An issue with weakref pickling on Ren'Py 7 has been fixed.
 
