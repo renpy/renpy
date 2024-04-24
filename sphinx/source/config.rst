@@ -1197,12 +1197,12 @@ Occasionally Used
 
         define config.web_input = renpy.variant("touch")
 
-.. var:: config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered", "say-bubble" ]
+.. var:: config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered", "say-bubble", ... ]
 
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.
 
-.. var:: config.window_auto_show = [ "say", "say-nvl", "menu-with-caption", "nvl-menu", "nvl-menu-with-caption" ]
+.. var:: config.window_auto_show = [ "say", "say-nvl", "menu-with-caption", "nvl-menu", "nvl-menu-with-caption", ... ]
 
     A list of statements that cause ``window auto`` to show the empty
     dialogue window.

@@ -135,10 +135,7 @@ the ``if`` keyword or colon. ::
 
 Menu arguments passed to the menu itself become arguments to the screen,
 except the `screen` argument which selects the screen, and the `nvl` argument
-that selects the :ref:`NVL-mode menu <nvl-mode-menu>`. There is also a special
-keyword `_mode` which will set the mode of this interaction, by default "menu".
-The arguments to the choices become arguments to the items passed to the
-menu screen.
+that selects the :ref:`NVL-mode menu <nvl-mode-menu>`.
 
 See the documentation for :ref:`the choice screen <choice-screen>` and
 :var:`config.menu_arguments_callback`.

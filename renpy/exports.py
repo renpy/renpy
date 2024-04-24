@@ -1197,7 +1197,7 @@ def display_menu(items,
     """
     :doc: se_menu
     :name: renpy.display_menu
-    :args: (items, *, interact=True, screen="choice", type="menu", _layer=..., **kwargs)
+    :args: (items, *, interact=True, screen="choice", type="menu", _layer=None, **kwargs)
 
     This displays a menu to the user. `items` should be a list of 2-item tuples.
     In each tuple, the first item is a textual label, and the second item is
@@ -1231,7 +1231,6 @@ def display_menu(items,
     menu_args, menu_kwargs = get_menu_args()
     screen = menu_kwargs.pop("screen", screen)
     with_none = menu_kwargs.pop("_with_none", with_none)
-    mode = menu_kwargs.pop("_mode", type)
     layer = menu_kwargs.pop("_layer", _layer)
 
     if interact:
