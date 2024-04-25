@@ -32,6 +32,11 @@ cdef class Glyph:
         self.variation = 0
         self.delta_x_adjustment = 0
 
+        self.add_left = 0
+        self.add_top = 0
+        self.add_right = 0
+        self.add_bottom = 0
+
     def __repr__(self):
         if self.variation == 0:
             return "<Glyph {0!r} time={1}>".format(self.character, self.time)
@@ -53,6 +58,10 @@ cdef class Glyph:
         time : float
         hyperlink : int
         draw : bool
+        add_left : int
+        add_top : int
+        add_right : int
+        add_bottom : int
         """
 
 

@@ -851,6 +851,9 @@ cdef class HBFont:
         cdef hb_glyph_position_t *glyph_pos
         cdef unsigned int glyph_count
 
+        cdef int bmx
+        cdef int bmy
+
         self.setup()
 
         rv = [ ]
@@ -961,6 +964,11 @@ cdef class HBFont:
 
             if bmy + <int> cache.bitmap.rows > h:
                 h = bmy + cache.bitmap.rows
+
+            glyph.add_left = <int> max(-(bmx - glyph.x), 0)
+            glyph.add_right = <int> max(bmx + cache.bitmap.width - (glyph.x + glyph.width), 0)
+            glyph.add_top = <int> max(-(bmy - glyph.y), 0)
+            glyph.add_bottom = <int> max(bmy + cache.bitmap.rows - (glyph.y + glyph.line_spacing), 0)
 
         return x, y, w, h
 

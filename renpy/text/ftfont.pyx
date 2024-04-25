@@ -715,6 +715,11 @@ cdef class FTFont:
             if bmy + <int> cache.bitmap.rows > h:
                 h = bmy + cache.bitmap.rows
 
+            glyph.add_left = <int> max(-(bmx - glyph.x), 0)
+            glyph.add_right = <int> max(bmx + cache.bitmap.width - (glyph.x + glyph.width), 0)
+            glyph.add_top = <int> max(-(bmy - glyph.y), 0)
+            glyph.add_bottom = <int> max(bmy + cache.bitmap.rows - (glyph.y + glyph.line_spacing), 0)
+
         return x, y, w, h
 
     def draw(self, pysurf, float xo, int yo, color, list glyphs, int underline, bint strikethrough, black_color):
