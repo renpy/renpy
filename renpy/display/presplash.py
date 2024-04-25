@@ -243,7 +243,7 @@ def progress(kind, done, total):
     if not renpy.emscripten:
         return
 
-    if done:
+    if done == total:
         return
 
     if not PY2:
