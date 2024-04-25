@@ -1226,6 +1226,7 @@ def display_menu(items,
     menu_args, menu_kwargs = get_menu_args()
     screen = menu_kwargs.pop("screen", screen)
     with_none = menu_kwargs.pop("_with_none", with_none)
+    mode = menu_kwargs.pop("_mode", type)
     layer = menu_kwargs.pop("_layer", _layer)
 
     if interact:
