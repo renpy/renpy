@@ -36,6 +36,7 @@ cdef class Glyph:
         self.add_top = 0
         self.add_right = 0
         self.add_bottom = 0
+        self.rtl = 0
 
     def __repr__(self):
         if self.variation == 0:
@@ -62,6 +63,7 @@ cdef class Glyph:
         add_top : int
         add_right : int
         add_bottom : int
+        rtl: bool
         """
 
 
@@ -839,6 +841,7 @@ def assign_times(float t, float gps, list glyphs):
 
         t += tpg
         g.time = t
+        g.duration = tpg
 
 
     return t
@@ -1124,6 +1127,8 @@ def reverse_lines(list glyphs):
             block = [ ]
 
             continue
+
+        g.rtl = True
 
         block.append(g)
 

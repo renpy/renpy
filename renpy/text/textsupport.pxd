@@ -95,6 +95,13 @@ cdef class Glyph:
         public int add_right
         public int add_bottom
 
+        # Is this glyph RTL?
+        public bint rtl
+
+        # How long does this glyph show for, before the next glyph,
+        # in seconds.
+        public float duration
+
 
 cdef class Line:
 

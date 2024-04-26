@@ -841,6 +841,9 @@ class Layout(object):
         # A map from (outline, color) to a texture.
         self.textures = { }
 
+        # A map from outline to a mesh.
+        self.meshes = { }
+
         di = DrawInfo()
 
         for o, color, _xo, _yo in self.outlines:
@@ -857,8 +860,8 @@ class Layout(object):
 
             # Create the texture.
 
-            tw = int(sw + o)
-            th = int(sh + o)
+            tw = int(sw + o * 2)
+            th = int(sh + o * 2)
 
             # If not a multiple of 32, round up.
             tw = (tw | 0x1f) + 1 if (tw & 0x1f) else tw
@@ -905,6 +908,9 @@ class Layout(object):
                 })
 
             self.textures[key] = tex
+
+            if o not in self.meshes:
+                self.meshes[o] = self.create_mesh(o, tw, th, lines)
 
         # Compute the max time for all lines, and the max max time.
         self.max_time = textsupport.max_times(lines)
@@ -994,7 +1000,7 @@ class Layout(object):
 
     def create_text_segments(self, text, ts, style):
         """
-        Creates one or more text segements, splitting out emoji. This
+        Creates one or more text segments, splitting out emoji. This
         will also use subsegment to handle font groups.
         """
 
@@ -1580,6 +1586,94 @@ class Layout(object):
             return None
         else:
             return 0
+
+    def create_mesh(self, outline, tw, th, lines):
+        """
+        Creates a mesh that will draw the text character-by-character, with
+        the given outline size.
+
+        `outline`
+            The size of the outline, in pixels.
+
+        `tw`, `th`
+            The size of the texture.
+
+        `lines`
+            A list of Line objects, representing the lines of text.
+        """
+
+        if lines:
+            last_line = lines[-1]
+        else:
+            last_line = None
+
+        # The number of glyphs in the mesh.
+        n_glyphs = sum(len(l.glyphs) for l in lines)
+
+        mesh = renpy.gl2.gl2mesh2.Mesh2.text_mesh(n_glyphs)
+
+        # The y coordinate of the top line.
+        top = 0
+
+        for line in lines:
+
+            # Line bottom is the y coordinate of the bottom line.
+            if line is not last_line:
+                bottom = min(outline + line.y + line.height + self.line_overlap_split, max_height)
+            else:
+                bottom = th
+
+            if line.glyphs:
+                first_glyph = line.glyphs[0]
+                last_glyph = line.glyphs[-1]
+            else:
+                first_glyph = None
+                last_glyph = None
+
+            for g in line.glyphs:
+
+                if g.time == -1:
+                    continue
+
+                # The x-coordinate of the left edge of the glyph.
+                if g is first_glyph:
+                    left = g.x - self.add_left
+                else:
+                    left = g.x + outline
+
+                # The x-coordinate of the right edge of the glyph.
+                if g is last_glyph:
+                    right = g.x + g.advance + outline * 2 + self.add_right
+                else:
+                    right = g.x + g.advance + outline
+
+                if left < 0:
+                    left = 0
+                if right > tw:
+                    right = tw
+
+                # The center coordinates of the glyph. These aren't the
+                # actual center, but the center of the baseline.
+                cx = g.x + g.advance / 2
+                cy = outline + line.baseline
+
+                if g.rtl:
+                    left_time = g.time
+                    right_time = g.time - g.duration
+                else:
+                    left_time = g.time - g.duration
+                    right_time = g.time
+
+                mesh.add_glyph(
+                    tw, th,
+                    cx, cy,
+                    left, bottom, left_time,
+                    right, bottom, right_time,
+                    right, top, right_time,
+                    left, top, left_time
+                )
+
+            top = bottom
 
 
 # The maximum number of entries in the layout cache.

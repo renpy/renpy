@@ -226,23 +226,24 @@ cdef class Mesh2(Mesh):
         return rv
 
     def add_glyph(Mesh2 self,
+        double tx, double ty,
         double cx, double cy,
-        double p0x, double p0y, double p0u, double p0v, double p0t,
-        double p1x, double p1y, double p1u, double p1v, double p1t,
-        double p2x, double p2y, double p2u, double p2v, double p2t,
-        double p3x, double p3y, double p3u, double p3v, double p3t,
+        double p0x, double p0y, double p0t,
+        double p1x, double p1y, double p1t,
+        double p2x, double p2y, double p2t,
+        double p3x, double p3y, double p3t,
         ):
         """
         Adds a glyph to a mesh created by `text_mesh`.
+
+        `tx`, `ty`
+            The size of the texture the glyph is in.
 
         `cx`, `cy`
             The center of the glyph.
 
         `p0x`, `p0y`
             The center of the first point.
-
-        `p0u`, `p0v`
-            The texture coordinates of the first point.
 
         `p0t`
             The time the first point should be shown.
@@ -252,6 +253,18 @@ cdef class Mesh2(Mesh):
 
         if self.layout is not TEXT_LAYOUT:
             raise ValueError("This mesh is not a text mesh.")
+
+        if tx == 0 or ty == 0:
+            return
+
+        cdef double p0u = p0x / tx
+        cdef double p0v = p0y / ty
+        cdef double p1u = p1x / tx
+        cdef double p1v = p1y / ty
+        cdef double p2u = p2x / tx
+        cdef double p2v = p2y / ty
+        cdef double p3u = p3x / tx
+        cdef double p3v = p3y / ty
 
         cdef double mint = min(p0t, p1t, p2t, p3t)
         cdef double maxt = max(p0t, p1t, p2t, p3t)
