@@ -1615,6 +1615,8 @@ class Layout(object):
         # The y coordinate of the top line.
         top = 0
 
+        _, max_height = self.size
+
         for line in lines:
 
             # Line bottom is the y coordinate of the bottom line.
