@@ -2390,14 +2390,6 @@ class Text(renpy.display.displayable.Displayable):
         vw, vh = virtual_layout.size
         w, h = layout.size
 
-        # Get the list of blits we want to undertake.
-        if not self.slow:
-            blits = [ Blit(0, 0, w - layout.xborder, h - layout.yborder, left=True, right=True, top=True, bottom=True) ]
-            redraw = None
-        else:
-            # TODO: Make this changeable.
-            blits = layout.blits_typewriter(st)
-            redraw = layout.redraw_typewriter(st)
 
         # Blit text layers.
         rv = renpy.display.render.Render(vw, vh)
@@ -2411,63 +2403,7 @@ class Text(renpy.display.displayable.Displayable):
 
             rv.blit(fill, (0, 0))
 
-        for o, color, xo, yo in layout.outlines:
-            tex = layout.textures[o, color]
-
-            if o:
-                oblits = outline_blits(blits, o)
-            else:
-                oblits = blits
-
-            for b in oblits:
-
-                b_x = b.x
-                b_y = b.y
-                b_w = b.w
-                b_h = b.h
-
-                # Bound to inside texture rectangle.
-                if b_x < 0:
-                    b_w += b.x
-                    b_x = 0
-
-                if b_y < 0:
-                    b_h += b_y
-                    b_y = 0
-
-                if b_w > w - b_x:
-                    b_w = w - b_x
-                if b_h > h - b_y:
-                    b_h = h - b_y
-
-                if b_w <= 0 or b_h <= 0:
-                    continue
-
-                # Expand the blits and offset them as necessary.
-                if b.right:
-                    b_w += layout.add_right
-                    b_w += o
-
-                if b.bottom:
-                    b_h += layout.add_bottom
-                    b_h += o
-
-                if b.left:
-                    b_w += layout.add_left
-                else:
-                    b_x += layout.add_left
-
-                if b.top:
-                    b_h += layout.add_top
-                else:
-                    b_y += layout.add_top
-
-                # Blit.
-                rv.absolute_blit(
-                    tex.subsurface((b_x, b_y, b_w, b_h)),
-                    layout.unscale_pair(b_x + xo + layout.xoffset - o - layout.add_left,
-                                        b_y + yo + layout.yoffset - o - layout.add_top)
-                    )
+        redraw = self.render_blits(rv, layout, st)
 
         # Blit displayables.
         if layout.displayable_blits:
@@ -2530,6 +2466,79 @@ class Text(renpy.display.displayable.Displayable):
             rv.properties = { "pixel_perfect" : True }
 
         return rv
+
+    def render_blits(self, rv, layout, st):
+
+        w, h = layout.size
+
+        # Get the list of blits we want to undertake.
+        if not self.slow:
+            blits = [ Blit(0, 0, w - layout.xborder, h - layout.yborder, left=True, right=True, top=True, bottom=True) ]
+            redraw = None
+        else:
+            # TODO: Make this changeable.
+            blits = layout.blits_typewriter(st)
+            redraw = layout.redraw_typewriter(st)
+
+        for o, color, xo, yo in layout.outlines:
+            tex = layout.textures[o, color]
+
+            if o:
+                oblits = outline_blits(blits, o)
+            else:
+                oblits = blits
+
+            for b in oblits:
+
+                b_x = b.x
+                b_y = b.y
+                b_w = b.w
+                b_h = b.h
+
+                # Bound to inside texture rectangle.
+                if b_x < 0:
+                    b_w += b.x
+                    b_x = 0
+
+                if b_y < 0:
+                    b_h += b_y
+                    b_y = 0
+
+                if b_w > w - b_x:
+                    b_w = w - b_x
+                if b_h > h - b_y:
+                    b_h = h - b_y
+
+                if b_w <= 0 or b_h <= 0:
+                    continue
+
+                # Expand the blits and offset them as necessary.
+                if b.right:
+                    b_w += layout.add_right
+                    b_w += o
+
+                if b.bottom:
+                    b_h += layout.add_bottom
+                    b_h += o
+
+                if b.left:
+                    b_w += layout.add_left
+                else:
+                    b_x += layout.add_left
+
+                if b.top:
+                    b_h += layout.add_top
+                else:
+                    b_y += layout.add_top
+
+                # Blit.
+                rv.absolute_blit(
+                    tex.subsurface((b_x, b_y, b_w, b_h)),
+                    layout.unscale_pair(b_x + xo + layout.xoffset - o - layout.add_left,
+                                        b_y + yo + layout.yoffset - o - layout.add_top)
+                    )
+
+        return redraw
 
     def tokenize(self, text):
         """
