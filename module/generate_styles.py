@@ -208,6 +208,7 @@ style_properties = sorted_dict(
     strikethrough=None,
     subtitle_width=None,
     subpixel=None,
+    textshader=None,
     text_y_fudge=None,
     text_align=None,
     thumb='none_is_null',
