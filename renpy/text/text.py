@@ -1619,7 +1619,7 @@ class Layout(object):
 
             # Line bottom is the y coordinate of the bottom line.
             if line is not last_line:
-                bottom = min(outline + line.y + line.height + self.line_overlap_split, max_height)
+                bottom = min(outline + line.y + line.height + self.line_overlap_split, th)
             else:
                 bottom = th
 
