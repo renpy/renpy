@@ -30,11 +30,11 @@ TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
 
 # The layout of a mesh used with text.
 TEXT_LAYOUT = AttributeLayout()
-TEXT_LAYOUT.add_attribute("a_tex_coord", 2) # # The texture coordinate.
-TEXT_LAYOUT.add_attribute("a_center_position", 2) # Position of the vertex center.
-TEXT_LAYOUT.add_attribute("a_vertex_time", 1) # The time this vertex should be shown.
-TEXT_LAYOUT.add_attribute("a_minimum_time", 1) # The minimum time any vertex in this text should be shown.
-TEXT_LAYOUT.add_attribute("a_maximum_time", 1) # The maximum time any vertex in this text should be shown.
+TEXT_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
+TEXT_LAYOUT.add_attribute("a_text_center", 2) # Position of the vertex center.
+TEXT_LAYOUT.add_attribute("a_text_time", 1) # The time this vertex should be shown.
+TEXT_LAYOUT.add_attribute("a_text_min_time", 1) # The minimum time any vertex in this glyph should be shown.
+TEXT_LAYOUT.add_attribute("a_text_max_time", 1) # The maximum time any vertex in this glyph should be shown.
 
 cdef class Mesh:
 

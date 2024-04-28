@@ -568,6 +568,13 @@ class Layout(object):
 
         self.line_overlap_split = self.scale_int(style.line_overlap_split)
 
+        # The textshaders in use.
+        self.textshader = style.textshader
+
+        if isinstance(self.textshader, basestring):
+            self.textshader = (self.textshader, )
+
+
         # Do we have any hyperlinks in this text? Set by segment.
         self.has_hyperlinks = False
 
@@ -1675,6 +1682,8 @@ class Layout(object):
 
             top = bottom
 
+        return mesh
+
 
 # The maximum number of entries in the layout cache.
 LAYOUT_CACHE_SIZE = 50
@@ -2403,7 +2412,10 @@ class Text(renpy.display.displayable.Displayable):
 
             rv.blit(fill, (0, 0))
 
-        redraw = self.render_blits(rv, layout, st)
+        if layout.textshader:
+            redraw = self.render_textshader(rv, layout, st)
+        else:
+            redraw = self.render_blits(rv, layout, st)
 
         # Blit displayables.
         if layout.displayable_blits:
@@ -2467,7 +2479,7 @@ class Text(renpy.display.displayable.Displayable):
 
         return rv
 
-    def render_blits(self, rv, layout, st):
+    def render_blits(self, render, layout, st):
 
         w, h = layout.size
 
@@ -2532,13 +2544,37 @@ class Text(renpy.display.displayable.Displayable):
                     b_y += layout.add_top
 
                 # Blit.
-                rv.absolute_blit(
+                render.absolute_blit(
                     tex.subsurface((b_x, b_y, b_w, b_h)),
                     layout.unscale_pair(b_x + xo + layout.xoffset - o - layout.add_left,
                                         b_y + yo + layout.yoffset - o - layout.add_top)
                     )
 
         return redraw
+
+    def render_textshader(self, render, layout, st):
+
+        for o, color, xo, yo in layout.outlines:
+            tex = layout.textures[o, color]
+            mesh = layout.meshes[o]
+
+            tw, th = tex.get_size()
+
+            r = renpy.display.render.Render(tw, th)
+            r.absolute_blit(tex, (0, 0))
+            r.mesh = mesh
+            r.add_shader("renpy.texture")
+
+            if layout.textshader:
+                for i in layout.textshader:
+                    r.add_shader(i)
+
+            render.absolute_blit(
+                r,
+                layout.unscale_pair(
+                    xo + layout.xoffset - o,
+                    yo + layout.yoffset - o))
+
 
     def tokenize(self, text):
         """
