@@ -24,8 +24,12 @@ init python:
     renpy.register_shader("renpy.geometry", variables="""
         uniform mat4 u_transform;
         attribute vec4 a_position;
-    """, vertex_100="""
-        gl_Position = u_transform * a_position;
+    """,
+    vertex_0="""
+        gl_Position = a_position;
+    """,
+    vertex_100="""
+        gl_Position = u_transform * gl_Position;
     """)
 
     renpy.register_shader("renpy.texture", variables="""
