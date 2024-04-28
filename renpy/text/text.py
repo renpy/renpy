@@ -845,7 +845,7 @@ class Layout(object):
         self.textures = { }
 
         # A map from outline to a mesh.
-        self.meshes = { }
+        self.mesh_renders = { }
 
         di = DrawInfo()
 
@@ -912,8 +912,9 @@ class Layout(object):
 
             self.textures[key] = tex
 
-            if o not in self.meshes:
-                self.meshes[o] = self.create_mesh(o, tw, th, lines)
+            if self.textshader:
+                if o not in self.mesh_renders:
+                    self.mesh_renders[o, color] = self.create_mesh_render(o, tex, lines)
 
         # Compute the max time for all lines, and the max max time.
         self.max_time = textsupport.max_times(lines)
@@ -1590,20 +1591,21 @@ class Layout(object):
         else:
             return 0
 
-    def create_mesh(self, outline, tw, th, lines):
+    def create_mesh_render(self, outline, tex, lines):
         """
-        Creates a mesh that will draw the text character-by-character, with
-        the given outline size.
+        Create a Render thant will use a mesh to draw the text character-by-character.
 
         `outline`
             The size of the outline, in pixels.
 
-        `tw`, `th`
-            The size of the texture.
+        `tex`
+            The texture to draw.
 
         `lines`
             A list of Line objects, representing the lines of text.
         """
+
+        tw, th = tex.get_size()
 
         if lines:
             last_line = lines[-1]
@@ -1678,7 +1680,19 @@ class Layout(object):
 
             top = bottom
 
-        return mesh
+
+        r = renpy.display.render.Render(tw, th)
+        r.absolute_blit(tex, (0, 0))
+        r.mesh = mesh
+        r.add_shader("renpy.texture")
+
+        for i in self.textshader.shader:
+            r.add_shader(i)
+
+        for k, v in self.textshader.uniforms.items():
+            r.add_uniform(k, v)
+
+        return r
 
 
 # The maximum number of entries in the layout cache.
@@ -2551,22 +2565,8 @@ class Text(renpy.display.displayable.Displayable):
     def render_textshader(self, render, layout, st):
 
         for o, color, xo, yo in layout.outlines:
-            tex = layout.textures[o, color]
-            mesh = layout.meshes[o]
-
-            tw, th = tex.get_size()
-
-            r = renpy.display.render.Render(tw, th)
-            r.absolute_blit(tex, (0, 0))
-            r.mesh = mesh
-            r.add_shader("renpy.texture")
-
-            if layout.textshader is not None:
-                for i in layout.textshader.shader:
-                    r.add_shader(i)
-
             render.absolute_blit(
-                r,
+                layout.mesh_renders[o, color],
                 layout.unscale_pair(
                     xo + layout.xoffset - o,
                     yo + layout.yoffset - o))
