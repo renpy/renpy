@@ -449,3 +449,44 @@ def thaic90(s):
         rv.append(c)
 
     return u''.join(rv)
+
+
+
+class TextShader(object):
+    """
+    This stores information about a text shader.
+    """
+
+    def __init__(self, shader=None, **kwargs):
+        """
+        `shader`
+            The shader to apply to the text. This can be a string, or a list of strings.
+            The shader or shaders must be registered with :func:`renpy.register_shader`.
+
+        Keyword argument beginning with ``u_`` are passed as uniforms to the shader.
+        """
+
+        if isinstance(shader, basestring):
+            shader = (shader ,)
+
+        # A list or tuple of shaders to apply to text.
+        self.shader = shader
+
+        # A list of uniform names to give to the
+        self.uniforms = { }
+
+        for k, v in kwargs:
+            if k.startswith("u_"):
+                self.uniforms[k] = v
+            else:
+                raise ValueError("Unknown keyword argument %r." % k)
+
+
+def check_textshader(o):
+    if isinstance(o, TextShader):
+        return o
+
+    if o is None:
+        return o
+
+    raise Exception("Expected a TextShader, but got %r." % o)

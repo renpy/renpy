@@ -571,10 +571,6 @@ class Layout(object):
         # The textshaders in use.
         self.textshader = style.textshader
 
-        if isinstance(self.textshader, basestring):
-            self.textshader = (self.textshader, )
-
-
         # Do we have any hyperlinks in this text? Set by segment.
         self.has_hyperlinks = False
 
@@ -2565,8 +2561,8 @@ class Text(renpy.display.displayable.Displayable):
             r.mesh = mesh
             r.add_shader("renpy.texture")
 
-            if layout.textshader:
-                for i in layout.textshader:
+            if layout.textshader is not None:
+                for i in layout.textshader.shader:
                     r.add_shader(i)
 
             render.absolute_blit(
