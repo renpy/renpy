@@ -821,15 +821,17 @@ cdef class RenderTransform:
 
         state = self.state
 
-        mt = state.matrixtransform
+        matrix_object = state.matrixtransform
 
-        if mt is not None:
+        if matrix_object is not None:
 
-            if callable(mt):
-                mt = mt(None, 1.0)
+            if callable(matrix_object):
+                matrix_object = matrix_object(None, 1.0)
 
-            if not isinstance(mt, renpy.display.matrix.Matrix):
-                raise Exception("matrixtransform requires a Matrix (got %r)" % (mt,))
+            if not isinstance(matrix_object, renpy.display.matrix.Matrix):
+                raise Exception("matrixtransform requires a Matrix (got %r)" % (matrix_object,))
+
+            mt = matrix_object
 
             if state.matrixanchor is None:
 
