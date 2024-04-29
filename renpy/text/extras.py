@@ -457,11 +457,17 @@ class TextShader(object):
     This stores information about a text shader.
     """
 
-    def __init__(self, shader=None, **kwargs):
+    def __init__(self, shader=None, extra_time=0, **kwargs):
         """
         `shader`
             The shader to apply to the text. This can be a string, or a list of strings.
             The shader or shaders must be registered with :func:`renpy.register_shader`.
+
+        `extra_time`
+            Extra time to add to the effect beyond what Ren'Py will compute from
+            the current characters per second. This is useful for shaders that
+            might take more time to transition a character than the default time.
+            If True, the shader is always updated.
 
         Keyword argument beginning with ``u_`` are passed as uniforms to the shader.
         """
@@ -472,6 +478,9 @@ class TextShader(object):
         # A list or tuple of shaders to apply to text.
         self.shader = shader
 
+        # The amount of extra time to add to the effect.
+        self.extra_time = extra_time
+
         # A list of uniform names to give to the
         self.uniforms = { }
 
@@ -479,7 +488,7 @@ class TextShader(object):
             if k.startswith("u_"):
                 self.uniforms[k] = v
             else:
-                raise ValueError("Unknown keyword argument %r." % k)
+                raise ValueError("Unknown keyword argument %r." % (k,))
 
 
 def check_textshader(o):
