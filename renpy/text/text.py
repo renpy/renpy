@@ -1662,11 +1662,15 @@ class Layout(object):
                 cx = g.x + g.advance / 2
                 cy = outline + line.baseline
 
+                duration = g.duration
+                if g.duration < 0:
+                    duraton = 0
+
                 if g.rtl:
                     left_time = g.time
-                    right_time = g.time - g.duration
+                    right_time = g.time - duration
                 else:
-                    left_time = g.time - g.duration
+                    left_time = g.time - duration
                     right_time = g.time
 
                 mesh.add_glyph(

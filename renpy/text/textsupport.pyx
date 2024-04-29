@@ -37,6 +37,7 @@ cdef class Glyph:
         self.add_right = 0
         self.add_bottom = 0
         self.rtl = 0
+        self.duration = -1
 
     def __repr__(self):
         if self.variation == 0:
@@ -64,6 +65,7 @@ cdef class Glyph:
         add_right : int
         add_bottom : int
         rtl: bool
+        duration: float
         """
 
 
