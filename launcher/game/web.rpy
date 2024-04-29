@@ -482,8 +482,9 @@ init python:
                 zip_targets.append(os.path.join(dn, file))
 
         with zipfile.ZipFile(destination + ".zip", 'w') as zf:
+            parent_path = os.path.dirname(os.path.abspath(destination))
             for i, target in enumerate(zip_targets):
-                zf.write(target, os.path.relpath(target, destination))
+                zf.write(target, os.path.relpath(target, parent_path))
                 reporter.progress(_("Creating package..."), i + 1, len(zip_targets))
 
         # Start the web server.
