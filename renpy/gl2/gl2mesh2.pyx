@@ -270,7 +270,9 @@ cdef class Mesh2(Mesh):
         cdef double maxt = max(p0t, p1t, p2t, p3t)
 
         cdef int point = self.points
-        cdef int attribute = self.points * self.layout.stride
+
+        cdef int stride = self.layout.stride
+        cdef int attribute = self.points * stride
 
         self.point[point + 0].y = p0y
         self.point[point + 1].x = p1x
@@ -289,29 +291,36 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 5] = mint
         self.attribute[attribute + 6] = maxt
 
-        self.attribute[attribute + 7] = p1u
-        self.attribute[attribute + 8] = p1v
-        self.attribute[attribute + 9] = cx
-        self.attribute[attribute + 10] = cy
-        self.attribute[attribute + 11] = p1t
-        self.attribute[attribute + 12] = mint
-        self.attribute[attribute + 13] = maxt
+        attribute += stride
 
-        self.attribute[attribute + 14] = p2u
-        self.attribute[attribute + 15] = p2v
-        self.attribute[attribute + 16] = cx
-        self.attribute[attribute + 17] = cy
-        self.attribute[attribute + 18] = p2t
-        self.attribute[attribute + 19] = mint
-        self.attribute[attribute + 20] = maxt
+        self.attribute[attribute + 0] = p1u
+        self.attribute[attribute + 1] = p1v
+        self.attribute[attribute + 2] = cx
+        self.attribute[attribute + 3] = cy
+        self.attribute[attribute + 4] = p1t
+        self.attribute[attribute + 5] = mint
+        self.attribute[attribute + 6] = maxt
 
-        self.attribute[attribute + 21] = p3u
-        self.attribute[attribute + 22] = p3v
-        self.attribute[attribute + 23] = cx
-        self.attribute[attribute + 24] = cy
-        self.attribute[attribute + 25] = p3t
-        self.attribute[attribute + 26] = mint
-        self.attribute[attribute + 27] = maxt
+        attribute += stride
+
+        self.attribute[attribute + 0] = p2u
+        self.attribute[attribute + 1] = p2v
+        self.attribute[attribute + 2] = cx
+        self.attribute[attribute + 3] = cy
+        self.attribute[attribute + 4] = p2t
+        self.attribute[attribute + 5] = mint
+        self.attribute[attribute + 6] = maxt
+
+        attribute += stride
+
+        self.attribute[attribute + 0] = p3u
+        self.attribute[attribute + 1] = p3v
+        self.attribute[attribute + 2] = cx
+        self.attribute[attribute + 3] = cy
+        self.attribute[attribute + 4] = p3t
+        self.attribute[attribute + 5] = mint
+        self.attribute[attribute + 6] = maxt
+
 
         cdef int triangle = self.triangles * 3
 
