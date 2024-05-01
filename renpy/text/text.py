@@ -2568,13 +2568,15 @@ class Text(renpy.display.displayable.Displayable):
 
     def render_textshader(self, render, layout, st):
 
-        if layout.textshader.extra_time is True:
-            redraw = 0
-        else:
-            if st > layout.max_time + layout.textshader.extra_time:
-                redraw = 0
-            else:
-                redraw = 1
+        slow_time = layout.max_time + layout.textshader.extra_slow_time
+        redraw = layout.textshader.redraw
+
+        if self.slow:
+            if st < slow_time:
+                redraw = layout.textshader.redraw_when_slow
+            slow_time = min(slow_time, st)
+
+        render.add_uniform("u_text_slow_time", st)
 
         for o, color, xo, yo in layout.outlines:
             render.absolute_blit(

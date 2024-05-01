@@ -457,17 +457,25 @@ class TextShader(object):
     This stores information about a text shader.
     """
 
-    def __init__(self, shader=None, extra_time=0, **kwargs):
+    def __init__(self, shader=None, extra_slow_time=0, redraw=None, redraw_when_slow=0, **kwargs):
         """
         `shader`
             The shader to apply to the text. This can be a string, or a list of strings.
             The shader or shaders must be registered with :func:`renpy.register_shader`.
 
-        `extra_time`
-            Extra time to add to the effect beyond what Ren'Py will compute from
+        `extra_slow_time`
+            Extra time to add to the slow time effect beyond what Ren'Py will compute from
             the current characters per second. This is useful for shaders that
             might take more time to transition a character than the default time.
             If True, the shader is always updated.
+
+        `redraw`
+            The amount in time in seconds before the text is redrawn, after
+            all slow text has been show and `extra_slow_time` has passed.
+
+        `redraw_when_slow`
+            The amount of time in seconds before the text is redrawn when showing
+            slow text.
 
         Keyword argument beginning with ``u_`` are passed as uniforms to the shader.
         """
@@ -478,8 +486,15 @@ class TextShader(object):
         # A list or tuple of shaders to apply to text.
         self.shader = shader
 
-        # The amount of extra time to add to the effect.
-        self.extra_time = extra_time
+        # The amount of extra time to add to the slow effect, in addition
+        # to the time Ren'Py would normally take to display the text.
+        self.extra_slow_time = extra_slow_time
+
+        # The redraw time.
+        self.redraw = redraw
+
+        # The redraw when showing slow text.
+        self.redraw_when_slow = redraw_when_slow
 
         # A list of uniform names to give to the
         self.uniforms = { }
