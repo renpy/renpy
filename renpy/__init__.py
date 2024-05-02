@@ -475,6 +475,7 @@ def import_all():
     import renpy.text.texwrap
     import renpy.text.text
     import renpy.text.extras
+    import renpy.text.shader
 
     sys.modules[pystr('renpy.display.text')] = renpy.text.text
 

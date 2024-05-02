@@ -67,7 +67,7 @@ cdef class Glyph:
         add_bottom : int
         rtl: bool
         duration: float
-        shader: renpy.text.extras.TextShader|None
+        shader: renpy.text.shader.TextShader|None
         """
 
 cdef class Line:
