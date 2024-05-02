@@ -38,6 +38,7 @@ cdef class Glyph:
         self.add_bottom = 0
         self.rtl = 0
         self.duration = -1
+        self.shader = None
 
     def __repr__(self):
         if self.variation == 0:
@@ -66,8 +67,8 @@ cdef class Glyph:
         add_bottom : int
         rtl: bool
         duration: float
+        shader: renpy.text.extras.TextShader|None
         """
-
 
 cdef class Line:
 
@@ -1197,3 +1198,19 @@ def move_glyphs(list glyphs, int x, int y):
     for g in glyphs:
         g.x += x
         g.y += y
+
+
+def get_textshader_set(list glyphs):
+    """
+    Returns the set of all textshaders.
+    """
+
+    rv = set()
+    shader = None
+
+    for g in glyphs:
+        if g.shader is not shader:
+            rv.add(g.shader)
+            shader = g.shader
+
+    return rv

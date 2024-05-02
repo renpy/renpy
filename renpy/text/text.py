@@ -203,6 +203,7 @@ class TextSegment(object):
             self.shaper = source.shaper
             self.instance = source.instance
             self.axis = source.axis
+            self.shader = source.shader
 
         else:
             self.hyperlink = 0
@@ -211,6 +212,7 @@ class TextSegment(object):
             self.ruby_bottom = False
             self.ignore = False
             self.default_font = True
+            self.shader = None
 
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
@@ -255,6 +257,8 @@ class TextSegment(object):
         self.axis = style.axis
         self.instance = style.instance
 
+        self.shader = style.textshader
+
     # From here down is the public glyph API.
 
     def glyphs(self, s, layout):
@@ -282,6 +286,10 @@ class TextSegment(object):
             textsupport.mark_altruby_top(rv)
         elif self.ruby_top:
             textsupport.mark_ruby_top(rv)
+
+        if self.shader is not None:
+            for g in rv:
+                g.shader = self.shader
 
         return rv
 
@@ -388,6 +396,7 @@ class SpaceSegment(object):
         if ts.hyperlink:
             glyph.hyperlink = ts.hyperlink
 
+        glyph.shader = ts.shader
         self.cps = ts.cps
 
     def glyphs(self, s, layout):
@@ -448,6 +457,7 @@ class DisplayableSegment(object):
         glyph.line_spacing = h
         glyph.advance = w
         glyph.width = w
+        glyph.shader = ts.shader
 
         if self.hyperlink:
             glyph.hyperlink = self.hyperlink
@@ -567,9 +577,6 @@ class Layout(object):
         style = text.style
 
         self.line_overlap_split = self.scale_int(style.line_overlap_split)
-
-        # The textshaders in use.
-        self.textshader = style.textshader
 
         # Do we have any hyperlinks in this text? Set by segment.
         self.has_hyperlinks = False
@@ -825,6 +832,9 @@ class Layout(object):
         if self.has_ruby:
             textsupport.place_ruby(all_glyphs, self.scale_int(style.ruby_style.yoffset), self.scale_int(style.altruby_style.yoffset), sw, sh)
 
+        # Determine the set of textshaders.
+        self.textshaders = textsupport.get_textshader_set(all_glyphs)
+
         # Check for glyphs that are being drawn out of bounds, because the font
         # or anti-aliasing or whatever makes them bigger than the bounding box. If
         # we have them, grow the bounding box.
@@ -916,9 +926,9 @@ class Layout(object):
 
             self.textures[key] = tex
 
-            if self.textshader:
-                for mr in self.create_mesh_render(o, surf, lines, xo, yo, depth):
-                    self.mesh_renders.append((o, xo, yo, mr))
+            for ts in self.textshaders:
+                mr = self.create_mesh_render(o, surf, lines, xo, yo, depth, ts)
+                self.mesh_renders.append((o, xo, yo, mr))
 
         # Compute the max time for all lines, and the max max time.
         self.max_time = textsupport.max_times(lines)
@@ -944,6 +954,7 @@ class Layout(object):
                 renpy.display.to_log.write("File \"%s\", line %d, text overflow:", filename, line)
                 renpy.display.to_log.write("     Available: (%d, %d) Laid-out: (%d, %d)", width, height, sw, sh)
                 renpy.display.to_log.write("     Text: %r", text.text)
+
 
     def make_alignment_grid(self, surf):
         w, h = surf.get_size()
@@ -1595,7 +1606,7 @@ class Layout(object):
         else:
             return 0
 
-    def create_mesh_render(self, outline, tex, lines, xo, yo, depth):
+    def create_mesh_render(self, outline, tex, lines, xo, yo, depth, ts):
         """
         Create a list of Renders that will use a mesh to draw the text character-by-character.
 
@@ -1645,6 +1656,10 @@ class Layout(object):
             for g in line.glyphs:
 
                 if g.time == -1:
+                    continue
+
+                # Check that this is the right shader to use.
+                if (g.shader is not ts) and (g.shader != ts):
                     continue
 
                 # The x-coordinate of the left edge of the glyph.
@@ -1697,17 +1712,17 @@ class Layout(object):
         r.mesh = mesh
         r.add_shader("renpy.texture")
 
-        for i in self.textshader.shader:
+        for i in ts.shader:
             r.add_shader(i)
 
         r.add_uniform("u_text_depth", depth)
         r.add_uniform("u_text_outline", outline)
         r.add_uniform("u_text_offset", (xo, yo))
 
-        for k, v in self.textshader.uniforms.items():
+        for k, v in ts.uniforms:
             r.add_uniform(k, v)
 
-        return [ r ]
+        return r
 
 
 # The maximum number of entries in the layout cache.
@@ -2437,7 +2452,7 @@ class Text(renpy.display.displayable.Displayable):
 
             rv.blit(fill, (0, 0))
 
-        if layout.textshader:
+        if layout.textshaders:
             redraw = self.render_textshader(rv, layout, st)
         else:
             redraw = self.render_blits(rv, layout, st)
@@ -2579,12 +2594,12 @@ class Text(renpy.display.displayable.Displayable):
 
     def render_textshader(self, render, layout, st):
 
-        slow_time = layout.max_time + layout.textshader.extra_slow_time
-        redraw = layout.textshader.redraw
+        slow_time = layout.max_time + max(i.extra_slow_time for i in layout.textshaders)
+        redraw = max(i.redraw for i in layout.textshaders)
 
         if self.slow:
             if st < slow_time:
-                redraw = layout.textshader.redraw_when_slow
+                redraw = max(i.redraw_when_slow for i in layout.textshaders)
             slow_time = min(slow_time, st)
 
         render.add_uniform("u_text_slow_time", st)

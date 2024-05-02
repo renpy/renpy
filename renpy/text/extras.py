@@ -457,7 +457,7 @@ class TextShader(object):
     This stores information about a text shader.
     """
 
-    def __init__(self, shader=None, extra_slow_time=0, redraw=None, redraw_when_slow=0, **kwargs):
+    def __init__(self, shader, extra_slow_time=0, redraw=None, redraw_when_slow=0, **kwargs):
         """
         `shader`
             The shader to apply to the text. This can be a string, or a list of strings.
@@ -480,11 +480,11 @@ class TextShader(object):
         Keyword argument beginning with ``u_`` are passed as uniforms to the shader.
         """
 
+        # A tuple of shaders to apply to text.
         if isinstance(shader, basestring):
-            shader = (shader ,)
-
-        # A list or tuple of shaders to apply to text.
-        self.shader = shader
+            self.shader = (shader,)
+        else:
+            self.shader = tuple(shader)
 
         # The amount of extra time to add to the slow effect, in addition
         # to the time Ren'Py would normally take to display the text.
@@ -496,21 +496,101 @@ class TextShader(object):
         # The redraw when showing slow text.
         self.redraw_when_slow = redraw_when_slow
 
-        # A list of uniform names to give to the
-        self.uniforms = { }
+        # A tuple of uniform name, value pairs.
+        uniforms = { }
 
         for k, v in kwargs:
             if k.startswith("u_"):
-                self.uniforms[k] = v
+
+                if v and v[0] == "#":
+                    v = renpy.easy.color(v).rgba
+
+                uniforms[k] = v
             else:
                 raise ValueError("Unknown keyword argument %r." % (k,))
 
+        self.uniforms = tuple(sorted(uniforms.items()))
+
+        self.key = (
+            self.shader,
+            self.extra_slow_time,
+            self.redraw,
+            self.redraw_when_slow,
+            self.uniforms
+            )
+
+    def __hash__(self):
+        return hash(self.key)
+
+    def __eq__(self, other):
+        return self.key == other.key
+
+    def copy(self, new_uniforms):
+        """
+        Create a copy of this TextShader, with the uniforms updated with
+        the new uniforms.
+        """
+
+        rv = TextShader(None)
+        rv.__dict__.update(self.__dict__)
+
+        uniforms = dict(self.uniforms)
+        uniforms.update(new_uniforms)
+        rv.uniforms = tuple(sorted(uniforms.items()))
+
+        return rv
+
+def create_textshader_args_dict(s):
+    """
+    Given a string, create a textshader uniforms from it.
+    """
+
+    rv = { }
+
+    for arg in s.split(":"):
+        try:
+            uniform, _, value = arg.split("=")
+
+            uniform = uniform.strip()
+            value = value.strip()
+
+            if not uniform.startswith("u_"):
+                raise ValueError()
+
+            if value and (value[0] == "#"):
+                numeric_value = renpy.easy.color(value).rgba
+            else:
+                numeric_value = tuple(float(i) for i in value.split(","))
+
+            if len(numeric_value) == 1:
+                rv[uniform] = numeric_value[0]
+            else:
+                rv[uniform] = numeric_value
+
+        except Exception as e:
+            raise ValueError("Expected a uniform assignment, but got %r." % arg)
+
+    return rv
+
 
 def check_textshader(o):
+    if o is None:
+        return o
+
     if isinstance(o, TextShader):
         return o
 
-    if o is None:
-        return o
+    if isinstance(o, basestring):
+        name, _, args = o.partition(":")
+
+        rv = renpy.config.text_shaders.get(o, None)
+
+        if rv is not None:
+            if args:
+                rv = rv.copy(create_textshader_args_dict(args))
+
+        else:
+            raise Exception("Unknown text shader %r." % o)
+
 
     raise Exception("Expected a TextShader, but got %r." % o)

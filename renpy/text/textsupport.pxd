@@ -102,6 +102,9 @@ cdef class Glyph:
         # in seconds.
         public float duration
 
+        # The textshader that applies to this glyph.
+        public object shader
+
 
 cdef class Line:
 

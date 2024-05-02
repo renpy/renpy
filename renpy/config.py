@@ -1453,6 +1453,8 @@ layer_transforms = { }
 # Should Ren'Py scan for exec.py?
 exec_py = True
 
+# A map from name to text shader object.
+text_shaders = { } # type: dict[str, renpy.text.extras.TextShader]
 
 del os
 del collections
