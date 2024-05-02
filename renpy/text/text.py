@@ -845,11 +845,15 @@ class Layout(object):
         self.textures = { }
 
         # A map from outline to a mesh.
-        self.mesh_renders = { }
+        self.mesh_renders = [ ]
 
         di = DrawInfo()
 
-        for o, color, _xo, _yo in self.outlines:
+        depth = len(self.outlines)
+
+        for o, color, xo, yo in self.outlines:
+            depth -= 1
+
             key = (o, color)
 
             if key in self.textures:
@@ -913,8 +917,8 @@ class Layout(object):
             self.textures[key] = tex
 
             if self.textshader:
-                if o not in self.mesh_renders:
-                    self.mesh_renders[o, color] = self.create_mesh_render(o, tex, lines)
+                for mr in self.create_mesh_render(o, surf, lines, xo, yo, depth):
+                    self.mesh_renders.append((o, xo, yo, mr))
 
         # Compute the max time for all lines, and the max max time.
         self.max_time = textsupport.max_times(lines)
@@ -1591,9 +1595,9 @@ class Layout(object):
         else:
             return 0
 
-    def create_mesh_render(self, outline, tex, lines):
+    def create_mesh_render(self, outline, tex, lines, xo, yo, depth):
         """
-        Create a Render thant will use a mesh to draw the text character-by-character.
+        Create a list of Renders that will use a mesh to draw the text character-by-character.
 
         `outline`
             The size of the outline, in pixels.
@@ -1603,6 +1607,9 @@ class Layout(object):
 
         `lines`
             A list of Line objects, representing the lines of text.
+
+        `xo`, `yo`
+            The x and y offsets of the text.
         """
 
         tw, th = tex.get_size()
@@ -1693,10 +1700,14 @@ class Layout(object):
         for i in self.textshader.shader:
             r.add_shader(i)
 
+        r.add_uniform("u_text_depth", depth)
+        r.add_uniform("u_text_outline", outline)
+        r.add_uniform("u_text_offset", (xo, yo))
+
         for k, v in self.textshader.uniforms.items():
             r.add_uniform(k, v)
 
-        return r
+        return [ r ]
 
 
 # The maximum number of entries in the layout cache.
@@ -2578,9 +2589,9 @@ class Text(renpy.display.displayable.Displayable):
 
         render.add_uniform("u_text_slow_time", st)
 
-        for o, color, xo, yo in layout.outlines:
+        for o, xo, yo, mesh_render in layout.mesh_renders:
             render.absolute_blit(
-                layout.mesh_renders[o, color],
+                mesh_render,
                 layout.unscale_pair(
                     xo + layout.xoffset - o,
                     yo + layout.yoffset - o))
