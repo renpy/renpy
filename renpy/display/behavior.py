@@ -1886,8 +1886,10 @@ class Adjustment(renpy.object.Object):
     # will set this to true for adjustments it may change.
     restart_interaction_at_limit = False
 
+    raw_changed = None
 
-    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
+
+    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False, raw_changed=None): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool, Callable|None) -> None
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
@@ -1926,6 +1928,12 @@ class Adjustment(renpy.object.Object):
             This function is called with the new value when the value of
             the adjustment changes.
 
+        `raw_changed`
+            This function is called when the value of the adjustment
+            changes. Unlike `changed`, this function is called with
+            the raw value, which may be out of range. It's called with
+            two arguments, the adjustment and the new value.
+
         `ranged`
             This function is called with the adjustment object when
             the range of the adjustment is set by a viewport.
@@ -1963,6 +1971,7 @@ class Adjustment(renpy.object.Object):
         self.adjustable = adjustable
         self.ranged = ranged
         self.force_step = force_step
+        self.raw_changed = raw_changed
 
     def viewport_replaces(self, replaces): # type: (Adjustment) -> None
         if replaces is self:
@@ -2051,6 +2060,11 @@ class Adjustment(renpy.object.Object):
 
         if end_animation:
             self.end_animation()
+
+        if self.raw_changed:
+            rv = self.raw_changed(self, value)
+            if rv is not None:
+                return rv
 
         if value < 0:
             value = 0

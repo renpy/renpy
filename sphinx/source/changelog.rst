@@ -10,16 +10,6 @@ Changelog (Ren'Py 7.x-)
 8.3.0 / 7.8.0
 =============
 
-Features
---------
-
-The :class:`SplineMatrix` class has been added, which makes it possible to
-transform matrices in a non-linear way.
-
-The Input displayable now takes an `action` property, which is an action that
-runs when the user presses enter with the text input active.
-
-
 Launcher Changes
 ----------------
 
@@ -62,6 +52,16 @@ it looked back to the last say statement.
 
 Features
 --------
+
+The :class:`ui.adjustment` class now takes a new `raw_changed` property, which
+takes the adjustment and the new value, before it's clamped. This can be used
+to perform actions when the adjustment scrolls out of range.
+
+The :class:`SplineMatrix` class has been added, which makes it possible to
+transform matrices in a non-linear way.
+
+The Input displayable now takes an `action` property, which is an action that
+runs when the user presses enter with the text input active.
 
 :ref:`Ruby/Furigana text <ruby-text>` can now inherit its color from the parent text,
 by setting :propref:`color` to None.
