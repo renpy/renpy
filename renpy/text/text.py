@@ -1397,6 +1397,10 @@ class Layout(object):
                     ts.instance = value.lower()
                     ts.axis = None
 
+                elif tag == "shader":
+                    ts = push()
+                    ts.shader = renpy.text.shader.check_textshader(value)
+
                 elif tag.startswith("axis:"):
                     ts = push()
                     if ts.axis:
@@ -2596,11 +2600,20 @@ class Text(renpy.display.displayable.Displayable):
     def render_textshader(self, render, layout, st):
 
         slow_time = layout.max_time + max(i.extra_slow_time for i in layout.textshaders)
-        redraw = max(i.redraw for i in layout.textshaders)
+
+        redraws = [ i for i in layout.textshaders if i.redraw is not None ]
+
+        if redraws:
+            redraw = max(redraws)
+        else:
+            redraw = None
 
         if self.slow:
             if st < slow_time:
-                redraw = max(i.redraw_when_slow for i in layout.textshaders)
+                redraws = [ i for i in layout.textshaders if i.redraw_when_slow is not None ]
+                if redraws:
+                    redraw = max(redraws)
+
             slow_time = min(slow_time, st)
 
         render.add_uniform("u_text_slow_time", st)
