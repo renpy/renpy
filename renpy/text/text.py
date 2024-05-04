@@ -1718,6 +1718,7 @@ class Layout(object):
         r.add_uniform("u_text_depth", depth)
         r.add_uniform("u_text_outline", outline)
         r.add_uniform("u_text_offset", (xo, yo))
+        r.add_uniform("u_text_to_virtual", 1 / self.oversample)
 
         for k, v in ts.uniforms:
             r.add_uniform(k, v)
