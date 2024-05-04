@@ -22,6 +22,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+import renpy
 
 class TextShader(object):
     """
@@ -70,7 +71,7 @@ class TextShader(object):
         # A tuple of uniform name, value pairs.
         uniforms = { }
 
-        for k, v in kwargs:
+        for k, v in kwargs.items():
             if k.startswith("u_"):
 
                 if v and v[0] == "#":
@@ -102,7 +103,7 @@ class TextShader(object):
         the new uniforms.
         """
 
-        rv = TextShader(None)
+        rv = TextShader(self.shader)
         rv.__dict__.update(self.__dict__)
 
         uniforms = dict(self.uniforms)
@@ -120,7 +121,7 @@ def create_textshader_args_dict(s):
 
     for arg in s.split(":"):
         try:
-            uniform, _, value = arg.split("=")
+            uniform, _, value = arg.partition("=")
 
             uniform = uniform.strip()
             value = value.strip()
@@ -131,6 +132,7 @@ def create_textshader_args_dict(s):
             if value and (value[0] == "#"):
                 numeric_value = renpy.easy.color(value).rgba
             else:
+                value = value.lstrip("(").rstrip(")")
                 numeric_value = tuple(float(i) for i in value.split(","))
 
             if len(numeric_value) == 1:
@@ -154,7 +156,7 @@ def check_textshader(o):
     if isinstance(o, basestring):
         name, _, args = o.partition(":")
 
-        rv = renpy.config.text_shaders.get(o, None)
+        rv = renpy.config.text_shaders.get(name, None)
 
         if rv is not None:
             if args:
@@ -163,5 +165,6 @@ def check_textshader(o):
         else:
             raise Exception("Unknown text shader %r." % o)
 
+        return rv
 
     raise Exception("Expected a TextShader, but got %r." % o)
