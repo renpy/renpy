@@ -927,7 +927,7 @@ class Layout(object):
             self.textures[key] = tex
 
             for ts in self.textshaders:
-                mr = self.create_mesh_render(o, surf, lines, xo, yo, depth, ts)
+                mr = self.create_mesh_render(o, tex, lines, xo, yo, depth, ts)
                 self.mesh_renders.append((o, xo, yo, mr))
 
         # Compute the max time for all lines, and the max max time.
