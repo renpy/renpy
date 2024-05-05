@@ -2619,11 +2619,9 @@ class Text(renpy.display.displayable.Displayable):
                 if redraws:
                     redraw = min(redraws)
 
-
-
             slow_time = min(slow_time, st)
 
-        render.add_uniform("u_text_slow_time", st)
+        render.add_uniform("u_text_slow_time", slow_time)
 
         for o, xo, yo, mesh_render in layout.mesh_renders:
             render.absolute_blit(
