@@ -2601,18 +2601,25 @@ class Text(renpy.display.displayable.Displayable):
 
         slow_time = layout.max_time + max(i.extra_slow_time for i in layout.textshaders)
 
-        redraws = [ i for i in layout.textshaders if i.redraw is not None ]
+        redraws = [ i.redraw for i in layout.textshaders if i.redraw is not None ]
 
         if redraws:
-            redraw = max(redraws)
+            redraw = min(redraws)
         else:
             redraw = None
 
         if self.slow:
+
             if st < slow_time:
-                redraws = [ i for i in layout.textshaders if i.redraw_when_slow is not None ]
+                redraws = [ i.redraw_when_slow for i in layout.textshaders if i.redraw_when_slow is not None ]
+
+                if redraw is not None:
+                    redraws.append(redraw)
+
                 if redraws:
-                    redraw = max(redraws)
+                    redraw = min(redraws)
+
+
 
             slow_time = min(slow_time, st)
 
