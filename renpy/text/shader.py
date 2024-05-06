@@ -196,8 +196,19 @@ def check_textshader(o):
         return o
 
     if isinstance(o, basestring):
+
+        # Combine multiple shaders separated by "|".
+        if "|" in o:
+            shaders = [ check_textshader(i) for i in o.split("|") ]
+            rv = shaders[0]
+            for shader in shaders[1:]:
+                rv = rv.combine(shader)
+
+            return rv
+
         name, _, args = o.partition(":")
 
+        name = name.strip()
         rv = renpy.config.textshaders.get(name, None)
 
         if rv is not None:
