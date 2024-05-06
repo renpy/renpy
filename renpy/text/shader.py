@@ -154,6 +154,26 @@ class TextShader(object):
 
         return rv
 
+
+def compute_times(shaders):
+    """
+    Given a list of shaders, compute the extra slow time and redraw times.
+    """
+
+    extra_slow_time = 0
+    redraw = None
+    redraw_when_slow = None
+
+    for shader in shaders:
+        extra_slow_time = max(extra_slow_time, shader.extra_slow_time)
+        redraw = combine_redraw(redraw, shader.redraw)
+        redraw_when_slow = combine_redraw(redraw_when_slow, shader.redraw_when_slow)
+
+    redraw_when_slow = combine_redraw(redraw_when_slow, redraw)
+
+    return extra_slow_time, redraw, redraw_when_slow
+
+
 def create_textshader_args_dict(s):
     """
     Given a string, create a textshader uniforms from it.
