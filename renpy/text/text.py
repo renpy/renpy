@@ -257,7 +257,7 @@ class TextSegment(object):
         self.axis = style.axis
         self.instance = style.instance
 
-        self.shader = style.textshader
+        self.shader = renpy.text.shader.get_textshader(style.textshader)
 
     # From here down is the public glyph API.
 
@@ -1399,7 +1399,7 @@ class Layout(object):
 
                 elif tag == "shader":
                     ts = push()
-                    ts.shader = renpy.text.shader.check_textshader(value)
+                    ts.shader = renpy.text.shader.get_textshader(value)
 
                 elif tag.startswith("axis:"):
                     ts = push()

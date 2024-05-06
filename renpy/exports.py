@@ -122,7 +122,7 @@ from renpy.memory import profile_memory, diff_memory, profile_rollback
 
 from renpy.text.font import variable_font_info
 from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH as TEXT_PARAGRAPH, DISPLAYABLE as TEXT_DISPLAYABLE
-from renpy.text.shader import TextShader
+from renpy.text.shader import TextShader, register_textshader
 
 from renpy.execution import not_infinite_loop, reset_all_contexts
 

@@ -1454,7 +1454,10 @@ layer_transforms = { }
 exec_py = True
 
 # A map from name to text shader object.
-text_shaders = { } # type: dict[str, renpy.text.extras.TextShader]
+textshaders = { } # type: dict[str, renpy.text.shader.TextShader]
+
+# The default textshader
+default_textshader = None # type: str | renpy.text.shader.TextShader | None
 
 del os
 del collections
