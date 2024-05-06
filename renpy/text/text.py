@@ -833,7 +833,10 @@ class Layout(object):
             textsupport.place_ruby(all_glyphs, self.scale_int(style.ruby_style.yoffset), self.scale_int(style.altruby_style.yoffset), sw, sh)
 
         # Determine the set of textshaders.
-        self.textshaders = textsupport.get_textshader_set(all_glyphs)
+        if renpy.display.draw.info.get("models", False):
+            self.textshaders = textsupport.get_textshader_set(all_glyphs)
+        else:
+            self.textshaders = None
 
         # Check for glyphs that are being drawn out of bounds, because the font
         # or anti-aliasing or whatever makes them bigger than the bounding box. If
@@ -926,9 +929,10 @@ class Layout(object):
 
             self.textures[key] = tex
 
-            for ts in self.textshaders:
-                mr = self.create_mesh_render(o, tex, lines, xo, yo, depth, ts)
-                self.mesh_renders.append((o, xo, yo, mr))
+            if self.textshaders:
+                for ts in self.textshaders:
+                    mr = self.create_mesh_render(o, tex, lines, xo, yo, depth, ts)
+                    self.mesh_renders.append((o, xo, yo, mr))
 
         # Compute the max time for all lines, and the max max time.
         self.max_time = textsupport.max_times(lines)
