@@ -43,7 +43,7 @@ class TextShader(object):
     This stores information about a text shader.
     """
 
-    def __init__(self, shader, extra_slow_time=0, redraw=None, redraw_when_slow=0, default=True, **kwargs):
+    def __init__(self, shader, extra_slow_time=0, redraw=None, redraw_when_slow=0, include_default=True, default_uniform=None, **kwargs):
         """
         `shader`
             The shader to apply to the text. This can be a string, or a list of strings.
@@ -63,9 +63,13 @@ class TextShader(object):
             The amount of time in seconds before the text is redrawn when showing
             slow text.
 
-        `default`
+        `include_default`
             If True, when this textshader is used directly, it will be combined
             with :var:`config.default_textshader`.
+
+        `default_uniform`
+            A uniform that is given the value of an argument if no uniform is
+            specified as part of the argument.
 
         Keyword argument beginning with ``u_`` are passed as uniforms to the shader.
         """
@@ -87,7 +91,10 @@ class TextShader(object):
         self.redraw_when_slow = redraw_when_slow
 
         # If True, this shader is combined with the default shader.
-        self.default = default
+        self.include_default = include_default
+
+        # The default uniform.
+        self.default_uniform = default_uniform
 
         # A tuple of uniform name, value pairs.
         uniforms = { }
@@ -109,7 +116,9 @@ class TextShader(object):
             self.extra_slow_time,
             self.redraw,
             self.redraw_when_slow,
-            self.uniforms
+            self.include_default,
+            self.default_uniform,
+            self.uniforms,
             )
 
     def __hash__(self):
@@ -134,7 +143,8 @@ class TextShader(object):
             max(self.extra_slow_time, other.extra_slow_time),
             combine_redraw(self.redraw, other.redraw),
             combine_redraw(self.redraw_when_slow, other.redraw_when_slow),
-            self.default or other.default,
+            self.include_default or other.include_default,
+            other.default_uniform,
             **uniforms
         )
 
@@ -174,7 +184,7 @@ def compute_times(shaders):
     return extra_slow_time, redraw, redraw_when_slow
 
 
-def create_textshader_args_dict(s):
+def create_textshader_args_dict(name, shader, s):
     """
     Given a string, create a textshader uniforms from it.
     """
@@ -182,28 +192,41 @@ def create_textshader_args_dict(s):
     rv = { }
 
     for arg in s.split(":"):
-        try:
+
+        if "=" in arg:
             uniform, _, value = arg.partition("=")
+        else:
+            if shader.default_uniform:
+                uniform = shader.default_uniform
+                value = arg
+            else:
+                raise ValueError("No default uniform for %r." % name)
 
-            uniform = uniform.strip()
-            value = value.strip()
+        uniform = uniform.strip()
+        value = value.strip()
 
-            if not uniform.startswith("u_"):
-                raise ValueError()
+        if not uniform.startswith("u_"):
+            uniform = "u_" + uniform
 
+        for k, v in shader.uniforms:
+            if k == uniform:
+                break
+        else:
+            raise ValueError("Unknown uniform %r in %r." % (uniform, name))
+
+        try:
             if value and (value[0] == "#"):
                 numeric_value = renpy.easy.color(value).rgba
             else:
                 value = value.lstrip("(").rstrip(")")
                 numeric_value = tuple(float(i) for i in value.split(","))
-
-            if len(numeric_value) == 1:
-                rv[uniform] = numeric_value[0]
-            else:
-                rv[uniform] = numeric_value
-
         except Exception as e:
-            raise ValueError("Expected a uniform assignment, but got %r." % arg)
+            raise ValueError("Error parsing %r as a uniform value: %s" % (value, e))
+
+        if len(numeric_value) == 1:
+            rv[uniform] = numeric_value[0]
+        else:
+            rv[uniform] = numeric_value
 
     return rv
 
@@ -233,7 +256,7 @@ def check_textshader(o):
 
         if rv is not None:
             if args:
-                rv = rv.copy(create_textshader_args_dict(args))
+                rv = rv.copy(create_textshader_args_dict(name, rv, args))
 
         else:
             raise Exception("Unknown text shader %r." % o)
@@ -260,12 +283,12 @@ def get_textshader(o):
     if default_textshader is None:
         default_textshader = check_textshader(renpy.config.default_textshader)
 
-    if rv.default and default_textshader is not None:
+    if rv.include_default and default_textshader is not None:
         return default_textshader.combine(rv)
     else:
         return rv
 
-def register_textshader(name, shaders=tuple(), extra_slow_time=0, redraw=None, redraw_when_slow=0, default=True, **kwargs):
+def register_textshader(name, shaders=tuple(), extra_slow_time=0, redraw=None, redraw_when_slow=0, include_default=True, default_uniform=None, **kwargs):
     """
     :doc: textshader
 
@@ -300,9 +323,13 @@ def register_textshader(name, shaders=tuple(), extra_slow_time=0, redraw=None, r
         The amount of time in seconds before the text is redrawn when showing
         slow text.
 
-    `default`
+    `include_default`
         If True, when this textshader is used directly, it will be combined
         with :var:`config.default_textshader`.
+
+    `default_uniform`
+        A uniform that is given the value of an argument if no uniform is
+        specified as part of the argument.
 
     Keyword argument beginning with ``u_`` are passed as uniforms to the shader,
     with strings beginning with ``#`` being interpreted as colors.
@@ -341,6 +368,7 @@ def register_textshader(name, shaders=tuple(), extra_slow_time=0, redraw=None, r
         extra_slow_time=extra_slow_time,
         redraw=redraw,
         redraw_when_slow=redraw_when_slow,
-        default=default,
+        include_default=include_default,
+        default_uniform=default_uniform,
         **textshader_kwargs
     )
