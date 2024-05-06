@@ -231,7 +231,12 @@ def create_textshader_args_dict(name, shader, s):
     return rv
 
 
-def check_textshader(o):
+def parse_textshader(o):
+    """
+    Given an object, returns a TextShader. This is mostly responsible for
+    parsing the Text Shader mini-language.
+    """
+
     if o is None:
         return o
 
@@ -242,7 +247,7 @@ def check_textshader(o):
 
         # Combine multiple shaders separated by "|".
         if "|" in o:
-            shaders = [ check_textshader(i) for i in o.split("|") ]
+            shaders = [ parse_textshader(i) for i in o.split("|") ]
             rv = shaders[0]
             for shader in shaders[1:]:
                 rv = rv.combine(shader)
@@ -265,7 +270,8 @@ def check_textshader(o):
 
     raise Exception("Expected a TextShader, but got %r." % o)
 
-default_textshader = None # type: TextShader|None
+
+parsed_shader_cache = { }
 
 def get_textshader(o):
     """
@@ -273,20 +279,32 @@ def get_textshader(o):
     textshader, if needed, and returns the result.
     """
 
-    global default_textshader
+    def lookup(name):
+        if name in renpy.config.textshader_callbacks:
+            name = renpy.config.textshader_callbacks[name]()
+
+        if name in parsed_shader_cache:
+            return parsed_shader_cache[name]
+
+        rv = parse_textshader(name)
+        parsed_shader_cache[name] = rv
+        return rv
 
     if o is None:
         return None
 
-    rv = check_textshader(o)
+    rv = lookup(o)
 
-    if default_textshader is None:
-        default_textshader = check_textshader(renpy.config.default_textshader)
-
-    if rv.include_default and default_textshader is not None:
-        return default_textshader.combine(rv)
-    else:
+    if not rv.include_default:
         return rv
+
+    default = lookup(renpy.config.default_textshader)
+
+    if default is None:
+        return rv
+
+    return default.combine(rv)
+
 
 def register_textshader(name, shaders=tuple(), extra_slow_time=0, redraw=None, redraw_when_slow=0, include_default=True, default_uniform=None, **kwargs):
     """

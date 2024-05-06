@@ -26,7 +26,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional, List
+from typing import Optional, List, Callable
 
 
 import collections
@@ -1456,8 +1456,12 @@ exec_py = True
 # A map from name to text shader object.
 textshaders = { } # type: dict[str, renpy.text.shader.TextShader]
 
+# A map from names to functions that return text shaders.
+textshader_callbacks = { } # type: dict[str, Callable[[], str]]
+
 # The default textshader
-default_textshader = None # type: str | renpy.text.shader.TextShader | None
+default_textshader = None # type: str | None
+
 
 del os
 del collections
