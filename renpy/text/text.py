@@ -2606,7 +2606,7 @@ class Text(renpy.display.displayable.Displayable):
         extra_slow_time, redraw, redraw_when_slow = renpy.text.shader.compute_times(layout.textshaders)
         slow_time = layout.max_time + extra_slow_time
 
-        if self.slow:
+        if self.slow and layout.max_time > 0:
             redraw = redraw_when_slow
             slow_time = min(slow_time, st)
 
