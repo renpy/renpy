@@ -22,6 +22,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+import re
+
 import renpy
 
 
@@ -380,18 +382,27 @@ def register_textshader(
     when registering the shader part.
     """
 
+    def expand_name(s):
+        if s.startswith("u__"):
+            return "u_textshader_" + name + "_" + s[3:]
+        else:
+            return s
+
+    def expand_match(m):
+        return expand_name(m.group(0))
+
     textshader_kwargs = { }
     part_kwargs = { }
 
     for k, v in kwargs.items():
         if k == "variables":
-            part_kwargs[k] = v
+            part_kwargs[k] = re.sub(r'u__\w+', expand_match, v)
         elif k.startswith("fragment_"):
-            part_kwargs[k] = v
+            part_kwargs[k] = re.sub(r'u__\w+', expand_match, v)
         elif k.startswith("vertex_"):
-            part_kwargs[k] = v
+            part_kwargs[k] = re.sub(r'u__\w+', expand_match, v)
         elif k.startswith("u_"):
-            textshader_kwargs[k] = v
+            textshader_kwargs[expand_name(k)] = v
         else:
             raise TypeError("renpy.register_textshader got an unknown keyword argument %r." % (k,))
 
