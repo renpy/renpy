@@ -51,7 +51,6 @@ class TextShader(object):
             redraw=None,
             redraw_when_slow=0.0,
             include_default=True,
-            default_uniform=None,
             **kwargs):
         """
         `shader`
@@ -81,11 +80,9 @@ class TextShader(object):
             If True, when this textshader is used directly, it will be combined
             with :var:`config.default_textshader`.
 
-        `default_uniform`
-            A uniform that is given the value of an argument if no uniform is
-            specified as part of the argument.
-
         Keyword argument beginning with ``u_`` are passed as uniforms to the shader.
+        The order of these matters, as when uniform names are omitted, uniforms
+        are given value in the order the uniform appears in `kwargs`.
         """
 
         # A tuple of shaders to apply to text.
@@ -111,9 +108,6 @@ class TextShader(object):
         # If True, this shader is combined with the default shader.
         self.include_default = include_default
 
-        # The default uniform.
-        self.default_uniform = default_uniform
-
         # A tuple of uniform name, value pairs.
         uniforms = { }
 
@@ -127,7 +121,7 @@ class TextShader(object):
             else:
                 raise ValueError("Unknown keyword argument %r." % (k,))
 
-        self.uniforms = tuple(sorted(uniforms.items()))
+        self.uniforms = tuple(uniforms.items())
 
         self.key = (
             self.shader,
@@ -136,7 +130,6 @@ class TextShader(object):
             self.redraw,
             self.redraw_when_slow,
             self.include_default,
-            self.default_uniform,
             self.uniforms,
             )
 
@@ -164,7 +157,6 @@ class TextShader(object):
             combine_redraw(self.redraw, other.redraw),
             combine_redraw(self.redraw_when_slow, other.redraw_when_slow),
             self.include_default or other.include_default,
-            other.default_uniform,
             **uniforms
         )
 
@@ -180,7 +172,7 @@ class TextShader(object):
 
         uniforms = dict(self.uniforms)
         uniforms.update(new_uniforms)
-        rv.uniforms = tuple(sorted(uniforms.items()))
+        rv.uniforms = tuple(uniforms.items())
 
         return rv
 
@@ -213,16 +205,16 @@ def create_textshader_args_dict(name, shader, s):
 
     rv = { }
 
-    for arg in s.split(":"):
+    for i, arg in enumerate(s.split(":")):
 
         if "=" in arg:
             uniform, _, value = arg.partition("=")
         else:
-            if shader.default_uniform:
-                uniform = shader.default_uniform
-                value = arg
-            else:
-                raise ValueError("No default uniform for %r." % name)
+            if i >= len(shader.uniforms):
+                raise ValueError("Too many uniforms given to to shader part: %r" % s)
+
+            uniform = shader.uniforms[i][0]
+            value = arg
 
         uniform = uniform.strip()
         value = value.strip()
@@ -336,7 +328,6 @@ def register_textshader(
         redraw=None,
         redraw_when_slow=0.0,
         include_default=True,
-        default_uniform=None,
         **kwargs):
     """
     :doc: textshader
@@ -381,10 +372,6 @@ def register_textshader(
         If True, when this textshader is used directly, it will be combined
         with :var:`config.default_textshader`.
 
-    `default_uniform`
-        A uniform that is given the value of an argument if no uniform is
-        specified as part of the argument.
-
     Keyword argument beginning with ``u_`` are passed as uniforms to the shader,
     with strings beginning with ``#`` being interpreted as colors.
 
@@ -424,6 +411,5 @@ def register_textshader(
         redraw=redraw,
         redraw_when_slow=redraw_when_slow,
         include_default=include_default,
-        default_uniform=default_uniform,
         **textshader_kwargs
     )
