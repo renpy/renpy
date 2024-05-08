@@ -238,7 +238,7 @@ def create_textshader_args_dict(name, shader, s):
 
         try:
             if value and (value[0] == "#"):
-                numeric_value = renpy.easy.color(value).rgba
+                numeric_value = renpy.easy.color(value).premultiplied
             else:
                 value = value.lstrip("(").rstrip(")")
                 numeric_value = tuple(float(i) for i in value.split(","))
