@@ -370,10 +370,12 @@ Tags that apply to all text are:
 
 .. text-tag:: shader
 
-    The shader tag applies a :doc:`text shader <textshaders>` to a section
-    of text. The argument is the name of the shader to apply. ::
+    The shader tag applies a text shader to a section of text.
+    The argument is the name of the shader to apply. ::
 
-    "This text is {shader=jitter:speed=3}jittery{/shader}."
+        "This text is {shader=jitter:speed=3}jittery{/shader}."
+
+    See :doc:`textsaders` for more information.
 
 .. text-tag:: size
 
