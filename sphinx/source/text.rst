@@ -375,7 +375,7 @@ Tags that apply to all text are:
 
         "This text is {shader=jitter:speed=3}jittery{/shader}."
 
-    See :doc:`textsaders` for more information.
+    See :doc:`textshaders` for more information.
 
 .. text-tag:: size
 
