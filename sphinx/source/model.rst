@@ -311,6 +311,8 @@ The default blend modes are::
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
 
 
+.. model-uniforms::
+
 Uniforms and Attributes
 -----------------------
 
@@ -347,7 +349,7 @@ The following uniforms are made available to all Models.
 
 ``vec2 u_drawable_size``
     The size of the drawable are of the windows, in pixels, at the resolution
-    the game is running at. For example, if a 1280x720 game is scaled up to 
+    the game is running at. For example, if a 1280x720 game is scaled up to
     1980x1080, this will be (1920, 1080).
 
 ``sampler2D tex0``, ``sampler2D tex1``, ``sampler2D tex2``
