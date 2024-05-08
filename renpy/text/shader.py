@@ -43,7 +43,16 @@ class TextShader(object):
     This stores information about a text shader.
     """
 
-    def __init__(self, shader, extra_slow_time=0, redraw=None, redraw_when_slow=0, include_default=True, default_uniform=None, **kwargs):
+    def __init__(
+            self,
+            shader,
+            extra_slow_time=0.0,
+            extra_slow_duration=0.0,
+            redraw=None,
+            redraw_when_slow=0.0,
+            include_default=True,
+            default_uniform=None,
+            **kwargs):
         """
         `shader`
             The shader to apply to the text. This can be a string, or a list of strings.
@@ -54,6 +63,11 @@ class TextShader(object):
             the current characters per second. This is useful for shaders that
             might take more time to transition a character than the default time.
             If True, the shader is always updated.
+
+        `extra_slow_duration`
+            Added to `extra_slow_time`, but this is multiplied by the time
+            per character to get the extra time to add to the slow time effect.
+            (Time per character is 1 / characters per second.)
 
         `redraw`
             The amount in time in seconds before the text is redrawn, after
@@ -83,6 +97,10 @@ class TextShader(object):
         # The amount of extra time to add to the slow effect, in addition
         # to the time Ren'Py would normally take to display the text.
         self.extra_slow_time = extra_slow_time
+
+        # The amount of extra time to add to the slow effect, multiplied by
+        # the time per character.
+        self.extra_slow_duration = extra_slow_duration
 
         # The redraw time.
         self.redraw = redraw
@@ -114,6 +132,7 @@ class TextShader(object):
         self.key = (
             self.shader,
             self.extra_slow_time,
+            self.extra_slow_duration,
             self.redraw,
             self.redraw_when_slow,
             self.include_default,
@@ -141,6 +160,7 @@ class TextShader(object):
         return TextShader(
             self.shader + other.shader,
             max(self.extra_slow_time, other.extra_slow_time),
+            max(self.extra_slow_duration, other.extra_slow_duration),
             combine_redraw(self.redraw, other.redraw),
             combine_redraw(self.redraw_when_slow, other.redraw_when_slow),
             self.include_default or other.include_default,
@@ -171,17 +191,19 @@ def compute_times(shaders):
     """
 
     extra_slow_time = 0
+    extra_slow_duration = 0
     redraw = None
     redraw_when_slow = None
 
     for shader in shaders:
         extra_slow_time = max(extra_slow_time, shader.extra_slow_time)
+        extra_slow_duration = max(extra_slow_duration, shader.extra_slow_duration)
         redraw = combine_redraw(redraw, shader.redraw)
         redraw_when_slow = combine_redraw(redraw_when_slow, shader.redraw_when_slow)
 
     redraw_when_slow = combine_redraw(redraw_when_slow, redraw)
 
-    return extra_slow_time, redraw, redraw_when_slow
+    return extra_slow_time, extra_slow_duration, redraw, redraw_when_slow
 
 
 def create_textshader_args_dict(name, shader, s):
@@ -306,7 +328,16 @@ def get_textshader(o):
     return default.combine(rv)
 
 
-def register_textshader(name, shaders=tuple(), extra_slow_time=0, redraw=None, redraw_when_slow=0, include_default=True, default_uniform=None, **kwargs):
+def register_textshader(
+        name,
+        shaders=tuple(),
+        extra_slow_time=0.0,
+        extra_slow_duration=0.0,
+        redraw=None,
+        redraw_when_slow=0.0,
+        include_default=True,
+        default_uniform=None,
+        **kwargs):
     """
     :doc: textshader
 
@@ -332,6 +363,11 @@ def register_textshader(name, shaders=tuple(), extra_slow_time=0, redraw=None, r
         the current characters per second. This is useful for shaders that
         might take more time to transition a character than the default time.
         If True, the shader is always updated.
+
+    `extra_slow_duration`
+        Added to `extra_slow_time`, but this is multiplied by the time
+        per character to get the extra time to add to the slow time effect.
+        (Time per character is 1 / characters per second.)
 
     `redraw`
         The amount in time in seconds before the text is redrawn, after
@@ -384,6 +420,7 @@ def register_textshader(name, shaders=tuple(), extra_slow_time=0, redraw=None, r
     renpy.config.textshaders[name] = TextShader(
         shaders,
         extra_slow_time=extra_slow_time,
+        extra_slow_duration=extra_slow_duration,
         redraw=redraw,
         redraw_when_slow=redraw_when_slow,
         include_default=include_default,

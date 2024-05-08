@@ -599,6 +599,11 @@ class Layout(object):
         self.width = width
         self.height = height
 
+        # The default characters-per-second for this displayable.
+        self.cps = style.slow_cps
+        if self.cps is None or self.cps is True:
+            self.cps = renpy.game.preferences.text_cps
+
         width = self.scale_int(width)
         height = self.scale_int(height)
 
@@ -934,8 +939,21 @@ class Layout(object):
                     mr = self.create_mesh_render(o, tex, lines, xo, yo, depth, ts)
                     self.mesh_renders.append((o, xo, yo, mr))
 
+        if self.textshaders:
+            extra_slow_time, extra_slow_duration, self.redraw, self.redraw_when_slow = renpy.text.shader.compute_times(self.textshaders)
+        else:
+            extra_slow_time = 0.0
+            extra_slow_duration = 0.0
+            self.redraw = None
+            self.redraw_when_slow = 0.0
+
         # Compute the max time for all lines, and the max max time.
-        self.max_time = textsupport.max_times(lines)
+        if not self.cps:
+            slow_duration = 0
+        else:
+            slow_duration = 1.0 / self.cps
+
+        self.max_time = textsupport.max_times(lines) + extra_slow_time + extra_slow_duration * slow_duration
 
         # Store the lines, so we have them for typeout.
         self.lines = lines
@@ -1103,11 +1121,7 @@ class Layout(object):
         line = [ ]
 
         ts = TextSegment(None)
-
-        ts.cps = style.slow_cps
-        if ts.cps is None or ts.cps is True:
-            ts.cps = renpy.game.preferences.text_cps
-
+        ts.cps = self.cps
         ts.take_style(style, self)
 
         # The text segement stack.
@@ -1603,16 +1617,6 @@ class Layout(object):
             rv.append(Blit(min_x, max_y, max_x - min_x, ly - max_y, left=left, right=right, top=top, bottom=(l is self.lines[-1])))
 
         return rv
-
-    def redraw_typewriter(self, st):
-        """
-        Return the time of the first glyph that should be shown after st.
-        """
-
-        if st >= self.max_time:
-            return None
-        else:
-            return 0
 
     def create_mesh_render(self, outline, tex, lines, xo, yo, depth, ts):
         """
@@ -2461,10 +2465,15 @@ class Text(renpy.display.displayable.Displayable):
 
             rv.blit(fill, (0, 0))
 
+        # Handle slow text ending.
+        if self.slow and st > layout.max_time:
+            self.slow = False
+            renpy.game.interface.timeout(0)
+
         if layout.textshaders:
-            redraw = self.render_textshader(rv, layout, st)
+            self.render_textshader(rv, layout, st)
         else:
-            redraw = self.render_blits(rv, layout, st)
+            self.render_blits(rv, layout, st)
 
         # Blit displayables.
         if layout.displayable_blits:
@@ -2505,13 +2514,14 @@ class Text(renpy.display.displayable.Displayable):
 
                 rv.add_focus(self, hyperlink, h_x, h_y, h_w, h_h)
 
-        # Figure out if we need to redraw or call slow_done.
+        # Figure out if we need to redraw.
         if self.slow:
-            if redraw is not None:
-                renpy.display.render.redraw(self, max(redraw, 0))
-            else:
-                self.slow = False
-                renpy.game.interface.timeout(0)
+            redraw = layout.redraw_when_slow
+        else:
+            redraw = layout.redraw
+
+        if redraw is not None:
+            renpy.display.render.redraw(self, max(redraw, 0))
 
         rv.forward = layout.forward
         rv.reverse = layout.reverse
@@ -2535,11 +2545,8 @@ class Text(renpy.display.displayable.Displayable):
         # Get the list of blits we want to undertake.
         if not self.slow:
             blits = [ Blit(0, 0, w - layout.xborder, h - layout.yborder, left=True, right=True, top=True, bottom=True) ]
-            redraw = None
         else:
-            # TODO: Make this changeable.
             blits = layout.blits_typewriter(st)
-            redraw = layout.redraw_typewriter(st)
 
         for o, color, xo, yo in layout.outlines:
             tex = layout.textures[o, color]
@@ -2599,18 +2606,19 @@ class Text(renpy.display.displayable.Displayable):
                                         b_y + yo + layout.yoffset - o - layout.add_top)
                     )
 
-        return redraw
-
     def render_textshader(self, render, layout, st):
 
-        extra_slow_time, redraw, redraw_when_slow = renpy.text.shader.compute_times(layout.textshaders)
-        slow_time = layout.max_time + extra_slow_time
+        slow_time = layout.max_time
 
-        if self.slow and layout.max_time > 0:
-            redraw = redraw_when_slow
+        if self.slow and layout.cps:
             slow_time = min(slow_time, st)
 
         render.add_uniform("u_text_slow_time", slow_time)
+
+        if layout.cps:
+            render.add_uniform("u_text_slow_duration", 1.0 / layout.cps)
+        else:
+            render.add_uniform("u_text_slow_duration", 0.0)
 
         for o, xo, yo, mesh_render in layout.mesh_renders:
             render.absolute_blit(
@@ -2618,8 +2626,6 @@ class Text(renpy.display.displayable.Displayable):
                 layout.unscale_pair(
                     xo + layout.xoffset - o,
                     yo + layout.yoffset - o))
-
-        return redraw
 
     def tokenize(self, text):
         """
