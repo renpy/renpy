@@ -3021,7 +3021,7 @@ def load_language(language):
 
     Load the script files in tl/language, if not loaded. Runs any
     init code found during the process.
-"""
+    """
 
     if language is None:
         return
@@ -3394,15 +3394,10 @@ def call_screen(_screen_name, *args, **kwargs):
     otherwise the mode will be "screen".
     """
 
-    mode = "screen"
-    if "_mode" in kwargs:
-        mode = kwargs.pop("_mode")
+    mode = kwargs.pop("_mode", "screen")
     renpy.exports.mode(mode)
 
-    with_none = renpy.config.implicit_with_none
-
-    if "_with_none" in kwargs:
-        with_none = kwargs.pop("_with_none")
+    with_none = kwargs.pop("_with_none", renpy.config.implicit_with_none)
 
     show_screen(_screen_name, *args, _transient=True, **kwargs)
 
@@ -3956,14 +3951,14 @@ def munge(name, filename=None):
         into the filename containing the call to this function.
     """
 
-    if filename is None:
-        filename = sys._getframe(1).f_code.co_filename
-
     if not name.startswith("__"):
         return name
 
     if name.endswith("__"):
         return name
+
+    if filename is None:
+        filename = sys._getframe(1).f_code.co_filename
 
     return renpy.lexer.munge_filename(filename) + name[2:]
 
@@ -4284,18 +4279,19 @@ def get_refresh_rate(precision=5):
     number of frames per second.
 
     `precision`
-        The raw data Ren'Py gets is number of frames per second, rounded down.
-        This means that a monitor that runs at 59.95 frames per second will
-        be reported at 59 fps. The precision argument reduces the precision
-        of this reading, such that the only valid readings are multiples of
-        the precision.
+        The raw data Ren'Py gets is the number of frames per second rounded down
+        to the nearest integer. This means that a monitor that runs at 59.95
+        frames per second will be reported at 59 fps. The precision argument
+        then further reduces the precision of this reading, such that the only valid
+        readings are multiples of the precision.
 
         Since all monitor framerates tend to be multiples of 5 (25, 30, 60,
         75, and 120), this likely will improve accuracy. Setting precision
         to 1 disables this.
     """
 
-    precision *= 1.0
+    if PY2:
+        precision = float(precision)
 
     info = renpy.display.get_info()
     rv = info.refresh_rate # type: ignore
@@ -4321,8 +4317,8 @@ def get_adjustment(bar_value):
     """
     :doc: screens
 
-    Given `bar_value`, a  :class:`BarValue`, returns the :func:`ui.adjustment`
-    if uses. The adjustment has the following to attributes defined:
+    Given `bar_value`, a :class:`BarValue`, returns the :func:`ui.adjustment`
+    it uses. The adjustment has the following attributes defined:
 
     .. attribute:: value
 
