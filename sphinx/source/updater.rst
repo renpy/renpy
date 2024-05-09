@@ -39,7 +39,7 @@ updates.ecdsa
    tampered with.
 
 rpu/
-   The rpu directory contains the metadat and data used by the updates.
+   The rpu directory contains the metadata and data used by the updates.
 
 You should upload these to the same place on your webserver.
 

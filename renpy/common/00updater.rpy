@@ -1768,7 +1768,7 @@ init -1500 python in updater:
         `restart`
             If true, the game will be re-run when the update completes. If
             "utter", :func:`renpy.utter_restart` will be called instead. If False,
-            the update will simply end.c
+            the update will simply end.
 
         `confirm`
             Should Ren'Py prompt the user to confirm the update? If False, the
