@@ -53,6 +53,7 @@ class TextShader(object):
             redraw=None,
             redraw_when_slow=0.0,
             include_default=True,
+            doc=None,
             **kwargs):
         """
         `shader`
@@ -109,6 +110,9 @@ class TextShader(object):
 
         # If True, this shader is combined with the default shader.
         self.include_default = include_default
+
+        # doc information that is stored as part of this object.
+        self.doc = doc
 
         # A tuple of uniform name, value pairs.
         uniforms = { }
@@ -330,6 +334,7 @@ def register_textshader(
         redraw=None,
         redraw_when_slow=0.0,
         include_default=True,
+        doc=None,
         **kwargs):
     """
     :doc: textshader
@@ -374,6 +379,10 @@ def register_textshader(
         If True, when this textshader is used directly, it will be combined
         with :var:`config.default_textshader`.
 
+    `doc`
+        A string containing documetation information. This is mostly intended
+        for Ren'Py's documentation system.
+
     Keyword argument beginning with ``u_`` are passed as uniforms to the shader,
     with strings beginning with ``#`` being interpreted as colors.
 
@@ -415,6 +424,9 @@ def register_textshader(
         "textshader." + name,
         **part_kwargs)
 
+    if doc is not None:
+        doc = re.sub(r'u__\w+', expand_match, doc)
+
     renpy.config.textshaders[name] = TextShader(
         shaders,
         extra_slow_time=extra_slow_time,
@@ -422,5 +434,6 @@ def register_textshader(
         redraw=redraw,
         redraw_when_slow=redraw_when_slow,
         include_default=include_default,
+        doc=doc,
         **textshader_kwargs
     )
