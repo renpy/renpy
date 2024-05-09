@@ -394,22 +394,29 @@ def register_textshader(
     def expand_name(s):
         if s.startswith("u__"):
             return "u_textshader_" + name + "_" + s[3:]
+        if s.startswith("a__"):
+            return "a_textshader_" + name + "_" + s[3:]
+        if s.startswith("v__"):
+            return "v_textshader_" + name + "_" + s[3:]
         else:
             return s
 
     def expand_match(m):
         return expand_name(m.group(0))
 
+    def sub(s):
+        return re.sub(r'[uav]__\w+', expand_match, v)
+
     textshader_kwargs = { }
     part_kwargs = { }
 
     for k, v in kwargs.items():
         if k == "variables":
-            part_kwargs[k] = re.sub(r'u__\w+', expand_match, v)
+            part_kwargs[k] = sub(v)
         elif k.startswith("fragment_"):
-            part_kwargs[k] = re.sub(r'u__\w+', expand_match, v)
+            part_kwargs[k] = sub(v)
         elif k.startswith("vertex_"):
-            part_kwargs[k] = re.sub(r'u__\w+', expand_match, v)
+            part_kwargs[k] = sub(v)
         elif k.startswith("u_"):
             textshader_kwargs[expand_name(k)] = v
         else:
@@ -425,7 +432,7 @@ def register_textshader(
         **part_kwargs)
 
     if doc is not None:
-        doc = re.sub(r'u__\w+', expand_match, doc)
+        doc = sub(doc)
 
     renpy.config.textshaders[name] = TextShader(
         shaders,
