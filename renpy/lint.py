@@ -880,7 +880,7 @@ def report_character_stats(charastats):
     Returns a list of character stat lines.
     """
 
-    rv = [ "", "Character Statistics (for default language):", ]
+    rv = [ "", "Character Statistics (for default language):", ] # type: list[str|list[str]]
 
     bullets = [ ]
 
@@ -1017,16 +1017,8 @@ def check_unreachables(all_nodes):
 
 def check_orphan_translations(none_lang_identifiers, translation_identifiers):
 
-    def header():
-        print("")
-        print("")
-        print("Orphan Translations:")
-        print()
-
-
     problems = [ ]
 
-    faulty = collections.defaultdict(list) # filename : [linenumbers]
     for id, nodes in translation_identifiers.items():
         if id not in none_lang_identifiers:
             for node in nodes:
@@ -1053,7 +1045,7 @@ def check_python_warnings():
 
     warnings.sort()
 
-    for filename, line, text in warnings:
+    for _filename, _line, text in warnings:
         print("\n" + text, end='')
 
 
