@@ -23,7 +23,7 @@ translate tchinese strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    new "Enable"
+    new "啓用"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
@@ -91,27 +91,27 @@ translate tchinese strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Select Gamepad to Calibrate"
+    new "選擇要校準的遊戲手柄"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No Gamepads Available"
+    new "沒有可用的游戲手柄"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
-    new "Calibrating [name] ([i]/[total])"
+    new "矯正 [name] 中 ([i]/[total])"
 
     # 00gamepad.rpy:58
     old "Press or move the [control!s] [kind]."
-    new "Press or move the [control!s] [kind]."
+    new "按下或者移動 [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Skip (A)"
+    new "跳過 (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "Back (B)"
+    new "返回 (B)"
 
     # _errorhandling.rpym:495
     old "Open Traceback"
@@ -123,11 +123,11 @@ translate tchinese strings:
 
     # _errorhandling.rpym:499
     old "Copy to Clipboard"
-    new "Copy to Clipboard"
+    new "複製到剪貼簿"
 
     # _errorhandling.rpym:501
     old "Copies the traceback.txt file to the clipboard."
-    new "Copies the traceback.txt file to the clipboard."
+    new "已經將 traceback.txt 檔案複製到剪貼簿。"
 
     # _errorhandling.rpym:519
     old "An exception has occurred."
@@ -175,4 +175,4 @@ translate tchinese strings:
 
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
-    new "Copies the errors.txt file to the clipboard."
+    new "已經將 errors.txt 檔案複製到剪貼簿。"
