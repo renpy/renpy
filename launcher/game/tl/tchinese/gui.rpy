@@ -408,9 +408,6 @@ translate tchinese strings:
     # gui.rpy:456
     old "## Quick buttons."
     new "## 快捷按鈕"
-# TODO: Translation updated at 2024-05-11 22:37
-
-translate tchinese strings:
 
     # gui/game/gui.rpy:5
     old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
