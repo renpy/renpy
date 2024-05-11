@@ -356,9 +356,6 @@ translate tchinese strings:
     # 00gallery.rpy:586
     old "return"
     new "返回"
-# TODO: Translation updated at 2024-05-11 22:37
-
-translate tchinese strings:
 
     # renpy/common/00accessibility.rpy:32
     old "bar"
