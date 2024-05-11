@@ -176,9 +176,6 @@ translate tchinese strings:
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
     new "已經將 errors.txt 檔案複製到剪貼簿。"
-# TODO: Translation updated at 2024-05-11 22:37
-
-translate tchinese strings:
 
     # renpy/common/00gltest.rpy:89
     old "Renderer"
