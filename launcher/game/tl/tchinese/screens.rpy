@@ -640,9 +640,6 @@ translate tchinese strings:
     # screens.rpy:1429
     old "Menu"
     new "選單"
-# TODO: Translation updated at 2024-05-11 22:37
-
-translate tchinese strings:
 
     # gui/game/screens.rpy:114
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
