@@ -176,9 +176,6 @@ translate tchinese strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <標籤>: 跳移至標籤"
-# TODO: Translation updated at 2024-05-11 22:37
-
-translate tchinese strings:
 
     # renpy/common/_developer/developer.rpym:43
     old "Interactive Director (D)"
