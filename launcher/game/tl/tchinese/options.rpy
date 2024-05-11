@@ -192,9 +192,6 @@ translate tchinese strings:
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## 與 itch.io 項目關聯的使用者名稱和項目名稱，以斜線分隔。"
-# TODO: Translation updated at 2024-05-11 22:37
-
-translate tchinese strings:
 
     # gui/game/options.rpy:31
     old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
