@@ -192,3 +192,27 @@ translate tchinese strings:
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## 與 itch.io 項目關聯的使用者名稱和項目名稱，以斜線分隔。"
+# TODO: Translation updated at 2024-05-11 22:37
+
+translate tchinese strings:
+
+    # gui/game/options.rpy:31
+    old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
+    new ""
+
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    new ""
+
+    # gui/game/options.rpy:82
+    old "## Between screens of the game menu."
+    new ""
+
+    # gui/game/options.rpy:152
+    old "## Icon"
+    new ""
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new ""
+

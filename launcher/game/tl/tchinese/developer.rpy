@@ -176,3 +176,123 @@ translate tchinese strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <標籤>: 跳移至標籤"
+# TODO: Translation updated at 2024-05-11 22:37
+
+translate tchinese strings:
+
+    # renpy/common/_developer/developer.rpym:43
+    old "Interactive Director (D)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:59
+    old "Show Image Load Log (F4)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:62
+    old "Hide Image Load Log (F4)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:65
+    old "Image Attributes"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:69
+    old "Show Translation Identifiers"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:72
+    old "Hide Translation Identifiers"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:77
+    old "Speech Bubble Editor (Shift+B)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Filename and Line"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Filename and Line"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:127
+    old "Layer [l]:"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:131
+    old "    [name] [attributes] (hidden)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:135
+    old "    [name] [attributes]"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:198
+    old "Hide deleted"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:198
+    old "Show deleted"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:420
+    old "Type to filter: "
+    new ""
+
+    # renpy/common/_developer/developer.rpym:538
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:542
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:606
+    old "\n{color=#fff}Copied to clipboard.{/color}"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:612
+    old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:657
+    old "Click to open in editor."
+    new ""
+
+    # renpy/common/00console.rpy:793
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    new ""
+
+    # renpy/common/00console.rpy:817
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    new ""
+
+    # renpy/common/00console.rpy:858
+    old "stack: print the return stack"
+    new ""
+
+    # renpy/common/00console.rpy:912
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    new ""
+
+    # renpy/common/00console.rpy:1032
+    old "short: Shorten the representation of objects on the console (default)."
+    new ""
+
+    # renpy/common/00console.rpy:1036
+    old "long: Print the full representation of objects on the console."
+    new ""
+
+    # renpy/common/00console.rpy:1040
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    new ""
+
+    # renpy/common/00console.rpy:1044
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    new ""
+

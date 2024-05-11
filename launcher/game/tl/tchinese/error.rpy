@@ -176,3 +176,115 @@ translate tchinese strings:
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
     new "已經將 errors.txt 檔案複製到剪貼簿。"
+# TODO: Translation updated at 2024-05-11 22:37
+
+translate tchinese strings:
+
+    # renpy/common/00gltest.rpy:89
+    old "Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new ""
+
+    # renpy/common/00gltest.rpy:159
+    old "Powersave"
+    new ""
+
+    # renpy/common/00gltest.rpy:173
+    old "Framerate"
+    new ""
+
+    # renpy/common/00gltest.rpy:177
+    old "Screen"
+    new ""
+
+    # renpy/common/00gltest.rpy:181
+    old "60"
+    new ""
+
+    # renpy/common/00gltest.rpy:185
+    old "30"
+    new ""
+
+    # renpy/common/00gltest.rpy:191
+    old "Tearing"
+    new ""
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    new ""
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new ""
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new ""
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    new ""
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new ""
+
+    # renpy/common/_errorhandling.rpym:662
+    old "Open"
+    new ""
+
+    # renpy/common/_errorhandling.rpym:666
+    old "Copy BBCode"
+    new ""
+
+    # renpy/common/_errorhandling.rpym:668
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new ""
+
+    # renpy/common/_errorhandling.rpym:670
+    old "Copy Markdown"
+    new ""
+
+    # renpy/common/_errorhandling.rpym:672
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new ""
+
+    # renpy/common/_errorhandling.rpym:735
+    old "Ignores the exception, allowing you to continue."
+    new ""
+
+    # renpy/common/_errorhandling.rpym:746
+    old "Console"
+    new ""
+
+    # renpy/common/_errorhandling.rpym:748
+    old "Opens a console to allow debugging the problem."
+    new ""
+

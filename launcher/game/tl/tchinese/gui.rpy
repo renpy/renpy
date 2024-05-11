@@ -408,3 +408,63 @@ translate tchinese strings:
     # gui.rpy:456
     old "## Quick buttons."
     new "## 快捷按鈕"
+# TODO: Translation updated at 2024-05-11 22:37
+
+translate tchinese strings:
+
+    # gui/game/gui.rpy:5
+    old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
+    new ""
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    new ""
+
+    # gui/game/gui.rpy:19
+    old "## GUI Configuration Variables"
+    new ""
+
+    # gui/game/gui.rpy:167
+    old "## The color of button text in various states."
+    new ""
+
+    # gui/game/gui.rpy:173
+    old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
+    new ""
+
+    # gui/game/gui.rpy:278
+    old "## The position of the main menu text."
+    new ""
+
+    # gui/game/gui.rpy:287
+    old "## Generic frames."
+    new ""
+
+    # gui/game/gui.rpy:307
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    new ""
+
+    # gui/game/gui.rpy:347
+    old "## Additional space to add between history screen entries."
+    new ""
+
+    # gui/game/gui.rpy:371
+    old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    new ""
+
+    # gui/game/gui.rpy:408
+    old "## Localization"
+    new ""
+
+    # gui/game/gui.rpy:410
+    old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new ""
+
+    # gui/game/gui.rpy:418
+    old "## Mobile devices"
+    new ""
+
+    # gui/game/gui.rpy:449
+    old "## Change the size and spacing of various things."
+    new ""
+
