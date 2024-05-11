@@ -1186,9 +1186,6 @@
     # updater.rpy:195
     old "Proceed"
     new "繼續"
-# TODO: Translation updated at 2024-05-11 22:37
-
-translate tchinese strings:
 
     # game/add_file.rpy:37
     old "The file name may not be empty."
