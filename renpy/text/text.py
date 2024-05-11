@@ -441,6 +441,7 @@ class DisplayableSegment(object):
         self.cps = ts.cps
         self.ruby_top = ts.ruby_top
         self.ruby_bottom = ts.ruby_bottom
+        self.shader = ts.shader
 
     def glyphs(self, s, layout):
 
@@ -457,7 +458,7 @@ class DisplayableSegment(object):
         glyph.line_spacing = h
         glyph.advance = w
         glyph.width = w
-        glyph.shader = ts.shader
+        glyph.shader = self.shader
 
         if self.hyperlink:
             glyph.hyperlink = self.hyperlink
