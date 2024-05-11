@@ -101,11 +101,11 @@
 
     # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
-    new "Retrieves the log from the Android device and writes it to a file."
+    new "從 Android 裝置檢索日誌並將其寫入檔案。"
 
     # android.rpy:240
     old "Copying Android files to distributions directory."
-    new "Copying Android files to distributions directory."
+    new "將 Android 檔案複製到釋出版目錄。"
 
     # android.rpy:304
     old "Android: [project.current.name!q]"
@@ -197,7 +197,7 @@
 
     # android.rpy:544
     old "Retrieving logcat information from device."
-    new "Retrieving logcat information from device."
+    new "從設備檢索 logcat 資訊。"
 
     # choose_directory.rpy:73
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
@@ -213,7 +213,7 @@
 
     # choose_theme.rpy:425
     old "Choose Theme"
-    new "Choose Theme"
+    new "選擇主題"
 
     # choose_theme.rpy:438
     old "Theme"
@@ -233,7 +233,7 @@
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "The command is being run in a new operating system console window."
+    new "該命令正在新的作業系統控制台視窗中運行。"
 
     # distribute.rpy:443
     old "Scanning project files..."
@@ -261,19 +261,19 @@
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "Unpacking the Macintosh application for signing..."
+    new "解包 Macintosh 應用程式中以進行簽署..."
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
-    new "Signing the Macintosh application..."
+    new "簽署 Macintosh 應用程式中..."
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
-    new "Creating the Macintosh DMG..."
+    new "創建 Macintosh DMG中..."
 
     # distribute.rpy:1091
     old "Signing the Macintosh DMG..."
-    new "Signing the Macintosh DMG..."
+    new "簽署 Macintosh DMG中..."
 
     # distribute.rpy:1248
     old "Writing the [variant] [format] package."
@@ -317,7 +317,7 @@
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Upload to itch.io"
+    new "上傳至 itch.io"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
@@ -481,7 +481,7 @@
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "Change/Update GUI"
+    new "改變/升級 GUI"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -525,23 +525,23 @@
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
-    new "Select Accent and Background Colors"
+    new "選擇強調色和背景色"
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
+    new "請點選您要使用的配色方案，然後按一下繼續。 這些顏色可以稍後更改和自訂。"
 
     # gui7.rpy:294
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
+    new "{b} 警告 {/b}\n 繼續將覆蓋自訂列、按鈕、儲存槽、捲軸和滑塊圖像。 \n\n 您希望執行哪種操作？"
 
     # gui7.rpy:294
     old "Choose new colors, then regenerate image files."
-    new "Choose new colors, then regenerate image files."
+    new "選擇新顏色，然後重新產生圖像檔案。"
 
     # gui7.rpy:294
     old "Regenerate the image files using the colors in gui.rpy."
-    new "Regenerate the image files using the colors in gui.rpy."
+    new "使用 gui.rpy 中的顏色重新產生圖像檔案。"
 
     # gui7.rpy:314
     old "PROJECT NAME"
@@ -565,15 +565,15 @@
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
-    new "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "專案應該使用什麼解析度？ 雖然Ren'Py可以上下縮放窗口，但這是視窗的初始大小、資源應繪製的大小以及資源最銳利化時的大小。\n\n 預設值 [default_size[0]]x[default_size[1]] 是合理的折中方案。"
 
     # gui7.rpy:389
     old "Creating the new project..."
-    new "Creating the new project..."
+    new "建立新專案中..."
 
     # gui7.rpy:391
     old "Updating the project..."
-    new "Updating the project..."
+    new "升級專案中..."
 
     # interface.rpy:107
     old "Documentation"
@@ -725,7 +725,7 @@
 
     # ios.rpy:354
     old "XCODE PROJECTS DIRECTORY"
-    new "XCODE PROJECTS DIRECTORY"
+    new "XCODE 專案目錄"
 
     # ios.rpy:354
     old "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
@@ -737,27 +737,27 @@
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "The built distributions could not be found. Please choose 'Build' and try again."
+    new "無法找到建置的釋出版。 請選擇“構建”並重試。"
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "No uploadable files were found. Please choose 'Build' and try again."
+    new "未找到可上傳的文件。 請選擇“構建”並重試。"
 
     # itch.rpy:99
     old "The butler program was not found."
-    new "The butler program was not found."
+    new "沒有找到管家程序。"
 
     # itch.rpy:99
     old "Please install the itch.io app, which includes butler, and try again."
-    new "Please install the itch.io app, which includes butler, and try again."
+    new "請安裝 itch.io 應用程式（其中包含管家），然後再試一次。"
 
     # itch.rpy:108
     old "The name of the itch project has not been set."
-    new "The name of the itch project has not been set."
+    new " itch 專案的名稱還沒設置。"
 
     # itch.rpy:108
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
+    new "請 {a=https://itch.io/game/new} 建立您的專案 {/a}, 然後新增一行例如 \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} 到 options.rpy."
 
     # mobilebuild.rpy:109
     old "{a=%s}%s{/a}"
@@ -781,7 +781,7 @@
 
     # navigation.rpy:182
     old "natural"
-    new "natural"
+    new "出現順序"
 
     # navigation.rpy:194
     old "Category:"
@@ -829,35 +829,35 @@
 
     # new_project.rpy:38
     old "New GUI Interface"
-    new "New GUI Interface"
+    new "新的 GUI 介面"
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "Both interfaces have been translated to your language."
+    new "兩種介面均已翻譯為您的語言。"
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "Only the new GUI has been translated to your language."
+    new "僅新的 GUI 已翻譯為您的語言。"
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "Only the legacy theme interface has been translated to your language."
+    new "僅傳統主題介面已翻譯為您的語言。"
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new "Neither interface has been translated to your language."
+    new "沒有介面已翻譯為您的語言。"
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
-    new "無法設定專案目錄。放棄。"
+    new "無法設定專案目錄。已經放棄。"
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
+    new "您想使用哪個介面？ 新的 GUI 具有現代外觀，支援寬螢幕和行動設備，並且更易於自訂。 傳統主題可能需要使用較舊的範例程式碼。 \n\n[language_support!t]\n\n 如果有疑問，請選擇新的 GUI，然後點擊右下角的繼續。"
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
-    new "Legacy Theme Interface"
+    new "傳統主題界面"
 
     # new_project.rpy:90
     old "Choose Project Template"
@@ -993,11 +993,11 @@
 
     # translations.rpy:63
     old "Translations: [project.current.name!q]"
-    new "Translations: [project.current.name!q]"
+    new "翻譯: [project.current.name!q]"
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "The language to work with. This should only contain lower-case ASCII characters and underscores."
+    new "生效的語言。 它應該只包含小寫 ASCII 字元和下劃線。"
 
     # translations.rpy:130
     old "Generate empty strings for translations"
@@ -1005,31 +1005,31 @@
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
+    new "產生或更新翻譯文件。 這些文件將被放置在 game/tl/[persistent.translate_language!q]."
 
     # translations.rpy:168
     old "Extract String Translations"
-    new "Extract String Translations"
+    new "提取字串翻譯"
 
     # translations.rpy:170
     old "Merge String Translations"
-    new "Merge String Translations"
+    new "合併字串翻譯"
 
     # translations.rpy:175
     old "Replace existing translations"
-    new "Replace existing translations"
+    new "替換現有翻譯"
 
     # translations.rpy:176
     old "Reverse languages"
-    new "Reverse languages"
+    new "反轉語言"
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Update Default Interface Translations"
+    new "更新預設介面翻譯"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
+    new "extract 命令可讓您將現有專案中的字串翻譯提取到臨時檔案中。 \n\n merge 指令將提取的翻譯合併到另一個項目。"
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1041,51 +1041,51 @@
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py is extracting string translations..."
+    new "Ren'Py 正在提取字串翻譯..."
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py has finished extracting [language] string translations."
+    new "Ren'Py 已完成提取 [language] 的字串翻譯。"
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py is merging string translations..."
+    new "Ren'Py 正在合併字串翻譯..."
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py has finished merging [language] string translations."
+    new "Ren'Py 已完成合併 [language] 的字串翻譯。"
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Updating default interface translations..."
+    new "正在更新預設介面翻譯..."
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
-    new "Extract Dialogue: [project.current.name!q]"
+    new "提取對話： [project.current.name!q]"
 
     # translations.rpy:322
     old "Format:"
-    new "Format:"
+    new "格式："
 
     # translations.rpy:330
     old "Tab-delimited Spreadsheet (dialogue.tab)"
-    new "Tab-delimited Spreadsheet (dialogue.tab)"
+    new "製表符分隔的電子表格 (dialogue.tab)"
 
     # translations.rpy:331
     old "Dialogue Text Only (dialogue.txt)"
-    new "Dialogue Text Only (dialogue.txt)"
+    new "僅對話文本 (dialogue.txt)"
 
     # translations.rpy:344
     old "Strip text tags from the dialogue."
-    new "Strip text tags from the dialogue."
+    new "從對話中刪除文字標籤。"
 
     # translations.rpy:345
     old "Escape quotes and other special characters."
-    new "Escape quotes and other special characters."
+    new "避開引號和其他特殊字元。"
 
     # translations.rpy:346
     old "Extract all translatable strings, not just dialogue."
-    new "Extract all translatable strings, not just dialogue."
+    new "提取所有可翻譯的字串，而不僅僅是對話。"
 
     # translations.rpy:374
     old "Ren'Py is extracting dialogue...."
@@ -1093,7 +1093,7 @@
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
+    new "Ren'Py 已完成對話提取。 提取的對話可以在 base 目錄的 dialogue.[persistent.dialogue_format] 中找到。"
 
     # updater.rpy:75
     old "Select Update Channel"
@@ -1105,7 +1105,7 @@
 
     # updater.rpy:91
     old "Release"
-    new "Release"
+    new "發佈版"
 
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -1113,7 +1113,7 @@
 
     # updater.rpy:102
     old "Prerelease"
-    new "Prerelease"
+    new "預發佈版"
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1121,7 +1121,7 @@
 
     # updater.rpy:114
     old "Experimental"
-    new "Experimental"
+    new "實驗版"
 
     # updater.rpy:120
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
@@ -1129,7 +1129,7 @@
 
     # updater.rpy:126
     old "Nightly"
-    new "Nightly"
+    new "每夜構置版本"
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
