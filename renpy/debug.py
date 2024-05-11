@@ -144,7 +144,7 @@ def run_exec_py():
             exec_py_exists = False
         except Exception as e:
             renpy.display.log.write("Failed to remove exec.py:")
-            renpy.display.log.exception(e)
+            renpy.display.log.exception()
             return
 
         renpy.python.py_exec(text)
