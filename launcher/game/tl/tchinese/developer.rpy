@@ -75,7 +75,7 @@ translate tchinese strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ 已預加載影像（良好） {/color}\n{color=#fcc}✘ 未預加載影像（糟糕） {/color}\n{color=#fff}通過拖拽來移動位置。{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
