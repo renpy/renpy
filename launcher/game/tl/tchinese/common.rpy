@@ -107,51 +107,51 @@ translate tchinese strings:
 
     # 00action_file.rpy:63
     old "{#month_short}Jan"
-    new "{#month_short}一月"
+    new "{#month_short}1月"
 
     # 00action_file.rpy:63
     old "{#month_short}Feb"
-    new "{#month_short}二月"
+    new "{#month_short}2月"
 
     # 00action_file.rpy:63
     old "{#month_short}Mar"
-    new "{#month_short}三月"
+    new "{#month_short}3月"
 
     # 00action_file.rpy:63
     old "{#month_short}Apr"
-    new "{#month_short}四月"
+    new "{#month_short}4月"
 
     # 00action_file.rpy:63
     old "{#month_short}May"
-    new "{#month_short}五月"
+    new "{#month_short}5月"
 
     # 00action_file.rpy:63
     old "{#month_short}Jun"
-    new "{#month_short}六月"
+    new "{#month_short}6月"
 
     # 00action_file.rpy:63
     old "{#month_short}Jul"
-    new "{#month_short}七月"
+    new "{#month_short}7月"
 
     # 00action_file.rpy:63
     old "{#month_short}Aug"
-    new "{#month_short}八月"
+    new "{#month_short}8月"
 
     # 00action_file.rpy:63
     old "{#month_short}Sep"
-    new "{#month_short}九月"
+    new "{#month_short}9月"
 
     # 00action_file.rpy:63
     old "{#month_short}Oct"
-    new "{#month_short}十月"
+    new "{#month_short}10月"
 
     # 00action_file.rpy:63
     old "{#month_short}Nov"
-    new "{#month_short}十一月"
+    new "{#month_short}11月"
 
     # 00action_file.rpy:63
     old "{#month_short}Dec"
-    new "{#month_short}十二月"
+    new "{#month_short}12月"
 
     # 00action_file.rpy:235
     old "%b %d, %H:%M"
