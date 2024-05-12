@@ -1,0 +1,1916 @@
+
+    # renpy/common/00accessibility.rpy:32
+    old "bar"
+    new ""
+
+    # renpy/common/00accessibility.rpy:33
+    old "selected"
+    new ""
+
+    # renpy/common/00accessibility.rpy:34
+    old "viewport"
+    new ""
+
+    # renpy/common/00accessibility.rpy:35
+    old "horizontal scroll"
+    new ""
+
+    # renpy/common/00accessibility.rpy:36
+    old "vertical scroll"
+    new ""
+
+    # renpy/common/00accessibility.rpy:37
+    old "activate"
+    new ""
+
+    # renpy/common/00accessibility.rpy:38
+    old "deactivate"
+    new ""
+
+    # renpy/common/00accessibility.rpy:39
+    old "increase"
+    new ""
+
+    # renpy/common/00accessibility.rpy:40
+    old "decrease"
+    new ""
+
+    # renpy/common/00accessibility.rpy:120
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
+    new ""
+
+    # renpy/common/00accessibility.rpy:139
+    old "Font Override"
+    new ""
+
+    # renpy/common/00accessibility.rpy:143
+    old "Default"
+    new ""
+
+    # renpy/common/00accessibility.rpy:147
+    old "DejaVu Sans"
+    new ""
+
+    # renpy/common/00accessibility.rpy:151
+    old "Opendyslexic"
+    new ""
+
+    # renpy/common/00accessibility.rpy:157
+    old "Text Size Scaling"
+    new ""
+
+    # renpy/common/00accessibility.rpy:163
+    old "Reset"
+    new ""
+
+    # renpy/common/00accessibility.rpy:169
+    old "Line Spacing Scaling"
+    new ""
+
+    # renpy/common/00accessibility.rpy:181
+    old "High Contrast Text"
+    new ""
+
+    # renpy/common/00accessibility.rpy:194
+    old "Self-Voicing"
+    new ""
+
+    # renpy/common/00accessibility.rpy:198
+    old "Off"
+    new ""
+
+    # renpy/common/00accessibility.rpy:202
+    old "Text-to-speech"
+    new ""
+
+    # renpy/common/00accessibility.rpy:206
+    old "Clipboard"
+    new ""
+
+    # renpy/common/00accessibility.rpy:210
+    old "Debug"
+    new ""
+
+    # renpy/common/00accessibility.rpy:224
+    old "Self-Voicing Volume Drop"
+    new ""
+
+    # renpy/common/00accessibility.rpy:235
+    old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
+    new ""
+
+    # renpy/common/00action_file.rpy:395
+    old "Save slot %s: [text]"
+    new ""
+
+    # renpy/common/00action_file.rpy:480
+    old "Load slot %s: [text]"
+    new ""
+
+    # renpy/common/00action_file.rpy:533
+    old "Delete slot [text]"
+    new ""
+
+    # renpy/common/00action_file.rpy:612
+    old "File page auto"
+    new ""
+
+    # renpy/common/00action_file.rpy:614
+    old "File page quick"
+    new ""
+
+    # renpy/common/00action_file.rpy:616
+    old "File page [text]"
+    new ""
+
+    # renpy/common/00action_file.rpy:815
+    old "Next file page."
+    new ""
+
+    # renpy/common/00action_file.rpy:887
+    old "Previous file page."
+    new ""
+
+    # renpy/common/00action_file.rpy:963
+    old "Quick save."
+    new ""
+
+    # renpy/common/00action_file.rpy:982
+    old "Quick load."
+    new ""
+
+    # renpy/common/00action_other.rpy:383
+    old "Language [text]"
+    new ""
+
+    # renpy/common/00director.rpy:712
+    old "The interactive director is not enabled here."
+    new ""
+
+    # renpy/common/00director.rpy:1511
+    old "⬆"
+    new ""
+
+    # renpy/common/00director.rpy:1517
+    old "⬇"
+    new ""
+
+    # renpy/common/00director.rpy:1581
+    old "Done"
+    new ""
+
+    # renpy/common/00director.rpy:1591
+    old "(statement)"
+    new ""
+
+    # renpy/common/00director.rpy:1592
+    old "(tag)"
+    new ""
+
+    # renpy/common/00director.rpy:1593
+    old "(attributes)"
+    new ""
+
+    # renpy/common/00director.rpy:1594
+    old "(transform)"
+    new ""
+
+    # renpy/common/00director.rpy:1619
+    old "(transition)"
+    new ""
+
+    # renpy/common/00director.rpy:1631
+    old "(channel)"
+    new ""
+
+    # renpy/common/00director.rpy:1632
+    old "(filename)"
+    new ""
+
+    # renpy/common/00director.rpy:1661
+    old "Change"
+    new ""
+
+    # renpy/common/00director.rpy:1663
+    old "Add"
+    new ""
+
+    # renpy/common/00director.rpy:1669
+    old "Remove"
+    new ""
+
+    # renpy/common/00director.rpy:1704
+    old "Statement:"
+    new ""
+
+    # renpy/common/00director.rpy:1725
+    old "Tag:"
+    new ""
+
+    # renpy/common/00director.rpy:1741
+    old "Attributes:"
+    new ""
+
+    # renpy/common/00director.rpy:1752
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    new ""
+
+    # renpy/common/00director.rpy:1764
+    old "Transforms:"
+    new ""
+
+    # renpy/common/00director.rpy:1775
+    old "Click to set transform, right click to add to transform list."
+    new ""
+
+    # renpy/common/00director.rpy:1776
+    old "Customize director.transforms to add more transforms."
+    new ""
+
+    # renpy/common/00director.rpy:1788
+    old "Behind:"
+    new ""
+
+    # renpy/common/00director.rpy:1799
+    old "Click to set, right click to add to behind list."
+    new ""
+
+    # renpy/common/00director.rpy:1811
+    old "Transition:"
+    new ""
+
+    # renpy/common/00director.rpy:1821
+    old "Click to set."
+    new ""
+
+    # renpy/common/00director.rpy:1822
+    old "Customize director.transitions to add more transitions."
+    new ""
+
+    # renpy/common/00director.rpy:1834
+    old "Channel:"
+    new ""
+
+    # renpy/common/00director.rpy:1845
+    old "Customize director.audio_channels to add more channels."
+    new ""
+
+    # renpy/common/00director.rpy:1857
+    old "Audio Filename:"
+    new ""
+
+    # renpy/common/00gui.rpy:454
+    old "Are you sure you want to continue where you left off?"
+    new ""
+
+    # renpy/common/00gui.rpy:459
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    new ""
+
+    # renpy/common/00gui.rpy:460
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    new ""
+
+    # renpy/common/00keymap.rpy:323
+    old "Failed to save screenshot as %s."
+    new ""
+
+    # renpy/common/00preferences.rpy:288
+    old "display"
+    new ""
+
+    # renpy/common/00preferences.rpy:308
+    old "transitions"
+    new ""
+
+    # renpy/common/00preferences.rpy:317
+    old "skip transitions"
+    new ""
+
+    # renpy/common/00preferences.rpy:319
+    old "video sprites"
+    new ""
+
+    # renpy/common/00preferences.rpy:328
+    old "show empty window"
+    new ""
+
+    # renpy/common/00preferences.rpy:337
+    old "text speed"
+    new ""
+
+    # renpy/common/00preferences.rpy:345
+    old "joystick"
+    new ""
+
+    # renpy/common/00preferences.rpy:345
+    old "joystick..."
+    new ""
+
+    # renpy/common/00preferences.rpy:352
+    old "skip"
+    new ""
+
+    # renpy/common/00preferences.rpy:355
+    old "skip unseen [text]"
+    new ""
+
+    # renpy/common/00preferences.rpy:360
+    old "skip unseen text"
+    new ""
+
+    # renpy/common/00preferences.rpy:362
+    old "begin skipping"
+    new ""
+
+    # renpy/common/00preferences.rpy:366
+    old "after choices"
+    new ""
+
+    # renpy/common/00preferences.rpy:373
+    old "skip after choices"
+    new ""
+
+    # renpy/common/00preferences.rpy:375
+    old "auto-forward time"
+    new ""
+
+    # renpy/common/00preferences.rpy:389
+    old "auto-forward"
+    new ""
+
+    # renpy/common/00preferences.rpy:396
+    old "Auto forward"
+    new ""
+
+    # renpy/common/00preferences.rpy:399
+    old "auto-forward after click"
+    new ""
+
+    # renpy/common/00preferences.rpy:408
+    old "automatic move"
+    new ""
+
+    # renpy/common/00preferences.rpy:417
+    old "wait for voice"
+    new ""
+
+    # renpy/common/00preferences.rpy:426
+    old "voice sustain"
+    new ""
+
+    # renpy/common/00preferences.rpy:435
+    old "self voicing"
+    new ""
+
+    # renpy/common/00preferences.rpy:438
+    old "self voicing enable"
+    new ""
+
+    # renpy/common/00preferences.rpy:440
+    old "self voicing disable"
+    new ""
+
+    # renpy/common/00preferences.rpy:444
+    old "self voicing volume drop"
+    new ""
+
+    # renpy/common/00preferences.rpy:452
+    old "clipboard voicing"
+    new ""
+
+    # renpy/common/00preferences.rpy:455
+    old "clipboard voicing enable"
+    new ""
+
+    # renpy/common/00preferences.rpy:457
+    old "clipboard voicing disable"
+    new ""
+
+    # renpy/common/00preferences.rpy:461
+    old "debug voicing"
+    new ""
+
+    # renpy/common/00preferences.rpy:464
+    old "debug voicing enable"
+    new ""
+
+    # renpy/common/00preferences.rpy:466
+    old "debug voicing disable"
+    new ""
+
+    # renpy/common/00preferences.rpy:470
+    old "emphasize audio"
+    new ""
+
+    # renpy/common/00preferences.rpy:479
+    old "rollback side"
+    new ""
+
+    # renpy/common/00preferences.rpy:489
+    old "gl powersave"
+    new ""
+
+    # renpy/common/00preferences.rpy:495
+    old "gl framerate"
+    new ""
+
+    # renpy/common/00preferences.rpy:498
+    old "gl tearing"
+    new ""
+
+    # renpy/common/00preferences.rpy:501
+    old "font transform"
+    new ""
+
+    # renpy/common/00preferences.rpy:504
+    old "font size"
+    new ""
+
+    # renpy/common/00preferences.rpy:512
+    old "font line spacing"
+    new ""
+
+    # renpy/common/00preferences.rpy:520
+    old "system cursor"
+    new ""
+
+    # renpy/common/00preferences.rpy:529
+    old "renderer menu"
+    new ""
+
+    # renpy/common/00preferences.rpy:532
+    old "accessibility menu"
+    new ""
+
+    # renpy/common/00preferences.rpy:535
+    old "high contrast text"
+    new ""
+
+    # renpy/common/00preferences.rpy:544
+    old "audio when minimized"
+    new ""
+
+    # renpy/common/00preferences.rpy:553
+    old "audio when unfocused"
+    new ""
+
+    # renpy/common/00preferences.rpy:562
+    old "web cache preload"
+    new ""
+
+    # renpy/common/00preferences.rpy:577
+    old "voice after game menu"
+    new ""
+
+    # renpy/common/00preferences.rpy:586
+    old "restore window position"
+    new ""
+
+    # renpy/common/00preferences.rpy:595
+    old "reset"
+    new ""
+
+    # renpy/common/00preferences.rpy:608
+    old "main volume"
+    new ""
+
+    # renpy/common/00preferences.rpy:609
+    old "music volume"
+    new ""
+
+    # renpy/common/00preferences.rpy:610
+    old "sound volume"
+    new ""
+
+    # renpy/common/00preferences.rpy:611
+    old "voice volume"
+    new ""
+
+    # renpy/common/00preferences.rpy:612
+    old "mute main"
+    new ""
+
+    # renpy/common/00preferences.rpy:613
+    old "mute music"
+    new ""
+
+    # renpy/common/00preferences.rpy:614
+    old "mute sound"
+    new ""
+
+    # renpy/common/00preferences.rpy:615
+    old "mute voice"
+    new ""
+
+    # renpy/common/00preferences.rpy:616
+    old "mute all"
+    new ""
+
+    # renpy/common/00speechbubble.rpy:392
+    old "Speech Bubble Editor"
+    new ""
+
+    # renpy/common/00speechbubble.rpy:397
+    old "(hide)"
+    new ""
+
+    # renpy/common/00speechbubble.rpy:408
+    old "(clear retained bubbles)"
+    new ""
+
+    # renpy/common/00sync.rpy:70
+    old "Sync downloaded."
+    new ""
+
+    # renpy/common/00sync.rpy:190
+    old "Could not connect to the Ren'Py Sync server."
+    new ""
+
+    # renpy/common/00sync.rpy:192
+    old "The Ren'Py Sync server timed out."
+    new ""
+
+    # renpy/common/00sync.rpy:194
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    new ""
+
+    # renpy/common/00sync.rpy:267
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    new ""
+
+    # renpy/common/00sync.rpy:412
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    new ""
+
+    # renpy/common/00sync.rpy:431
+    old "The sync ID is not in the correct format."
+    new ""
+
+    # renpy/common/00sync.rpy:451
+    old "The sync could not be decrypted."
+    new ""
+
+    # renpy/common/00sync.rpy:474
+    old "The sync belongs to a different game."
+    new ""
+
+    # renpy/common/00sync.rpy:479
+    old "The sync contains a file with an invalid name."
+    new ""
+
+    # renpy/common/00sync.rpy:538
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    new ""
+
+    # renpy/common/00sync.rpy:569
+    old "Enter Sync ID"
+    new ""
+
+    # renpy/common/00sync.rpy:580
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    new ""
+
+    # renpy/common/00sync.rpy:609
+    old "Sync Success"
+    new ""
+
+    # renpy/common/00sync.rpy:612
+    old "The Sync ID is:"
+    new ""
+
+    # renpy/common/00sync.rpy:618
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    new ""
+
+    # renpy/common/00sync.rpy:646
+    old "Sync Error"
+    new ""
+
+    # renpy/common/00updater.rpy:505
+    old "No update methods found."
+    new ""
+
+    # renpy/common/00updater.rpy:552
+    old "Could not download file list: "
+    new ""
+
+    # renpy/common/00updater.rpy:555
+    old "File list digest does not match."
+    new ""
+
+    # renpy/common/00updater.rpy:2072
+    old "Preparing to download the game data."
+    new ""
+
+    # renpy/common/00updater.rpy:2074
+    old "Downloading the game data."
+    new ""
+
+    # renpy/common/00updater.rpy:2076
+    old "The game data has been downloaded."
+    new ""
+
+    # renpy/common/00updater.rpy:2078
+    old "An error occured when trying to download game data:"
+    new ""
+
+    # renpy/common/00updater.rpy:2083
+    old "This game cannot be run until the game data has been downloaded."
+    new ""
+
+    # renpy/common/00updater.rpy:2090
+    old "Retry"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:43
+    old "Interactive Director (D)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:59
+    old "Show Image Load Log (F4)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:62
+    old "Hide Image Load Log (F4)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:65
+    old "Image Attributes"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:69
+    old "Show Translation Identifiers"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:72
+    old "Hide Translation Identifiers"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:77
+    old "Speech Bubble Editor (Shift+B)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Filename and Line"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Filename and Line"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:127
+    old "Layer [l]:"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:131
+    old "    [name] [attributes] (hidden)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:135
+    old "    [name] [attributes]"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:198
+    old "Hide deleted"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:198
+    old "Show deleted"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:420
+    old "Type to filter: "
+    new ""
+
+    # renpy/common/_developer/developer.rpym:538
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:542
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:606
+    old "\n{color=#fff}Copied to clipboard.{/color}"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:612
+    old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:657
+    old "Click to open in editor."
+    new ""
+
+    # renpy/common/00console.rpy:793
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    new ""
+
+    # renpy/common/00console.rpy:817
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    new ""
+
+    # renpy/common/00console.rpy:858
+    old "stack: print the return stack"
+    new ""
+
+    # renpy/common/00console.rpy:912
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    new ""
+
+    # renpy/common/00console.rpy:1032
+    old "short: Shorten the representation of objects on the console (default)."
+    new ""
+
+    # renpy/common/00console.rpy:1036
+    old "long: Print the full representation of objects on the console."
+    new ""
+
+    # renpy/common/00console.rpy:1040
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    new ""
+
+    # renpy/common/00console.rpy:1044
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    new ""
+
+    # renpy/common/00gltest.rpy:89
+    old "Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new ""
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new ""
+
+    # renpy/common/00gltest.rpy:159
+    old "Powersave"
+    new ""
+
+    # renpy/common/00gltest.rpy:173
+    old "Framerate"
+    new ""
+
+    # renpy/common/00gltest.rpy:177
+    old "Screen"
+    new ""
+
+    # renpy/common/00gltest.rpy:181
+    old "60"
+    new ""
+
+    # renpy/common/00gltest.rpy:185
+    old "30"
+    new ""
+
+    # renpy/common/00gltest.rpy:191
+    old "Tearing"
+    new ""
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    new ""
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new ""
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new ""
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    new ""
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new ""
+
+    # renpy/common/_errorhandling.rpym:662
+    old "Open"
+    new ""
+
+    # renpy/common/_errorhandling.rpym:666
+    old "Copy BBCode"
+    new ""
+
+    # renpy/common/_errorhandling.rpym:668
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new ""
+
+    # renpy/common/_errorhandling.rpym:670
+    old "Copy Markdown"
+    new ""
+
+    # renpy/common/_errorhandling.rpym:672
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new ""
+
+    # renpy/common/_errorhandling.rpym:735
+    old "Ignores the exception, allowing you to continue."
+    new ""
+
+    # renpy/common/_errorhandling.rpym:746
+    old "Console"
+    new ""
+
+    # renpy/common/_errorhandling.rpym:748
+    old "Opens a console to allow debugging the problem."
+    new ""
+
+    # gui/game/gui.rpy:5
+    old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
+    new ""
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    new ""
+
+    # gui/game/gui.rpy:19
+    old "## GUI Configuration Variables"
+    new ""
+
+    # gui/game/gui.rpy:167
+    old "## The color of button text in various states."
+    new ""
+
+    # gui/game/gui.rpy:173
+    old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
+    new ""
+
+    # gui/game/gui.rpy:278
+    old "## The position of the main menu text."
+    new ""
+
+    # gui/game/gui.rpy:287
+    old "## Generic frames."
+    new ""
+
+    # gui/game/gui.rpy:307
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    new ""
+
+    # gui/game/gui.rpy:347
+    old "## Additional space to add between history screen entries."
+    new ""
+
+    # gui/game/gui.rpy:371
+    old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    new ""
+
+    # gui/game/gui.rpy:408
+    old "## Localization"
+    new ""
+
+    # gui/game/gui.rpy:410
+    old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new ""
+
+    # gui/game/gui.rpy:418
+    old "## Mobile devices"
+    new ""
+
+    # gui/game/gui.rpy:449
+    old "## Change the size and spacing of various things."
+    new ""
+
+    # game/add_file.rpy:37
+    old "The file name may not be empty."
+    new ""
+
+    # game/android.rpy:38
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    new ""
+
+    # game/android.rpy:40
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    new ""
+
+    # game/android.rpy:45
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new ""
+
+    # game/android.rpy:47
+    old "Downloads and installs the Android SDK and supporting packages."
+    new ""
+
+    # game/android.rpy:48
+    old "Generates the keys required to sign the package."
+    new ""
+
+    # game/android.rpy:55
+    old "Lists the connected devices."
+    new ""
+
+    # game/android.rpy:56
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    new ""
+
+    # game/android.rpy:57
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    new ""
+
+    # game/android.rpy:58
+    old "Disconnects a device connected over Wi-Fi."
+    new ""
+
+    # game/android.rpy:60
+    old "Removes Android temporary files."
+    new ""
+
+    # game/android.rpy:62
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    new ""
+
+    # game/android.rpy:63
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    new ""
+
+    # game/android.rpy:334
+    old "Android: [project.current.display_name!q]"
+    new ""
+
+    # game/android.rpy:390
+    old "Install SDK"
+    new ""
+
+    # game/android.rpy:394
+    old "Generate Keys"
+    new ""
+
+    # game/android.rpy:404
+    old "Play Bundle"
+    new ""
+
+    # game/android.rpy:409
+    old "Universal APK"
+    new ""
+
+    # game/android.rpy:459
+    old "List Devices"
+    new ""
+
+    # game/android.rpy:463
+    old "Wi-Fi Debugging Pair"
+    new ""
+
+    # game/android.rpy:467
+    old "Wi-Fi Debugging Connect"
+    new ""
+
+    # game/android.rpy:471
+    old "Wi-Fi Debugging Disconnect"
+    new ""
+
+    # game/android.rpy:475
+    old "Clean"
+    new ""
+
+    # game/android.rpy:580
+    old "Wi-Fi Pairing Code"
+    new ""
+
+    # game/android.rpy:580
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    new ""
+
+    # game/android.rpy:587
+    old "Pairing Host & Port"
+    new ""
+
+    # game/android.rpy:603
+    old "IP Address & Port"
+    new ""
+
+    # game/android.rpy:603
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    new ""
+
+    # game/android.rpy:619
+    old "This can be found in 'List Devices'."
+    new ""
+
+    # game/android.rpy:639
+    old "Cleaning up Android project."
+    new ""
+
+    # game/androidstrings.rpy:7
+    old "{} is not a directory."
+    new ""
+
+    # game/androidstrings.rpy:8
+    old "{} does not contain a Ren'Py game."
+    new ""
+
+    # game/androidstrings.rpy:10
+    old "Run configure before attempting to build the app."
+    new ""
+
+    # game/androidstrings.rpy:11
+    old "Updating project."
+    new ""
+
+    # game/androidstrings.rpy:12
+    old "Creating assets directory."
+    new ""
+
+    # game/androidstrings.rpy:13
+    old "Packaging internal data."
+    new ""
+
+    # game/androidstrings.rpy:14
+    old "I'm using Gradle to build the package."
+    new ""
+
+    # game/androidstrings.rpy:15
+    old "The build seems to have failed."
+    new ""
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    new ""
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    new ""
+
+    # game/androidstrings.rpy:18
+    old "Launching app."
+    new ""
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    new ""
+
+    # game/androidstrings.rpy:20
+    old "The build seems to have succeeded."
+    new ""
+
+    # game/androidstrings.rpy:21
+    old "What is the full name of your application? This name will appear in the list of installed applications."
+    new ""
+
+    # game/androidstrings.rpy:22
+    old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
+    new ""
+
+    # game/androidstrings.rpy:23
+    old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
+    new ""
+
+    # game/androidstrings.rpy:24
+    old "The package name may not be empty."
+    new ""
+
+    # game/androidstrings.rpy:25
+    old "The package name may not contain spaces."
+    new ""
+
+    # game/androidstrings.rpy:26
+    old "The package name must contain at least one dot."
+    new ""
+
+    # game/androidstrings.rpy:27
+    old "The package name may not contain two dots in a row, or begin or end with a dot."
+    new ""
+
+    # game/androidstrings.rpy:28
+    old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
+    new ""
+
+    # game/androidstrings.rpy:29
+    old "{} is a Java keyword, and can't be used as part of a package name."
+    new ""
+
+    # game/androidstrings.rpy:30
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    new ""
+
+    # game/androidstrings.rpy:31
+    old "The RAM size must contain only numbers and be positive."
+    new ""
+
+    # game/androidstrings.rpy:32
+    old "How would you like your application to be displayed?"
+    new ""
+
+    # game/androidstrings.rpy:33
+    old "In landscape orientation."
+    new ""
+
+    # game/androidstrings.rpy:34
+    old "In portrait orientation."
+    new ""
+
+    # game/androidstrings.rpy:35
+    old "In the user's preferred orientation."
+    new ""
+
+    # game/androidstrings.rpy:36
+    old "Which app store would you like to support in-app purchasing through?"
+    new ""
+
+    # game/androidstrings.rpy:37
+    old "Google Play."
+    new ""
+
+    # game/androidstrings.rpy:38
+    old "Amazon App Store."
+    new ""
+
+    # game/androidstrings.rpy:39
+    old "Both, in one app."
+    new ""
+
+    # game/androidstrings.rpy:40
+    old "Neither."
+    new ""
+
+    # game/androidstrings.rpy:41
+    old "Do you want to automatically update the Java source code?"
+    new ""
+
+    # game/androidstrings.rpy:42
+    old "Yes. This is the best choice for most projects."
+    new ""
+
+    # game/androidstrings.rpy:43
+    old "No. This may require manual updates when Ren'Py or the project configuration changes."
+    new ""
+
+    # game/androidstrings.rpy:44
+    old "Unknown configuration variable: {}"
+    new ""
+
+    # game/androidstrings.rpy:45
+    old "I'm compiling a short test program, to see if you have a working JDK on your system."
+    new ""
+
+    # game/androidstrings.rpy:46
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
+    new ""
+
+    # game/androidstrings.rpy:47
+    old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new ""
+
+    # game/androidstrings.rpy:48
+    old "The JDK is present and working. Good!"
+    new ""
+
+    # game/androidstrings.rpy:49
+    old "The Android SDK has already been unpacked."
+    new ""
+
+    # game/androidstrings.rpy:50
+    old "Do you accept the Android SDK Terms and Conditions?"
+    new ""
+
+    # game/androidstrings.rpy:51
+    old "I'm downloading the Android SDK. This might take a while."
+    new ""
+
+    # game/androidstrings.rpy:52
+    old "I'm extracting the Android SDK."
+    new ""
+
+    # game/androidstrings.rpy:53
+    old "I've finished unpacking the Android SDK."
+    new ""
+
+    # game/androidstrings.rpy:54
+    old "I'm about to download and install the required Android packages. This might take a while."
+    new ""
+
+    # game/androidstrings.rpy:55
+    old "I was unable to accept the Android licenses."
+    new ""
+
+    # game/androidstrings.rpy:57
+    old "I was unable to install the required Android packages."
+    new ""
+
+    # game/androidstrings.rpy:58
+    old "I've finished installing the required Android packages."
+    new ""
+
+    # game/androidstrings.rpy:59
+    old "It looks like you're ready to start packaging games."
+    new ""
+
+    # game/androidstrings.rpy:60
+    old "Please enter your name or the name of your organization."
+    new ""
+
+    # game/androidstrings.rpy:61
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    new ""
+
+    # game/androidstrings.rpy:62
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    new ""
+
+    # game/androidstrings.rpy:63
+    old "\n\nSaying 'No' will prevent key creation."
+    new ""
+
+    # game/androidstrings.rpy:64
+    old "Could not create android.keystore. Is keytool in your path?"
+    new ""
+
+    # game/androidstrings.rpy:65
+    old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
+    new ""
+
+    # game/androidstrings.rpy:66
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    new ""
+
+    # game/androidstrings.rpy:67
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    new ""
+
+    # game/choose_directory.rpy:58
+    old "Select Projects Directory"
+    new ""
+
+    # game/choose_directory.rpy:72
+    old "No directory was selected, but one is required."
+    new ""
+
+    # game/choose_directory.rpy:80
+    old "The selected directory does not exist."
+    new ""
+
+    # game/choose_directory.rpy:82
+    old "The selected directory is not writable."
+    new ""
+
+    # game/choose_theme.rpy:508
+    old "changing the theme"
+    new ""
+
+    # game/distribute.rpy:543
+    old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
+    new ""
+
+    # game/distribute.rpy:570
+    old "This may be derived from build.name and config.version or build.version."
+    new ""
+
+    # game/distribute.rpy:1331
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new ""
+
+    # game/distribute.rpy:1606
+    old "Finishing the [variant] [format] package."
+    new ""
+
+    # game/distribute.rpy:1802
+    old "Copying files..."
+    new ""
+
+    # game/distribute_gui.rpy:157
+    old "Build Distributions: [project.current.display_name!q]"
+    new ""
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    new ""
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new ""
+
+    # game/dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    new ""
+
+    # game/dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    new ""
+
+    # game/editor.rpy:155
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    new ""
+
+    # game/editor.rpy:156
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    new ""
+
+    # game/editor.rpy:172
+    old "Visual Studio Code"
+    new ""
+
+    # game/editor.rpy:172
+    old "Up to 110 MB download required."
+    new ""
+
+    # game/editor.rpy:185
+    old "Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended."
+    new ""
+
+    # game/editor.rpy:199
+    old "Atom"
+    new ""
+
+    # game/editor.rpy:199
+    old "Up to 150 MB download required."
+    new ""
+
+    # game/editor.rpy:214
+    old "jEdit"
+    new ""
+
+    # game/editor.rpy:214
+    old "JEdit is deprecated, using another editor is recommended."
+    new ""
+
+    # game/editor.rpy:228
+    old "Visual Studio Code (System)"
+    new ""
+
+    # game/editor.rpy:228
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    new ""
+
+    # game/editor.rpy:234
+    old "System Editor"
+    new ""
+
+    # game/editor.rpy:253
+    old "None"
+    new ""
+
+    # game/editor.rpy:360
+    old "Edit [text]."
+    new ""
+
+    # game/editor.rpy:607
+    old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
+    new ""
+
+    # game/editor.rpy:607
+    old "Select editor now."
+    new ""
+
+    # game/editor.rpy:607
+    old "Ignore until next launch."
+    new ""
+
+    # game/editor.rpy:607
+    old "Do not ask again."
+    new ""
+
+    # game/front_page.rpy:58
+    old "PROJECTS:"
+    new ""
+
+    # game/front_page.rpy:182
+    old "Open project"
+    new ""
+
+    # game/front_page.rpy:188
+    old "Actions"
+    new ""
+
+    # game/front_page.rpy:219
+    old "Web"
+    new ""
+
+    # game/front_page.rpy:219
+    old "(Beta)"
+    new ""
+
+    # game/gui7.rpy:306
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    new ""
+
+    # game/gui7.rpy:337
+    old "Custom. The GUI is optimized for a 16:9 aspect ratio."
+    new ""
+
+    # game/gui7.rpy:354
+    old "WIDTH"
+    new ""
+
+    # game/gui7.rpy:354
+    old "Please enter the width of your game, in pixels."
+    new ""
+
+    # game/gui7.rpy:364
+    old "The width must be a number."
+    new ""
+
+    # game/gui7.rpy:370
+    old "HEIGHT"
+    new ""
+
+    # game/gui7.rpy:370
+    old "Please enter the height of your game, in pixels."
+    new ""
+
+    # game/gui7.rpy:380
+    old "The height must be a number."
+    new ""
+
+    # game/gui7.rpy:428
+    old "creating a new project"
+    new ""
+
+    # game/gui7.rpy:432
+    old "activating the new project"
+    new ""
+
+    # game/install.rpy:33
+    old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
+    new ""
+
+    # game/install.rpy:79
+    old "Successfully installed [name!t]."
+    new ""
+
+    # game/install.rpy:115
+    old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
+    new ""
+
+    # game/install.rpy:121
+    old "Install Steam Support"
+    new ""
+
+    # game/install.rpy:130
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    new ""
+
+    # game/install.rpy:142
+    old "Steam support has already been installed."
+    new ""
+
+    # game/install.rpy:146
+    old "Install Live2D Cubism SDK for Native"
+    new ""
+
+    # game/install.rpy:160
+    old "Install Libraries"
+    new ""
+
+    # game/install.rpy:186
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new ""
+
+    # game/install.rpy:190
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new ""
+
+    # game/install.rpy:195
+    old "Open Ren'Py SDK Directory"
+    new ""
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    new ""
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    new ""
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    new ""
+
+    # game/interface.rpy:121
+    old "[interface.version]"
+    new ""
+
+    # game/interface.rpy:138
+    old "Ren'Py Sponsor Information"
+    new ""
+
+    # game/interface.rpy:382
+    old "opening the log file"
+    new ""
+
+    # game/ios.rpy:272
+    old "iOS: [project.current.display_name!q]"
+    new ""
+
+    # game/ios.rpy:382
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    new ""
+
+    # game/itch.rpy:45
+    old "Downloading the itch.io butler."
+    new ""
+
+    # game/navigation.rpy:168
+    old "Navigate: [project.current.display_name!q]"
+    new ""
+
+    # game/new_project.rpy:38
+    old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
+    new ""
+
+    # game/new_project.rpy:45
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
+    new ""
+
+    # game/new_project.rpy:49
+    old "Please select a template project to use."
+    new ""
+
+    # game/new_project.rpy:49
+    old "Do not use a template project."
+    new ""
+
+    # game/preferences.rpy:95
+    old "General"
+    new ""
+
+    # game/preferences.rpy:95
+    old "Options"
+    new ""
+
+    # game/preferences.rpy:95
+    old "Lint"
+    new ""
+
+    # game/preferences.rpy:234
+    old "Game Options:"
+    new ""
+
+    # game/preferences.rpy:241
+    old "Skip splashscreen"
+    new ""
+
+    # game/preferences.rpy:258
+    old "Prefer the web documentation"
+    new ""
+
+    # game/preferences.rpy:260
+    old "Sponsor message"
+    new ""
+
+    # game/preferences.rpy:262
+    old "Restore window position"
+    new ""
+
+    # game/preferences.rpy:265
+    old "Daily check for update"
+    new ""
+
+    # game/preferences.rpy:266
+    old "Prefer RPU updates"
+    new ""
+
+    # game/preferences.rpy:283
+    old "Launcher Theme:"
+    new ""
+
+    # game/preferences.rpy:287
+    old "Default theme"
+    new ""
+
+    # game/preferences.rpy:288
+    old "Dark theme"
+    new ""
+
+    # game/preferences.rpy:289
+    old "Custom theme"
+    new ""
+
+    # game/preferences.rpy:295
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new ""
+
+    # game/preferences.rpy:312
+    old "Install Libraries:"
+    new ""
+
+    # game/preferences.rpy:338
+    old "Open projects.txt"
+    new ""
+
+    # game/preferences.rpy:346
+    old "Reset window size"
+    new ""
+
+    # game/preferences.rpy:347
+    old "Clean temporary files"
+    new ""
+
+    # game/preferences.rpy:364
+    old "Lint toggles:"
+    new ""
+
+    # game/preferences.rpy:368
+    old "Check for orphan/obsolete translations"
+    new ""
+
+    # game/preferences.rpy:371
+    old "Check parameters shadowing reserved names"
+    new ""
+
+    # game/preferences.rpy:374
+    old "Print block, word, and character counts by speaking character."
+    new ""
+
+    # game/preferences.rpy:377
+    old "Unclosed text tags"
+    new ""
+
+    # game/preferences.rpy:380
+    old "Show all unreachable blocks and orphaned translations."
+    new ""
+
+    # game/preferences.rpy:389
+    old "Cleaning temporary files..."
+    new ""
+
+    # game/preferences.rpy:419
+    old "{#in language font}Welcome! Please choose a language"
+    new ""
+
+    # game/preferences.rpy:454
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    new ""
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    new ""
+
+    # game/project.rpy:292
+    old "This may be because the project is not writeable."
+    new ""
+
+    # game/project.rpy:776
+    old "Splashscreen skipped in launcher preferences."
+    new ""
+
+    # game/translations.rpy:91
+    old "Translations: [project.current.display_name!q]"
+    new ""
+
+    # game/translations.rpy:342
+    old "Extract Dialogue: [project.current.display_name!q]"
+    new ""
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    new ""
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    new ""
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    new ""
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new ""
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new ""
+
+    # game/updater.rpy:76
+    old "Nightly Fix"
+    new ""
+
+    # game/updater.rpy:77
+    old "Nightly Fix (Ren'Py 8, Python 3)"
+    new ""
+
+    # game/updater.rpy:78
+    old "Nightly Fix (Ren'Py 7, Python 2)"
+    new ""
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    new ""
+
+    # game/updater.rpy:82
+    old "Nightly (Ren'Py 8, Python 3)"
+    new ""
+
+    # game/updater.rpy:83
+    old "Nightly (Ren'Py 7, Python 2)"
+    new ""
+
+    # game/updater.rpy:113
+    old "The update channel controls the version of Ren'Py the updater will download."
+    new ""
+
+    # game/updater.rpy:121
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    new ""
+
+    # game/updater.rpy:123
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    new ""
+
+    # game/updater.rpy:129
+    old "• This version is installed and up-to-date."
+    new ""
+
+    # game/updater.rpy:139
+    old "%B %d, %Y"
+    new ""
+
+    # game/updater.rpy:219
+    old "Fetching the list of update channels"
+    new ""
+
+    # game/updater.rpy:226
+    old "downloading the list of update channels"
+    new ""
+
+    # game/web.rpy:430
+    old "Preparing progressive download"
+    new ""
+
+    # game/web.rpy:487
+    old "Creating package..."
+    new ""
+
+    # game/web.rpy:508
+    old "Web: [project.current.display_name!q]"
+    new ""
+
+    # game/web.rpy:538
+    old "Build Web Application"
+    new ""
+
+    # game/web.rpy:539
+    old "Build and Open in Browser"
+    new ""
+
+    # game/web.rpy:540
+    old "Open in Browser"
+    new ""
+
+    # game/web.rpy:541
+    old "Open build directory"
+    new ""
+
+    # game/web.rpy:563
+    old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    new ""
+
+    # game/web.rpy:571
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    new ""
+
+    # gui/game/options.rpy:31
+    old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
+    new ""
+
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    new ""
+
+    # gui/game/options.rpy:82
+    old "## Between screens of the game menu."
+    new ""
+
+    # gui/game/options.rpy:152
+    old "## Icon"
+    new ""
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new ""
+
+    # gui/game/screens.rpy:114
+    old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
+    new ""
+
+    # gui/game/screens.rpy:120
+    old "## Make the namebox available for styling through the Character object."
+    new ""
+
+    # gui/game/screens.rpy:173
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new ""
+
+    # gui/game/screens.rpy:206
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new ""
+
+    # gui/game/screens.rpy:241
+    old "## Ensure this appears on top of other screens."
+    new ""
+
+    # gui/game/screens.rpy:280
+    old "## Main and Game Menu Screens"
+    new ""
+
+    # gui/game/screens.rpy:329
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    new ""
+
+    # gui/game/screens.rpy:348
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new ""
+
+    # gui/game/screens.rpy:352
+    old "## This ensures that any other menu screen is replaced."
+    new ""
+
+    # gui/game/screens.rpy:357
+    old "## This empty frame darkens the main menu."
+    new ""
+
+    # gui/game/screens.rpy:429
+    old "## Reserve space for the navigation section."
+    new ""
+
+    # gui/game/screens.rpy:612
+    old "## The page name, which can be edited by clicking on a button."
+    new ""
+
+    # gui/game/screens.rpy:672
+    old "## range(1, 10) gives the numbers from 1 to 9."
+    new ""
+
+    # gui/game/screens.rpy:680
+    old "Upload Sync"
+    new ""
+
+    # gui/game/screens.rpy:684
+    old "Download Sync"
+    new ""
+
+    # gui/game/screens.rpy:925
+    old "## This determines what tags are allowed to be displayed on the history screen."
+    new ""
+
+    # gui/game/screens.rpy:1053
+    old "Opens the accessibility menu."
+    new ""
+
+    # gui/game/screens.rpy:1086
+    old "Left Trigger\nLeft Shoulder"
+    new ""
+
+    # gui/game/screens.rpy:1098
+    old "Start, Guide, B/Right Button"
+    new ""
+
+    # gui/game/screens.rpy:1142
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new ""
+
+    # gui/game/screens.rpy:1251
+    old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
+    new ""
+
+    # gui/game/screens.rpy:1299
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new ""
+
+    # gui/game/screens.rpy:1323
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new ""
+
+    # gui/game/screens.rpy:1413
+    old "## Bubble screen"
+    new ""
+
+    # gui/game/screens.rpy:1415
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    new ""
+
+    # gui/game/screens.rpy:1420
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new ""
