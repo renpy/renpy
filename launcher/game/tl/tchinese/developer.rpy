@@ -179,117 +179,117 @@ translate tchinese strings:
 
     # renpy/common/_developer/developer.rpym:43
     old "Interactive Director (D)"
-    new ""
+    new "互動總監（D）"
 
     # renpy/common/_developer/developer.rpym:51
     old "Persistent Viewer"
-    new ""
+    new "持續觀察者"
 
     # renpy/common/_developer/developer.rpym:59
     old "Show Image Load Log (F4)"
-    new ""
+    new "顯示圖像加載日誌（F4）"
 
     # renpy/common/_developer/developer.rpym:62
     old "Hide Image Load Log (F4)"
-    new ""
+    new "隱藏圖像加載日誌（F4）"
 
     # renpy/common/_developer/developer.rpym:65
     old "Image Attributes"
-    new ""
+    new "圖像屬性"
 
     # renpy/common/_developer/developer.rpym:69
     old "Show Translation Identifiers"
-    new ""
+    new "顯示翻譯標識符"
 
     # renpy/common/_developer/developer.rpym:72
     old "Hide Translation Identifiers"
-    new ""
+    new "隱藏翻譯標識符"
 
     # renpy/common/_developer/developer.rpym:77
     old "Speech Bubble Editor (Shift+B)"
-    new ""
+    new "語音氣泡編輯器（Shift+B）"
 
     # renpy/common/_developer/developer.rpym:81
     old "Show Filename and Line"
-    new ""
+    new "顯示檔案名稱和行"
 
     # renpy/common/_developer/developer.rpym:84
     old "Hide Filename and Line"
-    new ""
+    new "隱藏檔案名稱和行"
 
     # renpy/common/_developer/developer.rpym:127
     old "Layer [l]:"
-    new ""
+    new "層 [l]"
 
     # renpy/common/_developer/developer.rpym:131
     old "    [name] [attributes] (hidden)"
-    new ""
+    new "    [name] [attributes] (hidden)"
 
     # renpy/common/_developer/developer.rpym:135
     old "    [name] [attributes]"
-    new ""
+    new "    [name] [attributes]"
 
     # renpy/common/_developer/developer.rpym:198
     old "Hide deleted"
-    new ""
+    new "隱藏已刪除"
 
     # renpy/common/_developer/developer.rpym:198
     old "Show deleted"
-    new ""
+    new "顯示已刪除"
 
     # renpy/common/_developer/developer.rpym:420
     old "Type to filter: "
-    new ""
+    new "要過濾的類型："
 
     # renpy/common/_developer/developer.rpym:538
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
-    new ""
+    new "紋理： [tex_count] ([tex_size_mb:.1f] MB)"
 
     # renpy/common/_developer/developer.rpym:542
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
-    new ""
+    new "映像快取： [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
 
     # renpy/common/_developer/developer.rpym:606
     old "\n{color=#fff}Copied to clipboard.{/color}"
-    new ""
+    new "\n{color=#fff} 已複製到剪貼簿。 {/color}"
 
     # renpy/common/_developer/developer.rpym:612
     old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
-    new ""
+    new "\n{color=#fff} 點擊複製。 \n 拖曳移動。 {/color}"
 
     # renpy/common/_developer/developer.rpym:657
     old "Click to open in editor."
-    new ""
+    new "單擊以在編輯器中打開"
 
     # renpy/common/00console.rpy:793
     old "help: show this help\n help <expr>: show signature and documentation of <expr>"
-    new ""
+    new "幫助：顯示此幫助 \n <expr> 幫助：顯示 <expr> 的簽名和文件"
 
     # renpy/common/00console.rpy:817
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
-    new ""
+    new "幫助可能會顯示未記錄的函數。請檢查您要使用的函數或 \n 類別是否已記錄。 \n\n"
 
     # renpy/common/00console.rpy:858
     old "stack: print the return stack"
-    new ""
+    new "堆疊：列印返回堆疊"
 
     # renpy/common/00console.rpy:912
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
-    new ""
+    new "監視 <expression> ：監視 python 表達式 \n 短監視：使追蹤表達式的表示較短（預設）\n 長監視：使追蹤表達式的表示按原樣"
 
     # renpy/common/00console.rpy:1032
     old "short: Shorten the representation of objects on the console (default)."
-    new ""
+    new "短 ：縮短控制台上物件的表示（預設）。"
 
     # renpy/common/00console.rpy:1036
     old "long: Print the full representation of objects on the console."
-    new ""
+    new "長 ：在控制台上列印物件的完整表示。"
 
     # renpy/common/00console.rpy:1040
     old "escape: Enables escaping of unicode symbols in unicode strings."
-    new ""
+    new "轉義：啟用 unicode 字串中的 unicode 符號轉義。"
 
     # renpy/common/00console.rpy:1044
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
-    new ""
+    new "不轉義：禁用 unicode 字串中 unicode 符號的轉義並按原樣列印（預設）。"
 
