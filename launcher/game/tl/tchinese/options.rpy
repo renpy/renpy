@@ -195,21 +195,21 @@ translate tchinese strings:
 
     # gui/game/options.rpy:31
     old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
-    new ""
+    new "## 放置在遊戲的關於螢幕上的文字。將文字放在三引號之間，並在段落之間留一個空行。"
 
     # gui/game/options.rpy:47
     old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
-    new ""
+    new "## 這三個變數控制預設向播放器顯示哪些混音器。將其中之一設為 False 將隱藏相應的混音器。"
 
     # gui/game/options.rpy:82
     old "## Between screens of the game menu."
-    new ""
+    new "## 在遊戲選單畫面之間。"
 
     # gui/game/options.rpy:152
     old "## Icon"
-    new ""
+    new "## 圖標"
 
     # gui/game/options.rpy:203
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-    new ""
+    new "## 執行應用程式內購買需要 Google Play 許可證密鑰。它可以在 Google Play 開發者控制台的 \"Monetize\" > \"Monetization Setup\" > \"Licensing\" 下找到。"
 
