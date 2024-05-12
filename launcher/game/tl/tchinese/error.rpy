@@ -179,109 +179,109 @@ translate tchinese strings:
 
     # renpy/common/00gltest.rpy:89
     old "Renderer"
-    new ""
+    new "渲染器"
 
     # renpy/common/00gltest.rpy:100
     old "Force GL Renderer"
-    new ""
+    new "强制 GL 渲染器"
 
     # renpy/common/00gltest.rpy:105
     old "Force ANGLE Renderer"
-    new ""
+    new "強制 ANGLE 渲染器"
 
     # renpy/common/00gltest.rpy:110
     old "Force GLES Renderer"
-    new ""
+    new "強制 GLES 渲染器"
 
     # renpy/common/00gltest.rpy:116
     old "Force GL2 Renderer"
-    new ""
+    new "强制 GL2 渲染器"
 
     # renpy/common/00gltest.rpy:121
     old "Force ANGLE2 Renderer"
-    new ""
+    new "強制 ANGLE2 渲染器"
 
     # renpy/common/00gltest.rpy:126
     old "Force GLES2 Renderer"
-    new ""
+    new "強制 GLES2 渲染器"
 
     # renpy/common/00gltest.rpy:136
     old "Enable (No Blocklist)"
-    new ""
+    new "啟用（無封鎖清單）"
 
     # renpy/common/00gltest.rpy:159
     old "Powersave"
-    new ""
+    new "省電"
 
     # renpy/common/00gltest.rpy:173
     old "Framerate"
-    new ""
+    new "幀率"
 
     # renpy/common/00gltest.rpy:177
     old "Screen"
-    new ""
+    new "畫面"
 
     # renpy/common/00gltest.rpy:181
     old "60"
-    new ""
+    new "60"
 
     # renpy/common/00gltest.rpy:185
     old "30"
-    new ""
+    new "30"
 
     # renpy/common/00gltest.rpy:191
     old "Tearing"
-    new ""
+    new "撕裂"
 
     # renpy/common/00gltest.rpy:249
     old "This game requires use of GL2 that can't be initialised."
-    new ""
+    new "這個遊戲需要使用無法初始化的GL2。"
 
     # renpy/common/00gltest.rpy:259
     old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
-    new ""
+    new " {a=edit:1:log.txt}log.txt{/a} 檔案可能包含可幫助您確定電腦出現問題的資訊。"
 
     # renpy/common/00gltest.rpy:264
     old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
-    new ""
+    new "有關如何解決此問題的更多詳細信息，請參閱 {a=[url]} 文檔 {/a} 。"
 
     # renpy/common/00gltest.rpy:281
     old "Change render options"
-    new ""
+    new "更改渲染選項"
 
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
-    new ""
+    new "按下或移動 '[control!s]' [kind] 。"
 
     # renpy/common/_errorhandling.rpym:662
     old "Open"
-    new ""
+    new "打開"
 
     # renpy/common/_errorhandling.rpym:666
     old "Copy BBCode"
-    new ""
+    new "複製 BBCode"
 
     # renpy/common/_errorhandling.rpym:668
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new ""
+    new "已將 traceback.txt 檔案作為 BBcode 複製到剪貼簿，用於 https://lemmasoft.renai.us/ 等論壇。"
 
     # renpy/common/_errorhandling.rpym:670
     old "Copy Markdown"
-    new ""
+    new "複製 Markdown"
 
     # renpy/common/_errorhandling.rpym:672
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
-    new ""
+    new "已將 traceback.txt 檔案作為適用於 Discord 的 Markdown 複製到剪貼簿。"
 
     # renpy/common/_errorhandling.rpym:735
     old "Ignores the exception, allowing you to continue."
-    new ""
+    new "忽略異常，允許您繼續。"
 
     # renpy/common/_errorhandling.rpym:746
     old "Console"
-    new ""
+    new "控制台"
 
     # renpy/common/_errorhandling.rpym:748
     old "Opens a console to allow debugging the problem."
-    new ""
+    new "打開控制台以調試問題。"
 
