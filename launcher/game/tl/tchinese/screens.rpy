@@ -21,10 +21,6 @@ translate tchinese strings:
     old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
     new "## 此畫面必須建立 id 為 \"what\" 的可顯示文本，因為 Ren'Py 使用它來管理文字顯示。它還可以建立 id \"who\" 和 id \"window\" 的可顯示文字應用程式樣式屬性。"
 
-    # screens.rpy:102
-    old "## https://www.renpy.org/doc/html/screen_special.html#say"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#say"
-
     # screens.rpy:169
     old "## Input screen"
     new "## 輸入畫面"
@@ -37,10 +33,6 @@ translate tchinese strings:
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
     new "## 此畫面必須建立一個可顯示的輸入，通過 id \"input\" 以接受各種輸入參數。"
 
-    # screens.rpy:177
-    old "## http://www.renpy.org/doc/html/screen_special.html#input"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#input"
-
     # screens.rpy:205
     old "## Choice screen"
     new "## 選擇畫面"
@@ -48,10 +40,6 @@ translate tchinese strings:
     # screens.rpy:207
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
     new "## 此畫面用於顯示選單語句所呈現的遊戲內選項。第一個參數，項目，是一個物件列表，每個物件都有標題和操作字段。"
-
-    # screens.rpy:211
-    old "## http://www.renpy.org/doc/html/screen_special.html#choice"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#choice"
 
     # screens.rpy:221
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
@@ -157,10 +145,6 @@ translate tchinese strings:
     old "## Used to display the main menu when Ren'Py starts."
     new "## 用於在 Ren'Py 啟動時顯示主選單。"
 
-    # screens.rpy:354
-    old "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#main-menu"
-
     # screens.rpy:369
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
     new "## use 語句在該畫面中包含另一個畫面。主選單的實際內容在導航畫面中。"
@@ -221,10 +205,6 @@ translate tchinese strings:
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
     new "## 這些畫面負責讓玩家保存遊戲並再次載入。由於它們幾乎共享所有共同點，因此兩者都是透過第三個畫面 file_slots 實現的。"
 
-    # screens.rpy:588
-    old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#save https://doc.renpy.cn/zh-TW/screen_special.html#load"
-
     # screens.rpy:607
     old "Page {}"
     new "頁面 {}"
@@ -280,10 +260,6 @@ translate tchinese strings:
     # screens.rpy:713
     old "## The preferences screen allows the player to configure the game to better suit themselves."
     new "## 首選項畫面允許玩家配置遊戲以更好地適合自己。"
-
-    # screens.rpy:716
-    old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#preferences"
 
     # screens.rpy:738
     old "Display"
@@ -364,10 +340,6 @@ translate tchinese strings:
     # screens.rpy:884
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
     new "## 這是向玩家顯示對話歷史記錄的畫面。 雖然這個畫面沒有什麼特別的，但它必須存取儲存在 _history_list 中的對話歷史記錄。"
-
-    # screens.rpy:888
-    old "## https://www.renpy.org/doc/html/history.html"
-    new "## https://doc.renpy.cn/zh-TW/history.html"
 
     # screens.rpy:894
     old "## Avoid predicting this screen, as it can be very large."
@@ -553,10 +525,6 @@ translate tchinese strings:
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
     new "## 當 Ren'Py 想問玩家是或否問題時，會呼叫確認畫面。"
 
-    # screens.rpy:1133
-    old "## http://www.renpy.org/doc/html/screen_special.html#confirm"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#confirm"
-
     # screens.rpy:1137
     old "## Ensure other screens do not get input while this screen is displayed."
     new "## 確保顯示此畫面時其他畫面不會收到輸入。"
@@ -581,10 +549,6 @@ translate tchinese strings:
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
     new "## 顯示 skip_indicator 畫面以指示快進正在進行中。"
 
-    # screens.rpy:1196
-    old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#skip-indicator"
-
     # screens.rpy:1208
     old "Skipping"
     new "快進中"
@@ -601,10 +565,6 @@ translate tchinese strings:
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
     new "## 通知畫面用於向玩家顯示訊息。 （例如，當遊戲快速保存或截取螢幕截圖時。）"
 
-    # screens.rpy:1252
-    old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#notify"
-
     # screens.rpy:1286
     old "## NVL screen"
     new "## NVL 畫面"
@@ -612,10 +572,6 @@ translate tchinese strings:
     # screens.rpy:1288
     old "## This screen is used for NVL-mode dialogue and menus."
     new "## 此畫面用於 NVL 模式對話和選單。"
-
-    # screens.rpy:1290
-    old "## http://www.renpy.org/doc/html/screen_special.html#nvl"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#nvl"
 
     # screens.rpy:1301
     old "## Displays dialogue in either a vpgrid or the vbox."
@@ -649,14 +605,6 @@ translate tchinese strings:
     old "## Make the namebox available for styling through the Character object."
     new "## 使名稱框可用於透過角色物件進行樣式設定。"
 
-    # gui/game/screens.rpy:173
-    old "## https://www.renpy.org/doc/html/screen_special.html#input"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#input"
-
-    # gui/game/screens.rpy:206
-    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#choice"
-
     # gui/game/screens.rpy:241
     old "## Ensure this appears on top of other screens."
     new "## 確保它出現在其他螢幕的頂部。"
@@ -668,10 +616,6 @@ translate tchinese strings:
     # gui/game/screens.rpy:329
     old "## The quit button is banned on iOS and unnecessary on Android and Web."
     new "## 退出按鈕在 iOS 上被禁止，在 Android 和 Web 上則不必要。"
-
-    # gui/game/screens.rpy:348
-    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#main-menu"
 
     # gui/game/screens.rpy:352
     old "## This ensures that any other menu screen is replaced."
@@ -717,17 +661,9 @@ translate tchinese strings:
     old "Start, Guide, B/Right Button"
     new "開始、指南、B/右鍵"
 
-    # gui/game/screens.rpy:1142
-    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#confirm"
-
     # gui/game/screens.rpy:1251
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
     new "## 我們必須使用帶有黑色右指小三角形字形的字體。"
-
-    # gui/game/screens.rpy:1299
-    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
-    new "## https://doc.renpy.cn/zh-TW/screen_special.html#nvl"
 
     # gui/game/screens.rpy:1323
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
@@ -740,8 +676,4 @@ translate tchinese strings:
     # gui/game/screens.rpy:1415
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
     new "## 氣泡螢幕用於在使用對話氣泡時向玩家顯示對話。氣泡螢幕採用與 say 螢幕相同的參數，必須創建一個 id 為 \"what\" 的可顯示內容，並且可以創建可顯示內容帶有 \"namebox\", \"who\", 和 \"window\" ID。"
-
-    # gui/game/screens.rpy:1420
-    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-    new "## https://doc.renpy.cn/zh-TW/bubble.html#bubble-screen"
 
