@@ -411,57 +411,57 @@ translate tchinese strings:
 
     # gui/game/gui.rpy:5
     old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
-    new ""
+    new "## init offset 語句導致此文件中的初始化語句在任何其他文件中的 init 語句之前運行。"
 
     # gui/game/gui.rpy:14
     old "## Enable checks for invalid or unstable properties in screens or transforms"
-    new ""
+    new "## 啟用螢幕或變換中無效或不穩定屬性的檢查"
 
     # gui/game/gui.rpy:19
     old "## GUI Configuration Variables"
-    new ""
+    new "## GUI 配置變數"
 
     # gui/game/gui.rpy:167
     old "## The color of button text in various states."
-    new ""
+    new "## 各種狀態下按鈕文字的顏色"
 
     # gui/game/gui.rpy:173
     old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
-    new ""
+    new "## 按鈕文字的水平對齊方式。（0.0 為左，0.5 為中，1.0 為右）"
 
     # gui/game/gui.rpy:278
     old "## The position of the main menu text."
-    new ""
+    new "## 主選單文字的位置"
 
     # gui/game/gui.rpy:287
     old "## Generic frames."
-    new ""
+    new "## 通用框架"
 
     # gui/game/gui.rpy:307
     old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
-    new ""
+    new "## 預設 GUI 僅使用滑塊和垂直滾動條。所有其他捲軸僅在創建者編寫的螢幕中使用"
 
     # gui/game/gui.rpy:347
     old "## Additional space to add between history screen entries."
-    new ""
+    new "## 在歷史畫面條目之間添加的額外空間。"
 
     # gui/game/gui.rpy:371
     old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
-    new ""
+    new "## Ren'Py 將顯示的 NVL 模式條目的最大數量。當要顯示的條目多於此時，最舊的條目將被刪除。"
 
     # gui/game/gui.rpy:408
     old "## Localization"
-    new ""
+    new "## 在地化"
 
     # gui/game/gui.rpy:410
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
-    new ""
+    new "## 這控制允許換行的位置。預設值適用於大多數語言。可用值的清單可以在 https://doc.renpy.cn/zh-TW/style_properties.html#style-property-language 中找到財產語言"
 
     # gui/game/gui.rpy:418
     old "## Mobile devices"
-    new ""
+    new "## 行動裝置"
 
     # gui/game/gui.rpy:449
     old "## Change the size and spacing of various things."
-    new ""
+    new "## 改變各種東西的大小和間距。"
 
