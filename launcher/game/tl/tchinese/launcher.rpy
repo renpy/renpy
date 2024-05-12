@@ -1941,11 +1941,11 @@
 
     # game/preferences.rpy:419
     old "{#in language font}Welcome! Please choose a language"
-    new "{#in language font} 歡迎！請選擇一種語言"
+    new "{font=SourceHanSansLite.ttf}歡迎！請選擇一種語言"
 
     # game/preferences.rpy:454
     old "{#in language font}Start using Ren'Py in [lang_name]"
-    new "{#in language font}開始以[lang_name]使用 Ren'Py"
+    new "{font=SourceHanSansLite.ttf}開始以[lang_name]為主要語言使用 Ren'Py"
 
     # game/project.rpy:46
     old "Lint checks your game for potential mistakes, and gives you statistics."
