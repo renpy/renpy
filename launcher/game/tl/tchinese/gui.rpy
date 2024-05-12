@@ -455,7 +455,7 @@ translate tchinese strings:
 
     # gui/game/gui.rpy:410
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
-    new "## 這控制允許換行的位置。預設值適用於大多數語言。可用值的清單可以在 https://doc.renpy.cn/zh-TW/style_properties.html#style-property-language 中找到財產語言"
+    new "## 這控制允許換行的位置。預設值適用於大多數語言。可用值的清單可以在 https://www.renpy.org/doc/html/style_properties.html#style-property-language 中找到財產語言"
 
     # gui/game/gui.rpy:418
     old "## Mobile devices"
