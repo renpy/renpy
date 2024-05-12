@@ -1945,7 +1945,7 @@
 
     # game/preferences.rpy:454
     old "{#in language font}Start using Ren'Py in [lang_name]"
-    new "{#in language font} 開始以 [lang_name] 為主要語言使用Ren'Py"
+    new "{#in language font}開始以[lang_name]使用 Ren'Py"
 
     # game/project.rpy:46
     old "Lint checks your game for potential mistakes, and gives you statistics."
