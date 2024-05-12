@@ -331,7 +331,7 @@ translate tchinese strings:
 
     # gui.rpy:333
     old "## The history screen displays dialogue that the player has already dismissed."
-    new "## 歷史熒幕顯示玩家已經閱讀過的對話"
+    new "## 歷史畫面顯示玩家已經閱讀過的對話"
 
     # gui.rpy:335
     old "## The number of blocks of dialogue history Ren'Py will keep."
@@ -339,7 +339,7 @@ translate tchinese strings:
 
     # gui.rpy:338
     old "## The height of a history screen entry, or None to make the height variable at the cost of performance."
-    new "## 歷史熒幕條目的高度，或設爲 None 以犧牲性能為代價使高度可變"
+    new "## 歷史畫面條目的高度，或設爲 None 以犧牲性能為代價使高度可變"
 
     # gui.rpy:342
     old "## The position, width, and alignment of the label giving the name of the speaking character."
