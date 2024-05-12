@@ -229,10 +229,6 @@ translate tchinese strings:
     old "30"
     new "30"
 
-    # renpy/common/00gltest.rpy:191
-    old "Tearing"
-    new "撕裂"
-
     # renpy/common/00gltest.rpy:249
     old "This game requires use of GL2 that can't be initialised."
     new "這個遊戲需要使用無法初始化的GL2。"
