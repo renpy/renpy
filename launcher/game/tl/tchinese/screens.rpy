@@ -663,85 +663,85 @@ translate tchinese strings:
 
     # gui/game/screens.rpy:280
     old "## Main and Game Menu Screens"
-    new "## "
+    new "## 主選單和遊戲選單畫面"
 
     # gui/game/screens.rpy:329
     old "## The quit button is banned on iOS and unnecessary on Android and Web."
-    new "## "
+    new "## 退出按鈕在 iOS 上被禁止，在 Android 和 Web 上則不必要。"
 
     # gui/game/screens.rpy:348
     old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
-    new "## "
+    new "## https://doc.renpy.cn/zh-TW/screen_special.html#main-menu"
 
     # gui/game/screens.rpy:352
     old "## This ensures that any other menu screen is replaced."
-    new "## "
+    new "## 這可確保替換任何其他選單畫面。"
 
     # gui/game/screens.rpy:357
     old "## This empty frame darkens the main menu."
-    new "## "
+    new "## 這個空框使主選單變暗。"
 
     # gui/game/screens.rpy:429
     old "## Reserve space for the navigation section."
-    new "## "
+    new "## 為導航部分保留空間。"
 
     # gui/game/screens.rpy:612
     old "## The page name, which can be edited by clicking on a button."
-    new "## "
+    new "## 頁面名稱，可以透過點擊按鈕進行編輯。"
 
     # gui/game/screens.rpy:672
     old "## range(1, 10) gives the numbers from 1 to 9."
-    new "## "
+    new "## range(1, 10) 給出從 1 到 9 的數字。"
 
     # gui/game/screens.rpy:680
     old "Upload Sync"
-    new "## "
+    new "上傳同步"
 
     # gui/game/screens.rpy:684
     old "Download Sync"
-    new "## "
+    new "下載同步"
 
     # gui/game/screens.rpy:925
     old "## This determines what tags are allowed to be displayed on the history screen."
-    new "## "
+    new "## 這決定了允許在歷史螢幕上顯示哪些標籤。"
 
     # gui/game/screens.rpy:1053
     old "Opens the accessibility menu."
-    new ""
+    new "打開輔助功能選單"
 
     # gui/game/screens.rpy:1086
     old "Left Trigger\nLeft Shoulder"
-    new ""
+    new "左扳機 \n 左肩鍵"
 
     # gui/game/screens.rpy:1098
     old "Start, Guide, B/Right Button"
-    new ""
+    new "開始、指南、B/右鍵"
 
     # gui/game/screens.rpy:1142
     old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
-    new "## "
+    new "## https://doc.renpy.cn/zh-TW/screen_special.html#confirm"
 
     # gui/game/screens.rpy:1251
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
-    new "## "
+    new "## 我們必須使用帶有黑色右指小三角形字形的字體。"
 
     # gui/game/screens.rpy:1299
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
-    new "## "
+    new "## https://doc.renpy.cn/zh-TW/screen_special.html#nvl"
 
     # gui/game/screens.rpy:1323
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
-    new "## "
+    new "## 顯示選單（如果給定）。如果 config.narrator_menu 設定為 True，則選單可能無法正確顯示。"
 
     # gui/game/screens.rpy:1413
     old "## Bubble screen"
-    new "## "
+    new "## 氣泡畫面"
 
     # gui/game/screens.rpy:1415
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
-    new "## "
+    new "## 氣泡螢幕用於在使用對話氣泡時向玩家顯示對話。氣泡螢幕採用與 say 螢幕相同的參數，必須創建一個 id 為 \"what\" 的可顯示內容，並且可以創建可顯示內容帶有 \"namebox\", \"who\", 和 \"window\" ID。"
 
     # gui/game/screens.rpy:1420
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-    new "## "
+    new "## https://doc.renpy.cn/zh-TW/bubble.html#bubble-screen"
 
