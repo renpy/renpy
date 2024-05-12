@@ -48,45 +48,13 @@ class TextShader(object):
     def __init__(
             self,
             shader,
+            uniforms,
             extra_slow_time=0.0,
             extra_slow_duration=0.0,
             redraw=None,
             redraw_when_slow=0.0,
             include_default=True,
-            doc=None,
-            **kwargs):
-        """
-        `shader`
-            The shader to apply to the text. This can be a string, or a list of strings.
-            The shader or shaders must be registered with :func:`renpy.register_shader`.
-
-        `extra_slow_time`
-            Extra time to add to the slow time effect beyond what Ren'Py will compute from
-            the current characters per second. This is useful for shaders that
-            might take more time to transition a character than the default time.
-            If True, the shader is always updated.
-
-        `extra_slow_duration`
-            Added to `extra_slow_time`, but this is multiplied by the time
-            per character to get the extra time to add to the slow time effect.
-            (Time per character is 1 / characters per second.)
-
-        `redraw`
-            The amount in time in seconds before the text is redrawn, after
-            all slow text has been show and `extra_slow_time` has passed.
-
-        `redraw_when_slow`
-            The amount of time in seconds before the text is redrawn when showing
-            slow text.
-
-        `include_default`
-            If True, when this textshader is used directly, it will be combined
-            with :var:`config.default_textshader`.
-
-        Keyword argument beginning with ``u_`` are passed as uniforms to the shader.
-        The order of these matters, as when uniform names are omitted, uniforms
-        are given value in the order the uniform appears in `kwargs`.
-        """
+            doc=None):
 
         # A tuple of shaders to apply to text.
         if isinstance(shader, basestring):
@@ -115,19 +83,7 @@ class TextShader(object):
         self.doc = doc
 
         # A tuple of uniform name, value pairs.
-        uniforms = { }
-
-        for k, v in kwargs.items():
-            if k.startswith("u_"):
-
-                if v and v[0] == "#":
-                    v = renpy.easy.color(v).rgba
-
-                uniforms[k] = v
-            else:
-                raise ValueError("Unknown keyword argument %r." % (k,))
-
-        self.uniforms = tuple(uniforms.items())
+        self.uniforms = uniforms
 
         self.key = (
             self.shader,
@@ -158,12 +114,12 @@ class TextShader(object):
 
         return TextShader(
             self.shader + other.shader,
+            tuple(uniforms.items()),
             max(self.extra_slow_time, other.extra_slow_time),
             max(self.extra_slow_duration, other.extra_slow_duration),
             combine_redraw(self.redraw, other.redraw),
             combine_redraw(self.redraw_when_slow, other.redraw_when_slow),
             self.include_default or other.include_default,
-            **uniforms
         )
 
 
@@ -173,14 +129,19 @@ class TextShader(object):
         the new uniforms.
         """
 
-        rv = TextShader(self.shader)
-        rv.__dict__.update(self.__dict__)
 
         uniforms = dict(self.uniforms)
         uniforms.update(new_uniforms)
-        rv.uniforms = tuple(uniforms.items())
 
-        return rv
+        return TextShader(
+            self.shader,
+            tuple(uniforms.items()),
+            self.extra_slow_time,
+            self.extra_slow_duration,
+            self.redraw,
+            self.redraw_when_slow,
+            self.include_default,
+        )
 
 
 def compute_times(shaders):
@@ -391,34 +352,19 @@ def register_textshader(
     when registering the shader part.
     """
 
-    def expand_name(s):
-        if s.startswith("u__"):
-            return "u_textshader_" + name + "_" + s[3:]
-        if s.startswith("a__"):
-            return "a_textshader_" + name + "_" + s[3:]
-        if s.startswith("v__"):
-            return "v_textshader_" + name + "_" + s[3:]
-        else:
-            return s
-
-    def expand_match(m):
-        return expand_name(m.group(0))
-
-    def sub(s):
-        return re.sub(r'[uav]__\w+', expand_match, v)
 
     textshader_kwargs = { }
     part_kwargs = { }
 
     for k, v in kwargs.items():
         if k == "variables":
-            part_kwargs[k] = sub(v)
+            part_kwargs[k] = v
         elif k.startswith("fragment_"):
-            part_kwargs[k] = sub(v)
+            part_kwargs[k] = v
         elif k.startswith("vertex_"):
-            part_kwargs[k] = sub(v)
+            part_kwargs[k] = v
         elif k.startswith("u_"):
-            textshader_kwargs[expand_name(k)] = v
+            textshader_kwargs[k] = v
         else:
             raise TypeError("renpy.register_textshader got an unknown keyword argument %r." % (k,))
 
@@ -427,20 +373,28 @@ def register_textshader(
 
     shaders = tuple(shaders) + ( "textshader." + name, )
 
-    renpy.exports.register_shader(
+    part = renpy.exports.register_shader(
         "textshader." + name,
+        private_uniforms=True,
         **part_kwargs)
 
     if doc is not None:
-        doc = sub(doc)
+        doc = part.substitute_name(doc)
+
+    textshader_kwargs = { part.expand_name(k): v for k, v in textshader_kwargs.items() }
+    uniforms = tuple((k, textshader_kwargs[k]) for k in part.uniforms if k in textshader_kwargs)
+
+    for k in textshader_kwargs:
+        if k not in part.uniforms:
+            raise ValueError("Unknown uniform %r." % k)
 
     renpy.config.textshaders[name] = TextShader(
         shaders,
+        uniforms,
         extra_slow_time=extra_slow_time,
         extra_slow_duration=extra_slow_duration,
         redraw=redraw,
         redraw_when_slow=redraw_when_slow,
         include_default=include_default,
         doc=doc,
-        **textshader_kwargs
     )
