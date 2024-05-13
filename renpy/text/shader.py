@@ -54,6 +54,8 @@ class TextShader(object):
             redraw=None,
             redraw_when_slow=0.0,
             include_default=True,
+            adjust_function=None,
+            adjust_name_map=None,
             doc=None):
 
         # A tuple of shaders to apply to text.
@@ -84,6 +86,18 @@ class TextShader(object):
 
         # A tuple of uniform name, value pairs.
         self.uniforms = uniforms
+
+        # A function that is called with the textshader and uniforms, to set up
+        # the extra_slow and redraw_variables.
+        self.adjust_function = adjust_function
+
+        # A map from uniform name to the original name, used to map keyword
+        # arguments to adjust_function.
+        self.adjust_name_map = adjust_name_map
+
+        if self.adjust_function is not None:
+            kwargs = { self.adjust_name_map.get(k, k): v for k, v in uniforms }
+            self.adjust_function(self, **kwargs)
 
         self.key = (
             self.shader,
@@ -141,8 +155,9 @@ class TextShader(object):
             self.redraw,
             self.redraw_when_slow,
             self.include_default,
+            self.adjust_function,
+            self.adjust_name_map,
         )
-
 
 def compute_times(shaders):
     """
@@ -295,6 +310,7 @@ def register_textshader(
         redraw=None,
         redraw_when_slow=0.0,
         include_default=True,
+        adjust_function=None,
         doc=None,
         **kwargs):
     """
@@ -340,6 +356,12 @@ def register_textshader(
         If True, when this textshader is used directly, it will be combined
         with :var:`config.default_textshader`.
 
+    `adjust_function`
+        A function that is called with an object and the uniforms being
+        passed to the text shader as keyworkd arguments. This
+        function can set the `extra_slow_time`, `extra_slow_duration`,
+        `redraw`, and `redraw_when_slow` fields of the object
+
     `doc`
         A string containing documetation information. This is mostly intended
         for Ren'Py's documentation system.
@@ -381,6 +403,7 @@ def register_textshader(
     if doc is not None:
         doc = part.substitute_name(doc)
 
+    mapped_names = { part.expand_name(k): k for k in textshader_kwargs }
     textshader_kwargs = { part.expand_name(k): v for k, v in textshader_kwargs.items() }
     uniforms = tuple((k, textshader_kwargs[k]) for k in part.uniforms if k in textshader_kwargs)
 
@@ -396,5 +419,7 @@ def register_textshader(
         redraw=redraw,
         redraw_when_slow=redraw_when_slow,
         include_default=include_default,
+        adjust_function=adjust_function,
+        adjust_name_map=mapped_names,
         doc=doc,
     )
