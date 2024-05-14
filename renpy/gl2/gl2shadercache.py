@@ -150,10 +150,12 @@ class ShaderPart(object):
 
         if s.startswith("u__"):
             return "u_" + name + "_" + s[3:]
-        if s.startswith("a__"):
+        elif s.startswith("a__"):
             return "a_" + name + "_" + s[3:]
-        if s.startswith("v__"):
+        elif s.startswith("v__"):
             return "v_" + name + "_" + s[3:]
+        elif s.startswith("l__"):
+            return "l_" + name + "_" + s[3:]
         else:
             return s
 
@@ -165,7 +167,7 @@ class ShaderPart(object):
         return self.expand_name(m.group(0))
 
     def substitute_name(self, s):
-        return re.sub(r'[uav]__\w+', self.expand_match, s)
+        return re.sub(r'[uavl]__\w+', self.expand_match, s)
 
 
 # A map from a tuple giving the parts that comprise a shader, to the Shader
