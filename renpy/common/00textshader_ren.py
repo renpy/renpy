@@ -37,6 +37,31 @@ def adjust_duration(ts, u__duration):
 
 
 renpy.register_textshader(
+    "typewriter",
+    include_default=False,
+
+    variables="""
+    uniform float u_text_slow_time;
+    attribute float a_text_min_time;
+    varying float v_text_min_time;
+    """,
+
+    vertex_500="""
+    v_text_min_time = a_text_min_time;
+    """,
+    fragment_500="""
+    float l__done = v_text_min_time <= u_text_slow_time ? 1.0 : 0.0;
+    gl_FragColor = gl_FragColor * l__done;
+    """,
+
+    doc="""
+    The typewriter text shader makes text appear slowly, as if it were being
+    type out by a typewriter.
+    """
+)
+
+
+renpy.register_textshader(
     "wave",
     include_default=False,
     adjust_function=adjust_duration,
@@ -58,7 +83,7 @@ renpy.register_textshader(
     if (l__duration > 0.0) {
         l__done = clamp((u_text_slow_time - v_text_time) / l__duration, 0.0, 1.0);
     } else {
-        l__done = v_text_time < u_text_slow_time ? 1.0 : 0.0;
+        l__done = v_text_time <= u_text_slow_time ? 1.0 : 0.0;
     }
     gl_FragColor = gl_FragColor * l__done;
     """,
@@ -72,5 +97,30 @@ renpy.register_textshader(
     `u__duration` = 10.0
         The number of characters that will be changing alpha at a time.  If set to
         0, the wave will move across the text one pixel at a time.
+    """
+)
+
+renpy.register_textshader(
+    "slowalpha",
+    include_default=False,
+
+    variables="""
+    uniform float u__alpha
+    """,
+
+    fragment_475="""
+vec4 l__color = gl_FragColor;
+""",
+
+    fragment_525="""
+    gl_FragColor = mix(gl_FragColor, l__color, u__alpha);
+    """,
+
+    u__alpha=0.2,
+
+    doc="""
+    The slowalpha shows slow text that has yet to be revealed with a non-zero alpha.
+
+`u__alpha` = 0.2
     """
 )
