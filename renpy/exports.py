@@ -1188,7 +1188,7 @@ def display_menu(items,
                  choice_chosen_style='menu_choice_chosen',
                  choice_button_style='menu_choice_button',
                  choice_chosen_button_style='menu_choice_chosen_button',
-                 scope={ },
+                 scope=(),
                  widget_properties=None,
                  screen="choice",
                  type="menu", # @ReservedAssignment
@@ -1198,14 +1198,14 @@ def display_menu(items,
     """
     :doc: se_menu
     :name: renpy.display_menu
-    :args: (items, *, interact=True, screen="choice", type="menu", _layer=None, **kwargs)
+    :args: (items, *, interact=True, screen="choice", type="menu", _layer=None)
 
     This displays a menu to the user. `items` should be a list of 2-item tuples.
     In each tuple, the first item is a textual label, and the second item is
     the value to be returned if that item is selected. If the value is None,
     the first item is used as a menu caption.
 
-    This function takes many arguments, of which only a few are documented.
+    This function takes many optional arguments, of which only a few are documented.
     Except for `items`, all arguments should be given as keyword arguments.
 
     `interact`
