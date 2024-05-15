@@ -29,7 +29,7 @@ init -1500 python in textshader:
 _constant = True
 
 
-def adjust_duration(ts, u__duration):
+def adjust_duration(ts, u__duration, **kwargs):
     """
     Adjusts extra_slow_duration to the value of u__duration.
     """
@@ -166,7 +166,46 @@ renpy.register_textshader(
     """
 )
 
-# TODO: Zoom in.
+renpy.register_textshader(
+    "zoom",
+    include_default=True,
+    adjust_function=adjust_duration,
+
+    variables="""
+    uniform float u__zoom;
+    uniform float u__duration;
+    uniform float u_text_slow_duration;
+    uniform float u_text_slow_time;
+    attribute vec2 a_text_center;
+    attribute float a_text_min_time;
+    """,
+
+    vertex_55="""
+    float l__duration = u__duration * u_text_slow_duration;
+
+    if (l__duration > 0.0) {
+        float l__done = clamp((u_text_slow_time - a_text_min_time) / l__duration, 0.0, 1.0);
+        gl_Position.xy = mix(a_text_center + (gl_Position.xy - a_text_center) * u__zoom, gl_Position.xy, l__done);
+    }
+    """,
+
+    u__zoom=0.0,
+    u__duration=10.0,
+
+    doc="""
+    The zoom text shader zooms in on the text.
+
+    `u__zoom`
+        The initial amount of zoom to apply to a character when it first starts
+        showing.
+
+    `u__duration`
+        The number of characters that will be changing alpha at a time.  If set to
+        0, the characters will instantly flip.
+    """
+)
+
+
 # TODO: Jitter.
 # TODO: Wave.
 # TODO: Per-line texture.
