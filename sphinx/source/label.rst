@@ -55,19 +55,35 @@ declared in, or by their full name, consisting of global and local name parts::
         jump global_label.local_name
 
 The label statement may take an optional list of parameters. These parameters
-are processed as described in :pep:`570`, with two exceptions.
+are processed as described in :pep:`570`, with two exceptions:
 
 First, the values of default parameters are evaluated at call time.
 
-Second, the variables are scoped dynamically, rather than lexically. This means that
-when a variable gets its value from a label parameter, its value lasts until a return
-statement following the label. This means that given a statement using a certain
-variable, that variable may or may not get its value from a label parameter ; this
-is not possible for a Python function parameter for example.
+Second, the variables are scoped dynamically, rather than lexically. This means
+that when a variable gets its value from a label parameter, it will be reverted
+(to the previous value of the variable if it had one, or to the absence of the
+variable otherwise) when a return statement is reached. It also means that given
+a statement using a certain variable, that variable may or may not get its value
+from a label parameter depending on how the statement was reached ; that is not
+possible in pure Python code. ::
 
-It doesn't generally make sense to
-have a label with parameters be reached by a jump or a previous
-statement. For an example of labels with parameters, see the
+    default a = 3
+
+    label start:
+        menu:
+            "Call":
+                call label_with_params(5)
+            "Jump":
+                jump label_without_params
+        jump start
+
+    label label_with_params(a):
+    label label_without_params:
+        e "a = [a]" # displays 1 or 3 depending on what path was taken
+        return
+
+It doesn't generally make sense to have a label with parameters be reached by a
+jump or a previous statement. For an example of labels with parameters, see the
 :ref:`call statement <call-statement>`.
 
 
