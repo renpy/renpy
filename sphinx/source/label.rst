@@ -19,10 +19,19 @@ functions, or from screens. ::
 
 A label statement may have a block associated with it. In that case, control
 enters the block whenever the label statement is reached, and proceeds with the
-statement after the label statement whenever the end of the block is reached.
+statement after the label statement whenever the end of the block is reached:
+the following code, when jumping to the "origin" label, produces the "a, b, c"
+sequence. ::
+
+    label origin:
+    "a"
+    label hasblock:
+        "b"
+    "c"
+    return
 
 There are two kinds of labels: *global* and *local* labels. Global labels live
-in one global scope shared across all project files and thus should have unique
+in one global namespace shared across all project files and thus should have unique
 names per game. A local label on the other hand refer to a global label, so several
 local labels in the game can have the same name, provided they are related to
 different global labels. To declare a local label, prefix its name with a period
@@ -30,7 +39,7 @@ different global labels. To declare a local label, prefix its name with a period
 For example::
 
     label global_label:
-        "Inside a global label.."
+        "Under a global label.."
     label .local_label:
         "..resides a local one."
         jump .another_local
@@ -46,14 +55,18 @@ declared in, or by their full name, consisting of global and local name parts::
         jump global_label.local_name
 
 The label statement may take an optional list of parameters. These parameters
-are processed as described in :pep:`570`, with two exceptions:
+are processed as described in :pep:`570`, with two exceptions.
 
-* The values of default parameters are evaluated at call time.
-* The variables are dynamically, rather than lexically, scoped.
+First, the values of default parameters are evaluated at call time.
 
-When a variable is dynamically scoped, its value lasts until a return
-statement following the label. It doesn't generally make sense to
-have a label with parameters that is reached by a jump or a previous
+Second, the variables are scoped dynamically, rather than lexically. This means that
+when a variable gets its value from a label parameter, its value lasts until a return
+statement following the label. This means that given a statement using a certain
+variable, that variable may or may not get its value from a label parameter ; this
+is not possible for a Python function parameter for example.
+
+It doesn't generally make sense to
+have a label with parameters be reached by a jump or a previous
 statement. For an example of labels with parameters, see the
 :ref:`call statement <call-statement>`.
 
@@ -93,8 +106,8 @@ also pushes the next statement onto the call stack, allowing the return statemen
 to return control to the statement following the call.
 
 If the ``expression`` keyword is present, the expression following it is evaluated, and the
-string so computed is used as the name of the label to call. If the
-``expression`` keyword is not present, the name of the statement to call must be
+resulting string is used as the name of the label to call. If the
+``expression`` keyword is not present, the name of the label to call must be
 explicitly given.
 
 A local label name can be passed, either with ``expression`` or without,
