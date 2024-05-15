@@ -94,7 +94,7 @@ renpy.register_textshader(
     The wave text shader makes text appear slowly, as if it were a wave moving
     across the text.
 
-    `u__duration` = 10.0
+    `u__duration`
         The number of characters that will be changing alpha at a time.  If set to
         0, the wave will move across the text one pixel at a time.
     """
@@ -120,7 +120,53 @@ vec4 l__color = gl_FragColor;
 
     doc="""
     The slowalpha shows slow text that has yet to be revealed with a non-zero alpha.
+    This is generally used in combination with other text shaders, typewriter
+    or wave, that reveal text slowly.
 
-`u__alpha` = 0.2
+    `u__alpha`
+        The alpha value of the text that has not been revealed yet.
     """
 )
+
+
+renpy.register_textshader(
+    "flip",
+    include_default=False,
+    adjust_function=adjust_duration,
+
+    variables="""
+    uniform float u__duration;
+    uniform float u_text_slow_duration;
+    uniform float u_text_slow_time;
+    attribute vec2 a_text_center;
+    attribute float a_text_min_time;
+    """,
+
+    vertex_50="""
+    float l__duration = u__duration * u_text_slow_duration;
+    float l__done;
+
+    if (l__duration > 0.0) {
+        l__done = clamp((u_text_slow_time - a_text_min_time) / l__duration, 0.0, 1.0);
+    } else {
+        l__done = a_text_min_time <= u_text_slow_time ? 1.0 : 0.0;
+    }
+
+    gl_Position.x = mix(a_text_center.x - (gl_Position.x - a_text_center.x), gl_Position.x, l__done);
+    """,
+
+    u__duration=10.0,
+
+    doc="""
+    The flip text shader flips the text around its center, revealing it slowly
+
+    `u__duration`
+        The number of characters that will be changing alpha at a time.  If set to
+        0, the characters will instantly flip.
+    """
+)
+
+# TODO: Zoom in.
+# TODO: Jitter.
+# TODO: Wave.
+# TODO: Per-line texture.
