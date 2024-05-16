@@ -40,6 +40,57 @@ def combine_redraw(a, b):
 
     return min(a, b)
 
+
+def to_uniform_value(shader_name, uniform_name, variable_types, value):
+    """
+    Given a shader name, uniform name, and variable types, converts `value`
+    to the appropriate type.
+    """
+
+    if uniform_name in variable_types:
+        if variable_types[uniform_name] == "color":
+            return renpy.easy.color(value).premultiplied
+
+    type = variable_types.get(uniform_name, None)
+
+    if type is None:
+        raise ValueError("Unknown uniform %r in shader %r." % (uniform_name, shader_name))
+
+    if isinstance(value, str):
+        if type == "sampler2D":
+            value = renpy.easy.displayable(value)
+        elif value.startswith("#"):
+            value = renpy.easy.color(value).premultiplied
+        else:
+            try:
+                value = value.lstrip("(").rstrip(")")
+                value = tuple(float(i) for i in value.split(","))
+
+                if len(value) == 1:
+                    value = value[0]
+
+            except Exception as e:
+                raise ValueError("Error parsing %r as a uniform value: %s" % (value, e))
+
+    if type == "float":
+        if not isinstance(value, float):
+            raise ValueError("Expected a float for %r in shader %r." % (uniform_name, shader_name))
+    elif type == "vec2":
+        if not isinstance(value, tuple) or len(value) != 2:
+            raise ValueError("Expected a 2 component tuple for %r in shader %r." % (uniform_name, shader_name))
+    elif type == "vec3":
+        if not isinstance(value, tuple) or len(value) != 3:
+            raise ValueError("Expected a 3 component tuple for %r in shader %r." % (uniform_name, shader_name))
+    elif type == "vec4":
+        if not isinstance(value, tuple) or len(value) != 4:
+            raise ValueError("Expected a 4 component tuple for %r in shader %r." % (uniform_name, shader_name))
+    elif type == "sampler2D":
+        if not isinstance(value, renpy.display.displayable.Displayable):
+            raise ValueError("Expected a displayable for %r in shader %r." % (uniform_name, shader_name))
+
+    return value
+
+
 class TextShader(object):
     """
     This stores information about a text shader.
@@ -49,6 +100,7 @@ class TextShader(object):
             self,
             shader,
             uniforms,
+            variable_types=None,
             extra_slow_time=0.0,
             extra_slow_duration=0.0,
             redraw=None,
@@ -129,6 +181,7 @@ class TextShader(object):
         return TextShader(
             self.shader + other.shader,
             tuple(uniforms.items()),
+            {},
             max(self.extra_slow_time, other.extra_slow_time),
             max(self.extra_slow_duration, other.extra_slow_duration),
             combine_redraw(self.redraw, other.redraw),
@@ -150,6 +203,7 @@ class TextShader(object):
         return TextShader(
             self.shader,
             tuple(uniforms.items()),
+            self.variable_types,
             self.extra_slow_time,
             self.extra_slow_duration,
             self.redraw,
@@ -210,19 +264,7 @@ def create_textshader_args_dict(name, shader, s):
         else:
             raise ValueError("Unknown uniform %r in %r." % (uniform, name))
 
-        try:
-            if value and (value[0] == "#"):
-                numeric_value = renpy.easy.color(value).premultiplied
-            else:
-                value = value.lstrip("(").rstrip(")")
-                numeric_value = tuple(float(i) for i in value.split(","))
-        except Exception as e:
-            raise ValueError("Error parsing %r as a uniform value: %s" % (value, e))
-
-        if len(numeric_value) == 1:
-            rv[uniform] = numeric_value[0]
-        else:
-            rv[uniform] = numeric_value
+        value = to_uniform_value(name, uniform, shader.variable_types, value)
 
     return rv
 
@@ -405,15 +447,19 @@ def register_textshader(
 
     mapped_names = { part.expand_name(k): k for k in textshader_kwargs }
     textshader_kwargs = { part.expand_name(k): v for k, v in textshader_kwargs.items() }
-    uniforms = tuple((k, textshader_kwargs[k]) for k in part.uniforms if k in textshader_kwargs)
 
-    for k in textshader_kwargs:
-        if k not in part.uniforms:
-            raise ValueError("Unknown uniform %r." % k)
+    uniforms = { }
+
+    for k in part.uniforms:
+        if k in textshader_kwargs:
+            uniforms[k] = to_uniform_value(name, k, part.variable_types, textshader_kwargs[k])
+
+    uniforms = tuple((k, uniforms[k]) for k in uniforms)
 
     renpy.config.textshaders[name] = TextShader(
         shaders,
         uniforms,
+        part.variable_types,
         extra_slow_time=extra_slow_time,
         extra_slow_duration=extra_slow_duration,
         redraw=redraw,
