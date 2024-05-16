@@ -79,7 +79,7 @@ possible in pure Python code. ::
 
     label label_with_params(a):
     label label_without_params:
-        e "a = [a]" # displays 1 or 3 depending on what path was taken
+        e "a = [a]" # displays 5 or 3 depending on what path was taken
         return
 
 It doesn't generally make sense to have a label with parameters be reached by a
