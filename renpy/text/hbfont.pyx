@@ -521,9 +521,14 @@ cdef class HBFont:
                 if "bold" in face.variations.instance:
                     bold = 0.0
                     instance = "bold"
+                elif "bold italic" in face.variations.instance:
+                    bold = 0.0
+                    instance = "bold italic"
             else:
                 if "regular" in face.variations.instance:
                     instance = "regular"
+                elif "italic" in face.variations.instance:
+                    instance = "italic"
 
         if bold:
             antialias = True
