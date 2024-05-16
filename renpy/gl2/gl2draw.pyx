@@ -1050,6 +1050,10 @@ cdef class GL2Draw:
             if r.uniforms:
                 uniforms.update(r.uniforms)
 
+            for k, v in uniforms.items():
+                if isinstance(v, Render):
+                    uniforms[k] = self.render_to_texture(v, properties=r.properties)
+
             for i, c in enumerate(r.children):
                 uniforms["tex" + str(i)] = self.render_to_texture(c[0], properties=r.properties)
 
@@ -1085,7 +1089,6 @@ cdef class GL2Draw:
             return what.cached_texture
 
         rv = self.texture_loader.render_to_texture(what, properties)
-
         what.cached_texture = rv
 
         return rv
