@@ -67,6 +67,44 @@ class Blit(object):
         return "<Blit ({0}, {1}, {2}, {3}) {4}>".format(self.x, self.y, self.w, self.h, self.alpha)
 
 
+class TextMeshDisplayable(renpy.display.core.Displayable):
+    """
+    This is a displayable that renders a mesh of text.
+    """
+
+    def __init__(self, width, height, tex, shader, mesh, uniforms):
+        super(TextMeshDisplayable, self).__init__()
+
+        self.width = width
+        self.height = height
+        self.tex = tex
+        self.shader = shader
+        self.mesh = mesh
+        self.uniforms = uniforms
+
+    def render(self, width, height, st, at):
+
+        rv = renpy.display.render.Render(width, height)
+        rv.mesh = self.mesh
+
+        rv.add_shader("renpy.texture")
+
+        for i in self.shader:
+            rv.add_shader(i)
+
+        for k, v, is_displayable in self.uniforms:
+
+            if is_displayable:
+                v = renpy.display.render.render(v, width, height, st, at)
+                rv.depends_on(v)
+
+            rv.add_uniform(k, v)
+
+        rv.absolute_blit(self.tex, (0, 0))
+
+        return rv
+
+
 def outline_blits(blits, outline):
     """
     Given a list of blits, adjusts it for the given outline size. That means
@@ -864,7 +902,7 @@ class Layout(object):
         self.textures = { }
 
         # A map from outline to a mesh.
-        self.mesh_renders = [ ]
+        self.mesh_displayables = [ ]
 
         di = DrawInfo()
 
@@ -937,8 +975,8 @@ class Layout(object):
 
             if self.textshaders:
                 for ts in self.textshaders:
-                    mr = self.create_mesh_render(o, tex, lines, xo, yo, depth, ts)
-                    self.mesh_renders.append((o, xo, yo, mr))
+                    mr = self.create_mesh_displayable(o, tex, lines, xo, yo, depth, ts)
+                    self.mesh_displayables.append((o, xo, yo, mr))
 
         if self.textshaders:
             extra_slow_time, extra_slow_duration, self.redraw, self.redraw_when_slow = renpy.text.shader.compute_times(self.textshaders)
@@ -1619,9 +1657,9 @@ class Layout(object):
 
         return rv
 
-    def create_mesh_render(self, outline, tex, lines, xo, yo, depth, ts):
+    def create_mesh_displayable(self, outline, tex, lines, xo, yo, depth, ts):
         """
-        Create a list of Renders that will use a mesh to draw the text character-by-character.
+        Create a Displayable that will use a mesh to draw the text character-by-character.
 
         `outline`
             The size of the outline, in pixels.
@@ -1719,7 +1757,6 @@ class Layout(object):
 
             top = bottom
 
-
         r = renpy.display.render.Render(tw, th)
         r.absolute_blit(tex, (0, 0))
         r.mesh = mesh
@@ -1728,16 +1765,24 @@ class Layout(object):
         for i in ts.shader:
             r.add_shader(i)
 
-        r.add_uniform("u_text_depth", depth)
-        r.add_uniform("u_text_outline", outline)
-        r.add_uniform("u_text_offset", (xo, yo))
-        r.add_uniform("u_text_to_virtual", 1 / self.oversample)
+        # (name, value, is_displayable)
+        uniforms = [
+            ("u_text_depth", depth, False),
+            ("u_text_outline", outline, False),
+            ("u_text_offset", (xo, yo), False),
+            ("u_text_to_virtual", 1 / self.oversample, False),
+        ]
 
         for k, v in ts.uniforms:
-            r.add_uniform(k, v)
+            uniforms.append((k, v, isinstance(v, renpy.display.core.Displayable)))
 
-        return r
-
+        return TextMeshDisplayable(
+            tw, th,
+            tex,
+            ts.shader,
+            mesh,
+            uniforms,
+        )
 
 # The maximum number of entries in the layout cache.
 LAYOUT_CACHE_SIZE = 50
@@ -2472,7 +2517,7 @@ class Text(renpy.display.displayable.Displayable):
             renpy.game.interface.timeout(0)
 
         if layout.textshaders:
-            self.render_textshader(rv, layout, st)
+            self.render_textshader(rv, layout, st, at)
         else:
             self.render_blits(rv, layout, st)
 
@@ -2607,7 +2652,7 @@ class Text(renpy.display.displayable.Displayable):
                                         b_y + yo + layout.yoffset - o - layout.add_top)
                     )
 
-    def render_textshader(self, render, layout, st):
+    def render_textshader(self, render, layout, st, at):
 
         slow_time = layout.max_time
 
@@ -2621,12 +2666,17 @@ class Text(renpy.display.displayable.Displayable):
         else:
             render.add_uniform("u_text_slow_duration", 0.0)
 
-        for o, xo, yo, mesh_render in layout.mesh_renders:
+        for o, xo, yo, mesh_displayable in layout.mesh_renders:
+            mesh_render = renpy.display.render.render(mesh_displayable, layout.width, layout.height, st, at)
+
             render.absolute_blit(
                 mesh_render,
                 layout.unscale_pair(
                     xo + layout.xoffset - o,
-                    yo + layout.yoffset - o))
+                    yo + layout.yoffset - o),
+                focus=False,
+                main=False,
+            )
 
     def tokenize(self, text):
         """

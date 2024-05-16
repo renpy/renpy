@@ -26,25 +26,18 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional
-
 import __future__
 
-import marshal
 import random
 import weakref
-import re
 import sys
-import time
-import io
-import types
 import copyreg
 import functools
 
 import renpy
 
 # A set of flags that indicate dict should run in future-compatible mode.
-FUTURE_FLAGS = (__future__.CO_FUTURE_DIVISION | __future__.CO_FUTURE_WITH_STATEMENT) # type: ignore
+FUTURE_FLAGS = __future__.division.compiler_flag | __future__.with_statement.compiler_flag
 
 ##############################################################################
 # Monkeypatch copy_reg to work around a change in the class that RevertableSet

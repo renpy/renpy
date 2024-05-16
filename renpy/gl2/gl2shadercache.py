@@ -75,6 +75,9 @@ class ShaderPart(object):
         self.vertex_variables = set()
         self.fragment_variables = set()
 
+        # A map from variable name to type.
+        self.variable_types = { }
+
         # A sets of variable names used in the vertex and fragments shader.
         vertex_used = set()
         fragment_used = set()
@@ -125,7 +128,10 @@ class ShaderPart(object):
                 raise Exception("{}: Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(self.name, l))
 
             kind = a[0]
+            type_ = a[1]
             name = a[2]
+
+            self.variable_types[name] = type_
 
             if name in vertex_used:
                 self.vertex_variables.add(a)

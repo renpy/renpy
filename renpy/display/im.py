@@ -266,6 +266,9 @@ class Cache(object):
             if image.pixel_perfect:
                 rv.add_property("pixel_perfect", True)
 
+            if ce.bounds == (0, 0, ce.width, ce.height):
+                rv.cached_texture = ce.texture
+
             return rv
 
         if render:
