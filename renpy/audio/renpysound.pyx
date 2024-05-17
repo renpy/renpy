@@ -66,6 +66,7 @@ cdef extern from "renpysound_core.h":
     void RPS_fadeout(int channel, int ms)
     void RPS_pause(int channel, int pause)
     void RPS_unpause_all_at_start()
+    void RPS_global_pause(int pause)
     int RPS_get_pos(int channel)
     double RPS_get_duration(int channel)
     void RPS_set_endevent(int channel, int event)
@@ -236,6 +237,15 @@ def unpause_all_at_start():
     """
 
     RPS_unpause_all_at_start()
+
+
+def global_pause(pause):
+    """
+    Pauses or unpauses all channels.
+    """
+
+    RPS_global_pause(pause)
+
 
 def fadeout(channel, delay):
     """

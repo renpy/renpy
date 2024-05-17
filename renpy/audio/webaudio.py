@@ -243,6 +243,14 @@ def unpause(channel):
     call("unpause", channel)
 
 
+def global_pause(pause):
+    """
+    Pauses all channels.
+    """
+
+    # Not used on web.
+
+
 @proxy_call_both
 def unpause_all_at_start():
     """
