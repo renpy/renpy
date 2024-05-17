@@ -469,9 +469,6 @@ class Channel(object):
         # mixer is muted.
         force_stop = self.context.force_stop or (renpy.game.preferences.mute.get(self.mixer, False) and self.stop_on_mute)
 
-        if global_pause and not self.loop:
-            force_stop = True
-
         if self.playing and force_stop:
             renpysound.stop(self.number)
             self.playing = False
@@ -491,9 +488,6 @@ class Channel(object):
         # per call, to prevent memory leaks with really short sound
         # files. So this loop will only execute once, in practice.
         while True:
-
-            if global_pause:
-                break
 
             if self._number is not None:
                 depth = renpysound.queue_depth(self.number)
@@ -600,7 +594,7 @@ class Channel(object):
             elif self.callback:
                 self.callback() # E1102
 
-        want_pause = self.context.pause or global_pause
+        want_pause = self.context.pause
 
         if self.paused != want_pause:
 
@@ -1333,32 +1327,22 @@ def autoreload(_fn):
     renpy.exports.restart_interaction()
 
 
-global_pause = 0
-
-
 def pause_all():
     """
     Pause all playback channels.
     """
 
-    global global_pause
-    global_pause += 1
+    if pcm_ok:
+        renpysound.global_pause(1)
 
-    for c in all_channels:
-        c.pause()
-        c.paused = True
 
 def unpause_all():
     """
     Unpause all playback channels.
     """
 
-    global global_pause
-    if global_pause > 0:
-        global_pause -= 1
-
-    periodic()
-
+    if pcm_ok:
+        renpysound.global_pause(0)
 
 def sample_surfaces(rgb, rgba):
     if not renpysound:

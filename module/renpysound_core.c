@@ -1042,6 +1042,15 @@ void RPS_unpause_all_at_start(void) {
 
 }
 
+
+/**
+ * Starts and stops the SDL audio playback.
+ */
+void RPS_global_pause(int pause) {
+    SDL_PauseAudio(pause);
+}
+
+
 /*
  * Returns the position of the given channel, in ms.
  */
