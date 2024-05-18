@@ -1186,3 +1186,896 @@
     # updater.rpy:195
     old "Proceed"
     new "繼續"
+
+    # game/add_file.rpy:37
+    old "The file name may not be empty."
+    new ""
+
+    # game/android.rpy:38
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    new ""
+
+    # game/android.rpy:40
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    new ""
+
+    # game/android.rpy:45
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new ""
+
+    # game/android.rpy:47
+    old "Downloads and installs the Android SDK and supporting packages."
+    new ""
+
+    # game/android.rpy:48
+    old "Generates the keys required to sign the package."
+    new ""
+
+    # game/android.rpy:55
+    old "Lists the connected devices."
+    new ""
+
+    # game/android.rpy:56
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    new ""
+
+    # game/android.rpy:57
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    new ""
+
+    # game/android.rpy:58
+    old "Disconnects a device connected over Wi-Fi."
+    new ""
+
+    # game/android.rpy:60
+    old "Removes Android temporary files."
+    new ""
+
+    # game/android.rpy:62
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    new ""
+
+    # game/android.rpy:63
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    new ""
+
+    # game/android.rpy:334
+    old "Android: [project.current.display_name!q]"
+    new ""
+
+    # game/android.rpy:390
+    old "Install SDK"
+    new ""
+
+    # game/android.rpy:394
+    old "Generate Keys"
+    new ""
+
+    # game/android.rpy:404
+    old "Play Bundle"
+    new ""
+
+    # game/android.rpy:409
+    old "Universal APK"
+    new ""
+
+    # game/android.rpy:459
+    old "List Devices"
+    new ""
+
+    # game/android.rpy:463
+    old "Wi-Fi Debugging Pair"
+    new ""
+
+    # game/android.rpy:467
+    old "Wi-Fi Debugging Connect"
+    new ""
+
+    # game/android.rpy:471
+    old "Wi-Fi Debugging Disconnect"
+    new ""
+
+    # game/android.rpy:475
+    old "Clean"
+    new ""
+
+    # game/android.rpy:580
+    old "Wi-Fi Pairing Code"
+    new ""
+
+    # game/android.rpy:580
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    new ""
+
+    # game/android.rpy:587
+    old "Pairing Host & Port"
+    new ""
+
+    # game/android.rpy:603
+    old "IP Address & Port"
+    new ""
+
+    # game/android.rpy:603
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    new ""
+
+    # game/android.rpy:619
+    old "This can be found in 'List Devices'."
+    new ""
+
+    # game/android.rpy:639
+    old "Cleaning up Android project."
+    new ""
+
+    # game/androidstrings.rpy:7
+    old "{} is not a directory."
+    new ""
+
+    # game/androidstrings.rpy:8
+    old "{} does not contain a Ren'Py game."
+    new ""
+
+    # game/androidstrings.rpy:10
+    old "Run configure before attempting to build the app."
+    new ""
+
+    # game/androidstrings.rpy:11
+    old "Updating project."
+    new ""
+
+    # game/androidstrings.rpy:12
+    old "Creating assets directory."
+    new ""
+
+    # game/androidstrings.rpy:13
+    old "Packaging internal data."
+    new ""
+
+    # game/androidstrings.rpy:14
+    old "I'm using Gradle to build the package."
+    new ""
+
+    # game/androidstrings.rpy:15
+    old "The build seems to have failed."
+    new ""
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    new ""
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    new ""
+
+    # game/androidstrings.rpy:18
+    old "Launching app."
+    new ""
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    new ""
+
+    # game/androidstrings.rpy:20
+    old "The build seems to have succeeded."
+    new ""
+
+    # game/androidstrings.rpy:21
+    old "What is the full name of your application? This name will appear in the list of installed applications."
+    new ""
+
+    # game/androidstrings.rpy:22
+    old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
+    new ""
+
+    # game/androidstrings.rpy:23
+    old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
+    new ""
+
+    # game/androidstrings.rpy:24
+    old "The package name may not be empty."
+    new ""
+
+    # game/androidstrings.rpy:25
+    old "The package name may not contain spaces."
+    new ""
+
+    # game/androidstrings.rpy:26
+    old "The package name must contain at least one dot."
+    new ""
+
+    # game/androidstrings.rpy:27
+    old "The package name may not contain two dots in a row, or begin or end with a dot."
+    new ""
+
+    # game/androidstrings.rpy:28
+    old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
+    new ""
+
+    # game/androidstrings.rpy:29
+    old "{} is a Java keyword, and can't be used as part of a package name."
+    new ""
+
+    # game/androidstrings.rpy:30
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    new ""
+
+    # game/androidstrings.rpy:31
+    old "The RAM size must contain only numbers and be positive."
+    new ""
+
+    # game/androidstrings.rpy:32
+    old "How would you like your application to be displayed?"
+    new ""
+
+    # game/androidstrings.rpy:33
+    old "In landscape orientation."
+    new ""
+
+    # game/androidstrings.rpy:34
+    old "In portrait orientation."
+    new ""
+
+    # game/androidstrings.rpy:35
+    old "In the user's preferred orientation."
+    new ""
+
+    # game/androidstrings.rpy:36
+    old "Which app store would you like to support in-app purchasing through?"
+    new ""
+
+    # game/androidstrings.rpy:37
+    old "Google Play."
+    new ""
+
+    # game/androidstrings.rpy:38
+    old "Amazon App Store."
+    new ""
+
+    # game/androidstrings.rpy:39
+    old "Both, in one app."
+    new ""
+
+    # game/androidstrings.rpy:40
+    old "Neither."
+    new ""
+
+    # game/androidstrings.rpy:41
+    old "Do you want to automatically update the Java source code?"
+    new ""
+
+    # game/androidstrings.rpy:42
+    old "Yes. This is the best choice for most projects."
+    new ""
+
+    # game/androidstrings.rpy:43
+    old "No. This may require manual updates when Ren'Py or the project configuration changes."
+    new ""
+
+    # game/androidstrings.rpy:44
+    old "Unknown configuration variable: {}"
+    new ""
+
+    # game/androidstrings.rpy:45
+    old "I'm compiling a short test program, to see if you have a working JDK on your system."
+    new ""
+
+    # game/androidstrings.rpy:46
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
+    new ""
+
+    # game/androidstrings.rpy:47
+    old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new ""
+
+    # game/androidstrings.rpy:48
+    old "The JDK is present and working. Good!"
+    new ""
+
+    # game/androidstrings.rpy:49
+    old "The Android SDK has already been unpacked."
+    new ""
+
+    # game/androidstrings.rpy:50
+    old "Do you accept the Android SDK Terms and Conditions?"
+    new ""
+
+    # game/androidstrings.rpy:51
+    old "I'm downloading the Android SDK. This might take a while."
+    new ""
+
+    # game/androidstrings.rpy:52
+    old "I'm extracting the Android SDK."
+    new ""
+
+    # game/androidstrings.rpy:53
+    old "I've finished unpacking the Android SDK."
+    new ""
+
+    # game/androidstrings.rpy:54
+    old "I'm about to download and install the required Android packages. This might take a while."
+    new ""
+
+    # game/androidstrings.rpy:55
+    old "I was unable to accept the Android licenses."
+    new ""
+
+    # game/androidstrings.rpy:57
+    old "I was unable to install the required Android packages."
+    new ""
+
+    # game/androidstrings.rpy:58
+    old "I've finished installing the required Android packages."
+    new ""
+
+    # game/androidstrings.rpy:59
+    old "It looks like you're ready to start packaging games."
+    new ""
+
+    # game/androidstrings.rpy:60
+    old "Please enter your name or the name of your organization."
+    new ""
+
+    # game/androidstrings.rpy:61
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    new ""
+
+    # game/androidstrings.rpy:62
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    new ""
+
+    # game/androidstrings.rpy:63
+    old "\n\nSaying 'No' will prevent key creation."
+    new ""
+
+    # game/androidstrings.rpy:64
+    old "Could not create android.keystore. Is keytool in your path?"
+    new ""
+
+    # game/androidstrings.rpy:65
+    old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
+    new ""
+
+    # game/androidstrings.rpy:66
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    new ""
+
+    # game/androidstrings.rpy:67
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    new ""
+
+    # game/choose_directory.rpy:58
+    old "Select Projects Directory"
+    new ""
+
+    # game/choose_directory.rpy:72
+    old "No directory was selected, but one is required."
+    new ""
+
+    # game/choose_directory.rpy:80
+    old "The selected directory does not exist."
+    new ""
+
+    # game/choose_directory.rpy:82
+    old "The selected directory is not writable."
+    new ""
+
+    # game/choose_theme.rpy:508
+    old "changing the theme"
+    new ""
+
+    # game/distribute.rpy:543
+    old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
+    new ""
+
+    # game/distribute.rpy:570
+    old "This may be derived from build.name and config.version or build.version."
+    new ""
+
+    # game/distribute.rpy:1331
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new ""
+
+    # game/distribute.rpy:1606
+    old "Finishing the [variant] [format] package."
+    new ""
+
+    # game/distribute.rpy:1802
+    old "Copying files..."
+    new ""
+
+    # game/distribute_gui.rpy:157
+    old "Build Distributions: [project.current.display_name!q]"
+    new ""
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    new ""
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new ""
+
+    # game/dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    new ""
+
+    # game/dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    new ""
+
+    # game/editor.rpy:155
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    new ""
+
+    # game/editor.rpy:156
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    new ""
+
+    # game/editor.rpy:172
+    old "Visual Studio Code"
+    new ""
+
+    # game/editor.rpy:172
+    old "Up to 110 MB download required."
+    new ""
+
+    # game/editor.rpy:185
+    old "Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended."
+    new ""
+
+    # game/editor.rpy:199
+    old "Atom"
+    new ""
+
+    # game/editor.rpy:199
+    old "Up to 150 MB download required."
+    new ""
+
+    # game/editor.rpy:214
+    old "jEdit"
+    new ""
+
+    # game/editor.rpy:214
+    old "JEdit is deprecated, using another editor is recommended."
+    new ""
+
+    # game/editor.rpy:228
+    old "Visual Studio Code (System)"
+    new ""
+
+    # game/editor.rpy:228
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    new ""
+
+    # game/editor.rpy:234
+    old "System Editor"
+    new ""
+
+    # game/editor.rpy:253
+    old "None"
+    new ""
+
+    # game/editor.rpy:360
+    old "Edit [text]."
+    new ""
+
+    # game/editor.rpy:607
+    old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
+    new ""
+
+    # game/editor.rpy:607
+    old "Select editor now."
+    new ""
+
+    # game/editor.rpy:607
+    old "Ignore until next launch."
+    new ""
+
+    # game/editor.rpy:607
+    old "Do not ask again."
+    new ""
+
+    # game/front_page.rpy:58
+    old "PROJECTS:"
+    new ""
+
+    # game/front_page.rpy:182
+    old "Open project"
+    new ""
+
+    # game/front_page.rpy:188
+    old "Actions"
+    new ""
+
+    # game/front_page.rpy:219
+    old "Web"
+    new ""
+
+    # game/front_page.rpy:219
+    old "(Beta)"
+    new ""
+
+    # game/gui7.rpy:306
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    new ""
+
+    # game/gui7.rpy:337
+    old "Custom. The GUI is optimized for a 16:9 aspect ratio."
+    new ""
+
+    # game/gui7.rpy:354
+    old "WIDTH"
+    new ""
+
+    # game/gui7.rpy:354
+    old "Please enter the width of your game, in pixels."
+    new ""
+
+    # game/gui7.rpy:364
+    old "The width must be a number."
+    new ""
+
+    # game/gui7.rpy:370
+    old "HEIGHT"
+    new ""
+
+    # game/gui7.rpy:370
+    old "Please enter the height of your game, in pixels."
+    new ""
+
+    # game/gui7.rpy:380
+    old "The height must be a number."
+    new ""
+
+    # game/gui7.rpy:428
+    old "creating a new project"
+    new ""
+
+    # game/gui7.rpy:432
+    old "activating the new project"
+    new ""
+
+    # game/install.rpy:33
+    old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
+    new ""
+
+    # game/install.rpy:79
+    old "Successfully installed [name!t]."
+    new ""
+
+    # game/install.rpy:115
+    old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
+    new ""
+
+    # game/install.rpy:121
+    old "Install Steam Support"
+    new ""
+
+    # game/install.rpy:130
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    new ""
+
+    # game/install.rpy:142
+    old "Steam support has already been installed."
+    new ""
+
+    # game/install.rpy:146
+    old "Install Live2D Cubism SDK for Native"
+    new ""
+
+    # game/install.rpy:160
+    old "Install Libraries"
+    new ""
+
+    # game/install.rpy:186
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new ""
+
+    # game/install.rpy:190
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new ""
+
+    # game/install.rpy:195
+    old "Open Ren'Py SDK Directory"
+    new ""
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    new ""
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    new ""
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    new ""
+
+    # game/interface.rpy:121
+    old "[interface.version]"
+    new ""
+
+    # game/interface.rpy:138
+    old "Ren'Py Sponsor Information"
+    new ""
+
+    # game/interface.rpy:382
+    old "opening the log file"
+    new ""
+
+    # game/ios.rpy:272
+    old "iOS: [project.current.display_name!q]"
+    new ""
+
+    # game/ios.rpy:382
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    new ""
+
+    # game/itch.rpy:45
+    old "Downloading the itch.io butler."
+    new ""
+
+    # game/navigation.rpy:176
+    old "Navigate: [project.current.display_name!q]"
+    new ""
+
+    # game/navigation.rpy:230
+    old "Show translation files"
+    new ""
+
+    # game/new_project.rpy:38
+    old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
+    new ""
+
+    # game/new_project.rpy:45
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
+    new ""
+
+    # game/new_project.rpy:49
+    old "Please select a template project to use."
+    new ""
+
+    # game/new_project.rpy:49
+    old "Do not use a template project."
+    new ""
+
+    # game/preferences.rpy:95
+    old "General"
+    new ""
+
+    # game/preferences.rpy:95
+    old "Options"
+    new ""
+
+    # game/preferences.rpy:95
+    old "Lint"
+    new ""
+
+    # game/preferences.rpy:234
+    old "Game Options:"
+    new ""
+
+    # game/preferences.rpy:241
+    old "Skip splashscreen"
+    new ""
+
+    # game/preferences.rpy:258
+    old "Prefer the web documentation"
+    new ""
+
+    # game/preferences.rpy:260
+    old "Sponsor message"
+    new ""
+
+    # game/preferences.rpy:262
+    old "Restore window position"
+    new ""
+
+    # game/preferences.rpy:265
+    old "Daily check for update"
+    new ""
+
+    # game/preferences.rpy:266
+    old "Prefer RPU updates"
+    new ""
+
+    # game/preferences.rpy:283
+    old "Launcher Theme:"
+    new ""
+
+    # game/preferences.rpy:287
+    old "Default theme"
+    new ""
+
+    # game/preferences.rpy:288
+    old "Dark theme"
+    new ""
+
+    # game/preferences.rpy:289
+    old "Custom theme"
+    new ""
+
+    # game/preferences.rpy:295
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new ""
+
+    # game/preferences.rpy:312
+    old "Install Libraries:"
+    new ""
+
+    # game/preferences.rpy:338
+    old "Open projects.txt"
+    new ""
+
+    # game/preferences.rpy:346
+    old "Reset window size"
+    new ""
+
+    # game/preferences.rpy:347
+    old "Clean temporary files"
+    new ""
+
+    # game/preferences.rpy:364
+    old "Lint toggles:"
+    new ""
+
+    # game/preferences.rpy:368
+    old "Check for orphan/obsolete translations"
+    new ""
+
+    # game/preferences.rpy:371
+    old "Check parameters shadowing reserved names"
+    new ""
+
+    # game/preferences.rpy:374
+    old "Print block, word, and character counts by speaking character."
+    new ""
+
+    # game/preferences.rpy:377
+    old "Unclosed text tags"
+    new ""
+
+    # game/preferences.rpy:380
+    old "Show all unreachable blocks and orphaned translations."
+    new ""
+
+    # game/preferences.rpy:389
+    old "Cleaning temporary files..."
+    new ""
+
+    # game/preferences.rpy:419
+    old "{#in language font}Welcome! Please choose a language"
+    new ""
+
+    # game/preferences.rpy:454
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    new ""
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    new ""
+
+    # game/project.rpy:292
+    old "This may be because the project is not writeable."
+    new ""
+
+    # game/project.rpy:776
+    old "Splashscreen skipped in launcher preferences."
+    new ""
+
+    # game/translations.rpy:91
+    old "Translations: [project.current.display_name!q]"
+    new ""
+
+    # game/translations.rpy:342
+    old "Extract Dialogue: [project.current.display_name!q]"
+    new ""
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    new ""
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    new ""
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    new ""
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new ""
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new ""
+
+    # game/updater.rpy:76
+    old "Nightly Fix"
+    new ""
+
+    # game/updater.rpy:77
+    old "Nightly Fix (Ren'Py 8, Python 3)"
+    new ""
+
+    # game/updater.rpy:78
+    old "Nightly Fix (Ren'Py 7, Python 2)"
+    new ""
+
+    # game/updater.rpy:79
+    old "A nightly build of fixes to the release version of Ren'Py."
+    new ""
+
+    # game/updater.rpy:82
+    old "Nightly (Ren'Py 8, Python 3)"
+    new ""
+
+    # game/updater.rpy:83
+    old "Nightly (Ren'Py 7, Python 2)"
+    new ""
+
+    # game/updater.rpy:113
+    old "The update channel controls the version of Ren'Py the updater will download."
+    new ""
+
+    # game/updater.rpy:121
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    new ""
+
+    # game/updater.rpy:123
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    new ""
+
+    # game/updater.rpy:129
+    old "• This version is installed and up-to-date."
+    new ""
+
+    # game/updater.rpy:139
+    old "%B %d, %Y"
+    new ""
+
+    # game/updater.rpy:219
+    old "Fetching the list of update channels"
+    new ""
+
+    # game/updater.rpy:226
+    old "downloading the list of update channels"
+    new ""
+
+    # game/web.rpy:430
+    old "Preparing progressive download"
+    new ""
+
+    # game/web.rpy:487
+    old "Creating package..."
+    new ""
+
+    # game/web.rpy:508
+    old "Web: [project.current.display_name!q]"
+    new ""
+
+    # game/web.rpy:538
+    old "Build Web Application"
+    new ""
+
+    # game/web.rpy:539
+    old "Build and Open in Browser"
+    new ""
+
+    # game/web.rpy:540
+    old "Open in Browser"
+    new ""
+
+    # game/web.rpy:541
+    old "Open build directory"
+    new ""
+
+    # game/web.rpy:563
+    old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    new ""
+
+    # game/web.rpy:571
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    new ""
+

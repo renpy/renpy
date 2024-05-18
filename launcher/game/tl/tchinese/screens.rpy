@@ -640,3 +640,108 @@ translate tchinese strings:
     # screens.rpy:1429
     old "Menu"
     new "Menu"
+
+    # gui/game/screens.rpy:114
+    old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
+    new ""
+
+    # gui/game/screens.rpy:120
+    old "## Make the namebox available for styling through the Character object."
+    new ""
+
+    # gui/game/screens.rpy:173
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new ""
+
+    # gui/game/screens.rpy:206
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new ""
+
+    # gui/game/screens.rpy:241
+    old "## Ensure this appears on top of other screens."
+    new ""
+
+    # gui/game/screens.rpy:280
+    old "## Main and Game Menu Screens"
+    new ""
+
+    # gui/game/screens.rpy:329
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    new ""
+
+    # gui/game/screens.rpy:348
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new ""
+
+    # gui/game/screens.rpy:352
+    old "## This ensures that any other menu screen is replaced."
+    new ""
+
+    # gui/game/screens.rpy:357
+    old "## This empty frame darkens the main menu."
+    new ""
+
+    # gui/game/screens.rpy:429
+    old "## Reserve space for the navigation section."
+    new ""
+
+    # gui/game/screens.rpy:612
+    old "## The page name, which can be edited by clicking on a button."
+    new ""
+
+    # gui/game/screens.rpy:672
+    old "## range(1, 10) gives the numbers from 1 to 9."
+    new ""
+
+    # gui/game/screens.rpy:680
+    old "Upload Sync"
+    new ""
+
+    # gui/game/screens.rpy:684
+    old "Download Sync"
+    new ""
+
+    # gui/game/screens.rpy:925
+    old "## This determines what tags are allowed to be displayed on the history screen."
+    new ""
+
+    # gui/game/screens.rpy:1053
+    old "Opens the accessibility menu."
+    new ""
+
+    # gui/game/screens.rpy:1086
+    old "Left Trigger\nLeft Shoulder"
+    new ""
+
+    # gui/game/screens.rpy:1098
+    old "Start, Guide, B/Right Button"
+    new ""
+
+    # gui/game/screens.rpy:1142
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new ""
+
+    # gui/game/screens.rpy:1251
+    old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
+    new ""
+
+    # gui/game/screens.rpy:1299
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new ""
+
+    # gui/game/screens.rpy:1323
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new ""
+
+    # gui/game/screens.rpy:1413
+    old "## Bubble screen"
+    new ""
+
+    # gui/game/screens.rpy:1415
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    new ""
+
+    # gui/game/screens.rpy:1420
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new ""
+
