@@ -451,7 +451,7 @@ translate tchinese strings:
 
     # screens.rpy:1044
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "切換輔助 {a=https://www.renpy.org/l/voicing} 自朗讀 {/a}."
+    new "切換輔助 {a=https://www.renpy.org/l/voicing} Self-Vocing {/a}."
 
     # screens.rpy:1050
     old "Left Click"
