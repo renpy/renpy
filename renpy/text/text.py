@@ -2666,7 +2666,7 @@ class Text(renpy.display.displayable.Displayable):
         else:
             render.add_uniform("u_text_slow_duration", 0.0)
 
-        for o, xo, yo, mesh_displayable in layout.mesh_renders:
+        for o, xo, yo, mesh_displayable in layout.mesh_displayables:
             mesh_render = renpy.display.render.render(mesh_displayable, layout.width, layout.height, st, at)
 
             render.absolute_blit(
