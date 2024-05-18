@@ -1856,156 +1856,156 @@
 
     # game/android.rpy:455
     old "Logcat"
-    new ""
+    new "Logcat"
 
     # game/androidstrings.rpy:37
     old "Google Play."
-    new ""
+    new "Google Play"
 
     # game/androidstrings.rpy:46
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
-    new ""
+    new "我无法使用 javac 编译测试文件。如果您尚未安装 Java 开发工具包，请从以下位置下载：\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nJDK 与 JRE 不同，因此您可能有 Java，但没有 JDK。请安装 JDK [JDK_REQUIREMENT] ，并将其添加到您的 PATH 中。\n\n没有可用的 JDK 的话，我无法继续"
 
     # game/androidstrings.rpy:47
     old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
-    new ""
+    new "您计算机上的 Java 版本似乎不是构建 Android 应用程序所需的 JDK [JDK_REQUIREMENT] ，如果您需要安装较新的 JDK，可以从以下位置下载：\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}，并将其添加到您的 PATH。\n\n您还可以设置 JAVA_HOME 环境变量以使用不同版本的 Java。"
 
     # game/choose_directory.rpy:72
     old "No directory was selected, but one is required."
-    new ""
+    new "未选择目录，但至少需要一个。"
 
     # game/choose_directory.rpy:80
     old "The selected directory does not exist."
-    new ""
+    new "所选目录不存在"
 
     # game/choose_directory.rpy:82
     old "The selected directory is not writable."
-    new ""
+    new "所选目录不可写"
 
     # game/choose_theme.rpy:371
     old "Planetarium"
-    new ""
+    new "Planetarium"
 
     # game/distribute.rpy:543
     old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
-    new ""
+    new "构建发行版失败：\n\n该项目是 Ren'Py 教程，无法在 Ren'Py 之外分发。请考虑使用 The Question 作为测试项目。"
 
     # game/distribute.rpy:570
     old "This may be derived from build.name and config.version or build.version."
-    new ""
+    new "这可能源自 build.name 和 config.version 或 build.version。"
 
     # game/distribute.rpy:1606
     old "Finishing the [variant] [format] package."
-    new ""
+    new "正在完成 [variant] [format] 包。"
 
     # game/editor.rpy:185
     old "Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended."
-    new ""
+    new "Atom 已被弃用，其错误会破坏游戏，建议使用其他编辑器。"
 
     # game/editor.rpy:214
     old "JEdit is deprecated, using another editor is recommended."
-    new ""
+    new "JEdit 已弃用，建议使用其他编辑器。"
 
     # game/editor.rpy:607
     old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
-    new ""
+    new "开发人员不再支持 Atom 文本编辑器。我们建议切换到 Visual Studio Code 或其他编辑器。"
 
     # game/editor.rpy:607
     old "Select editor now."
-    new ""
+    new "现在选择编辑器"
 
     # game/editor.rpy:607
     old "Ignore until next launch."
-    new ""
+    new "忽略直到下次启动"
 
     # game/editor.rpy:607
     old "Do not ask again."
-    new ""
+    new "别再问了"
 
     # game/front_page.rpy:133
     old "The Question"
-    new ""
+    new "问题"
 
     # game/navigation.rpy:230
     old "Show translation files"
-    new ""
+    new "显示翻译文件"
 
     # game/new_project.rpy:38
     old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
-    new ""
+    new "警告：您正在使用 Ren'Py 7。建议使用 Ren'Py 8 开始新项目。"
 
     # game/new_project.rpy:49
     old "Please select a template project to use."
-    new ""
+    new "请选择要使用的模板项目"
 
     # game/new_project.rpy:49
     old "Do not use a template project."
-    new ""
+    new "不要使用模板项目"
 
     # game/preferences.rpy:95
     old "Lint"
-    new ""
+    new "Lint"
 
     # game/preferences.rpy:234
     old "Game Options:"
-    new ""
+    new "游戏选项："
 
     # game/preferences.rpy:241
     old "Skip splashscreen"
-    new ""
+    new "跳过启动画面"
 
     # game/preferences.rpy:258
     old "Prefer the web documentation"
-    new ""
+    new "偏好网络文档"
 
     # game/preferences.rpy:262
     old "Restore window position"
-    new ""
+    new "恢复窗口位置"
 
     # game/preferences.rpy:266
     old "Prefer RPU updates"
-    new ""
+    new "首选 RPU 更新"
 
     # game/preferences.rpy:338
     old "Open projects.txt"
-    new ""
+    new "打开 projects.txt"
 
     # game/preferences.rpy:364
     old "Lint toggles:"
-    new ""
+    new "Lint 切换："
 
     # game/preferences.rpy:368
     old "Check for orphan/obsolete translations"
-    new ""
+    new "检查孤立/过时的翻译"
 
     # game/preferences.rpy:371
     old "Check parameters shadowing reserved names"
-    new ""
+    new "检查参数隐藏保留名称"
 
     # game/preferences.rpy:374
     old "Print block, word, and character counts by speaking character."
-    new ""
+    new "通过对话字符来打印块、单词和字符计数。"
 
     # game/preferences.rpy:377
     old "Unclosed text tags"
-    new ""
+    new "未封闭的文本标签"
 
     # game/preferences.rpy:380
     old "Show all unreachable blocks and orphaned translations."
-    new ""
+    new "显示所有无法访问的块和孤立的翻译"
 
     # game/project.rpy:776
     old "Splashscreen skipped in launcher preferences."
-    new ""
+    new "在启动器首选项中跳过启动画面。"
 
     # game/updater.rpy:76
     old "Nightly Fix"
-    new ""
+    new "夜间修复"
 
     # game/updater.rpy:77
     old "Nightly Fix (Ren'Py 8, Python 3)"
-    new ""
+    new "夜间修复（Ren'Py 8，Python 3）"
 
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
-    new ""
+    new "夜间修复（Ren'Py 7，Python 2）"
