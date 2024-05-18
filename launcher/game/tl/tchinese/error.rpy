@@ -281,3 +281,6 @@ translate tchinese strings:
     old "Opens a console to allow debugging the problem."
     new "打開控制台以調試問題。"
 
+    # renpy/common/00gltest.rpy:191
+    old "Tearing"
+    new "撕裂"
