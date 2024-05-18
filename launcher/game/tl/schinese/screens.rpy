@@ -676,3 +676,7 @@
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
 
+    # gui/game/screens.rpy:1098
+    old "Start, Guide, B/Right Button"
+    new ""
+

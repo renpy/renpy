@@ -96,3 +96,43 @@
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
     new "帮助功能可能会显示未记录文档的函数。请确认您想使用的函数或类是否已经被记录文档。\n\n"
 
+    # renpy/common/_developer/developer.rpym:69
+    old "Show Translation Identifiers"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:72
+    old "Hide Translation Identifiers"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Filename and Line"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Filename and Line"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:127
+    old "Layer [l]:"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:131
+    old "    [name] [attributes] (hidden)"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:135
+    old "    [name] [attributes]"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:606
+    old "\n{color=#fff}Copied to clipboard.{/color}"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:612
+    old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
+    new ""
+
+    # renpy/common/_developer/developer.rpym:657
+    old "Click to open in editor."
+    new ""
+
