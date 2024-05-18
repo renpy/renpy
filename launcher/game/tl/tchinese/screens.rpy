@@ -679,49 +679,49 @@ translate tchinese strings:
 
     # gui/game/screens.rpy:96
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
-    new ""
+    new "## https://www.renpy.org/doc/html/screen_special.html#say"
 
     # gui/game/screens.rpy:173
     old "## https://www.renpy.org/doc/html/screen_special.html#input"
-    new ""
+    new "## https://www.renpy.org/doc/html/screen_special.html#input"
 
     # gui/game/screens.rpy:206
     old "## https://www.renpy.org/doc/html/screen_special.html#choice"
-    new ""
+    new "## https://www.renpy.org/doc/html/screen_special.html#choice"
 
     # gui/game/screens.rpy:348
     old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
-    new ""
+    new "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
 
     # gui/game/screens.rpy:583
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
-    new ""
+    new "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
 
     # gui/game/screens.rpy:726
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
-    new ""
+    new "## https://www.renpy.org/doc/html/screen_special.html#preferences"
 
     # gui/game/screens.rpy:886
     old "## https://www.renpy.org/doc/html/history.html"
-    new ""
+    new "## https://www.renpy.org/doc/html/history.html"
 
     # gui/game/screens.rpy:1142
     old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
-    new ""
+    new "## https://www.renpy.org/doc/html/screen_special.html#confirm"
 
     # gui/game/screens.rpy:1205
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
-    new ""
+    new "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
 
     # gui/game/screens.rpy:1261
     old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
-    new ""
+    new "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
 
     # gui/game/screens.rpy:1299
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
-    new ""
+    new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
 
     # gui/game/screens.rpy:1420
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-    new ""
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
 
