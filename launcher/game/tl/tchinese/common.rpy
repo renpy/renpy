@@ -935,7 +935,7 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:577
     old "voice after game menu"
-    new "遊戲後語音選單"
+    new "遊戲選單後語音"
 
     # renpy/common/00preferences.rpy:586
     old "restore window position"
