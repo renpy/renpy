@@ -2075,3 +2075,6 @@
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "在打包 Web 應用程式之前，您需要下載 RenPyWeb ，Ren'Py 的 Web 支援。您想現在下載 RenPyWeb 嗎？"
 
+    # game/navigation.rpy:230
+    old "Show translation files"
+    new "顯示翻譯資料"
