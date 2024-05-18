@@ -677,3 +677,51 @@ translate tchinese strings:
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
     new "## 氣泡螢幕用於在使用對話氣泡時向玩家顯示對話。氣泡螢幕採用與 say 螢幕相同的參數，必須創建一個 id 為 \"what\" 的可顯示內容，並且可以創建可顯示內容帶有 \"namebox\", \"who\", 和 \"window\" ID。"
 
+    # gui/game/screens.rpy:96
+    old "## https://www.renpy.org/doc/html/screen_special.html#say"
+    new ""
+
+    # gui/game/screens.rpy:173
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new ""
+
+    # gui/game/screens.rpy:206
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new ""
+
+    # gui/game/screens.rpy:348
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new ""
+
+    # gui/game/screens.rpy:583
+    old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
+    new ""
+
+    # gui/game/screens.rpy:726
+    old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
+    new ""
+
+    # gui/game/screens.rpy:886
+    old "## https://www.renpy.org/doc/html/history.html"
+    new ""
+
+    # gui/game/screens.rpy:1142
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new ""
+
+    # gui/game/screens.rpy:1205
+    old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
+    new ""
+
+    # gui/game/screens.rpy:1261
+    old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
+    new ""
+
+    # gui/game/screens.rpy:1299
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new ""
+
+    # gui/game/screens.rpy:1420
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new ""
+
