@@ -1972,7 +1972,7 @@
 
     # game/preferences.rpy:364
     old "Lint toggles:"
-    new "Lint 切换："
+    new "Lint 功能开关："
 
     # game/preferences.rpy:368
     old "Check for orphan/obsolete translations"
