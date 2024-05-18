@@ -473,7 +473,7 @@
 
     # front_page.rpy:223
     old "Navigate Script"
-    new "腳本導航"
+    new "定位腳本"
 
     # front_page.rpy:234
     old "Check Script (Lint)"
