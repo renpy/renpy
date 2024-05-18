@@ -1924,7 +1924,7 @@
 
     # game/front_page.rpy:133
     old "The Question"
-    new "问题"
+    new "The Question"
 
     # game/navigation.rpy:230
     old "Show translation files"
