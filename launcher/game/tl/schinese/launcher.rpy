@@ -1853,3 +1853,159 @@
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
     new "对 Ren'Py 发布版进行修正的每夜构建。"
+
+    # game/android.rpy:455
+    old "Logcat"
+    new ""
+
+    # game/androidstrings.rpy:37
+    old "Google Play."
+    new ""
+
+    # game/androidstrings.rpy:46
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
+    new ""
+
+    # game/androidstrings.rpy:47
+    old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new ""
+
+    # game/choose_directory.rpy:72
+    old "No directory was selected, but one is required."
+    new ""
+
+    # game/choose_directory.rpy:80
+    old "The selected directory does not exist."
+    new ""
+
+    # game/choose_directory.rpy:82
+    old "The selected directory is not writable."
+    new ""
+
+    # game/choose_theme.rpy:371
+    old "Planetarium"
+    new ""
+
+    # game/distribute.rpy:543
+    old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
+    new ""
+
+    # game/distribute.rpy:570
+    old "This may be derived from build.name and config.version or build.version."
+    new ""
+
+    # game/distribute.rpy:1606
+    old "Finishing the [variant] [format] package."
+    new ""
+
+    # game/editor.rpy:185
+    old "Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended."
+    new ""
+
+    # game/editor.rpy:214
+    old "JEdit is deprecated, using another editor is recommended."
+    new ""
+
+    # game/editor.rpy:607
+    old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
+    new ""
+
+    # game/editor.rpy:607
+    old "Select editor now."
+    new ""
+
+    # game/editor.rpy:607
+    old "Ignore until next launch."
+    new ""
+
+    # game/editor.rpy:607
+    old "Do not ask again."
+    new ""
+
+    # game/front_page.rpy:133
+    old "The Question"
+    new ""
+
+    # game/navigation.rpy:230
+    old "Show translation files"
+    new ""
+
+    # game/new_project.rpy:38
+    old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
+    new ""
+
+    # game/new_project.rpy:49
+    old "Please select a template project to use."
+    new ""
+
+    # game/new_project.rpy:49
+    old "Do not use a template project."
+    new ""
+
+    # game/preferences.rpy:95
+    old "Lint"
+    new ""
+
+    # game/preferences.rpy:234
+    old "Game Options:"
+    new ""
+
+    # game/preferences.rpy:241
+    old "Skip splashscreen"
+    new ""
+
+    # game/preferences.rpy:258
+    old "Prefer the web documentation"
+    new ""
+
+    # game/preferences.rpy:262
+    old "Restore window position"
+    new ""
+
+    # game/preferences.rpy:266
+    old "Prefer RPU updates"
+    new ""
+
+    # game/preferences.rpy:338
+    old "Open projects.txt"
+    new ""
+
+    # game/preferences.rpy:364
+    old "Lint toggles:"
+    new ""
+
+    # game/preferences.rpy:368
+    old "Check for orphan/obsolete translations"
+    new ""
+
+    # game/preferences.rpy:371
+    old "Check parameters shadowing reserved names"
+    new ""
+
+    # game/preferences.rpy:374
+    old "Print block, word, and character counts by speaking character."
+    new ""
+
+    # game/preferences.rpy:377
+    old "Unclosed text tags"
+    new ""
+
+    # game/preferences.rpy:380
+    old "Show all unreachable blocks and orphaned translations."
+    new ""
+
+    # game/project.rpy:776
+    old "Splashscreen skipped in launcher preferences."
+    new ""
+
+    # game/updater.rpy:76
+    old "Nightly Fix"
+    new ""
+
+    # game/updater.rpy:77
+    old "Nightly Fix (Ren'Py 8, Python 3)"
+    new ""
+
+    # game/updater.rpy:78
+    old "Nightly Fix (Ren'Py 7, Python 2)"
+    new ""
