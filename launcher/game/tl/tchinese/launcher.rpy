@@ -1661,7 +1661,7 @@
 
     # game/editor.rpy:607
     old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
-    new "開發人員不再支援 Atom 文字編輯器。我們建議切換到 Visual Studio Code 或其他編輯器。"
+    new "Atom 文字編輯器不再受其開發人員支持。我們建議切換到 Visual Studio Code 或其他編輯器。"
 
     # game/editor.rpy:607
     old "Select editor now."
