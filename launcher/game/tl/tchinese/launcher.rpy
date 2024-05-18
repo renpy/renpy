@@ -1913,7 +1913,7 @@
 
     # game/preferences.rpy:364
     old "Lint toggles:"
-    new "Lint 切換："
+    new "Lint 功能開關："
 
     # game/preferences.rpy:368
     old "Check for orphan/obsolete translations"
