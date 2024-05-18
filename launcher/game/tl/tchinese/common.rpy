@@ -751,232 +751,232 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:288
     old "display"
-    new ""
+    new "顯示"
 
     # renpy/common/00preferences.rpy:308
     old "transitions"
-    new ""
+    new "過渡"
 
     # renpy/common/00preferences.rpy:317
     old "skip transitions"
-    new ""
+    new "跳過過渡"
 
     # renpy/common/00preferences.rpy:319
     old "video sprites"
-    new ""
+    new "視訊精靈"
 
     # renpy/common/00preferences.rpy:328
     old "show empty window"
-    new ""
+    new "顯示空視窗"
 
     # renpy/common/00preferences.rpy:337
     old "text speed"
-    new ""
+    new "文本速度"
 
     # renpy/common/00preferences.rpy:345
     old "joystick"
-    new ""
+    new "游戲桿"
 
     # renpy/common/00preferences.rpy:345
     old "joystick..."
-    new ""
+    new "游戲桿..."
 
     # renpy/common/00preferences.rpy:352
     old "skip"
-    new ""
+    new "跳過"
 
     # renpy/common/00preferences.rpy:355
     old "skip unseen [text]"
-    new ""
+    new "跳過未見過的 [text]"
 
     # renpy/common/00preferences.rpy:360
     old "skip unseen text"
-    new ""
+    new "跳過未見過的文本"
 
     # renpy/common/00preferences.rpy:362
     old "begin skipping"
-    new ""
+    new "開始快進"
 
     # renpy/common/00preferences.rpy:366
     old "after choices"
-    new ""
+    new "選項后"
 
     # renpy/common/00preferences.rpy:373
     old "skip after choices"
-    new ""
+    new "選項后快進"
 
     # renpy/common/00preferences.rpy:375
     old "auto-forward time"
-    new ""
+    new "自動推進時間"
 
     # renpy/common/00preferences.rpy:389
     old "auto-forward"
-    new ""
+    new "自動推進"
 
     # renpy/common/00preferences.rpy:396
     old "Auto forward"
-    new ""
+    new "自動推進"
 
     # renpy/common/00preferences.rpy:399
     old "auto-forward after click"
-    new ""
+    new "點擊後自動推進"
 
     # renpy/common/00preferences.rpy:408
     old "automatic move"
-    new ""
+    new "自動移動"
 
     # renpy/common/00preferences.rpy:417
     old "wait for voice"
-    new ""
+    new "等待語音"
 
     # renpy/common/00preferences.rpy:426
     old "voice sustain"
-    new ""
+    new "保持語音"
 
     # renpy/common/00preferences.rpy:435
     old "self voicing"
-    new ""
+    new "self voicing"
 
     # renpy/common/00preferences.rpy:438
     old "self voicing enable"
-    new ""
+    new "self voicing已啓用"
 
     # renpy/common/00preferences.rpy:440
     old "self voicing disable"
-    new ""
+    new "self voicing已禁用"
 
     # renpy/common/00preferences.rpy:444
     old "self voicing volume drop"
-    new ""
+    new "self voicing音量上升"
 
     # renpy/common/00preferences.rpy:452
     old "clipboard voicing"
-    new ""
+    new "self voicing音量下降"
 
     # renpy/common/00preferences.rpy:455
     old "clipboard voicing enable"
-    new ""
+    new "clipboard voicing已啓用"
 
     # renpy/common/00preferences.rpy:457
     old "clipboard voicing disable"
-    new ""
+    new "clipboard voicing已禁用"
 
     # renpy/common/00preferences.rpy:461
     old "debug voicing"
-    new ""
+    new "debug voicing"
 
     # renpy/common/00preferences.rpy:464
     old "debug voicing enable"
-    new ""
+    new "debug voicing已啓用"
 
     # renpy/common/00preferences.rpy:466
     old "debug voicing disable"
-    new ""
+    new "debug voicing已禁用"
 
     # renpy/common/00preferences.rpy:470
     old "emphasize audio"
-    new ""
+    new "强調音頻"
 
     # renpy/common/00preferences.rpy:479
     old "rollback side"
-    new ""
+    new "回滾側端"
 
     # renpy/common/00preferences.rpy:489
     old "gl powersave"
-    new ""
+    new "gl 節電"
 
     # renpy/common/00preferences.rpy:495
     old "gl framerate"
-    new ""
+    new "gl 幀率"
 
     # renpy/common/00preferences.rpy:498
     old "gl tearing"
-    new ""
+    new "gl 撕裂"
 
     # renpy/common/00preferences.rpy:501
     old "font transform"
-    new ""
+    new "字形變換"
 
     # renpy/common/00preferences.rpy:504
     old "font size"
-    new ""
+    new "字形大小"
 
     # renpy/common/00preferences.rpy:512
     old "font line spacing"
-    new ""
+    new "字形間隔"
 
     # renpy/common/00preferences.rpy:520
     old "system cursor"
-    new ""
+    new "系統遊標"
 
     # renpy/common/00preferences.rpy:529
     old "renderer menu"
-    new ""
+    new "渲染器選單"
 
     # renpy/common/00preferences.rpy:532
     old "accessibility menu"
-    new ""
+    new "輔助使用選單"
 
     # renpy/common/00preferences.rpy:535
     old "high contrast text"
-    new ""
+    new "高對比文本"
 
     # renpy/common/00preferences.rpy:544
     old "audio when minimized"
-    new ""
+    new "最小化時的音頻"
 
     # renpy/common/00preferences.rpy:553
     old "audio when unfocused"
-    new ""
+    new "未聚焦時的音頻"
 
     # renpy/common/00preferences.rpy:562
     old "web cache preload"
-    new ""
+    new "網路快取預先載入"
 
     # renpy/common/00preferences.rpy:577
     old "voice after game menu"
-    new ""
+    new "遊戲後語音選單"
 
     # renpy/common/00preferences.rpy:586
     old "restore window position"
-    new ""
+    new "恢復視窗位置"
 
     # renpy/common/00preferences.rpy:595
     old "reset"
-    new ""
+    new "重置"
 
     # renpy/common/00preferences.rpy:608
     old "main volume"
-    new ""
+    new "主要音量"
 
     # renpy/common/00preferences.rpy:609
     old "music volume"
-    new ""
+    new "音樂音量"
 
     # renpy/common/00preferences.rpy:610
     old "sound volume"
-    new ""
+    new "聲音音量"
 
     # renpy/common/00preferences.rpy:611
     old "voice volume"
-    new ""
+    new "語音音量"
 
     # renpy/common/00preferences.rpy:612
     old "mute main"
-    new ""
+    new "屏蔽主要"
 
     # renpy/common/00preferences.rpy:613
     old "mute music"
-    new ""
+    new "屏蔽音樂"
 
     # renpy/common/00preferences.rpy:614
     old "mute sound"
-    new ""
+    new "屏蔽聲音"
 
     # renpy/common/00preferences.rpy:615
     old "mute voice"
-    new ""
+    new "屏蔽語音"
 
     # renpy/common/00preferences.rpy:616
     old "mute all"
-    new ""
+    new "屏蔽全部"
