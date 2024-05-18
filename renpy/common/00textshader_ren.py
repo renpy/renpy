@@ -206,6 +206,32 @@ renpy.register_textshader(
 )
 
 
-# TODO: Jitter.
+renpy.register_textshader(
+    "jitter",
+
+    variables="""
+    uniform vec2 u__jitter;
+    uniform vec4 u_random;
+    uniform float u_text_to_virtual;
+    """,
+
+    vertex_60="""
+    vec2 l__jitter = u__jitter / u_text_to_virtual;
+    gl_Position.xy += l__jitter * u_random.xy - l__jitter / 2;
+    """,
+
+    u__jitter=(3.0, 3.0),
+    redraw=0.0,
+
+    doc="""
+    The jitter text shader jitters moves the text to random positions
+    relative to where it would be normally drawn. The position changes
+    once per frame.
+
+    `u__jitter`
+        The amount of jitter to apply to the text, in pixels.
+    """
+)
+
 # TODO: Wave.
 # TODO: Per-line texture.
