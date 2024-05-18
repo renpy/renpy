@@ -2000,12 +2000,12 @@
 
     # game/updater.rpy:76
     old "Nightly Fix"
-    new "夜间修复"
+    new "每夜修复版"
 
     # game/updater.rpy:77
     old "Nightly Fix (Ren'Py 8, Python 3)"
-    new "夜间修复（Ren'Py 8，Python 3）"
+    new "每夜修复版（Ren'Py 8，Python 3）"
 
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
-    new "夜间修复（Ren'Py 7，Python 2）"
+    new "每夜修复版（Ren'Py 7，Python 2）"
