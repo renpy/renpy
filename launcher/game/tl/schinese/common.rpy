@@ -806,336 +806,336 @@
 
     # renpy/common/00accessibility.rpy:32
     old "bar"
-    new ""
+    new "栏"
 
     # renpy/common/00accessibility.rpy:33
     old "selected"
-    new ""
+    new "选定"
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
-    new ""
+    new "视口"
 
     # renpy/common/00accessibility.rpy:35
     old "horizontal scroll"
-    new ""
+    new "水平滚动"
 
     # renpy/common/00accessibility.rpy:36
     old "vertical scroll"
-    new ""
+    new "垂直滚动"
 
     # renpy/common/00accessibility.rpy:37
     old "activate"
-    new ""
+    new "激活"
 
     # renpy/common/00accessibility.rpy:38
     old "deactivate"
-    new ""
+    new "停用"
 
     # renpy/common/00accessibility.rpy:39
     old "increase"
-    new ""
+    new "增加"
 
     # renpy/common/00accessibility.rpy:40
     old "decrease"
-    new ""
+    new "减少"
 
     # renpy/common/00accessibility.rpy:120
     old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
-    new ""
+    new "辅助功能菜单。使用向上和向下箭头进行导航，并使用 Enter 激活按钮和栏"
 
     # renpy/common/00director.rpy:1776
     old "Customize director.transforms to add more transforms."
-    new ""
+    new "自定义 director.transforms 以添加更多变换"
 
     # renpy/common/00director.rpy:1821
     old "Click to set."
-    new ""
+    new "点击设置"
 
     # renpy/common/00director.rpy:1822
     old "Customize director.transitions to add more transitions."
-    new ""
+    new "自定义 director.transitions 以添加更多过渡。"
 
     # renpy/common/00director.rpy:1845
     old "Customize director.audio_channels to add more channels."
-    new ""
+    new "自定义 director.audio_channels 以添加更多音频频道。"
 
     # renpy/common/00gui.rpy:454
     old "Are you sure you want to continue where you left off?"
-    new ""
+    new "您确定要从上次中断的地方继续吗？"
 
     # renpy/common/00preferences.rpy:288
     old "display"
-    new ""
+    new "显示"
 
     # renpy/common/00preferences.rpy:308
     old "transitions"
-    new ""
+    new "过渡"
 
     # renpy/common/00preferences.rpy:317
     old "skip transitions"
-    new ""
+    new "跳过过渡"
 
     # renpy/common/00preferences.rpy:319
     old "video sprites"
-    new ""
+    new "视频精灵"
 
     # renpy/common/00preferences.rpy:328
     old "show empty window"
-    new ""
+    new "显示空窗口"
 
     # renpy/common/00preferences.rpy:337
     old "text speed"
-    new ""
+    new "文本速度"
 
     # renpy/common/00preferences.rpy:345
     old "joystick"
-    new ""
+    new "手柄"
 
     # renpy/common/00preferences.rpy:345
     old "joystick..."
-    new ""
+    new "手柄..."
 
     # renpy/common/00preferences.rpy:352
     old "skip"
-    new ""
+    new "跳过"
 
     # renpy/common/00preferences.rpy:355
     old "skip unseen [text]"
-    new ""
+    new "跳过没见过的 [text]"
 
     # renpy/common/00preferences.rpy:360
     old "skip unseen text"
-    new ""
+    new "跳过没见过的文本"
 
     # renpy/common/00preferences.rpy:362
     old "begin skipping"
-    new ""
+    new "开头快进"
 
     # renpy/common/00preferences.rpy:366
     old "after choices"
-    new ""
+    new "选项后"
 
     # renpy/common/00preferences.rpy:373
     old "skip after choices"
-    new ""
+    new "选项后快进"
 
     # renpy/common/00preferences.rpy:375
     old "auto-forward time"
-    new ""
+    new "自动推进时间"
 
     # renpy/common/00preferences.rpy:389
     old "auto-forward"
-    new ""
+    new "自动推进"
 
     # renpy/common/00preferences.rpy:396
     old "Auto forward"
-    new ""
+    new "自动推进"
 
     # renpy/common/00preferences.rpy:399
     old "auto-forward after click"
-    new ""
+    new "单击后自动推进"
 
     # renpy/common/00preferences.rpy:408
     old "automatic move"
-    new ""
+    new "自动移动"
 
     # renpy/common/00preferences.rpy:417
     old "wait for voice"
-    new ""
+    new "等待朗读"
 
     # renpy/common/00preferences.rpy:426
     old "voice sustain"
-    new ""
+    new "维持朗读"
 
     # renpy/common/00preferences.rpy:435
     old "self voicing"
-    new ""
+    new "机器朗读"
 
     # renpy/common/00preferences.rpy:438
     old "self voicing enable"
-    new ""
+    new "机器朗读已启用"
 
     # renpy/common/00preferences.rpy:440
     old "self voicing disable"
-    new ""
+    new "机器朗读已禁用"
 
     # renpy/common/00preferences.rpy:444
     old "self voicing volume drop"
-    new ""
+    new "机器朗读音量增加"
 
     # renpy/common/00preferences.rpy:452
     old "clipboard voicing"
-    new ""
+    new "剪贴板朗读"
 
     # renpy/common/00preferences.rpy:455
     old "clipboard voicing enable"
-    new ""
+    new "剪贴板朗读已启用"
 
     # renpy/common/00preferences.rpy:457
     old "clipboard voicing disable"
-    new ""
+    new "剪贴板朗读已禁用"
 
     # renpy/common/00preferences.rpy:461
     old "debug voicing"
-    new ""
+    new "调试朗读"
 
     # renpy/common/00preferences.rpy:464
     old "debug voicing enable"
-    new ""
+    new "调试朗读已启用"
 
     # renpy/common/00preferences.rpy:466
     old "debug voicing disable"
-    new ""
+    new "调试朗读已禁用"
 
     # renpy/common/00preferences.rpy:470
     old "emphasize audio"
-    new ""
+    new "强调音频"
 
     # renpy/common/00preferences.rpy:479
     old "rollback side"
-    new ""
+    new "回滚侧"
 
     # renpy/common/00preferences.rpy:489
     old "gl powersave"
-    new ""
+    new "gl 省电"
 
     # renpy/common/00preferences.rpy:495
     old "gl framerate"
-    new ""
+    new "gl 帧率"
 
     # renpy/common/00preferences.rpy:498
     old "gl tearing"
-    new ""
+    new "gl 撕裂"
 
     # renpy/common/00preferences.rpy:501
     old "font transform"
-    new ""
+    new "字体变换"
 
     # renpy/common/00preferences.rpy:504
     old "font size"
-    new ""
+    new "字体大小"
 
     # renpy/common/00preferences.rpy:512
     old "font line spacing"
-    new ""
+    new "字体间距"
 
     # renpy/common/00preferences.rpy:520
     old "system cursor"
-    new ""
+    new "系统光标"
 
     # renpy/common/00preferences.rpy:529
     old "renderer menu"
-    new ""
+    new "渲染器菜单"
 
     # renpy/common/00preferences.rpy:532
     old "accessibility menu"
-    new ""
+    new "辅助功能菜单"
 
     # renpy/common/00preferences.rpy:535
     old "high contrast text"
-    new ""
+    new "高对比度文本"
 
     # renpy/common/00preferences.rpy:544
     old "audio when minimized"
-    new ""
+    new "最小化时的音频"
 
     # renpy/common/00preferences.rpy:553
     old "audio when unfocused"
-    new ""
+    new "未聚焦时的音频"
 
     # renpy/common/00preferences.rpy:562
     old "web cache preload"
-    new ""
+    new "网络缓存预加载"
 
     # renpy/common/00preferences.rpy:577
     old "voice after game menu"
-    new ""
+    new "游戏菜单后语音"
 
     # renpy/common/00preferences.rpy:586
     old "restore window position"
-    new ""
+    new "恢复窗口位置"
 
     # renpy/common/00preferences.rpy:595
     old "reset"
-    new ""
+    new "重置"
 
     # renpy/common/00preferences.rpy:608
     old "main volume"
-    new ""
+    new "主要音量"
 
     # renpy/common/00preferences.rpy:609
     old "music volume"
-    new ""
+    new "音乐音量"
 
     # renpy/common/00preferences.rpy:610
     old "sound volume"
-    new ""
+    new "声音音量"
 
     # renpy/common/00preferences.rpy:611
     old "voice volume"
-    new ""
+    new "语音音量"
 
     # renpy/common/00preferences.rpy:612
     old "mute main"
-    new ""
+    new "屏蔽主要"
 
     # renpy/common/00preferences.rpy:613
     old "mute music"
-    new ""
+    new "屏蔽音乐"
 
     # renpy/common/00preferences.rpy:614
     old "mute sound"
-    new ""
+    new "屏蔽声音"
 
     # renpy/common/00preferences.rpy:615
     old "mute voice"
-    new ""
+    new "屏蔽语音"
 
     # renpy/common/00preferences.rpy:616
     old "mute all"
-    new ""
+    new "屏蔽全部"
 
     # renpy/common/00speechbubble.rpy:397
     old "(hide)"
-    new ""
+    new "(hide)"
 
     # renpy/common/00speechbubble.rpy:408
     old "(clear retained bubbles)"
-    new ""
+    new "(clear retained bubbles)"
 
     # renpy/common/00updater.rpy:505
     old "No update methods found."
-    new ""
+    new "未找到更新方法"
 
     # renpy/common/00updater.rpy:552
     old "Could not download file list: "
-    new ""
+    new "无法下载文件列表："
 
     # renpy/common/00updater.rpy:555
     old "File list digest does not match."
-    new ""
+    new "文件列表摘要不匹配"
 
     # renpy/common/00updater.rpy:2072
     old "Preparing to download the game data."
-    new ""
+    new "准备下载游戏数据"
 
     # renpy/common/00updater.rpy:2074
     old "Downloading the game data."
-    new ""
+    new "下载游戏数据"
 
     # renpy/common/00updater.rpy:2076
     old "The game data has been downloaded."
-    new ""
+    new "游戏数据已下载"
 
     # renpy/common/00updater.rpy:2078
     old "An error occured when trying to download game data:"
-    new ""
+    new "尝试下载游戏数据时发生错误："
 
     # renpy/common/00updater.rpy:2083
     old "This game cannot be run until the game data has been downloaded."
-    new ""
+    new "在游戏数据下载完毕之前，该游戏无法运行"
 
     # renpy/common/00updater.rpy:2090
     old "Retry"
-    new ""
+    new "重试"
