@@ -659,7 +659,7 @@ translate tchinese strings:
 
     # gui/game/screens.rpy:1098
     old "Start, Guide, B/Right Button"
-    new "開始、指南、B/右鍵"
+    new "開始，指南，B/右鍵"
 
     # gui/game/screens.rpy:1251
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
