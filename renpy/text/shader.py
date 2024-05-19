@@ -147,6 +147,9 @@ class TextShader(object):
         # arguments to adjust_function.
         self.adjust_name_map = adjust_name_map
 
+        # A map from variable name to the type of the uniform.
+        self.variable_types = variable_types
+
         if self.adjust_function is not None:
             kwargs = { self.adjust_name_map.get(k, k): v for k, v in uniforms }
             self.adjust_function(self, **kwargs)
@@ -265,6 +268,8 @@ def create_textshader_args_dict(name, shader, s):
             raise ValueError("Unknown uniform %r in %r." % (uniform, name))
 
         value = to_uniform_value(name, uniform, shader.variable_types, value)
+
+        rv[uniform] = value
 
     return rv
 
