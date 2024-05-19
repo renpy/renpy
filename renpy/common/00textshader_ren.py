@@ -20,6 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.exports as renpy
+import renpy.config as config
+import renpy.defaultstore.style as style
 
 """renpy
 init -1500 python in textshader:
@@ -235,3 +237,12 @@ renpy.register_textshader(
 
 # TODO: Wave.
 # TODO: Per-line texture.
+
+
+
+"""renpy
+init 1500 python hide:
+"""
+
+if config.default_textshader is not None:
+    style.default.setdefault(textshader=config.default_textshader)
