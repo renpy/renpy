@@ -68,6 +68,7 @@ cdef class Glyph:
         rtl: bool
         duration: float
         shader: renpy.text.shader.TextShader|None
+        index: short
         """
 
 cdef class Line:
@@ -846,7 +847,6 @@ def assign_times(float t, float gps, list glyphs):
         g.time = t
         g.duration = tpg
 
-
     return t
 
 
@@ -869,6 +869,20 @@ def max_times(list l):
         line.max_time = max_time
 
     return max_time
+
+def assign_index(index, list glyphs):
+    """
+    Assign an index to each glyph.
+    """
+
+    cdef Glyph g
+
+    for g in glyphs:
+        if g.time != -1:
+            g.index = index
+            index += 1
+
+    return index
 
 
 def hyperlink_areas(list l):
