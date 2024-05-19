@@ -577,7 +577,7 @@
 
     # interface.rpy:107
     old "Documentation"
-    new "文件"
+    new "文檔"
 
     # interface.rpy:108
     old "Ren'Py Website"
@@ -609,7 +609,7 @@
 
     # interface.rpy:356
     old "While [what!qt], an error occured:"
-    new "[what!qt]時，出現錯誤："
+    new "[what!qt] 時，出現錯誤："
 
     # interface.rpy:356
     old "[exception!q]"
@@ -617,11 +617,11 @@
 
     # interface.rpy:375
     old "Text input may not contain the {{ or [[ characters."
-    new "文字輸入可能不包含{{ 或 [[ 字元。"
+    new "文字輸入可能不包含 {{ 或 [[ 字元。"
 
     # interface.rpy:380
     old "File and directory names may not contain / or \\."
-    new "檔案或目錄不包含/或\\。"
+    new "檔案或目錄不包含 / 或 \\ 。"
 
     # interface.rpy:386
     old "File and directory names must consist of ASCII characters."
@@ -821,7 +821,7 @@
 
     # navigation.rpy:249
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
-    new "沒有待辦的事項被發現。\n\n要建立一個包含「# TODO」到您的腳本中。"
+    new "沒有待辦的事項被發現。\n\n 要建立一個包含 \"# TODO\" 到您的腳本中。"
 
     # navigation.rpy:256
     old "The list of names is empty."
@@ -865,7 +865,7 @@
 
     # new_project.rpy:108
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
-    new "請為您新建的專案選擇一個模版。該模版將設定為預設的字型和語言。如果您的所使用的語言沒有被支援，那麼請選擇「english」。"
+    new "請為您新建的專案選擇一個模版。該模版將設定為預設的字型和語言。如果您的所使用的語言沒有被支援，那麼請選擇 'english' 。"
 
     # preferences.rpy:64
     old "Launcher Preferences"
