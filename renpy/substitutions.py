@@ -195,7 +195,10 @@ def parse(s):
                     state = LITERAL
                     lit = ''
 
-            elif c == '!' and brackets == 0 and parens == 0:
+            elif brackets:
+                pass
+
+            elif c == '!':
                 if s[pos+1:pos+2] == '=':
                     pos += 1
                 else:
@@ -203,7 +206,7 @@ def parse(s):
                     expr = s[cut:pos]
                     cut = pos + 1
 
-            elif c == ':' and brackets == 0 and parens == 0:
+            elif c == ':':
                 state = FORMAT
                 expr = s[cut:pos]
                 cut = pos + 1
