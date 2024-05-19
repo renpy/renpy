@@ -64,7 +64,7 @@ renpy.register_textshader(
 
 
 renpy.register_textshader(
-    "wave",
+    "dissolve",
     include_default=False,
     adjust_function=adjust_duration,
 
@@ -93,8 +93,8 @@ renpy.register_textshader(
     u__duration=10.0,
 
     doc="""
-    The wave text shader makes text appear slowly, as if it were a wave moving
-    across the text.
+    The dissolve text shader makes text appear slowly, dissolving in from
+    the start to the end.
 
     `u__duration`
         The number of characters that will be changing alpha at a time.  If set to
@@ -235,7 +235,68 @@ renpy.register_textshader(
     """
 )
 
-# TODO: Wave.
+
+renpy.register_textshader(
+    "offset",
+
+    variables="""
+    uniform vec2 u__offset;
+    uniform float u_text_to_virtual;
+    """,
+
+    vertex_65="""
+    gl_Position.xy += u__offset / u_text_to_virtual;
+    """,
+
+    u__offset=(0.0, 0.0),
+
+    doc="""
+    The offset text shader moves the text by a fixed amount.
+
+    `u__offset`
+        The amount to move the text by, in virtual pixels.
+    """
+)
+
+
+renpy.register_textshader(
+    "wave",
+
+    variables="""
+    uniform float u__amplitude;
+    uniform float u__frequency
+    uniform float u__wavelength;
+
+    uniform float u_time;
+    uniform float u_text_to_virtual;
+    attribute float a_text_index;
+    """,
+
+    vertex_70="""
+    gl_Position.y += cos(2 * 3.14159265359 * (a_text_index / u__wavelength + u_time * u__frequency)) * u__amplitude / u_text_to_virtual;
+    """,
+
+    u__amplitude=5.0,
+    u__frequency=2.0,
+    u__wavelength=20.0,
+
+    redraw=0.0,
+
+    doc="""
+    The wave text shader makes the text bounce up and down in a wave.
+
+    `u__amplitude`
+        The number of pixels up and down the text will move.
+
+    `u__frequency`
+        The number of waves per second.
+
+    `u__wavelength`
+        The number of characters between peaks in the wave.
+    """
+)
+
+
 # TODO: Per-line texture.
 
 
