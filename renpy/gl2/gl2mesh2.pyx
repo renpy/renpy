@@ -228,6 +228,7 @@ cdef class Mesh2(Mesh):
     def add_glyph(Mesh2 self,
         double tx, double ty,
         double cx, double cy,
+        double index,
         double p0x, double p0y, double p0t,
         double p1x, double p1y, double p1t,
         double p2x, double p2y, double p2t,
@@ -290,6 +291,7 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 4] = p0t
         self.attribute[attribute + 5] = mint
         self.attribute[attribute + 6] = maxt
+        self.attribute[attribute + 7] = index
 
         attribute += stride
 
@@ -300,6 +302,7 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 4] = p1t
         self.attribute[attribute + 5] = mint
         self.attribute[attribute + 6] = maxt
+        self.attribute[attribute + 7] = index
 
         attribute += stride
 
@@ -310,6 +313,7 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 4] = p2t
         self.attribute[attribute + 5] = mint
         self.attribute[attribute + 6] = maxt
+        self.attribute[attribute + 7] = index
 
         attribute += stride
 
@@ -320,6 +324,7 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 4] = p3t
         self.attribute[attribute + 5] = mint
         self.attribute[attribute + 6] = maxt
+        self.attribute[attribute + 7] = index
 
 
         cdef int triangle = self.triangles * 3

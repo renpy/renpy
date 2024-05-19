@@ -105,6 +105,9 @@ cdef class Glyph:
         # The textshader that applies to this glyph.
         public object shader
 
+        # The index of this displayable - the order in which it is shown.
+        public short index
+
 
 cdef class Line:
 

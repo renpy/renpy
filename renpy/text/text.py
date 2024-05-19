@@ -677,6 +677,9 @@ class Layout(object):
         # The time at which the next glyph will be displayed.
         gt = 0.0
 
+        # The index of these glyphs.
+        index = 0.0
+
         # 2. Breaks the text into a list of paragraphs, where each paragraph is
         # represented as a list of (Segment, text string) tuples.
         #
@@ -798,6 +801,8 @@ class Layout(object):
                     textsupport.assign_times(gt, 0.0, glyphs)
                 else:
                     gt = ts.assign_times(gt, glyphs)
+
+            index = textsupport.assign_index(index, par_glyphs)
 
             # RTL - Reverse the glyphs in each line, back to RTL order,
             # now that we have lines.
@@ -1749,6 +1754,7 @@ class Layout(object):
                 mesh.add_glyph(
                     tw, th,
                     cx, cy,
+                    g.index,
                     left, bottom, left_time,
                     right, bottom, right_time,
                     right, top, right_time,
