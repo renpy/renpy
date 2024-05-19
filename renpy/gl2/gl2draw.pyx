@@ -1047,15 +1047,17 @@ cdef class GL2Draw:
                 return
 
             uniforms = { }
+
             if r.uniforms:
                 uniforms.update(r.uniforms)
 
-            for k, v in uniforms.items():
-                if isinstance(v, Render):
-                    uniforms[k] = self.render_to_texture(v, properties=r.properties)
-
             for i, c in enumerate(r.children):
                 uniforms["tex" + str(i)] = self.render_to_texture(c[0], properties=r.properties)
+
+            for k, v in list(uniforms.items()):
+                if isinstance(v, Render):
+                    uniforms[k] = self.render_to_texture(v, properties=r.properties)
+                    # uniforms[k + "_size"] = (v.width, v.height)
 
             if r.mesh is True:
                 mesh = uniforms["tex0"].mesh
@@ -1445,15 +1447,6 @@ cdef class GL2DrawingContext:
         if r.shaders is not None:
             shaders = shaders + r.shaders
 
-        if r.uniforms is not None:
-            uniforms = dict(uniforms)
-
-            for k, v in r.uniforms.items():
-                if (k in uniforms) and (k in renpy.config.merge_uniforms):
-                    uniforms[k] = renpy.config.merge_uniforms[k](uniforms[k], v)
-                else:
-                    uniforms[k] = v
-
         depth = properties.pop("depth", False) and not properties.get("has_depth", False)
         if depth:
             glClear(GL_DEPTH_BUFFER_BIT)
@@ -1466,6 +1459,16 @@ cdef class GL2DrawingContext:
 
         if r.cached_model is not None:
             children = [ (r.cached_model, 0, 0, False, False) ]
+
+        else:
+            if r.uniforms is not None:
+                uniforms = dict(uniforms)
+
+                for k, v in r.uniforms.items():
+                    if (k in uniforms) and (k in renpy.config.merge_uniforms):
+                        uniforms[k] = renpy.config.merge_uniforms[k](uniforms[k], v)
+                    else:
+                        uniforms[k] = v
 
         for child, cx, cy, focus, main in children:
 
