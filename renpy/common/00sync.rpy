@@ -250,7 +250,7 @@ init -1100 python in _sync:
             if i.startswith("quick-") and i != "quick-1":
                 continue
 
-            files.append((location.mtime(i), i + "-LT1.save"))
+            files.append((location.mtime(i), i + renpy.savegame_suffix))
 
         files.sort(reverse=True)
 
