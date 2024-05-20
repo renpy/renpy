@@ -1769,11 +1769,14 @@ class Layout(object):
         for i in ts.shader:
             r.add_shader(i)
 
+        main = xo == 0 and yo == 0 and outline == 0
+
         # (name, value, is_displayable)
         uniforms = [
             ("u_text_depth", depth, False),
             ("u_text_outline", outline, False),
             ("u_text_offset", (xo, yo), False),
+            ("u_text_main", 1.0 if main else 0.0, False),
             ("u_text_to_virtual", 1 / self.oversample, False),
             ("u_text_to_drawable", self.oversample, False),
         ]
