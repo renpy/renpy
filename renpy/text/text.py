@@ -1742,7 +1742,7 @@ class Layout(object):
 
                 duration = g.duration
                 if g.duration < 0:
-                    duraton = 0
+                    duration = 0
 
                 if g.rtl:
                     left_time = g.time
@@ -1755,10 +1755,8 @@ class Layout(object):
                     tw, th,
                     cx, cy,
                     g.index,
-                    left, bottom, left_time,
-                    right, bottom, right_time,
-                    right, top, right_time,
-                    left, top, left_time
+                    left, top, right, bottom,
+                    left_time, right_time,
                 )
 
             top = bottom

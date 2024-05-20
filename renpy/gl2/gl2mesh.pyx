@@ -36,6 +36,8 @@ TEXT_LAYOUT.add_attribute("a_text_time", 1) # The time this vertex should be sho
 TEXT_LAYOUT.add_attribute("a_text_min_time", 1) # The minimum time any vertex in this glyph should be shown.
 TEXT_LAYOUT.add_attribute("a_text_max_time", 1) # The maximum time any vertex in this glyph should be shown.
 TEXT_LAYOUT.add_attribute("a_text_index", 1) # The glyph number.
+TEXT_LAYOUT.add_attribute("a_text_pos_rect", 4)
+TEXT_LAYOUT.add_attribute("a_text_tex_rect", 4)
 
 cdef class Mesh:
 
