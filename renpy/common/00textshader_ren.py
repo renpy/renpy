@@ -214,11 +214,11 @@ renpy.register_textshader(
     variables="""
     uniform vec2 u__jitter;
     uniform vec4 u_random;
-    uniform float u_text_to_virtual;
+    uniform float u_text_to_drawable;
     """,
 
     vertex_60="""
-    vec2 l__jitter = u__jitter / u_text_to_virtual;
+    vec2 l__jitter = u__jitter * u_text_to_drawable;
     gl_Position.xy += l__jitter * u_random.xy - l__jitter / 2;
     """,
 
@@ -241,11 +241,11 @@ renpy.register_textshader(
 
     variables="""
     uniform vec2 u__offset;
-    uniform float u_text_to_virtual;
+    uniform float u_text_to_drawable;
     """,
 
     vertex_65="""
-    gl_Position.xy += u__offset / u_text_to_virtual;
+    gl_Position.xy += u__offset * u_text_to_drawable;
     """,
 
     u__offset=(0.0, 0.0),
@@ -268,12 +268,12 @@ renpy.register_textshader(
     uniform float u__wavelength;
 
     uniform float u_time;
-    uniform float u_text_to_virtual;
+    uniform float u_text_to_drawable;
     attribute float a_text_index;
     """,
 
     vertex_70="""
-    gl_Position.y += cos(2 * 3.14159265359 * (a_text_index / u__wavelength + u_time * u__frequency)) * u__amplitude / u_text_to_virtual;
+    gl_Position.y += cos(2 * 3.14159265359 * (a_text_index / u__wavelength + u_time * u__frequency)) * u__amplitude * u_text_to_drawable;
     """,
 
     u__amplitude=5.0,
@@ -296,9 +296,84 @@ renpy.register_textshader(
     """
 )
 
+renpy.register_textshader(
+    "texture",
 
-# TODO: Per-line texture.
+    variables="""
+    uniform sampler2D u__texture;
+    uniform vec2 u__texture_res;
 
+    uniform float u_text_to_virtual;
+    uniform float u_text_main;
+    varying vec2 v__coord;
+    """,
+
+    vertex_95="""
+    v__coord = u_text_to_virtual * gl_Position.xy / u__texture_res;
+    """,
+
+    fragment_300="""
+    if (u_text_main == 1.0) {
+        gl_FragColor = texture2D(u__texture, v__coord) * gl_FragColor;
+    }
+    """,
+
+    u__texture="#800080",
+
+    doc="""
+    The texture text shader multiplies the text with a shader. This not
+    done to outlined or offset text. The texture is aligned with the top
+    left of the text.
+
+    `u__texture`
+        The texture to multiply the text by.
+    """
+)
+
+renpy.register_textshader(
+    "linetexture",
+
+    variables="""
+    uniform sampler2D u__texture;
+    uniform vec2 u__scale;
+    uniform vec2 u__texture_res;
+
+    uniform float u_text_to_virtual;
+    uniform float u_text_main;
+
+    attribute vec2 a_text_center;
+    varying vec2 v__coord;
+    """,
+
+    vertex_95="""
+
+    v__coord = vec2( gl_Position.x, (gl_Position.y - a_text_center.y)) / u__scale * u_text_to_virtual / u__texture_res;
+    v__coord.y += 0.5;
+    """,
+
+    fragment_300="""
+    if (u_text_main == 1.0) {
+        gl_FragColor = texture2D(u__texture, v__coord) * gl_FragColor;
+    }
+    """,
+
+    u__texture="#800080",
+    u__scale=(1.0, 1.0),
+
+    doc="""
+    Applys a texture to the text, one line at a time. The texture is aligned with
+    the left sideo of the text. The vertical center of the texture is aligned with
+    the baseline of the text - this meas that most of the texture will not
+    be visible.
+
+    `u__texture`
+        The texture to multiply the text by.
+
+    `u__scale`
+        A factor to scale the texture by. For example (1.0, 0.5) will make the
+        texture half as tall as it otherwise would be.
+    """
+)
 
 
 """renpy

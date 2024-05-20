@@ -20,7 +20,6 @@ cdef class AttributeLayout:
         return (AttributeLayout, (self.offset, self.stride))
 
 
-
 # The layout of a mesh used in a Solid.
 SOLID_LAYOUT = AttributeLayout()
 
@@ -36,6 +35,7 @@ TEXT_LAYOUT.add_attribute("a_text_time", 1) # The time this vertex should be sho
 TEXT_LAYOUT.add_attribute("a_text_min_time", 1) # The minimum time any vertex in this glyph should be shown.
 TEXT_LAYOUT.add_attribute("a_text_max_time", 1) # The maximum time any vertex in this glyph should be shown.
 TEXT_LAYOUT.add_attribute("a_text_index", 1) # The glyph number.
+TEXT_LAYOUT.add_attribute("a_text_pos_rect", 4) # The rectangle being drawn.
 
 cdef class Mesh:
 

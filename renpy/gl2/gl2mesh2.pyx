@@ -226,106 +226,109 @@ cdef class Mesh2(Mesh):
         return rv
 
     def add_glyph(Mesh2 self,
-        double tx, double ty,
+        double tw, double th,
         double cx, double cy,
         double index,
-        double p0x, double p0y, double p0t,
-        double p1x, double p1y, double p1t,
-        double p2x, double p2y, double p2t,
-        double p3x, double p3y, double p3t,
+        double left, double top, double right, double bottom,
+        double left_time, double right_time,
         ):
         """
         Adds a glyph to a mesh created by `text_mesh`.
 
         `tx`, `ty`
             The size of the texture the glyph is in.
-
-        `cx`, `cy`
-            The center of the glyph.
-
-        `p0x`, `p0y`
-            The center of the first point.
-
-        `p0t`
-            The time the first point should be shown.
-
-        The p1, p2, and p3 arguments are similar.
         """
 
         if self.layout is not TEXT_LAYOUT:
             raise ValueError("This mesh is not a text mesh.")
 
-        if tx == 0 or ty == 0:
+        if tw == 0 or th == 0:
             return
 
-        cdef double p0u = p0x / tx
-        cdef double p0v = p0y / ty
-        cdef double p1u = p1x / tx
-        cdef double p1v = p1y / ty
-        cdef double p2u = p2x / tx
-        cdef double p2v = p2y / ty
-        cdef double p3u = p3x / tx
-        cdef double p3v = p3y / ty
+        cdef double tex_left = left / tw
+        cdef double tex_right = right / tw
+        cdef double tex_top = top / th
+        cdef double tex_bottom = bottom / th
 
-        cdef double mint = min(p0t, p1t, p2t, p3t)
-        cdef double maxt = max(p0t, p1t, p2t, p3t)
+        cdef double width = right - left
+        cdef double height = bottom - top
+
+        cdef double mint = min(left_time, right_time)
+        cdef double maxt = max(left_time, right_time)
 
         cdef int point = self.points
-
         cdef int stride = self.layout.stride
         cdef int attribute = self.points * stride
 
-        self.point[point + 0].y = p0y
-        self.point[point + 1].x = p1x
-        self.point[point + 1].y = p1y
-        self.point[point + 0].x = p0x
-        self.point[point + 2].x = p2x
-        self.point[point + 2].y = p2y
-        self.point[point + 3].x = p3x
-        self.point[point + 3].y = p3y
-
-        self.attribute[attribute + 0] = p0u
-        self.attribute[attribute + 1] = p0v
+        self.point[point + 0].x = left
+        self.point[point + 0].y = bottom
+        self.attribute[attribute + 0] = tex_left
+        self.attribute[attribute + 1] = tex_bottom
         self.attribute[attribute + 2] = cx
         self.attribute[attribute + 3] = cy
-        self.attribute[attribute + 4] = p0t
+        self.attribute[attribute + 4] = left_time
+
         self.attribute[attribute + 5] = mint
         self.attribute[attribute + 6] = maxt
         self.attribute[attribute + 7] = index
+        self.attribute[attribute + 8] = left
+        self.attribute[attribute + 9] = top
+        self.attribute[attribute + 10] = width
+        self.attribute[attribute + 11] = height
 
         attribute += stride
 
-        self.attribute[attribute + 0] = p1u
-        self.attribute[attribute + 1] = p1v
+        self.point[point + 1].x = right
+        self.point[point + 1].y = bottom
+        self.attribute[attribute + 0] = tex_right
+        self.attribute[attribute + 1] = tex_bottom
         self.attribute[attribute + 2] = cx
         self.attribute[attribute + 3] = cy
-        self.attribute[attribute + 4] = p1t
+        self.attribute[attribute + 4] = right_time
+
         self.attribute[attribute + 5] = mint
         self.attribute[attribute + 6] = maxt
         self.attribute[attribute + 7] = index
+        self.attribute[attribute + 8] = left
+        self.attribute[attribute + 9] = top
+        self.attribute[attribute + 10] = width
+        self.attribute[attribute + 11] = height
 
         attribute += stride
 
-        self.attribute[attribute + 0] = p2u
-        self.attribute[attribute + 1] = p2v
+        self.point[point + 2].x = right
+        self.point[point + 2].y = top
+        self.attribute[attribute + 0] = tex_right
+        self.attribute[attribute + 1] = tex_top
         self.attribute[attribute + 2] = cx
         self.attribute[attribute + 3] = cy
-        self.attribute[attribute + 4] = p2t
+        self.attribute[attribute + 4] = right_time
+
         self.attribute[attribute + 5] = mint
         self.attribute[attribute + 6] = maxt
         self.attribute[attribute + 7] = index
+        self.attribute[attribute + 8] = left
+        self.attribute[attribute + 9] = top
+        self.attribute[attribute + 10] = width
+        self.attribute[attribute + 11] = height
 
         attribute += stride
 
-        self.attribute[attribute + 0] = p3u
-        self.attribute[attribute + 1] = p3v
+        self.point[point + 3].x = left
+        self.point[point + 3].y = top
+        self.attribute[attribute + 0] = tex_left
+        self.attribute[attribute + 1] = tex_top
         self.attribute[attribute + 2] = cx
         self.attribute[attribute + 3] = cy
-        self.attribute[attribute + 4] = p3t
+        self.attribute[attribute + 4] = left_time
+
         self.attribute[attribute + 5] = mint
         self.attribute[attribute + 6] = maxt
         self.attribute[attribute + 7] = index
-
+        self.attribute[attribute + 8] = left
+        self.attribute[attribute + 9] = top
+        self.attribute[attribute + 10] = width
+        self.attribute[attribute + 11] = height
 
         cdef int triangle = self.triangles * 3
 

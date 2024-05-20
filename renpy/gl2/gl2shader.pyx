@@ -215,7 +215,7 @@ cdef class Program:
             renpy.display.log.write("Error compiling shader %s:", self.name)
 
             for i, l in enumerate(original_source.splitlines()):
-                renpy.display.log.write("%03d %s" % (i, l))
+                renpy.display.log.write("% 3d %s" % (i+1 , l))
 
             glGetShaderInfoLog(shader, 1024, NULL, error)
             raise ShaderError((<object> error).decode("latin-1"))

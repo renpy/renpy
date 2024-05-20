@@ -1057,7 +1057,7 @@ cdef class GL2Draw:
             for k, v in list(uniforms.items()):
                 if isinstance(v, Render):
                     uniforms[k] = self.render_to_texture(v, properties=r.properties)
-                    # uniforms[k + "_size"] = (v.width, v.height)
+                    uniforms.setdefault(k + "_res", (v.width, v.height))
 
             if r.mesh is True:
                 mesh = uniforms["tex0"].mesh
