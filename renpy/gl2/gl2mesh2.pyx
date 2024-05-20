@@ -253,9 +253,6 @@ cdef class Mesh2(Mesh):
         cdef double width = right - left
         cdef double height = bottom - top
 
-        cdef double tex_width = tex_right - tex_left
-        cdef double tex_height = tex_bottom - tex_top
-
         cdef double mint = min(left_time, right_time)
         cdef double maxt = max(left_time, right_time)
 
@@ -278,10 +275,6 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 9] = top
         self.attribute[attribute + 10] = width
         self.attribute[attribute + 11] = height
-        self.attribute[attribute + 12] = tex_left
-        self.attribute[attribute + 13] = tex_top
-        self.attribute[attribute + 14] = tex_width
-        self.attribute[attribute + 15] = tex_height
 
         attribute += stride
 
@@ -300,10 +293,6 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 9] = top
         self.attribute[attribute + 10] = width
         self.attribute[attribute + 11] = height
-        self.attribute[attribute + 12] = tex_left
-        self.attribute[attribute + 13] = tex_top
-        self.attribute[attribute + 14] = tex_width
-        self.attribute[attribute + 15] = tex_height
 
         attribute += stride
 
@@ -322,10 +311,6 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 9] = top
         self.attribute[attribute + 10] = width
         self.attribute[attribute + 11] = height
-        self.attribute[attribute + 12] = tex_left
-        self.attribute[attribute + 13] = tex_top
-        self.attribute[attribute + 14] = tex_width
-        self.attribute[attribute + 15] = tex_height
 
         attribute += stride
 
@@ -344,10 +329,6 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 9] = top
         self.attribute[attribute + 10] = width
         self.attribute[attribute + 11] = height
-        self.attribute[attribute + 12] = tex_left
-        self.attribute[attribute + 13] = tex_top
-        self.attribute[attribute + 14] = tex_width
-        self.attribute[attribute + 15] = tex_height
 
         cdef int triangle = self.triangles * 3
 

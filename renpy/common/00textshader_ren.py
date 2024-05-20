@@ -296,6 +296,7 @@ renpy.register_textshader(
     """
 )
 
+from renpy.defaultstore import Transform
 
 renpy.register_textshader(
     "texture",
@@ -303,18 +304,32 @@ renpy.register_textshader(
     variables="""
     uniform sampler2D u__texture;
     uniform vec2 u__texture_res;
+
+    uniform float u_text_to_virtual;
+    uniform float u_text_main;
+    varying vec2 v__coord;
     """,
 
-
-    vertex_75="""
-    v__coord = vec2(a_tex_coord.x, a_tex_coord.y);
+    vertex_95="""
+    v__coord = u_text_to_virtual * gl_Position.xy / u__texture_res;
     """,
 
-    fragment_450="""
-    gl_FragColor = texture2D(u__texture, v__coord) * gl_FragColor.a;
+    fragment_300="""
+    if (u_text_main == 1.0) {
+        gl_FragColor = texture2D(u__texture, v__coord) * gl_FragColor;
+    }
     """,
 
-    u__texture="gold.png",
+    u__texture="#800080",
+
+    doc="""
+    The texture text shader multiplies the text with a shader. This not
+    done to outlined or offset text. The texture is aligned with the top
+    left of the text.
+
+    `u__texture`
+        The texture to multiply the text by.
+    """
 )
 
 # TODO: Per-line texture.
