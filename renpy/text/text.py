@@ -1775,6 +1775,7 @@ class Layout(object):
             ("u_text_outline", outline, False),
             ("u_text_offset", (xo, yo), False),
             ("u_text_to_virtual", 1 / self.oversample, False),
+            ("u_text_to_drawable", self.oversample, False),
         ]
 
         for k, v in ts.uniforms:

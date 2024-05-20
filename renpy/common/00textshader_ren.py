@@ -214,11 +214,11 @@ renpy.register_textshader(
     variables="""
     uniform vec2 u__jitter;
     uniform vec4 u_random;
-    uniform float u_text_to_virtual;
+    uniform float u_text_to_drawable;
     """,
 
     vertex_60="""
-    vec2 l__jitter = u__jitter / u_text_to_virtual;
+    vec2 l__jitter = u__jitter * u_text_to_drawable;
     gl_Position.xy += l__jitter * u_random.xy - l__jitter / 2;
     """,
 
@@ -241,11 +241,11 @@ renpy.register_textshader(
 
     variables="""
     uniform vec2 u__offset;
-    uniform float u_text_to_virtual;
+    uniform float u_text_to_drawable;
     """,
 
     vertex_65="""
-    gl_Position.xy += u__offset / u_text_to_virtual;
+    gl_Position.xy += u__offset * u_text_to_drawable;
     """,
 
     u__offset=(0.0, 0.0),
@@ -268,12 +268,12 @@ renpy.register_textshader(
     uniform float u__wavelength;
 
     uniform float u_time;
-    uniform float u_text_to_virtual;
+    uniform float u_text_to_drawable;
     attribute float a_text_index;
     """,
 
     vertex_70="""
-    gl_Position.y += cos(2 * 3.14159265359 * (a_text_index / u__wavelength + u_time * u__frequency)) * u__amplitude / u_text_to_virtual;
+    gl_Position.y += cos(2 * 3.14159265359 * (a_text_index / u__wavelength + u_time * u__frequency)) * u__amplitude * u_text_to_drawable;
     """,
 
     u__amplitude=5.0,
@@ -296,6 +296,26 @@ renpy.register_textshader(
     """
 )
 
+
+renpy.register_textshader(
+    "texture",
+
+    variables="""
+    uniform sampler2D u__texture;
+    uniform vec2 u__texture_res;
+    """,
+
+
+    vertex_75="""
+    v__coord = vec2(a_tex_coord.x, a_tex_coord.y);
+    """,
+
+    fragment_450="""
+    gl_FragColor = texture2D(u__texture, v__coord) * gl_FragColor.a;
+    """,
+
+    u__texture="gold.png",
+)
 
 # TODO: Per-line texture.
 
