@@ -296,8 +296,6 @@ renpy.register_textshader(
     """
 )
 
-from renpy.defaultstore import Transform
-
 renpy.register_textshader(
     "texture",
 
@@ -332,8 +330,50 @@ renpy.register_textshader(
     """
 )
 
-# TODO: Per-line texture.
+renpy.register_textshader(
+    "linetexture",
 
+    variables="""
+    uniform sampler2D u__texture;
+    uniform vec2 u__scale;
+    uniform vec2 u__texture_res;
+
+    uniform float u_text_to_virtual;
+    uniform float u_text_main;
+
+    attribute vec2 a_text_center;
+    varying vec2 v__coord;
+    """,
+
+    vertex_95="""
+
+    v__coord = vec2( gl_Position.x, (gl_Position.y - a_text_center.y)) / u__scale * u_text_to_virtual / u__texture_res;
+    v__coord.y += 0.5;
+    """,
+
+    fragment_300="""
+    if (u_text_main == 1.0) {
+        gl_FragColor = texture2D(u__texture, v__coord) * gl_FragColor;
+    }
+    """,
+
+    u__texture="#800080",
+    u__scale=(1.0, 1.0),
+
+    doc="""
+    Applys a texture to the text, one line at a time. The texture is aligned with
+    the left sideo of the text. The vertical center of the texture is aligned with
+    the baseline of the text - this meas that most of the texture will not
+    be visible.
+
+    `u__texture`
+        The texture to multiply the text by.
+
+    `u__scale`
+        A factor to scale the texture by. For example (1.0, 0.5) will make the
+        texture half as tall as it otherwise would be.
+    """
+)
 
 
 """renpy
