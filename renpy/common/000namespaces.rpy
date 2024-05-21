@@ -130,3 +130,8 @@ python early hide:
     config.special_namespaces["store.preferences"] =  _PreferencesNamespace()
     config.special_namespaces["store.gui"] = _GuiNamespace()
     config.special_namespaces["store.renpy"] = _ErrorNamespace("renpy")
+
+init 1700 python hide:
+    for name, store_dict in renpy.python.store_dicts.items():
+        if getattr(store_dict, "_constant", False):
+            renpy.const(name[:6])
