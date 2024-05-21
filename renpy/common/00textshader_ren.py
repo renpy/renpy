@@ -48,10 +48,10 @@ renpy.register_textshader(
     varying float v_text_min_time;
     """,
 
-    vertex_500="""
+    vertex_200="""
     v_text_min_time = a_text_min_time;
     """,
-    fragment_500="""
+    fragment_350="""
     float l__done = v_text_min_time <= u_text_slow_time ? 1.0 : 0.0;
     gl_FragColor = gl_FragColor * l__done;
     """,
@@ -76,10 +76,10 @@ renpy.register_textshader(
     varying float v_text_time;
     """,
 
-    vertex_500="""
+    vertex_200="""
     v_text_time = a_text_time;
     """,
-    fragment_500="""
+    fragment_350="""
     float l__duration = u__duration * u_text_slow_duration;
     float l__done;
     if (l__duration > 0.0) {
@@ -110,11 +110,11 @@ renpy.register_textshader(
     uniform float u__alpha
     """,
 
-    fragment_475="""
+    fragment_325="""
 vec4 l__color = gl_FragColor;
 """,
 
-    fragment_525="""
+    fragment_375="""
     gl_FragColor = mix(gl_FragColor, l__color, u__alpha);
     """,
 
@@ -144,7 +144,7 @@ renpy.register_textshader(
     attribute float a_text_min_time;
     """,
 
-    vertex_50="""
+    vertex_20="""
     float l__duration = u__duration * u_text_slow_duration;
     float l__done;
 
@@ -182,7 +182,7 @@ renpy.register_textshader(
     attribute float a_text_min_time;
     """,
 
-    vertex_55="""
+    vertex_25="""
     float l__duration = u__duration * u_text_slow_duration;
 
     if (l__duration > 0.0) {
@@ -217,7 +217,7 @@ renpy.register_textshader(
     uniform float u_text_to_drawable;
     """,
 
-    vertex_60="""
+    vertex_30="""
     vec2 l__jitter = u__jitter * u_text_to_drawable;
     gl_Position.xy += l__jitter * u_random.xy - l__jitter / 2;
     """,
@@ -244,7 +244,7 @@ renpy.register_textshader(
     uniform float u_text_to_drawable;
     """,
 
-    vertex_65="""
+    vertex_35="""
     gl_Position.xy += u__offset * u_text_to_drawable;
     """,
 
@@ -272,7 +272,7 @@ renpy.register_textshader(
     attribute float a_text_index;
     """,
 
-    vertex_70="""
+    vertex_40="""
     gl_Position.y += cos(2 * 3.14159265359 * (a_text_index / u__wavelength + u_time * u__frequency)) * u__amplitude * u_text_to_drawable;
     """,
 
@@ -308,7 +308,7 @@ renpy.register_textshader(
     varying vec2 v__coord;
     """,
 
-    vertex_95="""
+    vertex_10="""
     v__coord = u_text_to_virtual * gl_Position.xy / u__texture_res;
     """,
 
@@ -345,7 +345,7 @@ renpy.register_textshader(
     varying vec2 v__coord;
     """,
 
-    vertex_95="""
+    vertex_10="""
 
     v__coord = vec2( gl_Position.x, (gl_Position.y - a_text_center.y)) / u__scale * u_text_to_virtual / u__texture_res;
     v__coord.y += 0.5;

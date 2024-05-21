@@ -15,48 +15,37 @@ def shaders(incdir="source/inc"):
         for i in s.split("\n"):
             print("    " + i, file=outf)
 
-    with open(os.path.join(incdir, "shadersource"), "w") as outf:
+    parts = list(renpy.gl2.gl2shadercache.shader_part.values())
+    parts.sort(key=lambda x: x.name)
 
-        parts = list(renpy.gl2.gl2shadercache.shader_part.values())
-        parts.sort(key=lambda x: x.name)
+    vertex_priorities = [ ]
+    fragment_priorities = [ ]
 
-        vertex_priorities = [ ]
-        fragment_priorities = [ ]
+    for sp in parts:
 
-        for sp in parts:
+        if sp.name == "renpy.ftl":
+            continue
 
-            if sp.name == "renpy.ftl":
-                continue
+        for prio, source in sp.vertex_parts:
+            vertex_priorities.append((prio, sp.name))
 
-            for prio, source in sp.vertex_parts:
-                vertex_priorities.append((prio, sp.name))
+        for prio, source in sp.fragment_parts:
+            fragment_priorities.append((prio, sp.name))
 
-            for prio, source in sp.fragment_parts:
-                fragment_priorities.append((prio, sp.name))
+    fragment_priorities.sort()
+    vertex_priorities.sort()
 
-        fragment_priorities.sort()
-        vertex_priorities.sort()
-
-        p("")
-
-        p("Vertex Shader Priorities")
-        p("------------------------")
-        p("")
+    with open(os.path.join(incdir, "shadervertexpriorities"), "w") as outf:
 
         for prio, name in vertex_priorities:
             p("| %d. :ref:`%s <shader-%s>`" % (prio, name, name))
 
-
-        p("Fragment Shader Priorities")
-        p("--------------------------")
-        p("")
-
+    with open(os.path.join(incdir, "shaderfragmentpriorities"), "w") as outf:
 
         for prio, name in fragment_priorities:
-
             p("| %d. :ref:`%s <shader-%s>`" % (prio, name, name))
 
-        p("")
+    with open(os.path.join(incdir, "shadersource"), "w") as outf:
 
         # Shaders.
         for sp in parts:
