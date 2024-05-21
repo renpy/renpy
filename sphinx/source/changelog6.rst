@@ -4015,7 +4015,7 @@ transition. These take two displayables, and use the alpha channel of a third
 displayable to blend them together. (The third displayable is often an
 animation, allowing the effect to change over time.)
 
-The new :doc:`modes` system allows one to invoke callbacks when switching from
+The new modes system allows one to invoke callbacks when switching from
 one type of interaction to another. This can be used, for example, to
 automatically hide the window before transitions.
 

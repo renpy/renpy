@@ -77,6 +77,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    preferences
    store_variables
    mouse
+   textshaders
 
 
 .. toctree::
@@ -192,6 +193,7 @@ Indices
 * `Variable and Definition Index <std-var-index.html>`_
 * `Function and Class Index <py-function-class-index.html>`_
 * `Reserved Names Index <reserved.html>`_
+* `Shader Part Index <shader_parts.html>`_
 * `General Index <genindex.html>`_
 
 Example Scripts

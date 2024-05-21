@@ -104,7 +104,7 @@ class Color(tuple):
         Returns the color as a tuple of four floating point numbers giving
         the red, green, blue and alpha components as 0.0 to 1.0 values.
 
-    .. premultiplied:: rgba
+    .. attribute:: premultiplied
 
         Returns the color as a tuple of four floating point numbers giving
         the red, green, blue and alpha components as 0.0 to 1.0 values, with

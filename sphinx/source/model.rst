@@ -311,7 +311,7 @@ The default blend modes are::
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
 
 
-.. model-uniforms::
+.. _model-uniforms:
 
 Uniforms and Attributes
 -----------------------
@@ -504,7 +504,8 @@ redraws to happen::
 different values for ``pause`` to specify a minimum frame rate, like
 ``pause 1.0/30``.
 
-Default Shader Parts
---------------------
 
-.. include:: inc/shadersource
+Shader Parts
+------------
+
+For a list of shader parts that Ren'Py uses, see the :doc:`shader_parts`.

@@ -69,7 +69,6 @@ def parse_style_node(env, sig, signode):
     ref = m.group(1)
 
     while ref in style_seen_ids:
-        print("duplicate id:", ref)
         ref = ref + "_alt"
 
     style_seen_ids.add(ref)
@@ -88,7 +87,6 @@ def parse_scpref_node(env, sig, signode):
     ref = m.group(1)
 
     while ref in scpref_seen_ids:
-        print("duplicate id:", ref)
         ref = ref + "_alt"
 
     scpref_seen_ids.add(ref)
