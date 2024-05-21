@@ -19,8 +19,10 @@ rm -Rf ../doc/_images || true
 # Build the full web documentation.
 sphinx-build -E -a source ../doc-web &
 
-# Build the included-with-Ren'Py documentation.
-RENPY_NO_FIGURES=1 sphinx-build -E -a source ../doc 2>/dev/null
+# Build the included-with-Ren'Py documentation, if not running interactively.
+if [ ! -t 0 ]; then
+    RENPY_NO_FIGURES=1 sphinx-build -E -a source ../doc 2>/dev/null
+fi
 
 # Wait for both builds to finish.
 wait
