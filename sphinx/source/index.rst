@@ -77,6 +77,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    preferences
    store_variables
    mouse
+   textshaders
 
 
 .. toctree::

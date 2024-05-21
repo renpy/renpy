@@ -311,7 +311,7 @@ The default blend modes are::
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
 
 
-.. model-uniforms::
+.. _model-uniforms:
 
 Uniforms and Attributes
 -----------------------
