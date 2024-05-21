@@ -134,4 +134,4 @@ python early hide:
 init 1700 python hide:
     for name, store_dict in renpy.python.store_dicts.items():
         if getattr(store_dict, "_constant", False):
-            renpy.const(name[:6])
+            renpy.const(name[6:])
