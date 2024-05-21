@@ -192,6 +192,7 @@ Indices
 * `Variable and Definition Index <std-var-index.html>`_
 * `Function and Class Index <py-function-class-index.html>`_
 * `Reserved Names Index <reserved.html>`_
+* `Shader Part Index <shader_parts.html>`_
 * `General Index <genindex.html>`_
 
 Example Scripts

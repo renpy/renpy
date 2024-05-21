@@ -18,21 +18,14 @@ def shaders(incdir="source/inc"):
     with open(os.path.join(incdir, "shadersource"), "w") as outf:
 
         parts = list(renpy.gl2.gl2shadercache.shader_part.values())
-
-        def priority(sp):
-            if sp.vertex_parts:
-                return sp.vertex_parts[0][0], sp.name
-            else:
-                return sp.fragment_parts[0][0], sp.name
-
-        parts.sort(key=priority)
+        parts.sort(key=lambda x: x.name)
 
         for sp in parts:
 
             if sp.name == "renpy.ftl":
                 continue
 
-            header = "{} (priority {})".format(sp.name, priority(sp)[0])
+            header = "{}".format(sp.name)
 
             p(header)
             p("^" * len(header))
@@ -47,13 +40,12 @@ def shaders(incdir="source/inc"):
             if sp.vertex_functions or sp.fragment_functions:
                 raise Exception("Can't doc functions yet.")
 
-            for _, s in sp.vertex_parts:
-                p("Vertex shader::")
+            for prio, s in sorted(sp.vertex_parts):
+                p("Vertex shader (priority %d)::" % prio)
 
                 indented(s)
 
-            for _, s in sp.fragment_parts:
-                p("Fragment shader::")
+            for prio, s in sorted(sp.fragment_parts):
+                p("Fragment shader (priority %d)::" % prio)
 
                 indented(s)
-
