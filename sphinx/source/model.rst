@@ -504,7 +504,8 @@ redraws to happen::
 different values for ``pause`` to specify a minimum frame rate, like
 ``pause 1.0/30``.
 
-Default Shader Parts
---------------------
 
-.. include:: inc/shadersource
+Shader Parts
+------------
+
+For a list of shader parts that Ren'Py uses, see the :doc:`shader_parts`.

@@ -20,6 +20,45 @@ def shaders(incdir="source/inc"):
         parts = list(renpy.gl2.gl2shadercache.shader_part.values())
         parts.sort(key=lambda x: x.name)
 
+        vertex_priorities = [ ]
+        fragment_priorities = [ ]
+
+        for sp in parts:
+
+            if sp.name == "renpy.ftl":
+                continue
+
+            for prio, source in sp.vertex_parts:
+                vertex_priorities.append((prio, sp.name))
+
+            for prio, source in sp.fragment_parts:
+                fragment_priorities.append((prio, sp.name))
+
+        fragment_priorities.sort()
+        vertex_priorities.sort()
+
+        p("")
+
+        p("Vertex Shader Priorities")
+        p("------------------------")
+        p("")
+
+        for prio, name in vertex_priorities:
+            p("| %d. :ref:`%s <shader-%s>`" % (prio, name, name))
+
+
+        p("Fragment Shader Priorities")
+        p("--------------------------")
+        p("")
+
+
+        for prio, name in fragment_priorities:
+
+            p("| %d. :ref:`%s <shader-%s>`" % (prio, name, name))
+
+        p("")
+
+        # Shaders.
         for sp in parts:
 
             if sp.name == "renpy.ftl":
@@ -27,8 +66,11 @@ def shaders(incdir="source/inc"):
 
             header = "{}".format(sp.name)
 
+            p(".. _shader-{}:".format(sp.name))
+            p("")
+
             p(header)
-            p("^" * len(header))
+            p("-" * len(header))
 
             if sp.raw_variables:
                 p("Variables::")

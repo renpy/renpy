@@ -7,6 +7,6 @@ Shader parts are used by :doc:`model` and :doc:`textshaders`. This file
 contains an index of parts by priority, and the source of each shader
 part.
 
-.. language:: glsl
+.. highlight:: glsl
 
 .. include:: inc/shadersource
