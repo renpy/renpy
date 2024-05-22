@@ -1685,7 +1685,7 @@
 
     # game/front_page.rpy:188
     old "Actions"
-    new "行動"
+    new "動作"
 
     # game/front_page.rpy:219
     old "Web"
