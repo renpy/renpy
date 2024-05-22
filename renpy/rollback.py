@@ -526,7 +526,7 @@ class RollbackLog(renpy.object.Object):
         if not context.rollback:
             return
 
-        # We only begin a checkpoint if the previous statement reached a checkpoint,
+        # We only begin a Rollback if the previous statement reached a checkpoint,
         # or an interaction took place. (Or we're forced.)
         ignore = True
 
@@ -539,6 +539,11 @@ class RollbackLog(renpy.object.Object):
                 ignore = False
             elif self.current.retain_after_load:
                 ignore = False
+            elif isinstance(context.current, basestring) and not isinstance(self.current.context.current, basestring):
+                # This will start a new rollback on reaching a label, if the current rollback isn't at a label.
+                ignore = False
+        else:
+            ignore = False
 
         if ignore:
             return

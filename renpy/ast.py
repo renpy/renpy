@@ -709,8 +709,6 @@ class Init(Node):
 
 class Label(Node):
 
-    rollback = "force"
-
     translation_relevant = True
     __slots__ = [
         'parameters',
