@@ -173,7 +173,7 @@ operator adds, and is generally used for list concatenaton. The ``|=``
 or operator is generally used to concatenate sets. For example::
 
     define config.keymap["dismiss"] += [ "K_KP_PLUS" ]
-    define endings |= { "best_ending }
+    define endings |= { "best_ending" }
 
 One advantage of using the define statement is that it records the
 filename and line number at which the assignment occurred, and
