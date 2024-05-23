@@ -847,7 +847,7 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:444
     old "self voicing volume drop"
-    new "self voicing 音量减小"
+    new "self voicing 音量減小"
 
     # renpy/common/00preferences.rpy:452
     old "clipboard voicing"
@@ -963,20 +963,20 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:612
     old "mute main"
-    new "屏蔽主要"
+    new "靜音主要"
 
     # renpy/common/00preferences.rpy:613
     old "mute music"
-    new "屏蔽音樂"
+    new "靜音音樂"
 
     # renpy/common/00preferences.rpy:614
     old "mute sound"
-    new "屏蔽聲音"
+    new "靜音聲音"
 
     # renpy/common/00preferences.rpy:615
     old "mute voice"
-    new "屏蔽語音"
+    new "靜音語音"
 
     # renpy/common/00preferences.rpy:616
     old "mute all"
-    new "屏蔽全部"
+    new "全部靜音"
