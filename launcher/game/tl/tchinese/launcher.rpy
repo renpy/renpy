@@ -129,7 +129,7 @@
 
     # android.rpy:353
     old "Build:"
-    new "建立："
+    new "建構："
 
     # android.rpy:361
     old "Install SDK & Create Keys"
@@ -141,15 +141,15 @@
 
     # android.rpy:369
     old "Build Package"
-    new "建立套件"
+    new "建構套件"
 
     # android.rpy:373
     old "Build & Install"
-    new "建立 & 安裝"
+    new "建構 & 安裝"
 
     # android.rpy:377
     old "Build, Install & Launch"
-    new "建立，安裝 & 啟動"
+    new "建構，安裝 & 啟動"
 
     # android.rpy:388
     old "Other:"
@@ -321,7 +321,7 @@
 
     # distribute_gui.rpy:215
     old "Build Packages:"
-    new "建立套件："
+    new "建構套件："
 
     # distribute_gui.rpy:234
     old "Options:"
@@ -341,7 +341,7 @@
 
     # distribute_gui.rpy:246
     old "Build"
-    new "建立"
+    new "建構"
 
     # distribute_gui.rpy:250
     old "Adding from clauses to call statements that do not have them."
@@ -353,7 +353,7 @@
 
     # distribute_gui.rpy:288
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
-    new "您的專案不包含建置資訊。是否加入建置資訊到 options.rpy？"
+    new "您的專案不包含建構資訊。是否加入建構資訊到 options.rpy？"
 
     # editor.rpy:150
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
@@ -737,11 +737,11 @@
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "無法找到建置的釋出版。 請選擇“構建”並重試。"
+    new "無法找到建置的釋出版。 請選擇“建構”並重試。"
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "未找到可上傳的文件。 請選擇“構建”並重試。"
+    new "未找到可上傳的文件。 請選擇“建構”並重試。"
 
     # itch.rpy:99
     old "The butler program was not found."
