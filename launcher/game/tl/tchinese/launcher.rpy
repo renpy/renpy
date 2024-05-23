@@ -353,7 +353,7 @@
 
     # distribute_gui.rpy:288
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
-    new "您的專案不包含建構資訊。是否加入建構資訊到 options.rpy？"
+    new "您的專案不包含建置資訊。是否加入建置資訊到 options.rpy？"
 
     # editor.rpy:150
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
