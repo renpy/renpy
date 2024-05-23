@@ -118,7 +118,7 @@
 
     # renpy/common/_developer/developer.rpym:131
     old "    [name] [attributes] (hidden)"
-    new "    [name] [attributes] (hidden)"
+    new "    [name] [attributes] (隐藏)"
 
     # renpy/common/_developer/developer.rpym:135
     old "    [name] [attributes]"
