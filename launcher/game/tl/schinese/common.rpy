@@ -1078,23 +1078,23 @@
 
     # renpy/common/00preferences.rpy:612
     old "mute main"
-    new "屏蔽主要"
+    new "静音主要"
 
     # renpy/common/00preferences.rpy:613
     old "mute music"
-    new "屏蔽音乐"
+    new "静音音乐"
 
     # renpy/common/00preferences.rpy:614
     old "mute sound"
-    new "屏蔽声音"
+    new "静音声音"
 
     # renpy/common/00preferences.rpy:615
     old "mute voice"
-    new "屏蔽语音"
+    new "静音语音"
 
     # renpy/common/00preferences.rpy:616
     old "mute all"
-    new "屏蔽全部"
+    new "静音全部"
 
     # renpy/common/00speechbubble.rpy:397
     old "(hide)"
