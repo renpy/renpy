@@ -1964,7 +1964,7 @@
 
     # game/preferences.rpy:266
     old "Prefer RPU updates"
-    new "首选 RPU 更新"
+    new "偏好 RPU 更新"
 
     # game/preferences.rpy:338
     old "Open projects.txt"
