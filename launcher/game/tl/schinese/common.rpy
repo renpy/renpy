@@ -962,7 +962,7 @@
 
     # renpy/common/00preferences.rpy:444
     old "self voicing volume drop"
-    new "机器朗读音量增加"
+    new "机器朗读音量减小"
 
     # renpy/common/00preferences.rpy:452
     old "clipboard voicing"
