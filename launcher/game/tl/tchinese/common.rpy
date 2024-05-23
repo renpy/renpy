@@ -839,27 +839,27 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:438
     old "self voicing enable"
-    new "self voicing已啓用"
+    new "self voicing 已啓用"
 
     # renpy/common/00preferences.rpy:440
     old "self voicing disable"
-    new "self voicing已禁用"
+    new "self voicing 已禁用"
 
     # renpy/common/00preferences.rpy:444
     old "self voicing volume drop"
-    new "self voicing音量上升"
+    new "self voicing 音量减小"
 
     # renpy/common/00preferences.rpy:452
     old "clipboard voicing"
-    new "self voicing音量下降"
+    new "clipboard voicing"
 
     # renpy/common/00preferences.rpy:455
     old "clipboard voicing enable"
-    new "clipboard voicing已啓用"
+    new "clipboard voicing 已啓用"
 
     # renpy/common/00preferences.rpy:457
     old "clipboard voicing disable"
-    new "clipboard voicing已禁用"
+    new "clipboard voicing 已禁用"
 
     # renpy/common/00preferences.rpy:461
     old "debug voicing"
@@ -867,11 +867,11 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:464
     old "debug voicing enable"
-    new "debug voicing已啓用"
+    new "debug voicing 已啓用"
 
     # renpy/common/00preferences.rpy:466
     old "debug voicing disable"
-    new "debug voicing已禁用"
+    new "debug voicing 已禁用"
 
     # renpy/common/00preferences.rpy:470
     old "emphasize audio"
