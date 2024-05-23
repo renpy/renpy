@@ -979,4 +979,4 @@ translate tchinese strings:
 
     # renpy/common/00preferences.rpy:616
     old "mute all"
-    new "全部靜音"
+    new "靜音全部"
