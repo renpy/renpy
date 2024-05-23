@@ -42,18 +42,18 @@ style property, either directly or in one of the many ways provided by Ren'Py to
 set styles. ::
 
     style default:
-        textshader "sunrise"
+        textshader "dissolve"
 
-    define kitt = Character("KITT", what_textshader="cylon:color=#ff0000|time=2.0")
+    define goldfinger = Character("Goldfinger", what_textshader="linetexture:gold.png")
 
     screen purchase():
         textbutton "Buy Now":
-            textshader "pulse:1.0" action iap.Purchase("dlc")
+            textshader "wave" action iap.Purchase("dlc")
 
 **Text Tags** The third way to use text shaders is to use the :tt:`appropriate text tag <shader>`
 to change the look of a portion of text. ::
 
-    "What's this? A letter from {shader=upside_down}Australia{/shader}?"
+    "What's this? A letter from {shader=zoom}out of nowhere{/shader}?"
 
 
 Specifying Text Shaders
@@ -61,16 +61,16 @@ Specifying Text Shaders
 
 Text shaders are specified as strings like::
 
-    "wave"
-    "jitter:1.0, 3.0"
-    "pulse:pulse_zoom=1.5:pulse_time=1.0"
+    "dissolve"
+    "jitter:u__jitter=1.0, 3.0"
+    "texture:gold.png"
 
 The first part of the string, before the first colon, is the name of the text shader.
 The rest of the string is a series of uniforms that are passed to the shader,
 separated by colons. (Uniforms are parameters that are passed to the shader,
 that can be used to control how the shader works.)
 
-Uniforms can be specified by name follwed by =, or the name can be
+Uniforms can be specified by name followed by =, or the name can be
 omitted to set each uniform in order. (Omitting the name is not supported in Ren'Py 7.) While
 internally all uniforms begin with u\_, the u\_ can be omitted for brevity.
 
@@ -81,6 +81,9 @@ The value of a uniform can be:
 * A color, beginning with #. (For example, #f00 or #ff0000 for red.) This
   creates a a vec4 corresponding to that color. This color will be
   premultiplied by its alpha channel.
+* A :doc:`displayable <displayables>`that will be
+  used as a texture. This creates a sampler2D that can be used to sample
+  the texture.
 
 Uniform values can't be expressions or access variables, though it is
 possible to use text interpolation to create a string that can be
@@ -90,12 +93,33 @@ evaluated as a textshader tag or its parameter.
 Finally, text shaders can be combined with each other using the | operator.
 For example::
 
-    "jitter:1.0, 3.0|pulse:pulse_zoom=1.5:pulse_time=1.0"
+    "jitter:1.0, 3.0|wave"
 
-This will apply both the wave and colors shaders to the text. This only works
+This will apply both the jitter and wave shaders to the text. This only works
 if the shaders are compatible with each other, and do not use the same
 uniforms (or use the uniform in a way that is compatible with each other, in
 which case it takes the value from the last shader in the list).
 
 Unless a textshader has `include_default` set to False, the default textshader
 will be combined with the textshader specified in the style or tag.
+
+
+Text Shader Callbacks
+---------------------
+
+The :var:`config.textshader_callbacks` variable can be used to set a callbakc that
+is run when a text shader is applied. This can be used to customize the text
+shader based on a preference. ::
+
+
+    default persistent.dissolve_text = True
+
+    init python:
+        def get_default_textshader():
+            if persistent.dissolve_text:
+                return "dissolve"
+            else:
+                return "typewriter"
+
+    define config.default_textshader = "default"
+    define config.textshader_callbacks["default"] = get_default_textshader

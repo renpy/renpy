@@ -1111,6 +1111,13 @@ Occasionally Used
     in this dictionary to find a zorder to use. If no zorder is found,
     0 is used.
 
+.. var:: config.textshader_callbacks = { }
+
+    This is dictionary that maps strings to callables. When :doc:`textshaders`
+    with the string are used, the function is called to return a string
+    giving another textshader. This can be used to make a textshader that
+    changes based on a persistent variable, for example.
+
 .. var:: config.thumbnail_height = 75
 
     The height of the thumbnails that are taken when the game is
