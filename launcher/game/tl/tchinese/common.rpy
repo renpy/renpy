@@ -639,11 +639,11 @@ translate tchinese strings:
 
     # renpy/common/00speechbubble.rpy:397
     old "(hide)"
-    new "(hide)"
+    new "(隱藏)"
 
     # renpy/common/00speechbubble.rpy:408
     old "(clear retained bubbles)"
-    new "(clear retained bubbles)"
+    new "(清除保留的氣泡)"
 
     # renpy/common/00sync.rpy:70
     old "Sync downloaded."
