@@ -111,7 +111,7 @@ translate tchinese strings:
 
     # _developer/inspector.rpym:185
     old "<repr() failed>"
-    new "<repr() 失敗>"
+    new "<repr() failed>"
 
     # 00console.rpy:182
     old "Press <esc> to exit console. Type help for help.\n"
