@@ -1098,11 +1098,11 @@
 
     # renpy/common/00speechbubble.rpy:397
     old "(hide)"
-    new "(hide)"
+    new "(隐藏)"
 
     # renpy/common/00speechbubble.rpy:408
     old "(clear retained bubbles)"
-    new "(clear retained bubbles)"
+    new "(清除保留的气泡)"
 
     # renpy/common/00updater.rpy:505
     old "No update methods found."
