@@ -129,7 +129,7 @@
 
     # android.rpy:353
     old "Build:"
-    new "建構："
+    new "建置："
 
     # android.rpy:361
     old "Install SDK & Create Keys"
@@ -141,15 +141,15 @@
 
     # android.rpy:369
     old "Build Package"
-    new "建構套件"
+    new "建置套件"
 
     # android.rpy:373
     old "Build & Install"
-    new "建構 & 安裝"
+    new "建置 & 安裝"
 
     # android.rpy:377
     old "Build, Install & Launch"
-    new "建構，安裝 & 啟動"
+    new "建置，安裝 & 啟動"
 
     # android.rpy:388
     old "Other:"
@@ -321,7 +321,7 @@
 
     # distribute_gui.rpy:215
     old "Build Packages:"
-    new "建構套件："
+    new "建置套件："
 
     # distribute_gui.rpy:234
     old "Options:"
@@ -341,7 +341,7 @@
 
     # distribute_gui.rpy:246
     old "Build"
-    new "建構"
+    new "建置"
 
     # distribute_gui.rpy:250
     old "Adding from clauses to call statements that do not have them."
@@ -653,7 +653,7 @@
 
     # ios.rpy:31
     old "An Xcode project exists. Choose 'Update Xcode Project' to update it with the latest game files, or use Xcode to build and install it."
-    new "Xcode 專案已存在。'更新 Xcode 專案' 通過選擇更新到最新的遊戲檔，但要使用 Xcode 構建它，請安裝。"
+    new "Xcode 專案已存在。'更新 Xcode 專案' 通過選擇更新到最新的遊戲檔，但要使用 Xcode 建置它，請安裝。"
 
     # ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
@@ -737,11 +737,11 @@
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "無法找到建置的釋出版。 請選擇“建構”並重試。"
+    new "無法找到建置的釋出版。 請選擇“建置”並重試。"
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "未找到可上傳的文件。 請選擇“建構”並重試。"
+    new "未找到可上傳的文件。 請選擇“建置”並重試。"
 
     # itch.rpy:99
     old "The butler program was not found."
@@ -1237,7 +1237,7 @@
 
     # game/android.rpy:63
     old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
-    new "構建通用 APK 包，用於側面加載和 Google Play 以外的存儲。這最多可以包含 2GB 的數據。"
+    new "建置通用 APK 包，用於側面加載和 Google Play 以外的存儲。這最多可以包含 2GB 的數據。"
 
     # game/android.rpy:334
     old "Android: [project.current.display_name!q]"
@@ -1333,11 +1333,11 @@
 
     # game/androidstrings.rpy:14
     old "I'm using Gradle to build the package."
-    new "我正在使用 Gradle 來構建包。"
+    new "我正在使用 Gradle 來建置包。"
 
     # game/androidstrings.rpy:15
     old "The build seems to have failed."
-    new "構建似乎失敗了。"
+    new "建置似乎失敗了。"
 
     # game/androidstrings.rpy:16
     old "I'm installing the bundle."
@@ -1357,7 +1357,7 @@
 
     # game/androidstrings.rpy:20
     old "The build seems to have succeeded."
-    new "構建似乎已經成功。"
+    new "建置似乎已經成功。"
 
     # game/androidstrings.rpy:21
     old "What is the full name of your application? This name will appear in the list of installed applications."
@@ -1565,7 +1565,7 @@
 
     # game/distribute.rpy:543
     old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
-    new "構建釋出版失敗：\n\n 該項目是 Ren'Py 教程，無法在 Ren'Py 之外分發。請考慮使用 The Question 作為測試項目。"
+    new "建置釋出版失敗：\n\n 該項目是 Ren'Py 教程，無法在 Ren'Py 之外分發。請考慮使用 The Question 作為測試項目。"
 
     # game/distribute.rpy:570
     old "This may be derived from build.name and config.version or build.version."
@@ -1585,7 +1585,7 @@
 
     # game/distribute_gui.rpy:157
     old "Build Distributions: [project.current.display_name!q]"
-    new "構建釋出版： [project.current.display_name!q]"
+    new "建置釋出版： [project.current.display_name!q]"
 
     # game/distribute_gui.rpy:195
     old "Update old-game"
