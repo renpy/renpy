@@ -81,7 +81,7 @@ The value of a uniform can be:
 * A color, beginning with #. (For example, #f00 or #ff0000 for red.) This
   creates a a vec4 corresponding to that color. This color will be
   premultiplied by its alpha channel.
-* A :doc:`displayable <displayables>`that will be
+* A :doc:`displayable <displayables>` that will be
   used as a texture. This creates a sampler2D that can be used to sample
   the texture.
 
@@ -123,3 +123,10 @@ shader based on a preference. ::
 
     define config.default_textshader = "default"
     define config.textshader_callbacks["default"] = get_default_textshader
+
+Built-In Text Shaders
+=====================
+
+Ren'Py includes a number of built-in text shaders. These are:
+
+.. include:: inc/builtintextshaders
