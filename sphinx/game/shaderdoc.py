@@ -4,6 +4,7 @@ import os
 import renpy
 import textwrap
 
+import re
 
 def shaders(incdir="source/inc"):
 
@@ -80,3 +81,50 @@ def shaders(incdir="source/inc"):
                 p("Fragment shader (priority %d)::" % prio)
 
                 indented(s)
+
+
+
+
+def textshaders(incdir="source/inc"):
+
+    with open(incdir + "/builtintextshaders", "w") as outf:
+
+        for name, shader in sorted(renpy.config.textshaders.items()):
+            print("---", name)
+
+            if not shader.doc:
+                continue
+
+            doc = textwrap.dedent(shader.doc)
+
+            uniforms = { }
+
+            for u, v in shader.uniforms:
+                uniforms[u] = v
+
+            def replace_uniform(m):
+                u = m.group(1)[1:-1]
+                value = uniforms[u]
+
+                u = u.replace("u_textshader_" + name + "_", "u__")
+
+                if isinstance(value, renpy.display.displayable.Displayable):
+                    value = "..."
+                else:
+                    value = repr(value)
+
+                return "`{}` = {}".format(u, value)
+
+            doc = re.sub(r"(`u_.*?`)", replace_uniform, doc)
+
+            outf.write(".. textshader:: {}\n".format(name))
+            outf.write("\n")
+
+            for i in doc.split("\n"):
+                outf.write("    {}\n".format(i))
+
+            if not shader.include_default:
+                outf.write("\n")
+                outf.write("    Using this shader will prevent the default text shader from being used.\n")
+
+            outf.write("\n")

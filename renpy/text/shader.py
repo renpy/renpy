@@ -73,6 +73,11 @@ def to_uniform_value(shader_name, uniform_name, variable_types, value):
                 raise ValueError("Error parsing %r as a uniform value: %s" % (value, e))
 
     if type == "float":
+        try:
+            value = float(value) # type: ignore
+        except ValueError:
+            pass
+
         if not isinstance(value, float):
             raise ValueError("Expected a float for %r in shader %r." % (uniform_name, shader_name))
     elif type == "vec2":
@@ -414,13 +419,14 @@ def register_textshader(
         for Ren'Py's documentation system.
 
     Keyword argument beginning with ``u_`` are passed as uniforms to the shader,
-    with strings beginning with ``#`` being interpreted as colors.
+    with strings beginning with ``#`` being interpreted as colors. Most uniforms
+    should begin with ``u__``, using :ref:`shader local variables <shader-local-variables>`
+    to prevent conflicts with other shaders.
 
     A keyword argument named `variables` and all keyword arguments that begin
     with `fragment_` or `vertex_` are passed to :func:`renpy.register_shader`,
-    when registering the shader part.
+    which registers the shader part.
     """
-
 
     textshader_kwargs = { }
     part_kwargs = { }

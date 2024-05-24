@@ -14,6 +14,7 @@ init 1000000 python:
     incdir = os.path.join(srcdir, 'inc')
 
     shaderdoc.shaders(incdir=incdir)
+    shaderdoc.textshaders(incdir=incdir)
 
     doc.scan_section("", renpy.store)
     doc.scan_section("renpy.", renpy)

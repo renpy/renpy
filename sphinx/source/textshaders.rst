@@ -81,7 +81,7 @@ The value of a uniform can be:
 * A color, beginning with #. (For example, #f00 or #ff0000 for red.) This
   creates a a vec4 corresponding to that color. This color will be
   premultiplied by its alpha channel.
-* A :doc:`displayable <displayables>`that will be
+* A :doc:`displayable <displayables>` that will be
   used as a texture. This creates a sampler2D that can be used to sample
   the texture.
 
@@ -123,3 +123,145 @@ shader based on a preference. ::
 
     define config.default_textshader = "default"
     define config.textshader_callbacks["default"] = get_default_textshader
+
+Built-In Text Shaders
+=====================
+
+Ren'Py includes a number of built-in text shaders. These are:
+
+.. include:: inc/builtintextshaders
+
+
+Creating Text Shaders
+=====================
+
+Text shaders are GLSL programs that are run on the GPU. These shaders are
+registered using the renpy.register_text_shader function.
+
+.. include:: inc/textshader
+
+Variables in Text Shaders
+-------------------------
+
+In additions to the uniforms you provided to the text shader (generally beginning with ``u__``),
+Ren'Py makes the following variables available to text shaders. To use a variable in a text shader,
+it needs to be declared in the `variables` argument to renpy.register_text_shader.
+
+In addition to these, the model :ref:`uniforms and attributes <model-uniforms>` are available, with
+`a_position`, `a_tex_coord`, `u_time` and `u_random` being particularly useful.
+
+Uniforms
+^^^^^^^^
+
+``float u_text_depth``
+    The depth of the text from the top. The topmost layer of text has a depth of 0.0, the next layer has a depth of 1.0, and so on.
+
+``vec2 u_text_offset``
+    The offset of the text from the center of the character. This is in drawable pixels in x, y order.
+
+``float u_text_outline``
+    The width of the outline around the text. This is in drawable pixels, and is the distance from the edge of the text to the edge of the outline.
+
+``float u_text_main``
+    If this is 1.0, the text is the main text. If this is 0.0, the text is the outline or shadow of the main text.
+
+``float u_text_slow_time``
+    The time in seconds since the start of the slow text effect. This will only increase until the end of slow
+    text, when it will max out. If the user clicks to terminate slow text, this will max out. It should only
+    be used for slow text - use
+
+``float u_text_slow_duration``
+    The duration of a single slow character, when showing slow text. 0.0 if not showing slow text.
+
+``float u_text_to_virtual``
+    The ratio of drawable pixels to virtual pixels. This is used to convert from drawable pixels to virtual pixels.
+
+``float u_text_to_drawable``
+    The ratio of virtual pixels to drawable pixels. This is used to convert from virtual pixels to drawable pixels.
+
+``sampler2D tex0``
+    This texture contains the rendered text.
+
+``vec2 res0``
+    The resolution of the texture, in drawable pixels.
+
+Attributes
+^^^^^^^^^^
+
+``vec2 a_text_center``
+    The position of the center of the center of the vertex's baseline, in drawable pixels. This is not the
+    center of the rectangle, it's a point on the baseline and around the center of the character.
+
+``float a_text_index``
+    The index of the glyph being drawn. This is 0 for the first vertex and goes up by one for each vertex.
+
+``vec2 a_text_min_time``
+    The minimum time at which any vertex of the glyph should be shown. When showing from left-to-right,
+    this is the time the leftmost vertices should be shown.
+
+``vec2 a_text_max_time``
+    The maximum time at which any vertex of the glyph should be shown. When showing from left-to-right,
+    this is the time the rightmost vertices should be shown.
+
+``float a_text_time``
+    The time at which this vertex should be shown.
+
+``vec4 a_text_pos_rect``
+    The rectangle being drawn, in drawable pixels. This is a vec4 with the x, y, width, and height of the rectangle,
+    in drawable pixels. This can be converted to texture coordinates by dividing it by ``res0``.
+
+
+Example
+-------
+
+This is an example of a text shader that spins text when shown. ::
+
+    init python:
+
+        def adjust_extra_slow_time(ts, u__delay, **kwargs):
+            """
+            Adjusts a text shader's extra slow time to support the spinning text shader.
+            """
+            ts.extra_slow_time = u__delay
+
+        renpy.register_textshader(
+            "spin",
+            adjust_function = adjust_extra_slow_time,
+
+            variables = """
+            uniform float u__delay;
+            uniform float u__offset;
+            uniform float u_text_slow_time;
+            attribute vec2 a_text_center;
+            attribute float a_text_min_time;
+            """,
+
+            vertex_50 = """
+            float l__angle = clamp((u_text_slow_time - a_text_min_time) / u__delay, 0.0, 1.0) * 2.0 * 3.1415926536;
+            float l__sin = sin(l__angle);
+            float l__cos = cos(l__angle);
+
+            gl_Position.y -= u__offset;
+            gl_Position.xy -= a_text_center;
+            gl_Position = vec4(
+                gl_Position.x * l__cos - gl_Position.y * l__sin,
+                gl_Position.x * l__sin + gl_Position.y * l__cos,
+                gl_Position.z,
+                gl_Position.w
+                );
+            gl_Position.xy += a_text_center;
+            gl_Position.y += u__offset;
+            """,
+
+            u__delay = 1.0,
+            u__offset = 0,
+        )
+
+
+It can be used witt the following script::
+
+    define config.default_textshader = "typewriter"
+
+    label start:
+
+        "This is a test of the {shader=spin:0.5:-5}spin{/shader} text shader."

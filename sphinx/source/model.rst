@@ -222,6 +222,23 @@ There is a variable that can help in debugging custom shaders:
     If true, source code for the GLSL shader programs will be written to
     log.txt on start.
 
+
+.. _shader-local-variables:
+
+Shader Local Variables
+----------------------
+
+Variables can be declared shader-local by using one of ``u__``, ``a__``,
+``v__``, or ``l__`` as a prefix. When this is done, the double underscores
+are filled in with the shader name with all dots replaced with underscores.
+For example, if the shader name is ``example.gradient``, the prefix
+``u__`` will be replaced with ``u_example_gradient_``.
+
+The main use of this is with :doc:`text shaders <textshaders>`, where most
+uniforms are shader-local. Also, local variables inside the shader should
+be declared with ``l__``.
+
+
 Transforms and Model-Based Rendering
 ------------------------------------
 

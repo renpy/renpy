@@ -57,8 +57,8 @@ renpy.register_textshader(
     """,
 
     doc="""
-    The typewriter text shader makes text appear slowly, as if it were being
-    type out by a typewriter.
+    The typewriter text shader handles slow text by making the text appear one character at a time, as if it were being
+    typed out by a typewriter.
     """
 )
 
@@ -93,8 +93,8 @@ renpy.register_textshader(
     u__duration=10.0,
 
     doc="""
-    The dissolve text shader makes text appear slowly, dissolving in from
-    the start to the end.
+    The dissolve text shader handles text by dissolving it in slowly, with the start dissolving in first, and the
+    end dissolving in last.
 
     `u__duration`
         The number of characters that will be changing alpha at a time.  If set to
@@ -104,7 +104,6 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "slowalpha",
-    include_default=False,
 
     variables="""
     uniform float u__alpha
@@ -121,9 +120,9 @@ vec4 l__color = gl_FragColor;
     u__alpha=0.2,
 
     doc="""
-    The slowalpha shows slow text that has yet to be revealed with a non-zero alpha.
-    This is generally used in combination with other text shaders, typewriter
-    or wave, that reveal text slowly.
+    The slowalpha shader is intended to be used with another slow text shader, like typewriter or dissolve.
+    It causes the text that has yet to be revealed to be drawn with an alpha value of `u__alpha`, rather than
+    being invisible.
 
     `u__alpha`
         The alpha value of the text that has not been revealed yet.
@@ -160,7 +159,8 @@ renpy.register_textshader(
     u__duration=10.0,
 
     doc="""
-    The flip text shader flips the text around its center, revealing it slowly
+    The flip shader flips slow text by flipping the text horizontally, with the start flipping in first,
+    and the end flipping in last.
 
     `u__duration`
         The number of characters that will be changing alpha at a time.  If set to
@@ -170,7 +170,7 @@ renpy.register_textshader(
 
 renpy.register_textshader(
     "zoom",
-    include_default=True,
+    include_default=False,
     adjust_function=adjust_duration,
 
     variables="""
@@ -195,7 +195,7 @@ renpy.register_textshader(
     u__duration=10.0,
 
     doc="""
-    The zoom text shader zooms in on the text.
+    The zoom text shader handles slow text to cause it to zoom in from an initial size of `u__zoom` to full size.
 
     `u__zoom`
         The initial amount of zoom to apply to a character when it first starts
@@ -226,7 +226,7 @@ renpy.register_textshader(
     redraw=0.0,
 
     doc="""
-    The jitter text shader jitters moves the text to random positions
+    The jitter text shader moves the text to random positions
     relative to where it would be normally drawn. The position changes
     once per frame.
 
@@ -361,10 +361,10 @@ renpy.register_textshader(
     u__scale=(1.0, 1.0),
 
     doc="""
-    Applys a texture to the text, one line at a time. The texture is aligned with
-    the left sideo of the text. The vertical center of the texture is aligned with
-    the baseline of the text - this meas that most of the texture will not
-    be visible.
+    Multiplies the text with a texture, one line at a time. The texture is aligned with
+    the left side of the text. The vertical center of the texture is aligned with
+    the baseline of the text - this meas that most of the lower half of the texture
+    will not be visible.
 
     `u__texture`
         The texture to multiply the text by.
