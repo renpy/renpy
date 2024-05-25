@@ -1933,6 +1933,12 @@ Rarely or Internally Used
     A list of prefixes that are prepended to filenames that are searched
     for.
 
+.. var:: config.shader_part_filter = None
+
+    If not None, this is a function that is called with a tuple of
+    shader part names. It should return a new tuple of shader parts
+    that will be used.
+
 .. var:: config.show = renpy.show
 
     A function that is used in place of :func:`renpy.show` by the :ref:`show

@@ -225,8 +225,8 @@ There is a variable that can help in debugging custom shaders:
 
 .. _shader-local-variables:
 
-Shader Local Variables
-----------------------
+Shader Part Local Variables
+---------------------------
 
 Variables can be declared shader-local by using one of ``u__``, ``a__``,
 ``v__``, or ``l__`` as a prefix. When this is done, the double underscores

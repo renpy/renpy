@@ -10,6 +10,18 @@ Changelog (Ren'Py 7.x-)
 8.3.0 / 7.8.0
 =============
 
+
+Other Shader Changes
+--------------------
+
+Shaders part can now access :ref:`shader part local variables <shader-local-variables>` to prevent conflicts between
+variables used by different shader parts. While used mostly with  text shaders, shader part local variables are available
+for all shaders to use.
+
+The new :var:`config.shader_part_filter` variable can be used to filter the shader parts that are used. This makes it
+possible to implement preferences that turn on and off shader parts as required.
+
+
 Launcher Changes
 ----------------
 
