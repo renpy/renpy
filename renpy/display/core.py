@@ -2432,6 +2432,7 @@ class Interface(object):
         renpy.display.im.cache.tick()
         renpy.text.text.text_tick()
         renpy.display.predict.reset()
+        renpy.gl2.gl2shadercache.shader_part_filter_cache.clear()
 
         # Clear the size groups.
         renpy.display.layout.size_groups.clear()

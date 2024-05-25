@@ -1462,6 +1462,9 @@ textshader_callbacks = { } # type: dict[str, Callable[[], str]]
 # The default textshader
 default_textshader = None # type: str | None
 
+# A function that is called with a tuple of shader parts, and returns a tuple of shader parts.
+shader_part_filter = None # type: Optional[Callable[[tuple[str]], tuple[str]]]
+
 
 del os
 del collections

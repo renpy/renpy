@@ -224,6 +224,8 @@ precision mediump float;
     return "".join(rv)
 
 
+shader_part_filter_cache = { }
+
 class ShaderCache(object):
     """
     This class caches shaders that were compiled. It's also responsible for
@@ -259,6 +261,14 @@ class ShaderCache(object):
             A tuple of strings, giving the names of the shader parts to include in
             the cache.
         """
+
+        if renpy.config.shader_part_filter is not None:
+            new_partnames = shader_part_filter_cache.get(partnames, None)
+            if new_partnames is None:
+                new_partnames = renpy.config.shader_part_filter(partnames)
+                shader_part_filter_cache[partnames] = new_partnames
+
+            partnames = new_partnames
 
         rv = self.cache.get(partnames, None)
         if rv is not None:
