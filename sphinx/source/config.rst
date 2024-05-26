@@ -1617,6 +1617,11 @@ Rarely or Internally Used
     shown to the user by :ref:`say <say-statement>` or :doc:`menu
     <menus>` statements will be logged to this file.
 
+.. var:: config.log_events = False
+
+    If true, Ren'Py will log pygame-style events to the log.txt file. This will hurt performance, but might be
+    useful for debugging certain problems.
+
 .. var:: config.log_width = 78
 
     The width of lines logged when :var:`config.log` is used.
