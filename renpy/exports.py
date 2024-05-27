@@ -2381,8 +2381,14 @@ def log(msg):
 
         import textwrap
 
-        wrapped = textwrap.fill(msg, renpy.config.log_width)
-        wrapped = unicode(wrapped)
+        wrapped = [ ]
+
+        for line in msg.split('\n'):
+            line = textwrap.fill(line, renpy.config.log_width)
+            line = unicode(line)
+            wrapped.append(line)
+
+        wrapped = '\n'.join(wrapped)
 
         logfile.write(wrapped + "\n")
         logfile.flush()
