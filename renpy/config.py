@@ -1450,6 +1450,9 @@ screens_never_cancel_hide = True
 # A list of transforms that are applied to entire layers.
 layer_transforms = { }
 
+# Set this to true to log events to log.txt.
+log_events = os.environ.get("RENPY_LOG_EVENTS", False)
+
 # Should Ren'Py scan for exec.py?
 exec_py = True
 

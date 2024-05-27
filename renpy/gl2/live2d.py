@@ -54,6 +54,8 @@ def onetime_init():
         dll = "Live2DCubismCore.dll"
     elif renpy.macintosh:
         dll = "libLive2DCubismCore.dylib"
+    elif renpy.ios:
+        dll = sys.executable
     else:
         dll = "libLive2DCubismCore.so"
 

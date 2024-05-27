@@ -3034,6 +3034,9 @@ class Interface(object):
 
                     continue
 
+                if renpy.config.log_events:
+                    renpy.display.log.write("%r", ev)
+
                 # Handle quit specially for now.
                 if ev.type == pygame.QUIT:
                     self.quit_event()
