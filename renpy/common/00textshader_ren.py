@@ -219,7 +219,7 @@ renpy.register_textshader(
 
     vertex_30="""
     vec2 l__jitter = u__jitter * u_text_to_drawable;
-    gl_Position.xy += l__jitter * u_random.xy - l__jitter / 2;
+    gl_Position.xy += l__jitter * u_random.xy - l__jitter / 2.0;
     """,
 
     u__jitter=(3.0, 3.0),
@@ -273,7 +273,7 @@ renpy.register_textshader(
     """,
 
     vertex_40="""
-    gl_Position.y += cos(2 * 3.14159265359 * (a_text_index / u__wavelength + u_time * u__frequency)) * u__amplitude * u_text_to_drawable;
+    gl_Position.y += cos(2.0 * 3.14159265359 * (a_text_index / u__wavelength + u_time * u__frequency)) * u__amplitude * u_text_to_drawable;
     """,
 
     u__amplitude=5.0,
