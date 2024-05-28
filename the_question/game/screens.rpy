@@ -792,6 +792,7 @@ screen preferences():
                     textbutton "Česky" text_font "DejaVuSans.ttf" action Language("czech")
                     textbutton "Dansk" text_font "DejaVuSans.ttf" action Language("danish")
                     textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
+                    textbutton "Italiano" text_font "DejaVuSans.ttf" action Language("italian")
                     textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
 

@@ -23,7 +23,6 @@ translate italian strings:
 
     # options.rpy:17
     old "Ren'Py 7 Default GUI"
-    # Automatic translation.
     new "GUI predefinita di Ren'Py 7"
 
     # options.rpy:20
@@ -198,26 +197,19 @@ translate italian strings:
     old "## Icon"
     new "## Icona"
 
-
-translate italian strings:
-
     # gui/game/options.rpy:31
     old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
-    # Automatic translation.
-    new "## Testo che viene inserito nella schermata del gioco. Posizionare il testo tra le virgolette triple e lasciare una riga vuota tra i paragrafi."
+    new "## Testo che viene inserito nella schermata informazioni del gioco. Inserisci il testo tra triple virgolette e lascia una riga vuota tra i paragrafi."
 
     # gui/game/options.rpy:47
     old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
-    # Automatic translation.
-    new "## Queste tre variabili controllano, tra le altre cose, quali mixer vengono mostrati al giocatore per impostazione predefinita. Impostando una di queste variabili a False, si nasconde il mixer appropriato."
+    new "## Queste tre variabili controllano, tra le altre cose, quali mixer vengono mostrati al giocatore per impostazione predefinita. Impostando una di queste a False, si nasconde il mixer appropriato."
 
     # gui/game/options.rpy:82
     old "## Between screens of the game menu."
-    # Automatic translation.
     new "## Tra le schermate del menu di gioco."
 
     # gui/game/options.rpy:203
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-    # Automatic translation.
     new "## Per eseguire gli acquisti in-app è necessaria una chiave di licenza Google Play. Si trova nella console per sviluppatori di Google Play, in \"Monetizzazione\" > \"Impostazione monetizzazione\" > \"Licenze\"."
 
