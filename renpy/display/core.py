@@ -2708,6 +2708,9 @@ class Interface(object):
             renpy.display.focus.before_interact(focus_roots)
             renpy.display.behavior.WebInput.post_find_focusable()
 
+            # We're no longer after rollback.
+            renpy.game.after_rollback = False
+
             # Something updated the screens. Deal with it now, so the player doesn't
             # see it.
             if self.restart_interaction:
@@ -2738,9 +2741,6 @@ class Interface(object):
 
             # Have we drawn a frame yet?
             video_frame_drawn = False
-
-            # We're no longer after rollback.
-            renpy.game.after_rollback = False
 
             # How many frames have we shown so far?
             frame = 0
