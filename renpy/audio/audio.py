@@ -1264,7 +1264,7 @@ def rollback():
 
         for c in all_channels:
             if not c.loop:
-                c.fadeout(0)
+                c.fadeout(renpy.config.fadeout_audio)
 
 
 def autoreload(_fn):
