@@ -627,6 +627,12 @@ class Live2D(renpy.display.displayable.Displayable):
         else:
             attributes = args.args
 
+
+        if common.attribute_filter:
+            attributes = common.attribute_filter(attributes)
+            if not isinstance(attributes, tuple):
+                attributes = tuple(attributes)
+
         if common.attribute_function is not None:
             attributes = common.attribute_function(attributes)
 
