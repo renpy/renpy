@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -61,7 +61,7 @@ position_property_names = [
     "debug",
     ]
 
-position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
+position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip"), Keyword("group_alt"), Keyword("extra_alt") ] # type: ignore
 text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ] # type: ignore
 side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
 viewport_position_properties = [ PrefixStyle("viewport_", i) for i in position_property_names ] # type: ignore
@@ -102,6 +102,7 @@ text_property_names = [
     "slow_abortable",
     "strikethrough",
     "textalign",
+    "textshader",
     "text_align",
     "text_y_fudge",
     "underline",
@@ -148,6 +149,7 @@ button_properties = [ Style(i) for i in [
     "focus_mask",
     "child",
     "keyboard_focus",
+    "keyboard_focus_insets",
     "key_events",
     ] ] + [
         Keyword("action"),

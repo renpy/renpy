@@ -84,24 +84,24 @@ displayed. For example, if the player's name is stored in the
 
     g "Welcome to the Nekomimi Institute, [playername]!"
 
-Ren'Py will interpolate variables found in the global store. When
-using a text widget in a screen, Ren'Py will also interpolate screen
-local variables. (This can be overridden by supplying an explicit
-scope argument to the Text displayable.)
+Ren'Py will search for variables in the following order:
+
+* When used in a screen, screen-local variables.
+* Variables found in the ``interpolate`` namespace.
+* Variables found in the global namespace.
 
 Ren'Py isn't limited to interpolating simple variables. It can also
-interpolate fields and components of tuples. So it's possible to have::
+interpolate any valid Python expression. So it's possible to have::
 
     g "My first name is [player.names[0]]."
 
 It's possible to apply formatting when displaying numbers. This
 will display a floating point number to two decimal places::
 
-    $ percent = 100.0 * points / max_points
-    g "I like you [percent:.2] percent!"
+    g "I like you [100.0 * points / max_points:.2] percent!"
 
-Ren'Py's string interpolation is taken from the :pep:`3101` string
-formatting syntax. Ren'Py uses [ to introduce string formatting
+Ren'Py's string formatting is taken from the :pep:`3101` string
+formatting syntax. Ren'Py uses [ to introduce string interpolation
 because { was taken by text tags.
 
 Along with the ``!s`` and ``!r`` conversion flags supported by Python, Ren'Py
@@ -368,6 +368,15 @@ Tags that apply to all text are:
 
        g "It's good {s}to see you{/s}."
 
+.. text-tag:: shader
+
+    The shader tag applies a text shader to a section of text.
+    The argument is the name of the shader to apply. ::
+
+        "This text is {shader=jitter:speed=3}jittery{/shader}."
+
+    See :doc:`textshaders` for more information.
+
 .. text-tag:: size
 
    The size tag changes the size of text between itself and its
@@ -603,8 +612,8 @@ steps required for your game to support ruby text.
 First, you must set up styles for the ruby text. The following style
 changes are required:
 
-1. The :propref:`line_leading` property must be used to leave enough
-   vertical space for the ruby text.
+1. One of the :propref:`line_leading` or :propref:`ruby_line_leading` properties
+   must be used to leave enough vertical space for the ruby text.
 2. A new named style must be created. The properties of this style,
    such as :propref:`size` should be set in a fashion appropriate
    for ruby text.
@@ -619,13 +628,14 @@ For example::
     style ruby_style is default:
         size 12
         yoffset -20
+        color None # Use the same color as the parent text.
 
     style say_dialogue:
-        line_leading 12
+        ruby_line_leading 12
         ruby_style style.ruby_style
 
     style history_text:
-        line_leading 12
+        ruby_line_leading 12
         ruby_style style.ruby_style
 
 (Use ``style.style_name`` to refer to a style for this purpose.)
@@ -681,8 +691,8 @@ followed by an at-sign and the file name. For example, "0\@font.ttc" is
 the first font in a collection, "1\@font.ttc" the second, and so on.
 
 When looking for a font files, if the file is not found, Ren'Py will search
-in the ``game/fonts`` directory. For example, when looking for test.ttf, Ren'Py
-will first search for ``game/test.ttf``, and then for ``game/fonts/test.ttf``.
+in the :file:`game/fonts` directory. For example, when looking for "test.ttf", Ren'Py
+will first search for :file:`game/test.ttf`, and then for :file:`game/fonts/test.ttf`.
 
 Font Replacement
 ----------------
@@ -760,7 +770,7 @@ points, and the first range to cover a point is used.
 For example::
 
     style default:
-         font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
+        font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
 
 .. include:: inc/font_group
 

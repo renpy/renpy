@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -184,7 +184,10 @@ init -1 python hide:
     #####################
     # More customizations can go here.
 
-    config.sound = False
+    config.has_sound = False
+    config.has_music = False
+    config.has_voice = False
+    config.force_sound = False
     config.quit_action = Quit(confirm=False)
     config.window_icon = "images/logo.png"
     config.has_autosave = False
@@ -242,9 +245,11 @@ init python:
     # allows the updater to run.
     build.include_update = True
 
+    # Build both kinds of updates.
+    build.update_formats = [ "zsync", "rpu" ]
+
     # Allow empty directories, so we can distribute the images directory.
     build.exclude_empty_directories = False
-
 
     # Mac signing options.
     import os

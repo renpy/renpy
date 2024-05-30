@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -105,32 +105,20 @@ init -1400 python:
 
     _define = define = object()
 
-    # Ease images around. These are basically cosine-warped moves.
-    def _ease_out_time_warp(x):
-        import math
-        return 1.0 - math.cos(x * math.pi / 2.0)
-
-    def _ease_in_time_warp(x):
-        import math
-        return math.cos((1.0 - x) * math.pi / 2.0)
-
-    def _ease_time_warp(x):
-        import math
-        return .5 - math.cos(math.pi * x) / 2.0
-
-    # Back up the move transition, so that if MoveTransition gets replaced by
-    # renpy.compat, this still works.
-    __MoveTransition = MoveTransition
+    _ease_out_time_warp = _warper.easeout
+    _ease_in_time_warp = _warper.easein
+    _ease_time_warp = _warper.ease
 
     # This defines a family of move transitions, using the old-style methods.
     def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
         """
         :doc: transition_family
 
-        This defines a family of :class:`move transitions <MoveTransition>`, similar to the move and ease
-        transitions. For a given `prefix`, this defines the transitions:
+        This defines a family of :class:`move transitions <MoveTransition>`,
+        similar to the :var:`move` and :var:`ease` transitions. For a given
+        `prefix`, this defines the transitions:
 
-        * *prefix*- A transition that takes `delay` seconds to move images that
+        * *prefix* - A transition that takes `delay` seconds to move images that
           changed positions to their new locations.
 
         * *prefix*\ inleft, *prefix*\ inright, *prefix*\ intop, *prefix*\ inbottom - Transitions
@@ -143,11 +131,13 @@ init -1400 python:
           positions to their new locations, with newly hidden images leaving via
           the appropriate side.
 
+        The other parameters are as :class:`MoveTransition` takes them:
+
         `time_warp`, `in_time_warp`, `out_time_warp`
-            Time warp functions that are given a time from 0.0 to 1.0 representing
-            the fraction of the move that is complete, and return a value in the same
-            range giving the fraction of a linear move that is complete.
-            See :ref:`warpers <warpers>` for more information.
+            :ref:`Time warp functions <warpers>` that are given a time from 0.0
+            to 1.0 representing the fraction of the move that is complete, and
+            return a value in the same range giving the fraction of a linear
+            move that is complete.
 
             This can be used to define functions that ease the images around,
             rather than moving them at a constant speed.
@@ -176,7 +166,8 @@ init -1400 python:
                 delay,
                 old=old,
                 layers=layers,
-                time_warp=time_warp),
+                time_warp=time_warp,
+                ),
 
             "inright" : MoveTransition(
                 delay,

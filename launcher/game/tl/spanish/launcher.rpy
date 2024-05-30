@@ -2020,8 +2020,8 @@
     new "Tema del lanzdor"
 
     # game/preferences.rpy:254
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "Puedes encontrar información sobre cómo crear un tema personalizado {a=https://www.renpy.org/doc/html/skins.html}en la documentación de Ren'Py{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "Puedes encontrar información sobre cómo crear un tema personalizado {a=[skins_url]}en la documentación de Ren'Py{/a}."
 
     # game/preferences.rpy:271
     old "Install Libraries:"
@@ -2114,7 +2114,7 @@
     # game/androidstrings.rpy:69
     old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
     new "He encontrado un archivo bundle.keystore en el directorio rapt. ¿Quieres usar este archivo?"
-    
+
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
     new "Compilación nocturna de correcciones para la versión estable de Ren'Py."
@@ -2150,3 +2150,103 @@
     # game/distribute.rpy:532
     old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
     new "La compilación de distribuciones falló:\n\nEl proyecto es el Tutorial de Ren'Py, que no puede ser distribuido fuera de Ren'Py. Considera usar The Question como proyecto de prueba."
+
+    # game/androidstrings.rpy:46
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
+    new "No he podido utilizar javac para compilar un archivo de prueba. Si aún no has instalado el Kit de Desarrollo de Java, descárgalo de:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\nEl JDK es diferente del JRE, por lo que es posible que tengas Java sin tener el JDK. Por favor, instala el JDK [JDK_REQUIREMENT], y añádelo a su PATH.\n\nSin un JDK que funcione, no puedo continuar."
+
+    # game/androidstrings.rpy:47
+    old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new "La versión de Java en tu computadora no parece ser JDK [JDK_REQUIREMENT], que se requiere para construir aplicaciones de Android. Si necesita instalar un JDK más reciente, puede descargarlo de:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, y añadirlo a su PATH. También puede configurar la variable de entorno JAVA_HOME para utilizar una versión diferente de Java."
+
+    # game/distribute.rpy:1620
+    old "Finishing the [variant] [format] package."
+    new "Finalizando el paquete [variant] [format]."
+
+    # game/editor.rpy:185
+    old "Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended."
+    new "Atom está obsoleto y sus bugs son conocidos por corromper juegos, se recomienda usar otro editor."
+
+    # game/editor.rpy:214
+    old "JEdit is deprecated, using another editor is recommended."
+    new "JEdit está obsoleto, se recomienda utilizar otro editor."
+
+    # game/editor.rpy:607
+    old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
+    new "El editor de texto Atom ya no está soportado por sus desarrolladores. Sugerimos cambiar a Visual Studio Code u otro editor."
+
+    # game/editor.rpy:607
+    old "Select editor now."
+    new "Seleccione un editor ahora."
+
+    # game/editor.rpy:607
+    old "Ignore until next launch."
+    new "Ignorar hasta el próximo lanzamiento."
+
+    # game/editor.rpy:607
+    old "Do not ask again."
+    new "No vuelver a preguntar."
+
+    # game/new_project.rpy:38
+    old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
+    new "Advertencia : estás utilizando Ren'Py 7. Se recomienda iniciar nuevos proyectos utilizando Ren'Py 8 en su lugar."
+
+    # game/new_project.rpy:49
+    old "Please select a template project to use."
+    new "Selecciona una plantilla para el proyecto."
+
+    # game/new_project.rpy:49
+    old "Do not use a template project."
+    new "No utilizar una plantilla para el proyecto."
+
+    # game/preferences.rpy:94
+    old "Lint"
+    new "Lint"
+
+    # game/preferences.rpy:233
+    old "Game Options:"
+    new "Opciones del juego:"
+
+    # game/preferences.rpy:240
+    old "Skip splashscreen"
+    new "Saltar pantalla splashscreen"
+
+    # game/preferences.rpy:258
+    old "Restore window position"
+    new "Restablecer la posición de la ventana"
+
+    # game/preferences.rpy:262
+    old "Prefer RPU updates"
+    new "Prefiera las actualizaciones de RPU"
+
+    # game/preferences.rpy:332
+    old "Open projects.txt"
+    new "Abrir projects.txt"
+
+    # game/preferences.rpy:356
+    old "Lint toggles:"
+    new "Ajuestes de Lint:"
+
+    # game/preferences.rpy:360
+    old "Check for orphan/obsolete translations"
+    new "Buscar traducciones huérfanas/obsoletas"
+
+    # game/preferences.rpy:363
+    old "Check parameters shadowing reserved names"
+    new "Comprobar los parámetros que ocultan a los nombres reservados"
+
+    # game/preferences.rpy:366
+    old "Print block, word, and character counts by speaking character."
+    new "Imprime el recuento de bloques, palabras y contador de caracteres por carpersonaje."
+
+    # game/preferences.rpy:369
+    old "Unclosed text tags"
+    new "Etiquetas de texto no cerradas"
+
+    # game/preferences.rpy:372
+    old "Show all unreachable blocks and orphaned translations."
+    new "Mostrar todos los bloques inalcanzables y las traducciones huérfanas."
+
+    # game/project.rpy:776
+    old "Splashscreen skipped in launcher preferences."
+    new "Se omite la pantalla Splashscreen en las preferencias del lanzador."

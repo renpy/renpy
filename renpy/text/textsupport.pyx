@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,7 +30,15 @@ cdef class Glyph:
 
     def __cinit__(self):
         self.variation = 0
-        self.delta_x_offset = 0
+        self.delta_x_adjustment = 0
+
+        self.add_left = 0
+        self.add_top = 0
+        self.add_right = 0
+        self.add_bottom = 0
+        self.rtl = 0
+        self.duration = -1
+        self.shader = None
 
     def __repr__(self):
         if self.variation == 0:
@@ -41,7 +49,7 @@ cdef class Glyph:
     _types = """
         x: int
         y: int
-        delta_x_offset : int
+        delta_x_adjustment : int
         character : int
         variation : int
         split : int
@@ -53,13 +61,21 @@ cdef class Glyph:
         time : float
         hyperlink : int
         draw : bool
+        add_left : int
+        add_top : int
+        add_right : int
+        add_bottom : int
+        rtl: bool
+        duration: float
+        shader: renpy.text.shader.TextShader|None
+        index: short
         """
-
 
 cdef class Line:
 
-    def __init__(self, int y, int height, list glyphs):
+    def __init__(self, int y, int baseline, int height, list glyphs):
         self.y = y
+        self.baseline = baseline
         self.height = height
         self.glyphs = glyphs
         self.eop = False
@@ -70,6 +86,7 @@ cdef class Line:
     _types = """
         y : int
         height : int
+        baseline: int
         glyphs : list[Glyph]
         max_time : float
         eop : bool
@@ -432,6 +449,10 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
             continue
 
+        if new_type == BC_CL or new_type == BC_CP:
+            g.split = SPLIT_IGNORE
+            continue
+
         # Figure out the type of break opportunity we have here.
         # ^ Prohibited break.
         # % Indirect break.
@@ -493,7 +514,7 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
     """
 
     cdef Glyph g, split_g
-    cdef float width, x, splitx, gwidth
+    cdef float width, x, splitx, gwidth, ignored
 
     width = first_width
     split_g = None
@@ -505,12 +526,19 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
     # The x position after splitting the line.
     splitx = 0
 
+    # The amount of x position ignored with SPLIT_IGNORE.
+    ignored = 0
+
     for g in glyphs:
 
         if g.ruby == RUBY_TOP:
             continue
 
         if g.ruby == RUBY_ALT:
+            continue
+
+        if g.split == SPLIT_IGNORE:
+            ignored += g.advance
             continue
 
         # If the x coordinate is greater than the width of the screen,
@@ -520,8 +548,10 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
             split_g = None
             width = rest_width
 
-        x += g.advance
-        splitx += g.advance
+        x += g.advance + ignored
+        splitx += g.advance + ignored
+
+        ignored = 0
 
         if g.split == SPLIT_INSTEAD:
             if split_g is not None:
@@ -628,6 +658,9 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
         if g.ruby == RUBY_ALT:
             continue
 
+        if g.split == SPLIT_IGNORE:
+            g.split = SPLIT_NONE
+
         if g.split != SPLIT_NONE and old_g:
             # When a glyph is at the end of the line, set its advance to
             # be its width. (This makes things like strikeout and underline
@@ -658,7 +691,7 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
 
     return maxx
 
-def place_vertical(list glyphs, int y, int spacing, int leading):
+def place_vertical(list glyphs, int y, int spacing, int leading, int ruby_line_leading):
     """
     Vertically places the non-ruby glyphs. Returns a list of line end heights,
     and the y-value for the top of the next line.
@@ -669,6 +702,8 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
     cdef int pos, sol, len_glyphs, i
     cdef int ascent, line_spacing
     cdef bint end_line
+    cdef bint has_ruby
+    cdef int line_leading
 
     if not glyphs:
         return [ ], y
@@ -695,13 +730,17 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
 
         if end_line:
 
+            has_ruby = False
+
             for i from sol <= i < pos:
                 gg = glyphs[i]
 
                 if gg.ruby == RUBY_TOP:
+                    has_ruby = True
                     continue
 
                 if gg.ruby == RUBY_ALT:
+                    has_ruby = True
                     continue
 
                 if gg.ascent:
@@ -713,7 +752,26 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
                     gg.y = y
                     gg.ascent = ascent
 
-            l = Line(y - leading, leading + line_spacing + spacing, glyphs[sol:pos])
+            # Line leading is the combination of line_leading and ruby_line_leading, if the latter
+            # is required.
+            line_leading = leading
+
+            if has_ruby:
+                y += ruby_line_leading
+                line_leading += ruby_line_leading
+
+                for i from sol <= i < pos:
+                    gg = glyphs[i]
+
+                    if gg.ruby == RUBY_TOP:
+                        continue
+
+                    if gg.ruby == RUBY_ALT:
+                        continue
+
+                    gg.y += ruby_line_leading
+
+            l = Line(y - line_leading, y + ascent, line_leading + line_spacing + spacing, glyphs[sol:pos])
             rv.append(l)
 
             y += line_spacing
@@ -744,7 +802,6 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
             line_spacing = g.line_spacing
 
         pos += 1
-
 
     rv[-1].eop = True
     return rv, y - leading
@@ -788,7 +845,7 @@ def assign_times(float t, float gps, list glyphs):
 
         t += tpg
         g.time = t
-
+        g.duration = tpg
 
     return t
 
@@ -812,6 +869,20 @@ def max_times(list l):
         line.max_time = max_time
 
     return max_time
+
+def assign_index(index, list glyphs):
+    """
+    Assign an index to each glyph.
+    """
+
+    cdef Glyph g
+
+    for g in glyphs:
+        if g.time != -1:
+            g.index = index
+            index += 1
+
+    return index
 
 
 def hyperlink_areas(list l):
@@ -1074,6 +1145,8 @@ def reverse_lines(list glyphs):
 
             continue
 
+        g.rtl = True
+
         block.append(g)
 
     block.reverse()
@@ -1098,26 +1171,26 @@ def copy_splits(list source, list dest):
         d.split = s.split
 
 
-def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w, double h):
+def adjust_glyph_spacing(list glyphs, list lines, double dx, double dy, double w, double h):
     cdef Glyph g
 
     if w <= 0 or h <= 0:
         return
 
-    cdef int old_x_offset = 0
-    cdef int x_offset
+    cdef int old_x_adjustment = 0
+    cdef int x_adjustment
 
     for g in glyphs:
 
-        x_offset = int(dx * g.x / w)
+        x_adjustment = int(dx * g.x / w)
 
-        g.x += x_offset
+        g.x += x_adjustment
         g.y += int(dy * g.y / h)
 
-        if x_offset > old_x_offset:
-            g.delta_x_offset = x_offset - old_x_offset
+        if x_adjustment > old_x_adjustment:
+            g.delta_x_adjustment = x_adjustment - old_x_adjustment
 
-        old_x_offset = x_offset
+        old_x_adjustment = x_adjustment
 
     for l in lines:
         end = l.y + l.height
@@ -1130,7 +1203,7 @@ def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w,
 
         l.height = end - l.y
 
-def offset_glyphs(list glyphs, int x, int y):
+def move_glyphs(list glyphs, int x, int y):
     cdef Glyph g
 
     if x == 0 and y == 0:
@@ -1139,3 +1212,19 @@ def offset_glyphs(list glyphs, int x, int y):
     for g in glyphs:
         g.x += x
         g.y += y
+
+
+def get_textshader_set(list glyphs):
+    """
+    Returns the set of all textshaders.
+    """
+
+    rv = set()
+    shader = None
+
+    for g in glyphs:
+        if g.shader is not shader:
+            rv.add(g.shader)
+            shader = g.shader
+
+    return rv

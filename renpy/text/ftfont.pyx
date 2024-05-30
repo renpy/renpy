@@ -1,5 +1,5 @@
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -715,6 +715,11 @@ cdef class FTFont:
             if bmy + <int> cache.bitmap.rows > h:
                 h = bmy + cache.bitmap.rows
 
+            glyph.add_left = <int> max(-(bmx - glyph.x), 0)
+            glyph.add_right = <int> max(bmx + cache.bitmap.width - (glyph.x + glyph.width), 0)
+            glyph.add_top = <int> max(-(bmy - glyph.y), 0)
+            glyph.add_bottom = <int> max(bmy + cache.bitmap.rows - (glyph.y + glyph.line_spacing), 0)
+
         return x, y, w, h
 
     def draw(self, pysurf, float xo, int yo, color, list glyphs, int underline, bint strikethrough, black_color):
@@ -770,8 +775,8 @@ cdef class FTFont:
             x = <int> (glyph.x + xo)
             y = <int> (glyph.y + yo)
 
-            underline_x = x - glyph.delta_x_offset
-            underline_end = x + <int> glyph.advance + expand
+            underline_x = x - glyph.delta_x_adjustment
+            underline_end = x + <int> (glyph.advance + expand + .999)
 
             if glyph.variation == 0:
                 index = FT_Get_Char_Index(face, glyph.character)
@@ -878,9 +883,9 @@ cdef class FTFont:
                     for px from underline_x <= px < underline_end:
                         line = pixels + py * pitch + px * 4
 
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
+                        line[0] = Sr * Sa // 255
+                        line[1] = Sg * Sa // 255
+                        line[2] = Sb * Sa // 255
                         line[3] = Sa
 
             # Strikethrough.
@@ -894,7 +899,7 @@ cdef class FTFont:
                     for px from underline_x <= px < underline_end:
                         line = pixels + py * pitch + px * 4
 
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
+                        line[0] = Sr * Sa // 255
+                        line[1] = Sg * Sa // 255
+                        line[2] = Sb * Sa // 255
                         line[3] = Sa

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -377,7 +377,7 @@ class SaveRecord(object):
         self.first_filename = filename
 
 
-def save(slotname, extra_info='', mutate_flag=False):
+def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
     """
     :doc: loadsave
     :args: (filename, extra_info='')
@@ -394,6 +394,9 @@ def save(slotname, extra_info='', mutate_flag=False):
 
     :func:`renpy.take_screenshot` should be called before this function.
     """
+
+    if not renpy.config.save:
+        return
 
     # Update persistent file, if needed. This is for the web and mobile
     # platforms, to make sure the persistent file is updated whenever the
@@ -435,7 +438,10 @@ def save(slotname, extra_info='', mutate_flag=False):
     if mutate_flag and renpy.revertable.mutate_flag:
         raise SaveAbort()
 
-    screenshot = renpy.game.interface.get_screenshot()
+    if include_screenshot:
+        screenshot = renpy.game.interface.get_screenshot()
+    else:
+        screenshot = None
 
     json = {
         "_save_name" : extra_info,

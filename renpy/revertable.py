@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,25 +26,18 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional
-
 import __future__
 
-import marshal
 import random
 import weakref
-import re
 import sys
-import time
-import io
-import types
 import copyreg
 import functools
 
 import renpy
 
 # A set of flags that indicate dict should run in future-compatible mode.
-FUTURE_FLAGS = (__future__.CO_FUTURE_DIVISION | __future__.CO_FUTURE_WITH_STATEMENT) # type: ignore
+FUTURE_FLAGS = __future__.division.compiler_flag | __future__.with_statement.compiler_flag
 
 ##############################################################################
 # Monkeypatch copy_reg to work around a change in the class that RevertableSet
@@ -193,7 +186,7 @@ class RevertableList(list):
     append = mutator(list.append)
     extend = mutator(list.extend)
     insert = mutator(list.insert)
-    pop = mutator(list.pop) # type: ignore
+    pop = mutator(list.pop)
     remove = mutator(list.remove)
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
@@ -203,6 +196,8 @@ class RevertableList(list):
         @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             l = method(*args, **kwargs) # type: ignore
+            if l is NotImplemented:
+                return l
             return RevertableList(l)
 
         return newmethod
@@ -210,6 +205,8 @@ class RevertableList(list):
     __add__ = wrapper(list.__add__) # type: ignore
     if PY2:
         __getslice__ = wrapper(list.__getslice__) # type: ignore
+    __mul__ = wrapper(list.__mul__) # type: ignore
+    __rmul__ = wrapper(list.__rmul__) # type: ignore
 
     del wrapper
 
@@ -221,19 +218,11 @@ class RevertableList(list):
         else:
             return rv
 
-    def __mul__(self, other):
-        if not isinstance(other, int):
-            raise TypeError("can't multiply sequence by non-int of type '{}'.".format(type(other).__name__))
-
-        return RevertableList(list.__mul__(self, other))
-
-    __rmul__ = __mul__ # type: ignore
-
     def copy(self):
         return self[:]
 
     def clear(self):
-        self[:] = []
+        del self[:]
 
     def _clean(self):
         """
@@ -370,6 +359,35 @@ class RevertableDict(dict):
             self[k] = v
 
 
+class RevertableDefaultDict(RevertableDict):
+    """
+    :doc: rollbackclasses
+    :name: defaultdict
+    :args: (default_factory, /, *args, **kwargs)
+
+    This is a revertable version of collections.defaultdict. It takes a
+    factory function. If a key is accessed that does not exist, the `default_factory`
+    function is called with the key as an argument, and the result is
+    returned.
+
+    While the default_factory attribute is present on this object, it does not
+    participate in rollback, and so should not be changed.
+    """
+
+    def __init__(self, default_factory=None, *args, **kwargs):
+        self.default_factory = default_factory
+        super(RevertableDefaultDict, self).__init__(*args, **kwargs)
+
+    def __missing__(self, key):
+        if self.default_factory is None:
+            raise KeyError(key)
+
+        rv = self.default_factory()
+        self[key] = rv
+        return rv
+
+
+
 class RevertableSet(set):
 
     def __setstate__(self, state):
@@ -482,6 +500,50 @@ class RevertableObject(object):
     def _rollback(self, compressed):
         self.__dict__.clear()
         self.__dict__.update(compressed)
+
+
+class MultiRevertable(object):
+    """
+    :doc: rollbackclasses
+    :name: MultiRevertable
+
+    MultiRevertable is a mixin class that allows an object to inherit
+    from more than one kind of revertable object. To use it, from MultiRevertable,
+    then from the revertable classes you want to inherit from.
+
+    For example::
+
+        class MyDict(MultiRevertable, dict, object):
+            pass
+
+    will create an class that will rollback both its dict contents and
+    object fields.
+    """
+
+    def _rollback_types(self):
+        rv = [ ]
+
+        for i in self.__class__.__mro__:
+
+            if i is MultiRevertable:
+                continue
+
+            if "_rollback" in i.__dict__:
+                rv.append(i)
+
+        return rv
+
+    def _clean(self):
+        return tuple(i._clean(self) for i in self._rollback_types())
+
+    def _compress(self, clean):
+        return tuple(i._compress(self, c) for i, c in zip(self._rollback_types(), clean))
+
+    def _rollback(self, compressed):
+
+        for i, c in zip(self._rollback_types(), compressed):
+            i._rollback(self, c)
+
 
 
 def checkpointing(method):

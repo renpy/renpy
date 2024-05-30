@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,8 +29,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional
-
 import sys
 
 import renpy
@@ -42,9 +40,7 @@ from renpy.display.behavior import is_selected, is_sensitive
 
 class Action(renpy.object.Object):
     """
-    This can be passed to the clicked method of a button or hotspot. It is
-    called when the action is selected. The other methods determine if the
-    action should be displayed insensitive or disabled.
+    Subclassable by creators, documented in Sphinx.
     """
 
     # Alt text.
@@ -66,12 +62,12 @@ class Action(renpy.object.Object):
         return
 
     def __call__(self):
-        raise Exception("Not implemented")
+        raise NotImplementedError
 
 
 class BarValue(renpy.object.Object):
     """
-    This can be passed to the value method of bar and hotbar.
+    Subclassable by creators, documented in Sphinx.
     """
 
     # Alt text.
@@ -86,7 +82,7 @@ class BarValue(renpy.object.Object):
         return
 
     def get_adjustment(self): # type: (BarValue) -> renpy.display.behavior.Adjustment
-        raise Exception("Not implemented")
+        raise NotImplementedError
 
     def get_style(self):
         return "bar", "vbar"
@@ -103,6 +99,12 @@ class BarValue(renpy.object.Object):
 class Addable(object):
     # A style_prefix associates with this addable.
     style_prefix = None
+
+    def add(self, d, key):
+        raise NotImplementedError
+
+    def close(self, d):
+        raise NotImplementedError
 
     def get_layer(self):
         return Exception("Operation can only be performed on a layer.")
@@ -224,7 +226,7 @@ class ChildOrFixed(Addable):
 
 
 # A stack of things we can add to.
-stack = [ ]
+stack = [ ] # type: list[Addable]
 
 # A stack of open ui.ats.
 at_stack = [ ]
@@ -251,7 +253,7 @@ def reset():
 renpy.game.post_init.append(reset)
 
 
-def interact(type='misc', roll_forward=None, **kwargs): # @ReservedAssignment
+def interact(type='misc', roll_forward=None, **kwargs):
     """
     :doc: ui
     :args: (*, roll_forward=None, mouse='default')
@@ -421,7 +423,7 @@ def combine_style(style_prefix, style_suffix):
     else:
         new_style = style_prefix + "_" + style_suffix
 
-    return renpy.style.get_style(new_style) # @UndefinedVariable
+    return renpy.style.get_style(new_style)
 
 
 def prefixed_style(style_suffix):
@@ -477,9 +479,9 @@ class Wrapper(renpy.object.Object):
 
         # Pull out the special kwargs, widget_id, at, and style_prefix.
 
-        widget_id = kwargs.pop("id", None) # @ReservedAssignment
+        widget_id = kwargs.pop("id", None)
 
-        at_list = kwargs.pop("at", [ ])
+        at_list = kwargs.pop("at", [ ]) # type: list
         if not isinstance(at_list, (list, tuple)):
             at_list = [ at_list ]
 
@@ -858,7 +860,7 @@ def menu(menuitems,
     close()
 
 
-input = Wrapper(renpy.display.behavior.Input, exclude='{}', style="input", replaces=True) # @ReservedAssignment
+input = Wrapper(renpy.display.behavior.Input, exclude='{}', style="input", replaces=True)
 
 
 def imagemap_compat(ground,
@@ -982,7 +984,7 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
         style = prefixed_style("button")
 
     if text_style is None:
-        text_style = renpy.style.get_text_style(style, prefixed_style('button_text')) # @UndefinedVariable
+        text_style = renpy.style.get_text_style(style, prefixed_style('button_text'))
 
     rv = renpy.display.behavior.Button(style=style, clicked=clicked, **button_kwargs)
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
@@ -1003,7 +1005,7 @@ def _label(label, style=None, text_style=None, substitute=True, scope=None, **kw
         style = prefixed_style('label')
 
     if text_style is None:
-        text_style = renpy.style.get_text_style(style, prefixed_style('label_text')) # @UndefinedVariable
+        text_style = renpy.style.get_text_style(style, prefixed_style('label_text'))
 
     rv = renpy.display.layout.Window(None, style=style, **label_kwargs)
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
@@ -1021,13 +1023,13 @@ adjustment = renpy.display.behavior.Adjustment
 def _bar(*args, **properties):
 
     if len(args) == 4:
-        width, height, range, value = args # @ReservedAssignment
+        width, height, range, value = args
     if len(args) == 2:
-        range, value = args # @ReservedAssignment
+        range, value = args
         width = None
         height = None
     else:
-        range = 1 # @ReservedAssignment
+        range = 1
         value = 0
         width = None
         height = None
@@ -1039,7 +1041,7 @@ def _bar(*args, **properties):
         height = properties.pop("height")
 
     if "range" in properties:
-        range = properties.pop("range") # @ReservedAssignment
+        range = properties.pop("range")
 
     if "value" in properties:
         value = properties.pop("value")
@@ -1067,7 +1069,7 @@ scrollbar = Wrapper(_bar, style='scrollbar', replaces=True)
 vscrollbar = Wrapper(_bar, style='vscrollbar', replaces=True)
 
 
-def _autobar_interpolate(range, start, end, time, st, at, **properties): # @ReservedAssignment
+def _autobar_interpolate(range, start, end, time, st, at, **properties):
 
     if st > time:
         t = 1.0
@@ -1083,7 +1085,7 @@ def _autobar_interpolate(range, start, end, time, st, at, **properties): # @Rese
 autobar_interpolate = renpy.curry.curry(_autobar_interpolate)
 
 
-def _autobar(range, start, end, time, **properties): # @ReservedAssignment
+def _autobar(range, start, end, time, **properties):
     return renpy.display.layout.DynamicDisplayable(autobar_interpolate(range, start, end, time, **properties))
 
 
@@ -1321,7 +1323,7 @@ def _hotspot(spot, style='hotspot', **properties):
     properties.setdefault("ymaximum", h)
 
     if imagemap.alpha:
-        focus_mask = True
+        focus_mask = hover
     else:
         focus_mask = None
 
@@ -1347,7 +1349,7 @@ def hotspot(*args, **kwargs):
     null()
 
 
-def _hotbar(spot, adjustment=None, range=None, value=None, **properties): # @ReservedAssignment
+def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
 
     if (adjustment is None) and (range is None) and (value is None):
         raise Exception("hotbar requires either an adjustment or a range and value.")

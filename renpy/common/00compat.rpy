@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -207,7 +207,6 @@ init -1100 python:
 
         if version <= (7, 3, 5):
             config.side_image_requires_attributes = False
-            config.window_functions_set_auto = False
             config.who_what_sub_compat = 0
 
         if version <= (7, 4, 0):
@@ -298,7 +297,19 @@ init -1100 python:
         if _compat_versions(version, (7, 6, 99), (8, 1, 99)):
             config.simple_box_reverse = True
             build.itch_channels = list(build.itch_channels.items())
+            config.atl_pos_only = True
             style.default.shaper = "freetype"
+            config.mixed_position = False
+            config.drag_group_add_top = False
+            config.transitions_use_child_placement = False
+            config.interpolate_exprs = False
+            config.containers_pass_transform_events.clear()
+            config.say_replace_event = False
+            config.screens_never_cancel_hide = False
+
+        if ((7, 4, 0) <= version) and _compat_versions(version, (7, 7, 99), (8, 2, 99)):
+            config.window_functions_set_auto = True
+
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
@@ -428,3 +439,6 @@ init 1100 python hide:
 
     if config.fade_music is not None:
         config.fadeout_audio = config.fade_music
+
+    config.max_texture_size = (max(config.max_texture_size[0], config.fbo_size[0]),
+                               max(config.max_texture_size[1], config.fbo_size[1]))

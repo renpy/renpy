@@ -274,8 +274,8 @@ translate schinese strings:
     new "右键"
 
     # game/screens.rpy:1098
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "鼠标滚轮向上\n单击 Rollback Side"
+    old "Mouse Wheel Up"
+    new "鼠标滚轮向上"
 
     # game/screens.rpy:1102
     old "Mouse Wheel Down"

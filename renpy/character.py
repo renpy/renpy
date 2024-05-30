@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -492,6 +492,9 @@ def display_say(
 
         # Clears out transients.
         renpy.exports.with_statement(None)
+
+        renpy.exports.checkpoint(True, hard=checkpoint)
+
         return
 
     # If we're not interacting, call the noniteractive_callbacks.
@@ -668,7 +671,18 @@ def display_say(
 
             what_text = show_function(who, what_string, **show_args)
 
+            # What text is (screen, id, layer) tuple if we're using a screen.
             if isinstance(what_text, tuple):
+                # If this is not the first pause, set the transform event to "replace".
+                if i != 0 and renpy.config.say_replace_event:
+                    screen_displayable = renpy.display.screen.get_screen(what_text[0], what_text[2])
+                    if screen_displayable is not None:
+                        screen_displayable.set_transform_event("replace")
+
+                        if not retain and not last_pause:
+                            sls = renpy.game.context().scene_lists
+                            sls.set_transient_prefix(what_text[2], what_text[0], "replaced")
+
                 what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
 
             if not multiple:
@@ -1117,7 +1131,7 @@ class ADVCharacter(object):
         renpy.game.context().say_attributes = None
 
         temporary_attrs = renpy.game.context().temporary_attributes
-        renpy.game.context().say_attributes = None
+        renpy.game.context().temporary_attributes = None
 
         if interact:
             if temporary_attrs:
@@ -1615,10 +1629,6 @@ def Character(name=NotSet, kind=None, **properties):
         auto-forward mode) will also work. If false, the player will be
         unable to move past the say statement unless an alternate means
         (such as a jump hyperlink or screen) is provided.
-
-    `mode`
-        A string giving the mode to enter when this character
-        speaks. See the section on :ref:`modes <modes>` for more details.
 
     `callback`
         A function that is called when events occur while the

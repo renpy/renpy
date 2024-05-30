@@ -91,6 +91,13 @@ Open build Directory
     This opens the folder containing the files produced by the build process.
 
 
+Generated folders
+-----------------
+Say, your project is in the renpy/projects/main/yourproject folder. Then you 
+will find a new renpy/projects/main/yourproject-1.0-dists folder. This folder
+contains a yourproject-1.0-web subfolder, and this subfolder's zipped version, 
+a yourproject-1.0-web.zip file.
+
 Uploading your Game
 -------------------
 
@@ -111,6 +118,16 @@ Presplash
 The Web platform natively uses a default presplash image. To override it, you can supply
 an image named `web-presplash`, `.jpg`, `.png` or `.webp`, and it will replace
 the default.
+
+The `.webp` format allows for an animated presplash image, if that's required.
+
+Icon
+---------
+
+The Web page icon can be customized by putting an image file with the name `web-icon.png`
+in the base directory of your project. This image must have a minimum resolution of
+512x512 and its width and height must be equal.
+If no custom image is given, the default Ren'Py icon is used.
 
 Progressive Downloading
 -----------------------

@@ -208,15 +208,15 @@ Sync Start Position
 The position in the file at which the clip begins playing can also be synced to
 another channel with a currently-playing track using a filename like
 "<sync channelname>track.opus", where channelname is the name of the channel,
-which could be music, sound, or any other registered channels.
+which could be "music", "sound", or any other registered channels.
 
 This can be used to sync multi-layered looping tracks together. For example::
 
         play music_2 [ "<sync music_1>layer_2.opus", "layer_2.opus" ]
 
-Will play layer_2.opus with the start time synced to the current track in
+Will play :file:`layer_2.opus` with the start time synced to the current track in
 channel music_1 in the first iteration, before playing the whole track in
-subsequent iterations. (By default, the layer_2.opus start time will remain
+subsequent iterations. (By default, the :file:`layer_2.opus` start time will remain
 modified even in subsequent iterations in the loop.)
 
 .. _volume:
@@ -298,22 +298,22 @@ extension stripped, the rest of the filename forced to lower case, and are
 placed into the audio namespace.
 
 Note that just because a file is placed into the audio namespace, that doesn't
-mean it can be used. So while you could play a file named "opening_song.ogg"
+mean it can be used. So while you could play a file named :file:`opening_song.ogg`
 by writing::
 
     play music opening_song
 
-Some filenames can't be accessed this way, as their names are not expressable
-as Python variables. For example, "my song.mp3", "8track.opus", and
-"this-is-a-song.ogg" won't work.
+some filenames can't be accessed this way, as their names are not expressable
+as Python variables. For example, :file:`my song.mp3`, :file:`8track.opus`, and
+:file:`this-is-a-song.ogg` won't work.
 
 When searching for an audio file, if the file is not found, Ren'Py will look
 in the audio directory. For example::
 
     play music "opening.ogg"
 
-Will first look for ``game/opening.ogg``. If not found, Ren'Py will look for
-``game/audio/opening.ogg``.
+will first look for :file:`game/opening.ogg`. If not found, Ren'Py will look for
+:file:`game/audio/opening.ogg`.
 
 Actions
 -------

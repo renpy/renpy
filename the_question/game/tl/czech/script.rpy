@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2023-06-11 22:49
-
+﻿
 # game/script.rpy:18
 translate czech start_915cb944:
 

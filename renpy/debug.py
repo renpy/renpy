@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,6 +34,7 @@ import traceback
 import os
 import builtins
 import io
+import time
 
 if PY2:
     real_open = io.open
@@ -76,3 +77,74 @@ def init_main_thread_open():
         return
 
     builtins.open = replacement_open
+
+
+# The path to the exec.py file, if it exists.
+exec_py_exists = False
+
+# The thread that scans for exec_py.
+exec_py_thread = None
+
+# The delay between exec_py scans.
+exec_py_delay = 0.1
+
+def scan_exec_py():
+    """
+    Called by the save scanning thread to see if exec.py exists. If it does,
+    the path is stored in exec_py_path.
+    """
+
+    while True:
+        time.sleep(.1)
+
+        exec_py_path = os.path.join(renpy.config.basedir, "exec.py")
+
+        if os.path.exists(exec_py_path):
+            global exec_py_exists
+            exec_py_exists = True
+
+
+def init_exec_py():
+    """
+    Starts the thread that scans for exec.py.
+    """
+
+    if renpy.emscripten:
+        return
+
+    if not renpy.config.exec_py:
+        return
+
+    global exec_py_thread
+
+    exec_py_thread = threading.Thread(target=scan_exec_py)
+    exec_py_thread.daemon = True
+    exec_py_thread.start()
+
+
+def run_exec_py():
+    """
+    Called by the save scanning thread to run exec.py, if it exists.
+    """
+
+    global exec_py_exists
+
+    if exec_py_exists:
+        exec_py_path = os.path.join(renpy.config.basedir, "exec.py")
+
+        try:
+            with open(exec_py_path, "r") as f:
+                text = f.read()
+        except Exception as e:
+            exec_py_exists = False
+            return
+
+        try:
+            os.unlink(exec_py_path)
+            exec_py_exists = False
+        except Exception as e:
+            renpy.display.log.write("Failed to remove exec.py:")
+            renpy.display.log.exception()
+            return
+
+        renpy.python.py_exec(text)

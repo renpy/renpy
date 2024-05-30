@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -48,11 +48,12 @@ class Version(object):
 
         py_branch_to_version[(python, branch)] = self
 
-Version("main", 3, "8.2.0", "TBD")
-Version("main", 2, "7.7.0", "TBD")
+Version("main", 3, "8.3.0", "TBD")
+Version("main", 2, "7.8.0", "TBD")
 
-Version("fix", 3, "8.1.4", "Where No One Has Gone Before")
-Version("fix", 2, "7.6.4", "To Boldy Go")
+Version("fix", 3, "8.2.2", "64bit Sensation")
+Version("fix", 2, "7.7.2", "32bit Sensation")
+
 
 def make_dict(branch, suffix="00000000", official=False, nightly=False):
     """

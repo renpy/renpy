@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -62,6 +62,9 @@ class ProgressBar(object):
     def get_size(self):
         return (self.width, self.height)
 
+    def get_at(self, pos):
+        return self.background.get_at(pos)
+
     def draw(self, target, done):
         width = self.width * min(done, 1)
         foreground = self.foreground.subsurface(0, 0, width, self.height)
@@ -119,11 +122,20 @@ def start(basedir, gamedir):
     x = bounds[0] + bounds[2] // 2 - sw // 2
     y = bounds[1] + bounds[3] // 2 - sh // 2
 
+    if presplash.get_at((0, 0))[3] == 0:
+        shape = presplash
+    else:
+        shape = None
+
+    if isinstance(shape, ProgressBar):
+        shape = shape.background
+
     window = pygame_sdl2.display.Window(
         sys.argv[0],
         (sw, sh),
         flags=pygame_sdl2.WINDOW_BORDERLESS,
-        pos=(x, y))
+        pos=(x, y),
+        shape=shape)
 
     if presplash_fn:
         presplash = presplash.convert_alpha(window.get_surface())
@@ -167,6 +179,9 @@ def pump_window():
         if ev.type == pygame_sdl2.QUIT:
             raise renpy.game.QuitException(relaunch=False, status=0)
 
+# Becomes true when the presplash is done.
+done = False
+
 
 def end():
     """
@@ -174,6 +189,9 @@ def end():
     """
 
     global window
+    global done
+
+    done = True
 
     if renpy.emscripten:
         emscripten.run_script(r"""presplashEnd();""")
@@ -223,6 +241,9 @@ def progress(kind, done, total):
     global progress_kind
 
     if not renpy.emscripten:
+        return
+
+    if done == total:
         return
 
     if not PY2:

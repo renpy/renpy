@@ -15,11 +15,12 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
 
     简体中文的文档请参考这里：
 
-        https://renpy.cn/doc/
+        https://doc.renpy.cn/zh-CN/
 
     繁體中文的文件請參考這裡：
 
-        https://renpy.cn/doc-tw/
+        https://doc.renpy.cn/zh-TW/
+
 
 .. toctree::
     :maxdepth: 3
@@ -41,6 +42,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    python
    conditional
    audio
+   audio_filters
    movie
    voice
 
@@ -75,6 +77,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    preferences
    store_variables
    mouse
+   textshaders
 
 
 .. toctree::
@@ -115,7 +118,6 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    trans_trans_python
    gui_advanced
    screen_python
-   modes
    cdd
    cds
    custom_text_tags
@@ -126,6 +128,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    model
    other
    ren_py
+   fetch
 
 
 .. toctree::
@@ -140,6 +143,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    raspi
    iap
    updater
+   downloader
    gesture
 
 
@@ -151,6 +155,14 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    problems
    environment_variables
    self_voicing
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Library and Tool Developer Documentation
+
+   template_projects
+   cli
 
 
 .. toctree::
@@ -181,6 +193,7 @@ Indices
 * `Variable and Definition Index <std-var-index.html>`_
 * `Function and Class Index <py-function-class-index.html>`_
 * `Reserved Names Index <reserved.html>`_
+* `Shader Part Index <shader_parts.html>`_
 * `General Index <genindex.html>`_
 
 Example Scripts

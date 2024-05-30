@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -81,6 +81,14 @@ class ScriptTranslator(object):
         # in that file.
         self.additional_strings = collections.defaultdict(list)
 
+        # Scan for languages.
+
+        for i in renpy.exports.list_files():
+            parts = i.split("/")
+            if parts[0] == "tl":
+                if len(parts) >= 3 and parts[1] != "None":
+                    self.languages.add(parts[1])
+
     def count_translates(self):
         """
         Return the number of dialogue blocks in the game.
@@ -105,6 +113,7 @@ class ScriptTranslator(object):
         Menu = renpy.ast.Menu
         UserStatement = renpy.ast.UserStatement
         Translate = renpy.ast.Translate
+        TranslateSay = renpy.ast.TranslateSay
 
         filename = renpy.lexer.unelide_filename(nodes[0].filename)
         filename = os.path.normpath(os.path.abspath(filename))
@@ -158,7 +167,7 @@ class ScriptTranslator(object):
                 for s in strings:
                     self.additional_strings[filename].append((n.linenumber, s))
 
-            elif type_n is Translate:
+            elif type_n is Translate or type_n is TranslateSay:
 
                 if n.language is None:
                     if n.identifier in self.default_translates:
@@ -192,7 +201,10 @@ class ScriptTranslator(object):
             translate = self.language_translates[identifier, language]
             next_node = self.default_translates[identifier].after
 
-            renpy.ast.chain_block(translate.block, next_node)
+            if isinstance(translate, renpy.ast.TranslateSay):
+                translate.chain(next_node)
+            else:
+                renpy.ast.chain_block(translate.block, next_node)
 
         self.chain_worklist = unchained
 
@@ -213,7 +225,10 @@ class ScriptTranslator(object):
         if tl is None:
             tl = self.default_translates[identifier]
 
-        return tl.block[0]
+        if isinstance(tl, renpy.ast.TranslateSay):
+            return tl
+        else:
+            return tl.block[0]
 
 
 def encode_say_string(s):
@@ -326,6 +341,43 @@ class Restructurer(object):
 
         return [ tl, ed ]
 
+
+    def combine_translate(self, node):
+        """
+        If we have a Translate containing a Say statement and an EndTranslate,
+        combine them into a TranslateSay statement.
+        """
+
+        if not isinstance(node, renpy.ast.Translate):
+            return node
+
+        if not len(node.block) == 1:
+            return node
+
+        if not isinstance(node.block[0], renpy.ast.Say):
+            return node
+
+        say = node.block[0]
+
+        rv = renpy.ast.TranslateSay(
+            (say.filename, say.linenumber),
+            say.who,
+            say.what,
+            say.with_,
+            interact=say.interact,
+            attributes=say.attributes,
+            arguments=say.arguments,
+            temporary_attributes=say.temporary_attributes,
+            identifier=node.identifier,
+            language=node.language,
+            alternate=node.alternate)
+
+        rv.name = say.name
+        rv.explicit_identifier = say.explicit_identifier
+
+        return rv
+
+
     def callback(self, children):
         """
         This should be called with a list of statements. It restructures the statements
@@ -371,7 +423,26 @@ class Restructurer(object):
             new_children.extend(nodes)
             group = [ ]
 
-        children[:] = new_children
+        # Combine translate and say into TranslateSay.
+        new_children = [ self.combine_translate(node) for node in new_children ]
+
+        # Remove EndTranslater when not required.
+
+        new_new_children = [ ]
+
+        old_node = None
+
+        for node in new_children:
+
+            if isinstance(old_node, renpy.ast.TranslateSay) and isinstance(node, renpy.ast.EndTranslate):
+                old_node.next = node.next
+                old_node = None
+                continue
+
+            new_new_children.append(node)
+            old_node = node
+
+        children[:] = new_new_children
 
 
 def restructure(children):
@@ -669,6 +740,8 @@ def change_language(language, force=False):
     if old_language != language:
         clean_data()
 
+    renpy.exports.load_language(language)
+
     renpy.game.preferences.language = language
     if old_language == language and not force:
         return
@@ -944,6 +1017,11 @@ locales = {
     "chs": "simplified_chinese",
     "cht": "traditional_chinese",
     "zh": "traditional_chinese",
+    "zh_tw" : "traditional_chinese",
+    "zh_cn" : "simplified_chinese",
+    "zh_hk" : "traditional_chinese",
+    "zh_sg" : "simplified_chinese",
+    "zh_mo" : "traditional_chinese",
 }
 
 

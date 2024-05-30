@@ -10,16 +10,15 @@ cd "$SPHINX"
 mkdir -p source/inc
 
 # Run a Ren'Py game that generates documentation.
-python ../renpy.py . || ../renpy.sh .
+python ../renpy.py . || ../renpy3.sh .
 
 # Clear out generated images.
 rm -Rf ../doc-web/_images || true
 rm -Rf ../doc/_images || true
 
-# Build the full web documentation.
 sphinx-build -E -a source ../doc-web &
 
-# Build the included-with-Ren'Py documentation.
+# Build the included-with-Ren'Py documentation, if not running interactively.
 RENPY_NO_FIGURES=1 sphinx-build -E -a source ../doc 2>/dev/null
 
 # Wait for both builds to finish.

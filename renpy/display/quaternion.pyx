@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -151,6 +151,9 @@ def euler_slerp(double complete, old, new):
     theta = abs(acos(dot))
 
     st = sin(theta)
+
+    if st == 0:
+        return new
 
     sut = sin(theta * complete)
     sout = sin(theta * (1 - complete))

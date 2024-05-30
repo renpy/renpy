@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -59,6 +59,7 @@ init python:
     if RENIOS_PATH:
         import renios.create
         import renios.image
+        import renios.interface
 
     def IOSState():
         if not RENIOS_PATH:
@@ -123,17 +124,19 @@ init python:
         return os.path.join(persistent.xcode_projects_directory, xcode_name(p.name))
 
     def ios_create(p=None, gui=True, target=None):
-        project.current.update_dump(force=True, gui=gui)
+        if p is None:
+            p = project.current
+        p.update_dump(force=True, gui=gui)
 
-        name = project.current.dump.get("name", None)
-        version = project.current.dump.get("version", None)
+        name = p.dump.get("name", None)
+        version = p.dump.get("version", None)
 
         dest = xcode_project(p, target)
 
         if gui:
             iface = MobileInterface("ios")
         else:
-            iface = rapt.interface.Interface()
+            iface = renios.interface.Interface()
 
         if os.path.exists(dest):
             if not iface.yesno(_("The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?")):

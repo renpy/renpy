@@ -21,17 +21,65 @@ Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1 is
 released, in May 2024.
 
 The original OpenGL renderer will be removed 1 year after Ren'Py 8.1 is
-released, in May 2024. If your game sets config.gl2 to False, you should
-set it to True, and make sure your game runs well. If it doesn't, please
-report any issues. When reporting issues, please determine the hardware
-(device and GPU), os and driver versions, and year of manufacture.
+released, after May 2024. Ren'Py 8.2 and 7.7 disable the :var:`config.gl2`
+flag, as GL2 will always be used unless the player selects a different
+renderer.
+
+Support for Window 7, 8, and 8.1 will be dropped after May 2024, to allow the
+use of versions of Python that only support Windows 10 and later.
+
+.. _incompatible-8.3.0:
+.. _incompatible-7.8.0:
+
+8.3.0 / 7.8.0
+-------------
+
+**Window Statement** The ``window show`` annd ``window hide`` statements
+no longer disable the ``window auto`` flag. If you'd like to do this, then
+either use the new ``window auto False`` statement, or change your game
+to include::
+
+    define config.window_functions_set_auto = True
+
+When a ``window show`` occurs after ``window hide``, Ren'Py will look forward
+to the next say statement to determine the type of thr window to show. Previously,
+it looked back to the last say statement. To revert this change, include::
+
+    define config.window_next = False
+
+
+.. _incompatible-8.2.1:
+.. _incompatible-7.7.1:
+
+8.2.1 / 7.7.1
+--------------
+
+***Vertical Text** Vertical text had been improved in the harfbuzz shaper,
+with the text now being rendered in the correct place. This may cause
+position changes, but since the previous version was wildly incorrect,
+no compatibility define is provided.
+
 
 
 .. _incompatible-8.2.0:
 .. _incompatible-7.7.0:
 
 8.2.0 / 7.7.0
---------------
+-------------
+
+**Stringified annotations and the aborted future of PEP 563** Since Ren'Py
+version 8.0.2, Python code in Ren'Py 8 was always compiled using the
+``from __future__ import annotations`` directive, with no possible opt-out
+for creators.
+
+Given that this change will most likely not be implemented by default in future
+versions of Python, we rolled that change back.
+
+In order to keep using the ``annotations`` future for stringified annotations,
+you can add the following line at the top of your files::
+
+    rpy python annotations
+
 
 **Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
 different glyphs than would have been produced differently, and may change
@@ -49,6 +97,25 @@ add::
     style default:
         emoji_font None
 
+**Interpolation Changes** Interpolations in strings are now treated as Python
+expressions, this results in mostly equivelent behaviour when interpreting
+fields except when item getters are in use. For example::
+
+    # Previously
+    e "[player[money]]" #=> player['money']
+    # But now
+    e "[player[money]]" #=> player[money]
+
+To revert this behaviour, add the following to your game::
+
+    define config.interpolate_exprs = False
+
+To help other developers work while you're migrating your game to the new
+behavior, there is a fallback mode that will first try the new behavior, and
+then fall back to the old behavior if the new behavior fails. To enable this,
+add the following to your game::
+
+    define config.interpolate_exprs = "fallback"
 
 **Polar Coordinate Changes** Ren'Py now enforces that the angles given to
 the :tpref:`angle` and :tpref:`anchorangle`
@@ -93,7 +160,6 @@ add to your game::
 
     define config.simple_box_reverse = True
 
-
 **build.itch_channels** That variable was always documented as a dict but was
 mistakenly implemented as a list of tuples. It's now truly a dict. If you
 were using list operations on it, you'll need to change your code::
@@ -109,13 +175,68 @@ were using list operations on it, you'll need to change your code::
     define build.itch_channels["pattern"] = "channel"
     define build.itch_channels |= {"pattern": "channel"}
 
+**New position type** The new :func:`position` type has been added to the list
+of :term:`position` types. As a result, it can be returned by the
+:func:`renpy.get_placement` function at any time, even in cases when it
+previously returned another type or if you don't use the new type anywhere in
+your game.
+
+To prevent this, add to your game::
+
+    define config.mixed_position = False
+
+**Drag Group Add Changes** Adding a displayable to a :class:`DragGroup` now
+adds it above the other displayables in the group, rather than below them.
+
+To change this, add to your game::
+
+    define config.drag_group_add_top = False
+
+**Translate Statements and config.statement_callbacks** Translate statements
+(including internal statements that Ren'Py automatically generates) will no
+longer cause :var:`config.statement_callbacks` to be called.
+
+**Transitions Use Child Placements** If the child of a transitions provides
+placement information, that will be used by the transition itself. This
+only makes sense when the transition is used by an ATL transition, and both
+the old and new children provide the same placement information.
+
+To disable this, add to your game::
+
+    define config.transitions_use_child_placement = False
+
+**Containers Pass Transform Events**
+Containers (including fixed, hbox, vbox, side, grid, viewport, and vpgrid) now
+pass some transform events (hover, idle, insensitive, selected_hover, and selected_idle)
+to their children, meaning that children of a button can have their own transforms to respond to those
+events.
+
+To disable this, add to your game::
+
+    define config.containers_pass_transform_events = set()
+
+**Say Screens Are Supplied the Replace Event.** Say screens are now supplied
+the "replace" (rather than "show") transform event for the second and subsequent pauses.
+
+To disable this, add to your game::
+
+    define config.say_replace_event = False
+
+**Re-showing A Screen No Longer Cancels a Hide Event** Previously, if a screen
+was hidden and re-shown, a hide or replace transform event associated with the same
+screen would be cancelled, and the hiding or replaced screen would instantly
+disappear. Now, the event will be allowed to run to completion.
+
+To disable this, add to your game::
+
+    define config.screens_never_cancel_hide = False
+
 
 .. _incompatible-8.1.1:
 .. _incompatible-7.6.1:
 
 8.1.1 / 7.6.1
 -------------
-
 
 .. _android-key-migration:
 
@@ -148,6 +269,28 @@ Then rebuild and re-upload your bundle.
 
 8.1.0 / 7.6.0
 -------------
+
+**Conflicting properties** The former default input screen, which may have found
+its way into your game, contains conflicting style properties. The fix for that
+is as follows:
+
+.. code-block:: diff
+
+    +define config.check_conflicting_properties = True
+
+     screen input(prompt):
+         style_prefix "input"
+         window:
+
+             vbox:
+    -            xalign gui.dialogue_text_xalign
+    +            xanchor gui.dialogue_text_xalign
+                 xpos gui.dialogue_xpos
+                 xsize gui.dialogue_width
+                 ypos gui.dialogue_ypos
+                 text prompt style "input_prompt"
+                 input id "input"
+
 
 **Speech Bubbles** Adding bubble support to an existing game requires
 adding files and script to the game. The :doc:`bubble` documentation

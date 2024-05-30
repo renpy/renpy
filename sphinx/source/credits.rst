@@ -62,10 +62,13 @@ the omission in future versions.
 * Deji
 * Delta
 * Dennis Goodlett
+* Denys
 * Denzil
 * Derik
 * Diapolo10
 * DinakiS
+* Dipesh Aggarwal
+* Do10HM
 * Dogtopus
 * Doomfest
 * Donghyeok Tak
@@ -103,6 +106,7 @@ the omission in future versions.
 * Haelwenn (lanodan) Monnier
 * Hanaka
 * Helloise
+* Helmut K. C. Tessarek
 * Hentai Senshi
 * Herpior
 * HikkeKun
@@ -111,6 +115,8 @@ the omission in future versions.
 * Huanxuantian
 * Hyper Sonic
 * Ian Leslie
+* Iivusly
+* ImJustAQ
 * JackkelDragon
 * Jackmcbarn
 * Jacob Kauffmann
@@ -118,6 +124,7 @@ the omission in future versions.
 * Jake Staines
 * James Broadhead
 * James Pearson Hughes
+* JamiesonC
 * Jan Beich
 * Jan Masek
 * Javimat
@@ -130,6 +137,7 @@ the omission in future versions.
 * Julian Uy
 * Julvenzor
 * Jürg Billeter
+* KagariSoft-Dev
 * Kalawore
 * Kassy
 * Kapil Gain
@@ -232,6 +240,7 @@ the omission in future versions.
 * Spiky Caterpillar
 * Susnux
 * Sylvain Beucler
+* Symegac
 * Tey
 * The66F95
 * Thuong Nguyen Huu
@@ -242,6 +251,7 @@ the omission in future versions.
 * Vadim Karpenko
 * Valery Iwanofu
 * Viliam Búr
+* Vladya
 * Vollschauer
 * William Tumeo
 * Winter Wolves

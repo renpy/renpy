@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -121,8 +121,13 @@ class CodeGenerator(object):
         else:
             template = os.path.join(self.p.template, filename)
 
-        with codecs.open(template, "r", "utf-8") as f:
-            self.lines = [ i.rstrip().replace(u"\ufeff", "") for i in f ]
+        if not os.path.exists(template):
+            return False
+        else:
+            with codecs.open(template, "r", "utf-8") as f:
+                self.lines = [ i.rstrip().replace(u"\ufeff", "") for i in f ]
+
+            return True
 
     def remove_scale(self):
 
@@ -386,7 +391,9 @@ class CodeGenerator(object):
         if not os.path.exists(src):
             src = os.path.join(self.p.template, name)
 
-        self.load_template(src)
+        if not self.load_template(src):
+            return
+
         self.remove_scale()
         self.write_target(dst)
 
@@ -401,7 +408,8 @@ class CodeGenerator(object):
         if not self.p.update_code:
             return
 
-        self.load_template(fn)
+        if not self.load_template(fn):
+            return
 
         if defines:
             self.update_gui_defines()
@@ -422,7 +430,8 @@ class CodeGenerator(object):
         if os.path.exists(target):
             return
 
-        self.load_template(fn)
+        if not self.load_template(fn):
+            return
 
         self.translate_strings()
         self.translate_comments()

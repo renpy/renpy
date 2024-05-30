@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -247,8 +247,11 @@ init -1500 python:
         """
 
         nvl_show_core()
-        renpy.with_statement(with_)
+        store._window = True
         store._last_say_who = "nvl"
+        renpy.with_statement(with_)
+
+        renpy.mode("window show")
 
     def nvl_hide(with_):
         """
@@ -261,9 +264,13 @@ init -1500 python:
         """
 
         nvl_show_core()
+
         renpy.with_statement(None)
-        renpy.with_statement(with_)
+        store._window = False
         store._last_say_who = None
+        renpy.with_statement(with_)
+
+        renpy.mode("window hide")
 
     def nvl_erase():
         if nvl_list:
@@ -304,6 +311,8 @@ init -1500 python:
                 self.clear = properties.pop("clear")
             else:
                 self.clear = kind.clear
+
+            properties.setdefault("statement_name", "say-nvl")
 
             ADVCharacter.__init__(
                 self,

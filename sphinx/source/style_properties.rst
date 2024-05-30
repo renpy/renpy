@@ -105,10 +105,10 @@ novel kinds of value a style property can expect.
 
     position
         Positions are used to specify locations relative to the upper-left
-        corner of the containing area. (For positions, the containing area is
-        given by the layout the displayable is in, if one is given, or the screen
-        otherwise. For anchors, the containing area is the size of the
-        displayable itself.)
+        corner of the containing area. (For placement and size, the containing
+        area is given by the layout the displayable is in, if one is given, or
+        the screen otherwise. For anchors, the containing area is the size of
+        the displayable itself.)
 
         The way a position value is interpreted depends on the type of the
         value:
@@ -121,9 +121,27 @@ novel kinds of value a style property can expect.
             containing area. For example, 0.5 is a point halfway between the
             sides of the containing area, while 1.0 is on the right or bottom
             side.
-        absolute (like absolute(100.25))
-            An ``absolute`` number is interpreted as the number of pixels from the
-            left or top side of the screen, when using subpixel-precise rendering.
+
+        .. function:: absolute(value, /)
+
+            For example, ``absolute(100.25)``, or ``absolute(a+b)`` when both
+            ``a`` and ``b`` may be floats or ints.
+
+            An ``absolute`` number is interpreted as the number of pixels from
+            the left or top side of the screen, when using subpixel-precise
+            rendering.
+
+        .. function:: position(absolute, relative, /)
+
+            For example, ``position(-10, .5)``.
+
+            A combination of `absolute`, which will be treated as an absolute
+            position, and `relative`, which will be treated as a relative
+            position, both being as described above. The two components are
+            added together to form the final position.
+
+            Both parameters should always be passed, otherwise unspecified
+            results may occur.
 
     displayable
         Any displayable. If a displayable contains a "[prefix\_]" substitution,
@@ -140,7 +158,7 @@ novel kinds of value a style property can expect.
         example:
 
         * ``"#f00"`` and ``"#ff0000"`` represent an opaque red color.
-        * ``"#0f08"`` and ``#00ff0080"`` represent a semi-transparent green
+        * ``"#0f08"`` and ``"#00ff0080"`` represent a semi-transparent green
           color.
 
         The color triples are the same as used in HTML.
@@ -205,8 +223,8 @@ the next prefix.
 The style prefix is passed through displayables that do not take user input,
 including containers, transforms, and frames.
 
-As an example of how this can be used, if the files "idle\_button.png" and
-"hover\_button.png" exist (and no other files ending in "button.png" do)::
+As an example of how this can be used, if the files :file:`idle_button.png` and
+:file:`hover_button.png` exist (and no other files ending in :file:`button.png` do)::
 
     style button:
         background "[prefix_]button.png"
@@ -460,6 +478,9 @@ Text Style Properties
     When rendering an image-based font, black will be mapped to this
     color. This has no effect for TrueType fonts.
 
+    This may be None in the case of ruby/furigana text, to use the same
+    color as the parent text.
+
 .. style-property:: bold boolean
 
     If True, render the font in a bold style. For a TrueType font,
@@ -478,6 +499,9 @@ Text Style Properties
     The color the text is rendered in. When using a TrueType font,
     the font is rendered in this color. When using an image-based
     font, white is mapped to this color.
+
+    This may be None in the case of ruby/furigana text, to use the same
+    color as the parent text.
 
 .. style-property:: emoji_font string
 
@@ -710,6 +734,12 @@ Text Style Properties
     Specifies the number of pixels the second and later lines in a
     paragraph are indented by.
 
+.. style-property:: ruby_line_leading int
+
+    The number of pixels of spacing to include above each line that
+    contains :ref:`ruby text <ruby-text>`. This is in addition to
+    :propref:`line_leading`.
+
 .. style-property:: ruby_style style or None
 
     If not None, this should be a style object. The style that's used for
@@ -718,8 +748,12 @@ Text Style Properties
 .. style-property:: shaper "harfbuzz" or "freetype".
 
     The shaper used on text. This should be one of "harfbuzz" or "freetype".
-    The harfbuzz shape is more capable but only works on Ren'Py 8, while
-    "freetype"
+    The harfbuzz shaper is more capable but only works on Ren'Py 8, while
+    "freetype" works in Ren'Py 7 as well.
+
+    The shaper takes a series of characters and turns it into a series of
+    positioned glyphs. This is used for things like ligatures, Indic/Bhramic
+    languages, and combining emjoi.
 
 .. style-property:: size int
 
@@ -765,6 +799,21 @@ Text Style Properties
 .. style-property:: vertical boolean
 
     If True, the text will be rendered vertically.
+
+    There are multiple caveats:
+
+    * If :propref:`shaper` is "freetype", vertical layout will likely be incorrect.
+
+    * Harfbuzz will convert horizontal forms to vertical forms if those
+      forms are present in the font.
+
+    * Characters will be laid out top to bottom, right to left, but will
+      not be rotated. This means that horizontal characters will be laid
+      out one on top of another.
+
+    * If vertical text information is not present in the font, it will be
+      synthesized, but may be incorrect. Generally, ideographic text works
+      better than non-ideographic text.
 
 .. _window-style-properties:
 
@@ -901,7 +950,18 @@ Button Style Properties
    If True, the default, this button can be focused using the keyboard focus
    mechanism, if it can be focused at all. If False, the keyboard focus
    mechanism will skip this button. (The keyboard focus mechanism is used
-   by keyboards and keyboard-like devices, such as joypads.)
+   by keyboards and keyboard-like devices, such as gamepads.)
+
+.. style-property:: keyboard_focus_insets (int, int, int, int) or None
+
+    If not None, this should be a tuple of four integers, giving the
+    number of pixels that are used to shrink the left, top, right, and
+    bottom sides of the focus rectangle, when it's used for keyboard
+    focus.
+
+    This can be useful when buttons overlap. The keyboard focus algorithm
+    doesn't work with overlapping buttons, and so this can be used to to
+    shrink the size of the buttons internally, allowing focus to work.
 
 .. style-property:: key_events boolean
 

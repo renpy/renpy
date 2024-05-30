@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -102,7 +102,7 @@ label install_live2d:
                 (r".*/Core/dll/windows/x86/(Live2DCubismCore.dll)", _prefix + r"windows-i686/\1"),
            ])
 
-        install_from_zip("Live2D Cubism SDK for Native", "CubismSdkForNative-4-*.zip", patterns)
+        install_from_zip("Live2D Cubism SDK for Native", "CubismSdkForNative-[45]-*.zip", patterns)
 
     jump front_page
 

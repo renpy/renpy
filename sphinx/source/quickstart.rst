@@ -20,19 +20,19 @@ manage, edit, and run Ren'Py projects.
 Once you've downloaded Ren'Py, you'll want to extract and run it.
 
 * On Windows, double click on the executable file you download. It will
-  extract Ren'Py into a folder named ``renpy-<version>``. You can change
-  into that folder and run ``renpy.exe``. (The renpy.exe file may be presented
-  as renpy if extensions are hidden.)
+  extract Ren'Py into a folder named :file:`renpy-{<version>}`. You can change
+  into that folder and run :file:`renpy.exe`. (It may be presented
+  as :file:`renpy` if extensions are hidden.)
 
 * On Mac OS X, double-click on the downloaded drive image to mount it as a
-  drive. When the drive opens, copy the folder named ``renpy-<version>``
+  drive. When the drive opens, copy the folder named :file:`renpy-{<version>}`
   somewhere else. (Where does not matter, but it has to be moved out of
   the read-only drive image. Do not move the renpy app out of the folder it's in
-  – it won't work elsewhere.) Then change into it, and run the ``renpy``
+  – it won't work elsewhere.) Then change into it, and run the :file:`renpy`
   application.
 
-* On Linux, unpack the tarball, change into the ``renpy-<version>``
-  directory, and then run ``renpy.sh``.
+* On Linux, unpack the tarball, change into the :file:`renpy-{<version>}`
+  directory, and then run :file:`renpy.sh`.
 
 After running this, the Ren'Py launcher should run.
 
@@ -129,9 +129,9 @@ your first time, Ren'Py will ask you to select an editor (we recommend
 Editra for first time creators), and will download the editor you choose.
 Then it will open the script file in the editor.
 
-Once the editor opens, erase everything in script.rpy. We're starting
+Once the editor opens, erase everything in :file:`script.rpy`. We're starting
 from scratch, so you don't need what's there. Copy the example above into
-script.rpy, and save it.
+:file:`script.rpy`, and save it.
 
 You're now ready to run this example. Go back to the launcher, and
 choose "Launch Project". Ren'Py will start up. Notice how, without any
@@ -486,12 +486,12 @@ effects do not loop. ::
         play sound "audio/effect.ogg"
 
 
-When a filename is in the "game/audio" directory, and the name without the
+When a filename is in the :file:`game/audio` directory, and the name without the
 file extension can be used as a Python variable (that is, it begins with
 a letter, and contains only letters, numbers, and underscores), it is possible
 to play that file without using quotes.
 
-For example, if "game/audio/illurock.ogg" exists, we can write::
+For example, if :file:`game/audio/illurock.ogg` exists, we can write::
 
     ###
         play music illurock
@@ -672,7 +672,7 @@ before releasing it:
     versions and view a list of changes at `https://www.renpy.org/latest.html <https://www.renpy.org/latest.html>`_.
 
     Rarely, changes to Ren'Py will require you to make a change to your game's
-    script. `https://www.renpy.org/doc/html/incompatible.html <https://www.renpy.org/doc/html/incompatible.html>`_ has
+    script. :doc:`incompatible` has
     a list of these changes.
 
 **Check the Script.**

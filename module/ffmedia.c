@@ -62,6 +62,11 @@ static int rwops_read(void *opaque, uint8_t *buf, int buf_size) {
     SDL_RWops *rw = (SDL_RWops *) opaque;
 
     int rv = rw->read(rw, buf, 1, buf_size);
+
+	if (rv == 0) {
+		return AVERROR_EOF;
+	}
+
     return rv;
 
 }
@@ -580,7 +585,7 @@ static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
 		return NULL;
 	}
 
-	AVCodec *codec = NULL;
+	const AVCodec *codec = NULL;
 	AVCodecContext *codec_ctx = NULL;
 
 	codec_ctx = avcodec_alloc_context3(NULL);

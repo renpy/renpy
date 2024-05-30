@@ -2032,8 +2032,8 @@
     new "ランチャーテーマ:"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
-    new "カスタムテーマ作成情報は {a=https://www.renpy.org/doc/html/skins.html}Ren'Pyのドキュメント{/a}で読めます。"
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
+    new "カスタムテーマ作成情報は {a=[skins_url]}Ren'Pyのドキュメント{/a}で読めます。"
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2154,10 +2154,139 @@ translate japanese strings:
     new "パッケージの作成..."
 
 
-translate japanese strings:
-
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Ren'Py のリリース版に対する修正を行ったナイトリービルドです。"
 
+    # game/androidstrings.rpy:46
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
+    new "javac を使用してテストファイルをコンパイルできませんでした。Java Development Kitをまだインストールしていないならば:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}からダウンロードしてください。\n\nJDKはJREとは異なるため、JDKがなくてもJavaを使用できる可能性があります。JDK [JDK_REQUIREMENT] をインストールしてパスに追加してください。\n\n動作するJDKなしでは続行できません。"
+
+    # game/androidstrings.rpy:47
+    old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new "コンピューター上のJavaのバージョンはAndroidアプリをビルドするのに必要なJDK [JDK_REQUIREMENT] からはわかりません。より新しいJDKをインストール必要があれば次からダウンロードしてパスに追加してください。:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}\n\n JAVA_HOME 環境変数を設定して異なるバージョンのJavaの使用もできます。"
+
+    # game/choose_directory.rpy:72
+    old "No directory was selected, but one is required."
+    new "ディレクトリーを選択してください。"
+
+    # game/choose_directory.rpy:80
+    old "The selected directory does not exist."
+    new "選択されたディレクトリーがありません。"
+
+    # game/choose_directory.rpy:82
+    old "The selected directory is not writable."
+    new "選択されたディレクトリーは書き込みできません。"
+
+    # game/distribute.rpy:535
+    old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
+    new "配布物のビルドに失敗しました:\n\nプロジェクトは Tutorial ですが、これは Ren'Py 外に出せません。テストプロジェクトには The Question を使用してください。"
+
+    # game/distribute.rpy:562
+    old "This may be derived from build.name and config.version or build.version."
+    new "これは build.name と config.version または build.version から所得されます。"
+
+    # game/distribute.rpy:1620
+    old "Finishing the [variant] [format] package."
+    new "[variant] [format] のパッケージを完了しました。"
+
+    # game/editor.rpy:185
+    old "Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended."
+    new "Atomは非推奨であり、そのバグはゲームを破壊することで知られているので他のエディタを使うことをお勧めします。"
+
+    # game/editor.rpy:214
+    old "JEdit is deprecated, using another editor is recommended."
+    new "JEditは非推奨です。他のエディタを使うことをお勧めします。"
+
+    # game/editor.rpy:607
+    old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
+    new "Atom はもう開発者自身にサポートされていません。Visual Studio Code や他のエディターを進めます。"
+
+    # game/editor.rpy:607
+    old "Select editor now."
+    new "今エディターを選択する"
+
+    # game/editor.rpy:607
+    old "Ignore until next launch."
+    new "次の起動まで無視する"
+
+    # game/editor.rpy:607
+    old "Do not ask again."
+    new "次回は尋ねません"
+
+    # game/new_project.rpy:38
+    old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
+    new "警告 : Ren'Py 7 を使用しています。新しいプロジェクトの開始には代りに Ren'Py 8 の使用が推奨されています。"
+
+    # game/new_project.rpy:49
+    old "Please select a template project to use."
+    new "使用するテンプレートプロジェクトを選択してください。"
+
+    # game/new_project.rpy:49
+    old "Do not use a template project."
+    new "テンプレートプロジェクトを使用しない"
+
+    # game/preferences.rpy:94
+    old "Lint"
+    new "Lint"
+
+    # game/preferences.rpy:233
+    old "Game Options:"
+    new "ゲームオプション"
+
+    # game/preferences.rpy:240
+    old "Skip splashscreen"
+    new "スプラッシュスクリーンをスキップします"
+
+    # game/preferences.rpy:258
+    old "Restore window position"
+    new "ウィンドウ位置を復元します"
+
+    # game/preferences.rpy:262
+    old "Prefer RPU updates"
+    new "RPU アップデートを優先します"
+
+    # game/preferences.rpy:332
+    old "Open projects.txt"
+    new "projects.txt を開きます"
+
+    # game/preferences.rpy:356
+    old "Lint toggles:"
+    new "Lint トグル"
+
+    # game/preferences.rpy:360
+    old "Check for orphan/obsolete translations"
+    new "未使用の翻訳の確認"
+
+    # game/preferences.rpy:363
+    old "Check parameters shadowing reserved names"
+    new "予約された名前を shadowing するパラメーターを確認します"
+
+    # game/preferences.rpy:366
+    old "Print block, word, and character counts by speaking character."
+    new "ブロック、単語、話をするキャラクターの数を出力します"
+
+    # game/preferences.rpy:369
+    old "Unclosed text tags"
+    new "閉じられていないテキストタグ"
+
+    # game/preferences.rpy:372
+    old "Show all unreachable blocks and orphaned translations."
+    new "すべての到達できないブロックと対応するもののない翻訳を表示します"
+
+    # game/project.rpy:776
+    old "Splashscreen skipped in launcher preferences."
+    new "スプラッシュスクリーンはランチャー設定でスキップされています"
+
+    # game/updater.rpy:76
+    old "Nightly Fix"
+    new "Nightly Fix"
+
+    # game/updater.rpy:77
+    old "Nightly Fix (Ren'Py 8, Python 3)"
+    new "Nightly Fix (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly Fix (Ren'Py 7, Python 2)"
+    new "Nightly Fix (Ren'Py 7, Python 2)"

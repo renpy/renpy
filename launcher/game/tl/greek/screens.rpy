@@ -583,7 +583,7 @@ translate greek strings:
     new "Δεξί κλικ"
 
     # screens.rpy:1062
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Mouse Wheel Up"
     # Automatic translation.
     new "Τροχός ποντικιού επάνω\nΚάντε κλικ στο Rollback Side"
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,6 +26,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import codecs
 import re
+import sys
 import os
 import time
 import contextlib
@@ -563,30 +564,23 @@ def group_logical_lines(lines):
 # Note: We need to be careful with what's in here, because these
 # are banned in simple_expressions, where we might want to use
 # some of them.
-KEYWORDS = set([
-    '$',
+KEYWORDS = {
     'as',
-    'at',
-    'behind',
-    'call',
-    'expression',
-    'hide',
     'if',
     'in',
-    'image',
-    'init',
-    'jump',
-    'menu',
-    'onlayer',
-    'python',
     'return',
-    'scene',
-    'show',
     'with',
     'while',
+}
+
+IMAGE_KEYWORDS = {
+    'behind',
+    'at',
+    'onlayer',
+    'with',
     'zorder',
     'transform',
-    ])
+}
 
 OPERATORS = [
     '<>',
@@ -758,6 +752,21 @@ class Lexer(object):
         self.skip_whitespace()
         return self.match_regexp(regexp)
 
+    def match_multiple(self, *regexps):
+        """
+        Matches multiple regular expressions. Return a tuple of matches
+        if all match, and if not returns None.
+        """
+
+        oldpos = self.pos
+
+        rv = tuple(self.match(i) for i in regexps)
+        if None in rv:
+            self.pos = oldpos
+            return None
+
+        return rv
+
     def keyword(self, word):
         """
         Matches a keyword at the current position. A keyword is a word
@@ -866,7 +875,7 @@ class Lexer(object):
 
     def string(self):
         """
-        Lexes a string, and returns the string to the user, or None if
+        Lexes a non-triple-quoted string, and returns the string to the user, or None if
         no string could be found. This also takes care of expanding
         escapes and collapsing whitespace.
 
@@ -928,6 +937,9 @@ class Lexer(object):
         This is about the same as the double-quoted strings, except that
         runs of whitespace with multiple newlines are turned into a single
         newline.
+
+        Except in the case of a raw string where this returns a simple string,
+        this returns a list of strings.
         """
 
         s = self.match(r'r?"""([^\\"]|\\.|"(?!""))*"""')
@@ -1039,6 +1051,9 @@ class Lexer(object):
         self.word_cache = rv
         self.word_cache_newpos = self.pos
 
+        if rv:
+            rv = sys.intern(rv)
+
         return rv
 
     def name(self):
@@ -1129,7 +1144,7 @@ class Lexer(object):
                 self.pos = oldpos
                 return None
 
-        if rv in KEYWORDS:
+        if (rv in KEYWORDS ) or (rv in IMAGE_KEYWORDS):
             self.pos = oldpos
             return None
 
@@ -1277,13 +1292,35 @@ class Lexer(object):
 
         return False
 
-    def simple_expression(self, comma=False, operator=True):
+    def simple_expression(self, comma=False, operator=True, image=False):
         """
         Tries to parse a simple_expression. Returns the text if it can, or
         None if it cannot.
+
+        If comma is True, then a comma is allowed to appear in the
+        expression.
+
+        If operator is True, then an operator is allowed to appear in
+        the expression.
+
+        If image is True, then the expression is being parsed as part of
+        an image, and so keywords that are special in the show/hide/scene
+        statements are not allowed.
         """
 
         start = self.pos
+
+        if image:
+            def lex_name():
+                oldpos = self.pos
+                n = self.name()
+                if n in IMAGE_KEYWORDS:
+                    self.pos = oldpos
+                    return None
+
+                return n
+        else:
+            lex_name = self.name
 
         # Operator.
         while True:
@@ -1297,7 +1334,7 @@ class Lexer(object):
             # We start with either a name, a python_string, or parenthesized
             # python
             if not (self.python_string() or
-                    self.name() or
+                    lex_name() or
                     self.float() or
                     self.parenthesised_python()):
 

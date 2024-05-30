@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -242,8 +242,6 @@ def process_downloaded_resources():
                     # mark for deletion as it's a one-time usage (a bit delayed)
                     fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
                     to_unlink[fullpath] = time.time() + 120
-
-                # TODO: videos (when web support is implemented)
 
         # make sure the queue doesn't contain a corrupt file so we
         # don't rethrow an exception while in Ren'Py's error handler

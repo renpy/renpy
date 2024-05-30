@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -37,7 +37,6 @@ screen iconbutton(icon, caption=None, **properties):
         properties button_properties
 
         if caption:
-           text caption style "iconbutton_text" properties text_properties
+            text caption style "iconbutton_text" properties text_properties
 
         icon icon style "iconbutton_icon" properties icon_properties
-

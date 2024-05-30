@@ -2045,9 +2045,9 @@ translate greek strings:
     new "Προσαρμοσμένο θέμα"
 
     # game/preferences.rpy:256
-    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
     # Automatic translation.
-    new "Πληροφορίες σχετικά με τη δημιουργία ενός προσαρμοσμένου θέματος μπορείτε να βρείτε στη διεύθυνση {a=https://www.renpy.org/doc/html/skins.html}στην Τεκμηρίωση Ren'Py{/a}."
+    new "Πληροφορίες σχετικά με τη δημιουργία ενός προσαρμοσμένου θέματος μπορείτε να βρείτε στη διεύθυνση {a=[skins_url]}στην Τεκμηρίωση Ren'Py{/a}."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -2217,4 +2217,3 @@ translate greek strings:
     old "A nightly build of fixes to the release version of Ren'Py."
     # Automatic translation.
     new "Ένα νυχτερινό build με διορθώσεις στην έκδοση κυκλοφορίας του Ren'Py."
-

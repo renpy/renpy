@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -267,7 +267,23 @@ label start_update_old_game:
     call update_old_game
     jump build_distributions
 
+label add_update_pem:
+
+    python hide:
+        interface.info("You're trying to build an update, but an update.pem file doesn't exist.\n\nThis file is used to sign updates, and will be automatically created in your projects's base directory.\n\nYou'll need to back up update.pem and keep it safe.", cancel=Jump("build_distributions"))
+
+        import ecdsa
+        key = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p).to_pem()
+
+        with open(os.path.join(project.current.path, "update.pem"), "wb") as f:
+            f.write(key)
+
+    return
+
 label start_distribute:
+    if project.current.dump["build"]["include_update"] and not os.path.exists(os.path.join(project.current.path, "update.pem")):
+        call add_update_pem
+
     if project.current.data["add_from"]:
         call add_from_common
 

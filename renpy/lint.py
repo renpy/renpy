@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -90,16 +90,40 @@ def add(msg, *args):
         print(msg)
 
 
-def humanize_listing(l, singular_prefix="", plural_prefix="", singular_suffix="", plural_suffix=""):
+def problem_listing(header, problems):
     """
-    Formats a list of strings into a humanized enumeration.
+    Prints out a list of problems, organized by file, in a terse list.
     """
-    if len(l) == 1:
-        return singular_prefix + l[0] + singular_suffix
-    elif len(l) == 2:
-        return plural_prefix + l[0] + " and " + l[1] + plural_suffix
-    else:
-        return plural_prefix + ", ".join(l[:-1]) + ", and " + l[-1] + plural_suffix
+
+    if not problems:
+        return
+
+    problems.sort()
+
+    print()
+    print()
+    print(header)
+
+    by_file = collections.defaultdict(list)
+
+    for filename, line, message in problems:
+        by_file[filename].append((line, message))
+
+    for filename, file_problems in sorted(by_file.items()):
+        print()
+        print("{}:".format(filename))
+
+        if args.all_problems:
+
+            for line, message in file_problems[:4]:
+                print("    * line {:>5d} {}".format(line, message))
+
+            if len(file_problems) > 4:
+                print("    * and {} more.".format(len(file_problems) - 4))
+
+        else:
+            for line, message in file_problems:
+                print("    * line {:>5d} {}".format(line, message))
 
 
 # Tries to evaluate an expression, announcing an error if it fails.
@@ -210,13 +234,18 @@ def image_exists_imprecise(name):
         if [ i for i in banned if i in attrs ]:
             continue
 
-        li = getattr(d, "_list_attributes", None)
+        try:
 
-        if li is not None:
-            attrs = attrs | set(li(im[0], required))
+            li = getattr(d, "_list_attributes", None)
 
-        if [ i for i in required if i not in attrs ]:
-            continue
+            if li is not None:
+                attrs = attrs | set(li(im[0], required))
+
+            if [ i for i in required if i not in attrs ]:
+                continue
+
+        except Exception:
+            pass
 
         imprecise_cache.add(name)
         return True
@@ -376,7 +405,7 @@ def check_show(node, precise):
 
     layer = renpy.exports.default_layer(layer, tag or name)
 
-    if layer not in renpy.display.core.layers:
+    if layer not in renpy.display.scenelists.layers:
         report("Uses layer '%s', which is not defined.", layer)
 
     image_exists(name, expression, tag, precise=precise)
@@ -404,7 +433,7 @@ def check_hide(node):
 
     layer = renpy.exports.default_layer(layer, tag)
 
-    if layer not in renpy.display.core.layers:
+    if layer not in renpy.display.scenelists.layers:
         report("Uses layer '%s', which is not defined.", layer)
 
     if tag not in image_prefixes:
@@ -447,7 +476,7 @@ def text_checks(s):
     if renpy.config.say_menu_text_filter is not None:
         s = renpy.config.say_menu_text_filter(s)
 
-    msg = renpy.text.extras.check_text_tags(s)
+    msg = renpy.text.extras.check_text_tags(s, check_unclosed=args.check_unclosed_tags)
     if msg:
         report("%s (in %s)", msg, quote_text(s))
 
@@ -685,6 +714,8 @@ def check_style(name, s):
                 if isinstance(v, renpy.text.font.FontGroup):
                     for f in set(v.map.values()):
                         check_file(name, f, directory="fonts")
+                elif v is None and k.endswith("emoji_font"):
+                    pass
                 else:
                     check_file(name, v, directory="fonts")
 
@@ -692,7 +723,47 @@ def check_style(name, s):
                 check_style_property_displayable(name, k, v)
 
 
+def check_parameters(kind, node_name, parameter_info):
+    """
+    `kind`
+        What we're parsing the parameters of, for the error message.
+        "screen", "label", "function", "ATL transform"...
+
+    `node_name`
+        The name of the (kind) we're defining.
+
+    `parameter_info`
+        The ParameterInfo we're scanning, or None.
+    """
+
+    if parameter_info is None:
+        return
+
+    names = set(parameter_info.parameters)
+
+    for cat, builtins in (("Python", python_builtins), ("Ren'Py", renpy_builtins)):
+        rv = names & builtins
+
+        if len(rv) == 1:
+            name = rv.pop()
+            report("In {0} {1!r}, the {2!r} parameter replaces a {3} built-in name, which may cause problems.".format(kind, node_name, name, cat))
+            if not "_" in name:
+                add("This can be fixed by naming it '{}_'".format(name))
+        elif rv:
+            last = rv.pop()
+            prettyprevious = ", ".join(repr(name) for name in rv)
+            report("In {0} {1!r}, the {2} and {3!r} parameters replace {4} built-in names, which may cause problems.".format(
+                kind,
+                node_name,
+                prettyprevious,
+                last,
+                cat))
+
+
 def check_label(node):
+
+    if args.reserved_parameters:
+        check_parameters("label", node.name, node.parameters)
 
     def add_arg(n):
         if n is None:
@@ -705,11 +776,8 @@ def check_label(node):
 
     if pi is not None:
 
-        for i, _ in pi.parameters:
+        for i in pi.parameters:
             add_arg(i)
-
-        add_arg(pi.extrapos)
-        add_arg(pi.extrakw)
 
 
 def check_screen(node):
@@ -717,6 +785,9 @@ def check_screen(node):
     if (node.screen.parameters is None) and renpy.config.lint_screens_without_parameters:
         report("The screen %s has not been given a parameter list.", node.screen.name)
         add("This can be fixed by writing 'screen %s():' instead.", node.screen.name)
+
+    if args.reserved_parameters:
+        check_parameters("screen", node.screen.name, node.screen.parameters)
 
 
 def check_styles():
@@ -731,6 +802,11 @@ def check_styles():
 def check_init(node):
     if not (-999 <= node.priority <= 999):
         report("The init priority ({}) is not in the -999 to 999 range.".format(node.priority))
+
+
+def check_transform(node):
+    if args.reserved_parameters:
+        check_parameters("ATL transform", node.varname, node.parameters)
 
 
 def humanize(n):
@@ -783,6 +859,9 @@ class Count(object):
         self.words += len(s.split())
         self.characters += len(s)
 
+    def tuple(self):
+        return (self.blocks, self.words, self.characters)
+
 
 def common(n):
     """
@@ -801,26 +880,22 @@ def report_character_stats(charastats):
     Returns a list of character stat lines.
     """
 
-    rv = [ "Character statistics (for default language):" ]
+    rv = [ "", "Character Statistics (for default language):", ] # type: list[str|list[str]]
 
-    count_to_char = collections.defaultdict(list)
+    bullets = [ ]
 
-    for char, count in charastats.items():
-        count_to_char[count].append(char)
+    for char in sorted(charastats, key=lambda char: charastats[char].tuple(), reverse=True):
+        count = charastats[char]
+        bullets.append(
+            " * " + char
+            + " has " + humanize(count.blocks) + (" block " if count.blocks == 1 else " blocks ") + "of dialogue, "
+            + "containing " + humanize(count.words) + " words and "
+            + humanize(count.characters) + " characters."
+        )
 
-    for count, chars in sorted(count_to_char.items(), reverse=True):
-        chars.sort()
-
-        start = humanize_listing(chars, singular_suffix=" has ", plural_suffix=" have ")
-
-        rv.append(
-            " * " + start + humanize(count) +
-            (" block " if count == 1 else " blocks ") + "of dialogue" +
-            (" each." if len(chars) > 1 else ".")
-            )
+    rv.append(bullets)
 
     return rv
-
 
 def check_unreachables(all_nodes):
 
@@ -872,6 +947,10 @@ def check_unreachables(all_nodes):
             if node.language is not None:
                 to_check.add(node)
 
+        elif isinstance(node, renpy.ast.TranslateSay):
+            if node.language is not None:
+                to_check.add(node)
+
         elif isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
             # the block of these ones is always reachable, but their next is reachable only if they are themselves reachable
             add_block(node.block)
@@ -892,6 +971,9 @@ def check_unreachables(all_nodes):
                 weakly_reachable.add(node)
 
             add_names(reach)
+
+        elif isinstance(node, renpy.ast.RPY):
+            weakly_reachable.add(node)
 
     while to_check:
         node = to_check.pop() # type: Any
@@ -929,36 +1011,42 @@ def check_unreachables(all_nodes):
             to_check.add(next)
 
     locations = sorted(set((node.filename, node.linenumber) for node in (unreachable - weakly_reachable)))
-
-    locadict = collections.defaultdict(list)
-    for filename, linenumber in locations:
-        locadict[filename].append(str(linenumber))
-
-    for filename, linenumbers in locadict.items():
-        if len(linenumbers) > 10:
-            linenumbers = linenumbers[:9]
-            linenumbers.append("others")
-        report("{} : this file contains unreachable statements at {}.".format(filename,
-                                                                              humanize_listing(linenumbers,
-                                                                                               singular_prefix="line ",
-                                                                                               plural_prefix="lines ")))
+    problems = [ (filename, linenumber, "") for filename, linenumber in locations ]
+    problem_listing("Unreachable Statements:", problems)
 
 
 def check_orphan_translations(none_lang_identifiers, translation_identifiers):
-    faulty = collections.defaultdict(list) # filename : [linenumbers]
+
+    problems = [ ]
+
     for id, nodes in translation_identifiers.items():
         if id not in none_lang_identifiers:
             for node in nodes:
-                faulty[node.filename].append("{} (id {})".format(node.linenumber, id))
+                problems.append((node.filename, node.linenumber, "(id {})".format(id)))
 
-    for filename, linenumbers in faulty.items():
-        # if len(linenumbers) > 10:
-        #     linenumbers = linenumbers[:9]
-        #     linenumbers.append("others")
-        report("{} : this file contains orphan translations at {}.".format(filename,
-                                                                           humanize_listing(linenumbers,
-                                                                                            singular_prefix="line ",
-                                                                                            plural_prefix="lines ")))
+    problem_listing("Orphan Translations:", problems)
+
+
+def check_python_warnings():
+    """
+    Reports Python warnings.
+    """
+
+    warnings = [ ]
+
+    for k, v in renpy.game.script.bytecode_newcache.items():
+        if isinstance(k, tuple) and k[0] == "warnings":
+            warnings.extend(v)
+
+    if not warnings:
+        return
+
+    print("\n\nPython Warnings:")
+
+    warnings.sort()
+
+    for _filename, _line, text in warnings:
+        print("\n" + text, end='')
 
 
 def lint():
@@ -969,8 +1057,17 @@ def lint():
 
     ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
-    ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errros, 1 if lint errors are found.")
 
+    ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errors, 1 if lint errors are found.")
+
+    ap.add_argument("--no-orphan-tl", dest="orphan_tl", action="store_false", help="If not given, orphan translations are reported.")
+    ap.add_argument("--reserved-parameters", action="store_true", help="If given, renpy or python reserved names in renpy statement parameters are reported.")
+    ap.add_argument("--by-character", action="store_true", help="If given, the count of blocks, words, and characters for each character is reported.")
+    ap.add_argument("--check-unclosed-tags", action="store_true", help="If given, unclosed text tags are reported.")
+
+    ap.add_argument("--all-problems", action="store_true", help="If given, all problems of a kind are reported, not just the first ten.")
+
+    global args
     args = ap.parse_args()
 
     if args.filename:
@@ -1003,7 +1100,7 @@ def lint():
     # The current count.
     counts = collections.defaultdict(Count)
 
-    charastats = collections.defaultdict(int)
+    charastats = collections.defaultdict(Count)
 
     # The current language.
     language = None
@@ -1047,9 +1144,14 @@ def lint():
         elif isinstance(node, renpy.ast.Say):
             check_say(node)
 
-            counts[language].add(node.what)
-            if language is None:
-                charastats[node.who or 'narrator' ] += 1
+            if isinstance(node, renpy.ast.TranslateSay):
+                node_language = node.language
+            else:
+                node_language = language
+
+            counts[node_language].add(node.what)
+            if node_language is None:
+                charastats[node.who or 'narrator'].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -1073,13 +1175,6 @@ def lint():
         elif isinstance(node, renpy.ast.Label):
             check_label(node)
 
-        elif isinstance(node, renpy.ast.Translate):
-            language = node.language
-            if language is None:
-                none_language_ids.add(node.identifier)
-            else:
-                translated_ids[node.identifier].append(node)
-
         elif isinstance(node, renpy.ast.EndTranslate):
             language = None
 
@@ -1098,12 +1193,31 @@ def lint():
         elif isinstance(node, renpy.ast.Init):
             check_init(node)
 
+        elif isinstance(node, renpy.ast.Transform):
+            check_transform(node)
+
+        # This has to be separate, as TranslateSay is a subclass of Say.
+        if isinstance(node, (renpy.ast.Translate, renpy.ast.TranslateSay)) and args.orphan_tl:
+            language = node.language
+            if language is None:
+                none_language_ids.add(node.identifier)
+            else:
+                translated_ids[node.identifier].append(node)
+
     report_node = None
 
     check_styles()
     check_filename_encodings()
+
     check_unreachables(all_stmts)
-    check_orphan_translations(none_language_ids, translated_ids)
+
+    if args.orphan_tl:
+        check_orphan_translations(none_language_ids, translated_ids)
+
+    check_python_warnings()
+
+    if not renpy.config.check_conflicting_properties:
+        print("It is advised to set config.check_conflicting_properties to True.")
 
     for f in renpy.config.lint_hooks:
         f()
@@ -1149,8 +1263,8 @@ characters per block. """.format(
     lines.append("The game contains {0} menus, {1} images, and {2} screens.".format(
         humanize(menu_count), humanize(image_count), humanize(screen_count)))
 
-    if renpy.config.developer and renpy.config.lint_character_statistics:
-        lines.append(report_character_stats(charastats))
+    if args.by_character:
+        lines.extend(report_character_stats(charastats))
 
     # Format the lines and lists of lines.
     for l in lines:

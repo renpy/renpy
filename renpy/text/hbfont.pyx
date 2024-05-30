@@ -1,5 +1,5 @@
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -114,6 +114,15 @@ cdef extern from "hb.h":
     void hb_font_set_scale(hb_font_t *font, int x_scale, int y_scale)
     void hb_font_set_synthetic_slant(hb_font_t *font, float slant)
 
+    struct hb_glyph_extents_t:
+        hb_position_t x_bearing
+        hb_position_t y_bearing
+        hb_position_t width
+        hb_position_t height
+
+    void hb_font_get_glyph_advance_for_direction(hb_font_t *font, hb_codepoint_t glyph, hb_direction_t direction, hb_position_t *x, hb_position_t *y)
+    void hb_font_get_glyph_extents_for_origin(hb_font_t *font, hb_codepoint_t glyph, hb_position_t *x, hb_position_t *y, hb_glyph_extents_t *extents)
+
     # hb-shape
     void hb_shape (
         hb_font_t *font,
@@ -122,13 +131,13 @@ cdef extern from "hb.h":
         unsigned int num_features);
 
 
-
 cdef extern from "hb-ft.h":
     hb_face_t *hb_ft_face_create(FT_Face ft_face, hb_destroy_func_t *destroy)
     hb_font_t *hb_ft_font_create(FT_Face ft_face, hb_destroy_func_t *destroy)
     hb_bool_t hb_ft_font_changed(hb_font_t *font)
     void hb_ft_font_set_funcs(hb_font_t *font)
     void hb_ft_font_set_load_flags (hb_font_t *font, int load_flags)
+
 
 cdef extern from "hb-ot.h":
     ctypedef unsigned int hb_ot_name_id_t
@@ -140,6 +149,39 @@ cdef extern from "hb-ot.h":
                      hb_language_t language,
                      unsigned int *text_size,
                      char *text)
+
+    ctypedef enum hb_ot_metrics_tag_t:
+        HB_OT_METRICS_TAG_HORIZONTAL_ASCENDER
+        HB_OT_METRICS_TAG_HORIZONTAL_DESCENDER
+        HB_OT_METRICS_TAG_HORIZONTAL_LINE_GAP
+        HB_OT_METRICS_TAG_HORIZONTAL_CLIPPING_ASCENT
+        HB_OT_METRICS_TAG_HORIZONTAL_CLIPPING_DESCENT
+        HB_OT_METRICS_TAG_VERTICAL_ASCENDER
+        HB_OT_METRICS_TAG_VERTICAL_DESCENDER
+        HB_OT_METRICS_TAG_VERTICAL_LINE_GAP
+        HB_OT_METRICS_TAG_HORIZONTAL_CARET_RISE
+        HB_OT_METRICS_TAG_HORIZONTAL_CARET_RUN
+        HB_OT_METRICS_TAG_HORIZONTAL_CARET_OFFSET
+        HB_OT_METRICS_TAG_VERTICAL_CARET_RISE
+        HB_OT_METRICS_TAG_VERTICAL_CARET_RUN
+        HB_OT_METRICS_TAG_VERTICAL_CARET_OFFSET
+        HB_OT_METRICS_TAG_X_HEIGHT
+        HB_OT_METRICS_TAG_CAP_HEIGHT
+        HB_OT_METRICS_TAG_SUBSCRIPT_EM_X_SIZE
+        HB_OT_METRICS_TAG_SUBSCRIPT_EM_Y_SIZE
+        HB_OT_METRICS_TAG_SUBSCRIPT_EM_X_OFFSET
+        HB_OT_METRICS_TAG_SUBSCRIPT_EM_Y_OFFSET
+        HB_OT_METRICS_TAG_SUPERSCRIPT_EM_X_SIZE
+        HB_OT_METRICS_TAG_SUPERSCRIPT_EM_Y_SIZE
+        HB_OT_METRICS_TAG_SUPERSCRIPT_EM_X_OFFSET
+        HB_OT_METRICS_TAG_SUPERSCRIPT_EM_Y_OFFSET
+        HB_OT_METRICS_TAG_STRIKEOUT_SIZE
+        HB_OT_METRICS_TAG_STRIKEOUT_OFFSET
+        HB_OT_METRICS_TAG_UNDERLINE_SIZE
+        HB_OT_METRICS_TAG_UNDERLINE_OFFSET
+
+    void hb_ot_metrics_get_position_with_fallback (hb_font_t *font, hb_ot_metrics_tag_t metrics_tag, hb_position_t *position)
+
 
 # The freetype library object we use.
 cdef FT_Library library
@@ -479,9 +521,14 @@ cdef class HBFont:
                 if "bold" in face.variations.instance:
                     bold = 0.0
                     instance = "bold"
+                elif "bold italic" in face.variations.instance:
+                    bold = 0.0
+                    instance = "bold italic"
             else:
                 if "regular" in face.variations.instance:
                     instance = "regular"
+                elif "italic" in face.variations.instance:
+                    instance = "italic"
 
         if bold:
             antialias = True
@@ -580,8 +627,18 @@ cdef class HBFont:
 
         cdef int error
         cdef FT_Face face
-        cdef FT_Fixed scale
         cdef float ascent_scale
+
+        cdef hb_position_t horizontal_ascender
+        cdef hb_position_t horizontal_descender
+        cdef hb_position_t horizontal_line_gap
+
+        cdef hb_position_t vertical_ascender
+        cdef hb_position_t vertical_descender
+        cdef hb_position_t vertical_line_gap
+
+        cdef hb_position_t underline_offset
+        cdef hb_position_t underline_size
 
         face = self.face
 
@@ -599,12 +656,35 @@ cdef class HBFont:
 
             self.has_setup = True
 
-            scale = face.size.metrics.y_scale
+            self.hb_font = hb_ft_font_create(self.face_object.face, NULL)
+
+            hb_ft_font_set_funcs(self.hb_font)
+
+            hb_font_set_scale(self.hb_font, <int> (self.size * 64), <int> (self.size * 64))
+
+            if self.italic:
+                hb_font_set_synthetic_slant(self.hb_font, .207)
+
+            hb_ft_font_set_load_flags(self.hb_font, self.hinting | FT_LOAD_COLOR)
+
+            # Get the metrics.
+            hb_ot_metrics_get_position_with_fallback(self.hb_font, HB_OT_METRICS_TAG_HORIZONTAL_ASCENDER, &horizontal_ascender)
+            hb_ot_metrics_get_position_with_fallback(self.hb_font, HB_OT_METRICS_TAG_HORIZONTAL_DESCENDER, &horizontal_descender)
+
+            hb_ot_metrics_get_position_with_fallback(self.hb_font, HB_OT_METRICS_TAG_VERTICAL_ASCENDER, &vertical_ascender)
+            hb_ot_metrics_get_position_with_fallback(self.hb_font, HB_OT_METRICS_TAG_VERTICAL_DESCENDER, &vertical_descender)
+
+            hb_ot_metrics_get_position_with_fallback(self.hb_font, HB_OT_METRICS_TAG_UNDERLINE_OFFSET, &underline_offset)
+            hb_ot_metrics_get_position_with_fallback(self.hb_font, HB_OT_METRICS_TAG_UNDERLINE_SIZE, &underline_size)
 
             vextent_scale = renpy.config.ftfont_vertical_extent_scale.get(self.face_object.fn, 1.0)
 
-            self.ascent = FT_CEIL(int(face.size.metrics.ascender * vextent_scale))
-            self.descent = FT_FLOOR(int(face.size.metrics.descender * vextent_scale))
+            if self.vertical:
+                self.ascent = FT_CEIL(vertical_ascender)
+                self.descent = FT_FLOOR(vertical_descender)
+            else:
+                self.ascent = FT_CEIL(int(horizontal_ascender * vextent_scale))
+                self.descent = FT_FLOOR(int(horizontal_descender * vextent_scale))
 
             if self.descent > 0:
                 self.descent = -self.descent
@@ -617,26 +697,16 @@ cdef class HBFont:
             self.lineskip = <int> self.height * renpy.game.preferences.font_line_spacing
 
             if self.vertical:
-                self.underline_offset = FT_FLOOR(FT_MulFix(face.ascender + face.descender - face.underline_position, scale))
+                self.underline_offset = FT_FLOOR(self.ascent - self.descent - underline_offset)
             else:
-                self.underline_offset = FT_FLOOR(FT_MulFix(face.underline_position, scale))
-            self.underline_height = FT_FLOOR(FT_MulFix(face.underline_thickness, scale))
+                self.underline_offset = FT_FLOOR(underline_offset)
+
+            self.underline_height = FT_FLOOR(underline_size)
 
             if self.underline_height < 1:
                 self.underline_height = 1
 
             self.underline_height += self.expand
-
-            self.hb_font = hb_ft_font_create(self.face_object.face, NULL)
-
-            hb_ft_font_set_funcs(self.hb_font)
-
-            hb_font_set_scale(self.hb_font, <int> (self.size * 64), <int> (self.size * 64))
-
-            if self.italic:
-                hb_font_set_synthetic_slant(self.hb_font, .207)
-
-            hb_ft_font_set_load_flags(self.hb_font, self.hinting | FT_LOAD_COLOR)
 
         return
 
@@ -708,10 +778,8 @@ cdef class HBFont:
                     shear.yx = 1 << 16
                     shear.yy = 0
                     FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.xMax - face.bbox.xMin) // 2)
 
                 if self.stroker != NULL:
-                    # FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
                     FT_Glyph_Stroke(&g, self.stroker, 1)
 
                 if self.antialias:
@@ -787,6 +855,9 @@ cdef class HBFont:
         cdef hb_glyph_info_t *glyph_info
         cdef hb_glyph_position_t *glyph_pos
         cdef unsigned int glyph_count
+
+        cdef int bmx
+        cdef int bmy
 
         self.setup()
 
@@ -899,6 +970,11 @@ cdef class HBFont:
             if bmy + <int> cache.bitmap.rows > h:
                 h = bmy + cache.bitmap.rows
 
+            glyph.add_left = <int> max(-(bmx - glyph.x), 0)
+            glyph.add_right = <int> max(bmx + cache.bitmap.width - (glyph.x + glyph.width), 0)
+            glyph.add_top = <int> max(-(bmy - glyph.y), 0)
+            glyph.add_bottom = <int> max(bmy + cache.bitmap.rows - (glyph.y + glyph.line_spacing), 0)
+
         return x, y, w, h
 
     def draw(self, pysurf, float xo, int yo, color, list glyphs, int underline, bint strikethrough, black_color):
@@ -954,12 +1030,10 @@ cdef class HBFont:
             x = <int> (glyph.x + xo + glyph.x_offset)
             y = <int> (glyph.y + yo + glyph.y_offset)
 
-            underline_x = x - glyph.delta_x_offset
-            underline_end = x + <int> glyph.advance + expand
+            underline_x = x - glyph.delta_x_adjustment
+            underline_end = x + <int> (glyph.advance + expand + .9999)
 
             cache = self.get_glyph(glyph.glyph)
-
-            # with nogil used to be here, but it slowed things down.
 
             bmx = <int> (x + .5) + cache.bitmap_left
             bmy = y - cache.bitmap_top
@@ -1057,9 +1131,9 @@ cdef class HBFont:
                     for px from underline_x <= px < underline_end:
                         line = pixels + py * pitch + px * 4
 
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
+                        line[0] = Sr * Sa // 255
+                        line[1] = Sg * Sa // 255
+                        line[2] = Sb * Sa // 255
                         line[3] = Sa
 
             # Strikethrough.
@@ -1073,7 +1147,7 @@ cdef class HBFont:
                     for px from underline_x <= px < underline_end:
                         line = pixels + py * pitch + px * 4
 
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
+                        line[0] = Sr * Sa // 255
+                        line[1] = Sg * Sa // 255
+                        line[2] = Sb * Sa // 255
                         line[3] = Sa

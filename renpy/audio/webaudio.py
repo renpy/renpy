@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -111,7 +111,7 @@ def proxy_call_both(func):
     return func
 
 @proxy_with_channel
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
+def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -137,20 +137,30 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
     `relative_volume`
         A number between 0 and 1 that controls the relative volume of this file
+
+    `audio_filter`
+        The audio filter to apply when the file is being played.
     """
 
     try:
         if not isinstance(file, basestring):
-            file = file.name
+            file = file.raw.name
     except Exception:
+        if renpy.config.debug_sound:
+            raise
         return
 
+    if file is None:
+        raise ValueError("Cannot play None.")
+
+    afid = load_audio_filter(audio_filter)
+
     call("stop", channel)
-    call("queue", channel, file, name, paused, fadein, tight, start, end, relative_volume)
+    call("queue", channel, file, name, paused, fadein, tight, start, end, relative_volume, afid)
 
 
 @proxy_with_channel
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
+def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -160,11 +170,18 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
 
     try:
         if not isinstance(file, basestring):
-            file = file.name
+            file = file.raw.name
     except Exception:
+        if renpy.config.debug_sound:
+            raise
         return
 
-    call("queue", channel, file, name, False, fadein, tight, start, end, relative_volume)
+    if file is None:
+        raise ValueError("Cannot play None.")
+
+    afid = load_audio_filter(audio_filter)
+
+    call("queue", channel, file, name, False, fadein, tight, start, end, relative_volume, afid)
 
 
 @proxy_with_channel
@@ -231,6 +248,14 @@ def unpause(channel):
     """
 
     call("unpause", channel)
+
+
+def global_pause(pause):
+    """
+    Pauses all channels.
+    """
+
+    # Not used on web.
 
 
 @proxy_call_both
@@ -335,6 +360,112 @@ def set_secondary_volume(channel, volume, delay):
 
 
 @proxy_with_channel
+def replace_audio_filter(channel, audio_filter):
+    """
+    Replaces the audio filter for `channel` with `audio_filter`.
+    """
+
+    afid = load_audio_filter(audio_filter)
+
+    call("replace_audio_filter", channel, afid)
+
+
+def audio_filter_constructor(f):
+    """
+    Returns a text of a constructor call for this filter, using syntax
+    that will work in Python and Javascript.
+
+    `prefix`
+        The prefix to use for the constructor
+    """
+
+    args = f.__reduce__()[1]
+
+    arg_repr = [ ]
+
+    for i in args:
+        if isinstance(i, renpy.audio.filter.AudioFilter):
+            arg_repr.append(audio_filter_constructor(i))
+        elif i is True:
+            arg_repr.append("true")
+        elif i is False:
+            arg_repr.append("false")
+        else:
+            arg_repr.append(repr(i))
+
+
+    return "renpyAudio.filter.{}({})".format(f.__class__.__name__, ", ".join(arg_repr))
+
+
+# A map from the object id to the id of the audio filter.
+audio_filter_ids = { }
+
+audio_filter_serial = 1
+
+# A flag for debugging.
+print_audio_filter = False
+
+
+def load_audio_filter(af):
+    """
+    Given an audio filter, loads it into the web audio filter system.
+    """
+
+    global audio_filter_serial
+
+    if af is None:
+        return 0
+
+    objid = id(af)
+
+    if objid in audio_filter_ids:
+        return audio_filter_ids[objid]
+
+    afid = audio_filter_serial
+    audio_filter_serial += 1
+
+    audio_filter_ids[objid] = afid
+
+    if isinstance(af, renpy.audio.filter.Crossfade):
+        afid1 = load_audio_filter(af.filter1)
+        afid2 = load_audio_filter(af.filter2)
+        constructor = "renpyAudio.filter.Crossfade({}, {}, {})".format(afid1, afid2, af.duration)
+    else:
+        constructor = audio_filter_constructor(af)
+
+    js = "renpyAudio.allocateFilter({}, {})".format(afid, constructor)
+
+    if print_audio_filter:
+        print(js)
+
+    emscripten.run_script(js)
+
+    return afid
+
+
+def deallocate_audio_filter(audio_filter):
+    """
+    Called when an audio filter is about to be deallocated to release all
+    assocated resources.
+    """
+
+    objid = id(audio_filter)
+
+    if objid in audio_filter_ids:
+        afid = audio_filter_ids[objid]
+        del audio_filter_ids[objid]
+
+    js = "renpyAudio.deallocateFilter({})".format(afid)
+
+    if print_audio_filter:
+        print(js)
+
+    emscripten.run_script(js)
+
+renpysound.deallocate_audio_filter = deallocate_audio_filter
+
+
+@proxy_with_channel
 def get_volume(channel):
     """
     Gets the primary volume associated with `channel`.
@@ -433,6 +564,9 @@ def load_script():
 
     if not loaded:
         js = renpy.loader.load("_audio.js").read().decode("utf-8")
+        emscripten.run_script(js)
+
+        js = renpy.loader.load("_audio_filter.js").read().decode("utf-8")
         emscripten.run_script(js)
 
     loaded = True

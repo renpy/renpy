@@ -29,6 +29,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string.h>
 #include <pygame_sdl2/pygame_sdl2.h>
 
+apply_audio_filter_type RPS_apply_audio_filter = NULL;
+
 SDL_mutex *name_mutex;
 
 #ifdef __EMSCRIPTEN__
@@ -99,7 +101,6 @@ static int initialized = 0;
 
 /** Should fades be linear rather than logarithmic? */
 static int linear_fades = 0;
-
 
 struct Interpolate {
     /* The number of samples that are finished so far. */
@@ -219,6 +220,15 @@ struct Channel {
     /* The relative volume of the playing stream. */
     float playing_relative_volume;
 
+    /* The number of samples of silence to pad the playing stream with.*/
+    int playing_pad;
+
+    /**
+     * The AudioFilter that is currently in use on this channel. NULL
+     * if no filter is in use.
+     */
+    PyObject *playing_audio_filter;
+
     /* The queued up stream. */
     struct MediaState *queued;
 
@@ -236,6 +246,9 @@ struct Channel {
 
     /* The relative volume of the queued stream. */
     float queued_relative_volume;
+
+    /* The AudioFilter that is queued on this channel. */
+    PyObject *queued_audio_filter;
 
     /* Is this channel paused? */
     int paused;
@@ -279,6 +292,7 @@ struct Channel {
 
 struct Dying {
     struct MediaState *stream;
+    PyObject *audio_filter;
     struct Dying *next;
 };
 
@@ -312,6 +326,9 @@ static void start_stream(struct Channel* c, int reset_fade) {
     if (!c) return;
 
     c->pos = 0;
+    if (!c->queued) {
+        c->playing_pad = audio_spec.freq * 2;
+    }
 
     if (reset_fade) {
 
@@ -349,14 +366,11 @@ static void post_event(struct Channel *c) {
 #define ZERO_PAN 0.7071067811865476 // cos(PI / 4) and sin(PI / 4)
 
 
-static inline void mix_sample(struct Channel *c, short left_in, short right_in, float *left_out, float *right_out) {
+static inline void mix_sample(struct Channel *c, float left, float right, float *left_out, float *right_out) {
 
     tick_interpolate(&c->fade);
     tick_interpolate(&c->secondary_volume);
     tick_interpolate(&c->pan);
-
-    float left = left_in / 1.0 / -MIN_SHORT;
-    float right = right_in / 1.0 / -MIN_SHORT;
 
     float pan = get_interpolate(&c->pan);
 
@@ -392,10 +406,11 @@ void (*RPS_generate_audio_c_function)(float *stream, int length) = NULL;
 static void callback(void *userdata, Uint8 *stream, int length) {
 
     // Convert the length to samples.
-    length /= 4;
+    length /= (2 * sizeof(float));
 
     float mix_buffer[length * 2];
     short stream_buffer[length * 2];
+    float float_buffer[length * 2];
 
     memset(mix_buffer, 0, length * 2 * sizeof(float));
 
@@ -430,49 +445,87 @@ static void callback(void *userdata, Uint8 *stream, int length) {
             // If we're done with this stream, skip to the next.
             if (c->stop_samples == 0 || read_length == 0) {
 
-                int old_tight = c->playing_tight;
-                struct Dying *d;
-
-                post_event(c);
-
-                LOCK_NAME()
-
-                d = malloc(sizeof(struct Dying));
-                d->next = dying;
-                d->stream = c->playing;
-                dying = d;
-
-                free(c->playing_name);
-
-                c->playing = c->queued;
-                c->playing_name = c->queued_name;
-                c->playing_fadein = c->queued_fadein;
-                c->playing_tight = c->queued_tight;
-                c->playing_start_ms = c->queued_start_ms;
-                c->playing_relative_volume = c->queued_relative_volume;
-
-                c->queued = NULL;
-                c->queued_name = NULL;
-                c->queued_fadein = 0;
-                c->queued_tight = 0;
-                c->queued_start_ms = 0;
-                c->queued_relative_volume = 1.0;
-
-                if (c->playing_fadein) {
-                    old_tight = 0;
+                if (!c->playing_audio_filter || c->playing_audio_filter == Py_None || c->queued) {
+                    c->playing_pad = 0;
                 }
 
-                UNLOCK_NAME()
+                if (c->playing_pad > 0) {
 
-                start_stream(c, !old_tight);
+                    if (c->playing_pad > mixleft) {
+                        read_length = mixleft;
+                    } else {
+                        read_length = c->playing_pad;
+                    }
 
-                continue;
+                    c->playing_pad -= read_length;
+                    memset(stream_buffer, 0, read_length * 2 * sizeof(short));
+
+                } else {
+
+                    int old_tight = c->playing_tight;
+                    struct Dying *d;
+
+                    post_event(c);
+
+                    LOCK_NAME()
+
+                    d = malloc(sizeof(struct Dying));
+                    d->next = dying;
+                    d->stream = c->playing;
+
+                    // If there's a new audio filter, queue the old one for deallocation.
+                    if (c->playing_audio_filter) {
+                        d->audio_filter = c->playing_audio_filter;
+                    } else {
+                        d->audio_filter = NULL;
+                    }
+
+                    dying = d;
+
+                    free(c->playing_name);
+
+                    c->playing = c->queued;
+                    c->playing_name = c->queued_name;
+                    c->playing_fadein = c->queued_fadein;
+                    c->playing_tight = c->queued_tight;
+                    c->playing_start_ms = c->queued_start_ms;
+                    c->playing_relative_volume = c->queued_relative_volume;
+
+                    c->playing_audio_filter = c->queued_audio_filter;
+
+                    c->queued = NULL;
+                    c->queued_name = NULL;
+                    c->queued_fadein = 0;
+                    c->queued_tight = 0;
+                    c->queued_start_ms = 0;
+                    c->queued_relative_volume = 1.0;
+                    c->queued_audio_filter = NULL;
+
+                    if (c->playing_fadein) {
+                        old_tight = 0;
+                    }
+
+                    UNLOCK_NAME()
+
+                    start_stream(c, !old_tight);
+
+                    continue;
+                }
+            }
+
+            for (int i = 0; i < read_length; i++) {
+                float_buffer[i * 2] = stream_buffer[i * 2] / 1.0 / -MIN_SHORT;
+                float_buffer[i * 2 + 1] = stream_buffer[i * 2 + 1] / 1.0 / -MIN_SHORT;
+            }
+
+            if (c->playing_audio_filter && c->playing_audio_filter != Py_None) {
+                RPS_apply_audio_filter(c->playing_audio_filter, float_buffer, 2, read_length, audio_spec.freq);
             }
 
             // We have some data in the buffer, so mix it.
             for (int i = 0; (i < read_length) && c->stop_samples; i++) {
 
-                mix_sample(c, stream_buffer[i * 2], stream_buffer[i * 2 + 1], &mix_buffer[mixed * 2], &mix_buffer[mixed * 2 + 1]);
+                mix_sample(c, float_buffer[i * 2], float_buffer[i * 2 + 1], &mix_buffer[mixed * 2], &mix_buffer[mixed * 2 + 1]);
 
                 if (c->stop_samples > 0) {
                     c->stop_samples--;
@@ -489,27 +542,29 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
     // Actually output the sound.
     for (int i = 0; i < length; i++) {
-        int left = mix_buffer[i * 2] * MAX_SHORT;
-        int right = mix_buffer[i * 2 + 1] * MAX_SHORT;
+        float left = mix_buffer[i * 2];
+        float right = mix_buffer[i * 2 + 1];
 
-        if (left > MAX_SHORT) {
-            left = MAX_SHORT;
-        }
-        if (left < MIN_SHORT) {
-            left = MIN_SHORT;
-        }
-        if (right > MAX_SHORT) {
-            right = MAX_SHORT;
-        }
-        if (right < MIN_SHORT) {
-            right = MIN_SHORT;
+
+        if (left > 1.0) {
+            left = 1.0;
         }
 
-        ((short *) stream)[i * 2] = left;
-        ((short *) stream)[i * 2 + 1] = right;
+        if (left < -1.0) {
+            left = -1.0;
+        }
+
+        if (right > 1.0) {
+            right = 1.0;
+        }
+
+        if (right < -1.0) {
+            right = -1.0;
+        }
+
+        ((float *) stream)[i * 2] = left;
+        ((float *) stream)[i * 2 + 1] = right;
     }
-
-
 }
 
 
@@ -578,7 +633,7 @@ struct MediaState *load_stream(SDL_RWops *rw, const char *ext, double start, dou
 }
 
 
-void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, int paused, double start, double end, float relative_volume) {
+void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, int paused, double start, double end, float relative_volume, PyObject *audio_filter) {
 
     struct Channel *c;
 
@@ -599,6 +654,11 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
         c->playing_tight = 0;
         c->playing_start_ms = 0;
         c->playing_relative_volume = 1.0;
+
+        if (c->playing_audio_filter) {
+            Py_DECREF(c->playing_audio_filter);
+            c->queued_audio_filter = NULL;
+        }
     }
 
     if (c->queued) {
@@ -609,6 +669,11 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
         c->queued_tight = 0;
         c->queued_start_ms = 0;
         c->queued_relative_volume = 1.0;
+
+        if (c->queued_audio_filter) {
+            Py_DECREF(c->queued_audio_filter);
+            c->queued_audio_filter = NULL;
+        }
     }
 
     /* Allocate playing sample. */
@@ -627,6 +692,13 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
     c->playing_start_ms = (int) (start * 1000);
     c->playing_relative_volume = relative_volume;
 
+    if (audio_filter) {
+        c->playing_audio_filter = audio_filter;
+        Py_INCREF(c->playing_audio_filter);
+    } else {
+        c->playing_audio_filter = NULL;
+    }
+
     c->paused = paused;
 
     start_stream(c, 1);
@@ -636,7 +708,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
     error(SUCCESS);
 }
 
-void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, double start, double end, float relative_volume) {
+void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
 
     struct Channel *c;
 
@@ -648,7 +720,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
 
     /* If we're not playing, then we should play instead of queue. */
     if (!c->playing) {
-        RPS_play(channel, rw, ext, name, fadein, tight, 0, start, end, relative_volume);
+        RPS_play(channel, rw, ext, name, fadein, tight, 0, start, end, relative_volume, audio_filter);
         return;
     }
 
@@ -664,6 +736,11 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
         free(c->queued_name);
         c->queued_name = NULL;
         c->queued_tight = 0;
+    }
+
+    if (c->queued_audio_filter) {
+        Py_DECREF(c->queued_audio_filter);
+        c->queued_audio_filter = NULL;
     }
 
     /* Allocate queued sample. */
@@ -682,6 +759,13 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
 
     c->queued_start_ms = (int) (start * 1000);
     c->queued_relative_volume = relative_volume;
+
+    if (audio_filter) {
+        c->queued_audio_filter = audio_filter;
+        Py_INCREF(c->queued_audio_filter);
+    } else {
+        c->queued_audio_filter = NULL;
+    }
 
     UNLOCK_AUDIO();
 
@@ -719,6 +803,12 @@ void RPS_stop(int channel) {
         c->playing_relative_volume = 1.0;
     }
 
+    if (c->playing_audio_filter) {
+        Py_DECREF(c->playing_audio_filter);
+        c->playing_audio_filter = NULL;
+    }
+
+
     if (c->queued) {
         free_stream(c->queued);
         c->queued = NULL;
@@ -726,6 +816,12 @@ void RPS_stop(int channel) {
         c->queued_name = NULL;
         c->queued_start_ms = 0;
         c->queued_relative_volume = 1.0;
+
+    }
+
+    if (c->queued_audio_filter) {
+        Py_DECREF(c->queued_audio_filter);
+        c->queued_audio_filter = NULL;
     }
 
     UNLOCK_AUDIO();
@@ -763,6 +859,11 @@ void RPS_dequeue(int channel, int even_tight) {
     }
 
     c->queued_start_ms = 0;
+
+    if (c->queued_audio_filter) {
+        Py_DECREF(c->queued_audio_filter);
+        c->queued_audio_filter = NULL;
+    }
 
     UNLOCK_AUDIO();
 
@@ -941,6 +1042,15 @@ void RPS_unpause_all_at_start(void) {
 
 }
 
+
+/**
+ * Starts and stops the SDL audio playback.
+ */
+void RPS_global_pause(int pause) {
+    SDL_PauseAudio(pause);
+}
+
+
 /*
  * Returns the position of the given channel, in ms.
  */
@@ -1094,6 +1204,42 @@ void RPS_set_secondary_volume(int channel, float vol2, float delay) {
     error(SUCCESS);
 }
 
+
+/**
+ * Replaces audio filters with the given PyObject.
+ */
+void RPS_replace_audio_filter(int channel, PyObject *new_filter) {
+
+    struct Channel *c;
+
+    if (check_channel(channel)) {
+        return;
+    }
+
+    c = &channels[channel];
+
+    LOCK_AUDIO();
+
+    if (c->playing_audio_filter) {
+        Py_DECREF(c->playing_audio_filter);
+        Py_INCREF(new_filter);
+        c->playing_audio_filter = new_filter;
+    }
+
+    if (c->queued_audio_filter) {
+        Py_DECREF(c->queued_audio_filter);
+        Py_INCREF(new_filter);
+        c->queued_audio_filter = new_filter;
+    }
+
+    UNLOCK_AUDIO();
+
+    error(SUCCESS);
+
+
+}
+
+
 PyObject *RPS_read_video(int channel) {
     struct Channel *c;
     SDL_Surface *surf = NULL;
@@ -1185,7 +1331,7 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int
     }
 
     audio_spec.freq = freq;
-    audio_spec.format = AUDIO_S16SYS;
+    audio_spec.format = AUDIO_F32;
     audio_spec.channels = stereo;
     audio_spec.samples = samples;
     audio_spec.callback = callback;
@@ -1242,6 +1388,11 @@ void RPS_periodic() {
     while (d) {
         media_close(d->stream);
         struct Dying *next_d = d->next;
+
+        if (d->audio_filter) {
+            Py_DECREF(d->audio_filter);
+        }
+
         free(d);
         d = next_d;
     }
@@ -1252,6 +1403,7 @@ void RPS_advance_time(void) {
 	media_advance_time();
 }
 
+
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba) {
     import_pygame_sdl2();
 
@@ -1260,6 +1412,11 @@ void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba) {
 			PySurface_AsSurface(rgba)
 		);
 
+}
+
+
+int RPS_get_sample_rate() {
+    return audio_spec.freq;
 }
 
 /*

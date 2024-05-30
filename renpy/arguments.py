@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -119,6 +119,10 @@ class ArgumentParser(argparse.ArgumentParser):
             help='Forces all .rpy scripts to be recompiled before proceeding.')
 
         self.add_argument(
+            "--compile-python", action='store_true', dest='compile_python',
+            help='Forces all Python to be recompiled, rather than read from game/cache/bytecode-*.rpyb.')
+
+        self.add_argument(
             "--keep-orphan-rpyc", action="store_true",
             help="Prevents the compile command from deleting orphan rpyc files.")
 
@@ -188,7 +192,8 @@ def run():
 
     args = renpy.game.args = ap.parse_args()
 
-    if args.warp and not renpy.session.get("_reload", False):
+    if args.warp and not renpy.session.get("_warped", False):
+        renpy.session["_warped"] = True
         renpy.warp.warp_spec = args.warp
 
     if args.profile_display: # @UndefinedVariable
@@ -261,6 +266,7 @@ def bootstrap():
     """
 
     clean_epic_arguments()
+    clean_macos_arguments()
 
     ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
@@ -326,5 +332,20 @@ def clean_epic_arguments():
 
     global epic_arguments
     epic_arguments = sys.argv[1:]
+
+    sys.argv = [ sys.argv[0] ]
+
+
+# On macOS a file with the quarantine flag will cause an error on game start:
+# error: unrecognized arguments: -psn_0_some_number_here
+# Let's ignore this -psn argument
+
+def clean_macos_arguments():
+
+    for i in sys.argv[1:]:
+        if i.lower().startswith("-psn"):
+            break
+    else:
+        return
 
     sys.argv = [ sys.argv[0] ]

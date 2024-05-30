@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -42,6 +42,9 @@ init -1400 python:
 
 
         def __call__(self, other, done):
+
+            if type(other) is SplineMatrix:
+                other = other.matrix
 
             if type(other) is not type(self):
                 return self.function(*self.args)

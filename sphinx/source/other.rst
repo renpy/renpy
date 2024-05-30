@@ -129,24 +129,25 @@ with the specified value if provided.
 SDL
 ----
 
-These functions let you use the Python ctypes module to call functions in
-the SDL dll. There are no guarantees as to the version of SDL2 that's included
+The SDL2 dll can be accessed using :func:`renpy.get_sdl_dll`.
+This allows the use of SDL2 functions directly. However, using them often
+requires knowledge of the Python ctypes module.
+
+There are no guarantees as to the version of SDL2 that's included
 with Ren'Py, including which features will or will not be compiled in. These
-functions may fail on platforms that can otherwise run Ren'Py, and so it's
-important to check for None before proceeding.
+functions may fail on platforms that can otherwise run Ren'Py. It's
+important to check for a None value before proceeding.
 
-.. include:: inc/sdl
-
-::
+In the following example, the position of the window will be taken from SDL2::
 
     init python:
 
         import ctypes
 
         def get_window_position():
-            """
-            Retrieves the position of the window from SDL2.  Returns
-            the (x, y) of the upper left corner of the window, or
+            """Retrieves the position of the window from SDL2.
+
+            Returns the (x, y) of the upper left corner of the window, or
             (0, 0) if it's not known.
             """
 
@@ -160,15 +161,15 @@ important to check for None before proceeding.
             if win is None:
                 return (0, 0)
 
-            SDL_GetWindowPosition = sdl.SDL_GetWindowPosition
-
             x = ctypes.c_int()
             y = ctypes.c_int()
 
-            SDL_GetWindowPosition(win, ctypes.byref(x), ctypes.byref(y))
+            result = sdl.SDL_GetWindowPosition(win, ctypes.byref(x), ctypes.byref(y))
+
+            return result
 
 
-
+.. include:: inc/sdl
 
 Miscellaneous
 -------------

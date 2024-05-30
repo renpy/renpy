@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,9 +38,9 @@ init python:
     WEB_PATH = None
 
     class ProgressiveFilter(object):
-        def __init__(self, project):
+        def __init__(self, project, destination):
             self.project = project
-            self.destination = get_web_destination(project)
+            self.destination = destination
             self.remote_files = {}
             self.images = []
             self.path_filters = []
@@ -228,11 +228,11 @@ init python:
                 return f_rule
         return False
 
-    def generate_pwa_icons(p, destination):
+    def generate_web_icons(p, destination):
         """
-        Checks if the pwa_icon.png file exists in the game folder and generates
+        Checks if the web-icon.png file exists in the game folder and generates
         required icons for PWA in subdirectory icons/ in the destination folder.
-        If no pwa_icon.png is found, the default Ren'Py icon is used instead in
+        If no web-icon.png is found, the default Ren'Py icon is used instead in
         the web folder, if exists.
         """
         # Check if there's a custom icon in the game directory
@@ -399,7 +399,7 @@ init python:
         generate_files_catalog(destination)
 
 
-    def build_web(p, gui=True):
+    def build_web(p, gui=True, destination=None, launch=True):
 
         # Figure out the reporter to use.
         if gui:
@@ -410,7 +410,9 @@ init python:
         # Determine details.
         p.update_dump(True, gui=gui)
 
-        destination = get_web_destination(p)
+        if destination is None:
+            destination = get_web_destination(p)
+
         display_name = p.dump['build']['display_name']
 
         # Clean the folder, then remake it.
@@ -419,7 +421,7 @@ init python:
 
         os.makedirs(destination, 0o777)
 
-        files_filter = ProgressiveFilter(p)
+        files_filter = ProgressiveFilter(p, destination)
 
         # Use the distributor to make game.zip.
         distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"),
@@ -430,7 +432,7 @@ init python:
 
         # Copy the files from WEB_PATH to destination.
         for fn in os.listdir(WEB_PATH):
-            if fn in { "game.zip", "hash.txt", "index.html", "pwa_icon.png" }:
+            if fn in { "game.zip", "hash.txt", "index.html", "web-icon.png" }:
                 continue
 
             shutil.copy(os.path.join(WEB_PATH, fn), os.path.join(destination, fn))
@@ -466,7 +468,7 @@ init python:
             f.write(html)
 
         if not PY2:
-            generate_pwa_icons(p, destination)
+            generate_web_icons(p, destination)
             prepare_pwa_files(p, destination)
 
         # Zip up the game.
@@ -486,7 +488,8 @@ init python:
 
         # Start the web server.
 
-        webserver.start(destination)
+        if launch:
+            webserver.start(destination)
 
 
     def launch_web():
@@ -593,3 +596,22 @@ label web_start:
     $ webserver.start(get_web_destination(project.current))
     $ launch_web()
     jump web
+
+
+init python:
+
+    def web_build_command():
+        ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("web_project", help="The path to the project directory.")
+        ap.add_argument("--launch", action="store_true", help="Launches the app after build and install complete. Implies --install.")
+        ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
+
+        args = ap.parse_args()
+
+        p = project.Project(args.web_project)
+
+        build_web(p=p, gui=False, launch=args.launch, destination=args.destination)
+
+        return False
+
+    renpy.arguments.register_command("web_build", web_build_command)

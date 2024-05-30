@@ -282,8 +282,8 @@ translate ukrainian strings:
     new "Правий клік"
 
     # game/screens.rpy:1101
-    old "Mouse Wheel Up\nClick Rollback Side"
-    new "Колесо миші вгору\nНатисніть сторону відкату"
+    old "Mouse Wheel Up"
+    new "Колесо миші вгору"
 
     # game/screens.rpy:1105
     old "Mouse Wheel Down"

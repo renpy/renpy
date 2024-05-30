@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -45,7 +45,7 @@ def register(
         scry=None,
         block=False,
         init=False,
-        translatable=False,
+        translatable=False, # Not used.
         execute_init=None,
         init_priority=0,
         label=None,
@@ -134,6 +134,13 @@ def register(
         You probably don't want this if you have an `execute_init` function,
         as wrapping the statement in an init block will cause the `execute_init`
         and `execute` functions to be called at the same time.
+
+    `translatable`
+        If set to true, the statement will be included in a translation
+        block, generally the block containing the succeding say statement.
+        This may only be set to true for one-line statements. It's used
+        for statements like ``nvl clear`` and ``voice``, which may need
+        to be changed with dialogue.
 
     `init_priority`
         An integer that determines the priority of initialization of the

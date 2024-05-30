@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -874,7 +874,7 @@ cdef class Render:
 
     def get_size(self):
         """
-        Returns the size of this Render, a mostly ficticious value
+        Returns the size of this Render, a mostly fictitious value
         that's taken from the inputs to the constructor. (As in, we
         don't clip to this size.)
         """
@@ -1175,8 +1175,12 @@ cdef class Render:
         `arg` - an argument.
 
         The rest of the parameters are a rectangle giving the portion of
-        this region corresponding to the focus. If they are all None, than
-        this focus is assumed to be the singular full-screen focus.
+        this region corresponding to the focus.
+
+
+        If they are all None, than this focus is assumed to be the singular full-screen focus.
+        If they are all False, this focus can be grabbed, but will not be focused by mouse
+        or keyboard focus.
         """
 
         if isinstance(mask, Render) and mask is not self:
@@ -1245,8 +1249,8 @@ cdef class Render:
 
             for (d, arg, xo, yo, w, h, mx, my, mask) in self.focuses:
 
-                if xo is None:
-                    focuses.append(renpy.display.focus.Focus(d, arg, None, None, None, None, screen))
+                if xo is None or xo is False:
+                    focuses.append(renpy.display.focus.Focus(d, arg, xo, yo, w, h, screen))
                     continue
 
                 x1, y1 = transform.transform(xo, yo)
@@ -1352,7 +1356,7 @@ cdef class Render:
         if (rv is None) and (self.focuses):
             for (d, arg, xo, yo, w, h, mx, my, mask) in reversed(self.focuses):
 
-                if xo is None:
+                if xo is None or xo is False:
                     continue
 
                 elif mx is not None:
@@ -1457,7 +1461,34 @@ cdef class Render:
         if x < 0 or y < 0 or x >= self.width or y >= self.height:
             return False
 
-        return renpy.display.draw.is_pixel_opaque(self, x, y)
+        what = self.subsurface((x, y, 1, 1))
+
+        if what.is_fully_transparent():
+            return False
+
+        return renpy.display.draw.is_pixel_opaque(what)
+
+    def is_fully_transparent(self):
+        """
+        Returns true if we are sure this pixel is fully transparent.
+
+        This is intended to help optimize is_pixel_opaque, by making
+        the draw unnecessary if there is no child render at the given
+        location. It can be wrong, so long as it errs by returning
+        False.
+        """
+
+        if self.alpha == 0:
+            return True
+
+        for (child, xo, yo, focus, main) in self.children:
+            if isinstance(child, Render):
+                if not child.is_fully_transparent():
+                    return False
+            else:
+                return False
+
+        return True
 
 
     def fill(self, color):

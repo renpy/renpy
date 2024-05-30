@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -117,6 +117,7 @@ screen _accessibility():
 
     frame:
         style_group ""
+        alt _("Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars.")
 
         has side "c b":
             spacing gui._scale(10)

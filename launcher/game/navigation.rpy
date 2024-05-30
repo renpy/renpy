@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -18,6 +18,9 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+# Should translation files be shown in the launcher file navigation?
+default persistent.show_translation_files = True
 
 init python in navigation:
     import store.interface as interface
@@ -110,6 +113,9 @@ init python in navigation:
             if shortfn.startswith("game/"):
                 shortfn = fn[5:]
 
+            if shortfn.startswith("tl/") and not persistent.show_translation_files:
+                continue
+
             rv.append((shortfn, fn, None))
 
         rv.sort()
@@ -154,6 +160,8 @@ init python in navigation:
 
 
 screen navigation:
+
+    $ todo_count = len(project.current.dump.get("location", {}).get("todo", []))
 
     frame:
         style_group "l"
@@ -201,7 +209,7 @@ screen navigation:
                     textbutton _("transforms") action navigation.ChangeKind("transform")
                     textbutton _("screens") action navigation.ChangeKind("screen")
                     textbutton _("callables") action navigation.ChangeKind("callable")
-                    textbutton _("TODOs") action navigation.ChangeKind("todo")
+                    textbutton (__("TODOs") + " (" + str(todo_count) + ")") action navigation.ChangeKind("todo")
 
             add SPACER
             add SEPARATOR
@@ -217,6 +225,10 @@ screen navigation:
 
                         vbox:
                             style_group "l_navigation"
+
+                            if persistent.navigation == "file":
+                                textbutton _("Show translation files") style "l_checkbox" action [ ToggleField(persistent, "show_translation_files"), Jump("navigation_loop") ]
+                                add SPACER
 
                             for group_name, group in groups:
 

@@ -45,7 +45,9 @@ def register_shader(name, **kwargs):
     with lower priority numbers inserted before higher priority numbers.
     """
 
-    ShaderPart(name, **kwargs)
+    return ShaderPart(name, **kwargs)
+
+
 
 
 class ShaderPart(object):
@@ -54,7 +56,7 @@ class ShaderPart(object):
 
     """
 
-    def __init__(self, name, variables="", vertex_functions="", fragment_functions="", **kwargs):
+    def __init__(self, name, variables="", vertex_functions="", fragment_functions="", private_uniforms=False, **kwargs):
 
         if not re.match(r'^[\w\.]+$', name):
             raise Exception("The shader name {!r} contains an invalid character. Shader names are limited to ASCII alphanumeric characters, _, and .".format(name))
@@ -73,13 +75,20 @@ class ShaderPart(object):
         self.vertex_variables = set()
         self.fragment_variables = set()
 
+        # A map from variable name to type.
+        self.variable_types = { }
+
         # A sets of variable names used in the vertex and fragments shader.
         vertex_used = set()
         fragment_used = set()
 
+        self.uniforms = [ ]
+
         for k, v in kwargs.items():
 
             shader, _, priority = k.partition('_')
+
+            v = self.substitute_name(v)
 
             if not priority:
                 # Trigger error handling.
@@ -104,6 +113,8 @@ class ShaderPart(object):
             for m in re.finditer(r'\b\w+\b', v):
                 used.add(m.group(0))
 
+        variables = self.substitute_name(variables)
+
         for l in variables.split("\n"):
             l = l.partition("//")[0].strip(' ;')
 
@@ -117,7 +128,10 @@ class ShaderPart(object):
                 raise Exception("{}: Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(self.name, l))
 
             kind = a[0]
+            type_ = a[1]
             name = a[2]
+
+            self.variable_types[name] = type_
 
             if name in vertex_used:
                 self.vertex_variables.add(a)
@@ -125,10 +139,41 @@ class ShaderPart(object):
             if name in fragment_used:
                 self.fragment_variables.add(a)
 
-            if kind == "uniform":
+            if kind == "uniform" and not private_uniforms:
                 renpy.display.transform.add_uniform(name)
 
+            if kind == "uniform":
+                self.uniforms.append(name)
+
         self.raw_variables = variables
+
+    def expand_name(self, s):
+        """
+        Expands names starting with u__, a__, and v__ to include the shader part name.
+        """
+
+        name = self.name.replace(".", "_")
+
+        if s.startswith("u__"):
+            return "u_" + name + "_" + s[3:]
+        elif s.startswith("a__"):
+            return "a_" + name + "_" + s[3:]
+        elif s.startswith("v__"):
+            return "v_" + name + "_" + s[3:]
+        elif s.startswith("l__"):
+            return "l_" + name + "_" + s[3:]
+        else:
+            return s
+
+    def expand_match(self, m):
+        """
+        Expands a match object using expand_name.
+        """
+
+        return self.expand_name(m.group(0))
+
+    def substitute_name(self, s):
+        return re.sub(r'[uavl]__\w+', self.expand_match, s)
 
 
 # A map from a tuple giving the parts that comprise a shader, to the Shader
@@ -179,6 +224,8 @@ precision mediump float;
     return "".join(rv)
 
 
+shader_part_filter_cache = { }
+
 class ShaderCache(object):
     """
     This class caches shaders that were compiled. It's also responsible for
@@ -214,6 +261,14 @@ class ShaderCache(object):
             A tuple of strings, giving the names of the shader parts to include in
             the cache.
         """
+
+        if renpy.config.shader_part_filter is not None:
+            new_partnames = shader_part_filter_cache.get(partnames, None)
+            if new_partnames is None:
+                new_partnames = renpy.config.shader_part_filter(partnames)
+                shader_part_filter_cache[partnames] = new_partnames
+
+            partnames = new_partnames
 
         rv = self.cache.get(partnames, None)
         if rv is not None:

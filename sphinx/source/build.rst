@@ -1,5 +1,3 @@
-.. _building-distributions:
-
 Building Distributions
 ======================
 
@@ -27,22 +25,22 @@ Macintosh
     as a single file. The updater does not work with this package.
 
 Windows
-     A zip file targeting Windows x86_64.
+    A zip file targeting Windows x86_64.
 
 Windows, Mac, and Linux for Markets
-     A distribution that contains the information required to run on
-     software markets like itch.io and Steam. This isn't meant to be
-     run directly (and probably won't work on the Mac), but should be
-     fed to the app store upload process.
+    A distribution that contains the information required to run on
+    software markets like itch.io and Steam. This isn't meant to be
+    run directly (and probably won't work on the Mac), but should be
+    fed to the app store upload process.
 
 .. warning::
 
-  The zip and tar.bz2 files that Ren'Py produces contain permissions
-  information that must be present for Ren'Py to run on Linux and
-  Macintosh.
+    The zip and tar.bz2 files that Ren'Py produces contain permissions
+    information that must be present for Ren'Py to run on Linux and
+    Macintosh.
 
-  Unpacking and re-packing a zip file on Windows and then running it
-  on Linux or Macintosh is not supported.
+    Unpacking and re-packing a zip file on Windows and then running it
+    on Linux or Macintosh is not supported.
 
 Basic Configuration
 -------------------
@@ -50,7 +48,7 @@ Basic Configuration
 The build process can be configured by setting variables and calling
 function that live in the build namespace. This must be done from
 inside an ``init python`` block. The default settings for these configurations are
-set in ``options.rpy``.
+set in :file:`options.rpy`.
 
 There are a few basic variables and functions that many games will
 use.
@@ -63,31 +61,31 @@ use.
 
 .. var:: build.directory_name = "..."
 
-   This is used to create the names of directories in the archive
-   files. For example, if this is set to "mygame-1.0", the Linux
-   version of the project will unpack to "mygame-1.0-linux".
+    This is used to create the names of directories in the archive
+    files. For example, if this is set to "mygame-1.0", the Linux
+    version of the project will unpack to "mygame-1.0-linux".
 
-   This is also used to determine the name of the directory in
-   which the package files are placed. For example, if you set
-   build.directory_name to mygame-1.0, the archive files will
-   be placed in mygame-1.0-dists in the directory above the base
-   directory.
+    This is also used to determine the name of the directory in
+    which the package files are placed. For example, if you set
+    build.directory_name to mygame-1.0, the archive files will
+    be placed in mygame-1.0-dists in the directory above the base
+    directory.
 
-   This variable should not contain special characters like spaces,
-   colons, and semicolons. If not set, it defaults to :var:`build.name`
-   a dash, and :var:`config.version`.
+    This variable should not contain special characters like spaces,
+    colons, and semicolons. If not set, it defaults to :var:`build.name`
+    a dash, and :var:`config.version`.
 
 .. var:: build.executable_name = "..."
 
-   This variable controls the name of the executables that the user
-   clicks on to start the game.
+    This variable controls the name of the executables that the user
+    clicks on to start the game.
 
-   This variable should not contain special characters like spaces,
-   colons, and semicolons. If not set, it defaults to :var:`build.name`.
+    This variable should not contain special characters like spaces,
+    colons, and semicolons. If not set, it defaults to :var:`build.name`.
 
-   For example, if this is set to "mygame", the user will be able
-   to run mygame.exe on Windows, mygame.app on Macintosh, and
-   mygame.sh on Linux.
+    For example, if this is set to "mygame", the user will be able
+    to run mygame.exe on Windows, mygame.app on Macintosh, and
+    mygame.sh on Linux.
 
 .. _special-files:
 
@@ -97,15 +95,15 @@ Special Files
 There are two files that can be included in your game's base directory
 to customize the build.
 
-icon.ico
+:file:`icon.ico`
     The icon that is used on Windows.
 
-icon.icns
+:file:`icon.icns`
     The icon that is used on Macintosh.
 
 These icon files must be in specific formats. You'll need to use a
-program or web service (such as https://anyconv.com/png-to-ico-converter/ and https://anyconv.com/png-to-icns-converter/ ) to convert
-them.
+program or web service (such as https://anyconv.com/png-to-ico-converter/ and
+https://anyconv.com/png-to-icns-converter/ ) to convert them.
 
 Classifying and Ignoring Files
 ------------------------------
@@ -173,15 +171,15 @@ must match at least one character.
 
 For example::
 
-     # Include README.txt
-     build.classify("README.txt", "all")
+    # Include README.txt
+    build.classify("README.txt", "all")
 
-     # But exclude all other txt files.
-     build.classify("**.txt", None)
+    # But exclude all other txt files.
+    build.classify("**.txt", None)
 
-     # Add png and jpg files in the game directory into an archive.
-     build.classify("game/**.png", "archive")
-     build.classify("game/**.jpg", "archive")
+    # Add png and jpg files in the game directory into an archive.
+    build.classify("game/**.png", "archive")
+    build.classify("game/**.jpg", "archive")
 
 Documentation
 -------------
@@ -239,8 +237,8 @@ the file lists they will be included in. (It's rare to use anything
 but the all file list, however.) To use an archive, classify files
 into a list with its name.
 
-For example, the following will archive images in images.rpa, and
-game scripts into scripts.rpa::
+For example, the following will archive images in :file:`images.rpa`, and
+game scripts into :file:`scripts.rpa`::
 
     # Declare two archives.
     build.archive("scripts", "all")
@@ -271,15 +269,15 @@ old .rpyc files around. The .rpyc files contain information that is
 necessary to ensure that saves can be loaded, and omitting these
 files can cause problems.
 
-At the same time, Ren'Py  will update the .rpyc files in the game
+At the same time, Ren'Py will update the .rpyc files in the game
 directory when these files are changed, making the files unsuitable
 for inclusion in version control.
 
 To solve this problem, Ren'Py allows you to place the .rpyc files from
 a previous distribution into the old-game directory, which is alongside
-the game directory. The directory structure of old-game/ should match
-the directory structure of game/. For example, game/scripts/day1.rpyc
-should be moved to old-game/scripts/day1.rpyc. Files in old-game that are
+the game directory. The directory structure of :file:`old-game/` should match
+the directory structure of :file:`game/`. For example, :file:`game/scripts/day1.rpyc`
+should be moved to :file:`old-game/scripts/day1.rpyc`. Files in old-game that are
 not .rpyc files are ignored.
 
 The advantage of using old-game is that the old-game .rpyc files can be
@@ -333,11 +331,45 @@ Build Functions
 
 .. include:: inc/build
 
+Build Info
+----------
+
+There are two variables that can be used to provide information about
+the build. This information is used to generate the game/cache/build_info.json
+file, which is loaded as Ren'Py starts.
+
+.. var:: build.time = None
+
+    This variable defaults to None, but if your game has been built,
+    it will be set to the time the game was built, in seconds since
+    January 1, 1970.
+
+.. var:: build.info = { }
+
+    This variable lets you store information that will be placed into
+    the game/cache/build_info.json file in the built game. When the built
+    game starts, game/cache/build_info.json is loaded and the contents
+    placed into this variable.
+
+    Generally, you'll want to check that a field does not exist, and
+    set it, using setdefault.
+
+    For example, this stores the name of the computer that built the
+    game in the build_info.json file::
+
+        python hide:
+            import socket
+            build.info.setdefault("build_host", socket.gethostname())
+
+    The information in this variable needs to be of types that can be
+    placed in JSON files. (That is, None, booleans, strings,
+    numbers, lists, and dictionaries)
+
+
 Advanced Configuration
 ----------------------
 
 The following variables provide further control of the build process:
-
 
 .. var:: build.allow_integrated_gpu = True
 
@@ -420,3 +452,15 @@ The following variables provide further control of the build process:
 
     This is a dictionary mapping strings to strings, that can be used to
     add or override keys in the mac's Info.plist file.
+
+.. var:: build.update_formats = [ "rpu" ]
+
+    This is a list of formats that the updater will build. The default,
+    "rpu" is supported from Ren'Py 7.7 and 8.2 on. If you need to support
+    updating using the earlier zsync-based updates, add "zsync' to the
+    list.
+
+.. var:: build.game_only_update = False
+
+    If true, :var:`build.include_update` is enabled, and
+    the "Game-Only Update for Mobile" package becomes available.

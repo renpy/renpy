@@ -27,8 +27,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Python.h>
 #include <SDL.h>
 
-void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadeout, int tight, int paused, double start, double end, float relative_volume);
-void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadeout, int tight, double start, double end, float relative_volume);
+void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadeout, int tight, int paused, double start, double end, float relative_volume, PyObject *audio_filter);
+void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
 void RPS_stop(int channel);
 void RPS_dequeue(int channel, int even_tight);
 int RPS_queue_depth(int channel);
@@ -36,6 +36,7 @@ PyObject *RPS_playing_name(int channel);
 void RPS_fadeout(int channel, int ms);
 void RPS_pause(int channel, int pause);
 void RPS_unpause_all_at_start(void);
+void RPS_global_pause(int pause);
 void RPS_set_endevent(int channel, int event);
 int RPS_get_pos(int channel);
 double RPS_get_duration(int channel);
@@ -43,7 +44,7 @@ void RPS_set_volume(int channel, float volume);
 float RPS_get_volume(int channel);
 void RPS_set_pan(int channel, float pan, float delay);
 void RPS_set_secondary_volume(int channel, float vol2, float delay);
-
+void RPS_replace_audio_filter(int channel, PyObject *audio_filter);
 
 int RPS_video_ready(int channel);
 PyObject *RPS_read_video(int channel);
@@ -56,9 +57,12 @@ void RPS_quit(void);
 void RPS_advance_time(void);
 void RPS_periodic(void);
 
+int RPS_get_sample_rate(void);
 char *RPS_get_error(void);
 
 extern void (*RPS_generate_audio_c_function)(float *stream, int length);
 
+typedef void (* apply_audio_filter_type)(PyObject *, float *, int, int, int);
+extern apply_audio_filter_type RPS_apply_audio_filter;
 
 #endif

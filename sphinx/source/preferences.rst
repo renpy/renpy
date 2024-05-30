@@ -82,12 +82,11 @@ can then change it again.)
 
     If None, Ren'Py will attempt to draw at the monitor's full framerate.
 
-.. var:: preferences.gl_powersave = "auto"
+.. var:: preferences.gl_powersave = True
 
     This determines how often Ren'Py will redraw an unchanging screen. If True,
     Ren'Py will only draw the screen 5 times a second. If False, it will always
-    draw at the full framerate possible. If "auto", it will draw at full speed
-    when the device is powered, and 5hz when it is running on battery.
+    draw at the full framerate possible.
 
 .. var:: preferences.gl_tearing = False
 
@@ -180,6 +179,12 @@ can then change it again.)
     If True, voice will continue playing after the game menu is shown. If False,
     voice will be stopped when the game menu is shown. The equivalent of the
     "voice after menu" preference.
+
+.. var:: preferences.restore_window_position = True
+
+    If True, Ren'Py will attempt to restore the window position when the game
+    is restarted. If False, Ren'Py will not attempt to restore the window
+    position. The equivalent of the "restore window position" preference.
 
 Mixer Functions
 ---------------

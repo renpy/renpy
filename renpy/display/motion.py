@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -211,8 +211,7 @@ class Interpolate(object):
 
     def __call__(self, t, sizes=(None, None, None, None)):
 
-        types = (renpy.atl.position,) * len(self.start)
-        return renpy.atl.interpolate(t, tuple(self.start), tuple(self.end), types)
+        return renpy.atl.interpolate(t, tuple(self.start), tuple(self.end), renpy.atl.position_or_none)
 
 
 def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,

@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,6 +28,16 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import gc
 import io
 import re
+import time
+import sys
+import threading
+import fnmatch
+import os
+
+if PY2:
+    from urllib import urlencode as _urlencode
+else:
+    from urllib.parse import urlencode as _urlencode
 
 import renpy
 
@@ -67,6 +77,7 @@ from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen
 from renpy.display.screen import has_screen, get_screen, get_displayable, get_widget, ScreenProfile as profile_screen
 from renpy.display.screen import get_displayable_properties, get_widget_properties
+from renpy.display.screen import get_screen_variable, set_screen_variable
 
 from renpy.display.focus import focus_coordinates, capture_focus, clear_capture_focus, get_focus_rect
 from renpy.display.predict import screen as predict_screen
@@ -76,6 +87,8 @@ from renpy.display.image import get_available_image_tags, get_available_image_at
 from renpy.display.image import get_registered_image
 
 from renpy.display.im import load_surface, load_image, load_rgba
+
+from renpy.display.tts import speak as alt, speak_extra_alt
 
 from renpy.curry import curry, partial
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
@@ -109,6 +122,7 @@ from renpy.memory import profile_memory, diff_memory, profile_rollback
 
 from renpy.text.font import variable_font_info
 from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH as TEXT_PARAGRAPH, DISPLAYABLE as TEXT_DISPLAYABLE
+from renpy.text.shader import TextShader, register_textshader
 
 from renpy.execution import not_infinite_loop, reset_all_contexts
 
@@ -123,6 +137,8 @@ from renpy.lint import try_compile, try_eval
 from renpy.gl2.gl2shadercache import register_shader
 from renpy.gl2.live2d import has_live2d
 
+from renpy.bootstrap import get_alternate_base
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
@@ -134,11 +150,6 @@ renpy_pure("known_languages")
 renpy_pure("check_text_tags")
 renpy_pure("filter_text_tags")
 renpy_pure("split_properties")
-
-import time
-import sys
-import threading
-import fnmatch
 
 
 # The number of bits in the architecture.
@@ -294,7 +305,7 @@ def retain_after_load():
     renpy.game.log.retain_after_load()
 
 
-scene_lists = renpy.display.core.scene_lists
+scene_lists = renpy.display.scenelists.scene_lists
 
 
 def count_displayables_in_layer(layer):
@@ -837,9 +848,6 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
 
     renpy.exports.mode('input')
 
-    # Take the user out of fullscreen during input.
-    renpy.game.preferences.fullscreen = False
-
     prompt = renpy.text.extras.filter_text_tags(prompt, allow=set())
 
     roll_forward = renpy.exports.roll_forward_info()
@@ -850,7 +858,7 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
     if roll_forward is not None:
         default = roll_forward
 
-    wi = renpy.display.behavior.WebInput(prompt, default, length=length, allow=allow, exclude=exclude, mask=mask)
+    wi = renpy.display.behavior.WebInput(substitute(prompt), default, length=length, allow=allow, exclude=exclude, mask=mask)
     renpy.ui.add(wi)
 
     renpy.exports.shown_window()
@@ -1180,23 +1188,24 @@ def display_menu(items,
                  choice_chosen_style='menu_choice_chosen',
                  choice_button_style='menu_choice_button',
                  choice_chosen_button_style='menu_choice_chosen_button',
-                 scope={ },
+                 scope=(),
                  widget_properties=None,
                  screen="choice",
                  type="menu", # @ReservedAssignment
                  predict_only=False,
+                 _layer=None,
                  **kwargs):
     """
     :doc: se_menu
     :name: renpy.display_menu
-    :args: (items, *, interact=True, screen="choice", **kwargs)
+    :args: (items, *, interact=True, screen="choice", type="menu", _layer=None)
 
     This displays a menu to the user. `items` should be a list of 2-item tuples.
     In each tuple, the first item is a textual label, and the second item is
     the value to be returned if that item is selected. If the value is None,
     the first item is used as a menu caption.
 
-    This function takes many arguments, of which only a few are documented.
+    This function takes many optional arguments, of which only a few are documented.
     Except for `items`, all arguments should be given as keyword arguments.
 
     `interact`
@@ -1204,6 +1213,14 @@ def display_menu(items,
 
     `screen`
         The name of the screen used to display the menu.
+
+    `type`
+        May be "menu" or "nvl". If "nvl", the menu is displayed in NVL mode.
+        Otherwise, it is displayed in ADV mode.
+
+    `_layer`
+        The layer to display the menu on. If not given, defaults to :var:`config.choice_layer`
+        for normal choice menus, and :var:`config.nvl_choice_layer` for NVL choice menus.
 
     Note that most Ren'Py games do not use menu captions, but use narration
     instead. To display a menu using narration, write::
@@ -1216,6 +1233,7 @@ def display_menu(items,
     screen = menu_kwargs.pop("screen", screen)
     with_none = menu_kwargs.pop("_with_none", with_none)
     mode = menu_kwargs.pop("_mode", type)
+    layer = menu_kwargs.pop("_layer", _layer)
 
     if interact:
         renpy.exports.mode(mode)
@@ -1305,12 +1323,18 @@ def display_menu(items,
 
             item_actions.append(me)
 
+        if layer is None:
+            if type == "nvl":
+                layer = renpy.config.nvl_choice_layer
+            else:
+                layer = renpy.config.choice_layer
+
         show_screen(
             screen,
             items=item_actions,
             _widget_properties=props,
             _transient=True,
-            _layer=renpy.config.choice_layer,
+            _layer=layer,
             *menu_args,
             **scope)
 
@@ -1543,7 +1567,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=None):
     """
     :doc: se_pause
-    :args: (delay=None, *, hard=False, predict=False, modal=None)
+    :args: (delay=None, *, predict=False, modal=True, hard=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -1553,36 +1577,40 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
 
     The following should be given as keyword arguments:
 
-    `hard`
-        This must be given as a keyword argument. When True, Ren'Py may prevent
-        the user from clicking to interrupt the pause. If the player enables
-        skipping, the hard pause will be skipped. There may be other circumstances
-        where the hard pause ends early or prevents Ren'Py from operating properly,
-        these will not be treated as bugs.
-
-        In general, using hard pauses is rude. When the user clicks to advance
-        the game, it's an explicit request - the user wishes the game to advance.
-        To override that request is to assume you understand what the player
-        wants more than the player does.
-
-        Calling renpy.pause guarantees that whatever is on the screen will be
-        displayed for at least one frame, and hence has been shown to the
-        player.
-
-        tl;dr - Don't use renpy.pause with hard=True.
-
     `predict`
-        If True, Ren'Py will end the pause when all prediction, including
-        prediction scheduled with :func:`renpy.start_predict` and
-        :func:`renpy.start_predict_screen`, has been finished.
+        If True, when all prediction - including prediction scheduled with
+        :func:`renpy.start_predict` and :func:`renpy.start_predict_screen` - has
+        been finished, the pause will be ended.
 
         This also causes Ren'Py to prioritize prediction over display smoothness
         for the duration of the pause. Because of that, it's recommended to not
         display animations during prediction.
 
+        The pause will still end by other means - when the user clicks or skips,
+        or when the delay expires (if any).
+
     `modal`
-        If True or None, the pause will not end when a modal screen is being displayed.
+        If True, a timed pause will not end (it will hold) when a modal screen
+        is being displayed.
         If False, the pause will end while a modal screen is being displayed.
+
+    `hard`
+        When True, Ren'Py may prevent the user from clicking to interrupt the
+        pause. If the player enables skipping, the hard pause will be skipped.
+        There may be other circumstances where the hard pause ends early or
+        prevents Ren'Py from operating properly, these will not be treated as
+        bugs.
+
+        In general, using hard pauses is rude. When the user clicks to advance
+        the game, it's an explicit request - the user wishes the game to
+        advance. To override that request is to assume you understand what the
+        player wants more than the player does.
+
+        tl;dr - Don't use renpy.pause with hard=True.
+
+    Calling renpy.pause guarantees that whatever is on the screen will be
+    displayed for at least one frame, and hence has been shown to the
+    player.
     """
 
     if renpy.config.skipping == "fast":
@@ -2057,7 +2085,7 @@ def warp_to_line(warp_spec):
     """
 
     renpy.warp.warp_spec = warp_spec
-    renpy.warp.warp()
+    full_restart()
 
 
 def screenshot(filename):
@@ -2207,7 +2235,7 @@ def get_game_runtime():
 
 
 @renpy_pure
-def loadable(filename, directory=None):
+def loadable(filename, directory=None, tl=True):
     """
     :doc: file
 
@@ -2219,9 +2247,11 @@ def loadable(filename, directory=None):
         If not None, a directory to search in if the file is not found
         in the game directory. This will be prepended to filename, and
         the search tried again.
+    `tl`
+        If True, a translation subdirectory will be considered as well.
     """
 
-    return renpy.loader.loadable(filename, directory=directory)
+    return renpy.loader.loadable(filename, tl=tl, directory=directory)
 
 
 @renpy_pure
@@ -2352,7 +2382,6 @@ def log(msg):
     try:
 
         if not logfile:
-            import os
             logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), "a")
 
             if not logfile.tell():
@@ -2360,8 +2389,14 @@ def log(msg):
 
         import textwrap
 
-        wrapped = textwrap.fill(msg, renpy.config.log_width)
-        wrapped = unicode(wrapped)
+        wrapped = [ ]
+
+        for line in msg.split('\n'):
+            line = textwrap.fill(line, renpy.config.log_width)
+            line = unicode(line)
+            wrapped.append(line)
+
+        wrapped = '\n'.join(wrapped)
 
         logfile.write(wrapped + "\n")
         logfile.flush()
@@ -2425,12 +2460,15 @@ def dynamic(*variables, **kwargs):
     variables dynamically scoped to the current call. When the call returns, the
     variables will be reset to the value they had when this function was called.
 
+    Variables in :ref:`named stores <named-stores>` are supported.
+
     If the variables are given as keyword arguments, the value of the argument
     is assigned to the variable name.
 
     Example calls are::
 
         $ renpy.dynamic("x", "y", "z")
+        $ renpy.dynamic("mystore.serial_number")
         $ renpy.dynamic(players=2, score=0)
     """
 
@@ -2445,13 +2483,17 @@ def context_dynamic(*variables):
     """
     :doc: context
 
-    This can be given one or more variable names as arguments. This makes
-    the variables dynamically scoped to the current context. The variables will
-    be reset to their original value when returning to the prior context.
+    This can be given one or more variable names as arguments. This makes the
+    variables dynamically scoped to the current context. When returning to the
+    prior context, the variables will be reset to the value they had when this
+    function was called.
 
-    An example call is::
+    Variables in :ref:`named stores <named-stores>` are supported.
+
+    Example calls are::
 
         $ renpy.context_dynamic("x", "y", "z")
+        $ renpy.context_dynamic("mystore.serial_number")
     """
 
     renpy.game.context().make_dynamic(variables, context=True)
@@ -2757,9 +2799,9 @@ def iconify():
 
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
-curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
+curried_call_in_new_context = curry(call_in_new_context)
 invoke_in_new_context = renpy.game.invoke_in_new_context
-curried_invoke_in_new_context = renpy.curry.curry(renpy.game.invoke_in_new_context)
+curried_invoke_in_new_context = curry(invoke_in_new_context)
 call_replay = renpy.game.call_replay
 
 renpy_pure("curried_call_in_new_context")
@@ -2977,6 +3019,60 @@ def load_string(s, filename="<string>"):
         renpy.game.exception_info = old_exception_info
 
 
+def load_language(language):
+    """
+    :undocumented:
+
+    (Here because of commonality with load_string and load_module.)
+
+    Load the script files in tl/language, if not loaded. Runs any
+    init code found during the process.
+    """
+
+    if language is None:
+        return
+
+    if not renpy.config.defer_tl_scripts:
+        return
+
+    if language in renpy.game.script.load_languages:
+        return
+
+    old_exception_info = renpy.game.exception_info
+
+    try:
+
+        old_locked = renpy.config.locked
+        renpy.config.locked = False
+
+        renpy.game.script.load_languages.add(language)
+
+        initcode = renpy.game.script.load_script()
+
+        context = renpy.execution.Context(False)
+        context.init_phase = True
+        renpy.game.contexts.append(context)
+
+        for _prio, node in initcode:
+            if isinstance(node, renpy.ast.Node):
+                renpy.game.context().run(node)
+            else:
+                node()
+
+        context.pop_all_dynamic()
+        renpy.game.contexts.pop()
+
+        renpy.config.locked = old_locked
+
+        if not renpy.game.context().init_phase:
+            renpy.game.script.analyze()
+
+        renpy.game.script.update_bytecode()
+
+    finally:
+        renpy.game.exception_info = old_exception_info
+
+
 def include_module(name):
     """
     :doc: other
@@ -3167,40 +3263,13 @@ def get_roll_forward():
 
 def cache_pin(*args):
     """
-    :undocumented: Cache pin is deprecated.
+    :undocumented: Cache pinning has been removed.
     """
-
-    new_pins = renpy.revertable.RevertableSet()
-
-    for i in args:
-
-        im = renpy.easy.displayable(i)
-
-        if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot pin non-image-manipulator %r" % im)
-
-        new_pins.add(im)
-
-    renpy.store._cache_pin_set = new_pins | renpy.store._cache_pin_set
-
 
 def cache_unpin(*args):
     """
-    :undocumented: Cache pin is deprecated.
+    :undocumented: Cache pinning has been removed
     """
-
-    new_pins = renpy.revertable.RevertableSet()
-
-    for i in args:
-
-        im = renpy.easy.displayable(i)
-
-        if not isinstance(im, renpy.display.im.ImageBase):
-            raise Exception("Cannot unpin non-image-manipulator %r" % im)
-
-        new_pins.add(im)
-
-    renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
 def expand_predict(d):
@@ -3331,15 +3400,10 @@ def call_screen(_screen_name, *args, **kwargs):
     otherwise the mode will be "screen".
     """
 
-    mode = "screen"
-    if "_mode" in kwargs:
-        mode = kwargs.pop("_mode")
+    mode = kwargs.pop("_mode", "screen")
     renpy.exports.mode(mode)
 
-    with_none = renpy.config.implicit_with_none
-
-    if "_with_none" in kwargs:
-        with_none = kwargs.pop("_with_none")
+    with_none = kwargs.pop("_with_none", renpy.config.implicit_with_none)
 
     show_screen(_screen_name, *args, _transient=True, **kwargs)
 
@@ -3435,7 +3499,7 @@ def display_reset():
 
 def mode(mode):
     """
-    :doc: modes
+    :undocumented:
 
     Causes Ren'Py to enter the named mode, or stay in that mode if it's
     already in it.
@@ -3548,6 +3612,9 @@ def vibrate(duration):
     is only supported on Android.
     """
 
+    if duration < 0.01:
+        duration = 0.01
+
     if renpy.android:
         import android # @UnresolvedImport
         android.vibrate(duration)
@@ -3574,19 +3641,27 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
 
     It begins by determining a set of image attributes. If `image_tag` is
     given, it gets the image attributes from the tag. Otherwise, it gets
-    them from the currently showing character. If no attributes are available
-    for the tag, this returns None.
+    them from the image property suplied to the currently showing character.
+    If no attributes are available, this returns None.
 
-    It then looks up an image with the tag `prefix_tag`, and the image tage (either
-    from `image_tag` or the currently showing character) and the set of image
-    attributes as attributes. If such an image exists, it's returned.
+    It then looks up an image with the tag `prefix_tag`, and attributes
+    consisting of:
 
-    If not_showing is True, this only returns a side image if the image the
-    attributes are taken from is not on the screen. If Nome, the value
-    is taken from :var:`config.side_image_only_not_showing`.
+    * An image tag (either from `image_tag` or the image property supplied
+      to the currently showing character).
+    * The attributes.
 
-    If `layer` is None, uses the default layer for the currently showing
-    tag.
+    If such an image exists, it's returned.
+
+    `not_showing`
+        If not showing is True, this only returns a side image if an image
+        with the tag that the attributes are taken from is not currently
+        being shown. If False, it will always return an image, if possible.
+        If None, takes the value from :var:`config.side_image_only_not_showing`.
+
+    `layer`
+        If given, the layer to look for the image tag and attributes on. If
+        None, uses the default layer for the tag.
     """
 
     if not_showing is None:
@@ -3602,6 +3677,9 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
             return None
 
     else:
+
+        # Character will compute the appropriate attributes, and stores it
+        # in _side_image_attributes.
         attrs = renpy.store._side_image_attributes
 
     if not attrs:
@@ -3879,14 +3957,14 @@ def munge(name, filename=None):
         into the filename containing the call to this function.
     """
 
-    if filename is None:
-        filename = sys._getframe(1).f_code.co_filename
-
     if not name.startswith("__"):
         return name
 
     if name.endswith("__"):
         return name
+
+    if filename is None:
+        filename = sys._getframe(1).f_code.co_filename
 
     return renpy.lexer.munge_filename(filename) + name[2:]
 
@@ -3937,14 +4015,15 @@ def invoke_in_thread(fn, *args, **kwargs):
     stopped when Ren'Py is shutting down.
 
     This thread is very limited in what it can do with the Ren'Py API.
-    Changing store variables is allowed, as is calling the :func:`renpy.queue_event`
-    function. Most other portions of the Ren'Py API are expected to be called from
-    the main thread.
+    Changing store variables is allowed, as are calling calling the following
+    functions:
 
-    The primary use of this function is to place accesss to a web API in a second
-    thread, and then update variables with the results of that call, by storing
-    the result in variables and then relying on the interaction restart to cause
-    screens to display those variables.
+    * :func:`renpy.restart_interaction`
+    * :func:`renpy.invoke_in_main_thread`
+    * :func:`renpy.queue_event`
+
+    Most other portions of the Ren'Py API are expected to be called from
+    the main thread.
 
     This does not work on the web platform, except for immediately returning
     without an error.
@@ -3965,6 +4044,36 @@ def invoke_in_thread(fn, *args, **kwargs):
     t = threading.Thread(target=run)
     t.daemon = True
     t.start()
+
+
+def invoke_in_main_thread(fn, *args, **kwargs):
+    """
+    :doc: other
+
+    This runs the given function with the given arguments in the main
+    thread. The function runs in an interaction context similar to an
+    event handler. This is meant to be called from a separate thread,
+    whose creation is handled by :func:`renpy.invoke_in_thread`.
+
+    If a single thread schedules multiple functions to be invoked, it is guaranteed
+    that they will be run in the order in which they have been scheduled::
+
+        def ran_in_a_thread():
+            renpy.invoke_in_main_thread(a)
+            renpy.invoke_in_main_thread(b)
+
+    In this example, it is guaranteed that ``a`` will return before
+    ``b`` is called. The order of calls made from different threads is not
+    guaranteed.
+
+    This may not be called during the init phase.
+    """
+
+    if renpy.game.context().init_phase:
+        raise Exception("invoke_in_main_thread may not be called during the init phase.")
+
+    renpy.display.interface.invoke_queue.append((fn, args, kwargs))
+    restart_interaction()
 
 
 def cancel_gesture():
@@ -4176,18 +4285,19 @@ def get_refresh_rate(precision=5):
     number of frames per second.
 
     `precision`
-        The raw data Ren'Py gets is number of frames per second, rounded down.
-        This means that a monitor that runs at 59.95 frames per second will
-        be reported at 59 fps. The precision argument reduces the precision
-        of this reading, such that the only valid readings are multiples of
-        the precision.
+        The raw data Ren'Py gets is the number of frames per second rounded down
+        to the nearest integer. This means that a monitor that runs at 59.95
+        frames per second will be reported at 59 fps. The precision argument
+        then further reduces the precision of this reading, such that the only valid
+        readings are multiples of the precision.
 
         Since all monitor framerates tend to be multiples of 5 (25, 30, 60,
         75, and 120), this likely will improve accuracy. Setting precision
         to 1 disables this.
     """
 
-    precision *= 1.0
+    if PY2:
+        precision = float(precision)
 
     info = renpy.display.get_info()
     rv = info.refresh_rate # type: ignore
@@ -4213,8 +4323,8 @@ def get_adjustment(bar_value):
     """
     :doc: screens
 
-    Given `bar_value`, a  :class:`BarValue`, returns the :func:`ui.adjustment`
-    if uses. The adjustment has the following to attributes defined:
+    Given `bar_value`, a :class:`BarValue`, returns the :func:`ui.adjustment`
+    it uses. The adjustment has the following attributes defined:
 
     .. attribute:: value
 
@@ -4394,7 +4504,7 @@ def get_zorder_list(layer):
     Returns a list of (tag, zorder) pairs for `layer`.
     """
 
-    return renpy.display.core.scene_lists().get_zorder_list(layer)
+    return scene_lists().get_zorder_list(layer)
 
 
 def change_zorder(layer, tag, zorder):
@@ -4404,7 +4514,7 @@ def change_zorder(layer, tag, zorder):
     Changes the zorder of `tag` on `layer` to `zorder`.
     """
 
-    return renpy.display.core.scene_lists().change_zorder(layer, tag, zorder)
+    return scene_lists().change_zorder(layer, tag, zorder)
 
 
 sdl_dll = False
@@ -4414,10 +4524,8 @@ def get_sdl_dll():
     """
     :doc: sdl
 
-    This returns a ctypes.cdll object that refers to the library that contains
-    the instance of SDL2 that Ren'Py is using.
-
-    If this can not be done, None is returned.
+    Returns a ctypes.cdll object that refers to the library that contains
+    the instance of SDL2 that Ren'Py is using. If this fails, None is returned.
     """
 
     global sdl_dll
@@ -4427,7 +4535,9 @@ def get_sdl_dll():
 
     try:
 
-        DLLS = [ None, "librenpython.dll", "librenpython.dylib", "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
+        lib = os.path.dirname(sys.executable) + "/"
+
+        DLLS = [ None, lib + "librenpython.dll", lib + "librenpython.dylib", lib + "librenpython.so", "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
 
         import ctypes
 
@@ -4437,7 +4547,7 @@ def get_sdl_dll():
                 dll = ctypes.cdll[i]
                 # See if it has SDL_GetError..
                 dll.SDL_GetError
-            except Exception:
+            except Exception as e:
                 continue
 
             sdl_dll = dll
@@ -4454,15 +4564,17 @@ def get_sdl_window_pointer():
     """
     :doc: sdl
 
-    Returns a pointer (of type ctypes.c_void_p) to the main window, or None
-    if the main window is not displayed, or some other problem occurs.
+    :rtype: ctypes.c_void_p | None
+
+    Returns a pointer to the main window, or None if the main window is not
+    displayed (or some other problem occurs).
     """
 
     try:
         window = pygame_sdl2.display.get_window()
 
         if window is None:
-            return
+            return None
 
         return window.get_sdl_window_pointer()
 
@@ -4596,3 +4708,265 @@ def confirm(message):
     Return = renpy.store.Return
     renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False))
     return renpy.ui.interact()
+
+
+try:
+    if PY2:
+        import urllib
+        proxies = urllib.getproxies()
+    else:
+        import urllib.request
+        proxies = urllib.request.getproxies()
+except Exception as e:
+    proxies = {}
+
+
+class FetchError(Exception):
+    """
+    :undocumented:
+
+    The type of errors raised by :func:`renpy.fetch`.
+    """
+
+    def __init__(self, message, exception=None):
+        super(FetchError, self).__init__(message)
+
+        self.original_exception = exception
+
+        m = re.search(r'\d\d\d', message)
+        if m is not None:
+            self.status_code = int(m.group(0))
+        else:
+            self.status_code = None
+
+
+def fetch_pause():
+    """
+    Called by the fetch functions to pause for a short amount of time.
+    """
+
+    if renpy.game.context().init_phase:
+        return
+
+    if renpy.game.context().interacting:
+        import pygame_sdl2
+        pygame_sdl2.event.pump()
+        renpy.audio.audio.periodic()
+
+        if renpy.emscripten:
+            emscripten.sleep(0)
+
+        return
+
+    renpy.exports.pause(0)
+
+
+def fetch_requests(url, method, data, content_type, timeout, headers):
+    """
+    :undocumented:
+
+    Used by fetch on non-emscripten systems.
+
+    Returns either a bytes object, or a FetchError.
+    """
+
+    import threading
+    import requests
+
+    # Because we don't have nonlocal yet.
+    resp = [ None ]
+
+    if data is not None:
+        headers = dict(headers)
+        headers["Content-Type"] = content_type
+
+    def make_request():
+        try:
+            r = requests.request(method, url, data=data, timeout=timeout, headers=headers, proxies=proxies)
+            r.raise_for_status()
+            resp[0] = r.content # type: ignore
+        except Exception as e:
+            resp[0] = FetchError(str(e), e) # type: ignore
+
+    t = threading.Thread(target=make_request)
+    t.start()
+
+    while resp[0] is None:
+        fetch_pause()
+
+    t.join()
+
+    return resp[0]
+
+
+def fetch_emscripten(url, method, data, content_type, timeout, headers):
+    """
+    :undocumented:
+
+    Used by fetch on emscripten systems.
+
+    Returns either a bytes object, or a FetchError.
+    """
+
+    import emscripten
+
+    fn = "/req-" + str(time.time()) + ".data"
+
+    with open(fn, "wb") as f:
+        if data is not None:
+            f.write(data)
+
+    url = url.replace('"' , '\\"')
+
+    import json
+    headers = json.dumps(headers)
+    headers = headers.replace("\\", "\\\\").replace('"', '\\"')
+
+    if method == "GET" or method == "HEAD":
+        command = """fetchFile("{method}", "{url}", null, "{fn}", null, "{headers}")""".format( method=method, url=url, fn=fn, content_type=content_type, headers=headers)
+    else:
+        command = """fetchFile("{method}", "{url}", "{fn}", "{fn}", "{content_type}", "{headers}")""".format( method=method, url=url, fn=fn, content_type=content_type, headers=headers)
+
+    fetch_id = emscripten.run_script_int(command)
+
+    status = "PENDING"
+    message = "Pending."
+
+    start = time.time()
+    while time.time() - start < timeout:
+        fetch_pause()
+
+        result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
+        status, _ignored, message = result.partition(" ")
+
+        if status != "PENDING":
+            break
+
+    try:
+
+        if status == "OK":
+            with open(fn, "rb") as f:
+                return f.read()
+
+        else:
+            return FetchError(message)
+
+    finally:
+        os.unlink(fn)
+
+
+
+def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes", params=None, headers={}):
+    """
+    :doc: fetch
+
+    This performs an HTTP (or HTTPS) request to the given URL, and returns
+    the content of that request. If it fails, raises a FetchError exception,
+    with text that describes the failure. (But may not be suitable for
+    presentation to the user.)
+
+    `url`
+        The URL to fetch.
+
+    `method`
+        The method to use. Generally one of "GET", "POST", or "PUT", but other
+        HTTP methods are possible. If `data` or `json` are not None, defaults to
+        "POST", otherwise defaults to GET.
+
+    `data`
+        If not None, a byte string of data to send with the request.
+
+    `json`
+        If not None, a JSON object to send with the request. This takes precendence
+        over `data`.
+
+    `content_type`
+        The content type of the data. If not given, defaults to "application/json"
+        if `json` is not None, or "application/octet-stream" otherwise. Only
+        used on a POST or PUT request.
+
+    `timeout`
+        The number of seconds to wait for the request to complete.
+
+    `result`
+        How to process the result. If "bytes", returns the raw bytes of the result.
+        If "text", decodes the result using UTF-8 and returns a unicode string. If "json",
+        decodes the result as JSON. (Other exceptions may be generated by the decoding
+        process.)
+
+    `params`
+        A dictionary of parameters that are added to the URL as a query string.
+
+    `headers`
+        A dictionary of headers to send with the request.
+
+    This may be called from inside or outside of an interaction.
+
+    * Outside of an interation, while waiting for `timeout` to pass, this will
+      repeatedly call :func:`renpy.pause`\ (0),  so Ren'Py doesn't lock up. It
+      may make sense to display a screen to the user to let them know what is going on.
+
+    * Inside of an interaction (for example, inside an Action), this will block
+      the display system until the fetch request finishes or times out. It will try
+      to service the audio system, so audio will continue to play.
+
+    This function should work on all platforms. However, on the web platform,
+    requests going to a different origin than the game will fail unless allowed
+    by CORS.
+    """
+
+    import json as _json
+
+
+    if data is not None and json is not None:
+        raise FetchError("data and json arguments are mutually exclusive.")
+
+    if result not in ( "bytes", "text", "json" ):
+        raise FetchError("result must be one of 'bytes', 'text', or 'json'.")
+
+    if params is not None:
+        url += "?" + _urlencode(params)
+
+    if method is None:
+        if data is not None or json is not None:
+            method = "POST"
+        else:
+            method = "GET"
+
+    if content_type is None:
+        if json is not None:
+            content_type = "application/json"
+        else:
+            content_type = "application/octet-stream"
+
+    if json is not None:
+        data = _json.dumps(json).encode("utf-8")
+
+    if renpy.emscripten:
+        content = fetch_emscripten(url, method, data, content_type, timeout, headers=headers)
+    else:
+        content = fetch_requests(url, method, data, content_type, timeout, headers=headers)
+
+    if isinstance(content, Exception):
+        raise content # type: ignore
+
+    try:
+        if result == "bytes":
+            return content
+        elif result == "text":
+            return content.decode("utf-8")
+        elif result == "json":
+            return _json.loads(content)
+    except Exception as e:
+        raise FetchError("Failed to decode the result: " + str(e), e)
+
+
+def can_fullscreen():
+    """
+    :doc: other
+
+    Returns True if the current platform supports fullscreen mode, False
+    otherwise.
+    """
+
+    return renpy.display.can_fullscreen

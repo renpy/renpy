@@ -894,3 +894,62 @@ translate spanish strings:
     old "(clear retained bubbles)"
     new "(borrar burbujas retenidas)"
 
+    # renpy/common/00director.rpy:1776
+    old "Customize director.transforms to add more transforms."
+    new "Modifica director.transforms para añadir más transformaciones."
+
+    # renpy/common/00director.rpy:1821
+    old "Click to set."
+    new "Haz clic para ajustar."
+
+    # renpy/common/00director.rpy:1822
+    old "Customize director.transitions to add more transitions."
+    new "Modifica director.transitions para añadir más transiciones."
+
+    # renpy/common/00director.rpy:1845
+    old "Customize director.audio_channels to add more channels."
+    new "Modifica director.audio_channels para añadir más canales."
+
+    # renpy/common/00preferences.rpy:587
+    old "restore window position"
+    new "restaurar la posición de la ventana"
+
+    # renpy/common/00preferences.rpy:596
+    old "reset"
+    new "restablecer"
+
+    # renpy/common/00updater.rpy:504
+    old "No update methods found."
+    new "Métodos de actualización no encontrados."
+
+    # renpy/common/00updater.rpy:551
+    old "Could not download file list: "
+    new "No se pudo descargar la lista de archivos: "
+
+    # renpy/common/00updater.rpy:554
+    old "File list digest does not match."
+    new "El compendio de la lista de archivos no coincide."
+
+    # renpy/common/00updater.rpy:2072
+    old "Preparing to download the game data."
+    new "Preparando la descarga de los datos del juego."
+
+    # renpy/common/00updater.rpy:2074
+    old "Downloading the game data."
+    new ""
+
+    # renpy/common/00updater.rpy:2076
+    old "The game data has been downloaded."
+    new "Descarga de los datos del juego."
+
+    # renpy/common/00updater.rpy:2078
+    old "An error occured when trying to download game data:"
+    new "Se ha producido un error al intentar descargar los datos del juego:"
+
+    # renpy/common/00updater.rpy:2083
+    old "This game cannot be run until the game data has been downloaded."
+    new "Este juego no puede ejecutarse hasta que se hayan descargado los datos del juego."
+
+    # renpy/common/00updater.rpy:2090
+    old "Retry"
+    new "Reintentar"

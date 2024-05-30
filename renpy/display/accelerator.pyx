@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -119,10 +119,7 @@ def relative(n, base, limit):
     while a float is interpreted as a fraction of the limit).
     """
 
-    if isinstance(n, (int, absolute)):
-        return n
-    else:
-        return min(int(n * base), limit)
+    return min(int(absolute.compute_raw(n, base)), limit)
 
 cdef class RenderTransform:
     """
@@ -232,7 +229,7 @@ cdef class RenderTransform:
         else:
             mr.mesh = True
 
-        if blur is not None:
+        if (blur is not None) and (blur > 0):
             mr.add_shader("-renpy.texture")
             mr.add_shader("renpy.blur")
             mr.add_uniform("u_renpy_blur_log2", math.log(blur, 2))
@@ -322,15 +319,24 @@ cdef class RenderTransform:
 
         if crop is not None:
 
+            x, y, w, h = crop
+
             if crop_relative:
-                x, y, w, h = crop
 
                 x = relative(x, width, width)
                 y = relative(y, height, height)
                 w = relative(w, width, width - x)
                 h = relative(h, height, height - y)
 
-                crop = (x, y, w, h)
+            else:
+
+                x = relative(x, 1, width)
+                y = relative(y, 1, height)
+                w = relative(w, 1, width - x)
+                h = relative(h, 1, height - y)
+
+            crop = (x, y, w, h)
+
 
         if (self.state.corner1 is not None) and (crop is None) and (self.state.corner2 is not None):
             x1, y1 = self.state.corner1
@@ -341,6 +347,11 @@ cdef class RenderTransform:
                 y1 = relative(y1, height, height)
                 x2 = relative(x2, width, width)
                 y2 = relative(y2, height, height)
+            else:
+                x1 = relative(x1, 1, width)
+                y1 = relative(y1, 1, height)
+                x2 = relative(x2, 1, width)
+                y2 = relative(y2, 1, height)
 
             if x1 > x2:
                 x3 = x1
@@ -392,13 +403,11 @@ cdef class RenderTransform:
         ysize = state.ysize
 
         if xsize is not None:
-            if renpy.config.relative_transform_size:
-                xsize = absolute.compute_raw(xsize, self.widtho)
+            xsize = absolute.compute_raw(xsize, self.widtho if renpy.config.relative_transform_size else 1 )
             self.widtho = xsize
 
         if ysize is not None:
-            if renpy.config.relative_transform_size:
-                ysize = absolute.compute_raw(ysize, self.heighto)
+            ysize = absolute.compute_raw(ysize, self.heighto if renpy.config.relative_transform_size else 1)
             self.heighto = ysize
 
         self.cr = render(child, self.widtho, self.heighto, st - self.transform.child_st_base, at)
@@ -812,15 +821,17 @@ cdef class RenderTransform:
 
         state = self.state
 
-        mt = state.matrixtransform
+        matrix_object = state.matrixtransform
 
-        if mt is not None:
+        if matrix_object is not None:
 
-            if callable(mt):
-                mt = mt(None, 1.0)
+            if callable(matrix_object):
+                matrix_object = matrix_object(None, 1.0)
 
-            if not isinstance(mt, renpy.display.matrix.Matrix):
-                raise Exception("matrixtransform requires a Matrix (got %r)" % (mt,))
+            if not isinstance(matrix_object, renpy.display.matrix.Matrix):
+                raise Exception("matrixtransform requires a Matrix (got %r)" % (matrix_object,))
+
+            mt = matrix_object
 
             if state.matrixanchor is None:
 
@@ -1020,7 +1031,9 @@ cdef class RenderTransform:
 
         pos = (self.xo, self.yo)
 
-        if state.subpixel:
+        if state.alpha <= 0.0:
+            rv.depends_on(self.cr, focus=True)
+        elif state.subpixel:
             rv.subpixel_blit(self.cr, pos)
         else:
             rv.blit(self.cr, pos)

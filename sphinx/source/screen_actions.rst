@@ -31,10 +31,72 @@ These are actions that manage screens, interaction results, and control flow.
 
 .. include:: inc/control_action
 
+.. _data-actions:
+
 Data Actions
 ------------
 
-These set or toggle data.
+A number of these actions, encompassing the most usual cases, follow a simple
+pattern shown in the following table:
+
++----------------+---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+| Managers       |                                                                          Accessors                                                            |
++                +---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+|                | Variable                  | ScreenVariable                  | LocalVariable                  | Field                  | Dict                  |
++================+===========================+=================================+================================+========================+=======================+
+| Set            | :func:`SetVariable`       | :func:`SetScreenVariable`       | :func:`SetLocalVariable`       | :func:`SetField`       | :func:`SetDict`       |
++----------------+---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+| Toggle         | :func:`ToggleVariable`    | :func:`ToggleScreenVariable`    | :func:`ToggleLocalVariable`    | :func:`ToggleField`    | :func:`ToggleDict`    |
++----------------+---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+| Cycle          | :func:`CycleVariable`     | :func:`CycleScreenVariable`     | :func:`CycleLocalVariable`     | :func:`CycleField`     | :func:`CycleDict`     |
++----------------+---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+| Increment      | :func:`IncrementVariable` | :func:`IncrementScreenVariable` | :func:`IncrementLocalVariable` | :func:`IncrementField` | :func:`IncrementDict` |
++----------------+---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+
+The accessors determine the target whose value will change, and the manager determines what the new value
+will be. Their behavior is relatively simple to grasp:
+
+- The :abbr:`-Variable (SetVariable, ToggleVariable, CycleVariable, IncrementVariable)`
+  actions change the value of the global variable called `name`, found in the general
+  store. The `name` argument must be a string, and can be a simple name like "strength", or one with dots
+  separating the variable from fields, like "hero.strength" or "persistent.show_cutscenes".
+- The :abbr:`-ScreenVariable (SetScreenVariable, ToggleScreenVariable, CycleScreenVariable, IncrementScreenVariable)`
+  actions change the value of the variable called `name`, associated with the
+  current top-level screen. In a `use`\ d screen, this action sets the variable in the context of the
+  screen containing all the `use`\ d one(s).
+- The :abbr:`-LocalVariable (SetLocalVariable, ToggleLocalVariable, CycleLocalVariable, IncrementLocalVariable)`
+  actions change the value of the variable called `name`, taken locally to the
+  screen it's in. This action is only useful in a screen that has been `use`\ d by another screen (for more
+  information, see :ref:`sl-use`). In all other cases, the -ScreenVariable actions should be preferred,
+  as yielding better performance and allowing more of the screen to be cached. The -LocalVariable
+  actions must be created in the context that the variable is set in - it can't be passed in from somewhere
+  else.
+- The :abbr:`-Field (SetField, ToggleField, CycleField, IncrementField)`
+  actions change the value of the field called `field` of the object `object`.
+- The :abbr:`-Dict (SetDict, ToggleDict, CycleDict, IncrementDict)`
+  actions change the value of the key `key` in the dictionary `dict` : they change
+  ``dict[key]``. This also works with lists.
+
+* The :abbr:`Set- (SetVariable, SetScreenVariable, SetLocalVariable, SetField, SetDict)`
+  actions simply set the value of the target to the passed `value`. Note that this has nothing
+  to do with ``set``, which is a builtin type in Python. ``target = value``
+* The :abbr:`Toggle- (ToggleVariable, ToggleScreenVariable, ToggleLocalVariable, ToggleField, ToggleDict)`
+  actions invert the boolean value of their target, between `true_value` (if given and not
+  None) and `false_value` (same). When `true_value` and `false_value` are both None, ``target = not target``
+* The :abbr:`Cycle- (CycleVariable, CycleScreenVariable, CycleLocalVariable, CycleField, CycleDict)`
+  actions cycle through the provided `values`, which must be a non-empty sequence (a list,
+  tuple or range). If the target's value is not in the sequence at the time the action runs, it is set to
+  the first value in the sequence. The `loop` parameter (defaulting to True) determines what happens when
+  the `values` run out : if True it's started from the beginning, if False it raises an exception. The
+  `reverse` parameter (defaulting to False) reverses the passed `values` sequence.
+* The :abbr:`Increment- (IncrementVariable, IncrementScreenVariable, IncrementLocalVariable, IncrementField, IncrementDict)`
+  actions add `amount` to their target, which defaults to 1 but may be of any type
+  compatible with the target. ``target = target + amount``
+
+.. include:: inc/generated_data_action
+
+The following data actions do not follow the pattern above. Some of them are related to Python's ``set`` type,
+not to be confused with the Set- actions above.
 
 .. include:: inc/data_action
 
@@ -186,12 +248,12 @@ Other Functions
 Tooltips
 --------
 
-Tooltips can now be accessed by the ``tooltip`` property available on all
+Tooltips can now be accessed by the :scpref:`tooltip` property available on all
 displayables, and the GetTooltip function. The GetTooltip function
 returns the value of the tooltip property when the displayable
 gains focus.
 
-As a reminder, values passed to the ``tooltip`` property must support
+As a reminder, values passed to the :scpref:`tooltip` property must support
 equality.
 
 Here's an example::

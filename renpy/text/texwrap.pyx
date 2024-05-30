@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,7 @@
 from __future__ import print_function
 
 import time
-from renpy.text.textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, RUBY_TOP, RUBY_ALT
+from renpy.text.textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, SPLIT_IGNORE, RUBY_TOP, RUBY_ALT
 from libc.stdlib cimport calloc, malloc, free
 
 import collections
@@ -180,6 +180,7 @@ cdef class WordWrapper(object):
         cdef int len_glyphs = len(glyphs)
         cdef int len_words = 0
 
+        cdef double ignored = 0
 
         words = <Word *> calloc(len_glyphs, sizeof(Word))
         word = words
@@ -217,7 +218,13 @@ cdef class WordWrapper(object):
                 start_x = x
                 start_glyph = g
 
-            x += g.advance
+            if g.split == SPLIT_IGNORE:
+                ignored += g.advance
+            else:
+                x += g.advance + ignored
+                ignored = 0
+
+        x += ignored
 
         word.glyph = <void *> start_glyph
         word.start_x = start_x

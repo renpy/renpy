@@ -20,15 +20,22 @@ cdef class AttributeLayout:
         return (AttributeLayout, (self.offset, self.stride))
 
 
-
 # The layout of a mesh used in a Solid.
 SOLID_LAYOUT = AttributeLayout()
 
 # The layout of a mesh used with a texture.
 TEXTURE_LAYOUT = AttributeLayout()
-TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2)
+TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
 
-
+# The layout of a mesh used with text.
+TEXT_LAYOUT = AttributeLayout()
+TEXT_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
+TEXT_LAYOUT.add_attribute("a_text_center", 2) # Position of the vertex center.
+TEXT_LAYOUT.add_attribute("a_text_time", 1) # The time this vertex should be shown.
+TEXT_LAYOUT.add_attribute("a_text_min_time", 1) # The minimum time any vertex in this glyph should be shown.
+TEXT_LAYOUT.add_attribute("a_text_max_time", 1) # The maximum time any vertex in this glyph should be shown.
+TEXT_LAYOUT.add_attribute("a_text_index", 1) # The glyph number.
+TEXT_LAYOUT.add_attribute("a_text_pos_rect", 4) # The rectangle being drawn.
 
 cdef class Mesh:
 

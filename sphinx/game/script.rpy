@@ -1,4 +1,6 @@
-﻿
+﻿python early:
+    config.generating_documentation = True
+
 init 1000000 python:
     import doc
     import shaderdoc
@@ -12,10 +14,12 @@ init 1000000 python:
     incdir = os.path.join(srcdir, 'inc')
 
     shaderdoc.shaders(incdir=incdir)
+    shaderdoc.textshaders(incdir=incdir)
 
     doc.scan_section("", renpy.store)
     doc.scan_section("renpy.", renpy)
     doc.scan_section("renpy.music.", renpy.music)
+    doc.scan_section("renpy.audio.filter.", renpy.audio.filter)
     doc.scan_section("theme.", theme)
     doc.scan_section("layout.", layout)
     doc.scan_section("define.", define)

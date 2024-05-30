@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -150,7 +150,12 @@ def is_empty_extend(t):
     Reture true if the translation is an empty extend.
     """
 
-    for t in t.block:
+    if isinstance(t, renpy.ast.TranslateSay):
+        block = [ t ]
+    else:
+        block = t.block
+
+    for t in block:
         if t.get_code() != 'extend ""':
             return False
 
@@ -195,10 +200,15 @@ def write_translates(filename, language, filter): # @ReservedAssignment
         f.write(u"translate {} {}:\n".format(language, t.identifier.replace('.', '_')))
         f.write(u"\n")
 
-        for n in t.block:
+        if isinstance(t, renpy.ast.TranslateSay):
+            block = [ t ]
+        else:
+            block = t.block
+
+        for n in block:
             f.write(u"    # " + n.get_code() + "\n")
 
-        for n in t.block:
+        for n in block:
             f.write(u"    " + n.get_code(filter) + "\n")
 
         f.write(u"\n")
@@ -213,6 +223,9 @@ def translation_filename(s):
         return "common.rpy"
 
     filename = s.elided
+
+    if filename.endswith("_ren.py"):
+        filename = filename[:-7] + ".rpy"
 
     if filename[-1] == "m":
         filename = filename[:-1]
@@ -431,7 +444,7 @@ def translate_list_files():
 
         filename = os.path.join(dirname, filename)
 
-        if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
+        if not (filename.endswith(".rpy") or filename.endswith(".rpym") or filename.endswith("_ren.py")):
             continue
 
         filename = os.path.normpath(filename)

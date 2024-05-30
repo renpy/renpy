@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,14 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+default persistent.show_edit_funcs = True
+default persistent.windows_console = False
+default persistent.lint_options = set()
+default persistent.use_web_doc = False
+
 init python:
     from math import ceil
-
-    if persistent.show_edit_funcs is None:
-        persistent.show_edit_funcs = True
-
-    if persistent.windows_console is None:
-        persistent.windows_console = False
 
     def scan_translations(piglatin=True):
 
@@ -48,14 +47,30 @@ init python:
         bound = ceil(len(rv)/3.)
         return (rv[:bound], rv[bound:2*bound], rv[2*bound:])
 
-    show_legacy = os.path.exists(os.path.join(config.renpy_base, "templates", "english", "game", "script.rpy"))
-
     class RestartAtPreferences(Action):
         def __call__(self):
             renpy.session["launcher_start_label"] = "preferences"
             renpy.utter_restart()
 
-default persistent.legacy = False
+    class EnsureProjectsTxt(Action):
+        """
+        Ensures the projects.txt file exists before it's opened.
+        """
+
+        def __call__(self):
+            fn = os.path.join(project.manager.projects_directory, "projects.txt")
+
+            if os.path.exists(fn):
+                return
+
+            with open(fn, "w") as f:
+                f.write("""\
+# This file can be used to add projects not in the projects directory
+# by listing the full path to each project, one per line.
+
+""")
+
+
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
 default persistent.daily_update_check = True
@@ -64,6 +79,12 @@ default persistent.daily_update_check_once = False
 # Keep the default update check from triggering until tomorrow.
 default persistent.last_update_check = datetime.date.today()
 
+# Should we try to skip the splashscreen?
+default persistent.skip_splashscreen = False
+
+# Should we prefer rpu updates?
+default persistent.prefer_rpu = True
+
 init python:
     if not persistent.daily_update_check_once:
         persistent.daily_update_check_once = True
@@ -71,6 +92,14 @@ init python:
 
 
 default preference_tab = "general"
+define preference_tabs = (
+    ("general", _("General")),
+    ("options", _("Options")),
+    ("theme", _("Theme")),
+    ("install", _("Install Libraries")),
+    ("actions", _("Actions")),
+    ("lint", _("Lint")),
+)
 
 screen preferences():
 
@@ -98,17 +127,12 @@ screen preferences():
 
                     has vbox
 
-                    # Projects directory selection.
                     add SEPARATOR2
 
                     add HALF_SPACER
 
-                    textbutton _("General") action SetVariable("preference_tab", "general") style "l_list"
-                    textbutton _("Options") action SetVariable("preference_tab", "options") style "l_list"
-                    textbutton _("Theme") action SetVariable("preference_tab", "theme") style "l_list"
-                    textbutton _("Install Libraries") action SetVariable("preference_tab", "install") style "l_list"
-                    textbutton _("Actions") action SetVariable("preference_tab", "actions") style "l_list"
-
+                    for i, l in preference_tabs:
+                        textbutton l action SetVariable("preference_tab", i) style "l_list"
 
                 if preference_tab == "general":
 
@@ -119,7 +143,6 @@ screen preferences():
 
                         has vbox
 
-                        # Projects directory selection.
                         add SEPARATOR2
 
 
@@ -157,10 +180,7 @@ screen preferences():
                             add HALF_SPACER
 
                             frame style "l_indent":
-                                if persistent.editor:
-                                    textbutton persistent.editor action Jump("editor_preference") alt _("Text editor: [text]")
-                                else:
-                                    textbutton _("Not Set") action Jump("editor_preference") alt _("Text editor: [text]")
+                                textbutton (persistent.editor or _("Not Set")) action Jump("editor_preference") alt _("Text editor: [text]")
 
                         add SPACER
 
@@ -211,6 +231,22 @@ screen preferences():
                             style "l_indent"
                             has vbox
 
+                            text _("Game Options:")
+
+                            add HALF_SPACER
+
+                            if renpy.windows:
+                                textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
+
+                            textbutton _("Skip splashscreen") style "l_checkbox" action ToggleField(persistent, "skip_splashscreen")
+
+                        add SPACER
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+                            has vbox
+
                             text _("Launcher Options:")
 
                             add HALF_SPACER
@@ -218,14 +254,16 @@ screen preferences():
                             textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
                             textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
 
-                            if renpy.windows:
-                                textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
+                            if interface.local_doc_exists:
+                                textbutton _("Prefer the web documentation") style "l_checkbox" action ToggleField(persistent, "use_web_doc")
 
                             textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
+                            textbutton _("Restore window position") style "l_checkbox" action Preference("restore window position", "toggle")
+
                             if ability.can_update:
                                 textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
-
+                                textbutton _("Prefer RPU updates") style "l_checkbox" action ToggleField(persistent, "prefer_rpu")
 
                 elif preference_tab == "theme":
 
@@ -236,7 +274,6 @@ screen preferences():
 
                         has vbox
 
-                        # Projects directory selection.
                         add SEPARATOR2
 
                         frame:
@@ -253,7 +290,9 @@ screen preferences():
 
                             add SPACER
 
-                            text _("Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}.")
+                            $ skins_url = interface.get_doc_url("skins.html")
+
+                            text _("Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}.")
 
                 elif preference_tab == "install":
 
@@ -276,7 +315,6 @@ screen preferences():
 
                             use install_preferences
 
-
                 elif preference_tab == "actions":
 
                     frame:
@@ -297,8 +335,51 @@ screen preferences():
                             add HALF_SPACER
 
                             textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
+                            textbutton _("Open projects.txt"):
+                                style "l_nonbox"
+                                if project.manager.projects_directory:
+                                    action [
+                                        EnsureProjectsTxt(),
+                                        editor.EditAbsolute(os.path.join(project.manager.projects_directory, "projects.txt"))
+                                    ]
+
                             textbutton _("Reset window size") style "l_nonbox" action Preference("display", 1.0)
                             textbutton _("Clean temporary files") style "l_nonbox" action Jump("clean_tmp")
+
+                elif preference_tab == "lint":
+
+                    frame:
+                        style "l_indent"
+                        xmaximum TWOTHIRDS
+                        xfill True
+
+                        has vbox
+
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+                            has vbox
+
+                            text _("Lint toggles:")
+
+                            add HALF_SPACER
+
+                            textbutton _("Check for orphan/obsolete translations"):
+                                style "l_checkbox"
+                                action InvertSelected(ToggleSetMembership(persistent.lint_options, "--no-orphan-tl"))
+                            textbutton _("Check parameters shadowing reserved names"):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--reserved-parameters")
+                            textbutton _("Print block, word, and character counts by speaking character."):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--by-character")
+                            textbutton _("Unclosed text tags"):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--check-unclosed-tags")
+                            textbutton _("Show all unreachable blocks and orphaned translations."):
+                                style "l_checkbox"
+                                action ToggleSetMembership(persistent.lint_options, "--all-problems")
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"

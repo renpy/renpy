@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -104,6 +104,12 @@ class Color(tuple):
         Returns the color as a tuple of four floating point numbers giving
         the red, green, blue and alpha components as 0.0 to 1.0 values.
 
+    .. attribute:: premultiplied
+
+        Returns the color as a tuple of four floating point numbers giving
+        the red, green, blue and alpha components as 0.0 to 1.0 values, with
+        the red, green, and blue components premultiplied by the alpha.
+
     .. attribute:: alpha
 
         Returns the alpha (opacity) of this Color as a number between 0.0 and
@@ -129,36 +135,28 @@ class Color(tuple):
         if color is not None:
             c = color
 
-            if isinstance(c, tuple):
-                if isinstance(c, Color):
-                    return c
-
-                if len(c) == 4:
-                    return tuple.__new__(cls, c)
-
-                if len(c) == 3:
-                    return tuple.__new__(cls, c + (int(255 * alpha),))
-
             if isinstance(c, basestring):
                 if c[0] == '#':
                     c = c[1:]
 
-                if len(c) == 6:
-                    r = int(c[0]+c[1], 16)
-                    g = int(c[2]+c[3], 16)
-                    b = int(c[4]+c[5], 16)
+                lenc = len(c)
+
+                if lenc == 6:
+                    r = int(c[:2], 16)
+                    g = int(c[2:4], 16)
+                    b = int(c[4:], 16)
                     a = int(alpha * 255)
-                elif len(c) == 8:
-                    r = int(c[0]+c[1], 16)
-                    g = int(c[2]+c[3], 16)
-                    b = int(c[4]+c[5], 16)
-                    a = int(c[6]+c[7], 16)
-                elif len(c) == 3:
+                elif lenc == 8:
+                    r = int(c[:2], 16)
+                    g = int(c[2:4], 16)
+                    b = int(c[4:6], 16)
+                    a = int(c[6:], 16)
+                elif lenc == 3:
                     r = int(c[0], 16) * 0x11
                     g = int(c[1], 16) * 0x11
                     b = int(c[2], 16) * 0x11
                     a = int(alpha * 255)
-                elif len(c) == 4:
+                elif lenc == 4:
                     r = int(c[0], 16) * 0x11
                     g = int(c[1], 16) * 0x11
                     b = int(c[2], 16) * 0x11
@@ -167,6 +165,19 @@ class Color(tuple):
                     raise Exception("Color string {!r} must be 3, 4, 6, or 8 hex digits long.".format(c))
 
                 return tuple.__new__(cls, (r, g, b, a)) # type: ignore
+
+            if isinstance(c, Color):
+                return c
+
+            c = tuple(c)
+
+            lenc = len(c)
+
+            if lenc == 4:
+                return tuple.__new__(cls, c)
+
+            if lenc == 3:
+                return tuple.__new__(cls, c + (int(255 * alpha),))
 
         if hsv is not None:
             rgb = colorsys.hsv_to_rgb(*hsv)
@@ -230,6 +241,12 @@ class Color(tuple):
                 )
 
         return self._rgba
+
+    @property
+    def premultiplied(self):
+        r, g, b, a = self.rgba
+
+        return (r * a, g * a, b * a, a)
 
     @property
     def hls(self):

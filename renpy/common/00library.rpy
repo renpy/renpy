@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -143,10 +143,10 @@ init -1700 python:
 
             # When running in a say statement or menu-with-caption, scry for
             # the next say statement, and get the window from that.
-            if scry.say or scry.menu_with_caption:
+            if scry.say or scry.menu_with_caption or store._window_next:
                 who = None
 
-                for i in range(10):
+                for i in range(20):
                     if scry.say:
                         who = scry.who
                         break
@@ -304,21 +304,21 @@ init -1700 python:
 
 
     ##########################################################################
-    # Constant stores.
-    #
-    # Set _constant on many default stores.
+    # Name-only say statements.
 
-    _errorhandling._constant = True
-    _gamepad._constant = True
-    _renpysteam._constant = True
-    _warper._constant = True
-    audio._constant = True
-    achievement._constant = True
-    build._constant = True
-    director._constant = True
-    iap._constant = True
-    layeredimage._constant = True
-    updater._constant = True
+    # This character is copied when a name-only say statement is called.
+    name_only = adv
+
+    def predict_say(who, what):
+        who = Character(who, kind=name_only)
+        try:
+            who.predict(what)
+        except Exception:
+            pass
+
+    def say(who, what, interact=True, *args, **kwargs):
+        who = Character(who, kind=name_only)
+        who(what, interact=interact, *args, **kwargs)
 
 
     ##########################################################################
@@ -336,6 +336,10 @@ init -1700 python:
 
 
 init -1000 python:
+
+    # Not used, may be in old save files.
+    config.missing_background = "black"
+
     # Set developer to the auto default.
     config.original_developer = "auto"
 
@@ -431,6 +435,7 @@ _quit_slot
 _rollback
 _skipping
 _window_subtitle
+_scene_show_hide_transition
 """.split():
 
         # _history, history_list, and _version are set later, so aren't included.

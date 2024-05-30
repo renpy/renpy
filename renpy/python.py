@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,7 +27,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 from typing import Optional, Any
-
+import contextlib
 
 # Import the python ast module, not ours.
 import ast
@@ -35,6 +35,7 @@ import ast
 # Import the future module itself.
 import __future__
 
+import collections
 import marshal
 import random
 import weakref
@@ -45,6 +46,7 @@ import io
 import types
 import copyreg
 import functools
+import warnings
 
 import renpy
 
@@ -142,7 +144,7 @@ class StoreDict(dict):
 
         self.old = DictItems(self)
 
-    def get_changes(self, cycle):
+    def get_changes(self, cycle, previous):
         """
         For every key that has changed since begin() was called, returns a
         dictionary mapping the key to its value when begin was called, or
@@ -154,6 +156,11 @@ class StoreDict(dict):
         `cycle`
             If true, this cycles the old changes to the new changes. If
             False, does not.
+
+        `previous`
+            The result of a call to this from a previous cycle. The result
+            from a previous run take precedence over the current run. None
+            if this is the first run.
         """
 
         if self.get("_constant", False):
@@ -162,11 +169,14 @@ class StoreDict(dict):
         new = DictItems(self)
         rv = find_changes(self.old, new, deleted)
 
+        if rv is None:
+            return None
+
         if cycle:
             self.old = new
 
-        if rv is None:
-            return None
+        if previous is not None:
+            rv.update(previous)
 
         delta_ebc = set()
 
@@ -205,6 +215,9 @@ def create_store(name):
     """
     Creates the store with `name`.
     """
+
+    if name == "store.store":
+        raise NameError('Namespaces may not begin with "store".')
 
     parent, _, var = name.rpartition('.')
 
@@ -784,6 +797,34 @@ def escape_unicode(s):
 
     return s
 
+# A list of warnings that were issued during compilation.
+compile_warnings = [ ]
+
+@contextlib.contextmanager
+def save_warnings():
+    """
+    A context manager that captures warnings issued during compilation.
+    """
+
+    pending_warnings = [ ]
+
+    def showwarning(message, category, filename, lineno, file=None, line=None):
+        pending_warnings.append((filename, lineno, warnings.formatwarning(message, category, filename, lineno, line)))
+
+    old = warnings.showwarning
+
+    try:
+
+        warnings.showwarning = showwarning
+
+        yield
+
+        compile_warnings.extend(pending_warnings)
+
+    finally:
+
+        warnings.showwarning = old
+
 
 # Flags used by py_compile.
 old_compile_flags = (__future__.nested_scopes.compiler_flag
@@ -796,15 +837,8 @@ new_compile_flags = (old_compile_flags
                       | __future__.unicode_literals.compiler_flag
                       )
 
-py3_compile_flags = (new_compile_flags |
-                      __future__.division.compiler_flag)
-
-if not PY2:
-    py3_compile_flags |= __future__.annotations.compiler_flag
-
-# The set of files that should be compiled under Python 2 with Python 3
-# semantics.
-py3_files = set()
+# A set of __future__ flag overrides for each file.
+file_compiler_flags = collections.defaultdict(int)
 
 # A cache for the results of py_compile.
 py_compile_cache = { }
@@ -933,6 +967,7 @@ def quote_eval(s):
 # The filename being compiled.
 compile_filename = ""
 
+
 def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None):
     """
     Compiles the given source code using the supplied codegenerator.
@@ -960,6 +995,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     """
 
     global compile_filename
+    global compile_warnings
 
     if ast_node:
         cache = False
@@ -982,6 +1018,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
     if cache:
         key = (lineno, filename, str(source), mode, renpy.script.MAGIC)
+        warnings_key = ("warnings", key)
 
         rv = py_compile_cache.get(key, None)
         if rv is not None:
@@ -990,17 +1027,23 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         rv = old_py_compile_cache.get(key, None)
         if rv is not None:
             py_compile_cache[key] = rv
+
             return rv
 
         bytecode = renpy.game.script.bytecode_oldcache.get(key, None)
         if bytecode is not None:
 
             renpy.game.script.bytecode_newcache[key] = bytecode
+
+            if warnings_key in renpy.game.script.bytecode_oldcache:
+                renpy.game.script.bytecode_newcache[warnings_key] = renpy.game.script.bytecode_oldcache[warnings_key]
+
             rv = marshal.loads(bytecode)
             py_compile_cache[key] = rv
             return rv
 
     else:
+        warnings_key = None
         key = None
 
     source = str(source)
@@ -1019,17 +1062,21 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         else:
             py_mode = mode
 
-        if (not PY2) or (filename in py3_files):
+        flags = file_compiler_flags.get(filename, 0)
 
-            flags = py3_compile_flags
+        if (not PY2) or flags:
+
+            flags |= new_compile_flags
 
             try:
-                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                with save_warnings():
+                    tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
             except SyntaxError as orig_e:
 
                 try:
                     fixed_source = renpy.compat.fixes.fix_tokens(source)
-                    tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                    with save_warnings():
+                        tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
                 except Exception:
                     raise orig_e
 
@@ -1037,11 +1084,13 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
             try:
                 flags = new_compile_flags
-                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                with save_warnings():
+                    tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
             except Exception:
                 flags = old_compile_flags
                 source = escape_unicode(source)
-                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                with save_warnings():
+                    tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
 
         tree = wrap_node.visit(tree)
 
@@ -1057,19 +1106,26 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             return tree.body
 
         try:
-            rv = compile(tree, filename, py_mode, flags, 1)
+            with save_warnings():
+                rv = compile(tree, filename, py_mode, flags, 1)
         except SyntaxError as orig_e:
             try:
                 tree = renpy.compat.fixes.fix_ast(tree)
                 fix_locations(tree, 1, 0)
-                rv = compile(tree, filename, py_mode, flags, 1)
+                with save_warnings():
+                    rv = compile(tree, filename, py_mode, flags, 1)
             except Exception:
                 raise orig_e
 
-
         if cache:
             py_compile_cache[key] = rv
+
             renpy.game.script.bytecode_newcache[key] = marshal.dumps(rv)
+
+            if compile_warnings:
+                renpy.game.script.bytecode_newcache[warnings_key] = compile_warnings
+                compile_warnings = [ ]
+
             renpy.game.script.bytecode_dirty = True
 
         return rv
@@ -1226,3 +1282,11 @@ def module_unpickle(name):
 
 
 copyreg.pickle(types.ModuleType, module_pickle)
+
+# Allow weakrefs to be pickled, with the reference being broken during
+# unpickling.
+
+def construct_None(*args):
+    return None
+
+copyreg.pickle(weakref.ReferenceType, lambda r : (construct_None, tuple()))

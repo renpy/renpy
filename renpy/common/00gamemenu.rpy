@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -107,7 +107,7 @@ init -1700 python:
         store._history = False
         store._menu = True
         store._side_image_attributes = None
-        store._side_image_attribute_reset = False
+        store._side_image_attributes_reset = False
 
         store.mouse_visible = True
         store.suppress_overlay = True

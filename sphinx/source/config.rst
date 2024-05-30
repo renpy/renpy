@@ -96,8 +96,8 @@ These control transitions between various screens.
 
 .. var:: config.adv_nvl_transition = None
 
-    A transition that is used when showing NVL-mode text directly
-    after ADV-mode text.
+    A transition that is used to show the NVL-mode window when
+    showing ADV-mode text directly after NVL-mode text.
 
 .. var:: config.after_load_transition = None
 
@@ -155,8 +155,8 @@ These control transitions between various screens.
 
 .. var:: config.nvl_adv_transition = None
 
-    A transition that is used when showing ADV-mode text directly
-    after NVL-mode text.
+    A transition that is used to hide the NVL-mode window when
+    showing ADV-mode text directly after NVL-mode text.
 
 .. var:: config.say_attribute_transition = None
 
@@ -208,6 +208,7 @@ These control transitions between various screens.
     The transition used by the window show statement when no
     transition has been explicitly specified.
 
+.. seealso:: :ref:`scene-show-hide-transition`
 
 Preference Defaults
 -------------------
@@ -457,6 +458,11 @@ Occasionally Used
     While this defaults to False, it's set to True when :func:`gui.init`
     is called.
 
+.. var:: config.defer_tl_scripts = Fasle
+
+    When True, avoids loading scripts in the tl directory until the
+    language is selected. See :ref:`deferred-translations`.
+
 .. var:: config.developer = "auto"
 
     If set to True, developer mode is enabled. Developer mode gives
@@ -585,8 +591,8 @@ Occasionally Used
     This is a map from (font, bold, italics) to (font, bold, italics),
     used to replace a font with one that's specialized as having bold
     and/or italics. For example, if you wanted to have everything
-    using an italic version of "Vera.ttf" use "VeraIt.ttf" instead,
-    you could write::
+    using an italic version of :file:`Vera.ttf` use :file:`VeraIt.ttf`
+    instead, you could write::
 
         init python:
             config.font_replacement_map["Vera.ttf", False, True] = ("VeraIt.ttf", False, False)
@@ -604,8 +610,8 @@ Occasionally Used
 
     The color that the window is cleared to before images are drawn.
     This is mainly seen as the color of the letterbox or pillarbox
-    edges drawn when aspect ratio of the window or monitor in fullscreen
-    mode) does not match the aspect ratio of the game.
+    edges drawn when aspect ratio of the window (or monitor in
+    fullscreen mode) does not match the aspect ratio of the game.
 
 .. var:: config.gl_lod_bias = -0.5
 
@@ -678,6 +684,16 @@ Occasionally Used
 
     If not False, sets the blinking period of the default caret, in seconds.
 
+.. var:: config.layer_transforms = { }
+
+    A dictionary mapping layer names to lists of transforms. These transforms
+    are applied last, after ``show layer``  and ``camera`` transforms have
+    already been applied.
+
+    If the layer name is None, then the transforms are applied to to the
+    combination of all layers in :var:`config.layers`, after any
+    transition has been applied.
+
 .. var:: config.lint_character_statistics = True
 
     If true, and :var:`config.developer` is true, the lint report will include
@@ -713,6 +729,14 @@ Occasionally Used
 
     The number of seconds to take to fade in :var:`config.main_menu_music`.
 
+.. var:: config.max_texture_size = (4096, 4096)
+
+    The maximum size of an image that Ren'Py will load as a single texture.
+    This is important for 3d models, while 2d images will be split into
+    multiple textures if necessary.
+
+    Live2d will adjust this to fit the largest live2d texture.
+
 .. var:: config.menu_arguments_callback = None
 
     If not None, this should be a function that takes positional and/or
@@ -744,21 +768,6 @@ Occasionally Used
     amount of time has been reached, it will sleep to ensure the image is
     shown for at least this amount of time. The image may be shown longer
     if Ren'Py takes longer to start up.
-
-.. var:: config.missing_background = "black"
-
-    This is the background that is used when :var:`config.developer` is True
-    and an undefined image is used in a :ref:`scene statement
-    <scene-statement>`. This should be an image name (a string), not a
-    displayable.
-
-.. var:: config.mode_callbacks = [ ... ]
-
-    A list of callbacks called when entering a mode. For more documentation,
-    see the section on :doc:`modes`.
-
-    The default value includes a callback that implements :var:`config.adv_nvl_transition`
-    and :var:`config.nvl_adv_transition`.
 
 .. var:: config.mouse = None
 
@@ -922,6 +931,8 @@ Occasionally Used
             return s
         config.replace_text = replace_text
 
+    .. seealso:: :var:`config.say_menu_text_filter`
+
 .. var:: config.replay_scope = { "_game_menu_screen" : "preferences", ... }
 
     A dictionary mapping variables in the default store to the values
@@ -1043,6 +1054,42 @@ Occasionally Used
     lines. The attribute is not removed when the text apparition animation
     ends, but when the dialogue window gets dismissed.
 
+.. var:: config.statement_callbacks = [ ... ]
+
+    A list of functions that are called when a statement is executed.
+    These functions are generally called with the name of the statement
+    in question. However, there are some special statement names.
+
+    "say"
+        Normal say statements.
+
+    "say-bubble"
+        Say statements in bubble mode.
+
+    "say-nvl"
+        Say statements in NVL mode.
+
+    "say-bubble"
+        Say statements in bubble mode.
+
+    "say-centered"
+        Say statments using the :var:`centered` character.
+
+    "menu":
+        Normal menu statements.
+
+    "menu-nvl"
+        Menu statements in NVL mode.
+
+    "menu-with-caption"
+        Menu statements with a caption.
+
+    "menu-nvl-with-caption"
+        Menu statements with a caption in NVL mode.
+
+    There is a default callback in this list that is used to implement
+    ``window auto``.
+
 .. var:: config.tag_layer = { }
 
     A dictionary mapping image tag strings to layer name strings. When
@@ -1063,6 +1110,13 @@ Occasionally Used
     newly-shown without a zorder clause, the image's tag is looked up
     in this dictionary to find a zorder to use. If no zorder is found,
     0 is used.
+
+.. var:: config.textshader_callbacks = { }
+
+    This is dictionary that maps strings to callables. When :doc:`textshaders`
+    with the string are used, the function is called to return a string
+    giving another textshader. This can be used to make a textshader that
+    changes based on a persistent variable, for example.
 
 .. var:: config.thumbnail_height = 75
 
@@ -1155,7 +1209,7 @@ Occasionally Used
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.
 
-.. var:: config.window_auto_show = [ 'say', 'menu-with-caption', ... ]
+.. var:: config.window_auto_show = [ "say", "say-nvl", "menu-with-caption", "nvl-menu", "nvl-menu-with-caption", ... ]
 
     A list of statements that cause ``window auto`` to show the empty
     dialogue window.
@@ -1250,8 +1304,8 @@ Rarely or Internally Used
     At startup, Ren'Py will automatically populate this variable with
     the names of all archives found in the game directory, sorted in
     reverse ascii order. For example, if Ren'Py finds the files
-    data.rpa, patch01.rpa, and patch02.rpa, this variable will be
-    populated with ``['patch02', 'patch01', 'data']``.
+    :file:`data.rpa`, :file:`patch01.rpa`, and :file:`patch02.rpa`,
+    this variable will be populated with ``['patch02', 'patch01', 'data']``.
 
 .. var:: config.at_exit_callbacks = [ ]
 
@@ -1350,7 +1404,7 @@ Rarely or Internally Used
 
     A list of strings, where each string is matched against the GUID
     of a game controller. These strings are mached as a prefix to the
-    controller GUID (which cand be found in log.txt), and if matched,
+    controller GUID (which cand be found in :file:`log.txt`), and if matched,
     prevent the controller from being initialized.
 
 .. var:: config.exception_handler = None
@@ -1424,7 +1478,7 @@ Rarely or Internally Used
 
 .. var:: config.gamedir = ...
 
-    The full path leading to the game's ``game/`` directory. This is a
+    The full path leading to the game's :file:`game/` directory. This is a
     read-only variable. There is no guarantee that any file will be there,
     typically on platforms such as android.
 
@@ -1516,8 +1570,9 @@ Rarely or Internally Used
     upper-left corner of the layer, with height and width giving the
     layer size.
 
-    If a layer is not mentioned in config.layer_clipping, then it is
-    assumed to take up the full screen.
+    If a layer is not mentioned in config.layer_clipping, then it will
+    take up the full size of its container. Typically this will be the
+    screen, unless being shown inside a :class:`Layer` displayable.
 
 .. var:: config.layeredimage_offer_screen = True
 
@@ -1561,6 +1616,11 @@ Rarely or Internally Used
     If not None, this is expected to be a filename. Much of the text
     shown to the user by :ref:`say <say-statement>` or :doc:`menu
     <menus>` statements will be logged to this file.
+
+.. var:: config.log_events = False
+
+    If true, Ren'Py will log pygame-style events to the log.txt file. This will hurt performance, but might be
+    useful for debugging certain problems.
 
 .. var:: config.log_width = 78
 
@@ -1683,8 +1743,18 @@ Rarely or Internally Used
 
 .. var:: config.pause_with_transition = False
 
-    If false, :func:`renpy.pause` is always, used by the ``pause`` statement.
-    If true, when given a delay, ``pause`` is equivalent to ``with Pause(...)``.
+    If false, :func:`renpy.pause` is always used by the ``pause`` statement.
+    If true, when given a delay, ``pause 5`` is equivalent to ``with Pause(5)``.
+
+.. var:: config.pass_controller_events = False
+
+    If true, pygame-like CONTROLLER events are passed to Displayables event
+    handlers. If not, those are consumed by Ren'Py.
+
+.. var:: config.pass_joystick_events = False
+
+    If true, pygame-like JOYSTICK events are passed to Displayables event
+    handlers. If not, those are consumed by Ren'Py.
 
 .. var:: config.per_frame_screens = [ ... ]
 
@@ -1693,10 +1763,9 @@ Rarely or Internally Used
     so if you add a screen, append the name rather than replacing the list in
     its entirety.
 
-.. var:: config.periodic_callback = None
+.. var:: config.periodic_callbacks = [ ... ]
 
-    If not None, this should be a function. The function is called,
-    with no arguments, at around 20Hz.
+    This is a list of functions that are called, with no arguments, at around 20Hz.
 
 .. var:: config.play_channel = "audio"
 
@@ -1758,7 +1827,8 @@ Rarely or Internally Used
 
 .. var:: config.say_layer = "screens"
 
-    The layer the say screen is shown on.
+    The layer the say screen is shown on. This layer should be in
+    :var:`config.context_clear_layers`.
 
 .. var:: config.say_menu_text_filter = None
 
@@ -1767,11 +1837,21 @@ Rarely or Internally Used
     <menus>` statements. It is expected to return new
     (or the same) strings to replace them.
 
+    This runs very early in the say and menu statement processing, before
+    translation and substitutions are applied. For a filter that runs later,
+    see :var:`config.replace_text`.
+
 .. var:: config.say_sustain_callbacks = [ ... ]
 
     A list of functions that are called, without arguments, before the
     second and later interactions caused by a line of dialogue with
     pauses in it. Used to sustain voice through pauses.
+
+.. var:: config.save = True
+
+    If True, Ren'Py will allow the user to save the game. If False,
+    Ren'Py will not allow the user to save the game, and will not show
+    existing saves.
 
 .. var:: config.save_dump = False
 
@@ -1786,6 +1866,12 @@ Rarely or Internally Used
     If True, the mobile app will save its state when it loses focus. The state
     is saved in a way that allows it to be automatically loaded (and the game
     to resume its place) when the app starts again.
+
+.. var:: config.save_persistent = True
+
+    If True, Ren'Py will save persistent data. If False,
+    persistent data will not be saved, and changes to persistent will be
+    lost when the game ends.
 
 .. var:: config.save_physical_size = True
 
@@ -1851,6 +1937,12 @@ Rarely or Internally Used
 
     A list of prefixes that are prepended to filenames that are searched
     for.
+
+.. var:: config.shader_part_filter = None
+
+    If not None, this is a function that is called with a tuple of
+    shader part names. It should return a new tuple of shader parts
+    that will be used.
 
 .. var:: config.show = renpy.show
 
@@ -1951,7 +2043,7 @@ Rarely or Internally Used
     A string that is formatted with the string argument to the voice
     statement to produce the filename that is played to the user. For
     example, if this is "{filename}.ogg", the ``voice "test"`` statement
-    will play test.ogg.
+    will play :file:`test.ogg`.
 
 .. var:: config.web_video_base = "./game"
 

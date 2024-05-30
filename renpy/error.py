@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -167,6 +167,12 @@ def report_exception(e, editor=True):
 
     # Note: Doki Doki Literature club calls this as ("Words...", False).
     # For what it's worth.
+
+    if not int(os.environ.get("RENPY_REPORT_EXCEPTIONS", "1")):
+        raise
+
+    # The sound system may not be ready during exception handling.
+    renpy.config.debug_sound = False
 
     import codecs
 

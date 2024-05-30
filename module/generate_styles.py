@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -156,6 +156,7 @@ style_properties = sorted_dict(
     drop_shadow=None,
     drop_shadow_color='renpy.easy.color',
     emoji_font=None,
+    extra_alt=None,
     first_indent=None,
     first_spacing=None,
     fit_first=None,
@@ -165,6 +166,7 @@ style_properties = sorted_dict(
     fore_bar='none_is_null',
     fore_gutter=None,
     foreground='renpy.easy.displayable_or_none',
+    group_alt=None,
     hinting=None,
     hover_sound=None,
     hyperlink_functions=None,
@@ -174,6 +176,7 @@ style_properties = sorted_dict(
     kerning=None,
     key_events=None,
     keyboard_focus=None,
+    keyboard_focus_insets=None,
     language=None,
     layout=None,
     line_leading=None,
@@ -193,6 +196,7 @@ style_properties = sorted_dict(
     rest_indent=None,
     right_margin=None,
     right_padding=None,
+    ruby_line_leading=None,
     ruby_style=None,
     shaper=None,
     size=None,
@@ -204,6 +208,7 @@ style_properties = sorted_dict(
     strikethrough=None,
     subtitle_width=None,
     subpixel=None,
+    textshader=None,
     text_y_fudge=None,
     text_align=None,
     thumb='none_is_null',
