@@ -2155,12 +2155,6 @@ variables. You can locate them there, in their context.
 * :var:`config.nvl_page_ctc_position`
 * :var:`config.nvl_paged_rollback`
 
-:doc:`preferences`:
-
-* :var:`config.default_music_volume`
-* :var:`config.default_sfx_volume`
-* :var:`config.default_voice_volume`
-
 :doc:`self_voicing`:
 
 * :var:`config.descriptive_text_character`

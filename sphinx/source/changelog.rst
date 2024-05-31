@@ -65,6 +65,11 @@ it looked back to the last say statement.
 Features
 --------
 
+The default volumes of mixers are now set by using the default statement with
+``preferences.volume.<mixer>``. For example, the default volume of the music
+mixer can be set with ``default preferences.volume.music = 0.5``. This also
+supports creator-defined mixers. Please see :ref:`mixer-defaults` for more information.
+
 The :class:`ui.adjustment` class now takes a new `raw_changed` property, which
 takes the adjustment and the new value, before it's clamped. This can be used
 to perform actions when the adjustment scrolls out of range.

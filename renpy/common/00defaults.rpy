@@ -114,9 +114,14 @@ init -1500 python:
             if config.default_emphasize_audio is not None:
                 _preferences.emphasize_audio = config.default_emphasize_audio
 
-            _preferences.set_volume('music', _vol(config.default_music_volume))
-            _preferences.set_volume('sfx', _vol(config.default_sfx_volume))
-            _preferences.set_volume('voice', _vol(config.default_voice_volume))
+            if config.default_music_volume is not None:
+                _preferences.set_volume('music', _vol(config.default_music_volume))
+
+            if config.default_sfx_volume is not None:
+                _preferences.set_volume('sfx', _vol(config.default_sfx_volume))
+
+            if config.default_voice_volume is not None:
+                _preferences.set_volume('voice', _vol(config.default_voice_volume))
 
         # Use default_afm_enable to decide if we use the afm_enable
         # preference.
