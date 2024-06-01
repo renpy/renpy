@@ -468,6 +468,7 @@ def before_interact(roots):
     if (should_max_default and (max_default > 0) and (current is None) and
         (renpy.display.interface.start_interact or (max_default_focus_name != old_max_default_focus_name))):
 
+        explicit = True
         current = max_default_focus
         set_focused(max_default_focus, None, max_default_screen)
 
