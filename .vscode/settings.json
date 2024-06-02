@@ -36,10 +36,13 @@
         "renpy*.app": true,
         "renpy*.exe": true,
         "tmp": true,
+        "vscode": true,
         "web": true,
+        "web2": true,
+        "web3": true,
         "**/*.rpa": true,
         "**/*.rpymc": true,
-        "**/cache/": true
+        "**/cache/": true,
     },
 
     "python.languageServer": "Pylance",
