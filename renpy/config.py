@@ -1450,6 +1450,9 @@ screens_never_cancel_hide = True
 # A list of transforms that are applied to entire layers.
 layer_transforms = { }
 
+# True if xfill or yfill can cause a window to shrink.
+fill_shrinks_frame = False
+
 # Set this to true to log events to log.txt.
 log_events = os.environ.get("RENPY_LOG_EVENTS", False)
 
