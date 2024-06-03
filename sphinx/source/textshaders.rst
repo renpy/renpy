@@ -47,8 +47,10 @@ set styles. ::
     define goldfinger = Character("Goldfinger", what_textshader="linetexture:gold.png")
 
     screen purchase():
-        textbutton "Buy Now":
-            textshader "wave" action iap.Purchase("dlc")
+        vbox:
+            text "Buy the DLC for more!" textshader "wave"
+            textbutton "Buy Now":
+                text_textshader "wave" action iap.Purchase("dlc")
 
 **Text Tags** The third way to use text shaders is to use the :tt:`appropriate text tag <shader>`
 to change the look of a portion of text. ::

@@ -48,6 +48,21 @@ it looked back to the last say statement. To revert this change, include::
     define config.window_next = False
 
 
+
+.. _incompatible-8.2.2:
+.. _incompatible-7.7.2:
+
+8.2.2 / 7.7.2
+-------------
+
+**Fill and Frames** In certain cases in 8.2.1 and earlier, the :propref:`xfill` and :propref:`yfill`
+style properties could cause Frames, Windows, and Buttons to shrink in size. Now, only expansion in
+size is allowed. To revert this, add::
+
+
+    define config.fill_shrinks_frames = True
+
+
 .. _incompatible-8.2.1:
 .. _incompatible-7.7.1:
 
