@@ -253,6 +253,7 @@ init -1100 python:
         elif _compat_versions(version, (7, 5, 1), (8, 0, 1)):
             config.modal_blocks_timer = True
             config.modal_blocks_pause = False
+
         elif _compat_versions(version, (7, 5, 2), (8, 0, 2)):
             config.modal_blocks_pause = True
             config.modal_blocks_timer = True
@@ -307,6 +308,10 @@ init -1100 python:
             config.containers_pass_transform_events.clear()
             config.say_replace_event = False
             config.screens_never_cancel_hide = False
+
+        if _compat_versions(version, (7, 7, 1), (8, 2, 1)):
+            config.fill_shrinks_frame = True
+
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
