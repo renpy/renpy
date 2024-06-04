@@ -234,7 +234,7 @@ def speak(s, translate=True, force=False):
     will be translated before it is spoken. If `force` is true, then the
     string will be spoken even if self-voicing is disabled.
 
-    This is intended for accsesibility purposes, and should not be used
+    This is intended for accessibility purposes, and should not be used
     for gameplay purposes.
     """
 
