@@ -2148,6 +2148,7 @@ EARLY_CONFIG = {
     "check_conflicting_properties",
     "check_translate_none",
     "defer_tl_scripts",
+    "munge_in_strings",
 }
 
 define_statements = [ ]

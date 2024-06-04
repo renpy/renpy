@@ -47,6 +47,22 @@ it looked back to the last say statement. To revert this change, include::
 
     define config.window_next = False
 
+.. _munge-8.3.0:
+
+**String Munging** Munging of names beginning with __ but not containing a second instance of __
+will now occur inside a string just like it does in the rest of a script. What this means is that:
+
+    $ __foo = 1
+    "Add one and __foo and you get [1 + __foo]."
+
+will be rewritten to:
+
+    $ _m1_script__foo = 1
+    "Add one and _m1_script__foo and you get [1 + _m1_script__foo]."
+
+To disable this, in a file named 01nomunge.rpy in your game directory, write::
+
+    define config.munge_in_strings = False
 
 
 .. _incompatible-8.2.2:

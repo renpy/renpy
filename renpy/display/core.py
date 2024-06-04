@@ -2872,6 +2872,9 @@ class Interface(object):
 
                         renpy.test.testexecution.execute()
 
+                # TTS.
+                renpy.display.tts.tick()
+
                 # Move the mouse, if necessary.
                 if self.mouse_move is not None:
                     if not self.mouse_move.perform():

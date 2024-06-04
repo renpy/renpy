@@ -1471,6 +1471,9 @@ default_textshader = None # type: str | None
 # A function that is called with a tuple of shader parts, and returns a tuple of shader parts.
 shader_part_filter = None # type: Optional[Callable[[tuple[str]], tuple[str]]]
 
+# Should munging occur everywhere in strings.
+munge_in_strings = True
+
 
 del os
 del collections
