@@ -90,6 +90,11 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+Munging of names beginning with __ now takes place inside strings, to allow
+munged names to be used inside substitutions. This should be fairly transparent,
+but for a discussion of the implications see :ref:`incompatible changes <munge-8.3.0>`
+
+
 The :func:`renpy.fetch` function can now take user-specified headers that
 are supplied as part of the HTTP/HTTPS request.
 
