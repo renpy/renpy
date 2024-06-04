@@ -96,9 +96,6 @@ def default_tts_function(s):
     if not s:
         return
 
-    if not renpy.game.preferences.self_voicing:
-        return
-
     if renpy.game.preferences.self_voicing == "clipboard":
         try:
             pygame.scrap.put(pygame.scrap.SCRAP_TEXT, s.encode("utf-8"))
@@ -201,15 +198,32 @@ def apply_substitutions(s):
     return s
 
 
-def tts(s):
-    """
-    Causes `s` to be spoken.
-    """
+# A queue of tts utterances.
+tts_queue = [ ]
+
+
+def tick():
+    if not tts_queue:
+        return
+
+    s = " ".join(tts_queue)
+    tts_queue[:] = [ ]
 
     try:
         renpy.config.tts_function(s)
     except Exception:
         pass
+
+
+def tts(s):
+    """
+    Causes `s` to be spoken.
+    """
+
+    if not renpy.game.preferences.self_voicing:
+        return
+
+    tts_queue.append(s)
 
 
 def speak(s, translate=True, force=False):
@@ -231,7 +245,7 @@ def speak(s, translate=True, force=False):
         s = renpy.translation.translate_string(s)
 
     s = apply_substitutions(s)
-    tts(s)
+    tts_queue.append(s)
 
 
 def speak_extra_alt():
