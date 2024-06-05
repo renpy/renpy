@@ -880,6 +880,7 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
 def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, copypaste=True, multiline=False, **kwargs): # @ReservedAssignment
     """
     :doc: input
+    :args: (default='', allow=None, exclude='{}', length=None, pixel_width=None, screen="input", mask=None, copypaste=True, multiline=False, **kwargs)
 
     Calling this function pops up a window asking the player to enter some
     text. It returns the entered text.
