@@ -1456,6 +1456,9 @@ fill_shrinks_frame = False
 # Set this to true to log events to log.txt.
 log_events = os.environ.get("RENPY_LOG_EVENTS", False)
 
+# Callbacks to run just before python exits.
+python_exit_callbacks = [ ]
+
 
 del os
 del collections
