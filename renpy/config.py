@@ -1211,7 +1211,7 @@ input_caret_blink = 1.
 single_movie_channel = None
 
 # Should Ren'Py raise exceptions when finding an image?
-raise_image_exceptions = True
+raise_image_exceptions = None
 
 # Should the size transform property only accept numbers of pixels ?
 relative_transform_size = True
@@ -1460,7 +1460,7 @@ log_events = os.environ.get("RENPY_LOG_EVENTS", False)
 python_exit_callbacks = [ ]
 
 # Should exceptions be raised if an image fails to load.
-raise_image_load_exceptions = False
+raise_image_load_exceptions = None
 
 
 del os
