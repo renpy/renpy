@@ -1211,7 +1211,7 @@ input_caret_blink = 1.
 single_movie_channel = None
 
 # Should Ren'Py raise exceptions when finding an image?
-raise_image_exceptions = True
+raise_image_exceptions = None
 
 # Should the size transform property only accept numbers of pixels ?
 relative_transform_size = True
@@ -1456,6 +1456,12 @@ fill_shrinks_frame = False
 # Set this to true to log events to log.txt.
 log_events = os.environ.get("RENPY_LOG_EVENTS", False)
 
+# Callbacks to run just before python exits.
+python_exit_callbacks = [ ]
+
+# Should exceptions be raised if an image fails to load.
+raise_image_load_exceptions = None
+
 # Should Ren'Py scan for exec.py?
 exec_py = True
 
@@ -1508,3 +1514,15 @@ def init():
     gl_blend_func["multiply"] = (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE)
     gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
+
+
+def post_init():
+    """
+    Called after all init scripts have been run.
+    """
+
+    if renpy.config.raise_image_exceptions is None:
+        renpy.config.raise_image_exceptions = renpy.config.developer
+
+    if renpy.config.raise_image_load_exceptions:
+        renpy.config.raise_image_load_exceptions = renpy.config.developer

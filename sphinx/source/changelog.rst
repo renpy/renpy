@@ -155,6 +155,16 @@ incorrectly included. This has been fixed.
 Other
 -----
 
+The :var:`config.raise_image_exceptions` variable has been documented. It
+controls if Ren'Py will raise an exception when an image name is unknown, or
+display a warning instead.
+
+The :var:`config.raise_image_load_exceptions` variable controls whether Ren'Py
+raises an exception when an image fails to load, or displays a warning instead.
+
+The :var:`config.raise_image_load_exceptions` and :var:`config.raise_image_exceptions`
+variables are set to False when the player ignores an error.
+
 When :var:`config.log_event` is true or RENPY_LOG_EVENTS is in the
 environment, Ren'Py will log most pygame-level events that happen.
 

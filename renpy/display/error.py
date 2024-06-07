@@ -152,6 +152,9 @@ def report_exception(short, full, traceback_fn):
         if renpy.store._ignore_action is not None:
             renpy.display.behavior.run(renpy.store._ignore_action)
 
+        renpy.config.raise_image_exceptions = False
+        renpy.config.raise_image_load_exceptions = False
+
     except renpy.game.CONTROL_EXCEPTIONS:
         raise
 

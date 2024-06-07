@@ -1307,11 +1307,6 @@ Rarely or Internally Used
     :file:`data.rpa`, :file:`patch01.rpa`, and :file:`patch02.rpa`,
     this variable will be populated with ``['patch02', 'patch01', 'data']``.
 
-.. var:: config.at_exit_callbacks = [ ]
-
-    A list of callbacks that are called when Ren'Py quits or restarts
-    the game. These callbacks should not interact with the user.
-
 .. var:: config.auto_choice_delay = None
 
     If not None, this variable gives a number of seconds that Ren'Py
@@ -1791,11 +1786,39 @@ Rarely or Internally Used
     ``init`` and ``init python`` blocks taking longer than this amount of time
     to run are reported to log file.
 
+.. var:: config.python_exit_callbacks = [ ]
+
+    A list of functions that are called when Ren'Py is about to exit to
+    the operating system. This is intended to be used to deinitalize
+    python modules.
+
+    Much of Ren'Py is deinitalized before these functions are called,
+    so it's not safe to use Ren'Py functions in these callbacks.
+
 .. var:: config.quit_on_mobile_background = False
 
     If True, the mobile app will quit when it loses focus, rather than
     saving and restoring its state. (See also :var:`config.save_on_mobile_background`,
     which controls this behavior.)
+
+.. var:: config.raise_image_exceptions = None
+
+    If True, Ren'Py will raise an exception when an image name is
+    not found. If False, Ren'Py will display a textual error message in place of the image.
+
+    If None, this takes on the value of config.developer.
+
+    This is set to False when Ren'Py ignores an exception.
+
+.. var:: config.raise_image_load_exceptions = None
+
+    If True, Ren'Py will raise an exception when an exception happens
+    during image loading. If False, Ren'Py will display a textual error
+    message in place of the image.
+
+    If None, this takes on the value of config.developer.
+
+    This is set to False when Ren'Py ignore an exception.
 
 .. var:: config.rollback_enabled = True
 
@@ -1993,9 +2016,11 @@ Rarely or Internally Used
 
 .. var:: config.quit_callbacks = [ ... ]
 
-    A list of functions that are called (without any arguments) when
-    Ren'Py terminates. This is intended to free resources, such as
-    opened files or started threads.
+    A list of functions that are called without any arguments when
+    Ren'Py is either terminating or reloading the script. This is
+    intended to free resources, such as opened files or started threads,
+    that arte created inside init code, if such things aren't freed
+    automatically.
 
 .. var:: config.sticky_layers = [ "master", ... ]
 

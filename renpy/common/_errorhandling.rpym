@@ -255,6 +255,13 @@ init label _errorhandling:
         color "#468"
         hover_color Color("#24C")
 
+    style _image_error is _default:
+        xalign 0.5
+        yalign 0.0
+        color "#fcc"
+        outlines [ (1, "#000", 0, 0) ]
+        size gui._scale(20)
+
     return
 
 # Invokes _errorhanding when this is first loaded.
