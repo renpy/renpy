@@ -1801,6 +1801,25 @@ Rarely or Internally Used
     saving and restoring its state. (See also :var:`config.save_on_mobile_background`,
     which controls this behavior.)
 
+.. var:: config.raise_image_exceptions = None
+
+    If True, Ren'Py will raise an exception when an image name is
+    not found. If False, Ren'Py will display a textual error message in place of the image.
+
+    If None, this takes on the value of config.developer.
+
+    This is set to False when Ren'Py ignores an exception.
+
+.. var:: config.raise_image_load_exceptions = None
+
+    If True, Ren'Py will raise an exception when an exception happens
+    during image loading. If False, Ren'Py will display a textual error
+    message in place of the image.
+
+    If None, this takes on the value of config.developer.
+
+    This is set to False when Ren'Py ignore an exception.
+
 .. var:: config.rollback_enabled = True
 
     Should the user be allowed to rollback the game? If set to False,

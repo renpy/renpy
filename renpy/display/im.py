@@ -587,6 +587,9 @@ class ImageBase(renpy.display.displayable.Displayable):
     oversample = 1
     pixel_perfect = False
 
+    # Did the image fail to load?
+    fail = False
+
     def after_upgrade(self, version):
         if version < 1:
             self.cache = True
@@ -626,7 +629,22 @@ class ImageBase(renpy.display.displayable.Displayable):
         raise Exception("load method not implemented.")
 
     def render(self, w, h, st, at):
-        return cache.get(self, render=True)
+        try:
+            return cache.get(self, render=True)
+        except Exception as e:
+            if renpy.config.raise_image_load_exceptions:
+                raise
+
+            self.fail = True
+
+            d = renpy.text.text.Text(str(e), color=(255, 0, 0, 255), xanchor=0, xpos=0, yanchor=0, ypos=0)
+            return d.render(w, h, st, at)
+
+    def get_placement(self):
+        if self.fail:
+            return (0, 0, 0, 0, 0, 0, False)
+        else:
+            return super(ImageBase, self).get_placement()
 
     def predict_one(self):
         renpy.display.predict.image(self)

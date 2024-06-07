@@ -546,6 +546,8 @@ def main():
         for i in renpy.game.post_init:
             i()
 
+        renpy.config.post_init()
+
         renpy.game.script.report_duplicate_labels()
 
         # Sort the images.
