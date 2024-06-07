@@ -587,8 +587,8 @@ class ImageBase(renpy.display.displayable.Displayable):
     oversample = 1
     pixel_perfect = False
 
-    # Did the image fail to load?
-    fail = False
+    # If the image failed to load, a placeholder used to report the error.
+    fail = None
 
     def after_upgrade(self, version):
         if version < 1:
@@ -635,14 +635,12 @@ class ImageBase(renpy.display.displayable.Displayable):
             if renpy.config.raise_image_load_exceptions:
                 raise
 
-            self.fail = True
-
-            d = renpy.text.text.Text(str(e), color=(255, 0, 0, 255), xanchor=0, xpos=0, yanchor=0, ypos=0)
-            return d.render(w, h, st, at)
+            self.fail = renpy.text.text.Text(str(e), style="_image_error")
+            return self.fail.render(w, h, st, at)
 
     def get_placement(self):
-        if self.fail:
-            return (0, 0, 0, 0, 0, 0, False)
+        if self.fail is not None:
+            return self.fail.get_placement() # type: ignore
         else:
             return super(ImageBase, self).get_placement()
 

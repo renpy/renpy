@@ -387,7 +387,7 @@ class ImageReference(renpy.display.displayable.Displayable):
             name = tuple(name.split())
 
         def error(msg):
-            self.target = renpy.text.text.Text(msg, color=(255, 0, 0, 255), xanchor=0, xpos=0, yanchor=0, ypos=0)
+            self.target = renpy.text.text.Text(msg, style="_image_error")
 
             if renpy.config.debug:
                 raise Exception(msg)
