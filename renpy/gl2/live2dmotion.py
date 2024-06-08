@@ -210,7 +210,7 @@ class Motion(object):
                 factor = min(factor, st / fadein)
 
             if st > self.duration - fadeout:
-                factor = min(factor, 1.0 - (st - (self.duration - fadeout)) / fadeout)
+                factor = min(factor, 1.0 - (st - self.duration) / fadeout)
 
             if fade_st is not None:
                 if fadeout > 0:
@@ -258,7 +258,7 @@ class Motion(object):
             factor = 1.0
 
             if st > self.duration - fadeout:
-                factor = min(factor, 1.0 - (st - (self.duration - fadeout)) / fadeout)
+                factor = min(factor, 1.0 - (st - self.duration) / fadeout)
 
             if fade_st is not None:
                 if fadeout > 0:
