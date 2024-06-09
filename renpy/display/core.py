@@ -1081,6 +1081,7 @@ class Interface(object):
 
         if renpy.android:
             android.wakelock(True)
+            android.activity.armOnStop()
 
         # Block events we don't use.
         for i in pygame.event.get_standard_events():
@@ -1985,8 +1986,8 @@ class Interface(object):
         if renpy.android:
             android.wakelock(False)
 
-            # Tell Android to end the onPause method.
-            android.activity.finishOnPause()
+            # Tell Android to end the onStop method.
+            android.activity.finishOnStop()
 
         print("Entered background. --------------------------------------------")
 
@@ -1994,7 +1995,6 @@ class Interface(object):
             ev = pygame.event.wait()
 
             if ev.type == pygame.APP_TERMINATING:
-
                 sys.exit(0)
 
             if ev.type == pygame.APP_DIDENTERFOREGROUND:
@@ -2010,6 +2010,7 @@ class Interface(object):
 
         if renpy.android:
             android.wakelock(True)
+            android.activity.armOnStop()
 
         # Reset the display so we get the GL context back.
         self.display_reset = True
