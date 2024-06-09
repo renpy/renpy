@@ -66,6 +66,12 @@ def periodic():
 
     if process is not None:
         if process.poll() is not None:
+
+            if process.returncode:
+                if renpy.config.tts_voice is not None:
+                    renpy.config.tts_voice = None
+                    renpy.config.tts_function(last_spoken)
+
             process = None
 
 
@@ -202,12 +208,19 @@ def apply_substitutions(s):
 tts_queue = [ ]
 
 
+# The last text spoken.
+last_spoken = ""
+
 def tick():
     if not tts_queue:
         return
 
     s = " ".join(tts_queue)
     tts_queue[:] = [ ]
+
+    global last_spoken
+    last_spoken = s
+
 
     try:
         renpy.config.tts_function(s)
