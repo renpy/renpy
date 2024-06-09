@@ -1462,6 +1462,8 @@ python_exit_callbacks = [ ]
 # Should exceptions be raised if an image fails to load.
 raise_image_load_exceptions = None
 
+# 8.2.2
+
 # Should Ren'Py scan for exec.py?
 exec_py = True
 
