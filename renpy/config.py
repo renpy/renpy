@@ -1462,6 +1462,7 @@ python_exit_callbacks = [ ]
 # Should exceptions be raised if an image fails to load.
 raise_image_load_exceptions = None
 
+# 8.2.2
 
 del os
 del collections
