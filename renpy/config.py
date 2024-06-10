@@ -1170,7 +1170,7 @@ scene_clears_layer_at_list = True
 mouse_displayable = None
 
 # The default bias for the GL level of detail.
-gl_lod_bias = -.5
+gl_lod_bias = -.6
 
 # A dictionary from a tag (or None) to a function that adjusts the attributes
 # of that tag.
