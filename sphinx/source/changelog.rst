@@ -17,6 +17,11 @@ Accessibility
 The accessibility menu can be accessed on touch screens by making a large ⋀ gesture. That is, press, move a large
 distance up and right, move a large distance down and right, and then release.
 
+There is a limited amount of self-voicing support for Android and iOS, largely limited by the nature of
+touch-screen focus. Dialogue will be read out, as will interface elements that become focused, but right now
+it's hard to focus an element without activating it.
+
+
 
 NVL-Mode and Window
 -------------------
