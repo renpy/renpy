@@ -193,6 +193,9 @@ screen _accessibility():
 
                     label _("Self-Voicing")
 
+                    if renpy.variant("touch"):
+                        text _("Self-voicing support is limited when using a touch screen.")
+
                     null height 10
 
                     textbutton _("Off"):
@@ -226,8 +229,6 @@ screen _accessibility():
                     null height 10
 
                     bar value Preference("self voicing volume drop")
-
-
 
 
         vbox:

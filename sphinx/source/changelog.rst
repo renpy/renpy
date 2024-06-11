@@ -11,6 +11,12 @@ Changelog (Ren'Py 7.x-)
 8.2.2 / 7.7.2
 =============
 
+Accessibility
+-------------
+
+The accessibility menu can be accessed on touch screens by making a large ⋀ gesture. That is, press, move a large
+distance up and right, move a large distance down and right, and then release.
+
 
 NVL-Mode and Window
 -------------------

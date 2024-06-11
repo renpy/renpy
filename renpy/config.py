@@ -602,7 +602,10 @@ dispatch_gesture = None
 
 # The table mapping gestures to events used by the default function.
 gestures = {
-    "n_s_w_e_w_e" : "progress_screen",
+    "s_n_e_s_w" : "progress_screen",
+    "n_e_s_w" : "progress_screen",
+    "ne_se" : "accessibility",
+    "nw_sw" : "accessibility",
     }
 
 # Sizes of gesture components and strokes, as a fraction of screen_width.

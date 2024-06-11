@@ -57,6 +57,26 @@
     "renpy.warnOnInvalidFilenameIssues": "Disabled",
     "renpy.warnOnIndentationAndSpacingIssues": "Disabled",
     "editor.tokenColorCustomizations": {
+        "[*Light*]": {
+            "textMateRules": [
+                {
+                    "scope": "ref.matchtext",
+                    "settings": {
+                        "foreground": "#000"
+                    }
+                }
+            ]
+        },
+        "[*Dark*]": {
+            "textMateRules": [
+                {
+                    "scope": "ref.matchtext",
+                    "settings": {
+                        "foreground": "#fff"
+                    }
+                }
+            ]
+        },
         "textMateRules": [
             {
                 "scope": "renpy.meta.plain",
@@ -207,6 +227,12 @@
                 "scope": "renpy.meta.color.#cfc",
                 "settings": {
                     "foreground": "#cfc"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.#c00",
+                "settings": {
+                    "foreground": "#c00"
                 }
             }
         ]
