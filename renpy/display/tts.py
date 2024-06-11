@@ -80,6 +80,45 @@ def is_active():
     return process is not None
 
 
+class AndroidTTS(object):
+
+    def __init__(self):
+
+        from jnius import autoclass
+        PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
+        self.TextToSpeech = autoclass('android.speech.tts.TextToSpeech')
+        self.tts = self.TextToSpeech(PythonSDLActivity.mActivity, None)
+
+
+    def speak(self, s):
+        self.tts.speak(s, self.TextToSpeech.QUEUE_FLUSH, None)
+
+
+class AppleTTS(object):
+
+    def __init__(self):
+
+        from pyobjus import autoclass, objc_str # type: ignore
+        from pyobjus.dylib_manager import load_framework # type: ignore
+
+        self.objc_str = objc_str
+
+        load_framework('/System/Library/Frameworks/AVFoundation.framework')
+        self.AVSpeechUtterance = autoclass('AVSpeechUtterance')
+        AVSpeechSynthesizer = autoclass('AVSpeechSynthesizer')
+
+        self.synth = AVSpeechSynthesizer.alloc().init()
+
+
+    def speak(self, s):
+        utterance = self.AVSpeechUtterance.alloc().initWithString_(self.objc_str(s))
+        self.synth.speakUtterance_(utterance)
+
+
+
+platform_tts = None # The platform-specific TTS object, used on Android or iOS.
+
+
 def default_tts_function(s):
     """
     Default function which speaks messages using an os-specific method.
@@ -156,19 +195,24 @@ def default_tts_function(s):
 
     elif renpy.emscripten and renpy.config.webaudio:
 
-        try:
-            from renpy.audio.webaudio import call
-            call("tts", s, amplitude)
-        except Exception:
-            pass
+        from renpy.audio.webaudio import call
+        call("tts", s, amplitude)
+
+    elif platform_tts is not None:
+        platform_tts.speak(s)
 
 # A List of (regex, string) pairs.
 tts_substitutions = [ ]
 
+
+
+
 def init():
     """
-    Initializes the TTS system. This is called automatically by ts, below.
+    Initializes the TTS system.
     """
+
+    global platform_tts
 
     for pattern, replacement in renpy.config.tts_substitutions:
 
@@ -178,6 +222,18 @@ def init():
             replacement = replacement.replace("\\", "\\\\")
 
         tts_substitutions.append((pattern, replacement))
+
+    try:
+
+        if renpy.android:
+            platform_tts = AndroidTTS()
+
+        if renpy.ios:
+            platform_tts = AppleTTS()
+
+    except Exception as e:
+        renpy.display.log.write("Failed to initialize TTS.")
+        renpy.display.log.exception()
 
 
 def apply_substitutions(s):
