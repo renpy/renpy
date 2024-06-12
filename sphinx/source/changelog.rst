@@ -128,7 +128,6 @@ touch-screen focus. Dialogue will be read out, as will interface elements that b
 it's hard to focus an element without activating it.
 
 
-
 NVL-Mode and Window
 -------------------
 
@@ -145,6 +144,17 @@ wince in a row by these statements.
 
 Fixes
 -----
+
+Two issues that could cause the Android version of Ren'Py to lock up
+if the window lost focus have been fixed.
+
+The `force` parameter to :func:`renpy.alt` now works as documented.
+
+The :propref:`xfill` and :propref:`yfill` properties can no longer
+cause a window to shrink.
+
+An issue where fonts with an incorrect line height would not work
+with the harfbuzz text shaper has been fixed.
 
 List slicing is now allowed inside string interpolation. For example,
 ``The first ten are: [long_list[:10]]`` will now work.
@@ -165,6 +175,29 @@ incorrectly included. This has been fixed.
 
 Other
 -----
+
+The Traditional and Simplified Chinese translations have been updated.
+
+Hovered handlers now run when a displayable is assigned thew default
+focus.
+
+The `attribute_filter` callback of :class:`Live2D` is now always
+run.
+
+The sound channel now fades out audio over the course of 16ms,
+just like the music channel does.
+
+It is possible to have two :class:`Live2D` displayables using the
+same model but different `default_fade` times.
+
+The new :var:`config.log_events` variable controls whether Ren'Py
+logs pygame-style events, for debugging.
+
+
+
+The new :var:`config.python_exit_callbacks` lets you specify a list of
+callbacks that can be used to de-initialize Python modules just before
+Ren'Py shuts down.
 
 The :var:`config.raise_image_exceptions` variable has been documented. It
 controls if Ren'Py will raise an exception when an image name is unknown, or

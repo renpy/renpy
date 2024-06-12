@@ -45,6 +45,7 @@ def main():
     ap.add_argument("prefix", default="", nargs='?', help="If given, only show results with this prefix.")
     ap.add_argument("--all", action="store_true", help="If given, show files that didn't change.")
     ap.add_argument("--dirs", action="store_true", help="If given, show directories.")
+    ap.add_argument("--changed", action="store_true", help="If given, show files that have changed size.")
 
     args = ap.parse_args()
 
@@ -61,7 +62,10 @@ def main():
         old_size = old_index[fn]
         new_size = new_index[fn]
 
-        if not args.all:
+        if args.changed:
+            if old_size == new_size:
+                continue
+        elif not args.all:
             if bool(old_size) == bool(new_size):
                 continue
 
@@ -77,4 +81,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
