@@ -40,7 +40,7 @@ style properties could cause Frames, Windows, and Buttons to shrink in size. Now
 size is allowed. To revert this, add::
 
 
-    define config.fill_shrinks_frames = True
+    define config.fill_shrinks_frame = True
 
 
 .. _incompatible-8.2.1:
