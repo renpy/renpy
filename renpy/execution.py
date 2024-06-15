@@ -325,7 +325,7 @@ class Context(renpy.object.Object):
             if clear is True:
                 clear = renpy.config.context_clear_layers
 
-            for i in renpy.config.context_clear_layers:
+            for i in clear:
                 self.scene_lists.clear(layer=i)
 
         # A list of modes that the context has been in.
