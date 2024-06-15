@@ -65,6 +65,10 @@ it looked back to the last say statement.
 Features
 --------
 
+The :func:`renpy.call_in_new_context` and :func:`renpy.invoke_in_new_context` functions
+take an option `_clear_layers` keyword argument. When given, this controls which
+layers will be cleared when changing to the new context.
+
 The default volumes of mixers are now set by using the default statement with
 ``preferences.volume.<mixer>``. For example, the default volume of the music
 mixer can be set with ``default preferences.volume.music = 0.5``. This also
@@ -93,7 +97,6 @@ Other Changes
 Munging of names beginning with __ now takes place inside strings, to allow
 munged names to be used inside substitutions. This should be fairly transparent,
 but for a discussion of the implications see :ref:`incompatible changes <munge-8.3.0>`
-
 
 The :func:`renpy.fetch` function can now take user-specified headers that
 are supplied as part of the HTTP/HTTPS request.
