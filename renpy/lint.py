@@ -716,6 +716,8 @@ def check_style(name, s):
                         check_file(name, f, directory="fonts")
                 elif v is None and k.endswith("emoji_font"):
                     pass
+                elif v in renpy.config.font_name_map.keys():
+                    check_file(name, renpy.config.font_name_map[v], directory="fonts")
                 else:
                     check_file(name, v, directory="fonts")
 
