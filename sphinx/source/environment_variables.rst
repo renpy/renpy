@@ -24,6 +24,9 @@ The following environment variables control the behavior of Ren'Py:
     The path to an .edit.py file telling Ren'Py how to invoke a text editor.
     See :doc:`editor` for more information.
 
+``RENPY_EXEC_PY``
+    If present and set to 1, enables processing of :ref:`exec.py files <exec_py>`.
+
 ``RENPY_GL_ENVIRON``
     Sets the OpenGL texture environment.
 

@@ -38,6 +38,8 @@ the game. If this file exists, it's loaded, deleted, and then run using ``exec``
 during an interaction context. This can be used to run Python code for debugging
 purposes.
 
+This is controlled by the RENPY_EXEC_PY environment variable, and by default is
+enabled in developer mode.
 
 Window Statement Changes
 ------------------------

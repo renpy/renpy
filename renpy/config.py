@@ -1467,9 +1467,6 @@ raise_image_load_exceptions = None
 
 # 8.2.2
 
-# Should Ren'Py scan for exec.py?
-exec_py = True
-
 # A map from name to text shader object.
 textshaders = { } # type: dict[str, renpy.text.shader.TextShader]
 

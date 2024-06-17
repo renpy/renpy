@@ -112,7 +112,10 @@ def init_exec_py():
     if renpy.emscripten:
         return
 
-    if not renpy.config.exec_py:
+    enable = renpy.config.developer
+    enable = bool(int(os.environ.get("RENPY_EXEC_PY", enable)))
+
+    if not enable:
         return
 
     global exec_py_thread
