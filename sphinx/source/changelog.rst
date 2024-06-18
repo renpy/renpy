@@ -4,6 +4,15 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.2.3:
+.. _renpy-7.7.3:
+
+
+8.2.3 / 7.7.3
+=============
+
+This release fixes an issue that prevented 8.2.2 and 7.7.2 from being built properly.
+
 
 .. _renpy-8.2.2:
 .. _renpy-7.7.2:
