@@ -2290,3 +2290,12 @@ translate japanese strings:
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
     new "Nightly Fix (Ren'Py 7, Python 2)"
+
+    # game/install.rpy:186
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} は Live2D モデルの表示サポートを追加します。CubismSdkForNative-{i}version{/i}.zip を Ren'Py SDK ディレクトリーに配置して、インストールをクリックしてください。Live2Dと共にゲームを配布するには Live2D, Inc からあなたがライセンスを所得する必要がります"
+
+    # game/preferences.rpy:258
+    old "Prefer the web documentation"
+    new "Web上のドキュメントを優先する"
+

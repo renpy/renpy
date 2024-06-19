@@ -250,10 +250,9 @@ translate japanese strings:
     new "\n{color=#fff}クリップボードにコピー{/color}"
 
     # renpy/common/_developer/developer.rpym:612
-    old "\n{color=#fff}クリックでコピー.\nドラッグで移動します{/color}"
-    new ""
+    old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
+    new "\n{color=#fff}クリックでコピー.\nドラッグで移動します{/color}"
 
     # renpy/common/_developer/developer.rpym:657
     old "Click to open in editor."
     new "エディターで開く"
-
