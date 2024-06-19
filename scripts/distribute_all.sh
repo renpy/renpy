@@ -14,6 +14,7 @@ sleep 2
     ./build.sh
 )
 
+rpy pull
 rpy build --python 3
 rpy build --python 2
 

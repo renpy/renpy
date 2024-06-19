@@ -157,6 +157,7 @@ the omission in future versions.
 * LaUwUrence
 * Lee Yunseok
 * Lent1
+* Levicratic
 * Lezalith
 * Llyama
 * LoafyLemon
