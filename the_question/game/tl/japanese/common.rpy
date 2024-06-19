@@ -1389,3 +1389,39 @@ translate japanese strings:
     old "Retry"
     new "リトライ"
 
+    # renpy/common/00accessibility.rpy:120
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
+    new "アクセス性メニュー。上下矢印キーをナビゲーションに使用し、ボタンとバーのアクティブ化にはエンターを使用します"
+
+    # renpy/common/00accessibility.rpy:197
+    old "Self-voicing support is limited when using a touch screen."
+    new "セルフボイシングのサポートはタッチスクリーン使用時に限定されます"
+
+    # renpy/common/00gui.rpy:454
+    old "Are you sure you want to continue where you left off?"
+    new "続きから開始しますか"
+
+    # renpy/common/00preferences.rpy:438
+    old "self voicing enable"
+    new "セルフボイシング有効化"
+
+    # renpy/common/00preferences.rpy:440
+    old "self voicing disable"
+    new "セルフボイシング無効化"
+
+    # renpy/common/00preferences.rpy:455
+    old "clipboard voicing enable"
+    new "クリップボードボイシング有効化"
+
+    # renpy/common/00preferences.rpy:457
+    old "clipboard voicing disable"
+    new "クリップボードボイシング無効化"
+
+    # renpy/common/00preferences.rpy:464
+    old "debug voicing enable"
+    new "デバックボイシング有効化"
+
+    # renpy/common/00preferences.rpy:466
+    old "debug voicing disable"
+    new "デバックボイシング無効化"
+
