@@ -346,15 +346,15 @@ translate japanese strings:
 
     # screens.rpy:752
     old "Unseen Text"
-    new "未読テキストもスキップ"
+    new "未読テキスト"
 
     # screens.rpy:753
     old "After Choices"
-    new "選択肢後もスキップ継続"
+    new "選択肢後"
 
     # screens.rpy:754
     old "Transitions"
-    new "トランジションをスキップ"
+    new "トランジション"
 
     # screens.rpy:756
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
