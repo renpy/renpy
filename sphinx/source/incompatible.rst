@@ -34,6 +34,11 @@ use of versions of Python that only support Windows 10 and later.
 8.3.0 / 7.8.0
 -------------
 
+**Character Callbacks** have been changed to take a large number of additional arguments,
+as documented at :doc:`character_callbacks`. This should not require changes as character
+callbacks should have been written to ignore unknown keyword arguments, but if not
+the character callbacks may need to be updated.
+
 **Window Statement** The ``window show`` annd ``window hide`` statements
 no longer disable the ``window auto`` flag. If you'd like to do this, then
 either use the new ``window auto False`` statement, or change your game

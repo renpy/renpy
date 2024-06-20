@@ -1482,6 +1482,8 @@ shader_part_filter = None # type: Optional[Callable[[tuple[str]], tuple[str]]]
 # Should munging occur everywhere in strings.
 munge_in_strings = True
 
+# The version of the character callback.
+character_callback_compat = None
 
 del os
 del collections

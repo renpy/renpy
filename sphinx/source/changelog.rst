@@ -67,6 +67,9 @@ it looked back to the last say statement.
 Features
 --------
 
+:doc:`character_callbacks` are now given information about the line of of dialogue
+and the segment of the line that is being shown.
+
 The :func:`renpy.call_in_new_context` and :func:`renpy.invoke_in_new_context` functions
 take an option `_clear_layers` keyword argument. When given, this controls which
 layers will be cleared when changing to the new context.

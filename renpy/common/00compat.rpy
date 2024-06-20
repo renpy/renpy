@@ -311,9 +311,11 @@ init -1100 python:
         if _compat_versions(version, (7, 7, 1), (8, 2, 1)):
             config.fill_shrinks_frame = True
 
-
         if ((7, 4, 0) <= version) and _compat_versions(version, (7, 7, 99), (8, 2, 99)):
             config.window_functions_set_auto = True
+
+        if _compat_versions(version, (7, 7, 99), (8, 2, 99)):
+            config.character_callback_compat = True
 
 
     # The version of Ren'Py this script is intended for, or

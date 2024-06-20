@@ -42,7 +42,7 @@
         "web3": true,
         "**/*.rpa": true,
         "**/*.rpymc": true,
-        "**/cache/": true,
+        "**/cache/": true
     },
 
     "python.languageServer": "Pylance",

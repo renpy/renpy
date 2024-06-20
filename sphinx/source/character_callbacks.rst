@@ -30,13 +30,36 @@ that occured. Possible events are:
 "end"
     Called at the end of a say statement.
 
-The callback is called with at least one keyword argument:
+The callback is called with at the keyword arguments:
 
 `interact`
     This is true if the dialogue causes an interaction to occur.
 
+`type`
+    The type of character (e.g. "nvl", "adv", "balloon").
+
+`what`
+    The text that is going to be supplied to the what displayable.
+
+The "show", "show_done", and "slow_done" callbacks are also given additional keyword
+arguments:
+
+`start`
+    The start of the current segment of dialogue, in the `what` string.
+
+`end`
+    The end of the current segment of dialogue, in the `what` string.
+
+`delay`
+    The amount of time Ren'Py will pause after the current segment of dialogue is shown,
+    or None if Ren'Py will pause until the player clicks.
+
+`last_segment`
+    True if this is the last segment of dialogue in the say statement, False otherwise.
+
+
 Other values of the positional argument and additional keyword arguments may
-be supplied in the future. The callback should be written to ignore arguments it
+be supplie to the callback. The callback should be written to ignore keyword arguments it
 does not understand.
 
 Example
