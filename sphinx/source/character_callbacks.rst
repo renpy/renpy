@@ -19,9 +19,6 @@ that occured. Possible events are:
     into multiple segments by the {w} or {p} text tags, but always consists of
     at least one segment.
 
-"show_done"
-    Called after showing each segment of dialogue.
-
 "slow_done"
     Called after slow text finishes showing. Note that this event may occur
     after "end", in cases where dialogue does not cause an interaction
@@ -41,7 +38,7 @@ The callback is called with at the keyword arguments:
 `what`
     The text that is going to be supplied to the what displayable.
 
-The "show", "show_done", and "slow_done" callbacks are also given additional keyword
+The "show" and "slow_done" callbacks are also given additional keyword
 arguments:
 
 `start`
