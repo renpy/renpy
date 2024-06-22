@@ -1238,7 +1238,10 @@ def testcase_statement(l, loc):
     l.expect_eol()
     l.expect_block('testcase statement')
 
-    test = renpy.test.testparser.parse_block(l.subblock_lexer(), loc)
+    ll = l.subblock_lexer()
+    ll.set_global_label(name)
+
+    test = renpy.test.testparser.parse_block(ll, loc)
 
     l.advance()
 
