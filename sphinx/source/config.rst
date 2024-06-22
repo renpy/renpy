@@ -358,6 +358,11 @@ Occasionally Used
     is given the `namebox_background` property, it sets :propref:`background`
     on the displayable in the say screen with the id "namebox".
 
+.. var:: config.clear_log = False
+
+    If true, the log created by :var:`config.log` is cleared each time
+    Ren'Py starts.
+
 .. var:: config.conditionswitch_predict_all = False
 
     The default value of the predict_all argument for :func:`ConditionSwitch`

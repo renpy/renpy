@@ -99,6 +99,9 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+The :var:`config.clear_log` variable has been added, which controls whether the
+dialogue log (:var:`config.log`) is cleared each time Ren'Py starts.
+
 Munging of names beginning with __ now takes place inside strings, to allow
 munged names to be used inside substitutions. This should be fairly transparent,
 but for a discussion of the implications see :ref:`incompatible changes <munge-8.3.0>`
