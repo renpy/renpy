@@ -1312,6 +1312,7 @@ variables need to be changed. ::
 
 If the second statement was missing, DejaVuSans would still be used.
 
+.. _more_advanced_gui:
 
 Advanced Customization
 ======================
