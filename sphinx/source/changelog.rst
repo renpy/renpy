@@ -102,6 +102,9 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+Taking a screenshot now hides the notify screen, so multiple screenshot do not
+leak the path to the previous one. This controled by :var:`config.pre_screenshot_actions`.
+
 The :var:`config.clear_log` variable has been added, which controls whether the
 dialogue log (:var:`config.log`) is cleared each time Ren'Py starts.
 

@@ -2350,13 +2350,6 @@ class Interface(object):
 
         renpy.plog(1, "start interact_core")
 
-        # Process the invoke queue.
-        while self.invoke_queue:
-            fn, args, kwargs = self.invoke_queue.pop(0)
-            rv = fn(*args, **kwargs)
-            if rv is not None:
-                return False, rv
-
         # Check to see if the language has changed.
         renpy.translation.check_language()
 
@@ -2948,6 +2941,13 @@ class Interface(object):
                         # Always set to at least 1ms.
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
+
+                # Process the invoke queue.
+                while self.invoke_queue:
+                    fn, args, kwargs = self.invoke_queue.pop(0)
+                    rv = fn(*args, **kwargs)
+                    if rv is not None:
+                        return False, rv
 
                 if can_block or (frame >= renpy.config.idle_frame) or (self.force_prediction):
                     expensive = not (needs_redraw or (_redraw_in < .2) or (_timeout_in < .2) or renpy.display.video.playing())

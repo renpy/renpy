@@ -872,6 +872,12 @@ Occasionally Used
     game, in pixels. If not set, the height of the window defaults to
     :var:`config.screen_width`.
 
+.. var:: config.pre_screenshot_actions = [ Hide("notify", immediately=True), ... ]
+
+    A list of actions that are run before a screenshot is taken. This
+    is intended to hide transient elements that should not be shown in the
+    screenshot.
+
 .. var:: config.preload_fonts = [ ... ]
 
     A list of the names of TrueType and OpenType fonts that Ren'Py should

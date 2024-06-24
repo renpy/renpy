@@ -4079,7 +4079,6 @@ def invoke_in_main_thread(fn, *args, **kwargs):
         raise Exception("invoke_in_main_thread may not be called during the init phase.")
 
     renpy.display.interface.invoke_queue.append((fn, args, kwargs))
-    restart_interaction()
 
 
 def cancel_gesture():

@@ -292,7 +292,7 @@ init -1600 python:
     config.screenshot_pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
 
     # Called to make a screenshot happen.
-    def _screenshot():
+    def _screenshot_core():
         import os.path
         import os
 
@@ -318,6 +318,7 @@ init -1600 python:
         except Exception:
             pass
 
+
         try:
             if not renpy.screenshot(fn):
                 renpy.notify(__("Failed to save screenshot as %s.") % fn)
@@ -331,10 +332,20 @@ init -1600 python:
         if config.screenshot_callback is not None:
             config.screenshot_callback(fn)
 
+    config.pre_screenshot_actions = [ ]
+
+
+    def _screenshot():
+        renpy.run(config.pre_screenshot_actions)
+        renpy.invoke_in_main_thread(_screenshot_core)
+        renpy.restart_interaction()
+
+
     def _screenshot_callback(fn):
         renpy.notify(__("Saved screenshot as %s.") % fn)
 
     config.screenshot_callback = _screenshot_callback
+
 
     def _fast_skip():
         if not config.fast_skipping and not config.developer:
@@ -450,6 +461,9 @@ init -1100 python:
         )
 
     config.underlay = [ _default_keymap ]
+
+    config.pre_screenshot_actions = [ Hide("notify", immediately=True) ]
+
 
 init 1100 python hide:
 
