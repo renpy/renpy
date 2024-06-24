@@ -102,6 +102,8 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+Displayables now have an id field, that contains the id given in screen language.
+
 Taking a screenshot now hides the notify screen, so multiple screenshot do not
 leak the path to the previous one. This controled by :var:`config.pre_screenshot_actions`.
 

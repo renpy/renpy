@@ -335,7 +335,8 @@ All user interface statements take the following common properties:
     given identifier. Some screens will require that a displayable
     with a given identifier is created.
 
-    By default, the ``id`` is automatically-generated.
+    When a displayable is created with an id, the id is stored as a
+    string ion a attribute named id on the Displayable object.
 
 .. screen-property:: prefer_screen_to_id
 
