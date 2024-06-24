@@ -67,6 +67,9 @@ it looked back to the last say statement.
 Features
 --------
 
+The :class:`Hide` action and :func:`renpy.hide_screen` actions now take an `immediately`
+keyword argument, which prevents 'on hide' handlers in the screens from running.
+
 :doc:`character_callbacks` are now given information about the line of of dialogue
 and the segment of the line that is being shown.
 
