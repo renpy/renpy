@@ -102,6 +102,8 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+The displayable inspector (Shift+Alt+I) now shows a displayable's id if it has one.
+
 Displayables now have an id field, that contains the id given in screen language.
 
 Taking a screenshot now hides the notify screen, so multiple screenshot do not

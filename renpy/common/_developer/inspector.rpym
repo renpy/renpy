@@ -201,7 +201,13 @@ init python:
         else:
             clname = type(d).__name__
 
+        parts = [ clname ]
+
         info = d._repr_info()
-        if info is None:
-            return clname
-        return clname + " " + info
+        if info is not None:
+            parts.append(info)
+
+        if d.id is not None:
+            parts.append("id %r" % d.id)
+
+        return " ".join(parts)
