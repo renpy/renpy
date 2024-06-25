@@ -283,9 +283,13 @@ def map_event(ev, keysym):
     """
 
     if ev.type == renpy.display.core.EVENTNAME:
-        if (keysym in ev.eventnames) and not ev.up:
-            return True
-
+        if isinstance(keysym, list):
+            for k in keysym:
+                if (k in ev.eventnames) and not ev.up:
+                    return True
+        else:
+            if (keysym in ev.eventnames) and not ev.up:
+                return True
         return False
 
     if isinstance(keysym, list):
