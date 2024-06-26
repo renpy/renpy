@@ -1724,10 +1724,7 @@ def release_deferred_errors():
     else:
         pop("duplicate_id")
 
-    if renpy.config.atl_pos_only:
-        pop("atl_pos_only")
-    else:
-        release("atl_pos_only")
+    pop("atl_pos_only")
 
     if deferred_parse_errors:
         raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))
