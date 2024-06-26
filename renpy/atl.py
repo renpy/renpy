@@ -663,7 +663,7 @@ class ATLTransformBase(renpy.object.Object):
         if getattr(child, '_duplicatable', False):
             child = child._duplicate(_args)
 
-        # scope.setdefault("child", child) # 4405
+        scope.setdefault("child", child)
 
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
