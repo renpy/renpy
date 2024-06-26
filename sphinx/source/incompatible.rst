@@ -34,6 +34,35 @@ use of versions of Python that only support Windows 10 and later.
 8.3.0 / 7.8.0
 -------------
 
+**How ATL sets the child from parameters** The rules as for how and when ATL
+transforms get their child set, based upon the parameters they accept and the
+arguments they are passed, has slightly changed. It is unlikely to have any
+impact on existing games, especially if you were only using documented features.
+
+- The `old_widget` parameter taking a value from a positional argument does not
+  set the child anymore. That was an undocumented misuse of
+  :ref:`atl-transitions`. ::
+
+    transform t(old_widget):
+        ...
+
+    t("eileen") # will no longer have a child set to the "eileen" image
+
+- A `child` keyword argument being passed to a transform having a `child`
+  parameter now sets the child, just as it would in a transform with no
+  `child` parameter, or if the `child` parameter got a value from a positional
+  argument. The documentation was ambiguous about this. ::
+
+    transform t1(child):
+        ...
+
+    transform t2(chile):
+        ...
+
+    t1(child="eileen") # will now have a child set to the "eileen" image, but previously didn't
+    t2(child="eileen") # the child is set, as before
+    t1("eileen") # the child is set, as before
+
 **Character Callbacks** have been changed to take a large number of additional arguments,
 as documented at :doc:`character_callbacks`. This should not require changes as character
 callbacks should have been written to ignore unknown keyword arguments, but if not
@@ -96,41 +125,6 @@ position changes, but since the previous version was wildly incorrect,
 no compatibility define is provided.
 
 
-
-.. _incompatible-8.2.1:
-.. _incompatible-7.7.1:
-
-8.2.1 / 7.7.1
--------------
-
-**How ATL sets the child from parameters** The rules as for how and when ATL
-transforms get their child set, based upon the parameters they accept and the
-arguments they are passed, has slightly changed. It is unlikely to have any
-impact on existing games, especially if you were only using documented features.
-
-- The `old_widget` parameter taking a value from a positional argument does not
-  set the child anymore. That was an undocumented misuse of
-  :ref:`atl-transitions`. ::
-
-    transform t(old_widget):
-        ...
-
-    t("eileen") # will no longer have a child set to the "eileen" image
-
-- A `child` keyword argument being passed to a transform having a `child`
-  parameter now sets the child, just as it would in a transform with no
-  `child` parameter, or if the `child` parameter got a value from a positional
-  argument. The documentation was ambiguous about this. ::
-
-    transform t1(child):
-        ...
-
-    transform t2(chile):
-        ...
-
-    t1(child="eileen") # will now have a child set to the "eileen" image, but previously didn't
-    t2(child="eileen") # the child is set, as before
-    t1("eileen") # the child is set, as before
 
 
 .. _incompatible-8.2.0:
