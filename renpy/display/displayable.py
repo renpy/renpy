@@ -580,11 +580,15 @@ class Displayable(renpy.object.Object):
             if i is not None:
                 speech = i._tts()
 
+                if isinstance(speech, renpy.display.tts.TTSDone):
+                    if speech.strip():
+                        rv = [ speech ]
+                    else:
+                        rv = [ ]
+                    break
+
                 if speech.strip():
                     rv.append(speech)
-                    if isinstance(speech, renpy.display.tts.TTSDone):
-                        rv = [ speech ]
-                        break
 
 
         rv = ": ".join(rv)
