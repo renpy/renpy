@@ -1886,10 +1886,14 @@ class Adjustment(renpy.object.Object):
     # will set this to true for adjustments it may change.
     restart_interaction_at_limit = False
 
+    # This causes the interaction to restart when the range changes.
+    restart_interaction_at_range = False
+
+    # Like changed, but called with the raw value, before it is clamped.
     raw_changed = None
 
 
-    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False, raw_changed=None): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool, Callable|None) -> None
+    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
@@ -2021,6 +2025,9 @@ class Adjustment(renpy.object.Object):
         self._range = v
         if self.ranged:
             self.ranged(self)
+
+        if self.restart_interaction_at_range:
+            renpy.exports.restart_interaction()
 
     range = property(get_range, set_range) # @ReservedAssignment
 

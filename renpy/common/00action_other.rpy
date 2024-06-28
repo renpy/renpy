@@ -703,10 +703,12 @@ init -1500 python:
 
             adjustment, delta = self.get_adjustment_and_delta()
 
+
             if adjustment is None:
                 return False
 
             adjustment.restart_interaction_at_limit = True
+            adjustment.restart_interaction_at_range = True
 
             if delta > 0:
                 return adjustment.value < adjustment.range
