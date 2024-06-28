@@ -407,5 +407,5 @@ translate japanese strings:
 
     # game/screens.rpy:1103
     old "Opens the accessibility menu."
-    new "アクセス性メニューを開きます。"
+    new "アクセシビリティーメニューを開きます。"
 
