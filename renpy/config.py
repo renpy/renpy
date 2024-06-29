@@ -943,6 +943,9 @@ optimize_texture_bounds = True
 # Should we predict everything in a ConditionSwitch?
 conditionswitch_predict_all = False
 
+# How long should a continuous ConditionSwitch wait before updating itself? (seconds)
+conditionswitch_refresh_rate = 0.1
+
 # Transform events to deliver each time one happens.
 repeat_transform_events = [ "show", "replace", "update" ]
 
