@@ -102,6 +102,8 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+Images can now be oversampled at the directory level.
+
 ATL polar coordinates now support the radius being a negative number.
 
 The displayable inspector (Shift+Alt+I) now shows a displayable's id if it has one.
