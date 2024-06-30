@@ -102,6 +102,8 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+ATL polar coordinates now support the radius being a negative number.
+
 The displayable inspector (Shift+Alt+I) now shows a displayable's id if it has one.
 
 Displayables now have an id field, that contains the id given in screen language.
@@ -222,8 +224,6 @@ same model but different `default_fade` times.
 
 The new :var:`config.log_events` variable controls whether Ren'Py
 logs pygame-style events, for debugging.
-
-
 
 The new :var:`config.python_exit_callbacks` lets you specify a list of
 callbacks that can be used to de-initialize Python modules just before

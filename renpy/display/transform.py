@@ -298,6 +298,7 @@ class TransformState(renpy.object.Object):
 
         if radius < 0:
             angle = limit_angle(angle + 180)
+            radius = -radius
 
         self.set_pos_from_angle_and_radius(angle, radius)
 
@@ -417,12 +418,14 @@ class TransformState(renpy.object.Object):
         self.last_absolute_anchorangle = limit_angle(absolute_anchorangle)
         self.last_relative_anchorangle = limit_angle(relative_anchorangle)
 
-        anchorradius = self.anchorradius
+        anchorradius = position(self.anchorradius.absolute, self.anchorradius.relative)
 
         if anchorradius.absolute < 0:
             absolute_anchorangle = limit_angle(absolute_anchorangle + 180)
+            anchorradius.absolute = -anchorradius.absolute
         if anchorradius.relative < 0:
             relative_anchorangle = limit_angle(relative_anchorangle + 180)
+            anchorradius.relative = -anchorradius.relative
 
         self.set_anchor_from_anchorangle_and_anchorradius(
             absolute_anchorangle,
@@ -450,7 +453,6 @@ class TransformState(renpy.object.Object):
             absolute_anchorangle = self.last_absolute_anchorangle
         if (not old_anchorradius.relative) and (self.last_relative_anchorangle is not None):
             relative_anchorangle = self.last_relative_anchorangle
-
 
         if anchorradius.absolute < 0:
             absolute_anchorangle = limit_angle(absolute_anchorangle + 180)
