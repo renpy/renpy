@@ -226,13 +226,14 @@ gamepad bindings is given below::
         "pad_start_press" : [ "game_menu", ],
 
         "pad_y_press" : [ "hide_windows", ],
+        "pad_x_press" : [ "button_alternate" ],
 
         "pad_rightshoulder_press" : [ "rollforward", ],
         "repeat_pad_rightshoulder_press" : [ "rollforward", ],
 
         "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
         "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
-        "pad_b_press" : [ "button_alternate" ],
+        "pad_b_press" : [ "game_menu" ],
 
         "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
         "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
