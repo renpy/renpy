@@ -67,6 +67,9 @@ it looked back to the last say statement.
 Features
 --------
 
+The :var:`config.translate_ignore_who` variable makes it possible to ignore certain characters for the
+purpose of translations.
+
 The :class:`Hide` action and :func:`renpy.hide_screen` actions now take an `immediately`
 keyword argument, which prevents 'on hide' handlers in the screens from running.
 

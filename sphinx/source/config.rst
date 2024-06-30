@@ -1149,6 +1149,13 @@ Occasionally Used
 
     This is changed by the default GUI.
 
+.. var:: config.translate_ignore_who = [ ]
+
+    A list of strings giving characters that will not have tanslations generated. This is useful
+    for characters that are used for debugging or note purposes. This compares against string value
+    of the expression in the statement. (So "e" will match ``e`` but not ``l``, even if e and l are
+    the same object.)
+
 .. var:: config.tts_voice = None
 
     If not None, a string giving a non-default voice that is used to

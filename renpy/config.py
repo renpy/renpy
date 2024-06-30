@@ -1488,6 +1488,9 @@ munge_in_strings = True
 # The version of the character callback.
 character_callback_compat = None
 
+# A list of who arguments to translate that will not be translated.
+translate_ignore_who = [ ]
+
 del os
 del collections
 
