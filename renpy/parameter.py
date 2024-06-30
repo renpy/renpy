@@ -126,10 +126,6 @@ class Signature(object):
             # when in PY3-only, turn this into MappingProxyType o dict
             self.parameters = collections.OrderedDict((param.name, param) for param in parameters)
 
-    @classmethod
-    def legacy(cls, *args, **kwargs):
-        return cls(cls.legacy_params(*args, **kwargs))
-
     @staticmethod
     def legacy_params(parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
         """
@@ -191,38 +187,6 @@ class Signature(object):
         else:
             # default behavior on py3, could be a super() call but this is faster and py2-compatible
             self.parameters = state[1]["parameters"]
-
-
-    @property
-    def positional(self):
-        """
-        Legacy accessor for obsolete attribute
-        """
-        rv = []
-        for n, p in self.parameters.items():
-            if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD):
-                rv.append(n)
-        return tuple(rv)
-
-    @property
-    def extrapos(self):
-        """
-        Legacy accessor for obsolete attribute
-        """
-        for n, p in self.parameters.items():
-            if p.kind == p.VAR_POSITIONAL:
-                return n
-        return None
-
-    @property
-    def extrakw(self):
-        """
-        Legacy accessor for obsolete attribute
-        """
-        for n, p in self.parameters.items():
-            if p.kind == p.VAR_KEYWORD:
-                return n
-        return None
 
     def apply_defaults(self, mapp, scope=None):
         """
