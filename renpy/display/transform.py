@@ -279,7 +279,7 @@ class TransformState(renpy.object.Object):
         if angle < 0:
             angle += 360
 
-        if (radius == 0) and (self.last_angle is not None):
+        if radius < .001 and self.last_angle is not None:
             angle = self.last_angle
         elif self.radius_sign < 0:
             angle = limit_angle(angle + 180)
@@ -306,12 +306,7 @@ class TransformState(renpy.object.Object):
 
         radius = self.scale(radius, min(self.available_width, self.available_height))
         vector = self.get_pos_polar_vector()
-
-        # Deal with the angle becoming 0.0 when the radius would be 0.0.
-        if not any(vector) and (self.last_angle is not None):
-            angle = self.last_angle
-        else:
-            angle = self.get_angle(vector)
+        angle = self.get_angle(vector)
 
         if radius < 0:
             angle = limit_angle(angle + 180)
@@ -323,6 +318,7 @@ class TransformState(renpy.object.Object):
         self.set_pos_from_angle_and_radius(angle, radius)
 
     def set_pos_from_angle_and_radius(self, angle, radius):
+
         xaround = self.scale(self.xaround, self.available_width)
         yaround = self.scale(self.yaround, self.available_height)
 
