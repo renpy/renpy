@@ -1892,8 +1892,7 @@ class Adjustment(renpy.object.Object):
     # Like changed, but called with the raw value, before it is clamped.
     raw_changed = None
 
-
-    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
+    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False, raw_changed=None): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool, Callable|None) -> None
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
