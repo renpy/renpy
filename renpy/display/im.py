@@ -690,7 +690,7 @@ class Image(ImageBase):
 
         if "@" in filename:
             base = filename.rpartition(".")[0]
-            extras = base.partition("@")[2].split(",")
+            extras = base.rpartition("@")[2].partition("/")[0].split(",")
 
             for i in extras:
                 try:
