@@ -457,8 +457,8 @@ def check_user(node):
 
     try:
         node.get_next()
-    except Exception:
-        report("Didn't properly report what the next statement should be.")
+    except Exception as e:
+        report("Didn't properly report what the next statement should be : {}".format(e))
 
 
 def quote_text(s):
