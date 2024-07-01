@@ -8,8 +8,7 @@ translate german strings:
 
     # options.rpy:4
     old "## Lines beginning with two '#' marks are comments, and you shouldn't uncomment them. Lines beginning with a single '#' mark are commented-out code, and you may want to uncomment them when appropriate."
-    # Automatic translation.
-    new "## Zeilen, die mit zwei '#' beginnen, sind Kommentare und sollten nicht auskommentiert werden. Zeilen, die mit einem einzelnen '#' beginnen, sind auskommentierter Code, den Sie ggf. auskommentieren sollten."
+    new "## Zeilen, die mit zwei '#' beginnen, sind Kommentare und sollten nicht auskommentiert werden. Zeilen, die mit einem einzelnen '#' beginnen, sind auskommentierter Code, den Du ggf. auskommentieren kannst."
 
     # options.rpy:10
     old "## Basics"
@@ -33,8 +32,7 @@ translate german strings:
 
     # options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
-    # Automatic translation.
-    new "## Bestimmt, ob der oben angegebene Titel auf dem Hauptmenübildschirm angezeigt wird. Setzen Sie dies auf False, um den Titel auszublenden."
+    new "## Bestimmt, ob der oben angegebene Titel auf dem Hauptmenübildschirm angezeigt wird. Setze dies auf False, um den Titel auszublenden."
 
     # options.rpy:26
     old "## The version of the game."
@@ -44,7 +42,7 @@ translate german strings:
     # options.rpy:31
     old "## Text that is placed on the game's about screen. To insert a blank line between paragraphs, write \\n\\n."
     # Automatic translation.
-    new "## Text, der auf dem Info-Bildschirm des Spiels erscheint. Um eine Leerzeile zwischen Absätzen einzufügen, schreiben Sie \\n\\n."
+    new "## Text, der auf dem Info-Bildschirm des Spiels erscheint. Um eine Leerzeile zwischen Absätzen einzufügen, schreibe \\n\\n."
 
     # options.rpy:37
     old "## A short name for the game used for executables and directories in the built distribution. This must be ASCII-only, and must not contain spaces, colons, or semicolons."
@@ -53,8 +51,7 @@ translate german strings:
 
     # options.rpy:44
     old "## Sounds and music"
-    # Automatic translation.
-    new "## Klänge und Musik"
+    new "## Ton und Musik"
 
     # options.rpy:46
     old "## These three variables control which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
@@ -63,13 +60,11 @@ translate german strings:
 
     # options.rpy:55
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
-    # Automatic translation.
-    new "## Um dem Benutzer die Möglichkeit zu geben, einen Testton auf dem Ton- oder Sprachkanal abzuspielen, entfernen Sie die Kommentarzeichen in der Zeile unten und verwenden Sie sie, um einen Beispielton abzuspielen."
+    new "## Um dem Benutzer die Möglichkeit zu geben, einen Testton auf dem Ton- oder Sprachkanal abzuspielen, entfernen die Kommentarzeichen in der Zeile unten und verwenden sie, um einen Beispielton abzuspielen."
 
     # options.rpy:62
     old "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. This file will continue playing into the game, until it is stopped or another file is played."
-    # Automatic translation.
-    new "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. Diese Datei wird im Spiel weiter abgespielt, bis sie gestoppt wird oder eine andere Datei abgespielt wird."
+    new "## Entferne das Kommentarzeichen in der folgenden Zeile, damit im Hauptmenü eine Audiodatei abgespielt wird. Diese wird im Spiel so lange weiterlaufen, bis sie gestoppt wird oder eine andere Datei abgespielt wird."
 
     # options.rpy:69
     old "## Transitions"
@@ -98,8 +93,7 @@ translate german strings:
 
     # options.rpy:91
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."
-    # Automatic translation.
-    new "## Eine Variable zum Festlegen des Übergangs, der beim Start des Spiels verwendet wird, existiert nicht. Verwenden Sie stattdessen eine with-Anweisung, nachdem Sie die Anfangsszene gezeigt haben."
+    new "## Eine Variable zum Festlegen des Übergangs, der beim Start des Spiels verwendet wird, existiert nicht. Verwende stattdessen eine with-Anweisung, nachdem Du die Anfangsszene gezeigt hast."
 
     # options.rpy:96
     old "## Window management"
@@ -123,8 +117,7 @@ translate german strings:
 
     # options.rpy:115
     old "## Preference defaults"
-    # Automatic translation.
-    new "## Präferenzvorgaben"
+    new "## Standardwerte für Einstellungen"
 
     # options.rpy:117
     old "## Controls the default text speed. The default, 0, is infinite, while any other number is the number of characters per second to type out."
@@ -134,7 +127,7 @@ translate german strings:
     # options.rpy:123
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
     # Automatic translation.
-    new "## Die Standardverzögerung für die automatische Weiterleitung. Größere Zahlen führen zu längeren Wartezeiten, wobei 0 bis 30 der gültige Bereich ist."
+    new "## Die Standardverzögerung für das automatische Blättern. Größere Zahlen führen zu längeren Wartezeiten, wobei 0 bis 30 der gültige Bereich ist."
 
     # options.rpy:129
     old "## Save directory"
@@ -179,8 +172,7 @@ translate german strings:
 
     # options.rpy:155
     old "## This section controls how Ren'Py turns your project into distribution files."
-    # Automatic translation.
-    new "## Dieser Abschnitt steuert, wie Ren'Py Ihr Projekt in Distributionsdateien umwandelt."
+    new "## Dieser Abschnitt steuert, wie Ren'Py Dein Projekt in Distributionsdateien umwandelt."
 
     # options.rpy:160
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
@@ -209,13 +201,11 @@ translate german strings:
 
     # options.rpy:177
     old "## Classify files as None to exclude them from the built distributions."
-    # Automatic translation.
-    new "## Klassifizieren Sie Dateien als None, um sie von den erstellten Distributionen auszuschließen."
+    new "## Klassifiziere Dateien als None, um sie von den erstellten Distributionen auszuschließen."
 
     # options.rpy:185
     old "## To archive files, classify them as 'archive'."
-    # Automatic translation.
-    new "## Um Dateien zu archivieren, klassifizieren Sie sie als \"Archiv\"."
+    new "## Um Dateien zu archivieren, klassifiziere sie als \"archive\"."
 
     # options.rpy:190
     old "## Files matching documentation patterns are duplicated in a mac app build, so they appear in both the app and the zip file."
@@ -224,8 +214,7 @@ translate german strings:
 
     # options.rpy:196
     old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
-    # Automatic translation.
-    new "## Ein Google Play-Lizenzschlüssel ist erforderlich, um Erweiterungsdateien herunterzuladen und In-App-Käufe durchzuführen. Sie finden ihn auf der Seite \"Services & APIs\" in der Google Play-Entwicklerkonsole."
+    new "## Ein Google Play-Lizenzschlüssel ist erforderlich, um Erweiterungsdateien herunterzuladen und In-App-Käufe durchzuführen. Du findest ihn auf der Seite \"Services & APIs\" in der Google Play-Entwicklerkonsole."
 
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
@@ -234,8 +223,7 @@ translate german strings:
 
     # gui/game/options.rpy:31
     old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
-    # Automatic translation.
-    new "## Text, der auf dem Info-Bildschirm des Spiels erscheint. Setzen Sie den Text zwischen die dreifachen Anführungszeichen und lassen Sie eine Leerzeile zwischen den Absätzen."
+    new "## Text, der auf dem Info-Bildschirm des Spiels erscheint. Setz den Text zwischen dreifache Anführungszeichen und lass eine Leerzeile zwischen den Absätzen."
 
     # gui/game/options.rpy:47
     old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
@@ -253,5 +241,4 @@ translate german strings:
 
     # gui/game/options.rpy:203
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-    # Automatic translation.
-    new "## Für In-App-Käufe ist ein Google Play-Lizenzschlüssel erforderlich. Sie finden ihn in der Google Play-Entwicklerkonsole unter \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new "## Für In-App-Käufe ist ein Google Play-Lizenzschlüssel erforderlich. Du findest ihn in der Google Play-Entwicklerkonsole unter \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
