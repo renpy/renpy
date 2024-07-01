@@ -23,8 +23,7 @@ translate german strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    # Automatic translation.
-    new "Aktivieren Sie"
+    new "Aktivieren"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
@@ -40,7 +39,7 @@ translate german strings:
 
     # 00gltest.rpy:148
     old "This computer is not using shaders."
-    new "Dieser Computer verwendet keine Shaders."
+    new "Dieser Computer verwendet keine Shader."
 
     # 00gltest.rpy:150
     old "This computer is displaying graphics slowly."
@@ -107,8 +106,7 @@ translate german strings:
 
     # 00gamepad.rpy:58
     old "Press or move the [control!s] [kind]."
-    # Automatic translation.
-    new "Drücken Sie oder bewegen Sie die [control!s] [kind] ."
+    new "Drücke oder bewege [control!s] [kind] ."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -117,8 +115,7 @@ translate german strings:
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    # Automatic translation.
-    new "Rücken (B)"
+    new "Zurück (B)"
 
     # _errorhandling.rpym:495
     old "Open Traceback"
@@ -144,11 +141,11 @@ translate german strings:
 
     # _errorhandling.rpym:538
     old "Rollback"
-    new "Zurückscrollen"
+    new "Zurückspulen"
 
     # _errorhandling.rpym:540
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Versucht zu einem früheren Zeitpunkt zu gehen und ermöglicht es zu speichern oder eine andere Auswahl zu treffen."
+    new "Versucht zu einem früheren Zeitpunkt zu spulen, damit Du erneut speichern oder eine andere Entscheidung treffen kannst."
 
     # _errorhandling.rpym:543
     old "Ignore"
@@ -156,7 +153,7 @@ translate german strings:
 
     # _errorhandling.rpym:545
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "Ignoriert den Fehler und ermöglicht es, fortzusetzen. Dies führt oft zu weiteren Fehlern."
+    new "Ignoriert den Fehler und ermöglicht es, fortzufahren. Dies führt oft zu weiteren Fehlern."
 
     # _errorhandling.rpym:548
     old "Reload"
@@ -176,7 +173,7 @@ translate german strings:
 
     # _errorhandling.rpym:606
     old "Open Parse Errors"
-    new "Parse Errors öffnen"
+    new "Syntaxfehler öffnen"
 
     # _errorhandling.rpym:608
     old "Opens the errors.txt file in a text editor."
@@ -229,7 +226,7 @@ translate german strings:
 
     # renpy/common/00gltest.rpy:159
     old "Powersave"
-    new "Powersave"
+    new "Energiesparen"
 
     # renpy/common/00gltest.rpy:173
     old "Framerate"
@@ -259,13 +256,11 @@ translate german strings:
 
     # renpy/common/00gltest.rpy:259
     old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
-    # Automatic translation.
-    new "Die Datei {a=edit:1:log.txt}log.txt{/a} kann Informationen enthalten, die Ihnen helfen, das Problem mit Ihrem Computer zu lösen."
+    new "Die Datei {a=edit:1:log.txt}log.txt{/a} kann Informationen enthalten, die Dir helfen, das Problem mit Deinem Computer zu lösen."
 
     # renpy/common/00gltest.rpy:264
     old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
-    # Automatic translation.
-    new "Weitere Einzelheiten zur Behebung dieses Problems finden Sie in der Dokumentation {a=[url]}{/a} ."
+    new "Weitere Einzelheiten zur Behebung dieses Problems findest Du in der Dokumentation {a=[url]}{/a} ."
 
     # renpy/common/00gltest.rpy:281
     old "Change render options"
@@ -274,13 +269,11 @@ translate german strings:
 
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
-    # Automatic translation.
-    new "Drücken Sie oder bewegen Sie die Taste '[control!s]' [kind]."
+    new "Drücke oder bewege die Taste '[control!s]' [kind]."
 
     # renpy/common/_errorhandling.rpym:555
     old "Open"
-    # Automatic translation.
-    new "Öffnen Sie"
+    new "Öffnen"
 
     # renpy/common/_errorhandling.rpym:559
     old "Copy BBCode"
@@ -304,8 +297,7 @@ translate german strings:
 
     # renpy/common/_errorhandling.rpym:626
     old "Ignores the exception, allowing you to continue."
-    # Automatic translation.
-    new "Ignoriert die Ausnahme, so dass Sie fortfahren können."
+    new "Ignoriert den Fehler, so dass Du fortfahren kannst."
 
     # renpy/common/_errorhandling.rpym:637
     old "Console"
