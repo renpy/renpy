@@ -67,6 +67,9 @@ it looked back to the last say statement.
 Features
 --------
 
+The :func:`renpy.get_ongoing_transition` function has been added. This returns the transition that
+is currently being applied to the top level or a layer.
+
 The :var:`config.translate_ignore_who` variable makes it possible to ignore certain characters for the
 purpose of translations.
 

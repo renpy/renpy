@@ -2206,6 +2206,9 @@ def get_transition(layer=None):
     `layer` is None. This returns the transition that is queued up
     to run during the next interaction, or None if no such
     transition exists.
+
+    Use :func:`renpy.get_ongoing_transition` to get the transition that is
+    in progress.
     """
 
     return renpy.game.interface.transition.get(layer, None)
@@ -4975,3 +4978,17 @@ def can_fullscreen():
     """
 
     return renpy.display.can_fullscreen
+
+
+def get_ongoing_transition(layer=None):
+    """
+    :doc: other
+
+    Returns the transition that is currently ongoing.
+
+    `layer`
+        If None, the top-level transition is returned. Otherwise, this should be a string giving a layer name,
+        in which case the transition for that layer is returned.
+    """
+
+    return renpy.display.interface.get_ongoing_transition(layer)
