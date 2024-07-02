@@ -129,6 +129,10 @@ init -1600 python:
         # Delete a save.
         save_delete = [ 'K_DELETE', 'KP_DELETE' ],
 
+        # Save/load screen pagination.
+        save_page_prev = ['mousedown_4'],
+        save_page_next = ['mousedown_5'],
+
         # Draggable.
         drag_activate = [ 'mousedown_1' ],
         drag_deactivate = [ 'mouseup_1' ],
