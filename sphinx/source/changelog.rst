@@ -108,6 +108,12 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+Ren'Py will load .rpe.py files from :var:`config.renpy_base` directory and the
+project's game directory, and execute the file before the game starts.
+
+Ren'Py will now load .rpe files from the :var:`config.renpy_base` directory as well as the
+project's game directory.
+
 Images can now be oversampled at the directory level.
 
 ATL polar coordinates now support the radius being a negative number.

@@ -155,6 +155,15 @@ def load_rpe(fn):
     sys.path.insert(0, fn)
     exec(autorun, {'__file__': os.path.join(fn, "autorun.py")})
 
+
+def load_rpe_py(fn):
+
+    with open(fn) as f:
+        autorun = f.read()
+
+    exec(autorun, {'__file__': fn})
+
+
 def choose_variants():
 
     if "RENPY_VARIANT" in os.environ:
@@ -351,7 +360,7 @@ def main():
     renpy.config.searchpath = renpy.__main__.predefined_searchpath(renpy.config.commondir) # E1101 @UndefinedVariable
 
     # Load Ren'Py extensions.
-    for dir in renpy.config.searchpath: # @ReservedAssignment
+    for dir in [ renpy.config.renpy_base ] + renpy.config.searchpath: # @ReservedAssignment
 
         if not os.path.isdir(dir):
             continue
@@ -359,6 +368,9 @@ def main():
         for fn in sorted(os.listdir(dir)):
             if fn.lower().endswith(".rpe"):
                 load_rpe(dir + "/" + fn)
+
+            if fn.lower().endswith(".rpe.py"):
+                load_rpe_py(dir + "/" + fn)
 
     # Generate a list of extensions for each archive handler.
     archive_extensions = [ ]
