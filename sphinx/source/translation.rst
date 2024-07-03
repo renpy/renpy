@@ -40,7 +40,7 @@ Python identifiers (starts with a letter or underscore, followed by
 letters, numbers, and underscores).
 
 When the None language is selected, most of Ren'Py's translation
-functionality is disabled, with the notable exception of Renpy's
+functionality is disabled, with the notable exception of Ren'Py's
 internal built-in strings, from the accessibility menu for example.
 Theses strings are not found in your project's code, yet they will
 still be included in the distributed version of the game. You can
