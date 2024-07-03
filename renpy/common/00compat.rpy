@@ -316,6 +316,7 @@ init -1100 python:
 
         if _compat_versions(version, (7, 7, 99), (8, 2, 99)):
             config.character_callback_compat = True
+            bubble.clear_retain_statements = [ ]
 
 
     # The version of Ren'Py this script is intended for, or

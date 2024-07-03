@@ -82,6 +82,10 @@ init -1150 python in bubble:
     # The layer that retained screens are placed on.
     retain_layer = "screens"
 
+    # Statements that cause retained bubbles to be cleared.
+    clear_retain_statements = [ "call screen", "menu",  "say", "say-centered", "say-nvl", "scene", ]
+
+
     class ToggleShown(Action):
         def __call__(self):
             if not active and not shown.value:
@@ -136,6 +140,9 @@ init -1150 python in bubble:
 
             if scene_callback not in config.scene_callbacks:
                 config.scene_callbacks.insert(0, scene_callback)
+
+            if statement_callback not in config.statement_callbacks:
+                config.statement_callbacks.insert(0, statement_callback)
 
         def bubble_default_properties(self, image_tag):
             """
@@ -345,6 +352,12 @@ init -1150 python in bubble:
         who_style="bubble_who",
         what_style="bubble_what",
         _open_db=False)
+
+    def statement_callback(statement):
+
+        if statement in clear_retain_statements:
+            renpy.clear_retain(layer=retain_layer)
+
 
 
 init 1050 python hide:

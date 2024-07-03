@@ -131,7 +131,6 @@ init -1200 python:
         if statement in config.window_auto_show:
             _window_show(auto=True)
 
-
         if statement == "say" or statement.startswith("say-"):
             store._window_next = False
 

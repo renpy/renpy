@@ -57,6 +57,9 @@ it looked back to the last say statement.
 Features
 --------
 
+Retained speech bubbles are now automatically cleared away when other say, menu, or call screen
+statements are invoked. This is controlled by the :var:`bubble.clear_retain_statements` variable.
+
 The :func:`renpy.get_ongoing_transition` function has been added. This returns the transition that
 is currently being applied to the top level or a layer.
 

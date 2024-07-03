@@ -186,6 +186,11 @@ The ``bubble`` namespace contains the following variables:
             "top_right" : (0, 22, 0, 0),
         }
 
+.. var:: bubble.clear_retain_statements = [ "call screen", "menu",  "say", "say-centered", "say-nvl", "scene", ]
+
+    This is a list of statements that will automatically cause retained bubbles to be cleared.
+
+
 .. _bubble-screen:
 
 Bubble Screen
