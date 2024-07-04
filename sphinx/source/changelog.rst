@@ -57,6 +57,8 @@ it looked back to the last say statement.
 Features
 --------
 
+It is now possible to supply :ref:`menu arguments <menu-arguments>` to :func:`renpy.display_menu`.
+
 Retained speech bubbles are now automatically cleared away when other say, menu, or call screen
 statements are invoked. This is controlled by the :var:`bubble.clear_retain_statements` variable.
 

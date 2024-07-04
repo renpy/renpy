@@ -1195,11 +1195,13 @@ def display_menu(items,
                  type="menu", # @ReservedAssignment
                  predict_only=False,
                  _layer=None,
+                 _args=None,
+                 _kwargs=None,
                  **kwargs):
     """
     :doc: se_menu
     :name: renpy.display_menu
-    :args: (items, *, interact=True, screen="choice", type="menu", _layer=None)
+    :args: (items, *, interact=True, screen="choice", type="menu", _layer=None, args=None, kwargs=None)
 
     This displays a menu to the user. `items` should be a list of 2-item tuples.
     In each tuple, the first item is a textual label, and the second item is
@@ -1223,6 +1225,14 @@ def display_menu(items,
         The layer to display the menu on. If not given, defaults to :var:`config.choice_layer`
         for normal choice menus, and :var:`config.nvl_choice_layer` for NVL choice menus.
 
+    `_args`
+        If not None, this should be a tuple containing the positional :ref:`menu arguments <menu-arguments>`
+        supplied to this menu.
+
+    `_kwargs`
+        If not None, this should be a dict containing the keyword :ref:`menu arguments <menu-arguments>`
+        supplied to this menu.
+
     Note that most Ren'Py games do not use menu captions, but use narration
     instead. To display a menu using narration, write::
 
@@ -1230,7 +1240,16 @@ def display_menu(items,
         $ result = renpy.display_menu([ ("East", "east"), ("West", "west") ])
     """
 
-    menu_args, menu_kwargs = get_menu_args()
+    if _args is not None or _kwargs is not None:
+        menu_args = _args or ()
+        menu_kwargs = _kwargs or {}
+
+        if renpy.config.menu_arguments_callback is not None:
+            menu_args, menu_kwargs = renpy.config.menu_arguments_callback(*menu_args, **menu_kwargs)
+
+    else:
+        menu_args, menu_kwargs = get_menu_args()
+
     screen = menu_kwargs.pop("screen", screen)
     with_none = menu_kwargs.pop("_with_none", with_none)
     mode = menu_kwargs.pop("_mode", type)
