@@ -473,6 +473,11 @@ can be supplied the property method.
         init python:
             from renpy.uguu import GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, GL_REPEAT
 
+    This can also be customized for specific textures. `gl_texture_wrap_tex0` controls
+    the first texture, `gl_texture_wrap_tex1` the second, `gl_texture_wrap_tex2`, the third,
+    and `gl_texture_wrap_tex3` the fourth. While only these four are avalable through Transforms,
+    it's possibe to supply "texture_wrap_tex4" or "texture_wrap_myuniform" to Render.add_property.
+
 Model Displayable
 -----------------
 

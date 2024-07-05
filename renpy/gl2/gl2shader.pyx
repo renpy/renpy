@@ -26,7 +26,7 @@ cdef class Uniform:
     cdef GLint location
     cdef bint ready
 
-    def __init__(self, program, location):
+    def __init__(self, program, location, name):
         self.location = location
         self.ready = False
 
@@ -61,11 +61,13 @@ cdef class UniformSampler2D(Uniform):
     cdef int sampler
     cdef object last_data
     cdef bint cleanup
+    cdef object texture_wrap_key
 
-    def __init__(self, program, location):
-        Uniform.__init__(self, program, location)
+    def __init__(self, program, location, name):
+        Uniform.__init__(self, program, location, name)
         self.sampler = program.samplers
         self.cleanup = False
+        self.texture_wrap_key = "texture_wrap_" + name
         program.samplers += 1
 
     cdef void assign(self, Program program, data):
@@ -81,8 +83,15 @@ cdef class UniformSampler2D(Uniform):
         else:
             glBindTexture(GL_TEXTURE_2D, data)
 
-        if "texture_wrap" in properties:
-            wrap_s, wrap_t = properties.get("texture_wrap", (GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE))
+
+        if self.texture_wrap_key in properties:
+            wrap_s, wrap_t = properties[self.texture_wrap_key]
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
+            self.cleanup = True
+
+        elif "texture_wrap" in properties:
+            wrap_s, wrap_t = properties["texture_wrap"]
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
             self.cleanup = True
@@ -106,7 +115,7 @@ cdef class UniformSampler2D(Uniform):
             else:
                 glBindTexture(GL_TEXTURE_2D, self.last_data)
 
-            if "texture_wrap" in properties:
+            if "texture_wrap" in properties or self.texture_wrap_key in properties:
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
@@ -222,7 +231,7 @@ cdef class Program:
                 location = glGetUniformLocation(self.program, name.encode("utf-8"))
 
                 if location >= 0:
-                    self.uniforms[name] = types[type](self, location)
+                    self.uniforms[name] = types[type](self, location, name)
 
             else:
                 location = glGetAttribLocation(self.program, name.encode("utf-8"))

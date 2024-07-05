@@ -1341,6 +1341,10 @@ add_gl_property("gl_mipmap")
 add_gl_property("gl_pixel_perfect")
 add_gl_property("gl_texture_scaling")
 add_gl_property("gl_texture_wrap")
+add_gl_property("gl_texture_wrap_tex0")
+add_gl_property("gl_texture_wrap_tex1")
+add_gl_property("gl_texture_wrap_tex2")
+add_gl_property("gl_texture_wrap_tex3")
 
 ALIASES = {
     "alignaround" : (float, float),
