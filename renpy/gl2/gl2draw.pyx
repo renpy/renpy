@@ -965,7 +965,7 @@ cdef class GL2Draw:
                     renpy.plog(1, "after broken vsync sleep")
 
 
-    def draw_screen(self, render_tree, flip=True):
+    def draw_screen(self, render_tree, flip=True, screenshot=False):
         """
         Draws the screen.
         """
@@ -984,20 +984,33 @@ cdef class GL2Draw:
         self.load_all_textures(surf)
 
         # Switch to the right FBO, and the right viewport.
-        self.change_fbo(self.default_fbo)
+        if screenshot:
+            self.change_fbo(self.fbo)
+        else:
+            self.change_fbo(self.default_fbo)
 
         # Set up the viewport.
-        x, y, w, h = self.drawable_viewport
+        if screenshot:
+            x = 0
+            y = 0
+            w = surf.width * self.draw_per_virt
+            h = surf.height * self.draw_per_virt
+        else:
+            x, y, w, h = self.drawable_viewport
+
         glViewport(x, y, w, h)
 
         # Clear the screen.
         clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
-        glClearColor(clear_r, clear_g, clear_b, 1.0)
+        glClearColor(clear_r, clear_g, clear_b, 0.0 if screenshot else 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
         # Project the child from virtual space to the screen space.
         cdef Matrix transform
-        transform = Matrix.cscreen_projection(self.virtual_size[0], self.virtual_size[1])
+        if screenshot:
+            transform = Matrix.cscreen_projection(surf.width, surf.height)
+        else:
+            transform = Matrix.cscreen_projection(self.virtual_size[0], self.virtual_size[1])
 
         # Set up the default modes.
         glEnable(GL_BLEND)
@@ -1202,8 +1215,11 @@ cdef class GL2Draw:
         cdef unsigned char *rpp
         cdef int x, y, pitch
 
-        # A surface the size of the framebuffer.
-        full = renpy.display.pgrender.surface_unscaled(self.drawable_size, False)
+        sw = render_tree.width * self.draw_per_virt
+        sh = render_tree.height * self.draw_per_virt
+
+        full = renpy.display.pgrender.surface_unscaled((sw, sh), True)
+        print("AAA", full)
         surf = PySurface_AsSurface(full)
 
         # Create an array that can hold densely-packed pixels.
@@ -1211,7 +1227,7 @@ cdef class GL2Draw:
 
         # Draw the last screen to the back buffer.
         if render_tree is not None:
-            self.draw_screen(render_tree, flip=False)
+            self.draw_screen(render_tree, flip=False, screenshot=True)
             glFinish()
 
         # Read the pixels.
@@ -1239,13 +1255,7 @@ cdef class GL2Draw:
 
         free(raw_pixels)
 
-        px, py, pw, ph = self.physical_box
-        xmul = self.drawable_size[0] / self.physical_size[0]
-        ymul = self.drawable_size[1] / self.physical_size[1]
-
-        # Crop and flip it, since it's upside down.
-        rv = full.subsurface((px * xmul, py * ymul, pw * xmul, ph * ymul))
-        rv = renpy.display.pgrender.flip_unscaled(rv, False, True)
+        rv = renpy.display.pgrender.flip_unscaled(full, False, True)
 
         return rv
 
