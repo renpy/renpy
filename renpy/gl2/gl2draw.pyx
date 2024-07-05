@@ -1071,6 +1071,7 @@ cdef class GL2Draw:
                 r.shaders,
                 uniforms)
 
+            r.cached_model.properties = r.properties
 
     def render_to_texture(self, what, alpha=True, properties={}):
         """
@@ -1340,6 +1341,9 @@ cdef class GL2DrawingContext:
 
         cdef Mesh mesh = model.mesh
 
+        if model.properties:
+            properties = self.merge_properties(properties, model.properties)
+
         if model.reverse is not IDENTITY:
              transform = transform * model.reverse
 
@@ -1360,7 +1364,7 @@ cdef class GL2DrawingContext:
 
         program = self.gl2draw.shader_cache.get(shaders)
 
-        program.start()
+        program.start(properties)
 
         program.set_uniform("u_model_size", (model.width, model.height))
         program.set_uniform("u_transform", transform)
@@ -1370,7 +1374,7 @@ cdef class GL2DrawingContext:
         if uniforms:
             program.set_uniforms(uniforms)
 
-        program.draw(mesh, properties)
+        program.draw(mesh)
         program.finish()
 
     def draw_one(self, what, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, dict properties):

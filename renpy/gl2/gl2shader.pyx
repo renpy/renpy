@@ -8,6 +8,9 @@ from renpy.display.matrix cimport Matrix
 import renpy
 import random
 
+cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
+
+
 class ShaderError(Exception):
     pass
 
@@ -27,42 +30,49 @@ cdef class Uniform:
         self.location = location
         self.ready = False
 
-    cdef void assign(self, program, data):
+    cdef void assign(self, Program program, data):
         return
 
-    cdef void finish(self):
+    cdef void finish(self, Program program):
         self.ready = False
         return
 
 cdef class UniformFloat(Uniform):
-    cdef void assign(self, program, data):
+    cdef void assign(self, Program program, data):
         glUniform1f(self.location, data)
 
 cdef class UniformVec2(Uniform):
-    cdef void assign(self, program, data):
+    cdef void assign(self, Program program, data):
         glUniform2f(self.location, data[0], data[1])
 
 cdef class UniformVec3(Uniform):
-    cdef void assign(self, program, data):
+    cdef void assign(self, Program program, data):
         glUniform3f(self.location, data[0], data[1], data[2])
 
 cdef class UniformVec4(Uniform):
-    cdef void assign(self, program, data):
+    cdef void assign(self, Program program, data):
         glUniform4f(self.location, data[0], data[1], data[2], data[3])
 
 cdef class UniformMat4(Uniform):
-    cdef void assign(self, program, data):
+    cdef void assign(self, Program program, data):
         glUniformMatrix4fv(self.location, 1, GL_FALSE, (<Matrix> data).m)
 
 cdef class UniformSampler2D(Uniform):
     cdef int sampler
+    cdef object last_data
+    cdef bint cleanup
 
     def __init__(self, program, location):
         Uniform.__init__(self, program, location)
         self.sampler = program.samplers
+        self.cleanup = False
         program.samplers += 1
 
-    cdef void assign(self, program, data):
+    cdef void assign(self, Program program, data):
+        cdef dict properties = program.properties
+        self.last_data = data
+        self.cleanup = False
+
         glActiveTexture(GL_TEXTURE0 + self.sampler)
         glUniform1i(self.location, self.sampler)
 
@@ -70,6 +80,41 @@ cdef class UniformSampler2D(Uniform):
             glBindTexture(GL_TEXTURE_2D, data.number)
         else:
             glBindTexture(GL_TEXTURE_2D, data)
+
+        if "texture_wrap" in properties:
+            wrap_s, wrap_t = properties.get("texture_wrap", (GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE))
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
+            self.cleanup = True
+
+        if "anisotropic" in properties:
+            if not properties.get("anisotropic", True) and renpy.display.draw.loader.max_anisotropy > 1.0:
+                glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, 1.0)
+                self.cleanup = True
+
+
+    cdef void finish(self, Program program):
+        cdef dict properties = program.properties
+        self.ready = False
+
+        if self.cleanup:
+
+            self.cleanup = False
+
+            if isinstance(self.last_data, GLTexture):
+                glBindTexture(GL_TEXTURE_2D, self.last_data.number)
+            else:
+                glBindTexture(GL_TEXTURE_2D, self.last_data)
+
+            if "texture_wrap" in properties:
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
+            if "anisotropic" in properties:
+                if not properties.get("anisotropic", True) and renpy.display.draw.loader.max_anisotropy > 1.0:
+                    glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, renpy.display.draw.loader.max_anisotropy)
+
+        self.last_data = None
 
 
 
@@ -272,8 +317,11 @@ cdef class Program:
         else:
             raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
 
-    def start(self):
+    def start(self, properties):
+        self.properties = properties
+
         glUseProgram(self.program)
+
 
     def set_uniform(self, name, value):
         cdef Uniform u
@@ -295,14 +343,17 @@ cdef class Program:
             u.assign(self, value)
             u.ready = True
 
-    def draw(self, Mesh mesh, dict properties):
+    def draw(self, Mesh mesh):
 
         cdef Attribute a
         cdef Uniform u
         cdef int i
+        cdef dict properties
 
         if not mesh.triangles:
             return
+
+        properties = self.properties
 
         # Set up the attributes.
         for a in self.attributes:
@@ -321,7 +372,7 @@ cdef class Program:
             if not u.ready:
                 self.missing("uniform", name)
 
-        if len(properties) > 1:
+        if properties:
 
             if "color_mask" in properties:
                 mask_r, mask_g, mask_b, mask_a = properties["color_mask"]
@@ -342,7 +393,7 @@ cdef class Program:
 
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
 
-        if len(properties) > 1:
+        if properties:
 
             if "texture_scaling" in properties:
                 for 0 <= i < self.samplers:
@@ -357,7 +408,6 @@ cdef class Program:
                 glBlendEquation(GL_FUNC_ADD)
                 glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-
     def finish(Program self):
         cdef Attribute a
         cdef Uniform u
@@ -366,4 +416,6 @@ cdef class Program:
             glDisableVertexAttribArray(a.location)
 
         for u in self.uniforms.itervalues():
-            u.finish()
+            u.finish(self)
+
+        self.properties = None

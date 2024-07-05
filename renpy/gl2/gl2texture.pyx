@@ -471,9 +471,9 @@ cdef class GLTexture(GL2Model):
 
         # Draw.
         program = self.loader.ftl_program
-        program.start()
+        program.start({})
         program.set_uniform("tex0", tex)
-        program.draw(mesh, {})
+        program.draw(mesh)
         program.finish()
 
         # Create premultiplied.
@@ -552,8 +552,6 @@ cdef class GLTexture(GL2Model):
         self.loaded = True
         self.surface = None
 
-
-
     def allocate_texture(GLTexture self, GLuint tex, int tw, int th, properties={}):
         """
         Allocates the VRAM required to store `tex`, which is a `tw` x `th`
@@ -586,12 +584,10 @@ cdef class GLTexture(GL2Model):
         else:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
 
-        wrap_s, wrap_t = properties.get("texture_wrap", (GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE))
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
-
-        if properties.get("anisotropic", True) and self.loader.max_anisotropy > 1.0:
+        if self.loader.max_anisotropy > 1.0:
             glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, self.loader.max_anisotropy)
 
         # Store the texture size that was loaded.

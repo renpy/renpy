@@ -20,4 +20,6 @@ cdef class Program:
 
     cdef public int nearest
 
+    cdef dict properties
+
     cdef GLuint load_shader(self, GLenum shader_type, source) except? 0
