@@ -1052,12 +1052,13 @@ cdef class GL2Draw:
                 uniforms.update(r.uniforms)
 
             for i, c in enumerate(r.children):
-                uniforms["tex" + str(i)] = self.render_to_texture(c[0], properties=r.properties)
+                uniforms["tex%d" % i ] = ctex = self.render_to_texture(c[0], properties=r.properties)
+                uniforms["res%d" % i ] = (ctex.texture_width, ctex.texture_height)
 
             for k, v in list(uniforms.items()):
                 if isinstance(v, Render):
-                    uniforms[k] = self.render_to_texture(v, properties=r.properties)
-                    uniforms.setdefault(k + "_res", (v.width, v.height))
+                    uniforms[k] = ctex = self.render_to_texture(v, properties=r.properties)
+                    uniforms.setdefault(k + "_res", (ctex.texture_width, ctex.texture_height))
 
             if r.mesh is True:
                 mesh = uniforms["tex0"].mesh
