@@ -33,6 +33,7 @@ init 1000000 python:
     doc.scan_section("gui.", gui)
     doc.scan_section("layeredimage.", layeredimage)
     doc.scan_section("Matrix.", Matrix)
+    doc.scan_section("achievement.steam.", _renpysteam)
 
     doc.write_line_buffer(incdir=incdir)
     doc.write_keywords(srcdir=srcdir)

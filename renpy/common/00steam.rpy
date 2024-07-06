@@ -405,7 +405,7 @@ init -1499 python in _renpysteam:
         """
         :doc: steam_user
 
-        Returns the user's full CSteamID as a 64-bit number..
+        Returns the user's full CSteamID as a 64-bit number.
         """
 
         # Accessing methods on CSteamID was crashing on Windows, so use
@@ -454,7 +454,7 @@ init -1499 python in _renpysteam:
         """
         :doc: steam_user
 
-        Cancels the ticket returned by :func:`_renpysteam.get_session_ticket`.
+        Cancels the ticket returned by :func:`achievement.steam.get_session_ticket`.
         """
 
         global h_ticket
