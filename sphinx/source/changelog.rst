@@ -54,6 +54,17 @@ to the next say statement to determine the type of thr window to show. Previousl
 it looked back to the last say statement.
 
 
+Screenshots and Paper Dolls
+---------------------------
+
+Taking a screenshot now hides the notify screen, so multiple screenshot do not
+leak the path to the previous one. This controled by :var:`config.pre_screenshot_actions`.
+
+The new :func:`renpy.render_to_file` and :func:`renpy.render_to_surface` functions make it possible to
+capture displayables (including trees of displayables, like layered images) and save that to a file
+or a pygame_sdl2 Surface.
+
+
 Features
 --------
 
@@ -116,10 +127,6 @@ ATL polar coordinates now support the radius being a negative number.
 The displayable inspector (Shift+Alt+I) now shows a displayable's id if it has one.
 
 Displayables now have an id field, that contains the id given in screen language.
-
-Taking a screenshot now hides the notify screen, so multiple screenshot do not
-leak the path to the previous one. This controled by :var:`config.pre_screenshot_actions`.
-
 The :var:`config.clear_log` variable has been added, which controls whether the
 dialogue log (:var:`config.log`) is cleared each time Ren'Py starts.
 
