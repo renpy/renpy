@@ -1219,7 +1219,6 @@ cdef class GL2Draw:
         sh = render_tree.height * self.draw_per_virt
 
         full = renpy.display.pgrender.surface_unscaled((sw, sh), True)
-        print("AAA", full)
         surf = PySurface_AsSurface(full)
 
         # Create an array that can hold densely-packed pixels.

@@ -2110,7 +2110,7 @@ def warp_to_line(warp_spec):
 
 def screenshot(filename):
     """
-    :doc: other
+    :doc: screenshot
 
     Saves a screenshot in `filename`.
 
@@ -2126,7 +2126,7 @@ def screenshot(filename):
 
 def screenshot_to_bytes(size):
     """
-    :doc: other
+    :doc: screenshot
 
     Returns a screenshot as a bytes object, that can be passed to im.Data().
     The bytes will be a png-format image, such that::
@@ -5011,3 +5011,84 @@ def get_ongoing_transition(layer=None):
     """
 
     return renpy.display.interface.get_ongoing_transition(layer)
+
+
+def render_to_surface(d, width=None, height=None, st=0.0, at=None):
+    """
+    :doc: screenshot
+
+    This takes a displayable or Render, and returns a pygame_sdl2 surface. The render is performed by
+    Ren'Py's display system, such that if the window is upscaled the render will be upscaled as well.
+
+    `d`
+        The displayable or Render to render. If a Render, `width`, `height`, `st`, and `at` are ignored.
+
+    `width`
+        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+
+    `height`
+        The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
+
+    `st`
+        The time of the render, in the shown timebase.
+
+    `at`
+        The time of the rendem in the animation timebase. If None, `st` is used.
+
+    This function may only be called after the Ren'Py display system has started, so it can't be
+    called during the init phase or before the first interaction.
+    """
+
+    if width is None:
+        width = renpy.config.screen_width
+
+    if height is None:
+        height = renpy.config.screen_height
+
+    if at is None:
+        at = st
+
+
+    if not isinstance(d, Render):
+        d = renpy.easy.displayable(d)
+        d = renpy.display.render.render(d, width, height, st, at)
+
+    return renpy.display.draw.screenshot(d)
+
+
+def render_to_file(d, filename, width=None, height=None, st=0.0, at=None):
+    """
+    :doc: screenshot
+
+    Renders a displayable or Render, and saves the result of that render to a file. The render is performed by
+    Ren'Py's display system, such that if the window is upscaled the render will be upscaled as well.
+
+    `d`
+        The displayable or Render to render. If a Render, `width`, `height`, `st`, and `at` are ignored.
+
+    `filename`
+        A string, giving the name of the file to save the render to. This is interpreted as relative
+        to the base directory.
+
+    `width`
+        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+
+    `height`
+        The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
+
+    `st`
+        The time of the render, in the shown timebase.
+
+    `at`
+        The time of the rendem in the animation timebase. If None, `st` is used.
+
+    This function may only be called after the Ren'Py display system has started, so it can't be
+    called during the init phase or before the first interaction.
+
+    Ren'Py not rescan files while the game is running, so this shouldn't be used to sythesize
+    assets that are used as part of the game.
+    """
+
+    filename = os.path.join(renpy.config.basedir, filename)
+    surface = render_to_surface(d, width, height, st, at)
+    pygame_sdl2.image.save(surface, filename)
