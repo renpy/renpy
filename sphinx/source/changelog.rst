@@ -65,6 +65,20 @@ capture displayables (including trees of displayables, like layered images) and 
 or a pygame_sdl2 Surface.
 
 
+Steam
+-----
+
+Ren'Py's Steam support has been updated to use the latest version of the Steam DLL.
+
+There is now support for the Steam Timeline, part of the Steam Game Recording system. This support is
+controlled by the :var:`config.automatic_steam_timeline` variable. When true, the default, :var:`save_name` is
+mirrored to the steam Timeline, as is the menu/laying state. It's possible to add additional events to the timeline
+using :var:`achievement.steamapi.add_timeline_event`. (Remember to check that achievement.steam is not None before
+calling this function.)
+
+Wrapped methods of the Steamworks API are documented on the :doc:`achievement` page.
+
+
 Features
 --------
 
