@@ -5013,7 +5013,7 @@ def get_ongoing_transition(layer=None):
     return renpy.display.interface.get_ongoing_transition(layer)
 
 
-def render_to_surface(d, width=None, height=None, st=0.0, at=None):
+def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False):
     """
     :doc: screenshot
 
@@ -5035,6 +5035,10 @@ def render_to_surface(d, width=None, height=None, st=0.0, at=None):
     `at`
         The time of the rendem in the animation timebase. If None, `st` is used.
 
+    `resize`
+        If True, the surface will be resized to the virtual size of the displayable or render. This
+        may lower the quality of the result.
+
     This function may only be called after the Ren'Py display system has started, so it can't be
     called during the init phase or before the first interaction.
     """
@@ -5053,10 +5057,15 @@ def render_to_surface(d, width=None, height=None, st=0.0, at=None):
         d = renpy.easy.displayable(d)
         d = renpy.display.render.render(d, width, height, st, at)
 
-    return renpy.display.draw.screenshot(d)
+    rv = renpy.display.draw.screenshot(d)
+
+    if resize:
+        return renpy.display.scale.smoothscale(rv, (d.width, d.height))
+    else:
+        return rv
 
 
-def render_to_file(d, filename, width=None, height=None, st=0.0, at=None):
+def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize=False):
     """
     :doc: screenshot
 
@@ -5068,7 +5077,7 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None):
 
     `filename`
         A string, giving the name of the file to save the render to. This is interpreted as relative
-        to the base directory.
+        to the base directory. This must end with .png.
 
     `width`
         The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
@@ -5082,6 +5091,10 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None):
     `at`
         The time of the rendem in the animation timebase. If None, `st` is used.
 
+    `resize`
+        If True, the image will be resized to the virtual size of the displayable or render. This
+        may lower the quality of the result.
+
     This function may only be called after the Ren'Py display system has started, so it can't be
     called during the init phase or before the first interaction.
 
@@ -5090,5 +5103,5 @@ def render_to_file(d, filename, width=None, height=None, st=0.0, at=None):
     """
 
     filename = os.path.join(renpy.config.basedir, filename)
-    surface = render_to_surface(d, width, height, st, at)
+    surface = render_to_surface(d, width, height, st, at, resize)
     pygame_sdl2.image.save(surface, filename)
