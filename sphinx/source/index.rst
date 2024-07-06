@@ -129,6 +129,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    other
    ren_py
    fetch
+   screenshot
 
 
 .. toctree::
