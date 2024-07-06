@@ -860,8 +860,11 @@ init -1499 python in achievement:
             import steamapi
             steamapi.load(dll)
 
-            if not steamapi.Init():
-                raise Exception("Init returned false.")
+            error_message = ctypes.create_string_buffer(1024)
+            init_result = steamapi.InitFlat(error_message)
+
+            if init_result.value != 0:
+                raise Exception("steamapi.InitFlat returned %r (%s)" % (init_result.value, error_message.value.decode("utf-8")))
 
             import store._renpysteam as steam
             sys.modules["_renpysteam"] = steam
@@ -889,6 +892,8 @@ init -1499 python in achievement:
             renpy.write_log("Initialized steam.")
 
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             renpy.write_log("Failed to initialize steam: %r", e)
             steam = None
             steamapi = None
