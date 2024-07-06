@@ -24,6 +24,9 @@ python early:
     # Should steam be enabled?
     config.enable_steam = True
 
+    # Should the steam timeline be automatically updated.
+    config.automatic_steam_timeline = True
+
 
 init -1499 python in _renpysteam:
     # Do not participate in saves.
@@ -31,6 +34,8 @@ init -1499 python in _renpysteam:
 
     import collections
     import time
+
+    from renpy.store import store, config
 
     ticket = None
 
@@ -518,6 +523,91 @@ init -1499 python in _renpysteam:
 
         return renpy.exports.fsdecode(path.value)
 
+    ################################################################### Timeline.
+
+    def set_timeline_state_description(description, time_delta=0.0):
+        """
+        :doc: steam_timeline
+
+        Sets the description of the current state in the timeline.
+
+        `description`
+            A string giving the description of the current state.
+
+        `time_delta`
+            The time since the last state change.
+        """
+
+        steamapi.SteamTimeline().SetTimelineStateDescription(description.encode("utf-8"), time_delta)
+
+    def clear_timeline_state_description(time_delta):
+        """
+        :doc: steam_timeline
+
+        Clears the description of the current state in the timeline.
+        """
+
+        steamapi.SteamTimeline().ClearTimelineStateDescription(time_delta)
+
+    def add_timeline_event(icon, title, description, priority=0, start_offset=0.0, duration=0.0, possible_clip=None):
+        """
+        :doc: steam_timeline
+
+        Adds an event to the timeline.
+
+        `icon`
+            The icon to display for the event. This should be a string giving one of the standard steam icons,
+            or one you uploaded to Steam.
+
+        `title`
+            The title of the event.
+
+        `description`
+            The description of the event.
+
+        `priority`
+            The priority of the event, used to resolve conflicts. This should be an interger between 0 and 1000.
+
+        `start_offset`
+            The offset of the start of the event from the current time, in seconds.
+
+        `duration`
+            The duration of the event, in seconds.
+
+        `possible_clip`
+            This determines if the event can be clipped. This should be one of the achievement.steam.CLIP_PRIORITY_...
+            constants: CLIP_PRIORITY_NONE, CLIP_PRIORITY_STANDARD, or CLIP_PRIORITY_FEATURED.
+        """
+
+        if possible_clip is None:
+            possible_clip = CLIP_PRIORITY_STANDARD
+
+        steamapi.SteamTimeline().AddTimelineEvent(
+            icon.encode("utf-8"),
+            title.encode("utf-8"),
+            description.encode("utf-8"),
+            priority,
+            start_offset,
+            duration,
+            possible_clip)
+
+
+    def set_timeline_game_mode(mode):
+        """
+        Sets the Steam Timeline Game Mode to the specified mode.
+
+        `mode`
+            Must be one of:
+
+            * achievement.steam.TIMELINE_GAME_MODE_PLAYING
+            * achievement.steam.TIMELINE_GAME_MODE_STAGING
+            * achievement.steam.TIMELINE_GAME_MODE_MENUS
+            * achievement.steam.TIMELINE_GAME_MODE_LOADING_SCREEN
+        """
+
+        steamapi.SteamTimeline().SetTimelineGameMode(mode)
+
+
     ############################################ Import API after steam is found.
     def import_api():
 
@@ -537,6 +627,20 @@ init -1499 python in _renpysteam:
         STORE_ADD_TO_CART = steamapi.k_EOverlayToStoreFlag_AddToCart
         STORE_ADD_TO_CART_AND_SHOW = steamapi.k_EOverlayToStoreFlag_AddToCartAndShow
 
+        global CLIP_PRIORITY_NONE, CLIP_PRIORITY_STANDARD, CLIP_PRIORITY_FEATURED
+
+        CLIP_PRIORITY_NONE = steamapi.k_ETimelineEventClipPriority_None
+        CLIP_PRIORITY_STANDARD = steamapi.k_ETimelineEventClipPriority_Standard
+        CLIP_PRIORITY_FEATURED = steamapi.k_ETimelineEventClipPriority_Featured
+
+        global TIMELINE_GAME_MODE_PLAYING, TIMELINE_GAME_MODE_STAGING, TIMELINE_GAME_MODE_MENUS, TIMELINE_GAME_MODE_LOADING_SCREEN
+
+        TIMELINE_GAME_MODE_PLAYING = steamapi.k_ETimelineGameMode_Playing
+        TIMELINE_GAME_MODE_STAGING = steamapi.k_ETimelineGameMode_Staging
+        TIMELINE_GAME_MODE_MENUS = steamapi.k_ETimelineGameMode_Menus
+        TIMELINE_GAME_MODE_LOADING_SCREEN = steamapi.k_ETimelineGameMode_LoadingScreen
+
+
     ################################################################## Callbacks
 
     # A map from callback class name to a list of callables that will be called
@@ -545,10 +649,16 @@ init -1499 python in _renpysteam:
 
     callback_handlers = collections.defaultdict(list)
 
+    old_menu = None
+    old_save_name = None
+
     def periodic():
         """
         Called periodically to run Steam callbacks.
         """
+
+        global old_menu
+        global old_save_name
 
         for cb in steamapi.generate_callbacks():
             # print(type(cb).__name__, {k : getattr(cb, k) for k in dir(cb) if not k.startswith("_")})
@@ -558,6 +668,26 @@ init -1499 python in _renpysteam:
 
         if renpy.variant("steam_deck"):
             keyboard_periodic()
+
+        if renpy.config.automatic_steam_timeline:
+            if store._menu:
+                new_menu = TIMELINE_GAME_MODE_MENUS
+            else:
+                new_menu = TIMELINE_GAME_MODE_PLAYING
+
+            if old_menu != new_menu:
+                set_timeline_game_mode(new_menu)
+                old_menu = new_menu
+
+        if store.save_name != old_save_name:
+            if not store.save_name:
+                clear_timeline_state_description(0.0)
+            else:
+                set_timeline_state_description(store.save_name, 0.0)
+
+            old_save_name = store.save_name
+
+
 
     ################################################################## Keyboard
 
@@ -852,8 +982,8 @@ init -1499 python in achievement:
             if not config.enable_steam:
                 return
 
-            if "RENPY_NO_STEAM" in os.environ:
-                return
+            # if "RENPY_NO_STEAM" in os.environ:
+            #     return
 
             dll = ctypes.cdll[dll_path]
 
