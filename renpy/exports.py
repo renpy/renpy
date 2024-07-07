@@ -139,6 +139,8 @@ from renpy.gl2.live2d import has_live2d
 
 from renpy.bootstrap import get_alternate_base
 
+from renpy.ui import Choice
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
@@ -1238,6 +1240,13 @@ def display_menu(items,
 
         $ narrator("Which direction would you like to go?", interact=False)
         $ result = renpy.display_menu([ ("East", "east"), ("West", "west") ])
+
+    If you need to supply per-item arguments, use :class:`renpy.Choice` objects as the values. For example::
+
+        renpy.display_menu([
+            ("East", renpy.Choice("east", icon="right_arrow"),
+            ("West", renpy.Choice("west", icon="left_arrow"),
+            ])
     """
 
     if _args is not None or _kwargs is not None:
@@ -1312,7 +1321,14 @@ def display_menu(items,
             if not label:
                 value = None
 
-            if isinstance(value, renpy.ui.ChoiceReturn):
+
+            if isinstance(value, renpy.ui.Choice):
+                action = renpy.ui.ChoiceReturn(label, value.value, location)
+                chosen = action.get_chosen()
+                item_args = value.args
+                item_kwargs = value.kwargs
+
+            elif isinstance(value, renpy.ui.ChoiceReturn):
                 action = value
                 chosen = action.get_chosen()
                 item_args = action.args

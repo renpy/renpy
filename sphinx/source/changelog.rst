@@ -82,7 +82,8 @@ Wrapped methods of the Steamworks API are documented on the :doc:`achievement` p
 Features
 --------
 
-It is now possible to supply :ref:`menu arguments <menu-arguments>` to :func:`renpy.display_menu`.
+It is now possible to supply :ref:`menu arguments <menu-arguments>` to :func:`renpy.display_menu`, and
+the new :class:`renpy.Choice` class makes it possible to supply arguments to each item in the menu.
 
 Retained speech bubbles are now automatically cleared away when other say, menu, or call screen
 statements are invoked. This is controlled by the :var:`bubble.clear_retain_statements` variable.
