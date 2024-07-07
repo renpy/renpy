@@ -815,15 +815,16 @@ class Choice(object):
     """
     :doc: se_menu
     :name: renpy.Choice
+    :args: (value, /, *args, **kwargs)
 
     This encapsulates a menu choice with with arguments. The first positional argument is is the value
-    that will be returned, and the other arguments are the arguments that will be passed to the chouice
+    that will be returned, and the other arguments are the arguments that will be passed to the choice
     screen.
 
     This is intended for use in the items list of :func:`renpy.display_menu` to supply arguments to
     that screen.
 
-    `_value`
+    `value`
         The value that will be given to the choice screen.
 
     Positional arguments and keyword arguments are stored in this object and used by renpy.display_menu.
