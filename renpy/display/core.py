@@ -1466,6 +1466,7 @@ class Interface(object):
         window = renpy.display.draw.screenshot(self.surftree)
 
         if renpy.config.screenshot_crop:
+            window = renpy.display.scale.smoothscale(window, (renpy.config.screen_width, renpy.config.screen_height))
             window = window.subsurface(renpy.config.screenshot_crop)
 
         try:
