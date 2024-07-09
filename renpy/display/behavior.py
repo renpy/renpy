@@ -2129,7 +2129,7 @@ class Adjustment(renpy.object.Object):
             return 0
 
         if not self.animation_delay:
-            self.end_animation(instantly=True)
+            self.end_animation()
             return 0
 
         done = (st - self.animation_start) / self.animation_delay
