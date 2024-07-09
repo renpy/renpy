@@ -2128,6 +2128,10 @@ class Adjustment(renpy.object.Object):
             self.end_animation(instantly=True)
             return 0
 
+        if not self.animation_delay:
+            self.end_animation(instantly=True)
+            return 0
+
         done = (st - self.animation_start) / self.animation_delay
         done = self.animation_warper(done)
 
