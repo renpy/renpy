@@ -2106,8 +2106,8 @@ Rarely or Internally Used
 
 .. var:: config.with_callback = None
 
-    If not None, this should be a function that is called when a :ref:`with
-    statement <with-statement>` occurs. This function can be responsible for
+    If not None, this should be a function that is called when a :ref:`with statement <with-statement>`
+    occurs. This function can be responsible for
     putting up transient things on the screen during the transition. The
     function is called with two arguments: the transition that is occurring,
     and the transition it is paired with. The latter is None except in the case
