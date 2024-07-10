@@ -116,6 +116,8 @@ class Documentation:
                 li = LineIterator(i)
                 self.parse_file(basename, li)
 
+        self.output("renpy", "image", "black", " = Solid(\"#000\")", "A solid black color.")
+
     def parse_file(self, basename, li):
         """
         Parses a file and updates the documentation with the contents.
@@ -255,6 +257,28 @@ class Documentation:
         else:
             self.renpy[name] = entry
 
+    def check_namespaces(self):
+        """
+        Checks that all namespaces have at least some documentation.
+        """
+
+        namespaces = set()
+
+        for name in list(self.renpy.keys()) + list(self.config.keys()):
+            if not "." in name:
+                continue
+
+            namespace = name.rpartition(".")[0]
+            namespaces.add(namespace)
+
+
+        for i in sorted(namespaces):
+            if i in { "_preferences", "emscripten", "renpy.audio" }:
+                continue
+
+            if i not in self.renpy and i not in self.config:
+                print("Namespace", i, "is not documented.")
+
 def main():
 
     d = Documentation()
@@ -271,6 +295,7 @@ def main():
     with open(SPHINX + "/renpy.json", "w") as f:
         json.dump(renpy_json, f, indent=2)
 
+    d.check_namespaces()
 
 if __name__ == '__main__':
     main()
