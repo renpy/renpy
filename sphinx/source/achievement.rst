@@ -54,8 +54,12 @@ steamapi module, as found `here <https://github.com/renpy/renpy-build/blob/maste
 and represents a machine translation of the C++ Steamworks API to Python.
 
 In addition, a large number of functions are available in the achievement.steam object, if and only
-if the Steamworks API is available. The ``achievement.steam`` object will be None if Steam is not
-present or initialized. Check the value of ``achievement.steam`` before using it.
+if the Steamworks API is available.
+
+.. var:: achievement.steam
+
+    If Steam initialized successfully, this is a namespace with high-level Steam methods. If Steam did not
+    initialize, this is None. Always check that this is not None before calling a method.
 
 Steam Apps
 ^^^^^^^^^^
