@@ -405,6 +405,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
         if (c.video_el === null) {
             c.video_el = document.createElement('video');
             c.video_el.style.display = 'none';
+            c.video_el.crossOrigin = 'anonymous';
             c.video_el.playsInline = true;  // For autoplay on Safari
             document.body.appendChild(c.video_el);
 
