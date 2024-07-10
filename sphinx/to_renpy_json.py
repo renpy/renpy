@@ -3,6 +3,17 @@ import os
 import re
 import json
 
+DEPRECATED = [
+    "ui."
+    "im."
+]
+
+NOT_DEPRECATED = [
+    "ui.interact",
+    "ui.adjustment",
+    "im.Data",
+]
+
 class LineIterator:
 
     def __init__(self, filename):
@@ -108,7 +119,8 @@ class Documentation:
         Parses a file and updates the documentation with the contents.
 
         `basename`
-            The basename of the file, without the extension.
+            The basename of the file, without the extension. This isn't currently used, but
+            passed around in case we want to link to Sphinx documentation.
 
         `li`
             A LineIterator object that provides the lines of the file.
@@ -217,8 +229,18 @@ class Documentation:
 
         accessKind = kind
 
+        origin = "renpy"
+
+        for i in DEPRECATED:
+            if name.startswith(i):
+                origin = "deprecated"
+
+        for i in NOT_DEPRECATED:
+            if name == "i":
+                origin = "renpy"
+
         entry = [
-            basename,
+            origin,
             kind,
             rest.strip(),
             "",
@@ -232,7 +254,7 @@ class Documentation:
             self.renpy[name] = entry
 
 def main():
-    os.chdir(os.path.dirname(__file__))
+    os.chdir(os.path.dirname(__file__) + "/../..")
 
     d = Documentation()
 
@@ -245,12 +267,8 @@ def main():
         "internal": sort(d.internal),
     }
 
-
     with open("renpy.json", "w") as f:
         json.dump(renpy_json, f, indent=2)
-
-
-
 
 
 if __name__ == '__main__':
