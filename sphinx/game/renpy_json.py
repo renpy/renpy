@@ -3,6 +3,8 @@ import os
 import re
 import json
 
+SPHINX = os.path.abspath(os.path.dirname(__file__) + "/..")
+
 DEPRECATED = [
     "ui."
     "im."
@@ -29,7 +31,7 @@ class LineIterator:
         and blank lines.
         """
 
-        filename = "source/" + filename
+        filename = SPHINX + "/source/" + filename
 
         last_indent = 0
 
@@ -108,7 +110,7 @@ class Documentation:
         self.config = { }
         self.internal = { }
 
-        for i in os.listdir("source"):
+        for i in os.listdir(SPHINX + "/source"):
             if i.endswith(".rst"):
                 basename = i[:-4]
                 li = LineIterator(i)
@@ -254,7 +256,6 @@ class Documentation:
             self.renpy[name] = entry
 
 def main():
-    os.chdir(os.path.dirname(__file__) + "/../..")
 
     d = Documentation()
 
@@ -267,7 +268,7 @@ def main():
         "internal": sort(d.internal),
     }
 
-    with open("renpy.json", "w") as f:
+    with open(SPHINX + "/renpy.json", "w") as f:
         json.dump(renpy_json, f, indent=2)
 
 

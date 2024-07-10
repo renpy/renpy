@@ -4,6 +4,7 @@
 init 1000000 python:
     import doc
     import shaderdoc
+    import renpy_json
 
     del object.__init__
 
@@ -53,5 +54,7 @@ init 1000000 python:
     console_commands = _console.help(None, True).replace("\n ", "\n\n* ")
     with open(os.path.join(incdir, "console_commands"), "w") as f:
         f.write(console_commands)
+
+    renpy_json.main()
 
     raise SystemExit
