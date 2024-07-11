@@ -215,6 +215,12 @@ def can_rollback():
     if not renpy.config.rollback_enabled:
         return False
 
+    if not renpy.store._rollback:
+        return False
+
+    if not renpy.game.context().rollback:
+        return False
+
     return renpy.game.log.can_rollback()
 
 
