@@ -124,7 +124,7 @@ can be used to customize the screen:
 
       The current state of the updater. See the example above for possible
       values and their meanings. The values are all constants on the Updater
-      obect.
+      object.
 
    .. attribute:: message
 

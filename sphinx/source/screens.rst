@@ -536,7 +536,7 @@ It also takes:
 * :ref:`window-style-properties`
 * :ref:`button-style-properties`
 
-It takes one children. If zero, two, or more children are supplied,
+It takes one child. If zero, two, or more children are supplied,
 they are implicitly added to a fixed, which is added to the button.
 
 
@@ -569,7 +569,7 @@ This takes the following properties:
 
 .. screen-property:: modal
 
-    By default, the dimiss is modal, preventing events from being processed
+    By default, the dismiss is modal, preventing events from being processed
     by displayables "behind" it.
 
 
@@ -601,7 +601,7 @@ Here's an example of dismiss being used::
                 xalign 0.5
                 action Return()
 
-See also how dismiss is used in conjuction with :ref:`nearrect <sl-nearrect>`.
+See also how dismiss is used in conjunction with :ref:`nearrect <sl-nearrect>`.
 
 .. _sl-fixed:
 
@@ -971,7 +971,7 @@ keysyms. It takes two properties:
 
     If true, the default, the event will capture, and will not be
     processed by other displayables. If false and the action does
-    not end the interaction, the event will be procssed by other
+    not end the interaction, the event will be processed by other
     displayables.
 
 It takes no children.
