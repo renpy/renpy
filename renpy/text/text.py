@@ -729,6 +729,7 @@ class Layout(object):
             # A list of (segment, list of glyph) pairs.
             seg_glyphs = [ ]
 
+
             for ts, s in p:
                 glyphs = ts.glyphs(s, self)
 
@@ -742,6 +743,7 @@ class Layout(object):
             # linebreaking algorithms.
             if rtl:
                 par_glyphs.reverse()
+                seg_glyphs.reverse()
                 for ts, glyphs in seg_glyphs:
                     glyphs.reverse()
 
@@ -1529,6 +1531,8 @@ class Layout(object):
             l.append((ts, s))
 
         rtl = (direction == RTL or direction == WRTL)
+        if rtl:
+            l.reverse()
 
         return l, rtl
 

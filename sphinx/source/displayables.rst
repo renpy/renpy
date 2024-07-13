@@ -191,7 +191,7 @@ targeted at the layer being displayed.
     define config.detached_layers += [ "broadcast" ]
 
     # A layer displayable to represent a TV and watch the broadcast layer.
-    image tv = Window(Layer("broadcast"), background='#000', padding=(10, 10))
+    image tv = Window(Layer("broadcast"), background='#000', padding=(10, 10), style="default")
 
     image living_room = Placeholder('bg', text='living_room')
     image studio = Solid('7c7')
