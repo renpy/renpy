@@ -667,6 +667,8 @@ init -1500 python in updater:
 
             # 8. Finish up.
 
+            self.save_state()
+
             persistent._update_version[self.url] = None
 
             if self.restart:
@@ -1633,7 +1635,7 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "current.json")
 
             with open(fn, "w") as f:
-                json.dump(self.new_state, f)
+                json.dump(self.new_state, f, indent=2)
 
         def clean(self, fn):
             """
