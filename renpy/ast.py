@@ -1030,7 +1030,7 @@ def predict_imspec(imspec, scene=False, atl=None):
 
     if atl is not None:
         try:
-            at_list.append(renpy.display.motion.ATLTransform(atl))
+            at_list.append(renpy.display.transform.ATLTransform(atl))
         except Exception:
             pass
 
@@ -1039,7 +1039,7 @@ def predict_imspec(imspec, scene=False, atl=None):
     if scene:
         renpy.game.context().images.predict_scene(layer)
 
-    renpy.exports.predict_show(name, layer, what=img, tag=tag)
+    renpy.exports.predict_show(name, layer, what=img, tag=tag, at_list=at_list)
 
 
 def show_imspec(imspec, atl=None):
