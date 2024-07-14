@@ -112,6 +112,7 @@ init -1500 python hide:
     config.font_transforms["dejavusans"] = dejavusans
 
 screen _accessibility():
+    layer config.interface_layer
     zorder 2000
     modal True
 

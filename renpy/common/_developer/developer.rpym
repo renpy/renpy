@@ -26,6 +26,7 @@
 
 screen _developer:
 
+    layer config.interface_layer
     zorder 1051
     modal True
 
@@ -95,6 +96,7 @@ screen _developer:
 
 
 screen _image_attributes():
+    layer config.interface_layer
 
     frame:
         style_prefix ""
@@ -155,9 +157,10 @@ label _image_attributes:
 
 
 screen _variable_viewer(title, all_entries, deleted_entries):
-
+    layer config.interface_layer
     zorder 1010
     modal True
+
     default show_deleted = True
     python:
         if show_deleted:
@@ -375,6 +378,7 @@ init python:
 
 
 screen _image_location_picker_image(image_name):
+    layer config.interface_layer
 
     default ilpd = __ImageLocationPickerData()
 
@@ -404,6 +408,7 @@ screen _image_location_picker_image(image_name):
 
 
 screen _image_location_picker(image_files):
+    layer config.interface_layer
 
     default filter = ""
 
@@ -505,6 +510,7 @@ label _filename_list:
 
 
 screen _image_load_log():
+    layer config.interface_layer
     zorder 1500
 
     default show_help = True
@@ -564,6 +570,7 @@ screen _image_load_log():
 
 
 screen _translation_identifier():
+    layer config.interface_layer
     zorder 1500
 
     default show_copy = False
@@ -616,7 +623,7 @@ screen _translation_identifier():
 
 
 screen _filename_and_line():
-
+    layer config.interface_layer
     zorder 1500
     style_prefix ""
 

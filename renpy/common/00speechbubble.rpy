@@ -381,6 +381,7 @@ init 1050 python hide:
 
 
 screen _bubble_editor():
+    layer config.interface_layer
     zorder 1050
 
     if bubble.shown.value and not _menu:
@@ -453,8 +454,9 @@ screen _bubble_editor():
 
 
 screen _bubble_window_area_editor(action):
-    modal True
+    layer config.interface_layer
     zorder 1051
+    modal True
 
     areapicker:
         cols bubble.cols

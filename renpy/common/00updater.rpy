@@ -2009,6 +2009,7 @@ init -1500 python in updater:
 init -1500:
 
     screen updater(u):
+        layer config.interface_layer
 
         add "#000"
 
@@ -2067,6 +2068,7 @@ init -1500:
 
 
     screen downloader(u):
+        layer config.interface_layer
 
         style_prefix "downloader"
 

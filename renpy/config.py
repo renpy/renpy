@@ -1491,6 +1491,9 @@ character_callback_compat = None
 # A list of who arguments to translate that will not be translated.
 translate_ignore_who = [ ]
 
+# The layer built-in screens exist on.
+interface_layer = "screens"
+
 del os
 del collections
 

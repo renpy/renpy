@@ -415,6 +415,8 @@ init -1600 python:
         renpy.restart_interaction()
 
 screen _progress:
+    layer config.interface_layer
+
     $ new = renpy.count_newly_seen_dialogue_blocks()
     $ seen = renpy.count_seen_dialogue_blocks()
     $ total = renpy.count_dialogue_blocks()

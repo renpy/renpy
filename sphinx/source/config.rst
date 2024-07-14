@@ -1532,6 +1532,10 @@ Rarely or Internally Used
     The default implementation formats the `auto` property with
     the desired image, and then checks if the computed filename exists.
 
+.. var:: config.interface_layer = "screens"
+
+    The layer that built-in screens are shown on.
+
 .. var:: config.keep_side_render_order = True
 
     If True, the order of substrings in the Side positions will be

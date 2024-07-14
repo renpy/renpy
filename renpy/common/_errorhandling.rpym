@@ -699,6 +699,7 @@ python early in _errorhandling:
 # The screen that is used for error handling.
 screen _exception:
     modal True
+    layer config.interface_layer
     zorder 1090
 
     default tt = __Tooltip("")
@@ -781,6 +782,7 @@ screen _exception:
 # The screen that is used for error handling.
 screen _parse_errors:
     modal True
+    layer config.interface_layer
     zorder 1090
 
     default tt = __Tooltip("")
