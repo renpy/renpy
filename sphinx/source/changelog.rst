@@ -82,6 +82,10 @@ Wrapped methods of the Steamworks API are documented on the :doc:`achievement` p
 Features
 --------
 
+:doc:`cds` can now take take an ATL block, which is supplied to the `execute` function as a keyword argument
+giving an ATL transform. It's also possible to define a creator-defined statement that optionally takes
+an ATL block, or a block of script statements.
+
 It is now possible to supply :ref:`menu arguments <menu-arguments>` to :func:`renpy.display_menu`, and
 the new :class:`renpy.Choice` class makes it possible to supply arguments to each item in the menu.
 
