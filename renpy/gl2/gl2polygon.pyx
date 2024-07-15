@@ -221,6 +221,11 @@ cdef void intersectLines(Point2 a0, Point2 a1, Point2 b0, Point2 b1, Point2 *p):
     p.x = ((a0.x * a1.y - a0.y * a1.x) * (b0.x - b1.x) - (a0.x - a1.x) * (b0.x * b1.y - b0.y * b1.x)) / denom
     p.y = ((a0.x * a1.y - a0.y * a1.x) * (b0.y - b1.y) - (a0.y - a1.y) * (b0.x * b1.y - b0.y * b1.x)) / denom
 
+    # Round the points to a grid.
+    p.x += .005
+    p.y += .005
+    p.x = p.x - p.x % 0.01
+    p.y = p.y - p.y % 0.01
 
 
 cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
@@ -248,7 +253,7 @@ cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
         px = p.point[i].x - a0.x
         py = p.point[i].y - a0.y
 
-        inside[i] = (lx * py - ly * px) > -0.000001
+        inside[i] = (lx * py - ly * px) > -0.005
 
         allin = allin and inside[i]
         allout = allout and not inside[i]
