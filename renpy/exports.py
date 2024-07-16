@@ -115,7 +115,7 @@ from renpy.character import show_display_say, predict_show_display_say, display_
 import renpy.audio.sound as sound
 import renpy.audio.music as music
 
-from renpy.statements import register as register_statement
+from renpy.statements import register as register_statement, register_decorator
 from renpy.text.extras import check_text_tags
 
 from renpy.memory import profile_memory, diff_memory, profile_rollback
