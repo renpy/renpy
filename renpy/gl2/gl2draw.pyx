@@ -1244,10 +1244,28 @@ cdef class GL2Draw:
         pitch = surf.pitch
         rpp = raw_pixels
 
+        cdef unsigned char r
+        cdef unsigned char g
+        cdef unsigned char b
+        cdef unsigned char a
+
         with nogil:
             for y from 0 <= y < surf.h:
-                for x from 0 <= x < (surf.w * 4):
-                    pixels[x] = rpp[x]
+                for x from 0 <= x < surf.w:
+                    r = rpp[x * 4 + 0]
+                    g = rpp[x * 4 + 1]
+                    b = rpp[x * 4 + 2]
+                    a = rpp[x * 4 + 3]
+
+                    if 0 < a < 255:
+                        r = r * 255 // a
+                        g = g * 255 // a
+                        b = b * 255 // a
+
+                    pixels[x * 4 + 0] = r
+                    pixels[x * 4 + 1] = g
+                    pixels[x * 4 + 2] = b
+                    pixels[x * 4 + 3] = a
 
                 pixels += pitch
                 rpp += surf.w * 4
