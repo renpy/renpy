@@ -1048,10 +1048,10 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
     args = args or ()
     kwargs = kwargs or {}
 
-    nvl = kwargs.pop("nvl", False)
-
     if renpy.config.menu_arguments_callback is not None:
         args, kwargs = renpy.config.menu_arguments_callback(*args, **kwargs)
+
+    nvl = kwargs.pop("nvl", False)
 
     if renpy.config.old_substitutions:
 
