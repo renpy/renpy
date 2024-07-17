@@ -443,6 +443,16 @@ The default language is chosen using the following method:
   :var:`config.default_language` is used.
 * Otherwise, the None language is used.
 
+
+Translation Info Screen
+=======================
+
+A screen with information about translations can be found by entering the developer menu (shift+D), and
+and selecting "Show Translation Info". For non-developers, this screen can be shown with::
+
+    show screen _translation_info
+
+
 Translation Actions, Functions, and Variables
 =============================================
 

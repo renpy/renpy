@@ -82,6 +82,10 @@ Wrapped methods of the Steamworks API are documented on the :doc:`achievement` p
 Features
 --------
 
+The translation identifier screen (accessed through shift+D) is now the translation info screen, and now includes
+information about the line being executed. If a language is selected, the screen will also show the line being
+translated, and the text of the say statement being translated.
+
 :doc:`cds` can now take take an ATL block, which is supplied to the `execute` function as a keyword argument
 giving an ATL transform. It's also possible to define a creator-defined statement that optionally takes
 an ATL block, or a block of script statements.

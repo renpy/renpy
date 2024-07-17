@@ -20,13 +20,26 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-screen _translates():
+screen _translation_info():
     layer config.interface_layer
     zorder 1500
     style_prefix ""
 
-    $ tl = renpy.get_translation_info()
-    $ filename, line = renpy.get_filename_line()
+    default show_copy = False
+
+    python:
+        identifier = renpy.get_translation_identifier()
+        copy = None
+
+        if identifier:
+            copy = (SetScreenVariable("show_copy", True),
+                    Function(pygame_sdl2.scrap.put,
+                             pygame_sdl2.scrap.SCRAP_TEXT,
+                             identifier.encode("utf8")))
+
+
+        tl = renpy.get_translation_info()
+        filename, line = renpy.get_filename_line()
 
     # The filename and line to show.
 
@@ -44,6 +57,16 @@ screen _translates():
             xminimum 200
 
             has vbox
+
+            null height gui._scale(7)
+
+            textbutton _("Translation identifier: [identifier]"):
+                action copy
+                padding (0, 0)
+                text_color "#fff"
+                text_hover_color "#bdf"
+
+                text_size gui._scale(14)
 
             null height gui._scale(7)
 
@@ -73,3 +96,9 @@ screen _translates():
                     text "    [s]":
                         size gui._scale(14)
                         color "#fff"
+
+            if show_copy:
+                text _("\n{color=#fff}Copied to clipboard.{/color}"):
+                    size gui._scale(14)
+
+                timer 2.0 action SetScreenVariable("show_copy", False)
