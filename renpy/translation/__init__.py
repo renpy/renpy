@@ -39,6 +39,31 @@ import codecs
 # Script
 ################################################################################
 
+class TranslateInfo(object):
+    """
+    This is the object that returns information about the a translation.
+    """
+
+    def __init__(self, node):
+
+        self.language = node.language
+        self.identifier = node.identifier
+        self.filename = node.filename
+        self.linenumber = node.linenumber
+
+        if isinstance(node, renpy.ast.TranslateSay):
+            block = [ node ]
+        else:
+            block = node.block
+
+        self.source = [ ]
+
+        for i in block:
+            try:
+                self.source.append(i.get_code())
+            except Exception as e:
+                pass
+
 
 class ScriptTranslator(object):
 
@@ -230,6 +255,19 @@ class ScriptTranslator(object):
         else:
             return tl.block[0]
 
+    def get_translate_info(self, identifier, language):
+
+        identifier = identifier.replace('.', '_')
+
+        if language is not None:
+            tl = self.language_translates.get((identifier, language), None)
+        else:
+            tl = self.default_translates.get(identifier, None)
+
+        if tl is None:
+            return None
+
+        return TranslateInfo(tl)
 
 def encode_say_string(s):
     """
@@ -823,6 +861,50 @@ def get_translation_identifier():
 
     ctx = renpy.game.contexts[-1]
     return ctx.translate_identifier or ctx.deferred_translate_identifier
+
+
+def get_translation_info(identifier=None, language=None):
+    """
+    :doc: translation_functions
+
+    Returns information about the translation with the given identifier, or about the default
+    text if `language` is None.
+
+    `identifier`
+        The translation identifier, or None to get information about currently displayed
+        text.
+
+    `language`
+        Either a language name, or None to get information about the default text.
+
+    If no information is available, returns None. Else returns an object with the following
+    attributes:
+
+    .. attribute:: language
+        The language of the translation.
+
+    .. attribute:: identifier
+        The identifier of the translation.
+
+    .. attribute:: filename
+        The filename the translation is found in.
+
+    .. attribute:: linenumber
+        The line number the translation is found on.
+
+    .. attribute:: source
+        A list of strings that make up the translation. Only some statements can be included here,
+        including the say statements that make up most translations.
+    """
+
+    if identifier is None:
+        identifier = get_translation_identifier()
+
+    if identifier is None:
+        return None
+
+    tl = renpy.game.script.translator
+    return tl.get_translate_info(identifier, language)
 
 
 def known_languages():
