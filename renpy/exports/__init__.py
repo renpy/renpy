@@ -193,6 +193,7 @@ from renpy.exports.fetchexports import (
     fetch_requests,
     fetch_emscripten,
     fetch,
+    proxies
 )
 
 
