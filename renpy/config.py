@@ -856,7 +856,7 @@ character_id_prefixes = [ ]
 nw_voice = True
 
 # If not None, a function that's used to process say arguments.
-say_arguments_callback = None
+say_arguments_callback = None # type: Callable|None
 
 # Should we show an atl interpolation for one frame?
 atl_one_frame = True
@@ -990,7 +990,7 @@ skip_sounds = False
 lint_screens_without_parameters = True
 
 # If not None, a function that's used to process and modify menu arguments.
-menu_arguments_callback = None
+menu_arguments_callback = None # type: Callable|None
 
 # Should Ren'PY automatically clear the screenshot?
 auto_clear_screenshot = True
