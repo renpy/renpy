@@ -22,6 +22,9 @@ The new :var:`config.shader_part_filter` variable can be used to filter the shad
 possible to implement preferences that turn on and off shader parts as required.
 
 
+Two new :ref:`model uniforms <model-uniforms>` have been added, ``u_drawable_size`` and ``u_virtual_size``, making
+it easier to project gl_Positions in shaders to coordinates that are used elsewhere in Ren'Py.
+
 Launcher Changes
 ----------------
 

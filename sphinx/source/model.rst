@@ -364,6 +364,15 @@ The following uniforms are made available to all Models.
     to the bottom-left corner of the window. u_viewport.pq is the width
     and height of the viewport.
 
+``vec2 u_virtual_size``
+
+    This is the virtual size of the game (:var:`config.screen_width`, :var:`config.screen_height`).
+    This can be used to convert from gl_Position to virtual coordinates using:
+
+    .. code-block:: glsl
+
+        v_position = u_virtual_size * vec2(gl_Position.x * .5 + .5, -gl_Position.y * .5 + .5)
+
 ``vec2 u_drawable_size``
     The size of the drawable are of the windows, in pixels, at the resolution
     the game is running at. For example, if a 1280x720 game is scaled up to
@@ -382,7 +391,8 @@ The following uniforms are made available to all Models.
 The following attributes are available to all models:
 
 ``vec4 a_position``
-    The position of the vertex being rendered.
+    The position of the vertex being rendered. This is in virtual pixels, relative to the upper
+    left corner of the texture.
 
 If textures are available, so is the following attribute:
 

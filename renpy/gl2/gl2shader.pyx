@@ -344,6 +344,8 @@ cdef class Program:
             self.set_uniform("u_viewport", (viewport[0], viewport[1], viewport[2], viewport[3]))
         elif name == "u_drawable_size":
             self.set_uniform("u_drawable_size", renpy.display.draw.drawable_viewport[2:])
+        elif name == "u_virtual_size":
+            self.set_uniform("u_virtual_size", renpy.display.draw.virtual_size)
         else:
             raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
 
