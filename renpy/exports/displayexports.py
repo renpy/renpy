@@ -691,3 +691,36 @@ def get_ongoing_transition(layer=None):
     """
 
     return renpy.display.interface.get_ongoing_transition(layer)
+
+
+
+def restart_interaction():
+    """
+    :doc: other
+
+    Restarts the current interaction. Among other things, this displays
+    images added to the scene, re-evaluates screens, and starts any
+    queued transitions.
+
+    This only does anything when called from within an interaction (for
+    example, from an action). Outside an interaction, this function has
+    no effect.
+    """
+
+    try:
+        renpy.game.interface.restart_interaction = True
+    except Exception:
+        pass
+
+
+def force_full_redraw():
+    """
+    :undocumented:
+
+    Forces the screen to be redrawn in full. Call this after using pygame
+    to redraw the screen directly.
+    """
+
+    # This had been used for the software renderer, but gl rendering redraws
+    # the screen every frame, so it's removed.
+    return

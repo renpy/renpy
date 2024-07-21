@@ -88,3 +88,21 @@ def toggle_music():
     :undocumented:
     Does nothing.
     """
+
+
+def music_start(filename, loops=True, fadeout=None, fadein=0):
+    """
+    Deprecated music start function, retained for compatibility. Use
+    renpy.music.play() or .queue() instead.
+    """
+
+    renpy.audio.music.play(filename, loop=loops, fadeout=fadeout, fadein=fadein)
+
+
+def music_stop(fadeout=None):
+    """
+    Deprecated music stop function, retained for compatibility. Use
+    renpy.music.stop() instead.
+    """
+
+    renpy.audio.music.stop(fadeout=fadeout)

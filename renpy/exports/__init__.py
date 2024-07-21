@@ -188,6 +188,8 @@ from renpy.exports.displayexports import (
     transition,
     get_transition,
     get_ongoing_transition,
+    restart_interaction,
+    force_full_redraw,
 )
 
 
@@ -228,6 +230,10 @@ from renpy.exports.sayexports import (
     predict_say,
     scry_say,
     say,
+    do_reshow_say,
+    curried_do_reshow_say,
+    get_reshow_say,
+    reshow_say,
 )
 
 
@@ -236,7 +242,6 @@ from renpy.exports.statementexports import (
     pause,
     with_statement,
     jump,
-    jump_out_of_context,
     call,
     return_statement,
 )
@@ -246,7 +251,9 @@ globals()["with"] = with_statement
 
 from renpy.exports.mediaexports import (
     movie_cutscene,
-    toggle_music
+    toggle_music,
+    music_start,
+    music_stop,
 )
 
 
@@ -265,10 +272,47 @@ from renpy.exports.restartexports import (
 
 
 from renpy.exports.debugexports import (
-    warp_to_line
+    warp_to_line,
+    get_filename_line,
+    log,
+)
+
+from renpy.exports.loaderexports import (
+    loadable,
+    exists,
+    open_file,
+    file,
+    notl_file,
 )
 
 
+from renpy.exports.loadsaveexports import (
+    clear_game_runtime,
+    get_game_runtime
+)
+
+
+from renpy.exports.contextexports import (
+    context,
+    context_nesting_level,
+    jump_out_of_context,
+    current_interact_type,
+    last_interact_type,
+    dynamic,
+    context_dynamic,
+)
+
+from renpy.exports.persistentexports import (
+    seen_label,
+    mark_label_seen,
+    mark_label_unseen,
+    seen_audio,
+    mark_audio_seen,
+    mark_audio_unseen,
+    seen_image,
+    mark_image_seen,
+    mark_image_unseen,
+)
 
 @renpy_pure
 def version(tuple=False): # @ReservedAssignment
@@ -304,465 +348,6 @@ except Exception:
         platform = "iOS"
     else:
         platform = "Unknown"
-
-
-
-def clear_game_runtime():
-    """
-    :doc: other
-
-    Resets the game runtime counter.
-    """
-
-    renpy.game.contexts[0].runtime = 0
-
-
-def get_game_runtime():
-    """
-    :doc: other
-
-    Returns the game runtime counter.
-
-    The game runtime counter counts the number of seconds that have
-    elapsed while waiting for user input in the top-level context.
-    (It does not count time spent in the main or game menus.)
-    """
-
-    return renpy.game.contexts[0].runtime
-
-
-@renpy_pure
-def loadable(filename, directory=None, tl=True):
-    """
-    :doc: file
-
-    Returns True if the given filename is loadable, meaning that it
-    can be loaded from the disk or from inside an archive. Returns
-    False if this is not the case.
-
-    `directory`
-        If not None, a directory to search in if the file is not found
-        in the game directory. This will be prepended to filename, and
-        the search tried again.
-    `tl`
-        If True, a translation subdirectory will be considered as well.
-    """
-
-    return renpy.loader.loadable(filename, tl=tl, directory=directory)
-
-
-@renpy_pure
-def exists(filename):
-    """
-    :doc: file_rare
-
-    Returns true if the given filename can be found in the
-    searchpath. This only works if a physical file exists on disk. It
-    won't find the file if it's inside of an archive.
-
-    You almost certainly want to use :func:`renpy.loadable` in preference
-    to this function.
-    """
-
-    try:
-        renpy.loader.transfn(filename)
-        return True
-    except Exception:
-        return False
-
-
-def restart_interaction():
-    """
-    :doc: other
-
-    Restarts the current interaction. Among other things, this displays
-    images added to the scene, re-evaluates screens, and starts any
-    queued transitions.
-
-    This only does anything when called from within an interaction (for
-    example, from an action). Outside an interaction, this function has
-    no effect.
-    """
-
-    try:
-        renpy.game.interface.restart_interaction = True
-    except Exception:
-        pass
-
-
-def context():
-    """
-    :doc: context
-
-    Returns an object that is unique to the current context. The object
-    is copied when entering a new context, but changes to the copy do
-    not change the original.
-
-    The object is saved and participates in rollback.
-    """
-
-    return renpy.game.context().info
-
-
-def context_nesting_level():
-    """
-    :doc: context
-
-    Returns the nesting level of the current context. This is 0 for the
-    outermost context (the context that is saved, loaded, and rolled-back),
-    and is non-zero in other contexts, such as menu and replay contexts.
-    """
-
-    return len(renpy.game.contexts) - 1
-
-
-def music_start(filename, loops=True, fadeout=None, fadein=0):
-    """
-    Deprecated music start function, retained for compatibility. Use
-    renpy.music.play() or .queue() instead.
-    """
-
-    renpy.audio.music.play(filename, loop=loops, fadeout=fadeout, fadein=fadein)
-
-
-def music_stop(fadeout=None):
-    """
-    Deprecated music stop function, retained for compatibility. Use
-    renpy.music.stop() instead.
-    """
-
-    renpy.audio.music.stop(fadeout=fadeout)
-
-
-def get_filename_line():
-    """
-    :doc: debug
-
-    Returns a pair giving the filename and line number of the current
-    statement.
-    """
-
-    n = renpy.game.script.namemap.get(renpy.game.context().current, None)
-
-    if n is None:
-        return "unknown", 0
-    else:
-        return n.filename, n.linenumber
-
-
-# A file that log logs to.
-logfile = None
-
-
-def log(msg):
-    """
-    :doc: debug
-
-    If :var:`config.log` is not set, this does nothing. Otherwise, it opens
-    the logfile (if not already open), formats the message to :var:`config.log_width`
-    columns, and prints it to the logfile.
-    """
-
-    global logfile
-
-    if not renpy.config.log:
-        return
-
-    if msg is None:
-        return
-
-    try:
-        msg = unicode(msg)
-    except Exception:
-        pass
-
-    try:
-
-        if not logfile:
-            import os
-            if renpy.config.clear_log:
-                file_mode = "w"
-            else:
-                file_mode = "a"
-            logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), file_mode)
-
-            if not logfile.tell():
-                logfile.write("\ufeff")
-
-        import textwrap
-
-        wrapped = [ ]
-
-        for line in msg.split('\n'):
-            line = textwrap.fill(line, renpy.config.log_width)
-            line = unicode(line)
-            wrapped.append(line)
-
-        wrapped = '\n'.join(wrapped)
-
-        logfile.write(wrapped + "\n")
-        logfile.flush()
-
-    except Exception:
-        renpy.config.log = None
-
-
-def force_full_redraw():
-    """
-    :undocumented:
-
-    Forces the screen to be redrawn in full. Call this after using pygame
-    to redraw the screen directly.
-    """
-
-    # This had been used for the software renderer, but gl rendering redraws
-    # the screen every frame, so it's removed.
-    return
-
-
-def do_reshow_say(who, what, interact=False, *args, **kwargs):
-
-    if who is not None:
-        who = renpy.python.py_eval(who)
-
-    say(who, what, *args, interact=interact, **kwargs)
-
-
-curried_do_reshow_say = curry(do_reshow_say)
-
-
-def get_reshow_say(**kwargs):
-    kw = dict(renpy.store._last_say_kwargs)
-    kw.update(kwargs)
-
-    return curried_do_reshow_say(
-        renpy.store._last_say_who,
-        renpy.store._last_say_what,
-        renpy.store._last_say_args,
-        **kw)
-
-
-def reshow_say(**kwargs):
-    get_reshow_say()(**kwargs)
-
-
-def current_interact_type():
-    return getattr(renpy.game.context().info, "_current_interact_type", None)
-
-
-def last_interact_type():
-    return getattr(renpy.game.context().info, "_last_interact_type", None)
-
-
-def dynamic(*variables, **kwargs):
-    """
-    :doc: label
-
-    This can be given one or more variable names as arguments. This makes the
-    variables dynamically scoped to the current call. When the call returns, the
-    variables will be reset to the value they had when this function was called.
-
-    Variables in :ref:`named stores <named-stores>` are supported.
-
-    If the variables are given as keyword arguments, the value of the argument
-    is assigned to the variable name.
-
-    Example calls are::
-
-        $ renpy.dynamic("x", "y", "z")
-        $ renpy.dynamic("mystore.serial_number")
-        $ renpy.dynamic(players=2, score=0)
-    """
-
-    variables = variables + tuple(kwargs)
-    renpy.game.context().make_dynamic(variables)
-
-    for k, v in kwargs.items():
-        setattr(renpy.store, k, v)
-
-
-def context_dynamic(*variables):
-    """
-    :doc: context
-
-    This can be given one or more variable names as arguments. This makes the
-    variables dynamically scoped to the current context. When returning to the
-    prior context, the variables will be reset to the value they had when this
-    function was called.
-
-    Variables in :ref:`named stores <named-stores>` are supported.
-
-    Example calls are::
-
-        $ renpy.context_dynamic("x", "y", "z")
-        $ renpy.context_dynamic("mystore.serial_number")
-    """
-
-    renpy.game.context().make_dynamic(variables, context=True)
-
-
-def seen_label(label):
-    """
-    :doc: label
-
-    Returns true if the named label has executed at least once on the current user's
-    system, and false otherwise. This can be used to unlock scene galleries, for
-    example.
-    """
-    return label in renpy.game.persistent._seen_ever # type: ignore
-
-
-def mark_label_seen(label):
-    """
-    :doc: label
-
-    Marks the named label as if it has been already executed on the current user's
-    system.
-    """
-    renpy.game.persistent._seen_ever[str(label)] = True # type: ignore
-
-
-def mark_label_unseen(label):
-    """
-    :doc: label
-
-    Marks the named label as if it has not been executed on the current user's
-    system yet.
-    """
-    if label in renpy.game.persistent._seen_ever: # type: ignore
-        del renpy.game.persistent._seen_ever[label] # type: ignore
-
-
-def seen_audio(filename):
-    """
-    :doc: audio
-
-    Returns True if the given filename has been played at least once on the current
-    user's system.
-    """
-    filename = re.sub(r'^<.*?>', '', filename)
-
-    return filename in renpy.game.persistent._seen_audio # type: ignore
-
-
-def mark_audio_seen(filename):
-    """
-    :doc: audio
-
-    Marks the given filename as if it has been already played on the current user's
-    system.
-    """
-    filename = re.sub(r'^<.*?>', '', filename)
-
-    renpy.game.persistent._seen_audio[filename] = True # type: ignore
-
-
-def mark_audio_unseen(filename):
-    """
-    :doc: audio
-
-    Marks the given filename as if it has not been played on the current user's
-    system yet.
-    """
-    filename = re.sub(r'^<.*?>', '', filename)
-
-    if filename in renpy.game.persistent._seen_audio: # type: ignore
-        del renpy.game.persistent._seen_audio[filename] # type: ignore
-
-
-def seen_image(name):
-    """
-    :doc: image_func
-
-    Returns True if the named image has been seen at least once on the user's
-    system. An image has been seen if it's been displayed using the show statement,
-    scene statement, or :func:`renpy.show` function. (Note that there are cases
-    where the user won't actually see the image, like a show immediately followed by
-    a hide.)
-    """
-    if not isinstance(name, tuple):
-        name = tuple(name.split())
-
-    return name in renpy.game.persistent._seen_images # type: ignore
-
-
-def mark_image_seen(name):
-    """
-    :doc: image_func
-
-    Marks the named image as if it has been already displayed on the current user's
-    system.
-    """
-    if not isinstance(name, tuple):
-        name = tuple(name.split())
-
-    renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
-
-
-def mark_image_unseen(name):
-    """
-    :doc: image_func
-
-    Marks the named image as if it has not been displayed on the current user's
-    system yet.
-    """
-    if not isinstance(name, tuple):
-        name = tuple(name.split())
-
-    if name in renpy.game.persistent._seen_images: # type: ignore
-        del renpy.game.persistent._seen_images[name] # type: ignore
-
-
-def open_file(fn, encoding=None, directory=None): # @ReservedAssignment
-    """
-    :doc: file
-
-    Returns a read-only file-like object that accesses the file named `fn`. The file is
-    accessed using Ren'Py's standard search method, and may reside in the game directory,
-    in an RPA archive, or as an Android asset.
-
-    The object supports a wide subset of the fields and methods found on Python's
-    standard file object, opened in binary mode. (Basically, all of the methods that
-    are sensible for a read-only file.)
-
-    `encoding`
-        If given, the file is open in text mode with the given encoding.
-        If None, the default, the encoding is taken from :var:`config.open_file_encoding`.
-        If False, the file is opened in binary mode.
-
-    `directory`
-        If not None, a directory to search in if the file is not found
-        in the game directory. This will be prepended to filename, and
-        the search tried again.
-    """
-
-    rv = renpy.loader.load(fn, directory=directory)
-
-    if encoding is None:
-        encoding = renpy.config.open_file_encoding
-
-    if encoding:
-        rv = io.TextIOWrapper(rv, encoding=encoding, errors="surrogateescape") # type: ignore
-
-    return rv
-
-def file(fn, encoding=None):
-    """
-    :doc: file
-
-    An alias for :func:`renpy.open_file`, for compatibility with older
-    versions of Ren'Py.
-    """
-
-    return open_file(fn, encoding=encoding)
-
-def notl_file(fn): # @ReservedAssignment
-    """
-    :undocumented:
-
-    Like file, but doesn't search the translation prefix.
-    """
-    return renpy.loader.load(fn, tl=False)
 
 
 def image_size(im):

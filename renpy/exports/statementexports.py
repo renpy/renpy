@@ -268,17 +268,6 @@ def jump(label):
     raise renpy.game.JumpException(label)
 
 
-def jump_out_of_context(label):
-    """
-    :doc: context
-
-    Causes control to leave the current context, and then to be
-    transferred in the parent context to the given label.
-    """
-
-    raise renpy.game.JumpOutException(label)
-
-
 def call(label, *args, **kwargs):
     """
     :doc: se_call

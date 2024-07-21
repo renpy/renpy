@@ -39,3 +39,76 @@ def warp_to_line(warp_spec):
 
     renpy.warp.warp_spec = warp_spec
     renpy.exports.full_restart()
+
+
+def get_filename_line():
+    """
+    :doc: debug
+
+    Returns a pair giving the filename and line number of the current
+    statement.
+    """
+
+    n = renpy.game.script.namemap.get(renpy.game.context().current, None)
+
+    if n is None:
+        return "unknown", 0
+    else:
+        return n.filename, n.linenumber
+
+
+# A file that log logs to.
+logfile = None
+
+
+def log(msg):
+    """
+    :doc: debug
+
+    If :var:`config.log` is not set, this does nothing. Otherwise, it opens
+    the logfile (if not already open), formats the message to :var:`config.log_width`
+    columns, and prints it to the logfile.
+    """
+
+    global logfile
+
+    if not renpy.config.log:
+        return
+
+    if msg is None:
+        return
+
+    try:
+        msg = unicode(msg)
+    except Exception:
+        pass
+
+    try:
+
+        if not logfile:
+            import os
+            if renpy.config.clear_log:
+                file_mode = "w"
+            else:
+                file_mode = "a"
+            logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), file_mode)
+
+            if not logfile.tell():
+                logfile.write("\ufeff")
+
+        import textwrap
+
+        wrapped = [ ]
+
+        for line in msg.split('\n'):
+            line = textwrap.fill(line, renpy.config.log_width)
+            line = unicode(line)
+            wrapped.append(line)
+
+        wrapped = '\n'.join(wrapped)
+
+        logfile.write(wrapped + "\n")
+        logfile.flush()
+
+    except Exception:
+        renpy.config.log = None
