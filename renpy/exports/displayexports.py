@@ -563,3 +563,131 @@ def scene(layer='master'):
 
     for i in renpy.config.scene_callbacks:
         i(layer)
+
+
+def toggle_fullscreen():
+    """
+    :undocumented:
+    Toggles the fullscreen mode.
+    """
+
+    renpy.game.preferences.fullscreen = not renpy.game.preferences.fullscreen # type: ignore
+
+
+def take_screenshot(scale=None, background=False):
+    """
+    :doc: loadsave
+    :args: ()
+
+    Causes a screenshot to be taken. This screenshot will be saved as part of
+    a saved game.
+    """
+
+    if scale is None:
+        scale = (renpy.config.thumbnail_width, renpy.config.thumbnail_height)
+
+    renpy.game.interface.take_screenshot(scale, background=background)
+
+
+def screenshot(filename):
+    """
+    :doc: screenshot
+
+    Saves a screenshot in `filename`.
+
+    Returns True if the screenshot was saved successfully, False if saving
+    failed for some reason.
+
+    The :var:`config.screenshot_pattern` and :var:`_screenshot_pattern`
+    variables control the file the screenshot is saved in.
+    """
+
+    return renpy.game.interface.save_screenshot(filename)
+
+
+def screenshot_to_bytes(size):
+    """
+    :doc: screenshot
+
+    Returns a screenshot as a bytes object, that can be passed to im.Data().
+    The bytes will be a png-format image, such that::
+
+        $ data = renpy.screenshot_to_bytes((640, 360))
+        show expression im.Data(data, "screenshot.png"):
+            align (0, 0)
+
+    Will show the image. The bytes objects returned can be stored in save
+    files and persistent data. However, these may be large, and care should
+    be taken to not include too many.
+
+    `size`
+        The size the screenshot will be resized to. If None, the screenshot
+        will be resized, and hence will be the size of the player's window,
+        without any letterbars.
+
+    This function may be slow, and so it's intended for save-like screenshots,
+    and not realtime effects.
+    """
+
+    return renpy.game.interface.screenshot_to_bytes(size)
+
+
+
+def transition(trans, layer=None, always=False, force=False):
+    """
+    :doc: other
+    :args: (trans, layer=None, always=False)
+
+    Sets the transition that will be used during the next interaction.
+
+    `layer`
+        The layer the transition applies to. If None, the transition
+        applies to the entire scene.
+
+    `always`
+        If false, this respects the transition preference. If true, the
+        transition is always run.
+    """
+
+    if isinstance(trans, dict):
+        for ly, t in trans.items():
+            transition(t, layer=ly, always=always, force=force)
+        return
+
+    if (not always) and not renpy.game.preferences.transitions: # type: ignore
+        trans = None
+
+    if renpy.config.skipping:
+        trans = None
+
+    renpy.game.interface.set_transition(trans, layer, force=force)
+
+
+def get_transition(layer=None):
+    """
+    :doc: other
+
+    Gets the transition for `layer`, or the entire scene if
+    `layer` is None. This returns the transition that is queued up
+    to run during the next interaction, or None if no such
+    transition exists.
+
+    Use :func:`renpy.get_ongoing_transition` to get the transition that is
+    in progress.
+    """
+
+    return renpy.game.interface.transition.get(layer, None)
+
+
+def get_ongoing_transition(layer=None):
+    """
+    :doc: other
+
+    Returns the transition that is currently ongoing.
+
+    `layer`
+        If None, the top-level transition is returned. Otherwise, this should be a string giving a layer name,
+        in which case the transition for that layer is returned.
+    """
+
+    return renpy.display.interface.get_ongoing_transition(layer)

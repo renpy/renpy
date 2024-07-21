@@ -208,3 +208,106 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         raise rv
 
     return rv
+
+
+def with_statement(trans, always=False, paired=None, clear=True):
+    """
+    :doc: se_with
+    :name: renpy.with_statement
+    :args: (trans, always=False)
+
+    Causes a transition to occur. This is the Python equivalent of the
+    with statement.
+
+    `trans`
+        The transition.
+
+    `always`
+        If True, the transition will always occur, even if the user has
+        disabled transitions.
+
+    This function returns true if the user chose to interrupt the transition,
+    and false otherwise.
+    """
+
+    if renpy.game.context().init_phase:
+        raise Exception("With statements may not run while in init phase.")
+
+    if renpy.config.skipping:
+        trans = None
+
+    if not (renpy.game.preferences.transitions or always): # type: ignore
+        trans = None
+
+    renpy.exports.mode('with')
+
+    if isinstance(trans, dict):
+
+        for k, v in trans.items():
+            if k is None:
+                continue
+
+            renpy.exports.transition(v, layer=k)
+
+        if None not in trans:
+            return
+
+        trans = trans[None]
+
+    return renpy.game.interface.do_with(trans, paired, clear=clear)
+
+
+def jump(label):
+    """
+    :doc: se_jump
+
+    Causes the current statement to end, and control to jump to the given
+    label.
+    """
+
+    raise renpy.game.JumpException(label)
+
+
+def jump_out_of_context(label):
+    """
+    :doc: context
+
+    Causes control to leave the current context, and then to be
+    transferred in the parent context to the given label.
+    """
+
+    raise renpy.game.JumpOutException(label)
+
+
+def call(label, *args, **kwargs):
+    """
+    :doc: se_call
+    :args: (label, *args, from_current=False, **kwargs)
+
+    Causes the current Ren'Py statement to terminate, and a jump to a
+    `label` to occur. When the jump returns, control will be passed
+    to the statement following the current statement.
+
+    The label must be either of the form "global_name" or "global_name.local_name".
+    The form ".local_name" is not allowed.
+
+    `from_current`
+        If true, control will return to the current statement, rather than
+        the statement following the current statement. (This will lead to
+        the current statement being run twice. This must be passed as a
+        keyword argument.)
+    """
+
+    from_current = kwargs.pop("from_current", False)
+    raise renpy.game.CallException(label, args, kwargs, from_current=from_current)
+
+
+def return_statement(value=None):
+    """
+    :doc: se_call
+
+    Causes Ren'Py to return from the current Ren'Py-level call.
+    """
+
+    renpy.store._return = value
+    jump("_renpy_return")

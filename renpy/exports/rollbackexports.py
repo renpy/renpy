@@ -175,3 +175,60 @@ def retain_after_load():
     """
 
     renpy.game.log.retain_after_load()
+
+
+
+def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True, current_label=None):
+    """
+    :doc: rollback
+    :args: (force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True)
+
+    Rolls the state of the game back to the last checkpoint.
+
+    `force`
+        If true, the rollback will occur in all circumstances. Otherwise,
+        the rollback will only occur if rollback is enabled in the store,
+        context, and config.
+
+    `checkpoints`
+        Ren'Py will roll back through this many calls to renpy.checkpoint. It
+        will roll back as far as it can, subject to this condition.
+
+    `defer`
+        If true, the call will be deferred until control returns to the main
+        context.
+
+    `greedy`
+        If true, rollback will finish just after the previous checkpoint.
+        If false, rollback finish just before the current checkpoint.
+
+    `label`
+        If not None, a label that is called when rollback completes.
+
+    `abnormal`
+        If true, the default, script executed after the transition is run in
+        an abnormal mode that skips transitions that would have otherwise
+        occured. Abnormal mode ends when an interaction begins.
+    """
+
+    if defer and not renpy.game.log.log:
+        return
+
+    if defer and len(renpy.game.contexts) > 1:
+        renpy.game.contexts[0].defer_rollback = (force, checkpoints)
+        return
+
+    if not force:
+
+        if not renpy.store._rollback:
+            return
+
+        if not renpy.game.context().rollback:
+            return
+
+        if not renpy.config.rollback_enabled:
+            return
+
+    renpy.config.skipping = None
+    renpy.game.log.complete()
+    renpy.game.log.rollback(checkpoints, greedy=greedy, label=label, force=(force is True), abnormal=abnormal, current_label=current_label)

@@ -159,7 +159,9 @@ from renpy.exports.rollbackexports import (
     suspend_rollback,
     fix_rollback,
     retain_after_load,
+    rollback,
 )
+
 
 from renpy.exports.displayexports import (
     scene_lists,
@@ -179,6 +181,13 @@ from renpy.exports.displayexports import (
     show,
     hide,
     scene,
+    toggle_fullscreen,
+    take_screenshot,
+    screenshot,
+    screenshot_to_bytes,
+    transition,
+    get_transition,
+    get_ongoing_transition,
 )
 
 
@@ -186,6 +195,7 @@ from renpy.exports.inputexports import (
     web_input,
     input,
 )
+
 
 from renpy.exports.fetchexports import (
     FetchError,
@@ -211,6 +221,7 @@ from renpy.exports.menuexports import (
     display_menu,
 )
 
+
 from renpy.exports.sayexports import (
     TagQuotingDict,
     tag_quoting_dict,
@@ -223,454 +234,40 @@ from renpy.exports.sayexports import (
 from renpy.exports.statementexports import (
     imagemap,
     pause,
+    with_statement,
+    jump,
+    jump_out_of_context,
+    call,
+    return_statement,
 )
-
-def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
-    """
-    :doc: movie_cutscene
-
-    This displays a movie cutscene for the specified number of
-    seconds. The user can click to interrupt the cutscene.
-    Overlays and Underlays are disabled for the duration of the cutscene.
-
-    `filename`
-        The name of a file containing any movie playable by Ren'Py.
-
-    `delay`
-        The number of seconds to wait before ending the cutscene.
-        Normally the length of the movie, in seconds. If None, then the
-        delay is computed from the number of loops (that is, loops + 1) *
-        the length of the movie. If -1, we wait until the user clicks.
-
-    `loops`
-        The number of extra loops to show, -1 to loop forever.
-
-    Returns True if the movie was terminated by the user, or False if the
-    given delay elapsed uninterrupted.
-    """
-
-    renpy.exports.mode('movie')
-
-    if stop_music:
-        renpy.audio.audio.set_force_stop("music", True)
-
-    movie_start_fullscreen(filename, loops=loops)
-
-    renpy.ui.saybehavior()
-
-    if delay is None or delay < 0:
-        renpy.ui.soundstopbehavior("movie")
-    else:
-        renpy.ui.pausebehavior(delay, False)
-
-    if renpy.game.log.forward:
-        roll_forward = True
-    else:
-        roll_forward = None
-
-    rv = renpy.ui.interact(suppress_overlay=True,
-                           roll_forward=roll_forward)
-
-    # We don't want to put a checkpoint here, as we can't roll back while
-    # playing a cutscene.
-
-    movie_stop()
-
-    if stop_music:
-        renpy.audio.audio.set_force_stop("music", False)
-
-    return rv
-
-
-def with_statement(trans, always=False, paired=None, clear=True):
-    """
-    :doc: se_with
-    :name: renpy.with_statement
-    :args: (trans, always=False)
-
-    Causes a transition to occur. This is the Python equivalent of the
-    with statement.
-
-    `trans`
-        The transition.
-
-    `always`
-        If True, the transition will always occur, even if the user has
-        disabled transitions.
-
-    This function returns true if the user chose to interrupt the transition,
-    and false otherwise.
-    """
-
-    if renpy.game.context().init_phase:
-        raise Exception("With statements may not run while in init phase.")
-
-    if renpy.config.skipping:
-        trans = None
-
-    if not (renpy.game.preferences.transitions or always): # type: ignore
-        trans = None
-
-    renpy.exports.mode('with')
-
-    if isinstance(trans, dict):
-
-        for k, v in trans.items():
-            if k is None:
-                continue
-
-            renpy.exports.transition(v, layer=k)
-
-        if None not in trans:
-            return
-
-        trans = trans[None]
-
-    return renpy.game.interface.do_with(trans, paired, clear=clear)
-
 
 globals()["with"] = with_statement
 
 
-def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True, current_label=None):
-    """
-    :doc: rollback
-    :args: (force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True)
+from renpy.exports.mediaexports import (
+    movie_cutscene,
+    toggle_music
+)
 
-    Rolls the state of the game back to the last checkpoint.
 
-    `force`
-        If true, the rollback will occur in all circumstances. Otherwise,
-        the rollback will only occur if rollback is enabled in the store,
-        context, and config.
+from renpy.exports.scriptexports import (
+    has_label,
+    get_all_labels,
+)
 
-    `checkpoints`
-        Ren'Py will roll back through this many calls to renpy.checkpoint. It
-        will roll back as far as it can, subject to this condition.
 
-    `defer`
-        If true, the call will be deferred until control returns to the main
-        context.
+from renpy.exports.restartexports import (
+    full_restart,
+    utter_restart,
+    reload_script,
+    quit,
+)
 
-    `greedy`
-        If true, rollback will finish just after the previous checkpoint.
-        If false, rollback finish just before the current checkpoint.
 
-    `label`
-        If not None, a label that is called when rollback completes.
+from renpy.exports.debugexports import (
+    warp_to_line
+)
 
-    `abnormal`
-        If true, the default, script executed after the transition is run in
-        an abnormal mode that skips transitions that would have otherwise
-        occured. Abnormal mode ends when an interaction begins.
-    """
-
-    if defer and not renpy.game.log.log:
-        return
-
-    if defer and len(renpy.game.contexts) > 1:
-        renpy.game.contexts[0].defer_rollback = (force, checkpoints)
-        return
-
-    if not force:
-
-        if not renpy.store._rollback:
-            return
-
-        if not renpy.game.context().rollback:
-            return
-
-        if not renpy.config.rollback_enabled:
-            return
-
-    renpy.config.skipping = None
-    renpy.game.log.complete()
-    renpy.game.log.rollback(checkpoints, greedy=greedy, label=label, force=(force is True), abnormal=abnormal, current_label=current_label)
-
-
-def toggle_fullscreen():
-    """
-    :undocumented:
-    Toggles the fullscreen mode.
-    """
-
-    renpy.game.preferences.fullscreen = not renpy.game.preferences.fullscreen # type: ignore
-
-
-def toggle_music():
-    """
-    :undocumented:
-    Does nothing.
-    """
-
-
-@renpy_pure
-def has_label(name):
-    """
-    :doc: label
-
-    Returns true if `name` is a valid label in the program, or false
-    otherwise.
-
-    `name`
-        Should be a string to check for the existence of a label. It can
-        also be an opaque tuple giving the name of a non-label statement.
-    """
-
-    return renpy.game.script.has_label(name)
-
-
-@renpy_pure
-def get_all_labels():
-    """
-    :doc: label
-
-    Returns the set of all labels defined in the program, including labels
-    defined for internal use in the libraries.
-    """
-    rv = [ ]
-
-    for i in renpy.game.script.namemap:
-        if isinstance(i, basestring):
-            rv.append(i)
-
-    return renpy.revertable.RevertableSet(rv)
-
-
-def take_screenshot(scale=None, background=False):
-    """
-    :doc: loadsave
-    :args: ()
-
-    Causes a screenshot to be taken. This screenshot will be saved as part of
-    a saved game.
-    """
-
-    if scale is None:
-        scale = (renpy.config.thumbnail_width, renpy.config.thumbnail_height)
-
-    renpy.game.interface.take_screenshot(scale, background=background)
-
-
-def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu", save=False):
-    """
-    :doc: other
-    :args: (transition=False, *, save=False)
-
-    Causes Ren'Py to restart, returning the user to the main menu.
-
-    `transition`
-        If given, the transition to run, or None to not run a transition.
-        False uses :var:`config.end_game_transition`.
-
-    `save`
-        If true, the game is saved in :var:`_quit_slot` before Ren'Py
-        restarts and returns the user to the main menu.
-    """
-
-    if save and (renpy.store._quit_slot is not None):
-        renpy.loadsave.save(renpy.store._quit_slot, getattr(renpy.store, "save_name", ""))
-
-    if transition is False:
-        transition = renpy.config.end_game_transition
-
-    raise renpy.game.FullRestartException((transition, label, target)) # type: ignore
-
-
-def utter_restart(keep_renderer=False):
-    """
-    :undocumented: Used in the implementation of shift+R.
-
-    Causes an utter restart of Ren'Py. This reloads the script and
-    re-runs initialization.
-    """
-
-    renpy.session["_keep_renderer"] = keep_renderer
-
-    raise renpy.game.UtterRestartException()
-
-def reload_script():
-    """
-    :doc: reload
-
-    Causes Ren'Py to save the game, reload the script, and then load the
-    save.
-
-    This should only be called during development. It works on Windows, macOS,
-    and Linux, but may not work on other platforms.
-    """
-
-    # Avoid reloading in a replay.
-    if renpy.store._in_replay:
-        return
-
-    s = get_screen("menu")
-
-    session = renpy.session
-    session["_reload"] = True
-
-    # If one of these variables is already in session, we're recovering from
-    # a failed reload.
-    if ("_reload_screen" in session) or ("_main_menu_screen" in session):
-        utter_restart()
-
-    if not renpy.store.main_menu:
-
-        if s is not None:
-            session["_reload_screen"] = s.screen_name[0]
-            session["_reload_screen_args"] = s.scope.get("_args", ())
-            session["_reload_screen_kwargs"] = s.scope.get("_kwargs", { })
-
-        renpy.game.call_in_new_context("_save_reload_game")
-
-    else:
-
-        if s is not None:
-            session["_main_menu_screen"] = s.screen_name[0]
-            session["_main_menu_screen_args"] = s.scope.get("_args", ())
-            session["_main_menu_screen_kwargs"] = s.scope.get("_kwargs", { })
-
-        utter_restart()
-
-
-def quit(relaunch=False, status=0, save=False): # @ReservedAssignment
-    """
-    :doc: other
-
-    This causes Ren'Py to exit entirely.
-
-    `relaunch`
-        If true, Ren'Py will run a second copy of itself before quitting.
-
-    `status`
-        The status code Ren'Py will return to the operating system.
-        Generally, 0 is success, and positive integers are failure.
-
-    `save`
-        If true, the game is saved in :var:`_quit_slot` before Ren'Py
-        terminates.
-    """
-
-    if save and (renpy.store._quit_slot is not None):
-        renpy.loadsave.save(renpy.store._quit_slot, getattr(renpy.store, "save_name", ""))
-
-    if has_label("quit"):
-        call_in_new_context("quit")
-
-    raise renpy.game.QuitException(relaunch=relaunch, status=status)
-
-
-def jump(label):
-    """
-    :doc: se_jump
-
-    Causes the current statement to end, and control to jump to the given
-    label.
-    """
-
-    raise renpy.game.JumpException(label)
-
-
-def jump_out_of_context(label):
-    """
-    :doc: context
-
-    Causes control to leave the current context, and then to be
-    transferred in the parent context to the given label.
-    """
-
-    raise renpy.game.JumpOutException(label)
-
-
-def call(label, *args, **kwargs):
-    """
-    :doc: se_call
-    :args: (label, *args, from_current=False, **kwargs)
-
-    Causes the current Ren'Py statement to terminate, and a jump to a
-    `label` to occur. When the jump returns, control will be passed
-    to the statement following the current statement.
-
-    The label must be either of the form "global_name" or "global_name.local_name".
-    The form ".local_name" is not allowed.
-
-    `from_current`
-        If true, control will return to the current statement, rather than
-        the statement following the current statement. (This will lead to
-        the current statement being run twice. This must be passed as a
-        keyword argument.)
-    """
-
-    from_current = kwargs.pop("from_current", False)
-    raise renpy.game.CallException(label, args, kwargs, from_current=from_current)
-
-
-def return_statement(value=None):
-    """
-    :doc: se_call
-
-    Causes Ren'Py to return from the current Ren'Py-level call.
-    """
-
-    renpy.store._return = value
-    jump("_renpy_return")
-
-
-def warp_to_line(warp_spec):
-    """
-    :doc: debug
-
-    This takes as an argument a filename:linenumber pair, and tries to warp to
-    the statement before that line number.
-
-    This works samely as the `--warp` command.
-    """
-
-    renpy.warp.warp_spec = warp_spec
-    full_restart()
-
-
-def screenshot(filename):
-    """
-    :doc: screenshot
-
-    Saves a screenshot in `filename`.
-
-    Returns True if the screenshot was saved successfully, False if saving
-    failed for some reason.
-
-    The :var:`config.screenshot_pattern` and :var:`_screenshot_pattern`
-    variables control the file the screenshot is saved in.
-    """
-
-    return renpy.game.interface.save_screenshot(filename)
-
-
-def screenshot_to_bytes(size):
-    """
-    :doc: screenshot
-
-    Returns a screenshot as a bytes object, that can be passed to im.Data().
-    The bytes will be a png-format image, such that::
-
-        $ data = renpy.screenshot_to_bytes((640, 360))
-        show expression im.Data(data, "screenshot.png"):
-            align (0, 0)
-
-    Will show the image. The bytes objects returned can be stored in save
-    files and persistent data. However, these may be large, and care should
-    be taken to not include too many.
-
-    `size`
-        The size the screenshot will be resized to. If None, the screenshot
-        will be resized, and hence will be the size of the player's window,
-        without any letterbars.
-
-    This function may be slow, and so it's intended for save-like screenshots,
-    and not realtime effects.
-    """
-
-    return renpy.game.interface.screenshot_to_bytes(size)
 
 
 @renpy_pure
@@ -708,51 +305,6 @@ except Exception:
     else:
         platform = "Unknown"
 
-
-def transition(trans, layer=None, always=False, force=False):
-    """
-    :doc: other
-    :args: (trans, layer=None, always=False)
-
-    Sets the transition that will be used during the next interaction.
-
-    `layer`
-        The layer the transition applies to. If None, the transition
-        applies to the entire scene.
-
-    `always`
-        If false, this respects the transition preference. If true, the
-        transition is always run.
-    """
-
-    if isinstance(trans, dict):
-        for ly, t in trans.items():
-            transition(t, layer=ly, always=always, force=force)
-        return
-
-    if (not always) and not renpy.game.preferences.transitions: # type: ignore
-        trans = None
-
-    if renpy.config.skipping:
-        trans = None
-
-    renpy.game.interface.set_transition(trans, layer, force=force)
-
-
-def get_transition(layer=None):
-    """
-    :doc: other
-
-    Gets the transition for `layer`, or the entire scene if
-    `layer` is None. This returns the transition that is queued up
-    to run during the next interaction, or None if no such
-    transition exists.
-
-    Use :func:`renpy.get_ongoing_transition` to get the transition that is
-    in progress.
-    """
-
-    return renpy.game.interface.transition.get(layer, None)
 
 
 def clear_game_runtime():
@@ -3268,21 +2820,6 @@ def can_fullscreen():
     """
 
     return renpy.display.can_fullscreen
-
-
-def get_ongoing_transition(layer=None):
-    """
-    :doc: other
-
-    Returns the transition that is currently ongoing.
-
-    `layer`
-        If None, the top-level transition is returned. Otherwise, this should be a string giving a layer name,
-        in which case the transition for that layer is returned.
-    """
-
-    return renpy.display.interface.get_ongoing_transition(layer)
-
 
 def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False):
     """
