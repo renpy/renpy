@@ -155,3 +155,79 @@ def get_reshow_say(**kwargs):
 
 def reshow_say(**kwargs):
     get_reshow_say()(**kwargs)
+
+
+def get_say_attributes():
+    """
+    :doc: other
+
+    Gets the attributes associated with the current say statement, or
+    None if no attributes are associated with this statement.
+
+    This is only valid when executing or predicting a say statement.
+    """
+
+    return renpy.game.context().say_attributes
+
+
+def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
+    """
+    :doc: side
+
+    This attempts to find an image to show as the side image.
+
+    It begins by determining a set of image attributes. If `image_tag` is
+    given, it gets the image attributes from the tag. Otherwise, it gets
+    them from the image property suplied to the currently showing character.
+    If no attributes are available, this returns None.
+
+    It then looks up an image with the tag `prefix_tag`, and attributes
+    consisting of:
+
+    * An image tag (either from `image_tag` or the image property supplied
+      to the currently showing character).
+    * The attributes.
+
+    If such an image exists, it's returned.
+
+    `not_showing`
+        If not showing is True, this only returns a side image if an image
+        with the tag that the attributes are taken from is not currently
+        being shown. If False, it will always return an image, if possible.
+        If None, takes the value from :var:`config.side_image_only_not_showing`.
+
+    `layer`
+        If given, the layer to look for the image tag and attributes on. If
+        None, uses the default layer for the tag.
+    """
+
+    if not_showing is None:
+        not_showing = renpy.config.side_image_only_not_showing
+
+    images = renpy.game.context().images
+
+    if image_tag is not None:
+        image_layer = default_layer(layer, image_tag)
+        attrs = (image_tag,) + images.get_attributes(image_layer, image_tag)
+
+        if renpy.config.side_image_requires_attributes and (len(attrs) < 2):
+            return None
+
+    else:
+
+        # Character will compute the appropriate attributes, and stores it
+        # in _side_image_attributes.
+        attrs = renpy.store._side_image_attributes
+
+    if not attrs:
+        return None
+
+    attr_layer = renpy.exports.default_layer(layer, attrs)
+
+    if not_showing and images.showing(attr_layer, (attrs[0],)):
+        return None
+
+    required = [ attrs[0] ]
+    optional = list(attrs[1:])
+
+    return images.choose_image(prefix_tag, required, optional, None)

@@ -22,7 +22,10 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+import gc
+
 import renpy
+from renpy.exports.commonexports import renpy_pure
 
 scene_lists = renpy.display.scenelists.scene_lists
 
@@ -724,3 +727,324 @@ def force_full_redraw():
     # This had been used for the software renderer, but gl rendering redraws
     # the screen every frame, so it's removed.
     return
+
+
+def image_size(im):
+    """
+    :doc: file_rare
+
+    Given an image manipulator, loads it and returns a (``width``,
+    ``height``) tuple giving its size.
+
+    This reads the image in from disk and decompresses it, without
+    using the image cache. This can be slow.
+    """
+
+    # Index the archives, if we haven't already.
+    renpy.loader.index_archives()
+
+    im = renpy.easy.displayable(im)
+
+    if not isinstance(im, renpy.display.im.Image):
+        raise Exception("renpy.image_size expects it's argument to be an image.")
+
+    surf = im.load()
+    return surf.get_size()
+
+
+def get_at_list(name, layer=None):
+    """
+    :doc: se_images
+
+    Returns the list of transforms being applied to the image with tag `name`
+    on `layer`. Returns an empty list if no transforms are being applied, or
+    None if the image is not shown.
+
+    If `layer` is None, uses the default layer for the given tag.
+    """
+
+    if isinstance(name, basestring):
+        name = tuple(name.split())
+
+    tag = name[0]
+    layer = default_layer(layer, tag)
+
+    transforms = renpy.game.context().scene_lists.at_list[layer].get(tag, None)
+
+    if transforms is None:
+        return None
+
+    return list(transforms)
+
+
+def show_layer_at(at_list, layer='master', reset=True, camera=False):
+    """
+    :doc: se_images
+    :name: renpy.show_layer_at
+
+    The Python equivalent of the ``show layer`` `layer` ``at`` `at_list`
+    statement. If `camera` is True, the equivalent of the ``camera`` statement.
+
+    `reset`
+        If true, the transform state is reset to the start when it is shown.
+        If false, the transform state is persisted, allowing the new transform
+        to update that state.
+    """
+
+    at_list = renpy.easy.to_list(at_list)
+
+    renpy.game.context().scene_lists.set_layer_at_list(layer, at_list, reset=reset, camera=camera)
+
+
+layer_at_list = show_layer_at
+
+
+def free_memory():
+    """
+    :doc: other
+
+    Attempts to free some memory. Useful before running a renpygame-based
+    minigame.
+    """
+
+    force_full_redraw()
+    renpy.display.interface.kill_textures()
+    renpy.display.interface.kill_surfaces()
+    renpy.text.font.free_memory()
+
+    gc.collect(2)
+
+    if gc.garbage:
+        del gc.garbage[:]
+
+
+def flush_cache_file(fn):
+    """
+    :doc: image_func
+
+    This flushes all image cache entries that refer to the file `fn`.  This
+    may be called when an image file changes on disk to force Ren'Py to
+    use the new version.
+    """
+
+    renpy.display.im.cache.flush_file(fn)
+
+
+@renpy_pure
+def easy_displayable(d, none=False):
+    """
+    :undocumented:
+    """
+
+    if none:
+        return renpy.easy.displayable(d)
+    else:
+        return renpy.easy.displayable_or_none(d)
+
+
+def quit_event():
+    """
+    :doc: other
+
+    Triggers a quit event, as if the player clicked the quit button in the
+    window chrome.
+    """
+
+    renpy.game.interface.quit_event()
+
+
+def iconify():
+    """
+    :doc: other
+
+    Iconifies the game.
+    """
+
+    renpy.game.interface.iconify()
+
+
+def timeout(seconds):
+    """
+    :doc: udd_utility
+
+    Causes an event to be generated before `seconds` seconds have elapsed.
+    This ensures that the event method of a user-defined displayable will be
+    called.
+    """
+
+    renpy.game.interface.timeout(seconds)
+
+
+def end_interaction(value):
+    """
+    :doc: udd_utility
+
+    If `value` is not None, immediately ends the current interaction, causing
+    the interaction to return `value`. If `value` is None, does nothing.
+
+    This can be called from inside the render and event methods of a
+    creator-defined displayable.
+    """
+
+    if value is None:
+        return
+
+    raise renpy.display.core.EndInteraction(value)
+
+
+def shown_window():
+    """
+    :doc: other
+
+    Call this to indicate that the window has been shown. This interacts
+    with the "window show" statement, which shows an empty window whenever
+    this functions has not been called during an interaction.
+    """
+
+    renpy.game.context().scene_lists.shown_window = True
+
+
+class placement(renpy.revertable.RevertableObject):
+
+    def __init__(self, p):
+        super(placement, self).__init__()
+
+        self.xpos = p[0]
+        self.ypos = p[1]
+        self.xanchor = p[2]
+        self.yanchor = p[3]
+        self.xoffset = p[4]
+        self.yoffset = p[5]
+        self.subpixel = p[6]
+
+    @property
+    def pos(self):
+        return self.xpos, self.ypos
+
+    @property
+    def anchor(self):
+        return self.xanchor, self.yanchor
+
+    @property
+    def offset(self):
+        return self.xoffset, self.yoffset
+
+
+def get_placement(d):
+    """
+    :doc: image_func
+
+    This gets the placement of displayable d. There's very little warranty on this
+    information, as it might change when the displayable is rendered, and might not
+    exist until the displayable is first rendered.
+
+    This returns an object with the following fields, each corresponding to a style
+    property:
+
+    * pos
+    * xpos
+    * ypos
+    * anchor
+    * xanchor
+    * yanchor
+    * offset
+    * xoffset
+    * yoffset
+    * subpixel
+    """
+    p = d.get_placement()
+
+    return placement(p)
+
+
+def get_image_bounds(tag, width=None, height=None, layer=None):
+    """
+    :doc: image_func
+
+    If an image with `tag` exists on `layer`, returns the bounding box of
+    that image. Returns None if the image is not found.
+
+    The bounding box is an (x, y, width, height) tuple. The components of
+    the tuples are expressed in pixels, and may be floating point numbers.
+
+    `width`, `height`
+        The width and height of the area that contains the image. If None,
+        defaults the width and height of the screen, respectively.
+
+    `layer`
+        If None, uses the default layer for `tag`.
+    """
+
+    tag = tag.split()[0]
+    layer = default_layer(layer, tag)
+
+    if width is None:
+        width = renpy.config.screen_width
+    if height is None:
+        height = renpy.config.screen_height
+
+    return scene_lists().get_image_bounds(layer, tag, width, height)
+
+# User-Defined Displayable stuff.
+
+
+Render = renpy.display.render.Render
+render = renpy.display.render.render
+IgnoreEvent = renpy.display.core.IgnoreEvent
+redraw = renpy.display.render.redraw
+
+def is_pixel_opaque(d, width, height, st, at, x, y):
+    """
+    :doc: udd_utility
+
+    Returns whether the pixel at (x, y) is opaque when this displayable
+    is rendered by ``renpy.render(d, width, height, st, at)``.
+    """
+
+    # Uses the caching features of renpy.render, as opposed to d.render.
+    return bool(render(renpy.easy.displayable(d), width, height, st, at).is_pixel_opaque(x, y))
+
+
+class Displayable(renpy.display.displayable.Displayable, renpy.revertable.RevertableObject):
+    pass
+
+
+class Container(renpy.display.layout.Container, renpy.revertable.RevertableObject):
+    _list_type = renpy.revertable.RevertableList
+
+
+def get_renderer_info():
+    """
+    :doc: other
+
+    Returns a dictionary, giving information about the renderer Ren'Py is
+    currently using. Defined keys are:
+
+    ``"renderer"``
+        A string giving the name of the renderer that is in use.
+
+    ``"resizable"``
+        True if and only if the window is resizable.
+
+    ``"additive"``
+        True if and only if the renderer supports additive blending.
+
+    ``"model"``
+        Present and true if model-based rendering is supported.
+
+    Other, renderer-specific, keys may also exist. The dictionary should
+    be treated as immutable. This should only be called once the display
+    has been started (that is, after the init phase has finished).
+    """
+
+    return renpy.display.draw.info
+
+
+def display_reset():
+    """
+    :undocumented: Used internally.
+
+    Causes the display to be restarted at the start of the next interaction.
+    """
+
+    renpy.display.interface.display_reset = True

@@ -112,3 +112,29 @@ def log(msg):
 
     except Exception:
         renpy.config.log = None
+
+
+# Error handling stuff.
+def _error(msg):
+    raise Exception(msg)
+
+_error_handlers = [ _error ]
+
+def push_error_handler(eh):
+    _error_handlers.append(eh)
+
+
+def pop_error_handler():
+    _error_handlers.pop()
+
+
+def error(msg):
+    """
+    :doc: lint
+
+    Reports `msg`, a string, as as error for the user. This is logged as a
+    parse or lint error when approprate, and otherwise it is raised as an
+    exception.
+    """
+
+    _error_handlers[-1](msg)

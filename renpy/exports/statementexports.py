@@ -300,3 +300,58 @@ def return_statement(value=None):
 
     renpy.store._return = value
     jump("_renpy_return")
+
+
+def call_screen(_screen_name, *args, **kwargs):
+    """
+    :doc: screens
+    :args: (_screen_name, *args, _with_none=True, _mode="screen", **kwargs)
+
+    The programmatic equivalent of the call screen statement.
+
+    This shows `_screen_name` as a screen, then causes an interaction
+    to occur. The screen is hidden at the end of the interaction, and
+    the result of the interaction is returned.
+
+    Positional arguments, and keyword arguments that do not begin with
+    _ are passed to the screen.
+
+    If `_with_none` is false, "with None" is not run at the end of end
+    of the interaction.
+
+    If `_mode` is passed, it will be the mode of this interaction,
+    otherwise the mode will be "screen".
+    """
+
+    mode = kwargs.pop("_mode", "screen")
+    renpy.exports.mode(mode)
+
+    with_none = kwargs.pop("_with_none", renpy.config.implicit_with_none)
+
+    renpy.exports.show_screen(_screen_name, *args, _transient=True, **kwargs)
+
+    roll_forward = renpy.exports.roll_forward_info()
+
+    # If roll
+    can_roll_forward = renpy.display.screen.get_screen_roll_forward(_screen_name)
+
+    if can_roll_forward is None:
+        can_roll_forward = renpy.config.call_screen_roll_forward
+
+    if not can_roll_forward:
+        roll_forward = None
+
+    try:
+        rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
+    except (renpy.game.JumpException, renpy.game.CallException) as e:
+        rv = e
+
+    renpy.exports.checkpoint(rv)
+
+    if with_none:
+        renpy.game.interface.do_with(None, None)
+
+    if isinstance(rv, (renpy.game.JumpException, renpy.game.CallException)):
+        raise rv
+
+    return rv

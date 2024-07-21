@@ -118,3 +118,29 @@ def notl_file(fn): # @ReservedAssignment
     Like file, but doesn't search the translation prefix.
     """
     return renpy.loader.load(fn, tl=False)
+
+
+@renpy_pure
+def list_files(common=False):
+    """
+    :doc: file
+
+    Lists the files in the game directory and archive files. Returns
+    a list of files, with / as the directory separator.
+
+    `common`
+        If true, files in the common directory are included in the
+        listing.
+    """
+
+    rv = [ ]
+
+    for _dir, fn in renpy.loader.listdirfiles(common):
+        if fn.startswith("saves/"):
+            continue
+
+        rv.append(fn)
+
+    rv.sort()
+
+    return rv

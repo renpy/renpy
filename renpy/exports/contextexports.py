@@ -23,6 +23,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import renpy
+from renpy.exports.commonexports import renpy_pure
 
 
 def context():
@@ -115,3 +116,154 @@ def context_dynamic(*variables):
     """
 
     renpy.game.context().make_dynamic(variables, context=True)
+
+
+
+
+# New context stuff.
+call_in_new_context = renpy.game.call_in_new_context
+curried_call_in_new_context = renpy.curry.curry(call_in_new_context)
+invoke_in_new_context = renpy.game.invoke_in_new_context
+curried_invoke_in_new_context = renpy.curry.curry(invoke_in_new_context)
+call_replay = renpy.game.call_replay
+
+renpy_pure("curried_call_in_new_context")
+renpy_pure("curried_invoke_in_new_context")
+
+
+def scry():
+    """
+    :doc: other
+
+    Returns the scry object for the current statement. Returns None if
+    there are no statements executing.
+
+    The scry object tells Ren'Py about things that must be true in the
+    future of the current statement. Right now, the scry object has the
+    following fields:
+
+    `nvl_clear`
+        Is true if an ``nvl clear`` statement will execute before the
+        next interaction.
+
+    `say`
+        Is true if an ``say`` statement will execute before the
+        next interaction.
+
+    `menu_with_caption`
+        Is true if a ``menu`` statement with a caption will execute
+        before the next interaction.
+
+    `who`
+        If a ``say`` or ``menu-with-caption`` statement will execute
+        before the next interaction, this is the character object it will use.
+
+    The scry object has a next() method, which returns the scry object of
+    the statement after the current one, if only one statement will execute
+    after the this one. Otherwise, it returns None.
+
+    .. warning::
+
+        Like other similar functions, the object this returns is meant to be used
+        in the short term after the function is called. Including it in save data
+        or making it participate in rollback is not advised.
+    """
+
+    name = renpy.game.context().current
+
+    if name is None:
+        return None
+
+    node = renpy.game.script.lookup(name)
+    return node.scry()
+
+
+def pop_call():
+    """
+    :doc: label
+    :name: renpy.pop_call
+
+    Pops the current call from the call stack, without returning to the
+    location. Also reverts the values of :func:`dynamic <renpy.dynamic>`
+    variables, the same way the Ren'Py return statement would.
+
+    This can be used if a label that is called decides not to return
+    to its caller.
+    """
+
+    renpy.game.context().pop_call()
+
+
+pop_return = pop_call
+
+
+def call_stack_depth():
+    """
+    :doc: label
+
+    Returns the depth of the call stack of the current context - the number
+    of calls that have run without being returned from or popped from the
+    call stack.
+    """
+
+    return len(renpy.game.context().return_stack)
+
+
+def game_menu(screen=None):
+    """
+    :undocumented: Probably not what we want in the presence of
+    screens.
+    """
+
+    if screen is None:
+        call_in_new_context("_game_menu")
+    else:
+        call_in_new_context("_game_menu", _game_menu_screen=screen)
+
+
+def mode(mode):
+    """
+    :undocumented:
+
+    Causes Ren'Py to enter the named mode, or stay in that mode if it's
+    already in it.
+    """
+
+    ctx = renpy.game.context()
+
+    if not ctx.use_modes:
+        return
+
+    modes = ctx.modes
+
+    try:
+        ctx.use_modes = False
+
+        if mode != modes[0]:
+            for c in renpy.config.mode_callbacks:
+                c(mode, modes)
+
+    finally:
+        ctx.use_modes = True
+
+    if mode in modes:
+        modes.remove(mode)
+
+    modes.insert(0, mode)
+
+
+def get_mode():
+    """
+    :doc: modes
+
+    Returns the current mode, or None if it is not defined.
+    """
+
+    ctx = renpy.game.context()
+
+    if not ctx.use_modes:
+        return None
+
+    modes = ctx.modes
+
+    return modes[0]
