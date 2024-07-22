@@ -231,7 +231,7 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
     This may be called from inside or outside of an interaction.
 
     * Outside of an interation, while waiting for `timeout` to pass, this will
-      repeatedly call :func:`renpy.pause`\ (0),  so Ren'Py doesn't lock up. It
+      repeatedly call :func:`renpy.pause`, so Ren'Py doesn't lock up. It
       may make sense to display a screen to the user to let them know what is going on.
 
     * Inside of an interaction (for example, inside an Action), this will block

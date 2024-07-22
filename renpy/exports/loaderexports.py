@@ -22,6 +22,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+import sys
+
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
@@ -144,3 +146,61 @@ def list_files(common=False):
     rv.sort()
 
     return rv
+
+
+@renpy_pure
+def fsencode(s, force=False): # type: (str, bool) -> str
+    """
+    :doc: file_rare
+    :name: renpy.fsencode
+
+    Converts s from unicode to the filesystem encoding.
+    """
+
+    if (not PY2) and (not force):
+        return s
+
+    if not isinstance(s, str):
+        return s
+
+    fsencoding = sys.getfilesystemencoding() or "utf-8"
+    return s.encode(fsencoding) # type: ignore
+
+
+@renpy_pure
+def fsdecode(s): # type: (bytes|str) -> str
+    """
+    :doc: file_rare
+    :name: renpy.fsdecode
+
+    Converts s from filesystem encoding to unicode.
+    """
+
+    if isinstance(s, str):
+        return s
+
+    fsencoding = sys.getfilesystemencoding() or "utf-8"
+    return s.decode(fsencoding) # type: ignore
+
+
+def munge(name, filename=None):
+    """
+    :doc: other
+
+    Munges `name`, which must begin with __.
+
+    `filename`
+        The filename the name is munged into. If None, the name is munged
+        into the filename containing the call to this function.
+    """
+
+    if not name.startswith("__"):
+        return name
+
+    if name.endswith("__"):
+        return name
+
+    if filename is None:
+        filename = sys._getframe(1).f_code.co_filename
+
+    return renpy.lexer.munge_filename(filename) + name[2:]

@@ -23,8 +23,12 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import gc
+import os
+import time
 
 import renpy
+import pygame_sdl2
+
 from renpy.exports.commonexports import renpy_pure
 
 scene_lists = renpy.display.scenelists.scene_lists
@@ -1048,3 +1052,455 @@ def display_reset():
     """
 
     renpy.display.interface.display_reset = True
+
+
+def get_physical_size():
+    """
+    :doc: other
+
+    Returns the size of the physical window.
+    """
+
+    return renpy.display.draw.get_physical_size()
+
+
+def set_physical_size(size):
+    """
+    :doc: other
+
+    Attempts to set the size of the physical window to `size`. This has the
+    side effect of taking the screen out of fullscreen mode.
+    """
+
+    width = int(size[0])
+    height = int(size[1])
+
+    renpy.game.preferences.fullscreen = False # type: ignore
+
+    if get_renderer_info()["resizable"]:
+
+        renpy.game.preferences.physical_size = (width, height) # type: ignore
+
+        if renpy.display.draw is not None:
+            renpy.display.draw.resize()
+
+
+def reset_physical_size():
+    """
+    :doc: other
+
+    Attempts to set the size of the physical window to the size specified
+    using :var:`renpy.config.physical_height` and :var:`renpy.config.physical_width`,
+    or the size set using :var:`renpy.config.screen_width` and :var:`renpy.config.screen_height`
+    if not set.
+    """
+
+    set_physical_size((renpy.config.physical_width or renpy.config.screen_width, renpy.config.physical_height or renpy.config.screen_height))
+
+
+def get_image_load_log(age=None):
+    """
+    :doc: other
+
+    A generator that yields a log of image loading activity. For the last 100
+    image loads, this returns:
+
+    * The time the image was loaded (in seconds since the epoch).
+    * The filename of the image that was loaded.
+    * A boolean that is true if the image was preloaded, and false if the
+      game stalled to load it.
+
+    The entries are ordered from newest to oldest.
+
+    `age`
+        If not None, only images that have been loaded in the past `age`
+        seconds are included.
+
+    The image load log is only kept if config.developer = True.
+    """
+
+    if age is not None:
+        deadline = time.time() - age
+    else:
+        deadline = 0
+
+    for i in renpy.display.im.cache.load_log:
+        if i[0] < deadline:
+            break
+
+        yield i
+
+
+def get_mouse_pos():
+    """
+    :doc: other
+
+    Returns an (x, y) tuple giving the location of the mouse pointer or the
+    current touch location. If the device does not support a mouse and is not
+    currently being touched, x and y are numbers, but not meaningful.
+    """
+    return renpy.display.draw.get_mouse_pos()
+
+
+def set_mouse_pos(x, y, duration=0):
+    """
+    :doc: other
+
+    Jump the mouse pointer to the location given by arguments x and y.
+    If the device does not have a mouse pointer, this does nothing.
+
+    `duration`
+        The time it will take to perform the move, in seconds.
+        During this time, the mouse may be unresponsive.
+    """
+
+    renpy.display.interface.set_mouse_pos(x, y, duration)
+
+
+def cancel_gesture():
+    """
+    :doc: gesture
+
+    Cancels the current gesture, preventing the gesture from being recognized.
+    This should be called by displayables that have gesture-like behavior.
+    """
+
+    renpy.display.gesture.recognizer.cancel() # @UndefinedVariable
+
+
+def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
+    """
+    :doc: image_func
+
+    Adds a new layer to the screen. If the layer already exists, this
+    function does nothing.
+
+    One of `behind` or `above` must be given.
+
+    `layer`
+        A string giving the name of the new layer to add.
+
+    `above`
+        If not None, a string giving the name of a layer the new layer will
+        be placed above.
+
+    `below`
+        If not None, a string giving the name of a layer the new layer will
+        be placed below.
+
+    `menu_clear`
+        If true, this layer will be cleared when entering the game menu
+        context, and restored when leaving it.
+
+    `sticky`
+        If true, any tags added to this layer will have it become their
+        default layer until they are hidden. If None, this layer will be
+        sticky only if other sticky layers already exist.
+    """
+
+    layers = renpy.config.layers
+
+    if layer in renpy.config.layers:
+        return
+
+    if (above is not None) and (below is not None):
+        raise Exception("The above and below arguments to renpy.add_layer are mutually exclusive.")
+
+    elif above is not None:
+        try:
+            index = layers.index(above) + 1
+        except ValueError:
+            raise Exception("Layer '%s' does not exist." % above)
+
+    elif below is not None:
+        try:
+            index = layers.index(below)
+        except ValueError:
+            raise Exception("Layer '%s' does not exist." % below)
+
+    else:
+        raise Exception("The renpy.add_layer function requires either the above or below argument.")
+
+    layers.insert(index, layer)
+
+    if menu_clear:
+        renpy.config.menu_clear_layers.append(layer) # type: ignore # Set in 00gamemenu.rpy.
+
+    if sticky or sticky is None and renpy.config.sticky_layers:
+        renpy.config.sticky_layers.append(layer)
+
+
+def maximum_framerate(t):
+    """
+    :doc: other
+
+    Forces Ren'Py to draw the screen at the maximum framerate for `t` seconds.
+    If `t` is None, cancels the maximum framerate request.
+    """
+
+    if renpy.display.interface is not None:
+        renpy.display.interface.maximum_framerate(t)
+    else:
+        if t is None:
+            renpy.display.core.initial_maximum_framerate = 0
+        else:
+            renpy.display.core.initial_maximum_framerate = max(renpy.display.core.initial_maximum_framerate, t)
+
+
+def is_start_interact():
+    """
+    :doc: other
+
+    Returns true if restart_interaction has not been called during the current
+    interaction. This can be used to determine if the interaction is just being
+    started, or has been restarted.
+    """
+
+    return renpy.display.interface.start_interact
+
+
+def get_refresh_rate(precision=5):
+    """
+    :doc: other
+
+    Returns the refresh rate of the current screen, as a floating-point
+    number of frames per second.
+
+    `precision`
+        The raw data Ren'Py gets is the number of frames per second rounded down
+        to the nearest integer. This means that a monitor that runs at 59.95
+        frames per second will be reported at 59 fps. The precision argument
+        then further reduces the precision of this reading, such that the only valid
+        readings are multiples of the precision.
+
+        Since all monitor framerates tend to be multiples of 5 (25, 30, 60,
+        75, and 120), this likely will improve accuracy. Setting precision
+        to 1 disables this.
+    """
+
+    if PY2:
+        precision = float(precision)
+
+    info = renpy.display.get_info()
+    rv = info.refresh_rate # type: ignore
+    rv = round(rv / precision) * precision
+
+    return rv
+
+
+def get_adjustment(bar_value):
+    """
+    :doc: screens
+
+    Given `bar_value`, a :class:`BarValue`, returns the :func:`ui.adjustment`
+    it uses. The adjustment has the following attributes defined:
+
+    .. attribute:: value
+
+        The current value of the bar.
+
+    .. attribute:: range
+
+        The current range of the bar.
+    """
+
+    return bar_value.get_adjustment()
+
+
+def get_texture_size():
+    """
+    :undocumented:
+
+    Returns the number of bytes of memory locked up in OpenGL textures and the
+    number of textures that are defined.
+    """
+
+    return renpy.display.draw.get_texture_size()
+
+
+def get_zorder_list(layer):
+    """
+    :doc: image_func
+
+    Returns a list of (tag, zorder) pairs for `layer`.
+    """
+
+    return scene_lists().get_zorder_list(layer)
+
+
+def change_zorder(layer, tag, zorder):
+    """
+    :doc: image_func
+
+    Changes the zorder of `tag` on `layer` to `zorder`.
+    """
+
+    return scene_lists().change_zorder(layer, tag, zorder)
+
+
+def is_mouse_visible():
+    """
+    :doc: other
+
+    Returns True if the mouse cursor is visible, False otherwise.
+    """
+
+    if not renpy.display.interface:
+        return True
+
+    if not renpy.display.interface.mouse_focused:
+        return False
+
+    return renpy.display.interface.is_mouse_visible()
+
+
+def get_mouse_name(interaction=False):
+    """
+    :doc: other
+
+    Returns the name of the mouse that should be shown.
+
+
+    `interaction`
+        If true, get a mouse name that is based on the type of interaction
+        occuring. (This is rarely useful.)
+    """
+
+    if not renpy.display.interface:
+        return 'default'
+
+    return renpy.display.interface.get_mouse_name(interaction=interaction)
+
+
+def set_focus(screen, id, layer="screens"): # @ReservedAssignment
+    """
+    :doc: screens
+
+    This attempts to focus the displayable with `id` in the screen `screen`.
+    Focusing will fail if the displayable isn't found, the window isn't
+    focused, or something else is grabbing focus.
+
+    The focus may change if the mouse moves, even slightly, after this call
+    is processed.
+    """
+
+    renpy.display.focus.override = (screen, id, layer)
+    renpy.display.interface.last_event = None
+    restart_interaction()
+
+
+def clear_retain(layer="screens", prefix="_retain"):
+    """
+    :doc: other
+
+    Clears all retained screens
+    """
+
+    for i in get_showing_tags(layer):
+        if i.startswith(prefix):
+            renpy.exports.hide_screen(i)
+
+
+def can_fullscreen():
+    """
+    :doc: other
+
+    Returns True if the current platform supports fullscreen mode, False
+    otherwise.
+    """
+
+    return renpy.display.can_fullscreen
+
+
+def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False):
+    """
+    :doc: screenshot
+
+    This takes a displayable or Render, and returns a pygame_sdl2 surface. The render is performed by
+    Ren'Py's display system, such that if the window is upscaled the render will be upscaled as well.
+
+    `d`
+        The displayable or Render to render. If a Render, `width`, `height`, `st`, and `at` are ignored.
+
+    `width`
+        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+
+    `height`
+        The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
+
+    `st`
+        The time of the render, in the shown timebase.
+
+    `at`
+        The time of the rendem in the animation timebase. If None, `st` is used.
+
+    `resize`
+        If True, the surface will be resized to the virtual size of the displayable or render. This
+        may lower the quality of the result.
+
+    This function may only be called after the Ren'Py display system has started, so it can't be
+    called during the init phase or before the first interaction.
+    """
+
+    if width is None:
+        width = renpy.config.screen_width
+
+    if height is None:
+        height = renpy.config.screen_height
+
+    if at is None:
+        at = st
+
+
+    if not isinstance(d, Render):
+        d = renpy.easy.displayable(d)
+        d = renpy.display.render.render(d, width, height, st, at)
+
+    rv = renpy.display.draw.screenshot(d)
+
+    if resize:
+        return renpy.display.scale.smoothscale(rv, (d.width, d.height))
+    else:
+        return rv
+
+
+def render_to_file(d, filename, width=None, height=None, st=0.0, at=None, resize=False):
+    """
+    :doc: screenshot
+
+    Renders a displayable or Render, and saves the result of that render to a file. The render is performed by
+    Ren'Py's display system, such that if the window is upscaled the render will be upscaled as well.
+
+    `d`
+        The displayable or Render to render. If a Render, `width`, `height`, `st`, and `at` are ignored.
+
+    `filename`
+        A string, giving the name of the file to save the render to. This is interpreted as relative
+        to the base directory. This must end with .png.
+
+    `width`
+        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+
+    `height`
+        The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
+
+    `st`
+        The time of the render, in the shown timebase.
+
+    `at`
+        The time of the rendem in the animation timebase. If None, `st` is used.
+
+    `resize`
+        If True, the image will be resized to the virtual size of the displayable or render. This
+        may lower the quality of the result.
+
+    This function may only be called after the Ren'Py display system has started, so it can't be
+    called during the init phase or before the first interaction.
+
+    Ren'Py not rescan files while the game is running, so this shouldn't be used to sythesize
+    assets that are used as part of the game.
+    """
+
+    filename = os.path.join(renpy.config.basedir, filename)
+    surface = render_to_surface(d, width, height, st, at, resize)
+    pygame_sdl2.image.save(surface, filename)

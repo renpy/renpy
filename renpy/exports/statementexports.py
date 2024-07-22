@@ -355,3 +355,21 @@ def call_screen(_screen_name, *args, **kwargs):
         raise rv
 
     return rv
+
+
+def execute_default_statement(start=False):
+    """
+    :undocumented:
+
+    Executes the default statement.
+
+    `start`
+        This is true at the start of the game, and false at other
+        times.
+    """
+
+    for i in renpy.ast.default_statements:
+        i.execute_default(start)
+
+    for i in renpy.config.after_default_callbacks:
+        i()

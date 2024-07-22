@@ -207,7 +207,7 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
     images = renpy.game.context().images
 
     if image_tag is not None:
-        image_layer = default_layer(layer, image_tag)
+        image_layer = renpy.exports.default_layer(layer, image_tag)
         attrs = (image_tag,) + images.get_attributes(image_layer, image_tag)
 
         if renpy.config.side_image_requires_attributes and (len(attrs) < 2):
@@ -231,3 +231,128 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
     optional = list(attrs[1:])
 
     return images.choose_image(prefix_tag, required, optional, None)
+
+
+def count_dialogue_blocks():
+    """
+    :doc: other
+
+    Returns the number of dialogue blocks in the game's original language.
+    """
+
+    return renpy.game.script.translator.count_translates()
+
+
+def count_seen_dialogue_blocks():
+    """
+    :doc: other
+
+    Returns the number of dialogue blocks the user has seen in any play-through
+    of the current game.
+    """
+
+    return renpy.game.seen_translates_count
+
+
+def count_newly_seen_dialogue_blocks():
+    """
+    :doc: other
+
+    Returns the number of dialogue blocks the user has seen for the first time
+    during this session.
+    """
+
+    return renpy.game.new_translates_count
+
+
+def substitute(s, scope=None, translate=True):
+    """
+    :doc: text_utility
+
+    Applies translation and new-style formatting to the string `s`.
+
+    `scope`
+        If not None, a scope which is used in formatting, in addition to the
+        default store.
+
+    `translate`
+        Determines if translation occurs.
+
+    Returns the translated and formatted string.
+    """
+
+    return renpy.substitutions.substitute(s, scope=scope, translate=translate)[0]
+
+
+
+def get_say_image_tag():
+    """
+    :doc: image_func
+
+    Returns the tag corresponding to the currently speaking character (the
+    `image` argument given to that character). Returns None if no character
+    is speaking or the current speaking character does not have a corresponding
+    image tag.
+    """
+
+    if renpy.store._side_image_attributes is None:
+        return None
+
+    return renpy.store._side_image_attributes[0]
+
+
+class LastSay():
+    """
+    :undocumented:
+    Object containing info about the last dialogue line.
+    Returned by the last_say function.
+    """
+
+    def __init__(self, who, what, args, kwargs):
+        self._who = who
+        self.what = what
+        self.args = args
+        self.kwargs = kwargs
+
+    @property
+    def who(self):
+        return renpy.exports.eval_who(self._who)
+
+
+def last_say():
+    """
+    :doc: other
+
+    Returns an object containing information about the last say statement.
+
+    While this can be called during a say statement, if the say statement is using
+    a normal Character, the information will be about the *current* say statement,
+    instead of the preceding one.
+
+    `who`
+        The speaker. This is usually a :func:`Character` object, but this
+        is not required.
+
+    `what`
+        A string with the dialogue spoken. This may be None if dialogue
+        hasn't been shown yet, for example at the start of the game.
+
+    `args`
+        A tuple of arguments passed to the last say statement.
+
+    `kwargs`
+        A dictionary of keyword arguments passed to the last say statement.
+
+    .. warning::
+
+        Like other similar functions, the object this returns is meant to be used
+        in the short term after the function is called. Including it in save data
+        or making it participate in rollback is not advised.
+    """
+
+    return LastSay(
+        who = renpy.store._last_say_who,
+        what = renpy.store._last_say_what,
+        args = renpy.store._last_say_args,
+        kwargs = renpy.store._last_say_kwargs,
+    )

@@ -138,3 +138,13 @@ def error(msg):
     """
 
     _error_handlers[-1](msg)
+
+
+def write_log(s, *args):
+    """
+    :undocumented:
+
+    Writes to log.txt.
+    """
+
+    renpy.display.log.write(s, *args)

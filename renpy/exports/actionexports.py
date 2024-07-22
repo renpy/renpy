@@ -25,7 +25,6 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import renpy
 
 
-
 def notify(message):
     """
     :doc: other
@@ -59,3 +58,22 @@ def display_notify(message):
     renpy.display.tts.notify_text = renpy.text.extras.filter_alt_text(message)
 
     renpy.exports.restart_interaction()
+
+
+def confirm(message):
+    """
+    :doc: other
+
+    This causes the a yes/no prompt screen with the given message
+    to be displayed, and dismissed when the player hits yes or no.
+
+    Returns True if the player hits yes, and False if the player hits no.
+
+    `message`
+        The message that will be displayed.
+
+    See :func:`Confirm` for a similar Action.
+    """
+    Return = renpy.store.Return
+    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False))
+    return renpy.ui.interact()

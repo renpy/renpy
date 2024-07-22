@@ -133,3 +133,25 @@ def quit(relaunch=False, status=0, save=False): # @ReservedAssignment
         renpy.exports.call_in_new_context("quit")
 
     raise renpy.game.QuitException(relaunch=relaunch, status=status)
+
+
+def set_autoreload(autoreload):
+    """
+    :doc: reload
+
+    Sets the autoreload flag, which determines if the game will be
+    automatically reloaded after file changes. Autoreload will not be
+    fully enabled until the game is reloaded with :func:`renpy.reload_script`.
+    """
+
+    renpy.autoreload = autoreload
+
+
+def get_autoreload():
+    """
+    :doc: reload
+
+    Gets the autoreload flag.
+    """
+
+    return renpy.autoreload

@@ -267,3 +267,122 @@ def get_mode():
     modes = ctx.modes
 
     return modes[0]
+
+
+def end_replay():
+    """
+    :doc: replay
+
+    If we're in a replay, ends the replay immediately. Otherwise, does
+    nothing.
+    """
+
+    if renpy.store._in_replay:
+        raise renpy.game.EndReplay()
+
+
+def get_return_stack():
+    """
+    :doc: label
+
+    Returns a list giving the current return stack. The return stack is a
+    list of statement names.
+
+    The statement names will be strings (for labels), or opaque tuples (for
+    non-label statements).
+    """
+
+    return renpy.game.context().get_return_stack()
+
+
+def set_return_stack(stack):
+    """
+    :doc: label
+
+    Sets the current return stack. The return stack is a list of statement
+    names.
+
+    Statement names may be strings (for labels) or opaque tuples (for
+    non-label statements).
+
+    The most common use of this is to use::
+
+        renpy.set_return_stack([])
+
+    to clear the return stack.
+    """
+
+    renpy.game.context().set_return_stack(stack)
+
+
+def get_line_log():
+    """
+    :undocumented:
+
+    Returns the list of lines that have been shown since the last time
+    :func:`renpy.clear_line_log` was called.
+    """
+
+    return renpy.game.context().line_log[:]
+
+
+def clear_line_log():
+    """
+    :undocumented:
+
+    Clears the line log.
+    """
+
+    renpy.game.context().line_log = [ ]
+
+
+def get_skipping():
+    """
+    :doc: other
+
+    Returns "slow" if the Ren'Py is skipping, "fast" if Ren'Py is fast skipping,
+    and None if it is not skipping.
+    """
+
+    return renpy.config.skipping
+
+
+def is_skipping():
+    """
+    :doc: other
+
+    Returns True if Ren'Py is currently skipping (in fast or slow skip mode),
+    or False otherwise.
+    """
+
+    return not not renpy.config.skipping
+
+
+def is_init_phase():
+    """
+    :doc: other
+
+    Returns True if Ren'Py is currently executing init code, or False otherwise.
+    """
+
+    return renpy.game.context().init_phase
+
+
+def add_to_all_stores(name, value):
+    """
+    :doc: other
+
+    Adds the `value` by the `name` to all creator defined namespaces. If the name
+    already exist in that namespace - do nothing for it.
+
+    This function may only be run from inside an init block. It is an
+    error to run this function once the game has started.
+    """
+
+    if not is_init_phase():
+        raise Exception("add_to_all_stores is only allowed in init code.")
+
+    for _k, ns in renpy.python.store_dicts.items():
+
+        if name not in ns:
+            ns[name] = value

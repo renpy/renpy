@@ -106,3 +106,21 @@ def music_stop(fadeout=None):
     """
 
     renpy.audio.music.stop(fadeout=fadeout)
+
+
+def play(filename, channel=None, **kwargs):
+    """
+    :doc: audio
+
+    Plays a sound effect. If `channel` is None, it defaults to
+    :var:`config.play_channel`. This is used to play sounds defined in
+    styles, :propref:`hover_sound` and :propref:`activate_sound`.
+    """
+
+    if filename is None:
+        return
+
+    if channel is None:
+        channel = renpy.config.play_channel
+
+    renpy.audio.music.play(filename, channel=channel, loop=False, **kwargs)

@@ -143,3 +143,13 @@ def stop_predict_screen(name):
     new_predict = renpy.revertable.RevertableDict(renpy.store._predict_screen)
     new_predict.pop(name, None)
     renpy.store._predict_screen = new_predict
+
+
+def predicting():
+    """
+    :doc: other
+
+    Returns true if Ren'Py is currently in a predicting phase.
+    """
+
+    return renpy.display.predict.predicting

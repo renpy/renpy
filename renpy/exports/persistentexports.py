@@ -137,3 +137,27 @@ def mark_image_unseen(name):
 
     if name in renpy.game.persistent._seen_images: # type: ignore
         del renpy.game.persistent._seen_images[name] # type: ignore
+
+
+def save_persistent():
+    """
+    :doc: persistent
+
+    Saves the persistent data to disk.
+    """
+
+    renpy.persistent.update(True)
+
+
+def is_seen(ever=True):
+    """
+    :doc: other
+
+    Returns true if the current line has been seen by the player.
+
+    If `ever` is true, we check to see if the line has ever been seen by the
+    player. If false, we check if the line has been seen in the current
+    play-through.
+    """
+
+    return renpy.game.context().seen_current(ever)
