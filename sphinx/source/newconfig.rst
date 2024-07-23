@@ -1,3 +1,36 @@
+=======================
+Configuration Variables
+=======================
+
+Configuration variables control the behavior of Ren'Py's implementation,
+allowing Ren'Py itself to be customized in a myriad of ways. These range from
+the common (such as changing the screen size) to the obscure (adding new
+kinds of archive files).
+
+Ren'Py's implementation makes the assumption that, once the GUI system has
+initialized, configuration variables will not change. Changing configuration
+variables outside of ``init`` blocks can lead to undefined behavior.
+Configuration variables are not part of the save data.
+
+Most configuration variables are easily set using a ``define`` statement::
+
+    define config.rollback_enabled = False
+
+Dict and list variables can be populated using ``define`` or in an
+``init python`` block::
+
+    define config.preload_fonts += ["OrthodoxHerbertarian.ttf"]
+    define config.adjust_attributes["eileen"] = eileen_adjust_function
+
+    init python hide:
+        def inter_cbk():
+            # this is a terrible callback
+            renpy.notify("Interacting !")
+
+        config.interact_callbacks.append(inter_cbk)
+
+
+
 Project Info
 ------------
 
@@ -16,6 +49,10 @@ Auto-Forward Mode
 
 Callbacks
 ---------
+
+These take functions that are called when certain events occur. These are not the only
+callbacks - ones corresponding to more specific features are listed in the section on
+that feature.
 
 .. var:: config.after_default_callbacks
 .. var:: config.context_callback
@@ -269,6 +306,9 @@ Showing Images
 .. var:: config.keep_running_transform
 .. var:: config.transform_uses_child_position
 .. var:: config.predict_statements
+.. var:: config.show
+.. var:: config.hide
+.. var:: config.scene
 
 Skipping
 --------
@@ -360,22 +400,22 @@ Window Management
 .. var:: config.choice_empty_window
 
 Developer
-=========
+---------
 
 Compatibility
--------------
+^^^^^^^^^^^^^
 
 .. var:: config.label_overrides
 .. var:: config.script_version
 
 Development
------------
+^^^^^^^^^^^
 
 .. var:: config.developer
 .. var:: config.console
 
 Debugging
----------
+^^^^^^^^^
 
 .. var:: config.log
 .. var:: config.log_events
@@ -398,7 +438,7 @@ Debugging
 .. var:: config.profile_init
 
 Garbage Collection
-------------------
+^^^^^^^^^^^^^^^^^^
 
 .. var:: config.manage_gc
 .. var:: config.gc_thresholds
@@ -406,7 +446,7 @@ Garbage Collection
 .. var:: config.gc_print_unreachable
 
 Reload
-------
+^^^^^^
 
 .. var:: config.autoreload
 .. var:: config.reload_modules
