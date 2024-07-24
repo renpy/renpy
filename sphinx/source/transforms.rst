@@ -241,13 +241,254 @@ occurs when the transform is first executed (that is when using a ``show``
 statement, or displaying the transform as part of a screen), and not when the
 particular ATL statement is executed.
 
-The following are the ATL staatements.
+The following are the ATL statements.
+
+.. _displayable-atl-statement:
+
+Displayable Statement
+~~~~~~~~~~~~~~~~~~~~~
+
+The displayable statement consists of a simple Python expression evaluating to
+a :doc:`displayable <displayables>`, optionally followed by a with clause
+containing a second simple expression.
+
+.. productionlist:: atl
+    atl_displayable : `simple_expression` ("with" `simple_expression`)?
+
+It is used to set or replace the child of the transform when the statement
+executes, making it useful for animation.
+
+If a ``with`` clause is present, the second expression is evaluated as a
+:doc:`transition`, and the transition is applied between the old child and the
+new child. Be careful in that not all transitions will work in this situation,
+notably :ref:`dict-transitions` and move- and ease- transitions. ::
+
+    image atl example:
+        # Displays logo_base.png
+        "logo_base.png"
+
+        # Pause for 1.0 seconds.
+        1.0
+
+        # Show logo_bw.png, with a dissolve.
+        "logo_bw.png" with Dissolve(0.5, alpha=True)
+
+Be careful that if passing any child-less transform is pointless as it will make
+the transform transparent and ineffective, passing child-less ATL transforms
+may be interpreted as a :ref:`transform-expression-atl-statement`, which will
+yield different results.
+
+Number Statement
+~~~~~~~~~~~~~~~~
+
+The number statement consists of a simple expression evaluating to an integer or
+floating-point number. It can optionally be preceded by the keyword "pause".
+
+.. productionlist:: atl
+    atl_number : "pause"? `simple_expression`
+
+It is used as a number of seconds to pause execution for. ::
+
+    image atl example:
+        # Displays logo_base.png
+        "logo_base.png"
+
+        # Pause for 1.0 seconds.
+        pause 1.0
+
+        # Show logo_bw.png, with a dissolve.
+        "logo_bw.png" with Dissolve(0.5, alpha=True)
+
+Properties Statement
+~~~~~~~~~~~~~~~~~~~~
+
+This statement sets one or more transform properties to a new value.
+
+.. productionlist:: atl
+    atl_properties : `atl_property`+
+
+.. productionlist:: atl
+    atl_property : `transform_property` `simple_expression`
+
+The statement first gives a series (at least one) of property names, each
+followed by the new value to set it to. See :doc:`transform-properties` for a
+list of transform properties, their meaning and the values they take. ::
+
+    transform rightoid:
+        xalign .9
+
+    transform ariana.left:
+        xanchor .3 xpos 100
+
+Interpolation Statement
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The interpolation statement is the main way of getting smoothly animated
+transformations.
+
+.. productionlist:: atl
+    atl_interpolation : ((`warper` `simple_expression`) | ("warp" `simple_expression` `simple_expression`)) (`atl_interp_target`+ | (":"
+                      :    `atl_interp_target`+ ))
+
+.. productionlist:: atl
+    atl_interp_target : (`atl_property`+ ("knot" `simple_expression`)* )
+                      : | `atl_transform_expression`
+                      : | "clockwise"
+                      : | "counterclockwise"
+                      : | ("circles" `simple_expression`)
+
+The first part of the interpolation is used to select a function that time-warps
+the interpolation. That means, a function that maps linear time to non-linear
+time, see :ref:`warpers` for more information about that. Selecting a warper can
+either be done by giving the name of a registered warper, or by giving the
+keyword "warp" followed by an expression giving a warping function.
+
+In either case, it's followed by a number giving the number of seconds the interpolation should take. ::
+
+    transform builtin_warper:
+        xpos 0
+        ease 5 xpos 520
+
+    init python:
+        def my_warper(t):
+            return t**4.4
+
+    define my_warpers = [my_warper]
+
+    transform accessed_as_function:
+        xpos 0
+        warp my_warpers[0] 5 xpos 520
+        warp my_warper 3 xpos 100
+
+The interpolation will persist for the given amount of time, and at least one
+frame.
+
+When properties are given, the value each is given is the value it will be set
+to at the end of the interpolation statement. This can be tweaked in several
+ways:
+
+* If the value is followed by one or more knots, then spline motion is used. The
+  starting point is the value of the property at the start of the interpolation,
+  the end point is the given value, and the knots are used to control the
+  spline. A quadratic curve is used for a single knot, Bezier is used when there
+  are two and Catmull-Rom is used for three or more knots. In the former two
+  cases, the knot or knots are simply control nodes. For Catmull-Rom, the first
+  and last knot are control nodes (often outside the displayed path) and the
+  other knots are points the path passes through.
+
+* If the interpolation statement contains a "clockwise" or "counterclockwise"
+  clause, circular motion is used. In that case, Ren'Py will compare the start
+  and end locations (which are set by :tpref:`pos`, :tpref:`align`,
+  :tpref:`angle` and :tpref:`radius`, ...) and figure out the polar coordinate
+  center (which is :tpref:`around`). Ren'Py will then compute the number of
+  degrees it will take to go from the start angle to the end angle, in the
+  specified direction of rotation. If the circles clause is given, Ren'Py will
+  ensure that the appropriate number of circles will be made.
+
+* Otherwise, the value is linearly interpolated between the start and end
+  locations.
+
+It is also possible to interpolate a :ref:`transform-expression-atl-statement`,
+which should in this case be an ATL transform containing only a single
+properties statement. The properties from the transform will be processed as if
+they were written directly in this interpolation.
+
+A warper may be followed by a colon (:). In that case, it may be followed by one
+or more lines, in an indented block, containing the clauses described above.
+This lets you break an interpolation of many different things up into several
+lines.
+
+Some sample interpolations::
+
+    show logo base:
+        # Show the logo at the upper right side of the screen.
+        xalign 1.0 yalign 0.0
+
+        # Take 1.0 seconds to move things back to the left.
+        linear 1.0 xalign 0.0
+
+        # Take 1.0 seconds to move things to the location specified in the
+        # truecenter transform. Use the ease warper to do this.
+        ease 1.0 truecenter
+
+        # Set the location to circle around.
+        anchor (0.5, 0.5)
+
+        # Use circular motion to bring us to spiral out to the top of
+        # the screen. Take 2 seconds to do so.
+        linear 2.0 yalign 0.0 clockwise circles 3
+
+        # Use a spline motion to move us around the screen.
+        linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
+
+        # Changes xalign and yalign at the same time.
+        linear 2.0 xalign 1.0 yalign 1.0
+
+        # The same thing, using a block.
+        linear 2.0:
+            xalign 1.0
+            yalign 1.0
+
+Pass Statement
+--------------
+
+.. productionlist:: atl
+    atl_pass : "pass"
+
+The ``pass`` statement is a simple statement that causes nothing to happen : a
+no-op. This can be used when there's a desire to separate statements, like when
+two sets of choice statements (see below) would otherwise be back-to-back. It
+can also be useful when the syntax requires a block to be created but you need
+it to be empty, for example to make one of the choice blocks not do anything.
+
+Repeat Statement
+----------------
+
+The ``repeat`` statement is a simple statement that causes the block containing it
+to resume execution from the beginning.
+
+.. productionlist:: atl
+    atl_repeat : "repeat" (`simple_expression`)?
+
+If the expression is present, then it is evaluated to give an integer number of
+times the block will execute. (So a block ending with ``repeat 2`` will execute
+at most twice in total, and ``repeat 1`` does not repeat.)
+
+The repeat statement must be the last statement in a block::
+
+    show logo base:
+        xalign 0.0
+        linear 1.0 xalign 1.0
+        linear 1.0 xalign 0.0
+        repeat
+
+Block Statement
+---------------
+
+The ``block`` statement simply contains a block of ATL statements.
+
+.. productionlist:: atl
+    atl_block_stmt : "block" ":"
+                   :      `atl_block`
+
+This can be used to group statements that will repeat::
+
+    show logo base:
+        alpha 0.0 xalign 0.0 yalign 0.0
+        linear 1.0 alpha 1.0
+
+        block:
+            linear 1.0 xalign 1.0
+            linear 1.0 xalign 0.0
+            repeat
+
+
 
 
 TODO: include ATL statements here
 
 
-TODO: link to transform properties ?
+TODO: link to transform properties in the ATL statements
 
 
 External events
