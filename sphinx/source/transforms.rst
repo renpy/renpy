@@ -160,6 +160,9 @@ forbidden, though they may be allowed in the future:
 #. Variadic positional parameters (``*args``)
 #. Variadic keyword parameters (``**kwargs``)
 
+..
+    update the special child section with this section
+
 `qualname`, the name of the transform, must be a set of dot-separated Python
 identifiers. The transform created by the ATL block will be bound to that name,
 within the provided :ref:`store <named-stores>` if one was provided. ::
@@ -866,6 +869,9 @@ value, **regardless of the kind of parameter or the way it receives a value**
 (by a positional argument or by keyword, and even if the parameter is
 positional-only or keyword-only, and defaulted or required), then the value of
 the parameter is in parallel set to be the child of the transform.
+
+..
+    address the special case of **kwargs if and when allowed
 
 Note that the default value of the parameter doesn't count, the parameter has to
 receive a value from the outside.
