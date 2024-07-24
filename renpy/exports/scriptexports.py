@@ -26,8 +26,6 @@ import renpy
 from renpy.exports.commonexports import renpy_pure
 
 
-
-
 @renpy_pure
 def has_label(name):
     """

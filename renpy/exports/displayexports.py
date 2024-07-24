@@ -23,8 +23,8 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import gc
-import os
 import time
+import os
 
 import renpy
 import pygame_sdl2

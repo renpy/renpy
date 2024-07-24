@@ -24,7 +24,6 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy
 
-
 def notify(message):
     """
     :doc: other
