@@ -273,10 +273,12 @@ notably :ref:`dict-transitions` and move- and ease- transitions. ::
         # Show logo_bw.png, with a dissolve.
         "logo_bw.png" with Dissolve(0.5, alpha=True)
 
-Be careful that if passing any child-less transform is pointless as it will make
-the transform transparent and ineffective, passing child-less ATL transforms
-may be interpreted as a :ref:`transform-expression-atl-statement`, which will
-yield different results.
+.. warning::
+
+    If passing any child-less transform is pointless as it will make the
+    transform transparent and ineffective, passing child-less ATL transforms may
+    be interpreted as a :ref:`transform-expression-atl-statement`, which will
+    yield different results.
 
 Number Statement
 ~~~~~~~~~~~~~~~~
@@ -430,7 +432,7 @@ Some sample interpolations::
             yalign 1.0
 
 Pass Statement
---------------
+~~~~~~~~~~~~~~
 
 .. productionlist:: atl
     atl_pass : "pass"
@@ -442,7 +444,7 @@ can also be useful when the syntax requires a block to be created but you need
 it to be empty, for example to make one of the choice blocks not do anything.
 
 Repeat Statement
-----------------
+~~~~~~~~~~~~~~~~
 
 The ``repeat`` statement is a simple statement that causes the block containing
 it to resume execution from the beginning.
@@ -463,7 +465,7 @@ The repeat statement must be the last statement in a block::
         repeat
 
 Block Statement
----------------
+~~~~~~~~~~~~~~~
 
 The ``block`` statement simply contains a block of ATL statements.
 
@@ -483,7 +485,7 @@ This can be used to group statements that will repeat::
             repeat
 
 Parallel Statement
-------------------
+~~~~~~~~~~~~~~~~~~
 
 The ``parallel`` statement defines a set of ATL blocks to execute in parallel.
 
@@ -513,7 +515,7 @@ undefined. ::
             repeat
 
 Choice Statement
-----------------
+~~~~~~~~~~~~~~~~
 
 The ``choice`` statement defines one of a set of
 potential choices. Ren'Py will pick one of the choices in the set, and
@@ -544,7 +546,7 @@ The ``pass`` statement can be useful in order to break several sets of choice
 blocks into several choice statements, or to make an empty choice block.
 
 Animation Statement
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 The ``animation`` statement must be the first statement in an ATL block, and
 tells Ren'Py that the block uses the animation timebase.
@@ -583,7 +585,7 @@ Without the animation statement, the position would reset when the player
 clicks.
 
 On Statement
-------------
+~~~~~~~~~~~~
 
 The ``on`` statement defines an event handler.
 
@@ -616,6 +618,96 @@ See the event statement for a way to produce arbitrary events, and see
         on hover, idle:
             linear .25 zoom 1.25
             linear .25 zoom 1.0
+
+.. _transform-expression-atl-statement:
+
+Transform Expression Statement
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This statement includes another ATL transform as part of the current ATL block.
+
+.. productionlist:: atl
+    atl_transform_expression : `simple_expression`
+
+This only works if the ATL transform has **not** been supplied a child (see the
+top of the page for how to do that), otherwise it will be interpreted as a
+:ref:`displayable-atl-statement`. The contents of the provided ATL transform
+are included at the location of this statement. ::
+
+    transform move_right:
+        linear 1.0 xalign 1.0
+
+    image atl example:
+        # Display logo_base.png
+        "logo_base.png"
+
+        # Run the move_right transform.
+        move_right
+
+.. _inline-contains-atl-statement:
+
+Inline Contains Statement
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The inline contains statement sets or replaces the child of the current ATL
+transform.
+
+.. productionlist:: atl
+    atl_contains : "contains" `simple_expression`
+
+This is a more explicit and more stable version of the
+:ref:`displayable-atl-statement`. The result of the expression, whatever it may
+be, is set to be the child of the transform. This is useful when an ATL
+transform wishes to contain, rather than include, a second ATL transform, or to
+avoid the ambiguity between the displayable statement and the transform
+expression statement. ::
+
+    transform an_animation:
+        "1.png"
+        pause 2
+        "2.png"
+        pause 2
+        repeat
+
+    image move_an_animation:
+        contains an_animation
+
+        # If we didn't use contains, we'd still be looping and
+        # would never reach here.
+        xalign 0.0
+        linear 1.0 yalign 1.0
+
+Contains Block Statement
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The contains block, like its
+:ref:`inline counterpart <inline-contains-atl-statement>`, sets the child of the
+transform but in a different way.
+
+.. productionlist:: atl
+    atl_counts : "contains" ":"
+               :    `atl_block`
+
+One or more contains blocks will be greedily grouped together inside a single
+contains statement, wrapped inside a :func:`Fixed`, and set as the child of the
+transform.
+
+Each block should define a displayable to use, otherwise an error will occur.
+The contains statement executes instantaneously, without waiting for the
+children to complete. ::
+
+    image test double:
+        contains:
+            "logo.png"
+            xalign 0.0
+            linear 1.0 xalign 1.0
+            repeat
+
+        contains:
+            "logo.png"
+            xalign 1.0
+            linear 1.0 xalign 0.0
+            repeat
 
 
 
