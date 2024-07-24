@@ -853,9 +853,56 @@ The following events are triggered automatically within an ATL transform:
     Triggered when a button containing this transform, or a button contained by
     this transform, enters the named state.
 
+.. _atl-child-param:
 
-TODO: special ATL kw param (child)
+Special Child Parameter
+-----------------------
 
+If an ATL transform has a parameter named "child" and that parameter receives a
+value, **regardless of the kind of parameter or the way it receives a value**
+(by a positional argument or by keyword, and even if the parameter is
+positional-only or keyword-only, and defaulted or required), then the value of
+the parameter is in parallel set to be the child of the transform.
+
+Note that the default value of the parameter doesn't count, the parameter has to
+receive a value from the outside.
+
+Conversely, when that ATL transform is used as a transform, the ``child=``
+keyword argument will be passed, and so in addition to setting the child, if a
+parameter is there to receive it (excluding positional-only parameters, since it
+is passed by keyword), it will have the child's value when the transform
+executes.
+
+For example, this enables to swap between the supplied child and another
+displayable::
+
+    transform lucy_jump_scare(child):
+        # the child is implicitly set as the child of the transform
+        pause 5
+
+        # Jump scare
+        "lucy mad"
+        pause .2
+
+        # Go back to the original child
+        child
+
+It can also be used to place the original child inside a ``contains`` block::
+
+    transform marquee(width, height=1.0, duration=2.0, child=None):
+        xcenter 0.5
+        ycenter 0.5
+
+        crop (0, 0, 0.5, 500)
+
+        contains:
+            child
+            xanchor 0.0 xpos 1.0
+            linear duration xanchor 1.0 xpos 0.0
+
+The `old_widget` and `new_widget` keyword-able parameters (meaning that they
+should not be positional-only) have a special use as part of
+:ref:`atl-transitions`.
 
 
 .. _replacing-transforms:
