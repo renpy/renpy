@@ -30,7 +30,6 @@ Dict and list variables can be populated using ``define`` or in an
         config.interact_callbacks.append(inter_cbk)
 
 
-
 Project Info
 ------------
 
@@ -2276,4 +2275,3 @@ Reload
     A list of strings giving the names of python modules that should be
     reloaded along with the game. Any submodules of these modules
     will also be reloaded.
-
