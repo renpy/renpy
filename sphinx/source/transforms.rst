@@ -311,7 +311,7 @@ This statement sets one or more transform properties to a new value.
     atl_property : `transform_property` `simple_expression`
 
 The statement first gives a series (at least one) of property names, each
-followed by the new value to set it to. See :doc:`transform-properties` for a
+followed by the new value to set it to. See :ref:`transform-properties` for a
 list of transform properties, their meaning and the values they take. ::
 
     transform rightoid:
@@ -363,7 +363,7 @@ In either case, it's followed by a number giving the number of seconds the inter
 The interpolation will persist for the given amount of time, and at least one
 frame.
 
-When :doc:`transform-properties` are given, the value each is given is the value
+When :doc:`transform_properties` are given, the value each is given is the value
 it will be set to at the end of the interpolation statement. This can be tweaked
 in several ways:
 
@@ -497,7 +497,7 @@ blocks are then executed simultaneously. The parallel statement terminates when
 the last block terminates.
 
 The blocks within a set should be independent of each other, and manipulate
-different :doc:`transform-properties`. When two blocks change the same property,
+different :doc:`transform_properties`. When two blocks change the same property,
 the result is undefined. ::
 
     show logo base:
@@ -633,9 +633,10 @@ It is used to set or replace the child of the transform when the statement
 executes.
 
 If a ``with`` clause is present, the second expression is evaluated as a
-:doc:`transition`, and the transition is applied between the old child and the
-new child. Be careful in that not all transitions will work in this situation,
-notably :ref:`dict-transitions` and move- and ease- transitions. ::
+:doc:`transition <transitions>`, and the transition is applied between the old
+child and the new child. Be careful in that not all transitions will work in
+this situation, notably :ref:`dict-transitions` and move- and ease-
+transitions. ::
 
     image atl example:
         # Displays logo_base.png
@@ -724,7 +725,7 @@ The ``function`` statement allows ATL to use Python code.
 
 The functions have the same signature as those used with :func:`Transform`:
 
-* The first argument is a transform object. :doc:`transform-properties` can be
+* The first argument is a transform object. :doc:`transform_properties` can be
   set as attributes on this object.
 
 * The second argument is the shown timebase, the number of seconds since the
@@ -972,7 +973,7 @@ One equivalent to to the simplest ATL transforms is the Transform class.
 
     Creates a transform which applies operations such as cropping, rotation,
     scaling or alpha-blending to its child. A transform object has fields
-    corresponding to the :ref:`transform properties <transform-properties>`,
+    corresponding to the :doc:`transform properties <transform_properties>`,
     which it applies to its child.
 
     `child`
