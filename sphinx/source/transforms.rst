@@ -327,8 +327,8 @@ The interpolation statement is the main way of getting smoothly animated
 transformations.
 
 .. productionlist:: atl
-    atl_interpolation : ((`warper` `simple_expression`) | ("warp" `simple_expression` `simple_expression`)) (`atl_interp_target`+ | (":"
-                      :    `atl_interp_target`+ ))
+    atl_interp : ((`warper` `simple_expression`) | ("warp" `simple_expression` `simple_expression`)) (`atl_interp_target`+ | (":"
+               :    `atl_interp_target`+ ))
 
 .. productionlist:: atl
     atl_interp_target : (`atl_property`+ ("knot" `simple_expression`)* )
@@ -485,7 +485,7 @@ This can be used to group statements that will repeat::
 
 
 
-TODO: include ATL statements here
+TODO: include remaining ATL statements here
 
 
 TODO: link to transform properties in the ATL statements
