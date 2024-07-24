@@ -219,15 +219,6 @@ targeted at the layer being displayed.
         pause
 
 
-Applying Transforms to Displayables
------------------------------------
-
-The At function produces a displayable from a displayable and one or
-more :doc:`transforms <transforms>`.
-
-.. include:: inc/disp_at
-
-
 Layout Boxes and Grids
 ----------------------
 

@@ -27,13 +27,15 @@ Applying transforms to displayables in Python
 
 There are several ways to apply transform ``t`` to displayable ``d`` in Python:
 
-#. The most universal and most recommended way is ``At(d, t)``. It works with
-   all transforms. See :func:`At`.
+#. The most universal and most recommended way is ``At(d, t)`` (see below). It
+   works with all transforms.
 
 #. ``d(child=t)`` works with all :ref:`ATL transforms <atl>`.
 
 #. ``t(d)`` works with all :ref:`Python transforms <transforms-python>`, as well
    as with ATL transforms that don't have any positional parameters.
+
+.. include:: inc/disp_at
 
 
 Built-in Transforms
