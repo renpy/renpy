@@ -635,8 +635,8 @@ executes.
 If a ``with`` clause is present, the second expression is evaluated as a
 :doc:`transition <transitions>`, and the transition is applied between the old
 child and the new child. Be careful in that not all transitions will work in
-this situation, notably :ref:`dict-transitions` and move- and ease-
-transitions. ::
+this situation, notably :ref:`dict-transitions` and :var:`move- <move>` and
+:var:`ease- <ease>` transitions. ::
 
     image atl example:
         # Displays logo_base.png
