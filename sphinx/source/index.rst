@@ -55,8 +55,8 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    translation
    displayables
    transforms
+   transform_properties
    transitions
-   atl
    matrixcolor
    layeredimage
    3dstage
