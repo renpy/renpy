@@ -243,42 +243,40 @@ particular ATL statement is executed.
 
 The following are the ATL statements.
 
-.. _displayable-atl-statement:
+.. _inline-contains-atl-statement:
 
-Displayable Statement
-~~~~~~~~~~~~~~~~~~~~~
+Inline Contains Statement
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The displayable statement consists of a simple Python expression evaluating to
-a :doc:`displayable <displayables>`, optionally followed by a with clause
-containing a second simple expression.
+The inline contains statement takes a single expression evaluating to a
+:doc:`displayable <displayables>`.
 
 .. productionlist:: atl
-    atl_displayable : `simple_expression` ("with" `simple_expression`)?
+    atl_contains : "contains" `simple_expression`
 
-It is used to set or replace the child of the transform when the statement
-executes, making it useful for animation.
+This statement sets (or replaces) the child of the current ATL transform to the
+value of the expression, making it useful for animation. ::
 
-If a ``with`` clause is present, the second expression is evaluated as a
-:doc:`transition`, and the transition is applied between the old child and the
-new child. Be careful in that not all transitions will work in this situation,
-notably :ref:`dict-transitions` and move- and ease- transitions. ::
+    transform an_animation:
+        "1.png"
+        pause 2
+        "2.png"
+        pause 2
+        repeat
 
-    image atl example:
-        # Displays logo_base.png
-        "logo_base.png"
+    image move_an_animation:
+        contains an_animation
 
-        # Pause for 1.0 seconds.
-        1.0
+        # If we didn't use contains, we'd still be looping
+        # and would never reach here.
+        xalign 0.0
+        linear 1.0 yalign 1.0
 
-        # Show logo_bw.png, with a dissolve.
-        "logo_bw.png" with Dissolve(0.5, alpha=True)
-
-.. warning::
-
-    If passing any child-less transform is pointless as it will make the
-    transform transparent and ineffective, passing child-less ATL transforms may
-    be interpreted as a :ref:`transform-expression-atl-statement`, which will
-    yield different results.
+The :ref:`displayable-atl-statement` is less explicit and bears ambiguity with
+the transform expression statement, but it allows for a
+:doc:`transition <transitions>` to be used for replacing the child. This
+statement can be particularly useful when an ATL transform wishes to contain,
+rather than include, a second ATL transform.
 
 Number Statement
 ~~~~~~~~~~~~~~~~
@@ -619,6 +617,46 @@ See the event statement for a way to produce arbitrary events, and see
             linear .25 zoom 1.25
             linear .25 zoom 1.0
 
+.. _displayable-atl-statement:
+
+Displayable Statement
+~~~~~~~~~~~~~~~~~~~~~
+
+The displayable statement consists of a simple Python expression evaluating to
+a :doc:`displayable <displayables>`, optionally followed by a with clause
+containing a second simple expression.
+
+.. productionlist:: atl
+    atl_displayable : `simple_expression` ("with" `simple_expression`)?
+
+It is used to set or replace the child of the transform when the statement
+executes.
+
+If a ``with`` clause is present, the second expression is evaluated as a
+:doc:`transition`, and the transition is applied between the old child and the
+new child. Be careful in that not all transitions will work in this situation,
+notably :ref:`dict-transitions` and move- and ease- transitions. ::
+
+    image atl example:
+        # Displays logo_base.png
+        "logo_base.png"
+
+        # Pause for 1.0 seconds.
+        1.0
+
+        # Show logo_bw.png, with a dissolve.
+        "logo_bw.png" with Dissolve(0.5, alpha=True)
+
+.. warning::
+
+    If passing any child-less transform is pointless as it will make the
+    transform transparent and ineffective, passing child-less ATL transforms may
+    be interpreted as a :ref:`transform-expression-atl-statement`, which will
+    yield different results.
+
+If the expression evaluates to an ATL transform **with** a child, the execution
+of this ATL block will only continue after the includee's ATL code runs.
+
 .. _transform-expression-atl-statement:
 
 Transform Expression Statement
@@ -629,8 +667,8 @@ This statement includes another ATL transform as part of the current ATL block.
 .. productionlist:: atl
     atl_transform_expression : `simple_expression`
 
-This only works if the ATL transform has **not** been supplied a child (see the
-top of the page for how to do that), otherwise it will be interpreted as a
+This only applies if the ATL transform has **not** been supplied a child (see
+the top of the page for how to do that), otherwise it will be interpreted as a
 :ref:`displayable-atl-statement`. The contents of the provided ATL transform
 are included at the location of this statement. ::
 
@@ -643,39 +681,6 @@ are included at the location of this statement. ::
 
         # Run the move_right transform.
         move_right
-
-.. _inline-contains-atl-statement:
-
-Inline Contains Statement
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The inline contains statement sets or replaces the child of the current ATL
-transform.
-
-.. productionlist:: atl
-    atl_contains : "contains" `simple_expression`
-
-This is a more explicit and more stable version of the
-:ref:`displayable-atl-statement`. The result of the expression, whatever it may
-be, is set to be the child of the transform. This is useful when an ATL
-transform wishes to contain, rather than include, a second ATL transform, or to
-avoid the ambiguity between the displayable statement and the transform
-expression statement. ::
-
-    transform an_animation:
-        "1.png"
-        pause 2
-        "2.png"
-        pause 2
-        repeat
-
-    image move_an_animation:
-        contains an_animation
-
-        # If we didn't use contains, we'd still be looping and
-        # would never reach here.
-        xalign 0.0
-        linear 1.0 yalign 1.0
 
 Contains Block Statement
 ~~~~~~~~~~~~~~~~~~~~~~~~
