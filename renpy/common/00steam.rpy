@@ -575,7 +575,7 @@ init -1499 python in _renpysteam:
             The duration of the event, in seconds.
 
         `possible_clip`
-            This determines if the event can be clipped. This should be one of the achievement.steam.CLIP_PRIORITY_...
+            This determines if the event can be clipped. This should be one of the achievement.steam.CLIP_PRIORITY...
             constants: CLIP_PRIORITY_NONE, CLIP_PRIORITY_STANDARD, or CLIP_PRIORITY_FEATURED.
         """
 

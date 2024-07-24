@@ -531,16 +531,6 @@ Input, Focus, and Events
     If true, pygame-like JOYSTICK events are passed to Displayables event
     handlers. If not, those are consumed by Ren'Py.
 
-.. var:: config.script_version = None
-
-    If not None, this is interpreted as a script version. The library
-    will use this script version to enable some compatibility
-    features, if necessary. If None, we assume this is a
-    latest-version script.
-
-    This is normally set in a file added by the Ren'Py launcher when
-    distributions are built.
-
 .. var:: config.web_input = True
 
     If True, the web platform will use the browser's input system to
@@ -2014,7 +2004,6 @@ Window Management
     Other implementations are possible, but it's assumed that this will
     always display a dialogue window.
 
-.. var:: config.choice_empty_window
 .. var:: config.empty_window : Callable
 
     This is called with no arguments when _window is True, and no window has been shown
@@ -2046,13 +2035,11 @@ Window Management
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.
 
-.. var:: config.window_auto_hide
 .. var:: config.window_auto_show = [ "say", "say-nvl", "menu-with-caption", "nvl-menu", "nvl-menu-with-caption", ... ]
 
     A list of statements that cause ``window auto`` to show the empty
     dialogue window.
 
-.. var:: config.window_auto_show
 
 Developer
 ---------
@@ -2067,7 +2054,16 @@ Compatibility
     add a mapping from "start" to "mystart", all jumps and calls to
     "start" will go to "mystart" instead.
 
-.. var:: config.script_version
+.. var:: config.script_version = None
+
+    If not None, this is interpreted as a script version. Ren'Py
+    uses the script version to enable some compatibility
+    features, if necessary. If None, we assume this is a
+    latest-version script.
+
+    This is normally set in a file added by the Ren'Py launcher when
+    distributions are built, and so generally shouldn't be set.
+
 
 Development
 ^^^^^^^^^^^

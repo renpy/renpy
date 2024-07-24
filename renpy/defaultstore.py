@@ -465,5 +465,6 @@ _screenshot_pattern = None
 # Make these available to user code.
 import sys
 import os
+import time
 
 globals()["renpy"] = renpy.exports
