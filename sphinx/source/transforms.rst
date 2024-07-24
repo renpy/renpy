@@ -908,6 +908,58 @@ should not be positional-only) have a special use as part of
 :ref:`atl-transitions`.
 
 
+.. _warpers:
+
+Warpers
+=======
+
+A warper is a function that can change the amount of time an interpolation
+statement considers to have elapsed. They are defined as functions from t to t',
+where t and t' are floating point numbers, with t ranging from 0.0 to 1.0 over
+the given amount of time. (If the statement has 0 duration, then t is 1.0 when
+it runs.) t' should start at 0.0 and end at 1.0, but can be greater or less. The
+following warpers are defined by default.
+
+``pause``
+    Pause, then jump to the new value. If ``t == 1.0``, ``t' = 1.0``. Otherwise,
+    ``t' = 0.0``.
+
+``linear``
+    Linear interpolation. ``t' = t``
+
+``ease``
+    Start slow, speed up, then slow down. ``t' = .5 - math.cos(math.pi * t) / 2.0``
+
+``easein``
+    Start fast, then slow down. ``t' = math.cos((1.0 - t) * math.pi / 2.0)``
+
+``easeout``
+    Start slow, then speed up. ``t' = 1.0 - math.cos(t * math.pi / 2.0)``
+
+In addition, most of Robert Penner's easing functions are supported. To
+make the names match those above, the functions have been renamed
+somewhat. Graphs of these standard functions can be found at
+http://www.easings.net/.
+
+.. include:: inc/easings
+
+These warpers can be accessed in the ``_warper`` read-only module, which contains
+the functions listed above. It is useful for things in Ren'Py which take a
+time-warping function, such as :func:`Dissolve`, which you can use like::
+
+    with Dissolve(1, time_warp=_warper.easein_quad)
+
+New warpers can be defined using the ``renpy.atl_warper`` decorator, in a ``python
+early`` block. It should be placed in a file that is parsed before any file
+that uses the warper. This looks like::
+
+    python early hide:
+
+        @renpy.atl_warper
+        def linear(t):
+            return t
+
+
 .. _replacing-transforms:
 
 Replacing Transforms
