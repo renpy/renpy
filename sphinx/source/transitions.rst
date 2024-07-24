@@ -39,8 +39,8 @@ Pre-Defined Transitions
     Move transitions, and similar transitions like ease, can only be applied to
     a single layer or all layers at once, using the
     :ref:`with statement <with-statement>`. It will not work in other contexts
-    such as :ref:`ATL <expression-atl-statement>`, :func:`ComposeTransition`, or
-    other ways of applying transitions.
+    such as :ref:`ATL <displayable-atl-statement>`, :func:`ComposeTransition`,
+    or other ways of applying transitions.
 
 .. var:: moveinright
 
