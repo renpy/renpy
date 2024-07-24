@@ -309,6 +309,7 @@ from renpy.exports.contextexports import (
     call_in_new_context,
     call_replay,
     call_stack_depth,
+    clear_game_runtime,
     clear_line_log,
     context_dynamic,
     context_nesting_level,
@@ -319,6 +320,7 @@ from renpy.exports.contextexports import (
     dynamic,
     end_replay,
     game_menu,
+    get_game_runtime,
     get_line_log,
     get_mode,
     get_return_stack,
@@ -446,11 +448,6 @@ from renpy.exports.loaderexports import (
     munge,
     notl_file,
     open_file,
-)
-
-from renpy.exports.loadsaveexports import (
-    clear_game_runtime,
-    get_game_runtime
 )
 
 from renpy.exports.mediaexports import (

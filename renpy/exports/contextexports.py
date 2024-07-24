@@ -386,3 +386,27 @@ def add_to_all_stores(name, value):
 
         if name not in ns:
             ns[name] = value
+
+
+def clear_game_runtime():
+    """
+    :doc: other
+
+    Resets the game runtime counter.
+    """
+
+    renpy.game.contexts[0].runtime = 0
+
+
+def get_game_runtime():
+    """
+    :doc: other
+
+    Returns the game runtime counter.
+
+    The game runtime counter counts the number of seconds that have
+    elapsed while waiting for user input in the top-level context.
+    (It does not count time spent in the main or game menus.)
+    """
+
+    return renpy.game.contexts[0].runtime

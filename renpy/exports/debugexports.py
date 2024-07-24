@@ -25,8 +25,6 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
-
-
 def warp_to_line(warp_spec):
     """
     :doc: debug
