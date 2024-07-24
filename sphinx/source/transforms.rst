@@ -444,8 +444,8 @@ it to be empty, for example to make one of the choice blocks not do anything.
 Repeat Statement
 ----------------
 
-The ``repeat`` statement is a simple statement that causes the block containing it
-to resume execution from the beginning.
+The ``repeat`` statement is a simple statement that causes the block containing
+it to resume execution from the beginning.
 
 .. productionlist:: atl
     atl_repeat : "repeat" (`simple_expression`)?
@@ -482,6 +482,141 @@ This can be used to group statements that will repeat::
             linear 1.0 xalign 0.0
             repeat
 
+Parallel Statement
+------------------
+
+The ``parallel`` statement defines a set of ATL blocks to execute in parallel.
+
+.. productionlist:: atl
+    atl_parallel : ("parallel" ":"
+                 :    `atl_block`)+
+
+Parallel statements are greedily grouped into a parallel set when more than
+one parallel block appears consecutively in a block. The set of all parallel
+blocks are then executed simultaneously. The parallel statement terminates when
+the last block terminates.
+
+The blocks within a set should be independent of each other, and manipulate
+different properties. When two blocks change the same property, the result is
+undefined. ::
+
+    show logo base:
+        parallel:
+            xalign 0.0
+            linear 1.3 xalign 1.0
+            linear 1.3 xalign 0.0
+            repeat
+        parallel:
+            yalign 0.0
+            linear 1.6 yalign 1.0
+            linear 1.6 yalign 0.0
+            repeat
+
+Choice Statement
+----------------
+
+The ``choice`` statement defines one of a set of
+potential choices. Ren'Py will pick one of the choices in the set, and
+execute the ATL block associated with it, and then continue execution after
+the last choice in the choice set.
+
+.. productionlist:: atl
+   atl_choice : ("choice" (`simple_expression`)? ":"
+              :     `atl_block`)+
+
+Choice statements are greedily grouped into a choice set when more than one
+choice statement appears consecutively in a block. If the `simple_expression`
+is supplied, it is a floating-point weight given to that block, otherwise 1.0
+is assumed. ::
+
+    image eileen random:
+        choice:
+            "eileen happy"
+        choice:
+            "eileen vhappy"
+        choice:
+            "eileen concerned"
+
+        pause 1.0
+        repeat
+
+The ``pass`` statement can be useful in order to break several sets of choice
+blocks into several choice statements, or to make an empty choice block.
+
+Animation Statement
+-------------------
+
+The ``animation`` statement must be the first statement in an ATL block, and
+tells Ren'Py that the block uses the animation timebase.
+
+.. productionlist:: atl
+    atl_animation : "animation"
+
+As compared to the normal showing timebase, the animation timebase starts when
+an image or screen with the same tag is shown. This is generally used to have
+one image replaced by a second one at the same apparent time. For example::
+
+    image eileen happy moving:
+        animation
+        "eileen happy"
+        xalign 0.0
+        linear 5.0 xalign 1.0
+        repeat
+
+    image eileen vhappy moving:
+        animation
+        "eileen vhappy"
+        xalign 0.0
+        linear 5.0 xalign 1.0
+        repeat
+
+    label start:
+        show eileen happy moving
+        pause
+        show eileen vhappy moving
+        pause
+
+This example will cause Eileen to change expression when the first pause
+finishes, but will not cause her position to change, as both animations share
+the same animation time, and hence will place her sprite in the same place.
+Without the animation statement, the position would reset when the player
+clicks.
+
+On Statement
+------------
+
+The ``on`` statement defines an event handler.
+
+.. productionlist:: atl
+   atl_on : "on" `name` ("," `name`)* ":"
+          :      `atl_block`
+
+``on`` blocks are greedily grouped into a single statement. On statement can
+handle a single event name, or a comma-separated list of event names.
+
+This statement is used to handle events. When an event is handled, handling of
+any other event ends and handing of the new event immediately starts. When an
+event handler ends without another event occurring, the ``default`` event is
+produced (unless the ``default`` event is already being handled).
+
+Execution of the on statement will never naturally end. (But it can be ended
+by the time statement, or an enclosing event handler.)
+
+See the event statement for a way to produce arbitrary events, and see
+:ref:`external-atl-events` for a list of naturally-produced events. ::
+
+    show logo base:
+        on show:
+            alpha 0.0
+            linear .5 alpha 1.0
+        on hide:
+            linear .5 alpha 0.0
+
+    transform pulse_button:
+        on hover, idle:
+            linear .25 zoom 1.25
+            linear .25 zoom 1.0
+
 
 
 
@@ -490,6 +625,8 @@ TODO: include remaining ATL statements here
 
 TODO: link to transform properties in the ATL statements
 
+
+.. _external-atl-events:
 
 External events
 ---------------
