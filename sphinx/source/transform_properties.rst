@@ -2,7 +2,9 @@
 Transform Properties
 ====================
 
-TODO: introduce transform properties and reference the transitions page and :ref:`atl`
+Transform properties are used by :doc:`transforms` to influence how a
+displayable is drawn. They are usually set using :ref:`ATL <atl>` or the
+:class:`Transform` class.
 
 .. _transform-properties:
 
