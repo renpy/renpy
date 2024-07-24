@@ -365,9 +365,9 @@ In either case, it's followed by a number giving the number of seconds the inter
 The interpolation will persist for the given amount of time, and at least one
 frame.
 
-When properties are given, the value each is given is the value it will be set
-to at the end of the interpolation statement. This can be tweaked in several
-ways:
+When :doc:`transform-properties` are given, the value each is given is the value
+it will be set to at the end of the interpolation statement. This can be tweaked
+in several ways:
 
 * If the value is followed by one or more knots, then spline motion is used. The
   starting point is the value of the property at the start of the interpolation,
@@ -499,8 +499,8 @@ blocks are then executed simultaneously. The parallel statement terminates when
 the last block terminates.
 
 The blocks within a set should be independent of each other, and manipulate
-different properties. When two blocks change the same property, the result is
-undefined. ::
+different :doc:`transform-properties`. When two blocks change the same property,
+the result is undefined. ::
 
     show logo base:
         parallel:
@@ -709,13 +709,103 @@ children to complete. ::
             linear 1.0 xalign 0.0
             repeat
 
+Function Statement
+~~~~~~~~~~~~~~~~~~
 
+The ``function`` statement allows ATL to use Python code.
 
+.. productionlist:: atl
+    atl_function : "function" `simple_expression`
 
-TODO: include remaining ATL statements here
+The functions have the same signature as those used with :func:`Transform`:
 
+* The first argument is a transform object. :doc:`transform-properties` can be
+  set as attributes on this object.
 
-TODO: link to transform properties in the ATL statements
+* The second argument is the shown timebase, the number of seconds since the
+  function began executing.
+
+* The third argument is the the animation timebase, which is the number of
+  seconds something with the same tag has been on the screen.
+
+* If the function returns a number, it will be called again after that number of
+  seconds has elapsed. (0 seconds means to call the function as soon as
+  possible.) If the function returns None, control will pass to the next ATL
+  statement.
+
+This function should not have side effects other than changing the transform
+object in the first argument, and may be called at any time with any value as
+part of prediction.
+
+Note that ``function`` is not a transform property, and that it doesn't have the
+exact same behavior as :func:`Transform`\ 's `function` parameter. ::
+
+    init python:
+        def slide_vibrate(trans, st, at, /):
+            if st > 1.0:
+                trans.xalign = 1.0
+                trans.yoffset = 0
+                return None
+            else:
+                trans.xalign = st
+                trans.yoffset = random.randrange(-10, 11)
+                return 0
+
+    label start:
+        show logo base:
+            function slide_vibrate
+            pause 1.0
+            repeat
+
+Time Statement
+~~~~~~~~~~~~~~
+
+The ``time`` statement is a control statement.
+
+.. productionlist:: atl
+    atl_time : "time" `simple_expression`
+
+It contains a single expression, which is evaluated to give a time expressed as
+seconds from the start of execution of the containing block. When the time given
+in the statement is reached, the following statement begins to execute. This
+transfer of control occurs even if a previous statement is still executing, and
+causes any such prior statement to immediately terminate.
+
+Time statements are implicitly preceded by a pause statement with an infinite
+time. This means that if control would otherwise reach the time statement, it
+waits until the time statement would take control.
+
+When there are multiple time statements in a block, they must strictly
+increase in order. ::
+
+    image backgrounds:
+        "bg band"
+        xoffset 0
+        block:
+            linear 1 xoffset 10
+            linear 1 xoffset 0
+            repeat # control would never exit this block
+
+        time 2.0
+        xoffset 0
+        "bg whitehouse"
+
+        time 4.0
+        "bg washington"
+
+Event Statement
+~~~~~~~~~~~~~~~
+
+The ``event`` statement is a simple statement that causes an event with the
+given name to be produced.
+
+.. productionlist:: atl
+    atl_event : "event" `name`
+
+When an event is produced inside a block, the block is checked to see if an
+event handler for the given name exists. If it does, control is transferred
+to the event handler. Otherwise, the event propagates to any containing event
+handler.
 
 
 .. _external-atl-events:
