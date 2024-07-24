@@ -115,7 +115,6 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    statement_equivalents
    save_load_rollback
    persistent
-   trans_trans_python
    gui_advanced
    screen_python
    cdd
