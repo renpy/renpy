@@ -146,6 +146,8 @@ project's game directory, and execute the file before the game starts.
 Ren'Py will now load .rpe files from the :var:`config.renpy_base` directory as well as the
 project's game directory.
 
+Files ending with .rpe or .rpe.py are excluded from the build process.
+
 Images can now be oversampled at the directory level.
 
 ATL polar coordinates now support the radius being a negative number.
