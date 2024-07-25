@@ -302,6 +302,8 @@ They can also be removed using the minus sign::
     # show susan being neutral again
     show susan -happy
 
+.. _show-expression-statement:
+
 Show expression
 ---------------
 
