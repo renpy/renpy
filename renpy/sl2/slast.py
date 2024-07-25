@@ -519,7 +519,7 @@ class SLBlock(SLNode):
 
         if self.atl_transform is not None:
             transform = ATLTransform(self.atl_transform, context=context.scope)
-            transform.parent_transform = self.transform # type: ignore
+            transform.parent_transform = self.transform
 
             if "at" in context.keywords:
                 try:

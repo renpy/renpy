@@ -407,7 +407,7 @@ class ATLTransformBase(renpy.object.Object):
 
     # Compatibility with older saves.
     parameters = renpy.ast.EMPTY_PARAMETERS
-    parent_transform = None
+    parent_transform = None # type: ATLTransformBase|None
     atl_st_offset = 0
 
     # The block, as first compiled for prediction.
@@ -684,7 +684,7 @@ class ATLTransformBase(renpy.object.Object):
             _args=_args,
         )
 
-        rv.parent_transform = self # type: ignore
+        rv.parent_transform = self
         rv.take_state(self)
 
         return rv
