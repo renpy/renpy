@@ -714,7 +714,7 @@ init python:
         ap.add_argument("--install", action="store_true", help="Installs the app on a device.")
         ap.add_argument("--launch", action="store_true", help="Launches the app after build and install complete. Implies --install.")
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
-        ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building all packages.")
+        ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building the 'android' package.")
 
         args = ap.parse_args()
 
