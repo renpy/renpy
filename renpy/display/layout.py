@@ -435,6 +435,9 @@ class Grid(Container):
 
     allow_underfull = None
 
+    total_width = 0
+    total_height = 0
+
     def __init__(self, cols, rows, padding=None,
                  transpose=False,
                  style='grid',
@@ -464,6 +467,9 @@ class Grid(Container):
 
         self.transpose = transpose
         self.allow_underfull = allow_underfull
+
+        self.total_width = 0
+        self.total_height = 0
 
     def render(self, width, height, st, at):
 
@@ -523,8 +529,8 @@ class Grid(Container):
         if self.style.yfill:
             cheight = renheight
 
-        width = cwidth * cols + xspacing * (cols - 1) + left_margin + right_margin
-        height = cheight * rows + yspacing * (rows - 1) + top_margin + bottom_margin
+        self.total_width = width = cwidth * cols + xspacing * (cols - 1) + left_margin + right_margin
+        self.total_height = height = cheight * rows + yspacing * (rows - 1) + top_margin + bottom_margin
 
         rv = renpy.display.render.Render(width, height)
 
