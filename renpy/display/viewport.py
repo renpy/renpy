@@ -610,6 +610,9 @@ class VPGrid(Viewport):
 
     allow_underfull = None
 
+    total_width = 0
+    total_height = 0
+
     def __init__(self, cols=None, rows=None,
                  transpose=None,
                  style="vpgrid",
@@ -628,6 +631,9 @@ class VPGrid(Viewport):
         self.grid_rows = rows
         self.grid_transpose = transpose
         self.allow_underfull = allow_underfull
+
+        self.total_width = 0
+        self.total_height = 0
 
     def render(self, width, height, st, at):
 
@@ -689,6 +695,9 @@ class VPGrid(Viewport):
         if self.style.yfill:
             th = child_height
             ch = (th - (rows - 1) * yspacing - top_margin - bottom_margin) // rows
+
+        self.total_width  = tw
+        self.total_height = th
 
         cxo, cyo, width, height = self.update_offsets(tw, th, st)
         cxo += left_margin
