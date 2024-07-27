@@ -41,14 +41,16 @@ alt
     Matches if the Alt key is pressed. Keysyms without this prefix match
     when the Alt key is not pressed.
 meta
-    Matches if the meta, Command, or Windows key is pressed. Keysyms without
+    Matches if the Meta, Command, or Windows key is pressed. Keysyms without
     this prefix match when the meta key is not pressed.
 ctrl
     Matches if the Ctrl key is pressed. Keysyms without this prefix match
     when the Ctrl key is not pressed. (Ctrl is not very useful, as it
     usually triggers skipping.)
 osctrl
-    This is alt on the Macintosh, and ctrl elsewhere.
+    This is Alt on the Macintosh, and Ctrl elsewhere.
+anymod
+    Matches regardless of the state of the Alt, Meta, or Ctrl keys.
 shift
     Matches when the Shift key is pressed.
 noshift
@@ -65,7 +67,7 @@ repeat
     Matches when the key is a repeat due to the key being held down. Keysyms
     without the repeat or any prefixes do not match repeats. (This does not
     work with mouse buttons.)
-any
+anyrepeat
     Matches both initial keypresses and repeats.
 keydown
     Matches when the key is being pressed down (the default).

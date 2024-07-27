@@ -85,6 +85,9 @@ Wrapped methods of the Steamworks API are documented on the :doc:`achievement` p
 Features
 --------
 
+The new anymod keysym prefix makes it possible to bind to a key while ignoring the meta, alt, and ctrl key
+modifiers.
+
 The translation identifier screen (accessed through shift+D) is now the translation info screen, and now includes
 information about the line being executed. If a language is selected, the screen will also show the line being
 translated, and the text of the say statement being translated.

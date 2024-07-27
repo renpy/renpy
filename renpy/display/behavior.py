@@ -66,7 +66,7 @@ def compile_event(key, keydown):
 
     part = key.split("_")
 
-    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl", "caps", "nocaps", "num", "nonum", "any" }
+    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl", "caps", "nocaps", "num", "nonum", "any", "anyrepeat", "anymod" }
     modifiers = set()
 
     while part[0] in MODIFIERS:
@@ -119,31 +119,33 @@ def compile_event(key, keydown):
 
         if "repeat" in modifiers:
             rv += " and (ev.repeat)"
-        elif "any" in modifiers:
+        elif "any" in modifiers or "anyrepeat" in modifiers:
             pass
         else:
             rv += " and (not ev.repeat)"
 
-    if key not in [ "K_LALT", "K_RALT" ]:
+    if not "anymod" in modifiers:
 
-        if "alt" in modifiers or (renpy.macintosh and "osctrl" in modifiers):
-            rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
-        else:
-            rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
+        if key not in [ "K_LALT", "K_RALT" ]:
 
-    if key not in [ "K_LGUI", "K_RGUI" ]:
+            if "alt" in modifiers or (renpy.macintosh and "osctrl" in modifiers):
+                rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
+            else:
+                rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
 
-        if "meta" in modifiers:
-            rv += " and (ev.mod & %d)" % pygame.KMOD_META
-        else:
-            rv += " and not (ev.mod & %d)" % pygame.KMOD_META
+        if key not in [ "K_LGUI", "K_RGUI" ]:
 
-    if key not in [ "K_LCTRL", "K_RCTRL" ]:
+            if "meta" in modifiers:
+                rv += " and (ev.mod & %d)" % pygame.KMOD_META
+            else:
+                rv += " and not (ev.mod & %d)" % pygame.KMOD_META
 
-        if "ctrl" in modifiers or (not renpy.macintosh and "osctrl" in modifiers):
-            rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
-        else:
-            rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
+        if key not in [ "K_LCTRL", "K_RCTRL" ]:
+
+            if "ctrl" in modifiers or (not renpy.macintosh and "osctrl" in modifiers):
+                rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
+            else:
+                rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
 
     if key not in [ "K_LSHIFT", "K_RSHIFT" ]:
 
