@@ -191,7 +191,7 @@ the namespace of :ref:`images <defining-images>`.
 Image Statement with ATL Block
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The second way to include ATL code in a script is as part of an :ref:` image
+The second way to include ATL code in a script is as part of an :ref:`image
 statement <image-statement>`. As its inline counterpart, it binds an image name
 (which may contain spaces) to the given transform. As there is no way to supply
 with parameters, it's only useful if the transform defines an animation. The
@@ -296,13 +296,18 @@ It is used as a number of seconds to pause execution for. ::
 
     image atl example:
         # Displays logo_base.png
-        "logo_base.png"
+        contains "logo_base.png"
 
         # Pause for 1.0 seconds.
         pause 1.0
 
         # Show logo_bw.png, with a dissolve.
         "logo_bw.png" with Dissolve(0.5, alpha=True)
+
+        # Pause for 3 seconds
+        3
+
+        repeat
 
 Properties Statement
 ~~~~~~~~~~~~~~~~~~~~
@@ -341,6 +346,37 @@ transformations.
                       : | "clockwise"
                       : | "counterclockwise"
                       : | ("circles" `simple_expression`)
+
+Some sample interpolations::
+
+    show logo base:
+        # Show the logo at the upper right side of the screen.
+        xalign 1.0 yalign 0.0
+
+        # Take 1.0 seconds to move things back to the left.
+        linear 1.0 xalign 0.0
+
+        # Take 1.0 seconds to move things to the location specified in the
+        # truecenter transform. Use the ease warper to do this.
+        ease 1.0 truecenter
+
+        # Set the location to circle around.
+        anchor (0.5, 0.5)
+
+        # Use circular motion to bring us to spiral out to the top of
+        # the screen. Take 2 seconds to do so.
+        linear 2.0 yalign 0.0 clockwise circles 3
+
+        # Use a spline motion to move us around the screen.
+        linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
+
+        # Changes xalign and yalign at the same time.
+        linear 2.0 xalign 1.0 yalign 1.0
+
+        # The same thing, using a block.
+        linear 2.0:
+            xalign 1.0
+            yalign 1.0
 
 The first part of the interpolation is used to select a function that time-warps
 the interpolation. That means, a function that maps linear time to non-linear
@@ -402,37 +438,6 @@ A warper may be followed by a colon (:). In that case, it may be followed by one
 or more lines, in an indented block, containing the clauses described above.
 This lets you break an interpolation of many different things up into several
 lines.
-
-Some sample interpolations::
-
-    show logo base:
-        # Show the logo at the upper right side of the screen.
-        xalign 1.0 yalign 0.0
-
-        # Take 1.0 seconds to move things back to the left.
-        linear 1.0 xalign 0.0
-
-        # Take 1.0 seconds to move things to the location specified in the
-        # truecenter transform. Use the ease warper to do this.
-        ease 1.0 truecenter
-
-        # Set the location to circle around.
-        anchor (0.5, 0.5)
-
-        # Use circular motion to bring us to spiral out to the top of
-        # the screen. Take 2 seconds to do so.
-        linear 2.0 yalign 0.0 clockwise circles 3
-
-        # Use a spline motion to move us around the screen.
-        linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
-
-        # Changes xalign and yalign at the same time.
-        linear 2.0 xalign 1.0 yalign 1.0
-
-        # The same thing, using a block.
-        linear 2.0:
-            xalign 1.0
-            yalign 1.0
 
 Pass Statement
 ~~~~~~~~~~~~~~
@@ -622,6 +627,31 @@ See the event statement for a way to produce arbitrary events, and see
             linear .25 zoom 1.25
             linear .25 zoom 1.0
 
+.. _transform-expression-atl-statement:
+
+Transform Expression Statement
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This statement includes another ATL transform as part of the current ATL block.
+
+.. productionlist:: atl
+    atl_transform_expression : `simple_expression`
+
+This only applies if the ATL transform has **not** been supplied a child (see
+the top of the page for how to do that), otherwise it will be interpreted as a
+:ref:`displayable-atl-statement`. The contents of the provided ATL transform
+are included at the location of this statement. ::
+
+    transform move_right:
+        linear 1.0 xalign 1.0
+
+    image atl example:
+        # Display logo_base.png
+        "logo_base.png"
+
+        # Run the move_right transform.
+        move_right
+
 .. _displayable-atl-statement:
 
 Displayable Statement
@@ -662,31 +692,6 @@ this situation, notably :ref:`dict-transitions` and :var:`move- <move>` and
 
 If the expression evaluates to an ATL transform **with** a child, the execution
 of this ATL block will only continue after the includee's ATL code runs.
-
-.. _transform-expression-atl-statement:
-
-Transform Expression Statement
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This statement includes another ATL transform as part of the current ATL block.
-
-.. productionlist:: atl
-    atl_transform_expression : `simple_expression`
-
-This only applies if the ATL transform has **not** been supplied a child (see
-the top of the page for how to do that), otherwise it will be interpreted as a
-:ref:`displayable-atl-statement`. The contents of the provided ATL transform
-are included at the location of this statement. ::
-
-    transform move_right:
-        linear 1.0 xalign 1.0
-
-    image atl example:
-        # Display logo_base.png
-        "logo_base.png"
-
-        # Run the move_right transform.
-        move_right
 
 Contains Block Statement
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -867,8 +872,8 @@ Special Child Parameter
 If an ATL transform has a parameter named "child" and that parameter receives a
 value, **regardless of the kind of parameter or the way it receives a value**
 (by a positional argument or by keyword, and even if the parameter is
-positional-only or keyword-only, and defaulted or required), then the value of
-the parameter is in parallel set to be the child of the transform.
+positional-only or keyword-only, and defaulted or required), then in parallel
+the child of the transform is set to the value of the parameter.
 
 ..
     address the special case of **kwargs if and when allowed
@@ -976,7 +981,7 @@ When an ATL transform, a built-in transform or a transform defined using the
 the properties of the outgoing transform are inherited by the incoming
 transform. That inheritance doesn't apply for other kinds of transforms.
 
-When the :ref:`show <show-statement>` statement has multiple transforms in the
+When the :ref:`show statement <show-statement>` has multiple transforms in the
 ``at`` list, the transforms are matched from last to first, until one list runs
 out. For example::
 
@@ -1091,8 +1096,8 @@ Callables as transforms
 =======================
 
 Finally, simple Python callables can be used as transforms. These callables
-should take a single Displayable as an argument, and return a new Displayable.
-For example::
+should take a single :doc:`displayable <displayables>` as an argument, and
+return a new Displayable. For example::
 
     init python:
 
@@ -1103,5 +1108,5 @@ For example::
             else:
                 return At(d, left)
 
-That means that certain builtins such as :func:`Flatten` are also transforms and
-can be used as such.
+That means that certain builtins which take a displayable and return a displayable,
+such as :func:`Flatten`, are also transforms and can be used as such.
