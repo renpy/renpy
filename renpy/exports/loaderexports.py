@@ -90,12 +90,17 @@ def open_file(fn, encoding=None, directory=None): # @ReservedAssignment
         If not None, a directory to search in if the file is not found
         in the game directory. This will be prepended to filename, and
         the search tried again.
+
+    This returns an io.BufferedReader object if encoding is None, and an
+    io.TextIOWrapper object if encoding is not None.
     """
 
     rv = renpy.loader.load(fn, directory=directory)
 
     if encoding is None:
         encoding = renpy.config.open_file_encoding
+
+    rv = io.BufferedReader(rv)
 
     if encoding:
         rv = io.TextIOWrapper(rv, encoding=encoding, errors="surrogateescape") # type: ignore

@@ -143,6 +143,9 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+The :func:`renpy.open_file` function now returns an io.BufferedReader object when
+`encoding` is None, allowing the .peek method to be used.
+
 Ren'Py will load .rpe.py files from :var:`config.renpy_base` directory and the
 project's game directory, and execute the file before the game starts.
 
