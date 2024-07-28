@@ -113,7 +113,7 @@ init -1600 python:
         viewport_pagedown = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN' ],
 
         # These keys control skipping.
-        skip = [ 'anyrepeat_K_LCTRL', 'anyrepeat_K_RCTRL' ],
+        skip = [ 'anymod_K_LCTRL', 'anymod_K_RCTRL' ],
         stop_skipping = [ ],
         toggle_skip = [ 'K_TAB' ],
         fast_skip = [ '>', 'shift_K_PERIOD' ],
