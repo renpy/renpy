@@ -620,7 +620,7 @@ screen _filename_and_line():
 
 init 1000 python hide:
     if config.transparent_tile:
-        tile = im.Tile("_transparent_tile.png", (config.screen_width, config.screen_height))
+        tile = Tile("_transparent_tile.png")
         config.underlay.append(tile)
         renpy.start_predict(tile)
 
