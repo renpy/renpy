@@ -143,7 +143,7 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
-Lint will not report obsolete image manipulators.
+Lint will now report obsolete image manipulators.
 
 The :func:`renpy.open_file` function now returns an io.BufferedReader object when
 `encoding` is None, allowing the .peek method to be used.
