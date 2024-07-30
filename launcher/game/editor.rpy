@@ -245,9 +245,6 @@ init 1 python in editor:
             _("Invokes the editor your operating system has associated with .rpy files."),
             None))
 
-
-
-
         for k in editors:
             if k in [ "Visual Studio Code", "Visual Studio Code (System)", "Atom", "jEdit", "System Editor", "None" ]:
                 continue
@@ -547,7 +544,11 @@ init 1 python in editor:
             return False
 
         for i in util.listdir(extensions):
-            if i.startswith("luquedaniel.languague-renpy-"):
+            if i.lower().startswith("renpy.language-renpy-"):
+                return False
+
+        for i in util.listdir(extensions):
+            if i.lower().startswith("luquedaniel.languague-renpy-"):
                 return True
 
         return False
