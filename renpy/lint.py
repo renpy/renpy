@@ -899,6 +899,18 @@ def report_character_stats(charastats):
 
     return rv
 
+
+def check_image_manipulators():
+
+    problems = [ ]
+
+    for filename, linenumber, classname in renpy.display.im.ImageBase.obsolete_list:
+        problems.append((filename, linenumber, "im.%s" % classname))
+
+    if problems:
+        problem_listing("Obsolete Image Manipulators:", problems)
+
+
 def check_unreachables(all_nodes):
 
     def add_block(block):
@@ -1209,6 +1221,8 @@ def lint():
     report_node = None
 
     check_styles()
+    check_image_manipulators()
+
     check_filename_encodings()
 
     check_unreachables(all_stmts)

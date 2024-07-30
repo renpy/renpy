@@ -108,6 +108,9 @@ def run(restart):
         # to not call quit label since it's not nessesary.
         raise renpy.game.QuitException()
 
+    # Clear obsolete image manipulators.
+    renpy.display.im.ImageBase.obsolete_list = [ ]
+
     if renpy.config.clear_lines:
         renpy.scriptedit.lines.clear()
 
