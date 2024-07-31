@@ -145,6 +145,7 @@ style_properties = sorted_dict(
     bottom_margin=None,
     bottom_padding=None,
     box_align=None,
+    box_justify=None,
     box_layout=None,
     box_reverse=None,
     box_wrap=None,

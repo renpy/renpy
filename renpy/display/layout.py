@@ -971,7 +971,7 @@ class MultiBox(Container):
         xminimum = self.style.xminimum
         yminimum = self.style.yminimum
 
-        justify = self.style.justify
+        box_justify = self.style.box_justify
         box_align = self.style.box_align
 
         # The shared height and width of the current line. The line_height must
@@ -1092,15 +1092,15 @@ class MultiBox(Container):
             lines = [ ]
             first_line = True
 
-            if xfill or justify or box_align > 0.0:
+            if xfill or box_justify or box_align > 0.0:
                 target_width = width
             else:
                 target_width = xminimum
 
             for d, padding, cst, cat in zip(children, spacings, csts, cats):
 
-                use_justify = (justify in (True, "all")
-                    or (justify == "first" and first_line))
+                use_justify = (box_justify in (True, "all")
+                    or (box_justify == "first" and first_line))
 
                 if d._box_skip and renpy.config.box_skip:
                     padding = 0
@@ -1132,7 +1132,7 @@ class MultiBox(Container):
                 remwidth -= (sw + last_padding)
                 last_padding = padding
 
-            use_justify = (justify == "all")
+            use_justify = (box_justify == "all")
             maxx, maxy, min_line_x, min_line_y = layout_line(
                 line, (target_width - x), 0, box_wrap and not use_justify)
 
@@ -1152,15 +1152,15 @@ class MultiBox(Container):
             lines = [ ]
             first_line = True
 
-            if yfill or justify or box_align > 0.0:
+            if yfill or box_justify or box_align > 0.0:
                 target_height = height
             else:
                 target_height = yminimum
 
             for d, padding, cst, cat in zip(children, spacings, csts, cats):
 
-                use_justify = (justify in (True, "all")
-                    or (justify == "first" and first_line))
+                use_justify = (box_justify in (True, "all")
+                    or (box_justify == "first" and first_line))
 
                 if d._box_skip and renpy.config.box_skip:
                     padding = 0
@@ -1192,7 +1192,7 @@ class MultiBox(Container):
                 remheight -= (sh + last_padding)
                 last_padding = padding
 
-            use_justify = (justify == "all")
+            use_justify = (box_justify == "all")
             maxx, maxy, min_line_x, min_line_y = layout_line(
                 line, 0, (target_height - y), box_wrap and not use_justify)
 

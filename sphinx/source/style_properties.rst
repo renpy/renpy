@@ -1137,7 +1137,7 @@ These are used for the horizontal and vertical box layouts.
     this order will be reversed, and the first item in the box will be above
     all other items in the box.
 
-.. style-property:: justify boolean or "first" or "all"
+.. style-property:: box_justify boolean or "first" or "all"
 
     If not False, the contents of the box will be justified - that is, the items
     inside the box will have the spacing between them adjusted so they evenly
