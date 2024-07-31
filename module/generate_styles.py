@@ -144,6 +144,7 @@ style_properties = sorted_dict(
     bold=None,
     bottom_margin=None,
     bottom_padding=None,
+    box_align=None,
     box_layout=None,
     box_reverse=None,
     box_wrap=None,
@@ -260,7 +261,7 @@ style_property_count = len(style_properties)
 #     style_property_count, PREFIX_COUNT, style_property_count * PREFIX_COUNT))
 
 # Special priority properties - these take a +1 compared to others. Generally,
-# these would be listed in the tuples in synthetic_properies, below.
+# these would be listed in the tuples in synthetic_properties, below.
 property_priority = sorted_dict(
     left_margin=1,
     top_margin=1,
