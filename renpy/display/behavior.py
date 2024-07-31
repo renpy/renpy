@@ -66,7 +66,7 @@ def compile_event(key, keydown):
 
     part = key.split("_")
 
-    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl", "caps", "nocaps", "num", "nonum", "any" }
+    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl", "caps", "nocaps", "num", "nonum", "any", "anyrepeat", "anymod" }
     modifiers = set()
 
     while part[0] in MODIFIERS:
@@ -119,31 +119,33 @@ def compile_event(key, keydown):
 
         if "repeat" in modifiers:
             rv += " and (ev.repeat)"
-        elif "any" in modifiers:
+        elif "any" in modifiers or "anyrepeat" in modifiers:
             pass
         else:
             rv += " and (not ev.repeat)"
 
-    if key not in [ "K_LALT", "K_RALT" ]:
+    if not "anymod" in modifiers:
 
-        if "alt" in modifiers or (renpy.macintosh and "osctrl" in modifiers):
-            rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
-        else:
-            rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
+        if key not in [ "K_LALT", "K_RALT" ]:
 
-    if key not in [ "K_LGUI", "K_RGUI" ]:
+            if "alt" in modifiers or (renpy.macintosh and "osctrl" in modifiers):
+                rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
+            else:
+                rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
 
-        if "meta" in modifiers:
-            rv += " and (ev.mod & %d)" % pygame.KMOD_META
-        else:
-            rv += " and not (ev.mod & %d)" % pygame.KMOD_META
+        if key not in [ "K_LGUI", "K_RGUI" ]:
 
-    if key not in [ "K_LCTRL", "K_RCTRL" ]:
+            if "meta" in modifiers:
+                rv += " and (ev.mod & %d)" % pygame.KMOD_META
+            else:
+                rv += " and not (ev.mod & %d)" % pygame.KMOD_META
 
-        if "ctrl" in modifiers or (not renpy.macintosh and "osctrl" in modifiers):
-            rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
-        else:
-            rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
+        if key not in [ "K_LCTRL", "K_RCTRL" ]:
+
+            if "ctrl" in modifiers or (not renpy.macintosh and "osctrl" in modifiers):
+                rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
+            else:
+                rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
 
     if key not in [ "K_LSHIFT", "K_RSHIFT" ]:
 
@@ -283,9 +285,13 @@ def map_event(ev, keysym):
     """
 
     if ev.type == renpy.display.core.EVENTNAME:
-        if (keysym in ev.eventnames) and not ev.up:
-            return True
-
+        if isinstance(keysym, list):
+            for k in keysym:
+                if (k in ev.eventnames) and not ev.up:
+                    return True
+        else:
+            if (keysym in ev.eventnames) and not ev.up:
+                return True
         return False
 
     if isinstance(keysym, list):
@@ -1886,8 +1892,13 @@ class Adjustment(renpy.object.Object):
     # will set this to true for adjustments it may change.
     restart_interaction_at_limit = False
 
+    # This causes the interaction to restart when the range changes.
+    restart_interaction_at_range = False
 
-    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
+    # Like changed, but called with the raw value, before it is clamped.
+    raw_changed = None
+
+    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False, raw_changed=None): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool, Callable|None) -> None
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
@@ -1926,6 +1937,12 @@ class Adjustment(renpy.object.Object):
             This function is called with the new value when the value of
             the adjustment changes.
 
+        `raw_changed`
+            This function is called when the value of the adjustment
+            changes. Unlike `changed`, this function is called with
+            the raw value, which may be out of range. It's called with
+            two arguments, the adjustment and the new value.
+
         `ranged`
             This function is called with the adjustment object when
             the range of the adjustment is set by a viewport.
@@ -1963,6 +1980,7 @@ class Adjustment(renpy.object.Object):
         self.adjustable = adjustable
         self.ranged = ranged
         self.force_step = force_step
+        self.raw_changed = raw_changed
 
     def viewport_replaces(self, replaces): # type: (Adjustment) -> None
         if replaces is self:
@@ -2013,6 +2031,9 @@ class Adjustment(renpy.object.Object):
         if self.ranged:
             self.ranged(self)
 
+        if self.restart_interaction_at_range:
+            renpy.exports.restart_interaction()
+
     range = property(get_range, set_range) # @ReservedAssignment
 
     def get_page(self):
@@ -2051,6 +2072,11 @@ class Adjustment(renpy.object.Object):
 
         if end_animation:
             self.end_animation()
+
+        if self.raw_changed:
+            rv = self.raw_changed(self, value)
+            if rv is not None:
+                return rv
 
         if value < 0:
             value = 0
@@ -2133,6 +2159,10 @@ class Adjustment(renpy.object.Object):
 
         if st < self.animation_start:
             self.end_animation(instantly=True)
+            return 0
+
+        if not self.animation_delay:
+            self.end_animation()
             return 0
 
         done = (st - self.animation_start) / self.animation_delay

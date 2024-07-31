@@ -145,7 +145,7 @@ def parse_image_specifier(l):
             if layer:
                 l.error("multiple onlayer clauses are prohibited.")
             else:
-                layer = l.require(l.name)
+                layer = l.require(l.image_name_component)
 
             continue
 
@@ -792,7 +792,7 @@ def call_statement(l, loc):
 def scene_statement(l, loc):
     layer = None
     if l.keyword('onlayer'):
-        layer = l.require(l.name)
+        layer = l.require(l.image_name_component)
         l.expect_eol()
 
     if layer or l.eol():
@@ -837,7 +837,7 @@ def show_statement(l, loc):
 @statement("show layer")
 def show_layer_statement(l, loc):
 
-    layer = l.require(l.name)
+    layer = l.require(l.image_name_component)
 
     if l.keyword("at"):
         at_list = parse_simple_expression_list(l)
@@ -862,7 +862,7 @@ def show_layer_statement(l, loc):
 @statement("camera")
 def camera_statement(l, loc):
 
-    layer = l.name() or 'master'
+    layer = l.image_name_component() or 'master'
 
     if l.keyword("at"):
         at_list = parse_simple_expression_list(l)
@@ -1238,7 +1238,10 @@ def testcase_statement(l, loc):
     l.expect_eol()
     l.expect_block('testcase statement')
 
-    test = renpy.test.testparser.parse_block(l.subblock_lexer(), loc)
+    ll = l.subblock_lexer()
+    ll.set_global_label(name)
+
+    test = renpy.test.testparser.parse_block(ll, loc)
 
     l.advance()
 
@@ -1750,6 +1753,9 @@ def report_parse_errors():
 
     if not parse_errors:
         return False
+
+    # The sound system may not be ready during exception handling.
+    renpy.config.debug_sound = False
 
     full_text = ""
 

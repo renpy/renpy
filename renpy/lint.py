@@ -716,6 +716,8 @@ def check_style(name, s):
                         check_file(name, f, directory="fonts")
                 elif v is None and k.endswith("emoji_font"):
                     pass
+                elif v in renpy.config.font_name_map.keys():
+                    check_file(name, renpy.config.font_name_map[v], directory="fonts")
                 else:
                     check_file(name, v, directory="fonts")
 
@@ -880,7 +882,7 @@ def report_character_stats(charastats):
     Returns a list of character stat lines.
     """
 
-    rv = [ "", "Character Statistics (for default language):", ]
+    rv = [ "", "Character Statistics (for default language):", ] # type: list[str|list[str]]
 
     bullets = [ ]
 
@@ -896,6 +898,18 @@ def report_character_stats(charastats):
     rv.append(bullets)
 
     return rv
+
+
+def check_image_manipulators():
+
+    problems = [ ]
+
+    for filename, linenumber, classname in renpy.display.im.ImageBase.obsolete_list:
+        problems.append((filename, linenumber, "im.%s" % classname))
+
+    if problems:
+        problem_listing("Obsolete Image Manipulators:", problems)
+
 
 def check_unreachables(all_nodes):
 
@@ -972,6 +986,9 @@ def check_unreachables(all_nodes):
 
             add_names(reach)
 
+        elif isinstance(node, renpy.ast.RPY):
+            weakly_reachable.add(node)
+
     while to_check:
         node = to_check.pop() # type: Any
         unreachable.remove(node)
@@ -1014,16 +1031,8 @@ def check_unreachables(all_nodes):
 
 def check_orphan_translations(none_lang_identifiers, translation_identifiers):
 
-    def header():
-        print("")
-        print("")
-        print("Orphan Translations:")
-        print()
-
-
     problems = [ ]
 
-    faulty = collections.defaultdict(list) # filename : [linenumbers]
     for id, nodes in translation_identifiers.items():
         if id not in none_lang_identifiers:
             for node in nodes:
@@ -1050,7 +1059,7 @@ def check_python_warnings():
 
     warnings.sort()
 
-    for filename, line, text in warnings:
+    for _filename, _line, text in warnings:
         print("\n" + text, end='')
 
 
@@ -1212,6 +1221,8 @@ def lint():
     report_node = None
 
     check_styles()
+    check_image_manipulators()
+
     check_filename_encodings()
 
     check_unreachables(all_stmts)

@@ -36,7 +36,7 @@ init -1600 python:
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'any_K_PAGEUP', 'any_KP_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
+        rollback = [ 'anyrepeat_K_PAGEUP', 'anyrepeat_KP_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
         screenshot = [ 'alt_K_s', 'alt_shift_K_s', 'noshift_K_s' ],
         toggle_afm = [ ],
         toggle_fullscreen = [ 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11', 'noshift_K_f' ],
@@ -63,7 +63,7 @@ init -1600 python:
         extra_voicing = [ '?' ],
 
         # Say.
-        rollforward = [ 'any_K_PAGEDOWN', 'any_KP_PAGEDOWN', 'mousedown_5', ],
+        rollforward = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN', 'mousedown_5', ],
         dismiss = [ 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT', 'mouseup_1' ],
         dismiss_unfocused = [ ],
 
@@ -71,10 +71,10 @@ init -1600 python:
         dismiss_hard_pause = [ ],
 
         # Focus.
-        focus_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
-        focus_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
-        focus_up = [ 'any_K_UP', 'any_KP_UP' ],
-        focus_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
+        focus_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        focus_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        focus_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        focus_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
@@ -83,14 +83,14 @@ init -1600 python:
         button_alternate_ignore = [ 'mousedown_3' ],
 
         # Input.
-        input_backspace = [ 'any_K_BACKSPACE' ],
+        input_backspace = [ 'anyrepeat_K_BACKSPACE' ],
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
         input_next_line = [ 'shift_K_RETURN', 'shift_K_KP_ENTER' ],
-        input_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
-        input_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
-        input_up = [ 'any_K_UP', 'any_KP_UP' ],
-        input_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
-        input_delete = [ 'any_K_DELETE', 'any_KP_DELETE' ],
+        input_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        input_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        input_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        input_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
+        input_delete = [ 'anyrepeat_K_DELETE', 'anyrepeat_KP_DELETE' ],
         input_home = [ 'K_HOME', 'KP_HOME', 'meta_K_LEFT' ],
         input_end = [ 'K_END', 'KP_END', 'meta_K_RIGHT' ],
         input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c', 'meta_noshift_K_c' ],
@@ -101,19 +101,19 @@ init -1600 python:
         input_delete_full = [ 'meta_K_BACKSPACE' ],
 
         # Viewport.
-        viewport_leftarrow = [ 'any_K_LEFT', 'any_KP_LEFT' ],
-        viewport_rightarrow = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
-        viewport_uparrow = [ 'any_K_UP', 'any_KP_UP' ],
-        viewport_downarrow = [ 'any_K_DOWN', 'any_KP_DOWN' ],
+        viewport_leftarrow = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        viewport_rightarrow = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        viewport_uparrow = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        viewport_downarrow = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
         viewport_wheelup = [ 'mousedown_4' ],
         viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
-        viewport_pageup = [ 'any_K_PAGEUP', 'any_KP_PAGEUP'],
-        viewport_pagedown = [ 'any_K_PAGEDOWN', 'any_KP_PAGEDOWN' ],
+        viewport_pageup = [ 'anyrepeat_K_PAGEUP', 'anyrepeat_KP_PAGEUP'],
+        viewport_pagedown = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN' ],
 
         # These keys control skipping.
-        skip = [ 'K_LCTRL', 'K_RCTRL' ],
+        skip = [ 'anymod_K_LCTRL', 'anymod_K_RCTRL' ],
         stop_skipping = [ ],
         toggle_skip = [ 'K_TAB' ],
         fast_skip = [ '>', 'shift_K_PERIOD' ],
@@ -121,13 +121,17 @@ init -1600 python:
         # Bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
-        bar_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
-        bar_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
-        bar_up = [ 'any_K_UP', 'any_KP_UP' ],
-        bar_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
+        bar_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        bar_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        bar_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        bar_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Delete a save.
         save_delete = [ 'K_DELETE', 'KP_DELETE' ],
+
+        # Save/load screen pagination.
+        save_page_prev = ['mousedown_4'],
+        save_page_next = ['mousedown_5'],
 
         # Draggable.
         drag_activate = [ 'mousedown_1' ],
@@ -136,8 +140,8 @@ init -1600 python:
         # Debug console.
         console = [ 'shift_K_o', 'alt_shift_K_o' ],
         console_exit = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
-        console_older = [ 'any_K_UP', 'any_KP_UP' ],
-        console_newer = [ 'any_K_DOWN', 'any_KP_DOWN' ],
+        console_older = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        console_newer = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Director
         director = [ 'noshift_K_d' ],
@@ -292,7 +296,7 @@ init -1600 python:
     config.screenshot_pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
 
     # Called to make a screenshot happen.
-    def _screenshot():
+    def _screenshot_core():
         import os.path
         import os
 
@@ -318,6 +322,7 @@ init -1600 python:
         except Exception:
             pass
 
+
         try:
             if not renpy.screenshot(fn):
                 renpy.notify(__("Failed to save screenshot as %s.") % fn)
@@ -331,10 +336,20 @@ init -1600 python:
         if config.screenshot_callback is not None:
             config.screenshot_callback(fn)
 
+    config.pre_screenshot_actions = [ ]
+
+
+    def _screenshot():
+        renpy.run(config.pre_screenshot_actions)
+        renpy.invoke_in_main_thread(_screenshot_core)
+        renpy.restart_interaction()
+
+
     def _screenshot_callback(fn):
         renpy.notify(__("Saved screenshot as %s.") % fn)
 
     config.screenshot_callback = _screenshot_callback
+
 
     def _fast_skip():
         if not config.fast_skipping and not config.developer:
@@ -400,6 +415,8 @@ init -1600 python:
         renpy.restart_interaction()
 
 screen _progress:
+    layer config.interface_layer
+
     $ new = renpy.count_newly_seen_dialogue_blocks()
     $ seen = renpy.count_seen_dialogue_blocks()
     $ total = renpy.count_dialogue_blocks()
@@ -450,6 +467,9 @@ init -1100 python:
         )
 
     config.underlay = [ _default_keymap ]
+
+    config.pre_screenshot_actions = [ Hide("notify", immediately=True) ]
+
 
 init 1100 python hide:
 

@@ -1,4 +1,4 @@
-﻿/* Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿/* Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -26,6 +26,8 @@ const DEBUG_OUT = false;
 
 const USE_FRAME_CB = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
 
+renpyAudio = { };
+
 /**
  * A map from channel to channel object.
  */
@@ -33,6 +35,7 @@ let channels = { };
 let next_chan_id = 0;
 
 let context = new AudioContext();
+renpyAudio.context = context;
 
 /**
  * Given a channel number, gets the channel object, creating a new channel
@@ -128,7 +131,8 @@ let start_playing = (c) => {
     }
 
     context.resume();
-    p.source.connect(c.destination);
+
+    renpyAudio.connectFilter(c.playing.filter, c.playing.source, c.destination);
 
     if (p.fadeout === null) {
         if (p.fadein > 0) {
@@ -209,7 +213,7 @@ let stop_playing = (c) => {
         } catch (e) {
         }
 
-        c.playing.source.disconnect();
+        renpyAudio.disconnectFilter(c.playing.filter, c.playing.source, c.destination);
     }
 
     c.playing = c.queued;
@@ -366,10 +370,8 @@ let on_video_end = (c) => {
     video_start(c);
 };
 
-renpyAudio = { };
 
-
-renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, relative_volume) => {
+renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, relative_volume, afid) => {
 
     const c = get_channel(channel);
 
@@ -390,6 +392,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
              fadeout: null,  // TODO?
              tight : tight,  // TODO?
              started_once: false,
+             filter : renpyAudio.getFilter(afid),
 
              period_stats: [0, 0],  // time sum, count
              fetch_stats: [0, 0],
@@ -402,6 +405,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
         if (c.video_el === null) {
             c.video_el = document.createElement('video');
             c.video_el.style.display = 'none';
+            c.video_el.crossOrigin = 'anonymous';
             c.video_el.playsInline = true;  // For autoplay on Safari
             document.body.appendChild(c.video_el);
 
@@ -462,6 +466,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
         tight : tight,
         started_once : false,
         file: file,
+        filter : renpyAudio.getFilter(afid),
     };
 
     function reuseBuffer(c) {
@@ -717,9 +722,23 @@ renpyAudio.set_pan = (channel, pan, delay) => {
     linearRampToValue(control, control.value, pan, delay);
 };
 
-renpyAudio.tts = (s, v) => {
-    console.log("tts:", s, "volume:", v);
+renpyAudio.replace_audio_filter = (channel, afid) => {
+    let c = get_channel(channel);
+    let filter = renpyAudio.getFilter(afid);
 
+    if (c.playing) {
+        renpyAudio.disconnectFilter(c.playing.filter, c.playing.source, c.destination);
+        c.playing.filter = filter;
+        renpyAudio.connectFilter(filter, c.playing.source, c.destination);
+    }
+
+    if (c.queued) {
+        c.queued.filter = filter;
+    }
+}
+
+
+renpyAudio.tts = (s, v) => {
     v = v || 1.0;
 
     let u = new SpeechSynthesisUtterance(s);

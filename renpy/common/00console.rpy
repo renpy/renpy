@@ -702,7 +702,6 @@ init -1500 python in _console:
                 # Try to run it as Ren'Py.
                 if self.can_renpy():
 
-                    # TODO: Can we run Ren'Py code?
                     name = renpy.load_string(code + "\nreturn")
 
                     if name is not None:
@@ -1060,6 +1059,7 @@ screen _console:
     #    Indentation to apply to the new line.
     # history
     #    A list of command, result, is_error tuples.
+    layer config.interface_layer
     zorder 1500
     modal True
 
@@ -1142,6 +1142,7 @@ default _console.traced_expressions = _console.TracedExpressionsList()
 
 screen _trace_screen():
 
+    layer config.interface_layer
     zorder 1501
 
     if _console.traced_expressions:

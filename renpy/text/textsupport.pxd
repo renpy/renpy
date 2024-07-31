@@ -44,7 +44,6 @@ cdef class Glyph:
         public int x
         public int y
 
-
         # This is the amount this character was shifted to the right when
         # adjusting placement to match the virtual text, relative to the
         # previous character in the line. This is used to draw underlines
@@ -88,6 +87,27 @@ cdef class Glyph:
         # Should we draw this glyph?
         public bint draw
 
+        # Not every font actually fits inside a (width, line_spacing)
+        # bounding box. If it extends past the edge, these are by how
+        # much on each side.
+        public int add_left
+        public int add_top
+        public int add_right
+        public int add_bottom
+
+        # Is this glyph RTL?
+        public bint rtl
+
+        # How long does this glyph show for, before the next glyph,
+        # in seconds.
+        public float duration
+
+        # The textshader that applies to this glyph.
+        public object shader
+
+        # The index of this displayable - the order in which it is shown.
+        public short index
+
 
 cdef class Line:
 
@@ -98,6 +118,9 @@ cdef class Line:
 
         # The height of this line.
         public int height
+
+        # The y coordinate of the baseline of this line.
+        public int baseline
 
         # The list of glyphs on this line.
         public list glyphs

@@ -195,6 +195,9 @@ def parse(s):
                     state = LITERAL
                     lit = ''
 
+            elif brackets:
+                pass
+
             elif c == '!':
                 if s[pos+1:pos+2] == '=':
                     pos += 1

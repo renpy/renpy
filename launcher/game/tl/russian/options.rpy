@@ -131,7 +131,6 @@ translate russian strings:
 
     # options.rpy:144
     old "## Linux: $HOME/.renpy/<config.save_directory>"
-    # Automatic translation.
     new "## Linux: $HOME/.renpy/<config.save_directory>."
 
     # options.rpy:146

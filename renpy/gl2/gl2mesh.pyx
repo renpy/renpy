@@ -1,3 +1,24 @@
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 from __future__ import print_function
 
 from libc.stdlib cimport malloc, free
@@ -20,15 +41,22 @@ cdef class AttributeLayout:
         return (AttributeLayout, (self.offset, self.stride))
 
 
-
 # The layout of a mesh used in a Solid.
 SOLID_LAYOUT = AttributeLayout()
 
 # The layout of a mesh used with a texture.
 TEXTURE_LAYOUT = AttributeLayout()
-TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2)
+TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
 
-
+# The layout of a mesh used with text.
+TEXT_LAYOUT = AttributeLayout()
+TEXT_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
+TEXT_LAYOUT.add_attribute("a_text_center", 2) # Position of the vertex center.
+TEXT_LAYOUT.add_attribute("a_text_time", 1) # The time this vertex should be shown.
+TEXT_LAYOUT.add_attribute("a_text_min_time", 1) # The minimum time any vertex in this glyph should be shown.
+TEXT_LAYOUT.add_attribute("a_text_max_time", 1) # The maximum time any vertex in this glyph should be shown.
+TEXT_LAYOUT.add_attribute("a_text_index", 1) # The glyph number.
+TEXT_LAYOUT.add_attribute("a_text_pos_rect", 4) # The rectangle being drawn.
 
 cdef class Mesh:
 

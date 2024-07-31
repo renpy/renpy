@@ -34,6 +34,7 @@ import threading
 import time
 import io
 import os.path
+import sys
 
 import pygame_sdl2
 import renpy
@@ -265,6 +266,9 @@ class Cache(object):
 
             if image.pixel_perfect:
                 rv.add_property("pixel_perfect", True)
+
+            if ce.bounds == (0, 0, ce.width, ce.height):
+                rv.cached_texture = ce.texture
 
             return rv
 
@@ -583,6 +587,13 @@ class ImageBase(renpy.display.displayable.Displayable):
     optimize_bounds = False
     oversample = 1
     pixel_perfect = False
+    obsolete = True
+
+    obsolete_list = [ ]
+
+
+    # If the image failed to load, a placeholder used to report the error.
+    fail = None
 
     def after_upgrade(self, version):
         if version < 1:
@@ -602,6 +613,14 @@ class ImageBase(renpy.display.displayable.Displayable):
 
         super(ImageBase, self).__init__(**properties)
         self.identity = (type(self).__name__,) + args
+
+        if self.obsolete and renpy.game.context().init_phase:
+            frame = sys._getframe(2)
+            filename = frame.f_code.co_filename
+            line = frame.f_lineno
+            classname = type(self).__name__
+
+            self.obsolete_list.append((filename, line, classname))
 
     def __hash__(self):
         return hash(self.identity)
@@ -623,7 +642,20 @@ class ImageBase(renpy.display.displayable.Displayable):
         raise Exception("load method not implemented.")
 
     def render(self, w, h, st, at):
-        return cache.get(self, render=True)
+        try:
+            return cache.get(self, render=True)
+        except Exception as e:
+            if renpy.config.raise_image_load_exceptions:
+                raise
+
+            self.fail = renpy.text.text.Text(str(e), style="_image_error")
+            return self.fail.render(w, h, st, at)
+
+    def get_placement(self):
+        if self.fail is not None:
+            return self.fail.get_placement() # type: ignore
+        else:
+            return super(ImageBase, self).get_placement()
 
     def predict_one(self):
         renpy.display.predict.image(self)
@@ -661,6 +693,8 @@ class Image(ImageBase):
     This image manipulator loads an image from a file.
     """
 
+    obsolete = False
+
     is_svg = False
     dpi = 96
 
@@ -671,7 +705,7 @@ class Image(ImageBase):
 
         if "@" in filename:
             base = filename.rpartition(".")[0]
-            extras = base.partition("@")[2].split(",")
+            extras = base.rpartition("@")[2].partition("/")[0].split(",")
 
             for i in extras:
                 try:
@@ -791,6 +825,8 @@ class Data(ImageBase):
         loaded from disk.)
     """
 
+    obsolete = False
+
     def __init__(self, data, filename, **properties):
         super(Data, self).__init__(data, filename, **properties)
         self.data = data
@@ -805,6 +841,8 @@ class Data(ImageBase):
 
 
 class ZipFileImage(ImageBase):
+
+    obsolete = False
 
     def __init__(self, zipfilename, filename, mtime=0, **properties):
         super(ZipFileImage, self).__init__(zipfilename, filename, mtime, **properties)

@@ -1,3 +1,24 @@
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 from __future__ import print_function
 
 from libc.stdlib cimport malloc, free
@@ -5,7 +26,7 @@ from libc.math cimport hypot
 
 from renpy.gl2.gl2polygon cimport Polygon, Point2
 from renpy.gl2.gl2mesh cimport Mesh, AttributeLayout
-from renpy.gl2.gl2mesh import SOLID_LAYOUT, TEXTURE_LAYOUT
+from renpy.gl2.gl2mesh import SOLID_LAYOUT, TEXTURE_LAYOUT, TEXT_LAYOUT
 
 cdef class Mesh2(Mesh):
 
@@ -212,6 +233,137 @@ cdef class Mesh2(Mesh):
 
         return rv
 
+    @staticmethod
+    def text_mesh(int glyphs):
+        """
+        Creates a mesh that can hold `glyphs` glyphs.
+        """
+
+        cdef Mesh2 rv = Mesh2(TEXT_LAYOUT, glyphs * 4, glyphs * 2)
+
+        rv.points = 0
+        rv.triangles = 0
+
+        return rv
+
+    def add_glyph(Mesh2 self,
+        double tw, double th,
+        double cx, double cy,
+        double index,
+        double left, double top, double right, double bottom,
+        double left_time, double right_time,
+        ):
+        """
+        Adds a glyph to a mesh created by `text_mesh`.
+
+        `tx`, `ty`
+            The size of the texture the glyph is in.
+        """
+
+        if self.layout is not TEXT_LAYOUT:
+            raise ValueError("This mesh is not a text mesh.")
+
+        if tw == 0 or th == 0:
+            return
+
+        cdef double tex_left = left / tw
+        cdef double tex_right = right / tw
+        cdef double tex_top = top / th
+        cdef double tex_bottom = bottom / th
+
+        cdef double width = right - left
+        cdef double height = bottom - top
+
+        cdef double mint = min(left_time, right_time)
+        cdef double maxt = max(left_time, right_time)
+
+        cdef int point = self.points
+        cdef int stride = self.layout.stride
+        cdef int attribute = self.points * stride
+
+        self.point[point + 0].x = left
+        self.point[point + 0].y = bottom
+        self.attribute[attribute + 0] = tex_left
+        self.attribute[attribute + 1] = tex_bottom
+        self.attribute[attribute + 2] = cx
+        self.attribute[attribute + 3] = cy
+        self.attribute[attribute + 4] = left_time
+
+        self.attribute[attribute + 5] = mint
+        self.attribute[attribute + 6] = maxt
+        self.attribute[attribute + 7] = index
+        self.attribute[attribute + 8] = left
+        self.attribute[attribute + 9] = top
+        self.attribute[attribute + 10] = width
+        self.attribute[attribute + 11] = height
+
+        attribute += stride
+
+        self.point[point + 1].x = right
+        self.point[point + 1].y = bottom
+        self.attribute[attribute + 0] = tex_right
+        self.attribute[attribute + 1] = tex_bottom
+        self.attribute[attribute + 2] = cx
+        self.attribute[attribute + 3] = cy
+        self.attribute[attribute + 4] = right_time
+
+        self.attribute[attribute + 5] = mint
+        self.attribute[attribute + 6] = maxt
+        self.attribute[attribute + 7] = index
+        self.attribute[attribute + 8] = left
+        self.attribute[attribute + 9] = top
+        self.attribute[attribute + 10] = width
+        self.attribute[attribute + 11] = height
+
+        attribute += stride
+
+        self.point[point + 2].x = right
+        self.point[point + 2].y = top
+        self.attribute[attribute + 0] = tex_right
+        self.attribute[attribute + 1] = tex_top
+        self.attribute[attribute + 2] = cx
+        self.attribute[attribute + 3] = cy
+        self.attribute[attribute + 4] = right_time
+
+        self.attribute[attribute + 5] = mint
+        self.attribute[attribute + 6] = maxt
+        self.attribute[attribute + 7] = index
+        self.attribute[attribute + 8] = left
+        self.attribute[attribute + 9] = top
+        self.attribute[attribute + 10] = width
+        self.attribute[attribute + 11] = height
+
+        attribute += stride
+
+        self.point[point + 3].x = left
+        self.point[point + 3].y = top
+        self.attribute[attribute + 0] = tex_left
+        self.attribute[attribute + 1] = tex_top
+        self.attribute[attribute + 2] = cx
+        self.attribute[attribute + 3] = cy
+        self.attribute[attribute + 4] = left_time
+
+        self.attribute[attribute + 5] = mint
+        self.attribute[attribute + 6] = maxt
+        self.attribute[attribute + 7] = index
+        self.attribute[attribute + 8] = left
+        self.attribute[attribute + 9] = top
+        self.attribute[attribute + 10] = width
+        self.attribute[attribute + 11] = height
+
+        cdef int triangle = self.triangles * 3
+
+        self.triangle[triangle + 0] = point + 0
+        self.triangle[triangle + 1] = point + 1
+        self.triangle[triangle + 2] = point + 2
+
+        self.triangle[triangle + 3] = point + 0
+        self.triangle[triangle + 4] = point + 2
+        self.triangle[triangle + 5] = point + 3
+
+        self.points += 4
+        self.triangles += 2
+
     cpdef Mesh2 crop(Mesh2 self, Polygon p):
         """
         Crops this mesh against Polygon `p`, and returns a new Mesh2.
@@ -242,10 +394,6 @@ cdef class Mesh2(Mesh):
             return (0.0, 0.0, 0.0, 1.0)
         else:
             return (self.point[0].x, self.point[0].y, 0.0, 1.0)
-
-
-
-
 
 
 ###############################################################################

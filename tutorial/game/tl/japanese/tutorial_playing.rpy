@@ -75,7 +75,7 @@ translate japanese tutorial_playing_eaac8ba9:
 translate japanese tutorial_playing_b1562a34:
 
     # e "The game menu also lets you end the game and return to the main menu, or quit Ren'Py entirely."
-    e "このゲームメニューでは他にも、ゲームを終了してメインメニューに戻ったり、Ren'Pyを完全に終了してりできます。"
+    e "このゲームメニューでは他にも、ゲームを終了してメインメニューに戻ったり、Ren'Pyを完全に終了したりできます。"
 
 # game/tutorial_playing.rpy:47
 translate japanese tutorial_playing_790f9dc7:

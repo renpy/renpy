@@ -667,6 +667,8 @@ init -1500 python in updater:
 
             # 8. Finish up.
 
+            self.save_state()
+
             persistent._update_version[self.url] = None
 
             if self.restart:
@@ -1049,7 +1051,11 @@ init -1500 python in updater:
 
             self.updates = json.loads(updates_json)
 
-            if verified and "monkeypatch" in self.updates:
+            if "RENPY_TEST_MONKEYPATCH" in os.environ:
+                with open(os.environ["RENPY_TEST_MONKEYPATCH"], "r") as f:
+                    monkeypatch = f.read()
+                    future.utils.exec_(monkeypatch, globals(), globals())
+            elif verified and "monkeypatch" in self.updates:
                 future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
 
         def add_dlc_state(self, name):
@@ -1633,7 +1639,7 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "current.json")
 
             with open(fn, "w") as f:
-                json.dump(self.new_state, f)
+                json.dump(self.new_state, f, indent=2)
 
         def clean(self, fn):
             """
@@ -1768,7 +1774,7 @@ init -1500 python in updater:
         `restart`
             If true, the game will be re-run when the update completes. If
             "utter", :func:`renpy.utter_restart` will be called instead. If False,
-            the update will simply end.c
+            the update will simply end.
 
         `confirm`
             Should Ren'Py prompt the user to confirm the update? If False, the
@@ -2003,6 +2009,7 @@ init -1500 python in updater:
 init -1500:
 
     screen updater(u):
+        layer config.interface_layer
 
         add "#000"
 
@@ -2061,6 +2068,7 @@ init -1500:
 
 
     screen downloader(u):
+        layer config.interface_layer
 
         style_prefix "downloader"
 

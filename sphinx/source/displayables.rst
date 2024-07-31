@@ -191,7 +191,7 @@ targeted at the layer being displayed.
     define config.detached_layers += [ "broadcast" ]
 
     # A layer displayable to represent a TV and watch the broadcast layer.
-    image tv = Window(Layer("broadcast"), background='#000', padding=(10, 10))
+    image tv = Window(Layer("broadcast"), background='#000', padding=(10, 10), style="default")
 
     image living_room = Placeholder('bg', text='living_room')
     image studio = Solid('7c7')
@@ -217,15 +217,6 @@ targeted at the layer being displayed.
         # Dissolve into the living room, as Eileen enters the TV from the right.
         with {'master': dissolve, 'broadcast': moveinright}
         pause
-
-
-Applying Transforms to Displayables
------------------------------------
-
-The At function produces a displayable from a displayable and one or
-more :doc:`transforms <transforms>`.
-
-.. include:: inc/disp_at
 
 
 Layout Boxes and Grids

@@ -27,6 +27,7 @@ init python:
         renpy.display.interface.frame_times[:] = [ ]
 
 screen _performance:
+    layer config.interface_layer
 
     on "show" action Function(_clear_performance)
 

@@ -478,6 +478,9 @@ Text Style Properties
     When rendering an image-based font, black will be mapped to this
     color. This has no effect for TrueType fonts.
 
+    This may be None in the case of ruby/furigana text, to use the same
+    color as the parent text.
+
 .. style-property:: bold boolean
 
     If True, render the font in a bold style. For a TrueType font,
@@ -496,6 +499,9 @@ Text Style Properties
     The color the text is rendered in. When using a TrueType font,
     the font is rendered in this color. When using an image-based
     font, white is mapped to this color.
+
+    This may be None in the case of ruby/furigana text, to use the same
+    color as the parent text.
 
 .. style-property:: emoji_font string
 

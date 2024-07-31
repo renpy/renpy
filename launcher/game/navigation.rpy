@@ -161,6 +161,8 @@ init python in navigation:
 
 screen navigation:
 
+    $ todo_count = len(project.current.dump.get("location", {}).get("todo", []))
+
     frame:
         style_group "l"
         style "l_root"
@@ -207,7 +209,7 @@ screen navigation:
                     textbutton _("transforms") action navigation.ChangeKind("transform")
                     textbutton _("screens") action navigation.ChangeKind("screen")
                     textbutton _("callables") action navigation.ChangeKind("callable")
-                    textbutton _("TODOs") action navigation.ChangeKind("todo")
+                    textbutton (__("TODOs") + " (" + str(todo_count) + ")") action navigation.ChangeKind("todo")
 
             add SPACER
             add SEPARATOR

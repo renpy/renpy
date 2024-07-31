@@ -34,6 +34,7 @@ the omission in future versions.
 * Awakening
 * Ayowel
 * Baekansi
+* Bas Couwenberg
 * Bbs3223474
 * Ben Wright
 * BlackDragonHunt/Mangagamer
@@ -156,6 +157,7 @@ the omission in future versions.
 * LaUwUrence
 * Lee Yunseok
 * Lent1
+* Levicratic
 * Lezalith
 * Llyama
 * LoafyLemon
@@ -179,6 +181,7 @@ the omission in future versions.
 * Michael
 * Midgethetree
 * mikey (ATP Projects)
+* Minger0
 * Morgan Willcock
 * Moshibit
 * MrStalker
@@ -196,6 +199,7 @@ the omission in future versions.
 * Numerlor
 * Nxcrft
 * Nyaatrap
+* OleSTEEP
 * Oscar Six
 * Oshi-Shinobu
 * Patrick Dawson
@@ -261,6 +265,7 @@ the omission in future versions.
 * Zedraxlo
 * Zhangning
 * Zigmut
+* Zout141
 * ねゆんせ
 * 琴梨梨
 

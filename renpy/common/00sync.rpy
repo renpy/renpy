@@ -181,10 +181,13 @@ init -1100 python in _sync:
             return key, hashed.hex()
 
     def verbose_error(e):
-        import requests
-
         renpy.display.log.write("Sync error:")
         renpy.display.log.exception()
+
+        if renpy.emscripten:
+           return e.args[0]
+
+        import requests
 
         if isinstance(e.original_exception, requests.exceptions.ConnectionError):
             return _("Could not connect to the Ren'Py Sync server.")
@@ -196,7 +199,7 @@ init -1100 python in _sync:
     def upload_content(content, url):
         try:
             renpy.fetch(url, method="PUT", data=content, timeout=15)
-        except renpy.Fetcherror as e:
+        except renpy.FetchError as e:
             return verbose_error(e)
 
         return None
@@ -247,7 +250,7 @@ init -1100 python in _sync:
             if i.startswith("quick-") and i != "quick-1":
                 continue
 
-            files.append((location.mtime(i), i + "-LT1.save"))
+            files.append((location.mtime(i), i + renpy.savegame_suffix))
 
         files.sort(reverse=True)
 
@@ -422,6 +425,7 @@ init -1100:
     screen sync_confirm():
         style_prefix "sync"
         modal True
+        layer config.interface_layer
         zorder 100
 
         frame:
@@ -453,6 +457,7 @@ init -1100:
     screen sync_prompt(prompt):
         style_prefix "sync"
         modal True
+        layer config.interface_layer
         zorder 100
 
         frame:
@@ -493,6 +498,7 @@ init -1100:
     screen sync_success(sync_id):
         style_prefix "sync"
         modal True
+        layer config.interface_layer
         zorder 100
 
         frame:
@@ -530,6 +536,7 @@ init -1100:
     screen sync_error(message):
         style_prefix "sync"
         modal True
+        layer config.interface_layer
         zorder 100
 
         frame:
@@ -558,5 +565,11 @@ init -1100:
         key "game_menu" action Return(False)
 
 
-    style sync_overlay is empty:
-        background "gui/overlay/confirm.png"
+    if renpy.loadable("gui/overlay/confirm.png"):
+        style sync_overlay is empty:
+            background "gui/overlay/confirm.png"
+    else:
+        style sync_overlay is empty:
+            background "#000a"
+
+    style sync_text is gui_text

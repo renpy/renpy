@@ -9,6 +9,7 @@ import shutil
 import io
 import os
 import textwrap
+import pprint
 
 try:
     import builtins
@@ -186,14 +187,16 @@ def write_keywords(srcdir='source'):
 
     with open(outf, "w") as f:
 
-        f.write("keywords = %r\n" % kwlist)
-        f.write("keyword_regex = %r\n" % ("|".join(re.escape(i) for i in kwlist)))
+        keyword_regex = [ re.escape(i) for i in kwlist ]
+
+        f.write("keywords = %s\n" % pprint.pformat(kwlist))
+        f.write("keyword_regex = %s\n" % pprint.pformat(keyword_regex))
+        f.write("keyword_regex = '|'.join(keyword_regex)\n")
 
         properties = [ i for i in expanded_sl2_properties() if i not in kwlist ]
 
-        f.write("properties = %r\n" % properties)
-
-        f.write("property_regexes = %r\n" % sl2_regexps())
+        f.write("properties = %s\n" % pprint.pformat(properties))
+        f.write("property_regexes = %s\n" % pprint.pformat(sl2_regexps()))
 
     shutil.copy(outf, os.path.join(srcdir, "../../tutorial/game/keywords.py"))
 

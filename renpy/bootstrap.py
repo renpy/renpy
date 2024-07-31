@@ -404,6 +404,9 @@ You may be using a system install of python. Please run {0}.sh,
 
         renpy.audio.audio.quit()
 
+        for cb in renpy.config.python_exit_callbacks:
+            cb()
+
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
         if not renpy.emscripten:

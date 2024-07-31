@@ -1,3 +1,24 @@
+# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 from libc.stdlib cimport calloc, free
 from libc.string cimport memcpy
 
@@ -200,6 +221,11 @@ cdef void intersectLines(Point2 a0, Point2 a1, Point2 b0, Point2 b1, Point2 *p):
     p.x = ((a0.x * a1.y - a0.y * a1.x) * (b0.x - b1.x) - (a0.x - a1.x) * (b0.x * b1.y - b0.y * b1.x)) / denom
     p.y = ((a0.x * a1.y - a0.y * a1.x) * (b0.y - b1.y) - (a0.y - a1.y) * (b0.x * b1.y - b0.y * b1.x)) / denom
 
+    # Round the points to a grid.
+    p.x += .005
+    p.y += .005
+    p.x = p.x - p.x % 0.01
+    p.y = p.y - p.y % 0.01
 
 
 cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
@@ -227,7 +253,7 @@ cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
         px = p.point[i].x - a0.x
         py = p.point[i].y - a0.y
 
-        inside[i] = (lx * py - ly * px) > -0.000001
+        inside[i] = (lx * py - ly * px) > -0.005
 
         allin = allin and inside[i]
         allout = allout and not inside[i]

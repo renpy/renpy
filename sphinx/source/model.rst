@@ -222,6 +222,23 @@ There is a variable that can help in debugging custom shaders:
     If true, source code for the GLSL shader programs will be written to
     log.txt on start.
 
+
+.. _shader-local-variables:
+
+Shader Part Local Variables
+---------------------------
+
+Variables can be declared shader-local by using one of ``u__``, ``a__``,
+``v__``, or ``l__`` as a prefix. When this is done, the double underscores
+are filled in with the shader name with all dots replaced with underscores.
+For example, if the shader name is ``example.gradient``, the prefix
+``u__`` will be replaced with ``u_example_gradient_``.
+
+The main use of this is with :doc:`text shaders <textshaders>`, where most
+uniforms are shader-local. Also, local variables inside the shader should
+be declared with ``l__``.
+
+
 Transforms and Model-Based Rendering
 ------------------------------------
 
@@ -311,6 +328,8 @@ The default blend modes are::
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
 
 
+.. _model-uniforms:
+
 Uniforms and Attributes
 -----------------------
 
@@ -345,6 +364,20 @@ The following uniforms are made available to all Models.
     to the bottom-left corner of the window. u_viewport.pq is the width
     and height of the viewport.
 
+``vec2 u_virtual_size``
+
+    This is the virtual size of the game (:var:`config.screen_width`, :var:`config.screen_height`).
+    This can be used to convert from gl_Position to virtual coordinates using:
+
+    .. code-block:: glsl
+
+        v_position = u_virtual_size * vec2(gl_Position.x * .5 + .5, -gl_Position.y * .5 + .5)
+
+``vec2 u_drawable_size``
+    The size of the drawable are of the windows, in pixels, at the resolution
+    the game is running at. For example, if a 1280x720 game is scaled up to
+    1980x1080, this will be (1920, 1080).
+
 ``sampler2D tex0``, ``sampler2D tex1``, ``sampler2D tex2``
     If textures are available, the corresponding samplers are placed in
     this variable.
@@ -358,7 +391,8 @@ The following uniforms are made available to all Models.
 The following attributes are available to all models:
 
 ``vec4 a_position``
-    The position of the vertex being rendered.
+    The position of the vertex being rendered. This is in virtual pixels, relative to the upper
+    left corner of the texture.
 
 If textures are available, so is the following attribute:
 
@@ -449,6 +483,11 @@ can be supplied the property method.
         init python:
             from renpy.uguu import GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, GL_REPEAT
 
+    This can also be customized for specific textures. `gl_texture_wrap_tex0` controls
+    the first texture, `gl_texture_wrap_tex1` the second, `gl_texture_wrap_tex2`, the third,
+    and `gl_texture_wrap_tex3` the fourth. While only these four are avalable through Transforms,
+    it's possibe to supply "texture_wrap_tex4" or "texture_wrap_myuniform" to Render.add_property.
+
 Model Displayable
 -----------------
 
@@ -497,7 +536,8 @@ redraws to happen::
 different values for ``pause`` to specify a minimum frame rate, like
 ``pause 1.0/30``.
 
-Default Shader Parts
---------------------
 
-.. include:: inc/shadersource
+Shader Parts
+------------
+
+For a list of shader parts that Ren'Py uses, see the :doc:`shader_parts`.

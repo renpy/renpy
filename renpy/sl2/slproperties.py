@@ -102,6 +102,7 @@ text_property_names = [
     "slow_abortable",
     "strikethrough",
     "textalign",
+    "textshader",
     "text_align",
     "text_y_fudge",
     "underline",

@@ -26,7 +26,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional, List
+from typing import Optional, List, Callable
 
 
 import collections
@@ -57,7 +57,7 @@ sound = True
 debug = False
 
 # Ditto, but for sound operations
-debug_sound = None
+debug_sound = False
 
 # Is rollback enabled? (This only controls if the user-invoked
 # rollback command does anything)
@@ -274,6 +274,9 @@ default_developer = False
 
 # A logfile that logging messages are sent to.
 log = None
+
+# Clear config.log at startup
+clear_log = False
 
 # Lint hooks.
 lint_hooks = [ ]
@@ -602,7 +605,10 @@ dispatch_gesture = None
 
 # The table mapping gestures to events used by the default function.
 gestures = {
-    "n_s_w_e_w_e" : "progress_screen",
+    "s_n_e_s_w" : "progress_screen",
+    "n_e_s_w" : "progress_screen",
+    "ne_se" : "accessibility",
+    "nw_sw" : "accessibility",
     }
 
 # Sizes of gesture components and strokes, as a fraction of screen_width.
@@ -850,7 +856,7 @@ character_id_prefixes = [ ]
 nw_voice = True
 
 # If not None, a function that's used to process say arguments.
-say_arguments_callback = None
+say_arguments_callback = None # type: Callable|None
 
 # Should we show an atl interpolation for one frame?
 atl_one_frame = True
@@ -984,7 +990,7 @@ skip_sounds = False
 lint_screens_without_parameters = True
 
 # If not None, a function that's used to process and modify menu arguments.
-menu_arguments_callback = None
+menu_arguments_callback = None # type: Callable|None
 
 # Should Ren'PY automatically clear the screenshot?
 auto_clear_screenshot = True
@@ -1170,7 +1176,7 @@ scene_clears_layer_at_list = True
 mouse_displayable = None
 
 # The default bias for the GL level of detail.
-gl_lod_bias = -.5
+gl_lod_bias = -.6
 
 # A dictionary from a tag (or None) to a function that adjusts the attributes
 # of that tag.
@@ -1211,7 +1217,7 @@ input_caret_blink = 1.
 single_movie_channel = None
 
 # Should Ren'Py raise exceptions when finding an image?
-raise_image_exceptions = True
+raise_image_exceptions = None
 
 # Should the size transform property only accept numbers of pixels ?
 relative_transform_size = True
@@ -1453,6 +1459,43 @@ screens_never_cancel_hide = True
 # A list of transforms that are applied to entire layers.
 layer_transforms = { }
 
+# True if xfill or yfill can cause a window to shrink.
+fill_shrinks_frame = False
+
+# Set this to true to log events to log.txt.
+log_events = os.environ.get("RENPY_LOG_EVENTS", False)
+
+# Callbacks to run just before python exits.
+python_exit_callbacks = [ ]
+
+# Should exceptions be raised if an image fails to load.
+raise_image_load_exceptions = None
+
+# 8.2.2
+
+# A map from name to text shader object.
+textshaders = { } # type: dict[str, renpy.text.shader.TextShader]
+
+# A map from names to functions that return text shaders.
+textshader_callbacks = { } # type: dict[str, Callable[[], str]]
+
+# The default textshader
+default_textshader = None # type: str | None
+
+# A function that is called with a tuple of shader parts, and returns a tuple of shader parts.
+shader_part_filter = None # type: Optional[Callable[[tuple[str]], tuple[str]]]
+
+# Should munging occur everywhere in strings.
+munge_in_strings = True
+
+# The version of the character callback.
+character_callback_compat = None
+
+# A list of who arguments to translate that will not be translated.
+translate_ignore_who = [ ]
+
+# The layer built-in screens exist on.
+interface_layer = "screens"
 
 del os
 del collections
@@ -1487,3 +1530,15 @@ def init():
     gl_blend_func["multiply"] = (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE)
     gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
+
+
+def post_init():
+    """
+    Called after all init scripts have been run.
+    """
+
+    if renpy.config.raise_image_exceptions is None:
+        renpy.config.raise_image_exceptions = renpy.config.developer
+
+    if renpy.config.raise_image_load_exceptions:
+        renpy.config.raise_image_load_exceptions = renpy.config.developer

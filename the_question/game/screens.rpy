@@ -695,6 +695,7 @@ screen file_slots(title):
                 spacing gui.page_spacing
 
                 textbutton _("<") action FilePagePrevious()
+                key "save_page_prev" action FilePagePrevious()
 
                 if config.has_autosave:
                     textbutton _("{#auto_page}A") action FilePage("auto")
@@ -707,6 +708,7 @@ screen file_slots(title):
                     textbutton "[page]" action FilePage(page)
 
                 textbutton _(">") action FilePageNext()
+                key "save_page_next" action FilePageNext()
 
 
 style page_label is gui_label
@@ -792,6 +794,7 @@ screen preferences():
                     textbutton "Česky" text_font "DejaVuSans.ttf" action Language("czech")
                     textbutton "Dansk" text_font "DejaVuSans.ttf" action Language("danish")
                     textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
+                    textbutton "Italiano" text_font "DejaVuSans.ttf" action Language("italian")
                     textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
 

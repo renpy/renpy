@@ -28,7 +28,7 @@ def process_file(fn):
 
             l = l.replace(BOM, "")
 
-            if l.startswith("# TODO: Translation updated"):
+            if l.startswith("# TO" + "DO: Translation updated"):
                 continue
 
             l = l.rstrip()

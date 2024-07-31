@@ -35,6 +35,7 @@ if 1 == 0:
     from . import font
     from . import ftfont
     from . import hbfont
+    from . import shader
     from . import text
     from . import textsupport
     from . import texwrap

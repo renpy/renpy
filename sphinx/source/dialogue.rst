@@ -106,7 +106,7 @@ For example::
 
     label start:
 
-        show eileen mad
+        show eileen concerned
         e "I'm a little upset at you."
 
         e happy "But it's just a passing thing."
@@ -117,15 +117,15 @@ is equivalent to::
 
     label start:
 
-        show eileen mad
+        show eileen concerned
         e "I'm a little upset at you."
 
         show eileen happy
         e "But it's just a passing thing."
 
-In the above example, the ``mad`` and ``happy`` replace one another.
+In the above example, the ``concerned`` and ``happy`` replace one another.
 But it is possible to revert to a ``happy``\ -less eileen without specifying
-the ``mad`` attribute. An attribute name prepended with the minus sign ( - )
+the ``concerned`` attribute. An attribute name prepended with the minus sign ( - )
 has that effect, just as it does with the :ref:`show statement <show-statement>`.
 
 For example::
@@ -135,7 +135,7 @@ For example::
     label start:
 
         show eileen
-        e mad "I'm a little upset at you."
+        e concerned "I'm a little upset at you."
 
         e happy "That's funny."
 
@@ -150,7 +150,7 @@ For example, the following code is equivalent to the previous example::
 
     label start:
 
-        show eileen mad
+        show eileen concerned
         e "I'm a little upset at you."
 
         e @ happy "That's funny."
@@ -164,7 +164,7 @@ the @, and temporary ones coming after. ::
 
 The minus sign can also be used after the @ sign::
 
-    e @ right -mad "My anger is temporarily suspended..."
+    e @ right -concerned "My anger is temporarily suspended..."
     e "HOWEVER !"
 
 To cause a transition to occur whenever the images are changed in this way, set
@@ -273,19 +273,18 @@ non-dialogue interactions.
     the transition is omitted, :var:`config.window_hide_transition` is
     used.
 
-``window auto``
+``window auto True``
     This enables automatic management of the window. The window is shown
     before statements listed in :var:`config.window_auto_show` – by default,
     say statements. The window is hidden before statements listed in
     :var:`config.window_auto_hide` – by default, ``scene`` and ``call screen``
     statements, and ``menu`` statements without a caption.
-    (Only statements are considered, not statement equivalent
-    functions.)
 
-``window auto hide``, ``window auto show``
-    These statements show or hide the window, with an optional transition,
-    like ``window show`` or ``window hide`` do. However, unlike those
-    statements, this keeps automatic management enabled.
+    Only statements are considered, not statement equivalent functions.
+
+``window auto False``
+    This disables automatic management of the window. The window is not
+    shown or hidden automatically.
 
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
@@ -304,7 +303,7 @@ For example::
     pause                # the window is hidden during this pause.
 
 
-    window auto
+    window auto True
 
     "The window is automatically shown before this line of dialogue."
     pause                # the window is shown during this pause.
@@ -312,12 +311,12 @@ For example::
     scene bg washington  # the window is hidden before the scene change.
     with dissolve
 
-    window auto show     # Shows the window before it normally would be shown.
+    window show     # Shows the window before it normally would be shown.
 
     show eileen
     with dissolve
 
-    "Without window auto show, the window would have been shown here."
+    "Without window show, the window would have been shown here."
 
 Dialogue window management is subject to the "show empty window"
 :func:`Preference`. If the preference is disabled, the statements above
@@ -337,8 +336,7 @@ Arguments to the say statement are first processed by :var:`config.say_arguments
 if it is not None. If any remain, they are then passed to the character,
 which treats them as if they were present when the character was defined.
 So, the example above displays the dialogue in green.
-Special keywords `_mode` and `_with_node` will override the ones set in
-the character only for this interaction.
+The keyword `_with_none` will override the `with_none` attribute of the character.
 
 The `interact` parameter is a special case : when it was passed as False
 when defining the Character, passing ``interact=True`` will not override

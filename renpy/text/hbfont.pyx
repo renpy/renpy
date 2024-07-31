@@ -521,9 +521,14 @@ cdef class HBFont:
                 if "bold" in face.variations.instance:
                     bold = 0.0
                     instance = "bold"
+                elif "bold italic" in face.variations.instance:
+                    bold = 0.0
+                    instance = "bold italic"
             else:
                 if "regular" in face.variations.instance:
                     instance = "regular"
+                elif "italic" in face.variations.instance:
+                    instance = "italic"
 
         if bold:
             antialias = True
@@ -673,6 +678,11 @@ cdef class HBFont:
             hb_ot_metrics_get_position_with_fallback(self.hb_font, HB_OT_METRICS_TAG_UNDERLINE_SIZE, &underline_size)
 
             vextent_scale = renpy.config.ftfont_vertical_extent_scale.get(self.face_object.fn, 1.0)
+
+            # Deal with fonts where harbuzz can't figure out the metrics.
+            if horizontal_ascender == 0 and horizontal_descender == 0:
+                horizontal_ascender = face.size.metrics.ascender
+                horizontal_descender = face.size.metrics.descender
 
             if self.vertical:
                 self.ascent = FT_CEIL(vertical_ascender)
@@ -851,6 +861,9 @@ cdef class HBFont:
         cdef hb_glyph_position_t *glyph_pos
         cdef unsigned int glyph_count
 
+        cdef int bmx
+        cdef int bmy
+
         self.setup()
 
         rv = [ ]
@@ -961,6 +974,11 @@ cdef class HBFont:
 
             if bmy + <int> cache.bitmap.rows > h:
                 h = bmy + cache.bitmap.rows
+
+            glyph.add_left = <int> max(-(bmx - glyph.x), 0)
+            glyph.add_right = <int> max(bmx + cache.bitmap.width - (glyph.x + glyph.width), 0)
+            glyph.add_top = <int> max(-(bmy - glyph.y), 0)
+            glyph.add_bottom = <int> max(bmy + cache.bitmap.rows - (glyph.y + glyph.line_spacing), 0)
 
         return x, y, w, h
 

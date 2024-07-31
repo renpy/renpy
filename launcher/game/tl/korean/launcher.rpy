@@ -2067,12 +2067,12 @@ translate korean strings:
     # game/preferences.rpy:338
     old "{#in language font}Welcome! Please choose a language"
     # Automatic translation.
-    new "{#in language font}환영합니다! 언어를 선택해 주세요."
+    new "{font=SourceHanSansLite.ttf}환영합니다! 언어를 선택해 주세요."
 
     # game/preferences.rpy:373
     old "{#in language font}Start using Ren'Py in [lang_name]"
     # Automatic translation.
-    new "{#in language font}다음에서 Ren'Py 사용 시작 [lang_name]"
+    new "{font=SourceHanSansLite.ttf}다음에서 Ren'Py 사용 시작 [lang_name]"
 
     # game/project.rpy:46
     old "Lint checks your game for potential mistakes, and gives you statistics."

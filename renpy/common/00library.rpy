@@ -143,10 +143,10 @@ init -1700 python:
 
             # When running in a say statement or menu-with-caption, scry for
             # the next say statement, and get the window from that.
-            if scry.say or scry.menu_with_caption:
+            if scry.say or scry.menu_with_caption or store._window_next:
                 who = None
 
-                for i in range(10):
+                for i in range(20):
                     if scry.say:
                         who = scry.who
                         break
@@ -301,6 +301,24 @@ init -1700 python:
                 return
 
     config.expensive_predict_callbacks.append(_predict_screens)
+
+
+    ##########################################################################
+    # Name-only say statements.
+
+    # This character is copied when a name-only say statement is called.
+    name_only = adv
+
+    def predict_say(who, what):
+        who = Character(who, kind=name_only)
+        try:
+            who.predict(what)
+        except Exception:
+            pass
+
+    def say(who, what, interact=True, *args, **kwargs):
+        who = Character(who, kind=name_only)
+        who(what, interact=interact, *args, **kwargs)
 
 
     ##########################################################################

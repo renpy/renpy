@@ -28,6 +28,98 @@ renderer.
 Support for Window 7, 8, and 8.1 will be dropped after May 2024, to allow the
 use of versions of Python that only support Windows 10 and later.
 
+.. _incompatible-8.3.0:
+.. _incompatible-7.8.0:
+
+8.3.0 / 7.8.0
+-------------
+
+**Retained speech bubbles** are now automatically cleared away when other say, menu, or call screen
+statements are invoked. This is controlled by the :var:`bubble.clear_retain_statements` variable.
+
+To disable this, add to your game::
+
+    define bubble.clear_retain_statements = [ ]
+
+**How ATL sets the child from parameters** The rules as for how and when ATL
+transforms get their child set, based upon the parameters they accept and the
+arguments they are passed, has slightly changed. It is unlikely to have any
+impact on existing games, especially if you were only using documented features.
+
+- The `old_widget` parameter taking a value from a positional argument does not
+  set the child anymore. That was an undocumented misuse of
+  :ref:`atl-transitions`. ::
+
+    transform t(old_widget):
+        ...
+
+    t("eileen") # will no longer have a child set to the "eileen" image
+
+- A `child` keyword argument being passed to a transform having a `child`
+  parameter now sets the child, just as it would in a transform with no
+  `child` parameter, or if the `child` parameter got a value from a positional
+  argument. The documentation was ambiguous about this. ::
+
+    transform t1(child):
+        ...
+
+    transform t2(chile):
+        ...
+
+    t1(child="eileen") # will now have a child set to the "eileen" image, but previously didn't
+    t2(child="eileen") # the child is set, as before
+    t1("eileen") # the child is set, as before
+
+**Character Callbacks** have been changed to take a large number of additional arguments,
+as documented at :doc:`character_callbacks`. This should not require changes as character
+callbacks should have been written to ignore unknown keyword arguments, but if not
+the character callbacks may need to be updated.
+
+**Window Statement** The ``window show`` annd ``window hide`` statements
+no longer disable the ``window auto`` flag. If you'd like to do this, then
+either use the new ``window auto False`` statement, or change your game
+to include::
+
+    define config.window_functions_set_auto = True
+
+When a ``window show`` occurs after ``window hide``, Ren'Py will look forward
+to the next say statement to determine the type of thr window to show. Previously,
+it looked back to the last say statement. To revert this change, include::
+
+    define config.window_next = False
+
+.. _munge-8.3.0:
+
+**String Munging** Munging of names beginning with __ but not containing a second instance of __
+will now occur inside a string just like it does in the rest of a script. What this means is that:
+
+    $ __foo = 1
+    "Add one and __foo and you get [1 + __foo]."
+
+will be rewritten to:
+
+    $ _m1_script__foo = 1
+    "Add one and _m1_script__foo and you get [1 + _m1_script__foo]."
+
+To disable this, in a file named 01nomunge.rpy in your game directory, write::
+
+    define config.munge_in_strings = False
+
+
+.. _incompatible-8.2.2:
+.. _incompatible-7.7.2:
+
+8.2.2 / 7.7.2
+-------------
+
+**Fill and Frames** In certain cases in 8.2.1 and earlier, the :propref:`xfill` and :propref:`yfill`
+style properties could cause Frames, Windows, and Buttons to shrink in size. Now, only expansion in
+size is allowed. To revert this, add::
+
+
+    define config.fill_shrinks_frame = True
+
+
 .. _incompatible-8.2.1:
 .. _incompatible-7.7.1:
 
@@ -38,6 +130,7 @@ use of versions of Python that only support Windows 10 and later.
 with the text now being rendered in the correct place. This may cause
 position changes, but since the previous version was wildly incorrect,
 no compatibility define is provided.
+
 
 
 
@@ -59,7 +152,6 @@ In order to keep using the ``annotations`` future for stringified annotations,
 you can add the following line at the top of your files::
 
     rpy python annotations
-
 
 **Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
 different glyphs than would have been produced differently, and may change

@@ -784,7 +784,7 @@ The following variables are also used:
 
     .. figure:: oshs/game/gui/slider/horizontal_hover_bar.png
 
-        An example :file:`gui/slider/horizontal_hover_bar.png `image.
+        An example :file:`gui/slider/horizontal_hover_bar.png` image.
 
     .. figure:: oshs/game/gui/slider/horizontal_idle_thumb.png
 
@@ -1312,6 +1312,7 @@ variables need to be changed. ::
 
 If the second statement was missing, DejaVuSans would still be used.
 
+.. _more_advanced_gui:
 
 Advanced Customization
 ======================

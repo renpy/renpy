@@ -519,7 +519,7 @@ class SLBlock(SLNode):
 
         if self.atl_transform is not None:
             transform = ATLTransform(self.atl_transform, context=context.scope)
-            transform.parent_transform = self.transform # type: ignore
+            transform.parent_transform = self.transform
 
             if "at" in context.keywords:
                 try:
@@ -961,7 +961,7 @@ class SLDisplayable(SLBlock):
                 keywords.update(properties)
 
             # Get the widget id and transform, if any.
-            widget_id = keywords.pop("id", None)
+            widget_id = keywords.get("id", None)
             transform = keywords.pop("at", None)
             prefer_screen_to_id = keywords.pop("prefer_screen_to_id", False)
 

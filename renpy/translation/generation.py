@@ -191,6 +191,10 @@ def write_translates(filename, language, filter): # @ReservedAssignment
         if is_empty_extend(t):
             continue
 
+        if isinstance(t, renpy.ast.TranslateSay):
+            if t.who and str(t.who) in renpy.config.translate_ignore_who:
+                continue
+
         f = open_tl_file(tl_filename)
 
         if label is None:
@@ -223,6 +227,9 @@ def translation_filename(s):
         return "common.rpy"
 
     filename = s.elided
+
+    if filename.endswith("_ren.py"):
+        filename = filename[:-7] + ".rpy"
 
     if filename[-1] == "m":
         filename = filename[:-1]
@@ -441,7 +448,7 @@ def translate_list_files():
 
         filename = os.path.join(dirname, filename)
 
-        if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
+        if not (filename.endswith(".rpy") or filename.endswith(".rpym") or filename.endswith("_ren.py")):
             continue
 
         filename = os.path.normpath(filename)

@@ -137,7 +137,7 @@ It should be noted that:
 
 - the order in which the flags are given does not change the result : ``!cl``
   will do just the same as ``!lc``.
-- Supplementarly exclamation marks will be ignored, and will not circumvent
+- Supplementary exclamation marks will be ignored, and will not circumvent
   the previous rule : ``!l!c`` will do the same as ``!c!l`` or ``!cl``.
 
 The transformations are done in the following order:
@@ -329,8 +329,8 @@ Tags that apply to all text are:
 .. text-tag:: noalt
 
     The noalt tag prevents text from being spoken by the text-to-speech
-    system. This is often used in conjuction with the alt tag, to provide
-    accessible and visual optiopns  ::
+    system. This is often used in conjunction with the alt tag, to provide
+    accessible and visual options  ::
 
        g "Good to see you! {noalt}<3{/noalt}{alt}heart{/alt}"
 
@@ -367,6 +367,15 @@ Tags that apply to all text are:
    its closing tag. ::
 
        g "It's good {s}to see you{/s}."
+
+.. text-tag:: shader
+
+    The shader tag applies a text shader to a section of text.
+    The argument is the name of the shader to apply. ::
+
+        "This text is {shader=jitter:speed=3}jittery{/shader}."
+
+    See :doc:`textshaders` for more information.
 
 .. text-tag:: size
 
@@ -511,7 +520,7 @@ Style Text Tags
 Ren'Py supports text tags that access styles. These are text tags
 where the tag name is empty. In this case, the argument
 is taken to be the name of a style. For example, the {=mystyle} tag
-will acces the ``mystyle`` style.
+will access the ``mystyle`` style.
 
 The text between the tag and the corresponding closing tag has the following
 properties set to those defined in the style:
@@ -619,6 +628,7 @@ For example::
     style ruby_style is default:
         size 12
         yoffset -20
+        color None # Use the same color as the parent text.
 
     style say_dialogue:
         ruby_line_leading 12
@@ -859,7 +869,7 @@ There are two text tags that support the use of variable fonts.
 
         "This is {instance=heavy}heavy{/instance} text."
 
-    When the instance tag is used, the axis properties are overriden.
+    When the instance tag is used, the axis properties are overridden.
 
 .. text-tag:: axis
 

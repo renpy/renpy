@@ -42,6 +42,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    python
    conditional
    audio
+   audio_filters
    movie
    voice
 
@@ -54,8 +55,8 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    translation
    displayables
    transforms
+   transform_properties
    transitions
-   atl
    matrixcolor
    layeredimage
    3dstage
@@ -76,6 +77,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    preferences
    store_variables
    mouse
+   textshaders
 
 
 .. toctree::
@@ -113,10 +115,8 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    statement_equivalents
    save_load_rollback
    persistent
-   trans_trans_python
    gui_advanced
    screen_python
-   modes
    cdd
    cds
    custom_text_tags
@@ -128,6 +128,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    other
    ren_py
    fetch
+   screenshot
 
 
 .. toctree::
@@ -192,6 +193,7 @@ Indices
 * `Variable and Definition Index <std-var-index.html>`_
 * `Function and Class Index <py-function-class-index.html>`_
 * `Reserved Names Index <reserved.html>`_
+* `Shader Part Index <shader_parts.html>`_
 * `General Index <genindex.html>`_
 
 Example Scripts

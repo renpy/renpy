@@ -1430,9 +1430,13 @@ class Window(Container):
 
         if not style.xfill:
             width = max(cxmargin + cxpadding + sw, xminimum)
+        elif not renpy.config.fill_shrinks_frame:
+            width = max(cxmargin + cxpadding + sw, width, xminimum)
 
         if not style.yfill:
             height = max(cymargin + cypadding + sh, yminimum)
+        elif not renpy.config.fill_shrinks_frame:
+            height = max(cymargin + cypadding + sh, height, yminimum)
 
         if renpy.config.enforce_window_max_size:
 

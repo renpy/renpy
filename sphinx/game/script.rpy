@@ -4,6 +4,7 @@
 init 1000000 python:
     import doc
     import shaderdoc
+    import renpy_json
 
     del object.__init__
 
@@ -14,10 +15,12 @@ init 1000000 python:
     incdir = os.path.join(srcdir, 'inc')
 
     shaderdoc.shaders(incdir=incdir)
+    shaderdoc.textshaders(incdir=incdir)
 
     doc.scan_section("", renpy.store)
     doc.scan_section("renpy.", renpy)
     doc.scan_section("renpy.music.", renpy.music)
+    doc.scan_section("renpy.audio.filter.", renpy.audio.filter)
     doc.scan_section("theme.", theme)
     doc.scan_section("layout.", layout)
     doc.scan_section("define.", define)
@@ -31,6 +34,7 @@ init 1000000 python:
     doc.scan_section("gui.", gui)
     doc.scan_section("layeredimage.", layeredimage)
     doc.scan_section("Matrix.", Matrix)
+    doc.scan_section("achievement.steam.", _renpysteam)
 
     doc.write_line_buffer(incdir=incdir)
     doc.write_keywords(srcdir=srcdir)
@@ -50,5 +54,7 @@ init 1000000 python:
     console_commands = _console.help(None, True).replace("\n ", "\n\n* ")
     with open(os.path.join(incdir, "console_commands"), "w") as f:
         f.write(console_commands)
+
+    renpy_json.main()
 
     raise SystemExit

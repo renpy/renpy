@@ -111,6 +111,46 @@ python early hide:
         def get(self, name):
             raise Exception("The define statement can not be used with the preferences namespace.")
 
+    class _VolumeNamespace(object):
+        pure = False
+        allow_child_namespaces = False
+        repeat_at_default_time = True
+
+        def set(self, name, value):
+            raise Exception("The define statement can not be used with the preferences namespace.")
+
+        def set_default(self, name, value):
+
+            undefined = object()
+
+            if not isinstance(persistent._preference_default, dict):
+                persistent._preference_default = { }
+
+            if not "volume" in persistent._preference_default:
+                persistent._preference_default["volume"] = { }
+
+            old_default = persistent._preference_default["volume"].get(name, undefined)
+
+            if old_default != value:
+                _preferences.set_volume(name, _vol(value))
+                persistent._preference_default["volume"][name] = value
+
+            default_field = "default_" + name + "_volume"
+
+            # This ensures we don't conflict with the old way of doing
+            # things.
+            try:
+                has_default_field = hasattr(config, default_field)
+            except Exception:
+                has_default_field = False
+
+            if has_default_field:
+                setattr(config, default_field, value)
+
+        def get(self, name):
+            raise Exception("The define statement can not be used with the preferences namespace.")
+
+
     class _GuiNamespace(object):
         pure = True
         allow_child_namespaces = True
@@ -128,5 +168,6 @@ python early hide:
     config.special_namespaces["store.config"] = _ObjectNamespace(config, "config")
     config.special_namespaces["store.persistent"] = _PersistentNamespace()
     config.special_namespaces["store.preferences"] =  _PreferencesNamespace()
+    config.special_namespaces["store.preferences.volume"] =  _VolumeNamespace()
     config.special_namespaces["store.gui"] = _GuiNamespace()
     config.special_namespaces["store.renpy"] = _ErrorNamespace("renpy")

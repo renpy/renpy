@@ -32,6 +32,14 @@ cdef class Glyph:
         self.variation = 0
         self.delta_x_adjustment = 0
 
+        self.add_left = 0
+        self.add_top = 0
+        self.add_right = 0
+        self.add_bottom = 0
+        self.rtl = 0
+        self.duration = -1
+        self.shader = None
+
     def __repr__(self):
         if self.variation == 0:
             return "<Glyph {0!r} time={1}>".format(self.character, self.time)
@@ -53,13 +61,21 @@ cdef class Glyph:
         time : float
         hyperlink : int
         draw : bool
+        add_left : int
+        add_top : int
+        add_right : int
+        add_bottom : int
+        rtl: bool
+        duration: float
+        shader: renpy.text.shader.TextShader|None
+        index: short
         """
-
 
 cdef class Line:
 
-    def __init__(self, int y, int height, list glyphs):
+    def __init__(self, int y, int baseline, int height, list glyphs):
         self.y = y
+        self.baseline = baseline
         self.height = height
         self.glyphs = glyphs
         self.eop = False
@@ -70,6 +86,7 @@ cdef class Line:
     _types = """
         y : int
         height : int
+        baseline: int
         glyphs : list[Glyph]
         max_time : float
         eop : bool
@@ -754,7 +771,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading, int ruby_line_l
 
                     gg.y += ruby_line_leading
 
-            l = Line(y - line_leading, line_leading + line_spacing + spacing, glyphs[sol:pos])
+            l = Line(y - line_leading, y + ascent, line_leading + line_spacing + spacing, glyphs[sol:pos])
             rv.append(l)
 
             y += line_spacing
@@ -785,7 +802,6 @@ def place_vertical(list glyphs, int y, int spacing, int leading, int ruby_line_l
             line_spacing = g.line_spacing
 
         pos += 1
-
 
     rv[-1].eop = True
     return rv, y - leading
@@ -829,7 +845,7 @@ def assign_times(float t, float gps, list glyphs):
 
         t += tpg
         g.time = t
-
+        g.duration = tpg
 
     return t
 
@@ -853,6 +869,20 @@ def max_times(list l):
         line.max_time = max_time
 
     return max_time
+
+def assign_index(index, list glyphs):
+    """
+    Assign an index to each glyph.
+    """
+
+    cdef Glyph g
+
+    for g in glyphs:
+        if g.time != -1:
+            g.index = index
+            index += 1
+
+    return index
 
 
 def hyperlink_areas(list l):
@@ -1115,6 +1145,8 @@ def reverse_lines(list glyphs):
 
             continue
 
+        g.rtl = True
+
         block.append(g)
 
     block.reverse()
@@ -1180,3 +1212,19 @@ def move_glyphs(list glyphs, int x, int y):
     for g in glyphs:
         g.x += x
         g.y += y
+
+
+def get_textshader_set(list glyphs):
+    """
+    Returns the set of all textshaders.
+    """
+
+    rv = set()
+    shader = None
+
+    for g in glyphs:
+        if g.shader is not shader:
+            rv.add(g.shader)
+            shader = g.shader
+
+    return rv

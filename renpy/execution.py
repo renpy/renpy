@@ -322,7 +322,10 @@ class Context(renpy.object.Object):
         self.dynamic_stack.append({ })
 
         if clear:
-            for i in renpy.config.context_clear_layers:
+            if clear is True:
+                clear = renpy.config.context_clear_layers
+
+            for i in clear:
                 self.scene_lists.clear(layer=i)
 
         # A list of modes that the context has been in.

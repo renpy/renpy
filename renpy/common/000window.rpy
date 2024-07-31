@@ -29,14 +29,19 @@ init -1200 python:
     config.window = None
 
     # A list of statements that cause the window to be auto-shown.
-    config.window_auto_show = [ "say", "menu-with-caption" ]
+    config.window_auto_show = [ "say", "say-nvl", "menu-with-caption", "nvl-menu", "nvl-menu-with-caption" ]
 
     # A list of statements that cause the window to be auto-hidden.
     config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered", "say-bubble" ]
 
-    config.window_functions_set_auto = True
+    # Compat, with a fairly complicated history, this defaulted to True in the past.
+    config.window_functions_set_auto = False
+
+    # Compat for window_next.
+    config.window_next = True
 
     _window_auto = False
+    _window_next = True
 
     def _window_show(trans=False, auto=False):
         """
@@ -51,7 +56,7 @@ init -1200 python:
 
         `auto`
             If True, this becomes the equivalent of the ``window auto show``
-            statment.
+            statement.
         """
 
         if config.window_functions_set_auto:
@@ -72,6 +77,8 @@ init -1200 python:
             store._window = True
 
         store._after_scene_show_hide = None
+
+        renpy.mode("window_show")
 
     def _window_hide(trans=False, auto=False):
         """
@@ -106,6 +113,9 @@ init -1200 python:
             store._window = False
 
         store._after_scene_show_hide = None
+        store._window_next = config.window_next
+
+        renpy.mode("window_hide")
 
     def _window_auto_callback(statement):
 
@@ -120,6 +130,9 @@ init -1200 python:
 
         if statement in config.window_auto_show:
             _window_show(auto=True)
+
+        if statement == "say" or statement.startswith("say-"):
+            store._window_next = False
 
     config.statement_callbacks.append(_window_auto_callback)
 
@@ -183,10 +196,15 @@ python early hide:
         if l.keyword('hide'):
             hide = l.simple_expression() or "False"
             rv["hide"] = hide
+            rv["auto"] = "True"
 
         elif l.keyword('show'):
             show = l.simple_expression() or "False"
             rv["show"] = show
+            rv["auto"] = "True"
+
+        else:
+            rv["auto"] = l.simple_expression() or "True"
 
         if not l.eol():
             renpy.error('expected end of line')
@@ -203,6 +221,10 @@ python early hide:
         if "show" in p:
             trans = eval(p["show"])
             _window_show(trans, auto=True)
+
+        if "auto" in p:
+            store._window_auto = eval(p["auto"])
+
 
     def warp_true(p):
         return True
@@ -224,3 +246,7 @@ python early hide:
                              parse=parse_window_auto,
                              execute=execute_window_auto,
                              warp=warp_true)
+
+
+init 1200 python:
+    _window_next = config.window_next

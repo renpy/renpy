@@ -586,6 +586,8 @@ def pump():
 
 def set_mixer(channel, mixer, default=False):
     """
+    :doc: audio
+
     This sets the name of the mixer associated with a given
     channel. By default, there are two mixers, 'sfx' and
     'music'. 'sfx' is on channels 0 to 3, and 'music'
@@ -609,6 +611,8 @@ def set_mixer(channel, mixer, default=False):
 
 def get_all_mixers():
     """
+    :doc: audio
+
     This gets all mixers in use.
     """
 
@@ -617,11 +621,16 @@ def get_all_mixers():
     for i in renpy.audio.audio.all_channels:
         rv.add(i.mixer)
 
+    for i in renpy.config.auto_channels.values():
+        rv.add(i[0])
+
     return list(rv)
 
 
 def channel_defined(channel):
     """
+    :doc: audio
+
     Returns True if the channel exists, or False otherwise.
     """
 
@@ -630,6 +639,36 @@ def channel_defined(channel):
         return True
     except Exception:
         return False
+
+
+def set_audio_filter(channel, audio_filter, replace=False, duration=0.016):
+    """
+    :doc: audio
+
+    Sets the audio filter for sounds about to be queued to `audio_filter`.
+
+    `audio_filter`
+        Must be a an :doc:`audio filter <audio_filters>` or list of
+        audio filters, or None to remove the audio filter.
+
+    `replace`
+        If True, the audio filter replaces the current audio filter immediately,
+        changing currently playing and queued sounds. If False, the audio
+        filter will be used the next time a sound is played or queued.
+
+    `duration`
+        The duration to change from the current to the new filter, in seconds.
+        This prevents a popping sound when changing filters.
+    """
+    if audio_filter is not None:
+        audio_filter = renpy.audio.filter.to_audio_filter(audio_filter)
+
+    try:
+        c = renpy.audio.audio.get_channel(channel)
+        c.set_audio_filter(audio_filter, replace=replace, duration=duration)
+    except Exception:
+        if renpy.config.debug_sound:
+            raise
 
 # Music change logic:
 

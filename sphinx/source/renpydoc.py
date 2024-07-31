@@ -69,7 +69,6 @@ def parse_style_node(env, sig, signode):
     ref = m.group(1)
 
     while ref in style_seen_ids:
-        print("duplicate id:", ref)
         ref = ref + "_alt"
 
     style_seen_ids.add(ref)
@@ -88,7 +87,6 @@ def parse_scpref_node(env, sig, signode):
     ref = m.group(1)
 
     while ref in scpref_seen_ids:
-        print("duplicate id:", ref)
         ref = ref + "_alt"
 
     scpref_seen_ids.add(ref)
@@ -203,6 +201,7 @@ def setup(app):
     app.add_object_type("transform-property", "tpref", "single: %s (transform property)")
     app.add_object_type("screen-property", "scpref", "single: %s (screen property)", parse_node=parse_scpref_node)
     app.add_object_type("text-tag", "tt", "single: %s (text tag)")
+    app.add_object_type("textshader", "textshader" "single: %s (text shader)")
 
     add_index(app, "std", "style-property", "Style Property Index")
     add_index(app, "std", "transform-property", "Transform Property Index")

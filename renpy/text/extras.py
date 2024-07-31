@@ -56,6 +56,7 @@ text_tags = dict(
     noalt=True,
     nw=False,
     s=True,
+    shader=True,
     rt=True,
     rb=True,
     k=True,
@@ -161,6 +162,7 @@ def filter_text_tags(s, allow=None, deny=None):
             rv.append("\n")
         elif tokentype == TAG:
             kind = text.partition("=")[0]
+            kind = kind.partition(":")[0]
 
             if kind and (kind[0] == "/"):
                 kind = kind[1:]

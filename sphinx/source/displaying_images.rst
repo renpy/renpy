@@ -151,6 +151,9 @@ by a number, before the extension. For example, :file:`eileen happy@2.png` is
 2x oversampled, and :file:`eileen happy@3x.png` will be 3x oversampled. Oversampling
 can also be enabled by giving the `oversample` keyword argument to :func:`Image`.
 
+A directory can also specify how much to oversample images inside it. For example,
+:file:`images/@2/eileen happy.png` will be oversampled 2x.
+
 .. _image-statement:
 
 Image Statement
@@ -298,6 +301,8 @@ They can also be removed using the minus sign::
 
     # show susan being neutral again
     show susan -happy
+
+.. _show-expression-statement:
 
 Show expression
 ---------------

@@ -291,7 +291,7 @@ python early hide:
         else:
             channel = "sound"
 
-        fadeout = eval(p["fadeout"]) or 0
+        fadeout = eval(p["fadeout"]) or None
 
         loop = p.get("loop", False)
 
@@ -346,7 +346,7 @@ python early hide:
         else:
             channel = "sound"
 
-        fadeout = eval(p["fadeout"]) or 0
+        fadeout = eval(p["fadeout"]) or None
 
         renpy.sound.stop(fadeout=fadeout, channel=channel)
 

@@ -243,8 +243,6 @@ def process_downloaded_resources():
                     fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
                     to_unlink[fullpath] = time.time() + 120
 
-                # TODO: videos (when web support is implemented)
-
         # make sure the queue doesn't contain a corrupt file so we
         # don't rethrow an exception while in Ren'Py's error handler
         finally:

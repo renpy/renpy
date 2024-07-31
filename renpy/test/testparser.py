@@ -116,7 +116,7 @@ def parse_clause(l, loc):
 
     elif l.keyword("label"):
 
-        name = l.require(l.name)
+        name = l.require(l.label_name)
         return testast.Label(loc, name)
 
     elif l.keyword("type"):
