@@ -143,6 +143,8 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+The hspace and vspace text tags now respect window scaling.
+
 Lint will now report obsolete image manipulators.
 
 The :func:`renpy.open_file` function now returns an io.BufferedReader object when
