@@ -986,7 +986,7 @@ class MultiBox(Container):
             children.reverse()
             spacings.reverse()
         elif self.style.box_reverse and not renpy.config.box_reverse_align:
-            box_align = 1.0 - (box_align // 1.0) - (box_align % 1.0)
+            box_align = 1.0 - box_align
 
         # a list of (child, x, y, w, h, surf) tuples that are turned into
         # calls to child.place().
