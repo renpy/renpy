@@ -1054,6 +1054,9 @@ class MultiBox(Container):
                     x += int(i * xperchild)
                     y += int(i * yperchild)
 
+                    sw += xperchild
+                    sh += yperchild
+
                     x += padding[0]
                     y += padding[1]
 
