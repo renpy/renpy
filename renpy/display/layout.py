@@ -974,6 +974,12 @@ class MultiBox(Container):
         box_justify = self.style.box_justify
         box_align = self.style.box_align
 
+        if box_align is None:
+            box_align = 0
+            use_box_align = False
+        else:
+            use_box_align = True
+
         # The shared height and width of the current line. The line_height must
         # be 0 for a vertical box, and the line_width must be 0 for a horizontal
         # box.
@@ -1031,15 +1037,12 @@ class MultiBox(Container):
             else:
                 line_count = len(line)
 
-            if use_justify:
-                line_count -= 1
-
-            if line_count > 0:
-                xperchild = xfill / line_count
-                yperchild = yfill / line_count
-            else:
+            if use_justify or use_box_align or line_count == 0:
                 xperchild = 0
                 yperchild = 0
+            else:
+                xperchild = xfill / line_count
+                yperchild = yfill / line_count
 
             i = 0
 
@@ -1134,6 +1137,7 @@ class MultiBox(Container):
             maxx, maxy = layout_line(line, (target_width - x), 0, use_justify)
 
         elif layout == "vertical":
+
             if xfill:
                 minx = width
             else:
@@ -1191,7 +1195,6 @@ class MultiBox(Container):
             raise Exception("Unknown box layout: %r" % layout)
 
         # Determine the size.
-
         if not xfill:
             width = max(xminimum, maxx)
 
@@ -1199,7 +1202,10 @@ class MultiBox(Container):
             height = max(yminimum, maxy)
 
         # Apply box_align and box_justify to the lines.
-        if layout == "horizontal":
+        if not(use_justify or use_box_align):
+            placements = [ i for line in line_placements for i in line ]
+
+        elif layout == "horizontal":
             for line, line_width, use_justify in zip(line_placements, line_widths, line_use_justify):
                 remaining = width - line_width
                 if use_justify and len(line) > 1:
@@ -1214,6 +1220,7 @@ class MultiBox(Container):
                     x += align_offset + int(i * justify_per_child)
                     placements.append((child, x, y, w, h, surf))
                     i += 1
+
         else:
             for line, line_height, use_justify in zip(line_placements, line_heights, line_use_justify):
                 remaining = height - line_height
@@ -1242,6 +1249,8 @@ class MultiBox(Container):
 
             placements = new_placements
 
+
+        # Place the children.
         rv = renpy.display.render.Render(width, height)
 
         if self.style.order_reverse ^ (self.style.box_reverse and renpy.config.simple_box_reverse):

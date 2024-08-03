@@ -1124,11 +1124,15 @@ These are used for the horizontal and vertical box layouts.
     or columns. (So it is the vertical spacing between lines in a wrapped
     hbox, and the horizontal spacing between columns in a wrapped vbox.)
 
-.. style-property:: box_align float
+.. style-property:: box_align float or None
 
     This determines the alignment of rows or columns in a box. If 0.0,
     the default, rows are left-aligned and columns are top-aligned. If 0.5,
-    it will center wrapped rows. Has no effect if box_wrap is False.
+    it will center wrapped rows.
+
+    When this is not None, addional space will not be offered to the child when
+    :propref:`xfill` or :propref:`yfill` is set, ignoring the child's position
+    in the box's primary direction.
 
 .. style-property:: order_reverse boolean
 
@@ -1145,6 +1149,10 @@ These are used for the horizontal and vertical box layouts.
     justified. "first" will cause only the first line to be justified. "all"
     will cause all lines to be justified, including the final line. Justified
     lines do not obey box_align, except when there is only one item in a line.
+
+    When this is not false, addional space will not be offered to the child when
+    :propref:`xfill` or :propref:`yfill` is set, ignoring the child's position
+    in the box's primary direction.
 
 
 .. _grid-style-properties:
