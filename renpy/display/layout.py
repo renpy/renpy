@@ -1026,8 +1026,8 @@ class MultiBox(Container):
                 line_count -= 1
 
             if line_count > 0 and not b_align:
-                xperchild = xfill // line_count
-                yperchild = yfill // line_count
+                xperchild = xfill / line_count
+                yperchild = yfill / line_count
             else:
                 xperchild = 0
                 yperchild = 0
@@ -1043,7 +1043,6 @@ class MultiBox(Container):
             maxyout = maxy
 
             i = 0
-            current_line = [ ]
 
             for child, padding, x, y, surf in line:
 
@@ -1053,8 +1052,8 @@ class MultiBox(Container):
 
                 if (not child._box_skip) or (not renpy.config.box_skip):
 
-                    x += i * xperchild
-                    y += i * yperchild
+                    x += int(i * xperchild)
+                    y += int(i * yperchild)
 
                     x += padding[0] + x_box_adj
                     y += padding[1] + y_box_adj
@@ -1070,7 +1069,6 @@ class MultiBox(Container):
 
         x = 0
         y = 0
-
 
         if layout == "horizontal":
 
