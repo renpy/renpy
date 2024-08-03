@@ -975,7 +975,11 @@ cdef class Render:
                 if (ty <= 0) and (th >= rh):
                     rv.yclipping = False
 
-            rv.subpixel_blit(this, (-x, -y), focus=focus, main=True)
+
+            if subpixel:
+                rv.subpixel_blit(this, (-x, -y), focus=focus, main=True)
+            else:
+                rv.blit(this, (-x, -y), focus=focus, main=True)
 
             return rv
 
@@ -983,6 +987,8 @@ cdef class Render:
         # making an actual subsurface.
 
         for child, cx, cy, cfocus, cmain in self.children:
+
+            child_subpixel = subpixel or not isinstance(cx, int) or not isinstance(cy, int)
 
             childw, childh = child.get_size()
             xo, cx, cw = compute_subline(cx, childw, x, w)
@@ -1011,7 +1017,7 @@ cdef class Render:
                         croph = h - yo
 
                     crop = (cx, cy, cropw, croph)
-                    newchild = child.subsurface(crop, focus=focus, subpixel=True)
+                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel)
                     newchild.width = cw
                     newchild.height = ch
                     newchild.render_of = child.render_of[:]
@@ -1025,7 +1031,10 @@ cdef class Render:
             except Exception:
                 raise Exception("Creating subsurface failed. child size = ({}, {}), crop = {!r}".format(childw, childh, crop))
 
-            rv.subpixel_blit(newchild, offset, focus=cfocus, main=cmain)
+            if child_subpixel:
+                rv.subpixel_blit(newchild, offset, focus=cfocus, main=cmain)
+            else:
+                rv.blit(newchild, offset, focus=cfocus, main=cmain)
 
         if focus and self.focuses:
 
