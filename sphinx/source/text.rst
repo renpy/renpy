@@ -137,7 +137,7 @@ It should be noted that:
 
 - the order in which the flags are given does not change the result : ``!cl``
   will do just the same as ``!lc``.
-- Supplementarly exclamation marks will be ignored, and will not circumvent
+- Supplementary exclamation marks will be ignored, and will not circumvent
   the previous rule : ``!l!c`` will do the same as ``!c!l`` or ``!cl``.
 
 The transformations are done in the following order:
@@ -329,8 +329,8 @@ Tags that apply to all text are:
 .. text-tag:: noalt
 
     The noalt tag prevents text from being spoken by the text-to-speech
-    system. This is often used in conjuction with the alt tag, to provide
-    accessible and visual optiopns  ::
+    system. This is often used in conjunction with the alt tag, to provide
+    accessible and visual options  ::
 
        g "Good to see you! {noalt}<3{/noalt}{alt}heart{/alt}"
 
@@ -520,7 +520,7 @@ Style Text Tags
 Ren'Py supports text tags that access styles. These are text tags
 where the tag name is empty. In this case, the argument
 is taken to be the name of a style. For example, the {=mystyle} tag
-will acces the ``mystyle`` style.
+will access the ``mystyle`` style.
 
 The text between the tag and the corresponding closing tag has the following
 properties set to those defined in the style:
@@ -869,7 +869,7 @@ There are two text tags that support the use of variable fonts.
 
         "This is {instance=heavy}heavy{/instance} text."
 
-    When the instance tag is used, the axis properties are overriden.
+    When the instance tag is used, the axis properties are overridden.
 
 .. text-tag:: axis
 

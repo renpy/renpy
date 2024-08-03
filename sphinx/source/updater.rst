@@ -118,13 +118,13 @@ The updater screen is supplied a single parameter, an Updater object, which
 must be named `u`. The Updater object has the following fields on it, which
 can be used to customize the screen:
 
-.. class:: update.Updater
+.. class:: updater.Updater
 
    .. attribute:: state
 
       The current state of the updater. See the example above for possible
       values and their meanings. The values are all constants on the Updater
-      obect.
+      object.
 
    .. attribute:: message
 

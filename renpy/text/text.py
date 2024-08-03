@@ -417,28 +417,32 @@ class SpaceSegment(object):
     A segment that's used to render horizontal or vertical whitespace.
     """
 
-    def __init__(self, ts, width=0, height=0):
+    def __init__(self, ts, width=0.0, height=0.0):
         """
         `ts`
             The text segment that this SpaceSegment follows.
         """
 
-        self.glyph = glyph = textsupport.Glyph()
+        self.width = width
+        self.height = height
+        self.ts = ts
+
+
+    def glyphs(self, s, layout):
+        glyph = textsupport.Glyph()
 
         glyph.character = 0
         glyph.ascent = 1
-        glyph.line_spacing = height
-        glyph.advance = width
-        glyph.width = width
+        glyph.line_spacing = layout.scale_int(self.height)
+        glyph.advance = layout.scale_int(self.width)
+        glyph.width = layout.scale_int(self.width)
 
-        if ts.hyperlink:
-            glyph.hyperlink = ts.hyperlink
+        if self.ts.hyperlink:
+            glyph.hyperlink = self.ts.hyperlink
 
-        glyph.shader = ts.shader
-        self.cps = ts.cps
+        glyph.shader = self.ts.shader
 
-    def glyphs(self, s, layout):
-        return [ self.glyph ]
+        return [ glyph ]
 
     def bounds(self, glyphs, bounds, layout):
         return bounds
@@ -449,10 +453,12 @@ class SpaceSegment(object):
         return
 
     def assign_times(self, gt, glyphs):
-        if self.cps != 0:
-            gt += 1.0 / self.cps
+        cps = self.ts.cps
 
-        self.glyph.time = gt
+        if cps != 0:
+            gt += 1.0 / cps
+
+        glyphs[0].time = gt
         return gt
 
 
@@ -729,6 +735,7 @@ class Layout(object):
             # A list of (segment, list of glyph) pairs.
             seg_glyphs = [ ]
 
+
             for ts, s in p:
                 glyphs = ts.glyphs(s, self)
 
@@ -742,6 +749,7 @@ class Layout(object):
             # linebreaking algorithms.
             if rtl:
                 par_glyphs.reverse()
+                seg_glyphs.reverse()
                 for ts, glyphs in seg_glyphs:
                     glyphs.reverse()
 
@@ -1256,7 +1264,7 @@ class Layout(object):
                     if len(value) < 1:
                         raise Exception("empty value supplied for tag %r" % tag)
 
-                    width = self.scale_int(int(value))
+                    width = float(value)
                     line.append((SpaceSegment(tss[-1], width=width), u""))
 
                 elif tag == "vspace":
@@ -1266,7 +1274,7 @@ class Layout(object):
 
                     # Duplicates from the newline tag.
 
-                    height = self.scale_int(int(value))
+                    height = float(value)
 
                     if line:
                         paragraphs.append(line)
@@ -1529,6 +1537,8 @@ class Layout(object):
             l.append((ts, s))
 
         rtl = (direction == RTL or direction == WRTL)
+        if rtl:
+            l.reverse()
 
         return l, rtl
 
@@ -1722,7 +1732,7 @@ class Layout(object):
                 if g is first_glyph:
                     left = g.x - self.add_left
                 else:
-                    left = g.x + outline
+                    left = g.x - outline
 
                 # The x-coordinate of the right edge of the glyph.
                 if g is last_glyph:

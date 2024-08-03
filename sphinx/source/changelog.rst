@@ -22,6 +22,9 @@ The new :var:`config.shader_part_filter` variable can be used to filter the shad
 possible to implement preferences that turn on and off shader parts as required.
 
 
+Two new :ref:`model uniforms <model-uniforms>` have been added, ``u_drawable_size`` and ``u_virtual_size``, making
+it easier to project gl_Positions in shaders to coordinates that are used elsewhere in Ren'Py.
+
 Launcher Changes
 ----------------
 
@@ -30,16 +33,6 @@ Under Navigate Script, the TODOs button now has a count of TODOs next to it.
 Under Navigate Script, the files view now has a checkbox that allows a creator to
 filter out translation files.
 
-Exec.Py
---------
-
-It's now possible to create a file named exec.py in the base directory of
-the game. If this file exists, it's loaded, deleted, and then run using ``exec``
-during an interaction context. This can be used to run Python code for debugging
-purposes.
-
-This is controlled by the RENPY_EXEC_PY environment variable, and by default is
-enabled in developer mode.
 
 Window Statement Changes
 ------------------------
@@ -64,8 +57,56 @@ to the next say statement to determine the type of thr window to show. Previousl
 it looked back to the last say statement.
 
 
+Screenshots and Paper Dolls
+---------------------------
+
+Taking a screenshot now hides the notify screen, so multiple screenshot do not
+leak the path to the previous one. This controled by :var:`config.pre_screenshot_actions`.
+
+The new :func:`renpy.render_to_file` and :func:`renpy.render_to_surface` functions make it possible to
+capture displayables (including trees of displayables, like layered images) and save that to a file
+or a pygame_sdl2 Surface.
+
+
+Steam
+-----
+
+Ren'Py's Steam support has been updated to use the latest version of the Steam DLL.
+
+There is now support for the Steam Timeline, part of the Steam Game Recording system. This support is
+controlled by the :var:`config.automatic_steam_timeline` variable. When true, the default, :var:`save_name` is
+mirrored to the steam Timeline, as is the menu/laying state. It's possible to add additional events to the timeline
+using :var:`achievement.steamapi.add_timeline_event`. (Remember to check that achievement.steam is not None before
+calling this function.)
+
+Wrapped methods of the Steamworks API are documented on the :doc:`achievement` page.
+
+
 Features
 --------
+
+The new anymod keysym prefix makes it possible to bind to a key while ignoring the meta, alt, and ctrl key
+modifiers.
+
+The translation identifier screen (accessed through shift+D) is now the translation info screen, and now includes
+information about the line being executed. If a language is selected, the screen will also show the line being
+translated, and the text of the say statement being translated.
+
+:doc:`cds` can now take take an ATL block, which is supplied to the `execute` function as a keyword argument
+giving an ATL transform. It's also possible to define a creator-defined statement that optionally takes
+an ATL block, or a block of script statements.
+
+It is now possible to supply :ref:`menu arguments <menu-arguments>` to :func:`renpy.display_menu`, and
+the new :class:`renpy.Choice` class makes it possible to supply arguments to each item in the menu.
+
+Retained speech bubbles are now automatically cleared away when other say, menu, or call screen
+statements are invoked. This is controlled by the :var:`bubble.clear_retain_statements` variable.
+
+The :func:`renpy.get_ongoing_transition` function has been added. This returns the transition that
+is currently being applied to the top level or a layer.
+
+The :var:`config.translate_ignore_who` variable makes it possible to ignore certain characters for the
+purpose of translations.
 
 The :class:`Hide` action and :func:`renpy.hide_screen` actions now take an `immediately`
 keyword argument, which prevents 'on hide' handlers in the screens from running.
@@ -102,13 +143,28 @@ the transform to a particular number of frames per second.
 Other Changes
 -------------
 
+The hspace and vspace text tags now respect window scaling.
+
+Lint will now report obsolete image manipulators.
+
+The :func:`renpy.open_file` function now returns an io.BufferedReader object when
+`encoding` is None, allowing the .peek method to be used.
+
+Ren'Py will load .rpe.py files from :var:`config.renpy_base` directory and the
+project's game directory, and execute the file before the game starts.
+
+Ren'Py will now load .rpe files from the :var:`config.renpy_base` directory as well as the
+project's game directory.
+
+Files ending with .rpe or .rpe.py are excluded from the build process.
+
+Images can now be oversampled at the directory level.
+
+ATL polar coordinates now support the radius being a negative number.
+
 The displayable inspector (Shift+Alt+I) now shows a displayable's id if it has one.
 
 Displayables now have an id field, that contains the id given in screen language.
-
-Taking a screenshot now hides the notify screen, so multiple screenshot do not
-leak the path to the previous one. This controled by :var:`config.pre_screenshot_actions`.
-
 The :var:`config.clear_log` variable has been added, which controls whether the
 dialogue log (:var:`config.log`) is cleared each time Ren'Py starts.
 
@@ -222,8 +278,6 @@ same model but different `default_fade` times.
 
 The new :var:`config.log_events` variable controls whether Ren'Py
 logs pygame-style events, for debugging.
-
-
 
 The new :var:`config.python_exit_callbacks` lets you specify a list of
 callbacks that can be used to de-initialize Python modules just before
@@ -2158,7 +2212,7 @@ is now allowed, and equivalent to::
 
     linear 2.0 xalign 1.0 yalign 1.0
 
-Information about :ref:`ATL Transitions <atl-transitions>` and :ref:`Special ATL Keyword Parameters <atl-keyword-parameters>`
+Information about :ref:`ATL Transitions <atl-transitions>` and :ref:`Special ATL Keyword Parameters <atl-child-param>`
 has been added to the documentation.
 
 The ``pause 0`` statement has been special-cased to always display one frame,

@@ -407,7 +407,7 @@ class ATLTransformBase(renpy.object.Object):
 
     # Compatibility with older saves.
     parameters = renpy.ast.EMPTY_PARAMETERS
-    parent_transform = None
+    parent_transform = None # type: ATLTransformBase|None
     atl_st_offset = 0
 
     # The block, as first compiled for prediction.
@@ -587,8 +587,18 @@ class ATLTransformBase(renpy.object.Object):
 
         child_param = signature.parameters.get("child", None)
         old_widget_param = signature.parameters.get("old_widget", None)
-        # args_param = signature.extrapos if ValuedParameter.VAR_POSITIONAL in present_kinds else None
-        # kwargs_param = signature.extrakw if ValuedParameter.VAR_KEYWORD in present_kinds else None
+        # args_param_name = None
+        # if ValuedParameter.VAR_POSITIONAL in present_kinds:
+        #     for param in signature.parameters.values():
+        #         if param.kind == ValuedParameter.VAR_POSITIONAL:
+        #             args_param_name = param.name
+        #             break
+        # kwargs_param_name = None
+        # if ValuedParameter.VAR_KEYWORD in present_kinds:
+        #     for param in signature.parameters.values():
+        #         if param.kind == ValuedParameter.VAR_KEYWORD:
+        #             kwargs_param_name = param.name
+        #             break
 
         ## if a single arg is passed and no positional parameter is there to catch it, set it to be the child
         if args and (present_kinds <= {ValuedParameter.KEYWORD_ONLY, ValuedParameter.VAR_KEYWORD}):
@@ -599,7 +609,7 @@ class ATLTransformBase(renpy.object.Object):
             args = ()
 
         if (child_param is None) or (child_param.kind not in {ValuedParameter.POSITIONAL_OR_KEYWORD, ValuedParameter.KEYWORD_ONLY}):
-            # if kwargs_param is None:
+            # if kwargs_param_name is None:
                 child = kwargs.pop("child", child)
         else:
             child = kwargs.get("child", child)
@@ -610,18 +620,18 @@ class ATLTransformBase(renpy.object.Object):
         new_scope = signature.apply(args, kwargs, partial=True, apply_defaults=False)
 
         ## when *args and **kwargs are enabled
-        # if args_param:
-        #     var_args = new_scope.pop(args_param, ())
-        #     if args_param in scope:
-        #         scope[args_param] += var_args
+        # if args_param_name:
+        #     var_args = new_scope.pop(args_param_name, ())
+        #     if args_param_name in scope:
+        #         scope[args_param_name] += var_args
         #     else:
-        #         scope[args_param] = var_args
-        # if kwargs_param:
-        #     var_kwargs = new_scope.pop(kwargs_param, {})
-        #     if kwargs_param in scope:
-        #         scope[kwargs_param].update(var_kwargs)
+        #         scope[args_param_name] = var_args
+        # if kwargs_param_name:
+        #     var_kwargs = new_scope.pop(kwargs_param_name, {})
+        #     if kwargs_param_name in scope:
+        #         scope[kwargs_param_name].update(var_kwargs)
         #     else:
-        #         scope[kwargs_param] = var_kwargs
+        #         scope[kwargs_param_name] = var_kwargs
 
         scope.update(new_scope)
 
@@ -636,7 +646,7 @@ class ATLTransformBase(renpy.object.Object):
             pkind = param.kind
 
             ## when *args and **kwargs are enabled
-            # if name in (args_param, kwargs_param):
+            # if name in (args_param_name, kwargs_param_name):
             #     pass
 
             ## when positional-only parameters are enabled
@@ -674,7 +684,7 @@ class ATLTransformBase(renpy.object.Object):
             _args=_args,
         )
 
-        rv.parent_transform = self # type: ignore
+        rv.parent_transform = self
         rv.take_state(self)
 
         return rv

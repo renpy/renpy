@@ -915,7 +915,7 @@ cdef class Render:
 
     pygame_surface = render_to_texture
 
-    def subsurface(self, rect, focus=False):
+    def subsurface(self, rect, focus=False, subpixel=False):
         """
         Returns a subsurface of this render. If `focus` is true, then
         the focuses are copied from this render to the child.
@@ -923,10 +923,11 @@ cdef class Render:
 
         (x, y, w, h) = rect
 
-        x = int(x)
-        y = int(y)
-        w = int(w)
-        h = int(h)
+        if not subpixel:
+            x = int(x)
+            y = int(y)
+            w = int(w)
+            h = int(h)
 
         rv = Render(w, h)
 
@@ -974,14 +975,14 @@ cdef class Render:
                 if (ty <= 0) and (th >= rh):
                     rv.yclipping = False
 
-            rv.blit(this, (-x, -y), focus=focus, main=True)
+            rv.subpixel_blit(this, (-x, -y), focus=focus, main=True)
+
             return rv
 
         # This is the path that executes for rectangle-aligned surfaces,
         # making an actual subsurface.
 
         for child, cx, cy, cfocus, cmain in self.children:
-
 
             childw, childh = child.get_size()
             xo, cx, cw = compute_subline(cx, childw, x, w)
@@ -1010,7 +1011,7 @@ cdef class Render:
                         croph = h - yo
 
                     crop = (cx, cy, cropw, croph)
-                    newchild = child.subsurface(crop, focus=focus)
+                    newchild = child.subsurface(crop, focus=focus, subpixel=True)
                     newchild.width = cw
                     newchild.height = ch
                     newchild.render_of = child.render_of[:]
@@ -1024,8 +1025,7 @@ cdef class Render:
             except Exception:
                 raise Exception("Creating subsurface failed. child size = ({}, {}), crop = {!r}".format(childw, childh, crop))
 
-
-            rv.blit(newchild, offset, focus=cfocus, main=cmain)
+            rv.subpixel_blit(newchild, offset, focus=cfocus, main=cmain)
 
         if focus and self.focuses:
 

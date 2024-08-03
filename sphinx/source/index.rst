@@ -55,8 +55,8 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    translation
    displayables
    transforms
+   transform_properties
    transitions
-   atl
    matrixcolor
    layeredimage
    3dstage
@@ -115,7 +115,6 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    statement_equivalents
    save_load_rollback
    persistent
-   trans_trans_python
    gui_advanced
    screen_python
    cdd
@@ -129,6 +128,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    other
    ren_py
    fetch
+   screenshot
 
 
 .. toctree::

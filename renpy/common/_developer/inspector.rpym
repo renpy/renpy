@@ -25,6 +25,7 @@ style _hyperlink_button is _default
 style _hyperlink_button_text is _hyperlink
 
 screen _inspector:
+    layer config.interface_layer
     zorder 1010
     modal True
 
@@ -107,6 +108,7 @@ screen _inspector:
     key "game_menu" action Return(True)
 
 screen _style_inspector:
+    layer config.interface_layer
     zorder 1020
     modal True
 

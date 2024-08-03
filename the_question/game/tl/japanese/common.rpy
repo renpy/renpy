@@ -99,7 +99,7 @@ translate japanese strings:
 
     # renpy/common/00accessibility.rpy:191
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new "このメニューのオプションはアクセス性を改善するためのものです。すべてのゲームで動作するわけではなく、特定の組合せではゲームを正常にレンダリングしないでしょう。これはゲームやエンジンの問題ではありません。フォント変更時に最良の結果を得るには、テキストサイズをオリジナルのままにしてください。"
+    new "このメニューのオプションはアクセシビリティーを改善するためのものです。すべてのゲームで動作するわけではなく、特定の組合せではゲームを正常にレンダリングしないでしょう。これはゲームやエンジンの問題ではありません。フォント変更時に最良の結果を得るには、テキストサイズをオリジナルのままにしてください。"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Monday"
@@ -1187,7 +1187,7 @@ translate japanese strings:
 
     # renpy/common/00preferences.rpy:495
     old "accessibility menu"
-    new "アクセス性メニュー"
+    new "アクセシビリティーメニュー"
 
     # renpy/common/00preferences.rpy:498
     old "high contrast text"
@@ -1391,7 +1391,7 @@ translate japanese strings:
 
     # renpy/common/00accessibility.rpy:120
     old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
-    new "アクセス性メニュー。上下矢印キーをナビゲーションに使用し、ボタンとバーのアクティブ化にはエンターを使用します"
+    new "アクセシビリティーメニュー。上下矢印キーをナビゲーションに使用し、ボタンとバーのアクティブ化にはエンターを使用します"
 
     # renpy/common/00accessibility.rpy:197
     old "Self-voicing support is limited when using a touch screen."

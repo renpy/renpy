@@ -34,6 +34,20 @@ use of versions of Python that only support Windows 10 and later.
 8.3.0 / 7.8.0
 -------------
 
+**Box_reverse and Box_align** The :propref:`box_reverse` property now no longer adjusts the box
+alignment. To adjust the box alignment, set the :propref:`box_align` property to 1.0, or use:
+
+    define config.box_reverse_align = true
+
+To get the 8.2 behavior.
+
+**Retained speech bubbles** are now automatically cleared away when other say, menu, or call screen
+statements are invoked. This is controlled by the :var:`bubble.clear_retain_statements` variable.
+
+To disable this, add to your game::
+
+    define bubble.clear_retain_statements = [ ]
+
 **How ATL sets the child from parameters** The rules as for how and when ATL
 transforms get their child set, based upon the parameters they accept and the
 arguments they are passed, has slightly changed. It is unlikely to have any

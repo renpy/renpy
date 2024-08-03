@@ -119,15 +119,15 @@ translate german strings:
 
     # 00console.rpy:182
     old "Press <esc> to exit console. Type help for help.\n"
-    new "Drücken Sie <esc>, um die Konsole zu schließen. Geben Sie „help“ ein, um die Hilfe anzuzeigen.\n"
+    new "Drücke <esc>, um die Konsole zu schließen. Gib „help“ ein, um die Hilfe anzuzeigen.\n"
 
     # 00console.rpy:186
     old "Ren'Py script enabled."
-    new "Ren’Py Skript aktiviert."
+    new "Ren'Py Skript aktiviert."
 
     # 00console.rpy:188
     old "Ren'Py script disabled."
-    new "Ren’Py Skript deaktiviert."
+    new "Ren'Py Skript deaktiviert."
 
     # 00console.rpy:398
     old "help: show this help"
@@ -143,7 +143,7 @@ translate german strings:
 
     # 00console.rpy:415
     old " <python expression or statement>: run the expression or statement"
-    new " <python expression or statement>: startet den Ausdruck oder die Anweisung"
+    new " <python Ausdruck oder Anweisung>: startet den Ausdruck oder die Anweisung"
 
     # 00console.rpy:423
     old "clear: clear the console history"
@@ -186,23 +186,19 @@ translate german strings:
 
     # renpy/common/_developer/developer.rpym:43
     old "Interactive Director (D)"
-    # Automatic translation.
-    new "Interaktiver Direktor (D)"
+    new "Interaktiver Regisseur (D)"
 
     # renpy/common/_developer/developer.rpym:51
     old "Persistent Viewer"
-    # Automatic translation.
-    new "Dauerhafter Betrachter"
+    new "Übersicht persistenter Variablen"
 
     # renpy/common/_developer/developer.rpym:59
     old "Show Image Load Log (F4)"
-    # Automatic translation.
-    new "Bildladeprotokoll anzeigen (F4)"
+    new "Ladeprotokoll aller Bilder anzeigen (F4)"
 
     # renpy/common/_developer/developer.rpym:62
     old "Hide Image Load Log (F4)"
-    # Automatic translation.
-    new "Bildladeprotokoll ausblenden (F4)"
+    new "Ladeprotokoll aller Bilder ausblenden (F4)"
 
     # renpy/common/_developer/developer.rpym:65
     old "Image Attributes"
@@ -211,32 +207,28 @@ translate german strings:
 
     # renpy/common/_developer/developer.rpym:70
     old "Speech Bubble Editor (Shift+B)"
-    # Automatic translation.
-    new "Sprechblasen-Editor (Umschalt+B)"
+    new "Sprechblasen-Editor (Shift+B)"
 
     # renpy/common/_developer/developer.rpym:97
     old "[name] [attributes] (hidden)"
-    # Automatic translation.
-    new "[name] [attributes] (versteckt)"
+    new "[Name] [Attribute] (versteckt)"
 
     # renpy/common/_developer/developer.rpym:101
     old "[name] [attributes]"
-    new "[name] [attributes]"
+    new "[Name] [Attribute]"
 
     # renpy/common/_developer/developer.rpym:162
     old "Hide deleted"
-    # Automatic translation.
-    new "Ausblenden gelöscht"
+    new "Gelöschtes verbergen"
 
     # renpy/common/_developer/developer.rpym:162
     old "Show deleted"
-    # Automatic translation.
-    new "Anzeigen gelöscht"
+    new "Gelöschtes anzeigen"
 
     # renpy/common/_developer/developer.rpym:389
     old "Type to filter: "
     # Automatic translation.
-    new "Typ zum Filtern: "
+    new "Filtertyp: "
 
     # renpy/common/_developer/developer.rpym:507
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
@@ -255,23 +247,20 @@ translate german strings:
 
     # renpy/common/00console.rpy:813
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
-    # Automatic translation.
-    new "Die Hilfe kann undokumentierte Funktionen anzeigen. Bitte prüfen Sie, ob die Funktion oder\nKlasse, die Sie verwenden möchten, dokumentiert ist.\n\n"
+    new "Die Hilfe kann undokumentierte Funktionen anzeigen. Bitte prüfe, ob die Funktion\noder Klasse, die Du verwenden möchtest, dokumentiert ist.\n\n"
 
     # renpy/common/00console.rpy:854
     old "stack: print the return stack"
-    # Automatic translation.
-    new "stack: den Rückgabestapel drucken"
+    new "stack: den Stack anzeigen"
 
     # renpy/common/00console.rpy:908
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
-    # Automatic translation.
-    new "watch <expression>: einen Python-Ausdruck beobachten\n watch short: macht die Darstellung der nachverfolgten Ausdrücke kurz (Standard)\n watch long: macht die Darstellung von verfolgten Ausdrücken wie folgt"
+    new "watch <expression>: einen Python-Ausdruck beobachten\n watch short: macht die Darstellung der nachverfolgten Ausdrücke kurz (Voreinstellung)\n watch long: macht die Darstellung von verfolgten Ausdrücken wie sie sind"
 
     # renpy/common/00console.rpy:1028
     old "short: Shorten the representation of objects on the console (default)."
     # Automatic translation.
-    new "short: Verkürzt die Darstellung von Objekten auf der Konsole (Standard)."
+    new "short: Verkürzt die Darstellung von Objekten auf der Konsole (Voreinstellung)."
 
     # renpy/common/00console.rpy:1032
     old "long: Print the full representation of objects on the console."
@@ -280,11 +269,9 @@ translate german strings:
 
     # renpy/common/00console.rpy:1036
     old "escape: Enables escaping of unicode symbols in unicode strings."
-    # Automatic translation.
-    new "escape: Ermöglicht das Escaping von Unicode-Symbolen in Unicode-Strings."
+    new "escape: Aktiviert das Escaping von Unicode-Symbolen in Unicode-Strings."
 
     # renpy/common/00console.rpy:1040
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
-    # Automatic translation.
     new "unescape: Deaktiviert das Escaping von Unicode-Symbolen in Unicode-Zeichenfolgen und druckt sie so, wie sie sind (Voreinstellung)."
 

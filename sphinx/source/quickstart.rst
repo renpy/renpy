@@ -659,6 +659,56 @@ used to store the player's name, a points score, or for any other
 purpose. Since Ren'Py includes the ability to use the full Python
 programming language, many things are possible.
 
+Files In Template
+-------------------
+
+The game folder in the created project includes below folders and files.
+
+**audio/**
+    This folder is intended to include audio files. See :doc:`audio`
+    for more details.
+
+**cache/**
+    This folder includes cache files. You don't need to edit those files.
+
+**gui/**
+    This folder includes images which are used by the gui. See the :ref:`GUI
+    Customization Guide <gui>` for more details.
+
+**images/**
+    This folder is intended to include images files.
+    See :doc:`displaying_images` for more details.
+
+**tl/**
+    This folder includes translation files. See :doc:`translation`
+    for more details.
+
+**gui.rpy**
+    The gui variables are defined in this file. See the :ref:`GUI
+    Customization Guide <gui>` for more details.
+
+**options.rpy**
+     Config and Build variables, a part of preferences and a part of gui
+     variables are defined in this file. See :doc:`config`, :doc:`preferences`,
+     :doc:`build` and the :ref:`GUI Customization Guide <gui>` for more
+     details.
+
+**screens.rpy**
+     Screens are defined in this file. You should edit this for :ref:`more
+     advanced gui customization <more_advanced_gui>`. Also see
+     :doc:`style`, :doc:`style_properties`, :doc:`screens`, :doc:`screen_actions`,
+     :doc:`screen_special` and :doc:`screen_optimization` for more details.
+
+**script.rpy**
+    This file is intended to include other scripts which include a scenario.
+    You can also add or delete any :file:`.rpy`. See :doc:`language_basics` for
+    more details.
+
+**\*.rpyc**
+    Those files are result of compiling each :file:`.rpy` files to reduce loading time.
+    You don't need to edit those files without deleting the corresonding :file:`.rpy`
+    file. See :doc:`language_basics` for more details.
+
 Releasing Your Game
 -------------------
 

@@ -99,6 +99,10 @@ class TransformState(renpy.object.Object):
 
     radius_type = absolute
 
+    radius_sign = 1
+    relative_anchor_radius_sign = 1
+    absolute_anchor_radius_sign = 1
+
     def __init__(self):
 
         # Most fields on this object are set by add_property, at the bottom
@@ -125,6 +129,9 @@ class TransformState(renpy.object.Object):
             d[k] = getattr(ts, k)
 
         self.last_angle = ts.last_angle
+        self.radius_sign = ts.radius_sign
+        self.relative_anchor_radius_sign = ts.relative_anchor_radius_sign
+        self.absolute_anchor_radius_sign = ts.absolute_anchor_radius_sign
         self.last_absolute_anchorangle = ts.last_absolute_anchorangle
         self.last_relative_anchorangle = ts.last_relative_anchorangle
         self.last_events = ts.last_events
@@ -272,36 +279,46 @@ class TransformState(renpy.object.Object):
         if angle < 0:
             angle += 360
 
-        if (radius == 0) and (self.last_angle is not None):
+        if radius < .001 and self.last_angle is not None:
             angle = self.last_angle
+        elif self.radius_sign < 0:
+            angle = limit_angle(angle + 180)
 
         return angle
 
     def get_radius(self, vector=None):
         vector_x, vector_y = vector or self.get_pos_polar_vector()
 
-        return absolute(math.hypot(vector_x, vector_y))
+        return absolute(math.hypot(vector_x, vector_y) * self.radius_sign)
 
     def set_angle(self, angle):
         self.last_angle = limit_angle(angle)
 
         radius = self.get_radius()
 
+        if radius < 0:
+            angle = limit_angle(angle + 180)
+            radius = -radius
+
         self.set_pos_from_angle_and_radius(angle, radius)
 
     def set_radius(self, radius):
-        radius = self.scale(radius, min(self.available_width, self.available_height))
 
+        radius = self.scale(radius, min(self.available_width, self.available_height))
         vector = self.get_pos_polar_vector()
-        # Deal with the angle becoming 0.0 when the radius would be 0.0.
-        if not any(vector) and (self.last_angle is not None):
-            angle = self.last_angle
-        else:
-            angle = self.get_angle(vector)
+        angle = self.get_angle(vector)
+
+        if radius < 0:
+            angle = limit_angle(angle + 180)
+            radius = -radius
+            self.radius_sign = -1
+        elif radius > 0:
+            self.radius_sign = 1
 
         self.set_pos_from_angle_and_radius(angle, radius)
 
     def set_pos_from_angle_and_radius(self, angle, radius):
+
         xaround = self.scale(self.xaround, self.available_width)
         yaround = self.scale(self.yaround, self.available_height)
 
@@ -348,15 +365,25 @@ class TransformState(renpy.object.Object):
         relative_radius = math.hypot(relative_vector_x, relative_vector_y)
         absolute_angle = math.atan2(absolute_vector_x, -absolute_vector_y) / math.pi * 180
         relative_angle = math.atan2(relative_vector_x, -relative_vector_y) / math.pi * 180
+
+
         if absolute_angle < 0:
             absolute_angle += 360
         if relative_angle < 0:
             relative_angle += 360
 
-        if (absolute_radius == 0) and (self.last_absolute_anchorangle is not None):
+        if (absolute_radius < .001) and (self.last_absolute_anchorangle is not None):
             absolute_angle = self.last_absolute_anchorangle
-        if (relative_radius == 0) and (self.last_relative_anchorangle is not None):
+        elif self.absolute_anchor_radius_sign < 0:
+            absolute_angle = absolute_angle + 180
+
+        if (relative_radius < .001) and (self.last_relative_anchorangle is not None):
             relative_angle = self.last_relative_anchorangle
+        elif self.relative_anchor_radius_sign < 0:
+            relative_angle = relative_angle + 180
+
+        absolute_angle = limit_angle(absolute_angle)
+        relative_angle = limit_angle(relative_angle)
 
         return DualAngle(absolute_angle, relative_angle)
 
@@ -368,8 +395,8 @@ class TransformState(renpy.object.Object):
         (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = polar_vectors or self.get_anchor_polar_vector()
 
         return position(
-            absolute=math.hypot(absolute_vector_x, absolute_vector_y), # type: ignore
-            relative=math.hypot(relative_vector_x, relative_vector_y),
+            absolute=math.hypot(absolute_vector_x, absolute_vector_y) * self.absolute_anchor_radius_sign, # type: ignore
+            relative=math.hypot(relative_vector_x, relative_vector_y) * self.relative_anchor_radius_sign, # type: ignore
         )
 
     def set_anchorangle(self, angle):
@@ -387,7 +414,14 @@ class TransformState(renpy.object.Object):
         self.last_absolute_anchorangle = limit_angle(absolute_anchorangle)
         self.last_relative_anchorangle = limit_angle(relative_anchorangle)
 
-        anchorradius = self.anchorradius
+        anchorradius = position(self.anchorradius.absolute, self.anchorradius.relative)
+
+        if anchorradius.absolute < 0:
+            absolute_anchorangle = limit_angle(absolute_anchorangle + 180)
+            anchorradius.absolute = -anchorradius.absolute
+        if anchorradius.relative < 0:
+            relative_anchorangle = limit_angle(relative_anchorangle + 180)
+            anchorradius.relative = -anchorradius.relative
 
         self.set_anchor_from_anchorangle_and_anchorradius(
             absolute_anchorangle,
@@ -415,6 +449,18 @@ class TransformState(renpy.object.Object):
             absolute_anchorangle = self.last_absolute_anchorangle
         if (not old_anchorradius.relative) and (self.last_relative_anchorangle is not None):
             relative_anchorangle = self.last_relative_anchorangle
+
+        if anchorradius.absolute < 0:
+            absolute_anchorangle = limit_angle(absolute_anchorangle + 180)
+            self.absolute_anchor_radius_sign = -1
+        elif anchorradius.absolute > 0:
+            self.absolute_anchor_radius_sign = 1
+
+        if anchorradius.relative < 0:
+            relative_anchorangle = limit_angle(relative_anchorangle + 180)
+            self.relative_anchor_radius_sign = -1
+        elif anchorradius.relative > 0:
+            self.relative_anchor_radius_sign = 1
 
         self.set_anchor_from_anchorangle_and_anchorradius(
             absolute_anchorangle,
@@ -1295,6 +1341,10 @@ add_gl_property("gl_mipmap")
 add_gl_property("gl_pixel_perfect")
 add_gl_property("gl_texture_scaling")
 add_gl_property("gl_texture_wrap")
+add_gl_property("gl_texture_wrap_tex0")
+add_gl_property("gl_texture_wrap_tex1")
+add_gl_property("gl_texture_wrap_tex2")
+add_gl_property("gl_texture_wrap_tex3")
 
 ALIASES = {
     "alignaround" : (float, float),

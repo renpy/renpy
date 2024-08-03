@@ -48,6 +48,7 @@ init -1500:
     # This screen can be customized by the creator, provided the actions
     # remain available.
     screen _choose_renderer:
+        layer config.interface_layer
 
         $ gl = False
         $ gles = False
@@ -233,6 +234,7 @@ init -1500:
     #
     # `allow_continue` controls whether this error can be ignored.
     screen _performance_warning:
+        layer config.interface_layer
 
         frame:
             style_group ""

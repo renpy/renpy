@@ -34,6 +34,7 @@ import threading
 import time
 import io
 import os.path
+import sys
 
 import pygame_sdl2
 import renpy
@@ -586,6 +587,10 @@ class ImageBase(renpy.display.displayable.Displayable):
     optimize_bounds = False
     oversample = 1
     pixel_perfect = False
+    obsolete = True
+
+    obsolete_list = [ ]
+
 
     # If the image failed to load, a placeholder used to report the error.
     fail = None
@@ -608,6 +613,14 @@ class ImageBase(renpy.display.displayable.Displayable):
 
         super(ImageBase, self).__init__(**properties)
         self.identity = (type(self).__name__,) + args
+
+        if self.obsolete and renpy.game.context().init_phase:
+            frame = sys._getframe(2)
+            filename = frame.f_code.co_filename
+            line = frame.f_lineno
+            classname = type(self).__name__
+
+            self.obsolete_list.append((filename, line, classname))
 
     def __hash__(self):
         return hash(self.identity)
@@ -680,6 +693,8 @@ class Image(ImageBase):
     This image manipulator loads an image from a file.
     """
 
+    obsolete = False
+
     is_svg = False
     dpi = 96
 
@@ -690,7 +705,7 @@ class Image(ImageBase):
 
         if "@" in filename:
             base = filename.rpartition(".")[0]
-            extras = base.partition("@")[2].split(",")
+            extras = base.rpartition("@")[2].partition("/")[0].split(",")
 
             for i in extras:
                 try:
@@ -810,6 +825,8 @@ class Data(ImageBase):
         loaded from disk.)
     """
 
+    obsolete = False
+
     def __init__(self, data, filename, **properties):
         super(Data, self).__init__(data, filename, **properties)
         self.data = data
@@ -824,6 +841,8 @@ class Data(ImageBase):
 
 
 class ZipFileImage(ImageBase):
+
+    obsolete = False
 
     def __init__(self, zipfilename, filename, mtime=0, **properties):
         super(ZipFileImage, self).__init__(zipfilename, filename, mtime, **properties)

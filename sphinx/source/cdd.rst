@@ -328,7 +328,7 @@ the implicit `self` parameter.
         If set to True:
 
         * All of the children of this displayable are rendered to textures.
-        * A mesh the size of the first child is assocated with this displayable.
+        * A mesh the size of the first child is associated with this displayable.
         * A model is created with the mesh, shaders, uniforms, and properties
           associated with this Render.
 
