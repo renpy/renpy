@@ -992,6 +992,14 @@ class MultiBox(Container):
         # calls to child.place().
         placements = [ ]
 
+        # A listof placements per line.
+        line_placements = [ ]
+
+        # The width and height of each line.
+        line_widths = [ ]
+        line_heights = [ ]
+        line_use_justify = [ ]
+
         # The maximum x and y.
         maxx = 0
         maxy = 0
@@ -1000,15 +1008,20 @@ class MultiBox(Container):
         minx = 0
         miny = 0
 
-        def layout_line(line, xfill, yfill, b_align=False):
+        def layout_line(line, xfill, yfill, use_justify):
             """
             Lays out a single line.
 
             `line` a list of (child, x, y, surf) tuples.
             `xfill` the amount of space to add in the x direction.
             `yfill` the amount of space to add in the y direction.
-            `b_align` whether the line should adhere to box_align.
+            `use_justify` if True, the line should be justified.
             """
+
+            placements = [ ]
+
+            line_max_x = 0
+            line_max_y = 0
 
             xfill = max(0, xfill)
             yfill = max(0, yfill)
@@ -1018,29 +1031,15 @@ class MultiBox(Container):
             else:
                 line_count = len(line)
 
-            if line_count == 1:
-                ## There's no way to justify/align a single item
-                b_align = True
-
             if use_justify:
                 line_count -= 1
 
-            if line_count > 0 and not b_align:
+            if line_count > 0:
                 xperchild = xfill / line_count
                 yperchild = yfill / line_count
             else:
                 xperchild = 0
                 yperchild = 0
-
-            if b_align:
-                x_box_adj = xfill * box_align
-                y_box_adj = yfill * box_align
-            else:
-                x_box_adj = 0
-                y_box_adj = 0
-
-            maxxout = maxx
-            maxyout = maxy
 
             i = 0
 
@@ -1055,17 +1054,23 @@ class MultiBox(Container):
                     x += int(i * xperchild)
                     y += int(i * yperchild)
 
-                    x += padding[0] + x_box_adj
-                    y += padding[1] + y_box_adj
+                    x += padding[0]
+                    y += padding[1]
 
                     i += 1
 
                 placements.append((child, x, y, sw, sh, surf))
 
-                maxxout = max(maxxout, x + sw)
-                maxyout = max(maxyout, y + sh)
+                line_max_x = x + sw
+                line_max_y = y + sh
 
-            return maxxout, maxyout
+            line_widths.append(line_max_x)
+            line_heights.append(line_max_y)
+            line_use_justify.append(use_justify)
+
+            line_placements.append(placements)
+
+            return ( max(maxx, line_max_x), max(maxy, line_max_y) )
 
         x = 0
         y = 0
@@ -1084,7 +1089,7 @@ class MultiBox(Container):
             lines = [ ]
             first_line = True
 
-            if xfill or box_justify or box_align > 0.0:
+            if xfill:
                 target_width = width
             else:
                 target_width = xminimum
@@ -1106,9 +1111,7 @@ class MultiBox(Container):
                 sw, sh = surf.get_size()
 
                 if box_wrap and (remwidth - sw - next_padding) < 0 and line:
-                    maxx, maxy = layout_line(
-                        line, (target_width - x), 0,
-                        not use_justify and not xfill)
+                    maxx, maxy = layout_line(line, (target_width - x), 0, use_justify)
 
                     y += line_height + box_wrap_spacing
                     x = 0
@@ -1125,8 +1128,7 @@ class MultiBox(Container):
                 next_padding = padding
 
             use_justify = (box_justify == "all")
-            maxx, maxy = layout_line(
-                line, (target_width - x), 0, box_wrap and not use_justify)
+            maxx, maxy = layout_line(line, (target_width - x), 0, use_justify)
 
         elif layout == "vertical":
             if xfill:
@@ -1141,7 +1143,7 @@ class MultiBox(Container):
             lines = [ ]
             first_line = True
 
-            if yfill or box_justify or box_align > 0.0:
+            if yfill:
                 target_height = height
             else:
                 target_height = yminimum
@@ -1163,9 +1165,7 @@ class MultiBox(Container):
                 sw, sh = surf.get_size()
 
                 if box_wrap and (remheight - sh - next_padding) < 0 and line:
-                    maxx, maxy  = layout_line(
-                        line, 0, (target_height - y),
-                        not use_justify and not yfill)
+                    maxx, maxy  = layout_line(line, 0, (target_height - y), use_justify)
 
                     x += line_width + box_wrap_spacing
                     y = 0
@@ -1182,13 +1182,12 @@ class MultiBox(Container):
                 next_padding = padding
 
             use_justify = (box_justify == "all")
-            maxx, maxy = layout_line(
-                line, 0, (target_height - y), box_wrap and not use_justify)
+            maxx, maxy = layout_line(line, 0, (target_height - y), use_justify)
 
         else:
             raise Exception("Unknown box layout: %r" % layout)
 
-        # Back to the common for vertical and horizontal.
+        # Determine the size.
 
         if not xfill:
             width = max(xminimum, maxx)
@@ -1196,14 +1195,47 @@ class MultiBox(Container):
         if not yfill:
             height = max(yminimum, maxy)
 
+        # Apply box_align and box_justify to the lines.
+        if layout == "horizontal":
+            for line, line_width, use_justify in zip(line_placements, line_widths, line_use_justify):
+                remaining = width - line_width
+                if use_justify and len(line) > 1:
+                    justify_per_child = remaining / (len(line) - 1)
+                    align_offset = 0
+                else:
+                    justify_per_child = 0
+                    align_offset = int(remaining * box_align)
+
+                i = 0
+                for (child, x, y, w, h, surf) in line:
+                    x += align_offset + int(i * justify_per_child)
+                    placements.append((child, x, y, w, h, surf))
+                    i += 1
+        else:
+            for line, line_height, use_justify in zip(line_placements, line_heights, line_use_justify):
+                remaining = height - line_height
+                if use_justify and len(line) > 1:
+                    justify_per_child = remaining / (len(line) - 1)
+                    align_offset = 0
+                else:
+                    justify_per_child = 0
+                    align_offset = int(remaining * box_align)
+
+                i = 0
+                for (child, x, y, w, h, surf) in line:
+                    y += align_offset + int(i * justify_per_child)
+                    placements.append((child, x, y, w, h, surf))
+                    i += 1
+
+        # Handle box reverse.
         if self.style.box_reverse and not renpy.config.simple_box_reverse:
             new_placements = [ ]
 
             for child, x, y, w, h, surf in placements:
-                if layout == "vertical":
-                    new_placements.append((child, x, height - y - h, w, h, surf))
-                else:
+                if layout == "horizontal":
                     new_placements.append((child, width - x - w, y, w, h, surf))
+                else:
+                    new_placements.append((child, x, height - y - h, w, h, surf))
 
             placements = new_placements
 

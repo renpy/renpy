@@ -1126,7 +1126,7 @@ These are used for the horizontal and vertical box layouts.
 
 .. style-property:: box_align float
 
-    This determines the alignment of wrapped rows or columns in a box. If 0.0,
+    This determines the alignment of rows or columns in a box. If 0.0,
     the default, rows are left-aligned and columns are top-aligned. If 0.5,
     it will center wrapped rows. Has no effect if box_wrap is False.
 
