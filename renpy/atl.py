@@ -617,7 +617,7 @@ class ATLTransformBase(renpy.object.Object):
             # if getattr(signature.parameters.get("new_widget", None), "kind", None) in {ValuedParameter.POSITIONAL_OR_KEYWORD, ValuedParameter.KEYWORD_ONLY}: # Gamma-ter
             child = kwargs.get("old_widget", child)
 
-        new_scope = signature.apply(args, kwargs, partial=True, apply_defaults=False)
+        new_scope = signature.apply(args, kwargs, partial=True, apply_defaults=False, pos_only_accept_kw=renpy.config.atl_pos_only)
 
         ## when *args and **kwargs are enabled
         # if args_param_name:

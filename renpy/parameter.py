@@ -213,7 +213,7 @@ class Signature(object):
                     continue
                 mapp[name] = val
 
-    def apply(self, args, kwargs, ignore_errors=False, partial=False, apply_defaults=True):
+    def apply(self, args, kwargs, ignore_errors=False, pos_only_accept_kw=False, partial=False, apply_defaults=True):
         """
         Takes args and kwargs, and returns a mapping corresponding to the
         inner scope of the callable as a result of that call.
@@ -223,6 +223,7 @@ class Signature(object):
         - avoids creating a BoundArguments object, just returns the scope dict
         - ignore_errors
         - applies the defaults automatically (and lazily, as per the above)
+        - can handle pos-only parameters as pos-or-keyword
         """
 
         # when in PY3-only, uncomment the "from None" in the raise statements
@@ -262,7 +263,7 @@ class Signature(object):
                         # kwargs
                         break
                     elif param.name in kwargs:
-                        if param.kind == param.POSITIONAL_ONLY:
+                        if (param.kind == param.POSITIONAL_ONLY) and not pos_only_accept_kw:
                             _raise(TypeError,
                                 "{arg!r} parameter is positional only, but was passed as a keyword",
                                 arg=param.name)
@@ -349,7 +350,7 @@ class Signature(object):
                                     format(arg=param_name)) # from None
 
             else:
-                if param.kind == param.POSITIONAL_ONLY:
+                if (param.kind == param.POSITIONAL_ONLY) and not pos_only_accept_kw:
                     # This should never happen in case of a properly built
                     # Signature object (but let's have this check here
                     # to ensure correct behaviour just in case)

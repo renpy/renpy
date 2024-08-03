@@ -1411,7 +1411,7 @@ ex_rollback_classes = [ ]
 # Should we revert to the old behavior of box_reverse?
 simple_box_reverse = False
 
-# If True, positional-only parameters are allowed in ATL transform signatures.
+# If True, positional-only parameters are allowed in ATL transform signatures and treated as pos-or-kw.
 atl_pos_only = False
 
 # A map from font name to the hinting for the font.
