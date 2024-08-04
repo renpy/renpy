@@ -1141,6 +1141,7 @@ class SLDisplayable(SLBlock):
                     keywords['context'] = ctx
 
                 d = self.displayable(*positional, **keywords) # type: ignore
+                d._unique()
                 main = d._main or d
 
                 main._location = self.location
