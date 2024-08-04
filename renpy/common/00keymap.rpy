@@ -45,7 +45,7 @@ init -1600 python:
         launch_editor = [ 'shift_K_e' ],
         dump_styles = [ ],
         reload_game = [ 'alt_K_r', 'shift_K_r' ],
-        inspector = [ 'alt_K_i', 'shift_K_i' ],
+        inspector = [ 'alt_noshift_K_i', 'shift_K_i' ],
         full_inspector = [ 'alt_shift_K_i' ],
         developer = [ 'alt_K_d', 'shift_K_d', ],
         quit = [ ],
