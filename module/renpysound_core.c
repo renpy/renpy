@@ -1047,7 +1047,15 @@ void RPS_unpause_all_at_start(void) {
  * Starts and stops the SDL audio playback.
  */
 void RPS_global_pause(int pause) {
+    int i;
+
     SDL_PauseAudio(pause);
+
+    for (i = 0; i < num_channels; i++) {
+        if (channels[i].playing) {
+            media_pause(channels[i].playing, pause);
+        }
+    }
 }
 
 
