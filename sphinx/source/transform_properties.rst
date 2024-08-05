@@ -362,9 +362,11 @@ Cropping and Resizing
     :default: None
 
     If not None, causes the displayable to be cropped to the given box. The box
-    is specified as a tuple of (x, y, width, height). All values can expand
-    outside of the bounds of the original image, though width and height must be
-    positive.
+    is specified as a tuple of (x, y, width, height), with x and y being the
+    coordinates of the box's top-left corner relative to the top-left corner of
+    the child. All values can expand outside of the bounds of the original
+    image, with the area outside being transparent, though width and height must
+    be positive.
 
     If corners and crop are given, crop takes priority over corners.
 
@@ -383,8 +385,8 @@ Cropping and Resizing
     :default: None
 
     If not None, gives the lower-right corner of the crop box. The values can
-    expand outside of the bounds of the original image. Crop takes priority over
-    corners.
+    expand outside of the bounds of the original image, but they should not be
+    inferior to :tpref:`corner1`. Crop takes priority over corners.
 
 .. transform-property:: xysize
 
