@@ -112,9 +112,10 @@ To disable this, in a file named 01nomunge.rpy in your game directory, write::
 
     define config.munge_in_strings = False
 
-**Cropping Outside the Bounds of a Displayable** The behavior of cropping a displayable with a box
-larger than the displayable has changed. As of this release, the behavior is to crop to the intersection
-of the crop rectangle and the displayable.
+**Cropping Outside the Bounds of a Displayable** The behavior of cropping a
+displayable with a box larger than the displayable has changed. As of this
+release, values passed to :func:`Crop`, :tpref:`crop`, :tpref:`corner1` and
+:tpref:`corner2` are not bound by the original boundaries of the displayable.
 
 In 8.2.x and 7.7.x releases of Ren'Py, the behavior was to crop the right/bottom of the displayable,
 but unconstrain the left/top. This behavior can be restored by adding to your game::
@@ -125,8 +126,6 @@ Before 8.2 and 7.7, the behavior was to crop the right/bottom of the displayable
 float, and leave left/top unconstrained. This behavior can be restored by adding to your game::
 
     define config.limit_transform_crop = False
-
-Cropping outside of the bounds of a displayable is not recommended.
 
 
 
