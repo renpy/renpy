@@ -112,7 +112,7 @@ IDENTITY = renpy.display.render.IDENTITY
 # The distance to the 1:1 plan, in the current perspective.
 z11 = 0.0
 
-def relative(n, base, limit):
+def relative_for_crop(n, base, limit):
     """
     A utility function that converts a relative value to an absolute value,
     using the usual Ren'Py conventions (int and absolute are passed unchanged,
@@ -337,17 +337,17 @@ cdef class RenderTransform:
 
             if crop_relative:
 
-                x = relative(x, width, width)
-                y = relative(y, height, height)
-                w = relative(w, width, width - x)
-                h = relative(h, height, height - y)
+                x = relative_for_crop(x, width, width)
+                y = relative_for_crop(y, height, height)
+                w = relative_for_crop(w, width, width - x)
+                h = relative_for_crop(h, height, height - y)
 
             else:
 
-                x = relative(x, 1, width)
-                y = relative(y, 1, height)
-                w = relative(w, 1, width - x)
-                h = relative(h, 1, height - y)
+                x = relative_for_crop(x, 1, width)
+                y = relative_for_crop(y, 1, height)
+                w = relative_for_crop(w, 1, width - x)
+                h = relative_for_crop(h, 1, height - y)
 
             crop = (x, y, w, h)
 
@@ -357,15 +357,15 @@ cdef class RenderTransform:
             x2, y2 = self.state.corner2
 
             if crop_relative:
-                x1 = relative(x1, width, width)
-                y1 = relative(y1, height, height)
-                x2 = relative(x2, width, width)
-                y2 = relative(y2, height, height)
+                x1 = relative_for_crop(x1, width, width)
+                y1 = relative_for_crop(y1, height, height)
+                x2 = relative_for_crop(x2, width, width)
+                y2 = relative_for_crop(y2, height, height)
             else:
-                x1 = relative(x1, 1, width)
-                y1 = relative(y1, 1, height)
-                x2 = relative(x2, 1, width)
-                y2 = relative(y2, 1, height)
+                x1 = relative_for_crop(x1, 1, width)
+                y1 = relative_for_crop(y1, 1, height)
+                x2 = relative_for_crop(x2, 1, width)
+                y2 = relative_for_crop(y2, 1, height)
 
             if x1 > x2:
                 x3 = x1
