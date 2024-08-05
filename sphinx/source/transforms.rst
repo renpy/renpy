@@ -1068,7 +1068,7 @@ For example::
 
 In this example, the image will bounce from left to right and back until the
 player clicks. When that happens, the ``xalign`` property of the ``bounce``
-transform will be used to initialize the ``xaalign`` property of the
+transform will be used to initialize the ``xalign`` property of the
 ``headright`` transform, and so the image will move from where it was when the
 player first clicked.
 
@@ -1080,8 +1080,16 @@ displayable may have only one position, and a position that is actively set
 takes precedence.
 
 Finally, when a ``show`` statement does not include an ``at`` clause, the same
-transforms are used, so no inheritance is necessary. To prevent inheritance,
-hide and then show the displayable again.
+transforms are used, so no inheritance is necessary. To reset all transform
+properties, hide and then show the displayable again. To break the animations
+applied to a displayable (but keep the position), you can use::
+
+    show eileen happy at some_animation
+    "Wow, so this is what antigravity feels like !"
+
+    show eileen:
+        pass
+    "But I'm happy when it settles down."
 
 
 The Transform Class
