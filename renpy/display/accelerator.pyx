@@ -128,14 +128,14 @@ def relative_for_crop(n, base, limit):
         else:
             return min(int(absolute.compute_raw(n, base)), limit)
 
+    rv = int(absolute.compute_raw(n, base))
+
+    if ltc == "compat":
+        # 8.2 / 7.7
+        return min(rv, limit)
+
     else:
-        # 8.2 / 7.7 +
-        rv = min(int(absolute.compute_raw(n, base)), limit)
-
-        if ltc != "compat":
-            # 8.3 / 7.8 +
-            rv = max(0, rv)
-
+        # 8.3 / 7.8 +
         return rv
 
 cdef class RenderTransform:
