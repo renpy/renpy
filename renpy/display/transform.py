@@ -87,6 +87,7 @@ def limit_angle(n):
 
     return n
 
+
 class TransformState(renpy.object.Object):
 
     last_angle = 0.0
@@ -187,6 +188,21 @@ class TransformState(renpy.object.Object):
                 rv[prop] = (old, new)
 
         return rv
+
+    def get(self, prop):
+        """
+        Returns the value of an attribute.
+        """
+
+        rv = getattr(self, prop, None)
+        if rv is not None:
+            return rv
+
+        if prop in diff4_properties:
+            return getattr(self, "inherited_" + prop, None)
+        else:
+            return rv
+
 
     def get_placement(self, cxoffset=0, cyoffset=0):
 

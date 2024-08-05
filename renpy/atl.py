@@ -1628,7 +1628,7 @@ class Interpolation(Statement):
 
             # Figure out the splines.
             for name, values in self.splines:
-                splines.append((name, [ getattr(trans.state, name) ] + values))
+                splines.append((name, [ trans.state.get(name) ] + values))
 
             state = (linear, angles, radii, anchorangles, anchorradii, splines)
 
