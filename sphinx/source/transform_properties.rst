@@ -362,9 +362,9 @@ Cropping and Resizing
     :default: None
 
     If not None, causes the displayable to be cropped to the given box. The box
-    is specified as a tuple of (x, y, width, height). width and height must be
-    positive, but x and y can be negative. All values can expand outside of the
-    bounds of the original image.
+    is specified as a tuple of (x, y, width, height). All values can expand
+    outside of the bounds of the original image, though width and height must be
+    positive.
 
     If corners and crop are given, crop takes priority over corners.
 
