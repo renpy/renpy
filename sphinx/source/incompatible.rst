@@ -120,12 +120,12 @@ release, values passed to :func:`Crop`, :tpref:`crop`, :tpref:`corner1` and
 In 8.2.x and 7.7.x releases of Ren'Py, the behavior was to crop the right/bottom of the displayable,
 but unconstrain the left/top. This behavior can be restored by adding to your game::
 
-    define config.limit_transform_crop = "compat"
+    define config.limit_transform_crop = True
 
 Before 8.2 and 7.7, the behavior was to crop the right/bottom of the displayable if the value was a
 float, and leave left/top unconstrained. This behavior can be restored by adding to your game::
 
-    define config.limit_transform_crop = False
+    define config.limit_transform_crop = "only_float"
 
 
 

@@ -121,16 +121,13 @@ def relative_for_crop(n, base, limit):
 
     ltc = renpy.config.limit_transform_crop
 
-    if not ltc:
+    if ltc == "only_float" and isinstance(n, (int, absolute)):
         # before 8.2 / 7.7
-        if isinstance(n, (int, absolute)):
-            return n
-        else:
-            return min(int(absolute.compute_raw(n, base)), limit)
+        return n
 
     rv = int(absolute.compute_raw(n, base))
 
-    if ltc == "compat":
+    if ltc:
         # 8.2 / 7.7
         return min(rv, limit)
 
