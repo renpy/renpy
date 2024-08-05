@@ -119,7 +119,21 @@ def relative(n, base, limit):
     while a float is interpreted as a fraction of the limit).
     """
 
-    return min(int(absolute.compute_raw(n, base)), limit)
+    if renpy.config.limit_transform_crop:
+
+        rv = min(int(absolute.compute_raw(n, base)), limit)
+
+        if renpy.config.limit_transform_crop != "compat":
+            rv = max(0, rv)
+
+        return rv
+
+    else:
+        if isinstance(n, (int, absolute)):
+            return n
+        else:
+            return min(int(absolute.compute_raw(n, base)), limit)
+
 
 cdef class RenderTransform:
     """
