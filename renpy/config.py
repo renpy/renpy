@@ -1497,8 +1497,8 @@ translate_ignore_who = [ ]
 # The layer built-in screens exist on.
 interface_layer = "screens"
 
-# Should Transform crop be limited to the size of the image being cropped?
-limit_transform_crop = True
+# Should Transform crop be limited to the width and height of the image being cropped?
+limit_transform_crop = False
 
 
 

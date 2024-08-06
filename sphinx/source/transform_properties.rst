@@ -362,7 +362,11 @@ Cropping and Resizing
     :default: None
 
     If not None, causes the displayable to be cropped to the given box. The box
-    is specified as a tuple of (x, y, width, height).
+    is specified as a tuple of (x, y, width, height), with x and y being the
+    coordinates of the box's top-left corner relative to the top-left corner of
+    the child. All values can expand outside of the bounds of the original
+    image, with the area outside being transparent, though width and height must
+    be positive.
 
     If corners and crop are given, crop takes priority over corners.
 
@@ -371,18 +375,18 @@ Cropping and Resizing
     :type: None or (position, position)
     :default: None
 
-    If not None, gives the upper-left corner of the crop box. Crop takes
-    priority over corners. When a float, and crop_relative is enabled, this is
-    relative to the size of the child.
+    If not None, gives the upper-left corner of the crop box. The values can
+    expand outside of the bounds of the original image. Crop takes priority over
+    corners.
 
 .. transform-property:: corner2
 
     :type: None or (position, position)
     :default: None
 
-    If not None, gives the lower-right corner of the crop box. Crop takes
-    priority over corners. When a float, and crop_relative is enabled, this is
-    relative to the size of the child.
+    If not None, gives the lower-right corner of the crop box. The values can
+    expand outside of the bounds of the original image, but they should not be
+    inferior to :tpref:`corner1`. Crop takes priority over corners.
 
 .. transform-property:: xysize
 
@@ -597,14 +601,14 @@ Deprecated Transform Properties
     :type: boolean
     :default: True
 
-    If False, float components of :tpref:`crop` are interpreted as an absolute
-    number of pixels, instead of a fraction of the width and height of the
-    source image.
+    If False, float components of :tpref:`crop`, :tpref:`corner1` and
+    :tpref:`corner2` are interpreted as an absolute number of pixels, instead of
+    a fraction of the width and height of the source image.
 
     If an absolute number of pixel is to be expressed, :func:`absolute`
-    instances should be provided to the :tpref:`crop` property instead of using
-    the crop_relative property. If necessary, values of dubious type can be
-    wrapped in the :func:`absolute` callable.
+    instances should be provided to these properties instead of using the
+    crop_relative property. If necessary, values of dubious type can be wrapped
+    in the :func:`absolute` callable.
 
 .. transform-property:: size
 
