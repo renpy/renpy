@@ -1186,10 +1186,10 @@ def get_screen_variable(name, screen=None, layer=None):
     else:
         s = get_screen(screen, layer)
         if s is None:
-            raise ValueError("Screen %s is not showing." % (name,))
+            raise ValueError("Screen %s is not showing." % (screen,))
 
     if name not in s.scope:
-        raise NameError("Screen %s does not have a variable named %s." % (screen.name, name))
+        raise NameError("Screen %s does not have a variable named %s." % (s.name, name))
 
     return s.scope[name]
 
@@ -1227,7 +1227,7 @@ def set_screen_variable(name, value, screen=None, layer=None):
     else:
         s = get_screen(screen, layer)
         if s is None:
-            raise ValueError("Screen %s is not showing." % (name,))
+            raise ValueError("Screen %s is not showing." % (screen,))
 
     s.scope[name] = value
 
