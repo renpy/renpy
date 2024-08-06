@@ -114,9 +114,9 @@ z11 = 0.0
 
 def relative_for_crop(n, base, limit):
     """
-    A utility function that converts a relative value to an absolute value,
-    using the usual Ren'Py conventions (int and absolute are passed unchanged,
-    while a float is interpreted as a fraction of the limit).
+    A utility function that converts position values to absolute values, using
+    the usual Ren'Py conversion, and then optionally applies the pre-8.3
+    limit_transform_crop setting.
     """
 
     ltc = renpy.config.limit_transform_crop
