@@ -1414,7 +1414,7 @@ simple_box_reverse = False
 # Should we revert to the right/bottom-alignment for non-simple reversed boxes?
 box_reverse_align = False
 
-# If True, positional-only parameters are allowed in ATL transform signatures.
+# If True, positional-only parameters are treated as pos-or-kw in ATL transform signatures.
 atl_pos_only = False
 
 # A map from font name to the hinting for the font.

@@ -336,7 +336,7 @@ def parse_menu(stmtl, loc, arguments):
     return rv
 
 
-def parse_parameters(l):
+def parse_parameters(l, treat_pos_only_as_pos_or_kw=False):
     """
     Parse a list of parameters according to PEP 570 semantic, if one is present.
     """
@@ -423,8 +423,9 @@ def parse_parameters(l):
             elif not parameters:
                 l.error("at least one parameter must precede /")
 
-            # All previous parameters are actually positional-only
-            parameters = collections.OrderedDict((k, p.replace(kind=p.POSITIONAL_ONLY)) for k, p in parameters.items())
+            if not treat_pos_only_as_pos_or_kw:
+                # All previous parameters are actually positional-only
+                parameters = collections.OrderedDict((k, p.replace(kind=p.POSITIONAL_ONLY)) for k, p in parameters.items())
 
             got_slash = True
 
@@ -1033,14 +1034,12 @@ def transform_statement(l, loc):
         store = store + "." + name
         name = l.require(l.word)
 
-    parameters = parse_parameters(l)
+    parameters = parse_parameters(l, treat_pos_only_as_pos_or_kw=renpy.config.atl_pos_only)
 
     if parameters:
-        found_pos_only = False
         for p in parameters.parameters.values():
-            if p.kind == p.POSITIONAL_ONLY and not found_pos_only:
-                found_pos_only = True
-                l.deferred_error("atl_pos_only", "the transform statement does not take positional-only parameters ({} is not allowed)".format(p))
+            if p.kind == p.POSITIONAL_ONLY:
+                l.error("the transform statement does not take positional-only parameters ({} is not allowed)".format(p))
             elif p.kind == p.VAR_POSITIONAL:
                 l.error("the transform statement does not take *args ({} is not allowed)".format(p))
             elif p.kind == p.VAR_KEYWORD:
@@ -1728,10 +1727,7 @@ def release_deferred_errors():
     else:
         pop("duplicate_id")
 
-    if renpy.config.atl_pos_only:
-        pop("atl_pos_only")
-    else:
-        release("atl_pos_only")
+    pop("atl_pos_only")
 
     if deferred_parse_errors:
         raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))
