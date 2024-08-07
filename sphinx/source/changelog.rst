@@ -10,6 +10,39 @@ Changelog (Ren'Py 7.x-)
 8.3.0 / 7.8.0
 =============
 
+Audio Filters
+-------------
+
+This release adds an :doc:`audio filter system <audio_filter>` to Ren'Py, providing a way of processing the sound coming out of
+audio channels. The audio filter system is based on webaudio, and includes the following filters:
+
+* Biquad, a way of implementing Lowpass, Highpass, Notch, Peaking, Lowshelf, Highshelf, and Allpass filters.
+* Comb, a delay line with filtering and feedback.
+* Delay, a delay line without the feedback.
+* Mix, a way of mixing two audio streams.
+* Sequence, a way of applying more than one filter to audio.
+* WetDry, a way of filtering a stream with a wet and dry control.
+* Reverb, a way of applying artifical reverb to the audio.
+
+
+Text Shaders
+------------
+
+This release adds support for :doc:`text shaders <textshaders>`, which are OpenGL shaders that are applied to text, using information
+that is provided by the rendering system. The big advantage of this is it now becomes possible to change the way
+Ren'Py shows slow text to something else. For example, the dissolve text shader causes characters to dissolve in
+from left to right, rather than showing all at once.
+
+Text shaders are able to process the color of the text, including the alpha channel. Text shaders can also adjust
+the position of the text - for example, the jitter shader causes text to bounce around.
+
+Text shaders can be introduced using the {shader} text tag, using the :propref:`textshader` style, or using
+the :var:`config.default_textshader` variable. A text block should either use text shaders or not - mixing
+is not supported.
+
+Custom text shaders are supported using the :func:`renpy.register_text_shader` function. These have access
+to new uniforms and attributes that are appopriate to text display.
+
 
 Other Shader Changes
 --------------------
@@ -24,6 +57,14 @@ possible to implement preferences that turn on and off shader parts as required.
 
 Two new :ref:`model uniforms <model-uniforms>` have been added, ``u_drawable_size`` and ``u_virtual_size``, making
 it easier to project gl_Positions in shaders to coordinates that are used elsewhere in Ren'Py.
+
+
+Visual Studio Code
+------------------
+
+The Ren'Py Language Visual Studio Code extension is now maintained by the Ren'Py project.
+As part of this, if you have a Visual Studio Code installed, the launcher will prompt you
+to install the new extension.
 
 Launcher Changes
 ----------------
@@ -82,6 +123,11 @@ calling this function.)
 Wrapped methods of the Steamworks API are documented on the :doc:`achievement` page.
 
 
+Android
+-------
+
+Ren'Py now targts Android 15 (API level 35), though versions down to Androoid 5 may still work.
+
 Features
 --------
 
@@ -139,9 +185,18 @@ by setting :propref:`color` to None.
 Transform now supports the :tpref:`fps` property, which quantizes time inside
 the transform to a particular number of frames per second.
 
+Where appropriate, Bar Values now take `min` and `max` parameters, which can be used to define a range that
+is not zero-based.
+
+
 
 Other Changes
 -------------
+
+The notification screen is now hidden before a screenshot is taken.
+
+The :tpref:`crop` transform propery now always takes the size of the crop box,
+even if bigger than what is being cropped.
 
 The hspace and vspace text tags now respect window scaling.
 
@@ -186,6 +241,13 @@ the size of the buttons to remove the overlap, when determining keyboard focus.
 
 The `synchro_start` option (documented as part of :func:`renpy.music.play`) is
 now True by default in that function, and in the ``play`` statement.
+
+The web version of Ren'Py now supports loading video from origins other than the origin of
+the game, if the video origin allows for it.
+
+
+
+
 
 .. _renpy-8.2.3:
 .. _renpy-7.7.3:
