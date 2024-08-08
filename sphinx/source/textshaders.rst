@@ -57,6 +57,9 @@ to change the look of a portion of text. ::
 
     "What's this? A letter from {shader=zoom}out of nowhere{/shader}?"
 
+**Note** A text block should either use text shaders or not - mixing is not
+supported. For example, you should set :var:`config.default_textshader`
+or :propref:`textshader` style property if you use the text tag like above.
 
 Specifying Text Shaders
 -----------------------
