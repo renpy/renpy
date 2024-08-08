@@ -26,7 +26,7 @@
 init python:
 
     import shutil
-    import webserver
+    from launcher.game import webserver
     import io
     import tempfile
     import time

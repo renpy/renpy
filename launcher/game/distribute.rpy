@@ -35,7 +35,7 @@ init python in distribute:
     import store.updater as updater
     import store as store
 
-    from change_icon import change_icons
+    from launcher.game.change_icon import change_icons
 
     import sys
     import os

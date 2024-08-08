@@ -28,8 +28,8 @@ default gui_template_path = None
 
 init -1 python:
 
-    import gui7
-    from gui7 import translate_define, translate_copy, translate_code
+    from launcher.game import gui7
+    from launcher.game.gui7 import translate_define, translate_copy, translate_code
 
     import os
 

@@ -19,9 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from gui7.code import CodeGenerator, translate_define, translate_copy, translate_code
-from gui7.images import ImageGenerator
-from gui7.parameters import GuiParameters
+from launcher.game.gui7.code import CodeGenerator, translate_define, translate_copy, translate_code
+from launcher.game.gui7.images import ImageGenerator
+from launcher.game.gui7.parameters import GuiParameters
 
 import renpy.arguments
 import os
