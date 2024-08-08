@@ -35,6 +35,8 @@ import re
 import io
 import unicodedata
 
+from importlib.util import spec_from_loader
+
 from pygame_sdl2.rwobject import RWopsIO
 
 from renpy.compat.pickle import loads
@@ -818,6 +820,11 @@ class RenpyImporter(object):
         return None
 
     def find_module(self, fullname, path=None):
+        """
+        Removed in Python 3.12 in favor of find_spec().
+        Left here for compatibility with Python < 3.4
+        (see https://docs.python.org/3/library/sys.html#sys.meta_path )
+        """
         if path is not None:
             for i in path:
                 if self.translate(fullname, i):
@@ -825,6 +832,16 @@ class RenpyImporter(object):
 
         if self.translate(fullname):
             return self
+
+    def find_spec(self, fullname, path, target=None):
+        if path is not None:
+            for i in path:
+                if self.translate(fullname, i):
+                    return RenpyImporter(i)
+
+        if self.translate(fullname):
+            return spec_from_loader(name=fullname, loader=self, origin=path)
+
 
     def load_module(self, fullname, mode="full"):
         """
