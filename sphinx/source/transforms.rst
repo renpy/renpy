@@ -917,7 +917,21 @@ For example::
 
 Note that the ``shorter_screamer`` transform, just as the ``screamer``
 transform, cannot be used directly like ``show eileen at screamer``, since their
-``screamee`` parameter does not have a value.
+``screamee`` parameters do not have a value.
+
+Note also that, like labels and screens, the default values of the parameters of
+a transform directly created by the :ref:`transform-statement` will be evaluated
+at the time when the transform is *called*, not at the time when it is
+*defined*.
+
+However, the transform resulting from calling another transform (such as
+``shorter_screamer`` in the example above, or also the transform applied to
+patricia) has all the default values of its parameters already evaluated,
+whether they come from the evaluation of the default values in the original
+transform (such as ``shorter_screamer``\ 's `flash_time` parameter, or
+patricia's transform's `wait_time` parameter), or from values passed to it in a
+call earlier in the line (such as ``shorter_screamer``\ 's `wait_time`
+parameter, or patricia's transform's `screamee` and `flash_time` parameters).
 
 .. _atl-child-param:
 
