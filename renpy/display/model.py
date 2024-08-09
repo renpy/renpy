@@ -108,7 +108,7 @@ class Model(renpy.display.displayable.Displayable):
         self._mesh = ("grid", width, height)
         return self
 
-    def texture(self, displayable, focus=False, main=False, fit=False, texure_wrap=None):
+    def texture(self, displayable, focus=False, main=False, fit=False, texture_wrap=None):
         """
         :doc: model_displayable method
 
