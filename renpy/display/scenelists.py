@@ -25,16 +25,16 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import renpy
 
 # Layer management.
-layers = frozenset(renpy.config.layers)
+ordered_layers = list(renpy.config.layers)
+layers = frozenset(ordered_layers)
 sticky_layers = frozenset()
 
 
 def init_layers():
-    global layers, sticky_layers
+    global layers, sticky_layers, ordered_layers
 
-    layers = frozenset(
-        renpy.config.layers + renpy.config.detached_layers +
-        renpy.config.top_layers + renpy.config.bottom_layers)
+    ordered_layers = renpy.config.detached_layers + renpy.config.bottom_layers + renpy.config.layers +  renpy.config.top_layers
+    layers = frozenset(ordered_layers)
     sticky_layers = frozenset(
         renpy.config.sticky_layers + renpy.config.detached_layers)
 

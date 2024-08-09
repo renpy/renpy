@@ -115,10 +115,10 @@ screen _image_attributes():
             vbox:
                 label _("Image Attributes")
 
-                for l in renpy.display.scenelists.layers:
+                for l in renpy.display.scenelists.ordered_layers:
 
                     $ hidden = renpy.get_hidden_tags(l)
-                    $ showing = renpy.get_showing_tags(l)
+                    $ showing = renpy.get_showing_tags(l, sort=True)
 
                     if not hidden and not showing:
                         continue
