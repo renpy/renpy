@@ -800,6 +800,7 @@ class Layout(object):
                     if self.start_segment is ts:
                         started = True
                     else:
+                        textsupport.assign_times(-3600, 0.0, glyphs)
                         continue
 
                 if ts is self.end_segment:
