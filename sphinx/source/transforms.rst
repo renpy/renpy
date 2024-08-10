@@ -37,6 +37,17 @@ There are several ways to apply transform ``t`` to displayable ``d`` in Python:
 
 .. include:: inc/disp_at
 
+.. note::
+    The resulting value may not be able to be displayed, if there remains
+    parameters of the transform that have not been given a value, as can be the
+    case with transforms defined using the :ref:`transform-statement`.
+
+.. note::
+    The resulting value may still be a transform that can be applied to yet
+    another displayable (overriding its previous child) ; that's the case with
+    ATL transforms which are still usable as transforms even when having their
+    child set.
+
 
 Built-in Transforms
 ===================
@@ -162,6 +173,11 @@ forbidden, though they may be allowed in the future:
 
 ..
     update the special child section with this section
+
+The created object cannot be used as a transform until and unless all its
+parameters have been given a value.
+
+*See also :* :ref:`atl-partial`
 
 `qualname`, the name of the transform, must be a set of dot-separated Python
 identifiers. The transform created by the ATL block will be bound to that name,
@@ -864,6 +880,59 @@ The following events are triggered automatically within an ATL transform:
     Triggered when a button containing this transform, or a button contained by
     this transform, enters the named state.
 
+.. _atl-partial:
+
+ATL curry and partial parameter passing
+---------------------------------------
+
+An ATL transform defined using the :ref:`transform-statement` can have its
+parameters set at different times. When calling an ATL transform like a
+function, the resulting value is still a transform, and the parameters that were
+passed a value are treated as though the value is the new default value of the
+parameter.
+
+For example::
+
+    transform screamer(child, screamee, wait_time=2, flash_time=.1):
+        child
+        pause wait_time
+        screamee
+        pause flash_time
+        child
+
+    # doing this doesn't raise an error (it would if it were a Python function)
+    define shorter_screamer = screamer(wait_time=1)
+
+    define eileen_excited_screamer = screamer(screamee="eileen excited", flash_time=.2)
+
+    label start:
+        show hhannahh happy at screamer(screamee="hhannahh surprised", wait_time=1.5)
+        "Here is one way"
+
+        show eileen vhappy at eileen_excited_screamer
+        "Here is another"
+
+        show patricia sad at eileen_excited_screamer(screamee="patricia wow")
+        "And you can also do this"
+
+Note that the ``shorter_screamer`` transform, just as the ``screamer``
+transform, cannot be used directly like ``show eileen at screamer``, since their
+``screamee`` parameters do not have a value.
+
+Note also that, like labels and screens, the default values of the parameters of
+a transform directly created by the :ref:`transform-statement` will be evaluated
+at the time when the transform is *called*, not at the time when it is
+*defined*.
+
+However, the transform resulting from calling another transform (such as
+``shorter_screamer`` in the example above, or also the transform applied to
+patricia) has all the default values of its parameters already evaluated,
+whether they come from the evaluation of the default values in the original
+transform (such as ``shorter_screamer``\ 's `flash_time` parameter, or
+patricia's transform's `wait_time` parameter), or from values passed to it in a
+call earlier in the line (such as ``shorter_screamer``\ 's `wait_time`
+parameter, or patricia's transform's `screamee` and `flash_time` parameters).
+
 .. _atl-child-param:
 
 Special Child Parameter
@@ -1013,7 +1082,7 @@ For example::
 
 In this example, the image will bounce from left to right and back until the
 player clicks. When that happens, the ``xalign`` property of the ``bounce``
-transform will be used to initialize the ``xaalign`` property of the
+transform will be used to initialize the ``xalign`` property of the
 ``headright`` transform, and so the image will move from where it was when the
 player first clicked.
 
@@ -1025,8 +1094,16 @@ displayable may have only one position, and a position that is actively set
 takes precedence.
 
 Finally, when a ``show`` statement does not include an ``at`` clause, the same
-transforms are used, so no inheritance is necessary. To prevent inheritance,
-hide and then show the displayable again.
+transforms are used, so no inheritance is necessary. To reset all transform
+properties, hide and then show the displayable again. To break the animations
+applied to a displayable (but keep the position), you can use::
+
+    show eileen happy at some_animation
+    "Wow, so this is what antigravity feels like !"
+
+    show eileen:
+        pass
+    "But I'm happy when it settles down."
 
 
 The Transform Class
