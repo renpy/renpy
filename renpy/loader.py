@@ -837,7 +837,7 @@ class RenpyImporter(object):
         if path is not None:
             for i in path:
                 if self.translate(fullname, i):
-                    return RenpyImporter(i)
+                    return spec_from_loader(name=fullname, loader=RenpyImporter(i), origin=path)
 
         if self.translate(fullname):
             return spec_from_loader(name=fullname, loader=self, origin=path)
