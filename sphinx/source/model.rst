@@ -317,7 +317,7 @@ Blend Functions
 .. var:: config.gl_blend_func = { ... }
 
     A dictionary used to map a blend mode name to a blend function. The
-    blend modes are supplied to the blend func property, given below.
+    blend modes are supplied to the :ref:`gl_blend_func <gl-blend-func>` property, given below.
 
 The default blend modes are::
 
@@ -327,6 +327,10 @@ The default blend modes are::
     gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
 
+As Ren'Py uses premultiplied alpha, the results of some of these may be counterintuitive when a pixel
+is not opaque. In the GPU, the color (r, g, b, a) is represented as (r * a, g * a, b * a, a), and the blend function
+uses these premultiplied colors. This may be a different result that you get for these blend modes in a paint program,
+when what is drawn is not fully opaque.
 
 .. _model-uniforms:
 
@@ -407,6 +411,8 @@ GL Properties
 GL properties change the global state of OpenGL, or the Model-Based renderer.
 These properties can be used with a Transform, or with the :func:`Render.add_property`
 function.
+
+.. _gl-blend_func:
 
 ``gl_blend_func``
     If present, this is expected to be a six-component tuple, which is
