@@ -583,6 +583,9 @@ class ATLTransformBase(renpy.object.Object):
         signature = self.parameters
         child = None
 
+        if renpy.config.atl_pos_only_as_pos_or_kw:
+            signature = signature.with_pos_only_as_pos_or_kw()
+
         present_kinds = {p.kind for p in signature.parameters.values()}
 
         child_param = signature.parameters.get("child", None)
