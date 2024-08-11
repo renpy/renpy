@@ -213,6 +213,22 @@ class Signature(object):
                     continue
                 mapp[name] = val
 
+    def with_pos_only_as_pos_or_kw(self):
+        """
+        Returns a new Signature object where positional-only parameters are
+        turned into positional-or-keyword parameters.
+        """
+        new_params = []
+        itparams = iter(self.parameters.values())
+        for param in itparams:
+            if param.kind == Parameter.POSITIONAL_ONLY:
+                new_params.append(param.replace(kind=Parameter.POSITIONAL_OR_KEYWORD))
+            else:
+                new_params.append(param)
+                new_params.extend(itparams)
+                break
+        return Signature(new_params)
+
     def apply(self, args, kwargs, ignore_errors=False, partial=False, apply_defaults=True):
         """
         Takes args and kwargs, and returns a mapping corresponding to the
@@ -524,5 +540,5 @@ class ArgumentInfo(renpy.object.Object):
         return "<ArgumentInfo {}>".format(self)
 
 
-EMPTY_PARAMETERS = ParameterInfo()
+EMPTY_PARAMETERS = Signature()
 EMPTY_ARGUMENTS = ArgumentInfo([ ], None, None)

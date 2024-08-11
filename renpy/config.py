@@ -1417,6 +1417,9 @@ box_reverse_align = False
 # If True, positional-only parameters are allowed in ATL transform signatures.
 atl_pos_only = False
 
+# If True, positional-only parameters in ATL transform signatures are treated as pos-or-keyword.
+atl_pos_only_as_pos_or_kw = False
+
 # A map from font name to the hinting for the font.
 font_hinting = { None : "auto" }
 

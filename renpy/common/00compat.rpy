@@ -299,6 +299,7 @@ init -1100 python:
             config.simple_box_reverse = True
             build.itch_channels = list(build.itch_channels.items())
             config.atl_pos_only = True
+            config.atl_pos_only_as_pos_or_kw = True
             style.default.shaper = "freetype"
             config.mixed_position = False
             config.drag_group_add_top = False
