@@ -62,7 +62,7 @@ impact on existing games, especially if you were only using documented features.
     transform t1(child):
         ...
 
-    transform t2(chile):
+    transform t2(child):
         ...
 
     t1(child="eileen") # will now have a child set to the "eileen" image, but previously didn't
