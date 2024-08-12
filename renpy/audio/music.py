@@ -621,6 +621,9 @@ def get_all_mixers():
     for i in renpy.audio.audio.all_channels:
         rv.add(i.mixer)
 
+    for i in renpy.config.auto_channels.values():
+        rv.add(i[0])
+
     return list(rv)
 
 

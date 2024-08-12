@@ -856,7 +856,7 @@ character_id_prefixes = [ ]
 nw_voice = True
 
 # If not None, a function that's used to process say arguments.
-say_arguments_callback = None
+say_arguments_callback = None # type: Callable|None
 
 # Should we show an atl interpolation for one frame?
 atl_one_frame = True
@@ -990,7 +990,7 @@ skip_sounds = False
 lint_screens_without_parameters = True
 
 # If not None, a function that's used to process and modify menu arguments.
-menu_arguments_callback = None
+menu_arguments_callback = None # type: Callable|None
 
 # Should Ren'PY automatically clear the screenshot?
 auto_clear_screenshot = True
@@ -1411,8 +1411,14 @@ ex_rollback_classes = [ ]
 # Should we revert to the old behavior of box_reverse?
 simple_box_reverse = False
 
-# (legacy)
+# Should we revert to the right/bottom-alignment for non-simple reversed boxes?
+box_reverse_align = False
+
+# If True, positional-only parameters are allowed in ATL transform signatures.
 atl_pos_only = True
+
+# If True, positional-only parameters in ATL transform signatures are treated as pos-or-keyword.
+atl_pos_only_as_pos_or_kw = False
 
 # A map from font name to the hinting for the font.
 font_hinting = { None : "auto" }
@@ -1487,6 +1493,17 @@ munge_in_strings = True
 
 # The version of the character callback.
 character_callback_compat = None
+
+# A list of who arguments to translate that will not be translated.
+translate_ignore_who = [ ]
+
+# The layer built-in screens exist on.
+interface_layer = "screens"
+
+# Should Transform crop be limited to the width and height of the image being cropped?
+limit_transform_crop = False
+
+
 
 del os
 del collections

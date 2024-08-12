@@ -1869,6 +1869,7 @@ screen director_audio(state):
 
 
 screen director():
+    layer config.interface_layer
     zorder 1400
 
     $ state = director.state

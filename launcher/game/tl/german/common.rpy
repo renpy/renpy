@@ -163,43 +163,43 @@ translate german strings:
 
     # 00gui.rpy:227
     old "Are you sure?"
-    new "Sind Sie sicher?"
+    new "Bist Du sicher?"
 
     # 00gui.rpy:228
     old "Are you sure you want to delete this save?"
-    new "Sind Sie sicher, dass Sie diese Datei löschen möchten?"
+    new "Bist Du sicher, dass Du diese Datei löschen möchtest?"
 
     # 00gui.rpy:229
     old "Are you sure you want to overwrite your save?"
-    new "Sind Sie sicher, dass Sie diese Datei überschreiben möchten?"
+    new "Bist Du sicher, dass Du diese Datei überschreiben möchtest?"
 
     # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "Beim Laden geht ungespeicherter Fortschritt verloren.\nSind Sie sicher, dass Sie das tun möchten?"
+    new "Beim Laden geht ungespeicherter Fortschritt verloren.\nBist Du sicher, dass Du das tun möchtest?"
 
     # 00gui.rpy:231
     old "Are you sure you want to quit?"
-    new "Sind Sie sicher, dass Sie beenden möchten?"
+    new "Bist Du sicher, dass Du das Spiel beenden möchtest?"
 
     # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "Sind Sie sicher, dass Sie zurück zum Hauptmenü möchten?\nUngespeicherter Fortschritt geht dabei verloren."
+    new "Bist Du sicher, dass Du zurück zum Hauptmenü möchtest?\nUngespeicherter Fortschritt geht dabei verloren."
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
-    new "Sind Sie sicher, dass sie die Szenen-Wiederholung beenden möchten?"
+    new "Bist Du sicher, dass Du die Szenen-Wiederholung beenden möchtest?"
 
     # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
-    new "Sind Sie sicher, dass Sie Text überspringen möchten?"
+    new "Bist Du sicher, dass Du vorspulen möchtest?"
 
     # 00gui.rpy:235
     old "Are you sure you want to skip to the next choice?"
-    new "Sind Sie sicher, dass Sie zur nächsten Auswahl springen möchten?"
+    new "Bist Du sicher, dass Du zur nächsten Entscheidung springen möchtest?"
 
     # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "Sind Sie sicher, dass sie ungesehenen Dialog bis zur nächsten Entscheidung überspringen möchten?"
+    new "Bist Du sicher, dass Du ungesehenen Dialog bis zur nächsten Entscheidung überspringen möchtest?"
 
     # 00keymap.rpy:250
     old "Saved screenshot as %s."
@@ -220,7 +220,7 @@ translate german strings:
 
     # 00library.rpy:179
     old "Skip Mode"
-    new "Skip-Modus"
+    new "Vorspul-Modus"
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
@@ -229,19 +229,19 @@ translate german strings:
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     # Automatic translation.
-    new "Zwischenablage-Voicing aktiviert. Drücken Sie 'Umschalt+C' zum Deaktivieren."
+    new "Zwischenablage-Voicing aktiviert. Drücke 'Shift+C' zum Deaktivieren."
 
     # 00preferences.rpy:424
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Sprachausgabe würde \"[renpy.display.tts.last]\" sagen. Zum deaktivieren 'alt+shift+V' drücken."
+    new "Sprachausgabe würde \"[renpy.display.tts.last]\" sagen. Drücke 'Alt+Shift+V' zum Deaktivieren."
 
     # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Sprachausgabe aktiviert. Zum deaktivieren 'v' drücken."
+    new "Sprachausgabe aktiviert. Drücke 'V' zum Deaktivieren."
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "Kontaktiert App Store\nBitte warten..."
+    new "Kontaktiere App Store\nBitte warten..."
 
     # 00updater.rpy:367
     old "The Ren'Py Updater is not supported on mobile devices."
@@ -249,7 +249,7 @@ translate german strings:
 
     # 00updater.rpy:486
     old "An error is being simulated."
-    new "Ein Error wird simuliert."
+    new "Ein Fehler wird simuliert."
 
     # 00updater.rpy:662
     old "Either this project does not support updating, or the update status file was deleted."
@@ -278,7 +278,7 @@ translate german strings:
     # 00updater.rpy:1049
     old "While unpacking {}, unknown type {}."
     # Automatic translation.
-    new "Beim Auspacken {}, unbekannter Typ {}."
+    new "Beim Entpacken {}, unbekannter Typ {}."
 
     # 00updater.rpy:1393
     old "Updater"
@@ -290,7 +290,7 @@ translate german strings:
 
     # 00updater.rpy:1406
     old "[u.version] is available. Do you want to install it?"
-    new "[u.version] ist verfügbar. Möchten Sie sie installieren?"
+    new "[u.version] ist verfügbar. Möchtest Du es installieren?"
 
     # 00updater.rpy:1408
     old "Preparing to download the updates."
@@ -351,13 +351,11 @@ translate german strings:
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
-    # Automatic translation.
-    new "Ansichtsfenster"
+    new "Viewport"
 
     # renpy/common/00accessibility.rpy:35
     old "horizontal scroll"
-    # Automatic translation.
-    new "Horizontales Blättern"
+    new "horizontaler Bildlauf"
 
     # renpy/common/00accessibility.rpy:36
     old "vertical scroll"
@@ -366,8 +364,7 @@ translate german strings:
 
     # renpy/common/00accessibility.rpy:37
     old "activate"
-    # Automatic translation.
-    new "aktivieren."
+    new "aktivieren"
 
     # renpy/common/00accessibility.rpy:38
     old "deactivate"
@@ -376,8 +373,7 @@ translate german strings:
 
     # renpy/common/00accessibility.rpy:39
     old "increase"
-    # Automatic translation.
-    new "erhöhen."
+    new "erhöhen"
 
     # renpy/common/00accessibility.rpy:40
     old "decrease"
@@ -419,13 +415,11 @@ translate german strings:
 
     # renpy/common/00accessibility.rpy:180
     old "High Contrast Text"
-    # Automatic translation.
-    new "Hochkontrastiger Text"
+    new "Kontrastreicher Text"
 
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing"
-    # Automatic translation.
-    new "Selbstanzeige"
+    new "Sprachausgabe"
 
     # renpy/common/00accessibility.rpy:197
     old "Off"
@@ -434,8 +428,7 @@ translate german strings:
 
     # renpy/common/00accessibility.rpy:201
     old "Text-to-speech"
-    # Automatic translation.
-    new "Text-in-Sprache"
+    new "Text-zu-Sprache"
 
     # renpy/common/00accessibility.rpy:205
     old "Clipboard"
@@ -449,53 +442,43 @@ translate german strings:
 
     # renpy/common/00accessibility.rpy:223
     old "Self-Voicing Volume Drop"
-    # Automatic translation.
-    new "Selbstlautstärkeabfall"
+    new "Lautstärkeabfall Sprachausgabe"
 
     # renpy/common/00accessibility.rpy:234
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    # Automatic translation.
-    new "Die Optionen in diesem Menü dienen der Verbesserung der Zugänglichkeit. Sie funktionieren möglicherweise nicht mit allen Spielen, und einige Kombinationen von Optionen können das Spiel unspielbar machen. Dies ist kein Problem mit dem Spiel oder der Engine. Die besten Ergebnisse beim Ändern von Schriftarten erzielen Sie, wenn Sie die ursprüngliche Textgröße beibehalten."
+    new "Die Optionen in diesem Menü dienen der Verbesserung der Zugänglichkeit. Sie funktionieren möglicherweise nicht mit allen Spielen, und einige Kombinationen von Optionen können das Spiel unspielbar machen. Dies ist kein Problem mit dem Spiel oder der Engine. Die besten Ergebnisse beim Ändern von Schriftarten erzielst Du, wenn Du die ursprüngliche Textgröße beibehältst."
 
     # renpy/common/00action_file.rpy:378
     old "Save slot %s: [text]"
-    # Automatic translation.
-    new "Steckplatz %s speichern: [text]"
+    new "Speicherplatz %s speichern: [text]"
 
     # renpy/common/00action_file.rpy:461
     old "Load slot %s: [text]"
-    # Automatic translation.
-    new "Steckplatz %s laden: [text]"
+    new "Speicherplatz %s laden: [text]"
 
     # renpy/common/00action_file.rpy:514
     old "Delete slot [text]"
-    # Automatic translation.
-    new "Steckplatz löschen [text]"
+    new "Speicherplatz löschen [text]"
 
     # renpy/common/00action_file.rpy:593
     old "File page auto"
-    # Automatic translation.
-    new "Datei Seite auto"
+    new "Spielstände: Seite auto-speichern"
 
     # renpy/common/00action_file.rpy:595
     old "File page quick"
-    # Automatic translation.
-    new "Datei Seite schnell"
+    new "Spielstände: Seite schnell-speichern"
 
     # renpy/common/00action_file.rpy:597
     old "File page [text]"
-    # Automatic translation.
-    new "Datei-Seite [text]"
+    new "Spielstände: Seite [text]"
 
     # renpy/common/00action_file.rpy:796
     old "Next file page."
-    # Automatic translation.
-    new "Nächste Dateiseite."
+    new "Nächste Seite."
 
     # renpy/common/00action_file.rpy:868
     old "Previous file page."
-    # Automatic translation.
-    new "Vorherige Dateiseite."
+    new "Vorherige Seite."
 
     # renpy/common/00action_file.rpy:944
     old "Quick save."
@@ -527,35 +510,30 @@ translate german strings:
 
     # renpy/common/00director.rpy:1574
     old "Done"
-    # Automatic translation.
-    new "Erledigt"
+    new "Fertig"
 
     # renpy/common/00director.rpy:1584
     old "(statement)"
-    # Automatic translation.
-    new "(Erklärung)"
+    new "(Statement)"
 
     # renpy/common/00director.rpy:1585
     old "(tag)"
-    # Automatic translation.
     new "(Tag)"
 
     # renpy/common/00director.rpy:1586
     old "(attributes)"
-    # Automatic translation.
     new "(Attribute)"
 
     # renpy/common/00director.rpy:1587
     old "(transform)"
-    new "(transform)"
+    new "(Transform)"
 
     # renpy/common/00director.rpy:1612
     old "(transition)"
-    new "(transition)"
+    new "(Transition)"
 
     # renpy/common/00director.rpy:1624
     old "(channel)"
-    # Automatic translation.
     new "(Kanal)"
 
     # renpy/common/00director.rpy:1625
@@ -565,23 +543,19 @@ translate german strings:
 
     # renpy/common/00director.rpy:1654
     old "Change"
-    # Automatic translation.
-    new "Ändern Sie"
+    new "Ändern"
 
     # renpy/common/00director.rpy:1656
     old "Add"
-    # Automatic translation.
-    new "hinzufügen"
+    new "Hinzufügen"
 
     # renpy/common/00director.rpy:1662
     old "Remove"
-    # Automatic translation.
-    new "entfernen"
+    new "Entfernen"
 
     # renpy/common/00director.rpy:1697
     old "Statement:"
-    # Automatic translation.
-    new "Erklärung:"
+    new "Statement:"
 
     # renpy/common/00director.rpy:1718
     old "Tag:"
@@ -594,18 +568,15 @@ translate german strings:
 
     # renpy/common/00director.rpy:1745
     old "Click to toggle attribute, right click to toggle negative attribute."
-    # Automatic translation.
-    new "Klicken Sie auf das Attribut, um es einzuschalten, klicken Sie mit der rechten Maustaste, um das negative Attribut einzuschalten."
+    new "Klicke auf das Attribut, um es umzuschalten; klicke mit der rechten Maustaste, um das negative Attribut umzuschalten."
 
     # renpy/common/00director.rpy:1757
     old "Transforms:"
-    # Automatic translation.
-    new "Verwandeln:"
+    new "Transforms:"
 
     # renpy/common/00director.rpy:1768
     old "Click to set transform, right click to add to transform list."
-    # Automatic translation.
-    new "Klicken Sie, um die Transformation festzulegen, und klicken Sie mit der rechten Maustaste, um sie zur Transformationsliste hinzuzufügen."
+    new "Klicke, um das Transform festzulegen; klicke mit der rechten Maustaste, um es zur Liste hinzuzufügen."
 
     # renpy/common/00director.rpy:1780
     old "Behind:"
@@ -619,8 +590,7 @@ translate german strings:
 
     # renpy/common/00director.rpy:1801
     old "Transition:"
-    # Automatic translation.
-    new "Überleitung:"
+    new "Transition:"
 
     # renpy/common/00director.rpy:1819
     old "Channel:"
@@ -634,13 +604,12 @@ translate german strings:
 
     # renpy/common/00gui.rpy:456
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
-    # Automatic translation.
-    new "Dieser Spielstand wurde auf einem anderen Gerät erstellt. Böswillig erstellte Speicherdateien können Ihrem Computer schaden. Vertrauen Sie dem Ersteller dieses Spielstands und allen, die die Datei geändert haben könnten?"
+    new "Dieser Spielstand wurde auf einem anderen Gerät erstellt. Böswillig erstellte Speicherstände können Deinem Computer schaden. Vertraust Du dem Ersteller dieses Spielstands und allen, die die Datei geändert haben könnten?"
 
     # renpy/common/00gui.rpy:457
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
     # Automatic translation.
-    new "Vertrauen Sie dem Gerät, auf dem die Sicherung erstellt wurde? Sie sollten nur dann Ja wählen, wenn Sie der einzige Benutzer des Geräts sind."
+    new "Vertraust Du dem Gerät, auf dem die Sicherung erstellt wurde? Du solltest nur dann Ja wählen, wenn Du der einzige Benutzer des Geräts bist."
 
     # renpy/common/00keymap.rpy:322
     old "Failed to save screenshot as %s."
@@ -654,12 +623,10 @@ translate german strings:
 
     # renpy/common/00preferences.rpy:283
     old "transitions"
-    # Automatic translation.
     new "Übergänge"
 
     # renpy/common/00preferences.rpy:292
     old "skip transitions"
-    # Automatic translation.
     new "Übergänge überspringen"
 
     # renpy/common/00preferences.rpy:294
@@ -700,32 +667,29 @@ translate german strings:
     # renpy/common/00preferences.rpy:335
     old "skip unseen text"
     # Automatic translation.
-    new "ungesehenen Text übergehen"
+    new "ungesehenen Text überspringen"
 
     # renpy/common/00preferences.rpy:337
     old "begin skipping"
-    # Automatic translation.
-    new "mit dem Springen beginnen"
+    new "mit dem Vorspulen beginnen"
 
     # renpy/common/00preferences.rpy:341
     old "after choices"
-    # Automatic translation.
-    new "nach der Wahl"
+    new "nach Entscheidungen"
 
     # renpy/common/00preferences.rpy:348
     old "skip after choices"
-    # Automatic translation.
-    new "nach Auswahlen überspringen"
+    new "Vorspulen nach Entscheidungen"
 
     # renpy/common/00preferences.rpy:350
     old "auto-forward time"
     # Automatic translation.
-    new "automatische Vorlaufzeit"
+    new "Zeit des automatischen Blätterns"
 
     # renpy/common/00preferences.rpy:364
     old "auto-forward"
     # Automatic translation.
-    new "automatisches Weiterleiten"
+    new "automatisches Blättern"
 
     # renpy/common/00preferences.rpy:371
     old "Auto forward"
@@ -754,23 +718,19 @@ translate german strings:
 
     # renpy/common/00preferences.rpy:410
     old "self voicing"
-    # Automatic translation.
-    new "selbststimmend"
+    new "Sprachausgabe"
 
     # renpy/common/00preferences.rpy:419
     old "self voicing volume drop"
-    # Automatic translation.
-    new "Selbststimmende Lautstärkeabnahme"
+    new "Lautstärkeabnahme der Sprachausgabe"
 
     # renpy/common/00preferences.rpy:427
     old "clipboard voicing"
-    # Automatic translation.
-    new "Clipboard-Intonation"
+    new "Sprachausgabe zur Zwischenablage"
 
     # renpy/common/00preferences.rpy:436
     old "debug voicing"
-    # Automatic translation.
-    new "Intonation debuggen"
+    new "Sprachausgabe debuggen"
 
     # renpy/common/00preferences.rpy:445
     old "emphasize audio"
@@ -789,7 +749,7 @@ translate german strings:
     # renpy/common/00preferences.rpy:470
     old "gl framerate"
     # Automatic translation.
-    new "Gl-Framerate"
+    new "gl-Framerate"
 
     # renpy/common/00preferences.rpy:473
     old "gl tearing"
@@ -797,8 +757,7 @@ translate german strings:
 
     # renpy/common/00preferences.rpy:476
     old "font transform"
-    # Automatic translation.
-    new "Schriftart umwandeln"
+    new "Schriftart Transform"
 
     # renpy/common/00preferences.rpy:479
     old "font size"
@@ -822,13 +781,11 @@ translate german strings:
 
     # renpy/common/00preferences.rpy:507
     old "accessibility menu"
-    # Automatic translation.
-    new "Menü Barrierefreiheit"
+    new "Barrierefreiheit-Menü"
 
     # renpy/common/00preferences.rpy:510
     old "high contrast text"
-    # Automatic translation.
-    new "Text mit hohem Kontrast"
+    new "kontrastreicher Text"
 
     # renpy/common/00preferences.rpy:519
     old "audio when minimized"
@@ -837,8 +794,7 @@ translate german strings:
 
     # renpy/common/00preferences.rpy:528
     old "audio when unfocused"
-    # Automatic translation.
-    new "Audio bei Unschärfe"
+    new "Audio wenn im Hintergrund"
 
     # renpy/common/00preferences.rpy:537
     old "web cache preload"
@@ -852,28 +808,23 @@ translate german strings:
 
     # renpy/common/00preferences.rpy:571
     old "main volume"
-    # Automatic translation.
-    new "Hauptvolumen"
+    new "Master-Lautstärke"
 
     # renpy/common/00preferences.rpy:572
     old "music volume"
-    # Automatic translation.
-    new "Musiklautstärke"
+    new "Musik-Lautstärke"
 
     # renpy/common/00preferences.rpy:573
     old "sound volume"
-    # Automatic translation.
-    new "Lautstärke"
+    new "Ton-Lautstärke"
 
     # renpy/common/00preferences.rpy:574
     old "voice volume"
-    # Automatic translation.
-    new "Sprachlautstärke"
+    new "Stimmen-Lautstärke"
 
     # renpy/common/00preferences.rpy:575
     old "mute main"
-    # Automatic translation.
-    new "Hauptstummschaltung"
+    new "Master stummschalten"
 
     # renpy/common/00preferences.rpy:576
     old "mute music"
@@ -887,13 +838,11 @@ translate german strings:
 
     # renpy/common/00preferences.rpy:578
     old "mute voice"
-    # Automatic translation.
-    new "stumme Stimme"
+    new "Stimme stummschalten"
 
     # renpy/common/00preferences.rpy:579
     old "mute all"
-    # Automatic translation.
-    new "alle stumm schalten"
+    new "alles stummschalten"
 
     # renpy/common/00speechbubble.rpy:344
     old "Speech Bubble Editor"
@@ -933,7 +882,7 @@ translate german strings:
     # renpy/common/00sync.rpy:409
     old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
     # Automatic translation.
-    new "Bitte geben Sie die von Ihnen erstellte Sync-ID ein.\nGeben Sie niemals eine Sync-ID ein, die Sie nicht selbst erstellt haben."
+    new "Bitte gib die von Dir erstellte Sync-ID ein.\nGie niemals eine Sync-ID ein, die Du nicht selbst erstellt hast."
 
     # renpy/common/00sync.rpy:428
     old "The sync ID is not in the correct format."
@@ -958,7 +907,7 @@ translate german strings:
     # renpy/common/00sync.rpy:529
     old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
     # Automatic translation.
-    new "Dadurch werden Ihre Spielstände auf den {a=https://sync.renpy.org}Ren'Py Sync Server{/a} hochgeladen.\nMöchten Sie fortfahren?"
+    new "Dadurch werden Deine Spielstände auf den {a=https://sync.renpy.org}Ren'Py Sync Server{/a} hochgeladen.\nMöchtest Du fortfahren?"
 
     # renpy/common/00sync.rpy:558
     old "Enter Sync ID"
@@ -983,7 +932,7 @@ translate german strings:
     # renpy/common/00sync.rpy:605
     old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
     # Automatic translation.
-    new "Sie können diese ID verwenden, um Ihren Spielstand auf ein anderes Gerät herunterzuladen.\nDiese Synchronisierung läuft in einer Stunde ab.\nRen'Py Sync wird unterstützt von {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    new "Du kannst diese ID verwenden, um Deinen Spielstand auf ein anderes Gerät herunterzuladen.\nDiese Synchronisierung läuft in einer Stunde ab.\nRen'Py Sync wird unterstützt von {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
 
     # renpy/common/00sync.rpy:631
     old "Sync Error"

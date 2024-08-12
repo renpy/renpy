@@ -24,7 +24,9 @@ import renpy
 
 class Texture(object):
 
-    def __init__(self, displayable, focus, main, fit):
+    texture_wrap = None
+
+    def __init__(self, displayable, focus, main, fit, texture_wrap):
 
         displayable = renpy.easy.displayable(displayable)
 
@@ -38,6 +40,7 @@ class Texture(object):
         self.focus = focus
         self.main = main
         self.fit = fit
+        self.texture_wrap = texture_wrap
 
     def _in_current_store(self):
 
@@ -105,7 +108,7 @@ class Model(renpy.display.displayable.Displayable):
         self._mesh = ("grid", width, height)
         return self
 
-    def texture(self, displayable, focus=False, main=False, fit=False):
+    def texture(self, displayable, focus=False, main=False, fit=False, texture_wrap=None):
         """
         :doc: model_displayable method
 
@@ -126,9 +129,13 @@ class Model(renpy.display.displayable.Displayable):
         `fit`
             If true, the Model is given the size of the displayable.
             This may only be true for one texture.
+
+        `texture_wrap`
+            If not None, this is the :ref:`gl_texture wrap GL property <gl-properties>` that will be applied
+            to this texture.
         """
 
-        self.textures.append(Texture(displayable, focus, main, fit))
+        self.textures.append(Texture(displayable, focus, main, fit, texture_wrap))
         return self
 
     def child(self, displayable, fit=False):
@@ -236,7 +243,6 @@ class Model(renpy.display.displayable.Displayable):
         if self.size is not None:
             width, height = self.size
 
-
         renders = [ renpy.display.im.render_for_texture(i.displayable, width, height, st, at) for i in self.textures ]
 
         for cr, t in zip(renders, self.textures):
@@ -245,8 +251,11 @@ class Model(renpy.display.displayable.Displayable):
 
         rv = renpy.display.render.Render(width, height)
 
-        for cr, t in zip(renders, self.textures):
+        for i, (cr, t) in enumerate(zip(renders, self.textures)):
             rv.blit(cr, (0, 0), focus=t.focus, main=t.main)
+
+            if t.texture_wrap is not None:
+                rv.add_property("texture_wrap_tex{}".format(i), t.texture_wrap)
 
         if self._mesh is None:
 

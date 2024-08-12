@@ -208,6 +208,8 @@ init -1800:
         # Box properties
         spacing 0
         first_spacing None
+        box_align None
+        box_justify False
         box_layout None
         box_wrap False
         box_wrap_spacing 0

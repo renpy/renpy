@@ -175,7 +175,7 @@ def default_tts_function(s):
 
     elif renpy.macintosh:
 
-        s = "[[volm {}]]".format(amplitude) + s
+        s = "[[volm {:.02f}]]".format(amplitude) + s
 
         if renpy.config.tts_voice is None:
             process = subprocess.Popen([ "say", fsencode(s) ])

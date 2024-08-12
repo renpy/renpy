@@ -10,7 +10,7 @@
     "name": "The Question",
     "numeric_version": 1,
     "orientation": "sensorLandscape",
-    "package": "org.renpy.tq",
+    "package": "org.renpy.thequestion",
     "permissions": [
         "VIBRATE",
         "INTERNET"

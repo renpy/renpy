@@ -57,6 +57,9 @@ to change the look of a portion of text. ::
 
     "What's this? A letter from {shader=zoom}out of nowhere{/shader}?"
 
+**Note** A text block should either use text shaders or not - mixing is not
+supported. For example, you should set :var:`config.default_textshader`
+or :propref:`textshader` style property if you use the text tag like above.
 
 Specifying Text Shaders
 -----------------------
@@ -199,14 +202,17 @@ Attributes
 
 ``vec2 a_text_min_time``
     The minimum time at which any vertex of the glyph should be shown. When showing from left-to-right,
-    this is the time the leftmost vertices should be shown.
+    this is the time the leftmost vertices should be shown. When the text is meant to be shown instantly
+    but ``u_text_slow_duration`` is not 0.0, this will be -3600.0.
 
 ``vec2 a_text_max_time``
     The maximum time at which any vertex of the glyph should be shown. When showing from left-to-right,
-    this is the time the rightmost vertices should be shown.
+    this is the time the rightmost vertices should be shown. When the text is meant to be shown instantly
+    but ``u_text_slow_duration`` is not 0.0, this will be -3600.0.
 
 ``float a_text_time``
-    The time at which this vertex should be shown.
+    The time at which this vertex should be shown. When the text is meant to be shown instantly
+    but ``u_text_slow_duration`` is not 0.0, this will be -3600.0.
 
 ``vec4 a_text_pos_rect``
     The rectangle being drawn, in drawable pixels. This is a vec4 with the x, y, width, and height of the rectangle,

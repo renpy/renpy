@@ -40,7 +40,7 @@ Python identifiers (starts with a letter or underscore, followed by
 letters, numbers, and underscores).
 
 When the None language is selected, most of Ren'Py's translation
-functionality is disabled, with the notable exception of Renpy's
+functionality is disabled, with the notable exception of Ren'Py's
 internal built-in strings, from the accessibility menu for example.
 Theses strings are not found in your project's code, yet they will
 still be included in the distributed version of the game. You can
@@ -442,6 +442,16 @@ The default language is chosen using the following method:
 * If this is the first time the game has been run,
   :var:`config.default_language` is used.
 * Otherwise, the None language is used.
+
+
+Translation Info Screen
+=======================
+
+A screen with information about translations can be found by entering the developer menu (shift+D), and
+and selecting "Show Translation Info". For non-developers, this screen can be shown with::
+
+    show screen _translation_info
+
 
 Translation Actions, Functions, and Variables
 =============================================

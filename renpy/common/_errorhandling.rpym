@@ -129,6 +129,8 @@ init label _errorhandling:
         # Box properties
         spacing 0
         first_spacing None
+        box_align None
+        box_justify False
         box_layout None
         box_wrap False
         box_wrap_spacing 0
@@ -699,6 +701,7 @@ python early in _errorhandling:
 # The screen that is used for error handling.
 screen _exception:
     modal True
+    layer config.interface_layer
     zorder 1090
 
     default tt = __Tooltip("")
@@ -781,6 +784,7 @@ screen _exception:
 # The screen that is used for error handling.
 screen _parse_errors:
     modal True
+    layer config.interface_layer
     zorder 1090
 
     default tt = __Tooltip("")

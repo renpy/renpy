@@ -191,6 +191,10 @@ def write_translates(filename, language, filter): # @ReservedAssignment
         if is_empty_extend(t):
             continue
 
+        if isinstance(t, renpy.ast.TranslateSay):
+            if t.who and str(t.who) in renpy.config.translate_ignore_who:
+                continue
+
         f = open_tl_file(tl_filename)
 
         if label is None:

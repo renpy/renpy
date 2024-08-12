@@ -1278,11 +1278,12 @@ class Interface(object):
 
         self.kill_textures()
 
-        # Stop the resizing.
-        pygame.key.stop_text_input() # @UndefinedVariable
-        pygame.key.set_text_input_rect(None) # @UndefinedVariable
-        self.text_rect = None
-        self.old_text_rect = None
+        if not renpy.mobile:
+            pygame.key.stop_text_input() # @UndefinedVariable
+            pygame.key.set_text_input_rect(None) # @UndefinedVariable
+            self.text_rect = None
+            self.old_text_rect = None
+
         self.display_reset = False
 
         self.force_redraw = True
@@ -1466,6 +1467,7 @@ class Interface(object):
         window = renpy.display.draw.screenshot(self.surftree)
 
         if renpy.config.screenshot_crop:
+            window = renpy.display.scale.smoothscale(window, (renpy.config.screen_width, renpy.config.screen_height))
             window = window.subsurface(renpy.config.screenshot_crop)
 
         try:
@@ -1611,6 +1613,26 @@ class Interface(object):
                 self.instantiated_transition.pop(l, None)
                 self.transition_time.pop(l, None)
                 self.transition_from.pop(l, None)
+
+    def get_ongoing_transition(self, layer=None):
+        """
+        Gets the transition that is currently operating on `layer`, or at the top level
+        if `layer` is None.
+        """
+
+        rv = self.ongoing_transition.get(layer, None)
+        transition = self.instantiated_transition.get(layer, None)
+
+        if transition is None:
+            return None
+
+        start = self.transition_time.get(layer, self.frame_time) or self.frame_time
+        delay = getattr(transition, "delay", 0)
+
+        if (self.frame_time - start) < delay:
+            return rv
+
+        return None
 
     def set_transition(self, transition, layer=None, force=False):
         """
@@ -2521,6 +2543,7 @@ class Interface(object):
                 trans.take_state(old_trans)
                 trans.take_execution_state(old_trans)
 
+
             self.instantiated_transition[layer] = trans
 
             return trans
@@ -2750,9 +2773,6 @@ class Interface(object):
 
                 # Check for autoreload.
                 renpy.loader.check_autoreload()
-
-                # Check for exec.py.
-                renpy.debug.run_exec_py()
 
                 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
                     renpy.webloader.process_downloaded_resources()

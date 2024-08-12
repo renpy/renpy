@@ -126,7 +126,7 @@ python early hide:
             if not isinstance(persistent._preference_default, dict):
                 persistent._preference_default = { }
 
-            if not hasattr(_preferences, "volume"):
+            if not "volume" in persistent._preference_default:
                 persistent._preference_default["volume"] = { }
 
             old_default = persistent._preference_default["volume"].get(name, undefined)

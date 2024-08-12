@@ -126,10 +126,6 @@ class Signature(object):
             # when in PY3-only, turn this into MappingProxyType o dict
             self.parameters = collections.OrderedDict((param.name, param) for param in parameters)
 
-    @classmethod
-    def legacy(cls, *args, **kwargs):
-        return cls(cls.legacy_params(*args, **kwargs))
-
     @staticmethod
     def legacy_params(parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
         """
@@ -192,38 +188,6 @@ class Signature(object):
             # default behavior on py3, could be a super() call but this is faster and py2-compatible
             self.parameters = state[1]["parameters"]
 
-
-    @property
-    def positional(self):
-        """
-        Legacy accessor for obsolete attribute
-        """
-        rv = []
-        for n, p in self.parameters.items():
-            if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD):
-                rv.append(n)
-        return tuple(rv)
-
-    @property
-    def extrapos(self):
-        """
-        Legacy accessor for obsolete attribute
-        """
-        for n, p in self.parameters.items():
-            if p.kind == p.VAR_POSITIONAL:
-                return n
-        return None
-
-    @property
-    def extrakw(self):
-        """
-        Legacy accessor for obsolete attribute
-        """
-        for n, p in self.parameters.items():
-            if p.kind == p.VAR_KEYWORD:
-                return n
-        return None
-
     def apply_defaults(self, mapp, scope=None):
         """
         From a mapping representing the inner scope of the callable after binding,
@@ -248,6 +212,22 @@ class Signature(object):
                     # result of a partial bind
                     continue
                 mapp[name] = val
+
+    def with_pos_only_as_pos_or_kw(self):
+        """
+        Returns a new Signature object where positional-only parameters are
+        turned into positional-or-keyword parameters.
+        """
+        new_params = []
+        itparams = iter(self.parameters.values())
+        for param in itparams:
+            if param.kind == Parameter.POSITIONAL_ONLY:
+                new_params.append(param.replace(kind=Parameter.POSITIONAL_OR_KEYWORD))
+            else:
+                new_params.append(param)
+                new_params.extend(itparams)
+                break
+        return Signature(new_params)
 
     def apply(self, args, kwargs, ignore_errors=False, partial=False, apply_defaults=True):
         """
@@ -560,5 +540,5 @@ class ArgumentInfo(renpy.object.Object):
         return "<ArgumentInfo {}>".format(self)
 
 
-EMPTY_PARAMETERS = ParameterInfo()
+EMPTY_PARAMETERS = Signature()
 EMPTY_ARGUMENTS = ArgumentInfo([ ], None, None)

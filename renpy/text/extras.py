@@ -56,6 +56,7 @@ text_tags = dict(
     noalt=True,
     nw=False,
     s=True,
+    shader=True,
     rt=True,
     rb=True,
     k=True,

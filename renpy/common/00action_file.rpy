@@ -409,7 +409,7 @@ init -1500 python:
                     return
 
             if self.cycle:
-                renpy.renpy.loadsave.cycle_saves(self.page + "-", config.quicksave_slots)
+                renpy.renpy.loadsave.cycle_saves(__slotname("", self.page, self.slot), config.quicksave_slots)
 
             renpy.save(fn, extra_info=save_name)
 
