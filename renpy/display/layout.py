@@ -1111,7 +1111,7 @@ class MultiBox(Container):
                 if box_wrap:
                     rw = width
                 else:
-                    rw = remwidth
+                    rw = remwidth - next_padding
 
                 surf = render(d, rw, height - y, cst, cat)
                 sw, sh = surf.get_size()
@@ -1166,7 +1166,7 @@ class MultiBox(Container):
                 if box_wrap:
                     rh = height
                 else:
-                    rh = remheight
+                    rh = remheight - next_padding
 
                 surf = render(d, width - x, rh, cst, cat)
                 sw, sh = surf.get_size()
@@ -1448,6 +1448,7 @@ class Window(Container):
                     new_target.take_execution_state(old_target)
 
             self.current_child = child
+
 
         # Render the child.
         surf = render(child,
