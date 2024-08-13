@@ -62,12 +62,12 @@ impact on existing games, especially if you were only using documented features.
     transform t1(child):
         ...
 
-    transform t2(chile):
+    transform t2(delay=1.0):
         ...
 
-    t1(child="eileen") # will now have a child set to the "eileen" image, but previously didn't
-    t2(child="eileen") # the child is set, as before
-    t1("eileen") # the child is set, as before
+    t1(child="eileen happy") # will now have a child set to the "eileen happy" image, but previously didn't.
+    t2(child="eileen happy") # the child is set, as before.
+    t1("eileen happy")       # the child is set, as before.
 
 **Character Callbacks** have been changed to take a large number of additional arguments,
 as documented at :doc:`character_callbacks`. This should not require changes as character
