@@ -160,7 +160,6 @@ let start_playing = (c) => {
     setValue(c.relative_volume.gain, p.relative_volume);
 
     p.started = context.currentTime;
-    p.started_once = true;
 };
 
 
@@ -302,7 +301,6 @@ let video_start = (c) => {
     setValue(c.relative_volume.gain, p.relative_volume);
 
     p.started = c.video_el.currentTime;  // XXX Probably not ready yet
-    p.started_once = true;
 };
 
 let video_pause = (c) => {
@@ -391,7 +389,6 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
              fadein : fadein,  // TODO?
              fadeout: null,  // TODO?
              tight : tight,  // TODO?
-             started_once: false,
              filter : renpyAudio.getFilter(afid),
 
              period_stats: [0, 0],  // time sum, count
@@ -464,7 +461,6 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
         fadein : fadein,
         fadeout: null,
         tight : tight,
-        started_once : false,
         file: file,
         filter : renpyAudio.getFilter(afid),
     };
@@ -629,21 +625,6 @@ renpyAudio.unpause = (channel) => {
         video_start(c);
     } else {
         start_playing(c);
-    }
-};
-
-
-renpyAudio.unpauseAllAtStart = () => {
-    for (let i of Object.entries(channels)) {
-        const c = i[1];
-        if (c.playing && ! c.playing.started_once && c.paused) {
-            c.paused = false;
-            if (c.video) {
-                video_start(c);
-            } else {
-                start_playing(c);
-            }
-        }
     }
 };
 

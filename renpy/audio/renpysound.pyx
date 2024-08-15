@@ -253,14 +253,6 @@ def unpause(channel):
     check_error()
 
 
-def unpause_all_at_start():
-    """
-    Unpauses all channels that are paused at the start.
-    """
-
-    RPS_unpause_all_at_start()
-
-
 def global_pause(pause):
     """
     Pauses or unpauses all channels.

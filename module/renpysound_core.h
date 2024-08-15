@@ -35,7 +35,6 @@ int RPS_queue_depth(int channel);
 PyObject *RPS_playing_name(int channel);
 void RPS_fadeout(int channel, int ms);
 void RPS_pause(int channel, int pause);
-void RPS_unpause_all_at_start(void);
 void RPS_global_pause(int pause);
 void RPS_set_endevent(int channel, int event);
 int RPS_get_pos(int channel);

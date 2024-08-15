@@ -719,8 +719,7 @@ class Channel(object):
                     # Only fade the first thing in.
                     fadein = 0
 
-
-                if self.synchro_start:
+                if synchro_start:
                     self.synchro_start = True
 
             if loop:
