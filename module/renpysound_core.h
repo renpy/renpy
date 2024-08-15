@@ -27,8 +27,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Python.h>
 #include <SDL.h>
 
-void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadeout, int tight, int paused, double start, double end, float relative_volume, PyObject *audio_filter);
-void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
+void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
+void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
 void RPS_stop(int channel);
 void RPS_dequeue(int channel, int even_tight);
 int RPS_queue_depth(int channel);

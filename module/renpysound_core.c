@@ -633,7 +633,7 @@ struct MediaState *load_stream(SDL_RWops *rw, const char *ext, double start, dou
 }
 
 
-void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, int paused, double start, double end, float relative_volume, PyObject *audio_filter) {
+void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
 
     struct Channel *c;
 
@@ -699,7 +699,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
         c->playing_audio_filter = NULL;
     }
 
-    c->paused = paused;
+    c->paused = 0;
 
     start_stream(c, 1);
 
@@ -708,7 +708,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
     error(SUCCESS);
 }
 
-void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
+void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
 
     struct Channel *c;
 

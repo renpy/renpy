@@ -259,11 +259,6 @@ class Channel(object):
         # Are we playing anything at all?
         self.playing = False
 
-        # If True, we'll wait for this channel to stop before
-        # loading in more music from the queue. (This is necessary to
-        # do a synchro-start.)
-        self.wait_stop = False
-
         # If True, then this channel will participate in a synchro-start
         # once all channels are ready.
         self.synchro_start = False
@@ -474,8 +469,6 @@ class Channel(object):
             self.playing = False
 
         if force_stop:
-            self.wait_stop = False
-
             if self.loop:
                 self.queue = self.queue[-len(self.loop):]
             else:
@@ -495,7 +488,6 @@ class Channel(object):
                 depth = 0
 
             if depth == 0:
-                self.wait_stop = False
                 self.playing = False
 
             # Need to check this, so we don't do pointless work.
@@ -510,11 +502,6 @@ class Channel(object):
             # If we can't buffer things, and we're playing something
             # give up here.
             if not self.buffer_queue and depth >= 1:
-                break
-
-            # We can't queue anything if the depth is > 0 and we're
-            # waiting for a synchro_start.
-            if self.synchro_start and depth:
                 break
 
             # If the queue is full, return.
@@ -559,11 +546,12 @@ class Channel(object):
                     renpysound.set_video(self.number, self.movie, loop=False)
 
                 if depth == 0:
-                    renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume, audio_filter=topq.audio_filter) # type:ignore
+                    renpysound.play(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume, audio_filter=topq.audio_filter) # type:ignore
                 else:
-                    renpysound.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume, audio_filter=topq.audio_filter) # type:ignore
+                    renpysound.queue(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume, audio_filter=topq.audio_filter) # type:ignore
 
                 self.playing = True
+                self.synchro_start = False
 
             except Exception:
 
@@ -626,7 +614,6 @@ class Channel(object):
 
             if self.keep_queue == 0:
                 renpysound.dequeue(self.number, even_tight)
-                self.wait_stop = False
                 self.synchro_start = False
 
     def interact(self):
@@ -732,8 +719,9 @@ class Channel(object):
                     # Only fade the first thing in.
                     fadein = 0
 
-                self.wait_stop = synchro_start
-                self.synchro_start = synchro_start
+
+                if self.synchro_start:
+                    self.synchro_start = True
 
             if loop:
                 self.loop = list(filenames)
@@ -1103,7 +1091,6 @@ def quit(): # @ReservedAssignment
         c.loop = [ ]
         c.playing = False
         c.playing_midi = False
-        c.wait_stop = False
         c.synchro_start = False
 
     renpysound.quit()
@@ -1167,24 +1154,6 @@ def periodic_pass():
             c.periodic()
 
         renpysound.periodic()
-
-        # Perform a synchro-start if necessary.
-        need_ss = False
-
-        for c in all_channels:
-
-            if c.synchro_start and c.wait_stop:
-                need_ss = False
-                break
-
-            if c.synchro_start and not c.wait_stop:
-                need_ss = True
-
-        if need_ss:
-            renpysound.unpause_all_at_start()
-
-            for c in all_channels:
-                c.synchro_start = False
 
     except Exception:
         if renpy.config.debug_sound:
@@ -1282,7 +1251,7 @@ def interact():
                     c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
 
                 if filenames:
-                    c.enqueue(filenames, loop=True, synchro_start=False, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)
+                    c.enqueue(filenames, loop=True, synchro_start=True, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)
 
                 c.last_changed = ctx.last_changed
 

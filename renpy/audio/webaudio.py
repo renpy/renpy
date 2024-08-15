@@ -111,7 +111,7 @@ def proxy_call_both(func):
     return func
 
 @proxy_with_channel
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -119,8 +119,9 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     `name`
         A python object giving a readable name for the file.
 
-    `paused`
-        If True, playback is paused rather than started.
+    `synchro_start`
+        If true, the file is played in synchro start mode. This means that playinf will be deferred until
+        all other synchro start files are ready to play.
 
     `fadein`
         The time it should take the fade the music in, in seconds.
@@ -156,11 +157,11 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     afid = load_audio_filter(audio_filter)
 
     call("stop", channel)
-    call("queue", channel, file, name, paused, fadein, tight, start, end, relative_volume, afid)
+    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid)
 
 
 @proxy_with_channel
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -181,7 +182,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
 
     afid = load_audio_filter(audio_filter)
 
-    call("queue", channel, file, name, False, fadein, tight, start, end, relative_volume, afid)
+    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid)
 
 
 @proxy_with_channel
