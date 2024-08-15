@@ -1022,14 +1022,13 @@ init -1499 python in achievement:
             renpy.write_log("Initialized steam.")
 
         except Exception as e:
-            import traceback
-            traceback.print_exc()
             renpy.write_log("Failed to initialize steam: %r", e)
             steam = None
             steamapi = None
 
-    steam_preinit()
-    steam_init()
+    if renpy.windows or renpy.macintosh or renpy.linux:
+        steam_preinit()
+        steam_init()
 
 
 init 1500 python in achievement:
