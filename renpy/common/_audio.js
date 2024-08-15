@@ -130,6 +130,10 @@ let start_playing = (c) => {
         return;
     }
 
+    if (p.synchro_start) {
+        return;
+    }
+
     context.resume();
 
     renpyAudio.connectFilter(c.playing.filter, c.playing.source, c.destination);
@@ -369,7 +373,7 @@ let on_video_end = (c) => {
 };
 
 
-renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, relative_volume, afid) => {
+renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid) => {
 
     const c = get_channel(channel);
 
@@ -390,6 +394,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
              fadeout: null,  // TODO?
              tight : tight,  // TODO?
              filter : renpyAudio.getFilter(afid),
+             synchro_start : synchro_start,
 
              period_stats: [0, 0],  // time sum, count
              fetch_stats: [0, 0],
@@ -408,6 +413,10 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
 
             c.video_el.addEventListener('loadedmetadata', function() {
                 c.video_size = [c.video_el.videoWidth, c.video_el.videoHeight];
+            });
+
+            c.video_el.addEventListener('error', function(e) {
+
             });
 
             c.media_source = context.createMediaElementSource(c.video_el);
@@ -441,7 +450,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
 
         if (c.playing === null) {
             c.playing = q;
-            c.paused = paused;
+            c.paused = false;
         } else {
             c.queued = q;
         }
@@ -463,6 +472,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
         tight : tight,
         file: file,
         filter : renpyAudio.getFilter(afid),
+        synchro_start : synchro_start,
     };
 
     function reuseBuffer(c) {
@@ -477,7 +487,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
 
     if (c.playing === null) {
         c.playing = q;
-        c.paused = paused;
+        c.paused = false;
     } else {
         c.queued = q;
         if (c.playing.file === file) {
@@ -716,7 +726,40 @@ renpyAudio.replace_audio_filter = (channel, afid) => {
     if (c.queued) {
         c.queued.filter = filter;
     }
-}
+};
+
+
+renpyAudio.periodic = () => {
+    let ready = true;
+
+    for (let c of Object.values(channels)) {
+
+        if (c.playing) {
+            if (c.playing.synchro_start) {
+                if (c.buffer === null) {
+                    ready = false;
+                }
+
+                if (c.queued) {
+                    c.queued.synchro_start = false;
+                }
+            }
+        }
+
+        if (c.queued && c.queued.synchro_start) {
+            ready = false;
+        }
+    }
+
+    if (ready) {
+        for (let c of Object.values(channels)) {
+            if (c.playing && c.playing.synchro_start) {
+                c.playing.synchro_start = false;
+                start_playing(c);
+            }
+        }
+    }
+};
 
 
 renpyAudio.tts = (s, v) => {

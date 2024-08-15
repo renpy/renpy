@@ -590,6 +590,8 @@ def periodic():
     Called periodically (at 20 Hz).
     """
 
+    call("periodic")
+
 
 @proxy_call_both
 def advance_time():
