@@ -692,6 +692,7 @@ init -1500:
 
     # The screen that we use to indicate that self-voicing is enabled.
     screen _self_voicing():
+        layer config.interface_layer
         zorder 1500
 
         if _preferences.self_voicing == "clipboard":

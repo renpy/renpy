@@ -25,6 +25,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import random
 
 import renpy
+from renpy.parameter import Signature, ValuedParameter
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
 
 def compiling(loc):
@@ -402,9 +403,11 @@ class ATLTransformBase(renpy.object.Object):
     much about the contents of this file.
     """
 
+    __version__ = 1
+
     # Compatibility with older saves.
     parameters = renpy.ast.EMPTY_PARAMETERS
-    parent_transform = None
+    parent_transform = None # type: ATLTransformBase|None
     atl_st_offset = 0
 
     # The block, as first compiled for prediction.
@@ -412,20 +415,28 @@ class ATLTransformBase(renpy.object.Object):
 
     nosave = [ 'parent_transform' ]
 
+    def after_upgrade(self, version):
+        if version < 1:
+            # any value in the inner scope was treated as a valid keyword parameter
+            # so, we turn any inner scope value into a keyword parameter
+            rv_parameters = []
+            for name, value in self.context.context.items():
+                if name not in self.parameters.parameters:
+                    rv_parameters.append(ValuedParameter(name, ValuedParameter.KEYWORD_ONLY, value))
+            if rv_parameters:
+                rv_parameters = list(self.parameters.parameters.values()) + rv_parameters
+                rv_parameters.sort(key=lambda p: p.kind)
+                self.parameters = Signature(rv_parameters)
+
     def __init__(self, atl, context, parameters):
 
         # The constructor will be called by atltransform.
         if parameters is None:
             parameters = ATLTransformBase.parameters
         else:
-
-            # Apply the default parameters.
             context = context.copy()
-
-            for k, p in parameters.parameters.items():
-                v = p.default
-                if v is not None:
-                    context[k] = renpy.python.py_eval(v, locals=context)
+            # Apply the default parameters.
+            parameters.apply_defaults(context, scope=context)
 
         # The parameters that we take.
         self.parameters = parameters
@@ -568,47 +579,96 @@ class ATLTransformBase(renpy.object.Object):
 
         _args = kwargs.pop("_args", None)
 
-        context = self.context.context.copy()
-
-        positional = list(self.parameters.positional)
-        args = list(args)
-
+        scope = self.context.context.copy()
+        signature = self.parameters
         child = None
 
-        if not positional and args:
-            child = args.pop(0)
+        if renpy.config.atl_pos_only_as_pos_or_kw:
+            signature = signature.with_pos_only_as_pos_or_kw()
 
-        # Handle positional arguments.
-        while positional and args:
-            name = positional.pop(0)
-            value = args.pop(0)
+        present_kinds = {p.kind for p in signature.parameters.values()}
 
-            if name in kwargs:
-                raise Exception('Parameter %r is used as both a positional and keyword argument to a transition.' % name)
+        child_param = signature.parameters.get("child", None)
+        old_widget_param = signature.parameters.get("old_widget", None)
+        # args_param_name = None
+        # if ValuedParameter.VAR_POSITIONAL in present_kinds:
+        #     for param in signature.parameters.values():
+        #         if param.kind == ValuedParameter.VAR_POSITIONAL:
+        #             args_param_name = param.name
+        #             break
+        # kwargs_param_name = None
+        # if ValuedParameter.VAR_KEYWORD in present_kinds:
+        #     for param in signature.parameters.values():
+        #         if param.kind == ValuedParameter.VAR_KEYWORD:
+        #             kwargs_param_name = param.name
+        #             break
 
-            if (name == "child") or (name == "old_widget"):
-                child = value
+        ## if a single arg is passed and no positional parameter is there to catch it, set it to be the child
+        if args and (present_kinds <= {ValuedParameter.KEYWORD_ONLY, ValuedParameter.VAR_KEYWORD}):
+            try:
+                child, = args
+            except Exception:
+                raise Exception("Too many arguments passed to ATL transform.")
+            args = ()
 
-            context[name] = value
+        if (child_param is None) or (child_param.kind not in {ValuedParameter.POSITIONAL_OR_KEYWORD, ValuedParameter.KEYWORD_ONLY}):
+            # if kwargs_param_name is None:
+                child = kwargs.pop("child", child)
+        else:
+            child = kwargs.get("child", child)
+        if (old_widget_param is not None) and (old_widget_param.kind in {ValuedParameter.POSITIONAL_OR_KEYWORD, ValuedParameter.KEYWORD_ONLY}):
+            # if getattr(signature.parameters.get("new_widget", None), "kind", None) in {ValuedParameter.POSITIONAL_OR_KEYWORD, ValuedParameter.KEYWORD_ONLY}: # Gamma-ter
+            child = kwargs.get("old_widget", child)
 
-        if args:
-            raise Exception("Too many arguments passed to ATL transform.")
+        new_scope = signature.apply(args, kwargs, partial=True, apply_defaults=False)
 
-        # Handle keyword arguments.
-        for k, v in kwargs.items():
+        ## when *args and **kwargs are enabled
+        # if args_param_name:
+        #     var_args = new_scope.pop(args_param_name, ())
+        #     if args_param_name in scope:
+        #         scope[args_param_name] += var_args
+        #     else:
+        #         scope[args_param_name] = var_args
+        # if kwargs_param_name:
+        #     var_kwargs = new_scope.pop(kwargs_param_name, {})
+        #     if kwargs_param_name in scope:
+        #         scope[kwargs_param_name].update(var_kwargs)
+        #     else:
+        #         scope[kwargs_param_name] = var_kwargs
 
-            if k == "old_widget":
-                child = v
+        scope.update(new_scope)
 
-            if k in positional:
-                positional.remove(k)
-                context[k] = v
-            elif k in context:
-                context[k] = v
-            elif k == 'child':
-                child = v
+        if child is None:
+            ## if a child parameter gets a value by a positional argument
+            if child_param and (child_param.kind in {ValuedParameter.POSITIONAL_ONLY, ValuedParameter.POSITIONAL_OR_KEYWORD}):
+                child = new_scope.get("child", child)
+
+        rv_parameters = []
+        for name, param in signature.parameters.items():
+            passed = name in new_scope
+            pkind = param.kind
+
+            ## when *args and **kwargs are enabled
+            # if name in (args_param_name, kwargs_param_name):
+            #     pass
+
+            ## when positional-only parameters are enabled
+            # elif passed and (pkind == param.POSITIONAL_ONLY):
+            #     continue
+
+            if passed: # turn into elif when possible
+                param = ValuedParameter(name, param.KEYWORD_ONLY, scope[name])
+
+            elif param.has_default:
+                param = ValuedParameter(name, pkind, scope[name])
+
             else:
-                raise Exception('Parameter %r is not known by ATL Transform.' % k)
+                ## not passed and no default value
+                pass
+
+            rv_parameters.append(param)
+
+        rv_parameters.sort(key=lambda p: p.kind)
 
         if child is None:
             child = self.child
@@ -616,19 +676,16 @@ class ATLTransformBase(renpy.object.Object):
         if getattr(child, '_duplicatable', False):
             child = child._duplicate(_args)
 
-        # Create a new ATL Transform.
-        parameters = renpy.ast.ParameterInfo.legacy([ ], positional, None, None)
-
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
             child=child,
             style=self.style_arg, # type: ignore
-            context=context,
-            parameters=parameters,
+            context=scope,
+            parameters=Signature(rv_parameters),
             _args=_args,
-            )
+        )
 
-        rv.parent_transform = self # type: ignore
+        rv.parent_transform = self
         rv.take_state(self)
 
         return rv
@@ -642,13 +699,14 @@ class ATLTransformBase(renpy.object.Object):
         constant = (self.atl.constant == GLOBAL_CONST)
 
         if not constant:
-            for p in self.parameters.positional:
-                if p not in self.context.context:
-                    raise Exception("Cannot compile ATL Transform at %s:%d, as it's missing positional parameter %s." % (
-                        self.atl.loc[0],
-                        self.atl.loc[1],
-                        p,
-                        ))
+            missing = set(self.parameters.parameters) - set(self.context.context)
+            if missing:
+                last = missing.pop()
+                raise Exception("Cannot compile ATL Transform at {}:{}, as it's missing parameters {}.".format(
+                    self.atl.loc[0],
+                    self.atl.loc[1],
+                    "{} and {!r}".format(", ".join(map(repr, missing)), last) if missing else repr(last),
+                ))
 
         if constant and self.parent_transform:
             if self.parent_transform.block:
@@ -1571,7 +1629,7 @@ class Interpolation(Statement):
 
             # Figure out the splines.
             for name, values in self.splines:
-                splines.append((name, [ getattr(trans.state, name) ] + values))
+                splines.append((name, [ trans.state.get(name) ] + values))
 
             state = (linear, angles, radii, anchorangles, anchorradii, splines)
 

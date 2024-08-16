@@ -95,7 +95,7 @@ from, and the properties each style contributes to the final displayable.
 ---------------
 
 When :var:`config.developer` or :var:`config.fast_skipping` is True, pressing
-the `fast_skip` key (by default, ">") causes the the game to immediately skip to
+the `fast_skip` key (by default, ">") causes the game to immediately skip to
 the next important interaction.  For this purpose, an important interaction is
 one that is not caused by a say statement, transition, or pause command.
 Usually, this means skipping to the next menu, but it will also stop when

@@ -436,3 +436,6 @@
     old "## Enable checks for invalid or unstable properties in screens or transforms"
     new "## 启用对屏幕或变换中无效或不稳定属性的检查"
 
+    # gui/game/gui.rpy:347
+    old "## Additional space to add between history screen entries."
+    new "## 在历史记录屏幕条目之间添加额外的空间。"

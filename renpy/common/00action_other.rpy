@@ -703,10 +703,12 @@ init -1500 python:
 
             adjustment, delta = self.get_adjustment_and_delta()
 
+
             if adjustment is None:
                 return False
 
             adjustment.restart_interaction_at_limit = True
+            adjustment.restart_interaction_at_range = True
 
             if delta > 0:
                 return adjustment.value < adjustment.range
@@ -964,6 +966,7 @@ init -1500:
             linear .5 alpha 0.0
 
     screen notify:
+        layer config.interface_layer
         zorder 100
 
         text "[message!tq]" at _notify_transform

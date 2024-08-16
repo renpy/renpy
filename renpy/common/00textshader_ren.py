@@ -321,8 +321,8 @@ renpy.register_textshader(
     u__texture="#800080",
 
     doc="""
-    The texture text shader multiplies the text with a shader. This not
-    done to outlined or offset text. The texture is aligned with the top
+    The texture text shader multiplies the text with the colors from a texture. This not
+    done to outlines or offset text. The texture is aligned with the top
     left of the text.
 
     `u__texture`

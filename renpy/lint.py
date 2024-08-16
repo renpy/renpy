@@ -457,8 +457,8 @@ def check_user(node):
 
     try:
         node.get_next()
-    except Exception:
-        report("Didn't properly report what the next statement should be.")
+    except Exception as e:
+        report("Didn't properly report what the next statement should be : {!r}".format(e))
 
 
 def quote_text(s):
@@ -716,6 +716,8 @@ def check_style(name, s):
                         check_file(name, f, directory="fonts")
                 elif v is None and k.endswith("emoji_font"):
                     pass
+                elif v in renpy.config.font_name_map.keys():
+                    check_file(name, renpy.config.font_name_map[v], directory="fonts")
                 else:
                     check_file(name, v, directory="fonts")
 
@@ -896,6 +898,18 @@ def report_character_stats(charastats):
     rv.append(bullets)
 
     return rv
+
+
+def check_image_manipulators():
+
+    problems = [ ]
+
+    for filename, linenumber, classname in renpy.display.im.ImageBase.obsolete_list:
+        problems.append((filename, linenumber, "im.%s" % classname))
+
+    if problems:
+        problem_listing("Obsolete Image Manipulators:", problems)
+
 
 def check_unreachables(all_nodes):
 
@@ -1207,6 +1221,8 @@ def lint():
     report_node = None
 
     check_styles()
+    check_image_manipulators()
+
     check_filename_encodings()
 
     check_unreachables(all_stmts)

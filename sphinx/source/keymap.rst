@@ -41,14 +41,16 @@ alt
     Matches if the Alt key is pressed. Keysyms without this prefix match
     when the Alt key is not pressed.
 meta
-    Matches if the meta, Command, or Windows key is pressed. Keysyms without
+    Matches if the Meta, Command, or Windows key is pressed. Keysyms without
     this prefix match when the meta key is not pressed.
 ctrl
     Matches if the Ctrl key is pressed. Keysyms without this prefix match
     when the Ctrl key is not pressed. (Ctrl is not very useful, as it
     usually triggers skipping.)
 osctrl
-    This is alt on the Macintosh, and ctrl elsewhere.
+    This is Alt on the Macintosh, and Ctrl elsewhere.
+anymod
+    Matches regardless of the state of the Alt, Meta, or Ctrl keys.
 shift
     Matches when the Shift key is pressed.
 noshift
@@ -65,7 +67,7 @@ repeat
     Matches when the key is a repeat due to the key being held down. Keysyms
     without the repeat or any prefixes do not match repeats. (This does not
     work with mouse buttons.)
-any
+anyrepeat
     Matches both initial keypresses and repeats.
 keydown
     Matches when the key is being pressed down (the default).
@@ -226,13 +228,14 @@ gamepad bindings is given below::
         "pad_start_press" : [ "game_menu", ],
 
         "pad_y_press" : [ "hide_windows", ],
+        "pad_x_press" : [ "button_alternate" ],
 
         "pad_rightshoulder_press" : [ "rollforward", ],
         "repeat_pad_rightshoulder_press" : [ "rollforward", ],
 
         "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
         "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
-        "pad_b_press" : [ "button_alternate" ],
+        "pad_b_press" : [ "game_menu" ],
 
         "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
         "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
@@ -271,7 +274,7 @@ gamepad bindings is given below::
 Gamepad buttons have an event name of the form "pad_*button*_press" or
 "pad_*button*_release". Analog axis events have the form "pad_*axis*_pos",
 "pad_*axis*_neg", or "pad_*axis*_zero". If held down, a second gamepad binding
-is generated, with the the "repeat\_" prefix.
+is generated, with the "repeat\_" prefix.
 
 Gamepads that do not work without special initialization are disabled by
 default. This includes the Nintendo Switch Pro Controller, which requires

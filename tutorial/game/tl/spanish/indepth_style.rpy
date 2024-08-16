@@ -110,7 +110,7 @@ translate spanish style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate spanish style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "Finalmente, está la sentencia 'style', que crea o cambia un estilo nombrado. Al darle a 'Text' el argumento de estilo, le decimos que use el estilo 'blue_text'."
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate spanish style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate spanish style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "Por defecto, el padre del estilo tiene el mismo nombre, con el prefijo hasta el primer guión bajo eliminado. Si el estilo no tiene un guión bajo en su nombre, se usa 'default'."
 
 # game/indepth_style.rpy:184

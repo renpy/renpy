@@ -256,16 +256,36 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
     contents. In that case, `filename` need not exist.
     """
 
-    def munge_string(m):
-        brackets = m.group(1)
+    if renpy.config.munge_in_strings:
 
-        if (len(brackets) & 1) == 0:
-            return m.group(0)
+        munge_regexp = re.compile(r'\b__(\w+)')
 
-        if "__" in m.group(2):
-            return m.group(0)
+        def munge_string(m):
 
-        return brackets + prefix + m.group(2)
+            g1 = m.group(1)
+
+            if "__" in g1:
+                return m.group(0)
+
+            if g1.startswith("_"):
+                return m.group(0)
+
+            return prefix + m.group(1)
+
+    else:
+
+        munge_regexp = re.compile(r'(\.|\[+)__(\w+)')
+
+        def munge_string(m):
+            brackets = m.group(1)
+
+            if (len(brackets) & 1) == 0:
+                return m.group(0)
+
+            if "__" in m.group(2):
+                return m.group(0)
+
+            return brackets + prefix + m.group(2)
 
     global original_filename
 
@@ -456,10 +476,8 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
                 s = "".join(s)
 
-                if "[__" in s:
-
-                    # Munge substitutions.
-                    s = re.sub(r'(\.|\[+)__(\w+)', munge_string, s)
+                if "__" in s:
+                    s = munge_regexp.sub(munge_string, s)
 
                 line.append(s)
 
@@ -1565,7 +1583,7 @@ def ren_py_to_rpy(text, filename):
 
     `filename`
         If not None, and an error occurs, the error is reported with the given filename.
-        Otherwise, errors are ignored and a a best effort is used.
+        Otherwise, errors are ignored and a best effort is used.
     """
 
     lines = text.splitlines()

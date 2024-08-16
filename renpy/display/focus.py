@@ -434,7 +434,7 @@ def before_interact(roots):
         max_default_focus_name = None
 
     # Should we do the max_default logic?
-    should_max_default = (renpy.display.interface.last_event is None) or (renpy.display.interface.last_event.type not in [ pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION ])
+    should_max_default = renpy.display.interface.event_time > renpy.display.interface.mouse_event_time + .1
 
     # Is this an explicit change, using the override operation?
     explicit = False
@@ -493,6 +493,7 @@ def before_interact(roots):
     if (should_max_default and (max_default > 0) and (current is None) and
         (renpy.display.interface.start_interact or (max_default_focus_name != old_max_default_focus_name))):
 
+        explicit = True
         current = max_default_focus
         set_focused(max_default_focus, None, max_default_screen)
 

@@ -1018,7 +1018,7 @@ class Interface(object):
 
         pygame.event.get([ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ])
 
-        # Create a cache of the the mouse information.
+        # Create a cache of the mouse information.
         if renpy.config.mouse:
 
             self.cursor_cache = { }
@@ -1081,6 +1081,7 @@ class Interface(object):
 
         if renpy.android:
             android.wakelock(True)
+            android.activity.armOnStop()
 
         # Block events we don't use.
         for i in pygame.event.get_standard_events():
@@ -1277,11 +1278,12 @@ class Interface(object):
 
         self.kill_textures()
 
-        # Stop the resizing.
-        pygame.key.stop_text_input() # @UndefinedVariable
-        pygame.key.set_text_input_rect(None) # @UndefinedVariable
-        self.text_rect = None
-        self.old_text_rect = None
+        if not renpy.mobile:
+            pygame.key.stop_text_input() # @UndefinedVariable
+            pygame.key.set_text_input_rect(None) # @UndefinedVariable
+            self.text_rect = None
+            self.old_text_rect = None
+
         self.display_reset = False
 
         self.force_redraw = True
@@ -1465,6 +1467,7 @@ class Interface(object):
         window = renpy.display.draw.screenshot(self.surftree)
 
         if renpy.config.screenshot_crop:
+            window = renpy.display.scale.smoothscale(window, (renpy.config.screen_width, renpy.config.screen_height))
             window = window.subsurface(renpy.config.screenshot_crop)
 
         try:
@@ -1610,6 +1613,26 @@ class Interface(object):
                 self.instantiated_transition.pop(l, None)
                 self.transition_time.pop(l, None)
                 self.transition_from.pop(l, None)
+
+    def get_ongoing_transition(self, layer=None):
+        """
+        Gets the transition that is currently operating on `layer`, or at the top level
+        if `layer` is None.
+        """
+
+        rv = self.ongoing_transition.get(layer, None)
+        transition = self.instantiated_transition.get(layer, None)
+
+        if transition is None:
+            return None
+
+        start = self.transition_time.get(layer, self.frame_time) or self.frame_time
+        delay = getattr(transition, "delay", 0)
+
+        if (self.frame_time - start) < delay:
+            return rv
+
+        return None
 
     def set_transition(self, transition, layer=None, force=False):
         """
@@ -1985,8 +2008,8 @@ class Interface(object):
         if renpy.android:
             android.wakelock(False)
 
-            # Tell Android to end the onPause method.
-            android.activity.finishOnPause()
+            # Tell Android to end the onStop method.
+            android.activity.finishOnStop()
 
         print("Entered background. --------------------------------------------")
 
@@ -1994,7 +2017,6 @@ class Interface(object):
             ev = pygame.event.wait()
 
             if ev.type == pygame.APP_TERMINATING:
-
                 sys.exit(0)
 
             if ev.type == pygame.APP_DIDENTERFOREGROUND:
@@ -2010,6 +2032,7 @@ class Interface(object):
 
         if renpy.android:
             android.wakelock(True)
+            android.activity.armOnStop()
 
         # Reset the display so we get the GL context back.
         self.display_reset = True
@@ -2349,13 +2372,6 @@ class Interface(object):
 
         renpy.plog(1, "start interact_core")
 
-        # Process the invoke queue.
-        while self.invoke_queue:
-            fn, args, kwargs = self.invoke_queue.pop(0)
-            rv = fn(*args, **kwargs)
-            if rv is not None:
-                return False, rv
-
         # Check to see if the language has changed.
         renpy.translation.check_language()
 
@@ -2526,6 +2542,7 @@ class Interface(object):
             if isinstance(trans, renpy.display.transform.Transform) and isinstance(old_trans, renpy.display.transform.Transform):
                 trans.take_state(old_trans)
                 trans.take_execution_state(old_trans)
+
 
             self.instantiated_transition[layer] = trans
 
@@ -2757,9 +2774,6 @@ class Interface(object):
                 # Check for autoreload.
                 renpy.loader.check_autoreload()
 
-                # Check for exec.py.
-                renpy.debug.run_exec_py()
-
                 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
                     renpy.webloader.process_downloaded_resources()
 
@@ -2872,6 +2886,9 @@ class Interface(object):
 
                         renpy.test.testexecution.execute()
 
+                # TTS.
+                renpy.display.tts.tick()
+
                 # Move the mouse, if necessary.
                 if self.mouse_move is not None:
                     if not self.mouse_move.perform():
@@ -2944,6 +2961,13 @@ class Interface(object):
                         # Always set to at least 1ms.
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
+
+                # Process the invoke queue.
+                while self.invoke_queue:
+                    fn, args, kwargs = self.invoke_queue.pop(0)
+                    rv = fn(*args, **kwargs)
+                    if rv is not None:
+                        return False, rv
 
                 if can_block or (frame >= renpy.config.idle_frame) or (self.force_prediction):
                     expensive = not (needs_redraw or (_redraw_in < .2) or (_timeout_in < .2) or renpy.display.video.playing())

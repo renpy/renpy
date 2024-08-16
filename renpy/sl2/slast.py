@@ -519,7 +519,7 @@ class SLBlock(SLNode):
 
         if self.atl_transform is not None:
             transform = ATLTransform(self.atl_transform, context=context.scope)
-            transform.parent_transform = self.transform # type: ignore
+            transform.parent_transform = self.transform
 
             if "at" in context.keywords:
                 try:
@@ -1141,6 +1141,7 @@ class SLDisplayable(SLBlock):
                     keywords['context'] = ctx
 
                 d = self.displayable(*positional, **keywords) # type: ignore
+                d._unique()
                 main = d._main or d
 
                 main._location = self.location
@@ -1167,6 +1168,8 @@ class SLDisplayable(SLBlock):
             else:
                 for i in ctx.children:
                     main.add(i) # type: ignore
+
+        main.id = widget_id
 
         d = d # type: ignore
         old_d = old_d # type: ignore

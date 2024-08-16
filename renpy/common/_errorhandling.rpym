@@ -49,9 +49,15 @@ init label _errorhandling:
         from store import config
 
         def _scale(n):
+            if renpy.variant("small"):
+                n *= 1.25
+
             return int(min(n * config.screen_width / 960, n * config.screen_height / 720))
 
         _wide = (config.screen_width >  (config.screen_height * 1.5))
+
+        if renpy.variant("small"):
+            _wide = False
 
     style _default:
 
@@ -123,6 +129,8 @@ init label _errorhandling:
         # Box properties
         spacing 0
         first_spacing None
+        box_align None
+        box_justify False
         box_layout None
         box_wrap False
         box_wrap_spacing 0
@@ -254,6 +262,13 @@ init label _errorhandling:
     style _hyperlink is _default:
         color "#468"
         hover_color Color("#24C")
+
+    style _image_error is _default:
+        xalign 0.5
+        yalign 0.0
+        color "#fcc"
+        outlines [ (1, "#000", 0, 0) ]
+        size gui._scale(20)
 
     return
 
@@ -686,6 +701,7 @@ python early in _errorhandling:
 # The screen that is used for error handling.
 screen _exception:
     modal True
+    layer config.interface_layer
     zorder 1090
 
     default tt = __Tooltip("")
@@ -768,6 +784,7 @@ screen _exception:
 # The screen that is used for error handling.
 screen _parse_errors:
     modal True
+    layer config.interface_layer
     zorder 1090
 
     default tt = __Tooltip("")

@@ -63,6 +63,7 @@ init python in distribute:
 
     # * Going from 7.4 to 7.5 or 8.0, the library directory changed.
     # * 7.7 called os.makedirs with exist_ok=True, even on Python 2.
+    # * 8.2 wouldn't save the DLC state.
     RENPY_PATCH = py("""\
 def change_renpy_executable():
     import sys, os, renpy, site
@@ -82,6 +83,24 @@ if sys.version_info.major == 2:
         os.old_makedirs(name, mode)
 
     os.makedirs = makedirs
+
+def fix_dlc(name, fn):
+    import sys, os
+
+    if not os.path.exists(os.path.join(config.renpy_base, fn)):
+        return
+
+    u = sys._getframe(2).f_locals["self"]
+    if name in u.current_state:
+        return
+
+    u.add_dlc_state(name)
+
+fix_dlc("steam", "lib/py3-linux-x86_64/libsteam_api.so")
+fix_dlc("steam", "lib/py2-linux-x86_64/libsteam_api.so")
+fix_dlc("web", "web")
+fix_dlc("rapt", "rapt")
+fix_dlc("renios", "renios")
 """)
 
     match_cache = { }

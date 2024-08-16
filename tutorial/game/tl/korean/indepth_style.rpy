@@ -110,7 +110,7 @@ translate korean style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate korean style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "마지막으로, 명명된 스타일을 생성하거나 변경하는 style 문이 있어. 우리는 Text에 blue_text 스타일을 사용하도록 지시했어."
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate korean style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate korean style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "기본적으로 스타일의 부모는 첫 번째 밑줄까지 접두사가 제거된 동일한 이름을 가져. 스타일의 이름에 밑줄이 없으면 기본(default)이 사용돼."
 
 # game/indepth_style.rpy:184

@@ -193,6 +193,9 @@ class Displayable(renpy.object.Object):
     # delay for.
     delay = None # type: float|None
 
+    # An id that can be used to identify this displayable.
+    id = None # type: str|None
+
     def __ne__(self, o):
         return not (self == o)
 
@@ -580,11 +583,15 @@ class Displayable(renpy.object.Object):
             if i is not None:
                 speech = i._tts()
 
+                if isinstance(speech, renpy.display.tts.TTSDone):
+                    if speech.strip():
+                        rv = [ speech ]
+                    else:
+                        rv = [ ]
+                    break
+
                 if speech.strip():
                     rv.append(speech)
-                    if isinstance(speech, renpy.display.tts.TTSDone):
-                        rv = [ speech ]
-                        break
 
 
         rv = ": ".join(rv)

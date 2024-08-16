@@ -57,8 +57,8 @@ import_pygame_sdl2()
 
 cdef extern from "renpysound_core.h":
 
-    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int fadein, int tight, int paused, double start, double end, float volume, object audio_filter)
-    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int fadein, int tight, double start, double end, float volume, object audio_filter)
+    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
+    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
@@ -111,7 +111,7 @@ def check_error():
         raise Exception(unicode(e, "utf-8", "replace"))
 
 
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -152,22 +152,17 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     if rw == NULL:
         raise Exception("Could not create RWops.")
 
-    if paused:
-        pause = 1
-    else:
-        pause = 0
-
     if tight:
         tight = 1
     else:
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_play(channel, rw, name, name, fadein * 1000, tight, pause, start, end, relative_volume, audio_filter)
+    RPS_play(channel, rw, name, name, synchro_start, fadein * 1000, tight, start, end, relative_volume, audio_filter)
     check_error()
 
 
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -191,7 +186,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_queue(channel, rw, name, name, fadein * 1000, tight, start, end, relative_volume, audio_filter)
+    RPS_queue(channel, rw, name, name, synchro_start, fadein * 1000, tight, start, end, relative_volume, audio_filter)
     check_error()
 
 
@@ -256,14 +251,6 @@ def unpause(channel):
 
     RPS_pause(channel, 0)
     check_error()
-
-
-def unpause_all_at_start():
-    """
-    Unpauses all channels that are paused at the start.
-    """
-
-    RPS_unpause_all_at_start()
 
 
 def global_pause(pause):

@@ -112,6 +112,7 @@ init -1500 python hide:
     config.font_transforms["dejavusans"] = dejavusans
 
 screen _accessibility():
+    layer config.interface_layer
     zorder 2000
     modal True
 
@@ -193,6 +194,9 @@ screen _accessibility():
 
                     label _("Self-Voicing")
 
+                    if renpy.variant("touch"):
+                        text _("Self-voicing support is limited when using a touch screen.")
+
                     null height 10
 
                     textbutton _("Off"):
@@ -226,8 +230,6 @@ screen _accessibility():
                     null height 10
 
                     bar value Preference("self voicing volume drop")
-
-
 
 
         vbox:

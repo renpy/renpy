@@ -36,7 +36,7 @@ label demo_character:
 
     e "There are a lot of properties that can be given to Characters, most of them prefixed styles."
 
-    e "Properties beginning with window apply to the textbox, those with what apply to the the dialogue, and those with who to the name of Character speaking."
+    e "Properties beginning with window apply to the textbox, those with what apply to the dialogue, and those with who to the name of Character speaking." id demo_character_7e0d75aa
 
     e "If you leave a prefix out, the style customizes the name of the speaker."
 

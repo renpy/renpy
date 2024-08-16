@@ -99,7 +99,7 @@ translate japanese strings:
 
     # renpy/common/00accessibility.rpy:191
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new "このメニューのオプションはアクセス性を改善するためのものです。すべてのゲームで動作するわけではなく、特定の組合せではゲームを正常にレンダリングしないでしょう。これはゲームやエンジンの問題ではありません。フォント変更時に最良の結果を得るには、テキストサイズをオリジナルのままにしてください。"
+    new "このメニューのオプションはアクセシビリティーを改善するためのものです。すべてのゲームで動作するわけではなく、特定の組合せではゲームを正常にレンダリングしないでしょう。これはゲームやエンジンの問題ではありません。フォント変更時に最良の結果を得るには、テキストサイズをオリジナルのままにしてください。"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Monday"
@@ -1187,7 +1187,7 @@ translate japanese strings:
 
     # renpy/common/00preferences.rpy:490
     old "accessibility menu"
-    new "アクセス性メニュー"
+    new "アクセシビリティーメニュー"
 
     # renpy/common/00preferences.rpy:493
     old "high contrast text"
@@ -1395,4 +1395,44 @@ translate japanese strings:
     # renpy/common/00updater.rpy:2090
     old "Retry"
     new "リトライ"
+
+    # renpy/common/00accessibility.rpy:120
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
+    new "アクセシビリティーメニュー。上下矢印キーをナビゲーションに使用し、ボタンとバーのアクティブ化にはエンターを使用します"
+
+    # renpy/common/00accessibility.rpy:197
+    old "Self-voicing support is limited when using a touch screen."
+    new "セルフボイシングのサポートはタッチスクリーン使用時に限定されます"
+
+    # renpy/common/00gui.rpy:454
+    old "Are you sure you want to continue where you left off?"
+    new "続きから開始しますか"
+
+    # renpy/common/00preferences.rpy:438
+    old "self voicing enable"
+    new "セルフボイシング有効化"
+
+    # renpy/common/00preferences.rpy:440
+    old "self voicing disable"
+    new "セルフボイシング無効化"
+
+    # renpy/common/00preferences.rpy:455
+    old "clipboard voicing enable"
+    new "クリップボードボイシング有効化"
+
+    # renpy/common/00preferences.rpy:457
+    old "clipboard voicing disable"
+    new "クリップボードボイシング無効化"
+
+    # renpy/common/00preferences.rpy:464
+    old "debug voicing enable"
+    new "デバックボイシング有効化"
+
+    # renpy/common/00preferences.rpy:466
+    old "debug voicing disable"
+    new "デバックボイシング無効化"
+
+    # renpy/common/00preferences.rpy:595
+    old "reset"
+    new "リセット"
 

@@ -108,6 +108,9 @@ def run(restart):
         # to not call quit label since it's not nessesary.
         raise renpy.game.QuitException()
 
+    # Clear obsolete image manipulators.
+    renpy.display.im.ImageBase.obsolete_list = [ ]
+
     if renpy.config.clear_lines:
         renpy.scriptedit.lines.clear()
 
@@ -154,6 +157,15 @@ def load_rpe(fn):
         sys.path.remove(fn)
     sys.path.insert(0, fn)
     exec(autorun, {'__file__': os.path.join(fn, "autorun.py")})
+
+
+def load_rpe_py(fn):
+
+    with open(fn) as f:
+        autorun = f.read()
+
+    exec(autorun, {'__file__': fn})
+
 
 def choose_variants():
 
@@ -351,7 +363,7 @@ def main():
     renpy.config.searchpath = renpy.__main__.predefined_searchpath(renpy.config.commondir) # E1101 @UndefinedVariable
 
     # Load Ren'Py extensions.
-    for dir in renpy.config.searchpath: # @ReservedAssignment
+    for dir in [ renpy.config.renpy_base ] + renpy.config.searchpath: # @ReservedAssignment
 
         if not os.path.isdir(dir):
             continue
@@ -359,6 +371,9 @@ def main():
         for fn in sorted(os.listdir(dir)):
             if fn.lower().endswith(".rpe"):
                 load_rpe(dir + "/" + fn)
+
+            if fn.lower().endswith(".rpe.py"):
+                load_rpe_py(dir + "/" + fn)
 
     # Generate a list of extensions for each archive handler.
     archive_extensions = [ ]
@@ -546,6 +561,8 @@ def main():
         for i in renpy.game.post_init:
             i()
 
+        renpy.config.post_init()
+
         renpy.game.script.report_duplicate_labels()
 
         # Sort the images.
@@ -593,9 +610,6 @@ def main():
 
         # Init the keymap.
         renpy.display.behavior.init_keymap()
-
-        # Init exec.py scanning.
-        renpy.debug.init_exec_py()
 
         gc.collect(2)
 

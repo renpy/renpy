@@ -317,7 +317,7 @@ def first_and_last_nodes(nodes):
 
 def adjust_ast_linenumbers(filename, linenumber, offset):
     """
-    This adjusts the line numbers in the the ast.
+    This adjusts the line numbers in the ast.
 
     `filename`
         The filename to adjust.

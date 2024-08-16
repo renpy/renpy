@@ -179,7 +179,7 @@ typedef struct MediaState {
 	/* This becomes true once the decode thread has finished initializing
 	 * and the readers and writers can do their thing.
 	 */
-	int ready; // Lock.
+	int ready;
 
 	/* This is set to true when data has been read, in order to ask the
 	 * decode thread to produce more data.
@@ -1470,16 +1470,8 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 	return rv;
 }
 
-void media_wait_ready(struct MediaState *ms) {
-#ifndef __EMSCRIPTEN__
-    SDL_LockMutex(ms->lock);
-
-    while (!ms->ready) {
-        SDL_CondWait(ms->cond, ms->lock);
-    }
-
-    SDL_UnlockMutex(ms->lock);
-#endif
+int media_is_ready(struct MediaState *ms) {
+	return ms->ready;
 }
 
 

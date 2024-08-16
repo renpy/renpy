@@ -265,7 +265,7 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
 
     If not None, this can either be a 2 or 4-component tuple. If mesh is
     True and this is given, this applies padding to the size of the textures
-    applied to the the textures used by the mesh. A 2-component tuple applies
+    applied to the textures used by the mesh. A 2-component tuple applies
     padding to the right and bottom, while a 4-component tuple applies
     padding to the left, top, right, and bottom.
 
@@ -317,7 +317,7 @@ Blend Functions
 .. var:: config.gl_blend_func = { ... }
 
     A dictionary used to map a blend mode name to a blend function. The
-    blend modes are supplied to the blend func property, given below.
+    blend modes are supplied to the :ref:`gl_blend_func <gl-blend-func>` property, given below.
 
 The default blend modes are::
 
@@ -327,6 +327,10 @@ The default blend modes are::
     gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
 
+As Ren'Py uses premultiplied alpha, the results of some of these may be counterintuitive when a pixel
+is not opaque. In the GPU, the color (r, g, b, a) is represented as (r * a, g * a, b * a, a), and the blend function
+uses these premultiplied colors. This may be a different result that you get for these blend modes in a paint program,
+when what is drawn is not fully opaque.
 
 .. _model-uniforms:
 
@@ -364,6 +368,15 @@ The following uniforms are made available to all Models.
     to the bottom-left corner of the window. u_viewport.pq is the width
     and height of the viewport.
 
+``vec2 u_virtual_size``
+
+    This is the virtual size of the game (:var:`config.screen_width`, :var:`config.screen_height`).
+    This can be used to convert from gl_Position to virtual coordinates using:
+
+    .. code-block:: glsl
+
+        v_position = u_virtual_size * vec2(gl_Position.x * .5 + .5, -gl_Position.y * .5 + .5)
+
 ``vec2 u_drawable_size``
     The size of the drawable are of the windows, in pixels, at the resolution
     the game is running at. For example, if a 1280x720 game is scaled up to
@@ -382,7 +395,8 @@ The following uniforms are made available to all Models.
 The following attributes are available to all models:
 
 ``vec4 a_position``
-    The position of the vertex being rendered.
+    The position of the vertex being rendered. This is in virtual pixels, relative to the upper
+    left corner of the texture.
 
 If textures are available, so is the following attribute:
 
@@ -397,6 +411,8 @@ GL Properties
 GL properties change the global state of OpenGL, or the Model-Based renderer.
 These properties can be used with a Transform, or with the :func:`Render.add_property`
 function.
+
+.. _gl-blend_func:
 
 ``gl_blend_func``
     If present, this is expected to be a six-component tuple, which is
@@ -472,6 +488,11 @@ can be supplied the property method.
 
         init python:
             from renpy.uguu import GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, GL_REPEAT
+
+    This can also be customized for specific textures. `gl_texture_wrap_tex0` controls
+    the first texture, `gl_texture_wrap_tex1` the second, `gl_texture_wrap_tex2`, the third,
+    and `gl_texture_wrap_tex3` the fourth. While only these four are avalable through Transforms,
+    it's possibe to supply "texture_wrap_tex4" or "texture_wrap_myuniform" to Render.add_property.
 
 Model Displayable
 -----------------

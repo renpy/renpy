@@ -1186,10 +1186,10 @@ def get_screen_variable(name, screen=None, layer=None):
     else:
         s = get_screen(screen, layer)
         if s is None:
-            raise ValueError("Screen %s is not showing." % (name,))
+            raise ValueError("Screen %s is not showing." % (screen,))
 
     if name not in s.scope:
-        raise NameError("Screen %s does not have a variable named %s." % (screen.name, name))
+        raise NameError("Screen %s does not have a variable named %s." % (s.name, name))
 
     return s.scope[name]
 
@@ -1227,7 +1227,7 @@ def set_screen_variable(name, value, screen=None, layer=None):
     else:
         s = get_screen(screen, layer)
         if s is None:
-            raise ValueError("Screen %s is not showing." % (name,))
+            raise ValueError("Screen %s is not showing." % (screen,))
 
     s.scope[name] = value
 
@@ -1430,13 +1430,15 @@ def predict_screen(_screen_name, *_args, **kwargs):
     renpy.ui.reset()
 
 
-def hide_screen(tag, layer=None):
+def hide_screen(tag, layer=None, immediately=False):
     """
     :doc: screens
 
     The programmatic equivalent of the hide screen statement.
 
     Hides the screen with `tag` on `layer`.
+
+    If `immediately` is true, the screen is hidden immediately, without the 'on hide' event.
     """
 
     if layer is None:
@@ -1448,7 +1450,7 @@ def hide_screen(tag, layer=None):
     sls = renpy.display.scenelists.scene_lists()
 
     if screen is not None:
-        sls.remove(layer, screen.tag)
+        sls.remove(layer, screen.tag, prefix="hide" if not immediately else None)
         sls.shown.predict_hide(layer, screen.screen_name)
 
 

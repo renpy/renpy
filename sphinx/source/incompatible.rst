@@ -15,24 +15,64 @@ such changes only take effect when the GUI is regenerated.
 Pending Deprecations
 --------------------
 
-These are changes that will take effect in a future version of Ren'Py.
+Ren'Py 7.8 is the last release to support Python 2.
 
-Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1 is
-released, in May 2024.
+Ren'Py 8.4 will drop support for the original OpenGL renderer (gl1), and for Windows 7, 8, and 8.1.
 
-The original OpenGL renderer will be removed 1 year after Ren'Py 8.1 is
-released, after May 2024. Ren'Py 8.2 and 7.7 disable the :var:`config.gl2`
-flag, as GL2 will always be used unless the player selects a different
-renderer.
-
-Support for Window 7, 8, and 8.1 will be dropped after May 2024, to allow the
-use of versions of Python that only support Windows 10 and later.
 
 .. _incompatible-8.3.0:
 .. _incompatible-7.8.0:
 
 8.3.0 / 7.8.0
 -------------
+
+**Box_reverse and Box_align** The :propref:`box_reverse` property now no longer adjusts the box
+alignment. To adjust the box alignment, set the :propref:`box_align` property to 1.0, or use:
+
+    define config.box_reverse_align = true
+
+To get the 8.2 behavior.
+
+**Retained speech bubbles** are now automatically cleared away when other say, menu, or call screen
+statements are invoked. This is controlled by the :var:`bubble.clear_retain_statements` variable.
+
+To disable this, add to your game::
+
+    define bubble.clear_retain_statements = [ ]
+
+**How ATL sets the child from parameters** The rules as for how and when ATL
+transforms get their child set, based upon the parameters they accept and the
+arguments they are passed, has slightly changed. It is unlikely to have any
+impact on existing games, especially if you were only using documented features.
+
+- The `old_widget` parameter taking a value from a positional argument does not
+  set the child anymore. That was an undocumented misuse of
+  :ref:`atl-transitions`. ::
+
+    transform t(old_widget):
+        ...
+
+    t("eileen") # will no longer have a child set to the "eileen" image
+
+- A `child` keyword argument being passed to a transform having a `child`
+  parameter now sets the child, just as it would in a transform with no
+  `child` parameter, or if the `child` parameter got a value from a positional
+  argument. The documentation was ambiguous about this. ::
+
+    transform t1(child):
+        ...
+
+    transform t2(delay=1.0):
+        ...
+
+    t1(child="eileen happy") # will now have a child set to the "eileen happy" image, but previously didn't.
+    t2(child="eileen happy") # the child is set, as before.
+    t1("eileen happy")       # the child is set, as before.
+
+**Character Callbacks** have been changed to take a large number of additional arguments,
+as documented at :doc:`character_callbacks`. This should not require changes as character
+callbacks should have been written to ignore unknown keyword arguments, but if not
+the character callbacks may need to be updated.
 
 **Window Statement** The ``window show`` annd ``window hide`` statements
 no longer disable the ``window auto`` flag. If you'd like to do this, then
@@ -47,6 +87,53 @@ it looked back to the last say statement. To revert this change, include::
 
     define config.window_next = False
 
+.. _munge-8.3.0:
+
+**String Munging** Munging of names beginning with __ but not containing a second instance of __
+will now occur inside a string just like it does in the rest of a script. What this means is that:
+
+    $ __foo = 1
+    "Add one and __foo and you get [1 + __foo]."
+
+will be rewritten to:
+
+    $ _m1_script__foo = 1
+    "Add one and _m1_script__foo and you get [1 + _m1_script__foo]."
+
+To disable this, in a file named 01nomunge.rpy in your game directory, write::
+
+    define config.munge_in_strings = False
+
+**Cropping Outside the Bounds of a Displayable** The behavior of cropping a
+displayable with a box larger than the displayable has changed. As of this
+release, values passed to :func:`Crop`, :tpref:`crop`, :tpref:`corner1` and
+:tpref:`corner2` are not bound by the original boundaries of the displayable.
+
+In 8.2.x and 7.7.x releases of Ren'Py, the behavior was to crop the right/bottom of the displayable,
+but unconstrain the left/top. This behavior can be restored by adding to your game::
+
+    define config.limit_transform_crop = True
+
+Before 8.2 and 7.7, the behavior was to crop the right/bottom of the displayable if the value was a
+float, and leave left/top unconstrained. This behavior can be restored by adding to your game::
+
+    define config.limit_transform_crop = "only_float"
+
+
+
+.. _incompatible-8.2.2:
+.. _incompatible-7.7.2:
+
+8.2.2 / 7.7.2
+-------------
+
+**Fill and Frames** In certain cases in 8.2.1 and earlier, the :propref:`xfill` and :propref:`yfill`
+style properties could cause Frames, Windows, and Buttons to shrink in size. Now, only expansion in
+size is allowed. To revert this, add::
+
+
+    define config.fill_shrinks_frame = True
+
 
 .. _incompatible-8.2.1:
 .. _incompatible-7.7.1:
@@ -58,6 +145,7 @@ it looked back to the last say statement. To revert this change, include::
 with the text now being rendered in the correct place. This may cause
 position changes, but since the previous version was wildly incorrect,
 no compatibility define is provided.
+
 
 
 
@@ -79,7 +167,6 @@ In order to keep using the ``annotations`` future for stringified annotations,
 you can add the following line at the top of your files::
 
     rpy python annotations
-
 
 **Text Changes** Ren'Py uses harfbuzz for shaping, which may produce
 different glyphs than would have been produced differently, and may change

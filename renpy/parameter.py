@@ -23,7 +23,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional, Any
 from itertools import chain as _chain
 import collections
 
@@ -31,6 +30,13 @@ import renpy
 
 
 class Parameter(object):
+    """
+    The default value (if any) of this class of parameters is a string,
+    evaluable to the actual default value. This is how most Ren'Py callables
+    work (labels, transforms directly defined using the transform statement,
+    and screens), where the actual value is computed at the time of the call.
+    """
+
     __slots__ = ("name", "kind", "default",)
 
     POSITIONAL_ONLY, POSITIONAL_OR_KEYWORD, VAR_POSITIONAL, KEYWORD_ONLY, VAR_KEYWORD = range(5)
@@ -41,24 +47,30 @@ class Parameter(object):
         # default should only be passed by keyword, todo when PY3-only
         self.name = name
         self.kind = kind
-        self.default = default # type: str|None
+        self.default = default
+
+    @property
+    def has_default(self):
+        return self.default is not self.empty
+
+    def default_value(self, locals=None, globals=None):
+        return renpy.python.py_eval(self.default, locals=locals, globals=globals)
 
     def replace(self, **kwargs):
         d = dict(name=self.name, kind=self.kind, default=self.default)
         d.update(kwargs)
-        return Parameter(**d)
+        return type(self)(**d)
 
     def __str__(self):
         kind = self.kind
         formatted = self.name
 
-        if self.default is not None:
-            formatted += "=" + self.default # type: ignore
-
         if kind == self.VAR_POSITIONAL:
             formatted = "*" + formatted
         elif kind == self.VAR_KEYWORD:
             formatted = "**" + formatted
+        elif self.default is not self.empty:
+            formatted += "=" + self.default # type: ignore
 
         return formatted
 
@@ -67,6 +79,37 @@ class Parameter(object):
 
     def __eq__(self, other):
         return (self is other) or (isinstance(other, Parameter) and (self.name == other.name) and (self.kind == other.kind) and (self.default == other.default))
+
+class ValuedParameter(Parameter):
+    """
+    This is a more python-classic parameter, in which the default value is the
+    final object itself, already evaluated.
+    """
+
+    __slots__ = ()
+
+    class empty: pass # singleton, should be picklable
+
+    def __init__(self, name, kind, default=empty):
+        # default should only be passed by keyword, todo when PY3-only
+        # this method is redefined in order to change default's default value
+        super(ValuedParameter, self).__init__(name, kind, default)
+
+    def default_value(self, *args, **kwargs):
+        return self.default
+
+    def __str__(self):
+        kind = self.kind
+        formatted = self.name
+
+        if kind == self.VAR_POSITIONAL:
+            formatted = "*" + formatted
+        elif kind == self.VAR_KEYWORD:
+            formatted = "**" + formatted
+        elif self.default is not self.empty:
+            formatted = "{}={!r}".format(formatted, self.default)
+
+        return formatted
 
 class Signature(object):
     """
@@ -82,10 +125,6 @@ class Signature(object):
         else:
             # when in PY3-only, turn this into MappingProxyType o dict
             self.parameters = collections.OrderedDict((param.name, param) for param in parameters)
-
-    @classmethod
-    def legacy(cls, *args, **kwargs):
-        return cls(cls.legacy_params(*args, **kwargs))
 
     @staticmethod
     def legacy_params(parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
@@ -149,39 +188,7 @@ class Signature(object):
             # default behavior on py3, could be a super() call but this is faster and py2-compatible
             self.parameters = state[1]["parameters"]
 
-
-    @property
-    def positional(self):
-        """
-        Legacy accessor for obsolete attribute
-        """
-        rv = []
-        for n, p in self.parameters.items():
-            if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD):
-                rv.append(n)
-        return tuple(rv)
-
-    @property
-    def extrapos(self):
-        """
-        Legacy accessor for obsolete attribute
-        """
-        for n, p in self.parameters.items():
-            if p.kind == p.VAR_POSITIONAL:
-                return n
-        return None
-
-    @property
-    def extrakw(self):
-        """
-        Legacy accessor for obsolete attribute
-        """
-        for n, p in self.parameters.items():
-            if p.kind == p.VAR_KEYWORD:
-                return n
-        return None
-
-    def apply_defaults(self, mapp):
+    def apply_defaults(self, mapp, scope=None):
         """
         From a mapping representing the inner scope of the callable after binding,
         this mutates the mapping to apply the evaluated default values of the parameters.
@@ -190,13 +197,13 @@ class Signature(object):
         is not calculated.
         """
         # code inspired from stdlib's inspect.BoundArguments.apply_defaults
-        # but optimized as not to create a new dict
+        # but optimized as to mutate the dict in-place
         # (because ordering doesn't matter to us)
         # resulting in 5x shorter execution time
         for name, param in self.parameters.items():
             if name not in mapp:
-                if param.default is not None:
-                    val = renpy.python.py_eval(param.default)
+                if param.has_default:
+                    val = param.default_value(locals=scope)
                 elif param.kind == param.VAR_POSITIONAL:
                     val = ()
                 elif param.kind == param.VAR_KEYWORD:
@@ -205,9 +212,24 @@ class Signature(object):
                     # result of a partial bind
                     continue
                 mapp[name] = val
-        return mapp
 
-    def apply(self, args, kwargs, ignore_errors=False, partial=False):
+    def with_pos_only_as_pos_or_kw(self):
+        """
+        Returns a new Signature object where positional-only parameters are
+        turned into positional-or-keyword parameters.
+        """
+        new_params = []
+        itparams = iter(self.parameters.values())
+        for param in itparams:
+            if param.kind == Parameter.POSITIONAL_ONLY:
+                new_params.append(param.replace(kind=Parameter.POSITIONAL_OR_KEYWORD))
+            else:
+                new_params.append(param)
+                new_params.extend(itparams)
+                break
+        return Signature(new_params)
+
+    def apply(self, args, kwargs, ignore_errors=False, partial=False, apply_defaults=True):
         """
         Takes args and kwargs, and returns a mapping corresponding to the
         inner scope of the callable as a result of that call.
@@ -218,6 +240,8 @@ class Signature(object):
         - ignore_errors
         - applies the defaults automatically (and lazily, as per the above)
         """
+
+        # when in PY3-only, uncomment the "from None" in the raise statements
 
         if not renpy.config.developer:
             ignore_errors = True
@@ -361,7 +385,9 @@ class Signature(object):
                     'got an unexpected keyword argument {arg!r}'.format(
                         arg=next(iter(kwargs))))
 
-        return self.apply_defaults(arguments)
+        if apply_defaults:
+            self.apply_defaults(arguments)
+        return arguments
 
     def __eq__(self, other):
         if self is other:
@@ -508,6 +534,11 @@ class ArgumentInfo(renpy.object.Object):
 
         return "(" + ", ".join(l) + ")"
 
+    __str__ = get_code
 
-EMPTY_PARAMETERS = ParameterInfo()
+    def __repr__(self):
+        return "<ArgumentInfo {}>".format(self)
+
+
+EMPTY_PARAMETERS = Signature()
 EMPTY_ARGUMENTS = ArgumentInfo([ ], None, None)

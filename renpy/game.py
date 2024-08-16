@@ -254,13 +254,14 @@ def context(index=-1):
     return contexts[index]
 
 
+
 def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
     """
     :doc: context
 
     This function creates a new context, and invokes the given Python
     callable (function) in that context. When the function returns
-    or raises an exception, control returns to the the original context.
+    or raises an exception, control returns to the original context.
     It's generally used to call a Python function that needs to display
     information to the player (like a confirmation prompt) from inside
     an event handler.
@@ -273,7 +274,16 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
     :func:`renpy.jump`, are handled by the outer context. If you want
     to call Ren'Py script rather than a Python function, use
     :func:`renpy.call_in_new_context` instead.
+
+    This takes an optional  keyword argument:
+
+    `_clear_layers`
+        If True (the default), the layers are cleared before the new
+        interaction starts. If False, the layers are not cleared. If a
+        list, only the layers in the list are cleared.
     """
+
+    clear = kwargs.pop('_clear_layers', True)
 
     restart_context = False
 
@@ -282,7 +292,7 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
 
     renpy.display.focus.clear_focus()
 
-    context = renpy.execution.Context(False, contexts[-1], clear=True)
+    context = renpy.execution.Context(False, contexts[-1], clear=clear)
     contexts.append(context)
 
     if renpy.display.interface is not None:
@@ -329,14 +339,23 @@ def call_in_new_context(label, *args, **kwargs):
 
     Use this to begin a second interaction with the user while
     inside an interaction.
+
+    This takes an optional  keyword argument:
+
+    `_clear_layers`
+        If True (the default), the layers are cleared before the new
+        interaction starts. If False, the layers are not cleared. If a
+        list, only the layers in the list are cleared.
     """
+
+    clear = kwargs.pop('_clear_layers', True)
 
     if renpy.game.log.current is not None:
         renpy.game.log.complete()
 
     renpy.display.focus.clear_focus()
 
-    context = renpy.execution.Context(False, contexts[-1], clear=True)
+    context = renpy.execution.Context(False, contexts[-1], clear=clear)
     contexts.append(context)
 
     if renpy.display.interface is not None:

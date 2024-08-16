@@ -110,7 +110,7 @@ translate french style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate french style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "Enfin, il y a des déclarations de style qui créent ou changent un style nommé. En fournissant l’argument de style à Text, nous lui disons d’utiliser le style 'blue_text'."
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate french style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate french style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "Par défaut, le parent d’un style a le même nom sans le préfixe. Si le style n’a pas de préfixe, alors il hérite des valeurs du style 'default'."
 
 # game/indepth_style.rpy:184

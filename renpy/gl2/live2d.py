@@ -667,6 +667,7 @@ class Live2D(renpy.display.displayable.Displayable):
             expression=expression,
             used_nonexclusive=used_nonexclusive,
             sustain=sustain,
+            default_fade=self.default_fade,
             **self.properties)
 
         rv.name = args.name

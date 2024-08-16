@@ -425,6 +425,7 @@ init -1100:
     screen sync_confirm():
         style_prefix "sync"
         modal True
+        layer config.interface_layer
         zorder 100
 
         frame:
@@ -456,6 +457,7 @@ init -1100:
     screen sync_prompt(prompt):
         style_prefix "sync"
         modal True
+        layer config.interface_layer
         zorder 100
 
         frame:
@@ -496,6 +498,7 @@ init -1100:
     screen sync_success(sync_id):
         style_prefix "sync"
         modal True
+        layer config.interface_layer
         zorder 100
 
         frame:
@@ -533,6 +536,7 @@ init -1100:
     screen sync_error(message):
         style_prefix "sync"
         modal True
+        layer config.interface_layer
         zorder 100
 
         frame:
@@ -561,5 +565,11 @@ init -1100:
         key "game_menu" action Return(False)
 
 
-    style sync_overlay is empty:
-        background "gui/overlay/confirm.png"
+    if renpy.loadable("gui/overlay/confirm.png"):
+        style sync_overlay is empty:
+            background "gui/overlay/confirm.png"
+    else:
+        style sync_overlay is empty:
+            background "#000a"
+
+    style sync_text is gui_text

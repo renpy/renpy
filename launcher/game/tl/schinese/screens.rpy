@@ -22,7 +22,7 @@
 
     # gui/game/screens.rpy:96
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
-    new "## https://www.renpy.cn/doc/screen_special.html#say"
+    new "## https://doc.renpy.cn/zh-CN/screen_special.html#say"
 
     # gui/game/screens.rpy:114
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
@@ -46,7 +46,7 @@
 
     # gui/game/screens.rpy:173
     old "## https://www.renpy.org/doc/html/screen_special.html#input"
-    new "## https://www.renpy.cn/doc/screen_special.html#input"
+    new "## https://doc.renpy.cn/zh-CN/screen_special.html#input"
 
     # gui/game/screens.rpy:200
     old "## Choice screen"
@@ -58,7 +58,7 @@
 
     # gui/game/screens.rpy:206
     old "## https://www.renpy.org/doc/html/screen_special.html#choice"
-    new "## https://www.renpy.cn/doc/screen_special.html#choice"
+    new "## https://doc.renpy.cn/zh-CN/screen_special.html#choice"
 
     # gui/game/screens.rpy:234
     old "## Quick Menu screen"
@@ -170,7 +170,7 @@
 
     # gui/game/screens.rpy:348
     old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
-    new "## https://www.renpy.cn/doc/screen_special.html#main-menu"
+    new "## https://doc.renpy.cn/zh-CN/screen_special.html#main-menu"
 
     # gui/game/screens.rpy:352
     old "## This ensures that any other menu screen is replaced."
@@ -242,7 +242,7 @@
 
     # gui/game/screens.rpy:579
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
-    new "## https://www.renpy.cn/doc/screen_special.html#save https://www.renpy.cn/doc/screen_special.html#load"
+    new "## https://doc.renpy.cn/zh-CN/screen_special.html#save https://doc.renpy.cn/zh-CN/screen_special.html#load"
 
     # gui/game/screens.rpy:598
     old "Page {}"
@@ -310,7 +310,7 @@
 
     # gui/game/screens.rpy:709
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
-    new "## https://www.renpy.cn/doc/screen_special.html#preferences"
+    new "## https://doc.renpy.cn/zh-CN/screen_special.html#preferences"
 
     # gui/game/screens.rpy:726
     old "Display"
@@ -379,7 +379,7 @@
 
     # gui/game/screens.rpy:869
     old "## https://www.renpy.org/doc/html/history.html"
-    new "## https://www.renpy.cn/doc/history.html"
+    new "## https://doc.renpy.cn/zh-CN/history.html"
 
     # gui/game/screens.rpy:875
     old "## Avoid predicting this screen, as it can be very large."
@@ -498,7 +498,7 @@
 
     # gui/game/screens.rpy:1032
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "切换辅助{a=https://www.renpy.cn/doc/self_voicing.html}机器朗读{/a}。"
+    new "切换辅助{a=https://doc.renpy.cn/zh-CN/self_voicing.html}机器朗读{/a}。"
 
     # gui/game/screens.rpy:1036
     old "Opens the accessibility menu."
@@ -566,7 +566,7 @@
 
     # gui/game/screens.rpy:1126
     old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
-    new "## https://www.renpy.cn/doc/screen_special.html#confirm"
+    new "## https://doc.renpy.cn/zh-CN/screen_special.html#confirm"
 
     # gui/game/screens.rpy:1130
     old "## Ensure other screens do not get input while this screen is displayed."
@@ -594,7 +594,7 @@
 
     # gui/game/screens.rpy:1189
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
-    new "## https://www.renpy.cn/doc/screen_special.html#skip-indicator"
+    new "## https://doc.renpy.cn/zh-CN/screen_special.html#skip-indicator"
 
     # gui/game/screens.rpy:1201
     old "Skipping"
@@ -618,7 +618,7 @@
 
     # gui/game/screens.rpy:1245
     old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
-    new "## https://www.renpy.cn/doc/screen_special.html#notify-screen"
+    new "## https://doc.renpy.cn/zh-CN/screen_special.html#notify-screen"
 
     # gui/game/screens.rpy:1279
     old "## NVL screen"
@@ -630,7 +630,7 @@
 
     # gui/game/screens.rpy:1283
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
-    new "## https://www.renpy.cn/doc/screen_special.html#nvl"
+    new "## https://doc.renpy.cn/zh-CN/screen_special.html#nvl"
 
     # gui/game/screens.rpy:1294
     old "## Displays dialogue in either a vpgrid or the vbox."
@@ -674,5 +674,8 @@
 
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
-    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://doc.renpy.cn/zh-CN/bubble.html#bubble-screen"
 
+    # gui/game/screens.rpy:1098
+    old "Start, Guide, B/Right Button"
+    new "开始，向导，B/右键"

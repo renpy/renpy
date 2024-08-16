@@ -25,6 +25,7 @@ style _hyperlink_button is _default
 style _hyperlink_button_text is _hyperlink
 
 screen _inspector:
+    layer config.interface_layer
     zorder 1010
     modal True
 
@@ -107,6 +108,7 @@ screen _inspector:
     key "game_menu" action Return(True)
 
 screen _style_inspector:
+    layer config.interface_layer
     zorder 1020
     modal True
 
@@ -201,7 +203,13 @@ init python:
         else:
             clname = type(d).__name__
 
+        parts = [ clname ]
+
         info = d._repr_info()
-        if info is None:
-            return clname
-        return clname + " " + info
+        if info is not None:
+            parts.append(info)
+
+        if d.id is not None:
+            parts.append("id %r" % d.id)
+
+        return " ".join(parts)

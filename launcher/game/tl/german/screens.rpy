@@ -1,4 +1,4 @@
-﻿
+
 translate german strings:
 
     # screens.rpy:9
@@ -8,13 +8,11 @@ translate german strings:
 
     # screens.rpy:87
     old "## In-game screens"
-    # Automatic translation.
-    new "## Bildschirme im Spiel"
+    new "## Spielinterne Bildschirme (Screens)"
 
     # screens.rpy:91
     old "## Say screen"
-    # Automatic translation.
-    new "## Sagen Sie Bildschirm"
+    new "## Dialog-Bildschirm"
 
     # screens.rpy:93
     old "## The say screen is used to display dialogue to the player. It takes two parameters, who and what, which are the name of the speaking character and the text to be displayed, respectively. (The who parameter can be None if no name is given.)"
@@ -32,8 +30,7 @@ translate german strings:
 
     # screens.rpy:169
     old "## Input screen"
-    # Automatic translation.
-    new "## Eingabebildschirm"
+    new "## Eingabe-Bildschirm"
 
     # screens.rpy:171
     old "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
@@ -51,13 +48,11 @@ translate german strings:
 
     # screens.rpy:205
     old "## Choice screen"
-    # Automatic translation.
-    new "## Auswahlbildschirm"
+    new "## Auswahl- oder Entscheidungs-Bildschirm"
 
     # screens.rpy:207
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    # Automatic translation.
-    new "## Dieser Bildschirm wird verwendet, um die Auswahlmöglichkeiten im Spiel anzuzeigen, die von der Menüanweisung präsentiert werden. Der eine Parameter, items, ist eine Liste von Objekten, jedes mit Beschriftung und Aktionsfeldern."
+    new "## Dieser Bildschirm wird verwendet, um die Auswahlmöglichkeiten im Spiel anzuzeigen, die von der Menüanweisung präsentiert werden. Der Parameter \"items\" ist eine Liste von Objekten, jedes mit Beschriftung und Aktionsfeldern."
 
     # screens.rpy:211
     old "## http://www.renpy.org/doc/html/screen_special.html#choice"
@@ -65,13 +60,11 @@ translate german strings:
 
     # screens.rpy:221
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
-    # Automatic translation.
-    new "## Wenn dies wahr ist, werden die Menübeschriftungen vom Sprecher gesprochen. Bei \"false\" werden die Menübeschriftungen als leere Schaltflächen angezeigt."
+    new "## Bei \"True\" werden die Menübeschriftungen vom Erzähler gesprochen. Bei \"False\" werden die Menübeschriftungen als leere Schaltflächen angezeigt."
 
     # screens.rpy:244
     old "## Quick Menu screen"
-    # Automatic translation.
-    new "## Bildschirm Schnellmenü"
+    new "## Schnellmenü-Bildschirm"
 
     # screens.rpy:246
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
@@ -84,12 +77,11 @@ translate german strings:
 
     # screens.rpy:262
     old "History"
-    # Automatic translation.
-    new "Geschichte"
+    new "Dialogverlauf"
 
     # screens.rpy:263
     old "Skip"
-    new "Spulen"
+    new "Vorspulen"
 
     # screens.rpy:264
     old "Auto"
@@ -105,7 +97,7 @@ translate german strings:
 
     # screens.rpy:267
     old "Q.Load"
-    new "S. Laden"
+    new "S.Laden"
 
     # screens.rpy:268
     old "Prefs"
@@ -133,7 +125,7 @@ translate german strings:
     # screens.rpy:316
     old "Load"
     # Automatic translation.
-    new "Laden Sie"
+    new "Laden"
 
     # screens.rpy:318
     old "Preferences"
@@ -205,13 +197,11 @@ translate german strings:
 
     # screens.rpy:539
     old "## About screen"
-    # Automatic translation.
-    new "## Über den Bildschirm"
+    new "## Info-Bildschirm"
 
     # screens.rpy:541
     old "## This screen gives credit and copyright information about the game and Ren'Py."
-    # Automatic translation.
-    new "## Dieser Bildschirm enthält Kredit- und Copyright-Informationen über das Spiel und Ren'Py."
+    new "## Dieser Bildschirm enthält Würdigungen und Copyright-Informationen über das Spiel und Ren'Py."
 
     # screens.rpy:544
     old "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
@@ -220,7 +210,6 @@ translate german strings:
 
     # screens.rpy:551
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
-    # Automatic translation.
     new "## Diese Anweisung schließt den Bildschirm game_menu in diesen Bildschirm ein. Das vbox-Kind wird dann in das Viewport innerhalb des game_menu-Bildschirms aufgenommen."
 
     # screens.rpy:561
@@ -234,23 +223,20 @@ translate german strings:
 
     # screens.rpy:567
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
-    # Automatic translation.
-    new "Hergestellt mit {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only] .\n\n[renpy.license!t]"
+    new "Erstellt mit {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
 
     # screens.rpy:570
     old "## This is redefined in options.rpy to add text to the about screen."
-    # Automatic translation.
     new "## Dies wird in options.rpy neu definiert, um dem Info-Bildschirm Text hinzuzufügen."
 
     # screens.rpy:582
     old "## Load and Save screens"
-    # Automatic translation.
-    new "## Bildschirme laden und speichern"
+    new "## Spielstände-Bildschirm"
 
     # screens.rpy:584
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
     # Automatic translation.
-    new "## Diese Bildschirme sind dafür verantwortlich, dass der Spieler das Spiel speichern und wieder laden kann. Da sie fast alles gemeinsam haben, sind beide in Form eines dritten Bildschirms, file_slots, implementiert."
+    new "## Der load and save Bildschirm sind dafür verantwortlich, dass der Spieler das Spiel speichern und wieder laden kann. Da sie fast alles gemeinsam haben, sind beide in Form eines dritten Bildschirms, file_slots, implementiert."
 
     # screens.rpy:588
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
@@ -263,13 +249,11 @@ translate german strings:
 
     # screens.rpy:607
     old "Automatic saves"
-    # Automatic translation.
-    new "Automatisch speichern"
+    new "Automatische Speicherstände"
 
     # screens.rpy:607
     old "Quick saves"
-    # Automatic translation.
-    new "Schnelles Speichern"
+    new "Schnellspeicherstände"
 
     # screens.rpy:613
     old "## This ensures the input will get the enter event before any of the buttons do."
@@ -283,12 +267,11 @@ translate german strings:
 
     # screens.rpy:649
     old "{#file_time}%A, %B %d %Y, %H:%M"
-    new "{#file_time}%A, %B %d %Y, %H:%M"
+    new "{#file_time}%A, %d. %B %Y, %H:%M"
 
     # screens.rpy:649
     old "empty slot"
-    # Automatic translation.
-    new "leerer Steckplatz"
+    new "leerer Speicherplatz"
 
     # screens.rpy:657
     old "## Buttons to access other pages."
@@ -305,7 +288,7 @@ translate german strings:
 
     # screens.rpy:670
     old "{#quick_page}Q"
-    new "{#quick_page}Q"
+    new "{#quick_page}S"
 
     # screens.rpy:676
     old ">"
@@ -314,12 +297,12 @@ translate german strings:
     # screens.rpy:711
     old "## Preferences screen"
     # Automatic translation.
-    new "## Bildschirm Präferenzen"
+    new "## Einstellungs-Bildschirm"
 
     # screens.rpy:713
     old "## The preferences screen allows the player to configure the game to better suit themselves."
     # Automatic translation.
-    new "## Der Einstellungsbildschirm ermöglicht es dem Spieler, das Spiel so zu konfigurieren, dass es besser zu ihm passt."
+    new "## Der Einstellungs-Bildschirm ermöglicht es dem Spieler, das Spiel so zu konfigurieren, dass es besser zu ihm passt."
 
     # screens.rpy:716
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
@@ -345,7 +328,7 @@ translate german strings:
     # screens.rpy:745
     old "Disable"
     # Automatic translation.
-    new "Deaktivieren Sie"
+    new "Deaktivieren"
 
     # screens.rpy:746
     old "Left"
@@ -359,12 +342,11 @@ translate german strings:
 
     # screens.rpy:752
     old "Unseen Text"
-    # Automatic translation.
-    new "Unsichtbarer Text"
+    new "Ungesehener Text"
 
     # screens.rpy:753
     old "After Choices"
-    new "Nach Auswahl"
+    new "Nach Entscheidungen"
 
     # screens.rpy:754
     old "Transitions"
@@ -389,7 +371,7 @@ translate german strings:
 
     # screens.rpy:785
     old "Sound Volume"
-    new "Soundlautstärke"
+    new "Geräuschlautstärke"
 
     # screens.rpy:791
     old "Test"
@@ -406,8 +388,7 @@ translate german strings:
 
     # screens.rpy:882
     old "## History screen"
-    # Automatic translation.
-    new "## Bildschirm Geschichte"
+    new "## Dialogverlauf-Bildschirm"
 
     # screens.rpy:884
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
@@ -420,8 +401,7 @@ translate german strings:
 
     # screens.rpy:894
     old "## Avoid predicting this screen, as it can be very large."
-    # Automatic translation.
-    new "## Vermeiden Sie es, diesen Bildschirm vorherzusehen, da er sehr groß sein kann."
+    new "## Vermeide es, diesen Bildschirm via \"predict\" vorberechnen zu lassen, da er sehr groß sein kann."
 
     # screens.rpy:905
     old "## This lays things out properly if history_height is None."
@@ -430,8 +410,7 @@ translate german strings:
 
     # screens.rpy:914
     old "## Take the color of the who text from the Character, if set."
-    # Automatic translation.
-    new "## Übernimmt die Farbe des Wer-Textes aus dem Zeichen, falls festgelegt."
+    new "## Übernimmt die Farbe des who-Textes des Charakters, falls vorhanden."
 
     # screens.rpy:921
     old "The dialogue history is empty."
@@ -470,17 +449,17 @@ translate german strings:
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
     # Automatic translation.
-    new "Erweitert den Dialog und aktiviert die Schnittstelle."
+    new "Bringt den Dialog voran und aktiviert die Schnittstelle."
 
     # screens.rpy:1007
     old "Space"
     # Automatic translation.
-    new "Weltraum"
+    new "Leertaste"
 
     # screens.rpy:1008
     old "Advances dialogue without selecting choices."
     # Automatic translation.
-    new "Bringt den Dialog voran, ohne eine Auswahl zu treffen."
+    new "Bringt den Dialog voran ohne eine Auswahl zu treffen."
 
     # screens.rpy:1011
     old "Arrow Keys"
@@ -490,12 +469,12 @@ translate german strings:
     # screens.rpy:1012
     old "Navigate the interface."
     # Automatic translation.
-    new "Navigieren Sie durch die Schnittstelle."
+    new "Navigiert durch die Schnittstelle."
 
     # screens.rpy:1015
     old "Escape"
     # Automatic translation.
-    new "Flucht"
+    new "ESC"
 
     # screens.rpy:1016
     old "Accesses the game menu."
@@ -509,8 +488,7 @@ translate german strings:
 
     # screens.rpy:1020
     old "Skips dialogue while held down."
-    # Automatic translation.
-    new "Überspringt Dialoge, wenn Sie die Taste gedrückt halten."
+    new "Überspringt Dialoge, wenn Du die Taste gedrückt hältst."
 
     # screens.rpy:1023
     old "Tab"
@@ -519,27 +497,27 @@ translate german strings:
     # screens.rpy:1024
     old "Toggles dialogue skipping."
     # Automatic translation.
-    new "Schaltet das Überspringen von Dialogen ein."
+    new "Schaltet das Überspringen von Dialogen ein/aus."
 
     # screens.rpy:1027
     old "Page Up"
     # Automatic translation.
-    new "Seite oben"
+    new "Seite hoch"
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
     # Automatic translation.
-    new "Kehrt zu einem früheren Dialog zurück."
+    new "Springt zu einem früheren Dialog zurück."
 
     # screens.rpy:1031
     old "Page Down"
     # Automatic translation.
-    new "Seite unten"
+    new "Seite runter"
 
     # screens.rpy:1032
     old "Rolls forward to later dialogue."
     # Automatic translation.
-    new "Weiter geht's mit einem späteren Dialog."
+    new "Springt zu einem späteren Dialog vor."
 
     # screens.rpy:1036
     old "Hides the user interface."
@@ -554,12 +532,12 @@ translate german strings:
     # screens.rpy:1044
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
     # Automatic translation.
-    new "Schaltet das Hilfsmittel {a=https://www.renpy.org/l/voicing}selbststimmend{/a} um."
+    new "Schaltet unterstützende {a=https://www.renpy.org/l/voicing}Automatische Spracherzeugung{/a} ein/aus."
 
     # screens.rpy:1050
     old "Left Click"
     # Automatic translation.
-    new "Links klicken"
+    new "Linksklick"
 
     # screens.rpy:1054
     old "Middle Click"
@@ -573,8 +551,7 @@ translate german strings:
 
     # screens.rpy:1062
     old "Mouse Wheel Up"
-    # Automatic translation.
-    new "Mausrad nach oben\nKlicken Sie auf Rollback Seite"
+    new "Mausrad nach oben\nKlicke auf Rollback Seite"
 
     # screens.rpy:1066
     old "Mouse Wheel Down"
@@ -589,12 +566,12 @@ translate german strings:
     # screens.rpy:1074
     old "Advance dialogue and activates the interface."
     # Automatic translation.
-    new "Erweitert den Dialog und aktiviert die Schnittstelle."
+    new "Springt zu einem späteren Dialog vor und aktiviert die Schnittstelle."
 
     # screens.rpy:1078
     old "Roll back to earlier dialogue."
     # Automatic translation.
-    new "Gehen Sie zu einem früheren Dialog zurück."
+    new "Springt zu einem früheren Dialog zurück."
 
     # screens.rpy:1081
     old "Right Shoulder"
@@ -603,8 +580,7 @@ translate german strings:
 
     # screens.rpy:1082
     old "Roll forward to later dialogue."
-    # Automatic translation.
-    new "Spulen Sie vor zu einem späteren Dialog."
+    new "Spult zu einem späteren Dialog vor."
 
     # screens.rpy:1085
     old "D-Pad, Sticks"
@@ -617,8 +593,7 @@ translate german strings:
 
     # screens.rpy:1090
     old "Access the game menu."
-    # Automatic translation.
-    new "Rufen Sie das Spielmenü auf."
+    new "Ruft das Spielmenü auf."
 
     # screens.rpy:1093
     old "Y/Top Button"
@@ -628,7 +603,7 @@ translate german strings:
     # screens.rpy:1096
     old "Calibrate"
     # Automatic translation.
-    new "Kalibrieren Sie"
+    new "Kalibrieren"
 
     # screens.rpy:1124
     old "## Additional screens"
@@ -637,8 +612,7 @@ translate german strings:
 
     # screens.rpy:1128
     old "## Confirm screen"
-    # Automatic translation.
-    new "## Bildschirm bestätigen"
+    new "## Bestätigungs-Bildschirm"
 
     # screens.rpy:1130
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
@@ -652,7 +626,7 @@ translate german strings:
     # screens.rpy:1137
     old "## Ensure other screens do not get input while this screen is displayed."
     # Automatic translation.
-    new "## Stellen Sie sicher, dass andere Bildschirme keine Eingaben erhalten, während dieser Bildschirm angezeigt wird."
+    new "## Stell sicher, dass andere Bildschirme keine Eingaben erhalten, während dieser Bildschirm angezeigt wird."
 
     # screens.rpy:1161
     old "Yes"
@@ -664,13 +638,12 @@ translate german strings:
 
     # screens.rpy:1164
     old "## Right-click and escape answer \"no\"."
-    # Automatic translation.
-    new "## Klicken Sie mit der rechten Maustaste und geben Sie die Antwort \"Nein\" ein."
+    new "## Ein Rechtsklick oder [ESC] beantworten jeweils mit \"Nein\"."
 
     # screens.rpy:1191
     old "## Skip indicator screen"
     # Automatic translation.
-    new "## Indikatorbildschirm überspringen"
+    new "## Vorspul-Symbol Bildschirm"
 
     # screens.rpy:1193
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
@@ -683,18 +656,16 @@ translate german strings:
 
     # screens.rpy:1208
     old "Skipping"
-    # Automatic translation.
-    new "Überspringen"
+    new "Vorspulen"
 
     # screens.rpy:1215
     old "## This transform is used to blink the arrows one after another."
-    # Automatic translation.
-    new "## Diese Transformation wird verwendet, um die Pfeile nacheinander zu blinken."
+    new "## Dieses Transform wird verwendet, um die Pfeile nacheinander blinken zu lassen."
 
     # screens.rpy:1247
     old "## Notify screen"
     # Automatic translation.
-    new "## Bildschirm benachrichtigen"
+    new "## Benachrichtigungsbildschirm"
 
     # screens.rpy:1249
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
@@ -736,8 +707,7 @@ translate german strings:
 
     # screens.rpy:1406
     old "## Mobile Variants"
-    # Automatic translation.
-    new "## Mobile Varianten"
+    new "## Varianten für Mobilgeräte"
 
     # screens.rpy:1413
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
@@ -755,12 +725,11 @@ translate german strings:
     # gui/game/screens.rpy:114
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
     # Automatic translation.
-    new "## Wenn es ein Seitenbild gibt, zeigen Sie es über dem Text an. Nicht auf der Telefonvariante anzeigen - dort ist kein Platz."
+    new "## Wenn es ein Seitenbild gibt, wird es über dem Text angezeigt. Allerdings nicht auf der Smartphone-Variante - dort ist kein Platz."
 
     # gui/game/screens.rpy:120
     old "## Make the namebox available for styling through the Character object."
-    # Automatic translation.
-    new "## Machen Sie das Namensfeld für die Gestaltung durch das Character-Objekt verfügbar."
+    new "## Macht das Namensfeld für die Gestaltung durch das Character-Objekt verfügbar."
 
     # gui/game/screens.rpy:173
     old "## https://www.renpy.org/doc/html/screen_special.html#input"
@@ -772,8 +741,7 @@ translate german strings:
 
     # gui/game/screens.rpy:241
     old "## Ensure this appears on top of other screens."
-    # Automatic translation.
-    new "## Stellen Sie sicher, dass dies über den anderen Bildschirmen erscheint."
+    new "## Stellt sicher, dass dies vor allen anderen Bildschirmen erscheint."
 
     # gui/game/screens.rpy:280
     old "## Main and Game Menu Screens"
@@ -801,8 +769,7 @@ translate german strings:
 
     # gui/game/screens.rpy:429
     old "## Reserve space for the navigation section."
-    # Automatic translation.
-    new "## Reservieren Sie Platz für den Navigationsbereich."
+    new "## Reserviert Platz für den Navigationsbereich."
 
     # gui/game/screens.rpy:608
     old "## The page name, which can be edited by clicking on a button."
@@ -812,7 +779,7 @@ translate german strings:
     # gui/game/screens.rpy:668
     old "## range(1, 10) gives the numbers from 1 to 9."
     # Automatic translation.
-    new "## bereich(1, 10) liefert die Zahlen von 1 bis 9."
+    new "## range(1, 10) liefert die Zahlen von 1 bis 9."
 
     # gui/game/screens.rpy:676
     old "Upload Sync"
@@ -826,7 +793,6 @@ translate german strings:
 
     # gui/game/screens.rpy:921
     old "## This determines what tags are allowed to be displayed on the history screen."
-    # Automatic translation.
     new "## Hier wird festgelegt, welche Tags auf dem Verlaufsbildschirm angezeigt werden dürfen."
 
     # gui/game/screens.rpy:1049
@@ -845,7 +811,6 @@ translate german strings:
 
     # gui/game/screens.rpy:1248
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
-    # Automatic translation.
     new "## Wir müssen eine Schriftart verwenden, die die Glyphe BLACK RIGHT-POINTING SMALL TRIANGLE enthält."
 
     # gui/game/screens.rpy:1296
@@ -859,13 +824,12 @@ translate german strings:
 
     # gui/game/screens.rpy:1410
     old "## Bubble screen"
-    # Automatic translation.
-    new "## Blasenbildschirm"
+    new "## Sprechblasen-Bildschirm"
 
     # gui/game/screens.rpy:1412
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
     # Automatic translation.
-    new "## Der Sprechblasenbildschirm wird verwendet, um dem Spieler einen Dialog anzuzeigen, wenn Sprechblasen verwendet werden. Der Sprechblasenbildschirm benötigt die gleichen Parameter wie der Sprechblasenbildschirm, muss ein Displayable mit der Id \"what\" erstellen und kann Displayables mit den Ids \"namebox\", \"who\" und \"window\" erstellen."
+    new "## Der Sprechblasenbildschirm wird verwendet, um dem Spieler einen Dialog anzuzeigen, wenn Sprechblasen verwendet werden. Er benötigt die gleichen Parameter wie der Dialog-Bildschirm, muss ein Displayable mit der Id \"what\" erstellen und kann Displayables mit den Ids \"namebox\", \"who\" und \"window\" erstellen."
 
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
@@ -875,6 +839,6 @@ translate german strings:
 
     # gui/game/screens.rpy:411
     old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    # Automatic translation.
-    new "## Der Parameter scroll kann None oder einer der Parameter \"viewport\" oder \"vpgrid\" sein. Dieser Bildschirm soll mit einem oder mehreren Kindern verwendet werden, die in ihn eingeschlossen (platziert) werden."
+    new "## Der Parameter scroll kann None oder einer der Parameter \"viewport\" oder \"vpgrid\" sein. Dieser Bildschirm sollte mit einem oder mehreren Unterobjekten verwendet werden, die in ihn eingeschlossen (platziert) werden."
+
 

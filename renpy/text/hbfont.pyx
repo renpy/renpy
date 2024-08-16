@@ -679,6 +679,11 @@ cdef class HBFont:
 
             vextent_scale = renpy.config.ftfont_vertical_extent_scale.get(self.face_object.fn, 1.0)
 
+            # Deal with fonts where harbuzz can't figure out the metrics.
+            if horizontal_ascender == 0 and horizontal_descender == 0:
+                horizontal_ascender = face.size.metrics.ascender
+                horizontal_descender = face.size.metrics.descender
+
             if self.vertical:
                 self.ascent = FT_CEIL(vertical_ascender)
                 self.descent = FT_FLOOR(vertical_descender)

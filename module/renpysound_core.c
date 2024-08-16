@@ -78,7 +78,7 @@ int media_video_ready(struct MediaState *ms);
 SDL_Surface *media_read_video(struct MediaState *ms);
 
 double media_duration(struct MediaState *ms);
-void media_wait_ready(struct MediaState *ms);
+int media_is_ready(struct MediaState *ms);
 
 /* Min and Max */
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -220,6 +220,9 @@ struct Channel {
     /* The relative volume of the playing stream. */
     float playing_relative_volume;
 
+    /* Is the playing sample waiting for a synchro start? */
+    int playing_synchro_start;
+
     /* The number of samples of silence to pad the playing stream with.*/
     int playing_pad;
 
@@ -246,6 +249,9 @@ struct Channel {
 
     /* The relative volume of the queued stream. */
     float queued_relative_volume;
+
+    /* Is the queued sample waiting for a synchro start? */
+    int queued_synchro_start;
 
     /* The AudioFilter that is queued on this channel. */
     PyObject *queued_audio_filter;
@@ -430,7 +436,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
             continue;
         }
 
-        while (mixed < length && c->playing) {
+        while (mixed < length && c->playing && !c->playing_synchro_start) {
 
             // How much do we have left to mix on this channel?
             int mixleft = length - mixed;
@@ -490,6 +496,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                     c->playing_tight = c->queued_tight;
                     c->playing_start_ms = c->queued_start_ms;
                     c->playing_relative_volume = c->queued_relative_volume;
+                    c->playing_synchro_start = c->queued_synchro_start;
 
                     c->playing_audio_filter = c->queued_audio_filter;
 
@@ -500,6 +507,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                     c->queued_start_ms = 0;
                     c->queued_relative_volume = 1.0;
                     c->queued_audio_filter = NULL;
+                    c->queued_synchro_start = 0;
 
                     if (c->playing_fadein) {
                         old_tight = 0;
@@ -633,7 +641,7 @@ struct MediaState *load_stream(SDL_RWops *rw, const char *ext, double start, dou
 }
 
 
-void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, int paused, double start, double end, float relative_volume, PyObject *audio_filter) {
+void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
 
     struct Channel *c;
 
@@ -699,7 +707,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
         c->playing_audio_filter = NULL;
     }
 
-    c->paused = paused;
+    c->playing_synchro_start = synchro_start;
 
     start_stream(c, 1);
 
@@ -708,7 +716,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
     error(SUCCESS);
 }
 
-void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
+void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadein, int tight, double start, double end, float relative_volume, PyObject *audio_filter) {
 
     struct Channel *c;
 
@@ -720,7 +728,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
 
     /* If we're not playing, then we should play instead of queue. */
     if (!c->playing) {
-        RPS_play(channel, rw, ext, name, fadein, tight, 0, start, end, relative_volume, audio_filter);
+        RPS_play(channel, rw, ext, name, synchro_start, fadein, tight, start, end, relative_volume, audio_filter);
         return;
     }
 
@@ -756,9 +764,11 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
     c->queued_name = strdup(name);
     c->queued_fadein = fadein;
     c->queued_tight = tight;
+    c->queued_synchro_start = synchro_start;
 
     c->queued_start_ms = (int) (start * 1000);
     c->queued_relative_volume = relative_volume;
+
 
     if (audio_filter) {
         c->queued_audio_filter = audio_filter;
@@ -801,13 +811,13 @@ void RPS_stop(int channel) {
         c->playing_name = NULL;
         c->playing_start_ms = 0;
         c->playing_relative_volume = 1.0;
+        c->playing_synchro_start = 0;
     }
 
     if (c->playing_audio_filter) {
         Py_DECREF(c->playing_audio_filter);
         c->playing_audio_filter = NULL;
     }
-
 
     if (c->queued) {
         free_stream(c->queued);
@@ -816,6 +826,7 @@ void RPS_stop(int channel) {
         c->queued_name = NULL;
         c->queued_start_ms = 0;
         c->queued_relative_volume = 1.0;
+        c->queued_synchro_start = 0;
 
     }
 
@@ -859,6 +870,7 @@ void RPS_dequeue(int channel, int even_tight) {
     }
 
     c->queued_start_ms = 0;
+    c->queued_synchro_start = 0;
 
     if (c->queued_audio_filter) {
         Py_DECREF(c->queued_audio_filter);
@@ -959,10 +971,10 @@ void RPS_fadeout(int channel, int ms) {
         }
     }
 
-
-    if (ms == 0) {
+    if (ms == 0 || c->playing_synchro_start) {
         c->stop_samples = 0;
         c->playing_tight = 0;
+        c->playing_synchro_start = 0;
         UNLOCK_AUDIO();
 
         error(SUCCESS);
@@ -1016,38 +1028,20 @@ void RPS_pause(int channel, int pause) {
 
 }
 
-void RPS_unpause_all_at_start(void) {
-
-    int i;
-
-    /* Since media_wait_ready can block, we need to release the GIL. */
-    Py_BEGIN_ALLOW_THREADS
-
-    for (i = 0; i < num_channels; i++) {
-        if (channels[i].playing && channels[i].paused && channels[i].pos == 0) {
-            media_wait_ready(channels[i].playing);
-        }
-    }
-
-    Py_END_ALLOW_THREADS
-
-    for (i = 0; i < num_channels; i++) {
-        if (channels[i].playing && channels[i].pos == 0) {
-            channels[i].paused = 0;
-            media_pause(channels[i].playing, 0);
-        }
-    }
-
-    error(SUCCESS);
-
-}
-
 
 /**
  * Starts and stops the SDL audio playback.
  */
 void RPS_global_pause(int pause) {
+    int i;
+
     SDL_PauseAudio(pause);
+
+    for (i = 0; i < num_channels; i++) {
+        if (channels[i].playing) {
+            media_pause(channels[i].playing, pause);
+        }
+    }
 }
 
 
@@ -1376,11 +1370,49 @@ void RPS_quit() {
     error(SUCCESS);
 }
 
+static void handle_synchro_start() {
+    int ready = 1;
+
+    for (int i = 0; i < num_channels; i++) {
+        struct Channel *c = &channels[i];
+
+        if (c->playing_synchro_start) {
+            c->queued_synchro_start = 0;
+
+            if (c->playing) {
+                if (!media_is_ready(c->playing)) {
+                    ready = 0;
+                }
+            } else {
+                c->playing_synchro_start = 0;
+            }
+        }
+
+        if (c->queued && c->queued_synchro_start) {
+            ready = 0;
+        } else {
+            c->queued_synchro_start = 0;
+        }
+    }
+
+    if (ready) {
+        for (int i = 0; i < num_channels; i++) {
+            struct Channel *c = &channels[i];
+
+            if (c->playing_synchro_start) {
+                c->playing_synchro_start = 0;
+            }
+        }
+    }
+}
+
 /* This must be called frequently, to take care of deallocating dead
  * streams. */
 void RPS_periodic() {
 
     LOCK_NAME();
+    handle_synchro_start();
+
     struct Dying *d = dying;
     dying = NULL;
     UNLOCK_NAME();

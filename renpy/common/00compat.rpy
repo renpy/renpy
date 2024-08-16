@@ -252,6 +252,7 @@ init -1100 python:
         elif _compat_versions(version, (7, 5, 1), (8, 0, 1)):
             config.modal_blocks_timer = True
             config.modal_blocks_pause = False
+
         elif _compat_versions(version, (7, 5, 2), (8, 0, 2)):
             config.modal_blocks_pause = True
             config.modal_blocks_timer = True
@@ -298,6 +299,7 @@ init -1100 python:
             config.simple_box_reverse = True
             build.itch_channels = list(build.itch_channels.items())
             config.atl_pos_only = True
+            config.atl_pos_only_as_pos_or_kw = True
             style.default.shaper = "freetype"
             config.mixed_position = False
             config.drag_group_add_top = False
@@ -306,9 +308,20 @@ init -1100 python:
             config.containers_pass_transform_events.clear()
             config.say_replace_event = False
             config.screens_never_cancel_hide = False
+            config.limit_transform_crop = "only_float"
+
+        if _compat_versions(version, (7, 7, 1), (8, 2, 1)):
+            config.fill_shrinks_frame = True
 
         if ((7, 4, 0) <= version) and _compat_versions(version, (7, 7, 99), (8, 2, 99)):
             config.window_functions_set_auto = True
+
+        if _compat_versions(version, (7, 7, 99), (8, 2, 99)):
+            config.character_callback_compat = True
+            bubble.clear_retain_statements = [ ]
+            if not _compat_versions(version, (7, 6, 99), (8, 1, 99)):
+                config.box_reverse_align = True
+                config.limit_transform_crop = True
 
 
     # The version of Ren'Py this script is intended for, or

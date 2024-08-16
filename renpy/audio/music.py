@@ -57,10 +57,10 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=True
         the channel is paused when the music is played.
 
     `synchro_start`
-        Ren'Py will ensure that all channels of with synchro_start set to true
-        will start playing at exactly the same time. Synchro_start should be
-        true when playing two audio files that are meant to be synchronized
-        with each other.
+        When True, all channels that have synchro_start set to true will start
+        playing at exactly the same time. This may lead to a pause before the
+        channels start playing. This is useful when playing two audio files that
+        are meant to be synchronized with each other.
 
     `fadein`
         This is the number of seconds to fade the music in for, on the
@@ -620,6 +620,9 @@ def get_all_mixers():
 
     for i in renpy.audio.audio.all_channels:
         rv.add(i.mixer)
+
+    for i in renpy.config.auto_channels.values():
+        rv.add(i[0])
 
     return list(rv)
 

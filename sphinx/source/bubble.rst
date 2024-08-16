@@ -31,7 +31,7 @@ associated with the speech bubble. For the default speech bubble, the
 different properties control the position of the speech bubble tail.
 
 Once you've changed the area or properties for a character (or group of
-characters with the same image tage), those properties remain set until
+characters with the same image tags), those properties remain set until
 changed again, or until the next scene statement.
 
 When the area or properties are being set on the current line of dialogue,
@@ -108,7 +108,7 @@ The ``bubble`` namespace contains the following variables:
 .. var:: bubble.properties = { ... }
 
     These are properties, apart from the area, that can be used to customize
-    the speech bubble. This is a map from the name of a set of proprerties
+    the speech bubble. This is a map from the name of a set of properties
     to a dictionary of properties and values. These properties supersede those
     given to the character, and are then supplied to the ``bubble`` screen.
 
@@ -162,7 +162,7 @@ The ``bubble`` namespace contains the following variables:
 
     If not None, this should be a function that takes an image tag, and returns
     a list or tuple of property names that should be used for that image tag, in
-    the order those names should be cycled through. This takes precendence over
+    the order those names should be cycled through. This takes precedence over
     bubble.properties_order, and can be used to customize the list of bubble
     properties by character.
 
@@ -185,6 +185,11 @@ The ``bubble`` namespace contains the following variables:
             "top_left" : (0, 22, 0, 0),
             "top_right" : (0, 22, 0, 0),
         }
+
+.. var:: bubble.clear_retain_statements = [ "call screen", "menu",  "say", "say-centered", "say-nvl", "scene", ]
+
+    This is a list of statements that will automatically cause retained bubbles to be cleared.
+
 
 .. _bubble-screen:
 

@@ -70,6 +70,9 @@ def warp():
     # This is called to indicate that next can be executed following node.
     def add(node, next):  # @ReservedAssignment
 
+        if next is None:
+            return
+
         if next not in prev:
             prev[next] = node
             return
