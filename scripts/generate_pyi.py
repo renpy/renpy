@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
+
 TYPING_IMPORTS = "List, Dict, Tuple, Set, Optional, Union, Any, Callable, Type".split(", ")
 
 from typing import List, Dict, Tuple, Set, Optional, Union, Any, Callable, Type, TextIO
@@ -284,11 +286,15 @@ def is_extension(m : types.ModuleType):
 
     return False
 
-def should_generate(name, m : types.ModuleType):
+def should_generate(name, m : Any):
     """
     Returns true if we should generate the type information for the module with
     `name`.
     """
+
+    # E.g. pygame_sdl2.try_import adds MissingModule to sys.modules
+    if not isinstance(m, types.ModuleType):
+        return False
 
     prefix = name.partition(".")[0]
 
