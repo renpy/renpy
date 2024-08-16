@@ -406,13 +406,13 @@ Display
 
 .. var:: config.screen_height = 600
 
-    The virtual height of the the game, in pixels. If :var:`config.physical_height`
+    The virtual height of the game, in pixels. If :var:`config.physical_height`
     is not set, this is also the default size of the window containing the
     game. Usually set by :func:`gui.init` to a much larger size.
 
 .. var:: config.screen_width = 800
 
-    The virtual width of the the game, in pixels. If :var:`config.physical_width`
+    The virtual width of the game, in pixels. If :var:`config.physical_width`
     is not set, this is also the default size of the window containing the
     game. Usually set by :func:`gui.init` to a much larger size.
 
@@ -1117,7 +1117,7 @@ Saving and Loading
 
         config.file_slotname_callback = file_slotname_callback
 
-    One use of this is to allow the the game to apply a prefix to
+    One use of this is to allow the game to apply a prefix to
     save files.
 
     See also :var:`config.autosave_prefix_callback`.
@@ -1907,7 +1907,7 @@ Translation
 .. var:: config.locale_to_language_function : Callable
 
     A function that determines the language the game should use,
-    based on the the user's locale.
+    based on the user's locale.
     It takes 2 string arguments that give the ISO code of the locale
     and the ISO code of the region.
 

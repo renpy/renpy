@@ -23,7 +23,7 @@
 # dialogue in a fullscreen way, like NVL-style games. Multiple lines
 # of dialogue are shown on the screen at once, whenever a line of
 # dialogue is said by a NVLCharacter. Calling the nvl_clear function
-# clears the screen, ensuring that the the next line will appear at
+# clears the screen, ensuring that the next line will appear at
 # the top of the screen.
 #
 # You can also have menus appear on the screen, by running:

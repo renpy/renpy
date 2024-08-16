@@ -265,7 +265,7 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
 
     If not None, this can either be a 2 or 4-component tuple. If mesh is
     True and this is given, this applies padding to the size of the textures
-    applied to the the textures used by the mesh. A 2-component tuple applies
+    applied to the textures used by the mesh. A 2-component tuple applies
     padding to the right and bottom, while a 4-component tuple applies
     padding to the left, top, right, and bottom.
 

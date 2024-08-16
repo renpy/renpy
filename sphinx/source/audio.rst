@@ -116,7 +116,7 @@ be used like this.
 Stop Statement
 --------------
 
-The ``stop`` statement begins with the keyword ``stop``, followed by the the name of a
+The ``stop`` statement begins with the keyword ``stop``, followed by the name of a
 channel to stop sound on. It may optionally have a ``fadeout`` clause. If the
 fadeout clause is not given, :var:`config.fadeout_audio` is used. ::
 
@@ -130,7 +130,7 @@ Queue Statement
 The ``queue`` statement is used to queue up audio files. They will be played when
 the channel finishes playing the currently playing file.
 
-The queue statement begins with keyword ``queue``, followed by the the name of a
+The queue statement begins with keyword ``queue``, followed by the name of a
 channel to play sound on. It optionally takes the ``fadein``, ``loop`` and ``noloop`` clauses. ::
 
         queue sound "woof.mp3"

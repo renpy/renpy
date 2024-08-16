@@ -108,7 +108,7 @@ namespaces Ren'Py uses, primarily to help editors provide autocompletion and doc
 
     **Note: Most functions in the ui namespace are deprecated.**
 
-    The ui namespace contains older functions and classes used to display user interface elements. With the the exception
+    The ui namespace contains older functions and classes used to display user interface elements. With the exception
     of ui.adjustment, ui.interact, ui.callsinnewcontext, and ui.invokesinnewcontext, these functions are
     obsolete.
 

@@ -684,7 +684,7 @@ cdef class Mix(AudioFilter):
 
             import renpy.audio.filter as af
 
-            # This mixes the the unchanged input with a delay.
+            # This mixes the unchanged input with a delay.
             $ echo = af.Mix(af.Null(), af.Delay(.3))
     """
 

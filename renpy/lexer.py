@@ -1583,7 +1583,7 @@ def ren_py_to_rpy(text, filename):
 
     `filename`
         If not None, and an error occurs, the error is reported with the given filename.
-        Otherwise, errors are ignored and a a best effort is used.
+        Otherwise, errors are ignored and a best effort is used.
     """
 
     lines = text.splitlines()

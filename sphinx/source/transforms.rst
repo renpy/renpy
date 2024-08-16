@@ -757,7 +757,7 @@ The functions have the same signature as those used with :func:`Transform`:
 * The second argument is the shown timebase, the number of seconds since the
   function began executing.
 
-* The third argument is the the animation timebase, which is the number of
+* The third argument is the animation timebase, which is the number of
   seconds something with the same tag has been on the screen.
 
 * If the function returns a number, it will be called again after that number of

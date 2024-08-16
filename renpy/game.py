@@ -261,7 +261,7 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
 
     This function creates a new context, and invokes the given Python
     callable (function) in that context. When the function returns
-    or raises an exception, control returns to the the original context.
+    or raises an exception, control returns to the original context.
     It's generally used to call a Python function that needs to display
     information to the player (like a confirmation prompt) from inside
     an event handler.

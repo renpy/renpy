@@ -423,7 +423,7 @@ Cropping and Resizing
     :default: None
 
     Causes the displayable to be sized according to the table below. In the
-    context of the the table below, the "dimensions" are:
+    context of the table below, the "dimensions" are:
 
     * If both :tpref:`xsize` and :tpref:`ysize` are not None, both sizes are
       used as the dimensions.

@@ -340,7 +340,7 @@ All user interface statements take the following common properties:
 
 .. screen-property:: prefer_screen_to_id
 
-    If true, when a property is provided by both the the screen and a
+    If true, when a property is provided by both the screen and a
     displayble identifier, the screen property is used. If false, the
     default, the displayable property is used. (This can be used to
     decide if the screen overrides properties set by a Character.)
@@ -1638,7 +1638,7 @@ If one is omitted or None, the other is automatically determined from the
 size, spacing, and number of children. If a row or column would be underfull,
 ``null`` displayable are used to fill the remaining space.
 
-Vpgrids take the the following properties:
+Vpgrids take the following properties:
 
 .. screen-property:: cols
 

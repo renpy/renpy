@@ -2454,7 +2454,7 @@ to be given to other displayables.
 The new :var:`config.main_menu_stop_channels` variable controls the
 channels that are stopped when entering the main menu.
 
-Layered images are now offered the the full size of the screen whenever
+Layered images are now offered the full size of the screen whenever
 rendered. Previously, when a layered image was used inside a layout (like
 hbox, vbox, side, and others), the space offered to the layered image
 could change, and relative positions could also change. (This is unlikely,
@@ -4145,7 +4145,7 @@ Renpyweb
 --------
 
 Courtesy of Sylvain Beucler, Ren'Py now can generate distributions for
-the the HTML5 web platforms, capable of running on modern web browsers
+the HTML5 web platforms, capable of running on modern web browsers
 that support the Web Assembly standard. This is intended for small games
 and demonstrations of larger games, as right now the implementation
 downloads the full game to the web browser before running any of it.

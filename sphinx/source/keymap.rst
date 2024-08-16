@@ -274,7 +274,7 @@ gamepad bindings is given below::
 Gamepad buttons have an event name of the form "pad_*button*_press" or
 "pad_*button*_release". Analog axis events have the form "pad_*axis*_pos",
 "pad_*axis*_neg", or "pad_*axis*_zero". If held down, a second gamepad binding
-is generated, with the the "repeat\_" prefix.
+is generated, with the "repeat\_" prefix.
 
 Gamepads that do not work without special initialization are disabled by
 default. This includes the Nintendo Switch Pro Controller, which requires

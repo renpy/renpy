@@ -84,7 +84,7 @@ The value of a uniform can be:
 * Between 1 and 4 numbers, separated by commas. These can be used with the
   the float, vec2, vec3, or vec4 types.
 * A color, beginning with #. (For example, #f00 or #ff0000 for red.) This
-  creates a a vec4 corresponding to that color. This color will be
+  creates a vec4 corresponding to that color. This color will be
   premultiplied by its alpha channel.
 * A :doc:`displayable <displayables>` that will be
   used as a texture. This creates a sampler2D that can be used to sample

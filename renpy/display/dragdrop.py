@@ -118,7 +118,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
     `activated`
         A callback (or list of callbacks) that is called when the mouse
         is pressed down on the drag. It is called with one argument, a
-        a list of Drags that are being dragged. The return value of this
+        list of Drags that are being dragged. The return value of this
         callback is ignored.
 
     `dragging`
