@@ -83,8 +83,9 @@ def open_file(fn, encoding=None, directory=None): # @ReservedAssignment
 
     `encoding`
         If given, the file is open in text mode with the given encoding.
-        If None, the default, the encoding is taken from :var:`config.open_file_encoding`.
         If False, the file is opened in binary mode.
+        If None, the default, the encoding is taken from :var:`config.open_file_encoding`.
+        In most cases, None will open a file in binary mode.
 
     `directory`
         If not None, a directory to search in if the file is not found
