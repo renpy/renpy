@@ -1470,6 +1470,10 @@ class Layout(object):
 
                 elif tag == "shader":
                     ts = push()
+
+                    if ts.shader is None:
+                        raise Exception("The shader tag was given, but text shaders are not in use. Consider adding \"define config.default_textshader = 'typewriter'\" to your game.")
+
                     ts.shader = renpy.text.shader.get_textshader(value)
 
                 elif tag.startswith("axis:"):
