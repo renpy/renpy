@@ -2061,7 +2061,10 @@ class Text(renpy.display.displayable.Displayable):
         if self.locked:
             return False
 
-        self.language = renpy.game.preferences.language
+        if renpy.game.context().init_phase:
+            self.language = None
+        else:
+            self.language = renpy.game.preferences.language
 
         if self.tokenized:
 
