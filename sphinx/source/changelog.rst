@@ -145,6 +145,8 @@ an ATL block, or a block of script statements.
 It is now possible to supply :ref:`menu arguments <menu-arguments>` to :func:`renpy.display_menu`, and
 the new :class:`renpy.Choice` class makes it possible to supply arguments to each item in the menu.
 
+The layer that bubbles appear on is now controlled by :var:`bubble.layer` and :var:`bubble.retained_layer`.
+
 Retained speech bubbles are now automatically cleared away when other say, menu, or call screen
 statements are invoked. This is controlled by the :var:`bubble.clear_retain_statements` variable.
 

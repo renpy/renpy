@@ -319,6 +319,7 @@ init -1100 python:
         if _compat_versions(version, (7, 7, 99), (8, 2, 99)):
             config.character_callback_compat = True
             bubble.clear_retain_statements = [ ]
+            bubble.layer = None
             if not _compat_versions(version, (7, 6, 99), (8, 1, 99)):
                 config.box_reverse_align = True
                 config.limit_transform_crop = True

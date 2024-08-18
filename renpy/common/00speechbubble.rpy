@@ -79,7 +79,10 @@ init -1150 python in bubble:
     frame = None
     thoughtframe = None
 
-    # The layer that retained screens are placed on.
+    # The layer that bubble screen are placed on.
+    layer = "screens"
+
+    # The layer that retained bubble screens are placed on.
     retain_layer = "screens"
 
     # Statements that cause retained bubbles to be cleared.
@@ -233,6 +236,13 @@ init -1150 python in bubble:
 
             extra_properties.update(properties.get(properties_key, { }))
             extra_properties[area_property] = self.expand_area(tag_properties[image_tag]["area"], properties_key)
+
+            if retain:
+                show_layer = retain_layer
+            else:
+                show_layer = layer
+
+            extra_properties["show_layer"] = show_layer
 
             return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, retain=retain, extra_properties=extra_properties)
 
