@@ -1048,10 +1048,18 @@ def check_git_index_lock():
     return False
 
 
+# Are we actively reloading?
+reloading = False
+
 def check_autoreload():
     """
     Checks to see if autoreload is required.
     """
+
+    global reloading
+
+    if reloading:
+        return
 
     # Defer loading while the git index lock is present.
     if needs_autoreload and check_git_index_lock():
@@ -1077,6 +1085,7 @@ def check_autoreload():
                 func(fn)
                 break
         else:
+            reloading = True
             renpy.exports.reload_script()
 
 
