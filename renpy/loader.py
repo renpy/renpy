@@ -34,6 +34,7 @@ import zlib
 import re
 import io
 import unicodedata
+import time
 
 from pygame_sdl2.rwobject import RWopsIO
 
@@ -989,10 +990,14 @@ def add_auto(fn, force=False):
         auto_mtimes[fn] = mtime
 
 
+max_mtime = 0
+
 def auto_thread_function():
     """
     This thread sets need_autoreload when necessary.
     """
+
+    global max_mtime
 
     while True:
 
@@ -1010,7 +1015,12 @@ def auto_thread_function():
             if mtime is auto_blacklisted:
                 continue
 
-            if auto_mtime(fn) != mtime:
+            new_mtime = auto_mtime(fn)
+
+            if new_mtime is not None:
+                max_mtime = max(max_mtime, new_mtime)
+
+            if new_mtime != mtime:
 
                 with auto_lock:
                     if auto_mtime(fn) != auto_mtimes[fn]:
@@ -1045,6 +1055,9 @@ def check_autoreload():
 
     # Defer loading while the git index lock is present.
     if needs_autoreload and check_git_index_lock():
+        return
+
+    if time.time() - max_mtime < .050:
         return
 
     while needs_autoreload:
