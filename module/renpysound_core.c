@@ -604,7 +604,7 @@ static int check_channel(int c) {
         	memset(&channels[i], 0, sizeof(struct Channel));
 
             channels[i].mixer_volume = 1.0;
-            channels[i].paused = 1;
+            channels[i].paused = 0;
             channels[i].event = 0;
 
             init_interpolate(&channels[i].fade, MAX_POWER);
