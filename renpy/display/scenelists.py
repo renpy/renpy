@@ -303,6 +303,9 @@ class SceneLists(renpy.object.Object):
         if not isinstance(old_transform, renpy.display.motion.Transform):
             return new_thing
 
+        if not old_transform.active:
+            old_transform.update_state()
+
         if renpy.config.take_state_from_target:
             new_transform = new_thing._target()
         else:
@@ -737,6 +740,7 @@ class SceneLists(renpy.object.Object):
         time, at_list = camera_list
 
         old_transform = self.camera_transform.get(layer, None)
+
         new_transform = None
 
         if at_list:
