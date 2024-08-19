@@ -47,6 +47,7 @@ respectively.
 In-game, the usual way to play music and sound in Ren'Py is using
 the three music/sound statements.
 
+
 .. _play-statement:
 
 Play Statement
@@ -60,7 +61,6 @@ The name of a channel is expected following the keyword ``play``.
 (Usually, this is either "sound", "music", "voice", or "audio"). This is
 followed by audiofile(s), where audiofile(s) can be one file or list of files.
 When the list is given, the item of it is played in order.
-
 
 The ``fadein`` and ``fadeout`` clauses are optional. Fadeout gives the fadeout
 time for currently playing music, in seconds, while fadein gives the time
@@ -98,7 +98,6 @@ track is played at, each time it's played. ::
 
         play sound "woof.mp3" volume 0.5
 
-
 On the audio channel, multiple play statements play multiple sounds at the same
 time::
 
@@ -112,6 +111,17 @@ A variable may be used instead of a string here. If a variable exists in the
 
 Files placed into the audio namespace may automatically define variables that can
 be used like this.
+
+.. _synchro-start:
+
+When multiple play statements are run at the same time, the audio in each channel will start synchronized.
+Specifically, the audio will start:
+
+* When the audio files on every channel have been loaded and audio samples are available.
+* When all all channels have been faded out.
+
+The play statement will delay starting new audio until these conditions have been met.
+
 
 Stop Statement
 --------------
@@ -200,6 +210,7 @@ will play 10.5 seconds of waves.opus, starting at the 5 second mark. The stateme
 will play song.opus all the way through once, then loop back to the 6.333
 second mark before playing it again all the way through to the end.
 
+
 .. _sync-start:
 
 Sync Start Position
@@ -218,6 +229,7 @@ Will play :file:`layer_2.opus` with the start time synced to the current track i
 channel music_1 in the first iteration, before playing the whole track in
 subsequent iterations. (By default, the :file:`layer_2.opus` start time will remain
 modified even in subsequent iterations in the loop.)
+
 
 .. _volume:
 
@@ -253,14 +265,14 @@ channel relates, creating it in the process if it doesn't already exist.
 
 A track's relative volume is set with the ``volume`` clause of the :ref:`play-statement`.
 
-
 In addition to these volume values, there is the mute flag of the mixer which
 the channel relates to. If enabled, it will reduce the played volume to 0.
 They can be set using the :func:`SetMute` or :func:`ToggleMute` actions, or
 using the :func:`Preference` action with the "mixer <mixer> mute" key, or using
 the :func:`preferences.set_mute` function.
 
-.. _silence:
+
+7.. _silence:
 
 Playing Silence
 ---------------
@@ -314,6 +326,7 @@ in the audio directory. For example::
 
 will first look for :file:`game/opening.ogg`. If not found, Ren'Py will look for
 :file:`game/audio/opening.ogg`.
+
 
 Actions
 -------

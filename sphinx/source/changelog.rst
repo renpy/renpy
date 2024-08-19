@@ -191,7 +191,6 @@ Where appropriate, Bar Values now take `min` and `max` parameters, which can be 
 is not zero-based.
 
 
-
 Other Changes
 -------------
 
@@ -242,7 +241,9 @@ have keyboard focus work with overlapping buttons, by artificially reducing
 the size of the buttons to remove the overlap, when determining keyboard focus.
 
 The `synchro_start` option (documented as part of :func:`renpy.music.play`) is
-now True by default in that function, and in the ``play`` statement.
+now True by default in that function, and in the ``play`` statement. The implementation of
+:ref:`synchro start <synchro-start>` has changed to make understanding it easier, while retaining the same
+behavior in most cases.
 
 The web version of Ren'Py now supports loading video from origins other than the origin of
 the game, if the video origin allows for it.
