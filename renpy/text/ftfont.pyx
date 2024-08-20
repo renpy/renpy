@@ -859,9 +859,7 @@ cdef class FTFont:
                                 line[2] = Sb
                                 line[3] = alpha
 
-                            elif alpha:
-
-                                alpha = alpha + line[3] * (255 - alpha) // 255
+                            elif alpha > line[3]:
 
                                 line[0] = Sr * alpha // 255
                                 line[1] = Sg * alpha // 255
