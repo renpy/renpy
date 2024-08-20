@@ -193,6 +193,9 @@ Uniforms
 Attributes
 ^^^^^^^^^^
 
+``float a_text_ascent``
+    The ascent of the current character above the baseline, in drawable pixels.
+
 ``vec2 a_text_center``
     The position of the center of the center of the vertex's baseline, in drawable pixels. This is not the
     center of the rectangle, it's a point on the baseline and around the center of the character.
@@ -216,7 +219,8 @@ Attributes
 
 ``vec4 a_text_pos_rect``
     The rectangle being drawn, in drawable pixels. This is a vec4 with the x, y, width, and height of the rectangle,
-    in drawable pixels. This can be converted to texture coordinates by dividing it by ``res0``.
+    in drawable pixels. This can be converted to texture coordinates by dividing it by ``res0``. This may be much
+    larger than the portion of the glyph that's actually being drawe.
 
 
 Example

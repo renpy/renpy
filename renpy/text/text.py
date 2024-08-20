@@ -1772,6 +1772,7 @@ class Layout(object):
                     g.index,
                     left, top, right, bottom,
                     left_time, right_time,
+                    g.ascent,
                 )
 
             top = bottom
