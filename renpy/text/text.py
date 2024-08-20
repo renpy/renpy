@@ -1737,7 +1737,7 @@ class Layout(object):
                 if g is first_glyph:
                     left = g.x - self.add_left
                 else:
-                    left = g.x - outline
+                    left = g.x + outline
 
                 # The x-coordinate of the right edge of the glyph.
                 if g is last_glyph:
