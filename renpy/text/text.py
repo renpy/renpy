@@ -827,7 +827,13 @@ class Layout(object):
 
             # Figure out the line height, line spacing, and the y coordinate of each
             # glyph.
-            l, y = textsupport.place_vertical(par_glyphs, y, self.scale_int(style.line_spacing), self.scale_int(style.line_leading), self.scale_int(style.ruby_line_leading))
+            l, y = textsupport.place_vertical(
+                par_glyphs, 
+                y, 
+                self.scale_int(style.line_spacing) or 0, 
+                self.scale_int(style.line_leading) or 0, 
+                self.scale_int(style.ruby_line_leading) or 0
+            )
             lines.extend(l)
 
             # Figure out the indent of the next paragraph.
