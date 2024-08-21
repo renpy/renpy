@@ -1,4 +1,4 @@
-﻿
+
 translate ukrainian strings:
 
     # gui/game/screens.rpy:9
@@ -549,6 +549,10 @@ translate ukrainian strings:
     old "Calibrate"
     new "Відкалібрувати"
 
+    # gui/game/screens.rpy:1098
+    old "Start, Guide, B/Right Button"
+    new "Кнопка Start, Guide, B/Управо"
+
     # gui/game/screens.rpy:1117
     old "## Additional screens"
     new "## Додаткові екрани"
@@ -652,7 +656,6 @@ translate ukrainian strings:
     # gui/game/screens.rpy:1424
     old "Menu"
     new "Меню"
-
 
 translate ukrainian strings:
 
