@@ -43,7 +43,7 @@ translate ukrainian strings:
 
     # game/android.rpy:36
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT встановлено, але вам потрібно встановити Android SDK, перш ніж ви зможете створювати пакети Android. Виберіть «Установити SDK» для встановлення."
+    new "RAPT встановлено, але вам потрібно встановити Android SDK, перш ніж ви зможете створювати пакети Android. Натисніть «Установити SDK» для встановлення."
 
     # game/android.rpy:37
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
@@ -63,7 +63,7 @@ translate ukrainian strings:
 
     # game/android.rpy:41
     old "Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device."
-    new "Виберіть «Зібрати», щоб зібрати поточний проєкт, або ж приєднайте пристрій Android та виберіть «Зібрати й встановити», щоб зібрати та встановити його на пристрої."
+    new "Натисніть «Зібрати», щоб зібрати поточний проєкт, або ж приєднайте пристрій Android та натисніть «Зібрати й встановити», щоб зібрати та встановити його на пристрої."
 
     # game/android.rpy:43
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
@@ -727,7 +727,7 @@ translate ukrainian strings:
 
     # game/editor.rpy:245
     old "None"
-    new "Немає"
+    new "немає"
 
     # game/editor.rpy:245
     old "Prevents Ren'Py from opening a text editor."
@@ -743,7 +743,7 @@ translate ukrainian strings:
 
     # game/editor.rpy:533
     old "Select Editor"
-    new "Вибрати редактор"
+    new "Оберіть редактор"
 
     # game/editor.rpy:548
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
@@ -883,7 +883,7 @@ translate ukrainian strings:
 
     # game/gui7.rpy:243
     old "Select Accent and Background Colors"
-    new "Виберіть акцентні та фонові кольори"
+    new "Оберіть акцентні та фонові кольори"
 
     # game/gui7.rpy:257
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
@@ -1463,7 +1463,7 @@ translate ukrainian strings:
 
     # game/preferences.rpy:338
     old "{#in language font}Welcome! Please choose a language"
-    new "{#in language font}Вітаємо! Виберіть мову"
+    new "{#in language font}Вітаємо! Оберіть мову застосунку"
 
     # game/preferences.rpy:373
     old "{#in language font}Start using Ren'Py in [lang_name]"
