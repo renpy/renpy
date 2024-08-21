@@ -1707,6 +1707,7 @@ class Layout(object):
         mesh = renpy.gl2.gl2mesh2.Mesh2.text_mesh(n_glyphs)
 
         # The y coordinate of the top line.
+
         top = 0
 
         for line in lines:
@@ -1715,7 +1716,7 @@ class Layout(object):
             if line is not last_line:
                 bottom = min(outline + line.y + line.height + self.line_overlap_split, th)
             else:
-                bottom = th
+                bottom = min(2 * outline + line.y + line.height, th)
 
             if line.glyphs:
                 first_glyph = line.glyphs[0]

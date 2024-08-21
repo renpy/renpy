@@ -219,8 +219,7 @@ Attributes
 
 ``vec4 a_text_pos_rect``
     The rectangle being drawn, in drawable pixels. This is a vec4 with the x, y, width, and height of the rectangle,
-    in drawable pixels. This can be converted to texture coordinates by dividing it by ``res0``. This may be much
-    larger than the portion of the glyph that's actually being drawe.
+    in drawable pixels. This can be converted to texture coordinates by dividing it by ``res0``.
 
 
 Example
