@@ -1,4 +1,4 @@
-﻿
+
 translate ukrainian strings:
 
     # 00action_file.rpy:26
@@ -1043,3 +1043,104 @@ translate ukrainian strings:
     old "Sync Error"
     new "Помилка синхронізації"
 
+translate ukrainian strings:
+
+    # renpy/common/00accessibility.rpy:120
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
+    new "Меню доступності. Використовуйте стрілки вгору та вниз для навігації, а клавішу «Enter» для активації кнопок та панелей."
+
+    # renpy/common/00accessibility.rpy:197
+    old "Self-voicing support is limited when using a touch screen."
+    new "Підтримка синтезу мовлення обмежена при використанні сенсорного екрана."
+
+    # renpy/common/00director.rpy:1776
+    old "Customize director.transforms to add more transforms."
+    new "Налаштуйте director.transforms, щоб додати більше перетворень."
+
+    # renpy/common/00director.rpy:1821
+    old "Click to set."
+    new "Клацніть для установлення."
+
+    # renpy/common/00director.rpy:1822
+    old "Customize director.transitions to add more transitions."
+    new "Налаштуйте director.transitions, щоб додати більше переходів."
+
+    # renpy/common/00director.rpy:1845
+    old "Customize director.audio_channels to add more channels."
+    new "Налаштуйте director.audio_channels, щоб додати більше каналів."
+
+    # renpy/common/00gui.rpy:454
+    old "Are you sure you want to continue where you left off?"
+    new "Ви дійсно бажаєте продовжити з того місця, на якому зупинилися?"
+
+    # renpy/common/00preferences.rpy:438
+    old "self voicing enable"
+    new "увімкнути синтез мовлення"
+
+    # renpy/common/00preferences.rpy:440
+    old "self voicing disable"
+    new "вимкнути синтез мовлення"
+
+    # renpy/common/00preferences.rpy:455
+    old "clipboard voicing enable"
+    new "увімкнути озвучення буфера обміну"
+
+    # renpy/common/00preferences.rpy:457
+    old "clipboard voicing disable"
+    new "вимкнути озвучення буфера обміну"
+
+    # renpy/common/00preferences.rpy:464
+    old "debug voicing enable"
+    new "увімкнути налагоджувальне озвучення"
+
+    # renpy/common/00preferences.rpy:466
+    old "debug voicing disable"
+    new "вимкнути налагоджувальне озвучення"
+
+    # renpy/common/00preferences.rpy:586
+    old "restore window position"
+    new "відновити положення вікна"
+
+    # renpy/common/00preferences.rpy:595
+    old "reset"
+    new "скинути"
+
+    # renpy/common/00speechbubble.rpy:408
+    old "(clear retained bubbles)"
+    new "(очистити залишкові бульбашки)"
+
+    # renpy/common/00updater.rpy:505
+    old "No update methods found."
+    new "Методів оновлення не знайдено."
+
+    # renpy/common/00updater.rpy:552
+    old "Could not download file list: "
+    new "Не вдалося завантажити список файлів: "
+
+    # renpy/common/00updater.rpy:555
+    old "File list digest does not match."
+    new "Дайджест списку файлів не збігається."
+
+    # renpy/common/00updater.rpy:2072
+    old "Preparing to download the game data."
+    new "Підготовка до завантаження даних гри."
+
+    # renpy/common/00updater.rpy:2074
+    old "Downloading the game data."
+    new "Завантаження даних гри."
+
+    # renpy/common/00updater.rpy:2076
+    old "The game data has been downloaded."
+    new "Дані гри було завантажено."
+
+    # renpy/common/00updater.rpy:2078
+    old "An error occured when trying to download game data:"
+    new "Виникла помилка при спробі завантажити дані гри:"
+
+    # renpy/common/00updater.rpy:2083
+    old "This game cannot be run until the game data has been downloaded."
+    new "Цю гру не можна запустити, доки не будуть завантажені дані гри."
+
+    # renpy/common/00updater.rpy:2090
+    old "Retry"
+    new "Повторити"

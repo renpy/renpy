@@ -1,4 +1,4 @@
-﻿
+
 translate ukrainian strings:
 
     # 00console.rpy:255
@@ -105,5 +105,46 @@ translate ukrainian strings:
 
     # renpy/common/00console.rpy:813
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
-    new "У довідці можуть відображатися недокументовані функції. Будь ласка, перевірте, чи функцію або\nклас, який бажаєте використати, задокументовано.\n\n"
+    new "У довідці можуть бути недокументовані функції. Будь ласка, перевірте, чи функцію або\nклас, який бажаєте використати, задокументовано.\n\n"
 
+translate ukrainian strings:
+
+    # renpy/common/_developer/developer.rpym:69
+    old "Show Translation Identifiers"
+    new "Показати ідентифікатори перекладу"
+
+    # renpy/common/_developer/developer.rpym:72
+    old "Hide Translation Identifiers"
+    new "Сховати ідентифікатори перекладу"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Filename and Line"
+    new "Показати назву файлу та рядок"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Filename and Line"
+    new "Сховати назву файлу та рядок"
+
+    # renpy/common/_developer/developer.rpym:127
+    old "Layer [l]:"
+    new "Шар [l]:"
+
+    # renpy/common/_developer/developer.rpym:131
+    old "    [name] [attributes] (hidden)"
+    new "    [name] [attributes] (приховано)"
+
+    # renpy/common/_developer/developer.rpym:135
+    old "    [name] [attributes]"
+    new "    [name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:606
+    old "\n{color=#fff}Copied to clipboard.{/color}"
+    new "\n{color=#fff}Скопійовано до буфера обміну.{/color}"
+
+    # renpy/common/_developer/developer.rpym:612
+    old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
+    new "\n{color=#fff}Клацніть для копіювання.\nПеретягнуть для пересування.{/color}"
+
+    # renpy/common/_developer/developer.rpym:657
+    old "Click to open in editor."
+    new "Клацніть, щоб відкрити в редакторі."

@@ -54,3 +54,11 @@ fluent in Finnish but not English. Adjustments will be made if better
 translations are suggested.
 
 * Lari Liuhamo (Diapolo10) <lari.liuhamo+github116504@gmail.com>
+
+Ukrainian
+---------
+
+Translation to Ukrainian language. Most of translations provided by Veydzher.
+Feel free to report me any mistakes, fixes or improvements.
+
+* Veydzher <veydzherdgswift008@gmail.com>
