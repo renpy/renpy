@@ -107,8 +107,6 @@ translate ukrainian strings:
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
     new "У довідці можуть бути недокументовані функції. Будь ласка, перевірте, чи функцію або\nклас, який бажаєте використати, задокументовано.\n\n"
 
-# TODO: Translation updated at 2024-08-21 20:59
-
 translate ukrainian strings:
 
     # renpy/common/_developer/developer.rpym:69
