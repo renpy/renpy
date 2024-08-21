@@ -1896,3 +1896,145 @@ translate ukrainian strings:
     # game/updater.rpy:79
     old "A nightly build of fixes to the release version of Ren'Py."
     new "Рання збірка виправлень до випуску версії Ren'Py."
+
+translate ukrainian strings:
+
+    # game/androidstrings.rpy:46
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please install JDK [JDK_REQUIREMENT], and add it to your PATH.\n\nWithout a working JDK, I can't continue."
+    new "Не вдалося використати javac для компіляції тестового файлу. Якщо ви ще не встановили Java Development Kit, завантажте його з:\n\n{a=https://adoptium.net}https://adoptium.net/{/a}\n\nDK відрізняється від JRE, тому можливо, що ви маєте Java, але не маєте JDK. Будь ласка, встановіть JDK [JDK_REQUIREMENT] і додайте його до вашої змінни середовища PATH.\n\nПрограма не зможе продовжити без робочого JDK."
+
+    # game/androidstrings.rpy:47
+    old "The version of Java on your computer does not appear to be JDK [JDK_REQUIREMENT], which is required to build Android apps. If you need to install a newer JDK, you can download it from:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, and add it to your PATH.\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new "Версія Java на вашому ПК не є JDK [JDK_REQUIREMENT], яка необхідна для створення застосунків на Android. Якщо вам потрібно встановити новішу версію JDK, ви можете завантажити її з:\n\n{a=https://adoptium.net/}https://adoptium.net/{/a}, і додати до вашої змінни середовища PATH.\n\nВи також можете встановити змінну середовища JAVA_HOME для використання іншої версії Java."
+
+    # game/choose_directory.rpy:72
+    old "No directory was selected, but one is required."
+    new "Не вибрано жодної теки, але вона є обов’язковою."
+
+    # game/choose_directory.rpy:80
+    old "The selected directory does not exist."
+    new "Обраної теки не існує."
+
+    # game/choose_directory.rpy:82
+    old "The selected directory is not writable."
+    new "Обрана тека є недоступною для запису."
+
+    # game/distribute.rpy:543
+    old "Building distributions failed:\n\nThe project is the Ren'Py Tutorial, which can't be distributed outside of Ren'Py. Consider using The Question as a test project."
+    new "Помилка збірки дистрибутивів:\n\nПроєкт є навчальним посібником Ren'Py, який не може поширюватися за межами Ren'Py. Подумайте про використання «Запитання» як тестового проєкту."
+
+    # game/distribute.rpy:570
+    old "This may be derived from build.name and config.version or build.version."
+    new "Це може бути отримане з build.name та config.version або build.version."
+
+    # game/distribute.rpy:1606
+    old "Finishing the [variant] [format] package."
+    new "Завершення пакету [variant] [format]."
+
+    # game/editor.rpy:185
+    old "Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended."
+    new "Atom застарілий, а його помилки, як відомо, призводять до пошкодження ігор, тому рекомендується використовувати інший редактор."
+
+    # game/editor.rpy:214
+    old "JEdit is deprecated, using another editor is recommended."
+    new "JEdit застарілий, рекомендується використовувати інший редактор."
+
+    # game/editor.rpy:607
+    old "The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."
+    new "Текстовий редактор Atom більше не підтримується його розробниками. Рекомендуємо перейти на Visual Studio Code або інший редактор."
+
+    # game/editor.rpy:607
+    old "Select editor now."
+    new "Обрати редактора зараз."
+
+    # game/editor.rpy:607
+    old "Ignore until next launch."
+    new "Ігнорувати до наступного запуску."
+
+    # game/editor.rpy:607
+    old "Do not ask again."
+    new "Не запитувати знову."
+
+    # game/install.rpy:186
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} додає підтримку відображення моделей Live2D. Розмістіть файл CubismSdkForNative-{i}версія{/i}.zip у теку Ren'Py SDK, і натисніть кнопку «Установити». Розповсюдження гри з Live2D вимагає від вас прийняття ліцензії від Live2D, Inc."
+
+    # game/new_project.rpy:38
+    old "Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."
+    new "Увага: ви користуєтеся Ren'Py 7. Рекомендується починати нові проєкти з Ren'Py 8."
+
+    # game/new_project.rpy:49
+    old "Please select a template project to use."
+    new "Оберіть шаблонний проект для використання."
+
+    # game/new_project.rpy:49
+    old "Do not use a template project."
+    new "Не використовувати шаблонний проєкт."
+
+    # game/preferences.rpy:95
+    old "Lint"
+    new "Lint"
+
+    # game/preferences.rpy:234
+    old "Game Options:"
+    new "Параметри гри:"
+
+    # game/preferences.rpy:241
+    old "Skip splashscreen"
+    new "Пропускати заставку"
+
+    # game/preferences.rpy:258
+    old "Prefer the web documentation"
+    new "Надавати перевагу вебдокументації"
+
+    # game/preferences.rpy:262
+    old "Restore window position"
+    new "Відновити положення вікна"
+
+    # game/preferences.rpy:266
+    old "Prefer RPU updates"
+    new "Надавати перевагу оновленням RPU"
+
+    # game/preferences.rpy:338
+    old "Open projects.txt"
+    new "Відкрити projects.txt"
+
+    # game/preferences.rpy:364
+    old "Lint toggles:"
+    new "Lint перемикає:"
+
+    # game/preferences.rpy:368
+    old "Check for orphan/obsolete translations"
+    new "Перевірка «сирітських» / застарілих перекладів"
+
+    # game/preferences.rpy:371
+    old "Check parameters shadowing reserved names"
+    new "Перевірка параметрів затінення зарезервованих імен"
+
+    # game/preferences.rpy:374
+    old "Print block, word, and character counts by speaking character."
+    new "Кількість блоків друку, слів і символів за кожним розмовним персонажем."
+
+    # game/preferences.rpy:377
+    old "Unclosed text tags"
+    new "Незакриті текстові теги"
+
+    # game/preferences.rpy:380
+    old "Show all unreachable blocks and orphaned translations."
+    new "Показувати всі недосяжні блоки та «осиротілі» переклади."
+
+    # game/project.rpy:776
+    old "Splashscreen skipped in launcher preferences."
+    new "Заставку пропущено у налаштуваннях запускача."
+
+    # game/updater.rpy:76
+    old "Nightly Fix"
+    new "Раннє виправлення"
+
+    # game/updater.rpy:77
+    old "Nightly Fix (Ren'Py 8, Python 3)"
+    new "Раннє виправлення (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly Fix (Ren'Py 7, Python 2)"
+    new "Раннє виправлення (Ren'Py 7, Python 2)"
