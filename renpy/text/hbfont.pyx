@@ -908,6 +908,7 @@ cdef class HBFont:
             gl.glyph = glyph_info[i].codepoint
 
             gl.ascent = self.ascent
+            gl.descent = -self.descent
             gl.line_spacing = self.lineskip
             gl.draw = True
 

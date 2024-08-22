@@ -193,12 +193,18 @@ Uniforms
 Attributes
 ^^^^^^^^^^
 
+When drawing text, each vertex corresponds to a single glyph. Multiple glyphs may have vertices that share
+locations, but these are passed to the shader as different vertices.
+
 ``float a_text_ascent``
-    The ascent of the current character above the baseline, in drawable pixels.
+    The ascent of the current glyph's font above the baseline, in drawable pixels.
 
 ``vec2 a_text_center``
-    The position of the center of the center of the vertex's baseline, in drawable pixels. This is not the
+    The position of the center of the glyphs's baseline, in drawable pixels. This is not the
     center of the rectangle, it's a point on the baseline and around the center of the character.
+
+``float a_text_descent``
+    The descent of the current glyph below the baseline, in drawable pixels.
 
 ``float a_text_index``
     The index of the glyph being drawn. This is 0 for the first vertex and goes up by one for each vertex.
@@ -218,7 +224,7 @@ Attributes
     but ``u_text_slow_duration`` is not 0.0, this will be -3600.0.
 
 ``vec4 a_text_pos_rect``
-    The rectangle being drawn, in drawable pixels. This is a vec4 with the x, y, width, and height of the rectangle,
+    The rectangle containing the glyph, in drawable pixels. This is a vec4 with the x, y, width, and height of the rectangle,
     in drawable pixels. This can be converted to texture coordinates by dividing it by ``res0``.
 
 

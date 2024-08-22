@@ -58,6 +58,7 @@ TEXT_LAYOUT.add_attribute("a_text_max_time", 1) # The maximum time any vertex in
 TEXT_LAYOUT.add_attribute("a_text_index", 1) # The glyph number.
 TEXT_LAYOUT.add_attribute("a_text_pos_rect", 4) # The rectangle being drawn.
 TEXT_LAYOUT.add_attribute("a_text_ascent", 1) # The ascent of the font.
+TEXT_LAYOUT.add_attribute("a_text_descent", 1) # The ascent of the font.
 
 cdef class Mesh:
 

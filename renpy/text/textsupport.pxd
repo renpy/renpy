@@ -66,6 +66,7 @@ cdef class Glyph:
 
         # The ascent and spacing of the font.
         public int ascent
+        public int descent
         public int line_spacing
 
         # The width of the character.

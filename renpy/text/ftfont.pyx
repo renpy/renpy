@@ -608,6 +608,7 @@ cdef class FTFont:
             gl.character = c
             gl.variation = vs
             gl.ascent = self.ascent
+            gl.descent = -self.descent
             gl.width = cache.width
             gl.line_spacing = self.lineskip
             gl.draw = True

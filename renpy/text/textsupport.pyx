@@ -39,6 +39,7 @@ cdef class Glyph:
         self.rtl = 0
         self.duration = -1
         self.shader = None
+        self.descent = 0
 
     def __repr__(self):
         if self.variation == 0:
@@ -55,6 +56,7 @@ cdef class Glyph:
         split : int
         ruby : int
         ascent : int
+        descent: int
         line_spacing : int
         width : float
         advance : float
