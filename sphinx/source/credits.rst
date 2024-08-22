@@ -106,6 +106,7 @@ the omission in future versions.
 * Gustavo Carvalho
 * Haelwenn (lanodan) Monnier
 * Hanaka
+* HB38
 * Helloise
 * Helmut K. C. Tessarek
 * Hentai Senshi
