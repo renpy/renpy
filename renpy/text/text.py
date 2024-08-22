@@ -921,6 +921,7 @@ class Layout(object):
         di = DrawInfo()
 
         depth = len(self.outlines)
+        max_depth = depth - 1
 
         for o, color, xo, yo in self.outlines:
             depth -= 1
@@ -989,7 +990,7 @@ class Layout(object):
 
             if self.textshaders:
                 for ts in self.textshaders:
-                    mr = self.create_mesh_displayable(o, tex, lines, xo, yo, depth, ts)
+                    mr = self.create_mesh_displayable(o, tex, lines, xo, yo, depth, max_depth, ts)
                     self.mesh_displayables.append((o, xo, yo, mr))
 
         if self.textshaders:
@@ -1677,7 +1678,7 @@ class Layout(object):
 
         return rv
 
-    def create_mesh_displayable(self, outline, tex, lines, xo, yo, depth, ts):
+    def create_mesh_displayable(self, outline, tex, lines, xo, yo, depth, max_depth, ts):
         """
         Create a Displayable that will use a mesh to draw the text character-by-character.
 
@@ -1692,6 +1693,16 @@ class Layout(object):
 
         `xo`, `yo`
             The x and y offsets of the text.
+
+        `depth`
+            The depth of the text. Depth 0 is closest to the screen, 1 is further away, and
+            so on.
+
+        `max_depth`
+            The maximum depth of any text.
+
+        `ts`
+            The text shader.
         """
 
         tw, th = tex.get_size()
@@ -1786,11 +1797,12 @@ class Layout(object):
         for i in ts.shader:
             r.add_shader(i)
 
-        main = xo == 0 and yo == 0 and outline == 0
+        main = (depth == 0)
 
         # (name, value, is_displayable)
         uniforms = [
             ("u_text_depth", depth, False),
+            ("u_text_max_depth", max_depth, False),
             ("u_text_outline", outline, False),
             ("u_text_offset", (xo, yo), False),
             ("u_text_main", 1.0 if main else 0.0, False),
