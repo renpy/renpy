@@ -499,8 +499,8 @@ def autosave_thread_function(take_screenshot):
                 renpy.exports.take_screenshot(background=True)
 
             save("_auto", mutate_flag=True, extra_info=extra_info)
-            cycle_saves(prefix, renpy.config.autosave_slots)
-            rename_save("_auto", prefix + "1")
+            cycle_saves(prefix, renpy.config.autosave_slots, sync=False)
+            rename_save("_auto", prefix + "1", sync=True)
 
             autosave_counter = 0
             did_autosave = True
@@ -840,7 +840,7 @@ def unlink_save(filename):
     clear_slot(filename)
 
 
-def rename_save(old, new):
+def rename_save(old, new, sync=True):
     """
     :doc: loadsave
 
@@ -848,7 +848,7 @@ def rename_save(old, new):
     exist.)
     """
 
-    location.rename(old, new)
+    location.rename(old, new, sync=sync)
 
     clear_slot(old)
     clear_slot(new)
@@ -866,7 +866,7 @@ def copy_save(old, new):
     clear_slot(new)
 
 
-def cycle_saves(name, count):
+def cycle_saves(name, count, sync=True):
     """
     :doc: loadsave
 
@@ -878,7 +878,11 @@ def cycle_saves(name, count):
     """
 
     for i in range(count - 1, 0, -1):
-        rename_save(name + str(i), name + str(i + 1))
+        rename_save(name + str(i), name + str(i + 1), sync=False)
+
+    if sync:
+        # Only sync once for all the saves
+        location.sync()
 
 ################################################################################
 # Cache

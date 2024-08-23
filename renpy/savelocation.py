@@ -305,7 +305,7 @@ class FileLocation(object):
             self.sync()
             self.scan()
 
-    def rename(self, old, new):
+    def rename(self, old, new, sync=True):
         """
         If old exists, renames it to new.
         """
@@ -323,7 +323,8 @@ class FileLocation(object):
             safe_rename(old_tmp, new)
             renpy.util.expose_file(new)
 
-            self.sync()
+            if sync:
+                self.sync()
             self.scan()
 
     def copy(self, old, new):
