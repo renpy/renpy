@@ -22,7 +22,7 @@ audio channels. The audio filter system is based on webaudio, and includes the f
 * Mix, a way of mixing two audio streams.
 * Sequence, a way of applying more than one filter to audio.
 * WetDry, a way of filtering a stream with a wet and dry control.
-* Reverb, a way of applying artifical reverb to the audio.
+* Reverb, a way of applying artificial reverb to the audio.
 
 
 Text Shaders
@@ -41,7 +41,7 @@ the :var:`config.default_textshader` variable. A text block should either use te
 is not supported.
 
 Custom text shaders are supported using the :func:`renpy.register_text_shader` function. These have access
-to new uniforms and attributes that are appopriate to text display.
+to new uniforms and attributes that are appropriate to text display.
 
 
 Other Shader Changes
@@ -78,7 +78,7 @@ filter out translation files.
 Window Statement Changes
 ------------------------
 
-There have been a changes to the ``window`` statment:
+There have been changes to the ``window`` statement:
 
 * ``window show`` and ``window hide`` no longer disable the automatic window
   management that Ren'Py does. Instead, these statements will immediately
@@ -86,7 +86,7 @@ There have been a changes to the ``window`` statment:
 
 * The new ``window auto False`` statement will disable automatic window
   management, and the new ``window auto True`` statement will re-enable it.
-  (The existing ``window auto`` statement wil also work, but ``window auto True``
+  (The existing ``window auto`` statement will also work, but ``window auto True``
   is preferred.)
 
 The intent behind this is to make ``window hide`` more useful, as it can
@@ -94,15 +94,15 @@ be used to hide the window for effects without disabling automatic window
 management.
 
 When a ``window show`` occurs after ``window hide``, Ren'Py will look forward
-to the next say statement to determine the type of thr window to show. Previously,
+to the next say statement to determine the type of the window to show. Previously,
 it looked back to the last say statement.
 
 
 Screenshots and Paper Dolls
 ---------------------------
 
-Taking a screenshot now hides the notify screen, so multiple screenshot do not
-leak the path to the previous one. This controled by :var:`config.pre_screenshot_actions`.
+Taking a screenshot now hides the notify screen, so multiple screenshots do not
+leak the path to the previous one. This controlled by :var:`config.pre_screenshot_actions`.
 
 The new :func:`renpy.render_to_file` and :func:`renpy.render_to_surface` functions make it possible to
 capture displayables (including trees of displayables, like layered images) and save that to a file
@@ -126,7 +126,7 @@ Wrapped methods of the Steamworks API are documented on the :doc:`achievement` p
 Android
 -------
 
-Ren'Py now targts Android 15 (API level 35), though versions down to Androoid 5 may still work.
+Ren'Py now targets Android 15 (API level 35), though versions down to Android 5 may still work.
 
 Features
 --------
@@ -138,7 +138,7 @@ The translation identifier screen (accessed through shift+D) is now the translat
 information about the line being executed. If a language is selected, the screen will also show the line being
 translated, and the text of the say statement being translated.
 
-:doc:`cds` can now take take an ATL block, which is supplied to the `execute` function as a keyword argument
+:doc:`cds` can now take an ATL block, which is supplied to the `execute` function as a keyword argument
 giving an ATL transform. It's also possible to define a creator-defined statement that optionally takes
 an ATL block, or a block of script statements.
 
@@ -159,7 +159,7 @@ purpose of translations.
 The :class:`Hide` action and :func:`renpy.hide_screen` actions now take an `immediately`
 keyword argument, which prevents 'on hide' handlers in the screens from running.
 
-:doc:`character_callbacks` are now given information about the line of of dialogue
+:doc:`character_callbacks` are now given information about the line of dialogue
 and the segment of the line that is being shown.
 
 The :func:`renpy.call_in_new_context` and :func:`renpy.invoke_in_new_context` functions
@@ -196,7 +196,7 @@ Other Changes
 
 The notification screen is now hidden before a screenshot is taken.
 
-The :tpref:`crop` transform propery now always takes the size of the crop box,
+The :tpref:`crop` transform property now always takes the size of the crop box,
 even if bigger than what is being cropped.
 
 The hspace and vspace text tags now respect window scaling.
