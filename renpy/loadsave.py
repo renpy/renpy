@@ -498,6 +498,8 @@ def autosave_thread_function(take_screenshot):
             if take_screenshot:
                 renpy.exports.take_screenshot(background=True)
 
+            renpy.savelocation.pause_syncfs()
+
             save("_auto", mutate_flag=True, extra_info=extra_info)
             cycle_saves(prefix, renpy.config.autosave_slots)
             rename_save("_auto", prefix + "1")
@@ -510,9 +512,7 @@ def autosave_thread_function(take_screenshot):
 
     finally:
         autosave_not_running.set()
-        if renpy.emscripten:
-            import emscripten
-            emscripten.syncfs()
+        renpy.savelocation.resume_syncfs()
 
 
 def autosave():

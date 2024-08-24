@@ -413,10 +413,7 @@ init -1100 python in _sync:
                 os.rename(nfn, fn)
 
         renpy.loadsave.location.scan()
-
-        if renpy.emscripten:
-            import emscripten
-            emscripten.syncfs()
+        renpy.savelocation.syncfs()
 
         return True
 
