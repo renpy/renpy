@@ -32,7 +32,7 @@ import warnings
 
 # Functions to be customized by distributors. ################################
 
-def path_to_gamedir(basedir, name):
+def path_to_gamedir(basedir, name): # type: (str, str) -> str
     """
     Returns the absolute path to the directory containing the game
     scripts an assets. (This becomes config.gamedir.)
@@ -77,7 +77,7 @@ def path_to_gamedir(basedir, name):
     return gamedir
 
 
-def path_to_common(renpy_base):
+def path_to_common(renpy_base): # type: (str) -> str | None
     """
     Returns the absolute path to the Ren'Py common directory.
 
@@ -205,7 +205,7 @@ def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
 
 # Returns the path to the Ren'Py base directory (containing common and
 # the launcher, usually.)
-def path_to_renpy_base():
+def path_to_renpy_base(): # type: () -> str
     """
     Returns the absolute path to the Ren'Py base directory.
     """
@@ -215,7 +215,7 @@ def path_to_renpy_base():
 
     return renpy_base
 
-def path_to_logdir(basedir):
+def path_to_logdir(basedir): # type: (str) -> str
     """
     Returns the absolute path to the log directory.
     `basedir`
@@ -229,7 +229,7 @@ def path_to_logdir(basedir):
 
     return basedir
 
-def predefined_searchpath(commondir):
+def predefined_searchpath(commondir):  # type: (str) -> list[str]
     import renpy # @UnresolvedImport
 
     # The default gamedir, in private.
