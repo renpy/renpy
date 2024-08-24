@@ -150,7 +150,7 @@ class FileLocation(object):
                             self.persistent_data = data
                             break
 
-    def save(self, slotname, record):
+    def save(self, slotname, record, sync=True):
         """
         Saves the save record in slotname.
         """
@@ -162,7 +162,8 @@ class FileLocation(object):
 
         renpy.util.expose_file(filename)
 
-        self.sync()
+        if sync:
+            self.sync()
         self.scan()
 
     def list(self):
@@ -454,7 +455,7 @@ class MultiLocation(object):
 
         self.locations.append(location)
 
-    def save(self, slotname, record):
+    def save(self, slotname, record, sync=True):
 
         if not renpy.config.save:
             return
@@ -462,7 +463,7 @@ class MultiLocation(object):
         saved = False
 
         for l in self.active_locations():
-            l.save(slotname, record)
+            l.save(slotname, record, sync=sync)
             saved = True
 
         if not saved:
@@ -539,12 +540,16 @@ class MultiLocation(object):
         for l in self.active_locations():
             l.unlink(slotname)
 
-    def rename(self, old, new):
+    def rename(self, old, new, sync=True):
         if not renpy.config.save:
             return
 
         for l in self.active_locations():
-            l.rename(old, new)
+            l.rename(old, new, sync=False)
+
+        if sync:
+            # Sync after renaming all files to avoid side effects
+            self.sync()
 
     def copy(self, old, new):
         if not renpy.config.save:
@@ -570,6 +575,15 @@ class MultiLocation(object):
 
         for l in self.active_locations():
             l.unlink_persistent()
+
+    def sync(self):
+        if renpy.emscripten:
+            # Don't call syncfs() multiple times
+            import emscripten # type: ignore
+            emscripten.syncfs()
+        else:
+            for l in self.locations:
+                l.sync()
 
     def scan(self):
         # This should scan everything, as a scan can help decide if a

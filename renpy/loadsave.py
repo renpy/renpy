@@ -377,7 +377,7 @@ class SaveRecord(object):
         self.first_filename = filename
 
 
-def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
+def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True, sync=True):
     """
     :doc: loadsave
     :args: (filename, extra_info='')
@@ -457,7 +457,7 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
     json = json_dumps(json)
 
     sr = SaveRecord(screenshot, extra_info, json, logf.getvalue())
-    location.save(slotname, sr)
+    location.save(slotname, sr, sync=sync)
 
     location.scan()
     clear_slot(slotname)
@@ -488,31 +488,27 @@ def autosave_thread_function(take_screenshot):
 
     try:
 
-        try:
+        if renpy.config.auto_save_extra_info:
+            extra_info = renpy.config.auto_save_extra_info()
+        else:
+            extra_info = ""
 
-            if renpy.config.auto_save_extra_info:
-                extra_info = renpy.config.auto_save_extra_info()
-            else:
-                extra_info = ""
+        if take_screenshot:
+            renpy.exports.take_screenshot(background=True)
 
-            if take_screenshot:
-                renpy.exports.take_screenshot(background=True)
+        save("_auto", mutate_flag=True, extra_info=extra_info, sync=False)
+        cycle_saves(prefix, renpy.config.autosave_slots, sync=False)
+        rename_save("_auto", prefix + "1", sync=False)
 
-            save("_auto", mutate_flag=True, extra_info=extra_info)
-            cycle_saves(prefix, renpy.config.autosave_slots, sync=False)
-            rename_save("_auto", prefix + "1", sync=True)
+        autosave_counter = 0
+        did_autosave = True
 
-            autosave_counter = 0
-            did_autosave = True
-
-        except Exception:
-            pass
+    except Exception:
+        pass
 
     finally:
         autosave_not_running.set()
-        if renpy.emscripten:
-            import emscripten
-            emscripten.syncfs()
+        location.sync()
 
 
 def autosave():
