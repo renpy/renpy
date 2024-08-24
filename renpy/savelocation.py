@@ -45,6 +45,46 @@ import time
 tmp = "." + str(int(time.time())) + ".tmp"
 
 
+# The number of times pause_syncfs has been called, without a corresponding
+# resume_syncfs
+pause_syncfs_count = 0
+
+def pause_syncfs():
+    """
+    Pauses the filesystem sync. This should be called before doing a large
+    number of file operations.
+    """
+
+    global pause_syncfs_count
+    pause_syncfs_count += 1
+
+
+def resume_syncfs():
+    """
+    Resumes the filesystem sync. This should be called after a corresponding
+    pause_syncfs.
+    """
+
+    global pause_syncfs_count
+    pause_syncfs_count -= 1
+
+    if pause_syncfs_count == 0:
+        syncfs()
+
+
+def syncfs():
+    """
+    Syncs the filesystem.
+    """
+
+    if pause_syncfs_count > 0:
+        return
+
+    if renpy.emscripten:
+        import emscripten # type: ignore
+        emscripten.syncfs()
+
+
 class FileLocation(object):
     """
     A location that saves files to a directory on disk.
@@ -98,9 +138,7 @@ class FileLocation(object):
         Called to indicate that the HOME filesystem was changed.
         """
 
-        if renpy.emscripten:
-            import emscripten # type: ignore
-            emscripten.syncfs()
+        syncfs()
 
     def scan(self):
         """
