@@ -112,6 +112,9 @@ If you're hosting the game yourself, you'll want to make sure your web
 server serves .wasm files using the application/wasm MIME type. Doing
 so will make the game load faster, and prevent a warning from happening.
 
+Some web hosts may reject the game.zip file. In that case, rename it to
+game.data, and edit index.html to change game.zip to game.data.
+
 .. _web-presplash:
 
 Presplash
