@@ -34,7 +34,7 @@ from renpy.audio.audio import get_channel, get_serial
 from renpy.audio.audio import register_channel, alias_channel
 
 
-def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=True, fadein=0, tight=None, if_changed=False, relative_volume=1.0):
+def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=None, fadein=0, tight=None, if_changed=False, relative_volume=1.0):
     """
     :doc: audio
 
@@ -61,6 +61,8 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=True
         playing at exactly the same time. This may lead to a pause before the
         channels start playing. This is useful when playing two audio files that
         are meant to be synchronized with each other.
+
+        If None, this takes its value from the channel.
 
     `fadein`
         This is the number of seconds to fade the music in for, on the

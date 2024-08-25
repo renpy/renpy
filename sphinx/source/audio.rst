@@ -114,13 +114,17 @@ be used like this.
 
 .. _synchro-start:
 
-When multiple play statements are run at the same time, the audio in each channel will start synchronized.
-Specifically, the audio will start:
+Ren'Py supports a feature that can ensure that audio files start playing at the same time. This feature
+is enabled on looping audio channels (like music) by default, but can also be enabled by the
+`synchro_start` option to :func:`renpy.music.register_channel` or :func:`renpy.music.play`.
+
+When synchro start is enabled and multiple play statements are run at the same time, the audio in each channel
+will start synchronized. Specifically, the audio will start:
 
 * When the audio files on every channel have been loaded and audio samples are available.
 * When all all channels have been faded out.
 
-The play statement will delay starting new audio until these conditions have been met.
+New audio will start playing when both conditions are met.
 
 
 Stop Statement
