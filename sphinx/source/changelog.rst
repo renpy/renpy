@@ -10,6 +10,12 @@ Changelog (Ren'Py 7.x-)
 8.3.1 / 7.8.1
 =============
 
+Fixes
+-----
+
+The web version of Ren'Py now defers calls to FS.syncfs, preventing errors that could be caused by files
+being rapidly renamed.
+
 The web version of Ren'Py now produces game.data instead of game.zip, allowing hosting on web providers
 that block .zip files.
 
