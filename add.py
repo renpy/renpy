@@ -8,12 +8,14 @@ import sys
 
 from renpy import version_tuple # @UnresolvedImport
 
+branch = subprocess.run([ "git", "branch", "--show-current" ], capture_output=True, text=True).stdout.strip()
+
 SOURCE = [
     "/home/tom/ab/renpy",
-    "/home/tom/ab/renpy-build",
+    "/home/tom/ab/renpy-build-" + branch,
     "/home/tom/ab/pygame_sdl2",
-    "/home/tom/ab/renpy-build/renpyweb",
     ]
+
 
 from renpy.versions import generate_vc_version
 
@@ -21,6 +23,9 @@ version = generate_vc_version()["version"]
 short_version = version.rpartition(".")[0]
 major = version.partition(".")[0]
 print("Version", version)
+
+if major == '7':
+    SOURCE.append("/home/tom/ab/renpy-build-fix/renpyweb")
 
 ap = argparse.ArgumentParser()
 
