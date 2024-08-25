@@ -72,6 +72,18 @@ def resume_syncfs():
         syncfs()
 
 
+class SyncfsLock(object):
+    """
+    Context to pause then resume the filesystem sync.
+    """
+    def __enter__(self):
+        pause_syncfs()
+        return self
+
+    def __exit__(self, exception_type, exception_value, exception_traceback):
+        resume_syncfs()
+
+
 def syncfs():
     """
     Syncs the filesystem.
@@ -599,14 +611,9 @@ class MultiLocation(object):
         return rv
 
     def save_persistent(self, data):
-        pause_syncfs()
-
-        try:
+        with SyncfsLock():
             for l in self.active_locations():
                 l.save_persistent(data)
-
-        finally:
-            resume_syncfs()
 
     def unlink_persistent(self):
 
