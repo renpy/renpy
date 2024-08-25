@@ -8,7 +8,7 @@ import sys
 
 from renpy import version_tuple # @UnresolvedImport
 
-branch = subprocess.run([ "git", "branch", "--show-current" ], capture_output=True, text=True).stdout.strip()
+branch = os.popen("git branch --show-current").read().strip()
 
 SOURCE = [
     "/home/tom/ab/renpy",
