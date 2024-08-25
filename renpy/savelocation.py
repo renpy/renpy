@@ -599,9 +599,14 @@ class MultiLocation(object):
         return rv
 
     def save_persistent(self, data):
+        pause_syncfs()
 
-        for l in self.active_locations():
-            l.save_persistent(data)
+        try:
+            for l in self.active_locations():
+                l.save_persistent(data)
+
+        finally:
+            resume_syncfs()
 
     def unlink_persistent(self):
 
