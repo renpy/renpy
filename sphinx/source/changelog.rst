@@ -16,9 +16,6 @@ Fixes
 The web version of Ren'Py now defers calls to FS.syncfs, preventing errors that could be caused by files
 being rapidly renamed.
 
-The web version of Ren'Py now produces game.data instead of game.zip, allowing hosting on web providers
-that block .zip files.
-
 
 .. _renpy-8.3.0:
 .. _renpy-7.8.0:
