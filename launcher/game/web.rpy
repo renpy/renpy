@@ -186,7 +186,7 @@ init python:
         if not os.path.exists(rules_path):
             open(rules_path, 'w').write(
                 "# RenPyWeb progressive download rules - first match applies\n"
-                + "# '+' = progressive download, '-' = keep in game.zip (default)\n"
+                + "# '+' = progressive download, '-' = keep in game.data (default)\n"
                 + "# See https://www.renpy.org/doc/html/build.html#classifying-and-ignoring-files for matching\n"
                 + "#\n"
                 + "# +/- type path\n"
@@ -429,6 +429,8 @@ init python:
 
         reporter.info(_("Preparing progressive download"))
         files_filter.finalize()
+
+        os.rename(os.path.join(destination, "game.zip"), os.path.join(destination, "game.data"))
 
         # Copy the files from WEB_PATH to destination.
         for fn in os.listdir(WEB_PATH):
