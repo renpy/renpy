@@ -4,6 +4,24 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.3.1:
+.. _renpy-7.8.1:
+
+8.3.1 / 7.8.1
+=============
+
+Fixes
+-----
+
+The path to game.zip in a web build can now be configured by editing the generated index.html.
+
+The web version of Ren'Py now defers calls to FS.syncfs, preventing errors that could be caused by files
+being rapidly renamed.
+
+By default, synchronized start of audio now only occurs on looping channels, like music channels. The default
+can be changed on a channel-by-channel basis by supplying `synchro_start` to :func:`renpy.music.register_channel`.
+
+
 .. _renpy-8.3.0:
 .. _renpy-7.8.0:
 

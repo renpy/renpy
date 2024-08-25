@@ -226,7 +226,7 @@ class Channel(object):
     # The audio filter to use.
     audio_filter = None
 
-    def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie, framedrop):
+    def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie, framedrop, synchro_start):
 
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
@@ -262,6 +262,9 @@ class Channel(object):
         # If True, then this channel will participate in a synchro-start
         # once all channels are ready.
         self.synchro_start = False
+
+        # Does this participate in synchro start by default.
+        self.default_synchro_start = synchro_start
 
         # The time the music in this channel was last changed.
         self.last_changed = 0
@@ -697,7 +700,10 @@ class Channel(object):
 
                 renpysound.replace_audio_filter(self.number, new_audio_filter)
 
-    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
+    def enqueue(self, filenames, loop=True, synchro_start=None, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
+
+        if synchro_start is None:
+            synchro_start = self.default_synchro_start
 
         with lock:
 
@@ -838,7 +844,8 @@ def register_channel(name,
                      buffer_queue=True,
                      movie=False,
                      framedrop=True,
-                     force=False):
+                     force=False,
+                     synchro_start=None):
     """
     :doc: audio
     :args: (name, mixer, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True, movie=False, framedrop=True)
@@ -889,7 +896,15 @@ def register_channel(name,
         This controls what a video does when lagging. If true, frames will
         be dropped to keep up with realtime and the soundtrack. If false,
         Ren'Py will display frames late rather than dropping them.
+
+    `synchro_start`
+        Does this channel particpate in synchro start? Synchro start determines if
+        the channel will start playing at the same time as other channels. If None,
+        this defaults to `loop`.
     """
+
+    if synchro_start is None:
+        synchro_start = loop
 
     if name == "movie":
         movie = True
@@ -897,7 +912,7 @@ def register_channel(name,
     if not force and not renpy.game.context().init_phase and (" " not in name):
         raise Exception("Can't register channel outside of init phase.")
 
-    c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie, framedrop=framedrop)
+    c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie, framedrop=framedrop, synchro_start=synchro_start)
 
     c.mixer = mixer
 
