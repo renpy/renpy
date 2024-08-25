@@ -2315,8 +2315,21 @@ class Interface(object):
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()
-                    renpy.persistent.check_update()
                     self.did_autosave = True
+
+                step += 1
+
+            # Step 6: Persistent data.
+            elif step == 6:
+
+                if not self.did_persistent:
+
+                    if renpy.emscripten:
+                        renpy.persistent.update()
+                    else:
+                        renpy.persistent.check_update()
+
+                    self.did_persistent = True
 
                 step += 1
 
@@ -2745,6 +2758,9 @@ class Interface(object):
 
             # We only want to do autosave once.
             self.did_autosave = False
+
+            # We only want to save persistent once.
+            self.did_persistent = False
 
             old_timeout_time = None
             old_redraw_time = None

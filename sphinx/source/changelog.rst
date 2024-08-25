@@ -13,6 +13,8 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+The web version of Ren'Py now saves persistent data when the screen is idle for .33 seconds.
+
 The path to game.zip in a web build can now be configured by editing the generated index.html.
 
 The web version of Ren'Py now defers calls to FS.syncfs, preventing errors that could be caused by files
