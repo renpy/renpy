@@ -4,6 +4,16 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.3.1:
+.. _renpy-7.8.1:
+
+8.3.1 / 7.8.1
+=============
+
+The web version of Ren'Py now produces game.data instead of game.zip, allowing hosting on web providers
+that block .zip files.
+
+
 .. _renpy-8.3.0:
 .. _renpy-7.8.0:
 

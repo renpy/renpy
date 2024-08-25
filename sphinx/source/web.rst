@@ -95,9 +95,9 @@ Open build Directory
 
 Generated folders
 -----------------
-Say, your project is in the renpy/projects/main/yourproject folder. Then you 
+Say, your project is in the renpy/projects/main/yourproject folder. Then you
 will find a new renpy/projects/main/yourproject-1.0-dists folder. This folder
-contains a yourproject-1.0-web subfolder, and this subfolder's zipped version, 
+contains a yourproject-1.0-web subfolder, and this subfolder's zipped version,
 a yourproject-1.0-web.zip file.
 
 Uploading your Game
@@ -141,7 +141,7 @@ package your game for the web the first time. The default contents of this
 file is::
 
     # RenPyWeb progressive download rules - first match applies"
-    # '+' = progressive download, '-' = keep in game.zip (default)
+    # '+' = progressive download, '-' = keep in game.data (default)
     # See https://www.renpy.org/doc/html/build.html#classifying-and-ignoring-files for matching
     #
     # +/- type path
