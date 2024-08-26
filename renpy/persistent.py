@@ -436,11 +436,12 @@ def update(force_save=False):
 
 should_save_persistent = True
 
-
 def save():
     """
     Saves the persistent data to disk.
     """
+
+    global old_persistent_data
 
     if not renpy.config.save_persistent:
         return

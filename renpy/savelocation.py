@@ -421,6 +421,8 @@ class FileLocation(object):
             fn_tmp = fn + tmp
             fn_new = fn + ".new"
 
+            pause_syncfs()
+
             with open(fn_tmp, "wb") as f:
                 f.write(data)
 
@@ -432,7 +434,7 @@ class FileLocation(object):
 
             renpy.util.expose_file(fn)
 
-            self.sync()
+            resume_syncfs()
 
     def unlink_persistent(self):
 
