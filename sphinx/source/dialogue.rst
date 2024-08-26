@@ -61,7 +61,7 @@ the ``[`` character begins a substitution. To use them in dialogue,
 double them. It may also be necessary to precede a quote with a
 backslash to prevent it from closing the string. For example::
 
-       "I walked past a sign saying, \"Let's give it 100%!\""
+       "I walked past a sign saying, \"Let's give it 100%%!\""
 
 It's also possible to use a proxy function instead of a character
 object. More details about this in :ref:`this section <say-proxy>`.
