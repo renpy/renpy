@@ -488,7 +488,7 @@ def autosave_thread_function(take_screenshot):
 
     try:
 
-        try:
+        with renpy.savelocation.SyncfsLock():
 
             if renpy.config.auto_save_extra_info:
                 extra_info = renpy.config.auto_save_extra_info()
@@ -498,8 +498,6 @@ def autosave_thread_function(take_screenshot):
             if take_screenshot:
                 renpy.exports.take_screenshot(background=True)
 
-            renpy.savelocation.pause_syncfs()
-
             save("_auto", mutate_flag=True, extra_info=extra_info)
             cycle_saves(prefix, renpy.config.autosave_slots)
             rename_save("_auto", prefix + "1")
@@ -507,12 +505,11 @@ def autosave_thread_function(take_screenshot):
             autosave_counter = 0
             did_autosave = True
 
-        except Exception:
-            pass
+    except Exception:
+        pass
 
     finally:
         autosave_not_running.set()
-        renpy.savelocation.resume_syncfs()
 
 
 def autosave():

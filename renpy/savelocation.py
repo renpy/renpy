@@ -72,6 +72,18 @@ def resume_syncfs():
         syncfs()
 
 
+class SyncfsLock(object):
+    """
+    Context to pause then resume the filesystem sync.
+    """
+    def __enter__(self):
+        pause_syncfs()
+        return self
+
+    def __exit__(self, exception_type, exception_value, exception_traceback):
+        resume_syncfs()
+
+
 def syncfs():
     """
     Syncs the filesystem.
@@ -498,9 +510,10 @@ class MultiLocation(object):
 
         saved = False
 
-        for l in self.active_locations():
-            l.save(slotname, record)
-            saved = True
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.save(slotname, record)
+                saved = True
 
         if not saved:
             raise Exception("Not saved - no valid save locations.")
@@ -573,22 +586,25 @@ class MultiLocation(object):
         if not renpy.config.save:
             return
 
-        for l in self.active_locations():
-            l.unlink(slotname)
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.unlink(slotname)
 
     def rename(self, old, new):
         if not renpy.config.save:
             return
 
-        for l in self.active_locations():
-            l.rename(old, new)
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.rename(old, new)
 
     def copy(self, old, new):
         if not renpy.config.save:
             return
 
-        for l in self.active_locations():
-            l.copy(old, new)
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.copy(old, new)
 
     def load_persistent(self):
         rv = [ ]
@@ -599,14 +615,14 @@ class MultiLocation(object):
         return rv
 
     def save_persistent(self, data):
-
-        for l in self.active_locations():
-            l.save_persistent(data)
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.save_persistent(data)
 
     def unlink_persistent(self):
-
-        for l in self.active_locations():
-            l.unlink_persistent()
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.unlink_persistent()
 
     def scan(self):
         # This should scan everything, as a scan can help decide if a
