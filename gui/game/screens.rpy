@@ -1216,11 +1216,15 @@ screen skip_indicator():
         hbox:
             spacing gui.scale(6)
 
-            text _("Skipping")
+            text f"{get_skip_string()}"
 
             text "▸" at delayed_blink(0.0, 1.0) style "skip_triangle"
             text "▸" at delayed_blink(0.2, 1.0) style "skip_triangle"
             text "▸" at delayed_blink(0.4, 1.0) style "skip_triangle"
+
+init python:
+    def get_skip_string():
+        return f'{_("Fast Skipping") if config.skipping == "fast" else _("Skipping")}'
 
 
 ## This transform is used to blink the arrows one after another.

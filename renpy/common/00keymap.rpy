@@ -238,7 +238,7 @@ init -1600 python:
         if not renpy.store._skipping:
             return
 
-        if not config.skipping:
+        if config.skipping in ["fast", None]:
             config.skipping = "slow"
         else:
             config.skipping = None

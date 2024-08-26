@@ -1042,12 +1042,12 @@ class Button(renpy.display.layout.Window):
     def is_selected(self):
         if self.selected is not None:
             return self.selected
-        return is_selected(self.action)
+        return is_selected(self.action) or is_selected(self.alternate)
 
     def is_sensitive(self):
         if self.sensitive is not None:
             return self.sensitive
-        return is_sensitive(self.action)
+        return is_sensitive(self.action) or is_sensitive(self.alternate)
 
     def per_interact(self):
 

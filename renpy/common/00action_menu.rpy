@@ -301,15 +301,15 @@ init -1500 python:
                 return
 
             if self.confirm:
-                if self.fast:
+                if self.fast and config.skipping in ["slow", None]:
                     if _preferences.skip_unseen:
                         layout.yesno_screen(layout.FAST_SKIP_UNSEEN, Skip(True))
                     else:
                         layout.yesno_screen(layout.FAST_SKIP_SEEN, Skip(True))
-                else:
+                    return
+                elif not self.fast and config.skipping in ["fast", None]:
                     layout.yesno_screen(layout.SLOW_SKIP, Skip(False))
-
-                return
+                    return
 
             if renpy.context()._menu:
                 if self.fast:
@@ -317,12 +317,10 @@ init -1500 python:
                 else:
                     renpy.jump("_return_skipping")
             else:
-
-                if not config.skipping:
-                    if self.fast:
-                        config.skipping = "fast"
-                    else:
-                        config.skipping = "slow"
+                if self.fast and config.skipping in ["slow", None]:
+                    config.skipping = "fast"
+                elif not self.fast and config.skipping in ["fast", None]:
+                    config.skipping = "slow"
                 else:
                     config.skipping = None
 
