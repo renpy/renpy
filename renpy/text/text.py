@@ -84,7 +84,7 @@ class TextMeshDisplayable(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
-        rv = renpy.display.render.Render(width, height)
+        rv = renpy.display.render.Render(self.width, self.height)
         rv.mesh = self.mesh
 
         rv.add_shader("renpy.texture")
@@ -95,7 +95,7 @@ class TextMeshDisplayable(renpy.display.core.Displayable):
         for k, v, is_displayable in self.uniforms:
 
             if is_displayable:
-                v = renpy.display.render.render(v, width, height, st, at)
+                v = renpy.display.render.render(v, self.width, self.height, st, at)
                 rv.depends_on(v)
 
             rv.add_uniform(k, v)
@@ -2538,10 +2538,8 @@ class Text(renpy.display.displayable.Displayable):
         vw, vh = virtual_layout.size
         w, h = layout.size
 
-
         # Blit text layers.
         rv = renpy.display.render.Render(vw, vh)
-        # rv = renpy.display.render.Render(*layout.unscale_pair(w, h))
 
         if renpy.config.draw_virtual_text_box:
             fill = renpy.display.render.Render(vw, vh)
