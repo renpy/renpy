@@ -13,6 +13,10 @@ translate ukrainian strings:
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
     new "## Виклик gui.init скидає стилі до розумних значень за замовчуванням і встановлює ширину та висоту гри."
 
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    new "## Увімкнути перевірку недійсних або нестабільних властивостей в екранах або перетвореннях"
+
     # gui/game/gui.rpy:17
     old "## GUI Configuration Variables"
     new "## Змінні конфігурації GUI"
@@ -357,6 +361,10 @@ translate ukrainian strings:
     old "## The position, width, and alignment of the label giving the name of the speaking character."
     new "## Положення, ширина та вирівнювання мітки, що вказує ім’я персонажа, що говорить."
 
+    # gui/game/gui.rpy:347
+    old "## Additional space to add between history screen entries."
+    new "## Додатковий простір для додавання між записами на екрані «Історія»."
+
     # gui/game/gui.rpy:352
     old "## The position, width, and alignment of the dialogue text."
     new "## Позиція, ширина та вирівнювання тексту діалогу."
@@ -432,15 +440,3 @@ translate ukrainian strings:
     # gui/game/gui.rpy:461
     old "## NVL-mode."
     new "## NVL-режим."
-
-translate ukrainian strings:
-
-    # gui/game/gui.rpy:14
-    old "## Enable checks for invalid or unstable properties in screens or transforms"
-    new "## Увімкнути перевірку недійсних або нестабільних властивостей в екранах або перетвореннях"
-
-translate ukrainian strings:
-
-    # gui/game/gui.rpy:347
-    old "## Additional space to add between history screen entries."
-    new "## Додатковий простір для додавання між записами на екрані «Історія»."
