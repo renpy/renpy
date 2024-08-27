@@ -790,7 +790,7 @@ def display_say(
 
                 slow = False
 
-                pause_callback("show_done")
+            pause_callback("show_done")
 
             if not slow:
                 slow_done()
