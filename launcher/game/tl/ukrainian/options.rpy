@@ -1,4 +1,4 @@
-﻿
+
 translate ukrainian strings:
 
     # gui/game/options.rpy:1
@@ -179,7 +179,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:183
     old "## Classify files as None to exclude them from the built distributions."
-    new "## Для виключення файлів із збірок для розповсюдження, класифікуйте їх як «None»."
+    new "## Для виключення файлів із збірки файлів розповсюдження, класифікуйте їх як «None»."
 
     # gui/game/options.rpy:191
     old "## To archive files, classify them as 'archive'."
@@ -197,10 +197,8 @@ translate ukrainian strings:
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Ім’я користувача та назва проєкту, пов’язані з проєктом itch.io, розділені скісною рискою."
 
-
 translate ukrainian strings:
 
     # gui/game/options.rpy:203
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-    new "## Для здійснення покупок у застосунку потрібен ліцензійний ключ Google Play. Його можна знайти в консолі розробника Google Play у розділі «Монетизація» > «Налаштування монетизації» > «Ліцензування»."
-
+    new "## Для здійснення внутрішньоігрового придбання потрібен ліцензійний ключ Google Play. Його можна знайти в консолі розробника Google Play у розділі «Монетизація» > «Налаштування монетизації» > «Ліцензування»."

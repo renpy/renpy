@@ -89,8 +89,6 @@ translate ukrainian strings:
     old "stack: print the return stack"
     new "stack: вивести стек повернення"
 
-translate ukrainian strings:
-
     # renpy/common/_developer/developer.rpym:51
     old "Persistent Viewer"
     new "Переглядач даних"
@@ -99,15 +97,13 @@ translate ukrainian strings:
     old "Speech Bubble Editor (Shift+B)"
     new "Редактор мовних бульбашок (Shift+B)"
 
-    # renpy/common/00console.rpy:789
-    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
-    new "help: показує цю довідку\n help <вираз>: показує підпис та документацію <виразу>"
+    # renpy/common/_developer/developer.rpym:70
+    old "Show Translation Info"
+    new "Показати відомості про переклад"
 
-    # renpy/common/00console.rpy:813
-    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
-    new "У довідці можуть бути недокументовані функції. Будь ласка, перевірте, чи функцію або\nклас, який бажаєте використати, задокументовано.\n\n"
-
-translate ukrainian strings:
+    # renpy/common/_developer/developer.rpym:73
+    old "Hide Translation Info"
+    new "Сховати відомості про переклад"
 
     # renpy/common/_developer/developer.rpym:69
     old "Show Translation Identifiers"
@@ -143,8 +139,20 @@ translate ukrainian strings:
 
     # renpy/common/_developer/developer.rpym:612
     old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
-    new "\n{color=#fff}Клацніть для копіювання.\nПеретягнуть для пересування.{/color}"
+    new "\n{color=#fff}Клацніть для копіювання.\nПеретягніть для пересування.{/color}"
 
     # renpy/common/_developer/developer.rpym:657
     old "Click to open in editor."
     new "Клацніть, щоб відкрити в редакторі."
+
+    # renpy/common/00console.rpy:725
+    old "The console is using short representations. To disable this, type 'long', and to re-enable, type 'short'"
+    new "Консоль використовує короткі представлення. Щоб вимкнути це, введіть 'long', а щоб увімкнути, введіть 'short'"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    new "help: показує цю довідку\n help <вираз>: показує підпис та документацію <виразу>"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    new "У довідці можуть бути недокументовані функції. Будь ласка, перевірте, чи бажана функція або\nклас задокументовано.\n\n"
