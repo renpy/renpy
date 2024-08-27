@@ -657,6 +657,12 @@ class Context(renpy.object.Object):
                 renpy.game.persistent._seen_ever[self.current] = True # type: ignore
                 renpy.game.seen_session[self.current] = True
 
+                tlid = renpy.game.context().translate_identifier
+                if tlid is not None and tlid not in renpy.game.persistent._seen_translates: # type: ignore
+                    renpy.game.persistent._seen_translates.add(tlid) # type: ignore
+                    renpy.game.seen_translates_count += 1
+                    renpy.game.new_translates_count += 1
+
             renpy.plog(2, "    end {} ({}:{})", type_node_name, this_node.filename, this_node.linenumber)
 
         if self.rollback and renpy.game.log:
@@ -906,7 +912,13 @@ class Context(renpy.object.Object):
         else:
             seen = renpy.game.seen_session
 
-        return self.current in seen
+        if self.current in seen:
+            return True
+
+        if renpy.game.context().translate_identifier in renpy.game.persistent._seen_translates:
+            return True
+
+        return False
 
     def do_deferred_rollback(self):
         """

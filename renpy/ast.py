@@ -2475,11 +2475,6 @@ class Translate(Node):
             next_node(self.next)
             raise Exception("Translation nodes cannot be run directly.")
 
-        if self.identifier not in renpy.game.persistent._seen_translates: # type: ignore
-            renpy.game.persistent._seen_translates.add(self.identifier) # type: ignore
-            renpy.game.seen_translates_count += 1
-            renpy.game.new_translates_count += 1
-
         next_node(self.lookup())
 
         renpy.game.context().translate_identifier = self.identifier
@@ -2555,11 +2550,6 @@ class TranslateSay(Say):
 
         if self.language is None:
 
-            if self.identifier not in renpy.game.persistent._seen_translates: # type: ignore
-                renpy.game.persistent._seen_translates.add(self.identifier) # type: ignore
-                renpy.game.seen_translates_count += 1
-                renpy.game.new_translates_count += 1
-
             # Potentially, jump to a translation.
             node = self.lookup()
 
@@ -2572,8 +2562,8 @@ class TranslateSay(Say):
         Say.execute(self)
 
         # Perform the equivalent of an endtranslate block.
-        renpy.game.context().translate_identifier = None
-        renpy.game.context().alternate_translate_identifier = None
+        #renpy.game.context().translate_identifier = None
+        #renpy.game.context().alternate_translate_identifier = None
 
     def predict(self):
         node = self.lookup()
@@ -2609,8 +2599,8 @@ class EndTranslate(Node):
     def execute(self):
         next_node(self.next)
 
-        renpy.game.context().translate_identifier = None
-        renpy.game.context().alternate_translate_identifier = None
+        #renpy.game.context().translate_identifier = None
+        #renpy.game.context().alternate_translate_identifier = None
 
 
 class TranslateString(Node):
