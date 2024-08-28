@@ -1042,7 +1042,6 @@ cdef class Render:
                     renpy.display.draw.mutated_surface(newchild)
 
             except Exception:
-                raise
                 raise Exception("Creating subsurface failed. child size = ({}, {}), crop = {!r}".format(childw, childh, crop))
 
             if child_subpixel:
