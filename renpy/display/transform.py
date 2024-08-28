@@ -194,14 +194,32 @@ class TransformState(renpy.object.Object):
         Returns the value of an attribute.
         """
 
-        rv = getattr(self, prop, None)
-        if rv is not None:
-            return rv
+        old_xpos = self.xpos
+        old_ypos = self.ypos
+        old_xanchor = self.xanchor
+        old_yanchor = self.yanchor
 
-        if prop in diff4_properties:
-            return getattr(self, "inherited_" + prop, None)
-        else:
-            return rv
+        try:
+            if self.xpos is None:
+                self.xpos = self.inherited_xpos
+
+            if self.ypos is None:
+                self.ypos = self.inherited_ypos
+
+            if self.xanchor is None:
+                self.xanchor = self.inherited_xanchor
+
+            if self.yanchor is None:
+                self.yanchor = self.inherited_yanchor
+
+            return getattr(self, prop, None)
+
+        finally:
+            self.xpos = old_xpos
+            self.ypos = old_ypos
+            self.xanchor = old_xanchor
+            self.yanchor = old_yanchor
+
 
 
     def get_placement(self, cxoffset=0, cyoffset=0):

@@ -537,39 +537,6 @@ def mark_sweep():
     live_renders = worklist
 
 
-def compute_subline(sx0, sw, cx0, cw):
-    """
-    Given a source line (start sx0, width sw) and a crop line (cx0, cw),
-    return three things:
-
-    * The offset of the portion of the source line that overlaps with
-      the crop line, relative to the crop line.
-    * The offset of the portion of the source line that overlaps with the
-      the crop line, relative to the source line.
-    * The length of the overlap in pixels. (can be <= 0)
-    """
-
-    sx1 = sx0 + sw
-    cx1 = cx0 + cw
-
-    if sx0 > cx0:
-        start = sx0
-    else:
-        start = cx0
-
-    offset = start - cx0
-    crop = start - sx0
-
-    if sx1 < cx1:
-        width = sx1 - start
-    else:
-        width = cx1 - start
-
-    return offset, crop, width
-
-
-
-
 # Possible operations that can be done as part of a render.
 BLIT = 0
 DISSOLVE = 1
@@ -915,7 +882,42 @@ cdef class Render:
 
     pygame_surface = render_to_texture
 
-    def subsurface(self, rect, focus=False, subpixel=False):
+
+    def compute_subline(self, sx, sw, cx, cw, bx, bw):
+        """
+        Given a source line (start sx0, width sw) and a crop line (cx0, cw),
+        return three things:
+
+        * The offset of the portion of the source line that overlaps with
+        the crop line, relative to the crop line.
+        * The offset of the portion of the source line that overlaps with the
+        the crop line, relative to the source line.
+        * The length of the overlap in pixels. (can be <= 0)
+        """
+
+
+        s_end = sx + sw
+        c_end = cx + cw
+
+        start = max(sx, cx)
+
+        offset = start - cx
+        crop = start - sx
+
+        end = min(s_end, c_end)
+        width = end - start
+
+        bsx = max(sx, bx)
+
+        if bsx < 0:
+            offset += bsx
+            crop += bsx
+            width -= bsx
+
+        return offset, crop, width
+
+
+    def subsurface(self, rect, focus=False, subpixel=False, bounds=None):
         """
         Returns a subsurface of this render. If `focus` is true, then
         the focuses are copied from this render to the child.
@@ -928,6 +930,14 @@ cdef class Render:
             y = int(y)
             w = int(w)
             h = int(h)
+
+        if bounds is not None:
+            bx, by, bw, bh = bounds
+        else:
+            bx = x
+            by = y
+            bw = w
+            bh = h
 
         rv = Render(w, h)
 
@@ -991,8 +1001,11 @@ cdef class Render:
             child_subpixel = subpixel or not isinstance(cx, int) or not isinstance(cy, int)
 
             childw, childh = child.get_size()
-            xo, cx, cw = compute_subline(cx, childw, x, w)
-            yo, cy, ch = compute_subline(cy, childh, y, h)
+            xo, cx, cw = self.compute_subline(cx, childw, x, w, bx, bw)
+            yo, cy, ch = self.compute_subline(cy, childh, y, h, by, bh)
+
+            cbx = bx - xo
+            cby = by - yo
 
             if cw <= 0 or ch <= 0 or w - xo <= 0 or h - yo <= 0:
                 continue
@@ -1017,7 +1030,7 @@ cdef class Render:
                         croph = h - yo
 
                     crop = (cx, cy, cropw, croph)
-                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel)
+                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel, bounds=(cbx, cby, bw, bh))
                     newchild.width = cw
                     newchild.height = ch
                     newchild.render_of = child.render_of[:]
@@ -1044,8 +1057,8 @@ cdef class Render:
                     rv.add_focus(d, arg, xo, yo, fw, fh, mx, my, mask)
                     continue
 
-                xo, cx, fw = compute_subline(xo, fw, x, w)
-                yo, cy, fh = compute_subline(yo, fh, y, h)
+                xo, cx, fw = self.compute_subline(xo, fw, x, w, bx, bw)
+                yo, cy, fh = self.compute_subline(yo, fh, y, h, by, bh)
 
                 if fw <= 0 or fh <= 0:
                     continue
@@ -1054,8 +1067,8 @@ cdef class Render:
 
                     mw, mh = mask.get_size()
 
-                    mx, mcx, mw = compute_subline(mx, mw, x, w)
-                    my, mcy, mh = compute_subline(my, mh, y, h)
+                    mx, mcx, mw = self.compute_subline(mx, mw, x, w, bx, bw)
+                    my, mcy, mh = self.compute_subline(my, mh, y, h, by, bh)
 
                     if mw <= 0 or mh <= 0:
                         mx = None
