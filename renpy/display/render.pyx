@@ -537,7 +537,7 @@ def mark_sweep():
     live_renders = worklist
 
 
-def compute_subline(sx0, sw, cx0, cw):
+def compute_subline(sx, sw, cx, cw):
     """
     Given a source line (start sx0, width sw) and a crop line (cx0, cw),
     return three things:
@@ -549,25 +549,23 @@ def compute_subline(sx0, sw, cx0, cw):
     * The length of the overlap in pixels. (can be <= 0)
     """
 
-    sx1 = sx0 + sw
-    cx1 = cx0 + cw
+    s_end = sx + sw
+    c_end = cx + cw
 
-    if sx0 > cx0:
-        start = sx0
+    if sx > cx:
+        start = sx
     else:
-        start = cx0
+        start = cx
 
-    offset = start - cx0
-    crop = start - sx0
+    offset = start - cx
+    crop = start - sx
 
-    if sx1 < cx1:
-        width = sx1 - start
+    if s_end < c_end:
+        width = s_end - start
     else:
-        width = cx1 - start
+        width = c_end - start
 
     return offset, crop, width
-
-
 
 
 # Possible operations that can be done as part of a render.
