@@ -25,6 +25,12 @@ being rapidly renamed.
 By default, synchronized start of audio now only occurs on looping channels, like music channels. The default
 can be changed on a channel-by-channel basis by supplying `synchro_start` to :func:`renpy.music.register_channel`.
 
+Other Changes
+-------------
+
+:var:`config.font_transforms` is now documented. This allows yout to define new font transforms for accessibility
+purposes.
+
 
 .. _renpy-8.3.0:
 .. _renpy-7.8.0:

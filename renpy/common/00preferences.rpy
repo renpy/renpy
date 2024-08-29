@@ -220,6 +220,8 @@ init -1500 python:
         * Preference("font transform", "dejavusans") - Sets the accessibility font transform to deja vu sans.
         * Preference("font transform", None) - Disables the accessibility font transform.
 
+        See :var:`config.font_transforms` for how to add font transforms.
+
         * Preference("font size", 1.0) - Sets the accessibility font size scaling factor.
         * Preference("font line spacing", 1.0) - Sets the accessibility font vertical spacing scaling factor.
 

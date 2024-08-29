@@ -1629,6 +1629,21 @@ Text and Fonts
     simplify and shorten ``{font}`` tags, and gives them access to the
     :ref:`fontgroup` feature.
 
+.. var:: config.font_transforms = { ... }
+
+    This is used to create new font transforms for accessibility purposes. The font transforms can be
+    activated by :func:`Preferences` using "font transform" as the first argument.
+
+    The dictionary maps strings giving the nam use to a function. The function is called with a font
+    or :class:`FontGroup` as the only argument, and is expected to return a font or font group. For
+    example, the dejavusans transform is defined as::
+
+        init python:
+            def dejavusans(f):
+                return "DejaVuSans.ttf"
+
+            config.font_transforms["dejavusans"] = dejavusans
+
 .. var:: config.font_replacement_map = { }
 
     This is a map from (font, bold, italics) to (font, bold, italics),

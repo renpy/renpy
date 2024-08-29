@@ -187,6 +187,12 @@
                 }
             },
             {
+                "scope": "renpy.meta.color.#f00",
+                "settings": {
+                    "foreground": "#f00"
+                }
+            },
+            {
                 "scope": "text.notes.info",
                 "settings": {
                     "foreground": "#17a2b8",
