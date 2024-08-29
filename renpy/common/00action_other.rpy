@@ -173,11 +173,7 @@ init -1500 python:
             self.url = url
 
         def __call__(self):
-            try:
-                import webbrowser
-                webbrowser.open_new(self.url)
-            except Exception:
-                pass
+            renpy.open_url(self.url)
 
     class With(Action, DictEquality):
         """

@@ -276,3 +276,19 @@ def request_permission(permission):
         return False
 
     return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8")) # type: ignore
+
+def open_url(url):
+    """
+    :doc: other
+
+    Opens a URL in the system's web browser, if possible.
+    """
+
+    if not renpy.mobile:
+        renpy.game.preferences.fullscreen = False
+
+    try:
+        import webbrowser
+        webbrowser.open_new(url)
+    except Exception:
+        pass
