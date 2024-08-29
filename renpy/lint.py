@@ -343,6 +343,9 @@ check_file_cache = { }
 
 def check_file(what, fn, directory=None):
 
+    if not isinstance(fn, basestring):
+        return
+
     present = check_file_cache.get(fn, None)
     if present is True:
         return
