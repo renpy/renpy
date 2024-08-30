@@ -230,11 +230,7 @@ init -1500 python:
         if protocol in config.hyperlink_handlers:
             return config.hyperlink_handlers[protocol](value)
         else:
-            try:
-                import webbrowser
-                webbrowser.open(target)
-            except Exception:
-                pass
+            renpy.open_url(target)
 
     def hyperlink_sensitive(target):
 

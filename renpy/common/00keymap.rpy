@@ -275,21 +275,18 @@ init -1600 python:
             renpy.call_in_new_context(help)
             return
 
-        _preferences.fullscreen = False
-
         try:
-            import webbrowser
             import os
 
             if help.startswith('http://') or help.startswith('https://'):
-                webbrowser.open_new(help)
+                renpy.open_url(help)
                 return
 
             file_path = os.path.join(config.basedir, help)
             if not os.path.isfile(file_path):
                 return
 
-            webbrowser.open_new("file:///" + file_path)
+            renpy.open_url("file:///" + file_path)
         except Exception:
             pass
 

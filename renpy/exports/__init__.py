@@ -495,6 +495,7 @@ from renpy.exports.platformexports import (
     request_permission,
     variant,
     vibrate,
+    open_url,
 )
 
 from renpy.exports.predictexports import (

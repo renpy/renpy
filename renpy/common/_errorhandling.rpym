@@ -284,11 +284,7 @@ init python:
 
     def _error_hyperlink_function(target):
         if target.startswith("http:") or target.startswith("https:"):
-            try:
-                import webbrowser
-                webbrowser.open(target)
-            except Exception:
-                pass
+            renpy.open_url(target)
 
         if target.startswith("edit:"):
             prefix, line, filename = target.split(":", 2)
