@@ -910,6 +910,9 @@ cdef class Render:
         bsx = max(sx, bx)
 
         if bsx < 0:
+            print(bsx, sx, bx)
+
+        if bsx < 0:
             offset += bsx
             crop += bsx
             width -= bsx
@@ -1020,11 +1023,19 @@ cdef class Render:
                 if isinstance(child, Render):
 
                     if child.xclipping:
+                        end = min(cw, cbx+bw)
+                        cbx = max(0, cbx)
+                        bw = end - cbx
+
                         cropw = cw
                     else:
                         cropw = w - xo
 
                     if child.yclipping:
+                        end = min(ch, cby+bh)
+                        cby = max(0, cby)
+                        bh = end - cby
+
                         croph = ch
                     else:
                         croph = h - yo
@@ -1042,6 +1053,7 @@ cdef class Render:
                     renpy.display.draw.mutated_surface(newchild)
 
             except Exception:
+                raise
                 raise Exception("Creating subsurface failed. child size = ({}, {}), crop = {!r}".format(childw, childh, crop))
 
             if child_subpixel:
