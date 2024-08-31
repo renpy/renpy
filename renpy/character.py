@@ -43,11 +43,12 @@ class Callbacks(object):
     This stores and calls the character callbacks.
     """
 
-    def __init__(self, callbacks, interact, type, cb_args):
+    def __init__(self, callbacks, interact, type, cb_args, multiple):
         self.callbacks = callbacks
         self.interact = interact
         self.type = type
         self.cb_args = cb_args
+        self.multiple = multiple # type: tuple[int, int]|None
 
         self.what = None # type: str|None
         self.start = None # type: int|None
@@ -79,6 +80,9 @@ class Callbacks(object):
             if self.last_segment is not None:
                 kwargs["last_segment"] = self.last_segment
 
+            if  self.multiple is not None:
+                kwargs["multiple"] = self.multiple
+
             kwargs["please_ignore_unknown_keyword_arguments"] = None
 
         kwargs.update(self.cb_args)
@@ -87,7 +91,7 @@ class Callbacks(object):
             c(*args, **kwargs)
 
     def copy(self):
-        rv = Callbacks(self.callbacks, self.interact, self.type, self.cb_args)
+        rv = Callbacks(self.callbacks, self.interact, self.type, self.cb_args, self.multiple)
         rv.__dict__.update(self.__dict__)
         return rv
 
@@ -566,7 +570,7 @@ def display_say(
         callback = [ callback ]
 
     callback = renpy.config.all_character_callbacks + callback
-    callback = Callbacks(callback, interact, type, cb_args)
+    callback = Callbacks(callback, interact, type, cb_args, multiple)
 
     roll_forward = renpy.exports.roll_forward_info()
 
