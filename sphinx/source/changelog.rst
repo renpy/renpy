@@ -31,6 +31,8 @@ Other Changes
 :var:`config.font_transforms` is now documented. This allows yout to define new font transforms for accessibility
 purposes.
 
+The multiple argument is now supplied to :doc:`character_callbacks`.
+
 
 .. _renpy-8.3.0:
 .. _renpy-7.8.0:
