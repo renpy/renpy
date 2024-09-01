@@ -433,7 +433,9 @@ cdef class Live2DModel:
             memcpy(mesh.attribute, self.drawable_vertex_uvs[i], sizeof(float) * mesh.points * 2)
 
             mesh.triangles = self.drawable_index_counts[i] // 3
-            memcpy(mesh.triangle, self.drawable_indices[i],  sizeof(unsigned short) * mesh.triangles * 3)
+
+            for 0 <= j < mesh.triangles * 3:
+                mesh.triangle[j] = self.drawable_indices[i][j]
 
             tex = textures[self.drawable_texture_indices[i]]
 

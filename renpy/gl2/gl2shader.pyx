@@ -423,7 +423,7 @@ cdef class Program:
                 glBlendEquationSeparate(rgb_eq, alpha_eq)
                 glBlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha)
 
-        glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
+        glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
 
         if properties:
 
