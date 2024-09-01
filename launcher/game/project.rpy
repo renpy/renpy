@@ -116,7 +116,7 @@ init python in project:
 
             try:
                 with open(os.path.join(self.path, "project.json"), "w") as f:
-                    json.dump(self.data, f)
+                    json.dump(self.data, f, indent=2)
             except Exception:
                 self.load_data()
 
