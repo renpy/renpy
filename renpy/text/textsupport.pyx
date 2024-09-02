@@ -887,6 +887,7 @@ def assign_index(index, list glyphs):
     return index
 
 
+
 def hyperlink_areas(list l):
     """
     Returns a list of (hyperlink, x, y, w, h, valid_st) tuples, where each entry in

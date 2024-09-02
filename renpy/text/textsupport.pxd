@@ -107,7 +107,7 @@ cdef class Glyph:
         public object shader
 
         # The index of this displayable - the order in which it is shown.
-        public short index
+        public int index
 
 
 cdef class Line:
