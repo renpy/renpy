@@ -37,6 +37,8 @@ import renpy.text.font as font
 import renpy.text.extras as extras
 from renpy.text.emoji_trie import emoji, UNQUALIFIED
 
+from renpy.gl2.gl2polygon import Polygon
+
 from _renpybidi import log2vis, WRTL, RTL, ON # @UnresolvedImport
 
 BASELINE = -65536
@@ -85,7 +87,6 @@ class TextMeshDisplayable(renpy.display.core.Displayable):
     def render(self, width, height, st, at):
 
         rv = renpy.display.render.Render(self.width, self.height)
-        rv.mesh = self.mesh
 
         rv.add_shader("renpy.texture")
 
@@ -100,7 +101,30 @@ class TextMeshDisplayable(renpy.display.core.Displayable):
 
             rv.add_uniform(k, v)
 
-        rv.absolute_blit(self.tex, (0, 0))
+        if not isinstance(self.tex, renpy.display.render.Render):
+
+            # Single texture case.
+
+            rv.absolute_blit(self.tex, (0, 0))
+            rv.mesh = self.mesh
+
+        else:
+
+            # Texture grid case.
+
+            for tex, x, y, focus, main in self.tex.children:
+                w, h = tex.get_size()
+                cmesh = self.mesh.crop(Polygon.rectangle(x, y, w, h))
+                cmesh.remap_texture(
+                    0, 0, self.width, self.height,
+                    x, y, w, h,
+                )
+
+                cr = renpy.display.render.Render(w, h)
+                cr.mesh = cmesh
+                cr.absolute_blit(tex, (0, 0))
+
+                rv.absolute_blit(cr, (x, y))
 
         return rv
 
