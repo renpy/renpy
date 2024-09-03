@@ -78,8 +78,8 @@ cdef class Mesh2(Mesh):
 
     def __repr__(Mesh2 self):
 
-        cdef unsigned int i
-        cdef unsigned int j
+        cdef int i
+        cdef int j
 
         rv = "<Mesh2 {!r}".format(self.layout.offset)
 
@@ -379,6 +379,17 @@ cdef class Mesh2(Mesh):
         """
 
         return crop_mesh(self, p)
+
+    def offset_texture(self, xo, yo):
+        """
+        Offsets the texture coordinates of this mesh by the given amount.
+        """
+
+        cdef int i
+
+        for 0 <= i < self.points:
+            self.attribute[i * self.layout.stride + 0] += xo
+            self.attribute[i * self.layout.stride + 1] += yo
 
     def get_points(Mesh2 self):
         """

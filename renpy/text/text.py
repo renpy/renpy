@@ -1789,14 +1789,6 @@ class Layout(object):
 
             top = bottom
 
-        r = renpy.display.render.Render(tw, th)
-        r.absolute_blit(tex, (0, 0))
-        r.mesh = mesh
-        r.add_shader("renpy.texture")
-
-        for i in ts.shader:
-            r.add_shader(i)
-
         main = (depth == 0)
 
         # (name, value, is_displayable)
