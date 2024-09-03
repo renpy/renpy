@@ -110,21 +110,21 @@ class TextMeshDisplayable(renpy.display.core.Displayable):
 
         else:
 
-            # Texture grid case.
-
             for tex, x, y, focus, main in self.tex.children:
                 w, h = tex.get_size()
-                cmesh = self.mesh.crop(Polygon.rectangle(x, y, w, h))
+
+                cmesh = self.mesh.crop(Polygon.rectangle(x, y+h, x+w, y))
+
                 cmesh.remap_texture(
                     0, 0, self.width, self.height,
                     x, y, w, h,
                 )
 
-                cr = renpy.display.render.Render(w, h)
+                cr = renpy.display.render.Render(self.width, self.height)
                 cr.mesh = cmesh
-                cr.absolute_blit(tex, (0, 0))
 
-                rv.absolute_blit(cr, (x, y))
+                cr.absolute_blit(tex, (0, 0))
+                rv.absolute_blit(cr, (0, 0))
 
         return rv
 
