@@ -358,6 +358,16 @@ def is_skipping():
     return not not renpy.config.skipping
 
 
+def stop_skipping():
+    """
+    :doc: other
+
+    Stops skipping, if Ren'Py is currently skipping.
+    """
+
+    renpy.config.skipping = None
+
+
 def is_init_phase():
     """
     :doc: other

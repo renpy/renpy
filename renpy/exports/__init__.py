@@ -335,6 +335,7 @@ from renpy.exports.contextexports import (
     pop_return,
     scry,
     set_return_stack,
+    stop_skipping,
 )
 
 from renpy.exports.debugexports import (

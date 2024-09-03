@@ -77,8 +77,8 @@ cdef class Mesh3(Mesh):
 
     def __repr__(Mesh3 self):
 
-        cdef unsigned int i
-        cdef unsigned int j
+        cdef int i
+        cdef int j
 
         rv = "<Mesh3 {!r}".format(self.layout.offset)
 
@@ -217,7 +217,6 @@ cdef class Mesh3(Mesh):
             return (0.0, 0.0, 0.0, 1.0)
         else:
             return (self.point[0].x, self.point[0].y, self.point[0].z, 1.0)
-
 
 ###############################################################################
 # Mesh cropping.
