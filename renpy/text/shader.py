@@ -266,6 +266,9 @@ def create_textshader_args_dict(name, shader, s):
         if not uniform.startswith("u_"):
             uniform = "u_" + uniform
 
+        if uniform.startswith("u__"):
+            uniform = uniform[:2] + "textshader_" + name.replace(".", "_") + uniform[2:]
+
         for k, v in shader.uniforms:
             if k == uniform:
                 break

@@ -69,8 +69,6 @@ def register_shader(name, **kwargs):
     return ShaderPart(name, **kwargs)
 
 
-
-
 class ShaderPart(object):
     """
     Arguments are as for register_shader.
