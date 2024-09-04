@@ -110,14 +110,19 @@ class TextMeshDisplayable(renpy.display.core.Displayable):
 
         else:
 
-            for tex, x, y, focus, main in self.tex.children:
+            for model, x, y, focus, main in self.tex.children:
+                tex = model.uniforms["tex0"]
                 w, h = tex.get_size()
+
+                # Adjust the size for the texture borders.
+                w -= tex.bl + tex.br
+                h -= tex.bt + tex.bb
 
                 cmesh = self.mesh.crop(Polygon.rectangle(x, y+h, x+w, y))
 
                 cmesh.remap_texture(
                     0, 0, self.width, self.height,
-                    x, y, w, h,
+                    x - tex.bl, y - tex.bt, w + tex.bl + tex.br, h + tex.bt + tex.bb,
                 )
 
                 cr = renpy.display.render.Render(self.width, self.height)
@@ -125,6 +130,7 @@ class TextMeshDisplayable(renpy.display.core.Displayable):
 
                 cr.absolute_blit(tex, (0, 0))
                 rv.absolute_blit(cr, (0, 0))
+
 
         return rv
 
