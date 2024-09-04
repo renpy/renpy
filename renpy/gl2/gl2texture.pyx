@@ -113,6 +113,12 @@ cdef class TextureLoader:
         rv.from_surface(surf, properties)
 
         if bl or bt or br or bb:
+
+            rv.bl = bl
+            rv.bt = bt
+            rv.br = br
+            rv.bb = bb
+
             w, h = size
 
             pw = w - bl - br
@@ -127,6 +133,7 @@ cdef class TextureLoader:
                 mesh = Mesh2.texture_rectangle(
                     0.0, 0.0, pw, ph,
                     0.0, 0.0, 0.0, 0.0)
+
 
             rv = GL2Model((pw, ph), mesh, ("renpy.texture",), { "tex0" : rv, "res0" : (rv.texture_width, rv.texture_height) })
 
@@ -275,6 +282,12 @@ cdef class GLTexture(GL2Model):
 
         # Update the loader.
         self.loader = loader
+
+        # Borders.
+        self.bl = 0
+        self.bt = 0
+        self.br = 0
+        self.bb = 0
 
         if renpy.emscripten and generate:
             # Generate a texture name to access video frames for web

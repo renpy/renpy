@@ -73,4 +73,10 @@ cdef class GLTexture(GL2Model):
     cdef public int texture_width
     cdef public int texture_height
 
+    # Borders
+    cdef public int bl
+    cdef public int bt
+    cdef public int br
+    cdef public int bb
+
     cpdef subsurface(GLTexture self, t)
