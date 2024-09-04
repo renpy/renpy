@@ -91,10 +91,12 @@ class AudioData(str):
     """
     :doc: audio
 
-    This class wraps a bytes object containing audio data, so it can be
-    passed to the audio playback system. The audio data should be contained
+    This class wraps a bytes object containing audio or video data, so it can be
+    passed to the audio/video playback system. The audio or video data should be contained
     in some format Ren'Py supports. (For examples RIFF WAV format headers,
     not unadorned samples.)
+
+    Despite the name, this can be used to represent video data as well as audio data.
 
     `data`
         A bytes object containing the audio file data.
@@ -103,6 +105,9 @@ class AudioData(str):
         A synthetic filename associated with this data. It can be used to
         suggest the format `data` is in, and is reported as part of
         error messages.
+
+        If this starts with angle bracket, it can supply properties to
+        the audio, like from and to times.
 
     Once created, this can be used wherever an audio filename is allowed. For
     example::
@@ -395,8 +400,7 @@ class Channel(object):
             except Exception:
                 raise exception("expected channel, got {!r}.".format(v))
 
-        if isinstance(filename, AudioData):
-            return filename, 0, -1
+        original_filename = filename
 
         m = re.match(r'<(.*)>(.*)', filename)
         if not m:
@@ -436,6 +440,9 @@ class Channel(object):
 
         if (loop is not None) and looped:
             start = loop
+
+        if isinstance(original_filename, AudioData):
+            fn = AudioData(original_filename.data, fn)
 
         return fn, start, end
 
