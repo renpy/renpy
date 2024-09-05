@@ -13,7 +13,15 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+Invoking local shaders in shaders tags now works.
+
+Textshaders now work with very large sizes and numbers of characters.
+
 Fast-skipping when slow-skipping (or vice versa) now cancels skipping.
+
+Lint avoids checking non-files as files.
+
+The show_done character callback is now called and documented.
 
 The web version of Ren'Py now saves persistent data when the screen is idle for .33 seconds.
 
@@ -27,6 +35,15 @@ can be changed on a channel-by-channel basis by supplying `synchro_start` to :fu
 
 Other Changes
 -------------
+
+On PC, Ren'Py will disable fullscreen when open a URL.
+
+It is now possible to clip displayabes that are posisioned at negative offsets to the parent, provided the
+displayable does not exit the clip rectangle.
+
+:class:`AudioData` now explicitly supports video, and supports properties inside angles (like <from 1.0 to 6.0>).
+
+The `multiple` argument to character is now passed to character callbacks.
 
 :var:`config.font_transforms` is now documented. This allows yout to define new font transforms for accessibility
 purposes.
