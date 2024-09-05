@@ -910,9 +910,6 @@ cdef class Render:
         bsx = max(sx, bx)
 
         if bsx < 0:
-            print(bsx, sx, bx)
-
-        if bsx < 0:
             offset += bsx
             crop += bsx
             width -= bsx
