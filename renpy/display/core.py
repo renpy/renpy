@@ -1201,24 +1201,15 @@ class Interface(object):
         renpy.config.renderer = renderer
 
         if renpy.android or renpy.ios or renpy.emscripten:
-            renderers = [ "gles" ]
+            renderers = [ "gles2" ]
         elif renpy.windows:
-            renderers = [ "gl", "angle", "gles" ]
+            renderers = [ "gl2", "angle2", "gles2" ]
         else:
-            renderers = [ "gl", "gles" ]
-
-        gl2_renderers = [ ]
-
-        for i in [ "gl", "angle", "gles" ]:
-
-            if i in renderers:
-                gl2_renderers.append(i + "2")
-
-        renderers = gl2_renderers + renderers
+            renderers = [ "gl2", "gles2" ]
 
         # Prevent a performance warning if the renderer
         # is taken from old persistent data.
-        if renderer not in gl2_renderers and (renpy.macintosh or renpy.android or renpy.config.gl2):
+        if renderer not in renderers and (renpy.macintosh or renpy.android or renpy.config.gl2):
             renderer = "auto"
 
         # Software renderer is the last hope for PC .
@@ -1253,10 +1244,6 @@ class Interface(object):
                 renpy.display.log.exception()
 
                 return False
-
-        make_draw("gl", "renpy.gl.gldraw", "GLDraw", "gl")
-        make_draw("angle", "renpy.gl.gldraw", "GLDraw", "angle")
-        make_draw("gles", "renpy.gl.gldraw", "GLDraw", "gles")
 
         make_draw("gl2", "renpy.gl2.gl2draw", "GL2Draw", "gl2")
         make_draw("angle2", "renpy.gl2.gl2draw", "GL2Draw", "angle2")

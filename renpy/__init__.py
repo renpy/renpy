@@ -223,7 +223,6 @@ backup_blacklist = {
     "renpy.test.testmouse",
     "renpy.test.testparser",
     "renpy.gl2",
-    "renpy.gl",
     "renpycoverage",
     }
 
@@ -479,7 +478,6 @@ def import_all():
 
     sys.modules[pystr('renpy.display.text')] = renpy.text.text
 
-    import renpy.gl
     import renpy.gl2
 
     import renpy.display.layout

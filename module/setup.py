@@ -174,12 +174,6 @@ cython("renpy.display.quaternion", libs=[ 'm' ])
 cython("renpy.uguu.gl", libs=sdl)
 cython("renpy.uguu.uguu", libs=sdl)
 
-cython("renpy.gl.gldraw", libs=sdl)
-cython("renpy.gl.gltexture", libs=sdl)
-cython("renpy.gl.glenviron_shader", libs=sdl)
-cython("renpy.gl.glrtt_copy", libs=sdl)
-cython("renpy.gl.glrtt_fbo", libs=sdl)
-
 cython("renpy.gl2.gl2mesh")
 cython("renpy.gl2.gl2mesh2")
 cython("renpy.gl2.gl2mesh3")
