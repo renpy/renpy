@@ -27,8 +27,7 @@ init -1500:
     python:
         class _SetRenderer(Action):
             """
-            Sets the preferred renderer to one of "auto", "angle", "gl", or
-            "sw".
+            Sets the preferred renderer.
             """
 
             def __init__(self, renderer):
@@ -94,24 +93,6 @@ init -1500:
                     textbutton _("Automatically Choose"):
                         action _SetRenderer("auto")
                         style_suffix "radio_button"
-
-                    if not config.gl2:
-
-                        if gl:
-                            textbutton _("Force GL Renderer"):
-                                action _SetRenderer("gl")
-                                style_suffix "radio_button"
-
-                        if angle:
-                            textbutton _("Force ANGLE Renderer"):
-                                action _SetRenderer("angle")
-                                style_suffix "radio_button"
-
-                        if gles:
-                            textbutton _("Force GLES Renderer"):
-                                action _SetRenderer("gles")
-                                style_suffix "radio_button"
-
 
                     if gl:
                         textbutton _("Force GL2 Renderer"):
@@ -349,14 +330,9 @@ init -1500 python:
 
         renderer_info = renpy.get_renderer_info()
 
-         # Software renderer check.
+        # Software renderer check.
         if config.renderer != "sw" and renderer_info["renderer"] == "sw":
             problem = "sw"
-            allow_continue = False
-
-        # Game require gl2 that wasn't initialized.
-        elif config.gl2 and not renderer_info.get("models", False):
-            problem = "gl2"
             allow_continue = False
 
         if problem is None:

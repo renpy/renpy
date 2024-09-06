@@ -88,9 +88,6 @@ def init():
     if live2dmodel is None:
         raise Exception("Live2D has not been built.")
 
-    if not renpy.config.gl2:
-        raise Exception("Live2D requires that config.gl2 be True.")
-
     if renpy.emscripten:
         raise Exception("Live2D is not supported the web platform.")
 

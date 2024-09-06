@@ -1209,7 +1209,7 @@ class Interface(object):
 
         # Prevent a performance warning if the renderer
         # is taken from old persistent data.
-        if renderer not in renderers and (renpy.macintosh or renpy.android or renpy.config.gl2):
+        if renderer not in renderers:
             renderer = "auto"
 
         # Software renderer is the last hope for PC .
@@ -1351,7 +1351,6 @@ class Interface(object):
             raise Exception("Could not set video mode.")
 
         renpy.session["renderer"] = draw.info["renderer"]
-        renpy.game.persistent._gl2 = renpy.config.gl2
 
         if renpy.android:
             android.init()

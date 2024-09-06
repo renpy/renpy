@@ -60,8 +60,6 @@ def init_display():
     The minimum amount of code required to init the display.
     """
 
-    renpy.config.gl2 = getattr(renpy.game.persistent, "_gl2", True)
-
     # Ensure we have correctly-typed preferences.
     renpy.game.preferences.check()
 

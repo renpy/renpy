@@ -217,7 +217,6 @@ init -1100 python:
 
         if version <= (7, 4, 4):
             config.pause_after_rollback = True
-            config.gl2 = False
             config.gl_lod_bias = -1.0
             config.who_what_sub_compat = 1
 
