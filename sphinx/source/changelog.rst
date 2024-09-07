@@ -13,6 +13,9 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+Image keywords (``zorder``, ``behind``, ``at``, ``onlayer``, and ``transform``) may not occur in an expression,
+like a list after ``at``.
+
 Using local shader variables by name in {shader} tags now works.
 
 Textshaders now work with very large sizes and numbers of characters.

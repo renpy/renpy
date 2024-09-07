@@ -98,20 +98,20 @@ def parse_image_name(l, string=False, nodash=False):
     return tuple(rv)
 
 
-def parse_simple_expression_list(l):
+def parse_simple_expression_list(l, image=False):
     """
     This parses a comma-separated list of simple_expressions, and
     returns a list of strings. It requires at least one
     simple_expression be present.
     """
 
-    rv = [ l.require(l.simple_expression) ]
+    rv = [ l.require(l.simple_expression, image=image) ]
 
     while True:
         if not l.match(','):
             break
 
-        e = l.simple_expression()
+        e = l.simple_expression(image=image)
 
         if not e:
             break
@@ -133,7 +133,7 @@ def parse_image_specifier(l):
     behind = [ ]
 
     if l.keyword("expression") or l.keyword("image"):
-        expression = l.require(l.simple_expression)
+        expression = l.require(l.simple_expression, image=True)
         image_name = (expression.strip(),)
     else:
         image_name = parse_image_name(l, True)
@@ -154,7 +154,7 @@ def parse_image_specifier(l):
             if at_list:
                 l.error("multiple at clauses are prohibited.")
             else:
-                at_list = parse_simple_expression_list(l)
+                at_list = parse_simple_expression_list(l, image=True)
 
             continue
 
@@ -172,7 +172,7 @@ def parse_image_specifier(l):
             if zorder is not None:
                 l.error("multiple zorder clauses are prohibited.")
             else:
-                zorder = l.require(l.simple_expression)
+                zorder = l.require(l.simple_expression, image=True)
 
             continue
 

@@ -1439,7 +1439,7 @@ class Lexer(object):
 
         return self.filename, self.number
 
-    def require(self, thing, name=None):
+    def require(self, thing, name=None, **kwargs):
         """
         Tries to parse thing, and reports an error if it cannot be done.
 
@@ -1452,10 +1452,14 @@ class Lexer(object):
             name = name or thing
             rv = self.match(thing)
         else:
-            name = name or thing.__func__.__name__
-            rv = thing()
+            rv = thing(**kwargs)
 
         if rv is None:
+            if isinstance(thing, basestring):
+                name = name or thing
+            else:
+                name = name or thing.__func__.__name__
+
             self.error("expected '%s' not found." % name)
 
         return rv
