@@ -249,12 +249,8 @@ def dump(error):
     if filename != "-":
         new = filename + ".new"
 
-        if PY2:
-            with open(new, "wb") as f:
-                json.dump(result, f) # type: ignore
-        else:
-            with open(new, "w") as f:
-                json.dump(result, f)
+        with open(new, "w") as f:
+            json.dump(result, f)
 
         if os.path.exists(filename):
             os.unlink(filename)

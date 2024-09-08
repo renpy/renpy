@@ -499,10 +499,7 @@ label _filename_list:
 
                 for fn in files:
                     fn = os.path.join(dirname, fn)
-                    if PY2:
-                        fn = fn.encode("utf-8", "replace")
                     print(fn, file=f)
-                    print(fn)
 
         renpy.launch_editor([ FILES_TXT ], transient=1)
 

@@ -351,13 +351,6 @@ def reset_store_changes(name):
 # Code that replaces literals will calls to magic constructors.
 
 
-def b(s):
-    if PY2:
-        return s.encode("utf-8")
-    else:
-        return s
-
-
 class LoadedVariables(ast.NodeVisitor):
     """
     This is used to implement find_loaded_variables.
@@ -368,15 +361,9 @@ class LoadedVariables(ast.NodeVisitor):
             self.loaded.add(node.id)
         elif isinstance(node.ctx, ast.Store):
             self.stored.add(node.id)
-        elif PY2 and isinstance(node.ctx, ast.Param):
-            # there's no guarantee that ast.Param will keep existing in future versions of python3
-            # it's only present in asts made in py2
-            self.stored.add(node.id)
 
-    if not PY2:
-        # we could remove this if, but the method wouldn't be called in py2 anyway
-        def visit_arg(self, node):
-            self.stored.add(node.arg)
+    def visit_arg(self, node):
+        self.stored.add(node.arg)
 
     def find(self, node):
         self.loaded = set()
@@ -470,52 +457,25 @@ class WrapNode(ast.NodeTransformer):
         call_args =[ ]
 
         for var in variables:
-            if PY2:
-                lambda_args.append(ast.Name(id=var, ctx=ast.Param()))
-            else:
-                lambda_args.append(ast.arg(arg=var))
-
+            lambda_args.append(ast.arg(arg=var))
             call_args.append(ast.Name(id=var, ctx=ast.Load()))
 
-        if PY2:
-
-            return ast.Call(
-                func=ast.Lambda(
-                    args=ast.arguments(
-                        args=lambda_args,
-                        vararg=None,
-                        kwarg=None,
-                        defaults=[]
-                    ),
-                    body=node,
+        return ast.Call(
+            func=ast.Lambda(
+                args=ast.arguments(
+                    posonlyargs=[ ],
+                    args=lambda_args,
+                    kwonlyargs=[ ],
+                    kw_defaults=[ ],
+                    defaults=[ ],
                 ),
-                args=call_args,
-                keywords=[ ],
-                starargs=None,
-                kwargs=None,
-            )
-
-        else:
-
-            return ast.Call(
-                func=ast.Lambda(
-                    args=ast.arguments(
-                        posonlyargs=[ ],
-                        args=lambda_args,
-                        kwonlyargs=[ ],
-                        kw_defaults=[ ],
-                        defaults=[ ],
-                    ),
-                    body=node,
-                ),
-                args=call_args,
-                keywords=[ ],
-            )
+                body=node,
+            ),
+            args=call_args,
+            keywords=[ ],
+        )
 
     def wrap_starred_assign(self, n, targets):
-
-        if PY2:
-            return n
 
         starred = find_starred_variables(targets)
 
@@ -528,7 +488,7 @@ class WrapNode(ast.NodeTransformer):
 
             call = ast.Call(
                 func=ast.Name(
-                    id=b("__renpy__list__"),
+                    id="__renpy__list__",
                     ctx=ast.Load()
                     ),
                 args=[
@@ -554,9 +514,6 @@ class WrapNode(ast.NodeTransformer):
 
     def wrap_starred_for(self, node):
 
-        if PY2:
-            return node
-
         starred = find_starred_variables([ node.target ])
 
         if not starred:
@@ -566,7 +523,7 @@ class WrapNode(ast.NodeTransformer):
 
             call = ast.Call(
                 func=ast.Name(
-                    id=b("__renpy__list__"),
+                    id="__renpy__list__",
                     ctx=ast.Load()
                     ),
                 args=[
@@ -588,9 +545,6 @@ class WrapNode(ast.NodeTransformer):
 
     def wrap_starred_with(self, node):
 
-        if PY2:
-            return node
-
         optional_vars = [ ]
 
         for i in node.items:
@@ -609,7 +563,7 @@ class WrapNode(ast.NodeTransformer):
 
             call = ast.Call(
                 func=ast.Name(
-                    id=b("__renpy__list__"),
+                    id="__renpy__list__",
                     ctx=ast.Load()
                     ),
                 args=[
@@ -656,7 +610,7 @@ class WrapNode(ast.NodeTransformer):
         n = self.generic_visit(n)
 
         if not n.bases: # type: ignore
-            n.bases.append(ast.Name(id=b("object"), ctx=ast.Load())) # type: ignore
+            n.bases.append(ast.Name(id="object", ctx=ast.Load())) # type: ignore
 
         return n
 
@@ -666,7 +620,7 @@ class WrapNode(ast.NodeTransformer):
     def visit_SetComp(self, n):
         return ast.Call(
             func=ast.Name(
-                id=b("__renpy__set__"),
+                id="__renpy__set__",
                 ctx=ast.Load()
                 ),
             args=[ self.wrap_generator(n) ],
@@ -678,7 +632,7 @@ class WrapNode(ast.NodeTransformer):
 
         return ast.Call(
             func=ast.Name(
-                id=b("__renpy__set__"),
+                id="__renpy__set__",
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -690,7 +644,7 @@ class WrapNode(ast.NodeTransformer):
 
         return ast.Call(
             func=ast.Name(
-                id=b("__renpy__list__"),
+                id="__renpy__list__",
                 ctx=ast.Load()
                 ),
             args=[ self.wrap_generator(n) ],
@@ -704,7 +658,7 @@ class WrapNode(ast.NodeTransformer):
 
         return ast.Call(
             func=ast.Name(
-                id=b("__renpy__list__"),
+                id="__renpy__list__",
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -715,7 +669,7 @@ class WrapNode(ast.NodeTransformer):
     def visit_DictComp(self, n):
         return ast.Call(
             func=ast.Name(
-                id=b("__renpy__dict__"),
+                id="__renpy__dict__",
                 ctx=ast.Load()
                 ),
             args=[ self.wrap_generator(n) ],
@@ -727,7 +681,7 @@ class WrapNode(ast.NodeTransformer):
 
         return ast.Call(
             func=ast.Name(
-                id=b("__renpy__dict__"),
+                id="__renpy__dict__",
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -1011,10 +965,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             py = source.py
 
     if py is None:
-        if PY2:
-            py = 2
-        else:
-            py = 3
+        py = 3
 
     if cache:
         key = (lineno, filename, str(source), mode, renpy.script.MAGIC)
@@ -1064,7 +1015,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
         flags = file_compiler_flags.get(filename, 0)
 
-        if (not PY2) or flags:
+        if flags:
 
             flags |= new_compile_flags
 
@@ -1252,20 +1203,6 @@ class StoreProxy(object):
 def method_unpickle(obj, name):
     return getattr(obj, name)
 
-if PY2:
-
-    # Code for pickling bound methods.
-    def method_pickle(method):
-        name = method.im_func.__name__
-
-        obj = method.im_self
-
-        if obj is None:
-            obj = method.im_class
-
-        return method_unpickle, (obj, name)
-
-    copyreg.pickle(types.MethodType, method_pickle)
 
 # Code for pickling modules.
 

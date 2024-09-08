@@ -1278,9 +1278,6 @@ def get_refresh_rate(precision=5):
         to 1 disables this.
     """
 
-    if PY2:
-        precision = float(precision)
-
     info = renpy.display.get_info()
     rv = info.refresh_rate # type: ignore
     rv = round(rv / precision) * precision

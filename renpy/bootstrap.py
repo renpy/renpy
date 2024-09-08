@@ -37,12 +37,6 @@ FSENCODING = sys.getfilesystemencoding() or "utf-8"
 old_stdout = sys.stdout
 old_stderr = sys.stderr
 
-if PY2:
-    sys_executable = sys.executable
-    reload(sys) # type: ignore
-    sys.setdefaultencoding("utf-8") # type: ignore
-    sys.executable = sys_executable
-
 def _setdefaultencoding(name):
     """
     This is install in sys to prevent games from trying to change the default
@@ -377,10 +371,7 @@ You may be using a system install of python. Please run {0}.sh,
                     if hasattr(sys, "renpy_executable"):
                         subprocess.Popen([sys.renpy_executable] + sys.argv[1:]) # type: ignore
                     else:
-                        if PY2:
-                            subprocess.Popen([sys.executable, "-EO"] + sys.argv)
-                        else:
-                            subprocess.Popen([sys.executable] + sys.argv)
+                        subprocess.Popen([sys.executable] + sys.argv)
 
             except renpy.game.ParseErrorException:
                 pass

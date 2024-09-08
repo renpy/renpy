@@ -173,7 +173,7 @@ init -1800:
         adjust_spacing True
         emoji_font "TwemojiCOLRv0.ttf"
         prefer_emoji True
-        shaper ("harfbuzz" if (not PY2) else "freetype")
+        shaper "harfbuzz"
 
         # Window properties
         background None

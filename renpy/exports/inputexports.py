@@ -122,7 +122,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     fixed = renpy.exports.in_fixed_rollback()
 
-    if (not PY2) and renpy.emscripten and renpy.config.web_input and not fixed:
+    if renpy.emscripten and renpy.config.web_input and not fixed:
         return web_input(prompt, default, allow, exclude, length, bool(mask))
 
     renpy.exports.mode('input')

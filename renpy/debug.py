@@ -36,10 +36,7 @@ import builtins
 import io
 import time
 
-if PY2:
-    real_open = io.open
-else:
-    real_open = builtins.open
+real_open = builtins.open
 
 report = True
 

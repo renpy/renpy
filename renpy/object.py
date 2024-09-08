@@ -26,12 +26,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 
 # Allow pickling NoneType.
-if PY2:
-    import __builtin__ # type: ignore
-    __builtin__.NoneType = type(None)
-else:
-    import builtins
-    builtins.NoneType = type(None) # type: ignore
+import builtins
+builtins.NoneType = type(None) # type: ignore
 
 
 class Object(object):

@@ -2827,7 +2827,7 @@ class Interface(object):
                         renpy.game.preferences.fullscreen = False
 
                     if renpy.game.preferences.fullscreen != self.fullscreen:
-                        if (not PY2) and renpy.emscripten:
+                        if renpy.emscripten:
                             if renpy.game.preferences.fullscreen:
                                 emscripten.run_script("setFullscreen(true);")
                             else:

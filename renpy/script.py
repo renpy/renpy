@@ -47,20 +47,10 @@ script_version = renpy.script_version
 # The version of the bytecode cache.
 BYTECODE_VERSION = 1
 
-# The python magic code.
-if PY2:
-    import heapq
-    import imp
-    MAGIC = imp.get_magic()
+from importlib.util import MAGIC_NUMBER as MAGIC
 
-    # Change this to force a recompile when required.
-    MAGIC += b'_v2.1'
-
-else:
-    from importlib.util import MAGIC_NUMBER as MAGIC
-
-    # Change this to force a recompile when required.
-    MAGIC += b'_v3.1'
+# Change this to force a recompile when required.
+MAGIC += b'_v3.1'
 
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
@@ -223,10 +213,7 @@ class Script(object):
 
             base, ext = os.path.splitext(short_fn)
 
-            if PY2:
-                hex_checksum = checksum[:8].encode("hex")
-            else:
-                hex_checksum = checksum[:8].hex()
+            hex_checksum = checksum[:8].hex()
 
             target_fn = os.path.join(
                 backupdir,

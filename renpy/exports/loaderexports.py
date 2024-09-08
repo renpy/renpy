@@ -164,7 +164,7 @@ def fsencode(s, force=False): # type: (str, bool) -> str
     Converts s from unicode to the filesystem encoding.
     """
 
-    if (not PY2) and (not force):
+    if not force:
         return s
 
     if not isinstance(s, str):

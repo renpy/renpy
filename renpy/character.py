@@ -1295,9 +1295,6 @@ class ADVCharacter(object):
 
         rv = renpy.substitutions.substitute(who)[0]
 
-        if PY2:
-            rv = rv.encode("utf-8")
-
         return rv
 
     def __format__(self, spec):

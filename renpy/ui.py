@@ -442,10 +442,7 @@ screen = None # type: renpy.display.screen.ScreenDisplayable|None
 class Wrapper(renpy.object.Object):
 
     def __reduce__(self):
-        if PY2:
-            return bytes(self.name) # type: ignore
-        else:
-            return self.name
+        return self.name
 
     def __init__(self, function, one=False, many=False, imagemap=False, replaces=False, style=None, **kwargs):
 

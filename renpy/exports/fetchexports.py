@@ -34,18 +34,11 @@ except ImportError:
 
 import renpy
 
-if PY2:
-    from urllib import urlencode as _urlencode # type: ignore
-else:
-    from urllib.parse import urlencode as _urlencode
+from urllib.parse import urlencode as _urlencode
 
 try:
-    if PY2:
-        import urllib
-        proxies = urllib.getproxies() # type: ignore
-    else:
-        import urllib.request
-        proxies = urllib.request.getproxies()
+    import urllib.request
+    proxies = urllib.request.getproxies()
 except Exception as e:
     proxies = {}
 

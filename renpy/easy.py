@@ -34,10 +34,8 @@ import renpy
 Color = renpy.color.Color
 color = renpy.color.Color
 
-if PY2:
-    from collections import Iterable # type: ignore
-else:
-    from collections.abc import Iterable
+
+from collections.abc import Iterable
 
 
 def lookup_displayable_prefix(d):

@@ -157,10 +157,7 @@ class PyCode(object):
         if isinstance(source, PyExpr):
             loc = (source.filename, source.linenumber, source)
 
-        if PY2:
-            self.py = 2
-        else:
-            self.py = 3
+        self.py = 3
 
         # The source code.
         self.source = source

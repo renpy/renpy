@@ -63,8 +63,7 @@ def onetime_init():
     if os.path.exists(fn):
         dll = fn
 
-    if not PY2:
-        dll = dll.encode("utf-8")
+    dll = dll.encode("utf-8")
 
     if not renpy.gl2.live2dmodel.load(dll): # type: ignore
         raise Exception("Could not load Live2D. {} was not found.".format(dll))

@@ -201,6 +201,3 @@ __all__ = [
     'ui',
     'unicode',
 ]
-
-if PY2:
-    __all__ = [ bytes(i) for i in __all__ ] # type: ignore

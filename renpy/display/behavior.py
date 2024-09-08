@@ -2988,7 +2988,7 @@ class WebInput(renpy.display.displayable.Displayable):
 
     @staticmethod
     def post_find_focusable():
-        if PY2 or not renpy.emscripten:
+        if not renpy.emscripten:
             return
 
         if WebInput.active is None:

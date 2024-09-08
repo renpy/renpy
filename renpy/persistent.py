@@ -233,7 +233,7 @@ def init():
     disk, so that we can configure the savelocation system.
     """
 
-    if renpy.config.early_developer and not PY2:
+    if renpy.config.early_developer:
         init_debug_pickler()
 
     filename = os.path.join(renpy.config.savedir, "persistent.new") # type: ignore
