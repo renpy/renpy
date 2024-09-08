@@ -6,7 +6,6 @@ renpy.lexersupport gen/renpy.lexersupport.c
 renpy.pydict gen/renpy.pydict.c
 renpy.style gen/renpy.style.c
 renpy.encryption gen/renpy.encryption.c
-renpy.compat.dictviews gen/renpy.compat.dictviews.c
 renpy.styledata.styleclass gen/renpy.styledata.styleclass.c
 renpy.styledata.stylesets gen/renpy.styledata.stylesets.c
 renpy.styledata.style_selected_hover_functions gen/renpy.styledata.style_selected_hover_functions.c

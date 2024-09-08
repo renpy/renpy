@@ -154,10 +154,6 @@ cython("renpy.style")
 
 cython("renpy.encryption")
 
-# renpy.compat
-if PY2:
-    cython("renpy.compat.dictviews")
-
 # renpy.styledata
 cython("renpy.styledata.styleclass")
 cython("renpy.styledata.stylesets")
@@ -195,12 +191,10 @@ cython(
     [ "ftsupport.c", "ttgsubtable.c" ],
     libs=sdl + [ 'freetype', 'z', 'm' ])
 
-if not (PY2 and emscripten):
-
-    cython(
-        "renpy.text.hbfont",
-        [ "ftsupport.c" ],
-        libs=sdl + [ 'harfbuzz', 'freetype', 'z', 'm' ])
+cython(
+    "renpy.text.hbfont",
+    [ "ftsupport.c" ],
+    libs=sdl + [ 'harfbuzz', 'freetype', 'z', 'm' ])
 
 generate_all_cython()
 find_unnecessary_gen()
