@@ -76,24 +76,14 @@ class BinFile(object):
         self.addr = addr
 
     def tostring(self):
-        if PY2:
-            return self.a.tostring() # type: ignore
-        else:
-            return self.a.tobytes()
+        return self.a.tobytes()
 
     def substring(self, start, len): # @ReservedAssignment
-        if PY2:
-            return self.a[start:start + len].tostring() # type: ignore
-        else:
-            return self.a[start:start + len].tobytes()
+        return self.a[start:start + len].tobytes()
 
     def __init__(self, data):
         self.a = array.array('B')
-
-        if PY2:
-            self.a.fromstring(data) # type: ignore
-        else:
-            self.a.frombytes(data)
+        self.a.frombytes(data)
 
 ##############################################################################
 # These functions parse data out of the file. In these functions, offset is

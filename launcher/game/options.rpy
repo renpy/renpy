@@ -320,7 +320,7 @@ init python:
         """
 
         if py is True:
-            py = 'pyo' if PY2 else 'pycache'
+            py = 'pycache'
 
         if py == 'pycache':
             build.classify_renpy(pattern + "/**__pycache__/", binary)
@@ -411,18 +411,11 @@ init python:
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
 
-    if PY2:
-        build.classify_renpy("lib/py2-linux-armv7l/**", "linux_arm")
-        build.classify_renpy("lib/py2-linux-aarch64/**", "linux_arm")
-        source_and_binary("lib/py2-**", "binary", "binary")
-        source_and_binary("lib/python2**", "binary", "binary")
-        build.classify_renpy("renpy2.sh", "binary")
-    else:
-        build.classify_renpy("lib/py3-linux-armv7l/**", "linux_arm")
-        build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
-        source_and_binary("lib/py3-**", "binary", "binary")
-        source_and_binary("lib/python3**", "binary", "binary", py='pyc')
-        build.classify_renpy("renpy3.sh", "binary")
+    build.classify_renpy("lib/py3-linux-armv7l/**", "linux_arm")
+    build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
+    source_and_binary("lib/py3-**", "binary", "binary")
+    source_and_binary("lib/python3**", "binary", "binary", py='pyc')
+    build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
 

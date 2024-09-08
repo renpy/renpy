@@ -432,10 +432,7 @@ fix_dlc("renios", "renios")
             for f in sorted(self, key=lambda a : a.name):
                 f.hash(sha, distributor)
 
-            if PY2:
-                return sha.hexdigest().decode("utf-8")
-            else:
-                return sha.hexdigest()
+            return sha.hexdigest()
 
         def split_by_prefix(self, prefix):
             """
@@ -1075,11 +1072,8 @@ fix_dlc("renios", "renios")
 
             rv = self.temp_filename("Info.plist")
 
-            if PY2:
-                plistlib.writePlist(plist, rv)
-            else:
-                with open(rv, "wb") as f:
-                    plistlib.dump(plist, f)
+            with open(rv, "wb") as f:
+                plistlib.dump(plist, f)
 
             return rv
 
@@ -1226,19 +1220,8 @@ fix_dlc("renios", "renios")
                 if os.path.exists(tmp):
                     self.add_file(fl, dst, tmp)
 
-            if PY2:
-
-                if self.build["include_i686"]:
-                    write_exe("lib/py2-windows-i686/renpy.exe", self.exe32, self.exe32, windows_i686)
-                    write_exe("lib/py2-windows-i686/pythonw.exe", "lib/py2-windows-i686/pythonw.exe", "pythonw-32.exe", windows_i686)
-
-                write_exe("lib/py2-windows-x86_64/renpy.exe", self.exe, self.exe, windows)
-                write_exe("lib/py2-windows-x86_64/pythonw.exe", "lib/py2-windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
-
-            else:
-
-                write_exe("lib/py3-windows-x86_64/renpy.exe", self.exe, self.exe, windows)
-                write_exe("lib/py3-windows-x86_64/pythonw.exe", "lib/py3-windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
+            write_exe("lib/py3-windows-x86_64/renpy.exe", self.exe, self.exe, windows)
+            write_exe("lib/py3-windows-x86_64/pythonw.exe", "lib/py3-windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
 
 
         def add_main_py(self):
@@ -1535,7 +1518,7 @@ fix_dlc("renios", "renios")
 
             if self.include_update and not format.startswith("app-"):
 
-                with open(update_fn, "wb" if PY2 else "w") as f:
+                with open(update_fn, "w") as f:
                     json.dump(update, f, indent=2)
 
                 if (not dlc) or (format == "update"):

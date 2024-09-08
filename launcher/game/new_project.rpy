@@ -34,9 +34,6 @@ label new_project:
     if persistent.projects_directory is None:
         $ interface.error(_("The projects directory could not be set. Giving up."))
 
-    if PY2:
-        $ interface.info(_("Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."))
-
     python:
         new_project_language = __("{#language name and font}")
         gui_kind = "new_gui_project"
