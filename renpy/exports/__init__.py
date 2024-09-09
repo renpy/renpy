@@ -484,6 +484,7 @@ from renpy.exports.persistentexports import (
     mark_image_unseen,
     save_persistent,
     is_seen,
+    is_seen_allowed,
 )
 
 from renpy.exports.platformexports import (
