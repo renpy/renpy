@@ -4,6 +4,20 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+
+.. _renpy-8.3.2:
+.. _renpy-7.8.2:
+
+8.3.2 / 7.8.2
+=============
+
+Fixes
+-----
+
+Fixed a build issue with 8.3.1 and 7.8.1 that prevented the Android version of Ren'Py from starting properly,
+making games unplayable.
+
+
 .. _renpy-8.3.1:
 .. _renpy-7.8.1:
 
