@@ -301,6 +301,8 @@ init python:
     build.classify_renpy("**.new", None)
     build.classify_renpy("**.bak", None)
 
+    build.classify_renpy("**.keystore", None)
+
     build.classify_renpy("**/log.txt", None)
     build.classify_renpy("**/traceback.txt", None)
     build.classify_renpy("**/errors.txt", None)
