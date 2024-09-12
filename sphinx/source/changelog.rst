@@ -5,6 +5,19 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.4.0:
+
+8.4.0
+=====
+
+Requirement and Dependency Changes
+----------------------------------
+
+Ren'Py now requires Windows 10 or later to run.
+
+
+
+
 .. _renpy-8.3.2:
 .. _renpy-7.8.2:
 
