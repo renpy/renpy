@@ -28,11 +28,12 @@ import os
 import sys
 import re
 import threading
+import warnings
 
-if sys.version_info.major == 2:
-    import distutils.core as setuptools
-else:
-    import setuptools
+import setuptools
+
+warnings.simplefilter("ignore", category=setuptools.SetuptoolsDeprecationWarning)
+
 
 # This flag determines if we are compiling for Android or not.
 android = "RENPY_ANDROID" in os.environ
