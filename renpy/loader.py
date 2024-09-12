@@ -820,19 +820,6 @@ class RenpyImporter(object):
 
         return None
 
-    def find_module(self, fullname, path=None):
-        """
-        Removed in Python 3.12 in favor of find_spec().
-        Left here for compatibility with Python < 3.4
-        (see https://docs.python.org/3/library/sys.html#sys.meta_path )
-        """
-        if path is not None:
-            for i in path:
-                if self.translate(fullname, i):
-                    return RenpyImporter(i)
-
-        if self.translate(fullname):
-            return self
 
     def find_spec(self, fullname, path, target=None):
         if path is not None:
