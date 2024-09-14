@@ -477,10 +477,12 @@ class ArgumentInfo(renpy.object.Object):
         self.arguments = arguments
 
         # Indexes of arguments to be considered as * unpacking
-        self.starred_indexes = starred_indexes or frozenset()
+        if starred_indexes is not None:
+            self.starred_indexes = starred_indexes
 
         # Indexes of arguments to be considered as ** unpacking.
-        self.doublestarred_indexes = doublestarred_indexes or frozenset()
+        if doublestarred_indexes is not None:
+            self.doublestarred_indexes = doublestarred_indexes
 
     def evaluate(self, scope=None):
         """
