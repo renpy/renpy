@@ -12,14 +12,6 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
-Pending Deprecations
---------------------
-
-Ren'Py 7.8 is the last release to support Python 2.
-
-Ren'Py 8.4 will drop support for the original OpenGL renderer (gl1), and for Windows 7, 8, and 8.1.
-
-
 .. _incompatible-8.3.0:
 .. _incompatible-7.8.0:
 
