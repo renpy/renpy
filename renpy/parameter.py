@@ -26,6 +26,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 from itertools import chain as _chain
 
 import renpy
+from renpy.easy import EMPTYMAP
 
 
 class Parameter(object):
@@ -448,7 +449,7 @@ def apply_arguments(parameters, args, kwargs, ignore_errors=False):
         else:
             return { }
 
-    return parameters.apply(args or (), kwargs or {}, ignore_errors)
+    return parameters.apply(args or (), kwargs or EMPTYMAP, ignore_errors)
 
 
 class ArgumentInfo(renpy.object.Object):
