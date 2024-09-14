@@ -455,8 +455,8 @@ def apply_arguments(parameters, args, kwargs, ignore_errors=False):
 class ArgumentInfo(renpy.object.Object):
 
     __version__ = 1
-    starred_indexes = set()
-    doublestarred_indexes = set()
+    starred_indexes = frozenset()
+    doublestarred_indexes = frozenset()
 
     def after_upgrade(self, version):
         if version < 1:
@@ -465,15 +465,12 @@ class ArgumentInfo(renpy.object.Object):
             extrakw = self.extrakw # type: ignore
             length = len(arguments) + bool(extrapos) + bool(extrakw)
             if extrapos:
-                self.starred_indexes = { length - 1 }
+                self.starred_indexes = { length - 1 - bool(extrakw) }
                 arguments.append((None, extrapos))
 
             if extrakw:
                 self.doublestarred_indexes = { length - 1 }
                 arguments.append((None, extrakw))
-
-            if extrapos and extrakw:
-                self.starred_indexes = { length - 2 }
 
     def __init__(self, arguments, starred_indexes=None, doublestarred_indexes=None):
 
@@ -482,10 +479,10 @@ class ArgumentInfo(renpy.object.Object):
         self.arguments = arguments
 
         # Indexes of arguments to be considered as * unpacking
-        self.starred_indexes = starred_indexes or set()
+        self.starred_indexes = starred_indexes or frozenset()
 
         # Indexes of arguments to be considered as ** unpacking.
-        self.doublestarred_indexes = doublestarred_indexes or set()
+        self.doublestarred_indexes = doublestarred_indexes or frozenset()
 
     def evaluate(self, scope=None):
         """
@@ -538,4 +535,4 @@ class ArgumentInfo(renpy.object.Object):
 
 
 EMPTY_PARAMETERS = Signature()
-EMPTY_ARGUMENTS = ArgumentInfo([ ], None, None)
+EMPTY_ARGUMENTS = ArgumentInfo((), None, None)
