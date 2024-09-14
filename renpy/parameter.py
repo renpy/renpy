@@ -43,8 +43,7 @@ class Parameter(object):
 
     empty = None
 
-    def __init__(self, name, kind, default=empty):
-        # default should only be passed by keyword, todo when PY3-only
+    def __init__(self, name, kind, *, default=empty):
         self.name = name
         self.kind = kind
         self.default = default
@@ -90,10 +89,9 @@ class ValuedParameter(Parameter):
 
     class empty: pass # singleton, should be picklable
 
-    def __init__(self, name, kind, default=empty):
-        # default should only be passed by keyword, todo when PY3-only
+    def __init__(self, name, kind, *, default=empty):
         # this method is redefined in order to change default's default value
-        super(ValuedParameter, self).__init__(name, kind, default)
+        super(ValuedParameter, self).__init__(name, kind, default=default)
 
     def default_value(self, *args, **kwargs):
         return self.default
