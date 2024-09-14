@@ -24,7 +24,6 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 from itertools import chain as _chain
-import collections
 
 import renpy
 
@@ -121,8 +120,7 @@ class Signature(object):
         if parameters is None:
             self.parameters = {}
         else:
-            # when in PY3-only, turn this into MappingProxyType o dict
-            self.parameters = collections.OrderedDict((param.name, param) for param in parameters)
+            self.parameters = {param.name: param for param in parameters}
 
     @staticmethod
     def legacy_params(parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
