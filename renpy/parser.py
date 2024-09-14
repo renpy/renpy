@@ -31,7 +31,7 @@ import time
 import renpy
 import renpy.ast as ast
 
-from renpy.parameter import Parameter
+from renpy.parameter import EMPTY_ARGUMENTS, Parameter
 
 from renpy.lexer import (
     list_logical_lines,
@@ -468,6 +468,9 @@ def parse_arguments(l):
 
     if not l.match(r'\('):
         return None
+
+    if l.match(r'\)'):
+        return EMPTY_ARGUMENTS
 
     arguments = [ ]
     starred_indexes = set()
