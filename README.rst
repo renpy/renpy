@@ -78,6 +78,7 @@ Then, install pygame_sdl2 by running the following commands::
     git clone https://www.github.com/renpy/pygame_sdl2
     pushd pygame_sdl2
     python setup.py install
+    python install_headers.py $VIRTUAL_ENV
     popd
 
 Next, set RENPY_DEPS_INSTALL To a \:-separated (\;-separated on Windows)

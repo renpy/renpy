@@ -43,12 +43,18 @@ setup () {
         build -b build/lib.$variant -t build/tmp.$variant $BUILD_J \
         $RENPY_BUILD_ARGS install $ADAPT_TO_SETUPTOOLS
 
+    if [ -e install_headers.py ]; then
+        python install_headers.py $VIRTUAL_ENV
+    fi
+
     popd >/dev/null
 }
 
 if [ -e "$ROOT/pygame_sdl2" ]; then
     setup "$ROOT/pygame_sdl2/"
 fi
+
+
 
 if [ -e "$ROOT/cubism" ]; then
     export CUBISM="$ROOT/cubism"
