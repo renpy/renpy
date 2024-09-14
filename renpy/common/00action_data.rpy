@@ -111,7 +111,7 @@ init -1600 python hide:
             try:
                 return self.dict[self.key]
             except LookupError as e:
-                raise Exception("The {!r} {} does not exist.".format(key, self.kind)) # from e # PY3 only
+                raise Exception("The {!r} {} does not exist.".format(key, self.kind)) from e
 
     class ScreenVariable(Accessor):
         """

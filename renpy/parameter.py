@@ -238,8 +238,6 @@ class Signature(object):
         - applies the defaults automatically (and lazily, as per the above)
         """
 
-        # when in PY3-only, uncomment the "from None" in the raise statements
-
         if not renpy.config.developer:
             ignore_errors = True
 
@@ -247,7 +245,7 @@ class Signature(object):
 
         def _raise(exct, msg, *argz, **kwargz):
             if not ignore_errors:
-                raise exct(msg.format(*argz, **kwargz)) # from None
+                raise exct(msg.format(*argz, **kwargz)) from None
 
         # code mostly taken from stdlib's inspect.Signature._bind
         arguments = {}
@@ -301,7 +299,7 @@ class Signature(object):
                                 argtype = ''
                             msg = 'missing a required{argtype} argument: {arg!r}'
                             msg = msg.format(arg=param.name, argtype=argtype)
-                            raise TypeError(msg) # from None
+                            raise TypeError(msg) from None
             else:
                 # We have a positional argument to process
                 try:
@@ -359,7 +357,7 @@ class Signature(object):
                 if (not (partial or ignore_errors) and param.kind != param.VAR_POSITIONAL and
                                                     param.default is param.empty):
                     raise TypeError('missing a required argument: {arg!r}'. \
-                                    format(arg=param_name)) # from None
+                                    format(arg=param_name)) from None
 
             else:
                 if param.kind == param.POSITIONAL_ONLY:

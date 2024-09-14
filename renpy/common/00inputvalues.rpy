@@ -274,7 +274,7 @@ init -1510 python:
             try:
                 return super(LocalVariableInputValue, self).get_text()
             except LookupError:
-                raise Exception("The {!r} local variable does not exist.".format(self.key)) # from e # PY3 only
+                raise Exception("The {!r} local variable does not exist.".format(self.key)) from e
 
 init -1510 python hide:
     if config.generating_documentation:
