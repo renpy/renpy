@@ -413,7 +413,7 @@ init python:
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
 
-    build.classify_renpy("lib/py3-linux-armv7l/**", "linux_arm")
+    build.classify_renpy("lib/py3-linux-armv7l/**", None)
     build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
     source_and_binary("lib/py3-**", "binary", "binary")
     source_and_binary("lib/python3**", "binary", "binary", py='pyc')
