@@ -4,6 +4,14 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+.. _renpy-8.3.3:
+.. _renpy-7.8.3:
+
+Other Changes
+-------------
+
+When using text shaders to display text with outlines, Ren'Py will create psuedo-glyphs. These psuedo-glyphs
+cover the start and end of each line, and are used to ensure the outlines will be shown.
 
 .. _renpy-8.4.0:
 

@@ -1736,6 +1736,13 @@ class Layout(object):
             The text shader.
         """
 
+        first_shader = ts
+
+        for l in lines:
+            for g in l.glyphs:
+                first_shader = g.shader
+                break
+
         tw, th = tex.get_size()
 
         if lines:
@@ -1746,11 +1753,16 @@ class Layout(object):
         # The number of glyphs in the mesh.
         n_glyphs = sum(len(l.glyphs) for l in lines)
 
-        mesh = renpy.gl2.gl2mesh2.Mesh2.text_mesh(n_glyphs)
+        mesh = renpy.gl2.gl2mesh2.Mesh2.text_mesh(n_glyphs + 2 * len(lines))
 
         # The y coordinate of the top line.
-
         top = 0
+
+        # The index of the last glyph to be shown.
+        last_index = 0
+
+        # The time of the last glyph to be shown.
+        last_time = 0.0
 
         for line in lines:
 
@@ -1767,7 +1779,37 @@ class Layout(object):
                 first_glyph = None
                 last_glyph = None
 
+            left = 0
+
+            if first_glyph:
+                right = first_glyph.x - self.add_left
+            else:
+                right = tw
+
+            # Generate a psuedo-glyph for the text to the left of the line.
+            # These pseudo-glyphs are used to make sure that outlines of lines above and below
+            # are displayed.
+
+            if outline:
+                if right > 0 and (ts == first_shader):
+
+                    cx = 0 + right / 2
+                    cy = outline + line.baseline
+
+                    mesh.add_glyph(
+                        tw, th,
+                        cx, cy,
+                        last_index,
+                        left, top, right, bottom,
+                        last_time, last_time,
+                        line.baseline, line.height - line.baseline,
+                    )
+
+            # Generate the actual glyphs.
+
             for g in line.glyphs:
+
+                left = right
 
                 if g.time == -1:
                     continue
@@ -1775,12 +1817,6 @@ class Layout(object):
                 # Check that this is the right shader to use.
                 if (g.shader is not ts) and (g.shader != ts):
                     continue
-
-                # The x-coordinate of the left edge of the glyph.
-                if g is first_glyph:
-                    left = g.x - self.add_left
-                else:
-                    left = g.x + outline
 
                 # The x-coordinate of the right edge of the glyph.
                 if g is last_glyph:
@@ -1817,6 +1853,29 @@ class Layout(object):
                     left_time, right_time,
                     g.ascent, g.descent,
                 )
+
+                last_time = g.time
+                last_index = g.index
+
+            # Handle the empty space to the right of the last glyph.
+            if outline:
+
+                if right < tw and (ts == first_shader):
+
+                    left = right
+                    right = tw
+
+                    cx = left + right / 2
+                    cy = outline + line.baseline
+
+                    mesh.add_glyph(
+                        tw, th,
+                        cx, cy,
+                        last_index,
+                        left, top, right, bottom,
+                        last_time, last_time,
+                        line.baseline, line.height - line.baseline,
+                    )
 
             top = bottom
 

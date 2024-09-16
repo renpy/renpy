@@ -234,6 +234,12 @@ locations, but these are passed to the shader as different vertices.
     The rectangle containing the glyph, in drawable pixels. This is a vec4 with the x, y, width, and height of the rectangle,
     in drawable pixels. This can be converted to texture coordinates by dividing it by ``res0``.
 
+Pseudo-Glyphs
+-------------
+
+When drawing outlined text, Ren'Py will creates pseudo-glyphs that cover the start and end of each line. If a line
+is blank, one pseudo-glyph is created covering the whole line. These pseudo-glyphs are necessary to cover areas
+where outlines may extend into a line above or below the current line.
 
 Example
 -------
