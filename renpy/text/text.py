@@ -1767,6 +1767,8 @@ class Layout(object):
                 first_glyph = None
                 last_glyph = None
 
+            right = 0
+
             for g in line.glyphs:
 
                 if g.time == -1:
@@ -1780,7 +1782,7 @@ class Layout(object):
                 if g is first_glyph:
                     left = g.x - self.add_left
                 else:
-                    left = g.x + outline
+                    left = right
 
                 # The x-coordinate of the right edge of the glyph.
                 if g is last_glyph:
