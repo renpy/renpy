@@ -982,8 +982,8 @@ init -1499 python in achievement:
             if not config.enable_steam:
                 return
 
-            # if "RENPY_NO_STEAM" in os.environ:
-            #     return
+            if "RENPY_NO_STEAM" in os.environ:
+                return
 
             dll = ctypes.cdll[dll_path]
 
