@@ -1782,7 +1782,7 @@ class Layout(object):
             left = 0
 
             if first_glyph:
-                right = first_glyph.x - self.add_left
+                right = first_glyph.x + self.add_left
             else:
                 right = tw
 
@@ -1803,6 +1803,7 @@ class Layout(object):
                         left, top, right, bottom,
                         last_time, last_time,
                         line.baseline, line.height - line.baseline,
+                        self.add_left, self.add_top,
                     )
 
             # Generate the actual glyphs.
@@ -1820,9 +1821,9 @@ class Layout(object):
 
                 # The x-coordinate of the right edge of the glyph.
                 if g is last_glyph:
-                    right = g.x + g.advance + outline * 2 + self.add_right
+                    right = g.x + g.advance + outline * 2 + self.add_left + self.add_right
                 else:
-                    right = g.x + g.advance + outline
+                    right = g.x + g.advance + outline + self.add_left
 
                 if left < 0:
                     left = 0
@@ -1831,7 +1832,7 @@ class Layout(object):
 
                 # The center coordinates of the glyph. These aren't the
                 # actual center, but the center of the baseline.
-                cx = g.x + g.advance / 2
+                cx = g.x + g.advance / 2 + self.add_left
                 cy = outline + line.baseline
 
                 duration = g.duration
@@ -1852,6 +1853,7 @@ class Layout(object):
                     left, top, right, bottom,
                     left_time, right_time,
                     g.ascent, g.descent,
+                    self.add_left, self.add_top,
                 )
 
                 last_time = g.time
@@ -1875,6 +1877,7 @@ class Layout(object):
                         left, top, right, bottom,
                         last_time, last_time,
                         line.baseline, line.height - line.baseline,
+                        self.add_left, self.add_top,
                     )
 
             top = bottom
