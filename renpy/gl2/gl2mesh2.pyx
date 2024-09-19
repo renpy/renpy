@@ -253,6 +253,7 @@ cdef class Mesh2(Mesh):
         double left, double top, double right, double bottom,
         double left_time, double right_time,
         double ascent, double descent,
+        double xoffset, double yoffset
         ):
         """
         Adds a glyph to a mesh created by `text_mesh`.
@@ -281,6 +282,10 @@ cdef class Mesh2(Mesh):
         cdef int point = self.points
         cdef int stride = self.layout.stride
         cdef int attribute = self.points * stride
+
+        left -= xoffset
+        right -= xoffset
+        cx -= xoffset
 
         self.point[point + 0].x = left
         self.point[point + 0].y = bottom

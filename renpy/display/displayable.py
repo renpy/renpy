@@ -505,18 +505,27 @@ class Displayable(renpy.object.Object):
 
         return pos
 
+    _store_transform_event = False
+
     def set_transform_event(self, event):
         """
         Sets the transform event of this displayable to event.
+
+        transform_event_responder needs to be set on displayables that respond to transform events.
+
+        _store_transform_event should be set on displayables that store a generated transform event,
+        like Button or Bar.
         """
 
-        if event == self.transform_event:
-            return
+        if self.transform_event_responder or self._store_transform_event:
 
-        self.transform_event = event
+            if event == self.transform_event:
+                return
 
-        if self.transform_event_responder:
-            renpy.display.render.redraw(self, 0)
+            self.transform_event = event
+
+            if self.transform_event_responder:
+                renpy.display.render.redraw(self, 0)
 
     def _handles_event(self, event):
         """
