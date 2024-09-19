@@ -132,9 +132,6 @@ class Container(renpy.display.displayable.Displayable):
         super(Container, self).__init__(**properties)
 
     def set_transform_event(self, event):
-        """
-        Sets the transform event of this displayable to event.
-        """
 
         super(Container, self).set_transform_event(event)
 

@@ -895,6 +895,8 @@ KEY_EVENTS = (
 
 class Button(renpy.display.layout.Window):
 
+    _store_transform_event = True
+
     keymap = { }
     action = None
     alternate = None
@@ -2187,6 +2189,8 @@ class Bar(renpy.display.displayable.Displayable):
     Implements a bar that can display an integer value, and respond
     to clicks on that value.
     """
+
+    _store_transform_event = True
 
     @property
     def _draggable(self):
