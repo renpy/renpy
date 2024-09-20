@@ -28,7 +28,6 @@ from typing import Any
 
 import contextlib
 import time
-import types
 
 import renpy
 
@@ -310,5 +309,3 @@ def run_callbacks(cb, *args, **kwargs):
         return rv
 
     return cb(*args, **kwargs)
-
-EMPTYMAP = types.MappingProxyType({})
