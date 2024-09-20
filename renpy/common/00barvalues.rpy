@@ -215,7 +215,7 @@ init -1500 python:
             try:
                 self.dict[self.key] = value
             except LookupError as e:
-                raise Exception("The {!r} {} does not exist".format(self.key, self.kind)) # from e # PY3 only
+                raise Exception("The {!r} {} does not exist".format(self.key, self.kind)) from e
 
     @renpy.pure
     class FieldValue(__GenericValue):

@@ -24,9 +24,9 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 from itertools import chain as _chain
-import collections
 
 import renpy
+from renpy.easy import EMPTYMAP
 
 
 class Parameter(object):
@@ -43,8 +43,7 @@ class Parameter(object):
 
     empty = None
 
-    def __init__(self, name, kind, default=empty):
-        # default should only be passed by keyword, todo when PY3-only
+    def __init__(self, name, kind, *, default=empty):
         self.name = name
         self.kind = kind
         self.default = default
@@ -90,10 +89,9 @@ class ValuedParameter(Parameter):
 
     class empty: pass # singleton, should be picklable
 
-    def __init__(self, name, kind, default=empty):
-        # default should only be passed by keyword, todo when PY3-only
+    def __init__(self, name, kind, *, default=empty):
         # this method is redefined in order to change default's default value
-        super(ValuedParameter, self).__init__(name, kind, default)
+        super(ValuedParameter, self).__init__(name, kind, default=default)
 
     def default_value(self, *args, **kwargs):
         return self.default
@@ -123,8 +121,7 @@ class Signature(object):
         if parameters is None:
             self.parameters = {}
         else:
-            # when in PY3-only, turn this into MappingProxyType o dict
-            self.parameters = collections.OrderedDict((param.name, param) for param in parameters)
+            self.parameters = {param.name: param for param in parameters}
 
     @staticmethod
     def legacy_params(parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
@@ -241,8 +238,6 @@ class Signature(object):
         - applies the defaults automatically (and lazily, as per the above)
         """
 
-        # when in PY3-only, uncomment the "from None" in the raise statements
-
         if not renpy.config.developer:
             ignore_errors = True
 
@@ -250,7 +245,7 @@ class Signature(object):
 
         def _raise(exct, msg, *argz, **kwargz):
             if not ignore_errors:
-                raise exct(msg.format(*argz, **kwargz)) # from None
+                raise exct(msg.format(*argz, **kwargz)) from None
 
         # code mostly taken from stdlib's inspect.Signature._bind
         arguments = {}
@@ -304,7 +299,7 @@ class Signature(object):
                                 argtype = ''
                             msg = 'missing a required{argtype} argument: {arg!r}'
                             msg = msg.format(arg=param.name, argtype=argtype)
-                            raise TypeError(msg) # from None
+                            raise TypeError(msg) from None
             else:
                 # We have a positional argument to process
                 try:
@@ -362,7 +357,7 @@ class Signature(object):
                 if (not (partial or ignore_errors) and param.kind != param.VAR_POSITIONAL and
                                                     param.default is param.empty):
                     raise TypeError('missing a required argument: {arg!r}'. \
-                                    format(arg=param_name)) # from None
+                                    format(arg=param_name)) from None
 
             else:
                 if param.kind == param.POSITIONAL_ONLY:
@@ -452,14 +447,14 @@ def apply_arguments(parameters, args, kwargs, ignore_errors=False):
         else:
             return { }
 
-    return parameters.apply(args or (), kwargs or {}, ignore_errors)
+    return parameters.apply(args or (), kwargs or EMPTYMAP, ignore_errors)
 
 
 class ArgumentInfo(renpy.object.Object):
 
     __version__ = 1
-    starred_indexes = set()
-    doublestarred_indexes = set()
+    starred_indexes = frozenset()
+    doublestarred_indexes = frozenset()
 
     def after_upgrade(self, version):
         if version < 1:
@@ -468,15 +463,12 @@ class ArgumentInfo(renpy.object.Object):
             extrakw = self.extrakw # type: ignore
             length = len(arguments) + bool(extrapos) + bool(extrakw)
             if extrapos:
-                self.starred_indexes = { length - 1 }
+                self.starred_indexes = { length - 1 - bool(extrakw) }
                 arguments.append((None, extrapos))
 
             if extrakw:
                 self.doublestarred_indexes = { length - 1 }
                 arguments.append((None, extrakw))
-
-            if extrapos and extrakw:
-                self.starred_indexes = { length - 2 }
 
     def __init__(self, arguments, starred_indexes=None, doublestarred_indexes=None):
 
@@ -485,10 +477,12 @@ class ArgumentInfo(renpy.object.Object):
         self.arguments = arguments
 
         # Indexes of arguments to be considered as * unpacking
-        self.starred_indexes = starred_indexes or set()
+        if starred_indexes is not None:
+            self.starred_indexes = starred_indexes
 
         # Indexes of arguments to be considered as ** unpacking.
-        self.doublestarred_indexes = doublestarred_indexes or set()
+        if doublestarred_indexes is not None:
+            self.doublestarred_indexes = doublestarred_indexes
 
     def evaluate(self, scope=None):
         """
@@ -541,4 +535,4 @@ class ArgumentInfo(renpy.object.Object):
 
 
 EMPTY_PARAMETERS = Signature()
-EMPTY_ARGUMENTS = ArgumentInfo([ ], None, None)
+EMPTY_ARGUMENTS = ArgumentInfo((), None, None)
