@@ -1014,34 +1014,19 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             py_mode = mode
 
         flags = file_compiler_flags.get(filename, 0)
+        flags |= new_compile_flags
 
-        if flags:
-
-            flags |= new_compile_flags
-
-            try:
-                with save_warnings():
-                    tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
-            except SyntaxError as orig_e:
-
-                try:
-                    fixed_source = renpy.compat.fixes.fix_tokens(source)
-                    with save_warnings():
-                        tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
-                except Exception:
-                    raise orig_e
-
-        else:
+        try:
+            with save_warnings():
+                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+        except SyntaxError as orig_e:
 
             try:
-                flags = new_compile_flags
+                fixed_source = renpy.compat.fixes.fix_tokens(source)
                 with save_warnings():
-                    tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                    tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
             except Exception:
-                flags = old_compile_flags
-                source = escape_unicode(source)
-                with save_warnings():
-                    tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                raise orig_e
 
         tree = wrap_node.visit(tree)
 
