@@ -384,3 +384,5 @@ init python in distribute:
         for i in parallel_threads:
             if i.done:
                 i.done()
+
+        parallel_threads.clear()
