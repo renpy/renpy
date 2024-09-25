@@ -123,6 +123,25 @@ init python in project:
         def update_data(self):
             data = self.data
 
+            data.setdefault("renpy_launcher",
+            {
+                "open_directory":
+                {
+                    "game": "game",
+                    "base": ".",
+                    "images": "game/images",
+                    "audio": "game/audio",
+                    "gui": "game/gui"
+                },
+                "edit_file":
+                {
+                    "script.rpy": "game/script.rpy",
+                    "options.rpy": "game/options.rpy",
+                    "gui.rpy": "game/gui.rpy",
+                    "screens.rpy": "game/screens.rpy"
+                }
+            })
+
             data.setdefault("build_update", False)
             data.setdefault("packages", [ "pc", "mac" ])
             data.setdefault("add_from", True)
