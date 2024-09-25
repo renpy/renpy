@@ -149,3 +149,34 @@ Debug Functions
 ---------------
 
 .. include:: inc/debug
+
+
+Launcher Customization
+----------------------
+
+It's possible to customize the Ren'Py launcher to select the files and directories
+that are available to click on. To do this, create project.json with the lines below::
+
+{
+    "renpy_launcher":
+    {
+        "open_directory":
+        {
+            "game": "game",
+            "base": ".",
+            "images": "game/images",
+            "audio": "game/audio",
+            "gui": "game/gui"
+        },
+        "edit_file":
+        {
+            "script.rpy": "game/script.rpy",
+            "options.rpy": "game/options.rpy",
+            "gui.rpy": "game/gui.rpy",
+            "screens.rpy": "game/screens.rpy"
+        }
+    }
+}
+
+If the file already exists, you'll want to edit in the renpy_launcher key and the lines below it.
+You can then edit the dictionaries to change the available files and directories.
