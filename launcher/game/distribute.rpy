@@ -1514,7 +1514,8 @@ fix_dlc("renios", "renios")
 
             update = { variant : { "version" : self.update_versions[variant], "base_name" : self.base_name, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            update_fn = os.path.join(self.destination, filename + ".update.json")
+            update_fn = self.temp_filename(filename + ".update.json")
+
 
             if self.include_update and not format.startswith("app-"):
 
@@ -1548,9 +1549,11 @@ fix_dlc("renios", "renios")
                 in this thread or a background thread.
                 """
 
-                if self.include_update and not self.build_update and not dlc:
+                final_update_fn = os.path.join(self.destination, filename + ".update.json")
+
+                if self.build_update or dlc:
                     if os.path.exists(update_fn):
-                        os.unlink(update_fn)
+                        shutil.copy(update_fn, final_update_fn)
 
                 if not directory:
                     file_hash = hash_file(path)
