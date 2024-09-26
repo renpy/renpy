@@ -1552,11 +1552,6 @@ fix_dlc("renios", "renios")
                     if os.path.exists(update_fn):
                         os.unlink(update_fn)
 
-                if not directory:
-                    file_hash = hash_file(path)
-                else:
-                    file_hash = ""
-
             if format == "tar.bz2" or format == "bare-tar.bz2":
                 pkg = TarPackage(path, "w:bz2")
             elif format == "update":
