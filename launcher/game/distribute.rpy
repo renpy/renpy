@@ -658,7 +658,6 @@ fix_dlc("renios", "renios")
             # Build the mac app and windows exes.
             self.add_mac_files()
             self.add_windows_files()
-            self.add_main_py()
 
             # Add the main.py.
             self.add_main_py()
