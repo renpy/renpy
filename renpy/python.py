@@ -534,9 +534,7 @@ class WrapNode(ast.NodeTransformer):
                 args=[
                     ast.Name(id=var, ctx=ast.Load())
                 ],
-                keywords=[ ],
-                starargs=None,
-                kwargs=None)
+                keywords=[ ])
 
             assign = ast.Assign(
                 targets=[ ast.Name(id=var, ctx=ast.Store()) ],
@@ -569,9 +567,7 @@ class WrapNode(ast.NodeTransformer):
                 args=[
                     ast.Name(id=var, ctx=ast.Load())
                 ],
-                keywords=[ ],
-                starargs=None,
-                kwargs=None)
+                keywords=[ ])
 
             assign = ast.Assign(
                 targets=[ ast.Name(id=var, ctx=ast.Store()) ],
@@ -609,9 +605,7 @@ class WrapNode(ast.NodeTransformer):
                 args=[
                     ast.Name(id=var, ctx=ast.Load())
                 ],
-                keywords=[ ],
-                starargs=None,
-                kwargs=None)
+                keywords=[ ])
 
             assign = ast.Assign(
                 targets=[ ast.Name(id=var, ctx=ast.Store()) ],
@@ -710,9 +704,7 @@ class WrapNode(ast.NodeTransformer):
                 ctx=ast.Load()
                 ),
             args=[ self.wrap_generator(n) ],
-            keywords=[ ],
-            starargs=None,
-            kwargs=None)
+            keywords=[ ])
 
     def visit_Set(self, n):
 
@@ -722,9 +714,7 @@ class WrapNode(ast.NodeTransformer):
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
-            keywords=[ ],
-            starargs=None,
-            kwargs=None)
+            keywords=[ ])
 
     def visit_ListComp(self, n):
 
@@ -734,9 +724,7 @@ class WrapNode(ast.NodeTransformer):
                 ctx=ast.Load()
                 ),
             args=[ self.wrap_generator(n) ],
-            keywords=[ ],
-            starargs=None,
-            kwargs=None)
+            keywords=[ ])
 
     def visit_List(self, n):
 
@@ -749,9 +737,7 @@ class WrapNode(ast.NodeTransformer):
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
-            keywords=[ ],
-            starargs=None,
-            kwargs=None)
+            keywords=[ ])
 
     def visit_DictComp(self, n):
         return ast.Call(
@@ -760,9 +746,7 @@ class WrapNode(ast.NodeTransformer):
                 ctx=ast.Load()
                 ),
             args=[ self.wrap_generator(n) ],
-            keywords=[ ],
-            starargs=None,
-            kwargs=None)
+            keywords=[ ])
 
     def visit_Dict(self, n):
 
@@ -772,9 +756,7 @@ class WrapNode(ast.NodeTransformer):
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
-            keywords=[ ],
-            starargs=None,
-            kwargs=None)
+            keywords=[ ])
 
     def visit_FormattedValue(self, n):
         n = wrap_formatted_value(n)
