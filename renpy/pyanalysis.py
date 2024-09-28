@@ -720,10 +720,17 @@ class PyAnalysis(ast.NodeVisitor):
     # performed on something non-constant, which means that every variable
     # assigned inside the match is also non-constant. This is probably a
     # reasonable assumption.
-    def visit_Match(self, node):
-        self.analysis.push_control(False)
-        self.generic_visit(node)
-        self.analysis.pop_control()
+    def visit_MatchMapping(self, node):
+        if node.rest:
+            self.analysis.mark_not_constant(node.rest)
+
+    def visit_MatchStar(self, node):
+        if node.name is not None:
+            self.analysis.mark_not_constant(node.name)
+
+    def visit_MatchAs(self, node):
+        if node.name is not None:
+            self.analysis.mark_not_constant(node.name)
 
     def visit_Try(self, node):
 
@@ -748,6 +755,7 @@ class PyAnalysis(ast.NodeVisitor):
 
     def visit_Continue(self, node):
         self.analysis.exit_loop()
+
 
 
 class CompilerCache(object):
