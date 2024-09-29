@@ -352,14 +352,14 @@ def set_secondary_volume(channel, volume, delay):
 
 
 @proxy_with_channel
-def replace_audio_filter(channel, audio_filter):
+def replace_audio_filter(channel, audio_filter, primary):
     """
     Replaces the audio filter for `channel` with `audio_filter`.
     """
 
     afid = load_audio_filter(audio_filter)
 
-    call("replace_audio_filter", channel, afid)
+    call("replace_audio_filter", channel, afid, primary)
 
 
 def audio_filter_constructor(f):

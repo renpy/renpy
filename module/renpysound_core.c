@@ -1202,7 +1202,7 @@ void RPS_set_secondary_volume(int channel, float vol2, float delay) {
 /**
  * Replaces audio filters with the given PyObject.
  */
-void RPS_replace_audio_filter(int channel, PyObject *new_filter) {
+void RPS_replace_audio_filter(int channel, PyObject *new_filter, int primary) {
 
     struct Channel *c;
 
@@ -1214,10 +1214,13 @@ void RPS_replace_audio_filter(int channel, PyObject *new_filter) {
 
     LOCK_AUDIO();
 
-    if (c->playing_audio_filter) {
-        Py_DECREF(c->playing_audio_filter);
-        Py_INCREF(new_filter);
-        c->playing_audio_filter = new_filter;
+    if (primary) {
+
+        if (c->playing_audio_filter) {
+            Py_DECREF(c->playing_audio_filter);
+            Py_INCREF(new_filter);
+            c->playing_audio_filter = new_filter;
+        }
     }
 
     if (c->queued_audio_filter) {

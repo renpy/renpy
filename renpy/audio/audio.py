@@ -701,11 +701,14 @@ class Channel(object):
 
             self.context.audio_filter = new_audio_filter
 
-            if replace:
-                for q in self.queue:
-                    q.audio_filter = new_audio_filter
+            for q in self.queue:
+                q.audio_filter = new_audio_filter
 
-                renpysound.replace_audio_filter(self.number, new_audio_filter)
+            if replace:
+                renpysound.replace_audio_filter(self.number, new_audio_filter, 1)
+            else:
+                renpysound.replace_audio_filter(self.number, new_audio_filter, 0)
+
 
     def enqueue(self, filenames, loop=True, synchro_start=None, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
 
