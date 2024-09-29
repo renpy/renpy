@@ -230,6 +230,7 @@ class Channel(object):
 
     # The audio filter to use.
     audio_filter = None
+    raw_audio_filter = None
 
     def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie, framedrop, synchro_start):
 
@@ -690,6 +691,7 @@ class Channel(object):
 
             old_raw_audio_filter = self.context.raw_audio_filter
             self.context.raw_audio_filter = audio_filter
+            self.raw_audio_filter = audio_filter
 
             if old_raw_audio_filter is None and audio_filter is None:
                 new_audio_filter = None
@@ -1263,6 +1265,7 @@ def interact():
 
                 ctx = c.context
 
+
                 # If we're in the same music change, then do nothing with the
                 # music.
                 if c.last_changed == ctx.last_changed:
@@ -1270,6 +1273,9 @@ def interact():
 
                 filenames = ctx.last_filenames
                 tight = ctx.last_tight
+
+                if ctx.raw_audio_filter != c.raw_audio_filter:
+                    c.set_audio_filter(ctx.raw_audio_filter, True)
 
                 if c.loop != filenames:
                     c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))

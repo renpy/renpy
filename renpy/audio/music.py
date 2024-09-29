@@ -659,11 +659,19 @@ def set_audio_filter(channel, audio_filter, replace=False, duration=0.016):
         The duration to change from the current to the new filter, in seconds.
         This prevents a popping sound when changing filters.
     """
+
+    replace = replace or renpy.game.after_rollback
+
     if audio_filter is not None:
         audio_filter = renpy.audio.filter.to_audio_filter(audio_filter)
 
     try:
         c = renpy.audio.audio.get_channel(channel)
+        ctx = c.copy_context()
+
+        t = get_serial()
+        ctx.last_changed = t
+
         c.set_audio_filter(audio_filter, replace=replace, duration=duration)
     except Exception:
         if renpy.config.debug_sound:

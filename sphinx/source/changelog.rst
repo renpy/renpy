@@ -7,6 +7,12 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-8.3.3:
 .. _renpy-7.8.3:
 
+Fixes
+-----
+
+Changes to audio filters take place immediately after reload.
+
+
 Other Changes
 -------------
 
