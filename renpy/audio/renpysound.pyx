@@ -74,7 +74,7 @@ cdef extern from "renpysound_core.h":
     float RPS_get_volume(int channel)
     void RPS_set_pan(int channel, float pan, float delay)
     void RPS_set_secondary_volume(int channel, float vol2, float delay)
-    void RPS_replace_audio_filter(int channel, object audio_filter)
+    void RPS_replace_audio_filter(int channel, object audio_filter, int primary)
 
     void RPS_advance_time()
     int RPS_video_ready(int channel)
@@ -343,15 +343,19 @@ def set_secondary_volume(channel, volume, delay):
     check_error()
 
 
-def replace_audio_filter(channel, audio_filter):
+def replace_audio_filter(channel, audio_filter, playing):
     """
     Replaces the audio filter for `channel` with `audio_filter`.
+
+    `playing`
+        If true, the filter is applied to the currently playing file and queued file. If false,
+        the filter is only applied to the queued file.
     """
 
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    RPS_replace_audio_filter(channel, audio_filter)
+    RPS_replace_audio_filter(channel, audio_filter, playing)
 
 
 def deallocate_audio_filter(audio_filter):

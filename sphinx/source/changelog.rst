@@ -7,8 +7,17 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-8.3.3:
 .. _renpy-7.8.3:
 
+Fixes
+-----
+
+Changes to audio filters take place immediately after reload.
+
+
 Other Changes
 -------------
+
+When :func:`renpy.set_audio_filter` is called with `immediate` false, the filter will be applied when
+the queued file is played, rather than at some indeterminate time in the future.
 
 When using text shaders to display text with outlines, Ren'Py will create psuedo-glyphs. These psuedo-glyphs
 cover the start and end of each line, and are used to ensure the outlines will be shown.

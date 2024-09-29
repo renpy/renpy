@@ -713,11 +713,11 @@ renpyAudio.set_pan = (channel, pan, delay) => {
     linearRampToValue(control, control.value, pan, delay);
 };
 
-renpyAudio.replace_audio_filter = (channel, afid) => {
+renpyAudio.replace_audio_filter = (channel, afid, primary) => {
     let c = get_channel(channel);
     let filter = renpyAudio.getFilter(afid);
 
-    if (c.playing) {
+    if (c.playing && primary) {
         renpyAudio.disconnectFilter(c.playing.filter, c.playing.source, c.destination);
         c.playing.filter = filter;
         renpyAudio.connectFilter(filter, c.playing.source, c.destination);

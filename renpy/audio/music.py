@@ -136,7 +136,6 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=None
 
             t = get_serial()
             ctx.last_changed = t
-            c.last_changed = t
 
             if loop:
                 ctx.last_filenames = filenames
@@ -234,7 +233,6 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
 
             t = get_serial()
             ctx.last_changed = t
-            c.last_changed = t
 
             if loop:
                 ctx.last_filenames = filenames
@@ -307,7 +305,6 @@ def stop(channel="music", fadeout=None):
 
             t = get_serial()
             ctx.last_changed = t
-            c.last_changed = t
             ctx.last_filenames = [ ]
             ctx.last_tight = False
 
@@ -662,11 +659,19 @@ def set_audio_filter(channel, audio_filter, replace=False, duration=0.016):
         The duration to change from the current to the new filter, in seconds.
         This prevents a popping sound when changing filters.
     """
+
+    replace = replace or renpy.game.after_rollback
+
     if audio_filter is not None:
         audio_filter = renpy.audio.filter.to_audio_filter(audio_filter)
 
     try:
         c = renpy.audio.audio.get_channel(channel)
+        ctx = c.copy_context()
+
+        t = get_serial()
+        ctx.last_changed = t
+
         c.set_audio_filter(audio_filter, replace=replace, duration=duration)
     except Exception:
         if renpy.config.debug_sound:
