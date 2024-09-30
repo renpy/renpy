@@ -736,8 +736,12 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
     def event(self, ev, x, y, st):
 
+        rv = self.child.event(ev, x, y, st)
+        if rv is not None:
+            return rv
+
         if not self.is_focused():
-            return self.child.event(ev, x, y, st)
+            return None
 
         # Mouse, in parent-relative coordinates.
         par_x = int(self.last_x + x)
