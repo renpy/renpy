@@ -658,7 +658,6 @@ fix_dlc("renios", "renios")
             # Build the mac app and windows exes.
             self.add_mac_files()
             self.add_windows_files()
-            self.add_main_py()
 
             # Add the main.py.
             self.add_main_py()
@@ -1554,11 +1553,6 @@ fix_dlc("renios", "renios")
                 if self.build_update or dlc:
                     if os.path.exists(update_fn):
                         shutil.copy(update_fn, final_update_fn)
-
-                if not directory:
-                    file_hash = hash_file(path)
-                else:
-                    file_hash = ""
 
             if format == "tar.bz2" or format == "bare-tar.bz2":
                 pkg = TarPackage(path, "w:bz2")
