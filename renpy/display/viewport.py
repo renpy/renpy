@@ -567,10 +567,7 @@ class Viewport(renpy.display.layout.Container):
             else:
                 self.edge_last_st = None
 
-        rv = super(Viewport, self).event(ev, x, y, st)
-
-        if rv is not None:
-            return rv
+        ignore_event = False
 
         if inside and draggable:
 
@@ -583,7 +580,15 @@ class Viewport(renpy.display.layout.Container):
                 self.xadjustment.end_animation(instantly=True)
                 self.yadjustment.end_animation(instantly=True)
 
-                raise renpy.display.core.IgnoreEvent()
+                ignore_event = True
+
+        rv = super(Viewport, self).event(ev, x, y, st)
+
+        if rv is not None:
+            return rv
+
+        if ignore_event:
+            raise renpy.display.core.IgnoreEvent()
 
         return None
 
