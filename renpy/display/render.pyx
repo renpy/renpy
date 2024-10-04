@@ -1662,6 +1662,17 @@ cdef class Render:
         else:
             self.properties[name] = value
 
+    def get_property(self, name, default):
+
+        if self.properties is None:
+            return default
+
+        if name[:3] == "gl_":
+            name = name[3:]
+
+        return self.properties.get(name, default)
+
+
 class Canvas(object):
 
     def __init__(self, surf): #@DuplicatedSignature

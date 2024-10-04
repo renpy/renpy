@@ -341,7 +341,9 @@ class Viewport(renpy.display.layout.Container):
 
         grab = renpy.display.focus.get_grab()
 
-        if draggable:
+        if (grab is not None) and getattr(grab, '_draggable', False):
+            self.drag_position = None
+        elif draggable:
             if grab is None and renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
                 self.drag_position = None
         else:
@@ -353,7 +355,9 @@ class Viewport(renpy.display.layout.Container):
 
                 oldx, oldy = self.drag_position
 
-                if math.hypot(oldx - x, oldy - y) >= renpy.config.viewport_drag_radius:
+                grabbed = getattr(grab, "_draggable") and grab.is_focused()
+
+                if math.hypot(oldx - x, oldy - y) >= renpy.config.viewport_drag_radius and not grabbed:
                     rv = renpy.display.focus.force_focus(self)
                     renpy.display.focus.set_grab(self)
                     self.drag_position = (x, y)

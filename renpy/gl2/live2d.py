@@ -859,7 +859,11 @@ class Live2D(renpy.display.displayable.Displayable):
         state.old_expressions = [ (name, shown, hidden) for (name, shown, hidden) in state.old_expressions if (now - hidden) < common.all_expressions[name].fadeout ]
 
         # Determine the list of expressions that are being shown by this displayable.
-        expressions = list(self.used_nonexclusive) # type: ignore
+        if self.used_nonexclusive is None:
+            expressions = [ ]
+        else:
+            expressions = list(self.used_nonexclusive) # type: ignore
+
         if self.expression:
             expressions.append(self.expression)
 
