@@ -336,12 +336,12 @@ class Viewport(renpy.display.layout.Container):
         else:
             inside = True
 
-        # True if the player can drag the viewoport.
+        # True if the player can drag the viewport.
         draggable = self.draggable and (self.xadjustment.range or self.yadjustment.range)
 
         grab = renpy.display.focus.get_grab()
 
-        if (grab is not None) and getattr(grab, '_draggable', False):
+        if (grab is not None) and getattr(grab, '_draggable', False) and (grab is not self):
             self.drag_position = None
         elif draggable:
             if grab is None and renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
@@ -355,7 +355,7 @@ class Viewport(renpy.display.layout.Container):
 
                 oldx, oldy = self.drag_position
 
-                grabbed = getattr(grab, "_draggable") and grab.is_focused()
+                grabbed = getattr(grab, "_draggable", False) and grab.is_focused()
 
                 if math.hypot(oldx - x, oldy - y) >= renpy.config.viewport_drag_radius and not grabbed:
                     rv = renpy.display.focus.force_focus(self)
