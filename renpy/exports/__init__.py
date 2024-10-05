@@ -113,6 +113,10 @@ from renpy.display.predict import (
     screen as predict_screen,
 )
 
+from renpy.display.scenelists import (
+    layer_has_transforms,
+)
+
 from renpy.display.screen import (
     ScreenProfile as profile_screen,
     current_screen,
