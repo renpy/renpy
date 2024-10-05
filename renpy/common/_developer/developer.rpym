@@ -117,8 +117,20 @@ screen _image_attributes():
 
                 for l in renpy.display.scenelists.ordered_layers:
 
-                    $ hidden = renpy.get_hidden_tags(l)
-                    $ showing = renpy.get_showing_tags(l, sort=True)
+                    python:
+
+                        hidden = renpy.get_hidden_tags(l)
+                        showing = renpy.get_showing_tags(l, sort=True)
+                        transforms = renpy.layer_has_transforms(l)
+                        transform_list = [ ]
+
+                        if transforms.at_list:
+                            transform_list.append("show layer")
+                        if transforms.camera:
+                            transform_list.append("camera")
+                        if transforms.config_layer_transforms:
+                            transform_list.append("config.layer_transforms")
+
 
                     if not hidden and not showing:
                         continue
@@ -127,6 +139,9 @@ screen _image_attributes():
                         continue
 
                     text _("Layer [l]:")
+
+                    if transform_list:
+                        text _("    (transforms: [', '.join(transform_list)])")
 
                     for name in hidden:
                         $ attributes = " ".join(renpy.get_attributes(name, layer=l))

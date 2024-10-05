@@ -16,6 +16,9 @@ Changes to audio filters take place immediately after reload.
 Other Changes
 -------------
 
+The "Image Attributes" screen also indicates if transforms are applied to a layer, as it can be hard
+to determine otherwise.
+
 When :func:`renpy.set_audio_filter` is called with `immediate` false, the filter will be applied when
 the queued file is played, rather than at some indeterminate time in the future.
 
