@@ -2942,6 +2942,14 @@ class Interface(object):
                     renpy.loadsave.did_autosave = False
                     renpy.exports.run(renpy.config.autosave_callback)
 
+                # End an obsolete ongoing transition.
+                if (not trans_pause) and self.ongoing_transition.get(None, None) and not self.get_ongoing_transition(None):
+                    self.transition.pop(None, None)
+                    self.ongoing_transition.pop(None, None)
+                    self.transition_time.pop(None, None)
+                    self.transition_from.pop(None, None)
+                    self.restart_interaction = True
+
                 # See if we want to restart the interaction entirely.
                 if self.restart_interaction and not self.display_reset:
                     return True, None
