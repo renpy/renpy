@@ -3257,6 +3257,11 @@ class Interface(object):
                     x = -1
                     y = -1
 
+                self.event_time = end_time = get_time()
+
+                if ev.type in input_events:
+                    self.input_event_time = self.event_time
+
                 # This can set the event to None, to ignore it.
                 ev = renpy.display.controller.event(ev)
                 if not ev:
@@ -3264,11 +3269,6 @@ class Interface(object):
 
                 # Handle skipping.
                 renpy.display.behavior.skipping(ev)
-
-                self.event_time = end_time = get_time()
-
-                if ev.type in input_events:
-                    self.input_event_time = self.event_time
 
                 try:
 
