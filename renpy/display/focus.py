@@ -468,6 +468,7 @@ def before_interact(roots):
         set_grab(None)
         set_focused(max_default_focus, None, max_default_screen)
         old_max_default = max_default
+        explicit = True
 
     # Try to find the current focus.
     if current is not None:
