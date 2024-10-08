@@ -606,6 +606,14 @@ class TransformState(renpy.object.Object):
     xycenter = property(get_pos, set_xycenter)
 
 
+def simplify_position(v):
+    if isinstance(v, tuple):
+        return tuple(simplify_position(i) for i in v)
+    elif isinstance(v, position):
+        return v.simplify()
+    else:
+        return v
+
 class Proxy(object):
     """
     This class proxies a field from the transform to its state.
@@ -615,14 +623,6 @@ class Proxy(object):
         self.name = name
 
     def __get__(self, instance, owner):
-
-        def simplify_position(v):
-            if isinstance(v, tuple):
-                return tuple(simplify_position(i) for i in v)
-            elif isinstance(v, position):
-                return v.simplify()
-            else:
-                return v
 
         return simplify_position(getattr(instance.state, self.name))
 

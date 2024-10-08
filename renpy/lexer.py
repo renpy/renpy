@@ -504,6 +504,61 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
     return rv
 
 
+def depth_split(l):
+    """
+    Returns the length of the line's prefix, and the rest of the line.
+    """
+
+    depth = 0
+    index = 0
+
+    while True:
+        if l[index] == ' ':
+            depth += 1
+            index += 1
+            continue
+
+        break
+
+    return depth, l[index:]
+
+# i, min_depth -> block, new_i
+def gll_core(lines, i, min_depth):
+    """
+    Recursively groups lines into blocks.
+
+    Given the line
+    """
+
+    rv = []
+    depth = None
+
+    while i < len(lines):
+
+        filename, number, text = lines[i]
+
+        line_depth, rest = depth_split(text)
+
+        # This catches a block exit.
+        if line_depth < min_depth:
+            break
+
+        if depth is None:
+            depth = line_depth
+
+        if depth != line_depth:
+            raise ParseError(filename, number, "Indentation mismatch.")
+
+        # Advance to the next line.
+        i += 1
+
+        # Try parsing a block associated with this line.
+        block, i = gll_core(lines, i, depth + 1)
+
+        rv.append((filename, number, rest, block))
+
+    return rv, i
+
 def group_logical_lines(lines):
     """
     This takes as input the list of logical line triples output from
@@ -513,59 +568,6 @@ def group_logical_lines(lines):
     no block is associated with this line.)
     """
 
-    # Returns the depth of a line, and the rest of the line.
-    def depth_split(l):
-
-        depth = 0
-        index = 0
-
-        while True:
-            if l[index] == ' ':
-                depth += 1
-                index += 1
-                continue
-
-            # if l[index] == '\t':
-            #    index += 1
-            #    depth = depth + 8 - (depth % 8)
-            #    continue
-
-            break
-
-        return depth, l[index:]
-
-    # i, min_depth -> block, new_i
-    def gll_core(i, min_depth):
-
-        rv = []
-        depth = None
-
-        while i < len(lines):
-
-            filename, number, text = lines[i]
-
-            line_depth, rest = depth_split(text)
-
-            # This catches a block exit.
-            if line_depth < min_depth:
-                break
-
-            if depth is None:
-                depth = line_depth
-
-            if depth != line_depth:
-                raise ParseError(filename, number, "Indentation mismatch.")
-
-            # Advance to the next line.
-            i += 1
-
-            # Try parsing a block associated with this line.
-            block, i = gll_core(i, depth + 1)
-
-            rv.append((filename, number, rest, block))
-
-        return rv, i
-
     if lines:
 
         filename, number, text = lines[0]
@@ -573,7 +575,7 @@ def group_logical_lines(lines):
         if depth_split(text)[0] != 0:
             raise ParseError(filename, number, "Unexpected indentation at start of file.")
 
-    return gll_core(0, 0)[0]
+    return gll_core(lines, 0, 0)[0]
 
 
 # A list of keywords which should not be parsed as names, because
@@ -1486,6 +1488,20 @@ class Lexer(object):
         self.pos = len(self.text)
         return self.text[pos:].strip()
 
+    def _process_python_block(self, block, indent, rv, line_holder):
+        for _fn, ln, text, subblock in block:
+
+            while line_holder.line < ln:
+                rv.append(indent + '\n')
+                line_holder.line += 1
+
+            linetext = indent + text + '\n'
+
+            rv.append(linetext)
+            line_holder.line += linetext.count('\n')
+
+            self._process_python_block(subblock, indent + '    ', rv, line_holder)
+
     def python_block(self):
         """
         Returns the subblock of this code, and subblocks of that
@@ -1495,25 +1511,10 @@ class Lexer(object):
 
         rv = [ ]
 
-        o = LineNumberHolder()
-        o.line = self.number
+        line_holder = LineNumberHolder()
+        line_holder.line = self.number
 
-        def process(block, indent):
-
-            for _fn, ln, text, subblock in block:
-
-                while o.line < ln:
-                    rv.append(indent + '\n')
-                    o.line += 1
-
-                linetext = indent + text + '\n'
-
-                rv.append(linetext)
-                o.line += linetext.count('\n')
-
-                process(subblock, indent + '    ')
-
-        process(self.subblock, '')
+        self._process_python_block(self.subblock, '', rv, line_holder)
         return ''.join(rv)
 
     def arguments(self):
