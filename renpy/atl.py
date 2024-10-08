@@ -1146,6 +1146,16 @@ compatible_pairs = [
 # values of the variables here.
 
 
+def check_spline_types(value):
+    if isinstance(value, (position, int, float)):
+        return True
+
+    if isinstance(value, tuple):
+        return all(check_spline_types(i) for i in value)
+
+    return False
+
+
 class RawMultipurpose(RawStatement):
 
     warp_function = None
@@ -1207,15 +1217,6 @@ class RawMultipurpose(RawStatement):
     def compile(self, ctx): # @ReservedAssignment
 
         compiling(self.loc)
-
-        def check_spline_types(value):
-            if isinstance(value, (position, int, float)):
-                return True
-
-            if isinstance(value, tuple):
-                return all(check_spline_types(i) for i in value)
-
-            return False
 
         # Figure out what kind of statement we have. If there's no
         # interpolator, and no properties, than we have either a
