@@ -381,6 +381,165 @@ class Analysis(object):
         self.local_constant.discard(name)
         self.global_constant.discard(name)
 
+
+    def _check_name(self, node):
+        """
+        Check nodes that make up a name. This returns a pair:
+
+        * The first element is True if the node is constant, and False
+            otherwise.
+        * The second element is None if the node is constant or the name is
+            not known, and the name otherwise.
+        """
+
+        if isinstance(node, ast.Name):
+            const = NOT_CONST
+            name = node.id
+
+        elif isinstance(node, ast.Attribute):
+            const, name = self._check_name(node.value)
+
+            if name is not None:
+                name = name + "." + node.attr
+
+        else:
+            return self._check_node(node), None
+
+        if name in self.not_constant:
+            return NOT_CONST, name
+        elif name in self.global_constant:
+            return GLOBAL_CONST, name
+        elif name in self.local_constant:
+            return LOCAL_CONST, name
+        else:
+            return const, name
+
+    def _check_nodes(self, nodes):
+        """
+        Checks a list of nodes for constness.
+        """
+
+        nodes = list(nodes)
+
+        if not nodes:
+            return GLOBAL_CONST
+
+        return min(self._check_node(i) for i in nodes)
+
+    def _check_node(self, node):
+        """
+        When given `node`, part of a Python expression, returns how
+        const the expression is.
+        """
+
+        # This handles children that do not exist.
+        if node is None:
+            return GLOBAL_CONST
+
+        # PY3: see if there are new node types.
+
+
+        if isinstance(node, ast.Constant):
+            return GLOBAL_CONST
+
+        elif isinstance(node, ast.BoolOp):
+            return self._check_nodes(node.values)
+
+        elif isinstance(node, ast.NamedExpr):
+            return self._check_node(node.value)
+
+        elif isinstance(node, ast.BinOp):
+            return min(
+                self._check_node(node.left),
+                self._check_node(node.right),
+                )
+
+        elif isinstance(node, ast.UnaryOp):
+            return self._check_node(node.operand)
+
+
+        # ast.Lambda is NOT_CONST.
+
+        elif isinstance(node, ast.IfExp):
+            return min(
+                self._check_node(node.test),
+                self._check_node(node.body),
+                self._check_node(node.orelse),
+                )
+
+
+        elif isinstance(node, ast.Dict):
+            return min(
+                self._check_nodes(node.keys),
+                self._check_nodes(node.values)
+                )
+
+        elif isinstance(node, ast.Set):
+            return self._check_nodes(node.elts)
+
+
+        # ast.ListComp is NOT_CONST.
+        # ast.SetComp is NOT_CONST.
+        # ast.DictComp is NOT_CONST.
+
+        # ast.GeneratorExp is NOT_CONST.
+
+        # ast.Await is NOT_CONST.
+        # ast.Yield is NOT_CONST.
+        # ast.YieldFrom is NOT_CONST.
+
+        elif isinstance(node, ast.Compare):
+            return min(
+                self._check_node(node.left),
+                self._check_nodes(node.comparators),
+                )
+
+        elif isinstance(node, ast.Call):
+            const, name = self._check_name(node.func)
+
+            # The function must have a name, and must be declared pure.
+            if (const != GLOBAL_CONST) or (name not in self.pure_functions):
+                return NOT_CONST
+
+            return min(
+                self._check_nodes(node.args),
+                self._check_nodes(i.value for i in node.keywords),
+            )
+
+
+        elif isinstance(node, ast.FormattedValue):
+            return min(
+                self._check_node(node.value),
+                self._check_node(node.format_spec),
+            )
+
+        elif isinstance(node, ast.JoinedStr):
+            return self._check_nodes(node.values)
+
+        elif isinstance(node, (ast.Attribute, ast.Name)):
+            return self._check_name(node)[0]
+
+        elif isinstance(node, ast.Subscript):
+            return min(
+                self._check_node(node.value),
+                self._check_node(node.slice),
+                )
+
+        elif isinstance(node, ast.Starred):
+            return self._check_node(node.value)
+
+        elif isinstance(node, (ast.List, ast.Tuple)):
+            return self._check_nodes(node.elts)
+
+        elif isinstance(node, ast.Slice):
+            return min(
+                self._check_node(node.lower),
+                self._check_node(node.upper),
+                self._check_node(node.step),
+            )
+
+        return NOT_CONST
+
     def is_constant(self, node):
         """
         Returns true if `node` is constant for the purpose of screen
@@ -390,165 +549,7 @@ class Analysis(object):
         object equality.
         """
 
-        def check_name(node):
-            """
-            Check nodes that make up a name. This returns a pair:
-
-            * The first element is True if the node is constant, and False
-              otherwise.
-            * The second element is None if the node is constant or the name is
-              not known, and the name otherwise.
-            """
-
-            if isinstance(node, ast.Name):
-                const = NOT_CONST
-                name = node.id
-
-            elif isinstance(node, ast.Attribute):
-                const, name = check_name(node.value)
-
-                if name is not None:
-                    name = name + "." + node.attr
-
-            else:
-                return check_node(node), None
-
-            if name in self.not_constant:
-                return NOT_CONST, name
-            elif name in self.global_constant:
-                return GLOBAL_CONST, name
-            elif name in self.local_constant:
-                return LOCAL_CONST, name
-            else:
-                return const, name
-
-        def check_nodes(nodes):
-            """
-            Checks a list of nodes for constness.
-            """
-
-            nodes = list(nodes)
-
-            if not nodes:
-                return GLOBAL_CONST
-
-            return min(check_node(i) for i in nodes)
-
-        def check_node(node):
-            """
-            When given `node`, part of a Python expression, returns how
-            const the expression is.
-            """
-
-            # This handles children that do not exist.
-            if node is None:
-                return GLOBAL_CONST
-
-            # PY3: see if there are new node types.
-
-
-            if isinstance(node, ast.Constant):
-                return GLOBAL_CONST
-
-            elif isinstance(node, ast.BoolOp):
-                return check_nodes(node.values)
-
-            elif isinstance(node, ast.NamedExpr):
-                return check_node(node.value)
-
-            elif isinstance(node, ast.BinOp):
-                return min(
-                    check_node(node.left),
-                    check_node(node.right),
-                    )
-
-            elif isinstance(node, ast.UnaryOp):
-                return check_node(node.operand)
-
-
-            # ast.Lambda is NOT_CONST.
-
-            elif isinstance(node, ast.IfExp):
-                return min(
-                    check_node(node.test),
-                    check_node(node.body),
-                    check_node(node.orelse),
-                    )
-
-
-            elif isinstance(node, ast.Dict):
-                return min(
-                    check_nodes(node.keys),
-                    check_nodes(node.values)
-                    )
-
-            elif isinstance(node, ast.Set):
-                return check_nodes(node.elts)
-
-
-            # ast.ListComp is NOT_CONST.
-            # ast.SetComp is NOT_CONST.
-            # ast.DictComp is NOT_CONST.
-
-            # ast.GeneratorExp is NOT_CONST.
-
-            # ast.Await is NOT_CONST.
-            # ast.Yield is NOT_CONST.
-            # ast.YieldFrom is NOT_CONST.
-
-            elif isinstance(node, ast.Compare):
-                return min(
-                    check_node(node.left),
-                    check_nodes(node.comparators),
-                    )
-
-            elif isinstance(node, ast.Call):
-                const, name = check_name(node.func)
-
-                # The function must have a name, and must be declared pure.
-                if (const != GLOBAL_CONST) or (name not in self.pure_functions):
-                    return NOT_CONST
-
-                return min(
-                    check_nodes(node.args),
-                    check_nodes(i.value for i in node.keywords),
-                )
-
-
-            elif isinstance(node, ast.FormattedValue):
-                return min(
-                    check_node(node.value),
-                    check_node(node.format_spec),
-                )
-
-            elif isinstance(node, ast.JoinedStr):
-                return check_nodes(node.values)
-
-            elif isinstance(node, (ast.Attribute, ast.Name)):
-                return check_name(node)[0]
-
-            elif isinstance(node, ast.Subscript):
-                return min(
-                    check_node(node.value),
-                    check_node(node.slice),
-                    )
-
-            elif isinstance(node, ast.Starred):
-                return check_node(node.value)
-
-            elif isinstance(node, (ast.List, ast.Tuple)):
-                return check_nodes(node.elts)
-
-            elif isinstance(node, ast.Slice):
-                return min(
-                    check_node(node.lower),
-                    check_node(node.upper),
-                    check_node(node.step),
-                )
-
-            return NOT_CONST
-
-        return check_node(node)
+        return self._check_node(node)
 
     def is_constant_expr(self, expr):
         """
