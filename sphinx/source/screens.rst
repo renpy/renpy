@@ -455,7 +455,7 @@ data. It takes the following properties:
 .. screen-property:: released
 
     An action to run when the bar button is released. This will be invoked
-    even if the bar has not changed its value.
+    even if the bar has not changed its value. Can take on a value of the adjustment.
 
 One of `value` or `adjustment` must be given. In addition, this
 function takes:

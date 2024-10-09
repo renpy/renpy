@@ -2545,7 +2545,10 @@ class Bar(renpy.display.displayable.Displayable):
                 if rv is not None:
                     return rv
 
-            rv = run(self.released)
+            try:
+                rv = run(self.released)
+            except TypeError:
+                rv = run(self.released, value)
             if rv is not None:
                 return rv
 
