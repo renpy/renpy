@@ -654,8 +654,9 @@ class Context(renpy.object.Object):
                 renpy.store._kwargs = e.kwargs
 
             if self.seen:
-                renpy.game.persistent._seen_ever[self.current] = True # type: ignore
-                renpy.game.seen_session[self.current] = True
+                if renpy.exports.is_seen_allowed():
+                    renpy.game.persistent._seen_ever[self.current] = True # type: ignore
+                    renpy.game.seen_session[self.current] = True
 
             renpy.plog(2, "    end {} ({}:{})", type_node_name, this_node.filename, this_node.linenumber)
 

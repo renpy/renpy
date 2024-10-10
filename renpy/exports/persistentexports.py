@@ -161,3 +161,13 @@ def is_seen(ever=True):
     """
 
     return renpy.game.context().seen_current(ever)
+
+
+def is_seen_allowed():
+    """
+    :doc: other
+
+    Returns true if outside a replay or forced by :var:`config.force_replay_seen`.
+    """
+
+    return not renpy.store._in_replay or renpy.config.force_replay_seen

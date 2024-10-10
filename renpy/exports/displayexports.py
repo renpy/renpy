@@ -492,7 +492,8 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         img._unique()
 
     # Update the list of images we have ever seen.
-    renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
+    if renpy.exports.is_seen_allowed():
+        renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
 
     if tag and munge_name:
         name = (tag,) + name[1:]
