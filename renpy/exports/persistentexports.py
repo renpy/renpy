@@ -167,7 +167,7 @@ def is_seen_allowed():
     """
     :doc: other
 
-    Returns true if outside a replay or forced by :var:`config.force_replay_seen`.
+    Returns False only if in a replay and no seen events allowed by setting :var:`config.no_replay_seen` to True.
     """
 
-    return not renpy.store._in_replay or renpy.config.force_replay_seen
+    return not (renpy.store._in_replay and renpy.config.no_replay_seen)
