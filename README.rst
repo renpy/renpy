@@ -71,7 +71,7 @@ To return to this virtualenv later, run::
 
 After activating the virtualenv, install additional dependencies::
 
-    pip install -U cython future six typing pefile requests ecdsa
+    pip install -U "setuptools cython<3.0.0 future six typing pefile requests ecdsa"
 
 Then, install pygame_sdl2 by running the following commands::
 
