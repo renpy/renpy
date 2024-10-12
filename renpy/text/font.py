@@ -457,7 +457,11 @@ class ScaledImageFont(ImageFont):
             w, h = v.get_size()
             nw = scale(w)
             nh = scale(h)
-            self.chars[k] = renpy.display.scale.smoothscale(v, (nw, nh))
+
+            if renpy.config.nearest_neighbor:
+                self.chars[k] = renpy.display.pgrender.transform_scale(v, (nw, nh))
+            else:
+                self.chars[k] = renpy.display.scale.smoothscale(v, (nw, nh))
 
 
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False,

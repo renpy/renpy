@@ -16,6 +16,9 @@ Changes to audio filters take place immediately after reload.
 Other Changes
 -------------
 
+When :var:`config.nearest_neighbor` is true, image fonts are scaled using nearest neighbor scaling,
+rather than the default bilinear scaling.
+
 The "Image Attributes" screen also indicates if transforms are applied to a layer, as it can be hard
 to determine otherwise.
 
