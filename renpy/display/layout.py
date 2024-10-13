@@ -1120,6 +1120,9 @@ class MultiBox(Container):
                     first_line = False
                     next_padding = 0
 
+                    surf = render(d, rw, height - y, cst, cat)
+                    sw, sh = surf.get_size()
+
                 line.append((d, (next_padding, 0), x, y, surf))
                 line_height = max(line_height, sh)
                 x += sw + next_padding
@@ -1174,6 +1177,9 @@ class MultiBox(Container):
                     line = [ ]
                     first_line = False
                     next_padding = 0
+
+                    surf = render(d, width - x, rh, cst, cat)
+                    sw, sh = surf.get_size()
 
                 line.append((d, (0, next_padding), x, y, surf))
                 line_width = max(line_width, sw)
