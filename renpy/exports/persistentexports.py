@@ -161,3 +161,13 @@ def is_seen(ever=True):
     """
 
     return renpy.game.context().seen_current(ever)
+
+
+def is_seen_allowed():
+    """
+    :doc: other
+
+    Returns False only if in a replay and no seen events allowed by setting :var:`config.no_replay_seen` to True.
+    """
+
+    return not (renpy.store._in_replay and renpy.config.no_replay_seen)

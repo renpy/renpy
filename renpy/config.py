@@ -1503,6 +1503,8 @@ interface_layer = "screens"
 # Should Transform crop be limited to the width and height of the image being cropped?
 limit_transform_crop = False
 
+# Marking labels, images and audio in replays as seen is not allowed.
+no_replay_seen = False
 
 
 del os
