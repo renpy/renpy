@@ -73,17 +73,27 @@ def get_path(fn):
 
 apks = [ ]
 game_apks = [ ]
+split_apks = [ ]
 
 if renpy.android:
     import android.apk # type: ignore
 
+    packs = [os.environ[i] for i in ["ANDROID_PACK_FF" + str(j+1) for j in range(4)] if i in os.environ and os.environ[i].endswith(".apk")]
+
     if renpy.config.renpy_base == renpy.config.basedir:
-        # Read the game data from the APK.
+        # Read the game data from the APKs.
 
         apks.append(android.apk.APK(prefix='assets/x-game/'))
-        game_apks.append(apks[0])
+        game_apks.append(apks[-1])
+        for i in packs:
+            apks.append(android.apk.APK(apk=i, prefix='assets/game/'))
+            game_apks.append(apks[-1])
+            split_apks.append(apks[-1])
 
     apks.append(android.apk.APK(prefix='assets/x-renpy/x-common/'))
+    for i in packs:
+        apks.append(android.apk.APK(apk=i, prefix='assets/renpy/common/'))
+        split_apks.append(apks[-1])
 
 
 # Files on disk should be checked before archives. Otherwise, among
@@ -362,7 +372,8 @@ def scandirfiles_from_apk(add, seen):
 
             # Strip off the "x-" in front of each filename, which is there
             # to ensure that aapt actually includes every file.
-            f = "/".join(i[2:] for i in f.split("/"))
+            if apk not in split_apks:
+                f = "/".join(i[2:] for i in f.split("/"))
 
             add(None, f, files, seen)
 
@@ -581,7 +592,9 @@ def load_from_apk(name):
     """
 
     for apk in apks:
-        prefixed_name = "/".join("x-" + i for i in name.split("/"))
+        prefixed_name = name
+        if apk not in split_apks:
+            prefixed_name = "/".join("x-" + i for i in name.split("/"))
 
         try:
             return apk.open(prefixed_name)
@@ -693,7 +706,9 @@ def loadable_core(name):
         pass
 
     for apk in apks:
-        prefixed_name = "/".join("x-" + i for i in name.split("/"))
+        prefixed_name = name
+        if apk not in split_apks:
+            prefixed_name = "/".join("x-" + i for i in name.split("/"))
         if prefixed_name in apk.info:
             loadable_cache[name] = True
             return True
