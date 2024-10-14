@@ -2460,8 +2460,10 @@ class Bar(renpy.display.displayable.Displayable):
 
         vertical = self.style.bar_vertical
         invert = self.style.bar_invert ^ vertical
+
         if invert:
             value = range - value
+            old_inverted_value = value
 
         grabbed = (renpy.display.focus.get_grab() is self)
         just_grabbed = False
@@ -2531,7 +2533,11 @@ class Bar(renpy.display.displayable.Displayable):
                 value = range
 
         if invert:
-            value = range - value
+            if value == old_inverted_value: # type: ignore
+                value = old_value
+            else:
+                value = range - value
+
 
         if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
             renpy.display.tts.speak(renpy.minstore.__("deactivate"))
