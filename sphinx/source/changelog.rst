@@ -7,11 +7,17 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-8.3.3:
 .. _renpy-7.8.3:
 
+
 Fixes
 -----
 
 Changes to audio filters take place immediately after reload.
 
+Android
+-------
+
+Android bundles now use install-time assets packs, rather than fast-follow packs, to ensure that all assets
+are available when the game is run.
 
 Other Changes
 -------------
