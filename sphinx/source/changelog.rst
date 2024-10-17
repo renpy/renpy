@@ -4,9 +4,32 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+
+.. _renpy-8.4.0:
+
+8.4.0
+=====
+
+Requirement and Dependency Changes
+----------------------------------
+
+Ren'Py now requires Windows 10 or later to run. This means that it will no longer run on Windows 7, 8, or 8.1.
+
+Ren'Py is no longer built for 32-bit ARM linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
+Ren'Py is still being built for 32-bit ARM Android.
+
+Other Changes
+-------------
+
+When :var:`config.nearest_neighbor` is true, image fonts are scaled using nearest neighbor scaling,
+rather than the default bilinear scaling.
+
+The "Image Attributes" screen also indicates if transforms are applied to a layer, as it can be hard
+to determine otherwise.
+
+
 .. _renpy-8.3.3:
 .. _renpy-7.8.3:
-
 
 Fixes
 -----
@@ -22,31 +45,14 @@ are available when the game is run.
 Other Changes
 -------------
 
-When :var:`config.nearest_neighbor` is true, image fonts are scaled using nearest neighbor scaling,
-rather than the default bilinear scaling.
-
-The "Image Attributes" screen also indicates if transforms are applied to a layer, as it can be hard
-to determine otherwise.
+Whe rolling back to a point where a looping :class:`Movie` was showing, the looping movie will be played again
+if it had been stopped.
 
 When :func:`renpy.set_audio_filter` is called with `immediate` false, the filter will be applied when
 the queued file is played, rather than at some indeterminate time in the future.
 
 When using text shaders to display text with outlines, Ren'Py will create psuedo-glyphs. These psuedo-glyphs
 cover the start and end of each line, and are used to ensure the outlines will be shown.
-
-.. _renpy-8.4.0:
-
-8.4.0
-=====
-
-Requirement and Dependency Changes
-----------------------------------
-
-Ren'Py now requires Windows 10 or later to run. This means that it will no longer run on Windows 7, 8, or 8.1.
-
-Ren'Py is no longer built for 32-bit ARM linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
-Ren'Py is still being built for 32-bit ARM Android.
-
 
 
 .. _renpy-8.3.2:
