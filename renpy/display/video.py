@@ -641,28 +641,38 @@ def playing():
     return
 
 
+# A map from a channel to the movie playing on it in the last
+# interaction. Used to restart looping movies.
+last_channel_movie = { }
+
 def update_playing():
     """
     Calls play/stop on Movie displayables.
     """
+
+    global last_channel_movie
 
     old_channel_movie = renpy.game.context().movie
 
     for c, m in channel_movie.items():
 
         old = old_channel_movie.get(c, None)
+        last = last_channel_movie.get(c, None)
 
         if (c in reset_channels) and renpy.config.replay_movie_sprites:
             m.play(old)
         elif old is not m:
+            m.play(old)
+        elif m.loop and last is not m:
             m.play(old)
 
     for c, m in old_channel_movie.items():
         if c not in channel_movie:
             m.stop()
 
-    renpy.game.context().movie = dict(channel_movie)
+    renpy.game.context().movie = last_channel_movie = dict(channel_movie)
     reset_channels.clear()
+
 
 def frequent():
     """

@@ -22,6 +22,9 @@ are available when the game is run.
 Other Changes
 -------------
 
+Whe rolling back to a point where a looping :class:`Movie` was showing, the looping movie will be played again
+if it had been stopped.
+
 When :func:`renpy.set_audio_filter` is called with `immediate` false, the filter will be applied when
 the queued file is played, rather than at some indeterminate time in the future.
 
