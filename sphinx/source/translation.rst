@@ -117,6 +117,8 @@ The third unit has the identifier start_9e949aac, and contains::
 These units are created automatically by Ren'Py when the game script
 is loaded.
 
+.. _translation_statement:
+
 Translate Statement
 -------------------
 
