@@ -407,10 +407,14 @@ class ImageReference(renpy.display.displayable.Displayable):
 
         if not name:
             error("Image '%s' not found." % ' '.join(self.name))
+            if renpy.game.lint:
+                renpy.lint.report("References image '%s', which does not exist.", ' '.join(self.name))
             return False
 
         if name and (self._args.name == name):
             error("Image '{}' refers to itself.".format(' '.join(name)))
+            if renpy.game.lint:
+                renpy.lint.report("Image '%s' refers to itself.", ' '.join(name))
             return False
 
         args += self._args.args
