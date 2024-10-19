@@ -21,6 +21,9 @@ Ren'Py is still being built for 32-bit ARM Android.
 Other Changes
 -------------
 
+One the web platform, :var:`renpy.emscripten` is the emscripten module, making it available
+without needing to import it. You should still check that :var:`renpy.emscripten` is true before using it.
+
 When :var:`config.nearest_neighbor` is true, image fonts are scaled using nearest neighbor scaling,
 rather than the default bilinear scaling.
 

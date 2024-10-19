@@ -40,7 +40,7 @@ import pygame_sdl2
 try:
     import emscripten
 except ImportError:
-    pass
+    emscripten = None
 
 import renpy.audio.sound as sound
 import renpy.audio.music as music

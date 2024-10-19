@@ -64,7 +64,9 @@ it's running on.
 
 .. var:: renpy.emscripten
 
-    Has a true value when running in the browser.
+    Has a true value when running in the browser. That value is specifically the
+    emscripten module that lets you interact with the browser, see :func:`renpy.emscripten.run_script`
+    and similar functions.
 
 .. var:: renpy.mobile
 

@@ -226,19 +226,20 @@ Javascript
 ----------
 
 Ren'Py can run Javascript, using three functions in the ``emscripten``
-module. This module is only present when running inside the web browser,
-which can be tested using :var:`renpy.emscripten` - though you still need
-to import the module before using it.
+module. This module is available as :var:`renpy.emscripten` when
+running on the web platform. When not running on the web platform,
+renpy.emscripten is False.
 
-.. function:: emscripten.run_script(script)
+
+.. function:: renpy.emscripten.run_script(script)
 
     Runs the given Javascript script. This does not return a result.
 
-.. function:: emscripten.run_script_int(script)
+.. function:: renpy.emscripten.run_script_int(script)
 
     Runs the given Javascript script, and returns its result as an integer.
 
-.. function:: emscripten.run_script_string(script)
+.. function:: renpy.emscripten.run_script_string(script)
 
     Runs the given Javascript script, and returns its result as a string.
 
@@ -249,22 +250,6 @@ may be replaced when Ren'Py is updated.
 Javascript can also call into Ren'Py using the window.renpy_exc, window.renpy_get,
 and window.renpy_set functions. For the documentation of these functions, please
 read ``web/renpy-pre.js``.
-
-
-Bytecode Cache
---------------
-
-In Ren'Py 8.1, loading may take longer than required, as Ren'Py may need
-to compile the python into bytecode after downloading it. To avoid this, retrieve
-the bytecode cache by:
-
-* Opening the game in the browser. Hit f12 while the presplash is loading
-  to open the javascript console.
-
-* In the javascript console, type ``downloadBytecode()``. This will cause
-  your browser to download ``bytecode-311.rpyb``.
-
-* Place this in the ``game/cache`` directory of your game, and rebuild.
 
 
 Hamburger Menu
