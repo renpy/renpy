@@ -666,7 +666,7 @@ def update_playing():
         elif m.loop and last is not m:
             m.play(old)
 
-    for c, m in old_channel_movie.items():
+    for c, m in last_channel_movie.items():
         if c not in channel_movie:
             m.stop()
 
