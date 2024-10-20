@@ -592,6 +592,9 @@ class Movie(renpy.display.displayable.Displayable):
         else:
             old_play = old._play
 
+        if (self._play is None) and (old_play is None):
+            return
+
         if (self._play != old_play) or renpy.config.replay_movie_sprites:
             if self._play:
 
@@ -664,9 +667,9 @@ def update_playing():
         elif old is not m:
             m.play(old)
         elif m.loop and last is not m:
-            m.play(old)
+            m.play(last)
 
-    for c, m in old_channel_movie.items():
+    for c, m in last_channel_movie.items():
         if c not in channel_movie:
             m.stop()
 
