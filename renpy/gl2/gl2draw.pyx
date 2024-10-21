@@ -1356,6 +1356,9 @@ cdef class GL2DrawingContext:
 
         sx, sy = transform.transform(0, 0)
 
+        sx = round(sx, 5)
+        sy = round(sy, 5)
+
         sx = sx * halfwidth + halfwidth
         sy = sy * halfheight + halfheight
 

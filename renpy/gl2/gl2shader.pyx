@@ -118,7 +118,7 @@ cdef class UniformSampler2D(Uniform):
             self.cleanup = True
 
         if "anisotropic" in properties:
-            if not properties.get("anisotropic", True) and renpy.display.draw.loader.max_anisotropy > 1.0:
+            if not properties.get("anisotropic", True) and renpy.display.draw.texture_loader.max_anisotropy > 1.0:
                 glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, 1.0)
                 self.cleanup = True
 
@@ -141,8 +141,8 @@ cdef class UniformSampler2D(Uniform):
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
             if "anisotropic" in properties:
-                if not properties.get("anisotropic", True) and renpy.display.draw.loader.max_anisotropy > 1.0:
-                    glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, renpy.display.draw.loader.max_anisotropy)
+                if not properties.get("anisotropic", True) and renpy.display.draw.texture_loader.max_anisotropy > 1.0:
+                    glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, renpy.display.draw.texture_loader.max_anisotropy)
 
         self.last_data = None
 
