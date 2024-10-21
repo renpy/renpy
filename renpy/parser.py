@@ -966,6 +966,9 @@ def define_statement(l, loc):
     elif l.match(r'\|='):
         operator = "|="
     else:
+        if l.match(":"):
+            l.match(r"[^=\n]*")
+
         l.require('=')
         operator = "="
 
@@ -1001,6 +1004,9 @@ def default_statement(l, loc):
     while l.match(r'\.'):
         store = store + "." + name
         name = l.require(l.word)
+
+    if l.match(":"):
+        l.match(r"[^=\n]*")
 
     l.require('=')
     expr = l.rest()
