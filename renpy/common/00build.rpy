@@ -232,7 +232,6 @@ init -1500 python in build:
     base_patterns = [ ]
 
     late_base_patterns = pattern_list([
-        ( "**.rpe", None),
         (".*", None),
         ("**", "all")
         ])
