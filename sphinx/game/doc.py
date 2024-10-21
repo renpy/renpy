@@ -1,5 +1,6 @@
-from __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals, annotations
 
+import ast
 import inspect
 import re
 import collections
@@ -10,11 +11,14 @@ import io
 import os
 import textwrap
 import pprint
+import types
+
+from typing import Any, Iterable, Literal
 
 try:
     import builtins
 except ImportError:
-    import __builtin__ as builtins
+    import __builtin__ as builtins # type: ignore
 
 # Additional keywords in the Ren'Py script language.
 SCRIPT_KEYWORDS = """\
@@ -203,20 +207,17 @@ def write_keywords(srcdir='source'):
 
 # A map from filename to a list of lines that are supposed to go into
 # that file.
-line_buffer = collections.defaultdict(list)
+line_buffer = collections.defaultdict[str, list[str]](list)
 
 # A map from id(o) to the names it's documented under.
-documented = collections.defaultdict(list)
-
-# This keeps all objectsd we see alive, to prevent duplicates in documented.
-documented_list = [ ]
+documented = collections.defaultdict[int, list[str]](list)
 
 def getdoc(o):
     """
     Returns the docstring for `o`, but unlike inspect.getdoc, does not get
     values from base classes if absent (and it's faster too).
     Will still get the inherited docstring for a non-overridden method in a
-    subclass (because the method object is the same as the base classe's).
+    subclass (because the method object is the same as the base classes).
     """
 
     doc = getattr(o, "__doc__", None)
@@ -229,23 +230,189 @@ def getdoc(o):
 # The docstring for object.__init__ - which we don't want to pass for one of our classes's
 objinidoc = getdoc(object.__init__)
 
+_file_trees: dict[str, ast.Module] = {}
 
-def scan(name, o, prefix="", inclass=False):
+def scan_pep224(prefix: str, o_name: str | None, o: type | types.ModuleType, /):
+    """
+    Scan for PEP-224 docstrings for variables of `o` (either a module or class).
+    For classes also scans its __init__ method.
 
-    if inspect.isclass(o):
-        if issubclass(o, (renpy.store.Action,
-                          renpy.store.BarValue,
-                          renpy.store.InputValue)):
-            doc_type = "function"
-        else:
-            doc_type = "class"
-    elif inclass:
-        doc_type = "method"
+    Documented variables are then scanned for Sphinx docstrings and added to the
+    line buffer.
+    """
+
+    if isinstance(o, types.ModuleType):
+        # No variables in namespace packages.
+        if o.__spec__.origin is None:
+            return
+
+        module_name = o.__name__
+
+    elif isinstance(o, type):
+        module_name = o.__module__
+
     else:
-        doc_type = "function"
+        raise TypeError(f"Expected a class or module, got {o!r}")
 
-    # The section it's going into.
-    section = None
+    fn = inspect.getfile(o)
+
+    # Can't read Cython files.
+    if fn == "built-in":
+        return
+
+    # No source for Ren'Py store modules.
+    if module_name in renpy.python.store_modules:
+        return
+
+    if fn in _file_trees:
+        tree = _file_trees[fn]
+    else:
+        try:
+            # Maybe raise exceptions with appropriate message
+            # before using cleaned doc_obj.source
+            source, _ = inspect.findsource(o)
+            tree = ast.parse("".join(source), fn)
+
+        except (OSError, TypeError, SyntaxError) as exc:
+            print(f"Warning: couldn't read PEP-224 variable docstrings from {o!r}: {exc}")
+            return
+
+        _file_trees[fn] = tree
+
+    def scan(tree: ast.AST, in_init_func: bool):
+        from itertools import tee
+        a, b = \
+            tee(ast.iter_child_nodes(tree))
+
+        next(b, None)
+
+        for assign_node, str_node in zip(a, b):
+            if not (isinstance(str_node, ast.Expr) and
+                    isinstance(str_node.value, ast.Constant) and
+                    isinstance(str_node.value.value, str)):
+                continue
+
+            if isinstance(assign_node, ast.Assign) and len(assign_node.targets) == 1:
+                target = assign_node.targets[0]
+
+            elif isinstance(assign_node, ast.AnnAssign):
+                target = assign_node.target
+            else:
+                continue
+
+            if (not in_init_func) and isinstance(target, ast.Name):
+                name = target.id
+            elif (in_init_func and
+                isinstance(target, ast.Attribute) and
+                isinstance(target.value, ast.Name) and
+                target.value.id == 'self'):
+                name = target.attr
+            else:
+                continue
+
+            docstring = inspect.cleandoc(str_node.value.value)
+            if not docstring:
+                continue
+
+            default = None
+            if assign_node.value is not None:
+                try:
+                    default = ast.unparse(assign_node.value)
+                except Exception:
+                    pass
+
+            if o_name is not None:
+                name = f"{o_name}{name}"
+
+            vars[name] = docstring, default
+
+        return vars
+
+    vars: dict[str, tuple[str, str | None]] = {}
+
+    if isinstance(o, types.ModuleType):
+        default_doc_type = "var"
+        scan(tree, False)
+
+    elif isinstance(o, type):
+        default_doc_type = "attribute"
+
+        class ClassFoundException(Exception):
+            def __init__(self, class_def: ast.ClassDef):
+                self.class_def = class_def
+
+        class ClassFinder(ast.NodeVisitor):
+            def __init__(self):
+                self.stack = []
+
+            def visit_FunctionDef(self, node):
+                self.stack.append(node.name)
+                self.stack.append('<locals>')
+                self.generic_visit(node)
+                self.stack.pop()
+                self.stack.pop()
+
+            visit_AsyncFunctionDef = visit_FunctionDef # type: ignore
+
+            def visit_ClassDef(self, node):
+                self.stack.append(node.name)
+                if o.__qualname__ == '.'.join(self.stack):
+                    raise ClassFoundException(node)
+                self.generic_visit(node)
+                self.stack.pop()
+
+        try:
+            ClassFinder().visit(tree)
+        except ClassFoundException as e:
+            scan(e.class_def, False)
+
+            # For classes add instance variables defined in __init__
+            # Get the *last* __init__ node in case it is preceded by @overloads.
+            for node in reversed(e.class_def.body):
+                if isinstance(node, ast.FunctionDef) and node.name == '__init__':
+                    scan(node, True)
+                    break
+        else:
+            print(f"Warning: couldn't find class {o.__qualname__} in {fn}")
+            return
+
+    for name, (docstring, default) in vars.items():
+        (
+            lines,
+            doc_type,
+            section,
+            name,
+            explicit_default,
+        ) = inspect_doc(name, docstring, default)
+
+        if section is None:
+            continue
+
+        if doc_type is None:
+            doc_type = default_doc_type
+
+        if explicit_default is not None:
+            default = explicit_default
+
+        if default is None:
+            default = "..."
+
+        # Put it into the line buffer.
+        lb = line_buffer[section]
+
+        lb.append(f"{prefix}.. {doc_type}:: {name} = {default}")
+
+        for l in lines:
+            lb.append(f"{prefix}    {l}")
+
+        lb.append(prefix)
+
+
+def scan(name: str, o: Any, prefix="", inclass=False):
+    """
+    Given an object `o`, scans it for sphinx doc string and adds it to the
+    line buffer and list of documented objects.
+    """
 
     # The formatted arguments.
     args = None
@@ -256,52 +423,56 @@ def scan(name, o, prefix="", inclass=False):
     if not doc:
         return
 
-    if doc[0] == ' ':
-        print("Bad docstring for ", name, repr(doc))
-
     # Cython-generated docstrings start with the function and arguments.
     if re.match(r'[\w\.]+\(', doc):
-        orig = doc
-
         sig, _, doc = doc.partition("\n\n")
         doc = textwrap.dedent(doc)
 
         if "(" in sig:
             args = "(" + sig.partition("(")[2]
 
+    if not doc:
+        return
 
-    # Break up the doc string, scan it for specials.
-    lines = [ ]
-
-    for l in doc.split("\n"):
-
-        m = re.match(r':doc: *(\w+) *(\w+)?', l)
-        if m:
-            section = m.group(1)
-
-            if m.group(2):
-                doc_type = m.group(2)
-
-            continue
-
-        m = re.match(r':args: *(.*)', l)
-        if m:
-            args = m.group(1)
-            continue
-
-        m = re.match(r':name: *(\S+)', l)
-        if m:
-            if name != m.group(1):
-                return
-            continue
-
-        lines.append(l)
+    (
+        lines,
+        doc_type,
+        section,
+        new_name,
+        explicit_args,
+    ) = inspect_doc(name, doc, args)
 
     if section is None:
         return
 
-    if args is None:
+    # Don't add documentation via this path.
+    if new_name != name:
+        return
 
+    if inspect.isclass(o):
+        if issubclass(o, (renpy.store.Action,
+                        renpy.store.BarValue,
+                        renpy.store.InputValue)):
+            o_type = "function"
+        else:
+            o_type = "class"
+    elif inclass:
+        o_type = "method"
+    else:
+        o_type = "function"
+
+    if doc_type is None:
+        doc_type = o_type
+
+    # Forbid to add functions/classes/method as variables.
+    elif doc_type not in ("function", "class", "method"):
+        print(f"Warning: {name} is a {o_type} but documented as {doc_type}.")
+        return
+
+    if explicit_args is not None:
+        args = explicit_args
+
+    if args is None:
         # Get the arguments.
         if inspect.isclass(o):
             init = getattr(o, "__init__", None)
@@ -324,16 +495,19 @@ def scan(name, o, prefix="", inclass=False):
             args = inspect.signature(o)
 
         else:
-            print("Warning: %s has section but not args." % name)
-
+            print(f"Warning: {name} has section but not args.")
             return
 
         # Format the arguments.
         if args is not None:
-            if args.parameters and next(iter(args.parameters)) == "self":
-                pars = iter(args.parameters.values())
+            # Skip 'self' in methods.
+            pars = iter(args.parameters.values())
+            if "self" in args.parameters:
                 next(pars)
-                args = args.replace(parameters=pars)
+
+            # Strip annotations, at least for now.
+            pars = (p.replace(annotation=p.empty) for p in pars)
+            args = args.replace(parameters=list(pars))
 
             args = str(args)
         else:
@@ -342,29 +516,87 @@ def scan(name, o, prefix="", inclass=False):
     # Put it into the line buffer.
     lb = line_buffer[section]
 
-    lb.append(prefix + ".. %s:: %s%s" % (doc_type, name, args))
+    lb.append(f"{prefix}.. {doc_type}:: {name}{args}")
 
     for l in lines:
-        lb.append(prefix + "    " + l)
+        lb.append(f"{prefix}    {l}")
 
-    lb.append(prefix + "")
+    lb.append(prefix)
 
     if inspect.isclass(o):
         if (name not in [ "Matrix", "OffsetMatrix", "RotateMatrix", "ScaleMatrix" ]):
+            # Scan for documented attributes in the class first.
+            scan_pep224(prefix + "    ", None, o)
+
+            # Then for other classes and methods.
             for i in dir(o):
                 scan(i, getattr(o, i), prefix + "    ", inclass=True)
 
     if name == "identity":
         raise Exception("identity")
 
-    documented_list.append(o)
     documented[id(o)].append(name)
+
+
+def inspect_doc(name: str, doc: str, args_or_default: str | None):
+    """
+    Given doc string after cleandoc, search for special lines
+    :doc:, :name: and :args: or :default: in it.
+
+    Return a (doc lines, doc_type, section, name, args or default) tuple.
+    """
+
+    if doc[0] == ' ':
+        print("Bad docstring for ", name, repr(doc))
+
+    # Break up the doc string, scan it for specials.
+    lines: list[str] = [ ]
+
+    # The section it's going into.
+    section: str | None = None
+
+    # The kind of doc for sphinx.
+    doc_type: str | None = None
+
+    for l in doc.split("\n"):
+
+        m = re.match(r':doc: *(\w+) *(\w+)?', l)
+        if m:
+            section = m.group(1)
+
+            if m.group(2):
+                doc_type = m.group(2)
+
+            continue
+
+        m = re.match(r':args: *(.*)', l)
+        if m:
+            args_or_default = m.group(1)
+            continue
+
+        m = re.match(r':default: *(\S+)', l)
+        if m:
+            args_or_default = m.group(1)
+            continue
+
+        m = re.match(r':name: *(\S+)', l)
+        if m:
+            name = m.group(1)
+            continue
+
+        lines.append(l)
+
+    return lines, doc_type, section, name, args_or_default
 
 
 def scan_section(name, o):
     """
     Scans object o. Assumes it has the name name.
     """
+
+    # For modules also scan for documented variables.
+    if isinstance(o, types.ModuleType):
+        scan_pep224("", name, o)
 
     for n in dir(o):
         scan(name + n, getattr(o, n))
