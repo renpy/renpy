@@ -163,7 +163,6 @@ init -1500 python in build:
         ("*.dll", None),
         ("*.manifest", None),
         ("*.keystore", None),
-        ( "**.rpe", None),
         ( "**.rpe.py", None),
 
         ("update.pem", None),
@@ -233,6 +232,7 @@ init -1500 python in build:
     base_patterns = [ ]
 
     late_base_patterns = pattern_list([
+        ( "**.rpe", None),
         (".*", None),
         ("**", "all")
         ])
