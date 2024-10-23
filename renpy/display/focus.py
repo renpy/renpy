@@ -515,7 +515,7 @@ def before_interact(roots):
             finally:
                 renpy.display.screen.pop_current_screen()
 
-    if current:
+    if current and (current is not old_current):
         renpy.display.screen.push_current_screen(screen_of_focused)
         try:
             current.focus(default=not explicit)
