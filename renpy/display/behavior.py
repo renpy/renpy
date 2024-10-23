@@ -2473,7 +2473,7 @@ class Bar(renpy.display.displayable.Displayable):
         if not grabbed and map_event(ev, "bar_activate"):
             renpy.display.tts.speak(renpy.minstore.__("activate"))
             renpy.display.focus.set_grab(self)
-            self.set_style_prefix("selected_hover_", True)
+            self.set_style_prefix("hover_", True)
             just_grabbed = True
             grabbed = True
             ignore_event = True
@@ -2541,8 +2541,8 @@ class Bar(renpy.display.displayable.Displayable):
 
         if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
             renpy.display.tts.speak(renpy.minstore.__("deactivate"))
-            self.set_style_prefix("hover_", True)
             renpy.display.focus.set_grab(None)
+            self.set_style_prefix("hover_", True)
 
             # Invoke rounding adjustment on bar release
             value = self.adjustment.round_value(value, release=True)
@@ -2570,6 +2570,10 @@ class Bar(renpy.display.displayable.Displayable):
 
     def set_style_prefix(self, prefix, root):
         if root:
+
+            if renpy.display.focus.get_grab() is self:
+                prefix = "selected_" + prefix
+
             super(Bar, self).set_style_prefix(prefix, root)
 
     def _tts(self):
