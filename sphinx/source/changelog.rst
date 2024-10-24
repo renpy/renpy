@@ -22,6 +22,8 @@ are available when the game is run.
 Other Changes
 -------------
 
+Synchronized start of audio/video no longer occurs on movie channels unless explicitly requested.
+
 Whe rolling back to a point where a looping :class:`Movie` was showing, the looping movie will be played again
 if it had been stopped.
 
