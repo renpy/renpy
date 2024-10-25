@@ -148,7 +148,7 @@ resolution graphics.
 
 Oversampling is automatically enabled if the image ends with an '@' followed
 by a number, before the extension. For example, :file:`eileen happy@2.png` is
-2x oversampled, and :file:`eileen happy@3x.png` will be 3x oversampled. Oversampling
+2x oversampled, and :file:`eileen happy@3.png` will be 3x oversampled. Oversampling
 can also be enabled by giving the `oversample` keyword argument to :func:`Image`.
 
 A directory can also specify how much to oversample images inside it. For example,
