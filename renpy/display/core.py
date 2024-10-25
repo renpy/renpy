@@ -994,6 +994,14 @@ class Interface(object):
         if renpy.android:
             self.check_android_start()
 
+        gc.collect()
+
+        if gc.garbage:
+            del gc.garbage[:]
+
+        # Kill off the presplash.
+        renpy.display.presplash.end()
+
         # Initialize audio.
         pygame.display.hint("SDL_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
         pygame.display.hint("SDL_AUDIO_DEVICE_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
@@ -1011,15 +1019,7 @@ class Interface(object):
 
         renpy.display.emulator.init_emulator()
 
-        gc.collect()
-
-        if gc.garbage:
-            del gc.garbage[:]
-
         renpy.display.render.render_ready()
-
-        # Kill off the presplash.
-        renpy.display.presplash.end()
 
         # If we are on the web browser, start preloading the browser cache.
         if renpy.emscripten and renpy.game.preferences.web_cache_preload:
