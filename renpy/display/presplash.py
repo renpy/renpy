@@ -206,6 +206,8 @@ def end():
     global progress_bar
     progress_bar = None
 
+    pygame_sdl2.display.quit()
+
 
 def sleep():
     """
