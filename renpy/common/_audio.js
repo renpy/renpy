@@ -308,6 +308,7 @@ let video_start = (c) => {
 };
 
 let video_pause = (c) => {
+    const p = c.playing;
     if (p.started === null) {
         return;
     }
