@@ -1107,16 +1107,6 @@ fix_dlc("renios", "renios")
                 os.path.join(config.renpy_base, prefix + "linux-x86_64/renpy"),
                 True)
 
-            armfn = os.path.join(config.renpy_base, prefix + "linux-armv7l/renpy")
-
-            if os.path.exists(armfn):
-
-                self.add_file(
-                    raspi,
-                    prefix + "linux-armv7l/" + self.executable_name,
-                    armfn,
-                    True)
-
             aarch64fn = os.path.join(config.renpy_base, prefix + "linux-aarch64/renpy")
 
             if os.path.exists(aarch64fn):

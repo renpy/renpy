@@ -410,14 +410,22 @@ init python:
     build.classify_renpy("module/tinyfiledialogs/**", "source")
     build.classify_renpy("module/libhydrogen/**", "source")
 
+    # No-longer-needed python.
+
     # all-platforms binary.
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
 
-    build.classify_renpy("lib/py3-linux-armv7l/**", None)
+    build.classify_renpy("lib/py3-linux-armv7l", None)
     build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
     source_and_binary("lib/py3-**", "binary", "binary")
-    source_and_binary("lib/python3**", "binary", "binary", py='pyc')
+
+    libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
+    source_and_binary(libpython, "binary", "binary", py='pyc')
+
+    build.classify_renpy("lib/python**", None)
+    build.classify_renpy("lib/py2-**", None)
+
     build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
