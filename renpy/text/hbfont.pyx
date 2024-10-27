@@ -1036,8 +1036,8 @@ cdef class HBFont:
             x = <int> (glyph.x + xo + glyph.x_offset)
             y = <int> (glyph.y + yo + glyph.y_offset)
 
-            underline_x = x - glyph.delta_x_adjustment
-            underline_end = x + <int> (glyph.advance + expand + .9999)
+            underline_x = <int> (glyph.x + xo - glyph.delta_x_adjustment)
+            underline_end = <int> (glyph.x + xo + glyph.advance + expand + .9999)
 
             cache = self.get_glyph(glyph.glyph)
 

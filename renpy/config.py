@@ -886,7 +886,7 @@ loadable_callback = None
 
 # How many frames should be drawn fast each time the screen needs to be
 # updated?
-fast_redraw_frames = 4
+fast_redraw_frames = 12
 
 # The color passed to glClearColor when clearing the screen.
 gl_clear_color = "#000"
