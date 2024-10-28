@@ -136,6 +136,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=None
 
             t = get_serial()
             ctx.last_changed = t
+            c.last_changed = t
 
             if loop:
                 ctx.last_filenames = filenames
@@ -233,6 +234,7 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
 
             t = get_serial()
             ctx.last_changed = t
+            c.last_changed = t
 
             if loop:
                 ctx.last_filenames = filenames
@@ -305,6 +307,7 @@ def stop(channel="music", fadeout=None):
 
             t = get_serial()
             ctx.last_changed = t
+            c.last_changed = t
             ctx.last_filenames = [ ]
             ctx.last_tight = False
 
