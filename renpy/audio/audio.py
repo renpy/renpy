@@ -365,9 +365,12 @@ class Channel(object):
         ExecutionContext to point to the copy, and returns the copy.
         """
 
-        mcd = renpy.game.context().music
+        context = renpy.game.context()
+        mcd = dict(context.music)
+        context.music = mcd
 
         ctx = self.get_context().copy()
+
         mcd[self.name] = ctx
         return ctx
 
