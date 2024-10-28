@@ -131,7 +131,7 @@ init -1500 python:
             renpy.show_screen(self.screen, *self.args, **self.kwargs)
 
             if self.transition is not None:
-                renpy.transition(self.transition)
+                renpy.transition(self.transition, layer=self.kwargs.get("_layer", None))
 
             renpy.restart_interaction()
 
@@ -166,13 +166,15 @@ init -1500 python:
             renpy.predict_screen(self.screen, *self.args, **self.kwargs)
 
         def __call__(self):
-            if renpy.get_screen(self.screen, layer=self.kwargs.get("_layer", None)):
-                renpy.hide_screen(self.screen, layer=self.kwargs.get("_layer", None))
+            layer=self.kwargs.get("_layer", None)
+            
+            if renpy.get_screen(self.screen, layer=layer):
+                renpy.hide_screen(self.screen, layer=layer)
             else:
                 renpy.show_screen(self.screen, *self.args, **self.kwargs)
 
             if self.transition is not None:
-                renpy.transition(self.transition)
+                renpy.transition(self.transition, layer=layer)
 
             renpy.restart_interaction()
 
@@ -239,10 +241,13 @@ init -1500 python:
 
                 renpy.hide_screen(cs.screen_name, layer=cs.layer, immediately=self.immediately)
 
+                if self.transition is not None:
+                    renpy.transition(self.transition, layer=cs.layer)
+
             else:
                 renpy.hide_screen(self.screen, layer=self._layer, immediately=self.immediately)
 
-            if self.transition is not None:
-                renpy.transition(self.transition)
+                if self.transition is not None:
+                    renpy.transition(self.transition, layer=self._layer)
 
             renpy.restart_interaction()

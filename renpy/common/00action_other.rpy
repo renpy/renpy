@@ -180,13 +180,19 @@ init -1500 python:
         :doc: other_action
 
         Causes `transition` to occur.
+
+        `layer`
+            This is passed as the layer argument to :func:`renpy.transition`.
         """
 
-        def __init__(self, transition):
+        layer = None
+
+        def __init__(self, transition, layer=None):
             self.transition = transition
+            self.layer = layer
 
         def __call__(self):
-            renpy.transition(self.transition)
+            renpy.transition(self.transition, layer=self.layer)
             renpy.restart_interaction()
 
     @renpy.pure
