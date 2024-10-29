@@ -50,13 +50,13 @@ Other Changes
 
 Synchronized start of audio/video no longer occurs on movie channels unless explicitly requested.
 
-Whe rolling back to a point where a looping :class:`Movie` was showing, the looping movie will be played again
+When rolling back to a point where a looping :class:`Movie` was showing, the looping movie will be played again
 if it had been stopped.
 
 When :func:`renpy.set_audio_filter` is called with `immediate` false, the filter will be applied when
 the queued file is played, rather than at some indeterminate time in the future.
 
-When using text shaders to display text with outlines, Ren'Py will create psuedo-glyphs. These psuedo-glyphs
+When using text shaders to display text with outlines, Ren'Py will create pseudo-glyphs. These pseudo-glyphs
 cover the start and end of each line, and are used to ensure the outlines will be shown.
 
 
