@@ -271,6 +271,12 @@ def parse_menu(stmtl, loc, arguments):
 
             say_ast = finish_say(l, l.get_location(), who, what, attributes, temporary_attributes, interact=False)
 
+            if isinstance(say_ast, list):
+                if len(say_ast) == 1:
+                    say_ast = say_ast[0]
+                else:
+                    l.error("Monologue mode cannot be used in a menu.")
+
             l.expect_eol()
             l.expect_noblock("say menuitem")
             continue
