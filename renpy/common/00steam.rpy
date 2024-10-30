@@ -725,10 +725,11 @@ init -1499 python in _renpysteam:
         global keyboard_shift
         global keyboard_baseline
 
+        if keyboard_mode == "always":
+            keyboard_mode = "once"
+
         if keyboard_mode == "never":
             return
-        elif keyboard_mode == "always":
-            keyboard_primed = True
         elif keyboard_mode != "once":
             raise Exception("Bad steam keyboard_mode.")
 
