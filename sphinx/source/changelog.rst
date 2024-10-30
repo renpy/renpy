@@ -48,6 +48,9 @@ are available when the game is run.
 Other Changes
 -------------
 
+The "always" option to _renpysteam.keyboard_mode is no longer supported. If given, the "once" mode is
+used, requiring the player to explicitly request the Steam Deck keyboard when required.
+
 Synchronized start of audio/video no longer occurs on movie channels unless explicitly requested.
 
 When rolling back to a point where a looping :class:`Movie` was showing, the looping movie will be played again
