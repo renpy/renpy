@@ -94,6 +94,24 @@ screen _developer:
 
     key "developer" action Hide("_developer")
 
+init python:
+
+    def get_tag_attributes(tag, l):
+        d = renpy.display.scenelists.scene_lists().get_displayable_by_tag(l, tag)
+
+        if tag in d.child.__dict__.get("name", []):
+
+            attributes = " ".join(renpy.get_attributes(tag, layer=l))
+
+        else:
+            tag = "Expression: {}".format(tag)
+
+            attributes = " ".join(d.child.__dict__.get("name", []))
+
+            if attributes:
+                attributes = "Resolved: {}".format(attributes)
+
+        return tag, attributes
 
 screen _image_attributes():
     layer config.interface_layer
@@ -143,13 +161,17 @@ screen _image_attributes():
                     if transform_list:
                         text _("    (transforms: [', '.join(transform_list)])")
 
-                    for name in hidden:
-                        $ attributes = " ".join(renpy.get_attributes(name, layer=l))
-                        text _("    [name] [attributes] (hidden)")
+                    for tag in hidden:
 
-                    for name in showing:
-                        $ attributes = " ".join(renpy.get_attributes(name, layer=l))
-                        text _("    [name] [attributes]")
+                        $ tag, attributes = get_tag_attributes(tag, l)
+
+                        text _("    [tag!q] [attributes] (hidden)")
+
+                    for tag in showing:
+
+                        $ tag, attributes = get_tag_attributes(tag, l)
+
+                        text _("    [tag!q] [attributes]")
 
                     text " "
 
