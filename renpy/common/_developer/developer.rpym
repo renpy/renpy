@@ -130,11 +130,11 @@ screen _image_attributes():
 
                     for name in hidden:
                         $ attributes = " ".join(renpy.get_attributes(name, layer=l))
-                        text _("    [name] [attributes] (hidden)")
+                        text _("    [name!q] [attributes!q] (hidden)")
 
                     for name in showing:
                         $ attributes = " ".join(renpy.get_attributes(name, layer=l))
-                        text _("    [name] [attributes]")
+                        text _("    [name!q] [attributes!q]")
 
                     text " "
 
