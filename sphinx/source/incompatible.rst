@@ -12,6 +12,20 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+.. _incompatible-8.4.0:
+
+8.4.0
+-----
+
+**Show expression.** The tags produced by ``show expression`` have been changed to be guaranteed unique, rather than being
+based on the Python expression. To revert to the old behavior, use:
+
+    define config.old_show_expression_tags = True
+
+If you need to hide or otherwise access a displayable shown with ``show expression``, it's highly
+recommended to use an ``as`` clause.
+
+
 .. _incompatible-8.3.0:
 .. _incompatible-7.8.0:
 

@@ -1068,6 +1068,16 @@ def show_imspec(imspec, atl=None):
 
     layer = renpy.exports.default_layer(layer, tag or name, bool(expression) and (tag is None))
 
+    if not renpy.config.old_show_expression_tags:
+        counter = 0
+
+        while True:
+            tag = "_show_expression_%d" % counter
+            if not renpy.exports.showing(tag, layer):
+                break
+
+            counter += 1
+
     renpy.config.show(name,
                       at_list=at_list,
                       layer=layer,

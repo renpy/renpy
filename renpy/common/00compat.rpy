@@ -323,6 +323,9 @@ init -1100 python:
                 config.box_reverse_align = True
                 config.limit_transform_crop = True
 
+        if version <= (8, 3, 99):
+            config.old_show_expression_tags = True
+
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
