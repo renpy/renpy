@@ -324,7 +324,7 @@ init -1100 python:
                 config.limit_transform_crop = True
 
         if version <= (8, 3, 99):
-            config.old_show_expression_tags = True
+            config.old_show_expression = True
 
 
     # The version of Ren'Py this script is intended for, or

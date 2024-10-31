@@ -17,13 +17,18 @@ such changes only take effect when the GUI is regenerated.
 8.4.0
 -----
 
-**Show expression.** The tags produced by ``show expression`` have been changed to be guaranteed unique, rather than being
-based on the Python expression. To revert to the old behavior, use:
+**Show expression.** The ``show expression`` statement has been changed so that::
 
-    define config.old_show_expression_tags = True
+    show expression "bg washington"
 
-If you need to hide or otherwise access a displayable shown with ``show expression``, it's highly
-recommended to use an ``as`` clause.
+is exactly equivalent to:
+
+    show bg washington
+
+Previously, this would use the expression itself as the tag. When the expression is not a string,
+a unique tag is created for the show expression statement. This change can be reverted with::
+
+    define config.old_show_expression = True
 
 
 .. _incompatible-8.3.0:

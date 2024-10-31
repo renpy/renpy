@@ -1062,21 +1062,31 @@ def show_imspec(imspec, atl=None):
 
     if expression is not None:
         expression = renpy.python.py_eval(expression)
+
+        if not renpy.config.old_show_expression:
+
+            if isinstance(expression, str):
+                name = expression
+            else:
+
+                counter = 0
+
+                while True:
+                    tag = "_show_expression_%d" % counter
+                    if not renpy.exports.showing(tag, layer):
+                        break
+
+                    counter += 1
+
+                name = tag
+
         expression = renpy.easy.displayable(expression)
 
     at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
     layer = renpy.exports.default_layer(layer, tag or name, bool(expression) and (tag is None))
 
-    if not renpy.config.old_show_expression_tags:
-        counter = 0
 
-        while True:
-            tag = "_show_expression_%d" % counter
-            if not renpy.exports.showing(tag, layer):
-                break
-
-            counter += 1
 
     renpy.config.show(name,
                       at_list=at_list,

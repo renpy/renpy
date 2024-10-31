@@ -21,6 +21,10 @@ Ren'Py is still being built for 32-bit ARM Android.
 Other Changes
 -------------
 
+The ``show expression`` statement has changed so that ``show expression "bg washington"`` is equivalent
+to ``show bg washington``. Previously, the expression would be used as a tag, which would rarely be correct.
+If a displayable is given instead of a string, a tag will be generated.
+
 One the web platform, :var:`renpy.emscripten` is the emscripten module, making it available
 without needing to import it. You should still check that :var:`renpy.emscripten` is true before using it.
 
