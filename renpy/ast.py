@@ -1067,16 +1067,19 @@ def show_imspec(imspec, atl=None):
 
             if isinstance(expression, str):
                 name = expression
+
             else:
 
-                counter = 0
+                if tag is None:
 
-                while True:
-                    tag = "_show_expression_%d" % counter
-                    if not renpy.exports.showing(tag, layer):
-                        break
+                    counter = 0
 
-                    counter += 1
+                    while True:
+                        tag = "_show_expression_%d" % counter
+                        if not renpy.exports.showing(tag, layer):
+                            break
+
+                        counter += 1
 
                 name = tag
 
