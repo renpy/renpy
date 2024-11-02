@@ -43,7 +43,6 @@ from renpy.lexer import (
     munge_filename,
     elide_filename,
     unelide_filename,
-    get_line_text,
     SubParse,
 )
 

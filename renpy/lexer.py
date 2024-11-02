@@ -23,61 +23,71 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+from typing import Any
 
 import codecs
 import re
 import sys
 import os
 import time
+import linecache
 import contextlib
 
 import renpy
 
 from renpy.lexersupport import match_logical_word
 
-# The filename that's in the line text cache.
-line_text_filename = ""
 
-# The content of the line text cache.
-line_text_cache = [ ]
+_python_updatecache = linecache.updatecache
 
 
-def get_line_text(filename, lineno):
+def _updatecache(filename: str, module_globals: dict[str, Any] | None = None) -> list[str]:
     """
-    Gets the text of a line, in a best-effort way, for debugging purposes. May
-    return just a newline, if the line doesn't exist.
+    Monkeypatch internal linecache.updatecache to work around RenPy python code
+    being in different files even in the same namespace. Assume filename is one
+    of '_ren.py', '.rpy' or '.rpym'.
+
+    This is needed because a lot of Python modules (namely traceback) assume
+    that the compiled python code is always comes from the python file and uses
+    linecache to get the source code, which tries to use PEP302 loader, which
+    for RenPy python code points to renpy.minstore.
     """
 
-    global line_text_filename
-    global line_text_cache
-
-    import linecache
-    full_filename = renpy.exports.unelide_filename(filename)
-
-
-    if full_filename != line_text_filename:
-
-        line_text_filename = full_filename
+    if filename.endswith(("_ren.py", ".rpy", ".rpym")):
+        # Assume filename also relative to basedir or renpy_base.
+        full_fn = renpy.lexer.unelide_filename(filename)
+        # If we can't find absolute path that way, assume we are
+        # in build, so we can't show source.
+        if not (os.path.isabs(full_fn) and os.path.exists(full_fn)):
+            linecache.cache.pop(filename, None)
+            return []
 
         try:
-
-            with open(full_filename, "rb") as f:
+            with open(full_fn, "rb") as f:
                 data = f.read().decode("utf-8", "python_strict")
 
-            if full_filename.endswith("_ren.py"):
+            if full_fn.endswith("_ren.py"):
                 data = ren_py_to_rpy(data, None)
 
             data += "\n\n"
 
-            line_text_cache = data.split("\n")
+            lines = data.split("\n")
+            if lines and lines[0].startswith("\ufeff"):
+                lines[0] = lines[0][1:]
+
+            lines = [line.removesuffix("\r") + "\n" for line in lines]
+
+            stat = os.stat(full_fn)
+            linecache.cache[filename] = stat.st_size, stat.st_mtime, lines, full_fn
+            return lines
 
         except Exception:
-            line_text_cache = [ ]
+            return []
 
-    if lineno <= len(line_text_cache):
-        return line_text_cache[lineno - 1] + "\n"
-    else:
-        return "\n"
+    return _python_updatecache(filename, module_globals)
+
+
+linecache.updatecache = _updatecache
 
 
 class ParseError(Exception):
@@ -1586,7 +1596,7 @@ class Lexer(object):
         return sp
 
 
-def ren_py_to_rpy(text, filename):
+def ren_py_to_rpy(text: str, filename: str | None) -> str:
     """
     Transforms an _ren.py file into the equivalent .rpy file. This should retain line numbers.
 

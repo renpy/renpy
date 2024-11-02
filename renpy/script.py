@@ -572,12 +572,13 @@ class Script(object):
                     if renpy.config.allow_duplicate_labels:
                         return
 
+                    import linecache
                     self.duplicate_labels.append(
                         u'The label {} is defined twice, at File "{}", line {}:\n{}and File "{}", line {}:\n{}'.format(
                             bad_name, old_node.filename, old_node.linenumber,
-                            renpy.lexer.get_line_text(old_node.filename, old_node.linenumber),
+                            linecache.getline(old_node.filename, old_node.linenumber),
                             bad_node.filename, bad_node.linenumber,
-                            renpy.lexer.get_line_text(bad_node.filename, bad_node.linenumber),
+                            linecache.getline(bad_node.filename, bad_node.linenumber),
                         ))
 
         self.update_bytecode()
