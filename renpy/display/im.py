@@ -146,8 +146,7 @@ class Cache(object):
         cache, in pixels.
         """
 
-        with self.lock:
-            return self.cache_size
+        return self.cache_size
 
     def get_current_size(self, generations):
         """
@@ -191,18 +190,16 @@ class Cache(object):
     # Clears out the cache.
     def clear(self):
 
-        self.lock.acquire()
+        with self.lock:
 
-        self.preloads = [ ]
+            self.preloads = [ ]
 
-        self.cache = { }
-        self.cache_size = 0
+            self.cache = { }
+            self.cache_size = 0
 
-        self.first_preload_in_tick = True
+            self.first_preload_in_tick = True
 
-        self.added.clear()
-
-        self.lock.release()
+            self.added.clear()
 
     def get_renders(self):
         """
@@ -211,14 +208,8 @@ class Cache(object):
 
         Render = renpy.display.render.Render
 
-        rv = [ ]
-
         with self.lock:
-            for ce in self.cache.values():
-                if isinstance(ce.texture, Render):
-                    rv.append(ce.texture)
-
-        return rv
+            return [ ce.texture for ce in self.cache.values() if isinstance(ce.texture, Render) ]
 
     # Increments time, and clears the list of images to be
     # preloaded.
@@ -328,21 +319,23 @@ class Cache(object):
             else:
                 bounds = (0, 0, w, h)
 
+            ce = CacheEntry(image, surf, bounds)
+
             with self.lock:
 
-                ce = CacheEntry(image, surf, bounds)
-
-                if image in self.cache:
-                    self.kill(self.cache[image])
+                old_ce = self.cache.get(image, None)
 
                 self.cache[image] = ce
                 self.cache_size += ce.size()
 
-                if renpy.config.debug_image_cache:
-                    if predict:
-                        renpy.display.ic_log.write("Added %r (%.02f%%)", ce.what, 100.0 * self.get_total_size() / self.cache_limit)
-                    else:
-                        renpy.display.ic_log.write("Total Miss %r", ce.what)
+            if renpy.config.debug_image_cache:
+                if predict:
+                    renpy.display.ic_log.write("Added %r (%.02f%%)", ce.what, 100.0 * self.get_total_size() / self.cache_limit)
+                else:
+                    renpy.display.ic_log.write("Total Miss %r", ce.what)
+
+            if old_ce:
+                self.kill(old_ce)
 
             renpy.display.render.mutated_surface(ce.surf)
 
@@ -388,8 +381,7 @@ class Cache(object):
             return make_render(ce)
 
         if (ce.surf is None) and (ce.texture is None):
-            with self.lock:
-                self.kill(ce)
+            self.kill(ce)
 
         return rv
 
@@ -400,8 +392,9 @@ class Cache(object):
         if ce.surf is not None:
             renpy.display.draw.mutated_surface(ce.surf)
 
-        self.cache_size -= ce.size()
-        del self.cache[ce.what]
+        with self.lock:
+            self.cache_size -= ce.size()
+            del self.cache[ce.what]
 
         if renpy.config.debug_image_cache:
             renpy.display.ic_log.write("Removed %r", ce.what)
@@ -420,7 +413,10 @@ class Cache(object):
         # If we're outside the cache limit, we need to go and start
         # killing off some of the entries until we're back inside it.
 
-        for ce in sorted(self.cache.values(), key=lambda a : a.time):
+        with self.lock:
+            cache_values = list(self.cache.values())
+
+        for ce in sorted(cache_values, key=lambda a : a.time):
 
             if ce.time == self.time:
                 # If we're bigger than the limit, and there's nothing
@@ -475,21 +471,19 @@ class Cache(object):
         if not isinstance(im, ImageBase):
             return
 
-        with self.lock:
+        if im in self.added:
+            return
 
-            if im in self.added:
-                return
+        self.added.add(im)
 
-            self.added.add(im)
+        ce = self.cache.get(im, None)
 
-            ce = self.cache.get(im, None)
-
-            if ce and ce.texture:
-                ce.time = self.time
-                in_cache = True
-            else:
-                self.preloads.append(im)
-                in_cache = False
+        if ce and ce.texture:
+            ce.time = self.time
+            in_cache = True
+        else:
+            self.preloads.append(im)
+            in_cache = False
 
         if not in_cache:
 
@@ -524,18 +518,17 @@ class Cache(object):
 
             # If the size of the current generation is bigger than the
             # total cache size, stop preloading.
-            with self.lock:
 
-                # If the cache is overfull, clean it out.
-                if not self.cleanout():
+            # If the cache is overfull, clean it out.
+            if not self.cleanout():
 
-                    if renpy.config.debug_image_cache:
-                        for i in self.preloads:
-                            renpy.display.ic_log.write("Overfull %r", i)
+                if renpy.config.debug_image_cache:
+                    for i in self.preloads:
+                        renpy.display.ic_log.write("Overfull %r", i)
 
-                    self.preloads = [ ]
+                self.preloads = [ ]
 
-                    break
+                return
 
             try:
                 image = self.preloads.pop(0)
@@ -548,8 +541,7 @@ class Cache(object):
             except Exception:
                 pass
 
-        with self.lock:
-            self.cleanout()
+        self.cleanout()
 
     def add_load_log(self, filename):
 
