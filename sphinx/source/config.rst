@@ -769,7 +769,7 @@ Media (Music, Sound, and Video)
 
 .. var:: config.skip_sounds = False
 
-    If False, non-looping audio will not be played when Ren'Py is
+    If True, non-looping audio will not be played when Ren'Py is
     skipping.
 
 .. var:: config.sound = True
