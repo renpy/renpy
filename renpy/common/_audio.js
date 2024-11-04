@@ -211,12 +211,13 @@ let stop_playing = (c) => {
 
 
     if (c.playing !== null && c.playing.source !== null) {
+
+        renpyAudio.disconnectFilter(c.playing.filter, c.playing.source, c.destination);
+
         try {
             c.playing.source.stop()
         } catch (e) {
         }
-
-        renpyAudio.disconnectFilter(c.playing.filter, c.playing.source, c.destination);
     }
 
     c.playing = c.queued;

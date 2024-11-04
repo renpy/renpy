@@ -1592,6 +1592,11 @@ def ren_py_to_rpy(text, filename):
     """
 
     lines = text.splitlines()
+
+    # Skip the BOM, if any.
+    if lines and lines[0][:1] == u'\ufeff':
+        lines = lines[1:]
+
     result = [ ]
 
     # The prefix prepended to Python lines.

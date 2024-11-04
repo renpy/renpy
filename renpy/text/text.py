@@ -1815,9 +1815,6 @@ class Layout(object):
                 if g.time == -1:
                     continue
 
-                # Check that this is the right shader to use.
-                if (g.shader is not ts) and (g.shader != ts):
-                    continue
 
                 # The x-coordinate of the right edge of the glyph.
                 if g is last_glyph:
@@ -1846,15 +1843,19 @@ class Layout(object):
                     left_time = g.time - duration
                     right_time = g.time
 
-                mesh.add_glyph(
-                    tw, th,
-                    cx, cy,
-                    g.index,
-                    left, top, right, bottom,
-                    left_time, right_time,
-                    g.ascent, g.descent,
-                    self.add_left, self.add_top,
-                )
+
+                # Check that this is the right shader to use.
+                if (g.shader is ts) or (g.shader == ts):
+
+                    mesh.add_glyph(
+                        tw, th,
+                        cx, cy,
+                        g.index,
+                        left, top, right, bottom,
+                        left_time, right_time,
+                        g.ascent, g.descent,
+                        self.add_left, self.add_top,
+                    )
 
                 last_time = g.time
                 last_index = g.index
