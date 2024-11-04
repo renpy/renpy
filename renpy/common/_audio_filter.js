@@ -71,16 +71,25 @@ renpyAudio.connectFilter = function (filter, source, destination) {
  */
 renpyAudio.disconnectFilter = function (filter, source, destination) {
     if (filter === null) {
-        source.disconnect(destination);
+        try {
+            source.disconnect(destination);
+        } catch (e) {
+        }
         return;
     }
 
     for (let input of filter.inputs) {
-        source.disconnect(input);
+        try {
+            source.disconnect(input);
+        } catch (e) {
+        }
     }
 
     for (let output of filter.outputs) {
-        output.disconnect(destination);
+        try {
+            output.disconnect(destination);
+        } catch (e) {
+        }
     }
 }
 
