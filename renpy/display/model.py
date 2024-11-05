@@ -81,7 +81,7 @@ class Model(renpy.display.displayable.Displayable):
         self.size = size
         self.textures = [ ]
 
-        self._mesh = True
+        self._mesh = None
 
         self.shaders = [ ]
         self.uniforms = { }
