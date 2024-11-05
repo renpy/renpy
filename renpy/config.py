@@ -983,7 +983,7 @@ menu_include_disabled = False
 # Should we report extraneous attributes?
 report_extraneous_attributes = True
 
-# Should we play non-loooped music when skipping?
+# Should we avoid playing non-loooped music when skipping?
 skip_sounds = False
 
 # Should we lint screens without parameters?
