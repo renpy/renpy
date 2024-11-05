@@ -913,6 +913,8 @@ class Button(renpy.display.layout.Window):
     # This locks the displayable against further change.
     locked = False
 
+    idle_mask = None
+
     def __init__(self, child=None, style='button', clicked=None,
                  hovered=None, unhovered=None, action=None, role=None,
                  time_policy=None, keymap={}, alternate=None,
@@ -977,6 +979,9 @@ class Button(renpy.display.layout.Window):
 
         if self.clicked:
 
+            if self.idle_mask is None and not self.is_focused():
+                self.idle_mask = rv
+
             rect = self.style.focus_rect
             if rect is not None:
                 fx, fy, fw, fh = rect
@@ -988,7 +993,9 @@ class Button(renpy.display.layout.Window):
 
             mask = self.style.focus_mask
 
-            if mask is True:
+            if mask == "idle_mask" and self.idle_mask is not None:
+                mask = self.idle_mask
+            elif mask is True:
                 mask = rv
             elif mask is not None:
                 try:
@@ -997,7 +1004,7 @@ class Button(renpy.display.layout.Window):
                     if callable(mask):
                         mask = mask
                     else:
-                        raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
+                        raise Exception("focus_mask must be None, True, \"idle_mask\", a displayable, or a callable.")
 
             if mask is not None:
                 fmx = 0

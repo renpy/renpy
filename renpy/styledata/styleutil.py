@@ -49,6 +49,8 @@ def expand_focus_mask(v):
         return v
     elif callable(v):
         return v
+    elif v == "idle_mask":
+        return v
     else:
         return renpy.easy.displayable(v)
 
