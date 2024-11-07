@@ -412,7 +412,7 @@ GL properties change the global state of OpenGL, or the Model-Based renderer.
 These properties can be used with a Transform, or with the :func:`Render.add_property`
 function.
 
-.. _gl-blend_func:
+.. _gl-blend-func:
 
 ``gl_blend_func``
     If present, this is expected to be a six-component tuple, which is
