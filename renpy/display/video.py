@@ -288,10 +288,10 @@ def render_movie(channel, width, height):
 
 def default_play_callback(old, new): # @UnusedVariable
 
-    renpy.audio.music.play(new._play, channel=new.channel, loop=new.loop, synchro_start=True)
+    renpy.audio.music.play(new._play, channel=new.channel, loop=new.loop)
 
     if new.mask:
-        renpy.audio.music.play(new.mask, channel=new.mask_channel, loop=new.loop, synchro_start=True)
+        renpy.audio.music.play(new.mask, channel=new.mask_channel, loop=new.loop)
 
 # A serial number that's used to generated movie channels.
 movie_channel_serial = 0
