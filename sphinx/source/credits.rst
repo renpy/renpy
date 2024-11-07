@@ -19,7 +19,9 @@ the omission in future versions.
 * Ajkahn96
 * Aleema
 * Alessio
+* Aleksandar Belic Aleksanchez
 * Alex
+* Alexandre Detiste
 * Alexandre Tranchant
 * Alisha Taylor
 * Altskop
@@ -31,6 +33,7 @@ the omission in future versions.
 * Arowana-vx
 * Asfdfdfd
 * Auro-Cyanide
+* Avonder
 * Awakening
 * Ayowel
 * Baekansi
@@ -39,12 +42,14 @@ the omission in future versions.
 * Ben Wright
 * BlackDragonHunt/Mangagamer
 * Brainos
+* Brimbel
 * Bryan Tsang
 * Carl
 * Capntrips
 * Caryoscelus
 * CensoredUsername (C)
 * Charles Surett
+* Chengtian He
 * Cherie Davidson
 * Chrisclone
 * Chris Mear
@@ -53,6 +58,7 @@ the omission in future versions.
 * Clinton Nguyen
 * CobaltCore
 * CodePsy
+* Craig de Stigter
 * Craig P. Donson
 * 被诅咒的章鱼
 * DaFool
@@ -101,6 +107,7 @@ the omission in future versions.
 * GNCanva
 * Gouvernathor
 * Gratusfr
+* Gregor Riepl
 * Gregory Pease
 * Grey
 * Gustavo Carvalho
@@ -152,6 +159,7 @@ the omission in future versions.
 * Konstantin Mozheyko
 * Konstantin Nikolayev
 * KorDen
+* Kuro
 * Kuroonehalf
 * Kyouryuukunn
 * Lapalissiano
@@ -166,13 +174,17 @@ the omission in future versions.
 * Liu Wenyuan
 * Lore
 * Lucas Ramage
+* Luejerry
+* M-From-Space
 * Maciej Katafiasz
 * Maissara Moustafa
 * Mal Graty
 * Marcel
+* Mark
 * Markus Koschany
 * Mason Chou
 * Matias B.
+* Matěj Račinský
 * Matt George
 * Matthew Vimislik
 * Max le Fou
@@ -197,9 +209,11 @@ the omission in future versions.
 * NoJoker
 * Nolanlemahn
 * Noriverwater
+* Npckc
 * Numerlor
 * Nxcrft
 * Nyaatrap
+* OctoSpacc
 * OleSTEEP
 * Oscar Six
 * Oshi-Shinobu
@@ -208,6 +222,7 @@ the omission in future versions.
 * Paul Morio
 * Pavel Langwell
 * Peter DeVita
+* Petr Abdulin
 * Philat
 * Pionere
 * Piroshki
@@ -243,6 +258,7 @@ the omission in future versions.
 * Siege-Wizard
 * SleepKirby
 * Spiky Caterpillar
+* Sunrise Sarsaparilla
 * Susnux
 * Sylvain Beucler
 * Symegac
@@ -255,6 +271,8 @@ the omission in future versions.
 * Totally a booplicate
 * Vadim Karpenko
 * Valery Iwanofu
+* Veydzh3r
+* Viktoras Agejevas
 * Viliam Búr
 * Vladya
 * Vollschauer
