@@ -1594,7 +1594,7 @@ def ren_py_to_rpy(text, filename):
 
     # Skip the BOM, if any.
     if lines and lines[0][:1] == u'\ufeff':
-        lines = lines[1:]
+        lines[0] = lines[0][1:]
 
     result = [ ]
 
