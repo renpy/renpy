@@ -720,6 +720,7 @@ init -1499 python in _renpysteam:
 
     def keyboard_periodic():
 
+        global keyboard_mode
         global keyboard_showing
         global keyboard_primed
         global keyboard_shift
