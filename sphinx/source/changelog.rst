@@ -4,9 +4,9 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+
 .. _renpy-8.3.3:
 .. _renpy-7.8.3:
-
 
 Fixes
 -----
@@ -47,9 +47,6 @@ There have been a number of fixes to the way Ren'Py handles dragging a viewport 
 
 A drag may now contain a draggable viewport, allowing a window to be more directly emulated.
 
-
-
-
 Other Changes
 -------------
 
@@ -78,6 +75,7 @@ The :class:`Frame` displayable is no longer adjusted to be pixel perfect, preven
 
 When using text shaders to display text with outlines, Ren'Py will create pseudo-glyphs. These pseudo-glyphs
 cover the start and end of each line, and are used to ensure the outlines will be shown.
+
 
 .. _renpy-8.3.2:
 .. _renpy-7.8.2:
