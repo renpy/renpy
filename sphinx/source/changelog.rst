@@ -77,9 +77,6 @@ There have been a number of fixes to the way Ren'Py handles dragging a viewport 
 
 A drag may now contain a draggable viewport, allowing a window to be more directly emulated.
 
-
-
-
 Other Changes
 -------------
 
