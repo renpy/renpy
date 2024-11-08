@@ -43,25 +43,68 @@ Fixes
 
 Changes to audio filters take place immediately after reload.
 
-Android
--------
+:var:`config.skip_sounds` now works as documented.
 
-Android bundles now use install-time assets packs, rather than fast-follow packs, to ensure that all assets
-are available when the game is run.
+:class:`Model` now creates meshes as described in the documentation when no textures are supplied.
+
+The image attributes screen now quotes image and displayable names.
+
+An issue with rollback not restarting music has been fixed.
+
+Underlines and strikethroughs will not be broken when drawn using harfbuzz-based text shaping.
+
+Ren'Py now ensures that IMEs are activated on the primary window when the game starts, rather than on
+a presplash window.
+
+Bars no longer lose the ``selected_hover`` prefix when adjusted using keyboard or game controller.
+
+Rounding errors during pixel perfect text positioning have been fixed. These errors could cause text to
+jump 1 pixel during dissolves.
+
+The rarely-used ``gl_anisotropic`` transform property now works.
+
+The :propref:`keyboard_focus_insets` property now works as documented.
+
+A rounding issue that could cause :propref:`bar_invert` from working has been fixed.
+
+Ren'Py will render a displayable a second time if :propref:`box_wrap` is True, to ensure that the displayable
+is offered the correct amount of space when wrapped to a second line. In rare cases, this could change layout.
+
+Controller events can now cause Ren'Py to focus a displayable with `default_focus` set. Previously, these
+events weren't considered inputs by the focus system.
+
+There have been a number of fixes to the way Ren'Py handles dragging a viewport filled with buttons.
+
+A drag may now contain a draggable viewport, allowing a window to be more directly emulated.
+
+
+
 
 Other Changes
 -------------
 
+Android bundles now use install-time assets packs, rather than fast-follow packs, to ensure that all assets
+are available when the game is run.
+
 The "always" option to _renpysteam.keyboard_mode is no longer supported. If given, the "once" mode is
 used, requiring the player to explicitly request the Steam Deck keyboard when required.
+
+The number of frames that Ren'Py passes through the rendering pipeline before switching to powersave
+mode has been increased to 12, to ensure that frames make it through compositors in a timely manner.
+
+Ren'Py locks the image cache less, which should prevent some frame drops when loading images.
 
 Synchronized start of audio/video no longer occurs on movie channels unless explicitly requested.
 
 When rolling back to a point where a looping :class:`Movie` was showing, the looping movie will be played again
 if it had been stopped.
 
+A :class:`Movie` will only stop movies that it has played, rather than any movie on the associated channel.
+
 When :func:`renpy.set_audio_filter` is called with `immediate` false, the filter will be applied when
 the queued file is played, rather than at some indeterminate time in the future.
+
+The :class:`Frame` displayable is no longer adjusted to be pixel perfect, preventing visual glitches.
 
 When using text shaders to display text with outlines, Ren'Py will create pseudo-glyphs. These pseudo-glyphs
 cover the start and end of each line, and are used to ensure the outlines will be shown.
