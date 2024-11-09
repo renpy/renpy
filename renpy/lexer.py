@@ -20,10 +20,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
+from typing import Iterator, TypeAlias
 
+import tokenize
 import codecs
 import re
 import sys
@@ -39,7 +41,7 @@ from renpy.lexersupport import match_logical_word
 line_text_filename = ""
 
 # The content of the line text cache.
-line_text_cache = [ ]
+line_text_cache = []
 
 
 def get_line_text(filename, lineno):
@@ -53,7 +55,6 @@ def get_line_text(filename, lineno):
 
     import linecache
     full_filename = renpy.exports.unelide_filename(filename)
-
 
     if full_filename != line_text_filename:
 
@@ -72,7 +73,7 @@ def get_line_text(filename, lineno):
             line_text_cache = data.split("\n")
 
         except Exception:
-            line_text_cache = [ ]
+            line_text_cache = []
 
     if lineno <= len(line_text_cache):
         return line_text_cache[lineno - 1] + "\n"
@@ -249,6 +250,79 @@ def unelide_filename(fn):
 # The filename that the start and end positions are relative to.
 original_filename = ""
 
+LexerBlock: TypeAlias = tuple[str, int, str, list["LexerBlock"]]
+
+
+class FileTokenizer:
+    def __init__(self, filename: str, filedata: str | None = None, lineno=0, col_offset=0, add_lines=False):
+        global original_filename
+        original_filename = filename
+
+        self.filename = elide_filename(filename)
+        self.prefix = munge_filename(self.filename)
+        self.linenumber = lineno
+        self.col_offset = col_offset
+
+        if add_lines or renpy.game.context().init_phase:
+            lines = renpy.scriptedit.lines
+            renpy.scriptedit.files.add(self.filename)
+        else:
+            lines = {}
+
+        self.lines = lines
+
+        data: str
+        if filedata:
+            data = filedata
+        else:
+            with open(filename, "rb") as f:
+                data = f.read().decode("utf-8", "python_strict")
+
+        if filename.endswith("_ren.py"):
+            data = ren_py_to_rpy(data, filename)
+
+        # Skip the BOM, if any.
+        if data and data[0] == u'\ufeff':
+            data = data[1:]
+
+        self.filedata = data
+
+    def tokenize(self) -> Iterator[tokenize.TokenInfo]:
+        from _tokenize import TokenizerIter  # type: ignore
+
+        linenumber = self.linenumber
+        col_offset = self.col_offset
+        for info in TokenizerIter(self.filedata):  # type: ignore
+            tok, type, lineno, end_lineno, col_off, end_col_off, line = info
+            yield tokenize.TokenInfo(
+                type,
+                tok,
+                (lineno + linenumber, col_off + col_offset),
+                (end_lineno + linenumber, end_col_off + col_offset),
+                line)
+
+    def make_lexer(self) -> Lexer:
+        stack: list[list[LexerBlock]] = [[]]
+
+        filename = self.filename
+        for tok in self.tokenize():
+            match tok.type:
+                case tokenize.NEWLINE:
+                    stack[-1].append((filename, tok.start[0], tok.line.strip(), []))
+                case tokenize.INDENT:
+                    stack.append(stack[-1][-1][3])
+                case tokenize.DEDENT:
+                    stack.pop()
+
+        return Lexer(stack[-1])
+
+
+def make_lexer(filename):
+    lines = list_logical_lines(filename)
+    nested = group_logical_lines(lines)
+
+    return Lexer(nested)
+
 
 def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
     """
@@ -328,7 +402,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
     if add_lines or renpy.game.context().init_phase:
         lines = renpy.scriptedit.lines
     else:
-        lines = { }
+        lines = {}
 
     len_data = len(data)
 
@@ -344,7 +418,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
         start_number = number
 
         # The line that we're building up.
-        line = [ ]
+        line = []
 
         # The number of open parenthesis there are right now.
         parendepth = 0
@@ -388,7 +462,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                 number += 1
                 endpos = None
                 # This helps out error checking.
-                line = [ ]
+                line = []
                 break
 
             if c == u'\n':
@@ -437,7 +511,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                     pos += 2
                     triplequote = True
 
-                s = [ ]
+                s = []
 
                 while pos < len_data:
 
@@ -500,10 +574,14 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
             pos = end
 
             if (pos - startpos) > 65536:
-                raise ParseError(filename, start_number, "Overly long logical line. (Check strings and parenthesis.)", line=line, first=True)
+                raise ParseError(
+                    filename, start_number, "Overly long logical line. (Check strings and parenthesis.)", line=line,
+                    first=True)
 
     if line:
-        raise ParseError(filename, start_number, "is not terminated with a newline. (Check strings and parenthesis.)", line=line, first=True)
+        raise ParseError(
+            filename, start_number, "is not terminated with a newline. (Check strings and parenthesis.)", line=line,
+            first=True)
 
     return rv
 
@@ -527,6 +605,8 @@ def depth_split(l):
     return depth, l[index:]
 
 # i, min_depth -> block, new_i
+
+
 def gll_core(lines, i, min_depth):
     """
     Recursively groups lines into blocks.
@@ -562,6 +642,7 @@ def gll_core(lines, i, min_depth):
         rv.append((filename, number, rest, block))
 
     return rv, i
+
 
 def group_logical_lines(lines):
     """
@@ -629,7 +710,7 @@ OPERATORS = [
     '~',
     '@',
     ':=',
-    ]
+]
 
 ESCAPED_OPERATORS = [
     r'\bor\b',
@@ -637,9 +718,9 @@ ESCAPED_OPERATORS = [
     r'\bnot\b',
     r'\bin\b',
     r'\bis\b',
-    ]
+]
 
-operator_regexp = "|".join([ re.escape(i) for i in OPERATORS ] + ESCAPED_OPERATORS)
+operator_regexp = "|".join([re.escape(i) for i in OPERATORS] + ESCAPED_OPERATORS)
 
 word_regexp = r'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*'
 image_word_regexp = r'[-0-9a-zA-Z_\u00a0-\ufffd][-0-9a-zA-Z_\u00a0-\ufffd]*'
@@ -686,7 +767,7 @@ class Lexer(object):
         self.filename = ""
         self.text = ""
         self.number = 0
-        self.subblock = [ ]
+        self.subblock = []
         self.global_label = global_label
         self.pos = 0
         self.word_cache_pos = -1
@@ -895,7 +976,8 @@ class Lexer(object):
 
         init = self.init or init
 
-        return Lexer(self.subblock, init=init, init_offset=self.init_offset, global_label=self.global_label, monologue_delimiter=self.monologue_delimiter, subparses=self.subparses)
+        return Lexer(self.subblock, init=init, init_offset=self.init_offset, global_label=self.global_label,
+                     monologue_delimiter=self.monologue_delimiter, subparses=self.subparses)
 
     def string(self):
         """
@@ -951,7 +1033,7 @@ class Lexer(object):
             # Collapse runs of whitespace into single spaces.
             s = re.sub(r'[ \n]+', ' ', s)
 
-            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
+            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)  # type: ignore
 
         return s
 
@@ -1016,7 +1098,7 @@ class Lexer(object):
             else:
                 sl = [s]
 
-            rv = [ ]
+            rv = []
 
             for s in sl:
                 s = s.strip()
@@ -1030,7 +1112,7 @@ class Lexer(object):
                 else:
                     s = re.sub(r' +', ' ', s)
 
-                s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
+                s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)  # type: ignore
 
                 rv.append(s)
 
@@ -1046,7 +1128,7 @@ class Lexer(object):
 
         return self.match(r'(\+|\-)?\d+')
 
-    def float(self): # @ReservedAssignment
+    def float(self):  # @ReservedAssignment
         """
         Tries to parse a number (float). Returns a string containing the
         number, or None.
@@ -1168,7 +1250,7 @@ class Lexer(object):
                 self.pos = oldpos
                 return None
 
-        if (rv in KEYWORDS ) or (rv in IMAGE_KEYWORDS):
+        if (rv in KEYWORDS) or (rv in IMAGE_KEYWORDS):
             self.pos = oldpos
             return None
 
@@ -1186,7 +1268,6 @@ class Lexer(object):
             return False
 
         old_pos = self.pos
-
 
         # Delimiter.
         start = self.match(r'[urfURF]*("""|\'\'\'|"|\')')
@@ -1283,7 +1364,7 @@ class Lexer(object):
         if not pe:
             self.error("expected python_expression")
 
-        rv = self.expr(pe.strip(), expr) # E1101
+        rv = self.expr(pe.strip(), expr)  # E1101
 
         return rv
 
@@ -1513,7 +1594,7 @@ class Lexer(object):
         whitespace to ensure line numbers match up.
         """
 
-        rv = [ ]
+        rv = []
 
         line_holder = LineNumberHolder()
         line_holder.line = self.number
@@ -1543,7 +1624,7 @@ class Lexer(object):
         self.unadvance()
 
         if not isinstance(block, list):
-            block = [ block ]
+            block = [block]
 
         sp = SubParse(block)
         self.subparses.append(sp)
@@ -1558,7 +1639,7 @@ class Lexer(object):
         if self.line < 0:
             self.advance()
 
-        block = [ ]
+        block = []
 
         while not self.eob:
             try:
@@ -1601,7 +1682,7 @@ def ren_py_to_rpy(text, filename):
     if lines and lines[0][:1] == u'\ufeff':
         lines[0] = lines[0][1:]
 
-    result = [ ]
+    result = []
 
     # The prefix prepended to Python lines.
     prefix = ""
@@ -1669,8 +1750,9 @@ def ren_py_to_rpy(text, filename):
             raise Exception('In {!r}, there are no """renpy blocks, so every line is ignored.'.format(filename))
 
         if state == RENPY:
-            raise Exception('In {!r}, there is a """renpy block at line {} that is not terminated by """.'.format(filename,
-                                                                                                                open_linenumber))
+            raise Exception(
+                'In {!r}, there is a """renpy block at line {} that is not terminated by """.'.format(
+                    filename, open_linenumber))
 
     rv = "\n".join(result)
 
