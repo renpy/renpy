@@ -20,8 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from typing import Callable
+from typing import Callable, Iterator, TypeAlias
 
+import tokenize
+import codecs
 import re
 import sys
 import os
@@ -245,6 +247,79 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
 
 # The filename that the start and end positions are relative to.
 original_filename = ""
+
+LexerBlock: TypeAlias = tuple[str, int, str, list["LexerBlock"]]
+
+
+class FileTokenizer:
+    def __init__(self, filename: str, filedata: str | None = None, lineno=0, col_offset=0, add_lines=False):
+        global original_filename
+        original_filename = filename
+
+        self.filename = elide_filename(filename)
+        self.prefix = munge_filename(self.filename)
+        self.linenumber = lineno
+        self.col_offset = col_offset
+
+        if add_lines or renpy.game.context().init_phase:
+            lines = renpy.scriptedit.lines
+            renpy.scriptedit.files.add(self.filename)
+        else:
+            lines = {}
+
+        self.lines = lines
+
+        data: str
+        if filedata:
+            data = filedata
+        else:
+            with open(filename, "rb") as f:
+                data = f.read().decode("utf-8", "python_strict")
+
+        if filename.endswith("_ren.py"):
+            data = ren_py_to_rpy(data, filename)
+
+        # Skip the BOM, if any.
+        if data and data[0] == u'\ufeff':
+            data = data[1:]
+
+        self.filedata = data
+
+    def tokenize(self) -> Iterator[tokenize.TokenInfo]:
+        from _tokenize import TokenizerIter  # type: ignore
+
+        linenumber = self.linenumber
+        col_offset = self.col_offset
+        for info in TokenizerIter(self.filedata):  # type: ignore
+            tok, type, lineno, end_lineno, col_off, end_col_off, line = info
+            yield tokenize.TokenInfo(
+                type,
+                tok,
+                (lineno + linenumber, col_off + col_offset),
+                (end_lineno + linenumber, end_col_off + col_offset),
+                line)
+
+    def make_lexer(self) -> "Lexer":
+        stack: list[list[LexerBlock]] = [[]]
+
+        filename = self.filename
+        for tok in self.tokenize():
+            match tok.type:
+                case tokenize.NEWLINE:
+                    stack[-1].append((filename, tok.start[0], tok.line.strip(), []))
+                case tokenize.INDENT:
+                    stack.append(stack[-1][-1][3])
+                case tokenize.DEDENT:
+                    stack.pop()
+
+        return Lexer(stack[-1])
+
+
+def make_lexer(filename):
+    lines = list_logical_lines(filename)
+    nested = group_logical_lines(lines)
+
+    return Lexer(nested)
 
 
 def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
