@@ -110,7 +110,7 @@ as of version 8.1.0 is as follows::
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = ['alt_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
-        accessibility = [ 'K_a' ],
+        accessibility = [ 'shift_K_a' ],
 
         # Accessibility.
         self_voicing = [ 'alt_K_v', 'K_v' ],
