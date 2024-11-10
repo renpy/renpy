@@ -424,7 +424,7 @@ init -1499 python in _renpysteam:
         return get_csteam_id() & 0xffffffff
 
 
-    def get_session_ticket():
+    def get_session_ticket(identity=None):
         """
         :doc: steam_user
 
@@ -442,7 +442,8 @@ init -1499 python in _renpysteam:
         ticket_buf = create_string_buffer(2048)
         ticket_len = c_uint()
 
-        h_ticket = steamapi.SteamUser().GetAuthSessionTicket(ticket_buf, 2048, byref(ticket_len))
+        identity = identity or steamapi.SteamNetworkingIdentity()
+        h_ticket = steamapi.SteamUser().GetAuthSessionTicket(ticket_buf, 2048, byref(ticket_len), identity)
 
         if h_ticket:
             ticket = ticket_buf.raw[0:ticket_len.value]
