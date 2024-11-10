@@ -1413,7 +1413,7 @@ cdef class Render:
                         if mask_result:
                             rv = d, arg, screen
 
-                elif xo <= x < xo + w and yo <= y < yo + h:
+                elif xo <= x < xo + w and yo <= y < yo + h and (x != 0 or y != 0):
                     rv = d, arg, screen
 
                 if rv is not None:
