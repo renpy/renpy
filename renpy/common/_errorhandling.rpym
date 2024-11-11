@@ -561,7 +561,15 @@ init python:
 
         def __call__(self):
             try:
-                renpy.launch_editor([ self.filename ], self.line, transient=1)
+                if renpy.android:
+                    try:
+                        import jnius
+                        activity = jnius.autoclass("org.renpy.android.PythonSDLActivity")
+                        activity.openEditor(renpy.exports.fsencode(self.filename))
+                    except Exception:
+                        traceback.print_exc()
+                else:
+                    renpy.launch_editor([ self.filename ], self.line, transient=1)
             except Exception:
                 pass
 
@@ -670,9 +678,10 @@ init python:
 # added arguments.
 screen _exception_actions(traceback_fn, tt, *args):
 
-    textbutton _("Open"):
-        action _EditFile(traceback_fn)
-        hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+    if not any([renpy.ios, renpy.emscripten]):
+        textbutton _("Open"):
+            action _EditFile(traceback_fn)
+            hovered tt.action(_("Opens the traceback.txt file in a text editor."))
 
     textbutton _("Copy BBCode"):
         action _CopyFile(traceback_fn, u"[code]\n{}[/code]\n")
