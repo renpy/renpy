@@ -2354,13 +2354,30 @@ class AlphaMask(Container):
 
     invert = False
 
+    _duplicatable = False
+
     def __init__(self, child, mask, invert=False, **properties):
         super(AlphaMask, self).__init__(**properties)
 
+
         self.mask = renpy.easy.displayable(mask)
+        self._duplicatable = self.mask._duplicatable
+
         self.add(self.mask)
         self.add(child)
         self.invert = invert
+
+    def _duplicate(self, args):
+        rv = super(AlphaMask, self)._duplicate(args)
+
+        if (rv is not self) and rv.mask._duplicatable:
+            rv.mask = self.mask._duplicate(args)
+
+        return rv
+
+    def _unique(self):
+        super(AlphaMask, self)._unique()
+        self.mask._unique()
 
     def visit(self):
         return [ self.mask, self.child ]
