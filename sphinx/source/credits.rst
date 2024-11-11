@@ -278,6 +278,7 @@ the omission in future versions.
 * Vollschauer
 * William Tumeo
 * Winter Wolves
+* Woolion
 * Xavi-Mat
 * Xareyli
 * Xela

@@ -11,6 +11,8 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+The :func:`achievement.steam.get_session_ticket` function now works as documented.
+
 Changes to audio filters take place immediately after reload.
 
 :var:`config.skip_sounds` now works as documented.
@@ -52,6 +54,10 @@ Other Changes
 
 Android bundles now use install-time assets packs, rather than fast-follow packs, to ensure that all assets
 are available when the game is run.
+
+An :class:`AlphaMask` will now cause mask transformations to restart each time it is shown.
+
+Displayables zoomed down to 0 pixels big will no longer get focus.
 
 The "always" option to _renpysteam.keyboard_mode is no longer supported. If given, the "once" mode is
 used, requiring the player to explicitly request the Steam Deck keyboard when required.
