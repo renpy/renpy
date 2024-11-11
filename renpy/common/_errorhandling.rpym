@@ -670,9 +670,10 @@ init python:
 # added arguments.
 screen _exception_actions(traceback_fn, tt, *args):
 
-    textbutton _("Open"):
-        action _EditFile(traceback_fn)
-        hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+    if not renpy.mobile:
+        textbutton _("Open"):
+            action _EditFile(traceback_fn)
+            hovered tt.action(_("Opens the traceback.txt file in a text editor."))
 
     textbutton _("Copy BBCode"):
         action _CopyFile(traceback_fn, u"[code]\n{}[/code]\n")
