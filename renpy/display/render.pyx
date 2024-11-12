@@ -1358,6 +1358,9 @@ cdef class Render:
             if y < 0 or y >= self.height:
                 return None
 
+        if self.forward and self.forward.is_2d_null():
+            return None
+
         rv = None
 
         if self.pass_focuses:
