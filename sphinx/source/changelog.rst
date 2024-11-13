@@ -42,6 +42,11 @@ to determine otherwise.
 Fixes
 -----
 
+The :var:`config.nvl_adv_transition` no longer forces the dialogue window to be hidden.
+
+Screens that are used by another screen are now updated properly if the interaction restarts
+before the screen is first rendered.
+
 The :func:`achievement.steam.get_session_ticket` function now works as documented.
 
 Changes to audio filters take place immediately after reload.
