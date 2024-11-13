@@ -20,22 +20,20 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
+from __future__ import annotations
 
-from typing import Iterator, TypeAlias
+from typing import Callable, Iterator, TypeAlias
 
-import tokenize
-import codecs
+import os
+import io
 import re
 import sys
-import os
-import time
+import tokenize
 import contextlib
 
 import renpy
 
-from renpy.lexersupport import match_logical_word
+from renpy.lexersupport import match_logical_word  # type: ignore
 
 # The filename that's in the line text cache.
 line_text_filename = ""
@@ -250,78 +248,715 @@ def unelide_filename(fn):
 # The filename that the start and end positions are relative to.
 original_filename = ""
 
-LexerBlock: TypeAlias = tuple[str, int, str, list["LexerBlock"]]
+
+class Line:
+    """
+    Represents a logical line in a file, which is a sequence of tokens.
+
+    If line starts with INDENT, it is a first line of a new indentation block.
+    If line starts with one or more DEDENT, it ends block(s) of indentation.
+    Otherwise this line is a next logical line of current indentation block.
+    Line always ends with a NEWLINE token.
+    """
+
+    __slots__ = ['tokens', 'dedent_line']
+
+    def __init__(self, token: Token, *tokens: Token, dedent_line: bool):
+        self.tokens: tuple[Token, ...] = (token, *tokens)
+        """
+        List of tokens that make up this line.
+        """
+
+        self.dedent_line: bool = dedent_line
+        """
+        If True, `self.text` is automatically dedented as if it were a
+        line outside of any block.
+        """
+
+        if "RENPY_DEBUG_TOKENIZATION" not in os.environ:
+            return
+
+        has_indent = False
+        has_dedent = False
+        has_newline = False
+        stop_dent = False
+        physical_offset = token.physical_offset
+        prev_row = -1
+        prev_col = -1
+        tokens_iter = iter(self.tokens)
+        for t in tokens_iter:
+            # If there is a change in physical offset in between tokens, it
+            # is impossible to locate the line in the file.
+            if t.physical_offset != physical_offset:
+                raise ValueError("Tokens in logical line must be contiguous.")
+
+            if t.lineno < prev_row or t.lineno == prev_row and t.col_offset < prev_col:
+                raise ValueError(f"start ({t.lineno}, {t.lineno}) precedes "
+                                 f"previous end ({prev_row}, {prev_col})")
+
+            prev_row = t.end_lineno
+            prev_col = t.end_col_offset
+
+            match t.name:
+                case "INDENT" if has_indent:
+                    raise ValueError("Line can start with only one INDENT token.")
+                case "INDENT" if has_dedent:
+                    raise ValueError("Line can have either INDENT or DEDENT tokens, not both.")
+                case "INDENT" if stop_dent:
+                    raise ValueError("INDENT token can appear only as first token.")
+                case "INDENT":
+                    has_indent = True
+
+                case "DEDENT" if has_indent:
+                    raise ValueError("Line can have either INDENT or DEDENT tokens, not both.")
+                case "DEDENT" if stop_dent:
+                    raise ValueError("DEDENT token can not appear after non-DEDENT token.")
+                case "DEDENT":
+                    has_dedent = True
+
+                case "NEWLINE":
+                    has_newline = True
+                    break
+
+                case _:
+                    stop_dent = True
+
+        if list(tokens_iter):
+            raise ValueError("NEWLINE must be the last token.")
+
+        if not has_newline:
+            raise ValueError("NEWLINE must be the last token.")
+
+    @property
+    def filename(self) -> str:
+        """
+        Elided filename where line is located.
+        """
+
+        return self.tokens[0].filename
+
+    @property
+    def start(self) -> tuple[int, int]:
+        """
+        Linenumber, col offset of start of logical line.
+        """
+
+        return (self.tokens[0].lineno, self.tokens[0].col_offset)
+
+    @property
+    def end(self) -> tuple[int, int]:
+        """
+        Linenumber, col offset of end of logical line.
+        """
+
+        return (self.tokens[-1].end_lineno, self.tokens[-1].end_col_offset)
+
+    class _Untokenize:
+        def __init__(self, tokens: tuple[Token, ...], token_text: Callable[[Token], str]):
+            self.tokens = tokens
+            self.token_text = token_text
+
+            self.data: list[str] = []
+            self.prev_row = self.tokens[0].lineno
+            self.prev_col = 0
+            self.cont_line = False
+
+        def add_whitespace(self, row: int, col: int):
+            row_offset = row - self.prev_row
+            if row_offset:
+                if self.cont_line:
+                    # Assume people continue lines with single space before splash.
+                    self.data.append(" \\")
+
+                self.data.append("\n" * row_offset)
+                self.prev_col = 0
+
+            col_offset = col - self.prev_col
+            if col_offset:
+                self.data.append(" " * col_offset)
+
+        def untokenize(self):
+            for t in self.tokens:
+                name = t.name
+                if name == "INDENT" or name == "DEDENT":
+                    self.prev_row = t.end_lineno
+                    continue
+
+                # Don't add spurious spaces before new line.
+                if name != "NL" and name != "NEWLINE":
+                    self.add_whitespace(t.lineno, t.col_offset)
+
+                self.data.append(self.token_text(t))
+                self.prev_row = t.end_lineno
+                self.prev_col = t.end_col_offset
+                self.cont_line = True
+
+                if name == "NL":
+                    self.cont_line = False
+                    self.prev_row += 1
+                    self.prev_col = 0
+
+            return "".join(self.data)
+
+    @property
+    def text(self) -> str:
+        """
+        Text of logical line except insignificant whitespace and comments.
+        """
+
+        def token_text(t: Token) -> str:
+            if t.name == "NEWLINE" or t.name == "COMMENT":
+                return ""
+
+            return t.munged
+
+        result = Line._Untokenize(self.tokens, token_text).untokenize()
+        if self.dedent_line:
+            result = result.lstrip(" ")
+
+            # XXX: Maybe this is better?
+            # import textwrap
+            # result = textwrap.dedent(result)
+
+        return result
+
+    @property
+    def full_text(self) -> str:
+        """
+        Full text of logical line including whitespaces and comments.
+        """
+
+        def token_text(t: Token) -> str:
+            return t.string
+
+        return Line._Untokenize(self.tokens, token_text).untokenize()
+
+    def __str__(self):
+        return self.full_text
+
+    def __iter__(self):
+        return iter((self.filename, self.start[0], self.text))
+
+    def __repr__(self):
+        return f"<Line {self.filename} {self.start}-{self.end}>"
 
 
-class FileTokenizer:
-    def __init__(self, filename: str, filedata: str | None = None, lineno=0, col_offset=0, add_lines=False):
-        global original_filename
-        original_filename = filename
+class Token:
+    """
+    Represents a token in a file.
+    """
 
-        self.filename = elide_filename(filename)
-        self.prefix = munge_filename(self.filename)
-        self.linenumber = lineno
-        self.col_offset = col_offset
+    __slots__ = [
+        'name',
+        'string',
+        'munged',
+        'filename',
+        'lineno',
+        'col_offset',
+        'end_lineno',
+        'end_col_offset',
+        'physical_offset',
+    ]
 
-        if add_lines or renpy.game.context().init_phase:
-            lines = renpy.scriptedit.lines
-            renpy.scriptedit.files.add(self.filename)
+    class _Name(str):
+        _rev_map = {v: k for k, v in tokenize.tok_name.items()} | {"DOLLAR": -1}
+        _all_op = set(tokenize.EXACT_TOKEN_TYPES.values()) | {tokenize.OP}
+
+        def __eq__(self, other):
+            # If we compare with "OP", return True also for all exact types.
+            if other == "OP":
+                return self._rev_map[str(self)] in self._all_op
+
+            if (type := self._rev_map.get(other, None)) is None:
+                return False
+
+            return self._rev_map[str(self)] == type
+
+        __hash__ = str.__hash__
+
+    def __init__(
+        self,
+        type: int,
+        string: str,
+        filename: str,
+        lineno: int,
+        col_offset: int,
+        end_lineno: int,
+        end_col_offset: int,
+        physical_offset: tuple[int, int],
+    ):
+        if type == tokenize.ERRORTOKEN and string == "$":  # FIXME: In 3.12 it is OP
+            name = "DOLLAR"
         else:
-            lines = {}
+            if type == tokenize.OP:
+                type = tokenize.EXACT_TOKEN_TYPES[string]
+            name = tokenize.tok_name[type]
 
-        self.lines = lines
+        self.name: str = Token._Name(name)
+        """
+        String name of the token such as "NAME", "DOLLAR" or "COLON".
+        """
 
-        data: str
-        if filedata:
-            data = filedata
+        self.string: str = string
+        """
+        String value of the token.
+        """
+
+        self.munged: str = string
+        """
+        Munged string of the token, if applicable.
+        """
+
+        self.filename: str = filename
+        """
+        Elided filename where token is located.
+        """
+
+        # Positions of the token in the source.
+        self.lineno: int = lineno
+        self.col_offset: int = col_offset
+        self.end_lineno: int = end_lineno
+        self.end_col_offset: int = end_col_offset
+
+        # Offset from logical positions to physical positions.
+        self.physical_offset: tuple[int, int] = physical_offset
+
+    def __repr__(self):
+        string = repr(self.string)
+        if len(string) > 30:
+            string = string[:15] + "..." + string[-15:]
+
+        location = f"{self.lineno}:{self.col_offset}-{self.end_lineno}:{self.end_col_offset}"
+        return f"<Token {self.name!r} {string} {self.filename} {location}>"
+
+
+class Tokenizer:
+    """
+    This class is used to read files and strings as RenPy source code.
+
+    First, this class reads passed buffer one line at a time, saving normalized
+    physical lines.
+
+    List of normalization and checks that this class performs during file read:
+        1. Strips the BOM from the start of the file.
+        2. Converts _ren.py files to equivalent .rpy files.
+        3. Normalizes line endings to \n.
+        4. Disallows \t and \f characters.
+
+    Then, it tokenizes read lines saving result tokens into a list.
+    Tokenization works the same as Python `tokenize.generate_tokens` function
+    with the following additional normalizations and checks:
+        1. It produces Token objects instead of tuples.
+        2. It allow 0-prefix non-zero numbers (e.g. 001).
+        3. It allows for identifiers to start with numbers (e.g. 1foo).
+        4. It disallows non-ASCII characters in identifiers.
+        5. It munges identifiers that start with double underscores
+           (e.g. "__foo" -> f"_m1_{filename}__foo").
+        6. It also munges words inside strings that start with double
+           underscores. Which later can be ignored.
+        7. It checks for non-terminated strings and parenthesis.
+        8. It checks for unbalanced parenthesis.
+
+    After file is tokenized, it can be used to list logical lines and group them
+    into indented blocks.
+    """
+
+    @staticmethod
+    def _strip_bom(lines: Iterator[str]) -> Iterator[str]:
+        first = next(lines)
+        if first.startswith('\ufeff'):
+            yield first[1:]
         else:
-            with open(filename, "rb") as f:
-                data = f.read().decode("utf-8", "python_strict")
+            yield first
+
+        yield from lines
+
+    def _ren_py_to_rpy(self, filename: str, lines: Iterator[str]) -> Iterator[str]:
+        """
+        Takes an iterator of lines from a _ren.py file, and returns an iterator
+        of lines of equivalent .rpy file. This should retain line numbers.
+        """
+
+        # The prefix prepended to Python lines.
+        prefix = ""
+
+        # Col offset of non-prefixed lines.
+        col_offset = self.col_offset
+
+        # Possible states.
+        IGNORE = 0
+        RENPY = 1
+        PYTHON = 2
+
+        # The state the state machine is in.
+        state = IGNORE
+
+        open_linenumber = 0
+
+        for linenumber, l in enumerate(lines, start=1):
+            if state != RENPY:
+                if l.startswith('"""renpy'):
+                    state = RENPY
+                    open_linenumber = linenumber
+                    self.col_offset = col_offset
+                    yield "\n"
+                    continue
+
+            if state == RENPY:
+                if l.strip() == '"""':
+                    state = PYTHON
+                    yield "\n"
+                    continue
+
+                # Ignore empty and comments.
+                sl = l.strip()
+                if not sl:
+                    yield l
+                    continue
+
+                if sl[0] == "#":
+                    yield l
+                    continue
+
+                # Determine the prefix.
+                prefix = ""
+                for i in l:
+                    if i != ' ':
+                        break
+                    prefix += ' '
+
+                # If the line ends in ":", add 4 spaces to the prefix.
+                # XXX: This does not work for 'init python: # Comment'...
+                if sl[-1] == ":":
+                    prefix += "    "
+
+                # Deduct the column offset, so error positions will be correct
+                # for python code.
+                self.col_offset -= len(prefix)
+
+                yield l
+                continue
+
+            if state == PYTHON:
+                if l == "\n":
+                    yield l
+                else:
+                    yield f"{prefix}{l}"
+                continue
+
+            if state == IGNORE:
+                yield "\n"
+                continue
+
+        if self.no_errors:
+            return
+
+        if state == IGNORE:
+            raise SyntaxError(f'In {filename!r}, there are no """renpy blocks, so every line is ignored.')
+
+        if state == RENPY:
+            raise SyntaxError(f'In {filename!r}, there is a """renpy block '
+                              f'at line {open_linenumber} that is not terminated by """.')
+
+    @staticmethod
+    def _disallow_bad_whitespaces(lines: Iterator[str]) -> Iterator[str]:
+        for l in lines:
+            if "\t" in l:
+                raise SyntaxError(f"Tab character is not allowed in Ren'Py scripts.")
+
+            if "\f" in l:
+                raise SyntaxError(f"Form feed character is not allowed in Ren'Py scripts.")
+
+            yield l
+
+    @classmethod
+    def from_string(
+        cls,
+        filename: str,
+        code: str, *,
+        lineno=0,
+        col_offset=0,
+        no_errors=False,
+    ):
+        return cls(filename, io.StringIO(code, newline=None),
+                   lineno=lineno, col_offset=col_offset, no_errors=no_errors)
+
+    @classmethod
+    def from_file(
+        cls,
+        filename: str, *,
+        no_errors=False,
+    ):
+        if os.path.isabs(filename):
+            fn = filename
+        else:
+            fn = unelide_filename(filename)
+
+        return cls(filename, open(fn, encoding="utf-8", errors="python_strict", newline=None),
+                   no_errors=no_errors)
+
+    def __init__(
+        self,
+        filename: str,
+        lines: Iterator[str], *,
+        lineno=0,
+        col_offset=0,
+        no_errors=False,
+    ):
+        from collections import deque
+        self.original_filename: str = filename
+        self.filename: str = elide_filename(filename)
+
+        self.linenumber: int = lineno
+        self.col_offset: int = col_offset
+
+        self.no_errors: bool = no_errors
+
+        lines = self._strip_bom(lines)
 
         if filename.endswith("_ren.py"):
-            data = ren_py_to_rpy(data, filename)
+            lines = self._ren_py_to_rpy(filename, lines)
 
-        # Skip the BOM, if any.
-        if data and data[0] == u'\ufeff':
-            data = data[1:]
+        if not no_errors:
+            lines = self._disallow_bad_whitespaces(lines)
 
-        self.filedata = data
+        # List of tokenized, normalized physical lines.
+        self._physical_lines: list[str] = []
 
-    def tokenize(self) -> Iterator[tokenize.TokenInfo]:
-        from _tokenize import TokenizerIter  # type: ignore
+        # This is used to buffer lines that are read but not tokenized,
+        # so one can list physical lines without more expensive tokenization
+        # pass.
+        self._next_lines_buffer: deque[str] = deque()
 
-        linenumber = self.linenumber
-        col_offset = self.col_offset
-        for info in TokenizerIter(self.filedata):  # type: ignore
-            tok, type, lineno, end_lineno, col_off, end_col_off, line = info
-            yield tokenize.TokenInfo(
-                type,
-                tok,
-                (lineno + linenumber, col_off + col_offset),
-                (end_lineno + linenumber, end_col_off + col_offset),
-                line)
+        # Generator of lines that are yet to be read.
+        self._next_lines = lines
 
-    def make_lexer(self) -> Lexer:
-        stack: list[list[LexerBlock]] = [[]]
+        # List of result tokens.
+        self._tokens: list[Token] = []
 
-        filename = self.filename
-        for tok in self.tokenize():
-            match tok.type:
-                case tokenize.NEWLINE:
-                    stack[-1].append((filename, tok.start[0], tok.line.strip(), []))
-                case tokenize.INDENT:
-                    stack.append(stack[-1][-1][3])
-                case tokenize.DEDENT:
+        self._tokenized = None
+
+    def _readline(self):
+        if self._next_lines_buffer:
+            line = self._next_lines_buffer.popleft()
+        else:
+            line = next(self._next_lines)
+
+        self._physical_lines.append(line)
+        return line
+
+    def _tokenize(self) -> Iterator[Token]:
+        hold_number = None
+        try:
+            for t in tokenize.generate_tokens(self._readline):
+                start_lineno, start_colno = t.start
+                end_lineno, end_colno = t.end
+
+                result = Token(
+                    t.type,
+                    t.string,
+                    self.filename,
+                    start_lineno,
+                    start_colno,
+                    end_lineno,
+                    end_colno,
+                    (self.linenumber, self.col_offset),
+                )
+
+                if hold_number is None and t.type == tokenize.NUMBER:
+                    hold_number = result
+                    continue
+
+                # If we have '0' on hold check if we can collapse it
+                # with next token.
+                if hold_number is not None:
+                    # Tokens are not next to each other, yield both.
+                    if (
+                        hold_number.end_col_offset != result.col_offset or
+                        hold_number.end_lineno != result.lineno
+                    ):
+                        yield hold_number
+                        hold_number = None
+
+                    # Python 2 style octal numbers are still valid in Ren'Py.
+                    # Tokenize report this as two numbers next to each other.
+                    # This is no longer needed in Python 3.12+
+                    elif t.type == tokenize.NUMBER:
+                        hold_number.string += result.string
+                        hold_number.munged = hold_number.string
+                        hold_number.end_lineno = result.end_lineno
+                        hold_number.end_col_offset = result.end_col_offset
+
+                        # We don't yield it yet, because '01attr' is 3 Python tokens.
+                        continue
+
+                    # 0-prefixed name is a valid in Ren'Py (e.g. image attributes).
+                    # NUMBER "$1" and NAME "$2" should appear as NAME "$1$2"
+                    elif t.type == tokenize.NAME:
+                        result.string = f"{hold_number.string}{result.string}"
+                        result.munged = result.string
+                        result.lineno = hold_number.lineno
+                        result.col_offset = hold_number.col_offset
+                        hold_number = None
+
+                    # Otherwise we yield a hold number and the result.
+                    else:
+                        yield hold_number
+                        hold_number = None
+
+                yield result
+
+        except IndentationError as err:
+            line, column = err.args[1][1:3]
+            line += self.linenumber
+            column += self.col_offset
+            if not self.no_errors:
+                raise SyntaxError(f"Indentation error in {self.filename}:{line}:{column}") from None
+
+        except tokenize.TokenError as err:
+            line, column = err.args[1]
+            line += self.linenumber
+            column += self.col_offset
+            if not self.no_errors:
+                raise SyntaxError(f"{err.args[0]} at {self.filename}:{line}:{column}") from None
+
+    def _yield_tokens(self) -> Iterator[Token]:
+        if self._tokenized:
+            yield from self._tokens
+            return
+
+        if self._tokenized is not None:
+            raise RuntimeError("_yield_tokens() called twice.")
+
+        self._tokenized = False
+
+        def unmatched_paren():
+            if not self.no_errors:
+                lineno = token.lineno + token.physical_offset[0]
+                col_offset = token.col_offset + token.physical_offset[1]
+                raise SyntaxError(f"unmatched '{token.string}' at {self.filename}:{lineno}:{col_offset}")
+
+        def wrong_paren():
+            if not self.no_errors:
+                lineno = token.lineno + token.physical_offset[0]
+                col_offset = token.col_offset + token.physical_offset[1]
+                raise SyntaxError(f"closing parenthesis '{parens[-1].string}' "
+                                  f"does not match opening parenthesis '{token.string}'"
+                                  f" at {self.filename}:{lineno}:{col_offset}")
+
+        def non_ascii_name():
+            if not self.no_errors:
+                bad = next(i for i in token.string if ord(i) > 127)
+                lineno = token.lineno + token.physical_offset[0]
+                col_offset = token.col_offset + token.physical_offset[1]
+                raise SyntaxError(f"Non-ASCII character '{bad}' in name '{token.string}'"
+                                  f" at {self.filename}:{lineno}:{col_offset}")
+
+        prefix: str = munge_filename(self.filename)
+
+        munge_regexp = re.compile(r'\b__(\w+)')
+
+        def munge_string(m: re.Match[str]):
+            g1 = m.group(1)
+
+            if "__" in g1:
+                return m.group(0)
+
+            if g1.startswith("_"):
+                return m.group(0)
+
+            return prefix + m.group(1)
+
+        parens: list[Token] = []
+        for token in self._tokenize():
+            match token.name:
+                case "RPAR" | "RBRACE" | "RSQB" if not parens:
+                    unmatched_paren()
+                case "RPAR" if parens[-1].name != "LPAR":
+                    wrong_paren()
+                case "RBRACE" if parens[-1].name != "LBRACE":
+                    wrong_paren()
+                case "RSQB" if parens[-1].name != "LSQB":
+                    wrong_paren()
+
+                case "LPAR" | "LBRACE" | "LSQB":
+                    parens.append(token)
+                case "RPAR" | "RBRACE" | "RSQB":
+                    parens.pop()
+
+                case "NAME" if not token.string.isascii():
+                    non_ascii_name()
+
+                case "NAME" | "STRING" if "__" in token.string:
+                    token.munged = munge_regexp.sub(munge_string, token.munged)
+
+            self._tokens.append(token)
+            yield token
+
+        # Here we might raise SyntaxError for unclosed paren or string literal.
+
+        self._tokenized = True
+
+    def list_physical_lines(self) -> list[str]:
+        """
+        Return a list of physical lines of tokenized code, such that
+        `"".join(physical lines)` is the lines that tokenizer sees.
+        """
+
+        rv = [*self._physical_lines, *self._next_lines_buffer]
+        while True:
+            try:
+                line = next(self._next_lines)
+                self._next_lines_buffer.append(line)
+                rv.append(line)
+            except StopIteration:
+                return rv
+
+    def list_logical_lines(self) -> list[Line]:
+        """
+        Return a list of logical lines of tokenized code.
+        """
+
+        rv: list[Line] = []
+        tokens: list[Token] = []
+
+        for token in self._yield_tokens():
+            name = token.name
+
+            # Empty lines and bare comments are not logical lines.
+            if not tokens and (name == "NL" or name == "COMMENT"):
+                continue
+
+            else:
+                tokens.append(token)
+
+            if name == "NEWLINE":
+                assert tokens, "NEWLINE without tokens?"
+
+                rv.append(Line(*tokens, dedent_line=False))
+                tokens.clear()
+
+        return rv
+
+    _Group: TypeAlias = tuple[Line, list["_Group"]]
+
+    def list_grouped_lines(self) -> list[_Group]:
+        stack: list[list[Tokenizer._Group]] = [[]]
+        for line in self.list_logical_lines():
+            for token in line.tokens:
+                if token.name == "INDENT":
+                    stack.append(stack[-1][-1][1])
+                elif token.name == "DEDENT":
                     stack.pop()
+                else:
+                    break
 
-        return Lexer(stack[-1])
+            stack[-1].append((Line(*line.tokens, dedent_line=True), []))
 
+        return stack[0]
 
-def make_lexer(filename):
-    lines = list_logical_lines(filename)
-    nested = group_logical_lines(lines)
-
-    return Lexer(nested)
+    def list_tokens(self) -> list[Token]:
+        return list(self._yield_tokens())
 
 
 def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
@@ -1535,14 +2170,17 @@ class Lexer(object):
         object, which is called directly.
         """
 
-        if isinstance(thing, basestring):
+        if isinstance(thing, bytes):
+            thing = thing.decode("utf-8")
+
+        if isinstance(thing, str):
             name = name or thing
             rv = self.match(thing)
         else:
             rv = thing(**kwargs)
 
         if rv is None:
-            if isinstance(thing, basestring):
+            if isinstance(thing, str):
                 name = name or thing
             else:
                 name = name or thing.__func__.__name__
@@ -1737,7 +2375,10 @@ def ren_py_to_rpy(text, filename):
             continue
 
         if state == PYTHON:
-            result.append(prefix + l)
+            if l.strip():
+                result.append(prefix + l)
+            else:
+                result.append("")
             continue
 
         if state == IGNORE:
