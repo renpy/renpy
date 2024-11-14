@@ -11,6 +11,9 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+If a :class:`Movie` has a transform as its `image` or `show_image`, that transform
+is reset each time the movie is shown.
+
 The :var:`config.nvl_adv_transition` no longer forces the dialogue window to be hidden.
 
 Screens that are used by another screen are now updated properly if the interaction restarts

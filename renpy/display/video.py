@@ -517,6 +517,27 @@ class Movie(renpy.display.displayable.Displayable):
 
         self.group = group
 
+        if self.image and self.image._duplicatable:
+            self._duplicatable = True
+
+        if self.start_image and self.start_image._duplicatable:
+            self._duplicatable = True
+
+
+    def _duplicate(self, args):
+        if not self._duplicatable:
+            return self
+
+        rv = self._copy(args)
+
+        if rv.image and rv.image._duplicatable:
+            rv.image = rv.image._duplicate(args)
+
+        if rv.start_image and rv.start_image._duplicatable:
+            rv.start_image = rv.start_image._duplicate(args)
+
+        return rv
+
     def _handles_event(self, event):
         return event == "show"
 
