@@ -11,6 +11,8 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+Empty masked inputs no longer show a single mask glyph.
+
 If a :class:`Movie` has a transform as its `image` or `show_image`, that transform
 is reset each time the movie is shown.
 
