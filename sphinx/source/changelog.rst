@@ -47,7 +47,7 @@ The rarely-used ``gl_anisotropic`` transform property now works.
 
 The :propref:`keyboard_focus_insets` property now works as documented.
 
-A rounding issue that could cause :propref:`bar_invert` from working has been fixed.
+A rounding issue that could cause :propref:`bar_invert` to stop working has been fixed.
 
 Ren'Py will render a displayable a second time if :propref:`box_wrap` is True, to ensure that the displayable
 is offered the correct amount of space when wrapped to a second line. In rare cases, this could change layout.
