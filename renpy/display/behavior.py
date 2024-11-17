@@ -1545,7 +1545,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         def set_content(content):
 
             if content == "":
-                content = u" "
+                content = "\u200b"
 
             if editable:
                 l = len(content)
