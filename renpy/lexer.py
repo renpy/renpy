@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, Iterator, TypeAlias
+from typing import Any, Callable, Iterator, TypeAlias
 
 import os
 import io
@@ -30,6 +30,7 @@ import re
 import sys
 import tokenize
 import contextlib
+import keyword
 
 import renpy
 
@@ -239,7 +240,7 @@ class Line:
     Line always ends with a NEWLINE token.
     """
 
-    __slots__ = ['tokens', 'dedent_line']
+    __slots__ = ['tokens', 'dedent_line', '_text', '_full_text']
 
     def __init__(self, token: Token, *tokens: Token, dedent_line: bool):
         self.tokens: tuple[Token, ...] = (token, *tokens)
@@ -252,6 +253,9 @@ class Line:
         If True, `self.text` is automatically dedented as if it were a
         line outside of any block.
         """
+
+        self._text = None
+        self._full_text = None
 
         if "RENPY_DEBUG_TOKENIZATION" not in os.environ:
             return
@@ -384,6 +388,9 @@ class Line:
         Text of logical line except insignificant whitespace and comments.
         """
 
+        if self._text is not None:
+            return self._text
+
         def token_text(t: Token) -> str:
             if t.name == "NEWLINE" or t.name == "COMMENT":
                 return ""
@@ -398,6 +405,7 @@ class Line:
             # import textwrap
             # result = textwrap.dedent(result)
 
+        self._text = result
         return result
 
     @property
@@ -406,10 +414,15 @@ class Line:
         Full text of logical line including whitespaces and comments.
         """
 
+        if self._full_text is not None:
+            return self._full_text
+
         def token_text(t: Token) -> str:
             return t.string
 
-        return Line._Untokenize(self.tokens, token_text).untokenize()
+        result = Line._Untokenize(self.tokens, token_text).untokenize()
+        self._full_text = result
+        return result
 
     def __str__(self):
         return self.full_text
@@ -428,6 +441,7 @@ class Token:
 
     __slots__ = [
         'name',
+        'exact_name',
         'string',
         'munged',
         'filename',
@@ -437,22 +451,6 @@ class Token:
         'end_col_offset',
         'physical_offset',
     ]
-
-    class _Name(str):
-        _rev_map = {v: k for k, v in tokenize.tok_name.items()} | {"DOLLAR": -1}
-        _all_op = set(tokenize.EXACT_TOKEN_TYPES.values()) | {tokenize.OP}
-
-        def __eq__(self, other):
-            # If we compare with "OP", return True also for all exact types.
-            if other == "OP":
-                return self._rev_map[str(self)] in self._all_op
-
-            if (type := self._rev_map.get(other, None)) is None:
-                return False
-
-            return self._rev_map[str(self)] == type
-
-        __hash__ = str.__hash__
 
     def __init__(
         self,
@@ -465,16 +463,98 @@ class Token:
         end_col_offset: int,
         physical_offset: tuple[int, int],
     ):
-        if type == tokenize.ERRORTOKEN and string == "$":  # FIXME: In 3.12 it is OP
-            name = "DOLLAR"
-        else:
-            if type == tokenize.OP:
-                type = tokenize.EXACT_TOKEN_TYPES[string]
-            name = tokenize.tok_name[type]
+        match type:
+            case tokenize.ERRORTOKEN if string == "$":  # FIXME: In 3.12 it is OP
+                name = "OP"
+                exact_name = "DOLLAR"
+            case tokenize.ERRORTOKEN:
+                raise ValueError(f"Error token with value: {string!r}")
 
-        self.name: str = Token._Name(name)
+            # Exact name is one of predefined.
+            case tokenize.OP:
+                name = "OP"
+                type = tokenize.EXACT_TOKEN_TYPES[string]
+                exact_name = tokenize.tok_name[type]
+
+            # f-strings and bytes are expressions in Ren'Py,
+            # and raw strings are handled differently.
+            case tokenize.STRING:
+                name = "STRING"
+
+                prefix = re.match(
+                    r'([urfbURFB])*("""|\'\'\'|"|\')', string)
+                assert prefix is not None
+                mods = prefix.group(1) or ""
+                kind = prefix.group(2)
+
+                if "b" in mods or "B" in mods:
+                    if "f" in mods or "F" in mods:
+                        exact_name = "F_BYTES"
+                    else:
+                        exact_name = "BYTES"
+                elif "f" in mods or "F" in mods:
+                    exact_name = "F_STRING"
+                elif "r" in mods or "R" in mods:
+                    if kind == "'''" or kind == '"""':
+                        exact_name = "RAW_TRIPLE_STRING"
+                    else:
+                        exact_name = "TRIPLE_STRING"
+                elif kind == "'''" or kind == '"""':
+                    exact_name = "RAW_STRING"
+                else:
+                    exact_name = "STRING"
+
+            # Split numbers into complex, float, and integer.
+            case tokenize.NUMBER:
+                name = "NUMBER"
+                if string.startswith("0x"):
+                    exact_name = "HEX"
+                elif string.startswith("0b"):
+                    exact_name = "BINARY"
+                elif string.startswith("0o"):
+                    exact_name = "OCTAL"
+                elif string[-1] in "jJ":
+                    exact_name = "IMAG"
+                else:
+                    symbols = set(string)
+                    # Definitely a float.
+                    if "." in symbols:
+                        exact_name = "FLOAT"
+
+                    # 00e0 is a float and can be interpreted as hex,
+                    # but we assume this is a float.
+                    elif symbols.intersection("eE"):
+                        exact_name = "FLOAT"
+
+                    else:
+                        exact_name = "INT"
+
+            # Names can be keywords, soft-keywords (including Ren'Py) or
+            # identifiers. Otherwise it is a 0name, which is not an identifier,
+            # but e.g. is a valid attribute name.
+            case tokenize.NAME:
+                name = "NAME"
+
+                if keyword.iskeyword(string):
+                    exact_name = "KEYWORD"
+                elif string in IMAGE_KEYWORDS:
+                    exact_name = "IMAGE_KEYWORD"
+                elif string.isidentifier():
+                    exact_name = "IDENTIFIER"
+                else:
+                    exact_name = "NAME"
+
+            case _:
+                name = exact_name = tokenize.tok_name[type]
+
+        self.name: str = name
         """
-        String name of the token such as "NAME", "DOLLAR" or "COLON".
+        String name of the token, such as "NAME", "OP" or "NUMBER".
+        """
+
+        self.exact_name: str = exact_name
+        """
+        String exact name of the token, such as "KW", "DOLLAR" or "INT".
         """
 
         self.string: str = string
@@ -507,7 +587,7 @@ class Token:
             string = string[:15] + "..." + string[-15:]
 
         location = f"{self.lineno}:{self.col_offset}-{self.end_lineno}:{self.end_col_offset}"
-        return f"<Token {self.name!r} {string} {self.filename} {location}>"
+        return f"<Token {self.exact_name!r} {string} {self.filename} {location}>"
 
 
 class Tokenizer:
@@ -528,14 +608,14 @@ class Tokenizer:
     with the following additional normalizations and checks:
         1. It produces Token objects instead of tuples.
         2. It allow 0-prefix non-zero numbers (e.g. 001).
-        3. It allows for identifiers to start with numbers (e.g. 1foo).
-        4. It disallows non-ASCII characters in identifiers.
-        5. It munges identifiers that start with double underscores
+        3. It allows for names to start with numbers (e.g. 1foo).
+        4. It disallows non-ASCII characters in names.
+        5. It munges names that starts with double underscores
            (e.g. "__foo" -> f"_m1_{filename}__foo").
         6. It also munges words inside strings that start with double
-           underscores. Which later can be ignored.
+           underscores.
         7. It checks for non-terminated strings and parenthesis.
-        8. It checks for unbalanced parenthesis.
+        8. It checks for parenthesis order of closing.
 
     After file is tokenized, it can be used to list logical lines and group them
     into indented blocks.
@@ -779,6 +859,8 @@ class Tokenizer:
                         result.col_offset = hold_number.col_offset
                         hold_number = None
 
+                    # TODO: ERRORTOKEN "`" ... ERRORTOKEN "`" -> STRING???
+
                     # Otherwise we yield a hold number and the result.
                     else:
                         yield hold_number
@@ -849,14 +931,14 @@ class Tokenizer:
 
         parens: list[Token] = []
         for token in self._tokenize():
-            match token.name:
+            match token.exact_name:
                 case "RPAR" | "RBRACE" | "RSQB" if not parens:
                     unmatched_paren()
-                case "RPAR" if parens[-1].name != "LPAR":
+                case "RPAR" if parens[-1].exact_name != "LPAR":
                     wrong_paren()
-                case "RBRACE" if parens[-1].name != "LBRACE":
+                case "RBRACE" if parens[-1].exact_name != "LBRACE":
                     wrong_paren()
-                case "RSQB" if parens[-1].name != "LSQB":
+                case "RSQB" if parens[-1].exact_name != "LSQB":
                     wrong_paren()
 
                 case "LPAR" | "LBRACE" | "LSQB":
@@ -864,8 +946,9 @@ class Tokenizer:
                 case "RPAR" | "RBRACE" | "RSQB":
                     parens.pop()
 
+            match token.name:
                 case "NAME" if not token.string.isascii():
-                    non_ascii_name()
+                    non_ascii_name()  # Should I remove it???
 
                 case "NAME" | "STRING" if "__" in token.string:
                     token.munged = munge_regexp.sub(munge_string, token.munged)
@@ -931,7 +1014,10 @@ class Tokenizer:
                 else:
                     break
 
-            stack[-1].append((Line(*line.tokens, dedent_line=True), []))
+            new_line = Line(*line.tokens, dedent_line=True)
+            new_line._text = line._text
+            new_line._full_text = line._full_text
+            stack[-1].append((new_line, []))
 
         return stack[0]
 
@@ -1065,21 +1151,55 @@ class Lexer(object):
         self.eob = False
 
         self.global_label = global_label
+        self.monologue_delimiter = monologue_delimiter
+        self.subparses = subparses
 
-        # These are set by advance.
-        self.filename: str = ""
-        self.text: str = ""
-        self.line: int = -1
-        self.number: int = 0
-        self.subblock: list[Tokenizer._Group] = []
+        # Index of current logical line in block.
+        # Should change only by advace/unadvance.
+        self._line_index: int = -1
+
+        # Line instance of current logical line.
+        self._line: Line | None = None
+
+        # Subblock of current logical line.
+        self._subblock: list[Tokenizer._Group] = []
+
+        # Position of cursor in line.
         self.pos: int = 0
+
         self.word_cache_pos: int = -1
         self.word_cache_newpos: int = -1
         self.word_cache: str | None = None
 
-        self.monologue_delimiter = monologue_delimiter
+    @property
+    def filename(self) -> str:
+        if self._line is None:
+            return ""
 
-        self.subparses = subparses
+        return self._line.filename
+
+    @property
+    def number(self) -> int:
+        if self._line is None:
+            return 0
+
+        return self._line.start[0]
+
+    @property
+    def text(self) -> str:
+        if self._line is None:
+            return ""
+
+        # Cached in Line class.
+        return self._line.text
+
+    @property
+    def line(self) -> int:
+        return self._line_index
+
+    @property
+    def subblock(self) -> list[Tokenizer._Group]:
+        return self._subblock
 
     def advance(self):
         """
@@ -1093,16 +1213,13 @@ class Lexer(object):
         advance (which will always return False) on the lexer.
         """
 
-        self.line += 1
+        self._line_index += 1
 
-        if self.line >= len(self.block):
+        if self._line_index >= len(self.block):
             self.eob = True
             return False
 
-        line, self.subblock = self.block[self.line]
-        self.filename = line.filename
-        self.number = line.start[0]
-        self.text = line.text
+        self._line, self._subblock = self.block[self._line_index]
 
         self.pos = 0
         self.word_cache_pos = -1
@@ -1116,13 +1233,10 @@ class Lexer(object):
         do.
         """
 
-        self.line -= 1
+        self._line_index -= 1
         self.eob = False
 
-        line, self.subblock = self.block[self.line]
-        self.filename = line.filename
-        self.number = line.start[0]
-        self.text = line.text
+        self._line, self._subblock = self.block[self._line_index]
 
         self.pos = len(self.text)
         self.word_cache_pos = -1
@@ -1217,11 +1331,8 @@ class Lexer(object):
         location.
         """
 
-        if (self.line == -1) and self.block:
-            line, self.subblock = self.block[0]
-            self.filename = line.filename
-            self.number = line.start[0]
-            self.text = line.text
+        if (self._line_index == -1) and self.block:
+            self._line, self._subblock = self.block[0]
 
         raise ParseError(self.filename, self.number, msg, self.text, self.pos)
 
@@ -1234,11 +1345,8 @@ class Lexer(object):
             A string giving a list of deferred errors to add to.
         """
 
-        if (self.line == -1) and self.block:
-            line, self.subblock = self.block[0]
-            self.filename = line.filename
-            self.number = line.start[0]
-            self.text = line.text
+        if (self._line_index == -1) and self.block:
+            self._line, self._subblock = self.block[0]
 
         ParseError(self.filename, self.number, msg, self.text, self.pos).defer(queue)
 
@@ -1285,6 +1393,7 @@ class Lexer(object):
         """
         Called to check if the current line has a non-empty block.
         """
+
         return bool(self.subblock)
 
     def subblock_lexer(self, init=False):
@@ -1818,26 +1927,29 @@ class Lexer(object):
         """
         return self.simple_expression(operator=False)
 
-    def checkpoint(self):
+    _Checkpoint: TypeAlias = tuple[int, int, Any]
+
+    def checkpoint(self) -> _Checkpoint:
         """
         Returns an opaque representation of the lexer state. This can be
         passed to revert to back the lexer up.
         """
 
-        return self.line, self.filename, self.number, self.text, self.subblock, self.pos, renpy.ast.PyExpr.checkpoint()
+        return self._line_index, self.pos, renpy.ast.PyExpr.checkpoint()
 
-    def revert(self, state):
+    def revert(self, state: _Checkpoint):
         """
         Reverts the lexer to the given state. State must have been returned
         by a previous checkpoint operation on this lexer.
         """
 
-        self.line, self.filename, self.number, self.text, self.subblock, self.pos, pyexpr_checkpoint = state
+        self._line_index, self.pos, pyexpr_checkpoint = state
+        self._line, self._subblock = self.block[self._line_index]
 
         renpy.ast.PyExpr.revert(pyexpr_checkpoint)
 
         self.word_cache_pos = -1
-        if self.line < len(self.block):
+        if self._line_index < len(self.block):
             self.eob = False
         else:
             self.eob = True
@@ -1963,7 +2075,7 @@ class Lexer(object):
         if self.subparses is None:
             raise Exception("A renpy_block can only be parsed inside a creator-defined statement.")
 
-        if self.line < 0:
+        if self._line_index < 0:
             self.advance()
 
         block = []
