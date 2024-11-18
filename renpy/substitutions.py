@@ -29,6 +29,7 @@ import renpy
 import string
 import os
 import re
+import sys
 
 
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
@@ -377,3 +378,15 @@ def substitute(s, scope=None, force=False, translate=True):
         raise
 
     return s, (s != old_s)
+
+
+def ___(s):
+    """
+    :undocumented: Documented directly in the .rst.
+
+    Translates a string, then performs substitutions on it.
+    """
+
+    scope = sys._getframe(1).f_locals
+
+    return substitute(s, scope)[0]

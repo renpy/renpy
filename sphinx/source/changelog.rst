@@ -18,6 +18,14 @@ Ren'Py now requires Windows 10 or later to run. This means that it will no longe
 Ren'Py is no longer built for 32-bit ARM linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
 Ren'Py is still being built for 32-bit ARM Android.
 
+Features
+--------
+
+The new :func:`___` (triple underscore) function makes it possible translate a string, and then
+apply :ref:`text interpolation <text-interpolation>` to the result. Interpolations occur in the scope of
+that the function is called from. The triple underscore function also marks the string contained
+inside for translation.
+
 Other Changes
 -------------
 

@@ -489,7 +489,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
                 rest = word[2:]
 
-                if u"__" not in rest:
+                if (u"__" not in rest) and not rest.startswith("_"):
                     word = prefix + rest
 
             line.append(word)

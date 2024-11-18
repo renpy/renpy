@@ -55,7 +55,6 @@ from renpy.revertable import revertable_sorted as sorted # @UnusedImport
 from renpy.revertable import MultiRevertable
 
 import renpy.ui as ui # @UnusedImport
-from renpy.translation import translate_string as __ # @UnusedImport
 
 from renpy.python import store_eval as eval
 
@@ -90,6 +89,8 @@ def _(s):
 
     return s
 
+from renpy.translation import translate_string as __
+from renpy.substitutions import ___
 
 def _p(s):
     '''
