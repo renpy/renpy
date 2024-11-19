@@ -1939,6 +1939,17 @@ Translation
     A list of named stores that are cleaned to their state at the end of
     the init phase when the translation language changes.
 
+.. var:: config.translate_additional_strings_callbacks = [ ]
+
+    A list of callbacks that are called when the translation system is searching for
+    strings. Each callback is expected to be return and iterable or iterator of
+    (filename, linenumber, string) tuples. The strings will then be treated as
+    additional strings to translate.
+
+    The line number doesn't need to correspond to an actual line in the file, but is used to control
+    the order in which string translations are added to transdlation files.
+
+
 .. var:: config.translate_ignore_who = [ ]
 
     A list of strings giving characters that will not have tanslations generated. This is useful

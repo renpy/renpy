@@ -1509,6 +1509,10 @@ no_replay_seen = False
 # Should we use pre-8.4 show expression behavior?
 old_show_expression = False
 
+# Callbacks that give the translation system more strings to translate.
+translate_additional_strings_callbacks = [ ]
+
+
 del os
 del collections
 

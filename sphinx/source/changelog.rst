@@ -21,7 +21,10 @@ Ren'Py is still being built for 32-bit ARM Android.
 Features
 --------
 
-The new :func:`___` (triple underscore) function makes it possible translate a string, and then
+The :var:`config.translate_additional_strings_callbacks` callbacks make it possible for a game to offer
+additional to be added to translation files. (For example, strings from third-party libraries or data files.)
+
+The :func:`___` (triple underscore) function makes it possible translate a string, and then
 apply :ref:`text interpolation <text-interpolation>` to the result. Interpolations occur in the scope of
 that the function is called from. The triple underscore function also marks the string contained
 inside for translation.
