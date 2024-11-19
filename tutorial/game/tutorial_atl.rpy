@@ -545,11 +545,10 @@ label tutorial_atl:
 
     e "If we were to write repeat 2 instead, the animation would loop twice, then stop."
 
-    show example atl_image1
+    show example atl_image2
     show eileen animated once
 
     e "Omitting the repeat statement means that the animation stops once we reach the end of the block of ATL code."
-
 
     show example atl_with
     show bg atl transitions
