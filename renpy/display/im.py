@@ -328,14 +328,14 @@ class Cache(object):
                 self.cache[image] = ce
                 self.cache_size += ce.size()
 
+                if old_ce is not None:
+                    self.cache_size -= old_ce.size()
+
             if renpy.config.debug_image_cache:
                 if predict:
                     renpy.display.ic_log.write("Added %r (%.02f%%)", ce.what, 100.0 * self.get_total_size() / self.cache_limit)
                 else:
                     renpy.display.ic_log.write("Total Miss %r", ce.what)
-
-            if old_ce:
-                self.kill(old_ce)
 
             renpy.display.render.mutated_surface(ce.surf)
 
@@ -393,8 +393,9 @@ class Cache(object):
             renpy.display.draw.mutated_surface(ce.surf)
 
         with self.lock:
-            self.cache_size -= ce.size()
-            del self.cache[ce.what]
+            if self.cache.get(ce.what, None) is ce:
+                del self.cache[ce.what]
+                self.cache_size -= ce.size()
 
         if renpy.config.debug_image_cache:
             renpy.display.ic_log.write("Removed %r", ce.what)
