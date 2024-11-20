@@ -1247,7 +1247,7 @@ class Layout(object):
                 elif type == TEXT:
 
                     if (text_displayable.mask is not None):
-                        if text != u"\u200b":
+                        if text != " ":
                             text = text_displayable.mask * len(text)
 
                     line.extend(self.create_text_segments(text, tss[-1], style))
