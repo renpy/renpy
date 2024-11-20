@@ -1116,9 +1116,9 @@ class Button(renpy.display.layout.Window):
         # If we have a child, try passing the event to it. (For keyboard
         # events, this only happens if we're focused.)
         if (not (ev.type in KEY_EVENTS)) or self.style.key_events:
-                rv = super(Button, self).event(ev, x, y, st)
-                if rv is not None:
-                    return rv
+            rv = super(Button, self).event(ev, x, y, st)
+            if rv is not None:
+                return rv
         else:
 
             # Used to prevent keymaps (the key statement) from reacting to
@@ -1545,7 +1545,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         def set_content(content):
 
             if content == "":
-                content = "\u200b"
+                content = " "
 
             if editable:
                 l = len(content)
