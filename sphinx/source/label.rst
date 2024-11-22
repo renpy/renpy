@@ -236,6 +236,14 @@ The following labels are used by Ren'Py:
     cancelled (it's assumed the hide has occurred). Otherwise, the hide
     continues.
 
+Ren'Py also uses the following labels to show some of the :doc:`special screens <screen_special>`:
+
+* ``main_menu_screen``
+* ``load_screen``
+* ``save_screen``
+* ``preferences_screen``
+* ``joystick_preferences_screen``
+
 Labels & Control Flow Functions
 -------------------------------
 
