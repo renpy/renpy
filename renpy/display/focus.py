@@ -632,7 +632,7 @@ def mouse_handler(ev, x, y, default=False):
     except renpy.display.layout.IgnoreLayers:
         new_focus = None
 
-    if new_focus and isinstance(new_focus.widget, renpy.display.viewport.Viewport) and new_focus.widget.draggable and not new_focus.widget.arrowkeys:
+    if new_focus and isinstance(new_focus.widget, renpy.display.viewport.Viewport):
         new_focus = None
 
     if new_focus is None:
@@ -656,6 +656,9 @@ def focus_extreme(xmul, ymul, wmul, hmul):
             continue
 
         if f.x is None:
+            continue
+
+        if isinstance(f.widget, renpy.display.viewport.Viewport) and f.widget.draggable and not f.widget.arrowkeys:
             continue
 
         score = (f.x * xmul +
@@ -763,6 +766,9 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
             if not f.widget.style.keyboard_focus:
                 continue
 
+            if isinstance(f.widget, renpy.display.viewport.Viewport) and f.widget.draggable and not f.widget.arrowkeys:
+                continue
+
             change_focus(f)
             return
 
@@ -802,6 +808,9 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
             continue
 
         if not f.widget.style.keyboard_focus:
+            continue
+
+        if isinstance(f.widget, renpy.display.viewport.Viewport) and f.widget.draggable and not f.widget.arrowkeys:
             continue
 
         if f.x is None:
@@ -864,6 +873,9 @@ def focus_ordered(delta):
             continue
 
         if not f.widget.style.keyboard_focus:
+            continue
+
+        if isinstance(f.widget, renpy.display.viewport.Viewport) and f.widget.draggable and not f.widget.arrowkeys:
             continue
 
         if f.widget is current:
