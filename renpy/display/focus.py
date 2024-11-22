@@ -632,6 +632,9 @@ def mouse_handler(ev, x, y, default=False):
     except renpy.display.layout.IgnoreLayers:
         new_focus = None
 
+    if new_focus and isinstance(new_focus.widget, renpy.display.viewport.Viewport) and new_focus.widget.draggable and not new_focus.widget.arrowkeys:
+        new_focus = None
+
     if new_focus is None:
         new_focus = global_focus
 
