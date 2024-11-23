@@ -635,6 +635,9 @@ def mouse_handler(ev, x, y, default=False):
     if new_focus is None:
         new_focus = global_focus
 
+    if new_focus and skip_viewport(new_focus):
+        new_focus = None
+
     return change_focus(new_focus, default=default)
 
 
