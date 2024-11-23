@@ -911,6 +911,12 @@ class Live2D(renpy.display.displayable.Displayable):
 
         self.common.model.blend_parameter(name, blend, value, weight)
 
+    def blend_opacity(self, name, blend, value, weight=1.0):
+        if blend not in ("Add", "Multiply", "Overwrite"):
+            raise Exception("Unknown blend mode {!r}".format(blend))
+
+        self.common.model.blend_opacity(name, blend, value, weight)
+
     def render(self, width, height, st, at):
 
         common = self.common
