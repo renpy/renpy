@@ -632,13 +632,21 @@ def mouse_handler(ev, x, y, default=False):
     except renpy.display.layout.IgnoreLayers:
         new_focus = None
 
-    if new_focus and isinstance(new_focus.widget, renpy.display.viewport.Viewport):
-        new_focus = None
-
     if new_focus is None:
         new_focus = global_focus
 
     return change_focus(new_focus, default=default)
+
+
+def skip_viewport(f):
+    """
+    :undocumented:
+
+    Draggable viewports without the arrowkeys argument
+    aren't supposed to be focused via keyboard.
+    """
+
+    return isinstance(f.widget, renpy.display.viewport.Viewport) and f.widget.draggable and not f.widget.arrowkeys
 
 
 # This focuses an extreme widget, which is one of the widgets that's
@@ -652,13 +660,13 @@ def focus_extreme(xmul, ymul, wmul, hmul):
 
     for f in focus_list:
 
+        if skip_viewport(f):
+            continue
+
         if not f.widget.style.keyboard_focus:
             continue
 
         if f.x is None:
-            continue
-
-        if isinstance(f.widget, renpy.display.viewport.Viewport) and f.widget.draggable and not f.widget.arrowkeys:
             continue
 
         score = (f.x * xmul +
@@ -760,13 +768,13 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
         for f in focus_list:
 
+            if skip_viewport(f):
+                continue
+
             if f.x is False:
                 continue
 
             if not f.widget.style.keyboard_focus:
-                continue
-
-            if isinstance(f.widget, renpy.display.viewport.Viewport) and f.widget.draggable and not f.widget.arrowkeys:
                 continue
 
             change_focus(f)
@@ -804,13 +812,13 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
     for f in focus_list:
 
+        if skip_viewport(f):
+            continue
+
         if f is from_focus:
             continue
 
         if not f.widget.style.keyboard_focus:
-            continue
-
-        if isinstance(f.widget, renpy.display.viewport.Viewport) and f.widget.draggable and not f.widget.arrowkeys:
             continue
 
         if f.x is None:
@@ -862,6 +870,9 @@ def focus_ordered(delta):
 
     for f in focus_list:
 
+        if skip_viewport(f):
+            continue
+
         if f.x is None:
             placeless = f
             continue
@@ -873,9 +884,6 @@ def focus_ordered(delta):
             continue
 
         if not f.widget.style.keyboard_focus:
-            continue
-
-        if isinstance(f.widget, renpy.display.viewport.Viewport) and f.widget.draggable and not f.widget.arrowkeys:
             continue
 
         if f.widget is current:
