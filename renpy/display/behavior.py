@@ -1384,7 +1384,7 @@ class CaretBlink(renpy.display.displayable.Displayable):
         st -= self.st_base
 
         cr = renpy.display.render.render(self.caret, width, height, st, at)
-        rv = renpy.display.render.Render(1, height)
+        rv = renpy.display.render.Render(cr.width, height)
 
         ttl = self.caret_blink - st % self.caret_blink
 
