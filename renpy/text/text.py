@@ -1221,7 +1221,7 @@ class Layout(object):
 
         def fill_empty_line():
             for i in line:
-                if isinstance(i[0], (TextSegment, SpaceSegment, DisplayableSegment)):
+                if isinstance(i[0], TextSegment):
                     return
 
             line.extend(tss[-1].subsegment(u"\u200B")) # type: ignore
