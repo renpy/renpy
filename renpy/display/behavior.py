@@ -1546,28 +1546,26 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
 
         def set_content(content):
 
+            if content == "":
+                # Use ZWSP to force correct vertical size using font style.
+                content = "\u200b"
+
             if editable:
-                l = len(content)
-                caret_content = [
+                self.set_text([
                     self.prefix,
-                    content[0:self.caret_pos].replace("{", "{{"),
+                    content[:self.caret_pos].replace("{", "{{"),
                     edit_text,
                     caret,
-                    content[self.caret_pos:l].replace("{", "{{"),
+                    content[self.caret_pos:].replace("{", "{{"),
                     self.suffix
-                    ]
+                    ])
 
             else:
-                caret_content = [
+                self.set_text([
                     self.prefix,
                     content.replace("{", "{{"),
                     self.suffix
-                ]
-
-            if not content:
-                caret_content.append("{space=1}")
-
-            self.set_text(caret_content)
+                ])
 
             if isinstance(self.caret, CaretBlink):
                 self.caret.st_base = self.st
