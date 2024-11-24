@@ -508,9 +508,6 @@ class DisplayableSegment(object):
 
         self.width, self.height = rend.get_size()
 
-        if isinstance(d, renpy.display.behavior.CaretBlink):
-            self.width = 0
-
         self.hyperlink = ts.hyperlink
         self.cps = ts.cps
         self.ruby_top = ts.ruby_top
@@ -530,7 +527,7 @@ class DisplayableSegment(object):
         glyph.character = 0xfffc
         glyph.ascent = 0
         glyph.line_spacing = h
-        glyph.advance = w
+        glyph.advance = 0 if isinstance(self.d, renpy.display.behavior.CaretBlink) else w
         glyph.width = w
         glyph.shader = self.shader
 
