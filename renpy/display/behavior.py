@@ -1544,15 +1544,28 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
 
         def set_content(content):
 
-            if content == "":
-                content = "\u200b"
-
             if editable:
                 l = len(content)
-                self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), edit_text, caret,
-                               content[self.caret_pos:l].replace("{", "{{"), self.suffix])
+                caret_content = [
+                    self.prefix,
+                    content[0:self.caret_pos].replace("{", "{{"),
+                    edit_text,
+                    caret,
+                    content[self.caret_pos:l].replace("{", "{{"),
+                    self.suffix
+                    ]
+
             else:
-                self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
+                caret_content = [
+                    self.prefix,
+                    content.replace("{", "{{"),
+                    self.suffix
+                ]
+
+            if not content:
+                caret_content.append("{space=1}")
+
+            self.set_text(caret_content)
 
             if isinstance(self.caret, CaretBlink):
                 self.caret.st_base = self.st
