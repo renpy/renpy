@@ -1116,9 +1116,9 @@ class Button(renpy.display.layout.Window):
         # If we have a child, try passing the event to it. (For keyboard
         # events, this only happens if we're focused.)
         if (not (ev.type in KEY_EVENTS)) or self.style.key_events:
-                rv = super(Button, self).event(ev, x, y, st)
-                if rv is not None:
-                    return rv
+            rv = super(Button, self).event(ev, x, y, st)
+            if rv is not None:
+                return rv
         else:
 
             # Used to prevent keymaps (the key statement) from reacting to
@@ -1384,7 +1384,7 @@ class CaretBlink(renpy.display.displayable.Displayable):
         st -= self.st_base
 
         cr = renpy.display.render.render(self.caret, width, height, st, at)
-        rv = renpy.display.render.Render(1, height)
+        rv = renpy.display.render.Render(cr.width, height)
 
         ttl = self.caret_blink - st % self.caret_blink
 
