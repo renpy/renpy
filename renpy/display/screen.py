@@ -717,6 +717,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if (self.cache.get(NAME, None) is not old_cache) and (self.current_transform_event is None) and (self.phase == UPDATE):
             self.current_transform_event = "update"
 
+        if (self.cache.get(NAME, None) is not old_cache) and (self.current_transform_event is None) and (self.phase == SHOW):
+            self.phase = UPDATE
+
         if self.current_transform_event:
 
             try:
@@ -745,9 +748,6 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         if not self.child:
             self.update()
-
-        if self.phase == SHOW:
-            self.phase = UPDATE
 
         try:
             push_current_screen(self)

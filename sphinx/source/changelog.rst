@@ -18,6 +18,17 @@ Ren'Py now requires Windows 10 or later to run. This means that it will no longe
 Ren'Py is no longer built for 32-bit ARM linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
 Ren'Py is still being built for 32-bit ARM Android.
 
+Features
+--------
+
+The :var:`config.translate_additional_strings_callbacks` callbacks make it possible for a game to offer
+additional to be added to translation files. (For example, strings from third-party libraries or data files.)
+
+The :func:`___` (triple underscore) function makes it possible translate a string, and then
+apply :ref:`text interpolation <text-interpolation>` to the result. Interpolations occur in the scope of
+that the function is called from. The triple underscore function also marks the string contained
+inside for translation.
+
 Other Changes
 -------------
 
@@ -35,11 +46,24 @@ The "Image Attributes" screen also indicates if transforms are applied to a laye
 to determine otherwise.
 
 
+
 .. _renpy-8.3.3:
 .. _renpy-7.8.3:
 
 Fixes
 -----
+
+Empty masked inputs no longer show a single mask glyph.
+
+If a :class:`Movie` has a transform as its `image` or `show_image`, that transform
+is reset each time the movie is shown.
+
+The :var:`config.nvl_adv_transition` no longer forces the dialogue window to be hidden.
+
+Screens that are used by another screen are now updated properly if the interaction restarts
+before the screen is first rendered.
+
+The :func:`achievement.steam.get_session_ticket` function now works as documented.
 
 Changes to audio filters take place immediately after reload.
 
@@ -65,7 +89,7 @@ The rarely-used ``gl_anisotropic`` transform property now works.
 
 The :propref:`keyboard_focus_insets` property now works as documented.
 
-A rounding issue that could cause :propref:`bar_invert` from working has been fixed.
+A rounding issue that could cause :propref:`bar_invert` to stop working has been fixed.
 
 Ren'Py will render a displayable a second time if :propref:`box_wrap` is True, to ensure that the displayable
 is offered the correct amount of space when wrapped to a second line. In rare cases, this could change layout.
@@ -82,6 +106,10 @@ Other Changes
 
 Android bundles now use install-time assets packs, rather than fast-follow packs, to ensure that all assets
 are available when the game is run.
+
+An :class:`AlphaMask` will now cause mask transformations to restart each time it is shown.
+
+Displayables zoomed down to 0 pixels big will no longer get focus.
 
 The "always" option to _renpysteam.keyboard_mode is no longer supported. If given, the "once" mode is
 used, requiring the player to explicitly request the Steam Deck keyboard when required.

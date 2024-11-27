@@ -183,6 +183,18 @@ cdef class Matrix:
 
         return rv
 
+    def is_2d_null(self):
+        """
+        Returns true if a 2D matrix always projects to 0 in the x or y directions.
+        """
+
+        if self.xdx == 0.0 and self.xdy == 0.0:
+            return True
+        if self.ydx == 0.0 and self.ydy == 0.0:
+            return True
+
+        return False
+
     def __repr__(Matrix self):
         cdef int x, y
 

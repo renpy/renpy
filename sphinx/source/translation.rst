@@ -493,6 +493,15 @@ translation:
     double-translated, if it matches a string translation when it
     is displayed.
 
+.. function:: ___(s)
+
+    (Triple underscore) Immediately translates `s` into the current
+    language. If a :ref:`text interpolation <text-interpolation>` is
+    found, the interpolation will be performed using the local
+    variables in the scope that called this function. Note that
+    the string may be double-translated, if it matches a string
+    translation when it is displayed.
+
 .. include:: inc/underscore_p
 
 .. include:: inc/translate_string

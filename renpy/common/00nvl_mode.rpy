@@ -253,9 +253,11 @@ init -1500 python:
 
         renpy.mode("window show")
 
-    def nvl_hide(with_):
+
+    def nvl_hide(with_, modes=True):
         """
         :doc: nvl
+        :args: (with_)
 
         The Python equivalent of the ``nvl hide`` statement.
 
@@ -266,11 +268,12 @@ init -1500 python:
         nvl_show_core()
 
         renpy.with_statement(None)
-        store._window = False
         store._last_say_who = None
         renpy.with_statement(with_)
 
-        renpy.mode("window hide")
+        if modes:
+            store._window = False
+            renpy.mode("window hide")
 
     def nvl_erase():
         if nvl_list:
@@ -557,7 +560,7 @@ init -1500 python:
         if config.nvl_adv_transition:
             if mode == "say" or mode == "menu":
                 if old == "nvl" or old == "nvl_menu":
-                    nvl_hide(config.nvl_adv_transition)
+                    nvl_hide(config.nvl_adv_transition, modes=False)
 
     config.mode_callbacks.append(_nvl_adv_callback)
 

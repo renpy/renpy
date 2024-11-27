@@ -508,9 +508,6 @@ class DisplayableSegment(object):
 
         self.width, self.height = rend.get_size()
 
-        if isinstance(d, renpy.display.behavior.CaretBlink):
-            self.width = 0
-
         self.hyperlink = ts.hyperlink
         self.cps = ts.cps
         self.ruby_top = ts.ruby_top
@@ -530,7 +527,7 @@ class DisplayableSegment(object):
         glyph.character = 0xfffc
         glyph.ascent = 0
         glyph.line_spacing = h
-        glyph.advance = w
+        glyph.advance = 0 if isinstance(self.d, renpy.display.behavior.CaretBlink) else w
         glyph.width = w
         glyph.shader = self.shader
 
@@ -1224,7 +1221,7 @@ class Layout(object):
 
         def fill_empty_line():
             for i in line:
-                if isinstance(i[0], (TextSegment, SpaceSegment, DisplayableSegment)):
+                if isinstance(i[0], TextSegment):
                     return
 
             line.extend(tss[-1].subsegment(u"\u200B")) # type: ignore
@@ -1247,8 +1244,7 @@ class Layout(object):
                 elif type == TEXT:
 
                     if (text_displayable.mask is not None):
-                        if text != u"\u200b":
-                            text = text_displayable.mask * len(text)
+                        text = text_displayable.mask * len(text)
 
                     line.extend(self.create_text_segments(text, tss[-1], style))
 
