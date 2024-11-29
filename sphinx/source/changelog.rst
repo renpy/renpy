@@ -5,6 +5,16 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.3.4:
+.. _renpy-7.8.4:
+
+Other Changes
+-------------
+
+The new :func:`renpy.get_statement_name` function returns the name of the currently
+executing Ren'Py statement, the same name given to :var:`config.statement_callbacks`.
+
+
 .. _renpy-8.3.3:
 .. _renpy-7.8.3:
 

@@ -325,6 +325,7 @@ from renpy.exports.contextexports import (
     get_mode,
     get_return_stack,
     get_skipping,
+    get_statement_name,
     invoke_in_new_context,
     is_init_phase,
     is_skipping,
