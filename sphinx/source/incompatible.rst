@@ -20,6 +20,21 @@ Ren'Py 7.8 is the last release to support Python 2.
 Ren'Py 8.4 will drop support for the original OpenGL renderer (gl1), and for Windows 7, 8, and 8.1.
 
 
+.. _incompatible-8.3.4:
+.. _incompatible-7.8.4:
+
+
+8.3.4 / 7.8.4
+-------------
+
+**Dissolving Different-Sized Displayables, part two.** When ImageDissolving or AlphaDissolving between
+displayables of different sizes, Ren'Py will give the result the size of the largest displayable, in
+each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis), add to your game::
+
+    define config.dissolve_shrinks = True
+
+
+
 .. _incompatible-8.3.0:
 .. _incompatible-7.8.0:
 
@@ -317,6 +332,21 @@ disappear. Now, the event will be allowed to run to completion.
 To disable this, add to your game::
 
     define config.screens_never_cancel_hide = False
+
+
+.. _incompatible-8.1.2:
+.. _incompatible-7.6.2:
+
+8.1.2 / 7.6.2
+-------------
+
+**Dissolving Different-Sized Displayables** When dissolving between two displayables
+of different sizes, Ren'Py will give the result the size of the largest displayable, in
+each access. To revert to the previous behavior (the smallest size on each axis), add to your game::
+
+    define config.dissolve_shrinks = True
+
+
 
 
 .. _incompatible-8.1.1:
