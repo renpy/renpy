@@ -43,10 +43,16 @@ from renpy.parameter import Parameter, Signature, ParameterInfo, ArgumentInfo, \
     apply_arguments, EMPTY_PARAMETERS, EMPTY_ARGUMENTS
 
 
+# The name of the current statement.
+current_statement_name = "init"
+
 def statement_name(name):
     """
     Reports the name of this statement to systems like window auto.
     """
+
+    global current_statement_name
+    current_statement_name = name
 
     for i in renpy.config.statement_callbacks:
         i(name)

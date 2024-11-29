@@ -46,6 +46,15 @@ The "Image Attributes" screen also indicates if transforms are applied to a laye
 to determine otherwise.
 
 
+.. _renpy-8.3.4:
+.. _renpy-7.8.4:
+
+Other Changes
+-------------
+
+The new :func:`renpy.get_statement_name` function returns the name of the currently
+executing Ren'Py statement, the same name given to :var:`config.statement_callbacks`.
+
 
 .. _renpy-8.3.3:
 .. _renpy-7.8.3:
