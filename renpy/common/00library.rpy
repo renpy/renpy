@@ -139,11 +139,14 @@ init -1700 python:
     def _default_empty_window():
 
         try:
+
             scry = renpy.scry()
+
+            window_hide = renpy.get_statement_name() == "window hide"
 
             # When running in a say statement or menu-with-caption, scry for
             # the next say statement, and get the window from that.
-            if scry.say or scry.menu_with_caption or store._window_next:
+            if (scry.say or scry.menu_with_caption or store._window_next) and not window_hide:
                 who = None
 
                 for i in range(20):
@@ -158,6 +161,7 @@ init -1700 python:
                 who = renpy.eval_who(who)
 
         except Exception:
+            raise
             who = None
 
         if who is None:

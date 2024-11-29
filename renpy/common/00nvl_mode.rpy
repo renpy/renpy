@@ -267,12 +267,14 @@ init -1500 python:
 
         nvl_show_core()
 
+        if modes:
+            store._window = False
+
         renpy.with_statement(None)
         store._last_say_who = None
         renpy.with_statement(with_)
 
         if modes:
-            store._window = False
             renpy.mode("window hide")
 
     def nvl_erase():
