@@ -46,6 +46,21 @@ each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis
 
 
 
+.. _incompatible-8.3.4:
+.. _incompatible-7.8.4:
+
+
+8.3.4 / 7.8.4
+-------------
+
+**Dissolving Different-Sized Displayables, part two.** When ImageDissolving or AlphaDissolving between
+displayables of different sizes, Ren'Py will give the result the size of the largest displayable, in
+each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis), add to your game::
+
+    define config.dissolve_shrinks = True
+
+
+
 .. _incompatible-8.3.0:
 .. _incompatible-7.8.0:
 
