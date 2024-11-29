@@ -668,6 +668,18 @@ def focus_extreme(xmul, ymul, wmul, hmul):
         return change_focus(max_focus)
 
 
+def check_keyboard_focus():
+    """
+    If the current widget is not keyboard focusable, clears
+    the focus.
+    """
+
+    current = get_focused()
+
+    if current and not current.style.keyboard_focus:
+        change_focus(None)
+
+
 # This calculates the distance between two points, applying
 # the given fudge factors. The distance is left squared.
 def points_dist(x0, y0, x1, y1, xfudge, yfudge):
@@ -740,6 +752,8 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
     if not focus_list:
         return
+
+    check_keyboard_focus()
 
     # No widget focused.
     current = get_focused()
@@ -844,6 +858,8 @@ def focus_ordered(delta):
 
     candidates = [ ]
     index = 0
+
+    check_keyboard_focus()
 
     current = get_focused()
     current_index = None
