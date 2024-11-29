@@ -1503,6 +1503,9 @@ interface_layer = "screens"
 # Should Transform crop be limited to the width and height of the image being cropped?
 limit_transform_crop = False
 
+# Should as dissolve shrink to the size of the smallest child?
+dissolve_shrink = False
+
 # Marking labels, images and audio in replays as seen is not allowed.
 no_replay_seen = False
 
