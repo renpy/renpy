@@ -929,6 +929,11 @@ The input statement takes no parameters, and the following properties:
     Generally, this is is used with a `value` that stores the input into
     a variable, so the action can access it.
 
+.. screen-property:: arrowkeys
+
+    If True (the default), the arrow keys can be used to move the caret left and right
+    within the input. If False, arrow keys are ignored, making them available for other uses,
+    like changing focus.
 
 
 It also takes:

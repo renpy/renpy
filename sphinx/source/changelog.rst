@@ -21,6 +21,9 @@ Ren'Py is still being built for 32-bit ARM Android.
 Features
 --------
 
+The :ref:`input <sl-input>` displayable now takes an `arrowkeys` property, which controls whether the arrow keys
+can be used to move the cursor in the input, or are used to move the focus between displayables.
+
 The :var:`config.translate_additional_strings_callbacks` callbacks make it possible for a game to offer
 additional to be added to translation files. (For example, strings from third-party libraries or data files.)
 

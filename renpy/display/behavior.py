@@ -1413,6 +1413,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
     shown = False
     multiline = False
     action = None
+    arrowkeys = True
 
     st = 0
 
@@ -1434,6 +1435,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                  caret_blink=None,
                  multiline=False,
                  action=None,
+                 arrowkeys=True,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
@@ -1471,6 +1473,8 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         self.multiline = multiline
 
         self.action = action
+
+        self.arrowkeys = arrowkeys
 
         caretprops = { 'color' : None }
 
@@ -1689,7 +1693,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             if not self.changed:
                 return content
 
-        elif map_event(ev, "input_left"):
+        elif map_event(ev, "input_left") and self.arrowkeys:
             if self.caret_pos > 0:
                 self.caret_pos -= 1
                 self.update_text(self.content, self.editable)
@@ -1697,7 +1701,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
-        elif map_event(ev, "input_jump_word_left"):
+        elif map_event(ev, "input_jump_word_left") and self.arrowkeys:
             if self.caret_pos > 0:
                 space_pos = 0
                 for item in re.finditer(r"\s+", self.content[:self.caret_pos]):
@@ -1710,7 +1714,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
-        elif map_event(ev, "input_right"):
+        elif map_event(ev, "input_right") and self.arrowkeys:
             if self.caret_pos < l:
                 self.caret_pos += 1
                 self.update_text(self.content, self.editable)
@@ -1718,7 +1722,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
-        elif map_event(ev, "input_jump_word_right"):
+        elif map_event(ev, "input_jump_word_right") and self.arrowkeys:
             if self.caret_pos < l:
                 space_pos = l
                 for item in re.finditer(r"\s+", self.content[self.caret_pos + 1:]):

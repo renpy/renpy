@@ -190,6 +190,7 @@ Keyword("mask")
 Keyword("caret_blink")
 Keyword("multiline")
 Keyword("action")
+Keyword("arrowkeys")
 Style("caret")
 add(text_properties)
 
