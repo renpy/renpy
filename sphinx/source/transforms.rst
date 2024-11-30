@@ -871,11 +871,6 @@ The following events are triggered automatically within an ATL transform:
     Triggered when the transform is replaced by another. The image will not
     actually hide until the ATL block finishes.
 
-``update``
-    Triggered when a screen is updated without being shown or replacing another
-    screen. This happens in rare but possible cases, such as when the game is
-    loaded and when styles or translations change.
-
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``, ``insensitive``, ``selected_insensitive``
     Triggered when a button containing this transform, or a button contained by
     this transform, enters the named state.
