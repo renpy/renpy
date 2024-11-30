@@ -719,6 +719,10 @@ def list_slots(regexp=None):
     return slots
 
 
+# The set of slots that have been accessed, such that clearing the slot
+# should restart the interaction.
+accessed_slots = set()
+
 # A cache for newest slot info.
 newest_slot_cache = { }
 
@@ -765,6 +769,8 @@ def slot_mtime(slotname):
     Returns the modification time for `slot`, or None if the slot is empty.
     """
 
+    accessed_slots.add(slotname)
+
     return get_cache(slotname).get_mtime()
 
 
@@ -780,6 +786,8 @@ def slot_json(slotname):
     dictionary will contain the same data as it did when the game was saved.
     """
 
+    accessed_slots.add(slotname)
+
     return get_cache(slotname).get_json()
 
 
@@ -791,6 +799,8 @@ def slot_screenshot(slotname):
     or None if the slot is empty.
     """
 
+    accessed_slots.add(slotname)
+
     return get_cache(slotname).get_screenshot()
 
 
@@ -800,6 +810,8 @@ def can_load(filename, test=False):
 
     Returns true if `filename` exists as a save slot, and False otherwise.
     """
+
+    accessed_slots.add(slotname)
 
     c = get_cache(filename)
 
@@ -966,13 +978,17 @@ def clear_slot(slotname):
 
     newest_slot_cache.clear()
 
-    renpy.exports.restart_interaction()
+    if slotname in accessed_slots:
+        accessed_slots.discard(slotname)
+        renpy.exports.restart_interaction()
 
 
 def clear_cache():
     """
     Clears the entire cache.
     """
+
+    accessed_slots.clear()
 
     for c in cache.values():
         c.clear()
