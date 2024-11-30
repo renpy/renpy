@@ -805,7 +805,7 @@ def can_load(filename, test=False):
     Returns true if `filename` exists as a save slot, and False otherwise.
     """
 
-    accessed_slots.add(slotname)
+    accessed_slots.add(filename)
 
     c = get_cache(filename)
 
