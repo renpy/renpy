@@ -161,7 +161,6 @@ init -1700 python:
                 who = renpy.eval_who(who)
 
         except Exception:
-            raise
             who = None
 
         if who is None:
