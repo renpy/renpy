@@ -654,7 +654,7 @@ class Context(renpy.object.Object):
                 renpy.store._kwargs = e.kwargs
 
             if self.seen:
-                if renpy.exports.is_seen_allowed():
+                if renpy.exports.is_seen_allowed("ever"):
                     renpy.game.persistent._seen_ever[self.current] = True # type: ignore
                     renpy.game.seen_session[self.current] = True
 

@@ -163,11 +163,16 @@ def is_seen(ever=True):
     return renpy.game.context().seen_current(ever)
 
 
-def is_seen_allowed():
+def is_seen_allowed(field):
     """
     :doc: other
 
+    @param field: Is one of the - ["audio", "image", "translate", "ever"].
+
     Returns False only if in a replay and no seen events allowed by setting :var:`config.no_replay_seen` to True.
     """
+
+    if renpy.config.seen_should_be_allowed_callback is not None:
+        return renpy.config.seen_should_be_allowed_callback(field)
 
     return not (renpy.store._in_replay and renpy.config.no_replay_seen)

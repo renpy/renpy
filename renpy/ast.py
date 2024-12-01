@@ -2583,9 +2583,10 @@ class TranslateSay(Say):
         if self.language is None:
 
             if self.identifier not in renpy.game.persistent._seen_translates: # type: ignore
-                renpy.game.persistent._seen_translates.add(self.identifier) # type: ignore
-                renpy.game.seen_translates_count += 1
-                renpy.game.new_translates_count += 1
+                if renpy.exports.is_seen_allowed("translate"):
+                    renpy.game.persistent._seen_translates.add(self.identifier) # type: ignore
+                    renpy.game.seen_translates_count += 1
+                    renpy.game.new_translates_count += 1
 
             # Potentially, jump to a translation.
             node = self.lookup()

@@ -723,7 +723,7 @@ class Channel(object):
         with lock:
 
             for filename in filenames:
-                if renpy.exports.is_seen_allowed():
+                if renpy.exports.is_seen_allowed("audio"):
                     filename, _, _ = self.split_filename(filename, False)
                     renpy.game.persistent._seen_audio[str(filename)] = True # type: ignore
 
