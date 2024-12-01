@@ -679,7 +679,7 @@ init -1500 python in _console:
 
                 # If we have 1 line, try to parse it as a command.
                 if line_count == 1:
-                    block = [ ( "<console>", 1, code, [ ]) ]
+                    block = renpy.lexer.Tokenizer.from_string("<console>", code).list_grouped_lines()
                     l = renpy.parser.Lexer(block)
                     l.advance()
 
