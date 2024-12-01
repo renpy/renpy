@@ -690,9 +690,17 @@ def update_playing():
         elif m.loop and last is not m:
             m.play(last)
 
+    stopped = set()
+
     for c, m in last_channel_movie.items():
         if c not in channel_movie:
+            stopped.add(c)
             m.stop()
+
+    for c, m in old_channel_movie.items():
+        if c not in channel_movie:
+            if c not in stopped:
+                m.stop()
 
     renpy.game.context().movie = last_channel_movie = dict(channel_movie)
     reset_channels.clear()
