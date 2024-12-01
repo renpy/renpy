@@ -1038,25 +1038,6 @@ class Tokenizer:
         return list(self._yield_tokens())
 
 
-def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
-    """
-    Reads `filename`, and divides it into logical lines.
-
-    Returns a list of (filename, line number, line text) triples.
-
-    If `filedata` is given, it should be a unicode string giving the file
-    contents. In that case, `filename` need not exist.
-    """
-
-    if filedata is None:
-        t = Tokenizer.from_file(filename)
-    else:
-        t = Tokenizer.from_string(
-            filename, filedata, lineno=linenumber - 1)
-
-    return t.list_logical_lines()
-
-
 # A list of keywords which should not be parsed as names, because
 # there is a huge chance of confusion.
 #
