@@ -147,7 +147,6 @@ def start(basedir, gamedir):
     window.update()
 
 
-
 # The last time the progress bar was updated.
 last_pump_time = 0
 
