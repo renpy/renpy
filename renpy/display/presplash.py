@@ -89,13 +89,13 @@ def start(basedir, gamedir):
     if "RENPY_LESS_UPDATES" in os.environ:
         return
 
-    presplash_fn = find_file("presplash", root=gamedir)
+    foreground_fn = find_file("presplash_foreground", root=gamedir)
+    background_fn = find_file("presplash_background", root=gamedir)
 
-    if not presplash_fn:
-        foreground_fn = find_file("presplash_foreground", root=gamedir)
-        background_fn = find_file("presplash_background", root=gamedir)
+    if not foreground_fn or not background_fn:
+        presplash_fn = find_file("presplash", root=gamedir)
 
-        if not foreground_fn or not background_fn:
+        if not presplash_fn:
             return
 
     if renpy.windows:
@@ -108,11 +108,11 @@ def start(basedir, gamedir):
 
     global progress_bar
 
-    if presplash_fn:
-        presplash = pygame_sdl2.image.load(presplash_fn)
-    else:
+    if foreground_fn and background_fn:
         presplash = ProgressBar(foreground_fn, background_fn) # type: ignore
         progress_bar = presplash
+    else:
+        presplash = pygame_sdl2.image.load(presplash_fn)
 
     global window
 
@@ -137,12 +137,12 @@ def start(basedir, gamedir):
         pos=(x, y),
         shape=shape)
 
-    if presplash_fn:
-        presplash = presplash.convert_alpha(window.get_surface())
-        window.get_surface().blit(presplash, (0, 0))
-    else:
+    if foreground_fn and background_fn:
         presplash.convert_alpha(window.get_surface())
         presplash.draw(window.get_surface(), 0)
+    else:
+        presplash = presplash.convert_alpha(window.get_surface())
+        window.get_surface().blit(presplash, (0, 0))
 
     window.update()
 
