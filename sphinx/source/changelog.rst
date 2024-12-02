@@ -8,6 +8,9 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-8.3.4:
 .. _renpy-7.8.4:
 
+8.3.4 / 7.8.4
+=============
+
 Fixes
 -----
 
@@ -50,6 +53,9 @@ executing Ren'Py statement, the same name given to :var:`config.statement_callba
 
 .. _renpy-8.3.3:
 .. _renpy-7.8.3:
+
+8.3.3 / 7.8.3
+=============
 
 Fixes
 -----
