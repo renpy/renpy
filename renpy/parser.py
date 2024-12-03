@@ -1685,17 +1685,16 @@ def parse(fn, filedata=None, linenumber=1):
 
     try:
         if filedata is None:
-            t = renpy.lexer.Tokenizer.from_file(fn)
+            tok = renpy.lexer.Tokenizer.from_file(fn)
         else:
-            t = renpy.lexer.Tokenizer.from_string(
+            tok = renpy.lexer.Tokenizer.from_string(
                 fn, filedata, lineno=linenumber - 1)
-        nested = t.list_grouped_lines()
 
     except ParseError as e:
         parse_errors.append(e.message)
         return None
 
-    l = Lexer(nested)
+    l = Lexer(tok.list_logical_lines())
 
     rv = parse_block(l)
 
