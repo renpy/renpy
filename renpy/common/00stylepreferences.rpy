@@ -64,6 +64,9 @@ init -1500 python:
             The value that will be assigned to the style property.
         """
 
+        if isinstance(style, str):
+            style = store.style.get(style)
+
         if preference not in __preferences:
             __preferences[preference] = [ ]
             __alternatives[preference] = [ ]
