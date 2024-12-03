@@ -52,15 +52,54 @@ to determine otherwise.
 .. _renpy-8.3.4:
 .. _renpy-7.8.4:
 
+8.3.4 / 7.8.4
+=============
+
+Fixes
+-----
+
+Animated presplash images now take precedence over static presplash images, matching
+the documentation.
+
+There have been a number of fixes related to dragging of viewports and drag displayables.
+
+Movies are stopped when returning to a channel from a context.
+
+An issue where autosave could hurt performance by causing interaction restarts has
+been fixed.
+
+Ren'Py now uses the previous window type when running the ``nvl hide`` statement.
+
+A displayable that does not support keyboard focus will now be ignored during
+keyboard focus computations.
+
+An issue that could cause :ref:`sl-input` to not be masked properly when the contents
+of the input was a space was fixed.
+
+An issue preventing Android and iOS keyboards from being shown when the
+window was empty has been fixed.
+
+An issue that could cause the image cache to be managed incorrectly has been fixed.
+
+An incorrect build prevented the web version of Ren'Py from working properly, on Ren'Py
+7.8.3. This has been fixed.
+
 Other Changes
 -------------
+
+The ATL "update" event, which was issued in rare circumstances, has been removed.
 
 The new :func:`renpy.get_statement_name` function returns the name of the currently
 executing Ren'Py statement, the same name given to :var:`config.statement_callbacks`.
 
+:class:`SpriteManager` has been modernized, and now can be saved.
+
 
 .. _renpy-8.3.3:
 .. _renpy-7.8.3:
+
+8.3.3 / 7.8.3
+=============
 
 Fixes
 -----

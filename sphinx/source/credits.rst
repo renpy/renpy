@@ -82,6 +82,7 @@ the omission in future versions.
 * DragoonHP
 * Duanemoody
 * Edward Betts
+* Edward Nicholes Jr.
 * Edwin
 * Eevee (Lexy Munroe)
 * Elckarow
@@ -93,6 +94,7 @@ the omission in future versions.
 * Eric Ahn
 * Erufailon4
 * Evilantishad0w
+* Farzher
 * Felix Lampe
 * Franck_v
 * Frédéric Chapoton
@@ -202,6 +204,7 @@ the omission in future versions.
 * Muhammad Nur Hidayat Yasuyoshi
 * Multimokia
 * NattyanTV
+* Naughty Road
 * Neotus
 * Neyunse
 * NetGenSuperstar
