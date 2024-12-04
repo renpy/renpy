@@ -43,6 +43,10 @@ An incorrect build prevented the web version of Ren'Py from working properly, on
 Other Changes
 -------------
 
+Displayables rendered for imagemaps are offered (:var:`config.screen_width`,
+:var:`config.screen_height`) pixels of space, rather than an arbitrary size. This
+shouldn't matter for images, but makes non-image displayables behave more consistently.
+
 The ATL "update" event, which was issued in rare circumstances, has been removed.
 
 The new :func:`renpy.get_statement_name` function returns the name of the currently
