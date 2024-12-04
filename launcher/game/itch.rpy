@@ -50,7 +50,7 @@ init python:
             pass
 
         with interface.error_handling(_("Downloading the itch.io butler.")):
-            url = "https://broth.itch.ovh/butler/{}/LATEST/archive/default".format(platform)
+            url = "https://broth.itch.zone/butler/{}/LATEST/archive/default".format(platform)
 
             response = requests.get(url, headers={'User-Agent' : "Renpy"}, proxies=renpy.proxies)
 
