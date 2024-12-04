@@ -51,7 +51,7 @@ class ImageMapCrop(renpy.display.displayable.Displayable):
         return [ self.child ]
 
     def render(self, width, height, st, at):
-        cr = render(self.child, width, height, st, at)
+        cr = render(self.child, renpy.config.screen_width, renpy.config.screen_height, st, at)
         return cr.subsurface(self.rect)
 
 
