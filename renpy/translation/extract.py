@@ -58,7 +58,7 @@ def extract_strings():
     ap.add_argument("language", help="The language to extract translated strings from.")
     ap.add_argument("destination", help="The json file to store the translated strings into.")
     ap.add_argument("--merge", help="If given, the current contents of the file are preserved, and new contents are merged into the file.", action="store_true")
-    ap.add_argument("--force", help="If given, noting happens if the language does not exist.", action="store_true")
+    ap.add_argument("--force", help="If given, no exceptions are thrown if the language does not exist.", action="store_true")
 
     args = ap.parse_args()
 
