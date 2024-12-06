@@ -310,7 +310,7 @@ class MultipleDict(object):
             if key in d:
                 return d[key]
 
-        raise NameError("Name '{}' is not defined.".format(key))
+        raise KeyError("Name '{}' is not defined.".format(key))
 
     def __contains__(self, key):
         for d in self.dicts:
