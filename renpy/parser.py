@@ -43,7 +43,6 @@ from renpy.lexer import (
     munge_filename,
     elide_filename,
     unelide_filename,
-    get_line_text,
     SubParse,
 )
 
@@ -1769,8 +1768,10 @@ def report_parse_errors():
     full_text = ""
 
     f, error_fn = renpy.error.open_error_file("errors.txt", "w")
+
+    screen_parse_errors = []
     with f:
-        f.write("\ufeff") # BOM
+        f.write("\ufeff")  # BOM
 
         print("I'm sorry, but errors were detected in your script. Please correct the", file=f)
         print("errors listed below, and try again.", file=f)
@@ -1787,6 +1788,8 @@ def report_parse_errors():
             print("", file=f)
             print(i, file=f)
 
+            screen_parse_errors.append(i)
+
             try:
                 print("")
                 print(i)
@@ -1797,7 +1800,7 @@ def report_parse_errors():
         print("Ren'Py Version:", renpy.version, file=f)
         print(str(time.ctime()), file=f)
 
-    renpy.display.error.report_parse_errors(full_text, error_fn)
+    renpy.display.error.report_parse_errors(screen_parse_errors, error_fn)
 
     try:
         if renpy.game.args.command == "run" or renpy.game.args.errors_in_editor: # type: ignore
