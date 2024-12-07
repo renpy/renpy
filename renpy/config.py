@@ -1515,6 +1515,9 @@ old_show_expression = False
 # Callbacks that give the translation system more strings to translate.
 translate_additional_strings_callbacks = [ ]
 
+# The is_seen_allowed control will be passed to this callback if set.
+seen_should_be_allowed_callback = None
+
 
 del os
 del collections
