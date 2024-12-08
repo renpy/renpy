@@ -1526,6 +1526,9 @@ def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None, in
 
     if isinstance(what, list):
 
+        if len(what) > 1 and identifier is not None:
+            l.error("Monologue mode say statements cannot have an id clause.")
+
         rv = [ ]
 
         for i in what:
