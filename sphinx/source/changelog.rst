@@ -58,6 +58,8 @@ to determine otherwise.
 Fixes
 -----
 
+Python Builtins (like len) are now always available during string interpolation.
+
 Animated presplash images now take precedence over static presplash images, matching
 the documentation.
 
