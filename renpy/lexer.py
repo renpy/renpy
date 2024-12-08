@@ -91,7 +91,11 @@ class ParseError(Exception):
 
             lines = line.split('\n')
 
-            if len(lines) > 1:
+            if '"""' in lines[0]:
+                pass
+            elif "'''" in lines[0]:
+                pass
+            elif len(lines) > 1:
                 open_string = None
                 i = 0
 
