@@ -112,7 +112,7 @@ link in a nightly build, or compile the modules as described above. You'll
 also need the `Sphinx <https://www.sphinx-doc.org>`_ documentation generator.
 If you have pip working, install Sphinx using::
 
-    pip install -U sphinx sphinx_rtd_theme sphinx_rtd_dark_mode
+    pip install -U sphinx sphinx_rtd_theme sphinx_rtd_dark_mode sphinx-tabs
 
 Once Sphinx is installed, change into the ``sphinx`` directory inside the
 Ren'Py checkout and run::
@@ -124,7 +124,8 @@ Format
 
 Ren'Py's documentation consists of reStructuredText files found in sphinx/source, and
 generated documentation found in function docstrings scattered throughout the code. Do
-not edit the files in sphinx/source/inc directly, as they will be overwritten.
+not edit the files in the ``sphinx/source/inc`` folder directly, as they will be
+overwritten.
 
 Docstrings may include tags on the first few lines:
 
