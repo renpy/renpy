@@ -21,6 +21,9 @@ Ren'Py is still being built for 32-bit ARM Android.
 Features
 --------
 
+The :propref:`thumb_offset` style property now can take a tuple giving different offsets for the two sides
+of a bar. The new :propref:`thumb_align` style property controls how a thumb is aligned with the bar.
+
 The :ref:`input <sl-input>` displayable now takes an `arrowkeys` property, which controls whether the arrow keys
 can be used to move the cursor in the input, or are used to move the focus between displayables.
 
