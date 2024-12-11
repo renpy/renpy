@@ -111,9 +111,6 @@ screen front_page_project_list():
     default folder_text = ["Projects","Templates","Libraries"]
     default folder_hover = [False,False,False]
     default folder_collapsed = [False,True,True]
-    default folder_collapsed0 = False
-    default folder_collapsed0 = True
-    default folder_collapsed2 = True
 
     vbox:
 
