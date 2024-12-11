@@ -23,6 +23,7 @@ default persistent.show_edit_funcs = True
 default persistent.windows_console = False
 default persistent.lint_options = set()
 default persistent.use_web_doc = False
+default persistent.show_templates = True
 
 init python:
     from math import ceil
@@ -252,6 +253,7 @@ screen preferences():
                             add HALF_SPACER
 
                             textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
+                            textbutton _("Show template projects") style "l_checkbox" action ToggleField(persistent, "show_templates")
                             textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
 
                             if interface.local_doc_exists:

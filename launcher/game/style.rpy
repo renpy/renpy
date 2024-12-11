@@ -422,7 +422,7 @@ style l_indent_margin is l_indent:
 
 # Lists.
 style l_list is l_default:
-    left_padding HALF_INDENT
+    left_padding INDENT
     xfill True
     selected_background REVERSE_IDLE
     selected_hover_background REVERSE_HOVER

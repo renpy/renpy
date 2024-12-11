@@ -100,32 +100,163 @@ screen front_page:
 
 
 # This is used by front_page to display the list of known projects on the screen.
-screen front_page_project_list:
+
+#default folder_collapsed = [False,True,False]
+
+screen front_page_project_list():
 
     $ projects = project.manager.projects
     $ templates = project.manager.templates
+    $ libraries = project.manager.libraries
+    default folder_text = ["Projects","Templates","Libraries"]
+    default folder_hover = [False,False,False]
+    default folder_collapsed = [False,True,True]
+    default folder_collapsed0 = False
+    default folder_collapsed0 = True
+    default folder_collapsed2 = True
 
     vbox:
 
         if templates and persistent.show_templates:
 
-            for p in templates:
+            if folder_collapsed[1]:
+                button:
+                    hover_background REVERSE_IDLE
+                    xfill True
+                    hbox:
+                        spacing 5
+                        if folder_hover[1]:
+                            image Transform("images/folder.svg", xysize=(25,25))
+                            text folder_text[1] color REVERSE_TEXT bold True yalign 0.5
+                        else:
+                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
+                            text folder_text[1] color IDLE bold True yalign 0.5
 
-                textbutton _("[p.name!q] (template)"):
-                    action project.Select(p)
-                    alt _("Select project [text].")
-                    style "l_list"
+                    action SetDict(folder_collapsed, 1, False)
+                    hovered SetDict(folder_hover, 1, True)
+                    unhovered SetDict(folder_hover, 1, False)
+
+            else:
+                button:
+                    hover_background REVERSE_HOVER
+                    xfill True
+                    hbox:
+                        spacing 5
+                        if folder_hover:
+                            image Transform("images/folder.svg", xysize=(25,25))
+                            text folder_text[1] color REVERSE_TEXT bold True yalign 0.5
+                        else:
+                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
+                            text folder_text[1] color HOVER bold True yalign 0.5
+                    action SetDict(folder_collapsed, 1, True)
+                    hovered SetDict(folder_hover, 1, True)
+                    unhovered SetDict(folder_hover, 1, False)
+
+                for p in templates:
+
+                    textbutton _("[p.name!q]"):
+                        action project.Select(p)
+                        alt _("Select project [text].")
+                        style "l_list"
+
+            null height 12
+
+        if libraries:
+
+            if folder_collapsed[2]:
+                button:
+                    hover_background REVERSE_IDLE
+                    xfill True
+                    hbox:
+                        spacing 5
+                        if folder_hover[2]:
+                            image Transform("images/folder.svg", xysize=(25,25))
+                            text folder_text[2] color REVERSE_TEXT bold True yalign 0.5
+                        else:
+                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
+                            text folder_text[2] color IDLE bold True yalign 0.5
+
+                    action SetDict(folder_collapsed, 2, False)
+                    hovered SetDict(folder_hover, 2, True)
+                    unhovered SetDict(folder_hover, 2, False)
+
+            else:
+                button:
+                    hover_background REVERSE_HOVER
+                    xfill True
+                    hbox:
+                        spacing 5
+                        if folder_hover[2]:
+                            image Transform("images/folder.svg", xysize=(25,25))
+                            text folder_text[2] color REVERSE_TEXT bold True yalign 0.5
+                        else:
+                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
+                            text folder_text[2] color HOVER bold True yalign 0.5
+                    action SetDict(folder_collapsed, 2, True)
+                    hovered SetDict(folder_hover, 2, True)
+                    unhovered SetDict(folder_hover, 2, False)
+
+                for p in libraries:
+
+                    textbutton _("[p.name!q]"):
+                        action project.Select(p)
+                        alt _("Select project [text].")
+                        style "l_list"
 
             null height 12
 
         if projects:
 
-            for p in projects:
+            if templates or libraries:
 
-                textbutton "[p.name!q]":
-                    action project.Select(p)
-                    alt _("Select project [text].")
-                    style "l_list"
+                if folder_collapsed[0]:
+                    button:
+                        hover_background REVERSE_IDLE
+                        xfill True
+                        hbox:
+                            spacing 5
+                            if folder_hover[0]:
+                                image Transform("images/folder.svg", xysize=(25,25))
+                                text folder_text[0] color REVERSE_TEXT bold True yalign 0.5
+                            else:
+                                image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
+                                text folder_text[0] color IDLE bold True yalign 0.5
+
+                        action SetDict(folder_collapsed, 0, False)
+                        hovered SetDict(folder_hover, 0, True)
+                        unhovered SetDict(folder_hover, 0, False)
+
+                else:
+                    button:
+                        hover_background REVERSE_HOVER
+                        xfill True
+                        hbox:
+                            spacing 5
+                            if folder_hover[0]:
+                                image Transform("images/folder.svg", xysize=(25,25))
+                                text folder_text[0] color REVERSE_TEXT bold True yalign 0.5
+                            else:
+                                image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
+                                text folder_text[0] color HOVER bold True yalign 0.5
+                        action SetDict(folder_collapsed, 0, True)
+                        hovered SetDict(folder_hover, 0, True)
+                        unhovered SetDict(folder_hover, 0, False)
+
+                    for p in projects:
+
+                        textbutton "[p.name!q]":
+                            action project.Select(p)
+                            alt _("Select project [text].")
+                            style "l_list"
+
+            else:
+
+                for p in projects:
+
+                    textbutton "[p.name!q]":
+                        action project.Select(p)
+                        alt _("Select project [text].")
+                        style "l_list"
 
             null height 12
 
@@ -158,8 +289,12 @@ screen front_page_project:
 
                 frame style "l_indent":
                     has vbox
-                    for button_name, path in p.data["renpy_launcher"]["open_directory"].items():
-                        textbutton button_name action OpenDirectory(os.path.join(p.path, path), absolute=True)
+
+                    textbutton "game" action OpenDirectory(os.path.join(p.path, "game"), absolute=True)
+                    textbutton "base" action OpenDirectory(os.path.join(p.path, "."), absolute=True)
+                    textbutton "images" action OpenDirectory(os.path.join(p.path, "game/images"), absolute=True)
+                    textbutton "audio" action OpenDirectory(os.path.join(p.path, "game/audio"), absolute=True)
+                    textbutton "gui" action OpenDirectory(os.path.join(p.path, "game/gui"), absolute=True)
 
             vbox:
                 if persistent.show_edit_funcs:
@@ -169,8 +304,10 @@ screen front_page_project:
                     frame style "l_indent":
                         has vbox
 
-                        for button_name, path in p.data["renpy_launcher"]["edit_file"].items():
-                            textbutton button_name action editor.Edit(path, check=True)
+                        textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
+                        textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
+                        textbutton "gui.rpy" action editor.Edit("game/gui.rpy", check=True)
+                        textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
 
                         if editor.CanEditProject():
                             textbutton _("Open project") action editor.EditProject()

@@ -116,31 +116,12 @@ init python in project:
 
             try:
                 with open(os.path.join(self.path, "project.json"), "w") as f:
-                    json.dump(self.data, f, indent=2)
+                    json.dump(self.data, f)
             except Exception:
                 self.load_data()
 
         def update_data(self):
             data = self.data
-
-            data.setdefault("renpy_launcher",
-            {
-                "open_directory":
-                {
-                    "game": "game",
-                    "base": ".",
-                    "images": "game/images",
-                    "audio": "game/audio",
-                    "gui": "game/gui"
-                },
-                "edit_file":
-                {
-                    "script.rpy": "game/script.rpy",
-                    "options.rpy": "game/options.rpy",
-                    "gui.rpy": "game/gui.rpy",
-                    "screens.rpy": "game/screens.rpy"
-                }
-            })
 
             data.setdefault("build_update", False)
             data.setdefault("packages", [ "pc", "mac" ])
@@ -371,6 +352,12 @@ init python in project:
 
                     line = line[:1024]
 
+                    if PY2:
+                        try:
+                            line = line.decode("utf-8")
+                        except Exception:
+                            continue
+
                     m = re.search(r"#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
 
                     if m is None:
@@ -460,7 +447,10 @@ init python in project:
             # Template projects.
             self.templates = [ ]
 
-            # All projects - normal, template, and hidden.
+            # Library projects.
+            self.libraries = [ ]
+
+            # All projects - normal, template, libraries, and hidden.
             self.all_projects = [ ]
 
             # Directories that have been scanned.
@@ -495,6 +485,7 @@ init python in project:
 
             self.projects = [ ]
             self.templates = [ ]
+            self.libraries = [ ]
             self.all_projects = [ ]
             self.scanned = set()
 
@@ -505,6 +496,7 @@ init python in project:
 
             self.projects.sort(key=lambda p : p.name.lower())
             self.templates.sort(key=lambda p : p.name.lower())
+            self.libraries.sort(key=lambda p : p.name.lower())
 
             # Select the default project.
             if persistent.active_project is not None:
@@ -611,8 +603,11 @@ init python in project:
             if project_type == "hidden":
                 pass
             elif project_type == "template":
-                self.projects.append(p)
+                #self.projects.append(p)
                 self.templates.append(p)
+            elif project_type == "library":
+                #self.projects.append(p)
+                self.libraries.append(p)
             else:
                 self.projects.append(p)
 
