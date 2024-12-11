@@ -455,7 +455,7 @@ init -1500 python:
             :doc: gallery method
 
             Returns a text string giving the number of unlocked images and total number of images in the button
-            named `name`.
+            named `name`. If `name` is None, returns the same information for all buttons.
 
             `format`
                 A Python format string that's used to format the numbers. This has three values that
@@ -474,7 +474,15 @@ init -1500 python:
 
             all_prior = True
 
-            for i in self.buttons[name].images:
+            if name is not None:
+                images = self.buttons[name].images
+            else:
+                images = [ ]
+
+                for b in self.button_list:
+                    images.extend(b.images)
+
+            for i in images:
                 total += 1
                 if i.check_unlock(all_prior):
                     seen += 1
