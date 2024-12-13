@@ -3,6 +3,7 @@ _renpybidi gen/_renpybidi.c renpybidicore.c
 renpy.audio.renpysound gen/renpy.audio.renpysound.c renpysound_core.c ffmedia.c
 renpy.audio.filter gen/renpy.audio.filter.c
 renpy.lexersupport gen/renpy.lexersupport.c
+renpy.location gen/renpy.location.c
 renpy.pydict gen/renpy.pydict.c
 renpy.style gen/renpy.style.c
 renpy.encryption gen/renpy.encryption.c

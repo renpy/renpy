@@ -149,6 +149,7 @@ cython("renpy.audio.filter")
 
 # renpy
 cython("renpy.lexersupport")
+cython("renpy.location")
 cython("renpy.pydict")
 cython("renpy.style")
 
