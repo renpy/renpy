@@ -1393,7 +1393,7 @@ class Interface(object):
             self.after_first_frame()
             self.first_frame = False
 
-    def take_screenshot(self, scale, background=False):
+    def take_screenshot(self, scale, background=False, keep_existing=False):
         """
         This takes a screenshot of the current screen, and stores it so
         that it can gotten using get_screenshot()
@@ -1401,7 +1401,13 @@ class Interface(object):
         `background`
            If true, we're in a background thread. So queue the request
            until it can be handled by the main thread.
+
+        `keep_existing`
+            If true, the existing screenshot is kept.
         """
+
+        if self.screenshot and keep_existing:
+            return
 
         self.clear_screenshot = False
 

@@ -582,7 +582,7 @@ def toggle_fullscreen():
     renpy.game.preferences.fullscreen = not renpy.game.preferences.fullscreen # type: ignore
 
 
-def take_screenshot(scale=None, background=False):
+def take_screenshot(scale=None, background=False, keep_existing=False):
     """
     :doc: loadsave
     :args: ()
@@ -594,7 +594,7 @@ def take_screenshot(scale=None, background=False):
     if scale is None:
         scale = (renpy.config.thumbnail_width, renpy.config.thumbnail_height)
 
-    renpy.game.interface.take_screenshot(scale, background=background)
+    renpy.game.interface.take_screenshot(scale, background=background, keep_existing=keep_existing)
 
 
 def screenshot(filename):

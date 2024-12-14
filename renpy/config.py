@@ -1515,6 +1515,9 @@ old_show_expression = False
 # Callbacks that give the translation system more strings to translate.
 translate_additional_strings_callbacks = [ ]
 
+# Should Ren'Py keep and existing screenshot when entering a menu.
+keep_screenshot_entering_menu = False
+
 
 del os
 del collections

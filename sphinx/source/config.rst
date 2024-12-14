@@ -1127,6 +1127,12 @@ Saving and Loading
     If true, the game will autosave. If false, no autosaving will
     occur.
 
+.. var:: config.keep_screenshot_entering_menu = False
+
+    If true, a screenshot taken with :class:`FileTakeScreenshot` will be kept
+    when entering the game menu. When false, a new screenshot will be taken
+    just before menu entry.
+
 .. var:: config.load_failed_label = None
 
     If a string, this is a label that is jumped to when a load fails because
