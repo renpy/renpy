@@ -167,7 +167,7 @@ init -1500 python:
             is based on the constants used for the luminance channel
             of an NTSC television signal. Since the human eye is
             mostly sensitive to green, more of the green channel is
-            kept then the other two channels.
+            kept than the other two channels.
         """
 
         def __init__(self, value, desat=(0.2126, 0.7152, 0.0722)):
