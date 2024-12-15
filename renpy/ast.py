@@ -252,13 +252,11 @@ class Node(renpy.location.Location):
 
     @ivar name: The name of this node.
     @ivar next: The statement that will execute after this one.
-    @ivar statement_start: If present, the first node that makes up the statement that includes this node.
     """
 
     __slots__ = [
         'name',
         'next',
-        'statement_start',
         ]
 
     # True if this node is translatable, false otherwise. (This can be set on
@@ -275,6 +273,15 @@ class Node(renpy.location.Location):
     # * "never" generally never.
     # * "force" force it to start.
     rollback = "normal"
+
+    # Statement_start used to be a property on all nodes.
+    @property
+    def statement_start(self):
+        return self
+
+    @statement_start.setter
+    def statement_start(self, value):
+        pass
 
     def __init__(self, loc):
         """
@@ -1538,6 +1545,7 @@ class Menu(Node):
         'arguments',
         'item_arguments',
         'rollback',
+        'statement_start',
         ]
 
     def __new__(cls, *args, **kwargs):
