@@ -2262,7 +2262,9 @@ class Lexer:
 
         line_index, pos, pyexpr_checkpoint = state
 
-        self._update_line(line_index)
+        if line_index != self._line_index:
+            self._update_line(line_index)
+
         self.pos = pos
         renpy.ast.PyExpr.revert(pyexpr_checkpoint)
 
