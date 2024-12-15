@@ -4,8 +4,29 @@ The Ren'Py Visual Novel Engine
 
 https://www.renpy.org
 
-Ren'Py development takes place on the ``master`` branch, and occasionally
-on feature branches.
+
+Branches
+========
+
+The following branches are the most interesting.
+
+``fix``
+    The fix branch is used for fixes to the current version of Ren'Py that do
+    not require dangerous changes. The fix branch is also the source of the
+    documentation on https://www.renpy.org/. This branch is automatically
+    merged into master on a regular basis.
+
+    Pull requests that contain fixes or documentation improvements should be
+    made to the fix branch. When a release is made, the master branch is
+    copied to the fix branch.
+
+``master``
+    The master branch is where the main focus of development is. This branch
+    will eventually become the next release of Ren'Py.
+
+    Pull requests that contain new features, that require incompatible changes,
+    or major changes to Ren'Py's internals should be targeted at the master
+    branch.
 
 
 Getting Started
