@@ -1,4 +1,3 @@
-#@PydevCodeAnalysisIgnore
 # Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -246,7 +245,7 @@ cdef bint is_zerowidth(unsigned int char):
 
     return False
 
-cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count):
+cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count) noexcept:
     """
     Seeks to offset, and then reads count bytes from the stream into buffer.
     """
@@ -283,7 +282,7 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
 
     return count
 
-cdef void close_func(FT_Stream stream):
+cdef void close_func(FT_Stream stream) noexcept:
     """
     Close the stream.
 

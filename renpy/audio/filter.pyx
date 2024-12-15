@@ -1,5 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
-#
+1#
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
 # (the "Software"), to deal in the Software without restriction,
@@ -60,7 +59,7 @@ cdef struct SampleBuffer:
 # A linked list of sample buffers with 0-16 subchannels.
 cdef SampleBuffer *free_buffers[SUBCHANNELS+1]
 
-cdef SampleBuffer *allocate_buffer(int subchannels, int length) nogil:
+cdef SampleBuffer *allocate_buffer(int subchannels, int length) noexcept nogil:
     """
     Allocates a sample buffer.
     """
@@ -91,7 +90,7 @@ cdef SampleBuffer *allocate_buffer(int subchannels, int length) nogil:
     return buf
 
 
-cdef void free_buffer(SampleBuffer *buf) nogil:
+cdef void free_buffer(SampleBuffer *buf) noexcept nogil:
     """
     Frees a sample buffer, by putting it back on the free list.
     """
@@ -123,7 +122,7 @@ cdef class AudioFilter:
 
         raise NotImplementedError("prepare")
 
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) noexcept nogil:
         """
         Applies the filter to the given samples.
         """
@@ -157,7 +156,7 @@ cdef class Null(AudioFilter):
     def prepare(self, int samplerate):
         pass
 
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) noexcept nogil:
         cdef SampleBuffer *result = allocate_buffer(samples.subchannels, samples.length)
         memcpy(result.samples, samples.samples, samples.length * samples.subchannels * sizeof(float))
         return result
@@ -188,7 +187,7 @@ cdef class FilterList:
     def __dealloc__(self):
         free(self.filters)
 
-    cdef SampleBuffer *apply(self, int index, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, int index, SampleBuffer *samples) noexcept nogil:
         return (<AudioFilter> self.filters[index]).apply(samples)
 
     def __iter__(self):
@@ -223,7 +222,7 @@ cdef class Sequence(AudioFilter):
         for f in self.filters:
             f.prepare(samplerate)
 
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) noexcept nogil:
 
         cdef SampleBuffer *result
         cdef SampleBuffer *old_result = samples
@@ -408,7 +407,7 @@ cdef class Biquad(AudioFilter):
         self.cy2 = a2 / a0
 
 
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) noexcept nogil:
 
         cdef SampleBuffer *result = allocate_buffer(samples.subchannels, samples.length)
         cdef int i, j
@@ -634,7 +633,7 @@ cdef class Crossfade(AudioFilter):
 
         self.duration_samples = int(self.duration * samplerate)
 
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) noexcept nogil:
 
         cdef SampleBuffer *result1
         cdef SampleBuffer *result2
@@ -705,7 +704,7 @@ cdef class Mix(AudioFilter):
         for f in self.filters:
             f.prepare(samplerate)
 
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) noexcept nogil:
 
             cdef SampleBuffer *result = NULL
             cdef SampleBuffer *temp
@@ -744,7 +743,7 @@ cdef class Multiply(AudioFilter):
     def prepare(self, int samplerate):
         return
 
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) noexcept nogil:
 
             cdef SampleBuffer *result
             cdef int i, j
@@ -807,7 +806,7 @@ cdef class DelayBuffer:
     def __dealloc__(self):
         free(self.buffer)
 
-    cdef void queue(self, SampleBuffer *samples) nogil:
+    cdef void queue(self, SampleBuffer *samples) noexcept nogil:
 
         cdef int i, j
 
@@ -816,7 +815,7 @@ cdef class DelayBuffer:
                 self.buffer[self.write_index[j]] = samples.samples[i * samples.subchannels + j]
                 self.write_index[j] = (self.write_index[j] + 1) % self.length
 
-    cdef SampleBuffer * dequeue(self, int subchannels, int length) nogil:
+    cdef SampleBuffer * dequeue(self, int subchannels, int length) noexcept nogil:
 
         cdef SampleBuffer *result = allocate_buffer(subchannels, length)
         cdef int i, j
@@ -865,7 +864,7 @@ cdef class Delay(AudioFilter):
         if self.buffer is None and self.max_delay >= 0.01:
             self.buffer = DelayBuffer(self.delay, samplerate, SUBCHANNELS)
 
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) noexcept nogil:
         cdef SampleBuffer *result
 
         if self.max_delay < 0.01:
@@ -936,7 +935,7 @@ cdef class Comb(AudioFilter):
 
         self.filter.prepare(samplerate)
 
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) noexcept nogil:
 
         cdef SampleBuffer *delayed
         cdef SampleBuffer *result
@@ -1001,7 +1000,7 @@ cdef class WetDry(AudioFilter):
     def prepare(self, int samplerate):
         self.filter.prepare(samplerate)
 
-    cdef SampleBuffer *apply(self, SampleBuffer *samples) nogil:
+    cdef SampleBuffer *apply(self, SampleBuffer *samples) noexcept nogil:
 
         cdef SampleBuffer *result
         cdef SampleBuffer *filtered
@@ -1107,7 +1106,7 @@ def to_audio_filter(o):
     raise TypeError("Expected an AudioFilter, got {!r}.".format(o))
 
 
-cdef void apply_audio_filter(AudioFilter af, float *samples, int subchannels, int length, int samplerate) nogil:
+cdef void apply_audio_filter(AudioFilter af, float *samples, int subchannels, int length, int samplerate) noexcept nogil:
     """
     :undocumented:
     """
@@ -1140,5 +1139,5 @@ cdef void apply_audio_filter(AudioFilter af, float *samples, int subchannels, in
     return
 
 
-cdef apply_audio_filter_type *get_apply_audio_filter():
+cdef apply_audio_filter_type *get_apply_audio_filter() noexcept:
     return <apply_audio_filter_type *> apply_audio_filter

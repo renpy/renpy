@@ -88,7 +88,7 @@ include "live2dcsm.pxi"
 
 
 # Enable logging.
-cdef void __stdcall log_function(const char *message):
+cdef void __stdcall log_function(const char *message) noexcept:
     print(message)
 
 def post_init():

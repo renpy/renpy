@@ -20,6 +20,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-ctypedef void (*apply_audio_filter_type)(object, float *, int, int, int)
+ctypedef void (*apply_audio_filter_type)(object, float *, int, int, int) noexcept
 
 cdef apply_audio_filter_type *get_apply_audio_filter()
