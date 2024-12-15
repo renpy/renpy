@@ -34,15 +34,8 @@ import future
 BASE = os.path.abspath(os.path.dirname(sys.argv[0]))
 os.chdir(BASE)
 
-# Create the gen directory if it doesn't exist.
-try:
-    os.makedirs("gen")
-except Exception:
-    pass
+sys.path.insert(0, os.path.join(BASE, 'scripts'))
 
-# Generate styles.
-import generate_styles
-generate_styles.generate()
 
 # If RENPY_CC or RENPY_LD are in the environment, and CC or LD are not, use them.
 def setup_env(name):
@@ -58,6 +51,9 @@ setup_env("CXX")
 import setuplib
 from setuplib import android, ios, emscripten, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen, generate_all_cython, PY2
 
+import generate_styles
+generate_styles.generate()
+
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
 setuplib.extra_link_args = [ ]
@@ -71,9 +67,6 @@ if platform.win32_ver()[0]:
 else:
     windows = False
     tfd_libs = [ ]
-
-if raspi:
-    setuplib.extra_compile_args.append("-DRASPBERRY_PI")
 
 include("zlib.h")
 include("png.h")
@@ -115,13 +108,13 @@ if cubism:
 # Modules directory.
 cython(
     "_renpy",
-    [ "IMG_savepng.c", "core.c" ],
+    [ "src/IMG_savepng.c", "src/core.c" ],
     sdl + [ png, 'z', 'm' ])
 
-cython("_renpybidi", [ "renpybidicore.c" ], [ "fribidi" ])
+cython("_renpybidi", [ "src/renpybidicore.c" ], [ "fribidi" ])
 
 if not (android or ios or emscripten):
-    cython("_renpytfd", [ "tinyfiledialogs/tinyfiledialogs.c" ], libs=tfd_libs)
+    cython("_renpytfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ], libs=tfd_libs)
 
 # Sound.
 
@@ -140,7 +133,7 @@ if has_swscale:
 
 cython(
     "renpy.audio.renpysound",
-    [ "renpysound_core.c", "ffmedia.c" ],
+    [ "src/renpysound_core.c", "src/ffmedia.c" ],
     libs=sdl + sound,
     define_macros=macros,
     compile_args=[ "-Wno-deprecated-declarations" ] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [ ])
@@ -189,20 +182,17 @@ cython("renpy.text.texwrap")
 
 cython(
     "renpy.text.ftfont",
-    [ "ftsupport.c", "ttgsubtable.c" ],
+    [ "src/ftsupport.c", "src/ttgsubtable.c" ],
     libs=sdl + [ 'freetype', 'z', 'm' ])
 
 cython(
     "renpy.text.hbfont",
-    [ "ftsupport.c" ],
+    [ "src/ftsupport.c" ],
     libs=sdl + [ 'harfbuzz', 'freetype', 'z', 'm' ])
 
 generate_all_cython()
 find_unnecessary_gen()
 
-# Figure out the version, and call setup.
-sys.path.insert(0, '..')
 
 import renpy
-
 setuplib.setup("Ren'Py", renpy.version[7:].rstrip('un')) # @UndefinedVariable

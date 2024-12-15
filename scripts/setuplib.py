@@ -53,13 +53,8 @@ coverage = "RENPY_COVERAGE" in os.environ
 # Are we doing a static build?
 static = "RENPY_STATIC" in os.environ
 
-gen = "gen"
-
-if sys.version_info.major > 2:
-    gen += "3"
-    PY2 = False
-else:
-    PY2 = True
+gen = "tmp/gen3"
+PY2 = False
 
 if coverage:
     gen += "-coverage"
@@ -93,7 +88,7 @@ else:
     install = [ ]
 
 # The include and library dirs that we compile against.
-include_dirs = [ "." ]
+include_dirs = [ "src" ]
 library_dirs = [ ]
 
 # Extra arguments that will be given to the compiler.
@@ -229,13 +224,14 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
     else:
         fn = "/".join(split_name) + ".pyx"
 
-    if os.path.exists(os.path.join("..", fn)):
-        fn = os.path.join("..", fn)
-    elif os.path.exists(fn):
-        pass
+    for d in [ ".", "src" ]:
+        prepended = os.path.join(d, fn)
+        if os.path.exists(prepended):
+            fn = prepended
+            break
     else:
-        print("Could not find {0}.".format(fn))
-        sys.exit(-1)
+        raise SystemExit("Could not find {0}.".format(fn))
+
 
     module_dir = os.path.dirname(fn)
 
@@ -282,16 +278,11 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
 
     for dep_fn in deps:
 
-        if os.path.exists(os.path.join(module_dir, dep_fn)):
-            dep_fn = os.path.join(module_dir, dep_fn)
-        elif os.path.exists(os.path.join("..", dep_fn)):
-            dep_fn = os.path.join("..", dep_fn)
-        elif os.path.exists(os.path.join("include", dep_fn)):
-            dep_fn = os.path.join("include", dep_fn)
-        elif os.path.exists(os.path.join(gen, dep_fn)):
-            dep_fn = os.path.join(gen, dep_fn)
-        elif os.path.exists(dep_fn):
-            pass
+        for d in [ module_dir, ".", "src", gen ]:
+            prepended = os.path.join(d, dep_fn)
+            if os.path.exists(prepended):
+                dep_fn = prepended
+                break
         else:
             print("{0} depends on {1}, which can't be found.".format(fn, dep_fn))
             sys.exit(-1)
@@ -341,9 +332,9 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
 
     p = subprocess.Popen([
             cython_command,
-            "-Iinclude",
+            "-Isrc",
             "-I" + gen,
-            "-I..",
+            "-I.",
             "--3str",
             ] + annotate + lang_args + coverage_args + [
             "-X", "profile=False",
@@ -480,6 +471,4 @@ def setup(name, version):
         )
 
 
-# Ensure the gen directory exists.
-if not os.path.exists(gen):
-    os.mkdir(gen)
+os.makedirs(gen, exist_ok=True)
