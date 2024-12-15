@@ -20,11 +20,17 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import sys
+import cython
 
-cdef class Location(object):
+@cython.auto_pickle(False)
+cdef class Location:
+
+    # Despite what it looks like, these aren't slots. This just exists to convince reduce_ex to pickle this object
+    # as if slots existed.
+    __slots__ = [ "filename", "linenumber", "column" ]
 
     # The filename of the location.
-    cdef str filename
+    cdef public str filename
 
     # The line number of the location.
     cdef public int linenumber
@@ -37,6 +43,9 @@ cdef class Location(object):
         linenumber: int
         column: int
     """
+
+    def __reduce_ex__(self, protocol):
+        return object.__reduce_ex__(self, protocol)
 
     def __init__(self, filename, linenumber, column=0):
         self.filename = sys.intern(filename)
