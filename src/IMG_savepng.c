@@ -25,7 +25,7 @@
  * 11/08/2004 - Compr fix, levels -1,1-7 now work - Tyler Montbriand
  */
 #include <stdlib.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <png.h>
 #include <zlib.h>
 #include "IMG_savepng.h"

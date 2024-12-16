@@ -21,14 +21,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
-
-import platform
 import sys
 import os
-import subprocess
-
-import future
 
 # Change to the directory containing this file.
 BASE = os.path.abspath(os.path.dirname(sys.argv[0]))
@@ -36,20 +30,8 @@ os.chdir(BASE)
 
 sys.path.insert(0, os.path.join(BASE, 'scripts'))
 
-
-# If RENPY_CC or RENPY_LD are in the environment, and CC or LD are not, use them.
-def setup_env(name):
-    renpy_name = "RENPY_" + name
-    if (renpy_name in os.environ) and (name not in os.environ):
-        os.environ[name] = os.environ[renpy_name]
-
-
-setup_env("CC")
-setup_env("LD")
-setup_env("CXX")
-
 import setuplib
-from setuplib import android, ios, emscripten, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen, generate_all_cython, PY2
+from setuplib import windows, macintosh, linux, library, cython, find_unnecessary_gen, generate_all_cython, env
 
 import generate_styles
 generate_styles.generate()
@@ -58,95 +40,56 @@ generate_styles.generate()
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
 setuplib.extra_link_args = [ ]
 
-# Detect win32.
-if platform.win32_ver()[0]:
-    windows = True
-    setuplib.extra_compile_args.append("-fno-strict-aliasing")
-    tfd_libs = [ "comdlg32", "ole32" ]
+pkgconfig_packages = """
+libavformat
+libavcodec
+libavutil
+libswresample
+libswscale
+harfbuzz
+freetype2
+fribidi
+sdl2
+"""
 
-else:
-    windows = False
-    tfd_libs = [ ]
-
-include("zlib.h")
-include("png.h")
-include("SDL.h", directory="SDL2")
-include("ft2build.h")
-include("freetype/freetype.h", directory="freetype2", optional=True) or include("freetype.h", directory="freetype2") # type: ignore
-include("libavutil/avstring.h", directory="ffmpeg", optional=True) or include("libavutil/avstring.h") # type: ignore
-include("libavformat/avformat.h", directory="ffmpeg", optional=True) or include("libavformat/avformat.h") # type: ignore
-include("libavcodec/avcodec.h", directory="ffmpeg", optional=True) or include("libavcodec/avcodec.h") # type: ignore
-include("libswscale/swscale.h", directory="ffmpeg", optional=True) or include("libswscale/swscale.h") # type: ignore
-include("GL/glew.h")
-include("pygame_sdl2/pygame_sdl2.h", directory="python{}.{}".format(sys.version_info.major, sys.version_info.minor))
-include("hb.h", directory="harfbuzz")
-
-library("SDL2")
-library("png")
 library("avformat")
 library("avcodec")
 library("avutil")
-has_avresample = library("avresample", optional=True)
-has_swresample = library("swresample", optional=True)
-has_swscale = library("swscale", optional=True)
+library("swresample")
+library("swscale")
+library("harfbuzz")
 library("freetype")
+library("fribidi")
+library("SDL2")
+library("png")
 library("z")
-has_libglew = library("GLEW", optional=True)
-has_libglew32 = library("glew32", optional=True)
 
-if android:
-    sdl = [ 'SDL2', 'GLESv2', 'log' ]
-    png = 'png16'
-else:
-    sdl = [ 'SDL2' ]
-    png = 'png'
+if windows:
+    setuplib.extra_compile_args.append("-fno-strict-aliasing")
+    library("comdlg32")
+    library("ole32")
 
 cubism = os.environ.get("CUBISM", None)
 if cubism:
     setuplib.include_dirs.append("{}/Core/include".format(cubism))
 
-# Modules directory.
-cython(
-    "_renpy",
-    [ "src/IMG_savepng.c", "src/core.c" ],
-    sdl + [ png, 'z', 'm' ])
-
-cython("_renpybidi", [ "src/renpybidicore.c" ], [ "fribidi" ])
-
-if not (android or ios or emscripten):
-    cython("_renpytfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ], libs=tfd_libs)
-
-# Sound.
-
-sound = [ "avformat", "avcodec", "avutil", "z" ]
-macros = [ ]
-
-if has_swresample:
-    sound.insert(3, "swresample")
-
-if has_avresample:
-    sound.insert(0, "avresample")
-    macros.append(("HAS_RESAMPLE", 1))
-
-if has_swscale:
-    sound.insert(0, "swscale")
-
-cython(
-    "renpy.audio.renpysound",
-    [ "src/renpysound_core.c", "src/ffmedia.c" ],
-    libs=sdl + sound,
-    define_macros=macros,
-    compile_args=[ "-Wno-deprecated-declarations" ] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [ ])
-
-cython("renpy.audio.filter")
+# src/ directory.
+cython("_renpy", [ "src/IMG_savepng.c", "src/core.c" ])
+cython("_renpybidi", [ "src/renpybidicore.c" ])
+cython("_renpytfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
 
 # renpy
 cython("renpy.lexersupport")
 cython("renpy.location")
 cython("renpy.pydict")
 cython("renpy.style")
-
 cython("renpy.encryption")
+
+# renpy.audio
+cython("renpy.audio.renpysound", [ "src/renpysound_core.c", "src/ffmedia.c" ],
+    compile_args=[ "-Wno-deprecated-declarations" ] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [ ])
+
+cython("renpy.audio.filter")
 
 # renpy.styledata
 cython("renpy.styledata.styleclass")
@@ -157,42 +100,43 @@ for p in generate_styles.prefixes:
 
 # renpy.display
 cython("renpy.display.matrix")
-cython("renpy.display.render", libs=[ 'z', 'm' ])
-cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
-cython("renpy.display.quaternion", libs=[ 'm' ])
+cython("renpy.display.render")
+cython("renpy.display.accelerator")
+cython("renpy.display.quaternion")
 
-cython("renpy.uguu.gl", libs=sdl)
-cython("renpy.uguu.uguu", libs=sdl)
+# renpy.uguu
+cython("renpy.uguu.gl")
+cython("renpy.uguu.uguu")
 
+# renpy.gl2
 cython("renpy.gl2.gl2mesh")
 cython("renpy.gl2.gl2mesh2")
 cython("renpy.gl2.gl2mesh3")
 cython("renpy.gl2.gl2polygon")
 cython("renpy.gl2.gl2model")
-cython("renpy.gl2.gl2draw", libs=sdl)
-cython("renpy.gl2.gl2texture", libs=sdl)
-cython("renpy.gl2.gl2shader", libs=sdl)
+cython("renpy.gl2.gl2draw")
+cython("renpy.gl2.gl2texture")
+cython("renpy.gl2.gl2shader")
 
 if cubism:
-    cython("renpy.gl2.live2dmodel", libs=sdl)
+    cython("renpy.gl2.live2dmodel")
 
 # renpy.text
 cython("renpy.text.textsupport")
 cython("renpy.text.texwrap")
-
-cython(
-    "renpy.text.ftfont",
-    [ "src/ftsupport.c", "src/ttgsubtable.c" ],
-    libs=sdl + [ 'freetype', 'z', 'm' ])
-
-cython(
-    "renpy.text.hbfont",
-    [ "src/ftsupport.c" ],
-    libs=sdl + [ 'harfbuzz', 'freetype', 'z', 'm' ])
+cython("renpy.text.ftfont", [ "src/ftsupport.c", "src/ttgsubtable.c" ])
+cython("renpy.text.hbfont", [ "src/ftsupport.c" ])
 
 generate_all_cython()
 find_unnecessary_gen()
 
+pkgconfig_packages = pkgconfig_packages.replace("\n", " ").strip()
+
+env("CC")
+env("LD")
+env("CXX")
+env("CFLAGS", f"pkg-config --cflags {pkgconfig_packages}")
+env("LDFLAGS", f"pkg-config --libs {pkgconfig_packages}")
 
 import renpy
-setuplib.setup("Ren'Py", renpy.version[7:].rstrip('un')) # @UndefinedVariable
+setuplib.setup("renpy", renpy.version[7:].partition(".")[0] + ".99.99")

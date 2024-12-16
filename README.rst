@@ -58,7 +58,7 @@ renpy.app, or renpy.exe, as appropriate for your platform.
 
 If the current nightly build doesn't work, please wait 24 hours for a new
 build to occur. If that build still doesn't work, contact Tom (`pytom at bishoujo.us`,
-or @renpytom on twitter) to find out what's wrong.
+or @renpytom on Twitter/X) to find out what's wrong.
 
 The ``doc`` symlink will dangle until documentation is built, as described
 below.
@@ -72,7 +72,7 @@ the command::
 
     sudo apt install virtualenvwrapper python3-dev libavcodec-dev libavformat-dev \
         libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
-        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev
+        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config
 
 Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
 that version, you'll need to download it from:
@@ -99,27 +99,31 @@ Then, install pygame_sdl2 by running the following commands::
     git clone https://www.github.com/renpy/pygame_sdl2
     pushd pygame_sdl2
     python setup.py install
-    python install_headers.py $VIRTUAL_ENV
     popd
 
-Next, set RENPY_DEPS_INSTALL To a \:-separated (\;-separated on Windows)
-list of paths containing the dependencies, and RENPY_CYTHON to the name
-of the cython command::
+Finally, use setup.py to compile extension modules that support Ren'Py::
 
-    export RENPY_DEPS_INSTALL="/usr:/usr/lib/$(gcc -dumpmachine)/"
-    export RENPY_CYTHON=cython
-
-Finally, use setup.py in the Ren'Py ``module`` directory to compile and
-install the modules that support Ren'Py::
-
-    pushd module
     python setup.py install
-    popd
 
 Ren'Py will be installed into the activated virtualenv. It can then be run
 using the command::
 
     python renpy.py
+
+
+Other Platforms
+---------------
+
+Where supported, Ren'Py will attempt to find include directories and library paths
+using pkg-config. If pkg-config is not present, include and library paths can be
+specified using CFLAGS and LDFLAGS.
+
+If RENPY_CFLAGS is present in the environment and CFLAGS is not, setup.py
+will set CFLAGS to RENPY_CFLAGS. The same is true for RENPY_LDFLAGS,
+RENPY_CC, RENPY_CXX, and RENPY_LD.
+
+Setup.py does not support cross-compiling. See https://github.com/renpy/renpy-build
+for software that cross-compiles Ren'Py for many platforms.
 
 
 Documentation

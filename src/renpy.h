@@ -2,7 +2,7 @@
 #define RENPY_H
 
 #include <Python.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 void core_init(void);
 void subpixel_init(void);

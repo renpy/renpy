@@ -23,8 +23,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "renpysound_core.h"
 #include <Python.h>
-#include <SDL.h>
-#include <SDL_thread.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_thread.h>
 #include <stdio.h>
 #include <string.h>
 #include <pygame_sdl2/pygame_sdl2.h>

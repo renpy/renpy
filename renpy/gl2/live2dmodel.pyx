@@ -34,7 +34,7 @@ from renpy.uguu.gl cimport GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD,
 
 import renpy
 
-cdef extern from "SDL.h" nogil:
+cdef extern from "SDL2/SDL.h" nogil:
     void* SDL_LoadObject(const char* sofile)
     void* SDL_LoadFunction(void* handle, const char* name)
 
