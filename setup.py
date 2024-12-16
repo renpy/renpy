@@ -34,109 +34,119 @@ import setuplib
 from setuplib import windows, macintosh, linux, library, cython, find_unnecessary_gen, generate_all_cython, env
 
 import generate_styles
-generate_styles.generate()
 
-# These control the level of optimization versus debugging.
-setuplib.extra_compile_args = [ "-Wno-unused-function" ]
-setuplib.extra_link_args = [ ]
+def main():
 
-pkgconfig_packages = """
-libavformat
-libavcodec
-libavutil
-libswresample
-libswscale
-harfbuzz
-freetype2
-fribidi
-sdl2
-"""
+    setuplib.init()
 
-library("avformat")
-library("avcodec")
-library("avutil")
-library("swresample")
-library("swscale")
-library("harfbuzz")
-library("freetype")
-library("fribidi")
-library("SDL2")
-library("png")
-library("z")
+    generate_styles.generate()
 
-if windows:
-    setuplib.extra_compile_args.append("-fno-strict-aliasing")
-    library("comdlg32")
-    library("ole32")
+    # These control the level of optimization versus debugging.
+    setuplib.extra_compile_args = [ "-Wno-unused-function" ]
+    setuplib.extra_link_args = [ ]
 
-cubism = os.environ.get("CUBISM", None)
-if cubism:
-    setuplib.include_dirs.append("{}/Core/include".format(cubism))
+    pkgconfig_packages = """
+    libavformat
+    libavcodec
+    libavutil
+    libswresample
+    libswscale
+    harfbuzz
+    freetype2
+    fribidi
+    sdl2
+    """
 
-# src/ directory.
-cython("_renpy", [ "src/IMG_savepng.c", "src/core.c" ])
-cython("_renpybidi", [ "src/renpybidicore.c" ])
-cython("_renpytfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
+    library("avformat")
+    library("avcodec")
+    library("avutil")
+    library("swresample")
+    library("swscale")
+    library("harfbuzz")
+    library("freetype")
+    library("fribidi")
+    library("SDL2")
+    library("png")
+    library("z")
 
-# renpy
-cython("renpy.lexersupport")
-cython("renpy.location")
-cython("renpy.pydict")
-cython("renpy.style")
-cython("renpy.encryption")
+    if windows:
+        setuplib.extra_compile_args.append("-fno-strict-aliasing")
+        library("comdlg32")
+        library("ole32")
 
-# renpy.audio
-cython("renpy.audio.renpysound", [ "src/renpysound_core.c", "src/ffmedia.c" ],
-    compile_args=[ "-Wno-deprecated-declarations" ] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [ ])
+    cubism = os.environ.get("CUBISM", None)
+    if cubism:
+        setuplib.include_dirs.append("{}/Core/include".format(cubism))
 
-cython("renpy.audio.filter")
+    # src/ directory.
+    cython("_renpy", [ "src/IMG_savepng.c", "src/core.c" ])
+    cython("_renpybidi", [ "src/renpybidicore.c" ])
+    cython("_renpytfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
 
-# renpy.styledata
-cython("renpy.styledata.styleclass")
-cython("renpy.styledata.stylesets")
+    # renpy
+    cython("renpy.lexersupport")
+    cython("renpy.location")
+    cython("renpy.pydict")
+    cython("renpy.style")
+    cython("renpy.encryption")
 
-for p in generate_styles.prefixes:
-    cython("renpy.styledata.style_{}functions".format(p), pyx=setuplib.gen + "/style_{}functions.pyx".format(p))
+    # renpy.audio
+    cython("renpy.audio.renpysound", [ "src/renpysound_core.c", "src/ffmedia.c" ],
+        compile_args=[ "-Wno-deprecated-declarations" ] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [ ])
 
-# renpy.display
-cython("renpy.display.matrix")
-cython("renpy.display.render")
-cython("renpy.display.accelerator")
-cython("renpy.display.quaternion")
+    cython("renpy.audio.filter")
 
-# renpy.uguu
-cython("renpy.uguu.gl")
-cython("renpy.uguu.uguu")
+    # renpy.styledata
+    cython("renpy.styledata.styleclass")
+    cython("renpy.styledata.stylesets")
 
-# renpy.gl2
-cython("renpy.gl2.gl2mesh")
-cython("renpy.gl2.gl2mesh2")
-cython("renpy.gl2.gl2mesh3")
-cython("renpy.gl2.gl2polygon")
-cython("renpy.gl2.gl2model")
-cython("renpy.gl2.gl2draw")
-cython("renpy.gl2.gl2texture")
-cython("renpy.gl2.gl2shader")
+    for p in generate_styles.prefixes:
+        cython("renpy.styledata.style_{}functions".format(p), pyx=setuplib.gen + "/style_{}functions.pyx".format(p))
 
-if cubism:
-    cython("renpy.gl2.live2dmodel")
+    # renpy.display
+    cython("renpy.display.matrix")
+    cython("renpy.display.render")
+    cython("renpy.display.accelerator")
+    cython("renpy.display.quaternion")
 
-# renpy.text
-cython("renpy.text.textsupport")
-cython("renpy.text.texwrap")
-cython("renpy.text.ftfont", [ "src/ftsupport.c", "src/ttgsubtable.c" ])
-cython("renpy.text.hbfont", [ "src/ftsupport.c" ])
+    # renpy.uguu
+    cython("renpy.uguu.gl")
+    cython("renpy.uguu.uguu")
 
-generate_all_cython()
-find_unnecessary_gen()
+    # renpy.gl2
+    cython("renpy.gl2.gl2mesh")
+    cython("renpy.gl2.gl2mesh2")
+    cython("renpy.gl2.gl2mesh3")
+    cython("renpy.gl2.gl2polygon")
+    cython("renpy.gl2.gl2model")
+    cython("renpy.gl2.gl2draw")
+    cython("renpy.gl2.gl2texture")
+    cython("renpy.gl2.gl2shader")
 
-pkgconfig_packages = pkgconfig_packages.replace("\n", " ").strip()
+    if cubism:
+        cython("renpy.gl2.live2dmodel")
 
-env("CC")
-env("LD")
-env("CXX")
-env("CFLAGS", f"pkg-config --cflags {pkgconfig_packages}")
-env("LDFLAGS", f"pkg-config --libs {pkgconfig_packages}")
+    # renpy.text
+    cython("renpy.text.textsupport")
+    cython("renpy.text.texwrap")
+    cython("renpy.text.ftfont", [ "src/ftsupport.c", "src/ttgsubtable.c" ])
+    cython("renpy.text.hbfont", [ "src/ftsupport.c" ])
 
-import renpy
-setuplib.setup("renpy", renpy.version[7:].partition(".")[0] + ".99.99")
+    generate_all_cython()
+    find_unnecessary_gen()
+
+    pkgconfig_packages = pkgconfig_packages.replace("\n", " ").strip()
+
+    env("CC")
+    env("LD")
+    env("CXX")
+    env("CFLAGS", f"pkg-config --cflags {pkgconfig_packages}")
+    env("LDFLAGS", f"pkg-config --libs {pkgconfig_packages}")
+
+    import renpy
+    version = renpy.version[7:].partition(".")[0] + ".99.99"
+
+    setuplib.setup("renpy", version)
+
+if __name__ == "__main__":
+    main()

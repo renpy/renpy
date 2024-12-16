@@ -399,6 +399,14 @@ def env(name, pkgconfig_command=None):
         print(f"Could not run pkg-config to set {name}. Consider setting {name} or {renpy_name} manually.")
 
 
+def init():
+    """
+    Should be  called before anything else to initialize this module.
+    """
+
+    os.makedirs(gen, exist_ok=True)
+
+
 def setup(name, version):
     """
     Calls the distutils setup function.
@@ -414,5 +422,3 @@ def setup(name, version):
         py_modules=py_modules,
         zip_safe=False,
         )
-
-os.makedirs(gen, exist_ok=True)
