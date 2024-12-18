@@ -1120,6 +1120,21 @@ class Lexer:
 
         return renpy.ast.PyExpr(s, self.filename, self.number)
 
+    def _delimited_python(self, delim: TokenExactKind):
+        while (tok := self._lookup_token()) is not None:
+            if tok.exact_kind is delim:
+                return True
+
+            if self.python_string():
+                continue
+
+            if self.parenthesised_python():
+                continue
+
+            self._advance_token()
+
+        return False
+
     def delimited_python(self, delim: str | TokenExactKind, expr=True):
         """
         This matches python code up to, but not including, the non-whitespace
@@ -1133,22 +1148,8 @@ class Lexer:
 
         start = self.pos
         if isinstance(delim, TokenExactKind):
-            while not self.eol():
-
-                tok = self._lookup_token()
-                if tok is None:
-                    break
-
-                if tok.exact_kind is delim:
-                    return self.expr(self.text[start:self.pos], expr)
-
-                if self.python_string():
-                    continue
-
-                if self.parenthesised_python():
-                    continue
-
-                self._advance_token()
+            if self._delimited_python(delim):
+                return self.expr(self.text[start:self.pos], expr)
         else:
             while not self.eol():
 
@@ -1173,14 +1174,11 @@ class Lexer:
         extending to a colon.
         """
 
-        pe = self.delimited_python(TokenExactKind.COLON, False)
-
-        if not pe:
+        start = self.pos
+        if not self._delimited_python(TokenExactKind.COLON):
             self.error("expected python_expression")
 
-        rv = self.expr(pe.strip(), expr)
-
-        return rv
+        return self.expr(self.text[start:self.pos].strip(), expr)
 
     def parenthesised_python(self):
         """
@@ -1195,17 +1193,17 @@ class Lexer:
 
         if tok.exact_kind is TokenExactKind.LPAR:
             self._advance_token()
-            self.delimited_python(TokenExactKind.RPAR, False)
+            self._delimited_python(TokenExactKind.RPAR)
             self._advance_token()
             return True
         elif tok.exact_kind is TokenExactKind.LSQB:
             self._advance_token()
-            self.delimited_python(TokenExactKind.RSQB, False)
+            self._delimited_python(TokenExactKind.RSQB)
             self._advance_token()
             return True
         elif tok.exact_kind is TokenExactKind.LBRACE:
             self._advance_token()
-            self.delimited_python(TokenExactKind.RBRACE, False)
+            self._delimited_python(TokenExactKind.RBRACE)
             self._advance_token()
             return True
 
@@ -1249,12 +1247,12 @@ class Lexer:
             # subscription | slicing ::= primary "[" expression "]"
             elif tok.exact_kind is TokenExactKind.LSQB:
                 self._advance_token()
-                self.delimited_python(TokenExactKind.RSQB, False)
+                self._delimited_python(TokenExactKind.RSQB)
                 self._advance_token()
             # call ::= primary "(" [argument_list] ")"
             elif tok.exact_kind is TokenExactKind.LPAR:
                 self._advance_token()
-                self.delimited_python(TokenExactKind.RPAR, False)
+                self._delimited_python(TokenExactKind.RPAR)
                 self._advance_token()
             else:
                 break
