@@ -27,7 +27,7 @@ import re
 import tokenize
 import contextlib
 import functools
-import keyword
+import bisect
 
 import renpy
 
@@ -306,6 +306,46 @@ class Lexer:
 
         self.text: str = ""
 
+    @staticmethod
+    def _get_munged_string(token: Token) -> str:
+        if "__" not in token.string:
+            return token.string
+
+        prefix = munge_filename(token.filename)
+
+        if renpy.config.munge_in_strings:
+
+            munge_regexp = re.compile(r'\b__(\w+)')
+
+            def munge_string(m: re.Match):
+
+                g1 = m.group(1)
+
+                if "__" in g1:
+                    return m.group(0)
+
+                if g1.startswith("_"):
+                    return m.group(0)
+
+                return prefix + m.group(1)
+
+        else:
+
+            munge_regexp = re.compile(r'(\.|\[+)__(\w+)')
+
+            def munge_string(m: re.Match):
+                brackets = m.group(1)
+
+                if (len(brackets) & 1) == 0:
+                    return m.group(0)
+
+                if "__" in m.group(2):
+                    return m.group(0)
+
+                return brackets + prefix + m.group(2)
+
+        return munge_regexp.sub(munge_string, token.string)
+
     @property
     def _mid_token(self):
         idx = self._token_index
@@ -353,11 +393,12 @@ class Lexer:
 
             self._tokens.append(t)
             self._tokens_pos.append(pos)
-            result.append(t.munged)
+            munged = self._get_munged_string(t)
+            result.append(munged)
             prev_row = t.end_lineno
             prev_col = t.end_col_offset
             cont_line = True
-            pos += len(t.munged)
+            pos += len(munged)
 
         self.text = "".join(result)
 
@@ -409,8 +450,6 @@ class Lexer:
         else:
             # Since keys are sorted and distinct, we can use
             # bisect to find the right key.
-            import bisect
-
             idx = bisect.bisect(self._tokens_pos, value)
 
             if value == self._tokens_pos[idx - 1]:
@@ -517,11 +556,14 @@ class Lexer:
         self._update_line(idx)
         self.pos = len(self.text)
 
+    # The regexes that match single operator.
     _OP_REGEX = {
-        re.escape(k): TokenExactKind(tokenize.tok_name[v].lower())
-        for k, v in tokenize.EXACT_TOKEN_TYPES.items()}
-    _OP_REGEX |= {
         k: TokenExactKind(tokenize.tok_name[v].lower())
+        for k, v in tokenize.EXACT_TOKEN_TYPES.items()}
+
+    # Ditto, but escaped.
+    _OP_REGEX |= {
+        re.escape(k): TokenExactKind(tokenize.tok_name[v].lower())
         for k, v in tokenize.EXACT_TOKEN_TYPES.items()}
 
     def match_regexp(self, regexp: str):
@@ -538,35 +580,14 @@ class Lexer:
         if self.pos == len(self.text):
             return None
 
-        # Fast path for some simple expressions.
-        if not self._mid_token:
-            if regexp in self._OP_REGEX:
-                kind = self._OP_REGEX[regexp]
-                if (tok := self._lookup_exact_token(kind)) is None:
-                    return None
+        # Fast path for single operator checks.
+        if regexp in self._OP_REGEX and not self._mid_token:
+            kind = self._OP_REGEX[regexp]
+            if (tok := self._lookup_exact_token(kind)) is None:
+                return None
 
-                self._advance_token()
-                return tok.string
-
-            if keyword.iskeyword(regexp):
-                if (tok := self._lookup_exact_token(TokenExactKind.KEYWORD)) is None:
-                    return None
-
-                if tok.string != regexp:
-                    return None
-
-                self._advance_token()
-                return tok.string
-
-            if regexp.isidentifier():
-                if (tok := self._lookup_exact_token(TokenExactKind.IDENTIFIER)) is None:
-                    return None
-
-                if tok.munged != regexp:
-                    return None
-
-                self._advance_token()
-                return tok.munged
+            self._advance_token()
+            return tok.string
 
         p = re.compile(regexp, re.DOTALL)
         m = p.match(self.text, self.pos)
@@ -784,7 +805,7 @@ class Lexer:
         tok = self._lookup_exact_token(TokenExactKind.RAW_STRING)
         if tok is not None:
             self._advance_token()
-            return tok.munged[2:-1]
+            return self._get_munged_string(tok)[2:-1]
 
         tok = self._lookup_exact_token(TokenExactKind.STRING)
         if tok is None:
@@ -792,7 +813,7 @@ class Lexer:
 
         self._advance_token()
 
-        s = tok.munged[1:-1]
+        s = self._get_munged_string(tok)[1:-1]
 
         # Collapse runs of whitespace into single spaces.
         s = re.sub(r'[ \n]+', ' ', s)
@@ -814,7 +835,7 @@ class Lexer:
         tok = self._lookup_exact_token(TokenExactKind.RAW_TRIPLE_STRING)
         if tok is not None:
             self._advance_token()
-            return tok.munged[4:-3]
+            return self._get_munged_string(tok)[4:-3]
 
         tok = self._lookup_exact_token(TokenExactKind.TRIPLE_STRING)
         if tok is None:
@@ -822,7 +843,7 @@ class Lexer:
 
         self._advance_token()
 
-        s = tok.munged[3:-3]
+        s = self._get_munged_string(tok)[3:-3]
 
         s = re.sub(r' *\n *', '\n', s)
 
@@ -918,7 +939,7 @@ class Lexer:
             return None
         else:
             self._advance_token()
-            return tok.munged
+            return tok.string
 
     def word(self):
         """
@@ -930,7 +951,7 @@ class Lexer:
             return None
         else:
             self._advance_token()
-            return tok.munged
+            return tok.string
 
     def name(self):
         """
@@ -943,13 +964,13 @@ class Lexer:
 
         if tok.exact_kind is TokenExactKind.IDENTIFIER:
             self._advance_token()
-            return tok.munged
+            return self._get_munged_string(tok)
 
         # Constants are names in old parser.
         if tok.exact_kind is TokenExactKind.KEYWORD:
             if tok.string in ("True", "False", "None"):
                 self._advance_token()
-                return tok.munged
+                return tok.string
 
         return None
 
@@ -988,7 +1009,7 @@ class Lexer:
             return None
 
         self._advance_token()
-        return tok.munged
+        return self._get_munged_string(tok)
 
     def set_global_label(self, label):
         """
@@ -1554,7 +1575,7 @@ class Lexer:
                 if col_offset := t.col_offset - prev_col:
                     result.append(" " * col_offset)
 
-                result.append(t.munged)
+                result.append(self._get_munged_string(t))
                 prev_row = t.end_lineno
                 prev_col = t.end_col_offset
                 cont_line = True
