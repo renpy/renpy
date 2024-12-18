@@ -287,7 +287,6 @@ class Token:
         'kind',
         'exact_kind',
         'string',
-        'munged',
         'filename',
         'lineno',
         'col_offset',
@@ -405,11 +404,6 @@ class Token:
         String value of the token.
         """
 
-        self.munged: str = string
-        """
-        Munged string of the token, if applicable.
-        """
-
         self.filename: str = filename
         """
         Elided filename where token is located.
@@ -453,12 +447,8 @@ class Tokenizer:
         2. It allow 0-prefix non-zero numbers (e.g. 001).
         3. It allows for names to start with numbers (e.g. 1foo).
         4. It disallows non-ASCII characters in names.
-        5. It munges names that starts with double underscores
-           (e.g. "__foo" -> f"_m1_{filename}__foo").
-        6. It also munges words inside strings that start with double
-           underscores.
-        7. It checks for non-terminated strings and parenthesis.
-        8. It checks for parenthesis order of closing.
+        5. It checks for non-terminated strings and parenthesis.
+        6. It checks for parenthesis order of closing.
 
     After file is tokenized, it can be used to list logical lines and group them
     into indented blocks.
@@ -652,6 +642,7 @@ class Tokenizer:
 
     def _tokenize(self) -> Iterator[Token]:
         hold_number = None
+
         try:
             for t in tokenize.generate_tokens(self._readline):
                 if t.type == tokenize.ENDMARKER:
@@ -691,23 +682,19 @@ class Tokenizer:
                     # This is no longer needed in Python 3.12+
                     elif t.type == tokenize.NUMBER:
                         hold_number.string += result.string
-                        hold_number.munged = hold_number.string
                         hold_number.end_lineno = result.end_lineno
                         hold_number.end_col_offset = result.end_col_offset
 
                         # We don't yield it yet, because '01attr' is 3 Python tokens.
                         continue
 
-                    # 0-prefixed name is a valid in Ren'Py (e.g. image attributes).
+                    # 0-prefixed names are valid in Ren'Py (e.g. image attributes).
                     # NUMBER "$1" and NAME "$2" should appear as NAME "$1$2"
                     elif t.type == tokenize.NAME:
                         result.string = f"{hold_number.string}{result.string}"
-                        result.munged = result.string
                         result.lineno = hold_number.lineno
                         result.col_offset = hold_number.col_offset
                         hold_number = None
-
-                    # TODO: ERRORTOKEN "`" ... ERRORTOKEN "`" -> STRING???
 
                     # Otherwise we yield a hold number and the result.
                     else:
@@ -754,22 +741,6 @@ class Tokenizer:
                                   f"does not match opening parenthesis '{token.string}'"
                                   f" at {self.filename}:{lineno}:{col_offset}")
 
-        from renpy.lexer import munge_filename
-        prefix: str = munge_filename(self.filename)
-
-        munge_regexp = re.compile(r'\b__(\w+)')
-
-        def munge_string(m: re.Match[str]):
-            g1 = m.group(1)
-
-            if "__" in g1:
-                return m.group(0)
-
-            if g1.startswith("_"):
-                return m.group(0)
-
-            return prefix + m.group(1)
-
         parens: list[Token] = []
         for token in self._tokenize():
             match token.exact_kind:
@@ -787,12 +758,10 @@ class Tokenizer:
                 case TokenExactKind.RPAR | TokenExactKind.RBRACE | TokenExactKind.RSQB:
                     parens.pop()
 
-            match token.kind:
-                case TokenKind.NAME | TokenKind.STRING if "__" in token.string:
-                    token.munged = munge_regexp.sub(
-                        munge_string, token.munged)
-
-                    token.munged = sys.intern(token.munged)
+            # Intern all names, so we have only a single instance
+            # of often overlapping names.
+            if token.kind is TokenKind.NAME:
+                token.string = sys.intern(token.string)
 
             self._tokens.append(token)
             yield token
