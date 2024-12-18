@@ -86,7 +86,6 @@ def main():
     cython("_renpytfd", [ "src/tinyfiledialogs/tinyfiledialogs.c" ])
 
     # renpy
-    cython("renpy.lexersupport")
     cython("renpy.location")
     cython("renpy.pydict")
     cython("renpy.style")

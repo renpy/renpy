@@ -705,7 +705,6 @@ if 1 == 0:
     from . import gl2
     from . import tokenizer
     from . import lexer
-    from . import lexersupport
     from . import lint
     from . import location
     from . import loader

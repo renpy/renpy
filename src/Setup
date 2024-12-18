@@ -2,7 +2,6 @@ _renpy ../tmp/gen/_renpy.c IMG_savepng.c core.c
 _renpybidi ../tmp/gen/_renpybidi.c renpybidicore.c
 renpy.audio.renpysound ../tmp/gen/renpy.audio.renpysound.c renpysound_core.c ffmedia.c
 renpy.audio.filter ../tmp/gen/renpy.audio.filter.c
-renpy.lexersupport ../tmp/gen/renpy.lexersupport.c
 renpy.location ../tmp/gen/renpy.location.c
 renpy.pydict ../tmp/gen/renpy.pydict.c
 renpy.style ../tmp/gen/renpy.style.c
