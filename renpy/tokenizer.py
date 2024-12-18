@@ -23,7 +23,7 @@
 from __future__ import annotations
 
 import enum
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 
 import os
 import io
@@ -159,12 +159,35 @@ class Line:
         return f"<Line {self.filename} {self.start}-{self.end}>"
 
 
-class TokenKind(enum.StrEnum):
+class TokenKind(enum.Enum):
     """
     Enum of all possible `Token.name` values.
 
     Equality can be checked as lower-case string value.
     """
+
+    if TYPE_CHECKING:
+        def __new__(cls, value: str, /):
+            return super().__new__(cls, value)
+
+    @staticmethod
+    def _generate_next_value_(name, start, count, last_values) -> str:
+        """
+        Return the lower-cased version of the member name.
+        """
+        return name.lower()
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, str):
+            return self.value == other.lower()
+
+        return super().__eq__(other)
+
+    def __ne__(self, other: object) -> bool:
+        if isinstance(other, str):
+            return self.value != other.lower()
+
+        return super().__ne__(other)
 
     # Special tokens.
     INDENT = enum.auto()
@@ -189,12 +212,35 @@ class TokenKind(enum.StrEnum):
     OP = enum.auto()
 
 
-class TokenExactKind(enum.StrEnum):
+class TokenExactKind(enum.Enum):
     """
     Enum of all possible `Token.exact_name` values.
 
     Equality can be checked as lower-case string value.
     """
+
+    if TYPE_CHECKING:
+        def __new__(cls, value: str, /):
+            return super().__new__(cls, value)
+
+    @staticmethod
+    def _generate_next_value_(name, start, count, last_values) -> str:
+        """
+        Return the lower-cased version of the member name.
+        """
+        return name.lower()
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, str):
+            return self.value == other.lower()
+
+        return super().__eq__(other)
+
+    def __ne__(self, other: object) -> bool:
+        if isinstance(other, str):
+            return self.value != other.lower()
+
+        return super().__ne__(other)
 
     # Special tokens.
     INDENT = enum.auto()
