@@ -416,6 +416,7 @@ def import_all():
     import renpy.easy
     import renpy.encryption
     import renpy.execution
+    import renpy.tokenizer
     import renpy.lexer
     import renpy.loadsave
     import renpy.savelocation
@@ -702,6 +703,7 @@ if 1 == 0:
     from . import game
     from . import gl
     from . import gl2
+    from . import tokenizer
     from . import lexer
     from . import lexersupport
     from . import lint
