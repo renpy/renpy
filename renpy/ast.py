@@ -2641,6 +2641,153 @@ class Screen(Node):
         renpy.dump.screens.append((self.screen.name, self.filename, self.linenumber))
 
 
+class Style(Node):
+
+    __slots__ = [
+        'style_name',
+        'parent',
+        'properties',
+        'clear',
+        'take',
+        'delattr',
+        'variant',
+    ]
+
+    style_name: str
+    parent: str | None
+    properties: dict[str, str]
+    clear: bool
+    take: str | None
+    delattr: list[str]
+    variant: str | None
+
+    def __init__(self, loc, name):
+        """
+        `name`
+            The name of the style to define.
+        """
+
+        super(Style, self).__init__(loc)
+
+        self.style_name = name
+
+        # The parent of this style.
+        self.parent = None
+
+        # Properties.
+        self.properties = {}
+
+        # Should we clear the style?
+        self.clear = False
+
+        # Should we take properties from another style?
+        self.take = None
+
+        # A list of attributes we should delete from this style.
+        self.delattr = []
+
+        # If not none, an expression for the variant.
+        self.variant = None
+
+    def diff_info(self):
+        return (Style, self.style_name)
+
+    def apply(self):
+        if self.variant is not None:
+            variant = renpy.python.py_eval(self.variant)
+            if not renpy.exports.variant(variant):
+                return
+
+        s = renpy.style.get_or_create_style(self.style_name)
+
+        if self.clear:
+            s.clear()
+
+        if self.parent is not None:
+            s.set_parent(self.parent)
+
+        if self.take is not None:
+            s.take(self.take)
+
+        for i in self.delattr:
+            s.delattr(i)
+
+        if self.properties:
+            properties = {}
+
+            for name, expr in self.properties.items():
+
+                value = renpy.python.py_eval(expr)
+
+                if name == "properties":
+                    properties.update(value)
+                else:
+                    properties[name] = value
+
+            s.add_properties(properties)
+
+    def execute(self):
+        next_node(self.next)
+        statement_name("style")
+
+        if renpy.config.defer_styles and renpy.game.context().init_phase:
+            renpy.translation.deferred_styles.append(self)
+            return
+
+        self.apply()
+
+
+class Testcase(Node):
+
+    __slots__ = [
+        'label',
+        'test',
+    ]
+
+    label: str
+    test: renpy.test.testast.Block
+
+    def __init__(self, loc, label, test):
+        super(Testcase, self).__init__(loc)
+
+        self.label = label
+        self.test = test
+
+    def diff_info(self):
+        return (Testcase, self.label)
+
+    def execute(self):
+        next_node(self.next)
+        statement_name("testcase")
+
+        renpy.test.testexecution.testcases[self.label] = self.test
+
+
+class RPY(Node):
+    __slots__ = [
+        "rest"
+    ]
+
+    rest: tuple[str, ...]
+
+    def __init__(self, loc, rest):
+        super(RPY, self).__init__(loc)
+
+        self.rest = rest
+
+    def diff_info(self):
+        return (RPY, self.rest)
+
+    def execute(self):
+        next_node(self.next)
+        statement_name("rpy")
+
+        # rpy python is run in Script.finish_load.
+
+    def get_code(self, dialogue_filter=None):
+        return "rpy " + " ".join(self.rest)
+
+
 ################################################################################
 # Translations
 ################################################################################
@@ -2999,150 +3146,3 @@ class TranslateEarlyBlock(TranslateBlock):
     This is similar to the TranslateBlock, except it runs before deferred
     styles do.
     """
-
-
-class Style(Node):
-
-    __slots__ = [
-        'style_name',
-        'parent',
-        'properties',
-        'clear',
-        'take',
-        'delattr',
-        'variant',
-    ]
-
-    style_name: str
-    parent: str | None
-    properties: dict[str, str]
-    clear: bool
-    take: str | None
-    delattr: list[str]
-    variant: str | None
-
-    def __init__(self, loc, name):
-        """
-        `name`
-            The name of the style to define.
-        """
-
-        super(Style, self).__init__(loc)
-
-        self.style_name = name
-
-        # The parent of this style.
-        self.parent = None
-
-        # Properties.
-        self.properties = {}
-
-        # Should we clear the style?
-        self.clear = False
-
-        # Should we take properties from another style?
-        self.take = None
-
-        # A list of attributes we should delete from this style.
-        self.delattr = []
-
-        # If not none, an expression for the variant.
-        self.variant = None
-
-    def diff_info(self):
-        return (Style, self.style_name)
-
-    def apply(self):
-        if self.variant is not None:
-            variant = renpy.python.py_eval(self.variant)
-            if not renpy.exports.variant(variant):
-                return
-
-        s = renpy.style.get_or_create_style(self.style_name)
-
-        if self.clear:
-            s.clear()
-
-        if self.parent is not None:
-            s.set_parent(self.parent)
-
-        if self.take is not None:
-            s.take(self.take)
-
-        for i in self.delattr:
-            s.delattr(i)
-
-        if self.properties:
-            properties = {}
-
-            for name, expr in self.properties.items():
-
-                value = renpy.python.py_eval(expr)
-
-                if name == "properties":
-                    properties.update(value)
-                else:
-                    properties[name] = value
-
-            s.add_properties(properties)
-
-    def execute(self):
-        next_node(self.next)
-        statement_name("style")
-
-        if renpy.config.defer_styles and renpy.game.context().init_phase:
-            renpy.translation.deferred_styles.append(self)
-            return
-
-        self.apply()
-
-
-class Testcase(Node):
-
-    __slots__ = [
-        'label',
-        'test',
-    ]
-
-    label: str
-    test: renpy.test.testast.Block
-
-    def __init__(self, loc, label, test):
-        super(Testcase, self).__init__(loc)
-
-        self.label = label
-        self.test = test
-
-    def diff_info(self):
-        return (Testcase, self.label)
-
-    def execute(self):
-        next_node(self.next)
-        statement_name("testcase")
-
-        renpy.test.testexecution.testcases[self.label] = self.test
-
-
-class RPY(Node):
-    __slots__ = [
-        "rest"
-    ]
-
-    rest: tuple[str, ...]
-
-    def __init__(self, loc, rest):
-        super(RPY, self).__init__(loc)
-
-        self.rest = rest
-
-    def diff_info(self):
-        return (RPY, self.rest)
-
-    def execute(self):
-        next_node(self.next)
-        statement_name("rpy")
-
-        # rpy python is run in Script.finish_load.
-
-    def get_code(self, dialogue_filter=None):
-        return "rpy " + " ".join(self.rest)
