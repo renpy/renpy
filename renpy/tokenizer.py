@@ -22,8 +22,7 @@
 
 from __future__ import annotations
 
-import enum
-from typing import TYPE_CHECKING, Iterator
+from typing import Iterator
 
 import os
 import io
@@ -31,6 +30,7 @@ import re
 import sys
 import tokenize
 import keyword
+import enum
 
 _DEBUG_TOKENIZATION = "RENPY_DEBUG_TOKENIZATION" in os.environ
 
@@ -77,13 +77,12 @@ class Line:
             prev_row = t.end_lineno
             prev_col = t.end_col_offset
 
-            match t.kind:
-                case TokenKind.INDENT | TokenKind.DEDENT:
-                    raise ValueError("Line can't contain INDENT or DEDENT tokens.")
+            if t.kind is TokenKind.INDENT or t.kind is TokenKind.DEDENT:
+                raise ValueError("Line can't contain INDENT or DEDENT tokens.")
 
-                case TokenKind.NEWLINE:
-                    has_newline = True
-                    break
+            if t.kind is TokenKind.NEWLINE:
+                has_newline = True
+                break
 
         if list(tokens_iter):
             raise ValueError("NEWLINE must be the last token.")
@@ -159,35 +158,12 @@ class Line:
         return f"<Line {self.filename} {self.start}-{self.end}>"
 
 
-class TokenKind(enum.Enum):
+class TokenKind(enum.StrEnum):
     """
-    Enum of all possible `Token.name` values.
+    Enum of all possible `Token.kind` values.
 
     Equality can be checked as lower-case string value.
     """
-
-    if TYPE_CHECKING:
-        def __new__(cls, value: str, /):
-            return super().__new__(cls, value)
-
-    @staticmethod
-    def _generate_next_value_(name, start, count, last_values) -> str:
-        """
-        Return the lower-cased version of the member name.
-        """
-        return name.lower()
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, str):
-            return self.value == other.lower()
-
-        return super().__eq__(other)
-
-    def __ne__(self, other: object) -> bool:
-        if isinstance(other, str):
-            return self.value != other.lower()
-
-        return super().__ne__(other)
 
     # Special tokens.
     INDENT = enum.auto()
@@ -200,64 +176,13 @@ class TokenKind(enum.Enum):
     NEWLINE = enum.auto()
 
     # Names.
-    NAME = enum.auto()
-
-    # Numbers.
-    NUMBER = enum.auto()
-
-    # Strings.
-    STRING = enum.auto()
-
-    # Operators.
-    OP = enum.auto()
-
-
-class TokenExactKind(enum.Enum):
-    """
-    Enum of all possible `Token.exact_name` values.
-
-    Equality can be checked as lower-case string value.
-    """
-
-    if TYPE_CHECKING:
-        def __new__(cls, value: str, /):
-            return super().__new__(cls, value)
-
-    @staticmethod
-    def _generate_next_value_(name, start, count, last_values) -> str:
-        """
-        Return the lower-cased version of the member name.
-        """
-        return name.lower()
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, str):
-            return self.value == other.lower()
-
-        return super().__eq__(other)
-
-    def __ne__(self, other: object) -> bool:
-        if isinstance(other, str):
-            return self.value != other.lower()
-
-        return super().__ne__(other)
-
-    # Special tokens.
-    INDENT = enum.auto()
-    DEDENT = enum.auto()
-    COMMENT = enum.auto()
-
-    # Non-terminating and terminating new lines.
-    # This is always \n in Ren'Py.
-    NL = enum.auto()
-    NEWLINE = enum.auto()
-
-    # Names.
-    NAME = enum.auto()
+    NAME = enum.auto()  # Any name.
     KEYWORD = enum.auto()
     IDENTIFIER = enum.auto()
+    NON_IDENTIFIER = enum.auto()
 
     # Numbers.
+    NUMBER = enum.auto()  # Any number.
     HEX = enum.auto()
     BINARY = enum.auto()
     OCTAL = enum.auto()
@@ -266,14 +191,16 @@ class TokenExactKind(enum.Enum):
     INT = enum.auto()
 
     # Strings.
-    STRING = enum.auto()
+    STRING = enum.auto()  # Any string.
     BYTES = enum.auto()
     F_STRING = enum.auto()
     RAW_TRIPLE_STRING = enum.auto()
     TRIPLE_STRING = enum.auto()
-    RAW_STRING = enum.auto()
+    RAW_SINGLE_STRING = enum.auto()
+    SINGLE_STRING = enum.auto()
 
     # Operators.
+    OP = enum.auto()  # Any operator.
     DOLLAR = enum.auto()
     LPAR = enum.auto()
     RPAR = enum.auto()
@@ -352,86 +279,86 @@ class Token:
         end_col_offset: int,
         physical_offset: tuple[int, int],
     ):
-        match type:
-            case tokenize.ERRORTOKEN if string == "$":  # FIXME: In 3.12 it is OP
-                kind = TokenKind.OP
-                exact_kind = TokenExactKind.DOLLAR
-            case tokenize.ERRORTOKEN:
-                raise SyntaxError(f"Error token with value: {string!r} on line "
-                                  f"{lineno + physical_offset[0]}")
+        if type == tokenize.ERRORTOKEN and string == "$":  # FIXME: In 3.12 it is OP
+            kind = TokenKind.OP
+            exact_kind = TokenKind.DOLLAR
+        elif type == tokenize.ERRORTOKEN:
+            raise SyntaxError(f"Error token with value: {string!r} on line "
+                              f"{lineno + physical_offset[0]}")
 
-            # Exact name is one of predefined.
-            case tokenize.OP:
-                kind = TokenKind.OP
-                type = tokenize.EXACT_TOKEN_TYPES[string]
-                exact_kind = TokenExactKind(tokenize.tok_name[type].lower())
+        # Exact name is one of predefined.
+        elif type == tokenize.OP:
+            kind = TokenKind.OP
+            type = tokenize.EXACT_TOKEN_TYPES[string]
+            exact_kind = TokenKind(tokenize.tok_name[type].lower())
 
-            # f-strings and bytes are expressions in Ren'Py,
-            # and raw strings are handled differently.
-            case tokenize.STRING:
-                kind = TokenKind.STRING
+        # f-strings and bytes are expressions in Ren'Py,
+        # and raw strings are handled differently.
+        elif type == tokenize.STRING:
+            kind = TokenKind.STRING
 
-                prefix = re.match(
-                    r'([urfbURFB])*("|\'|"""|\'\'\')', string)
-                assert prefix is not None
-                mods = prefix.group(1) or ""
-                quotes = prefix.group(2)
+            prefix = re.match(
+                r'([urfbURFB])*("|\'|"""|\'\'\')', string)
+            assert prefix is not None
+            mods = prefix.group(1) or ""
+            quotes = prefix.group(2)
 
-                if "b" in mods or "B" in mods:
-                    exact_kind = TokenExactKind.BYTES
-                elif "f" in mods or "F" in mods:
-                    exact_kind = TokenExactKind.F_STRING
-                elif "r" in mods or "R" in mods:
-                    if quotes == "'''" or quotes == '"""':
-                        exact_kind = TokenExactKind.RAW_TRIPLE_STRING
-                    else:
-                        exact_kind = TokenExactKind.RAW_STRING
-                elif quotes == "'''" or quotes == '"""':
-                    exact_kind = TokenExactKind.TRIPLE_STRING
+            if "b" in mods or "B" in mods:
+                exact_kind = TokenKind.BYTES
+            elif "f" in mods or "F" in mods:
+                exact_kind = TokenKind.F_STRING
+            elif quotes == "'''" or quotes == '"""':
+                if "r" in mods or "R" in mods:
+                    exact_kind = TokenKind.RAW_TRIPLE_STRING
                 else:
-                    exact_kind = TokenExactKind.STRING
-
-            # Split numbers into complex, float, and integer.
-            case tokenize.NUMBER:
-                kind = TokenKind.NUMBER
-                if string.startswith("0x"):
-                    exact_kind = TokenExactKind.HEX
-                elif string.startswith("0b"):
-                    exact_kind = TokenExactKind.BINARY
-                elif string.startswith("0o"):
-                    exact_kind = TokenExactKind.OCTAL
-                elif string[-1] in "jJ":
-                    exact_kind = TokenExactKind.IMAG
+                    exact_kind = TokenKind.TRIPLE_STRING
+            else:
+                if "r" in mods or "R" in mods:
+                    exact_kind = TokenKind.RAW_SINGLE_STRING
                 else:
-                    symbols = set(string)
-                    # Definitely a float.
-                    if "." in symbols:
-                        exact_kind = TokenExactKind.FLOAT
+                    exact_kind = TokenKind.SINGLE_STRING
 
-                    # 00e0 is a float and can be interpreted as hex,
-                    # but we assume this is a float.
-                    elif symbols.intersection("eE"):
-                        exact_kind = TokenExactKind.FLOAT
+        # Split numbers into complex, float, and integer.
+        elif type == tokenize.NUMBER:
+            kind = TokenKind.NUMBER
+            if string.startswith("0x"):
+                exact_kind = TokenKind.HEX
+            elif string.startswith("0b"):
+                exact_kind = TokenKind.BINARY
+            elif string.startswith("0o"):
+                exact_kind = TokenKind.OCTAL
+            elif string[-1] in "jJ":
+                exact_kind = TokenKind.IMAG
+            else:
+                symbols = set(string)
+                # Definitely a float.
+                if "." in symbols:
+                    exact_kind = TokenKind.FLOAT
 
-                    else:
-                        exact_kind = TokenExactKind.INT
+                # 00e0 is a float and can be interpreted as hex,
+                # but we assume this is a float.
+                elif symbols.intersection("eE"):
+                    exact_kind = TokenKind.FLOAT
 
-            # Names can be keywords, soft-keywords (including Ren'Py) or
-            # identifiers. Otherwise it is a 0name, which is not an identifier,
-            # but e.g. is a valid attribute name.
-            case tokenize.NAME:
-                kind = TokenKind.NAME
-
-                if keyword.iskeyword(string):
-                    exact_kind = TokenExactKind.KEYWORD
-                elif string.isidentifier():
-                    exact_kind = TokenExactKind.IDENTIFIER
                 else:
-                    exact_kind = TokenExactKind.NAME
+                    exact_kind = TokenKind.INT
 
-            case _:
-                kind = TokenKind(tokenize.tok_name[type].lower())
-                exact_kind = TokenExactKind(tokenize.tok_name[type].lower())
+        # Names can be keywords or identifiers.
+        # Otherwise it is a 0name, which is not an identifier,
+        # but e.g. is a valid attribute name.
+        elif type == tokenize.NAME:
+            kind = TokenKind.NAME
+
+            if keyword.iskeyword(string):
+                exact_kind = TokenKind.KEYWORD
+            elif string.isidentifier():
+                exact_kind = TokenKind.IDENTIFIER
+            else:
+                exact_kind = TokenKind.NON_IDENTIFIER
+
+        else:
+            kind = TokenKind(tokenize.tok_name[type].lower())
+            exact_kind = TokenKind(tokenize.tok_name[type].lower())
 
         self.kind: TokenKind = kind
         """
@@ -439,10 +366,10 @@ class Token:
         Can be iterpreted as a corresponding lower-cased string.
         """
 
-        self.exact_kind: TokenExactKind = exact_kind
+        self.exact_kind: TokenKind = exact_kind
         """
-        Exact kind of the token, such as TokenExactKind.KEYWORD, TokenExactKind.DOLLAR or TokenExactKind.INT.
-        Can be iterpreted as a corresponding upper-cased string.
+        Exact kind of the token, such as TokenKind.KEYWORD, TokenKind.DOLLAR or TokenKind.INT.
+        Can be iterpreted as a corresponding lower-cased string.
         """
 
         self.string: str = string
@@ -492,9 +419,8 @@ class Tokenizer:
         1. It produces Token objects instead of tuples.
         2. It allow 0-prefix non-zero numbers (e.g. 001).
         3. It allows for names to start with numbers (e.g. 1foo).
-        4. It disallows non-ASCII characters in names.
-        5. It checks for non-terminated strings and parenthesis.
-        6. It checks for parenthesis order of closing.
+        4. It checks for non-terminated strings and parenthesis.
+        5. It checks for parenthesis order of closing.
 
     After file is tokenized, it can be used to list logical lines and group them
     into indented blocks.
@@ -797,9 +723,9 @@ class Tokenizer:
             if token.kind is TokenKind.NAME:
                 token.string = sys.intern(token.string)
 
-            elif token.exact_kind is TokenExactKind.LPAR:
+            elif token.exact_kind is TokenKind.LPAR:
                 parens.append(LPAR)
-            elif token.exact_kind is TokenExactKind.RPAR:
+            elif token.exact_kind is TokenKind.RPAR:
                 if not parens:
                     unmatched_paren()
                 elif parens[-1] is not LPAR:
@@ -807,9 +733,9 @@ class Tokenizer:
                 else:
                     parens.pop()
 
-            elif token.exact_kind is TokenExactKind.LBRACE:
+            elif token.exact_kind is TokenKind.LBRACE:
                 parens.append(LBRACE)
-            elif token.exact_kind is TokenExactKind.RBRACE:
+            elif token.exact_kind is TokenKind.RBRACE:
                 if not parens:
                     unmatched_paren()
                 elif parens[-1] is not LBRACE:
@@ -817,9 +743,9 @@ class Tokenizer:
                 else:
                     parens.pop()
 
-            elif token.exact_kind is TokenExactKind.LSQB:
+            elif token.exact_kind is TokenKind.LSQB:
                 parens.append(LSQB)
-            elif token.exact_kind is TokenExactKind.RSQB:
+            elif token.exact_kind is TokenKind.RSQB:
                 if not parens:
                     unmatched_paren()
                 elif parens[-1] is not LSQB:
@@ -859,16 +785,16 @@ class Tokenizer:
         tokens: list[Token] = []
 
         for token in self._yield_tokens():
-            match token.kind:
-                # Empty lines and bare comments are not logical lines.
-                case TokenKind.NL | TokenKind.COMMENT if not tokens:
-                    continue
-                case TokenKind.INDENT:
-                    depth += 1
-                case TokenKind.DEDENT:
-                    depth -= 1
-                case _:
-                    tokens.append(token)
+            # Empty lines and bare comments are not logical lines.
+            if (token.kind is TokenKind.NL or token.kind is TokenKind.COMMENT) and not tokens:
+                continue
+
+            if token.kind is TokenKind.INDENT:
+                depth += 1
+            elif token.kind is TokenKind.DEDENT:
+                depth -= 1
+            else:
+                tokens.append(token)
 
             if token.kind is TokenKind.NEWLINE:
                 rv.append(Line(*tokens, indent_depth=depth))
