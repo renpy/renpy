@@ -385,7 +385,12 @@ class Lexer:
 
             self._tokens.append(t)
             self._tokens_pos.append(pos)
-            munged = self._get_munged_string(t)
+
+            if t.kind is TokenKind.STRING or t.kind is TokenKind.NAME:
+                munged = self._get_munged_string(t)
+            else:
+                munged = t.string
+
             result.append(munged)
             prev_row = t.end_lineno
             prev_col = t.end_col_offset

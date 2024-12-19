@@ -372,7 +372,7 @@ class Token:
                 kind = TokenKind.STRING
 
                 prefix = re.match(
-                    r'([urfbURFB])*("""|\'\'\'|"|\')', string)
+                    r'([urfbURFB])*("|\'|"""|\'\'\')', string)
                 assert prefix is not None
                 mods = prefix.group(1) or ""
                 quotes = prefix.group(2)
@@ -783,31 +783,49 @@ class Tokenizer:
             if not self.no_errors:
                 lineno = token.lineno + token.physical_offset[0]
                 col_offset = token.col_offset + token.physical_offset[1]
-                raise SyntaxError(f"closing parenthesis '{parens[-1].string}' "
-                                  f"does not match opening parenthesis '{token.string}'"
+                raise SyntaxError(f"closing parenthesis '{token.string}' "
+                                  f"does not match opening parenthesis '{parens[-1]}'"
                                   f" at {self.filename}:{lineno}:{col_offset}")
 
-        parens: list[Token] = []
+        parens: list[str] = []
+        LPAR = "("
+        LBRACE = "{"
+        LSQB = "["
         for token in self._tokenize():
-            match token.exact_kind:
-                case TokenExactKind.RPAR | TokenExactKind.RBRACE | TokenExactKind.RSQB if not parens:
-                    unmatched_paren()
-                case TokenExactKind.RPAR if parens[-1].exact_kind != TokenExactKind.LPAR:
-                    wrong_paren()
-                case TokenExactKind.RBRACE if parens[-1].exact_kind != TokenExactKind.LBRACE:
-                    wrong_paren()
-                case TokenExactKind.RSQB if parens[-1].exact_kind != TokenExactKind.LSQB:
-                    wrong_paren()
-
-                case TokenExactKind.LPAR | TokenExactKind.LBRACE | TokenExactKind.LSQB:
-                    parens.append(token)
-                case TokenExactKind.RPAR | TokenExactKind.RBRACE | TokenExactKind.RSQB:
-                    parens.pop()
-
             # Intern all names, so we have only a single instance
             # of often overlapping names.
             if token.kind is TokenKind.NAME:
                 token.string = sys.intern(token.string)
+
+            elif token.exact_kind is TokenExactKind.LPAR:
+                parens.append(LPAR)
+            elif token.exact_kind is TokenExactKind.RPAR:
+                if not parens:
+                    unmatched_paren()
+                elif parens[-1] is not LPAR:
+                    wrong_paren()
+                else:
+                    parens.pop()
+
+            elif token.exact_kind is TokenExactKind.LBRACE:
+                parens.append(LBRACE)
+            elif token.exact_kind is TokenExactKind.RBRACE:
+                if not parens:
+                    unmatched_paren()
+                elif parens[-1] is not LBRACE:
+                    wrong_paren()
+                else:
+                    parens.pop()
+
+            elif token.exact_kind is TokenExactKind.LSQB:
+                parens.append(LSQB)
+            elif token.exact_kind is TokenExactKind.RSQB:
+                if not parens:
+                    unmatched_paren()
+                elif parens[-1] is not LSQB:
+                    wrong_paren()
+                else:
+                    parens.pop()
 
             self._tokens.append(token)
             yield token
