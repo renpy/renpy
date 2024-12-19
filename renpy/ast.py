@@ -343,9 +343,6 @@ class Node(renpy.location.Location):
 
         return None
 
-    # get_init is only present on statements that define it.
-    get_init = None  # type: ignore
-
     def chain(self, next: Node | None) -> None:
         """
         This is called with the Node node that should be followed after
@@ -379,9 +376,6 @@ class Node(renpy.location.Location):
         """
         Called when the module is loaded.
         """
-
-    # early_execute is only present on statements that define it.
-    early_execute = None  # type: ignore
 
     def predict(self) -> list[Node | None]:
         """

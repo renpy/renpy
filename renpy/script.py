@@ -498,7 +498,7 @@ class Script(object):
         # All of the statements found in file, regardless of nesting
         # depth.
 
-        all_stmts = [ ]
+        all_stmts: list[renpy.ast.Node] = []
         for i in stmts:
             i.get_children(all_stmts.append)
 
@@ -580,13 +580,10 @@ class Script(object):
             self.namemap[name] = node
 
             # Add any init nodes to self.initcode.
-            if node.get_init:
-                init = node.get_init()
-                if init:
-                    initcode.append(init)
+            if init := node.get_init():
+                initcode.append(init)
 
-            if node.early_execute:
-                node.early_execute()
+            node.early_execute()
 
         if self.all_stmts is not None:
             self.all_stmts.extend(all_stmts)
