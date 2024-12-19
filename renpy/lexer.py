@@ -859,17 +859,27 @@ class Lexer:
         """
 
         tok = self._lookup_exact_token(RAW_SINGLE_STRING)
-        if tok is not None:
-            self._advance_token()
-            return self._get_munged_string(tok)[2:-1]
+        if tok is None:
+            tok = self._lookup_exact_token(SINGLE_STRING)
+            raw = False
+        else:
+            raw = True
 
-        tok = self._lookup_exact_token(SINGLE_STRING)
         if tok is None:
             return None
 
         self._advance_token()
 
-        s = self._get_munged_string(tok)[1:-1]
+        s = self._get_munged_string(tok)
+
+        # Strip mods and quotes.
+        for i, c in enumerate(s):
+            if c in "\"'":
+                s = s[i+1:-1]
+                break
+
+        if raw:
+            return s
 
         # Collapse runs of whitespace into single spaces.
         s = re.sub(r'[ \n]+', ' ', s)
@@ -889,17 +899,27 @@ class Lexer:
         """
 
         tok = self._lookup_exact_token(RAW_TRIPLE_STRING)
-        if tok is not None:
-            self._advance_token()
-            return self._get_munged_string(tok)[4:-3]
+        if tok is None:
+            tok = self._lookup_exact_token(TRIPLE_STRING)
+            raw = False
+        else:
+            raw = True
 
-        tok = self._lookup_exact_token(TRIPLE_STRING)
         if tok is None:
             return None
 
         self._advance_token()
 
-        s = self._get_munged_string(tok)[3:-3]
+        s = self._get_munged_string(tok)
+
+        # Strip mods and quotes.
+        for i, c in enumerate(s):
+            if c in "\"'":
+                s = s[i+3:-3]
+                break
+
+        if raw:
+            return s
 
         s = re.sub(r' *\n *', '\n', s)
 
