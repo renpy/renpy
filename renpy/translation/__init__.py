@@ -198,10 +198,10 @@ class ScriptTranslator(object):
                     if n.identifier in self.default_translates:
                         old_node = self.default_translates[n.identifier]
 
-                        renpy.lexer.ParseError(n.filename, n.linenumber, "Line with id %s appears twice. The other line is %s:%d" % (
-                                    n.identifier,
-                                    old_node.filename, old_node.linenumber)
-                                    ).defer("duplicate_id")
+                        renpy.lexer.ParseError(
+                            f"Line with id {n.identifier} appears twice. "
+                            f"The other line is {old_node.filename}:{old_node.linenumber}",
+                            n.filename, n.linenumber,).defer("duplicate_id")
 
                     self.default_translates[n.identifier] = n
                     self.file_translates[filename].append((label, n))
