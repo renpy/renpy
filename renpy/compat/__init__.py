@@ -92,8 +92,6 @@ import codecs
 strict_error = codecs.lookup_error("strict")
 codecs.register_error("python_strict", strict_error)
 
-import renpy
-renpy.update_path()
 
 ################################################################################
 # String (text and binary) types and functions.
