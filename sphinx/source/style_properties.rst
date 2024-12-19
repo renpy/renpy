@@ -725,7 +725,7 @@ Text Style Properties
 
 .. style-property:: prefer_emoji boolean
 
-    Some unicode characters have both Emoji and non-Emjoji presentations. This
+    Some unicode characters have both Emoji and non-Emoji presentations. This
     style property chooses if such characters are given the Emoji presentation
     or not.
 
