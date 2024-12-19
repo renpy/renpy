@@ -2666,6 +2666,10 @@ class Text(renpy.display.displayable.Displayable):
                 yo = y + yo + layout.yoffset
 
                 drend.absolute_blit(renders[d], (xo, yo))
+
+                if layout.reverse:
+                    xo, yo = layout.reverse.transform(xo, yo)
+
                 self.displayable_offsets.append((d, xo, yo))
 
             rv.blit(drend, (0, 0))
