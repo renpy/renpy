@@ -34,8 +34,6 @@ import renpy.ast as ast
 from renpy.parameter import EMPTY_ARGUMENTS, Parameter
 
 from renpy.lexer import (
-    list_logical_lines,
-    group_logical_lines,
     ParseError,
     Lexer,
 
@@ -1686,13 +1684,17 @@ def parse(fn, filedata=None, linenumber=1):
     renpy.game.exception_info = 'While parsing ' + fn + '.'
 
     try:
-        lines = list_logical_lines(fn, filedata, linenumber)
-        nested = group_logical_lines(lines)
+        if filedata is None:
+            tok = renpy.lexer.Tokenizer.from_file(fn)
+        else:
+            tok = renpy.lexer.Tokenizer.from_string(
+                fn, filedata, lineno=linenumber - 1)
+
     except ParseError as e:
         parse_errors.append(e.message)
         return None
 
-    l = Lexer(nested)
+    l = Lexer(tok.list_logical_lines())
 
     rv = parse_block(l)
 

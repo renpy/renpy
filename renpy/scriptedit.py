@@ -89,7 +89,7 @@ def ensure_loaded(filename):
     files.add(filename)
 
     fn = renpy.lexer.unelide_filename(filename)
-    renpy.lexer.list_logical_lines(fn, add_lines=True)
+    raise Exception("WIP")
 
 
 def get_line_text(filename, linenumber):

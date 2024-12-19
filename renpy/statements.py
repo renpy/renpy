@@ -305,11 +305,11 @@ def register(
                 if l.subblock:
                     atl = renpy.atl.parse_atl(l.subblock_lexer())
 
-            start_line = l.line
+            start_line = l.number
 
             parsed = name, parse(l)
 
-            if l.line == start_line:
+            if l.number == start_line:
                 l.advance()
 
             rv = renpy.ast.UserStatement(loc, text, subblock, parsed)
@@ -347,21 +347,7 @@ def parse(node, line, subblock):
     This is used for runtime parsing of CDSes that were created before 7.3.
     """
 
-    block = [ (node.filename, node.linenumber, line, subblock) ]
-    l = renpy.parser.Lexer(block)
-    l.advance()
-
-    renpy.exports.push_error_handler(l.error)
-    try:
-
-        pf = parsers.parse(l)
-        if pf is None:
-            l.error("Could not find user-defined statement at runtime.")
-
-        return pf(l)
-
-    finally:
-        renpy.exports.pop_error_handler()
+    raise Exception("Removed???")
 
 
 def call(method, parsed, *args, **kwargs):
