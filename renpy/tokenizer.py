@@ -30,7 +30,6 @@ import re
 import sys
 import tokenize
 import keyword
-import enum
 
 _DEBUG_TOKENIZATION = "RENPY_DEBUG_TOKENIZATION" in os.environ
 
@@ -77,10 +76,10 @@ class Line:
             prev_row = t.end_lineno
             prev_col = t.end_col_offset
 
-            if t.kind is TokenKind.INDENT or t.kind is TokenKind.DEDENT:
+            if t.kind is INDENT or t.kind is DEDENT:
                 raise ValueError("Line can't contain INDENT or DEDENT tokens.")
 
-            if t.kind is TokenKind.NEWLINE:
+            if t.kind is NEWLINE:
                 has_newline = True
                 break
 
@@ -128,7 +127,7 @@ class Line:
 
             for t in self.tokens:
                 # Don't add spurious spaces before new line.
-                if t.kind in (TokenKind.NL, TokenKind.NEWLINE):
+                if t.kind is NL or t.kind is NEWLINE:
                     cont_line = False
                     prev_row += 1
                     prev_col = 0
@@ -158,97 +157,96 @@ class Line:
         return f"<Line {self.filename} {self.start}-{self.end}>"
 
 
-class TokenKind(enum.StrEnum):
-    """
-    Enum of all possible `Token.kind` values.
+# All possible Token.kind and Token.exact_kind values.
+class TokenKind(str):
+    def __new__(cls, value: str, /) -> TokenKind:
+        return sys.intern(value)  # type: ignore
 
-    Equality can be checked as lower-case string value.
-    """
 
-    # Special tokens.
-    INDENT = enum.auto()
-    DEDENT = enum.auto()
-    COMMENT = enum.auto()
+# Special tokens.
+INDENT = TokenKind("indent")
+DEDENT = TokenKind("dedent")
+COMMENT = TokenKind("comment")
 
-    # Non-terminating and terminating new lines.
-    # This is always \n in Ren'Py.
-    NL = enum.auto()
-    NEWLINE = enum.auto()
+# Non-terminating and terminating new lines.
+# This is always \n in Ren'Py.
+NL = TokenKind("nl")
+NEWLINE = TokenKind("newline")
 
-    # Names.
-    NAME = enum.auto()  # Any name.
-    KEYWORD = enum.auto()
-    IDENTIFIER = enum.auto()
-    NON_IDENTIFIER = enum.auto()
+# Names.
+NAME = TokenKind("name")  # Any name.
+KEYWORD = TokenKind("keyword")
+IDENTIFIER = TokenKind("identifier")
+NON_IDENTIFIER = TokenKind("non_identifier")
 
-    # Numbers.
-    NUMBER = enum.auto()  # Any number.
-    HEX = enum.auto()
-    BINARY = enum.auto()
-    OCTAL = enum.auto()
-    IMAG = enum.auto()
-    FLOAT = enum.auto()
-    INT = enum.auto()
+# Numbers.
+NUMBER = TokenKind("number")  # Any number.
+HEX = TokenKind("hex")
+BINARY = TokenKind("binary")
+OCTAL = TokenKind("octal")
+IMAG = TokenKind("imag")
+FLOAT = TokenKind("float")
+INT = TokenKind("int")
 
-    # Strings.
-    STRING = enum.auto()  # Any string.
-    BYTES = enum.auto()
-    F_STRING = enum.auto()
-    RAW_TRIPLE_STRING = enum.auto()
-    TRIPLE_STRING = enum.auto()
-    RAW_SINGLE_STRING = enum.auto()
-    SINGLE_STRING = enum.auto()
+# Strings.
+STRING = TokenKind("string")  # Any string.
+BYTES = TokenKind("bytes")
+F_STRING = TokenKind("f_string")
+RAW_TRIPLE_STRING = TokenKind("raw_triple_string")
+TRIPLE_STRING = TokenKind("triple_string")
+RAW_SINGLE_STRING = TokenKind("raw_single_string")
+SINGLE_STRING = TokenKind("single_string")
 
-    # Operators.
-    OP = enum.auto()  # Any operator.
-    DOLLAR = enum.auto()
-    LPAR = enum.auto()
-    RPAR = enum.auto()
-    LSQB = enum.auto()
-    RSQB = enum.auto()
-    COLON = enum.auto()
-    COMMA = enum.auto()
-    SEMI = enum.auto()
-    PLUS = enum.auto()
-    MINUS = enum.auto()
-    STAR = enum.auto()
-    SLASH = enum.auto()
-    VBAR = enum.auto()
-    AMPER = enum.auto()
-    LESS = enum.auto()
-    GREATER = enum.auto()
-    EQUAL = enum.auto()
-    DOT = enum.auto()
-    PERCENT = enum.auto()
-    LBRACE = enum.auto()
-    RBRACE = enum.auto()
-    EQEQUAL = enum.auto()
-    NOTEQUAL = enum.auto()
-    LESSEQUAL = enum.auto()
-    GREATEREQUAL = enum.auto()
-    TILDE = enum.auto()
-    CIRCUMFLEX = enum.auto()
-    LEFTSHIFT = enum.auto()
-    RIGHTSHIFT = enum.auto()
-    DOUBLESTAR = enum.auto()
-    PLUSEQUAL = enum.auto()
-    MINEQUAL = enum.auto()
-    STAREQUAL = enum.auto()
-    SLASHEQUAL = enum.auto()
-    PERCENTEQUAL = enum.auto()
-    AMPEREQUAL = enum.auto()
-    VBAREQUAL = enum.auto()
-    CIRCUMFLEXEQUAL = enum.auto()
-    LEFTSHIFTEQUAL = enum.auto()
-    RIGHTSHIFTEQUAL = enum.auto()
-    DOUBLESTAREQUAL = enum.auto()
-    DOUBLESLASH = enum.auto()
-    DOUBLESLASHEQUAL = enum.auto()
-    AT = enum.auto()
-    ATEQUAL = enum.auto()
-    RARROW = enum.auto()
-    ELLIPSIS = enum.auto()
-    COLONEQUAL = enum.auto()
+# Operators.
+OP = TokenKind("op")  # Any operator.
+DOLLAR = TokenKind("dollar")
+LPAR = TokenKind("lpar")
+RPAR = TokenKind("rpar")
+LSQB = TokenKind("lsqb")
+RSQB = TokenKind("rsqb")
+COLON = TokenKind("colon")
+COMMA = TokenKind("comma")
+SEMI = TokenKind("semi")
+PLUS = TokenKind("plus")
+MINUS = TokenKind("minus")
+STAR = TokenKind("star")
+SLASH = TokenKind("slash")
+VBAR = TokenKind("vbar")
+AMPER = TokenKind("amper")
+LESS = TokenKind("less")
+GREATER = TokenKind("greater")
+EQUAL = TokenKind("equal")
+DOT = TokenKind("dot")
+PERCENT = TokenKind("percent")
+LBRACE = TokenKind("lbrace")
+RBRACE = TokenKind("rbrace")
+EQEQUAL = TokenKind("eqequal")
+NOTEQUAL = TokenKind("notequal")
+LESSEQUAL = TokenKind("lessequal")
+GREATEREQUAL = TokenKind("greaterequal")
+TILDE = TokenKind("tilde")
+CIRCUMFLEX = TokenKind("circumflex")
+LEFTSHIFT = TokenKind("leftshift")
+RIGHTSHIFT = TokenKind("rightshift")
+DOUBLESTAR = TokenKind("doublestar")
+PLUSEQUAL = TokenKind("plusequal")
+MINEQUAL = TokenKind("minequal")
+STAREQUAL = TokenKind("starequal")
+SLASHEQUAL = TokenKind("slashequal")
+PERCENTEQUAL = TokenKind("percentequal")
+AMPEREQUAL = TokenKind("amperequal")
+VBAREQUAL = TokenKind("vbarequal")
+CIRCUMFLEXEQUAL = TokenKind("circumflexequal")
+LEFTSHIFTEQUAL = TokenKind("leftshiftequal")
+RIGHTSHIFTEQUAL = TokenKind("rightshiftequal")
+DOUBLESTAREQUAL = TokenKind("doublestarequal")
+DOUBLESLASH = TokenKind("doubleslash")
+DOUBLESLASHEQUAL = TokenKind("doubleslashequal")
+AT = TokenKind("at")
+ATEQUAL = TokenKind("atequal")
+RARROW = TokenKind("rarrow")
+ELLIPSIS = TokenKind("ellipsis")
+COLONEQUAL = TokenKind("colonequal")
 
 
 class Token:
@@ -280,22 +278,22 @@ class Token:
         physical_offset: tuple[int, int],
     ):
         if type == tokenize.ERRORTOKEN and string == "$":  # FIXME: In 3.12 it is OP
-            kind = TokenKind.OP
-            exact_kind = TokenKind.DOLLAR
+            kind = OP
+            exact_kind = DOLLAR
         elif type == tokenize.ERRORTOKEN:
             raise SyntaxError(f"Error token with value: {string!r} on line "
                               f"{lineno + physical_offset[0]}")
 
         # Exact name is one of predefined.
         elif type == tokenize.OP:
-            kind = TokenKind.OP
+            kind = OP
             type = tokenize.EXACT_TOKEN_TYPES[string]
             exact_kind = TokenKind(tokenize.tok_name[type].lower())
 
         # f-strings and bytes are expressions in Ren'Py,
         # and raw strings are handled differently.
         elif type == tokenize.STRING:
-            kind = TokenKind.STRING
+            kind = STRING
 
             prefix = re.match(
                 r'([urfbURFB])*("|\'|"""|\'\'\')', string)
@@ -304,61 +302,60 @@ class Token:
             quotes = prefix.group(2)
 
             if "b" in mods or "B" in mods:
-                exact_kind = TokenKind.BYTES
+                exact_kind = BYTES
             elif "f" in mods or "F" in mods:
-                exact_kind = TokenKind.F_STRING
+                exact_kind = F_STRING
             elif quotes == "'''" or quotes == '"""':
                 if "r" in mods or "R" in mods:
-                    exact_kind = TokenKind.RAW_TRIPLE_STRING
+                    exact_kind = RAW_TRIPLE_STRING
                 else:
-                    exact_kind = TokenKind.TRIPLE_STRING
+                    exact_kind = TRIPLE_STRING
             else:
                 if "r" in mods or "R" in mods:
-                    exact_kind = TokenKind.RAW_SINGLE_STRING
+                    exact_kind = RAW_SINGLE_STRING
                 else:
-                    exact_kind = TokenKind.SINGLE_STRING
+                    exact_kind = SINGLE_STRING
 
         # Split numbers into complex, float, and integer.
         elif type == tokenize.NUMBER:
-            kind = TokenKind.NUMBER
+            kind = NUMBER
             if string.startswith("0x"):
-                exact_kind = TokenKind.HEX
+                exact_kind = HEX
             elif string.startswith("0b"):
-                exact_kind = TokenKind.BINARY
+                exact_kind = BINARY
             elif string.startswith("0o"):
-                exact_kind = TokenKind.OCTAL
+                exact_kind = OCTAL
             elif string[-1] in "jJ":
-                exact_kind = TokenKind.IMAG
+                exact_kind = IMAG
             else:
                 symbols = set(string)
                 # Definitely a float.
                 if "." in symbols:
-                    exact_kind = TokenKind.FLOAT
+                    exact_kind = FLOAT
 
                 # 00e0 is a float and can be interpreted as hex,
                 # but we assume this is a float.
                 elif symbols.intersection("eE"):
-                    exact_kind = TokenKind.FLOAT
+                    exact_kind = FLOAT
 
                 else:
-                    exact_kind = TokenKind.INT
+                    exact_kind = INT
 
         # Names can be keywords or identifiers.
         # Otherwise it is a 0name, which is not an identifier,
         # but e.g. is a valid attribute name.
         elif type == tokenize.NAME:
-            kind = TokenKind.NAME
+            kind = NAME
 
             if keyword.iskeyword(string):
-                exact_kind = TokenKind.KEYWORD
+                exact_kind = KEYWORD
             elif string.isidentifier():
-                exact_kind = TokenKind.IDENTIFIER
+                exact_kind = IDENTIFIER
             else:
-                exact_kind = TokenKind.NON_IDENTIFIER
+                exact_kind = NON_IDENTIFIER
 
         else:
-            kind = TokenKind(tokenize.tok_name[type].lower())
-            exact_kind = TokenKind(tokenize.tok_name[type].lower())
+            kind = exact_kind = TokenKind(tokenize.tok_name[type].lower())
 
         self.kind: TokenKind = kind
         """
@@ -397,7 +394,7 @@ class Token:
             string = string[:15] + "..." + string[-15:]
 
         location = f"{self.lineno}:{self.col_offset}-{self.end_lineno}:{self.end_col_offset}"
-        return f"<Token {self.exact_kind._name_!r} {string} {self.filename} {location}>"
+        return f"<Token {self.exact_kind!r} {string} {self.filename} {location}>"
 
 
 class Tokenizer:
@@ -714,41 +711,41 @@ class Tokenizer:
                                   f" at {self.filename}:{lineno}:{col_offset}")
 
         parens: list[str] = []
-        LPAR = "("
-        LBRACE = "{"
-        LSQB = "["
+        lpar = "("
+        lbrace = "{"
+        lsqb = "["
         for token in self._tokenize():
             # Intern all names, so we have only a single instance
             # of often overlapping names.
-            if token.kind is TokenKind.NAME:
+            if token.kind is NAME:
                 token.string = sys.intern(token.string)
 
-            elif token.exact_kind is TokenKind.LPAR:
-                parens.append(LPAR)
-            elif token.exact_kind is TokenKind.RPAR:
+            elif token.exact_kind is LPAR:
+                parens.append(lpar)
+            elif token.exact_kind is RPAR:
                 if not parens:
                     unmatched_paren()
-                elif parens[-1] is not LPAR:
+                elif parens[-1] is not lpar:
                     wrong_paren()
                 else:
                     parens.pop()
 
-            elif token.exact_kind is TokenKind.LBRACE:
-                parens.append(LBRACE)
-            elif token.exact_kind is TokenKind.RBRACE:
+            elif token.exact_kind is LBRACE:
+                parens.append(lbrace)
+            elif token.exact_kind is RBRACE:
                 if not parens:
                     unmatched_paren()
-                elif parens[-1] is not LBRACE:
+                elif parens[-1] is not lbrace:
                     wrong_paren()
                 else:
                     parens.pop()
 
-            elif token.exact_kind is TokenKind.LSQB:
-                parens.append(LSQB)
-            elif token.exact_kind is TokenKind.RSQB:
+            elif token.exact_kind is LSQB:
+                parens.append(lsqb)
+            elif token.exact_kind is RSQB:
                 if not parens:
                     unmatched_paren()
-                elif parens[-1] is not LSQB:
+                elif parens[-1] is not lsqb:
                     wrong_paren()
                 else:
                     parens.pop()
@@ -786,17 +783,17 @@ class Tokenizer:
 
         for token in self._yield_tokens():
             # Empty lines and bare comments are not logical lines.
-            if (token.kind is TokenKind.NL or token.kind is TokenKind.COMMENT) and not tokens:
+            if (token.kind is NL or token.kind is COMMENT) and not tokens:
                 continue
 
-            if token.kind is TokenKind.INDENT:
+            if token.kind is INDENT:
                 depth += 1
-            elif token.kind is TokenKind.DEDENT:
+            elif token.kind is DEDENT:
                 depth -= 1
             else:
                 tokens.append(token)
 
-            if token.kind is TokenKind.NEWLINE:
+            if token.kind is NEWLINE:
                 rv.append(Line(*tokens, indent_depth=depth))
                 tokens.clear()
 
