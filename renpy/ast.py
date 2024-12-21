@@ -458,6 +458,15 @@ class Node(renpy.location.Location):
         else:
             return [self.next]
 
+    def get_translation_strings(self) -> list[tuple[int, str]]:
+        """
+        Return a possibly empty list of linenumber, string pairs of strings
+        that are additional translation strings for this node.
+        """
+
+        return []
+
+
 ################################################################################
 # Utility functions
 ################################################################################
@@ -1072,6 +1081,7 @@ class Label(Node):
         'hide',
     ]
 
+    name: str
     parameters: ParameterInfo | None
     block: list[Node]
     hide: bool
@@ -1093,7 +1103,7 @@ class Label(Node):
 
         super(Label, self).__init__(loc)
 
-        self.name = name
+        self.name = name  # type: ignore
         self.block = block
         self.parameters = parameters
         self.hide = hide
@@ -2022,6 +2032,28 @@ class Menu(Node):
 
         return rv
 
+    def get_translation_strings(self):
+        rv = super().get_translation_strings()
+
+        for (caption, _, block) in self.items:
+            if renpy.config.old_substitutions:
+                caption = caption.replace("%%", "%")
+
+            if caption is None:
+                continue
+
+            # Empty lines after the caption will strill make
+            # this caption to be repoprted on wrong line,
+            # but it is still better than line number of the menu itself
+            # which can be hundreds of lines away.
+            if block:
+                loc = block[0].linenumber - 1
+            else:
+                loc = self.linenumber
+
+            rv.append((loc, caption))
+
+        return rv
 
 setattr(Menu, "with", Menu.with_)  # type: ignore
 
@@ -2524,6 +2556,18 @@ class UserStatement(Node):
     def analyze(self):
         if self.atl is not None:
             self.atl.analyze(EMPTY_PARAMETERS)
+
+    def get_translation_strings(self) -> list[tuple[int, str]]:
+        rv = super().get_translation_strings()
+
+        if strings := self.call("translation_strings"):
+            for i in strings:
+                if not isinstance(i, tuple):
+                    i = (self.linenumber, i)
+
+                rv.append(i)
+
+        return rv
 
 
 class PostUserStatement(Node):
