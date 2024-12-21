@@ -334,10 +334,16 @@ class Node(renpy.location.Location):
 
         f(self)
 
-    def get_init(self) -> tuple[int, Node | Callable[[], None]] | None:
+    def execute_init(self):
         """
-        Returns a node that should be run at init time (that is, before
-        the normal start of the script.), or None if this node doesn't
+        Called at init time (that is, before the normal start of the script.),
+        at init priority returned by `Node.get_init` to execute init code of
+        this statement.
+        """
+
+    def get_init(self) -> int | None:
+        """
+        Return an integer priority for this node, or None if this node doesn't
         care to suggest one.
         """
 
@@ -1052,8 +1058,12 @@ class Init(Node):
         for i in self.block:
             i.get_children(f)
 
+    def execute_init(self):
+        renpy.execution.not_infinite_loop(60)
+        renpy.game.context().run(self.block[0])
+
     def get_init(self):
-        return self.priority, self.block[0]
+        return self.priority
 
     # We handle chaining specially. We want to chain together the nodes in
     # the block, but we want that chain to end in None, and we also want
@@ -2415,7 +2425,7 @@ class UserStatement(Node):
             default_statements.append(self)
 
     def get_init(self):
-        return self.init_priority, self.execute_init
+        return self.init_priority
 
     def execute(self):
         next_node(self.get_next())
