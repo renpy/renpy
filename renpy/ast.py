@@ -2904,6 +2904,14 @@ class TranslateSay(Say):
     alternate: str | None
     language: str | None
 
+    @property
+    def after(self):
+        return self.next
+
+    @property
+    def block(self) -> list[Node]:
+        return [self]
+
     def __init__(
         self,
         loc,
@@ -2935,13 +2943,9 @@ class TranslateSay(Say):
 
     def chain(self, next):
         Say.chain(self, next)
-        self.after = next
 
     def replace_next(self, old, new):
         Say.replace_next(self, old, new)
-
-        if self.after is old:
-            self.after = new
 
     def lookup(self) -> Node:
         return renpy.game.script.translator.lookup_translate(
