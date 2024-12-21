@@ -443,6 +443,21 @@ class Node(renpy.location.Location):
 
         return self.warp
 
+    def get_reachable(self) -> list[Node]:
+        """
+        Return a possibly empty list of nodes that are directly reachable via
+        this node.
+
+        Basically, this should return all nodes that can be set as next node in
+        `execute`, but unlike predict, it should not guess nodes, and return
+        information that is statically defined in the node.
+        """
+
+        if self.next is None:
+            return []
+        else:
+            return [self.next]
+
 ################################################################################
 # Utility functions
 ################################################################################
@@ -707,6 +722,70 @@ def redefine(stores: list[str]):
 
     for i in define_statements:
         i.redefine(stores)
+
+
+def _reach_any(source: Node, target: Node) -> bool:
+    return True
+
+
+def get_reachable_nodes(
+    entry_nodes: list[Node],
+    node_validator: Callable[[Node, Node], bool] = _reach_any,
+    seen: set[Node] | None = None
+) -> list[Node]:
+    """
+    Starting with `entry_nodes`, tries to reach new nodes by calling
+    `node_validator` on each new node that is reachable from the node in set.
+
+    `node_validator`
+        A function that takes two nodes as arguments, the node from which
+        reachability is being checked, and the node that is reachable from
+        that node.
+        If it returns True if the node should be considered
+        reachable for that source node, otherwise it is skipped.
+
+        By default allow any pairs of nodes.
+
+    `seen`
+        If not None, a set of nodes that have already been seen.
+        This can be used to avoid redundant work for multiple calls to this
+        function.
+
+    Ends when no new nodes are found and returns the left of all reached nodes.
+    Order of result nodes is all entry nodes, than nodes reachable from them,
+    and so on.
+
+    If all creator defined statements define their `reachable` function properly,
+    this function should return the same result for all calls with the same
+    arguments.
+    """
+
+    from collections import deque
+
+    result = []
+    worklist = deque(entry_nodes)
+
+    if seen is None:
+        seen = set()
+
+    while worklist:
+        node = worklist.popleft()
+        if node in seen:
+            continue
+
+        seen.add(node)
+        result.append(node)
+
+        for n in node.get_reachable():
+            if n in seen:
+                continue
+
+            if not node_validator(node, n):
+                continue
+
+            worklist.append(n)
+
+    return result
 
 
 ################################################################################
@@ -1699,6 +1778,17 @@ class Call(Node):
         rv._next = None
         return rv
 
+    def get_reachable(self):
+        rv = super().get_reachable()
+
+        # Add static target label as reachable in case we are looking
+        # for reachable labels from a single label, instead of all labels.
+        if not self.expression:
+            target = renpy.game.script.lookup_or_none(self.label)
+            if target is not None:
+                rv = [target, *rv]
+
+        return rv
 
 class Return(Node):
 
@@ -1913,6 +2003,25 @@ class Menu(Node):
             if block is not None:
                 callback(block)
 
+    def get_reachable(self):
+        rv: list[Node] = []
+
+        for (_, _, block) in self.items:
+            if not block:
+                continue
+
+            rv.append(block[0])
+
+        # Technically, if all choices ends with a jump or return, self.next
+        # is unreachable, but self.set and empty menu with conditions, or
+        # even custom display_menu realizations, will fall through to
+        # self.next, so we need to add it here, to not falsely report that
+        # self.next is unreachable.
+        if self.next is not None:
+            rv.append(self.next)
+
+        return rv
+
 
 setattr(Menu, "with", Menu.with_)  # type: ignore
 
@@ -1997,6 +2106,18 @@ class Jump(Node):
 
         return rv
 
+    def get_reachable(self):
+        rv = super().get_reachable()
+
+        # Add static target label as reachable in case we are looking
+        # for reachable labels from a single label, instead of all labels.
+        if not self.expression:
+            target = renpy.game.script.lookup_or_none(self.target)
+            if target is not None:
+                rv = [target, *rv]
+
+        return rv
+
 
 # GNDN
 class Pass(Node):
@@ -2065,6 +2186,12 @@ class While(Node):
     def restructure(self, callback):
         callback(self.block)
 
+    def get_reachable(self):
+        if self.condition == "True":
+            return [self.block[0]]
+        else:
+            return [self.block[0], *super().get_reachable()]
+
 
 class If(Node):
 
@@ -2127,6 +2254,19 @@ class If(Node):
     def restructure(self, callback):
         for _condition, block in self.entries:
             callback(block)
+
+    def get_reachable(self):
+        rv: list[Node] = []
+
+        # First branch that is always True (like else branch)
+        # can make self.next unreachable unless the block
+        # can reach it.
+        for condition, block in self.entries:
+            rv.append(block[0])
+            if condition == "True":
+                return rv
+
+        return [*rv, *super().get_reachable()]
 
 
 class UserStatement(Node):
@@ -2320,7 +2460,7 @@ class UserStatement(Node):
 
         return False
 
-    def reachable(self, is_reachable):
+    def reachable(self, is_reachable: bool) -> set[NodeName | Literal[True] | renpy.lexer.SubParse | None]:
         """
         This is used by lint to find statements reachable from or through
         this statement.
@@ -2353,6 +2493,31 @@ class UserStatement(Node):
 
                 if self.next:
                     rv.add(self.next.name)
+
+        return rv
+
+    def get_reachable(self) -> list[Node]:
+        reachable = self.reachable(True)
+
+        rv = list()
+        for name in reachable:
+            if name is None:
+                continue
+
+            if name is True:
+                continue
+
+            if isinstance(name, renpy.lexer.SubParse):
+                if name.block:
+                    rv.append(name.block[0])
+                continue
+
+            node = renpy.game.script.lookup(name)
+
+            if node is None:
+                continue
+
+            rv.append(node)
 
         return rv
 
@@ -2813,7 +2978,7 @@ class Translate(Node):
         "after",
     ]
 
-    identifier: str | None
+    identifier: str
     alternate: str | None
     language: str | None
     block: list[Node]
@@ -2887,6 +3052,20 @@ class Translate(Node):
     def restructure(self, callback):
         return callback(self.block)
 
+    def get_reachable(self):
+        rv = super().get_reachable()
+        # Language translates are not really reachable,
+        # so this branch is only for cases we check for
+        # e.g. orpahn translations.
+        if self.language is not None:
+            return rv
+
+        nodes = \
+            renpy.game.script.translator.get_all_translates(self.identifier)
+
+        rv += [n.block[0] for n in nodes.values() if n.block]
+        return rv
+
 
 class TranslateSay(Say):
     """
@@ -2910,7 +3089,7 @@ class TranslateSay(Say):
 
     @property
     def block(self) -> list[Node]:
-        return [self]
+        return []
 
     def __init__(
         self,
@@ -2999,6 +3178,21 @@ class TranslateSay(Say):
         rv = Scry()
         rv._next = self.next
 
+        return rv
+
+    def get_reachable(self):
+        rv = super().get_reachable()
+        # Language translates are not really reachable,
+        # so this branch is only for cases we check for
+        # e.g. orpahn translations.
+        if self.language is not None:
+            return rv
+
+        assert self.identifier is not None
+        nodes = \
+            renpy.game.script.translator.get_all_translates(self.identifier)
+
+        rv += [n.block[0] for n in nodes.values() if n.block]
         return rv
 
 

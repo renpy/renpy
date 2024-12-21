@@ -255,6 +255,27 @@ class ScriptTranslator(object):
         else:
             return tl.block[0]
 
+    def get_all_translates(self, identifier: str):
+        """
+        Return a dict of all existing translates for the given identifier.
+
+        The dict keys are language names, or None for the default language.
+        """
+
+        identifier = identifier.replace('.', '_')
+        language = renpy.game.preferences.language
+
+        rv: dict[str | None, renpy.ast.Translate | renpy.ast.TranslateSay] = {}
+
+        for language in self.languages:
+            try:
+                rv[language] = self.language_translates[(identifier, language)]
+            except KeyError:
+                pass
+
+        rv[None] = self.default_translates[identifier]
+        return rv
+
     def get_translate_info(self, identifier, language):
 
         identifier = identifier.replace('.', '_')
