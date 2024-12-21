@@ -26,7 +26,6 @@ from typing import Optional, Any
 
 
 import renpy
-renpy.update_path()
 
 import renpy.log
 
