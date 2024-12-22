@@ -1133,7 +1133,7 @@ class Interface(object):
         if renpy.android:
             from jnius import autoclass
             PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
-            PythonSDLActivity.hidePresplash()
+            PythonSDLActivity.mActivity.hidePresplash()
 
             print("Hid presplash.")
 
