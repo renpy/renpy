@@ -29,23 +29,18 @@ import sys
 import re
 import threading
 import warnings
+import pathlib
+import platform
+import subprocess
 
 import setuptools
 
 warnings.simplefilter("ignore", category=setuptools.SetuptoolsDeprecationWarning)
 
-
-# This flag determines if we are compiling for Android or not.
-android = "RENPY_ANDROID" in os.environ
-
-# True if we're building on ios.
-ios = "RENPY_IOS" in os.environ
-
-# True of we're building on raspberry pi.
-raspi = "RENPY_RASPBERRY_PI" in os.environ
-
-# True of we're building with emscripten.
-emscripten = "RENPY_EMSCRIPTEN" in os.environ
+# Platform selection.
+windows = platform.win32_ver()[0]
+macintosh = platform.mac_ver()[0]
+linux = not windows and not macintosh
 
 # Is coverage enabled?
 coverage = "RENPY_COVERAGE" in os.environ
@@ -53,13 +48,8 @@ coverage = "RENPY_COVERAGE" in os.environ
 # Are we doing a static build?
 static = "RENPY_STATIC" in os.environ
 
-gen = "gen"
-
-if sys.version_info.major > 2:
-    gen += "3"
-    PY2 = False
-else:
-    PY2 = True
+gen = "tmp/gen3"
+PY2 = False
 
 if coverage:
     gen += "-coverage"
@@ -70,30 +60,8 @@ if static:
 # The cython command.
 cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
-# Note that the android build sets up CFLAGS for us, and ensures
-# that necessary libraries are present. So autoconfiguration is
-# unnecessary on that platform.
-
-# The install variable is a list of directories that have Ren'Py
-# dependencies installed in them.
-if not (android or ios):
-    install = os.environ.get("RENPY_DEPS_INSTALL", "/usr")
-
-    if "::" in install:
-        install = install.split("::")
-    else:
-        install = install.split(os.pathsep)
-
-    install = [ os.path.abspath(i) for i in install ]
-
-    if "VIRTUAL_ENV" in os.environ:
-        install.insert(0, os.environ["VIRTUAL_ENV"])
-
-else:
-    install = [ ]
-
 # The include and library dirs that we compile against.
-include_dirs = [ "." ]
+include_dirs = [ "src" ]
 library_dirs = [ ]
 
 # Extra arguments that will be given to the compiler.
@@ -101,79 +69,15 @@ extra_compile_args = [ ]
 extra_link_args = [ ]
 
 
-def include(header, directory=None, optional=True):
-    """
-    Searches the install paths for `header`. If `directory` is given, we
-    will append that to each of the install paths when trying to find
-    the header. The directory the header is found in is added to include_dirs
-    if it's not present already.
+# The libraries that we link against.
+libraries = [ ]
 
-    `optional`
-        If given, returns False rather than abandoning the process.
+def library(name):
+    """
+    Links `name` into the build.
     """
 
-    if android or ios or emscripten:
-        return True
-
-    for i in install:
-
-        if directory is not None:
-            idir = os.path.join(i, "include", directory)
-        else:
-            idir = os.path.join(i, "include")
-
-        fn = os.path.join(idir, header)
-
-        if os.path.exists(fn):
-
-            if idir not in include_dirs:
-                include_dirs.append(idir)
-
-            return True
-
-    if optional:
-        return False
-
-    if directory is None:
-        print("Could not find required header {0}.".format(header))
-    else:
-        print("Could not find required header {0}/{1}.".format(directory, header))
-
-    sys.exit(-1)
-
-
-def library(name, optional=False):
-    """
-    Searches for `library`.
-
-    `optional`
-        If true, this function will return False if a library is not found,
-        rather than reporting an error.
-    """
-
-    if android or ios or emscripten:
-        return True
-
-    for i in install:
-
-        for ldir in [i, os.path.join(i, "lib"), os.path.join(i, "lib64"), os.path.join(i, "lib32") ]:
-
-            for suffix in (".so", ".a", ".dll.a", ".dylib"):
-
-                fn = os.path.join(ldir, "lib" + name + suffix)
-
-                if os.path.exists(fn):
-
-                    if ldir not in library_dirs:
-                        library_dirs.append(ldir)
-
-                    return True
-
-    if optional:
-        return False
-
-    print("Could not find required library {0}.".format(name))
-    sys.exit(-1)
+    libraries.append(name)
 
 
 # A list of extension objects that we use.
@@ -183,10 +87,21 @@ extensions = [ ]
 global_macros = [ ]
 
 
-def cmodule(name, source, libs=[], define_macros=[], includes=[], language="c", compile_args=[]):
+def cmodule(name, source, define_macros=[], language="c", compile_args=[]):
     """
-    Compiles the python module `name` from the files given in
-    `source`, and the libraries in `libs`.
+    Compiles `name`, as a Python module.
+
+    `source`
+        A list of source files that make up the module.
+
+    `define_macros`
+        A list of macros that are defined when compiling the module files.
+
+    `language`
+        The language that the module is written in. This is either "c" or "c++".
+
+    `compile_args`
+        A list of additional arguments that are passed to the compiler.
     """
 
     eca = list(extra_compile_args) + compile_args
@@ -197,11 +112,11 @@ def cmodule(name, source, libs=[], define_macros=[], includes=[], language="c", 
     extensions.append(setuptools.Extension(
         name,
         source,
-        include_dirs=include_dirs + includes,
+        include_dirs=include_dirs,
         library_dirs=library_dirs,
         extra_compile_args=eca,
         extra_link_args=extra_link_args,
-        libraries=libs,
+        libraries=libraries,
         define_macros=define_macros + global_macros,
         language=language,
         ))
@@ -213,7 +128,7 @@ necessary_gen = [ ]
 # A list of cython generation commands that will be run in parallel.
 generate_cython_queue = [ ]
 
-def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros=[], pyx=None, language="c", compile_args=[]):
+def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_args=[]):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -229,13 +144,14 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
     else:
         fn = "/".join(split_name) + ".pyx"
 
-    if os.path.exists(os.path.join("..", fn)):
-        fn = os.path.join("..", fn)
-    elif os.path.exists(fn):
-        pass
+    for d in [ ".", "src" ]:
+        prepended = os.path.join(d, fn)
+        if os.path.exists(prepended):
+            fn = prepended
+            break
     else:
-        print("Could not find {0}.".format(fn))
-        sys.exit(-1)
+        raise SystemExit("Could not find {0}.".format(fn))
+
 
     module_dir = os.path.dirname(fn)
 
@@ -282,16 +198,11 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
 
     for dep_fn in deps:
 
-        if os.path.exists(os.path.join(module_dir, dep_fn)):
-            dep_fn = os.path.join(module_dir, dep_fn)
-        elif os.path.exists(os.path.join("..", dep_fn)):
-            dep_fn = os.path.join("..", dep_fn)
-        elif os.path.exists(os.path.join("include", dep_fn)):
-            dep_fn = os.path.join("include", dep_fn)
-        elif os.path.exists(os.path.join(gen, dep_fn)):
-            dep_fn = os.path.join(gen, dep_fn)
-        elif os.path.exists(dep_fn):
-            pass
+        for d in [ module_dir, ".", "src", gen ]:
+            prepended = os.path.join(d, dep_fn)
+            if os.path.exists(prepended):
+                dep_fn = prepended
+                break
         else:
             print("{0} depends on {1}, which can't be found.".format(fn, dep_fn))
             sys.exit(-1)
@@ -310,12 +221,12 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
         generate_cython_queue.append((name, language, mod_coverage, split_name, fn, c_fn))
 
     # Build the module normally once we have the c file.
-    if compile_if:
 
-        if mod_coverage:
-            define_macros = define_macros + [ ("CYTHON_TRACE", "1") ]
+    if mod_coverage:
+        define_macros = define_macros + [ ("CYTHON_TRACE", "1") ]
 
-        cmodule(name, [ c_fn ] + source, libs=libs, includes=includes, define_macros=define_macros, language=language, compile_args=compile_args)
+    cmodule(name, [ c_fn ] + source,define_macros=define_macros, language=language, compile_args=compile_args)
+
 
 lock = threading.Condition()
 cython_failure = False
@@ -341,9 +252,9 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
 
     p = subprocess.Popen([
             cython_command,
-            "-Iinclude",
+            "-Isrc",
             "-I" + gen,
-            "-I..",
+            "-I.",
             "--3str",
             ] + annotate + lang_args + coverage_args + [
             "-X", "profile=False",
@@ -384,6 +295,7 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
 
         with open(c_fn, 'w') as f:
             f.write(ccode)
+
 
 def generate_all_cython():
     """
@@ -463,6 +375,60 @@ def copyfile(source, dest, replace=None, replace_with=None):
     shutil.copystat(sfn, dfn)
 
 
+def env(name, pkgconfig_command=None):
+    """
+    This sets an environment variable, if require. The logic is:
+
+    * If NAME is set, then keep it.
+    * Otherwise, if RENPY_NAME is set, then set NAME to RENPY_NAME.
+    * Otherwise, if pkgconfig_command is set, run it and set NAME to the output.
+    """
+
+    renpy_name = "RENPY_" + name
+    if (renpy_name in os.environ) and (name not in os.environ):
+        os.environ[name] = os.environ[renpy_name]
+
+    if name in os.environ:
+        return
+
+    if pkgconfig_command is None:
+        return
+
+    try:
+        os.environ[name] = subprocess.check_output(pkgconfig_command, shell=True, text=True).strip()
+    except Exception:
+        print(f"Could not run pkg-config to set {name}. Consider setting {name} or {renpy_name} manually.")
+
+
+def init():
+    """
+    Should be  called before anything else to initialize this module.
+    """
+
+    os.makedirs(gen, exist_ok=True)
+
+
+def check_imports(directory, *module_files):
+    """
+    This checks that the only module files imported from `directory` are listed in `module_files`.
+    """
+
+    directory = pathlib.Path(directory)
+
+    for m in sys.modules.values():
+        fn = getattr(m, "__file__", None)
+        if fn is None:
+            continue
+
+        try:
+            p = pathlib.Path(fn).relative_to(directory)
+        except ValueError:
+            continue
+
+        if str(p) not in module_files:
+            print("Module", p, "is imported, but not listed in check_imports. (And probably not distributed.)")
+
+
 def setup(name, version):
     """
     Calls the distutils setup function.
@@ -478,8 +444,3 @@ def setup(name, version):
         py_modules=py_modules,
         zip_safe=False,
         )
-
-
-# Ensure the gen directory exists.
-if not os.path.exists(gen):
-    os.mkdir(gen)

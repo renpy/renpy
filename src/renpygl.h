@@ -1,7 +1,7 @@
 #ifndef RENPY_GL_H
 #define RENPY_GL_H
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #if defined(__IPHONEOS__)
 
@@ -13,7 +13,7 @@
 
 #else
 
-#include <SDL_opengl.h>
+#include <SDL2/SDL_opengl.h>
 
 #endif
 

@@ -246,23 +246,17 @@ class Scry(object):
                 return None
 
 
-class Node(object):
+class Node(renpy.location.Location):
     """
     A node in the abstract syntax tree of the program.
 
     @ivar name: The name of this node.
-    @ivar filename: The filename where this node comes from.
-    @ivar linenumber: The line number of the line on which this node is defined.
     @ivar next: The statement that will execute after this one.
-    @ivar statement_start: If present, the first node that makes up the statement that includes this node.
     """
 
     __slots__ = [
         'name',
-        'filename',
-        'linenumber',
         'next',
-        'statement_start',
         ]
 
     # True if this node is translatable, false otherwise. (This can be set on
@@ -280,6 +274,15 @@ class Node(object):
     # * "force" force it to start.
     rollback = "normal"
 
+    # Statement_start used to be a property on all nodes.
+    @property
+    def statement_start(self):
+        return self
+
+    @statement_start.setter
+    def statement_start(self, value):
+        pass
+
     def __init__(self, loc):
         """
         Initializes this Node object.
@@ -288,7 +291,8 @@ class Node(object):
         logical line on which this Node node starts.
         """
 
-        self.filename, self.linenumber = loc
+        super().__init__(loc[0], loc[1])
+
         self.name = None
         self.next = None
 
@@ -1541,6 +1545,7 @@ class Menu(Node):
         'arguments',
         'item_arguments',
         'rollback',
+        'statement_start',
         ]
 
     def __new__(cls, *args, **kwargs):

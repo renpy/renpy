@@ -40,12 +40,8 @@ setup () {
     pushd $1 >/dev/null
 
     python setup.py $QUIET \
-        build -b build/lib.$variant -t build/tmp.$variant $BUILD_J \
+        build -b tmp/build/lib.$variant -t tmp/build/tmp.$variant $BUILD_J \
         $RENPY_BUILD_ARGS install $ADAPT_TO_SETUPTOOLS
-
-    if [ -e install_headers.py ]; then
-        python install_headers.py $VIRTUAL_ENV
-    fi
 
     popd >/dev/null
 }
@@ -55,14 +51,13 @@ if [ -e "$ROOT/pygame_sdl2" ]; then
 fi
 
 
-
 if [ -e "$ROOT/cubism" ]; then
     export CUBISM="$ROOT/cubism"
     export CUBISM_PLATFORM=${CUBISM_PLATFORM:-linux/x86_64}
     export LD_LIBRARY_PATH="$CUBISM/Core/dll/$CUBISM_PLATFORM"
 fi
 
-setup "$ROOT/module/"
+setup "$ROOT/"
 
 python "$ROOT/distribute.py" --link-directories
 

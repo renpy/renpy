@@ -25,7 +25,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define RPS_H
 
 #include <Python.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);
 void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int synchro_start, int fadeout, int tight, double start, double end, float relative_volume, PyObject *audio_filter);

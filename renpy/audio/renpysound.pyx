@@ -95,7 +95,7 @@ cdef extern from "renpysound_core.h":
 
 
 from renpy.audio.filter cimport get_apply_audio_filter
-RPS_apply_audio_filter = <void (*)(object, float *, int, int, int)> get_apply_audio_filter()
+RPS_apply_audio_filter = <void (*)(object, float *, int, int, int) noexcept> get_apply_audio_filter()
 
 
 def check_error():
@@ -518,7 +518,7 @@ def set_generate_audio_c_function(fn):
         import ctypes
         fn = ctypes.cast(fn, ctypes.c_void_p).value
 
-    RPS_generate_audio_c_function = <void (*)(float *, int)> <uintptr_t> fn
+    RPS_generate_audio_c_function = <void (*)(float *, int) noexcept> <uintptr_t> fn
 
 
 # Store the sample surfaces so they stay alive.

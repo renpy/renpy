@@ -1,4 +1,3 @@
-
 # Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -20,6 +19,35 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-ctypedef void (*apply_audio_filter_type)(object, float *, int, int, int) noexcept
+import sys
+import cython
 
-cdef apply_audio_filter_type *get_apply_audio_filter()
+@cython.auto_pickle(False)
+cdef class Location:
+
+    # Despite what it looks like, these aren't slots. This just exists to convince reduce_ex to pickle this object
+    # as if slots existed.
+    __slots__ = [ "filename", "linenumber", "column" ]
+
+    # The filename of the location.
+    cdef public str filename
+
+    # The line number of the location.
+    cdef public int linenumber
+
+    # The column number of the location.
+    cdef public int column
+
+    _types = """
+        filename: str
+        linenumber: int
+        column: int
+    """
+
+    def __reduce_ex__(self, protocol):
+        return object.__reduce_ex__(self, protocol)
+
+    def __init__(self, filename, linenumber, column=0):
+        self.filename = sys.intern(filename)
+        self.linenumber = linenumber
+        self.column = column

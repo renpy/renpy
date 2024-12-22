@@ -1,6 +1,6 @@
 #include "renpy.h"
 #include "IMG_savepng.h"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <pygame_sdl2/pygame_sdl2.h>
 #include <stdio.h>
 #include <math.h>

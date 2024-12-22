@@ -8,25 +8,12 @@ cdef extern from "stdlib.h":
 cdef extern from "pyfreetype.h":
     #ftconfig.h
     #Some tweaking may be needed on a platform-by-platform basis
-    DEF FT_SIZEOF_INT = 4
-    DEF FT_SIZEOF_LONG = 4
-
     ctypedef signed short      FT_Int16
     ctypedef unsigned short    FT_UInt16
-    IF FT_SIZEOF_INT == 4:
-        ctypedef signed int    FT_Int32
-        ctypedef unsigned int  FT_UInt32
-    ELIF FT_SIZEOF_LONG == 4:
-        ctypedef signed long   FT_Int32
-        ctypedef unsigned long FT_UInt32
-
-    IF FT_SIZEOF_INT >= 4:
-        ctypedef int           FT_Fast
-        ctypedef unsigned int  FT_UFast
-    ELIF FT_SIZEOF_LONG >= 4:
-        ctypedef long          FT_Fast
-        ctypedef unsigned long FT_UFast
-
+    ctypedef signed int    FT_Int32
+    ctypedef unsigned int  FT_UInt32
+    ctypedef int           FT_Fast
+    ctypedef unsigned int  FT_UFast
 
     # Moved up.
     cdef struct FT_ModuleRec_

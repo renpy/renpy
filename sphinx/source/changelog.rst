@@ -15,11 +15,17 @@ Requirement and Dependency Changes
 
 Ren'Py now requires Windows 10 or later to run. This means that it will no longer run on Windows 7, 8, or 8.1.
 
-Ren'Py is no longer built for 32-bit ARM linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
+Ren'Py is no longer built for 32-bit ARM Linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
 Ren'Py is still being built for 32-bit ARM Android.
+
+The Android version of Ren'Py is now being built with 16KB pages, for future Android devices that will
+require 16 KB page support.
 
 Features
 --------
+
+The new :var:`config.keep_screenshot_entering_menu` variable determines if a screenshot taken with :class:`FileTakeScreenshot`
+is kept when entering a menu context.
 
 The :propref:`thumb_offset` style property now can take a tuple giving different offsets for the two sides
 of a bar. The new :propref:`thumb_align` style property controls how a thumb is aligned with the bar.
