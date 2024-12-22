@@ -410,8 +410,14 @@ init python:
     build.classify_renpy("module/libhydrogen/**", "source")
 
     # all-platforms binary.
+    build.classify_renpy("lib/**/libpython{}.{}.dll".format(sys.version_info.major, sys.version_info.minor), "binary")
+    build.classify_renpy("lib/**/libpython*.dll", None)
+
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
+
+
+    libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
 
     if PY2:
         build.classify_renpy("lib/py2-linux-armv7l/**", "linux_arm")
