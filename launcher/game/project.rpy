@@ -603,10 +603,8 @@ init python in project:
             if project_type == "hidden":
                 pass
             elif project_type == "template":
-                #self.projects.append(p)
                 self.templates.append(p)
             elif project_type == "library":
-                #self.projects.append(p)
                 self.libraries.append(p)
             else:
                 self.projects.append(p)

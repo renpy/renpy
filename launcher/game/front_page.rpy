@@ -111,6 +111,7 @@ screen front_page_project_list():
     default folder_text = ["Projects","Templates","Libraries"]
     default folder_hover = [False,False,False]
     default folder_collapsed = [False,True,True]
+    default folder_matrix = FOLDER_MATRIX
 
     vbox:
 
@@ -123,7 +124,7 @@ screen front_page_project_list():
                     hbox:
                         spacing 5
                         if folder_hover[1]:
-                            image Transform("images/folder.svg", xysize=(25,25))
+                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
                             text folder_text[1] color REVERSE_TEXT bold True yalign 0.5
                         else:
                             image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
@@ -139,8 +140,8 @@ screen front_page_project_list():
                     xfill True
                     hbox:
                         spacing 5
-                        if folder_hover:
-                            image Transform("images/folder.svg", xysize=(25,25))
+                        if folder_hover[1]:
+                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
                             text folder_text[1] color REVERSE_TEXT bold True yalign 0.5
                         else:
                             image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
@@ -167,7 +168,7 @@ screen front_page_project_list():
                     hbox:
                         spacing 5
                         if folder_hover[2]:
-                            image Transform("images/folder.svg", xysize=(25,25))
+                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
                             text folder_text[2] color REVERSE_TEXT bold True yalign 0.5
                         else:
                             image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
@@ -184,7 +185,7 @@ screen front_page_project_list():
                     hbox:
                         spacing 5
                         if folder_hover[2]:
-                            image Transform("images/folder.svg", xysize=(25,25))
+                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
                             text folder_text[2] color REVERSE_TEXT bold True yalign 0.5
                         else:
                             image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
@@ -204,7 +205,7 @@ screen front_page_project_list():
 
         if projects:
 
-            if templates or libraries:
+            if (templates and persistent.show_templates) or libraries:
 
                 if folder_collapsed[0]:
                     button:
@@ -213,7 +214,7 @@ screen front_page_project_list():
                         hbox:
                             spacing 5
                             if folder_hover[0]:
-                                image Transform("images/folder.svg", xysize=(25,25))
+                                image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
                                 text folder_text[0] color REVERSE_TEXT bold True yalign 0.5
                             else:
                                 image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
@@ -230,7 +231,7 @@ screen front_page_project_list():
                         hbox:
                             spacing 5
                             if folder_hover[0]:
-                                image Transform("images/folder.svg", xysize=(25,25))
+                                image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
                                 text folder_text[0] color REVERSE_TEXT bold True yalign 0.5
                             else:
                                 image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
@@ -257,8 +258,9 @@ screen front_page_project_list():
 
             null height 12
 
-        textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
-        textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
+        if persistent.show_default_projects:
+            textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
+            textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
 
 
 # This is used for the right side of the screen, which is where the project-specific
