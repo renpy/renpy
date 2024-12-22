@@ -15,8 +15,11 @@ Requirement and Dependency Changes
 
 Ren'Py now requires Windows 10 or later to run. This means that it will no longer run on Windows 7, 8, or 8.1.
 
-Ren'Py is no longer built for 32-bit ARM linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
+Ren'Py is no longer built for 32-bit ARM Linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
 Ren'Py is still being built for 32-bit ARM Android.
+
+The Android version of Ren'Py is now being built with 16KB pages, for future Android devices that will
+require 16 KB page support.
 
 Features
 --------
