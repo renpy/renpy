@@ -347,6 +347,7 @@ init python:
 
         build.classify_renpy(pattern + "/**.pyi", None)
         build.classify_renpy(pattern + "/**.pyx", "source_only")
+        build.classify_renpy(pattern + "/**.pxd", "source_only")
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
