@@ -154,6 +154,7 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
 
     if tight:
         tight = 1
+    else:
         tight = 0
 
     name = name.encode("utf-8")
