@@ -346,6 +346,7 @@ init python:
             build.classify_renpy(pattern + "/**.pyo", None)
 
         build.classify_renpy(pattern + "/**.pyi", None)
+        build.classify_renpy(pattern + "/**.pyx", "source_only")
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
@@ -393,24 +394,12 @@ init python:
     build.classify_renpy("sphinx/source/inc/", None)
     build.classify_renpy("sphinx/source/**", "source_only")
 
-
-    # module.
-    build.classify_renpy("module/", "source")
-    build.classify_renpy("module/*.c", "source")
-    build.classify_renpy("module/gen/", None)
-    build.classify_renpy("module/*.h", "source")
-    build.classify_renpy("module/*.py*", "source")
-    build.classify_renpy("module/include/", "source")
-    build.classify_renpy("module/include/*.pxd", "source")
-    build.classify_renpy("module/include/*.pxi", "source")
-    build.classify_renpy("module/pysdlsound/", "source")
-    build.classify_renpy("module/pysdlsound/*.py", "source")
-    build.classify_renpy("module/pysdlsound/*.pyx", "source")
-    build.classify_renpy("module/fribidi-src/**", "source")
-    build.classify_renpy("module/tinyfiledialogs/**", "source")
-    build.classify_renpy("module/libhydrogen/**", "source")
-
-    # No-longer-needed python.
+    # Build System.
+    build.classify_renpy("setup.py", "source_only")
+    build.classify_renpy("src/**", "source_only")
+    build.classify_renpy("scripts/", "source_only")
+    build.classify_renpy("scripts/setuplib.py", "source_only")
+    build.classify_renpy("scripts/generate_styles.py", "source_only")
 
     # all-platforms binary.
     build.classify_renpy("lib/**/libpython{}.{}.dll".format(sys.version_info.major, sys.version_info.minor), "binary")

@@ -28,16 +28,18 @@ import os
 BASE = os.path.abspath(os.path.dirname(sys.argv[0]))
 os.chdir(BASE)
 
-sys.path.insert(0, os.path.join(BASE, 'scripts'))
+SCRIPTS = os.path.join(BASE, 'scripts')
+sys.path.insert(0, SCRIPTS)
 
 import setuplib
-from setuplib import windows, macintosh, linux, library, cython, find_unnecessary_gen, generate_all_cython, env
+from setuplib import windows, library, cython, find_unnecessary_gen, generate_all_cython, env
 
 import generate_styles
 
 def main():
 
     setuplib.init()
+    setuplib.check_imports(SCRIPTS, "setuplib.py", "generate_styles.py")
 
     generate_styles.generate()
 
@@ -147,6 +149,7 @@ def main():
     version = renpy.version[7:].partition(".")[0] + ".99.99"
 
     setuplib.setup("renpy", version)
+
 
 if __name__ == "__main__":
     main()

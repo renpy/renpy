@@ -29,6 +29,7 @@ import sys
 import re
 import threading
 import warnings
+import pathlib
 import platform
 import subprocess
 
@@ -405,6 +406,27 @@ def init():
     """
 
     os.makedirs(gen, exist_ok=True)
+
+
+def check_imports(directory, *module_files):
+    """
+    This checks that the only module files imported from `directory` are listed in `module_files`.
+    """
+
+    directory = pathlib.Path(directory)
+
+    for m in sys.modules.values():
+        fn = getattr(m, "__file__", None)
+        if fn is None:
+            continue
+
+        try:
+            p = pathlib.Path(fn).relative_to(directory)
+        except ValueError:
+            continue
+
+        if str(p) not in module_files:
+            print("Module", p, "is imported, but not listed in check_imports. (And probably not distributed.)")
 
 
 def setup(name, version):
