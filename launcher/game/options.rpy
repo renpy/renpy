@@ -413,6 +413,9 @@ init python:
     # No-longer-needed python.
 
     # all-platforms binary.
+    build.classify_renpy("lib/**/libpython{}.{}.dll".format(sys.version_info.major, sys.version_info.minor), "binary")
+    build.classify_renpy("lib/**/libpython*.dll", None)
+
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
 
