@@ -23,7 +23,6 @@ default persistent.show_edit_funcs = True
 default persistent.windows_console = False
 default persistent.lint_options = set()
 default persistent.use_web_doc = False
-default persistent.show_templates = True
 default persistent.show_default_projects = True
 
 init python:
@@ -255,7 +254,6 @@ screen preferences():
 
                             textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
                             textbutton _("Show default projects") style "l_checkbox" action ToggleField(persistent, "show_default_projects")
-                            textbutton _("Show template projects") style "l_checkbox" action ToggleField(persistent, "show_templates")
                             textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
 
                             if interface.local_doc_exists:

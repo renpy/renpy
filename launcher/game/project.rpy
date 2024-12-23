@@ -441,16 +441,10 @@ init python in project:
             # The projects directory.
             self.projects_directory = ""
 
-            # Normal projects, in alphabetical order by lowercase name.
-            self.projects = [ ]
+            # A list of all project types.
+            self.project_types = [ ]
 
-            # Template projects.
-            self.templates = [ ]
-
-            # Library projects.
-            self.libraries = [ ]
-
-            # All projects - normal, template, libraries, and hidden.
+            # All projects - normal, template, hidden, etc.
             self.all_projects = [ ]
 
             # Directories that have been scanned.
@@ -483,20 +477,18 @@ init python in project:
 
             self.projects_directory = persistent.projects_directory
 
-            self.projects = [ ]
-            self.templates = [ ]
-            self.libraries = [ ]
+            self.project_types = [ ]
             self.all_projects = [ ]
             self.scanned = set()
 
             if self.projects_directory is not None:
                 self.scan_directory(self.projects_directory)
 
-            self.scan_directory(config.renpy_base)
+            # Sort the projects and project folders alphabetically, set the 'Project' Folder to always be first.
+            self.all_projects.sort(key=lambda p : p.name.lower())
+            persistent.project_types.sort(key=lambda x : (x[0] != 'project', x[0].lower()))
 
-            self.projects.sort(key=lambda p : p.name.lower())
-            self.templates.sort(key=lambda p : p.name.lower())
-            self.libraries.sort(key=lambda p : p.name.lower())
+            self.scan_directory(config.renpy_base)
 
             # Select the default project.
             if persistent.active_project is not None:
@@ -552,6 +544,8 @@ init python in project:
                 ppath = os.path.join(d, pdir)
                 self.scan_directory_direct(ppath, pdir)
 
+            self.project_cleanup()
+
             # If a file called "projects.txt" exists, include any projects listed in it.
             extra_projects_fn = os.path.join(d, "projects.txt")
 
@@ -567,7 +561,6 @@ init python in project:
 
                         if len(path) > 0:
                             self.scan_directory_direct(path)
-
 
         def scan_directory_direct(self, ppath, name=None):
             """
@@ -598,19 +591,27 @@ init python in project:
             if project_filter and (p.name not in project_filter):
                 return
 
-            project_type = p.data.get("type", "normal")
+            project_type = p.data.get("type", "project")
 
-            if project_type == "hidden":
-                pass
-            elif project_type == "template":
-                self.templates.append(p)
-            elif project_type == "library":
-                self.libraries.append(p)
-            else:
-                self.projects.append(p)
+            # Determine what data types you are using, if any.  Create folders for each, default them to closed (expect Projects, which starts open).
+            if project_type != None:
+                p.project_type = project_type
+                if not any(project_type in x[0] for x in persistent.project_types):
+                    if project_type == 'project':
+                        persistent.project_types.append([project_type, False, False])
+                    else:
+                        persistent.project_types.append([project_type, True, False])
+                if project_type not in self.project_types:
+                    self.project_types.append(project_type)
 
             self.all_projects.append(p)
 
+        def project_cleanup(self):
+
+            # Cleanup any old, unused data types the user may no longer have.
+            for x in persistent.project_types:
+                if not x[0] in self.project_types:
+                    persistent.project_types.remove(x)
 
         def get(self, name):
             """

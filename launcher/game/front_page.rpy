@@ -101,162 +101,70 @@ screen front_page:
 
 # This is used by front_page to display the list of known projects on the screen.
 
-#default folder_collapsed = [False,True,False]
-
 screen front_page_project_list():
 
-    $ projects = project.manager.projects
-    $ templates = project.manager.templates
-    $ libraries = project.manager.libraries
-    default folder_text = ["Projects","Templates","Libraries"]
-    default folder_hover = [False,False,False]
-    default folder_collapsed = [False,True,True]
-    default folder_matrix = FOLDER_MATRIX
+    $ all_projects = project.manager.all_projects
+    $ project_types = persistent.project_types
 
     vbox:
 
-        if templates and persistent.show_templates:
+        if any(x[0] not in ["hidden","project"] for x in project_types):
 
-            if folder_collapsed[1]:
-                button:
-                    hover_background REVERSE_IDLE
-                    xfill True
-                    hbox:
-                        spacing 5
-                        if folder_hover[1]:
-                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
-                            text folder_text[1] color REVERSE_TEXT bold True yalign 0.5
-                        else:
-                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
-                            text folder_text[1] color IDLE bold True yalign 0.5
+            for t in project_types:
 
-                    action SetDict(folder_collapsed, 1, False)
-                    hovered SetDict(folder_hover, 1, True)
-                    unhovered SetDict(folder_hover, 1, False)
-
-            else:
-                button:
-                    hover_background REVERSE_HOVER
-                    xfill True
-                    hbox:
-                        spacing 5
-                        if folder_hover[1]:
-                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
-                            text folder_text[1] color REVERSE_TEXT bold True yalign 0.5
-                        else:
-                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
-                            text folder_text[1] color HOVER bold True yalign 0.5
-                    action SetDict(folder_collapsed, 1, True)
-                    hovered SetDict(folder_hover, 1, True)
-                    unhovered SetDict(folder_hover, 1, False)
-
-                for p in templates:
-
-                    textbutton _("[p.name!q]"):
-                        action project.Select(p)
-                        alt _("Select project [text].")
-                        style "l_list"
-
-            null height 12
-
-        if libraries:
-
-            if folder_collapsed[2]:
-                button:
-                    hover_background REVERSE_IDLE
-                    xfill True
-                    hbox:
-                        spacing 5
-                        if folder_hover[2]:
-                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
-                            text folder_text[2] color REVERSE_TEXT bold True yalign 0.5
-                        else:
-                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
-                            text folder_text[2] color IDLE bold True yalign 0.5
-
-                    action SetDict(folder_collapsed, 2, False)
-                    hovered SetDict(folder_hover, 2, True)
-                    unhovered SetDict(folder_hover, 2, False)
-
-            else:
-                button:
-                    hover_background REVERSE_HOVER
-                    xfill True
-                    hbox:
-                        spacing 5
-                        if folder_hover[2]:
-                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
-                            text folder_text[2] color REVERSE_TEXT bold True yalign 0.5
-                        else:
-                            image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
-                            text folder_text[2] color HOVER bold True yalign 0.5
-                    action SetDict(folder_collapsed, 2, True)
-                    hovered SetDict(folder_hover, 2, True)
-                    unhovered SetDict(folder_hover, 2, False)
-
-                for p in libraries:
-
-                    textbutton _("[p.name!q]"):
-                        action project.Select(p)
-                        alt _("Select project [text].")
-                        style "l_list"
-
-            null height 12
-
-        if projects:
-
-            if (templates and persistent.show_templates) or libraries:
-
-                if folder_collapsed[0]:
-                    button:
-                        hover_background REVERSE_IDLE
-                        xfill True
-                        hbox:
-                            spacing 5
-                            if folder_hover[0]:
-                                image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
-                                text folder_text[0] color REVERSE_TEXT bold True yalign 0.5
-                            else:
-                                image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
-                                text folder_text[0] color IDLE bold True yalign 0.5
-
-                        action SetDict(folder_collapsed, 0, False)
-                        hovered SetDict(folder_hover, 0, True)
-                        unhovered SetDict(folder_hover, 0, False)
-
+                if t[0] == "hidden":
+                    pass
                 else:
-                    button:
-                        hover_background REVERSE_HOVER
-                        xfill True
-                        hbox:
-                            spacing 5
-                            if folder_hover[0]:
-                                image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=folder_matrix))
-                                text folder_text[0] color REVERSE_TEXT bold True yalign 0.5
-                            else:
-                                image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
-                                text folder_text[0] color HOVER bold True yalign 0.5
-                        action SetDict(folder_collapsed, 0, True)
-                        hovered SetDict(folder_hover, 0, True)
-                        unhovered SetDict(folder_hover, 0, False)
+                    if t[1]:
+                        button:
+                           hover_background REVERSE_IDLE
+                           xfill True
+                           hbox:
+                               spacing 5
+                               if t[2]:
+                                   image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=FOLDER_MATRIX))
+                                   text t[0].capitalize() color REVERSE_TEXT bold True yalign 0.5
+                               else:
+                                   image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
+                                   text t[0].capitalize() color IDLE bold True yalign 0.5
 
-                    for p in projects:
+                           action SetDict(t, 1, False)
+                           hovered SetDict(t, 2, True)
+                           unhovered SetDict(t, 2, False)
 
-                        textbutton "[p.name!q]":
-                            action project.Select(p)
-                            alt _("Select project [text].")
-                            style "l_list"
+                    else:
+                        button:
+                           hover_background REVERSE_HOVER
+                           xfill True
+                           hbox:
+                               spacing 5
+                               if t[2]:
+                                   image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=FOLDER_MATRIX))
+                                   text t[0].capitalize() color REVERSE_TEXT bold True yalign 0.5
+                               else:
+                                   image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
+                                   text t[0].capitalize() color HOVER bold True yalign 0.5
+                           action SetDict(t, 1, True)
+                           hovered SetDict(t, 2, True)
+                           unhovered SetDict(t, 2, False)
 
-            else:
+                        for p in all_projects:
+                            if p.project_type == t[0]:
 
-                for p in projects:
+                                textbutton _("[p.name!q]"):
+                                   action project.Select(p)
+                                   alt _("Select project [text].")
+                                   style "l_list"
 
-                    textbutton "[p.name!q]":
-                        action project.Select(p)
-                        alt _("Select project [text].")
-                        style "l_list"
+        else:
+            for p in all_projects:
+                if p.project_type == "project":
+                    textbutton _("[p.name!q]"):
+                       action project.Select(p)
+                       alt _("Select project [text].")
+                       style "l_list"
 
-            null height 12
+        null height 12
 
         if persistent.show_default_projects:
             textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
