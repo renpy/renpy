@@ -255,7 +255,7 @@ init -1150 python in gui:
     button_image_extension = ".png"
 
     def button_properties(kind):
-        """
+        r"""
         :doc: gui
 
         Given a `kind` of button, returns a dictionary giving standard style

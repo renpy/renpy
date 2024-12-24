@@ -272,7 +272,7 @@ init -1500 python:
 
     @renpy.pure
     class ScreenVariableValue(__GenericValue):
-        """
+        r"""
         :doc: value
         :args: {args}
 
@@ -314,7 +314,7 @@ init -1500 python:
 
     # unpure
     class LocalVariableValue(DictValue):
-        """
+        r"""
         :doc: value
         :args: {args}
 
