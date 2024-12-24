@@ -285,9 +285,12 @@ class TextSegment(object):
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
 
-    def take_style(self, style, layout):
+    def take_style(self, style, layout, context=None):
         """
         Takes the style of this text segment from the named style object.
+
+        `context`
+            Text given the context the style is taken in. Used to produce error messages.
         """
 
         self.antialias = style.antialias
@@ -325,7 +328,12 @@ class TextSegment(object):
         self.axis = style.axis
         self.instance = style.instance
 
+        if context and style.textshader and not self.shader:
+            raise Exception("%s supplies a textshader, but the Text displayable does not use textshaders. Consider using config.default_textshader to opt-in." % (context,))
+
         self.shader = renpy.text.shader.get_textshader(style.textshader)
+
+
 
     # From here down is the public glyph API.
 
@@ -1351,7 +1359,7 @@ class Layout(object):
                     vert_style = ts.vertical
                     size = ts.size
 
-                    ts.take_style(hls, self)
+                    ts.take_style(hls, self, "A hyperlink style")
 
                     ts.vertical = vert_style
                     ts.hyperlink = link
@@ -1385,7 +1393,7 @@ class Layout(object):
 
                 elif tag == "":
                     style = getattr(renpy.store.style, value)
-                    push().take_style(style, self)
+                    push().take_style(style, self, "The %s style" % value)
 
                 elif tag == "font":
                     value = renpy.config.font_name_map.get(value, value)
@@ -1447,7 +1455,7 @@ class Layout(object):
                     ts = push()
                     # inherit vertical style
                     vert_style = ts.vertical
-                    ts.take_style(style.ruby_style, self)
+                    ts.take_style(style.ruby_style, self, "The ruby style")
                     ts.vertical = vert_style
                     ts.ruby_top = True
                     self.has_ruby = True
@@ -1456,7 +1464,7 @@ class Layout(object):
                     ts = push()
                     # inherit vertical style
                     vert_style = ts.vertical
-                    ts.take_style(style.altruby_style, self)
+                    ts.take_style(style.altruby_style, self, "The altruby style")
                     ts.vertical = vert_style
                     ts.ruby_top = "alt"
                     self.has_ruby = True
