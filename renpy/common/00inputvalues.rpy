@@ -130,7 +130,7 @@ init -1510 python:
             self.returnable = returnable
 
     class ScreenVariableInputValue(__GenericInputValue):
-        """
+        r"""
         :doc: input_value
         :args: {args}
 
@@ -249,7 +249,7 @@ init -1510 python:
 
     # not pure
     class LocalVariableInputValue(DictInputValue):
-        """
+        r"""
         :doc: input_value
         :args: {args}
 

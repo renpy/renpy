@@ -141,7 +141,7 @@ init -1500 python:
 
     @renpy.pure
     class Continue(Action, DictEquality):
-        """
+        r"""
         :doc: menu_action
 
         Causes the last save to be loaded.
