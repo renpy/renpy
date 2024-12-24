@@ -1100,12 +1100,14 @@ fix_dlc("renios", "renios")
 
             prefix = py("lib/py{major}-")
 
-            if os.path.exists(linux_i686):
+            i686fn = os.path.join(config.renpy_base, prefix + "linux-i686/renpy")
+
+            if os.path.exists(i686fn):
 
                 self.add_file(
                     linux_i686,
                     prefix + "linux-i686/" + self.executable_name,
-                    os.path.join(config.renpy_base, prefix + "linux-i686/renpy"),
+                    i686fn,
                     True)
 
             self.add_file(
