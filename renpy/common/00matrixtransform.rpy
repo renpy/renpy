@@ -67,15 +67,15 @@ init -1400 python:
 
     class OffsetMatrix(TransformMatrix, DictEquality):
         nargs = 3
-        function = Matrix.offset
+        function = staticmethod(Matrix.offset)
         __doc__ = TransformMatrix._document(Matrix.offset)
 
     class RotateMatrix(TransformMatrix, DictEquality):
         nargs = 3
-        function = Matrix.rotate
+        function = staticmethod(Matrix.rotate)
         __doc__ = TransformMatrix._document(Matrix.rotate)
 
     class ScaleMatrix(TransformMatrix, DictEquality):
         nargs = 3
-        function = Matrix.scale
+        function = staticmethod(Matrix.scale)
         __doc__ = TransformMatrix._document(Matrix.scale)
