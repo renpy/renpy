@@ -1334,7 +1334,7 @@ class RawMultipurpose(RawStatement):
             except Exception:
                 continue
 
-            if isinstance(i, ATLTransformBase):
+            if isinstance(i, ATLTransformBase) and (i.child is None):
                 i.atl.predict(ctx)
                 return
 
