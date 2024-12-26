@@ -298,7 +298,7 @@ class Token:
 
             prefix = re.match(
                 r'([urfbURFB])*("|\'|"""|\'\'\')', string)
-            assert prefix is not None
+            assert prefix is not None, repr(string)
             mods = prefix.group(1) or ""
             quotes = prefix.group(2)
 
@@ -617,7 +617,7 @@ class Tokenizer:
     def _tokenize(self) -> Iterator[Token]:
         parens: list[str] = []
         f_string_depth = 0
-        f_string_parts: list[str] = []
+        f_string_parts: list[tokenize.TokenInfo] = []
         hold_number = None
 
         def unmatched_paren():
@@ -635,47 +635,50 @@ class Tokenizer:
                                   f" at {self.filename}:{lineno}:{col_offset}")
 
         try:
-            for (
-                type,
-                string,
-                (start_lineno, start_colno),
-                (end_lineno, end_colno),
-                _,
-            ) in tokenize.generate_tokens(self._readline):
+            for t in tokenize.generate_tokens(self._readline):
+                (
+                    type,
+                    string,
+                    (start_lineno, start_colno),
+                    (end_lineno, end_colno),
+                    _,
+                ) = t
+
                 if type == tokenize.ENDMARKER:
                     continue
 
                 # Tokenize doesn't report unmatched parens and bad order of
                 # parens, but Python itself does, so we do too.
-                elif string == "(":
-                    parens.append("(")
-                elif string == ")":
-                    if not parens:
-                        unmatched_paren()
-                    elif parens[-1] != "(":
-                        wrong_paren()
-                    else:
-                        parens.pop()
+                elif type == tokenize.OP:
+                    if string == "(":
+                        parens.append("(")
+                    elif string == ")":
+                        if not parens:
+                            unmatched_paren()
+                        elif parens[-1] != "(":
+                            wrong_paren()
+                        else:
+                            parens.pop()
 
-                elif string == "[":
-                    parens.append("[")
-                elif string == "]":
-                    if not parens:
-                        unmatched_paren()
-                    elif parens[-1] != "[":
-                        wrong_paren()
-                    else:
-                        parens.pop()
+                    elif string == "[":
+                        parens.append("[")
+                    elif string == "]":
+                        if not parens:
+                            unmatched_paren()
+                        elif parens[-1] != "[":
+                            wrong_paren()
+                        else:
+                            parens.pop()
 
-                elif string == "{":
-                    parens.append("{")
-                elif string == "}":
-                    if not parens:
-                        unmatched_paren()
-                    elif parens[-1] != "{":
-                        wrong_paren()
-                    else:
-                        parens.pop()
+                    elif string == "{":
+                        parens.append("{")
+                    elif string == "}":
+                        if not parens:
+                            unmatched_paren()
+                        elif parens[-1] != "{":
+                            wrong_paren()
+                        else:
+                            parens.pop()
 
                 # We care only about first depth. Inners is Python's realm.
                 # We do not provide PEP 701 tokens, but if someone really wants
@@ -687,11 +690,15 @@ class Tokenizer:
                     f_string_depth -= 1
                     if not f_string_depth:
                         type = tokenize.STRING
-                        string = "".join(f_string_parts)
+
+                        f_string_parts.append(t)
+                        untok = tokenize.Untokenizer()
+                        untok.prev_row, untok.prev_col = f_string_parts[0].start
+                        string = untok.untokenize(f_string_parts)
                         f_string_parts.clear()
 
                 if f_string_depth:
-                    f_string_parts.append(string)
+                    f_string_parts.append(t)
                     continue
 
                 if hold_number is None and type == tokenize.NUMBER:
