@@ -14,6 +14,9 @@ from cpython.object cimport PyObject
 from cpython.ref cimport Py_XINCREF, Py_XDECREF
 
 
+from sys import intern
+
+
 cdef class CObject:
 
     # The number of value unions in the storage allocation.
@@ -23,18 +26,103 @@ cdef class CObject:
     cdef unsigned char index_count
 
     # The column number of this object
-    cdef unsigned short column
+    cdef public unsigned short column
 
     # The line number of this object.
-    cdef unsigned int linenumber
+    cdef public unsigned int linenumber
 
     # This points to value_count PyObject *s, followed by index_count bytes
     cdef PyObject **values
 
+    def __init__(self):
+
+        cdef int i
+        cdef int slot_count = self.__class__._slot_count
+
+        self.value_count = slot_count
+        self.index_count = slot_count
+
+        self.values = <PyObject **>calloc(slot_count, sizeof(PyObject *) + 1)
+
+        cdef unsigned char *indexes = <unsigned char *>(self.values + slot_count)
+
+        for i in range(slot_count):
+            indexes[i] = i
+
+    def __dealloc__(self):
+
+        cdef int i
+        cdef int slot_count = self.__class__._slot_count
+
+        for i in range(slot_count):
+            Py_XDECREF(self.values[i])
+
+        free(self.values)
+
 
 cdef class Slot:
 
+    # The index of this slot inside the indexes contained by CObject.
     cdef public int index
+
+    # The default value of this slot.
+    cdef public object default_value
+
+    # Whether this slot should be interned.
+    cdef public bint intern
+
+    # The name of this slot.
+    cdef public str name
+
+    def __init__(self, default_value, intern=False):
+
+        self.default_value = default_value
+        self.intern = intern
+
+    def __get__(self, CObject instance, owner):
+
+        if self.index >= instance.index_count:
+            return self.default_value
+
+        cdef unsigned char *indexes = <unsigned char *> (instance.values + instance.value_count)
+        cdef int index = indexes[self.index]
+
+        if index >= instance.value_count:
+            return self.default_value
+
+        cdef PyObject *rv = instance.values[index]
+
+        if rv is NULL:
+            return self.default_value
+
+        return <object> rv
+
+    def __set__(self, CObject instance, value):
+
+        if self.intern:
+            value = intern(value)
+
+        cdef PyObject *v
+
+        if value == self.default_value:
+            v = NULL
+        else:
+            v = <PyObject *> value
+
+        if instance.index_count != instance.value_count:
+            raise AttributeError("Cannot set a compressed slot.")
+
+        assert self.index < instance.index_count
+
+        cdef unsigned char *indexes = <unsigned char *> (instance.values + instance.value_count)
+        cdef int index = indexes[self.index]
+
+        assert index < instance.value_count
+
+        Py_XDECREF(instance.values[index])
+        Py_XINCREF(v)
+        instance.values[index] = v
+
 
 
 class Metaclass(type):
@@ -56,9 +144,10 @@ class Metaclass(type):
         else:
             slot_count = base._slot_count
 
-        for v in namespace.values():
+        for k, v in namespace.items():
             if isinstance(v, Slot):
                 v.index = slot_count
+                v.name = k
                 slot_count += 1
 
         namespace["_slot_count"] = slot_count
