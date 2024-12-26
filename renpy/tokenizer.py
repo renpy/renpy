@@ -473,6 +473,10 @@ class Tokenizer:
                 if l.strip() == '"""':
                     state = PYTHON
                     yield "\n"
+
+                    # All python lines are virtually dedented, so result Python
+                    # code has correct column offsets.
+                    self.col_offset -= len(prefix)
                     continue
 
                 # Ignore empty and comments.
@@ -496,10 +500,6 @@ class Tokenizer:
                 # XXX: This does not work for 'init python: # Comment'...
                 if sl[-1] == ":":
                     prefix += "    "
-
-                # Deduct the column offset, so error positions will be correct
-                # for python code.
-                self.col_offset -= len(prefix)
 
                 yield l
                 continue
