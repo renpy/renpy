@@ -277,18 +277,19 @@ class Token:
         end_col_offset: int,
         physical_offset: tuple[int, int],
     ):
-        if type == tokenize.ERRORTOKEN and string == "$":  # FIXME: In 3.12 it is OP
-            kind = OP
-            exact_kind = DOLLAR
-        elif type == tokenize.ERRORTOKEN:
+        if type == tokenize.ERRORTOKEN:
             raise SyntaxError(f"Error token with value: {string!r} on line "
                               f"{lineno + physical_offset[0]}")
 
         # Exact name is one of predefined.
         elif type == tokenize.OP:
-            kind = OP
-            type = tokenize.EXACT_TOKEN_TYPES[string]
-            exact_kind = TokenKind(tokenize.tok_name[type].lower())
+            if string == "$":
+                kind = OP
+                exact_kind = DOLLAR
+            else:
+                kind = OP
+                type = tokenize.EXACT_TOKEN_TYPES[string]
+                exact_kind = TokenKind(tokenize.tok_name[type].lower())
 
         # f-strings and bytes are expressions in Ren'Py,
         # and raw strings are handled differently.
@@ -353,6 +354,10 @@ class Token:
                 exact_kind = IDENTIFIER
             else:
                 exact_kind = NON_IDENTIFIER
+
+            # Intern all names, so we have only a single instance
+            # of often overlapping names.
+            string = sys.intern(string)
 
         else:
             kind = exact_kind = TokenKind(tokenize.tok_name[type].lower())
@@ -610,59 +615,108 @@ class Tokenizer:
         return line
 
     def _tokenize(self) -> Iterator[Token]:
+        parens: list[str] = []
+        f_string_depth = 0
+        f_string_parts: list[str] = []
         hold_number = None
 
+        def unmatched_paren():
+            if not self.no_errors:
+                lineno = start_lineno + self.linenumber
+                col_offset = start_colno + self.col_offset
+                raise SyntaxError(f"unmatched '{string}' at {self.filename}:{lineno}:{col_offset}")
+
+        def wrong_paren():
+            if not self.no_errors:
+                lineno = start_lineno + self.linenumber
+                col_offset = start_colno + self.col_offset
+                raise SyntaxError(f"closing parenthesis '{string}' "
+                                  f"does not match opening parenthesis '{parens[-1]}'"
+                                  f" at {self.filename}:{lineno}:{col_offset}")
+
         try:
-            for t in tokenize.generate_tokens(self._readline):
-                if t.type == tokenize.ENDMARKER:
+            for (
+                type,
+                string,
+                (start_lineno, start_colno),
+                (end_lineno, end_colno),
+                _,
+            ) in tokenize.generate_tokens(self._readline):
+                if type == tokenize.ENDMARKER:
                     continue
 
-                start_lineno, start_colno = t.start
-                end_lineno, end_colno = t.end
+                # Tokenize doesn't report unmatched parens and bad order of
+                # parens, but Python itself does, so we do too.
+                elif string == "(":
+                    parens.append("(")
+                elif string == ")":
+                    if not parens:
+                        unmatched_paren()
+                    elif parens[-1] != "(":
+                        wrong_paren()
+                    else:
+                        parens.pop()
 
-                result = Token(
-                    t.type,
-                    t.string,
-                    self.filename,
-                    start_lineno,
-                    start_colno,
-                    end_lineno,
-                    end_colno,
-                    (self.linenumber, self.col_offset),
-                )
+                elif string == "[":
+                    parens.append("[")
+                elif string == "]":
+                    if not parens:
+                        unmatched_paren()
+                    elif parens[-1] != "[":
+                        wrong_paren()
+                    else:
+                        parens.pop()
 
-                if hold_number is None and t.type == tokenize.NUMBER:
-                    hold_number = result
+                elif string == "{":
+                    parens.append("{")
+                elif string == "}":
+                    if not parens:
+                        unmatched_paren()
+                    elif parens[-1] != "{":
+                        wrong_paren()
+                    else:
+                        parens.pop()
+
+                # We care only about first depth. Inners is Python's realm.
+                # We do not provide PEP 701 tokens, but if someone really wants
+                # them, they can tokenize our token string again at parse time.
+                elif type == tokenize.FSTRING_START:
+                    f_string_depth += 1
+
+                elif type == tokenize.FSTRING_END:
+                    f_string_depth -= 1
+                    if not f_string_depth:
+                        type = tokenize.STRING
+                        string = "".join(f_string_parts)
+                        f_string_parts.clear()
+
+                if f_string_depth:
+                    f_string_parts.append(string)
                     continue
 
-                # If we have '0' on hold check if we can collapse it
-                # with next token.
+                if hold_number is None and type == tokenize.NUMBER:
+                    hold_number = Token(
+                        type,
+                        string,
+                        self.filename,
+                        start_lineno,
+                        start_colno,
+                        end_lineno,
+                        end_colno,
+                        (self.linenumber, self.col_offset),
+                    )
+                    continue
+
                 if hold_number is not None:
-                    # Tokens are not next to each other, yield both.
+                    # Tokens are next to each other and next token is a NAME,
+                    # which is a valid RenPy non-identifier (e.g. image attribute).
                     if (
-                        hold_number.end_col_offset != result.col_offset or
-                        hold_number.end_lineno != result.lineno
+                        type == tokenize.NAME and
+                        hold_number.end_col_offset == start_colno and
+                        hold_number.end_lineno == start_lineno
                     ):
-                        yield hold_number
-                        hold_number = None
-
-                    # Python 2 style octal numbers are still valid in Ren'Py.
-                    # Tokenize report this as two numbers next to each other.
-                    # This is no longer needed in Python 3.12+
-                    elif t.type == tokenize.NUMBER:
-                        hold_number.string += result.string
-                        hold_number.end_lineno = result.end_lineno
-                        hold_number.end_col_offset = result.end_col_offset
-
-                        # We don't yield it yet, because '01attr' is 3 Python tokens.
-                        continue
-
-                    # 0-prefixed names are valid in Ren'Py (e.g. image attributes).
-                    # NUMBER "$1" and NAME "$2" should appear as NAME "$1$2"
-                    elif t.type == tokenize.NAME:
-                        result.string = f"{hold_number.string}{result.string}"
-                        result.lineno = hold_number.lineno
-                        result.col_offset = hold_number.col_offset
+                        string = f"{hold_number.string}{string}"
+                        start_colno = hold_number.col_offset
                         hold_number = None
 
                     # Otherwise we yield a hold number and the result.
@@ -670,7 +724,16 @@ class Tokenizer:
                         yield hold_number
                         hold_number = None
 
-                yield result
+                yield Token(
+                    type,
+                    string,
+                    self.filename,
+                    start_lineno,
+                    start_colno,
+                    end_lineno,
+                    end_colno,
+                    (self.linenumber, self.col_offset),
+                )
 
         except IndentationError as err:
             line, column = err.args[1][1:3]
@@ -696,64 +759,10 @@ class Tokenizer:
 
         self._tokenized = False
 
-        def unmatched_paren():
-            if not self.no_errors:
-                lineno = token.lineno + token.physical_offset[0]
-                col_offset = token.col_offset + token.physical_offset[1]
-                raise SyntaxError(f"unmatched '{token.string}' at {self.filename}:{lineno}:{col_offset}")
-
-        def wrong_paren():
-            if not self.no_errors:
-                lineno = token.lineno + token.physical_offset[0]
-                col_offset = token.col_offset + token.physical_offset[1]
-                raise SyntaxError(f"closing parenthesis '{token.string}' "
-                                  f"does not match opening parenthesis '{parens[-1]}'"
-                                  f" at {self.filename}:{lineno}:{col_offset}")
-
-        parens: list[str] = []
-        lpar = "("
-        lbrace = "{"
-        lsqb = "["
         for token in self._tokenize():
-            # Intern all names, so we have only a single instance
-            # of often overlapping names.
-            if token.kind is NAME:
-                token.string = sys.intern(token.string)
-
-            elif token.exact_kind is LPAR:
-                parens.append(lpar)
-            elif token.exact_kind is RPAR:
-                if not parens:
-                    unmatched_paren()
-                elif parens[-1] is not lpar:
-                    wrong_paren()
-                else:
-                    parens.pop()
-
-            elif token.exact_kind is LBRACE:
-                parens.append(lbrace)
-            elif token.exact_kind is RBRACE:
-                if not parens:
-                    unmatched_paren()
-                elif parens[-1] is not lbrace:
-                    wrong_paren()
-                else:
-                    parens.pop()
-
-            elif token.exact_kind is LSQB:
-                parens.append(lsqb)
-            elif token.exact_kind is RSQB:
-                if not parens:
-                    unmatched_paren()
-                elif parens[-1] is not lsqb:
-                    wrong_paren()
-                else:
-                    parens.pop()
-
             self._tokens.append(token)
             yield token
 
-        # self._tokenize will raise SyntaxError for unclosed paren or string literal.
         self._tokenized = True
 
     def list_physical_lines(self) -> list[str]:
