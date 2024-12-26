@@ -1100,22 +1100,12 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
         try:
             with save_warnings():
-                # filename should not be a valid file name, so Python tokenizer
-                # function 'get_error_line_from_tokenizer_buffers' does not try
-                # to read from the file to get the size of the buffer of error
-                # line.
-                tree = compile(source, "<tree>", py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
         except SyntaxError as orig_e:
-            # Set back filename to correct one.
-            # For what it worth, '_PyPegen_raise_error_known_location'
-            # fixes lineno, col_offset and end_col_offset, but not end_lineno.
-            # We don't use it, so whatever.
-            orig_e.filename = filename
-
             try:
                 fixed_source = renpy.compat.fixes.fix_tokens(source)
                 with save_warnings():
-                    tree = compile(fixed_source, "<tree>", py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                    tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
             except Exception:
                 raise orig_e
 
