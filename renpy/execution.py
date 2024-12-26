@@ -494,7 +494,7 @@ class Context(renpy.object.Object):
         """
 
         ps = pyast.Pass(lineno=node.linenumber, col_offset=0)
-        module = pyast.Module(lineno=node.linenumber, col_offset=0, body=[ ps ], type_ignores=[])
+        module = pyast.Module(body=[ps], type_ignores=[])
         code = compile(module, node.filename, 'exec')
         exec(code)
 

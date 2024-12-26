@@ -509,7 +509,7 @@ class WrapNode(ast.NodeTransformer):
                     kw_defaults=[ ],
                     defaults=[ ],
                 ),
-                body=node,
+                body=node,  # type: ignore
             ),
             args=call_args,
             keywords=[ ],
@@ -662,111 +662,111 @@ class WrapNode(ast.NodeTransformer):
 
         return node
 
-    def visit_Assign(self, n):
-        n = self.generic_visit(n)
-        return self.wrap_starred_assign(n, n.targets) # type: ignore
+    def visit_Assign(self, node: ast.Assign):
+        node = self.generic_visit(node)  # type: ignore
+        return self.wrap_starred_assign(node, node.targets)
 
-    def visit_AnnAssign(self, n):
-        n = self.generic_visit(n)
-        return self.wrap_starred_assign(n, [ n.target ]) # type: ignore
+    def visit_AnnAssign(self, node: ast.AnnAssign):
+        node = self.generic_visit(node)  # type: ignore
+        return self.wrap_starred_assign(node, [node.target])
 
-    def visit_For(self, n):
-        n = self.generic_visit(n)
-        return self.wrap_starred_for(n)
+    def visit_For(self, node):
+        node = self.generic_visit(node)
+        return self.wrap_starred_for(node)
 
-    def visit_AsyncFor(self, n):
-        n = self.generic_visit(n)
-        return self.wrap_starred_for(n)
+    def visit_AsyncFor(self, node):
+        node = self.generic_visit(node)
+        return self.wrap_starred_for(node)
 
-    def visit_With(self, n):
-        n = self.generic_visit(n)
-        return self.wrap_starred_with(n)
+    def visit_With(self, node):
+        node = self.generic_visit(node)
+        return self.wrap_starred_with(node)
 
-    def visit_AsyncWith(self, n):
-        n = self.generic_visit(n)
-        return self.wrap_starred_with(n)
+    def visit_AsyncWith(self, node):
+        node = self.generic_visit(node)
+        return self.wrap_starred_with(node)
 
-    def visit_ClassDef(self, n):
-        n = self.generic_visit(n)
+    def visit_ClassDef(self, node: ast.ClassDef):
+        node = self.generic_visit(node)  # type: ignore
 
-        if not n.bases: # type: ignore
-            n.bases.append(ast.Name(id="object", ctx=ast.Load())) # type: ignore
+        # This will force the class to inherit from RevertableObject.
+        if not node.bases:
+            node.bases.append(ast.Name(id="object", ctx=ast.Load()))
 
-        return n
+        return node
 
     def visit_GeneratorExp(self, node):
         return self.wrap_generator(node)
 
-    def visit_SetComp(self, n):
+    def visit_SetComp(self, node):
         return ast.Call(
             func=ast.Name(
                 id="__renpy__set__",
                 ctx=ast.Load()
-                ),
-            args=[ self.wrap_generator(n) ],
-            keywords=[ ])
+            ),
+            args=[self.wrap_generator(node)],
+            keywords=[])
 
-    def visit_Set(self, n):
+    def visit_Set(self, node):
 
         return ast.Call(
             func=ast.Name(
                 id="__renpy__set__",
                 ctx=ast.Load()
-                ),
-            args=[ self.generic_visit(n) ],
-            keywords=[ ])
+            ),
+            args=[self.generic_visit(node)],  # type: ignore
+            keywords=[])
 
-    def visit_ListComp(self, n):
+    def visit_ListComp(self, node):
 
         return ast.Call(
             func=ast.Name(
                 id="__renpy__list__",
                 ctx=ast.Load()
-                ),
-            args=[ self.wrap_generator(n) ],
-            keywords=[ ])
+            ),
+            args=[self.wrap_generator(node)],
+            keywords=[])
 
-    def visit_List(self, n):
+    def visit_List(self, node):
 
-        if not isinstance(n.ctx, ast.Load):
-            return self.generic_visit(n)
+        if not isinstance(node.ctx, ast.Load):
+            return self.generic_visit(node)
 
         return ast.Call(
             func=ast.Name(
                 id="__renpy__list__",
                 ctx=ast.Load()
-                ),
-            args=[ self.generic_visit(n) ],
-            keywords=[ ])
+            ),
+            args=[self.generic_visit(node)],  # type: ignore
+            keywords=[])
 
-    def visit_DictComp(self, n):
+    def visit_DictComp(self, node):
         return ast.Call(
             func=ast.Name(
                 id="__renpy__dict__",
                 ctx=ast.Load()
-                ),
-            args=[ self.wrap_generator(n) ],
-            keywords=[ ])
+            ),
+            args=[self.wrap_generator(node)],
+            keywords=[])
 
-    def visit_Dict(self, n):
+    def visit_Dict(self, node):
 
         return ast.Call(
             func=ast.Name(
                 id="__renpy__dict__",
                 ctx=ast.Load()
-                ),
-            args=[ self.generic_visit(n) ],
-            keywords=[ ])
+            ),
+            args=[self.generic_visit(node)],  # type: ignore
+            keywords=[])
 
-    def visit_FormattedValue(self, n):
-        n = wrap_formatted_value(n)
-        return self.generic_visit(n)
+    def visit_FormattedValue(self, node):
+        node = wrap_formatted_value(node)
+        return self.generic_visit(node)
 
-    def visit_Match(self, node : ast.Match) -> Any:
-        n : ast.Match = self.generic_visit(node) # type: ignore
-        n.cases = [ self.wrap_match_case(i) for i in n.cases ]
-        return n
-
+    def visit_Match(self, node: ast.Match):
+        node = self.generic_visit(node)   # type: ignore
+        node.cases = [self.wrap_match_case(i) for i in node.cases]
+        return node
 
 
 wrap_node = WrapNode()
