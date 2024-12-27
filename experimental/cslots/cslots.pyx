@@ -19,6 +19,15 @@ from sys import intern
 cdef COMPRESSED_FLAG = 0x80
 cdef INDEX_COUNT_MASK = 0x7f
 
+cdef INTEGER_FLAG = 0x01
+
+cdef union Value:
+    PyObject *object
+    unsigned long long integer
+
+# If
+
+
 cdef class CObject:
 
     # The number of indexes the object has. This also stores COMPRESSED_FLAG.
@@ -34,7 +43,7 @@ cdef class CObject:
     cdef public unsigned int linenumber
 
     # This points to value_count PyObject *s, followed by index_count bytes
-    cdef PyObject **values
+    cdef Value *values
 
     # Note: Adding any non-slot objects to this object will require tp_traverse and tp_clear to be
     # changed.
@@ -42,25 +51,23 @@ cdef class CObject:
     def __init__(self):
 
         cdef int i
-        cdef int slot_count = self.__class__._slot_count
+        cdef int cslot_count = self.__class__._cslot_count
 
-        self.value_count = slot_count
-        self.index_count = slot_count
+        self.value_count = cslot_count
+        self.index_count = cslot_count
 
-        self.values = <PyObject **>calloc(slot_count, sizeof(PyObject *) + 1)
+        self.values = <Value *> calloc(cslot_count, sizeof(Value) + 1)
 
-        cdef unsigned char *indexes = <unsigned char *>(self.values + slot_count)
+        cdef unsigned char *indexes = <unsigned char *>(self.values + cslot_count)
 
-        for i in range(slot_count):
+        for i in range(cslot_count):
             indexes[i] = i
 
     def __dealloc__(self):
 
-        cdef int i
-        cdef int slot_count = self.__class__._slot_count
-
-        for i in range(slot_count):
-            Py_XDECREF(self.values[i])
+        for i in range(self.value_count):
+            if not self.values[i].integer & INTEGER_FLAG:
+                Py_XDECREF(self.values[i].object)
 
         free(self.values)
 
@@ -74,8 +81,11 @@ cdef int cobject_tp_traverse(PyObject *raw, visitproc visit, void *arg) except -
     cdef CObject self = <CObject> raw
 
     for i in range(self.value_count):
-        if self.values[i] is not NULL:
-            visit(<PyObject *>self.values[i], arg)
+        if self.values[i].integer & INTEGER_FLAG:
+            continue
+
+        if self.values[i].object is not NULL:
+            visit(<PyObject *> self.values[i].object, arg)
 
     return 0
 
@@ -88,8 +98,11 @@ cdef int cobject_tp_clear(object raw) except -1:
     cdef CObject self = raw
 
     for i in range(self.value_count):
-        if self.values[i] is not NULL:
-            Py_CLEAR(self.values[i])
+        if self.values[i].integer & INTEGER_FLAG:
+            continue
+
+        if self.values[i].object is not NULL:
+            Py_CLEAR(self.values[i].object)
 
     return 0
 
@@ -131,7 +144,10 @@ cdef class Slot:
         if index >= instance.value_count:
             return self.default_value
 
-        cdef PyObject *rv = instance.values[index]
+        if instance.values[index].integer & INTEGER_FLAG:
+            return instance.values[index].integer >> 1
+
+        cdef PyObject *rv = instance.values[index].object
 
         if rv is NULL:
             return self.default_value
@@ -162,15 +178,14 @@ cdef class Slot:
         if index >= instance.value_count:
             raise AttributeError("Index is too large for object.")
 
-        Py_XDECREF(instance.values[index])
+        if not instance.values[index].integer & INTEGER_FLAG:
+            Py_XDECREF(instance.values[index].object)
+
         Py_XINCREF(v)
-        instance.values[index] = v
+        instance.values[index].object = v
 
 
 class Metaclass(type):
-
-    slot_count: int
-    "The number of slots in this class and all of its parents."
 
     def __new__(cls, name, bases, namespace, **kwds):
 
@@ -182,22 +197,30 @@ class Metaclass(type):
         base = bases[0]
 
         if base is CObject:
-            slot_count = 0
+            cslot_count = 0
+            cslot_map = { }
+            cslot_list = [ ]
         else:
-            slot_count = base._slot_count
+            cslot_count = base._cslot_count
+            cslot_map = dict(base._cslot_map)
+            cslot_list = list(base._cslot_list)
+
 
         for k, v in namespace.items():
             if isinstance(v, Slot):
-                v.number = slot_count
+                v.number = cslot_count
                 v.name = k
-                slot_count += 1
+                cslot_count += 1
 
-        namespace["_slot_count"] = slot_count
+        namespace["_cslot_count"] = cslot_count
+        namespace["_cslot_map"] = cslot_map
+        namespace["_cslot_list"] = cslot_list
 
         return type.__new__(cls, name, bases, namespace)
 
 
 class Object(CObject, metaclass=Metaclass):
+
     pass
 
 
