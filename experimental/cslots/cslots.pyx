@@ -76,6 +76,15 @@ cdef class CObject:
 
         PyMem_Free(self.values)
 
+    def _kill(self):
+
+        for i in range(self.value_count):
+            if not self.values[i].integer & INTEGER_FLAG:
+                Py_XDECREF(self.values[i].object)
+
+            self.values[i].object = NULL
+
+
     def _compress(self):
 
         if self.index_count & COMPRESSED_FLAG:
@@ -123,49 +132,10 @@ cdef class CObject:
 
         self.values = new_values
 
+
+
     def __sizeof__(self):
         return sizeof(CObject) + self.value_count * sizeof(Value) + self.index_count
-
-cdef int cobject_tp_traverse(PyObject *raw, visitproc visit, void *arg) except -1:
-    """
-    Supports cyclic garbage collection by visiting objects in slots.
-    """
-
-
-    cdef CObject self = <CObject> raw
-
-    for i in range(self.value_count):
-        if self.values[i].integer & INTEGER_FLAG:
-            continue
-
-        if self.values[i].object is not NULL:
-            visit(<PyObject *> self.values[i].object, arg)
-
-    return 0
-
-
-cdef int cobject_tp_clear(object raw) except -1:
-    """
-    Supports cyclic garbage collection by clearing slots to break a cycle.
-    """
-
-    cdef CObject self = raw
-
-    for i in range(self.value_count):
-        if self.values[i].integer & INTEGER_FLAG:
-            continue
-
-        if self.values[i].object is not NULL:
-            Py_CLEAR(self.values[i].object)
-
-    return 0
-
-
-# Assign the functions to the tp_traverse and tp_clear slots of CObject.
-cdef PyTypeObject *cobject = <PyTypeObject *> CObject
-cobject.tp_traverse = cobject_tp_traverse
-cobject.tp_clear = cobject_tp_clear
-cobject.tp_flags = cobject.tp_flags | Py_TPFLAGS_HAVE_GC
 
 
 cdef class Slot:

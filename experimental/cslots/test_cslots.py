@@ -99,3 +99,34 @@ def test_compress():
     assert o.int1 == 0
     assert o.str2 is None
     assert o.int2 == 0
+
+
+def test_kill():
+
+    o = C2()
+
+    o.str1 = "hello"
+    o.int1 = 42
+    o.str2 = "world"
+    o.int2 = 43
+
+    o._kill()
+
+    assert o.str1 is None
+    assert o.int1 == 0
+    assert o.str2 is None
+    assert o.int2 == 0
+
+
+    o = C2()
+
+    o.str2 = "world"
+    o.int2 = 43
+
+    o._compress()
+    o._kill()
+
+    assert o.str1 is None
+    assert o.int1 == 0
+    assert o.str2 is None
+    assert o.int2 == 0
