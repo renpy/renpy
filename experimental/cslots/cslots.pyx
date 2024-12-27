@@ -132,6 +132,39 @@ cdef class CObject:
 
         self.values = new_values
 
+
+    def _decompress(self):
+
+        cdef unsigned char i
+        cdef unsigned char index
+
+        if not self.index_count & COMPRESSED_FLAG:
+            return
+
+        cdef unsigned char cslot_count = self.__class__._cslot_count
+
+        cdef unsigned char *old_indexes = <unsigned char *> (self.values + self.value_count)
+
+        cdef Value *new_values = <Value *> PyMem_Calloc(1, cslot_count * sizeof(Value) + cslot_count)
+        cdef unsigned char *new_indexes = <unsigned char *>(new_values + cslot_count)
+
+        for i in range(cslot_count):
+            new_indexes[i] = i
+
+        for i in range(self.index_count & INDEX_COUNT_MASK):
+            index = old_indexes[i]
+
+            if index > self.value_count:
+                continue
+
+            new_values[i] = self.values[index]
+
+        PyMem_Free(self.values)
+        self.values = new_values
+        self.index_count = cslot_count
+        self.value_count = cslot_count
+
+
     def __sizeof__(self):
         return sizeof(CObject) + self.value_count * sizeof(Value) + self.index_count & INDEX_COUNT_MASK
 

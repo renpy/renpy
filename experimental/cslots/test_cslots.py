@@ -79,8 +79,6 @@ def test_compress():
     assert o.int2 == 43
     expect_size(o, 4, 4)
 
-
-
     o = C2()
 
     o.str2 = "world"
@@ -94,19 +92,65 @@ def test_compress():
     assert o.int2 == 43
     expect_size(o, 2, 4)
 
-
-
     o = C2()
     o.str1 = "hello"
 
     o._compress()
-
 
     assert o.str1 == "hello"
     assert o.int1 == 0
     assert o.str2 is None
     assert o.int2 == 0
     expect_size(o, 1, 1)
+
+
+def test_decompress():
+
+    def expect_size(o, values, indexes):
+        assert sys.getsizeof(o) == 32 + 8 * values + indexes
+
+    o = C2()
+
+    o.str1 = "hello"
+    o.int1 = 42
+    o.str2 = "world"
+    o.int2 = 43
+    expect_size(o, 4, 4)
+
+    o._compress()
+    o._decompress()
+
+    assert o.str1 == "hello"
+    assert o.int1 == 42
+    assert o.str2 == "world"
+    assert o.int2 == 43
+    expect_size(o, 4, 4)
+
+    o = C2()
+
+    o.str2 = "world"
+    o.int2 = 43
+
+    o._compress()
+    o._decompress()
+
+    assert o.str1 is None
+    assert o.int1 == 0
+    assert o.str2 == "world"
+    assert o.int2 == 43
+    expect_size(o, 4, 4)
+
+    o = C2()
+    o.str1 = "hello"
+
+    o._compress()
+    o._decompress()
+
+    assert o.str1 == "hello"
+    assert o.int1 == 0
+    assert o.str2 is None
+    assert o.int2 == 0
+    expect_size(o, 4, 4)
 
 
 def test_kill():
@@ -125,7 +169,6 @@ def test_kill():
     assert o.str2 is None
     assert o.int2 == 0
 
-
     o = C2()
 
     o.str2 = "world"
@@ -138,6 +181,3 @@ def test_kill():
     assert o.int1 == 0
     assert o.str2 is None
     assert o.int2 == 0
-
-
-print("%x" % C1.__class__.__flags__)
