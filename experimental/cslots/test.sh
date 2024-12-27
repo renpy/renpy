@@ -2,6 +2,6 @@
 
 set -e
 
-cython cslots.pyx
+cython -a cslots.pyx
 pip install -e .
 python3 -m pytest
