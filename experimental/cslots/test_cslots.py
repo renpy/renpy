@@ -26,6 +26,7 @@ def test_slots():
 
     class C1(cslots.Object):
         s1 = cslots.Slot(1)
+        s2 = cslots.Slot(2)
 
     i1 = C1()
 
@@ -36,3 +37,11 @@ def test_slots():
 
     i1.s1 = 1
     assert i1.s1 == 1
+
+    assert i1.s2 == 2
+
+    i1.s2 = 3
+    assert i1.s2 == 3
+
+    i1.s2 = 2
+    assert i1.s2 == 2

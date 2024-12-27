@@ -16,14 +16,16 @@ from cpython.ref cimport Py_XINCREF, Py_XDECREF, Py_CLEAR
 
 from sys import intern
 
+cdef COMPRESSED_FLAG = 0x80
+cdef INDEX_COUNT_MASK = 0x7f
 
 cdef class CObject:
 
+    # The number of indexes the object has. This also stores COMPRESSED_FLAG.
+    cdef unsigned char index_count
+
     # The number of value unions in the storage allocation.
     cdef unsigned char value_count
-
-    # The number of indexes the object has.
-    cdef unsigned char index_count
 
     # The column number of this object
     cdef public unsigned short column
@@ -101,8 +103,8 @@ cobject.tp_flags = cobject.tp_flags | Py_TPFLAGS_HAVE_GC
 
 cdef class Slot:
 
-    # The index of this slot inside the indexes contained by CObject.
-    cdef public int index
+    # The number of this slot inside the indexes contained by CObject.
+    cdef public int number
 
     # The default value of this slot.
     cdef public object default_value
@@ -120,11 +122,11 @@ cdef class Slot:
 
     def __get__(self, CObject instance, owner):
 
-        if self.index >= instance.index_count:
+        if self.number >= instance.index_count & INDEX_COUNT_MASK:
             return self.default_value
 
         cdef unsigned char *indexes = <unsigned char *> (instance.values + instance.value_count)
-        cdef int index = indexes[self.index]
+        cdef int index = indexes[self.number]
 
         if index >= instance.value_count:
             return self.default_value
@@ -148,20 +150,21 @@ cdef class Slot:
         else:
             v = <PyObject *> value
 
-        if instance.index_count != instance.value_count:
-            raise AttributeError("Cannot set a compressed slot.")
+        if instance.index_count & COMPRESSED_FLAG:
+            raise AttributeError("Cannot set a value on a compressed object.")
 
-        assert self.index < instance.index_count
+        if self.number >= instance.index_count & INDEX_COUNT_MASK:
+            raise AttributeError("Slot number is too large for object.")
 
         cdef unsigned char *indexes = <unsigned char *> (instance.values + instance.value_count)
-        cdef int index = indexes[self.index]
+        cdef int index = indexes[self.number]
 
-        assert index < instance.value_count
+        if index >= instance.value_count:
+            raise AttributeError("Index is too large for object.")
 
         Py_XDECREF(instance.values[index])
         Py_XINCREF(v)
         instance.values[index] = v
-
 
 
 class Metaclass(type):
@@ -185,7 +188,7 @@ class Metaclass(type):
 
         for k, v in namespace.items():
             if isinstance(v, Slot):
-                v.index = slot_count
+                v.number = slot_count
                 v.name = k
                 slot_count += 1
 
