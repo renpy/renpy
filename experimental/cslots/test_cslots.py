@@ -60,12 +60,16 @@ def test_slots():
 
 def test_compress():
 
+    def expect_size(o, values, indexes):
+        assert sys.getsizeof(o) == 32 + 8 * values + indexes
+
     o = C2()
 
     o.str1 = "hello"
     o.int1 = 42
     o.str2 = "world"
     o.int2 = 43
+    expect_size(o, 4, 4)
 
     o._compress()
 
@@ -73,6 +77,7 @@ def test_compress():
     assert o.int1 == 42
     assert o.str2 == "world"
     assert o.int2 == 43
+    expect_size(o, 4, 4)
 
 
 
@@ -87,6 +92,7 @@ def test_compress():
     assert o.int1 == 0
     assert o.str2 == "world"
     assert o.int2 == 43
+    expect_size(o, 2, 4)
 
 
 
@@ -95,10 +101,12 @@ def test_compress():
 
     o._compress()
 
+
     assert o.str1 == "hello"
     assert o.int1 == 0
     assert o.str2 is None
     assert o.int2 == 0
+    expect_size(o, 1, 1)
 
 
 def test_kill():
@@ -130,3 +138,6 @@ def test_kill():
     assert o.int1 == 0
     assert o.str2 is None
     assert o.int2 == 0
+
+
+print("%x" % C1.__class__.__flags__)

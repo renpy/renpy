@@ -10,7 +10,7 @@ Value unions, followed by a series of byes that give the value union correspondi
 """
 
 from cpython.mem cimport PyMem_Calloc, PyMem_Free
-from cpython.object cimport PyObject, PyTypeObject, traverseproc, visitproc, Py_TPFLAGS_HAVE_GC
+from cpython.object cimport PyObject, PyTypeObject, Py_TPFLAGS_HAVE_GC, PyObject_Free
 from cpython.ref cimport Py_XINCREF, Py_XDECREF, Py_CLEAR
 
 from sys import intern
@@ -132,10 +132,8 @@ cdef class CObject:
 
         self.values = new_values
 
-
-
     def __sizeof__(self):
-        return sizeof(CObject) + self.value_count * sizeof(Value) + self.index_count
+        return sizeof(CObject) + self.value_count * sizeof(Value) + self.index_count & INDEX_COUNT_MASK
 
 
 cdef class Slot:
