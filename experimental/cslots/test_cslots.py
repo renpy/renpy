@@ -1,30 +1,26 @@
-import cslots
+from cslots import Object, Slot, cobject_size
 
-class C1(cslots.Object):
-    s1 = cslots.Slot(1)
-    s2 = cslots.Slot(2)
+class C1(Object):
+    str1 : Slot[str|None] = Slot(None)
+    int1 : Slot[int] = Slot(0)
 
-    def __init__(self, s1, s2):
-        self.s1 = 1
-        self.s2 = 2
+    def __init__(self, str1=None, int1=1):
+        self.str1 = str1
+        self.int1 = int1
 
 class C2(C1):
+    str2 : Slot[str|None] = Slot(None)
+    int2 : Slot[int] = Slot(0)
 
-    s3 = cslots.Slot(3)
-    s4 = cslots.Slot(4)
+    def __init__(self, str1=None, int1=0, str2=None, int2=0):
+        self.str1 = str1
+        self.int1 = int1
+        self.str2 = str2
+        self.int2 = int2
 
-    def __init__(self, s1, s2, s3, s4):
-        super().__init__(s1, s2)
-        self.s3 = s3
-        self.s4 = s4
-
-
-
-def test_cslots_import():
-    assert cslots
 
 def test_cslots_object_size():
-    assert cslots.cobject_size() == 32
+    assert cobject_size() == 32
 
 
 def test_slot_count():
@@ -34,24 +30,71 @@ def test_slot_count():
 
 def test_slots():
 
-    class C1(cslots.Object):
-        s1 = cslots.Slot(1)
-        s2 = cslots.Slot(2)
+    o = C2()
 
-    i1 = C1()
+    assert o.str1 is None
+    assert o.int1 == 0
+    assert o.str2 is None
+    assert o.int2 == 0
 
-    assert i1.s1 == 1
+    o.str1 = "hello"
+    o.int1 = 42
+    o.str2 = "world"
+    o.int2 = 43
 
-    i1.s1 = 2
-    assert i1.s1 == 2
+    assert o.str1 == "hello"
+    assert o.int1 == 42
+    assert o.str2 == "world"
+    assert o.int2 == 43
 
-    i1.s1 = 1
-    assert i1.s1 == 1
+    o.str1 = None
+    o.int1 = 0
+    o.str2 = None
+    o.int2 = 0
 
-    assert i1.s2 == 2
+    assert o.str1 is None
+    assert o.int1 == 0
+    assert o.str2 is None
+    assert o.int2 == 0
 
-    i1.s2 = 3
-    assert i1.s2 == 3
+def test_compress():
 
-    i1.s2 = 2
-    assert i1.s2 == 2
+    o = C2()
+
+    o.str1 = "hello"
+    o.int1 = 42
+    o.str2 = "world"
+    o.int2 = 43
+
+    o._compress()
+
+    assert o.str1 == "hello"
+    assert o.int1 == 42
+    assert o.str2 == "world"
+    assert o.int2 == 43
+
+
+
+    o = C2()
+
+    o.str2 = "world"
+    o.int2 = 43
+
+    o._compress()
+
+    assert o.str1 is None
+    assert o.int1 == 0
+    assert o.str2 == "world"
+    assert o.int2 == 43
+
+
+
+    o = C2()
+    o.str1 = "hello"
+
+    o._compress()
+
+    assert o.str1 == "hello"
+    assert o.int1 == 0
+    assert o.str2 is None
+    assert o.int2 == 0

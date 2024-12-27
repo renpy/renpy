@@ -13,19 +13,24 @@ from libc.stdlib cimport calloc, free
 from cpython.object cimport PyObject, PyTypeObject, traverseproc, visitproc, Py_TPFLAGS_HAVE_GC
 from cpython.ref cimport Py_XINCREF, Py_XDECREF, Py_CLEAR
 
-
 from sys import intern
 
+
+# Used in CObject.index_slots to indicate that the object is compressed.
 cdef COMPRESSED_FLAG = 0x80
+
+# Used in CObject.index_slots to mask the index count.
 cdef INDEX_COUNT_MASK = 0x7f
 
+# Used in Value.integer to indicate that the value is an integer, shifted right by 1.
 cdef INTEGER_FLAG = 0x01
+
+# Used in an index slot to indicate there is no value.
+cdef DEFAULT_VALUE = 0xff
 
 cdef union Value:
     PyObject *object
     unsigned long long integer
-
-# If
 
 
 cdef class CObject:
@@ -48,7 +53,7 @@ cdef class CObject:
     # Note: Adding any non-slot objects to this object will require tp_traverse and tp_clear to be
     # changed.
 
-    def __init__(self):
+    def __cinit__(self):
 
         cdef int i
         cdef int cslot_count = self.__class__._cslot_count
@@ -71,6 +76,52 @@ cdef class CObject:
 
         free(self.values)
 
+    def _compress(self):
+
+        if self.index_count & COMPRESSED_FLAG:
+            return
+
+        cdef unsigned char *old_indexes = <unsigned char *> (self.values + self.value_count)
+
+        # The number of distinct values in the new object.
+        cdef unsigned char new_value_count = 0
+
+        # The maximum slot index in the new object.
+        cdef unsigned char new_index_count = 0
+
+        cdef unsigned char i
+        cdef unsigned char index
+
+        for i in range(self.index_count):
+            index = old_indexes[i]
+
+            if self.values[index].object is NULL:
+                continue
+
+            new_value_count += 1
+            new_index_count = i + 1
+
+        cdef Value *new_values = <Value *> calloc(new_value_count * sizeof(Value) + new_index_count, 1)
+        cdef unsigned char *new_indexes = <unsigned char *> (new_values + new_value_count)
+
+        self.value_count = 0
+
+        for i in range(new_index_count):
+            index = old_indexes[i]
+
+            if self.values[index].object is NULL:
+                new_indexes[i] = 0xff
+                continue
+
+            new_values[self.value_count] = self.values[index]
+            new_indexes[i] = self.value_count
+            self.value_count += 1
+
+        self.index_count = new_index_count | COMPRESSED_FLAG
+
+        free(self.values)
+
+        self.values = new_values
 
 cdef int cobject_tp_traverse(PyObject *raw, visitproc visit, void *arg) except -1:
     """
@@ -127,6 +178,9 @@ cdef class Slot:
 
     # The name of this slot.
     cdef public str name
+
+    def __class_getitem__(self, arg):
+        return None
 
     def __init__(self, default_value, intern=False):
 
