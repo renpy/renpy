@@ -243,7 +243,15 @@ class Metaclass(type):
         namespace["_cslot_map"] = cslot_map
         namespace["_cslot_list"] = cslot_list
 
-        return type.__new__(cls, name, bases, namespace)
+        rv = type.__new__(cls, name, bases, namespace)
+
+        cdef PyTypeObject *pto = <PyTypeObject *> rv
+        pto.tp_flags =  pto.tp_flags & ~(Py_TPFLAGS_HAVE_GC)
+        pto.tp_traverse = NULL
+        pto.tp_clear = NULL
+        pto.tp_dealloc = <void (*)(PyObject *) noexcept> PyObject_Free
+
+        return rv
 
 
 class Object(CObject, metaclass=Metaclass):
