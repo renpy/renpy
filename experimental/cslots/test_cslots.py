@@ -1,3 +1,4 @@
+import sys
 from cslots import Object, Slot, cobject_size
 
 class C1(Object):
@@ -27,7 +28,6 @@ def test_slot_count():
     assert C1._cslot_count == 2
     assert C2._cslot_count == 4
 
-
 def test_slots():
 
     o = C2()
@@ -56,6 +56,7 @@ def test_slots():
     assert o.int1 == 0
     assert o.str2 is None
     assert o.int2 == 0
+
 
 def test_compress():
 

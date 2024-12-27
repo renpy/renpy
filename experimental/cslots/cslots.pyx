@@ -9,7 +9,7 @@ This is done through indirection. Each Object has a storage allocation consistin
 Value unions, followed by a series of byes that give the value union corresponding to a given slot.
 """
 
-from libc.stdlib cimport calloc, free
+from cpython.mem cimport PyMem_Calloc, PyMem_Free
 from cpython.object cimport PyObject, PyTypeObject, traverseproc, visitproc, Py_TPFLAGS_HAVE_GC
 from cpython.ref cimport Py_XINCREF, Py_XDECREF, Py_CLEAR
 
@@ -61,7 +61,7 @@ cdef class CObject:
         self.value_count = cslot_count
         self.index_count = cslot_count
 
-        self.values = <Value *> calloc(cslot_count, sizeof(Value) + 1)
+        self.values = <Value *> PyMem_Calloc(1, cslot_count * sizeof(Value) + cslot_count)
 
         cdef unsigned char *indexes = <unsigned char *>(self.values + cslot_count)
 
@@ -74,7 +74,7 @@ cdef class CObject:
             if not self.values[i].integer & INTEGER_FLAG:
                 Py_XDECREF(self.values[i].object)
 
-        free(self.values)
+        PyMem_Free(self.values)
 
     def _compress(self):
 
@@ -101,7 +101,7 @@ cdef class CObject:
             new_value_count += 1
             new_index_count = i + 1
 
-        cdef Value *new_values = <Value *> calloc(new_value_count * sizeof(Value) + new_index_count, 1)
+        cdef Value *new_values = <Value *> PyMem_Calloc(1, new_value_count * sizeof(Value) + new_index_count)
         cdef unsigned char *new_indexes = <unsigned char *> (new_values + new_value_count)
 
         self.value_count = 0
@@ -119,9 +119,12 @@ cdef class CObject:
 
         self.index_count = new_index_count | COMPRESSED_FLAG
 
-        free(self.values)
+        PyMem_Free(self.values)
 
         self.values = new_values
+
+    def __sizeof__(self):
+        return sizeof(CObject) + self.value_count * sizeof(Value) + self.index_count
 
 cdef int cobject_tp_traverse(PyObject *raw, visitproc visit, void *arg) except -1:
     """
