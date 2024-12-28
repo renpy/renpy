@@ -776,7 +776,12 @@ class Script(object):
                             bindata = self.read_rpyc_data(f, slot)
 
                             if bindata:
-                                data, stmts = loads(bindata)
+                                try:
+                                    data, stmts = loads(bindata)
+                                except Exception as e:
+                                    print(f"Failed to load {fn}: {e}")
+                                    raise
+
                                 break
 
                         except Exception:
