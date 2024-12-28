@@ -14,19 +14,20 @@ from cpython.object cimport PyObject, PyTypeObject, Py_TPFLAGS_HAVE_GC, PyObject
 from cpython.ref cimport Py_XINCREF, Py_XDECREF, Py_CLEAR
 
 from sys import intern
+from copyreg import __newobj__
 
 
 # Used in CObject.index_slots to indicate that the object is compressed.
-cdef COMPRESSED_FLAG = 0x80
+cdef unsigned char COMPRESSED_FLAG = 0x80
 
 # Used in CObject.index_slots to mask the index count.
-cdef INDEX_COUNT_MASK = 0x7f
+cdef unsigned char INDEX_COUNT_MASK = 0x7f
 
 # Used in Value.integer to indicate that the value is an integer, shifted right by 1.
-cdef INTEGER_FLAG = 0x01
+cdef unsigned char INTEGER_FLAG = 0x01
 
 # Used in an index slot to indicate there is no value.
-cdef DEFAULT_VALUE = 0xff
+cdef unsigned char DEFAULT_VALUE = 0xff
 
 cdef union Value:
     PyObject *object
@@ -50,13 +51,10 @@ cdef class CObject:
     # This points to value_count PyObject *s, followed by index_count bytes
     cdef Value *values
 
-    # Note: Adding any non-slot objects to this object will require tp_traverse and tp_clear to be
-    # changed.
-
     def __cinit__(self):
 
         cdef unsigned char i
-        cdef unsigned char cslot_count = self.__class__._cslot_count
+        cdef unsigned char cslot_count = type(self)._cslot_count
 
         self.value_count = cslot_count
         self.index_count = cslot_count
@@ -83,7 +81,6 @@ cdef class CObject:
                 Py_XDECREF(self.values[i].object)
 
             self.values[i].object = NULL
-
 
     def _compress(self):
 
@@ -132,7 +129,6 @@ cdef class CObject:
 
         self.values = new_values
 
-
     def _decompress(self):
 
         cdef unsigned char i
@@ -141,7 +137,7 @@ cdef class CObject:
         if not self.index_count & COMPRESSED_FLAG:
             return
 
-        cdef unsigned char cslot_count = self.__class__._cslot_count
+        cdef unsigned char cslot_count = type(self)._cslot_count
 
         cdef unsigned char *old_indexes = <unsigned char *> (self.values + self.value_count)
 
@@ -164,9 +160,62 @@ cdef class CObject:
         self.index_count = cslot_count
         self.value_count = cslot_count
 
-
     def __sizeof__(self):
         return sizeof(CObject) + self.value_count * sizeof(Value) + self.index_count & INDEX_COUNT_MASK
+
+    def __reduce_ex__(self, protocol):
+
+        cdef dict slots = { "linenumber" : self.linenumber, "column" : self.column }
+        cdef list cslot_fields = type(self)._cslot_fields
+        cdef unsigned char *indexes = <unsigned char *> (self.values + self.value_count)
+        cdef unsigned char i
+        cdef Value v
+        cdef unsigned char index
+
+        for i in range(self.index_count & INDEX_COUNT_MASK):
+            if indexes[i] == DEFAULT_VALUE:
+                continue
+
+            index = indexes[i]
+
+            if index > self.value_count:
+                continue
+
+            v = self.values[index]
+
+            if v.integer & INTEGER_FLAG:
+                slots[cslot_fields[i]] = v.integer >> 1
+            elif v.object is not NULL:
+                slots[cslot_fields[i]] = <object> v.object
+
+        return ( __newobj__, (type(self),), (None, slots) )
+
+    def __setstate__(self, state):
+
+        cdef dict cslot_setters = type(self)._cslot_setters
+        cdef dict d
+
+        if type(state) is tuple:
+            for d in (<tuple> state):
+                if d is None:
+                    continue
+
+                for k, v in d.items():
+                    f = cslot_setters.get(k, None)
+                    if f is not None:
+                        f(self, v)
+
+        elif type(state) is dict:
+            d = state
+
+            for k, v in d.items():
+                f = cslot_setters.get(k, None)
+                if f is not None:
+                    f(self, v)
+
+        else:
+            raise TypeError("Invalid state type.")
+
 
 
 cdef class Slot:
@@ -245,14 +294,17 @@ cdef class Slot:
 
 cdef class IntegerSlot(Slot):
 
+    cdef long long default_int_value
+
     def __init__(self, default_value=0):
         super(IntegerSlot, self).__init__(default_value)
+        self.default_int_value = default_value
 
     def __set__(self, CObject instance, unsigned int value):
 
         cdef Value v
 
-        if value == self.default_value:
+        if value == self.default_int_value:
             v.object = NULL
         else:
             v.integer = (value << 1) | INTEGER_FLAG
@@ -277,6 +329,13 @@ cdef class IntegerSlot(Slot):
 
 
 class Metaclass(type):
+    """
+    This handles setting up the slots, and adds three names to the classes:
+
+    * `_cslot_count` - The number of slots in the class.
+    * `_cslot_setters` - A dictionary mapping slot names to their setters.
+    * `_cslot_fields` - A list of slot names.
+    """
 
     def __new__(cls, name, bases, namespace, **kwds):
 
@@ -289,23 +348,25 @@ class Metaclass(type):
 
         if base is CObject:
             cslot_count = 0
-            cslot_map = { }
-            cslot_list = [ ]
+            cslot_setters = { "linenumber" : CObject.linenumber.__set__, "column" : CObject.column.__set__ }
+            cslot_fields = [ ]
         else:
             cslot_count = base._cslot_count
-            cslot_map = dict(base._cslot_map)
-            cslot_list = list(base._cslot_list)
+            cslot_setters = dict(base._cslot_setters)
+            cslot_fields = list(base._cslot_fields)
 
 
         for k, v in namespace.items():
             if isinstance(v, Slot):
                 v.number = cslot_count
                 v.name = k
+                cslot_fields.append(k)
+                cslot_setters[k] = v.__set__
                 cslot_count += 1
 
         namespace["_cslot_count"] = cslot_count
-        namespace["_cslot_map"] = cslot_map
-        namespace["_cslot_list"] = cslot_list
+        namespace["_cslot_setters"] = cslot_setters
+        namespace["_cslot_fields"] = cslot_fields
 
         rv = type.__new__(cls, name, bases, namespace)
 
@@ -321,11 +382,3 @@ class Metaclass(type):
 class Object(CObject, metaclass=Metaclass):
 
     pass
-
-
-def cobject_size():
-    """
-    Returns the size of the CObject struct, in bytes.
-    """
-
-    return sizeof(CObject)
