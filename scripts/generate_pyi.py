@@ -257,7 +257,8 @@ def generate_module(module : types.ModuleType, package : bool):
     else:
         fn = base / f"{modfn}.pyi"
 
-    print(fn)
+    if fn.exists() and not fn.read_text().startswith("from typing import"):
+        return
 
     fn.parent.mkdir(parents=True, exist_ok=True)
 
