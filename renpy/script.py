@@ -151,8 +151,8 @@ class Script(object):
 
         self.duplicate_labels = [ ]
 
-        # A list of initcode, priority, statement pairs.
-        self.initcode = [ ]
+        # A list of (initcode priority, statement) pairs.
+        self.initcode: list[tuple[int, renpy.ast.Node]] = []
 
         # A set of (fn, dir) tuples for scripts that have already been
         # loaded.
@@ -385,6 +385,7 @@ class Script(object):
         Loads a module with the provided name and inserts its
         initcode into the script current initcode
         """
+
         module_initcode = self.load_module(name)
         if not module_initcode:
             return
@@ -400,7 +401,7 @@ class Script(object):
 
         # Since script initcode and module initcode are both sorted,
         # we can use heap to merge them
-        new_tail = current_tail +  module_initcode
+        new_tail = current_tail + module_initcode
         new_tail.sort(key=lambda i: i[0])
 
         self.initcode[merge_id:] = new_tail
@@ -498,7 +499,7 @@ class Script(object):
         # All of the statements found in file, regardless of nesting
         # depth.
 
-        all_stmts = [ ]
+        all_stmts: list[renpy.ast.Node] = []
         for i in stmts:
             i.get_children(all_stmts.append)
 
@@ -580,13 +581,10 @@ class Script(object):
             self.namemap[name] = node
 
             # Add any init nodes to self.initcode.
-            if node.get_init:
-                init = node.get_init()
-                if init:
-                    initcode.append(init)
+            if (priority := node.get_init()) is not None:
+                initcode.append((priority, node))
 
-            if node.early_execute:
-                node.early_execute()
+            node.early_execute()
 
         if self.all_stmts is not None:
             self.all_stmts.extend(all_stmts)

@@ -535,19 +535,14 @@ def main():
 
             renpy.game.initcode_ast_id = id_
 
-            if isinstance(node, renpy.ast.Node):
-                node_start = time.time()
+            node_start = time.time()
 
-                renpy.game.context().run(node)
+            node.execute_init()
 
-                node_duration = time.time() - node_start
+            node_duration = time.time() - node_start
 
-                if node_duration > renpy.config.profile_init:
-                    renpy.display.log.write(" - Init at %s:%d took %.5f s.", node.filename, node.linenumber, node_duration)
-
-            else:
-                # An init function.
-                node()
+            if node_duration > renpy.config.profile_init:
+                renpy.display.log.write(f" - Init at {node.filename}:{node.linenumber} took {node_duration:.2f}s.")
 
         renpy.game.exception_info = 'After initialization, but before game start.'
 
