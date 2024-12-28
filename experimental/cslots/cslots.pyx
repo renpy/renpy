@@ -55,8 +55,8 @@ cdef class CObject:
 
     def __cinit__(self):
 
-        cdef int i
-        cdef int cslot_count = self.__class__._cslot_count
+        cdef unsigned char i
+        cdef unsigned char cslot_count = self.__class__._cslot_count
 
         self.value_count = cslot_count
         self.index_count = cslot_count
@@ -241,6 +241,39 @@ cdef class Slot:
 
         Py_XINCREF(v)
         instance.values[index].object = v
+
+
+cdef class IntegerSlot(Slot):
+
+    def __init__(self, default_value=0):
+        super(IntegerSlot, self).__init__(default_value)
+
+    def __set__(self, CObject instance, unsigned int value):
+
+        cdef Value v
+
+        if value == self.default_value:
+            v.object = NULL
+        else:
+            v.integer = (value << 1) | INTEGER_FLAG
+
+        if instance.index_count & COMPRESSED_FLAG:
+            raise AttributeError("Cannot set a value on a compressed object.")
+
+        if self.number >= instance.index_count & INDEX_COUNT_MASK:
+            raise AttributeError("Slot number is too large for object.")
+
+        cdef unsigned char *indexes = <unsigned char *> (instance.values + instance.value_count)
+        cdef int index = indexes[self.number]
+
+        if index >= instance.value_count:
+            raise AttributeError("Index is too large for object.")
+
+        if not instance.values[index].integer & INTEGER_FLAG:
+            Py_XDECREF(instance.values[index].object)
+
+        instance.values[index] = v
+
 
 
 class Metaclass(type):

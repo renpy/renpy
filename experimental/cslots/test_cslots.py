@@ -1,9 +1,9 @@
 import sys
-from cslots import Object, Slot, cobject_size
+from cslots import Object, Slot, IntegerSlot, cobject_size
 
 class C1(Object):
     str1 : Slot[str|None] = Slot(None)
-    int1 : Slot[int] = Slot(0)
+    int1 : IntegerSlot = IntegerSlot(0)
 
     def __init__(self, str1=None, int1=1):
         self.str1 = str1
@@ -11,7 +11,7 @@ class C1(Object):
 
 class C2(C1):
     str2 : Slot[str|None] = Slot(None)
-    int2 : Slot[int] = Slot(0)
+    int2 : IntegerSlot = IntegerSlot(0)
 
     def __init__(self, str1=None, int1=0, str2=None, int2=0):
         self.str1 = str1
