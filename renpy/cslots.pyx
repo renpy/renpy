@@ -246,19 +246,15 @@ cdef class Slot:
     # The default value of this slot.
     cdef public object default_value
 
-    # Whether this slot should be interned.
-    cdef public bint intern
-
     # The name of this slot.
     cdef public str name
 
     def __class_getitem__(self, arg):
         return None
 
-    def __init__(self, default_value=None, intern=False):
+    def __init__(self, default_value=None):
 
         self.default_value = default_value
-        self.intern = intern
 
     def __get__(self, CObject instance, owner):
 
@@ -282,9 +278,6 @@ cdef class Slot:
         return <object> rv
 
     def __set__(self, CObject instance, value):
-
-        if self.intern and value is not None:
-            value = intern(value)
 
         cdef PyObject *v
 
