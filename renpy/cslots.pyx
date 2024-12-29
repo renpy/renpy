@@ -63,7 +63,7 @@ cdef class CObject:
     cdef unsigned char value_count
 
     # The column number of this object
-    cdef public unsigned short column
+    cdef public unsigned short col_offset
 
     # The line number of this object.
     cdef public unsigned int linenumber
@@ -255,7 +255,7 @@ cdef class Slot:
     def __class_getitem__(self, arg):
         return None
 
-    def __init__(self, default_value, intern=False):
+    def __init__(self, default_value=None, intern=False):
 
         self.default_value = default_value
         self.intern = intern
@@ -283,7 +283,7 @@ cdef class Slot:
 
     def __set__(self, CObject instance, value):
 
-        if self.intern:
+        if self.intern and value is not None:
             value = intern(value)
 
         cdef PyObject *v
@@ -368,7 +368,7 @@ class Metaclass(type):
 
         if base is CObject:
             cslot_count = 0
-            cslot_setters = { "linenumber" : CObject.linenumber.__set__, "column" : CObject.column.__set__ }
+            cslot_setters = { "linenumber" : CObject.linenumber.__set__, "col_offset" : CObject.col_offset.__set__ }
             cslot_fields = [ ]
         else:
             cslot_count = base._cslot_count

@@ -38,6 +38,8 @@ import sys
 
 import renpy
 
+from renpy.cslots import Object, Slot, IntegerSlot
+
 from renpy.parameter import (
     ParameterInfo,
     ArgumentInfo,
@@ -125,22 +127,15 @@ class PyExpr(str):
         renpy.game.script.all_pyexpr[opaque:] = []
 
 
-class PyCode:
-    __slots__ = [
-        'source',
-        'location',
-        'mode',
-        'bytecode',
-        'hash',
-        'py',
-    ]
+class PyCode(Object):
 
-    source: str
-    location: tuple[Any, ...]
-    mode: Literal["eval", "exec", "hide"]
-    bytecode: bytes | None
-    hash: bytes
-    py: int
+    source : Slot[str] = Slot()
+    location : Slot[tuple[Any, ...]] = Slot()
+    mode : Slot[Literal["eval", "exec", "hide"]] = Slot("exec")
+    bytecode : Slot[bytes | None] = Slot()
+    hash : Slot[bytes] = Slot()
+    py : IntegerSlot = IntegerSlot(3)
+
 
     def __getstate__(self):
         return (1, self.source, self.location, self.mode, self.py)
@@ -183,10 +178,9 @@ class PyCode:
         self.hash = self.get_hash()
 
     def get_hash(self) -> bytes:
-        try:
-            return self.hash
-        except AttributeError:
-            pass
+        rv = self.hash
+        if rv:
+            return rv
 
         code = self.source
         if isinstance(code, ast.AST):

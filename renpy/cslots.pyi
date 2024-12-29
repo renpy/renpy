@@ -1,6 +1,12 @@
 
 class Object:
 
+    linenumber: int
+    "If known, the line number of the object in the source file."
+
+    col_offset: int
+    "If known, the column offset of the object in the source file."
+
     _cslot_count: int
     "The number of slots in this class and all of its parents."
 
@@ -32,7 +38,7 @@ class Slot[T]:
     intern: bool
     "If true, the value of this slot should be interned."
 
-    def __init__(self, default_value: T, intern: bool=False) -> None:
+    def __init__(self, default_value: T|None=None, intern: bool=False) -> None:
         """
         A slot that stores a value in a CObject.
 
@@ -63,7 +69,7 @@ class IntegerSlot:
     default_value: int
     "The default value of this slot."
 
-    def __init__(self, default_value: int,) -> None:
+    def __init__(self, default_value: int = 0,) -> None:
         """
         A slot that stores a value in a CObject.
 
@@ -81,9 +87,3 @@ class IntegerSlot:
         """
         Sets the value of a slot.
         """
-
-
-def cobject_size() -> int:
-    """
-    Returns the size of a CObject.
-    """
