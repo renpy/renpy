@@ -129,18 +129,18 @@ class PyExpr(str):
 
 class PyCode(Object):
 
-    source : Slot[str] = Slot()
-    location : Slot[tuple[Any, ...]] = Slot()
-    mode : Slot[Literal["eval", "exec", "hide"]] = Slot("exec")
-    bytecode : Slot[bytes | None] = Slot()
-    hash : Slot[bytes] = Slot()
-    py : IntegerSlot = IntegerSlot(3)
-
+    source: str
+    location: tuple[Any, ...]
+    mode : Literal["eval", "exec", "hide"] = "eval"
+    bytecode : bytes | None
+    hash : bytes
+    py : int = 3
 
     def __getstate__(self):
         return (1, self.source, self.location, self.mode, self.py)
 
     def __setstate__(self, state):
+
         if len(state) == 4:
             (_, self.source, self.location, self.mode) = state
             self.py = 2

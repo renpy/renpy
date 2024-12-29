@@ -33,9 +33,9 @@ from cpython.mem cimport PyMem_Calloc, PyMem_Free
 from cpython.object cimport PyObject, PyTypeObject, Py_TPFLAGS_HAVE_GC, PyObject_Free
 from cpython.ref cimport Py_XINCREF, Py_XDECREF, Py_CLEAR
 
-from sys import intern
 from copyreg import __newobj__
 
+import typing
 
 # Used in CObject.index_slots to indicate that the object is compressed.
 cdef unsigned char COMPRESSED_FLAG = 0x80
@@ -200,21 +200,21 @@ cdef class CObject:
             cslot_fields = type(self)._cslot_fields
             indexes = <unsigned char *> (self.values + self.value_count)
 
-        for i in range(self.index_count & INDEX_COUNT_MASK):
-            if indexes[i] == DEFAULT_VALUE:
-                continue
+            for i in range(self.index_count & INDEX_COUNT_MASK):
+                if indexes[i] == DEFAULT_VALUE:
+                    continue
 
-            index = indexes[i]
+                index = indexes[i]
 
-            if index > self.value_count:
-                continue
+                if index > self.value_count:
+                    continue
 
-            v = self.values[index]
+                v = self.values[index]
 
-            if v.integer & INTEGER_FLAG:
-                slots[cslot_fields[i]] = v.integer >> 1
-            elif v.object is not NULL:
-                slots[cslot_fields[i]] = <object> v.object
+                if v.integer & INTEGER_FLAG:
+                    slots[cslot_fields[i]] = v.integer >> 1
+                elif v.object is not NULL:
+                    slots[cslot_fields[i]] = <object> v.object
 
             state = (None, slots)
 
@@ -365,8 +365,26 @@ class Metaclass(type):
         if len(bases) != 1:
             raise TypeError("cslots.Object only supports single inheritance.")
 
+        # Apply annotations to automatically create Slot objects.
+
+        annotations = namespace.get("__annotations__", { })
+
+        for k, v in annotations.items():
+            if typing.get_origin(v) is typing.ClassVar:
+                continue
+
+            if v is int:
+                default_value = getattr(namespace, k, 0)
+                namespace[k] = IntegerSlot(default_value)
+            else:
+                default_value = getattr(namespace, k, None)
+                namespace[k] = Slot(default_value)
+
+
+        # Add empty Python slots, so the object doesn't get a dict.
         namespace["__slots__"] = [ ]
 
+        # Number slots, and create the _cslot_setters and _cslot_fields attributes.
         base = bases[0]
 
         if base is CObject:
@@ -377,7 +395,6 @@ class Metaclass(type):
             cslot_count = base._cslot_count
             cslot_setters = dict(base._cslot_setters)
             cslot_fields = list(base._cslot_fields)
-
 
         for k, v in namespace.items():
             if isinstance(v, Slot):
@@ -393,6 +410,8 @@ class Metaclass(type):
 
         rv = type.__new__(cls, name, bases, namespace)
 
+        # Modify the type object to remove support for the cyclic GC. This saves 16 bytes per object, but
+        # means reference cycles.
         cdef PyTypeObject *pto = <PyTypeObject *> rv
         pto.tp_flags =  pto.tp_flags & ~(Py_TPFLAGS_HAVE_GC)
         pto.tp_traverse = NULL
