@@ -185,12 +185,20 @@ cdef class CObject:
 
     def __reduce_ex__(self, protocol):
 
-        cdef dict slots = { "linenumber" : self.linenumber, "column" : self.column }
-        cdef list cslot_fields = type(self)._cslot_fields
-        cdef unsigned char *indexes = <unsigned char *> (self.values + self.value_count)
+        cdef dict slots
+        cdef list cslot_fields
+        cdef unsigned char *indexes
         cdef unsigned char i
         cdef Value v
         cdef unsigned char index
+
+        if self.__getstate__:
+            state = self.__getstate__()
+        else:
+
+            slots = { "linenumber" : self.linenumber, "col_offset" : self.col_offset }
+            cslot_fields = type(self)._cslot_fields
+            indexes = <unsigned char *> (self.values + self.value_count)
 
         for i in range(self.index_count & INDEX_COUNT_MASK):
             if indexes[i] == DEFAULT_VALUE:
@@ -208,7 +216,9 @@ cdef class CObject:
             elif v.object is not NULL:
                 slots[cslot_fields[i]] = <object> v.object
 
-        return ( __newobj__, (type(self),), (None, slots) )
+            state = (None, slots)
+
+        return ( __newobj__, (type(self),), state )
 
     def __setstate__(self, state):
 
