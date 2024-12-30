@@ -67,6 +67,9 @@ cdef class CMetaclass(type):
     cdef public bint _cslot_linenumbers
     "If true, linenumber information should be included when objects of this class are pickled."
 
+    cdef public bint _cslot_has_getstate
+    "If true, the class defines its own __getstate__ method."
+
 
 cdef class CObject:
 
@@ -211,11 +214,11 @@ cdef class CObject:
         cdef Value v
         cdef unsigned char index
 
-        if self.__getstate__:
+        ctype = <CMetaclass> type(self)
+
+        if ctype._cslot_has_getstate:
             state = self.__getstate__()
         else:
-
-            ctype = <CMetaclass> type(self)
 
             if ctype._cslot_linenumbers:
                 slots = { "linenumber" : self.linenumber, "col_offset" : self.col_offset }
@@ -417,6 +420,7 @@ class Metaclass(CMetaclass):
             cslot_setters = { "linenumber" : CObject.linenumber.__set__, "col_offset" : CObject.col_offset.__set__ }
             cslot_fields = [ ]
             cslot_linenumbers = False
+            cslot_has_getstate = False
         else:
             cbase = <CMetaclass> base
 
@@ -424,6 +428,7 @@ class Metaclass(CMetaclass):
             cslot_setters = dict(cbase._cslot_setters)
             cslot_fields = list(cbase._cslot_fields)
             cslot_linenumbers = cbase._cslot_linenumbers
+            cslot_has_getstate = cbase._cslot_has_getstate
 
         for k, v in namespace.items():
             if isinstance(v, Slot):
@@ -441,6 +446,7 @@ class Metaclass(CMetaclass):
         crv._cslot_setters = cslot_setters
         crv._cslot_fields = cslot_fields
         crv._cslot_linenumbers = namespace.get("_cslot_linenumbers", cslot_linenumbers)
+        crv._cslot_has_getstate = cslot_has_getstate or ("__getstate__" in namespace)
 
         # Modify the type object to remove support for the cyclic GC. This saves 16 bytes per object, but
         # means reference cycles.
