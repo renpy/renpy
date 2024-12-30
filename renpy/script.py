@@ -586,6 +586,8 @@ class Script(object):
 
             node.early_execute()
 
+            node._compress()
+
         if self.all_stmts is not None:
             self.all_stmts.extend(all_stmts)
 
@@ -1144,3 +1146,8 @@ class Script(object):
 
         if renpy.parser.report_parse_errors():
             raise SystemExit(-1)
+
+
+    def __del__(self):
+        for v in self.namemap.values():
+            v._kill()
