@@ -53,6 +53,17 @@ cdef union Value:
     PyObject *object
     unsigned long long integer
 
+cdef class CMetaclass(type):
+
+    cdef public unsigned char _cslot_count
+    "The number of slots in the class."
+
+    cdef public dict _cslot_setters
+    "A dictionary mapping slot names to their setters."
+
+    cdef public list _cslot_fields
+    "A list of slot names."
+
 
 cdef class CObject:
 
@@ -73,8 +84,10 @@ cdef class CObject:
 
     def __cinit__(self):
 
+        cdef CMetaclass cbase = <CMetaclass> type(self)
+
         cdef unsigned char i
-        cdef unsigned char cslot_count = type(self)._cslot_count
+        cdef unsigned char cslot_count = cbase._cslot_count
 
         self.value_count = cslot_count
         self.index_count = cslot_count
@@ -157,7 +170,9 @@ cdef class CObject:
         if not self.index_count & COMPRESSED_FLAG:
             return
 
-        cdef unsigned char cslot_count = type(self)._cslot_count
+        cdef CMetaclass cbase = <CMetaclass> type(self)
+
+        cdef unsigned char cslot_count = cbase._cslot_count
 
         cdef unsigned char *old_indexes = <unsigned char *> (self.values + self.value_count)
 
@@ -185,6 +200,7 @@ cdef class CObject:
 
     def __reduce_ex__(self, protocol):
 
+        cdef CMetaclass ctype
         cdef dict slots
         cdef list cslot_fields
         cdef unsigned char *indexes
@@ -196,8 +212,10 @@ cdef class CObject:
             state = self.__getstate__()
         else:
 
+            ctype = <CMetaclass> type(self)
+
             slots = { "linenumber" : self.linenumber, "col_offset" : self.col_offset }
-            cslot_fields = type(self)._cslot_fields
+            cslot_fields = ctype._cslot_fields
             indexes = <unsigned char *> (self.values + self.value_count)
 
             for i in range(self.index_count & INDEX_COUNT_MASK):
@@ -222,7 +240,8 @@ cdef class CObject:
 
     def __setstate__(self, state):
 
-        cdef dict cslot_setters = type(self)._cslot_setters
+        cdef CMetaclass ctype = <CMetaclass> type(self)
+        cdef dict cslot_setters = ctype._cslot_setters
         cdef dict d
 
         if type(state) is tuple:
@@ -350,17 +369,14 @@ cdef class IntegerSlot(Slot):
         instance.values[index] = v
 
 
-
-class Metaclass(type):
+class Metaclass(CMetaclass):
     """
-    This handles setting up the slots, and adds three names to the classes:
-
-    * `_cslot_count` - The number of slots in the class.
-    * `_cslot_setters` - A dictionary mapping slot names to their setters.
-    * `_cslot_fields` - A list of slot names.
+    A metaclass that sets up the slots, and makes sure classes that inherit from it do not participate
+    in cyclic GC.
     """
 
     def __new__(cls, name, bases, namespace, **kwds):
+
 
         if len(bases) != 1:
             raise TypeError("cslots.Object only supports single inheritance.")
@@ -387,14 +403,18 @@ class Metaclass(type):
         # Number slots, and create the _cslot_setters and _cslot_fields attributes.
         base = bases[0]
 
+        cdef CMetaclass cbase
+
         if base is CObject:
             cslot_count = 0
             cslot_setters = { "linenumber" : CObject.linenumber.__set__, "col_offset" : CObject.col_offset.__set__ }
             cslot_fields = [ ]
         else:
-            cslot_count = base._cslot_count
-            cslot_setters = dict(base._cslot_setters)
-            cslot_fields = list(base._cslot_fields)
+            cbase = <CMetaclass> base
+
+            cslot_count = cbase._cslot_count
+            cslot_setters = dict(cbase._cslot_setters)
+            cslot_fields = list(cbase._cslot_fields)
 
         for k, v in namespace.items():
             if isinstance(v, Slot):
@@ -404,11 +424,13 @@ class Metaclass(type):
                 cslot_setters[k] = v.__set__
                 cslot_count += 1
 
-        namespace["_cslot_count"] = cslot_count
-        namespace["_cslot_setters"] = cslot_setters
-        namespace["_cslot_fields"] = cslot_fields
+        rv = CMetaclass.__new__(cls, name, bases, namespace, **kwds)
 
-        rv = type.__new__(cls, name, bases, namespace)
+        cdef CMetaclass crv = <CMetaclass> rv
+
+        crv._cslot_count = cslot_count
+        crv._cslot_setters = cslot_setters
+        crv._cslot_fields = cslot_fields
 
         # Modify the type object to remove support for the cyclic GC. This saves 16 bytes per object, but
         # means reference cycles.
