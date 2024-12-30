@@ -35,6 +35,7 @@ import hashlib
 import ast
 import re
 import sys
+import zlib
 
 import renpy
 
@@ -305,7 +306,8 @@ class Node(Object):
             logical line on which this Node node starts.
         """
 
-        super().__init__(loc[0], loc[1])
+        self.filename = loc[0]
+        self.linenumber = loc[1]
 
         self.name = None
         self.next = None
