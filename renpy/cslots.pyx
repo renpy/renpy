@@ -64,6 +64,9 @@ cdef class CMetaclass(type):
     cdef public list _cslot_fields
     "A list of slot names."
 
+    cdef public bint _cslot_linenumbers
+    "If true, linenumber information should be included when objects of this class are pickled."
+
 
 cdef class CObject:
 
@@ -214,7 +217,11 @@ cdef class CObject:
 
             ctype = <CMetaclass> type(self)
 
-            slots = { "linenumber" : self.linenumber, "col_offset" : self.col_offset }
+            if ctype._cslot_linenumbers:
+                slots = { "linenumber" : self.linenumber, "col_offset" : self.col_offset }
+            else:
+                slots = { }
+
             cslot_fields = ctype._cslot_fields
             indexes = <unsigned char *> (self.values + self.value_count)
 
@@ -409,12 +416,14 @@ class Metaclass(CMetaclass):
             cslot_count = 0
             cslot_setters = { "linenumber" : CObject.linenumber.__set__, "col_offset" : CObject.col_offset.__set__ }
             cslot_fields = [ ]
+            cslot_linenumbers = False
         else:
             cbase = <CMetaclass> base
 
             cslot_count = cbase._cslot_count
             cslot_setters = dict(cbase._cslot_setters)
             cslot_fields = list(cbase._cslot_fields)
+            cslot_linenumbers = cbase._cslot_linenumbers
 
         for k, v in namespace.items():
             if isinstance(v, Slot):
@@ -431,6 +440,7 @@ class Metaclass(CMetaclass):
         crv._cslot_count = cslot_count
         crv._cslot_setters = cslot_setters
         crv._cslot_fields = cslot_fields
+        crv._cslot_linenumbers = namespace.get("_cslot_linenumbers", cslot_linenumbers)
 
         # Modify the type object to remove support for the cyclic GC. This saves 16 bytes per object, but
         # means reference cycles.
