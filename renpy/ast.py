@@ -232,25 +232,18 @@ class Scry(object):
                 return None
 
 
-NodeName: TypeAlias = "str | tuple[Any, ...] | None"
+type NodeName = "str | tuple[Any, ...] | None"
+type RollbackType = Literal["normal", "never", "force"]
 
-
-class Node(renpy.location.Location):
+class Node(Object):
     """
     A node in the abstract syntax tree of the program.
     """
 
-    __slots__ = [
-        'name',
-        'next',
-    ]
+    _cslot_linenumbers = True
 
     filename: str
     "Elided string file name of this node."
-    linenumber: int
-    "Integer line number of first line of this node in the source file."
-    col_offset: int
-    "Integer column offset of first line of this node in the source file."
 
     name: NodeName
     """
@@ -268,25 +261,30 @@ class Node(renpy.location.Location):
     or None if this node is the last one in the block.
     """
 
-    translatable: bool = False
+    translatable: ClassVar[bool] = False
     """
     True if this node is translatable, False otherwise.
     (This can be set on the class or the instance.)
     """
 
-    translation_relevant: bool = False
+    translation_relevant: ClassVar[bool] = False
     """
     True if the node is releveant to translation, and has to be processed by
     take_translations.
     """
 
-    rollback: Literal["normal", "never", "force"] = "normal"
+    rollback: ClassVar[RollbackType] = "normal"
     """
     How does the node participate in rollback?
 
     * "normal" in normal mode.
     * "never" generally never.
     * "force" force it to start.
+    """
+
+    warp: ClassVar[bool] = False
+    """
+    True if this statement should be run while warping, False otherwise.
     """
 
     # Statement_start used to be a property on all nodes.
@@ -434,8 +432,6 @@ class Node(renpy.location.Location):
         # Does nothing by default.
         return
 
-    warp: ClassVar[bool] = False
-
     def can_warp(self) -> bool:
         """
         Returns true if this should be run while warping, False otherwise.
@@ -568,14 +564,14 @@ def eval_who(who: str | None, fast: bool | None = None) -> Any | None:
         raise Exception("Sayer '%s' is not defined." % who)
 
 
-_imspec: TypeAlias = """
+type ImspecType = """
 tuple[tuple[str, ...], str | None, str | None, list[str], str | None, str | None, list[str]] |
 tuple[tuple[str, ...], str | None, str | None, list[str], str | None, str | None] |
 tuple[tuple[str, ...], list[str], str | None]
 """
 
 
-def predict_imspec(imspec: _imspec, scene=False, atl: renpy.atl.RawBlock | None = None):
+def predict_imspec(imspec: ImspecType, scene=False, atl: renpy.atl.RawBlock | None = None):
     """
     Call this to use the given callback to predict the image named
     in imspec.
@@ -622,7 +618,7 @@ def predict_imspec(imspec: _imspec, scene=False, atl: renpy.atl.RawBlock | None 
     renpy.exports.predict_show(name, layer, what=img, tag=tag, at_list=at_list)
 
 
-def show_imspec(imspec: _imspec, atl: renpy.atl.RawBlock | None = None):
+def show_imspec(imspec: ImspecType, atl: renpy.atl.RawBlock | None = None):
 
     if len(imspec) == 7:
         name, expression, tag, at_list, layer, zorder, behind = imspec
@@ -803,44 +799,20 @@ def get_reachable_nodes(
 
 class Say(Node):
 
-    __slots__ = [
-        'who',
-        'who_fast',
-        'what',
-        'with_',
-        'interact',
-        'attributes',
-        'arguments',
-        'temporary_attributes',
-        'rollback',
-        'identifier',
-        'explicit_identifier',
-    ]
-
     who: str | None
     who_fast: bool
     what: str
     with_: str | None
-    interact: bool
-    attributes: tuple[str, ...] | None
-    arguments: ArgumentInfo | None
-    temporary_attributes: tuple[str, ...] | None
-    rollback: Literal['normal', 'never', 'force']
-    identifier: str | None
-    explicit_identifier: bool
+    interact: bool = True
+    attributes: tuple[str, ...] | None = None
+    arguments: ArgumentInfo | None = None
+    temporary_attributes: tuple[str, ...] | None = None
+    rollback: RollbackType = "normal" # type: ignore
+    identifier: str | None = None
+    explicit_identifier: bool = False
 
     def diff_info(self):
         return (Say, self.who, self.what)
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.attributes = None
-        self.interact = True
-        self.arguments = None
-        self.temporary_attributes = None
-        self.rollback = "normal"
-        self.explicit_identifier = False
-        return self
 
     def __init__(
         self,
@@ -1032,11 +1004,6 @@ setattr(Say, "with", Say.with_)
 
 class Init(Node):
 
-    __slots__ = [
-        'block',
-        'priority',
-    ]
-
     block: list[Node]
     priority: int
 
@@ -1079,22 +1046,10 @@ class Init(Node):
 class Label(Node):
 
     translation_relevant = True
-    __slots__ = [
-        'parameters',
-        'block',
-        'hide',
-    ]
 
-    name: str
-    parameters: ParameterInfo | None
     block: list[Node]
-    hide: bool
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.parameters = None
-        self.hide = False
-        return self
+    parameters: ParameterInfo | None = None
+    hide: bool = False
 
     def __init__(self, loc, name, block, parameters, hide=False):
         """
@@ -1158,20 +1113,9 @@ class Label(Node):
 
 class Python(Node):
 
-    __slots__ = [
-        'hide',
-        'code',
-        'store',
-    ]
-
-    hide: bool
     code: PyCode
-    store: str
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.store = "store"
-        return self
+    store: str = "store"
+    hide: bool = False
 
     def __init__(self, loc, python_code, hide=False, store="store"):
         """
@@ -1220,20 +1164,9 @@ class Python(Node):
 
 class EarlyPython(Node):
 
-    __slots__ = [
-        'hide',
-        'code',
-        'store',
-    ]
-
-    hide: bool
     code: PyCode
-    store: str
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.store = "store"
-        return self
+    store: str = "store"
+    hide: bool = False
 
     def __init__(self, loc, python_code, hide=False, store="store"):
         """
@@ -1273,12 +1206,6 @@ class EarlyPython(Node):
 
 
 class Image(Node):
-
-    __slots__ = [
-        'imgname',
-        'code',
-        'atl',
-    ]
 
     imgname: tuple[str, ...]
     code: PyCode | None
@@ -1330,31 +1257,12 @@ class Image(Node):
 
 class Transform(Node):
 
-    __slots__ = [
-        # The name of the store this transform is stored in.
-        'store',
-
-        # The name of the transform.
-        'varname',
-
-        # The block of ATL associated with the transform.
-        'atl',
-
-        # The parameters associated with the transform, if any.
-        'parameters',
-    ]
-
-    store: str
     varname: str
     atl: renpy.atl.RawBlock
-    parameters: ParameterInfo
+    parameters: ParameterInfo|None = None
+    store: str = "store"
 
     default_parameters = EMPTY_PARAMETERS
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.store = 'store'
-        return self
 
     def __init__(self, loc, store, name, atl, parameters=default_parameters):
 
@@ -1400,13 +1308,8 @@ class Transform(Node):
 
 class Show(Node):
 
-    __slots__ = [
-        'imspec',
-        'atl',
-    ]
-
-    imspec: _imspec
-    atl: renpy.atl.RawBlock | None
+    imspec: ImspecType
+    atl: renpy.atl.RawBlock | None = None
 
     warp = True
 
@@ -1446,15 +1349,9 @@ class ShowLayer(Node):
 
     warp = True
 
-    __slots__ = [
-        'layer',
-        'at_list',
-        'atl',
-    ]
-
-    layer: str
     at_list: list[str]
-    atl: renpy.atl.RawBlock | None
+    atl: renpy.atl.RawBlock | None = None
+    layer: str = "master"
 
     def __init__(self, loc, layer, at_list, atl):
         super(ShowLayer, self).__init__(loc)
@@ -1490,15 +1387,9 @@ class Camera(Node):
 
     warp = True
 
-    __slots__ = [
-        'layer',
-        'at_list',
-        'atl',
-    ]
-
-    layer: str
     at_list: list[str]
     atl: renpy.atl.RawBlock | None
+    layer: str = "master"
 
     def __init__(self, loc, layer, at_list, atl):
         super(Camera, self).__init__(loc)
@@ -1532,15 +1423,9 @@ class Camera(Node):
 
 class Scene(Node):
 
-    __slots__ = [
-        'imspec',
-        'layer',
-        'atl',
-    ]
-
-    imspec: _imspec
-    layer: str
-    atl: renpy.atl.RawBlock | None
+    imspec: ImspecType
+    atl: renpy.atl.RawBlock | None = None
+    layer: str = "master"
 
     warp = True
 
@@ -1590,13 +1475,9 @@ class Scene(Node):
 
 class Hide(Node):
 
-    __slots__ = [
-        'imspec',
-    ]
-
-    imspec: _imspec
-
     warp = True
+
+    imspec: ImspecType
 
     def __init__(self, loc, imgspec):
         """
@@ -1658,18 +1539,8 @@ class Hide(Node):
 
 class With(Node):
 
-    __slots__ = [
-        'expr',
-        'paired',
-    ]
-
     expr: str
-    paired: str | None
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.paired = None
-        return self
+    paired: str | None = None
 
     def __init__(self, loc, expr, paired=None):
         """
@@ -1713,23 +1584,10 @@ class With(Node):
 
 class Call(Node):
 
-    __slots__ = [
-        'label',
-        'arguments',
-        'expression',
-        'global_label',
-    ]
-
     label: str
-    arguments: ArgumentInfo | None
-    expression: bool
-    global_label: str
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.arguments = None
-        self.global_label = ""
-        return self
+    arguments: ArgumentInfo | None = None
+    expression: bool = False
+    global_label: str = ""
 
     def __init__(self, loc, label, expression, arguments, global_label=""):
 
@@ -1806,14 +1664,7 @@ class Call(Node):
 
 class Return(Node):
 
-    __slots__ = ['expression']
-
-    expression: str | None
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.expression = None
-        return self
+    expression: str | None = None
 
     def __init__(self, loc, expression):
         super(Return, self).__init__(loc)
@@ -1862,33 +1713,15 @@ class Menu(Node):
 
     translation_relevant = True
 
-    __slots__ = [
-        'items',
-        'set',
-        'with_',
-        'has_caption',
-        'arguments',
-        'item_arguments',
-        'rollback',
-        'statement_start',  # type: ignore
-    ]
 
     items: list[tuple[str, str, list[Node] | None]]
-    set: str | None
-    with_: str | None
-    has_caption: bool
-    arguments: ArgumentInfo | None
-    item_arguments: list[ArgumentInfo | None] | None
-    rollback: Literal["normal", "never", "force"]
-    statement_start: Node
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.has_caption = False
-        self.arguments = None
-        self.item_arguments = None
-        self.rollback = "force"
-        return self
+    statement_start: Node # type: ignore
+    set: str | None = None
+    with_: str | None = None
+    has_caption: bool = False
+    arguments: ArgumentInfo | None = None
+    item_arguments: list[ArgumentInfo | None] | None = None
+    rollback: RollbackType = "force" # type: ignore
 
     def __init__(self, loc, items, set, with_, has_caption, arguments, item_arguments):
         super(Menu, self).__init__(loc)
@@ -2066,20 +1899,9 @@ setattr(Menu, "with", Menu.with_)  # type: ignore
 # instead.
 class Jump(Node):
 
-    __slots__ = [
-        'target',
-        'expression',
-        'global_label',
-    ]
-
     target: str
-    expression: bool
-    global_label: str
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.global_label = ""
-        return self
+    expression: bool = False
+    global_label: str = ""
 
     def __init__(self, loc, target, expression, global_label=""):
         super(Jump, self).__init__(loc)
@@ -2158,8 +1980,6 @@ class Jump(Node):
 # GNDN
 class Pass(Node):
 
-    __slots__ = []
-
     def diff_info(self):
         return (Pass, )
 
@@ -2169,11 +1989,6 @@ class Pass(Node):
 
 
 class While(Node):
-
-    __slots__ = [
-        'condition',
-        'block',
-    ]
 
     condition: str
     block: list[Node]
@@ -2230,8 +2045,6 @@ class While(Node):
 
 
 class If(Node):
-
-    __slots__ = ['entries']
 
     entries: list[tuple[str, list[Node]]]
 
@@ -2307,41 +2120,16 @@ class If(Node):
 
 class UserStatement(Node):
 
-    __slots__ = [
-        'line',
-        'parsed',
-        'block',
-        'translatable',
-        'code_block',
-        'translation_relevant',
-        'rollback',
-        'subparses',
-        'init_priority',
-        'atl',
-    ]
-
     line: str
     parsed: Any
-    block: list[Any]
-    translatable: bool
-    code_block: list[Node] | None
-    translation_relevant: bool
-    rollback: Literal['normal', 'never', 'force']
-    subparses: list[renpy.lexer.SubParse]
-    init_priority: int
-    atl: renpy.atl.RawBlock | None
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.block = []
-        self.code_block = None
-        self.translatable = False
-        self.translation_relevant = False
-        self.rollback = "normal"
-        self.subparses = []
-        self.init_priority = 0
-        self.atl = None
-        return self
+    block: list[Any] = [ ]
+    translatable: bool = False # type: ignore
+    code_block: list[Node] | None = None
+    translation_relevant: bool = False # type: ignore
+    rollback: RollbackType = "normal"
+    subparses: list[renpy.lexer.SubParse] = [ ]
+    init_priority: int = 0
+    atl: renpy.atl.RawBlock | None = None
 
     def __init__(self, loc, line, block, parsed):
 
@@ -2354,7 +2142,7 @@ class UserStatement(Node):
         self.init_priority = 0
 
         self.name = self.call("label")
-        self.rollback = renpy.statements.get("rollback", self.parsed) or "normal"
+        self.rollback = renpy.statements.get("rollback", self.parsed) or "normal" # type: ignore
 
     def __repr__(self):
         return "<UserStatement {!r}>".format(self.line)
@@ -2576,10 +2364,6 @@ class UserStatement(Node):
 
 class PostUserStatement(Node):
 
-    __slots__ = [
-        'parent',
-    ]
-
     parent: UserStatement
 
     def __init__(self, loc, parent):
@@ -2608,26 +2392,11 @@ define_statements: list[Define] = []
 
 class Define(Node):
 
-    __slots__ = [
-        'varname',
-        'code',
-        'store',
-        'operator',
-        'index',
-    ]
-
     varname: str
     code: PyCode
-    store: str
-    operator: str
-    index: PyCode | None
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.store = 'store'
-        self.operator = '='
-        self.index = None
-        return self
+    store: str = "store"
+    operator: str = "="
+    index: PyCode | None = None
 
     def __init__(self, loc, store, name, index, operator, expr):
         super(Define, self).__init__(loc)
@@ -2725,20 +2494,9 @@ default_statements: list[Default | UserStatement] = []
 
 class Default(Node):
 
-    __slots__ = [
-        'varname',
-        'code',
-        'store',
-    ]
-
     varname: str
     code: PyCode
-    store: str
-
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self.store = 'store'
-        return self
+    store: str = "store"
 
     def __init__(self, loc, store, name, expr):
 
@@ -2820,10 +2578,6 @@ class Default(Node):
 
 class Screen(Node):
 
-    __slots__ = [
-        'screen',
-    ]
-
     screen: renpy.sl2.slast.SLScreen
 
     def __init__(self, loc, screen):
@@ -2849,16 +2603,6 @@ class Screen(Node):
 
 
 class Style(Node):
-
-    __slots__ = [
-        'style_name',
-        'parent',
-        'properties',
-        'clear',
-        'take',
-        'delattr',
-        'variant',
-    ]
 
     style_name: str
     parent: str | None
@@ -2946,11 +2690,6 @@ class Style(Node):
 
 class Testcase(Node):
 
-    __slots__ = [
-        'label',
-        'test',
-    ]
-
     label: str
     test: renpy.test.testast.Block
 
@@ -2971,10 +2710,6 @@ class Testcase(Node):
 
 
 class RPY(Node):
-    __slots__ = [
-        "rest"
-    ]
-
     rest: tuple[str, ...]
 
     def __init__(self, loc, rest):
@@ -3015,16 +2750,7 @@ class Translate(Node):
     """
 
     rollback = "never"
-
     translation_relevant = True
-
-    __slots__ = [
-        "identifier",
-        "alternate",
-        "language",
-        "block",
-        "after",
-    ]
 
     identifier: str
     alternate: str | None
@@ -3122,11 +2848,6 @@ class TranslateSay(Say):
 
     translatable = True
     translation_relevant = True
-
-    __slots__ = [
-        "alternate",
-        "language",
-    ]
 
     alternate: str | None
     language: str | None
@@ -3269,13 +2990,6 @@ class TranslateString(Node):
 
     translation_relevant = True
 
-    __slots__ = [
-        "language",
-        "old",
-        "new",
-        "newloc",
-    ]
-
     language: str
     old: str
     new: str
@@ -3307,11 +3021,6 @@ class TranslatePython(Node):
     """
 
     translation_relevant = True
-
-    __slots__ = [
-        'language',
-        'code',
-    ]
 
     language: str
     code: PyCode
@@ -3346,11 +3055,6 @@ class TranslateBlock(Node):
     """
 
     translation_relevant = True
-
-    __slots__ = [
-        'block',
-        'language',
-    ]
 
     block: list[Node]
     language: str
