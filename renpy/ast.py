@@ -176,7 +176,7 @@ class PyCode(Object):
         if renpy.game.script.record_pycode:
             renpy.game.script.all_pycode.append(self)
 
-        self.hash = self.get_hash()
+        self.get_hash()
 
     def get_hash(self) -> bytes:
         rv = self.hash

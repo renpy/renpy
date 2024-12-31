@@ -128,6 +128,9 @@ class Script(object):
         # A list of statements that haven't been analyzed.
         self.need_analysis = [ ]
 
+        # A list of statements that need to be compressed.
+        self.need_compress = [ ]
+
         self.record_pycode = True
 
         # Bytecode caches.
@@ -141,6 +144,8 @@ class Script(object):
         self.scan_script_files()
 
         self.translator.chain_translates()
+
+        self.compress()
 
         self.serial = 0
 
@@ -354,6 +359,8 @@ class Script(object):
 
         self.translator.chain_translates()
 
+        self.compress()
+
         return initcode
 
     def load_module(self, name):
@@ -377,6 +384,8 @@ class Script(object):
         initcode.sort(key=lambda i: i[0])
 
         self.translator.chain_translates()
+
+        self.compress()
 
         return initcode
 
@@ -500,6 +509,7 @@ class Script(object):
         # depth.
 
         all_stmts: list[renpy.ast.Node] = []
+
         for i in stmts:
             i.get_children(all_stmts.append)
 
@@ -586,12 +596,11 @@ class Script(object):
 
             node.early_execute()
 
-            node._compress()
-
         if self.all_stmts is not None:
             self.all_stmts.extend(all_stmts)
 
         self.need_analysis.extend(all_stmts)
+        self.need_compress.extend(all_stmts)
 
         return stmts
 
@@ -1134,6 +1143,16 @@ class Script(object):
             i.analyze()
 
         self.need_analysis = [ ]
+
+    def compress(self):
+        """
+        Compress all statements that need to be compressed.
+        """
+
+        for i in self.need_compress:
+            i._compress()
+
+        self.need_compress = [ ]
 
     def report_duplicate_labels(self):
         if not renpy.config.developer:
