@@ -263,6 +263,10 @@ cdef class CObject:
                     f = cslot_setters.get(k, None)
                     if f is not None:
                         f(self, v)
+                    else:
+                        descriptor = getattr(type(self), k, None)
+                        if descriptor is not None:
+                            descriptor.__set__(self, v)
 
         elif type(state) is dict:
             d = state
