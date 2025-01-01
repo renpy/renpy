@@ -40,7 +40,7 @@ import zlib
 import renpy
 
 from renpy.cslots import Object, Slot, IntegerSlot
-from renpy.pythonsupport import hash_fnv1a
+from renpy.astsupport import hash_fnv1a
 
 from renpy.parameter import (
     ParameterInfo,

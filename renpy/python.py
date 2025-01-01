@@ -50,7 +50,7 @@ import warnings
 
 import renpy
 
-from renpy.pythonsupport import hash_fnv1a
+from renpy.astsupport import hash_fnv1a
 
 # Import these for pickle-compatibility.
 from renpy.revertable import (
