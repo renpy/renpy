@@ -89,6 +89,7 @@ def main():
     cython("renpy.cslots")
     cython("renpy.lexersupport")
     cython("renpy.pydict")
+    cython("renpy.pythonsupport")
     cython("renpy.style")
     cython("renpy.encryption")
 

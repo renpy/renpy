@@ -425,6 +425,7 @@ def import_all():
     import renpy.parser
     import renpy.performance
     import renpy.pydict
+    import renpy.pythonsupport
     import renpy.revertable
     import renpy.rollback
     import renpy.python

@@ -5,6 +5,7 @@ renpy.audio.filter ../tmp/gen/renpy.audio.filter.c
 renpy.cslots ../tmp/gen/renpy.cslots.c
 renpy.lexersupport ../tmp/gen/renpy.lexersupport.c
 renpy.pydict ../tmp/gen/renpy.pydict.c
+renpy.pythonsupport ../tmp/gen/renpy.pythonsupport.c
 renpy.style ../tmp/gen/renpy.style.c
 renpy.encryption ../tmp/gen/renpy.encryption.c
 renpy.styledata.styleclass ../tmp/gen/renpy.styledata.styleclass.c
