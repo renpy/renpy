@@ -39,6 +39,7 @@ import zlib
 import sys
 
 from renpy.compat.pickle import loads, dumps
+
 import shutil
 
 # The version of the dumped script.
@@ -996,69 +997,35 @@ class Script(object):
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
 
+        old_ei = renpy.game.exception_info
+
         for i in self.all_pycode:
 
-            key = i.get_hash() + MAGIC
+            try:
 
-            flags = renpy.python.file_compiler_flags.get(i.location[0], 0)
-            if flags:
-                if flags == __future__.division.compiler_flag:
-                    # avoid triggering a recompile
-                    key += b"_py3"
-                else:
-                    key += b"_flags" + str(flags).encode("utf-8")
+                renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (i.linenumber, i.filename)
 
-            warnings_key = ("warnings", key)
+                i.bytecode = renpy.python.py_compile(i.source, i.mode, filename=i.filename, lineno=i.linenumber, py=i.py, hashcode=i.hashcode)
 
-            code = self.bytecode_oldcache.get(key, None)
+            except SyntaxError as e:
 
-            if code is None:
+                text = e.text
 
-                self.bytecode_dirty = True
+                if text is None:
+                    text = ''
 
-                old_ei = renpy.game.exception_info
-                renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (i.location[1], i.location[0])
+                pem = renpy.parser.ParseError(
+                    filename=e.filename,
+                    number=e.lineno,
+                    msg=e.msg,
+                    line=text,
+                    pos=e.offset)
 
-                try:
+                renpy.parser.parse_errors.append(pem.message)
 
-                    if i.mode == 'exec':
-                        code = renpy.python.py_compile_exec_bytecode(i.source, filename=i.location[0], lineno=i.location[1], py=i.py)
-                    elif i.mode == 'hide':
-                        code = renpy.python.py_compile_hide_bytecode(i.source, filename=i.location[0], lineno=i.location[1], py=i.py)
-                    elif i.mode == 'eval':
-                        code = renpy.python.py_compile_eval_bytecode(i.source, filename=i.location[0], lineno=i.location[1], py=i.py)
-
-                except SyntaxError as e:
-
-                    text = e.text
-
-                    if text is None:
-                        text = ''
-
-                    pem = renpy.parser.ParseError(
-                        filename=e.filename,
-                        number=e.lineno,
-                        msg=e.msg,
-                        line=text,
-                        pos=e.offset)
-
-                    renpy.parser.parse_errors.append(pem.message)
-
-                    continue
+            finally:
 
                 renpy.game.exception_info = old_ei
-
-                if renpy.python.compile_warnings:
-                    self.bytecode_newcache[warnings_key] = renpy.python.compile_warnings
-                    renpy.python.compile_warnings = [ ]
-
-            else:
-
-                if warnings_key in self.bytecode_oldcache:
-                    self.bytecode_newcache[warnings_key] = self.bytecode_oldcache[warnings_key]
-
-            self.bytecode_newcache[key] = code
-            i.bytecode = marshal.loads(code) # type: ignore
 
         self.all_pycode = [ ]
 

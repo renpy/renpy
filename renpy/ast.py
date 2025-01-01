@@ -40,6 +40,7 @@ import zlib
 import renpy
 
 from renpy.cslots import Object, Slot, IntegerSlot
+from renpy.pythonsupport import hash_fnv1a
 
 from renpy.parameter import (
     ParameterInfo,
@@ -83,17 +84,24 @@ class PyExpr(str):
         'filename',
         'linenumber',
         'py',
+        'hashcode',
     ]
 
     filename: str
     linenumber: int
     py: int
+    hashcode: int
 
-    def __new__(cls, s, filename, linenumber, py=3):
+    def __new__(cls, s, filename, linenumber, py=3, hashcode=None):
         self = str.__new__(cls, s)
         self.filename = filename
         self.linenumber = linenumber
         self.py = py
+
+        if hashcode is None:
+            self.hashcode = hash_fnv1a(s)
+        else:
+            self.hashcode = hashcode
 
         # Queue the string for precompilation.
         if self and (renpy.game.script.all_pyexpr is not None):
@@ -102,7 +110,7 @@ class PyExpr(str):
         return self
 
     def __getnewargs__(self):  # type: ignore
-        return (str(self), self.filename, self.linenumber, self.py)
+        return (str(self), self.filename, self.linenumber, self.py, self.hashcode)
 
     @staticmethod
     def checkpoint() -> Any:
@@ -130,23 +138,43 @@ class PyExpr(str):
 
 class PyCode(Object):
 
+    _cslot_linenumbers = True
+
+    filename: str
     source: str
     location: tuple[Any, ...]
     mode : Literal["eval", "exec", "hide"] = "eval"
     bytecode : bytes | None
-    hash : bytes
     py : int = 3
+    hashcode : int
 
     def __getstate__(self):
-        return (1, self.source, self.location, self.mode, self.py)
+        return (1, self.source, (self.filename, self.linenumber), self.mode, self.py, self.hashcode)
 
     def __setstate__(self, state):
 
-        if len(state) == 4:
-            (_, self.source, self.location, self.mode) = state
-            self.py = 2
-        else:
-            (_, self.source, self.location, self.mode, self.py) = state
+        match state:
+            case (_, source, location, mode):
+                py = 2
+                hashcode = None
+            case (_, source, location, mode, py):
+                hashcode = None
+            case (_, source, location, mode, py, hashcode):
+                pass
+            case _:
+                raise Exception("Invalid state:", state)
+
+        self.py = py
+        self.source = source
+        self.filename = location[0]
+        self.linenumber = location[1]
+        self.mode = mode
+
+        if hashcode is None:
+            if isinstance(source, PyExpr):
+                self.hashcode = source.hashcode
+            else:
+                self.hashcode = hash_fnv1a(source)
 
         self.bytecode = None
 
@@ -161,12 +189,14 @@ class PyCode(Object):
         # The source code.
         self.source = source
 
-        # The time is necessary so we can disambiguate between Python
-        # blocks on the same line in different script versions.
         if isinstance(source, PyExpr):
-            self.location = (source.filename, source.linenumber, source, int(time.time()))
+            self.filename = source.filename
+            self.linenumber = source.linenumber
+            self.hashcode = source.hashcode
         else:
-            self.location = (*loc, int(time.time()))
+            self.filename = loc[0]
+            self.linenumber = loc[1]
+            self.hashcode = hash_fnv1a(source)
 
         self.mode = mode
 
@@ -175,24 +205,6 @@ class PyCode(Object):
 
         if renpy.game.script.record_pycode:
             renpy.game.script.all_pycode.append(self)
-
-        self.get_hash()
-
-    def get_hash(self) -> bytes:
-        rv = self.hash
-        if rv:
-            return rv
-
-        code = self.source
-        if isinstance(code, ast.AST):
-            code = ast.dump(code)
-
-        source = (repr(self.location) + code).encode("utf-8")
-        self.hash = bytes([renpy.bytecode_version]) + \
-            hashlib.md5(source).digest()
-
-        return self.hash
-
 
 DoesNotExtend = renpy.object.Sentinel("DoesNotExtend")
 

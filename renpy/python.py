@@ -50,6 +50,8 @@ import warnings
 
 import renpy
 
+from renpy.pythonsupport import hash_fnv1a
+
 # Import these for pickle-compatibility.
 from renpy.revertable import (
     CompressedList, DetRandom, RevertableDict,
@@ -997,7 +999,7 @@ def quote_eval(s):
 compile_filename = ""
 
 
-def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None):
+def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None, hashcode=None):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
@@ -1008,7 +1010,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         node.
 
     `mode`
-        One of "exec" or "eval".
+        One of "eval", "exec", or "hide".
 
     `filename`
         The filename the source comes from. If a pyexpr is given, the
@@ -1032,18 +1034,24 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     if isinstance(source, ast.Module):
         return compile(source, filename, mode)
 
-    if isinstance(source, renpy.ast.PyExpr):
+    elif isinstance(source, renpy.ast.PyExpr):
         filename = source.filename
         lineno = source.linenumber
+        hashcode = source.hashcode
 
         if py is None:
             py = source.py
 
+    elif hashcode is None:
+        hashcode = hash_fnv1a(source)
+
     if py is None:
         py = 3
 
+    flags = file_compiler_flags.get(filename, 0)
+
     if cache:
-        key = (lineno, filename, str(source), mode, renpy.script.MAGIC)
+        key = (hashcode, lineno, filename, mode, renpy.script.MAGIC, flags)
         warnings_key = ("warnings", key)
 
         rv = py_compile_cache.get(key, None)
@@ -1088,7 +1096,6 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         else:
             py_mode = mode
 
-        flags = file_compiler_flags.get(filename, 0)
         flags |= new_compile_flags
 
         try:
@@ -1153,25 +1160,6 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             e.lineno += line_offset
 
         raise e
-
-
-def py_compile_exec_bytecode(source, **kwargs):
-    code = py_compile(source, 'exec', cache=False, **kwargs)
-    return marshal.dumps(code)
-
-
-def py_compile_hide_bytecode(source, **kwargs):
-    code = py_compile(source, 'hide', cache=False, **kwargs)
-    return marshal.dumps(code)
-
-
-def py_compile_eval_bytecode(source, **kwargs):
-    source = source.strip()
-    code = py_compile(source, 'eval', cache=False, **kwargs)
-    return marshal.dumps(code)
-
-# Classes that are exported in place of the normal list, dict, and
-# object.
 
 
 

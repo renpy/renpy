@@ -23,7 +23,7 @@ cdef union UCS4:
     Py_UCS4 u
     unsigned char c[4]
 
-def hash_fnv1a(unicode s):
+def hash_fnv1a(s):
     """
     FNV-1a hash function.
 
@@ -33,7 +33,12 @@ def hash_fnv1a(unicode s):
     cdef unsigned int rv = 0x811c9dc5
     cdef UCS4 codepoint
 
-    for codepoint.u in s:
+    if type(s) is not unicode:
+        s = unicode(s)
+
+    cdef unicode us = <unicode> s
+
+    for codepoint.u in us:
         rv ^= codepoint.c[0]
         rv *= 0x01000193
 

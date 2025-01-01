@@ -721,6 +721,7 @@ if 1 == 0:
     from . import preferences
     from . import pyanalysis
     from . import pydict
+    from . import pythonsupport
     from . import python
     from . import revertable
     from . import rollback
