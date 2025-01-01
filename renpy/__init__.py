@@ -397,7 +397,6 @@ def import_all():
 
     # Should probably be early, as we will add these as a base to serialized things.
     import renpy.object
-    import renpy.location
 
     import renpy.game
     import renpy.preferences
