@@ -613,22 +613,29 @@ class Context(renpy.object.Object):
 
                     short, full, traceback_fn = renpy.error.report_exception(e, editor=False)
 
+                    handled = False
                     try:
-                        handled = False
-
                         if self.exception_handler is not None:
                             self.exception_handler(short, full, traceback_fn)
                             handled = True
                         elif renpy.config.exception_handler is not None:
                             handled = renpy.config.exception_handler(short, full, traceback_fn)
 
-                        if not handled:
-                            if renpy.display.error.report_exception(short, full, traceback_fn):
-                                raise
-                    except renpy.game.CONTROL_EXCEPTIONS as ce:
-                        raise ce
+                        if not handled and not renpy.display.error.report_exception(
+                            short,
+                            full,
+                            traceback_fn
+                        ):
+                            handled = True
+
+                    except renpy.game.CONTROL_EXCEPTIONS:
+                        raise
                     except Exception:
-                        raise e from None
+                        pass
+
+                    # Raise original exception.
+                    if not handled:
+                        raise
 
                 node = self.next_node
 
