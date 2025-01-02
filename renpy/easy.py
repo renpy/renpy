@@ -21,7 +21,8 @@
 
 """Functions that make the user's life easier."""
 
-from __future__ import annotations
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 from typing import Any
 
@@ -55,13 +56,56 @@ def lookup_displayable_prefix(d):
     return displayable(fn(arg))
 
 
-def displayable_or_none(
-    d: Any,
-    scope: dict[str, Any] | None = None,
-    dynamic: bool = True) -> renpy.display.displayable.Displayable | None:
+def displayable_or_none(d, scope=None, dynamic=True): # type: (Any, dict|None, bool) -> renpy.display.displayable.Displayable|None
+
+    if isinstance(d, renpy.display.displayable.Displayable):
+        return d
 
     if d is None:
         return d
+
+    if isinstance(d, str):
+        if not d:
+            raise Exception("An empty string cannot be used as a displayable.")
+        elif ("[" in d) and renpy.config.dynamic_images and dynamic:
+            return renpy.display.image.DynamicImage(d, scope=scope)
+
+        rv = lookup_displayable_prefix(d)
+
+        if rv is not None:
+            return rv
+        elif d[0] == '#':
+            return renpy.store.Solid(d)
+        elif "." in d:
+            return renpy.store.Image(d)
+        else:
+            return renpy.store.ImageReference(tuple(d.split()))
+
+    if isinstance(d, Color):
+        return renpy.store.Solid(d) # type: ignore
+
+    if isinstance(d, list):
+        return renpy.display.image.DynamicImage(d, scope=scope) # type: ignore
+
+    # We assume the user knows what he's doing in this case.
+    if hasattr(d, '_duplicate'):
+        return d
+
+    if d is True or d is False:
+        return d
+
+    raise Exception("Not a displayable: %r" % (d,))
+
+
+def displayable(d, scope=None): # type(d, dict|None=None) -> renpy.display.displayable.Displayable|None
+    """
+    :doc: udd_utility
+    :name: renpy.displayable
+
+    This takes `d`, which may be a displayable object or a string. If it's
+    a string, it converts that string into a displayable using the usual
+    rules.
+    """
 
     if isinstance(d, renpy.display.displayable.Displayable):
         return d
@@ -69,7 +113,7 @@ def displayable_or_none(
     if isinstance(d, str):
         if not d:
             raise Exception("An empty string cannot be used as a displayable.")
-        elif ("[" in d) and renpy.config.dynamic_images and dynamic:
+        elif ("[" in d) and renpy.config.dynamic_images:
             return renpy.display.image.DynamicImage(d, scope=scope)
 
         rv = lookup_displayable_prefix(d)
@@ -94,33 +138,12 @@ def displayable_or_none(
         return d
 
     if d is True or d is False:
-        return d  # type: ignore
+        return d
 
-    raise Exception(f"Not a displayable: {d!r}")
-
-
-def displayable(d: Any, scope: dict[str, Any] | None = None) -> renpy.display.displayable.Displayable:
-    """
-    :doc: udd_utility
-    :name: renpy.displayable
-
-    This takes `d`, which may be a displayable object or a string. If it's
-    a string, it converts that string into a displayable using the usual
-    rules.
-    """
-
-    rv = displayable_or_none(d, scope=scope, dynamic=True)
-
-    if rv is None:
-        raise Exception(f"Not a displayable: {d!r}")
-
-    return rv
+    raise Exception("Not a displayable: %r" % (d,))
 
 
-def dynamic_image(
-    d: Any, scope: dict[str, Any] | None = None,
-    prefix: str | None = None, search: list[str] | None = None,
-)-> renpy.display.displayable.Displayable | None:
+def dynamic_image(d, scope=None, prefix=None, search=None): # type: (Any, dict|None, str|None, list|None) -> renpy.display.displayable.Displayable|None
     """
     Substitutes a scope into `d`, then returns a displayable.
 
