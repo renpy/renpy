@@ -306,13 +306,11 @@ def draw_special(what, dest, x, y):
 
         ramplen = what.operation_parameter
 
-        from itertools import repeat
+        ramp = b"\x00" * 256
 
-        ramp = bytes([
-            *repeat(0, 256),
-            *(255 * i // ramplen for i in range(ramplen)),
-            *repeat(255, 256),
-        ])
+        ramp += bytes([255 * i // ramplen for i in range(ramplen)])
+
+        ramp += b"\xff" * 256
 
         step = int(what.operation_complete * (256 + ramplen))
         ramp = ramp[step:step + 256]
