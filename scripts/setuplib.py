@@ -255,7 +255,7 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
             "-Isrc",
             "-I" + gen,
             "-I.",
-            "--3str",
+            "-3",
             ] + annotate + lang_args + coverage_args + [
             "-X", "profile=False",
             "-X", "embedsignature=True",
