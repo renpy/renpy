@@ -40,7 +40,7 @@ import zlib
 import renpy
 
 from renpy.cslots import Object, Slot, IntegerSlot
-from renpy.astsupport import hash_fnv1a
+from renpy.astsupport import hash_fnv1a, PyExpr
 
 from renpy.parameter import (
     ParameterInfo,
@@ -74,66 +74,6 @@ EARLY_CONFIG = {
     "munge_in_strings",
     "interface_layer",
 }
-
-class PyExpr(str):
-    """
-    Represents a string containing python expression.
-    """
-
-    __slots__ = [
-        'filename',
-        'linenumber',
-        'py',
-        'hashcode',
-    ]
-
-    filename: str
-    linenumber: int
-    py: int
-    hashcode: int
-
-    def __new__(cls, s, filename, linenumber, py=3, hashcode=None):
-        self = str.__new__(cls, s)
-        self.filename = filename
-        self.linenumber = linenumber
-        self.py = py
-
-        if hashcode is None:
-            self.hashcode = hash_fnv1a(s)
-        else:
-            self.hashcode = hashcode
-
-        # Queue the string for precompilation.
-        if self and (renpy.game.script.all_pyexpr is not None):
-            renpy.game.script.all_pyexpr.append(self)
-
-        return self
-
-    def __getnewargs__(self):  # type: ignore
-        return (str(self), self.filename, self.linenumber, self.py, self.hashcode)
-
-    @staticmethod
-    def checkpoint() -> Any:
-        """
-        Checkpoints the pyexpr list. Returns an opaque object that can be used
-        to revert the list.
-        """
-
-        if renpy.game.script.all_pyexpr is None:
-            return None
-
-        return len(renpy.game.script.all_pyexpr)
-
-    @staticmethod
-    def revert(opaque: Any):
-
-        if renpy.game.script.all_pyexpr is None:
-            return
-
-        if opaque is None:
-            return
-
-        renpy.game.script.all_pyexpr[opaque:] = []
 
 
 class PyCode(Object):
