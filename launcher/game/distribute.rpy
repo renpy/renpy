@@ -894,7 +894,7 @@ fix_dlc("renios", "renios")
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
 
-            if isinstance(file_list, basestring):
+            if isinstance(file_list, str):
                 file_list = file_list.split()
 
             f = File(name, path, False, executable)
@@ -907,7 +907,7 @@ fix_dlc("renios", "renios")
             Adds an empty directory to the file lists.
             """
 
-            if isinstance(file_list, basestring):
+            if isinstance(file_list, str):
                 file_list = file_list.split()
 
             f = File(name, None, True, False)
@@ -981,7 +981,7 @@ fix_dlc("renios", "renios")
                     script_version_txt = self.temp_filename("script_version.txt")
 
                     with open(script_version_txt, "w") as f:
-                        f.write(unicode(repr(renpy.renpy.version_tuple[:-1])))
+                        f.write(repr(renpy.renpy.version_tuple[:-1]))
 
                     self.add_file("all", "game/script_version.txt", script_version_txt)
 
@@ -1778,8 +1778,9 @@ fix_dlc("renios", "renios")
             reporter.info(_("Recompiling all rpy files into rpyc files..."))
             project.launch([ "compile", "--keep-orphan-rpyc" ], wait=True)
 
-        files = [fn + "c" for fn in project.script_files()
-                 if fn.startswith("game/") and project.exists(fn + "c")]
+        files = [
+            fn + "c" for fn in project.script_files()
+            if fn.startswith("game/") and project.exists(fn + "c")]
         len_files = len(files)
 
         if not files:

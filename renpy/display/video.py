@@ -424,7 +424,7 @@ class Movie(renpy.display.displayable.Displayable):
         If `name` is a list of strings, checks if any filenames is loadable.
         """
 
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             m = re.match(r'<.*>(.*)$', name)
             if m:
                 name = m.group(1)

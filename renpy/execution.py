@@ -25,8 +25,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from future.utils import reraise
-
 import sys
 import time
 
@@ -613,25 +611,37 @@ class Context(renpy.object.Object):
                 except Exception as e:
                     self.translate_interaction = None
 
-                    exc_info = sys.exc_info()
                     short, full, traceback_fn = renpy.error.report_exception(e, editor=False)
 
+                    reraise = True
                     try:
-                        handled = False
-
+                        # Local exception handler, if any.
                         if self.exception_handler is not None:
                             self.exception_handler(short, full, traceback_fn)
-                            handled = True
-                        elif renpy.config.exception_handler is not None:
-                            handled = renpy.config.exception_handler(short, full, traceback_fn)
+                            reraise = False
 
-                        if not handled:
-                            if renpy.display.error.report_exception(short, full, traceback_fn):
-                                raise
-                    except renpy.game.CONTROL_EXCEPTIONS as ce:
-                        raise ce
+                        # Creator-defined exception handler. Returns True
+                        # if exception handled.
+                        elif renpy.config.exception_handler is not None:
+                            reraise = not renpy.config.exception_handler(short, full, traceback_fn)
+
+                        # RenPy default exception handler. Returns True
+                        # if exception NOT handled.
+                        if reraise:
+                            reraise = renpy.display.error.report_exception(
+                                short,
+                                full,
+                                traceback_fn
+                            )
+
+                    except renpy.game.CONTROL_EXCEPTIONS:
+                        raise
                     except Exception:
-                        reraise(exc_info[0], exc_info[1], exc_info[2])
+                        pass
+
+                    # Raise original exception.
+                    if reraise:
+                        raise
 
                 node = self.next_node
 

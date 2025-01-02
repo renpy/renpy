@@ -327,7 +327,7 @@ init -1500 python:
                     if tlid is None:
                         continue
 
-                    if isinstance(config.auto_voice, (str, unicode)):
+                    if isinstance(config.auto_voice, str):
                         fn = config.auto_voice.format(id=tlid)
                     else:
                         fn = config.auto_voice(tlid)
@@ -549,7 +549,7 @@ python early hide:
         _voice.seen_in_lint = True
 
         fn = _try_eval(fn, 'voice filename')
-        if not isinstance(fn, basestring):
+        if not isinstance(fn, str):
             return
 
         try:
@@ -560,12 +560,13 @@ python early hide:
         if not renpy.music.playable(fn, 'voice'):
             renpy.error('voice file %r is not playable' % fn)
 
-    renpy.statements.register('voice',
-                              parse=parse_voice,
-                              execute=execute_voice,
-                              predict=predict_voice,
-                              lint=lint_voice,
-                              translatable=True)
+    renpy.statements.register(
+        'voice',
+        parse=parse_voice,
+        execute=execute_voice,
+        predict=predict_voice,
+        lint=lint_voice,
+        translatable=True)
 
     def parse_voice_sustain(l):
         if not l.eol():
@@ -576,7 +577,8 @@ python early hide:
     def execute_voice_sustain(parsed):
         voice_sustain()
 
-    renpy.statements.register('voice sustain',
-                              parse=parse_voice_sustain,
-                              execute=execute_voice_sustain,
-                              translatable=True)
+    renpy.statements.register(
+        'voice sustain',
+        parse=parse_voice_sustain,
+        execute=execute_voice_sustain,
+        translatable=True)

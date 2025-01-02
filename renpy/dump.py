@@ -128,7 +128,7 @@ def dump(error):
         filename = n.filename
         line = n.linenumber
 
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             continue
 
         if not name_filter(name, filename):

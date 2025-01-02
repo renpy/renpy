@@ -27,9 +27,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
-from future.utils import raise_
-
 import time
 import pygame_sdl2 # @UnusedImport
 import os
@@ -116,16 +113,18 @@ class AudioData(str):
         play sound easteregg
     """
 
-    def __new__(cls, data, filename):
+    data: bytes
+
+    def __new__(cls, data: bytes, filename: str):
         rv = str.__new__(cls, filename)
-        rv.data = data # type: ignore
+        rv.data = data
         return rv
 
     def __init__(self, data, filename):
         pass
 
     def __reduce__(self):
-        return(AudioData, (self.data, str(self))) # type: ignore
+        return(AudioData, (self.data, str(self)))
 
 
 class QueueEntry(object):
@@ -545,7 +544,7 @@ class Channel(object):
                     continue
 
                 if isinstance(topq.filename, AudioData):
-                    topf = io.BytesIO(topq.filename.data) # type: ignore
+                    topf = io.BytesIO(topq.filename.data)
                 else:
                     topf = load(filename)
                     if topf is AudioNotReady:
@@ -1194,7 +1193,7 @@ def periodic_pass():
 
 
 # The exception that's been thrown by the periodic thread.
-periodic_exc = None
+periodic_exc: Exception | None = None
 
 # Should we run the periodic thread now?
 run_periodic = False
@@ -1225,8 +1224,8 @@ def periodic_thread_main():
 
             try:
                 periodic_pass()
-            except Exception:
-                periodic_exc = sys.exc_info()
+            except Exception as e:
+                periodic_exc = e
 
 
 def periodic():
@@ -1246,7 +1245,7 @@ def periodic():
             exc = periodic_exc
             periodic_exc = None
 
-            raise_(exc[0], exc[1], exc[2])
+            raise exc
 
         run_periodic = True
         periodic_condition.notify()

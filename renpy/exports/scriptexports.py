@@ -53,7 +53,7 @@ def get_all_labels():
     rv = [ ]
 
     for i in renpy.game.script.namemap:
-        if isinstance(i, basestring):
+        if isinstance(i, str):
             rv.append(i)
 
     return renpy.revertable.RevertableSet(rv)

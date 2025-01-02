@@ -344,7 +344,7 @@ init -1500 python:
                 A string giving a Python expression.
             """
 
-            if not isinstance(expression, basestring):
+            if not isinstance(expression, str):
                 raise Exception("Gallery condition must be a string containing an expression.")
 
             self.unlockable.conditions.append(__GalleryArbitraryCondition(expression))

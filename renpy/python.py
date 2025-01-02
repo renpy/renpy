@@ -1202,7 +1202,7 @@ def py_eval_bytecode(bytecode, globals=None, locals=None): # @ReservedAssignment
 
 
 def py_eval(code, globals=None, locals=None): # @ReservedAssignment
-    if isinstance(code, basestring):
+    if isinstance(code, str):
         code = py_compile(code, 'eval')
 
     return py_eval_bytecode(code, globals, locals)
@@ -1228,9 +1228,8 @@ def raise_at_location(e, loc):
 
     node = ast.parse("raise e", filename)
     ast.increment_lineno(node, line - 1)
-    code = compile(node, filename, 'exec') #type: ignore
+    code = compile(node, filename, 'exec')
 
-    # PY3 - need to change to exec().
     exec(code, { "e" : e })
 
 

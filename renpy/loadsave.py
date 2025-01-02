@@ -24,10 +24,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from future.utils import reraise
-
-from typing import Optional
-
 import io
 import zipfile
 import re
@@ -68,11 +64,17 @@ def save_dump(roots, log):
         if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             o_repr = repr(o)
 
-        elif isinstance(o, basestring):
+        elif isinstance(o, str):
             if len(o) <= 80:
                 o_repr = repr(o)
             else:
-                o_repr = repr(o[:80]) + "..."
+                o_repr = repr(o[:40] + "..." + o[-40:])
+
+        elif isinstance(o, bytes):
+            if len(o) <= 80:
+                o_repr = repr(o)
+            else:
+                o_repr = repr(o[:40] + b"..." + o[-40:])
 
         elif isinstance(o, (tuple, list)):
             o_repr = "<" + o.__class__.__name__ + ">"
@@ -129,7 +131,7 @@ def save_dump(roots, log):
                 reduction = [ ]
                 o_repr_cache[ido] = "BAD REDUCTION " + o_repr
 
-            if isinstance(reduction, basestring):
+            if isinstance(reduction, str):
                 o_repr_cache[ido] = o.__module__ + '.' + reduction
                 size = 1
 
@@ -409,25 +411,17 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
     logf = io.BytesIO()
     try:
         dump((roots, renpy.game.log), logf)
-    except Exception:
-
-        t, e, tb = sys.exc_info()
-
-        if mutate_flag:
-            reraise(t, e, tb)
+    except Exception as e:
+        if mutate_flag or not e.args:
+            raise
 
         try:
-            bad = find_bad_reduction(roots, renpy.game.log)
+            if bad := find_bad_reduction(roots, renpy.game.log):
+                e.args = (e.args[0] + f' (perhaps {bad})', *e.args[1:])
         except Exception:
-            reraise(t, e, tb)
+            pass
 
-        if bad is None:
-            reraise(t, e, tb)
-
-        if e.args:
-            e.args = (e.args[0] + ' (perhaps {})'.format(bad),) + e.args[1:]
-
-        reraise(t, e, tb)
+        raise
 
     if mutate_flag and renpy.revertable.mutate_flag:
         raise SaveAbort()

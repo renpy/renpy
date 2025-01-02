@@ -216,7 +216,7 @@ def init():
 
     for pattern, replacement in renpy.config.tts_substitutions:
 
-        if isinstance(pattern, basestring):
+        if isinstance(pattern, str):
             pattern = r'\b' + re.escape(pattern) + r'\b'
             pattern = re.compile(pattern, re.IGNORECASE)
             replacement = replacement.replace("\\", "\\\\")

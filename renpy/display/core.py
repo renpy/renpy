@@ -257,12 +257,6 @@ class absolute(float):
         return absolute(absolute.compute_raw(value, room))
 
 for fn in (
-    '__coerce__', # PY2
-    '__div__', # PY2
-    '__long__', # PY2
-    '__nonzero__', # PY2
-    '__rdiv__', # PY2
-
     '__abs__',
     '__add__',
     # '__bool__', # non-float
@@ -303,11 +297,10 @@ for fn in (
     # 'hex', # non-float
     # 'is_integer', # non-float
 ):
-    f = getattr(float, fn, None)
-    if f is not None: # for PY2-only and PY3-only methods
-        setattr(absolute, fn, absolute_wrap(f))
+    f = getattr(float, fn)
+    setattr(absolute, fn, absolute_wrap(f))
 
-del absolute_wrap, fn, f # type: ignore
+del absolute_wrap, fn, f  # type: ignore
 
 
 

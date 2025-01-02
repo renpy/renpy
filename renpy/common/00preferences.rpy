@@ -282,7 +282,7 @@ init -1500 python:
 
         name = name.lower()
 
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             value = value.lower()
 
         def get():

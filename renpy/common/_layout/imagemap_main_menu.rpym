@@ -81,7 +81,7 @@ label main_menu_screen:
             if not eval(enabled):
                 act = None
 
-            if isinstance(act, basestring):
+            if isinstance(act, str):
                 act = ui.jumpsoutofcontext(act)
 
             ime.button(name, act, False)

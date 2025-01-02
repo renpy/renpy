@@ -64,7 +64,6 @@ import io
 import sys
 import operator
 
-python_open = open
 
 ################################################################################
 # Determine if this is Python2.
@@ -74,14 +73,9 @@ PY2 = False
 ################################################################################
 # Make open mimic Python 3.
 
+python_open = open
 open = builtins.open
-
-
-def compat_open(*args, **kwargs):
-    if (sys._getframe(1).f_code.co_flags & 0xa000) == 0xa000:
-        return open(*args, **kwargs)
-    else:
-        return python_open(*args, **kwargs)
+compat_open = open
 
 
 ################################################################################
@@ -98,7 +92,7 @@ renpy.update_path()
 ################################################################################
 # String (text and binary) types and functions.
 
-basestring = (str, bytes)
+basestring = (str, )
 pystr = str
 unicode = str
 str = builtins.str

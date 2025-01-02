@@ -192,7 +192,7 @@ init -1500 python:
 
 
         def __init__(self, mixer, mute):
-            if isinstance(mixer, basestring):
+            if isinstance(mixer, str):
                 mixer = [ mixer ]
 
             self.mixers = mixer
@@ -225,7 +225,7 @@ init -1500 python:
 
 
         def __init__(self, mixer):
-            if isinstance(mixer, basestring):
+            if isinstance(mixer, str):
                 mixer = [ mixer ]
 
             self.mixers = mixer

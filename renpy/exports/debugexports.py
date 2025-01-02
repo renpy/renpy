@@ -77,7 +77,7 @@ def log(msg):
         return
 
     try:
-        msg = unicode(msg)
+        msg = str(msg)
     except Exception:
         pass
 
@@ -100,7 +100,7 @@ def log(msg):
 
         for line in msg.split('\n'):
             line = textwrap.fill(line, renpy.config.log_width)
-            line = unicode(line)
+            line = str(line)
             wrapped.append(line)
 
         wrapped = '\n'.join(wrapped)

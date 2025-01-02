@@ -93,7 +93,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=None
     if filenames is None:
         return
 
-    if isinstance(filenames, basestring):
+    if isinstance(filenames, str):
         filenames = [ filenames ]
 
     if get_pause(channel=channel):
@@ -200,7 +200,7 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         filenames = [ ]
         loop = False
 
-    if isinstance(filenames, basestring):
+    if isinstance(filenames, str):
         filenames = [ filenames ]
 
     if renpy.config.skipping == "fast":
