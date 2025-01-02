@@ -230,7 +230,7 @@ def interpolate(t, a, b, typ):
     """
 
     # Deal with booleans, nones, etc.
-    if b is None or isinstance(b, (bool, str, bytes, renpy.display.matrix.Matrix, renpy.display.transform.Camera)):
+    if b is None or isinstance(b, (bool, str, renpy.display.matrix.Matrix, renpy.display.transform.Camera)):
         if t >= 1.0:
             return b
         else:

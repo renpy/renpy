@@ -613,20 +613,26 @@ class Context(renpy.object.Object):
 
                     short, full, traceback_fn = renpy.error.report_exception(e, editor=False)
 
-                    handled = False
+                    reraise = True
                     try:
+                        # Local exception handler, if any.
                         if self.exception_handler is not None:
                             self.exception_handler(short, full, traceback_fn)
-                            handled = True
-                        elif renpy.config.exception_handler is not None:
-                            handled = renpy.config.exception_handler(short, full, traceback_fn)
+                            reraise = False
 
-                        if not handled and not renpy.display.error.report_exception(
-                            short,
-                            full,
-                            traceback_fn
-                        ):
-                            handled = True
+                        # Creator-defined exception handler. Returns True
+                        # if exception handled.
+                        elif renpy.config.exception_handler is not None:
+                            reraise = not renpy.config.exception_handler(short, full, traceback_fn)
+
+                        # RenPy default exception handler. Returns True
+                        # if exception NOT handled.
+                        if reraise:
+                            reraise = renpy.display.error.report_exception(
+                                short,
+                                full,
+                                traceback_fn
+                            )
 
                     except renpy.game.CONTROL_EXCEPTIONS:
                         raise
@@ -634,7 +640,7 @@ class Context(renpy.object.Object):
                         pass
 
                     # Raise original exception.
-                    if not handled:
+                    if reraise:
                         raise
 
                 node = self.next_node

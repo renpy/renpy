@@ -412,12 +412,14 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
     try:
         dump((roots, renpy.game.log), logf)
     except Exception as e:
-        if not mutate_flag and e.args:
-            try:
-                bad = find_bad_reduction(roots, renpy.game.log)
+        if mutate_flag or not e.args:
+            raise
+
+        try:
+            if bad := find_bad_reduction(roots, renpy.game.log):
                 e.args = (e.args[0] + f' (perhaps {bad})', *e.args[1:])
-            except Exception:
-                pass
+        except Exception:
+            pass
 
         raise
 
