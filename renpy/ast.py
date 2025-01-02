@@ -188,6 +188,7 @@ class Scry(object):
 type NodeName = "str | tuple[Any, ...] | None"
 type RollbackType = Literal["normal", "never", "force"]
 
+
 class Node(Object):
     """
     A node in the abstract syntax tree of the program.
@@ -198,14 +199,22 @@ class Node(Object):
     filename: str
     "Elided string file name of this node."
 
-    name: NodeName
+    _name: NodeName
     """
     Unique name of the node of all nodes in the abstract syntax tree.
 
-    Can be one of:
-    * A string, giving the name of the label this node defines.
-    * An opaque tuple, giving the name of the non-label statement.
-    * None, if not yet assigned.
+    This is used when the node name is either a string, or doesn't fit
+    into the usual filename, version, serial format.
+    """
+
+    name_version: int
+    """
+    When the name is a three-argument tuple, stores the version number.
+    """
+
+    name_serial: int
+    """
+    When the name is a three-argument tuple, stores the serial number.
     """
 
     next: Node | None
@@ -239,6 +248,37 @@ class Node(Object):
     """
     True if this statement should be run while warping, False otherwise.
     """
+
+    @property
+    def name(self) -> NodeName:
+        """
+        The name property stores and retreives the name for the node.
+        This is one of:
+
+        * A string, when the node is a label.
+        * A tuple, in (filename, version, serial) format. This is stored efficently,
+          as it makes up most nodes in Ren'Py.
+        * Longer tuples, like (filename, version, serial, ...) are rare, but used.
+        * None, when the name is not known.
+        """
+
+        if self._name:
+            return self._name
+        elif self.name_version:
+            return (self.filename, self.name_version, self.name_serial)
+        else:
+            return None
+
+    @name.setter
+    def name(self, value: NodeName):
+
+        match value:
+            case (self.filename, int(version), int(serial)):
+                self._name = None
+                self.name_version = version
+                self.name_serial = serial
+            case _:
+                self._name = value
 
     # Statement_start used to be a property on all nodes.
     @property

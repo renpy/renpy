@@ -254,6 +254,8 @@ cdef class CObject:
         cdef dict cslot_setters = ctype._cslot_setters
         cdef dict d
 
+        name = None
+
         if type(state) is tuple:
             for d in (<tuple> state):
                 if d is None:
@@ -263,10 +265,8 @@ cdef class CObject:
                     f = cslot_setters.get(k, None)
                     if f is not None:
                         f(self, v)
-                    else:
-                        descriptor = getattr(type(self), k, None)
-                        if descriptor is not None:
-                            descriptor.__set__(self, v)
+                    elif k == "name":
+                        name = v
 
         elif type(state) is dict:
             d = state
@@ -275,10 +275,17 @@ cdef class CObject:
                 f = cslot_setters.get(k, None)
                 if f is not None:
                     f(self, v)
+                elif k == "name":
+                    name = v
 
         else:
             raise TypeError("Invalid state type.")
 
+        if name:
+            try:
+                setattr(self, "name", name)
+            except AttributeError:
+                pass
 
 
 cdef class Slot:

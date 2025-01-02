@@ -792,6 +792,11 @@ class Script(object):
                                     data, stmts = loads(bindata)
                                 except Exception as e:
                                     print(f"Failed to load {fn}: {e}")
+
+                                    import traceback
+                                    traceback.print_exc()
+                                    raise SystemExit()
+
                                     raise
 
                                 break
