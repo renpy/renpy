@@ -139,8 +139,6 @@ class position(object):
             return self * (1/other)
         return NotImplemented
 
-    __div__ = __truediv__ # PY2
-
     def __pos__(self):
         return position(renpy.display.core.absolute(self.absolute), float(self.relative))
 
@@ -953,7 +951,7 @@ class RawBlock(RawStatement):
         old_exception_info = renpy.game.exception_info
         try:
             block = self.compile(Context({}))
-        except RuntimeError:  # PY3: RecursionError
+        except RecursionError:
             raise Exception("This transform refers to itself in a cycle.")
         except Exception:
             self.constant = NOT_CONST

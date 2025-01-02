@@ -1231,9 +1231,8 @@ def raise_at_location(e, loc):
 
     node = ast.parse("raise e", filename)
     ast.increment_lineno(node, line - 1)
-    code = compile(node, filename, 'exec') #type: ignore
+    code = compile(node, filename, 'exec')
 
-    # PY3 - need to change to exec().
     exec(code, { "e" : e })
 
 

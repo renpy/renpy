@@ -206,9 +206,6 @@ def fix_tokens(source):
 
     try:
 
-        if PY2:
-            return source
-
         bio = io.BytesIO(source.encode("utf-8"))
         tokens = list(tokenize.tokenize(bio.readline))
 
@@ -272,9 +269,6 @@ def fix_ast(tree):
 
     These are fixes that apply at the AST level.
     """
-
-    if PY2:
-        return tree
 
     try:
 
