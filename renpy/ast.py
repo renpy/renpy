@@ -280,6 +280,14 @@ class Node(Object):
             case _:
                 self._name = value
 
+    # An ast node is equal to its name, allowing it to be used as the key in renpy.script.Script.namemap.
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __eq__(self, other):
+        return self.name == other
+
     # Statement_start used to be a property on all nodes.
     @property
     def statement_start(self) -> Node:

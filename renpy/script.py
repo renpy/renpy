@@ -588,8 +588,9 @@ class Script(object):
 
             check_name(node)
 
-            # Add the name to the namemap.
-            self.namemap[name] = node
+            # Add the name to the namemap. This uses the node as both key and value, as the node is equal to and
+            # hashes as its name.
+            self.namemap[node] = node
 
             # Add any init nodes to self.initcode.
             if (priority := node.get_init()) is not None:
@@ -792,11 +793,6 @@ class Script(object):
                                     data, stmts = loads(bindata)
                                 except Exception as e:
                                     print(f"Failed to load {fn}: {e}")
-
-                                    import traceback
-                                    traceback.print_exc()
-                                    raise SystemExit()
-
                                     raise
 
                                 break
