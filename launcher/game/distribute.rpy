@@ -894,7 +894,10 @@ fix_dlc("renios", "renios")
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
 
-            if isinstance(file_list, basestring):
+            if isinstance(file_list, bytes):
+                raise Exception("File lists must be str, not bytes.")
+
+            if isinstance(file_list, str):
                 file_list = file_list.split()
 
             f = File(name, path, False, executable)
@@ -907,7 +910,10 @@ fix_dlc("renios", "renios")
             Adds an empty directory to the file lists.
             """
 
-            if isinstance(file_list, basestring):
+            if isinstance(file_list, bytes):
+                raise Exception("File lists must be str, not bytes.")
+
+            if isinstance(file_list, str):
                 file_list = file_list.split()
 
             f = File(name, None, True, False)
@@ -1778,8 +1784,9 @@ fix_dlc("renios", "renios")
             reporter.info(_("Recompiling all rpy files into rpyc files..."))
             project.launch([ "compile", "--keep-orphan-rpyc" ], wait=True)
 
-        files = [fn + "c" for fn in project.script_files()
-                 if fn.startswith("game/") and project.exists(fn + "c")]
+        files = [
+            fn + "c" for fn in project.script_files()
+            if fn.startswith("game/") and project.exists(fn + "c")]
         len_files = len(files)
 
         if not files:

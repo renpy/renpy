@@ -275,7 +275,7 @@ def convert(value, conv, scope):
         return value
 
     # All conversion symbols below assume we have a string.
-    if not isinstance(value, basestring):
+    if not isinstance(value, str):
         value = str(value)
 
     if 't' in conv:
@@ -320,7 +320,7 @@ def substitute(s, scope=None, force=False, translate=True):
     occurred, or False if no substitution occurred.
     """
 
-    if not isinstance(s, basestring):
+    if not isinstance(s, str):
         s = str(s)
 
     if translate:

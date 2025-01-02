@@ -45,7 +45,7 @@ def expand_predict(d):
     Use the fnmatch function to expland `d` for the purposes of prediction.
     """
 
-    if not isinstance(d, basestring):
+    if not isinstance(d, str):
         return [ d ]
 
     if not "*" in d:

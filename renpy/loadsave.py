@@ -64,11 +64,17 @@ def save_dump(roots, log):
         if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             o_repr = repr(o)
 
-        elif isinstance(o, basestring):
+        elif isinstance(o, str):
             if len(o) <= 80:
                 o_repr = repr(o)
             else:
-                o_repr = repr(o[:80]) + "..."
+                o_repr = repr(o[:40] + "..." + o[-40:])
+
+        elif isinstance(o, bytes):
+            if len(o) <= 80:
+                o_repr = repr(o)
+            else:
+                o_repr = repr(o[:40] + b"..." + o[-40:])
 
         elif isinstance(o, (tuple, list)):
             o_repr = "<" + o.__class__.__name__ + ">"
@@ -125,7 +131,7 @@ def save_dump(roots, log):
                 reduction = [ ]
                 o_repr_cache[ido] = "BAD REDUCTION " + o_repr
 
-            if isinstance(reduction, basestring):
+            if isinstance(reduction, str):
                 o_repr_cache[ido] = o.__module__ + '.' + reduction
                 size = 1
 

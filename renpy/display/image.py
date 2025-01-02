@@ -581,7 +581,7 @@ class DynamicImage(renpy.display.displayable.Displayable):
 
         self._uses_scope = False
 
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             if ("[prefix_" in name):
                 self._duplicatable = True
 

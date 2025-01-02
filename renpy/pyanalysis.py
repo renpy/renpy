@@ -153,7 +153,7 @@ def pure(fn):
 
     name = fn
 
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         name = fn.__name__
 
         module = fn.__module__

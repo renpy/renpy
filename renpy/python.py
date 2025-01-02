@@ -1202,7 +1202,10 @@ def py_eval_bytecode(bytecode, globals=None, locals=None): # @ReservedAssignment
 
 
 def py_eval(code, globals=None, locals=None): # @ReservedAssignment
-    if isinstance(code, basestring):
+    if isinstance(code, bytes):
+        code = code.decode("utf-8", "python_strict")
+
+    if isinstance(code, str):
         code = py_compile(code, 'eval')
 
     return py_eval_bytecode(code, globals, locals)

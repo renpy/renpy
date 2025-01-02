@@ -1454,14 +1454,13 @@ class Lexer(object):
         object, which is called directly.
         """
 
-        if isinstance(thing, basestring):
-            name = name or thing
+        if isinstance(thing, str):
             rv = self.match(thing)
         else:
             rv = thing(**kwargs)
 
         if rv is None:
-            if isinstance(thing, basestring):
+            if isinstance(thing, str):
                 name = name or thing
             else:
                 name = name or thing.__func__.__name__

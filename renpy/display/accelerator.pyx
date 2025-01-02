@@ -938,7 +938,7 @@ cdef class RenderTransform:
         # Shaders and uniforms.
         if state.shader is not None:
 
-            if isinstance(state.shader, basestring):
+            if isinstance(state.shader, str):
                 rv.add_shader(state.shader)
             else:
                 for name in state.shader:

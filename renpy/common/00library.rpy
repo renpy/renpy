@@ -190,7 +190,7 @@ init -1700 python:
 
             if who is None:
                 who = narrator
-            elif isinstance(who, basestring):
+            elif isinstance(who, str):
                 who = Character(who, kind=name_only)
 
             return who

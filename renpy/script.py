@@ -560,7 +560,7 @@ class Script(object):
                 bad_node = node
                 old_node = self.namemap[name]
 
-                if not isinstance(bad_name, basestring):
+                if not isinstance(bad_name, str):
 
                     raise ScriptError("Name %s is defined twice, at %s:%d and %s:%d." %
                                       (repr(bad_name),

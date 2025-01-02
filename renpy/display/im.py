@@ -2024,7 +2024,7 @@ def image(arg, loose=False, **properties):
     if isinstance(arg, ImageBase):
         return arg
 
-    elif isinstance(arg, basestring):
+    elif isinstance(arg, str):
         return Image(arg, **properties)
 
     elif isinstance(arg, renpy.display.image.ImageReference):

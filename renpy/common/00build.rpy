@@ -42,7 +42,7 @@ init -1500 python in build:
             return s
         elif isinstance(s, list):
             return s
-        elif isinstance(s, basestring):
+        elif isinstance(s, str):
             return s.split()
 
         raise Exception("Expected a string, list, or None.")

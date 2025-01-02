@@ -31,7 +31,7 @@ def renpy_pure(fn):
 
     name = fn
 
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         name = fn.__name__
 
     pure("renpy." + name)

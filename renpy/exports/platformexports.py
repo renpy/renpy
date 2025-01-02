@@ -45,7 +45,7 @@ def variant(name):
     returns True if any of the variants would.
     """
 
-    if isinstance(name, basestring):
+    if isinstance(name, str):
         return name in renpy.config.variants
     else:
         for n in name:

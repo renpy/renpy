@@ -2839,7 +2839,7 @@ class OnEvent(renpy.display.displayable.Displayable):
         self.action = action
 
     def is_event(self, event):
-        if isinstance(self.event_name, basestring):
+        if isinstance(self.event_name, str):
             return self.event_name == event
         else:
             return event in self.event_name
