@@ -91,7 +91,7 @@ def main():
     # renpy
     cython("renpy.astsupport")
     cython("renpy.cslots")
-    cython("renpy.location")
+    cython("renpy.lexersupport")
     cython("renpy.pydict")
     cython("renpy.style")
     cython("renpy.encryption")
