@@ -41,7 +41,7 @@ last_clock = time.time()
 def log_clock(s):
     global last_clock
     now = time.time()
-    s = "{} took {:.2f}s".format(s, now - last_clock)
+    s = "{} took {:.0f} ms".format(s, 1000 * (now - last_clock))
 
     renpy.display.log.write(s)
     if renpy.android and not renpy.config.log_to_stdout:
@@ -97,10 +97,10 @@ def run(restart):
 
     if not restart:
         renpy.pyanalysis.save_cache()
-        log_clock("Save pyanalysis.")
+        log_clock("Save pyanalysis")
 
         renpy.game.script.save_bytecode()
-        log_clock("Save bytecode.")
+        log_clock("Save bytecode")
 
     # Handle arguments and commands.
     if not renpy.arguments.post_init():
@@ -542,7 +542,7 @@ def main():
             node_duration = time.time() - node_start
 
             if node_duration > renpy.config.profile_init:
-                renpy.display.log.write(f" - Init at {node.filename}:{node.linenumber} took {node_duration:.2f}s.")
+                renpy.display.log.write(f" - Init at {node.filename}:{node.linenumber} took {1000 * node_duration:.0f} ms.")
 
         renpy.game.exception_info = 'After initialization, but before game start.'
 
