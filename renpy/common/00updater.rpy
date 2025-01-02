@@ -41,7 +41,6 @@ init -1500 python in updater:
     import zlib
     import codecs
     import io
-    import future.utils
 
     def urlopen(url):
         import requests
@@ -1054,9 +1053,9 @@ init -1500 python in updater:
             if "RENPY_TEST_MONKEYPATCH" in os.environ:
                 with open(os.environ["RENPY_TEST_MONKEYPATCH"], "r") as f:
                     monkeypatch = f.read()
-                    future.utils.exec_(monkeypatch, globals(), globals())
+                    exec(monkeypatch, globals(), globals())
             elif verified and "monkeypatch" in self.updates:
-                future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
+                exec(self.updates["monkeypatch"], globals(), globals())
 
         def add_dlc_state(self, name):
 

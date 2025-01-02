@@ -24,10 +24,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from future.utils import reraise
-
-from typing import Optional
-
 import io
 import zipfile
 import re
@@ -409,25 +405,23 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
     logf = io.BytesIO()
     try:
         dump((roots, renpy.game.log), logf)
-    except Exception:
-
-        t, e, tb = sys.exc_info()
+    except Exception as e:
 
         if mutate_flag:
-            reraise(t, e, tb)
+            raise e from None
 
         try:
             bad = find_bad_reduction(roots, renpy.game.log)
         except Exception:
-            reraise(t, e, tb)
+            raise e from None
 
         if bad is None:
-            reraise(t, e, tb)
+            raise e from None
 
         if e.args:
-            e.args = (e.args[0] + ' (perhaps {})'.format(bad),) + e.args[1:]
+            e.args = (e.args[0] + f' (perhaps {bad})', *e.args[1:])
 
-        reraise(t, e, tb)
+        raise e from None
 
     if mutate_flag and renpy.revertable.mutate_flag:
         raise SaveAbort()
