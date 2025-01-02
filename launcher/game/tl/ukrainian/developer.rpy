@@ -1,4 +1,4 @@
-
+﻿
 translate ukrainian strings:
 
     # 00console.rpy:255

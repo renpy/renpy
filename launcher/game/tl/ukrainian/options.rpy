@@ -1,4 +1,4 @@
-
+﻿
 translate ukrainian strings:
 
     # gui/game/options.rpy:1

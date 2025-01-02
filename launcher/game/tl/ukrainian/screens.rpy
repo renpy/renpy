@@ -1,4 +1,4 @@
-
+﻿
 translate ukrainian strings:
 
     # gui/game/screens.rpy:9
