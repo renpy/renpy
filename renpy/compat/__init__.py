@@ -92,7 +92,7 @@ renpy.update_path()
 ################################################################################
 # String (text and binary) types and functions.
 
-basestring = (str, bytes)
+basestring = (str, )
 pystr = str
 unicode = str
 str = builtins.str
