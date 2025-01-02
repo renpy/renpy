@@ -54,7 +54,7 @@ label _library_main_menu:
 
         for i, (text, clicked, enabled) in enumerate(config.main_menu):
 
-            if isinstance(clicked, (bytes, str)):
+            if isinstance(clicked, str):
                 clicked = ui.jumpsoutofcontext(clicked)
 
             if config.main_menu_positions:

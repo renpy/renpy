@@ -135,9 +135,6 @@ class Color(tuple):
         if color is not None:
             c = color
 
-            if isinstance(c, bytes):
-                c = c.decode("utf-8")
-
             if isinstance(c, str):
                 if c[0] == '#':
                     c = c[1:]
@@ -359,7 +356,7 @@ class Color(tuple):
         `other` may be a string, Color or an HSV tuple.
         """
 
-        if isinstance(other, (bytes, str)):
+        if isinstance(other, str):
             other = Color(other, alpha=self.alpha)
         elif not isinstance(other, Color):
             other = Color(hsv=other, alpha=self.alpha)
@@ -380,7 +377,7 @@ class Color(tuple):
         `other` may be a string, Color or an HLS tuple.
         """
 
-        if isinstance(other, (bytes, str)):
+        if isinstance(other, str):
             other = Color(other, alpha=self.alpha)
         elif not isinstance(other, Color):
             other = Color(hls=other, alpha=self.alpha)

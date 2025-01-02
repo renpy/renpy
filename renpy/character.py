@@ -259,9 +259,6 @@ def compute_widget_properties(who_args, what_args, window_args, properties, vari
 
         d = d.copy()
 
-        if isinstance(style, bytes):
-            raise Exception("Style name must be str, not bytes.")
-
         if isinstance(style, str):
 
             if multiple is not None:
@@ -356,9 +353,6 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                 renpy.ui.text(who, **who_args)
 
     def merge_style(style, properties):
-
-        if isinstance(style, bytes):
-            raise Exception("Style name must be str, not bytes.")
 
         if isinstance(style, str):
             style = getattr(renpy.store.style, style)

@@ -894,9 +894,6 @@ fix_dlc("renios", "renios")
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
 
-            if isinstance(file_list, bytes):
-                raise Exception("File lists must be str, not bytes.")
-
             if isinstance(file_list, str):
                 file_list = file_list.split()
 
@@ -909,9 +906,6 @@ fix_dlc("renios", "renios")
             """
             Adds an empty directory to the file lists.
             """
-
-            if isinstance(file_list, bytes):
-                raise Exception("File lists must be str, not bytes.")
 
             if isinstance(file_list, str):
                 file_list = file_list.split()

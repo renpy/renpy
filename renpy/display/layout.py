@@ -1596,7 +1596,7 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
         super(DynamicDisplayable, self).__init__()
         self.child = None
 
-        if isinstance(function, (bytes, str)):
+        if isinstance(function, str):
             args = (function, )
             kwargs = { }
             function = dynamic_displayable_compat
@@ -1889,8 +1889,6 @@ class Side(Container):
 
         if isinstance(positions, str):
             positions = positions.split()
-        elif isinstance(positions, bytes):
-            raise Exception("Side positions must be str, not bytes.")
 
         seen = set()
 

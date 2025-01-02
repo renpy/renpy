@@ -403,7 +403,7 @@ init python:
 
     def _joystick_take_binding(binding, key):
 
-        if not isinstance(binding, (bytes, str)):
+        if not isinstance(binding, str):
             if key in _preferences.joymap:
                 del _preferences.joymap[key]
         else:
