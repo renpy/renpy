@@ -327,7 +327,7 @@ init -1500 python:
                     if tlid is None:
                         continue
 
-                    if isinstance(config.auto_voice, (str, unicode)):
+                    if isinstance(config.auto_voice, str):
                         fn = config.auto_voice.format(id=tlid)
                     else:
                         fn = config.auto_voice(tlid)

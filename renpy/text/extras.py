@@ -315,7 +315,7 @@ def thaic90(s):
     """
     Reencodes `s` to the Thai C90 encoding, which is used by Thai-specific
     fonts to combine base characters, upper vowels, lower vowls, and tone marks
-    into singe precomposed characters in thje unicode private use area.
+    into singe precomposed characters in the unicode private use area.
     """
 
 

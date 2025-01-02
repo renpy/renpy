@@ -337,7 +337,7 @@ def scandirfiles():
 
     def add(dn, fn, files, seen):
 
-        fn = unicode(fn)
+        fn = str(fn)
 
         if fn in seen:
             return

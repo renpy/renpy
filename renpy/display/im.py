@@ -1200,13 +1200,14 @@ def ramp(start, end):
     rv = ramp_cache.get((start, end), None)
     if rv is None:
 
-        chars = [ ]
+        chars: list[int] = [ ]
 
         for i in range(0, 256):
             i = i / 255.0
-            chars.append(bchr(int(end * i + start * (1.0 - i))))
+            i = end * i + start * (1.0 - i)
+            chars.append(int(i))
 
-        rv = b"".join(chars)
+        rv = bytes(chars)
         ramp_cache[start, end] = rv
 
     return rv
