@@ -1,4 +1,4 @@
-
+﻿
 translate ukrainian strings:
 
     # game/about.rpy:39
