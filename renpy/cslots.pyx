@@ -402,22 +402,6 @@ class Metaclass(CMetaclass):
         if len(bases) != 1:
             raise TypeError("cslots.Object only supports single inheritance.")
 
-        # Apply annotations to automatically create Slot objects.
-
-        annotations = namespace.get("__annotations__", { })
-
-        for k, v in annotations.items():
-            if typing.get_origin(v) is typing.ClassVar:
-                continue
-
-            if v is int:
-                default_value = getattr(namespace, k, 0)
-                namespace[k] = IntegerSlot(default_value)
-            else:
-                default_value = getattr(namespace, k, None)
-                namespace[k] = Slot(default_value)
-
-
         # Add empty Python slots, so the object doesn't get a dict.
         namespace["__slots__"] = [ ]
 
@@ -441,6 +425,23 @@ class Metaclass(CMetaclass):
             cslot_linenumbers = cbase._cslot_linenumbers
             cslot_has_getstate = cbase._cslot_has_getstate
 
+        rv = CMetaclass.__new__(cls, name, bases, namespace, **kwds)
+
+        annotations = rv.__annotations__
+
+        for k, v in annotations.items():
+            if typing.get_origin(v) is typing.ClassVar:
+                continue
+
+            if v is int:
+                default_value = getattr(namespace, k, 0)
+                namespace[k] = IntegerSlot(default_value)
+            else:
+                default_value = getattr(namespace, k, None)
+                namespace[k] = Slot(default_value)
+
+            setattr(rv, k, namespace[k])
+
         for k, v in namespace.items():
             if isinstance(v, Slot):
                 v.number = cslot_count
@@ -449,7 +450,6 @@ class Metaclass(CMetaclass):
                 cslot_setters[k] = v.__set__
                 cslot_count += 1
 
-        rv = CMetaclass.__new__(cls, name, bases, namespace, **kwds)
 
         cdef CMetaclass crv = <CMetaclass> rv
 
