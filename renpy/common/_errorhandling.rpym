@@ -509,50 +509,69 @@ init python:
 
         return "\n".join(rv)
 
-    def __format_parse_errors(s):
+    def __format_parse_errors(errors: list[str]):
+        """
+        Takes list of ParseError messages and transforms it
+        to string of sane length to be used as child of viewport.
+        """
+
         import re
 
-        rv = ""
+        rv = []
+        rv_len = 0
+        for error in errors:
+            lines = error.split("\n")
 
-        lines = s.split("\n")
-        lines = __limit_lines(lines)
-        len_lines = len(lines)
+            # Do not count first line in total to include those as much as
+            # possible.
+            rv.append(re.sub(
+                r'(File "(.*)", line (\d+))',
+                r'{a=edit:\3:\2}\1{/a}',
+                lines.pop(0)))
 
-        ln = 0
+            error_rv = []
+            error_len = 0
+            for line in lines:
+                # In case we have single insanely lengthy single error.
+                error_len += len(line)
+                if error_len > 65536:
+                    error_rv.clear()
+                    break
 
-        while ln < len_lines:
-            line = lines[ln]
-            ln += 1
+                if set(line.strip()) == {"^"}:
+                    idx = line.find("^")
+                    count = line.count("^", idx)
 
-            if ln < len_lines and lines[ln].endswith("^"):
-                highlight = len(lines[ln]) - 1
-                ln += 1
-            else:
-                highlight = -1
+                    prev_line = error_rv[-1]
 
-            pos = 0
+                    line = prev_line[:idx]
 
-            for c in line:
-                if pos == highlight:
-                    rv += u"{color=#c00}\u2192{/color}"
-                    highlight = -1
+                    if count == 1:
+                        if len(prev_line) < idx + count:
+                            mark = "\u2190"
+                        else:
+                            mark = "\u2192"
+                            count = 0
+                    else:
+                        mark = prev_line[idx:idx + count]
+                    line += "{b}{color=#a00}"
+                    line += mark
+                    line += "{/color}{/b}"
+                    line += prev_line[idx + count:]
 
-                pos += 1
+                    error_rv[-1] = line
+                    continue
 
-                if c == "{":
-                    rv += "{{"
-                else:
-                    rv += c
+                error_rv.append(line)
 
-            if highlight > 0:
-                rv += u"{color=#c00}\u2190{/color}"
+            rv_len += error_len
+            if rv_len > 1048576:
+                break
 
-            rv += "\n"
+            rv.extend(error_rv)
+            rv.append("")
 
-
-        rv = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', rv)
-
-        return rv
+        return "\n".join(rv)
 
     class _EditFile(Action):
         def __init__(self, filename, line=1):
@@ -787,7 +806,7 @@ screen _exception:
     key "console" action __EnterConsole()
 
 # The screen that is used for error handling.
-screen _parse_errors:
+screen _parse_errors(errors, error_fn, reload_action):
     modal True
     layer config.interface_layer
     zorder 1090
