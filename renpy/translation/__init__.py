@@ -23,9 +23,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 
-
 import renpy
-renpy.update_path()
 
 import hashlib
 import re
