@@ -357,17 +357,14 @@ cdef class Slot:
 
 cdef class IntegerSlot(Slot):
 
-    cdef long long default_int_value
-
     def __init__(self, default_value=0):
         super(IntegerSlot, self).__init__(default_value)
-        self.default_int_value = default_value
 
     def __set__(self, CObject instance, unsigned int value):
 
         cdef Value v
 
-        if value == self.default_int_value:
+        if value == self.default_value:
             v.object = NULL
         else:
             v.integer = (value << 1) | INTEGER_FLAG
