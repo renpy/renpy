@@ -370,7 +370,7 @@ cdef class IntegerSlot(Slot):
             v.integer = (value << 1) | INTEGER_FLAG
 
         if instance.index_count & COMPRESSED_FLAG:
-            raise AttributeError("Cannot set a value on a compressed object.")
+            instance._decompress()
 
         if self.number >= instance.index_count & INDEX_COUNT_MASK:
             raise AttributeError("Slot number is too large for object.")
