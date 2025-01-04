@@ -20,7 +20,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-
 import cython
 from cpython.object cimport PyObject, PyTypeObject, newfunc
 from typing import Any
@@ -40,8 +39,10 @@ cpdef unsigned int hash32(s):
     if type(s) is not unicode:
         s = unicode(s)
 
+    cdef unicode us = <unicode> s
+
     for u in us:
-        rv ^= u
+        rv ^= <unsigned int> u
         rv *= 0x01000193
 
     return rv
@@ -58,7 +59,7 @@ cpdef unsigned long long hash64(s):
     cdef unicode us = <unicode> s
 
     for u in us:
-        rv ^= u
+        rv ^= <unsigned int> u
         rv *= 0x100000001b3
 
     return rv
