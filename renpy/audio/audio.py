@@ -373,7 +373,7 @@ class Channel(object):
         mcd[self.name] = ctx
         return ctx
 
-    def split_filename(self, filename, looped):
+    def split_filename(self, filename : str | AudioData , looped : bool) -> tuple[str|AudioData, float, float, float]:
         """
         Splits a filename into a filename, start time, and end time.
         """
@@ -407,7 +407,7 @@ class Channel(object):
 
         m = re.match(r'<(.*)>(.*)', filename)
         if not m:
-            return self.file_prefix + filename + self.file_suffix, 0, -1
+            return self.file_prefix + filename + self.file_suffix, 0, -1, 1.0
 
         fn = m.group(2)
         fn = self.file_prefix + fn + self.file_suffix
@@ -417,6 +417,7 @@ class Channel(object):
         start = 0
         loop = None
         end = -1
+        volume = 1.0
 
         while spec:
             clause = spec.pop(0)
@@ -437,6 +438,8 @@ class Channel(object):
             elif clause == "silence":
                 end = expect_float()
                 fn = "_silence.ogg"
+            elif clause == "volume":
+                volume = expect_float()
 
             else:
                 raise exception("expected keyword, got {!r}.".format(clause))
@@ -447,7 +450,7 @@ class Channel(object):
         if isinstance(original_filename, AudioData):
             fn = AudioData(original_filename.data, fn)
 
-        return fn, start, end
+        return fn, start, end, volume
 
     def periodic(self):
         """
@@ -535,7 +538,7 @@ class Channel(object):
                 continue
 
             try:
-                filename, start, end = self.split_filename(topq.filename, topq.loop)
+                filename, start, end, filename_volume = self.split_filename(topq.filename, topq.loop)
 
                 if renpy.config.audio_filename_callback is not None:
                     filename = renpy.config.audio_filename_callback(filename)
@@ -559,9 +562,9 @@ class Channel(object):
                     renpysound.set_video(self.number, self.movie, loop=False)
 
                 if depth == 0:
-                    renpysound.play(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume, audio_filter=topq.audio_filter) # type:ignore
+                    renpysound.play(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume * filename_volume, audio_filter=topq.audio_filter) # type:ignore
                 else:
-                    renpysound.queue(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume, audio_filter=topq.audio_filter) # type:ignore
+                    renpysound.queue(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume * filename_volume, audio_filter=topq.audio_filter) # type:ignore
 
                 self.playing = True
                 self.synchro_start = False
@@ -723,7 +726,7 @@ class Channel(object):
 
             for filename in filenames:
                 if renpy.exports.is_seen_allowed():
-                    filename, _, _ = self.split_filename(filename, False)
+                    filename, _, _, _ = self.split_filename(filename, False)
                     renpy.game.persistent._seen_audio[str(filename)] = True # type: ignore
 
             if not loop_only:

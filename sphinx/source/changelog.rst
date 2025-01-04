@@ -24,6 +24,9 @@ require 16 KB page support.
 Features
 --------
 
+Audio filesname can now include a volume clase, like "<volume 0.5>sunflower-slow-drag.ogg". This sets the relative
+amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue` statements.
+
 The new :var:`config.keep_screenshot_entering_menu` variable determines if a screenshot taken with :class:`FileTakeScreenshot`
 is kept when entering a menu context.
 
