@@ -17,6 +17,7 @@ ehthumbs_vista.db
 *.egg-info
 
 !/renpy/cslots.pyi
+!/renpy/astsupport.pyi
 
 # Editor/tool files.
 *~

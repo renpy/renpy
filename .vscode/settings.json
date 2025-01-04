@@ -17,7 +17,6 @@
         "**-dists": true,
         "**/*.pyc": true,
         "**/*.pyo": true,
-        "renpy/**/*.pyi": true,
         "**/*.rpmc": true,
         "**/*.rpyc": true,
         "**/__pycache__": true,

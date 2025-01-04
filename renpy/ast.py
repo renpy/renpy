@@ -40,7 +40,7 @@ import zlib
 import renpy
 
 from renpy.cslots import Object, Slot, IntegerSlot
-from renpy.astsupport import hash_fnv1a, PyExpr
+from renpy.astsupport import hash32, PyExpr
 
 from renpy.parameter import (
     ParameterInfo,
@@ -114,7 +114,7 @@ class PyCode(Object):
             if isinstance(source, PyExpr):
                 self.hashcode = source.hashcode
             else:
-                self.hashcode = hash_fnv1a(source)
+                self.hashcode = hash32(source)
 
         self.bytecode = None
 
@@ -136,7 +136,7 @@ class PyCode(Object):
         else:
             self.filename = loc[0]
             self.linenumber = loc[1]
-            self.hashcode = hash_fnv1a(source)
+            self.hashcode = hash32(source)
 
         self.mode = mode
 

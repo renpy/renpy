@@ -50,7 +50,7 @@ import warnings
 
 import renpy
 
-from renpy.astsupport import hash_fnv1a
+from renpy.astsupport import hash32
 
 # Import these for pickle-compatibility.
 from renpy.revertable import (
@@ -1043,7 +1043,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             py = source.py
 
     elif hashcode is None:
-        hashcode = hash_fnv1a(source)
+        hashcode = hash32(source)
 
     if py is None:
         py = 3

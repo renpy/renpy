@@ -27,40 +27,42 @@ from typing import Any
 
 import renpy
 
-cdef union UCS4:
-    Py_UCS4 u
-    unsigned char c[4]
+# These hash functions use the FNV-1a algorithm to provide a stable hash from strings
+# to integers. The stability allows them to be used to hash tlids and pyexprs that may
+# be stored in .rpyc and persistent files, unlike Pythons' built-in hash function which
+# changes values each time Python is started.
 
-
-def hash_fnv1a(s):
-    """
-    FNV-1a hash function.
-
-    This computes a stable 32-bit hash of the unicode string (s).
-    """
+cpdef unsigned int hash32(s):
 
     cdef unsigned int rv = 0x811c9dc5
-    cdef UCS4 codepoint
+    cdef Py_UCS4 u
+
+    if type(s) is not unicode:
+        s = unicode(s)
+
+    for u in us:
+        rv ^= u
+        rv *= 0x01000193
+
+    return rv
+
+
+cpdef unsigned long long hash64(s):
+
+    cdef unsigned long long rv = 0xcbf29ce484222325
+    cdef Py_UCS4 u
 
     if type(s) is not unicode:
         s = unicode(s)
 
     cdef unicode us = <unicode> s
 
-    for codepoint.u in us:
-        rv ^= codepoint.c[0]
-        rv *= 0x01000193
-
-        rv ^= codepoint.c[1]
-        rv *= 0x01000193
-
-        rv ^= codepoint.c[2]
-        rv *= 0x01000193
-
-        rv ^= codepoint.c[3]
-        rv *= 0x01000193
+    for u in us:
+        rv ^= u
+        rv *= 0x100000001b3
 
     return rv
+
 
 @cython.no_gc
 cdef class PyExpr(str):
@@ -72,11 +74,6 @@ cdef class PyExpr(str):
     cdef public unsigned int hashcode
     cdef public int linenumber
     cdef public unsigned char py
-
-    filename: str
-    linenumber: int
-    py: int
-    hashcode: int
 
     def __reduce__(self):
         return (PyExpr, (str(self), self.filename, self.linenumber, self.py, self.hashcode))
@@ -143,7 +140,7 @@ cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
         if hashcode is not None:
             rv.hashcode = hashcode
         else:
-            rv.hashcode = hash_fnv1a(s)
+            rv.hashcode = hash32(s)
 
         all_pyexpr = renpy.game.script.all_pyexpr
 
