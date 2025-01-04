@@ -4,16 +4,16 @@ import pickle
 from cslots import Object, Slot, IntegerSlot
 
 class C1(Object):
-    str1 : Slot[str|None] = Slot(None)
-    int1 : IntegerSlot = IntegerSlot(0)
+    str1 : str|None = None
+    int1 : int = 0
 
     def __init__(self, str1=None, int1=1):
         self.str1 = str1
         self.int1 = int1
 
 class C2(C1):
-    str2 : Slot[str|None] = Slot(None)
-    int2 : IntegerSlot = IntegerSlot(0)
+    str2 : str|None = None
+    int2 : int = 0
 
     def __init__(self, str1=None, int1=0, str2=None, int2=0):
         self.str1 = str1

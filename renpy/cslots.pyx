@@ -357,23 +357,20 @@ cdef class Slot:
 
 cdef class IntegerSlot(Slot):
 
-    cdef long long default_int_value
-
     def __init__(self, default_value=0):
         super(IntegerSlot, self).__init__(default_value)
-        self.default_int_value = default_value
 
     def __set__(self, CObject instance, unsigned int value):
 
         cdef Value v
 
-        if value == self.default_int_value:
+        if value == self.default_value:
             v.object = NULL
         else:
             v.integer = (value << 1) | INTEGER_FLAG
 
         if instance.index_count & COMPRESSED_FLAG:
-            raise AttributeError("Cannot set a value on a compressed object.")
+            instance._decompress()
 
         if self.number >= instance.index_count & INDEX_COUNT_MASK:
             raise AttributeError("Slot number is too large for object.")
