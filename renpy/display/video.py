@@ -244,6 +244,9 @@ def get_movie_texture_web(channel, mask_channel, side_mask, mipmap):
         new = True
     else:
         tex = texture.get(channel, None)
+        if isinstance(tex, renpy.display.render.Render) and tex.killed:
+            # Render has been killed so it cannot be re-used
+            texture[channel] = tex = None
         new = False
 
     return tex, new
