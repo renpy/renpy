@@ -434,10 +434,10 @@ class Metaclass(CMetaclass):
                 continue
 
             if v is int:
-                default_value = getattr(namespace, k, 0)
+                default_value = namespace.get(k, 0)
                 namespace[k] = IntegerSlot(default_value)
             else:
-                default_value = getattr(namespace, k, None)
+                default_value = namespace.get(k, None)
                 namespace[k] = Slot(default_value)
 
             setattr(rv, k, namespace[k])
