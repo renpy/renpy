@@ -22,6 +22,7 @@
 from renpy.uguu.gl cimport *
 from libc.stdlib cimport malloc, free
 
+from renpy.gl2.gl2draw cimport GL2Draw
 from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.display.matrix cimport Matrix
@@ -335,6 +336,7 @@ cdef class Program:
 
     def missing(self, kind, name):
         cdef GLfloat viewport[4]
+        cdef GL2Draw cdraw
 
         if name == "u_lod_bias":
             self.set_uniform("u_lod_bias", float(renpy.config.gl_lod_bias))
@@ -348,7 +350,8 @@ cdef class Program:
         elif name == "u_drawable_size":
             self.set_uniform("u_drawable_size", renpy.display.draw.drawable_viewport[2:])
         elif name == "u_virtual_size":
-            self.set_uniform("u_virtual_size", renpy.display.draw.virtual_size)
+            cdraw = renpy.display.draw
+            self.set_uniform("u_virtual_size", cdraw.virtual_size)
         else:
             raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
 
