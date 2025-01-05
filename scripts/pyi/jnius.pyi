@@ -1,0 +1,3 @@
+from typing import Any
+
+def autoclass(name : str) -> Any: ...
