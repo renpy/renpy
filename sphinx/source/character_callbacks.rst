@@ -87,11 +87,10 @@ text is enabled::
 
         pike "So, hanging out on Talos IV, minding my own business, when..."
 
-This is an example of how to specialize a general callback for specific
-characters::
+To specialize a general callback with for specific characters, you can
+pass arguments to the callback function with the `cb_` prefix::
 
     init python:
-        import functools
         def boopy_voice(event, interact=True, boopfile="normal_boop.ogg", **kwargs):
             if not interact:
                 return
@@ -101,5 +100,5 @@ characters::
             elif event == "slow_done":
                 renpy.sound.stop()
 
-    define nagata = Character("Naomi", callback=functools.partial(boopy_voice, boopfile="belter_boop.ogg"))
     define chrisjen = Character("Chrisjen", callback=boopy_voice)
+    define nagata = Character("Naomi", callback=boopy_voice, cb_boopfile="sfx-blipmale.ogg")
