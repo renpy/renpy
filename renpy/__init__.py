@@ -38,9 +38,12 @@ try:
     import _renpy  # type: ignore
 
     if getattr(_renpy, "__file__", "built-in") != "built-in":
+        import importlib.util
+
+        libexec : str = os.path.dirname(_renpy.__file__)
+
         class _LibExecFinder:
             def __init__(self):
-                self.libexec: str = os.path.dirname(_renpy.__file__)
                 self.in_find_spec: bool = False
 
             def find_spec(self, fullname: str, path, target=None, /):
@@ -50,8 +53,8 @@ try:
                 if self.in_find_spec:
                     return None
 
-                import importlib.util
                 self.in_find_spec = True
+
                 try:
                     spec = importlib.util.find_spec(fullname)
                 finally:
@@ -63,8 +66,7 @@ try:
                 # Is a package.
                 if spec.submodule_search_locations is not None:
                     name = fullname.split(".")
-                    spec.submodule_search_locations.append(
-                        os.path.join(self.libexec, *name))
+                    spec.submodule_search_locations.append(os.path.join(libexec, *name))
 
                 return spec
 
@@ -72,8 +74,8 @@ try:
 
         # Add the libexec directory to this module.
         try:
-            __spec__.submodule_search_locations.append(
-                os.path.join(os.path.dirname(_renpy.__file__), "renpy"))
+            __spec__.submodule_search_locations.append(os.path.join(libexec, "renpy"))
+            __path__ = list(__spec__.submodule_search_locations)
         except Exception:
             pass
 
