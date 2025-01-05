@@ -23,7 +23,6 @@
 from __future__ import print_function
 
 import renpy
-renpy.update_path()
 
 def import_style_functions():
     import renpy.styledata.stylesets  # @UnresolvedImport
