@@ -348,6 +348,10 @@ init -1500 python:
             if renpy.game.context().seen_current(True):
                 return True
 
+            tlid = renpy.game.context().translate_identifier
+            if renpy.seen_translation(tlid):
+                return True
+
             if _preferences.skip_unseen:
                 return True
 

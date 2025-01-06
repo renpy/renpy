@@ -665,8 +665,13 @@ class Context(renpy.object.Object):
 
             if self.seen:
                 if renpy.exports.is_seen_allowed():
-                    renpy.game.persistent._seen_ever[self.current] = True # type: ignore
-                    renpy.game.seen_session[self.current] = True
+                    if renpy.config.hash_seen:
+                        seen_key = renpy.astsupport.hash64(self.current)
+                    else:
+                        seen_key = self.current
+
+                    renpy.game.persistent._seen_ever[seen_key] = True # type: ignore
+                    renpy.game.seen_session[seen_key] = True
 
             renpy.plog(2, "    end {} ({}:{})", type_node_name, this_node.filename, this_node.linenumber)
 
@@ -917,7 +922,7 @@ class Context(renpy.object.Object):
         else:
             seen = renpy.game.seen_session
 
-        return self.current in seen
+        return (self.current in seen) or (renpy.astsupport.hash64(self.current) in seen)
 
     def do_deferred_rollback(self):
         """

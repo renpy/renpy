@@ -24,6 +24,9 @@ require 16 KB page support.
 Features
 --------
 
+The new :func:`renpy.seen_translation`, :func:`renpy.mark_translation_seen`, and :func:`renpy.mark_translation_unseen`
+functions make it possible to determine if a translation has been seen.
+
 Audio filesname can now include a volume clase, like "<volume 0.5>sunflower-slow-drag.ogg". This sets the relative
 amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue` statements.
 
@@ -46,6 +49,12 @@ inside for translation.
 
 Other Changes
 -------------
+
+Ren'Py now considers a dialogue statment to have been seen if a statement with the same translation identifier
+has been seen.
+
+For size reasons, the lists of seen dialogue and translations now store a 64-bit integer hash of the statement
+name or translation id.
 
 The ``show expression`` statement has changed so that ``show expression "bg washington"`` is equivalent
 to ``show bg washington``. Previously, the expression would be used as a tag, which would rarely be correct.

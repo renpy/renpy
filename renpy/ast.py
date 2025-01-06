@@ -2800,16 +2800,10 @@ class Translate(Node):
             next_node(self.next)
             raise Exception("Translation nodes cannot be run directly.")
 
-        if self.identifier not in renpy.game.persistent._seen_translates:
-            renpy.game.persistent._seen_translates.add(self.identifier)
-            renpy.game.seen_translates_count += 1
-            renpy.game.new_translates_count += 1
-
         next_node(self.lookup())
 
         renpy.game.context().translate_identifier = self.identifier
-        renpy.game.context().alternate_translate_identifier = \
-            getattr(self, "alternate", None)
+        renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
 
     def predict(self) -> list[Node | None]:
         return [self.lookup()]
@@ -2907,15 +2901,9 @@ class TranslateSay(Say):
         next_node(self.next)
 
         renpy.game.context().translate_identifier = self.identifier
-        renpy.game.context().alternate_translate_identifier = \
-            getattr(self, "alternate", None)
+        renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
 
         if self.language is None:
-
-            if self.identifier not in renpy.game.persistent._seen_translates:
-                renpy.game.persistent._seen_translates.add(self.identifier)
-                renpy.game.seen_translates_count += 1
-                renpy.game.new_translates_count += 1
 
             # Potentially, jump to a translation.
             node = self.lookup()
@@ -2926,11 +2914,27 @@ class TranslateSay(Say):
 
         # Otherwise, say the text.
 
-        Say.execute(self)
+        try:
 
-        # Perform the equivalent of an endtranslate block.
-        renpy.game.context().translate_identifier = None
-        renpy.game.context().alternate_translate_identifier = None
+            Say.execute(self)
+
+        finally:
+
+            hashed_key = renpy.astsupport.hash64(self.identifier)
+
+            if (self.identifier not in renpy.game.persistent._seen_translates) and (hashed_key not in renpy.game.persistent._seen_translates):
+
+                if renpy.config.hash_seen:
+                    renpy.game.persistent._seen_translates.add(hashed_key)
+                else:
+                    renpy.game.persistent._seen_translates.add(self.identifier)
+
+                renpy.game.seen_translates_count += 1
+                renpy.game.new_translates_count += 1
+
+            # Perform the equivalent of an endtranslate block.
+            renpy.game.context().translate_identifier = None
+            renpy.game.context().alternate_translate_identifier = None
 
     def predict(self) -> list[Node | None]:
         node = self.lookup()
@@ -2980,6 +2984,21 @@ class EndTranslate(Node):
 
     def execute(self):
         next_node(self.next)
+
+        tlid = renpy.game.context().translate_identifier
+        if tlid is not None:
+
+            hashed_key = renpy.astsupport.hash64(tlid)
+
+            if (tlid not in renpy.game.persistent._seen_translates) and (hashed_key not in renpy.game.persistent._seen_translates):
+
+                if renpy.config.hash_seen:
+                    renpy.game.persistent._seen_translates.add(hashed_key)
+                else:
+                    renpy.game.persistent._seen_translates.add(tlid)
+
+                renpy.game.seen_translates_count += 1
+                renpy.game.new_translates_count += 1
 
         renpy.game.context().translate_identifier = None
         renpy.game.context().alternate_translate_identifier = None

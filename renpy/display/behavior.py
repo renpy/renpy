@@ -807,6 +807,8 @@ class SayBehavior(renpy.display.layout.Null):
 
             if ev.type == renpy.display.core.TIMEEVENT and st >= skip_delay:
 
+                tlid = renpy.game.context().translate_identifier
+
                 if ev.modal:
                     return None
                 elif renpy.game.preferences.skip_unseen:
@@ -814,6 +816,8 @@ class SayBehavior(renpy.display.layout.Null):
                 elif renpy.config.skipping == "fast":
                     return True
                 elif renpy.game.context().seen_current(True):
+                    return True
+                elif tlid and renpy.exports.seen_translation(tlid):
                     return True
                 else:
                     renpy.config.skipping = None
