@@ -43,7 +43,7 @@ cpdef unsigned int hash32(s):
 
     for u in us:
         rv ^= <unsigned int> u
-        rv *= 0x01000193
+        rv *= <unsigned int> 0x01000193
 
     return rv
 
@@ -60,7 +60,7 @@ cpdef unsigned long long hash64(s):
 
     for u in us:
         rv ^= <unsigned int> u
-        rv *= 0x100000001b3
+        rv *= <unsigned long long> 0x100000001b3
 
     return rv
 
