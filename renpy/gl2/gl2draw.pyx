@@ -187,7 +187,7 @@ cdef class GL2Draw:
         visible_w = info.current_w
         visible_h = info.current_h
 
-        if renpy.windows and renpy.windows <= (6, 1):
+        if renpy.windows:
             visible_h -= 102
 
         # Determine the visible area of the current head.
