@@ -1051,6 +1051,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     flags = file_compiler_flags.get(filename, 0)
 
     if cache:
+
         key = (hashcode, lineno, filename, mode, renpy.script.MAGIC, flags)
         warnings_key = ("warnings", key)
 
@@ -1067,14 +1068,19 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         bytecode = renpy.game.script.bytecode_oldcache.get(key, None)
         if bytecode is not None:
 
-            renpy.game.script.bytecode_newcache[key] = bytecode
+            try:
+                rv = marshal.loads(bytecode)
+                py_compile_cache[key] = rv
 
-            if warnings_key in renpy.game.script.bytecode_oldcache:
-                renpy.game.script.bytecode_newcache[warnings_key] = renpy.game.script.bytecode_oldcache[warnings_key]
+                renpy.game.script.bytecode_newcache[key] = bytecode
 
-            rv = marshal.loads(bytecode)
-            py_compile_cache[key] = rv
-            return rv
+                if warnings_key in renpy.game.script.bytecode_oldcache:
+                    renpy.game.script.bytecode_newcache[warnings_key] = renpy.game.script.bytecode_oldcache[warnings_key]
+
+                return rv
+
+            except Exception:
+                pass
 
     else:
         warnings_key = None
