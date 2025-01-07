@@ -199,7 +199,7 @@ def get_windows_version() -> tuple[int, int]:
 
 
 if platform.win32_ver()[0]:
-    windows = bool(get_windows_version())
+    windows = True
 elif os.environ.get("RENPY_PLATFORM", "").startswith("ios"):
     ios = True
 elif platform.mac_ver()[0]:
