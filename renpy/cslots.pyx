@@ -331,7 +331,9 @@ cdef class Slot:
 
         cdef PyObject *v
 
-        if value == self.default_value:
+
+
+        if (type(value) is type(self.default_value)) and (value == self.default_value):
             v = NULL
         else:
             v = <PyObject *> value
