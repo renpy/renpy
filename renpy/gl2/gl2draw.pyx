@@ -187,9 +187,6 @@ cdef class GL2Draw:
         visible_w = info.current_w
         visible_h = info.current_h
 
-        if renpy.windows:
-            visible_h -= 102
-
         # Determine the visible area of the current head.
         bounds = pygame.display.get_display_bounds(0)
 
