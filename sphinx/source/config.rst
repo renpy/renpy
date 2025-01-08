@@ -727,6 +727,20 @@ Media (Music, Sound, and Video)
 
     If not None, a music file to play when at the game menu.
 
+.. var:: config.has_music = True
+
+    If true, the "music" mixer is enabled. The default GUI will hide the music mixer if this is false. When this,
+    config.has_sound, and config.has_voice are all false, the default GUI will hide the main mixer as well.
+
+.. var:: config.has_sound = True
+
+    If true, the "sfx" mixer is enabled. The default GUI will hide the sound mixer if this is false.
+
+.. var:: config.has_voice = True
+
+    If true, the "voice" mixer is enabled. The default GUI will hide the voice mixer if this is false. Ren'Py will
+    disable the voice system if this is false.
+
 .. var:: config.main_menu_music = None
 
     If not None, a music file to play when at the main menu.
@@ -1950,6 +1964,8 @@ Translation
 
 Voice
 -----
+
+.. seealso:: :var:`config.has_voice`
 
 .. var:: config.auto_voice = None
 
