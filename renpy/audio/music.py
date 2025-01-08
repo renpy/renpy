@@ -261,7 +261,7 @@ def playable(filename, channel="music"):
 
     c = get_channel(channel)
 
-    filename, _, _ = c.split_filename(filename, False)
+    filename, _, _, _ = c.split_filename(filename, False)
 
     return renpy.loader.loadable(filename, directory="audio")
 
