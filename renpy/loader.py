@@ -35,6 +35,7 @@ import re
 import io
 import unicodedata
 import time
+import pathlib
 
 from importlib.util import spec_from_loader
 
@@ -759,9 +760,8 @@ def transfn(name):
     for d in renpy.config.searchpath:
         fn = os.path.join(renpy.config.basedir, d, name)
 
-        add_auto(fn)
-
         if os.path.isfile(fn):
+            add_auto(fn)
             return fn
 
     raise Exception("Couldn't find file '%s'." % name)
@@ -986,15 +986,18 @@ def auto_mtime(fn):
 def add_auto(fn, force=False):
     """
     Adds fn as a file we watch for changes. If it's mtime changes or the file
-    starts/stops existing, we trigger a reload.
+    stops existing, we trigger a reload.
     """
-
-    fn = fn.replace("\\", "/")
 
     if not renpy.autoreload:
         return
 
     if (fn in auto_mtimes) and (not force):
+        return
+
+    fn = fn.replace("\\", "/")
+
+    if renpy.config.commondir and pathlib.Path(fn).is_relative_to(renpy.config.commondir):
         return
 
     for e in renpy.config.autoreload_blacklist:

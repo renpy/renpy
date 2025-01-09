@@ -50,6 +50,10 @@ inside for translation.
 Other Changes
 -------------
 
+Ren'Py no longer triggers and autoreload when a file that had not existed comes into existence. This behavior
+had been inconsistent, working in some places but not others, required Ren'Py to spent time scanning for files
+that do not exist.
+
 Ren'Py now considers a dialogue statment to have been seen if a statement with the same translation identifier
 has been seen.
 
@@ -83,6 +87,7 @@ Python Builtins (like len) are now always available during string interpolation.
 
 Animated presplash images now take precedence over static presplash images, matching
 the documentation.
+
 
 There have been a number of fixes related to dragging of viewports and drag displayables.
 
