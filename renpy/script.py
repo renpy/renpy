@@ -239,6 +239,46 @@ class Script(object):
             except Exception:
                 pass
 
+    def classify_script_files(self, dirlist, script_files, module_files):
+        """
+        Classify the files in dirlist as script or module files, or not script related.
+        """
+
+        for dir, fn in dirlist:
+
+            if fn.endswith("_ren.py"):
+                if dir is None:
+                    continue
+
+                fn = fn[:-7]
+                target = script_files
+
+            elif fn.endswith(".rpy"):
+                if dir is None:
+                    continue
+
+                fn = fn[:-4]
+                target = script_files
+
+            elif fn.endswith(".rpyc"):
+                fn = fn[:-5]
+                target = script_files
+
+            elif fn.endswith(".rpym"):
+                if dir is None:
+                    continue
+
+                fn = fn[:-5]
+                target = module_files
+            elif fn.endswith(".rpymc"):
+                fn = fn[:-6]
+                target = module_files
+            else:
+                continue
+
+            if (fn, dir) not in target:
+                target.append((fn, dir))
+
     def scan_script_files(self):
         """
         Scan the directories for script files.
@@ -251,43 +291,21 @@ class Script(object):
         # what we will load immediately.
         self.script_files = [ ]
 
+        # Similar, but for files in the common directory.
+        self.common_script_files = [ ]
+
         # Similar, but for modules:
         self.module_files = [ ]
 
-        for dir, fn in dirlist: # @ReservedAssignment
+        self.classify_script_files(
+            renpy.loader.listdirfiles(common=True, game=False),
+            self.common_script_files,
+            self.module_files)
 
-            if fn.endswith("_ren.py"):
-                if dir is None:
-                    continue
-
-                fn = fn[:-7]
-                target = self.script_files
-
-            elif fn.endswith(".rpy"):
-                if dir is None:
-                    continue
-
-                fn = fn[:-4]
-                target = self.script_files
-
-            elif fn.endswith(".rpyc"):
-                fn = fn[:-5]
-                target = self.script_files
-
-            elif fn.endswith(".rpym"):
-                if dir is None:
-                    continue
-
-                fn = fn[:-5]
-                target = self.module_files
-            elif fn.endswith(".rpymc"):
-                fn = fn[:-6]
-                target = self.module_files
-            else:
-                continue
-
-            if (fn, dir) not in target:
-                target.append((fn, dir))
+        self.classify_script_files(
+            renpy.loader.listdirfiles(common=False, game=True),
+            self.script_files,
+            self.module_files)
 
     def script_filter(self, fn, dir):
         """
@@ -317,14 +335,19 @@ class Script(object):
 
         return True
 
+    def sort_script_files(self):
+        """
+        Sorts the script files in the order they should be loaded.
+        """
+
+        self.common_script_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
+        self.script_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
+
+        return self.common_script_files + self.script_files
+
     def load_script(self):
 
-        script_files = self.script_files
-
-        # Sort script files by filename.
-        # We need this key to prevent possible crash when comparing None to str
-        # during sorting
-        script_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
+        script_files = self.sort_script_files()
 
         initcode = [ ]
 

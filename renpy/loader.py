@@ -448,7 +448,7 @@ def scandirfiles_from_archives(add, seen):
 scandirfiles_callbacks.append(scandirfiles_from_archives)
 
 
-def listdirfiles(common=True):
+def listdirfiles(common=True, game=True):
     """
     Returns a list of directory, file tuples known to the system. If
     the file is in an archive, the directory is None.
@@ -457,11 +457,14 @@ def listdirfiles(common=True):
     if (not game_files) and (not common_files):
         scandirfiles()
 
-    if common:
-        return game_files + common_files
-    else:
-        return list(game_files)
+    rv = [ ]
 
+    if common:
+        rv.extend(common_files)
+    if game:
+        rv.extend(game_files)
+
+    return rv
 
 
 open_file = RWopsIO # type: ignore
