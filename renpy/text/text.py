@@ -1234,6 +1234,8 @@ class Layout(object):
 
             line.extend(tss[-1].subsegment(u"\u200B")) # type: ignore
 
+        done = False
+
         for type, text in tokens: # @ReservedAssignment
 
             try:
@@ -1327,6 +1329,7 @@ class Layout(object):
                     pass
 
                 elif tag == "done":
+                    done = True
                     pass
 
                 elif tag == "nw":
@@ -1534,6 +1537,9 @@ class Layout(object):
                     raise Exception("Unknown text tag %r" % text)
 
             except Exception:
+                if done:
+                    break
+
                 renpy.game.exception_info = "While processing text tag {{{!s}}} in {!r}.:".format(text, text_displayable.get_all_text())
                 raise
 
