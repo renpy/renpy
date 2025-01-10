@@ -714,7 +714,10 @@ def display_say(
                     if scry.extend_text is renpy.ast.DoesNotExtend:
                         break
                     elif scry.extend_text is not None:
-                        extend_text += scry.extend_text
+                        try:
+                            extend_text += renpy.substitutions.substitute(scry.extend_text, scope=None, force=False, translate=True)[0]
+                        except Exception:
+                            pass
 
                     scry = scry.next()
                     scry_count += 1
