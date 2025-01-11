@@ -30,24 +30,24 @@ cdef class GL2Draw:
     cdef public bint gles
     cdef public bint angle
 
-    cdef bint did_init
-    cdef object window
-    cdef tuple virtual_size
+    cdef public bint did_init
+    cdef public object window
+    cdef public tuple virtual_size
     cdef public tuple physical_size
     cdef public tuple drawable_size
     cdef public tuple virtual_box
     cdef public tuple physical_box
-    cdef double last_redraw_time
-    cdef double redraw_period
+    cdef public double last_redraw_time
+    cdef public double redraw_period
     cdef public dict info
-    cdef object old_fullscreen
+    cdef public object old_fullscreen
     cdef public object fullscreen_surface
-    cdef object display_info
-    cdef tuple clip_cache
-    cdef tuple default_clip
-    cdef float dpi_scale
-    cdef object shader_cache
-    cdef bint ever_set_position
+    cdef public object display_info
+    cdef public tuple clip_cache
+    cdef public tuple default_clip
+    cdef public float dpi_scale
+    cdef public object shader_cache
+    cdef public bint ever_set_position
 
     cdef public tuple clip_rtt_box
 
@@ -66,22 +66,22 @@ cdef class GL2Draw:
     cdef public int fast_redraw_frames
 
     # The color texture object used for offscreen rendering.
-    cdef GLuint color_renderbuffer
+    cdef public GLuint color_renderbuffer
 
     # The depth renderbuffer object used for offscreen rendering.
-    cdef GLuint depth_renderbuffer
+    cdef public GLuint depth_renderbuffer
 
     # The framebuffer object used for offscreen rendering.
-    cdef GLuint fbo
+    cdef public GLuint fbo
 
     # The color texture object used for pixel tests (1x1).
-    cdef GLuint color_renderbuffer_1px
+    cdef public GLuint color_renderbuffer_1px
 
     # The depth renderbuffer object used for pixel tests. (1x1)
-    cdef GLuint depth_renderbuffer_1px
+    cdef public GLuint depth_renderbuffer_1px
 
     # The framebuffer object used for pixel tests (1x1)
-    cdef GLuint fbo_1px
+    cdef public GLuint fbo_1px
 
     # The texture_loader singleton.
     cdef public TextureLoader texture_loader
