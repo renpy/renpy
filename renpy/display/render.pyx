@@ -156,18 +156,17 @@ rendering = 0
 render_st = 0.0
 render_at = 0.0
 
-cdef bint render_is_ready
-render_is_ready = 0
+cpdef dummy_render(d, object widtho, object heighto, double st, double at):
+    if renpy.config.developer:
+        raise Exception("Displayables may not be rendered during the init phase.")
+
+render = dummy_render
 
 def render_ready():
-    global render_is_ready
-    render_is_ready = 1
+    global render
+    render = actual_render
 
-# These are good until the next call to render.
-render_width = 0
-render_height = 0
-
-cpdef render(d, object widtho, object heighto, double st, double at):
+cpdef actual_render(d, object widtho, object heighto, double st, double at):
     """
     :doc: udd_utility
     :args: (d, width, height, /, st, at)
@@ -199,10 +198,6 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     cdef tuple orig_wh, wh
     cdef dict render_cache_d
     cdef Render rv
-
-    if not render_is_ready:
-        if renpy.config.developer:
-            raise Exception("Displayables may not be rendered during the init phase.")
 
     orig_wh = (widtho, heighto, frame_time-st, frame_time-at)
 
@@ -288,6 +283,10 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     renpy.plog(2, "end render {!r}", d)
 
     return rv
+
+# These are good until the next call to render.
+render_width = 0
+render_height = 0
 
 def render_for_size(d, width, height, st, at):
     """
