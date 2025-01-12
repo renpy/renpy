@@ -92,6 +92,10 @@ init python in project:
             # The mtime of the last dump file loaded.
             self.dump_mtime = 0
 
+            # A processed version of data['renpy_launcher'] with missing files
+            # and directories removed.
+            self.renpy_launcher = None
+
         def get_dump_filename(self):
 
             if os.path.exists(os.path.join(self.gamedir, "saves")):
@@ -122,25 +126,6 @@ init python in project:
 
         def update_data(self):
             data = self.data
-
-            data.setdefault("renpy_launcher",
-            {
-                "open_directory":
-                {
-                    "game": "game",
-                    "base": ".",
-                    "images": "game/images",
-                    "audio": "game/audio",
-                    "gui": "game/gui"
-                },
-                "edit_file":
-                {
-                    "script.rpy": "game/script.rpy",
-                    "options.rpy": "game/options.rpy",
-                    "gui.rpy": "game/gui.rpy",
-                    "screens.rpy": "game/screens.rpy"
-                }
-            })
 
             data.setdefault("build_update", False)
             data.setdefault("packages", [ "pc", "mac" ])
@@ -173,6 +158,43 @@ init python in project:
                         dp.append("market")
 
                 data["renamed_steam"] = True
+
+
+        def get_renpy_launcher(self):
+
+            if self.renpy_launcher is not None:
+                return self.renpy_launcher
+
+            rv = { }
+
+            default_values = {
+                "open_directory":
+                {
+                    "game": "game",
+                    "base": ".",
+                    "images": "game/images",
+                    "audio": "game/audio",
+                    "gui": "game/gui",
+                    "libs": "game/libs",
+                    "mods": "game/mods",
+                },
+                "edit_file":
+                {
+                    "script.rpy": "game/script.rpy",
+                    "options.rpy": "game/options.rpy",
+                    "gui.rpy": "game/gui.rpy",
+                    "screens.rpy": "game/screens.rpy"
+                }
+            }
+
+            for k, default_d in default_values.items():
+                d = self.data.get("renpy_launcher", {}).get(k, default_d)
+                rv[k] = { name : path for name, path in d.items() if os.path.exists(os.path.join(self.path, path)) }
+
+            self.renpy_launcher = rv
+
+            return rv
+
 
 
         def make_tmp(self):

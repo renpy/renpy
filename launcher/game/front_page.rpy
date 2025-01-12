@@ -157,8 +157,10 @@ screen front_page_project:
                 label _("Open Directory") style "l_label_small"
 
                 frame style "l_indent":
-                    has vbox
-                    for button_name, path in p.data["renpy_launcher"]["open_directory"].items():
+                    has grid 2 max(5, (len(p.get_renpy_launcher()["open_directory"]) + 1) // 2):
+                        transpose True xfill True
+
+                    for button_name, path in p.get_renpy_launcher()["open_directory"].items():
                         textbutton button_name action OpenDirectory(os.path.join(p.path, path), absolute=True)
 
             vbox:
@@ -169,7 +171,7 @@ screen front_page_project:
                     frame style "l_indent":
                         has vbox
 
-                        for button_name, path in p.data["renpy_launcher"]["edit_file"].items():
+                        for button_name, path in p.get_renpy_launcher()["edit_file"].items():
                             textbutton button_name action editor.Edit(path, check=True)
 
                         if editor.CanEditProject():
