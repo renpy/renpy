@@ -82,6 +82,10 @@ init python in project:
             # A name to display the project.
             self.display_name = self.data.get("display_name", self.name)
 
+
+            # Folder type for the project
+            self.folder_type = self.data.get("folder_type", "projects")
+
             # The project's temporary directory.
             self.tmp = None
 
@@ -116,31 +120,12 @@ init python in project:
 
             try:
                 with open(os.path.join(self.path, "project.json"), "w") as f:
-                    json.dump(self.data, f, indent=2)
+                    json.dump(self.data, f)
             except Exception:
                 self.load_data()
 
         def update_data(self):
             data = self.data
-
-            data.setdefault("renpy_launcher",
-            {
-                "open_directory":
-                {
-                    "game": "game",
-                    "base": ".",
-                    "images": "game/images",
-                    "audio": "game/audio",
-                    "gui": "game/gui"
-                },
-                "edit_file":
-                {
-                    "script.rpy": "game/script.rpy",
-                    "options.rpy": "game/options.rpy",
-                    "gui.rpy": "game/gui.rpy",
-                    "screens.rpy": "game/screens.rpy"
-                }
-            })
 
             data.setdefault("build_update", False)
             data.setdefault("packages", [ "pc", "mac" ])
@@ -371,6 +356,12 @@ init python in project:
 
                     line = line[:1024]
 
+                    if PY2:
+                        try:
+                            line = line.decode("utf-8")
+                        except Exception:
+                            continue
+
                     m = re.search(r"#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
 
                     if m is None:
@@ -460,7 +451,10 @@ init python in project:
             # Template projects.
             self.templates = [ ]
 
-            # All projects - normal, template, and hidden.
+            # List of all folder types
+            self.folder_types = [ ]
+
+            # All projects - normal, template, hidden, etc.
             self.all_projects = [ ]
 
             # Directories that have been scanned.
@@ -493,18 +487,23 @@ init python in project:
 
             self.projects_directory = persistent.projects_directory
 
+
             self.projects = [ ]
             self.templates = [ ]
+            self.folder_types = [ ]
             self.all_projects = [ ]
             self.scanned = set()
 
             if self.projects_directory is not None:
                 self.scan_directory(self.projects_directory)
 
-            self.scan_directory(config.renpy_base)
-
+            # Sort the projects and project folders alphabetically, set the 'Project' Folder to always be first.
+            self.all_projects.sort(key=lambda p : p.name.lower())
             self.projects.sort(key=lambda p : p.name.lower())
             self.templates.sort(key=lambda p : p.name.lower())
+            persistent.folder_types.sort(key=lambda x : (x[0] != 'projects', x[0].lower()))
+
+            self.scan_directory(config.renpy_base)
 
             # Select the default project.
             if persistent.active_project is not None:
@@ -560,6 +559,8 @@ init python in project:
                 ppath = os.path.join(d, pdir)
                 self.scan_directory_direct(ppath, pdir)
 
+            self.project_cleanup()
+
             # If a file called "projects.txt" exists, include any projects listed in it.
             extra_projects_fn = os.path.join(d, "projects.txt")
 
@@ -575,7 +576,6 @@ init python in project:
 
                         if len(path) > 0:
                             self.scan_directory_direct(path)
-
 
         def scan_directory_direct(self, ppath, name=None):
             """
@@ -618,6 +618,32 @@ init python in project:
 
             self.all_projects.append(p)
 
+            # Determine what folder types you are using, if any.  Create folders for each, default them to closed (expect Projects, which starts open).
+
+            folder_type = p.data.get("folder", "projects")
+
+            if folder_type != None:
+                p.folder_type = folder_type
+                if persistent.folder_types is None:
+                    persistent.folder_types = [ ]
+                if project_type == "hidden":
+                    p.folder_type = "hidden"
+                else:
+                    if not any(folder_type in x[0] for x in persistent.folder_types):
+                        if folder_type == 'projects':
+                            persistent.folder_types.append([folder_type, False, False])
+                        else:
+                            persistent.folder_types.append([folder_type, True, False])
+                    if folder_type not in self.folder_types:
+                        self.folder_types.append(folder_type)
+
+
+        def project_cleanup(self):
+
+            # Cleanup any old, unused folder types the user may no longer have.
+            for x in persistent.folder_types:
+                if not x[0] in self.folder_types:
+                    persistent.folder_types.remove(x)
 
         def get(self, name):
             """

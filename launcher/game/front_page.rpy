@@ -100,37 +100,72 @@ screen front_page:
 
 
 # This is used by front_page to display the list of known projects on the screen.
-screen front_page_project_list:
 
+screen front_page_project_list():
+
+    $ all_projects = project.manager.all_projects
     $ projects = project.manager.projects
-    $ templates = project.manager.templates
+    $ folder_types = persistent.folder_types
 
     vbox:
 
-        if templates and persistent.show_templates:
+        if any(x[0] not in ["hidden","projects","tutorial"] for x in folder_types) or persistent.show_tutorial_projects:
 
-            for p in templates:
+            for t in folder_types:
 
-                textbutton _("[p.name!q] (template)"):
-                    action project.Select(p)
-                    alt _("Select project [text].")
-                    style "l_list"
+                if (t[0] == "hidden") or (t[0] == "tutorial" and not persistent.show_tutorial_projects):
+                    pass
+                else:
+                    if t[1]:
+                        button:
+                           hover_background REVERSE_IDLE
+                           xfill True
+                           hbox:
+                               spacing 5
+                               if t[2]:
+                                   image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=FOLDER_MATRIX))
+                                   text t[0].capitalize() color REVERSE_TEXT bold True yalign 0.5
+                               else:
+                                   image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
+                                   text t[0].capitalize() color IDLE bold True yalign 0.5
 
-            null height 12
+                           action SetDict(t, 1, False)
+                           hovered SetDict(t, 2, True)
+                           unhovered SetDict(t, 2, False)
 
-        if projects:
+                    else:
+                        button:
+                           hover_background REVERSE_HOVER
+                           xfill True
+                           hbox:
+                               spacing 5
+                               if t[2]:
+                                   image Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=FOLDER_MATRIX))
+                                   text t[0].capitalize() color REVERSE_TEXT bold True yalign 0.5
+                               else:
+                                   image Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
+                                   text t[0].capitalize() color HOVER bold True yalign 0.5
+                           action SetDict(t, 1, True)
+                           hovered SetDict(t, 2, True)
+                           unhovered SetDict(t, 2, False)
 
-            for p in projects:
+                        for p in all_projects:
+                            if p.folder_type == t[0]:
 
-                textbutton "[p.name!q]":
-                    action project.Select(p)
-                    alt _("Select project [text].")
-                    style "l_list"
+                                textbutton _(f"[p.display_name]" if p.display_name else "[p.name!q]"):
+                                    action project.Select(p)
+                                    alt _("Select project [text].")
+                                    style "l_list"
 
-            null height 12
+        else:
+            for p in all_projects:
+                if p.folder_type == "projects":
+                    textbutton _(f"[p.display_name]" if p.display_name else "[p.name!q]"):
+                       action project.Select(p)
+                       alt _("Select project [text].")
+                       style "l_list"
 
-        textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
-        textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
+        null height 12
 
 
 # This is used for the right side of the screen, which is where the project-specific
@@ -158,8 +193,12 @@ screen front_page_project:
 
                 frame style "l_indent":
                     has vbox
-                    for button_name, path in p.data["renpy_launcher"]["open_directory"].items():
-                        textbutton button_name action OpenDirectory(os.path.join(p.path, path), absolute=True)
+
+                    textbutton "game" action OpenDirectory(os.path.join(p.path, "game"), absolute=True)
+                    textbutton "base" action OpenDirectory(os.path.join(p.path, "."), absolute=True)
+                    textbutton "images" action OpenDirectory(os.path.join(p.path, "game/images"), absolute=True)
+                    textbutton "audio" action OpenDirectory(os.path.join(p.path, "game/audio"), absolute=True)
+                    textbutton "gui" action OpenDirectory(os.path.join(p.path, "game/gui"), absolute=True)
 
             vbox:
                 if persistent.show_edit_funcs:
@@ -169,8 +208,10 @@ screen front_page_project:
                     frame style "l_indent":
                         has vbox
 
-                        for button_name, path in p.data["renpy_launcher"]["edit_file"].items():
-                            textbutton button_name action editor.Edit(path, check=True)
+                        textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
+                        textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
+                        textbutton "gui.rpy" action editor.Edit("game/gui.rpy", check=True)
+                        textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
 
                         if editor.CanEditProject():
                             textbutton _("Open project") action editor.EditProject()
