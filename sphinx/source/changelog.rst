@@ -50,6 +50,8 @@ inside for translation.
 Other Changes
 -------------
 
+Ren'Py will now prefer the gles2 renderer on ARM Linux devices, such as the Raspberry Pi.
+
 Ren'Py no longer triggers and autoreload when a file that had not existed comes into existence. This behavior
 had been inconsistent, working in some places but not others, required Ren'Py to spent time scanning for files
 that do not exist.
