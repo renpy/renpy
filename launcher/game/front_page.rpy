@@ -104,15 +104,16 @@ screen front_page:
 screen front_page_project_list():
 
     $ all_projects = project.manager.all_projects
-    $ project_types = persistent.project_types
+    $ projects = project.manager.projects
+    $ folder_types = persistent.folder_types
 
     vbox:
 
-        if any(x[0] not in ["hidden","project"] for x in project_types):
+        if any(x[0] not in ["hidden","project"] for x in folder_types):
 
-            for t in project_types:
+            for t in folder_types:
 
-                if t[0] == "hidden":
+                if (t[0] == "hidden") or (t[0] == "tutorial" and not persistent.show_tutorial_projects):
                     pass
                 else:
                     if t[1]:
@@ -149,26 +150,22 @@ screen front_page_project_list():
                            unhovered SetDict(t, 2, False)
 
                         for p in all_projects:
-                            if p.project_type == t[0]:
+                            if p.folder_type == t[0]:
 
-                                textbutton _("[p.name!q]"):
+                                textbutton _(f"[p.display_name]" if p.display_name else "[p.name!q]"):
                                    action project.Select(p)
                                    alt _("Select project [text].")
                                    style "l_list"
 
         else:
             for p in all_projects:
-                if p.project_type == "project":
-                    textbutton _("[p.name!q]"):
+                if p.folder_type == "project":
+                    textbutton _(f"[p.display_name]" if p.display_name else "[p.name!q]"):
                        action project.Select(p)
                        alt _("Select project [text].")
                        style "l_list"
 
         null height 12
-
-        if persistent.show_default_projects:
-            textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
-            textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
 
 
 # This is used for the right side of the screen, which is where the project-specific

@@ -82,6 +82,10 @@ init python in project:
             # A name to display the project.
             self.display_name = self.data.get("display_name", self.name)
 
+
+            # Folder type for the project
+            self.folder_type = self.data.get("folder_type", "projects")
+
             # The project's temporary directory.
             self.tmp = None
 
@@ -441,8 +445,14 @@ init python in project:
             # The projects directory.
             self.projects_directory = ""
 
-            # A list of all project types.
-            self.project_types = [ ]
+            # Normal projects, in alphabetical order by lowercase name.
+            self.projects = [ ]
+
+            # Template projects.
+            self.templates = [ ]
+
+            # List of all folder types
+            self.folder_types = [ ]
 
             # All projects - normal, template, hidden, etc.
             self.all_projects = [ ]
@@ -477,7 +487,10 @@ init python in project:
 
             self.projects_directory = persistent.projects_directory
 
-            self.project_types = [ ]
+
+            self.projects = [ ]
+            self.templates = [ ]
+            self.folder_types = [ ]
             self.all_projects = [ ]
             self.scanned = set()
 
@@ -486,7 +499,9 @@ init python in project:
 
             # Sort the projects and project folders alphabetically, set the 'Project' Folder to always be first.
             self.all_projects.sort(key=lambda p : p.name.lower())
-            persistent.project_types.sort(key=lambda x : (x[0] != 'project', x[0].lower()))
+            self.projects.sort(key=lambda p : p.name.lower())
+            self.templates.sort(key=lambda p : p.name.lower())
+            persistent.folder_types.sort(key=lambda x : (x[0] != 'projects', x[0].lower()))
 
             self.scan_directory(config.renpy_base)
 
@@ -591,27 +606,44 @@ init python in project:
             if project_filter and (p.name not in project_filter):
                 return
 
-            project_type = p.data.get("type", "project")
+            project_type = p.data.get("type", "normal")
 
-            # Determine what data types you are using, if any.  Create folders for each, default them to closed (expect Projects, which starts open).
-            if project_type != None:
-                p.project_type = project_type
-                if not any(project_type in x[0] for x in persistent.project_types):
-                    if project_type == 'project':
-                        persistent.project_types.append([project_type, False, False])
-                    else:
-                        persistent.project_types.append([project_type, True, False])
-                if project_type not in self.project_types:
-                    self.project_types.append(project_type)
+            if project_type == "hidden":
+                pass
+            elif project_type == "template":
+                self.projects.append(p)
+                self.templates.append(p)
+            else:
+                self.projects.append(p)
 
             self.all_projects.append(p)
 
+            # Determine what folder types you are using, if any.  Create folders for each, default them to closed (expect Projects, which starts open).
+
+            folder_type = p.data.get("folder", "projects")
+
+            if folder_type != None:
+                p.folder_type = folder_type
+                if persistent.folder_types is None:
+                    persistent.folder_types = [ ]
+                if project_type == "hidden":
+                    p.folder_type = "hidden"
+                else:
+                    if not any(folder_type in x[0] for x in persistent.folder_types):
+                        if folder_type == 'projects':
+                            persistent.folder_types.append([folder_type, False, False])
+                        else:
+                            persistent.folder_types.append([folder_type, True, False])
+                    if folder_type not in self.folder_types:
+                        self.folder_types.append(folder_type)
+
+
         def project_cleanup(self):
 
-            # Cleanup any old, unused data types the user may no longer have.
-            for x in persistent.project_types:
-                if not x[0] in self.project_types:
-                    persistent.project_types.remove(x)
+            # Cleanup any old, unused folder types the user may no longer have.
+            for x in persistent.folder_types:
+                if not x[0] in self.folder_types:
+                    persistent.folder_types.remove(x)
 
         def get(self, name):
             """
