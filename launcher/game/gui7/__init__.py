@@ -28,14 +28,18 @@ import os
 import shutil
 
 
+
 def finish(p):
 
-    for dn in [ "images", "audio" ]:
+    for dn in [ "images", "audio", "libs" ]:
 
             fulldn = os.path.join(p.prefix, dn)
 
             if not os.path.exists(fulldn):
                 os.mkdir(fulldn)
+
+    with open(os.path.join(p.prefix, "libs", "libs.txt"), "w") as f:
+        f.write(renpy.translation.translate_string(renpy.store.LIBS_TXT, language=p.language))
 
 def generate_gui(p):
 

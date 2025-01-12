@@ -26,6 +26,15 @@ define gui.asian = False
 # and provides the full path to the template project.
 default gui_template_path = None
 
+define LIBS_TXT = _("""\
+The game/libs/ directory is meant for third-party libraries that ask to be put in
+game/libs.
+
+When this file (game/libs/libs.txt) is present, Ren'Py will load all files in libs
+before any other file in game/, and will not consider directory names when loading
+these files.
+""")
+
 init -1 python:
 
     import gui7
