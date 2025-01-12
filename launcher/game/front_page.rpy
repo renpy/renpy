@@ -109,7 +109,7 @@ screen front_page_project_list():
 
     vbox:
 
-        if any(x[0] not in ["hidden","project"] for x in folder_types):
+        if any(x[0] not in ["hidden","projects","tutorial"] for x in folder_types) or persistent.show_tutorial_projects:
 
             for t in folder_types:
 
@@ -153,13 +153,13 @@ screen front_page_project_list():
                             if p.folder_type == t[0]:
 
                                 textbutton _(f"[p.display_name]" if p.display_name else "[p.name!q]"):
-                                   action project.Select(p)
-                                   alt _("Select project [text].")
-                                   style "l_list"
+                                    action project.Select(p)
+                                    alt _("Select project [text].")
+                                    style "l_list"
 
         else:
             for p in all_projects:
-                if p.folder_type == "project":
+                if p.folder_type == "projects":
                     textbutton _(f"[p.display_name]" if p.display_name else "[p.name!q]"):
                        action project.Select(p)
                        alt _("Select project [text].")
