@@ -246,8 +246,14 @@ def create_store(name):
     eval("1", d)
 
     for k, v in renpy.minstore.__dict__.items():
-        if (k not in d) and k != "__all__":
-            d[k] = v
+
+        if k in ("__all__", "__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__cached__"):
+            continue
+
+        if k in d:
+            continue
+
+        d[k] = v
 
     # Create or reuse the corresponding module.
     if name in store_modules:
