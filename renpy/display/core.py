@@ -32,6 +32,7 @@ import threading
 import copy
 import gc
 import atexit
+import platform
 
 import pygame_sdl2 as pygame
 import renpy
@@ -1197,6 +1198,8 @@ class Interface(object):
             renderers = [ "gles2" ]
         elif renpy.windows:
             renderers = [ "gl2", "angle2", "gles2" ]
+        elif renpy.linux and platform.machine() == "aarch64":
+            renderers = [ "gles2", "gl2" ]
         else:
             renderers = [ "gl2", "gles2" ]
 
