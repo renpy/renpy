@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -109,7 +109,7 @@ class ScreenProfile(renpy.object.Object):
         self.const = const
 
         if name is not None:
-            if isinstance(name, basestring):
+            if isinstance(name, str):
                 name = tuple(name.split())
                 profile[name] = self
 
@@ -123,7 +123,7 @@ def get_profile(name):
         A string or tuple.
     """
 
-    if isinstance(name, basestring):
+    if isinstance(name, str):
         name = tuple(name.split())
 
     if name in profile:
@@ -219,12 +219,12 @@ class Screen(renpy.object.Object):
                  roll_forward=None):
 
         # The name of this screen.
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             name = tuple(name.split())
 
         self.name = name
 
-        if (variant is None) or isinstance(variant, basestring):
+        if variant is None or isinstance(variant, str):
             variant = [ variant ]
 
         for v in variant:
@@ -872,7 +872,7 @@ def get_all_screen_variants(name):
     order.
     """
 
-    if isinstance(name, basestring):
+    if isinstance(name, str):
         name = tuple(name.split())
 
     name = name[0]
@@ -1082,7 +1082,7 @@ def get_screen_layer(name):
     Returns the layer that the screen with `name` is part of.
     """
 
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         name = name[0]
 
     screen = get_screen_variant(name)
@@ -1139,8 +1139,8 @@ def get_screen(name, layer=None, tag_only=False):
     if layer is None:
         layer = get_screen_layer(name)
 
-    if isinstance(name, basestring):
-        name = (name,)
+    if isinstance(name, str):
+        name = (name, )
 
     sl = renpy.exports.scene_lists()
 

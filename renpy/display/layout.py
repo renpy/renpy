@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1596,8 +1596,8 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
         super(DynamicDisplayable, self).__init__()
         self.child = None
 
-        if isinstance(function, basestring):
-            args = (function,)
+        if isinstance(function, str):
+            args = (function, )
             kwargs = { }
             function = dynamic_displayable_compat
 
@@ -1887,7 +1887,7 @@ class Side(Container):
 
         super(Side, self).__init__(style=style, **properties)
 
-        if isinstance(positions, basestring):
+        if isinstance(positions, str):
             positions = positions.split()
 
         seen = set()

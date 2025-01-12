@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -41,7 +41,7 @@ last_clock = time.time()
 def log_clock(s):
     global last_clock
     now = time.time()
-    s = "{} took {:.2f}s".format(s, now - last_clock)
+    s = "{} took {:.0f} ms".format(s, 1000 * (now - last_clock))
 
     renpy.display.log.write(s)
     if renpy.android and not renpy.config.log_to_stdout:
@@ -97,10 +97,10 @@ def run(restart):
 
     if not restart:
         renpy.pyanalysis.save_cache()
-        log_clock("Save pyanalysis.")
+        log_clock("Save pyanalysis")
 
         renpy.game.script.save_bytecode()
-        log_clock("Save bytecode.")
+        log_clock("Save bytecode")
 
     # Handle arguments and commands.
     if not renpy.arguments.post_init():
@@ -497,8 +497,8 @@ def main():
     game.persistent = renpy.persistent.init()
     game.preferences = game.persistent._preferences
 
-    for i in renpy.game.persistent._seen_translates: # type: ignore
-        if i in renpy.game.script.translator.default_translates:
+    for i in renpy.game.script.translator.default_translates:
+        if (i in renpy.game.persistent._seen_translates) or (renpy.astsupport.hash64(i) in renpy.game.persistent._seen_translates):
             renpy.game.seen_translates_count += 1
 
     if game.persistent._virtual_size:
@@ -535,19 +535,14 @@ def main():
 
             renpy.game.initcode_ast_id = id_
 
-            if isinstance(node, renpy.ast.Node):
-                node_start = time.time()
+            node_start = time.time()
 
-                renpy.game.context().run(node)
+            node.execute_init()
 
-                node_duration = time.time() - node_start
+            node_duration = time.time() - node_start
 
-                if node_duration > renpy.config.profile_init:
-                    renpy.display.log.write(" - Init at %s:%d took %.5f s.", node.filename, node.linenumber, node_duration)
-
-            else:
-                # An init function.
-                node()
+            if node_duration > renpy.config.profile_init:
+                renpy.display.log.write(f" - Init at {node.filename}:{node.linenumber} took {1000 * node_duration:.0f} ms.")
 
         renpy.game.exception_info = 'After initialization, but before game start.'
 

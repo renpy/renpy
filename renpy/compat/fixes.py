@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -206,9 +206,6 @@ def fix_tokens(source):
 
     try:
 
-        if PY2:
-            return source
-
         bio = io.BytesIO(source.encode("utf-8"))
         tokens = list(tokenize.tokenize(bio.readline))
 
@@ -227,6 +224,7 @@ def fix_tokens(source):
         # traceback.print_exc()
         raise e
 
+
 class ReorderGlobals(ast.NodeTransformer):
     """
     This removes all global statements from functions, and places the variables
@@ -236,29 +234,30 @@ class ReorderGlobals(ast.NodeTransformer):
     def __init__(self):
         self.globals = set()
 
-    def visit_Global(self, n):
+    def visit_Global(self, node):
 
-        for i in n.names:
+        for i in node.names:
             self.globals.add(i)
 
         return ast.Pass()
 
-    def visit_FunctionDef(self, n):
+    def visit_FunctionDef(self, node: ast.FunctionDef):
 
         old_globals = self.globals
 
         try:
-            n = self.generic_visit(n)
+            node = self.generic_visit(node)  # type: ignore
 
             new_globals = list(self.globals)
             new_globals.sort()
 
             if new_globals:
-                n.body.insert(0, ast.Global(names=new_globals)) # type: ignore
+                node.body.insert(0, ast.Global(names=new_globals))
 
-            return n
+            return node
         finally:
             self.globals = old_globals
+
 
 reorder_globals = ReorderGlobals()
 
@@ -270,9 +269,6 @@ def fix_ast(tree):
 
     These are fixes that apply at the AST level.
     """
-
-    if PY2:
-        return tree
 
     try:
 

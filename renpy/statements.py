@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -160,8 +160,8 @@ def register(
 
     `translation_strings`
         A function that is called with the parsed block. It's expected to
-        return a list of strings, which are then reported as being available
-        to be translated.
+        return a list of strings or tuples of (string line number, string),
+        which are then reported as being available to be translated.
 
     `force_begin_rollback`
         This should be set to true on statements that are likely to cause the

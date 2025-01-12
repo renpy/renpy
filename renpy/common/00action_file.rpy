@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -592,7 +592,7 @@ init -1500 python:
         if page is None:
             return
 
-        page = unicode(page)
+        page = str(page)
 
         for i in renpy.list_slots(__slotname(page, r'\d+')):
             renpy.predict(renpy.slot_screenshot(i))
@@ -957,7 +957,7 @@ init -1500 python:
 
         `newest`
             Set to true to mark the quicksave as the newest save.
-         """
+        """
 
         rv = [ FileSave(1, page="quick", confirm=False, cycle=True, newest=newest, action=Notify(message)) ]
 

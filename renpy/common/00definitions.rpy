@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -111,7 +111,7 @@ init -1400 python:
 
     # This defines a family of move transitions, using the old-style methods.
     def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
-        """
+        r"""
         :doc: transition_family
 
         This defines a family of :class:`move transitions <MoveTransition>`,

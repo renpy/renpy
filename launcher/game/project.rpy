@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -679,7 +679,7 @@ init python in project:
                 The label to jump to when clicked.
             """
 
-            if isinstance(p, basestring):
+            if isinstance(p, str):
                 p = manager.get(p)
 
             self.project = p
@@ -767,7 +767,7 @@ init python in project:
         def __init__(self, p=None):
             if p is None:
                 self.project = current
-            elif isinstance(p, basestring):
+            elif isinstance(p, str):
                 self.project = manager.get(p)
             else:
                 self.project = p

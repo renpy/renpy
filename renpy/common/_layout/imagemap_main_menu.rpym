@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -81,7 +81,7 @@ label main_menu_screen:
             if not eval(enabled):
                 act = None
 
-            if isinstance(act, basestring):
+            if isinstance(act, str):
                 act = ui.jumpsoutofcontext(act)
 
             ime.button(name, act, False)

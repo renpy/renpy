@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,35 +19,44 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import sys
-import cython
+from typing import Any
 
-@cython.auto_pickle(False)
-cdef class Location:
+def hash32(s : Any) -> int:
+    """
+    Returns a stable 32-bit hash of the string `s`.
 
-    # Despite what it looks like, these aren't slots. This just exists to convince reduce_ex to pickle this object
-    # as if slots existed.
-    __slots__ = [ "filename", "linenumber", "column" ]
-
-    # The filename of the location.
-    cdef public str filename
-
-    # The line number of the location.
-    cdef public int linenumber
-
-    # The column number of the location.
-    cdef public int column
-
-    _types = """
-        filename: str
-        linenumber: int
-        column: int
+    `s`
+        A unicode string. Other types will be coerced to unicode before hashing.
     """
 
-    def __reduce_ex__(self, protocol):
-        return object.__reduce_ex__(self, protocol)
 
-    def __init__(self, filename, linenumber, column=0):
-        self.filename = sys.intern(filename)
-        self.linenumber = linenumber
-        self.column = column
+def hash64(s : Any) -> int:
+    """
+    Returns a stable 64-bit hash of the string `s`.
+
+    `s`
+        A unicode string. Other types will be coerced to unicode before hashing.
+    """
+
+class PyExpr(str):
+    """
+    Represents a string containing python expression.
+    """
+
+    filename: str
+    linenumber: int
+    py: int
+    hashcode: int
+
+    @staticmethod
+    def checkpoint() -> Any:
+        """
+        Checkpoints the pyexpr list. Returns an opaque object that can be used
+        with PyExpr.revert to revert the list.
+        """
+
+    @staticmethod
+    def revert(opaque: Any):
+        """
+        Reverts the pyexpr list to the state it was in when checkpoint was called.
+        """

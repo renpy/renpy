@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -37,7 +37,7 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
     prompt = renpy.text.extras.filter_text_tags(prompt, allow=set())
 
     roll_forward = renpy.exports.roll_forward_info()
-    if not isinstance(roll_forward, basestring):
+    if not isinstance(roll_forward, str):
         roll_forward = None
 
     # use previous data in rollback
@@ -128,7 +128,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     renpy.exports.mode('input')
 
     roll_forward = renpy.exports.roll_forward_info()
-    if not isinstance(roll_forward, basestring):
+    if not isinstance(roll_forward, str):
         roll_forward = None
 
     # use previous data in rollback

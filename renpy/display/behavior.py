@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -807,6 +807,8 @@ class SayBehavior(renpy.display.layout.Null):
 
             if ev.type == renpy.display.core.TIMEEVENT and st >= skip_delay:
 
+                tlid = renpy.game.context().translate_identifier
+
                 if ev.modal:
                     return None
                 elif renpy.game.preferences.skip_unseen:
@@ -814,6 +816,8 @@ class SayBehavior(renpy.display.layout.Null):
                 elif renpy.config.skipping == "fast":
                     return True
                 elif renpy.game.context().seen_current(True):
+                    return True
+                elif tlid and renpy.exports.seen_translation(tlid):
                     return True
                 else:
                     renpy.config.skipping = None
@@ -2839,7 +2843,7 @@ class OnEvent(renpy.display.displayable.Displayable):
         self.action = action
 
     def is_event(self, event):
-        if isinstance(self.event_name, basestring):
+        if isinstance(self.event_name, str):
             return self.event_name == event
         else:
             return event in self.event_name

@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -501,6 +501,7 @@ def mark_sweep():
     cdef list worklist
     cdef int i
     cdef Render r, j
+    cdef object o
 
     worklist = [ ]
 
@@ -527,6 +528,12 @@ def mark_sweep():
 
     for r in cache_renders:
         r.mark = True
+
+    if renpy.emscripten:
+        # Do not kill Renders that cache the last video frame
+        for o in renpy.display.video.texture.values():
+            if isinstance(o, Render):
+                o.mark = True
 
     for r in live_renders:
         if not r.mark:

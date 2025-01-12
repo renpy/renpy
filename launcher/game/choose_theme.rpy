@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,6 @@ init python:
     import codecs
     import re
     import sys
-    import future.utils
 
     def theme_names():
         """
@@ -98,7 +97,7 @@ init python:
             return
 
         renpy.style.restore(style_backup)
-        future.utils.exec_(theme_data.THEME[theme][scheme], globals(), globals())
+        exec(theme_data.THEME[theme][scheme], globals(), globals())
 
         # Rebuild the style cache.
         renpy.style.rebuild(False)
@@ -168,8 +167,8 @@ init python:
 
     def list_logical_lines(filename):
         """
-         This reads in filename, and turns it into a list of logical
-         lines.
+        This reads in filename, and turns it into a list of logical
+        lines.
         """
 
         f = codecs.open(filename, "rb", "utf-8")
@@ -188,7 +187,7 @@ init python:
             # The line that we're building up.
             line = ""
 
-           # The number of open parenthesis there are right now.
+            # The number of open parenthesis there are right now.
             parendepth = 0
 
             # Looping over the characters in a single logical line.

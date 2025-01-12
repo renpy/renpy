@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -259,7 +259,7 @@ def compute_widget_properties(who_args, what_args, window_args, properties, vari
 
         d = d.copy()
 
-        if isinstance(style, basestring):
+        if isinstance(style, str):
 
             if multiple is not None:
                 style = "block{}_multiple{}_{}".format(multiple[0], multiple[1], style)
@@ -354,7 +354,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
     def merge_style(style, properties):
 
-        if isinstance(style, basestring):
+        if isinstance(style, str):
             style = getattr(renpy.store.style, style)
 
         if variant is not None:
@@ -714,7 +714,10 @@ def display_say(
                     if scry.extend_text is renpy.ast.DoesNotExtend:
                         break
                     elif scry.extend_text is not None:
-                        extend_text += scry.extend_text
+                        try:
+                            extend_text += renpy.substitutions.substitute(scry.extend_text, scope=None, force=False, translate=True)[0]
+                        except Exception:
+                            pass
 
                     scry = scry.next()
                     scry_count += 1
@@ -1362,8 +1365,8 @@ class ADVCharacter(object):
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
             return True
 
-        if not isinstance(what, basestring):
-            raise Exception("Character expects its what argument to be a string, got %r." % (what,))
+        if not isinstance(what, str):
+            raise Exception(f"Character expects its what argument to be a string, got {what!r}.")
 
         if renpy.store._side_image_attributes_reset:
             renpy.store._side_image_attributes = None
@@ -1463,7 +1466,7 @@ class ADVCharacter(object):
                     self.do_done(who, what)
 
                 # Finally, log this line of dialogue.
-                if who and isinstance(who, basestring):
+                if who and isinstance(who, str):
                     renpy.exports.log(who)
 
                 renpy.exports.log(what)

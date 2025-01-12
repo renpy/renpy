@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,9 +23,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 
-
 import renpy
-renpy.update_path()
 
 import hashlib
 import re
@@ -121,87 +119,61 @@ class ScriptTranslator(object):
 
         return len(self.default_translates)
 
-    def take_translates(self, nodes):
+    def take_translates(self, nodes: list[renpy.ast.Node]):
         """
         Takes the translates out of the flattened list of statements, and stores
         them into the dicts above.
         """
 
-        label = None
-
         if not nodes:
             return
 
-        TranslatePython = renpy.ast.TranslatePython
-        TranslateBlock = renpy.ast.TranslateBlock
-        TranslateEarlyBlock = renpy.ast.TranslateEarlyBlock
-        Menu = renpy.ast.Menu
-        UserStatement = renpy.ast.UserStatement
-        Translate = renpy.ast.Translate
-        TranslateSay = renpy.ast.TranslateSay
+        from renpy.ast import (
+            TranslatePython,
+            TranslateBlock,
+            TranslateEarlyBlock,
+            Translate,
+            TranslateSay,
+        )
 
         filename = renpy.lexer.unelide_filename(nodes[0].filename)
         filename = os.path.normpath(os.path.abspath(filename))
+
+        label = None
 
         for n in nodes:
 
             if not n.translation_relevant:
                 continue
 
-            if n.name.__class__ is not tuple:
-                if isinstance(n.name, basestring):
-                    label = n.name
+            if isinstance(n.name, str):
+                label = n.name
 
-            type_n = n.__class__
-
-            if type_n is TranslatePython:
+            if isinstance(n, TranslatePython):
                 if n.language is not None:
                     self.languages.add(n.language)
                 self.python[n.language].append(n)
 
-            elif type_n is TranslateEarlyBlock:
+            elif isinstance(n, TranslateEarlyBlock):
                 if n.language is not None:
                     self.languages.add(n.language)
                 self.early_block[n.language].append(n)
 
-            elif type_n is TranslateBlock:
+            elif isinstance(n, TranslateBlock):
                 if n.language is not None:
                     self.languages.add(n.language)
                 self.block[n.language].append(n)
 
-            elif type_n is Menu:
-
-                for i in n.items:
-                    s = i[0]
-
-                    if renpy.config.old_substitutions:
-                        s = s.replace("%%", "%")
-
-                    if s is None:
-                        continue
-
-                    self.additional_strings[filename].append((n.linenumber, s))
-
-            elif type_n is UserStatement:
-
-                strings = n.call("translation_strings")
-
-                if strings is None:
-                    continue
-
-                for s in strings:
-                    self.additional_strings[filename].append((n.linenumber, s))
-
-            elif type_n is Translate or type_n is TranslateSay:
-
+            elif isinstance(n, (Translate, TranslateSay)):
                 if n.language is None:
                     if n.identifier in self.default_translates:
                         old_node = self.default_translates[n.identifier]
 
-                        renpy.lexer.ParseError(n.filename, n.linenumber, "Line with id %s appears twice. The other line is %s:%d" % (
-                                    n.identifier,
-                                    old_node.filename, old_node.linenumber)
-                                    ).defer("duplicate_id")
+                        err = renpy.lexer.ParseError(
+                            n.filename, n.linenumber,
+                            f"Line with id {n.identifier} appears twice. "
+                            f"The other line is {old_node.filename}:{old_node.linenumber}")
+                        err.defer("duplicate_id")
 
                     self.default_translates[n.identifier] = n
                     self.file_translates[filename].append((label, n))
@@ -209,6 +181,10 @@ class ScriptTranslator(object):
                     self.languages.add(n.language)
                     self.language_translates[n.identifier, n.language] = n
                     self.chain_worklist.append((n.identifier, n.language))
+
+            else:
+                for line in n.get_translation_strings():
+                    self.additional_strings[filename].append(line)
 
     def chain_translates(self):
         """
@@ -254,6 +230,27 @@ class ScriptTranslator(object):
             return tl
         else:
             return tl.block[0]
+
+    def get_all_translates(self, identifier: str):
+        """
+        Return a dict of all existing translates for the given identifier.
+
+        The dict keys are language names, or None for the default language.
+        """
+
+        identifier = identifier.replace('.', '_')
+        language = renpy.game.preferences.language
+
+        rv: dict[str | None, renpy.ast.Translate | renpy.ast.TranslateSay] = {}
+
+        for language in self.languages:
+            try:
+                rv[language] = self.language_translates[(identifier, language)]
+            except KeyError:
+                pass
+
+        rv[None] = self.default_translates[identifier]
+        return rv
 
     def get_translate_info(self, identifier, language):
 
@@ -1147,9 +1144,11 @@ def detect_user_locale():
 
 
 # Generated by scripts/relative_imports.py, do not edit below this line.
-if 1 == 0:
-    from . import dialogue
-    from . import extract
-    from . import generation
-    from . import merge
-    from . import scanstrings
+import typing
+
+if typing.TYPE_CHECKING:
+    from . import dialogue as dialogue
+    from . import extract as extract
+    from . import generation as generation
+    from . import merge as merge
+    from . import scanstrings as scanstrings

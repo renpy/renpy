@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -35,6 +35,7 @@ import re
 import io
 import unicodedata
 import time
+import pathlib
 
 from importlib.util import spec_from_loader
 
@@ -48,7 +49,6 @@ from renpy.webloader import DownloadNeeded
 u"".encode(u"utf-8")
 
 # Physical Paths
-
 
 def get_path(fn):
     """
@@ -337,7 +337,7 @@ def scandirfiles():
 
     def add(dn, fn, files, seen):
 
-        fn = unicode(fn)
+        fn = str(fn)
 
         if fn in seen:
             return
@@ -447,7 +447,7 @@ def scandirfiles_from_archives(add, seen):
 scandirfiles_callbacks.append(scandirfiles_from_archives)
 
 
-def listdirfiles(common=True):
+def listdirfiles(common=True, game=True):
     """
     Returns a list of directory, file tuples known to the system. If
     the file is in an archive, the directory is None.
@@ -456,11 +456,14 @@ def listdirfiles(common=True):
     if (not game_files) and (not common_files):
         scandirfiles()
 
-    if common:
-        return game_files + common_files
-    else:
-        return list(game_files)
+    rv = [ ]
 
+    if common:
+        rv.extend(common_files)
+    if game:
+        rv.extend(game_files)
+
+    return rv
 
 
 open_file = RWopsIO # type: ignore
@@ -759,9 +762,8 @@ def transfn(name):
     for d in renpy.config.searchpath:
         fn = os.path.join(renpy.config.basedir, d, name)
 
-        add_auto(fn)
-
         if os.path.isfile(fn):
+            add_auto(fn)
             return fn
 
     raise Exception("Couldn't find file '%s'." % name)
@@ -844,7 +846,6 @@ class RenpyImporter(object):
 
         if self.translate(fullname):
             return spec_from_loader(name=fullname, loader=self, origin=path)
-
 
     def load_module(self, fullname, mode="full"):
         """
@@ -986,15 +987,18 @@ def auto_mtime(fn):
 def add_auto(fn, force=False):
     """
     Adds fn as a file we watch for changes. If it's mtime changes or the file
-    starts/stops existing, we trigger a reload.
+    stops existing, we trigger a reload.
     """
-
-    fn = fn.replace("\\", "/")
 
     if not renpy.autoreload:
         return
 
     if (fn in auto_mtimes) and (not force):
+        return
+
+    fn = fn.replace("\\", "/")
+
+    if renpy.config.commondir and pathlib.Path(fn).is_relative_to(renpy.config.commondir):
         return
 
     for e in renpy.config.autoreload_blacklist:

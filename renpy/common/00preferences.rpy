@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -282,7 +282,7 @@ init -1500 python:
 
         name = name.lower()
 
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             value = value.lower()
 
         def get():

@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,6 +22,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+from typing import Any
 
 
 import os
@@ -37,6 +38,25 @@ from renpy.compat.pickle import dump, dumps, loads
 # The class that's used to hold the persistent data.
 
 class Persistent(object):
+
+    _preferences: renpy.preferences.Preferences
+    "The preferences object."
+
+    _seen_ever: dict[Any, bool]
+    "A dict (used as a set) that maps a hashed or unhashed statement name to True if that label has been seen."
+
+    _seen_images: dict[tuple[str, ...], bool]
+    "A dict that maps an image name to True if that image has been seen."
+
+    _chosen: dict[tuple[Any, str], bool]
+    "A dict that maps a menu choice to True if that choice has been chosen."
+
+    _seen_audio: dict[str, bool]
+    "A dict that maps an audio file name to True if that audio file has been seen."
+
+    _seen_translates: set[Any]
+    "A set of hashed or unhashed translation identifiers that have been seen."
+
 
     def __init__(self):
         self._update()
@@ -78,6 +98,7 @@ class Persistent(object):
             self._seen_images.clear()
             self._chosen.clear()
             self._seen_audio.clear()
+            self._seen_translates.clear()
 
         renpy.exports.execute_default_statement()
 

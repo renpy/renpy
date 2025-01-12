@@ -14,6 +14,8 @@ ENDINGS = [
     ".rpym",
     ".py",
     ".pyx",
+    ".pxd",
+    ".pyi",
     ".pxf",
     ]
 

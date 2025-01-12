@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -464,14 +464,14 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
         bc = break_rules[ old_type * BC_PITCH + new_type]
 
-        if bc == "%": # Indirect break.
+        if bc == b"%": # Indirect break.
             if space_pos:
                 g1 = glyphs[space_pos]
                 g1.split = SPLIT_INSTEAD
 
             g.split = SPLIT_NONE
 
-        elif bc == "_": # Direct break.
+        elif bc == b"_": # Direct break.
             if space_pos:
                 g1 = glyphs[space_pos]
                 g1.split = SPLIT_INSTEAD

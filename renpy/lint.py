@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -192,7 +192,7 @@ def try_compile(where, expr, additional=None):
     """
 
     try:
-        renpy.python.py_compile_eval_bytecode(expr)
+        renpy.python.py_compile(expr, 'eval')
     except Exception:
         report("'%s' could not be compiled as a python expression, %s.", expr, where)
         if additional:
@@ -343,12 +343,13 @@ check_file_cache = { }
 
 def check_file(what, fn, directory=None):
 
-    if not isinstance(fn, basestring):
+    if not isinstance(fn, str):
         return
 
     present = check_file_cache.get(fn, None)
     if present is True:
         return
+
     if present is False:
         report("%s uses file '%s', which is not loadable.", what.capitalize(), fn)
         return
@@ -915,120 +916,104 @@ def check_image_manipulators():
 
 
 def check_unreachables(all_nodes):
-
-    def add_block(block):
-        next = block[0]
-        if next in unreachable:
-            to_check.add(next)
-
-    def add_names(names):
-        for name in names:
-
-            if name is None:
-                continue
-
-            if name is True:
-                continue
-
-            if isinstance(name, renpy.lexer.SubParse):
-                if name.block:
-                    add_block(name.block)
-                continue
-
-            node = renpy.game.script.lookup(name)
-
-            if node is None:
-                continue
-
-            if node in unreachable:
-                to_check.add(node)
+    from renpy.ast import (
+        get_reachable_nodes,
+        Node,
+        Label,
+        Init,
+        TranslateBlock,
+        UserStatement,
+        EarlyPython,
+        Translate,
+        TranslateSay,
+        Return,
+        EndTranslate,
+        RPY,
+    )
 
     # All nodes, outside of common.
     all_nodes = [node for node in all_nodes if not common(node)]
 
     # Unreachable nodes - this set shrinks as nodes become reachable.
-    unreachable = set(all_nodes)
+    unreachable = set[Node](all_nodes)
 
     # Weakly reachable nodes - nodes that are reachable, but don't
     # make their next reachable.
-    weakly_reachable = set()
+    weakly_reachable = set[Node]()
 
     # The worklist of reachable nodes that haven't been checked yet.
-    to_check = set()
+    to_check = []
 
     for node in all_nodes:
-        if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)):
-            to_check.add(node)
+        if isinstance(node, Label):
+            # All labels are reachable because arbitary expression can
+            # renpy.call or renpy.jump to them.
+            to_check.append(node)
 
-        elif isinstance(node, renpy.ast.Translate):
-            if node.language is not None:
-                to_check.add(node)
+        elif isinstance(node, (Init, TranslateBlock)):
+            # Init and TranslateBlock nodes are ment to be unreachable from
+            # runtime code, but the block of these ones is always reachable,
+            # either by simply running the game, or changing the langauge.
+            if node.block:
+                to_check.append(node.block[0])
 
-        elif isinstance(node, renpy.ast.TranslateSay):
-            if node.language is not None:
-                to_check.add(node)
-
-        elif isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
-            # the block of these ones is always reachable, but their next is reachable only if they are themselves reachable
-            add_block(node.block)
+            # Their `next` is reachable only if they are themselves reachable
+            # from the other nodes.
             weakly_reachable.add(node)
-            # Init and TranslateBlock nodes are meant to be unreachable, but we had to check them
-            # because if they are reachable, what follows them is too and must not be flagged as unreachable
 
-        elif isinstance(node, (renpy.ast.Return, renpy.ast.EndTranslate)):
+        elif isinstance(node, EarlyPython):
+            # python early outside of init block is common, and reachable
+            # but in that case its next is only reachable if it is itself
+            # reachable.
             weakly_reachable.add(node)
-            # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes
-            # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place,
-            # and EndTranslate nodes from explicit translate blocks are naturally unreachable
 
-        elif isinstance(node, renpy.ast.UserStatement):
-            reach = node.reachable(False)
-
-            if True in reach:
+        elif isinstance(node, (Translate, TranslateSay)):
+            # If a block with missing id exists, it is orpahn translation.
+            # We don't report it there, but later in the lint.
+            if node.language is not None:
                 weakly_reachable.add(node)
 
-            add_names(reach)
+        elif isinstance(node, (Return, EndTranslate)):
+            weakly_reachable.add(node)
+            # the auto-generated Return at the end of every file is hard to
+            # segregate from the other Return nodes, so we don't check Return nodes
+            # EndTranslate nodes can't be manually created, so it makes no sense
+            # to show them to the user in the first place, and EndTranslate
+            #  nodes from explicit translate blocks are naturally unreachable
 
-        elif isinstance(node, renpy.ast.RPY):
+        elif isinstance(node, UserStatement):
+            for name in node.reachable(False):
+                if name is None:
+                    continue
+
+                if name is True:
+                    weakly_reachable.add(node)
+                    continue
+
+                if isinstance(name, renpy.lexer.SubParse):
+                    if name.block:
+                        to_check.append(name.block[0])
+                    continue
+
+                node = renpy.game.script.lookup(name)
+
+                if node is None:
+                    continue
+
+                if node in unreachable:
+                    to_check.append(node)
+
+        elif isinstance(node, RPY):
             weakly_reachable.add(node)
 
-    while to_check:
-        node = to_check.pop() # type: Any
-        unreachable.remove(node)
+    reachable = get_reachable_nodes(to_check)
 
-        if isinstance(node, renpy.ast.While):
-            add_block(node.block)
+    unreachable -= set(reachable)
+    unreachable -= weakly_reachable
 
-        elif isinstance(node, renpy.ast.Menu):
-            all_cond = True
-
-            for (_l, condition, block) in node.items:
-                if block is not None:
-                    add_block(block)
-                if condition == "True":
-                    # "True" is the default value when no condition is specified
-                    all_cond = False
-
-            if not all_cond:
-                # if there's only returns or jumps in the menu choices,
-                # the next of the menu is only reachable if every choice is disabled and the menu gets skipped
-                # if not, the blocks will lead us there eventually
-                continue
-
-        elif isinstance(node, renpy.ast.If):
-            for (_c, block) in node.entries:
-                add_block(block)
-
-        elif isinstance(node, renpy.ast.UserStatement):
-            add_names(node.reachable(True))
-            continue
-
-        next = node.next
-        if next in unreachable:
-            to_check.add(next)
-
-    locations = sorted(set((node.filename, node.linenumber) for node in (unreachable - weakly_reachable)))
-    problems = [ (filename, linenumber, "") for filename, linenumber in locations ]
+    locations = {(node.filename, node.linenumber) for node in unreachable}
+    locations = sorted(locations)
+    problems = [(filename, linenumber, "") for filename, linenumber in locations]
     problem_listing("Unreachable Statements:", problems)
 
 

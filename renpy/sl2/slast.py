@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -432,7 +432,7 @@ class SLBlock(SLNode):
             if const == GLOBAL_CONST:
                 keyword_values[k] = py_eval_bytecode(compile_expr(self.location, node))
             else:
-                keyword_keys.append(ast.Str(s=k))
+                keyword_keys.append(ast.Constant(value=k))
                 keyword_exprs.append(node) # Will be compiled as part of ast.Dict below.
 
             self.constant = min(self.constant, const)
@@ -818,7 +818,7 @@ class SLDisplayable(SLBlock):
 
             if const == GLOBAL_CONST:
                 values.append(py_eval_bytecode(compile_expr(self.location, node)))
-                exprs.append(ast.Num(n=0))
+                exprs.append(ast.Constant(value=0))
                 has_values = True
             else:
                 values.append(use_expression)

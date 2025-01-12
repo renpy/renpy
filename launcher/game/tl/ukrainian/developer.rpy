@@ -1,4 +1,4 @@
-
+﻿
 translate ukrainian strings:
 
     # 00console.rpy:255
@@ -156,3 +156,14 @@ translate ukrainian strings:
     # renpy/common/00console.rpy:813
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
     new "У довідці можуть бути недокументовані функції. Будь ласка, перевірте, чи бажана функція або\nклас задокументовано.\n\n"
+
+translate ukrainian strings:
+
+    # renpy/common/_developer/developer.rpym:133
+    old "    [name!q] [attributes!q] (hidden)"
+    new "    [name!q] [attributes!q] (приховано)"
+
+    # renpy/common/_developer/developer.rpym:137
+    old "    [name!q] [attributes!q]"
+    new "    [name!q] [attributes!q]"
+

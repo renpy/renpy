@@ -24,6 +24,12 @@ require 16 KB page support.
 Features
 --------
 
+The new :func:`renpy.seen_translation`, :func:`renpy.mark_translation_seen`, and :func:`renpy.mark_translation_unseen`
+functions make it possible to determine if a translation has been seen.
+
+Audio filesname can now include a volume clase, like "<volume 0.5>sunflower-slow-drag.ogg". This sets the relative
+amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue` statements.
+
 The new :var:`config.keep_screenshot_entering_menu` variable determines if a screenshot taken with :class:`FileTakeScreenshot`
 is kept when entering a menu context.
 
@@ -43,6 +49,18 @@ inside for translation.
 
 Other Changes
 -------------
+
+Ren'Py will now prefer the gles2 renderer on ARM Linux devices, such as the Raspberry Pi.
+
+Ren'Py no longer triggers and autoreload when a file that had not existed comes into existence. This behavior
+had been inconsistent, working in some places but not others, required Ren'Py to spent time scanning for files
+that do not exist.
+
+Ren'Py now considers a dialogue statment to have been seen if a statement with the same translation identifier
+has been seen.
+
+For size reasons, the lists of seen dialogue and translations now store a 64-bit integer hash of the statement
+name or translation id.
 
 The ``show expression`` statement has changed so that ``show expression "bg washington"`` is equivalent
 to ``show bg washington``. Previously, the expression would be used as a tag, which would rarely be correct.
@@ -71,6 +89,7 @@ Python Builtins (like len) are now always available during string interpolation.
 
 Animated presplash images now take precedence over static presplash images, matching
 the documentation.
+
 
 There have been a number of fixes related to dragging of viewports and drag displayables.
 

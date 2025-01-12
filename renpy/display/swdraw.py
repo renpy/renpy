@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -308,8 +308,7 @@ def draw_special(what, dest, x, y):
 
         ramp = b"\x00" * 256
 
-        for i in range(0, ramplen):
-            ramp += bchr(255 * i // ramplen)
+        ramp += bytes([255 * i // ramplen for i in range(ramplen)])
 
         ramp += b"\xff" * 256
 

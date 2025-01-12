@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1203,9 +1203,12 @@ class Transform(Container):
         child = self.child._in_current_store()
         if child is self.child:
             return self
-        rv = self()
+
+        # This forestalls any _duplicate attempts while building the transform.
+        child._unique()
+
+        rv = self(child=child)
         rv.take_execution_state(self)
-        rv.child = child
         rv._unique()
 
         return rv

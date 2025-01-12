@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,9 +26,6 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-
-from future.utils import raise_
 
 import time
 import pygame_sdl2 # @UnusedImport
@@ -116,16 +113,18 @@ class AudioData(str):
         play sound easteregg
     """
 
-    def __new__(cls, data, filename):
+    data: bytes
+
+    def __new__(cls, data: bytes, filename: str):
         rv = str.__new__(cls, filename)
-        rv.data = data # type: ignore
+        rv.data = data
         return rv
 
     def __init__(self, data, filename):
         pass
 
     def __reduce__(self):
-        return(AudioData, (self.data, str(self))) # type: ignore
+        return(AudioData, (self.data, str(self)))
 
 
 class QueueEntry(object):
@@ -374,7 +373,7 @@ class Channel(object):
         mcd[self.name] = ctx
         return ctx
 
-    def split_filename(self, filename, looped):
+    def split_filename(self, filename : str | AudioData , looped : bool) -> tuple[str|AudioData, float, float, float]:
         """
         Splits a filename into a filename, start time, and end time.
         """
@@ -408,7 +407,7 @@ class Channel(object):
 
         m = re.match(r'<(.*)>(.*)', filename)
         if not m:
-            return self.file_prefix + filename + self.file_suffix, 0, -1
+            return self.file_prefix + filename + self.file_suffix, 0, -1, 1.0
 
         fn = m.group(2)
         fn = self.file_prefix + fn + self.file_suffix
@@ -418,6 +417,7 @@ class Channel(object):
         start = 0
         loop = None
         end = -1
+        volume = 1.0
 
         while spec:
             clause = spec.pop(0)
@@ -438,6 +438,8 @@ class Channel(object):
             elif clause == "silence":
                 end = expect_float()
                 fn = "_silence.ogg"
+            elif clause == "volume":
+                volume = expect_float()
 
             else:
                 raise exception("expected keyword, got {!r}.".format(clause))
@@ -448,7 +450,7 @@ class Channel(object):
         if isinstance(original_filename, AudioData):
             fn = AudioData(original_filename.data, fn)
 
-        return fn, start, end
+        return fn, start, end, volume
 
     def periodic(self):
         """
@@ -458,7 +460,11 @@ class Channel(object):
 
         # Update the channel volume.
 
-        mixer_volume = renpy.game.preferences.volumes.get(self.mixer, 1.0)
+        if self.mixer:
+            mixer_volume = renpy.game.preferences.volumes.get(self.mixer, 1.0)
+        else:
+            mixer_volume = 1.0
+
         main_volume = renpy.game.preferences.volumes.get("main", 1.0)
 
         if renpy.game.preferences.self_voicing:
@@ -536,7 +542,7 @@ class Channel(object):
                 continue
 
             try:
-                filename, start, end = self.split_filename(topq.filename, topq.loop)
+                filename, start, end, filename_volume = self.split_filename(topq.filename, topq.loop)
 
                 if renpy.config.audio_filename_callback is not None:
                     filename = renpy.config.audio_filename_callback(filename)
@@ -545,7 +551,7 @@ class Channel(object):
                     continue
 
                 if isinstance(topq.filename, AudioData):
-                    topf = io.BytesIO(topq.filename.data) # type: ignore
+                    topf = io.BytesIO(topq.filename.data)
                 else:
                     topf = load(filename)
                     if topf is AudioNotReady:
@@ -560,9 +566,9 @@ class Channel(object):
                     renpysound.set_video(self.number, self.movie, loop=False)
 
                 if depth == 0:
-                    renpysound.play(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume, audio_filter=topq.audio_filter) # type:ignore
+                    renpysound.play(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume * filename_volume, audio_filter=topq.audio_filter) # type:ignore
                 else:
-                    renpysound.queue(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume, audio_filter=topq.audio_filter) # type:ignore
+                    renpysound.queue(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume * filename_volume, audio_filter=topq.audio_filter) # type:ignore
 
                 self.playing = True
                 self.synchro_start = False
@@ -724,7 +730,7 @@ class Channel(object):
 
             for filename in filenames:
                 if renpy.exports.is_seen_allowed():
-                    filename, _, _ = self.split_filename(filename, False)
+                    filename, _, _, _ = self.split_filename(filename, False)
                     renpy.game.persistent._seen_audio[str(filename)] = True # type: ignore
 
             if not loop_only:
@@ -1194,7 +1200,7 @@ def periodic_pass():
 
 
 # The exception that's been thrown by the periodic thread.
-periodic_exc = None
+periodic_exc: Exception | None = None
 
 # Should we run the periodic thread now?
 run_periodic = False
@@ -1225,8 +1231,8 @@ def periodic_thread_main():
 
             try:
                 periodic_pass()
-            except Exception:
-                periodic_exc = sys.exc_info()
+            except Exception as e:
+                periodic_exc = e
 
 
 def periodic():
@@ -1246,7 +1252,7 @@ def periodic():
             exc = periodic_exc
             periodic_exc = None
 
-            raise_(exc[0], exc[1], exc[2])
+            raise exc
 
         run_periodic = True
         periodic_condition.notify()
@@ -1267,11 +1273,7 @@ def interact():
 
                 c.interact()
 
-                # if _music_volumes.get(i, 1.0) != c.chan_volume:
-                #    c.set_volume(_music_volumes.get(i, 1.0))
-
                 ctx = c.context
-
 
                 # If we're in the same music change, then do nothing with the
                 # music.

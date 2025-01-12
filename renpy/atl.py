@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -139,8 +139,6 @@ class position(object):
             return self * (1/other)
         return NotImplemented
 
-    __div__ = __truediv__ # PY2
-
     def __pos__(self):
         return position(renpy.display.core.absolute(self.absolute), float(self.relative))
 
@@ -232,7 +230,7 @@ def interpolate(t, a, b, typ):
     """
 
     # Deal with booleans, nones, etc.
-    if b is None or isinstance(b, (bool, basestring, renpy.display.matrix.Matrix, renpy.display.transform.Camera)):
+    if b is None or isinstance(b, (bool, str, renpy.display.matrix.Matrix, renpy.display.transform.Camera)):
         if t >= 1.0:
             return b
         else:
@@ -953,7 +951,7 @@ class RawBlock(RawStatement):
         old_exception_info = renpy.game.exception_info
         try:
             block = self.compile(Context({}))
-        except RuntimeError:  # PY3: RecursionError
+        except RecursionError:
             raise Exception("This transform refers to itself in a cycle.")
         except Exception:
             self.constant = NOT_CONST
@@ -1334,7 +1332,7 @@ class RawMultipurpose(RawStatement):
             except Exception:
                 continue
 
-            if isinstance(i, ATLTransformBase):
+            if isinstance(i, ATLTransformBase) and (i.child is None):
                 i.atl.predict(ctx)
                 return
 
