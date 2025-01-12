@@ -598,6 +598,10 @@ def post_import():
     sys.modules[pystr('renpy.subprocess')] = subprocess
 
     for k, v in renpy.defaultstore.__dict__.items():
+
+        if k in ("__all__", "__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__cached__"):
+            continue
+
         renpy.store.__dict__.setdefault(k, v) # type: ignore
 
     renpy.store.eval = renpy.defaultstore.eval # type: ignore
