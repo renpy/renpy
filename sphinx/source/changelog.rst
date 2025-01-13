@@ -16,10 +16,33 @@ Requirement and Dependency Changes
 Ren'Py now requires Windows 10 or later to run. This means that it will no longer run on Windows 7, 8, or 8.1.
 
 Ren'Py is no longer built for 32-bit ARM Linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
-Ren'Py is still being built for 32-bit ARM Android.
+Ren'Py is still being built for 32-bit ARM Android. Ren'Py will now prefer the gles2 renderer on ARM Linux devices,
+such as the Raspberry Pi.
+
 
 The Android version of Ren'Py is now being built with 16KB pages, for future Android devices that will
 require 16 KB page support.
+
+Libs and Mods
+-------------
+
+Ren'Py now includes support for two more special directories, :file:`game/libs` and :file:`game/mods`. These
+directories are intended to receive third-party libraries and mods, respectively.
+
+When the file :file:`game/libs/libs.txt`
+exists, script files inside it are loaded in unicode order by filename (not full path), before other files in :file:`game`.
+Similarly, when the file :file:`game/mods/mods.txt` exists, script files inside it are loaded in unicode order by filename,
+after other files in :file:`game/` and :file:`game/libs/`.
+
+Note that load order is relatively unimportant in Ren'Py - it's mostly used with :doc:`cds`. Init priorities levels
+have been changed to recommend that games use init priorities of -99 to 99, and libraries and mods use from -999 to -100
+and 100 to 999.
+
+When present, the libs and mods directories are showin in the launcher. The libs directory is created automatically
+when the game is created. The mods directory can be created manually if a creator wants to support mods.
+
+The goal of this change is to make it easier to distribute third-party libraries and mods. Instead of needing to be
+merged with the player's script, a library can be placed under game/libs, and will provide full functionality there.
 
 Features
 --------
@@ -49,8 +72,6 @@ inside for translation.
 
 Other Changes
 -------------
-
-Ren'Py will now prefer the gles2 renderer on ARM Linux devices, such as the Raspberry Pi.
 
 Ren'Py no longer triggers and autoreload when a file that had not existed comes into existence. This behavior
 had been inconsistent, working in some places but not others, required Ren'Py to spent time scanning for files
