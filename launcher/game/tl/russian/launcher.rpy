@@ -1874,7 +1874,7 @@
 
     # game/androidstrings.rpy:43
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
-    new "Не удалось использовать javac для компиляции тестового файла. Если вы еще не установили Java Development Kit, загрузите его с:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\JDK отличается от JRE, поэтому возможно, что у вас есть Java без JDK. Пожалуйста, убедитесь, что вы установили 'переменные окружения JavaSoft (Oracle)'.\n\nБез работающего JDK я не могу продолжать."
+    new "Не удалось использовать javac для компиляции тестового файла. Если вы еще не установили Java Development Kit, загрузите его с:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nJDK отличается от JRE, поэтому возможно, что у вас есть Java без JDK. Пожалуйста, убедитесь, что вы установили 'переменные окружения JavaSoft (Oracle)'.\n\nБез работающего JDK я не могу продолжать."
 
     # game/androidstrings.rpy:64
     old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
