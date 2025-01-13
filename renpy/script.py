@@ -37,6 +37,7 @@ import marshal
 import struct
 import zlib
 import sys
+import pathlib
 
 from renpy.compat.pickle import loads, dumps
 
@@ -341,7 +342,34 @@ class Script(object):
         """
 
         self.common_script_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
-        self.script_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
+
+        has_libs = renpy.loader.loadable("libs/libs.txt")
+        has_mods = renpy.loader.loadable("mods/mods.txt")
+
+        def game_key(item):
+            fn = item[0] or ""
+            dn = item[1] or ""
+
+            priority = 1
+            sort_key = fn
+
+            if has_libs and fn.startswith("libs/"):
+                priority = 0
+                sort_key = fn.rpartition("/")[2]
+
+            if has_mods and fn.startswith("mods/"):
+                priority = 2
+                sort_key = fn.rpartition("/")[2]
+
+            return (priority, sort_key, fn, dn)
+
+        self.script_files.sort(key=game_key)
+
+        print("has_libs", has_libs)
+        print("has_mods", has_mods)
+
+        for i in self.script_files:
+            print(game_key(i))
 
         return self.common_script_files + self.script_files
 

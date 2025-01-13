@@ -12,8 +12,7 @@ Files
 
 The script of a Ren'Py game is made up of all the files found under the
 :file:`game/` directory ending with the :file:`.rpy` extension. Ren'Py will
-consider each of these files (in the Unicode order of their paths), and will
-use the contents of the files as the script.
+consider each of these files and will use the contents of the files as the script.
 
 Generally, there's no difference between a script written in one big file and a
 script broken into multiple files. Control can be transferred within the script
