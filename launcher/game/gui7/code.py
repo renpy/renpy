@@ -172,7 +172,7 @@ class CodeGenerator(object):
 
         for l in self.lines:
 
-            m = re.match('^(\s*)define (.*?) =', l)
+            m = re.match(r'^(\s*)define (.*?) =', l)
 
             if m:
                 indent = m.group(1)
