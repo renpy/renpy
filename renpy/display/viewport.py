@@ -297,7 +297,7 @@ class Viewport(renpy.display.layout.Container):
         rv = rv.subsurface((0, 0, width, height), focus=True)
 
         if self.arrowkeys or self.draggable:
-            rv.add_focus(self, None, 0, 0, width, height)
+            rv.add_focus(self, renpy.display.render.Render.NO_MOUSE_FOCUS, 0, 0, width, height)
 
         return rv
 
@@ -740,7 +740,7 @@ class VPGrid(Viewport):
         rv = rv.subsurface((0, 0, width, height), focus=True)
 
         if self.draggable or self.arrowkeys:
-            rv.add_focus(self, None, 0, 0, width, height)
+            rv.add_focus(self, renpy.display.render.Render.NO_MOUSE_FOCUS, 0, 0, width, height)
 
         return rv
 
