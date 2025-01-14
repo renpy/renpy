@@ -365,12 +365,6 @@ class Script(object):
 
         self.script_files.sort(key=game_key)
 
-        print("has_libs", has_libs)
-        print("has_mods", has_mods)
-
-        for i in self.script_files:
-            print(game_key(i))
-
         return self.common_script_files + self.script_files
 
     def load_script(self):

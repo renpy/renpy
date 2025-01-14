@@ -25,13 +25,13 @@ one. That's the "parsing" phase, or "early" phase. The order that files are read
 2. Only if :file:`game/libs/libs.txt` exists, files in game/libs are loaded using the filename only,
    in unicode order. (In this order, :file:`game/libs/plants/aloe.rpy` will load before :file:`game/libs/animals/zebra.rpy`.)
 
-3. Files in :file:`game` are loaded using the filename only, in unicode order. (In this order,
+3. Files in :file:`game` are loaded using the full path, in unicode order. (In this order,
    :file:`game/animals/zebra.rpy` will load before :file:`game/plants/aloe.rpy`.)
 
 4. Only if :file:`game/mods/mods.txt` exists, files in game/mods are loaded using the filename only,
    in unicode order. (In this order, :file:`game/mods/plants/aloe.rpy` will load before :file:`game/mods/animals/zebra.rpy`.)
 
-The precise order of file loading mosty affects :doc:`cds`.
+The precise order of file loading mostly affects :doc:`cds`.
 
 The first creator-written code being executed is what's written in ``python early`` blocks. These
 are executed after the file they're in has been read and parsed, but before the next file gets
