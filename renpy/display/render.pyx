@@ -1202,6 +1202,7 @@ cdef class Render:
         self.cached_texture = None
         self.cached_model = None
 
+    NO_MOUSE_FOCUS = renpy.object.Sentinel("NO_MOUSE_FOCUS")
 
     def add_focus(self, d, arg=None, x=0, y=0, w=None, h=None, mx=None, my=None, mask=None):
         """
@@ -1397,6 +1398,9 @@ cdef class Render:
             for (d, arg, xo, yo, w, h, mx, my, mask) in reversed(self.focuses):
 
                 if xo is None or xo is False:
+                    continue
+
+                if arg is self.NO_MOUSE_FOCUS:
                     continue
 
                 elif mx is not None:
