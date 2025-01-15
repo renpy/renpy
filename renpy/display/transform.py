@@ -34,6 +34,7 @@ from renpy.display.accelerator import RenderTransform
 from renpy.atl import position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
 from renpy.display.core import absolute
 
+
 class Camera(renpy.object.Object):
     """
     :doc: point_to_camera
@@ -219,8 +220,6 @@ class TransformState(renpy.object.Object):
             self.ypos = old_ypos
             self.xanchor = old_xanchor
             self.yanchor = old_yanchor
-
-
 
     def get_placement(self, cxoffset=0, cyoffset=0):
 
@@ -605,6 +604,18 @@ class TransformState(renpy.object.Object):
 
     xycenter = property(get_pos, set_xycenter)
 
+    def get_reset(self):
+        return False
+
+    def set_reset(self, value):
+        if value:
+            self.take_state(RESET_STATE)
+
+    _reset = property(get_reset, set_reset)
+
+
+RESET_STATE = TransformState()
+
 
 def simplify_position(v):
     if isinstance(v, tuple):
@@ -700,10 +711,14 @@ class Transform(Container):
                  focus=None,
                  default=False,
                  _args=None,
-
+                 *,
+                 reset=False,
                  **kwargs):
 
         properties = {k: kwargs.pop(k) for k in style_properties if k in kwargs}
+
+        if reset:
+            kwargs = {"_reset": True} | kwargs
 
         self.kwargs = kwargs
         self.style_arg = style
@@ -1402,6 +1417,8 @@ ALIASES = {
     "xysize" : (position_or_none, position_or_none),
     "yalign" : position_or_none, # documented as float
     "ycenter" : position_or_none,
+
+    "_reset" : bool,
 }
 
 renpy.atl.PROPERTIES.update(ALIASES)

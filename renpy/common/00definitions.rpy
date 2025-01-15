@@ -27,8 +27,7 @@
 init -1400:
 
     transform reset:
-        alpha 1.0 rotate None zoom 1.0 xzoom 1.0 yzoom 1.0 align (0, 0) alignaround (0, 0) subpixel False
-        xsize None ysize None fit None crop None
+        _reset True
 
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
