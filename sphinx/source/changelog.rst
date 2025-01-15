@@ -49,7 +49,7 @@ Features
 
 The :var:`reset` transform now resets all properties of a Transform.
 
-The :class:`Transform` now takes a `reset` property, which controls whether the transform is reset when it is_init_phase
+:class:`Transform` now takes a `reset` property, which controls whether the transform is reset when it is
 used, as opposed to being given properties by other transforms that share a tag.
 
 The new :func:`renpy.seen_translation`, :func:`renpy.mark_translation_seen`, and :func:`renpy.mark_translation_unseen`
