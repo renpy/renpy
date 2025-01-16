@@ -1950,8 +1950,9 @@ class SLUse(SLNode):
 
     id = None
     block = None
+    variable = None
 
-    def __init__(self, loc, target, args, id_expr, block):
+    def __init__(self, loc, target, args, id_expr, block, variable):
 
         SLNode.__init__(self, loc)
 
@@ -1971,6 +1972,9 @@ class SLUse(SLNode):
         # A block for transclusion, or None if the statement does not have a
         # block.
         self.block = block
+
+        # The variable the main displayable is assigned to.
+        self.variable = variable
 
     def copy(self, transclude):
 
@@ -1993,8 +1997,11 @@ class SLUse(SLNode):
 
         self.last_keyword = True
 
-        if self.id:
+        if self.id or self.variable:
             self.constant = NOT_CONST
+
+        if self.variable:
+            analysis.mark_not_constant(self.variable)
 
         if self.block:
             self.block.analyze(analysis)
@@ -2160,6 +2167,10 @@ class SLUse(SLNode):
 
         if ctx.fail:
             context.fail = True
+
+        if self.variable:
+            context.scope[self.variable] = ctx.scope.get("main", None)
+
 
     def copy_on_change(self, cache):
 
