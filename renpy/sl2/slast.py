@@ -386,6 +386,10 @@ class SLBlock(SLNode):
     # The actual transform created from the atl transform.
     transform = None
 
+    # True if this block has a variable name that should apply to the parent.
+    # (Only used by CustomParser, an implementation detail.)
+    variable : str|None = None
+
     def __init__(self, loc):
         SLNode.__init__(self, loc)
 
@@ -2276,7 +2280,9 @@ class SLCustomUse(SLNode):
     by renpy.register_sl_statement.
     """
 
-    def __init__(self, loc, target, positional, block):
+    variable = None
+
+    def __init__(self, loc, target, positional, block, variable):
 
         SLNode.__init__(self, loc)
 
@@ -2291,6 +2297,9 @@ class SLCustomUse(SLNode):
 
         # A block for transclusion, from which we also take kwargs.
         self.block = block
+
+        # The variable the main displayable is assigned to.
+        self.variable = variable
 
     def copy(self, transclude):
 
@@ -2334,6 +2343,10 @@ class SLCustomUse(SLNode):
                 raise Exception("A screen used in CD SLS should be a SL-based screen.")
             else:
                 return
+
+        if self.variable is not None:
+            self.constant = NOT_CONST
+            analysis.mark_not_constant(self.variable)
 
         # If we have the id property, we're not constant - since we may get
         # our state via other screen on replace.
@@ -2446,6 +2459,9 @@ class SLCustomUse(SLNode):
 
         if ctx.fail:
             context.fail = True
+
+        if self.variable:
+            context.scope[self.variable] = ctx.scope.get("main", None)
 
     def copy_on_change(self, cache):
 

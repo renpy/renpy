@@ -1073,6 +1073,8 @@ class CustomParser(Parser):
         else:
             self.screen = name
 
+        self.variable = True
+
     def parse(self, loc, l, parent, keyword):
 
         arguments = [ ]
@@ -1095,7 +1097,10 @@ class CustomParser(Parser):
             if not block.keyword_exist("arguments"):
                 l.error("{} statement expects {} positional arguments, got {}.".format(self.name, len(self.positional), len(arguments)))
 
-        return slast.SLCustomUse(loc, self.screen, arguments, block)
+        variable = block.variable
+        block.variable = None
+
+        return slast.SLCustomUse(loc, self.screen, arguments, block, variable)
 
 
 class ScreenParser(Parser):
