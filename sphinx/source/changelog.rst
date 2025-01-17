@@ -47,6 +47,12 @@ merged with the player's script, a library can be placed under game/libs, and wi
 Features
 --------
 
+The screen language :ref:`use <sl-use>` statement now takes an ``as`` clause, which can be used to capture a
+variable named `main` from the screen. This is intended to be used like the ``as`` clause of screen language
+displayables, which captures the displayable into a variable.
+
+Custom screen language statement also support the ``as`` clause.
+
 The :var:`reset` transform now resets all properties of a Transform.
 
 :class:`Transform` now takes a `reset` property, which controls whether the transform is reset when it is

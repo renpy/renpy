@@ -2239,8 +2239,11 @@ to the result of assigning the arguments to those parameters. ::
                   use file_slot(i)
 
 
-The use statement may take one property, ``id``, which must be placed
-after the parameter list if present. This screen is only useful when
+The use statement may take clauses properties, ``id`` and ``as``. These properties must be placed
+after the parameter list, if present, and must be on the first line of the statement, not in
+th block.
+
+The ``id`` clause is only useful when
 two screens with the same tag use the same screen. In this case,
 when one screen replaces the other, the state of the used screen
 is transfered from old to new.
@@ -2270,6 +2273,18 @@ is transfered from old to new.
         show screen s2
         pause
         return
+
+The ``as`` clause should be followed by a variable name. When the used screen finishes, the binding of the `main`
+variable in the screen is assigned to the given variable. For example::
+
+    screen child():
+        add MyCreatorDefinedDisplayable() as main
+
+    screen parent():
+        use child as mycdd
+
+        # Here, the MyCreatorDefinedDisplaybale instance is assigned to cdd.
+
 
 Instead of the name of the screen, the keyword ``expression`` can be
 given, followed by an expression giving the name of the screen to use.
