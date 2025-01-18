@@ -363,7 +363,7 @@ def main():
     renpy.config.searchpath = renpy.__main__.predefined_searchpath(renpy.config.commondir) # E1101 @UndefinedVariable
 
     # Load Ren'Py extensions.
-    for dir in [ renpy.config.renpy_base ] + renpy.config.searchpath: # @ReservedAssignment
+    for dir in [ renpy.config.renpy_base ] + renpy.config.searchpath + [ os.path.join(renpy.config.gamedir, "libs") ]: # @ReservedAssignment
 
         if not os.path.isdir(dir):
             continue
