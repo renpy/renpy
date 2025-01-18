@@ -38,11 +38,13 @@ Note that load order is relatively unimportant in Ren'Py - it's mostly used with
 have been changed to recommend that games use init priorities of -99 to 99, and libraries and mods use from -999 to -100
 and 100 to 999.
 
-When present, the libs and mods directories are showin in the launcher. The libs directory is created automatically
+When present, the libs and mods directories are showing in the launcher. The libs directory is created automatically
 when the game is created. The mods directory can be created manually if a creator wants to support mods.
 
 The goal of this change is to make it easier to distribute third-party libraries and mods. Instead of needing to be
 merged with the player's script, a library can be placed under game/libs, and will provide full functionality there.
+
+`.rpe` and `.rpe.py` files are also searched in the libs directory. 
 
 Features
 --------
@@ -107,6 +109,7 @@ rather than the default bilinear scaling.
 The "Image Attributes" screen also indicates if transforms are applied to a layer, as it can be hard
 to determine otherwise.
 
+Ren'Py now also searches for `.rpe` and `.rpe.py` files in the new libs directory.
 
 .. _renpy-8.3.4:
 .. _renpy-7.8.4:
