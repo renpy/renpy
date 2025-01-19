@@ -25,7 +25,7 @@ cdef inline void selection_sort(Item *array, int size):
     cdef PyObject *minkey
     cdef Item tmp
 
-    for 0 <= i < size - 1:
+    for i in range(size - 1):
 
         min = i
 
@@ -92,7 +92,7 @@ cdef class DictItems(object):
     def __dealloc__(self):
         cdef int i
 
-        for 0 <= i < self.size:
+        for i in range(self.size):
             Py_XDECREF(self.items[i].key)
             Py_XDECREF(self.items[i].value)
 
@@ -121,7 +121,7 @@ cdef class DictItems(object):
 
         rv = { }
 
-        for 0 <= i < self.size:
+        for i in range(self.size):
             rv[<object> self.items[i].key] = <object> self.items[i].value
 
         return rv

@@ -417,7 +417,7 @@ cdef class Program:
             if "texture_scaling" in properties:
                 magnify, minify = TEXTURE_SCALING[properties["texture_scaling"]]
 
-                for 0 <= i < self.samplers:
+                for i in range(self.samplers):
                     glActiveTexture(GL_TEXTURE0 + i)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify)
@@ -432,7 +432,7 @@ cdef class Program:
         if properties:
 
             if "texture_scaling" in properties:
-                for 0 <= i < self.samplers:
+                for i in range(self.samplers):
                     glActiveTexture(GL_TEXTURE0 + i)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)

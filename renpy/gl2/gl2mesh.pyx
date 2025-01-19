@@ -98,7 +98,7 @@ cdef class Mesh:
         cdef int i
         cdef int len_geometry = len(geometry)
 
-        for 0 <= i < len_geometry:
+        for i in range(len_geometry):
             self.point_data[i] = geometry[i]
 
     def set_attribute_data(self, attributes):
@@ -120,7 +120,7 @@ cdef class Mesh:
         if len_attributes > self.allocated_points * self.layout.stride:
             raise Exception("Attributes contains too much data.")
 
-        for 0 <= i < len_attributes:
+        for i in range(len_attributes):
             self.attribute[i] = attributes[i]
 
     def set_triangle_data(self, triangles):
@@ -145,7 +145,7 @@ cdef class Mesh:
 
         self.triangles = len_triangles // 3
 
-        for 0 <= i < len_triangles:
+        for i in range(len_triangles):
             self.triangle[i] = triangles[i]
 
     def get_triangles(self):
@@ -157,7 +157,7 @@ cdef class Mesh:
 
         rv = [ ]
 
-        for 0 <= i < self.triangles:
+        for i in range(self.triangles):
             rv.append((
                 self.triangle[i * 3 + 0],
                 self.triangle[i * 3 + 1],

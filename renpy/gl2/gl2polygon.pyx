@@ -45,7 +45,7 @@ cdef class Polygon:
 
         rv = "<Polygon"
 
-        for 0 <= i < self.points:
+        for i in range(self.points):
             rv += " "
             rv += point2str(self.point[i])
 
@@ -83,7 +83,7 @@ cdef class Polygon:
 
         empty = not (ax or ay)
 
-        for 2 <= i < self.points:
+        for i in range(2, self.points):
 
             bx = self.point[i].x - self.point[0].x
             by = self.point[i].y - self.point[0].y
@@ -119,7 +119,7 @@ cdef class Polygon:
         cdef Polygon rv = Polygon(points)
         rv.points = points
 
-        for 0 <= i < points:
+        for i in range(points):
             rv.point[i].x = l[i * 2 + 0]
             rv.point[i].y = l[i * 2 + 1]
 
@@ -168,7 +168,7 @@ cdef class Polygon:
 
         j = p.points - 1
 
-        for 0 <= i < p.points:
+        for i in range(p.points):
             rv = intersectOnce(p.point[j], p.point[i], rv)
 
             if rv is None:
@@ -197,7 +197,7 @@ cdef class Polygon:
 
         cdef int i
 
-        for 0 <= i < self.points:
+        for i in range(self.points):
             m.transform2(&self.point[i].x, &self.point[i].y, self.point[i].x, self.point[i].y, 0, 1)
 
     cpdef Polygon multiply_matrix(Polygon self, Matrix m):
@@ -249,7 +249,7 @@ cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
     cdef bint inside[1024]
 
     # Figure out which points are 'inside' the wound line.
-    for 0 <= i < p.points:
+    for i in range(p.points):
         px = p.point[i].x - a0.x
         py = p.point[i].y - a0.y
 
@@ -271,7 +271,7 @@ cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
 
     j = p.points - 1
 
-    for 0 <= i < p.points:
+    for i in range(p.points):
         if inside[i]:
             if not inside[j]:
                 intersectLines(a0, a1, p.point[j], p.point[i], &rv.point[rv.points])

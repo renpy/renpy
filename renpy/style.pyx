@@ -731,7 +731,7 @@ cpdef unbuild_style(StyleCore s):
 
     if s.cache != NULL:
 
-        for 0 <= i < PREFIX_COUNT * STYLE_PROPERTY_COUNT:
+        for i in range(PREFIX_COUNT * STYLE_PROPERTY_COUNT):
             Py_XDECREF(s.cache[i])
 
         free(s.cache)

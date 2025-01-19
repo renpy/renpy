@@ -390,7 +390,7 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
     else:
         break_classes = break_western
 
-    for pos from 1 <= pos < len_glyphs:
+    for pos in range(1, len_glyphs):
 
         g = glyphs[pos]
         c = g.character
@@ -734,7 +734,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading, int ruby_line_l
 
             has_ruby = False
 
-            for i from sol <= i < pos:
+            for i in range(sol, pos):
                 gg = glyphs[i]
 
                 if gg.ruby == RUBY_TOP:
@@ -762,7 +762,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading, int ruby_line_l
                 y += ruby_line_leading
                 line_leading += ruby_line_leading
 
-                for i from sol <= i < pos:
+                for i in range(sol, pos):
                     gg = glyphs[i]
 
                     if gg.ruby == RUBY_TOP:
@@ -1030,7 +1030,7 @@ def place_ruby(list glyphs, int ruby_offset, int altruby_offset, int surf_width,
         # Compute the width of the run.
 
         width = 0
-        for i from start_top <= i < pos:
+        for i in range(start_top, pos):
             g = glyphs[i]
             width += g.advance
 
@@ -1040,7 +1040,7 @@ def place_ruby(list glyphs, int ruby_offset, int altruby_offset, int surf_width,
         # Place the glyphs.
         x = (max_x + min_x) / 2 - width / 2
 
-        for i from start_top <= i < pos:
+        for i in range(start_top, pos):
             g = glyphs[i]
             g.x = <int> (x + .5)
 
@@ -1167,7 +1167,7 @@ def copy_splits(list source, list dest):
     cdef Glyph d
     cdef int i
 
-    for 0 <= i < len(dest):
+    for i in range(len(dest)):
         s = source[i]
         d = dest[i]
 

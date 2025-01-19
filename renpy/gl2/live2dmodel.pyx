@@ -261,7 +261,7 @@ cdef class Live2DModel:
 
         self.parameters = { }
 
-        for 0 <= i < self.parameter_count:
+        for i in range(self.parameter_count):
             name = self.parameter_ids[i].decode("utf-8")
             self.parameters[name] = Parameter(
                 i, name,
@@ -272,7 +272,7 @@ cdef class Live2DModel:
 
         self.parts = { }
 
-        for 0 <= i < self.part_count:
+        for i in range(self.part_count):
             name = self.part_ids[i].decode("utf-8")
             self.parts[name] = Part(i, name, self.part_opacities[i])
 
@@ -418,7 +418,7 @@ cdef class Live2DModel:
         cdef csmVector4 multiply
         cdef csmVector4 screen
 
-        for 0 <= i < self.drawable_count:
+        for i in range(self.drawable_count):
 
             multiply = self.drawable_multiply_colors[i]
             screen = self.drawable_screen_colors[i]
@@ -434,7 +434,7 @@ cdef class Live2DModel:
 
             mesh.triangles = self.drawable_index_counts[i] // 3
 
-            for 0 <= j < mesh.triangles * 3:
+            for j in range(mesh.triangles * 3):
                 mesh.triangle[j] = self.drawable_indices[i][j]
 
             tex = textures[self.drawable_texture_indices[i]]
@@ -490,7 +490,7 @@ cdef class Live2DModel:
 
         multi_masks = { }
 
-        for 0 <= i < self.drawable_count:
+        for i in range(self.drawable_count):
 
             multiply = self.drawable_multiply_colors[i]
             screen = self.drawable_screen_colors[i]
@@ -506,7 +506,7 @@ cdef class Live2DModel:
 
                 key = [ ]
 
-                for 0 <= j < self.drawable_mask_counts[i]:
+                for j in range(self.drawable_mask_counts[i]):
                     key.append(self.drawable_masks[i][j])
 
                 key = tuple(key)

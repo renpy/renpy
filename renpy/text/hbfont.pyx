@@ -272,7 +272,7 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
             cbuf = buf
             count = len(buf)
 
-            for i from 0 <= i < count:
+            for i in range(count):
                 buffer[i] = cbuf[i]
         except Exception:
             traceback.print_exc()
@@ -422,7 +422,7 @@ cdef class HBFace:
 
             hb_face = hb_ft_face_create(self.face, NULL)
 
-            for 0 <= i < self.mm_var.num_axis:
+            for i in range(self.mm_var.num_axis):
                 if i >= 16:
                     continue
 
@@ -493,12 +493,12 @@ cdef class HBFont:
 
 
     def __cinit__(self):
-        for i from 0 <= i < 256:
+        for i in range(256):
             self.cache[i].index = -1
             FT_Bitmap_New(&(self.cache[i].bitmap))
 
     def __dealloc__(self):
-        for i from 0 <= i < 256:
+        for i in range(256):
             FT_Bitmap_Done(library, &(self.cache[i].bitmap))
 
         if self.stroker != NULL:
@@ -587,7 +587,7 @@ cdef class HBFont:
 
         if instance and instance.lower() in variations.instance:
             index = variations.instance[instance.lower()]
-            for 0 <= i < min(fo.mm_var.num_axis, 16):
+            for i in range(min(fo.mm_var.num_axis, 16)):
                 coords[i] = fo.mm_var.namedstyle[index].coords[i]
 
         else:
@@ -808,8 +808,8 @@ cdef class HBFont:
             FT_Bitmap_Convert(library, &(bitmap), &(rv.bitmap), 4)
 
             # Freetype gives us a bitmap where values range from 0 to 1.
-            for y from 0 <= y < rv.bitmap.rows:
-                for x from 0 <= x < rv.bitmap.width:
+            for y in range(rv.bitmap.rows):
+                for x in range(rv.bitmap.width):
                     if rv.bitmap.buffer[ y * rv.bitmap.pitch + x ]:
                         rv.bitmap.buffer[ y * rv.bitmap.pitch + x ] = 255
 
@@ -890,7 +890,7 @@ cdef class HBFont:
         face = self.face
         g = face.glyph
 
-        for 0 <= i < glyph_count:
+        for i in range(glyph_count):
             # print(
             #     repr(s[glyph_info[i].cluster]),
             #     glyph_info[i].codepoint,
@@ -1058,7 +1058,7 @@ cdef class HBFont:
 
                 if cache.bitmap.pixel_mode == FT_PIXEL_MODE_BGRA:
 
-                    for py from 0 <= py < rows:
+                    for py in range(rows):
 
                         if bmy < 0:
                             bmy += 1
@@ -1067,7 +1067,7 @@ cdef class HBFont:
                         line = pixels + bmy * pitch + bmx * 4
                         gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
 
-                        for px from 0 <= px < width:
+                        for px in range(width):
 
                             Gb = gline[0]
                             Gg = gline[1]
@@ -1086,7 +1086,7 @@ cdef class HBFont:
 
                 else:
 
-                    for py from 0 <= py < rows:
+                    for py in range(rows):
 
                         if bmy < 0:
                             bmy += 1
@@ -1095,7 +1095,7 @@ cdef class HBFont:
                         line = pixels + bmy * pitch + bmx * 4
                         gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
 
-                        for px from 0 <= px < width:
+                        for px in range(width):
 
                             alpha = gline[0]
 
@@ -1130,8 +1130,8 @@ cdef class HBFont:
                 ly = y - self.underline_offset - 1
                 lh = self.underline_height * underline
 
-                for py from ly <= py < min(ly + lh, surf.h):
-                    for px from underline_x <= px < underline_end:
+                for py in range(ly, min(ly + lh, surf.h)):
+                    for px in range(underline_x, underline_end):
                         line = pixels + py * pitch + px * 4
 
                         line[0] = Sr * Sa // 255
@@ -1146,8 +1146,8 @@ cdef class HBFont:
                 if lh < 1:
                     lh = 1
 
-                for py from ly <= py < (ly + lh):
-                    for px from underline_x <= px < underline_end:
+                for py in range(ly, (ly + lh)):
+                    for px in range(underline_x, underline_end):
                         line = pixels + py * pitch + px * 4
 
                         line[0] = Sr * Sa // 255

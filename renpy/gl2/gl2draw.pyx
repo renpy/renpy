@@ -1250,8 +1250,8 @@ cdef class GL2Draw:
         cdef unsigned char a
 
         with nogil:
-            for y from 0 <= y < surf.h:
-                for x from 0 <= x < surf.w:
+            for y in range(surf.h):
+                for x in range(surf.w):
                     r = rpp[x * 4 + 0]
                     g = rpp[x * 4 + 1]
                     b = rpp[x * 4 + 2]

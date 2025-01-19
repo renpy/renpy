@@ -200,10 +200,10 @@ cdef class Matrix:
 
         rv = "Matrix(["
 
-        for 0 <= y < 4:
+        for y in range(4):
             if y:
                 rv += "\n        "
-            for 0 <= x < 4:
+            for x in range(4):
                 rv += "{:10.7f}, ".format(self.m[x * 4 + y])
 
         return rv + "])"
