@@ -584,6 +584,9 @@ class Viewport(renpy.display.layout.Container):
                 self.xadjustment.end_animation(instantly=True)
                 self.yadjustment.end_animation(instantly=True)
 
+                if not renpy.display.focus.get_focused():
+                    renpy.display.focus.set_grab(self)
+
                 ignore_event = True
 
         rv = super(Viewport, self).event(ev, x, y, st)
