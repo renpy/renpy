@@ -64,7 +64,12 @@ cdef extern from "assimp/mesh.h":
         aiPrimitiveType_POLYGON
 
 
+    cdef struct aiFace:
+        unsigned int mNumIndices
+        unsigned int *mIndices
+
     cdef struct aiMesh:
+        unsigned int mPrimitiveTypes
         unsigned int mNumVertices
         unsigned int mNumFaces
 
@@ -72,6 +77,9 @@ cdef extern from "assimp/mesh.h":
         aiVector3D *mNormals
         aiVector3D *mTangents
         aiVector3D *mBitangents
+        aiVector2D **mTextureCoords
+
+        aiFace *mFaces
 
 cdef extern from "assimp/scene.h":
 

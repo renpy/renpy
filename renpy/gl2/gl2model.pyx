@@ -32,13 +32,13 @@ cdef class GL2Model:
     everything needed to be draw to the screen.
     """
 
-    def __init__(GL2Model self, size, mesh, shaders, uniforms):
+    def __init__(GL2Model self, size, mesh, shaders, uniforms, properties=None):
         self.width = size[0]
         self.height = size[1]
         self.mesh = mesh
         self.shaders = shaders
         self.uniforms = uniforms
-        self.properties = None
+        self.properties = properties
         self.cached_texture = None
 
         self.forward = IDENTITY
@@ -85,7 +85,7 @@ cdef class GL2Model:
         Creates an identical copy of the current model.
         """
 
-        cdef GL2Model rv = GL2Model((self.width, self.height), self.mesh, self.shaders, self.uniforms)
+        cdef GL2Model rv = GL2Model((self.width, self.height), self.mesh, self.shaders, self.uniforms, self.properties)
         rv.forward = self.forward
         rv.reverse = self.reverse
 

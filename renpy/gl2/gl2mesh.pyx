@@ -48,6 +48,18 @@ SOLID_LAYOUT = AttributeLayout()
 TEXTURE_LAYOUT = AttributeLayout()
 TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
 
+# The layout of mesh with a normal.
+MODEL_N_LAYOUT = AttributeLayout()
+MODEL_N_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
+MODEL_N_LAYOUT.add_attribute("a_normal", 3) # The normal.
+
+# The layout of a mesh used with a texture, normal, tangent, and bitangent.
+MODEL_TBN_LAYOUT = AttributeLayout()
+MODEL_TBN_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
+MODEL_TBN_LAYOUT.add_attribute("a_normal", 3) # The normal.
+MODEL_TBN_LAYOUT.add_attribute("a_tangent", 3) # The tangent.
+MODEL_TBN_LAYOUT.add_attribute("a_bitangent", 3) # The bitangent.
+
 # The layout of a mesh used with text.
 TEXT_LAYOUT = AttributeLayout()
 TEXT_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
