@@ -129,9 +129,9 @@ def scan_strings(filename):
         rv.append(String(filename, line, s, False))
 
     tok = renpy.lexer.Tokenizer.from_file(filename)
-    for line in tok.list_logical_lines():
+    for line in tok.logical_lines():
 
-        for m in re.finditer(STRING_RE, line.text):
+        for m in re.finditer(STRING_RE, line):
 
             s = m.group(1)
             s = s.replace('\\\n', "")
@@ -144,7 +144,7 @@ def scan_strings(filename):
                     s = renpy.minstore._p(s)
 
                 if s:
-                    rv.append(String(filename, line.start[0], s, False))
+                    rv.append(String(filename, line.physical_location[0], s, False))
 
     return rv
 

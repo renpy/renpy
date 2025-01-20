@@ -49,7 +49,7 @@ from renpy.tokenizer import (
     HEX,
     BINARY,
     OCTAL,
-    IMAG,
+    IMAGINARY,
     FLOAT,
     INT,
     STRING,
@@ -61,6 +61,7 @@ from renpy.tokenizer import (
     SINGLE_STRING,
     OP,
     DOLLAR,
+    SPACESHIP,
     LPAR,
     RPAR,
     LSQB,
@@ -360,13 +361,10 @@ class Lexer:
         # -1 means we are before the first line.
         self._line_index: int = -1
 
-        # Line instance of current logical line.
+        # Line instance of current logical line or None if before the first
+        # line, or after the last line.
         self._line: Line | None = None
 
-        # List of tokens in line.
-        self._tokens: list[Token] = []
-        # List of start positions of token in line.
-        self._tokens_pos: list[int] = []
         # Index of current token in tokens, or None if at end of line.
         self._token_index: int | None = None
 
@@ -375,14 +373,18 @@ class Lexer:
         # different if the cursor is in the middle of a token after match_regexp.
         self._pos: int = 0
 
+        # Munged str value of self._line
         self.text: str = ""
 
-    @staticmethod
-    def _get_munged_string(token: Token) -> str:
-        if "__" not in token.string:
-            return token.string
+    def __reduce__(self):
+        raise TypeError("Can't pickle Lexer instance.")
 
-        prefix = munge_filename(token.filename)
+    @staticmethod
+    def _get_munged_string(filename: str, string: str) -> str:
+        if "__" not in string:
+            return str(string)
+
+        prefix = munge_filename(filename)
 
         if renpy.config.munge_in_strings:
 
@@ -415,7 +417,16 @@ class Lexer:
 
                 return brackets + prefix + m.group(2)
 
-        return munge_regexp.sub(munge_string, token.string)
+        return munge_regexp.sub(munge_string, string)
+
+    def _update_line(self, idx: int):
+        self._line_index = idx
+        self._line = line = self._block[idx]
+        self._token_index = 0
+        self._pos = 0
+
+        self.text = self._get_munged_string(
+            self.filename, line)
 
     @property
     def _mid_token(self):
@@ -423,94 +434,35 @@ class Lexer:
         if idx is None:
             return False
 
-        return self._pos != self._tokens_pos[idx]
-
-    def _update_line(self, idx: int):
-        self._line_index = idx
-        self._line = self._block[idx]
-        self._tokens = []
-        self._tokens_pos = []
-
-        pos = 0
-        prev_row = self._line.tokens[0].lineno
-        prev_col = 0
-        cont_line = False
-        result: list[str] = []
-
-        for t in self._line.tokens:
-            # Don't add spurious spaces before new line.
-            if t.kind is NL or t.kind is NEWLINE:
-                cont_line = False
-                prev_col = 0
-                continue
-
-            # Comments don't play nicely with some evaluations.
-            if t.kind is COMMENT:
-                continue
-
-            if row_offset := t.lineno - prev_row:
-                if cont_line:
-                    result.append(" \\")
-
-                result.append("\n" * row_offset)
-                pos += row_offset
-                prev_col = 0
-
-            if col_offset := t.col_offset - prev_col:
-                result.append(" " * col_offset)
-                pos += col_offset
-
-            self._tokens.append(t)
-            self._tokens_pos.append(pos)
-
-            if t.kind is STRING or t.kind is NAME:
-                munged = self._get_munged_string(t)
-            else:
-                munged = t.string
-
-            result.append(munged)
-            prev_row = t.end_lineno
-            prev_col = t.end_col_offset
-            cont_line = True
-            pos += len(munged)
-
-        self.text = "".join(result)
-
-        if self._tokens_pos:
-            self._token_index = 0
-            self._pos = 0
-        else:
-            self._token_index = None
-            self._pos = len(self.text)
-
+        return self._pos != self._line.offsets[idx]
 
     @property
     def _current_token(self):
         if self._token_index is None:
             return None
 
-        return self._tokens[self._token_index]
+        return self._line.tokens[self._token_index]
 
     def _advance_token(self):
         if self._token_index is None:
             return
 
         self._token_index += 1
-        if self._token_index >= len(self._tokens):
+        if self._token_index >= len(self._line.tokens):
             self._pos = len(self.text)
             self._token_index = None
         else:
-            self._pos = self._tokens_pos[self._token_index]
+            self._pos = self._line.offsets[self._token_index]
 
     def _yield_subblock_lines(self) -> Iterator[Line]:
         if self._line is None:
             return
 
         idx = self._line_index + 1
-        depth = self._line.indent_depth
+        depth = self._line.indent_size
         while idx < len(self._block):
             l = self._block[idx]
-            if l.indent_depth > depth:
+            if l.indent_size > depth:
                 idx += 1
                 yield l
             else:
@@ -530,21 +482,25 @@ class Lexer:
             self._pos = len(self.text)
             self._token_index = None
         else:
-            # Since keys are sorted and distinct, we can use
-            # bisect to find the right key.
-            idx = bisect.bisect(self._tokens_pos, value)
+            # Since offsets are sorted and distinct, we can use
+            # bisect to faster find the right index.
+            idx = bisect.bisect(self._line.offsets, value)
 
-            if value == self._tokens_pos[idx - 1]:
+            if value == self._line.offsets[idx - 1]:
                 self._pos = value
                 self._token_index = idx - 1
             else:
                 # If pos points to spaces, snap it to the beginning
                 # of the token.
-                while self.text[value] in " \n":
-                    value += 1
-
-                self._pos = value
-                self._token_index = idx
+                try:
+                    while self.text[value] in " \n\\":
+                        value += 1
+                except IndexError:
+                    self._pos = len(self.text)
+                    self._token_index = None
+                else:
+                    self._pos = value
+                    self._token_index = idx
 
     @property
     def filename(self) -> str:
@@ -566,7 +522,7 @@ class Lexer:
         if self._line is None:
             return 0
 
-        return self._line.start[0]
+        return self._line.physical_location.start_lineno
 
     @property
     def eob(self):
@@ -578,6 +534,9 @@ class Lexer:
         position is at the end of the end of the current line, or
         False otherwise.
         """
+
+        if self._lookup_token(NEWLINE):
+            self._advance_token()
 
         return self._token_index is None
 
@@ -603,11 +562,11 @@ class Lexer:
             return False
 
         idx = self._line_index
-        depth = self._block[0].indent_depth
+        depth = self._block[0].indent_size
 
         while (idx := idx + 1) < block_len:
             line = self._block[idx]
-            if line.indent_depth == depth:
+            if line.indent_size == depth:
                 break
         else:
             self._line_index = block_len + 1
@@ -626,10 +585,10 @@ class Lexer:
         """
 
         idx = min(self._line_index, len(self._block) - 1)
-        depth = self._line.indent_depth
+        depth = self._line.indent_size
         while (idx := idx - 1) >= 0:
             line = self._block[idx]
-            if line.indent_depth == depth:
+            if line.indent_size == depth:
                 break
         else:
             self._line_index = 0
@@ -890,12 +849,12 @@ class Lexer:
 
         self._advance_token()
 
-        s = self._get_munged_string(tok)
+        s = self._get_munged_string(tok.filename, tok.string)
 
         # Strip mods and quotes.
         for i, c in enumerate(s):
-            if c in "\"'":
-                s = s[i+1:-1]
+            if c in "\"'`":
+                s = s[i + 1:-1]
                 break
 
         if raw:
@@ -930,12 +889,12 @@ class Lexer:
 
         self._advance_token()
 
-        s = self._get_munged_string(tok)
+        s = self._get_munged_string(tok.filename, tok.string)
 
         # Strip mods and quotes.
         for i, c in enumerate(s):
-            if c in "\"'":
-                s = s[i+3:-3]
+            if c in "\"'`":
+                s = s[i + 3:-3]
                 break
 
         if raw:
@@ -1060,7 +1019,7 @@ class Lexer:
 
         if tok.exact_kind is IDENTIFIER:
             self._advance_token()
-            return self._get_munged_string(tok)
+            return self._get_munged_string(tok.filename, tok.string)
 
         # Constants are names in old parser.
         if tok.exact_kind is KEYWORD:
@@ -1105,7 +1064,7 @@ class Lexer:
             return None
 
         self._advance_token()
-        return self._get_munged_string(tok)
+        return self._get_munged_string(tok.filename, tok.string)
 
     def set_global_label(self, label):
         """
@@ -1383,6 +1342,7 @@ class Lexer:
             return False
 
         binops = (
+            SPACESHIP,
             PLUS,
             MINUS,
             STAR,
@@ -1628,48 +1588,22 @@ class Lexer:
         whitespace to ensure line numbers match up.
         """
 
-        prev_row = self._line.tokens[-1].lineno + 1
-        depth = self._line.indent_depth + 1
         result: list[str] = []
 
+        prev_row = self._line.physical_location.end_lineno + 1
+        base_indent = None
         for line in self._yield_subblock_lines():
-            first = line.tokens[0]
+            if delta := line.physical_location.start_lineno - prev_row:
+                result.append("\n" * delta)
+            prev_row = line.physical_location.end_lineno
 
-            if row_offset := first.lineno - prev_row:
-                result.append("\n" * row_offset)
+            if base_indent is None:
+                base_indent = line.indent_size
+            elif delta := line.indent_size - base_indent:
+                result.append(" " * delta)
 
-            # Remove indent from the beginning of the line.
-            result.append("    " * (line.indent_depth - depth))
-
-            prev_row = first.lineno
-            prev_col = first.col_offset
-            cont_line = False
-
-            for t in line.tokens:
-                # Don't add spurious spaces before new line.
-                if t.kind is NL or t.kind is NEWLINE:
-                    cont_line = False
-                    prev_col = 0
-                    continue
-
-                # Comments don't play nicely with some evaluations.
-                if t.kind is COMMENT:
-                    continue
-
-                if row_offset := t.lineno - prev_row:
-                    if cont_line:
-                        result.append(" \\")
-
-                    result.append("\n" * row_offset)
-                    prev_col = 0
-
-                if col_offset := t.col_offset - prev_col:
-                    result.append(" " * col_offset)
-
-                result.append(self._get_munged_string(t))
-                prev_row = t.end_lineno
-                prev_col = t.end_col_offset
-                cont_line = True
+            result.append(self._get_munged_string(
+                line.filename, line))
 
         return "".join(result)
 
