@@ -20,8 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import contextlib
-from typing import Any, Iterator, NamedTuple
+from typing import Iterator, NamedTuple
 
 import os
 import io
@@ -29,6 +28,7 @@ import re
 import sys
 import keyword
 import unicodedata
+import contextlib
 import renpy
 
 # All possible Token.kind and Token.exact_kind values.
@@ -207,7 +207,7 @@ class Token(NamedTuple):
 
     filename: str
     """
-    Elided filename where token is located or None if unknown.
+    Elided filename where token is located.
     """
 
     physical_location: PhysicalLocation
@@ -304,26 +304,23 @@ class Tokenizer:
     This class is used to read files and strings as RenPy source code and yield
     physical lines, logical lines or tokens.
 
-    First, this class reads passed buffer one line at a time, saving normalized
-    physical lines.
 
-    List of normalization and checks that this class performs during file read:
+    First, this class reads passed buffer one line at a time, and performs
+    this normalizations:
         1. Strips the BOM from the start of the file.
-        2. Converts _ren.py files to equivalent .rpy files.
+        2. Converts _ren.py file to equivalent .rpy file.
         3. Normalizes line endings to \n.
-        4. Disallows \t character.
+        4. Ensures that file ends with a newline.
 
-    Then, it tokenizes read lines saving result tokens into a list.
-    Tokenization works the same as Python `tokenize.generate_tokens` function
-    with the following additional normalizations and checks:
-        1. It produces Token objects instead of tuples.
-        2. It allow 0-prefix non-zero numbers (e.g. 001).
-        3. It allows for names to start with numbers (e.g. 1foo).
-        4. It checks for non-terminated strings and parenthesis.
-        5. It checks for parenthesis order of closing.
+    Then, it tokenizes read lines, performing these syntax checks:
+        1. Disallows \t as indentation character.
+        2. Checks for unbalanced parenthesis.
+        3. Checks for wrong order of closing parenthesis.
+        4. Most (but not all) syntax restrictions of Python.
 
-    After file is tokenized, it can be used to list logical lines and group them
-    into indented blocks.
+    After file is tokenized, it can be used to list logical lines, which are
+    string of seen source code without indentation and comments, and tokens
+    that make up this line (except INDENT, DEDENT, NL and COMMENT tokens).
     """
 
     @staticmethod
@@ -536,7 +533,7 @@ class Tokenizer:
 
     def logical_lines(self) -> Iterator[Line]:
         """
-        Return an iterator of logical lines of tokenized code as Line objects.
+        Return an iterator of logical line Line objects for the tokenized code.
         """
 
         if self._exhausted:
@@ -600,7 +597,7 @@ class Tokenizer:
 
     def tokens(self) -> Iterator[Token]:
         """
-        Return an iterator of tokens tokenized code as Token objects.
+        Return an iterator of Token objects for the tokenized code.
         """
 
         if self._exhausted:
@@ -643,7 +640,7 @@ OP_RE = re.compile(f"({"|".join(_vals)})")
 del _vals
 
 
-type TokenInfo = tuple[TokenKind, TokenKind, str, tuple[int, int], tuple[int, int]]
+type _TokenInfo = tuple[TokenKind, TokenKind, str, tuple[int, int], tuple[int, int]]
 """
 1. token kind
 2. token exact kind
@@ -697,7 +694,7 @@ class _Tokenizer:
     pending = 0
 
     # Stack of open parens info.
-    parens: list[TokenInfo] = []
+    parens: list[_TokenInfo] = []
 
     # Are we done?
     done = False
@@ -759,7 +756,7 @@ class _Tokenizer:
 
         return c
 
-    def make_token(self, kind: TokenKind, exact_kind: TokenKind, intern: bool = False) -> TokenInfo:
+    def make_token(self, kind: TokenKind, exact_kind: TokenKind, intern: bool = False) -> _TokenInfo:
         string = self.line[self.start:self.pos]
         if intern:
             # Normalize unicode characters, so we can't have two
@@ -929,7 +926,7 @@ class _Tokenizer:
                     "unterminated string literal"
                     f" (detected at line {self.start_lineno})")
 
-    def next_token(self, c: str) -> TokenInfo:
+    def next_token(self, c: str) -> _TokenInfo:
         # Starting at non-space char c - return a token info of the next token.
         # State can't be left mid-token, and after return next line should not
         # be consumed. EOF here always is SyntaxError.
@@ -1067,7 +1064,7 @@ class _Tokenizer:
     def __iter__(self):
         return self
 
-    def __next__(self) -> TokenInfo:
+    def __next__(self) -> _TokenInfo:
         # This is Python implementation of some code of Python's C
         # tokenizer and pegen, mostly it is 'tok_get_normal_mode' from tokenizer.c
 
