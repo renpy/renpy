@@ -21,14 +21,33 @@
 
 from assimp cimport (
     Importer, aiProcessPreset_TargetRealtime_Quality, aiProcess_ConvertToLeftHanded, aiProcess_FlipUVs, aiScene,
-    aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace
+    aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace, aiNode
 )
-
-from renpy.gl2.gl2mesh3 cimport Mesh3, Point3
-from renpy.gl2.gl2model import GL2Model
 
 import renpy
 
+from renpy.display.displayable import Displayable
+from renpy.display.matrix import Matrix
+from renpy.display.render import IDENTITY, Render
+from renpy.gl2.gl2mesh3 cimport Mesh3, Point3
+from renpy.gl2.gl2model import GL2Model
+
+
+
+class ModelData:
+    """
+    Represents the information about a model after it's been loaded.
+    """
+
+    mesh_renders : list[Render]
+    "The renders that make up the model."
+
+    def __init__(self):
+        self.mesh_renders = [ ]
+
+
+cache : dict[str, ModelData] = { }
+"Caches the models that have been loaded."
 
 cdef class Loader:
 
@@ -41,15 +60,38 @@ cdef class Loader:
         filename_bytes = filename.encode()
         self.scene = self.importer.ReadFile(
             filename_bytes,
-            aiProcessPreset_TargetRealtime_Quality |
-            aiProcess_ConvertToLeftHanded |
-            aiProcess_FlipUVs)
+            aiProcessPreset_TargetRealtime_Quality)
 
         if not self.scene:
             raise Exception("Error loading %s: %s" % (filename, self.importer.GetErrorString()))
 
+        model_data = ModelData()
 
-    def load_mesh(self, mesh_index: int, shaders : tuple[str]) -> GL2Model:
+        flip_y = Matrix((
+            1.0, 0.0,
+            0.0, -1.0))
+
+        self.load_node(model_data, self.scene.mRootNode, flip_y)
+
+        cache[filename] = model_data
+
+    cdef load_node(self, model_data: ModelData, aiNode *node, matrix : Matrix):
+        cdef unsigned int i
+
+        matrix = Matrix((
+            node.mTransformation.a1, node.mTransformation.a2, node.mTransformation.a3, node.mTransformation.a4,
+            node.mTransformation.b1, node.mTransformation.b2, node.mTransformation.b3, node.mTransformation.b4,
+            node.mTransformation.c1, node.mTransformation.c2, node.mTransformation.c3, node.mTransformation.c4,
+            node.mTransformation.d1, node.mTransformation.d2, node.mTransformation.d3, node.mTransformation.d4)
+            ) * matrix
+
+        for i in range(node.mNumMeshes):
+            self.load_mesh(model_data, node.mMeshes[i], matrix)
+
+        for i in range(node.mNumChildren):
+            self.load_node(model_data, node.mChildren[i], matrix)
+
+    def load_mesh(self, model_data: ModelData, mesh_index: int, matrix: Matrix) -> Render:
         """
         Loads the mesh with index `mesh_index` from the scene.
         """
@@ -79,9 +121,6 @@ cdef class Loader:
             point[i].y = mesh.mVertices[i].y
             point[i].z = mesh.mVertices[i].z
 
-            miny = min(miny, point[i].y)
-            maxy = max(maxy, point[i].y)
-
             # a_tex_coord
             if mesh.mTextureCoords[0]:
                 attribute[0] = mesh.mTextureCoords[0][i].x
@@ -104,4 +143,49 @@ cdef class Loader:
 
             triangle += 3
 
-        return GL2Model((0, 0), m, shaders, {}, { "depth" : True })
+        r = Render(0, 0)
+        r.mesh = m
+        r.reverse = matrix
+        r.forward = matrix.inverse()
+
+        model_data.mesh_renders.append(r)
+
+loader = Loader()
+"The loader used to load in imported models."
+
+
+class ModelDisplayable(renpy.display.displayable.Displayable):
+    """
+    A displayable that displays a model.
+    """
+
+    filename: str
+    "The filename of the model to display."
+
+    shaders: tuple[str]
+    "The shaders to use to display the model."
+
+    def __init__(self, filename: str, shaders: tuple[str]):
+        super().__init__()
+
+        self.filename = filename
+        self.shaders = shaders
+
+    def render(self, width, height, st, at):
+
+        if self.filename not in cache:
+            loader.load(self.filename)
+
+        model_data = cache[self.filename]
+
+        rv = Render(0, 0)
+
+        for cr in model_data.mesh_renders:
+            rv.blit(cr, (0, 0), focus=False, main=False)
+
+        for i in self.shaders:
+            rv.add_shader(i)
+
+        rv.add_property("depth", True)
+
+        return rv
