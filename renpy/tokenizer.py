@@ -470,8 +470,8 @@ class Tokenizer:
     @classmethod
     def from_string(
         cls,
-        filename: str,
-        code: str, *,
+        code: str,
+        filename: str, *,
         lineno_offset=0,
         col_offset=0,
         no_errors=False,

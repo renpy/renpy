@@ -68,10 +68,7 @@ def python_signature(o):
 
     s = s.replace("-> void", "")
 
-    lines = renpy.parser.list_logical_lines('<test>', s, 1, add_lines=True)
-    nested = renpy.parser.group_logical_lines(lines)
-
-    l = renpy.parser.Lexer(nested)
+    l = renpy.parser.Lexer.from_string(s, "<test>")
     l.advance()
 
     l.word()
