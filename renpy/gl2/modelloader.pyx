@@ -21,7 +21,7 @@
 
 from assimp cimport (
     Importer, aiProcessPreset_TargetRealtime_Quality, aiProcess_ConvertToLeftHanded, aiProcess_FlipUVs, aiScene,
-    aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace, aiNode
+    aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace, aiNode, aiTexture
 )
 
 import renpy
@@ -29,6 +29,7 @@ import renpy
 from renpy.display.displayable import Displayable
 from renpy.display.matrix import Matrix
 from renpy.display.render import IDENTITY, Render
+from renpy.display.im import Data, unoptimized_texture, render_for_texture
 from renpy.gl2.gl2mesh3 cimport Mesh3, Point3
 from renpy.gl2.gl2model import GL2Model
 
@@ -39,10 +40,14 @@ class ModelData:
     Represents the information about a model after it's been loaded.
     """
 
+    embedded_textures: dict[str, Data]
+    "The embedded textures in the model."
+
     mesh_renders : list[Render]
     "The renders that make up the model."
 
     def __init__(self):
+        self.embedded_textures = { }
         self.mesh_renders = [ ]
 
 
@@ -57,23 +62,52 @@ cdef class Loader:
     def load(self, filename: str) -> None:
         cdef const aiScene *scene
 
+        # Load the scene.
         filename_bytes = filename.encode()
         self.scene = self.importer.ReadFile(
             filename_bytes,
-            aiProcessPreset_TargetRealtime_Quality)
+            aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs)
 
         if not self.scene:
             raise Exception("Error loading %s: %s" % (filename, self.importer.GetErrorString()))
 
         model_data = ModelData()
+        cache[filename] = model_data
 
+        self.load_textures(model_data)
+
+        # Load the nodes.
         flip_y = Matrix((
             1.0, 0.0,
             0.0, -1.0))
 
         self.load_node(model_data, self.scene.mRootNode, flip_y)
 
-        cache[filename] = model_data
+    def load_textures(self, model_data: ModelData) -> None:
+        """
+        Loads the textures from the scene.
+        """
+
+        cdef aiTexture *texture
+        cdef char *texbytes
+
+        for i in range(self.scene.mNumTextures):
+            texture = self.scene.mTextures[i]
+
+            key = f"*{i}"
+            format = texture.achFormatHint.decode()
+
+            if texture.mHeight == 0:
+                texbytes = <char *>texture.pcData
+                data = texbytes[:texture.mWidth]
+
+                filename = key + "." + format
+
+                model_data.embedded_textures[key] = unoptimized_texture(Data(data, filename))
+
+            else:
+                raise Exception(f"{format} textures are not (yet) supported.")
+
 
     cdef load_node(self, model_data: ModelData, aiNode *node, matrix : Matrix):
         cdef unsigned int i
@@ -149,7 +183,9 @@ cdef class Loader:
         r.mesh = m
         r.reverse = matrix
         r.forward = matrix.inverse()
-        r.add_property("debug", True)
+
+        tex = renpy.display.im.render_for_texture(model_data.embedded_textures["*0"], 0, 0, 0, 0)
+        r.blit(tex, (0, 0))
 
         model_data.mesh_renders.append(r)
 

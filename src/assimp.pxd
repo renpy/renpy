@@ -4,6 +4,10 @@ cdef extern from "assimp/types.h":
         aiReturn_FAILURE
         aiReturn_OUTOFMEMORYn
 
+    cdef struct aiString:
+        unsigned int length
+        char[1024] data
+
 cdef extern from "assimp/vector2.h":
     cdef struct aiVector2D:
         float x
@@ -91,6 +95,14 @@ cdef extern from "assimp/material.h":
     cdef struct aiMaterial:
         pass
 
+cdef extern from "assimp/texture.h":
+    cdef struct aiTexture:
+        unsigned int mWidth
+        unsigned int mHeight
+        char[8] achFormatHint
+        void *pcData
+        aiString mFilename
+
 cdef extern from "assimp/scene.h":
 
     cdef struct aiNode:
@@ -111,6 +123,7 @@ cdef extern from "assimp/scene.h":
 
         aiNode *mRootNode
         aiMesh **mMeshes
+        aiTexture **mTextures
 
 cdef extern from "assimp/Importer.hpp" namespace "Assimp":
 
