@@ -74,6 +74,28 @@ cdef class UniformVec4(Uniform):
     cdef void assign(self, Program program, data):
         glUniform4f(self.location, data[0], data[1], data[2], data[3])
 
+
+cdef class UniformMat2(Uniform):
+    cdef void assign(self, Program program, data):
+        cdef Matrix m = data
+        cdef GLfloat[4] values = [
+            m.xdx, m.ydx,
+            m.xdy, m.ydy
+            ]
+
+        glUniformMatrix2fv(self.location, 1, GL_FALSE, values)
+
+cdef class UniformMat3(Uniform):
+    cdef void assign(self, Program program, data):
+        cdef Matrix m = data
+        cdef GLfloat[9] values = [
+            m.xdx, m.ydx, m.zdx,
+            m.xdy, m.ydy, m.zdy,
+            m.xdz, m.ydz, m.zdz
+            ]
+
+        glUniformMatrix3fv(self.location, 1, GL_FALSE, values)
+
 cdef class UniformMat4(Uniform):
     cdef void assign(self, Program program, data):
         glUniformMatrix4fv(self.location, 1, GL_FALSE, (<Matrix> data).m)
@@ -153,6 +175,8 @@ UNIFORM_TYPES = {
     "vec2" : UniformVec2,
     "vec3" : UniformVec3,
     "vec4" : UniformVec4,
+    "mat2" : UniformMat2,
+    "mat3" : UniformMat3,
     "mat4" : UniformMat4,
     "sampler2D" : UniformSampler2D,
     }
@@ -263,7 +287,7 @@ cdef class Program:
                 if location >= 0:
                     self.attributes.append(Attribute(name, location, types[type]))
 
-    cdef GLuint load_shader(self, GLenum shader_type, source) except? 0:
+    cdef GLuint load_shader(self, GLenum shader_type, source) except 0:
         """
         This loads a shader into the GPU, and returns the number.
         """
@@ -349,6 +373,13 @@ cdef class Program:
             self.set_uniform("u_drawable_size", renpy.display.draw.drawable_viewport[2:])
         elif name == "u_virtual_size":
             self.set_uniform("u_virtual_size", renpy.display.draw.virtual_size)
+        elif name == "u_normal_transform":
+            mat = self.uniform_values.get("u_transform", None)
+            if mat is not None:
+                mat = mat.inverse().transpose()
+                self.set_uniform("u_normal_transform", mat)
+            else:
+                raise Exception("Shader {} was given u_normal transform but not u_transform.".format(self.name))
         else:
             raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
 

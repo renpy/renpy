@@ -78,12 +78,14 @@ cdef class Loader:
     cdef load_node(self, model_data: ModelData, aiNode *node, matrix : Matrix):
         cdef unsigned int i
 
-        matrix = Matrix((
+        node_matrix = Matrix((
             node.mTransformation.a1, node.mTransformation.a2, node.mTransformation.a3, node.mTransformation.a4,
             node.mTransformation.b1, node.mTransformation.b2, node.mTransformation.b3, node.mTransformation.b4,
             node.mTransformation.c1, node.mTransformation.c2, node.mTransformation.c3, node.mTransformation.c4,
             node.mTransformation.d1, node.mTransformation.d2, node.mTransformation.d3, node.mTransformation.d4)
-            ) * matrix
+            )
+
+        matrix = node_matrix * matrix
 
         for i in range(node.mNumMeshes):
             self.load_mesh(model_data, node.mMeshes[i], matrix)
@@ -147,6 +149,7 @@ cdef class Loader:
         r.mesh = m
         r.reverse = matrix
         r.forward = matrix.inverse()
+        r.add_property("debug", True)
 
         model_data.mesh_renders.append(r)
 

@@ -1,3 +1,9 @@
+cdef extern from "assimp/types.h":
+    cdef enum aiReturn:
+        aiReturn_SUCCESS
+        aiReturn_FAILURE
+        aiReturn_OUTOFMEMORYn
+
 cdef extern from "assimp/vector2.h":
     cdef struct aiVector2D:
         float x
@@ -80,6 +86,10 @@ cdef extern from "assimp/mesh.h":
         aiVector2D **mTextureCoords
 
         aiFace *mFaces
+
+cdef extern from "assimp/material.h":
+    cdef struct aiMaterial:
+        pass
 
 cdef extern from "assimp/scene.h":
 

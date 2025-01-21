@@ -43,6 +43,6 @@ cdef class Program:
 
     cdef dict properties
 
-    cdef GLuint load_shader(self, GLenum shader_type, source) except? 0
+    cdef GLuint load_shader(self, GLenum shader_type, source) except 0
 
     cdef dict uniform_values
