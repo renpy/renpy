@@ -22,11 +22,10 @@
 
 from __future__ import annotations
 
-from typing import Any, Iterator, NamedTuple
+from typing import Any, Iterator, LiteralString, NamedTuple
 
 import os
 import re
-import tokenize
 import contextlib
 import bisect
 
@@ -34,34 +33,21 @@ import renpy
 
 from renpy.tokenizer import (
     Line,
-    Token,
     TokenKind,
     Tokenizer,
-    INDENT,
-    DEDENT,
-    COMMENT,
-    NL,
+    TOKEN_VALUE_TO_OP,
     NEWLINE,
     NAME,
     KEYWORD,
     IDENTIFIER,
-    NON_IDENTIFIER,
     NUMBER,
-    HEX,
-    BINARY,
-    OCTAL,
-    IMAGINARY,
     FLOAT,
     INT,
     STRING,
-    BYTES,
-    F_STRING,
     RAW_TRIPLE_STRING,
     TRIPLE_STRING,
     RAW_SINGLE_STRING,
     SINGLE_STRING,
-    OP,
-    DOLLAR,
     SPACESHIP,
     LPAR,
     RPAR,
@@ -69,7 +55,6 @@ from renpy.tokenizer import (
     RSQB,
     COLON,
     COMMA,
-    SEMI,
     PLUS,
     MINUS,
     STAR,
@@ -78,7 +63,6 @@ from renpy.tokenizer import (
     AMPER,
     LESS,
     GREATER,
-    EQUAL,
     DOT,
     PERCENT,
     LBRACE,
@@ -92,24 +76,8 @@ from renpy.tokenizer import (
     LEFTSHIFT,
     RIGHTSHIFT,
     DOUBLESTAR,
-    PLUSEQUAL,
-    MINEQUAL,
-    STAREQUAL,
-    SLASHEQUAL,
-    PERCENTEQUAL,
-    AMPEREQUAL,
-    VBAREQUAL,
-    CIRCUMFLEXEQUAL,
-    LEFTSHIFTEQUAL,
-    RIGHTSHIFTEQUAL,
-    DOUBLESTAREQUAL,
     DOUBLESLASH,
-    DOUBLESLASHEQUAL,
     AT,
-    ATEQUAL,
-    RARROW,
-    ELLIPSIS,
-    COLONEQUAL,
 )
 
 # The filename that's in the line text cache.
@@ -368,6 +336,27 @@ class Lexer:
         # Munged str value of self._line
         self.text: str = ""
 
+    @classmethod
+    def from_string(
+        cls,
+        source: str,
+        filename: str,
+        lineno_offset=0,
+        init=False,
+        init_offset=0,
+    ):
+        """
+        Tokenizes a string and creates a Lexer object from results logical
+        lines.
+        """
+
+        tok = Tokenizer.from_string(source, filename)
+        return Lexer(
+            list(tok.logical_lines()),
+            init=init,
+            init_offset=init_offset,
+        )
+
     def __reduce__(self):
         raise TypeError("Can't pickle Lexer instance.")
 
@@ -586,16 +575,12 @@ class Lexer:
         self.pos = len(self.text)
 
     # The regexes that match single operator.
-    _OP_REGEX = {
-        k: TokenKind(tokenize.tok_name[v].lower())
-        for k, v in tokenize.EXACT_TOKEN_TYPES.items()}
+    _OP_REGEX = TOKEN_VALUE_TO_OP.copy()
 
     # Ditto, but escaped.
-    _OP_REGEX |= {
-        re.escape(k): TokenKind(tokenize.tok_name[v].lower())
-        for k, v in tokenize.EXACT_TOKEN_TYPES.items()}
+    _OP_REGEX |= {re.escape(k): v for k, v in TOKEN_VALUE_TO_OP.items()}
 
-    def match_regexp(self, regexp: str):
+    def match_regexp(self, regexp: LiteralString):
         """
         Tries to match the given regexp at the current location on the
         current line. If it succeeds, it returns the matched text (if
@@ -1168,7 +1153,7 @@ class Lexer:
 
         return False
 
-    def delimited_python(self, delim: str | TokenKind, expr=True):
+    def delimited_python(self, delim: LiteralString, expr=True):
         """
         This matches python code up to, but not including, the non-whitespace
         delimiter characters. Returns a string containing the matched code,

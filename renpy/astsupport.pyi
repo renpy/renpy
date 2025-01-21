@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Any
+from typing import Any, Literal
 
 def hash32(s : Any) -> int:
     """
@@ -47,6 +47,16 @@ class PyExpr(str):
     linenumber: int
     py: int
     hashcode: int
+
+    def __new__(
+        cls,
+        s: str,
+        filename: str,
+        linenumber: int,
+        py: Literal[2, 3] = 2,
+        hashcode: int | None = None, /
+    ) -> PyExpr:
+        ...
 
     @staticmethod
     def checkpoint() -> Any:
