@@ -943,6 +943,15 @@ fix_dlc("renios", "renios")
                 arcfn = arcname + ".rpa"
                 arcpath = self.temp_filename(arcfn)
 
+                # Create new directories leading to the new archive file relative to the tmp root
+                # if the archive's name indicates it should be in a subdirectory
+                arc_relpath = os.path.relpath(arcpath, self.project.tmp)
+                arc_subdir = os.path.dirname(arc_relpath)
+
+                if arc_subdir:
+                    abs_subdir = os.path.join(self.project.tmp, arc_subdir)
+                    os.makedirs(abs_subdir, exist_ok=True)
+
                 af = archiver.Archive(arcpath)
 
                 fll = len(self.file_lists[arcname])
