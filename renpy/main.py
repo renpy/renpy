@@ -31,6 +31,7 @@ import zipfile
 import gc
 import linecache
 import json
+from pathlib import Path
 
 import renpy
 import renpy.game as game
@@ -385,16 +386,20 @@ def main():
     # Find archives.
     for dn in renpy.config.searchpath:
 
-        if not os.path.isdir(dn):
+        dn = Path(dn)
+
+        if not dn.is_dir():
             continue
 
-        for i in sorted(os.listdir(dn)):
-            base, ext = os.path.splitext(i)
+        archives = [ ]
 
-            # Check if the archive does not have any of the extensions in archive_extensions
-            if not (ext in archive_extensions):
-                continue
+        for ext in archive_extensions:
+            archives.extend(dn.glob(f"**/*{ext}"))
 
+        archives.sort()
+
+        for archive in archives:
+            base = archive.stem
             renpy.config.archives.append(base)
 
     renpy.config.archives.reverse()
