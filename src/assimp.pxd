@@ -83,6 +83,8 @@ cdef extern from "assimp/mesh.h":
         unsigned int mNumVertices
         unsigned int mNumFaces
 
+        unsigned int mMaterialIndex
+
         aiVector3D *mVertices
         aiVector3D *mNormals
         aiVector3D *mTangents
@@ -92,8 +94,19 @@ cdef extern from "assimp/mesh.h":
         aiFace *mFaces
 
 cdef extern from "assimp/material.h":
+
+    cdef enum aiTextureType:
+        aiTextureType_BASE_COLOR
+        aiTextureType_EMISSION_COLOR
+        aiTextureType_METALNESS
+        aiTextureType_DIFFUSE_ROUGHNESS
+        aiTextureType_AMBIENT_OCCLUSION
+        aiTextureType_LIGHTMAP
+        aiTextureType_NORMALS
+
     cdef struct aiMaterial:
-        pass
+        unsigned int GetTextureCount(aiTextureType type)
+        aiReturn GetTexture(aiTextureType type, unsigned int index, aiString *path)
 
 cdef extern from "assimp/texture.h":
     cdef struct aiTexture:
@@ -124,6 +137,7 @@ cdef extern from "assimp/scene.h":
         aiNode *mRootNode
         aiMesh **mMeshes
         aiTexture **mTextures
+        aiMaterial **mMaterials
 
 cdef extern from "assimp/Importer.hpp" namespace "Assimp":
 

@@ -21,7 +21,15 @@
 
 from assimp cimport (
     Importer, aiProcessPreset_TargetRealtime_Quality, aiProcess_ConvertToLeftHanded, aiProcess_FlipUVs, aiScene,
-    aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace, aiNode, aiTexture
+    aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace, aiNode, aiTexture,
+    aiTextureType,
+    aiTextureType_BASE_COLOR,
+    aiTextureType_EMISSION_COLOR,
+    aiTextureType_METALNESS,
+    aiTextureType_DIFFUSE_ROUGHNESS,
+    aiTextureType_LIGHTMAP,
+    aiTextureType_NORMALS,
+    aiString, aiMaterial
 )
 
 import renpy
@@ -32,7 +40,6 @@ from renpy.display.render import IDENTITY, Render
 from renpy.display.im import Data, unoptimized_texture, render_for_texture
 from renpy.gl2.gl2mesh3 cimport Mesh3, Point3
 from renpy.gl2.gl2model import GL2Model
-
 
 
 class ModelData:
@@ -108,15 +115,14 @@ cdef class Loader:
             else:
                 raise Exception(f"{format} textures are not (yet) supported.")
 
-
     cdef load_node(self, model_data: ModelData, aiNode *node, matrix : Matrix):
         cdef unsigned int i
 
         node_matrix = Matrix((
-            node.mTransformation.a1, node.mTransformation.a2, node.mTransformation.a3, node.mTransformation.a4,
-            node.mTransformation.b1, node.mTransformation.b2, node.mTransformation.b3, node.mTransformation.b4,
-            node.mTransformation.c1, node.mTransformation.c2, node.mTransformation.c3, node.mTransformation.c4,
-            node.mTransformation.d1, node.mTransformation.d2, node.mTransformation.d3, node.mTransformation.d4)
+            node.mTransformation.a1, node.mTransformation.b1, node.mTransformation.c1, node.mTransformation.d1,
+            node.mTransformation.a2, node.mTransformation.b2, node.mTransformation.c2, node.mTransformation.d2,
+            node.mTransformation.a3, node.mTransformation.b3, node.mTransformation.c3, node.mTransformation.d3,
+            node.mTransformation.a4, node.mTransformation.b4, node.mTransformation.c4, node.mTransformation.d4)
             )
 
         matrix = node_matrix * matrix
@@ -126,6 +132,17 @@ cdef class Loader:
 
         for i in range(node.mNumChildren):
             self.load_node(model_data, node.mChildren[i], matrix)
+
+    cdef str get_texture(self, unsigned int index, aiTextureType type):
+        cdef aiString path
+        cdef aiMaterial *material = self.scene.mMaterials[index]
+
+        if material.GetTextureCount(type) == 0:
+            return None
+
+        material.GetTexture(type, 0, &path)
+
+        return path.data[:path.length].decode()
 
     def load_mesh(self, model_data: ModelData, mesh_index: int, matrix: Matrix) -> Render:
         """
@@ -179,12 +196,24 @@ cdef class Loader:
 
             triangle += 3
 
+        # print("Material", mesh.mMaterialIndex)
+        # print("Base color", self.get_texture(mesh.mMaterialIndex, aiTextureType_BASE_COLOR))
+        # print("Normal", self.get_texture(mesh.mMaterialIndex, aiTextureType_NORMALS))
+        # print("Emission", self.get_texture(mesh.mMaterialIndex, aiTextureType_EMISSION_COLOR))
+        # print("Metalness", self.get_texture(mesh.mMaterialIndex, aiTextureType_METALNESS))
+        # print("Roughness", self.get_texture(mesh.mMaterialIndex, aiTextureType_DIFFUSE_ROUGHNESS))
+        # print("Ambient occlusion", self.get_texture(mesh.mMaterialIndex, aiTextureType_LIGHTMAP))
+
+        fn = "Sponza/glTF/" +  self.get_texture(mesh.mMaterialIndex, aiTextureType_BASE_COLOR)
+        d = unoptimized_texture(renpy.easy.displayable(fn))
+
         r = Render(0, 0)
         r.mesh = m
         r.reverse = matrix
         r.forward = matrix.inverse()
+        r.add_property("texture_wrap", (renpy.uguu.GL_REPEAT, renpy.uguu.GL_REPEAT))
 
-        tex = renpy.display.im.render_for_texture(model_data.embedded_textures["*0"], 0, 0, 0, 0)
+        tex = renpy.display.im.render_for_texture(d, 0, 0, 0, 0)
         r.blit(tex, (0, 0))
 
         model_data.mesh_renders.append(r)
