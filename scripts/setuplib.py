@@ -32,6 +32,7 @@ import warnings
 import pathlib
 import platform
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 
 import setuptools
 
@@ -302,24 +303,18 @@ def generate_all_cython():
     Run all of the cython that needs to be generated.
     """
 
-    threads = [ ]
-
-    for args in generate_cython_queue:
-
-        if "RENPY_CYTHON_SINGLETHREAD" in os.environ:
+    if "RENPY_CYTHON_SINGLETHREAD" in os.environ:
+        for args in generate_cython_queue:
             generate_cython(*args)
             if cython_failure:
                 sys.exit(1)
-        else:
-            t = threading.Thread(target=generate_cython, args=args)
-            t.start()
-            threads.append(t)
+    else:
+        with ThreadPoolExecutor() as executor:
+            for args in generate_cython_queue:
+                executor.submit(generate_cython, *args)
 
-    for t in threads:
-        t.join()
-
-    if cython_failure:
-        sys.exit(1)
+        if cython_failure:
+            sys.exit(1)
 
 
 def find_unnecessary_gen():
