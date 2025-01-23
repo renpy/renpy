@@ -43,7 +43,6 @@ DEDENT = TokenKind("dedent")
 COMMENT = TokenKind("comment")
 
 # Non-terminating and terminating new lines.
-# This is always \n in Ren'Py.
 NL = TokenKind("nl")
 NEWLINE = TokenKind("newline")
 
@@ -178,6 +177,11 @@ TOKEN_VALUE_TO_OP = \
     {v: k for k, v in TOKEN_OP_TO_VALUE.items()}
 
 class PhysicalLocation(NamedTuple):
+    """
+    Represents a physical location in a file.
+    Column offset are 0-indexed and valid for source
+    code that has newlines translated to '\n'.
+    """
     start_lineno: int
     start_col_offset: int
     end_lineno: int
@@ -304,7 +308,6 @@ class Tokenizer:
     This class is used to read files and strings as RenPy source code and yield
     physical lines, logical lines or tokens.
 
-
     First, this class reads passed buffer one line at a time, and performs
     this normalizations:
         1. Strips the BOM from the start of the file.
@@ -324,7 +327,7 @@ class Tokenizer:
     """
 
     @staticmethod
-    def _basic_convert(lines: Iterator[str]) -> Iterator[str]:
+    def _readline(lines: Iterator[str]) -> Iterator[str]:
         # Strip BOM.
         a = next(lines)
         if a.startswith('\ufeff'):
@@ -358,6 +361,8 @@ class Tokenizer:
         # Col offset of non-prefixed lines.
         col_offset = self.col_offset
 
+        current_offset = 0
+
         # Possible states.
         IGNORE = 0
         RENPY = 1
@@ -374,6 +379,7 @@ class Tokenizer:
                     state = RENPY
                     open_linenumber = linenumber
                     self.col_offset = col_offset
+                    self.pos_offset = 0
                     yield "\n"
                     continue
 
@@ -384,7 +390,8 @@ class Tokenizer:
 
                     # All python lines are virtually dedented, so result Python
                     # code has correct column offsets.
-                    self.col_offset -= len(prefix)
+                    current_offset = len(prefix)
+                    self.col_offset -= current_offset
                     continue
 
                 # Ignore empty and comments.
@@ -416,6 +423,8 @@ class Tokenizer:
                 if l == "\n":
                     yield l
                 else:
+                    # Each line adds len(prefix) offset to position.
+                    self.pos_offset -= current_offset
                     yield f"{prefix}{l}"
                 continue
 
@@ -441,8 +450,6 @@ class Tokenizer:
         col_offset=0,
         no_errors=False,
     ):
-        self.original_filename: str = filename
-
         self.filename: str = renpy.lexer.elide_filename(filename)
 
         # This can be used to influence physical location of tokenized lines
@@ -452,18 +459,20 @@ class Tokenizer:
         # of empty lines at the beginning.
         self.lineno_offset: int = lineno_offset
         self.col_offset: int = col_offset
+        self.pos_offset: int = 0
 
         self.no_errors: bool = no_errors
 
-        lines = self._basic_convert(lines)
+        self._physical_lines = lines = self._readline(lines)
 
         if filename.endswith("_ren.py"):
             lines = self._ren_py_to_rpy(filename, lines)
 
-        # Generator of lines that are yet to be read.
-        self._next_lines = lines
+        # Actual tokenizer.
+        self._tokenizer = _Tokenizer(lines)
 
-        # Whether we have already exhausted the lines.
+        # True if tokenizer was called, so calling it again
+        # will broke the iteration.
         self._exhausted = False
 
     # Public interface
@@ -508,6 +517,19 @@ class Tokenizer:
 
         return cls(filename, lines(), no_errors=no_errors)
 
+    def physical_lines(self) -> Iterator[str]:
+        """
+        Return iterator of normalized physical lines of the file, so that
+        tokens physicall locations for that iterator are correct.
+        """
+        if self._exhausted:
+            raise Exception("Tokenizer is exhausted.")
+
+        self._exhausted = True
+
+        for line in self._physical_lines:
+            yield line
+
     @contextlib.contextmanager
     def _no_errors(self):
         try:
@@ -515,85 +537,6 @@ class Tokenizer:
         except SyntaxError as e:
             if not self.no_errors:
                 raise
-
-    def physical_lines(self) -> Iterator[str]:
-        """
-        Return an iterator of physical lines of tokenized code, such that
-        `"".join(physical lines)` is what tokenizer sees.
-        """
-
-        if self._exhausted:
-            raise Exception("Tokenizer is exhausted.")
-
-        self._exhausted = True
-
-        with self._no_errors():
-            for line in self._next_lines:
-                yield line
-
-    def logical_lines(self) -> Iterator[Line]:
-        """
-        Return an iterator of logical line Line objects for the tokenized code.
-        """
-
-        if self._exhausted:
-            raise Exception("Tokenizer is exhausted.")
-
-        self._exhausted = True
-
-        tokens: list[Token] = []
-        positions: list[int] = []
-        filename = self.filename
-        lineno = self.lineno_offset
-
-        with self._no_errors():
-            tokenizer = _Tokenizer(self._next_lines)
-            for (
-                kind,
-                exact_kind,
-                string,
-                (start_lineno, start_col_offset),
-                (end_lineno, end_col_offset),
-            ) in tokenizer:
-                if (
-                    kind is COMMENT or
-                    kind is INDENT or
-                    kind is DEDENT or
-                    kind is NL
-                ):
-                    continue
-
-                tokens.append(Token(
-                    kind,
-                    exact_kind,
-                    string,
-                    filename,
-                    PhysicalLocation(
-                        start_lineno + lineno,
-                        start_col_offset + self.col_offset,
-                        end_lineno + lineno,
-                        end_col_offset + self.col_offset)))
-                positions.append(tokenizer.start)
-
-                if kind is NEWLINE:
-                    indent = tokenizer.indents[-1]
-                    line = Line(
-                        tokenizer.line[indent:],
-                        tuple(tokens),
-                        tuple(p - indent for p in positions),
-                        filename,
-                        PhysicalLocation(
-                            tokenizer.first_lineno + lineno,
-                            tokenizer.start_col_offset + self.col_offset,
-                            end_lineno + lineno,
-                            end_col_offset + self.col_offset,
-                        ),
-                        indent,
-                    )
-                    yield line
-
-                    tokens.clear()
-                    positions.clear()
 
     def tokens(self) -> Iterator[Token]:
         """
@@ -607,25 +550,112 @@ class Tokenizer:
 
         filename = self.filename
         lineno = self.lineno_offset
+        tok = self._tokenizer
 
         with self._no_errors():
             for (
                 kind,
                 exact_kind,
                 string,
-                (start_lineno, start_col_offset),
-                (end_lineno, end_col_offset),
-            ) in _Tokenizer(self._next_lines):
+            ) in tok:
+                location = PhysicalLocation(
+                    tok.start_lineno + lineno,
+                    tok.start_col_offset + self.col_offset,
+                    tok.lineno + lineno,
+                    tok.col_offset + self.col_offset,
+                )
+
                 yield Token(
                     kind,
                     exact_kind,
                     string,
                     filename,
-                    PhysicalLocation(
-                        start_lineno + lineno,
-                        start_col_offset + self.col_offset,
-                        end_lineno + lineno,
-                        end_col_offset + self.col_offset))
+                    location)
+
+    def logical_lines(self) -> Iterator[Line]:
+        """
+        Return an iterator of logical line Line objects for the tokenized code.
+        """
+
+        if self._exhausted:
+            raise Exception("Tokenizer is exhausted.")
+
+        tokens: list[Token] = []
+        positions: list[int] = []
+        strip_from_to: list[tuple[int, int]] = []
+        filename = self.filename
+        tok = self._tokenizer
+        start_location = None
+        line_indent = 0
+
+        iter_tokens = iter(self.tokens())
+        for token in iter_tokens:
+            # Skip comments-only and empty lines.
+            if not tokens:
+                while True:
+                    if token.kind is COMMENT:
+                        token = next(iter_tokens)
+
+                    if token.kind is NL:
+                        token = next(iter_tokens)
+                    else:
+                        break
+
+            # Compute location of where line starts.
+            if start_location is None or token.kind is INDENT:
+                start_location = (
+                    token.physical_location.start_lineno,
+                    token.physical_location.start_col_offset,
+                )
+                line_indent = tok.indents[-1]
+
+            # Remember positions of comments to strip them later.
+            if token.kind is COMMENT:
+                strip_from_to.append((tok.start, tok.pos))
+                continue
+            elif (
+                token.kind is INDENT or
+                token.kind is DEDENT or
+                token.kind is NL
+            ):
+                continue
+
+            tokens.append(token)
+            positions.append(tok.start - line_indent)
+
+            if token.kind is NEWLINE:
+                if strip_from_to:
+                    last_pos = line_indent
+                    line = tok.line
+                    parts = []
+                    for start, end in strip_from_to:
+                        parts.append(line[last_pos:start])
+                        last_pos = end
+                    parts.append(line[last_pos:])
+                    text = ''.join(parts)
+                else:
+                    text = tok.line[line_indent:]
+
+                location = PhysicalLocation(
+                    start_location[0],
+                    start_location[1],
+                    token.physical_location.end_lineno,
+                    token.physical_location.end_col_offset,
+                )
+
+                yield Line(
+                    text,
+                    tuple(tokens),
+                    tuple(positions),
+                    filename,
+                    location,
+                    line_indent,
+                )
+
+                tokens.clear()
+                positions.clear()
+                strip_from_to.clear()
+                start_location = None
 
 
 BINARY_RE = re.compile(r'[bB](?:_?[01])+\b')
@@ -640,23 +670,19 @@ OP_RE = re.compile(f"({"|".join(_vals)})")
 del _vals
 
 
-type _TokenInfo = tuple[TokenKind, TokenKind, str, tuple[int, int], tuple[int, int]]
-"""
-1. token kind
-2. token exact kind
-3. string value of token
-4. tuple of line number and col offset of start char.
-5. tuple of line number and col offset of end char.
-"""
-
+# Kind of CPython struct tok_state
 class _Tokenizer:
-    # Kind of CPython struct tok_state
-    next_lines: Iterator[str]  # Rest of input.
-    line: str  # Current logical line.
-    max = 0  # Length of current logical line.
+    # Rest of input.
+    next_lines: Iterator[str]
 
-    # First line of current logical line.
-    first_lineno = 0
+    # Current logical line.
+    line: str
+
+    # Length of current logical line.
+    max = 0
+
+    # Position of current char in logical line.
+    pos = -1
 
     # Position of start of current token.
     start = 0
@@ -667,42 +693,34 @@ class _Tokenizer:
     # The column offset at the beginning of a token.
     start_col_offset = 0
 
-    # Position of current char in logical line.
-    pos = -1
-
     # Current line number.
     lineno = 0
 
     # Current col offset.
     col_offset = -1
 
-    # Are we at beginning of line?
-    atbol = False
-
-    # Are we need to enter next line?
-    # NEWLINE creates a new logical line.
-    # NL creates new logical line iif parens are empty.
-    last_was_newline = None
-
-    # Were there any non-comment tokens on the line?
-    blankline = True
-
     # Stack of indentation levels.
     indents = [0]
 
     # Pending indents (if > 0) or dedents (if < 0)
-    pending = 0
+    _pending = 0
 
     # Stack of open parens info.
-    parens: list[_TokenInfo] = []
+    _parens: list[tuple[TokenKind, TokenKind, str]] = []
 
-    # Are we done?
-    done = False
+    # Are we at beginning of line?
+    _atbol = False
+
+    # Are we need to enter next line?
+    # NEWLINE creates a new logical line.
+    # NL creates new logical line iif parens are empty.
+    _last_was_newline = NEWLINE
+
+    # Were there any non-comment tokens on the line?
+    _blankline = True
 
     def __init__(self, lines: Iterator[str]):
         self.next_lines = lines
-        self.reset_line()
-        self.nextc()  # Init state.
 
     @staticmethod
     def is_potential_identifier_start(c: str):
@@ -726,7 +744,6 @@ class _Tokenizer:
         self.max = 0
         self.pos = -1
         self.col_offset = -1
-        self.first_lineno = self.lineno + 1
 
     def getc(self, offset=0) -> str:
         i = self.pos + offset
@@ -756,7 +773,7 @@ class _Tokenizer:
 
         return c
 
-    def make_token(self, kind: TokenKind, exact_kind: TokenKind, intern: bool = False) -> _TokenInfo:
+    def make_token(self, kind: TokenKind, exact_kind: TokenKind, intern: bool = False):
         string = self.line[self.start:self.pos]
         if intern:
             # Normalize unicode characters, so we can't have two
@@ -767,9 +784,7 @@ class _Tokenizer:
             # of often overlapping names.
             string = sys.intern(string)
 
-        start = self.start_lineno, self.start_col_offset
-        end = self.lineno, self.col_offset
-        return (kind, exact_kind, string, start, end)
+        return (kind, exact_kind, string)
 
     def match(self, pattern: re.Pattern[str]) -> re.Match[str] | None:
         m = pattern.match(self.line, self.pos)
@@ -789,29 +804,6 @@ class _Tokenizer:
                 raise SyntaxError("unexpected character after line continuation character")
 
         return False
-
-    def comment(self):
-        # Called when pos at the "#" char.
-        # We return a comment token, but strip it from the line.
-        start = self.pos
-        lineno = self.lineno
-        start_col_offset = self.col_offset
-
-        end = self.max - 1  # Don't include the newline.
-        # Don't change col_offset, so NL will have correct physical offset.
-        self.col_offset = start_col_offset + (end - start)
-        comment = self.line[start:end]
-        self.line = self.line[:start] + self.line[end:]
-        self.max -= len(comment)
-        self.pos = self.max - 1
-
-        return (
-            COMMENT,
-            COMMENT,
-            comment,
-            (lineno, start_col_offset),
-            (lineno, self.col_offset),
-        )
 
     def float_or_imaginary(self):
         m = self.match(FLOAT_IMAG_RE)
@@ -893,11 +885,10 @@ class _Tokenizer:
         try:
             c = self.getc()
             while end_quote_size != quote_size:
-                if c == '\\':
+                while c == '\\':
                     end_quote_size = 0
                     self.nextc()  # skip escaped char
                     c = self.nextc()
-                    continue
 
                 if c == quote:
                     end_quote_size += 1
@@ -926,7 +917,7 @@ class _Tokenizer:
                     "unterminated string literal"
                     f" (detected at line {self.start_lineno})")
 
-    def next_token(self, c: str) -> _TokenInfo:
+    def next_token(self, c: str):
         # Starting at non-space char c - return a token info of the next token.
         # State can't be left mid-token, and after return next line should not
         # be consumed. EOF here always is SyntaxError.
@@ -963,7 +954,8 @@ class _Tokenizer:
             while self.is_potential_identifier_char(c):
                 c = self.nextc()
 
-            name = self.line[self.start:self.pos]
+            kind, _, name = \
+                self.make_token(NAME, NAME, True)
 
             if keyword.iskeyword(name):
                 exact_kind = KEYWORD
@@ -972,15 +964,18 @@ class _Tokenizer:
             else:
                 exact_kind = NON_IDENTIFIER
 
-            return self.make_token(NAME, exact_kind, True)
+            return (kind, exact_kind, name)
 
         # Comment
         if c == '#':
-            return self.comment()
+            # Everything on current line except the newline.
+            self.pos = self.max - 1
+            self.col_offset += (self.pos - self.start)
+            return self.make_token(COMMENT, COMMENT)
 
         # Newline
         if c == '\n':
-            if self.blankline or self.parens:
+            if self._blankline or self._parens:
                 kind = NL
             else:
                 kind = NEWLINE
@@ -1006,13 +1001,14 @@ class _Tokenizer:
         # Hex, octal or binary?
         if c == "0":
             # If any of that matches, it can't be any other kind of number.
-            exact_kind = None
             if self.match(BINARY_RE):
                 exact_kind = BINARY
             elif self.match(OCTAL_RE):
                 exact_kind = OCTAL
             elif self.match(HEX_RE):
                 exact_kind = HEX
+            else:
+                exact_kind = None
 
             if exact_kind is not None:
                 return self.make_token(NUMBER, exact_kind)
@@ -1034,7 +1030,7 @@ class _Tokenizer:
                 self.col_offset -= 1
                 return self.make_token(NUMBER, INT)
 
-            # Still can be a float or imaginary line 1e+5j
+            # Still can be a float or imaginary like 1e+3j
             if c == 'e' or c == 'E':
                 if (rv := self.float_or_imaginary()) is not None:
                     return rv
@@ -1064,39 +1060,45 @@ class _Tokenizer:
     def __iter__(self):
         return self
 
-    def __next__(self) -> _TokenInfo:
+    def __next__(self) -> tuple[TokenKind, TokenKind, str]:
         # This is Python implementation of some code of Python's C
         # tokenizer and pegen, mostly it is 'tok_get_normal_mode' from tokenizer.c
 
-        line_continuation_indent = None
-
         try:
-            while True:
-                if self.last_was_newline is None:
-                    c = self.getc()
-                    if c == '':
-                        raise StopIteration
+            # Advance to next physical line, and probably
+            # start a new logical line.
+            if self._last_was_newline is None:
+                c = self.getc()
+                if c == '':
+                    raise StopIteration
 
-                elif self.last_was_newline is NEWLINE:
-                    self.last_was_newline = None
-                    self.blankline = True
+            elif self._last_was_newline is NEWLINE:
+                self._last_was_newline = None
+                self._blankline = True
+                self.reset_line()
+                self._atbol = True
+                c = self.nextc()
+
+            elif self._last_was_newline is NL:
+                self._last_was_newline = None
+                self._blankline = True
+                if not self._parens:
                     self.reset_line()
-                    self.atbol = True
-                    c = self.nextc()
+                    self._atbol = True
 
-                elif self.last_was_newline is NL:
-                    self.last_was_newline = None
-                    self.blankline = True
-                    if not self.parens:
-                        self.reset_line()
-                        self.atbol = True
+                c = self.nextc()
 
-                    c = self.nextc()
+            else:
+                raise RuntimeError(self._last_was_newline)
 
-                else:
-                    raise RuntimeError(self.last_was_newline)
-
-                if self.atbol:
+            if self._atbol:
+                # Compute indentation size.
+                # Indentation cannot be split over multiple physical lines
+                # using backslashes. This means that if we found a backslash
+                # preceded by whitespace, **the first one we find** determines
+                # the level of indentation of whatever comes next.
+                line_continuation_indent = None
+                while True:
                     # Values for INDENT/DEDENT tokens.
                     self.start = self.pos
                     self.start_lineno = self.lineno
@@ -1112,90 +1114,88 @@ class _Tokenizer:
                         indent_size = line_continuation_indent
                         line_continuation_indent = None
 
-                    # Indentation cannot be split over multiple physical lines
-                    # using backslashes. This means that if we found a backslash
-                    # preceded by whitespace, **the first one we find** determines
-                    # the level of indentation of whatever comes next.
                     if self.line_continuation(c):
                         line_continuation_indent = indent_size
-                        self.nextc()
+                        self.nextc()  # Enter next line.
                         continue
 
-                    # We are not at beginning of line anymore.
-                    self.atbol = False
+                    break
 
-                    # Indent/dedent for new logical line, but only if
-                    # it is not a blank, comment or parenthesed line.
-                    if not (c == '#' or c == '\n') and not self.parens:
-                        if self.col_offset > self.indents[-1]:
-                            self.indents.append(self.col_offset)
-                            self.pending += 1
-                        else:
-                            for val in reversed(self.indents):
-                                if self.col_offset == val:
-                                    break
-                                elif self.col_offset < val:
-                                    self.pending -= 1
-                                    self.indents.pop()
-                                else:
-                                    raise SyntaxError("unindent does not match any outer indentation level")
+                # We are not at beginning of line anymore.
+                self._atbol = False
 
-                # token on the same line, skip spaces
-                else:
-                    while True:
-                        if c == ' ':
-                            c = self.nextc()
-
-                        elif self.line_continuation(c):
-                            c = self.nextc()  # Enter next line.
-
-                        else:
-                            break
-
-                # Return pending indents/dedents
-                if self.pending > 0:
-                    self.pending -= 1
-                    return self.make_token(INDENT, INDENT)
-                elif self.pending < 0:
-                    self.pending += 1
-                    return self.make_token(DEDENT, DEDENT)
-
-                try:
-                    rv = self.next_token(c)
-                except StopIteration:
-                    raise SyntaxError(f"unexpected EOF while parsing")
-
-                exact_kind = rv[1]
-
-                # Get next line when enter this function next time.
-                if exact_kind is NEWLINE or exact_kind is NL:
-                    self.last_was_newline = exact_kind
-
-                # If we have a non-comment token, it is not blank line.
-                elif exact_kind is not COMMENT:
-                    self.blankline = False
-
-                # Track open parens.
-                if exact_kind is LPAR or exact_kind is LBRACE or exact_kind is LSQB:
-                    self.parens.append(rv)
-                elif exact_kind is RPAR or exact_kind is RBRACE or exact_kind is RSQB:
-                    if not self.parens:
-                        raise SyntaxError(f"unmatched '{rv[2]}'")
-
-                    _, open_kind, open, *_ = self.parens.pop()
-
-                    if exact_kind is RPAR and open_kind is LPAR:
-                        pass
-                    elif exact_kind is RBRACE and open_kind is LBRACE:
-                        pass
-                    elif exact_kind is RSQB and open_kind is LSQB:
-                        pass
+                # Indent/dedent for new logical line, but only if
+                # it is not a blank, comment or parenthesed line.
+                if not (c == '#' or c == '\n') and not self._parens:
+                    if self.col_offset > self.indents[-1]:
+                        self.indents.append(self.col_offset)
+                        self._pending += 1
                     else:
-                        raise SyntaxError(
-                            f"closing parenthesis '{rv[2]}' does not match "
-                            f"opening parenthesis '{open}'")
+                        for val in reversed(self.indents):
+                            if self.col_offset == val:
+                                break
+                            elif self.col_offset < val:
+                                self._pending -= 1
+                                self.indents.pop()
+                            else:
+                                raise SyntaxError("unindent does not match any outer indentation level")
 
-                return rv
+            # token on the same line, skip spaces
+            else:
+                while True:
+                    if c == ' ':
+                        c = self.nextc()
+
+                    elif self.line_continuation(c):
+                        c = self.nextc()  # Enter next line.
+
+                    else:
+                        break
+
+            # Return pending indents/dedents.
+            if self._pending > 0:
+                self._pending -= 1
+                return self.make_token(INDENT, INDENT)
+            elif self._pending < 0:
+                self._pending += 1
+                return self.make_token(DEDENT, DEDENT)
+
+            try:
+                rv = self.next_token(c)
+            except StopIteration:
+                raise SyntaxError(f"unexpected EOF while parsing")
+
+            exact_kind = rv[1]
+
+            # Get next line when enter this function next time.
+            if exact_kind is NEWLINE or exact_kind is NL:
+                self._last_was_newline = exact_kind
+
+            # If we have a non-comment token, it is not a blank line.
+            elif exact_kind is not COMMENT:
+                self._blankline = False
+
+            # Track open parens.
+            if exact_kind is LPAR or exact_kind is LBRACE or exact_kind is LSQB:
+                self._parens.append(rv)
+            elif exact_kind is RPAR or exact_kind is RBRACE or exact_kind is RSQB:
+                if not self._parens:
+                    raise SyntaxError(f"unmatched '{rv[2]}'")
+
+                _, open_kind, open, *_ = self._parens.pop()
+
+                if exact_kind is RPAR and open_kind is LPAR:
+                    pass
+                elif exact_kind is RBRACE and open_kind is LBRACE:
+                    pass
+                elif exact_kind is RSQB and open_kind is LSQB:
+                    pass
+                else:
+                    raise SyntaxError(
+                        f"closing parenthesis '{rv[2]}' does not match "
+                        f"opening parenthesis '{open}'")
+
+            return rv
 
         except StopIteration:
             # Pop remaining indent levels.
@@ -1203,13 +1203,12 @@ class _Tokenizer:
                 self.indents.pop()
                 return self.make_token(DEDENT, DEDENT)
 
-            if self.parens:
+            if self._parens:
                 (
                     _, _,
                     char,
-                    _, _,
-                ) = self.parens[-1]
-                self.parens.clear()
+                ) = self._parens[-1]
+                self._parens.clear()
                 raise SyntaxError(f"'{char}' was never closed")
 
             raise

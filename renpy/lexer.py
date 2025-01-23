@@ -102,8 +102,11 @@ def get_line_text(filename, lineno):
 
         line_text_filename = full_filename
 
-        t = Tokenizer.from_file(full_filename, no_errors=True)
-        line_text_cache = list(t.physical_lines())
+        try:
+            with open(full_filename, "r", encoding="utf-8") as f:
+                line_text_cache = f.readlines()
+        except Exception:
+                line_text_cache = [ ]
 
     if lineno <= len(line_text_cache):
         return line_text_cache[lineno - 1]
@@ -259,10 +262,6 @@ def unelide_filename(fn):
         return fn2
 
     return fn
-
-
-# The filename that the start and end positions are relative to.
-original_filename = ""
 
 
 

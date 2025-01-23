@@ -22,237 +22,323 @@
 # This file contains code to add and remove statements from the AST
 # and the textual representation of Ren'Py code.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-
 
 import renpy
 import re
-import codecs
 
-# A map from line loc (elided filename, line) to the Line object representing
-# that line.
-lines = { }
+from dataclasses import dataclass
+from pathlib import Path
 
-# The set of files that have been loaded.
-files = set()
+import renpy.tokenizer
 
-
-class Line(object):
+@dataclass(eq=False)
+class Line:
     """
-    Represents a logical line in a file.
-    """
-
-    def __init__(self, filename, number, start):
-
-        filename = filename.replace("\\", "/")
-
-        # The full path to the file with the line in it.
-        self.filename = filename
-
-        # The line number.
-        self.number = number
-
-        # The offset inside the file at which the line starts.
-        self.start = start
-
-        # The offset inside the file at which the line ends.
-        self.end = start
-
-        # The offset inside the lime where the line delimiter ends.
-        self.end_delim = start
-
-        # The text of the line.
-        self.text = ''
-
-        # The full text, including any comments or delimiters.
-        self.full_text = ''
-
-
-    def __repr__(self):
-        return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
-
-
-def ensure_loaded(filename):
-    """
-    Ensures that the given filename and linenumber are loaded. Doesn't do
-    anything if the filename can't be loaded.
+    Represent a logical line of Ren'Py code.
+    In contrast to renpy.tokenizer.Line, this class represents
+    lines exactly as they appear in the file, including comments.
+    Also, it includes
     """
 
-    if not (filename.endswith(".rpy") or filename.endswith(".rpyc")):
-        return
+    # The full path to the file with the line in it.
+    filename: str
 
-    if filename in files:
-        return
+    # The line number where logical line starts.
+    number: int
 
-    files.add(filename)
+    # The lines of the logical line.
+    lines: tuple[str, ...]
 
-    fn = renpy.lexer.unelide_filename(filename)
-    raise Exception("WIP")
+    # The comments on the lines.
+    comments: tuple[str, ...]
+
+    _text: str | None = None
+    _full_text: str | None = None
+
+    @property
+    def blank(self):
+        return self.lines == ["\n"]
+
+    @property
+    def text(self):
+        if self._text is None:
+            self._text = "".join(self.lines)
+
+        return self._text
+
+    @property
+    def full_text(self):
+        if self._full_text is not None:
+            return self._full_text
+
+        def join():
+            for i, line in enumerate(self.lines):
+                comment = self.comments[i]
+                if comment:
+                    yield f"{line[:-1]}{comment}\n"
+                else:
+                    yield line
+
+        self._full_text = "".join(join())
+        return self._full_text
+
+    def with_added_code(self, code: str) -> str:
+        """
+        Return a full text with a code added to the end before comment.
+        """
+
+        def join():
+            last_i = len(self.lines) - 1
+            for i, line in enumerate(self.lines):
+                if i == last_i:
+                    line = f"{line[:-1]}{code}\n"
+
+                comment = self.comments[i]
+                if comment:
+                    yield f"{line[:-1]}{comment}\n"
+                else:
+                    yield line
+
+        return "".join(join())
 
 
-def get_line_text(filename, linenumber):
+
+# A map from elided filename to dict of line number to Line objects
+# representing that file.
+lines = dict[str, dict[int, Line]]()
+
+
+def ensure_loaded(filename: str, reload: bool = False ) -> dict[int, Line] | None:
+    """
+    Ensures that the given filename is loaded.
+    Doesn't do anything if the filename can't be loaded or is empty.
+    If `reload` is true, the file will be reloaded even if it's already
+    loaded.
+    """
+
+    filename = renpy.parser.unelide_filename(filename)
+    path = Path(filename)
+
+    if not (path.exists() and (
+        path.name.endswith("_ren.py") or
+        path.name.endswith(".rpy") or
+        path.name.endswith(".rpym")
+    )):
+        return None
+
+    filename = renpy.parser.elide_filename(path.as_posix())
+
+    if reload:
+        lines.pop(filename, None)
+    elif filename in lines:
+        return lines[filename]
+
+    lines[filename] = dict()
+
+    def linesfunc():
+        tok = renpy.tokenizer.Tokenizer.from_file(filename)
+
+        yield from tok.physical_lines()
+
+        while True:
+            yield ""
+
+    file_lines = linesfunc()
+    current_line = next(file_lines)
+    last_lineno = 1
+    start_lineno = 1
+    seen_token = False
+
+    tokens = renpy.tokenizer.Tokenizer.from_file(filename).tokens()
+    text_lines: list[str] = []
+    comments: list[str] = []
+    for token in tokens:
+        # Fast-path for comment-only and empty lines.
+        while not seen_token:
+            comment = ""
+            if token.kind is renpy.tokenizer.COMMENT:
+                comment = token.string
+                start = token.physical_location.start_col_offset
+                end = token.physical_location.end_col_offset
+                current_line = f"{current_line[:start]}{current_line[end:]}"
+                # Next token is always NL.
+                token = next(tokens)
+
+            if token.kind is renpy.tokenizer.NL:
+                lines[filename][last_lineno] = Line(
+                    filename,
+                    last_lineno,
+                    (current_line, ),
+                    (comment, ))
+
+                current_line = next(file_lines)
+                last_lineno += 1
+                token = next(tokens)
+                continue
+
+            # New logical line just started.
+            seen_token = True
+            start_lineno = last_lineno
+            break
+
+        # Consume lines between the last line and the start of the token.
+        # It happens only for multiline strings, so no comments here.
+        while last_lineno < token.physical_location.start_lineno:
+            text_lines.append(current_line)
+            comments.append("")
+            current_line = next(file_lines)
+            last_lineno += 1
+
+        if token.kind is renpy.tokenizer.COMMENT:
+            comment = token.string
+            start = token.physical_location.start_col_offset
+            end = token.physical_location.end_col_offset
+            current_line = f"{current_line[:start]}{current_line[end:]}"
+
+            # Should be NL or NEWLINE.
+            token = next(tokens)
+        else:
+            comment = ""
+
+        if token.kind is renpy.tokenizer.NL:
+            text_lines.append(current_line)
+            comments.append(comment)
+            current_line = next(file_lines)
+            last_lineno += 1
+
+        elif token.kind is renpy.tokenizer.NEWLINE:
+            text_lines.append(current_line)
+            comments.append(comment)
+
+            lines[filename][start_lineno] = Line(
+                filename,
+                start_lineno,
+                tuple(text_lines),
+                tuple(comments))
+
+            text_lines.clear()
+            comments.clear()
+            current_line = next(file_lines)
+            last_lineno += 1
+            seen_token = False
+
+    if not lines[filename]:
+        del lines[filename]
+        return None
+
+    return lines[filename]
+
+
+def get_line_text(filename: str, linenumber: int):
     """
     Gets the text of the line with `filename` and `linenumber`, or the None if
     the line does not exist.
     """
 
-    filename = filename.replace("\\", "/")
+    lines = ensure_loaded(filename)
+    if lines is None:
+        return None
 
-    ensure_loaded(filename)
-
-    if (filename, linenumber) in lines:
-        return lines[filename, linenumber].text
-    else:
+    try:
+        return lines[linenumber].text
+    except KeyError:
         return None
 
 
-def adjust_line_locations(filename, linenumber, char_offset, line_offset):
+def get_full_text(filename: str, linenumber: int):
     """
-    Adjusts the locations in the line data structure.
-
-    `filename`, `linenumber`
-        The filename and first line number to adjust.
-
-    `char_offset`
-        The number of characters in the file to offset the code by,.
-
-    `line_offset`
-        The number of line in the file to offset the code by.
+    Returns the full text of `linenumber` from `filename`, including
+    any comment or delimiter characters that exist.
     """
 
-    filename = filename.replace("\\", "/")
+    lines = ensure_loaded(filename)
+    if lines is None:
+        return None
 
-    ensure_loaded(filename)
-
-    global lines
-
-    new_lines = { }
-
-    for key, line in lines.items():
-
-        (fn, ln) = key
-
-        if (fn == filename) and (linenumber <= ln):
-            ln += line_offset
-            line.number += line_offset
-            line.start += char_offset
-            line.end += char_offset
-            line.end_delim += char_offset
-
-        new_lines[fn, ln] = line
-
-    lines = new_lines
+    try:
+        return lines[linenumber].full_text
+    except KeyError:
+        return None
 
 
-def insert_line_before(code, filename, linenumber):
+def insert_line_before(code: str, filename: str, linenumber: int):
     """
     Adds `code` immediately before `filename` and `linenumber`. Those must
     correspond to an existing line, and the code is inserted with the same
     indentation as that line.
     """
 
-    filename = filename.replace("\\", "/")
-
     if renpy.config.clear_lines:
         raise Exception("config.clear_lines must be False for script editing to work.")
 
-    ensure_loaded(filename)
+    lines = ensure_loaded(filename)
+    if lines is None:
+        return
 
-    old_line = lines[filename, linenumber]
+    old_line = lines[linenumber]
 
-    m = re.match(r' *', old_line.text)
-    indent = m.group(0)
-
-    if not code:
+    if code:
+        indent = re.match(r' *', old_line.text).group(0)
+    else:
         indent = ''
 
-    if old_line.text.endswith("\r\n") or not old_line.text.endswith("\n"):
-        line_ending = "\r\n"
-    else:
-        line_ending = "\n"
+    line_ending = "\n" if code.endswith("\n") else "\n"
+    code = f"{indent}{code}{line_ending}"
 
-    raw_code = indent + code
-    code = indent + code + line_ending
+    path = Path(renpy.parser.unelide_filename(old_line.filename))
+    with path.open("w", encoding="utf-8") as f, renpy.loader.auto_lock:
+        f.write("\ufeff")
 
-    new_line = Line(old_line.filename, old_line.number, old_line.start)
-    new_line.text = raw_code
-    new_line.full_text = code
-    new_line.end = new_line.start + len(raw_code)
-    new_line.end_delim = new_line.start + len(code)
+        for lineno, line in lines.items():
+            if lineno == linenumber:
+                f.write(code)
 
-    with codecs.open(old_line.filename, "r", "utf-8") as f:
-        data = f.read()
-
-    data = data[:old_line.start] + code + data[old_line.start:]
-
-    adjust_line_locations(filename, linenumber, len(code), code.count("\n"))
-
-    with renpy.loader.auto_lock:
-
-        with codecs.open(old_line.filename, "w", "utf-8") as f:
-            f.write(data)
+            f.write(line.full_text)
 
         renpy.loader.add_auto(old_line.filename, force=True)
 
-    lines[filename, linenumber] = new_line
+    ensure_loaded(old_line.filename, reload=True)
 
 
-def remove_line(filename, linenumber):
+def remove_line(filename: str, linenumber: int):
     """
     Removes `linenumber` from `filename`. The line must exist and correspond
     to a logical line.
     """
 
-    filename = filename.replace("\\", "/")
-
     if renpy.config.clear_lines:
         raise Exception("config.clear_lines must be False for script editing to work.")
 
-    ensure_loaded(filename)
+    lines = ensure_loaded(filename)
+    if lines is None:
+        return
 
-    line = lines[filename, linenumber]
+    old_line = lines[linenumber]
 
-    with codecs.open(line.filename, "r", "utf-8") as f:
-        data = f.read()
+    path = Path(renpy.parser.unelide_filename(old_line.filename))
+    with path.open("w", encoding="utf-8") as f, renpy.loader.auto_lock:
+        f.write("\ufeff")
 
-    code = data[line.start:line.end_delim]
-    data = data[:line.start] + data[line.end_delim:]
+        for lineno, line in lines.items():
+            if lineno == linenumber:
+                continue
 
-    del lines[filename, linenumber]
-    adjust_line_locations(filename, linenumber, -len(code), -code.count("\n"))
+            f.write(line.full_text)
 
-    with renpy.loader.auto_lock:
+        renpy.loader.add_auto(old_line.filename, force=True)
 
-        with codecs.open(line.filename, "w", "utf-8") as f:
-            f.write(data)
-
-        renpy.loader.add_auto(line.filename, force=True)
-
-
-def get_full_text(filename, linenumber):
-    """
-    Returns the full text of `linenumber` from `filename`, including
-    any comment or delimiter characters that exist.
-    """
-
-    filename = filename.replace("\\", "/")
-
-    ensure_loaded(filename)
-
-    if (filename, linenumber) not in lines:
-        return None
-
-    return lines[filename, linenumber].full_text
+    ensure_loaded(old_line.filename, reload=True)
 
 
-def nodes_on_line(filename, linenumber):
+def nodes_on_line(filename: str, linenumber: int) -> list[renpy.ast.Node]:
     """
     Returns a list of nodes that are found on the given line.
     """
 
-    ensure_loaded(filename)
+    if (lines := ensure_loaded(filename)) is None:
+        return [ ]
+
+    filename = next(iter(lines.values())).filename
 
     rv = [ ]
 
@@ -263,12 +349,15 @@ def nodes_on_line(filename, linenumber):
     return rv
 
 
-def nodes_on_line_at_or_after(filename, linenumber):
+def nodes_on_line_at_or_after(filename: str, linenumber: int) -> list[renpy.ast.Node]:
     """
     Returns a list of nodes that are found at or after the given line.
     """
 
-    ensure_loaded(filename)
+    if (lines := ensure_loaded(filename)) is None:
+        return [ ]
+
+    filename = next(iter(lines.values())).filename
 
     lines = [ i.linenumber
               for i in renpy.game.script.all_stmts
@@ -282,15 +371,15 @@ def nodes_on_line_at_or_after(filename, linenumber):
     return nodes_on_line(filename, min(lines))
 
 
-def first_and_last_nodes(nodes):
+def first_and_last_nodes(nodes: list[renpy.ast.Node]):
     """
     Finds the first and last nodes in `nodes`, a list of nodes. This assumes
     that all the nodes are "simple", with no control flow, and that all of
     the relevant nodes are in `nodes`.
     """
 
-    firsts = [ ]
-    lasts = [ ]
+    firsts: list[renpy.ast.Node] = [ ]
+    lasts: list[renpy.ast.Node] = [ ]
 
     for i in nodes:
         for j in nodes:
@@ -315,7 +404,7 @@ def first_and_last_nodes(nodes):
     return firsts[0], lasts[0]
 
 
-def adjust_ast_linenumbers(filename, linenumber, offset):
+def adjust_ast_linenumbers(filename: str, linenumber: int, offset: int):
     """
     This adjusts the line numbers in the ast.
 
@@ -334,7 +423,7 @@ def adjust_ast_linenumbers(filename, linenumber, offset):
             i.linenumber += offset
 
 
-def add_to_ast_before(code, filename, linenumber):
+def add_to_ast_before(code: str, filename: str, linenumber: int):
     """
     Adds `code`, which must be a textual line of Ren'Py code,
     before the given filename and line number.
@@ -345,7 +434,8 @@ def add_to_ast_before(code, filename, linenumber):
 
     adjust_ast_linenumbers(old.filename, linenumber, 1)
 
-    block, _init = renpy.game.script.load_string(old.filename, code, linenumber=linenumber)
+    block, _init = renpy.game.script.load_string(
+        old.filename, code, linenumber=linenumber)
 
     # Remove the return statement at the end of the block.
     ret_stmt = block.pop()
@@ -365,7 +455,7 @@ def add_to_ast_before(code, filename, linenumber):
     renpy.game.log.replace_node(old, block[0])
 
 
-def can_add_before(filename, linenumber):
+def can_add_before(filename: str, linenumber: int):
     """
     Returns True if it's possible to add a line before the given filename
     and linenumber, and False if it's not possible.
@@ -380,7 +470,7 @@ def can_add_before(filename, linenumber):
         return False
 
 
-def remove_from_ast(filename, linenumber):
+def remove_from_ast(filename: str, linenumber: int):
     """
     Removes from the AST all statements that happen to be at `filename`
     and `linenumber`, then adjusts the line numbers appropriately.
