@@ -427,6 +427,7 @@ Keyword("selected_insensitive")
 Keyword("auto")
 Keyword("alpha")
 Keyword("cache")
+add(box_properties)
 
 DisplayableParser("hotspot", renpy.ui._hotspot, "hotspot", 1, hotspot=True)
 Positional("spot")
