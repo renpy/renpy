@@ -343,35 +343,7 @@ def parse(node: renpy.ast.UserStatement, line: str, subblock: list):
     This is used for runtime parsing of CDSes that were created before 7.3.
     """
 
-    # Subblock here is a pre 8.4 way to represent Lexer subblock,
-    # list of (filename, linenumber, line, line subblock) tuples.
-    # We reconstruct source code from this and then tokenize it,
-    # as if it were read from a file, and pass it to parse function.
-    # This may have incorrect line numbers and column offsets.
-
-    lines = []
-
-    queue = [(0, node.linenumber, line, subblock)]
-    last_lineno = node.linenumber
-    while queue:
-        indent_depth, linenumber, line, subblock = queue.pop()
-
-        for _ in range(linenumber - last_lineno):
-            lines.append("\n")
-        last_lineno = linenumber
-
-        lines.append(" " * indent_depth)
-        lines.append(line)
-
-        for _, linenumber, line, subblock in reversed(subblock):
-            queue.append((indent_depth + 4, linenumber, line, subblock))
-
-    # Source code should already have newlines at the end.
-    source = "".join(lines)
-
-    l = renpy.lexer.Lexer.from_string(
-        source, node.filename,
-        lineno_offset=node.linenumber - 1)
+    l = renpy.lexer.Lexer([(node.filename, node.linenumber, line, subblock)])
     l.advance()
 
     renpy.exports.push_error_handler(l.error)

@@ -587,6 +587,7 @@ class Tokenizer:
         tok = self._tokenizer
         start_location = None
         line_indent = 0
+        position_bias = 0
 
         iter_tokens = iter(self.tokens())
         for token in iter_tokens:
@@ -597,7 +598,11 @@ class Tokenizer:
                         token = next(iter_tokens)
 
                     if token.kind is NL:
-                        token = next(iter_tokens)
+                        # It may be last token.
+                        try:
+                            token = next(iter_tokens)
+                        except StopIteration:
+                            return
                     else:
                         break
 
@@ -612,6 +617,7 @@ class Tokenizer:
             # Remember positions of comments to strip them later.
             if token.kind is COMMENT:
                 strip_from_to.append((tok.start, tok.pos))
+                position_bias += tok.pos - tok.start
                 continue
             elif (
                 token.kind is INDENT or
@@ -621,7 +627,7 @@ class Tokenizer:
                 continue
 
             tokens.append(token)
-            positions.append(tok.start - line_indent)
+            positions.append(tok.start - line_indent - position_bias)
 
             if token.kind is NEWLINE:
                 if strip_from_to:
@@ -656,6 +662,7 @@ class Tokenizer:
                 positions.clear()
                 strip_from_to.clear()
                 start_location = None
+                position_bias = 0
 
 
 BINARY_RE = re.compile(r'[bB](?:_?[01])+\b')

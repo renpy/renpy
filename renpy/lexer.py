@@ -22,12 +22,11 @@
 
 from __future__ import annotations
 
-from typing import Any, Iterator, LiteralString, NamedTuple
+from typing import Any, Iterator, LiteralString, NamedTuple, cast
 
 import os
 import re
 import contextlib
-import bisect
 
 import renpy
 
@@ -284,6 +283,7 @@ class SubParse:
         else:
             return "<SubParse {}:{}>".format(self.block[0].filename, self.block[0].linenumber)
 
+type LegacyLexerBlock = list[tuple[str, int, str, LegacyLexerBlock]]
 
 class Lexer:
     """
@@ -294,7 +294,7 @@ class Lexer:
 
     def __init__(
         self,
-        block: list[Line],
+        block: list[Line] | LegacyLexerBlock,
         init=False,
         init_offset=0,
         global_label: str | None = None,
@@ -312,8 +312,48 @@ class Lexer:
         self.monologue_delimiter = monologue_delimiter
         self.subparses = subparses
 
+        # Convert pre 8.4 list of grouped logical lines to
+        # tokenized list of Line's.
+        if block and not isinstance(block[0], Line):
+            block = cast("LegacyLexerBlock", block)
+
+            # 'block' here is a pre 8.4 way to represent Lexer subblock -
+            # list of (filename, linenumber, line, line subblock) tuples.
+            # We reconstruct source code from this and then tokenize it,
+            # as if it were read from a file, and pass it to parse function.
+            # This _may_ have incorrect line numbers and column offsets.
+
+            filename = block[0][0]
+            start_lineno = last_lineno = block[0][1]
+            queue = [
+                (0, linenumber, line, subblock)
+                for (_, linenumber, line, subblock)
+                in reversed(block)]
+
+            lines = []
+            while queue:
+                indent_depth, linenumber, line, subblock = queue.pop()
+
+                for _ in range(linenumber - last_lineno):
+                    lines.append("\n")
+                last_lineno = linenumber
+
+                lines.append(" " * indent_depth)
+                lines.append(line)
+
+                for _, linenumber, line, subblock in reversed(subblock):
+                    queue.append((indent_depth + 4, linenumber, line, subblock))
+
+            # Source code should already have newlines at the end.
+            tok = Tokenizer.from_string(
+                "".join(lines),
+                filename,
+                lineno_offset=start_lineno - 1)
+
+            block = list(tok.logical_lines())
+
         # List of lines that make up this indentation block.
-        self._block = block
+        self._block = cast("list[Line]", block)
 
         # Index of current logical line in block.
         # Should change only by advace/unadvance.
@@ -349,7 +389,11 @@ class Lexer:
         lines.
         """
 
-        tok = Tokenizer.from_string(source, filename)
+        tok = Tokenizer.from_string(
+            source,
+            filename,
+            lineno_offset=lineno_offset)
+
         return Lexer(
             list(tok.logical_lines()),
             init=init,
@@ -362,7 +406,7 @@ class Lexer:
     @staticmethod
     def _get_munged_string(filename: str, string: str) -> str:
         if "__" not in string:
-            return str(string)
+            return string
 
         prefix = munge_filename(filename)
 
@@ -405,8 +449,26 @@ class Lexer:
         self._token_index = 0
         self._pos = 0
 
-        self.text = self._get_munged_string(
-            self.filename, line)
+        text = self._get_munged_string(self.filename, line)
+        if line is text:
+            # No munging occurred, offsets are correct,
+            # just make sure text is str, not Line.
+            self.text = str(text)
+            return
+
+        # Вместо токенизации нужно проходится по всей строке и мунжить _токены_,
+        # но оставлять позиции токенов неизменными. Если токен мунжится, можно
+        # вычислить байас оффсета для следующих токенов.
+        # Также в питон нужно передавать не мунженный текст и делать замену
+        # на уровне AST а не исходного кода. Так в трейсбеках будет правильно
+        # отображаться исходный код с позициями токенов.
+
+        # Otherwise we need to fix up the offsets, retokenize munged text.
+        # It should return the same tokens, but with correct offsets.
+        tok = Tokenizer.from_string(text, line.filename)
+        self._line = next(tok.logical_lines())
+        self._line.indent_size = line.indent_size
+        self.text = text
 
     @property
     def _mid_token(self):
@@ -462,25 +524,15 @@ class Lexer:
             self._pos = len(self.text)
             self._token_index = None
         else:
-            # Since offsets are sorted and distinct, we can use
-            # bisect to faster find the right index.
-            idx = bisect.bisect(self._line.offsets, value)
+            self._pos = value
+            for i, p in enumerate(self._line.offsets):
+                if p >= value:
+                    self._token_index = i
+                    return
 
-            if value == self._line.offsets[idx - 1]:
-                self._pos = value
-                self._token_index = idx - 1
-            else:
-                # If pos points to spaces, snap it to the beginning
-                # of the token.
-                try:
-                    while self.text[value] in " \n\\":
-                        value += 1
-                except IndexError:
-                    self._pos = len(self.text)
-                    self._token_index = None
-                else:
-                    self._pos = value
-                    self._token_index = idx
+            # Value is greater than all offsets, i.e. it is mid-token
+            # in last token.
+            self._token_index = len(self._line.tokens) - 1
 
     @property
     def filename(self) -> str:
@@ -616,7 +668,21 @@ class Lexer:
         Advances the current position beyond any contiguous whitespace.
         """
 
-        # Does nothing, because tokens does not care about whitespace.
+        pos = self._pos
+        text = self.text
+        len_text = len(text)
+        while pos < len_text:
+            c = text[pos]
+            if c == " " or c == "\n":
+                pos += 1
+
+            elif c == "\\" and text[pos + 1] == "\n":
+                pos += 2
+
+            else:
+                break
+
+        self.pos = pos
 
     def match(self, regexp):
         """
@@ -625,6 +691,7 @@ class Lexer:
         still skipped past the leading whitespace.
         """
 
+        self.skip_whitespace()
         return self.match_regexp(regexp)
 
     def match_multiple(self, *regexps):
@@ -746,6 +813,7 @@ class Lexer:
             subparses=self.subparses)
 
     def _lookup_token(self, kind: TokenKind | None = None):
+        self.skip_whitespace()
         if self._mid_token:
             return None
 
@@ -762,6 +830,7 @@ class Lexer:
             return None
 
     def _lookup_exact_token(self, kind: TokenKind):
+        self.skip_whitespace()
         if self._mid_token:
             return None
 
@@ -1189,6 +1258,11 @@ class Lexer:
         """
 
         start = self.pos
+
+        if self.filename.endswith("inventory/rcode.rpy"):
+            print(repr(self._line))
+            print(repr(self.text[start:]))
+
         if not self._delimited_python(COLON):
             self.error("expected python_expression")
 
@@ -1486,7 +1560,13 @@ class Lexer:
         line_index, pos, pyexpr_checkpoint = state
 
         if line_index != self._line_index:
-            self._update_line(line_index)
+            try:
+                self._update_line(line_index)
+            except Exception:
+                exc = Exception("Revert outsite of this lexer.")
+                exc.add_note("Are you sure you revert the same "
+                             "lexer that you checkpointed?")
+                raise exc
 
         self.pos = pos
         renpy.ast.PyExpr.revert(pyexpr_checkpoint)
@@ -1529,6 +1609,8 @@ class Lexer:
         line, and advances the current position to the end of
         the current line.
         """
+
+        self.skip_whitespace()
 
         pos = self.pos
         self.pos = len(self.text)
