@@ -1959,6 +1959,29 @@ class AlphaMask(ImageBase):
         return self.base.predict_files() + self.mask.predict_files()
 
 
+class Null(ImageBase):
+    """
+    :undocumented:
+
+    An image manipulator that returns a 1x1 transparent surface. This can be used as a missing texture,
+    if needed.
+    """
+
+    def __init__(self, **properties):
+        super(Null, self).__init__(**properties)
+
+    def get_hash(self):
+        return 42
+
+    def load(self):
+        rv = renpy.display.pgrender.surface((1, 1), True)
+        rv.fill((0, 0, 0, 0))
+        return rv
+
+    def predict_files(self):
+        return [ ]
+
+
 class UnoptimizedTexture(ImageBase):
     """
     :undocumented:
