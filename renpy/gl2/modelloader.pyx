@@ -23,12 +23,31 @@ from assimp cimport (
     Importer, aiProcessPreset_TargetRealtime_Quality, aiProcess_ConvertToLeftHanded, aiProcess_FlipUVs, aiScene,
     aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace, aiNode, aiTexture,
     aiTextureType,
+
+    aiTextureType_NONE,
+    aiTextureType_DIFFUSE,
+    aiTextureType_SPECULAR,
+    aiTextureType_AMBIENT,
+    aiTextureType_EMISSIVE,
+    aiTextureType_HEIGHT,
+    aiTextureType_NORMALS,
+    aiTextureType_SHININESS,
+    aiTextureType_OPACITY,
+    aiTextureType_DISPLACEMENT,
+    aiTextureType_LIGHTMAP,
+    aiTextureType_REFLECTION,
     aiTextureType_BASE_COLOR,
+    aiTextureType_NORMAL_CAMERA,
     aiTextureType_EMISSION_COLOR,
     aiTextureType_METALNESS,
     aiTextureType_DIFFUSE_ROUGHNESS,
-    aiTextureType_LIGHTMAP,
-    aiTextureType_NORMALS,
+    aiTextureType_AMBIENT_OCCLUSION,
+    aiTextureType_UNKNOWN,
+    aiTextureType_SHEEN,
+    aiTextureType_CLEARCOAT,
+    aiTextureType_TRANSMISSION,
+
+
     aiString, aiMaterial
 )
 
@@ -41,8 +60,34 @@ from renpy.display.im import Data, unoptimized_texture, render_for_texture
 from renpy.gl2.gl2mesh3 cimport Mesh3, Point3
 from renpy.gl2.gl2model import GL2Model
 
+# A map from texture types to the corresponding assimp constants.
+TEXTURE_TYPES = {
+    "none": aiTextureType_NONE,
+    "diffuse": aiTextureType_DIFFUSE,
+    "specular": aiTextureType_SPECULAR,
+    "ambient": aiTextureType_AMBIENT,
+    "emissive": aiTextureType_EMISSIVE,
+    "height": aiTextureType_HEIGHT,
+    "normals": aiTextureType_NORMALS,
+    "shininess": aiTextureType_SHININESS,
+    "opacity": aiTextureType_OPACITY,
+    "displacement": aiTextureType_DISPLACEMENT,
+    "lightmap": aiTextureType_LIGHTMAP,
+    "reflection": aiTextureType_REFLECTION,
+    "base_color": aiTextureType_BASE_COLOR,
+    "normal_camera": aiTextureType_NORMAL_CAMERA,
+    "emission_color": aiTextureType_EMISSION_COLOR,
+    "metalness": aiTextureType_METALNESS,
+    "diffuse_roughness": aiTextureType_DIFFUSE_ROUGHNESS,
+    "ambient_occlusion": aiTextureType_AMBIENT_OCCLUSION,
+    "unknown": aiTextureType_UNKNOWN,
+    "sheen": aiTextureType_SHEEN,
+    "clearcoat": aiTextureType_CLEARCOAT,
+    "transmission": aiTextureType_TRANSMISSION,
+}
 
-class ModelData:
+
+class AIModelData:
     """
     Represents the information about a model after it's been loaded.
     """
@@ -58,19 +103,132 @@ class ModelData:
         self.mesh_renders = [ ]
 
 
-cache : dict[str, ModelData] = { }
+cache : dict[str, AIModelData] = { }
 "Caches the models that have been loaded."
 
-cdef class Loader:
+
+class AIMeshInfo:
+    """
+    This stores information that's passed into the mesh callback.
+    """
+
+    _importer: "AssetImporter"
+    "The importer that's loading the mesh."
+
+    _material_index: int
+    "The index of the material."
+
+    mesh: Mesh3
+    "The mesh that's being loaded."
+
+    reverse_matrix: Matrix
+    forward_matrix: Matrix
+
+    def has_texture(self, texture_type: str) -> bool:
+        """
+        Returns True if the mesh has a texture of the given type.
+        """
+
+        if texture_type not in TEXTURE_TYPES:
+            raise Exception(f"Unknown texture type {texture_type}.")
+
+        return self._importer.get_texture(self._material_index, TEXTURE_TYPES[texture_type]) is not None
+
+
+    def get_texture(self, texture_type: str) -> renpy.display.displayable.Displayable:
+        """
+        Returns the texture of the given type.
+        """
+
+        if texture_type not in TEXTURE_TYPES:
+            raise Exception(f"Unknown texture type {texture_type}.")
+
+        path = self._importer.get_texture(self._material_index, TEXTURE_TYPES[texture_type])
+
+        if path is None:
+            rv = renpy.display.im.Null()
+
+        elif path.startswith("*"):
+            rv = self._importer.model_data.embedded_textures[path]
+
+        else:
+            rv = renpy.easy.displayable(self._importer.dirname + "/" + path)
+
+        return renpy.display.im.render_for_texture(unoptimized_texture(rv), 0, 0, 0, 0)
+
+    def wrap_texture(self, d):
+        """
+        Wraps an image file so it can be used as a texture.
+        """
+
+        d = renpy.easy.displayable(d)
+        return renpy.display.im.render_for_texture(unoptimized_texture(d), 0, 0, 0, 0)
+
+
+class AIMeshCallback:
+    """
+    A callback that's called for each mesh in the model.
+    """
+
+    textures: tuple[str]
+    "The textures that the callback is interested in."
+
+    shaders: tuple[str]
+    "The shaders that the callback is interested in."
+
+    def __init__(self, textures=( "diffuse", ), shaders=()):
+        self.textures = textures
+        self.shaders = shaders
+
+
+    def __call__(self, mesh: AIMeshInfo) -> None:
+        """
+        Called for each mesh in the model.
+        """
+
+        rv = renpy.display.render.Render(0, 0)
+        rv.mesh = mesh.mesh
+        rv.reverse = mesh.reverse_matrix
+        rv.forward = mesh.forward_matrix
+
+        rv.add_property("texture_wrap", (renpy.uguu.GL_REPEAT, renpy.uguu.GL_REPEAT))
+
+        for i in self.shaders:
+            rv.add_shader(i)
+
+        for i in self.textures:
+            rv.blit(mesh.get_texture(i), (0, 0))
+
+        return rv
+
+
+
+cdef class AssetImporter:
+
+    cdef public str dirname
+    "The directory that the asset was loaded from."
 
     cdef Importer importer
-    cdef const aiScene *scene
+    "The importer used to load the models."
 
-    def load(self, filename: str) -> None:
-        cdef const aiScene *scene
+    cdef const aiScene *scene
+    "The scene that has been loaded."
+
+    cdef public object model_data
+    "The ModelData object that is being filled in."
+
+    cdef public object mesh_callback
+    "The callback that is called for each mesh."
+
+    def load(self, filename: str, mesh_callback) -> None:
+
+        self.mesh_callback = mesh_callback
+        self.dirname = filename.rpartition("/")[0]
+
+        full_filename = renpy.config.gamedir + "/" + filename
 
         # Load the scene.
-        filename_bytes = filename.encode()
+        filename_bytes = full_filename.encode()
         self.scene = self.importer.ReadFile(
             filename_bytes,
             aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs)
@@ -78,19 +236,26 @@ cdef class Loader:
         if not self.scene:
             raise Exception("Error loading %s: %s" % (filename, self.importer.GetErrorString()))
 
-        model_data = ModelData()
-        cache[filename] = model_data
+        try:
 
-        self.load_textures(model_data)
+            self.model_data = AIModelData()
+            cache[filename] = self.model_data
 
-        # Load the nodes.
-        flip_y = Matrix((
-            1.0, 0.0,
-            0.0, -1.0))
+            self.load_textures()
 
-        self.load_node(model_data, self.scene.mRootNode, flip_y)
+            # Load the nodes.
+            flip_y = Matrix((
+                1.0, 0.0,
+                0.0, -1.0))
 
-    def load_textures(self, model_data: ModelData) -> None:
+            self.load_node(self.scene.mRootNode, flip_y)
+
+        finally:
+            self.model_data = None
+            self.mesh_callback = None
+
+
+    def load_textures(self) -> None:
         """
         Loads the textures from the scene.
         """
@@ -110,12 +275,29 @@ cdef class Loader:
 
                 filename = key + "." + format
 
-                model_data.embedded_textures[key] = unoptimized_texture(Data(data, filename))
+                self.model_data.embedded_textures[key] = unoptimized_texture(Data(data, filename))
 
             else:
                 raise Exception(f"{format} textures are not (yet) supported.")
 
-    cdef load_node(self, model_data: ModelData, aiNode *node, matrix : Matrix):
+    def get_texture(self, material_index : int, texture_type : int) -> str|None:
+        """
+        Given a material index and a texture type, returns the path to the texture. This
+        may also be *0 (etc) for embedded textures.
+        """
+
+        cdef aiString path
+        cdef aiMaterial *material = self.scene.mMaterials[material_index]
+
+        if material.GetTextureCount(texture_type) == 0:
+            return None
+
+        material.GetTexture(texture_type, 0, &path)
+
+        return path.data[:path.length].decode()
+
+
+    cdef load_node(self, aiNode *node, matrix : Matrix):
         cdef unsigned int i
 
         node_matrix = Matrix((
@@ -128,23 +310,13 @@ cdef class Loader:
         matrix = node_matrix * matrix
 
         for i in range(node.mNumMeshes):
-            self.load_mesh(model_data, node.mMeshes[i], matrix)
+            self.load_mesh(node.mMeshes[i], matrix)
 
         for i in range(node.mNumChildren):
-            self.load_node(model_data, node.mChildren[i], matrix)
+            self.load_node(node.mChildren[i], matrix)
 
-    cdef str get_texture(self, unsigned int index, aiTextureType type):
-        cdef aiString path
-        cdef aiMaterial *material = self.scene.mMaterials[index]
 
-        if material.GetTextureCount(type) == 0:
-            return None
-
-        material.GetTexture(type, 0, &path)
-
-        return path.data[:path.length].decode()
-
-    def load_mesh(self, model_data: ModelData, mesh_index: int, matrix: Matrix) -> Render:
+    def load_mesh(self, mesh_index: int, matrix: Matrix) -> Render:
         """
         Loads the mesh with index `mesh_index` from the scene.
         """
@@ -196,33 +368,23 @@ cdef class Loader:
 
             triangle += 3
 
-        # print("Material", mesh.mMaterialIndex)
-        # print("Base color", self.get_texture(mesh.mMaterialIndex, aiTextureType_BASE_COLOR))
-        # print("Normal", self.get_texture(mesh.mMaterialIndex, aiTextureType_NORMALS))
-        # print("Emission", self.get_texture(mesh.mMaterialIndex, aiTextureType_EMISSION_COLOR))
-        # print("Metalness", self.get_texture(mesh.mMaterialIndex, aiTextureType_METALNESS))
-        # print("Roughness", self.get_texture(mesh.mMaterialIndex, aiTextureType_DIFFUSE_ROUGHNESS))
-        # print("Ambient occlusion", self.get_texture(mesh.mMaterialIndex, aiTextureType_LIGHTMAP))
+        info = AIMeshInfo()
+        info._importer = self
+        info._material_index = mesh.mMaterialIndex
+        info.mesh = m
+        info.reverse_matrix = matrix
+        info.forward_matrix = matrix.inverse()
 
-        fn = "Sponza/glTF/" +  self.get_texture(mesh.mMaterialIndex, aiTextureType_BASE_COLOR)
-        d = unoptimized_texture(renpy.easy.displayable(fn))
+        r = self.mesh_callback(info)
 
-        r = Render(0, 0)
-        r.mesh = m
-        r.reverse = matrix
-        r.forward = matrix.inverse()
-        r.add_property("texture_wrap", (renpy.uguu.GL_REPEAT, renpy.uguu.GL_REPEAT))
+        if r is not None:
+            self.model_data.mesh_renders.append(r)
 
-        tex = renpy.display.im.render_for_texture(d, 0, 0, 0, 0)
-        r.blit(tex, (0, 0))
-
-        model_data.mesh_renders.append(r)
-
-loader = Loader()
+loader = AssetImporter()
 "The loader used to load in imported models."
 
 
-class ModelDisplayable(renpy.display.displayable.Displayable):
+class AIModel(renpy.display.displayable.Displayable):
     """
     A displayable that displays a model.
     """
@@ -230,19 +392,16 @@ class ModelDisplayable(renpy.display.displayable.Displayable):
     filename: str
     "The filename of the model to display."
 
-    shaders: tuple[str]
-    "The shaders to use to display the model."
-
-    def __init__(self, filename: str, shaders: tuple[str]):
+    def __init__(self, filename: str, callback):
         super().__init__()
 
         self.filename = filename
-        self.shaders = shaders
+        self.callback = callback
 
     def render(self, width, height, st, at):
 
         if self.filename not in cache:
-            loader.load(self.filename)
+            loader.load(self.filename, self.callback)
 
         model_data = cache[self.filename]
 
@@ -250,9 +409,6 @@ class ModelDisplayable(renpy.display.displayable.Displayable):
 
         for cr in model_data.mesh_renders:
             rv.blit(cr, (0, 0), focus=False, main=False)
-
-        for i in self.shaders:
-            rv.add_shader(i)
 
         rv.add_property("depth", True)
 

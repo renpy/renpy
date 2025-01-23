@@ -96,13 +96,28 @@ cdef extern from "assimp/mesh.h":
 cdef extern from "assimp/material.h":
 
     cdef enum aiTextureType:
+        aiTextureType_NONE
+        aiTextureType_DIFFUSE
+        aiTextureType_SPECULAR
+        aiTextureType_AMBIENT
+        aiTextureType_EMISSIVE
+        aiTextureType_HEIGHT
+        aiTextureType_NORMALS
+        aiTextureType_SHININESS
+        aiTextureType_OPACITY
+        aiTextureType_DISPLACEMENT
+        aiTextureType_LIGHTMAP
+        aiTextureType_REFLECTION
         aiTextureType_BASE_COLOR
+        aiTextureType_NORMAL_CAMERA
         aiTextureType_EMISSION_COLOR
         aiTextureType_METALNESS
         aiTextureType_DIFFUSE_ROUGHNESS
         aiTextureType_AMBIENT_OCCLUSION
-        aiTextureType_LIGHTMAP
-        aiTextureType_NORMALS
+        aiTextureType_UNKNOWN
+        aiTextureType_SHEEN
+        aiTextureType_CLEARCOAT
+        aiTextureType_TRANSMISSION
 
     cdef struct aiMaterial:
         unsigned int GetTextureCount(aiTextureType type)
