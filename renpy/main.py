@@ -399,7 +399,11 @@ def main():
         archives.sort()
 
         for archive in archives:
-            base = archive.stem
+            arc_relpath = archive.relative_to(dn)
+            base = arc_relpath.stem
+            if arc_relpath.parent != Path("."):
+                base = os.path.join(arc_relpath.parent, arc_relpath.stem)
+
             renpy.config.archives.append(base)
 
     renpy.config.archives.reverse()
