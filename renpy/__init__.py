@@ -223,6 +223,8 @@ backup_blacklist = {
     "renpy.test.testparser",
     "renpy.gl2",
     "renpycoverage",
+    "renpy.tokenizer",
+    "renpy.lexer",
     }
 
 type_blacklist = (

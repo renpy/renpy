@@ -778,11 +778,14 @@ def call_statement(l: Lexer, loc: tuple[str, int]):
         name = l.require(l.label_name_declare)
         rv.append(ast.Label(loc, name, [], None))
     else:
-        if renpy.scriptedit.lines and (loc in renpy.scriptedit.lines):
+        if line := renpy.scriptedit.lines.get(l.filename, {}).get(l.number):
             if expression:
-                renpy.add_from.report_missing("expression", renpy.lexer.original_filename, renpy.scriptedit.lines[loc].end)
-            else:
-                renpy.add_from.report_missing(target, renpy.lexer.original_filename, renpy.scriptedit.lines[loc].end)
+                target = "expression"
+
+            renpy.add_from.report_missing(
+                target,
+                line.filename,
+                line.number)
 
     rv.append(ast.Pass(loc))
 

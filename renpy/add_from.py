@@ -19,26 +19,23 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
-
-import collections
+from collections import defaultdict
+from pathlib import Path
 import renpy
 import os
 
 # A map from filename to position, target label pairs.
-missing = collections.defaultdict(list)
+missing = defaultdict[str, list[tuple[int, str]]](list)
 
 
-def report_missing(target, filename, position):
+def report_missing(target: str, filename: str, number: int):
     """
     Reports that the call statement ending at `position` in `filename`
     is missing a from clause.
     """
 
-    missing[filename].append((position, target))
+    missing[filename].append((number, target))
 
 
 # Labels that we've created while running add_from.
@@ -69,44 +66,43 @@ def generate_label(target):
     return label
 
 
-def process_file(fn):
+def process_file(fn: str, full_fn: str):
     """
     Adds missing from clauses to `fn`.
     """
 
-    if not os.path.exists(fn):
+    path = Path(full_fn)
+    if not path.exists():
+        return
+
+    if (lines := renpy.scriptedit.ensure_loaded(full_fn)) is None:
         return
 
     edits = missing[fn]
     edits.sort()
+    edits = iter(edits)
+    next_edit, target = next(edits)
 
-    with open(fn, "rb") as f:
-        data = f.read().decode("utf-8")
+    new_lines = []
+    for lineno, line in lines.items():
+        if lineno == next_edit:
+            code = f" from {generate_label(target)}"
+            full_text = line.with_added_code(code)
+        else:
+            full_text = line.full_text
 
-    # How much of the input has been consumed.
-    consumed = 0
+        new_lines.append(full_text)
 
-    # The output.
-    output = u""
+    new_path = path.with_suffix(f"{path.suffix}.new")
+    with new_path.open("w", encoding="utf-8") as f:
+        f.write("\ufeff")
+        f.writelines(new_lines)
 
-    for position, target in edits:
-        output += data[consumed:position]
-        consumed = position
+    bak_path = path.with_suffix(f"{path.suffix}.bak")
+    bak_path.unlink(missing_ok=True)
 
-        output += " from {}".format(generate_label(target))
-
-    output += data[consumed:]
-
-    with open(fn + ".new", "wb") as f:
-        f.write(output.encode("utf-8"))
-
-    try:
-        os.unlink(fn + ".bak")
-    except Exception:
-        pass
-
-    os.rename(fn, fn + ".bak")
-    os.rename(fn + ".new", fn)
+    path.rename(bak_path)
+    new_path.rename(path)
 
 
 def add_from():
@@ -114,8 +110,9 @@ def add_from():
     renpy.arguments.takes_no_arguments("Adds from clauses to call statements that are missing them.")
 
     for fn in missing:
-        if fn.startswith(renpy.config.gamedir):
-            process_file(fn)
+        full_fn = renpy.parser.unelide_filename(fn)
+        if full_fn.startswith(renpy.config.gamedir):
+            process_file(fn, full_fn)
 
     return False
 
