@@ -72,8 +72,9 @@ use.
     directory.
 
     This variable should not contain special characters like spaces,
-    colons, and semicolons. If not set, it defaults to :var:`build.name`
-    a dash, and :var:`config.version`.
+    colons, and semicolons. If not set, it defaults to :var:`build.name`,
+    a dash, and the version. The version is taken from :var:`build.version`,
+    if set, or :var:`config.version`.
 
 .. var:: build.executable_name = "..."
 
@@ -406,6 +407,14 @@ The following variables provide further control of the build process:
     If true, empty directories (including directories left empty by
     file archiving) will be removed from generated packages. If false,
     empty directories will be included.
+
+
+.. var:: build.game_only_update = False
+
+    If true, :var:`build.include_update` is enabled, and
+    the "Game-Only Update for Mobile" package becomes available.
+
+
 .. var:: build.include_i686 = True
 
     If true, files necessary to run on 32-bit x86 processors will be included
@@ -460,7 +469,7 @@ The following variables provide further control of the build process:
     updating using the earlier zsync-based updates, add "zsync' to the
     list.
 
-.. var:: build.game_only_update = False
+.. var:: build.version = None
 
-    If true, :var:`build.include_update` is enabled, and
-    the "Game-Only Update for Mobile" package becomes available.
+    Gives a version of the build used by the build process. If None, this defaults to config.version. The main use
+    of this is to allow config.version to have characters that are not valid in file or directory names.
