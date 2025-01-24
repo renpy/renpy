@@ -465,6 +465,12 @@ class MungeNodes(ast.NodeTransformer):
 
         return visit
 
+    def visit_Constant(self, node):
+        if isinstance(node.value, str) and "__" in node.value:
+            node.value = renpy.lexer.munged_string(self.prefix, node.value)
+
+        return node
+
     # stmt
     visit_FunctionDef = _munge_attribute("name")
     visit_AsyncFunctionDef = _munge_attribute("name")
