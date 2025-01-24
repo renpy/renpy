@@ -2412,11 +2412,18 @@ class NearRect(Container):
 
     `rect`
         The rectangle to place the child near.
+    
+    `focus`
+        Passed to `GetFocusRect`. The special name "tooltop" will retrieve the
+        rect of last displayable to set a tooltip. If present, overrides `rect`.
 
     `preferred_side`
         One of "left", "top", "right", "bottom" to prefer that position for
         the nearrect. If there is not room on one side, the opposite side is
         used. By default, the preferred side is "bottom".
+    
+    `prefer_top`
+        Deprecated. Equivalent to passing `preferred_side="top"`
 
     `invert_offsets`
         If True and there isn't enough space on the preferred side, multiply the
