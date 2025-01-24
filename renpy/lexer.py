@@ -449,7 +449,8 @@ class Lexer:
         # just make sure text is str, not Line.
         if "__" not in line:
             self._line = line
-            self.text = str(line)
+            # Strip ending \n.
+            self.text = str(line)[:-1]
             return
 
         # Otherwise we need to fix up the offsets text and offsets.
@@ -481,6 +482,8 @@ class Lexer:
             text_parts.append(token.string)
             tokens.append(token)
 
+        # Strip ending \n.
+        text_parts[-1] = text_parts[-1][:-1]
         text = "".join(text_parts)
         self._line = Line(
             text,
