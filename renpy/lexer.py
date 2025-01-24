@@ -30,6 +30,7 @@ import functools
 import renpy
 
 from renpy.tokenizer import (
+    Token,
     Line,
     TokenKind,
     Tokenizer,
@@ -292,6 +293,41 @@ class SubParse:
         else:
             return "<SubParse {}:{}>".format(self.block[0].filename, self.block[0].linenumber)
 
+
+def munged_string(prefix: str, string: str) -> str:
+    if renpy.config.munge_in_strings:
+
+        munge_regexp = re.compile(r'\b__(\w+)')
+
+        def munge_string(m: re.Match):
+
+            g1 = m.group(1)
+
+            if "__" in g1:
+                return m.group(0)
+
+            if g1.startswith("_"):
+                return m.group(0)
+
+            return prefix + m.group(1)
+
+    else:
+
+        munge_regexp = re.compile(r'(\.|\[+)__(\w+)')
+
+        def munge_string(m: re.Match):
+            brackets = m.group(1)
+
+            if (len(brackets) & 1) == 0:
+                return m.group(0)
+
+            if "__" in m.group(2):
+                return m.group(0)
+
+            return brackets + prefix + m.group(2)
+
+    return munge_regexp.sub(munge_string, string)
+
 type LegacyLexerBlock = list[tuple[str, int, str, LegacyLexerBlock]]
 
 class Lexer:
@@ -412,71 +448,57 @@ class Lexer:
     def __reduce__(self):
         raise TypeError("Can't pickle Lexer instance.")
 
-    @staticmethod
-    def _get_munged_string(filename: str, string: str) -> str:
-        if "__" not in string:
-            return string
-
-        prefix = munge_filename(filename)
-
-        if renpy.config.munge_in_strings:
-
-            munge_regexp = re.compile(r'\b__(\w+)')
-
-            def munge_string(m: re.Match):
-
-                g1 = m.group(1)
-
-                if "__" in g1:
-                    return m.group(0)
-
-                if g1.startswith("_"):
-                    return m.group(0)
-
-                return prefix + m.group(1)
-
-        else:
-
-            munge_regexp = re.compile(r'(\.|\[+)__(\w+)')
-
-            def munge_string(m: re.Match):
-                brackets = m.group(1)
-
-                if (len(brackets) & 1) == 0:
-                    return m.group(0)
-
-                if "__" in m.group(2):
-                    return m.group(0)
-
-                return brackets + prefix + m.group(2)
-
-        return munge_regexp.sub(munge_string, string)
-
     def _update_line(self, idx: int):
         self._line_index = idx
-        self._line = line = self._block[idx]
+        line = self._block[idx]
         self._token_index = 0
         self._pos = 0
 
-        text = self._get_munged_string(self.filename, line)
-        if line is text:
-            # No munging occurred, offsets are correct,
-            # just make sure text is str, not Line.
-            self.text = str(text)
+        # No munging needed, offsets are correct,
+        # just make sure text is str, not Line.
+        if "__" not in line:
+            self._line = line
+            self.text = str(line)
             return
 
-        # Вместо токенизации нужно проходится по всей строке и мунжить _токены_,
-        # но оставлять позиции токенов неизменными. Если токен мунжится, можно
-        # вычислить байас оффсета для следующих токенов.
-        # Также в питон нужно передавать не мунженный текст и делать замену
-        # на уровне AST а не исходного кода. Так в трейсбеках будет правильно
-        # отображаться исходный код с позициями токенов.
+        # Otherwise we need to fix up the offsets text and offsets.
+        # But keep physical locations the same, because munging doesn't
+        # change physical file.
+        filename = line.filename
+        prefix = munge_filename(filename)
+        text_parts = []
+        tokens = []
+        offsets = []
+        offset_bias = 0
+        pos = 0
+        for token, offset in zip(line.tokens, line.offsets):
+            text_parts.append(line[pos:offset])
+            offsets.append(offset + offset_bias)
+            pos = offset + len(token.string)
 
-        # Otherwise we need to fix up the offsets, retokenize munged text.
-        # It should return the same tokens, but with correct offsets.
-        tok = Tokenizer.from_string(text, line.filename)
-        self._line = next(tok.logical_lines())
-        self._line.indent_size = line.indent_size
+            if "__" in token.string:
+                token_len = len(token.string)
+                token = Token(
+                    token.kind,
+                    token.exact_kind,
+                    munged_string(prefix, token.string),
+                    filename,
+                    token.physical_location,
+                )
+                offset_bias += len(token.string) - token_len
+
+            text_parts.append(token.string)
+            tokens.append(token)
+
+        text = "".join(text_parts)
+        self._line = Line(
+            text,
+            tuple(tokens),
+            tuple(offsets),
+            filename,
+            line.physical_location,
+            line.indent_size,
+        )
         self.text = text
 
     @property
@@ -903,7 +925,7 @@ class Lexer:
 
         self._advance_token()
 
-        s = self._get_munged_string(tok.filename, tok.string)
+        s = tok.string
 
         # Strip mods and quotes.
         for i, c in enumerate(s):
@@ -943,7 +965,7 @@ class Lexer:
 
         self._advance_token()
 
-        s = self._get_munged_string(tok.filename, tok.string)
+        s = tok.string
 
         # Strip mods and quotes.
         for i, c in enumerate(s):
@@ -1073,7 +1095,7 @@ class Lexer:
 
         if tok.exact_kind is IDENTIFIER:
             self._advance_token()
-            return self._get_munged_string(tok.filename, tok.string)
+            return tok.string
 
         # Constants are names in old parser.
         if tok.exact_kind is KEYWORD:
@@ -1118,7 +1140,7 @@ class Lexer:
             return None
 
         self._advance_token()
-        return self._get_munged_string(tok.filename, tok.string)
+        return tok.string
 
     def set_global_label(self, label):
         """
@@ -1281,10 +1303,6 @@ class Lexer:
         """
 
         start = self.pos
-
-        if self.filename.endswith("inventory/rcode.rpy"):
-            print(repr(self._line))
-            print(repr(self.text[start:]))
 
         if not self._delimited_python(COLON):
             self.error("expected python_expression")
@@ -1669,8 +1687,9 @@ class Lexer:
             elif delta := line.indent_size - base_indent:
                 result.append(" " * delta)
 
-            result.append(self._get_munged_string(
-                line.filename, line))
+            # Don't munge code here, so Python assign correct
+            # col_offsets for the code.
+            result.append(line)
 
         return "".join(result)
 
