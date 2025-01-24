@@ -179,9 +179,12 @@ TOKEN_VALUE_TO_OP = \
 class PhysicalLocation(NamedTuple):
     """
     Represents a physical location in a file.
+    `filename` is elided string of source filename.
     Column offset are 0-indexed and valid for source
     code that has newlines translated to '\n'.
     """
+
+    filename: str
     start_lineno: int
     start_col_offset: int
     end_lineno: int
@@ -209,14 +212,9 @@ class Token(NamedTuple):
     String value of the token.
     """
 
-    filename: str
-    """
-    Elided filename where token is located.
-    """
-
     physical_location: PhysicalLocation
     """
-    Physical location of the token in the file.
+    Physical location of the token.
     """
 
     def __reduce__(self):
@@ -227,8 +225,8 @@ class Token(NamedTuple):
         if len(string) > 30:
             string = string[:15] + "..." + string[-15:]
 
-        location = " {}:{}-{}:{}".format(*self.physical_location)
-        return f"<Token {self.exact_kind!r} {string} in {self.filename}{location}>"
+        location = "{} {}:{}-{}:{}".format(*self.physical_location)
+        return f"<Token {self.exact_kind!r} {string} in {location}>"
 
 
 class Line(str):
@@ -241,7 +239,6 @@ class Line(str):
     __slots__ = [
         'tokens',
         'offsets',
-        'filename',
         'physical_location',
         'indent_size',
     ]
@@ -254,11 +251,6 @@ class Line(str):
     offsets: tuple[int, ...]
     """
     Tuple of offsets of tokens in line.
-    """
-
-    filename: str
-    """
-    Elided filename where line is located.
     """
 
     physical_location: PhysicalLocation
@@ -277,7 +269,6 @@ class Line(str):
         text: str,
         tokens: tuple[Token, ...],
         offsets: tuple[int, ...],
-        filename: str,
         physical_location: PhysicalLocation,
         indent_depth: int,
     ):
@@ -285,7 +276,6 @@ class Line(str):
 
         self.tokens = tuple(tokens)
         self.offsets = tuple(offsets)
-        self.filename = filename
         self.physical_location = physical_location
         self.indent_size = indent_depth
         return self
@@ -294,12 +284,11 @@ class Line(str):
         raise Exception("Can't pickle Line instance.")
 
     def __repr__(self):
-        location = "{}:{}-{}:{}".format(*self.physical_location)
-        rv = [f"<Line {self.filename} {location}:"]
+        location = "{} {}:{}-{}:{}".format(*self.physical_location)
+        rv = [f"Line {location}:"]
         for token in self.tokens:
             rv.append(f"    {token.exact_kind} {token.string!r}")
 
-        rv.append(">")
         return "\n".join(rv)
 
 
@@ -559,6 +548,7 @@ class Tokenizer:
                 string,
             ) in tok:
                 location = PhysicalLocation(
+                    filename,
                     tok.start_lineno + lineno,
                     tok.start_col_offset + self.col_offset,
                     tok.lineno + lineno,
@@ -569,7 +559,6 @@ class Tokenizer:
                     kind,
                     exact_kind,
                     string,
-                    filename,
                     location)
 
     def logical_lines(self) -> Iterator[Line]:
@@ -643,6 +632,7 @@ class Tokenizer:
                     text = tok.line[line_indent:]
 
                 location = PhysicalLocation(
+                    filename,
                     start_location[0],
                     start_location[1],
                     token.physical_location.end_lineno,
@@ -653,7 +643,6 @@ class Tokenizer:
                     text,
                     tuple(tokens),
                     tuple(positions),
-                    filename,
                     location,
                     line_indent,
                 )

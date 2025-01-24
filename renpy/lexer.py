@@ -456,8 +456,7 @@ class Lexer:
         # Otherwise we need to fix up the offsets text and offsets.
         # But keep physical locations the same, because munging doesn't
         # change physical file.
-        filename = line.filename
-        prefix = munge_filename(filename)
+        prefix = munge_filename(line.physical_location.filename)
         text_parts = []
         tokens = []
         offsets = []
@@ -474,7 +473,6 @@ class Lexer:
                     token.kind,
                     token.exact_kind,
                     munged_string(prefix, token.string),
-                    filename,
                     token.physical_location,
                 )
                 offset_bias += len(token.string) - token_len
@@ -489,7 +487,6 @@ class Lexer:
             text,
             tuple(tokens),
             tuple(offsets),
-            filename,
             line.physical_location,
             line.indent_size,
         )
@@ -568,7 +565,7 @@ class Lexer:
         if self._line is None:
             return ""
 
-        return self._line.filename
+        return self._line.physical_location.filename
 
     @property
     def number(self) -> int:
