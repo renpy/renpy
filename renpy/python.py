@@ -480,7 +480,8 @@ def find_starred_match_patterns(node):
 
 
 class WrapNode(ast.NodeTransformer):
-
+    def __init__(self):
+        self.in_function_def = False
 
     def wrap_generator(self, node):
         """
@@ -776,34 +777,65 @@ class WrapNode(ast.NodeTransformer):
         node.cases = [self.wrap_match_case(i) for i in node.cases]
         return node
 
+    def visit_FunctionDef(self, node):
+        old = self.in_function_def
+
+        self.in_function_def = True
+        rv = self.generic_visit(node)
+        self.in_function_def = old
+
+        return rv
+
     def visit_ImportFrom(self, node):
+        if self.in_function_def:
+            return node
+
         namespace = node.module
+        if namespace.startswith("store"):
+            namespace = namespace[6:]
 
-        for alias in node.names:
-            name = alias.asname or alias.name
-            fullname = f"{namespace}.{name}"
+        names = [alias.asname or alias.name for alias in node.names]
+        
+        if not names:
+            return node
+        
+        rv = [ node ]
+        
+        args = [ ]
 
-            if fullname.startswith("store."):
-                fullname = fullname[6:]
-                        
-            if fullname not in renpy.pyanalysis.not_constants:
-                STORE_NAME_THIS_IMPORT_IS_FROM = "???" # TODO get the module name
+        args.append(
+            ast.Constant(namespace)
+        )
 
-                after_import_fullname = f"{STORE_NAME_THIS_IMPORT_IS_FROM}.{name}"
+        args.append(
+            ast.Name(
+                id="__name__",
+                ctx=ast.Load()
+            )
+        )
 
-                # renpy.pure and renpy.const
-                # aren't actually called yet
-                # since we're jut parsing the tree
-                # TODO
-                if fullname in renpy.pyanalysis.pure_functions:
-                    renpy.pyanalysis.pure(after_import_fullname)
-                    pass
-
-                elif fullname in renpy.pyanalysis.constants:
-                    renpy.pyanalysis.const(after_import_fullname)
-                    pass
-
-        return node
+        args.extend([
+            ast.Constant(name)
+            for name in names
+        ])
+        
+        rv.append(
+            ast.Expr(
+                value=ast.Call(
+                    func=ast.Attribute(
+                        value=ast.Attribute(
+                            value=ast.Name(id="renpy", ctx=ast.Load()),
+                            attr="pyanalysis",
+                            ctx=ast.Load()),
+                        attr="import_from",
+                        ctx=ast.Load()),
+                    args=args,
+                    keywords=[]
+                )
+            )
+        )
+            
+        return rv
 
 wrap_node = WrapNode()
 
