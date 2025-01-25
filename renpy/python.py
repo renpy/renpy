@@ -776,6 +776,34 @@ class WrapNode(ast.NodeTransformer):
         node.cases = [self.wrap_match_case(i) for i in node.cases]
         return node
 
+    def visit_ImportFrom(self, node):
+        namespace = node.module
+
+        for alias in node.names:
+            name = alias.asname or alias.name
+            fullname = f"{namespace}.{name}"
+
+            if fullname.startswith("store."):
+                fullname = fullname[6:]
+                        
+            if fullname not in renpy.pyanalysis.not_constants:
+                STORE_NAME_THIS_IMPORT_IS_FROM = "???" # TODO get the module name
+
+                after_import_fullname = f"{STORE_NAME_THIS_IMPORT_IS_FROM}.{name}"
+
+                # renpy.pure and renpy.const
+                # aren't actually called yet
+                # since we're jut parsing the tree
+                # TODO
+                if fullname in renpy.pyanalysis.pure_functions:
+                    renpy.pyanalysis.pure(after_import_fullname)
+                    pass
+
+                elif fullname in renpy.pyanalysis.constants:
+                    renpy.pyanalysis.const(after_import_fullname)
+                    pass
+
+        return node
 
 wrap_node = WrapNode()
 
