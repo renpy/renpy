@@ -806,10 +806,12 @@ class WrapNode(ast.NodeTransformer):
         
         args = [ ]
 
+        # name of the module we're importing from
         args.append(
             ast.Constant(namespace)
         )
 
+        # name of the module we're importing into
         args.append(
             ast.Name(
                 id="__name__",
@@ -817,21 +819,27 @@ class WrapNode(ast.NodeTransformer):
             )
         )
 
+        # what we are importing
         args.extend([
             ast.Constant(name)
             for name in names
         ])
+
+        renpy_pyanalysis_import_from = \
+        ast.Attribute(
+            value=ast.Attribute(
+                value=ast.Name(id="renpy", ctx=ast.Load()),
+                attr="pyanalysis",
+                ctx=ast.Load()
+            ),
+            attr="import_from",
+            ctx=ast.Load()
+        )
         
         rv.append(
             ast.Expr(
                 value=ast.Call(
-                    func=ast.Attribute(
-                        value=ast.Attribute(
-                            value=ast.Name(id="renpy", ctx=ast.Load()),
-                            attr="pyanalysis",
-                            ctx=ast.Load()),
-                        attr="import_from",
-                        ctx=ast.Load()),
+                    func=renpy_pyanalysis_import_from,
                     args=args,
                     keywords=[]
                 )
