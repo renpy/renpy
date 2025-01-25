@@ -168,6 +168,29 @@ def pure(fn):
 
     return fn
 
+def import_from(from_module, in_module, *names):
+    """
+    This function is called after each `from from_module import name` statement,
+    to make sure that if `from_module.name` is a const / pure value, `in_module.name` is marked const / pure as well.
+    """
+    if from_module.startswith("store."):
+        from_module = from_module[6:]
+    
+    if in_module.startswith("store."):
+        in_module = in_module[6:]
+    
+    for name in names:
+        fullname = f"{from_module}.{name}"
+
+        if fullname in not_constants:
+            continue
+
+        fullname_after_import = f"{in_module}.{name}"
+
+        if fullname in pure_functions:
+            pure(fullname_after_import)
+        elif fullname in constants:
+            const(fullname_after_import)
 
 class Control(object):
     """
