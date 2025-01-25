@@ -481,7 +481,8 @@ def find_starred_match_patterns(node):
 
 class WrapNode(ast.NodeTransformer):
     def __init__(self):
-        self.in_function_def = False
+        # Do we call `renpy.pyanalysis.import_from` when importing stuff?
+        self.call_import_from = True
 
     def wrap_generator(self, node):
         """
@@ -696,7 +697,10 @@ class WrapNode(ast.NodeTransformer):
         return self.wrap_starred_with(node)
 
     def visit_ClassDef(self, node: ast.ClassDef):
-        node = self.generic_visit(node)  # type: ignore
+        old = self.call_import_from
+        self.call_import_from = False
+        node = self.generic_visit(node) # type: ignore
+        self.call_import_from = old
 
         # This will force the class to inherit from RevertableObject.
         if not node.bases:
@@ -778,16 +782,15 @@ class WrapNode(ast.NodeTransformer):
         return node
 
     def visit_FunctionDef(self, node):
-        old = self.in_function_def
+        old = self.call_import_from
+        self.call_import_from = False
+        node = self.generic_visit(node)
+        self.call_import_from = old
 
-        self.in_function_def = True
-        rv = self.generic_visit(node)
-        self.in_function_def = old
-
-        return rv
+        return node
 
     def visit_ImportFrom(self, node):
-        if self.in_function_def:
+        if not self.call_import_from:
             return node
 
         namespace = node.module
