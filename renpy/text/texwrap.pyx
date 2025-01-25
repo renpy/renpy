@@ -119,7 +119,7 @@ cdef class WordWrapper(object):
         scores[0] = 0.0
         splits[0] = 0
 
-        for j in range(1, self.len_words):
+        for j in range(1, self.len_words + 1):
 
             j_x = words[j-1].end_x
 
