@@ -343,8 +343,25 @@ class Script(object):
 
         self.common_script_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
 
-        has_libs = renpy.loader.loadable("libs/libs.txt")
-        has_mods = renpy.loader.loadable("mods/mods.txt")
+        try:
+            with renpy.loader.load("libs/libs.txt") as f:
+                libs_order_by_filename = [s.decode("utf-8") for s in f.readlines()]
+                has_libs = True
+        except Exception:
+            has_libs = False
+            libs_order_by_filename = [ ]
+        
+        libs_order_by_filename.append("")
+
+        try:
+            with renpy.loader.load("mods/mods.txt") as f:
+                mods_order_by_filename = [s.decode("utf-8") for s in f.readlines()]
+                has_mods = True
+        except Exception:
+            has_mods = False
+            mods_order_by_filename = [ ]
+        
+        mods_order_by_filename.append("")
 
         def game_key(item):
             fn = item[0] or ""
@@ -353,13 +370,20 @@ class Script(object):
             priority = 1
             sort_key = fn
 
-            if has_libs and fn.startswith("libs/"):
-                priority = 0
-                sort_key = fn.rpartition("/")[2]
+            path, _, filename = fn.rpartition("/")
+            first_dir_name, *sub_dir_names = path.split("/")
 
-            if has_mods and fn.startswith("mods/"):
+            if has_libs and first_dir_name == "libs":
+                priority = 0
+                
+                if sub_dir_names[0] in libs_order_by_filename:
+                    sort_key = filename
+
+            elif has_mods and first_dir_name == "mods":
                 priority = 2
-                sort_key = fn.rpartition("/")[2]
+
+                if sub_dir_names[0] in mods_order_by_filename:
+                    sort_key = filename
 
             return (priority, sort_key, fn, dn)
 
