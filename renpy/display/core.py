@@ -1268,6 +1268,7 @@ class Interface(object):
         if renpy.display.draw is not None:
             renpy.display.draw.kill_textures()
 
+        renpy.gl2.modelloader.free_memory()
         renpy.display.im.cache.clear()
         renpy.display.render.free_memory()
         renpy.text.text.layout_cache_clear()

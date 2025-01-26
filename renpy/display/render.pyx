@@ -508,8 +508,11 @@ def mark_sweep():
     if screen_render is not None:
         worklist.append(screen_render)
 
-    cache_renders = renpy.display.im.cache.get_renders()
-    worklist.extend(cache_renders)
+    worklist.extend(renpy.display.im.cache.get_renders())
+    worklist.extend(renpy.gl2.modelloader.get_renders())
+
+    for r in worklist:
+        r.mark = True
 
     i = 0
 
@@ -522,12 +525,6 @@ def mark_sweep():
                 worklist.append(j)
 
         i += 1
-
-    if screen_render is not None:
-        screen_render.mark = True
-
-    for r in cache_renders:
-        r.mark = True
 
     if renpy.emscripten:
         # Do not kill Renders that cache the last video frame

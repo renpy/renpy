@@ -107,6 +107,15 @@ cache : dict[str, AIModelData] = { }
 "Caches the models that have been loaded."
 
 
+def get_renders():
+    for i in cache.values():
+        for j in i.mesh_renders:
+            yield j
+
+def free_memory():
+    cache.clear()
+
+
 class AIMeshInfo:
     """
     This stores information that's passed into the mesh callback.
