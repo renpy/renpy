@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from assimp cimport (
+from assimpapi cimport (
     Importer, aiProcessPreset_TargetRealtime_Quality, aiProcess_ConvertToLeftHanded, aiProcess_FlipUVs, aiScene,
     aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace, aiNode, aiTexture,
     aiTextureType,
@@ -50,6 +50,8 @@ from assimp cimport (
 
     aiString, aiMaterial
 )
+
+from typing import Callable, Iterable
 
 import renpy
 
@@ -87,7 +89,7 @@ TEXTURE_TYPES = {
 }
 
 
-class AIModelData:
+class ModelData:
     """
     Represents the information about a model after it's been loaded.
     """
@@ -103,7 +105,7 @@ class AIModelData:
         self.mesh_renders = [ ]
 
 
-cache : dict[str, AIModelData] = { }
+cache : dict[str, ModelData] = { }
 "Caches the models that have been loaded."
 
 
@@ -116,7 +118,7 @@ def free_memory():
     cache.clear()
 
 
-class AIMeshInfo:
+class MeshInfo:
     """
     This stores information that's passed into the mesh callback.
     """
@@ -174,7 +176,10 @@ class AIMeshInfo:
         return renpy.display.im.render_for_texture(unoptimized_texture(d), 0, 0, 0, 0)
 
 
-class AIMeshCallback:
+MeshCallbackType = Callable[[MeshInfo], Render]
+
+
+class MeshCallback:
     """
     A callback that's called for each mesh in the model.
     """
@@ -190,7 +195,7 @@ class AIMeshCallback:
         self.shaders = shaders
 
 
-    def __call__(self, mesh: AIMeshInfo) -> None:
+    def __call__(self, mesh: MeshInfo) -> None:
         """
         Called for each mesh in the model.
         """
@@ -212,7 +217,7 @@ class AIMeshCallback:
 
 
 
-cdef class AssetImporter:
+cdef class Loader:
 
     cdef public str dirname
     "The directory that the asset was loaded from."
@@ -247,7 +252,7 @@ cdef class AssetImporter:
 
         try:
 
-            self.model_data = AIModelData()
+            self.model_data = ModelData()
             cache[filename] = self.model_data
 
             self.load_textures()
@@ -377,7 +382,7 @@ cdef class AssetImporter:
 
             triangle += 3
 
-        info = AIMeshInfo()
+        info = MeshInfo()
         info._importer = self
         info._material_index = mesh.mMaterialIndex
         info.mesh = m
@@ -389,11 +394,10 @@ cdef class AssetImporter:
         if r is not None:
             self.model_data.mesh_renders.append(r)
 
-loader = AssetImporter()
+loader = Loader()
 "The loader used to load in imported models."
 
-
-class AIModel(renpy.display.displayable.Displayable):
+class AssimpModel(renpy.display.displayable.Displayable):
     """
     A displayable that displays a model.
     """
@@ -401,8 +405,22 @@ class AIModel(renpy.display.displayable.Displayable):
     filename: str
     "The filename of the model to display."
 
-    def __init__(self, filename: str, callback):
+    def __init__(
+        self,
+        filename: str,
+        callback: MeshCallbackType|None = None,
+        textures: Iterable[str] = ("diffuse",),
+        shader: str|tuple[str] = "renpy.texture"):
+
         super().__init__()
+
+        if isinstance(shader, str):
+            shaders = (shader, )
+        else:
+            shaders = shader
+
+        if callback is None:
+            callback = MeshCallback(textures=textures, shaders=shaders)
 
         self.filename = filename
         self.callback = callback

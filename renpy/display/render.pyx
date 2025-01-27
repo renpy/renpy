@@ -509,7 +509,7 @@ def mark_sweep():
         worklist.append(screen_render)
 
     worklist.extend(renpy.display.im.cache.get_renders())
-    worklist.extend(renpy.gl2.modelloader.get_renders())
+    worklist.extend(renpy.gl2.assimp.get_renders())
 
     for r in worklist:
         r.mark = True

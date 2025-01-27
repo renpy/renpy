@@ -7,6 +7,7 @@ import renpy
 import typing
 
 if typing.TYPE_CHECKING:
+    from . import assimp as assimp
     from . import gl2debug as gl2debug
     from . import gl2draw as gl2draw
     from . import gl2functions as gl2functions
