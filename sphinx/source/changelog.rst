@@ -15,10 +15,11 @@ Requirement and Dependency Changes
 
 Ren'Py now requires Windows 10 or later to run. This means that it will no longer run on Windows 7, 8, or 8.1.
 
+Ren'Py now targets Ubuntu 20.04. This also means it targers the "soldier" version of the Steam Linux Runtime.
+
 Ren'Py is no longer built for 32-bit ARM Linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
 Ren'Py is still being built for 32-bit ARM Android. Ren'Py will now prefer the gles2 renderer on ARM Linux devices,
 such as the Raspberry Pi.
-
 
 The Android version of Ren'Py is now being built with 16KB pages, for future Android devices that will
 require 16 KB page support.
@@ -44,7 +45,7 @@ when the game is created. The mods directory can be created manually if a creato
 The goal of this change is to make it easier to distribute third-party libraries and mods. Instead of needing to be
 merged with the player's script, a library can be placed under game/libs, and will provide full functionality there.
 
-`.rpe` and `.rpe.py` files are also searched in the libs directory. 
+`.rpe` and `.rpe.py` files are also searched in the libs directory.
 
 Features
 --------
