@@ -238,7 +238,7 @@ def interpolate(t, a, b, typ):
 
     # Recurse into tuples.
     elif isinstance(b, tuple):
-        if a is None:
+        if not isinstance(a, tuple):
             a = [ None ] * len(b)
 
         if not isinstance(typ, tuple):
