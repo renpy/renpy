@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -967,10 +967,23 @@ class UseParser(Parser):
 
         args = renpy.parser.parse_arguments(l)
 
-        if l.keyword('id'):
-            id_expr = l.simple_expression()
-        else:
-            id_expr = None
+        id_expr = None
+        variable = None
+
+        while True:
+
+            if l.keyword('id'):
+                if id_expr is not None:
+                    l.error("The id keyword may only appear once in a use statement.")
+                id_expr = l.simple_expression()
+
+            elif l.keyword('as'):
+                if variable is not None:
+                    l.error("The as keyword may only appear once in a use statement.")
+                variable = l.require(l.word)
+
+            else:
+                break
 
         if l.match(':'):
             l.expect_eol()
@@ -985,7 +998,7 @@ class UseParser(Parser):
 
             block = None
 
-        return slast.SLUse(loc, target, args, id_expr, block)
+        return slast.SLUse(loc, target, args, id_expr, block, variable)
 
 
 UseParser("use")
@@ -1060,6 +1073,8 @@ class CustomParser(Parser):
         else:
             self.screen = name
 
+        self.variable = True
+
     def parse(self, loc, l, parent, keyword):
 
         arguments = [ ]
@@ -1082,7 +1097,10 @@ class CustomParser(Parser):
             if not block.keyword_exist("arguments"):
                 l.error("{} statement expects {} positional arguments, got {}.".format(self.name, len(self.positional), len(arguments)))
 
-        return slast.SLCustomUse(loc, self.screen, arguments, block)
+        variable = block.variable
+        block.variable = None
+
+        return slast.SLCustomUse(loc, self.screen, arguments, block, variable)
 
 
 class ScreenParser(Parser):

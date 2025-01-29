@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1200,13 +1200,14 @@ def ramp(start, end):
     rv = ramp_cache.get((start, end), None)
     if rv is None:
 
-        chars = [ ]
+        chars: list[int] = [ ]
 
         for i in range(0, 256):
             i = i / 255.0
-            chars.append(bchr(int(end * i + start * (1.0 - i))))
+            i = end * i + start * (1.0 - i)
+            chars.append(int(i))
 
-        rv = b"".join(chars)
+        rv = bytes(chars)
         ramp_cache[start, end] = rv
 
     return rv
@@ -1958,6 +1959,29 @@ class AlphaMask(ImageBase):
         return self.base.predict_files() + self.mask.predict_files()
 
 
+class Null(ImageBase):
+    """
+    :undocumented:
+
+    An image manipulator that returns a 1x1 transparent surface. This can be used as a missing texture,
+    if needed.
+    """
+
+    def __init__(self, **properties):
+        super(Null, self).__init__(**properties)
+
+    def get_hash(self):
+        return 42
+
+    def load(self):
+        rv = renpy.display.pgrender.surface((1, 1), True)
+        rv.fill((0, 0, 0, 0))
+        return rv
+
+    def predict_files(self):
+        return [ ]
+
+
 class UnoptimizedTexture(ImageBase):
     """
     :undocumented:
@@ -2024,7 +2048,7 @@ def image(arg, loose=False, **properties):
     if isinstance(arg, ImageBase):
         return arg
 
-    elif isinstance(arg, basestring):
+    elif isinstance(arg, str):
         return Image(arg, **properties)
 
     elif isinstance(arg, renpy.display.image.ImageReference):

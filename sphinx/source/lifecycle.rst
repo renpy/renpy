@@ -18,7 +18,20 @@ Script Parsing Phase
 --------------------
 
 To read the game's code, Ren'Py reads each of the game's ``.rpy`` (and ``_ren.py``) files one by
-one, in the unicode order of their filepaths. That's the "parsing" phase, or "early" phase.
+one. That's the "parsing" phase, or "early" phase. The order that files are read in is:
+
+1. Files inside :file`renpy/common` are loaded using  using the full path, in unicode order.
+
+2. Only if :file:`game/libs/libs.txt` exists, files in game/libs are loaded using the filename only,
+   in unicode order. (In this order, :file:`game/libs/plants/aloe.rpy` will load before :file:`game/libs/animals/zebra.rpy`.)
+
+3. Files in :file:`game` are loaded using the full path, in unicode order. (In this order,
+   :file:`game/animals/zebra.rpy` will load before :file:`game/plants/aloe.rpy`.)
+
+4. Only if :file:`game/mods/mods.txt` exists, files in game/mods are loaded using the filename only,
+   in unicode order. (In this order, :file:`game/mods/plants/aloe.rpy` will load before :file:`game/mods/animals/zebra.rpy`.)
+
+The precise order of file loading mostly affects :doc:`cds`.
 
 The first creator-written code being executed is what's written in ``python early`` blocks. These
 are executed after the file they're in has been read and parsed, but before the next file gets
@@ -37,9 +50,13 @@ Init Phase
 After parsing/early phase, the "init" phase starts. Several statements are executed at that time,
 including the :ref:`init-python-statement`, the :ref:`define-statement`, the
 :ref:`transform-statement`, the :ref:`image-statement`, the :ref:`screen-statement`, and the
-:doc:`style <style>` statement. The init phase is divided in successive epochs, or init priorities,
-from -999 to 999. Contrary to what the term may imply, epochs of lower priority are executed before
-epochs of higher priority.
+:doc:`style <style>` statement.
+
+The init phase is divided in successive epochs, or init priorities.
+Contrary to what the term may imply, epochs of lower priority are executed before
+epochs of higher priority. It is suggested that games use init priorities of -99 to 99.
+Libraries and mods can use from -999 to -100 and 100 to 999. Init priorities outside of the
+range -999 to 999 are reserved for Ren'Py's internal use.
 
 .. image define default transform (init) screen (testcase) (translation) style
 

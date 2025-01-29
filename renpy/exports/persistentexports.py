@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -35,7 +35,14 @@ def seen_label(label):
     system, and false otherwise. This can be used to unlock scene galleries, for
     example.
     """
-    return label in renpy.game.persistent._seen_ever # type: ignore
+
+    if label in renpy.game.persistent._seen_ever:
+        return True
+
+    if renpy.astsupport.hash64(label) in renpy.game.persistent._seen_ever:
+        return True
+
+    return False
 
 
 def mark_label_seen(label):
@@ -45,7 +52,13 @@ def mark_label_seen(label):
     Marks the named label as if it has been already executed on the current user's
     system.
     """
-    renpy.game.persistent._seen_ever[str(label)] = True # type: ignore
+
+    if renpy.config.hash_seen:
+        key = renpy.astsupport.hash64(label)
+    else:
+        key = label
+
+    renpy.game.persistent._seen_ever[key] = True # type: ignore
 
 
 def mark_label_unseen(label):
@@ -55,8 +68,9 @@ def mark_label_unseen(label):
     Marks the named label as if it has not been executed on the current user's
     system yet.
     """
-    if label in renpy.game.persistent._seen_ever: # type: ignore
-        del renpy.game.persistent._seen_ever[label] # type: ignore
+
+    renpy.game.persistent._seen_ever.pop(label, None)
+    renpy.game.persistent._seen_ever.pop(renpy.astsupport.hash64(label), None)
 
 
 def seen_audio(filename):
@@ -137,6 +151,60 @@ def mark_image_unseen(name):
 
     if name in renpy.game.persistent._seen_images: # type: ignore
         del renpy.game.persistent._seen_images[name] # type: ignore
+
+
+def seen_translation(tlid : str) -> bool:
+    """
+    :doc: translation
+
+    Returns True if the translation with the given tlid has been seen at least once.
+
+    `tlid`
+        A string giving the translation id.
+    """
+
+    hashed_tlid = renpy.astsupport.hash64(tlid)
+
+    if tlid in renpy.game.persistent._seen_translates:
+        return True
+
+    if hashed_tlid in renpy.game.persistent._seen_translates:
+        return True
+
+    return False
+
+def mark_translation_seen(tlid : str) -> None:
+    """
+    :doc: translation
+
+    Marks the translation with the given tlid as seen.\
+
+    `tlid`
+        A string giving the translation id.
+    """
+
+    hashed_tlid = renpy.astsupport.hash64(tlid)
+
+    if renpy.config.hash_seen:
+        renpy.game.persistent._seen_translates.add(hashed_tlid)
+    else:
+        renpy.game.persistent._seen_translates.add(tlid)
+
+
+def mark_translation_unseen(tlid : str) -> None:
+    """
+    :doc: translation
+
+    Marks the translation with the given tlid as not seen.
+
+    `tlid`
+        A string giving the translation id.
+    """
+
+    hashed_tlid = renpy.astsupport.hash64(tlid)
+
+    renpy.game.persistent._seen_translates.discard(hashed_tlid)
+    renpy.game.persistent._seen_translates.discard(tlid)
 
 
 def save_persistent():

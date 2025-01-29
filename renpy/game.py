@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -64,14 +64,14 @@ exception_info = ''
 style = None
 
 # The set of statements we've seen in this session.
-seen_session = { }
+seen_session: dict[Any, bool] = { }
 
 # The number of entries in persistent._seen_translates that are also in
 # the current game.
-seen_translates_count = 0
+seen_translates_count: int = 0
 
 # The number of new translates we've seen today.
-new_translates_count = 0
+new_translates_count: int = 0
 
 # True if we're in the first interaction after a rollback or rollforward.
 after_rollback = False

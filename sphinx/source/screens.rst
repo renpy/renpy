@@ -1126,9 +1126,23 @@ Nearrect takes the following properties:
     Passing "tooltip" to this uses the location of the last displayable that
     was focused while displaying a tooltip.
 
+    If present, overrides `rect`
+
+.. screen-property:: preferred_side
+    
+    One of ``"left"``, ``"top"``, ``"right"``, ``"bottom"`` to prefer that
+    position for the nearrect. If there is not room on one side, the opposite
+    side is used. By default, the preferred side is "bottom".
+
 .. screen-property:: prefer_top
 
-    If given, positioning the child above the focus rect is preferred.
+    Deprecated. Equivalent to ``preferred_side "top"``
+
+.. screen-property:: invert_offsets
+        
+    If True and there isn't enough space on the preferred side, multiply
+    xoffset and yoffset by -1 since the child will be on the opposite side of
+    the rectangle. False by default.
 
 It also takes:
 
@@ -1136,21 +1150,26 @@ It also takes:
 * :ref:`position-style-properties`
 
 
-Nearrect differs from the other layouts in that it positions its child near
-the given rectangle, rather than inside it. The child is first rendered with
-the full width available, and the maximum of the height above and height below
-the rectangle. The y position is then computed as followed.
+Nearrect differs from the other layouts in that it positions its child near the
+given rectangle, rather than inside it. For a `preferred_side` of ``"top"`` or
+``"bottom"`` (resp. ``"left"``, ``"right"``), the child is first rendered with
+the full width (resp. height) available, and the maximum of the height
+(resp. width) above and below the rectangle. The y position (resp. x position)
+is then computed as followed.
 
-* If the child will fit above the rectangle and `prefer_top` is given, the child
-  is positioned directly above the rectangle.
-* Otherwise, if the child can fit below the rectangle, it's positioned directly
-  below the rectangle.
-* Otherwise, the child is positioned directly above the rectangle.
+* If the child will fit on the `preferred_side` of the rectangle, the child is
+  positioned directly adjacent to the rectangle.
+* Otherwise, if the child can fit opposite the `preferred_side` of the
+  rectangle, it's positioned there.
+* Otherwise, the child is positioned directly adjacent to the rectangles's
+  `preferred_side`.
 
-The x positioning is computed using the normal rules, using the :propref:`xpos`
-and :propref:`xanchor` properties of the child, and properties that set them,
-such as :propref:`xalign`. The pos properties are relative to the x coordinate
-of the rectangle, and in the case of a floating point number, the width.
+The x positioning (resp. y position) is computed using the normal rules, using
+the :propref:`xpos` and :propref:`xanchor` properties (resp. :propref:`ypos`,
+:propref:`yanchor`) of the child, and properties that set them, such as
+:propref:`xalign`. The pos properties are relative to the x coordinate
+(resp. y coordinate) of the rectangle, and in the case of a floating point
+number, the width (resp. height).
 
 At the end of positioning, the :propref:`xoffset` and :propref:`yoffset`
 properties are applied as normal.
@@ -2239,8 +2258,11 @@ to the result of assigning the arguments to those parameters. ::
                   use file_slot(i)
 
 
-The use statement may take one property, ``id``, which must be placed
-after the parameter list if present. This screen is only useful when
+The use statement may take clauses properties, ``id`` and ``as``. These properties must be placed
+after the parameter list, if present, and must be on the first line of the statement, not in
+th block.
+
+The ``id`` clause is only useful when
 two screens with the same tag use the same screen. In this case,
 when one screen replaces the other, the state of the used screen
 is transfered from old to new.
@@ -2270,6 +2292,18 @@ is transfered from old to new.
         show screen s2
         pause
         return
+
+The ``as`` clause should be followed by a variable name. When the used screen finishes, the binding of the `main`
+variable in the screen is assigned to the given variable. For example::
+
+    screen child():
+        add MyCreatorDefinedDisplayable() as main
+
+    screen parent():
+        use child as mycdd
+
+        # Here, the MyCreatorDefinedDisplaybale instance is assigned to cdd.
+
 
 Instead of the name of the screen, the keyword ``expression`` can be
 given, followed by an expression giving the name of the screen to use.

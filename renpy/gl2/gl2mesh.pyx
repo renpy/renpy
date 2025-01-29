@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -48,6 +48,18 @@ SOLID_LAYOUT = AttributeLayout()
 TEXTURE_LAYOUT = AttributeLayout()
 TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
 
+# The layout of mesh with a normal.
+MODEL_N_LAYOUT = AttributeLayout()
+MODEL_N_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
+MODEL_N_LAYOUT.add_attribute("a_normal", 3) # The normal.
+
+# The layout of a mesh used with a texture, normal, tangent, and bitangent.
+MODEL_TBN_LAYOUT = AttributeLayout()
+MODEL_TBN_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
+MODEL_TBN_LAYOUT.add_attribute("a_normal", 3) # The normal.
+MODEL_TBN_LAYOUT.add_attribute("a_tangent", 3) # The tangent.
+MODEL_TBN_LAYOUT.add_attribute("a_bitangent", 3) # The bitangent.
+
 # The layout of a mesh used with text.
 TEXT_LAYOUT = AttributeLayout()
 TEXT_LAYOUT.add_attribute("a_tex_coord", 2) # The texture coordinate.
@@ -86,7 +98,7 @@ cdef class Mesh:
         cdef int i
         cdef int len_geometry = len(geometry)
 
-        for 0 <= i < len_geometry:
+        for i in range(len_geometry):
             self.point_data[i] = geometry[i]
 
     def set_attribute_data(self, attributes):
@@ -108,7 +120,7 @@ cdef class Mesh:
         if len_attributes > self.allocated_points * self.layout.stride:
             raise Exception("Attributes contains too much data.")
 
-        for 0 <= i < len_attributes:
+        for i in range(len_attributes):
             self.attribute[i] = attributes[i]
 
     def set_triangle_data(self, triangles):
@@ -133,7 +145,7 @@ cdef class Mesh:
 
         self.triangles = len_triangles // 3
 
-        for 0 <= i < len_triangles:
+        for i in range(len_triangles):
             self.triangle[i] = triangles[i]
 
     def get_triangles(self):
@@ -145,7 +157,7 @@ cdef class Mesh:
 
         rv = [ ]
 
-        for 0 <= i < self.triangles:
+        for i in range(self.triangles):
             rv.append((
                 self.triangle[i * 3 + 0],
                 self.triangle[i * 3 + 1],

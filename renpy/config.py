@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1474,8 +1474,6 @@ python_exit_callbacks = [ ]
 # Should exceptions be raised if an image fails to load.
 raise_image_load_exceptions = None
 
-# 8.2.2
-
 # A map from name to text shader object.
 textshaders = { } # type: dict[str, renpy.text.shader.TextShader]
 
@@ -1518,6 +1516,8 @@ translate_additional_strings_callbacks = [ ]
 # Should Ren'Py keep and existing screenshot when entering a menu.
 keep_screenshot_entering_menu = False
 
+# Should Ren'Py hash seen statements and tlids?
+hash_seen = True
 
 del os
 del collections

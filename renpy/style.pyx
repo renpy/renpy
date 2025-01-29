@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -731,7 +731,7 @@ cpdef unbuild_style(StyleCore s):
 
     if s.cache != NULL:
 
-        for 0 <= i < PREFIX_COUNT * STYLE_PROPERTY_COUNT:
+        for i in range(PREFIX_COUNT * STYLE_PROPERTY_COUNT):
             Py_XDECREF(s.cache[i])
 
         free(s.cache)

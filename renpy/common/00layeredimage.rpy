@@ -86,7 +86,7 @@ python early in layeredimage:
 
             image = "_".join(parts)
 
-        if isinstance(image, basestring) and (image_format is not None):
+        if isinstance(image, str) and (image_format is not None):
             image = image_format.format(name=name, image=image)
 
         return image

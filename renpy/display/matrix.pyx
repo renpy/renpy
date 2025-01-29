@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -200,10 +200,10 @@ cdef class Matrix:
 
         rv = "Matrix(["
 
-        for 0 <= y < 4:
+        for y in range(4):
             if y:
                 rv += "\n        "
-            for 0 <= x < 4:
+            for x in range(4):
                 rv += "{:10.7f}, ".format(self.m[x * 4 + y])
 
         return rv + "])"
@@ -233,7 +233,7 @@ cdef class Matrix:
 
         total = 0
 
-        for 0 < i < 16:
+        for i in range(16):
             total += abs(self.m[i] - other_matrix.m[i])
 
         return total < .0001
@@ -256,7 +256,7 @@ cdef class Matrix:
         total_1 = 0
         total_2 = 0
 
-        for 0 < i < 16:
+        for i in range(16):
             v = abs(self.m[i])
             total_1 += abs(v - aligned_1[i])
             total_2 += abs(v - aligned_2[i])
@@ -364,6 +364,40 @@ cdef class Matrix:
         im[13] = <float> (det *   ( m[ 0] * A1223 - m[ 1] * A0223 + m[ 2] * A0123 ))
         im[14] = <float> (det * - ( m[ 0] * A1213 - m[ 1] * A0213 + m[ 2] * A0113 ))
         im[15] = <float> (det *   ( m[ 0] * A1212 - m[ 1] * A0212 + m[ 2] * A0112 ))
+
+        return rv
+
+    cpdef Matrix transpose(Matrix self):
+        """
+        Returns the transpose of this matrix.
+        """
+
+        if self.transpose_cache is not None:
+            return self.transpose_cache
+
+        cdef Matrix rv = Matrix(None)
+
+        self.transpose_cache = rv
+
+        rv.xdx = self.xdx
+        rv.xdy = self.ydx
+        rv.xdz = self.zdx
+        rv.xdw = self.wdx
+
+        rv.ydx = self.xdy
+        rv.ydy = self.ydy
+        rv.ydz = self.zdy
+        rv.ydw = self.wdy
+
+        rv.zdx = self.xdz
+        rv.zdy = self.ydz
+        rv.zdz = self.zdz
+        rv.zdw = self.wdz
+
+        rv.wdx = self.xdw
+        rv.wdy = self.ydw
+        rv.wdz = self.zdw
+        rv.wdw = self.wdw
 
         return rv
 

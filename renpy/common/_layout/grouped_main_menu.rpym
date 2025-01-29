@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -72,7 +72,7 @@ label main_menu_screen:
 
             # This checks to see if clicked is a string. If so, we want clicked
             # to jump us out of the current context.
-            if isinstance(clicked, basestring):
+            if isinstance(clicked, str):
                 clicked=ui.jumpsoutofcontext(clicked)
 
             # Create each button.

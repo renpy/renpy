@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,6 +32,7 @@ import threading
 import copy
 import gc
 import atexit
+import platform
 
 import pygame_sdl2 as pygame
 import renpy
@@ -257,12 +258,6 @@ class absolute(float):
         return absolute(absolute.compute_raw(value, room))
 
 for fn in (
-    '__coerce__', # PY2
-    '__div__', # PY2
-    '__long__', # PY2
-    '__nonzero__', # PY2
-    '__rdiv__', # PY2
-
     '__abs__',
     '__add__',
     # '__bool__', # non-float
@@ -303,11 +298,10 @@ for fn in (
     # 'hex', # non-float
     # 'is_integer', # non-float
 ):
-    f = getattr(float, fn, None)
-    if f is not None: # for PY2-only and PY3-only methods
-        setattr(absolute, fn, absolute_wrap(f))
+    f = getattr(float, fn)
+    setattr(absolute, fn, absolute_wrap(f))
 
-del absolute_wrap, fn, f # type: ignore
+del absolute_wrap, fn, f  # type: ignore
 
 
 
@@ -1204,6 +1198,8 @@ class Interface(object):
             renderers = [ "gles2" ]
         elif renpy.windows:
             renderers = [ "gl2", "angle2", "gles2" ]
+        elif renpy.linux and platform.machine() == "aarch64":
+            renderers = [ "gles2", "gl2" ]
         else:
             renderers = [ "gl2", "gles2" ]
 
@@ -1272,6 +1268,7 @@ class Interface(object):
         if renpy.display.draw is not None:
             renpy.display.draw.kill_textures()
 
+        renpy.gl2.assimp.free_memory()
         renpy.display.im.cache.clear()
         renpy.display.render.free_memory()
         renpy.text.text.layout_cache_clear()

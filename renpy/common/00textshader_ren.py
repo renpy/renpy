@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -321,7 +321,7 @@ renpy.register_textshader(
     u__texture="#800080",
 
     doc="""
-    The texture text shader multiplies the text with the colors from a texture. This not
+    The texture text shader multiplies the text with the colors from a texture. This is not
     done to outlines or offset text. The texture is aligned with the top
     left of the text.
 
@@ -363,7 +363,7 @@ renpy.register_textshader(
     doc="""
     Multiplies the text with a texture, one line at a time. The texture is aligned with
     the left side of the text. The vertical center of the texture is aligned with
-    the baseline of the text - this meas that most of the lower half of the texture
+    the baseline of the text - this means that most of the lower half of the texture
     will not be visible.
 
     `u__texture`

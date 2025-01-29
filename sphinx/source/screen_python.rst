@@ -308,3 +308,6 @@ the \*\*properties syntax with a properties keyword in some place. For example::
             null height 15
 
             transclude
+
+Custom defined screen language statements support the ``as`` clause, which takes the name of the variable. If present,
+this variable will be assigned the value of `main` in the scope of the screen.

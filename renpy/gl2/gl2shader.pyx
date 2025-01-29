@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -73,6 +73,28 @@ cdef class UniformVec3(Uniform):
 cdef class UniformVec4(Uniform):
     cdef void assign(self, Program program, data):
         glUniform4f(self.location, data[0], data[1], data[2], data[3])
+
+
+cdef class UniformMat2(Uniform):
+    cdef void assign(self, Program program, data):
+        cdef Matrix m = data
+        cdef GLfloat[4] values = [
+            m.xdx, m.ydx,
+            m.xdy, m.ydy
+            ]
+
+        glUniformMatrix2fv(self.location, 1, GL_FALSE, values)
+
+cdef class UniformMat3(Uniform):
+    cdef void assign(self, Program program, data):
+        cdef Matrix m = data
+        cdef GLfloat[9] values = [
+            m.xdx, m.ydx, m.zdx,
+            m.xdy, m.ydy, m.zdy,
+            m.xdz, m.ydz, m.zdz
+            ]
+
+        glUniformMatrix3fv(self.location, 1, GL_FALSE, values)
 
 cdef class UniformMat4(Uniform):
     cdef void assign(self, Program program, data):
@@ -153,6 +175,8 @@ UNIFORM_TYPES = {
     "vec2" : UniformVec2,
     "vec3" : UniformVec3,
     "vec4" : UniformVec4,
+    "mat2" : UniformMat2,
+    "mat3" : UniformMat3,
     "mat4" : UniformMat4,
     "sampler2D" : UniformSampler2D,
     }
@@ -263,7 +287,7 @@ cdef class Program:
                 if location >= 0:
                     self.attributes.append(Attribute(name, location, types[type]))
 
-    cdef GLuint load_shader(self, GLenum shader_type, source) except? 0:
+    cdef GLuint load_shader(self, GLenum shader_type, source) except 0:
         """
         This loads a shader into the GPU, and returns the number.
         """
@@ -349,6 +373,13 @@ cdef class Program:
             self.set_uniform("u_drawable_size", renpy.display.draw.drawable_viewport[2:])
         elif name == "u_virtual_size":
             self.set_uniform("u_virtual_size", renpy.display.draw.virtual_size)
+        elif name == "u_normal_transform":
+            mat = self.uniform_values.get("u_transform", None)
+            if mat is not None:
+                mat = mat.inverse().transpose()
+                self.set_uniform("u_normal_transform", mat)
+            else:
+                raise Exception("Shader {} was given u_normal transform but not u_transform.".format(self.name))
         else:
             raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
 
@@ -417,7 +448,7 @@ cdef class Program:
             if "texture_scaling" in properties:
                 magnify, minify = TEXTURE_SCALING[properties["texture_scaling"]]
 
-                for 0 <= i < self.samplers:
+                for i in range(self.samplers):
                     glActiveTexture(GL_TEXTURE0 + i)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify)
@@ -432,7 +463,7 @@ cdef class Program:
         if properties:
 
             if "texture_scaling" in properties:
-                for 0 <= i < self.samplers:
+                for i in range(self.samplers):
                     glActiveTexture(GL_TEXTURE0 + i)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)

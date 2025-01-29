@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -135,7 +135,7 @@ class Color(tuple):
         if color is not None:
             c = color
 
-            if isinstance(c, basestring):
+            if isinstance(c, str):
                 if c[0] == '#':
                     c = c[1:]
 
@@ -164,7 +164,7 @@ class Color(tuple):
                 else:
                     raise Exception("Color string {!r} must be 3, 4, 6, or 8 hex digits long.".format(c))
 
-                return tuple.__new__(cls, (r, g, b, a)) # type: ignore
+                return tuple.__new__(cls, (r, g, b, a))
 
             if isinstance(c, Color):
                 return c
@@ -192,7 +192,7 @@ class Color(tuple):
             b = int(rgb[2] * 255)
             a = int(alpha * 255)
 
-            rv = tuple.__new__(cls, (r, g, b, a)) # type: ignore
+            rv = tuple.__new__(cls, (r, g, b, a))
             rv._rgb = rgb
             rv._hls = hls
             rv._hsv = hsv
@@ -204,7 +204,7 @@ class Color(tuple):
         if color is None:
             return None
 
-        raise Exception("Not a color: %r" % (color,))
+        raise Exception(f"Not a color: {color!r}")
 
     @property
     def hexcode(self):
@@ -356,7 +356,7 @@ class Color(tuple):
         `other` may be a string, Color or an HSV tuple.
         """
 
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             other = Color(other, alpha=self.alpha)
         elif not isinstance(other, Color):
             other = Color(hsv=other, alpha=self.alpha)
@@ -377,7 +377,7 @@ class Color(tuple):
         `other` may be a string, Color or an HLS tuple.
         """
 
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             other = Color(other, alpha=self.alpha)
         elif not isinstance(other, Color):
             other = Color(hls=other, alpha=self.alpha)

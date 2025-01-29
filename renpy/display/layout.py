@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1596,8 +1596,8 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
         super(DynamicDisplayable, self).__init__()
         self.child = None
 
-        if isinstance(function, basestring):
-            args = (function,)
+        if isinstance(function, str):
+            args = (function, )
             kwargs = { }
             function = dynamic_displayable_compat
 
@@ -1887,7 +1887,7 @@ class Side(Container):
 
         super(Side, self).__init__(style=style, **properties)
 
-        if isinstance(positions, basestring):
+        if isinstance(positions, str):
             positions = positions.split()
 
         seen = set()
@@ -2412,11 +2412,18 @@ class NearRect(Container):
 
     `rect`
         The rectangle to place the child near.
+    
+    `focus`
+        Passed to `GetFocusRect`. The special name "tooltop" will retrieve the
+        rect of last displayable to set a tooltip. If present, overrides `rect`.
 
     `preferred_side`
         One of "left", "top", "right", "bottom" to prefer that position for
         the nearrect. If there is not room on one side, the opposite side is
         used. By default, the preferred side is "bottom".
+    
+    `prefer_top`
+        Deprecated. Equivalent to passing `preferred_side="top"`
 
     `invert_offsets`
         If True and there isn't enough space on the preferred side, multiply the

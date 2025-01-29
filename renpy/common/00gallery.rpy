@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -344,7 +344,7 @@ init -1500 python:
                 A string giving a Python expression.
             """
 
-            if not isinstance(expression, basestring):
+            if not isinstance(expression, str):
                 raise Exception("Gallery condition must be a string containing an expression.")
 
             self.unlockable.conditions.append(__GalleryArbitraryCondition(expression))

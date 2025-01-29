@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -186,9 +186,6 @@ cdef class GL2Draw:
 
         visible_w = info.current_w
         visible_h = info.current_h
-
-        if renpy.windows and renpy.windows <= (6, 1):
-            visible_h -= 102
 
         # Determine the visible area of the current head.
         bounds = pygame.display.get_display_bounds(0)
@@ -1253,8 +1250,8 @@ cdef class GL2Draw:
         cdef unsigned char a
 
         with nogil:
-            for y from 0 <= y < surf.h:
-                for x from 0 <= x < surf.w:
+            for y in range(surf.h):
+                for x in range(surf.w):
                     r = rpp[x * 4 + 0]
                     g = rpp[x * 4 + 1]
                     b = rpp[x * 4 + 2]

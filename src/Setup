@@ -2,8 +2,9 @@ _renpy ../tmp/gen/_renpy.c IMG_savepng.c core.c
 _renpybidi ../tmp/gen/_renpybidi.c renpybidicore.c
 renpy.audio.renpysound ../tmp/gen/renpy.audio.renpysound.c renpysound_core.c ffmedia.c
 renpy.audio.filter ../tmp/gen/renpy.audio.filter.c
+renpy.astsupport ../tmp/gen/renpy.astsupport.c
+renpy.cslots ../tmp/gen/renpy.cslots.c
 renpy.lexersupport ../tmp/gen/renpy.lexersupport.c
-renpy.location ../tmp/gen/renpy.location.c
 renpy.pydict ../tmp/gen/renpy.pydict.c
 renpy.style ../tmp/gen/renpy.style.c
 renpy.encryption ../tmp/gen/renpy.encryption.c
@@ -25,6 +26,7 @@ renpy.display.accelerator ../tmp/gen/renpy.display.accelerator.c
 renpy.display.quaternion ../tmp/gen/renpy.display.quaternion.c
 renpy.uguu.gl ../tmp/gen/renpy.uguu.gl.c
 renpy.uguu.uguu ../tmp/gen/renpy.uguu.uguu.c
+renpy.gl2.assimp ../tmp/gen/renpy.gl2.assimp.cc
 renpy.gl2.gl2mesh ../tmp/gen/renpy.gl2.gl2mesh.c
 renpy.gl2.gl2mesh2 ../tmp/gen/renpy.gl2.gl2mesh2.c
 renpy.gl2.gl2mesh3 ../tmp/gen/renpy.gl2.gl2mesh3.c

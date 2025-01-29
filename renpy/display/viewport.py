@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -297,7 +297,7 @@ class Viewport(renpy.display.layout.Container):
         rv = rv.subsurface((0, 0, width, height), focus=True)
 
         if self.arrowkeys or self.draggable:
-            rv.add_focus(self, None, 0, 0, width, height)
+            rv.add_focus(self, renpy.display.render.Render.NO_MOUSE_FOCUS, 0, 0, width, height)
 
         return rv
 
@@ -584,6 +584,9 @@ class Viewport(renpy.display.layout.Container):
                 self.xadjustment.end_animation(instantly=True)
                 self.yadjustment.end_animation(instantly=True)
 
+                if not renpy.display.focus.get_focused():
+                    renpy.display.focus.set_grab(self)
+
                 ignore_event = True
 
         rv = super(Viewport, self).event(ev, x, y, st)
@@ -740,7 +743,7 @@ class VPGrid(Viewport):
         rv = rv.subsurface((0, 0, width, height), focus=True)
 
         if self.draggable or self.arrowkeys:
-            rv.add_focus(self, None, 0, 0, width, height)
+            rv.add_focus(self, renpy.display.render.Render.NO_MOUSE_FOCUS, 0, 0, width, height)
 
         return rv
 

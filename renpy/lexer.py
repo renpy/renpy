@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1454,14 +1454,13 @@ class Lexer(object):
         object, which is called directly.
         """
 
-        if isinstance(thing, basestring):
-            name = name or thing
+        if isinstance(thing, str):
             rv = self.match(thing)
         else:
             rv = thing(**kwargs)
 
         if rv is None:
-            if isinstance(thing, basestring):
+            if isinstance(thing, str):
                 name = name or thing
             else:
                 name = name or thing.__func__.__name__

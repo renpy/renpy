@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -49,6 +49,8 @@ import functools
 import warnings
 
 import renpy
+
+from renpy.astsupport import hash32
 
 # Import these for pickle-compatibility.
 from renpy.revertable import (
@@ -244,8 +246,14 @@ def create_store(name):
     eval("1", d)
 
     for k, v in renpy.minstore.__dict__.items():
-        if (k not in d) and k != "__all__":
-            d[k] = v
+
+        if k in ("__all__", "__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__cached__"):
+            continue
+
+        if k in d:
+            continue
+
+        d[k] = v
 
     # Create or reuse the corresponding module.
     if name in store_modules:
@@ -997,7 +1005,7 @@ def quote_eval(s):
 compile_filename = ""
 
 
-def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None):
+def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None, hashcode=None):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
@@ -1008,7 +1016,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         node.
 
     `mode`
-        One of "exec" or "eval".
+        One of "eval", "exec", or "hide".
 
     `filename`
         The filename the source comes from. If a pyexpr is given, the
@@ -1032,18 +1040,25 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     if isinstance(source, ast.Module):
         return compile(source, filename, mode)
 
-    if isinstance(source, renpy.ast.PyExpr):
+    elif isinstance(source, renpy.ast.PyExpr):
         filename = source.filename
         lineno = source.linenumber
+        hashcode = source.hashcode
 
         if py is None:
             py = source.py
 
+    elif hashcode is None:
+        hashcode = hash32(source)
+
     if py is None:
         py = 3
 
+    flags = file_compiler_flags.get(filename, 0)
+
     if cache:
-        key = (lineno, filename, str(source), mode, renpy.script.MAGIC)
+
+        key = (hashcode, lineno, filename, mode, renpy.script.MAGIC, flags)
         warnings_key = ("warnings", key)
 
         rv = py_compile_cache.get(key, None)
@@ -1059,14 +1074,19 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         bytecode = renpy.game.script.bytecode_oldcache.get(key, None)
         if bytecode is not None:
 
-            renpy.game.script.bytecode_newcache[key] = bytecode
+            try:
+                rv = marshal.loads(bytecode)
+                py_compile_cache[key] = rv
 
-            if warnings_key in renpy.game.script.bytecode_oldcache:
-                renpy.game.script.bytecode_newcache[warnings_key] = renpy.game.script.bytecode_oldcache[warnings_key]
+                renpy.game.script.bytecode_newcache[key] = bytecode
 
-            rv = marshal.loads(bytecode)
-            py_compile_cache[key] = rv
-            return rv
+                if warnings_key in renpy.game.script.bytecode_oldcache:
+                    renpy.game.script.bytecode_newcache[warnings_key] = renpy.game.script.bytecode_oldcache[warnings_key]
+
+                return rv
+
+            except Exception:
+                pass
 
     else:
         warnings_key = None
@@ -1088,7 +1108,6 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         else:
             py_mode = mode
 
-        flags = file_compiler_flags.get(filename, 0)
         flags |= new_compile_flags
 
         try:
@@ -1155,25 +1174,6 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         raise e
 
 
-def py_compile_exec_bytecode(source, **kwargs):
-    code = py_compile(source, 'exec', cache=False, **kwargs)
-    return marshal.dumps(code)
-
-
-def py_compile_hide_bytecode(source, **kwargs):
-    code = py_compile(source, 'hide', cache=False, **kwargs)
-    return marshal.dumps(code)
-
-
-def py_compile_eval_bytecode(source, **kwargs):
-    source = source.strip()
-    code = py_compile(source, 'eval', cache=False, **kwargs)
-    return marshal.dumps(code)
-
-# Classes that are exported in place of the normal list, dict, and
-# object.
-
-
 
 def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"): # @ReservedAssignment
 
@@ -1214,7 +1214,7 @@ def py_eval_bytecode(bytecode, globals=None, locals=None): # @ReservedAssignment
 
 
 def py_eval(code, globals=None, locals=None): # @ReservedAssignment
-    if isinstance(code, basestring):
+    if isinstance(code, str):
         code = py_compile(code, 'eval')
 
     return py_eval_bytecode(code, globals, locals)
@@ -1240,9 +1240,8 @@ def raise_at_location(e, loc):
 
     node = ast.parse("raise e", filename)
     ast.increment_lineno(node, line - 1)
-    code = compile(node, filename, 'exec') #type: ignore
+    code = compile(node, filename, 'exec')
 
-    # PY3 - need to change to exec().
     exec(code, { "e" : e })
 
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,60 +22,90 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from typing import Any
+from __future__ import annotations
+
+from typing import Any, NamedTuple
+import sys
+import os
+import types
+import site
+
+# Set up the hook for any renpy __init__ modules to import binary modules from
+# a libexec directory if it available.
+# This is relevant only for development RenPy itself, when compiled binaries
+# are stored in the libexec directory.
+try:
+    import _renpy  # type: ignore
+
+    if getattr(_renpy, "__file__", "built-in") != "built-in":
+        import importlib.util
+
+        libexec : str = os.path.dirname(_renpy.__file__)
+
+        class _LibExecFinder:
+            def __init__(self):
+                self.in_find_spec: bool = False
+
+            def find_spec(self, fullname: str, path, target=None, /):
+                if not fullname.startswith("renpy."):
+                    return None
+
+                if self.in_find_spec:
+                    return None
+
+                self.in_find_spec = True
+
+                try:
+                    spec = importlib.util.find_spec(fullname)
+                finally:
+                    self.in_find_spec = False
+
+                if spec is None:
+                    return None
+
+                # Is a package.
+                if spec.submodule_search_locations is not None:
+                    name = fullname.split(".")
+                    spec.submodule_search_locations.append(os.path.join(libexec, *name))
+
+                return spec
+
+        sys.meta_path.insert(0, _LibExecFinder())
+
+        # Add the libexec directory to this module.
+        try:
+            __spec__.submodule_search_locations.append(os.path.join(libexec, "renpy"))
+            __path__ = list(__spec__.submodule_search_locations)
+        except Exception:
+            pass
+
+except ImportError:
+    pass
+
+# All imports should go below renpy.compat.
+import renpy.compat.pickle as pickle
 
 # Initial import of the __main__ module. This gets replaced in renpy.py
 # whatever that module has been imported as.
 import __main__
-
-# All imports should go below renpy.compat.
-
-# Backup object, as it'll be overwritten when renpy.object is imported.
-_object = object # type: ignore
-
-def update_path():
-    """
-    Update the __path__ of package, to import binary modules from a libexec
-    directory.
-    """
-    import sys
-    import os.path
-
-    name = sys._getframe(1).f_globals["__name__"]
-    package = sys.modules[name]
-    name = name.split(".")
-
-    try:
-        import _renpy
-        if hasattr(_renpy, '__file__') and _renpy.__file__ != "built-in":
-            libexec = os.path.dirname(_renpy.__file__)
-            package.__path__.append(os.path.join(libexec, *name))
-    except ImportError:
-        return
-
-
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-
-update_path()
-
-import renpy.compat.pickle as pickle
-
-import sys
-import os
-import copy
-import types
-import site
-from collections import namedtuple
 
 ################################################################################
 # Version information
 ################################################################################
 
 # Version numbers.
+official: bool
+nightly: bool
+version_name: str
+version: str
 try:
-    from renpy.vc_version import official, nightly, version_name, version
+    from renpy.vc_version import (  # type: ignore
+        official,
+        nightly,
+        version_name,
+        version,
+    )
+
 except ImportError:
     import renpy.versions
     version_dict = renpy.versions.get_version()
@@ -87,7 +117,13 @@ except ImportError:
 
 official = official and getattr(site, "renpy_build_official", False)
 
-VersionTuple = namedtuple("VersionTuple", ["major", "minor", "patch", "commit"])
+
+class VersionTuple(NamedTuple):
+    major: int
+    minor: int
+    patch: int
+    commit: int
+
 version_tuple = VersionTuple(*(int(i) for i in version.split(".")))
 
 # A string giving the version number only (8.0.1.123), with a suffix if needed.
@@ -102,68 +138,31 @@ elif nightly:
 version = "Ren'Py " + version_only
 
 # Other versions.
-script_version = 5003000
-savegame_suffix = "-LT1.save"
-bytecode_version = 1
+script_version: int = 5003000
+savegame_suffix: str = "-LT1.save"
+bytecode_version: int = 1
 
 ################################################################################
 # Platform Information
 ################################################################################
 
 # Information about the platform we're running on. We break the platforms
-# up into 5 groups - windows-like, mac-like, linux-like, android-like,
-# and ios-like.
-windows = False
-macintosh = False
-linux = False
-android = False
-ios = False
-emscripten = False
+# up into 6 groups - windows-like, mac-like, linux-like, android-like,
+# ios-like and web (aka. emscripten).
+windows: bool = False
+macintosh: bool = False
+linux: bool = False
+android: bool = False
+ios: bool = False
+emscripten: bool = False
 
 # Should we enable experimental features and debugging?
 experimental = "RENPY_EXPERIMENTAL" in os.environ
 
 import platform
 
-
-def get_windows_version():
-    """
-    When called on windows, returns the windows version.
-    """
-
-    import ctypes
-
-    class OSVERSIONINFOEXW(ctypes.Structure):
-        _fields_ = [('dwOSVersionInfoSize', ctypes.c_ulong),
-                    ('dwMajorVersion', ctypes.c_ulong),
-                    ('dwMinorVersion', ctypes.c_ulong),
-                    ('dwBuildNumber', ctypes.c_ulong),
-                    ('dwPlatformId', ctypes.c_ulong),
-                    ('szCSDVersion', ctypes.c_wchar * 128),
-                    ('wServicePackMajor', ctypes.c_ushort),
-                    ('wServicePackMinor', ctypes.c_ushort),
-                    ('wSuiteMask', ctypes.c_ushort),
-                    ('wProductType', ctypes.c_byte),
-                    ('wReserved', ctypes.c_byte)]
-
-    try:
-
-        os_version = OSVERSIONINFOEXW() # type: ignore
-        os_version.dwOSVersionInfoSize = ctypes.sizeof(os_version)
-        retcode = ctypes.windll.Ntdll.RtlGetVersion(ctypes.byref(os_version)) # type: ignore
-
-        # Om failure, assume we have a newer version of windows
-        if retcode != 0:
-            return (10, 0)
-
-        return (os_version.dwMajorVersion, os_version.dwMinorVersion) # type: ignore
-
-    except Exception:
-        return (10, 0)
-
-
 if platform.win32_ver()[0]:
-    windows = get_windows_version()
+    windows = True
 elif os.environ.get("RENPY_PLATFORM", "").startswith("ios"):
     ios = True
 elif platform.mac_ver()[0]:
@@ -175,28 +174,28 @@ elif sys.platform == 'emscripten' or "RENPY_EMSCRIPTEN" in os.environ:
 else:
     linux = True
 
-arch = os.environ.get("RENPY_PLATFORM", "unknown-unknown-unknown").rpartition("-")[2]
+arch: str = os.environ.get("RENPY_PLATFORM", "unknown-unknown-unknown").rpartition("-")[2]
 
 # A flag that's true if we're on a smartphone or tablet-like platform.
-mobile = android or ios or emscripten
+mobile: bool = android or ios or emscripten
 
 # A flag that's set to true if the game directory is bundled inside a mac app.
-macapp = False
+macapp: bool = False
 
 ################################################################################
 # Backup Data for Reload
 ################################################################################
 
 # True if we're done with safe mode checks.
-safe_mode_checked = False
+safe_mode_checked: bool = False
 
 # True if autoreload mode is enabled. This has to live here, because it
 # needs to survive through an utter restart.
-autoreload = False
+autoreload: bool = False
 
 # A dict that persists through utter restarts. Accessible to all code as
 # renpy.session.
-session = { }
+session: dict[str, Any] = {}
 
 # A list of modules beginning with "renpy" that we don't want
 # to backup.
@@ -252,10 +251,12 @@ name_blacklist = {
     "renpy.persistent.MP_instances",
     "renpy.exports.sdl_dll",
     "renpy.sl2.slast.serial",
+    "renpy.gl2.assimp.loader",
     "renpy.gl2.gl2draw.default_position",
     }
 
-class Backup(_object):
+
+class Backup:
     """
     This represents a backup of all of the fields in the python modules
     comprising Ren'Py, shortly after they were imported.
@@ -277,6 +278,7 @@ class Backup(_object):
         # A map from module to the set of names in that module.
         self.names = { }
 
+    def backup(self):
         for m in sys.modules.values():
             if m is None:
                 continue
@@ -356,14 +358,14 @@ class Backup(_object):
 
 
 # A backup of the Ren'Py modules after initial import.
-backup = None
+backup = Backup()
 
 ################################################################################
 # Import
 ################################################################################
 
 
-def plog(level, even, *args):
+def plog(depth, event, *args):
     """
     Empty version of renpy.plog that is replaced by the real implementation
     in import_all.
@@ -382,12 +384,12 @@ def import_all():
     # Note: If we add a new module, it should be added at the bottom of this file so it shows up in
     # code analysis.
 
-    import renpy # @UnresolvedImport
+    import renpy
 
     import renpy.config
     import renpy.log
 
-    import renpy.arguments # @UnresolvedImport
+    import renpy.arguments
 
     import renpy.compat.fixes
 
@@ -397,7 +399,6 @@ def import_all():
 
     # Should probably be early, as we will add these as a base to serialized things.
     import renpy.object
-    import renpy.location
 
     import renpy.game
     import renpy.preferences
@@ -407,6 +408,8 @@ def import_all():
 
     import renpy.pyanalysis
     sys.modules["renpy.py3analysis"] = renpy.pyanalysis
+
+    import renpy.astsupport
 
     import renpy.parameter
     import renpy.ast
@@ -434,14 +437,14 @@ def import_all():
     import renpy.versions
 
     global plog
-    plog = renpy.performance.log # type:ignore
+    plog = renpy.performance.log
 
     import renpy.styledata
 
     import renpy.style
     renpy.styledata.import_style_functions()
 
-    sys.modules[pystr('renpy.styleclass')] = renpy.style
+    sys.modules['renpy.styleclass'] = renpy.style
 
     import renpy.substitutions
     import renpy.translation
@@ -473,7 +476,7 @@ def import_all():
     import renpy.text.extras
     import renpy.text.shader
 
-    sys.modules[pystr('renpy.display.text')] = renpy.text.text
+    sys.modules['renpy.display.text'] = renpy.text.text
 
     import renpy.gl2
 
@@ -545,6 +548,7 @@ def import_all():
     import renpy.gl2.gl2shader
     import renpy.gl2.gl2texture
     import renpy.gl2.live2d
+    import renpy.gl2.assimp
 
     import renpy.minstore
     import renpy.defaultstore
@@ -561,13 +565,10 @@ def import_all():
 
     global six
     import six
-    sys.modules[pystr('renpy.six')] = six
+    sys.modules['renpy.six'] = six
 
     # Back up the Ren'Py modules.
-
-    global backup
-
-    backup = Backup()
+    backup.backup()
 
     post_import()
 
@@ -578,7 +579,7 @@ def post_import():
     of various modules.
     """
 
-    import renpy # @UnresolvedImport
+    import renpy
 
     # Create the store.
     renpy.python.create_store("store")
@@ -590,9 +591,13 @@ def post_import():
     sys.modules['renpy.store'] = sys.modules['store']
 
     import subprocess
-    sys.modules[pystr('renpy.subprocess')] = subprocess
+    sys.modules['renpy.subprocess'] = subprocess
 
     for k, v in renpy.defaultstore.__dict__.items():
+
+        if k in ("__all__", "__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__cached__"):
+            continue
+
         renpy.store.__dict__.setdefault(k, v) # type: ignore
 
     renpy.store.eval = renpy.defaultstore.eval # type: ignore
@@ -612,9 +617,6 @@ def reload_all():
     Resets all modules to the state they were in right after import_all
     returned.
     """
-
-    # if mobile:
-    #     raise Exception("Reloading is not supported on mobile platforms.")
 
     import renpy
 
@@ -661,7 +663,7 @@ def reload_all():
             del sys.modules[i]
 
     # Restore the state of all modules from backup.
-    backup.restore() # type: ignore
+    backup.restore()
 
     renpy.python.old_py_compile_cache = py_compile_cache
 
@@ -672,75 +674,78 @@ def reload_all():
     # Re-initialize the importer.
     renpy.loader.init_importer()
 
-if 1 == 0:
-    store = None # type: Any
+
+# renpy.store and sub-modules can have names of any type inside.
+store: Any = None
 
 
 # Generated by scripts/relative_imports.py, do not edit below this line.
-if 1 == 0:
-    from . import add_from
-    from . import arguments
-    from . import ast
-    from . import atl
-    from . import audio
-    from . import bootstrap
-    from . import character
-    from . import color
-    from . import compat
-    from . import config
-    from . import curry
-    from . import debug
-    from . import defaultstore
-    from . import display
-    from . import dump
-    from . import easy
-    from . import editor
-    from . import encryption
-    from . import error
-    from . import execution
-    from . import exports
-    from . import game
-    from . import gl
-    from . import gl2
-    from . import lexer
-    from . import lexersupport
-    from . import lint
-    from . import location
-    from . import loader
-    from . import loadsave
-    from . import log
-    from . import main
-    from . import memory
-    from . import minstore
-    from . import object
-    from . import parameter
-    from . import parser
-    from . import performance
-    from . import persistent
-    from . import preferences
-    from . import pyanalysis
-    from . import pydict
-    from . import python
-    from . import revertable
-    from . import rollback
-    from . import savelocation
-    from . import savetoken
-    from . import screenlang
-    from . import script
-    from . import scriptedit
-    from . import sl2
-    from . import statements
-    from . import style
-    from . import styledata
-    from . import substitutions
-    from . import test
-    from . import text
-    from . import translation
-    from . import uguu
-    from . import ui
-    from . import update
-    from . import util
-    from . import vc_version
-    from . import versions
-    from . import warp
-    from . import webloader
+import typing
+
+if typing.TYPE_CHECKING:
+    from . import add_from as add_from
+    from . import arguments as arguments
+    from . import ast as ast
+    from . import astsupport as astsupport
+    from . import atl as atl
+    from . import audio as audio
+    from . import bootstrap as bootstrap
+    from . import character as character
+    from . import color as color
+    from . import compat as compat
+    from . import config as config
+    from . import cslots as cslots
+    from . import curry as curry
+    from . import debug as debug
+    from . import defaultstore as defaultstore
+    from . import display as display
+    from . import dump as dump
+    from . import easy as easy
+    from . import editor as editor
+    from . import encryption as encryption
+    from . import error as error
+    from . import execution as execution
+    from . import exports as exports
+    from . import game as game
+    from . import gl2 as gl2
+    from . import lexer as lexer
+    from . import lexersupport as lexersupport
+    from . import lint as lint
+    from . import loader as loader
+    from . import loadsave as loadsave
+    from . import log as log
+    from . import main as main
+    from . import memory as memory
+    from . import minstore as minstore
+    from . import object as object
+    from . import parameter as parameter
+    from . import parser as parser
+    from . import performance as performance
+    from . import persistent as persistent
+    from . import preferences as preferences
+    from . import pyanalysis as pyanalysis
+    from . import pydict as pydict
+    from . import python as python
+    from . import revertable as revertable
+    from . import rollback as rollback
+    from . import savelocation as savelocation
+    from . import savetoken as savetoken
+    from . import screenlang as screenlang
+    from . import script as script
+    from . import scriptedit as scriptedit
+    from . import sl2 as sl2
+    from . import statements as statements
+    from . import style as style
+    from . import styledata as styledata
+    from . import substitutions as substitutions
+    from . import test as test
+    from . import text as text
+    from . import translation as translation
+    from . import uguu as uguu
+    from . import ui as ui
+    from . import update as update
+    from . import util as util
+    from . import vc_version as vc_version
+    from . import versions as versions
+    from . import warp as warp
+    from . import webloader as webloader

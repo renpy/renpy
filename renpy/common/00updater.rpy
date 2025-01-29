@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -41,7 +41,6 @@ init -1500 python in updater:
     import zlib
     import codecs
     import io
-    import future.utils
 
     def urlopen(url):
         import requests
@@ -425,7 +424,7 @@ init -1500 python in updater:
                     self.log.flush()
 
             except Exception as e:
-                self.message = _type(e).__name__ + ": " + unicode(e)
+                self.message = _type(e).__name__ + ": " + str(e)
                 self.can_cancel = False
                 self.can_proceed = True
                 self.state = self.ERROR
@@ -1054,9 +1053,9 @@ init -1500 python in updater:
             if "RENPY_TEST_MONKEYPATCH" in os.environ:
                 with open(os.environ["RENPY_TEST_MONKEYPATCH"], "r") as f:
                     monkeypatch = f.read()
-                    future.utils.exec_(monkeypatch, globals(), globals())
+                    exec(monkeypatch, globals(), globals())
             elif verified and "monkeypatch" in self.updates:
-                future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
+                exec(self.updates["monkeypatch"], globals(), globals())
 
         def add_dlc_state(self, name):
 

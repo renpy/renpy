@@ -172,6 +172,8 @@ Ren'Py supports only the following variable types:
 * vec2 (a tuple of 2 floats)
 * vec3 (a tuple of 3 floats)
 * vec4 (a tuple of 4 floats)
+* mat2 (a :class:`Matrix`)
+* mat3 (a :class:`Matrix`)
 * mat4 (a :class:`Matrix`)
 * sampler2D (supplied by Ren'Py)
 
@@ -353,6 +355,10 @@ The following uniforms are made available to all Models.
 ``mat4 u_transform``
     The transform used to project virtual pixels to the OpenGL viewport.
 
+``mat3 u_normal_transform``
+    The transform used to project normals, tangents, and bitangents to the
+    OpenGL viewport.
+
 ``float u_time``
     The time of the frame. The epoch is undefined, so it's best to treat
     this as a number that increases by one second a second. The time is
@@ -402,6 +408,11 @@ If textures are available, so is the following attribute:
 
 ``vec2 a_tex_coord``
     The coordinate that this vertex projects to inside the textures.
+
+If normals are available, so is the following attribute:
+
+``vec3 a_normal``
+    The normal of the vertex being rendered.
 
 .. _gl-properties:
 

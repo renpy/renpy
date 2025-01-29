@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -463,7 +463,7 @@ def before_interact(roots):
 
     # When increasing the default focus, and the user is not using the mouse,
     # switch to the default.
-    if should_max_default and (max_default > old_max_default):
+    if not explicit and should_max_default and (max_default > old_max_default):
         current = max_default_focus
         set_grab(None)
         set_focused(max_default_focus, None, max_default_screen)

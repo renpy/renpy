@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1234,6 +1234,8 @@ class Layout(object):
 
             line.extend(tss[-1].subsegment(u"\u200B")) # type: ignore
 
+        done = False
+
         for type, text in tokens: # @ReservedAssignment
 
             try:
@@ -1327,6 +1329,7 @@ class Layout(object):
                     pass
 
                 elif tag == "done":
+                    done = True
                     pass
 
                 elif tag == "nw":
@@ -1534,6 +1537,9 @@ class Layout(object):
                     raise Exception("Unknown text tag %r" % text)
 
             except Exception:
+                if done:
+                    break
+
                 renpy.game.exception_info = "While processing text tag {{{!s}}} in {!r}.:".format(text, text_displayable.get_all_text())
                 raise
 
@@ -1574,7 +1580,7 @@ class Layout(object):
         l = [ ]
 
         for ts, s in p:
-            s, direction = log2vis(unicode(s), direction)
+            s, direction = log2vis(str(s), direction)
             l.append((ts, s))
 
         rtl = (direction == RTL or direction == WRTL)
@@ -2041,7 +2047,7 @@ class Text(renpy.display.displayable.Displayable):
 
             # Check that the text is all text-able things.
             for i in text:
-                if not isinstance(i, (basestring, renpy.display.displayable.Displayable)):
+                if not isinstance(i, (str, renpy.display.displayable.Displayable)):
                     if renpy.config.developer:
                         raise Exception("Cannot display {0!r} as text.".format(i))
                     else:
@@ -2129,8 +2135,8 @@ class Text(renpy.display.displayable.Displayable):
         s = ""
 
         for i in self.text:
-            if isinstance(i, basestring):
-                s += i # type: ignore
+            if isinstance(i, str):
+                s += i
 
             if len(s) > 25:
                 s = s[:24] + u"\u2026"
@@ -2145,8 +2151,8 @@ class Text(renpy.display.displayable.Displayable):
         s = u""
 
         for i in self.text:
-            if isinstance(i, basestring):
-                s += i # type: ignore
+            if isinstance(i, str):
+                s += i
 
         return s
 
@@ -2195,13 +2201,10 @@ class Text(renpy.display.displayable.Displayable):
 
         # Perform substitution as necessary.
         for i in text:
-            if isinstance(i, basestring):
+            if isinstance(i, str):
                 if substitute is not False:
                     i, did_sub = renpy.substitutions.substitute(i, scope, substitute) # type: ignore
                     uses_scope = uses_scope or did_sub
-
-                if isinstance(i, bytes):
-                    i = str(i, "utf-8", "replace")
 
             new_text.append(i)
 
@@ -2335,7 +2338,7 @@ class Text(renpy.display.displayable.Displayable):
 
         for i in self.text:
 
-            if not isinstance(i, basestring):
+            if not isinstance(i, str):
                 continue
 
             rv.append(i)
@@ -2821,9 +2824,6 @@ class Text(renpy.display.displayable.Displayable):
 
             if isinstance(i, str):
                 tokens.extend(textsupport.tokenize(i))
-
-            elif isinstance(i, basestring):
-                tokens.extend(textsupport.tokenize(str(i)))
 
             elif isinstance(i, renpy.display.displayable.Displayable):
                 tokens.append((DISPLAYABLE, i))

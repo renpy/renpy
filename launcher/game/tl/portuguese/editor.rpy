@@ -53,7 +53,7 @@
 
     # game/editor.rpy:327
     old "An exception occured while launching the text editor:\n[exception!q]"
-    new "Ocorreu uma exceção ao executar o editor de texto:\[exception!q]"
+    new "Ocorreu uma exceção ao executar o editor de texto:\n[exception!q]"
 
     # game/editor.rpy:423
     old "Select Editor"

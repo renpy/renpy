@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -676,7 +676,7 @@ cdef class RenderTransform:
             #cameras is rotated in z, y, x order.
             #It is because rotating stage in x, y, z order means rotating a camera in z, y, x order.
             #rotating around z axis isn't rotating around the center of the screen when rotating camera in x, y, z order.
-            v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
+            v_len = math.hypot(a, b, c)
             if v_len == 0:
                 xpoi = ypoi = zpoi = 0
             else:
@@ -786,7 +786,7 @@ cdef class RenderTransform:
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
             a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
-            v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
+            v_len = math.hypot(a, b, c)
             if v_len == 0:
                 xpoi = ypoi = 0
             else:
@@ -938,7 +938,7 @@ cdef class RenderTransform:
         # Shaders and uniforms.
         if state.shader is not None:
 
-            if isinstance(state.shader, basestring):
+            if isinstance(state.shader, str):
                 rv.add_shader(state.shader)
             else:
                 for name in state.shader:

@@ -92,8 +92,8 @@ on the channel, the play instruction doesn't interrupt it. ::
             "If we were already there, the music didn't stop and start over, it just continued."
             jump market_main
 
-The ``volume`` clause is also optional, and specifies a relative volume for
-the track, between 0.0 and 1.0. This makes it possible to adjust the volume a
+The ``volume`` clause is also optional, and specifies a relative amplitude for
+the track, between 0.0 and 1.0. This makes it possible to adjust the amplitude a
 track is played at, each time it's played. ::
 
         play sound "woof.mp3" volume 0.5
@@ -246,14 +246,18 @@ of variables:
 - the "main" mixer's volume
 - the volume of the mixer which the channel relates to
 - the volume of the channel
-- the relative volume of the track itself
+- the relative amplitude of the track itself
+- the relative amplitude associated with the filename
 
 These four volumes are values between 0 and 1, and their multiplication results
 in the volume the track will be played at.
 
 For example, if the main volume is 80% (or 0.8), the mixer's volume is 100%,
 the channel volume is 50% (0.5) and the track's relative volume is 25% (0.25),
-the resulting volume is .8\*1.\*.5\*.25 = .1, so 10%.
+and the filename's relative volume is 50% (0.5), the resulting volume is .8\*1.\*.5\*.25\*.5 = .0.5 so 5%.
+
+Note that while all of these volumes are amplitudes, the mixers are presented as
+decibels in the preferences menu.
 
 The mixers' volumes can be set using :func:`preferences.set_mixer`, using the
 :func:`SetMixer` action, or using the :func:`Preference` action with the
@@ -269,6 +273,9 @@ channel relates, creating it in the process if it doesn't already exist.
 
 A track's relative volume is set with the ``volume`` clause of the :ref:`play-statement`.
 
+A filename's relative volume is set with a volume clause in angle brackets,
+such as "<volume 0.5>track.opus".
+
 In addition to these volume values, there is the mute flag of the mixer which
 the channel relates to. If enabled, it will reduce the played volume to 0.
 They can be set using the :func:`SetMute` or :func:`ToggleMute` actions, or
@@ -276,7 +283,7 @@ using the :func:`Preference` action with the "mixer <mixer> mute" key, or using
 the :func:`preferences.set_mute` function.
 
 
-7.. _silence:
+.. _silence:
 
 Playing Silence
 ---------------

@@ -105,8 +105,8 @@ The transforms are:
 
 .. var:: reset
 
-    Resets the transform. Places the displayable in the top-left corner of the
-    screen, and also eliminates any zoom, rotation, or other effects.
+    Resets the transform to the default values of each property, removing any
+    properites set before it.
 
 .. var:: right
 
@@ -1106,7 +1106,7 @@ The Transform Class
 
 One equivalent to to the simplest ATL transforms is the Transform class.
 
-.. class:: Transform(child=None, function=None, **properties)
+.. class:: Transform(child=None, *, function=None, reset=False, **properties)
 
     Creates a transform which applies operations such as cropping, rotation,
     scaling or alpha-blending to its child. A transform object has fields
@@ -1115,6 +1115,11 @@ One equivalent to to the simplest ATL transforms is the Transform class.
 
     `child`
         The child the transform applies to.
+
+    `reset`
+        If True, the transform will reset properties to their default values
+        when it is shown, rather than inheriting those properties from the
+        transforms it replaces.
 
     .. function:: function(trans: Transform, st: float, at: float, /) -> int|None
 

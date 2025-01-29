@@ -15,14 +15,57 @@ Requirement and Dependency Changes
 
 Ren'Py now requires Windows 10 or later to run. This means that it will no longer run on Windows 7, 8, or 8.1.
 
+Ren'Py now targets Ubuntu 20.04. This also means it targers the "soldier" version of the Steam Linux Runtime.
+
 Ren'Py is no longer built for 32-bit ARM Linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
-Ren'Py is still being built for 32-bit ARM Android.
+Ren'Py is still being built for 32-bit ARM Android. Ren'Py will now prefer the gles2 renderer on ARM Linux devices,
+such as the Raspberry Pi.
 
 The Android version of Ren'Py is now being built with 16KB pages, for future Android devices that will
 require 16 KB page support.
 
+Libs and Mods
+-------------
+
+Ren'Py now includes support for two more special directories, :file:`game/libs` and :file:`game/mods`. These
+directories are intended to receive third-party libraries and mods, respectively.
+
+When the file :file:`game/libs/libs.txt`
+exists, script files inside it are loaded in unicode order by filename (not full path), before other files in :file:`game`.
+Similarly, when the file :file:`game/mods/mods.txt` exists, script files inside it are loaded in unicode order by filename,
+after other files in :file:`game/` and :file:`game/libs/`.
+
+Note that load order is relatively unimportant in Ren'Py - it's mostly used with :doc:`cds`. Init priorities levels
+have been changed to recommend that games use init priorities of -99 to 99, and libraries and mods use from -999 to -100
+and 100 to 999.
+
+When present, the libs and mods directories are showing in the launcher. The libs directory is created automatically
+when the game is created. The mods directory can be created manually if a creator wants to support mods.
+
+The goal of this change is to make it easier to distribute third-party libraries and mods. Instead of needing to be
+merged with the player's script, a library can be placed under game/libs, and will provide full functionality there.
+
+`.rpe` and `.rpe.py` files are also searched in the libs directory.
+
 Features
 --------
+
+The screen language :ref:`use <sl-use>` statement now takes an ``as`` clause, which can be used to capture a
+variable named `main` from the screen. This is intended to be used like the ``as`` clause of screen language
+displayables, which captures the displayable into a variable.
+
+Custom screen language statement also support the ``as`` clause.
+
+The :var:`reset` transform now resets all properties of a Transform.
+
+:class:`Transform` now takes a `reset` property, which controls whether the transform is reset when it is
+used, as opposed to being given properties by other transforms that share a tag.
+
+The new :func:`renpy.seen_translation`, :func:`renpy.mark_translation_seen`, and :func:`renpy.mark_translation_unseen`
+functions make it possible to determine if a translation has been seen.
+
+Audio filesname can now include a volume clase, like "<volume 0.5>sunflower-slow-drag.ogg". This sets the relative
+amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue` statements.
 
 The new :var:`config.keep_screenshot_entering_menu` variable determines if a screenshot taken with :class:`FileTakeScreenshot`
 is kept when entering a menu context.
@@ -44,6 +87,16 @@ inside for translation.
 Other Changes
 -------------
 
+Ren'Py no longer triggers and autoreload when a file that had not existed comes into existence. This behavior
+had been inconsistent, working in some places but not others, required Ren'Py to spent time scanning for files
+that do not exist.
+
+Ren'Py now considers a dialogue statment to have been seen if a statement with the same translation identifier
+has been seen.
+
+For size reasons, the lists of seen dialogue and translations now store a 64-bit integer hash of the statement
+name or translation id.
+
 The ``show expression`` statement has changed so that ``show expression "bg washington"`` is equivalent
 to ``show bg washington``. Previously, the expression would be used as a tag, which would rarely be correct.
 If a displayable is given instead of a string, a tag will be generated.
@@ -57,6 +110,7 @@ rather than the default bilinear scaling.
 The "Image Attributes" screen also indicates if transforms are applied to a layer, as it can be hard
 to determine otherwise.
 
+Ren'Py now also searches for `.rpe` and `.rpe.py` files in the new libs directory.
 
 .. _renpy-8.3.4:
 .. _renpy-7.8.4:
@@ -71,6 +125,7 @@ Python Builtins (like len) are now always available during string interpolation.
 
 Animated presplash images now take precedence over static presplash images, matching
 the documentation.
+
 
 There have been a number of fixes related to dragging of viewports and drag displayables.
 

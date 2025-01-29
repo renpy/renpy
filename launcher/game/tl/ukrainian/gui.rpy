@@ -1,4 +1,4 @@
-
+﻿
 translate ukrainian strings:
 
     # gui/game/gui.rpy:2
@@ -440,3 +440,10 @@ translate ukrainian strings:
     # gui/game/gui.rpy:461
     old "## NVL-mode."
     new "## NVL-режим."
+
+translate ukrainian strings:
+
+    # gui/game/gui.rpy:331
+    old "## What to do with unscrollable scrollbars in the game menu. \"hide\" hides them, while None shows them."
+    new "## Що робити з не прокручуваними смугами прокрутки у меню гри. Параметр «hide» приховує їх, а «None» показує їх."
+

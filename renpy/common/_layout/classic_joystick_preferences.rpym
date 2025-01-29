@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -77,7 +77,7 @@ init python:
 
     def _joystick_take_binding(binding, key):
 
-        if not isinstance(binding, basestring):
+        if not isinstance(binding, str):
             if key in _preferences.joymap:
                 del _preferences.joymap[key]
         else:
