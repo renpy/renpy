@@ -182,7 +182,7 @@ advanced (rarely used) features.
 Partial Playback
 ----------------
 
-Ren'Py supports partial of audio files. This is done by putting a playback
+Ren'Py supports partial playback of audio files. This is done by putting a playback
 specification, enclosed in angle brackets, at the start of the file.
 The partial playback specification should consist of alternating
 property name and value pairs, with every thing separated by spaces.

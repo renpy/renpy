@@ -1092,8 +1092,8 @@ def reset_physical_size():
 
     Attempts to set the size of the physical window to the size specified
     using :var:`renpy.config.physical_height` and :var:`renpy.config.physical_width`,
-    or the size set using :var:`renpy.config.screen_width` and :var:`renpy.config.screen_height`
-    if not set.
+    or, if those are not set, the size set using :var:`renpy.config.screen_width`
+    and :var:`renpy.config.screen_height`.
     """
 
     set_physical_size((renpy.config.physical_width or renpy.config.screen_width, renpy.config.physical_height or renpy.config.screen_height))
@@ -1252,7 +1252,7 @@ def is_start_interact():
     """
     :doc: other
 
-    Returns true if restart_interaction has not been called during the current
+    Returns True if restart_interaction has not been called during the current
     interaction. This can be used to determine if the interaction is just being
     started, or has been restarted.
     """
@@ -1421,7 +1421,7 @@ def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False)
         The displayable or Render to render. If a Render, `width`, `height`, `st`, and `at` are ignored.
 
     `width`
-        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+        The width to offer `d`, in virtual pixels. If None, :var:`config.screen_width`.
 
     `height`
         The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
@@ -1430,7 +1430,7 @@ def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False)
         The time of the render, in the shown timebase.
 
     `at`
-        The time of the rendem in the animation timebase. If None, `st` is used.
+        The time of the render in the animation timebase. If None, `st` is used.
 
     `resize`
         If True, the surface will be resized to the virtual size of the displayable or render. This

@@ -29,7 +29,7 @@ Ren'Py Version
 
 .. var:: renpy.version_name
 
-    A human readable version name, of the form "Example Version."
+    A human-readable version name, of the form "Example Version."
 
 .. var:: renpy.license
 

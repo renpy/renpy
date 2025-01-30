@@ -143,15 +143,15 @@ def scry():
     following fields:
 
     `nvl_clear`
-        Is true if an ``nvl clear`` statement will execute before the
+        Is True if an ``nvl clear`` statement will execute before the
         next interaction.
 
     `say`
-        Is true if an ``say`` statement will execute before the
+        Is True if an ``say`` statement will execute before the
         next interaction.
 
     `menu_with_caption`
-        Is true if a ``menu`` statement with a caption will execute
+        Is True if a ``menu`` statement with a caption will execute
         before the next interaction.
 
     `who`

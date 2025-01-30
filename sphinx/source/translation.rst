@@ -385,7 +385,7 @@ More usually, the font used for dialogue is set with :var:`gui.text_font`.
 The font used for system text, like the exception screen, the accessibility menu,
 and the gui menu, can be customized with :var:`gui.system_font`. The system font
 should be able to express both ASCII and the translated language. Together, these
-can be customized with.
+can be customized with::
 
     translate piglatin python:
         gui.text_font = "stonecutter.ttf"

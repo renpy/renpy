@@ -1733,7 +1733,7 @@ def Character(name=NotSet, kind=None, **properties):
     `retain`
         If not true, an unused tag is generated for each line of dialogue,
         and the screens are shown non-transiently. Call :func:`renpy.clear_retain`
-        to remove all retaint screens. This is almost always used with
+        to remove all retained screens. This is almost always used with
         :doc:`bubble`.
 
     Keyword arguments beginning with ``show_`` have the prefix
