@@ -481,7 +481,8 @@ for name in [ "add", "image" ]:
     Keyword("id")
     Keyword("alt")
     for i in renpy.atl.PROPERTIES:
-        Style(i)
+        if not i.startswith("_"):
+            Style(i)
 
 DisplayableParser("drag", renpy.display.dragdrop.Drag, "drag", 1, replaces=True)
 Keyword("activated")
