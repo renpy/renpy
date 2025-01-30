@@ -806,12 +806,13 @@ Media (Music, Sound, and Video)
 
     This allows large movie files to be hosted on a different server
     than the rest of the game.
+..
+    Lez's comment: This is a TODO variable, look bottom of _audio.js
+    .. var:: config.web_video_prompt = _("Touch to play the video.")
 
-.. var:: config.web_video_prompt = _("Touch to play the video.")
-
-    On Mobile Safari on iOS, by default, the player will need to click to play
-    a movie with sound. This variable gives the message that's used to prompt
-    players to click.
+        On Mobile Safari on iOS, by default, the player will need to click to play
+        a movie with sound. This variable gives the message that's used to prompt
+        players to click.
 
 .. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mpeg", ... ]
 
