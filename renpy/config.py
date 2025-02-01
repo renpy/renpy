@@ -1502,7 +1502,7 @@ interface_layer = "screens"
 limit_transform_crop = False
 
 # Should as dissolve shrink to the size of the smallest child?
-dissolve_shrink = False
+dissolve_shrinks = False
 
 # Marking labels, images and audio in replays as seen is not allowed.
 no_replay_seen = False

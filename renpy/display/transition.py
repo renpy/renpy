@@ -383,7 +383,7 @@ class Dissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        if renpy.config.dissolve_shrink:
+        if renpy.config.dissolve_shrinks:
             width = min(top.width, bottom.width)
             height = min(top.height, bottom.height)
         else:
@@ -552,7 +552,7 @@ class ImageDissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        if renpy.config.dissolve_shrink:
+        if renpy.config.dissolve_shrinks:
             width = min(bottom.width, top.width, image.width)
             height = min(bottom.height, top.height, image.height)
         else:
@@ -680,7 +680,7 @@ class AlphaDissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        if renpy.config.dissolve_shrink:
+        if renpy.config.dissolve_shrinks:
             width = min(bottom.width, top.width, image.width)
             height = min(bottom.height, top.height, image.height)
         else:
