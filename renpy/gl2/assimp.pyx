@@ -277,6 +277,8 @@ cdef class Loader:
             self.model_data = None
             self.mesh_callback = None
 
+            self.importer.FreeScene()
+
 
     def load_textures(self) -> None:
         """
