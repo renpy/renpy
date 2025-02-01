@@ -154,10 +154,18 @@ cdef extern from "assimp/scene.h":
         aiTexture **mTextures
         aiMaterial **mMaterials
 
+cdef extern from "assimp/IOSystem.hpp" namespace "Assimp":
+
+    cdef cppclass IOSystem:
+        pass
+
 cdef extern from "assimp/Importer.hpp" namespace "Assimp":
 
     cdef cppclass Importer:
         Importer()
         const aiScene *ReadFile(const char* pFile, unsigned int pFlags)
         const aiScene *GetScene()
+        void FreeScene()
         const char *GetErrorString()
+
+        void SetIOHandler(IOSystem *ioHandler)

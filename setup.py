@@ -132,7 +132,7 @@ def main():
     if cubism:
         cython("renpy.gl2.live2dmodel")
 
-    cython("renpy.gl2.assimp", language="c++")
+    cython("renpy.gl2.assimp", [ "src/assimpio.cc" ], language="c++")
 
     # renpy.text
     cython("renpy.text.textsupport")

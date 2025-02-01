@@ -19,10 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from pygame_sdl2 cimport *
+import_pygame_sdl2()
+
 from assimpapi cimport (
     Importer, aiProcessPreset_TargetRealtime_Quality, aiProcess_ConvertToLeftHanded, aiProcess_FlipUVs, aiScene,
     aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace, aiNode, aiTexture,
-    aiTextureType,
+    aiTextureType, IOSystem,
 
     aiTextureType_NONE,
     aiTextureType_DIFFUSE,
@@ -47,9 +50,14 @@ from assimpapi cimport (
     aiTextureType_CLEARCOAT,
     aiTextureType_TRANSMISSION,
 
-
     aiString, aiMaterial
 )
+
+cdef extern from "assimpio.h":
+    cdef cppclass RenpyIOSystem(IOSystem):
+        RenpyIOSystem()
+        pass
+
 
 from typing import Callable, Iterable
 
@@ -234,15 +242,16 @@ cdef class Loader:
     cdef public object mesh_callback
     "The callback that is called for each mesh."
 
+    def __cinit__(self):
+        self.importer.SetIOHandler(new RenpyIOSystem())
+
     def load(self, filename: str, mesh_callback) -> None:
 
         self.mesh_callback = mesh_callback
         self.dirname = filename.rpartition("/")[0]
 
-        full_filename = renpy.config.gamedir + "/" + filename
-
         # Load the scene.
-        filename_bytes = full_filename.encode()
+        filename_bytes = filename.encode()
         self.scene = self.importer.ReadFile(
             filename_bytes,
             aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs)
@@ -440,3 +449,37 @@ class AssimpModel(renpy.display.displayable.Displayable):
         rv.add_property("depth", True)
 
         return rv
+
+
+cdef public int assimp_loadable(const char *filename) nogil:
+    """
+    Returns 1 if filename is loadable, 0 otherwise.
+    """
+
+    with gil:
+        fn = filename.decode()
+
+        if renpy.loader.loadable(filename):
+            return 1
+        else:
+            return 0
+
+
+cdef public SDL_RWops *assimp_load(const char *filename) nogil:
+    """
+    Loads the model from the given filename.
+    """
+
+    cdef SDL_RWops *rv = NULL
+
+    with gil:
+
+        fn = filename.decode()
+
+        try:
+            f = renpy.loader.load(fn)
+            rv = RWopsFromPython(f)
+        except Exception as e:
+            pass
+
+    return rv

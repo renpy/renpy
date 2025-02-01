@@ -26,7 +26,7 @@ renpy.display.accelerator ../tmp/gen/renpy.display.accelerator.c
 renpy.display.quaternion ../tmp/gen/renpy.display.quaternion.c
 renpy.uguu.gl ../tmp/gen/renpy.uguu.gl.c
 renpy.uguu.uguu ../tmp/gen/renpy.uguu.uguu.c
-renpy.gl2.assimp ../tmp/gen/renpy.gl2.assimp.cc
+renpy.gl2.assimp ../tmp/gen/renpy.gl2.assimp.cc assimpio.cc
 renpy.gl2.gl2mesh ../tmp/gen/renpy.gl2.gl2mesh.c
 renpy.gl2.gl2mesh2 ../tmp/gen/renpy.gl2.gl2mesh2.c
 renpy.gl2.gl2mesh3 ../tmp/gen/renpy.gl2.gl2mesh3.c
