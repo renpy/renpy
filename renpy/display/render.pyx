@@ -552,7 +552,7 @@ FLATTEN = 4
 # Possible matrix kinds.
 MATRIX_VIEW = 0
 MATRIX_MODEL = 1
-MATRIX_CAMERA = 2
+MATRIX_PROJECTION = 2
 
 cdef class Render:
 

@@ -48,7 +48,7 @@ import random
 import renpy.uguu.gl as uguugl
 
 cimport renpy.display.render as render
-from renpy.display.render cimport Render, MATRIX_CAMERA, MATRIX_VIEW, MATRIX_MODEL
+from renpy.display.render cimport Render, MATRIX_PROJECTION, MATRIX_VIEW, MATRIX_MODEL
 from renpy.display.matrix cimport Matrix
 
 cimport renpy.gl2.gl2texture as gl2texture
@@ -1398,7 +1398,7 @@ cdef class GL2DrawingContext:
 
         program.set_uniform("u_model_size", (model.width, model.height))
         program.set_uniform("u_model", model_matrix)
-        program.set_uniform("u_transform", uniforms["u_cameraview"] * model_matrix)
+        program.set_uniform("u_transform", uniforms["u_projectionview"] * model_matrix)
 
         model.program_uniforms(program)
 
@@ -1526,23 +1526,23 @@ cdef class GL2DrawingContext:
             if has_reverse:
                 child_model_matrix = child_model_matrix * r.reverse
 
-                if r.matrix_kind == MATRIX_CAMERA:
+                if r.matrix_kind == MATRIX_PROJECTION:
                     child_uniforms = dict(child_uniforms)
-                    child_uniforms["u_camera"] = child_uniforms["u_cameraview"] = child_uniforms["u_cameraview"] * child_model_matrix
+                    child_uniforms["u_projection"] = child_uniforms["u_projectionview"] = child_uniforms["u_projectionview"] * child_model_matrix
                     child_uniforms["u_view"] = IDENTITY
                     child_model_matrix = IDENTITY
 
                 elif r.matrix_kind == MATRIX_VIEW:
                     child_uniforms = dict(child_uniforms)
                     child_uniforms["u_view"] = child_uniforms["u_view"] * child_model_matrix
-                    child_uniforms["u_cameraview"] = child_uniforms["u_camera"] * child_uniforms["u_view"]
+                    child_uniforms["u_projectionview"] = child_uniforms["u_projection"] * child_uniforms["u_view"]
                     child_model_matrix = IDENTITY
 
                 if child_clip_polygon is not None:
                     child_clip_polygon = child_clip_polygon.multiply_matrix(r.forward)
 
 
-            self.draw_one(child, child_model_matrix, child_clip_polygon, shaders, uniforms, child_properties)
+            self.draw_one(child, child_model_matrix, child_clip_polygon, shaders, child_uniforms, child_properties)
 
 
         if depth:
@@ -1552,20 +1552,19 @@ cdef class GL2DrawingContext:
 
 
     def draw(self, what, Matrix transform):
-
         clip_polygon = None
         shaders = ()
-        uniforms = { "u_camera": IDENTITY, "u_view": IDENTITY, "u_cameraview": IDENTITY }
+        uniforms = { "u_projection": transform, "u_view": IDENTITY, "u_projectionview": transform }
         properties = { "pixel_perfect" : None }
 
         if renpy.config.nearest_neighbor:
             properties["texture_scaling"] = "nearest"
 
-        self.draw_one(what, transform, clip_polygon, shaders, uniforms, properties)
+        self.draw_one(what, IDENTITY, clip_polygon, shaders, uniforms, properties)
 
 
 # A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
-standard_uniforms = { "u_transform", "u_camera", "u_view", "u_cameraview", "u_model", "u_time", "u_random", "u_drawable_size" }
+standard_uniforms = { "u_transform", "u_projection", "u_view", "u_projectionview", "u_model", "u_time", "u_random", "u_drawable_size" }
 
 _types = """
 standard_uniforms : set[str]

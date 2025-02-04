@@ -24,7 +24,7 @@ from renpy.display.matrix cimport Matrix, Matrix2D
 
 cdef public int MATRIX_MODEL
 cdef public int MATRIX_VIEW
-cdef public int MATRIX_CAMERA
+cdef public int MATRIX_PROJECTION
 
 cdef class Render:
 

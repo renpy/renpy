@@ -25,7 +25,7 @@ from __future__ import print_function
 import renpy
 import math
 from renpy.display.matrix cimport Matrix
-from renpy.display.render cimport Render, Matrix2D, render
+from renpy.display.render cimport Render, Matrix2D, render, MATRIX_VIEW, MATRIX_PROJECTION
 from renpy.display.core import absolute
 
 from sdl2 cimport *
@@ -1029,11 +1029,6 @@ cdef class RenderTransform:
         # The final render. (Unless we mesh it.)
         rv = Render(self.width, self.height)
 
-        # perspective
-        if perspective:
-            near, z_one_one, far = perspective
-            self.reverse = Matrix.perspective(self.width, self.height, near, z_one_one, far) * self.reverse
-
         # Apply the matrices to the transform.
         transform.reverse = self.reverse
 
@@ -1051,6 +1046,21 @@ cdef class RenderTransform:
             rv.subpixel_blit(self.cr, pos)
         else:
             rv.blit(self.cr, pos)
+
+
+        # perspective
+        if perspective:
+            rv.matrix_kind = MATRIX_VIEW
+
+            prv = Render(self.width, self.height)
+            prv.blit(rv, (0, 0))
+
+            near, z_one_one, far = perspective
+            prv.reverse = Matrix.perspective(self.width, self.height, near, z_one_one, far)
+            prv.forward = prv.reverse.inverse()
+            prv.matrix_kind = MATRIX_PROJECTION
+
+            rv = prv
 
         if mesh and perspective:
             rv = self.make_mesh(rv)
