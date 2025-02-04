@@ -48,7 +48,7 @@ import random
 import renpy.uguu.gl as uguugl
 
 cimport renpy.display.render as render
-from renpy.display.render cimport Render
+from renpy.display.render cimport Render, MATRIX_CAMERA, MATRIX_VIEW, MATRIX_MODEL
 from renpy.display.matrix cimport Matrix
 
 cimport renpy.gl2.gl2texture as gl2texture
@@ -1510,6 +1510,7 @@ cdef class GL2DrawingContext:
             child_transform = transform
             child_clip_polygon = clip_polygon
             child_properties = properties
+            child_uniforms = uniforms
 
             if (cx or cy):
                 if isinstance(cx, float) and not properties["pixel_perfect"]:
@@ -1527,6 +1528,17 @@ cdef class GL2DrawingContext:
                 if child_clip_polygon is not None:
                     child_clip_polygon = child_clip_polygon.multiply_matrix(r.forward)
 
+                if r.matrix_kind == MATRIX_CAMERA:
+                    child_uniforms = dict(child_uniforms)
+                    child_uniforms["u_camera"] = child_uniforms["u_camera"] * child_uniforms["u_view"] * child_transform
+                    child_uniforms["u_view"] = IDENTITY
+                    child_transform = IDENTITY
+
+                elif r.matrix_kind == MATRIX_VIEW:
+                    child_uniforms = dict(child_uniforms)
+                    child_uniforms["u_view"] = child_uniforms["u_view"] * child_transform
+                    child_transform = IDENTITY
+
             self.draw_one(child, child_transform, child_clip_polygon, shaders, uniforms, child_properties)
 
 
@@ -1540,7 +1552,7 @@ cdef class GL2DrawingContext:
 
         clip_polygon = None
         shaders = ()
-        uniforms = {}
+        uniforms = { "u_camera": IDENTITY, "u_view": IDENTITY }
         properties = { "pixel_perfect" : None }
 
         if renpy.config.nearest_neighbor:
@@ -1550,7 +1562,7 @@ cdef class GL2DrawingContext:
 
 
 # A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
-standard_uniforms = { "u_transform", "u_time", "u_random", "u_drawable_size" }
+standard_uniforms = { "u_transform", "u_camera", "u_view", "u_model", "u_time", "u_random", "u_drawable_size" }
 
 _types = """
 standard_uniforms : set[str]
