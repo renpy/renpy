@@ -20,26 +20,71 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import annotations
 
+from typing import Any, Iterator, LiteralString, NamedTuple, cast
 
-import codecs
-import re
-import sys
 import os
-import time
+import re
 import contextlib
 
 import renpy
 
-from renpy.lexersupport import match_logical_word
+from renpy.tokenizer import (
+    Token,
+    Line,
+    TokenKind,
+    Tokenizer,
+    TOKEN_VALUE_TO_OP,
+    NEWLINE,
+    NAME,
+    KEYWORD,
+    IDENTIFIER,
+    NUMBER,
+    FLOAT,
+    INT,
+    STRING,
+    RAW_TRIPLE_STRING,
+    TRIPLE_STRING,
+    RAW_SINGLE_STRING,
+    SINGLE_STRING,
+    SPACESHIP,
+    LPAR,
+    RPAR,
+    LSQB,
+    RSQB,
+    COLON,
+    COMMA,
+    PLUS,
+    MINUS,
+    STAR,
+    SLASH,
+    VBAR,
+    AMPER,
+    LESS,
+    GREATER,
+    DOT,
+    PERCENT,
+    LBRACE,
+    RBRACE,
+    EQEQUAL,
+    NOTEQUAL,
+    LESSEQUAL,
+    GREATEREQUAL,
+    TILDE,
+    CIRCUMFLEX,
+    LEFTSHIFT,
+    RIGHTSHIFT,
+    DOUBLESTAR,
+    DOUBLESLASH,
+    AT,
+)
 
 # The filename that's in the line text cache.
 line_text_filename = ""
 
 # The content of the line text cache.
-line_text_cache = [ ]
+line_text_cache = []
 
 
 def get_line_text(filename, lineno):
@@ -51,31 +96,20 @@ def get_line_text(filename, lineno):
     global line_text_filename
     global line_text_cache
 
-    import linecache
-    full_filename = renpy.exports.unelide_filename(filename)
-
+    full_filename = unelide_filename(filename)
 
     if full_filename != line_text_filename:
 
         line_text_filename = full_filename
 
         try:
-
-            with open(full_filename, "rb") as f:
-                data = f.read().decode("utf-8", "python_strict")
-
-            if full_filename.endswith("_ren.py"):
-                data = ren_py_to_rpy(data, None)
-
-            data += "\n\n"
-
-            line_text_cache = data.split("\n")
-
+            with open(full_filename, "r", encoding="utf-8") as f:
+                line_text_cache = f.readlines()
         except Exception:
-            line_text_cache = [ ]
+                line_text_cache = [ ]
 
     if lineno <= len(line_text_cache):
-        return line_text_cache[lineno - 1] + "\n"
+        return line_text_cache[lineno - 1]
     else:
         return "\n"
 
@@ -139,17 +173,6 @@ class ParseError(Exception):
     def defer(self, queue):
         renpy.parser.deferred_parse_errors[queue].append(self.message)
 
-# Something to hold the expected line number.
-
-
-class LineNumberHolder(object):
-    """
-    Holds the expected line number.
-    """
-
-    def __init__(self):
-        self.line = 0
-
 
 def unicode_filename(fn):
     """
@@ -173,11 +196,6 @@ def unicode_filename(fn):
 
     # Insane systems, mojibake.
     return fn.decode("latin-1")
-
-
-# Matches either a word, or something else. Most magic is taken care of
-# before this.
-lllword = re.compile(r'__(\w+)|\w+| +|.', re.S)
 
 
 def munge_filename(fn):
@@ -246,25 +264,33 @@ def unelide_filename(fn):
     return fn
 
 
-# The filename that the start and end positions are relative to.
-original_filename = ""
+
+word_regexp = r'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*'
 
 
-def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
+class SubParse:
     """
-    Reads `filename`, and divides it into logical lines.
-
-    Returns a list of (filename, line number, line text) triples.
-
-    If `filedata` is given, it should be a unicode string giving the file
-    contents. In that case, `filename` need not exist.
+    This represents the information about a subparse that can be provided to
+    a creator-defined statement.
     """
 
+    def __init__(self, block: list[renpy.ast.Node]):
+        self.block = block
+
+    def __repr__(self):
+
+        if not self.block:
+            return "<SubParse empty>"
+        else:
+            return "<SubParse {}:{}>".format(self.block[0].filename, self.block[0].linenumber)
+
+
+def munged_string(prefix: str, string: str) -> str:
     if renpy.config.munge_in_strings:
 
         munge_regexp = re.compile(r'\b__(\w+)')
 
-        def munge_string(m):
+        def munge_string(m: re.Match):
 
             g1 = m.group(1)
 
@@ -280,7 +306,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
         munge_regexp = re.compile(r'(\.|\[+)__(\w+)')
 
-        def munge_string(m):
+        def munge_string(m: re.Match):
             brackets = m.group(1)
 
             if (len(brackets) & 1) == 0:
@@ -291,385 +317,26 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
             return brackets + prefix + m.group(2)
 
-    global original_filename
+    return munge_regexp.sub(munge_string, string)
 
-    original_filename = filename
+type LegacyLexerBlock = list[tuple[str, int, str, LegacyLexerBlock]]
 
-    if filedata:
-        data = filedata
-    else:
-        with open(filename, "rb") as f:
-            data = f.read().decode("utf-8", "python_strict")
-
-    if filename.endswith("_ren.py"):
-        data = ren_py_to_rpy(data, filename)
-
-    filename = elide_filename(filename)
-    prefix = munge_filename(filename)
-
-    # Add some newlines, to fix lousy editors.
-    data += "\n\n"
-
-    # The result.
-    rv = []
-
-    # The line number in the physical file.
-    number = linenumber
-
-    # The current position we're looking at in the buffer.
-    pos = 0
-
-    # Are we looking at a triple-quoted string?
-
-    # Skip the BOM, if any.
-    if len(data) and data[0] == u'\ufeff':
-        pos += 1
-
-    if add_lines or renpy.game.context().init_phase:
-        lines = renpy.scriptedit.lines
-    else:
-        lines = { }
-
-    len_data = len(data)
-
-    renpy.scriptedit.files.add(filename)
-
-    line = 0
-    start_number = 0
-
-    # Looping over the lines in the file.
-    while pos < len_data:
-
-        # The line number of the start of this logical line.
-        start_number = number
-
-        # The line that we're building up.
-        line = [ ]
-
-        # The number of open parenthesis there are right now.
-        parendepth = 0
-
-        loc = (filename, start_number)
-        lines[loc] = renpy.scriptedit.Line(original_filename, start_number, pos)
-
-        endpos = None
-
-        while pos < len_data:
-
-            startpos = pos
-            c = data[pos]
-
-            if c == u'\t':
-                raise ParseError(filename, number, "Tab characters are not allowed in Ren'Py scripts.")
-
-            if c == u'\n' and not parendepth:
-
-                line = ''.join(line)
-
-                # If not blank...
-                if not re.match(r"^\s*$", line):
-
-                    # Add to the results.
-                    rv.append((filename, start_number, line))
-
-                if endpos is None:
-                    endpos = pos
-
-                lines[loc].end_delim = endpos + 1
-
-                while data[endpos - 1] in u' \r':
-                    endpos -= 1
-
-                lines[loc].end = endpos
-                lines[loc].text = data[lines[loc].start:lines[loc].end]
-                lines[loc].full_text = data[lines[loc].start:lines[loc].end_delim]
-
-                pos += 1
-                number += 1
-                endpos = None
-                # This helps out error checking.
-                line = [ ]
-                break
-
-            if c == u'\n':
-                number += 1
-                endpos = None
-
-            if c == u"\r":
-                pos += 1
-                continue
-
-            # Backslash/newline.
-            if c == u"\\" and data[pos + 1] == u"\n":
-                pos += 2
-                number += 1
-                line.append(u"\\\n")
-                continue
-
-            # Parenthesis.
-            if c in u'([{':
-                parendepth += 1
-
-            if (c in u'}])') and parendepth:
-                parendepth -= 1
-
-            # Comments.
-            if c == u'#':
-                endpos = pos
-
-                while data[pos] != u'\n':
-                    pos += 1
-
-                continue
-
-            # Strings.
-            if c in u'"\'`':
-                delim = c
-                line.append(c)
-                pos += 1
-
-                escape = False
-                triplequote = False
-
-                if (pos < len_data - 1) and (data[pos] == delim) and (data[pos + 1] == delim):
-                    line.append(delim)
-                    line.append(delim)
-                    pos += 2
-                    triplequote = True
-
-                s = [ ]
-
-                while pos < len_data:
-
-                    c = data[pos]
-
-                    if c == u'\n':
-                        number += 1
-
-                    if c == u'\r':
-                        pos += 1
-                        continue
-
-                    if escape:
-                        escape = False
-                        pos += 1
-                        s.append(c)
-                        continue
-
-                    if c == delim:
-
-                        if not triplequote:
-                            pos += 1
-                            s.append(c)
-                            break
-
-                        if (pos < len_data - 2) and (data[pos + 1] == delim) and (data[pos + 2] == delim):
-                            pos += 3
-                            s.append(delim)
-                            s.append(delim)
-                            s.append(delim)
-                            break
-
-                    if c == u'\\':
-                        escape = True
-
-                    s.append(c)
-                    pos += 1
-
-                    continue
-
-                s = "".join(s)
-
-                if "__" in s:
-                    s = munge_regexp.sub(munge_string, s)
-
-                line.append(s)
-
-                continue
-
-            word, magic, end = match_logical_word(data, pos)
-
-            if magic:
-
-                rest = word[2:]
-
-                if (u"__" not in rest) and not rest.startswith("_"):
-                    word = prefix + rest
-
-            line.append(word)
-            pos = end
-
-            if (pos - startpos) > 65536:
-                raise ParseError(filename, start_number, "Overly long logical line. (Check strings and parenthesis.)", line=line, first=True)
-
-    if line:
-        raise ParseError(filename, start_number, "is not terminated with a newline. (Check strings and parenthesis.)", line=line, first=True)
-
-    return rv
-
-
-def depth_split(l):
-    """
-    Returns the length of the line's prefix, and the rest of the line.
-    """
-
-    depth = 0
-    index = 0
-
-    while True:
-        if l[index] == ' ':
-            depth += 1
-            index += 1
-            continue
-
-        break
-
-    return depth, l[index:]
-
-# i, min_depth -> block, new_i
-def gll_core(lines, i, min_depth):
-    """
-    Recursively groups lines into blocks.
-
-    Given the line
-    """
-
-    rv = []
-    depth = None
-
-    while i < len(lines):
-
-        filename, number, text = lines[i]
-
-        line_depth, rest = depth_split(text)
-
-        # This catches a block exit.
-        if line_depth < min_depth:
-            break
-
-        if depth is None:
-            depth = line_depth
-
-        if depth != line_depth:
-            raise ParseError(filename, number, "Indentation mismatch.")
-
-        # Advance to the next line.
-        i += 1
-
-        # Try parsing a block associated with this line.
-        block, i = gll_core(lines, i, depth + 1)
-
-        rv.append((filename, number, rest, block))
-
-    return rv, i
-
-def group_logical_lines(lines):
-    """
-    This takes as input the list of logical line triples output from
-    list_logical_lines, and breaks the lines into blocks. Each block
-    is represented as a list of (filename, line number, line text,
-    block) triples, where block is a block list (which may be empty if
-    no block is associated with this line.)
-    """
-
-    if lines:
-
-        filename, number, text = lines[0]
-
-        if depth_split(text)[0] != 0:
-            raise ParseError(filename, number, "Unexpected indentation at start of file.")
-
-    return gll_core(lines, 0, 0)[0]
-
-
-# A list of keywords which should not be parsed as names, because
-# there is a huge chance of confusion.
-#
-# Note: We need to be careful with what's in here, because these
-# are banned in simple_expressions, where we might want to use
-# some of them.
-KEYWORDS = {
-    'as',
-    'if',
-    'in',
-    'return',
-    'with',
-    'while',
-}
-
-IMAGE_KEYWORDS = {
-    'behind',
-    'at',
-    'onlayer',
-    'with',
-    'zorder',
-    'transform',
-}
-
-OPERATORS = [
-    '<>',
-    '<<',
-    '<=',
-    '<',
-    '>>',
-    '>=',
-    '>',
-    '!=',
-    '==',
-    '|',
-    '^',
-    '&',
-    '+',
-    '-',
-    '**',
-    '*',
-    '//',
-    '/',
-    '%',
-    '~',
-    '@',
-    ':=',
-    ]
-
-ESCAPED_OPERATORS = [
-    r'\bor\b',
-    r'\band\b',
-    r'\bnot\b',
-    r'\bin\b',
-    r'\bis\b',
-    ]
-
-operator_regexp = "|".join([ re.escape(i) for i in OPERATORS ] + ESCAPED_OPERATORS)
-
-word_regexp = r'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*'
-image_word_regexp = r'[-0-9a-zA-Z_\u00a0-\ufffd][-0-9a-zA-Z_\u00a0-\ufffd]*'
-
-
-class SubParse(object):
-    """
-    This represents the information about a subparse that can be provided to
-    a creator-defined statement.
-    """
-
-    def __init__(self, block):
-        self.block = block
-
-    def __repr__(self):
-
-        if not self.block:
-            return "<SubParse empty>"
-        else:
-            return "<SubParse {}:{}>".format(self.block[0].filename, self.block[0].linenumber)
-
-
-class Lexer(object):
+class Lexer:
     """
     The lexer that is used to lex script files. This works on the idea
     that we want to lex each line in a block individually, and use
     sub-lexers to lex sub-blocks.
     """
 
-    def __init__(self, block, init=False, init_offset=0, global_label=None, monologue_delimiter="\n\n", subparses=None):
+    def __init__(
+        self,
+        block: list[Line] | LegacyLexerBlock,
+        init=False,
+        init_offset=0,
+        global_label: str | None = None,
+        monologue_delimiter="\n\n",
+        subparses: list[SubParse] | None = None,
+    ):
 
         # Are we underneath an init block?
         self.init = init
@@ -677,25 +344,255 @@ class Lexer(object):
         # The priority of auto-defined init statements.
         self.init_offset = init_offset
 
-        self.block = block
-        self.eob = False
-
-        self.line = -1
-
-        # These are set by advance.
-        self.filename = ""
-        self.text = ""
-        self.number = 0
-        self.subblock = [ ]
         self.global_label = global_label
-        self.pos = 0
-        self.word_cache_pos = -1
-        self.word_cache_newpos = -1
-        self.word_cache = ""
-
         self.monologue_delimiter = monologue_delimiter
-
         self.subparses = subparses
+
+        # Convert pre 8.4 list of grouped logical lines to
+        # tokenized list of Line's.
+        if block and not isinstance(block[0], Line):
+            block = cast("LegacyLexerBlock", block)
+
+            # 'block' here is a pre 8.4 way to represent Lexer subblock -
+            # list of (filename, linenumber, line, line subblock) tuples.
+            # We reconstruct source code from this and then tokenize it,
+            # as if it were read from a file, and pass it to parse function.
+            # This _may_ have incorrect line numbers and column offsets.
+
+            filename = block[0][0]
+            start_lineno = last_lineno = block[0][1]
+            queue = [
+                (0, linenumber, line, subblock)
+                for (_, linenumber, line, subblock)
+                in reversed(block)]
+
+            lines = []
+            while queue:
+                indent_depth, linenumber, line, subblock = queue.pop()
+
+                for _ in range(linenumber - last_lineno):
+                    lines.append("\n")
+                last_lineno = linenumber
+
+                lines.append(" " * indent_depth)
+                lines.append(line)
+
+                for _, linenumber, line, subblock in reversed(subblock):
+                    queue.append((indent_depth + 4, linenumber, line, subblock))
+
+            # Source code should already have newlines at the end.
+            tok = Tokenizer.from_string(
+                "".join(lines),
+                filename,
+                lineno_offset=start_lineno - 1)
+
+            block = list(tok.logical_lines())
+
+        # List of lines that make up this indentation block.
+        self._block = cast("list[Line]", block)
+
+        # Index of current logical line in block.
+        # Should change only by advace/unadvance.
+        # -1 means we are before the first line.
+        self._line_index: int = -1
+
+        # Line instance of current logical line or None if before the first
+        # line, or after the last line.
+        self._line: Line | None = None
+
+        # Index of current token in tokens, or None if at end of line.
+        self._token_index: int | None = None
+
+        # Position of 'cursor' in the line.
+        # Most often it is equal to tokens_keys[token_index], but it can be
+        # different if the cursor is in the middle of a token after match_regexp.
+        self._pos: int = 0
+
+        # Munged str value of self._line
+        self.text: str = ""
+
+    @classmethod
+    def from_string(
+        cls,
+        source: str,
+        filename: str,
+        lineno_offset=0,
+        init=False,
+        init_offset=0,
+    ):
+        """
+        Tokenizes a string and creates a Lexer object from results logical
+        lines.
+        """
+
+        tok = Tokenizer.from_string(
+            source,
+            filename,
+            lineno_offset=lineno_offset)
+
+        return Lexer(
+            list(tok.logical_lines()),
+            init=init,
+            init_offset=init_offset,
+        )
+
+    def __reduce__(self):
+        raise TypeError("Can't pickle Lexer instance.")
+
+    def _update_line(self, idx: int):
+        self._line_index = idx
+        line = self._block[idx]
+        self._token_index = 0
+        self._pos = 0
+
+        # No munging needed, offsets are correct,
+        # just make sure text is str, not Line.
+        if "__" not in line:
+            self._line = line
+            # Strip ending \n.
+            self.text = str(line)[:-1]
+            return
+
+        # Otherwise we need to fix up the offsets text and offsets.
+        # But keep physical locations the same, because munging doesn't
+        # change physical file.
+        prefix = munge_filename(line.physical_location.filename)
+        text_parts = []
+        tokens = []
+        offsets = []
+        offset_bias = 0
+        pos = 0
+        for token, offset in zip(line.tokens, line.offsets):
+            text_parts.append(line[pos:offset])
+            offsets.append(offset + offset_bias)
+            pos = offset + len(token.string)
+
+            if "__" in token.string:
+                token_len = len(token.string)
+                token = Token(
+                    token.kind,
+                    token.exact_kind,
+                    munged_string(prefix, token.string),
+                    token.physical_location,
+                )
+                offset_bias += len(token.string) - token_len
+
+            text_parts.append(token.string)
+            tokens.append(token)
+
+        # Strip ending \n.
+        text_parts[-1] = text_parts[-1][:-1]
+        text = "".join(text_parts)
+        self._line = Line(
+            text,
+            tuple(tokens),
+            tuple(offsets),
+            line.physical_location,
+            line.indent_size,
+        )
+        self.text = text
+
+    @property
+    def _mid_token(self):
+        idx = self._token_index
+        if idx is None:
+            return False
+
+        return self._pos != self._line.offsets[idx]
+
+    @property
+    def _current_token(self):
+        if self._token_index is None:
+            return None
+
+        return self._line.tokens[self._token_index]
+
+    def _advance_token(self):
+        if self._token_index is None:
+            return
+
+        self._token_index += 1
+        if self._token_index >= len(self._line.tokens):
+            self._pos = len(self.text)
+            self._token_index = None
+        else:
+            self._pos = self._line.offsets[self._token_index]
+
+    def _yield_subblock_lines(self) -> Iterator[Line]:
+        if self._line is None:
+            return
+
+        idx = self._line_index + 1
+        depth = self._line.indent_size
+        while idx < len(self._block):
+            l = self._block[idx]
+            if l.indent_size > depth:
+                idx += 1
+                yield l
+            else:
+                break
+
+    @property
+    def subblock(self):
+        return self.has_block()
+
+    @property
+    def pos(self):
+        return self._pos
+
+    @pos.setter
+    def pos(self, value: int):
+        if value >= len(self.text):
+            self._pos = len(self.text)
+            self._token_index = None
+        else:
+            self._pos = value
+            for i, p in enumerate(self._line.offsets):
+                if p >= value:
+                    self._token_index = i
+                    return
+
+            # Value is greater than all offsets, i.e. it is mid-token
+            # in last token.
+            self._token_index = len(self._line.tokens) - 1
+
+    @property
+    def filename(self) -> str:
+        """
+        Elided filename where current logical line is located.
+        """
+
+        if self._line is None:
+            return ""
+
+        return self._line.physical_location.filename
+
+    @property
+    def number(self) -> int:
+        """
+        Line number where current logical line is located.
+        """
+
+        if self._line is None:
+            return 0
+
+        return self._line.physical_location.start_lineno
+
+    @property
+    def eob(self):
+        return self._line_index > len(self._block)
+
+    def eol(self):
+        """
+        Returns True if, after skipping whitespace, the current
+        position is at the end of the end of the current line, or
+        False otherwise.
+        """
+
+        if self._lookup_token(NEWLINE):
+            self._advance_token()
+
+        return self._token_index is None
 
     def advance(self):
         """
@@ -709,16 +606,25 @@ class Lexer(object):
         advance (which will always return False) on the lexer.
         """
 
-        self.line += 1
-
-        if self.line >= len(self.block):
-            self.eob = True
+        block_len = len(self._block)
+        if not block_len:
+            self._line_index = 1
             return False
 
-        self.filename, self.number, self.text, self.subblock = self.block[self.line]
-        self.pos = 0
-        self.word_cache_pos = -1
+        idx = self._line_index
+        depth = self._block[0].indent_size
 
+        while (idx := idx + 1) < block_len:
+            line = self._block[idx]
+            if line.indent_size == depth:
+                break
+        else:
+            self._line_index = block_len + 1
+            self.pos = len(self.text)
+            return False
+
+        self._update_line(idx)
+        self.pos = 0
         return True
 
     def unadvance(self):
@@ -728,16 +634,29 @@ class Lexer(object):
         do.
         """
 
-        self.line -= 1
-        self.eob = False
-        self.filename, self.number, self.text, self.subblock = self.block[self.line]
-        self.pos = len(self.text)
-        self.word_cache_pos = -1
+        idx = min(self._line_index, len(self._block) - 1)
+        depth = self._line.indent_size
+        while (idx := idx - 1) >= 0:
+            line = self._block[idx]
+            if line.indent_size == depth:
+                break
+        else:
+            self._line_index = 0
+            return
 
-    def match_regexp(self, regexp):
+        self._update_line(idx)
+        self.pos = len(self.text)
+
+    # The regexes that match single operator.
+    _OP_REGEX = TOKEN_VALUE_TO_OP.copy()
+
+    # Ditto, but escaped.
+    _OP_REGEX |= {re.escape(k): v for k, v in TOKEN_VALUE_TO_OP.items()}
+
+    def match_regexp(self, regexp: LiteralString):
         """
         Tries to match the given regexp at the current location on the
-        current line. If it succeds, it returns the matched text (if
+        current line. If it succeeds, it returns the matched text (if
         any), and updates the current position to be after the
         match. Otherwise, returns None and the position is unchanged.
         """
@@ -748,13 +667,22 @@ class Lexer(object):
         if self.pos == len(self.text):
             return None
 
-        m = re.compile(regexp, re.DOTALL).match(self.text, self.pos)
+        # Fast path for single operator checks.
+        if regexp in self._OP_REGEX and not self._mid_token:
+            kind = self._OP_REGEX[regexp]
+            if (tok := self._lookup_exact_token(kind)) is None:
+                return None
 
-        if not m:
+            self._advance_token()
+            return tok.string
+
+        p = re.compile(regexp, re.DOTALL)
+        m = p.match(self.text, self.pos)
+
+        if m is None:
             return None
 
         self.pos = m.end()
-
         return m.group(0)
 
     def skip_whitespace(self):
@@ -762,9 +690,21 @@ class Lexer(object):
         Advances the current position beyond any contiguous whitespace.
         """
 
-        # print self.text[self.pos].encode('unicode_escape')
+        pos = self._pos
+        text = self.text
+        len_text = len(text)
+        while pos < len_text:
+            c = text[pos]
+            if c == " " or c == "\n":
+                pos += 1
 
-        self.match_regexp(r"(\s+|\\\n)+")
+            elif c == "\\" and text[pos + 1] == "\n":
+                pos += 2
+
+            else:
+                break
+
+        self.pos = pos
 
     def match(self, regexp):
         """
@@ -823,8 +763,8 @@ class Lexer(object):
         location.
         """
 
-        if (self.line == -1) and self.block:
-            self.filename, self.number, self.text, self.subblock = self.block[0]
+        if self._line is None and self._block:
+            self._update_line(0)
 
         raise ParseError(self.filename, self.number, msg, self.text, self.pos)
 
@@ -837,20 +777,10 @@ class Lexer(object):
             A string giving a list of deferred errors to add to.
         """
 
-        if (self.line == -1) and self.block:
-            self.filename, self.number, self.text, self.subblock = self.block[0]
+        if self._line is None and self._block:
+            self._update_line(0)
 
         ParseError(self.filename, self.number, msg, self.text, self.pos).defer(queue)
-
-    def eol(self):
-        """
-        Returns True if, after skipping whitespace, the current
-        position is at the end of the end of the current line, or
-        False otherwise.
-        """
-
-        self.skip_whitespace()
-        return self.pos >= len(self.text)
 
     def expect_eol(self):
         """
@@ -866,11 +796,11 @@ class Lexer(object):
         If a block is found, raises an error.
         """
 
-        if self.subblock:
+        if self.has_block():
             ll = self.subblock_lexer()
             ll.advance()
-            ll.error("Line is indented, but the preceding {} statement does not expect a block. "
-                     "Please check this line's indentation. You may have forgotten a colon (:).".format(stmt))
+            ll.error(f"Line is indented, but the preceding {stmt} statement does not expect a block. "
+                     "Please check this line's indentation. You may have forgotten a colon (:).")
 
     def expect_block(self, stmt):
         """
@@ -878,14 +808,15 @@ class Lexer(object):
         block is present.
         """
 
-        if not self.subblock:
+        if not self.has_block():
             self.error('%s expects a non-empty block.' % stmt)
 
     def has_block(self):
         """
         Called to check if the current line has a non-empty block.
         """
-        return bool(self.subblock)
+
+        return next(self._yield_subblock_lines(), None) is not None
 
     def subblock_lexer(self, init=False):
         """
@@ -895,7 +826,61 @@ class Lexer(object):
 
         init = self.init or init
 
-        return Lexer(self.subblock, init=init, init_offset=self.init_offset, global_label=self.global_label, monologue_delimiter=self.monologue_delimiter, subparses=self.subparses)
+        return Lexer(
+            list(self._yield_subblock_lines()),
+            init=init,
+            init_offset=self.init_offset,
+            global_label=self.global_label,
+            monologue_delimiter=self.monologue_delimiter,
+            subparses=self.subparses)
+
+    def _lookup_token(self, kind: TokenKind | None = None):
+        self.skip_whitespace()
+        if self._mid_token:
+            return None
+
+        current_token = self._current_token
+        if current_token is None:
+            return None
+
+        if kind is None:
+            return current_token
+
+        if current_token.kind is TokenKind(kind):
+            return current_token
+        else:
+            return None
+
+    def _lookup_exact_token(self, kind: TokenKind):
+        self.skip_whitespace()
+        if self._mid_token:
+            return None
+
+        current_token = self._current_token
+        if current_token is None:
+            return None
+
+        if current_token.exact_kind is TokenKind(kind):
+            return current_token
+        else:
+            return None
+
+    @staticmethod
+    def _dequote_string(m: re.Match[str]):
+        c: str = m.group(1)
+
+        if c[0] == 'u' and (group2 := m.group(2)):
+            return chr(int(group2, 16))
+        elif c == "{":
+            return "{{"
+        elif c == "[":
+            return "[["
+        elif c == "%":
+            return "%%"
+        elif c == "n":
+            return "\n"
+        else:
+            return c
 
     def string(self):
         """
@@ -907,52 +892,33 @@ class Lexer(object):
         different than None.
         """
 
-        s = self.match(r'r?"([^\\"]|\\.)*"')
+        tok = self._lookup_exact_token(RAW_SINGLE_STRING)
+        if tok is None:
+            tok = self._lookup_exact_token(SINGLE_STRING)
+            raw = False
+        else:
+            raw = True
 
-        if s is None:
-            s = self.match(r"r?'([^\\']|\\.)*'")
-
-        if s is None:
-            s = self.match(r"r?`([^\\`]|\\.)*`")
-
-        if s is None:
+        if tok is None:
             return None
 
-        if s[0] == 'r':
-            raw = True
-            s = s[1:]
-        else:
-            raw = False
+        self._advance_token()
 
-        # Strip off delimiters.
-        s = s[1:-1]
+        s = tok.string
 
-        def dequote(m):
-            c = m.group(1)
+        # Strip mods and quotes.
+        for i, c in enumerate(s):
+            if c in "\"'`":
+                s = s[i + 1:-1]
+                break
 
-            if c == "{":
-                return "{{"
-            elif c == "[":
-                return "[["
-            elif c == "%":
-                return "%%"
-            elif c == "n":
-                return "\n"
-            elif c[0] == 'u':
-                group2 = m.group(2)
+        if raw:
+            return s
 
-                if group2:
-                    return chr(int(m.group(2), 16))
-            else:
-                return c
+        # Collapse runs of whitespace into single spaces.
+        s = re.sub(r'[ \n]+', ' ', s)
 
-        if not raw:
-
-            # Collapse runs of whitespace into single spaces.
-            s = re.sub(r'[ \n]+', ' ', s)
-
-            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
-
+        s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', self._dequote_string, s)
         return s
 
     def triple_string(self):
@@ -966,77 +932,56 @@ class Lexer(object):
         this returns a list of strings.
         """
 
-        s = self.match(r'r?"""([^\\"]|\\.|"(?!""))*"""')
+        tok = self._lookup_exact_token(RAW_TRIPLE_STRING)
+        if tok is None:
+            tok = self._lookup_exact_token(TRIPLE_STRING)
+            raw = False
+        else:
+            raw = True
 
-        if s is None:
-            s = self.match(r"r?'''([^\\']|\\.|'(?!''))*'''")
-
-        if s is None:
-            s = self.match(r"r?```([^\\`]|\\.|`(?!``))*```")
-
-        if s is None:
+        if tok is None:
             return None
 
-        if s[0] == 'r':
-            raw = True
-            s = s[1:]
+        self._advance_token()
+
+        s = tok.string
+
+        # Strip mods and quotes.
+        for i, c in enumerate(s):
+            if c in "\"'`":
+                s = s[i + 3:-3]
+                break
+
+        if raw:
+            return s
+
+        s = re.sub(r' *\n *', '\n', s)
+
+        mondel = self.monologue_delimiter
+
+        if mondel:
+            sl = s.split(mondel)
         else:
-            raw = False
+            sl = [s]
 
-        # Strip off delimiters.
-        s = s[3:-3]
+        rv: list[str] = []
+        for s in sl:
+            s = s.strip()
 
-        def dequote(m):
-            c = m.group(1)
+            if not s:
+                continue
 
-            if c == "{":
-                return "{{"
-            elif c == "[":
-                return "[["
-            elif c == "%":
-                return "%%"
-            elif c == "n":
-                return "\n"
-            elif c[0] == 'u':
-                group2 = m.group(2)
-
-                if group2:
-                    return chr(int(m.group(2), 16))
-            else:
-                return c
-
-        if not raw:
-
-            s = re.sub(r' *\n *', '\n', s)
-
-            mondel = self.monologue_delimiter
-
+            # Collapse runs of whitespace into single spaces.
             if mondel:
-                sl = s.split(mondel)
+                s = re.sub(r'[ \n]+', ' ', s)
             else:
-                sl = [s]
+                s = re.sub(r' +', ' ', s)
 
-            rv = [ ]
+            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', self._dequote_string, s)
 
-            for s in sl:
-                s = s.strip()
+            rv.append(s)
 
-                if not s:
-                    continue
-
-                # Collapse runs of whitespace into single spaces.
-                if mondel:
-                    s = re.sub(r'[ \n]+', ' ', s)
-                else:
-                    s = re.sub(r' +', ' ', s)
-
-                s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
-
-                rv.append(s)
-
-            return rv
-
-        return s
+        return rv
 
     def integer(self):
         """
@@ -1044,60 +989,137 @@ class Lexer(object):
         integer, or None.
         """
 
-        return self.match(r'(\+|\-)?\d+')
+        tok = self._lookup_token()
+        if tok is None:
+            return None
 
-    def float(self): # @ReservedAssignment
+        pos = self.pos
+        if tok.exact_kind is PLUS:
+            self._advance_token()
+            rv = "+"
+        elif tok.exact_kind is MINUS:
+            self._advance_token()
+            rv = "-"
+        else:
+            rv = ""
+
+        tok = self._lookup_exact_token(INT)
+        if tok is None:
+            self.pos = pos
+            return None
+        else:
+            self._advance_token()
+            return rv + tok.string
+
+    def float(self):
         """
         Tries to parse a number (float). Returns a string containing the
         number, or None.
         """
 
-        return self.match(r'(\+|\-)?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?')
+        tok = self._lookup_token()
+        if tok is None:
+            return None
+
+        pos = self.pos
+        if tok.exact_kind is PLUS:
+            self._advance_token()
+            rv = "+"
+        elif tok.exact_kind is MINUS:
+            self._advance_token()
+            rv = "-"
+        else:
+            rv = ""
+
+        tok = self._lookup_exact_token(FLOAT)
+        if tok is None:
+            self.pos = pos
+            return None
+        else:
+            self._advance_token()
+            return rv + tok.string
 
     def hash(self):
         """
         Matches the characters in an md5 hash, and then some.
         """
 
-        return self.match(r'\w+')
+        tok = self._lookup_token(NAME)
+        if tok is None:
+            return None
+        else:
+            self._advance_token()
+            return tok.string
 
     def word(self):
         """
         Parses a name, which may be a keyword or not.
         """
 
-        if self.pos == self.word_cache_pos:
-            self.pos = self.word_cache_newpos
-            return self.word_cache
-
-        self.word_cache_pos = self.pos
-        rv = self.match(word_regexp)
-        self.word_cache = rv
-        self.word_cache_newpos = self.pos
-
-        if rv:
-            rv = sys.intern(rv)
-
-        return rv
+        tok = self._lookup_token(NAME)
+        if tok is None:
+            return None
+        else:
+            self._advance_token()
+            return tok.string
 
     def name(self):
         """
         This tries to parse a name. Returns the name or None.
         """
 
-        oldpos = self.pos
-        rv = self.word()
-
-        if (rv == "r") or (rv == "u") or (rv == "ur"):
-            if self.text[self.pos:self.pos + 1] in ('"', "'", "`"):
-                self.pos = oldpos
-                return None
-
-        if rv in KEYWORDS:
-            self.pos = oldpos
+        tok = self._lookup_token()
+        if tok is None:
             return None
 
-        return rv
+        if tok.exact_kind is IDENTIFIER:
+            self._advance_token()
+            return tok.string
+
+        # Constants are names in old parser.
+        if tok.exact_kind is KEYWORD:
+            if tok.string in ("True", "False", "None"):
+                self._advance_token()
+                return tok.string
+
+        return None
+
+    def image_name_component(self):
+        """
+        Matches a word that is a component of an image name. (These are
+        strings of numbers, letters, and underscores.)
+        """
+
+        tok = self._lookup_token()
+        if tok is None:
+            return None
+
+        if tok.kind is NAME:
+            pass
+        # All digits except those with dot or +- are valid.
+        elif tok.kind is NUMBER and tok.string.isalnum():
+            pass
+        else:
+            return None
+
+        if tok.string in (
+            'as',
+            'if',
+            'in',
+            'return',
+            'with',
+            'while',
+            'behind',
+            'at',
+            'onlayer',
+            'with',
+            'zorder',
+            'transform',
+        ):
+            return None
+
+        self._advance_token()
+        return tok.string
 
     def set_global_label(self, label):
         """
@@ -1105,6 +1127,7 @@ class Lexer(object):
         label can be any valid label or None, but this has only effect if label
         has global part.
         """
+
         if label and label[0] != '.':
             self.global_label = label.split('.')[0]
 
@@ -1121,27 +1144,31 @@ class Lexer(object):
         local_name = None
         global_name = self.name()
 
-        if not global_name:
+        dot = bool(self._lookup_exact_token(DOT))
+        if dot:
+            self._advance_token()
+
+        if global_name is None:
             # .local label
-            if not self.match(r'\.') or not self.global_label:
+            if not dot or not self.global_label:
                 self.pos = old_pos
                 return None
+
             global_name = self.global_label
             local_name = self.name()
             if not local_name:
                 self.pos = old_pos
                 return None
-        else:
-            if self.match(r'\.'):
-                # full global.local name
-                if declare and global_name != self.global_label:
-                    self.pos = old_pos
-                    return None
+        elif dot:
+            # full global.local name
+            if declare and global_name != self.global_label:
+                self.pos = old_pos
+                return None
 
-                local_name = self.name()
-                if not local_name:
-                    self.pos = old_pos
-                    return None
+            local_name = self.name()
+            if not local_name:
+                self.pos = old_pos
+                return None
 
         if not local_name:
             return global_name
@@ -1154,26 +1181,6 @@ class Lexer(object):
         """
         return self.label_name(declare=True)
 
-    def image_name_component(self):
-        """
-        Matches a word that is a component of an image name. (These are
-        strings of numbers, letters, and underscores.)
-        """
-
-        oldpos = self.pos
-        rv = self.match(image_word_regexp)
-
-        if (rv == "r") or (rv == "u"):
-            if self.text[self.pos:self.pos + 1] in ('"', "'", "`"):
-                self.pos = oldpos
-                return None
-
-        if (rv in KEYWORDS ) or (rv in IMAGE_KEYWORDS):
-            self.pos = oldpos
-            return None
-
-        return rv
-
     def python_string(self):
         """
         This tries to match a python string at the current
@@ -1182,36 +1189,12 @@ class Lexer(object):
         returns False.
         """
 
-        if self.eol():
+        tok = self._lookup_token(STRING)
+        if tok is None:
             return False
-
-        old_pos = self.pos
-
-
-        # Delimiter.
-        start = self.match(r'[urfURF]*("""|\'\'\'|"|\')')
-
-        if not start:
-            self.pos = old_pos
-            return False
-
-        delim = start.lstrip('urfURF')
-
-        # String contents.
-        while True:
-            if self.eol():
-                self.error("end of line reached while parsing string.")
-
-            if self.match(delim):
-                break
-
-            if self.match(r'\\'):
-                self.pos += 1
-                continue
-
-            self.match(r'.[^\'"\\]*')
-
-        return True
+        else:
+            self._advance_token()
+            return True
 
     def dotted_name(self):
         """
@@ -1229,7 +1212,8 @@ class Lexer(object):
         if not rv:
             return None
 
-        while self.match(r'\.'):
+        while self._lookup_exact_token(DOT):
+            self._advance_token()
             n = self.name()
             if not n:
                 self.error('expecting name.')
@@ -1238,13 +1222,28 @@ class Lexer(object):
 
         return rv
 
-    def expr(self, s, expr):
+    def expr(self, s: str, expr):
         if not expr:
             return s
 
         return renpy.ast.PyExpr(s, self.filename, self.number)
 
-    def delimited_python(self, delim, expr=True):
+    def _delimited_python(self, delim: TokenKind):
+        while (tok := self._lookup_token()) is not None:
+            if tok.exact_kind is delim:
+                return True
+
+            if self.python_string():
+                continue
+
+            if self.parenthesised_python():
+                continue
+
+            self._advance_token()
+
+        return False
+
+    def delimited_python(self, delim: LiteralString, expr=True):
         """
         This matches python code up to, but not including, the non-whitespace
         delimiter characters. Returns a string containing the matched code,
@@ -1253,24 +1252,26 @@ class Lexer(object):
         """
 
         start = self.pos
-
-        while not self.eol():
-
-            c = self.text[self.pos]
-
-            if c in delim:
+        if delim in self._OP_REGEX:
+            if self._delimited_python(self._OP_REGEX[delim]):
                 return self.expr(self.text[start:self.pos], expr)
+        else:
+            while not self.eol():
 
-            if c in "'\"":
-                self.python_string()
-                continue
+                c = self.text[self.pos]
 
-            if self.parenthesised_python():
-                continue
+                if c in delim:
+                    return self.expr(self.text[start:self.pos], expr)
 
-            self.pos += 1
+                if self.python_string():
+                    continue
 
-        self.error("reached end of line when expecting '%s'." % delim)
+                if self.parenthesised_python():
+                    continue
+
+                self.pos += 1
+
+        self.error(f"reached end of line when expecting '{delim}'.")
 
     def python_expression(self, expr=True):
         """
@@ -1278,14 +1279,12 @@ class Lexer(object):
         extending to a colon.
         """
 
-        pe = self.delimited_python(':', False)
+        start = self.pos
 
-        if not pe:
+        if not self._delimited_python(COLON):
             self.error("expected python_expression")
 
-        rv = self.expr(pe.strip(), expr) # E1101
-
-        return rv
+        return self.expr(self.text[start:self.pos].strip(), expr)
 
     def parenthesised_python(self):
         """
@@ -1294,27 +1293,190 @@ class Lexer(object):
         closing parenthesis. Returns False otherwise.
         """
 
-        c = self.text[self.pos]
+        tok = self._lookup_token()
+        if tok is None:
+            return False
 
-        if c == '(':
-            self.pos += 1
-            self.delimited_python(')', False)
-            self.pos += 1
+        if tok.exact_kind is LPAR:
+            self._advance_token()
+            self._delimited_python(RPAR)
+            self._advance_token()
             return True
-
-        if c == '[':
-            self.pos += 1
-            self.delimited_python(']', False)
-            self.pos += 1
+        elif tok.exact_kind is LSQB:
+            self._advance_token()
+            self._delimited_python(RSQB)
+            self._advance_token()
             return True
-
-        if c == '{':
-            self.pos += 1
-            self.delimited_python('}', False)
-            self.pos += 1
+        elif tok.exact_kind is LBRACE:
+            self._advance_token()
+            self._delimited_python(RBRACE)
+            self._advance_token()
             return True
 
         return False
+
+    def _atom(self):
+        # https://docs.python.org/3/reference/expressions.html#atoms
+
+        # Some kind of enclosure.
+        if self.parenthesised_python():
+            return True
+
+        tok = self._lookup_token()
+        if tok is None:
+            return False
+
+        # Literals.
+        if tok.kind is STRING:
+            self._advance_token()
+            return True
+
+        if tok.kind is NUMBER:
+            self._advance_token()
+            return True
+
+        return bool(self._simple_expression_func())
+
+    def _primary(self):
+        # https://docs.python.org/3/reference/expressions.html#grammar-token-python-grammar-primary
+
+        # All primaries start with atom.
+        if not self._atom():
+            return False
+
+        while tok := self._lookup_token():
+            # attributeref ::= primary "." identifier
+            if tok.exact_kind is DOT:
+                self._advance_token()
+                if not self._simple_expression_func():
+                    self.error("expecting name after dot.")
+            # subscription | slicing ::= primary "[" expression "]"
+            elif tok.exact_kind is LSQB:
+                self._advance_token()
+                self._delimited_python(RSQB)
+                self._advance_token()
+            # call ::= primary "(" [argument_list] ")"
+            elif tok.exact_kind is LPAR:
+                self._advance_token()
+                self._delimited_python(RPAR)
+                self._advance_token()
+            else:
+                break
+
+        return True
+
+    def _u_expr(self):
+        # https://docs.python.org/3/reference/expressions.html#grammar-token-python-grammar-u_expr
+        while tok := self._lookup_token():
+            # "~" u_expr
+            if tok.exact_kind is TILDE:
+                self._advance_token()
+            # "+" u_expr
+            elif tok.exact_kind is PLUS:
+                self._advance_token()
+            # "-" u_expr
+            elif tok.exact_kind is MINUS:
+                self._advance_token()
+            # "not" u_expr
+            elif tok.exact_kind is KEYWORD and tok.string == "not":
+                self._advance_token()
+            else:
+                break
+
+        # It is 'power' in Python grammar, but because we don't care about
+        # operator precedence we parse primary here.
+        return self._primary()
+
+    def _operator(self):
+        # Combination of power, binary arithmetic, shift, bitwise, comparison
+        # and logical operators.
+
+        # u_expr (OP u_expr)+
+        if not self._u_expr():
+            return False
+
+        binops = (
+            SPACESHIP,
+            PLUS,
+            MINUS,
+            STAR,
+            SLASH,
+            VBAR,
+            AMPER,
+            LESS,
+            GREATER,
+            PERCENT,
+            EQEQUAL,
+            NOTEQUAL,
+            LESSEQUAL,
+            GREATEREQUAL,
+            CIRCUMFLEX,
+            LEFTSHIFT,
+            RIGHTSHIFT,
+            DOUBLESTAR,
+            DOUBLESLASH,
+            AT,
+        )
+        while tok := self._lookup_token():
+            ename = tok.exact_kind
+            # "and" u_expr
+            if ename is KEYWORD and tok.string == "and":
+                pass
+            # "or" u_expr
+            elif ename is KEYWORD and tok.string == "or":
+                pass
+            # "is" u_expr
+            # 'not' here is part of u_expr
+            elif ename is KEYWORD and tok.string == "is":
+                pass
+            # "in" u_expr
+            elif ename is KEYWORD and tok.string == "in":
+                pass
+            # "not in" u_expr
+            elif ename is KEYWORD and tok.string == "not":
+                self._advance_token()
+                if not (
+                    (tok2 := self._lookup_token()) and
+                    tok2.exact_kind is KEYWORD and
+                    tok2.string == "in"
+                ):
+                    self.error("expecting 'in' after 'not'.")
+            # BINOP u_expr
+            elif next((True for n in binops if n is ename), False):
+                pass
+            else:
+                break
+
+            self._advance_token()
+            if not self._u_expr():
+                self.error("expecting expression after operator.")
+
+            continue
+
+    def _conditional_expression(self):
+        # https://docs.python.org/3/reference/expressions.html#conditional-expressions
+        if not self._operator():
+            return False
+
+        # No condition here.
+        if (tok := self._lookup_token()) is None or tok.string != "if":
+            return True
+
+        # expression "if" expression "else" expression
+        self._advance_token()
+
+        if not self._operator():
+            self.error("expecting expression after if.")
+
+        if (tok := self._lookup_token()) is None or tok.string != "else":
+            self.error("expecting else after if expression.")
+
+        self._advance_token()
+
+        if not self._operator():
+            self.error("expecting expression after else.")
+
+        return True
 
     def simple_expression(self, comma=False, operator=True, image=False):
         """
@@ -1332,65 +1494,40 @@ class Lexer(object):
         statements are not allowed.
         """
 
+        # https://docs.python.org/3/reference/expressions.html
+        # More technically, when operator is allowed, this parses Python
+        # 'conditional_expression', otherwise it parses 'primary'.
+        # If comma is True, then it consumes tuple of expressions.
+        # If image is True, some bare names are not allowed, unless they
+        # parenthesized.
+
+        if self.eol():
+            return None
+
+        if self._mid_token:
+            raise Exception("Can't start expression in the middle of a token.")
+
         start = self.pos
-
         if image:
-            def lex_name():
-                oldpos = self.pos
-                n = self.name()
-                if n in IMAGE_KEYWORDS:
-                    self.pos = oldpos
-                    return None
-
-                return n
+            self._simple_expression_func = self.image_name_component
         else:
-            lex_name = self.name
+            self._simple_expression_func = self.name
 
-        # Operator.
-        while True:
+        if operator:
+            parse_func = self._conditional_expression
+        else:
+            parse_func = self._primary
 
-            while self.match(operator_regexp):
-                pass
+        while not self.eol():
+            parse_func()
 
-            if self.eol():
-                break
-
-            # We start with either a name, a python_string, or parenthesized
-            # python
-            if not (self.python_string() or
-                    lex_name() or
-                    self.float() or
-                    self.parenthesised_python()):
-
-                break
-
-            while True:
-                self.skip_whitespace()
-
-                if self.eol():
-                    break
-
-                # If we see a dot, expect a dotted name.
-                if self.match(r'\.'):
-                    n = self.word()
-                    if not n:
-                        self.error("expecting name after dot.")
-
-                    continue
-
-                # Otherwise, try matching parenthesised python.
-                if self.parenthesised_python():
-                    continue
-
-                break
-
-            if operator and self.match(operator_regexp):
-                continue
-
-            if comma and self.match(r','):
+            if comma and self._lookup_exact_token(COMMA):
+                self._advance_token()
                 continue
 
             break
+
+        del self._simple_expression_func
 
         text = self.text[start:self.pos].strip()
 
@@ -1413,29 +1550,44 @@ class Lexer(object):
         """
         return self.simple_expression(operator=False)
 
-    def checkpoint(self):
+    class _Checkpoint(NamedTuple):
+        def __reduce__(self):
+            raise TypeError("Can't pickle Lexer checkpoints.")
+
+        line_index: int
+        pos: int
+        pyexpr_checkpoint: Any
+
+    def checkpoint(self) -> _Checkpoint:
         """
         Returns an opaque representation of the lexer state. This can be
         passed to revert to back the lexer up.
         """
 
-        return self.line, self.filename, self.number, self.text, self.subblock, self.pos, renpy.ast.PyExpr.checkpoint()
+        return self._Checkpoint(
+            self._line_index,
+            self.pos,
+            renpy.ast.PyExpr.checkpoint())
 
-    def revert(self, state):
+    def revert(self, state: _Checkpoint):
         """
         Reverts the lexer to the given state. State must have been returned
         by a previous checkpoint operation on this lexer.
         """
 
-        self.line, self.filename, self.number, self.text, self.subblock, self.pos, pyexpr_checkpoint = state
+        line_index, pos, pyexpr_checkpoint = state
 
+        if line_index != self._line_index:
+            try:
+                self._update_line(line_index)
+            except Exception:
+                exc = Exception("Revert outsite of this lexer.")
+                exc.add_note("Are you sure you revert the same "
+                             "lexer that you checkpointed?")
+                raise exc
+
+        self.pos = pos
         renpy.ast.PyExpr.revert(pyexpr_checkpoint)
-
-        self.word_cache_pos = -1
-        if self.line < len(self.block):
-            self.eob = False
-        else:
-            self.eob = True
 
     def get_location(self):
         """
@@ -1491,20 +1643,6 @@ class Lexer(object):
         self.pos = len(self.text)
         return self.text[pos:].strip()
 
-    def _process_python_block(self, block, indent, rv, line_holder):
-        for _fn, ln, text, subblock in block:
-
-            while line_holder.line < ln:
-                rv.append(indent + '\n')
-                line_holder.line += 1
-
-            linetext = indent + text + '\n'
-
-            rv.append(linetext)
-            line_holder.line += linetext.count('\n')
-
-            self._process_python_block(subblock, indent + '    ', rv, line_holder)
-
     def python_block(self):
         """
         Returns the subblock of this code, and subblocks of that
@@ -1512,13 +1650,25 @@ class Lexer(object):
         whitespace to ensure line numbers match up.
         """
 
-        rv = [ ]
+        result: list[str] = []
 
-        line_holder = LineNumberHolder()
-        line_holder.line = self.number
+        prev_row = self._line.physical_location.end_lineno + 1
+        base_indent = None
+        for line in self._yield_subblock_lines():
+            if delta := line.physical_location.start_lineno - prev_row:
+                result.append("\n" * delta)
+            prev_row = line.physical_location.end_lineno
 
-        self._process_python_block(self.subblock, '', rv, line_holder)
-        return ''.join(rv)
+            if base_indent is None:
+                base_indent = line.indent_size
+            elif delta := line.indent_size - base_indent:
+                result.append(" " * delta)
+
+            # Don't munge code here, so Python assign correct
+            # col_offsets for the code.
+            result.append(line)
+
+        return "".join(result)
 
     def arguments(self):
         """
@@ -1542,7 +1692,7 @@ class Lexer(object):
         self.unadvance()
 
         if not isinstance(block, list):
-            block = [ block ]
+            block = [block]
 
         sp = SubParse(block)
         self.subparses.append(sp)
@@ -1554,10 +1704,10 @@ class Lexer(object):
         if self.subparses is None:
             raise Exception("A renpy_block can only be parsed inside a creator-defined statement.")
 
-        if self.line < 0:
+        if self._line_index < 0:
             self.advance()
 
-        block = [ ]
+        block = []
 
         while not self.eob:
             try:
@@ -1583,94 +1733,3 @@ class Lexer(object):
         self.subparses.append(sp)
 
         return sp
-
-
-def ren_py_to_rpy(text, filename):
-    """
-    Transforms an _ren.py file into the equivalent .rpy file. This should retain line numbers.
-
-    `filename`
-        If not None, and an error occurs, the error is reported with the given filename.
-        Otherwise, errors are ignored and a best effort is used.
-    """
-
-    lines = text.splitlines()
-
-    # Skip the BOM, if any.
-    if lines and lines[0][:1] == u'\ufeff':
-        lines[0] = lines[0][1:]
-
-    result = [ ]
-
-    # The prefix prepended to Python lines.
-    prefix = ""
-
-    # Possible states.
-    IGNORE = 0
-    RENPY = 1
-    PYTHON = 2
-
-    # The state the state machine is in.
-    state = IGNORE
-
-    open_linenumber = 0
-
-    for linenumber, l in enumerate(lines, start=1):
-
-        if state != RENPY:
-            if l.startswith('"""renpy'):
-                state = RENPY
-                result.append('')
-                open_linenumber = linenumber
-                continue
-
-        if state == RENPY:
-            if l == '"""':
-                state = PYTHON
-                result.append('')
-                continue
-
-            # Ignore empty and comments.
-            sl = l.strip()
-            if not sl:
-                result.append(l)
-                continue
-
-            if sl[0] == "#":
-                result.append(l)
-                continue
-
-            # Determine the prefix.
-            prefix = ""
-            for i in l:
-                if i != ' ':
-                    break
-                prefix += ' '
-
-            # If the line ends in ":", add 4 spaces to the prefix.
-            if sl[-1] == ":":
-                prefix += "    "
-
-            result.append(l)
-            continue
-
-        if state == PYTHON:
-            result.append(prefix + l)
-            continue
-
-        if state == IGNORE:
-            result.append('')
-            continue
-
-    if filename is not None:
-
-        if state == IGNORE:
-            raise Exception('In {!r}, there are no """renpy blocks, so every line is ignored.'.format(filename))
-
-        if state == RENPY:
-            raise Exception('In {!r}, there is a """renpy block at line {} that is not terminated by """.'.format(filename,
-                                                                                                                open_linenumber))
-
-    rv = "\n".join(result)
-
-    return rv
