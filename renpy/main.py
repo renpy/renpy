@@ -364,17 +364,20 @@ def main():
     renpy.config.searchpath = renpy.__main__.predefined_searchpath(renpy.config.commondir) # E1101 @UndefinedVariable
 
     # Load Ren'Py extensions.
-    for dir in [ renpy.config.renpy_base ] + renpy.config.searchpath + [ os.path.join(renpy.config.gamedir, "libs") ]: # @ReservedAssignment
+    search = (renpy.config.renpy_base,
+              *renpy.config.searchpath,
+              os.path.join(renpy.config.gamedir, "libs"))
 
-        if not os.path.isdir(dir):
+    for path in search:
+        if not os.path.isdir(path):
             continue
 
-        for fn in sorted(os.listdir(dir)):
+        for fn in sorted(os.listdir(path)):
             if fn.lower().endswith(".rpe"):
-                load_rpe(dir + "/" + fn)
+                load_rpe(path + "/" + fn)
 
-            if fn.lower().endswith(".rpe.py"):
-                load_rpe_py(dir + "/" + fn)
+            elif fn.lower().endswith(".rpe.py"):
+                load_rpe_py(path + "/" + fn)
 
     # Generate a list of extensions for each archive handler.
     archive_extensions = [ ]
