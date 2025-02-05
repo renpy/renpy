@@ -266,7 +266,7 @@ state of the game. Contexts include:
 * the audio that is playing or queued.
 
 Most of the time there is only one context at play, and only one instance of each
-of these elements exists. This changes when entering the main or game game menus;
+of these elements exists. This changes when entering the main or game menus;
 everything above can be changed, and will be restored when leaving the menu
 context. Some of these changes are automatic, like the screens layer being
 cleared when entering a context.

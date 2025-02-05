@@ -245,8 +245,8 @@ def queue_event(name, up=False, **kwargs):
     names in :var:`config.keymap`, or a list of such names.
 
     `up`
-        This should be false when the event begins (for example, when a keyboard
-        button is pressed.) It should be true when the event ends (when the
+        This should be False when the event begins (for example, when a keyboard
+        button is pressed.) It should be True when the event ends (when the
         button is released.)
 
     The event is queued at the time this function is called. This function will

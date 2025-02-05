@@ -74,8 +74,9 @@ Auto-Forward Mode
 .. var:: config.afm_callback = None
 
     If not None, a Python function that is called to determine if it
-    is safe to auto-forward. The intent is that this can be used by a
-    voice system to disable auto-forwarding when a voice is playing.
+    is safe to auto-forward. If None, an internal function is used to 
+    disable auto-forwarding when a voice is playing, unless :var:`preferences.wait_voice`
+    is set to False.
 
 .. var:: config.afm_characters = 250
 
@@ -364,7 +365,7 @@ Display
     edges drawn when aspect ratio of the window (or monitor in
     fullscreen mode) does not match the aspect ratio of the game.
 
-.. var:: config.gl_lod_bias = -0.5
+.. var:: config.gl_lod_bias = -0.6
 
     The default value of the :ref:`u_lod_bias <u-lod-bias>` uniform,
     which controls the mipmap level Ren'Py uses.
@@ -768,11 +769,11 @@ Media (Music, Sound, and Video)
     The name of the audio channel used by :func:`renpy.play`,
     :propref:`hover_sound`, and :propref:`activate_sound`.
 
-.. var:: config.preserve_volume_when_muted = False
+.. var:: config.preserve_volume_when_muted = True
 
-    If False, the default, the volume of channels are shown as 0 and
+    If False, the volume of channels are shown as 0 and
     changing it disables mute when the channel is mute.
-    Otherwise, It is shown and adjustable while keeping mute.
+    If True, the default, it is shown and adjustable while keeping mute.
 
 .. var:: config.single_movie_channel = None
 
@@ -806,12 +807,13 @@ Media (Music, Sound, and Video)
 
     This allows large movie files to be hosted on a different server
     than the rest of the game.
+..
+    Lez's comment: This is a TODO variable, look bottom of _audio.js
+    .. var:: config.web_video_prompt = _("Touch to play the video.")
 
-.. var:: config.web_video_prompt = _("Touch to play the video.")
-
-    On Mobile Safari on iOS, by default, the player will need to click to play
-    a movie with sound. This variable gives the message that's used to prompt
-    players to click.
+        On Mobile Safari on iOS, by default, the player will need to click to play
+        a movie with sound. This variable gives the message that's used to prompt
+        players to click.
 
 .. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mpeg", ... ]
 
@@ -929,7 +931,7 @@ Paths
     :var:`config.save_directory`, which generates the default value for this
     if it is not set during a ``python early`` block.
 
-.. var:: config.search_prefixes = [ "", "images/", ... ]
+.. var:: config.search_prefixes = [ "", ... ]
 
     A list of prefixes that are prepended to filenames that are searched
     for.
@@ -1619,7 +1621,7 @@ Skipping
 
     Set this to True to allow fast skipping outside of developer mode.
 
-.. var:: config.skip_delay = 75
+.. var:: config.skip_delay = 5
 
     The amount of time that dialogue will be shown for, when skipping
     statements using ctrl, in milliseconds. (Although it's nowhere
@@ -1928,7 +1930,7 @@ Translation
     While this defaults to False, it's set to True when :func:`gui.init`
     is called.
 
-.. var:: config.defer_tl_scripts = Fasle
+.. var:: config.defer_tl_scripts = False
 
     When True, avoids loading scripts in the tl directory until the
     language is selected. See :ref:`deferred-translations`.
@@ -2021,7 +2023,7 @@ Voice
 
     See above.
 
-.. var:: config.emphasize_audio_volume = 0.5
+.. var:: config.emphasize_audio_volume = 0.8
 
     See above.
 

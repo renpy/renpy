@@ -149,7 +149,7 @@ def predicting():
     """
     :doc: other
 
-    Returns true if Ren'Py is currently in a predicting phase.
+    Returns True if Ren'Py is currently in a predicting phase.
     """
 
     return renpy.display.predict.predicting

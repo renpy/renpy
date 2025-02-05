@@ -21,19 +21,20 @@ an opaque white pixel will have the value (1.0, 1.0, 1.0, 1.0), a 50% transparen
 red pixel will have the value (0.5, 0.0, 0.0, 0.5), and a transparent pixel
 will have the value (0.0, 0.0, 0.0, 0.0).
 
-Premultiplied alph allows Ren'Py to scale images
+Premultiplied alpha allows Ren'Py to scale images
 up and down without causing dark artifacts that come from representing
 colors more directly. Scaling images is similar to averaging two pixels
 together. Without premultiplied alpha, we might have a solid white pixel
 and a transparent pixel - (1.0, 1.0, 1.0, 1.0) and (0.0, 0.0, 0.0, 0.0),
-respectively. Average those together gets (0.5, 0.5, 0.5, 0.5).
-But that's not right - averaging solid white and transparent black should
-get 50% opaque white, not 50% opaque gray.
+respectively. Average those together gets (0.5, 0.5, 0.5, 0.5), representing
+50% opaque gray in the straight alpha system. 
 
-In the premultiplied alpha system, the starting value is the same, and so is the
-result - except now, (0.5, 0.5, 0.5, 0.5) has been pre-defined to be 50% opaque
-white. By storing colors in this way, Ren'Py can draw them to the screen
-correctly, and not get weird artifacts when scaling.
+However, since a fully transparent pixel doesn't really have
+any color, it shouldn't affect the resulting color, either - only the resulting
+transparency. In the premultiplied alpha system, the starting values are the same,
+and so is the result - except now, (0.5, 0.5, 0.5, 0.5) has been pre-defined to
+be 50% opaque white. By storing colors in this way, Ren'Py can draw them to the
+screen correctly, and not get weird artifacts when scaling.
 
 Using a Matrix to Change Colors
 -------------------------------

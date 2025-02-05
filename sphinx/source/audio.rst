@@ -45,17 +45,67 @@ for the given music files to be played as the main and game menu music,
 respectively.
 
 In-game, the usual way to play music and sound in Ren'Py is using
-the three music/sound statements.
+the three music/sound statements. Audio files can either be provided directly
+as strings, or as defined names within the audio namespace.
 
+.. _audio-namespace:
+
+Audio Directory and Namespace
+-----------------------------
+
+When Ren'Py searches for an audio file used by audio statements or functions, it
+will start inside the ``game`` directory. If the provided file is not found there,
+it will also look in the ``game/audio`` directory. For example::
+
+    play music "opening.ogg"
+
+will first look for :file:`game/opening.ogg`. If not found, Ren'Py will look for
+:file:`game/audio/opening.ogg`. This is consistent with audio files in further
+subdirectories. The following statement::
+
+    play music "my_music/opening.ogg"
+
+will first look for :file:`game/my_music/opening.ogg`, before looking for
+:file:`game/audio/my_music/opening.ogg` if the former is not found.
+
+Files found in the ``game/audio`` directory, **as well as its subdirectories**, that end with
+a supported extension (currently, .wav, .mp2, .mp3, .ogg, and .opus) are also automatically
+placed by Ren'Py into the audio namespace. This means that :file:`game/audio/Town_theme.ogg`
+can be played with::
+
+    play music town_theme
+
+The usable name is determined by stripping the extension and forcing the rest of
+the filename to lower case. This is only the case for audio files with names that
+can be expressed as Python variables, for example: :file:`my song.mp3`, :file:`8track.opus`,
+or :file:`this-is-a-song.ogg` will not work. Additionally, if two or more files would
+end up defined under the same name, only the first file (determined alphabetically by its path
+and filename, extension included) will be defined. 
+
+When a file isn't placed automatically into the audio namespace, either due to
+an incompatible name or being inside a different directory, it can still be placed
+there manually with the define statement.
+
+For example, one can write::
+
+    define audio.sunflower = "my_music/sun-flower-slow-jam.ogg"
+
+and then use::
+
+    play music sunflower
+
+The ``play`` and ``queue`` statements always evaluate their arguments in the
+audio namespace. Functions do not, meaning they will not work with ``sunflower``,
+but will work with ``audio.sunflower`` instead.
 
 .. _play-statement:
 
 Play Statement
 --------------
 
-The ``play`` statement is used to play sound and music. If a file is
-currently playing on a normal channel, it is interrupted and replaced with
-the new file.
+The ``play`` statement is the most common way used to play sound and music.
+If a file is currently playing on a normal channel, it is interrupted and
+replaced with the new file.
 
 The name of a channel is expected following the keyword ``play``.
 (Usually, this is either "sound", "music", "voice", or "audio"). This is
@@ -182,7 +232,7 @@ advanced (rarely used) features.
 Partial Playback
 ----------------
 
-Ren'Py supports partial of audio files. This is done by putting a playback
+Ren'Py supports partial playback of audio files. This is done by putting a playback
 specification, enclosed in angle brackets, at the start of the file.
 The partial playback specification should consist of alternating
 property name and value pairs, with every thing separated by spaces.
@@ -295,48 +345,6 @@ desired. This can be used to delay the start of a sound file. For example::
         play audio [ "<silence .5>", "boom.opus" ]
 
 Will play silence for half a second, and then an explosion sound.
-
-
-.. _audio-namespace:
-
-Audio Namespace and Directory
------------------------------
-
-The ``play`` and ``queue`` statements evaluate their arguments in the
-audio namespace. This means it is possible to use the define statement
-to provide an alias for an audio file.
-
-For example, one can write::
-
-    define audio.sunflower = "music/sun-flower-slow-jam.ogg"
-
-and then use::
-
-    play music sunflower
-
-Ren'Py will also automatically place sound files in the audio namespace,
-if found in the ``game/audio`` directory. Files in this directory with a
-supported extension (currently, .wav, .mp2, .mp3, .ogg, and .opus) have the
-extension stripped, the rest of the filename forced to lower case, and are
-placed into the audio namespace.
-
-Note that just because a file is placed into the audio namespace, that doesn't
-mean it can be used. So while you could play a file named :file:`opening_song.ogg`
-by writing::
-
-    play music opening_song
-
-some filenames can't be accessed this way, as their names are not expressable
-as Python variables. For example, :file:`my song.mp3`, :file:`8track.opus`, and
-:file:`this-is-a-song.ogg` won't work.
-
-When searching for an audio file, if the file is not found, Ren'Py will look
-in the audio directory. For example::
-
-    play music "opening.ogg"
-
-will first look for :file:`game/opening.ogg`. If not found, Ren'Py will look for
-:file:`game/audio/opening.ogg`.
 
 
 Actions
