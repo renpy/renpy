@@ -745,9 +745,6 @@ def image_size(im):
     using the image cache. This can be slow.
     """
 
-    # Index the archives, if we haven't already.
-    renpy.loader.index_archives()
-
     im = renpy.easy.displayable(im)
 
     if not isinstance(im, renpy.display.im.Image):

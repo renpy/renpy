@@ -379,44 +379,8 @@ def main():
             elif fn.lower().endswith(".rpe.py"):
                 load_rpe_py(path + "/" + fn)
 
-    # Generate a list of extensions for each archive handler.
-    archive_extensions = [ ]
-    for handler in renpy.loader.archive_handlers:
-        for ext in handler.get_supported_extensions():
-            if not (ext in archive_extensions):
-                archive_extensions.append(ext)
-
-    # Find archives.
-    for dn in renpy.config.searchpath:
-
-        dn = Path(dn)
-
-        if not dn.is_dir():
-            continue
-
-        archives = [ ]
-
-        for ext in archive_extensions:
-            archives.extend(dn.glob(f"**/*{ext}"))
-
-        archives.sort()
-
-        for archive in archives:
-            arc_relpath = archive.relative_to(dn)
-            base = arc_relpath.stem
-            if arc_relpath.parent != Path("."):
-                base = os.path.join(arc_relpath.parent, arc_relpath.stem)
-
-        archives.sort()
-
-        for archive in archives:
-            base = archive.stem
-            renpy.config.archives.append(base)
-
-    renpy.config.archives.reverse()
-
-    # Initialize archives.
-    renpy.loader.index_archives()
+    # Initialize file indexes.
+    renpy.loader.index_files()
 
     # Start auto-loading.
     renpy.loader.auto_init()
@@ -478,8 +442,8 @@ def main():
                     # This perhaps shouldn't happen since either .rpy or .rpyc should exist
                     pass
 
-        # Update script files list, so that it doesn't contain removed .rpyc's
-        renpy.loader.cleardirfiles()
+        # Reindex files so that .rpyc's are cleared out.
+        renpy.loader.index_files()
         renpy.game.script.scan_script_files()
 
     # Load all .rpy files.
@@ -594,13 +558,6 @@ def main():
         renpy.savelocation.init()
         renpy.loadsave.init()
         log_clock("Reloading save slot metadata")
-
-        # Index the archive files. We should not have loaded an image
-        # before this point. (As pygame will not have been initialized.)
-        # We need to do this again because the list of known archives
-        # may have changed.
-        renpy.loader.index_archives()
-        log_clock("Index archives")
 
         # Check some environment variables.
         renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ

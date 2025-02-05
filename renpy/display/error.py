@@ -68,7 +68,7 @@ def init_display():
 
     if not renpy.game.interface:
         renpy.display.core.Interface()
-        renpy.loader.index_archives()
+        renpy.loader.index_files()
         renpy.display.im.cache.init()
 
     renpy.game.interface.start()
