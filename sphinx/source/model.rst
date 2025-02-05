@@ -336,13 +336,15 @@ when what is drawn is not fully opaque.
 
 .. _model-uniforms:
 
-Uniforms and Attributes
------------------------
+Float, Sample, and Vector Uniforms
+-----------------------------------
 
-The following uniforms are made available to all Models.
+The following uniforms are made available to all models.
 
 ``vec2 u_model_size``
-    The width and height of the model.
+    The width and height of the model, as supplied to Ren'Py. This
+    is only available for 2D models that supply a size, and is (0, 0)
+    for 3d models.
 
 .. _u-lod-bias:
 
@@ -351,13 +353,6 @@ The following uniforms are made available to all Models.
     set in a Transform. The default value, taken from :var:`config.gl_lod_bias`
     and defaulting to -0.5, biases Ren'Py to always pick the next bigger
     level and scale it down.
-
-``mat4 u_transform``
-    The transform used to project virtual pixels to the OpenGL viewport.
-
-``mat3 u_normal_transform``
-    The transform used to project normals, tangents, and bitangents to the
-    OpenGL viewport.
 
 ``float u_time``
     The time of the frame. The epoch is undefined, so it's best to treat
@@ -398,7 +393,55 @@ The following uniforms are made available to all Models.
     image file. After a render to texture, it's the number of drawable pixels
     the rendered texture covered.
 
-The following attributes are available to all models:
+Matrix Uniforms
+----------------
+
+The following uniforms are made available to all models. This assumes that only one transform with the
+:tpref:`perspective` property is used to render a model. When multiple transforms with the :tpref:`perspective`
+are used, the innermost transformation with perspective set defines the world and view spaces.
+
+``mat4 u_projection``
+    This is a matrix that transforms coordinates from view space to the OpenGL viewport.
+    This is sent by Ren'Py, and is updated by transforms with the :tpref:`perspective` property
+    to encapsulate the effects of that property.
+
+``mat4 u_view``
+    This is a matrix that transforms vertex coordinates from the world space to the view space. This
+    defaults to the identity matrix, but can be set by transforms with the :tpref:`perspective` property,
+    in which case the effects of positioning, rotation, and scaling are encapsulated in this matrix.
+
+``mat4 u_model``
+    This is a matrix that transforms vertex coordinates from the model space to the world space.
+
+``mat4 u_projectionview``
+    This matrix contains ``u_projection * u_view``. It exists to minimize the number of uniforms that need
+    to be sent to the GPU, and the amount of work that needs to be done in the shader.
+
+``mat4 u_transform``
+    This is the same as ``u_projectionview * u_model``. It's the matrix that transforms vertex coordinates
+    directly to the OpenGL viewport. It exists to minimize the number of uniforms that need to be sent to the GPU,
+    the amount of work that needs to be done in the shader, and for compatibility with older versions of Ren'Py.
+
+In addition to these methods, Ren'Py can sythesize matrices with certain functions applied when suffixes are
+appended to the matrix
+
+``_inverse``
+    When appended to a matrix, this returns the inverse of the matrix. For example, ``u_projection_inverse``
+    is the inverse of the projection matrix.
+
+``_transpose``
+    When appended to a matrix, this returns the transpose of the matrix. For example, ``u_view_transpose``
+    is the transpose of the projection matrix.
+
+``_inversetranspose``
+    When appended to a matrix, this returns the inverse of the transpose of the matrix. For example,
+    ``u_model_inversetranspose`` is the inverse of the transpose of the model matrix. This is useful for
+    transforming normals.
+
+Attributes
+----------
+
+The following attribute is available to all models:
 
 ``vec4 a_position``
     The position of the vertex being rendered. This is in virtual pixels, relative to the upper
