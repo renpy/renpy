@@ -207,6 +207,11 @@ TEXTURE_SCALING = {
     "linear_mipmap_linear" : (GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR),
 }
 
+def get_viewport():
+    cdef GLfloat viewport[4]
+    glGetFloatv(GL_VIEWPORT, viewport)
+    return viewport
+
 cdef class Program:
     """
     Represents an OpenGL program.
@@ -357,31 +362,47 @@ cdef class Program:
         self.find_variables(self.vertex)
         self.find_variables(self.fragment)
 
-    def missing(self, kind, name):
-        cdef GLfloat viewport[4]
+    MISSING = {
+        "u_lod_bias": lambda : float(renpy.config.gl_lod_bias),
+        "u_time": lambda : (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400,
+        "u_random": lambda : (random.random(), random.random(), random.random(), random.random()),
+        "u_viewport": get_viewport,
+        "u_drawable_size": lambda : renpy.display.draw.drawable_viewport[2:],
+        "u_virtual_size": lambda : renpy.display.draw.virtual_size,
+    }
 
-        if name == "u_lod_bias":
-            self.set_uniform("u_lod_bias", float(renpy.config.gl_lod_bias))
-        elif name == "u_time":
-            self.set_uniform("u_time", (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400)
-        elif name == "u_random":
-            self.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
-        elif name == "u_viewport":
-            glGetFloatv(GL_VIEWPORT, viewport)
-            self.set_uniform("u_viewport", (viewport[0], viewport[1], viewport[2], viewport[3]))
-        elif name == "u_drawable_size":
-            self.set_uniform("u_drawable_size", renpy.display.draw.drawable_viewport[2:])
-        elif name == "u_virtual_size":
-            self.set_uniform("u_virtual_size", renpy.display.draw.virtual_size)
-        elif name == "u_normal_transform":
-            mat = self.uniform_values.get("u_transform", None)
-            if mat is not None:
-                mat = mat.inverse().transpose()
-                self.set_uniform("u_normal_transform", mat)
-            else:
-                raise Exception("Shader {} was given u_normal transform but not u_transform.".format(self.name))
+    def missing(self, kind, name):
+
+        f = Program.MISSING.get(name, None)
+        if f:
+            self.set_uniform(name, f())
+            return
+
+        base, _, suffix = name.rpartition("_")
+
+        derived = False
+
+        try:
+
+            if suffix == "inverse":
+                derived = True
+                self.set_uniform(name, self.uniform_values[base].inverse())
+                return
+            elif suffix == "transpose":
+                derived = True
+                self.set_uniform(name, self.uniform_values[base].transpose())
+                return
+            elif suffix == "inversetranspose":
+                derived = True
+                self.set_uniform(name, self.uniform_values[base].inverse().transpose())
+                return
+        except Exception:
+            pass
+
+        if not derived:
+            raise Exception(f"Shader {self.name} has not been given {kind} {name}.")
         else:
-            raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
+            renpy.display.log.write(f"Shader {self.name} has not been given {kind} {name}, and couldn't derive it from {base}.")
 
     def start(self, properties):
         self.properties = properties
@@ -393,6 +414,7 @@ cdef class Program:
         cdef Uniform u
         u = self.uniforms.get(name, None)
         if u is None:
+            self.uniform_values[name] = value
             return
 
         if name in self.uniform_values and name in renpy.config.merge_uniforms:
