@@ -583,7 +583,9 @@ class Script(object):
                     filename += "c"
 
                 for i in all_stmts:
+                    old_name = i.name
                     i.filename = filename
+                    i.name = old_name
 
         def check_name(node):
 
