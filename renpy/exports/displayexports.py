@@ -1145,7 +1145,11 @@ def set_mouse_pos(x, y, duration=0):
     :doc: other
 
     Jump the mouse pointer to the location given by arguments x and y.
-    If the device does not have a mouse pointer, this does nothing.
+    If the device does not have a mouse pointer, or if it is not possible for
+    Ren'Py to move that pointer, this does nothing.
+
+    This is unlikely to work on the Linux with Wayland, Android, iOS, or Web
+    platforms.
 
     `duration`
         The time it will take to perform the move, in seconds.

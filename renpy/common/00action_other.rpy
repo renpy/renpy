@@ -478,6 +478,9 @@ init -1500 python:
         or if the :var:`"automatic move" preference <preferences.mouse_move>`
         is False, this does nothing.
 
+        This is unlikely to work on the Linux with Wayland, Android, iOS, or Web
+        platforms.
+
         `duration`
             The time it will take to perform the move, in seconds. During
             this time, the mouse may be unresponsive.
