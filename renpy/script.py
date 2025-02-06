@@ -576,11 +576,12 @@ class Script(object):
         # Fix the filename for a renamed .rpyc file.
         if filename is not None:
             filename = renpy.lexer.elide_filename(filename)
+            if filename[-1] == "c":
+                filename = filename[:-1]
 
             if not all_stmts[0].filename.lower().endswith(filename.lower()):
 
-                if filename[-1] != "c":
-                    filename += "c"
+                filename += "c"
 
                 for i in all_stmts:
                     old_name = i.name
