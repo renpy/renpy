@@ -749,7 +749,7 @@ translate french strings:
     new "Mise à jour"
 
     # 00updater.rpy:1419
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Une erreur est survenue :"
     # 00updater.rpy:1421
     old "Checking for updates."

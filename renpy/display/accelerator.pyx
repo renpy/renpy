@@ -168,7 +168,7 @@ cdef class RenderTransform:
         self.transform = transform
         self.state = transform.state
 
-        # The original width and heigh given to the render.
+        # The original width and height given to the render.
         self.widtho = 0
         self.heighto = 0
 

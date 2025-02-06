@@ -1129,7 +1129,7 @@
     new "游戏数据已下载"
 
     # renpy/common/00updater.rpy:2078
-    old "An error occured when trying to download game data:"
+    old "An error occurred when trying to download game data:"
     new "尝试下载游戏数据时发生错误："
 
     # renpy/common/00updater.rpy:2083

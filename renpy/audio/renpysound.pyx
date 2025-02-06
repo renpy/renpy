@@ -102,7 +102,7 @@ def check_error():
     """
     This is called by Ren'Py to check for an error. This function should raise
     a meaningful exception if an error has occurred in a background thread,
-    or do nothing if an error has not occured. (It should clear any error that
+    or do nothing if an error has not occurred. (It should clear any error that
     it raises.)
     """
 
@@ -361,7 +361,7 @@ def replace_audio_filter(channel, audio_filter, playing):
 def deallocate_audio_filter(audio_filter):
     """
     Called when an audio filter is about to be dealloica to release all
-    assocated resources.
+    associated resources.
     """
 
     # Does nothing on this backend, but is used on web audio.

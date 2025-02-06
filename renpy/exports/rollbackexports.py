@@ -209,7 +209,7 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, a
     `abnormal`
         If true, the default, script executed after the transition is run in
         an abnormal mode that skips transitions that would have otherwise
-        occured. Abnormal mode ends when an interaction begins.
+        occurred. Abnormal mode ends when an interaction begins.
     """
 
     if defer and not renpy.game.log.log:

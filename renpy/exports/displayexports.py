@@ -1362,7 +1362,7 @@ def get_mouse_name(interaction=False):
 
     `interaction`
         If true, get a mouse name that is based on the type of interaction
-        occuring. (This is rarely useful.)
+        occurring. (This is rarely useful.)
     """
 
     if not renpy.display.interface:

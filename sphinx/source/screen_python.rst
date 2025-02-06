@@ -56,7 +56,7 @@ sensitive, and when it is selected.
         This should return true if the button should be rendered as a
         selected button, and false otherwise.
 
-        The default implemention returns False.
+        The default implementation returns False.
 
     .. method:: get_tooltip(self)
 

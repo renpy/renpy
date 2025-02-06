@@ -366,7 +366,7 @@
     new "{b}Di Rekomendasikan.{/b} Editor dengan interface yang mudah untuk di gunakan dan fitur yang sesuai dengan development . Saat ini Editra belum mendukung text input IME yang di butuhkan untuk bahasa Cina,Jepang Dan Korea. Pada Linux, Editra memerlikan wxPython."
 
     # editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Ini mungkin terjadi karena wxPython tidak terpasang di sistem ini."
 
     # editor.rpy:169
@@ -382,7 +382,7 @@
     new "1.8 MB download di butuhkan."
 
     # editor.rpy:182
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Ini mungkin terjadi karena Java tidak terpasang di sistem ini."
 
     # editor.rpy:191
@@ -394,7 +394,7 @@
     new "Larang Ren''Py untuk membuka editor text."
 
     # editor.rpy:359
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Kesalahan terjadi ketika menjalankan editor text: \n[exception!q]"
 
     # editor.rpy:457
@@ -612,7 +612,7 @@
     new "KESALAHAN"
 
     # interface.rpy:356
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "Kesalahan terjadi ketika : [what!qt] adalah :"
 
     # interface.rpy:356
@@ -1146,7 +1146,7 @@
     new "Update terbaru dari pengembangan Ren'Py. Ini mungikin mempunyai fitur terbaru. Bahkan tidak jalan sama sekali."
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Kesalahan telah terjadi:"
 
     # updater.rpy:154

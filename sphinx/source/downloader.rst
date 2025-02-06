@@ -155,7 +155,7 @@ Here's the default::
             elif u.state == u.FINISHING or u.state == u.DONE:
                 text _("The game data has been downloaded.")
             else: # An error or unknown state.
-                text _("An error occured when trying to download game data:")
+                text _("An error occurred when trying to download game data:")
 
                 if u.message is not None:
                     text "[u.message!q]"

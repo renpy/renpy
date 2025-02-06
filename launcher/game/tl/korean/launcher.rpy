@@ -624,7 +624,7 @@
     new "에디트라(Editra)는 현재 중국어, 일본어, 한국어 텍스트를 입력할 때 필요한 IME를 지원하지 않습니다. 리눅스에서, 에디트라는 wxPython이 필요합니다."
 
     # game/editor.rpy:195
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "wxPython이 설치되지 않아 문제가 발생했을 가능성이 있습니다."
 
     # game/editor.rpy:197
@@ -640,7 +640,7 @@
     new "1.8MB 내려받기 필요."
 
     # game/editor.rpy:210
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "자바(Java)가 설치되지 않아 문제가 발생했을 수도 있습니다."
 
     # game/editor.rpy:219
@@ -664,7 +664,7 @@
     new "[text] 편집."
 
     # game/editor.rpy:387
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "스크립트 에디터를 실행하던 도중 예외가 발생했습니다:\n[exception!q]"
 
     # game/editor.rpy:519
@@ -1480,7 +1480,7 @@
     new "%Y년 %m월 %d일"
 
     # game/updater.rpy:140
-    old "An error has occured:"
+    old "An error has occurred:"
     new "오류가 발생했습니다:"
 
     # game/updater.rpy:142
@@ -1532,7 +1532,7 @@
     new "다음으로"
 
     # game/interface.rpy:394
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "[what!qt]에 오류가 발생했습니다:"
 
     # game/interface.rpy:394

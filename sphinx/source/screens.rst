@@ -1955,7 +1955,7 @@ self-voicing feature to work.
 Add Statement
 =============
 
-The add statement is a bit special, as it adds an already-exising displayble
+The add statement is a bit special, as it adds an already-existing displayble
 to the screen. As a result, it doesn't take the properties common to the
 user interface statements.
 
@@ -2003,12 +2003,12 @@ rectangular area on the screen. It takes the following properties:
 
 .. screen-property:: cols
 
-    If not None, the defaut, this divides the screen up into a grid
+    If not None, the default, this divides the screen up into a grid
     with this many columns.
 
 .. screen-property:: rows
 
-    If not None, the defaut, this divides the screen up into a grid
+    If not None, the default, this divides the screen up into a grid
     with this many rows.
 
 .. screen-property:: position
@@ -2410,7 +2410,7 @@ The ``showif`` statement wraps its children in a displayable that manages
 the show and hide process.
 
 Multiple showif statements can be grouped together into a single
-``showif``/``elif``/``else`` construct, similiar to an if statement.
+``showif``/``elif``/``else`` construct, similar to an if statement.
 **Unlike the if statement, showif executes all of its blocks, including Python, even if the condition is false.**
 This is because the showif statement needs to create the children that it is
 hiding.

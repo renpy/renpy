@@ -384,7 +384,7 @@
     new "Un editor maduro. Editra carece de soporte IME, necesario para el texto en chino, japonés y coreano. En Linux, Editra necesita wxPython."
 
     # editor.rpy:195
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Esto puede haber ocurrido porque wxPython no está instalado en este sistema."
 
     # editor.rpy:197
@@ -400,7 +400,7 @@
     new "Requiere descargar 1.8 MB."
 
     # editor.rpy:210
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Esto puede haber ocurrido porque Java no está instalado en este sistema"
 
     # editor.rpy:219
@@ -424,7 +424,7 @@
     new "Editar [text]."
 
     # editor.rpy:387
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Ha ocurrido una excepción mientras se ejecutaba el editor de texto:\\[exception!q]"
 
     # editor.rpy:519
@@ -1216,7 +1216,7 @@
     new "Versión de desarrollo de Ren'Py. Puede tener las últimas características o puede no funcionar."
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Ha sucedido un error:"
 
     # updater.rpy:154
@@ -1568,7 +1568,7 @@
     new "abriendo el archivo de registro"
 
     # game/interface.rpy:394
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "Mientras que [what!qt], ocurrió un error:"
 
     # game/interface.rpy:394

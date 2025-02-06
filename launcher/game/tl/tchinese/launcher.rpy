@@ -364,7 +364,7 @@
     new "{b}推薦{/b} 一個有簡單易用的介面和功能的測試版編輯器能夠幫助開發，例如拼字的校對功能。Editra 現在沒有中文，日文，韓文的輸入功能。在 linux 中 Editra 需要 wxPython（模組支援）。"
 
     # editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "這可能是因為 wxPython 沒有被安裝在當前系統中而發生的。"
 
     # editor.rpy:169
@@ -380,7 +380,7 @@
     new "1.8 MB 需要下載。"
 
     # editor.rpy:182
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "這可能是因為 Java 沒有被安裝在當前系統中而發生的。"
 
     # editor.rpy:191
@@ -392,7 +392,7 @@
     new "防止 Ren'Py 開啟文字編輯器。"
 
     # editor.rpy:359
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "啟動以下編輯器出現異常：\n[exception!q]"
 
     # editor.rpy:457
@@ -608,7 +608,7 @@
     new "錯誤"
 
     # interface.rpy:356
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "[what!qt] 時，出現錯誤："
 
     # interface.rpy:356
@@ -1136,7 +1136,7 @@
     new "Ren'Py 最新的開發版本。這可能會擁有最新的功能，或可能根本無法運作。"
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "一個錯誤發生："
 
     # updater.rpy:154

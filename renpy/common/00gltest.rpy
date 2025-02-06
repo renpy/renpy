@@ -205,7 +205,7 @@ init -1500:
 
     # This is displayed when a display performance problem occurs.
     #
-    # `problem` is the kind of problem that is occuring. It can be:
+    # `problem` is the kind of problem that is occurring. It can be:
     # - "sw" if the software renderer was selected.
     # - "gl2" if GL2 should be used but wasn't selected.
     # - other things, added in the future.

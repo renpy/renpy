@@ -1455,7 +1455,7 @@ int RPS_get_sample_rate() {
 }
 
 /*
- * Returns the error message string if an error has occured, or
+ * Returns the error message string if an error has occurred, or
  * NULL if no error has happened.
  */
 char *RPS_get_error() {

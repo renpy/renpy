@@ -438,7 +438,7 @@ def load_audio_filter(af):
 def deallocate_audio_filter(audio_filter):
     """
     Called when an audio filter is about to be deallocated to release all
-    assocated resources.
+    associated resources.
     """
 
     objid = id(audio_filter)

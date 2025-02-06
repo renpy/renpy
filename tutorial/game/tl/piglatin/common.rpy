@@ -898,7 +898,7 @@ translate piglatin strings:
     new "Pdateruay"
 
     # renpy/common/00updater.rpy:2022
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Naay erroray ashay occureday:"
 
     # renpy/common/00updater.rpy:2024
@@ -958,7 +958,7 @@ translate piglatin strings:
     new "Hetay amegay ataday ashay eenbay ownloadedday."
 
     # renpy/common/00updater.rpy:2078
-    old "An error occured when trying to download game data:"
+    old "An error occurred when trying to download game data:"
     new "Naay erroray occureday henway yingtray otay ownloadday amegay ataday:"
 
     # renpy/common/00updater.rpy:2083

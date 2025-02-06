@@ -338,7 +338,7 @@ translate korean button_displayables_220b020d:
 # game/tutorial_screen_displayables.rpy:558
 translate korean button_displayables_b89d12aa:
 
-    # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+    # e "Of course, it's pretty rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
     e "물론, 그런 스크린에서 버튼을 사용자 정의하는 경우는 드물지. 대신에 사용자 정의 스타일을 만들어 렌파이에게 사용하도록 알려주는 거야."
 
 # game/tutorial_screen_displayables.rpy:577

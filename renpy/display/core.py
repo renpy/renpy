@@ -404,7 +404,7 @@ class Renderer(object):
     def update(self, force=False):
         """
         This is called before a draw operation to check to see if the state of
-        the draw objects needs to be updated after an external event has occured.
+        the draw objects needs to be updated after an external event has occurred.
         Things that require draw updates might be:
 
         * The window has changed its size.
@@ -677,7 +677,7 @@ class Interface(object):
         # The time at which this draw occurs.
         self.frame_time = 0
 
-        # The time when this interaction occured.
+        # The time when this interaction occurred.
         self.interact_time = None
 
         # The time we last tried to quit.
@@ -2235,7 +2235,7 @@ class Interface(object):
 
     def consider_gc(self):
         """
-        Considers if we should peform a garbage collection.
+        Considers if we should perform a garbage collection.
         """
 
         if not renpy.config.manage_gc:

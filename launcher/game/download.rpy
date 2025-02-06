@@ -52,7 +52,7 @@ init python:
             # This is set to true by cancel() to indicate the download should be cancelled.
             self.cancelled = False
 
-            # Set on succes or failure.
+            # Set on success or failure.
             self.success = False
             self.failure = None
 

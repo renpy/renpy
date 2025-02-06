@@ -176,7 +176,7 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
 
         # If new does not have .layers or .scene_list, then we simply
         # insert a move from the old position to the new position, if
-        # a move occured.
+        # a move occurred.
 
         if (not isinstance(new, renpy.display.layout.MultiBox)
                 or (new.layers is None and new.layer_name is None)):
@@ -547,7 +547,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
         # If new does not have .layers or .scene_list, then we simply
         # insert a move from the old position to the new position, if
-        # a move occured.
+        # a move occurred.
 
         if (not isinstance(new, renpy.display.layout.MultiBox)
                 or (new.layers is None and new.layer_name is None)):

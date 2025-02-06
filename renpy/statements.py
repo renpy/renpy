@@ -78,7 +78,7 @@ def register(
           parse that block.
         * "possible", to indicate that the statement may or may not take
           a block.
-        * "script" to indicate that the block shopuld be interpreted as a
+        * "script" to indicate that the block should be interpreted as a
           block of Ren'Py script language statements. See `next` for how
           to implement control flow using this.
         * "script-possible" is treated like "script" if a block is present,

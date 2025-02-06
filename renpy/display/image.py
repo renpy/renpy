@@ -201,7 +201,7 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
         return list(set(attrcount.keys()) | set(j for i in sequences for j in i))
 
     # If we have a sequence, do a topological sort on the before-after relation -
-    # with an ajustment to make sure it will complete even if it loops.
+    # with an adjustment to make sure it will complete even if it loops.
 
     rv = [ ]
 

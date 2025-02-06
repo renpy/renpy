@@ -20,7 +20,7 @@ What is Saved
 Ren'Py attempts to save the game state. This includes both internal state
 and Python state.
 
-The internal state consists of all aspects of Ren'Py that are intented to
+The internal state consists of all aspects of Ren'Py that are intended to
 change once the game has started, and includes:
 
 * The current statement, and all statements that can be returned to.
