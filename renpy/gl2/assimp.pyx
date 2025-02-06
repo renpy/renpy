@@ -242,12 +242,17 @@ cdef class Loader:
     cdef public object mesh_callback
     "The callback that is called for each mesh."
 
+    cdef public bint tangents
+    "True if tangents should be included in the mesh."
+
     def __cinit__(self):
         self.importer.SetIOHandler(new RenpyIOSystem())
 
-    def load(self, filename: str, mesh_callback) -> None:
+    def load(self, filename: str, mesh_callback, tangents) -> None:
 
         self.mesh_callback = mesh_callback
+        self.tangents = tangents
+
         self.dirname = filename.rpartition("/")[0]
 
         # Load the scene.
@@ -262,7 +267,6 @@ cdef class Loader:
         try:
 
             self.model_data = ModelData()
-            cache[filename] = self.model_data
 
             self.load_textures()
 
@@ -272,6 +276,8 @@ cdef class Loader:
                 0.0, -1.0))
 
             self.load_node(self.scene.mRootNode, flip_y)
+
+            return self.model_data
 
         finally:
             self.model_data = None
@@ -354,10 +360,13 @@ cdef class Loader:
         if mesh.mPrimitiveTypes != aiPrimitiveType_TRIANGLE:
             raise Exception("Mesh %d is not a triangle mesh." % mesh_index)
 
-        layout = renpy.gl2.gl2mesh.MODEL_N_LAYOUT
+        if self.tangents:
+            layout = renpy.gl2.gl2mesh.MODEL_NT_LAYOUT
+        else:
+            layout = renpy.gl2.gl2mesh.MODEL_N_LAYOUT
         cdef int stride = layout.stride
 
-        cdef Mesh3 m = Mesh3(renpy.gl2.gl2mesh.MODEL_N_LAYOUT, mesh.mNumVertices, mesh.mNumFaces)
+        cdef Mesh3 m = Mesh3(layout, mesh.mNumVertices, mesh.mNumFaces)
         m.points = mesh.mNumVertices
         m.triangles = mesh.mNumFaces
 
@@ -381,6 +390,19 @@ cdef class Loader:
                 attribute[2] = mesh.mNormals[i].x
                 attribute[3] = mesh.mNormals[i].y
                 attribute[4] = mesh.mNormals[i].z
+
+            if self.tangents:
+                # a_tangent
+                if mesh.mTangents:
+                    attribute[5] = mesh.mTangents[i].x
+                    attribute[6] = mesh.mTangents[i].y
+                    attribute[7] = mesh.mTangents[i].z
+
+                # a_bitangent
+                if mesh.mBitangents:
+                    attribute[8] = mesh.mBitangents[i].x
+                    attribute[9] = mesh.mBitangents[i].y
+                    attribute[10] = mesh.mBitangents[i].z
 
             attribute += stride
 
@@ -421,7 +443,8 @@ class AssimpModel(renpy.display.displayable.Displayable):
         filename: str,
         callback: MeshCallbackType|None = None,
         textures: Iterable[str] = ("diffuse",),
-        shader: str|tuple[str] = "renpy.texture"):
+        shader: str|tuple[str] = "renpy.texture",
+        tangents: bool = False):
 
         super().__init__()
 
@@ -435,13 +458,15 @@ class AssimpModel(renpy.display.displayable.Displayable):
 
         self.filename = filename
         self.callback = callback
+        self.tangents = tangents
 
     def render(self, width, height, st, at):
 
-        if self.filename not in cache:
-            loader.load(self.filename, self.callback)
+        key = id(self)
+        model_data = cache.get(key)
 
-        model_data = cache[self.filename]
+        if model_data is None:
+            model_data = cache[key] = loader.load(self.filename, self.callback, self.tangents)
 
         rv = Render(0, 0)
 

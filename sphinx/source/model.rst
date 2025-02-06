@@ -457,6 +457,14 @@ If normals are available, so is the following attribute:
 ``vec3 a_normal``
     The normal of the vertex being rendered.
 
+If tangents are avaiable, so are the following attributes:
+
+``vec3 a_tangent``
+    The tangent of the vertex being rendered.
+
+``vec3 a_bitangent``
+    The bitangent of the vertex being rendered.
+
 .. _gl-properties:
 
 GL Properties
