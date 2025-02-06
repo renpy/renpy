@@ -12,7 +12,7 @@ displayables can be used in many ways.
 * Assignment to certain style properties.
 
 When a Ren'Py function or variable expects a displayable, there are
-five things that can be provided:
+several things that can be provided:
 
 * An object of type Displayable, created by calling one of the
   functions given below.

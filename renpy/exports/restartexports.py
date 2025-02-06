@@ -115,14 +115,14 @@ def quit(relaunch=False, status=0, save=False): # @ReservedAssignment
     This causes Ren'Py to exit entirely.
 
     `relaunch`
-        If true, Ren'Py will run a second copy of itself before quitting.
+        If True, Ren'Py will run a second copy of itself before quitting.
 
     `status`
         The status code Ren'Py will return to the operating system.
         Generally, 0 is success, and positive integers are failure.
 
     `save`
-        If true, the game is saved in :var:`_quit_slot` before Ren'Py
+        If True, the game is saved in :var:`_quit_slot` before Ren'Py
         terminates.
     """
 

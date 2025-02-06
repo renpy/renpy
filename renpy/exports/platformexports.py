@@ -83,7 +83,7 @@ def invoke_in_thread(fn, *args, **kwargs):
     stopped when Ren'Py is shutting down.
 
     This thread is very limited in what it can do with the Ren'Py API.
-    Changing store variables is allowed, as are calling calling the following
+    Changing store variables is allowed, as are calling the following
     functions:
 
     * :func:`renpy.restart_interaction`
