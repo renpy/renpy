@@ -288,7 +288,7 @@ def walkdir(path, elide=None): # @ReservedAssignment
         if de.is_dir():
             yield from walkdir(de.path, elide)
         else:
-            yield de.path[elide:]
+            yield de.path[elide:].replace("\\", "/")
 
 
 # A list of files that are recognised as archives.
