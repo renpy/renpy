@@ -338,7 +338,7 @@ translate piglatin button_displayables_220b020d:
 # game/tutorial_screen_displayables.rpy:558
 translate piglatin button_displayables_b89d12aa:
 
-    # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+    # e "Of course, it's pretty rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
     e "Foay oursecay, itay'say retypay areray eway'day everay ustomizecay aay uttonbay inay aay creensay ikelay hattay. Nsteadiay, eway'day reatecay ustomcay ylesstay anday elltay Enray'Ypay otay useay hemtay."
 
 # game/tutorial_screen_displayables.rpy:577

@@ -386,7 +386,7 @@ def change_icons(oldexe, icofn):
 
 
     #Image size is the memory size of all sections + all headers, padded to memory alignment.
-    #There's alread a header size, and this isn't changing headers, so just add.
+    #There's already a header size, and this isn't changing headers, so just add.
     #imageSize = pe.OPTIONAL_HEADER.ImageBase + pe.OPTIONAL_HEADER.SizeOfHeaders
     imageSize = pe.OPTIONAL_HEADER.SizeOfHeaders
     for s in pe.sections:

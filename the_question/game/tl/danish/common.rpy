@@ -829,7 +829,7 @@
     new "Opdateringsprogram"
 
     # renpy/common/00updater.rpy:1631
-    old "An error has occured:"
+    old "An error has occurred:"
     new "En fejl er opstået:"
 
     # renpy/common/00updater.rpy:1633
@@ -1145,7 +1145,7 @@
     new "Spildataene er blevet hentet."
 
     # renpy/common/00updater.rpy:2078
-    old "An error occured when trying to download game data:"
+    old "An error occurred when trying to download game data:"
     new "En fejl opstod under forsøg på hentning af spildata:"
 
     # renpy/common/00updater.rpy:2083

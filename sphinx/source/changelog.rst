@@ -601,7 +601,7 @@ The interaction of ``window auto`` and ``nvl`` mode, especially
 :var:`config.nvl_adv_transition` and :var:`config.adl_nvl_transition`,
 has been improved. The major change is that the latter transitions will
 now only occur if the window has not been shown or hidden, preventing
-double interactions from occuring.
+double interactions from occurring.
 
 The (rarely used) ``nvl hide`` and ``nvl show`` statements now set the
 flag used by ``window auto``, preventing the window from being shown
@@ -1654,7 +1654,7 @@ if the fade time was too short.
 The :var:`config.fadeout_audio` variable (renamed from config.fade_music) controls
 the default fadeout used when stopping audio, or changing audio using ``play``. (It
 is not used by ``queue``). The default value is now 0.016 seconds, which eliminates
-popping sounds that occured when audio was stopped abruptly.
+popping sounds that occurred when audio was stopped abruptly.
 
 Audio panning (:func:`renpy.music.set_pan`) is now constant-power, so that
 panning audio should not change the volume.
@@ -4020,7 +4020,7 @@ work on both Python 2 and Python 3.
 
 First, Ren'Py now uses `future <https://python-future.org/>`_ to provide
 standard library compatibility. It's now possible to import modules using
-their Python 3 names, when a renaming has occured.
+their Python 3 names, when a renaming has occurred.
 
 When a .rpy file begins with the new ``rpy python 3`` statement, the file is
 compiled in a Python 3 compatibility mode. The two changes this causes are:

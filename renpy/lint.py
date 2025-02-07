@@ -946,14 +946,14 @@ def check_unreachables(all_nodes):
 
     for node in all_nodes:
         if isinstance(node, Label):
-            # All labels are reachable because arbitary expression can
+            # All labels are reachable because arbitrary expression can
             # renpy.call or renpy.jump to them.
             to_check.append(node)
 
         elif isinstance(node, (Init, TranslateBlock)):
             # Init and TranslateBlock nodes are ment to be unreachable from
             # runtime code, but the block of these ones is always reachable,
-            # either by simply running the game, or changing the langauge.
+            # either by simply running the game, or changing the language.
             if node.block:
                 to_check.append(node.block[0])
 

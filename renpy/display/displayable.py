@@ -391,7 +391,7 @@ class Displayable(renpy.object.Object):
 
     def event(self, ev, x, y, st):
         """
-        Called to report than an event has occured. Ev is the raw
+        Called to report than an event has occurred. Ev is the raw
         pygame event object representing that event. If the event
         involves the mouse, x and y are the translation of the event
         into the coordinates of this displayable. st is the time this

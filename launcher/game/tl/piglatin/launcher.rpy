@@ -730,7 +730,7 @@ translate piglatin strings:
     new "1.8 Bmay ownloadday equiredray."
 
     # game/editor.rpy:214
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Histay aymay avehay occureday ecausebay Avajay isay otnay installeday onay histay ystemsay."
 
     # game/editor.rpy:228
@@ -762,7 +762,7 @@ translate piglatin strings:
     new "Diteay [text]."
 
     # game/editor.rpy:409
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Naay exceptionay occureday hileway aunchinglay hetay exttay editoray:\n[exception!q]"
 
     # game/editor.rpy:541
@@ -1070,7 +1070,7 @@ translate piglatin strings:
     new "openingay hetay oglay ilefay"
 
     # game/interface.rpy:407
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "Hileway [what!qt], anay erroray occureday:"
 
     # game/interface.rpy:407
@@ -1778,7 +1778,7 @@ translate piglatin strings:
     new "%Bay %day, %Yay"
 
     # game/updater.rpy:162
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Naay erroray ashay occureday:"
 
     # game/updater.rpy:164

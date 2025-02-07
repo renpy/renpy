@@ -1134,7 +1134,7 @@ translate ukrainian strings:
     new "Дані гри було завантажено."
 
     # renpy/common/00updater.rpy:2078
-    old "An error occured when trying to download game data:"
+    old "An error occurred when trying to download game data:"
     new "Виникла помилка при спробі завантажити дані гри:"
 
     # renpy/common/00updater.rpy:2083

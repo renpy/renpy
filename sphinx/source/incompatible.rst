@@ -954,7 +954,7 @@ to be given. To revert to the old interface, use::
 
 It's mode parameter has also been slightly changed, and will now return
 a value of ``both`` when both a ``permanent`` and ``temporary``
-attribute transition is occuring.
+attribute transition is occurring.
 
 .. _incompatible-7.2.2:
 

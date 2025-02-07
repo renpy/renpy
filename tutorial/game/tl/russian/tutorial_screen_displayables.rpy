@@ -338,7 +338,7 @@ translate russian button_displayables_220b020d:
 # game/tutorial_screen_displayables.rpy:558
 translate russian button_displayables_b89d12aa:
 
-    # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+    # e "Of course, it's pretty rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
     e "И конечно, мы очень редко настраиваем каждую кнопку на подобных экранах. Вместо этого мы создаём отдельный стиль и говорим Ren'Py его использовать."
 
 # game/tutorial_screen_displayables.rpy:577

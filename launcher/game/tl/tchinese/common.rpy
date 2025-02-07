@@ -738,7 +738,7 @@ translate tchinese strings:
     new "遊戲資料已下載。"
 
     # renpy/common/00updater.rpy:2078
-    old "An error occured when trying to download game data:"
+    old "An error occurred when trying to download game data:"
     new "嘗試下載遊戲資料時發生錯誤："
 
     # renpy/common/00updater.rpy:2083

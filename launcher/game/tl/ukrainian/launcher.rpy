@@ -706,7 +706,7 @@ translate ukrainian strings:
     new "Розмір завантаження — 1,8 МБ."
 
     # game/editor.rpy:211
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Це могло статися через те, що на цій системі не встановлено Java."
 
     # game/editor.rpy:220
@@ -738,7 +738,7 @@ translate ukrainian strings:
     new "Редагувати [text]."
 
     # game/editor.rpy:401
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Під час запуску текстового редактора виникла помилка:\n[exception!q]"
 
     # game/editor.rpy:533
@@ -1050,7 +1050,7 @@ translate ukrainian strings:
     new "відкриття файлу журналу"
 
     # game/interface.rpy:399
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "Під час [what!qt] сталася помилка:"
 
     # game/interface.rpy:399
@@ -1718,7 +1718,7 @@ translate ukrainian strings:
     new "%d %B, %Y"
 
     # game/updater.rpy:157
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Сталася помилка:"
 
     # game/updater.rpy:159

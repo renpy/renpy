@@ -624,7 +624,7 @@
     new "Старый, проверенный бета-редактор. Editra на данный момент не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов. На Linux, Editra требует wxPython."
 
     # editor.rpy:195
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Это могло случиться из-за того, что wxPython не установлен на этой системе."
 
     # editor.rpy:197
@@ -640,7 +640,7 @@
     new "Требуется скачать 1.8 МБ."
 
     # editor.rpy:210
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Это могло случиться из-за того, что Java не установлена в данной системе."
 
     # editor.rpy:219
@@ -664,7 +664,7 @@
     new "Редактировать [text]"
 
     # editor.rpy:387
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Возникла ошибка при запуске текстового редактора:\n[exception!q]"
 
     # editor.rpy:519
@@ -1457,7 +1457,7 @@
     new "%d %B %Y года"
 
     # updater.rpy:140
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Возникла ошибка:"
 
     # updater.rpy:142
@@ -1525,7 +1525,7 @@
     new "(Бета)"
 
     # interface.rpy:394
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "В процессе выполнения \"[what!qt]\" произошла ошибка:"
 
     # interface.rpy:394

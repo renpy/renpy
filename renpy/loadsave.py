@@ -458,7 +458,7 @@ autosave_thread = None
 autosave_not_running = threading.Event()
 autosave_not_running.set()
 
-# The number of times autosave has been called without a save occuring.
+# The number of times autosave has been called without a save occurring.
 autosave_counter = 0
 
 # True if a background autosave has finished.

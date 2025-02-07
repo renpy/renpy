@@ -535,7 +535,7 @@ placed in parenthesis after the text to be spoken. For example::
     e "Hey!" (what_size=36, what_color="#ffeeee")
 
 These arguments are first passed to config.say_argument_callback, and then
-are passed to the character. The default implemention (in :func:`Character`)
+are passed to the character. The default implementation (in :func:`Character`)
 creates a new character with the passed arguments, and uses that to display
 the text.
 
@@ -774,7 +774,7 @@ A crash on video playback on Android and iOS has been fixed.
 
 The default encoding for non-Unicode strings in Ren'Py has been changed to
 the filesystem encoding. This should address a series of encoding issues
-that have occured on non-ascii systems since 6.99.12.
+that have occurred on non-ascii systems since 6.99.12.
 
 Ren'Py will no longer search for system-installed fonts when in developer
 mode.

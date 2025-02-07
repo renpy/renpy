@@ -42,7 +42,7 @@ def capture_focus(name="default"):
     box of that displayable, and stores it with `name`. If not, removes any
     focus stored with `name`.
 
-    Captured focuses are not saved when the game is saveed.
+    Captured focuses are not saved when the game is saved.
 
     `name`
         Should be a string. The name "tooltip" is special, as it's

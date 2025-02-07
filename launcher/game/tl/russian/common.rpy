@@ -1144,7 +1144,7 @@ translate russian strings:
     new "Данные игры загружены."
 
     # renpy/common/00updater.rpy:2077
-    old "An error occured when trying to download game data:"
+    old "An error occurred when trying to download game data:"
     new "При попытке загрузить данные игры произошла ошибка:"
 
     # renpy/common/00updater.rpy:2082

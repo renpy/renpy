@@ -28,7 +28,7 @@ import functools
 
 
 class Curry(object):
-    # essentialy the same as Partial, kept for compatibility
+    # essentially the same as Partial, kept for compatibility
 
     hash = None
 

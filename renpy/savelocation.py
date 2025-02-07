@@ -398,7 +398,7 @@ class FileLocation(object):
         """
         Returns a list of (mtime, persistent) tuples loaded from the
         persistent file. This should return quickly, with the actual
-        load occuring in the scan thread.
+        load occurring in the scan thread.
         """
 
         if self.persistent_data:

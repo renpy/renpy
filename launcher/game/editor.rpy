@@ -225,7 +225,7 @@ init 1 python in editor:
             _("JEdit is deprecated, using another editor is recommended."),
             "jedit",
             _("1.8 MB download required."),
-            _("This may have occured because Java is not installed on this system."),
+            _("This may have occurred because Java is not installed on this system."),
             deprecated=True,
             )
 
@@ -411,7 +411,7 @@ init 1 python in editor:
 
             except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
-                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+                renpy.invoke_in_new_context(interface.error, _("An exception occurred while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
     class EditAbsolute(Action):
         def __init__(self, filename, line=None, check=False):
@@ -457,7 +457,7 @@ init 1 python in editor:
 
             except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
-                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+                renpy.invoke_in_new_context(interface.error, _("An exception occurred while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
 
     class EditAll(Action):
@@ -495,7 +495,7 @@ init 1 python in editor:
 
             except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
-                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+                renpy.invoke_in_new_context(interface.error, _("An exception occurred while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
 
     class EditProject(Action):
@@ -518,7 +518,7 @@ init 1 python in editor:
 
             except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
-                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+                renpy.invoke_in_new_context(interface.error, _("An exception occurred while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
 
     def CanEditProject():

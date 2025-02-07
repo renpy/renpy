@@ -199,7 +199,7 @@ init -1500 python in updater:
             The state that the updater is in.
 
         self.message
-            In an error state, the error message that occured.
+            In an error state, the error message that occurred.
 
         self.progress
             If not None, a number between 0.0 and 1.0 giving some sort of
@@ -212,7 +212,7 @@ init -1500 python in updater:
 
         # Here are the possible states.
 
-        # An error occured during the update process.
+        # An error occurred during the update process.
         # self.message is set to the error message.
         ERROR = "ERROR"
 
@@ -2025,7 +2025,7 @@ init -1500:
                 vbox:
 
                     if u.state == u.ERROR:
-                        text _("An error has occured:")
+                        text _("An error has occurred:")
                     elif u.state == u.CHECKING:
                         text _("Checking for updates.")
                     elif u.state == u.UPDATE_NOT_AVAILABLE:
@@ -2082,7 +2082,7 @@ init -1500:
             elif u.state == u.FINISHING or u.state == u.DONE:
                 text _("The game data has been downloaded.")
             else: # An error or unknown state.
-                text _("An error occured when trying to download game data:")
+                text _("An error occurred when trying to download game data:")
 
                 if u.message is not None:
                     text "[u.message!q]"
