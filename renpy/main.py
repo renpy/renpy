@@ -31,7 +31,6 @@ import zipfile
 import gc
 import linecache
 import json
-from pathlib import Path
 
 import renpy
 import renpy.game as game
