@@ -1994,8 +1994,9 @@ class UnoptimizedTexture(ImageBase):
     """
 
     def __init__(self, im, **properties):
-        super(UnoptimizedTexture, self).__init__(im, optimize_bounds=False, **properties)
-        self.image = image(im)
+        im = image(im)
+        super(UnoptimizedTexture, self).__init__(im.identity, optimize_bounds=False, **properties)
+        self.image = im
 
     def get_hash(self):
         return self.image.get_hash()
@@ -2005,7 +2006,6 @@ class UnoptimizedTexture(ImageBase):
 
     def predict_files(self):
         return self.image.predict_files()
-
 
 
 def image(arg, loose=False, **properties):
