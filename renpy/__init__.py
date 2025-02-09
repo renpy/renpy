@@ -241,6 +241,7 @@ name_blacklist = {
     "renpy.savelocation.disk_lock",
     "renpy.character.TAG_RE",
     "renpy.display.im.cache",
+    "renpy.display.render.main_thread",
     "renpy.display.render.blit_lock",
     "renpy.display.render.IDENTITY",
     "renpy.loader.auto_lock",
@@ -252,6 +253,7 @@ name_blacklist = {
     "renpy.exports.sdl_dll",
     "renpy.sl2.slast.serial",
     "renpy.gl2.assimp.loader",
+    "renpy.gl2.assimp.loader_lock",
     "renpy.gl2.gl2draw.default_position",
     }
 

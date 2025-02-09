@@ -19,6 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
+import threading
+
+from typing import Iterable
+
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
 
@@ -105,22 +110,23 @@ class ModelData:
     embedded_textures: dict[str, Data]
     "The embedded textures in the model."
 
-    mesh_renders : list[Render]
-    "The renders that make up the model."
+    mesh_info: dict[str, MeshInfo]
+    "Information required to blit each mesh in the model."
 
     def __init__(self):
         self.embedded_textures = { }
-        self.mesh_renders = [ ]
+        self.mesh_info = [ ]
 
 
-cache : dict[str, ModelData] = { }
+cache: dict[AssimpModel, ModelData] = { }
 "Caches the models that have been loaded."
 
+predicted: set[AssimpModel]|None = None
+"The set of models that are predicted to be loaded."
 
-def get_renders():
-    for i in cache.values():
-        for j in i.mesh_renders:
-            yield j
+new_predicted: set[AssimpModel] = set()
+"The same, but before finish_predict() is called."
+
 
 def free_memory():
     cache.clear()
@@ -128,14 +134,8 @@ def free_memory():
 
 class MeshInfo:
     """
-    This stores information that's passed into the mesh callback.
+    This stores the information used to blit a texture.
     """
-
-    _importer: "AssetImporter"
-    "The importer that's loading the mesh."
-
-    _material_index: int
-    "The index of the material."
 
     mesh: Mesh3
     "The mesh that's being loaded."
@@ -143,86 +143,46 @@ class MeshInfo:
     reverse_matrix: Matrix
     forward_matrix: Matrix
 
-    def has_texture(self, texture_type: str) -> bool:
-        """
-        Returns True if the mesh has a texture of the given type.
-        """
-
-        if texture_type not in TEXTURE_TYPES:
-            raise Exception(f"Unknown texture type {texture_type}.")
-
-        return self._importer.get_texture(self._material_index, TEXTURE_TYPES[texture_type]) is not None
-
-
-    def get_texture(self, texture_type: str) -> renpy.display.displayable.Displayable:
-        """
-        Returns the texture of the given type.
-        """
-
-        if texture_type not in TEXTURE_TYPES:
-            raise Exception(f"Unknown texture type {texture_type}.")
-
-        path = self._importer.get_texture(self._material_index, TEXTURE_TYPES[texture_type])
-
-        if path is None:
-            rv = renpy.display.im.Null()
-
-        elif path.startswith("*"):
-            rv = self._importer.model_data.embedded_textures[path]
-
-        else:
-            rv = renpy.easy.displayable(self._importer.dirname + "/" + path)
-
-        return renpy.display.im.render_for_texture(unoptimized_texture(rv), 0, 0, 0, 0)
-
-    def wrap_texture(self, d):
-        """
-        Wraps an image file so it can be used as a texture.
-        """
-
-        d = renpy.easy.displayable(d)
-        return renpy.display.im.render_for_texture(unoptimized_texture(d), 0, 0, 0, 0)
-
-
-MeshCallbackType = Callable[[MeshInfo], Render]
-
-
-class MeshCallback:
+    textures: list
     """
-    A callback that's called for each mesh in the model.
+    A list of displaybles to render and blit as textures.
     """
 
-    textures: tuple[str]
-    "The textures that the callback is interested in."
+    shaders: Iterable[str]
+    """
+    The shaders to use.
+    """
 
-    shaders: tuple[str]
-    "The shaders that the callback is interested in."
+    def __init__(self, Loader loader, Mesh3 mesh, reverse_matrix: Matrix, forward_matrix: Matrix,  int material_index, textures: Iterable[str], shaders: Iterable[str]):
 
-    def __init__(self, textures=( "diffuse", ), shaders=()):
-        self.textures = textures
+        self.mesh = mesh
+        self.reverse_matrix = reverse_matrix
+        self.forward_matrix = forward_matrix
+
+        self.textures = [ ]
+
+        for t in textures:
+
+            if isinstance(t, str) and t in TEXTURE_TYPES:
+
+                path = loader.get_texture(material_index, TEXTURE_TYPES[t])
+
+                if path is None:
+                    d = renpy.display.im.Null()
+
+                elif path.startswith("*"):
+                    d = loader.model_data.embedded_textures[path]
+
+                else:
+                    d = renpy.easy.displayable(loader.dirname + "/" + path)
+
+            else:
+
+                d = renpy.easy.displayable(t)
+
+            self.textures.append(unoptimized_texture(d))
+
         self.shaders = shaders
-
-
-    def __call__(self, mesh: MeshInfo) -> None:
-        """
-        Called for each mesh in the model.
-        """
-
-        rv = renpy.display.render.Render(0, 0)
-        rv.mesh = mesh.mesh
-        rv.reverse = mesh.reverse_matrix
-        rv.forward = mesh.forward_matrix
-
-        rv.add_property("texture_wrap", (renpy.uguu.GL_REPEAT, renpy.uguu.GL_REPEAT))
-
-        for i in self.shaders:
-            rv.add_shader(i)
-
-        for i in self.textures:
-            rv.blit(mesh.get_texture(i), (0, 0))
-
-        return rv
-
 
 
 cdef class Loader:
@@ -239,18 +199,22 @@ cdef class Loader:
     cdef public object model_data
     "The ModelData object that is being filled in."
 
-    cdef public object mesh_callback
-    "The callback that is called for each mesh."
-
     cdef public bint tangents
     "True if tangents should be included in the mesh."
+
+    cdef public object textures
+    "A list of names of shaders to use."
+
+    cdef public object shaders
+    "A shader or list of shaders to use."
 
     def __cinit__(self):
         self.importer.SetIOHandler(new RenpyIOSystem())
 
-    def load(self, filename: str, mesh_callback, tangents) -> None:
+    def load(self, model_data: ModelData, filename: str, textures: Iterable[str], shaders: Iterable[str], tangents: bool) -> None:
 
-        self.mesh_callback = mesh_callback
+        self.shaders = shaders
+        self.textures = textures
         self.tangents = tangents
 
         self.dirname = filename.rpartition("/")[0]
@@ -266,7 +230,7 @@ cdef class Loader:
 
         try:
 
-            self.model_data = ModelData()
+            self.model_data = model_data
 
             self.load_textures()
 
@@ -280,8 +244,9 @@ cdef class Loader:
             return self.model_data
 
         finally:
+            self.shaders = [ ]
+            self.textures = [ ]
             self.model_data = None
-            self.mesh_callback = None
 
             self.importer.FreeScene()
 
@@ -415,20 +380,22 @@ cdef class Loader:
 
             triangle += 3
 
-        info = MeshInfo()
-        info._importer = self
-        info._material_index = mesh.mMaterialIndex
-        info.mesh = m
-        info.reverse_matrix = matrix
-        info.forward_matrix = matrix.inverse()
+        info = MeshInfo(
+            self,
+            m,
+            matrix,
+            matrix.inverse(),
+            mesh.mMaterialIndex,
+            self.textures,
+            self.shaders)
 
-        r = self.mesh_callback(info)
-
-        if r is not None:
-            self.model_data.mesh_renders.append(r)
+        self.model_data.mesh_info.append(info)
 
 loader = Loader()
 "The loader used to load in imported models."
+
+loader_lock = threading.Lock()
+"The lock used to protect the loader."
 
 class AssimpModel(renpy.display.displayable.Displayable):
     """
@@ -438,10 +405,19 @@ class AssimpModel(renpy.display.displayable.Displayable):
     filename: str
     "The filename of the model to display."
 
+    textures: Iterable[str]
+    "The textures to load."
+
+    shaders: Iterable[str]
+    "The shaders to use."
+
+    tangents: bool
+    "True if tangents should be included in the mesh."
+
+
     def __init__(
         self,
         filename: str,
-        callback: MeshCallbackType|None = None,
         textures: Iterable[str] = ("diffuse",),
         shader: str|tuple[str] = "renpy.texture",
         tangents: bool = False):
@@ -453,29 +429,105 @@ class AssimpModel(renpy.display.displayable.Displayable):
         else:
             shaders = shader
 
-        if callback is None:
-            callback = MeshCallback(textures=textures, shaders=shaders)
-
         self.filename = filename
-        self.callback = callback
+        self.textures = textures
+        self.shaders = shaders
         self.tangents = tangents
+
+    def load(self):
+        """
+        Loads the AssimpModel, including its meshes and textures.
+        """
+
+        model_data = cache.get(self)
+
+        if model_data is None:
+
+            with loader_lock:
+                model_data = cache[self] = ModelData()
+
+                try:
+                    loader.load(model_data, self.filename, self.textures, self.shaders, self.tangents)
+                except Exception as e:
+                    del cache[self]
+                    raise
+
+            for d in (j for i in cache[self].mesh_info for j in i.textures if j):
+                renpy.display.im.cache.preload_image(d)
+
+        return model_data
 
     def render(self, width, height, st, at):
 
-        key = id(self)
-        model_data = cache.get(key)
+        new_predicted.add(self)
 
-        if model_data is None:
-            model_data = cache[key] = loader.load(self.filename, self.callback, self.tangents)
+        model_data = self.load()
 
         rv = Render(0, 0)
 
-        for cr in model_data.mesh_renders:
-            rv.blit(cr, (0, 0), focus=False, main=False)
+        for mi in model_data.mesh_info:
+            cr = Render(0, 0)
+            cr.mesh = mi.mesh
+            cr.reverse = mi.reverse_matrix
+            cr.forward = mi.forward_matrix
+
+            for i in mi.shaders:
+                cr.add_shader(i)
+
+            for i in mi.textures:
+                cr.blit(renpy.display.im.render_for_texture(i, width, height, st, at), (0, 0))
+
+            rv.blit(cr, (0, 0))
 
         rv.add_property("depth", True)
+        rv.add_property("texture_wrap", (renpy.uguu.GL_REPEAT, renpy.uguu.GL_REPEAT))
 
         return rv
+
+    def visit(self):
+        if self in cache:
+            return [ j for i in cache[self].mesh_info for j in i.textures ]
+        else:
+            return [ ]
+
+    def predict_one(self):
+        new_predicted.add(self)
+
+    def __hash__(self):
+        return id(self)
+
+    def __eq__(self, other):
+        return self is other
+
+
+def finish_predict():
+    """
+    Called to finish the prediction process.
+    """
+
+    global predicted
+    global new_predicted
+
+    if new_predicted != predicted:
+        predicted = new_predicted
+        new_predicted = set()
+
+        renpy.display.im.cache.start_prediction()
+
+
+def preload():
+    """
+    Called to preload predicted models.
+    """
+
+    if predicted is None:
+        return
+
+    for i in set(cache.keys()) - predicted:
+        del cache[i]
+
+    for i in predicted:
+        i.load()
 
 
 cdef public int assimp_loadable(const char *filename) nogil:

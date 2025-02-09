@@ -515,6 +515,8 @@ class Cache(object):
 
     def preload_thread_pass(self):
 
+        renpy.gl2.assimp.preload()
+
         while self.preloads and self.keep_preloading:
 
             # If the size of the current generation is bigger than the
@@ -543,6 +545,7 @@ class Cache(object):
                 pass
 
         self.cleanout()
+
 
     def add_load_log(self, filename):
 

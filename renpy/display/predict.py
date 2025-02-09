@@ -209,4 +209,6 @@ def prediction_coroutine(root_widget):
 
         predicting = False
 
+    renpy.gl2.assimp.finish_predict()
+
     yield None
