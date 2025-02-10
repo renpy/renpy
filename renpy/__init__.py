@@ -255,6 +255,7 @@ name_blacklist = {
     "renpy.gl2.assimp.loader",
     "renpy.gl2.assimp.loader_lock",
     "renpy.gl2.gl2draw.default_position",
+    "renpy.lexer._python_updatecache",
     }
 
 
