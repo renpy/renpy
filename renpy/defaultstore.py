@@ -187,6 +187,8 @@ Live2D = renpy.gl2.live2d.Live2D
 
 Model = renpy.display.model.Model
 
+AssimpModel = renpy.gl2.assimp.AssimpModel
+
 # Currying things.
 Alpha = renpy.curry.curry(renpy.display.layout.Alpha)
 Position = renpy.curry.curry(renpy.display.layout.Position)
