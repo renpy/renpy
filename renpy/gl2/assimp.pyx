@@ -118,6 +118,18 @@ class ModelData:
         self.mesh_info = [ ]
 
 
+    def duplicate(self):
+        """
+        Duplicates the model data.
+        """
+
+        rv = ModelData()
+        rv.embedded_textures = self.embedded_textures.copy()
+        rv.mesh_info = [ mi.duplicate() for mi in self.mesh_info ]
+
+        return rv
+
+
 cache: dict[AssimpModel, ModelData] = { }
 "Caches the models that have been loaded."
 
@@ -178,12 +190,32 @@ class MeshInfo:
 
             else:
 
-                d = renpy.easy.displayable(t)
+                d = t
 
             self.textures.append(unoptimized_texture(d))
 
         self.shaders = shaders
 
+    def duplicate(self):
+        """
+        Duplicates the mesh info.
+        """
+
+        rv = MeshInfo.__new__(MeshInfo)
+        rv.mesh = self.mesh
+        rv.reverse_matrix = self.reverse_matrix
+        rv.forward_matrix = self.forward_matrix
+        rv.shaders = self.shaders
+
+        rv.textures = [ ]
+
+        for d in self.textures:
+            if d._duplicatable:
+                rv.textures.append(d._duplicate())
+            else:
+                rv.textures.append(d)
+
+        return rv
 
 cdef class Loader:
 
@@ -211,7 +243,13 @@ cdef class Loader:
     def __cinit__(self):
         self.importer.SetIOHandler(new RenpyIOSystem())
 
-    def load(self, model_data: ModelData, filename: str, textures: Iterable[str], shaders: Iterable[str], tangents: bool) -> None:
+    def load(
+        self,
+        model_data: ModelData,
+        filename: str,
+        textures: Iterable[str],
+        shaders: Iterable[str|renpy.display.displayable.Displayable],
+        tangents: bool) -> None:
 
         self.shaders = shaders
         self.textures = textures
@@ -418,7 +456,7 @@ class AssimpModel(renpy.display.displayable.Displayable):
     def __init__(
         self,
         filename: str,
-        textures: Iterable[str] = ("diffuse",),
+        textures: Iterable = ("diffuse",),
         shader: str|tuple[str] = "renpy.texture",
         tangents: bool = False):
 
@@ -430,9 +468,18 @@ class AssimpModel(renpy.display.displayable.Displayable):
             shaders = shader
 
         self.filename = filename
-        self.textures = textures
         self.shaders = shaders
         self.tangents = tangents
+
+        self.textures = [ ]
+
+        for i in textures:
+            if i not in TEXTURE_TYPES:
+                i = renpy.easy.displayable(i)
+
+            self.textures.append(i)
+
+        self._duplicatable = any(getattr(i, "_duplicatable", False) for i in self.textures)
 
     def load(self):
         """
