@@ -249,7 +249,12 @@ cdef class Loader:
         filename: str,
         textures: Iterable[str],
         shaders: Iterable[str|renpy.display.displayable.Displayable],
-        tangents: bool) -> None:
+        tangents: bool,
+        zoom: float,
+        flip_x: bool,
+        flip_y: bool,
+        flip_z: bool,
+        flip_uv: bool,) -> None:
 
         self.shaders = shaders
         self.textures = textures
@@ -261,7 +266,7 @@ cdef class Loader:
         filename_bytes = filename.encode()
         self.scene = self.importer.ReadFile(
             filename_bytes,
-            aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs)
+            aiProcessPreset_TargetRealtime_Quality | (aiProcess_FlipUVs if flip_uv else 0))
 
         if not self.scene:
             raise Exception("Error loading %s: %s" % (filename, self.importer.GetErrorString()))
@@ -272,12 +277,14 @@ cdef class Loader:
 
             self.load_textures()
 
-            # Load the nodes.
-            flip_y = Matrix((
-                1.0, 0.0,
-                0.0, -1.0))
+            xdx = -1.0 if flip_x else 1.0
+            ydy = -1.0 if flip_y else 1.0
+            zdz = -1.0 if flip_z else 1.0
 
-            self.load_node(self.scene.mRootNode, flip_y)
+            # Load the nodes.
+            m = Matrix.scale(xdx, ydy, zdz) * Matrix.scale(zoom, zoom, zoom)
+
+            self.load_node(self.scene.mRootNode, m)
 
             return self.model_data
 
@@ -452,13 +459,30 @@ class AssimpModel(renpy.display.displayable.Displayable):
     tangents: bool
     "True if tangents should be included in the mesh."
 
+    zoom: float
+    "The zoom level of the model."
+
+    flip_y: bool
+    "True if the model should be flipped along the y axis."
+
+    flip_z: bool
+    "True if the model should be flipped along the z axis."
+
+    flip_uv: bool
+    "True if the UV coordinates should be flipped vertically."
+
 
     def __init__(
         self,
         filename: str,
         textures: Iterable = ("diffuse",),
         shader: str|tuple[str] = "renpy.texture",
-        tangents: bool = False):
+        tangents: bool = False,
+        zoom: float = 1.0,
+        flip_x: bool = False,
+        flip_y: bool = True,
+        flip_z: bool = False,
+        flip_uv: bool = True):
 
         super().__init__()
 
@@ -470,6 +494,12 @@ class AssimpModel(renpy.display.displayable.Displayable):
         self.filename = filename
         self.shaders = shaders
         self.tangents = tangents
+        self.zoom = zoom
+
+        self.flip_x = flip_x
+        self.flip_y = flip_y
+        self.flip_z = flip_z
+        self.flip_uv = flip_uv
 
         self.textures = [ ]
 
@@ -494,7 +524,19 @@ class AssimpModel(renpy.display.displayable.Displayable):
                 model_data = cache[self] = ModelData()
 
                 try:
-                    loader.load(model_data, self.filename, self.textures, self.shaders, self.tangents)
+
+                    loader.load(
+                        model_data,
+                        self.filename,
+                        self.textures,
+                        self.shaders,
+                        self.tangents,
+                        self.zoom,
+                        self.flip_x,
+                        self.flip_y,
+                        self.flip_z,
+                        self.flip_uv)
+
                 except Exception as e:
                     del cache[self]
                     raise
