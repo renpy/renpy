@@ -444,7 +444,88 @@ loader_lock = threading.Lock()
 
 class AssimpModel(renpy.display.displayable.Displayable):
     """
-    A displayable that displays a model.
+    :doc: assimp
+
+    A displayable that displays a 3D Model loaded using the
+    `Open Asset Importer (assimp) library <https://github.com/assimp/assimp>`_.
+
+    For the purposes of Ren'Py's 2D layout system, an AssimpModel has zero width and height. By default, the model
+    is loaded at the size found in the file that contains it. If required, the `zoom` may be used to scale it.
+
+    When multiple models are in use, the ``gl_depth True`` property should be supplied to the camera, so that
+    depth testing is enabled. Ren'Py does not currently perform any culling of the model, so it's
+    important to use models simple enough to be completely rendered.
+
+    `filename`
+        The filename of the model to display. The following formats are supported:
+
+        3D, 3DS, 3MF, AC, AC3D, ACC, AMJ, ASE, ASK, B3D, BVH, CSM, COB, DAE/Collada, DXF, ENFF, FBX,
+        glTF 1.0 + GLB, glTF 2.0, HMB, IFC-STEP, IQM, IRR / IRRMESH, LWO, LWS, LXO, M3D, MD2, MD5,
+        MDC, MDL, MESH / MESH.XML, MOT, MS3D, NDO, NFF, OBJ, OFF, OGEX, PLY, PMX, PRJ, Q3O, Q3S, RAW, SCN,
+        SIB, SMD, STP, STL, TER, UC, VTA, X, X3D, XGL, ZGL
+
+        Many of these formats are obsolete or special-purpose. glTF 2.0 is the best-tested format for Ren'Py
+        use, though it requires a custom shader for best results.
+
+    `textures`
+        A list of textures to load. These textures will be loaded into texture slots - the first will be tex0, the
+        second tex1, and so on.
+
+        The list may contain one of the following strings, giving the type of texture to load:
+
+        * "none"
+        * "diffuse"
+        * "specular"
+        * "ambient"
+        * "emissive"
+        * "height"
+        * "normals"
+        * "shininess"
+        * "opacity"
+        * "displacement"
+        * "lightmap"
+        * "reflection"
+        * "base_color"
+        * "normal_camera"
+        * "emission_color"
+        * "metalness"
+        * "diffuse_roughness"
+        * "ambient_occlusion"
+        * "unknown"
+        * "sheen"
+        * "clearcoat"
+        * "transmission"
+
+        These correspond to the various textures defined by assimp. In many cases, you'll have multiple types packed
+        into a single texture - like having a textuure that has metallic on the blue channel, roughness on the green,
+        and ambient occlusion on the red. In that case, you'll want to pick one texture type to load, and use the
+        texture shader to extract the channels you want.
+
+        The textures list may also contain displayables, which will be used as textures directly.
+
+    `shader`
+        Either a string or tuple of strings, giving the name of the shader to use.
+
+    `tangents`
+        If True, tangents will be included in the mesh.
+
+    `zoom`
+        A zoom factor that will be applied to the model. Many models naturally use the range -1 to 1, and so this
+        may need to be quite large to make the model visible.
+
+    `flip_x`
+        If True, the model will be flipped along the x axis.
+
+    `flip_y`
+        If True, the model will be flipped along the y axis. This defaults to True, to map models to Ren'Py's
+        coordinate system.
+
+    `flip_z`
+        If True, the model will be flipped along the z axis.
+
+    `flip_uv`
+        If True, the UV coordinates will be flipped vertically. This defaults to True, to map texture coordinates
+        to how Ren'Py expects them.
     """
 
     filename: str
