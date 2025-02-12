@@ -432,6 +432,8 @@ class Grid(Container):
                  transpose=False,
                  style='grid',
                  allow_underfull=None,
+                 right_to_left=False,
+                 bottom_to_top=False,
                  **properties):
         """
         @param cols: The number of columns in this widget.
@@ -442,6 +444,12 @@ class Grid(Container):
 
         @params allow_underfull: Controls if grid may be underfull.
         If None - uses config.allow_underfull_grids.
+
+        @params right_to_left: True if cells should be filled
+        right to left.
+
+        @params bottom_to_top: True if cells should be filled
+        bottom to top.
         """
 
         if padding is not None:
@@ -457,6 +465,9 @@ class Grid(Container):
 
         self.transpose = transpose
         self.allow_underfull = allow_underfull
+
+        self.right_to_left = right_to_left
+        self.bottom_to_top = bottom_to_top
 
     def render(self, width, height, st, at):
 
@@ -477,18 +488,8 @@ class Grid(Container):
         top_margin = compute_raw(self.style.top_margin, height)
         bottom_margin = compute_raw(self.style.bottom_margin, height)
 
-        # For convenience and speed.
-        cols = self.cols
-        rows = self.rows
-
-        if self.transpose:
-            children = [ ]
-            for y in range(rows):
-                for x in range(cols):
-                    children.append(self.children[y + x * rows])
-
-        else:
-            children = self.children
+        # Generates a gridmap dict. Key: child, Value: (col, row) tuple of intended position
+        gridmap = self.generate_gridmap()
 
         # Now, start the actual rendering.
 
@@ -496,12 +497,13 @@ class Grid(Container):
         renheight = height
 
         if self.style.xfill:
-            renwidth = (width - (cols - 1) * xspacing - left_margin - right_margin) // cols
+            renwidth = (width - (self.cols - 1) * xspacing - left_margin - right_margin) // self.cols
         if self.style.yfill:
-            renheight = (height - (rows - 1) * yspacing - top_margin - bottom_margin) // rows
+            renheight = (height - (self.rows - 1) * yspacing - top_margin - bottom_margin) // self.rows
 
-        renders = [ render(i, renwidth, renheight, st, at) for i in children ]
-        sizes = [ i.get_size() for i in renders ]
+        # Key: child, Value: render instance
+        renders = {child: render(child, renwidth, renheight, st, at) for child in gridmap.keys()}
+        sizes = [render.get_size() for render in renders.values()] # Order doesn't matter
 
         cwidth = 0
         cheight = 0
@@ -516,32 +518,29 @@ class Grid(Container):
         if self.style.yfill:
             cheight = renheight
 
-        width = cwidth * cols + xspacing * (cols - 1) + left_margin + right_margin
-        height = cheight * rows + yspacing * (rows - 1) + top_margin + bottom_margin
+        width = cwidth * self.cols + xspacing * (self.cols - 1) + left_margin + right_margin
+        height = cheight * self.rows + yspacing * (self.rows - 1) + top_margin + bottom_margin
 
         rv = renpy.display.render.Render(width, height)
 
-        offsets = [ ]
+        # Key: child, Value: (x, y) tuple of position offsets
+        offsets_dict = {}
 
-        for y in range(0, rows):
-            for x in range(0, cols):
+        for child in gridmap.keys():
+            col, row = gridmap[child]
 
-                child = children[ x + y * cols ]
-                surf = renders[x + y * cols]
+            surf = renders[child]
 
-                xpos = x * (cwidth + xspacing) + left_margin
-                ypos = y * (cheight + yspacing) + top_margin
+            xpos = col * (cwidth + xspacing) + left_margin
+            ypos = row * (cheight + yspacing) + top_margin
 
-                offset = child.place(rv, xpos, ypos, cwidth, cheight, surf)
-                offsets.append(offset)
+            offset = child.place(rv, xpos, ypos, cwidth, cheight, surf)
+            offsets_dict[child] = offset
 
-        if self.transpose:
-            self.offsets = [ ]
-            for x in range(cols):
-                for y in range(rows):
-                    self.offsets.append(offsets[y * cols + x])
-        else:
-            self.offsets = offsets
+        # Offsets sorted to match the initial order of children
+        self.offsets = []
+        for child in gridmap.keys():
+            self.offsets.append(offsets_dict[child])
 
         return rv
 
@@ -573,6 +572,21 @@ class Grid(Container):
         for _ in range(delta):
             self.add(null)
 
+    def generate_gridmap(self):
+        row_order = list(range(self.rows))
+        if self.bottom_to_top:
+            row_order = row_order[::-1]
+
+        col_order = list(range(self.cols))
+        if self.right_to_left:
+            col_order = col_order[::-1]
+
+        if self.transpose:
+            intended_order = [(col, row) for col in col_order for row in row_order]
+        else:
+            intended_order = [(col, row) for row in row_order for col in col_order]
+        
+        return {self.children[i]: pos for i, pos in enumerate(intended_order)}
 
 class IgnoreLayers(Exception):
     """
