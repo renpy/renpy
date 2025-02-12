@@ -488,7 +488,8 @@ class Grid(Container):
         top_margin = compute_raw(self.style.top_margin, height)
         bottom_margin = compute_raw(self.style.bottom_margin, height)
 
-        # Generates a gridmap dict. Key: child, Value: (col, row) tuple of intended position
+        # Generates a gridmap list containing (col, row) tuples of intended position
+        # for each child.
         gridmap = self.generate_gridmap()
 
         # Now, start the actual rendering.
@@ -501,9 +502,8 @@ class Grid(Container):
         if self.style.yfill:
             renheight = (height - (self.rows - 1) * yspacing - top_margin - bottom_margin) // self.rows
 
-        # Key: child, Value: render instance
-        renders = {child: render(child, renwidth, renheight, st, at) for child in gridmap.keys()}
-        sizes = [render.get_size() for render in renders.values()] # Order doesn't matter
+        renders = [render(child, renwidth, renheight, st, at) for child in self.children]
+        sizes = [r.get_size() for r in renders]
 
         cwidth = 0
         cheight = 0
@@ -523,24 +523,19 @@ class Grid(Container):
 
         rv = renpy.display.render.Render(width, height)
 
-        # Key: child, Value: (x, y) tuple of position offsets
-        offsets_dict = {}
+        # List of offsets in the same order as self.children
+        self.offsets = []
 
-        for child in gridmap.keys():
-            col, row = gridmap[child]
+        for i, child in enumerate(self.children):
+            col, row = gridmap[i]
 
-            surf = renders[child]
+            surf = renders[i]
 
             xpos = col * (cwidth + xspacing) + left_margin
             ypos = row * (cheight + yspacing) + top_margin
 
             offset = child.place(rv, xpos, ypos, cwidth, cheight, surf)
-            offsets_dict[child] = offset
-
-        # Offsets sorted to match the initial order of children
-        self.offsets = []
-        for child in gridmap.keys():
-            self.offsets.append(offsets_dict[child])
+            self.offsets.append(offset)
 
         return rv
 
@@ -586,7 +581,7 @@ class Grid(Container):
         else:
             intended_order = [(col, row) for row in row_order for col in col_order]
         
-        return {self.children[i]: pos for i, pos in enumerate(intended_order)}
+        return intended_order
 
 class IgnoreLayers(Exception):
     """
