@@ -48,6 +48,9 @@ class PyExpr(str):
     py: int
     hashcode: int
 
+    def __new__(cls, s: str, filename: str, linenumber: int, py: int = 3, hashcode: int | None = None, /) -> PyExpr:
+        ...
+
     @staticmethod
     def checkpoint() -> Any:
         """
