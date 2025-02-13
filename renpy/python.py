@@ -424,31 +424,97 @@ class StarredVariables(ast.NodeVisitor):
 # starred assignment.
 find_starred_variables = StarredVariables().find
 
-class WrapFormattedValue(ast.NodeTransformer):
+class MungeNodes(ast.NodeTransformer):
     """
-    This walks through the children of a FormattedValue, to look for
-    nodes with the __name syntax, and format those nodes.
+    This walks through the tree and munges all identifiers and strings,
+    so __names in different files don't collide, but column offsets
+    of the original code stays correct.
     """
 
-    def visit_Name(self, node):
+    def __init__(self, filename: str):
+        self.prefix = renpy.lexer.munge_filename(filename)
+        self.string_munger = renpy.lexer.get_string_munger(self.prefix)
 
-        name = node.id
+    def _munge_identifier(self, id):
+        if id is None or len(id) < 3 or id[:2] != "__" or id[2] == "_":
+            return id
 
-        if not name.startswith("__"):
+        rest = id[2:]
+        if "__" in rest:
+            return id
+
+        return self.prefix + rest
+
+    @staticmethod
+    def _munge_attribute(attr: str):
+        def visit(self: "MungeNodes", node: ast.AST):
+            value = getattr(node, attr)
+            value = self._munge_identifier(value)
+            setattr(node, attr, value)
+            self.generic_visit(node)
             return node
 
-        name = name[2:]
+        return visit
 
-        if (not name) or ("__" in name):
+    @staticmethod
+    def _munge_attribute_list(attr: str):
+        def visit(self: "MungeNodes", node: ast.AST):
+            value = getattr(node, attr)
+            value = [self._munge_identifier(i) for i in value]
+            setattr(node, attr, value)
+            self.generic_visit(node)
             return node
 
-        prefix = renpy.lexer.munge_filename(compile_filename)
+        return visit
 
-        name = prefix + name
+    def visit_Constant(self, node):
+        if isinstance(node.value, str) and "__" in node.value:
+            node.value = self.string_munger(node.value)
 
-        return ast.Name(id=name, ctx=node.ctx, lineno=node.lineno, col_offset=node.col_offset, end_lineno=node.end_lineno, end_col_offset=node.end_col_offset)
+        return node
 
-wrap_formatted_value = WrapFormattedValue().visit
+    # stmt
+    visit_FunctionDef = _munge_attribute("name")
+    visit_AsyncFunctionDef = _munge_attribute("name")
+    visit_ClassDef = _munge_attribute("name")
+
+    def visit_ImportFrom(self, node):
+        if node.module is not None:
+            node.module = ".".join(
+                self._munge_identifier(part)
+                for part in node.module.split("."))
+
+        self.generic_visit(node)
+        return node
+
+    visit_Global = _munge_attribute_list("names")
+    visit_Nonlocal = _munge_attribute_list("names")
+
+    # expr
+    visit_Attribute = _munge_attribute("attr")
+    visit_Name = _munge_attribute("id")
+
+    # Other
+    visit_ExceptHandler = _munge_attribute("name")
+    visit_arg = _munge_attribute("arg")
+    visit_keyword = _munge_attribute("arg")
+
+    def visit_alias(self, node):
+        node.name = self._munge_identifier(node.name)
+        node.asname = self._munge_identifier(node.asname)
+        self.generic_visit(node)
+        return node
+
+    # pattern
+    visit_MatchMapping = _munge_attribute("rest")
+    visit_MatchClass = _munge_attribute_list("kwd_attrs")
+    visit_MatchStar = _munge_attribute("name")
+    visit_MatchAs = _munge_attribute("name")
+
+    # type_param
+    visit_TypeVar = _munge_attribute("name")
+    visit_ParamSpec = _munge_attribute("name")
+    visit_TypeVarTuple = _munge_attribute("name")
 
 
 class FindStarredMatchPatterns(ast.NodeVisitor):
@@ -767,10 +833,6 @@ class WrapNode(ast.NodeTransformer):
             args=[self.generic_visit(node)],  # type: ignore
             keywords=[])
 
-    def visit_FormattedValue(self, node):
-        node = wrap_formatted_value(node)
-        return self.generic_visit(node)
-
     def visit_Match(self, node: ast.Match):
         node = self.generic_visit(node)   # type: ignore
         node.cases = [self.wrap_match_case(i) for i in node.cases]
@@ -1001,9 +1063,6 @@ def quote_eval(s):
     return "".join(rv[:-2])
 
 
-# The filename being compiled.
-compile_filename = ""
-
 
 def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None, hashcode=None):
     """
@@ -1031,7 +1090,6 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         that would be used.
     """
 
-    global compile_filename
     global compile_warnings
 
     if ast_node:
@@ -1099,7 +1157,6 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         source = quote_eval(source)
 
     line_offset = lineno - 1
-    compile_filename = filename
 
     try:
 
@@ -1112,16 +1169,18 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
         try:
             with save_warnings():
-                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True)
         except SyntaxError as orig_e:
             try:
                 fixed_source = renpy.compat.fixes.fix_tokens(source)
                 with save_warnings():
-                    tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                    tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True)
             except Exception:
                 raise orig_e
 
         tree = wrap_node.visit(tree)
+
+        tree = MungeNodes(filename).visit(tree)
 
         if mode == "hide":
             wrap_hide(tree)
@@ -1136,13 +1195,13 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
         try:
             with save_warnings():
-                rv = compile(tree, filename, py_mode, flags, 1)
+                rv = compile(tree, filename, py_mode, flags, True)
         except SyntaxError as orig_e:
             try:
                 tree = renpy.compat.fixes.fix_ast(tree)
                 fix_locations(tree, 1, 0)
                 with save_warnings():
-                    rv = compile(tree, filename, py_mode, flags, 1)
+                    rv = compile(tree, filename, py_mode, flags, True)
             except Exception:
                 raise orig_e
 
