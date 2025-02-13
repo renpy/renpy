@@ -170,9 +170,9 @@ class ScriptTranslator(object):
                         old_node = self.default_translates[n.identifier]
 
                         err = renpy.lexer.ParseError(
-                            n.filename, n.linenumber,
                             f"Line with id {n.identifier} appears twice. "
-                            f"The other line is {old_node.filename}:{old_node.linenumber}")
+                            f"The other line is {old_node.filename}:{old_node.linenumber}",
+                            n.filename, n.linenumber,)
                         err.defer("duplicate_id")
 
                     self.default_translates[n.identifier] = n
