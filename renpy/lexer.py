@@ -230,7 +230,6 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
 
     else:
         def munge_string(m: re.Match[str]):
-            m.groups()
             brackets = m.group(1)
 
             if len(brackets) % 2 == 0:
