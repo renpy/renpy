@@ -369,6 +369,8 @@ cdef class HBFace:
         if self.mm_var:
             FT_Done_MM_Var(library, self.mm_var)
 
+        FT_Done_Face(self.face)
+
     def __init__(self, f, index, fn):
 
         cdef int error
