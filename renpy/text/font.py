@@ -765,6 +765,7 @@ def free_memory():
 
     scaled_image_fonts.clear()
     font_cache.clear()
+    face_cache.clear()
 
 
 def load_fonts():

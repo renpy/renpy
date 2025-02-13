@@ -886,6 +886,15 @@ def cycle_saves(name, count):
 unknown = renpy.object.Sentinel("unknown")
 
 
+def wrap_json(d):
+    if isinstance(d, list):
+        return [ wrap_json(i) for i in d ]
+    if isinstance(d, dict):
+        return renpy.revertable.RevertableDict({ k : wrap_json(v) for k, v in d.items() })
+    else:
+        return d
+
+
 class Cache(object):
     """
     This represents cached information about a save slot.
@@ -921,7 +930,7 @@ class Cache(object):
         if rv is unknown:
             rv = self.json = location.json(self.slotname)
 
-        return rv
+        return wrap_json(rv)
 
     def get_screenshot(self):
 
