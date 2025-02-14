@@ -30,53 +30,13 @@ import functools
 import renpy
 
 from renpy.tokenizer import (
+    TokenExactKindOp,
+    TokenKind,
+    TokenExactKind,
     Token,
     Line,
-    TokenKind,
     Tokenizer,
     TOKEN_VALUE_TO_OP,
-    NEWLINE,
-    NAME,
-    KEYWORD,
-    IDENTIFIER,
-    NUMBER,
-    FLOAT,
-    INT,
-    STRING,
-    RAW_TRIPLE_STRING,
-    TRIPLE_STRING,
-    RAW_SINGLE_STRING,
-    SINGLE_STRING,
-    SPACESHIP,
-    LPAR,
-    RPAR,
-    LSQB,
-    RSQB,
-    COLON,
-    COMMA,
-    PLUS,
-    MINUS,
-    STAR,
-    SLASH,
-    VBAR,
-    AMPER,
-    LESS,
-    GREATER,
-    DOT,
-    PERCENT,
-    LBRACE,
-    RBRACE,
-    EQEQUAL,
-    NOTEQUAL,
-    LESSEQUAL,
-    GREATEREQUAL,
-    TILDE,
-    CIRCUMFLEX,
-    LEFTSHIFT,
-    RIGHTSHIFT,
-    DOUBLESTAR,
-    DOUBLESLASH,
-    AT,
 )
 
 
@@ -444,19 +404,19 @@ class Lexer:
             pos = offset + len(token.string)
 
             string = token.string
-            if token.kind is NAME and len(string) >= 3 and string[:2] == "__" and string[2] != "_":
+            if token.kind == "name" and len(string) >= 3 and string[:2] == "__" and string[2] != "_":
                 rest = string[2:]
                 if "__" in rest:
                     token = Token(
-                        NAME,
+                        "name",
                         token.exact_kind,
                         prefix + rest,
                         token.physical_location,
                     )
 
-            elif token.kind is STRING and "__" in string:
+            elif token.kind == "string" and "__" in string:
                 token = Token(
-                    STRING,
+                    "string",
                     token.exact_kind,
                     munge_string(string),
                     token.physical_location,
@@ -575,7 +535,7 @@ class Lexer:
         False otherwise.
         """
 
-        if self._lookup_token(NEWLINE):
+        if self._lookup_token("newline"):
             self._advance_token()
 
         return self._token_index is None
@@ -844,12 +804,12 @@ class Lexer:
         if kind is None:
             return current_token
 
-        if current_token.kind is TokenKind(kind):
+        if current_token.kind == kind:
             return current_token
         else:
             return None
 
-    def _lookup_exact_token(self, kind: TokenKind):
+    def _lookup_exact_token(self, kind: TokenExactKind):
         self.skip_whitespace()
         if self._mid_token:
             return None
@@ -858,7 +818,7 @@ class Lexer:
         if current_token is None:
             return None
 
-        if current_token.exact_kind is TokenKind(kind):
+        if current_token.exact_kind == kind:
             return current_token
         else:
             return None
@@ -890,9 +850,9 @@ class Lexer:
         different than None.
         """
 
-        tok = self._lookup_exact_token(RAW_SINGLE_STRING)
+        tok = self._lookup_exact_token("raw_single_string")
         if tok is None:
-            tok = self._lookup_exact_token(SINGLE_STRING)
+            tok = self._lookup_exact_token("single_string")
             raw = False
         else:
             raw = True
@@ -930,9 +890,9 @@ class Lexer:
         this returns a list of strings.
         """
 
-        tok = self._lookup_exact_token(RAW_TRIPLE_STRING)
+        tok = self._lookup_exact_token("raw_triple_string")
         if tok is None:
-            tok = self._lookup_exact_token(TRIPLE_STRING)
+            tok = self._lookup_exact_token("triple_string")
             raw = False
         else:
             raw = True
@@ -992,16 +952,16 @@ class Lexer:
             return None
 
         pos = self.pos
-        if tok.exact_kind is PLUS:
+        if tok.exact_kind == "plus":
             self._advance_token()
             rv = "+"
-        elif tok.exact_kind is MINUS:
+        elif tok.exact_kind == "minus":
             self._advance_token()
             rv = "-"
         else:
             rv = ""
 
-        tok = self._lookup_exact_token(INT)
+        tok = self._lookup_exact_token("int")
         if tok is None:
             self.pos = pos
             return None
@@ -1020,16 +980,16 @@ class Lexer:
             return None
 
         pos = self.pos
-        if tok.exact_kind is PLUS:
+        if tok.exact_kind == "plus":
             self._advance_token()
             rv = "+"
-        elif tok.exact_kind is MINUS:
+        elif tok.exact_kind == "minus":
             self._advance_token()
             rv = "-"
         else:
             rv = ""
 
-        tok = self._lookup_exact_token(FLOAT)
+        tok = self._lookup_exact_token("float")
         if tok is None:
             self.pos = pos
             return None
@@ -1042,7 +1002,7 @@ class Lexer:
         Matches the characters in an md5 hash, and then some.
         """
 
-        tok = self._lookup_token(NAME)
+        tok = self._lookup_token("name")
         if tok is None:
             return None
         else:
@@ -1054,7 +1014,7 @@ class Lexer:
         Parses a name, which may be a keyword or not.
         """
 
-        tok = self._lookup_token(NAME)
+        tok = self._lookup_token("name")
         if tok is None:
             return None
         else:
@@ -1070,12 +1030,12 @@ class Lexer:
         if tok is None:
             return None
 
-        if tok.exact_kind is IDENTIFIER:
+        if tok.exact_kind == "identifier":
             self._advance_token()
             return tok.string
 
         # Constants are names in old parser.
-        if tok.exact_kind is KEYWORD:
+        if tok.exact_kind == "keyword":
             if tok.string in ("True", "False", "None"):
                 self._advance_token()
                 return tok.string
@@ -1092,10 +1052,10 @@ class Lexer:
         if tok is None:
             return None
 
-        if tok.kind is NAME:
+        if tok.kind == "name":
             pass
         # All digits except those with dot or +- are valid.
-        elif tok.kind is NUMBER and tok.string.isalnum():
+        elif tok.kind == "number" and tok.string.isalnum():
             pass
         else:
             return None
@@ -1142,7 +1102,7 @@ class Lexer:
         local_name = None
         global_name = self.name()
 
-        dot = bool(self._lookup_exact_token(DOT))
+        dot = bool(self._lookup_exact_token("dot"))
         if dot:
             self._advance_token()
 
@@ -1187,7 +1147,7 @@ class Lexer:
         returns False.
         """
 
-        tok = self._lookup_token(STRING)
+        tok = self._lookup_token("string")
         if tok is None:
             return False
         else:
@@ -1210,7 +1170,7 @@ class Lexer:
         if not rv:
             return None
 
-        while self._lookup_exact_token(DOT):
+        while self._lookup_exact_token("dot"):
             self._advance_token()
             n = self.name()
             if not n:
@@ -1228,9 +1188,9 @@ class Lexer:
 
         return renpy.ast.PyExpr(s, self.filename, self.number)
 
-    def _delimited_python(self, delim: TokenKind):
+    def _delimited_python(self, delim: TokenExactKindOp):
         while (tok := self._lookup_token()) is not None:
-            if tok.exact_kind is delim:
+            if tok.exact_kind == delim:
                 return True
 
             if self.python_string():
@@ -1281,7 +1241,7 @@ class Lexer:
 
         start = self.pos
 
-        if not self._delimited_python(COLON):
+        if not self._delimited_python("colon"):
             self.error("expected python_expression")
 
         return self.expr(self.text[start:self.pos].strip(), expr)
@@ -1297,19 +1257,19 @@ class Lexer:
         if tok is None:
             return False
 
-        if tok.exact_kind is LPAR:
+        if tok.exact_kind == "lpar":
             self._advance_token()
-            self._delimited_python(RPAR)
-            self._advance_token()
-            return True
-        elif tok.exact_kind is LSQB:
-            self._advance_token()
-            self._delimited_python(RSQB)
+            self._delimited_python("rpar")
             self._advance_token()
             return True
-        elif tok.exact_kind is LBRACE:
+        elif tok.exact_kind == "lsqb":
             self._advance_token()
-            self._delimited_python(RBRACE)
+            self._delimited_python("rsqb")
+            self._advance_token()
+            return True
+        elif tok.exact_kind == "lbrace":
+            self._advance_token()
+            self._delimited_python("rbrace")
             self._advance_token()
             return True
 
@@ -1327,11 +1287,11 @@ class Lexer:
             return False
 
         # Literals.
-        if tok.kind is STRING:
+        if tok.kind == "string":
             self._advance_token()
             return True
 
-        if tok.kind is NUMBER:
+        if tok.kind == "number":
             self._advance_token()
             return True
 
@@ -1346,19 +1306,19 @@ class Lexer:
 
         while tok := self._lookup_token():
             # attributeref ::= primary "." identifier
-            if tok.exact_kind is DOT:
+            if tok.exact_kind == "dot":
                 self._advance_token()
                 if not self._simple_expression_func():
                     self.error("expecting name after dot.")
             # subscription | slicing ::= primary "[" expression "]"
-            elif tok.exact_kind is LSQB:
+            elif tok.exact_kind == "lsqb":
                 self._advance_token()
-                self._delimited_python(RSQB)
+                self._delimited_python("rsqb")
                 self._advance_token()
             # call ::= primary "(" [argument_list] ")"
-            elif tok.exact_kind is LPAR:
+            elif tok.exact_kind == "lpar":
                 self._advance_token()
-                self._delimited_python(RPAR)
+                self._delimited_python("rpar")
                 self._advance_token()
             else:
                 break
@@ -1369,16 +1329,16 @@ class Lexer:
         # https://docs.python.org/3/reference/expressions.html#grammar-token-python-grammar-u_expr
         while tok := self._lookup_token():
             # "~" u_expr
-            if tok.exact_kind is TILDE:
+            if tok.exact_kind == "tilde":
                 self._advance_token()
             # "+" u_expr
-            elif tok.exact_kind is PLUS:
+            elif tok.exact_kind == "plus":
                 self._advance_token()
             # "-" u_expr
-            elif tok.exact_kind is MINUS:
+            elif tok.exact_kind == "minus":
                 self._advance_token()
             # "not" u_expr
-            elif tok.exact_kind is KEYWORD and tok.string == "not":
+            elif tok.exact_kind == "keyword" and tok.string == "not":
                 self._advance_token()
             else:
                 break
@@ -1396,48 +1356,48 @@ class Lexer:
             return False
 
         binops = (
-            SPACESHIP,
-            PLUS,
-            MINUS,
-            STAR,
-            SLASH,
-            VBAR,
-            AMPER,
-            LESS,
-            GREATER,
-            PERCENT,
-            EQEQUAL,
-            NOTEQUAL,
-            LESSEQUAL,
-            GREATEREQUAL,
-            CIRCUMFLEX,
-            LEFTSHIFT,
-            RIGHTSHIFT,
-            DOUBLESTAR,
-            DOUBLESLASH,
-            AT,
+            "spaceship",
+            "plus",
+            "minus",
+            "star",
+            "slash",
+            "vbar",
+            "amper",
+            "less",
+            "greater",
+            "percent",
+            "eqequal",
+            "notequal",
+            "lessequal",
+            "greaterequal",
+            "circumflex",
+            "leftshift",
+            "rightshift",
+            "doublestar",
+            "doubleslash",
+            "at",
         )
         while tok := self._lookup_token():
             ename = tok.exact_kind
             # "and" u_expr
-            if ename is KEYWORD and tok.string == "and":
+            if ename == "keyword" and tok.string == "and":
                 pass
             # "or" u_expr
-            elif ename is KEYWORD and tok.string == "or":
+            elif ename == "keyword" and tok.string == "or":
                 pass
             # "is" u_expr
             # 'not' here is part of u_expr
-            elif ename is KEYWORD and tok.string == "is":
+            elif ename == "keyword" and tok.string == "is":
                 pass
             # "in" u_expr
-            elif ename is KEYWORD and tok.string == "in":
+            elif ename == "keyword" and tok.string == "in":
                 pass
             # "not in" u_expr
-            elif ename is KEYWORD and tok.string == "not":
+            elif ename == "keyword" and tok.string == "not":
                 self._advance_token()
                 if not (
                     (tok2 := self._lookup_token()) and
-                    tok2.exact_kind is KEYWORD and
+                    tok2.exact_kind == "keyword" and
                     tok2.string == "in"
                 ):
                     self.error("expecting 'in' after 'not'.")
@@ -1521,7 +1481,7 @@ class Lexer:
         while not self.eol():
             parse_func()
 
-            if comma and self._lookup_exact_token(COMMA):
+            if comma and self._lookup_exact_token("comma"):
                 self._advance_token()
                 continue
 

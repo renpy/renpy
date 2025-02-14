@@ -156,7 +156,7 @@ def ensure_loaded(filename: str, reload: bool = False ) -> dict[int, Line] | Non
         # Fast-path for comment-only and empty lines.
         while not seen_token:
             comment = ""
-            if token.kind is renpy.tokenizer.COMMENT:
+            if token.kind == "comment":
                 comment = token.string
                 start = token.physical_location.start_col_offset
                 end = token.physical_location.end_col_offset
@@ -164,7 +164,7 @@ def ensure_loaded(filename: str, reload: bool = False ) -> dict[int, Line] | Non
                 # Next token is always NL.
                 token = next(tokens)
 
-            if token.kind is renpy.tokenizer.NL:
+            if token.kind == "nl":
                 lines[filename][last_lineno] = Line(
                     filename,
                     last_lineno,
@@ -189,7 +189,7 @@ def ensure_loaded(filename: str, reload: bool = False ) -> dict[int, Line] | Non
             current_line = next(file_lines)
             last_lineno += 1
 
-        if token.kind is renpy.tokenizer.COMMENT:
+        if token.kind == "comment":
             comment = token.string
             start = token.physical_location.start_col_offset
             end = token.physical_location.end_col_offset
@@ -200,13 +200,13 @@ def ensure_loaded(filename: str, reload: bool = False ) -> dict[int, Line] | Non
         else:
             comment = ""
 
-        if token.kind is renpy.tokenizer.NL:
+        if token.kind == "nl":
             text_lines.append(current_line)
             comments.append(comment)
             current_line = next(file_lines)
             last_lineno += 1
 
-        elif token.kind is renpy.tokenizer.NEWLINE:
+        elif token.kind == "newline":
             text_lines.append(current_line)
             comments.append(comment)
 

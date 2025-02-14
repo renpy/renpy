@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from typing import Iterator, NamedTuple
+from typing import Iterator, NamedTuple, Literal
 
 import os
 import io
@@ -31,149 +31,229 @@ import unicodedata
 import contextlib
 import renpy
 
-# All possible Token.kind and Token.exact_kind values.
-class TokenKind(str):
-    def __new__(cls, value: str, /) -> "TokenKind":
-        return sys.intern(value)  # type: ignore
 
+type TokenKind = Literal[
+    "indent",
+    "dedent",
+    "comment",
+    "nl",
+    "newline",
+    "name",
+    "number",
+    "string",
+    "op",
+]
+"""
+Possible values for Token.kind.
+"""
 
-# Special tokens.
-INDENT = TokenKind("indent")
-DEDENT = TokenKind("dedent")
-COMMENT = TokenKind("comment")
+type TokenExactKindName = Literal[
+    "keyword",
+    "identifier",
+    "non_identifier",
+]
+"""
+Possible exact token kinds for tokens with 'name' kind.
+"""
 
-# Non-terminating and terminating new lines.
-NL = TokenKind("nl")
-NEWLINE = TokenKind("newline")
+type TokenExactKindNumber = Literal[
+    "hex",
+    "binary",
+    "octal",
+    "imaginary",
+    "float",
+    "int",
+]
+"""
+Possible exact token kinds for tokens with 'number' kind.
+"""
 
-# Names.
-NAME = TokenKind("name")  # Any name.
-KEYWORD = TokenKind("keyword")
-IDENTIFIER = TokenKind("identifier")
-NON_IDENTIFIER = TokenKind("non_identifier")
+type TokenExactKindString = Literal[
+    "bytes",
+    "f_string",
+    "raw_triple_string",
+    "triple_string",
+    "raw_single_string",
+    "single_string",
+]
+"""
+Possible exact token kinds for tokens with 'string' kind.
+"""
 
-# Numbers.
-NUMBER = TokenKind("number")  # Any number.
-HEX = TokenKind("hex")
-BINARY = TokenKind("binary")
-OCTAL = TokenKind("octal")
-IMAGINARY = TokenKind("imaginary")
-FLOAT = TokenKind("float")
-INT = TokenKind("int")
+type TokenExactKindOp = Literal[
+    "dollar",
+    "spaceship",
+    "lpar",
+    "rpar",
+    "lsqb",
+    "rsqb",
+    "colon",
+    "comma",
+    "semi",
+    "plus",
+    "minus",
+    "star",
+    "slash",
+    "vbar",
+    "amper",
+    "less",
+    "greater",
+    "equal",
+    "dot",
+    "percent",
+    "lbrace",
+    "rbrace",
+    "eqequal",
+    "notequal",
+    "lessequal",
+    "greaterequal",
+    "tilde",
+    "circumflex",
+    "leftshift",
+    "rightshift",
+    "doublestar",
+    "plusequal",
+    "minequal",
+    "starequal",
+    "slashequal",
+    "percentequal",
+    "amperequal",
+    "vbarequal",
+    "circumflexequal",
+    "leftshiftequal",
+    "rightshiftequal",
+    "doublestarequal",
+    "doubleslash",
+    "doubleslashequal",
+    "at",
+    "atequal",
+    "rarrow",
+    "ellipsis",
+    "colonequal",
+]
+"""
+Possible exact token kinds for tokens with 'op' kind.
+"""
 
-# Strings.
-STRING = TokenKind("string")  # Any string.
-BYTES = TokenKind("bytes")
-F_STRING = TokenKind("f_string")
-RAW_TRIPLE_STRING = TokenKind("raw_triple_string")
-TRIPLE_STRING = TokenKind("triple_string")
-RAW_SINGLE_STRING = TokenKind("raw_single_string")
-SINGLE_STRING = TokenKind("single_string")
+type TokenExactKind = Literal[
+    "indent", "dedent", "comment", "nl", "newline",
+    TokenExactKindName,
+    TokenExactKindNumber,
+    TokenExactKindString,
+    TokenExactKindOp,
+]
+"""
+Possible values for Token.exact_kind.
+"""
 
-# Operators.
-OP = TokenKind("op")  # Any operator.
-DOLLAR = TokenKind("dollar")
-SPACESHIP = TokenKind("spaceship")
-LPAR = TokenKind("lpar")
-RPAR = TokenKind("rpar")
-LSQB = TokenKind("lsqb")
-RSQB = TokenKind("rsqb")
-COLON = TokenKind("colon")
-COMMA = TokenKind("comma")
-SEMI = TokenKind("semi")
-PLUS = TokenKind("plus")
-MINUS = TokenKind("minus")
-STAR = TokenKind("star")
-SLASH = TokenKind("slash")
-VBAR = TokenKind("vbar")
-AMPER = TokenKind("amper")
-LESS = TokenKind("less")
-GREATER = TokenKind("greater")
-EQUAL = TokenKind("equal")
-DOT = TokenKind("dot")
-PERCENT = TokenKind("percent")
-LBRACE = TokenKind("lbrace")
-RBRACE = TokenKind("rbrace")
-EQEQUAL = TokenKind("eqequal")
-NOTEQUAL = TokenKind("notequal")
-LESSEQUAL = TokenKind("lessequal")
-GREATEREQUAL = TokenKind("greaterequal")
-TILDE = TokenKind("tilde")
-CIRCUMFLEX = TokenKind("circumflex")
-LEFTSHIFT = TokenKind("leftshift")
-RIGHTSHIFT = TokenKind("rightshift")
-DOUBLESTAR = TokenKind("doublestar")
-PLUSEQUAL = TokenKind("plusequal")
-MINEQUAL = TokenKind("minequal")
-STAREQUAL = TokenKind("starequal")
-SLASHEQUAL = TokenKind("slashequal")
-PERCENTEQUAL = TokenKind("percentequal")
-AMPEREQUAL = TokenKind("amperequal")
-VBAREQUAL = TokenKind("vbarequal")
-CIRCUMFLEXEQUAL = TokenKind("circumflexequal")
-LEFTSHIFTEQUAL = TokenKind("leftshiftequal")
-RIGHTSHIFTEQUAL = TokenKind("rightshiftequal")
-DOUBLESTAREQUAL = TokenKind("doublestarequal")
-DOUBLESLASH = TokenKind("doubleslash")
-DOUBLESLASHEQUAL = TokenKind("doubleslashequal")
-AT = TokenKind("at")
-ATEQUAL = TokenKind("atequal")
-RARROW = TokenKind("rarrow")
-ELLIPSIS = TokenKind("ellipsis")
-COLONEQUAL = TokenKind("colonequal")
+type TokenStringOp = Literal[
+    "$",
+    "<>",
+    "(",
+    ")",
+    "[",
+    "]",
+    ":",
+    ",",
+    ";",
+    "+",
+    "-",
+    "*",
+    "/",
+    "|",
+    "&",
+    "<",
+    ">",
+    "=",
+    ".",
+    "%",
+    "{",
+    "}",
+    "==",
+    "!=",
+    "<=",
+    ">=",
+    "~",
+    "^",
+    "<<",
+    ">>",
+    "**",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "%=",
+    "&=",
+    "|=",
+    "^=",
+    "<<=",
+    ">>=",
+    "**=",
+    "//",
+    "//=",
+    "@",
+    "@=",
+    "->",
+    "...",
+    ":=",
+]
+"""
+Possible string values for tokens with 'op' kind.
+"""
 
-TOKEN_OP_TO_VALUE = {
-    DOLLAR: "$",
-    SPACESHIP: "<>",
-    LPAR: "(",
-    RPAR: ")",
-    LSQB: "[",
-    RSQB: "]",
-    COLON: ":",
-    COMMA: ",",
-    SEMI: ";",
-    PLUS: "+",
-    MINUS: "-",
-    STAR: "*",
-    SLASH: "/",
-    VBAR: "|",
-    AMPER: "&",
-    LESS: "<",
-    GREATER: ">",
-    EQUAL: "=",
-    DOT: ".",
-    PERCENT: "%",
-    LBRACE: "{",
-    RBRACE: "}",
-    EQEQUAL: "==",
-    NOTEQUAL: "!=",
-    LESSEQUAL: "<=",
-    GREATEREQUAL: ">=",
-    TILDE: "~",
-    CIRCUMFLEX: "^",
-    LEFTSHIFT: "<<",
-    RIGHTSHIFT: ">>",
-    DOUBLESTAR: "**",
-    PLUSEQUAL: "+=",
-    MINEQUAL: "-=",
-    STAREQUAL: "*=",
-    SLASHEQUAL: "/=",
-    PERCENTEQUAL: "%=",
-    AMPEREQUAL: "&=",
-    VBAREQUAL: "|=",
-    CIRCUMFLEXEQUAL: "^=",
-    LEFTSHIFTEQUAL: "<<=",
-    RIGHTSHIFTEQUAL: ">>=",
-    DOUBLESTAREQUAL: "**=",
-    DOUBLESLASH: "//",
-    DOUBLESLASHEQUAL: "//=",
-    AT: "@",
-    ATEQUAL: "@=",
-    RARROW: "->",
-    ELLIPSIS: "...",
-    COLONEQUAL: ":=",
+TOKEN_OP_TO_VALUE: dict[TokenExactKindOp, TokenStringOp] = {
+    "dollar": "$",
+    "spaceship": "<>",
+    "lpar": "(",
+    "rpar": ")",
+    "lsqb": "[",
+    "rsqb": "]",
+    "colon": ":",
+    "comma": ",",
+    "semi": ";",
+    "plus": "+",
+    "minus": "-",
+    "star": "*",
+    "slash": "/",
+    "vbar": "|",
+    "amper": "&",
+    "less": "<",
+    "greater": ">",
+    "equal": "=",
+    "dot": ".",
+    "percent": "%",
+    "lbrace": "{",
+    "rbrace": "}",
+    "eqequal": "==",
+    "notequal": "!=",
+    "lessequal": "<=",
+    "greaterequal": ">=",
+    "tilde": "~",
+    "circumflex": "^",
+    "leftshift": "<<",
+    "rightshift": ">>",
+    "doublestar": "**",
+    "plusequal": "+=",
+    "minequal": "-=",
+    "starequal": "*=",
+    "slashequal": "/=",
+    "percentequal": "%=",
+    "amperequal": "&=",
+    "vbarequal": "|=",
+    "circumflexequal": "^=",
+    "leftshiftequal": "<<=",
+    "rightshiftequal": ">>=",
+    "doublestarequal": "**=",
+    "doubleslash": "//",
+    "doubleslashequal": "//=",
+    "at": "@",
+    "atequal": "@=",
+    "rarrow": "->",
+    "ellipsis": "...",
+    "colonequal": ":=",
 }
-TOKEN_VALUE_TO_OP = \
+
+TOKEN_VALUE_TO_OP: dict[str, TokenExactKindOp] = \
     {v: k for k, v in TOKEN_OP_TO_VALUE.items()}
 
 class PhysicalLocation(NamedTuple):
@@ -197,13 +277,13 @@ class Token(NamedTuple):
 
     kind: TokenKind
     """
-    Kind of the token, such as tokenizer.NAME, tokenizer.OP or tokenizer.NUMBER.
+    Kind of the token, such as 'name', 'op' or 'number'.
     Is the same as a corresponding lower-cased string.
     """
 
-    exact_kind: TokenKind
+    exact_kind: TokenExactKind
     """
-    Exact kind of the token, such as tokenizer.KEYWORD, tokenizer.DOLLAR or tokenizer.INT.
+    Exact kind of the token, such as 'keyword', 'dollar' or 'int'.
     Is the same as a corresponding lower-cased string.
     """
 
@@ -583,10 +663,10 @@ class Tokenizer:
             # Skip comments-only and empty lines.
             if not tokens:
                 while True:
-                    if token.kind is COMMENT:
+                    if token.kind == "comment":
                         token = next(iter_tokens)
 
-                    if token.kind is NL:
+                    if token.kind == "nl":
                         # It may be last token.
                         try:
                             token = next(iter_tokens)
@@ -596,7 +676,7 @@ class Tokenizer:
                         break
 
             # Compute location of where line starts.
-            if start_location is None or token.kind is INDENT:
+            if start_location is None or token.kind == "indent":
                 start_location = (
                     token.physical_location.start_lineno,
                     token.physical_location.start_col_offset,
@@ -604,21 +684,21 @@ class Tokenizer:
                 line_indent = tok.indents[-1]
 
             # Remember positions of comments to strip them later.
-            if token.kind is COMMENT:
+            if token.kind == "comment":
                 strip_from_to.append((tok.start, tok.pos))
                 position_bias += tok.pos - tok.start
                 continue
             elif (
-                token.kind is INDENT or
-                token.kind is DEDENT or
-                token.kind is NL
+                token.kind == "indent" or
+                token.kind == "dedent" or
+                token.kind == "nl"
             ):
                 continue
 
             tokens.append(token)
             positions.append(tok.start - line_indent - position_bias)
 
-            if token.kind is NEWLINE:
+            if token.kind == "newline":
                 if strip_from_to:
                     last_pos = line_indent
                     line = tok.line
@@ -702,7 +782,7 @@ class _Tokenizer:
     _pending = 0
 
     # Stack of open parens info.
-    _parens: list[tuple[TokenKind, TokenKind, str]] = []
+    _parens: list[tuple[TokenKind, TokenExactKind, str]] = []
 
     # Are we at beginning of line?
     _atbol = False
@@ -710,7 +790,7 @@ class _Tokenizer:
     # Are we need to enter next line?
     # NEWLINE creates a new logical line.
     # NL creates new logical line iif parens are empty.
-    _last_was_newline = NEWLINE
+    _last_was_newline = "newline"
 
     # Were there any non-comment tokens on the line?
     _blankline = True
@@ -769,7 +849,7 @@ class _Tokenizer:
 
         return c
 
-    def make_token(self, kind: TokenKind, exact_kind: TokenKind, intern: bool = False):
+    def make_token(self, kind: TokenKind, exact_kind: TokenExactKind, intern: bool = False):
         string = self.line[self.start:self.pos]
         if intern:
             # Normalize unicode characters, so we can't have two
@@ -812,9 +892,9 @@ class _Tokenizer:
 
         c = self.getc(-1)
         if c == 'j' or c == 'J':
-            return self.make_token(NUMBER, IMAGINARY)
+            return self.make_token("number", "imaginary")
         else:
-            return self.make_token(NUMBER, FLOAT)
+            return self.make_token("number", "float")
 
     def f_string_expression(self):
         # Called after first '{' of an f-string.
@@ -854,28 +934,28 @@ class _Tokenizer:
         # Called at first quote of a string, after mods.
         mods = self.line[self.start:self.pos].lower()
         if "b" in mods:
-            exact_kind = BYTES
+            exact_kind = "bytes"
         elif "f" in mods:
-            exact_kind = F_STRING
+            exact_kind = "f_string"
         elif "r" in mods:
-            exact_kind = RAW_SINGLE_STRING
+            exact_kind = "raw_single_string"
         else:
-            exact_kind = SINGLE_STRING
+            exact_kind = "single_string"
 
-        f_string = exact_kind is F_STRING
+        f_string = exact_kind == "f_string"
 
         # Compute quote size.
         quote_size = 1
         if self.nextc() == quote:
             if self.nextc() == quote:
                 quote_size = 3
-                if exact_kind is SINGLE_STRING:
-                    exact_kind  = TRIPLE_STRING
-                elif exact_kind is RAW_SINGLE_STRING:
-                    exact_kind = RAW_TRIPLE_STRING
+                if exact_kind == "single_string":
+                    exact_kind  = "triple_string"
+                elif exact_kind == "raw_single_string":
+                    exact_kind = "raw_triple_string"
             else:
                 # Empty string.
-                return self.make_token(STRING, exact_kind)
+                return self.make_token("string", exact_kind)
 
         end_quote_size = 0
         try:
@@ -896,7 +976,7 @@ class _Tokenizer:
 
                 c = self.nextc()
 
-            return self.make_token(STRING, exact_kind)
+            return self.make_token("string", exact_kind)
 
         except StopIteration:
             # When we are in an f-string, before raising the
@@ -950,15 +1030,13 @@ class _Tokenizer:
             while self.is_potential_identifier_char(c):
                 c = self.nextc()
 
-            kind, _, name = \
-                self.make_token(NAME, NAME, True)
+            kind, exact_kind, name = \
+                self.make_token("name", "non_identifier", True)
 
             if keyword.iskeyword(name):
-                exact_kind = KEYWORD
+                exact_kind = "keyword"
             elif name.isidentifier():
-                exact_kind = IDENTIFIER
-            else:
-                exact_kind = NON_IDENTIFIER
+                exact_kind = "identifier"
 
             return (kind, exact_kind, name)
 
@@ -967,21 +1045,21 @@ class _Tokenizer:
             # Everything on current line except the newline.
             self.pos = self.max - 1
             self.col_offset += (self.pos - self.start)
-            return self.make_token(COMMENT, COMMENT)
+            return self.make_token("comment", "comment")
 
         # Newline
         if c == '\n':
             if self._blankline or self._parens:
-                kind = NL
+                kind = "nl"
             else:
-                kind = NEWLINE
+                kind = "newline"
 
             self.pos += 1
             self.col_offset += 1
             return self.make_token(kind, kind)
 
         if self.match(ELLIPSIS_RE):
-            return self.make_token(OP, ELLIPSIS, True)
+            return self.make_token("op", "ellipsis", True)
 
         # Period or number starting with period?
         if c == '.':
@@ -992,22 +1070,22 @@ class _Tokenizer:
                     return rv
 
             # Otherwise it's a DOT followed by something else.
-            return self.make_token(OP, DOT, True)
+            return self.make_token("op", "dot", True)
 
         # Hex, octal or binary?
         if c == "0":
             # If any of that matches, it can't be any other kind of number.
             if self.match(BINARY_RE):
-                exact_kind = BINARY
+                exact_kind = "binary"
             elif self.match(OCTAL_RE):
-                exact_kind = OCTAL
+                exact_kind = "octal"
             elif self.match(HEX_RE):
-                exact_kind = HEX
+                exact_kind = "hex"
             else:
                 exact_kind = None
 
             if exact_kind is not None:
-                return self.make_token(NUMBER, exact_kind)
+                return self.make_token("number", exact_kind)
 
         # Other number?
         if c.isdecimal():
@@ -1024,7 +1102,7 @@ class _Tokenizer:
                 # Rollback the dot.
                 self.pos -= 1
                 self.col_offset -= 1
-                return self.make_token(NUMBER, INT)
+                return self.make_token("number", "int")
 
             # Still can be a float or imaginary like 1e+3j
             if c == 'e' or c == 'E':
@@ -1033,13 +1111,13 @@ class _Tokenizer:
 
             # If there is a word border, it is an int.
             if not self.is_potential_identifier_char(c):
-                return self.make_token(NUMBER, INT)
+                return self.make_token("number", "int")
 
             # Otherwise it is some kind of NON_IDENTIFIER.
             while self.is_potential_identifier_char(c):
                 c = self.nextc()
 
-            return self.make_token(NAME, NON_IDENTIFIER, True)
+            return self.make_token("name", "non_identifier", True)
 
         # String?
         if c == '"' or c == "'" or c == "`":
@@ -1047,8 +1125,8 @@ class _Tokenizer:
 
         # Otherwise it should be some kind of OP
         if m := self.match(OP_RE):
-            exact_kind = TOKEN_VALUE_TO_OP[m.group()]
-            return self.make_token(OP, exact_kind, True)
+            exact_kind = TOKEN_VALUE_TO_OP[m.group(0)]
+            return self.make_token("op", exact_kind, True)
 
         else:
             raise SyntaxError(f"unknown character {c!r} at {self.lineno}:{self.col_offset}")
@@ -1056,7 +1134,7 @@ class _Tokenizer:
     def __iter__(self):
         return self
 
-    def __next__(self) -> tuple[TokenKind, TokenKind, str]:
+    def __next__(self) -> tuple[TokenKind, TokenExactKind, str]:
         # This is Python implementation of some code of Python's C
         # tokenizer and pegen, mostly it is 'tok_get_normal_mode' from tokenizer.c
 
@@ -1068,14 +1146,14 @@ class _Tokenizer:
                 if c == '':
                     raise StopIteration
 
-            elif self._last_was_newline is NEWLINE:
+            elif self._last_was_newline == "newline":
                 self._last_was_newline = None
                 self._blankline = True
                 self.reset_line()
                 self._atbol = True
                 c = self.nextc()
 
-            elif self._last_was_newline is NL:
+            elif self._last_was_newline == "nl":
                 self._last_was_newline = None
                 self._blankline = True
                 if not self._parens:
@@ -1151,10 +1229,10 @@ class _Tokenizer:
             # Return pending indents/dedents.
             if self._pending > 0:
                 self._pending -= 1
-                return self.make_token(INDENT, INDENT)
+                return self.make_token("indent", "indent")
             elif self._pending < 0:
                 self._pending += 1
-                return self.make_token(DEDENT, DEDENT)
+                return self.make_token("dedent", "dedent")
 
             try:
                 rv = self.next_token(c)
@@ -1164,27 +1242,27 @@ class _Tokenizer:
             exact_kind = rv[1]
 
             # Get next line when enter this function next time.
-            if exact_kind is NEWLINE or exact_kind is NL:
+            if exact_kind == "newline" or exact_kind == "nl":
                 self._last_was_newline = exact_kind
 
             # If we have a non-comment token, it is not a blank line.
-            elif exact_kind is not COMMENT:
+            elif exact_kind != "comment":
                 self._blankline = False
 
             # Track open parens.
-            if exact_kind is LPAR or exact_kind is LBRACE or exact_kind is LSQB:
+            if exact_kind == "lpar" or exact_kind == "lbrace" or exact_kind == "lsqb":
                 self._parens.append(rv)
-            elif exact_kind is RPAR or exact_kind is RBRACE or exact_kind is RSQB:
+            elif exact_kind == "rpar" or exact_kind == "rbrace" or exact_kind == "rsqb":
                 if not self._parens:
                     raise SyntaxError(f"unmatched '{rv[2]}'")
 
                 _, open_kind, open, *_ = self._parens.pop()
 
-                if exact_kind is RPAR and open_kind is LPAR:
+                if exact_kind == "rpar" and open_kind == "lpar":
                     pass
-                elif exact_kind is RBRACE and open_kind is LBRACE:
+                elif exact_kind == "rbrace" and open_kind == "lbrace":
                     pass
-                elif exact_kind is RSQB and open_kind is LSQB:
+                elif exact_kind == "rsqb" and open_kind == "lsqb":
                     pass
                 else:
                     raise SyntaxError(
@@ -1197,7 +1275,7 @@ class _Tokenizer:
             # Pop remaining indent levels.
             if len(self.indents) > 1:
                 self.indents.pop()
-                return self.make_token(DEDENT, DEDENT)
+                return self.make_token("dedent", "dedent")
 
             if self._parens:
                 (
