@@ -294,48 +294,14 @@ class SubParse:
             return "<SubParse {}:{}>".format(self.block[0].filename, self.block[0].linenumber)
 
 
-def munged_string(prefix: str, string: str) -> str:
-    if renpy.config.munge_in_strings:
-
-        munge_regexp = re.compile(r'\b__(\w+)')
-
-        def munge_string(m: re.Match):
-
-            g1 = m.group(1)
-
-            if "__" in g1:
-                return m.group(0)
-
-            if g1.startswith("_"):
-                return m.group(0)
-
-            return prefix + m.group(1)
-
-    else:
-
-        munge_regexp = re.compile(r'(\.|\[+)__(\w+)')
-
-        def munge_string(m: re.Match):
-            brackets = m.group(1)
-
-            if (len(brackets) & 1) == 0:
-                return m.group(0)
-
-            if "__" in m.group(2):
-                return m.group(0)
-
-            return brackets + prefix + m.group(2)
-
-    return munge_regexp.sub(munge_string, string)
-
-type LegacyLexerBlock = list[tuple[str, int, str, LegacyLexerBlock]]
-
 class Lexer:
     """
     The lexer that is used to lex script files. This works on the idea
     that we want to lex each line in a block individually, and use
     sub-lexers to lex sub-blocks.
     """
+
+    type LegacyLexerBlock = list[tuple[str, int, str, LegacyLexerBlock]]
 
     def __init__(
         self,
@@ -360,7 +326,7 @@ class Lexer:
         # Convert pre 8.4 list of grouped logical lines to
         # tokenized list of Line's.
         if block and not isinstance(block[0], Line):
-            block = cast("LegacyLexerBlock", block)
+            block = cast("Lexer.LegacyLexerBlock", block)
 
             # 'block' here is a pre 8.4 way to represent Lexer subblock -
             # list of (filename, linenumber, line, line subblock) tuples.
@@ -462,10 +428,11 @@ class Lexer:
             self.text = str(line)[:-1]
             return
 
-        # Otherwise we need to fix up the offsets text and offsets.
+        # Otherwise we need to fix up tokens strings and offsets.
         # But keep physical locations the same, because munging doesn't
         # change physical file.
         prefix = munge_filename(line.physical_location.filename)
+        munge_string = get_string_munger(prefix)
         text_parts = []
         tokens = []
         offsets = []
@@ -476,16 +443,26 @@ class Lexer:
             offsets.append(offset + offset_bias)
             pos = offset + len(token.string)
 
-            if "__" in token.string:
-                token_len = len(token.string)
+            string = token.string
+            if token.kind is NAME and len(string) >= 3 and string[:2] == "__" and string[2] != "_":
+                rest = string[2:]
+                if "__" in rest:
+                    token = Token(
+                        NAME,
+                        token.exact_kind,
+                        prefix + rest,
+                        token.physical_location,
+                    )
+
+            elif token.kind is STRING and "__" in string:
                 token = Token(
-                    token.kind,
+                    STRING,
                     token.exact_kind,
-                    munged_string(prefix, token.string),
+                    munge_string(string),
                     token.physical_location,
                 )
-                offset_bias += len(token.string) - token_len
 
+            offset_bias += len(token.string) - len(string)
             text_parts.append(token.string)
             tokens.append(token)
 
