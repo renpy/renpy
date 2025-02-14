@@ -982,8 +982,8 @@ class Lexer:
 
         if tok.kind == "name":
             pass
-        # All digits except those with dot or +- are valid.
-        elif tok.kind == "number" and tok.string.isalnum():
+        # All numbers except those with dot or +- are valid.
+        elif tok.kind == "number" and re.fullmatch(r"\w+", tok.string):
             pass
         else:
             return None
@@ -1028,7 +1028,7 @@ class Lexer:
 
         old_pos = self.pos
         local_name = None
-        global_name = self.name()
+        global_name = self.word()
 
         dot = bool(self._lookup_exact_token("dot"))
         if dot:
@@ -1041,7 +1041,7 @@ class Lexer:
                 return None
 
             global_name = self.global_label
-            local_name = self.name()
+            local_name = self.word()
             if not local_name:
                 self.pos = old_pos
                 return None
@@ -1051,7 +1051,7 @@ class Lexer:
                 self.pos = old_pos
                 return None
 
-            local_name = self.name()
+            local_name = self.word()
             if not local_name:
                 self.pos = old_pos
                 return None
