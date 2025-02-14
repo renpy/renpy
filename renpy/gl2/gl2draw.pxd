@@ -58,6 +58,8 @@ cdef class GL2Draw:
     cdef public Matrix virt_to_draw
     cdef public Matrix draw_to_virt
 
+    cdef public bint auto_mipmap
+
     # The matrix that goes from drawable space to the window. This isn't used
     # directly, it's used to determine if something is being drawn in a wa
     # that it should be lined up with pixels.

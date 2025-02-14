@@ -307,7 +307,12 @@ cdef class GLTexture(GL2Model):
         when it's loaded).
         """
 
-        return self.properties.get("mipmap", True)
+        rv = self.properties.get("mipmap", renpy.config.mipmap)
+
+        if rv == "auto":
+            rv = renpy.display.draw.auto_mipmap
+
+        return rv
 
     def get_number(GLTexture self):
         return self.number if renpy.emscripten else None
@@ -333,7 +338,7 @@ cdef class GLTexture(GL2Model):
         """
 
         self.properties = {
-            "mipmap" : properties.get("mipmap", True),
+            "mipmap" : properties.get("mipmap", renpy.config.mipmap),
             "pixel_perfect" : properties.get("pixel_perfect", False),
             }
 
@@ -585,7 +590,7 @@ cdef class GLTexture(GL2Model):
 
         max_level = renpy.config.max_mipmap_level
 
-        if not properties.get("mipmap", True):
+        if not self.has_mipmaps():
             max_level = 0
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, max_level)
@@ -630,7 +635,7 @@ cdef class GLTexture(GL2Model):
 
         cdef GLuint level = renpy.config.max_mipmap_level
 
-        if not properties.get("mipmap", True):
+        if not self.has_mipmaps():
             level = 0
 
         glBindTexture(GL_TEXTURE_2D, tex)
@@ -654,7 +659,7 @@ cdef class GLTexture(GL2Model):
                     self.loader.total_texture_size -= int(self.width * self.height * 4 * 1.34)
                 else:
                     self.loader.total_texture_size -= int(self.width * self.height * 4)
-        except TypeError:
+        except (TypeError, AttributeError):
             pass # Let's not error on shutdown.
 
     def load(self):

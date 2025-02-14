@@ -1133,6 +1133,9 @@ controller_blocklist = [
     "030000006d0400000000", # Razer Xbox 360 Controller (#4622)
 ]
 
+# Should other textures be mipmapped by default?
+mipmap = "auto"
+
 # Should dissolve transitions be mipmapped by default?
 mipmap_dissolves = False
 

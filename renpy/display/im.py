@@ -355,7 +355,7 @@ class Cache(object):
                     texsurf = ce.surf.subsurface(ce.bounds)
                     renpy.display.render.mutated_surface(texsurf)
 
-                ce.texture = renpy.display.draw.load_texture(texsurf)
+                ce.texture = renpy.display.draw.load_texture(texsurf, properties={ 'mipmap' : image.mipmap })
 
                 # This was loaded while predicting images for immediate use,
                 # so get it onto the GPU.
@@ -586,7 +586,7 @@ class ImageBase(renpy.display.displayable.Displayable):
     obsolete = True
 
     obsolete_list = [ ]
-
+    mipmap = True
 
     # If the image failed to load, a placeholder used to report the error.
     fail = None
@@ -601,6 +601,7 @@ class ImageBase(renpy.display.displayable.Displayable):
         self.cache = properties.pop('cache', True)
         self.optimize_bounds = properties.pop('optimize_bounds', True)
         self.oversample = properties.pop('oversample', 1)
+        self.mipmap = properties.pop('mipmap', "auto")
 
         if self.oversample <= 0:
             raise Exception("Image's oversample parameter must be greater than 0.")
@@ -2012,7 +2013,7 @@ def image(arg, loose=False, **properties):
     """
     :doc: im_image
     :name: Image
-    :args: (filename, *, optimize_bounds=True, oversample=1, dpi=96, **properties)
+    :args: (filename, *, optimize_bounds=True, oversample=1, dpi=96, mipmap="auto", **properties)
 
     Loads an image from a file. `filename` is a
     string giving the name of the file.
@@ -2036,6 +2037,11 @@ def image(arg, loose=False, **properties):
         The DPI of an SVG image. This defaults to 96, but that can be
         increased to render the SVG larger, and decreased to render
         it smaller.
+
+    `mipmap`
+        If this is "auto", then mipmaps are generated for the image only if the game is scaled down to less than
+        75% of its default size. If this is True, mipmaps are always generated. If this is False, mipmaps are never
+        generated.
     """
 
     """
@@ -2160,7 +2166,7 @@ def unoptimized_texture(d):
     """
 
     if isinstance(d, ImageBase):
-        return UnoptimizedTexture(d)
+        return UnoptimizedTexture(d, mipmap=True)
     else:
         return d
 

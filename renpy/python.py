@@ -1165,18 +1165,32 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         else:
             py_mode = mode
 
-        flags |= new_compile_flags
-
-        try:
-            with save_warnings():
-                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True)
-        except SyntaxError as orig_e:
+        tree: Any = None
+        with save_warnings():
             try:
-                fixed_source = renpy.compat.fixes.fix_tokens(source)
-                with save_warnings():
-                    tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True)
-            except Exception:
-                raise orig_e
+                tree = compile(
+                    source,
+                    filename,
+                    py_mode,
+                    ast.PyCF_ONLY_AST | flags,
+                    True)
+
+            except SyntaxError:
+                handled = False
+                try:
+                    fixed_source = renpy.compat.fixes.fix_tokens(source)
+                    tree = compile(
+                        fixed_source,
+                        filename,
+                        py_mode,
+                        ast.PyCF_ONLY_AST | flags,
+                        True)
+                    handled = True
+                except Exception:
+                    pass
+
+                if not handled:
+                    raise
 
         tree = wrap_node.visit(tree)
 
@@ -1193,18 +1207,23 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         if ast_node:
             return tree.body
 
-        try:
-            with save_warnings():
-                rv = compile(tree, filename, py_mode, flags, True)
-        except SyntaxError as orig_e:
+        rv: Any = None
+        with save_warnings():
             try:
-                tree = renpy.compat.fixes.fix_ast(tree)
-                fix_locations(tree, 1, 0)
-                with save_warnings():
+                rv = compile(tree, filename, py_mode, flags, True)
+            except SyntaxError:
+                handled = False
+                try:
+                    tree = renpy.compat.fixes.fix_ast(tree)
+                    fix_locations(tree, 1, 0)
                     rv = compile(tree, filename, py_mode, flags, True)
-            except Exception:
-                raise orig_e
+                    handled = True
+                except Exception:
+                    pass
 
+                if not handled:
+                    raise
+                    
         if cache:
             py_compile_cache[key] = rv
 
