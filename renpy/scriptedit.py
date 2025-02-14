@@ -136,7 +136,7 @@ def ensure_loaded(filename: str, reload: bool = False ) -> dict[int, Line] | Non
     lines[filename] = dict()
 
     def linesfunc():
-        tok = renpy.tokenizer.Tokenizer.from_file(filename)
+        tok = renpy.tokenizer.from_file(filename)
 
         yield from tok.physical_lines()
 
@@ -149,7 +149,7 @@ def ensure_loaded(filename: str, reload: bool = False ) -> dict[int, Line] | Non
     start_lineno = 1
     seen_token = False
 
-    tokens = renpy.tokenizer.Tokenizer.from_file(filename).tokens()
+    tokens = renpy.tokenizer.from_file(filename).tokens()
     text_lines: list[str] = []
     comments: list[str] = []
     for token in tokens:

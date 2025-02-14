@@ -679,7 +679,7 @@ init -1500 python in _console:
 
                 # If we have 1 line, try to parse it as a command.
                 if line_count == 1:
-                    l = renpy.parser.Lexer.from_string(code, "<console>")
+                    l = renpy.lexer.from_string(code, "<console>")
                     l.advance()
 
                     # Command can be None, but that's okay, since the lookup will fail.
@@ -937,7 +937,7 @@ init -1500 python in _console:
         upper-right corner of the screen.
         """
 
-        l = renpy.parser.Lexer.from_string(expr, "<console>")
+        l = renpy.lexer.from_string(expr, "<console>")
         l.advance()
         watch(l)
 
@@ -980,7 +980,7 @@ init -1500 python in _console:
         Stops watching the given Python expression.
         """
 
-        l = renpy.parser.Lexer.from_string(expr, "<console>")
+        l = renpy.lexer.from_string(expr, "<console>")
         l.advance()
         unwatch(l)
 

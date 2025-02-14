@@ -128,7 +128,7 @@ def scan_strings(filename):
     for line, s in renpy.game.script.translator.additional_strings[filename]: # @UndefinedVariable
         rv.append(String(filename, line, s, False))
 
-    tok = renpy.lexer.Tokenizer.from_file(filename)
+    tok = renpy.tokenizer.from_file(filename)
     for line in tok.logical_lines():
 
         for m in re.finditer(STRING_RE, line):

@@ -32,6 +32,15 @@ import renpy
 from renpy.tokenizer import ParseError
 
 
+def from_string(source: str, filename: str, lineno_offset=0, init=False, init_offset=0) -> "Lexer":
+    """
+    Tokenizes a string and creates a Lexer object from result logical lines.
+    """
+
+    tok = renpy.tokenizer.from_string(source, filename, lineno_offset=lineno_offset)
+    return Lexer(list(tok.logical_lines()), init=init, init_offset=init_offset)
+
+
 def unicode_filename(fn):
     """
     Converts the supplied filename to unicode.
@@ -235,7 +244,7 @@ class Lexer:
                     queue.append((indent_depth + 4, linenumber, line, subblock))
 
             # Source code should already have newlines at the end.
-            tok = renpy.tokenizer.Tokenizer.from_string(
+            tok = renpy.tokenizer.from_string(
                 "".join(lines),
                 filename,
                 lineno_offset=start_lineno - 1)
@@ -264,31 +273,6 @@ class Lexer:
 
         # Munged str value of self._line
         self.text: str = ""
-
-    @classmethod
-    def from_string(
-        cls,
-        source: str,
-        filename: str,
-        lineno_offset=0,
-        init=False,
-        init_offset=0,
-    ):
-        """
-        Tokenizes a string and creates a Lexer object from results logical
-        lines.
-        """
-
-        tok = renpy.tokenizer.Tokenizer.from_string(
-            source,
-            filename,
-            lineno_offset=lineno_offset)
-
-        return Lexer(
-            list(tok.logical_lines()),
-            init=init,
-            init_offset=init_offset,
-        )
 
     def __reduce__(self):
         raise TypeError("Can't pickle Lexer instance.")

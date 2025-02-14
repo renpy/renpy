@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from typing import Iterator, NamedTuple, Literal, assert_never
+from typing import Iterator, NamedTuple, Literal
 
 import os
 import io
@@ -30,6 +30,36 @@ import keyword
 import unicodedata
 import contextlib
 import renpy
+
+
+def from_string(code: str, filename: str, *, lineno_offset=0, col_offset=0, no_errors=False) -> "Tokenizer":
+    lines = io.StringIO(code, newline=None)
+    return Tokenizer(
+        filename, lines,
+        lineno_offset=lineno_offset,
+        col_offset=col_offset,
+        no_errors=no_errors)
+
+
+def from_file(filename: str, *, no_errors=False) -> "Tokenizer":
+    if os.path.isabs(filename):
+        fn = filename
+    else:
+        fn = renpy.lexer.unelide_filename(filename)
+
+    if not os.path.exists(fn):
+        raise FileNotFoundError(fn)
+
+    def lines():
+        with open(
+            fn,
+            encoding="utf-8",
+            errors="python_strict",
+            newline=None
+        ) as f:
+            yield from f
+
+    return Tokenizer(filename, lines(), no_errors=no_errors)
 
 
 class ParseError(SyntaxError):
@@ -619,47 +649,6 @@ class Tokenizer:
         self._exhausted = False
 
     # Public interface
-    @classmethod
-    def from_string(
-        cls,
-        code: str,
-        filename: str, *,
-        lineno_offset=0,
-        col_offset=0,
-        no_errors=False,
-    ):
-        lines = io.StringIO(code, newline=None)
-        return cls(
-            filename, lines,
-            lineno_offset=lineno_offset,
-            col_offset=col_offset,
-            no_errors=no_errors)
-
-    @classmethod
-    def from_file(
-        cls,
-        filename: str, *,
-        no_errors=False,
-    ):
-        if os.path.isabs(filename):
-            fn = filename
-        else:
-            fn = renpy.lexer.unelide_filename(filename)
-
-        if not os.path.exists(fn):
-            raise FileNotFoundError(fn)
-
-        def lines():
-            with open(
-                fn,
-                encoding="utf-8",
-                errors="python_strict",
-                newline=None
-            ) as f:
-                yield from f
-
-        return cls(filename, lines(), no_errors=no_errors)
-
     def physical_lines(self) -> Iterator[str]:
         """
         Return iterator of normalized physical lines of the file, so that
@@ -820,15 +809,15 @@ class Tokenizer:
                 position_bias = 0
 
 
-BINARY_RE = re.compile(r'[bB](?:_?[01])+\b')
-OCTAL_RE = re.compile(r'[oO](?:_?[0-7])+\b')
-HEX_RE = re.compile(r'[xX](?:_?[0-9a-fA-F])+\b')
-FLOAT_IMAG_RE = re.compile(r'(?:_?[0-9])*(?:[eE][+-]?[0-9](?:_?[0-9])*)?[jJ]?\b')
-DIGITPART_RE = re.compile(r'(?:_?[0-9])*')
-ELLIPSIS_RE = re.compile(r'\.\.\.')
+_BINARY_RE = re.compile(r'[bB](?:_?[01])+\b')
+_OCTAL_RE = re.compile(r'[oO](?:_?[0-7])+\b')
+_HEX_RE = re.compile(r'[xX](?:_?[0-9a-fA-F])+\b')
+_FLOAT_IMAG_RE = re.compile(r'(?:_?[0-9])*(?:[eE][+-]?[0-9](?:_?[0-9])*)?[jJ]?\b')
+_DIGITPART_RE = re.compile(r'(?:_?[0-9])*')
+_ELLIPSIS_RE = re.compile(r'\.\.\.')
 _vals = sorted(TOKEN_VALUE_TO_OP, reverse=True)
 _vals = map(re.escape, _vals)
-OP_RE = re.compile(f"({"|".join(_vals)})")
+_OP_RE = re.compile(f"({"|".join(_vals)})")
 del _vals
 
 
@@ -993,7 +982,7 @@ class _Tokenizer:
                                 self.filename, self.lineno, self.col_offset, self.line)
 
     def float_or_imaginary(self):
-        m = self.match(FLOAT_IMAG_RE)
+        m = self.match(_FLOAT_IMAG_RE)
         if m is None:
             return None
 
@@ -1169,7 +1158,7 @@ class _Tokenizer:
             self.col_offset += 1
             return self.make_token(kind, kind)
 
-        if self.match(ELLIPSIS_RE):
+        if self.match(_ELLIPSIS_RE):
             return self.make_token("op", "ellipsis", True)
 
         # Period or number starting with period?
@@ -1186,11 +1175,11 @@ class _Tokenizer:
         # Hex, octal or binary?
         if c == "0":
             # If any of that matches, it can't be any other kind of number.
-            if self.match(BINARY_RE):
+            if self.match(_BINARY_RE):
                 exact_kind = "binary"
-            elif self.match(OCTAL_RE):
+            elif self.match(_OCTAL_RE):
                 exact_kind = "octal"
-            elif self.match(HEX_RE):
+            elif self.match(_HEX_RE):
                 exact_kind = "hex"
             else:
                 exact_kind = None
@@ -1201,7 +1190,7 @@ class _Tokenizer:
         # Other number?
         if c.isdecimal():
             # Consume as many digits and underscores as possible.
-            self.match(DIGITPART_RE)
+            self.match(_DIGITPART_RE)
             c = self.getc()
 
             # It may be float or imaginary like 1.e+3j
@@ -1235,7 +1224,7 @@ class _Tokenizer:
             return self.string_token(c)
 
         # Otherwise it should be some kind of OP
-        if m := self.match(OP_RE):
+        if m := self.match(_OP_RE):
             exact_kind = TOKEN_VALUE_TO_OP[m.group(0)]
             return self.make_token("op", exact_kind, True)
 

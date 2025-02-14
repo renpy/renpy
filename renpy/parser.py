@@ -1686,9 +1686,9 @@ def parse(fn: str, filedata: str | None = None, linenumber: int = 1) -> list[ast
 
     try:
         if filedata is None:
-            tok = renpy.lexer.Tokenizer.from_file(fn)
+            tok = renpy.tokenizer.from_file(fn)
         else:
-            tok = renpy.lexer.Tokenizer.from_string(
+            tok = renpy.tokenizer.from_string(
                 filedata, fn, lineno_offset=linenumber - 1)
 
         lines = list(tok.logical_lines())
