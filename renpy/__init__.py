@@ -743,6 +743,7 @@ if typing.TYPE_CHECKING:
     from . import substitutions as substitutions
     from . import test as test
     from . import text as text
+    from . import tokenizer as tokenizer
     from . import translation as translation
     from . import uguu as uguu
     from . import ui as ui

@@ -29,16 +29,7 @@ import functools
 
 import renpy
 
-from renpy.tokenizer import (
-    ParseError,
-    TokenExactKindOp,
-    TokenKind,
-    TokenExactKind,
-    Token,
-    Line,
-    Tokenizer,
-    TOKEN_VALUE_TO_OP,
-)
+from renpy.tokenizer import ParseError
 
 
 def unicode_filename(fn):
@@ -193,7 +184,7 @@ class Lexer:
 
     def __init__(
         self,
-        block: list[Line] | LegacyLexerBlock,
+        block: list[renpy.tokenizer.Line] | LegacyLexerBlock,
         init=False,
         init_offset=0,
         global_label: str | None = None,
@@ -213,7 +204,7 @@ class Lexer:
 
         # Convert pre 8.4 list of grouped logical lines to
         # tokenized list of Line's.
-        if block and not isinstance(block[0], Line):
+        if block and not isinstance(block[0], renpy.tokenizer.Line):
             block = cast("Lexer.LegacyLexerBlock", block)
 
             # 'block' here is a pre 8.4 way to represent Lexer subblock -
@@ -244,7 +235,7 @@ class Lexer:
                     queue.append((indent_depth + 4, linenumber, line, subblock))
 
             # Source code should already have newlines at the end.
-            tok = Tokenizer.from_string(
+            tok = renpy.tokenizer.Tokenizer.from_string(
                 "".join(lines),
                 filename,
                 lineno_offset=start_lineno - 1)
@@ -252,7 +243,7 @@ class Lexer:
             block = list(tok.logical_lines())
 
         # List of lines that make up this indentation block.
-        self._block = cast("list[Line]", block)
+        self._block = cast("list[renpy.tokenizer.Line]", block)
 
         # Index of current logical line in block.
         # Should change only by advace/unadvance.
@@ -261,7 +252,7 @@ class Lexer:
 
         # Line instance of current logical line or None if before the first
         # line, or after the last line.
-        self._line: Line | None = None
+        self._line: renpy.tokenizer.Line | None = None
 
         # Index of current token in tokens, or None if at end of line.
         self._token_index: int | None = None
@@ -288,7 +279,7 @@ class Lexer:
         lines.
         """
 
-        tok = Tokenizer.from_string(
+        tok = renpy.tokenizer.Tokenizer.from_string(
             source,
             filename,
             lineno_offset=lineno_offset)
@@ -319,6 +310,8 @@ class Lexer:
         # Otherwise we need to fix up tokens strings and offsets.
         # But keep physical locations the same, because munging doesn't
         # change physical file.
+        from renpy.tokenizer import Token, Line
+
         prefix = munge_filename(line.physical_location.filename)
         munge_string = get_string_munger(prefix)
         text_parts = []
@@ -392,7 +385,7 @@ class Lexer:
         else:
             self._pos = self._line.offsets[self._token_index]
 
-    def _yield_subblock_lines(self) -> Iterator[Line]:
+    def _yield_subblock_lines(self) -> Iterator[renpy.tokenizer.Line]:
         if self._line is None:
             return
 
@@ -526,10 +519,10 @@ class Lexer:
         self.pos = len(self.text)
 
     # The regexes that match single operator.
-    _OP_REGEX = TOKEN_VALUE_TO_OP.copy()
+    _OP_REGEX = renpy.tokenizer.TOKEN_VALUE_TO_OP.copy()
 
     # Ditto, but escaped.
-    _OP_REGEX |= {re.escape(k): v for k, v in TOKEN_VALUE_TO_OP.items()}
+    _OP_REGEX |= {re.escape(k): v for k, v in renpy.tokenizer.TOKEN_VALUE_TO_OP.items()}
 
     def match_regexp(self, regexp: LiteralString):
         """
@@ -720,7 +713,7 @@ class Lexer:
             monologue_delimiter=self.monologue_delimiter,
             subparses=self.subparses)
 
-    def _lookup_token(self, kind: TokenKind | None = None):
+    def _lookup_token(self, kind: renpy.tokenizer.TokenKind | None = None):
         self.skip_whitespace()
         if self._mid_token:
             return None
@@ -737,7 +730,7 @@ class Lexer:
         else:
             return None
 
-    def _lookup_exact_token(self, kind: TokenExactKind):
+    def _lookup_exact_token(self, kind: renpy.tokenizer.TokenExactKind):
         self.skip_whitespace()
         if self._mid_token:
             return None
@@ -1116,7 +1109,7 @@ class Lexer:
 
         return renpy.ast.PyExpr(s, self.filename, self.number)
 
-    def _delimited_python(self, delim: TokenExactKindOp):
+    def _delimited_python(self, delim: renpy.tokenizer.TokenExactKindOp):
         while (tok := self._lookup_token()) is not None:
             if tok.exact_kind == delim:
                 return True
