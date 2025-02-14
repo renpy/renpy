@@ -87,6 +87,10 @@ inside for translation.
 Other Changes
 -------------
 
+By default, Ren'Py now only creates mipmaps for textures if the display is scaled down to less than .75 of virtual
+window size. This is suitable for games that do not scale down images. To enable mipmapping again, set
+:var:`config.mipmap` to True.
+
 Ren'Py no longer triggers and autoreload when a file that had not existed comes into existence. This behavior
 had been inconsistent, working in some places but not others, required Ren'Py to spent time scanning for files
 that do not exist.

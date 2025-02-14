@@ -17,6 +17,11 @@ such changes only take effect when the GUI is regenerated.
 8.4.0
 -----
 
+
+**Mipmaps** By default, Ren'Py now only creates mipmaps for textures if the display is scaled down to
+less than .75 of virtual window size. This is suitable for games that do not scale down images. To enable
+mipmapping again, set :var:`config.mipmap` to True.
+
 **Show expression.** The ``show expression`` statement has been changed so that::
 
     show expression "bg washington"

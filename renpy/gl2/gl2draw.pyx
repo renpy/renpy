@@ -137,6 +137,9 @@ cdef class GL2Draw:
         # The old value of fullscreen.
         self.old_fullscreen = False
 
+        # Should mipmaps be generated when mipmap == "auto"?
+        self.auto_mipmap = False
+
     def get_texture_size(self):
         """
         Returns the amount of memory locked up in textures.
@@ -610,6 +613,8 @@ cdef class GL2Draw:
         self.shader_cache.load()
         self.init_fbo()
         self.texture_loader.init()
+
+        self.auto_mipmap = self.draw_per_virt < 0.75
 
     def resize(self):
         """

@@ -74,7 +74,7 @@ Auto-Forward Mode
 .. var:: config.afm_callback = None
 
     If not None, a Python function that is called to determine if it
-    is safe to auto-forward. If None, an internal function is used to 
+    is safe to auto-forward. If None, an internal function is used to
     disable auto-forwarding when a voice is playing, unless :var:`preferences.wait_voice`
     is set to False.
 
@@ -755,9 +755,29 @@ Media (Music, Sound, and Video)
     A list of channels that are stopped when entering or returning to the
     main menu.
 
+.. var:: config.mipmap = "auto"
+
+    This controls if Ren'Py generates mipmaps for image. If True, mipmaps are always generated. If "auto", mipmaps
+    are generated only if the window is smaller than 75% of the virtual screen size. If False, mipmaps are never
+    generated.
+
+.. var:: config.mipmap_dissolves = False
+
+    If True, mipmaps are generated for dissolve transitions.
+
+    This takes the same values as :var:`config.mipmap`.
+
 .. var:: config.mipmap_movies = False
 
     The default value of the mipmap argument to :func:`Movie`.
+
+    This takes the same values as :var:`config.mipmap`.
+
+.. var:: config.mipmap_text = False
+
+    If True, mipmaps are generated for text.
+
+    This takes the same values as :var:`config.mipmap`.
 
 .. var:: config.movie_mixer = "music"
 
