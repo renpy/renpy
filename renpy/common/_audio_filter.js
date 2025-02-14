@@ -1,4 +1,4 @@
-/* Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+/* Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -20,7 +20,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-let afidToFilter = {0 : null};
+let afidToFilter = { 0: null };
 
 /**
  * Given an afid, return the filter associated with it. Returns null if the
@@ -94,7 +94,7 @@ renpyAudio.disconnectFilter = function (filter, source, destination) {
 }
 
 
-renpyAudio.filter = { }
+renpyAudio.filter = {}
 let filter = renpyAudio.filter;
 
 /**
@@ -112,7 +112,7 @@ filter.filterToFilter = function (filter1, filter2) {
 /**
  * Connects a filter to a node.
  */
-filter.filterToNode = function(filter, node) {
+filter.filterToNode = function (filter, node) {
     for (let output of filter.outputs) {
         output.connect(node);
     }
@@ -121,22 +121,22 @@ filter.filterToNode = function(filter, node) {
 /**
  * Connects a node to a filter.
  */
-filter.nodeToFilter = function(node, filter) {
+filter.nodeToFilter = function (node, filter) {
     for (let input of filter.inputs) {
         node.connect(input);
     }
 }
 
-filter.Null = function() {
+filter.Null = function () {
     let node = new GainNode(renpyAudio.context, { gain: 1 });
 
     return {
-        inputs: [ node ],
-        outputs: [ node ],
+        inputs: [node],
+        outputs: [node],
     };
 }
 
-filter.Crossfade = function(afid1, afid2, t) {
+filter.Crossfade = function (afid1, afid2, t) {
     let filter1 = renpyAudio.getFilter(afid1);
     let filter2 = renpyAudio.getFilter(afid2);
 
@@ -150,13 +150,13 @@ filter.Crossfade = function(afid1, afid2, t) {
     gain2.gain.linearRampToValueAtTime(1, renpyAudio.context.currentTime + t);
 
     return {
-        inputs: [ ...filter1.inputs, ...filter2.inputs ],
+        inputs: [...filter1.inputs, ...filter2.inputs],
         outputs: [gain1, gain2],
     };
 };
 
 
-filter.Biquad = function(kind, frequency, Q, gain) {
+filter.Biquad = function (kind, frequency, Q, gain) {
     let node = new BiquadFilterNode(renpyAudio.context, {
         type: kind,
         frequency: frequency,
@@ -170,7 +170,7 @@ filter.Biquad = function(kind, frequency, Q, gain) {
     };
 };
 
-filter.Sequence = function(...filters) {
+filter.Sequence = function (...filters) {
     let first = filters[0];
     let last = filters[filters.length - 1];
 
@@ -184,7 +184,7 @@ filter.Sequence = function(...filters) {
     };
 }
 
-filter.Mix = function(...filters) {
+filter.Mix = function (...filters) {
     let inputs = [];
     let outputs = [];
 
@@ -199,7 +199,7 @@ filter.Mix = function(...filters) {
     };
 }
 
-filter.Multiply = function(factor) {
+filter.Multiply = function (factor) {
     let node = new GainNode(renpyAudio.context, { gain: factor });
 
     return {
@@ -209,7 +209,7 @@ filter.Multiply = function(factor) {
 }
 
 
-filter.Delay = function(delay) {
+filter.Delay = function (delay) {
 
     if (typeof delay !== "number") {
         delay = delay[0];
@@ -223,7 +223,7 @@ filter.Delay = function(delay) {
     };
 }
 
-filter.Comb = function(delay, child, multiplier, wet) {
+filter.Comb = function (delay, child, multiplier, wet) {
     if (typeof delay !== "number") {
         delay = delay[0];
     }
@@ -237,8 +237,8 @@ filter.Comb = function(delay, child, multiplier, wet) {
     multiplierNode.connect(delayNode);
 
     let rv = {
-        inputs: [ delayNode ],
-        outputs: [ multiplierNode ],
+        inputs: [delayNode],
+        outputs: [multiplierNode],
     };
 
     if (wet) {
@@ -252,7 +252,7 @@ filter.Comb = function(delay, child, multiplier, wet) {
 }
 
 
-filter.WetDry = function(child, wet, dry) {
+filter.WetDry = function (child, wet, dry) {
     let wetNode = new GainNode(renpyAudio.context, { gain: wet });
     let dryNode = new GainNode(renpyAudio.context, { gain: dry });
 
