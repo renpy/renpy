@@ -18,9 +18,19 @@ such changes only take effect when the GUI is regenerated.
 -----
 
 
-**Mipmaps** By default, Ren'Py now only creates mipmaps for textures if the display is scaled down to
-less than .75 of virtual window size. This is suitable for games that do not scale down images. To enable
-mipmapping again, set :var:`config.mipmap` to True.
+**Mipmaps**
+Mipmaps are smaller versions of an image that are used when Ren'Py scales an image down. Using mipmaps
+prevents the image from becoming jagged when scaled down, but generating mipmaps takes time and can cause the game
+to use more memory.
+
+Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
+image. To always enable mipmaps, set :var:`config.mipmap` to True. If this isn't set to true, Ren'Py will only
+create mipmaps if the display is scaled down to less than 75% of the virtual window size.
+
+Mipmaps will automatically be created for images loaded for the purpose of Live2D or AssimpModel, as these are
+likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
+of :func:`Image`.
+
 
 **Show expression.** The ``show expression`` statement has been changed so that::
 

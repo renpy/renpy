@@ -659,7 +659,7 @@ cdef class GLTexture(GL2Model):
                     self.loader.total_texture_size -= int(self.width * self.height * 4 * 1.34)
                 else:
                     self.loader.total_texture_size -= int(self.width * self.height * 4)
-        except TypeError:
+        except (TypeError, AttributeError):
             pass # Let's not error on shutdown.
 
     def load(self):
