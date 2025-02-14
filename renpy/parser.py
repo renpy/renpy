@@ -1691,11 +1691,13 @@ def parse(fn: str, filedata: str | None = None, linenumber: int = 1) -> list[ast
             tok = renpy.lexer.Tokenizer.from_string(
                 filedata, fn, lineno_offset=linenumber - 1)
 
+        lines = list(tok.logical_lines())
+
     except ParseError as e:
         parse_errors.append(e.message)
         return None
 
-    l = Lexer(list(tok.logical_lines()))
+    l = Lexer(lines)
 
     rv = parse_block(l)
 

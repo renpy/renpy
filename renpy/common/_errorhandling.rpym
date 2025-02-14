@@ -527,7 +527,7 @@ init python:
             rv.append(re.sub(
                 r'(File "(.*)", line (\d+))',
                 r'{a=edit:\3:\2}\1{/a}',
-                lines.pop(0)))
+                lines.pop(0).replace("{", "{{")))
 
             error_rv = []
             error_len = 0
@@ -544,7 +544,7 @@ init python:
 
                     prev_line = error_rv[-1]
 
-                    line = prev_line[:idx]
+                    line = prev_line[:idx].replace("{", "{{")
 
                     if count == 1:
                         if len(prev_line) < idx + count:
@@ -557,7 +557,7 @@ init python:
                     line += "{b}{color=#a00}"
                     line += mark
                     line += "{/color}{/b}"
-                    line += prev_line[idx + count:]
+                    line += prev_line[idx + count:].replace("{", "{{")
 
                     error_rv[-1] = line
                     continue

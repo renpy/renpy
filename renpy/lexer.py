@@ -30,6 +30,7 @@ import functools
 import renpy
 
 from renpy.tokenizer import (
+    ParseError,
     TokenExactKindOp,
     TokenKind,
     TokenExactKind,
@@ -38,79 +39,6 @@ from renpy.tokenizer import (
     Tokenizer,
     TOKEN_VALUE_TO_OP,
 )
-
-
-class ParseError(SyntaxError):
-    """
-    Special exception type for syntax errors in Ren'Py.
-    This exception includes syntax errors of Python code, converted to
-    appropriate report style, and Ren'Py own syntax errors in user script.
-    """
-
-    _message: str | None = None
-
-    def __init__(
-        self,
-        message: str,
-        filename: str,
-        lineno: int,
-        offset: int | None = None,
-        text: str | None = None,
-        end_lineno: int | None = None,
-        end_offset: int | None = None,
-    ):
-        super().__init__(message, (
-            unicode_filename(filename),
-            lineno, offset,
-            text,
-            end_lineno, end_offset))
-
-    @property
-    def message(self) -> str:
-        """
-        Fully formatted message of the error close to the result of
-        `traceback.print_exception_only`.
-        """
-        if self._message is None:
-            message = f'File "{self.filename}", line {self.lineno}: {self.msg}'
-            if self.text is not None:
-                # Neither Python nor this class does not support multiline syntax error code.
-                # Just strip the first line of provided code.
-                text = self.text.split("\n")[0]
-
-                # Remove ending escape chars, so we can render it.
-                text = text.rstrip()
-
-                # And also replace any escape chars at the start with an indent.
-                message += f'\n    {text.lstrip()}'
-
-                if self.offset is not None:
-                    offset = self.offset
-
-                    # Fallback to single caret for cases end_offset is before offset.
-                    if self.end_offset is None or self.end_offset <= offset:
-                        end_offset = offset + 1
-                    else:
-                        end_offset = self.end_offset
-
-                    left_spaces = len(text) - len(text.lstrip())
-                    offset -= left_spaces
-                    end_offset -= left_spaces
-
-                    if offset >= 1:
-                        caret_space = ' ' * (offset - 1)
-                        carets = '^' * (end_offset - offset)
-                        message += f"\n    {caret_space}{carets}"
-
-            for note in getattr(self, "__notes__", ()):
-                message += f"\n{note}"
-
-            self._message = message
-
-        return self._message
-
-    def defer(self, queue):
-        renpy.parser.deferred_parse_errors[queue].append(self.message)
 
 
 def unicode_filename(fn):
@@ -645,7 +573,7 @@ class Lexer:
         len_text = len(text)
         while pos < len_text:
             c = text[pos]
-            if c == " " or c == "\n":
+            if c in " \n":
                 pos += 1
 
             elif c == "\\" and text[pos + 1] == "\n":
