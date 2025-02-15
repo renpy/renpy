@@ -341,7 +341,7 @@ All user interface statements take the following common properties:
 .. screen-property:: prefer_screen_to_id
 
     If true, when a property is provided by both the screen and a
-    displayble identifier, the screen property is used. If false, the
+    displayable identifier, the screen property is used. If false, the
     default, the displayable property is used. (This can be used to
     decide if the screen overrides properties set by a Character.)
 

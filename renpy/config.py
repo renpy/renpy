@@ -949,7 +949,7 @@ repeat_transform_events = [ "show", "replace", "update" ]
 # How many statements should we warp through?
 warp_limit = 1000
 
-# Should dissolve statments force the use of alpha.
+# Should dissolve statements force the use of alpha.
 dissolve_force_alpha = True
 
 # A map from a displayable prefix to a function that returns a displayable

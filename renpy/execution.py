@@ -906,7 +906,7 @@ class Context(renpy.object.Object):
 
     def seen_current(self, ever):
         """
-        Returns a true value if we have finshed the current statement
+        Returns a true value if we have finished the current statement
         at least once before.
 
         @param ever: If True, we're checking to see if we've ever

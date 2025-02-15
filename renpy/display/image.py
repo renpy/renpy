@@ -323,7 +323,7 @@ class ImageReference(renpy.display.displayable.Displayable):
     """
     ImageReference objects are used to reference images by their name,
     which is a tuple of strings corresponding to the name used to define
-    the image in an image statment.
+    the image in an image statement.
     """
 
     nosave = [ 'target' ]

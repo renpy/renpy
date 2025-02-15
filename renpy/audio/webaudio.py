@@ -120,7 +120,7 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
         A python object giving a readable name for the file.
 
     `synchro_start`
-        If true, the file is played in synchro start mode. This means that playinf will be deferred until
+        If true, the file is played in synchro start mode. This means that playing will be deferred until
         all other synchro start files are ready to play.
 
     `fadein`

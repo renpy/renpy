@@ -19,7 +19,7 @@ And the limitation:
 Using Ren'Py to draw a displayable as a cursor inverts these restrictions.
 While the cursors can be anything Ren'Py can draw, Ren'Py needs to do
 the drawing. When triple buffering is enabled on a computer, a lag can
-be present that isn't for the harware cursor.
+be present that isn't for the hardware cursor.
 
 
 Hardware Mouse Cursor

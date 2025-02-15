@@ -40,14 +40,14 @@ can then change it again.)
 
     When on a desktop platform, touches or clicks to this side of the window
     cause rollback to occur. One of "left", "right", or "disable". This is
-    the equivalend of the "rollback side" preference when on a desktop
+    the equivalent of the "rollback side" preference when on a desktop
     platform.
 
 .. var:: preferences.mobile_rollback_side = "disable"
 
     When on a mobile platform, touches or clicks to this side of the window
     cause rollback to occur. One of "left", "right", or "disable". This is
-    the equivalend of the "rollback side" preference when on a mobile
+    the equivalent of the "rollback side" preference when on a mobile
     platform.
 
 .. var:: preferences.language = None

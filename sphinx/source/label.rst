@@ -260,7 +260,7 @@ state of the game. Contexts include:
 * the currently running Ren'Py statement,
 * the call stack, as described above, and the names and former values of dynamic
   variables created by :func:`renpy.dynamic`,
-* the images currently being shown (and informations about them like their attributes,
+* the images currently being shown (and information about them like their attributes,
   the transforms applied to them and so on),
 * the screens being shown, and the variables inside them,
 * the audio that is playing or queued.

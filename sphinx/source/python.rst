@@ -169,7 +169,7 @@ to add entries to a dictionary::
     define config.tag_layer["eileen"] = "master"
 
 In addition to ``=``, define can take two more operators. The ``+=``
-operator adds, and is generally used for list concatenaton. The ``|=``
+operator adds, and is generally used for list concatenation. The ``|=``
 or operator is generally used to concatenate sets. For example::
 
     define config.keymap["dismiss"] += [ "K_KP_PLUS" ]
