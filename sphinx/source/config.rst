@@ -201,7 +201,7 @@ that feature.
         Say statements in bubble mode.
 
     "say-centered"
-        Say statments using the :var:`centered` character.
+        Say statements using the :var:`centered` character.
 
     "menu":
         Normal menu statements.

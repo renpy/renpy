@@ -138,7 +138,7 @@ image will fill the entire screen.
 
 When oversampling is enabled, the size that the image is displayed at is
 smaller than the image size would imply. For example, if an image is 3480x2160,
-and has an oversamply of 2, then each axis will be halved, and the image would
+and has an oversample of 2, then each axis will be halved, and the image would
 fill the same 1920x1080 window.
 
 This is useful when the image might be zoomed in on, and the extra detail is

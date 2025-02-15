@@ -139,7 +139,7 @@ to be removed.)
 Ren'Py then takes the list of shader parts, and retrieves lists of variables,
 functions, vertex shader parts, and fragment shader parts. These are, in turn,
 used to generate the source code for shaders, with the parts of the vertex and
-fragement shaders being included in low-number to high-number priority order.
+fragment shaders being included in low-number to high-number priority order.
 
 This means that any variable created by one of the shaders will be accessible
 by every other fragment from any other shader in the list of shader parts.
@@ -457,7 +457,7 @@ If normals are available, so is the following attribute:
 ``vec3 a_normal``
     The normal of the vertex being rendered.
 
-If tangents are avaiable, so are the following attributes:
+If tangents are available, so are the following attributes:
 
 ``vec3 a_tangent``
     The tangent of the vertex being rendered.

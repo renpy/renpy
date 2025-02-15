@@ -54,7 +54,7 @@ image_prefixes = None
 report_node = None
 
 # Collect define/default statements to check for duplication
-all_define_statments = {}
+all_define_statements = {}
 all_default_statements = {}
 
 # True if at east one error was reported, false otherwise.
@@ -143,7 +143,7 @@ def try_eval(where, expr, additional=None):
         The expression to try evaluating.
 
     `additional`
-        If given, an additional line of information that is addded to the
+        If given, an additional line of information that is added to the
         error message.
     """
 
@@ -187,7 +187,7 @@ def try_compile(where, expr, additional=None):
         The expression to try compiling.
 
     `additional`
-        If given, an additional line of information that is addded to the
+        If given, an additional line of information that is added to the
         error message.
     """
 
@@ -640,7 +640,7 @@ def check_redefined(node, kind):
     if kind == 'default':
         scanned = all_default_statements
     elif kind == 'define':
-        scanned = all_define_statments
+        scanned = all_define_statements
 
         if not (node.operator == "=" and node.index is None):
             return

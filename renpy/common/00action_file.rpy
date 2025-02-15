@@ -655,7 +655,7 @@ init -1500 python:
         An input value that updates the name of a file page.
 
         `pattern`
-            This is used for the default name of a page. Python-style substition
+            This is used for the default name of a page. Python-style substitution
             is performed, such that {} is replaced with the number of the page.
 
         `auto`

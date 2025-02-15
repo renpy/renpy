@@ -87,7 +87,7 @@ at the end of a line, unless:
 * The last character on the line is a backslash (``\``).
 
 * The line contains an open parenthesis character (``(``, ``{``, or ``[``),
-  that hasn't been matched by the cooresponding closing parenthesis
+  that hasn't been matched by the corresponding closing parenthesis
   character (\ ``)``, ``}``, or ``]``, respectively).
 
 * The end of the line occurs during a string - *any* string, even with single

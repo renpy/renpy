@@ -231,7 +231,7 @@ class Node(Object):
 
     translation_relevant: ClassVar[bool] = False
     """
-    True if the node is releveant to translation, and has to be processed by
+    True if the node is relevant to translation, and has to be processed by
     take_translations.
     """
 

@@ -203,7 +203,7 @@ the enter key being pressed.
     .. method:: enter(self)
 
         Called when the user presses enter. If this returns a non-None
-        value, that value is returned from the interacton. This may also
+        value, that value is returned from the interaction. This may also
         raise :exc:`renpy.IgnoreEvent` to ignore the press. Otherwise, the
         enter-press is propagated to other displayables.
 

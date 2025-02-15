@@ -15,7 +15,7 @@ Requirement and Dependency Changes
 
 Ren'Py now requires Windows 10 or later to run. This means that it will no longer run on Windows 7, 8, or 8.1.
 
-Ren'Py now targets Ubuntu 20.04. This also means it targers the "soldier" version of the Steam Linux Runtime.
+Ren'Py now targets Ubuntu 20.04. This also means it targets the "soldier" version of the Steam Linux Runtime.
 
 Ren'Py is no longer built for 32-bit ARM Linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
 Ren'Py is still being built for 32-bit ARM Android. Ren'Py will now prefer the gles2 renderer on ARM Linux devices,
@@ -111,7 +111,7 @@ Ren'Py no longer triggers and autoreload when a file that had not existed comes 
 had been inconsistent, working in some places but not others, required Ren'Py to spent time scanning for files
 that do not exist.
 
-Ren'Py now considers a dialogue statment to have been seen if a statement with the same translation identifier
+Ren'Py now considers a dialogue statement to have been seen if a statement with the same translation identifier
 has been seen.
 
 For size reasons, the lists of seen dialogue and translations now store a 64-bit integer hash of the statement

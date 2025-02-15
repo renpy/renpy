@@ -719,7 +719,7 @@ class Lexer(object):
     def match_regexp(self, regexp):
         """
         Tries to match the given regexp at the current location on the
-        current line. If it succeds, it returns the matched text (if
+        current line. If it succeeds, it returns the matched text (if
         any), and updates the current position to be after the
         match. Otherwise, returns None and the position is unchanged.
         """

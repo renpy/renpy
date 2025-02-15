@@ -62,7 +62,7 @@ arguments:
 
 
 Other values of the positional argument and additional keyword arguments may
-be supplie to the callback. The callback should be written to ignore keyword arguments it
+be supplied to the callback. The callback should be written to ignore keyword arguments it
 does not understand.
 
 Example

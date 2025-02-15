@@ -389,7 +389,7 @@ class Renderer(object):
     and then:
     - "renderer", the name of the Renderer.
     - "resizable", true if the window can be resized.
-    - "additive", true if additive blendering is supported.
+    - "additive", true if additive blending is supported.
     - "models", true if model-based rendering is being used.
     """
 
@@ -552,7 +552,7 @@ class Renderer(object):
     def mouse_event(self, ev):
         """
         This translates the .pos field of `ev` from physical coordinates to
-        virtual coordinates. Returns an (x, y) pait of virtual coordinates.
+        virtual coordinates. Returns an (x, y) pair of virtual coordinates.
         """
 
         return ev

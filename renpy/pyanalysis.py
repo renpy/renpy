@@ -761,7 +761,7 @@ class PyAnalysis(ast.NodeVisitor):
 
 class CompilerCache(object):
     """
-    Objects of this class are used to cache the compiliation of Python code.
+    Objects of this class are used to cache the compilation of Python code.
     """
 
     def __init__(self):
