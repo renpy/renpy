@@ -953,19 +953,15 @@ class Lexer:
         strings of numbers, letters, and underscores.)
         """
 
-        tok = self._lookup_token()
-        if tok is None:
+        self.skip_whitespace()
+
+        pattern = re.compile(r'[-0-9a-zA-Z_\u00a0-\ufffd]+')
+        m = pattern.match(self.text, self.pos)
+        if m is None:
             return None
 
-        if tok.kind == "name":
-            pass
-        # All numbers except those with dot or +- are valid.
-        elif tok.kind == "number" and re.fullmatch(r"\w+", tok.string):
-            pass
-        else:
-            return None
-
-        if tok.string in (
+        rv = m.group(0)
+        if rv in (
             'as',
             'if',
             'in',
@@ -981,8 +977,8 @@ class Lexer:
         ):
             return None
 
-        self._advance_token()
-        return tok.string
+        self.pos = m.end(0)
+        return rv
 
     def set_global_label(self, label):
         """
