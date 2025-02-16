@@ -20,12 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from typing import Any
+from typing import Callable
 
 import re
 import sys
 import os
 import contextlib
+import functools
 
 import renpy
 
@@ -211,6 +212,37 @@ def unelide_filename(fn):
     return fn
 
 
+def get_string_munger(prefix: str) -> Callable[[str], str]:
+    if renpy.config.munge_in_strings:
+        def munge_string(m: re.Match[str]):
+
+            g1 = m.group(1)
+
+            if "__" in g1:
+                return m.group(0)
+
+            if g1.startswith("_"):
+                return m.group(0)
+
+            return prefix + m.group(1)
+
+        return functools.partial(re.sub, r'\b__(\w+)', munge_string)
+
+    else:
+        def munge_string(m: re.Match[str]):
+            brackets = m.group(1)
+
+            if len(brackets) % 2 == 0:
+                return m.group(0)
+
+            if "__" in m.group(2):
+                return m.group(0)
+
+            return brackets + prefix + m.group(2)
+
+        return functools.partial(re.sub, r'(\.|\[+)__(\w+)', munge_string)
+
+
 # The filename that the start and end positions are relative to.
 original_filename = ""
 
@@ -224,37 +256,6 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
     If `filedata` is given, it should be a unicode string giving the file
     contents. In that case, `filename` need not exist.
     """
-
-    if renpy.config.munge_in_strings:
-
-        munge_regexp = re.compile(r'\b__(\w+)')
-
-        def munge_string(m):
-
-            g1 = m.group(1)
-
-            if "__" in g1:
-                return m.group(0)
-
-            if g1.startswith("_"):
-                return m.group(0)
-
-            return prefix + m.group(1)
-
-    else:
-
-        munge_regexp = re.compile(r'(\.|\[+)__(\w+)')
-
-        def munge_string(m):
-            brackets = m.group(1)
-
-            if (len(brackets) & 1) == 0:
-                return m.group(0)
-
-            if "__" in m.group(2):
-                return m.group(0)
-
-            return brackets + prefix + m.group(2)
 
     global original_filename
 
@@ -271,6 +272,8 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
     filename = elide_filename(filename)
     prefix = munge_filename(filename)
+
+    munge_string = get_string_munger(prefix)
 
     # Add some newlines, to fix lousy editors.
     data += "\n\n"
@@ -447,7 +450,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                 s = "".join(s)
 
                 if "__" in s:
-                    s = munge_regexp.sub(munge_string, s)
+                    s = munge_string(s)
 
                 line.append(s)
 
@@ -455,11 +458,10 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
             word, magic, end = match_logical_word(data, pos)
 
-            if magic:
-
+            if magic and word[2] != "_":
                 rest = word[2:]
 
-                if (u"__" not in rest) and not rest.startswith("_"):
+                if "__" not in rest:
                     word = prefix + rest
 
             line.append(word)
@@ -678,6 +680,10 @@ class Lexer(object):
         self.monologue_delimiter = monologue_delimiter
 
         self.subparses = subparses
+
+    def _unmunge_string(self, s: str) -> str:
+        prefix = munge_filename(self.filename)
+        return s.replace(prefix, "__")
 
     def advance(self):
         """
@@ -1232,6 +1238,8 @@ class Lexer(object):
         if not expr:
             return s
 
+        s = self._unmunge_string(s)
+
         return renpy.ast.PyExpr(s, self.filename, self.number)
 
     def delimited_python(self, delim, expr=True):
@@ -1387,7 +1395,7 @@ class Lexer(object):
         if not text:
             return None
 
-        return renpy.ast.PyExpr(text, self.filename, self.number)
+        return self.expr(text, True)
 
     def comma_expression(self):
         """
@@ -1470,7 +1478,7 @@ class Lexer(object):
 
         pos = self.pos
         self.pos = len(self.text)
-        return renpy.ast.PyExpr(self.text[pos:].strip(), self.filename, self.number)
+        return self.expr(self.text[pos:].strip(), True)
 
     def rest_statement(self):
         """
@@ -1508,7 +1516,7 @@ class Lexer(object):
         line_holder.line = self.number
 
         self._process_python_block(self.subblock, '', rv, line_holder)
-        return ''.join(rv)
+        return self._unmunge_string(''.join(rv))
 
     def arguments(self):
         """
