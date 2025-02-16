@@ -556,10 +556,10 @@ can be supplied the property method.
     and `gl_texture_wrap_tex3` the fourth. While only these four are avalable through Transforms,
     it's possibe to supply "texture_wrap_tex4" or "texture_wrap_myuniform" to Render.add_property.
 
-AssimpModel Displayable
+GLTFModel Displayable
 -----------------------
 
-The AssimpModel displayble allow you to load 3D models in over 40 file formats. This is what you should use
+The GLTFModel displayble allow you to load 3D models in the GLTF file format. This is what you should use
 if you have a 3D model you created in another program and want to display in Ren'Py.
 
 .. include:: inc/assimp

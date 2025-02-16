@@ -442,14 +442,14 @@ loader = Loader()
 loader_lock = threading.Lock()
 "The lock used to protect the loader."
 
-class AssimpModel(renpy.display.displayable.Displayable):
+class GLTFModel(renpy.display.displayable.Displayable):
     """
     :doc: assimp
 
-    A displayable that displays a 3D Model loaded using the
-    `Open Asset Importer (assimp) library <https://github.com/assimp/assimp>`_.
+    A displayable that loads a 3D Model in the GLTF format. This format is supported by many 3D tools. Ren'Py
+    uses the `Open Asset Importer (assimp) library <https://github.com/assimp/assimp>`_ to load GLTF models.
 
-    For the purposes of Ren'Py's 2D layout system, an AssimpModel has zero width and height. By default, the model
+    For the purposes of Ren'Py's 2D layout system, a GLTFModel has zero width and height. By default, the model
     is loaded at the size found in the file that contains it. If required, the `zoom` may be used to scale it.
 
     When multiple models are in use, the ``gl_depth True`` property should be supplied to the camera, so that
@@ -457,15 +457,7 @@ class AssimpModel(renpy.display.displayable.Displayable):
     important to use models simple enough to be completely rendered.
 
     `filename`
-        The filename of the model to display. The following formats are supported:
-
-        3D, 3DS, 3MF, AC, AC3D, ACC, AMJ, ASE, ASK, B3D, BVH, CSM, COB, DAE/Collada, DXF, ENFF, FBX,
-        glTF 1.0 + GLB, glTF 2.0, HMB, IFC-STEP, IQM, IRR / IRRMESH, LWO, LWS, LXO, M3D, MD2, MD5,
-        MDC, MDL, MESH / MESH.XML, MOT, MS3D, NDO, NFF, OBJ, OFF, OGEX, PLY, PMX, PRJ, Q3O, Q3S, RAW, SCN,
-        SIB, SMD, STP, STL, TER, UC, VTA, X, X3D, XGL, ZGL
-
-        Many of these formats are obsolete or special-purpose. glTF 2.0 is the best-tested format for Ren'Py
-        use, though it requires a custom shader for best results.
+        The filename of the model to display.
 
     `textures`
         A list of textures to load. These textures will be loaded into texture slots - the first will be tex0, the
