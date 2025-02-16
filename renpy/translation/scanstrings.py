@@ -143,8 +143,10 @@ def scan_strings(filename):
                 if m.group(0).startswith("_p"):
                     s = renpy.minstore._p(s)
 
-                if s:
-                    rv.append(String(filename, line.physical_location[0], s, False))
+                if not s:
+                    continue
+
+                rv.append(String(filename, line.physical_location.start_lineno, s, False))
 
     return rv
 
