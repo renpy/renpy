@@ -22,7 +22,6 @@
 # This module contains code to support user-defined statements.
 
 import renpy
-import renpy.tokenizer
 
 # The statement registry. It's a map from tuples giving the prefixes of
 # statements to dictionaries giving the methods used for that statement.
@@ -239,7 +238,6 @@ def register(
     """
 
     name = tuple(name.split())
-    statement_name = " ".join(name)
 
     if label:
         force_begin_rollback = True
@@ -268,7 +266,7 @@ def register(
         raise Exception("Unknown \"block\" argument value: {}".format(block))
 
     # The function that is called to create an ast.UserStatement.
-    def parse_user_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
+    def parse_user_statement(l, loc):
 
         renpy.exports.push_error_handler(l.error)
 
@@ -283,19 +281,19 @@ def register(
             atl = None
 
             if block is False:
-                l.expect_noblock(f"{statement_name} statement")
+                l.expect_noblock(" ".join(name) + " statement")
             elif block is True:
-                l.expect_block(f"{statement_name} statement")
+                l.expect_block(" ".join(name) + " statement")
             elif block == "possible":
                 pass
             elif block == "script":
-                l.expect_block(f"{statement_name} statement")
+                l.expect_block(" ".join(name) + " statement")
                 code_block = renpy.parser.parse_block(l.subblock_lexer())
             elif block == "script-possible":
                 if l.has_block():
                     code_block = renpy.parser.parse_block(l.subblock_lexer())
             elif block == "atl":
-                l.expect_block(f"{statement_name} statement")
+                l.expect_block(" ".join(name) + " statement")
                 atl = renpy.atl.parse_atl(l.subblock_lexer())
             elif block == "atl-possible":
                 if l.has_block():
@@ -338,12 +336,13 @@ def register(
     parsers.add(name, parse_data)
 
 
-def parse(node: renpy.ast.UserStatement, line: str, subblock: list):
+def parse(node, line, subblock):
     """
     This is used for runtime parsing of CDSes that were created before 7.3.
     """
 
-    l = renpy.lexer.Lexer([(node.filename, node.linenumber, line, subblock)])
+    block = [ (node.filename, node.linenumber, line, subblock) ]
+    l = renpy.parser.Lexer(block)
     l.advance()
 
     renpy.exports.push_error_handler(l.error)

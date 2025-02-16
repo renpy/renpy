@@ -68,7 +68,8 @@ def python_signature(o):
 
     s = s.replace("-> void", "")
 
-    l = renpy.lexer.from_string(s, "<generate_pyi>")
+    tok = renpy.tokenizer.from_string(s, "<generate_pyi>")
+    l = renpy.lexer.Lexer(list(tok.logical_lines()))
     l.advance()
 
     l.word()

@@ -51,7 +51,7 @@ deferred_parse_errors = collections.defaultdict(list)
 ################################################################################
 # Parsing of structures that are less than a full statement.
 
-def parse_image_name(l: Lexer, string=False, nodash=False):
+def parse_image_name(l, string=False, nodash=False):
     """
     This parses an image name, and returns it as a tuple. It requires
     that the image name be present.
@@ -92,7 +92,7 @@ def parse_image_name(l: Lexer, string=False, nodash=False):
     return tuple(rv)
 
 
-def parse_simple_expression_list(l: Lexer, image=False):
+def parse_simple_expression_list(l, image=False):
     """
     This parses a comma-separated list of simple_expressions, and
     returns a list of strings. It requires at least one
@@ -115,7 +115,7 @@ def parse_simple_expression_list(l: Lexer, image=False):
     return rv
 
 
-def parse_image_specifier(l: Lexer):
+def parse_image_specifier(l):
     """
     This parses an image specifier.
     """
@@ -188,7 +188,7 @@ def parse_image_specifier(l: Lexer):
     return image_name, expression, tag, at_list, layer, zorder, behind
 
 
-def parse_with(l: Lexer, node):
+def parse_with(l, node):
     """
     Tries to parse the with clause associated with this statement. If
     one exists, then the node is wrapped in a list with the
@@ -208,7 +208,7 @@ def parse_with(l: Lexer, node):
              ast.With(loc, expr) ]
 
 
-def parse_menu(stmtl: Lexer, loc, arguments):
+def parse_menu(stmtl, loc, arguments):
 
     l = stmtl.subblock_lexer()
 
@@ -336,7 +336,7 @@ def parse_menu(stmtl: Lexer, loc, arguments):
     return rv
 
 
-def parse_parameters(l: Lexer):
+def parse_parameters(l):
     """
     Parse a list of parameters according to PEP 570 semantic, if one is present.
     """
@@ -461,7 +461,7 @@ def parse_parameters(l: Lexer):
     return renpy.parameter.Signature(parameters.values())
 
 
-def parse_arguments(l: Lexer):
+def parse_arguments(l):
     """
     Parse a list of arguments according to PEP 448 semantics, if one is present.
     """
@@ -554,7 +554,7 @@ class ParseTrie(object):
 
         self.words[first].add(rest, function)
 
-    def parse(self, l: Lexer):
+    def parse(self, l):
         old_pos = l.pos
 
         word = l.word() or l.match(r'\$')
@@ -589,7 +589,7 @@ def statement(keywords):
 
 
 @statement("if")
-def if_statement(l: Lexer, loc: tuple[str, int]):
+def if_statement(l, loc):
 
     entries = [ ]
 
@@ -632,7 +632,7 @@ def if_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("IF")
-def IF_statement(l: Lexer, loc: tuple[str, int]):
+def IF_statement(l, loc):
 
     rv = None
 
@@ -674,7 +674,7 @@ def IF_statement(l: Lexer, loc: tuple[str, int]):
     return rv
 
 @statement("while")
-def while_statement(l: Lexer, loc: tuple[str, int]):
+def while_statement(l, loc):
     condition = l.require(l.python_expression)
     l.require(':')
     l.expect_eol()
@@ -686,7 +686,7 @@ def while_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("pass")
-def pass_statement(l: Lexer, loc: tuple[str, int]):
+def pass_statement(l, loc):
     l.expect_noblock('pass statement')
     l.expect_eol()
     l.advance()
@@ -695,7 +695,7 @@ def pass_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("menu")
-def menu_statement(l: Lexer, loc: tuple[str, int]):
+def menu_statement(l, loc):
     l.expect_block('menu statement')
     label = l.label_name_declare()
     l.set_global_label(label)
@@ -724,7 +724,7 @@ def menu_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("return")
-def return_statement(l: Lexer, loc: tuple[str, int]):
+def return_statement(l, loc):
     l.expect_noblock('return statement')
 
     rest = l.rest()
@@ -738,7 +738,7 @@ def return_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("jump")
-def jump_statement(l: Lexer, loc: tuple[str, int]):
+def jump_statement(l, loc):
     l.expect_noblock('jump statement')
 
     if l.keyword('expression'):
@@ -755,7 +755,7 @@ def jump_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("call")
-def call_statement(l: Lexer, loc: tuple[str, int]):
+def call_statement(l, loc):
     l.expect_noblock('call statement')
 
     if l.keyword('expression'):
@@ -796,7 +796,7 @@ def call_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("scene")
-def scene_statement(l: Lexer, loc: tuple[str, int]):
+def scene_statement(l, loc):
     layer = None
     if l.keyword('onlayer'):
         layer = l.require(l.image_name_component)
@@ -824,7 +824,7 @@ def scene_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("show")
-def show_statement(l: Lexer, loc: tuple[str, int]):
+def show_statement(l, loc):
     imspec = parse_image_specifier(l)
     stmt = ast.Show(loc, imspec)
     rv = parse_with(l, stmt)
@@ -842,7 +842,7 @@ def show_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("show layer")
-def show_layer_statement(l: Lexer, loc: tuple[str, int]):
+def show_layer_statement(l, loc):
 
     layer = l.require(l.image_name_component)
 
@@ -867,7 +867,7 @@ def show_layer_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("camera")
-def camera_statement(l: Lexer, loc: tuple[str, int]):
+def camera_statement(l, loc):
 
     layer = l.image_name_component() or 'master'
 
@@ -892,7 +892,7 @@ def camera_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("hide")
-def hide_statement(l: Lexer, loc: tuple[str, int]):
+def hide_statement(l, loc):
     imspec = parse_image_specifier(l)
     rv = parse_with(l, ast.Hide(loc, imspec))
 
@@ -904,7 +904,7 @@ def hide_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("with")
-def with_statement(l: Lexer, loc: tuple[str, int]):
+def with_statement(l, loc):
     expr = l.require(l.simple_expression)
     l.expect_eol()
     l.expect_noblock('with statement')
@@ -914,7 +914,7 @@ def with_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("image")
-def image_statement(l: Lexer, loc: tuple[str, int]):
+def image_statement(l, loc):
     name = parse_image_name(l, nodash=True)
 
     if l.match(':'):
@@ -944,7 +944,7 @@ def image_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("define")
-def define_statement(l: Lexer, loc: tuple[str, int]):
+def define_statement(l, loc):
 
     priority = l.integer()
     if priority:
@@ -991,7 +991,7 @@ def define_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("default")
-def default_statement(l: Lexer, loc: tuple[str, int]):
+def default_statement(l, loc):
 
     priority = l.integer()
     if priority:
@@ -1025,7 +1025,7 @@ def default_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("transform")
-def transform_statement(l: Lexer, loc: tuple[str, int]):
+def transform_statement(l, loc):
 
     priority = l.integer()
     if priority:
@@ -1072,7 +1072,7 @@ def transform_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("$")
-def one_line_python(l: Lexer, loc: tuple[str, int]):
+def one_line_python(l, loc):
     python_code = l.rest_statement()
 
     if not python_code:
@@ -1085,7 +1085,7 @@ def one_line_python(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("python")
-def python_statement(l: Lexer, loc: tuple[str, int]):
+def python_statement(l, loc):
     hide = False
     early = False
     store = 'store'
@@ -1115,7 +1115,7 @@ def python_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("label")
-def label_statement(l: Lexer, loc: tuple[str, int], init=False):
+def label_statement(l, loc, init=False):
 
     name = l.require(l.label_name_declare)
     l.set_global_label(name)
@@ -1138,7 +1138,7 @@ def label_statement(l: Lexer, loc: tuple[str, int], init=False):
 
 
 @statement("init offset")
-def init_offset_statement(l: Lexer, loc: tuple[str, int]):
+def init_offset_statement(l, loc):
 
     l.require('=')
     offset = l.require(l.integer)
@@ -1152,12 +1152,12 @@ def init_offset_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("init label")
-def init_label_statement(l: Lexer, loc: tuple[str, int]):
+def init_label_statement(l, loc):
     return label_statement(l, loc, init=True)
 
 
 @statement("init")
-def init_statement(l: Lexer, loc: tuple[str, int]):
+def init_statement(l, loc):
 
     p = l.integer()
 
@@ -1199,7 +1199,7 @@ def init_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("rpy monologue")
-def rpy_statement(l: Lexer, loc: tuple[str, int]):
+def rpy_statement(l, loc):
 
     if l.keyword("double"):
         l.monologue_delimiter = "\n\n"
@@ -1218,7 +1218,7 @@ def rpy_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("screen")
-def screen_statement(l: Lexer, loc: tuple[str, int]):
+def screen_statement(l, loc):
 
     slver = l.integer()
     if slver is not None:
@@ -1239,7 +1239,7 @@ def screen_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("testcase")
-def testcase_statement(l: Lexer, loc: tuple[str, int]):
+def testcase_statement(l, loc):
     name = l.require(l.name)
     l.require(':')
     l.expect_eol()
@@ -1331,7 +1331,7 @@ def translate_strings(init_loc, language, l):
 translate_none_files = set()
 
 @statement("translate")
-def translate_statement(l: Lexer, loc: tuple[str, int]):
+def translate_statement(l, loc):
 
     language = l.require(l.name)
 
@@ -1382,7 +1382,7 @@ def translate_statement(l: Lexer, loc: tuple[str, int]):
 
 
 @statement("style")
-def style_statement(l: Lexer, loc: tuple[str, int]):
+def style_statement(l, loc):
 
     # Parse priority and name.
     name = l.require(l.word)
@@ -1462,18 +1462,16 @@ def style_statement(l: Lexer, loc: tuple[str, int]):
 
             ll.expect_eol()
 
-    if l.init:
-        result = rv
-    else:
-        result = ast.Init(loc, [ rv ], l.init_offset)
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], l.init_offset)
 
     l.advance()
 
-    return result
+    return rv
 
 
 @statement("rpy python")
-def rpy_python(l: Lexer, loc: tuple[str, int]):
+def rpy_python(l, loc):
 
     rv = []
 
@@ -1492,7 +1490,7 @@ def rpy_python(l: Lexer, loc: tuple[str, int]):
     return rv
 
 
-def finish_say(l: Lexer, loc: tuple[str, int], who, what, attributes=None, temporary_attributes=None, interact=True):
+def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None, interact=True):
 
     if what is None:
         return None
@@ -1574,7 +1572,7 @@ def say_attributes(l):
 
 
 @statement("")
-def say_statement(l: Lexer, loc: tuple[str, int]):
+def say_statement(l, loc):
 
     state = l.checkpoint()
 
@@ -1622,7 +1620,7 @@ def say_statement(l: Lexer, loc: tuple[str, int]):
 # Functions called to parse things.
 
 
-def parse_statement(l: Lexer) -> ast.Node | list[ast.Node]:
+def parse_statement(l):
     """
     This parses a Ren'Py statement. l is expected to be a Ren'Py lexer
     that has been advanced to a logical line. This function will
@@ -1642,7 +1640,7 @@ def parse_statement(l: Lexer) -> ast.Node | list[ast.Node]:
     return pf(l, loc)
 
 
-def parse_block(l: Lexer) -> list[ast.Node]:
+def parse_block(l):
     """
     This parses a block of Ren'Py statements. It returns a list of the
     statements contained within the block. l is a new Lexer object, for
