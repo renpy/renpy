@@ -93,7 +93,7 @@ init -1200 python:
 
         `auto`
             If True, this becomes the equivalent of the ``window auto hide``
-            statment.
+            statement.
         """
 
         if config.window_functions_set_auto:

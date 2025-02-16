@@ -885,7 +885,7 @@ class Lexer(object):
 
     def subblock_lexer(self, init=False):
         """
-        Returns a new lexer object, equiped to parse the block
+        Returns a new lexer object, equipped to parse the block
         associated with this line.
         """
 

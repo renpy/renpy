@@ -164,7 +164,7 @@ class Scry(object):
 
     extend_text: str | None | renpy.object.Sentinel = None
     """
-    Text that will be added to the current say statment by a call to
+    Text that will be added to the current say statement by a call to
     extend.
     """
 
