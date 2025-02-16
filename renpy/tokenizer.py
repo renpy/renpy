@@ -1165,9 +1165,8 @@ class _Tokenizer:
         if c == '.':
             self.nextc()
             # Fraction can only start with a digit.
-            if self.getc().isdecimal():
-                if (rv := self.float_or_imaginary()) is not None:
-                    return rv
+            if self.getc().isdecimal() and (rv := self.float_or_imaginary()) is not None:
+                return rv
 
             # Otherwise it's a DOT followed by something else.
             return self.make_token("op", "dot", True)
@@ -1196,13 +1195,12 @@ class _Tokenizer:
             # It may be float or imaginary like 1.e+3j
             if c == '.':
                 self.nextc()
-                if (rv := self.float_or_imaginary()) is not None:
-                    return rv
+                if self.getc().isdecimal():
+                    if (rv := self.float_or_imaginary()) is not None:
+                        return rv
 
-                # Rollback the dot.
-                self.pos -= 1
-                self.col_offset -= 1
-                return self.make_token("number", "int")
+                # Otherwise it is a float like '1.' followed by something else.
+                return self.make_token("number", "float")
 
             # Still can be a float or imaginary like 1e+3j
             if c in 'eE':
