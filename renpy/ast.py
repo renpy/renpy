@@ -89,17 +89,21 @@ class PyCode(Object):
     hashcode : int
 
     def __getstate__(self):
-        return (1, self.source, (self.filename, self.linenumber), self.mode, self.py, self.hashcode)
+        return (1, self.source, (self.filename, self.linenumber), self.mode, self.py, self.hashcode, self.col_offset)
 
     def __setstate__(self, state):
+        col_offset = 0
+        py = 2
+        hashcode = None
 
         match state:
-            case (_, source, location, mode):
-                py = 2
-                hashcode = None
-            case (_, source, location, mode, py):
-                hashcode = None
+            case (_, source, location, mode, py, hashcode, col_offset):
+                pass
             case (_, source, location, mode, py, hashcode):
+                pass
+            case (_, source, location, mode, py):
+                pass
+            case (_, source, location, mode):
                 pass
             case _:
                 raise Exception("Invalid state:", state)
@@ -108,6 +112,7 @@ class PyCode(Object):
         self.source = source
         self.filename = location[0]
         self.linenumber = location[1]
+        self.col_offset = col_offset
         self.mode = mode
 
         if hashcode is None:
@@ -121,13 +126,13 @@ class PyCode(Object):
         if renpy.game.script.record_pycode:
             renpy.game.script.all_pycode.append(self)
 
-    def __init__(self, source: str, loc: tuple[str, int] = ('<none>', 1),
-                 mode: Literal["eval", "exec", "hide"] = 'exec'):
+    def __init__(
+            self,
+            source: str,
+            loc: tuple[str, int] = ('<none>', 1),
+            mode: Literal["eval", "exec", "hide"] = 'exec'):
 
         self.py = 3
-
-        # The source code.
-        self.source = source
 
         if isinstance(source, PyExpr):
             self.filename = source.filename
@@ -138,6 +143,13 @@ class PyCode(Object):
             self.linenumber = loc[1]
             self.hashcode = hash32(source)
 
+        # The source code.
+        if self.mode != "eval":
+            self.source, self.col_offset = PyCode.dedent(source)
+        else:
+            self.source = source
+            self.col_offset = 0
+
         self.mode = mode
 
         # This will be initialized later on, after we are serialized.
@@ -145,6 +157,53 @@ class PyCode(Object):
 
         if renpy.game.script.record_pycode:
             renpy.game.script.all_pycode.append(self)
+
+
+    _leading_whitespace_re = re.compile('(^[ ]*)(?:[^ ])', re.MULTILINE)
+
+    @staticmethod
+    def dedent(text: str):
+        """
+        Removes leading whitespace from a block of text. Entirely blank lines
+        are normalized to a newline character.
+
+        This returns the dedented text, and the amount of whitespace removed,
+        """
+
+        # Look for the longest leading string of spaces and tabs common to
+        # all lines.
+        margin = None
+        indents = PyCode._leading_whitespace_re.findall(text)
+        for indent in indents:
+            if margin is None:
+                margin = indent
+
+            # Current line more deeply indented than previous winner:
+            # no change (previous winner is still on top).
+            elif indent.startswith(margin):
+                pass
+
+            # Current line consistent with and no deeper than previous winner:
+            # it's the new winner.
+            elif margin.startswith(indent):
+                margin = indent
+
+            # Find the largest common whitespace between current line and previous
+            # winner.
+            else:
+                for i, (x, y) in enumerate(zip(margin, indent)):
+                    if x != y:
+                        margin = margin[:i]
+                        break
+
+        if margin:
+            text = re.sub(r'(?m)^' + margin, '', text)
+
+        if margin:
+            return text, len(margin)
+        else:
+            return text, 0
+
 
 DoesNotExtend = renpy.object.Sentinel("DoesNotExtend")
 

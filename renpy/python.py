@@ -1047,7 +1047,6 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     `column`
         A column offset to add to the column numbers of the source.
     """
-
     global compile_warnings
 
     first_line_column_delta = column
@@ -1078,7 +1077,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
     # This determines if the lines are indented. If so, we adjust the
     # ast to match.
-    indented = source and (source[0] == " ")
+    indented = source and (source[0] == " ") and (mode != "eval")
 
     if indented:
         lineno -= 1

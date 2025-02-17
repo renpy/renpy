@@ -1055,7 +1055,7 @@ class Script(object):
 
                 renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (i.linenumber, i.filename)
 
-                i.bytecode = renpy.python.py_compile(i.source, i.mode, filename=i.filename, lineno=i.linenumber, py=i.py, hashcode=i.hashcode)
+                i.bytecode = renpy.python.py_compile(i.source, i.mode, filename=i.filename, lineno=i.linenumber, py=i.py, hashcode=i.hashcode, column=i.col_offset)
 
             except SyntaxError as e:
                 assert e.filename is not None
