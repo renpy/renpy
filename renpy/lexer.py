@@ -700,11 +700,6 @@ class Lexer(object):
 
         self.subparses = subparses
 
-
-    def _unmunge_string(self, s: str) -> str:
-        prefix = munge_filename(self.filename)
-        return s.replace(prefix, "__")
-
     def advance(self):
         """
         Advances this lexer to the next line in the block. The lexer
@@ -1257,7 +1252,6 @@ class Lexer(object):
             return s
 
         pos = self.pos - len(s)
-        s = self._unmunge_string(s)
 
         return make_pyexpr(s, self.filename, self.number, self.column, self.text, pos)
 
@@ -1538,7 +1532,7 @@ class Lexer(object):
         line_holder.line = self.number
 
         self._process_python_block(self.subblock, rv, line_holder)
-        return self._unmunge_string(''.join(rv))
+        return ''.join(rv)
 
     def arguments(self):
         """

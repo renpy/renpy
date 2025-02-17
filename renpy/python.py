@@ -424,97 +424,6 @@ class StarredVariables(ast.NodeVisitor):
 # starred assignment.
 find_starred_variables = StarredVariables().find
 
-class MungeNodes(ast.NodeTransformer):
-    """
-    This walks through the tree and munges all identifiers and strings,
-    so __names in different files don't collide, but column offsets
-    of the original code stays correct.
-    """
-
-    def __init__(self, filename: str):
-        self.prefix = renpy.lexer.munge_filename(filename)
-        self.string_munger = renpy.lexer.get_string_munger(self.prefix)
-
-    def _munge_identifier(self, id):
-        if id is None or len(id) < 3 or id[:2] != "__" or id[2] == "_":
-            return id
-
-        rest = id[2:]
-        if "__" in rest:
-            return id
-
-        return self.prefix + rest
-
-    @staticmethod
-    def _munge_attribute(attr: str):
-        def visit(self: "MungeNodes", node: ast.AST):
-            value = getattr(node, attr)
-            value = self._munge_identifier(value)
-            setattr(node, attr, value)
-            self.generic_visit(node)
-            return node
-
-        return visit
-
-    @staticmethod
-    def _munge_attribute_list(attr: str):
-        def visit(self: "MungeNodes", node: ast.AST):
-            value = getattr(node, attr)
-            value = [self._munge_identifier(i) for i in value]
-            setattr(node, attr, value)
-            self.generic_visit(node)
-            return node
-
-        return visit
-
-    def visit_Constant(self, node):
-        if isinstance(node.value, str) and "__" in node.value:
-            node.value = self.string_munger(node.value)
-
-        return node
-
-    # stmt
-    visit_FunctionDef = _munge_attribute("name")
-    visit_AsyncFunctionDef = _munge_attribute("name")
-    visit_ClassDef = _munge_attribute("name")
-
-    def visit_ImportFrom(self, node):
-        if node.module is not None:
-            node.module = ".".join(
-                self._munge_identifier(part)
-                for part in node.module.split("."))
-
-        self.generic_visit(node)
-        return node
-
-    visit_Global = _munge_attribute_list("names")
-    visit_Nonlocal = _munge_attribute_list("names")
-
-    # expr
-    visit_Attribute = _munge_attribute("attr")
-    visit_Name = _munge_attribute("id")
-
-    # Other
-    visit_ExceptHandler = _munge_attribute("name")
-    visit_arg = _munge_attribute("arg")
-    visit_keyword = _munge_attribute("arg")
-
-    def visit_alias(self, node):
-        node.name = self._munge_identifier(node.name)
-        node.asname = self._munge_identifier(node.asname)
-        self.generic_visit(node)
-        return node
-
-    # pattern
-    visit_MatchMapping = _munge_attribute("rest")
-    visit_MatchClass = _munge_attribute_list("kwd_attrs")
-    visit_MatchStar = _munge_attribute("name")
-    visit_MatchAs = _munge_attribute("name")
-
-    # type_param
-    visit_TypeVar = _munge_attribute("name")
-    visit_ParamSpec = _munge_attribute("name")
-    visit_TypeVarTuple = _munge_attribute("name")
 
 
 class FindStarredMatchPatterns(ast.NodeVisitor):
@@ -1206,7 +1115,6 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             tree.body = tree.body[0].body
 
         tree = wrap_node.visit(tree)
-        tree = MungeNodes(filename).visit(tree)
 
         if mode == "hide":
             wrap_hide(tree)
