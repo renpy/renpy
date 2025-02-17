@@ -73,11 +73,12 @@ cdef class PyExpr(str):
 
     cdef public str filename
     cdef public unsigned int hashcode
-    cdef public int linenumber
+    cdef public unsigned int linenumber
+    cdef public unsigned short column
     cdef public unsigned char py
 
     def __reduce__(self):
-        return (PyExpr, (str(self), self.filename, self.linenumber, self.py, self.hashcode))
+        return (PyExpr, (str(self), self.filename, self.linenumber, self.py, self.hashcode, self.column))
 
     @staticmethod
     def checkpoint() -> Any:
@@ -116,15 +117,20 @@ cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
 
     cdef tuple cargs = <tuple> args
 
-    if len(cargs) == 5:
+    if len(cargs) == 6:
+        s, filename, linenumber, py, hashcode, column = cargs
+    elif len(cargs) == 5:
         s, filename, linenumber, py, hashcode = cargs
+        column = 0
     elif len(cargs) == 4:
         s, filename, linenumber, py = cargs
         hashcode = None
+        column = 0
     elif len(cargs) == 3:
         s, filename, linenumber = cargs
         py = 2
         hashcode = None
+        column = 0
     else:
         raise Exception("PyExpr.__new__ called with invalid arguments.", str(<object> args))
 
@@ -136,6 +142,7 @@ cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
 
         rv.filename = filename
         rv.linenumber = linenumber
+        rv.column = column
         rv.py = py
 
         if hashcode is not None:
@@ -152,3 +159,44 @@ cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
     return rv
 
 PyExprType.tp_new = <newfunc> PyExpr_new
+
+
+def make_pyexpr(s, str filename, int linenumber, int column, str text, int pos):
+    """
+    Used by lexer to make a pyexpr, rapidly adjusting line number and column.
+
+    `s`
+        The string that is the expression.
+
+    `filename`
+        The name of the file the expression is in.
+
+    `linenumber`
+        The line number the logical line starts at.
+
+    `column`
+        The column the logical line starts at.
+
+    `text`
+        The text of the line.
+
+    `pos`
+        The position in the text where the expression starts.
+    """
+
+    cdef Py_UCS4 c
+    cdef int i = 0
+
+    for c in text:
+        if i >= pos:
+            break
+
+        i += 1
+
+        if c == 10: # NL
+            linenumber += 1
+            column = 0
+        else:
+            column += 1
+
+    return PyExpr(s, filename, linenumber, 3, hash32(s), column)

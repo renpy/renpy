@@ -1112,6 +1112,14 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     if py is None:
         py = 3
 
+    # This determines if the lines are indented. If so, we adjust the
+    # ast to match.
+    indented = source and (source[0] == " ")
+
+    if indented:
+        lineno -= 1
+        source = "if True:\n" + source
+
     flags = file_compiler_flags.get(filename, 0)
 
     if cache:
@@ -1130,6 +1138,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             return rv
 
         bytecode = renpy.game.script.bytecode_oldcache.get(key, None)
+
         if bytecode is not None:
 
             try:
@@ -1192,8 +1201,11 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
                 if not handled:
                     raise
 
-        tree = wrap_node.visit(tree)
+        # If the body is indented, it's wrapped in an "if True:" statement, which needs to be eliminated.
+        if indented:
+            tree.body = tree.body[0].body
 
+        tree = wrap_node.visit(tree)
         tree = MungeNodes(filename).visit(tree)
 
         if mode == "hide":
@@ -1223,7 +1235,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
                 if not handled:
                     raise
-                    
+
         if cache:
             py_compile_cache[key] = rv
 

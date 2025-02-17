@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from typing import Callable
+from typing import Callable,  NamedTuple
 
 import re
 import sys
@@ -31,6 +31,7 @@ import functools
 import renpy
 
 from renpy.lexersupport import match_logical_word
+from renpy.astsupport import make_pyexpr
 
 
 class ParseError(SyntaxError):
@@ -485,9 +486,9 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
     return rv
 
 
-def depth_split(l):
+def split_indent(l):
     """
-    Returns the length of the line's prefix, and the rest of the line.
+    Returns the length of the line's indentation, and the rest of the line.
     """
 
     depth = 0
@@ -506,6 +507,14 @@ def depth_split(l):
 # i, min_depth -> block, new_i
 
 
+class GroupedLine(NamedTuple):
+    # The filename the line is from.
+    filename: str
+    number: int
+    indent: int
+    text: str
+    block: list
+
 def gll_core(lines, i, min_depth):
     """
     Recursively groups lines into blocks.
@@ -520,16 +529,16 @@ def gll_core(lines, i, min_depth):
 
         filename, number, text = lines[i]
 
-        line_depth, rest = depth_split(text)
+        indent, rest = split_indent(text)
 
         # This catches a block exit.
-        if line_depth < min_depth:
+        if indent < min_depth:
             break
 
         if depth is None:
-            depth = line_depth
+            depth = indent
 
-        if depth != line_depth:
+        if depth != indent:
             raise ParseError(
                 "Indentation mismatch.",
                 filename, number, text=text)
@@ -540,17 +549,16 @@ def gll_core(lines, i, min_depth):
         # Try parsing a block associated with this line.
         block, i = gll_core(lines, i, depth + 1)
 
-        rv.append((filename, number, rest, block))
+        rv.append(GroupedLine(filename, number, indent, rest, block))
 
     return rv, i
-
 
 def group_logical_lines(lines):
     """
     This takes as input the list of logical line triples output from
     list_logical_lines, and breaks the lines into blocks. Each block
-    is represented as a list of (filename, line number, line text,
-    block) triples, where block is a block list (which may be empty if
+    is represented as a list of (filename, line number, starting column, line text,
+    block) tuples, where block is a block list (which may be empty if
     no block is associated with this line.)
     """
 
@@ -558,7 +566,7 @@ def group_logical_lines(lines):
 
         filename, number, text = lines[0]
 
-        if depth_split(text)[0] != 0:
+        if split_indent(text)[0] != 0:
             raise ParseError(
                 "Unexpected indentation at start of file.",
                 filename, number, text=text)
@@ -653,7 +661,15 @@ class Lexer(object):
     sub-lexers to lex sub-blocks.
     """
 
+    block: list[GroupedLine]
+
     def __init__(self, block, init=False, init_offset=0, global_label=None, monologue_delimiter="\n\n", subparses=None):
+
+
+        # Older version of Lexer had block being a list of tuples. Those lists can be found in UserStatements,
+        # and so need to be upgraded.
+        if block and len(block[0]) == 4:
+            self.block = [ GroupedLine(filename, line, 0, text, subblock) for filename, line, text, subblock in block ]
 
         # Are we underneath an init block?
         self.init = init
@@ -677,9 +693,13 @@ class Lexer(object):
         self.word_cache_newpos = -1
         self.word_cache = ""
 
+        # The column text starts at.
+        self.column = 0
+
         self.monologue_delimiter = monologue_delimiter
 
         self.subparses = subparses
+
 
     def _unmunge_string(self, s: str) -> str:
         prefix = munge_filename(self.filename)
@@ -703,7 +723,7 @@ class Lexer(object):
             self.eob = True
             return False
 
-        self.filename, self.number, self.text, self.subblock = self.block[self.line]
+        self.filename, self.number, self.column, self.text, self.subblock = self.block[self.line]
         self.pos = 0
         self.word_cache_pos = -1
 
@@ -718,7 +738,7 @@ class Lexer(object):
 
         self.line -= 1
         self.eob = False
-        self.filename, self.number, self.text, self.subblock = self.block[self.line]
+        self.filename, self.number, self.column, self.text, self.subblock = self.block[self.line]
         self.pos = len(self.text)
         self.word_cache_pos = -1
 
@@ -749,8 +769,6 @@ class Lexer(object):
         """
         Advances the current position beyond any contiguous whitespace.
         """
-
-        # print self.text[self.pos].encode('unicode_escape')
 
         self.match_regexp(r"(\s+|\\\n)+")
 
@@ -812,7 +830,7 @@ class Lexer(object):
         """
 
         if (self.line == -1) and self.block:
-            self.filename, self.number, self.text, self.subblock = self.block[0]
+            self.filename, self.number, self.column, self.text, self.subblock = self.block[0]
 
         raise ParseError(
             msg,
@@ -831,7 +849,7 @@ class Lexer(object):
         """
 
         if (self.line == -1) and self.block:
-            self.filename, self.number, self.text, self.subblock = self.block[0]
+            self.filename, self.number, self.column, self.text, self.subblock = self.block[0]
 
         ParseError(
             msg, self.filename,
@@ -1238,9 +1256,10 @@ class Lexer(object):
         if not expr:
             return s
 
+        pos = self.pos - len(s)
         s = self._unmunge_string(s)
 
-        return renpy.ast.PyExpr(s, self.filename, self.number)
+        return make_pyexpr(s, self.filename, self.number, self.column, self.text, pos)
 
     def delimited_python(self, delim, expr=True):
         """
@@ -1417,7 +1436,7 @@ class Lexer(object):
         passed to revert to back the lexer up.
         """
 
-        return self.line, self.filename, self.number, self.text, self.subblock, self.pos, renpy.ast.PyExpr.checkpoint()
+        return self.line, self.filename, self.number, self.text, self.subblock, self.pos, self.column, renpy.ast.PyExpr.checkpoint()
 
     def revert(self, state):
         """
@@ -1425,7 +1444,7 @@ class Lexer(object):
         by a previous checkpoint operation on this lexer.
         """
 
-        self.line, self.filename, self.number, self.text, self.subblock, self.pos, pyexpr_checkpoint = state
+        self.line, self.filename, self.number, self.text, self.subblock, self.pos, self.column, pyexpr_checkpoint = state
 
         renpy.ast.PyExpr.revert(pyexpr_checkpoint)
 
@@ -1489,19 +1508,22 @@ class Lexer(object):
         self.pos = len(self.text)
         return self.text[pos:].strip()
 
-    def _process_python_block(self, block, indent, rv, line_holder):
-        for _fn, ln, text, subblock in block:
+    def _process_python_block(self, block, rv, line_holder):
+
+        for _fn, ln, indent, text, subblock in block:
+
+            prefix = " " * indent
 
             while line_holder.line < ln:
-                rv.append(indent + '\n')
+                rv.append(prefix + '\n')
                 line_holder.line += 1
 
-            linetext = indent + text + '\n'
+            linetext = prefix + text + '\n'
 
             rv.append(linetext)
             line_holder.line += linetext.count('\n')
 
-            self._process_python_block(subblock, indent + '    ', rv, line_holder)
+            self._process_python_block(subblock, rv, line_holder)
 
     def python_block(self):
         """
@@ -1515,7 +1537,7 @@ class Lexer(object):
         line_holder = LineNumberHolder()
         line_holder.line = self.number
 
-        self._process_python_block(self.subblock, '', rv, line_holder)
+        self._process_python_block(self.subblock, rv, line_holder)
         return self._unmunge_string(''.join(rv))
 
     def arguments(self):
