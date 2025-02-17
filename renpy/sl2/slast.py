@@ -81,7 +81,7 @@ def compile_expr(loc, node):
     flags = renpy.python.new_compile_flags | renpy.python.file_compiler_flags.get(filename, 0)
 
     expr = ast.Expression(body=node)
-    renpy.python.fix_locations(expr, 1, 0)
+    renpy.python.LocationFixer(node)
     return compile(expr, filename, "eval", flags, True)
 
 class SLContext(renpy.ui.Addable):

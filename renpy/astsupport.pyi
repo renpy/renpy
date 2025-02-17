@@ -47,8 +47,9 @@ class PyExpr(str):
     linenumber: int
     py: int
     hashcode: int
+    column: int
 
-    def __new__(cls, s: str, filename: str, linenumber: int, py: int = 3, hashcode: int | None = None, /) -> PyExpr:
+    def __new__(cls, s: str, filename: str, linenumber: int, py: int = 3, hashcode: int | None = None, column: int = 0, /) -> PyExpr:
         ...
 
     @staticmethod
