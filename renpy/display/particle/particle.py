@@ -21,15 +21,12 @@
 
 # This code supports sprite and particle animation.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-
-
-from renpy.display.render import render
+import random
+from typing import Callable
 
 import renpy
-import random
+from renpy.display.particle import distribution
+from renpy.display.render import render
 
 
 class SpriteCache(renpy.object.Object):
@@ -450,7 +447,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
         vars(self).update(state)
         self.init()
 
-    def __init__(self, image, count, xspeed, yspeed, border, start, fast, rotate=False):
+    def __init__(self, image, count, xspeed, yspeed, border, start, fast, rotate=False, distribution: Callable[[float, float], float] = distribution.linear):
         self.image = renpy.easy.displayable(image)
         self.count = count
         self.xspeed = xspeed
@@ -459,6 +456,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
         self.start = start
         self.fast = fast
         self.rotate = rotate
+        self.distribution = distribution
         self.init()
 
     def init(self):
@@ -485,7 +483,8 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
                                               st,
                                               random.uniform(0, 100),
                                               fast=True,
-                                              rotate=self.rotate))
+                                              rotate=self.rotate,
+                                              distribution=self.distribution))
             return rv
 
         if particles is None or len(particles) < self.count:
@@ -502,7 +501,8 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
                                          st,
                                          random.uniform(0, 100),
                                          fast=False,
-                                         rotate=self.rotate) ]
+                                         rotate=self.rotate,
+                                         distribution=self.distribution) ]
 
     def predict(self):
         return [ self.image ]
@@ -510,7 +510,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
 
 class SnowBlossomParticle(renpy.rollback.NoRollback):
 
-    def __init__(self, image, xspeed, yspeed, border, start, offset, fast, rotate):
+    def __init__(self, image, xspeed, yspeed, border, start, offset, fast, rotate, distribution: Callable[[float, float], float]):
 
         # safety.
         if yspeed == 0:
@@ -543,11 +543,11 @@ class SnowBlossomParticle(renpy.rollback.NoRollback):
         x0 = min(-xdist, 0)
         x1 = max(sw + xdist, sw)
 
-        self.xstart = random.uniform(x0, x1)
+        self.xstart = distribution(x0, x1)
 
         if fast:
-            self.ystart = random.uniform(-border, sh + border)
-            self.xstart = random.uniform(0, sw)
+            self.ystart = distribution(-border, sh + border)
+            self.xstart = distribution(0, sw)
 
     def update(self, st):
         to = st - self.start
@@ -579,7 +579,8 @@ def SnowBlossom(d,
                 yspeed=(100, 200),
                 start=0,
                 fast=False,
-                horizontal=False):
+                horizontal=False,
+                distribution: Callable[[float, float], float] = distribution.linear):
     """
     :doc: sprites_extra
 
@@ -614,7 +615,19 @@ def SnowBlossom(d,
     `horizontal`
         If true, particles appear on the left or right side of the screen,
         rather than the top or bottom.
-        """
+    
+    `distribution`
+        A function which determines the starting position of a particle.
+
+        This function must take two floats as arguments and return a float.
+
+        The following distributions are built-in: 
+        - `renpy.display.particle.distribution.linear`
+        - `renpy.display.particle.distribution.gaussian`
+        - `renpy.display.particle.distribution.arcsine`
+        
+        Default is `renpy.display.particle.distribution.linear`.
+    """
 
     # If going horizontal, swap the xspeed and the yspeed.
     if horizontal:
@@ -627,4 +640,5 @@ def SnowBlossom(d,
                                         yspeed=yspeed,
                                         start=start,
                                         fast=fast,
-                                        rotate=horizontal))
+                                        rotate=horizontal,
+                                        distribution=distribution))
