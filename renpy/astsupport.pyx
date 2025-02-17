@@ -138,6 +138,9 @@ cdef object PyExpr_new(type cls, PyObject *args, PyObject *kwargs):
 
     cdef PyExpr rv = old_pyexpr_newfunc(cls, <PyObject *> new_args, kwargs)
 
+    if py != 3 and py != 2:
+        raise ValueError("PyExpr was given an invalid value for its py argument. Did you put the column in the py argument?")
+
     if <PyObject *> rv:
 
         rv.filename = filename
