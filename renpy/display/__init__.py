@@ -93,7 +93,7 @@ if typing.TYPE_CHECKING:
     from . import module as module
     from . import motion as motion
     from . import movetransition as movetransition
-    from . import particle.particle as particle
+    from . import particle as particle
     from . import pgrender as pgrender
     from . import predict as predict
     from . import presplash as presplash

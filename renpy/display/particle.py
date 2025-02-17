@@ -21,17 +21,52 @@
 
 # This code supports sprite and particle animation.
 
+import math
 import random
-from typing import Callable
+
+from typing import Callable, Union
 
 import renpy
-from renpy.display.particle import distribution
 from renpy.display.render import render
+
+
+# Distribution functions.
+DISTRIBUTION_FUNC_T = Callable[[float, float], float]
+
+def _interpolate(a: float, b: float, step: float) -> float:
+    return a + (b - a) * step
+
+
+def linear(a: float, b: float) -> float:
+    """Linear distribution: Value has an equal chance of being anywhere between a and b."""
+    return random.uniform(a, b)
+
+
+def gaussian(a: float, b: float) -> float:
+    """Gaussian distribution: Value is more likely to be near the mean and less likely to be near the extremes."""
+    mu = _interpolate(a, b, 0.5)
+    sigma = (b - a) / 6
+
+    return random.gauss(mu, sigma)
+
+
+def arcsine(a: float, b: float) -> float:
+    """Arcsine distribution: Value is more likely to be near the extremes and less likely to be near the mean."""
+    u = random.random()
+    x = math.sin((math.pi / 2) * u) ** 2
+
+    return _interpolate(a, b, x)
+
+distribution_func_map = {
+    "linear": linear,
+    "gaussian": gaussian,
+    "arcsine": arcsine,
+}
 
 
 class SpriteCache(renpy.object.Object):
     """
-    This stores information about a displayble, including the identity
+    This stores information about a displayable, including the identity
     of the displayable, and when it was first displayed. It is also
     responsible for caching the displayable surface, so it doesn't
     need to be re-rendered.
@@ -447,7 +482,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
         vars(self).update(state)
         self.init()
 
-    def __init__(self, image, count, xspeed, yspeed, border, start, fast, rotate=False, distribution: Callable[[float, float], float] = distribution.linear):
+    def __init__(self, image, count, xspeed, yspeed, border, start, fast, rotate=False, distribution: Union[DISTRIBUTION_FUNC_T, str] = "linear"):
         self.image = renpy.easy.displayable(image)
         self.count = count
         self.xspeed = xspeed
@@ -456,7 +491,11 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
         self.start = start
         self.fast = fast
         self.rotate = rotate
+
+        if isinstance(distribution, str):
+            distribution = distribution_func_map[distribution]
         self.distribution = distribution
+        
         self.init()
 
     def init(self):
@@ -510,7 +549,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
 
 class SnowBlossomParticle(renpy.rollback.NoRollback):
 
-    def __init__(self, image, xspeed, yspeed, border, start, offset, fast, rotate, distribution: Callable[[float, float], float]):
+    def __init__(self, image, xspeed, yspeed, border, start, offset, fast, rotate, distribution: DISTRIBUTION_FUNC_T = linear):
 
         # safety.
         if yspeed == 0:
@@ -580,7 +619,7 @@ def SnowBlossom(d,
                 start=0,
                 fast=False,
                 horizontal=False,
-                distribution: Callable[[float, float], float] = distribution.linear):
+                distribution: Union[DISTRIBUTION_FUNC_T, str] = "linear"):
     """
     :doc: sprites_extra
 
@@ -617,16 +656,16 @@ def SnowBlossom(d,
         rather than the top or bottom.
     
     `distribution`
-        A function which determines the starting position of a particle.
+        A function or the name of a built-in distribution function to determine the starting position of a particle.
 
-        This function must take two floats as arguments and return a float.
+        If a string, must be one of the following:
+        - `linear`: Value has an equal chance of being anywhere along an axis.
+        - `gaussian`: Value is more likely to be near the middle and less likely to be near the edges.
+        - `arcsine`: Value is more likely to be near the edges and less likely to be near the middle.
 
-        The following distributions are built-in: 
-        - `renpy.display.particle.distribution.linear`
-        - `renpy.display.particle.distribution.gaussian`
-        - `renpy.display.particle.distribution.arcsine`
-        
-        Default is `renpy.display.particle.distribution.linear`.
+        If a function, it must take two floats as arguments and return a float.
+
+        Default is `linear`.
     """
 
     # If going horizontal, swap the xspeed and the yspeed.
