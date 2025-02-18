@@ -21,20 +21,52 @@
 
 # This code supports sprite and particle animation.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+import math
+import random
 
-
-
-from renpy.display.render import render
+from typing import Callable, Union
 
 import renpy
-import random
+from renpy.display.render import render
+
+
+# Distribution functions.
+DISTRIBUTION_FUNC_T = Callable[[float, float], float]
+
+def _interpolate(a: float, b: float, step: float) -> float:
+    return a + (b - a) * step
+
+
+def linear(a: float, b: float) -> float:
+    """Linear distribution: Value has an equal chance of being anywhere between a and b."""
+    return random.uniform(a, b)
+
+
+def gaussian(a: float, b: float) -> float:
+    """Gaussian distribution: Value is more likely to be near the mean and less likely to be near the extremes."""
+    mu = _interpolate(a, b, 0.5)
+    sigma = (b - a) / 6
+
+    return random.gauss(mu, sigma)
+
+
+def arcsine(a: float, b: float) -> float:
+    """Arcsine distribution: Value is more likely to be near the extremes and less likely to be near the mean."""
+    u = random.random()
+    x = math.sin((math.pi / 2) * u) ** 2
+
+    return _interpolate(a, b, x)
+
+distribution_func_map = {
+    "linear": linear,
+    "gaussian": gaussian,
+    "arcsine": arcsine,
+}
 
 
 class SpriteCache(renpy.object.Object):
     """
-    This stores information about a displayble, including the identity
+    This stores information about a displayable, including the identity
     of the displayable, and when it was first displayed. It is also
     responsible for caching the displayable surface, so it doesn't
     need to be re-rendered.
@@ -450,7 +482,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
         vars(self).update(state)
         self.init()
 
-    def __init__(self, image, count, xspeed, yspeed, border, start, fast, rotate=False):
+    def __init__(self, image, count, xspeed, yspeed, border, start, fast, rotate=False, distribution: Union[DISTRIBUTION_FUNC_T, str] = "linear"):
         self.image = renpy.easy.displayable(image)
         self.count = count
         self.xspeed = xspeed
@@ -459,6 +491,11 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
         self.start = start
         self.fast = fast
         self.rotate = rotate
+
+        if isinstance(distribution, str):
+            distribution = distribution_func_map[distribution]
+        self.distribution = distribution
+        
         self.init()
 
     def init(self):
@@ -485,7 +522,8 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
                                               st,
                                               random.uniform(0, 100),
                                               fast=True,
-                                              rotate=self.rotate))
+                                              rotate=self.rotate,
+                                              distribution=self.distribution))
             return rv
 
         if particles is None or len(particles) < self.count:
@@ -502,7 +540,8 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
                                          st,
                                          random.uniform(0, 100),
                                          fast=False,
-                                         rotate=self.rotate) ]
+                                         rotate=self.rotate,
+                                         distribution=self.distribution) ]
 
     def predict(self):
         return [ self.image ]
@@ -510,7 +549,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
 
 class SnowBlossomParticle(renpy.rollback.NoRollback):
 
-    def __init__(self, image, xspeed, yspeed, border, start, offset, fast, rotate):
+    def __init__(self, image, xspeed, yspeed, border, start, offset, fast, rotate, distribution: DISTRIBUTION_FUNC_T = linear):
 
         # safety.
         if yspeed == 0:
@@ -543,11 +582,11 @@ class SnowBlossomParticle(renpy.rollback.NoRollback):
         x0 = min(-xdist, 0)
         x1 = max(sw + xdist, sw)
 
-        self.xstart = random.uniform(x0, x1)
+        self.xstart = distribution(x0, x1)
 
         if fast:
-            self.ystart = random.uniform(-border, sh + border)
-            self.xstart = random.uniform(0, sw)
+            self.ystart = distribution(-border, sh + border)
+            self.xstart = distribution(0, sw)
 
     def update(self, st):
         to = st - self.start
@@ -579,7 +618,8 @@ def SnowBlossom(d,
                 yspeed=(100, 200),
                 start=0,
                 fast=False,
-                horizontal=False):
+                horizontal=False,
+                distribution: Union[DISTRIBUTION_FUNC_T, str] = "linear"):
     """
     :doc: sprites_extra
 
@@ -614,7 +654,19 @@ def SnowBlossom(d,
     `horizontal`
         If true, particles appear on the left or right side of the screen,
         rather than the top or bottom.
-        """
+    
+    `distribution`
+        A function or the name of a built-in distribution function to determine the starting position of a particle.
+
+        If a string, must be one of the following:
+        - `linear`: Value has an equal chance of being anywhere along an axis.
+        - `gaussian`: Value is more likely to be near the middle and less likely to be near the edges.
+        - `arcsine`: Value is more likely to be near the edges and less likely to be near the middle.
+
+        If a function, it must take two floats as arguments and return a float.
+
+        Default is `linear`.
+    """
 
     # If going horizontal, swap the xspeed and the yspeed.
     if horizontal:
@@ -627,4 +679,5 @@ def SnowBlossom(d,
                                         yspeed=yspeed,
                                         start=start,
                                         fast=fast,
-                                        rotate=horizontal))
+                                        rotate=horizontal,
+                                        distribution=distribution))
