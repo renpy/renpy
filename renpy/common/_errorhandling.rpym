@@ -527,7 +527,7 @@ init python:
             rv.append(re.sub(
                 r'(File "(.*)", line (\d+))',
                 r'{a=edit:\3:\2}\1{/a}',
-                lines.pop(0)))
+                lines.pop(0).replace("{", "{{")))
 
             error_rv = []
             error_len = 0
@@ -562,7 +562,7 @@ init python:
                     error_rv[-1] = line
                     continue
 
-                error_rv.append(line)
+                error_rv.append(line.replace("{", "{{"))
 
             rv_len += error_len
             if rv_len > 1048576:
