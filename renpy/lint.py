@@ -415,7 +415,7 @@ def check_show(node, precise):
     image_exists(name, expression, tag, precise=precise)
 
     for i in at_list:
-        try_eval("the at list of a scene or show statment", i, "Perhaps you forgot to define or misspelled a transform.")
+        try_eval("the at list of a scene or show statement", i, "Perhaps you forgot to define or misspelled a transform.")
 
 
 def precheck_show(node):
