@@ -719,7 +719,7 @@ renpyAudio.replace_audio_filter = (channel, afid, primary) => {
     let c = get_channel(channel);
     let filter = renpyAudio.getFilter(afid);
 
-    if (c.playing && primary) {
+    if (c.playing && c.playing.source && primary) {
         renpyAudio.disconnectFilter(c.playing.filter, c.playing.source, c.destination);
         c.playing.filter = filter;
         renpyAudio.connectFilter(filter, c.playing.source, c.destination);
