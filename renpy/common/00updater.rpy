@@ -770,8 +770,8 @@ init -1500 python in updater:
                 persistent._update_version[self.url] = None
                 return
 
-            pretty_version = build.version or build.directory_name
-            persistent._update_version[self.url] = pretty_version
+            self.pretty_version = build.version or build.directory_name
+            persistent._update_version[self.url] = self.pretty_version
 
             if self.check_only:
                 renpy.restart_interaction()
