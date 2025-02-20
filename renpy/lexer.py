@@ -668,8 +668,8 @@ class Lexer(object):
 
         # Older version of Lexer had block being a list of tuples. Those lists can be found in UserStatements,
         # and so need to be upgraded.
-        if block and len(block[0]) == 4:
-            self.block = [ GroupedLine(filename, line, 0, text, subblock) for filename, line, text, subblock in block ]
+        if block and not isinstance(block[0], GroupedLine):
+            block = [ GroupedLine(filename, line, 0, text, subblock) for filename, line, text, subblock in block ]
 
         # Are we underneath an init block?
         self.init = init
