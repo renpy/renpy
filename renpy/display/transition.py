@@ -318,6 +318,7 @@ class Pixellate(Transition):
         rv.add_shader("renpy.texture")
         rv.add_property("texture_scaling", "nearest_mipmap_nearest")
         rv.add_property("anisotropic", False)
+        rv.add_property("mipmap", True)
         rv.add_uniform("u_lod_bias", step + 1)
 
         renpy.display.render.redraw(self, 0)
