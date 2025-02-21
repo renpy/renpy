@@ -1343,7 +1343,7 @@ cdef class GL2DrawingContext:
 
         return rv
 
-    cdef Matrix correct_pixel_perfect(self, Matrix transform):
+    cdef Matrix correct_pixel_perfect(self, Matrix projectionview, Matrix model_matrix):
         """
         Corrects `transform` so that the (0, 0) pixel is aligned with a
         drawable pixel.
@@ -1351,10 +1351,10 @@ cdef class GL2DrawingContext:
 
         cdef float halfwidth
         cdef float halfheight
+        cdef Matrix transform = projectionview * model_matrix
 
-        # This is the equivalent of projecting (0, 0, 0, 1), and getting x and y.
-        cdef float sx = transform.xdw
-        cdef float sy = transform.ydw
+        cdef float sx
+        cdef float sy
 
         halfwidth = self.width / 2.0
         halfheight = self.height / 2.0
@@ -1370,7 +1370,7 @@ cdef class GL2DrawingContext:
         cdef float xoff = round(sx) - sx
         cdef float yoff = round(sy) - sy
 
-        return Matrix.coffset(xoff / halfwidth, yoff / halfheight, 0) * transform
+        return Matrix.coffset(xoff / halfwidth, yoff / halfheight, 0)
 
     def draw_model(self, model, Matrix model_matrix, Polygon clip_polygon, tuple shaders, dict uniforms, dict properties):
 
@@ -1477,7 +1477,11 @@ cdef class GL2DrawingContext:
         has_reverse = (r.reverse is not None) and (r.reverse is not IDENTITY)
 
         if r.properties and r.properties.get("pixel_perfect", False) and properties["pixel_perfect"] is None:
-            model_matrix = self.correct_pixel_perfect(model_matrix)
+            uniforms = dict(uniforms)
+
+            offset_matrix  = self.correct_pixel_perfect(uniforms["u_projectionview"], model_matrix)
+            uniforms["u_view"] = offset_matrix * uniforms["u_view"]
+            uniforms["u_projectionview"] = offset_matrix * uniforms["u_projectionview"]
 
         if has_reverse or r.properties:
             properties = self.merge_properties(properties, r.properties)
