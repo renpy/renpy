@@ -1306,12 +1306,16 @@ class ADVCharacter(object):
     def __repr__(self):
         return "<Character: {!r}>".format(self.name)
 
-    def empty_window(self):
-        if renpy.config.fast_empty_window and (self.name is None) and not (self.what_prefix or self.what_suffix):
+    def empty_window(self, multiple=None):
+        if renpy.config.fast_empty_window and (self.name is None) and not (self.what_prefix or self.what_suffix) and (multiple is None):
             self.do_show(None, "")
             return
 
-        self("", interact=False, _call_done=False)
+        if multiple:
+            for i in range(multiple):
+                self("", interact=False, _call_done=False, multiple=multiple)
+        else:
+            self("", interact=False, _call_done=False)
 
     def has_character_arguments(self, **kwargs):
         """
