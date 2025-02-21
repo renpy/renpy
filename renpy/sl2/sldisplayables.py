@@ -147,6 +147,8 @@ Positional("cols")
 Positional("rows")
 Keyword("transpose")
 Keyword("allow_underfull")
+Keyword("right_to_left")
+Keyword("bottom_to_top")
 add(grid_properties)
 
 DisplayableParser("side", renpy.display.layout.Side, "side", many)
