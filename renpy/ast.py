@@ -235,6 +235,8 @@ class Scry(object):
     # extend.
     extend_text = None # type: str|None|renpy.object.Sentinel
 
+    multiple = None
+
     # By default, all attributes are None.
     def __getattr__(self, name):
         return None
@@ -660,6 +662,11 @@ class Say(Node):
         who = eval_who(self.who, self.who_fast)
         rv.who = who
         rv.say = True
+
+        try:
+            rv.multiple = self.arguments.evaluate()[1]["multiple"]
+        except Exception:
+            pass
 
         if self.interact:
             renpy.exports.scry_say(who, self.what, rv)

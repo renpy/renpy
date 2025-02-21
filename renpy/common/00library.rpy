@@ -169,9 +169,9 @@ init -1700 python:
         if isinstance(who, NVLCharacter):
             nvl_show_core()
         elif not isinstance(store.narrator, NVLCharacter):
-            store.narrator.empty_window()
+            store.narrator.empty_window(multiple=scry.multiple)
         else:
-            store._narrator.empty_window()
+            store._narrator.empty_window(multiple=scry.multiple)
 
     config.empty_window = _default_empty_window
 
