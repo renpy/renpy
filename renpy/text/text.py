@@ -1023,7 +1023,10 @@ class Layout(object):
 
             self.textures[key] = tex
 
-            if self.textshaders:
+        if self.textshaders:
+            for o, color, xo, yo in self.outlines:
+                tex = self.textures[(o, color)]
+
                 for ts in self.textshaders:
                     mr = self.create_mesh_displayable(o, tex, lines, xo, yo, depth, max_depth, ts)
                     self.mesh_displayables.append((o, xo, yo, mr))
