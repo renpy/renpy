@@ -468,6 +468,9 @@ init -1500 python hide:
             if not getattr(renpy.context(), "_menu", False):
                 store._last_voice_play = None
 
+        if config.skipping:
+            renpy.sound.stop(channel="voice")
+
         _voice.play = None
         _voice.sustain = False
         _voice.tag = None
