@@ -1783,7 +1783,7 @@ class Layout(object):
             if line is not last_line:
                 bottom = min(outline + line.y + line.height + self.line_overlap_split, th)
             else:
-                bottom = min(2 * outline + line.y + line.height, th)
+                bottom = th
 
             if line.glyphs:
                 first_glyph = line.glyphs[0]
@@ -1795,7 +1795,7 @@ class Layout(object):
             left = 0
 
             if first_glyph:
-                right = first_glyph.x + self.add_left
+                right = max(first_glyph.x - self.add_left, 0)
             else:
                 right = tw
 
@@ -1831,7 +1831,7 @@ class Layout(object):
 
                 # The x-coordinate of the right edge of the glyph.
                 if g is last_glyph:
-                    right = g.x + g.advance + outline * 2 + self.add_left + self.add_right
+                    right = g.x + g.advance + outline * 2 + self.add_left + self.add_right + 1
                 else:
                     right = g.x + g.advance + outline + self.add_left
 
