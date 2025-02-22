@@ -15,11 +15,11 @@ translate tchinese strings:
 
     # screens.rpy:93
     old "## The say screen is used to display dialogue to the player. It takes two parameters, who and what, which are the name of the speaking character and the text to be displayed, respectively. (The who parameter can be None if no name is given.)"
-    new "## Say 畫面用於向玩家顯示對話。它有兩個參數 who 和 what，分別是說話角色的名字和要顯示的文本。（who 參數可以為 None 如果沒有給出名字。）"
+    new "## Say 畫面用於向玩家顯示對話。它有兩個參數 who 和 what，分別是說話角色的名字和要顯示的文字。（who 參數可以為 None 如果沒有給出名字。）"
 
     # screens.rpy:98
     old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
-    new "## 此畫面必須建立 id 為 \"what\" 的可顯示文本，因為 Ren'Py 使用它來管理文字顯示。它還可以建立 id \"who\" 和 id \"window\" 的可顯示文字應用程式樣式屬性。"
+    new "## 此畫面必須建立 id 為 \"what\" 的可顯示文字，因為 Ren'Py 使用它來管理文字顯示。它還可以建立 id \"who\" 和 id \"window\" 的可顯示文字應用程式樣式屬性。"
 
     # screens.rpy:169
     old "## Input screen"
@@ -31,7 +31,7 @@ translate tchinese strings:
 
     # screens.rpy:174
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
-    new "## 此畫面必須建立一個可顯示的輸入，通過 id \"input\" 以接受各種輸入參數。"
+    new "## 此畫面必須建立一個可顯示的輸入，透過 id \"input\" 以接受各種輸入參數。"
 
     # screens.rpy:205
     old "## Choice screen"
@@ -39,7 +39,7 @@ translate tchinese strings:
 
     # screens.rpy:207
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    new "## 此畫面用於顯示選單語句所呈現的遊戲內選項。第一個參數，項目，是一個物件列表，每個物件都有標題和操作字段。"
+    new "## 此畫面用於顯示選單語句所呈現的遊戲內選項。第一個參數，項目，是一個物件列表，每個物件都有標題和操作欄位。"
 
     # screens.rpy:221
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
@@ -51,7 +51,7 @@ translate tchinese strings:
 
     # screens.rpy:246
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## 快捷選單顯示在遊戲中，以便輕鬆訪問遊戲外選單。"
+    new "## 快捷選單顯示在遊戲中，以便輕鬆存取遊戲外選單。"
 
     # screens.rpy:261
     old "Back"
@@ -91,11 +91,11 @@ translate tchinese strings:
 
     # screens.rpy:291
     old "## Navigation screen"
-    new "## 導航畫面"
+    new "## 導覽畫面"
 
     # screens.rpy:293
     old "## This screen is included in the main and game menus, and provides navigation to other menus, and to start the game."
-    new "## 此畫面包含在主選單和遊戲選單中，並提供其他選單的導航以及開始遊戲的導航。"
+    new "## 此畫面包含在主選單和遊戲選單中，並提供其他選單的導覽以及開始遊戲的導覽。"
 
     # screens.rpy:308
     old "Start"
@@ -103,7 +103,7 @@ translate tchinese strings:
 
     # screens.rpy:316
     old "Load"
-    new "加載"
+    new "載入"
 
     # screens.rpy:318
     old "Preferences"
@@ -131,7 +131,7 @@ translate tchinese strings:
 
     # screens.rpy:335
     old "## The quit button is banned on iOS and unnecessary on Android."
-    new "## 退出按鈕在 iOS 上被禁止，在 Android 上則不必要。"
+    new "## 結束按鈕在 iOS 上被禁止，在 Android 上則不必要。"
 
     # screens.rpy:336
     old "Quit"
@@ -147,7 +147,7 @@ translate tchinese strings:
 
     # screens.rpy:369
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
-    new "## use 語句在該畫面中包含另一個畫面。主選單的實際內容在導航畫面中。"
+    new "## use 語句在該畫面中包含另一個畫面。主選單的實際內容在導覽畫面中。"
 
     # screens.rpy:413
     old "## Game Menu screen"
@@ -155,11 +155,11 @@ translate tchinese strings:
 
     # screens.rpy:415
     old "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
-    new "## 這列出了遊戲選單畫面的基本公共結構。它透過畫面標題進行調用，並顯示背景、標題和導航。"
+    new "## 這列出了遊戲選單畫面的基本公共結構。它透過畫面標題進行呼叫，並顯示背景、標題和導覽。"
 
     # screens.rpy:418
     old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## 滾動參數可以是None，或者是 \"viewport\" 與 \"vpgrid\" 的其中之一。此畫面旨在與一個或多個子畫面一起使用，這些子畫面被嵌入（放置）在其中。"
+    new "## 滾動參數可以是 None，或者是 \"viewport\" 與 \"vpgrid\" 的其中之一。此畫面是要與一個或多個子畫面一起使用，這些子畫面被嵌入（放置）在其中。"
 
     # screens.rpy:476
     old "Return"
@@ -203,7 +203,7 @@ translate tchinese strings:
 
     # screens.rpy:584
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
-    new "## 這些畫面負責讓玩家保存遊戲並再次載入。由於它們幾乎共享所有共同點，因此兩者都是透過第三個畫面 file_slots 實現的。"
+    new "## 這些畫面負責讓玩家儲存遊戲並再次載入。由於它們幾乎共享所有共同點，因此兩者都是透過第三個畫面 file_slots 實現的。"
 
     # screens.rpy:607
     old "Page {}"
@@ -235,7 +235,7 @@ translate tchinese strings:
 
     # screens.rpy:657
     old "## Buttons to access other pages."
-    new "## 訪問其他頁面的按鈕。"
+    new "## 存取其他頁面的按鈕。"
 
     # screens.rpy:666
     old "<"
@@ -259,7 +259,7 @@ translate tchinese strings:
 
     # screens.rpy:713
     old "## The preferences screen allows the player to configure the game to better suit themselves."
-    new "## 首選項畫面允許玩家配置遊戲以更好地適合自己。"
+    new "## 首選項畫面允許玩家設定遊戲以更好地適合自己。"
 
     # screens.rpy:738
     old "Display"
@@ -279,7 +279,7 @@ translate tchinese strings:
 
     # screens.rpy:745
     old "Disable"
-    new "禁用"
+    new "停用"
 
     # screens.rpy:746
     old "Left"
@@ -291,7 +291,7 @@ translate tchinese strings:
 
     # screens.rpy:752
     old "Unseen Text"
-    new "未讀文本"
+    new "未讀文字"
 
     # screens.rpy:753
     old "After Choices"
@@ -371,11 +371,11 @@ translate tchinese strings:
 
     # screens.rpy:987
     old "Mouse"
-    new "鼠標"
+    new "滑鼠"
 
     # screens.rpy:990
     old "Gamepad"
-    new "游戲手柄"
+    new "遊戲手柄"
 
     # screens.rpy:1003
     old "Enter"
@@ -399,15 +399,15 @@ translate tchinese strings:
 
     # screens.rpy:1012
     old "Navigate the interface."
-    new "導航介面。"
+    new "導覽介面。"
 
     # screens.rpy:1015
     old "Escape"
-    new "退出鍵"
+    new "結束鍵"
 
     # screens.rpy:1016
     old "Accesses the game menu."
-    new "訪問遊戲選單。"
+    new "存取遊戲選單。"
 
     # screens.rpy:1019
     old "Ctrl"
@@ -503,7 +503,7 @@ translate tchinese strings:
 
     # screens.rpy:1090
     old "Access the game menu."
-    new "訪問遊戲選單。"
+    new "存取遊戲選單。"
 
     # screens.rpy:1093
     old "Y/Top Button"
@@ -539,7 +539,7 @@ translate tchinese strings:
 
     # screens.rpy:1164
     old "## Right-click and escape answer \"no\"."
-    new "## 右鍵單擊並退出回答 \"no\"."
+    new "## 右鍵點選並結束回答 \"no\"."
 
     # screens.rpy:1191
     old "## Skip indicator screen"
@@ -563,7 +563,7 @@ translate tchinese strings:
 
     # screens.rpy:1249
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
-    new "## 通知畫面用於向玩家顯示訊息。 （例如，當遊戲快速保存或截取螢幕截圖時。）"
+    new "## 通知畫面用於向玩家顯示訊息。 （例如，當遊戲快速儲存或截取螢幕截圖時。）"
 
     # screens.rpy:1286
     old "## NVL screen"
@@ -591,7 +591,7 @@ translate tchinese strings:
 
     # screens.rpy:1413
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## 由於可能不存在滑鼠，我們將快捷選單替換為使用更少、更大、更容易觸摸的按鈕的版本。"
+    new "## 由於可能不存在滑鼠，我們將快捷選單替換為使用更少、更大、更容易觸控的按鈕的版本。"
 
     # screens.rpy:1429
     old "Menu"
@@ -599,7 +599,7 @@ translate tchinese strings:
 
     # gui/game/screens.rpy:114
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
-    new "## 如果有側面圖像，請將其顯示在文字上方。不要顯示在手機版本上 - 沒有空間。"
+    new "## 如果有側面影像，請將其顯示在文字上方。不要顯示在手機版本上 - 沒有空間。"
 
     # gui/game/screens.rpy:120
     old "## Make the namebox available for styling through the Character object."
@@ -607,7 +607,7 @@ translate tchinese strings:
 
     # gui/game/screens.rpy:241
     old "## Ensure this appears on top of other screens."
-    new "## 確保它出現在其他螢幕的頂部。"
+    new "## 確保它出現在其他螢幕的頂端。"
 
     # gui/game/screens.rpy:280
     old "## Main and Game Menu Screens"
@@ -615,7 +615,7 @@ translate tchinese strings:
 
     # gui/game/screens.rpy:329
     old "## The quit button is banned on iOS and unnecessary on Android and Web."
-    new "## 退出按鈕在 iOS 上被禁止，在 Android 和 Web 上則不必要。"
+    new "## 結束按鈕在 iOS 上被禁止，在 Android 和 Web 上則不必要。"
 
     # gui/game/screens.rpy:352
     old "## This ensures that any other menu screen is replaced."
@@ -627,11 +627,11 @@ translate tchinese strings:
 
     # gui/game/screens.rpy:429
     old "## Reserve space for the navigation section."
-    new "## 為導航部分保留空間。"
+    new "## 為導覽部分保留空間。"
 
     # gui/game/screens.rpy:612
     old "## The page name, which can be edited by clicking on a button."
-    new "## 頁面名稱，可以透過點擊按鈕進行編輯。"
+    new "## 頁面名稱，可以透過點選按鈕進行編輯。"
 
     # gui/game/screens.rpy:672
     old "## range(1, 10) gives the numbers from 1 to 9."
@@ -663,7 +663,7 @@ translate tchinese strings:
 
     # gui/game/screens.rpy:1251
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
-    new "## 我們必須使用帶有黑色右指小三角形字形的字體。"
+    new "## 我們必須使用帶有黑色右指小三角形字形的字型。"
 
     # gui/game/screens.rpy:1323
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
@@ -675,7 +675,7 @@ translate tchinese strings:
 
     # gui/game/screens.rpy:1415
     old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
-    new "## 氣泡螢幕用於在使用對話氣泡時向玩家顯示對話。氣泡螢幕採用與 say 螢幕相同的參數，必須創建一個 id 為 \"what\" 的可顯示內容，並且可以創建可顯示內容帶有 \"namebox\", \"who\", 和 \"window\" ID。"
+    new "## 氣泡螢幕用於在使用對話氣泡時向玩家顯示對話。氣泡螢幕採用與 say 螢幕相同的參數，必須建立一個 id 為 \"what\" 的可顯示內容，並且可以建立可顯示內容帶有 \"namebox\", \"who\", 和 \"window\" ID。"
 
     # gui/game/screens.rpy:96
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
