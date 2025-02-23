@@ -8,6 +8,18 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-8.3.4:
 .. _renpy-7.8.4:
 
+8.3.5 / 7.8.5
+==============
+
+Changes
+-------
+
+Ren'Py will now create pseudo-glyphs for the all textshaders, not just textshaders applied to text with outlines.
+
+
+.. _renpy-8.3.5:
+.. _renpy-7.8.5:
+
 8.3.4 / 7.8.4
 =============
 

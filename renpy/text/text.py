@@ -1803,21 +1803,20 @@ class Layout(object):
             # These pseudo-glyphs are used to make sure that outlines of lines above and below
             # are displayed.
 
-            if outline:
-                if right > 0 and (ts == first_shader):
+            if right > 0 and (ts == first_shader):
 
-                    cx = 0 + right / 2
-                    cy = outline + line.baseline
+                cx = 0 + right / 2
+                cy = outline + line.baseline
 
-                    mesh.add_glyph(
-                        tw, th,
-                        cx, cy,
-                        last_index,
-                        left, top, right, bottom,
-                        last_time, last_time,
-                        line.baseline, line.height - line.baseline,
-                        self.add_left, self.add_top,
-                    )
+                mesh.add_glyph(
+                    tw, th,
+                    cx, cy,
+                    last_index,
+                    left, top, right, bottom,
+                    last_time, last_time,
+                    line.baseline, line.height - line.baseline,
+                    self.add_left, self.add_top,
+                )
 
             # Generate the actual glyphs.
 
@@ -1831,7 +1830,7 @@ class Layout(object):
 
                 # The x-coordinate of the right edge of the glyph.
                 if g is last_glyph:
-                    right = g.x + g.advance + outline * 2 + self.add_left + self.add_right + 1
+                    right = g.x + g.advance + outline * 2 + self.add_left + self.add_right
                 else:
                     right = g.x + g.advance + outline + self.add_left
 
@@ -1874,25 +1873,23 @@ class Layout(object):
                 last_index = g.index
 
             # Handle the empty space to the right of the last glyph.
-            if outline:
+            if right < tw and (ts == first_shader):
 
-                if right < tw and (ts == first_shader):
+                left = right
+                right = tw
 
-                    left = right
-                    right = tw
+                cx = left + right / 2
+                cy = outline + line.baseline
 
-                    cx = left + right / 2
-                    cy = outline + line.baseline
-
-                    mesh.add_glyph(
-                        tw, th,
-                        cx, cy,
-                        last_index,
-                        left, top, right, bottom,
-                        last_time, last_time,
-                        line.baseline, line.height - line.baseline,
-                        self.add_left, self.add_top,
-                    )
+                mesh.add_glyph(
+                    tw, th,
+                    cx, cy,
+                    last_index,
+                    left, top, right, bottom,
+                    last_time, last_time,
+                    line.baseline, line.height - line.baseline,
+                    self.add_left, self.add_top,
+                )
 
             top = bottom
 
