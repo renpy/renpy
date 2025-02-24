@@ -268,11 +268,16 @@ def list_logical_lines(
 
     original_filename = filename
 
+    filename = elide_filename(filename)
+    prefix = munge_filename(filename)
+
+    munge_string = get_string_munger(prefix)
+
     # Convert windows and mac newlines to \n, so we don't have to worry about it.
     if filedata:
         data_io = io.StringIO(filedata, None)
     else:
-        data_io = open(filename, "r")
+        data_io = open(original_filename, "r", encoding="utf-8")
 
     with data_io:
         data = data_io.read()
@@ -280,19 +285,8 @@ def list_logical_lines(
     if filename.endswith("_ren.py"):
         data = ren_py_to_rpy(data, filename)
 
-    filename = elide_filename(filename)
-    prefix = munge_filename(filename)
-
-    munge_string = get_string_munger(prefix)
-
-    # Add some newlines, to fix lousy editors.
+    # Add couple empty lines, so we can safely check for pos + 2 for triple-string.
     data += "\n\n"
-
-    # Result tuples of (string, start line number, start pos, end pos).
-    rv: list[tuple[str, int, int, int]] = []
-
-    # The line number in the physical file.
-    number = linenumber
 
     # The current position we're looking at in the buffer.
     pos = 0
@@ -300,6 +294,12 @@ def list_logical_lines(
     # Skip the BOM, if any.
     if data[0] == u'\ufeff':
         pos += 1
+
+    # Result tuples of (string, start line number, start pos, end pos).
+    rv: list[tuple[str, int, int, int]] = []
+
+    # The line number in the physical file.
+    number = linenumber
 
     len_data = len(data)
 
