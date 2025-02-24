@@ -64,3 +64,26 @@ class PyExpr(str):
         """
         Reverts the pyexpr list to the state it was in when checkpoint was called.
         """
+
+def make_pyexpr(s: str, filename: str, linenumber: int, column: int, text: str, pos: int) -> PyExpr:
+    """
+    Used by lexer to make a pyexpr, rapidly adjusting line number and column.
+
+    `s`
+        The string that is the expression.
+
+    `filename`
+        The name of the file the expression is in.
+
+    `linenumber`
+        The line number the logical line starts at.
+
+    `column`
+        The column the logical line starts at.
+
+    `text`
+        The text of the line.
+
+    `pos`
+        The position in the text where the expression starts.
+    """
