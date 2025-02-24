@@ -28,6 +28,7 @@ import sys
 import os
 import contextlib
 import functools
+import linecache
 
 import renpy
 
@@ -328,7 +329,8 @@ def list_logical_lines(
 
             if c == u'\t':
                 raise ParseError("Tab characters are not allowed in Ren'Py scripts.",
-                                 filename, number)
+                                 filename, number,
+                                 text=linecache.getline(filename, number))
 
             if c == u'\n' and not parendepth:
 
@@ -376,58 +378,49 @@ def list_logical_lines(
 
             # Strings.
             if c in u'"\'`':
-                delim = c
-                line.append(c)
-                pos += 1
+                string_startpos = pos
 
-                escape = False
-                triplequote = False
-
-                if (pos < len_data - 1) and (data[pos] == delim) and (data[pos + 1] == delim):
-                    line.append(delim)
-                    line.append(delim)
-                    pos += 2
-                    triplequote = True
-
-                s = [ ]
-
-                while pos < len_data:
-
-                    c = data[pos]
-
-                    if c == u'\n':
-                        number += 1
-
-                    if escape:
-                        escape = False
-                        pos += 1
-                        s.append(c)
+                # Compute quote size.
+                if data[pos + 1] == c:
+                    if data[pos + 2] == c:
+                        pos += 3
+                        quote_size = 3
+                    else:
+                        # Empty string.
+                        pos += 2
+                        line.append(f"{c}{c}")
                         continue
-
-                    if c == delim:
-
-                        if not triplequote:
-                            pos += 1
-                            s.append(c)
-                            break
-
-                        if (pos < len_data - 2) and (data[pos + 1] == delim) and (data[pos + 2] == delim):
-                            pos += 3
-                            s.append(delim)
-                            s.append(delim)
-                            s.append(delim)
-                            break
-
-                    if c == u'\\':
-                        escape = True
-
-                    s.append(c)
+                else:
                     pos += 1
+                    quote_size = 1
 
-                    continue
+                quote = c
 
-                s = "".join(s)
+                end_quote_size = 0
+                c = data[pos]
+                while end_quote_size != quote_size:
+                    # Skip escaped char.
+                    while c == '\\':
+                        end_quote_size = 0
+                        pos += 2
+                        c = data[pos]
 
+                    if c == quote:
+                        end_quote_size += 1
+                    else:
+                        end_quote_size = 0
+
+                    # TODO: disallow same quote nested in f-strings.
+
+                    pos += 1
+                    try:
+                        c = data[pos]
+                    except IndexError:
+                        raise ParseError("unterminated string literal",
+                                         filename, number,
+                                         text=linecache.getline(filename, number))
+
+                s = data[string_startpos:pos]
                 if "__" in s:
                     s = munge_string(s)
 
