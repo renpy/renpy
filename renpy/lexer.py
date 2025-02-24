@@ -249,7 +249,6 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
 original_filename = ""
 
 
-@__import__('renpy.line_profiler').line_profiler.profile_lines
 def list_logical_lines(
     filename: str,
     filedata: str | None = None,
