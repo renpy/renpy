@@ -428,7 +428,7 @@ init python:
     def ios_create_command():
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("project", help="The path to the Ren'Py project.")
-        ap.add_argument("destination", help="The path the iOS project that will be created.")
+        ap.add_argument("destination", help="The path to the iOS project that will be created.")
 
         args = ap.parse_args()
 
@@ -444,7 +444,7 @@ init python:
     def ios_populate_command():
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("project", help="The path to the Ren'Py project.")
-        ap.add_argument("destination", help="The path the iOS project that will be created.")
+        ap.add_argument("destination", help="The path to the iOS project that will be created.")
 
         args = ap.parse_args()
 
