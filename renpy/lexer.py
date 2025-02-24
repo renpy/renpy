@@ -249,6 +249,7 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
 original_filename = ""
 
 
+@__import__('renpy.line_profiler').line_profiler.profile_lines
 def list_logical_lines(
     filename: str,
     filedata: str | None = None,
@@ -511,8 +512,6 @@ class GroupedLine(NamedTuple):
 def gll_core(lines, i, min_depth):
     """
     Recursively groups lines into blocks.
-
-    Given the line
     """
 
     rv = []
@@ -547,7 +546,7 @@ def gll_core(lines, i, min_depth):
     return rv, i
 
 
-def group_logical_lines(lines):
+def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
     """
     This takes as input the list of logical line triples output from
     list_logical_lines, and breaks the lines into blocks. Each block
@@ -1593,25 +1592,13 @@ class Lexer(object):
         return sp
 
 
-def ren_py_to_rpy(text: str, filename: str | None) -> str:
+def ren_py_to_rpy_offsets(lines: list[str], filename: str):
     """
-    Transforms an _ren.py file into the equivalent .rpy file. This should retain line numbers.
-
-    `filename`
-        If not None, and an error occurs, the error is reported with the given filename.
-        Otherwise, errors are ignored and a best effort is used.
+    Takes a list of lines of _ren.py file, and yields a None if line of equivalent .rpy file
+    should be ignored, or an integer of extra indent for that line.
     """
 
-    lines = text.splitlines()
-
-    # Skip the BOM, if any.
-    if lines and lines[0][:1] == u'\ufeff':
-        lines[0] = lines[0][1:]
-
-    result = [ ]
-
-    # The prefix prepended to Python lines.
-    prefix = ""
+    current_offset = 0
 
     # Possible states.
     IGNORE = 0
@@ -1624,61 +1611,86 @@ def ren_py_to_rpy(text: str, filename: str | None) -> str:
     open_linenumber = 0
 
     for linenumber, l in enumerate(lines, start=1):
-
         if state != RENPY:
             if l.startswith('"""renpy'):
                 state = RENPY
-                result.append('')
                 open_linenumber = linenumber
+                yield None
                 continue
 
         if state == RENPY:
-            if l == '"""':
+            if l.strip() == '"""':
+                yield None
+
                 state = PYTHON
-                result.append('')
                 continue
 
             # Ignore empty and comments.
             sl = l.strip()
-            if not sl:
-                result.append(l)
-                continue
-
-            if sl[0] == "#":
-                result.append(l)
+            if not sl or sl[0] == "#":
+                yield 0
                 continue
 
             # Determine the prefix.
-            prefix = ""
+            current_offset = 0
             for i in l:
                 if i != ' ':
                     break
-                prefix += ' '
+                current_offset += 1
 
             # If the line ends in ":", add 4 spaces to the prefix.
+            # XXX: This does not work for 'init python: # Comment'...
             if sl[-1] == ":":
-                prefix += "    "
+                current_offset += 4
 
-            result.append(l)
+            yield 0
             continue
 
         if state == PYTHON:
-            result.append(prefix + l)
+            if l == "\n":
+                # Don't add spaces to empty lines to not interfere with multiline strings.
+                yield 0
+            else:
+                yield current_offset
             continue
 
         if state == IGNORE:
-            result.append('')
+            yield None
             continue
 
-    if filename is not None:
+    if state == IGNORE:
+        raise ParseError(f'There are no \'"""renpy\' blocks, so every line is ignored.',
+                        filename, open_linenumber)
 
-        if state == IGNORE:
-            raise Exception('In {!r}, there are no """renpy blocks, so every line is ignored.'.format(filename))
+    if state == RENPY:
+        raise ParseError(f'\'"""renpy\' block was not terminated by """.',
+                        filename, open_linenumber)
 
-        if state == RENPY:
-            raise Exception(
-                'In {!r}, there is a """renpy block at line {} that is not terminated by """.'.format(
-                    filename, open_linenumber))
+
+def ren_py_to_rpy(text: str, filename: str | None) -> str:
+    """
+    Transforms an _ren.py file into the equivalent .rpy file. This should retain line numbers.
+
+    `filename`
+        If not None, and an error occurs, the error is reported with the given filename.
+        Otherwise, errors are ignored and a best effort is used.
+    """
+
+    lines = text.splitlines()
+
+    result = [ ]
+
+    # Consume as much as possible from the input
+    try:
+        for offset, line in zip(ren_py_to_rpy_offsets(lines, filename or "<string>"), lines):
+            if offset is None:
+                result.append("")
+            else:
+                result.append(f"{' ' * offset}{line}")
+
+    except Exception:
+        if filename is not None:
+            raise
 
     rv = "\n".join(result)
 
