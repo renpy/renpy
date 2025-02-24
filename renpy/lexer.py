@@ -20,8 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from typing import Callable,  NamedTuple
+from typing import Callable, NamedTuple
 
+import io
 import re
 import sys
 import os
@@ -248,7 +249,12 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
 original_filename = ""
 
 
-def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
+def list_logical_lines(
+    filename: str,
+    filedata: str | None = None,
+    linenumber: int = 1,
+    add_lines: bool = False,
+) -> list[tuple[str, int, str]]:
     """
     Reads `filename`, and divides it into logical lines.
 
@@ -262,11 +268,14 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
     original_filename = filename
 
+    # Convert windows and mac newlines to \n, so we don't have to worry about it.
     if filedata:
-        data = filedata
+        data_io = io.StringIO(filedata, None)
     else:
-        with open(filename, "rb") as f:
-            data = f.read().decode("utf-8", "python_strict")
+        data_io = open(filename, "r")
+
+    with data_io:
+        data = data_io.read()
 
     if filename.endswith("_ren.py"):
         data = ren_py_to_rpy(data, filename)
@@ -347,7 +356,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
                 lines[loc].end_delim = endpos + 1
 
-                while data[endpos - 1] in u' \r':
+                while data[endpos - 1] == u' ':
                     endpos -= 1
 
                 lines[loc].end = endpos
@@ -364,10 +373,6 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
             if c == u'\n':
                 number += 1
                 endpos = None
-
-            if c == u"\r":
-                pos += 1
-                continue
 
             # Backslash/newline.
             if c == u"\\" and data[pos + 1] == u"\n":
@@ -415,10 +420,6 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
                     if c == u'\n':
                         number += 1
-
-                    if c == u'\r':
-                        pos += 1
-                        continue
 
                     if escape:
                         escape = False
@@ -504,8 +505,6 @@ def split_indent(l):
 
     return depth, l[index:]
 
-# i, min_depth -> block, new_i
-
 
 class GroupedLine(NamedTuple):
     # The filename the line is from.
@@ -514,6 +513,7 @@ class GroupedLine(NamedTuple):
     indent: int
     text: str
     block: list
+
 
 def gll_core(lines, i, min_depth):
     """
@@ -552,6 +552,7 @@ def gll_core(lines, i, min_depth):
         rv.append(GroupedLine(filename, number, indent, rest, block))
 
     return rv, i
+
 
 def group_logical_lines(lines):
     """
