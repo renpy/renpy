@@ -55,7 +55,7 @@ translate tchinese strings:
 
     # _developer/developer.rpym:383
     old "Right-click or escape to quit."
-    new "點選滑鼠右鍵或者按 Esc 鍵來退出。"
+    new "點選滑鼠右鍵或者按 Esc 鍵來結束。"
 
     # _developer/developer.rpym:412
     old "Rectangle copied to clipboard."
@@ -75,7 +75,7 @@ translate tchinese strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ 已預加載影像（良好） {/color}\n{color=#fcc}✘ 未預加載影像（糟糕） {/color}\n{color=#fff}通過拖拽來移動位置。{/color}"
+    new "\n{color=#cfc}✔ 已預載入影像（良好） {/color}\n{color=#fcc}✘ 未預載入影像（糟糕） {/color}\n{color=#fff}透過拖拽來移動位置。{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
@@ -115,7 +115,7 @@ translate tchinese strings:
 
     # 00console.rpy:182
     old "Press <esc> to exit console. Type help for help.\n"
-    new "按 <esc> 來退出控制臺。輸入 help 來檢視說明。\n"
+    new "按 <esc> 來結束控制臺。輸入 help 來檢視說明。\n"
 
     # 00console.rpy:186
     old "Ren'Py script enabled."
@@ -123,7 +123,7 @@ translate tchinese strings:
 
     # 00console.rpy:188
     old "Ren'Py script disabled."
-    new "禁用 Ren'Py 腳本。"
+    new "停用 Ren'Py 腳本。"
 
     # 00console.rpy:398
     old "help: show this help"
@@ -135,11 +135,11 @@ translate tchinese strings:
 
     # 00console.rpy:413
     old " <renpy script statement>: run the statement\n"
-    new "<Ren'py 腳本語句>: 運行語句\n"
+    new "<Ren'py 腳本語句>: 執行語句\n"
 
     # 00console.rpy:415
     old " <python expression or statement>: run the expression or statement"
-    new " <Python 運算式或語句>: 運行運算式或語句"
+    new " <Python 運算式或語句>: 執行運算式或語句"
 
     # 00console.rpy:423
     old "clear: clear the console history"
@@ -155,7 +155,7 @@ translate tchinese strings:
 
     # 00console.rpy:448
     old "save <slot>: saves the game in slot"
-    new "save <檔位>: 保存遊戲到檔位"
+    new "save <檔位>: 儲存遊戲到檔位"
 
     # 00console.rpy:459
     old "reload: reloads the game, refreshing the scripts"
@@ -187,23 +187,23 @@ translate tchinese strings:
 
     # renpy/common/_developer/developer.rpym:59
     old "Show Image Load Log (F4)"
-    new "顯示圖像加載日誌（F4）"
+    new "顯示影像載入日誌（F4）"
 
     # renpy/common/_developer/developer.rpym:62
     old "Hide Image Load Log (F4)"
-    new "隱藏圖像加載日誌（F4）"
+    new "隱藏影像載入日誌（F4）"
 
     # renpy/common/_developer/developer.rpym:65
     old "Image Attributes"
-    new "圖像屬性"
+    new "影像屬性"
 
     # renpy/common/_developer/developer.rpym:69
     old "Show Translation Identifiers"
-    new "顯示翻譯標識符"
+    new "顯示翻譯識別符號"
 
     # renpy/common/_developer/developer.rpym:72
     old "Hide Translation Identifiers"
-    new "隱藏翻譯標識符"
+    new "隱藏翻譯識別符號"
 
     # renpy/common/_developer/developer.rpym:77
     old "Speech Bubble Editor (Shift+B)"
@@ -255,11 +255,11 @@ translate tchinese strings:
 
     # renpy/common/_developer/developer.rpym:612
     old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
-    new "\n{color=#fff} 點擊複製。 \n 拖曳移動。 {/color}"
+    new "\n{color=#fff} 點選複製。 \n 拖曳移動。 {/color}"
 
     # renpy/common/_developer/developer.rpym:657
     old "Click to open in editor."
-    new "單擊以在編輯器中打開"
+    new "點選以在編輯器中開啟"
 
     # renpy/common/00console.rpy:793
     old "help: show this help\n help <expr>: show signature and documentation of <expr>"
@@ -267,7 +267,7 @@ translate tchinese strings:
 
     # renpy/common/00console.rpy:817
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
-    new "幫助可能會顯示未記錄的函數。請檢查您要使用的函數或 \n 類別是否已記錄。 \n\n"
+    new "幫助可能會顯示未記錄的函式。請檢查您要使用的函式或 \n 類別是否已記錄。 \n\n"
 
     # renpy/common/00console.rpy:858
     old "stack: print the return stack"
@@ -291,5 +291,5 @@ translate tchinese strings:
 
     # renpy/common/00console.rpy:1044
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
-    new "不轉義：禁用 unicode 字串中 unicode 符號的轉義並按原樣列印（預設）。"
+    new "不轉義：停用 unicode 字串中 unicode 符號的轉義並按原樣列印（預設）。"
 
