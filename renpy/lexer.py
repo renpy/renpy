@@ -31,7 +31,7 @@ import functools
 
 import renpy
 
-from renpy.lexersupport import match_logical_word
+from renpy.lexersupport import match_logical_word  # type: ignore
 from renpy.astsupport import make_pyexpr
 
 
@@ -288,8 +288,8 @@ def list_logical_lines(
     # Add some newlines, to fix lousy editors.
     data += "\n\n"
 
-    # The result.
-    rv = []
+    # Result tuples of (string, start line number, start pos, end pos).
+    rv: list[tuple[str, int, int, int]] = []
 
     # The line number in the physical file.
     number = linenumber
@@ -297,44 +297,33 @@ def list_logical_lines(
     # The current position we're looking at in the buffer.
     pos = 0
 
-    # Are we looking at a triple-quoted string?
-
     # Skip the BOM, if any.
-    if len(data) and data[0] == u'\ufeff':
+    if data[0] == u'\ufeff':
         pos += 1
-
-    if add_lines or renpy.game.context().init_phase:
-        lines = renpy.scriptedit.lines
-    else:
-        lines = { }
 
     len_data = len(data)
 
-    renpy.scriptedit.files.add(filename)
-
-    line = 0
+    # The line number of the start of this logical line.
     start_number = 0
+
+    # The line that we're building up.
+    line: list[str] = []
+
+    # The number of open parenthesis there are right now.
+    parendepth = 0
 
     # Looping over the lines in the file.
     while pos < len_data:
 
-        # The line number of the start of this logical line.
         start_number = number
-
-        # The line that we're building up.
-        line = [ ]
-
-        # The number of open parenthesis there are right now.
         parendepth = 0
-
-        loc = (filename, start_number)
-        lines[loc] = renpy.scriptedit.Line(original_filename, start_number, pos)
-
+        startpos = pos
         endpos = None
+        line.clear()
 
+        # Looping over one logical line.
         while pos < len_data:
 
-            startpos = pos
             c = data[pos]
 
             if c == u'\t':
@@ -343,25 +332,13 @@ def list_logical_lines(
 
             if c == u'\n' and not parendepth:
 
-                line = ''.join(line)
+                rv_line = ''.join(line)
 
                 # If not blank...
-                if not re.match(r"^\s*$", line):
+                if not re.match(r"^\s*$", rv_line):
 
                     # Add to the results.
-                    rv.append((filename, start_number, line))
-
-                if endpos is None:
-                    endpos = pos
-
-                lines[loc].end_delim = endpos + 1
-
-                while data[endpos - 1] == u' ':
-                    endpos -= 1
-
-                lines[loc].end = endpos
-                lines[loc].text = data[lines[loc].start:lines[loc].end]
-                lines[loc].full_text = data[lines[loc].start:lines[loc].end_delim]
+                    rv.append((rv_line, start_number, startpos, endpos or pos))
 
                 pos += 1
                 number += 1
@@ -484,7 +461,23 @@ def list_logical_lines(
         err.add_note("Check strings and parenthesis.")
         raise err
 
-    return rv
+    if add_lines:
+        lines = renpy.scriptedit.lines
+        for _, number, start, end in rv:
+            l = renpy.scriptedit.Line(original_filename, number, start)
+
+            l.end_delim = end + 1
+
+            while data[end - 1] == u' ':
+                end -= 1
+
+            l.end = end
+            l.text = data[l.start:l.end]
+            l.full_text = data[l.start:l.end_delim]
+
+            lines[filename, number] = l
+
+    return [(filename, number, line) for line, number, _, _ in rv]
 
 
 def split_indent(l):
