@@ -340,6 +340,9 @@ init -1150 python in bubble:
         rv = [ ]
 
         for image_tag, tlid in current_dialogue:
+            if image_tag not in tag_properties:
+                continue
+
             property_list = [ ]
 
             property_list.append((
