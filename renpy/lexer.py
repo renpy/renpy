@@ -93,8 +93,8 @@ class ParseError(SyntaxError):
                     offset -= left_spaces
                     end_offset -= left_spaces
 
-                    if offset >= 1:
-                        caret_space = ' ' * (offset - 1)
+                    if offset >= 0:
+                        caret_space = ' ' * offset
                         carets = '^' * (end_offset - offset)
                         message += f"\n    {caret_space}{carets}"
 
@@ -310,29 +310,46 @@ def list_logical_lines(
     # The line that we're building up.
     line: list[str] = []
 
-    # The number of open parenthesis there are right now.
-    parendepth = 0
+    # Stack of open paren (char, line number, column) tuples.
+    open_parens: list[tuple[str, int, int]] = []
+
+    # Position at the beginning of current physical line.
+    # This is used to calculate column offset by pos - line_start_pos.
+    line_startpos = pos
+
+    # The starting position of the current logical line.
+    startpos = pos
+
+    # The ending position of the current logical line without comment and whitespace/newline
+    # or None if the same as pos.
+    endpos = None
 
     # Looping over the lines in the file.
     while pos < len_data:
 
         start_number = number
-        parendepth = 0
+        line_startpos = pos
         startpos = pos
         endpos = None
         line.clear()
 
         # Looping over one logical line.
-        while pos < len_data:
-
-            c = data[pos]
+        while True:
+            try:
+                c = data[pos]
+            except IndexError:
+                # This can happen only if we have unclosed parens.
+                c, lineno, column = open_parens[-1]
+                raise ParseError(f"'{c}' was never closed",
+                                 filename, lineno, column,
+                                 linecache.getline(filename, lineno))
 
             if c == u'\t':
                 raise ParseError("Tab characters are not allowed in Ren'Py scripts.",
                                  filename, number,
                                  text=linecache.getline(filename, number))
 
-            if c == u'\n' and not parendepth:
+            if c == u'\n' and not open_parens:
 
                 rv_line = ''.join(line)
 
@@ -344,28 +361,43 @@ def list_logical_lines(
 
                 pos += 1
                 number += 1
-                endpos = None
-                # This helps out error checking.
-                line = [ ]
                 break
 
             if c == u'\n':
+                pos += 1
                 number += 1
+                line_startpos = pos
                 endpos = None
+                continue
 
             # Backslash/newline.
             if c == u"\\" and data[pos + 1] == u"\n":
                 pos += 2
                 number += 1
+                line_startpos = pos
                 line.append(u"\\\n")
                 continue
 
             # Parenthesis.
-            if c in u'([{':
-                parendepth += 1
+            if c in '([{':
+                open_parens.append((c, number, pos - line_startpos))
 
-            if (c in u'}])') and parendepth:
-                parendepth -= 1
+            elif c in '}])':
+                if not open_parens:
+                    raise ParseError(f"unmatched '{c}'",
+                                     filename, number, pos - line_startpos,
+                                     linecache.getline(filename, number))
+
+                open_c, _, _ = open_parens.pop()
+
+                if not (
+                    c == ")" and open_c == "(" or
+                    c == "]" and open_c == "[" or
+                    c == "}" and open_c == "{"
+                ):
+                    raise ParseError(f"closing parenthesis '{c}' does not match opening parenthesis '{open_c}'",
+                                     filename, number, pos - line_startpos,
+                                     linecache.getline(filename, number))
 
             # Comments.
             if c == u'#':
@@ -405,20 +437,26 @@ def list_logical_lines(
                         pos += 2
                         c = data[pos]
 
-                    if c == quote:
+                    pos += 1
+
+                    if c == "\n":
+                        end_quote_size = 0
+                        line_startpos = pos
+                        number += 1
+
+                    elif c == quote:
                         end_quote_size += 1
                     else:
                         end_quote_size = 0
 
-                    # TODO: disallow same quote nested in f-strings.
+                    # TODO: disallow same quote nested f-strings.
 
-                    pos += 1
                     try:
                         c = data[pos]
                     except IndexError:
                         raise ParseError("unterminated string literal",
-                                         filename, number,
-                                         text=linecache.getline(filename, number))
+                                         filename, start_number,
+                                         text=linecache.getline(filename, start_number))
 
                 s = data[string_startpos:pos]
                 if "__" in s:
@@ -439,21 +477,7 @@ def list_logical_lines(
             line.append(word)
             pos = end
 
-            if (pos - startpos) > 65536:
-                err = ParseError(
-                    "Overly long logical line.",
-                    filename, start_number,
-                    text="".join(line))
-                err.add_note("Check strings and parenthesis.")
-                raise err
-
-    if line:
-        err = ParseError("is not terminated with a newline.",
-                         filename, start_number,
-                         text="".join(line))
-        err.add_note("Check strings and parenthesis.")
-        raise err
-
+    # Add scriptedit lines if requested.
     if add_lines:
         lines = renpy.scriptedit.lines
         for _, number, start, end in rv:
