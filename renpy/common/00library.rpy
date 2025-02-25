@@ -138,6 +138,9 @@ init -1700 python:
 
     def _default_empty_window():
 
+        who = None
+        multiple = None
+
         try:
 
             scry = renpy.scry()
@@ -152,16 +155,19 @@ init -1700 python:
                 for i in range(20):
                     if scry.say:
                         who = scry.who
+                        multiple = scry.multiple
                         break
 
                     scry = scry.next()
+                    if scry is None:
+                        break
 
             else:
                 who = _last_say_who
                 who = renpy.eval_who(who)
 
         except Exception:
-            who = None
+            pass
 
         if who is None:
             who = narrator
@@ -169,9 +175,9 @@ init -1700 python:
         if isinstance(who, NVLCharacter):
             nvl_show_core()
         elif not isinstance(store.narrator, NVLCharacter):
-            store.narrator.empty_window(multiple=scry.multiple)
+            store.narrator.empty_window(multiple=multiple)
         else:
-            store._narrator.empty_window(multiple=scry.multiple)
+            store._narrator.empty_window(multiple=multiple)
 
     config.empty_window = _default_empty_window
 
