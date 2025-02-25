@@ -247,8 +247,6 @@ cdef class RenderTransform:
             mr.add_shader("-renpy.texture")
             mr.add_shader("renpy.blur")
             mr.add_uniform("u_renpy_blur_log2", math.log(blur, 2))
-
-        if (blur is not None):
             mr.add_property("mipmap", True)
 
         self.mr = mr
