@@ -36,7 +36,7 @@ init -1150 python in bubble:
 
     # This becomes true when the screen is shown.
     shown = NoRollback()
-    shown.value = False
+    shown.value = renpy.session.get('speechbubble_shown', False)
 
     # The path to the json file the bubble database is stored in.
     db_filename = "bubble.json"
@@ -95,6 +95,7 @@ init -1150 python in bubble:
                 return
 
             shown.value = not shown.value
+            renpy.session['speechbubble_shown'] = shown.value
             renpy.restart_interaction()
 
         def get_selected(self):
