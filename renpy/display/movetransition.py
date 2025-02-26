@@ -639,7 +639,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
         def moving(old_sle, new_sle):
 
             if old_sle.displayable is new_sle.displayable:
-                rv_sl.append(new_sle)
+                rv_sl.append(merge(new_sle, wrap(new_sle)))
                 return
 
             old_d = wrap(old_sle)

@@ -484,7 +484,7 @@ is equivalent to::
 
 Note that even though this applies to the :ref:`show-screen-statement`
 and :ref:`hide-screen-statement` statements too,
-:ref:`call-screen-statement` works a bit differently.
+:ref:`call-screen-statement` differently.
 
 .. _camera:
 

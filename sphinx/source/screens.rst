@@ -1129,7 +1129,7 @@ Nearrect takes the following properties:
     If present, overrides `rect`
 
 .. screen-property:: preferred_side
-    
+
     One of ``"left"``, ``"top"``, ``"right"``, ``"bottom"`` to prefer that
     position for the nearrect. If there is not room on one side, the opposite
     side is used. By default, the preferred side is "bottom".
@@ -1139,7 +1139,7 @@ Nearrect takes the following properties:
     Deprecated. Equivalent to ``preferred_side "top"``
 
 .. screen-property:: invert_offsets
-        
+
     If True and there isn't enough space on the preferred side, multiply
     xoffset and yoffset by -1 since the child will be on the opposite side of
     the rectangle. False by default.
@@ -2627,6 +2627,9 @@ those of the :ref:`show-screen-statement`:
 ``with``
     In a call screen statement, the ``with`` clause causes a transition
     to occur when the screen is shown.
+
+    This does **not** cause a ``with None`` occur before the screen is shown, so all show and hide statements before
+    the screen will run. If you need a ``with None``, add one.
 
 Since calling a screen is an interaction, and interactions trigger
 an implicit ``with None``, using a ``with`` statement after the

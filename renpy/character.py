@@ -677,6 +677,7 @@ def display_say(
                 what_ctc = None
 
             what_ctc = renpy.easy.displayable_or_none(what_ctc)
+            ctc = renpy.easy.displayable_or_none(ctc)
 
             if (what_ctc is not None) and what_ctc._duplicatable:
                 what_ctc = what_ctc._duplicate(None)
@@ -687,9 +688,6 @@ def display_say(
                     ctc = ctc._duplicate(None)
                     ctc._unique()
 
-            if delay == 0:
-                what_ctc = None
-                ctc = None
 
             # Run the show callback.
             pause_callback("show")
@@ -707,7 +705,6 @@ def display_say(
 
                 if scry is not None:
                     scry = scry.next()
-
                 scry_count = 0
 
                 while scry and scry_count < 64:
@@ -756,6 +753,11 @@ def display_say(
             else:
                 afm_text_queue.append(what_text)
 
+            if delay == 0:
+                what_ctc = None
+                if not extend_text:
+                    ctc = None
+
             if interact or what_string or (what_ctc is not None) or (behavior and afm):
 
                 if not isinstance(what_text, renpy.text.text.Text): # @UndefinedVariable
@@ -763,16 +765,22 @@ def display_say(
 
                 if what_ctc:
 
+
+                    if extend_text or not last_pause:
+                        if ctc_position == "nestled" or ctc_position == "nestled-close":
+                                what_ctc = renpy.store.Fixed(what_ctc, xsize=0)
+
                     if ctc_position == "nestled":
                         what_text.set_ctc(what_ctc)
                     elif ctc_position == "nestled-close":
                         what_text.set_ctc([ u"\ufeff", what_ctc, ])
 
-                if (not last_pause) and ctc:
+                if (extend_text or not last_pause) and ctc:
                     if ctc_position == "nestled":
                         what_text.set_last_ctc(ctc)
                     elif ctc_position == "nestled-close":
                         what_text.set_last_ctc([ u"\ufeff", ctc, ])
+
 
                 if what_text.text[0] == what_string:
 
