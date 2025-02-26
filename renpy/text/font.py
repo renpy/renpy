@@ -904,7 +904,6 @@ class FontGroup(object):
 
                     if target_increment:
                         target += 1
-
         return self
 
     def remap(self, cha, target):
@@ -966,6 +965,9 @@ class FontGroup(object):
 
             n = ord(c)
 
+            if n == 32 and font:
+                continue
+
             font = self.map.get(ord(c), None)
 
             if font is None:
@@ -973,7 +975,6 @@ class FontGroup(object):
 
                 if font is None:
                     raise Exception("Character U+{0:04x} not found in FontGroup".format(n))
-
             if font != old_font:
                 if pos:
                     yield old_font, s[mark:pos]
