@@ -765,6 +765,11 @@ def display_say(
 
                 if what_ctc:
 
+
+                    if extend_text or not last_pause:
+                        if ctc_position == "nestled" or ctc_position == "nestled-close":
+                                what_ctc = renpy.store.Fixed(what_ctc, xsize=0)
+
                     if ctc_position == "nestled":
                         what_text.set_ctc(what_ctc)
                     elif ctc_position == "nestled-close":
