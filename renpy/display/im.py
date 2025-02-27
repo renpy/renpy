@@ -1966,6 +1966,8 @@ class UnoptimizedTexture(ImageBase):
     optimizing the bounds.
     """
 
+    obsolete = False
+
     def __init__(self, im, **properties):
         super(UnoptimizedTexture, self).__init__(im, optimize_bounds=False, **properties)
         self.image = image(im)
