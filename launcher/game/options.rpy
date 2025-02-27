@@ -426,10 +426,17 @@ init python:
         source_and_binary("lib/python2**", "binary", "binary")
         build.classify_renpy("renpy2.sh", "binary")
     else:
+        build.classify_renpy("lib/**/libpython{}.{}.dll".format(sys.version_info.major, sys.version_info.minor), "binary")
+        build.classify_renpy("lib/**/libpython*.dll", None)
+
         build.classify_renpy("lib/py3-linux-armv7l/**", "linux_arm")
         build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
         source_and_binary("lib/py3-**", "binary", "binary")
-        source_and_binary("lib/python3**", "binary", "binary", py='pyc')
+
+        libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
+        source_and_binary(libpython, "binary", "binary", py='pyc')
+        build.classify_renpy("lib/python**", None)
+
         build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
