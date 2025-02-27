@@ -535,69 +535,13 @@ def list_logical_lines(
     return [(filename, number, line) for line, number, _, _ in rv]
 
 
-def split_indent(l):
-    """
-    Returns the length of the line's indentation, and the rest of the line.
-    """
-
-    depth = 0
-    index = 0
-
-    while True:
-        if l[index] == ' ':
-            depth += 1
-            index += 1
-            continue
-
-        break
-
-    return depth, l[index:]
-
-
 class GroupedLine(NamedTuple):
     # The filename the line is from.
     filename: str
     number: int
     indent: int
     text: str
-    block: list
-
-
-def gll_core(lines, i, min_depth):
-    """
-    Recursively groups lines into blocks.
-    """
-
-    rv = []
-    depth = None
-
-    while i < len(lines):
-
-        filename, number, text = lines[i]
-
-        indent, rest = split_indent(text)
-
-        # This catches a block exit.
-        if indent < min_depth:
-            break
-
-        if depth is None:
-            depth = indent
-
-        if depth != indent:
-            raise ParseError(
-                "Indentation mismatch.",
-                filename, number, text=text)
-
-        # Advance to the next line.
-        i += 1
-
-        # Try parsing a block associated with this line.
-        block, i = gll_core(lines, i, depth + 1)
-
-        rv.append(GroupedLine(filename, number, indent, rest, block))
-
-    return rv, i
+    block: list["GroupedLine"]
 
 
 def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
@@ -609,16 +553,47 @@ def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
     no block is associated with this line.)
     """
 
-    if lines:
+    if not lines:
+        return []
 
-        filename, number, text = lines[0]
+    filename, number, text = lines[0]
 
-        if split_indent(text)[0] != 0:
-            raise ParseError(
-                "Unexpected indentation at start of file.",
-                filename, number, text=text)
+    if text.startswith(" "):
+        raise ParseError(
+            "Unexpected indentation at start of file.",
+            filename, number, text=text)
 
-    return gll_core(lines, 0, 0)[0]
+    stack: list[tuple[int, list[GroupedLine]]] = [(0, [])]
+    block_indent, block = stack[-1]
+
+    for filename, number, text in lines:
+        rest = text.lstrip(" ")
+        indent = len(text) - len(rest)
+
+        # Indent.
+        if indent > block_indent:
+            block_indent = indent
+            block = block[-1].block
+            stack.append((block_indent, block))
+
+        # Dedent.
+        elif indent < block_indent:
+            stack.pop()  # Safe because indent can't be less than 0, so stack is never empty.
+            while stack:
+                block_indent, block = stack[-1]
+                if indent == block_indent:
+                    break
+
+                stack.pop()
+
+            else:
+                raise ParseError(
+                    "Indentation mismatch.",
+                    filename, number, text=text)
+
+        block.append(GroupedLine(filename, number, indent, text, []))
+
+    return stack[0][1]
 
 
 # A list of keywords which should not be parsed as names, because
