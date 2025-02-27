@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from typing import Callable, NamedTuple
+from typing import TYPE_CHECKING, Callable, NamedTuple
 
 import io
 import re
@@ -32,7 +32,11 @@ import linecache
 
 import renpy
 
-from renpy.lexersupport import match_logical_word  # type: ignore
+if TYPE_CHECKING:
+    def match_logical_word(data: str, pos: int) -> tuple[str, bool, int]: ...
+else:
+    from renpy.lexersupport import match_logical_word  # type: ignore
+
 from renpy.astsupport import make_pyexpr
 
 
@@ -249,6 +253,13 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
 # The filename that the start and end positions are relative to.
 original_filename = ""
 
+# Matches one operator that contains special characters.
+_ANY_OPERATOR_REGEX = re.compile("|".join(re.escape(i) for i in (
+    '//=', '>>=', '<<=', '**=', '+=', '-=', '*=', '/=', '%=', '@=', '&=', '|=', '^=',
+    '//', '>>', '<<', '**', '+', '-', '*', '/', '%', '@', '&', '|', '^',
+    ':=', '<=', '>=', '==', '->', '!=',
+    ',', ':', '!', '.', ';', '=', '~', '<', '>', '$', '?')))
+
 
 def list_logical_lines(
     filename: str,
@@ -324,8 +335,19 @@ def list_logical_lines(
     # or None if the same as pos.
     endpos = None
 
-    # Looping over the lines in the file.
-    while pos < len_data:
+    # Matches any amount of blank lines, comment-only lines, and backslash-newlines.
+    ignore_regex = re.compile(r"""(?:\ *\n|\ *\#[^\n]*\n|\ *\\\n)*""")
+
+    operator_regex = _ANY_OPERATOR_REGEX
+
+    # Looping over whole file to find logical lines.
+    while match := ignore_regex.match(data, pos):
+        pos = match.end()
+
+        if pos >= len_data:
+            break
+
+        number += match[0].count("\n")
 
         start_number = number
         line_startpos = pos
@@ -333,7 +355,7 @@ def list_logical_lines(
         endpos = None
         line.clear()
 
-        # Looping over one logical line.
+        # Looping over parts of single logical line.
         while True:
             try:
                 c = data[pos]
@@ -344,71 +366,21 @@ def list_logical_lines(
                                  filename, lineno, column,
                                  linecache.getline(filename, lineno))
 
-            if c == u'\t':
-                raise ParseError("Tab characters are not allowed in Ren'Py scripts.",
-                                 filename, number,
-                                 text=linecache.getline(filename, number))
+            # Name and runs of spaces are the most common cases, so it's first.
+            if c in ' _' or c.isalnum():
+                word, magic, end = match_logical_word(data, pos)
 
-            if c == u'\n' and not open_parens:
+                if magic and word[2] != "_":
+                    rest = word[2:]
 
-                rv_line = ''.join(line)
+                    if "__" not in rest:
+                        word = prefix + rest
 
-                # If not blank...
-                if not re.match(r"^\s*$", rv_line):
-
-                    # Add to the results.
-                    rv.append((rv_line, start_number, startpos, endpos or pos))
-
-                pos += 1
-                number += 1
-                break
-
-            if c == u'\n':
-                pos += 1
-                number += 1
-                line_startpos = pos
-                endpos = None
+                line.append(word)
+                pos = end
                 continue
 
-            # Backslash/newline.
-            if c == u"\\" and data[pos + 1] == u"\n":
-                pos += 2
-                number += 1
-                line_startpos = pos
-                line.append(u"\\\n")
-                continue
-
-            # Parenthesis.
-            if c in '([{':
-                open_parens.append((c, number, pos - line_startpos))
-
-            elif c in '}])':
-                if not open_parens:
-                    raise ParseError(f"unmatched '{c}'",
-                                     filename, number, pos - line_startpos,
-                                     linecache.getline(filename, number))
-
-                open_c, _, _ = open_parens.pop()
-
-                if not (
-                    c == ")" and open_c == "(" or
-                    c == "]" and open_c == "[" or
-                    c == "}" and open_c == "{"
-                ):
-                    raise ParseError(f"closing parenthesis '{c}' does not match opening parenthesis '{open_c}'",
-                                     filename, number, pos - line_startpos,
-                                     linecache.getline(filename, number))
-
-            # Comments.
-            if c == u'#':
-                endpos = pos
-
-                while data[pos] != u'\n':
-                    pos += 1
-
-                continue
-
-            # Strings.
+            # Strings are second common case.
             if c in u'"\'`':
                 string_startpos = pos
 
@@ -466,16 +438,82 @@ def list_logical_lines(
 
                 continue
 
-            word, magic, end = match_logical_word(data, pos)
+            # Opertator.
+            if match := operator_regex.match(data, pos):
+                line.append(match[0])
+                pos = match.end()
+                continue
 
-            if magic and word[2] != "_":
-                rest = word[2:]
+            # Newline.
+            if c == '\n':
+                if open_parens:
+                    pos += 1
+                    number += 1
+                    line_startpos = pos
+                    endpos = None
+                    continue
 
-                if "__" not in rest:
-                    word = prefix + rest
+                rv_line = ''.join(line)
 
-            line.append(word)
-            pos = end
+                if not rv_line.strip():
+                    raise Exception(f"{filename}:{start_number}:{startpos} empty line")
+
+                # Add to the results.
+                rv.append((rv_line, start_number, startpos, endpos or pos))
+                break
+
+            # Parenthesis.
+            if c in '([{':
+                open_parens.append((c, number, pos - line_startpos))
+                line.append(c)
+                pos += 1
+                continue
+
+            elif c in '}])':
+                if not open_parens:
+                    raise ParseError(f"unmatched '{c}'",
+                                     filename, number, pos - line_startpos,
+                                     linecache.getline(filename, number))
+
+                open_c, _, _ = open_parens.pop()
+
+                if not (
+                    c == ")" and open_c == "(" or
+                    c == "]" and open_c == "[" or
+                    c == "}" and open_c == "{"
+                ):
+                    raise ParseError(f"closing parenthesis '{c}' does not match opening parenthesis '{open_c}'",
+                                     filename, number, pos - line_startpos,
+                                     linecache.getline(filename, number))
+
+                line.append(c)
+                pos += 1
+                continue
+
+            # Comments.
+            if c == u'#':
+                endpos = pos
+
+                pos = data.index('\n', pos)
+                continue
+
+            # Backslash/newline.
+            if c == "\\" and data[pos + 1] == "\n":
+                pos += 2
+                number += 1
+                line_startpos = pos
+                line.append(u"\\\n")
+                continue
+
+            if c == '\t':
+                raise ParseError("Tab characters are not allowed in Ren'Py scripts.",
+                                 filename, number,
+                                 text=linecache.getline(filename, number))
+
+            # Some kind of non alpha-numeric character outside of ASCII range.
+            else:
+                line.append(c)
+                pos += 1
 
     # Add scriptedit lines if requested.
     if add_lines:
