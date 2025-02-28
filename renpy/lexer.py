@@ -304,7 +304,7 @@ def list_logical_lines(
     pos = 0
 
     # Skip the BOM, if any.
-    if data[0] == u'\ufeff':
+    if data[0] == '\ufeff':
         pos += 1
 
     # Result tuples of (string, start line number, start pos, end pos).
@@ -381,7 +381,7 @@ def list_logical_lines(
                 continue
 
             # Strings are second common case.
-            if c in u'"\'`':
+            if c in '"\'`':
                 string_startpos = pos
 
                 # Compute quote size.
@@ -447,6 +447,7 @@ def list_logical_lines(
             # Newline.
             if c == '\n':
                 if open_parens:
+                    line.append('\n')
                     pos += 1
                     number += 1
                     line_startpos = pos
@@ -491,7 +492,7 @@ def list_logical_lines(
                 continue
 
             # Comments.
-            if c == u'#':
+            if c == '#':
                 endpos = pos
 
                 pos = data.index('\n', pos)
@@ -502,7 +503,7 @@ def list_logical_lines(
                 pos += 2
                 number += 1
                 line_startpos = pos
-                line.append(u"\\\n")
+                line.append("\\\n")
                 continue
 
             if c == '\t':
@@ -523,7 +524,7 @@ def list_logical_lines(
 
             l.end_delim = end + 1
 
-            while data[end - 1] == u' ':
+            while data[end - 1] == ' ':
                 end -= 1
 
             l.end = end
