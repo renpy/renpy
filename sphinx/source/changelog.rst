@@ -5,11 +5,23 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
-.. _renpy-8.3.4:
-.. _renpy-7.8.4:
+.. _renpy-8.3.6:
+.. _renpy-7.8.6:
+
+8.3.6 / 7.8.6
+=============
+
+Fixes
+-----
+
+Revert a change that prevented certain saves from loading.
+
+
+.. _renpy-8.3.5:
+.. _renpy-7.8.5:
 
 8.3.5 / 7.8.5
-==============
+=============
 
 Changes
 -------
