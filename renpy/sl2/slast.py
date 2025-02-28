@@ -1381,6 +1381,106 @@ class SLDisplayable(SLBlock):
             i.dump_const(prefix + "  ")
 
 
+class SLAddImage(SLDisplayable):
+    def __init__(self, loc, name):
+        super().__init__(loc, None, name=name, unique=False)
+
+    def execute(self, context):
+        debug = context.debug
+
+        cache = context.old_cache.get(self.serial, None) or context.miss_cache.get(self.serial, None)
+
+        # We use and check 'displayable', 'constant' and 'old_showif'
+        # fields, and rest are left unchanged.
+        if not isinstance(cache, SLCache):
+            cache = SLCache()
+
+        context.new_cache[self.serial] = cache
+
+        if debug:
+            self.debug_line()
+
+        # Add image does not use style or scope.
+        if cache.constant is not None:
+            d = cache.constant
+
+            if context.showif is not None:
+                d = self.wrap_in_showif(d, context, cache)
+
+            context.children.append(d)
+
+            if debug:
+                profile_log.write("    reused constant displayable")
+
+            return
+
+        # Create the context.
+        ctx = SLContext(context)
+
+        # True if we encountered an exception that we're recovering from
+        # due to being in prediction mode.
+        fail = False
+
+        # Result transform to display.
+        d = None
+
+        try:
+            ctx.keywords = {}
+
+            SLBlock.keywords(self, ctx)
+
+            d = ctx.keywords.pop("at")
+            assert not ctx.keywords, ctx.keywords
+
+            if debug:
+                self.report_arguments(cache, (), {}, None)
+
+            d._location = self.location
+
+            cache.copy_on_change = False # We no longer need to copy on change.
+
+            if debug:
+                if self.constant:
+                    profile_log.write("    created constant displayable")
+                else:
+                    profile_log.write("    created displayable")
+
+        except Exception:
+            if not context.predicting:
+                raise
+            fail = True
+
+        if self.variable is not None:
+            context.scope[self.variable] = d
+
+        old_d = cache.displayable
+
+        if old_d is not None:
+            d.take_state(old_d)
+            d.take_execution_state(old_d)
+
+        # If a failure occurred during prediction, predict main (if known),
+        # and return.
+        if fail:
+            predict_displayable(d)
+            context.fail = True
+            return
+
+        cache.displayable = d
+
+        if ctx.fail:
+            context.fail = True
+
+        else:
+            if self.constant:
+                cache.constant = d
+
+        if context.showif is not None:
+            d = self.wrap_in_showif(d, context, cache)
+
+        context.children.append(d)
+
+
 class SLIf(SLNode):
     """
     A screen language AST node that corresponds to an If/Elif/Else statement.
