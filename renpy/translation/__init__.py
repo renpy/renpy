@@ -689,16 +689,10 @@ def load_all_rpts():
 style_backup = None
 
 
-old_language = "language never set"
-
-
 def init_translation():
     """
     Called before the game starts.
     """
-
-    global old_language
-    old_language = "language never set"
 
     global style_backup
     style_backup = renpy.style.backup() # @UndefinedVariable
@@ -708,6 +702,7 @@ def init_translation():
     renpy.store._init_language() # type: ignore
 
 
+old_language = "language never set"
 
 # A list of styles that have beend deferred to right before translate
 # styles are run.
