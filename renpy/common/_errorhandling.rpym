@@ -562,7 +562,6 @@ init python:
                     error_rv[-1] = line
                     continue
 
-                print(repr(line))
                 error_rv.append(line.replace("{", "{{"))
 
             rv_len += error_len
