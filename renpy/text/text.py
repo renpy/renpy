@@ -683,6 +683,7 @@ class Layout(object):
         self.cps = style.slow_cps
         if self.cps is None or self.cps is True:
             self.cps = renpy.game.preferences.text_cps
+        self.cps = self.cps * style.slow_cps_multiplier
 
         width = self.scale_int(width)
         height = self.scale_int(height)
