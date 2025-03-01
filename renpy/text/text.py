@@ -396,7 +396,7 @@ class TextSegment(object):
     def subsegment(self, s):
         """
         This is called to break the current text segment up into multiple
-        text segments. It yields one or more(TextSegement, string) tuples
+        text segments. It yields one or more(TextSegment, string) tuples
         for each sub-segment it creates.
 
         This is used by the FontGroup code to create new text segments based

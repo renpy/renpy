@@ -132,20 +132,71 @@ to determine otherwise.
 
 Ren'Py now also searches for `.rpe` and `.rpe.py` files in the new libs directory.
 
-.. _renpy-8.3.4:
-.. _renpy-7.8.4:
+.. _renpy-8.3.6:
+.. _renpy-7.8.6:
 
-8.3.5 / 7.8.5
-==============
+8.3.6 / 7.8.6
+=============
 
-Changes
--------
+Fixes
+-----
 
-Ren'Py will now create pseudo-glyphs for the all textshaders, not just textshaders applied to text with outlines.
+Revert a change that prevented certain saves from loading.
 
 
 .. _renpy-8.3.5:
 .. _renpy-7.8.5:
+
+8.3.5 / 7.8.5
+=============
+
+Changes
+-------
+
+Cyrillic characters are no longer used by the OpenDyslexic font in accessibility mode, as some of the characters
+are wrong in the version of OpenDyslexic that Ren'Py uses.
+
+When laying out text, nestled CTC (click-to-continue) indicators that are not at the end of the text are considered
+to be of 0 size. This prevents the text from jumping around.
+
+When laying out text with nestled CTC indicators, ``extend`` is taken into account.
+
+A modal screen stops being modal as it begins hiding.
+
+Ren'Py will now create pseudo-glyphs for the all textshaders, not just textshaders applied to text with outlines.
+
+Ren'Py will now consider multiple dialogue when displaying empty windows.
+
+Gles2 is now the default renderer on arm-linux, even if OpenGL is available.
+
+When a file no_launcher_links.txt exist in the Ren'Py base directory, the launcher will disable all links to renpy.org,
+for environments where direct links to external sites are not suitable.
+
+Displayables given to imagemaps are offered a full screen's worth of space when being rendered. Previously, the
+amount of space given to these displayables was undefined.
+
+The itch butler tool is now downloaded from itch's new CDN.
+
+Fixes
+-----
+
+Non-moving children of a MoveTransform are now wrapped to ensure the child's timeline remains consistent.
+
+A crash during reload when the speech bubble editor is displayed has been fixed.
+
+Ren'Py now displays all outline offsets when using textshaders.
+
+A crash caused by changing audio filters on the web platform has been fixed.
+
+A font in a translation directory can now override a font in the game directory.
+
+A crash during video playback on the web platform has been fixed.
+
+Mouse coordinates passed to displayables embedded in text are now correct.
+
+
+.. _renpy-8.3.4:
+.. _renpy-7.8.4:
 
 8.3.4 / 7.8.4
 =============

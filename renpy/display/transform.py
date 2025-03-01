@@ -988,7 +988,7 @@ class Transform(Container):
         elif isinstance(d, ATLTransform):
             d.execute(d, fst, fat)
 
-        new_child = d.child._hide(st - self.st_offset, at - self.st_offset, kind)
+        new_child = d.child._hide(st - self.st_offset, at - self.at_offset, kind)
 
         if new_child is not None:
             d.child = new_child
