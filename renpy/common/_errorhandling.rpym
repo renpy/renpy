@@ -531,7 +531,7 @@ init python:
 
             error_rv = []
             error_len = 0
-            for line in lines:
+            for i, line in enumerate(lines):
                 # In case we have single insanely lengthy single error.
                 error_len += len(line)
                 if error_len > 65536:
@@ -542,9 +542,9 @@ init python:
                     idx = line.find("^")
                     count = line.count("^", idx)
 
-                    prev_line = error_rv[-1]
+                    prev_line = lines[i - 1]
 
-                    line = prev_line[:idx]
+                    line = prev_line[:idx].replace("{", "{{")
 
                     if count == 1:
                         if len(prev_line) < idx + count:
@@ -557,11 +557,12 @@ init python:
                     line += "{b}{color=#a00}"
                     line += mark
                     line += "{/color}{/b}"
-                    line += prev_line[idx + count:]
+                    line += prev_line[idx + count:].replace("{", "{{")
 
                     error_rv[-1] = line
                     continue
 
+                print(repr(line))
                 error_rv.append(line.replace("{", "{{"))
 
             rv_len += error_len
