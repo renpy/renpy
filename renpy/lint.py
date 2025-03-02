@@ -125,6 +125,8 @@ def problem_listing(header, problems):
             for line, message in file_problems:
                 print("    * line {:>5d} {}".format(line, message))
 
+    global error_reported
+    error_reported = True
 
 # Tries to evaluate an expression, announcing an error if it fails.
 def try_eval(where, expr, additional=None):
