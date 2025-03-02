@@ -1087,7 +1087,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
     if cache:
 
-        key = (hashcode, lineno, filename, mode, renpy.script.MAGIC, flags, column)
+        key = (hashcode, lineno, filename, mode, renpy.script.PYC_MAGIC, flags, column)
         warnings_key = ("warnings", key)
 
         rv = py_compile_cache.get(key, None)

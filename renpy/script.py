@@ -49,10 +49,13 @@ script_version = renpy.script_version
 # The version of the bytecode cache.
 BYTECODE_VERSION = 1
 
-from importlib.util import MAGIC_NUMBER as MAGIC
+from importlib.util import MAGIC_NUMBER as PYC_MAGIC
 
-# Change this to force a recompile when required.
-MAGIC += b'_v3.1'
+# Change this to force a recompile of Python when required.
+PYC_MAGIC += b'_2025-03-02'
+
+# Change this to force a recompile of RPYC files when required, if the .rpy file exists.
+RPYC_MAGIC = b'_2025-03-02'
 
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
@@ -818,7 +821,7 @@ class Script(object):
                             self.write_rpyc_data(f, 2, pickle_data_after_static_transforms)
 
                             with open(fullfn, "rb") as fullf:
-                                rpydigest = hashlib.md5(fullf.read()).digest()
+                                rpydigest = hashlib.md5(fullf.read() + RPYC_MAGIC).digest()
 
                             self.write_rpyc_md5(f, rpydigest)
                     except Exception:
@@ -933,7 +936,7 @@ class Script(object):
                 source, rpyfn = rpyfns[0]
 
                 with open(rpyfn, "rb") as f:
-                    rpydigest = hashlib.md5(f.read()).digest()
+                    rpydigest = hashlib.md5(f.read() + RPYC_MAGIC).digest()
             else:
                 source = source_extensions[-1]
                 rpyfn = dir + "/" + fn + source_extensions[-1]
