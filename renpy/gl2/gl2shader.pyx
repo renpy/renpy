@@ -318,12 +318,13 @@ cdef class Program:
 
         if status == GL_FALSE:
 
-            renpy.display.log.write("Error compiling shader %s:", self.name)
+            glGetShaderInfoLog(shader, 1024, NULL, error)
+
+            renpy.display.log.write("Error compiling shader %s: %r", self.name, <object> error)
 
             for i, l in enumerate(original_source.splitlines()):
                 renpy.display.log.write("% 3d %s" % (i+1 , l))
 
-            glGetShaderInfoLog(shader, 1024, NULL, error)
             raise ShaderError((<object> error).decode("latin-1"))
 
         return shader
@@ -351,7 +352,20 @@ cdef class Program:
         glGetProgramiv(program, GL_LINK_STATUS, &status)
 
         if status == GL_FALSE:
+
             glGetProgramInfoLog(program, 1024, NULL, error)
+
+            renpy.display.log.write("Error linking shader %s: %r", self.name, <object> error)
+
+            renpy.display.log.write("Vertex shader:")
+            for i, l in enumerate(self.vertex.splitlines()):
+                renpy.display.log.write("% 3d %s" % (i+1 , l))
+
+            renpy.display.log.write("Fragment shader:")
+
+            for i, l in enumerate(self.fragment.splitlines()):
+                renpy.display.log.write("% 3d %s" % (i+1 , l))
+
             raise ShaderError(repr((<object> error)))
 
         glDeleteShader(vertex)
