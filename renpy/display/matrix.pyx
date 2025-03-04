@@ -183,6 +183,57 @@ cdef class Matrix:
 
         return rv
 
+    def __imul__(Matrix self, Matrix other):
+
+        cdef float xdx, xdy, xdz, xdw
+        cdef float ydx, ydy, ydz, ydw
+        cdef float zdx, zdy, zdz, zdw
+        cdef float wdx, wdy, wdz, wdw
+
+        xdx = other.wdx*self.xdw + other.xdx*self.xdx + other.ydx*self.xdy + other.zdx*self.xdz
+        xdy = other.wdy*self.xdw + other.xdy*self.xdx + other.ydy*self.xdy + other.zdy*self.xdz
+        xdz = other.wdz*self.xdw + other.xdz*self.xdx + other.ydz*self.xdy + other.zdz*self.xdz
+        xdw = other.wdw*self.xdw + other.xdw*self.xdx + other.ydw*self.xdy + other.zdw*self.xdz
+
+        ydx = other.wdx*self.ydw + other.xdx*self.ydx + other.ydx*self.ydy + other.zdx*self.ydz
+        ydy = other.wdy*self.ydw + other.xdy*self.ydx + other.ydy*self.ydy + other.zdy*self.ydz
+        ydz = other.wdz*self.ydw + other.xdz*self.ydx + other.ydz*self.ydy + other.zdz*self.ydz
+        ydw = other.wdw*self.ydw + other.xdw*self.ydx + other.ydw*self.ydy + other.zdw*self.ydz
+
+        zdx = other.wdx*self.zdw + other.xdx*self.zdx + other.ydx*self.zdy + other.zdx*self.zdz
+        zdy = other.wdy*self.zdw + other.xdy*self.zdx + other.ydy*self.zdy + other.zdy*self.zdz
+        zdz = other.wdz*self.zdw + other.xdz*self.zdx + other.ydz*self.zdy + other.zdz*self.zdz
+        zdw = other.wdw*self.zdw + other.xdw*self.zdx + other.ydw*self.zdy + other.zdw*self.zdz
+
+        wdx = other.wdx*self.wdw + other.xdx*self.wdx + other.ydx*self.wdy + other.zdx*self.wdz
+        wdy = other.wdy*self.wdw + other.xdy*self.wdx + other.ydy*self.wdy + other.zdy*self.wdz
+        wdz = other.wdz*self.wdw + other.xdz*self.wdx + other.ydz*self.wdy + other.zdz*self.wdz
+        wdw = other.wdw*self.wdw + other.xdw*self.wdx + other.ydw*self.wdy + other.zdw*self.wdz
+
+        self.xdx = xdx
+        self.xdy = xdy
+        self.xdz = xdz
+        self.xdw = xdw
+
+        self.ydx = ydx
+        self.ydy = ydy
+        self.ydz = ydz
+        self.ydw = ydw
+
+        self.zdx = zdx
+        self.zdy = zdy
+        self.zdz = zdz
+        self.zdw = zdw
+
+        self.wdx = wdx
+        self.wdy = wdy
+        self.wdz = wdz
+        self.wdw = wdw
+
+        return self
+
+
+
     def is_2d_null(self):
         """
         Returns true if a 2D matrix always projects to 0 in the x or y directions.
