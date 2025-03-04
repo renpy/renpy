@@ -194,20 +194,41 @@ class Parser(object):
                 self.keyword[i.prefix + j + i.name] = i
 
         elif isinstance(i, Parser):
-            self.children[i.name] = i
+            self.children[tuple(i.name.split())] = i
 
     def parse_statement(self, loc, l, layout_mode=False, keyword=True):
-        word = l.word() or l.match(r'\$')
-
-        if word and word in self.children:
-            if layout_mode:
-                c = self.children[word].parse_layout(loc, l, self, keyword)
+        # Look for one-line python only once.
+        if l.match(r'\$'):
+            if ("$", ) in self.children:
+                assert not layout_mode, "One-line python can not be in layout mode."
+                return self.children["$", ].parse(loc, l, self, keyword)
             else:
-                c = self.children[word].parse(loc, l, self, keyword)
+                return None
 
-            return c
-        else:
+        name = ()
+        while True:
+            cp = l.checkpoint()
+            word = l.word()
+            if not word:
+                break
+
+            # Look for more specialized child parser.
+            new_name = (*name, word)
+            if new_name not in self.children:
+                l.revert(cp)
+                break
+
+            name = new_name
+
+        if not name:
             return None
+
+        if layout_mode:
+            c = self.children[name].parse_layout(loc, l, self, keyword)
+        else:
+            c = self.children[name].parse(loc, l, self, keyword)
+
+        return c
 
     def parse_layout(self, loc, l, parent, keyword):
         l.error("The %s statement cannot be used as a container for the has statement." % self.name)
@@ -229,7 +250,16 @@ class Parser(object):
 
         raise Exception("Not Implemented")
 
-    def parse_contents(self, l, target, layout_mode=False, can_has=False, can_tag=False, block_only=False, keyword=True):
+    def parse_contents(
+        self,
+        l, target,
+        layout_mode=False,
+        can_has=False,
+        can_tag=False,
+        block_only=False,
+        keyword=True,
+        line_only=False,
+    ):
         """
         Parses the remainder of the current line of `l`, and all of its subblock,
         looking for keywords and children.
@@ -247,6 +277,10 @@ class Parser(object):
 
         `block_only`
             If true, only parse the block and not the initial properties.
+
+        `line_only`
+            If true, only parse initial properties and not the block.
+            Lexer ends before the colon (if any).
         """
 
         seen_keywords = set()
@@ -330,10 +364,16 @@ class Parser(object):
             # If not block_only, we allow keyword arguments on the starting
             # line.
             while True:
+                cp = l.checkpoint()
                 if l.match(':'):
-                    l.expect_eol()
-                    l.expect_block(self.name)
-                    block = True
+                    # If line_only, we stop before the colon.
+                    if line_only:
+                        l.revert(cp)
+                        block = False
+                    else:
+                        l.expect_eol()
+                        l.expect_block(self.name)
+                        block = True
                     break
 
                 if l.eol():
@@ -698,6 +738,24 @@ class DisplayableParser(Parser):
                 l.error("{} statement expects {} positional arguments, got {}.".format(self.name, len(self.positional), len(rv.positional)))
 
         return rv
+
+
+class AddImageParser(Parser):
+    def __init__(self, name):
+        super().__init__(name)
+        self.variable = True
+
+    def parse(self, loc, l, parent, keyword):
+        rv = slast.SLAddImage(loc, self.name)
+
+        self.parse_contents(l, rv, line_only=True)
+        l.require(':')
+        l.expect_eol()
+        l.expect_block("ATL block")
+        rv.atl_transform = renpy.atl.parse_atl(l.subblock_lexer()) # type: ignore
+        return rv
+
+AddImageParser("add image")
 
 
 class IfParser(Parser):
