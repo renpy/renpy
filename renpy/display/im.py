@@ -1971,6 +1971,8 @@ class Null(ImageBase):
     if needed.
     """
 
+    obsolete = False
+
     def __init__(self, **properties):
         super(Null, self).__init__(**properties)
 
