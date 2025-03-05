@@ -450,3 +450,93 @@ def thaic90(s):
         rv.append(c)
 
     return u''.join(rv)
+
+
+def unmap_arabic_isolated_forms(s):
+    """
+    Unmaps Arabic isolated forms back to the base glyphs.
+    This will let the shaper do the remapping with the information
+    about the font used for the text.
+    """
+    
+    # Arabic Presentation Forms-A
+    s = s.replace(u'\uFB50', u'\u0671') # ARABIC LETTER ALEF WASLA ISOLATED FORM
+    s = s.replace(u'\uFB52', u'\u067B') # ARABIC LETTER BEEH ISOLATED FORM
+    s = s.replace(u'\uFB56', u'\u067E') # ARABIC LETTER PEH ISOLATED FORM
+    s = s.replace(u'\uFB5A', u'\u0680') # ARABIC LETTER BEHEH ISOLATED FORM
+    s = s.replace(u'\uFB5E', u'\u067A') # ARABIC LETTER TTEHEH ISOLATED FORM
+    s = s.replace(u'\uFB62', u'\u067F') # ARABIC LETTER TEHEH ISOLATED FORM
+    s = s.replace(u'\uFB66', u'\u0679') # ARABIC LETTER TTEH ISOLATED FORM
+    s = s.replace(u'\uFB6A', u'\u06A4') # ARABIC LETTER VEH ISOLATED FORM
+    s = s.replace(u'\uFB6E', u'\u06A6') # ARABIC LETTER PEHEH ISOLATED FORM
+    s = s.replace(u'\uFB72', u'\u0684') # ARABIC LETTER DYEH ISOLATED FORM
+    s = s.replace(u'\uFB76', u'\u0683') # ARABIC LETTER NYEH ISOLATED FORM
+    s = s.replace(u'\uFB7A', u'\u0686') # ARABIC LETTER TCHEH ISOLATED FORM
+    s = s.replace(u'\uFB7E', u'\u0687') # ARABIC LETTER TCHEHEH ISOLATED FORM
+    s = s.replace(u'\uFB82', u'\u068D') # ARABIC LETTER DDAHAL ISOLATED FORM
+    s = s.replace(u'\uFB84', u'\u068C') # ARABIC LETTER DAHAL ISOLATED FORM
+    s = s.replace(u'\uFB86', u'\u068E') # ARABIC LETTER DUL ISOLATED FORM
+    s = s.replace(u'\uFB88', u'\u0688') # ARABIC LETTER DDAL ISOLATED FORM
+    s = s.replace(u'\uFB8A', u'\u0698') # ARABIC LETTER JEH ISOLATED FORM
+    s = s.replace(u'\uFB8C', u'\u0691') # ARABIC LETTER RREH ISOLATED FORM
+    s = s.replace(u'\uFB8E', u'\u06A9') # ARABIC LETTER KEHEH ISOLATED FORM
+    s = s.replace(u'\uFB92', u'\u06AF') # ARABIC LETTER GAF ISOLATED FORM
+    s = s.replace(u'\uFB96', u'\u06B3') # ARABIC LETTER GUEH ISOLATED FORM
+    s = s.replace(u'\uFB9A', u'\u06B1') # ARABIC LETTER NGOEH ISOLATED FORM
+    s = s.replace(u'\uFB9E', u'\u06BA') # ARABIC LETTER GHUNNA ISOLATED FORM
+    s = s.replace(u'\uFBA0', u'\u06BB') # ARABIC LETTER RNOON ISOLATED FORM
+    s = s.replace(u'\uFBA4', u'\u06C0') # ARABIC LETTER HEH WITH YEH ABOVE ISOLATED FORM
+    s = s.replace(u'\uFBA6', u'\u06C1') # ARABIC LETTER GOAL ISOLATED FORM
+    s = s.replace(u'\uFBAA', u'\u06BE') # ARABIC LETTER HEH DOACHASHMEE ISOLATED FORM
+    s = s.replace(u'\uFBAE', u'\u06D2') # ARABIC LETTER YEH BARREE ISOLATED FORM
+    s = s.replace(u'\uFBB0', u'\u06D3') # ARABIC LETTER YEH BARREE WITH HAMZA ABOVE ISOLATED FORM
+    s = s.replace(u'\uFBD3', u'\u06AD') # ARABIC LETTER NG ISOLATED FORM
+    s = s.replace(u'\uFBD7', u'\u06C7') # ARABIC LETTER U ISOLATED FORM
+    s = s.replace(u'\uFBD9', u'\u06C6') # ARABIC LETTER OE ISOLATED FORM
+    s = s.replace(u'\uFBDB', u'\u06C8') # ARABIC LETTER YU ISOLATED FORM
+    s = s.replace(u'\uFBDD', u'\u0677') # ARABIC LETTER U WITH HAMZA ABOVE ISOLATED FORM
+    s = s.replace(u'\uFBDE', u'\u06CB') # ARABIC LETTER VE ISOLATED FORM
+    s = s.replace(u'\uFBE0', u'\u06C5') # ARABIC LETTER KIRGHIZ OE ISOLATED FORM
+    s = s.replace(u'\uFBE4', u'\u06D0') # ARABIC LETTER E ISOLATED FORM
+    s = s.replace(u'\uFBE8', u'\u0649') # ARABIC LETTER UIGHUR KAZAKH KIRGHIZ ALEF MAKSURA ISOLATED FORM
+    s = s.replace(u'\uFBFC', u'\u06CC') # ARABIC LETTER FARSI YEH ISOLATED FORM
+
+    # Arabic Presentation Forms-B
+    s = s.replace(u'\uFE80', u'\u0621') # ARABIC LETTER HAMZA ISOLATED FORM
+    s = s.replace(u'\uFE81', u'\u0622') # ARABIC LETTER ALEF WITH MADDA ABOVE ISOLATED FORM
+    s = s.replace(u'\uFE83', u'\u0623') # ARABIC LETTER ALEF WITH HAMZA ABOVE ISOLATED FORM
+    s = s.replace(u'\uFE85', u'\u0624') # ARABIC LETTER WAW WITH HAMZA ABOVE ISOLATED FORM
+    s = s.replace(u'\uFE87', u'\u0625') # ARABIC LETTER ALEF WITH HAMZA BELOW ISOLATED FORM
+    s = s.replace(u'\uFE89', u'\u0626') # ARABIC LETTER YEH WITH HAMZA ABOVE ISOLATED FORM
+    s = s.replace(u'\uFE8D', u'\u0627') # ARABIC LETTER ALEF ISOLATED FORM
+    s = s.replace(u'\uFE8F', u'\u0628') # ARABIC LETTER BEH ISOLATED FORM
+    s = s.replace(u'\uFE93', u'\u0629') # ARABIC LETTER TEH MARBUTA ISOLATED FORM
+    s = s.replace(u'\uFE95', u'\u062A') # ARABIC LETTER TEH ISOLATED FORM
+    s = s.replace(u'\uFE99', u'\u062B') # ARABIC LETTER THEH ISOLATED FORM
+    s = s.replace(u'\uFE9D', u'\u062C') # ARABIC LETTER JEEM ISOLATED FORM
+    s = s.replace(u'\uFEA1', u'\u062D') # ARABIC LETTER HAH ISOLATED FORM
+    s = s.replace(u'\uFEA5', u'\u062E') # ARABIC LETTER KHAH ISOLATED FORM
+    s = s.replace(u'\uFEA9', u'\u062F') # ARABIC LETTER DAL ISOLATED FORM
+    s = s.replace(u'\uFEAB', u'\u0630') # ARABIC LETTER THAL ISOLATED FORM
+    s = s.replace(u'\uFEAD', u'\u0631') # ARABIC LETTER REH ISOLATED FORM
+    s = s.replace(u'\uFEAF', u'\u0632') # ARABIC LETTER ZAIN ISOLATED FORM
+    s = s.replace(u'\uFEB1', u'\u0633') # ARABIC LETTER SEEN ISOLATED FORM
+    s = s.replace(u'\uFEB5', u'\u0634') # ARABIC LETTER SHEEN ISOLATED FORM
+    s = s.replace(u'\uFEB9', u'\u0635') # ARABIC LETTER SAD ISOLATED FORM
+    s = s.replace(u'\uFEBD', u'\u0636') # ARABIC LETTER DAD ISOLATED FORM
+    s = s.replace(u'\uFEC1', u'\u0637') # ARABIC LETTER TAH ISOLATED FORM
+    s = s.replace(u'\uFEC5', u'\u0638') # ARABIC LETTER ZAH ISOLATED FORM
+    s = s.replace(u'\uFEC9', u'\u0639') # ARABIC LETTER AIN ISOLATED FORM
+    s = s.replace(u'\uFECD', u'\u063A') # ARABIC LETTER GHAIN ISOLATED FORM
+    s = s.replace(u'\uFED1', u'\u0641') # ARABIC LETTER FEH ISOLATED FORM
+    s = s.replace(u'\uFED5', u'\u0642') # ARABIC LETTER QAF ISOLATED FORM
+    s = s.replace(u'\uFED9', u'\u0643') # ARABIC LETTER KAF ISOLATED FORM
+    s = s.replace(u'\uFEDD', u'\u0644') # ARABIC LETTER LAM ISOLATED FORM
+    s = s.replace(u'\uFEE1', u'\u0645') # ARABIC LETTER MEEM ISOLATED FORM
+    s = s.replace(u'\uFEE5', u'\u0646') # ARABIC LETTER NOON ISOLATED FORM
+    s = s.replace(u'\uFEE9', u'\u0647') # ARABIC LETTER HEH ISOLATED FORM
+    s = s.replace(u'\uFEED', u'\u0648') # ARABIC LETTER WAW ISOLATED FORM
+    s = s.replace(u'\uFEEF', u'\u0649') # ARABIC LETTER ALEF MAKSURA ISOLATED FORM
+    s = s.replace(u'\uFEF1', u'\u064A') # ARABIC LETTER YEH ISOLATED FORM
+
+    return s
