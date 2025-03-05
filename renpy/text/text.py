@@ -1575,8 +1575,9 @@ class Layout(object):
         """
         Given a paragraph (a list of segment, text tuples) handles
         RTL and ligaturization. This returns the reversed RTL paragraph,
-        which differers from the LTR one. It also returns a flag that is
-        True if this is an rtl paragraph.
+        which differs from the LTR one with the arabic glyphs mapped to
+        the presentation forms except the isolated forms. It also returns
+        a flag that is True if this is an rtl paragraph.
         """
 
         direction = ON
@@ -1585,6 +1586,7 @@ class Layout(object):
 
         for ts, s in p:
             s, direction = log2vis(str(s), direction)
+            s = renpy.text.extras.unmap_arabic_isolated_forms(s)
             l.append((ts, s))
 
         rtl = (direction == RTL or direction == WRTL)
