@@ -699,8 +699,6 @@ def init_translation():
 
     load_all_rpts()
 
-    renpy.store._init_language() # type: ignore
-
 
 old_language = "language never set"
 
@@ -775,9 +773,6 @@ def change_language(language, force=False):
 
     global old_language
 
-    if old_language != language:
-        clean_data()
-
     renpy.exports.load_language(language)
 
     renpy.game.preferences.language = language
@@ -834,6 +829,8 @@ def check_language():
 
     # Deal with a changed language.
     if ctx.translate_language != preferences.language:
+        clean_data()
+
         ctx.translate_language = preferences.language
 
         tid = ctx.translate_identifier or ctx.deferred_translate_identifier
