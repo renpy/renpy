@@ -59,7 +59,7 @@ def display_notify(message):
     renpy.exports.restart_interaction()
 
 
-def confirm(message):
+def confirm(message, **kwargs):
     """
     :doc: other
 
@@ -71,8 +71,10 @@ def confirm(message):
     `message`
         The message that will be displayed.
 
+    Additional keyword arguments not beginning with _ are passed to the screen.
+
     See :func:`Confirm` for a similar Action.
     """
     Return = renpy.store.Return
-    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False))
+    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False), **kwargs)
     return renpy.ui.interact()

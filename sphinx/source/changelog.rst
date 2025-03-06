@@ -65,6 +65,9 @@ of :func:`Image`.
 Features
 --------
 
+The :class:`Confirm` action and :func:`renpy.confirm` function now pass additional keyword arguments (not beginning
+with _) to the confirm screen.
+
 The screen language :ref:`use <sl-use>` statement now takes an ``as`` clause, which can be used to capture a
 variable named `main` from the screen. This is intended to be used like the ``as`` clause of screen language
 displayables, which captures the displayable into a variable.

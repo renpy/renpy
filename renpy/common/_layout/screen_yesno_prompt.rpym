@@ -23,7 +23,7 @@ init python hide:
 
     layout.provides('yesno_prompt')
 
-    def yesno_prompt(screen, message):
+    def yesno_prompt(screen, message, **kwargs):
 
         if config.confirm_screen and renpy.has_screen('confirm'):
             screen = "confirm"

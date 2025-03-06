@@ -639,6 +639,9 @@ init -1500 python:
             is already selected. If false (the default), the prompt
             will not be displayed if the `yes` action is selected.
 
+        Additional keyword arguments not beginning with _ are passed to
+        the screen.
+
         The sensitivity and selectedness of this action match those
         of the `yes` action.
 
@@ -646,17 +649,20 @@ init -1500 python:
         """
 
 
-        def __init__(self, prompt, yes, no=None, confirm_selected=False):
+        kwargs = { }
+
+        def __init__(self, prompt, yes, no=None, confirm_selected=False, **kwargs):
             self.prompt = prompt
             self.yes = yes
             self.no = no
             self.confirm_selected = confirm_selected
+            self.kwargs = kwargs
 
         def __call__(self):
             if self.get_selected() and not self.confirm_selected:
                 return renpy.run(self.yes)
 
-            return layout.yesno_screen(self.prompt, self.yes, self.no)
+            return layout.yesno_screen(self.prompt, self.yes, self.no, **self.kwargs)
 
         def get_sensitive(self):
             if self.yes is None:
