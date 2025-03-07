@@ -913,14 +913,9 @@ cdef class HBFont:
             gl.line_spacing = self.lineskip
             gl.draw = True
 
-            if self.vertical:
-                gl.x_offset = -glyph_pos[i].y_offset / 64.0
-                gl.y_offset = -glyph_pos[i].x_offset / 64.0
-                gl.advance = -glyph_pos[i].y_advance / 64.0
-            else:
-                gl.x_offset = glyph_pos[i].x_offset / 64.0
-                gl.y_offset = glyph_pos[i].y_offset / 64.0
-                gl.advance = glyph_pos[i].x_advance / 64.0
+            gl.x_offset = -glyph_pos[i].y_offset / 64.0
+            gl.y_offset = -glyph_pos[i].x_offset / 64.0
+            gl.advance = -glyph_pos[i].y_advance / 64.0
 
             gl.width = gl.advance
 
