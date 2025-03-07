@@ -1506,6 +1506,10 @@ limit_transform_crop = False
 # Should as dissolve shrink to the size of the smallest child?
 dissolve_shrinks = False
 
+# Should arabic presentations forms be reversed to base forms?
+reverse_arabic_presentation_forms = True
+
+
 del os
 del collections
 

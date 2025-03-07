@@ -11,6 +11,15 @@ Changelog (Ren'Py 7.x-)
 8.3.6 / 7.8.6
 =============
 
+
+Changes
+-------
+
+When :var:`config.rtl` is set to True and harfbuzz is enabled, Ren'Py will unmap Arabic presentation forms and allow
+harfbuzz to fully shape Arabic text. This allows Ren'Py to work with fonts that do not contain Arabic presentation
+forms directly, but instead use ligaturization.
+
+
 Fixes
 -----
 
