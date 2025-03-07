@@ -1105,7 +1105,6 @@ class RollbackLog(renpy.object.Object):
         renpy.game.log = self
 
         renpy.python.clean_stores()
-        renpy.translation.init_translation()
 
         store_dicts = renpy.python.store_dicts
 
