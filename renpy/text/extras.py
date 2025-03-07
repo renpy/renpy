@@ -539,7 +539,7 @@ arabic_reverse_mappings = {
     (u'\uFEF5',u'\uFEF6'):  		  u'\u0622\u0644', # ARABIC LIGATURE LAM WITH ALEF WITH MADDA ABOVE
     (u'\uFEF7',u'\uFEF8'):  		  u'\u0623\u0644', # ARABIC LIGATURE LAM WITH ALEF WITH HAMZA ABOVE
     (u'\uFEF9',u'\uFEFA'):  		  u'\u0625\u0644', # ARABIC LIGATURE LAM WITH ALEF WITH HAMZA BELOW
-    (u'\uFEFB',u'\uFEFC'):  		  u'\u0625\u0644'  # ARABIC LIGATURE LAM WITH ALEF
+    (u'\uFEFB',u'\uFEFC'):  		  u'\u0627\u0644'  # ARABIC LIGATURE LAM WITH ALEF
 }
 
 # Convert this to one-on-one.
