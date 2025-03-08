@@ -130,8 +130,7 @@ class Sprite(renpy.object.Object):
                 sc.child_copy._unique()
             else:
                 sc.child_copy = d
-
-            self.manager.displayable_map[id_d] = sc
+                self.manager.displayable_map[id_d] = sc
 
         self.cache = sc
 
