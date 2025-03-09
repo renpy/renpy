@@ -135,6 +135,7 @@ class Part(object):
         self.default_opacity = default_opacity
         self.remaining = 1.0
 
+
 cdef class Live2DModel:
     """
     Represents a Live2D model, generated from a MOC.
@@ -389,24 +390,15 @@ cdef class Live2DModel:
         csmUpdateModel(self.model)
 
         # Render the model.
-        w = int(zoom * self.pixel_size.X)
-        h = int(zoom * self.pixel_size.Y)
+        w = self.pixel_size.X * zoom
+        h = self.pixel_size.Y * zoom
+
+        offset_x = self.pixel_origin.X * zoom
+        offset_y = self.pixel_origin.Y * zoom
 
         ppu = self.pixels_per_unit * zoom
 
-        if ppu:
-            invppu = 1 / ppu
-        else:
-            invppu = 0
-
-        offset = (w / 2.0 - ppu, h / 2.0 - ppu)
-
-        reverse = Matrix([
-            ppu, 0, 0, ppu,
-            0, -ppu, 0, ppu,
-            0, 0, 1, 0,
-            0, 0, 0, 1, ])
-
+        reverse = Matrix.offset(offset_x, offset_y, 0.0) * Matrix.scale(ppu, -ppu, 1.0)
         forward = reverse.inverse()
 
         rv = Render(w, h)
@@ -440,7 +432,7 @@ cdef class Live2DModel:
             tex = textures[self.drawable_texture_indices[i]]
 
             # Create a render that can be used as a mask.
-            mr = Render(ppu * 2, ppu * 2)
+            mr = Render(w, h)
             mr.reverse = reverse
             mr.forward = forward
             mr.mesh = mesh
@@ -456,7 +448,7 @@ cdef class Live2DModel:
             mask_renders.append(mr)
 
             # Create the render that is actually drawn.
-            r = Render(ppu * 2, ppu * 2)
+            r = Render(w, h)
             r.reverse = reverse
             r.forward = forward
             r.mesh = mesh
@@ -502,6 +494,7 @@ cdef class Live2DModel:
 
             if self.drawable_mask_counts[i] == 1:
                 m = mask_renders[self.drawable_masks[i][0]]
+
             else:
 
                 key = [ ]
@@ -530,11 +523,14 @@ cdef class Live2DModel:
             for s in shaders:
                 r.add_shader(s)
 
+            r.add_uniform("u_live2d_ppu", ppu)
+            r.add_uniform("u_live2d_offset", (offset_x, offset_y))
+
             r.blit(m, (0, 0))
 
         renders.sort()
 
         for t in renders:
-            rv.subpixel_blit(t[1], offset)
+            rv.subpixel_blit(t[1], (0, 0))
 
         return rv
