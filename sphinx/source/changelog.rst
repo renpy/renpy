@@ -5,20 +5,49 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.3.7:
+.. _renpy-7.8.7:
+
+Live2D
+------
+
+Fixed an issue where Ren'Py would incorrectly size Live2D clipping masks. As this problem only affected layers that
+used clipping, this would often manifest as eyes being missing.
+
+Live2D fading now uses cosine easing, as the Cubism Native SDK does.
+
+
+Arabic Text Shaping
+-------------------
+
+(As these changes require the Harfbuzz text shaper, the changes are only available in Ren'Py 8.)
+
+When :var:`config.rtl` is set to True and Harfbuzz is enabled, Ren'Py will unmap Arabic presentation forms and allow
+harfbuzz to fully shape Arabic text. This allows Ren'Py to work with fonts that do not contain Arabic presentation
+forms directly, but instead use ligaturization.
+
+An issue with Harbuzz's adjustments of vertical positions has been fixed. This improves the positioning of text
+where ligatures control the vertical positioning of the text. While this affects some Arabic fonts, it also may
+improve the location of marks in other fonts.
+
+Fixes
+-----
+
+:class:`SpriteManager` will no longer merge instances of a displayable that maintains internal state, like
+transforms. This is more correct, but slightly less efficient.
+
+The language is now set when the game starts or is loaded, ensuring that ``translate python`` blocs are always
+run in the game context.
+
+Text shaders now respect :propref:`slow_cps_multiplier`.
+
+
+
 .. _renpy-8.3.6:
 .. _renpy-7.8.6:
 
 8.3.6 / 7.8.6
 =============
-
-
-Changes
--------
-
-When :var:`config.rtl` is set to True and harfbuzz is enabled, Ren'Py will unmap Arabic presentation forms and allow
-harfbuzz to fully shape Arabic text. This allows Ren'Py to work with fonts that do not contain Arabic presentation
-forms directly, but instead use ligaturization.
-
 
 Fixes
 -----
