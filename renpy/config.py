@@ -1509,6 +1509,9 @@ dissolve_shrinks = False
 # Should arabic presentations forms be reversed to base forms?
 reverse_arabic_presentation_forms = True
 
+# Should the script be compiled with from future import annotations?
+future_annotations = False
+
 
 del os
 del collections

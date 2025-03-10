@@ -1074,6 +1074,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
             flags |= new_compile_flags
 
+            if renpy.config.future_annotations:
+                flags |= __future__.annotations.compiler_flag
+
             try:
                 with save_warnings():
                     tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
