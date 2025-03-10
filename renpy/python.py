@@ -1085,6 +1085,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
     flags = file_compiler_flags.get(filename, 0)
 
+    if renpy.config.future_annotations:
+        flags |= __future__.annotations.compiler_flag
+
     if cache:
 
         key = (hashcode, lineno, filename, mode, renpy.script.PYC_MAGIC, flags, column)
@@ -1138,7 +1141,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             py_mode = mode
 
         tree: Any = None
+
         with save_warnings():
+
             try:
                 tree = compile(
                     source,
