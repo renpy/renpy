@@ -889,6 +889,9 @@ class Live2D(renpy.display.displayable.Displayable):
             weight = 1.0
             e = common.all_expressions[name]
 
+            if now - hidden >= e.fadeout:
+                continue
+
             if (e.fadein > 0) and (now - shown) < e.fadein:
                 weight = min(weight, (now - shown) / e.fadein)
                 redraw = 0

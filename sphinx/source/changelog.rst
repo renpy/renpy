@@ -11,6 +11,8 @@ Changelog (Ren'Py 7.x-)
 Live2D
 ------
 
+Fixed an issue where Expressions with a fadeout time of 0 would not hide properly.
+
 Fixed an issue where Ren'Py would incorrectly size Live2D clipping masks. As this problem only affected layers that
 used clipping, this would often manifest as eyes being missing.
 
