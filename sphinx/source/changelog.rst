@@ -38,6 +38,9 @@ improve the location of marks in other fonts.
 Fixes
 -----
 
+Multiple say statements can now contain image attributes, like other say statements. Temporary image attributes
+are only supported in the last say statement in a multiple group.
+
 Games made with Ren'Py 8.0 and 8.1 will have Python compiled with ``from __future__ import annotations``, matching
 how Python in those versions was originally compiled.
 
