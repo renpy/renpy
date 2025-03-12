@@ -139,6 +139,9 @@ Ren'Py now also searches for `.rpe` and `.rpe.py` files in the new libs director
 .. _renpy-8.3.7:
 .. _renpy-7.8.7:
 
+8.3.7 / 7.8.7
+=============
+
 Live2D
 ------
 
@@ -165,6 +168,9 @@ improve the location of marks in other fonts.
 
 Fixes
 -----
+
+Multiple say statements can now contain image attributes, like other say statements. Temporary image attributes
+are only supported in the last say statement in a multiple group.
 
 Games made with Ren'Py 8.0 and 8.1 will have Python compiled with ``from __future__ import annotations``, matching
 how Python in those versions was originally compiled.
