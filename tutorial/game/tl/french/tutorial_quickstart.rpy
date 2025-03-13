@@ -104,7 +104,7 @@ translate french tutorial_dialogue_f0d66410:
 # game/tutorial_quickstart.rpy:89
 translate french tutorial_dialogue_3e6b0068:
 
-    # "Wow, It's really really dark in here."
+    # "Wow, it's really really dark in here."
     "Ouah, c’est vraiment sombre ici."
 
 # game/tutorial_quickstart.rpy:91
@@ -200,7 +200,7 @@ translate french tutorial_dialogue_90719f73:
 # game/tutorial_quickstart.rpy:151
 translate french tutorial_dialogue_910f286a:
 
-    # e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
+    # e "The first is that it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
     e "La première, c’est que c’est une solution un peu verbeuse. Même si écrire \"Lucy\" n’est pas faux, imaginez ce que cela va être si vous devez taper \"Eileen Richardson\" un millier de fois !"
 
 # game/tutorial_quickstart.rpy:153

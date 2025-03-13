@@ -86,7 +86,7 @@ label tutorial_dialogue:
 
     example dialogue1 hide:
 
-        "Wow, It's really really dark in here."
+        "Wow, it's really really dark in here."
 
         "Lucy" "Better watch out. You don't want to be eaten by a Grue."
 

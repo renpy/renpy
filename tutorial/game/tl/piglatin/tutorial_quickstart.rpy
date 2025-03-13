@@ -104,7 +104,7 @@ translate piglatin tutorial_dialogue_f0d66410:
 # game/tutorial_quickstart.rpy:89
 translate piglatin tutorial_dialogue_3e6b0068:
 
-    # "Wow, It's really really dark in here."
+    # "Wow, it's really really dark in here."
     "Owway, Tiay'say eallyray eallyray arkday inay erehay."
 
 # game/tutorial_quickstart.rpy:91
@@ -152,7 +152,7 @@ translate piglatin tutorial_dialogue_628c9e4c:
 # game/tutorial_quickstart.rpy:116
 translate piglatin tutorial_dialogue_3e6b0068_1:
 
-    # "Wow, It's really really dark in here."
+    # "Wow, it's really really dark in here."
     "Owway, Tiay'say eallyray eallyray arkday inay erehay."
 
 # game/tutorial_quickstart.rpy:125
@@ -200,7 +200,7 @@ translate piglatin tutorial_dialogue_90719f73:
 # game/tutorial_quickstart.rpy:151
 translate piglatin tutorial_dialogue_910f286a:
 
-    # e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
+    # e "The first is that it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
     e "Hetay irstfay isay hattay'say itay'say aay itbay erbosevay. Hileway ypingtay \"Ucylay\" isnay'tay osay adbay, imagineay ifay ouyay adhay otay ypetay \"Ileeneay Ichardsonray\" housandstay ofay imestay."
 
 # game/tutorial_quickstart.rpy:153
