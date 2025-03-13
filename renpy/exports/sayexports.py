@@ -19,18 +19,37 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
 
-
 class TagQuotingDict(object):
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
 
         store = renpy.store.__dict__
 
@@ -43,7 +62,9 @@ class TagQuotingDict(object):
             return rv
         else:
             if renpy.config.debug:
-                raise Exception("During an interpolation, '%s' was not found as a variable." % key)
+                raise Exception(
+                    "During an interpolation, '%s' was not found as a variable." % key
+                )
             return "<" + key + " unbound>"
 
 
@@ -58,12 +79,12 @@ def predict_say(who, what):
     """
 
     if who is None:
-        who = renpy.store.narrator # type: ignore
+        who = renpy.store.narrator  # type: ignore
 
     if isinstance(who, str):
         return renpy.store.predict_say(who, what)
 
-    predict = getattr(who, 'predict', None)
+    predict = getattr(who, "predict", None)
     if predict:
         predict(what)
 
@@ -121,7 +142,7 @@ def say(who, what, *args, **kwargs):
         what = what % tag_quoting_dict
 
     if who is None:
-        who = renpy.store.narrator # type: ignore
+        who = renpy.store.narrator  # type: ignore
 
     if renpy.config.say_arguments_callback:
         args, kwargs = renpy.config.say_arguments_callback(who, *args, **kwargs)
@@ -151,7 +172,8 @@ def get_reshow_say(**kwargs):
         renpy.store._last_say_who,
         renpy.store._last_say_what,
         renpy.store._last_say_args,
-        **kw)
+        **kw
+    )
 
 
 def reshow_say(**kwargs):
@@ -228,7 +250,7 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
     if not_showing and images.showing(attr_layer, (attrs[0],)):
         return None
 
-    required = [ attrs[0] ]
+    required = [attrs[0]]
     optional = list(attrs[1:])
 
     return images.choose_image(prefix_tag, required, optional, None)
@@ -285,7 +307,6 @@ def substitute(s, scope=None, translate=True):
     return renpy.substitutions.substitute(s, scope=scope, translate=translate)[0]
 
 
-
 def get_say_image_tag():
     """
     :doc: image_func
@@ -302,7 +323,7 @@ def get_say_image_tag():
     return renpy.store._side_image_attributes[0]
 
 
-class LastSay():
+class LastSay:
     """
     :undocumented:
     Object containing info about the last dialogue line.
@@ -352,8 +373,8 @@ def last_say():
     """
 
     return LastSay(
-        who = renpy.store._last_say_who,
-        what = renpy.store._last_say_what,
-        args = renpy.store._last_say_args,
-        kwargs = renpy.store._last_say_kwargs,
+        who=renpy.store._last_say_who,
+        what=renpy.store._last_say_what,
+        args=renpy.store._last_say_args,
+        kwargs=renpy.store._last_say_kwargs,
     )

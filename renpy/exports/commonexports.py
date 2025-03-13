@@ -19,21 +19,42 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any, Callable  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 from renpy.pyanalysis import const, pure, not_const
 
-def renpy_pure(fn):
+
+def renpy_pure(fn: str | Callable[..., Any]):
     """
     Marks renpy.`fn` as a pure function.
     """
 
-    name = fn
-
-    if not isinstance(name, str):
+    if isinstance(fn, str):
+        name = fn
+    else:
         name = fn.__name__
 
-    pure("renpy." + name)
+    _ = pure(f"renpy.{name}")
 
     return fn

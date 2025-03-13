@@ -19,26 +19,47 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import fnmatch
 
 import renpy
 
 
-def cache_pin(*args):
+def cache_pin(*args: Any):
     """
     :undocumented: Cache pinning has been removed.
     """
 
-def cache_unpin(*args):
+
+def cache_unpin(*args: Any):
     """
     :undocumented: Cache pinning has been removed
     """
 
 
-def expand_predict(d):
+def expand_predict(d: str):
     """
     :undocumented:
 
@@ -46,10 +67,10 @@ def expand_predict(d):
     """
 
     if not isinstance(d, str):
-        return [ d ]
+        return [d]
 
     if not "*" in d:
-        return [ d ]
+        return [d]
 
     if "." in d:
         l = renpy.exports.list_files(False)
@@ -133,7 +154,7 @@ def start_predict_screen(_screen_name, *args, **kwargs):
     renpy.store._predict_screen = new_predict
 
 
-def stop_predict_screen(name):
+def stop_predict_screen(name: str):
     """
     :doc: screens
 

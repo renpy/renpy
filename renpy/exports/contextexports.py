@@ -19,8 +19,28 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
@@ -116,8 +136,6 @@ def context_dynamic(*variables):
     """
 
     renpy.game.context().make_dynamic(variables, context=True)
-
-
 
 
 # New context stuff.
@@ -221,7 +239,7 @@ def game_menu(screen=None):
         call_in_new_context("_game_menu", _game_menu_screen=screen)
 
 
-def mode(mode):
+def mode(mode: str):
     """
     :undocumented:
 
@@ -234,7 +252,7 @@ def mode(mode):
     if not ctx.use_modes:
         return
 
-    modes = ctx.modes
+    modes: list[Any] = ctx.modes
 
     try:
         ctx.use_modes = False
@@ -333,7 +351,7 @@ def clear_line_log():
     Clears the line log.
     """
 
-    renpy.game.context().line_log = [ ]
+    renpy.game.context().line_log = []
 
 
 def get_skipping():
@@ -420,6 +438,7 @@ def get_game_runtime():
     """
 
     return renpy.game.contexts[0].runtime
+
 
 def get_statement_name():
     """

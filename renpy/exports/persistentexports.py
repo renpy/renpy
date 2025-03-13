@@ -19,15 +19,28 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import re
 
 import renpy
 
 
-def seen_label(label):
+def seen_label(label: str):
     """
     :doc: label
 
@@ -45,7 +58,7 @@ def seen_label(label):
     return False
 
 
-def mark_label_seen(label):
+def mark_label_seen(label: int):
     """
     :doc: label
 
@@ -58,10 +71,10 @@ def mark_label_seen(label):
     else:
         key = label
 
-    renpy.game.persistent._seen_ever[key] = True # type: ignore
+    renpy.game.persistent._seen_ever[key] = True  # type: ignore
 
 
-def mark_label_unseen(label):
+def mark_label_unseen(label: str):
     """
     :doc: label
 
@@ -73,44 +86,44 @@ def mark_label_unseen(label):
     renpy.game.persistent._seen_ever.pop(renpy.astsupport.hash64(label), None)
 
 
-def seen_audio(filename):
+def seen_audio(filename: str):
     """
     :doc: audio
 
     Returns True if the given filename has been played at least once on the current
     user's system.
     """
-    filename = re.sub(r'^<.*?>', '', filename)
+    filename = re.sub(r"^<.*?>", "", filename)
 
-    return filename in renpy.game.persistent._seen_audio # type: ignore
+    return filename in renpy.game.persistent._seen_audio  # type: ignore
 
 
-def mark_audio_seen(filename):
+def mark_audio_seen(filename: str):
     """
     :doc: audio
 
     Marks the given filename as if it has been already played on the current user's
     system.
     """
-    filename = re.sub(r'^<.*?>', '', filename)
+    filename = re.sub(r"^<.*?>", "", filename)
 
-    renpy.game.persistent._seen_audio[filename] = True # type: ignore
+    renpy.game.persistent._seen_audio[filename] = True  # type: ignore
 
 
-def mark_audio_unseen(filename):
+def mark_audio_unseen(filename: str):
     """
     :doc: audio
 
     Marks the given filename as if it has not been played on the current user's
     system yet.
     """
-    filename = re.sub(r'^<.*?>', '', filename)
+    filename = re.sub(r"^<.*?>", "", filename)
 
-    if filename in renpy.game.persistent._seen_audio: # type: ignore
-        del renpy.game.persistent._seen_audio[filename] # type: ignore
+    if filename in renpy.game.persistent._seen_audio:  # type: ignore
+        del renpy.game.persistent._seen_audio[filename]  # type: ignore
 
 
-def seen_image(name):
+def seen_image(name: str | tuple[str, ...]):
     """
     :doc: image_func
 
@@ -123,10 +136,10 @@ def seen_image(name):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    return name in renpy.game.persistent._seen_images # type: ignore
+    return name in renpy.game.persistent._seen_images  # type: ignore
 
 
-def mark_image_seen(name):
+def mark_image_seen(name: str | tuple[str, ...]):
     """
     :doc: image_func
 
@@ -139,7 +152,7 @@ def mark_image_seen(name):
     renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
 
 
-def mark_image_unseen(name):
+def mark_image_unseen(name: str | tuple[str, ...]):
     """
     :doc: image_func
 
@@ -149,11 +162,11 @@ def mark_image_unseen(name):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    if name in renpy.game.persistent._seen_images: # type: ignore
-        del renpy.game.persistent._seen_images[name] # type: ignore
+    if name in renpy.game.persistent._seen_images:  # type: ignore
+        del renpy.game.persistent._seen_images[name]  # type: ignore
 
 
-def seen_translation(tlid : str) -> bool:
+def seen_translation(tlid: str) -> bool:
     """
     :doc: translation
 
@@ -173,7 +186,8 @@ def seen_translation(tlid : str) -> bool:
 
     return False
 
-def mark_translation_seen(tlid : str) -> None:
+
+def mark_translation_seen(tlid: str) -> None:
     """
     :doc: translation
 
@@ -191,7 +205,7 @@ def mark_translation_seen(tlid : str) -> None:
         renpy.game.persistent._seen_translates.add(tlid)
 
 
-def mark_translation_unseen(tlid : str) -> None:
+def mark_translation_unseen(tlid: str) -> None:
     """
     :doc: translation
 
@@ -217,7 +231,7 @@ def save_persistent():
     renpy.persistent.update(True)
 
 
-def is_seen(ever=True):
+def is_seen(ever: bool = True):
     """
     :doc: other
 
