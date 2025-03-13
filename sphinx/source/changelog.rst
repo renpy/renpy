@@ -166,8 +166,18 @@ An issue with Harbuzz's adjustments of vertical positions has been fixed. This i
 where ligatures control the vertical positioning of the text. While this affects some Arabic fonts, it also may
 improve the location of marks in other fonts.
 
+Changes
+-------
+
+Displayables embedded in slow text (most notably, nestled click-to-continue indicators) are now timed from
+when the displayable is revealed, rather than when the text block itself is show. This means that the first
+frame of CTC animations will always be seen.
+
+
 Fixes
 -----
+
+Problems caused by registering an audio channel more than once have been fixed.
 
 Multiple say statements can now contain image attributes, like other say statements. Temporary image attributes
 are only supported in the last say statement in a multiple group.
