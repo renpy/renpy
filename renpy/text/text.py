@@ -1586,7 +1586,7 @@ class Layout(object):
         for ts, s in p:
             s, direction = log2vis(unicode(s), direction)
 
-            if ts.shaper == "harfbuzz":
+            if s and getattr(ts, "shaper", "") == "harfbuzz":
                 s = renpy.text.extras.unmap_arabic_presentation_forms(s)
 
             l.append((ts, s))
