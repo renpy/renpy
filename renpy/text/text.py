@@ -2703,7 +2703,7 @@ class Text(renpy.display.displayable.Displayable):
                 xo = x + xo + layout.xoffset
                 yo = y + yo + layout.yoffset
 
-                cr = renpy.display.render.render(d, width, height, cst, at)
+                cr = renpy.display.render.render(d, width, self.style.size, cst, at)
 
                 drend.absolute_blit(cr, (xo, yo))
 
