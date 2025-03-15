@@ -141,7 +141,7 @@ sound_sample_rate = 48000
 # The default fadeout used when playing or stopping audio.
 fadeout_audio = 0.016
 
-# The old name of config.fadeout_audio. Kept for compatibility, and yused
+# The old name of config.fadeout_audio. Kept for compatibility, and used
 # in 00compat.rpy.
 fade_music = None
 
@@ -776,7 +776,7 @@ translate_files = [ ]
 # translated.
 translate_comments = [ ]
 
-# Should we trying detect user locale on first launch?
+# Should we try detect user locale on first launch?
 enable_language_autodetect = False
 
 # A function from (locale, region) -> existing language.
@@ -823,7 +823,7 @@ profile_screens = [ ]
 allow_sysfonts = False
 
 # Should Ren'Py tightly loop during fadeouts? (That is, not stop the fadeout
-# if it reaches the end of a trac.)
+# if it reaches the end of a track.)
 tight_loop_default = True
 
 # Should Ren'Py apply style_prefix to viewport scrollbar styles?
@@ -849,7 +849,7 @@ lint_stats_callbacks = [ ]
 # Should we apply position properties to the side of a viewport?
 position_viewport_side = True
 
-# Things that be given properties via Character.
+# Things that can be given properties via Character.
 character_id_prefixes = [ ]
 
 # Should {nw} wait for voice.
@@ -1053,7 +1053,7 @@ context_copy_remove_screens = [ "notify" ]
 # An exception handling callback.
 exception_handler = None
 
-# A label that is jumped to if return fails.
+# A label to jump to if return fails.
 return_not_found_label = None
 
 # A list of (regex, autoreload function) tuples.
@@ -1152,7 +1152,7 @@ allow_screensaver = True
 context_fadein_music = 0
 context_fadeout_music = 0
 
-# Shout it be possible to dismiss blocking transitions that are not part of
+# Should it be possible to dismiss blocking transitions that are not part of
 # a with statement?
 dismiss_blocking_transitions = True
 
@@ -1318,7 +1318,7 @@ physical_height = None
 # If true, lenticular brackets can be used to encode ruby text.
 lenticular_bracket_ruby = True
 
-# If true, the web implentation of renpy.input will be used.
+# If true, the web implementation of renpy.input will be used.
 web_input = True
 
 # Aliases for the keys on the numeric keypad, to make them easier to write as keysyms.
@@ -1375,7 +1375,7 @@ check_conflicting_properties = False
 # A list of extra save directories. Strings giving the full paths.
 extra_savedirs = [ ]
 
-# The text-to-speech dictionary. A list of [ (RegeEx|String, String) ] pairs.
+# The text-to-speech dictionary. A list of [ (RegEx|String, String) ] pairs.
 tts_substitutions = [ ]
 
 # The base URL where unpacked web videos can be found.

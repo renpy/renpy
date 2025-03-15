@@ -104,7 +104,7 @@ translate korean tutorial_dialogue_f0d66410:
 # game/tutorial_quickstart.rpy:89
 translate korean tutorial_dialogue_3e6b0068:
 
-    # "Wow, It's really really dark in here."
+    # "Wow, it's really really dark in here."
     "와우, 여긴 정말 정말 어두워."
 
 # game/tutorial_quickstart.rpy:91
@@ -152,7 +152,7 @@ translate korean tutorial_dialogue_628c9e4c:
 # game/tutorial_quickstart.rpy:116
 translate korean tutorial_dialogue_3e6b0068_1:
 
-    # "Wow, It's really really dark in here."
+    # "Wow, it's really really dark in here."
     "와우, 여기는 정말 정말 어두워."
 
 # game/tutorial_quickstart.rpy:125
@@ -200,7 +200,7 @@ translate korean tutorial_dialogue_90719f73:
 # game/tutorial_quickstart.rpy:151
 translate korean tutorial_dialogue_910f286a:
 
-    # e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
+    # e "The first is that it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
     e "첫 번째는 다소 장황하다는 거야. \"루시\"를 타이핑하는 것이 그렇게 나쁘지는 않지만, \"아일린 리차드슨\"을 수천 번 입력해야 한다고 상상해봐."
 
 # game/tutorial_quickstart.rpy:153
