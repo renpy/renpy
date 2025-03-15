@@ -152,7 +152,6 @@ used clipping, this would often manifest as eyes being missing.
 
 Live2D fading now uses cosine easing, as the Cubism Native SDK does.
 
-
 Arabic Text Shaping
 -------------------
 
@@ -169,10 +168,12 @@ improve the location of marks in other fonts.
 Changes
 -------
 
+Vertex and fragment functions created with :func:`renpy.register_shader` are now placed after the
+variables defined by the shaders, making it possible to use uniforms in the functions.
+
 Displayables embedded in slow text (most notably, nestled click-to-continue indicators) are now timed from
 when the displayable is revealed, rather than when the text block itself is show. This means that the first
 frame of CTC animations will always be seen.
-
 
 Fixes
 -----

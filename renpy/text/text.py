@@ -1586,7 +1586,7 @@ class Layout(object):
         for ts, s in p:
             s, direction = log2vis(str(s), direction)
 
-            if ts.shaper == "harfbuzz":
+            if s and getattr(ts, "shaper", "") == "harfbuzz":
                 s = renpy.text.extras.unmap_arabic_presentation_forms(s)
 
             l.append((ts, s))
@@ -2700,7 +2700,7 @@ class Text(renpy.display.displayable.Displayable):
                 xo = x + xo + layout.xoffset
                 yo = y + yo + layout.yoffset
 
-                cr = renpy.display.render.render(d, width, height, cst, at)
+                cr = renpy.display.render.render(d, width, self.style.size, cst, at)
 
                 drend.absolute_blit(cr, (xo, yo))
 

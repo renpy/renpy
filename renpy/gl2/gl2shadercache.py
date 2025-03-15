@@ -230,10 +230,10 @@ def source(variables, parts, functions, fragment, gles):
 #version 120
 """)
 
-    rv.extend(functions)
-
     for storage, type_, name in sorted(variables):
         rv.append("{} {} {};\n".format(storage, type_, name))
+
+    rv.extend(functions)
 
     rv.append("\nvoid main() {\n")
 
