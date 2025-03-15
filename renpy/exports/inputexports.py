@@ -19,24 +19,44 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 
 
-def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=False):
+def web_input(prompt, default="", allow=None, exclude="{}", length=None, mask=False):
     """
     :undocumented:
 
     This provides input in the web environment, when config.web_input is True.
     """
 
-    renpy.exports.mode('input')
+    renpy.exports.mode("input")
 
     prompt = renpy.text.extras.filter_text_tags(prompt, allow=set())
 
-    roll_forward = renpy.exports.roll_forward_info()
+    roll_forward: str | None = renpy.exports.roll_forward_info()
     if not isinstance(roll_forward, str):
         roll_forward = None
 
@@ -44,7 +64,14 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
     if roll_forward is not None:
         default = roll_forward
 
-    wi = renpy.display.behavior.WebInput(renpy.exports.substitute(prompt), default, length=length, allow=allow, exclude=exclude, mask=mask)
+    wi = renpy.display.behavior.WebInput(
+        renpy.exports.substitute(prompt),
+        default,
+        length=length,
+        allow=allow,
+        exclude=exclude,
+        mask=mask,
+    )
     renpy.ui.add(wi)
 
     renpy.exports.shown_window()
@@ -52,7 +79,7 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
     if renpy.config.autosave_on_input and not renpy.game.after_rollback:
         renpy.loadsave.force_autosave(True)
 
-    rv = renpy.ui.interact(mouse='prompt', type="input", roll_forward=roll_forward)
+    rv = renpy.ui.interact(mouse="prompt", type="input", roll_forward=roll_forward)
     renpy.exports.checkpoint(rv)
 
     with_none = renpy.config.implicit_with_none
@@ -63,7 +90,20 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
     return rv
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, copypaste=True, multiline=False, **kwargs): # @ReservedAssignment
+def input(
+    prompt: str,
+    default: str = "",
+    allow: str | None = None,
+    exclude: str | None = "{}",
+    length: int | None = None,
+    with_none: None = None,
+    pixel_width: int | None = None,
+    screen: str = "input",
+    mask: str | None = None,
+    copypaste: bool = True,
+    multiline: bool = False,
+    **kwargs: Any
+):  # @ReservedAssignment
     """
     :doc: input
     :args: (default='', allow=None, exclude='{}', length=None, pixel_width=None, screen="input", mask=None, copypaste=True, multiline=False, **kwargs)
@@ -125,7 +165,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     if renpy.emscripten and renpy.config.web_input and not fixed:
         return web_input(prompt, default, allow, exclude, length, bool(mask))
 
-    renpy.exports.mode('input')
+    renpy.exports.mode("input")
 
     roll_forward = renpy.exports.roll_forward_info()
     if not isinstance(roll_forward, str):
@@ -139,25 +179,47 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     show_properties, kwargs = renpy.easy.split_properties(kwargs, "show_", "")
 
     if kwargs:
-        raise TypeError("renpy.input() got unexpected keyword argument(s): {}".format(", ".join(kwargs.keys())))
+        raise TypeError(
+            "renpy.input() got unexpected keyword argument(s): {}".format(
+                ", ".join(kwargs.keys())
+            )
+        )
 
     if renpy.exports.has_screen(screen):
-        widget_properties = { }
-        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width, mask=mask, copypaste=copypaste, multiline=multiline)
+        widget_properties = {}
+        widget_properties["input"] = dict(
+            default=default,
+            length=length,
+            allow=allow,
+            exclude=exclude,
+            editable=not fixed,
+            pixel_width=pixel_width,
+            mask=mask,
+            copypaste=copypaste,
+            multiline=multiline,
+        )
 
-        renpy.exports.show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **show_properties)
+        renpy.exports.show_screen(
+            screen,
+            _transient=True,
+            _widget_properties=widget_properties,
+            prompt=prompt,
+            **show_properties
+        )
 
     else:
 
         if screen != "input":
             raise Exception("The '{}' screen does not exist.".format(screen))
 
-        renpy.ui.window(style='input_window')
+        renpy.ui.window(style="input_window")
         renpy.ui.vbox()
 
-        renpy.ui.text(prompt, style='input_prompt')
+        renpy.ui.text(prompt, style="input_prompt")
 
-        inputwidget = renpy.ui.input(default, length=length, style='input_text', allow=allow, exclude=exclude)
+        inputwidget = renpy.ui.input(
+            default, length=length, style="input_text", allow=allow, exclude=exclude
+        )
 
         # disable input in fixed rollback
         if fixed:
@@ -174,7 +236,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     if fixed:
         renpy.ui.saybehavior()
 
-    rv = renpy.ui.interact(mouse='prompt', type="input", roll_forward=roll_forward)
+    rv = renpy.ui.interact(mouse="prompt", type="input", roll_forward=roll_forward)
     renpy.exports.checkpoint(rv)
 
     if with_none is None:
@@ -194,7 +256,10 @@ def get_editable_input_value():
     and false otherwise.
     """
 
-    return renpy.display.behavior.current_input_value, renpy.display.behavior.input_value_active
+    return (
+        renpy.display.behavior.current_input_value,
+        renpy.display.behavior.input_value_active,
+    )
 
 
 def set_editable_input_value(input_value, editable):
