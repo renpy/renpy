@@ -207,9 +207,6 @@ cdef class RenderTransform:
         Handles the mesh, mesh_pad, and blur properties.
         """
 
-        # The render we're going to return.
-        mr = Render(cr.width, cr.height)
-
         mesh = self.state.mesh
         blur = self.state.blur
         mesh_pad = self.state.mesh_pad
@@ -227,6 +224,9 @@ cdef class RenderTransform:
             padded.blit(cr, (pad_left, pad_top))
 
             cr = padded
+
+        # The render we're going to return.
+        mr = Render(cr.width, cr.height)
 
         mr.blit(cr, (0, 0))
 
