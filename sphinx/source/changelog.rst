@@ -47,6 +47,8 @@ frame of CTC animations will always be seen.
 Fixes
 -----
 
+Ren'Py will no longer change the position of newly-created maximized windows.
+
 Problems caused by registering an audio channel more than once have been fixed.
 
 Multiple say statements can now contain image attributes, like other say statements. Temporary image attributes
