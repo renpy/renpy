@@ -444,16 +444,14 @@ cdef class GL2Draw:
 
             if renpy.game.preferences.maximized:
                 window_flags |= pygame.WINDOW_MAXIMIZED
+                pos = (pygame.WINDOWPOS_UNDEFINED, pygame.WINDOWPOS_UNDEFINED)
             else:
                 self.ever_set_position = True
-
-            pos = self.get_window_position((pwidth, pheight))
+                pos = self.get_window_position((pwidth, pheight))
 
             try:
                 renpy.display.log.write("Windowed mode.")
                 self.window = pygame.display.set_mode((pwidth, pheight), window_flags, pos=pos)
-
-
             except pygame.error as e:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
                 return False
