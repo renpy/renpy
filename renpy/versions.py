@@ -51,8 +51,8 @@ class Version(object):
 
 Version("main", 3, "8.4.0", "TBD")
 
-Version("fix", 3, "8.3.7", "Second Star to the Right")
-Version("fix", 2, "7.8.7", "Straight on Till Morning")
+Version("fix", 3, "8.3.8", "Second Star to the Right")
+Version("fix", 2, "7.8.8", "Straight on Till Morning")
 
 
 def make_dict(branch, suffix="00000000", official=False, nightly=False):
