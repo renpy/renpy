@@ -232,20 +232,6 @@ cdef class Matrix:
 
         return self
 
-
-
-    def is_2d_null(self):
-        """
-        Returns true if a 2D matrix always projects to 0 in the x or y directions.
-        """
-
-        if self.xdx == 0.0 and self.xdy == 0.0:
-            return True
-        if self.ydx == 0.0 and self.ydy == 0.0:
-            return True
-
-        return False
-
     def __repr__(Matrix self):
         cdef int x, y
 
@@ -258,6 +244,31 @@ cdef class Matrix:
                 rv += "{:10.7f}, ".format(self.m[x * 4 + y])
 
         return rv + "])"
+
+    def take(Matrix self, Matrix other):
+        """
+        Take the values from another matrix.
+        """
+
+        cdef float *m = self.m
+        cdef float *om = other.m
+
+        for i in range(16):
+            m[i] = om[i]
+
+        return self
+
+    def is_2d_null(self):
+        """
+        Returns true if a 2D matrix always projects to 0 in the x or y directions.
+        """
+
+        if self.xdx == 0.0 and self.xdy == 0.0:
+            return True
+        if self.ydx == 0.0 and self.ydy == 0.0:
+            return True
+
+        return False
 
     def transform(Matrix self, float x, float y, float z=0.0, float w=1.0, int components=2):
         cdef float ox, oy, oz, ow
