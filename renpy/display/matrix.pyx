@@ -254,7 +254,7 @@ cdef class Matrix:
 
         return rv + "])"
 
-    cpdef take(Matrix self, Matrix other):
+    def take(Matrix self, Matrix other):
         """
         Take the values from another matrix.
         """

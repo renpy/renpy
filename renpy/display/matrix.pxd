@@ -48,13 +48,36 @@ cdef class Matrix:
         ox[0] = x * self.xdx + y * self.xdy + z * self.xdz + w * self.xdw
         oy[0] = x * self.ydx + y * self.ydy + z * self.ydz + w * self.ydw
 
-    cpdef take(Matrix self, Matrix other)
-
     cpdef bint is_unit_aligned(Matrix self)
 
     cpdef Matrix inverse(Matrix self)
 
     cpdef Matrix transpose(Matrix self)
+
+    cdef inline void ctake(Matrix self, Matrix other):
+        """
+        Take the values from another matrix, and put them into this one.
+        """
+
+        self.xdx = other.xdx
+        self.xdy = other.xdy
+        self.xdz = other.xdz
+        self.xdw = other.xdw
+
+        self.ydx = other.ydx
+        self.ydy = other.ydy
+        self.ydz = other.ydz
+        self.ydw = other.ydw
+
+        self.zdx = other.zdx
+        self.zdy = other.zdy
+        self.zdz = other.zdz
+        self.zdw = other.zdw
+
+        self.wdx = other.wdx
+        self.wdy = other.wdy
+        self.wdz = other.wdz
+        self.wdw = other.wdw
 
     @staticmethod
     cdef bint is_drawable_aligned(Matrix a, Matrix b)
