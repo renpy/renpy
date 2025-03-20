@@ -189,7 +189,7 @@ cdef class Matrix:
 
         return rv
 
-    def __imul__(Matrix self, Matrix other):
+    cdef Matrix inplace_multiply(Matrix self, Matrix other):
 
         if other is IDENTITY:
             return self

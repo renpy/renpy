@@ -79,6 +79,7 @@ cdef class Matrix:
         self.wdz = other.wdz
         self.wdw = other.wdw
 
+    cdef Matrix inplace_multiply(Matrix self, Matrix other)
     cdef Matrix inplace_offset(Matrix self, float xo, float yo)
 
     @staticmethod

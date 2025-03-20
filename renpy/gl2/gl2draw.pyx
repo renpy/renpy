@@ -1417,7 +1417,7 @@ cdef class GL2DrawingContext:
             self.properties = self.merge_properties(self.properties, model.properties)
 
         if model.reverse is not IDENTITY:
-            self.model_matrix *= model.reverse
+            self.model_matrix.inplace_multiply(model.reverse)
 
         # If a clip polygon is in place, clip the mesh with it.
         if self.clip_polygon is not None:
@@ -1577,7 +1577,7 @@ cdef class GL2DrawingContext:
                     ctx.clip_polygon = ctx.clip_polygon.multiply_matrix(Matrix.coffset(-cx, -cy, 0))
 
             if has_reverse:
-                ctx.model_matrix *= r.reverse
+                ctx.model_matrix.inplace_multiply(r.reverse)
 
                 if r.matrix_kind == MATRIX_PROJECTION:
                     ctx.projection_matrix = ctx.projection_matrix * ctx.view_matrix * ctx.model_matrix
