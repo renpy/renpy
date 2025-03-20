@@ -244,6 +244,29 @@ cdef class Matrix:
 
         return self
 
+    cdef Matrix inplace_offset(Matrix self, float xo, float yo):
+        """
+        This is equivalent to self *= Matrix.offset(xo, yo, 0.0), but is faster
+        because much less allocation and multiplication needs to be done.
+        """
+
+        cdef float xdx, xdy, xdz, xdw
+        cdef float ydx, ydy, ydz, ydw
+        cdef float zdx, zdy, zdz, zdw
+        cdef float wdx, wdy, wdz, wdw
+
+        xdw = self.xdw + xo*self.xdx + yo*self.xdy
+        ydw = self.ydw + xo*self.ydx + yo*self.ydy
+        zdw = self.zdw + xo*self.zdx + yo*self.zdy
+        wdw = self.wdw + xo*self.wdx + yo*self.wdy
+
+        self.xdw = xdw
+        self.ydw = ydw
+        self.zdw = zdw
+        self.wdw = wdw
+
+        return self
+
     def __repr__(Matrix self):
         cdef int x, y
 

@@ -79,6 +79,8 @@ cdef class Matrix:
         self.wdz = other.wdz
         self.wdw = other.wdw
 
+    cdef Matrix inplace_offset(Matrix self, float xo, float yo)
+
     @staticmethod
     cdef bint is_drawable_aligned(Matrix a, Matrix b)
 

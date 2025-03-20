@@ -1569,10 +1569,10 @@ cdef class GL2DrawingContext:
             ctx = self.child_context()
 
             if (cx or cy):
-                if isinstance(cx, float):
+                if type(cx) is not int:
                     ctx.pixel_perfect = False
 
-                ctx.model_matrix *= Matrix.coffset(cx, cy, 0)
+                ctx.model_matrix.inplace_offset(cx, cy)
 
                 if ctx.clip_polygon is not None:
                     ctx.clip_polygon = ctx.clip_polygon.multiply_matrix(Matrix.coffset(-cx, -cy, 0))
