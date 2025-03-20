@@ -194,6 +194,9 @@ cdef class Matrix:
         if other is IDENTITY:
             return self
 
+        if self is IDENTITY:
+            raise ValueError("Cannot in-place multiply IDENTITY.")
+
         cdef float xdx, xdy, xdz, xdw
         cdef float ydx, ydy, ydz, ydw
         cdef float zdx, zdy, zdz, zdw
