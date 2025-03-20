@@ -1500,7 +1500,7 @@ cdef class GL2DrawingContext:
         if r.text_input:
 
             virtual_size = renpy.display.draw.virtual_size
-            tovirt = Matrix.cscreen_projection(virtual_size, virtual_size).inverse() * self.model_matrix
+            tovirt = Matrix.cscreen_projection(virtual_size, virtual_size).inverse() * self.projection_matrix * self.view_matrix * self.model_matrix
 
             x0, y0 = tovirt.transform(0, 0)
             x1, y1 = tovirt.transform(r.width, r.height)
@@ -1530,6 +1530,9 @@ cdef class GL2DrawingContext:
             self.projection_matrix = offset_matrix * self.projection_matrix
             self.pixel_perfect = False
 
+        if has_reverse:
+            self.pixel_perfect = False
+
         has_depth = False
 
         if r.properties:
@@ -1542,10 +1545,6 @@ cdef class GL2DrawingContext:
                 glDepthFunc(GL_LEQUAL)
 
                 self.properties["has_depth"] = True
-
-        if has_reverse and self.properties.get("pixel_perfect", None) is not False:
-            self.properties = dict(self.properties)
-            self.properties["pixel_perfect"] = False
 
         if r.shaders is not None:
             self.shaders = self.shaders + r.shaders
