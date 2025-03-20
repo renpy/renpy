@@ -1365,7 +1365,7 @@ cdef class GL2DrawingContext:
 
         return rv
 
-    def merge_properties(self, dict old, dict child):
+    cdef dict merge_properties(self, dict old, dict child):
         """
         Merges the child properties into the old properties,
         returning new properties.
@@ -1408,7 +1408,7 @@ cdef class GL2DrawingContext:
 
         return Matrix.coffset(xoff / halfwidth, yoff / halfheight, 0)
 
-    def draw_model(self, model):
+    cdef object draw_model(self, model):
 
         cdef GL2Draw gl2draw = renpy.display.draw
         cdef Mesh mesh = model.mesh
@@ -1457,7 +1457,7 @@ cdef class GL2DrawingContext:
         program.draw(mesh)
         program.finish()
 
-    def draw_one(self, what):
+    cdef object draw_one(self, what):
         """
         This is responsible for walking the surface tree, and drawing any
         GL2Models, Renders, and Surfaces it encounters.
