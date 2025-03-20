@@ -1328,25 +1328,11 @@ cdef class GL2DrawingContext:
     # Is the pixel perfect transform eligible to be performed?
     cdef bint pixel_perfect
 
-    def __init__(self, width, height, debug=False):
-        self.width = width
-        self.height = height
-
-        self.debug = debug
-
-        self._child_context = None
-
-        self.projection_matrix = Matrix.identity()
-        self.view_matrix = Matrix.identity()
-        self.model_matrix = Matrix.identity()
-
-        self.clip_polygon = None
-
-        self.shaders = tuple()
-        self.uniforms = { }
-        self.properties = { }
-
-        self.pixel_perfect = True
+    def __init__(self):
+        # Most initialization is done in draw_render, below.
+        self.projection_matrix = Matrix(None)
+        self.view_matrix = Matrix(None)
+        self.model_matrix = Matrix(None)
 
     cdef GL2DrawingContext child_context(self):
         """
@@ -1358,12 +1344,12 @@ cdef class GL2DrawingContext:
 
         rv = self._child_context
         if rv is None:
-            rv = GL2DrawingContext(self.width, self.height, self.debug)
+            rv = GL2DrawingContext()
             self._child_context = rv
-        else:
-            rv.width = self.width
-            rv.height = self.height
-            rv.debug = self.debug
+
+        rv.width = self.width
+        rv.height = self.height
+        rv.debug = self.debug
 
         rv.projection_matrix.take(self.projection_matrix)
         rv.view_matrix.take(self.view_matrix)
@@ -1612,8 +1598,35 @@ cdef class GL2DrawingContext:
 
         return 0
 
+
+# The root of allocated linked list of GL2DrawingContexts.
+root_context = GL2DrawingContext()
+
+
 def draw_render(what, int drawable_width, int drawable_height, Matrix projection):
-    cdef GL2DrawingContext ctx = GL2DrawingContext(drawable_width, drawable_height)
+    """
+    Renders `what` to the current OpenGL context.
+
+    `what`
+        The object to draw. This is usually a Render, but can be a
+        GL2Model or a Surface.
+
+    `drawable_width`
+        The width of the drawable area, in pixels.
+
+    `drawable_height`
+        The height of the drawable area, in pixels.
+
+    `projection`
+        The projection matrix to use to transform from view space
+        to the viewport.
+    """
+
+    cdef GL2DrawingContext ctx = root_context
+
+    ctx.width = drawable_width
+    ctx.height = drawable_height
+    ctx.debug = False
 
     ctx.projection_matrix = projection
     ctx.view_matrix = IDENTITY
@@ -1634,6 +1647,7 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
 
 # A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
 standard_uniforms = { "u_transform", "u_projection", "u_view", "u_projectionview", "u_model", "u_time", "u_random", "u_drawable_size" }
+
 
 _types = """
 standard_uniforms : set[str]
