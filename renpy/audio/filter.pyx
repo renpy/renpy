@@ -140,9 +140,6 @@ cdef class AudioFilter:
         return "renpy.audio.filter.{}({})".format(self.__class__.__name__, ", ".join(arg_repr))
 
 
-        return self.constructor("renpy.audio.filter.")
-
-
 cdef class Null(AudioFilter):
     """
     :doc: audio_filter
