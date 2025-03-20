@@ -105,7 +105,7 @@ def get_poi(state):
 # Transform render function
 ################################################################################
 
-cdef Matrix2D IDENTITY
+cdef Matrix IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
 

@@ -159,6 +159,12 @@ cdef class Matrix:
 
     def __mul__(Matrix self, Matrix other):
 
+        if other is IDENTITY:
+            return self
+
+        if self is IDENTITY:
+            return other
+
         cdef Matrix rv = Matrix(None)
 
         rv.xdx = other.wdx*self.xdw + other.xdx*self.xdx + other.ydx*self.xdy + other.zdx*self.xdz
@@ -184,6 +190,9 @@ cdef class Matrix:
         return rv
 
     def __imul__(Matrix self, Matrix other):
+
+        if other is IDENTITY:
+            return self
 
         cdef float xdx, xdy, xdz, xdw
         cdef float ydx, ydy, ydz, ydw
@@ -245,13 +254,14 @@ cdef class Matrix:
 
         return rv + "])"
 
-    def take(Matrix self, Matrix other):
+    cpdef take(Matrix self, Matrix other):
         """
         Take the values from another matrix.
         """
 
         cdef float *m = self.m
         cdef float *om = other.m
+        cdef int i
 
         for i in range(16):
             m[i] = om[i]
@@ -607,5 +617,9 @@ cdef class Matrix2D(Matrix):
 
         self.zdz = 1.0
         self.wdw = 1.0
+
+cdef Matrix IDENTITY_MATRIX = Matrix([1.0, 0.0, 0.0, 1.0])
+IDENTITY = IDENTITY_MATRIX
+
 
 include "matrix_functions.pxi"

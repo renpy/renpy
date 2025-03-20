@@ -72,7 +72,7 @@ DISSOLVE = renpy.display.render.DISSOLVE
 IMAGEDISSOLVE = renpy.display.render.IMAGEDISSOLVE
 PIXELLATE = renpy.display.render.PIXELLATE
 
-cdef object IDENTITY
+cdef Matrix IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
 # Should we try to vsync?
@@ -1582,11 +1582,11 @@ cdef class GL2DrawingContext:
 
                 if r.matrix_kind == MATRIX_PROJECTION:
                     ctx.projection_matrix = ctx.projection_matrix * ctx.view_matrix * ctx.model_matrix
-                    ctx.model_matrix = IDENTITY
+                    ctx.model_matrix.take(IDENTITY)
 
                 elif r.matrix_kind == MATRIX_VIEW:
                     ctx.view_matrix = ctx.view_matrix * ctx.model_matrix
-                    ctx.model_matrix = IDENTITY
+                    ctx.model_matrix.take(IDENTITY)
 
                 if ctx.clip_polygon is not None:
                     ctx.clip_polygon = ctx.clip_polygon.multiply_matrix(r.forward)
@@ -1628,9 +1628,9 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
     ctx.height = drawable_height
     ctx.debug = False
 
-    ctx.projection_matrix = projection
-    ctx.view_matrix = IDENTITY
-    ctx.model_matrix = IDENTITY
+    ctx.projection_matrix.take(projection)
+    ctx.view_matrix.take(IDENTITY)
+    ctx.model_matrix.take(IDENTITY)
 
     ctx.shaders = ()
     ctx.uniforms = { }

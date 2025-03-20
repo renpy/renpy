@@ -48,6 +48,8 @@ cdef class Matrix:
         ox[0] = x * self.xdx + y * self.xdy + z * self.xdz + w * self.xdw
         oy[0] = x * self.ydx + y * self.ydy + z * self.ydz + w * self.ydw
 
+    cpdef take(Matrix self, Matrix other)
+
     cpdef bint is_unit_aligned(Matrix self)
 
     cpdef Matrix inverse(Matrix self)
