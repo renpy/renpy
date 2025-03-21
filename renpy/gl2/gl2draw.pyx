@@ -1303,31 +1303,6 @@ cdef class GL2DrawingContext:
     the appropriate draw calls to OpenGL, using the saved state.
     """
 
-    # The width and height of the viewport, in drawable pixels.
-    cdef float width
-    cdef float height
-
-    # Is debugging enabled?
-    cdef bint debug
-
-    # The GL2DrawingContext that will be used when .child is called.
-    cdef GL2DrawingContext _child_context
-
-    # The matrices.
-    cdef Matrix projection_matrix
-    cdef Matrix view_matrix
-    cdef Matrix model_matrix
-
-    # The clipping Polygon.
-    cdef Polygon clip_polygon
-
-    cdef tuple shaders
-    cdef dict uniforms
-    cdef dict properties
-
-    # Is the pixel perfect transform eligible to be performed?
-    cdef bint pixel_perfect
-
     def __init__(self):
         # Most initialization is done in draw_render, below.
         self.projection_matrix = Matrix(None)
