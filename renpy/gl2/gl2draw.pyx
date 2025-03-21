@@ -1140,8 +1140,7 @@ cdef class GL2Draw:
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
         # Use the context to draw the surface tree.
-        context = GL2DrawingContext(self, 1, 1)
-        context.draw(what, transform)
+        draw_render(what, 1, 1, transform)
 
         cdef unsigned char pixel[4]
         glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
@@ -1432,6 +1431,41 @@ cdef class GL2DrawingContext:
         program.draw(mesh)
         program.finish()
 
+    cdef void set_text_rect(self, Render r):
+        """
+        Sets the text rect.
+        """
+
+        cdef:
+            int wvirt
+            int hvirt
+
+            float x0
+            float y0
+            float x1
+            float y1
+
+            float xmin
+            float xmax
+            float ymin
+            float ymax
+
+            Matrix tovirt
+
+        wvirt, hvirt = renpy.display.draw.virtual_size
+
+        tovirt = Matrix.cscreen_projection(wvirt, hvirt).inverse() * self.projection_matrix * self.view_matrix * self.model_matrix
+
+        x0, y0 = tovirt.transform(0, 0)
+        x1, y1 = tovirt.transform(r.width, r.height)
+
+        xmin = min(x0, x1)
+        xmax = max(x0, x1)
+        ymin = min(y0, y1)
+        ymax = max(y0, y1)
+
+        renpy.display.interface.text_rect = (xmin, ymin, xmax - xmin, ymax - ymin)
+
     cdef object draw_one(self, what):
         """
         This is responsible for walking the surface tree, and drawing any
@@ -1454,10 +1488,11 @@ cdef class GL2DrawingContext:
             and passed to the shader.
         """
 
-        cdef GL2DrawingContext ctx
-        cdef Polygon new_clip_polygon
-        cdef bint has_reverse
-        cdef bint has_depth
+        cdef:
+            GL2DrawingContext ctx
+            Polygon new_clip_polygon
+            bint has_reverse
+            bint has_depth
 
         if what.__class__ is not Render:
 
@@ -1469,23 +1504,11 @@ cdef class GL2DrawingContext:
             if isinstance(what, Surface):
                 what = (<GL2Draw> renpy.display.draw).load_texture(what)
 
-        cdef Render r
-        r = what
+        cdef Render r = what
 
         if r.text_input:
-
-            virtual_size = renpy.display.draw.virtual_size
-            tovirt = Matrix.cscreen_projection(virtual_size, virtual_size).inverse() * self.projection_matrix * self.view_matrix * self.model_matrix
-
-            x0, y0 = tovirt.transform(0, 0)
-            x1, y1 = tovirt.transform(r.width, r.height)
-
-            xmin = min(x0, x1)
-            xmax = max(x0, x1)
-            ymin = min(y0, y1)
-            ymax = max(y0, y1)
-
-            renpy.display.interface.text_rect = (xmin, ymin, xmax - xmin, ymax - ymin)
+            # Allocate memory with a call price.
+            self.set_text_rect(r)
 
         # Handle clipping.
         if (r.xclipping or r.yclipping):
