@@ -346,6 +346,9 @@ python early hide:
         if script_version <= (7, 2, 2):
             config.keyword_after_python = True
 
+        if script_version >= (8, 0, 0) and script_version < (8, 2, 0):
+            config.future_annotations = True
+
     except Exception:
         config.early_script_version = None
         config.early_developer = True

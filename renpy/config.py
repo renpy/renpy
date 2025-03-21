@@ -1507,6 +1507,12 @@ limit_transform_crop = False
 # Should as dissolve shrink to the size of the smallest child?
 dissolve_shrinks = False
 
+# Should arabic presentations forms be reversed to base forms?
+reverse_arabic_presentation_forms = True
+
+# Should the script be compiled with from future import annotations?
+future_annotations = False
+
 # Marking labels, images and audio in replays as seen is not allowed.
 no_replay_seen = False
 
@@ -1521,6 +1527,7 @@ keep_screenshot_entering_menu = False
 
 # Should Ren'Py hash seen statements and tlids?
 hash_seen = True
+
 
 del os
 del collections

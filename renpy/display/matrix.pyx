@@ -159,6 +159,12 @@ cdef class Matrix:
 
     def __mul__(Matrix self, Matrix other):
 
+        if other is IDENTITY:
+            return self
+
+        if self is IDENTITY:
+            return other
+
         cdef Matrix rv = Matrix(None)
 
         rv.xdx = other.wdx*self.xdw + other.xdx*self.xdx + other.ydx*self.xdy + other.zdx*self.xdz
@@ -183,7 +189,13 @@ cdef class Matrix:
 
         return rv
 
-    def __imul__(Matrix self, Matrix other):
+    cdef Matrix inplace_multiply(Matrix self, Matrix other):
+
+        if other is IDENTITY:
+            return self
+
+        if self is IDENTITY:
+            raise ValueError("Cannot in-place multiply IDENTITY.")
 
         cdef float xdx, xdy, xdz, xdw
         cdef float ydx, ydy, ydz, ydw
@@ -232,19 +244,28 @@ cdef class Matrix:
 
         return self
 
-
-
-    def is_2d_null(self):
+    cdef Matrix inplace_offset(Matrix self, float xo, float yo):
         """
-        Returns true if a 2D matrix always projects to 0 in the x or y directions.
+        This is equivalent to self *= Matrix.offset(xo, yo, 0.0), but is faster
+        because much less allocation and multiplication needs to be done.
         """
 
-        if self.xdx == 0.0 and self.xdy == 0.0:
-            return True
-        if self.ydx == 0.0 and self.ydy == 0.0:
-            return True
+        cdef float xdx, xdy, xdz, xdw
+        cdef float ydx, ydy, ydz, ydw
+        cdef float zdx, zdy, zdz, zdw
+        cdef float wdx, wdy, wdz, wdw
 
-        return False
+        xdw = self.xdw + xo*self.xdx + yo*self.xdy
+        ydw = self.ydw + xo*self.ydx + yo*self.ydy
+        zdw = self.zdw + xo*self.zdx + yo*self.zdy
+        wdw = self.wdw + xo*self.wdx + yo*self.wdy
+
+        self.xdw = xdw
+        self.ydw = ydw
+        self.zdw = zdw
+        self.wdw = wdw
+
+        return self
 
     def __repr__(Matrix self):
         cdef int x, y
@@ -258,6 +279,32 @@ cdef class Matrix:
                 rv += "{:10.7f}, ".format(self.m[x * 4 + y])
 
         return rv + "])"
+
+    def take(Matrix self, Matrix other):
+        """
+        Take the values from another matrix.
+        """
+
+        cdef float *m = self.m
+        cdef float *om = other.m
+        cdef int i
+
+        for i in range(16):
+            m[i] = om[i]
+
+        return self
+
+    def is_2d_null(self):
+        """
+        Returns true if a 2D matrix always projects to 0 in the x or y directions.
+        """
+
+        if self.xdx == 0.0 and self.xdy == 0.0:
+            return True
+        if self.ydx == 0.0 and self.ydy == 0.0:
+            return True
+
+        return False
 
     def transform(Matrix self, float x, float y, float z=0.0, float w=1.0, int components=2):
         cdef float ox, oy, oz, ow
@@ -596,5 +643,9 @@ cdef class Matrix2D(Matrix):
 
         self.zdz = 1.0
         self.wdw = 1.0
+
+cdef Matrix IDENTITY_MATRIX = Matrix([1.0, 0.0, 0.0, 1.0])
+IDENTITY = IDENTITY_MATRIX
+
 
 include "matrix_functions.pxi"

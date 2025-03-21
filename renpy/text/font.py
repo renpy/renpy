@@ -970,6 +970,7 @@ class FontGroup(object):
             n = ord(c)
 
             if n == 32 and font:
+                pos += 1
                 continue
 
             font = self.map.get(ord(c), None)

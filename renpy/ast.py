@@ -26,9 +26,7 @@
 # When updating this file, consider if lint.py or warp.py also need
 # updating.
 
-from __future__ import annotations
-
-from typing import Any, Callable, ClassVar, Literal, Never, TypeAlias
+from typing import Any, Callable, ClassVar, Literal, Never
 
 import time
 import hashlib
@@ -214,7 +212,7 @@ class Scry(object):
     predict, this tries to only get things we _know_ will happen.
     """
 
-    _next: Node | None = None
+    _next: 'Node | None' = None
     interacts: bool = False
 
     say: bool = False
@@ -237,7 +235,7 @@ class Scry(object):
     def __reduce__(self):
         raise Exception("Cannot pickle Scry.")
 
-    def next(self) -> Scry | None:
+    def next(self) -> 'Scry | None':
         if self._next is None:
             return None
         else:
@@ -249,7 +247,9 @@ class Scry(object):
 
 type NodeName = "str | tuple[Any, ...] | None"
 type RollbackType = Literal["normal", "never", "force"]
-
+# Workaround that IntegerSlot accept only unsigned int.
+# By using type alias SignedInt slot will fail 'type is int' check.
+type SignedInt = int
 
 class Node(Object):
     """
@@ -279,7 +279,7 @@ class Node(Object):
     When the name is a three-argument tuple, stores the serial number.
     """
 
-    next: Node | None
+    next: 'Node | None'
     """
     Node that unconditionally follows this one in the abstract syntax tree,
     or None if this node is the last one in the block.
@@ -352,7 +352,7 @@ class Node(Object):
 
     # Statement_start used to be a property on all nodes.
     @property
-    def statement_start(self) -> Node:
+    def statement_start(self) -> 'Node':
         return self
 
     @statement_start.setter
@@ -383,7 +383,7 @@ class Node(Object):
 
         return (id(self), )
 
-    def get_children(self, f: Callable[[Node], Any]) -> None:
+    def get_children(self, f: Callable[['Node'], Any]) -> None:
         """
         Calls `f` with this node and its children.
         """
@@ -405,7 +405,7 @@ class Node(Object):
 
         return None
 
-    def chain(self, next: Node | None) -> None:
+    def chain(self, next: 'Node | None') -> None:
         """
         This is called with the Node node that should be followed after
         executing this node, and all nodes that this node
@@ -416,7 +416,7 @@ class Node(Object):
 
         self.next = next
 
-    def replace_next(self, old: Node, new: Node) -> None:
+    def replace_next(self, old: 'Node', new: 'Node') -> None:
         """
         Replaces instances of the `old` node with `new` when it is the next
         node.
@@ -439,7 +439,7 @@ class Node(Object):
         Called when the module is loaded.
         """
 
-    def predict(self) -> list[Node | None]:
+    def predict(self) -> list['Node | None']:
         """
         This is called to predictively load images from this node. It
         should cause renpy.display.predict.displayable and
@@ -464,7 +464,7 @@ class Node(Object):
         rv._next = self.next
         return rv
 
-    def restructure(self, callback: Callable[[list[Node]], Any]):
+    def restructure(self, callback: Callable[[list['Node']], Any]):
         """
         Called to restructure the AST.
 
@@ -503,7 +503,7 @@ class Node(Object):
 
         return self.warp
 
-    def get_reachable(self) -> list[Node]:
+    def get_reachable(self) -> list['Node']:
         """
         Return a possibly empty list of nodes that are directly reachable via
         this node.
@@ -635,7 +635,7 @@ tuple[tuple[str, ...], list[str], str | None]
 """
 
 
-def predict_imspec(imspec: ImspecType, scene=False, atl: renpy.atl.RawBlock | None = None):
+def predict_imspec(imspec: ImspecType, scene=False, atl: 'renpy.atl.RawBlock | None' = None):
     """
     Call this to use the given callback to predict the image named
     in imspec.
@@ -682,7 +682,7 @@ def predict_imspec(imspec: ImspecType, scene=False, atl: renpy.atl.RawBlock | No
     renpy.exports.predict_show(name, layer, what=img, tag=tag, at_list=at_list)
 
 
-def show_imspec(imspec: ImspecType, atl: renpy.atl.RawBlock | None = None):
+def show_imspec(imspec: ImspecType, atl: 'renpy.atl.RawBlock | None' = None):
 
     if len(imspec) == 7:
         name, expression, tag, at_list, layer, zorder, behind = imspec
@@ -1074,7 +1074,7 @@ setattr(Say, "with", Say.with_)
 class Init(Node):
 
     block: list[Node]
-    priority: int
+    priority: SignedInt
 
     def __init__(self, loc, block, priority):
         super(Init, self).__init__(loc)
@@ -1278,7 +1278,7 @@ class Image(Node):
 
     imgname: tuple[str, ...]
     code: PyCode | None
-    atl: renpy.atl.RawBlock | None
+    atl: 'renpy.atl.RawBlock | None'
 
     def __init__(self, loc, name, expr=None, atl=None):
         """
@@ -1327,7 +1327,7 @@ class Image(Node):
 class Transform(Node):
 
     varname: str
-    atl: renpy.atl.RawBlock
+    atl: 'renpy.atl.RawBlock'
     parameters: ParameterInfo|None = None
     store: str = "store"
 
@@ -1378,7 +1378,7 @@ class Transform(Node):
 class Show(Node):
 
     imspec: ImspecType
-    atl: renpy.atl.RawBlock | None = None
+    atl: 'renpy.atl.RawBlock | None' = None
 
     warp = True
 
@@ -1419,7 +1419,7 @@ class ShowLayer(Node):
     warp = True
 
     at_list: list[str]
-    atl: renpy.atl.RawBlock | None = None
+    atl: 'renpy.atl.RawBlock | None' = None
     layer: str = "master"
 
     def __init__(self, loc, layer, at_list, atl):
@@ -1457,7 +1457,7 @@ class Camera(Node):
     warp = True
 
     at_list: list[str]
-    atl: renpy.atl.RawBlock | None
+    atl: 'renpy.atl.RawBlock | None'
     layer: str = "master"
 
     def __init__(self, loc, layer, at_list, atl):
@@ -1493,7 +1493,7 @@ class Camera(Node):
 class Scene(Node):
 
     imspec: ImspecType
-    atl: renpy.atl.RawBlock | None = None
+    atl: 'renpy.atl.RawBlock | None' = None
     layer: str = "master"
 
     warp = True
@@ -2196,9 +2196,9 @@ class UserStatement(Node):
     code_block: list[Node] | None = None
     translation_relevant: bool = False # type: ignore
     rollback: RollbackType = "normal"
-    subparses: list[renpy.lexer.SubParse] = [ ]
-    init_priority: int = 0
-    atl: renpy.atl.RawBlock | None = None
+    subparses: list['renpy.lexer.SubParse'] = [ ]
+    init_priority: SignedInt = 0
+    atl: 'renpy.atl.RawBlock | None' = None
 
     def __init__(self, loc, line, block, parsed):
 
@@ -2353,7 +2353,7 @@ class UserStatement(Node):
 
         return False
 
-    def reachable(self, is_reachable: bool) -> set[NodeName | Literal[True] | renpy.lexer.SubParse | None]:
+    def reachable(self, is_reachable: bool) -> set[NodeName | Literal[True] | 'renpy.lexer.SubParse' | None]:
         """
         This is used by lint to find statements reachable from or through
         this statement.
@@ -2456,7 +2456,7 @@ class PostUserStatement(Node):
 
 
 # All the define statements, in the order they were registered.
-define_statements: list[Define] = []
+define_statements: list['Define'] = []
 
 
 class Define(Node):
@@ -2558,7 +2558,7 @@ class Define(Node):
 
 
 # All the default statements, in the order they were registered.
-default_statements: list[Default | UserStatement] = []
+default_statements: list['Default | UserStatement'] = []
 
 
 class Default(Node):
@@ -2647,7 +2647,7 @@ class Default(Node):
 
 class Screen(Node):
 
-    screen: renpy.sl2.slast.SLScreen
+    screen: 'renpy.sl2.slast.SLScreen'
 
     def __init__(self, loc, screen):
         """
@@ -2718,7 +2718,7 @@ class Style(Node):
             if not renpy.exports.variant(variant):
                 return
 
-        s = renpy.style.get_or_create_style(self.style_name)
+        s = renpy.style.get_or_create_style(self.style_name)  # type: ignore
 
         if self.clear:
             s.clear()
@@ -2760,7 +2760,7 @@ class Style(Node):
 class Testcase(Node):
 
     label: str
-    test: renpy.test.testast.Block
+    test: 'renpy.test.testast.Block'
 
     def __init__(self, loc, label, test):
         super(Testcase, self).__init__(loc)

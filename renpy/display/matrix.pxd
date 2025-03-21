@@ -54,6 +54,34 @@ cdef class Matrix:
 
     cpdef Matrix transpose(Matrix self)
 
+    cdef inline void ctake(Matrix self, Matrix other):
+        """
+        Take the values from another matrix, and put them into this one.
+        """
+
+        self.xdx = other.xdx
+        self.xdy = other.xdy
+        self.xdz = other.xdz
+        self.xdw = other.xdw
+
+        self.ydx = other.ydx
+        self.ydy = other.ydy
+        self.ydz = other.ydz
+        self.ydw = other.ydw
+
+        self.zdx = other.zdx
+        self.zdy = other.zdy
+        self.zdz = other.zdz
+        self.zdw = other.zdw
+
+        self.wdx = other.wdx
+        self.wdy = other.wdy
+        self.wdz = other.wdz
+        self.wdw = other.wdw
+
+    cdef Matrix inplace_multiply(Matrix self, Matrix other)
+    cdef Matrix inplace_offset(Matrix self, float xo, float yo)
+
     @staticmethod
     cdef bint is_drawable_aligned(Matrix a, Matrix b)
 

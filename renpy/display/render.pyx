@@ -421,7 +421,7 @@ def redraw(d, when):
     redraw_queue.append((when + renpy.game.interface.frame_time, d))
 
 
-IDENTITY = Matrix2D(1, 0, 0, 1)
+IDENTITY = renpy.display.matrix.IDENTITY
 
 
 def take_focuses(focuses):
