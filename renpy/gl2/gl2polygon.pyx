@@ -210,6 +210,26 @@ cdef class Polygon:
         rv.multiply_matrix_inplace(m)
         return rv
 
+    cpdef void offset_inplace(Polygon self, float x, float y):
+        """
+        Offsets the polygon by (x, y), in place.
+        """
+
+        cdef int i
+
+        for i in range(self.points):
+            self.point[i].x += x
+            self.point[i].y += y
+
+    cpdef Polygon offset(Polygon self, float x, float y):
+        """
+        Offsets the polygon by (x, y), in place, and returns a copy.
+        """
+
+        cdef Polygon rv = self.copy()
+        rv.offset_inplace(x, y)
+        return rv
+
 
 cdef void intersectLines(Point2 a0, Point2 a1, Point2 b0, Point2 b1, Point2 *p):
     """

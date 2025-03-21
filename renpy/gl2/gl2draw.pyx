@@ -1574,7 +1574,7 @@ cdef class GL2DrawingContext:
                 ctx.model_matrix.inplace_offset(cx, cy)
 
                 if ctx.clip_polygon is not None:
-                    ctx.clip_polygon = ctx.clip_polygon.multiply_matrix(Matrix.coffset(-cx, -cy, 0))
+                    ctx.clip_polygon = ctx.clip_polygon.offset(-cx, -cy)
 
             if has_reverse:
                 ctx.model_matrix.inplace_multiply(r.reverse)
