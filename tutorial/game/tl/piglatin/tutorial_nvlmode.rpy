@@ -8,7 +8,7 @@ translate piglatin tutorial_nvlmode_76b2fe88:
 # game/tutorial_nvlmode.rpy:22
 translate piglatin tutorial_nvlmode_ac125210:
 
-    # nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a window at the bottom of the screen. Like this."
+    # nvle "NVL-style games are games that cover the full screen with text, rather than placing it in a window at the bottom of the screen. Like this."
     nvle "Vlnay-ylestay amesgay areay amesgay hattay overcay hetay ullfay creensay ithway exttay, atherray hentay acingplay itay inay aay indowway atay hetay ottombay ofay hetay creensay. Ikelay histay."
 
 # game/tutorial_nvlmode.rpy:26
