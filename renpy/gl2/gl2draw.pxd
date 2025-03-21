@@ -23,6 +23,7 @@ from renpy.display.matrix cimport Matrix, Matrix2D
 cimport renpy.display.render as render
 from renpy.gl2.gl2texture cimport TextureLoader
 from renpy.gl2.gl2polygon cimport Polygon
+from renpy.display.render cimport Render
 
 from renpy.uguu.gl cimport *
 
@@ -146,5 +147,7 @@ cdef class GL2DrawingContext:
     cdef Matrix correct_pixel_perfect(self)
 
     cdef object draw_model(self, model)
+
+    cdef void set_text_rect(self, Render r)
 
     cdef object draw_one(self, what)
