@@ -3,6 +3,8 @@ import os
 import re
 import json
 
+import doc
+
 SPHINX = os.path.abspath(os.path.dirname(__file__) + "/..")
 
 DEPRECATED = [
@@ -240,8 +242,11 @@ class Documentation:
                 origin = "deprecated"
 
         for i in NOT_DEPRECATED:
-            if name == "i":
+            if name == i:
                 origin = "renpy"
+
+        if name in doc.actions:
+            accessKind = "Action"
 
         entry = [
             origin,
@@ -254,8 +259,10 @@ class Documentation:
 
         if basename == 'config':
             self.config[name] = entry
-        else:
+        elif name.startswith("renpy."):
             self.renpy[name] = entry
+        else:
+            self.internal[name] = entry
 
     def check_namespaces(self):
         """
@@ -276,7 +283,7 @@ class Documentation:
             if i in { "_preferences", "emscripten", "renpy.audio" }:
                 continue
 
-            if i not in self.renpy and i not in self.config:
+            if i not in self.renpy and i not in self.config and i not in self.internal:
                 print("Namespace", i, "is not documented.")
 
 def main():
