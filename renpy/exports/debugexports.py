@@ -19,13 +19,34 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any, Callable, Never  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
-def warp_to_line(warp_spec):
+
+def warp_to_line(warp_spec: str):
     """
     :doc: debug
 
@@ -39,7 +60,7 @@ def warp_to_line(warp_spec):
     renpy.exports.full_restart()
 
 
-def get_filename_line():
+def get_filename_line() -> tuple[str, int]:
     """
     :doc: debug
 
@@ -59,7 +80,7 @@ def get_filename_line():
 logfile = None
 
 
-def log(msg):
+def log(msg: str | None):
     """
     :doc: debug
 
@@ -85,27 +106,28 @@ def log(msg):
 
         if not logfile:
             import os
+
             if renpy.config.clear_log:
                 file_mode = "w"
             else:
                 file_mode = "a"
-            logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), file_mode)
+            logfile = open(
+                os.path.join(renpy.config.basedir, renpy.config.log), file_mode
+            )
 
             if not logfile.tell():
-                logfile.write("\ufeff")
+                _ = logfile.write("\ufeff")
 
         import textwrap
 
-        wrapped = [ ]
+        wrapped: list[str] = []
 
-        for line in msg.split('\n'):
+        for line in msg.split("\n"):
             line = textwrap.fill(line, renpy.config.log_width)
             line = str(line)
             wrapped.append(line)
 
-        wrapped = '\n'.join(wrapped)
-
-        logfile.write(wrapped + "\n")
+        _ = logfile.write(f"{'\n'.join(wrapped)}\n")
         logfile.flush()
 
     except Exception:
@@ -113,20 +135,22 @@ def log(msg):
 
 
 # Error handling stuff.
-def _error(msg):
+def _error(msg: str | Exception) -> Never:
     raise Exception(msg)
 
-_error_handlers = [ _error ]
 
-def push_error_handler(eh):
+_error_handlers: list[Callable[[str | Exception], Never]] = [_error]
+
+
+def push_error_handler(eh: Callable[[str | Exception], Never]) -> None:
     _error_handlers.append(eh)
 
 
 def pop_error_handler():
-    _error_handlers.pop()
+    _ = _error_handlers.pop()
 
 
-def error(msg):
+def error(msg: str | Exception):
     """
     :doc: lint
 
@@ -138,7 +162,7 @@ def error(msg):
     _error_handlers[-1](msg)
 
 
-def write_log(s, *args):
+def write_log(s: str, *args: Any):
     """
     :undocumented:
 
