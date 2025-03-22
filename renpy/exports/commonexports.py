@@ -26,7 +26,7 @@ from __future__ import (
     print_function,
     unicode_literals,
 )
-from typing import Any, Callable  # type: ignore
+from typing import Any, Callable, overload  # type: ignore
 from renpy.compat import (
     PY2,
     basestring,
@@ -43,6 +43,14 @@ from renpy.compat import (
 )  # *
 
 from renpy.pyanalysis import const, pure, not_const
+
+
+@overload
+def renpy_pure(fn: str) -> str: ...
+
+
+@overload
+def renpy_pure[T](fn: Callable[..., T]) -> Callable[..., T]: ...
 
 
 def renpy_pure(fn: str | Callable[..., Any]):
