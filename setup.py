@@ -127,6 +127,7 @@ def main():
     cython("renpy.gl2.gl2model")
     cython("renpy.gl2.gl2draw")
     cython("renpy.gl2.gl2texture")
+    cython("renpy.gl2.gl2uniform")
     cython("renpy.gl2.gl2shader")
 
     if cubism:

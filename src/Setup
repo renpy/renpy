@@ -34,6 +34,7 @@ renpy.gl2.gl2polygon ../tmp/gen/renpy.gl2.gl2polygon.c
 renpy.gl2.gl2model ../tmp/gen/renpy.gl2.gl2model.c
 renpy.gl2.gl2draw ../tmp/gen/renpy.gl2.gl2draw.c
 renpy.gl2.gl2texture ../tmp/gen/renpy.gl2.gl2texture.c
+renpy.gl2.gl2uniform ../tmp/gen/renpy.gl2.gl2uniform.c
 renpy.gl2.gl2shader ../tmp/gen/renpy.gl2.gl2shader.c
 renpy.gl2.live2dmodel ../tmp/gen/renpy.gl2.live2dmodel.c
 renpy.text.textsupport ../tmp/gen/renpy.text.textsupport.c
