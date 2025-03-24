@@ -23,6 +23,9 @@
 from renpy.display.matrix cimport Matrix
 from renpy.gl2.gl2texture cimport GLTexture
 
+import random
+
+import renpy
 
 cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
 
@@ -157,3 +160,105 @@ cdef class Getter:
 
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         raise NotImplementedError()
+
+
+cdef class ContextGetter:
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return context.uniforms[self.uniform_name]
+
+
+cdef class LODBiasGetter:
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return float(renpy.config.gl_lod_bias)
+
+
+cdef class TimeGetter:
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400
+
+
+cdef class RandomGetter:
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return (random.random(), random.random(), random.random(), random.random())
+
+
+cdef class ViewportGetter:
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        cdef GLfloat[4] viewport
+        glGetFloatv(GL_VIEWPORT, viewport)
+        return viewport
+
+
+cdef class DrawableSizeGetter:
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return renpy.display.draw.drawable_viewport[2:]
+
+
+cdef class VirtualSizeGetter:
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return renpy.display.draw.virtual_size
+
+
+
+cdef class InverseGetter:
+
+    cdef Getter getter
+    cdef Matrix matrix
+
+    def __init__(self, uniform_name, getter):
+        Getter.__init__(self, uniform_name)
+        self.getter = getter
+        self.matrix = Matrix(None)
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        value = self.getter.get(context, model)
+
+        if type(value) is Matrix:
+            self.matrix.ctake(value)
+            self.matrix.inplace_inverse()
+            return self.matrix
+        else:
+            raise TypeError("InverseGetter only works with Matrix values.")
+
+
+cdef class TransposeGetter:
+
+    cdef Getter getter
+    cdef Matrix matrix
+
+    def __init__(self, uniform_name, getter):
+        Getter.__init__(self, uniform_name)
+        self.getter = getter
+        self.matrix = Matrix(None)
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        value = self.getter.get(context, model)
+
+        if type(value) is Matrix:
+            self.matrix.ctake(value)
+            self.matrix.inplace_transpose()
+            return self.matrix
+        else:
+            raise TypeError("TransposeGetter only works with Matrix values.")
+
+
+cdef class InverseTransposeGetter:
+
+    cdef Getter getter
+    cdef Matrix matrix
+
+    def __init__(self, uniform_name, getter):
+        Getter.__init__(self, uniform_name)
+        self.getter = getter
+        self.matrix = Matrix(None)
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        value = self.getter.get(context, model)
+
+        if type(value) is Matrix:
+            self.matrix.ctake(value)
+            self.matrix.inplace_inverse()
+            self.matrix.inplace_transpose()
+            return self.matrix
+        else:
+            raise TypeError("InverseTransposeGetter only works with Matrix values.")
