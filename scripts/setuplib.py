@@ -193,7 +193,7 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
     else:
         c_mtime = 0
 
-    out_of_date = False
+    out_of_date = "RENPY_REGENERATE_CYTHON" in os.environ
 
     # print c_fn, "depends on", deps
 
