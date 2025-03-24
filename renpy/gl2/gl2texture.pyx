@@ -163,7 +163,7 @@ cdef class TextureLoader:
 
             rv = [ ]
 
-            for i in xrange(tiles):
+            for i in range(tiles):
                 start = int(i * tile_length)
                 end = int((i + 1) * tile_length)
 
@@ -288,6 +288,11 @@ cdef class GLTexture(GL2Model):
         self.bt = 0
         self.br = 0
         self.bb = 0
+
+        # States used by gl2unfiorm.
+        self.wrap_s = GL_CLAMP_TO_EDGE
+        self.wrap_t = GL_CLAMP_TO_EDGE
+        self.anisotropy = loader.max_anisotropy
 
         if renpy.emscripten and generate:
             # Generate a texture name to access video frames for web
