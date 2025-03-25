@@ -1387,11 +1387,6 @@ cdef class GL2DrawingContext:
         cdef GL2Draw gl2draw = renpy.display.draw
         cdef Mesh mesh = model.mesh
 
-        if model.properties:
-            self.properties = self.merge_properties(self.properties, model.properties)
-
-        if model.reverse is not IDENTITY:
-            self.model_matrix.inplace_multiply(model.reverse)
 
         # If a clip polygon is in place, clip the mesh with it.
         if self.clip_polygon is not None:
@@ -1401,8 +1396,22 @@ cdef class GL2DrawingContext:
 
             mesh = mesh.crop(self.clip_polygon)
 
+        if not mesh.triangles:
+            return
+
+        if model.properties:
+            self.properties = self.merge_properties(self.properties, model.properties)
+
+        if model.reverse is not IDENTITY:
+            self.model_matrix.inplace_multiply(model.reverse)
+
         if model.shaders:
             self.shaders = self.shaders + model.shaders
+
+        # Temporary - will be read out of GL2Model and GL2Texture.
+        new_uniforms = dict(model.get_uniforms())
+        new_uniforms.update(self.uniforms)
+        self.uniforms = new_uniforms
 
         if self.debug:
             import renpy.gl2.gl2debug as gl2debug
@@ -1415,20 +1424,18 @@ cdef class GL2DrawingContext:
         u_projectionview = self.projection_matrix * self.view_matrix
         u_transform = u_projectionview * self.model_matrix
 
-        program.set_uniform("u_model_size", (model.width, model.height))
+        # Temporary - until the below can go away.
+        self.uniforms = dict(self.uniforms)
 
-        program.set_uniform("u_projection", self.projection_matrix)
-        program.set_uniform("u_view", self.view_matrix)
-        program.set_uniform("u_projectionview", u_projectionview)
-        program.set_uniform("u_model", self.model_matrix)
-        program.set_uniform("u_transform", u_transform)
+        self.uniforms["u_projection"] = self.projection_matrix
+        self.uniforms["u_model_size"] = (model.width, model.height)
+        self.uniforms["u_view"] = self.view_matrix
+        self.uniforms["u_projectionview"] = u_projectionview
+        self.uniforms["u_model"] = self.model_matrix
+        self.uniforms["u_transform"] = u_transform
 
-        model.program_uniforms(program)
+        program.draw(self, model, mesh)
 
-        if self.uniforms:
-            program.set_uniforms(self.uniforms)
-
-        program.draw(mesh)
         program.finish()
 
     cdef void set_text_rect(self, Render r):

@@ -65,13 +65,8 @@ cdef class GL2Model:
             if isinstance(i, GLTexture):
                 i.load()
 
-    def program_uniforms(self, shader):
-        """
-        Called by the rest of the drawing code to set up the textures associated
-        with this model.
-        """
-
-        shader.set_uniforms(self.uniforms)
+    def get_uniforms(self):
+        return self.uniforms
 
     def get_size(self):
         """

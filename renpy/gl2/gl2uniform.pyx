@@ -46,7 +46,6 @@ cdef class Setter:
     cdef object set(self, GL2DrawingContext context, value):
         raise NotImplementedError()
 
-
 cdef class FloatSetter(Setter):
     cdef object set(self, GL2DrawingContext context, value):
         glUniform1f(self.location, value)
@@ -125,7 +124,7 @@ cdef class Sampler2DSetter(Setter):
 
         cdef GLint wrap_s = GL_CLAMP_TO_EDGE
         cdef GLint wrap_t = GL_CLAMP_TO_EDGE
-        cdef GLfloat anisotropy = self.loader.max_anisotropy
+        cdef GLfloat anisotropy = texture.loader.max_anisotropy
 
         if context.properties:
             if self.texture_wrap_key in context.properties:

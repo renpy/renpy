@@ -24,7 +24,13 @@ from libc.stdlib cimport malloc, free
 
 from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2texture cimport GLTexture
+from renpy.gl2.gl2draw cimport GL2DrawingContext
+from renpy.gl2.gl2model cimport GL2Model
+from renpy.gl2.gl2uniform cimport Setter
+
 from renpy.display.matrix cimport Matrix
+
+from renpy.gl2.gl2uniform import generate_uniform_setter
 
 import renpy
 import random
@@ -234,7 +240,13 @@ cdef class Program:
         # The number of samplers that have been added.
         self.samplers = 0
 
-    def find_variables(self, source):
+        # A list of gl2uniform.Setter objects that can be called to set
+        # the uniforms.
+        self.uniform_setters = [ ]
+
+    def find_variables(self, source, seen_uniforms: set, samplers: int):
+
+        shader_name = "+".join(self.name)
 
         for l in source.split("\n"):
 
@@ -284,6 +296,11 @@ cdef class Program:
                 location = glGetUniformLocation(self.program, name.encode("utf-8"))
 
                 if location >= 0:
+
+                    setter, samplers = generate_uniform_setter(shader_name, location, name, type, samplers)
+                    self.uniform_setters.append(setter)
+
+                    # To be removed.
                     self.uniforms[name] = types[type](self, location, name)
 
             else:
@@ -291,6 +308,8 @@ cdef class Program:
 
                 if location >= 0:
                     self.attributes.append(Attribute(name, location, types[type]))
+
+        return samplers
 
     cdef GLuint load_shader(self, GLenum shader_type, source) except 0:
         """
@@ -373,8 +392,14 @@ cdef class Program:
 
         self.program = program
 
-        self.find_variables(self.vertex)
-        self.find_variables(self.fragment)
+        # Create self.uniform_setters
+        seen_uniforms = set()
+        samplers = 0
+
+        self.uniform_setters = [ ]
+
+        samplers = self.find_variables(self.vertex, seen_uniforms, samplers)
+        self.find_variables(self.fragment, seen_uniforms, samplers)
 
     MISSING = {
         "u_lod_bias": lambda : float(renpy.config.gl_lod_bias),
@@ -419,44 +444,25 @@ cdef class Program:
             renpy.display.log.write(f"Shader {self.name} has not been given {kind} {name}, and couldn't derive it from {base}.")
 
     def start(self, properties):
-        self.properties = properties
-
-        glUseProgram(self.program)
+        pass
 
 
     def set_uniform(self, name, value):
-        cdef Uniform u
-        u = self.uniforms.get(name, None)
-        if u is None:
-            self.uniform_values[name] = value
-            return
-
-        if name in self.uniform_values and name in renpy.config.merge_uniforms:
-            value = renpy.config.merge_uniforms[name](self.uniform_values[name], value)
-
-        self.uniform_values[name] = value
-
-        u.assign(self, value)
-        u.ready = True
+        pass
 
     def set_uniforms(self, dict uniforms):
-        cdef Uniform u
+        pass
 
-        for name, value in uniforms.iteritems():
-
-            self.set_uniform(name, value)
-
-    def draw(self, Mesh mesh):
+    def draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh):
 
         cdef Attribute a
         cdef Uniform u
         cdef int i
         cdef dict properties
 
-        if not mesh.triangles:
-            return
+        glUseProgram(self.program)
 
-        properties = self.properties
+        properties = context.properties
 
         # Set up the attributes.
         for a in self.attributes:
@@ -471,9 +477,18 @@ cdef class Program:
 
             glEnableVertexAttribArray(a.location)
 
-        for name, u in self.uniforms.iteritems():
-            if not u.ready:
-                self.missing("uniform", name)
+        cdef Setter setter
+
+        for setter in self.uniform_setters:
+            try:
+                value = setter.getter.get(context, model)
+            except:
+                raise SystemExit("Could not get shader uniform value.")
+
+            try:
+                setter.set(context, value)
+            except:
+                raise # SystemExit("Could not set shader uniform value.")
 
         if properties:
 
@@ -511,15 +526,42 @@ cdef class Program:
                 glBlendEquation(GL_FUNC_ADD)
                 glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-    def finish(Program self):
+        for a in self.attributes:
+            glDisableVertexAttribArray(a.location)
+
+    def draw_ftl(self, GLuint texture, Mesh mesh):
+        """
+        Draws the given texture using mesh, for the ftl alpha premultiply shader.
+        """
+
         cdef Attribute a
-        cdef Uniform u
+
+        glUseProgram(self.program)
+
+        # Set up the attributes.
+        for a in self.attributes:
+            if a.name == "a_position":
+                glVertexAttribPointer(a.location, mesh.point_size, GL_FLOAT, GL_FALSE, mesh.point_size * sizeof(float), mesh.point_data)
+            else:
+                offset = mesh.layout.offset.get(a.name, None)
+                if offset is None:
+                    self.missing("mesh attribute", a.name)
+
+                glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.layout.stride * sizeof(float), mesh.attribute + <int> offset)
+
+            glEnableVertexAttribArray(a.location)
+
+        # There's only one setter, and it's for tex0.
+        cdef Setter setter = self.uniform_setters[0]
+
+        for setter in self.uniform_setters:
+            setter.set(None, texture)
+
+        glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
 
         for a in self.attributes:
             glDisableVertexAttribArray(a.location)
 
-        for u in self.uniforms.itervalues():
-            u.finish(self)
 
-        self.properties = None
-        self.uniform_values = { }
+    def finish(Program self):
+        pass

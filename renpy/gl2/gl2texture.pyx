@@ -493,10 +493,7 @@ cdef class GLTexture(GL2Model):
 
         # Draw.
         program = self.loader.ftl_program
-        program.start({})
-        program.set_uniform("tex0", tex)
-        program.draw(mesh)
-        program.finish()
+        program.draw_ftl(tex, mesh)
 
         # Create premultiplied.
         self.allocate_texture(premultiplied, self.width, self.height, self.properties)
@@ -673,9 +670,11 @@ cdef class GLTexture(GL2Model):
         else:
             self.load_gltexture()
 
-    def program_uniforms(self, shader):
-        shader.set_uniform("tex0", self)
-        shader.set_uniform("res0", (self.texture_width, self.texture_height))
+    def get_uniforms(self):
+        return {
+            "tex0" : self,
+            "res0" : (self.texture_width, self.texture_height),
+            }
 
     cpdef subsurface(self, rect):
         rv = GL2Model.subsurface(self, rect)
