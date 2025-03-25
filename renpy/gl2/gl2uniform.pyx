@@ -162,45 +162,45 @@ cdef class Getter:
         raise NotImplementedError()
 
 
-cdef class ContextGetter:
+cdef class ContextGetter(Getter):
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         return context.uniforms[self.uniform_name]
 
 
-cdef class LODBiasGetter:
+cdef class LODBiasGetter(Getter):
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         return float(renpy.config.gl_lod_bias)
 
 
-cdef class TimeGetter:
+cdef class TimeGetter(Getter):
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         return (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400
 
 
-cdef class RandomGetter:
+cdef class RandomGetter(Getter):
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         return (random.random(), random.random(), random.random(), random.random())
 
 
-cdef class ViewportGetter:
+cdef class ViewportGetter(Getter):
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         cdef GLfloat[4] viewport
         glGetFloatv(GL_VIEWPORT, viewport)
         return viewport
 
 
-cdef class DrawableSizeGetter:
+cdef class DrawableSizeGetter(Getter):
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         return renpy.display.draw.drawable_viewport[2:]
 
 
-cdef class VirtualSizeGetter:
+cdef class VirtualSizeGetter(Getter):
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         return renpy.display.draw.virtual_size
 
 
 
-cdef class InverseGetter:
+cdef class InverseGetter(Getter):
 
     cdef Getter getter
     cdef Matrix matrix
@@ -221,7 +221,7 @@ cdef class InverseGetter:
             raise TypeError("InverseGetter only works with Matrix values.")
 
 
-cdef class TransposeGetter:
+cdef class TransposeGetter(Getter):
 
     cdef Getter getter
     cdef Matrix matrix
@@ -242,7 +242,7 @@ cdef class TransposeGetter:
             raise TypeError("TransposeGetter only works with Matrix values.")
 
 
-cdef class InverseTransposeGetter:
+cdef class InverseTransposeGetter(Getter):
 
     cdef Getter getter
     cdef Matrix matrix
@@ -262,3 +262,112 @@ cdef class InverseTransposeGetter:
             return self.matrix
         else:
             raise TypeError("InverseTransposeGetter only works with Matrix values.")
+
+
+def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, uniform_type: str, sampler: int):
+    """
+    Given the information about a uniform, generates an object that will get the
+    information for the uniform, and set it.
+
+    `shader_name`
+        The name of the shader that this uniform is associated with. Used to
+        report errors.
+
+    `location`
+        The location of the uniform. This should not be -1, as that indicates
+        that the uniform is not used in the shader.
+
+    `uniform_name`
+        The name of the uniform.
+
+    `uniform_type`
+        The type of the uniform.
+
+    `sampler`
+        The sampler number to allocate next.
+
+    Returns a (setter, sampler) tuple, where setter is a Setter object with its getter
+    field set, and sampler is the sampler number to use for the next sampler.
+    """
+
+    if "__" in uniform_name:
+        base_name, _, operation = uniform_name.rpartition("__")
+    else:
+        base_name = uniform_name
+        operation = None
+
+    if base_name == "u_lod_bias":
+        getter = LODBiasGetter(uniform_name)
+        require_type = "float"
+
+    elif base_name == "u_time":
+        getter = TimeGetter(uniform_name)
+        require_type = "float"
+
+    elif base_name == "u_random":
+        getter = RandomGetter(uniform_name)
+        require_type = "vec4"
+
+    elif base_name == "u_viewport":
+        getter = ViewportGetter(uniform_name)
+        require_type = "vec2"
+
+    elif base_name == "u_drawable_size":
+        getter = DrawableSizeGetter(uniform_name)
+        require_type = "vec2"
+
+    elif base_name == "u_virtual_size":
+        getter = VirtualSizeGetter(uniform_name)
+        require_type = "vec2"
+
+    else:
+        getter = ContextGetter(uniform_name)
+        require_type = None
+
+    if require_type is not None and uniform_type != require_type:
+        raise TypeError(
+            f"Uniform {uniform_name} in shader {shader_name} has type {uniform_type}, "
+            f"but requires type {require_type}."
+        )
+
+    if operation is None:
+        pass
+    elif operation == "inverse":
+        getter = InverseGetter(uniform_name, getter)
+        uniform_type = "mat4"
+    elif operation == "transpose":
+        getter = TransposeGetter(uniform_name, getter)
+        uniform_type = "mat4"
+    elif operation == "inverse_transpose":
+        getter = InverseTransposeGetter(uniform_name, getter)
+        uniform_type = "mat4"
+    else:
+        raise TypeError(
+            f"Uniform {uniform_name} in shader {shader_name} has unknown operation "
+            f"{operation}."
+        )
+
+    if uniform_type == "float":
+        setter = FloatSetter(uniform_name, uniform_type, location, getter)
+    elif uniform_type == "vec2":
+        setter = Vec2Setter(uniform_name, uniform_type, location, getter)
+    elif uniform_type == "vec3":
+        setter = Vec3Setter(uniform_name, uniform_type, location, getter)
+    elif uniform_type == "vec4":
+        setter = Vec4Setter(uniform_name, uniform_type, location, getter)
+    elif uniform_type == "mat2":
+        setter = Mat2Setter(uniform_name, uniform_type, location, getter)
+    elif uniform_type == "mat3":
+        setter = Mat3Setter(uniform_name, uniform_type, location, getter)
+    elif uniform_type == "mat4":
+        setter = Mat4Setter(uniform_name, uniform_type, location, getter)
+    elif uniform_type == "sampler2D":
+        setter = Sampler2DSetter(uniform_name, uniform_type, location, getter, sampler)
+        sampler += 1
+    else:
+        raise TypeError(
+            f"Uniform {uniform_name} in shader {shader_name} has unknown type "
+            f"{uniform_type}."
+        )
+
+    return setter, sampler
