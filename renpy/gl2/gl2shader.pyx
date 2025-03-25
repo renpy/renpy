@@ -48,144 +48,23 @@ GLSL_PRECISIONS = {
     "lowp",
     }
 
-
-cdef class Uniform:
-    cdef GLint location
-    cdef bint ready
-
-    def __init__(self, program, location, name):
-        self.location = location
-        self.ready = False
-
-    cdef void assign(self, Program program, data):
-        return
-
-    cdef void finish(self, Program program):
-        self.ready = False
-        return
-
-cdef class UniformFloat(Uniform):
-    cdef void assign(self, Program program, data):
-        glUniform1f(self.location, data)
-
-cdef class UniformVec2(Uniform):
-    cdef void assign(self, Program program, data):
-        glUniform2f(self.location, data[0], data[1])
-
-cdef class UniformVec3(Uniform):
-    cdef void assign(self, Program program, data):
-        glUniform3f(self.location, data[0], data[1], data[2])
-
-cdef class UniformVec4(Uniform):
-    cdef void assign(self, Program program, data):
-        glUniform4f(self.location, data[0], data[1], data[2], data[3])
-
-
-cdef class UniformMat2(Uniform):
-    cdef void assign(self, Program program, data):
-        cdef Matrix m = data
-        cdef GLfloat[4] values = [
-            m.xdx, m.ydx,
-            m.xdy, m.ydy
-            ]
-
-        glUniformMatrix2fv(self.location, 1, GL_FALSE, values)
-
-cdef class UniformMat3(Uniform):
-    cdef void assign(self, Program program, data):
-        cdef Matrix m = data
-        cdef GLfloat[9] values = [
-            m.xdx, m.ydx, m.zdx,
-            m.xdy, m.ydy, m.zdy,
-            m.xdz, m.ydz, m.zdz
-            ]
-
-        glUniformMatrix3fv(self.location, 1, GL_FALSE, values)
-
-cdef class UniformMat4(Uniform):
-    cdef void assign(self, Program program, data):
-        glUniformMatrix4fv(self.location, 1, GL_FALSE, (<Matrix> data).m)
-
-cdef class UniformSampler2D(Uniform):
-    cdef int sampler
-    cdef object last_data
-    cdef bint cleanup
-    cdef object texture_wrap_key
-
-    def __init__(self, program, location, name):
-        Uniform.__init__(self, program, location, name)
-        self.sampler = program.samplers
-        self.cleanup = False
-        self.texture_wrap_key = "texture_wrap_" + name
-        program.samplers += 1
-
-    cdef void assign(self, Program program, data):
-        cdef dict properties = program.properties
-        self.last_data = data
-        self.cleanup = False
-
-        glActiveTexture(GL_TEXTURE0 + self.sampler)
-        glUniform1i(self.location, self.sampler)
-
-        if isinstance(data, GLTexture):
-            glBindTexture(GL_TEXTURE_2D, data.number)
-        else:
-            glBindTexture(GL_TEXTURE_2D, data)
-
-
-        if self.texture_wrap_key in properties:
-            wrap_s, wrap_t = properties[self.texture_wrap_key]
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
-            self.cleanup = True
-
-        elif "texture_wrap" in properties:
-            wrap_s, wrap_t = properties["texture_wrap"]
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
-            self.cleanup = True
-
-        if "anisotropic" in properties:
-            if not properties.get("anisotropic", True) and renpy.display.draw.texture_loader.max_anisotropy > 1.0:
-                glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, 1.0)
-                self.cleanup = True
-
-
-    cdef void finish(self, Program program):
-        cdef dict properties = program.properties
-        self.ready = False
-
-        if self.cleanup:
-
-            self.cleanup = False
-
-            if isinstance(self.last_data, GLTexture):
-                glBindTexture(GL_TEXTURE_2D, self.last_data.number)
-            else:
-                glBindTexture(GL_TEXTURE_2D, self.last_data)
-
-            if "texture_wrap" in properties or self.texture_wrap_key in properties:
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-
-            if "anisotropic" in properties:
-                if not properties.get("anisotropic", True) and renpy.display.draw.texture_loader.max_anisotropy > 1.0:
-                    glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, renpy.display.draw.texture_loader.max_anisotropy)
-
-        self.last_data = None
-
-
+ATTRIBUTE_TYPES = {
+    "float" : 1,
+    "vec2" : 2,
+    "vec3" : 3,
+    "vec4" : 4,
+}
 
 UNIFORM_TYPES = {
-    "float" : UniformFloat,
-    "vec2" : UniformVec2,
-    "vec3" : UniformVec3,
-    "vec4" : UniformVec4,
-    "mat2" : UniformMat2,
-    "mat3" : UniformMat3,
-    "mat4" : UniformMat4,
-    "sampler2D" : UniformSampler2D,
-    }
+    "float",
+    "vec2",
+    "vec3",
+    "vec4",
+    "mat2",
+    "mat3",
+    "mat4",
+    "sampler2D",
+}
 
 cdef class Attribute:
     cdef object name
@@ -197,17 +76,7 @@ cdef class Attribute:
         self.location = location
         self.size = size
 
-ATTRIBUTE_TYPES = {
-    "float" : 1,
-    "vec2" : 2,
-    "vec3" : 3,
-    "vec4" : 4,
-}
 
-def get_viewport():
-    cdef GLfloat viewport[4]
-    glGetFloatv(GL_VIEWPORT, viewport)
-    return viewport
 
 cdef class Program:
     """
@@ -219,17 +88,8 @@ cdef class Program:
         self.vertex = vertex
         self.fragment = fragment
 
-        # A map from uniform name to a Uniform object.
-        self.uniforms = { }
-
-        # A map from unform name to a value.
-        self.uniform_values = { }
-
         # A list of Attribute objects
         self.attributes = [ ]
-
-        # The number of samplers that have been added.
-        self.samplers = 0
 
         # A list of gl2uniform.Setter objects that can be called to set
         # the uniforms.
@@ -291,14 +151,11 @@ cdef class Program:
                     setter, samplers = generate_uniform_setter(shader_name, location, name, type, samplers)
                     self.uniform_setters.append(setter)
 
-                    # To be removed.
-                    self.uniforms[name] = types[type](self, location, name)
-
             else:
                 location = glGetAttribLocation(self.program, name.encode("utf-8"))
 
                 if location >= 0:
-                    self.attributes.append(Attribute(name, location, types[type]))
+                    self.attributes.append(Attribute(name, location, ATTRIBUTE_TYPES[type]))
 
         return samplers
 
@@ -395,24 +252,26 @@ cdef class Program:
     def draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh):
 
         cdef Attribute a
-        cdef Uniform u
         cdef int i
         cdef dict properties
+        cdef dict attribute_offsets
 
         glUseProgram(self.program)
 
         properties = context.properties
+        attribute_offsets = mesh.layout.offset
 
         # Set up the attributes.
         for a in self.attributes:
             if a.name == "a_position":
                 glVertexAttribPointer(a.location, mesh.point_size, GL_FLOAT, GL_FALSE, mesh.point_size * sizeof(float), mesh.point_data)
             else:
-                offset = mesh.layout.offset.get(a.name, None)
-                if offset is None:
-                    self.missing("mesh attribute", a.name)
-
-                glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.layout.stride * sizeof(float), mesh.attribute + <int> offset)
+                try:
+                    offset = attribute_offsets[a.name]
+                    glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.layout.stride * sizeof(float), mesh.attribute + <int> offset)
+                except KeyError:
+                    shader_name = "+".join(self.name)
+                    raise ShaderError(f"Shader {shader_name} requires attribute {a.name}, but it is not in the mesh.")
 
             glEnableVertexAttribArray(a.location)
 
@@ -423,13 +282,13 @@ cdef class Program:
                 value = setter.getter.get(context, model)
             except:
                 shader_name = "+".join(self.name)
-                raise Exception(f"Could not get value for uniform {setter.uniform_name} in shader {shader_name}.")
+                raise ShaderError(f"Could not get value for uniform {setter.uniform_name} in shader {shader_name}.")
 
             try:
                 setter.set(context, value)
             except:
                 shader_name = "+".join(self.name)
-                raise TypeError(f"Could not set value for uniform {setter.uniform_type} {setter.uniform_name} in shader {shader_name}, value {value!r}")
+                raise ShaderError(f"Could not set value for uniform {setter.uniform_type} {setter.uniform_name} in shader {shader_name}, value {value!r}")
 
         if properties:
 

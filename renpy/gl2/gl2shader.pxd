@@ -27,24 +27,14 @@ cdef class Program:
     cdef public object name
 
     # The number of the OpenGL program created.
-    cdef GLuint program
+    cdef public GLuint program
 
     # The text of the vertex and fragment shaders.
-    cdef object vertex
-    cdef object fragment
+    cdef public object vertex
+    cdef public object fragment
 
-    cdef public dict uniforms
-
+    # Objects used to set attributes and uniforms.
     cdef public list attributes
-
-    cdef public int samplers
-
-    cdef public int nearest
-
-    cdef dict properties
+    cdef public list uniform_setters
 
     cdef GLuint load_shader(self, GLenum shader_type, source) except 0
-
-    cdef dict uniform_values
-
-    cdef list uniform_setters
