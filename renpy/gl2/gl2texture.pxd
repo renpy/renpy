@@ -83,5 +83,6 @@ cdef class GLTexture(GL2Model):
     cdef GLint wrap_s
     cdef GLint wrap_t
     cdef GLfloat anisotropy
+    cdef object texture_scaling
 
     cpdef subsurface(GLTexture self, t)

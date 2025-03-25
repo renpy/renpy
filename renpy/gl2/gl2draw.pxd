@@ -140,6 +140,9 @@ cdef class GL2DrawingContext:
     # Is the pixel perfect transform eligible to be performed?
     cdef bint pixel_perfect
 
+    # Has depth been enabled?
+    cdef bint has_depth
+
     cdef GL2DrawingContext child_context(self)
 
     cdef dict merge_properties(self, dict old, dict child)

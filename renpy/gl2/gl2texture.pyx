@@ -293,6 +293,7 @@ cdef class GLTexture(GL2Model):
         self.wrap_s = GL_CLAMP_TO_EDGE
         self.wrap_t = GL_CLAMP_TO_EDGE
         self.anisotropy = loader.max_anisotropy
+        self.texture_scaling = None
 
         if renpy.emscripten and generate:
             # Generate a texture name to access video frames for web

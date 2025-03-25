@@ -204,15 +204,6 @@ ATTRIBUTE_TYPES = {
     "vec4" : 4,
 }
 
-TEXTURE_SCALING = {
-    "nearest" : (GL_NEAREST, GL_NEAREST),
-    "linear" : (GL_LINEAR, GL_LINEAR),
-    "nearest_mipmap_nearest" : (GL_NEAREST, GL_NEAREST_MIPMAP_NEAREST),
-    "linear_mipmap_nearest" : (GL_LINEAR, GL_LINEAR_MIPMAP_NEAREST),
-    "nearest_mipmap_linear" : (GL_NEAREST, GL_NEAREST_MIPMAP_LINEAR),
-    "linear_mipmap_linear" : (GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR),
-}
-
 def get_viewport():
     cdef GLfloat viewport[4]
     glGetFloatv(GL_VIEWPORT, viewport)
@@ -358,7 +349,7 @@ cdef class Program:
         cdef GLuint program
         cdef GLint status
 
-        cdef char error[1024]
+        cdef char[1024] error
 
         vertex = self.load_shader(GL_VERTEX_SHADER, self.vertex)
         fragment = self.load_shader(GL_FRAGMENT_SHADER, self.fragment)
@@ -401,58 +392,6 @@ cdef class Program:
         samplers = self.find_variables(self.vertex, seen_uniforms, samplers)
         self.find_variables(self.fragment, seen_uniforms, samplers)
 
-    MISSING = {
-        "u_lod_bias": lambda : float(renpy.config.gl_lod_bias),
-        "u_time": lambda : (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400,
-        "u_random": lambda : (random.random(), random.random(), random.random(), random.random()),
-        "u_viewport": get_viewport,
-        "u_drawable_size": lambda : renpy.display.draw.drawable_viewport[2:],
-        "u_virtual_size": lambda : renpy.display.draw.virtual_size,
-    }
-
-    def missing(self, kind, name):
-
-        f = Program.MISSING.get(name, None)
-        if f:
-            self.set_uniform(name, f())
-            return
-
-        base, _, suffix = name.rpartition("_")
-
-        derived = False
-
-        try:
-
-            if suffix == "inverse":
-                derived = True
-                self.set_uniform(name, self.uniform_values[base].inverse())
-                return
-            elif suffix == "transpose":
-                derived = True
-                self.set_uniform(name, self.uniform_values[base].transpose())
-                return
-            elif suffix == "inversetranspose":
-                derived = True
-                self.set_uniform(name, self.uniform_values[base].inverse().transpose())
-                return
-        except Exception:
-            pass
-
-        if not derived:
-            raise Exception(f"Shader {self.name} has not been given {kind} {name}.")
-        else:
-            renpy.display.log.write(f"Shader {self.name} has not been given {kind} {name}, and couldn't derive it from {base}.")
-
-    def start(self, properties):
-        pass
-
-
-    def set_uniform(self, name, value):
-        pass
-
-    def set_uniforms(self, dict uniforms):
-        pass
-
     def draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh):
 
         cdef Attribute a
@@ -483,26 +422,20 @@ cdef class Program:
             try:
                 value = setter.getter.get(context, model)
             except:
-                raise SystemExit("Could not get shader uniform value.")
+                shader_name = "+".join(self.name)
+                raise Exception(f"Could not get value for uniform {setter.uniform_name} in shader {shader_name}.")
 
             try:
                 setter.set(context, value)
             except:
-                raise # SystemExit("Could not set shader uniform value.")
+                shader_name = "+".join(self.name)
+                raise TypeError(f"Could not set value for uniform {setter.uniform_type} {setter.uniform_name} in shader {shader_name}, value {value!r}")
 
         if properties:
 
             if "color_mask" in properties:
                 mask_r, mask_g, mask_b, mask_a = properties["color_mask"]
                 glColorMask(mask_r, mask_g, mask_b, mask_a)
-
-            if "texture_scaling" in properties:
-                magnify, minify = TEXTURE_SCALING[properties["texture_scaling"]]
-
-                for i in range(self.samplers):
-                    glActiveTexture(GL_TEXTURE0 + i)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify)
 
             if "blend_func" in properties:
                 rgb_eq, src_rgb, dst_rgb, alpha_eq, src_alpha, dst_alpha = properties["blend_func"]
@@ -512,12 +445,6 @@ cdef class Program:
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
 
         if properties:
-
-            if "texture_scaling" in properties:
-                for i in range(self.samplers):
-                    glActiveTexture(GL_TEXTURE0 + i)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
 
             if "color_mask" in properties:
                 glColorMask(True, True, True, True)
@@ -561,7 +488,3 @@ cdef class Program:
 
         for a in self.attributes:
             glDisableVertexAttribArray(a.location)
-
-
-    def finish(Program self):
-        pass

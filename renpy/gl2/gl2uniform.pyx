@@ -94,6 +94,19 @@ cdef class Mat4Setter(Setter):
         glUniformMatrix4fv(self.location, 1, GL_FALSE, (<Matrix> value).m)
 
 
+
+TEXTURE_SCALING = {
+    "nearest" : (GL_NEAREST, GL_NEAREST),
+    "linear" : (GL_LINEAR, GL_LINEAR),
+    "nearest_mipmap_nearest" : (GL_NEAREST, GL_NEAREST_MIPMAP_NEAREST),
+    "linear_mipmap_nearest" : (GL_LINEAR, GL_LINEAR_MIPMAP_NEAREST),
+    "nearest_mipmap_linear" : (GL_NEAREST, GL_NEAREST_MIPMAP_LINEAR),
+    "linear_mipmap_linear" : (GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR),
+}
+
+default_texture_scaling = TEXTURE_SCALING["linear_mipmap_nearest"]
+
+
 cdef class Sampler2DSetter(Setter):
 
     cdef int sampler
@@ -125,6 +138,7 @@ cdef class Sampler2DSetter(Setter):
         cdef GLint wrap_s = GL_CLAMP_TO_EDGE
         cdef GLint wrap_t = GL_CLAMP_TO_EDGE
         cdef GLfloat anisotropy = texture.loader.max_anisotropy
+        cdef texture_scaling = default_texture_scaling
 
         if context.properties:
             if self.texture_wrap_key in context.properties:
@@ -134,6 +148,9 @@ cdef class Sampler2DSetter(Setter):
 
             if not context.properties.get("anisotropic", True):
                 anisotropy = 1.0
+
+            if "texture_scaling" in context.properties:
+                texture_scaling = TEXTURE_SCALING[context.properties["texture_scaling"]]
 
         if wrap_s != texture.wrap_s:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
@@ -146,6 +163,11 @@ cdef class Sampler2DSetter(Setter):
         if anisotropy != texture.anisotropy and texture.loader.max_anisotropy > 1.0:
             glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, anisotropy)
             texture.anisotropy = anisotropy
+
+        if texture_scaling != texture.texture_scaling:
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture_scaling[0])
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture_scaling[1])
+            texture.texture_scaling = texture_scaling
 
 
 cdef class Getter:
