@@ -179,13 +179,67 @@ cdef class Getter:
     def __init__(self, uniform_name):
         self.uniform_name = uniform_name
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
+
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         raise NotImplementedError()
 
 
 cdef class ContextGetter(Getter):
+
+    def __repr__(self):
+        return f"ContextGetter({self.uniform_name})"
+
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         return context.uniforms[self.uniform_name]
+
+
+cdef class ProjectionGetter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return context.projection_matrix
+
+
+cdef class ViewGetter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return context.view_matrix
+
+
+cdef class ModelGetter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return context.model_matrix
+
+
+cdef class ProjectionViewGetter(Getter):
+    cdef Matrix matrix
+
+    def __init__(self, uniform_name):
+        Getter.__init__(self, uniform_name)
+        self.matrix = Matrix(None)
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        self.matrix.ctake(context.projection_matrix)
+        self.matrix.inplace_multiply(context.view_matrix)
+        return self.matrix
+
+
+cdef class TransformMatrixGetter(Getter):
+    cdef Matrix matrix
+
+    def __init__(self, uniform_name):
+        Getter.__init__(self, uniform_name)
+        self.matrix = Matrix(None)
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        self.matrix.ctake(context.projection_matrix)
+        self.matrix.inplace_multiply(context.view_matrix)
+        self.matrix.inplace_multiply(context.model_matrix)
+        return self.matrix
+
+
+cdef class ModelSizeGetter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return (model.width, model.height)
 
 
 cdef class LODBiasGetter(Getter):
@@ -231,6 +285,9 @@ cdef class InverseGetter(Getter):
         self.getter = getter
         self.matrix = Matrix(None)
 
+    def __repr__(self):
+        return f"InverseGetter({self.getter!r})"
+
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         value = self.getter.get(context, model)
 
@@ -251,6 +308,9 @@ cdef class TransposeGetter(Getter):
         Getter.__init__(self, uniform_name)
         self.getter = getter
         self.matrix = Matrix(None)
+
+    def __repr__(self):
+        return f"TransposeGetter({self.getter!r})"
 
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         value = self.getter.get(context, model)
@@ -273,6 +333,9 @@ cdef class InverseTransposeGetter(Getter):
         self.getter = getter
         self.matrix = Matrix(None)
 
+    def __repr__(self):
+        return f"InverseTransposeGetter({self.getter!r})"
+
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         value = self.getter.get(context, model)
 
@@ -283,6 +346,23 @@ cdef class InverseTransposeGetter(Getter):
             return self.matrix
         else:
             raise TypeError("InverseTransposeGetter only works with Matrix values.")
+
+
+# The classes that are used to get the values of uniforms.
+UNIFORM_GETTER_CLASSES = {
+    "u_projection": (ProjectionGetter, "mat4"),
+    "u_view": (ViewGetter, "mat4"),
+    "u_model": (ModelGetter, "mat4"),
+    "u_projectionview": (ProjectionViewGetter, "mat4"),
+    "u_transform": (TransformMatrixGetter, "mat4"),
+    "u_model_size": (ModelSizeGetter, "vec2"),
+    "u_lod_bias": (LODBiasGetter, "float"),
+    "u_time": (TimeGetter, "float"),
+    "u_random": (RandomGetter, "vec4"),
+    "u_viewport": (ViewportGetter, "vec2"),
+    "u_drawable_size": (DrawableSizeGetter, "vec2"),
+    "u_virtual_size": (VirtualSizeGetter, "vec2"),
+}
 
 
 def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, uniform_type: str, sampler: int):
@@ -317,30 +397,9 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
         base_name = uniform_name
         operation = None
 
-    if base_name == "u_lod_bias":
-        getter = LODBiasGetter(uniform_name)
-        require_type = "float"
-
-    elif base_name == "u_time":
-        getter = TimeGetter(uniform_name)
-        require_type = "float"
-
-    elif base_name == "u_random":
-        getter = RandomGetter(uniform_name)
-        require_type = "vec4"
-
-    elif base_name == "u_viewport":
-        getter = ViewportGetter(uniform_name)
-        require_type = "vec2"
-
-    elif base_name == "u_drawable_size":
-        getter = DrawableSizeGetter(uniform_name)
-        require_type = "vec2"
-
-    elif base_name == "u_virtual_size":
-        getter = VirtualSizeGetter(uniform_name)
-        require_type = "vec2"
-
+    if base_name in UNIFORM_GETTER_CLASSES:
+        getter_class, require_type = UNIFORM_GETTER_CLASSES[base_name]
+        getter = getter_class(uniform_name)
     else:
         getter = ContextGetter(uniform_name)
         require_type = None

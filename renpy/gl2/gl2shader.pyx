@@ -282,7 +282,7 @@ cdef class Program:
                 value = setter.getter.get(context, model)
             except:
                 shader_name = "+".join(self.name)
-                raise ShaderError(f"Could not get value for uniform {setter.uniform_name} in shader {shader_name}.")
+                raise ShaderError(f"Could not get value for uniform {setter.uniform_name} in shader {shader_name}, using {setter.getter!r}")
 
             try:
                 setter.set(context, value)

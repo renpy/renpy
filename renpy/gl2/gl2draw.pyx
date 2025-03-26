@@ -1422,19 +1422,6 @@ cdef class GL2DrawingContext:
 
         program = gl2draw.shader_cache.get(self.shaders)
 
-        u_projectionview = self.projection_matrix * self.view_matrix
-        u_transform = u_projectionview * self.model_matrix
-
-        # Temporary - until the below can go away.
-        self.uniforms = dict(self.uniforms)
-
-        self.uniforms["u_projection"] = self.projection_matrix
-        self.uniforms["u_model_size"] = (model.width, model.height)
-        self.uniforms["u_view"] = self.view_matrix
-        self.uniforms["u_projectionview"] = u_projectionview
-        self.uniforms["u_model"] = self.model_matrix
-        self.uniforms["u_transform"] = u_transform
-
         program.draw(self, model, mesh)
 
     cdef void set_text_rect(self, Render r):
