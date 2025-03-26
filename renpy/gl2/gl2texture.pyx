@@ -163,7 +163,7 @@ cdef class TextureLoader:
 
             rv = [ ]
 
-            for i in xrange(tiles):
+            for i in range(tiles):
                 start = int(i * tile_length)
                 end = int((i + 1) * tile_length)
 
@@ -288,6 +288,12 @@ cdef class GLTexture(GL2Model):
         self.bt = 0
         self.br = 0
         self.bb = 0
+
+        # States used by gl2unfiorm.
+        self.wrap_s = GL_CLAMP_TO_EDGE
+        self.wrap_t = GL_CLAMP_TO_EDGE
+        self.anisotropy = loader.max_anisotropy
+        self.texture_scaling = None
 
         if renpy.emscripten and generate:
             # Generate a texture name to access video frames for web
@@ -488,10 +494,7 @@ cdef class GLTexture(GL2Model):
 
         # Draw.
         program = self.loader.ftl_program
-        program.start({})
-        program.set_uniform("tex0", tex)
-        program.draw(mesh)
-        program.finish()
+        program.draw_ftl(tex, mesh)
 
         # Create premultiplied.
         self.allocate_texture(premultiplied, self.width, self.height, self.properties)
@@ -668,9 +671,11 @@ cdef class GLTexture(GL2Model):
         else:
             self.load_gltexture()
 
-    def program_uniforms(self, shader):
-        shader.set_uniform("tex0", self)
-        shader.set_uniform("res0", (self.texture_width, self.texture_height))
+    def get_uniforms(self):
+        return {
+            "tex0" : self,
+            "res0" : (self.texture_width, self.texture_height),
+            }
 
     cpdef subsurface(self, rect):
         rv = GL2Model.subsurface(self, rect)

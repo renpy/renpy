@@ -183,7 +183,7 @@ init -1500 python:
     @renpy.pure
     def ShowTransient(screen, transition=None, *args, **kwargs):
         """
-        :doc: control_action
+        :doc: control_action action
 
         Shows a transient screen. A transient screen will be hidden when
         the current interaction completes. The arguments are

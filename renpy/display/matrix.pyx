@@ -414,26 +414,26 @@ cdef class Matrix:
         cdef float *m = self.m
         cdef float *im = rv.m
 
-        cdef double A2323 = m[10] * m[15] - m[11] * m[14];
-        cdef double A1323 = m[ 9] * m[15] - m[11] * m[13];
-        cdef double A1223 = m[ 9] * m[14] - m[10] * m[13];
-        cdef double A0323 = m[ 8] * m[15] - m[11] * m[12];
-        cdef double A0223 = m[ 8] * m[14] - m[10] * m[12];
-        cdef double A0123 = m[ 8] * m[13] - m[ 9] * m[12];
-        cdef double A2313 = m[ 6] * m[15] - m[ 7] * m[14];
-        cdef double A1313 = m[ 5] * m[15] - m[ 7] * m[13];
-        cdef double A1213 = m[ 5] * m[14] - m[ 6] * m[13];
-        cdef double A2312 = m[ 6] * m[11] - m[ 7] * m[10];
-        cdef double A1312 = m[ 5] * m[11] - m[ 7] * m[ 9];
-        cdef double A1212 = m[ 5] * m[10] - m[ 6] * m[ 9];
-        cdef double A0313 = m[ 4] * m[15] - m[ 7] * m[12];
-        cdef double A0213 = m[ 4] * m[14] - m[ 6] * m[12];
-        cdef double A0312 = m[ 4] * m[11] - m[ 7] * m[ 8];
-        cdef double A0212 = m[ 4] * m[10] - m[ 6] * m[ 8];
-        cdef double A0113 = m[ 4] * m[13] - m[ 5] * m[12];
-        cdef double A0112 = m[ 4] * m[ 9] - m[ 5] * m[ 8];
+        cdef double A2323 = m[10] * m[15] - m[11] * m[14]
+        cdef double A1323 = m[ 9] * m[15] - m[11] * m[13]
+        cdef double A1223 = m[ 9] * m[14] - m[10] * m[13]
+        cdef double A0323 = m[ 8] * m[15] - m[11] * m[12]
+        cdef double A0223 = m[ 8] * m[14] - m[10] * m[12]
+        cdef double A0123 = m[ 8] * m[13] - m[ 9] * m[12]
+        cdef double A2313 = m[ 6] * m[15] - m[ 7] * m[14]
+        cdef double A1313 = m[ 5] * m[15] - m[ 7] * m[13]
+        cdef double A1213 = m[ 5] * m[14] - m[ 6] * m[13]
+        cdef double A2312 = m[ 6] * m[11] - m[ 7] * m[10]
+        cdef double A1312 = m[ 5] * m[11] - m[ 7] * m[ 9]
+        cdef double A1212 = m[ 5] * m[10] - m[ 6] * m[ 9]
+        cdef double A0313 = m[ 4] * m[15] - m[ 7] * m[12]
+        cdef double A0213 = m[ 4] * m[14] - m[ 6] * m[12]
+        cdef double A0312 = m[ 4] * m[11] - m[ 7] * m[ 8]
+        cdef double A0212 = m[ 4] * m[10] - m[ 6] * m[ 8]
+        cdef double A0113 = m[ 4] * m[13] - m[ 5] * m[12]
+        cdef double A0112 = m[ 4] * m[ 9] - m[ 5] * m[ 8]
 
-        cdef double det;
+        cdef double det
 
         det = m[ 0] * ( m[ 5] * A2323 - m[ 6] * A1323 + m[ 7] * A1223 ) \
             - m[ 1] * ( m[ 4] * A2323 - m[ 6] * A0323 + m[ 7] * A0223 ) \
@@ -444,7 +444,7 @@ cdef class Matrix:
             rv.m[15] = 1.0
             return rv
 
-        det = 1 / det;
+        det = 1 / det
 
         im[ 0] = <float> (det *   ( m[ 5] * A2323 - m[ 6] * A1323 + m[ 7] * A1223 ))
         im[ 1] = <float> (det * - ( m[ 1] * A2323 - m[ 2] * A1323 + m[ 3] * A1223 ))
@@ -464,6 +464,70 @@ cdef class Matrix:
         im[15] = <float> (det *   ( m[ 0] * A1212 - m[ 1] * A0212 + m[ 2] * A0112 ))
 
         return rv
+
+    cdef Matrix inplace_inverse(Matrix self):
+        """
+        Computes the inverse of this matrix in place.
+        """
+
+        cdef float *m = self.m
+        cdef float[16] im
+
+        cdef double A2323 = m[10] * m[15] - m[11] * m[14]
+        cdef double A1323 = m[ 9] * m[15] - m[11] * m[13]
+        cdef double A1223 = m[ 9] * m[14] - m[10] * m[13]
+        cdef double A0323 = m[ 8] * m[15] - m[11] * m[12]
+        cdef double A0223 = m[ 8] * m[14] - m[10] * m[12]
+        cdef double A0123 = m[ 8] * m[13] - m[ 9] * m[12]
+        cdef double A2313 = m[ 6] * m[15] - m[ 7] * m[14]
+        cdef double A1313 = m[ 5] * m[15] - m[ 7] * m[13]
+        cdef double A1213 = m[ 5] * m[14] - m[ 6] * m[13]
+        cdef double A2312 = m[ 6] * m[11] - m[ 7] * m[10]
+        cdef double A1312 = m[ 5] * m[11] - m[ 7] * m[ 9]
+        cdef double A1212 = m[ 5] * m[10] - m[ 6] * m[ 9]
+        cdef double A0313 = m[ 4] * m[15] - m[ 7] * m[12]
+        cdef double A0213 = m[ 4] * m[14] - m[ 6] * m[12]
+        cdef double A0312 = m[ 4] * m[11] - m[ 7] * m[ 8]
+        cdef double A0212 = m[ 4] * m[10] - m[ 6] * m[ 8]
+        cdef double A0113 = m[ 4] * m[13] - m[ 5] * m[12]
+        cdef double A0112 = m[ 4] * m[ 9] - m[ 5] * m[ 8]
+
+        cdef double det
+
+        det = m[ 0] * ( m[ 5] * A2323 - m[ 6] * A1323 + m[ 7] * A1223 ) \
+            - m[ 1] * ( m[ 4] * A2323 - m[ 6] * A0323 + m[ 7] * A0223 ) \
+            + m[ 2] * ( m[ 4] * A1323 - m[ 5] * A0323 + m[ 7] * A0123 ) \
+            - m[ 3] * ( m[ 4] * A1223 - m[ 5] * A0223 + m[ 6] * A0123 )
+
+        if det == 0:
+            m[15] = 1.0
+            return self
+
+        det = 1 / det
+
+        im[ 0] = <float> (det *   ( m[ 5] * A2323 - m[ 6] * A1323 + m[ 7] * A1223 ))
+        im[ 1] = <float> (det * - ( m[ 1] * A2323 - m[ 2] * A1323 + m[ 3] * A1223 ))
+        im[ 2] = <float> (det *   ( m[ 1] * A2313 - m[ 2] * A1313 + m[ 3] * A1213 ))
+        im[ 3] = <float> (det * - ( m[ 1] * A2312 - m[ 2] * A1312 + m[ 3] * A1212 ))
+        im[ 4] = <float> (det * - ( m[ 4] * A2323 - m[ 6] * A0323 + m[ 7] * A0223 ))
+        im[ 5] = <float> (det *   ( m[ 0] * A2323 - m[ 2] * A0323 + m[ 3] * A0223 ))
+        im[ 6] = <float> (det * - ( m[ 0] * A2313 - m[ 2] * A0313 + m[ 3] * A0213 ))
+        im[ 7] = <float> (det *   ( m[ 0] * A2312 - m[ 2] * A0312 + m[ 3] * A0212 ))
+        im[ 8] = <float> (det *   ( m[ 4] * A1323 - m[ 5] * A0323 + m[ 7] * A0123 ))
+        im[ 9] = <float> (det * - ( m[ 0] * A1323 - m[ 1] * A0323 + m[ 3] * A0123 ))
+        im[10] = <float> (det *   ( m[ 0] * A1313 - m[ 1] * A0313 + m[ 3] * A0113 ))
+        im[11] = <float> (det * - ( m[ 0] * A1312 - m[ 1] * A0312 + m[ 3] * A0112 ))
+        im[12] = <float> (det * - ( m[ 4] * A1223 - m[ 5] * A0223 + m[ 6] * A0123 ))
+        im[13] = <float> (det *   ( m[ 0] * A1223 - m[ 1] * A0223 + m[ 2] * A0123 ))
+        im[14] = <float> (det * - ( m[ 0] * A1213 - m[ 1] * A0213 + m[ 2] * A0113 ))
+        im[15] = <float> (det *   ( m[ 0] * A1212 - m[ 1] * A0212 + m[ 2] * A0112 ))
+
+        cdef int i
+
+        for i in range(16):
+            m[i] = im[i]
+
+        return self
 
     cpdef Matrix transpose(Matrix self):
         """
@@ -498,6 +562,51 @@ cdef class Matrix:
         rv.wdw = self.wdw
 
         return rv
+
+    cdef Matrix inplace_transpose(Matrix self):
+
+
+        cdef float xdx, xdy, xdz, xdw
+        cdef float ydx, ydy, ydz, ydw
+        cdef float zdx, zdy, zdz, zdw
+        cdef float wdx, wdy, wdz, wdw
+
+        xdx = self.xdx
+        xdy = self.ydx
+        xdz = self.zdx
+        xdw = self.wdx
+        ydx = self.xdy
+        ydy = self.ydy
+        ydz = self.zdy
+        ydw = self.wdy
+        zdx = self.xdz
+        zdy = self.ydz
+        zdz = self.zdz
+        zdw = self.wdz
+        wdx = self.xdw
+        wdy = self.ydw
+        wdz = self.zdw
+        wdw = self.wdw
+
+        self.xdx = xdx
+        self.xdy = ydx
+        self.xdz = zdx
+        self.xdw = wdx
+        self.ydx = xdy
+        self.ydy = ydy
+        self.ydz = zdy
+        self.ydw = wdy
+        self.zdx = xdz
+        self.zdy = ydz
+        self.zdz = zdz
+        self.zdw = wdz
+        self.wdx = xdw
+        self.wdy = ydw
+        self.wdz = zdw
+        self.wdw = wdw
+
+        return self
+
 
     @staticmethod
     cdef Matrix cidentity():

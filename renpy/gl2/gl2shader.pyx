@@ -24,7 +24,13 @@ from libc.stdlib cimport malloc, free
 
 from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2texture cimport GLTexture
+from renpy.gl2.gl2draw cimport GL2DrawingContext
+from renpy.gl2.gl2model cimport GL2Model
+from renpy.gl2.gl2uniform cimport Setter
+
 from renpy.display.matrix cimport Matrix
+
+from renpy.gl2.gl2uniform import generate_uniform_setter
 
 import renpy
 import random
@@ -42,144 +48,23 @@ GLSL_PRECISIONS = {
     "lowp",
     }
 
-
-cdef class Uniform:
-    cdef GLint location
-    cdef bint ready
-
-    def __init__(self, program, location, name):
-        self.location = location
-        self.ready = False
-
-    cdef void assign(self, Program program, data):
-        return
-
-    cdef void finish(self, Program program):
-        self.ready = False
-        return
-
-cdef class UniformFloat(Uniform):
-    cdef void assign(self, Program program, data):
-        glUniform1f(self.location, data)
-
-cdef class UniformVec2(Uniform):
-    cdef void assign(self, Program program, data):
-        glUniform2f(self.location, data[0], data[1])
-
-cdef class UniformVec3(Uniform):
-    cdef void assign(self, Program program, data):
-        glUniform3f(self.location, data[0], data[1], data[2])
-
-cdef class UniformVec4(Uniform):
-    cdef void assign(self, Program program, data):
-        glUniform4f(self.location, data[0], data[1], data[2], data[3])
-
-
-cdef class UniformMat2(Uniform):
-    cdef void assign(self, Program program, data):
-        cdef Matrix m = data
-        cdef GLfloat[4] values = [
-            m.xdx, m.ydx,
-            m.xdy, m.ydy
-            ]
-
-        glUniformMatrix2fv(self.location, 1, GL_FALSE, values)
-
-cdef class UniformMat3(Uniform):
-    cdef void assign(self, Program program, data):
-        cdef Matrix m = data
-        cdef GLfloat[9] values = [
-            m.xdx, m.ydx, m.zdx,
-            m.xdy, m.ydy, m.zdy,
-            m.xdz, m.ydz, m.zdz
-            ]
-
-        glUniformMatrix3fv(self.location, 1, GL_FALSE, values)
-
-cdef class UniformMat4(Uniform):
-    cdef void assign(self, Program program, data):
-        glUniformMatrix4fv(self.location, 1, GL_FALSE, (<Matrix> data).m)
-
-cdef class UniformSampler2D(Uniform):
-    cdef int sampler
-    cdef object last_data
-    cdef bint cleanup
-    cdef object texture_wrap_key
-
-    def __init__(self, program, location, name):
-        Uniform.__init__(self, program, location, name)
-        self.sampler = program.samplers
-        self.cleanup = False
-        self.texture_wrap_key = "texture_wrap_" + name
-        program.samplers += 1
-
-    cdef void assign(self, Program program, data):
-        cdef dict properties = program.properties
-        self.last_data = data
-        self.cleanup = False
-
-        glActiveTexture(GL_TEXTURE0 + self.sampler)
-        glUniform1i(self.location, self.sampler)
-
-        if isinstance(data, GLTexture):
-            glBindTexture(GL_TEXTURE_2D, data.number)
-        else:
-            glBindTexture(GL_TEXTURE_2D, data)
-
-
-        if self.texture_wrap_key in properties:
-            wrap_s, wrap_t = properties[self.texture_wrap_key]
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
-            self.cleanup = True
-
-        elif "texture_wrap" in properties:
-            wrap_s, wrap_t = properties["texture_wrap"]
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
-            self.cleanup = True
-
-        if "anisotropic" in properties:
-            if not properties.get("anisotropic", True) and renpy.display.draw.texture_loader.max_anisotropy > 1.0:
-                glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, 1.0)
-                self.cleanup = True
-
-
-    cdef void finish(self, Program program):
-        cdef dict properties = program.properties
-        self.ready = False
-
-        if self.cleanup:
-
-            self.cleanup = False
-
-            if isinstance(self.last_data, GLTexture):
-                glBindTexture(GL_TEXTURE_2D, self.last_data.number)
-            else:
-                glBindTexture(GL_TEXTURE_2D, self.last_data)
-
-            if "texture_wrap" in properties or self.texture_wrap_key in properties:
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-
-            if "anisotropic" in properties:
-                if not properties.get("anisotropic", True) and renpy.display.draw.texture_loader.max_anisotropy > 1.0:
-                    glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, renpy.display.draw.texture_loader.max_anisotropy)
-
-        self.last_data = None
-
-
+ATTRIBUTE_TYPES = {
+    "float" : 1,
+    "vec2" : 2,
+    "vec3" : 3,
+    "vec4" : 4,
+}
 
 UNIFORM_TYPES = {
-    "float" : UniformFloat,
-    "vec2" : UniformVec2,
-    "vec3" : UniformVec3,
-    "vec4" : UniformVec4,
-    "mat2" : UniformMat2,
-    "mat3" : UniformMat3,
-    "mat4" : UniformMat4,
-    "sampler2D" : UniformSampler2D,
-    }
+    "float",
+    "vec2",
+    "vec3",
+    "vec4",
+    "mat2",
+    "mat3",
+    "mat4",
+    "sampler2D",
+}
 
 cdef class Attribute:
     cdef object name
@@ -191,26 +76,7 @@ cdef class Attribute:
         self.location = location
         self.size = size
 
-ATTRIBUTE_TYPES = {
-    "float" : 1,
-    "vec2" : 2,
-    "vec3" : 3,
-    "vec4" : 4,
-}
 
-TEXTURE_SCALING = {
-    "nearest" : (GL_NEAREST, GL_NEAREST),
-    "linear" : (GL_LINEAR, GL_LINEAR),
-    "nearest_mipmap_nearest" : (GL_NEAREST, GL_NEAREST_MIPMAP_NEAREST),
-    "linear_mipmap_nearest" : (GL_LINEAR, GL_LINEAR_MIPMAP_NEAREST),
-    "nearest_mipmap_linear" : (GL_NEAREST, GL_NEAREST_MIPMAP_LINEAR),
-    "linear_mipmap_linear" : (GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR),
-}
-
-def get_viewport():
-    cdef GLfloat viewport[4]
-    glGetFloatv(GL_VIEWPORT, viewport)
-    return viewport
 
 cdef class Program:
     """
@@ -222,19 +88,16 @@ cdef class Program:
         self.vertex = vertex
         self.fragment = fragment
 
-        # A map from uniform name to a Uniform object.
-        self.uniforms = { }
-
-        # A map from unform name to a value.
-        self.uniform_values = { }
-
         # A list of Attribute objects
         self.attributes = [ ]
 
-        # The number of samplers that have been added.
-        self.samplers = 0
+        # A list of gl2uniform.Setter objects that can be called to set
+        # the uniforms.
+        self.uniform_setters = [ ]
 
-    def find_variables(self, source):
+    def find_variables(self, source, seen_uniforms: set, samplers: int):
+
+        shader_name = "+".join(self.name)
 
         for l in source.split("\n"):
 
@@ -284,13 +147,17 @@ cdef class Program:
                 location = glGetUniformLocation(self.program, name.encode("utf-8"))
 
                 if location >= 0:
-                    self.uniforms[name] = types[type](self, location, name)
+
+                    setter, samplers = generate_uniform_setter(shader_name, location, name, type, samplers)
+                    self.uniform_setters.append(setter)
 
             else:
                 location = glGetAttribLocation(self.program, name.encode("utf-8"))
 
                 if location >= 0:
-                    self.attributes.append(Attribute(name, location, types[type]))
+                    self.attributes.append(Attribute(name, location, ATTRIBUTE_TYPES[type]))
+
+        return samplers
 
     cdef GLuint load_shader(self, GLenum shader_type, source) except 0:
         """
@@ -339,7 +206,7 @@ cdef class Program:
         cdef GLuint program
         cdef GLint status
 
-        cdef char error[1024]
+        cdef char[1024] error
 
         vertex = self.load_shader(GL_VERTEX_SHADER, self.vertex)
         fragment = self.load_shader(GL_FRAGMENT_SHADER, self.fragment)
@@ -373,90 +240,89 @@ cdef class Program:
 
         self.program = program
 
-        self.find_variables(self.vertex)
-        self.find_variables(self.fragment)
+        # Create self.uniform_setters
+        seen_uniforms = set()
+        samplers = 0
 
-    MISSING = {
-        "u_lod_bias": lambda : float(renpy.config.gl_lod_bias),
-        "u_time": lambda : (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400,
-        "u_random": lambda : (random.random(), random.random(), random.random(), random.random()),
-        "u_viewport": get_viewport,
-        "u_drawable_size": lambda : renpy.display.draw.drawable_viewport[2:],
-        "u_virtual_size": lambda : renpy.display.draw.virtual_size,
-    }
+        self.uniform_setters = [ ]
 
-    def missing(self, kind, name):
+        samplers = self.find_variables(self.vertex, seen_uniforms, samplers)
+        self.find_variables(self.fragment, seen_uniforms, samplers)
 
-        f = Program.MISSING.get(name, None)
-        if f:
-            self.set_uniform(name, f())
-            return
+    def draw(self, GL2DrawingContext context, GL2Model model, Mesh mesh):
 
-        base, _, suffix = name.rpartition("_")
-
-        derived = False
-
-        try:
-
-            if suffix == "inverse":
-                derived = True
-                self.set_uniform(name, self.uniform_values[base].inverse())
-                return
-            elif suffix == "transpose":
-                derived = True
-                self.set_uniform(name, self.uniform_values[base].transpose())
-                return
-            elif suffix == "inversetranspose":
-                derived = True
-                self.set_uniform(name, self.uniform_values[base].inverse().transpose())
-                return
-        except Exception:
-            pass
-
-        if not derived:
-            raise Exception(f"Shader {self.name} has not been given {kind} {name}.")
-        else:
-            renpy.display.log.write(f"Shader {self.name} has not been given {kind} {name}, and couldn't derive it from {base}.")
-
-    def start(self, properties):
-        self.properties = properties
+        cdef Attribute a
+        cdef int i
+        cdef dict properties
+        cdef dict attribute_offsets
 
         glUseProgram(self.program)
 
+        properties = context.properties
+        attribute_offsets = mesh.layout.offset
 
-    def set_uniform(self, name, value):
-        cdef Uniform u
-        u = self.uniforms.get(name, None)
-        if u is None:
-            self.uniform_values[name] = value
-            return
+        # Set up the attributes.
+        for a in self.attributes:
+            if a.name == "a_position":
+                glVertexAttribPointer(a.location, mesh.point_size, GL_FLOAT, GL_FALSE, mesh.point_size * sizeof(float), mesh.point_data)
+            else:
+                try:
+                    offset = attribute_offsets[a.name]
+                    glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.layout.stride * sizeof(float), mesh.attribute + <int> offset)
+                except KeyError:
+                    shader_name = "+".join(self.name)
+                    raise ShaderError(f"Shader {shader_name} requires attribute {a.name}, but it is not in the mesh.")
 
-        if name in self.uniform_values and name in renpy.config.merge_uniforms:
-            value = renpy.config.merge_uniforms[name](self.uniform_values[name], value)
+            glEnableVertexAttribArray(a.location)
 
-        self.uniform_values[name] = value
+        cdef Setter setter
 
-        u.assign(self, value)
-        u.ready = True
+        for setter in self.uniform_setters:
+            try:
+                value = setter.getter.get(context, model)
+            except:
+                shader_name = "+".join(self.name)
+                raise ShaderError(f"Could not get value for uniform {setter.uniform_name} in shader {shader_name}.")
 
-    def set_uniforms(self, dict uniforms):
-        cdef Uniform u
+            try:
+                setter.set(context, value)
+            except:
+                shader_name = "+".join(self.name)
+                raise ShaderError(f"Could not set value for uniform {setter.uniform_type} {setter.uniform_name} in shader {shader_name}, value {value!r}")
 
-        for name, value in uniforms.iteritems():
+        if properties:
 
-            self.set_uniform(name, value)
+            if "color_mask" in properties:
+                mask_r, mask_g, mask_b, mask_a = properties["color_mask"]
+                glColorMask(mask_r, mask_g, mask_b, mask_a)
 
-    def draw(self, Mesh mesh):
+            if "blend_func" in properties:
+                rgb_eq, src_rgb, dst_rgb, alpha_eq, src_alpha, dst_alpha = properties["blend_func"]
+                glBlendEquationSeparate(rgb_eq, alpha_eq)
+                glBlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha)
+
+        glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
+
+        if properties:
+
+            if "color_mask" in properties:
+                glColorMask(True, True, True, True)
+
+            if "blend_func" in properties:
+                glBlendEquation(GL_FUNC_ADD)
+                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+
+        for a in self.attributes:
+            glDisableVertexAttribArray(a.location)
+
+    def draw_ftl(self, GLuint texture, Mesh mesh):
+        """
+        Draws the given texture using mesh, for the ftl alpha premultiply shader.
+        """
 
         cdef Attribute a
-        cdef Uniform u
-        cdef int i
-        cdef dict properties
 
-        if not mesh.triangles:
-            return
-
-        properties = self.properties
+        glUseProgram(self.program)
 
         # Set up the attributes.
         for a in self.attributes:
@@ -471,55 +337,13 @@ cdef class Program:
 
             glEnableVertexAttribArray(a.location)
 
-        for name, u in self.uniforms.iteritems():
-            if not u.ready:
-                self.missing("uniform", name)
+        # There's only one setter, and it's for tex0.
+        cdef Setter setter = self.uniform_setters[0]
 
-        if properties:
-
-            if "color_mask" in properties:
-                mask_r, mask_g, mask_b, mask_a = properties["color_mask"]
-                glColorMask(mask_r, mask_g, mask_b, mask_a)
-
-            if "texture_scaling" in properties:
-                magnify, minify = TEXTURE_SCALING[properties["texture_scaling"]]
-
-                for i in range(self.samplers):
-                    glActiveTexture(GL_TEXTURE0 + i)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify)
-
-            if "blend_func" in properties:
-                rgb_eq, src_rgb, dst_rgb, alpha_eq, src_alpha, dst_alpha = properties["blend_func"]
-                glBlendEquationSeparate(rgb_eq, alpha_eq)
-                glBlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha)
+        for setter in self.uniform_setters:
+            setter.set(None, texture)
 
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_INT, mesh.triangle)
 
-        if properties:
-
-            if "texture_scaling" in properties:
-                for i in range(self.samplers):
-                    glActiveTexture(GL_TEXTURE0 + i)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
-
-            if "color_mask" in properties:
-                glColorMask(True, True, True, True)
-
-            if "blend_func" in properties:
-                glBlendEquation(GL_FUNC_ADD)
-                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
-
-    def finish(Program self):
-        cdef Attribute a
-        cdef Uniform u
-
         for a in self.attributes:
             glDisableVertexAttribArray(a.location)
-
-        for u in self.uniforms.itervalues():
-            u.finish(self)
-
-        self.properties = None
-        self.uniform_values = { }

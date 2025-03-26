@@ -93,7 +93,7 @@ init -1500 python:
     @renpy.pure
     def Preference(name, value=None, range=None):
         """
-        :doc: preference_action
+        :doc: preference_action action
 
         This constructs the appropriate action or value from a preference.
         The preference name should be the name given in the standard

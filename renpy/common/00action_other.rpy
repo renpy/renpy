@@ -56,7 +56,7 @@ init -1500 python:
     @renpy.pure
     def If(expression, true=None, false=None):
         """
-        :doc: other_action
+        :doc: other_action action
 
         This returns `true` if `expression` is true, and `false`
         otherwise. Use this to select an action based on an expression.

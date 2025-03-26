@@ -559,7 +559,7 @@ init -1500 python:
 
     def FileAction(name, page=None, **kwargs):
         """
-        :doc: file_action
+        :doc: file_action action
 
         "Does the right thing" with the file. This means loading it if the
         load screen is showing (current screen is named "load"), and saving
@@ -948,7 +948,7 @@ init -1500 python:
     @renpy.pure
     def QuickSave(message=_("Quick save complete."), newest=False):
         """
-        :doc: file_action
+        :doc: file_action action
 
         Performs a quick save.
 
@@ -971,7 +971,7 @@ init -1500 python:
     @renpy.pure
     def QuickLoad(confirm=True):
         """
-        :doc: file_action
+        :doc: file_action action
 
         Performs a quick load.
 

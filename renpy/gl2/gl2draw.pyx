@@ -1336,6 +1336,7 @@ cdef class GL2DrawingContext:
         rv.properties = self.properties
 
         rv.pixel_perfect = self.pixel_perfect
+        rv.has_depth = self.has_depth
 
         return rv
 
@@ -1351,6 +1352,9 @@ cdef class GL2DrawingContext:
             return rv
 
         rv.update(child)
+
+        rv.pop("depth", None)
+        rv.pop("pixel_perfect", None)
         return rv
 
     cdef Matrix correct_pixel_perfect(self):
@@ -1387,12 +1391,6 @@ cdef class GL2DrawingContext:
         cdef GL2Draw gl2draw = renpy.display.draw
         cdef Mesh mesh = model.mesh
 
-        if model.properties:
-            self.properties = self.merge_properties(self.properties, model.properties)
-
-        if model.reverse is not IDENTITY:
-            self.model_matrix.inplace_multiply(model.reverse)
-
         # If a clip polygon is in place, clip the mesh with it.
         if self.clip_polygon is not None:
 
@@ -1401,8 +1399,22 @@ cdef class GL2DrawingContext:
 
             mesh = mesh.crop(self.clip_polygon)
 
+        if not mesh.triangles:
+            return
+
+        if model.properties:
+            self.properties = self.merge_properties(self.properties, model.properties)
+
+        if model.reverse is not IDENTITY:
+            self.model_matrix.inplace_multiply(model.reverse)
+
         if model.shaders:
             self.shaders = self.shaders + model.shaders
+
+        # Temporary - will be read out of GL2Model and GL2Texture.
+        new_uniforms = dict(model.get_uniforms())
+        new_uniforms.update(self.uniforms)
+        self.uniforms = new_uniforms
 
         if self.debug:
             import renpy.gl2.gl2debug as gl2debug
@@ -1410,26 +1422,20 @@ cdef class GL2DrawingContext:
 
         program = gl2draw.shader_cache.get(self.shaders)
 
-        program.start(self.properties)
-
         u_projectionview = self.projection_matrix * self.view_matrix
         u_transform = u_projectionview * self.model_matrix
 
-        program.set_uniform("u_model_size", (model.width, model.height))
+        # Temporary - until the below can go away.
+        self.uniforms = dict(self.uniforms)
 
-        program.set_uniform("u_projection", self.projection_matrix)
-        program.set_uniform("u_view", self.view_matrix)
-        program.set_uniform("u_projectionview", u_projectionview)
-        program.set_uniform("u_model", self.model_matrix)
-        program.set_uniform("u_transform", u_transform)
+        self.uniforms["u_projection"] = self.projection_matrix
+        self.uniforms["u_model_size"] = (model.width, model.height)
+        self.uniforms["u_view"] = self.view_matrix
+        self.uniforms["u_projectionview"] = u_projectionview
+        self.uniforms["u_model"] = self.model_matrix
+        self.uniforms["u_transform"] = u_transform
 
-        model.program_uniforms(program)
-
-        if self.uniforms:
-            program.set_uniforms(self.uniforms)
-
-        program.draw(mesh)
-        program.finish()
+        program.draw(self, model, mesh)
 
     cdef void set_text_rect(self, Render r):
         """
@@ -1488,11 +1494,9 @@ cdef class GL2DrawingContext:
             and passed to the shader.
         """
 
-        cdef:
-            GL2DrawingContext ctx
-            Polygon new_clip_polygon
-            bint has_reverse
-            bint has_depth
+        cdef GL2DrawingContext ctx
+        cdef Polygon new_clip_polygon
+        cdef bint has_reverse
 
         if what.__class__ is not Render:
 
@@ -1522,27 +1526,28 @@ cdef class GL2DrawingContext:
                 self.clip_polygon = new_clip_polygon
 
         has_reverse = (r.reverse is not None) and (r.reverse is not IDENTITY)
-
-        if r.properties and r.properties.get("pixel_perfect", False) and self.pixel_perfect:
-            offset_matrix = self.correct_pixel_perfect()
-            self.projection_matrix = offset_matrix * self.projection_matrix
-            self.pixel_perfect = False
-
-        if has_reverse:
-            self.pixel_perfect = False
-
         has_depth = False
 
         if r.properties:
+
             self.properties = self.merge_properties(self.properties, r.properties)
 
-            has_depth = r.properties.get("depth", False) and not self.properties.get("has_depth", False)
+            if r.properties.get("pixel_perfect", False) and self.pixel_perfect:
+                offset_matrix = self.correct_pixel_perfect()
+                self.projection_matrix = offset_matrix * self.projection_matrix
+                self.pixel_perfect = False
+
+            has_depth = not self.has_depth and r.properties.get("depth", False)
+
             if has_depth:
                 glClear(GL_DEPTH_BUFFER_BIT)
                 glEnable(GL_DEPTH_TEST)
                 glDepthFunc(GL_LEQUAL)
 
-                self.properties["has_depth"] = True
+                self.has_depth = True
+
+        if has_reverse:
+            self.pixel_perfect = False
 
         if r.shaders is not None:
             self.shaders = self.shaders + r.shaders

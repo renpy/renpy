@@ -83,14 +83,11 @@ def shaders(incdir="source/inc"):
                 indented(s)
 
 
-
-
 def textshaders(incdir="source/inc"):
 
     with open(incdir + "/builtintextshaders", "w") as outf:
 
         for name, shader in sorted(renpy.config.textshaders.items()):
-            print("---", name)
 
             if not shader.doc:
                 continue

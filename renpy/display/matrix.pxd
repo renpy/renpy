@@ -81,6 +81,8 @@ cdef class Matrix:
 
     cdef Matrix inplace_multiply(Matrix self, Matrix other)
     cdef Matrix inplace_offset(Matrix self, float xo, float yo)
+    cdef Matrix inplace_inverse(Matrix self)
+    cdef Matrix inplace_transpose(Matrix self)
 
     @staticmethod
     cdef bint is_drawable_aligned(Matrix a, Matrix b)
