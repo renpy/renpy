@@ -89,7 +89,7 @@ def predict_say(who, what):
         predict(what)
 
 
-def scry_say(who, what, scry):
+def scry_say(who: renpy.character.ADVCharacter | str | None, what: str, scry: Any):
     """
     :undocumented:
 
@@ -108,7 +108,9 @@ def scry_say(who, what, scry):
         scry.extend_text = renpy.ast.DoesNotExtend
 
 
-def say(who, what, *args, **kwargs):
+def say(
+    who: renpy.character.ADVCharacter | str | None, what: str, *args: Any, **kwargs: Any
+):
     """
     :doc: se_say
 
@@ -153,7 +155,13 @@ def say(who, what, *args, **kwargs):
         who(what, *args, **kwargs)
 
 
-def do_reshow_say(who, what, interact=False, *args, **kwargs):
+def do_reshow_say(
+    who: renpy.character.ADVCharacter | str | None,
+    what: str,
+    interact: bool = False,
+    *args: Any,
+    **kwargs: Any
+):
 
     if who is not None:
         who = renpy.python.py_eval(who)
@@ -193,7 +201,12 @@ def get_say_attributes():
     return renpy.game.context().say_attributes
 
 
-def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
+def get_side_image(
+    prefix_tag: str,
+    image_tag: str | None = None,
+    not_showing: bool | None = None,
+    layer: str | None = None,
+):
     """
     :doc: side
 

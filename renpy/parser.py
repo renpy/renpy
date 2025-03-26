@@ -657,7 +657,7 @@ def statement(keywords: str):
     new_kwds: list[str] = keywords.split()
 
     def wrap(
-        f: Callable[..., ast.Node | list[ast.Node]]
+        f: Callable[..., ast.Node | list[ast.Node]],
     ) -> Callable[..., ast.Node | list[ast.Node]]:
         statements.add(new_kwds, f)
         return f
@@ -1251,9 +1251,9 @@ def label_statement(
 
 @statement("init offset")
 def init_offset_statement(
-    l: renpy.lexer.Lexer, init: tuple[str, int]
+    l: renpy.lexer.Lexer,
+    _: tuple[str, int],
 ) -> list[ast.Node]:
-    _ = init
 
     l.require("=")
     offset = l.require(l.integer)
@@ -1318,8 +1318,7 @@ def init_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 
 @statement("rpy monologue")
-def rpy_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]) -> list[ast.Node]:
-    _ = loc
+def rpy_statement(l: renpy.lexer.Lexer, _: tuple[str, int]) -> list[ast.Node]:
 
     if l.keyword("double"):
         l.monologue_delimiter = "\n\n"
@@ -1477,7 +1476,7 @@ def translate_statement(
             l.init = True
 
             block = [python_statement(l, loc)]
-            return [ast.TranslateEarlyBlock(loc, language, block)]
+            return cast(list[ast.Node], [ast.TranslateEarlyBlock(loc, language, block)])
         finally:
             l.init = old_init
 

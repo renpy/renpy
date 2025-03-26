@@ -81,7 +81,7 @@ log: renpy.rollback.RollbackLog | None = None
 
 # Some useful additional information about program execution that
 # can be added to the exception.
-exception_info = ""
+exception_info: str = ""
 
 # Used to store style information.
 style = None

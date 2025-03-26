@@ -26,7 +26,8 @@ from __future__ import (
     print_function,
     unicode_literals,
 )
-from typing import Any  # type: ignore
+from collections.abc import Iterable
+from typing import Any, Callable  # type: ignore
 from renpy.compat import (
     PY2,
     basestring,
@@ -72,7 +73,7 @@ def context_nesting_level():
     return len(renpy.game.contexts) - 1
 
 
-def jump_out_of_context(label):
+def jump_out_of_context(label: str):
     """
     :doc: context
 
@@ -91,7 +92,7 @@ def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)
 
 
-def dynamic(*variables, **kwargs):
+def dynamic(*variables: str, **kwargs: Any):
     """
     :doc: label
 
@@ -118,7 +119,7 @@ def dynamic(*variables, **kwargs):
         setattr(renpy.store, k, v)
 
 
-def context_dynamic(*variables):
+def context_dynamic(*variables: str):
     """
     :doc: context
 
@@ -227,7 +228,7 @@ def call_stack_depth():
     return len(renpy.game.context().return_stack)
 
 
-def game_menu(screen=None):
+def game_menu(screen: str | None = None):
     """
     :undocumented: Probably not what we want in the presence of
     screens.
@@ -252,7 +253,7 @@ def mode(mode: str):
     if not ctx.use_modes:
         return
 
-    modes: list[Any] = ctx.modes
+    modes: list[str] = ctx.modes
 
     try:
         ctx.use_modes = False
@@ -313,7 +314,7 @@ def get_return_stack():
     return renpy.game.context().get_return_stack()
 
 
-def set_return_stack(stack):
+def set_return_stack(stack: Iterable[str]):
     """
     :doc: label
 
@@ -396,7 +397,7 @@ def is_init_phase():
     return renpy.game.context().init_phase
 
 
-def add_to_all_stores(name, value):
+def add_to_all_stores(name: str, value: Any):
     """
     :doc: other
 

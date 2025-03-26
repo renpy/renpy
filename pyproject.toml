@@ -19,6 +19,11 @@ reportUnknownParameterType = false
 reportExplicitAny = false
 reportAny = false
 reportPrivateLocalImportUsage = false
+reportUnusedCallResult = false
+reportIncompatibleVariableOverride = false
+reportIncompatibleMethodOverride = false
+reportMissingImports = false
+reportAttributeAccessIssue = false
 
 
 [tool.cyright]

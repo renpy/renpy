@@ -30,6 +30,7 @@ from __future__ import (
     print_function,
     unicode_literals,
 )
+from collections.abc import Iterable
 from renpy.compat import (
     PY2,
     basestring,
@@ -45,7 +46,7 @@ from renpy.compat import (
     unicode,
 )  # *
 
-from typing import Any, Callable
+from typing import Any, Callable, Literal
 
 
 import collections
@@ -136,7 +137,7 @@ fast_skipping = False
 
 # Are we currently skipping? If so, how fast?
 # May be "slow", "fast", or None.
-skipping = None
+skipping: Literal["slow", "fast"] | None = None
 
 # The delay while we are skipping say statements.
 skip_delay = 5
@@ -377,7 +378,7 @@ missing_image_callback = None
 say_menu_text_filter = None
 
 # Used to replace one label with another.
-label_overrides = {}
+label_overrides: dict[renpy.ast.NodeName, renpy.ast.NodeName] = {}
 
 # Called to get the extra_info for an auto_save.
 auto_save_extra_info = None
@@ -439,7 +440,7 @@ logdir: str | None = None  # Where log and error files go.
 gl_enable = True
 
 # A list of callbacks that are called by renpy.mode.
-mode_callbacks: list[Callable[[str, renpy.revertable.RevertableList], None]] = []
+mode_callbacks: list[Callable[[str, Iterable[str]], None]] = []
 
 # Should MoveTransition take offsets into account?
 movetransition_respects_offsets = True
@@ -616,7 +617,7 @@ transition_screens = True
 
 # A function that given the current statement identifier, returns a list
 # of statement identifiers that should be predicted.
-predict_statements_callback = None
+predict_statements_callback: Callable[[str], list[str]] | None = None
 
 # Should we use hardware video on platforms that support it?
 hw_video = False
@@ -640,10 +641,10 @@ gesture_stroke_size = 0.2
 log_to_stdout = bool(int(os.environ.get("RENPY_LOG_TO_STDOUT", "0")))
 
 # new-style custom text tags.
-custom_text_tags = {}
+custom_text_tags: dict[str, bool] = {}
 
 # Same, but for ones that are empty.
-self_closing_custom_text_tags = {}
+self_closing_custom_text_tags: dict[str, bool] = {}
 
 # A function that given the text from a TEXT token, returns a replacement text.
 replace_text = None
@@ -881,7 +882,9 @@ character_id_prefixes = []
 nw_voice = True
 
 # If not None, a function that's used to process say arguments.
-say_arguments_callback: Callable[[], None] | None = None
+say_arguments_callback: Callable[..., tuple[tuple[Any, ...], dict[str, Any]]] | None = (
+    None
+)
 
 # Should we show an atl interpolation for one frame?
 atl_one_frame = True
@@ -1308,7 +1311,9 @@ choice_empty_window = None
 
 # The encoding that's used by renpy.open_file by default. False
 # means to use binary mode.
-open_file_encoding = os.environ.get("RENPY_OPEN_FILE_ENCODING", False)
+open_file_encoding: str | Literal[False] = os.environ.get(
+    "RENPY_OPEN_FILE_ENCODING", False
+)
 
 # A callback that can modify the gl2 window flags.
 gl2_modify_window_flags = None

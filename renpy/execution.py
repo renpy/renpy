@@ -31,6 +31,7 @@ from __future__ import (
     print_function,
     unicode_literals,
 )
+from collections.abc import Iterable
 from typing import Any, override
 from renpy.compat import (
     PY2,
@@ -218,7 +219,7 @@ class Context(renpy.object.Object):
             self.interacting: bool = False
 
         if version < 5:
-            self.modes = renpy.revertable.RevertableList(["start"])
+            self.modes: list[str] = renpy.revertable.RevertableList(["start"])
             self.use_modes: bool = True
 
         if version < 6:
@@ -263,7 +264,7 @@ class Context(renpy.object.Object):
 
         self.current = None
         self.call_location_stack = []
-        self.return_stack = []
+        self.return_stack: list[str] = []
 
         # The value of abnormal at the time of the call.
         self.abnormal_stack = []
@@ -316,7 +317,7 @@ class Context(renpy.object.Object):
 
         # A list of lines that were run since the last time this log was
         # cleared.
-        self.line_log = []
+        self.line_log: list[str] = []
 
         # Do we want to force a checkpoint before the next statement
         # executed?
@@ -398,7 +399,7 @@ class Context(renpy.object.Object):
         self.current = replace_one(self.current)
         self.return_stack = [replace_one(i) for i in self.return_stack]
 
-    def make_dynamic(self, names, context=False):
+    def make_dynamic(self, names: Iterable[str], context: bool = False):
         """
         Makes the variable names listed in names dynamic, by backing up
         their current value (if not already dynamic in the current call).
@@ -1023,7 +1024,7 @@ class Context(renpy.object.Object):
     def get_return_stack(self):
         return list(self.return_stack)
 
-    def set_return_stack(self, return_stack):
+    def set_return_stack(self, return_stack: Iterable[str]):
         self.return_stack = list(return_stack)
 
         while len(self.call_location_stack) > len(self.return_stack):

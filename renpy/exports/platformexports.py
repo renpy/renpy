@@ -329,6 +329,6 @@ def open_url(url: str):
     try:
         import webbrowser
 
-        _ = webbrowser.open_new(url)
+        webbrowser.open_new(url)
     except Exception:
         pass

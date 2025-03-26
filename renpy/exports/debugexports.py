@@ -116,7 +116,7 @@ def log(msg: str | None):
             )
 
             if not logfile.tell():
-                _ = logfile.write("\ufeff")
+                logfile.write("\ufeff")
 
         import textwrap
 
@@ -127,7 +127,7 @@ def log(msg: str | None):
             line = str(line)
             wrapped.append(line)
 
-        _ = logfile.write(f"{'\n'.join(wrapped)}\n")
+        logfile.write(f"{'\n'.join(wrapped)}\n")
         logfile.flush()
 
     except Exception:
@@ -147,7 +147,7 @@ def push_error_handler(eh: Callable[[str | Exception], Never]) -> None:
 
 
 def pop_error_handler():
-    _ = _error_handlers.pop()
+    _error_handlers.pop()
 
 
 def error(msg: str | Exception):

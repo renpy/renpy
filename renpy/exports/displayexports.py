@@ -54,7 +54,7 @@ from renpy.exports.commonexports import renpy_pure
 scene_lists = renpy.display.scenelists.scene_lists
 
 
-def count_displayables_in_layer(layer):
+def count_displayables_in_layer(layer: str):
     """
     Returns how many displayables are in the supplied layer.
     """
@@ -94,7 +94,7 @@ def image(name: str | tuple[str, ...], d: Any):
     renpy.display.image.register_image(name, d)
 
 
-def copy_images(old, new):
+def copy_images(old: str | tuple[str, ...], new: str | tuple[str, ...]):
     """
     :doc: image_func
 

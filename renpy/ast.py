@@ -27,8 +27,7 @@
 # updating.
 
 # pyright: reportUnusedParameter=false, reportUnusedCallResult=false, reportFunctionMemberAccess=false
-# pyright: reportUninitializedInstanceVariable=false, reportIncompatibleVariableOverride=false
-# pyright: reportIncompatibleMethodOverride=false, reportAttributeAccessIssue=false
+# pyright: reportUninitializedInstanceVariable=false, reportAttributeAccessIssue=false
 
 from __future__ import annotations
 
@@ -263,7 +262,7 @@ class Scry(object):
                 return None
 
 
-type NodeName = "str | tuple[Any, ...] | None"
+type NodeName = str | tuple[Any, ...] | None
 type RollbackType = Literal["normal", "never", "force"]
 # Workaround that IntegerSlot accept only unsigned int.
 # By using type alias SignedInt slot will fail 'type is int' check.

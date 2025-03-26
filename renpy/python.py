@@ -23,8 +23,27 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 from typing import Optional, Any
 import contextlib
@@ -54,9 +73,15 @@ from renpy.astsupport import hash32
 
 # Import these for pickle-compatibility.
 from renpy.revertable import (
-    CompressedList, DetRandom, RevertableDict,
-    RevertableList, RevertableObject, RevertableSet, RollbackRandom,
-    revertable_range, revertable_sorted,
+    CompressedList,
+    DetRandom,
+    RevertableDict,
+    RevertableList,
+    RevertableObject,
+    RevertableSet,
+    RollbackRandom,
+    revertable_range,
+    revertable_sorted,
 )
 
 from renpy.rollback import (
@@ -86,7 +111,7 @@ class StoreModule(object):
     # since Python won't call them by default.
 
     def __reduce__(self):
-        return (get_store_module, (self.__name__,)) # type: ignore
+        return (get_store_module, (self.__name__,))  # type: ignore
 
     def __init__(self, d):
         object.__setattr__(self, "__dict__", d)
@@ -108,7 +133,7 @@ def get_store_module(name):
 from renpy.pydict import DictItems, find_changes
 
 
-class StoreDict(dict):
+class StoreDict(dict[str, Any]):
     """
     This class represents the dictionary of a store module. It logs
     sets and deletes.
@@ -118,6 +143,7 @@ class StoreDict(dict):
         raise Exception("Cannot pickle a reference to a store dictionary.")
 
     def __init__(self):
+        super().__init__()
 
         # The value of this dictionary at the start of the current
         # rollback period (when begin() was last called).
@@ -125,7 +151,7 @@ class StoreDict(dict):
 
         # The set of variables in this StoreDict that changed since the
         # end of the init phase.
-        self.ever_been_changed = set()
+        self.ever_been_changed: set[str] = set()
 
     def reset(self):
         """
@@ -203,10 +229,10 @@ def begin_stores():
 
 # A map from the name of a store dict to the corresponding StoreDict object.
 # This isn't reset during a reload, so store objects stay the same in modules.
-store_dicts = { }
+store_dicts: dict[str, StoreDict] = {}
 
 # Same, for module objects.
-store_modules = { }
+store_modules = {}
 
 # The store dicts that have been cleared and initialized during the current
 # run.
@@ -221,7 +247,7 @@ def create_store(name):
     if name == "store.store":
         raise NameError('Namespaces may not begin with "store".')
 
-    parent, _, var = name.rpartition('.')
+    parent, _, var = name.rpartition(".")
 
     if parent:
         create_store(parent)
@@ -247,7 +273,16 @@ def create_store(name):
 
     for k, v in renpy.minstore.__dict__.items():
 
-        if k in ("__all__", "__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__cached__"):
+        if k in (
+            "__all__",
+            "__name__",
+            "__doc__",
+            "__package__",
+            "__loader__",
+            "__spec__",
+            "__file__",
+            "__cached__",
+        ):
             continue
 
         if k in d:
@@ -259,13 +294,13 @@ def create_store(name):
     if name in store_modules:
         sys.modules[pyname] = store_modules[name]
     else:
-        store_modules[name] = sys.modules[pyname] = StoreModule(d) # type: ignore
+        store_modules[name] = sys.modules[pyname] = StoreModule(d)  # type: ignore
 
     if parent:
         store_dicts[parent][var] = sys.modules[pyname]
 
 
-class StoreBackup():
+class StoreBackup:
     """
     This creates a copy of the current store, as it was at the start of
     the current statement.
@@ -274,13 +309,13 @@ class StoreBackup():
     def __init__(self):
 
         # The contents of the store for each store.
-        self.store = { }
+        self.store = {}
 
         # The contents of old for each store.
-        self.old = { }
+        self.old = {}
 
         # The contents of ever_been_changed for each store.
-        self.ever_been_changed = { }
+        self.ever_been_changed = {}
 
         for k, v in store_dicts.items():
             if not v.get("_constant", False):
@@ -311,7 +346,7 @@ class StoreBackup():
             self.restore_one(k)
 
 
-clean_store_backup = None # type: Optional[StoreBackup]
+clean_store_backup = None  # type: Optional[StoreBackup]
 
 
 def make_clean_stores():
@@ -334,7 +369,7 @@ def clean_stores():
     Revert the store to the clean copy.
     """
 
-    clean_store_backup.restore() # type: ignore
+    clean_store_backup.restore()  # type: ignore
 
 
 def clean_store(name):
@@ -345,7 +380,7 @@ def clean_store(name):
     if not name.startswith("store."):
         name = "store." + name
 
-    clean_store_backup.restore_one(name) # type: ignore
+    clean_store_backup.restore_one(name)  # type: ignore
 
 
 def reset_store_changes(name):
@@ -355,6 +390,7 @@ def reset_store_changes(name):
 
     sd = store_dicts[name]
     sd.begin()
+
 
 # Code that replaces literals will calls to magic constructors.
 
@@ -393,6 +429,7 @@ class LoadedVariables(ast.NodeVisitor):
 
         return self.loaded - self.stored
 
+
 # Given a comprehension or generator expression, returns the list of variables
 # that are loaded from external scopes.
 find_loaded_variables = LoadedVariables().find
@@ -420,10 +457,10 @@ class StarredVariables(ast.NodeVisitor):
 
         return self.starred
 
+
 # Given an assignment target list, return a list of variables that are set using
 # starred assignment.
 find_starred_variables = StarredVariables().find
-
 
 
 class FindStarredMatchPatterns(ast.NodeVisitor):
@@ -432,7 +469,7 @@ class FindStarredMatchPatterns(ast.NodeVisitor):
     """
 
     def __init__(self):
-        self.vars = [ ]
+        self.vars = []
 
     def visit_MatchStar(self, node: ast.MatchStar) -> Any:
         self.generic_visit(node)
@@ -443,6 +480,7 @@ class FindStarredMatchPatterns(ast.NodeVisitor):
         self.generic_visit(node)
         if node.rest is not None:
             self.vars.append((node.rest, "dict"))
+
 
 def find_starred_match_patterns(node):
     """
@@ -455,7 +493,6 @@ def find_starred_match_patterns(node):
 
 
 class WrapNode(ast.NodeTransformer):
-
 
     def wrap_generator(self, node):
         """
@@ -476,8 +513,8 @@ class WrapNode(ast.NodeTransformer):
 
         node = self.generic_visit(node)
 
-        lambda_args = [ ]
-        call_args =[ ]
+        lambda_args = []
+        call_args = []
 
         for var in variables:
             lambda_args.append(ast.arg(arg=var))
@@ -486,16 +523,16 @@ class WrapNode(ast.NodeTransformer):
         return ast.Call(
             func=ast.Lambda(
                 args=ast.arguments(
-                    posonlyargs=[ ],
+                    posonlyargs=[],
                     args=lambda_args,
-                    kwonlyargs=[ ],
-                    kw_defaults=[ ],
-                    defaults=[ ],
+                    kwonlyargs=[],
+                    kw_defaults=[],
+                    defaults=[],
                 ),
                 body=node,  # type: ignore
             ),
             args=call_args,
-            keywords=[ ],
+            keywords=[],
         )
 
     def wrap_starred_assign(self, n, targets):
@@ -505,37 +542,33 @@ class WrapNode(ast.NodeTransformer):
         if not starred:
             return n
 
-        list_stmts = [ ]
+        list_stmts = []
 
         for var in starred:
 
             call = ast.Call(
-                func=ast.Name(
-                    id="__renpy__list__",
-                    ctx=ast.Load()
-                    ),
-                args=[
-                    ast.Name(id=var, ctx=ast.Load())
-                ],
-                keywords=[ ])
+                func=ast.Name(id="__renpy__list__", ctx=ast.Load()),
+                args=[ast.Name(id=var, ctx=ast.Load())],
+                keywords=[],
+            )
 
             assign = ast.Assign(
-                targets=[ ast.Name(id=var, ctx=ast.Store()) ],
+                targets=[ast.Name(id=var, ctx=ast.Store())],
                 value=call,
             )
 
             list_stmts.append(assign)
 
         return ast.Try(
-            body=[ n ],
-            handlers=[ ],
-            orelse=[ ],
+            body=[n],
+            handlers=[],
+            orelse=[],
             finalbody=list_stmts,
-            )
+        )
 
     def wrap_starred_for(self, node):
 
-        starred = find_starred_variables([ node.target ])
+        starred = find_starred_variables([node.target])
 
         if not starred:
             return node
@@ -543,17 +576,13 @@ class WrapNode(ast.NodeTransformer):
         for var in starred:
 
             call = ast.Call(
-                func=ast.Name(
-                    id="__renpy__list__",
-                    ctx=ast.Load()
-                    ),
-                args=[
-                    ast.Name(id=var, ctx=ast.Load())
-                ],
-                keywords=[ ])
+                func=ast.Name(id="__renpy__list__", ctx=ast.Load()),
+                args=[ast.Name(id=var, ctx=ast.Load())],
+                keywords=[],
+            )
 
             assign = ast.Assign(
-                targets=[ ast.Name(id=var, ctx=ast.Store()) ],
+                targets=[ast.Name(id=var, ctx=ast.Store())],
                 value=call,
             )
 
@@ -561,10 +590,9 @@ class WrapNode(ast.NodeTransformer):
 
         return node
 
-
     def wrap_starred_with(self, node):
 
-        optional_vars = [ ]
+        optional_vars = []
 
         for i in node.items:
             if i.optional_vars is not None:
@@ -581,17 +609,13 @@ class WrapNode(ast.NodeTransformer):
         for var in starred:
 
             call = ast.Call(
-                func=ast.Name(
-                    id="__renpy__list__",
-                    ctx=ast.Load()
-                    ),
-                args=[
-                    ast.Name(id=var, ctx=ast.Load())
-                ],
-                keywords=[ ])
+                func=ast.Name(id="__renpy__list__", ctx=ast.Load()),
+                args=[ast.Name(id=var, ctx=ast.Load())],
+                keywords=[],
+            )
 
             assign = ast.Assign(
-                targets=[ ast.Name(id=var, ctx=ast.Store()) ],
+                targets=[ast.Name(id=var, ctx=ast.Store())],
                 value=call,
             )
 
@@ -609,17 +633,13 @@ class WrapNode(ast.NodeTransformer):
 
             if kind == "list":
                 call = ast.Call(
-                    func=ast.Name(
-                        id="__renpy__list__",
-                        ctx=ast.Load()
-                        ),
-                    args=[
-                        ast.Name(id=var, ctx=ast.Load())
-                    ],
-                    keywords=[ ])
+                    func=ast.Name(id="__renpy__list__", ctx=ast.Load()),
+                    args=[ast.Name(id=var, ctx=ast.Load())],
+                    keywords=[],
+                )
 
                 assign = ast.Assign(
-                    targets=[ ast.Name(id=var, ctx=ast.Store()) ],
+                    targets=[ast.Name(id=var, ctx=ast.Store())],
                     value=call,
                 )
 
@@ -627,17 +647,13 @@ class WrapNode(ast.NodeTransformer):
 
             elif kind == "dict":
                 call = ast.Call(
-                    func=ast.Name(
-                        id="__renpy__dict__",
-                        ctx=ast.Load()
-                        ),
-                    args=[
-                        ast.Name(id=var, ctx=ast.Load())
-                    ],
-                    keywords=[ ])
+                    func=ast.Name(id="__renpy__dict__", ctx=ast.Load()),
+                    args=[ast.Name(id=var, ctx=ast.Load())],
+                    keywords=[],
+                )
 
                 assign = ast.Assign(
-                    targets=[ ast.Name(id=var, ctx=ast.Store()) ],
+                    targets=[ast.Name(id=var, ctx=ast.Store())],
                     value=call,
                 )
 
@@ -683,32 +699,26 @@ class WrapNode(ast.NodeTransformer):
 
     def visit_SetComp(self, node):
         return ast.Call(
-            func=ast.Name(
-                id="__renpy__set__",
-                ctx=ast.Load()
-            ),
+            func=ast.Name(id="__renpy__set__", ctx=ast.Load()),
             args=[self.wrap_generator(node)],
-            keywords=[])
+            keywords=[],
+        )
 
     def visit_Set(self, node):
 
         return ast.Call(
-            func=ast.Name(
-                id="__renpy__set__",
-                ctx=ast.Load()
-            ),
+            func=ast.Name(id="__renpy__set__", ctx=ast.Load()),
             args=[self.generic_visit(node)],  # type: ignore
-            keywords=[])
+            keywords=[],
+        )
 
     def visit_ListComp(self, node):
 
         return ast.Call(
-            func=ast.Name(
-                id="__renpy__list__",
-                ctx=ast.Load()
-            ),
+            func=ast.Name(id="__renpy__list__", ctx=ast.Load()),
             args=[self.wrap_generator(node)],
-            keywords=[])
+            keywords=[],
+        )
 
     def visit_List(self, node):
 
@@ -716,34 +726,28 @@ class WrapNode(ast.NodeTransformer):
             return self.generic_visit(node)
 
         return ast.Call(
-            func=ast.Name(
-                id="__renpy__list__",
-                ctx=ast.Load()
-            ),
+            func=ast.Name(id="__renpy__list__", ctx=ast.Load()),
             args=[self.generic_visit(node)],  # type: ignore
-            keywords=[])
+            keywords=[],
+        )
 
     def visit_DictComp(self, node):
         return ast.Call(
-            func=ast.Name(
-                id="__renpy__dict__",
-                ctx=ast.Load()
-            ),
+            func=ast.Name(id="__renpy__dict__", ctx=ast.Load()),
             args=[self.wrap_generator(node)],
-            keywords=[])
+            keywords=[],
+        )
 
     def visit_Dict(self, node):
 
         return ast.Call(
-            func=ast.Name(
-                id="__renpy__dict__",
-                ctx=ast.Load()
-            ),
+            func=ast.Name(id="__renpy__dict__", ctx=ast.Load()),
             args=[self.generic_visit(node)],  # type: ignore
-            keywords=[])
+            keywords=[],
+        )
 
     def visit_Match(self, node: ast.Match):
-        node = self.generic_visit(node)   # type: ignore
+        node = self.generic_visit(node)  # type: ignore
         node.cases = [self.wrap_match_case(i) for i in node.cases]
         return node
 
@@ -758,19 +762,21 @@ def wrap_hide(tree):
     it to.
     """
 
-    hide = ast.parse("""\
+    hide = ast.parse(
+        """\
 def _execute_python_hide(): pass;
 _execute_python_hide()
-""")
+"""
+    )
 
     for i in ast.walk(hide):
         ast.copy_location(i, hide.body[0])
 
-    hide.body[0].body = tree.body # type: ignore
+    hide.body[0].body = tree.body  # type: ignore
     tree.body = hide.body
 
 
-unicode_re = re.compile(r'[\u0080-\uffff]')
+unicode_re = re.compile(r"[\u0080-\uffff]")
 
 
 def unicode_sub(m):
@@ -789,7 +795,7 @@ def unicode_sub(m):
     body = m.group(3)
 
     if "u" not in prefix and "U" not in prefix:
-        prefix = 'u' + prefix
+        prefix = "u" + prefix
 
     rv = prefix + sep + body + sep
 
@@ -805,8 +811,10 @@ def escape_unicode(s):
 
     return s
 
+
 # A list of warnings that were issued during compilation.
-compile_warnings = [ ]
+compile_warnings = []
+
 
 @contextlib.contextmanager
 def save_warnings():
@@ -814,10 +822,16 @@ def save_warnings():
     A context manager that captures warnings issued during compilation.
     """
 
-    pending_warnings = [ ]
+    pending_warnings = []
 
     def showwarning(message, category, filename, lineno, file=None, line=None):
-        pending_warnings.append((filename, lineno, warnings.formatwarning(message, category, filename, lineno, line)))
+        pending_warnings.append(
+            (
+                filename,
+                lineno,
+                warnings.formatwarning(message, category, filename, lineno, line),
+            )
+        )
 
     old = warnings.showwarning
 
@@ -835,26 +849,28 @@ def save_warnings():
 
 
 # Flags used by py_compile.
-old_compile_flags = (__future__.nested_scopes.compiler_flag
-                      | __future__.with_statement.compiler_flag
-                      )
+old_compile_flags = (
+    __future__.nested_scopes.compiler_flag | __future__.with_statement.compiler_flag
+)
 
-new_compile_flags = (old_compile_flags
-                      | __future__.absolute_import.compiler_flag
-                      | __future__.print_function.compiler_flag
-                      | __future__.unicode_literals.compiler_flag
-                      )
+new_compile_flags = (
+    old_compile_flags
+    | __future__.absolute_import.compiler_flag
+    | __future__.print_function.compiler_flag
+    | __future__.unicode_literals.compiler_flag
+)
 
 # A set of __future__ flag overrides for each file.
 file_compiler_flags = collections.defaultdict(int)
 
 # A cache for the results of py_compile.
-py_compile_cache = { }
+py_compile_cache = {}
 
 # An old version of the same, that's preserved across reloads.
-old_py_compile_cache = { }
+old_py_compile_cache = {}
 
-LocatableNode = ast.stmt|ast.expr
+LocatableNode = ast.stmt | ast.expr
+
 
 class LocationFixer:
     """
@@ -876,14 +892,20 @@ class LocationFixer:
     first_line_col_delta: int
     rest_line_col_delta: int
 
-    def __init__(self, node: ast.stmt|ast.expr, line_delta: int=0, first_line_col_delta: int=0, rest_line_col_delta: int=0):
+    def __init__(
+        self,
+        node: ast.stmt | ast.expr,
+        line_delta: int = 0,
+        first_line_col_delta: int = 0,
+        rest_line_col_delta: int = 0,
+    ):
         self.line_delta = line_delta
         self.first_line_col_delta = first_line_col_delta
         self.rest_line_col_delta = rest_line_col_delta
 
         self.fix(node, 1 + line_delta, first_line_col_delta)
 
-    def fix(self, node: ast.stmt|ast.expr, lineno=1, col_offset=0):
+    def fix(self, node: ast.stmt | ast.expr, lineno=1, col_offset=0):
 
         # This finds missing attributes by triggering AttributeErrors if an attribute is missing.
         try:
@@ -911,16 +933,13 @@ class LocationFixer:
             node.end_lineno = node.lineno
             node.end_col_offset = node.col_offset
 
-        start = max(
-            (lineno, col_offset),
-            (node.lineno, node.col_offset)
-        )
+        start = max((lineno, col_offset), (node.lineno, node.col_offset))
 
         lineno, col_offset = start
         node.lineno = lineno
         node.col_offset = col_offset
 
-        ends = [ start, (node.end_lineno, node.end_col_offset) ]
+        ends = [start, (node.end_lineno, node.end_col_offset)]
 
         for child in ast.iter_child_nodes(node):
             self.fix(child, lineno, col_offset)
@@ -941,7 +960,7 @@ def quote_eval(s):
         return s
 
     # Characters being added to the string.
-    rv = [ ]
+    rv = []
 
     # Pad out the string, so we don't have to deal with quotes at the end.
     s += "\0\0"
@@ -974,21 +993,25 @@ def quote_eval(s):
             continue
 
         # Null.
-        if c == '\0':
+        if c == "\0":
             rv.append(c)
             i += 1
             continue
 
         # Any escaped character passes.
-        if c == '\\':
-            rv.append(s[i:i + 2])
+        if c == "\\":
+            rv.append(s[i : i + 2])
             i += 2
             continue
 
         # String delimiters.
-        if c in '\'"':
+        if c in "'\"":
 
-            if ((string is None) or (len(string) == 3)) and (s[i + 1] == c) and (s[i + 2] == c):
+            if (
+                ((string is None) or (len(string) == 3))
+                and (s[i + 1] == c)
+                and (s[i + 2] == c)
+            ):
                 delim = c + c + c
             else:
                 delim = c
@@ -1006,7 +1029,7 @@ def quote_eval(s):
         # Newline.
         if c == "\n":
             if string is None:
-                rv.append('\\')
+                rv.append("\\")
 
             rv.append("\n")
             i += 1
@@ -1018,8 +1041,17 @@ def quote_eval(s):
     return "".join(rv[:-2])
 
 
-
-def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None, hashcode=None, column=0):
+def py_compile(
+    source,
+    mode,
+    filename="<none>",
+    lineno=1,
+    ast_node=False,
+    cache=True,
+    py=None,
+    hashcode=None,
+    column=0,
+):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
@@ -1114,7 +1146,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
                 renpy.game.script.bytecode_newcache[key] = bytecode
 
                 if warnings_key in renpy.game.script.bytecode_oldcache:
-                    renpy.game.script.bytecode_newcache[warnings_key] = renpy.game.script.bytecode_oldcache[warnings_key]
+                    renpy.game.script.bytecode_newcache[warnings_key] = (
+                        renpy.game.script.bytecode_oldcache[warnings_key]
+                    )
 
                 return rv
 
@@ -1146,22 +1180,16 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
             try:
                 tree = compile(
-                    source,
-                    filename,
-                    py_mode,
-                    ast.PyCF_ONLY_AST | flags,
-                    True)
+                    source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True
+                )
 
             except SyntaxError:
                 handled = False
                 try:
                     fixed_source = renpy.compat.fixes.fix_tokens(source)
                     tree = compile(
-                        fixed_source,
-                        filename,
-                        py_mode,
-                        ast.PyCF_ONLY_AST | flags,
-                        True)
+                        fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True
+                    )
                     handled = True
                 except Exception:
                     pass
@@ -1209,7 +1237,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
             if compile_warnings:
                 renpy.game.script.bytecode_newcache[warnings_key] = compile_warnings
-                compile_warnings = [ ]
+                compile_warnings = []
 
             renpy.game.script.bytecode_dirty = True
 
@@ -1229,17 +1257,18 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         raise e
 
 
-
-def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"): # @ReservedAssignment
+def py_exec_bytecode(
+    bytecode, hide=False, globals=None, locals=None, store="store"
+):  # @ReservedAssignment
 
     if hide:
-        locals = { } # @ReservedAssignment
+        locals = {}  # @ReservedAssignment
 
     if globals is None:
-        globals = store_dicts[store] # @ReservedAssignment
+        globals = store_dicts[store]  # @ReservedAssignment
 
     if locals is None:
-        locals = globals # @ReservedAssignment
+        locals = globals  # @ReservedAssignment
 
     exec(bytecode, globals, locals)
 
@@ -1250,27 +1279,27 @@ def py_exec(source, hide=False, store=None):
         store = store_dicts["store"]
 
     if hide:
-        locals = { } # @ReservedAssignment
+        locals = {}  # @ReservedAssignment
     else:
-        locals = store # @ReservedAssignment
+        locals = store  # @ReservedAssignment
 
-    exec(py_compile(source, 'exec'), store, locals)
+    exec(py_compile(source, "exec"), store, locals)
 
 
-def py_eval_bytecode(bytecode, globals=None, locals=None): # @ReservedAssignment
+def py_eval_bytecode(bytecode, globals=None, locals=None):  # @ReservedAssignment
 
     if globals is None:
-        globals = store_dicts["store"] # @ReservedAssignment
+        globals = store_dicts["store"]  # @ReservedAssignment
 
     if locals is None:
-        locals = globals # @ReservedAssignment
+        locals = globals  # @ReservedAssignment
 
     return eval(bytecode, globals, locals)
 
 
-def py_eval(code, globals=None, locals=None): # @ReservedAssignment
+def py_eval(code, globals=None, locals=None):  # @ReservedAssignment
     if isinstance(code, str):
-        code = py_compile(code, 'eval')
+        code = py_compile(code, "eval")
 
     return py_eval_bytecode(code, globals, locals)
 
@@ -1295,9 +1324,9 @@ def raise_at_location(e, loc):
 
     node = ast.parse("raise e", filename)
     ast.increment_lineno(node, line - 1)
-    code = compile(node, filename, 'exec')
+    code = compile(node, filename, "exec")
 
-    exec(code, { "e" : e })
+    exec(code, {"e": e})
 
 
 # This was used to proxy accesses to the store. Now it's kept around to deal
@@ -1305,13 +1334,14 @@ def raise_at_location(e, loc):
 class StoreProxy(object):
 
     def __getattr__(self, k):
-        return getattr(renpy.store, k) # @UndefinedVariable
+        return getattr(renpy.store, k)  # @UndefinedVariable
 
     def __setattr__(self, k, v):
-        setattr(renpy.store, k, v) # @UndefinedVariable
+        setattr(renpy.store, k, v)  # @UndefinedVariable
 
     def __delattr__(self, k):
-        delattr(renpy.store, k) # @UndefinedVariable
+        delattr(renpy.store, k)  # @UndefinedVariable
+
 
 # This needs to exist even after PY2 support is dropped, to load older saves.
 def method_unpickle(obj, name):
@@ -1337,7 +1367,9 @@ copyreg.pickle(types.ModuleType, module_pickle)
 # Allow weakrefs to be pickled, with the reference being broken during
 # unpickling.
 
+
 def construct_None(*args):
     return None
 
-copyreg.pickle(weakref.ReferenceType, lambda r : (construct_None, tuple()))
+
+copyreg.pickle(weakref.ReferenceType, lambda r: (construct_None, tuple()))

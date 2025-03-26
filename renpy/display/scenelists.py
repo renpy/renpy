@@ -152,14 +152,14 @@ class SceneLists(renpy.object.Object):
         self.shown_window = False
 
         # A map from layer name -> list(SceneListEntry)
-        self.layers = { }
+        self.layers: dict[str, list[SceneListEntry]] = { }
 
         # A map from layer name -> tag -> at_list associated with that tag.
-        self.at_list = { }
+        self.at_list:dict[str, str] = { }
 
         # A map from layer to (start time, at_list), where the at list has
         # been applied to the layer as a whole.
-        self.layer_at_list = { }
+        self.layer_at_list:dict[int, str] = { }
 
         # The camera list, which is similar to the layer at list but is not
         # cleared during the scene statement.

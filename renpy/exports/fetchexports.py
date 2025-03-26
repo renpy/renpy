@@ -19,7 +19,15 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from collections.abc import Iterable, Mapping
+from typing import Any  # type: ignore
 from renpy.compat import (
     PY2,
     basestring,
@@ -98,7 +106,22 @@ def fetch_pause():
     renpy.exports.pause(0)
 
 
-def fetch_requests(url, method, data, content_type, timeout, headers):
+def fetch_requests(
+    url: str | bytes,
+    method: str | bytes,
+    data: (
+        Iterable[bytes]
+        | str
+        | bytes
+        | list[tuple[Any, Any]]
+        | tuple[tuple[Any, Any], ...]
+        | Mapping[Any, Any]
+        | None
+    ),
+    content_type: str,
+    timeout: float | tuple[float, float] | tuple[float, None],
+    headers: Mapping[str, str | bytes | None],
+) -> FetchError | bytes:
     """
     :undocumented:
 
@@ -111,7 +134,7 @@ def fetch_requests(url, method, data, content_type, timeout, headers):
     import requests
 
     # Because we don't have nonlocal yet.
-    resp = [None]
+    resp: list[FetchError | bytes | None] = [None]
 
     if data is not None:
         headers = dict(headers)
@@ -143,7 +166,14 @@ def fetch_requests(url, method, data, content_type, timeout, headers):
     return resp[0]
 
 
-def fetch_emscripten(url, method, data, content_type, timeout, headers):
+def fetch_emscripten(
+    url: str,
+    method: str | bytes,
+    data: bytes | None,
+    content_type: str,
+    timeout: float,
+    headers: Any,
+):
     """
     :undocumented:
 

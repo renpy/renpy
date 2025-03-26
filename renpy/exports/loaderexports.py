@@ -19,7 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Literal  # type: ignore
 from renpy.compat import (
     PY2,
     basestring,
@@ -82,7 +89,9 @@ def exists(filename: str):
         return False
 
 
-def open_file(fn, encoding=None, directory=None):  # @ReservedAssignment
+def open_file(
+    fn: str, encoding: str | Literal[False] | None = None, directory: str | None = None
+):  # @ReservedAssignment
     """
     :doc: file
 
@@ -122,7 +131,7 @@ def open_file(fn, encoding=None, directory=None):  # @ReservedAssignment
     return rv
 
 
-def file(fn, encoding=None):
+def file(fn: str, encoding: str | Literal[False] | None = None):
     """
     :doc: file
 
@@ -133,7 +142,7 @@ def file(fn, encoding=None):
     return open_file(fn, encoding=encoding)
 
 
-def notl_file(fn):  # @ReservedAssignment
+def notl_file(fn: str):  # @ReservedAssignment
     """
     :undocumented:
 
@@ -143,7 +152,7 @@ def notl_file(fn):  # @ReservedAssignment
 
 
 @renpy_pure
-def list_files(common=False):
+def list_files(common: bool = False):
     """
     :doc: file
 
@@ -155,7 +164,7 @@ def list_files(common=False):
         listing.
     """
 
-    rv = []
+    rv: list[str] = []
 
     for _dir, fn in renpy.loader.listdirfiles(common):
         if fn.startswith("saves/"):
@@ -169,7 +178,7 @@ def list_files(common=False):
 
 
 @renpy_pure
-def fsencode(s, force=False):  # type: (str, bool) -> str
+def fsencode(s: str | bytes, force: bool = False):
     """
     :doc: file_rare
     :name: renpy.fsencode
@@ -188,7 +197,7 @@ def fsencode(s, force=False):  # type: (str, bool) -> str
 
 
 @renpy_pure
-def fsdecode(s):  # type: (bytes|str) -> str
+def fsdecode(s: bytes | str):
     """
     :doc: file_rare
     :name: renpy.fsdecode
@@ -203,7 +212,7 @@ def fsdecode(s):  # type: (bytes|str) -> str
     return s.decode(fsencoding)  # type: ignore
 
 
-def munge(name, filename=None):
+def munge(name: str, filename: str | None = None):
     """
     :doc: other
 

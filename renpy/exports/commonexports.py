@@ -53,7 +53,7 @@ def renpy_pure(fn: str) -> str: ...
 def renpy_pure[T](fn: Callable[..., T]) -> Callable[..., T]: ...
 
 
-def renpy_pure(fn: str | Callable[..., Any]):
+def renpy_pure(fn: str | Callable[..., Any]) -> str | Callable[..., Any]:
     """
     Marks renpy.`fn` as a pure function.
     """
@@ -63,6 +63,6 @@ def renpy_pure(fn: str | Callable[..., Any]):
     else:
         name = fn.__name__
 
-    _ = pure(f"renpy.{name}")
+    pure(f"renpy.{name}")
 
     return fn
