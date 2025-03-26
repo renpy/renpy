@@ -308,6 +308,9 @@ cdef class Slot:
 
     def __get__(self, CObject instance, owner):
 
+        if instance is None:
+            return self
+
         if self.number >= instance.index_count & INDEX_COUNT_MASK:
             return self.default_value
 
@@ -331,7 +334,8 @@ cdef class Slot:
 
         cdef PyObject *v
 
-
+        if instance is None:
+            raise AttributeError("Slot is not bound to an instance.")
 
         if (type(value) is type(self.default_value)) and (value == self.default_value):
             v = NULL
