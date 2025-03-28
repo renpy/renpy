@@ -150,7 +150,7 @@ cdef class Program:
                 continue
 
             if token not in types:
-                raise ShaderError("Unsupported type {} in '{}'. Only float, vec<2-4>, mat<2-4>, and sampler2D are supported.".format(token, line))
+                raise ShaderError("Unsupported type {} in '{}'. Only float, int, bool, vec<2-4>, ivec<2-4>, bvec<2-4>, mat<2-4>, and sampler2D are supported.".format(token, line))
 
             type = token
 
