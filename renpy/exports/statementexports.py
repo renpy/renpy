@@ -19,15 +19,46 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
 
-def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
-             style='imagemap', mouse='imagemap', with_none=None, **properties):
+def imagemap[
+    T
+](
+    ground: str,
+    selected: str,
+    hotspots: list[tuple[int, int, int, int, T]],
+    unselected: str | None = None,
+    overlays: bool = False,
+    style: str = "imagemap",
+    mouse: str = "imagemap",
+    with_none: bool | None = None,
+    **properties: Any,
+) -> T:
     """
     :undocumented: Use screens already.
 
@@ -63,22 +94,25 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     takes the value from config.implicit_with_none.
     """
 
-    renpy.exports.mode('imagemap')
+    renpy.exports.mode("imagemap")
 
-    renpy.ui.imagemap_compat(ground, selected, hotspots, unselected=unselected,
-                             style=style, **properties)
+    renpy.ui.imagemap_compat(
+        ground, selected, hotspots, unselected=unselected, style=style, **properties
+    )
 
     roll_forward = renpy.exports.roll_forward_info()
-    if roll_forward not in [ result for _x0, _y0, _x1, _y1, result in hotspots]:
+    if roll_forward not in [result for _x0, _y0, _x1, _y1, result in hotspots]:
         roll_forward = None
 
     if renpy.exports.in_fixed_rollback() and renpy.config.fix_rollback_without_choice:
         renpy.ui.saybehavior()
 
-    rv = renpy.ui.interact(suppress_overlay=(not overlays),
-                           type='imagemap',
-                           mouse=mouse,
-                           roll_forward=roll_forward)
+    rv = renpy.ui.interact(
+        suppress_overlay=(not overlays),
+        type="imagemap",
+        mouse=mouse,
+        roll_forward=roll_forward,
+    )
 
     renpy.exports.checkpoint(rv)
 
@@ -91,7 +125,15 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     return rv
 
 
-def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=None):
+def pause(
+    delay: float | None = None,
+    music: bool | None = None,
+    with_none: bool | None = None,
+    hard: bool = False,
+    predict: bool = False,
+    checkpoint: bool | None = None,
+    modal: bool | None = None,
+):
     """
     :doc: se_pause
     :args: (delay=None, *, predict=False, modal=True, hard=False)
@@ -151,10 +193,18 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
 
     roll_forward = renpy.exports.roll_forward_info()
 
-    if type(roll_forward) not in (bool, renpy.game.CallException, renpy.game.JumpException):
+    if type(roll_forward) not in (
+        bool,
+        renpy.game.CallException,
+        renpy.game.JumpException,
+    ):
         roll_forward = None
 
-    if (delay is not None) and renpy.game.after_rollback and not renpy.config.pause_after_rollback:
+    if (
+        (delay is not None)
+        and renpy.game.after_rollback
+        and not renpy.config.pause_after_rollback
+    ):
 
         rv = roll_forward
         if rv is None:
@@ -165,7 +215,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
 
         return rv
 
-    renpy.exports.mode('pause')
+    renpy.exports.mode("pause")
 
     if music is not None:
         newdelay = renpy.audio.music.get_delay(music)
@@ -182,7 +232,9 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         afm = None
 
     if hard or not renpy.store._dismiss_pause:
-        renpy.ui.saybehavior(afm=afm, dismiss='dismiss_hard_pause', dismiss_unfocused=[])
+        renpy.ui.saybehavior(
+            afm=afm, dismiss="dismiss_hard_pause", dismiss_unfocused=[]
+        )
     else:
         renpy.ui.saybehavior(afm=afm)
 
@@ -191,12 +243,22 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         renpy.ui.add(renpy.display.behavior.PredictPauseBehavior())
 
     try:
-        rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay, pause_modal=modal)
+        rv = renpy.ui.interact(
+            mouse="pause",
+            type="pause",
+            roll_forward=roll_forward,
+            pause=delay,
+            pause_modal=modal,
+        )
     except (renpy.game.JumpException, renpy.game.CallException) as e:
         rv = e
 
     if checkpoint:
-        renpy.exports.checkpoint(rv, keep_rollback=True, hard=renpy.config.pause_after_rollback or (delay is None))
+        renpy.exports.checkpoint(
+            rv,
+            keep_rollback=True,
+            hard=renpy.config.pause_after_rollback or (delay is None),
+        )
 
     if with_none is None:
         with_none = renpy.config.implicit_with_none
@@ -236,10 +298,10 @@ def with_statement(trans, always=False, paired=None, clear=True):
     if renpy.config.skipping:
         trans = None
 
-    if not (renpy.game.preferences.transitions or always): # type: ignore
+    if not (renpy.game.preferences.transitions or always):  # type: ignore
         trans = None
 
-    renpy.exports.mode('with')
+    renpy.exports.mode("with")
 
     if isinstance(trans, dict):
 
@@ -357,7 +419,7 @@ def call_screen(_screen_name, *args, **kwargs):
     return rv
 
 
-def execute_default_statement(start=False):
+def execute_default_statement(start: bool = False):
     """
     :undocumented:
 

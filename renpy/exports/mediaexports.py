@@ -19,14 +19,39 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
 
-def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
+def movie_cutscene(
+    filename: bool,
+    delay: float | None = None,
+    loops: int = 0,
+    stop_music: bool = True,
+):
     """
     :doc: movie_cutscene
 
@@ -50,7 +75,7 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     given delay elapsed uninterrupted.
     """
 
-    renpy.exports.mode('movie')
+    renpy.exports.mode("movie")
 
     if stop_music:
         renpy.audio.audio.set_force_stop("music", True)
@@ -69,8 +94,7 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     else:
         roll_forward = None
 
-    rv = renpy.ui.interact(suppress_overlay=True,
-                           roll_forward=roll_forward)
+    rv = renpy.ui.interact(suppress_overlay=True, roll_forward=roll_forward)
 
     # We don't want to put a checkpoint here, as we can't roll back while
     # playing a cutscene.
@@ -90,7 +114,12 @@ def toggle_music():
     """
 
 
-def music_start(filename, loops=True, fadeout=None, fadein=0):
+def music_start(
+    filename: str,
+    loops: bool = True,
+    fadeout: float | None = None,
+    fadein: int = 0,
+):
     """
     Deprecated music start function, retained for compatibility. Use
     renpy.music.play() or .queue() instead.
@@ -99,7 +128,7 @@ def music_start(filename, loops=True, fadeout=None, fadein=0):
     renpy.audio.music.play(filename, loop=loops, fadeout=fadeout, fadein=fadein)
 
 
-def music_stop(fadeout=None):
+def music_stop(fadeout: float | None = None):
     """
     Deprecated music stop function, retained for compatibility. Use
     renpy.music.stop() instead.
@@ -108,7 +137,7 @@ def music_stop(fadeout=None):
     renpy.audio.music.stop(fadeout=fadeout)
 
 
-def play(filename, channel=None, **kwargs):
+def play(filename: str | list[str] | None, channel: str | None = None, **kwargs: Any):
     """
     :doc: audio
 
