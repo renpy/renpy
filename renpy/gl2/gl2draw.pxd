@@ -147,7 +147,7 @@ cdef class GL2DrawingContext:
 
     cdef dict merge_properties(self, dict old, dict child)
 
-    cdef Matrix correct_pixel_perfect(self)
+    cdef void correct_pixel_perfect(self)
 
     cdef object draw_model(self, model)
 

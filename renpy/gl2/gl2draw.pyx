@@ -26,6 +26,7 @@ from __future__ import print_function
 DEF ANGLE = False
 
 from libc.stdlib cimport malloc, free
+from libc.math cimport roundf
 from sdl2 cimport *
 from renpy.uguu.gl cimport *
 import renpy.gl2.gl2functions
@@ -1357,7 +1358,7 @@ cdef class GL2DrawingContext:
         rv.pop("pixel_perfect", None)
         return rv
 
-    cdef Matrix correct_pixel_perfect(self):
+    cdef void correct_pixel_perfect(self):
         """
         Computes an offset for the projection transform such that the (0, 0) pixel
         is aligned with a drawable pixel.
@@ -1365,26 +1366,31 @@ cdef class GL2DrawingContext:
 
         cdef float halfwidth
         cdef float halfheight
-        cdef Matrix transform = self.projection_matrix * self.view_matrix * self.model_matrix
 
-        cdef float sx
-        cdef float sy
+        cdef float sx, sy, sz, sw
 
         halfwidth = self.width / 2.0
         halfheight = self.height / 2.0
 
-        sx, sy = transform.transform(0, 0)
+        sx = 0
+        sy = 0
+        sz = 0
+        sw = 1
 
-        sx = round(sx, 5)
-        sy = round(sy, 5)
+        self.model_matrix.transform4(&sx, &sy, &sz, &sw, sx, sy, sz, sw)
+        self.view_matrix.transform4(&sx, &sy, &sz, &sw, sx, sy, sz, sw)
+        self.projection_matrix.transform4(&sx, &sy, &sz, &sw, sx, sy, sz, sw)
+
+        sx = roundf(sx * 10000) / 10000
+        sy = roundf(sy * 10000) / 10000
 
         sx = sx * halfwidth + halfwidth
         sy = sy * halfheight + halfheight
 
-        cdef float xoff = round(sx) - sx
-        cdef float yoff = round(sy) - sy
+        cdef float xoff = roundf(sx) - sx
+        cdef float yoff = roundf(sy) - sy
 
-        return Matrix.coffset(xoff / halfwidth, yoff / halfheight, 0)
+        self.projection_matrix.inplace_reverse_offset(xoff / halfwidth, yoff / halfheight)
 
     cdef object draw_model(self, model):
 
@@ -1520,8 +1526,7 @@ cdef class GL2DrawingContext:
             self.properties = self.merge_properties(self.properties, r.properties)
 
             if r.properties.get("pixel_perfect", False) and self.pixel_perfect:
-                offset_matrix = self.correct_pixel_perfect()
-                self.projection_matrix = offset_matrix * self.projection_matrix
+                self.correct_pixel_perfect()
                 self.pixel_perfect = False
 
             has_depth = not self.has_depth and r.properties.get("depth", False)

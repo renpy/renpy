@@ -267,6 +267,44 @@ cdef class Matrix:
 
         return self
 
+    cdef Matrix inplace_reverse_offset(Matrix self, float xo, float yo):
+
+        cdef float xdx, xdy, xdz, xdw
+        cdef float ydx, ydy, ydz, ydw
+        cdef float zdx, zdy, zdz, zdw
+
+        xdx = self.wdx*xo + self.xdx
+        xdy = self.wdy*xo + self.xdy
+        xdz = self.wdz*xo + self.xdz
+        xdw = self.wdw*xo + self.xdw
+
+        ydx = self.wdx*yo + self.ydx
+        ydy = self.wdy*yo + self.ydy
+        ydz = self.wdz*yo + self.ydz
+        ydw = self.wdw*yo + self.ydw
+
+        zdx = self.xdx + self.zdx
+        zdy = self.xdy + self.zdy
+        zdz = self.xdz + self.zdz
+        zdw = self.xdw + self.zdw
+
+        self.xdx = xdx
+        self.xdy = xdy
+        self.xdz = xdz
+        self.xdw = xdw
+
+        self.ydx = ydx
+        self.ydy = ydy
+        self.ydz = ydz
+        self.ydw = ydw
+
+        self.zdx = zdx
+        self.zdy = zdy
+        self.zdz = zdz
+        self.zdw = zdw
+
+        return self
+
     def __repr__(Matrix self):
         cdef int x, y
 
