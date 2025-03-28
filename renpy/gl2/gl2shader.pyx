@@ -75,6 +75,9 @@ UNIFORM_TYPES = {
     "sampler2D",
 }
 
+VARYING_TYPES = set(ATTRIBUTE_TYPES)| set(UNIFORM_TYPES)
+
+
 cdef class Attribute:
     cdef object name
     cdef GLint location
@@ -85,6 +88,87 @@ cdef class Attribute:
         self.location = location
         self.size = size
 
+
+
+class Variable:
+    """
+    Represents a variable parsed from a shader, as part of the parsing process.
+    Returns an empty object if the line is not a variable.
+    """
+
+    storage: str|None = None
+    "The storage class, one of uniform, attribute, or varying, or None if not a variable."
+
+    type: str|None = None
+    "The type of the variable, one of float, int, bool, vec<2-4>, ivec<2-4>, bvec<2-4>, mat<2-4>, or sampler2D."
+
+    name: str|None = None
+    "The name of the variable."
+
+    array: int|None = None
+    "The size of the array, or None if not an array."
+
+    line: str
+    "The line of source code that the variable was parsed from, including qualifiers and the trailing semicolon."
+
+    def __init__(self, shader_name, line):
+
+        self.line = line
+
+        l = line.strip().rstrip("; ")
+
+        def match_word():
+            nonlocal l
+            if m := re.match(r'\s*(\w+)', l):
+                l = l[m.end():]
+                return m.group(1)
+            else:
+                return None
+
+        def match_array():
+            nonlocal l
+            if m := re.match(r'\s*\[\s*(\d+)\s*\]', l):
+                l = l[m.end():]
+                return int(m.group(1))
+            else:
+                return None
+
+        token = match_word()
+
+        if token == "invariant":
+            token = match_word()
+
+        if token == "uniform":
+            self.storage = "uniform"
+            types = UNIFORM_TYPES
+        elif token == "attribute":
+            self.storage = "attribute"
+            types = ATTRIBUTE_TYPES
+        elif token == "varying":
+            self.storage = "varying"
+            types = VARYING_TYPES
+        else:
+            self.storage = None
+            return
+
+        token = match_word()
+
+        if token in ( "highp", "mediump", "lowp"):
+            token = match_word()
+
+        if token not in types:
+            raise ShaderError(f"In {shader_name}, Unsupported type {token} in '{line}'. Only float, int, bool, vec<2-4>, ivec<2-4>, bvec<2-4>, mat<2-4>, and sampler2D are supported.")
+
+        self.type = token
+
+        self.name = match_word()
+        if self.name is None:
+            raise ShaderError(f"In {shader_name}, couldn't find name in '{line}'.")
+
+        self.array = match_array()
+
+        if l.rstrip():
+            raise ShaderError("Spurious tokens after the name in '{}'.".format(line))
 
 
 cdef class Program:
@@ -113,72 +197,29 @@ cdef class Program:
             l = line.strip()
             l = l.rstrip("; ")
 
-            def match_word():
-                nonlocal l
-                if m := re.match(r'\s*(\w+)', l):
-                    l = l[m.end():]
-                    return m.group(1)
-                else:
-                    return None
-
-            def match_array():
-                nonlocal l
-                if m := re.match(r'\s*\[\s*(\d+)\s*\]', l):
-                    l = l[m.end():]
-                    return int(m.group(1))
-                else:
-                    return None
-
-            token = match_word()
-
-            if token == "invariant":
-                token = match_word()
-
-            if token == "uniform":
-                storage = "uniform"
-                types = UNIFORM_TYPES
-            elif token == "attribute":
-                storage = "attribute"
-                types = ATTRIBUTE_TYPES
-            else:
+            if not l:
                 continue
 
-            token = match_word()
+            v = Variable(shader_name, l)
 
-            if token in ( "highp", "mediump", "lowp"):
-                token = match_word()
-                continue
-
-            if token not in types:
-                raise ShaderError("Unsupported type {} in '{}'. Only float, int, bool, vec<2-4>, ivec<2-4>, bvec<2-4>, mat<2-4>, and sampler2D are supported.".format(token, line))
-
-            type = token
-
-            name = match_word()
-            if name is None:
-                raise ShaderError("Couldn't find name in {}".format(line))
-
-            array = match_array()
-
-            if l.rstrip():
-                raise ShaderError("Spurious tokens after the name in '{}'.".format(line))
-
-            if storage == "uniform":
-                location = glGetUniformLocation(self.program, name.encode("utf-8"))
+            if v.storage == "uniform":
+                location = glGetUniformLocation(self.program, v.name.encode("utf-8"))
 
                 if location >= 0:
-                    setter, samplers = generate_uniform_setter(shader_name, location, name, type, array, samplers)
+                    setter, samplers = generate_uniform_setter(shader_name, location, v.name, v.type, v.array, samplers)
                     self.uniform_setters.append(setter)
 
-            else:
+            elif v.storage == "attribute":
 
-                location = glGetAttribLocation(self.program, name.encode("utf-8"))
+                location = glGetAttribLocation(self.program, v.name.encode("utf-8"))
 
-                if array is None:
+                if v.array is None:
                     array = 1
+                else:
+                    array = v.array
 
                 if location >= 0:
-                    self.attributes.append(Attribute(name, location, ATTRIBUTE_TYPES[type] * array))
+                    self.attributes.append(Attribute(v.name, location, ATTRIBUTE_TYPES[v.type] * array))
 
         return samplers
 
