@@ -213,14 +213,8 @@ cdef class ModelGetter(Getter):
 cdef class ProjectionViewGetter(Getter):
     cdef Matrix matrix
 
-    def __init__(self, uniform_name):
-        Getter.__init__(self, uniform_name)
-        self.matrix = Matrix(None)
-
     cdef object get(self, GL2DrawingContext context, GL2Model model):
-        self.matrix.ctake(context.projection_matrix)
-        self.matrix.inplace_multiply(context.view_matrix)
-        return self.matrix
+        return context.projectionview_matrix
 
 
 cdef class TransformMatrixGetter(Getter):
@@ -231,8 +225,7 @@ cdef class TransformMatrixGetter(Getter):
         self.matrix = Matrix(None)
 
     cdef object get(self, GL2DrawingContext context, GL2Model model):
-        self.matrix.ctake(context.projection_matrix)
-        self.matrix.inplace_multiply(context.view_matrix)
+        self.matrix.ctake(context.projectionview_matrix)
         self.matrix.inplace_multiply(context.model_matrix)
         return self.matrix
 

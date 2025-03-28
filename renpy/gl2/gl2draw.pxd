@@ -122,10 +122,13 @@ cdef class GL2DrawingContext:
     # A matrix that maps world-space coordinates to camera-space coordinates.
     cdef Matrix view_matrix
 
+    # The projection and view matrices, multiplied together.
+    cdef Matrix projectionview_matrix
+
     # A matrix that maps model-space coordinates to
     cdef Matrix model_matrix
 
-    # The clipping Polygo
+    # The clipping Polygon
     cdef Polygon clip_polygon
 
     # A tuple giving the names of shaders that will be applied to the model.
