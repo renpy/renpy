@@ -66,6 +66,26 @@ cdef class Vec4Setter(Setter):
         glUniform4f(self.location, value[0], value[1], value[2], value[3])
 
 
+cdef class IntSetter(Setter):
+    cdef object set(self, GL2DrawingContext context, value):
+        glUniform1i(self.location, value)
+
+
+cdef class IVec2Setter(Setter):
+    cdef object set(self, GL2DrawingContext context, value):
+
+        glUniform2i(self.location, value[0], value[1])
+
+cdef class IVec3Setter(Setter):
+    cdef object set(self, GL2DrawingContext context, value):
+        glUniform3i(self.location, value[0], value[1], value[2])
+
+
+cdef class IVec4Setter(Setter):
+    cdef object set(self, GL2DrawingContext context, value):
+        glUniform4i(self.location, value[0], value[1], value[2], value[3])
+
+
 cdef class Mat2Setter(Setter):
     cdef object set(self, GL2DrawingContext context, value):
         cdef Matrix m = value
@@ -93,7 +113,26 @@ cdef class Mat4Setter(Setter):
     cdef object set(self, GL2DrawingContext context, value):
         glUniformMatrix4fv(self.location, 1, GL_FALSE, (<Matrix> value).m)
 
+NON_ARRAY_SETTERS = {
+    "float" : FloatSetter,
+    "vec2" : Vec2Setter,
+    "vec3" : Vec3Setter,
+    "vec4" : Vec4Setter,
 
+    "int" : IntSetter,
+    "ivec2" : IVec2Setter,
+    "ivec3" : IVec3Setter,
+    "ivec4" : IVec4Setter,
+
+    "bool": IntSetter,
+    "bvec2": IVec2Setter,
+    "bvec3": IVec3Setter,
+    "bvec4": IVec4Setter,
+
+    "mat2" : Mat2Setter,
+    "mat3" : Mat3Setter,
+    "mat4" : Mat4Setter,
+}
 
 TEXTURE_SCALING = {
     "nearest" : (GL_NEAREST, GL_NEAREST),
@@ -420,23 +459,12 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
             f"{operation}."
         )
 
-    if uniform_type == "float":
-        setter = FloatSetter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "vec2":
-        setter = Vec2Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "vec3":
-        setter = Vec3Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "vec4":
-        setter = Vec4Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "mat2":
-        setter = Mat2Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "mat3":
-        setter = Mat3Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "mat4":
-        setter = Mat4Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "sampler2D":
+    if uniform_type == "sampler2D":
         setter = Sampler2DSetter(uniform_name, uniform_type, location, getter, sampler)
         sampler += 1
+    elif setter_class := NON_ARRAY_SETTERS.get(uniform_type):
+        setter = setter_class(uniform_name, uniform_type, location, getter)
+
     else:
         raise TypeError(
             f"Uniform {uniform_name} in shader {shader_name} has unknown type "
