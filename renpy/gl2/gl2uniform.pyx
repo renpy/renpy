@@ -134,6 +134,7 @@ NON_ARRAY_SETTERS = {
     "mat4" : Mat4Setter,
 }
 
+
 TEXTURE_SCALING = {
     "nearest" : (GL_NEAREST, GL_NEAREST),
     "linear" : (GL_LINEAR, GL_LINEAR),
@@ -397,7 +398,7 @@ UNIFORM_GETTER_CLASSES = {
 }
 
 
-def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, uniform_type: str, sampler: int):
+def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, uniform_type: str, array: int|None, sampler: int):
     """
     Given the information about a uniform, generates an object that will get the
     information for the uniform, and set it.

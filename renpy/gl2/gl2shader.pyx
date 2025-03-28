@@ -34,6 +34,7 @@ from renpy.gl2.gl2uniform import generate_uniform_setter
 
 import renpy
 import random
+import re
 
 cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
 
@@ -60,6 +61,14 @@ UNIFORM_TYPES = {
     "vec2",
     "vec3",
     "vec4",
+    "int",
+    "ivec2",
+    "ivec3",
+    "ivec4",
+    "bool",
+    "bvec2",
+    "bvec3",
+    "bvec4",
     "mat2",
     "mat3",
     "mat4",
@@ -99,22 +108,31 @@ cdef class Program:
 
         shader_name = "+".join(self.name)
 
-        for l in source.split("\n"):
+        for line in source.split("\n"):
 
-            l = l.strip()
+            l = line.strip()
             l = l.rstrip("; ")
-            tokens = l.split()
 
-            def advance():
-                if not tokens:
-                    return None
+            def match_word():
+                nonlocal l
+                if m := re.match(r'\s*(\w+)', l):
+                    l = l[m.end():]
+                    return m.group(1)
                 else:
-                    return tokens.pop(0)
+                    return None
 
-            token = advance()
+            def match_array():
+                nonlocal l
+                if m := re.match(r'\s*\[\s*(\d+)\s*\]', l):
+                    l = l[m.end():]
+                    return int(m.group(1))
+                else:
+                    return None
+
+            token = match_word()
 
             if token == "invariant":
-                token = advance()
+                token = match_word()
 
             if token == "uniform":
                 storage = "uniform"
@@ -125,37 +143,42 @@ cdef class Program:
             else:
                 continue
 
-            token = advance()
+            token = match_word()
 
             if token in ( "highp", "mediump", "lowp"):
-                token = advance()
+                token = match_word()
                 continue
 
             if token not in types:
-                raise ShaderError("Unsupported type {} in '{}'. Only float, vec<2-4>, mat<2-4>, and sampler2D are supported.".format(token, l))
+                raise ShaderError("Unsupported type {} in '{}'. Only float, vec<2-4>, mat<2-4>, and sampler2D are supported.".format(token, line))
 
             type = token
 
-            name = advance()
+            name = match_word()
             if name is None:
-                raise ShaderError("Couldn't finds name in {}".format(l))
+                raise ShaderError("Couldn't find name in {}".format(line))
 
-            if tokens:
-                raise ShaderError("Spurious tokens after the name in '{}'. Arrays are not supported in Ren'Py.".format(l))
+            array = match_array()
+
+            if l.rstrip():
+                raise ShaderError("Spurious tokens after the name in '{}'.".format(line))
 
             if storage == "uniform":
                 location = glGetUniformLocation(self.program, name.encode("utf-8"))
 
                 if location >= 0:
-
-                    setter, samplers = generate_uniform_setter(shader_name, location, name, type, samplers)
+                    setter, samplers = generate_uniform_setter(shader_name, location, name, type, array, samplers)
                     self.uniform_setters.append(setter)
 
             else:
+
                 location = glGetAttribLocation(self.program, name.encode("utf-8"))
 
+                if array is None:
+                    array = 1
+
                 if location >= 0:
-                    self.attributes.append(Attribute(name, location, ATTRIBUTE_TYPES[type]))
+                    self.attributes.append(Attribute(name, location, ATTRIBUTE_TYPES[type] * array))
 
         return samplers
 
