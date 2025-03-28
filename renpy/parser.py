@@ -616,7 +616,11 @@ class ParseTrie(object):
         self.default: Callable[..., ast.Node | list[ast.Node]] | None = None
         self.words: dict[str, ParseTrie] = {}
 
-    def add(self, name: list[str], function: Callable[..., ast.Node | list[ast.Node]]):
+    def add(
+        self,
+        name: list[str] | tuple[str, ...],
+        function: Callable[..., ast.Node | list[ast.Node]],
+    ):
 
         if not name:
             self.default = function
@@ -896,10 +900,10 @@ def scene_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
     if layer or l.eol():
         # No displayable.
         l.advance()
-        return ast.Scene(loc, None, layer)
+        return ast.Scene(loc, None, cast(str, layer))
 
     imspec = parse_image_specifier(l)
-    stmt = ast.Scene(loc, imspec, imspec[4])
+    stmt = ast.Scene(loc, imspec, cast(str, imspec[4]))
     rv = parse_with(l, stmt)
 
     if l.match(":"):
@@ -1303,9 +1307,7 @@ def init_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
             stmt = parse_statement(l)
 
-            if not isinstance(
-                stmt, ast.Node
-            ):  # pyright: ignore[reportUnnecessaryIsInstance]
+            if not isinstance(stmt, ast.Node):
                 l.revert(checkpoint)
                 l.error("init expects a block or statement")
 
@@ -1393,7 +1395,7 @@ def translate_strings(
     block: list[ast.Node] = []
 
     old = None
-    loc = None
+    loc: tuple[str, int] | None = None
 
     def parse_string(s: str):
         s = s.strip()
@@ -1430,7 +1432,15 @@ def translate_strings(
             except Exception:
                 ll.error("Could not parse string.")
 
-            block.append(renpy.ast.TranslateString(loc, language, old, new, newloc))
+            block.append(
+                renpy.ast.TranslateString(
+                    cast(tuple[str, int], loc),
+                    cast(str, language),
+                    old,
+                    new,
+                    newloc,
+                )
+            )
 
             old = None
             new = None
@@ -1475,8 +1485,11 @@ def translate_statement(
         try:
             l.init = True
 
-            block = [python_statement(l, loc)]
-            return cast(list[ast.Node], [ast.TranslateEarlyBlock(loc, language, block)])
+            block = [cast(ast.Node, python_statement(l, loc))]
+            return cast(
+                list[ast.Node],
+                [ast.TranslateEarlyBlock(loc, cast(str, language), block)],
+            )
         finally:
             l.init = old_init
 
@@ -1486,8 +1499,17 @@ def translate_statement(
         try:
             l.init = True
 
-            block = [style_statement(l, loc)]
-            return [ast.TranslateBlock(loc, language, block)]
+            block = [cast(ast.Node, style_statement(l, loc))]
+            return cast(
+                list[ast.Node],
+                [
+                    ast.TranslateBlock(
+                        loc,
+                        cast(str, language),
+                        block,
+                    )
+                ],
+            )
         finally:
             l.init = old_init
 
@@ -1521,6 +1543,8 @@ def style_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
     # Function that parses a clause. This returns true if a clause has been
     # parsed, False otherwise.
     def parse_clause(l: renpy.lexer.Lexer):
+        nonlocal rv
+        rv = cast(ast.Style, rv)
 
         if l.keyword("is"):
             if rv.parent is not None:
@@ -1777,7 +1801,10 @@ def say_statement(
 
     if (who is not None) and (what is not None):
 
-        rv = finish_say(l, loc, who, what, attributes, temporary_attributes)
+        rv = cast(
+            ast.Node | list[ast.Node],
+            finish_say(l, loc, who, what, attributes, temporary_attributes),
+        )
 
         l.expect_eol()
         l.expect_noblock("say statement")
@@ -1793,7 +1820,7 @@ def say_statement(
 # Functions called to parse things.
 
 
-def parse_statement(l: renpy.lexer.Lexer) -> ast.Node:
+def parse_statement(l: renpy.lexer.Lexer) -> ast.Node | list[ast.Node]:
     """
     This parses a Ren'Py statement. l is expected to be a Ren'Py lexer
     that has been advanced to a logical line. This function will
@@ -1805,7 +1832,17 @@ def parse_statement(l: renpy.lexer.Lexer) -> ast.Node:
     # Store the current location.
     loc = l.get_location()
 
-    pf = statements.parse(l)
+    pf = cast(
+        Callable[
+            [
+                renpy.lexer.Lexer,
+                tuple[str, int],
+            ],
+            ast.Node | list[ast.Node],
+        ]
+        | None,
+        statements.parse(l),
+    )
 
     if pf is None:
         l.error("expected statement.")

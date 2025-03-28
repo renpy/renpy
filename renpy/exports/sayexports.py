@@ -26,7 +26,7 @@ from __future__ import (
     print_function,
     unicode_literals,
 )
-from typing import Any  # type: ignore
+from typing import Any, Callable  # type: ignore
 from renpy.compat import (
     PY2,
     basestring,
@@ -109,7 +109,10 @@ def scry_say(who: renpy.character.ADVCharacter | str | None, what: str, scry: An
 
 
 def say(
-    who: renpy.character.ADVCharacter | str | None, what: str, *args: Any, **kwargs: Any
+    who: Callable[..., Any] | str | None,
+    what: str,
+    *args: Any,
+    **kwargs: Any,
 ):
     """
     :doc: se_say
@@ -156,11 +159,11 @@ def say(
 
 
 def do_reshow_say(
-    who: renpy.character.ADVCharacter | str | None,
+    who: str | None,
     what: str,
     interact: bool = False,
     *args: Any,
-    **kwargs: Any
+    **kwargs: Any,
 ):
 
     if who is not None:
@@ -172,7 +175,7 @@ def do_reshow_say(
 curried_do_reshow_say = renpy.curry.curry(do_reshow_say)
 
 
-def get_reshow_say(**kwargs):
+def get_reshow_say(**kwargs: Any):
     kw = dict(renpy.store._last_say_kwargs)
     kw.update(kwargs)
 
@@ -180,7 +183,7 @@ def get_reshow_say(**kwargs):
         renpy.store._last_say_who,
         renpy.store._last_say_what,
         renpy.store._last_say_args,
-        **kw
+        **kw,
     )
 
 
@@ -301,7 +304,7 @@ def count_newly_seen_dialogue_blocks():
     return renpy.game.new_translates_count
 
 
-def substitute(s, scope=None, translate=True):
+def substitute(s: str, scope: dict[str, Any] | None = None, translate: bool = True):
     """
     :doc: text_utility
 
@@ -343,11 +346,17 @@ class LastSay:
     Returned by the last_say function.
     """
 
-    def __init__(self, who, what, args, kwargs):
-        self._who = who
-        self.what = what
-        self.args = args
-        self.kwargs = kwargs
+    def __init__(
+        self,
+        who: renpy.character.ADVCharacter | str | None,
+        what: str,
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+    ):
+        self._who: renpy.character.ADVCharacter | str | None = who
+        self.what: str = what
+        self.args: tuple[Any, ...] = args
+        self.kwargs: dict[str, Any] = kwargs
 
     @property
     def who(self):

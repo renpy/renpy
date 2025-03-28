@@ -21,9 +21,16 @@
 
 # This module handles the logging of messages to a file.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # type: ignore
-
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from collections.abc import Iterable
+from typing import Callable, TextIO, Any, cast, override
+from renpy.compat import PY2, basestring, bchr, bord, chr, pystr, range, round, str, tobytes, unicode  # type: ignore
 
 
 import os
@@ -34,7 +41,7 @@ import tempfile
 import sys
 import io
 
-import encodings.latin_1 # @UnusedImport
+import encodings.latin_1  # @UnusedImport
 
 import renpy
 
@@ -50,7 +57,13 @@ class LogFile(object):
     This manages one of our logfiles.
     """
 
-    def __init__(self, name, append=False, developer=False, flush=True):
+    def __init__(
+        self,
+        name: str,
+        append: bool = False,
+        developer: bool = False,
+        flush: bool = True,
+    ):
         """
         `name`
             The name of the logfile, without the .txt extension.
@@ -63,23 +76,23 @@ class LogFile(object):
             Determines if the file is flushed after each write.
         """
 
-        self.name = name
-        self.append = append
-        self.developer = developer
-        self.flush = flush
-        self.file = None
+        self.name: str = name
+        self.append: bool = append
+        self.developer: bool = developer
+        self.flush: bool = flush
+        self.file: TextIO = None
 
         # File-like attributes.
-        self.softspace = 0
-        self.newlines = None
+        self.softspace: int = 0
+        self.newlines: str | None = None
 
         # Should we emulate file's write method? We do so if this is True.
-        self.raw_write = False
+        self.raw_write: bool = False
 
         if renpy.ios:
             self.file = real_stdout
 
-    def open(self): # @ReservedAssignment
+    def open(self):  # @ReservedAssignment
 
         if renpy.config.log_to_stdout:
             self.file = real_stdout
@@ -104,7 +117,13 @@ class LogFile(object):
             return
 
         try:
-            base = os.environ.get("RENPY_LOG_BASE", renpy.config.logdir)
+            base = cast(
+                str | None,
+                os.environ.get(
+                    "RENPY_LOG_BASE",
+                    renpy.config.logdir,
+                ),
+            )
 
             if base is None:
                 return False
@@ -133,9 +152,9 @@ class LogFile(object):
                     pass
 
             if self.append:
-                self.write('')
-                self.write('=' * 78)
-                self.write('')
+                self.write("")
+                self.write("=" * 78)
+                self.write("")
 
             self.write("%s UTC", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))
             try:
@@ -148,7 +167,12 @@ class LogFile(object):
             if "name" in renpy.game.build_info:
                 self.write("%s", renpy.game.build_info["name"])
                 self.write("%s", renpy.game.build_info["version"])
-                self.write("Built at %s UTC", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(renpy.game.build_info["time"])))
+                self.write(
+                    "Built at %s UTC",
+                    time.strftime(
+                        "%Y-%m-%d %H:%M:%S", time.gmtime(renpy.game.build_info["time"])
+                    ),
+                )
                 self.write("")
 
             return True
@@ -158,7 +182,7 @@ class LogFile(object):
             traceback.print_exc(file=real_stderr)
             return False
 
-    def write(self, s, *args):
+    def write(self, s: str | bytes, *args: Any):
         """
         Formats `s` with args, and writes it to the logfile.
         """
@@ -176,11 +200,11 @@ class LogFile(object):
 
                 s += "\n"
 
-            self.file.write(s) # type: ignore
+            self.file.write(s)  # type: ignore
 
             if self.flush:
                 try:
-                    self.file.flush() # type: ignore
+                    self.file.flush()  # type: ignore
                 except Exception:
                     self.flush = False
 
@@ -190,15 +214,20 @@ class LogFile(object):
         """
 
         self.raw_write = True
-        traceback.print_exc(None, self) # type: ignore
+        traceback.print_exc(None, self)  # type: ignore
         self.raw_write = False
 
 
 # A map from the log name to a log object.
-log_cache = { }
+log_cache: dict[str, LogFile] = {}
 
 
-def open(name, append=False, developer=False, flush=False): # @ReservedAssignment
+def open(
+    name: str,
+    append: bool = False,
+    developer: bool = False,
+    flush: bool = False,
+):  # @ReservedAssignment
     rv = log_cache.get(name, None)
 
     if rv is None:
@@ -207,25 +236,28 @@ def open(name, append=False, developer=False, flush=False): # @ReservedAssignmen
 
     return rv
 
+
 ################################################################################
 # Timed event log.
 
 
-class TimeLog(list):
+class TimeLog[T](list[tuple[float, T]]):
     """
     This represents a log that is limited to the last `duration` seconds.
     """
 
-    def __init__(self, duration):
-        self.duration = duration
+    def __init__(self, duration: float):
+        super().__init__()
+        self.duration: float = duration
 
-    def append(self, v):
+    @override
+    def append(self, v: T):
         now = time.time()
 
-        list.append(self, (now, v))
+        list[tuple[float, T]].append(self, (now, v))
         self.prune(now)
 
-    def prune(self, now=None):
+    def prune(self, now: float | None = None):
 
         if now is None:
             now = time.time()
@@ -233,20 +265,21 @@ class TimeLog(list):
         while self[0][0] < (now - self.duration):
             self.pop(0)
 
+
 ################################################################################
 # Stdout / Stderr Redirection
 
 
 class StdioRedirector(object):
 
-    real_file = sys.stderr
+    real_file: TextIO = sys.stderr
 
     def __init__(self):
-        self.buffer = ''
-        self.log = open("log", developer=False, append=False, flush=True)
-        self.encoding = "utf-8"
+        self.buffer: str = ""
+        self.log: LogFile = open("log", developer=False, append=False, flush=True)
+        self.encoding: str = "utf-8"
 
-    def write(self, s):
+    def write(self, s: bytes | str):
 
         if not isinstance(s, str):
             s = str(s, "utf-8", "replace")
@@ -265,7 +298,7 @@ class StdioRedirector(object):
         try:
             callbacks = self.get_callbacks()
         except Exception:
-            callbacks = [ ]
+            callbacks = []
 
         for l in lines[:-1]:
             self.log.write("%s", l)
@@ -278,7 +311,7 @@ class StdioRedirector(object):
 
         self.buffer = lines[-1]
 
-    def writelines(self, lines):
+    def writelines(self, lines: Iterable[str | bytes]):
         for i in lines:
             self.write(i)
 
@@ -291,24 +324,26 @@ class StdioRedirector(object):
     def close(self):
         pass
 
-    def get_callbacks(self):
-        return [ ]
+    def get_callbacks(self) -> list[Callable[[str], None]]:
+        return []
 
 
 if not "RENPY_NO_REDIRECT_STDIO" in os.environ:
 
     class StdoutRedirector(StdioRedirector):
-        real_file = real_stdout
+        real_file: TextIO = real_stdout
 
+        @override
         def get_callbacks(self):
             return renpy.config.stdout_callbacks
 
     sys.stdout = sys_stdout = StdoutRedirector()
 
     class StderrRedirector(StdioRedirector):
-        real_file = real_stderr
+        real_file: TextIO = real_stderr
 
-        def get_callbacks(self):
+        @override
+        def get_callbacks(self) -> list[Callable[[], None]]:
             return renpy.config.stderr_callbacks
 
     sys.stderr = sys_stderr = StderrRedirector()

@@ -132,7 +132,11 @@ def copy_images(old: str | tuple[str, ...], new: str | tuple[str, ...]):
             renpy.display.image.register_image(new + k[lenold:], v)
 
 
-def default_layer(layer, tag, expression=False):
+def default_layer(
+    layer: str | None,
+    tag: tuple[str, ...] | str | None,
+    expression: bool = False,
+):
     """
     :undocumented:
 
@@ -153,11 +157,16 @@ def default_layer(layer, tag, expression=False):
         tag = tag.split()[0]
 
     return scene_lists().sticky_tags.get(tag, None) or renpy.config.tag_layer.get(
-        tag, renpy.config.default_tag_layer
+        tag,
+        renpy.config.default_tag_layer,
     )
 
 
-def can_show(name, layer=None, tag=None):
+def can_show(
+    name: tuple[str, ...] | str,
+    layer: str | None = None,
+    tag: str | None = None,
+):
     """
     :doc: image_func
 
@@ -189,7 +198,7 @@ def can_show(name, layer=None, tag=None):
         return None
 
 
-def showing(name, layer=None):
+def showing(name: str | tuple[str, ...], layer: str | None = None):
     """
     :doc: image_func
 
@@ -213,7 +222,7 @@ def showing(name, layer=None):
     return renpy.game.context().images.showing(layer, name)
 
 
-def get_showing_tags(layer="master", sort=False):
+def get_showing_tags(layer: str = "master", sort: bool = False):
     """
     :doc: image_func
 
@@ -227,7 +236,7 @@ def get_showing_tags(layer="master", sort=False):
     return renpy.game.context().images.get_showing_tags(layer)
 
 
-def get_hidden_tags(layer="master"):
+def get_hidden_tags(layer: str = "master"):
     """
     :doc: image_func
 

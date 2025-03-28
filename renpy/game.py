@@ -125,7 +125,7 @@ preferences: Any = None
 initcode_ast_id: int = 0
 
 # The build_info.
-build_info = {"info": {}}
+build_info: dict[str, Any] = {"info": {}}
 
 
 class ExceptionInfo(object):

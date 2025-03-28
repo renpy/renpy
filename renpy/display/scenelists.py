@@ -19,8 +19,27 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 
@@ -33,10 +52,14 @@ sticky_layers = frozenset()
 def init_layers():
     global layers, sticky_layers, ordered_layers
 
-    ordered_layers = renpy.config.detached_layers + renpy.config.bottom_layers + renpy.config.layers +  renpy.config.top_layers
+    ordered_layers = (
+        renpy.config.detached_layers
+        + renpy.config.bottom_layers
+        + renpy.config.layers
+        + renpy.config.top_layers
+    )
     layers = frozenset(ordered_layers)
-    sticky_layers = frozenset(
-        renpy.config.sticky_layers + renpy.config.detached_layers)
+    sticky_layers = frozenset(renpy.config.sticky_layers + renpy.config.detached_layers)
 
 
 class SceneListEntry(renpy.object.Object):
@@ -54,10 +77,24 @@ class SceneListEntry(renpy.object.Object):
         self.name = name
 
     def __iter__(self):
-        return iter((self.tag, self.zorder, self.show_time, self.animation_time, self.displayable))
+        return iter(
+            (
+                self.tag,
+                self.zorder,
+                self.show_time,
+                self.animation_time,
+                self.displayable,
+            )
+        )
 
     def __getitem__(self, index):
-        return (self.tag, self.zorder, self.show_time, self.animation_time, self.displayable)[index]
+        return (
+            self.tag,
+            self.zorder,
+            self.show_time,
+            self.animation_time,
+            self.displayable,
+        )[index]
 
     def __repr__(self):
         return "<SLE: %r %r %r>" % (self.tag, self.name, self.displayable)
@@ -69,7 +106,8 @@ class SceneListEntry(renpy.object.Object):
             self.show_time,
             self.animation_time,
             self.displayable,
-            self.name)
+            self.name,
+        )
 
     def update_time(self, time):
 
@@ -92,57 +130,58 @@ class SceneLists(renpy.object.Object):
     __version__ = 9
 
     def after_setstate(self):
-        self.camera_list = getattr(self, "camera_list", { })
-        self.camera_transform = getattr(self, "camera_transform", { })
-        self.config_layer_transform = getattr(self, "config_layer_transform", { })
+        self.camera_list = getattr(self, "camera_list", {})
+        self.camera_transform = getattr(self, "camera_transform", {})
+        self.config_layer_transform = getattr(self, "config_layer_transform", {})
 
         for i in layers:
             if i not in self.layers:
-                self.layers[i] = [ ]
-                self.at_list[i] = { }
-                self.layer_at_list[i] = (None, [ ])
+                self.layers[i] = []
+                self.at_list[i] = {}
+                self.layer_at_list[i] = (None, [])
 
             if i not in self.camera_list:
-                self.camera_list[i] = (None, [ ])
+                self.camera_list[i] = (None, [])
 
             if i not in self.config_layer_transform:
-                self.config_layer_transform[i] = [ ]
+                self.config_layer_transform[i] = []
 
     def after_upgrade(self, version):
 
         if version < 1:
 
-            self.at_list = { }
-            self.layer_at_list = { }
+            self.at_list = {}
+            self.layer_at_list = {}
 
             for i in layers:
-                self.at_list[i] = { }
-                self.layer_at_list[i] = (None, [ ])
+                self.at_list[i] = {}
+                self.layer_at_list[i] = (None, [])
 
         if version < 3:
             self.shown_window = False
 
         if version < 4:
             for k in self.layers:
-                self.layers[k] = [ SceneListEntry(*(i + (None,))) for i in self.layers[k] ]
+                self.layers[k] = [
+                    SceneListEntry(*(i + (None,))) for i in self.layers[k]
+                ]
 
-            self.additional_transient = [ ]
+            self.additional_transient = []
 
         if version < 5:
             self.drag_group = None
 
         if version < 6:
-            self.shown = self.image_predict_info # type: ignore
+            self.shown = self.image_predict_info  # type: ignore
 
         if version < 7:
-            self.layer_transform = { }
+            self.layer_transform = {}
 
         if version < 8:
-            self.sticky_tags = { }
+            self.sticky_tags: dict[str, str] = {}
 
         if version < 9:
-            self.additional_transient = [ (layer, tag, None) for layer, tag in self.additional_transient ] # type: ignore
-
+            self.additional_transient = [(layer, tag, None) for layer, tag in self.additional_transient]  # type: ignore
 
     def __init__(self, oldsl, shown):
 
@@ -152,25 +191,25 @@ class SceneLists(renpy.object.Object):
         self.shown_window = False
 
         # A map from layer name -> list(SceneListEntry)
-        self.layers: dict[str, list[SceneListEntry]] = { }
+        self.layers: dict[str, list[SceneListEntry]] = {}
 
         # A map from layer name -> tag -> at_list associated with that tag.
-        self.at_list:dict[str, str] = { }
+        self.at_list: dict[str, str] = {}
 
         # A map from layer to (start time, at_list), where the at list has
         # been applied to the layer as a whole.
-        self.layer_at_list:dict[int, str] = { }
+        self.layer_at_list: dict[int, str] = {}
 
         # The camera list, which is similar to the layer at list but is not
         # cleared during the scene statement.
-        self.camera_list = { }
+        self.camera_list = {}
 
         # The current shown images,
         self.shown = shown
 
         # A list of (layer, tag) pairs that are considered to be
         # transient.
-        self.additional_transient = [ ]
+        self.additional_transient = []
 
         # Either None, or a DragGroup that's used as the default for
         # drags with names.
@@ -178,16 +217,16 @@ class SceneLists(renpy.object.Object):
 
         # A map from a layer to the transform that applies to that
         # layer.
-        self.layer_transform = { }
+        self.layer_transform = {}
 
         # Same thing, but for the camera transform.
-        self.camera_transform = { }
+        self.camera_transform = {}
 
         # Same thing, but for config.layer_transforms.
-        self.config_layer_transform = { }
+        self.config_layer_transform = {}
 
         # A map from tag -> layer name, only for layers in config.sticky_layers.
-        self.sticky_tags = { }
+        self.sticky_tags = {}
 
         if oldsl:
 
@@ -196,16 +235,16 @@ class SceneLists(renpy.object.Object):
                 try:
                     self.layers[i] = oldsl.layers[i][:]
                 except KeyError:
-                    self.layers[i] = [ ]
+                    self.layers[i] = []
 
                 if i in oldsl.at_list:
                     self.at_list[i] = oldsl.at_list[i].copy()
                     self.layer_at_list[i] = oldsl.layer_at_list[i]
                     self.camera_list[i] = oldsl.camera_list[i]
                 else:
-                    self.at_list[i] = { }
-                    self.layer_at_list[i] = (None, [ ])
-                    self.camera_list[i] = (None, [ ])
+                    self.at_list[i] = {}
+                    self.layer_at_list[i] = (None, [])
+                    self.camera_list[i] = (None, [])
 
             for i in renpy.config.overlay_layers:
                 self.clear(i)
@@ -222,10 +261,10 @@ class SceneLists(renpy.object.Object):
 
         else:
             for i in layers:
-                self.layers[i] = [ ]
-                self.at_list[i] = { }
-                self.layer_at_list[i] = (None, [ ])
-                self.camera_list[i] = (None, [ ])
+                self.layers[i] = []
+                self.at_list[i] = {}
+                self.layer_at_list[i] = (None, [])
+                self.camera_list[i] = (None, [])
 
             self.music = None
             self.focused = None
@@ -237,7 +276,7 @@ class SceneLists(renpy.object.Object):
         is hidden, and not the "hide" event.
         """
 
-        l = [ ]
+        l = []
 
         for ltp in self.additional_transient:
             if ltp[0] == layer and ltp[1] == tag:
@@ -247,7 +286,7 @@ class SceneLists(renpy.object.Object):
 
         self.additional_transient = l
 
-    def replace_transient(self, prefix="hide"): # type: (str|None) -> None
+    def replace_transient(self, prefix="hide"):  # type: (str|None) -> None
         """
         Replaces the contents of the transient display list with
         a copy of the master display list. This is used after a
@@ -265,7 +304,7 @@ class SceneLists(renpy.object.Object):
         for layer, tag, p in self.additional_transient:
             self.remove(layer, tag, prefix=p if p is not None else prefix)
 
-        self.additional_transient = [ ]
+        self.additional_transient = []
 
     def transient_is_empty(self):
         """
@@ -361,18 +400,20 @@ class SceneLists(renpy.object.Object):
 
         return add_index, remove_index, zorder
 
-    def add(self,
-            layer,
-            thing,
-            key=None,
-            zorder=0,
-            behind=[ ],
-            at_list=[ ],
-            name=None,
-            atl=None,
-            default_transform=None,
-            transient=False,
-            keep_st=False):
+    def add(
+        self,
+        layer,
+        thing,
+        key=None,
+        zorder=0,
+        behind=[],
+        at_list=[],
+        name=None,
+        atl=None,
+        default_transform=None,
+        transient=False,
+        keep_st=False,
+    ):
         """
         Adds something to this scene list. Some of these names are quite a bit
         out of date.
@@ -404,10 +445,14 @@ class SceneLists(renpy.object.Object):
         """
 
         if not isinstance(thing, renpy.display.core.Displayable):
-            raise Exception("Attempting to show something that isn't a displayable:" + repr(thing))
+            raise Exception(
+                "Attempting to show something that isn't a displayable:" + repr(thing)
+            )
 
         if layer not in self.layers:
-            raise Exception("Trying to add something to non-existent layer '%s'." % layer)
+            raise Exception(
+                "Trying to add something to non-existent layer '%s'." % layer
+            )
 
         if key:
             self.remove_hide_replaced(layer, key)
@@ -445,10 +490,12 @@ class SceneLists(renpy.object.Object):
                 if add_index > remove_index:
                     add_index -= 1
 
-            if (not atl and
-                    not at_list and
-                    renpy.config.keep_running_transform and
-                    isinstance(old, renpy.display.motion.Transform)):
+            if (
+                not atl
+                and not at_list
+                and renpy.config.keep_running_transform
+                and isinstance(old, renpy.display.motion.Transform)
+            ):
 
                 thing = sle.displayable._change_transform_child(thing)
 
@@ -474,7 +521,7 @@ class SceneLists(renpy.object.Object):
         # Errors might exist in older games, which are ignored when not in
         # developer mode.
         try:
-            thing.visit_all(lambda d : None)
+            thing.visit_all(lambda d: None)
         except Exception:
             if renpy.config.developer:
                 raise
@@ -514,12 +561,8 @@ class SceneLists(renpy.object.Object):
             if d is not None:
 
                 sle = SceneListEntry(
-                    prefix + "$" + oldsle.tag,
-                    oldsle.zorder,
-                    st,
-                    at,
-                    d,
-                    None)
+                    prefix + "$" + oldsle.tag, oldsle.zorder, st, at, d, None
+                )
 
                 l[index] = sle
 
@@ -538,7 +581,7 @@ class SceneLists(renpy.object.Object):
             of being hidden.
         """
 
-        rv = [ ]
+        rv = []
         for l in self.layers.values():
             for sle in l:
 
@@ -569,7 +612,9 @@ class SceneLists(renpy.object.Object):
 
             self.hide_or_replace(layer, i, "hide")
 
-    def remove(self, layer, thing, prefix="hide"): # type: (str, str|tuple|renpy.display.core.Displayable, str|None) -> None
+    def remove(
+        self, layer, thing, prefix="hide"
+    ):  # type: (str, str|tuple|renpy.display.core.Displayable, str|None) -> None
         """
         Thing is either a key or a displayable. This iterates through the
         named layer, searching for entries matching the thing.
@@ -580,9 +625,11 @@ class SceneLists(renpy.object.Object):
         """
 
         if layer not in self.layers:
-            raise Exception("Trying to remove something from non-existent layer '%s'." % layer)
+            raise Exception(
+                "Trying to remove something from non-existent layer '%s'." % layer
+            )
 
-        _add_index, remove_index, _zorder = self.find_index(layer, thing, 0, [ ])
+        _add_index, remove_index, _zorder = self.find_index(layer, thing, 0, [])
 
         if remove_index is not None:
             tag = self.layers[layer][remove_index].tag
@@ -608,7 +655,7 @@ class SceneLists(renpy.object.Object):
             return
 
         if not hide:
-            self.layers[layer][:] = [ ]
+            self.layers[layer][:] = []
 
         else:
 
@@ -623,7 +670,7 @@ class SceneLists(renpy.object.Object):
         self.shown.predict_scene(layer)
 
         if renpy.config.scene_clears_layer_at_list:
-            self.layer_at_list[layer] = (None, [ ])
+            self.layer_at_list[layer] = (None, [])
 
     def set_layer_at_list(self, layer, at_list, reset=True, camera=False):
 
@@ -648,7 +695,7 @@ class SceneLists(renpy.object.Object):
             self.layer_at_list[l] = (t or time, ll)
 
         for ll in self.layers.values():
-            ll[:] = [ i.update_time(time) for i in ll ]
+            ll[:] = [i.update_time(time) for i in ll]
 
     def showing(self, layer, name):
         """
@@ -662,7 +709,7 @@ class SceneLists(renpy.object.Object):
         return self.shown.get_showing_tags(layer)
 
     def get_sorted_tags(self, layer):
-        rv = [ ]
+        rv = []
 
         for sle in self.layers[layer]:
             if not sle.tag:
@@ -680,7 +727,7 @@ class SceneLists(renpy.object.Object):
         Creates a Fixed with the given layer name and scene_list.
         """
 
-        rv = renpy.display.layout.MultiBox(layout='fixed', focus=layer, **properties)
+        rv = renpy.display.layout.MultiBox(layout="fixed", focus=layer, **properties)
         rv.append_scene_list(self.layers[layer])
         rv.layer_name = layer
         rv._duplicatable = False
@@ -726,7 +773,7 @@ class SceneLists(renpy.object.Object):
             if (new_transform is not None) and (renpy.config.keep_show_layer_state):
                 self.transform_state(old_transform, new_transform, execution=True)
 
-            f = renpy.display.layout.MultiBox(layout='fixed')
+            f = renpy.display.layout.MultiBox(layout="fixed")
             f.add(rv, time, time)
             f.layer_name = layer
             f.untransformed_layer = d
@@ -757,10 +804,10 @@ class SceneLists(renpy.object.Object):
                 if isinstance(rv, renpy.display.motion.Transform):
                     new_transform = rv
 
-            if (new_transform is not None):
+            if new_transform is not None:
                 self.transform_state(old_transform, new_transform, execution=True)
 
-            f = renpy.display.layout.MultiBox(layout='fixed')
+            f = renpy.display.layout.MultiBox(layout="fixed")
             f.add(rv, time, time)
             f.layer_name = layer
             f.untransformed_layer = d
@@ -771,7 +818,7 @@ class SceneLists(renpy.object.Object):
 
         # Handle config.layer_transforms.
 
-        at_list = renpy.config.layer_transforms.get(layer, [ ])
+        at_list = renpy.config.layer_transforms.get(layer, [])
 
         old_transform = self.config_layer_transform.get(layer, None)
         new_transform = None
@@ -790,10 +837,10 @@ class SceneLists(renpy.object.Object):
                 if isinstance(rv, renpy.display.motion.Transform):
                     new_transform = rv
 
-            if (new_transform is not None):
+            if new_transform is not None:
                 self.transform_state(old_transform, new_transform, execution=True)
 
-            f = renpy.display.layout.MultiBox(layout='fixed')
+            f = renpy.display.layout.MultiBox(layout="fixed")
             f.add(rv, 0, 0)
             f.layer_name = layer
             f.untransformed_layer = d
@@ -815,14 +862,15 @@ class SceneLists(renpy.object.Object):
 
         layer_list = self.layers[layer]
 
-
         now = renpy.display.core.get_time()
 
-        new_layer_list = [ ]
+        new_layer_list = []
 
         for sle in layer_list:
             if (sle.tag == hide_tag) or (sle.tag == replaced_tag):
-                d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "cancel")
+                d = sle.displayable._hide(
+                    now - sle.show_time, now - sle.animation_time, "cancel"
+                )
 
                 if d is None:
                     continue
@@ -841,19 +889,23 @@ class SceneLists(renpy.object.Object):
         now = renpy.display.core.get_time()
 
         for v in self.layers.values():
-            newl = [ ]
+            newl = []
 
             for sle in v:
 
                 if sle.tag:
 
                     if sle.tag.startswith("hide$"):
-                        d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "hide")
+                        d = sle.displayable._hide(
+                            now - sle.show_time, now - sle.animation_time, "hide"
+                        )
                         if not d:
                             continue
 
                     elif sle.tag.startswith("replaced$"):
-                        d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "replaced")
+                        d = sle.displayable._hide(
+                            now - sle.show_time, now - sle.animation_time, "replaced"
+                        )
                         if not d:
                             continue
 
@@ -867,7 +919,7 @@ class SceneLists(renpy.object.Object):
         """
 
         for v in self.layers.values():
-            newl = [ ]
+            newl = []
 
             for sle in v:
 
@@ -938,12 +990,16 @@ class SceneLists(renpy.object.Object):
         else:
             at = 0
 
-        surf = renpy.display.render.render_for_size(sle.displayable, width, height, st, at)
+        surf = renpy.display.render.render_for_size(
+            sle.displayable, width, height, st, at
+        )
 
         sw = surf.width
         sh = surf.height
 
-        x, y = renpy.display.displayable.place(width, height, sw, sh, sle.displayable.get_placement())
+        x, y = renpy.display.displayable.place(
+            width, height, sw, sh, sle.displayable.get_placement()
+        )
 
         return (x, y, sw, sh)
 
@@ -952,9 +1008,9 @@ class SceneLists(renpy.object.Object):
         Returns a list of (tag, zorder) pairs.
         """
 
-        rv = [ ]
+        rv = []
 
-        for sle in self.layers.get(layer, [ ]):
+        for sle in self.layers.get(layer, []):
 
             if sle.tag is None:
                 continue
@@ -970,13 +1026,13 @@ class SceneLists(renpy.object.Object):
         Changes the zorder for tag on layer.
         """
 
-        sl = self.layers.get(layer, [ ])
+        sl = self.layers.get(layer, [])
         for sle in sl:
 
             if sle.tag == tag:
                 sle.zorder = zorder
 
-        sl.sort(key=lambda sle : sle.zorder)
+        sl.sort(key=lambda sle: sle.zorder)
 
 
 class _HasTransforms:
@@ -984,9 +1040,10 @@ class _HasTransforms:
     This is returned from layer_has_transforms.
     """
 
-    at_list : bool
+    at_list: bool
     camera: bool
     config_layer_transforms: bool
+
 
 def layer_has_transforms(layer):
     """
@@ -1009,7 +1066,7 @@ def layer_has_transforms(layer):
 
     rv.at_list = bool(scene_lists().layer_at_list[layer][1])
     rv.camera = bool(scene_lists().camera_list[layer][1])
-    rv.config_layer_transforms = bool(renpy.config.layer_transforms.get(layer, [ ]))
+    rv.config_layer_transforms = bool(renpy.config.layer_transforms.get(layer, []))
 
     return rv
 

@@ -1299,7 +1299,7 @@ def set_screen_variable(name, value, screen=None, layer=None):
     s.scope[name] = value
 
 
-def has_screen(name):
+def has_screen(name: str | tuple[str, ...]):
     """
     Returns true if a screen with the given name exists.
     """
@@ -1316,7 +1316,7 @@ def has_screen(name):
         return False
 
 
-def get_screen_roll_forward(screen_name):
+def get_screen_roll_forward(screen_name: str | tuple[str, ...]):
     """
     Given a screen name, determines if roll forward is enable for the
     screen.

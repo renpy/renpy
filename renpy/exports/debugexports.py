@@ -26,7 +26,7 @@ from __future__ import (
     print_function,
     unicode_literals,
 )
-from typing import Any, Callable, Never  # type: ignore
+from typing import Any, Callable, Never, overload, override  # type: ignore
 from renpy.compat import (
     PY2,
     basestring,
@@ -142,8 +142,18 @@ def _error(msg: str | Exception) -> Never:
 _error_handlers: list[Callable[[str | Exception], Never]] = [_error]
 
 
-def push_error_handler(eh: Callable[[str | Exception], Never]) -> None:
-    _error_handlers.append(eh)
+@overload
+def push_error_handler(eh: Callable[[str], Never]) -> None: ...
+
+
+@overload
+def push_error_handler(eh: Callable[[Exception], Never]) -> None: ...
+
+
+def push_error_handler(
+    eh: Callable[[str], Never] | Callable[[Exception], Never],
+) -> None:
+    _error_handlers.append(eh)  # pyright: ignore[reportArgumentType]
 
 
 def pop_error_handler():

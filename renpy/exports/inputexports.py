@@ -45,7 +45,14 @@ from renpy.compat import (
 import renpy
 
 
-def web_input(prompt, default="", allow=None, exclude="{}", length=None, mask=False):
+def web_input(
+    prompt: str,
+    default: str = "",
+    allow: str | None = None,
+    exclude: str | None = "{}",
+    length: int | None = None,
+    mask: bool = False,
+):
     """
     :undocumented:
 
@@ -96,7 +103,7 @@ def input(
     allow: str | None = None,
     exclude: str | None = "{}",
     length: int | None = None,
-    with_none: None = None,
+    with_none: bool | None = None,
     pixel_width: int | None = None,
     screen: str = "input",
     mask: str | None = None,

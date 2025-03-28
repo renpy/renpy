@@ -24,6 +24,7 @@ reportIncompatibleVariableOverride = false
 reportIncompatibleMethodOverride = false
 reportMissingImports = false
 reportAttributeAccessIssue = false
+reportOperatorIssue = false
 
 
 [tool.cyright]

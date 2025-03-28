@@ -478,7 +478,7 @@ class Context(renpy.object.Object):
                 else:
                     roots[name] = v
 
-    def goto_label(self, node_name):
+    def goto_label(self, node_name: str):
         """
         Sets the name of the node that will be run when this context
         next executes.
@@ -1039,7 +1039,7 @@ class Context(renpy.object.Object):
             self.dynamic_stack.append({})
 
 
-def run_context(top):
+def run_context(top: bool):
     """
     Runs the current context until it can't be run anymore, while handling
     the RestartContext and RestartTopContext exceptions.

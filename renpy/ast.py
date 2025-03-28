@@ -623,7 +623,9 @@ def say_menu_with(expression: str | None, callback: Callable[[Any], Any]):
         callback(what)
 
 
-def eval_who(who: str | None, fast: bool | None = None) -> Any | None:
+def eval_who(
+    who: renpy.character.ADVCharacter | str | None, fast: bool | None = None
+) -> Any | None:
     """
     Evaluates the `who` parameter to a say statement.
     """
@@ -643,7 +645,7 @@ def eval_who(who: str | None, fast: bool | None = None) -> Any | None:
         return rv
 
     try:
-        return renpy.python.py_eval(who)
+        return renpy.python.py_eval(cast(str, who))
     except Exception:
         raise Exception("Sayer '%s' is not defined." % who)
 
@@ -651,7 +653,8 @@ def eval_who(who: str | None, fast: bool | None = None) -> Any | None:
 type ImspecType = """
 tuple[tuple[str, ...], str | None, str | None, list[str], str | None, str | None, list[str]] |
 tuple[tuple[str, ...], str | None, str | None, list[str], str | None, str | None] |
-tuple[tuple[str, ...], list[str], str | None]
+tuple[tuple[str, ...], list[str], str | None] |
+None
 """
 
 
@@ -980,7 +983,7 @@ class Say(Node):
 
         if getattr(self, "identifier", None) and self.explicit_identifier:
             rv.append("id")
-            rv.append(getattr(self, "identifier", None))
+            rv.append(cast(str, getattr(self, "identifier", None)))
 
         if self.arguments:
             rv.append(self.arguments.get_code())
@@ -1276,7 +1279,9 @@ class Python(Node):
 
         try:
             renpy.python.py_exec_bytecode(
-                self.code.bytecode, self.hide, store=self.store
+                cast(bytes, self.code.bytecode),
+                self.hide,
+                store=self.store,
             )
         finally:
             if not renpy.game.context().init_phase:
@@ -1386,7 +1391,7 @@ class Image(Node):
         statement_name("image")
 
         if self.code is not None:
-            img = renpy.python.py_eval_bytecode(self.code.bytecode)
+            img = renpy.python.py_eval_bytecode(cast(bytes, self.code.bytecode))
         else:
             img = renpy.display.motion.ATLTransform(self.atl)
 
@@ -2464,7 +2469,7 @@ class UserStatement(Node):
     def diff_info(self):
         return (UserStatement, self.line)
 
-    def call(self, method, *args, **kwargs):
+    def call(self, method: str, *args: Any, **kwargs: Any):
 
         parsed = self.parsed
 
@@ -2560,7 +2565,7 @@ class UserStatement(Node):
         return rv
 
     @override
-    def get_code(self, dialogue_filter: Callable[[str], str] = None):
+    def get_code(self, dialogue_filter: Callable[[str], str] | None = None):
         return self.line
 
     @override
@@ -2729,7 +2734,7 @@ class Define(Node):
             return
 
         if self.store == "store.config" and self.varname in EARLY_CONFIG:
-            value = renpy.python.py_eval_bytecode(self.code.bytecode)
+            value = renpy.python.py_eval_bytecode(cast(bytes, self.code.bytecode))
             setattr(renpy.config, self.varname, value)
 
     @override
@@ -2768,7 +2773,7 @@ class Define(Node):
         key = None
         new = None
 
-        value = renpy.python.py_eval_bytecode(self.code.bytecode)
+        value = renpy.python.py_eval_bytecode(cast(bytes, self.code.bytecode))
         ns, _special = get_namespace(self.store)
 
         if (self.index is None) and (self.operator == "="):
@@ -2779,7 +2784,7 @@ class Define(Node):
         old = base
 
         if self.index:
-            key = renpy.python.py_eval_bytecode(self.index.bytecode)
+            key = renpy.python.py_eval_bytecode(cast(bytes, self.index.bytecode))
 
             if self.operator != "=":
                 old = base[key]
@@ -2832,7 +2837,7 @@ class Default(Node):
         ns, special = get_namespace(self.store)
 
         if special:
-            value = renpy.python.py_eval_bytecode(self.code.bytecode)
+            value = renpy.python.py_eval_bytecode(cast(bytes, self.code.bytecode))
             ns.set_default(self.varname, value)
 
             if getattr(ns, "repeat_at_default_time", False):
@@ -2857,7 +2862,7 @@ class Default(Node):
         ns, special = get_namespace(self.store)
 
         if special:
-            value = renpy.python.py_eval_bytecode(self.code.bytecode)
+            value = renpy.python.py_eval_bytecode(cast(bytes, self.code.bytecode))
             ns.set_default(self.varname, value)
             return
 
@@ -2890,7 +2895,9 @@ class Default(Node):
                 )
 
         if start or (self.varname not in d.ever_been_changed):
-            d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
+            d[self.varname] = renpy.python.py_eval_bytecode(
+                cast(bytes, self.code.bytecode)
+            )
 
         d.ever_been_changed.add(self.varname)
 

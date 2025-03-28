@@ -31,6 +31,7 @@ from __future__ import (
     unicode_literals,
 )
 from collections.abc import Iterable
+import typing
 from renpy.compat import (
     PY2,
     basestring,
@@ -143,10 +144,10 @@ skipping: Literal["slow", "fast"] | None = None
 skip_delay = 5
 
 # basic: Archive files that are searched for images.
-archives = []
+archives: list[str] = []
 
 # Searchpath.
-searchpath = []
+searchpath: list[str] = []
 
 # If True, we will only try loading from archives.
 # Only useful for debugging Ren'Py, don't document.
@@ -407,7 +408,7 @@ window_overlay_functions = []
 rtl = False
 
 # A callback for file opening.
-file_open_callback = None
+file_open_callback: Callable[[str], typing.TextIO] | None = None
 
 # The size of screenshot thumbnails. (Redefined in common/)
 thumbnail_width = 256
@@ -472,7 +473,7 @@ choice_screen_chosen = True
 narrator_menu = True
 
 # A list of screen variants to use.
-variants = [None]  # type: List
+variants: list[str | None] = [None]
 
 # A function from (auto_parameter, variant) -> displayable.
 imagemap_auto_function = None
@@ -728,7 +729,7 @@ overlay_screens = []
 always_shown_screens = []
 
 # A map from tag to the default layer that tag should be displayed on.
-tag_layer = {}
+tag_layer: dict[str, str] = {}
 
 # The default layer for tags not in in tag_layer.
 default_tag_layer = "master"
@@ -1092,7 +1093,7 @@ exception_handler = None
 return_not_found_label = None
 
 # A list of (regex, autoreload function) tuples.
-autoreload_functions = []
+autoreload_functions: list[tuple[str, Callable[[str], None]]] = []
 
 # A list of voice mixers (that should not be dropped when self voicing is
 # enabled).

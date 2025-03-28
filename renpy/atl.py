@@ -2243,7 +2243,7 @@ class Function(Statement):
 
 
 # This parses an ATL block.
-def parse_atl(l):
+def parse_atl(l: renpy.lexer.Lexer):
 
     l.advance()
     block_loc = l.get_location()
