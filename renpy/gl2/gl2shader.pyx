@@ -170,6 +170,12 @@ class Variable:
         if l.rstrip():
             raise ShaderError("Spurious tokens after the name in '{}'.".format(line))
 
+    def __hash__(self):
+        return hash((self.storage, self.type, self.name, self.array))
+
+    def __eq__(self, other):
+        return (self.storage, self.type, self.name, self.array) == (other.storage, other.type, other.name, other.array)
+
 
 cdef class Program:
     """

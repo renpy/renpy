@@ -135,34 +135,32 @@ class ShaderPart(object):
         variables = self.substitute_name(variables)
 
         for l in variables.split("\n"):
-            l = l.partition("//")[0].strip(' ;')
 
-            a = l.split()
-            if not a:
+            l = l.strip()
+            if not l:
                 continue
 
-            a = tuple(a)
+            v = renpy.gl2.gl2shader.Variable(self.name, l)
 
-            if len(a) != 3:
+            if v.storage not in { "uniform", "attribute", "varying" }:
                 raise Exception("{}: Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(self.name, l))
 
-            kind = a[0]
-            type_ = a[1]
-            name = a[2]
+            if v.array:
+                self.variable_types[v.name] = v.type + "[]"
+            else:
+                self.variable_types[v.name] = v.type
 
-            self.variable_types[name] = type_
+            if v.name in vertex_used:
+                self.vertex_variables.add(v)
 
-            if name in vertex_used:
-                self.vertex_variables.add(a)
+            if v.name in fragment_used:
+                self.fragment_variables.add(v)
 
-            if name in fragment_used:
-                self.fragment_variables.add(a)
-
-            if kind == "uniform" and not private_uniforms:
+            if v.storage == "uniform" and not private_uniforms:
                 renpy.display.transform.add_uniform(name)
 
-            if kind == "uniform":
-                self.uniforms.append(name)
+            if v.storage == "uniform":
+                self.uniforms.append(v.name)
 
         self.raw_variables = variables
 
@@ -232,8 +230,8 @@ def source(variables, parts, functions, fragment, gles):
 #version 120
 """)
 
-    for storage, type_, name in sorted(variables):
-        rv.append("{} {} {};\n".format(storage, type_, name))
+    for v in sorted(variables, key=lambda x: x.name):
+        rv.append(v.line + "\n")
 
     rv.extend(functions)
 
