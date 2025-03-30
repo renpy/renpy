@@ -23,6 +23,8 @@
 from renpy.display.matrix cimport Matrix
 from renpy.gl2.gl2texture cimport GLTexture
 
+from cpython.mem cimport PyMem_Malloc, PyMem_Free
+
 import random
 
 import renpy
@@ -133,6 +135,159 @@ NON_ARRAY_SETTERS = {
     "mat3" : Mat3Setter,
     "mat4" : Mat4Setter,
 }
+
+cdef GLfloat *to_float_array(l, int length) except NULL:
+    """
+    Converts a list of floats or tuples containing floats to an array of GLFloats.
+
+    `length`
+        The number of floats required.
+    """
+
+    cdef int index = 0
+
+    cdef GLfloat *rv = <GLfloat *> PyMem_Malloc(length * sizeof(GLfloat))
+
+    for i in l:
+        if type(i) is tuple:
+            for j in i:
+                if index < length:
+                    rv[index] = <GLfloat> <float> j
+                index += 1
+        else:
+            if index < length:
+                rv[index] = <GLfloat> <float> i
+            index += 1
+
+    if index != length:
+        PyMem_Free(rv)
+        raise Exception(f"Expected {length} floats, got {index}.")
+
+    return rv
+
+
+cdef GLint *to_int_array(l, int length) except NULL:
+    """
+    Converts a list of ints or tuples containing ints to an array of GLints.
+
+    `length`
+        The number of ints required.
+    """
+
+    cdef int index = 0
+
+    cdef GLint *rv = <GLint *> PyMem_Malloc(length * sizeof(GLint))
+
+    for i in l:
+        if type(i) is tuple:
+            for j in i:
+                if index < length:
+                    rv[index] = <GLint> <int> j
+                index += 1
+        else:
+            if index < length:
+                rv[index] = <GLint> <int> i
+            index += 1
+
+    if index != length:
+        PyMem_Free(rv)
+        raise Exception(f"Expected {length} ints, got {index}.")
+
+    return rv
+
+
+cdef class ArraySetter(Setter):
+
+    cdef int length
+    "The number of elements in the array."
+
+    def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int length):
+
+        Setter.__init__(self, uniform_name, uniform_type, location, getter)
+        self.length = length
+
+
+cdef class FloatArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLfloat *values = to_float_array(value, self.length)
+        glUniform1fv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class Vec2ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLfloat *values = to_float_array(value, self.length * 2)
+        glUniform2fv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class Vec3ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLfloat *values = to_float_array(value, self.length * 3)
+        glUniform3fv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class Vec4ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLfloat *values = to_float_array(value, self.length * 4)
+        glUniform4fv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class IntArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLint *values = to_int_array(value, self.length)
+        glUniform1iv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class IVec2ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLint *values = to_int_array(value, self.length * 2)
+        glUniform2iv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class IVec3ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLint *values = to_int_array(value, self.length * 3)
+        glUniform3iv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class IVec4ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLint *values = to_int_array(value, self.length * 4)
+        glUniform4iv(self.location, self.length, values)
+        PyMem_Free(values)
+
+ARRAY_SETTERS = {
+    "float" : FloatArraySetter,
+    "vec2" : Vec2ArraySetter,
+    "vec3" : Vec3ArraySetter,
+    "vec4" : Vec4ArraySetter,
+
+    "int" : IntArraySetter,
+    "ivec2" : IVec2ArraySetter,
+    "ivec3" : IVec3ArraySetter,
+    "ivec4" : IVec4ArraySetter,
+
+    "bool": IntArraySetter,
+    "bvec2": IVec2ArraySetter,
+    "bvec3": IVec3ArraySetter,
+    "bvec4": IVec4ArraySetter,
+}
+
+
 
 
 TEXTURE_SCALING = {
@@ -463,8 +618,10 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
     if uniform_type == "sampler2D":
         setter = Sampler2DSetter(uniform_name, uniform_type, location, getter, sampler)
         sampler += 1
-    elif setter_class := NON_ARRAY_SETTERS.get(uniform_type):
+    elif (array is None) and (setter_class := NON_ARRAY_SETTERS.get(uniform_type, None)):
         setter = setter_class(uniform_name, uniform_type, location, getter)
+    elif setter_class := ARRAY_SETTERS.get(uniform_type, None):
+        setter = setter_class(uniform_name, uniform_type, location, getter, array)
 
     else:
         raise TypeError(

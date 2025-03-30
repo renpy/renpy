@@ -113,9 +113,8 @@ class Variable:
 
     def __init__(self, shader_name, line):
 
-        self.line = line
-
         l = line.strip().rstrip("; ")
+        self.line = l
 
         def match_word():
             nonlocal l
