@@ -8,7 +8,7 @@ translate schinese tutorial_nvlmode_76b2fe88:
 # game/tutorial_nvlmode.rpy:20
 translate schinese tutorial_nvlmode_ac125210:
 
-    # nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a window at the bottom of the screen. Like this."
+    # nvle "NVL-style games are games that cover the full screen with text, rather than placing it in a window at the bottom of the screen. Like this."
     nvle "NVL风格的游戏用文本覆盖整个界面，而不是将其放在界面底部的窗口中。像这样。"
 
 # game/tutorial_nvlmode.rpy:24

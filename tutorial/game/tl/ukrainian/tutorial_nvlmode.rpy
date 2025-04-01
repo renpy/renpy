@@ -8,7 +8,7 @@ translate ukrainian tutorial_nvlmode_76b2fe88:
 # game/tutorial_nvlmode.rpy:22
 translate ukrainian tutorial_nvlmode_ac125210:
 
-    # nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a window at the bottom of the screen. Like this."
+    # nvle "NVL-style games are games that cover the full screen with text, rather than placing it in a window at the bottom of the screen. Like this."
     nvle "Ігри у стилі NVL — це ігри, які покривають текст на весь екран, а не розміщують його у вікні внизу екрана. Подобається це."
 
 # game/tutorial_nvlmode.rpy:26

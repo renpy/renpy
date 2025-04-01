@@ -104,7 +104,7 @@ translate spanish tutorial_dialogue_f0d66410:
 # game/tutorial_quickstart.rpy:89
 translate spanish tutorial_dialogue_3e6b0068:
 
-    # "Wow, It's really really dark in here."
+    # "Wow, it's really really dark in here."
     "Guau, realmente está muy oscuro aquí."
 
 # game/tutorial_quickstart.rpy:91
@@ -152,7 +152,7 @@ translate spanish tutorial_dialogue_628c9e4c:
 # game/tutorial_quickstart.rpy:116
 translate spanish tutorial_dialogue_3e6b0068_1:
 
-    # "Wow, It's really really dark in here."
+    # "Wow, it's really really dark in here."
     "Guau, realmente está muy oscuro aquí."
 
 # game/tutorial_quickstart.rpy:125
@@ -200,7 +200,7 @@ translate spanish tutorial_dialogue_90719f73:
 # game/tutorial_quickstart.rpy:151
 translate spanish tutorial_dialogue_910f286a:
 
-    # e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
+    # e "The first is that it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
     e "La primera es que es un poco verbosa. Mientras que escribir \"Lucy\" no es tan malo, imagínate si tuvieras que escribir \"Eileen Richardson\" miles de veces."
 
 # game/tutorial_quickstart.rpy:153
