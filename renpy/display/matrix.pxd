@@ -81,6 +81,7 @@ cdef class Matrix:
 
     cdef Matrix inplace_multiply(Matrix self, Matrix other)
     cdef Matrix inplace_offset(Matrix self, float xo, float yo)
+    cdef Matrix inplace_reverse_offset(Matrix self, float xo, float yo)
     cdef Matrix inplace_inverse(Matrix self)
     cdef Matrix inplace_transpose(Matrix self)
 

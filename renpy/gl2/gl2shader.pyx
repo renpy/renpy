@@ -34,6 +34,7 @@ from renpy.gl2.gl2uniform import generate_uniform_setter
 
 import renpy
 import random
+import re
 
 cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
 
@@ -60,11 +61,22 @@ UNIFORM_TYPES = {
     "vec2",
     "vec3",
     "vec4",
+    "int",
+    "ivec2",
+    "ivec3",
+    "ivec4",
+    "bool",
+    "bvec2",
+    "bvec3",
+    "bvec4",
     "mat2",
     "mat3",
     "mat4",
     "sampler2D",
 }
+
+VARYING_TYPES = set(ATTRIBUTE_TYPES)| set(UNIFORM_TYPES)
+
 
 cdef class Attribute:
     cdef object name
@@ -76,6 +88,92 @@ cdef class Attribute:
         self.location = location
         self.size = size
 
+
+
+class Variable:
+    """
+    Represents a variable parsed from a shader, as part of the parsing process.
+    Returns an empty object if the line is not a variable.
+    """
+
+    storage: str|None = None
+    "The storage class, one of uniform, attribute, or varying, or None if not a variable."
+
+    type: str|None = None
+    "The type of the variable, one of float, int, bool, vec<2-4>, ivec<2-4>, bvec<2-4>, mat<2-4>, or sampler2D."
+
+    name: str|None = None
+    "The name of the variable."
+
+    array: int|None = None
+    "The size of the array, or None if not an array."
+
+    line: str
+    "The line of source code that the variable was parsed from, including qualifiers and the trailing semicolon."
+
+    def __init__(self, shader_name, line):
+
+        l = line.strip().rstrip("; ")
+        self.line = l
+
+        def match_word():
+            nonlocal l
+            if m := re.match(r'\s*(\w+)', l):
+                l = l[m.end():]
+                return m.group(1)
+            else:
+                return None
+
+        def match_array():
+            nonlocal l
+            if m := re.match(r'\s*\[\s*(\d+)\s*\]', l):
+                l = l[m.end():]
+                return int(m.group(1))
+            else:
+                return None
+
+        token = match_word()
+
+        if token == "invariant":
+            token = match_word()
+
+        if token == "uniform":
+            self.storage = "uniform"
+            types = UNIFORM_TYPES
+        elif token == "attribute":
+            self.storage = "attribute"
+            types = ATTRIBUTE_TYPES
+        elif token == "varying":
+            self.storage = "varying"
+            types = VARYING_TYPES
+        else:
+            self.storage = None
+            return
+
+        token = match_word()
+
+        if token in ( "highp", "mediump", "lowp"):
+            token = match_word()
+
+        if token not in types:
+            raise ShaderError(f"In {shader_name}, Unsupported type {token} in '{line}'. Only float, int, bool, vec<2-4>, ivec<2-4>, bvec<2-4>, mat<2-4>, and sampler2D are supported.")
+
+        self.type = token
+
+        self.name = match_word()
+        if self.name is None:
+            raise ShaderError(f"In {shader_name}, couldn't find name in '{line}'.")
+
+        self.array = match_array()
+
+        if l.rstrip():
+            raise ShaderError("Spurious tokens after the name in '{}'.".format(line))
+
+    def __hash__(self):
+        return hash((self.storage, self.type, self.name, self.array))
+
+    def __eq__(self, other):
+        return (self.storage, self.type, self.name, self.array) == (other.storage, other.type, other.name, other.array)
 
 
 cdef class Program:
@@ -99,63 +197,34 @@ cdef class Program:
 
         shader_name = "+".join(self.name)
 
-        for l in source.split("\n"):
+        for line in source.split("\n"):
 
-            l = l.strip()
+            l = line.strip()
             l = l.rstrip("; ")
-            tokens = l.split()
 
-            def advance():
-                if not tokens:
-                    return None
-                else:
-                    return tokens.pop(0)
-
-            token = advance()
-
-            if token == "invariant":
-                token = advance()
-
-            if token == "uniform":
-                storage = "uniform"
-                types = UNIFORM_TYPES
-            elif token == "attribute":
-                storage = "attribute"
-                types = ATTRIBUTE_TYPES
-            else:
+            if not l:
                 continue
 
-            token = advance()
+            v = Variable(shader_name, l)
 
-            if token in ( "highp", "mediump", "lowp"):
-                token = advance()
-                continue
-
-            if token not in types:
-                raise ShaderError("Unsupported type {} in '{}'. Only float, vec<2-4>, mat<2-4>, and sampler2D are supported.".format(token, l))
-
-            type = token
-
-            name = advance()
-            if name is None:
-                raise ShaderError("Couldn't finds name in {}".format(l))
-
-            if tokens:
-                raise ShaderError("Spurious tokens after the name in '{}'. Arrays are not supported in Ren'Py.".format(l))
-
-            if storage == "uniform":
-                location = glGetUniformLocation(self.program, name.encode("utf-8"))
+            if v.storage == "uniform":
+                location = glGetUniformLocation(self.program, v.name.encode("utf-8"))
 
                 if location >= 0:
-
-                    setter, samplers = generate_uniform_setter(shader_name, location, name, type, samplers)
+                    setter, samplers = generate_uniform_setter(shader_name, location, v.name, v.type, v.array, samplers)
                     self.uniform_setters.append(setter)
 
-            else:
-                location = glGetAttribLocation(self.program, name.encode("utf-8"))
+            elif v.storage == "attribute":
+
+                location = glGetAttribLocation(self.program, v.name.encode("utf-8"))
+
+                if v.array is None:
+                    array = 1
+                else:
+                    array = v.array
 
                 if location >= 0:
-                    self.attributes.append(Attribute(name, location, ATTRIBUTE_TYPES[type]))
+                    self.attributes.append(Attribute(v.name, location, ATTRIBUTE_TYPES[v.type] * array))
 
         return samplers
 
@@ -282,7 +351,7 @@ cdef class Program:
                 value = setter.getter.get(context, model)
             except:
                 shader_name = "+".join(self.name)
-                raise ShaderError(f"Could not get value for uniform {setter.uniform_name} in shader {shader_name}.")
+                raise ShaderError(f"Could not get value for uniform {setter.uniform_name} in shader {shader_name}, using {setter.getter!r}")
 
             try:
                 setter.set(context, value)

@@ -23,6 +23,8 @@
 from renpy.display.matrix cimport Matrix
 from renpy.gl2.gl2texture cimport GLTexture
 
+from cpython.mem cimport PyMem_Malloc, PyMem_Free
+
 import random
 
 import renpy
@@ -66,6 +68,26 @@ cdef class Vec4Setter(Setter):
         glUniform4f(self.location, value[0], value[1], value[2], value[3])
 
 
+cdef class IntSetter(Setter):
+    cdef object set(self, GL2DrawingContext context, value):
+        glUniform1i(self.location, value)
+
+
+cdef class IVec2Setter(Setter):
+    cdef object set(self, GL2DrawingContext context, value):
+
+        glUniform2i(self.location, value[0], value[1])
+
+cdef class IVec3Setter(Setter):
+    cdef object set(self, GL2DrawingContext context, value):
+        glUniform3i(self.location, value[0], value[1], value[2])
+
+
+cdef class IVec4Setter(Setter):
+    cdef object set(self, GL2DrawingContext context, value):
+        glUniform4i(self.location, value[0], value[1], value[2], value[3])
+
+
 cdef class Mat2Setter(Setter):
     cdef object set(self, GL2DrawingContext context, value):
         cdef Matrix m = value
@@ -92,6 +114,179 @@ cdef class Mat3Setter(Setter):
 cdef class Mat4Setter(Setter):
     cdef object set(self, GL2DrawingContext context, value):
         glUniformMatrix4fv(self.location, 1, GL_FALSE, (<Matrix> value).m)
+
+NON_ARRAY_SETTERS = {
+    "float" : FloatSetter,
+    "vec2" : Vec2Setter,
+    "vec3" : Vec3Setter,
+    "vec4" : Vec4Setter,
+
+    "int" : IntSetter,
+    "ivec2" : IVec2Setter,
+    "ivec3" : IVec3Setter,
+    "ivec4" : IVec4Setter,
+
+    "bool": IntSetter,
+    "bvec2": IVec2Setter,
+    "bvec3": IVec3Setter,
+    "bvec4": IVec4Setter,
+
+    "mat2" : Mat2Setter,
+    "mat3" : Mat3Setter,
+    "mat4" : Mat4Setter,
+}
+
+cdef GLfloat *to_float_array(l, int length) except NULL:
+    """
+    Converts a list of floats or tuples containing floats to an array of GLFloats.
+
+    `length`
+        The number of floats required.
+    """
+
+    cdef int index = 0
+
+    cdef GLfloat *rv = <GLfloat *> PyMem_Malloc(length * sizeof(GLfloat))
+
+    for i in l:
+        if type(i) is tuple:
+            for j in i:
+                if index < length:
+                    rv[index] = <GLfloat> <float> j
+                index += 1
+        else:
+            if index < length:
+                rv[index] = <GLfloat> <float> i
+            index += 1
+
+    if index != length:
+        PyMem_Free(rv)
+        raise Exception(f"Expected {length} floats, got {index}.")
+
+    return rv
+
+
+cdef GLint *to_int_array(l, int length) except NULL:
+    """
+    Converts a list of ints or tuples containing ints to an array of GLints.
+
+    `length`
+        The number of ints required.
+    """
+
+    cdef int index = 0
+
+    cdef GLint *rv = <GLint *> PyMem_Malloc(length * sizeof(GLint))
+
+    for i in l:
+        if type(i) is tuple:
+            for j in i:
+                if index < length:
+                    rv[index] = <GLint> <int> j
+                index += 1
+        else:
+            if index < length:
+                rv[index] = <GLint> <int> i
+            index += 1
+
+    if index != length:
+        PyMem_Free(rv)
+        raise Exception(f"Expected {length} ints, got {index}.")
+
+    return rv
+
+
+cdef class ArraySetter(Setter):
+
+    cdef int length
+    "The number of elements in the array."
+
+    def __init__(self, uniform_name, uniform_type, GLint location, Getter getter, int length):
+
+        Setter.__init__(self, uniform_name, uniform_type, location, getter)
+        self.length = length
+
+
+cdef class FloatArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLfloat *values = to_float_array(value, self.length)
+        glUniform1fv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class Vec2ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLfloat *values = to_float_array(value, self.length * 2)
+        glUniform2fv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class Vec3ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLfloat *values = to_float_array(value, self.length * 3)
+        glUniform3fv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class Vec4ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLfloat *values = to_float_array(value, self.length * 4)
+        glUniform4fv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class IntArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLint *values = to_int_array(value, self.length)
+        glUniform1iv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class IVec2ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLint *values = to_int_array(value, self.length * 2)
+        glUniform2iv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class IVec3ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLint *values = to_int_array(value, self.length * 3)
+        glUniform3iv(self.location, self.length, values)
+        PyMem_Free(values)
+
+
+cdef class IVec4ArraySetter(ArraySetter):
+
+    cdef object set(self, GL2DrawingContext context, value):
+        cdef GLint *values = to_int_array(value, self.length * 4)
+        glUniform4iv(self.location, self.length, values)
+        PyMem_Free(values)
+
+ARRAY_SETTERS = {
+    "float" : FloatArraySetter,
+    "vec2" : Vec2ArraySetter,
+    "vec3" : Vec3ArraySetter,
+    "vec4" : Vec4ArraySetter,
+
+    "int" : IntArraySetter,
+    "ivec2" : IVec2ArraySetter,
+    "ivec3" : IVec3ArraySetter,
+    "ivec4" : IVec4ArraySetter,
+
+    "bool": IntArraySetter,
+    "bvec2": IVec2ArraySetter,
+    "bvec3": IVec3ArraySetter,
+    "bvec4": IVec4ArraySetter,
+}
+
 
 
 
@@ -179,13 +374,60 @@ cdef class Getter:
     def __init__(self, uniform_name):
         self.uniform_name = uniform_name
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
+
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         raise NotImplementedError()
 
 
 cdef class ContextGetter(Getter):
+
+    def __repr__(self):
+        return f"ContextGetter({self.uniform_name})"
+
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         return context.uniforms[self.uniform_name]
+
+
+cdef class ProjectionGetter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return context.projection_matrix
+
+
+cdef class ViewGetter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return context.view_matrix
+
+
+cdef class ModelGetter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return context.model_matrix
+
+
+cdef class ProjectionViewGetter(Getter):
+    cdef Matrix matrix
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return context.projectionview_matrix
+
+
+cdef class TransformMatrixGetter(Getter):
+    cdef Matrix matrix
+
+    def __init__(self, uniform_name):
+        Getter.__init__(self, uniform_name)
+        self.matrix = Matrix(None)
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        self.matrix.ctake(context.projectionview_matrix)
+        self.matrix.inplace_multiply(context.model_matrix)
+        return self.matrix
+
+
+cdef class ModelSizeGetter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return (model.width, model.height)
 
 
 cdef class LODBiasGetter(Getter):
@@ -231,6 +473,9 @@ cdef class InverseGetter(Getter):
         self.getter = getter
         self.matrix = Matrix(None)
 
+    def __repr__(self):
+        return f"InverseGetter({self.getter!r})"
+
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         value = self.getter.get(context, model)
 
@@ -251,6 +496,9 @@ cdef class TransposeGetter(Getter):
         Getter.__init__(self, uniform_name)
         self.getter = getter
         self.matrix = Matrix(None)
+
+    def __repr__(self):
+        return f"TransposeGetter({self.getter!r})"
 
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         value = self.getter.get(context, model)
@@ -273,6 +521,9 @@ cdef class InverseTransposeGetter(Getter):
         self.getter = getter
         self.matrix = Matrix(None)
 
+    def __repr__(self):
+        return f"InverseTransposeGetter({self.getter!r})"
+
     cdef object get(self, GL2DrawingContext context, GL2Model model):
         value = self.getter.get(context, model)
 
@@ -285,7 +536,24 @@ cdef class InverseTransposeGetter(Getter):
             raise TypeError("InverseTransposeGetter only works with Matrix values.")
 
 
-def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, uniform_type: str, sampler: int):
+# The classes that are used to get the values of uniforms.
+UNIFORM_GETTER_CLASSES = {
+    "u_projection": (ProjectionGetter, "mat4"),
+    "u_view": (ViewGetter, "mat4"),
+    "u_model": (ModelGetter, "mat4"),
+    "u_projectionview": (ProjectionViewGetter, "mat4"),
+    "u_transform": (TransformMatrixGetter, "mat4"),
+    "u_model_size": (ModelSizeGetter, "vec2"),
+    "u_lod_bias": (LODBiasGetter, "float"),
+    "u_time": (TimeGetter, "float"),
+    "u_random": (RandomGetter, "vec4"),
+    "u_viewport": (ViewportGetter, "vec2"),
+    "u_drawable_size": (DrawableSizeGetter, "vec2"),
+    "u_virtual_size": (VirtualSizeGetter, "vec2"),
+}
+
+
+def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, uniform_type: str, array: int|None, sampler: int):
     """
     Given the information about a uniform, generates an object that will get the
     information for the uniform, and set it.
@@ -317,30 +585,9 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
         base_name = uniform_name
         operation = None
 
-    if base_name == "u_lod_bias":
-        getter = LODBiasGetter(uniform_name)
-        require_type = "float"
-
-    elif base_name == "u_time":
-        getter = TimeGetter(uniform_name)
-        require_type = "float"
-
-    elif base_name == "u_random":
-        getter = RandomGetter(uniform_name)
-        require_type = "vec4"
-
-    elif base_name == "u_viewport":
-        getter = ViewportGetter(uniform_name)
-        require_type = "vec2"
-
-    elif base_name == "u_drawable_size":
-        getter = DrawableSizeGetter(uniform_name)
-        require_type = "vec2"
-
-    elif base_name == "u_virtual_size":
-        getter = VirtualSizeGetter(uniform_name)
-        require_type = "vec2"
-
+    if base_name in UNIFORM_GETTER_CLASSES:
+        getter_class, require_type = UNIFORM_GETTER_CLASSES[base_name]
+        getter = getter_class(uniform_name)
     else:
         getter = ContextGetter(uniform_name)
         require_type = None
@@ -368,23 +615,14 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
             f"{operation}."
         )
 
-    if uniform_type == "float":
-        setter = FloatSetter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "vec2":
-        setter = Vec2Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "vec3":
-        setter = Vec3Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "vec4":
-        setter = Vec4Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "mat2":
-        setter = Mat2Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "mat3":
-        setter = Mat3Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "mat4":
-        setter = Mat4Setter(uniform_name, uniform_type, location, getter)
-    elif uniform_type == "sampler2D":
+    if uniform_type == "sampler2D":
         setter = Sampler2DSetter(uniform_name, uniform_type, location, getter, sampler)
         sampler += 1
+    elif (array is None) and (setter_class := NON_ARRAY_SETTERS.get(uniform_type, None)):
+        setter = setter_class(uniform_name, uniform_type, location, getter)
+    elif setter_class := ARRAY_SETTERS.get(uniform_type, None):
+        setter = setter_class(uniform_name, uniform_type, location, getter, array)
+
     else:
         raise TypeError(
             f"Uniform {uniform_name} in shader {shader_name} has unknown type "

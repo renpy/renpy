@@ -452,6 +452,7 @@ cdef class RenderTransform:
         cdef double rxdy
         cdef double rydx
         cdef double rydy
+        cdef double rzdz
         cdef double x2
         cdef double x3
         cdef double x4
@@ -478,11 +479,12 @@ cdef class RenderTransform:
         fit = self.state.fit
 
         # The reverse matrix used by the zoom and rotate properties.
-        # (This can probably become a Matrix at some point.)
         rxdx = 1
         rxdy = 0
         rydx = 0
         rydy = 1
+
+        rzdz = 1
 
         # Size.
         if (width != 0) and (height != 0):
@@ -573,6 +575,9 @@ cdef class RenderTransform:
             if yzoom < 0:
                 yo += height
 
+        if zoom != 1:
+            rzdz = zoom
+
         # Rotation.
         rotate = state.rotate
         if (rotate is not None) and (not self.perspective):
@@ -633,10 +638,14 @@ cdef class RenderTransform:
         self.xo = xo
 
         # Default case - no transformation matrix.
-        if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
+        if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1 and rzdz == 1:
             self.reverse = IDENTITY
         else:
-            self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
+            self.reverse = Matrix((
+                rxdx, rxdy, 0,
+                rydx, rydy, 0,
+                0, 0, rzdz,
+            ))
 
     cdef camera_matrix_operations(self):
         """

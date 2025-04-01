@@ -259,6 +259,7 @@ def mesh(x):
 # function. This is massively added to by renpy.display.transform.
 PROPERTIES = {}
 
+tuple_or_list = (tuple, list)
 
 def interpolate(t, a, b, typ):
     """
@@ -275,11 +276,12 @@ def interpolate(t, a, b, typ):
             return a
 
     # Recurse into tuples.
-    elif isinstance(b, tuple):
-        if not isinstance(a, tuple):
-            a = [None] * len(b)
 
-        if not isinstance(typ, tuple):
+    elif isinstance(b, tuple_or_list):
+        if not isinstance(a, tuple_or_list):
+            a = [ None ] * len(b)
+
+        if not isinstance(typ, tuple_or_list):
             typ = (typ,) * len(b)
 
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, typ))

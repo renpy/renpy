@@ -26,6 +26,7 @@ from __future__ import print_function
 DEF ANGLE = False
 
 from libc.stdlib cimport malloc, free
+from libc.math cimport roundf
 from sdl2 cimport *
 from renpy.uguu.gl cimport *
 import renpy.gl2.gl2functions
@@ -1306,6 +1307,7 @@ cdef class GL2DrawingContext:
         # Most initialization is done in draw_render, below.
         self.projection_matrix = Matrix(None)
         self.view_matrix = Matrix(None)
+        self.projectionview_matrix = Matrix(None)
         self.model_matrix = Matrix(None)
 
     cdef GL2DrawingContext child_context(self):
@@ -1325,9 +1327,10 @@ cdef class GL2DrawingContext:
         rv.height = self.height
         rv.debug = self.debug
 
-        rv.projection_matrix.take(self.projection_matrix)
-        rv.view_matrix.take(self.view_matrix)
-        rv.model_matrix.take(self.model_matrix)
+        rv.projection_matrix.ctake(self.projection_matrix)
+        rv.view_matrix.ctake(self.view_matrix)
+        rv.projectionview_matrix.ctake(self.projectionview_matrix)
+        rv.model_matrix.ctake(self.model_matrix)
 
         rv.clip_polygon = self.clip_polygon
 
@@ -1357,7 +1360,7 @@ cdef class GL2DrawingContext:
         rv.pop("pixel_perfect", None)
         return rv
 
-    cdef Matrix correct_pixel_perfect(self):
+    cdef void correct_pixel_perfect(self):
         """
         Computes an offset for the projection transform such that the (0, 0) pixel
         is aligned with a drawable pixel.
@@ -1365,26 +1368,33 @@ cdef class GL2DrawingContext:
 
         cdef float halfwidth
         cdef float halfheight
-        cdef Matrix transform = self.projection_matrix * self.view_matrix * self.model_matrix
 
-        cdef float sx
-        cdef float sy
+        cdef float sx, sy, sz, sw
 
         halfwidth = self.width / 2.0
         halfheight = self.height / 2.0
 
-        sx, sy = transform.transform(0, 0)
+        sx = 0
+        sy = 0
+        sz = 0
+        sw = 1
 
-        sx = round(sx, 5)
-        sy = round(sy, 5)
+        self.model_matrix.transform4(&sx, &sy, &sz, &sw, sx, sy, sz, sw)
+        self.view_matrix.transform4(&sx, &sy, &sz, &sw, sx, sy, sz, sw)
+        self.projection_matrix.transform4(&sx, &sy, &sz, &sw, sx, sy, sz, sw)
+
+        sx = roundf(sx * 10000) / 10000
+        sy = roundf(sy * 10000) / 10000
 
         sx = sx * halfwidth + halfwidth
         sy = sy * halfheight + halfheight
 
-        cdef float xoff = round(sx) - sx
-        cdef float yoff = round(sy) - sy
+        cdef float xoff = roundf(sx) - sx
+        cdef float yoff = roundf(sy) - sy
 
-        return Matrix.coffset(xoff / halfwidth, yoff / halfheight, 0)
+        self.projection_matrix.inplace_reverse_offset(xoff / halfwidth, yoff / halfheight)
+        self.projectionview_matrix.ctake(self.projection_matrix)
+        self.projectionview_matrix.inplace_multiply(self.view_matrix)
 
     cdef object draw_model(self, model):
 
@@ -1421,19 +1431,6 @@ cdef class GL2DrawingContext:
             gl2debug.geometry(mesh, self.model_matrix, self.width, self.height)
 
         program = gl2draw.shader_cache.get(self.shaders)
-
-        u_projectionview = self.projection_matrix * self.view_matrix
-        u_transform = u_projectionview * self.model_matrix
-
-        # Temporary - until the below can go away.
-        self.uniforms = dict(self.uniforms)
-
-        self.uniforms["u_projection"] = self.projection_matrix
-        self.uniforms["u_model_size"] = (model.width, model.height)
-        self.uniforms["u_view"] = self.view_matrix
-        self.uniforms["u_projectionview"] = u_projectionview
-        self.uniforms["u_model"] = self.model_matrix
-        self.uniforms["u_transform"] = u_transform
 
         program.draw(self, model, mesh)
 
@@ -1533,8 +1530,7 @@ cdef class GL2DrawingContext:
             self.properties = self.merge_properties(self.properties, r.properties)
 
             if r.properties.get("pixel_perfect", False) and self.pixel_perfect:
-                offset_matrix = self.correct_pixel_perfect()
-                self.projection_matrix = offset_matrix * self.projection_matrix
+                self.correct_pixel_perfect()
                 self.pixel_perfect = False
 
             has_depth = not self.has_depth and r.properties.get("depth", False)
@@ -1583,12 +1579,21 @@ cdef class GL2DrawingContext:
                 ctx.model_matrix.inplace_multiply(r.reverse)
 
                 if r.matrix_kind == MATRIX_PROJECTION:
-                    ctx.projection_matrix = ctx.projection_matrix * ctx.view_matrix * ctx.model_matrix
+                    ctx.projection_matrix.inplace_multiply(ctx.view_matrix)
+                    ctx.projection_matrix.inplace_multiply(ctx.model_matrix)
+
+                    ctx.view_matrix.ctake(IDENTITY)
                     ctx.model_matrix.ctake(IDENTITY)
 
+                    self.projectionview_matrix.ctake(self.projection_matrix)
+
+
                 elif r.matrix_kind == MATRIX_VIEW:
-                    ctx.view_matrix = ctx.view_matrix * ctx.model_matrix
+                    ctx.view_matrix.inplace_multiply(ctx.model_matrix)
                     ctx.model_matrix.ctake(IDENTITY)
+
+                    self.projectionview_matrix.ctake(self.projection_matrix)
+                    self.projectionview_matrix.inplace_multiply(ctx.view_matrix)
 
                 if ctx.clip_polygon is not None:
                     ctx.clip_polygon = ctx.clip_polygon.multiply_matrix(r.forward)
@@ -1632,6 +1637,7 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
 
     ctx.projection_matrix.ctake(projection)
     ctx.view_matrix.ctake(IDENTITY)
+    ctx.projectionview_matrix.ctake(projection)
     ctx.model_matrix.ctake(IDENTITY)
 
     ctx.shaders = ()
