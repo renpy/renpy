@@ -21,9 +21,28 @@
 
 # This file contains code for formatting tracebacks.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import IO, cast
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 
 import traceback
@@ -39,12 +58,12 @@ import renpy
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
 
-def write_traceback_list(out, l):
+def write_traceback_list(out: IO[str], l: list[tuple[str, int, str, str | None]]):
     """
     Given the traceback list, writes it to out as unicode.
     """
 
-    ul = [ ]
+    ul: list[tuple[str, int, str, str | None]] = []
 
     for filename, line, what, text in l:
 
@@ -72,7 +91,7 @@ def traceback_list(tb):
     tuples.
     """
 
-    l = [ ]
+    l: list[tuple[str, int, str, str | None]] = []
 
     while tb:
         frame = tb.tb_frame
@@ -83,10 +102,10 @@ def traceback_list(tb):
 
         tb = tb.tb_next
 
-        if ('self' in frame.f_locals) and (not renpy.config.raw_tracebacks):
-            obj = frame.f_locals['self']
+        if ("self" in frame.f_locals) and (not renpy.config.raw_tracebacks):
+            obj = frame.f_locals["self"]
 
-            last = (tb is None)
+            last = tb is None
 
             try:
                 report = obj.report_traceback(name, last)
@@ -99,44 +118,46 @@ def traceback_list(tb):
 
         l.append((filename, line_number, name, None))
 
-    rv = [ ]
+    rv: list[tuple[str, int, str, str | None]] = []
 
     for filename, line_number, name, line in l:
         if line is None:
             try:
                 line = linecache.getline(filename, line_number)
             except Exception:
-                line = ''
+                line = ""
 
         rv.append((filename, line_number, name, line))
 
     return rv
 
 
-def filter_traceback_list(tl):
+def filter_traceback_list(tl: list[tuple[str, int, str, str | None]]):
     """
     Returns the subset of `tl` that originates in creator-written files, as
     opposed to those portions that come from Ren'Py itself.
     """
 
-    rv = [ ]
+    rv: list[tuple[str, int, str, str | None]] = []
 
     for t in tl:
         filename = t[0]
-        if filename.endswith(".rpy") and not filename.replace("\\", "/").startswith("common/"):
+        if filename.endswith(".rpy") and not filename.replace("\\", "/").startswith(
+            "common/"
+        ):
             rv.append(t)
 
     return rv
 
 
-def open_error_file(fn, mode):
+def open_error_file(fn: str, mode: str):
     """
     Opens an error/log/file. Returns the open file, and the filename that
     was opened.
     """
 
     try:
-        new_fn = os.path.join(renpy.config.logdir, fn) # type: ignore
+        new_fn = os.path.join(cast(str, renpy.config.logdir), fn)  # type: ignore
         f = open(new_fn, mode)
         return f, new_fn
     except Exception:
@@ -154,7 +175,7 @@ def open_error_file(fn, mode):
     return open(new_fn, mode), new_fn
 
 
-def report_exception(e, editor=True):
+def report_exception(e: Exception, editor: bool = True):
     """
     Reports an exception by writing it to standard error and
     traceback.txt. If `editor` is True, opens the traceback
@@ -176,7 +197,7 @@ def report_exception(e, editor=True):
 
     import codecs
 
-    type, _value, tb = sys.exc_info() # @ReservedAssignment
+    type, _value, tb = sys.exc_info()  # @ReservedAssignment
 
     # Return values - which can be displayed to the user.
     simple = io.StringIO()
@@ -187,12 +208,12 @@ def report_exception(e, editor=True):
 
     print(str(renpy.game.exception_info), file=simple)
     write_traceback_list(simple, simple_tl)
-    print(type.__name__ + ":", end=' ', file=simple)
+    print(type.__name__ + ":", end=" ", file=simple)
     print(str(e), file=simple)
 
     print("Full traceback:", file=full)
     write_traceback_list(full, full_tl)
-    print(type.__name__ + ":", end=' ', file=full)
+    print(type.__name__ + ":", end=" ", file=full)
     print(str(e), file=full)
 
     # Write to stdout/stderr.
@@ -204,7 +225,7 @@ def report_exception(e, editor=True):
     except Exception:
         pass
 
-    print('', file=full)
+    print("", file=full)
 
     try:
         print(str(platform.platform()), str(platform.machine()), file=full)
@@ -223,16 +244,19 @@ def report_exception(e, editor=True):
         f, traceback_fn = open_error_file("traceback.txt", "w")
 
         with f:
-            f.write("\ufeff") # BOM
+            f.write("\ufeff")  # BOM
 
             print("I'm sorry, but an uncaught exception occurred.", file=f)
-            print('', file=f)
+            print("", file=f)
 
             f.write(simple)
 
-            print('', file=f)
-            print("-- Full Traceback ------------------------------------------------------------", file=f)
-            print('', file=f)
+            print("", file=f)
+            print(
+                "-- Full Traceback ------------------------------------------------------------",
+                file=f,
+            )
+            print("", file=f)
 
             f.write(full)
 
@@ -242,12 +266,12 @@ def report_exception(e, editor=True):
             pass
 
         try:
-            if editor and ((renpy.game.args.command == "run") or (renpy.game.args.errors_in_editor)): # type: ignore
-                renpy.exports.launch_editor([ traceback_fn ], 1, transient=True)
+            if editor and ((renpy.game.args.command == "run") or (renpy.game.args.errors_in_editor)):  # type: ignore
+                renpy.exports.launch_editor([traceback_fn], 1, transient=True)
         except Exception:
             pass
 
     except Exception:
-        traceback_fn = os.path.join(renpy.config.basedir, "traceback.txt") # type: ignore
+        traceback_fn = os.path.join(renpy.config.basedir, "traceback.txt")  # type: ignore
 
     return simple, full, traceback_fn

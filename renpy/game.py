@@ -100,7 +100,7 @@ new_translates_count: int = 0
 after_rollback = False
 
 # Code that's run after the init code.
-post_init = []
+post_init: list[Callable[[], None]] = []
 
 # Should we attempt to run in a mode that uses less memory?
 less_memory = False

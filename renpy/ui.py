@@ -26,6 +26,8 @@
 
 # All functions in the is file should be documented in the wiki.
 
+# pyright: reportUnknownMemberType=false
+
 from __future__ import (
     division,
     absolute_import,
@@ -33,7 +35,8 @@ from __future__ import (
     print_function,
     unicode_literals,
 )
-from typing import override
+from collections.abc import Iterable
+from typing import Any, Callable, cast, override
 from renpy.compat import (
     PY2,
     basestring,
@@ -121,35 +124,37 @@ class Addable(object):
     # A style_prefix associates with this addable.
     style_prefix: str | None = None
 
-    def add(self, d, key):
+    def add(self, d: str, key: str) -> None:
         raise NotImplementedError
 
-    def close(self, d):
+    def close(self, d: str) -> None:
         raise NotImplementedError
 
-    def get_layer(self):
-        return Exception("Operation can only be performed on a layer.")
+    def get_layer(self) -> str:
+        raise Exception("Operation can only be performed on a layer.")
 
 
 class Layer(Addable):
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, name: str):
+        self.name: str = name
 
-    def add(self, d, key):
+    @override
+    def add(self, d: str, key: str):
         renpy.game.context(-1).scene_lists.add(self.name, d, key=key)
 
-    def close(self, d):
+    @override
+    def close(self, d: str):
         stack.pop()
 
         if d and d != self.name:
-            raise Exception(
-                "ui.close closed layer %s, not the expected %r." % (self.name, d)
-            )
+            raise Exception(f"ui.close closed layer {self.name}, not the expected {d}.")
 
+    @override
     def get_layer(self):
         return self.name
 
+    @override
     def __repr__(self):
         return "<Layer: %r>" % self.name
 
@@ -254,7 +259,7 @@ class ChildOrFixed(Addable):
 
 
 # A stack of things we can add to.
-stack: list[Addable] = []
+stack: list[Addable] | None = []
 
 # A stack of open ui.ats.
 at_stack = []
@@ -354,7 +359,7 @@ def child_or_fixed():
     stack.append(ChildOrFixed(stack[-1].style_prefix))
 
 
-def remove(d):
+def remove(d: str):
     layer = stack[-1].get_layer()
     renpy.game.context(-1).scene_lists.remove(layer, d)
 
@@ -443,7 +448,7 @@ def context_exit(w):
 NoStylePrefixGiven = renpy.object.Sentinel("NoStylePrefixGiven")
 
 
-def combine_style(style_prefix, style_suffix):
+def combine_style(style_prefix: str | None, style_suffix: str | None):
     """
     Combines a style prefix and style suffix to create a style name, then
     returns the style object corresoinding to that name.
@@ -452,12 +457,12 @@ def combine_style(style_prefix, style_suffix):
     if style_prefix is None:
         new_style = style_suffix
     else:
-        new_style = style_prefix + "_" + style_suffix
+        new_style = f"{style_prefix}_{style_suffix}"
 
-    return renpy.style.get_style(new_style)
+    return cast(str, renpy.style.get_style(new_style))
 
 
-def prefixed_style(style_suffix):
+def prefixed_style(style_suffix: str | None):
     """
     Combines the default style prefix with a style suffix.
     """
@@ -467,47 +472,48 @@ def prefixed_style(style_suffix):
 
 # The screen we're using as we add widgets. None if there isn't a
 # screen.
-screen = None  # type: renpy.display.screen.ScreenDisplayable|None
+screen: renpy.display.screen.ScreenDisplayable | None = None
 
 
-class Wrapper(renpy.object.Object):
+class Wrapper[R](renpy.object.Object):
 
+    @override
     def __reduce__(self):
         return self.name
 
     def __init__(
         self,
-        function,
-        one=False,
-        many=False,
-        imagemap=False,
-        replaces=False,
-        style=None,
-        **kwargs
+        function: Callable[..., R],
+        one: bool = False,
+        many: bool = False,
+        imagemap: bool = False,
+        replaces: bool = False,
+        style: str | None = None,
+        **kwargs: Any,
     ):
 
         # The name assigned to this wrapper. This is used to serialize us correctly.
-        self.name = ""
+        self.name: str = ""
 
         # The function to call.
-        self.function = function
+        self.function: Callable[..., R] = function
 
         # Should we add one or many things to this wrapper?
-        self.one = one
-        self.many = many or imagemap
-        self.imagemap = imagemap
+        self.one: bool = one
+        self.many: bool = many or imagemap
+        self.imagemap: bool = imagemap
 
         # Should the function be given the replaces parameter,
         # specifiying the displayable it replaced?
-        self.replaces = replaces
+        self.replaces: bool = replaces
 
         # Default keyword arguments to the function.
-        self.kwargs = kwargs
+        self.kwargs: dict[str, Any] = kwargs
 
         # Default style (suffix).
-        self.style = style
+        self.style: str | None = style
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args: Any, **kwargs: Any):
 
         global add_tag
 
@@ -518,7 +524,7 @@ class Wrapper(renpy.object.Object):
 
         widget_id = kwargs.pop("id", None)
 
-        at_list = kwargs.pop("at", [])  # type: list
+        at_list: Iterable[Any] = kwargs.pop("at", [])
         if not isinstance(at_list, (list, tuple)):
             at_list = [at_list]
 
@@ -715,7 +721,7 @@ def _key(key, action=None, activate_sound=None, capture=True):
 key = Wrapper(_key)
 
 
-class ChoiceActionBase(Action):
+class ChoiceActionBase[T](Action):
     """
     Base class for choice actions. The choice is identified by a label
     and value. The class will automatically determine the rollback state
@@ -725,32 +731,33 @@ class ChoiceActionBase(Action):
     previously visited and mark it so if it is chosen.
     """
 
-    sensitive = True
+    sensitive: bool = True
 
     def __init__(
         self,
-        label,
-        value,
-        location=None,
-        block_all=None,
-        sensitive=True,
-        args=None,
-        kwargs=None,
+        label: str,
+        value: T,
+        location: tuple[str, int] | None = None,
+        block_all: bool | None = None,
+        sensitive: bool = True,
+        args: tuple[Any, ...] | None = None,
+        kwargs: dict[str, Any] | None = None,
     ):
-        self.label = label
-        self.value = value
-        self.location = location
+        self.label: str = label
+        self.value: T = value
+        self.location: tuple[str, int] | None = location
         self.sensitive = sensitive
 
         if block_all is None:
-            self.block_all = renpy.config.fix_rollback_without_choice
+            self.block_all: bool = renpy.config.fix_rollback_without_choice
         else:
             self.block_all = block_all
 
         # The arguments passed to a menu choice.
-        self.args = args
-        self.kwargs = kwargs
+        self.args: tuple[Any, ...] | None = args
+        self.kwargs: dict[str, Any] | None = kwargs
 
+    @override
     def get_sensitive(self):
         return (
             self.sensitive
@@ -758,7 +765,8 @@ class ChoiceActionBase(Action):
             or (not self.block_all and self.get_selected())
         )
 
-    def get_selected(self):
+    @override
+    def get_selected(self) -> bool:
         roll_forward = renpy.exports.roll_forward_info()
         return renpy.exports.in_fixed_rollback() and roll_forward == self.value
 
@@ -776,7 +784,7 @@ class ChoiceActionBase(Action):
         return (self.location, self.label) in self.chosen
 
 
-class ChoiceReturn(ChoiceActionBase):
+class ChoiceReturn[T](ChoiceActionBase[T]):
     """
     :doc: blockrollback
 
@@ -811,6 +819,7 @@ class ChoiceReturn(ChoiceActionBase):
         become unclickable (rolling forward will still work).
     """
 
+    @override
     def __call__(self):
         if self.chosen is not None:
             self.chosen[(self.location, self.label)] = True
@@ -818,7 +827,7 @@ class ChoiceReturn(ChoiceActionBase):
         return self.value
 
 
-class ChoiceJump(ChoiceActionBase):
+class ChoiceJump[T](ChoiceActionBase[T]):
     """
     :doc: blockrollback
 
@@ -853,6 +862,7 @@ class ChoiceJump(ChoiceActionBase):
         become unclickable (rolling forward will still work).
     """
 
+    @override
     def get_selected(self):
         roll_forward = renpy.exports.roll_forward_info()
 
@@ -862,6 +872,7 @@ class ChoiceJump(ChoiceActionBase):
 
         return renpy.exports.in_fixed_rollback() and roll_forward == self.value
 
+    @override
     def __call__(self):
         if self.chosen is not None:
             self.chosen[(self.location, self.label)] = True
@@ -869,7 +880,7 @@ class ChoiceJump(ChoiceActionBase):
         renpy.exports.jump(self.value)
 
 
-class Choice(object):
+class Choice[T](object):
     """
     :doc: se_menu
     :name: renpy.Choice
@@ -888,24 +899,24 @@ class Choice(object):
     Positional arguments and keyword arguments are stored in this object and used by renpy.display_menu.
     """
 
-    def __init__(self, _value, *args, **kwargs):
-        self.value = _value
-        self.args = args
-        self.kwargs = kwargs
+    def __init__(self, _value: T, *args: Any, **kwargs: Any):
+        self.value: T = _value
+        self.args: tuple[Any, ...] = args
+        self.kwargs: dict[str, Any] = kwargs
 
 
-def menu(
-    menuitems,
-    style="menu",
-    caption_style="menu_caption",
-    choice_style="menu_choice",
-    choice_chosen_style="menu_choice_chosen",
-    choice_button_style="menu_choice_button",
-    choice_chosen_button_style="menu_choice_chosen_button",
-    location=None,
-    focus=None,
-    default=False,
-    **properties
+def menu[T](
+    menuitems: list[tuple[str, T | ChoiceReturn[T]]],
+    style: str = "menu",
+    caption_style: str = "menu_caption",
+    choice_style: str = "menu_choice",
+    choice_chosen_style: str = "menu_choice_chosen",
+    choice_button_style: str = "menu_choice_button",
+    choice_chosen_button_style: str = "menu_choice_chosen_button",
+    location: renpy.ast.NodeName | None = None,
+    focus: str | None = None,
+    default: bool = False,
+    **properties: Any,
 ):
 
     renpy.ui.vbox(style=style, **properties)
@@ -919,9 +930,9 @@ def menu(
             button = choice_button_style
 
             if isinstance(val, ChoiceReturn):
-                clicked = val
+                clicked = cast(ChoiceReturn[T], val)
             else:
-                clicked = ChoiceReturn(label, val, location)
+                clicked = ChoiceReturn[T](label, val, location)
 
             if clicked.get_chosen():
                 text = choice_chosen_style
@@ -948,7 +959,10 @@ def menu(
 
 
 input = Wrapper(
-    renpy.display.behavior.Input, exclude="{}", style="input", replaces=True
+    renpy.display.behavior.Input,
+    exclude="{}",
+    style="input",
+    replaces=True,
 )
 
 
@@ -959,7 +973,7 @@ def imagemap_compat(
     unselected=None,
     style="imagemap",
     button_style="hotspot",
-    **properties
+    **properties,
 ):
 
     if isinstance(button_style, str):
@@ -1020,7 +1034,7 @@ def _imagebutton(
     selected_insensitive=None,
     image_style=None,
     auto=None,
-    **properties
+    **properties,
 ):
 
     def choice(a, b, name, required=False):
@@ -1063,7 +1077,7 @@ def _imagebutton(
         selected_hover_image=selected_hover,
         selected_insensitive_image=selected_insensitive,
         selected_activate_image=selected_activate_image,
-        **properties
+        **properties,
     )
 
 
@@ -1071,13 +1085,13 @@ imagebutton = Wrapper(_imagebutton, style="image_button")
 
 
 def _textbutton(
-    label,
+    label: str,
     clicked=None,
-    style=None,
-    text_style=None,
-    substitute=True,
+    style: str | None = None,
+    text_style: str | None = None,
+    substitute: bool = True,
     scope=None,
-    **kwargs
+    **kwargs: Any,
 ):
 
     text_kwargs, button_kwargs = renpy.easy.split_properties(kwargs, "text_", "")
@@ -1093,7 +1107,13 @@ def _textbutton(
         style = prefixed_style("button")
 
     if text_style is None:
-        text_style = renpy.style.get_text_style(style, prefixed_style("button_text"))
+        text_style = cast(
+            str,
+            renpy.style.get_text_style(
+                style,
+                prefixed_style("button_text"),
+            ),
+        )
 
     rv = renpy.display.behavior.Button(style=style, clicked=clicked, **button_kwargs)
     text = renpy.text.text.Text(
@@ -1108,7 +1128,14 @@ def _textbutton(
 textbutton = Wrapper(_textbutton)
 
 
-def _label(label, style=None, text_style=None, substitute=True, scope=None, **kwargs):
+def _label(
+    label: str,
+    style: str | None = None,
+    text_style: str | None = None,
+    substitute: bool = True,
+    scope=None,
+    **kwargs,
+):
 
     text_kwargs, label_kwargs = renpy.easy.split_properties(kwargs, "text_", "")
 
@@ -1133,7 +1160,7 @@ label = Wrapper(_label)
 adjustment = renpy.display.behavior.Adjustment
 
 
-def _bar(*args, **properties):
+def _bar(*args: Any, **properties: Any):
 
     if len(args) == 4:
         width, height, range, value = args
@@ -1217,7 +1244,7 @@ _vpgrid = Wrapper(
 VIEWPORT_SIZE = 32767
 
 
-def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
+def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties: Any):
 
     if scrollbars is None:
         return vpfunc(**properties)
@@ -1321,11 +1348,11 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
         return rv
 
 
-def viewport(**properties):
+def viewport(**properties: Any):
     return viewport_common(_viewport, True, **properties)
 
 
-def vpgrid(**properties):
+def vpgrid(**properties: Any):
     return viewport_common(_vpgrid, False, **properties)
 
 
@@ -1386,7 +1413,7 @@ def _imagemap(
     alpha=True,
     cache=True,
     style="imagemap",
-    **properties
+    **properties,
 ):
 
     def pick(variable, name, other):
@@ -1495,7 +1522,7 @@ def _hotspot(spot, style="hotspot", **properties):
         insensitive_background=insensitive,
         selected_insensitive_background=selected_insensitive,
         style=style,
-        **properties
+        **properties,
     )
 
 
@@ -1552,7 +1579,7 @@ def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
         thumb_offset=0,
         xmaximum=w,
         ymaximum=h,
-        **properties
+        **properties,
     )
 
 

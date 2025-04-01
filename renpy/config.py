@@ -983,7 +983,13 @@ dissolve_force_alpha = True
 
 # A map from a displayable prefix to a function that returns a displayable
 # corresponding to the argument.
-displayable_prefix = {}
+displayable_prefix: dict[
+    str,
+    Callable[
+        [str],
+        renpy.display.displayable.Displayable,
+    ],
+] = {}
 
 # Should we re-play a movie when it's shown again.
 replay_movie_sprites = True

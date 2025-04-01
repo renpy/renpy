@@ -26,7 +26,7 @@ from __future__ import (
     print_function,
     unicode_literals,
 )
-from typing import Any  # type: ignore
+from typing import Any, cast  # type: ignore
 from renpy.compat import (
     PY2,
     basestring,
@@ -52,7 +52,7 @@ def web_input(
     exclude: str | None = "{}",
     length: int | None = None,
     mask: bool = False,
-):
+) -> str:
     """
     :undocumented:
 
@@ -86,7 +86,14 @@ def web_input(
     if renpy.config.autosave_on_input and not renpy.game.after_rollback:
         renpy.loadsave.force_autosave(True)
 
-    rv = renpy.ui.interact(mouse="prompt", type="input", roll_forward=roll_forward)
+    rv = cast(
+        str,
+        renpy.ui.interact(
+            mouse="prompt",
+            type="input",
+            roll_forward=roll_forward,
+        ),
+    )
     renpy.exports.checkpoint(rv)
 
     with_none = renpy.config.implicit_with_none
@@ -110,7 +117,7 @@ def input(
     copypaste: bool = True,
     multiline: bool = False,
     **kwargs: Any
-):  # @ReservedAssignment
+) -> str:  # @ReservedAssignment
     """
     :doc: input
     :args: (default='', allow=None, exclude='{}', length=None, pixel_width=None, screen="input", mask=None, copypaste=True, multiline=False, **kwargs)

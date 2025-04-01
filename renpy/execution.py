@@ -478,13 +478,13 @@ class Context(renpy.object.Object):
                 else:
                     roots[name] = v
 
-    def goto_label(self, node_name: str):
+    def goto_label(self, node_name: renpy.ast.NodeName):
         """
         Sets the name of the node that will be run when this context
         next executes.
         """
 
-        self.current = node_name
+        self.current: renpy.ast.NodeName = node_name
 
     def check_stacks(self):
         """

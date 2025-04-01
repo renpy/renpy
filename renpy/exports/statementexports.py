@@ -46,9 +46,7 @@ import renpy
 from renpy.exports.commonexports import renpy_pure
 
 
-def imagemap[
-    T
-](
+def imagemap[T](
     ground: str,
     selected: str,
     hotspots: list[tuple[int, int, int, int, T]],
@@ -319,7 +317,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
     return renpy.game.interface.do_with(trans, paired, clear=clear)
 
 
-def jump(label):
+def jump(label: Any):
     """
     :doc: se_jump
 
@@ -353,7 +351,7 @@ def call(label, *args, **kwargs):
     raise renpy.game.CallException(label, args, kwargs, from_current=from_current)
 
 
-def return_statement(value=None):
+def return_statement[T](value: T | None = None):
     """
     :doc: se_call
 
