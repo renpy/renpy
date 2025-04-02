@@ -71,6 +71,7 @@ EARLY_CONFIG = {
     "defer_tl_scripts",
     "munge_in_strings",
     "interface_layer",
+    "persistent_callback",
 }
 
 

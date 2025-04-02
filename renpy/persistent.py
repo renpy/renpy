@@ -143,6 +143,12 @@ class Persistent(object):
                 "_seen_translates" : 0,
             }
 
+        if self._version is None:
+            self._version = renpy.config.version
+
+        if cb := renpy.config.persistent_callback:
+            cb(self)
+
 
 renpy.game.Persistent = Persistent # type: ignore
 renpy.game.persistent = Persistent()
