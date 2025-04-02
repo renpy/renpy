@@ -1652,6 +1652,13 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
 
     ctx.draw_one(what)
 
+    while ctx is not None:
+        ctx.uniforms.clear()
+        ctx.properties.clear()
+
+        ctx = ctx._child_context
+
+
 
 # A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
 standard_uniforms = { "u_transform", "u_projection", "u_view", "u_projectionview", "u_model", "u_time", "u_random", "u_drawable_size" }
