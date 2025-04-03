@@ -32,7 +32,7 @@ cdef class GL2Model:
     everything needed to be draw to the screen.
     """
 
-    def __init__(GL2Model self, size, mesh, shaders, uniforms, properties=None):
+    def __init__(GL2Model self, size, mesh, shaders, uniforms=None, properties=None):
         self.width = size[0]
         self.height = size[1]
         self.mesh = mesh
@@ -134,3 +134,42 @@ cdef class GL2Model:
             rv.forward = Matrix.cscale(reciprocal_factor, reciprocal_factor, reciprocal_factor) * rv.forward
 
         return rv
+
+    cpdef void set_texture(self, int i, GL2Model texture):
+        """
+        Sets the i'th texture of this model to be `texture`.
+        """
+
+        if i == 0:
+            self.tex0 = texture
+        elif i == 1:
+            self.tex1 = texture
+        elif i == 2:
+            self.tex2 = texture
+        elif i == 3:
+            self.tex3 = texture
+        else:
+            if self.uniforms is None:
+                self.uniforms = {}
+
+            self.uniforms["tex%d" % i] = texture
+            self.uniforms["res%d" % i] = (texture.texture_width, texture.texture_height)
+
+    cpdef GL2Model get_texture(self, int i):
+        """
+        Returns the i'th texture of this model.
+        """
+
+        if i == 0:
+            return self.tex0
+        elif i == 1:
+            return self.tex1
+        elif i == 2:
+            return self.tex2
+        elif i == 3:
+            return self.tex3
+        else:
+            if self.uniforms is None:
+                return None
+
+            return self.uniforms.get("tex%d" % i, None)

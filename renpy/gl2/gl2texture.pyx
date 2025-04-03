@@ -686,6 +686,16 @@ cdef class GLTexture(GL2Model):
                 }
         return rv
 
+    cpdef GL2Model get_texture(self, int i):
+        """
+        Returns the texture at index `i`.
+        """
+
+        if i == 0:
+            return self
+        else:
+            raise IndexError("GLTexture.get_texture: index out of range")
+
 class Texture(GLTexture):
     """
     Use a Python class to make  sure __del__ works.
