@@ -111,7 +111,7 @@ class TextMeshDisplayable(renpy.display.core.Displayable):
         else:
 
             for model, x, y, focus, main in self.tex.children:
-                tex = model.uniforms["tex0"]
+                tex = model.get_texture(0)
                 w, h = tex.get_size()
 
                 # Adjust the size for the texture borders.

@@ -44,6 +44,11 @@ cdef class GL2Model:
         self.forward = IDENTITY
         self.reverse = IDENTITY
 
+        self.tex0 = None
+        self.tex1 = None
+        self.tex2 = None
+        self.tex3 = None
+
     def __repr__(GL2Model self):
         rv = "<{} {}x{} {} {}".format(type(self).__name__, self.width, self.height, self.shaders, self.uniforms)
 
@@ -61,12 +66,22 @@ cdef class GL2Model:
         Loads the textures associated with this model.
         """
 
-        for i in self.uniforms.itervalues():
-            if isinstance(i, GLTexture):
-                i.load()
+        if self.tex0 is not None:
+            self.tex0.load()
 
-    def get_uniforms(self):
-        return self.uniforms
+        if self.tex1 is not None:
+            self.tex1.load()
+
+        if self.tex2 is not None:
+            self.tex2.load()
+
+        if self.tex3 is not None:
+            self.tex3.load()
+
+        if self.uniforms:
+            for i in self.uniforms.values():
+                if isinstance(i, GLTexture):
+                    i.load()
 
     def get_size(self):
         """

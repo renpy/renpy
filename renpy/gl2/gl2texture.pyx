@@ -135,7 +135,9 @@ cdef class TextureLoader:
                     0.0, 0.0, 0.0, 0.0)
 
 
-            rv = GL2Model((pw, ph), mesh, ("renpy.texture",), { "tex0" : rv, "res0" : (rv.texture_width, rv.texture_height) })
+            old_rv = rv
+            rv = GL2Model((pw, ph), mesh, ("renpy.texture",) )
+            rv.set_texture(0, old_rv)
 
         return rv
 
@@ -671,19 +673,10 @@ cdef class GLTexture(GL2Model):
         else:
             self.load_gltexture()
 
-    def get_uniforms(self):
-        return {
-            "tex0" : self,
-            "res0" : (self.texture_width, self.texture_height),
-            }
-
     cpdef subsurface(self, rect):
         rv = GL2Model.subsurface(self, rect)
         if rv is not self:
-            rv.uniforms = {
-                "tex0" : self,
-                "res0" : (self.texture_width, self.texture_height),
-                }
+            rv.set_texture(0, self)
         return rv
 
     cpdef GL2Model get_texture(self, int i):

@@ -1043,6 +1043,8 @@ cdef class GL2Draw:
         # what is a Render.
 
         cdef Render r = what
+        cdef GL2Model model
+        cdef int i
 
         if r.loaded:
             return
@@ -1050,8 +1052,8 @@ cdef class GL2Draw:
         r.loaded = True
 
         # Load the child textures.
-        for i in r.children:
-            self.load_all_textures(i[0])
+        for c in r.children:
+            self.load_all_textures(c[0])
 
         # If we have a mesh (or mesh=True), create the GL2Model.
         if r.mesh:
@@ -1059,30 +1061,31 @@ cdef class GL2Draw:
             if (r.mesh is True) and (not r.children):
                 return
 
-            uniforms = { }
+            uniforms = None
 
             if r.uniforms:
-                uniforms.update(r.uniforms)
+                uniforms = dict()
 
-            for i, c in enumerate(r.children):
-                uniforms["tex%d" % i ] = ctex = self.render_to_texture(c[0], properties=r.properties)
-                uniforms["res%d" % i ] = (ctex.texture_width, ctex.texture_height)
+                for k, v in r.uniforms.items():
+                    if isinstance(v, Render):
+                        uniforms[k] = ctex = self.render_to_texture(v, properties=r.properties)
+                        uniforms.setdefault(k + "_res", (ctex.texture_width, ctex.texture_height))
+                    else:
+                        uniforms[k] = v
 
-            for k, v in list(uniforms.items()):
-                if isinstance(v, Render):
-                    uniforms[k] = ctex = self.render_to_texture(v, properties=r.properties)
-                    uniforms.setdefault(k + "_res", (ctex.texture_width, ctex.texture_height))
-
-            if r.mesh is True:
-                mesh = uniforms["tex0"].mesh
-            else:
-                mesh = r.mesh
-
-            r.cached_model = GL2Model(
+            model = r.cached_model = GL2Model(
                 (r.width, r.height),
-                mesh,
+                None,
                 r.shaders,
                 uniforms)
+
+            for i, c in enumerate(r.children):
+                model.set_texture(i, self.render_to_texture(c[0], properties=r.properties))
+
+            if r.mesh is True:
+                model.mesh = model.get_texture(0).mesh
+            else:
+                model.mesh = r.mesh
 
             r.cached_model.properties = r.properties
 
@@ -1421,10 +1424,10 @@ cdef class GL2DrawingContext:
         if model.shaders:
             self.shaders = self.shaders + model.shaders
 
-        # Temporary - will be read out of GL2Model and GL2Texture.
-        new_uniforms = dict(model.get_uniforms())
-        new_uniforms.update(self.uniforms)
-        self.uniforms = new_uniforms
+        if model.uniforms:
+            uniforms = dict(model.uniforms)
+            uniforms.update(self.uniforms)
+            self.uniforms = uniforms
 
         if self.debug:
             import renpy.gl2.gl2debug as gl2debug

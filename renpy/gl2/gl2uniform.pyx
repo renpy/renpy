@@ -535,6 +535,42 @@ cdef class InverseTransposeGetter(Getter):
         else:
             raise TypeError("InverseTransposeGetter only works with Matrix values.")
 
+cdef class Tex0Getter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return model.get_texture(0)
+
+cdef class Tex1Getter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return model.get_texture(1)
+
+cdef class Tex2Getter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return model.get_texture(2)
+
+cdef class Tex3Getter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        return model.get_texture(3)
+
+cdef class Res0Getter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        tex = model.get_texture(0)
+        return (tex.texture_width, tex.texture_height)
+
+cdef class Res1Getter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        tex = model.get_texture(1)
+        return (tex.texture_width, tex.texture_height)
+
+cdef class Res2Getter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        tex = model.get_texture(2)
+        return (tex.texture_width, tex.texture_height)
+
+cdef class Res3Getter(Getter):
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        tex = model.get_texture(3)
+        return (tex.texture_width, tex.texture_height)
+
 
 # The classes that are used to get the values of uniforms.
 UNIFORM_GETTER_CLASSES = {
@@ -550,6 +586,14 @@ UNIFORM_GETTER_CLASSES = {
     "u_viewport": (ViewportGetter, "vec2"),
     "u_drawable_size": (DrawableSizeGetter, "vec2"),
     "u_virtual_size": (VirtualSizeGetter, "vec2"),
+    "tex0" : (Tex0Getter, "sampler2D"),
+    "tex1" : (Tex1Getter, "sampler2D"),
+    "tex2" : (Tex2Getter, "sampler2D"),
+    "tex3" : (Tex3Getter, "sampler2D"),
+    "res0" : (Res0Getter, "vec2"),
+    "res1" : (Res1Getter, "vec2"),
+    "res2" : (Res2Getter, "vec2"),
+    "res3" : (Res3Getter, "vec2"),
 }
 
 
