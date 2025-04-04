@@ -623,7 +623,7 @@ class MultiLocation(object):
 
     def save_persistent(self, data):
         with SyncfsLock():
-            for l in self.active_locations():
+            for l in reversed(self.active_locations()):
                 l.save_persistent(data)
 
     def unlink_persistent(self):
