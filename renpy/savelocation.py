@@ -132,8 +132,8 @@ class FileLocation(object):
         # The persistent file.
         self.persistent = os.path.join(self.directory, "persistent")
 
-        # The mtime of the persistent file.
-        self.persistent_mtime = 0
+        # The minumum mtime at which it makes sense to load the persistent file.
+        self.persistent_mtime = renpy.persistent.persistent_mtime
 
         # The data loaded from the persistent file.
         self.persistent_data = None
@@ -193,7 +193,7 @@ class FileLocation(object):
                 if os.path.exists(pfn):
                     mtime = os.path.getmtime(pfn)
 
-                    if mtime != self.persistent_mtime:
+                    if mtime > self.persistent_mtime:
                         data = renpy.persistent.load(pfn)
                         if data is not None:
                             self.persistent_mtime = mtime
