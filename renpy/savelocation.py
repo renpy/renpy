@@ -694,17 +694,26 @@ def init():
 
     location = MultiLocation()
 
+    # Reuse locations when possible.
+    if current := renpy.loadsave.location:
+        reusable = {fl.directory: fl for fl in current.locations}
+    else:
+        reusable = {}
+
+    def location_add(d):
+        location.add(reusable.get(d, None) or FileLocation(d))
+
     # 1. User savedir.
-    location.add(FileLocation(renpy.config.savedir))
+    location_add(renpy.config.savedir)
 
     # 2. Game-local savedir.
     if (not renpy.mobile) and (not renpy.macapp):
         path = os.path.join(renpy.config.gamedir, "saves")
-        location.add(FileLocation(path))
+        location_add(path)
 
     # 3. Extra savedirs.
     for i in renpy.config.extra_savedirs:
-        location.add(FileLocation(i))
+        location_add(i)
 
     # Scan the location once.
     location.scan()
