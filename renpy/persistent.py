@@ -260,6 +260,8 @@ def init():
     disk, so that we can configure the savelocation system.
     """
 
+    global persistent_mtime
+
     if renpy.config.early_developer:
         init_debug_pickler()
 
@@ -272,6 +274,8 @@ def init():
 
     if persistent is None:
         persistent = Persistent()
+    else:
+        persistent_mtime = os.path.getmtime(filename)
 
     # Create the backup of the persistent data.
     for k, v in persistent.__dict__.items():
