@@ -394,17 +394,22 @@ class FileLocation(object):
             self.sync()
             self.scan()
 
-    def load_persistent(self):
+    def load_persistent(self, *, consume=False):
         """
         Returns a list of (mtime, persistent) tuples loaded from the
         persistent file. This should return quickly, with the actual
         load occurring in the scan thread.
         """
 
-        if self.persistent_data:
-            return [ (self.persistent_mtime, self.persistent_data) ]
-        else:
+        if not self.persistent_data:
             return [ ]
+
+        rv = [ (self.persistent_mtime, self.persistent_data) ]
+
+        if consume:
+            self.persistent_data = None
+
+        return rv
 
     def save_persistent(self, data):
         """
@@ -608,11 +613,11 @@ class MultiLocation(object):
             for l in self.active_locations():
                 l.copy(old, new)
 
-    def load_persistent(self):
+    def load_persistent(self, *, consume=False):
         rv = [ ]
 
         for l in self.active_locations():
-            rv.extend(l.load_persistent())
+            rv.extend(l.load_persistent(consume=consume))
 
         return rv
 

@@ -438,7 +438,7 @@ def update(force_save=False):
 
     # A list of (mtime, other) pairs, where other is a persistent file
     # we might want to merge in.
-    pairs = renpy.loadsave.location.load_persistent()
+    pairs = renpy.loadsave.location.load_persistent(consume=True)
     pairs.sort(key=lambda a : a[0])
 
     # Deals with the case where we don't have any persistent data for
