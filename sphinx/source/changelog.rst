@@ -102,6 +102,8 @@ apply :ref:`text interpolation <text-interpolation>` to the result. Interpolatio
 that the function is called from. The triple underscore function also marks the string contained
 inside for translation.
 
+The :var:`config.persistent_callback` callback makes it possible to update persistent data when it is loaded.
+
 
 Other Changes
 -------------

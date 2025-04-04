@@ -1528,6 +1528,9 @@ keep_screenshot_entering_menu = False
 # Should Ren'Py hash seen statements and tlids?
 hash_seen = True
 
+# A function that is called whenever persistent data is loaded.
+persistent_callback = None
+
 
 del os
 del collections
