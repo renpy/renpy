@@ -722,6 +722,8 @@ def display_say(
                 if extend_text:
                     extend_text = "{done}" + extend_text
 
+                    what_ctc = ctc_pause # show ctc_pause when using extend
+
             # Show the text.
 
             show_args = { }
