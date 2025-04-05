@@ -19,15 +19,35 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from nt import strerror  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
 
 @renpy_pure
-def has_label(name):
+def has_label(name: str | tuple[str, ...]):
     """
     :doc: label
 
@@ -50,7 +70,7 @@ def get_all_labels():
     Returns the set of all labels defined in the program, including labels
     defined for internal use in the libraries.
     """
-    rv = [ ]
+    rv = []
 
     for i in renpy.game.script.namemap.values():
         if isinstance(i.name, str):
@@ -64,10 +84,10 @@ def munged_filename():
     return renpy.lexer.munge_filename(renpy.exports.get_filename_line()[0])
 
 
-loaded_modules = set()
+loaded_modules: set[str] = set()
 
 
-def load_module(name, **kwargs):
+def load_module(name: str, **kwargs: str):
     """
     :doc: other
     :args: (name)
@@ -114,7 +134,7 @@ def load_module(name, **kwargs):
     renpy.config.locked = old_locked
 
 
-def load_string(s, filename="<string>"):
+def load_string(s: str, filename: str = "<string>"):
     """
     :doc: other
 

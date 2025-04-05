@@ -23,7 +23,7 @@ import renpy
 import os
 
 
-def expose_file(fn):
+def expose_file(fn: str):
     """
     Ensures that `fn` can be read and written by the user, on platforms where
     that may not be the default.
@@ -37,7 +37,7 @@ def expose_file(fn):
             pass
 
 
-def expose_directory(dn):
+def expose_directory(dn: str):
     """
     Ensures that `fn` can be read and written by the user, on platforms where
     that may not be the default.

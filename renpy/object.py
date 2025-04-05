@@ -19,15 +19,35 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+    annotations,
+)
+from typing import Any, override
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 
 # Allow pickling NoneType.
 import builtins
-builtins.NoneType = type(None) # type: ignore
+
+builtins.NoneType = type(None)  # type: ignore
 
 
 class Object(object):
@@ -35,10 +55,11 @@ class Object(object):
     Our own base class. Contains methods to simplify serialization.
     """
 
-    __version__ = 0
+    __version__: int = 0
 
-    nosave = [ ]
+    nosave: list[str] = []
 
+    @override
     def __getstate__(self):
         rv = vars(self).copy()
 
@@ -51,9 +72,9 @@ class Object(object):
         return rv
 
     # None, to prevent this from being called when unnecessary.
-    after_setstate = None
+    after_setstate: None = None
 
-    def __setstate__(self, new_dict):
+    def __setstate__(self, new_dict: dict[str, Any]):
 
         version = new_dict.pop("__version__", 0)
 
@@ -65,11 +86,12 @@ class Object(object):
         if self.after_setstate:
             self.after_setstate()  # E1102
 
+
 # We don't handle slots with this mechanism, since the call to vars should
 # throw an error.
 
 
-sentinels = { }
+sentinels: dict[str, Sentinel] = {}
 
 
 class Sentinel(object):
@@ -78,7 +100,7 @@ class Sentinel(object):
     sentinel object with a name existing in the system at any time.
     """
 
-    def __new__(cls, name):
+    def __new__(cls, name: str) -> Sentinel:
         rv = sentinels.get(name, None)
 
         if rv is None:
@@ -87,8 +109,9 @@ class Sentinel(object):
 
         return rv
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, name: str):
+        self.name: str = name
 
+    @override
     def __reduce__(self):
-        return (Sentinel, (self.name, ))
+        return (Sentinel, (self.name,))

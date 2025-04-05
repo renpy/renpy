@@ -23,9 +23,28 @@
 # Most of the guts of this file have been moved into im.py, with only some
 # of the stuff thar uses images remaining.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from collections.abc import Iterable
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 
 import renpy
@@ -35,14 +54,16 @@ import collections
 
 # A map from image name to the displayable object corresponding to that
 # image.
-images = { }
+images: dict[tuple[str, ...], renpy.display.displayable.Displayable] = {}
 
 # A map from image tag to lists of possible attributes for images with that
 # tag.
-image_attributes = collections.defaultdict(dict)
+image_attributes: collections.defaultdict[str, dict[tuple[str, ...], str]] = (
+    collections.defaultdict(dict)
+)
 
 # The set of image names Ren'Py knows about, as strings with spaces.
-image_names = [ ]
+image_names: list[str] = []
 
 
 def list_images():
@@ -63,10 +84,10 @@ def get_available_image_tags():
     Returns a list of image tags that have been defined.
     """
 
-    return [ k for k, v in image_attributes.items() if v ]
+    return [k for k, v in image_attributes.items() if v]
 
 
-def get_available_image_attributes(tag, attributes=()):
+def get_available_image_attributes(tag: str, attributes: Iterable[str] = ()):
     """
     :undocumented:
 
@@ -76,7 +97,7 @@ def get_available_image_attributes(tag, attributes=()):
     in that iterable are returned.
     """
 
-    rv = [ ]
+    rv: list[tuple[str, ...]] = []
 
     if tag not in image_attributes:
         return rv
@@ -91,7 +112,7 @@ def get_available_image_attributes(tag, attributes=()):
     return rv
 
 
-def get_tag_method(tag, method):
+def get_tag_method(tag: str, method: str):
     """
     This looks for an image named `tag`, then tries to grab the given method
     from it. If it can do that, returns a reference to the method. Otherwise,
@@ -106,7 +127,7 @@ def get_tag_method(tag, method):
     return getattr(ti, method, None)
 
 
-def check_image_attributes(tag, attributes):
+def check_image_attributes(tag: str, attributes: Iterable[str]):
     """
     :doc: image_func
 
@@ -118,11 +139,11 @@ def check_image_attributes(tag, attributes):
     negative = tuple(i for i in attributes if i[:1] == "-")
     attributes = [i for i in attributes if i[:1] != "-"]
 
-    l = [ ]
+    l: list[tuple[str, ...]] = []
 
     for attrs, d in image_attributes[tag].items():
 
-        remainder = [ i for i in attributes if i not in attrs ]
+        remainder = [i for i in attributes if i not in attrs]
 
         ca = getattr(d, "_choose_attributes", None)
 
@@ -139,7 +160,7 @@ def check_image_attributes(tag, attributes):
 
     if negative:
         negated = {i[1:] for i in negative}
-        l = [ i for i in l if not (negated & set(i)) ]
+        l = [i for i in l if not (negated & set(i))]
 
     # Check to see if there's an image that is exactly the one we want.
     for i in l:
@@ -171,7 +192,7 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
         for more information.
     """
 
-    sequences = [ ]
+    sequences = []
 
     attrcount = collections.defaultdict(int)
     attrtotalpos = collections.defaultdict(float)
@@ -181,7 +202,7 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
         la = getattr(d, "_list_attributes", None)
         if la is not None:
 
-            sequence = list(attrs) + la(tag, [ i for i in attributes if i not in attrs ])
+            sequence = list(attrs) + la(tag, [i for i in attributes if i not in attrs])
 
             if not all(i in sequence for i in attributes):
                 continue
@@ -203,7 +224,7 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
     # If we have a sequence, do a topological sort on the before-after relation -
     # with an adjustment to make sure it will complete even if it loops.
 
-    rv = [ ]
+    rv = []
 
     # A map from an attribute to all the attributes it is after.
     after = collections.defaultdict(set)
@@ -231,11 +252,11 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
             after[k] = after[k] - ready
 
         ready = list(ready)
-        ready.sort(key=lambda a : (sort(a), a))
+        ready.sort(key=lambda a: (sort(a), a))
 
         rv.extend(ready)
 
-    l = [ ]
+    l = []
 
     for attr in attrcount:
         if attr not in rv:
@@ -248,7 +269,7 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
     return rv
 
 
-def register_image(name, d):
+def register_image(name: tuple[str, ...], d):
     """
     Registers the existence of an image with `name`, and that the image
     used displayable d.
@@ -326,7 +347,7 @@ class ImageReference(renpy.display.displayable.Displayable):
     the image in an image statement.
     """
 
-    nosave = [ 'target' ]
+    nosave = ["target"]
 
     target = None
     old_transform = None
@@ -348,7 +369,7 @@ class ImageReference(renpy.display.displayable.Displayable):
         super(ImageReference, self).__init__(**properties)
 
         self.name = name
-        self.target = None # type: renpy.display.displayable.Displayable|None
+        self.target = None  # type: renpy.display.displayable.Displayable|None
 
     def _repr_info(self):
         return repr(self.name)
@@ -392,9 +413,9 @@ class ImageReference(renpy.display.displayable.Displayable):
             if renpy.config.debug:
                 raise Exception(msg)
 
-        target = None # typing
+        target = None  # typing
 
-        args = [ ]
+        args = []
 
         while name:
             target = images.get(name, None)
@@ -406,15 +427,17 @@ class ImageReference(renpy.display.displayable.Displayable):
             name = name[:-1]
 
         if not name:
-            error("Image '%s' not found." % ' '.join(self.name))
+            error("Image '%s' not found." % " ".join(self.name))
             if renpy.game.lint:
-                renpy.lint.report("References image '%s', which does not exist.", ' '.join(self.name))
+                renpy.lint.report(
+                    "References image '%s', which does not exist.", " ".join(self.name)
+                )
             return False
 
         if name and (self._args.name == name):
-            error("Image '{}' refers to itself.".format(' '.join(name)))
+            error("Image '{}' refers to itself.".format(" ".join(name)))
             if renpy.game.lint:
-                renpy.lint.report("Image '%s' refers to itself.", ' '.join(name))
+                renpy.lint.report("Image '%s' refers to itself.", " ".join(name))
             return False
 
         args += self._args.args
@@ -523,7 +546,9 @@ class ImageReference(renpy.display.displayable.Displayable):
         if not renpy.config.imagereference_respects_position:
             return self.target.get_placement()
 
-        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.target.get_placement()
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = (
+            self.target.get_placement()
+        )
 
         if xpos is None:
             xpos = self.style.xpos
@@ -543,7 +568,7 @@ class ImageReference(renpy.display.displayable.Displayable):
         if self.target is None:
             self.find_target()
 
-        return [ self.target ]
+        return [self.target]
 
 
 class DynamicImage(renpy.display.displayable.Displayable):
@@ -556,13 +581,13 @@ class DynamicImage(renpy.display.displayable.Displayable):
     performed at the start of each interaction.
     """
 
-    nosave = [ 'raw_target' ]
+    nosave = ["raw_target"]
 
     # The target that this image currently resolves to.
-    target = None # type: renpy.display.displayable.Displayable|None
+    target = None  # type: renpy.display.displayable.Displayable|None
 
     # The raw target that the image resolves to, before it has been parameterized.
-    raw_target = None # type: renpy.display.displayable.Displayable|None
+    raw_target = None  # type: renpy.display.displayable.Displayable|None
 
     # Have we been locked, so we never change?
     locked = False
@@ -582,7 +607,7 @@ class DynamicImage(renpy.display.displayable.Displayable):
         self._uses_scope = False
 
         if isinstance(name, str):
-            if ("[prefix_" in name):
+            if "[prefix_" in name:
                 self._duplicatable = True
 
             if "[" in name.replace("[prefix_]", ""):
@@ -590,7 +615,7 @@ class DynamicImage(renpy.display.displayable.Displayable):
 
         if isinstance(name, list):
             for i in name:
-                if ("[prefix_" in i):
+                if "[prefix_" in i:
                     self._duplicatable = True
 
                 if "[" in i.replace("[prefix_]", ""):
@@ -667,10 +692,15 @@ class DynamicImage(renpy.display.displayable.Displayable):
             prefix = self._args.prefix
 
         try:
-            search = [ ]
-            target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix, search=search)
+            search = []
+            target = renpy.easy.dynamic_image(
+                self.name, scope, prefix=prefix, search=search
+            )
         except KeyError as ke:
-            raise Exception("In DynamicImage %r: Could not find substitution '%s'." % (self.name, str(ke.args[0])))
+            raise Exception(
+                "In DynamicImage %r: Could not find substitution '%s'."
+                % (self.name, str(ke.args[0]))
+            )
         except Exception as e:
             raise Exception("In DynamicImage %r: %r" % (self.name, e))
 
@@ -682,7 +712,11 @@ class DynamicImage(renpy.display.displayable.Displayable):
             elif len(search) == 2:
                 error += " (%r, %r)" % (search[0], search[1])
             elif len(search) > 2:
-                error += " (%r, %r, and %d more.)" % (search[0], search[1], len(search) - 2)
+                error += " (%r, %r, and %d more.)" % (
+                    search[0],
+                    search[1],
+                    len(search) - 2,
+                )
 
             raise Exception(error)
 
@@ -692,7 +726,7 @@ class DynamicImage(renpy.display.displayable.Displayable):
         if not update:
             return True
 
-        raw_target = target # type: renpy.display.displayable.Displayable
+        raw_target = target  # type: renpy.display.displayable.Displayable
         old_target = self.target
 
         if raw_target._duplicatable:
@@ -788,7 +822,7 @@ class DynamicImage(renpy.display.displayable.Displayable):
         if self.target is None:
             self.find_target()
 
-        return [ self.target ]
+        return [self.target]
 
     def per_interact(self):
         old_target = self.target
@@ -797,7 +831,7 @@ class DynamicImage(renpy.display.displayable.Displayable):
             self.find_target()
 
         if old_target is not self.target:
-            self.target.visit_all(lambda i : i.per_interact())
+            self.target.visit_all(lambda i: i.per_interact())
 
 
 class ShownImageInfo(renpy.object.Object):
@@ -821,7 +855,7 @@ class ShownImageInfo(renpy.object.Object):
             # This doesn't necessarily correspond to something that is
             # currently showing, as we can remember the state of a tag
             # for use in SideImage.
-            self.attributes = { }
+            self.attributes = {}
 
             # A set of (layer, tag) pairs that are being shown on the
             # screen right now.
@@ -834,12 +868,12 @@ class ShownImageInfo(renpy.object.Object):
     def after_upgrade(self, version):
         if version < 2:
 
-            self.attributes = { }
+            self.attributes = {}
             self.shown = set()
 
-            for layer in self.images: # type: ignore
-                for tag in self.images[layer]: # type: ignore
-                    self.attributes[layer, tag] = self.images[layer][tag][1:] # type: ignore
+            for layer in self.images:  # type: ignore
+                for tag in self.images[layer]:  # type: ignore
+                    self.attributes[layer, tag] = self.images[layer][tag][1:]  # type: ignore
                     self.shown.add((layer, tag))
 
     def get_attributes(self, layer, tag, default=()):
@@ -885,7 +919,7 @@ class ShownImageInfo(renpy.object.Object):
         Returns the set of tags being shown on `layer`.
         """
 
-        return { t for l, t in self.shown if l == layer }
+        return {t for l, t in self.shown if l == layer}
 
     def get_hidden_tags(self, layer):
         """
@@ -893,7 +927,7 @@ class ShownImageInfo(renpy.object.Object):
         but aren't being shown.
         """
 
-        return { t for l, t in self.attributes if l == layer if (l, t) not in self.shown }
+        return {t for l, t in self.attributes if l == layer if (l, t) not in self.shown}
 
     def predict_scene(self, layer):
         """
@@ -901,7 +935,7 @@ class ShownImageInfo(renpy.object.Object):
         """
 
         if layer is None:
-            layer = 'master'
+            layer = "master"
 
         for l, t in list(self.attributes.keys()):
             if l == layer:
@@ -946,7 +980,9 @@ class ShownImageInfo(renpy.object.Object):
         with that name couldn't be found.
         """
 
-        f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
+        f = renpy.config.adjust_attributes.get(
+            name[0], None
+        ) or renpy.config.adjust_attributes.get(None, None)
         if f is not None:
             name = f(name)
 
@@ -966,16 +1002,17 @@ class ShownImageInfo(renpy.object.Object):
 
         # If no record, it's the first show, so try to fetch defaults.
         if defaults is None:
-            f = renpy.config.default_attribute_callbacks.get(name[0], None) \
-                or renpy.config.default_attribute_callbacks.get(None, None)
+            f = renpy.config.default_attribute_callbacks.get(
+                name[0], None
+            ) or renpy.config.default_attribute_callbacks.get(None, None)
             if f is not None:
                 defaults = f(name)
 
         # The list of attributes a matching image may have.
-        optional = list(defaults) if defaults else [ ]
+        optional = list(defaults) if defaults else []
 
         # The list of attributes a matching image must have.
-        required = [ ]
+        required = []
 
         for i in name[1:]:
             if i[0] == "-":
@@ -1009,8 +1046,10 @@ class ShownImageInfo(renpy.object.Object):
             ca = getattr(d, "_choose_attributes", None)
 
             if ca:
-                ca_required = [ i for i in required if i not in attrs ]
-                ca_optional = [ i for i in optional if i not in attrs if i not in required ]
+                ca_required = [i for i in required if i not in attrs]
+                ca_optional = [
+                    i for i in optional if i not in attrs if i not in required
+                ]
 
                 newattrs = ca(tag, ca_required, ca_optional)
 
@@ -1041,7 +1080,7 @@ class ShownImageInfo(renpy.object.Object):
 
             if len_attrs > max_len:
                 max_len = len_attrs
-                matches = [ ]
+                matches = []
 
             matches.append((tag,) + attrs)
 
@@ -1052,12 +1091,17 @@ class ShownImageInfo(renpy.object.Object):
             return matches[0]
 
         if exception_name:
-            raise Exception("Showing '" + " ".join(exception_name) + "' is ambiguous, possible images include: " + ", ".join(" ".join(i) for i in matches))
+            raise Exception(
+                "Showing '"
+                + " ".join(exception_name)
+                + "' is ambiguous, possible images include: "
+                + ", ".join(" ".join(i) for i in matches)
+            )
         else:
             return None
 
 
-renpy.display.core.ImagePredictInfo = ShownImageInfo # type: ignore
+renpy.display.core.ImagePredictInfo = ShownImageInfo  # type: ignore
 
 # Functions that have moved from this module to other modules,
 # that live here for the purpose of backward-compatibility.

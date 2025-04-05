@@ -19,12 +19,33 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 
-def notify(message):
+
+def notify(message: str):
     """
     :doc: other
 
@@ -41,25 +62,25 @@ def notify(message):
     This function just calls :var:`config.notify`, allowing its implementation
     to be replaced by assigning a new function to that variable.
     """
-
+    assert renpy.config.notify is not None
     renpy.config.notify(message)
 
 
-def display_notify(message):
+def display_notify(message: str):
     """
     :doc: other
 
     The default implementation of :func:`renpy.notify`.
     """
 
-    renpy.exports.hide_screen('notify')
-    renpy.exports.show_screen('notify', message=message)
+    renpy.exports.hide_screen("notify")
+    renpy.exports.show_screen("notify", message=message)
     renpy.display.tts.notify_text = renpy.text.extras.filter_alt_text(message)
 
     renpy.exports.restart_interaction()
 
 
-def confirm(message, **kwargs):
+def confirm(message: str, **kwargs: Any):
     """
     :doc: other
 
@@ -76,5 +97,7 @@ def confirm(message, **kwargs):
     See :func:`Confirm` for a similar Action.
     """
     Return = renpy.store.Return
-    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False), **kwargs)
+    renpy.store.layout.yesno_screen(
+        message, yes=Return(True), no=Return(False), **kwargs
+    )
     return renpy.ui.interact()

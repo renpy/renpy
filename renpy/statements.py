@@ -21,43 +21,89 @@
 
 # This module contains code to support user-defined statements.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any, Callable, Literal, assert_type, cast
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 
 import renpy
 
 # The statement registry. It's a map from tuples giving the prefixes of
 # statements to dictionaries giving the methods used for that statement.
-registry = { }
+registry = {}
 
 parsers = renpy.parser.ParseTrie()
 
 
-def register(
-        name,
-        parse=None,
-        lint=None,
-        execute=None,
-        predict=None,
-        next=None,
-        scry=None,
-        block=False,
-        init=False,
-        translatable=False, # Not used.
-        execute_init=None,
-        init_priority=0,
-        label=None,
-        warp=None,
-        translation_strings=None,
-        force_begin_rollback=False,
-        post_execute=None,
-        post_label=None,
-        predict_all=True,
-        predict_next=None,
-        execute_default=None,
-        reachable=None,
+def register[T](
+    name: str,
+    parse: Callable[[renpy.lexer.Lexer], T] | None = None,
+    lint: Callable[[T], None] | None = None,
+    execute: Callable[..., None] | None = None,
+    predict: Callable[[T], None] | None = None,
+    next: Callable[..., Any | None] | None = None,
+    scry: Any | None = None,
+    block: (
+        bool
+        | Literal[
+            "possible",
+            "script",
+            "script-possible",
+            "atl",
+            "atl-possible",
+        ]
+    ) = False,
+    init: bool = False,
+    translatable: bool = False,  # Not used.
+    execute_init: Callable[[T], None] | None = None,
+    init_priority: int = 0,
+    label: Callable[[T], str | None] | None = None,
+    warp: Callable[[T], bool] | None = None,
+    translation_strings: (
+        Callable[
+            [list[renpy.lexer.GroupedLine]],
+            tuple[int, str],
+        ]
+        | None
+    ) = None,
+    force_begin_rollback: bool = False,
+    post_execute: Callable[[T], None] | None = None,
+    post_label: Callable[[T], str | None] | None = None,
+    predict_all: bool = True,
+    predict_next: Callable[[str], list[str]] | None = None,
+    execute_default: Callable[[T], None] | None = None,
+    reachable: (
+        Callable[
+            [
+                T,
+                bool,
+                str | object,
+                str | object | None,
+                str | object | None,
+            ],
+            bool,
+        ]
+        | None
+    ) = None,
 ):
     """
     :doc: statement_register
@@ -242,12 +288,12 @@ def register(
         reimplementing them entirely).
     """
 
-    name = tuple(name.split())
+    name2 = tuple(name.split())  # pyright: ignore[reportAssignmentType]
 
     if label:
         force_begin_rollback = True
 
-    registry[name] = dict(
+    registry[name2] = dict(
         parse=parse,
         lint=lint,
         execute=execute,
@@ -267,18 +313,28 @@ def register(
         reachable=reachable,
     )
 
-    if block not in [True, False, "script", "script-possible", "atl", "atl-possible", "possible" ]:
-        raise Exception("Unknown \"block\" argument value: {}".format(block))
+    if block not in [
+        True,
+        False,
+        "script",
+        "script-possible",
+        "atl",
+        "atl-possible",
+        "possible",
+    ]:
+        raise Exception('Unknown "block" argument value: {}'.format(block))
 
     # The function that is called to create an ast.UserStatement.
-    def parse_user_statement(l, loc):
+    def parse_user_statement(
+        l: renpy.lexer.Lexer, loc: tuple[str, int]
+    ) -> renpy.ast.Node | list[renpy.ast.Node]:
 
         renpy.exports.push_error_handler(l.error)
 
         old_subparses = l.subparses
 
         try:
-            l.subparses = [ ]
+            l.subparses = []
 
             text = l.text
             subblock = l.subblock
@@ -287,19 +343,19 @@ def register(
             atl = None
 
             if block is False:
-                l.expect_noblock(" ".join(name) + " statement")
+                l.expect_noblock(" ".join(name2) + " statement")
             elif block is True:
-                l.expect_block(" ".join(name) + " statement")
+                l.expect_block(" ".join(name2) + " statement")
             elif block == "possible":
                 pass
             elif block == "script":
-                l.expect_block(" ".join(name) + " statement")
+                l.expect_block(" ".join(name2) + " statement")
                 code_block = renpy.parser.parse_block(l.subblock_lexer())
             elif block == "script-possible":
                 if l.subblock:
                     code_block = renpy.parser.parse_block(l.subblock_lexer())
             elif block == "atl":
-                l.expect_block(" ".join(name) + " statement")
+                l.expect_block(" ".join(name2) + " statement")
                 atl = renpy.atl.parse_atl(l.subblock_lexer())
             elif block == "atl-possible":
                 if l.subblock:
@@ -326,35 +382,42 @@ def register(
 
         if (post_execute is not None) or (post_label is not None):
             post = renpy.ast.PostUserStatement(loc, rv)
-            rv = [ rv, post ]
+            rv = cast(list[renpy.ast.Node], [rv, post])
 
         if init and not l.init:
-            rv = renpy.ast.Init(loc, [rv], init_priority + l.init_offset)
+            rv = renpy.ast.Init(
+                loc,
+                [cast(renpy.ast.Node, rv)],
+                init_priority + l.init_offset,
+            )
 
         return rv
 
-    renpy.parser.statements.add(name, parse_user_statement)
+    renpy.parser.statements.add(name2, parse_user_statement)
 
     # The function that is called to get our parse data.
-    def parse_data(l):
-        return (name, registry[name]["parse"](l))
+    def parse_data(l: renpy.lexer.Lexer):
+        return (name2, registry[name]["parse"](l))
 
-    parsers.add(name, parse_data)
+    parsers.add(name2, parse_data)
 
 
-def parse(node, line, subblock):
+def parse(node: renpy.ast.Node, line: str, subblock: list[renpy.lexer.GroupedLine]):
     """
     This is used for runtime parsing of CDSes that were created before 7.3.
     """
 
-    block = [ (node.filename, node.linenumber, line, subblock) ]
+    block = [(node.filename, node.linenumber, line, subblock)]
     l = renpy.parser.Lexer(block)
     l.advance()
 
     renpy.exports.push_error_handler(l.error)
     try:
 
-        pf = parsers.parse(l)
+        pf = cast(
+            Callable[[renpy.lexer.Lexer], renpy.ast.Node | list[renpy.ast.Node]] | None,
+            parsers.parse(l),
+        )
         if pf is None:
             l.error("Could not find user-defined statement at runtime.")
 
