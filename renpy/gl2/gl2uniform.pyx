@@ -320,6 +320,10 @@ cdef class Sampler2DSetter(Setter):
         glActiveTexture(GL_TEXTURE0 + self.sampler)
         glUniform1i(self.location, self.sampler)
 
+        # None case.
+        if value is None:
+            raise Exception(f"Uniform {self.uniform_name} in shader {context.shader_name} given None.")
+
         # Int case.
         if type(value) is int:
             glBindTexture(GL_TEXTURE_2D, value)
