@@ -592,7 +592,7 @@ def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
                     "Indentation mismatch.",
                     filename, number, text=text)
 
-        block.append(GroupedLine(filename, number, indent, text, []))
+        block.append(GroupedLine(filename, number, indent, rest, []))
 
     return stack[0][1]
 
