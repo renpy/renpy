@@ -99,6 +99,11 @@ cdef class GL2Model:
         rv.forward = self.forward
         rv.reverse = self.reverse
 
+        rv.tex0 = self.tex0
+        rv.tex1 = self.tex1
+        rv.tex2 = self.tex2
+        rv.tex3 = self.tex3
+
         return rv
 
     cpdef subsurface(GL2Model self, rect):
