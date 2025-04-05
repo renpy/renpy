@@ -143,6 +143,12 @@ class Persistent(object):
                 "_seen_translates" : 0,
             }
 
+        if self._version is None:
+            self._version = renpy.config.version
+
+        if cb := renpy.config.persistent_callback:
+            cb(self)
+
 
 renpy.game.Persistent = Persistent # type: ignore
 renpy.game.persistent = Persistent()
@@ -432,7 +438,7 @@ def update(force_save=False):
 
     # A list of (mtime, other) pairs, where other is a persistent file
     # we might want to merge in.
-    pairs = renpy.loadsave.location.load_persistent()
+    pairs = renpy.loadsave.location.load_persistent(consume=True)
     pairs.sort(key=lambda a : a[0])
 
     # Deals with the case where we don't have any persistent data for

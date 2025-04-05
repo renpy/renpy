@@ -86,3 +86,5 @@ cdef class GLTexture(GL2Model):
     cdef object texture_scaling
 
     cpdef subsurface(GLTexture self, t)
+
+    cpdef GL2Model get_texture(self, int i)

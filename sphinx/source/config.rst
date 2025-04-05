@@ -1185,6 +1185,15 @@ Saving and Loading
     True if the file is loadable, and False if not. This can be used with
     :var:`config.file_open_callback` or :var:`config.missing_image_callback`.
 
+.. var:: config.persistent_callback = None
+
+    When not None, a function that's called with a persistent store whenever
+    a persistent save file is loaded. It should make any alterations in-place.
+
+    This must be set with either the define statement, or inside a ``python
+    early`` block. It should only reference other things typically available
+    to ``python early`` blocks.
+
 .. var:: config.quicksave_slots = 10
 
     The number of slots used by quicksaves.
