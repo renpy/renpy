@@ -134,13 +134,12 @@ screen _accessibility():
 
                 has grid 2 1:
                     xfill True
-                    spacing 20
+                    spacing 40
 
                 vbox:
 
                     label _("Font Override")
 
-                    null height 10
 
                     textbutton _("Default"):
                         action Preference("font transform", None)
@@ -154,29 +153,35 @@ screen _accessibility():
                         action Preference("font transform", "opendyslexic")
                         style_suffix "radio_button"
 
+                    textbutton "":
+                        action None
+                        style_suffix "radio_button"
+
                     null height 10
 
                     label _("Text Size Scaling")
 
-                    null height 10
+                    side "c r":
+                        spacing gui._scale(10)
 
-                    bar value Preference("font size")
+                        bar value Preference("font size") yalign 0.5
 
-                    textbutton _("Reset"):
-                        alt "reset font size"
-                        action Preference("font size", 1.0)
+                        textbutton _("Reset"):
+                            alt "reset font size"
+                            action Preference("font size", 1.0)
 
                     null height 10
 
                     label _("Line Spacing Scaling")
 
-                    null height 10
+                    side "c r":
+                        spacing gui._scale(10)
 
-                    bar value Preference("font line spacing")
+                        bar value Preference("font line spacing") yalign 0.5
 
-                    textbutton _("Reset"):
-                        alt "reset font line spacing"
-                        action Preference("font line spacing", 1.0)
+                        textbutton _("Reset"):
+                            alt "reset font line spacing"
+                            action Preference("font line spacing", 1.0)
 
                     null height 10
 
@@ -198,8 +203,6 @@ screen _accessibility():
                     if renpy.variant("touch"):
                         text _("Self-voicing support is limited when using a touch screen.")
 
-                    null height 10
-
                     textbutton _("Off"):
                         action Preference("self voicing", "disable")
                         style_suffix "radio_button"
@@ -220,17 +223,28 @@ screen _accessibility():
 
                     label _("Voice Volume")
 
-                    null height 10
+                    side "c r":
 
-                    bar value Preference("voice volume")
+                        spacing gui._scale(10)
+
+                        bar value Preference("voice volume") yalign 0.5
+
+                        textbutton _("Reset"):
+                            alt "reset voice volume"
+                            action Preference("voice volume", 1.0)
 
                     null height 10
 
                     label _("Self-Voicing Volume Drop")
 
-                    null height 10
+                    side "c r":
+                        spacing gui._scale(10)
 
-                    bar value Preference("self voicing volume drop")
+                        bar value Preference("self voicing volume drop") yalign 0.5
+
+                        textbutton _("Reset"):
+                            alt "reset self voicing volume drop"
+                            action Preference("self voicing volume drop", 0.5)
 
                     null height 10
 
