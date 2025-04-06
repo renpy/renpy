@@ -364,8 +364,8 @@ cdef class Sampler2DSetter(Setter):
             texture.anisotropy = anisotropy
 
         if texture_scaling != texture.texture_scaling:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture_scaling[0])
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture_scaling[1])
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture_scaling[0])
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture_scaling[1])
             texture.texture_scaling = texture_scaling
 
 
