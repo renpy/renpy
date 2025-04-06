@@ -232,6 +232,17 @@ screen _accessibility():
 
                     bar value Preference("self voicing volume drop")
 
+                    null height 10
+
+                    label _("Mono Audio")
+
+                    textbutton _("Enable"):
+                        action Preference("mono audio", "enable")
+                        style_suffix "radio_button"
+
+                    textbutton _("Disable"):
+                        action Preference("mono audio", "disable")
+                        style_suffix "radio_button"
 
         vbox:
 
