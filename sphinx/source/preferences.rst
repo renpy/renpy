@@ -186,6 +186,12 @@ can then change it again.)
     is restarted. If False, Ren'Py will not attempt to restore the window
     position. The equivalent of the "restore window position" preference.
 
+.. var:: preferences.force_mono = False
+
+    If True, Ren'Py will mix stereo audio to mono before playing it. If False,
+    stereo audio will be played normally.
+
+
 .. _mixer-defaults:
 
 Mixer Defaults

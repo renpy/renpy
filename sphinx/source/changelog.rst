@@ -62,6 +62,16 @@ Mipmaps will automatically be created for images loaded for the purpose of Live2
 likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
 of :func:`Image`.
 
+Accessibility
+-------------
+
+Ren'Py can now force audio to mono, allowing sounds contain information on only the left or right channel
+to become audible on both. This can be enabled through the shift+A accessibility menu, the "force mono" :func:`Preference`,
+or the :var:`preferences.force_mono` preference.
+
+The shift+A accessibility menu has been redesigned to improve alignment.
+
+
 Features
 --------
 

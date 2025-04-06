@@ -60,11 +60,23 @@ def call_str(function, *args):
 # Set of channel IDs that are not video channels
 audio_channels = set()
 
+
 def set_movie_channel(channel, movie):
     if video_only and not movie:
         audio_channels.add(channel)
 
 renpysound.set_movie_channel = set_movie_channel # type: ignore
+
+
+def set_channel_count(count):
+    """
+    Sets the number of channels.
+    """
+
+    call("set_channel_count", count)
+
+renpysound.set_channel_count = set_channel_count # type: ignore
+
 
 # Map of renpysound functions that have been replaced with webaudio functions
 renpysound_funcs = {}

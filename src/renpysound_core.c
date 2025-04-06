@@ -409,6 +409,14 @@ static inline void mix_sample(struct Channel *c, float left, float right, float 
 void (*RPS_generate_audio_c_function)(float *stream, int length) = NULL;
 
 
+/* The count of channels to mix down to. */
+
+static int channel_count = 2;
+
+void RPS_set_channel_count(int count) {
+    channel_count = count;
+}
+
 static void callback(void *userdata, Uint8 *stream, int length) {
 
     // Convert the length to samples.
@@ -548,11 +556,22 @@ static void callback(void *userdata, Uint8 *stream, int length) {
         c->last_playing = 1;
     }
 
+    if (channel_count == 1) {
+        for (int i = 0; i < length; i++) {
+            float left = mix_buffer[i * 2];
+            float right = mix_buffer[i * 2 + 1];
+
+            left = right = (left + right) / 2.0;
+
+            mix_buffer[i * 2] = left;
+            mix_buffer[i * 2 + 1] = right;
+        }
+    }
+
     // Actually output the sound.
     for (int i = 0; i < length; i++) {
         float left = mix_buffer[i * 2];
         float right = mix_buffer[i * 2 + 1];
-
 
         if (left > 1.0) {
             left = 1.0;
