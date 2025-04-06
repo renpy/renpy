@@ -116,10 +116,11 @@ class PyCode(Object):
 
         if hashcode is None:
             if isinstance(source, PyExpr):
-                self.hashcode = source.hashcode
+                hashcode = source.hashcode
             else:
-                self.hashcode = hash32(source)
+                hashcode = hash32(source)
 
+        self.hashcode = hashcode
         self.bytecode = None
 
         if renpy.game.script.record_pycode:
