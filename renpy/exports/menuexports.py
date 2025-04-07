@@ -19,14 +19,34 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any, cast  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
 
-def get_menu_args():
+def get_menu_args() -> tuple[tuple[Any, ...], dict[str, Any] | None]:
     """
     :doc: other
 
@@ -40,7 +60,13 @@ def get_menu_args():
     return renpy.exports.menu_args, renpy.exports.menu_kwargs
 
 
-def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
+def menu(
+    items,
+    set_expr,
+    args: tuple[Any, ...] | None = None,
+    kwargs: dict[str, Any] | None = None,
+    item_arguments=None,
+):
     """
     :undocumented:
 
@@ -51,30 +77,30 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
     args = args or ()
     kwargs = kwargs or {}
 
-    nvl = kwargs.pop("nvl", False)
+    nvl: bool = kwargs.pop("nvl", False)
 
     if renpy.config.menu_arguments_callback is not None:
         args, kwargs = renpy.config.menu_arguments_callback(*args, **kwargs)
 
     if renpy.config.old_substitutions:
 
-        def substitute(s):
+        def substitute(s: str):
             return s % renpy.exports.tag_quoting_dict
 
     else:
 
-        def substitute(s):
+        def substitute(s: str):
             return s
 
     if item_arguments is None:
-        item_arguments = [ ((), {}) ] * len(items)
+        item_arguments = [((), {})] * len(items)
 
     # Filter the list of items on the set_expr:
     if set_expr:
-        set = renpy.python.py_eval(set_expr) # @ReservedAssignment
+        set = renpy.python.py_eval(set_expr)  # @ReservedAssignment
 
-        new_items = [ ]
-        new_item_arguments = [ ]
+        new_items = []
+        new_item_arguments = []
 
         for i, ia in zip(items, item_arguments):
             if i[0] not in set:
@@ -84,7 +110,7 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
         items = new_items
         item_arguments = new_item_arguments
     else:
-        set = None # @ReservedAssignment
+        set = None  # @ReservedAssignment
 
     # Filter the list of items to only include ones for which the
     # condition is true.
@@ -93,9 +119,11 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
 
         location = renpy.game.context().current
 
-        new_items = [ ]
+        new_items = []
 
-        for (label, condition, value), (item_args, item_kwargs) in zip(items, item_arguments):
+        for (label, condition, value), (item_args, item_kwargs) in zip(
+            items, item_arguments
+        ):
             label = substitute(label)
             condition = renpy.python.py_eval(condition)
 
@@ -103,18 +131,32 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
                 continue
 
             if value is not None:
-                new_items.append((label, renpy.ui.ChoiceReturn(label, value, location, sensitive=condition, args=item_args, kwargs=item_kwargs)))
+                new_items.append(
+                    (
+                        label,
+                        renpy.ui.ChoiceReturn(
+                            label,
+                            value,
+                            location,
+                            sensitive=condition,
+                            args=item_args,
+                            kwargs=item_kwargs,
+                        ),
+                    )
+                )
             else:
                 new_items.append((label, None))
 
     else:
 
-        new_items = [ (substitute(label), value)
-                      for label, condition, value in items
-                      if renpy.python.py_eval(condition) ]
+        new_items = [
+            (substitute(label), value)
+            for label, condition, value in items
+            if renpy.python.py_eval(condition)
+        ]
 
     # Check to see if there's at least one choice in set of items:
-    choices = [ value for label, value in new_items if value is not None ]
+    choices = [value for label, value in new_items if value is not None]
 
     # If not, bail out.
     if not choices:
@@ -129,7 +171,7 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
         renpy.exports.menu_kwargs = kwargs
 
         if nvl:
-            rv = renpy.store.nvl_menu(new_items) # type: ignore
+            rv = renpy.store.nvl_menu(new_items)  # type: ignore
         else:
             rv = renpy.store.menu(new_items)
 
@@ -162,7 +204,7 @@ def choice_for_skipping():
     * An auto-save is triggered.
     """
 
-    if renpy.config.skipping and not renpy.game.preferences.skip_after_choices: # type: ignore
+    if renpy.config.skipping and not renpy.game.preferences.skip_after_choices:  # type: ignore
         renpy.config.skipping = None
 
     if renpy.config.autosave_on_choice and not renpy.game.after_rollback:
@@ -184,38 +226,40 @@ def predict_menu():
     if not renpy.config.choice_screen_chosen:
         return
 
-    items = [ ("Menu Prediction", True, False) ]
+    items = [("Menu Prediction", True, False)]
 
     renpy.exports.predict_screen(
         "choice",
         items=items,
-        )
+    )
 
 
-class MenuEntry(tuple):
+class MenuEntry[K](tuple[K]):
     """
     The object passed into the choice screen.
     """
 
 
-def display_menu(items,
-                 window_style='menu_window',
-                 interact=True,
-                 with_none=None,
-                 caption_style='menu_caption',
-                 choice_style='menu_choice',
-                 choice_chosen_style='menu_choice_chosen',
-                 choice_button_style='menu_choice_button',
-                 choice_chosen_button_style='menu_choice_chosen_button',
-                 scope=(),
-                 widget_properties=None,
-                 screen="choice",
-                 type="menu", # @ReservedAssignment
-                 predict_only=False,
-                 _layer=None,
-                 _args=None,
-                 _kwargs=None,
-                 **kwargs):
+def display_menu[T](
+    items: list[tuple[str, T | renpy.ui.Choice[T]]],
+    window_style: str = "menu_window",
+    interact: bool = True,
+    with_none: bool | None = None,
+    caption_style: str = "menu_caption",
+    choice_style: str = "menu_choice",
+    choice_chosen_style: str = "menu_choice_chosen",
+    choice_button_style: str = "menu_choice_button",
+    choice_chosen_button_style: str = "menu_choice_chosen_button",
+    scope: dict[str, Any] | tuple[Any, ...] = (),
+    widget_properties: Any | None = None,
+    screen: str = "choice",
+    type: str = "menu",  # @ReservedAssignment
+    predict_only: bool = False,
+    _layer: str | None = None,
+    _args: tuple[Any, ...] | None = None,
+    _kwargs: dict[str, Any] | None = None,
+    **kwargs: Any,
+):
     """
     :doc: se_menu
     :name: renpy.display_menu
@@ -270,7 +314,9 @@ def display_menu(items,
         menu_kwargs = _kwargs or {}
 
         if renpy.config.menu_arguments_callback is not None:
-            menu_args, menu_kwargs = renpy.config.menu_arguments_callback(*menu_args, **menu_kwargs)
+            menu_args, menu_kwargs = renpy.config.menu_arguments_callback(
+                *menu_args, **menu_kwargs
+            )
 
     else:
         menu_args, menu_kwargs = get_menu_args()
@@ -285,19 +331,21 @@ def display_menu(items,
         choice_for_skipping()
 
         if not predict_only:
-            if renpy.config.choice_empty_window and (not renpy.game.context().scene_lists.shown_window):
+            if renpy.config.choice_empty_window and (
+                not renpy.game.context().scene_lists.shown_window
+            ):
                 renpy.config.choice_empty_window("", interact=False)
 
-    choices = [ ]
+    choices: list[T] = []
 
     for _, val in items:
         if isinstance(val, renpy.ui.ChoiceReturn):
-            val = val.value
+            val = cast(T, val.value)
 
         if val is None:
             continue
 
-        choices.append(val)
+        choices.append(cast(T, val))
 
     # Roll forward.
     roll_forward = renpy.exports.roll_forward_info()
@@ -308,11 +356,12 @@ def display_menu(items,
     # Auto choosing.
     if renpy.config.auto_choice_delay:
 
-        renpy.ui.pausebehavior(renpy.config.auto_choice_delay,
-                               renpy.exports.random.choice(choices))
+        renpy.ui.pausebehavior(
+            renpy.config.auto_choice_delay, renpy.exports.random.choice(choices)
+        )
 
     # The location
-    location = renpy.game.context().current
+    location = cast(tuple[str, int], renpy.game.context().current)
 
     # change behavior for fixed rollback
     if renpy.exports.in_fixed_rollback() and renpy.config.fix_rollback_without_choice:
@@ -320,32 +369,31 @@ def display_menu(items,
 
     scope = dict(scope)
 
-    scope.update(menu_kwargs) # type: ignore
+    scope.update(cast(dict[str, Any], menu_kwargs))  # type: ignore
 
     # Show the menu.
     if renpy.exports.has_screen(screen):
 
-        item_actions = [ ]
+        item_actions: list[MenuEntry[Any]] = []
 
         if widget_properties is None:
-            props = { }
+            props = {}
         else:
             props = widget_properties
 
-        for (label, value) in items:
+        for label, value in items:
 
             if not label:
                 value = None
 
-
             if isinstance(value, renpy.ui.Choice):
-                action = renpy.ui.ChoiceReturn(label, value.value, location)
+                action = renpy.ui.ChoiceReturn(label, cast(T, value.value), location)
                 chosen = action.get_chosen()
                 item_args = value.args
                 item_kwargs = value.kwargs
 
             elif isinstance(value, renpy.ui.ChoiceReturn):
-                action = value
+                action = cast(renpy.ui.ChoiceReturn[T], value)
                 chosen = action.get_chosen()
                 item_args = action.args
                 item_kwargs = action.kwargs
@@ -354,24 +402,24 @@ def display_menu(items,
                 action = renpy.ui.ChoiceReturn(label, value, location)
                 chosen = action.get_chosen()
                 item_args = ()
-                item_kwargs = { }
+                item_kwargs = {}
 
             else:
                 action = None
                 chosen = False
                 item_args = ()
-                item_kwargs = { }
+                item_kwargs = {}
 
             if renpy.config.choice_screen_chosen:
                 me = MenuEntry((label, action, chosen))
             else:
                 me = MenuEntry((label, action))
 
-            me.caption = label # type: ignore
-            me.action = action # type: ignore
-            me.chosen = chosen # type: ignore
-            me.args = item_args # type: ignore
-            me.kwargs = item_kwargs # type: ignore
+            me.caption = label  # type: ignore
+            me.action = action  # type: ignore
+            me.chosen = chosen  # type: ignore
+            me.args = item_args  # type: ignore
+            me.kwargs = item_kwargs  # type: ignore
 
             item_actions.append(me)
 
@@ -388,22 +436,25 @@ def display_menu(items,
             _transient=True,
             _layer=layer,
             *menu_args,
-            **scope)
+            **scope,
+        )
 
     else:
         renpy.exports.shown_window()
 
         renpy.ui.window(style=window_style, focus="menu")
-        renpy.ui.menu(items,
-                      location=renpy.game.context().current,
-                      focus="choices",
-                      default=True,
-                      caption_style=caption_style,
-                      choice_style=choice_style,
-                      choice_chosen_style=choice_chosen_style,
-                      choice_button_style=choice_button_style,
-                      choice_chosen_button_style=choice_chosen_button_style,
-                      **kwargs)
+        renpy.ui.menu(
+            items,
+            location=renpy.game.context().current,
+            focus="choices",
+            default=True,
+            caption_style=caption_style,
+            choice_style=choice_style,
+            choice_chosen_style=choice_chosen_style,
+            choice_button_style=choice_button_style,
+            choice_chosen_button_style=choice_chosen_button_style,
+            **kwargs,
+        )
 
     if renpy.config.menu_showed_window:
         renpy.exports.shown_window()
@@ -421,7 +472,7 @@ def display_menu(items,
 
     if interact:
 
-        rv = renpy.ui.interact(mouse='menu', type=type, roll_forward=roll_forward)
+        rv = renpy.ui.interact(mouse="menu", type=type, roll_forward=roll_forward)
 
         for label, val in items:
 

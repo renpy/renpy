@@ -21,10 +21,32 @@
 
 # Other text-related things.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+# pyright: reportUnknownMemberType=false, reportUnknownArgumentType=false
+# pyright: reportUnknownVariableType=false
 
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
 
+from typing import Any, cast
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 
@@ -62,15 +84,15 @@ text_tags = dict(
     k=True,
     cps=True,
     space=False,
-    vspace=False
-    )
+    vspace=False,
+)
 
 text_tags[""] = True
 
 
 # This checks the text tags in a string to be sure they are all matched, and
 # properly nested. It returns an error message, or None if the line is okay.
-def check_text_tags(s, check_unclosed=False):
+def check_text_tags(s: str, check_unclosed: bool = False) -> str | None:
     """
     :doc: lint
 
@@ -89,13 +111,13 @@ def check_text_tags(s, check_unclosed=False):
         all_tags.update(dict.fromkeys(self_closing_custom_tags, False))
 
     try:
-        tokens = textsupport.tokenize(str(s))
+        tokens = cast(list[tuple[str, str]], textsupport.tokenize(str(s)))
     except Exception as e:
-        return e.args[0]
+        return cast(str, e.args[0])
 
-    tag_stack = [ ]
+    tag_stack: list[str] = []
 
-    for type, text in tokens: # @ReservedAssignment
+    for type, text in tokens:  # @ReservedAssignment
         if type != TAG:
             continue
 
@@ -103,19 +125,19 @@ def check_text_tags(s, check_unclosed=False):
             continue
 
         # Strip off arguments for tags.
-        text = text.partition('=')[0]
-        text = text.partition(':')[0]
+        text = text.partition("=")[0]
+        text = text.partition(":")[0]
 
-        if text.find('=') != -1:
-            text = text[:text.find('=')]
+        if text.find("=") != -1:
+            text = text[: text.find("=")]
 
         # Closing tag.
-        if text and text[0] == '/':
+        if text and text[0] == "/":
             if not tag_stack:
-                return "Close text tag '{%s}' does not match an open text tag." % text
+                return f"Close text tag '{text}' does not match an open text tag."
 
             if tag_stack[-1] != text[1:]:
-                return "Close text tag '{%s}' does not match open text tag '{%s}'." % (text, tag_stack[-1])
+                return "Close text tag '{text}' does not match open text tag '{tag_stack[-1]}'."
 
             tag_stack.pop()
             continue
@@ -127,12 +149,16 @@ def check_text_tags(s, check_unclosed=False):
             tag_stack.append(text)
 
     if check_unclosed and tag_stack:
-            return "One or more text tags were left open at the end of the string: " + ", ".join(repr(i) for i in tag_stack)
+        return f"One or more text tags were left open at the end of the string: {', '.join(repr(i) for i in tag_stack)}"
 
     return None
 
 
-def filter_text_tags(s, allow=None, deny=None):
+def filter_text_tags(
+    s: str,
+    allow: set[str] | None = None,
+    deny: set[str] | None = None,
+) -> str:
     """
     :doc: text_utility
 
@@ -147,14 +173,18 @@ def filter_text_tags(s, allow=None, deny=None):
     """
 
     if (allow is None) and (deny is None):
-        raise Exception("Only one of the allow and deny keyword arguments should be given to filter_text_tags.")
+        raise Exception(
+            "Only one of the allow and deny keyword arguments should be given to filter_text_tags."
+        )
 
     if (allow is not None) and (deny is not None):
-        raise Exception("Only one of the allow and deny keyword arguments should be given to filter_text_tags.")
+        raise Exception(
+            "Only one of the allow and deny keyword arguments should be given to filter_text_tags."
+        )
 
-    tokens = textsupport.tokenize(str(s))
+    tokens = cast(list[tuple[str, str]], textsupport.tokenize(str(s)))
 
-    rv = [ ]
+    rv: list[str] = []
 
     for tokentype, text in tokens:
 
@@ -170,7 +200,7 @@ def filter_text_tags(s, allow=None, deny=None):
             if allow is not None:
                 if kind in allow:
                     rv.append("{" + text + "}")
-            else:
+            elif deny is not None:
                 if kind not in deny:
                     rv.append("{" + text + "}")
         else:
@@ -179,21 +209,25 @@ def filter_text_tags(s, allow=None, deny=None):
     return "".join(rv)
 
 
-def filter_alt_text(s):
+def filter_alt_text(s: str):
     """
     Returns a copy of `s` with the contents of text tags that shouldn't be in
     alt text filtered. This returns just the text to say, with no text tags
     at all in it.
     """
 
-    tokens = textsupport.tokenize(str(s))
+    tokens = cast(list[tuple[str, str]], textsupport.tokenize(str(s)))
 
-    if renpy.config.custom_text_tags or renpy.config.self_closing_custom_text_tags or (renpy.config.replace_text is not None):
+    if (
+        renpy.config.custom_text_tags
+        or renpy.config.self_closing_custom_text_tags
+        or (renpy.config.replace_text is not None)
+    ):
         tokens = renpy.text.text.Text.apply_custom_tags(tokens)
 
-    rv = [ ]
+    rv: list[str] = []
 
-    active = set()
+    active: set[str] = set()
 
     for tokentype, text in tokens:
 
@@ -248,19 +282,21 @@ class ParameterizedText(object):
             show top_text "This text is shown at the center-top of the screen"
     """
 
-    def __init__(self, style='default', **properties):
-        self.style = style
-        self.properties = properties
+    def __init__(self, style: str = "default", **properties: Any):
+        self.style: str = style
+        self.properties: dict[str, Any] = properties
 
-    _duplicatable = True
+    _duplicatable: bool = True
 
-    def _duplicate(self, args):
+    def _duplicate(self, args: Any):
 
         if args.lint:
             return renpy.text.text.Text("", style=self.style, **self.properties)
 
         if len(args.args) == 0:
-            raise Exception("'%s' takes a single string parameter." % ' '.join(args.name))
+            raise Exception(
+                "'%s' takes a single string parameter." % " ".join(args.name)
+            )
 
         param = "".join(args.args)
         string = renpy.python.py_eval(param)
@@ -268,7 +304,7 @@ class ParameterizedText(object):
         return renpy.text.text.Text(string, style=self.style, **self.properties)
 
 
-def textwrap(s, width=78, asian=False):
+def textwrap(s: str, width: int = 78, asian: bool = False):
     """
     Wraps the unicode string `s`, and returns a list of strings.
 
@@ -281,7 +317,7 @@ def textwrap(s, width=78, asian=False):
 
     import unicodedata
 
-    glyphs = [ ]
+    glyphs: list[str] = []
 
     for c in str(s):
 
@@ -289,7 +325,7 @@ def textwrap(s, width=78, asian=False):
 
         if (eaw == "F") or (eaw == "W"):
             gwidth = 20
-        elif (eaw == "A"):
+        elif eaw == "A":
             if asian:
                 gwidth = 20
             else:
@@ -308,16 +344,15 @@ def textwrap(s, width=78, asian=False):
 
     textsupport.annotate_unicode(glyphs, False, 2)
     renpy.text.texwrap.linebreak_tex(glyphs, width * 10, width * 10, False)
-    return textsupport.linebreak_list(glyphs)
+    return cast(str, textsupport.linebreak_list(glyphs))
 
 
-def thaic90(s):
+def thaic90(s: str) -> str:
     """
     Reencodes `s` to the Thai C90 encoding, which is used by Thai-specific
     fonts to combine base characters, upper vowels, lower vowls, and tone marks
     into singe precomposed characters in the unicode private use area.
     """
-
 
     # Copyright (c) 2021 SahabandhSthabara, Saamkhaih Kyakya
     # MIT License.
@@ -335,36 +370,49 @@ def thaic90(s):
     # F718~1A:  uni0E38~3A.low      (lower.low)
     # ==============================================
 
-    def isBase(c):
-        return (u'\u0E01' <= c <= u'\u0E30') or c == u"\u0E30" or c == u"\u0E40" or c == u"\u0E41"
+    def isBase(c: str):
+        return (
+            ("\u0e01" <= c <= "\u0e30")
+            or c == "\u0e30"
+            or c == "\u0e40"
+            or c == "\u0e41"
+        )
 
-    def isBaseAsc(c):
-        return c == u'\u0E1B' or c == u'\u0E1D' or c == u'\u0E1F' or c == u'\u0E2C'
+    def isBaseAsc(c: str):
+        return c == "\u0e1b" or c == "\u0e1d" or c == "\u0e1f" or c == "\u0e2c"
 
-    def isBaseDesc(c):
-        return c == u'\u0E0E' or c == u'\u0E0F'
+    def isBaseDesc(c: str):
+        return c == "\u0e0e" or c == "\u0e0f"
 
-    def isTop(c):
+    def isTop(c: str):
         # Tone Mark, THANTHAKHAT
-        if u"\u0E48" <= c <= u"\u0E4C":
+        if "\u0e48" <= c <= "\u0e4c":
             return True
 
-    def isLower(c):
-        #SARA U, SARA UU, PHINTHU
-        return c >= u"\u0E38" and c <= u"\u0E3A"
+    def isLower(c: str):
+        # SARA U, SARA UU, PHINTHU
+        return c >= "\u0e38" and c <= "\u0e3a"
 
-    def isUpper(c):
-        return c == u'\u0E31' or c == u'\u0E34' or c == u'\u0E35' or c == u'\u0E36' or c == u'\u0E37' or c == u'\u0E47' or c == u'\u0E4D'
+    def isUpper(c: str):
+        return (
+            c == "\u0e31"
+            or c == "\u0e34"
+            or c == "\u0e35"
+            or c == "\u0e36"
+            or c == "\u0e37"
+            or c == "\u0e47"
+            or c == "\u0e4d"
+        )
 
-    rv = [ ]
+    rv: list[str] = []
 
     # [sara am] -> [nikhahit] [sara aa]
-    s = s.replace(u"\u0E33", u"\u0E4D\u0E32")
-    s = s.replace(u"\u0E48\u0E4D", u"\u0E4D\u0E48")
-    s = s.replace(u"\u0E49\u0E4D", u"\u0E4D\u0E49")
-    s = s.replace(u"\u0E4A\u0E4D", u"\u0E4D\u0E4A")
-    s = s.replace(u"\u0E4B\u0E4D", u"\u0E4D\u0E4B")
-    s = s.replace(u"\u0E4C\u0E4D", u"\u0E4D\u0E4C")
+    s = s.replace("\u0e33", "\u0e4d\u0e32")
+    s = s.replace("\u0e48\u0e4d", "\u0e4d\u0e48")
+    s = s.replace("\u0e49\u0e4d", "\u0e4d\u0e49")
+    s = s.replace("\u0e4a\u0e4d", "\u0e4d\u0e4a")
+    s = s.replace("\u0e4b\u0e4d", "\u0e4d\u0e4b")
+    s = s.replace("\u0e4c\u0e4d", "\u0e4d\u0e4c")
 
     length = len(s)
     for z in range(length):
@@ -372,86 +420,85 @@ def thaic90(s):
 
         #  [base] ~ [top]
         if isTop(c) and z > 0:
-                # [base]             [top] -> [base]             [top.low]
-                # [base]     [lower] [top] -> [base]     [lower] [top.low]
-                # [base.asc]         [top] -> [base.asc]         [top.lowleft]
-                # [base.asc] [lower] [top] -> [base.asc] [lower] [top.lowleft]
-            b = s[z - 1];
+            # [base]             [top] -> [base]             [top.low]
+            # [base]     [lower] [top] -> [base]     [lower] [top.low]
+            # [base.asc]         [top] -> [base.asc]         [top.lowleft]
+            # [base.asc] [lower] [top] -> [base.asc] [lower] [top.lowleft]
+            b = s[z - 1]
             if isLower(b) and z > 0:
-                b = s[z -2]
+                b = s[z - 2]
             if isBase(b):
-                Nikhahit = (z < length - 1 and (s[z + 1] == u'\u0E33' or s[z + 1] == u'\u0E4D'))
+                Nikhahit = z < length - 1 and (
+                    s[z + 1] == "\u0e33" or s[z + 1] == "\u0e4d"
+                )
                 if isBaseAsc(b):
                     if Nikhahit:
                         # [base.asc] [nikhahit] [top] -> [base.asc] [nikhahit] [top.left]
                         choices = {
-                            u'\u0E48': u'\uF713',
-                            u'\u0E49': u'\uF714',
-                            u'\u0E4A': u'\uF715',
-                            u'\u0E4B': u'\uF716',
-                            u'\u0E4C': u'\uF717'
-                            }
-                        c = choices.get(c, 'error')
+                            "\u0e48": "\uf713",
+                            "\u0e49": "\uf714",
+                            "\u0e4a": "\uf715",
+                            "\u0e4b": "\uf716",
+                            "\u0e4c": "\uf717",
+                        }
+                        c = choices.get(c, "error")
                     else:
                         choices = {
-                            u'\u0E48': u'\uF705',
-                            u'\u0E49': u'\uF706',
-                            u'\u0E4A': u'\uF707',
-                            u'\u0E4B': u'\uF708',
-                            u'\u0E4C': u'\uF709'
-                            }
-                        c = choices.get(c, 'error')
+                            "\u0e48": "\uf705",
+                            "\u0e49": "\uf706",
+                            "\u0e4a": "\uf707",
+                            "\u0e4b": "\uf708",
+                            "\u0e4c": "\uf709",
+                        }
+                        c = choices.get(c, "error")
                 else:
                     if Nikhahit == False:
                         choices = {
-                            u'\u0E48': u'\uF70A',
-                            u'\u0E49': u'\uF70B',
-                            u'\u0E4A': u'\uF70C',
-                            u'\u0E4B': u'\uF70D',
-                            u'\u0E4C': u'\uF70E'
-                            }
-                        c = choices.get(c, 'error')
+                            "\u0e48": "\uf70a",
+                            "\u0e49": "\uf70b",
+                            "\u0e4a": "\uf70c",
+                            "\u0e4b": "\uf70d",
+                            "\u0e4c": "\uf70e",
+                        }
+                        c = choices.get(c, "error")
             # [base.asc] [upper] [top] -> [base.asc] [upper] [top.left]
-            if (z > 1 and isUpper(s[z -1]) and isBaseAsc(s[z - 2])):
+            if z > 1 and isUpper(s[z - 1]) and isBaseAsc(s[z - 2]):
                 choices = {
-                    u'\u0E48': u'\uF713',
-                    u'\u0E49': u'\uF714',
-                    u'\u0E4A': u'\uF715',
-                    u'\u0E4B': u'\uF716',
-                    u'\u0E4C': u'\uF717'
-                    }
-                c = choices.get(c, 'error')
+                    "\u0e48": "\uf713",
+                    "\u0e49": "\uf714",
+                    "\u0e4a": "\uf715",
+                    "\u0e4b": "\uf716",
+                    "\u0e4c": "\uf717",
+                }
+                c = choices.get(c, "error")
         # [base.asc] [upper] -> [base.asc] [upper-left]
-        elif (isUpper(c)and z > 0 and isBaseAsc(s[z -1])):
+        elif isUpper(c) and z > 0 and isBaseAsc(s[z - 1]):
             choices = {
-                u'\u0E31': u'\uF710',
-                u'\u0E34': u'\uF701',
-                u'\u0E35': u'\uF702',
-                u'\u0E36': u'\uF703',
-                u'\u0E37': u'\uF704',
-                u'\u0E4D': u'\uF711',
-                u'\u0E47': u'\uF712'
-                }
-            c = choices.get(c, 'error')
-        elif (isLower(c) and z > 0 and isBaseDesc(s[z -1])):
-            choices = {
-                u'\u0E38': u'\uF718',
-                u'\u0E39': u'\uF719',
-                u'\u0E3A': u'\uF71A'
-                }
-            c = choices.get(c, 'error')
-        elif (c == u'\u0E0D' and z < length -1 and isLower(s[z + 1])):
-            c = u'\uF70F'
-        elif (c == u'\u0E10' and z < length -1 and isLower(s[z + 1])):
-            c = u'\uF700'
+                "\u0e31": "\uf710",
+                "\u0e34": "\uf701",
+                "\u0e35": "\uf702",
+                "\u0e36": "\uf703",
+                "\u0e37": "\uf704",
+                "\u0e4d": "\uf711",
+                "\u0e47": "\uf712",
+            }
+            c = choices.get(c, "error")
+        elif isLower(c) and z > 0 and isBaseDesc(s[z - 1]):
+            choices = {"\u0e38": "\uf718", "\u0e39": "\uf719", "\u0e3a": "\uf71a"}
+            c = choices.get(c, "error")
+        elif c == "\u0e0d" and z < length - 1 and isLower(s[z + 1]):
+            c = "\uf70f"
+        elif c == "\u0e10" and z < length - 1 and isLower(s[z + 1]):
+            c = "\uf700"
         else:
             c = s[z]
 
         rv.append(c)
 
-    return u''.join(rv)
+    return "".join(rv)
 
 
+# fmt: off
 arabic_reverse_mappings = {
     # [ISOLATED],[FINAL],[INITIAL],[MEDIAL] -> [BASE]
     # Arabic Presentation Forms-A
@@ -541,12 +588,15 @@ arabic_reverse_mappings = {
     (u'\uFEF9',u'\uFEFA'):  		  u'\u0625\u0644', # ARABIC LIGATURE LAM WITH ALEF WITH HAMZA BELOW
     (u'\uFEFB',u'\uFEFC'):  		  u'\u0627\u0644'  # ARABIC LIGATURE LAM WITH ALEF
 }
+# fmt: on
 
 # Convert this to one-on-one.
-arabic_reverse_mappings = {k: v for l, v in arabic_reverse_mappings.items() for k in l if k is not None}
+arabic_reverse_mappings = {
+    k: v for l, v in arabic_reverse_mappings.items() for k in l if k is not None
+}
 
 
-def unmap_arabic_presentation_forms(s):
+def unmap_arabic_presentation_forms(s: str) -> str:
     """
     Reverses the Arabic presentation forms in `s` to their base forms.
     """
@@ -554,7 +604,7 @@ def unmap_arabic_presentation_forms(s):
     if not renpy.config.reverse_arabic_presentation_forms:
         return s
 
-    rv = [ ]
+    rv: list[str] = []
 
     for c in s:
 

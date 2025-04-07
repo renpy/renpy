@@ -2860,12 +2860,12 @@ class Text(renpy.display.displayable.Displayable):
         return tokens
 
     @staticmethod
-    def apply_custom_tags(tokens):
+    def apply_custom_tags(tokens)-> list[tuple[str,str]]:
         """
         Apply new-style custom text tags.
         """
 
-        rv = [ ]
+        rv: list[tuple[str,str]] = [ ]
 
         while tokens:
 
