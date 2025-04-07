@@ -148,7 +148,7 @@ label tutorial_dialogue:
 
     e "Using a string for a character's name is inconvenient, for two reasons."
 
-    e "The first is that it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
+    e "The first is that it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times." id tutorial_dialogue_910f286a
 
     e "The second is that it doesn't leave any place to put styling, which can change the look of a character."
 
