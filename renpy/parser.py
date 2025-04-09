@@ -1696,7 +1696,8 @@ def parse(fn, filedata=None, linenumber=1):
         return None
 
     if rv:
-        rv.append(ast.Return((rv[-1].filename, rv[-1].linenumber), None))
+        linenumber = max(i[1] for i in lines) + 1
+        rv.append(ast.Return((rv[-1].filename, linenumber), None))
 
     return rv
 
