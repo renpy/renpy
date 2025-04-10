@@ -295,7 +295,9 @@ cdef class GLTexture(GL2Model):
         self.wrap_s = GL_CLAMP_TO_EDGE
         self.wrap_t = GL_CLAMP_TO_EDGE
         self.anisotropy = loader.max_anisotropy
-        self.texture_scaling = None
+        self.mag_filter = GL_LINEAR
+        self.min_filter = None
+        self.scaling = None
 
         if renpy.emscripten and generate:
             # Generate a texture name to access video frames for web
@@ -602,9 +604,12 @@ cdef class GLTexture(GL2Model):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
         if max_level:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+            self.min_filter = GL_LINEAR_MIPMAP_NEAREST
         else:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+            self.min_filter = GL_LINEAR
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, self.min_filter)
+        self.scaling = (GL_LINEAR, self.min_filter)
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
