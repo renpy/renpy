@@ -1210,9 +1210,8 @@ class Lexer(object):
     def python_string(self):
         """
         This tries to match a python string at the current
-        location. If it matches, it returns True, and the current
-        position is updated to the end of the string. Otherwise,
-        returns False.
+        location. If it matches, it returns the string, including
+        delimiters. If not, returns None.
         """
 
         if self.eol():
@@ -1225,7 +1224,7 @@ class Lexer(object):
 
         if not start:
             self.pos = old_pos
-            return False
+            return None
 
         delim = start.lstrip('urfURF')
 
@@ -1243,7 +1242,7 @@ class Lexer(object):
 
             self.match(r'.[^\'"\\]*')
 
-        return True
+        return self.text[old_pos:self.pos]
 
     def dotted_name(self):
         """

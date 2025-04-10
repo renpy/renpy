@@ -75,6 +75,10 @@ The shift+A accessibility menu has been redesigned to improve alignment.
 Features
 --------
 
+Screens now support python-style docstrings, which are used when a string is included as the first line
+of the block. Ren'Py does not do anything directly with dosctrings, but the raw string can be accessed
+using :func:`renpy.get_screen_docstring`.
+
 The :class:`Confirm` action and :func:`renpy.confirm` function now pass additional keyword arguments (not beginning
 with _) to the confirm screen.
 

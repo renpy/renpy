@@ -203,6 +203,7 @@ class Screen(renpy.object.Object):
 
     sensitive = "True"
     roll_forward = None
+    docstring = None
 
     def __init__(self,
                  name,
@@ -216,7 +217,8 @@ class Screen(renpy.object.Object):
                  location=None,
                  layer="screens",
                  sensitive="True",
-                 roll_forward=None):
+                 roll_forward=None,
+                 docstring=None):
 
         # The name of this screen.
         if isinstance(name, str):
@@ -272,6 +274,9 @@ class Screen(renpy.object.Object):
         # call screen statement? True for yes, False for no, None for
         # config.call_screen_roll_forward.
         self.roll_forward = roll_forward
+
+        # The docstring for this screen.
+        self.docstring = docstring
 
         global prepared
         global analyzed
@@ -1094,6 +1099,25 @@ def get_screen_layer(name):
         return "screens"
     else:
         return screen.layer
+
+
+def get_screen_docstring(name, variant=None):
+    """
+    :doc: screens
+
+    Returns the docstring for the screen with `name` and `variant`.
+
+    `name`
+        The name of the screen.
+    `variant`
+        The variant of the screen. If None, the default variant is used.
+    """
+
+    screen = get_screen_variant(name, [ variant ])
+    if screen is not None:
+        return screen.docstring
+    else:
+        return None
 
 
 def get_screen(name, layer=None, tag_only=False):

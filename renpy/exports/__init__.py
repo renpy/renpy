@@ -124,6 +124,7 @@ from renpy.display.screen import (
     get_displayable,
     get_displayable_properties,
     get_screen,
+    get_screen_docstring,
     get_screen_variable,
     get_widget,
     get_widget_properties,
