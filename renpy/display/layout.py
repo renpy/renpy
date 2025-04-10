@@ -1701,6 +1701,12 @@ def condition_switch_pick(switch):
         if cond is None:
             return d
 
+        if cond is True:
+            return d
+
+        if cond is False:
+            continue
+
         if cond in cond_cache:
             code = cond_cache[cond]
         else:
@@ -1771,7 +1777,9 @@ def ConditionSwitch(*args, **kwargs):
 
     for cond, d in zip(args[0::2], args[1::2]):
 
-        if cond not in cond_cache:
+        if cond is True or cond is False or cond is None:
+            code = cond
+        elif cond not in cond_cache:
             code = renpy.python.py_compile(cond, 'eval')
             cond_cache[cond] = code
 
@@ -2412,7 +2420,7 @@ class NearRect(Container):
 
     `rect`
         The rectangle to place the child near.
-    
+
     `focus`
         Passed to `GetFocusRect`. The special name "tooltop" will retrieve the
         rect of last displayable to set a tooltip. If present, overrides `rect`.
@@ -2421,7 +2429,7 @@ class NearRect(Container):
         One of "left", "top", "right", "bottom" to prefer that position for
         the nearrect. If there is not room on one side, the opposite side is
         used. By default, the preferred side is "bottom".
-    
+
     `prefer_top`
         Deprecated. Equivalent to passing `preferred_side="top"`
 
