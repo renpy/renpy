@@ -299,8 +299,6 @@ TEXTURE_SCALING = {
     "linear_mipmap_linear" : (GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR),
 }
 
-default_texture_scaling = TEXTURE_SCALING["linear_mipmap_nearest"]
-
 
 cdef class Sampler2DSetter(Setter):
 
@@ -337,7 +335,8 @@ cdef class Sampler2DSetter(Setter):
         cdef GLint wrap_s = GL_CLAMP_TO_EDGE
         cdef GLint wrap_t = GL_CLAMP_TO_EDGE
         cdef GLfloat anisotropy = texture.loader.max_anisotropy
-        cdef texture_scaling = default_texture_scaling
+        cdef GLint mag_filter = texture.scaling[0]
+        cdef GLint min_filter = texture.scaling[1]
 
         if context.properties:
             if self.texture_wrap_key in context.properties:
@@ -349,7 +348,7 @@ cdef class Sampler2DSetter(Setter):
                 anisotropy = 1.0
 
             if "texture_scaling" in context.properties:
-                texture_scaling = TEXTURE_SCALING[context.properties["texture_scaling"]]
+                mag_filter, min_filter = TEXTURE_SCALING[context.properties["texture_scaling"]]
 
         if wrap_s != texture.wrap_s:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
@@ -363,10 +362,13 @@ cdef class Sampler2DSetter(Setter):
             glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, anisotropy)
             texture.anisotropy = anisotropy
 
-        if texture_scaling != texture.texture_scaling:
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture_scaling[0])
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture_scaling[1])
-            texture.texture_scaling = texture_scaling
+        if mag_filter != texture.mag_filter:
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter)
+            texture.mag_filter = mag_filter
+
+        if min_filter != texture.min_filter:
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter)
+            texture.min_filter = min_filter
 
 
 cdef class Getter:
