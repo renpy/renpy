@@ -676,6 +676,9 @@ def reload_all():
     # Re-initialize the importer.
     renpy.loader.init_importer()
 
+    # Reset main log clock.
+    renpy.main.reset_clock()
+
 
 # renpy.store and sub-modules can have names of any type inside.
 store: Any = None
