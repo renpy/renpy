@@ -779,7 +779,7 @@ def change_language(language, force=False):
     tl = renpy.game.script.translator
 
     renpy.style.restore(style_backup) # @UndefinedVariable
-    renpy.style.rebuild() # @UndefinedVariable
+    renpy.style.rebuild(False) # @UndefinedVariable
 
     for i in renpy.config.translate_clean_stores:
         renpy.python.clean_store(i)
