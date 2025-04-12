@@ -71,10 +71,6 @@ def run(restart):
     renpy.python.clean_stores()
     log_clock("Cleaning stores")
 
-    # Rebuild the various style caches.
-    renpy.style.build_styles() # @UndefinedVariable
-    log_clock("Build styles")
-
     renpy.sl2.slast.load_cache()
     log_clock("Load screen analysis")
 
@@ -86,12 +82,6 @@ def run(restart):
         renpy.sl2.slast.save_cache()
         log_clock("Save screen analysis")
 
-    # Prepare the screens.
-    renpy.display.screen.prepare_screens()
-
-    log_clock("Prepare screens")
-
-    if not restart:
         renpy.pyanalysis.save_cache()
         log_clock("Save pyanalysis")
 
