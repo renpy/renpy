@@ -71,10 +71,6 @@ def run(restart):
     renpy.python.clean_stores()
     log_clock("Cleaning stores")
 
-    # Init translation.
-    renpy.translation.init_translation()
-    log_clock("Init translation")
-
     # Rebuild the various style caches.
     renpy.style.build_styles() # @UndefinedVariable
     log_clock("Build styles")
@@ -605,6 +601,10 @@ def main():
         if not game.interface:
             renpy.display.core.Interface()
             log_clock("Creating interface object")
+
+        # Init translation.
+        renpy.translation.init_translation()
+        log_clock("Init translation")
 
         # Start things running.
         restart = None
