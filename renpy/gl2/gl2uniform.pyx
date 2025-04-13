@@ -335,8 +335,8 @@ cdef class Sampler2DSetter(Setter):
         cdef GLint wrap_s = GL_CLAMP_TO_EDGE
         cdef GLint wrap_t = GL_CLAMP_TO_EDGE
         cdef GLfloat anisotropy = texture.loader.max_anisotropy
-        cdef GLint mag_filter = texture.scaling[0]
-        cdef GLint min_filter = texture.scaling[1]
+        cdef GLint mag_filter = texture.default_mag_filter
+        cdef GLint min_filter = texture.default_min_filter
 
         if context.properties:
             if self.texture_wrap_key in context.properties:
