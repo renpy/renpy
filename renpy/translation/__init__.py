@@ -266,6 +266,13 @@ class ScriptTranslator(object):
 
         return TranslateInfo(tl)
 
+    def requires_init(self, language):
+        return bool(self.python[language] or
+                    self.block[language] or
+                    self.early_block[language] or
+                    renpy.config.language_callbacks[language])
+
+
 def encode_say_string(s):
     """
     Encodes a string in the format used by Ren'Py say statements.
@@ -782,18 +789,22 @@ def change_language(language, force=False):
     if not changed and not force:
         return
 
+    tl = renpy.game.script.translator
+
     if changed:
         renpy.style.restore(style_backup) # @UndefinedVariable
         renpy.style.rebuild(False) # @UndefinedVariable
 
         for i in renpy.config.translate_clean_stores:
             renpy.python.clean_store(i)
+
+    elif not tl.requires_init(language):
+        return
+
     else:
         # Prevent memory leak by ignoring any style changes from translate
         # blocks when language hasn't changed.
         current_styles = renpy.style.backup()
-
-    tl = renpy.game.script.translator
 
     if renpy.config.new_translate_order:
         new_change_language(tl, language, changed)
@@ -820,12 +831,12 @@ def change_language(language, force=False):
         renpy.exports.block_rollback()
 
         old_language = language
+
     else:
         renpy.style.restore(current_styles)
 
     # Restart the interaction.
     renpy.exports.restart_interaction()
-
 
 
 def check_language():
