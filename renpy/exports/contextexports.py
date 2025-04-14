@@ -19,8 +19,29 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from collections.abc import Iterable
+from typing import Any, Callable  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
@@ -52,7 +73,7 @@ def context_nesting_level():
     return len(renpy.game.contexts) - 1
 
 
-def jump_out_of_context(label):
+def jump_out_of_context(label: str):
     """
     :doc: context
 
@@ -71,7 +92,7 @@ def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)
 
 
-def dynamic(*variables, **kwargs):
+def dynamic(*variables: str, **kwargs: Any):
     """
     :doc: label
 
@@ -98,7 +119,7 @@ def dynamic(*variables, **kwargs):
         setattr(renpy.store, k, v)
 
 
-def context_dynamic(*variables):
+def context_dynamic(*variables: str):
     """
     :doc: context
 
@@ -116,8 +137,6 @@ def context_dynamic(*variables):
     """
 
     renpy.game.context().make_dynamic(variables, context=True)
-
-
 
 
 # New context stuff.
@@ -209,7 +228,7 @@ def call_stack_depth():
     return len(renpy.game.context().return_stack)
 
 
-def game_menu(screen=None):
+def game_menu(screen: str | None = None):
     """
     :undocumented: Probably not what we want in the presence of
     screens.
@@ -221,7 +240,7 @@ def game_menu(screen=None):
         call_in_new_context("_game_menu", _game_menu_screen=screen)
 
 
-def mode(mode):
+def mode(mode: str):
     """
     :undocumented:
 
@@ -234,7 +253,7 @@ def mode(mode):
     if not ctx.use_modes:
         return
 
-    modes = ctx.modes
+    modes: list[str] = ctx.modes
 
     try:
         ctx.use_modes = False
@@ -295,7 +314,7 @@ def get_return_stack():
     return renpy.game.context().get_return_stack()
 
 
-def set_return_stack(stack):
+def set_return_stack(stack: Iterable[str]):
     """
     :doc: label
 
@@ -333,7 +352,7 @@ def clear_line_log():
     Clears the line log.
     """
 
-    renpy.game.context().line_log = [ ]
+    renpy.game.context().line_log = []
 
 
 def get_skipping():
@@ -378,7 +397,7 @@ def is_init_phase():
     return renpy.game.context().init_phase
 
 
-def add_to_all_stores(name, value):
+def add_to_all_stores(name: str, value: Any):
     """
     :doc: other
 
@@ -420,6 +439,7 @@ def get_game_runtime():
     """
 
     return renpy.game.contexts[0].runtime
+
 
 def get_statement_name():
     """

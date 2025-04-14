@@ -19,10 +19,29 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
-from typing import Optional, Any
+from typing import Any
 
 
 import renpy
@@ -32,10 +51,10 @@ import renpy.log
 # The draw object through which all drawing is routed. This object
 # contains all of the distinction between the software and GL
 # renderers.
-draw = None # type: Any|None
+draw: Any | None = None
 
 # The interface object.
-interface = None # type: Optional[renpy.display.core.Interface]
+interface: renpy.display.core.Interface | None = None
 
 # Should we disable imagedissolve-type transitions?
 less_imagedissolve = False
@@ -50,15 +69,20 @@ info = None
 # all platforms.)
 can_fullscreen = True
 
+
 def get_info():
     global info
 
     if info is None:
         import pygame_sdl2 as pygame
-        pygame.display.init()
-        info = pygame.display.Info()
 
-    return info
+        # fmt: off
+        pygame.display.init() # pyright: ignore[reportUnknownMemberType]
+        info = pygame.display.Info() # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+        # fmt: on
+
+    return info  # pyright: ignore[reportUnknownVariableType]
+
 
 # Logs we use.
 log = renpy.log.open("log", developer=False, append=False)
