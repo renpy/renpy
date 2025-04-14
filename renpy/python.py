@@ -455,7 +455,9 @@ def find_starred_match_patterns(node):
 
 
 class WrapNode(ast.NodeTransformer):
-
+    def __init__(self):
+        # Do we call `renpy.pyanalysis.import_from` when importing stuff?
+        self.call_import_from = True
 
     def wrap_generator(self, node):
         """
@@ -670,7 +672,10 @@ class WrapNode(ast.NodeTransformer):
         return self.wrap_starred_with(node)
 
     def visit_ClassDef(self, node: ast.ClassDef):
-        node = self.generic_visit(node)  # type: ignore
+        old = self.call_import_from
+        self.call_import_from = False
+        node = self.generic_visit(node) # type: ignore
+        self.call_import_from = old
 
         # This will force the class to inherit from RevertableObject.
         if not node.bases:
@@ -747,6 +752,72 @@ class WrapNode(ast.NodeTransformer):
         node.cases = [self.wrap_match_case(i) for i in node.cases]
         return node
 
+    def visit_FunctionDef(self, node):
+        old = self.call_import_from
+        self.call_import_from = False
+        node = self.generic_visit(node)
+        self.call_import_from = old
+
+        return node
+
+    def visit_ImportFrom(self, node):
+        if not self.call_import_from:
+            return node
+
+        namespace = node.module
+        if namespace.startswith("store"):
+            namespace = namespace[6:]
+
+        names = [alias.asname or alias.name for alias in node.names]
+        
+        if not names:
+            return node
+        
+        rv = [ node ]
+        
+        args = [ ]
+
+        # name of the module we're importing from
+        args.append(
+            ast.Constant(namespace)
+        )
+
+        # name of the module we're importing into
+        args.append(
+            ast.Name(
+                id="__name__",
+                ctx=ast.Load()
+            )
+        )
+
+        # what we are importing
+        args.extend([
+            ast.Constant(name)
+            for name in names
+        ])
+
+        renpy_pyanalysis_import_from = \
+        ast.Attribute(
+            value=ast.Attribute(
+                value=ast.Name(id="renpy", ctx=ast.Load()),
+                attr="pyanalysis",
+                ctx=ast.Load()
+            ),
+            attr="import_from",
+            ctx=ast.Load()
+        )
+        
+        rv.append(
+            ast.Expr(
+                value=ast.Call(
+                    func=renpy_pyanalysis_import_from,
+                    args=args,
+                    keywords=[]
+                )
+            )
+        )
+            
+        return rv
 
 wrap_node = WrapNode()
 
