@@ -22,6 +22,7 @@
 
 from renpy.display.matrix cimport Matrix
 from renpy.gl2.gl2texture cimport GLTexture
+from renpy.display.render cimport Render
 
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
 
@@ -326,6 +327,9 @@ cdef class Sampler2DSetter(Setter):
         if type(value) is int:
             glBindTexture(GL_TEXTURE_2D, value)
             return
+
+        if type(value) is Render:
+            value = value.cached_texture
 
         # GLTexture case.
         cdef GLTexture texture = value

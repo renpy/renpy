@@ -108,6 +108,9 @@ cdef class Render:
     # A flag that's used to enable debugging on a per-render basis.
     cdef public bint debug
 
+    # A flag that tells us if uniforms has a render in it.
+    cdef public bint uniforms_has_render
+
     # operations ###############################################################
 
     cpdef int blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
