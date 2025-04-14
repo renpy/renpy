@@ -1158,8 +1158,6 @@ def periodic_pass():
     the various channels, which then may play music.
     """
 
-    renpy.config.debug_sound = True
-
     global old_emphasized
     global old_channel_count
 
