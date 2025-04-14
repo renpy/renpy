@@ -144,7 +144,7 @@ class PyCode(Object):
             self.hashcode = hash32(source)
 
         # The source code.
-        if self.mode != "eval":
+        if mode != "eval":
             self.source, self.col_offset = PyCode.dedent(source)
         else:
             self.source = source
