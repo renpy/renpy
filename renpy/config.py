@@ -281,6 +281,9 @@ clear_log = False
 # Lint hooks.
 lint_hooks = [ ]
 
+# Aliases for character names in the linter character statistics view
+lint_char_aliases = False
+
 # Hyperlink styler.
 hyperlink_styler = None
 
