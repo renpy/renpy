@@ -611,28 +611,24 @@ class Context(renpy.object.Object):
                 except Exception as e:
                     self.translate_interaction = None
 
-                    short, full, traceback_fn = renpy.error.report_exception(e, editor=False)
+                    te = renpy.error.report_exception(e, editor=False)
 
                     reraise = True
                     try:
                         # Local exception handler, if any.
                         if self.exception_handler is not None:
-                            self.exception_handler(short, full, traceback_fn)
+                            self.exception_handler(*te)
                             reraise = False
 
                         # Creator-defined exception handler. Returns True
                         # if exception handled.
                         elif renpy.config.exception_handler is not None:
-                            reraise = not renpy.config.exception_handler(short, full, traceback_fn)
+                            reraise = not renpy.config.exception_handler(*te)
 
                         # RenPy default exception handler. Returns True
                         # if exception NOT handled.
                         if reraise:
-                            reraise = renpy.display.error.report_exception(
-                                short,
-                                full,
-                                traceback_fn
-                            )
+                            reraise = renpy.display.error.report_exception(te)
 
                     except renpy.game.CONTROL_EXCEPTIONS:
                         raise

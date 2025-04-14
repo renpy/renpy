@@ -84,7 +84,7 @@ def error_dump():
     renpy.dump.dump(True)
 
 
-def report_exception(short, full, traceback_fn):
+def report_exception(traceback_exception: renpy.error.TracebackException):
     """
     Reports an exception to the user. Returns True if the exception should
     be raised by the normal reporting mechanisms. Otherwise, should raise
@@ -138,11 +138,10 @@ def report_exception(short, full, traceback_fn):
         renpy.game.invoke_in_new_context(
             call_exception_screen,
             "_exception",
-            short=short, full=full,
+            traceback_exception=traceback_exception,
             rollback_action=rollback_action,
             reload_action=reload_action,
             ignore_action=ignore_action,
-            traceback_fn=traceback_fn,
         )
 
         renpy.display.im.ignored_images |= renpy.display.im.images_to_ignore
