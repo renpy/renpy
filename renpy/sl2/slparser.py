@@ -229,7 +229,7 @@ class Parser(object):
 
         raise Exception("Not Implemented")
 
-    def parse_contents(self, l, target, layout_mode=False, can_has=False, can_tag=False, block_only=False, keyword=True):
+    def parse_contents(self, l, target, layout_mode=False, can_has=False, can_tag=False, block_only=False, keyword=True, docstring=False):
         """
         Parses the remainder of the current line of `l`, and all of its subblock,
         looking for keywords and children.
@@ -362,6 +362,13 @@ class Parser(object):
 
                 state = l.checkpoint()
                 loc = l.get_location()
+
+                if docstring:
+                    if s := l.python_string():
+                        l.expect_eol()
+                        l.expect_noblock("docstring")
+                        target.docstring = s
+                        continue
 
                 if l.keyword(r'has'):
                     if not can_has:
@@ -1115,7 +1122,7 @@ class ScreenParser(Parser):
         screen.name = l.require(l.word)
         screen.parameters = renpy.parser.parse_parameters(l) # type: ignore
 
-        self.parse_contents(l, screen, can_tag=True)
+        self.parse_contents(l, screen, can_tag=True, docstring=True)
 
         keyword = dict(screen.keyword)
 

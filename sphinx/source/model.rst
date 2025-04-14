@@ -175,7 +175,7 @@ Ren'Py supports only the following variable types:
 * mat2 (a :class:`Matrix`)
 * mat3 (a :class:`Matrix`)
 * mat4 (a :class:`Matrix`)
-* sampler2D (supplied by Ren'Py)
+* sampler2D (a Displayabe, including strings that give Displayables, or a Render)
 
 Uniform variables should begin with u\_, attributes with a\_, and varying
 variables with v\_. Names starting with u_renpy\_, a_renpy, and v_renpy
@@ -392,6 +392,10 @@ The following uniforms are made available to all models.
     variables. When the texture is loaded from disk, this is the size of the
     image file. After a render to texture, it's the number of drawable pixels
     the rendered texture covered.
+
+In addition, if a sampler uniform is available, then suffixing it with ``__res`` will give a vec2
+containing the underlying texture size. For example, ``u_markup__res`` will give the size of the
+``u_markup`` texture.
 
 Matrix Uniforms
 ----------------

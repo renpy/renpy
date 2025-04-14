@@ -685,6 +685,9 @@ cdef class Render:
         # Have the textures been loaded?
         self.loaded = False
 
+        # Do the uniforms have a render in them?
+        self.uniforms_has_render = False
+
         live_renders.append(self)
 
     _types = """\
@@ -724,6 +727,7 @@ cdef class Render:
         cached_texture: Any
         cached_model: Any
         loaded: bool
+        uniforms_has_render: bool
         """
 
     def __repr__(self): #@DuplicatedSignature
@@ -1662,6 +1666,10 @@ cdef class Render:
         Adds a uniform with the given name and value that will be passed
         to the shaders that render this Render and its children.
         """
+
+        if type(value) is Render:
+            self.depends_on(value)
+            self.uniforms_has_render = True
 
         if self.uniforms is None:
             self.uniforms = { name : value }

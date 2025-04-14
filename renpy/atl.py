@@ -51,9 +51,16 @@ import renpy
 from renpy.parameter import Signature, ValuedParameter
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
 
+def late_imports():
+    global Displayable, Matrix, Camera
+
+    from renpy.display.displayable import Displayable
+    from renpy.display.matrix import Matrix
+    from renpy.display.transform import Camera
 
 def compiling(loc: tuple[str, int]):
-    file, number = loc  # @ReservedAssignment
+    file, number = loc # @ReservedAssignment
+
 
     renpy.game.exception_info = "Compiling ATL code at %s:%d" % (file, number)
 
@@ -267,9 +274,8 @@ def interpolate(t, a, b, typ):
     """
 
     # Deal with booleans, nones, etc.
-    if b is None or isinstance(
-        b, (bool, str, renpy.display.matrix.Matrix, renpy.display.transform.Camera)
-    ):
+
+    if b is None or isinstance(b, (bool, str, Displayable, Matrix, Camera)):
         if t >= 1.0:
             return b
         else:
@@ -1435,6 +1441,26 @@ class RawMultipurpose(RawStatement):
                 renpy.easy.predict(i)
             except Exception:
                 continue
+
+        for k, e in self.properties:
+            if k[:2] == "u_":
+
+                try:
+                    d = ctx.eval(e)
+                except Exception:
+                    continue
+
+                if isinstance(d, str):
+                    d = renpy.easy.displayable(d)
+
+                if not isinstance(d, Displayable):
+                    continue
+
+                try:
+                    d = renpy.display.im.unoptimized_texture(d)
+                    renpy.easy.predict(d)
+                except Exception:
+                    continue
 
 
 # This lets us have an ATL transform as our child.

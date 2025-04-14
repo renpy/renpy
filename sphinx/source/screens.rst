@@ -213,9 +213,16 @@ expression. It takes the following properties:
     and :func:`Return` actions, it's safe to enable `roll_forward`. Other
     actions may have side-effects that will not occur during the roll_forward.
 
+If the first line of a screen is a Python string, it is used as the docstring for
+the screen. The docstring can be retrieved with :func:`renpy.get_screen_docstring`.
+
 ::
 
    screen hello_world():
+        """
+        Displays a hello world message.
+        """
+
         tag example
         zorder 1
         modal False

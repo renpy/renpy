@@ -1055,23 +1055,30 @@ cdef class GL2Draw:
         for c in r.children:
             self.load_all_textures(c[0])
 
+        # This needs to be outside of r.mesh, as it handles all uniform texture loading,
+        # even if uniforms isn't used.
         # If we have a mesh (or mesh=True), create the GL2Model.
         if r.mesh:
 
             if (r.mesh is True) and (not r.children):
                 return
 
-            uniforms = None
+            if not r.uniforms:
+                uniforms = None
 
-            if r.uniforms:
+            elif r.uniforms_has_render:
+
                 uniforms = dict()
 
                 for k, v in r.uniforms.items():
                     if isinstance(v, Render):
+                        self.load_all_textures(v)
                         uniforms[k] = ctex = self.render_to_texture(v, properties=r.properties)
                         uniforms.setdefault(k + "_res", (ctex.texture_width, ctex.texture_height))
                     else:
                         uniforms[k] = v
+            else:
+                uniforms = r.uniforms
 
             model = r.cached_model = GL2Model(
                 (r.width, r.height),
@@ -1088,6 +1095,12 @@ cdef class GL2Draw:
                 model.mesh = r.mesh
 
             r.cached_model.properties = r.properties
+
+        elif r.uniforms_has_render:
+            for v in r.uniforms.values():
+                if isinstance(v, Render):
+                    self.load_all_textures(v)
+                    self.render_to_texture(v, properties=r.properties)
 
     def render_to_texture(self, what, alpha=True, properties={}):
         """

@@ -86,7 +86,7 @@ label tutorial_dialogue:
 
     example dialogue1 hide:
 
-        "Wow, It's really really dark in here."
+        "Wow, it's really really dark in here."
 
         "Lucy" "Better watch out. You don't want to be eaten by a Grue."
 
@@ -113,7 +113,7 @@ label tutorial_dialogue:
     scene black
     with dissolve
 
-    "Wow, It's really really dark in here."
+    "Wow, it's really really dark in here."
 
     scene bg washington
     show eileen happy
@@ -148,7 +148,7 @@ label tutorial_dialogue:
 
     e "Using a string for a character's name is inconvenient, for two reasons."
 
-    e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
+    e "The first is that it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times." id tutorial_dialogue_910f286a
 
     e "The second is that it doesn't leave any place to put styling, which can change the look of a character."
 

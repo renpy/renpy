@@ -58,6 +58,7 @@ void RPS_periodic(void);
 
 int RPS_get_sample_rate(void);
 char *RPS_get_error(void);
+void RPS_set_channel_count(int count);
 
 extern void (*RPS_generate_audio_c_function)(float *stream, int length);
 

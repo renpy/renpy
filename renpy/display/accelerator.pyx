@@ -26,6 +26,8 @@ import renpy
 import math
 from renpy.display.matrix cimport Matrix
 from renpy.display.render cimport Render, Matrix2D, render, MATRIX_VIEW, MATRIX_PROJECTION
+
+from renpy.display.displayable import Displayable
 from renpy.display.core import absolute
 
 from sdl2 cimport *
@@ -893,7 +895,7 @@ cdef class RenderTransform:
 
             self.reverse = m * self.reverse
 
-    cdef final_render(self, rv):
+    cdef final_render(self, rv, st, at):
         """
         Apply properties to the final render:
 
@@ -958,6 +960,9 @@ cdef class RenderTransform:
 
         for name in renpy.display.transform.uniforms:
             value = getattr(state, name, None)
+
+            if isinstance(value, Displayable):
+                value = value.render(rv.width, rv.height, st, at)
 
             if value is not None:
                 rv.add_uniform(name, value)
@@ -1077,7 +1082,7 @@ cdef class RenderTransform:
         if mesh and perspective:
             rv = self.make_mesh(rv)
 
-        self.final_render(rv)
+        self.final_render(rv, st, at)
 
         # Clipping.
         rv.xclipping = self.clipping

@@ -253,6 +253,10 @@ init -1500 python:
         * Preference("restore window position", "disable") - Will cause the window position to not be restored when the game is started.
         * Preference("restore window position", "toggle") - Will toggle the restore window position state.
 
+        * Preference("mono audio", "enable") - Forces audio to be downmixed to mono.
+        * Preference("mono audio", "disable") - Disables forcing audio to be downmixed to mono.
+        * Preference("mono audio", "toggles") - Toggles mono audio.
+
         Values that can be used with bars are:
 
         * Preference("text speed")
@@ -593,6 +597,15 @@ init -1500 python:
                     return SetField(_preferences, "restore_window_position", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "restore_window_position")
+
+            elif name == _("mono audio"):
+
+                if value == "enable":
+                    return SetField(_preferences, "mono_audio", True)
+                elif value == "disable":
+                    return SetField(_preferences, "mono_audio", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "mono_audio")
 
             elif name == _("reset"):
                 return __ResetPreferences()

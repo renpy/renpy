@@ -89,6 +89,7 @@ cdef extern from "renpysound_core.h":
 
     int RPS_get_sample_rate()
     char *RPS_get_error()
+    void RPS_set_channel_count(int count)
 
     void (*RPS_generate_audio_c_function)(float *stream, int length)
     void (*RPS_apply_audio_filter)(object, float *stream, int length, int channels, int sample_rate)
@@ -488,6 +489,14 @@ def advance_time():
     """
 
     RPS_advance_time()
+
+
+def set_channel_count(count):
+    """
+    Sets the number of channels that the audio system should use
+    """
+
+    RPS_set_channel_count(count)
 
 
 def get_sample_rate():

@@ -152,11 +152,13 @@ last_pump_time = 0
 
 # The number of times the progress was pumped.
 pump_count = 0
+pump_clock = 23
+pump_total = 0
 
 def pump_window():
 
     global last_pump_time
-    global pump_count
+    global pump_count, pump_total
 
     pump_count += 1
 
@@ -171,13 +173,23 @@ def pump_window():
 
     last_pump_time = time.time()
 
-    if progress_bar and renpy.game.script:
-        progress_bar.draw(window.get_surface(), pump_count / (len(renpy.game.script.script_files) + 23))
-        window.update()
-
     for ev in pygame_sdl2.event.get():
         if ev.type == pygame_sdl2.QUIT:
             raise renpy.game.QuitException(relaunch=False, status=0)
+
+    if not progress_bar:
+        return
+
+    if not pump_total:
+        if not renpy.game.script:
+            return
+
+        pump_total = (len(renpy.game.script.common_script_files) +
+                      len(renpy.game.script.script_files)) + pump_clock
+
+    progress_bar.draw(window.get_surface(), pump_count / pump_total)
+    window.update()
+
 
 # Becomes true when the presplash is done.
 done = False

@@ -41,12 +41,14 @@ import renpy
 
 import renpy.audio.renpysound as renpysound
 
-# This is True if we were able to sucessfully enable the pcm audio.
+# This is True if we were able to successfully enable the pcm audio.
 pcm_ok = None
 
 unique = time.time()
 serial = 0
 
+# The number of channels passed to the last call of set_channel_count
+old_channel_count = 0
 
 def get_serial():
     """
@@ -1156,12 +1158,24 @@ def periodic_pass():
     the various channels, which then may play music.
     """
 
+    renpy.config.debug_sound = True
+
     global old_emphasized
+    global old_channel_count
 
     if not pcm_ok:
         return False
 
     try:
+
+        if renpy.game.preferences.mono_audio:
+            channel_count = 1
+        else:
+            channel_count = 2
+
+        if old_channel_count != channel_count:
+            renpysound.set_channel_count(channel_count)
+            old_channel_count = channel_count
 
         # A list of emphasized channels.
         emphasize_channels = [ ]

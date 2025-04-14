@@ -58,12 +58,33 @@ Ren'Py now leaves the decision of if to create mipmaps to the developer, who kno
 image. To always enable mipmaps, set :var:`config.mipmap` to True. If this isn't set to true, Ren'Py will only
 create mipmaps if the display is scaled down to less than 75% of the virtual window size.
 
-Mipmaps will automatically be created for images loaded for the purpose of Live2D or AssimpModel, as these are
+Mipmaps will automatically be created for images loaded for the purpose of Live2D or GLTFModel, as these are
 likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
 of :func:`Image`.
 
+Texture Uniforms
+----------------
+
+Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
+to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
+
+
+Accessibility
+-------------
+
+Ren'Py can now force audio to mono, allowing sounds contain information on only the left or right channel
+to become audible on both. This can be enabled through the shift+A accessibility menu, the "force mono" :func:`Preference`,
+or the :var:`preferences.force_mono` preference.
+
+The shift+A accessibility menu has been redesigned to improve alignment.
+
+
 Features
 --------
+
+Screens now support python-style docstrings, which are used when a string is included as the first line
+of the block. Ren'Py does not do anything directly with dosctrings, but the raw string can be accessed
+using :func:`renpy.get_screen_docstring`.
 
 The :class:`Confirm` action and :func:`renpy.confirm` function now pass additional keyword arguments (not beginning
 with _) to the confirm screen.

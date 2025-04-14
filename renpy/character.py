@@ -315,7 +315,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     @param who: The name of the character that is speaking, or None to
     not show this name to the user.
 
-    @param what: What that character is saying. Please not that this
+    @param what: What that character is saying. Please note that this
     may not be a string, as it can also be a list containing both text
     and displayables, suitable for use as the first argument of ui.text().
 
@@ -721,6 +721,9 @@ def display_say(
 
                 if extend_text:
                     extend_text = "{done}" + extend_text
+
+                    if last_pause:
+                        what_ctc = ctc_pause # show ctc_pause when using extend
 
             # Show the text.
 
@@ -1642,7 +1645,7 @@ def Character(name=NotSet, kind=None, **properties):
          character.
 
     **Voice Tag.**
-    If a voice tag is assign to a Character, the voice files that are
+    If a voice tag is assigned to a Character, the voice files that are
     associated with it, can be muted or played in the preference
     screen.
 

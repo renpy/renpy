@@ -511,6 +511,8 @@ def import_all():
 
     import renpy.display.error
 
+    renpy.atl.late_imports()
+
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module.
 
@@ -675,6 +677,9 @@ def reload_all():
 
     # Re-initialize the importer.
     renpy.loader.init_importer()
+
+    # Reset main log clock.
+    renpy.main.reset_clock()
 
 
 # renpy.store and sub-modules can have names of any type inside.

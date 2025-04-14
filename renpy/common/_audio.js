@@ -375,6 +375,11 @@ let on_video_end = (c) => {
 };
 
 
+renpyAudio.set_channel_count = (count) => {
+    context.destination.channelCount = count;
+}
+
+
 renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid) => {
 
     const c = get_channel(channel);
