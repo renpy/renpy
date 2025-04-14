@@ -487,33 +487,73 @@ init python:
     def _(s):
         return s
 
-    def __limit_lines(lines):
-        """
-        Limit the number of lines shown.
-        """
 
-        if len(lines) < 401:
-            return lines
+    class __RenPyExceptionPrintContext(renpy.renpy.error.ExceptionPrintContext):
+        BOLD_RED = "#DE382B"
+        RED = "#FF0000"
 
-        return lines[:200] + [ "..." ] + lines[-200:]
+        def __init__(self, *, filter_private: bool):
+            super().__init__(filter_private=filter_private)
 
-    # This function is responsible for taking a traceback, and converting
-    # it to a string that can be shown with text.
-    def __format_traceback(s):
-        import re
+            from io import StringIO
+            self.file = StringIO()
 
-        lines = [ i.replace("{", "{{") for i in s.split("\n") ]
-        lines = __limit_lines(lines)
+        def getvalue(self):
+            return self.file.getvalue()
 
-        rv = [ ("{size=%d}" % gui._scale(22)) + lines[0] + "{/size}" ]
+        def _escape_limit(self, s: str):
+            s = s.replace("{", "{{")
+            if len(s) > 400:
+                s = s[:200] + " ... " + s[-200:]
 
-        for i in lines[1:]:
-            i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
-            rv.append("  " + i)
+            return s
 
-        rv[1] = "{vspace=5}" + rv[1]
+        def _print(self, text: str):
+            print(f"{'  ' * self.indent_depth}{text}", file=self.file)
 
-        return "\n".join(rv)
+        def emit_location(self, filename, lineno, name):
+            self._print(
+                f'File {{a=edit:{lineno}:{filename}}}"{filename}", '
+                f'line {lineno}{{/a}}, '
+                f'in {name}')
+
+        def emit_source_carets(self, line, carets):
+            if carets is None:
+                self._print(self._escape_limit(line))
+                return
+
+            zipped = zip(line, carets, strict=True)
+            colorized_line_parts: list[str] = []
+            for color, group in itertools.groupby(zipped, key=lambda x: x[1]):
+                caret_group = list(group)
+                line_part = "".join(char for char, _ in caret_group)
+                line_part = self._escape_limit(line_part)
+                if color == "^":
+                    line_part = f"{{color={self.BOLD_RED}}}{line_part}{{/color}}"
+                elif color == "~":
+                    line_part = f"{{color={self.RED}}}{line_part}{{/color}}"
+
+                colorized_line_parts.append(line_part)
+
+            self._print("".join(colorized_line_parts))
+
+        def emit_string(self, text: str):
+            self._print(self._escape_limit(text))
+
+        def emit_iterable(self, text_gen: Iterable[str]):
+            for text in text_gen:
+                self._print(self._escape_limit(text))
+
+
+    def __simple_traceback(traceback_exception):
+        ctx = __RenPyExceptionPrintContext(filter_private=True)
+        traceback_exception.format(ctx)
+        return ctx.getvalue()
+
+    def __full_traceback(traceback_exception):
+        ctx = __RenPyExceptionPrintContext(filter_private=False)
+        traceback_exception.format(ctx)
+        return ctx.getvalue()
 
     def __format_parse_errors(errors: list[str]):
         """
@@ -735,8 +775,8 @@ screen _exception:
     zorder 1090
 
     default tt = __Tooltip("")
-    default fmt_short = __format_traceback(short)
-    default fmt_full = __format_traceback(full)
+    default fmt_short = __simple_traceback(traceback_exception)
+    default fmt_full = __full_traceback(traceback_exception)
 
     frame:
         style_group ""
@@ -793,7 +833,7 @@ screen _exception:
                                 action __EnterConsole()
                                 hovered tt.action(_("Opens a console to allow debugging the problem."))
 
-                    use _exception_actions(traceback_fn, tt)
+                    use _exception_actions(traceback_exception.traceback_fn, tt)
 
                 # Tooltip.
                 text tt.value
