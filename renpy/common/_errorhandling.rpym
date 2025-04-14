@@ -522,9 +522,11 @@ init python:
                 self._print(self._escape_limit(line))
                 return
 
+            from itertools import groupby
+
             zipped = zip(line, carets, strict=True)
             colorized_line_parts: list[str] = []
-            for color, group in itertools.groupby(zipped, key=lambda x: x[1]):
+            for color, group in groupby(zipped, key=lambda x: x[1]):
                 caret_group = list(group)
                 line_part = "".join(char for char, _ in caret_group)
                 line_part = self._escape_limit(line_part)
@@ -539,6 +541,8 @@ init python:
 
         def emit_string(self, text: str):
             self._print(self._escape_limit(text))
+
+        from typing import Iterable
 
         def emit_iterable(self, text_gen: Iterable[str]):
             for text in text_gen:
