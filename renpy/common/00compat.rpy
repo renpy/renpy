@@ -271,12 +271,20 @@ init -1100 python:
             if version > (6, 99, 5):
                 config.search_prefixes.append("images/")
 
-            config.top_layers.remove("top")
-            config.bottom_layers.remove("bottom")
-            config.context_clear_layers.remove("top")
-            config.context_clear_layers.remove("bottom")
+            if "top" in config.top_layers:
+                config.top_layers.remove("top")
 
-            config.sticky_layers.remove("master")
+            if "bottom" in config.bottom_layers:
+                config.bottom_layers.remove("bottom")
+
+            if "top" in config.context_clear_layers:
+                config.context_clear_layers.remove("top")
+
+            if "bottom" in config.context_clear_layers:
+                config.context_clear_layers.remove("bottom")
+
+            if "master" in config.sticky_layers:
+                config.sticky_layers.remove("master")
 
             store._errorhandling._constant = True
             store._gamepad._constant = True
@@ -297,7 +305,10 @@ init -1100 python:
 
         if _compat_versions(version, (7, 6, 99), (8, 1, 99)):
             config.simple_box_reverse = True
-            build.itch_channels = list(build.itch_channels.items())
+
+            if isinstance(build.itch_channels, list):
+                build.itch_channels = { k : v for k, v in build.itch_channels }
+
             config.atl_pos_only = True
             config.atl_pos_only_as_pos_or_kw = True
             style.default.shaper = "freetype"
@@ -385,8 +396,6 @@ init -1000 python hide:
                     m = re.match(r"version = \"Ren'Py ([\.\d]+)", l)
                     if m:
                         config.script_version = tuple(int(i) for i in m.group(1).split("."))
-
-
 
             renpy.write_log("Set script version to: %r (alternate path)", config.script_version)
     except Exception:
