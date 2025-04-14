@@ -581,6 +581,21 @@ cdef class Res3Getter(Getter):
         tex = model.get_texture(3)
         return (tex.texture_width, tex.texture_height)
 
+cdef class ResGetter(Getter):
+    def __init__(self, uniform_name, getter):
+        Getter.__init__(self, uniform_name)
+        self.getter = getter
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        value = self.getter.get(context, model)
+
+        if type(value) is Render:
+            value = value.cached_texture
+
+        if type(value) is GLTexture:
+            return (value.texture_width, value.texture_height)
+        else:
+            raise TypeError("ResGetter only works with GLTexture values.")
 
 # The classes that are used to get the values of uniforms.
 UNIFORM_GETTER_CLASSES = {
@@ -663,6 +678,9 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
     elif operation == "inverse_transpose":
         getter = InverseTransposeGetter(uniform_name, getter)
         uniform_type = "mat4"
+    elif operation == "res":
+        getter = ResGetter(uniform_name, getter)
+        uniform_type = "vec2"
     else:
         raise TypeError(
             f"Uniform {uniform_name} in shader {shader_name} has unknown operation "

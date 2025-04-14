@@ -58,9 +58,16 @@ Ren'Py now leaves the decision of if to create mipmaps to the developer, who kno
 image. To always enable mipmaps, set :var:`config.mipmap` to True. If this isn't set to true, Ren'Py will only
 create mipmaps if the display is scaled down to less than 75% of the virtual window size.
 
-Mipmaps will automatically be created for images loaded for the purpose of Live2D or AssimpModel, as these are
+Mipmaps will automatically be created for images loaded for the purpose of Live2D or GLTFModel, as these are
 likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
 of :func:`Image`.
+
+Texture Uniforms
+----------------
+
+Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
+to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
+
 
 Accessibility
 -------------
