@@ -29,11 +29,14 @@ from typing import Any
 import math
 
 import renpy
+from renpy.display.displayable import Displayable
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
 from renpy.atl import position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
 from renpy.display.core import absolute
 
+# A List of fields that have displayables in them.
+displayable_uniform_fields = set()
 
 class Camera(renpy.object.Object):
     """
@@ -88,6 +91,31 @@ def limit_angle(n):
 
     return n
 
+class TextureUniform(object):
+    """
+    Descriptor for a sampler2D uniform.
+    """
+
+    def __init__(self, name):
+        self.name = name
+
+    def __get__(self, instance, owner):
+        return instance.__dict__.get(self.name, None)
+
+    def __set__(self, instance, value):
+        if isinstance(value, str):
+            value = renpy.easy.displayable(value)
+
+        if isinstance(value, Displayable):
+            value = renpy.display.im.unoptimized_texture(value)
+
+            if instance.texture_uniforms is None:
+                instance.texture_uniforms = set()
+
+            instance.texture_uniforms.add(self.name)
+
+        instance.__dict__[self.name] = value
+
 
 class TransformState(renpy.object.Object):
 
@@ -104,6 +132,8 @@ class TransformState(renpy.object.Object):
     radius_sign = 1
     relative_anchor_radius_sign = 1
     absolute_anchor_radius_sign = 1
+
+    texture_uniforms = None
 
     def __init__(self):
 
@@ -1301,7 +1331,7 @@ def add_property(name, atl=any_object, default=None, diff=2): # type: (str, Any,
         diff4_properties.add(name)
 
 
-def add_uniform(name):
+def add_uniform(name, uniform_type):
     """
     Adds a uniform with `name` to Transform and ATL.
     """
@@ -1313,6 +1343,9 @@ def add_uniform(name):
         return
 
     add_property(name, diff=2)
+
+    if uniform_type == "sampler2D":
+        setattr(TransformState, name, TextureUniform(name))
 
     uniforms.add(name)
 

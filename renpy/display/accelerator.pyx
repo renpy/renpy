@@ -961,11 +961,7 @@ cdef class RenderTransform:
         for name in renpy.display.transform.uniforms:
             value = getattr(state, name, None)
 
-            if isinstance(value, str):
-                value = renpy.easy.displayable(value)
-
             if isinstance(value, Displayable):
-                value = renpy.display.im.unoptimized_texture(value)
                 value = value.render(rv.width, rv.height, st, at)
 
             if value is not None:

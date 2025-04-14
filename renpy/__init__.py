@@ -511,6 +511,8 @@ def import_all():
 
     import renpy.display.error
 
+    renpy.atl.late_imports()
+
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module.
 

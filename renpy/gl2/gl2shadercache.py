@@ -158,7 +158,7 @@ class ShaderPart(object):
                 self.fragment_variables.add(v)
 
             if v.storage == "uniform" and not private_uniforms:
-                renpy.display.transform.add_uniform(v.name)
+                renpy.display.transform.add_uniform(v.name, v.type)
 
             if v.storage == "uniform":
                 self.uniforms.append(v.name)
