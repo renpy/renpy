@@ -213,7 +213,7 @@ be present by default unless an attribute in the same group is called. The
 ``null`` keyword prevents this clause from getting attached a displayable, which
 can be useful for bookkeeping and to build conditional display conditions using
 `if_all`, `if_any`, `if_not`, `attribute_function`,
-:var:`config.adjust_attributes` or :var:`config.default_attributes`.
+:var:`config.adjust_attributes` or :var:`config.default_attribute_callbacks`.
 
 The same attribute name
 can be used in multiple ``attribute`` clauses (and in auto-defined attributes as
