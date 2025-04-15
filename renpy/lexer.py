@@ -1515,14 +1515,7 @@ class Lexer(object):
         self.pos = len(self.text)
         return self.expr(self.text[pos:].strip(), True)
 
-    def rest_statement(self):
-        """
-        Like rest, but returns a string rather than a PyExpr.
-        """
-
-        pos = self.pos
-        self.pos = len(self.text)
-        return self.text[pos:].strip()
+    rest_statement = rest
 
     def _process_python_block(self, block, rv, line_holder):
 

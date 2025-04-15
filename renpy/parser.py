@@ -1075,7 +1075,7 @@ def transform_statement(l, loc):
 
 @statement("$")
 def one_line_python(l, loc):
-    python_code = l.rest_statement()
+    python_code = l.rest()
 
     if not python_code:
         l.error('expected python code')
