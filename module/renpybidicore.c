@@ -38,7 +38,6 @@ PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
 PyObject *renpybidi_reorder(PyObject *s, int *direction) {
     Py_ssize_t size;
     FriBidiChar *srcuni;
-    FriBidiChar *dstuni;
     FriBidiLevel *levels;
     FriBidiCharType *types;
 
@@ -46,7 +45,6 @@ PyObject *renpybidi_reorder(PyObject *s, int *direction) {
     size = PyUnicode_GET_LENGTH(s);
 
     srcuni = (FriBidiChar *) alloca(size * 4);
-    dstuni = (FriBidiChar *) alloca(size * 4);
     levels = (FriBidiLevel *) alloca(size * 4);
     types = (FriBidiCharType *) alloca(size * 4);
 
@@ -73,10 +71,8 @@ PyObject *renpybidi_reorder(PyObject *s, int *direction) {
         levels,
         srcuni,
         NULL);
-      
-    dstuni = srcuni;
     
-    return PyUnicode_FromKindAndData(PyUnicode_4BYTE_KIND, dstuni, size);
+    return PyUnicode_FromKindAndData(PyUnicode_4BYTE_KIND, srcuni, size);
 }
 
 #else
@@ -122,7 +118,6 @@ PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
 PyObject *renpybidi_reorder(PyObject *s, int *direction) {
     Py_ssize_t size;
     FriBidiChar *srcuni;
-    FriBidiChar *dstuni;
     FriBidiLevel *levels;
     FriBidiCharType *types;
     PyObject *rv;
@@ -132,7 +127,6 @@ PyObject *renpybidi_reorder(PyObject *s, int *direction) {
     size = PyUnicode_GET_SIZE((PyUnicodeObject *) s);
 
     srcuni = (FriBidiChar *) alloca(size * 4);
-    dstuni = (FriBidiChar *) alloca(size * 4);
     levels = (FriBidiLevel *) alloca(size * 4);
     types = (FriBidiCharType *) alloca(size * 4);
 
@@ -162,12 +156,10 @@ PyObject *renpybidi_reorder(PyObject *s, int *direction) {
         srcuni,
         NULL);
 
-    dstuni = srcuni;
-
     p = (Py_UNICODE *) alloca(size * sizeof(Py_UNICODE));
 
     for (Py_ssize_t i = 0; i < size; i++) {
-        p[i] = (Py_UNICODE) dstuni[i];
+        p[i] = (Py_UNICODE) srcuni[i];
     }
 
     rv = PyUnicode_FromUnicode(p, size);
