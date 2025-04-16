@@ -83,12 +83,17 @@ init -1500 python:
 
             return True
 
-        def show(self, locked, index, count):
+        def show(self, locked, index, count, first):
             """
             Shows this image when it's unlocked.
             """
 
-            renpy.transition(self.gallery.transition)
+            if first:
+                transition = getattr(self.gallery, "enter_transition", self.gallery.transition)
+            else:
+                transition = getattr(self.gallery, "intra_transition", self.gallery.transition)
+
+            renpy.transition(transition)
             ui.saybehavior()
 
             displayables = [ ]
@@ -172,9 +177,25 @@ init -1500 python:
         locking of images, providing an action that can show one or more images,
         and a providing method that creates buttons that use that action.
 
+        .. attribute:: enter_transition
+
+            The transition that is used when displaying the first image associated
+            with a gallery button.
+
+        .. attribute:: intra_transition
+
+            The transition that is used when displaying images associated with
+            gallery buttons, apart from the first.
+
+        .. attribute:: exit_transition
+
+            The transition that is used when returning from the last image associated
+            with a gallery button to the gallery screen.
+
         .. attribute:: transition
 
-            The transition that is used when changing images.
+            This is used in place of enter_transition, intra_transition, or exit_transition
+            if one or more of them has not been set.
 
         .. attribute:: locked_button
 
@@ -527,6 +548,8 @@ init -1500 python:
 
             self.slideshow = False
 
+            first = True
+
             # Loop, displaying the images.
             while True:
 
@@ -540,7 +563,9 @@ init -1500 python:
 
                 i = b.images[image]
 
-                result = i.show((button, image) not in unlocked_images, image, len(b.images))
+                result = i.show((button, image) not in unlocked_images, image, len(b.images), first)
+
+                first = False
 
                 # Default action for click.
 
@@ -580,7 +605,7 @@ init -1500 python:
                 button = new_button
                 image = new_image
 
-            renpy.transition(self.transition)
+            renpy.transition(getattr(self, "exit_transition", self.transition))
 
         def Return(self):
             """

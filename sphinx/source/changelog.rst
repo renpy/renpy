@@ -82,6 +82,9 @@ The shift+A accessibility menu has been redesigned to improve alignment.
 Features
 --------
 
+The :class:`Gallery` class now supports separate transitions when entering a sequence of images, going
+between images, and exiting the sequence of images.
+
 Screens now support python-style docstrings, which are used when a string is included as the first line
 of the block. Ren'Py does not do anything directly with dosctrings, but the raw string can be accessed
 using :func:`renpy.get_screen_docstring`.
