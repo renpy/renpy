@@ -695,12 +695,22 @@ It takes two parameters. The first is the number of columns in the
 grid, and the second is the number of rows in the grid. If the grid
 is not full, the remaining cells are filled with the ``null`` displayable.
 
-Grid takes one property:
+Grid takes several properties related to the way its children are placed:
 
 .. screen-property:: transpose
 
     If False (the default), rows are filled before columns. If True,
     then columns are filled before rows.
+
+.. screen-property:: right_to_left
+
+    If True, cells are filled from right to left, instead of the default
+    left to right.
+
+.. screen-property:: bottom_to_top
+
+    If True, cells are filled from bottom to top, instead of the default
+    top to bottom.
 
 It also takes:
 
