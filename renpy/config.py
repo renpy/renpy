@@ -1051,7 +1051,7 @@ depth_size = 24
 context_copy_remove_screens = [ "notify" ]
 
 # An exception handling callback.
-exception_handler = None
+exception_handler: Callable[[renpy.error.TracebackException], bool] | None = None
 
 # A label to jump to if return fails.
 return_not_found_label = None
