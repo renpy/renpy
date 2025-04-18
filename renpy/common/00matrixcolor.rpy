@@ -312,7 +312,7 @@ init -1500 python:
 
         The alpha channel is not touched.
 
-        This is inteded for use with a black and white image (or one that
+        This is intended for use with a black and white image (or one that
         has been desaturated with :func:`SaturationMatrix`), and will yield
         strange results when used with images that are not black and white.
 
