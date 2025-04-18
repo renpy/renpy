@@ -82,6 +82,9 @@ The shift+A accessibility menu has been redesigned to improve alignment.
 Features
 --------
 
+The :class:`SpriteManager` and :func:`SnowBlossom` displayables now support the `animation` parameter,
+which can be used to prevent resetting when the displayable is reshown.
+
 The :class:`Gallery` class now supports separate transitions when entering a sequence of images, going
 between images, and exiting the sequence of images.
 
