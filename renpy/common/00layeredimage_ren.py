@@ -15,17 +15,18 @@ from renpy.atl import parse_atl
 from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
 from collections import OrderedDict, defaultdict
 
-ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
-ATL_PROPERTIES_SET = set(ATL_PROPERTIES)
+ATL_PROPERTIES = frozenset(renpy.atl.PROPERTIES)
+
+# The properties for the Fixed wrapping the layeredimage
+FIXED_PROPERTIES = frozenset(renpy.sl2.slproperties.position_property_names)\
+    .union(renpy.sl2.slproperties.box_property_names)
 
 # The properties taken at the base level of the layeredimage
-BASE_PROPERTIES = (("image_format", "format_function", "attribute_function", "offer_screen", "at") +
-                renpy.sl2.slproperties.position_property_names +
-                renpy.sl2.slproperties.box_property_names +
-                ATL_PROPERTIES)
+BASE_PROPERTIES = ATL_PROPERTIES | FIXED_PROPERTIES \
+    | {"image_format", "format_function", "attribute_function", "offer_screen", "at"}
 
 # The properties for attribute layers.
-LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + ATL_PROPERTIES
+LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + list(ATL_PROPERTIES)
 
 # The properties passed to the Fixed wrapping the layeredimage.
 FIXED_PROPERTIES = renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names
@@ -1247,11 +1248,7 @@ def parse_layeredimage(l):
         else:
             pp = 1
             while pp == 1:
-                pp = parse_property(ll, rv.final_properties, rv.expr_properties,
-                    ["image_format", "format_function", "attribute_function", "offer_screen", "at"] +
-                    renpy.sl2.slproperties.position_property_names +
-                    renpy.sl2.slproperties.box_property_names +
-                    ATL_PROPERTIES)
+                pp = parse_property(ll, rv.final_properties, rv.expr_properties, BASE_PROPERTIES)
 
             if not pp:
                 ll.expect_noblock("layeredimage property")
