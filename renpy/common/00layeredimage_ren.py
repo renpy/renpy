@@ -28,7 +28,7 @@ FIXED_PROPERTIES = frozenset(renpy.sl2.slproperties.position_property_names)\
 BASE_PROPERTIES = ATL_PROPERTIES | FIXED_PROPERTIES \
     | {"image_format", "format_function", "attribute_function", "offer_screen", "at"}
 # The properties for all layers
-LAYER_PROPERTIES = ATL_PROPERTIES | {"if_attr", "at"}
+LAYER_PROPERTIES = ATL_PROPERTIES | {"if_attr", "if_all", "if_any", "if_not", "at"}
 # The properties for the group statement
 GROUP_BLOCK_PROPERTIES = LAYER_PROPERTIES | {"auto"}
 GROUP_INLINE_PROPERTIES = GROUP_BLOCK_PROPERTIES | {"prefix", "variant", "multiple"}
