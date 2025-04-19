@@ -1021,7 +1021,7 @@ def quote_eval(s):
     # Since the last 2 characters are \0, those characters need to be stripped.
     return "".join(rv[:-2])
 
-IMMUTABLE_TYPES = (int, float, str, bool, bytes, type(None), complex)
+IMMUTABLE_TYPES = (int, float, str, bool, bytes, NoneType, complex)
 
 def is_immutable_value(v):
     """
@@ -1149,8 +1149,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         try:
 
             rv = ast.literal_eval(source)
-            rv = ("literal", rv)
+
             if is_immutable_value(rv):
+                rv = ("literal", rv)
                 py_compile_cache[key] = rv
                 renpy.game.script.bytecode_newcache[key] = marshal.dumps(rv)
 
