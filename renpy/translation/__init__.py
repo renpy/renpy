@@ -266,6 +266,13 @@ class ScriptTranslator(object):
 
         return TranslateInfo(tl)
 
+    def requires_init(self, language):
+        return bool(self.python[language] or
+                    self.block[language] or
+                    self.early_block[language] or
+                    renpy.config.language_callbacks[language])
+
+
 def encode_say_string(s):
     """
     Encodes a string in the format used by Ren'Py say statements.
@@ -704,10 +711,11 @@ old_language = "language never set"
 deferred_styles = [ ]
 
 
-def old_change_language(tl, language):
+def old_change_language(tl, language, changed):
 
-    for i in deferred_styles:
-        i.apply()
+    if changed:
+        for i in deferred_styles:
+            i.apply()
 
     def run_blocks():
         for i in tl.early_block[language]:
@@ -725,7 +733,7 @@ def old_change_language(tl, language):
         i()
 
 
-def new_change_language(tl, language):
+def new_change_language(tl, language, changed):
 
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)
@@ -739,8 +747,9 @@ def new_change_language(tl, language):
     for i in renpy.config.language_callbacks[language]:
         i()
 
-    for i in deferred_styles:
-        i.apply()
+    if changed:
+        for i in deferred_styles:
+            i.apply()
 
     def run_blocks():
         for i in tl.block[language]:
@@ -748,7 +757,9 @@ def new_change_language(tl, language):
 
     renpy.game.invoke_in_new_context(run_blocks)
 
-    renpy.config.init_system_styles()
+    if changed:
+        renpy.config.init_system_styles()
+
 
 def clean_data():
     """
@@ -773,46 +784,59 @@ def change_language(language, force=False):
     renpy.exports.load_language(language)
 
     renpy.game.preferences.language = language
-    if old_language == language and not force:
+    changed = language != old_language
+
+    if not changed and not force:
         return
 
     tl = renpy.game.script.translator
 
-    renpy.style.restore(style_backup) # @UndefinedVariable
-    renpy.style.rebuild() # @UndefinedVariable
+    if changed:
+        renpy.style.restore(style_backup) # @UndefinedVariable
+        renpy.style.rebuild(False) # @UndefinedVariable
 
-    for i in renpy.config.translate_clean_stores:
-        renpy.python.clean_store(i)
+        for i in renpy.config.translate_clean_stores:
+            renpy.python.clean_store(i)
+
+    elif not tl.requires_init(language):
+        return
+
+    else:
+        # Prevent memory leak by ignoring any style changes from translate
+        # blocks when language hasn't changed.
+        current_styles = renpy.style.backup()
 
     if renpy.config.new_translate_order:
-        new_change_language(tl, language)
+        new_change_language(tl, language, changed)
     else:
-        old_change_language(tl, language)
+        old_change_language(tl, language, changed)
 
-    for i in renpy.config.change_language_callbacks:
-        i()
+    if changed:
+        for i in renpy.config.change_language_callbacks:
+            i()
 
-    # Reset various parts of the system. Most notably, this clears the image
-    # cache, letting us load translated images.
-    renpy.exports.free_memory()
+        # Reset various parts of the system. Most notably, this clears the image
+        # cache, letting us load translated images.
+        renpy.exports.free_memory()
 
-    # Rebuild the styles.
-    renpy.style.rebuild() # @UndefinedVariable
+        # Rebuild the styles.
+        renpy.style.rebuild() # @UndefinedVariable
 
-    # Re-init tts.
-    renpy.display.tts.init()
+        # Re-init tts.
+        renpy.display.tts.init()
 
-    for i in renpy.config.translate_clean_stores:
-        renpy.python.reset_store_changes(i)
+        for i in renpy.config.translate_clean_stores:
+            renpy.python.reset_store_changes(i)
 
-    # Restart the interaction.
-    renpy.exports.restart_interaction()
-
-    if language != old_language:
         renpy.exports.block_rollback()
 
         old_language = language
 
+    else:
+        renpy.style.restore(current_styles)
+
+    # Restart the interaction.
+    renpy.exports.restart_interaction()
 
 
 def check_language():

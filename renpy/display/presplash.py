@@ -152,7 +152,7 @@ last_pump_time = 0
 
 # The number of times the progress was pumped.
 pump_count = 0
-pump_clock = 23
+pump_clock = 21
 pump_total = 0
 
 def pump_window():
