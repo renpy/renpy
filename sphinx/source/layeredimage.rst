@@ -659,3 +659,23 @@ in the Advice section)::
             return names[0], *atts
 
     define config.adjust_attributes["eileen"] = eileen_adjuster
+
+
+**Including groups in if_attr**
+
+The ``if_attr`` property does not allow a group name to be specified, so that a given layer be shown only when any or none of the attributes in a given group are shown. However, there is still a way to do that using the various other parts of the layeredimage syntax.
+
+Supposing that the group has no default attribute, you can add a default ``null`` attribute, with a name of your choice. That way, if no attribute from the group is shown, that attribute is activated (although nothing gets displayed), and it gets reactivated if an attribute of the group gets hidden.
+
+::
+
+    layeredimage eliza:
+        attribute head_and_hair default
+        group top auto
+        group headtop prefix headtop:
+            attribute notop null default
+            attribute hat
+            attribute cap
+        attribute hair_patch if_attr (notop)
+
+Here, the hair_patch attribute will only show more of Eliza's hair over her top layer (on her shoulders for example) if there is no hat to hide it.
