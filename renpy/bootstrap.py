@@ -354,9 +354,6 @@ You may be using a system install of python. Please run {0}.sh,
 
                 exit_status = 0
 
-            except KeyboardInterrupt:
-                raise
-
             except renpy.game.UtterRestartException:
 
                 # On an UtterRestart, reload Ren'Py.
@@ -377,7 +374,9 @@ You may be using a system install of python. Please run {0}.sh,
                 pass
 
             except Exception as e:
-                renpy.error.report_exception(e)
+                # If exception was raised outside of Ren'Py execution context,
+                # or context was unable to handle it, report it here.
+                renpy.error.report_exception(e, editor=True)
 
         sys.exit(exit_status)
 

@@ -612,6 +612,9 @@ class Context(renpy.object.Object):
                 except Exception:
                     self.translate_interaction = None
 
+                    # This could raise CONTROL_EXCEPTIONS that are handled
+                    # as if it happened in node execute. Other exceptions
+                    # are chained to original and reported after program exit.
                     self.handle_exception()
 
                 node = self.next_node
@@ -941,43 +944,30 @@ class Context(renpy.object.Object):
 
         te = renpy.error.report_exception(e, editor=False)
 
-        try:
-            # Local exception handler, if any. This should handle all cases
-            # of the exception.
-            if self.exception_handler is not None:
-                self.exception_handler(te)
-                return
-
-            # Creator-defined exception handler. Returns True
-            # if exception handled.
-            if renpy.config.exception_handler is not None:
-                try:
-                    # Before 8.4 it was a function that takes 3 strings.
-                    import inspect
-                    inspect.signature(renpy.config.exception_handler).bind(te)
-                    if not renpy.config.exception_handler(te):
-                        return
-
-                except TypeError:
-                    if not renpy.config.exception_handler(*te): # type: ignore
-                        return
-
-            # RenPy default exception handler. Returns True
-            # if exception NOT handled.
-            renpy.display.error.report_exception(te)
+        # Local exception handler, if any. This should handle all cases
+        # of the exception.
+        if self.exception_handler is not None:
+            self.exception_handler(te)
             return
 
-        except renpy.game.CONTROL_EXCEPTIONS:
-            raise
+        # Creator-defined exception handler. Returns True
+        # if exception handled.
+        if renpy.config.exception_handler is not None:
+            try:
+                # Before 8.4 it was a function that takes 3 strings.
+                import inspect
+                inspect.signature(renpy.config.exception_handler).bind(te)
+                if not renpy.config.exception_handler(te):
+                    return
 
-        except Exception:
-            import traceback
+            except TypeError:
+                if not renpy.config.exception_handler(*te): # type: ignore
+                    return
 
-            print("While handling exception:")
-            traceback.print_exc()
+        # RenPy default exception handler. Returns True
+        # if exception NOT handled.
+        renpy.display.error.report_exception(te)
 
-        # Raise original exception.
-        raise
 
 def run_context(top):
     """
