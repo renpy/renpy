@@ -3,4 +3,5 @@
 #include <Python.h>
 
 PyObject *renpybidi_log2vis(PyObject *s, int *direction);
+PyObject *renpybidi_reorder(PyObject *s, int *direction);
 #endif

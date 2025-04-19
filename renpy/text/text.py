@@ -1574,8 +1574,9 @@ class Layout(object):
     def rtl_paragraph(self, p):
         """
         Given a paragraph (a list of segment, text tuples) handles
-        RTL and ligaturization. This returns the reversed RTL paragraph,
-        which differers from the LTR one. It also returns a flag that is
+        RTL, and if the shaper is set to freetype, ligaturization. 
+        This returns the reversed RTL paragraph, which differs
+        from the LTR one. It also returns a flag that is
         True if this is an rtl paragraph.
         """
 
@@ -1584,17 +1585,14 @@ class Layout(object):
         l = [ ]
 
         for ts, s in p:
-            s, direction = log2vis(str(s), direction)
+            ft_enabled = (getattr(ts, "shaper", "") != "harfbuzz")
 
-            if s and getattr(ts, "shaper", "") == "harfbuzz":
-                s = renpy.text.extras.unmap_arabic_presentation_forms(s)
-
+            s, direction = log2vis(str(s), ft_enabled, direction)
+            
             l.append((ts, s))
 
         rtl = (direction == RTL or direction == WRTL)
-        if rtl:
-            l.reverse()
-
+        
         return l, rtl
 
     def figure_outlines(self, style):
