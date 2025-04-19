@@ -1,4 +1,4 @@
-﻿from typing import Literal
+﻿from typing import Container, Literal
 import renpy
 
 python_object = object
@@ -17,6 +17,12 @@ from collections import OrderedDict, defaultdict
 
 ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
 ATL_PROPERTIES_SET = set(ATL_PROPERTIES)
+
+# The properties taken at the base level of the layeredimage
+BASE_PROPERTIES = (("image_format", "format_function", "attribute_function", "offer_screen", "at") +
+                renpy.sl2.slproperties.position_property_names +
+                renpy.sl2.slproperties.box_property_names +
+                ATL_PROPERTIES)
 
 # The properties for attribute layers.
 LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + ATL_PROPERTIES
@@ -915,7 +921,7 @@ def old_parse_property(l, o, names):
 
     return True
 
-def parse_property(l, final_properties: dict, expr_properties: dict, names: str) -> Literal[0]|Literal[1]|Literal[2]:
+def parse_property(l, final_properties: dict, expr_properties: dict, names: Container[str]) -> Literal[0]|Literal[1]|Literal[2]:
     """
     Parses a property among the provided names and stores it inside the appropriate dict.
     Returns 0 if it didn't find any property,
@@ -1223,41 +1229,35 @@ def parse_layeredimage(l):
 
     while not ll.eob:
         if ll.keyword('attribute'):
-
-            parse_attribute(ll, rv)
-            ll.advance()
+            rv.children.append(parse_attribute(ll, rv))
 
         elif ll.keyword('group'):
-
-            parse_group(ll, rv, name)
-            ll.advance()
+            rv.children.append(parse_group(ll, rv, name))
 
         elif ll.keyword('if'):
-
-            parse_conditions(ll, rv)
-            # Advances for us.
+            rv.children.append(parse_condition(ll, True))
 
         elif ll.keyword('always'):
-            parse_always(ll, rv)
-            ll.advance()
+            rv.children.append(parse_always(ll, rv))
 
         elif ll.keyword("pass"):
-            ll.expect_noblock("pass")
             ll.expect_eol()
-            ll.advance()
+            ll.expect_noblock("pass")
 
         else:
+            pp = 1
+            while pp == 1:
+                pp = parse_property(ll, rv.final_properties, rv.expr_properties,
+                    ["image_format", "format_function", "attribute_function", "offer_screen", "at"] +
+                    renpy.sl2.slproperties.position_property_names +
+                    renpy.sl2.slproperties.box_property_names +
+                    ATL_PROPERTIES)
 
-            while parse_property(ll, rv, [ "image_format", "format_function", "attribute_function", "offer_screen", "at" ] +
-                renpy.sl2.slproperties.position_property_names +
-                renpy.sl2.slproperties.box_property_names +
-                ATL_PROPERTIES
-                ):
-                pass
+            if not pp:
+                ll.expect_noblock("layeredimage property")
+                ll.expect_eol()
 
-            ll.expect_noblock('statement')
-            ll.expect_eol()
-            ll.advance()
+        ll.advance()
 
     return rv
 
