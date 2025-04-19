@@ -361,8 +361,8 @@ class RawAttribute(object):
         else:
             image = None
 
-        properties = { k : v for k, v in group_properties.items() if k not in ATL_PROPERTIES_SET }
-        group_args = { k : v for k, v in group_properties.items() if k in ATL_PROPERTIES_SET }
+        properties = { k : v for k, v in group_properties.items() if k not in ATL_PROPERTIES }
+        group_args = { k : v for k, v in group_properties.items() if k in ATL_PROPERTIES }
         properties.update({ k : eval(v) for k, v in self.properties.items() })
 
         return [ Attribute(group, self.name, image, group_args=group_args, **properties) ]
@@ -1188,7 +1188,9 @@ def parse_conditions(l, parent):
     parent.children.append(cg)
 
 
-class RawLayeredImage(object):
+class RawLayeredImage(renpy.object.Object):
+    __version__ = 1
+
     def __init__(self, name):
         self.name = name
         self.children = []
@@ -1206,6 +1208,11 @@ class RawLayeredImage(object):
             self.name,
             LayeredImage(l, name=self.name.replace(" ", "_"), **properties),
         )
+
+    def after_upgrade(self, version: int):
+        if version < 1:
+            self.expr_properties = self.properties # type: ignore
+            self.final_properties = {}
 
 def execute_layeredimage(rai):
     rai.execute()
