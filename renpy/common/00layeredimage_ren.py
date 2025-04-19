@@ -941,7 +941,7 @@ def parse_attribute(l):
     elif not l.match(":"):
         l.expect_eol()
         l.expect_noblock("attribute")
-        return
+        return ra
 
     l.expect_block("attribute")
     l.expect_eol()
