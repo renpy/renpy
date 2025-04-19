@@ -338,6 +338,10 @@ class Attribute(Layer):
         An attribute or list of attributes. The displayable is only shown
         if none of these are showing.
 
+    `variant`
+        A string giving the variant of the attribute. This is used
+        as part of finding the displayable when `image` is None.
+
     Other keyword arguments are interpreted as transform properties. If
     any are present, a transform is created that wraps the image. (For
     example, pos=(100, 200) can be used to offset the image by 100 pixels
