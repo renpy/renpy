@@ -92,7 +92,7 @@ The new ``if_attr`` property introduces a more straightforward boolean condition
 
 The ``multiple`` groups may now be anonymous, and should from now on be defined with the ``multiple`` keyword placed in lieu of the group name. This makes their behavior more consistent and easier to understand. The behavior of named multiple groups is unchanged, but they should not be used going forward.
 
-The ``attribute`` statement now takes the ``variant`` property, unless it is inside a group with a ``variant``, or it is directly assigned a displayable.
+The ``attribute`` statement now takes the ``variant`` property, unless it is inside a group with a ``variant``, or it is directly assigned a displayable. This allows native support for cases which previously required a multiple group with a variant, or an attribute_function manipulation.
 
 
 Features
