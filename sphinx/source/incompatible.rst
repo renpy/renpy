@@ -50,6 +50,8 @@ a unique tag is created for the show expression statement. This change can be re
 
     variant f"{old_expression}"
 
+Also, naming a group "multiple" is no longer supported.
+
 
 .. _incompatible-8.3.4:
 .. _incompatible-7.8.4:
