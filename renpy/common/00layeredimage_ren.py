@@ -1133,24 +1133,34 @@ def parse_condition(l, need_expr): # TODO
     return rv
 
 
-def parse_conditions(l, parent):
+class RawConditionGroup(object):
 
-    cg = RawConditionGroup()
+    def __init__(self, conditions: list|tuple = ()):
+        self.conditions = conditions
 
-    cg.conditions.append(parse_condition(l, True))
+    def execute(self):
+        l = []
+        for i in self.conditions:
+            l.extend(i.execute())
+
+        return [ConditionGroup(l)]
+
+def parse_conditions(l):
+    conditions = []
+
+    conditions.append(parse_condition(l, True))
     l.advance()
 
     while l.keyword('elif'):
-
-        cg.conditions.append(parse_condition(l, True))
+        conditions.append(parse_condition(l, True))
         l.advance()
 
     if l.keyword('else'):
+        conditions.append(parse_condition(l, False))
+    else:
+        l.unadvance()
 
-        cg.conditions.append(parse_condition(l, False))
-        l.advance()
-
-    parent.children.append(cg)
+    return RawConditionGroup(conditions)
 
 class RawAlways(renpy.object.Object):
     __version__ = 1
@@ -1292,10 +1302,10 @@ def parse_layeredimage(l):
             rv.children.append(parse_group(ll, rv, name))
 
         elif ll.keyword('if'):
-            rv.children.append(parse_condition(ll, True))
+            rv.children.append(parse_conditions(ll))
 
         elif ll.keyword('always'):
-            rv.children.append(parse_always(ll, rv))
+            rv.children.append(parse_always(ll))
 
         elif ll.keyword("pass"):
             ll.expect_eol()
