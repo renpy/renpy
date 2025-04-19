@@ -51,6 +51,8 @@ from renpy.pyanalysis import Analysis, NOT_CONST, LOCAL_CONST, GLOBAL_CONST, cca
 import hashlib
 import time
 
+from renpy.python import py_eval as eval
+
 # This file contains the abstract syntax tree for a screen language
 # screen.
 
