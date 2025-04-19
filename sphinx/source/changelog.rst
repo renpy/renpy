@@ -86,7 +86,9 @@ The ``variant`` and ``prefix`` properties, which accepted any value but evaluate
 
 In places where the syntax allowed the ``at`` keyword, it now allows an ``at transform`` block.
 
-The new ``if_attr`` property replaces the former ``if_any``, ``if_all`` and ``if_not`` properties, which remain supported for backwards compatibility, introducing a more straightforward boolean condition syntax.
+The new ``if_attr`` property introduces a more straightforward boolean condition syntax, replacing the ``if_any``, ``if_all`` and ``if_not`` properties which remain supported for backwards compatibility.
+
+The ``multiple`` groups may now be anonymous, and should from now on be defined with the ``multiple`` keyword placed in lieu of the group name. This makes their behavior more consistent and easier to understand. The behavior of named multiple groups is unchanged, but they should not be used going forward.
 
 
 Features

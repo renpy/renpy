@@ -29,6 +29,9 @@ BASE_PROPERTIES = ATL_PROPERTIES | FIXED_PROPERTIES \
     | {"image_format", "format_function", "attribute_function", "offer_screen", "at"}
 # The properties for all layers
 LAYER_PROPERTIES = ATL_PROPERTIES | {"if_attr", "at"}
+# The properties for the group statement
+GROUP_BLOCK_PROPERTIES = LAYER_PROPERTIES | {"auto"}
+GROUP_INLINE_PROPERTIES = GROUP_BLOCK_PROPERTIES | {"prefix", "variant", "multiple"}
 # The properties for the if/elif/else layers
 CONDITION_PROPERTIES = LAYER_PROPERTIES
 # The properties for the always layers
@@ -386,52 +389,6 @@ class RawAttribute(object):
 
         return [ Attribute(group, self.name, image, group_args=group_args, **properties) ]
 
-
-class RawAttributeGroup(object):
-
-    def __init__(self, image_name, group):
-
-        self.image_name = image_name
-        self.group = group
-        self.properties = OrderedDict()
-        self.children = [ ]
-
-    def execute(self):
-
-        properties = { k : eval(v) for k, v in self.properties.items() }
-
-        auto = properties.pop("auto", False)
-        variant = properties.get("variant", None)
-        multiple = properties.pop("multiple", False)
-
-        rv = [ ]
-
-        if multiple:
-            group = None
-        else:
-            group = self.group
-
-        for i in self.children:
-            rv.extend(i.execute(group=group, group_properties=properties))
-
-        if auto:
-            seen = set(i.raw_attribute for i in rv)
-            pattern = self.image_name.replace(" ", "_")  + "_" + self.group + "_"
-
-            if variant:
-                pattern += variant + "_"
-
-            for i in renpy.list_images():
-
-                if i.startswith(pattern):
-                    rest = i[len(pattern):]
-                    attrs = rest.split()
-
-                    if len(attrs) == 1:
-                        if attrs[0] not in seen:
-                            rv.append(Attribute(group, attrs[0], renpy.displayable(i), **properties))
-
-        return rv
 
 
 class Condition(Layer):
@@ -924,7 +881,7 @@ def parse_property(l, final_properties: dict, expr_properties: dict, names: Cont
     if (name in final_properties) or (name in expr_properties):
         l.error(f"Duplicate property: {name}")
 
-    if name in ("auto", "default"):
+    if name in ("auto", "default", "multiple"):
         final_properties[name] = True
     elif name == "if_attr":
         final_properties[name] = IfAttr.parse(l)
@@ -1020,42 +977,135 @@ def parse_attribute(l, parent): # TODO
     return
 
 
-def parse_group(l, parent, image_name): # TODO
+class RawAttributeGroup(renpy.object.Object):
+    __version__ = 1
 
-    group = l.require(l.image_name_component)
+    def after_upgrade(self, version: int):
+        if version < 1:
+            self.final_properties = self.properties # type: ignore
+            self.expr_properties = {}
+            self.group_name = self.group # type: ignore
+            self.li_name = self.image_name # type: ignore
 
-    rv = RawAttributeGroup(image_name, group)
-    parent.children.append(rv)
+    def __init__(self, li_name, group_name: str|None):
+        self.li_name = li_name
+        self.group_name = group_name
+        self.children = []
+        self.final_properties = {}
+        self.expr_properties = {}
 
-    while old_parse_property(l, rv, [ "auto", "prefix", "variant", "multiple" ] + LAYER_PROPERTIES_LIST):
-        pass
+    def execute(self):
+        properties = self.final_properties | {k: eval(v) for k, v in self.expr_properties.items()}
 
-    if l.match(':'):
+        auto = properties.pop("auto", False)
+        variant = properties.get("variant", None)
+        multiple = properties.pop("multiple", False)
 
-        l.expect_eol()
-        l.expect_block("group")
+        rv = []
 
-        ll = l.subblock_lexer()
+        if multiple:
+            group_name_for_attributes = None
+        else:
+            group_name_for_attributes = self.group_name
 
-        while ll.advance():
-            if ll.keyword("pass"):
-                ll.expect_eol()
-                ll.expect_noblock("pass")
-                continue
+        for ra in self.children:
+            rv.extend(ra.execute(group_name=group_name_for_attributes, **properties))
 
-            if ll.keyword("attribute"):
-                parse_attribute(ll, rv)
-                continue
+        if auto:
+            seen = set(a.raw_attribute for a in rv)
 
-            while old_parse_property(ll, rv, [ "auto" ] + LAYER_PROPERTIES_LIST):
-                pass
+            pattern = format_function(
+                what="auto group attribute",
+                name=self.li_name.replace(" ", "_"),
+                group=self.group_name or None,
+                variant=variant or None,
+                attribute="",
+                image=None,
+                image_format=None,
+            )
 
-            ll.expect_eol()
-            ll.expect_noblock('group property')
+            for i in renpy.list_images():
+                if i.startswith(pattern):
+                    attr, *rest = i.removeprefix(pattern).split()
+                    if (not rest) and (attr not in seen):
+                        rv.append(Attribute(group_name_for_attributes, attr, renpy.displayable(i), **properties))
 
+        return rv
+
+def parse_group(l, li_name):
+    if l.keyword("multiple"):
+        # a multiple group can be anonymous,
+        # though for compatibility, not all multiple groups are anonymous
+        group_name = None
     else:
-        l.expect_eol()
-        l.expect_noblock("group")
+        group_name = l.require(l.image_name_component)
+
+    rv = RawAttributeGroup(li_name, group_name)
+
+    got_block = False
+
+    while True:
+        pp = parse_property(l, rv.final_properties, rv.expr_properties, GROUP_INLINE_PROPERTIES)
+        if pp == 1:
+            continue
+        elif pp == 2:
+            got_block = True
+        break
+
+    if not got_block:
+        if l.match(':'):
+            l.expect_eol()
+            l.expect_block("group")
+
+            ll = l.subblock_lexer()
+
+            while ll.advance():
+                got_block = False
+
+                if ll.keyword("pass"):
+                    ll.expect_eol()
+                    ll.expect_noblock("pass")
+                    continue
+
+                if ll.keyword("attribute"):
+                    # TODO check this whole block again
+                    raw_attribute = parse_attribute(ll) # type: ignore
+                    # if "variant" in attribute_node.final_properties:
+                    #     ll.error(f"Attribute {attribute_node.name} cannot have a variant when inside a group.")
+                    rv.children.append(raw_attribute)
+                    continue
+
+                while True:
+                    pp = parse_property(ll, rv.final_properties, rv.expr_properties, GROUP_BLOCK_PROPERTIES)
+                    if pp == 1:
+                        continue
+                    elif pp == 2:
+                        got_block = True
+                    break
+
+                if got_block:
+                    got_block = False
+                else:
+                    ll.expect_eol()
+                    ll.expect_noblock("group property")
+
+        else:
+            l.expect_eol()
+            l.expect_noblock("group")
+
+    # after the parsing, to avoid duplicate property errors
+    if group_name is None:
+        rv.final_properties["multiple"] = True
+
+    if "variant" in rv.final_properties:
+        for an in rv.children:
+            if "variant" in an.final_properties:
+                l.error(f"Attribute {an.name!r} has a variant, it cannot be inside group {group_name!r} which also has a variant.")
+    elif (group_name is None) and ("auto" in rv.final_properties):
+        # tolerated for name multiple groups, for compatibility
+        l.error(f"Group {group_name!r} cannot be multiple and auto at the same time.")
+
+    return rv
 
 
 class RawCondition(renpy.object.Object):
@@ -1300,7 +1350,7 @@ def parse_layeredimage(l):
             rv.children.append(parse_attribute(ll, rv))
 
         elif ll.keyword('group'):
-            rv.children.append(parse_group(ll, rv, name))
+            rv.children.append(parse_group(ll, name))
 
         elif ll.keyword('if'):
             rv.children.append(parse_conditions(ll))
