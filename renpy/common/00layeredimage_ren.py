@@ -41,10 +41,6 @@ CONDITION_PROPERTIES = LAYER_PROPERTIES
 ALWAYS_PROPERTIES = LAYER_PROPERTIES
 
 
-# The properties passed to the Fixed wrapping the layeredimage.
-FIXED_PROPERTIES_LIST = renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names
-
-
 # This is the default value for predict_all given to conditions.
 predict_all = None
 
@@ -283,7 +279,7 @@ class Layer(object):
 
         return d
 
-    def apply_format(self, li, /):
+    def apply_format(self, li: "LayeredImage", /):
         """
         Abstract method on Layer.
         Actuates the displayable for this layer, by passing infos to li's format function.
@@ -366,7 +362,7 @@ class Attribute(Layer):
         self.default = default
         self.variant = variant
 
-    def apply_format(self, li):
+    def apply_format(self, li: "LayeredImage"):
         self.image = self.wrap(li.format(
             what=f"Attribute ({self.group!r}, {self.attribute!r})",
             group=self.group,
@@ -384,7 +380,6 @@ class Attribute(Layer):
             return None
 
         return self.image
-
 
 
 class Condition(Layer):
@@ -432,19 +427,16 @@ class Condition(Layer):
     at = [ ]
 
     def __init__(self, condition, image, **kwargs):
+        super().__init__(**kwargs)
+
         self.condition = condition
         self.image = image
 
-        super(Condition, self).__init__(**kwargs)
-
-    def apply_format(self, ai):
-
-        self.image = self.wrap(ai.format(
-            "Condition ({})".format(self.condition),
-            group=None,
-            attribute=None,
+    def apply_format(self, li: "LayeredImage"):
+        self.image = self.wrap(li.format(
+            what=f"Condition ({self.condition})",
             image=self.image,
-            ))
+        ))
 
     def get_displayable(self, attributes):
 
@@ -470,14 +462,16 @@ class ConditionGroup(Layer):
     """
 
     def __init__(self, conditions):
+        super().__init__()
+
         self.conditions = conditions
 
-    def apply_format(self, ai):
+    def apply_format(self, li: "LayeredImage"):
         for i in self.conditions:
-            i.apply_format(ai)
+            i.apply_format(li)
 
     def get_displayable(self, attributes):
-        args = [ ]
+        args = []
 
         for i in self.conditions:
             if not i.check(attributes):
@@ -524,19 +518,15 @@ class Always(Layer):
     """
 
     def __init__(self, image, **kwargs):
+        super().__init__(**kwargs)
 
         self.image = image
 
-        super(Always, self).__init__(**kwargs)
-
-    def apply_format(self, ai):
-
-        self.image = self.wrap(ai.format(
+    def apply_format(self, li: "LayeredImage"):
+        self.image = self.wrap(li.format(
             "Always",
-            group=None,
-            attribute=None,
             image=self.image,
-            ))
+        ))
 
     def get_displayable(self, attributes):
 
@@ -614,38 +604,32 @@ class LayeredImage(object):
     transform_args = { }
     offer_screen = None
 
-    def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, offer_screen=None, **kwargs):
-
+    def __init__(self, attributes, at=[], name=None, image_format=None, format_function=format_function, attribute_function=None, offer_screen=None, **kwargs):
         self.name = name
         self.image_format = image_format
         self.format_function = format_function
         self.attribute_function = attribute_function
         self.offer_screen = offer_screen
 
-        self.attributes = [ ]
-        self.layers = [ ]
+        self.attributes: list[Attribute] = []
+        self.layers: list[Layer] = []
 
-        self.attribute_to_groups = defaultdict(set)
-        self.group_to_attributes = defaultdict(set)
+        self.attribute_to_groups: defaultdict[str, set[str]] = defaultdict(set)
+        self.group_to_attributes: defaultdict[str, set[str]] = defaultdict(set)
 
         for i in attributes:
             self.add(i)
 
-        self.at = renpy.easy.to_list(at)
+        self.at = resolve_at(at)
 
         kwargs.setdefault("xfit", True)
         kwargs.setdefault("yfit", True)
 
-        self.transform_args = {k : kwargs.pop(k) for k, v in list(kwargs.items()) if k not in FIXED_PROPERTIES_LIST}
+        self.transform_args = {k : kwargs.pop(k) for k in FIXED_PROPERTIES.intersection(kwargs)}
         self.fixed_args = kwargs
 
     def format(self, what, attribute=None, group=None, variant=None, image=None):
-
-        ff = format_function
-
-        if self.format_function is not None:
-            ff = self.format_function
-
+        ff = self.format_function or format_function
         return ff(
             what=what,
             name=self.name,
@@ -685,20 +669,17 @@ class LayeredImage(object):
         Get the set of attributes that are incompatible with those
         in attributes.
         """
+        banned = set()
 
-        rv = set()
+        for a1 in attributes:
+            for gn in self.attribute_to_groups[a1]:
+                for a2 in self.group_to_attributes[gn]:
+                    if a2 != a1:
+                        banned.add(a2)
 
-        for i in attributes:
-            for g in self.attribute_to_groups[i]:
-                for j in self.group_to_attributes[g]:
-                    if j != i:
-                        rv.add(j)
-        return rv
+        return banned
 
     def _duplicate(self, args):
-
-        name = " ".join(args.name + tuple(args.args))
-
         attributes = set(args.args)
         unknown = set(args.args)
         banned = self.get_banned(attributes)
@@ -713,7 +694,7 @@ class LayeredImage(object):
         if self.attribute_function:
             attributes = set(self.attribute_function(attributes))
 
-            unknown = set([i[1:] if i.startswith('-') else i for i in attributes])
+            unknown = {i[1:] if i.startswith('-') else i for i in attributes}
 
             for a in self.attributes:
 
@@ -769,10 +750,9 @@ class LayeredImage(object):
         return rv
 
     def _list_attributes(self, tag, attributes):
-
         banned = self.get_banned(attributes)
 
-        group_attr = [ ]
+        group_attr_pairs: list[tuple[int, str]] = []
 
         seen = set()
 
@@ -780,7 +760,6 @@ class LayeredImage(object):
         old_group = None
 
         for a in self.attributes:
-
             if a.group != old_group:
                 old_group = a.group
                 group_count += 1
@@ -792,14 +771,13 @@ class LayeredImage(object):
                 continue
 
             seen.add(a.attribute)
-            group_attr.append((group_count, a.attribute))
+            group_attr_pairs.append((group_count, a.attribute))
 
-        group_attr.sort()
+        group_attr_pairs.sort()
 
-        return [ i[1] for i in group_attr ]
+        return [p[1] for p in group_attr_pairs]
 
     def _choose_attributes(self, tag, required, optional):
-
         rv = list(required)
 
         required = set(required)
@@ -807,7 +785,7 @@ class LayeredImage(object):
         both = required & banned
 
         if both:
-            raise Exception("The attributes for {} conflict: {}".format(tag, " ".join(both)))
+            raise Exception(f"The specified attributes for {tag} conflict: {', '.join(both)}")
 
         # The set of all available attributes.
         available_attributes = set(a.attribute for a in self.attributes)
