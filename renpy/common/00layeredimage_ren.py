@@ -29,6 +29,8 @@ BASE_PROPERTIES = ATL_PROPERTIES | FIXED_PROPERTIES \
     | {"image_format", "format_function", "attribute_function", "offer_screen", "at"}
 # The properties for all layers
 LAYER_PROPERTIES = ATL_PROPERTIES | {"if_attr", "if_all", "if_any", "if_not", "at"}
+# The properties for the attribute layers
+ATTRIBUTE_PROPERTIES = LAYER_PROPERTIES | {"variant", "default"}
 # The properties for the group statement
 GROUP_BLOCK_PROPERTIES = LAYER_PROPERTIES | {"auto"}
 GROUP_INLINE_PROPERTIES = GROUP_BLOCK_PROPERTIES | {"prefix", "variant", "multiple"}
@@ -37,9 +39,6 @@ CONDITION_PROPERTIES = LAYER_PROPERTIES
 # The properties for the always layers
 ALWAYS_PROPERTIES = LAYER_PROPERTIES
 
-
-# The properties for attribute layers.
-LAYER_PROPERTIES_LIST = [ "if_all", "if_any", "if_not", "at" ] + list(ATL_PROPERTIES)
 
 # The properties passed to the Fixed wrapping the layeredimage.
 FIXED_PROPERTIES_LIST = renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names
@@ -365,29 +364,6 @@ class Attribute(Layer):
             return None
 
         return self.image
-
-
-class RawAttribute(object):
-
-    def __init__(self, name):
-        self.name = name
-        self.image = None
-        self.properties = OrderedDict()
-
-    def execute(self, group=None, group_properties=None):
-        if group_properties is None:
-            group_properties = {}
-
-        if self.image:
-            image = eval(self.image)
-        else:
-            image = None
-
-        properties = { k : v for k, v in group_properties.items() if k not in ATL_PROPERTIES }
-        group_args = { k : v for k, v in group_properties.items() if k in ATL_PROPERTIES }
-        properties.update({ k : eval(v) for k, v in self.properties.items() })
-
-        return [ Attribute(group, self.name, image, group_args=group_args, **properties) ]
 
 
 
@@ -922,44 +898,80 @@ def parse_displayable(l) -> Imageable:
         return l.simple_expression()
 
 
-def parse_attribute(l, parent): # TODO
+class RawAttribute(renpy.object.Object):
+    __version__ = 1
 
+    def after_upgrade(self, version: int):
+        if version < 1:
+            self.expr_properties = self.properties # type: ignore
+            self.final_properties = {}
+
+    def __init__(self, name):
+        self.name = name
+        self.image: Imageable = None
+        self.final_properties = {}
+        self.expr_properties = {}
+
+    def execute(self, group_name=None, **group_properties):
+        if "if_attr" in self.final_properties:
+            if "if_attr" in group_properties:
+                self.final_properties["if_attr"] = IfAnd(self.final_properties["if_attr"], group_properties.pop("if_attr"))
+
+        group_args = {k: group_properties.pop(k) for k in ATL_PROPERTIES.intersection(group_properties)}
+
+        properties = (group_properties # the remaining ones, overridden by the following
+            | self.final_properties
+            | {k: eval(v) for k, v in self.expr_properties.items()}
+        )
+
+        return [Attribute(group_name, self.name, resolve_image(self.image), group_args=group_args, **properties)]
+
+def parse_attribute(l):
     name = l.require(l.image_name_component)
 
-    a = RawAttribute(name)
-    parent.children.append(a)
+    ra = RawAttribute(name)
 
-    def line(l):
+    got_block = False
+
+    def line(lex):
+        nonlocal got_block
 
         while True:
-
-            if old_parse_property(l, a, [ "default" ] + LAYER_PROPERTIES_LIST):
+            pp = parse_property(lex, ra.final_properties, ra.expr_properties, ATTRIBUTE_PROPERTIES)
+            if pp:
+                if pp == 2:
+                    got_block = True
+                    return
                 continue
 
-            if l.match('null'):
-                image = "Null()"
+            if lex.match("null"):
+                displayable = "Null()"
             else:
-                image = l.simple_expression()
+                displayable = parse_displayable(lex)
 
-            if image is not None:
+            if displayable is not None:
+                if ra.image is not None:
+                    lex.error(f"An attribute can only have zero or one displayable, two found : {displayable} and {ra.image}.")
 
-                if a.image is not None:
-                    l.error('An attribute can only have zero or one displayables, two found.')
+                ra.image = displayable
 
-                a.image = image
+                if isinstance(displayable, RawBlock):
+                    got_block = True
+                    return
                 continue
 
             break
 
     line(l)
 
-    if not l.match(':'):
+    if got_block:
+        return ra
+    elif not l.match(":"):
         l.expect_eol()
-        l.expect_noblock('attribute')
+        l.expect_noblock("attribute")
         return
 
-
-    l.expect_block('attribute')
+    l.expect_block("attribute")
     l.expect_eol()
 
     ll = l.subblock_lexer()
@@ -971,10 +983,16 @@ def parse_attribute(l, parent): # TODO
             continue
 
         line(ll)
-        ll.expect_eol()
-        ll.expect_noblock('attribute')
+        if got_block:
+            got_block = False
+        else:
+            ll.expect_eol()
+            ll.expect_noblock("attribute")
 
-    return
+    if (ra.image is not None) and ("variant" in ra.final_properties):
+        l.error(f"Attribute {ra.name!r} cannot have a variant if it is provided a displayable.")
+
+    return ra
 
 
 class RawAttributeGroup(renpy.object.Object):
@@ -1069,7 +1087,7 @@ def parse_group(l, li_name):
 
                 if ll.keyword("attribute"):
                     # TODO check this whole block again
-                    raw_attribute = parse_attribute(ll) # type: ignore
+                    raw_attribute = parse_attribute(ll)
                     # if "variant" in attribute_node.final_properties:
                     #     ll.error(f"Attribute {attribute_node.name} cannot have a variant when inside a group.")
                     rv.children.append(raw_attribute)
@@ -1347,7 +1365,7 @@ def parse_layeredimage(l):
 
     while not ll.eob:
         if ll.keyword('attribute'):
-            rv.children.append(parse_attribute(ll, rv))
+            rv.children.append(parse_attribute(ll))
 
         elif ll.keyword('group'):
             rv.children.append(parse_group(ll, name))
