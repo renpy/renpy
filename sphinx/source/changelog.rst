@@ -126,7 +126,7 @@ The new :func:`renpy.seen_translation`, :func:`renpy.mark_translation_seen`, and
 functions make it possible to determine if a translation has been seen.
 
 Audio filesname can now include a volume clase, like "<volume 0.5>sunflower-slow-drag.ogg". This sets the relative
-amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue` statements.
+amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue`` statements.
 
 The new :var:`config.keep_screenshot_entering_menu` variable determines if a screenshot taken with :class:`FileTakeScreenshot`
 is kept when entering a menu context.
