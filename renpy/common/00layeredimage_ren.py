@@ -11,7 +11,7 @@ python early in layeredimage:
 _constant = True
 
 from typing import Container, Literal
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 from renpy.atl import RawBlock, parse_atl
 from renpy.display.transform import ATLTransform
 from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
@@ -802,36 +802,6 @@ class LayeredImage(object):
 
         return tuple(rv)
 
-
-def old_parse_property(l, o, names):
-    """
-    Parses a property, returns True if one is found.
-    """
-
-    checkpoint = l.checkpoint()
-
-    name = l.word()
-
-    if name is None:
-        return False
-
-    if name not in names:
-        l.revert(checkpoint)
-        return False
-
-    if name in o.properties:
-        l.error("Duplicate property " + name)
-
-    if name == "auto" or name == "default" or name == "multiple":
-        expr = "True"
-    elif name == "at":
-        expr = l.require(l.comma_expression)
-    else:
-        expr = l.require(l.simple_expression)
-
-    o.properties[name] = expr
-
-    return True
 
 def parse_property(l, final_properties: dict, expr_properties: dict, names: Container[str]) -> Literal[0]|Literal[1]|Literal[2]:
     """
