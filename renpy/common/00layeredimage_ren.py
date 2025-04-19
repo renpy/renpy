@@ -1,4 +1,5 @@
-﻿import renpy
+﻿from typing import Literal
+import renpy
 
 python_object = object
 
@@ -10,6 +11,7 @@ python early in layeredimage:
 # Do not participate in saves.
 _constant = True
 
+from renpy.atl import parse_atl
 from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
 from collections import OrderedDict, defaultdict
 
@@ -823,6 +825,57 @@ def old_parse_property(l, o, names):
     o.properties[name] = expr
 
     return True
+
+def parse_property(l, final_properties: dict, expr_properties: dict, names: str) -> Literal[0]|Literal[1]|Literal[2]:
+    """
+    Parses a property among the provided names and stores it inside the appropriate dict.
+    Returns 0 if it didn't find any property,
+    1 if it found a normal, inline property,
+    and 2 if it found a block property.
+
+    This function knows and decides which property is final and which is an expression.
+    """
+
+    check = l.checkpoint()
+
+    name = l.word()
+
+    if name is None:
+        return 0
+
+    if name not in names:
+        l.revert(check)
+        return 0
+
+    if (name in final_properties) or (name in expr_properties):
+        l.error(f"Duplicate property: {name}")
+
+    if name in ("auto", "default"):
+        final_properties[name] = True
+    elif name == "if_attr":
+        # TODO
+        # final_properties[name] = IfAttr.parse(l)
+        raise NotImplementedError
+    elif name in ("if_all", "if_any", "if_not"):
+        expr_properties[name] = l.require(l.simple_expression)
+    elif name in ("variant", "prefix"):
+        if (value := l.image_name_component()) is not None:
+            final_properties[name] = value
+        else:
+            expr_properties[name] = l.require(l.simple_expression)
+    elif name == "at":
+        if l.keyword("transform"):
+            l.require(":")
+            l.expect_eol()
+            l.expect_block("ATL")
+            final_properties[name] = parse_atl(l.subblock_lexer())
+            return 2
+        else:
+            expr_properties[name] = l.require(l.comma_expression)
+    else:
+        expr_properties[name] = l.require(l.simple_expression)
+
+    return 1
 
 
 def parse_attribute(l, parent):

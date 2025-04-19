@@ -79,6 +79,14 @@ or the :var:`preferences.force_mono` preference.
 The shift+A accessibility menu has been redesigned to improve alignment.
 
 
+Layeredimages
+-------------
+
+The ``variant`` and ``prefix`` properties, which accepted any value but evaluated it (as a string) only at init time, now accept an unquoted `image name component` (digits, letters and underscores, no space or dash, may start with a digit).
+
+In places where the syntax allowed the ``at`` keyword, it now allows an ``at transform`` block.
+
+
 Features
 --------
 
