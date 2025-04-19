@@ -793,31 +793,8 @@ class LayeredImage(object):
 
         return tuple(rv)
 
-class RawLayeredImage(object):
 
-    def __init__(self, name):
-        self.name = name
-        self.children = [ ]
-        self.properties = OrderedDict()
-
-    def execute(self):
-        properties = { k : eval(v) for k, v in self.properties.items() }
-
-
-        l = [ ]
-        for i in self.children:
-            l.extend(i.execute())
-
-        renpy.image(
-            self.name,
-            LayeredImage(l, name=self.name.replace(" ", "_"), **properties),
-        )
-
-def execute_layeredimage(rai):
-    rai.execute()
-
-
-def parse_property(l, o, names):
+def old_parse_property(l, o, names):
     """
     Parses a property, returns True if one is found.
     """
@@ -859,7 +836,7 @@ def parse_attribute(l, parent):
 
         while True:
 
-            if parse_property(l, a, [ "default" ] + LAYER_PROPERTIES):
+            if old_parse_property(l, a, [ "default" ] + LAYER_PROPERTIES):
                 continue
 
             if l.match('null'):
@@ -911,7 +888,7 @@ def parse_always(l, parent):
 
         while True:
 
-            if parse_property(l, a, LAYER_PROPERTIES):
+            if old_parse_property(l, a, LAYER_PROPERTIES):
                 continue
 
             image = l.simple_expression()
@@ -961,7 +938,7 @@ def parse_group(l, parent, image_name):
     rv = RawAttributeGroup(image_name, group)
     parent.children.append(rv)
 
-    while parse_property(l, rv, [ "auto", "prefix", "variant", "multiple" ] + LAYER_PROPERTIES):
+    while old_parse_property(l, rv, [ "auto", "prefix", "variant", "multiple" ] + LAYER_PROPERTIES):
         pass
 
     if l.match(':'):
@@ -981,7 +958,7 @@ def parse_group(l, parent, image_name):
                 parse_attribute(ll, rv)
                 continue
 
-            while parse_property(ll, rv, [ "auto" ] + LAYER_PROPERTIES):
+            while old_parse_property(ll, rv, [ "auto" ] + LAYER_PROPERTIES):
                 pass
 
             ll.expect_eol()
@@ -1019,7 +996,7 @@ def parse_condition(l, need_expr):
 
         while True:
 
-            if parse_property(ll, rv, LAYER_PROPERTIES):
+            if old_parse_property(ll, rv, LAYER_PROPERTIES):
                 continue
 
             image = ll.simple_expression()
@@ -1064,17 +1041,37 @@ def parse_conditions(l, parent):
     parent.children.append(cg)
 
 
+class RawLayeredImage(object):
+    def __init__(self, name):
+        self.name = name
+        self.children = []
+        self.final_properties = {}
+        self.expr_properties = {}
+
+    def execute(self):
+        properties = self.final_properties | { k : eval(v) for k, v in self.expr_properties.items() }
+
+        l = [ ]
+        for i in self.children:
+            l.extend(i.execute())
+
+        renpy.image(
+            self.name,
+            LayeredImage(l, name=self.name.replace(" ", "_"), **properties),
+        )
+
+def execute_layeredimage(rai):
+    rai.execute()
+
 def parse_layeredimage(l):
+    name = [l.require(l.image_name_component)]
 
-    name = [ l.require(l.image_name_component) ]
-
-    while True:
+    part = l.image_name_component()
+    while part is not None:
+        name.append(part)
         part = l.image_name_component()
 
-        if part is None:
-            break
-
-        name.append(part)
+    name = " ".join(name)
 
     l.require(':')
     l.expect_block("layeredimage")
@@ -1082,11 +1079,9 @@ def parse_layeredimage(l):
     ll = l.subblock_lexer()
     ll.advance()
 
-    name = " ".join(name)
     rv = RawLayeredImage(name)
 
     while not ll.eob:
-
         if ll.keyword('attribute'):
 
             parse_attribute(ll, rv)
