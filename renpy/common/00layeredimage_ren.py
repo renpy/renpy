@@ -156,7 +156,7 @@ class IfAttr(python_object):
 class IfOr(IfAttr):
     __slots__ = ("left", "right")
 
-    def __init__(self, left, right):
+    def __init__(self, left, right, /):
         self.left = left
         self.right = right
 
@@ -173,7 +173,7 @@ class IfOr(IfAttr):
 class IfAnd(IfAttr):
     __slots__ = ("left", "right")
 
-    def __init__(self, left, right):
+    def __init__(self, left, right, /):
         self.left = left
         self.right = right
 
@@ -190,7 +190,7 @@ class IfAnd(IfAttr):
 class IfNot(IfAttr):
     __slots__ = ("ifattr",)
 
-    def __init__(self, ifattr):
+    def __init__(self, ifattr, /):
         self.ifattr = ifattr
 
     def check(self, attributes):
@@ -206,7 +206,7 @@ class IfNot(IfAttr):
 class IfAttribute(IfAttr):
     __slots__ = ("attribute",)
 
-    def __init__(self, attribute):
+    def __init__(self, attribute, /):
         self.attribute = attribute
 
     def check(self, attributes):
