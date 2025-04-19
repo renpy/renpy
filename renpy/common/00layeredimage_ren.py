@@ -1,5 +1,4 @@
-﻿from typing import Container, Literal
-import renpy
+﻿import renpy
 
 python_object = object
 
@@ -11,6 +10,7 @@ python early in layeredimage:
 # Do not participate in saves.
 _constant = True
 
+from typing import Container, Literal
 from renpy.atl import parse_atl
 from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
 from collections import OrderedDict, defaultdict
