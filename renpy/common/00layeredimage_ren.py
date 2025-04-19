@@ -11,6 +11,7 @@ python early in layeredimage:
 _constant = True
 
 from typing import Container, Literal
+from collections.abc import Iterable
 from collections import defaultdict
 from renpy.atl import RawBlock, parse_atl
 from renpy.display.transform import ATLTransform
@@ -127,6 +128,15 @@ def resolve_image(img: Imageable):
     else:
         return eval(img)
 
+def resolve_at(at: RawBlock|Transform|Iterable[Transform]) -> tuple[Transform, ...]:
+    """
+    Turns an ATL RawBlock, or a Transform, or an iterable of Transforms,
+    into a tuple of transforms.
+    """
+    if isinstance(at, RawBlock):
+        return (ATLTransform(at),)
+    return renpy.easy.to_tuple(at)
+
 class IfAttr(python_object):
     """
     Represents an if_attr expression.
@@ -218,14 +228,14 @@ class IfAttribute(IfAttr):
 
 class Layer(object):
     """
-    Base class for our layers.
+    Abstract base class for our layers.
     """
 
     group_args = {}
 
-    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], group_args={}, **kwargs):
-
-        self.at = renpy.easy.to_list(at)
+    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, if_attr=None, **kwargs):
+        self.at = resolve_at(at)
+        self.if_attr = if_attr
         self.if_all = renpy.easy.to_list(if_all)
         self.if_any = renpy.easy.to_list(if_any)
         self.if_not = renpy.easy.to_list(if_not)
@@ -234,13 +244,15 @@ class Layer(object):
         self.transform_args = kwargs
 
     def check(self, attributes):
+        if self.if_attr is not None:
+            if not self.if_attr.check(attributes):
+                return False
 
         for i in self.if_all:
             if i not in attributes:
                 return False
 
         if self.if_any:
-
             for i in self.if_any:
                 if i in attributes:
                     break
@@ -270,6 +282,20 @@ class Layer(object):
                 setattr(d, k, v)
 
         return d
+
+    def apply_format(self, li, /):
+        """
+        Abstract method on Layer.
+        Actuates the displayable for this layer, by passing infos to li's format function.
+        """
+        raise NotImplementedError
+
+    def get_displayable(self, attributes):
+        """
+        Abstract method on Layer.
+        Returns the displayable for this layer.
+        """
+        raise NotImplementedError
 
 
 class Attribute(Layer):
