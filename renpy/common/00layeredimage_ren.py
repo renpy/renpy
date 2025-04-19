@@ -972,7 +972,7 @@ def parse_property(l, final_properties: dict, expr_properties: dict, names: Cont
     return 1
 
 
-def parse_attribute(l, parent):
+def parse_attribute(l, parent): # TODO
 
     name = l.require(l.image_name_component)
 
@@ -1026,7 +1026,7 @@ def parse_attribute(l, parent):
 
     return
 
-def parse_always(l, parent):
+def parse_always(l, parent): # TODO
 
     a = RawAlways()
     parent.children.append(a)
@@ -1078,7 +1078,7 @@ def parse_always(l, parent):
     return
 
 
-def parse_group(l, parent, image_name):
+def parse_group(l, parent, image_name): # TODO
 
     group = l.require(l.image_name_component)
 
@@ -1115,7 +1115,7 @@ def parse_group(l, parent, image_name):
         l.expect_eol()
         l.expect_noblock("group")
 
-def parse_condition(l, need_expr):
+def parse_condition(l, need_expr): # TODO
 
     l.skip_whitespace()
 
