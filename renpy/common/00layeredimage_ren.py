@@ -11,9 +11,12 @@ python early in layeredimage:
 _constant = True
 
 from typing import Container, Literal
-from renpy.atl import parse_atl
-from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
 from collections import OrderedDict, defaultdict
+from renpy.atl import RawBlock, parse_atl
+from renpy.display.transform import ATLTransform
+from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
+
+type Imageable = RawBlock|str|None
 
 ATL_PROPERTIES = frozenset(renpy.atl.PROPERTIES)
 
@@ -24,12 +27,18 @@ FIXED_PROPERTIES = frozenset(renpy.sl2.slproperties.position_property_names)\
 # The properties taken at the base level of the layeredimage
 BASE_PROPERTIES = ATL_PROPERTIES | FIXED_PROPERTIES \
     | {"image_format", "format_function", "attribute_function", "offer_screen", "at"}
+# The properties for all layers
+LAYER_PROPERTIES = ATL_PROPERTIES | {"if_attr", "at"}
+# The properties for the always layers
+ALWAYS_PROPERTIES = LAYER_PROPERTIES
+
 
 # The properties for attribute layers.
-LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + list(ATL_PROPERTIES)
+LAYER_PROPERTIES_LIST = [ "if_all", "if_any", "if_not", "at" ] + list(ATL_PROPERTIES)
 
 # The properties passed to the Fixed wrapping the layeredimage.
-FIXED_PROPERTIES = renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names
+FIXED_PROPERTIES_LIST = renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names
+
 
 # This is the default value for predict_all given to conditions.
 predict_all = None
@@ -105,6 +114,14 @@ def format_function(what, name, group, variant, attribute, image, image_format, 
         image = image_format.format(name=name, image=image)
 
     return image
+
+def resolve_image(img: Imageable):
+    if img is None:
+        return None
+    if isinstance(img, RawBlock):
+        return ATLTransform(img)
+    else:
+        return eval(img)
 
 class IfAttr(python_object):
     """
@@ -598,22 +615,6 @@ class Always(Layer):
 
         return self.image
 
-class RawAlways(object):
-
-    def __init__(self):
-        self.image = None
-        self.properties = OrderedDict()
-
-    def execute(self):
-
-        if self.image:
-            image = eval(self.image)
-        else:
-            image = None
-
-        properties = { k : eval(v) for k, v in self.properties.items() }
-        return [ Always(image, **properties) ]
-
 class LayeredImage(object):
     """
     :doc: li
@@ -705,7 +706,7 @@ class LayeredImage(object):
         kwargs.setdefault("xfit", True)
         kwargs.setdefault("yfit", True)
 
-        self.transform_args = {k : kwargs.pop(k) for k, v in list(kwargs.items()) if k not in FIXED_PROPERTIES}
+        self.transform_args = {k : kwargs.pop(k) for k, v in list(kwargs.items()) if k not in FIXED_PROPERTIES_LIST}
         self.fixed_args = kwargs
 
     def format(self, what, attribute=None, group=None, variant=None, image=None):
@@ -971,6 +972,21 @@ def parse_property(l, final_properties: dict, expr_properties: dict, names: Cont
 
     return 1
 
+def parse_displayable(l) -> Imageable:
+    """
+    Parses either "image:" opening an ATL block and returns a RawBlock,
+    or a simple expression and returns an evaluable string,
+    or None.
+    """
+
+    if l.keyword("image"):
+        l.require(":")
+        l.expect_eol()
+        l.expect_block("ATL image")
+        return parse_atl(l.subblock_lexer())
+    else:
+        return l.simple_expression()
+
 
 def parse_attribute(l, parent): # TODO
 
@@ -983,7 +999,7 @@ def parse_attribute(l, parent): # TODO
 
         while True:
 
-            if old_parse_property(l, a, [ "default" ] + LAYER_PROPERTIES):
+            if old_parse_property(l, a, [ "default" ] + LAYER_PROPERTIES_LIST):
                 continue
 
             if l.match('null'):
@@ -1026,57 +1042,6 @@ def parse_attribute(l, parent): # TODO
 
     return
 
-def parse_always(l, parent): # TODO
-
-    a = RawAlways()
-    parent.children.append(a)
-
-    def line(l):
-
-        while True:
-
-            if old_parse_property(l, a, LAYER_PROPERTIES):
-                continue
-
-            image = l.simple_expression()
-            if image is not None:
-
-                if a.image is not None:
-                    l.error('The always statement can only have one displayable, two found.')
-
-                a.image = image
-                continue
-
-            break
-
-
-    line(l)
-
-    if not l.match(':'):
-        l.expect_eol()
-        l.expect_noblock('always')
-        return
-
-    l.expect_block('always')
-    l.expect_eol()
-
-    ll = l.subblock_lexer()
-
-    while ll.advance():
-        if ll.keyword("pass"):
-            ll.expect_eol()
-            ll.expect_noblock("pass")
-            continue
-
-        line(ll)
-        ll.expect_eol()
-        ll.expect_noblock('always')
-
-    if a.image is None:
-        l.error("The always statement must have a displayable.")
-
-    return
-
 
 def parse_group(l, parent, image_name): # TODO
 
@@ -1085,7 +1050,7 @@ def parse_group(l, parent, image_name): # TODO
     rv = RawAttributeGroup(image_name, group)
     parent.children.append(rv)
 
-    while old_parse_property(l, rv, [ "auto", "prefix", "variant", "multiple" ] + LAYER_PROPERTIES):
+    while old_parse_property(l, rv, [ "auto", "prefix", "variant", "multiple" ] + LAYER_PROPERTIES_LIST):
         pass
 
     if l.match(':'):
@@ -1105,7 +1070,7 @@ def parse_group(l, parent, image_name): # TODO
                 parse_attribute(ll, rv)
                 continue
 
-            while old_parse_property(ll, rv, [ "auto" ] + LAYER_PROPERTIES):
+            while old_parse_property(ll, rv, [ "auto" ] + LAYER_PROPERTIES_LIST):
                 pass
 
             ll.expect_eol()
@@ -1143,7 +1108,7 @@ def parse_condition(l, need_expr): # TODO
 
         while True:
 
-            if old_parse_property(ll, rv, LAYER_PROPERTIES):
+            if old_parse_property(ll, rv, LAYER_PROPERTIES_LIST):
                 continue
 
             image = ll.simple_expression()
@@ -1187,9 +1152,98 @@ def parse_conditions(l, parent):
 
     parent.children.append(cg)
 
+class RawAlways(renpy.object.Object):
+    __version__ = 1
+
+    def after_upgrade(self, version: int):
+        if version < 1:
+            self.expr_properties = self.properties # type: ignore
+            self.final_properties = {}
+
+    def __init__(self):
+        self.image: Imageable = None
+        self.final_properties = {}
+        self.expr_properties = {}
+
+    def execute(self):
+        image = resolve_image(self.image)
+        properties = self.final_properties | {k : eval(v) for k, v in self.expr_properties.items()}
+        return [Always(image, **properties)]
+
+def parse_always(l):
+    a = RawAlways()
+
+    got_block = False
+
+    # parent.children.append(a)
+
+    def line(lex):
+        nonlocal got_block
+
+        while True:
+            pp = parse_property(lex, a.final_properties, a.expr_properties, ALWAYS_PROPERTIES)
+            if pp:
+                if pp == 2:
+                    got_block = True
+                    return
+                continue
+
+            displayable = parse_displayable(lex)
+
+            if displayable is not None:
+                if a.image is not None:
+                    l.error(f"The always statement can only have one displayable, two found : {displayable} and {a.image}.")
+
+                a.image = displayable
+
+                if isinstance(displayable, RawBlock):
+                    got_block = True
+                    return
+                continue
+
+            break
+
+    line(l)
+
+    if got_block:
+        return a
+    if not l.match(':'):
+        l.expect_eol()
+        l.expect_noblock('always')
+        return a
+
+    l.expect_block('always')
+    l.expect_eol()
+
+    ll = l.subblock_lexer()
+
+    while ll.advance():
+        # since an always can have an inline child, it can have an empty block
+        if ll.keyword("pass"):
+            ll.expect_eol()
+            ll.expect_noblock("pass")
+            continue
+
+        line(ll)
+        if got_block:
+            got_block = False
+        else:
+            ll.expect_eol()
+            ll.expect_noblock('always')
+
+    if a.image is None:
+        l.error("The always statement must have a displayable.")
+
+    return a
+
 
 class RawLayeredImage(renpy.object.Object):
     __version__ = 1
+
+    def after_upgrade(self, version: int):
+        if version < 1:
+            self.expr_properties = self.properties # type: ignore
+            self.final_properties = {}
 
     def __init__(self, name):
         self.name = name
@@ -1198,7 +1252,7 @@ class RawLayeredImage(renpy.object.Object):
         self.expr_properties = {}
 
     def execute(self):
-        properties = self.final_properties | { k : eval(v) for k, v in self.expr_properties.items() }
+        properties = self.final_properties | {k : eval(v) for k, v in self.expr_properties.items()}
 
         l = [ ]
         for i in self.children:
@@ -1208,11 +1262,6 @@ class RawLayeredImage(renpy.object.Object):
             self.name,
             LayeredImage(l, name=self.name.replace(" ", "_"), **properties),
         )
-
-    def after_upgrade(self, version: int):
-        if version < 1:
-            self.expr_properties = self.properties # type: ignore
-            self.final_properties = {}
 
 def execute_layeredimage(rai):
     rai.execute()
