@@ -29,6 +29,8 @@ BASE_PROPERTIES = ATL_PROPERTIES | FIXED_PROPERTIES \
     | {"image_format", "format_function", "attribute_function", "offer_screen", "at"}
 # The properties for all layers
 LAYER_PROPERTIES = ATL_PROPERTIES | {"if_attr", "at"}
+# The properties for the if/elif/else layers
+CONDITION_PROPERTIES = LAYER_PROPERTIES
 # The properties for the always layers
 ALWAYS_PROPERTIES = LAYER_PROPERTIES
 
@@ -503,18 +505,6 @@ class Condition(Layer):
         )
 
 
-class RawCondition(object):
-
-    def __init__(self, condition):
-        self.condition = condition
-        self.image = None
-        self.properties = OrderedDict()
-
-    def execute(self):
-        properties = { k : eval(v) for k, v in self.properties.items() }
-        return [ Condition(self.condition, eval(self.image), **properties) ]
-
-
 class ConditionGroup(Layer):
     """
     :doc: li
@@ -547,19 +537,6 @@ class ConditionGroup(Layer):
         args.append(Null())
 
         return ConditionSwitch(*args, predict_all=predict_all)
-
-class RawConditionGroup(object):
-
-    def __init__(self):
-        self.conditions = [ ]
-
-    def execute(self):
-
-        l = [ ]
-        for i in self.conditions:
-            l.extend(i.execute())
-
-        return [ ConditionGroup(l) ]
 
 
 class Always(Layer):
@@ -1080,18 +1057,36 @@ def parse_group(l, parent, image_name): # TODO
         l.expect_eol()
         l.expect_noblock("group")
 
-def parse_condition(l, need_expr): # TODO
 
+class RawCondition(renpy.object.Object):
+    __version__ = 1
+
+    def after_upgrade(self, version: int):
+        if version < 1:
+            self.expr_properties = self.properties # type: ignore
+            self.final_properties = {}
+
+    def __init__(self, condition):
+        self.condition = condition
+        self.image: Imageable = None
+        self.final_properties = {}
+        self.expr_properties = {}
+
+    def execute(self):
+        properties = self.final_properties | {k: eval(v) for k, v in self.expr_properties.items()}
+        return [Condition(self.condition, resolve_image(self.image), **properties)]
+
+def parse_condition(l, need_expr):
     l.skip_whitespace()
 
     if need_expr:
-        condition = l.delimited_python(':')
+        # condition = l.require(l.comma_expression)
+        condition = l.delimited_python(":")
     else:
         condition = None
 
-    l.require(':')
-
-    l.expect_block('condition')
+    l.require(":")
+    l.expect_block("if/elif/else")
     l.expect_eol()
 
     ll = l.subblock_lexer()
@@ -1106,35 +1101,41 @@ def parse_condition(l, need_expr): # TODO
         #     ll.expect_noblock("pass")
         #     continue
 
-        while True:
+        got_block = False
 
-            if old_parse_property(ll, rv, LAYER_PROPERTIES_LIST):
+        while True:
+            pp = parse_property(ll, rv.final_properties, rv.expr_properties, CONDITION_PROPERTIES)
+            if pp:
+                if pp == 2:
+                    got_block = True
+                    break
                 continue
 
-            image = ll.simple_expression()
-
-            if image is not None:
-
+            displayable = parse_displayable(ll)
+            if displayable is not None:
                 if rv.image is not None:
-                    ll.error('A condition can only have one displayable, two found.')
+                    ll.error(f"An if, elif or else statement can only have one displayable, two found : {displayable} and {rv.image}.")
 
-                rv.image = image
+                rv.image = displayable
+
+                if isinstance(displayable, RawBlock):
+                    got_block = True
+                    break
                 continue
 
             break
 
-        ll.expect_noblock("condition properties")
-        ll.expect_eol()
-
+        if not got_block:
+            ll.expect_noblock("if/elif/else properties")
+            ll.expect_eol()
 
     if rv.image is None:
-        l.error("A condition must have a displayable.")
+        l.error("An if, elif or else statement must have a displayable.")
 
     return rv
 
 
 class RawConditionGroup(object):
-
     def __init__(self, conditions: list|tuple = ()):
         self.conditions = conditions
 
