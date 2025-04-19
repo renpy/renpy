@@ -629,8 +629,8 @@ class LayeredImage(object):
         kwargs.setdefault("xfit", True)
         kwargs.setdefault("yfit", True)
 
-        self.transform_args = {k : kwargs.pop(k) for k in FIXED_PROPERTIES.intersection(kwargs)}
-        self.fixed_args = kwargs
+        self.fixed_args = {k : kwargs.pop(k) for k in FIXED_PROPERTIES.intersection(kwargs)}
+        self.transform_args = kwargs
 
     def format(self, what, attribute=None, group=None, variant=None, image=None):
         ff = self.format_function or format_function
