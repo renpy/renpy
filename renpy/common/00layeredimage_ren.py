@@ -982,8 +982,8 @@ class RawAttributeGroup(renpy.object.Object):
 
     def after_upgrade(self, version: int):
         if version < 1:
-            self.final_properties = self.properties # type: ignore
-            self.expr_properties = {}
+            self.expr_properties = self.properties # type: ignore
+            self.final_properties = {}
             self.group_name = self.group # type: ignore
             self.li_name = self.image_name # type: ignore
 
