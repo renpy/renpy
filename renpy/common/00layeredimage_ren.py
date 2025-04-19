@@ -99,6 +99,95 @@ def format_function(what, name, group, variant, attribute, image, image_format, 
 
     return image
 
+class IfAttr(python_object):
+    """
+    Represents an if_attr expression.
+    Abstract base class.
+    """
+    __slots__ = ()
+
+    def __init__(self):
+        raise Exception("IfAttr is an abstract base class.")
+
+    def check(self, attributes: set[str]) -> bool:
+        raise Exception # implemented in subclasses
+
+    @staticmethod
+    def parse(l) -> "IfAttr":
+        l.require(r"\(", "parenthesized if_attr expression")
+        rv = IfOr.parse(l)
+        l.require(r"\)", "closing parenthesis")
+        return rv
+
+class IfOr(IfAttr):
+    __slots__ = ("left", "right")
+
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+    def check(self, attributes):
+        return self.left.check(attributes) or self.right.check(attributes)
+
+    @staticmethod
+    def parse(l) -> IfAttr:
+        rv = IfAnd.parse(l)
+        while l.match(r"\|"):# or l.keyword("or"):
+            rv = IfOr(rv, IfAnd.parse(l))
+        return rv
+
+class IfAnd(IfAttr):
+    __slots__ = ("left", "right")
+
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+    def check(self, attributes):
+        return self.left.check(attributes) and self.right.check(attributes)
+
+    @staticmethod
+    def parse(l) -> IfAttr:
+        rv = IfNot.parse(l)
+        while l.match(r"&"):# or l.keyword("and"):
+            rv = IfAnd(rv, IfNot.parse(l))
+        return rv
+
+class IfNot(IfAttr):
+    __slots__ = ("ifattr",)
+
+    def __init__(self, ifattr):
+        self.ifattr = ifattr
+
+    def check(self, attributes):
+        return not self.ifattr.check(attributes)
+
+    @staticmethod
+    def parse(l) -> IfAttr:
+        if l.match(r"\!"):
+            return IfNot(IfNot.parse(l))
+        else:
+            return IfAttribute.parse(l)
+
+class IfAttribute(IfAttr):
+    __slots__ = ("attribute",)
+
+    def __init__(self, attribute):
+        self.attribute = attribute
+
+    def check(self, attributes):
+        return self.attribute in attributes
+
+    @staticmethod
+    def parse(l) -> IfAttr:
+        if l.match(r"\("):
+            rv = IfOr.parse(l)
+            l.require(r"\)", "closing parenthesis")
+            return rv
+        else:
+            name = l.require(l.image_name_component, "attribute name")
+            return IfAttribute(name)
+
 class Layer(object):
     """
     Base class for our layers.
@@ -853,9 +942,7 @@ def parse_property(l, final_properties: dict, expr_properties: dict, names: str)
     if name in ("auto", "default"):
         final_properties[name] = True
     elif name == "if_attr":
-        # TODO
-        # final_properties[name] = IfAttr.parse(l)
-        raise NotImplementedError
+        final_properties[name] = IfAttr.parse(l)
     elif name in ("if_all", "if_any", "if_not"):
         expr_properties[name] = l.require(l.simple_expression)
     elif name in ("variant", "prefix"):

@@ -86,6 +86,8 @@ The ``variant`` and ``prefix`` properties, which accepted any value but evaluate
 
 In places where the syntax allowed the ``at`` keyword, it now allows an ``at transform`` block.
 
+The new ``if_attr`` property replaces the former ``if_any``, ``if_all`` and ``if_not`` properties, which remain supported for backwards compatibility, introducing a more straightforward boolean condition syntax.
+
 
 Features
 --------
