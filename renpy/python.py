@@ -1031,6 +1031,9 @@ def is_immutable_value(v):
     if isinstance(v, IMMUTABLE_TYPES):
         return True
 
+    if isinstance(v, tuple):
+        return all(is_immutable_value(i) for i in v)
+
     return False
 
 
@@ -1149,8 +1152,8 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         try:
 
             rv = ast.literal_eval(source)
-            rv = ("literal", rv)
             if is_immutable_value(rv):
+                rv = ("literal", rv)
                 py_compile_cache[key] = rv
                 renpy.game.script.bytecode_newcache[key] = marshal.dumps(rv)
 
@@ -1289,7 +1292,7 @@ def py_exec(source, hide=False, store=None):
 
 def py_eval_bytecode(bytecode, globals=None, locals=None): # @ReservedAssignment
 
-    if type(bytecode) is tuple:
+    if bytecode.__class__ is tuple:
         return bytecode[1]
 
     if globals is None:

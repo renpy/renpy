@@ -135,6 +135,10 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 Other Changes
 -------------
 
+In some circumstances, Ren'Py will reuse tuples containing immutable values (float, int, bool,
+complex, str, bytes, and other immutable tuples), which can reduce memory usage and improve performance. This
+may lead to these immutable tuples having the same object identity when previously they would not have.
+
 By default, Ren'Py now only creates mipmaps for textures if the display is scaled down to less than .75 of virtual
 window size. This is suitable for games that do not scale down images. To enable mipmapping again, set
 :var:`config.mipmap` to True.
