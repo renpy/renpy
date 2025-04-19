@@ -352,15 +352,10 @@ class Attribute(Layer):
     to generate an image filename.
     """
 
-    def __init__(self, group, attribute, image=None, default=False, group_args={}, **kwargs):
-
-        prefix = kwargs.pop("prefix", None)
-        variant = kwargs.pop("variant", None)
-
-        super(Attribute, self).__init__(group_args=group_args, **kwargs)
+    def __init__(self, group, attribute, image=None, default=False, *, prefix=None, variant=None, **kwargs):
+        super().__init__(**kwargs)
 
         self.group = group
-
         self.raw_attribute = attribute
 
         if prefix is not None:
@@ -371,15 +366,14 @@ class Attribute(Layer):
         self.default = default
         self.variant = variant
 
-    def apply_format(self, ai):
-
-        self.image = self.wrap(ai.format(
-            "Attribute ({!r}, {!r})".format(self.group, self.attribute),
+    def apply_format(self, li):
+        self.image = self.wrap(li.format(
+            what=f"Attribute ({self.group!r}, {self.attribute!r})",
             group=self.group,
             variant=self.variant,
             attribute=self.raw_attribute,
             image=self.image,
-            ))
+        ))
 
     def get_displayable(self, attributes):
 
