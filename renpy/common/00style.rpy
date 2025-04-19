@@ -391,6 +391,22 @@ init -1800:
     style pref_label:
         alt "" # We expect the labelled buttons/bars to read themselves out.
 
+    # Sync
+
+    if renpy.loadable("gui/overlay/confirm.png"):
+        style sync_overlay is empty:
+            background "gui/overlay/confirm.png"
+    else:
+        style sync_overlay is empty:
+            background "#000a"
+
+    style sync_frame is frame
+    style sync_text is gui_text
+    style sync_button is button
+    style sync_button_text is button_text
+    style sync_label is label
+    style sync_label_text is label_text
+
 
 ################################################################################
 # Style reset.
