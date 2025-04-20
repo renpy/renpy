@@ -187,7 +187,9 @@ class SpriteManager(renpy.display.displayable.Displayable):
     them at the fastest speed possible.
     """
 
-    def __init__(self, update=None, event=None, predict=None, ignore_time=False, **properties):
+    animation = False
+
+    def __init__(self, update=None, event=None, predict=None, ignore_time=False, animation=True, **properties):
         """
         `update`
             If not None, a function that is called each time a sprite
@@ -220,6 +222,10 @@ class SpriteManager(renpy.display.displayable.Displayable):
             it will keep all displayables used in memory for the life of the
             SpriteManager.
 
+        `animation`
+            If True, then this sprite manager uses the animation timebase.
+            This prevents it from resetting when shown twice.
+
         After being rendered once (before the `update` function is called),
         SpriteManagers have the following fields:
 
@@ -236,6 +242,7 @@ class SpriteManager(renpy.display.displayable.Displayable):
         self.event_function = event
         self.predict_function = predict
         self.ignore_time = ignore_time
+        self.animation = animation
 
         # A map from a displayable to the SpriteDisplayable object
         # representing that displayable.
@@ -292,6 +299,9 @@ class SpriteManager(renpy.display.displayable.Displayable):
         renpy.display.render.redraw(self, delay)
 
     def render(self, width, height, st, at):
+
+        if self.animation:
+            st = at
 
         self.width = width
         self.height = height
@@ -399,14 +409,14 @@ class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback
     def after_setstate(self):
         self.particles = None
 
-    def __init__(self, factory, **properties):
+    def __init__(self, factory, animation=False, **properties):
         """
         @param factory: A factory object.
         """
 
         super(Particles, self).__init__(**properties)
 
-        self.sm = SpriteManager(update=self.update_callback, predict=self.predict_callback)
+        self.sm = SpriteManager(update=self.update_callback, predict=self.predict_callback, animation=animation)
 
         self.factory = factory
         self.particles = None
@@ -494,7 +504,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
         if isinstance(distribution, str):
             distribution = distribution_func_map[distribution]
         self.distribution = distribution
-        
+
         self.init()
 
     def init(self):
@@ -618,7 +628,8 @@ def SnowBlossom(d,
                 start=0,
                 fast=False,
                 horizontal=False,
-                distribution: Union[DISTRIBUTION_FUNC_T, str] = "linear"):
+                distribution: Union[DISTRIBUTION_FUNC_T, str] = "linear",
+                animation=False):
     """
     :doc: sprites_extra
 
@@ -653,7 +664,7 @@ def SnowBlossom(d,
     `horizontal`
         If true, particles appear on the left or right side of the screen,
         rather than the top or bottom.
-    
+
     `distribution`
         A function or the name of a built-in distribution function to determine the starting position of a particle.
 
@@ -665,6 +676,11 @@ def SnowBlossom(d,
         If a function, it must take two floats as arguments and return a float.
 
         Default is `linear`.
+
+    `animation`
+            If True, then this SnowBlossom uses the animation timebase.
+            This prevents it from resetting when shown twice.
+
     """
 
     # If going horizontal, swap the xspeed and the yspeed.
@@ -679,4 +695,5 @@ def SnowBlossom(d,
                                         start=start,
                                         fast=fast,
                                         rotate=horizontal,
-                                        distribution=distribution))
+                                        distribution=distribution),
+                    animation=animation)

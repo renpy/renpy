@@ -896,7 +896,7 @@ class OneLinePythonParser(Parser):
     def parse(self, loc, l, parent, keyword):
 
         loc = l.get_location()
-        source = l.require(l.rest_statement)
+        source = l.require(l.rest)
 
         l.expect_eol()
         l.expect_noblock("one-line python")

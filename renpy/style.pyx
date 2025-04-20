@@ -804,7 +804,7 @@ def rebuild(prepare_screens=True):
 
     renpy.display.screen.prepared = False
 
-    if not renpy.game.context().init_phase:
+    if prepare_screens and not renpy.game.context().init_phase:
         renpy.display.screen.prepare_screens()
 
     renpy.exports.restart_interaction()

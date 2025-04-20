@@ -794,7 +794,7 @@ init -1500 python in _console:
     def help(l, doc_generate=False):
 
         if l is not None:
-            rest = l.rest_statement()
+            rest = l.rest()
         else:
             rest = None
 

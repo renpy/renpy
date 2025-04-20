@@ -545,13 +545,3 @@ init -1100:
 
         ## Right-click and escape answer "no".
         key "game_menu" action Return(False)
-
-
-    if renpy.loadable("gui/overlay/confirm.png"):
-        style sync_overlay is empty:
-            background "gui/overlay/confirm.png"
-    else:
-        style sync_overlay is empty:
-            background "#000a"
-
-    style sync_text is gui_text

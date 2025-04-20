@@ -153,14 +153,16 @@ class PyCode(Object):
             self.filename = source.filename
             self.linenumber = source.linenumber
             self.hashcode = source.hashcode
+            self.col_offset = source.column
         else:
             self.filename = loc[0]
             self.linenumber = loc[1]
             self.hashcode = hash32(source)
+            self.col_offset = 0
 
         # The source code.
         if mode != "eval":
-            self.source, self.col_offset = PyCode.dedent(source)
+            self.source, self.col_offset = PyCode.dedent(source, self.col_offset)
         else:
             self.source = source
             self.col_offset = 0
@@ -178,7 +180,7 @@ class PyCode(Object):
     )
 
     @staticmethod
-    def dedent(text: str):
+    def dedent(text: str, col_offset: int) -> tuple[str, int]:
         """
         Removes leading whitespace from a block of text. Entirely blank lines
         are normalized to a newline character.
@@ -216,9 +218,9 @@ class PyCode(Object):
             text = re.sub(r"(?m)^" + margin, "", text)
 
         if margin:
-            return text, len(margin)
+            return text, len(margin) + col_offset
         else:
-            return text, 0
+            return text, col_offset
 
 
 DoesNotExtend: renpy.object.Sentinel = renpy.object.Sentinel("DoesNotExtend")

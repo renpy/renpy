@@ -1601,15 +1601,14 @@ cdef class GL2DrawingContext:
                     ctx.view_matrix.ctake(IDENTITY)
                     ctx.model_matrix.ctake(IDENTITY)
 
-                    self.projectionview_matrix.ctake(self.projection_matrix)
-
+                    ctx.projectionview_matrix.ctake(ctx.projection_matrix)
 
                 elif r.matrix_kind == MATRIX_VIEW:
                     ctx.view_matrix.inplace_multiply(ctx.model_matrix)
                     ctx.model_matrix.ctake(IDENTITY)
 
-                    self.projectionview_matrix.ctake(self.projection_matrix)
-                    self.projectionview_matrix.inplace_multiply(ctx.view_matrix)
+                    ctx.projectionview_matrix.ctake(ctx.projection_matrix)
+                    ctx.projectionview_matrix.inplace_multiply(ctx.view_matrix)
 
                 if ctx.clip_polygon is not None:
                     ctx.clip_polygon = ctx.clip_polygon.multiply_matrix(r.forward)

@@ -1084,6 +1084,20 @@ def quote_eval(s: str):
     # Since the last 2 characters are \0, those characters need to be stripped.
     return "".join(rv[:-2])
 
+IMMUTABLE_TYPES = (int, float, str, bool, bytes, type(None), complex)
+
+def is_immutable_value(v):
+    """
+    Returns True if v is an immutable value, and False if it is not.
+    """
+
+    if isinstance(v, IMMUTABLE_TYPES):
+        return True
+
+    if isinstance(v, tuple):
+        return all(is_immutable_value(i) for i in v)
+
+    return False
 
 def py_compile(
     source: str | PyExpr | ast.Module,
@@ -1206,7 +1220,22 @@ def py_compile(
     source = str(source)
     source = source.replace("\r", "")
 
-    if mode == "eval":
+    if mode == "eval" and not ast_node:
+
+        # If possible, compute the value of immutable literals.
+        try:
+
+            rv = ast.literal_eval(source)
+            if is_immutable_value(rv):
+                rv = ("literal", rv)
+                py_compile_cache[key] = rv
+                renpy.game.script.bytecode_newcache[key] = marshal.dumps(rv)
+
+                return rv
+
+        except ValueError:
+            pass
+
         source = quote_eval(source)
 
     line_offset = lineno - 1
@@ -1339,6 +1368,9 @@ def py_eval_bytecode(
     globals: dict[str, Any] | None = None,
     locals: dict[str, Any] | None = None,
 ):  # @ReservedAssignment
+
+    if bytecode.__class__ is tuple:
+        return bytecode[1]
 
     if globals is None:
         globals = store_dicts["store"]  # @ReservedAssignment

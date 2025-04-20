@@ -82,6 +82,12 @@ The shift+A accessibility menu has been redesigned to improve alignment.
 Features
 --------
 
+The :class:`SpriteManager` and :func:`SnowBlossom` displayables now support the `animation` parameter,
+which can be used to prevent resetting when the displayable is reshown.
+
+The :class:`Gallery` class now supports separate transitions when entering a sequence of images, going
+between images, and exiting the sequence of images.
+
 Screens now support python-style docstrings, which are used when a string is included as the first line
 of the block. Ren'Py does not do anything directly with dosctrings, but the raw string can be accessed
 using :func:`renpy.get_screen_docstring`.
@@ -128,6 +134,10 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 
 Other Changes
 -------------
+
+In some circumstances, Ren'Py will reuse tuples containing immutable values (float, int, bool,
+complex, str, bytes, and other immutable tuples), which can reduce memory usage and improve performance. This
+may lead to these immutable tuples having the same object identity when previously they would not have.
 
 By default, Ren'Py now only creates mipmaps for textures if the display is scaled down to less than .75 of virtual
 window size. This is suitable for games that do not scale down images. To enable mipmapping again, set

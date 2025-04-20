@@ -1185,7 +1185,7 @@ def transform_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 @statement("$")
 def one_line_python(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-    python_code = l.rest_statement()
+    python_code = l.rest()
 
     if not python_code:
         l.error("expected python code")
