@@ -2000,7 +2000,7 @@ class UnoptimizedTexture(ImageBase):
 
     def __init__(self, im, **properties):
         im = image(im)
-        super(UnoptimizedTexture, self).__init__(im.identity, optimize_bounds=False, **properties)
+        super(UnoptimizedTexture, self).__init__(im.identity, optimize_bounds=False, mipmap=True, **properties)
         self.image = im
 
     def get_hash(self):
