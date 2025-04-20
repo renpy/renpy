@@ -461,6 +461,45 @@ class Context(renpy.object.Object):
 
             raise e
 
+    def handle_exception(self):
+        """
+        Handles exception that is currently on a fly.
+        """
+
+        e = sys.exception()
+        if e is None:
+            return
+
+        # Base exceptions are not handled.
+        elif not isinstance(e, Exception):
+            raise
+
+        te = renpy.error.report_exception(e, editor=False)
+
+        # Local exception handler, if any. This should handle all cases
+        # of the exception.
+        if self.exception_handler is not None:
+            self.exception_handler(te)
+            return
+
+        # Creator-defined exception handler. Returns True
+        # if exception handled.
+        if renpy.config.exception_handler is not None:
+            try:
+                # Before 8.4 it was a function that takes 3 strings.
+                import inspect
+                inspect.signature(renpy.config.exception_handler).bind(te)
+                if not renpy.config.exception_handler(te):
+                    return
+
+            except TypeError:
+                if not renpy.config.exception_handler(*te): # type: ignore
+                    return
+
+        # RenPy default exception handler. Returns True
+        # if exception NOT handled.
+        renpy.display.error.report_exception(te)
+
     def report_traceback(self, name, last):
 
         if last:
@@ -928,45 +967,6 @@ class Context(renpy.object.Object):
         while len(self.call_location_stack) < len(self.return_stack):
             self.call_location_stack.append("unknown location")
             self.dynamic_stack.append({})
-
-    def handle_exception(self):
-        """
-        Handles exception that is currently on a fly.
-        """
-
-        e = sys.exception()
-        if e is None:
-            return
-
-        # Base exceptions are not handled.
-        elif not isinstance(e, Exception):
-            raise
-
-        te = renpy.error.report_exception(e, editor=False)
-
-        # Local exception handler, if any. This should handle all cases
-        # of the exception.
-        if self.exception_handler is not None:
-            self.exception_handler(te)
-            return
-
-        # Creator-defined exception handler. Returns True
-        # if exception handled.
-        if renpy.config.exception_handler is not None:
-            try:
-                # Before 8.4 it was a function that takes 3 strings.
-                import inspect
-                inspect.signature(renpy.config.exception_handler).bind(te)
-                if not renpy.config.exception_handler(te):
-                    return
-
-            except TypeError:
-                if not renpy.config.exception_handler(*te): # type: ignore
-                    return
-
-        # RenPy default exception handler. Returns True
-        # if exception NOT handled.
-        renpy.display.error.report_exception(te)
 
 
 def run_context(top):

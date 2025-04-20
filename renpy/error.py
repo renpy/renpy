@@ -21,7 +21,7 @@
 
 # This file contains code for formatting tracebacks.
 
-from typing import IO, TYPE_CHECKING, Iterable, Iterator, Callable, Any
+from typing import TextIO, TYPE_CHECKING, Iterable, Iterator, Callable, Any
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -311,12 +311,19 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
 
 
 class ExceptionPrintContext(abc.ABC):
-    def __init__(self, *, filter_private: bool):
-        self.seen = set()
+    def __init__(
+        self, *,
+        filter_private=False,
+        max_group_width=15,
+        max_group_depth=10,
+    ):
         self.indent_depth = 0
         self.exception_group_depth = 0
         self.need_close = False
+
         self.filter_private = filter_private
+        self.max_group_width = max_group_width
+        self.max_group_depth = max_group_depth
 
     def should_filter(self, filename: str) -> bool:
         """
@@ -331,7 +338,8 @@ class ExceptionPrintContext(abc.ABC):
             return False
 
         if filename.endswith((".rpy", ".rpym", "_ren.py")):
-            return filename.startswith(("renpy/common/", "libs/"))
+            # TODO: Make it more robust by is_relative_to check.
+            return filename.startswith(("renpy/common/", "game/libs/"))
         elif filename.endswith(".py"):
             return True
         else:
@@ -346,7 +354,13 @@ class ExceptionPrintContext(abc.ABC):
             self.indent_depth -= 1
 
     @abc.abstractmethod
-    def emit_location(self, filename: str, lineno: int, name: str):
+    def getvalue(self) -> Any:
+        """
+        Returns the object that becomes the result of formatting methods.
+        """
+
+    @abc.abstractmethod
+    def location(self, filename: str, lineno: int, name: str):
         """
         Emits a line that shows the location of the frame in the source code.
 
@@ -364,7 +378,7 @@ class ExceptionPrintContext(abc.ABC):
         """
 
     @abc.abstractmethod
-    def emit_source_carets(self, line: str, carets: str | None):
+    def source_carets(self, line: str, carets: str | None):
         """
         Emits a line(s) that shows the source code that was running in the
         frame when the exception occurred.
@@ -377,96 +391,152 @@ class ExceptionPrintContext(abc.ABC):
             source code. If carets for that line are not available, this
             is None. Otherwise this is a string that contains spaces, ~, and ^
             characters.
-
         """
 
     @abc.abstractmethod
-    def emit_string(self, text: str):
+    def final_exception_line(self, exc_type: str, text: str | None):
+        """
+        Emits the final exception line from the string of the exception
+        type and the optional exception text.
+        """
+
+    @abc.abstractmethod
+    def string(self, text: str):
         """
         Emits a string.
         """
 
     @abc.abstractmethod
-    def emit_iterable(self, text_gen: Iterable[str]):
+    def chain_cause(self):
         """
-        Emits an iterable of strings.
+        Emits the message that above exception was the cause of the following exception.
+        """
+
+    @abc.abstractmethod
+    def chain_context(self):
+        """
+        Emits the message that above exception is the context of the following exception.
+        """
+
+    @abc.abstractmethod
+    def exceptions_separator(self, index: int, total: int):
+        """
+        Emits the separator between exceptions in the group.
+
+        `index`
+            The index of exception that is being printed.
+
+        `total`
+            The total number of exceptions in the group.
+        """
+
+    @abc.abstractmethod
+    def exceptions_close(self):
+        """
+        Emits the closing separator for the exception group.
         """
 
 
-class ANSIColoredPrintContext(ExceptionPrintContext):
-    RESET = "\x1b[0m"
-    MAGENTA = "\x1b[35m"
-    BOLD_RED = "\x1b[1;31m"
-    RED = "\x1b[31m"
+CAUSE_MESSAGE = "The above exception was the direct cause of the following exception:\n"
+CONTEXT_MESSAGE = "During handling of the above exception, another exception occurred:\n"
 
-    def __init__(self, file: IO[str], *, filter_private: bool):
-        super().__init__(filter_private=filter_private)
+
+class TextIOExceptionPrintContext(ExceptionPrintContext):
+    def __init__(
+        self, file: TextIO, *,
+        filter_private=False,
+        max_group_width=15,
+        max_group_depth=10,
+    ):
+        super().__init__(filter_private=filter_private,
+                         max_group_width=max_group_width,
+                         max_group_depth=max_group_depth)
+
         self.file = file
+
+    def getvalue(self):
+        try:
+            return self.file.getvalue()  # type: ignore
+        except AttributeError:
+            return None
 
     def _print(self, text: str):
         print(f"{'  ' * self.indent_depth}{text}", file=self.file)
 
-    def emit_location(self, filename, lineno, name):
+    def string(self, text: str):
+        self._print(text)
+
+    def chain_cause(self):
+        self._print(CAUSE_MESSAGE)
+
+    def chain_context(self):
+        self._print(CONTEXT_MESSAGE)
+
+    def exceptions_separator(self, index: int, total: int):
+        truncated = (index >= self.max_group_width)
+        title = f'{index + 1}' if not truncated else '...'
+        self._print(
+            ('+-' if index == 0 else '  ') +
+            f'+---------------- {title} ----------------')
+
+    def exceptions_close(self):
+        self._print("+------------------------------------")
+
+class ANSIColoredPrintContext(TextIOExceptionPrintContext):
+    RESET = "\x1b[0m"
+    BOLD_MAGENTA = "\x1b[1;35m"
+    MAGENTA = "\x1b[35m"
+    BOLD_RED = "\x1b[1;31m"
+    RED = "\x1b[31m"
+
+    def location(self, filename, lineno, name):
         self._print(
             f'File {self.MAGENTA}"{filename}"{self.RESET}, '
             f'line {self.MAGENTA}{lineno}{self.RESET}, '
             f'in {self.MAGENTA}{name}{self.RESET}')
 
-    def emit_source_carets(self, line, carets):
+    def source_carets(self, line, carets):
         if carets is None:
             self._print(line)
             return
 
         zipped = zip(line, carets, strict=True)
         colorized_line_parts: list[str] = []
-        colorized_carets_parts: list[str] = []
         for color, group in itertools.groupby(zipped, key=lambda x: x[1]):
             caret_group = list(group)
             line_part = "".join(char for char, _ in caret_group)
-            caret_part = "".join(caret for _, caret in caret_group)
             if color == "^":
                 line_part = f"{self.BOLD_RED}{line_part}{self.RESET}"
-                caret_part = f"{self.BOLD_RED}{caret_part}{self.RESET}"
             elif color == "~":
                 line_part = f"{self.RED}{line_part}{self.RESET}"
-                caret_part = f"{self.RED}{caret_part}{self.RESET}"
 
             colorized_line_parts.append(line_part)
-            colorized_carets_parts.append(caret_part)
 
         self._print("".join(colorized_line_parts))
-        self._print("".join(colorized_carets_parts))
 
-    def emit_string(self, text: str):
-        self._print(text)
+    def final_exception_line(self, exc_type: str, text: str | None):
+        if text is None:
+            self._print(f"{self.BOLD_MAGENTA}{exc_type}{self.RESET}")
+        else:
+            self._print(f"{self.BOLD_MAGENTA}{exc_type}{self.RESET}: {self.MAGENTA}{text}{self.RESET}")
 
-    def emit_iterable(self, text_gen: Iterable[str]):
-        for text in text_gen:
-            self._print(text)
-
-
-class NonColoredExceptionPrintContext(ExceptionPrintContext):
-    def __init__(self, file: IO[str], *, filter_private: bool):
-        super().__init__(filter_private=filter_private)
-        self.file = file
-
-    def _print(self, text: str):
-        print(f"{'  ' * self.indent_depth}{text}", file=self.file)
-
-    def emit_location(self, filename: str, lineno: int, name: str):
+class NonColoredExceptionPrintContext(TextIOExceptionPrintContext):
+    def location(self, filename: str, lineno: int, name: str):
         self._print(f'    File "{filename}", line {lineno}, in {name}\n')
 
-    def emit_source_carets(self, line: str, carets: str | None):
+    def source_carets(self, line: str, carets: str | None):
         self._print(line)
         if carets is not None:
             self._print(carets)
 
-    def emit_string(self, text: str):
-        self._print(text)
+    def final_exception_line(self, exc_type: str, text: str | None):
+        if text is None:
+            self._print(exc_type)
+        else:
+            self._print(f"{exc_type}: {text}")
 
-    def emit_iterable(self, text_gen: Iterable[str]):
-        for text in text_gen:
-            self._print(text)
+    def string(self, text: str):
+        self._print(text)
 
 
 @dataclasses.dataclass(repr=False, slots=True)
@@ -514,7 +584,7 @@ class FrameSummary:
     @property
     def lines(self) -> Iterator[str]:
         """
-        Yields the lines of the frame source code as-is.
+        Yields the lines of the frame source code as-is, including indentation.
         """
 
         if self._lines is None:
@@ -547,6 +617,11 @@ class FrameSummary:
     def carets(self) -> Iterator[str]:
         """
         Yields the carets line for each line in the frame source code.
+
+        If the frame has no carets information, this is an empty iterator.
+
+        Otherwise, the length of the iterator is equal to the length of the
+        `FrameSummary.lines`.
         """
 
         if self._carets is not None:
@@ -586,7 +661,10 @@ class FrameSummary:
     @property
     def significant_lines(self):
         """
-        Yields line numbers that are significant to render during format.
+        Yields indexes of lines that are significant to render during format.
+
+        This includes the first and last lines, and if the frame has carets
+        information, the lines around the carets.
         """
 
         yield 0
@@ -612,14 +690,15 @@ class FrameSummary:
         gets called for every frame to be printed in the stack summary.
         """
 
-        ctx.emit_location(self.filename, self.lineno, self.name)
+        ctx.location(self.filename, self.lineno, self.name)
 
         original_lines = list(self.lines)
         dedent_lines = textwrap.dedent("\n".join(original_lines)).split("\n")
         dedent_amount = len(original_lines[0]) - len(dedent_lines[0])
-        carets = [c[dedent_amount:] for c in self.carets]
-        if not carets:
+        if self.carets:
             carets = [None] * len(dedent_lines)
+        else:
+            carets = [c[dedent_amount:] for c in self.carets]
 
         sig_lines_list = list(self.significant_lines)
         with ctx.indent():
@@ -628,12 +707,12 @@ class FrameSummary:
                     line_diff = lineno - sig_lines_list[i - 1]
                     if line_diff == 2:
                         # 1 line in between - just output it
-                        ctx.emit_source_carets(dedent_lines[lineno - 1], carets[lineno - 1])
+                        ctx.source_carets(dedent_lines[lineno - 1], carets[lineno - 1])
                     elif line_diff > 2:
                         # > 1 line in between - abbreviate
-                        ctx.emit_string(f"...<{line_diff - 1} lines>...")
+                        ctx.string(f"...<{line_diff - 1} lines>...")
 
-                ctx.emit_source_carets(dedent_lines[lineno], carets[lineno])
+                ctx.source_carets(dedent_lines[lineno], carets[lineno])
 
 
 class StackSummary(list[FrameSummary]):
@@ -717,7 +796,7 @@ class StackSummary(list[FrameSummary]):
             ):
                 if count > RECURSIVE_CUTOFF:
                     count -= RECURSIVE_CUTOFF
-                    ctx.emit_string(
+                    ctx.string(
                         f'[Previous line repeated {count} more '
                         f'time{"s" if count > 1 else ""}]')
 
@@ -734,7 +813,7 @@ class StackSummary(list[FrameSummary]):
 
         if count > RECURSIVE_CUTOFF:
             count -= RECURSIVE_CUTOFF
-            ctx.emit_string(
+            ctx.string(
                 f'[Previous line repeated {count} more '
                 f'time{"s" if count > 1 else ""}]')
 
@@ -747,9 +826,10 @@ def _safe_string(value, what, func: Callable[..., str] = str):
 
 
 class TracebackException:
-    """An exception ready for rendering.
+    """
+    An exception ready for rendering.
 
-    The traceback module captures enough attributes from the original exception
+    This class captures enough attributes from the original exception
     to this intermediary form to ensure that no references are held, while
     still being able to fully print or format it.
 
@@ -758,26 +838,23 @@ class TracebackException:
     refers to the size of a single exception group's exceptions array. The
     formatted output is truncated when either limit is exceeded.
 
-    Use `from_exception` to create TracebackException instances from exception
-    objects, or the constructor to create TracebackException instances from
-    individual components.
-
-    - :attr:`__cause__` A TracebackException of the original *__cause__*.
-    - :attr:`__context__` A TracebackException of the original *__context__*.
+    - :attr:`__cause__` A TracebackException of the original __cause__.
+    - :attr:`__context__` A TracebackException of the original __context__.
     - :attr:`exceptions` For exception groups - a list of TracebackException
-      instances for the nested *exceptions*.  ``None`` for other exceptions.
-    - :attr:`__suppress_context__` The *__suppress_context__* value from the
+      instances for the nested *exceptions*. ``None`` for other exceptions.
+    - :attr:`__suppress_context__` The __suppress_context__ value from the
       original exception.
+    - :attr:`__notes__` List of string display of the __notes__ value from the
+    original exception.
     - :attr:`stack` A `StackSummary` representing the traceback.
-    - :attr:`exc_type_str` String display of exc_type
+    - :attr:`exc_type_str` String display of exc_type.
     - :attr:`filename` For syntax errors - the filename where the error
       occurred.
     - :attr:`lineno` For syntax errors - the linenumber where the error
       occurred.
     - :attr:`end_lineno` For syntax errors - the end linenumber where the error
       occurred. Can be `None` if not present.
-    - :attr:`text` For syntax errors - the text where the error
-      occurred.
+    - :attr:`text` For syntax errors - the text where the error occurred.
     - :attr:`offset` For syntax errors - the offset into the text where the
       error occurred.
     - :attr:`end_offset` For syntax errors - the end offset into the text where
@@ -785,45 +862,44 @@ class TracebackException:
     - :attr:`msg` For syntax errors - the compiler error message.
     """
 
-    def __init__(
-        self,
-        exception: BaseException, *,
-        max_group_width=15,
-        max_group_depth=10,
-        _seen=None,
-    ):
-        # Handle loops in __cause__ or __context__.
-        is_recursive_call = _seen is not None
-        if _seen is None:
-            _seen = set()
-        _seen.add(id(exception))
-
-        self.max_group_width = max_group_width
-        self.max_group_depth = max_group_depth
-
-        assert exception.__traceback__ is not None
-        self.stack = StackSummary(exception.__traceback__)
+    def __init__(self, exception: BaseException, /, _seen=None):
+        if exception.__traceback__ is None:
+            self.stack = StackSummary.__new__(StackSummary)
+        else:
+            self.stack = StackSummary(exception.__traceback__)
 
         # Capture now to permit freeing resources
         self._str = _safe_string(exception, 'exception')
+
+        self.__notes__: list[str]
         try:
-            self.__notes__ = getattr(exception, '__notes__', None)
+            notes = getattr(exception, '__notes__', None)
         except Exception as e:
+            err = _safe_string(e, '__notes__', repr)
             self.__notes__ = [
-                f'Ignored error getting __notes__: {_safe_string(e, '__notes__', repr)}']
+                f'Ignored error getting __notes__: {err}']
+        else:
+            if (
+                isinstance(notes, collections.abc.Sequence)
+                and not isinstance(notes, (str, bytes))
+            ):
+                self.__notes__ = [_safe_string(note, 'note') for note in notes]
+
+            elif notes is not None:
+                self.__notes__ = [_safe_string(notes, '__notes__')]
+            else:
+                self.__notes__ = []
 
         self._is_syntax_error = False
         self._exc_type = type(exception)
-        self.exc_type_qualname = type(exception).__qualname__
-        self.exc_type_module = type(exception).__module__
+        self._exc_type_qualname = type(exception).__qualname__
+        self._exc_type_module = type(exception).__module__
 
         if isinstance(exception, SyntaxError):
             # Handle SyntaxError's specially
             self.filename = exception.filename
-            lno = exception.lineno
-            self.lineno = str(lno) if lno is not None else None
-            end_lno = exception.end_lineno
-            self.end_lineno = str(end_lno) if end_lno is not None else None
+            self.lineno = exception.lineno
+            self.end_lineno = exception.end_lineno
             self.text = exception.text
             self.offset = exception.offset
             self.end_offset = exception.end_offset
@@ -836,6 +912,16 @@ class TracebackException:
         self.__context__: TracebackException | None = None
         self.exceptions: list[TracebackException] | None = None
 
+        self.simple: str | None = None
+        self.full: str | None = None
+        self.traceback_fn: str | None = None
+
+        # Handle loops in __cause__ or __context__.
+        is_recursive_call = _seen is not None
+        if _seen is None:
+            _seen = set()
+        _seen.add(id(exception))
+
         # Convert __cause__ and __context__ to `TracebackExceptions`s, use a
         # queue to avoid recursion (only the top-level call gets _seen == None)
         if not is_recursive_call:
@@ -843,46 +929,28 @@ class TracebackException:
             while queue:
                 te, e = queue.pop()
                 if (e and e.__cause__ is not None and id(e.__cause__) not in _seen):
-                    cause = TracebackException(
-                        e.__cause__,
-                        max_group_width=max_group_width,
-                        max_group_depth=max_group_depth,
-                        _seen=_seen)
-
+                    cause = TracebackException(e.__cause__, _seen=_seen)
                     te.__cause__ = cause
                     queue.append((te.__cause__, e.__cause__))
 
                 if (e and e.__context__ is not None and id(e.__context__) not in _seen):
-                    context = TracebackException(
-                        e.__context__,
-                        max_group_width=max_group_width,
-                        max_group_depth=max_group_depth,
-                        _seen=_seen)
-
+                    context = TracebackException(e.__context__, _seen=_seen)
                     te.__context__ = context
                     queue.append((te.__context__, e.__context__))
 
                 if e and isinstance(e, BaseExceptionGroup):
                     exceptions = []
                     for exc in e.exceptions:
-                        te = TracebackException(
-                            exc,
-                            max_group_width=max_group_width,
-                            max_group_depth=max_group_depth,
-                            _seen=_seen)
+                        te = TracebackException(exc, _seen=_seen)
                         exceptions.append(te)
                         queue.append((te, exc))
 
                     te.exceptions = exceptions
 
-        self.simple: str | None = None
-        self.full: str | None = None
-        self.traceback_fn: str | None = None
-
     @property
     def exc_type_str(self):
-        s_type = self.exc_type_qualname
-        s_mod = self.exc_type_module
+        s_type = self._exc_type_qualname
+        s_mod = self._exc_type_module
         if s_mod not in ("__main__", "builtins"):
             if not isinstance(s_mod, str):
                 s_mod = "<unknown>"
@@ -898,114 +966,97 @@ class TracebackException:
     def __str__(self):
         return self._str
 
-    def _format_final_exc_line(self):
-        if self._str:
-            return f"{self.exc_type_str}: {self._str}"
-        else:
-            return f"{self.exc_type_str}"
+    def format_exception_only(self, ctx: ExceptionPrintContext | None = None, /, *, show_group=False) -> Any:
+        """
+        Format the exception type, message and notes.
 
-    def format_exception_only(self, ctx: ExceptionPrintContext, /, *, show_group=False):
-        """Format the exception part of the traceback.
+        If exception print context is not given, it defaults to the non-colorized
+        string context.
 
-        The return value is a generator of strings, each ending in a newline.
-
-        Generator yields the exception message.
-        For :exc:`SyntaxError` exceptions, it
-        also yields (before the exception message)
-        several lines that (when printed)
-        display detailed information about where the syntax error occurred.
-        Following the message, generator also yields
-        all the exception's ``__notes__``.
+        Returns the result of `getvalue` of the exception print context.
 
         When *show_group* is ``True``, and the exception is an instance of
         :exc:`BaseExceptionGroup`, the nested exceptions are included as
         well, recursively, with indentation relative to their nesting depth.
         """
 
+        if ctx is None:
+            ctx = NonColoredExceptionPrintContext(io.StringIO())
+
         if self._is_syntax_error:
             raise NotImplementedError
 
-        ctx.emit_string(self._format_final_exc_line())
+        ctx.final_exception_line(self.exc_type_str, self._str or None)
 
-        if (
-            isinstance(self.__notes__, collections.abc.Sequence)
-            and not isinstance(self.__notes__, (str, bytes))
-        ):
-            for note in self.__notes__:
-                ctx.emit_iterable(_safe_string(note, 'note').split('\n'))
-
-        elif self.__notes__ is not None:
-            ctx.emit_string(_safe_string(self.__notes__, '__notes__', func=repr))
+        for note in self.__notes__:
+            ctx.string(note)
 
         if show_group and self.exceptions:
             with ctx.indent():
                 for ex in self.exceptions:
                     ex.format_exception_only(ctx, show_group=show_group)
 
-    def format(self, ctx: ExceptionPrintContext, /, *, chain=True, show_group=False):
-        """Format the exception.
+        return ctx.getvalue()
 
-        If chain is not *True*, *__cause__* and *__context__* will not be formatted.
+    def format(self, ctx: ExceptionPrintContext | None = None, /, *, chain=True, show_group=False) -> Any:
+        """
+        Format the exception.
 
-        The return value is a generator of strings, each ending in a newline and
-        some containing internal newlines. `print_exception` is a wrapper around
-        this method which just prints the lines to a file.
+        If chain is True, adds *__cause__* and *__context__* exceptions to the output.
+
+        If exception print context is not given, it defaults to the non-colorized
+        string context.
+
+        Returns the result of `getvalue` of the exception print context.
 
         The message indicating which exception occurred is always the last
         string in the output.
         """
 
-        output: list[tuple[str | None, TracebackException]] = []
+        if ctx is None:
+            ctx = NonColoredExceptionPrintContext(io.StringIO())
+
+        output: list[tuple[Callable[[], None] | None, TracebackException]] = []
         exc = self
 
         if chain:
             while exc:
                 if exc.__cause__ is not None:
-                    chained_msg = (
-                        "\nThe above exception was the direct cause "
-                        "of the following exception:\n\n")
+                    chained_method = ctx.chain_cause
                     chained_exc = exc.__cause__
-                elif (exc.__context__ is not None and
-                      not exc.__suppress_context__):
-                    chained_msg = (
-                        "\nDuring handling of the above exception, "
-                        "another exception occurred:\n\n")
+                elif (exc.__context__ is not None and not exc.__suppress_context__):
+                    chained_method = ctx.chain_context
                     chained_exc = exc.__context__
                 else:
-                    chained_msg = None
-                    chained_exc = None
+                    break
 
-                output.append((chained_msg, exc))
+                output.append((chained_method, exc))
                 exc = chained_exc
         else:
             output.append((None, exc))
 
-        for msg, exc in reversed(output):
-            if exc.stack.should_filter(ctx):
-                ctx.emit_string("Traceback is suppressed.")
-                continue
-
-            if msg is not None:
-                ctx.emit_string(msg)
+        for meth, exc in reversed(output):
+            if meth is not None:
+                meth()
 
             if exc.exceptions is None:
-                ctx.emit_string('Traceback (most recent call last):')
+                ctx.string('Traceback (most recent call last):')
 
                 with ctx.indent():
                     exc.stack.format(ctx)
 
                 exc.format_exception_only(ctx)
 
-            elif ctx.exception_group_depth > self.max_group_depth:
+            elif ctx.exception_group_depth > ctx.max_group_depth:
                 # exception group, but depth exceeds limit
-                ctx.emit_string(f"... (max_group_depth is {self.max_group_depth})")
+                ctx.string(f"... (max group depth is {ctx.max_group_depth})")
             else:
                 # format exception group
                 is_toplevel = (ctx.exception_group_depth == 0)
                 if is_toplevel:
                     ctx.exception_group_depth += 1
 
-                ctx.emit_string('Exception Group Traceback (most recent call last):')
+                ctx.string('Exception Group Traceback (most recent call last):')
 
                 with ctx.indent():
                     exc.stack.format(ctx)
@@ -1013,10 +1064,11 @@ class TracebackException:
                 exc.format_exception_only(ctx)
 
                 num_exceptions = len(exc.exceptions)
-                if num_exceptions <= self.max_group_width:
+                if num_exceptions <= ctx.max_group_width:
                     n = num_exceptions
                 else:
-                    n = self.max_group_width + 1
+                    n = ctx.max_group_width + 1
+
                 ctx.need_close = False
                 for i in range(n):
                     last_exc = (i == n-1)
@@ -1024,23 +1076,20 @@ class TracebackException:
                         # The closing frame may be added by a recursive call
                         ctx.need_close = True
 
-                    truncated = (i >= self.max_group_width)
-                    title = f'{i+1}' if not truncated else '...'
+                    truncated = (i >= ctx.max_group_width)
                     with ctx.indent():
-                        ctx.emit_string(
-                            ('+-' if i == 0 else '  ') +
-                            f'+---------------- {title} ----------------')
+                        ctx.exceptions_separator(i, n)
 
                         ctx.exception_group_depth += 1
                         if not truncated:
                             exc.exceptions[i].format(ctx, chain=chain)
                         else:
-                            remaining = num_exceptions - self.max_group_width
+                            remaining = num_exceptions - ctx.max_group_width
                             plural = 's' if remaining > 1 else ''
-                            ctx.emit_string(f"and {remaining} more exception{plural}")
+                            ctx.string(f"and {remaining} more exception{plural}")
 
                         if last_exc and ctx.need_close:
-                            ctx.emit_string("+------------------------------------")
+                            ctx.exceptions_close()
                             ctx.need_close = False
 
                     ctx.exception_group_depth -= 1
@@ -1048,6 +1097,8 @@ class TracebackException:
                 if is_toplevel:
                     assert ctx.exception_group_depth == 1
                     ctx.exception_group_depth = 0
+
+        return ctx.getvalue()
 
     # Mimic old report_exception return value.
     def __getitem__(self, pos):
@@ -1060,7 +1111,7 @@ class TracebackException:
         return 3
 
 
-def open_error_file(fn, mode):
+def open_error_file(fn, mode) -> tuple[TextIO, str]:
     """
     Opens an error/log/file. Returns the open file, and the filename that
     was opened.
