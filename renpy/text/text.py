@@ -956,12 +956,7 @@ class Layout(object):
 
         di = DrawInfo()
 
-        depth = len(self.outlines)
-        max_depth = depth - 1
-
         for o, color, xo, yo in self.outlines:
-            depth -= 1
-
             key = (o, color)
 
             if key in self.textures:
@@ -1025,8 +1020,13 @@ class Layout(object):
             self.textures[key] = tex
 
         if self.textshaders:
+            depth = len(self.outlines)
+            max_depth = depth - 1
+
             for o, color, xo, yo in self.outlines:
                 tex = self.textures[(o, color)]
+
+                depth -= 1
 
                 for ts in self.textshaders:
                     mr = self.create_mesh_displayable(o, tex, lines, xo, yo, depth, max_depth, ts)
