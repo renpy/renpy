@@ -94,6 +94,11 @@ def copy_images(old, new):
     `new`
         A space-separated string giving the components of the new image
         name.
+
+    This function may only be run from inside an init block. It is an
+    error to run this function once the game has started. As the ``image``
+    statement runs with init priority 500, this should generally be called
+    with init priority 501 or higher.
     """
 
     if not isinstance(old, tuple):
@@ -104,7 +109,7 @@ def copy_images(old, new):
 
     lenold = len(old)
 
-    for k, v in renpy.display.image.images.items():
+    for k, v in list(renpy.display.image.images.items()):
         if len(k) < lenold:
             continue
 
