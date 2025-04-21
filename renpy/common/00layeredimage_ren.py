@@ -116,6 +116,7 @@ def format_function(what, name, group, variant, attribute, image, image_format, 
 
     return image
 
+
 def resolve_image(img: Imageable):
     if img is None:
         return None
@@ -132,6 +133,7 @@ def resolve_at(at: RawBlock|Transform|Iterable[Transform]) -> tuple[Transform, .
     if isinstance(at, RawBlock):
         return (ATLTransform(at),)
     return renpy.easy.to_tuple(at)
+
 
 class IfAttr(python_object):
     """
@@ -198,7 +200,7 @@ class IfNot(IfAttr):
 
     @staticmethod
     def parse(l) -> IfAttr:
-        if l.match(r"\!"):
+        if l.match(r"\!"):# or l.keyword("not"):
             return IfNot(IfNot.parse(l))
         else:
             return IfAttribute.parse(l)
@@ -221,6 +223,7 @@ class IfAttribute(IfAttr):
         else:
             name = l.require(l.image_name_component, "attribute name")
             return IfAttribute(name)
+
 
 class Layer(object):
     """
@@ -292,7 +295,6 @@ class Layer(object):
         Returns the displayable for this layer.
         """
         raise NotImplementedError
-
 
 class Attribute(Layer):
     """
@@ -385,7 +387,6 @@ class Attribute(Layer):
 
         return self.image
 
-
 class Condition(Layer):
     """
     :doc: li
@@ -453,7 +454,6 @@ class Condition(Layer):
             predict_all=predict_all,
         )
 
-
 class ConditionGroup(Layer):
     """
     :doc: li
@@ -488,7 +488,6 @@ class ConditionGroup(Layer):
         args.append(Null())
 
         return ConditionSwitch(*args, predict_all=predict_all)
-
 
 class Always(Layer):
     """
@@ -1202,6 +1201,7 @@ def parse_conditions(l):
         l.unadvance()
 
     return RawConditionGroup(conditions)
+
 
 class RawAlways(renpy.object.Object):
     __version__ = 1
