@@ -1298,7 +1298,7 @@ class RawLayeredImage(renpy.object.Object):
 
     def __init__(self, name):
         self.name = name
-        self.children = []
+        self.children: list[RawAlways|RawAttribute|RawAttributeGroup|RawConditionGroup] = []
         self.final_properties = {}
         self.expr_properties = {}
 
@@ -1365,7 +1365,26 @@ def parse_layeredimage(l):
 
     return rv
 
-renpy.register_statement("layeredimage", parse=parse_layeredimage, execute=execute_layeredimage, init=True, block=True)
+def lint_layeredimage(rli: RawLayeredImage) -> None:
+    for c in rli.children:
+        if isinstance(c, RawAttributeGroup):
+            # named auto multiple groups have weird behavior
+            if c.group_name and {"auto", "multiple"}.issubset(c.final_properties):
+                renpy.error(f"In Layeredimage {rli.name!r}, group {c.group_name!r} should not be named, auto and multiple at the same time.")
+
+        # Things that are obsolete but work, so are not reported:
+        # - if_all, if_any and if_not, in any layer
+        # - prefix and variant being in expr_properties (reporting this could really bloat the report)
+        # - all named multiple groups
+        # - non-auto multiple groups with a variant and a single attribute inside (use variant at the attribute level)
+
+renpy.register_statement("layeredimage",
+    parse=parse_layeredimage,
+    execute=execute_layeredimage,
+    lint=lint_layeredimage,
+    init=True,
+    block=True,
+)
 
 
 class LayeredImageProxy(object):
