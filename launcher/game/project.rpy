@@ -267,7 +267,7 @@ init python in project:
             else:
                 extension = ""
 
-            if persistent.windows_console:
+            if persistent.use_console:
                 executables = [ "python" + extension ]
             else:
                 executables = [ "pythonw" + extension ]
@@ -322,6 +322,9 @@ init python in project:
             # Launch the project.
             cmd = [ renpy.fsencode(i) for i in cmd ]
 
+            if persistent.use_console and renpy.macintosh:
+                cmd = self.generate_mac_launch_string(cmd)
+
             p = subprocess.Popen(cmd, env=encoded_environ)
 
             if wait:
@@ -335,6 +338,20 @@ init python in project:
                         interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
 
             renpy.not_infinite_loop(30)
+
+        def generate_mac_launch_string(self, cmd):
+            """
+            replaces the existing launch arguments, 
+            with the correct ones to open up a console window on MacOS based systems
+            """
+            python_launch_string = ""
+
+            for argument in cmd:
+                python_launch_string += argument
+                # adding spacing between arguments
+                python_launch_string += " "
+            
+            return ["osascript", "-e", 'tell app "Terminal" to do script "'+python_launch_string+' && exit"']
 
 
         def update_dump(self, force=False, gui=True, compile=False):
