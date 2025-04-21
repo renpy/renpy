@@ -21,10 +21,11 @@
 
 # This file contains code for formatting tracebacks.
 
-from typing import TextIO, TYPE_CHECKING, Iterable, Iterator, Callable, Any
+from typing import TextIO, TYPE_CHECKING, Iterator, Callable, Any, Protocol
 
+# Those types can't be pickled!
 if TYPE_CHECKING:
-    from types import TracebackType
+    from types import TracebackType, FrameType
 
 import io
 import os
@@ -40,6 +41,24 @@ import contextlib
 import collections.abc
 
 import renpy
+
+
+class HasReportTraceback(Protocol):
+    def report_traceback(self, name: str, last: bool, frame: 'FrameType') -> list['FrameSummary'] | None:
+        """
+        Convert a frame corresponding to a call of a method `name` of this object to a
+        list of FrameSummary objects.
+
+        `last` is True if this is the last frame in the traceback.
+
+        This method can return an empty list to hide this frame from the traceback
+        or None to fall back to default conversion.
+
+        The frame is guaranteed to have `self == frame.f_locals['self']`.
+
+        For legacy purposes, this method can have only first 2 arguments, in
+        which case it is assumed to return (filename, linenumber, name, line) tuples.
+        """
 
 
 # Reimplement parts of Python 3.14 traceback module, so we can add Ren'Py-specific behavior.
@@ -460,13 +479,17 @@ class TextIOExceptionPrintContext(ExceptionPrintContext):
         except AttributeError:
             return None
 
-    def _print(self, text: str):
-        print(f"{'  ' * self.indent_depth}{text}", file=self.file)
+    def _print(self, text: str = ""):
+        if text:
+            text = f"{'  ' * self.indent_depth}{text}"
+
+        print(text, file=self.file)
 
     def string(self, text: str):
         self._print(text)
 
     def chain_cause(self):
+        self._print()
         self._print(CAUSE_MESSAGE)
 
     def chain_context(self):
@@ -539,9 +562,12 @@ class NonColoredExceptionPrintContext(TextIOExceptionPrintContext):
         self._print(text)
 
 
-@dataclasses.dataclass(repr=False, slots=True)
+@dataclasses.dataclass(init=False, repr=False, slots=True)
 class FrameSummary:
     """Information about a single frame from a traceback."""
+
+    name: str
+    """The name of the code that was executing when the frame was captured."""
 
     filename: str
     """The filename of the source code."""
@@ -558,28 +584,55 @@ class FrameSummary:
     end_colno: int | None
     """The column number of the end of the source code."""
 
-    name: str
-    """The name of the function or method that was executing when the frame was captured."""
-
-    _lines: list[str] | None = dataclasses.field(init=False, default=None, compare=False)
-    _carets: list[str] | None = dataclasses.field(init=False, default=None, compare=False)
-    _anchors_value: list[tuple[int, int]] | None = dataclasses.field(init=False, default=None, compare=False)
-
     locals: dict[str, Any] | None = dataclasses.field(default=None, compare=False)
     """Either None if locals were not supplied, or a dict mapping the name to the repr() of the variable."""
 
-    def __post_init__(self):
-        if self.lineno is None:
-            raise ValueError("FrameSummary.lineno must not be None")
+    _lines: list[str] | None = dataclasses.field(default=None, compare=False)
+    _carets: list[str] | None = dataclasses.field(default=None, compare=False)
+    _anchors_value: list[tuple[int, int]] | None = dataclasses.field(default=None, compare=False)
 
-        if self.end_lineno is None:
-            self.end_lineno = self.lineno
+    def __init__(
+        self,
+        name: str,
+        filename: str,
+        lineno: int,
+        colno: int | None = None,
+        end_lineno: int | None = None,
+        end_colno: int | None = None,
+        text: str | None = None,
+        locals: dict[str, Any] | None = None,
+    ):
+        self.name = name
 
         from renpy.lexer import elide_filename
-        self.filename = elide_filename(self.filename)
+        self.filename = elide_filename(filename)
+
+        self.lineno = lineno
+        self.colno = colno
+        self.end_lineno = end_lineno or lineno
+        self.end_colno = end_colno
+
+        self.locals = locals
+
+        if text is not None:
+            self._lines = [text]
+            self._anchors_value = []
+            self._carets = []
+        else:
+            self._lines = None
+            self._anchors_value = None
+            self._carets = None
 
     def __repr__(self):
         return f"<FrameSummary file {self.filename}, line {self.lineno} in {self.name}>"
+
+    @property
+    def line(self):
+        """
+        Return a first line of the frame source code.
+        """
+
+        return next(self.lines)
 
     @property
     def lines(self) -> Iterator[str]:
@@ -587,15 +640,12 @@ class FrameSummary:
         Yields the lines of the frame source code as-is, including indentation.
         """
 
-        if self._lines is None:
-            lines = []
+        lines = self._lines
+        if lines is None:
+            self._lines = lines = []
             for lineno in range(self.lineno, self.end_lineno + 1):
                 # treat errors (empty string) and empty lines (newline) as the same
                 lines.append(linecache.getline(self.filename, lineno).rstrip())
-
-            self._lines = lines
-        else:
-            lines = self._lines
 
         yield from lines
 
@@ -607,9 +657,7 @@ class FrameSummary:
             except Exception:
                 anchors = None
 
-            if anchors is None:
-                anchors = []
-            self._anchors_value = anchors
+            self._anchors_value = anchors or []
 
         return self._anchors_value or None
 
@@ -695,10 +743,10 @@ class FrameSummary:
         original_lines = list(self.lines)
         dedent_lines = textwrap.dedent("\n".join(original_lines)).split("\n")
         dedent_amount = len(original_lines[0]) - len(dedent_lines[0])
-        if self.carets:
-            carets = [None] * len(dedent_lines)
-        else:
+        if carets := [*self.carets]:
             carets = [c[dedent_amount:] for c in self.carets]
+        else:
+            carets = [None] * len(dedent_lines)
 
         sig_lines_list = list(self.significant_lines)
         with ctx.indent():
@@ -720,11 +768,20 @@ class StackSummary(list[FrameSummary]):
     A list of FrameSummary objects, representing a stack of frames.
     """
 
-    def __init__(self, traceback: 'TracebackType', /):
+    def __init__(self, traceback: 'TracebackType | None', /):
         tb = traceback
         filenames = set()
 
-        while tb:
+        while tb is not None:
+            try:
+                if (frames := self._report_traceback(tb)) is not None:
+                    self.extend(frames)
+                    tb = tb.tb_next
+                    continue
+            except Exception:
+                renpy.display.log.write("While getting report_traceback:")
+                renpy.display.log.exception()
+
             frame = tb.tb_frame
             code = frame.f_code
             filename = code.co_filename
@@ -742,17 +799,52 @@ class StackSummary(list[FrameSummary]):
             filenames.add(filename)
             linecache.lazycache(filename, frame.f_globals)
             self.append(FrameSummary(
+                code.co_name,
                 filename,
                 lineno,
                 colno,
-                end_lineno or lineno,
+                end_lineno,
                 end_colno,
-                code.co_name,
-                # frame.f_locals,
             ))
 
         for filename in filenames:
             linecache.checkcache(filename)
+
+    @staticmethod
+    def _report_traceback(tb: 'TracebackType'):
+        if renpy.config.raw_tracebacks:
+            return None
+
+        try:
+            obj = tb.tb_frame.f_locals['self']
+            report_traceback = obj.report_traceback
+        except Exception:
+            return None
+
+        name = tb.tb_frame.f_code.co_name
+        last = tb.tb_next is None
+
+        import inspect
+        try:
+            inspect.signature(report_traceback).bind(obj, name, last, tb.tb_frame)
+        except TypeError:
+            # Legacy path
+            frames = report_traceback(name, last)
+            if frames is None:
+                return None
+
+            rv: list[FrameSummary] = []
+            for filename, line_number, name, text in frames:
+                rv.append(FrameSummary(
+                    name,
+                    filename,
+                    line_number,
+                    text=text,
+                ))
+
+            return rv
+        else:
+            return report_traceback(name, last, tb.tb_frame)
 
     def should_filter(self, ctx: ExceptionPrintContext, /) -> bool:
         """
@@ -863,10 +955,7 @@ class TracebackException:
     """
 
     def __init__(self, exception: BaseException, /, _seen=None):
-        if exception.__traceback__ is None:
-            self.stack = StackSummary.__new__(StackSummary)
-        else:
-            self.stack = StackSummary(exception.__traceback__)
+        self.stack = StackSummary(exception.__traceback__)
 
         # Capture now to permit freeing resources
         self._str = _safe_string(exception, 'exception')
@@ -1028,7 +1117,7 @@ class TracebackException:
                     chained_method = ctx.chain_context
                     chained_exc = exc.__context__
                 else:
-                    break
+                    chained_method = chained_exc = None
 
                 output.append((chained_method, exc))
                 exc = chained_exc

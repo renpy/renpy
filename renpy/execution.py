@@ -22,7 +22,11 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
+
+# FrameType can't be pickled!
+if TYPE_CHECKING:
+    from types import FrameType
 
 import sys
 import time
@@ -489,18 +493,20 @@ class Context(renpy.object.Object):
                 # Before 8.4 it was a function that takes 3 strings.
                 import inspect
                 inspect.signature(renpy.config.exception_handler).bind(te)
-                if not renpy.config.exception_handler(te):
-                    return
 
             except TypeError:
                 if not renpy.config.exception_handler(*te): # type: ignore
+                    return
+
+            else:
+                if not renpy.config.exception_handler(te):
                     return
 
         # RenPy default exception handler. Returns True
         # if exception NOT handled.
         renpy.display.error.report_exception(te)
 
-    def report_traceback(self, name, last):
+    def report_traceback(self, name: str, last: bool):
 
         if last:
             return

@@ -113,6 +113,8 @@ def report_exception(traceback_exception: renpy.error.TracebackException) -> boo
     rollback_action = None
     reload_action = None
 
+    renpy.store.te = traceback_exception
+
     try:
         if not renpy.game.context().init_phase:
 
