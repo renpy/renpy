@@ -1200,7 +1200,7 @@ class Button(renpy.display.layout.Window):
     def _tts_all(self):
         rv = self._tts_common(alt(self.action))
 
-        if self.is_selected() and (self.style.alt == self.style._hover_alt()):
+        if self.style.prefix.startswith("selected_")  and (self.style.alt == self.style._hover_alt()):
             rv += " " + renpy.minstore.__("selected")
 
         return rv
