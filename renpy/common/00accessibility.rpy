@@ -198,10 +198,6 @@ screen _accessibility_text():
                 action Preference("font transform", "opendyslexic")
                 style_suffix "radio_button"
 
-            textbutton "":
-                action None
-                style_suffix "radio_button"
-
             label _("High Contrast Text")
 
             textbutton _("Enable"):
@@ -245,7 +241,7 @@ screen _accessibility_text():
 
                 textbutton _("Reset"):
                     alt "reset font kerning"
-                    action Preference("font kerning", 1.0)
+                    action Preference("font kerning", 0.0)
 
 
 screen _accessibility():
@@ -282,7 +278,7 @@ screen _accessibility():
                             style_suffix "big_radio_button"
                             action SetScreenVariable("page", "audio")
 
-                        textbutton _("Font and Text"):
+                        textbutton _("Text"):
                             style_suffix "big_radio_button"
                             action SetScreenVariable("page", "text")
 
