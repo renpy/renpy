@@ -175,6 +175,7 @@ from renpy.gl2.live2d import (
 
 from renpy.lexer import (
     unelide_filename,
+    lex_string,
 )
 
 from renpy.lint import (

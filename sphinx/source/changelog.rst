@@ -82,6 +82,8 @@ The shift+A accessibility menu has been redesigned to improve alignment.
 Features
 --------
 
+The new :func:`renpy.lex_string` function makes it possible to create a Lexer for an arbitrary string.
+
 The :class:`SpriteManager` and :func:`SnowBlossom` displayables now support the `animation` parameter,
 which can be used to prevent resetting when the displayable is reshown.
 
