@@ -607,6 +607,14 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "mono_audio")
 
+            elif name == _("font kerning"):
+
+                if value is None:
+                    return FieldValue(_preferences, "font_kerning", min=-3, max=3, action=_DisplayReset())
+
+                return [ SetField(_preferences, "font_kerning", value), _DisplayReset() ]
+
+
             elif name == _("reset"):
                 return __ResetPreferences()
 

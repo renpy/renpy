@@ -236,6 +236,16 @@ screen _accessibility_text():
                     alt "reset font line spacing"
                     action Preference("font line spacing", 1.0)
 
+            label _("Kerning")
+
+            side "c r":
+                spacing gui._scale(10)
+
+                bar value Preference("font kerning") yalign 0.5
+
+                textbutton _("Reset"):
+                    alt "reset font kerning"
+                    action Preference("font kerning", 1.0)
 
 
 screen _accessibility():
@@ -248,19 +258,23 @@ screen _accessibility():
     frame:
         style_group ""
         alt _("Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars.")
+        yfill False
 
         has side "c b":
             spacing gui._scale(10)
             xfill True
-            yfill True
 
-        fixed:
+        viewport:
+            scrollbars "vertical"
+            mousewheel True
+            viewport_yfill False
 
-            viewport:
-                scrollbars "vertical"
-                mousewheel True
 
-                vbox:
+            vbox:
+
+                hbox:
+                    xfill True
+
                     hbox:
                         spacing gui._scale(25)
 
@@ -272,19 +286,14 @@ screen _accessibility():
                             style_suffix "big_radio_button"
                             action SetScreenVariable("page", "text")
 
-                    if page == "audio":
-                        use _accessibility_audio()
-                    elif page == "text":
-                        use _accessibility_text()
+                    textbutton _("Return"):
+                        action Hide("_accessibility")
+                        style_suffix "big_radio_button"
+                        xalign 1.0
 
+                if page == "audio":
+                    use _accessibility_audio()
+                elif page == "text":
+                    use _accessibility_text()
 
-        vbox:
-
-            text _("The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was.")
-
-            hbox:
-                spacing gui._scale(25)
-
-                textbutton _("Return"):
-                    action Hide("_accessibility")
-                    yalign 1.0
+        text _("The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was.")
