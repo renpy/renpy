@@ -349,8 +349,10 @@ class TextSegment(object):
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
-        if self.kerning:
-            textsupport.kerning(rv, self.kerning)
+        kerning = self.kerning + self.size / 30 * renpy.game.preferences.font_kerning
+
+        if kerning:
+            textsupport.kerning(rv, kerning)
 
         if self.hyperlink:
             for g in rv:
