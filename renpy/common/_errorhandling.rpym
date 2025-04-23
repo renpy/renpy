@@ -567,10 +567,12 @@ init python:
         def chain_cause(self):
             self._print()
             self._print(renpy.renpy.error.CAUSE_MESSAGE)
+            self._print()
 
         def chain_context(self):
             self._print()
             self._print(renpy.renpy.error.CONTEXT_MESSAGE)
+            self._print()
 
         def exceptions_separator(self, index: int, total: int):
             truncated = (index >= self.max_group_width)

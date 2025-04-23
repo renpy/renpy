@@ -357,6 +357,9 @@ class ExceptionPrintContext(abc.ABC):
         if not self.filter_private:
             return False
 
+        if filename and filename[0] == "<" and filename[-1] == ">":
+            return True
+
         if filename.endswith((".rpy", ".rpym", "_ren.py")):
             # TODO: Make it more robust by is_relative_to check.
             return filename.startswith(("renpy/common/", "game/libs/"))
@@ -457,8 +460,8 @@ class ExceptionPrintContext(abc.ABC):
         """
 
 
-CAUSE_MESSAGE = "The above exception was the direct cause of the following exception:\n"
-CONTEXT_MESSAGE = "During handling of the above exception, another exception occurred:\n"
+CAUSE_MESSAGE = "The above exception was the direct cause of the following exception:"
+CONTEXT_MESSAGE = "During handling of the above exception, another exception occurred:"
 
 
 class TextIOExceptionPrintContext(ExceptionPrintContext):
@@ -485,9 +488,12 @@ class TextIOExceptionPrintContext(ExceptionPrintContext):
     def chain_cause(self):
         self._print()
         self._print(CAUSE_MESSAGE)
+        self._print()
 
     def chain_context(self):
+        self._print()
         self._print(CONTEXT_MESSAGE)
+        self._print()
 
     def exceptions_separator(self, index: int, total: int):
         truncated = (index >= self.max_group_width)
@@ -539,7 +545,7 @@ class ANSIColoredPrintContext(TextIOExceptionPrintContext):
 
 class NonColoredExceptionPrintContext(TextIOExceptionPrintContext):
     def location(self, filename: str, lineno: int, name: str):
-        self._print(f'    File "{filename}", line {lineno}, in {name}\n')
+        self._print(f'File "{filename}", line {lineno}, in {name}')
 
     def source_carets(self, line: str, carets: str | None):
         self._print(line)
@@ -1200,10 +1206,11 @@ class TracebackException:
                 meth()
 
             if exc.exceptions is None:
-                ctx.string('Traceback (most recent call last):')
+                if not exc.stack.should_filter(ctx):
+                    ctx.string('Traceback (most recent call last):')
 
-                with ctx.indent():
-                    exc.stack.format(ctx)
+                    with ctx.indent():
+                        exc.stack.format(ctx)
 
                 exc.format_exception_only(ctx)
 
@@ -1216,12 +1223,13 @@ class TracebackException:
                 if is_toplevel:
                     ctx.exception_group_depth += 1
 
-                ctx.string('Exception Group Traceback (most recent call last):')
+                if not exc.stack.should_filter(ctx):
+                    ctx.string('Exception Group Traceback (most recent call last):')
 
-                with ctx.indent():
-                    exc.stack.format(ctx)
+                    with ctx.indent():
+                        exc.stack.format(ctx)
 
-                exc.format_exception_only(ctx)
+                    exc.format_exception_only(ctx)
 
                 num_exceptions = len(exc.exceptions)
                 if num_exceptions <= ctx.max_group_width:
@@ -1330,14 +1338,17 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
 
     # Write to stdout/stderr.
     try:
-        sys.stdout.write("\n")
+        print(file=sys.stdout)
+        print("Full traceback:", file=sys.stdout)
         te.format(MaybeColoredExceptionPrintContext(sys.stdout, filter_private=False))
-        sys.stdout.write("\n")
+
+        print(file=sys.stdout)
+        print(str(renpy.game.exception_info), file=sys.stdout)
         te.format(MaybeColoredExceptionPrintContext(sys.stdout, filter_private=True))
     except Exception:
         pass
 
-    print('', file=full)
+    print(file=full)
 
     try:
         print(str(platform.platform()), str(platform.machine()), file=full)
