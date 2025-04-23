@@ -21,7 +21,7 @@
 
 # This file contains code for formatting tracebacks.
 
-from typing import TextIO, TYPE_CHECKING, Iterator, Callable, Any, Protocol
+from typing import TYPE_CHECKING, NotRequired, TextIO, Iterator, Callable, Any, Protocol, TypedDict, Unpack
 
 # Those types can't be pickled!
 if TYPE_CHECKING:
@@ -329,20 +329,21 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
             return default_anchors
 
 
+class ExceptionPrintContextKwargs(TypedDict):
+    filter_private: NotRequired[bool]
+    max_group_width: NotRequired[int]
+    max_group_depth: NotRequired[int]
+
+
 class ExceptionPrintContext(abc.ABC):
-    def __init__(
-        self, *,
-        filter_private=False,
-        max_group_width=15,
-        max_group_depth=10,
-    ):
+    def __init__(self, **kwargs: Unpack[ExceptionPrintContextKwargs]):
         self.indent_depth = 0
         self.exception_group_depth = 0
         self.need_close = False
 
-        self.filter_private = filter_private
-        self.max_group_width = max_group_width
-        self.max_group_depth = max_group_depth
+        self.filter_private = kwargs.get("filter_private", False)
+        self.max_group_width = kwargs.get("max_group_width", 15)
+        self.max_group_depth = kwargs.get("max_group_depth", 10)
 
     def should_filter(self, filename: str) -> bool:
         """
@@ -461,15 +462,8 @@ CONTEXT_MESSAGE = "During handling of the above exception, another exception occ
 
 
 class TextIOExceptionPrintContext(ExceptionPrintContext):
-    def __init__(
-        self, file: TextIO, *,
-        filter_private=False,
-        max_group_width=15,
-        max_group_depth=10,
-    ):
-        super().__init__(filter_private=filter_private,
-                         max_group_width=max_group_width,
-                         max_group_depth=max_group_depth)
+    def __init__(self, file: TextIO, **kwargs: Unpack[ExceptionPrintContextKwargs]):
+        super().__init__(**kwargs)
 
         self.file = file
 
@@ -560,6 +554,83 @@ class NonColoredExceptionPrintContext(TextIOExceptionPrintContext):
 
     def string(self, text: str):
         self._print(text)
+
+
+
+def MaybeColoredExceptionPrintContext(
+    file: TextIO | None = None,
+    **kwargs: Unpack[ExceptionPrintContextKwargs]
+) -> ExceptionPrintContext:
+    """
+    Returns exception print context that writes to a file or other text IO.
+    If file is a tty, or other ANSI-capable terminal, it will use colored
+    output. Otherwise, it will use carets and other non-colored output.
+    """
+
+    if file is None:
+        file = sys.stdout
+        if file is None:
+            file = io.StringIO()
+
+    if os.environ.get("NO_COLOR"):
+        return NonColoredExceptionPrintContext(file, **kwargs)
+    if os.environ.get("FORCE_COLOR"):
+        return ANSIColoredPrintContext(file, **kwargs)
+    if os.environ.get("TERM") == "dumb":
+        return NonColoredExceptionPrintContext(file, **kwargs)
+
+    try:
+        fileno = file.fileno()
+    except Exception:
+        return NonColoredExceptionPrintContext(file, **kwargs)
+
+    # TODO: nt._supports_virtual_terminal was added only in Python 3.13 to check for that.
+    if sys.platform == "win32":
+        import ctypes
+        import ctypes.wintypes
+
+        FILE_TYPE_CHAR = 0x0002
+        FILE_TYPE_REMOTE = 0x8000
+        ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
+
+        kernel32 = ctypes.windll.kernel32
+
+        if fileno == 1:
+            h = kernel32.GetStdHandle(-11)
+        elif fileno == 2:
+            h = kernel32.GetStdHandle(-12)
+        else:
+            return NonColoredExceptionPrintContext(file, **kwargs)
+
+        if h is None or h == ctypes.wintypes.HANDLE(-1):
+            return NonColoredExceptionPrintContext(file, **kwargs)
+
+        if (kernel32.GetFileType(h) & ~FILE_TYPE_REMOTE) != FILE_TYPE_CHAR:
+            return NonColoredExceptionPrintContext(file, **kwargs)
+
+        mode = ctypes.wintypes.DWORD()
+        if not kernel32.GetConsoleMode(h, ctypes.byref(mode)):
+            return NonColoredExceptionPrintContext(file, **kwargs)
+
+        if mode.value & ENABLE_VIRTUAL_TERMINAL_PROCESSING == 0:
+            return NonColoredExceptionPrintContext(file, **kwargs)
+        else:
+            return ANSIColoredPrintContext(file, **kwargs)
+
+    # POSIX system - just check isatty.
+    else:
+        try:
+            try:
+                isatty = file.isatty()
+            except Exception:
+                isatty = os.isatty(fileno)
+        except Exception:
+            isatty = False
+
+        if isatty:
+            return ANSIColoredPrintContext(file, **kwargs)
+        else:
+            return NonColoredExceptionPrintContext(file, **kwargs)
 
 
 @dataclasses.dataclass(init=False, repr=False, slots=True)
@@ -1260,9 +1331,9 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
     # Write to stdout/stderr.
     try:
         sys.stdout.write("\n")
-        te.format(ANSIColoredPrintContext(sys.stdout, filter_private=False))
+        te.format(MaybeColoredExceptionPrintContext(sys.stdout, filter_private=False))
         sys.stdout.write("\n")
-        te.format(ANSIColoredPrintContext(sys.stdout, filter_private=True))
+        te.format(MaybeColoredExceptionPrintContext(sys.stdout, filter_private=True))
     except Exception:
         pass
 

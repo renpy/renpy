@@ -278,6 +278,12 @@ class StdioRedirector(object):
 
         self.buffer = lines[-1]
 
+    def fileno(self):
+        return self.real_file.fileno()
+
+    def isatty(self):
+        return self.real_file.isatty()
+
     def writelines(self, lines):
         for i in lines:
             self.write(i)
