@@ -349,8 +349,10 @@ class TextSegment(object):
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
-        if self.kerning:
-            textsupport.kerning(rv, self.kerning)
+        kerning = self.kerning + self.size / 30 * renpy.game.preferences.font_kerning
+
+        if kerning:
+            textsupport.kerning(rv, kerning)
 
         if self.hyperlink:
             for g in rv:
@@ -956,12 +958,7 @@ class Layout(object):
 
         di = DrawInfo()
 
-        depth = len(self.outlines)
-        max_depth = depth - 1
-
         for o, color, xo, yo in self.outlines:
-            depth -= 1
-
             key = (o, color)
 
             if key in self.textures:
@@ -1025,8 +1022,13 @@ class Layout(object):
             self.textures[key] = tex
 
         if self.textshaders:
+            depth = len(self.outlines)
+            max_depth = depth - 1
+
             for o, color, xo, yo in self.outlines:
                 tex = self.textures[(o, color)]
+
+                depth -= 1
 
                 for ts in self.textshaders:
                     mr = self.create_mesh_displayable(o, tex, lines, xo, yo, depth, max_depth, ts)

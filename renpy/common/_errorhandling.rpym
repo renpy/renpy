@@ -219,12 +219,18 @@ init label _errorhandling:
         left_padding gui._scale(15)
         ypadding gui._scale(2)
 
+    style _big_radio_button is _button
+
+    style _big_radio_button_text is _button_text:
+        size gui._scale(26)
+        selected_color "#404040"
+
     style _label is _default:
-        top_margin gui._scale(10)
-        bottom_margin gui._scale(15)
+        top_margin gui._scale(15)
+        bottom_margin gui._scale(5)
 
     style _label_text is _default:
-        size gui._scale(30)
+        size gui._scale(26)
         kerning -1
 
     style _bar is _default:

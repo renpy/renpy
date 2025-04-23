@@ -1717,3 +1717,33 @@ def ren_py_to_rpy(text: str, filename: str | None) -> str:
     rv = "\n".join(result)
 
     return rv
+
+
+def lex_string(text: str, filename: str = "<string>", linenumber: int = 1, advance: bool = True) -> Lexer:
+    """
+    :doc: lexer
+
+    Returns a Lexer object that can be used to lex the given text.
+
+    `text`
+        The text to lex.
+
+    `filename`
+        A filename for which errros will be reported.
+
+    `linenumber`
+        A line number for which errors will be reported.
+
+    `advance`
+        If true, the .advance() method will be called on the lexer.
+    """
+
+    lines = list_logical_lines(filename, text, linenumber)
+    nested = group_logical_lines(lines)
+
+    rv = Lexer(nested)
+
+    if advance:
+        rv.advance()
+
+    return rv

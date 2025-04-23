@@ -219,6 +219,10 @@ Preference("restore_window_position", True)
 # Is the game forcing mono audio?
 Preference("mono_audio", False)
 
+# Should font kerning be adjustedt?
+Preference("font_kerning", 0.0)
+
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
@@ -274,6 +278,8 @@ class Preferences(renpy.object.Object):
         window_position_layout = ( (0, 0, 1920, 1080), )
         restore_window_position = True
         mono_audio = False
+        font_kerning = 0.0
+
 
     def init(self):
         """

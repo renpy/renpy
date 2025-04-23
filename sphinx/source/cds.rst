@@ -370,6 +370,10 @@ A custom statement's parse function takes an instance of a Lexer object.
 
                 return { "strings" : strings }
 
+A function allows you to lex arbitrary strings:
+
+.. include:: inc/lexer
+
 
 Lint Utility Functions
 ~~~~~~~~~~~~~~~~~~~~~~
