@@ -2247,10 +2247,12 @@ class Text(renpy.display.displayable.Displayable):
     def set_ctc(self, ctc):
         self.ctc = ctc
         self.dirty = True
+        renpy.display.render.redraw(self, 0)
 
     def set_last_ctc(self, last_ctc):
         self.last_ctc = last_ctc
         self.dirty = True
+        renpy.display.render.redraw(self, 0)
 
     def update(self):
         """
@@ -2264,7 +2266,7 @@ class Text(renpy.display.displayable.Displayable):
 
         if not self.tokenized:
 
-            text = self.text
+            text = list(self.text)
 
             # Decide the portion of the text to show quickly, the part to
             # show slowly, and the part not to show (but to lay out).

@@ -768,7 +768,6 @@ def display_say(
 
                 if what_ctc:
 
-
                     if extend_text or not last_pause:
                         if ctc_position == "nestled" or ctc_position == "nestled-close":
                                 what_ctc = renpy.store.Fixed(what_ctc, xsize=0)
@@ -815,6 +814,12 @@ def display_say(
 
             if final:
                 rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
+
+                if retain and what_ctc:
+                    if ctc_position == "nestled":
+                        what_text.set_ctc([ "{_end}", what_ctc ])
+                    elif ctc_position == "nestled-close":
+                        what_text.set_ctc([ "{_end}", u"\ufeff", what_ctc, ])
 
                 # This is only the case if the user has rolled forward, {nw} happens, or
                 # maybe in some other obscure cases.
