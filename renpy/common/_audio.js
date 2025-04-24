@@ -53,7 +53,7 @@ let get_channel = (channel) => {
         playing : null,
         queued : null,
         stereo_pan : context.createStereoPanner(),
-        fade_volume : context.createGain(),
+        fade_volume: new GainNode(context, {gain: 0.0}),
         primary_volume : context.createGain(),
         secondary_volume : context.createGain(),
         relative_volume : context.createGain(),
