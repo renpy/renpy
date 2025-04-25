@@ -276,13 +276,32 @@ class ANSIColoredPrintContext(TextIOExceptionPrintContext):
             self._print(f"{self.BOLD_MAGENTA}{exc_type}{self.RESET}: {self.MAGENTA}{text}{self.RESET}")
 
 class NonColoredExceptionPrintContext(TextIOExceptionPrintContext):
+    @staticmethod
+    def _display_width(line: str) -> Iterator[int]:
+        """
+        Calculate the extra amount of width space the given source
+        code segment might take if it were to be displayed on a fixed
+        width output device. Supports wide unicode characters and emojis.
+        """
+
+        # Fast track for ASCII-only strings
+        if line.isascii():
+            return itertools.repeat(1, len(line))
+
+        from unicodedata import east_asian_width
+
+        return (2 if east_asian_width(char) in "WF" else 1 for char in line)
+
     def location(self, filename: str, lineno: int, name: str):
         self._print(f'File "{filename}", line {lineno}, in {name}')
 
     def source_carets(self, line: str, carets: str | None):
         self._print(line)
         if carets is not None:
-            self._print(carets)
+            chars = list[str]()
+            for width, char in zip(self._display_width(line), carets):
+                chars.append(char * width)
+            self._print("".join(chars))
 
     def final_exception_line(self, exc_type: str, text: str | None):
         if text is None:
@@ -372,22 +391,6 @@ def MaybeColoredExceptionPrintContext(
 
 
 # Reimplement parts of Python 3.14 traceback module, so we can add Ren'Py-specific behavior.
-def _display_width(line: str) -> Iterator[int]:
-    """
-    Calculate the extra amount of width space the given source
-    code segment might take if it were to be displayed on a fixed
-    width output device. Supports wide unicode characters and emojis.
-    """
-
-    # Fast track for ASCII-only strings
-    if line.isascii():
-        return itertools.repeat(1, len(line))
-
-    from unicodedata import east_asian_width
-
-    return (2 if east_asian_width(char) in "WF" else 1 for char in line)
-
-
 def _calculate_anchors(frame_summary: 'FrameSummary'):
     """
     For given frame summary, return None if there is no column information or
@@ -432,26 +435,44 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
                 if i == frame_summary.lineno:
                     start_offset -= offset
 
-                elif i == frame_summary.end_lineno:
+                if i == frame_summary.end_lineno:
                     end_offset -= offset
+                    break
 
-    # Correct extra offset from munged names.
-    from renpy.lexer import munge_filename, get_string_munger
-    munge_prefix = munge_filename(frame_summary.filename)
-    munge_string = get_string_munger(munge_prefix)
-    len_prefix = len(munge_prefix) - 2
+    def normalize_munge(line: str, offset: int):
+        """
+        Given byte offset in `line`, convert it into character offset and
+        discard extra offset from munged names.
+        """
 
-    idx = 0
-    munged_first_line = munge_string(first_line)
-    while (idx := munged_first_line.find(munge_prefix, idx, start_offset + len_prefix)) != -1:
-        start_offset -= len_prefix
-        idx += len_prefix
+        if not line.isascii():
+            as_utf8 = line.encode('utf-8')
+            offset = len(as_utf8[:offset].decode("utf-8", errors="replace"))
 
-    idx = 0
-    munged_last_line = munge_string(last_line)
-    while (idx := munged_last_line.find(munge_prefix, idx, end_offset + len_prefix)) != -1:
-        end_offset -= len_prefix
-        idx += len_prefix
+        from renpy.lexer import munge_filename, get_string_munger
+        munge_prefix = munge_filename(frame_summary.filename)
+
+        if munge_prefix in line:
+            munged_line = get_string_munger(munge_prefix)(line)
+            len_prefix = len(munge_prefix) - 2
+
+            idx = 0
+            while True:
+                idx = munged_line.find(
+                    munge_prefix,
+                    idx,
+                    offset + len_prefix)
+
+                if idx == -1:
+                    break
+
+                offset -= len_prefix
+                idx += len_prefix
+
+        return offset
+
+    start_offset = normalize_munge(first_line, start_offset)
+    end_offset = normalize_munge(last_line, end_offset)
 
     default_anchors = [
         (0, start_offset), (0, start_offset),
@@ -491,7 +512,8 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
 
     def normalize(lineno: int, offset: int):
         """Get character index given byte offset"""
-        return offset
+        as_utf8 = lines[lineno].encode('utf-8')
+        return len(as_utf8[:offset].decode("utf-8", errors="replace"))
 
     def next_valid_char(lineno: int, col: int):
         """Gets the next valid character index in `lines`, if
