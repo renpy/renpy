@@ -61,274 +61,6 @@ class HasReportTraceback(Protocol):
         """
 
 
-# Reimplement parts of Python 3.14 traceback module, so we can add Ren'Py-specific behavior.
-def _display_width(line: str) -> Iterator[int]:
-    """
-    Calculate the extra amount of width space the given source
-    code segment might take if it were to be displayed on a fixed
-    width output device. Supports wide unicode characters and emojis.
-    """
-
-    # Fast track for ASCII-only strings
-    if line.isascii():
-        return itertools.repeat(1, len(line))
-
-    from unicodedata import east_asian_width
-
-    return (2 if east_asian_width(char) in "WF" else 1 for char in line)
-
-
-def _calculate_anchors(frame_summary: 'FrameSummary'):
-    """
-    For given frame summary, return None if there is no column information or
-    other error happens, or list of 4 (lineno, colno) tuples that represent:
-        - position where secondary character starts
-        - position where primary character starts
-        - position where secondary character starts again
-        - position where secondary character ends
-
-    The invariant is that for split lines of frame code, carets can be rendered as
-    nothing until first tuple, secondary char until second tuple, primary char
-    until third tuple, secondary char until fourth tuple, and nothing after fourth
-    tuple.
-    """
-
-    if frame_summary.colno is None or frame_summary.end_colno is None:
-        return None
-
-    all_lines = list(frame_summary.lines)
-    end_lineno = frame_summary.end_lineno - frame_summary.lineno
-    first_line = all_lines[0]
-    # assume all_lines has enough lines (since we constructed it)
-    last_line = all_lines[end_lineno]
-
-    # character index of the start/end of the instruction
-    start_offset = frame_summary.colno
-    end_offset = frame_summary.end_colno
-
-    # Correct extra offset from _ren.py transformation.
-    if frame_summary.filename.endswith("_ren.py"):
-        from renpy.lexer import ren_py_to_rpy_offsets
-        try:
-            with open(frame_summary.filename, "r", encoding="utf-8") as f:
-                lines = f.readlines()
-
-            offsets = list(ren_py_to_rpy_offsets(lines, frame_summary.filename))
-        except Exception:
-            return None
-
-        for i, offset in enumerate(offsets, start=1):
-            if offset is not None:
-                if i == frame_summary.lineno:
-                    start_offset -= offset
-
-                elif i == frame_summary.end_lineno:
-                    end_offset -= offset
-
-    # Correct extra offset from munged names.
-    from renpy.lexer import munge_filename, get_string_munger
-    munge_prefix = munge_filename(frame_summary.filename)
-    munge_string = get_string_munger(munge_prefix)
-    len_prefix = len(munge_prefix) - 2
-
-    idx = 0
-    munged_first_line = munge_string(first_line)
-    while (idx := munged_first_line.find(munge_prefix, idx, start_offset + len_prefix)) != -1:
-        start_offset -= len_prefix
-        idx += len_prefix
-
-    idx = 0
-    munged_last_line = munge_string(last_line)
-    while (idx := munged_last_line.find(munge_prefix, idx, end_offset + len_prefix)) != -1:
-        end_offset -= len_prefix
-        idx += len_prefix
-
-    default_anchors = [
-        (0, start_offset), (0, start_offset),
-        (end_lineno, end_offset), (end_lineno, end_offset)]
-
-    # get exact code segment corresponding to the instruction
-    segment = "\n".join(all_lines)
-    segment = segment[start_offset:len(segment) - (len(last_line) - end_offset)]
-
-    from ast import parse, expr, BinOp, Expr, Subscript, Call
-    # Without parentheses, `segment` is parsed as a statement.
-    # Binary ops, subscripts, and calls are expressions, so
-    # we can wrap them with parentheses to parse them as
-    # (possibly multi-line) expressions.
-    # e.g. if we try to highlight the addition in
-    # x = (
-    #     a +
-    #     b
-    # )
-    # then we would ast.parse
-    #     a +
-    #     b
-    # which is not a valid statement because of the newline.
-    # Adding brackets makes it a valid expression.
-    # (
-    #     a +
-    #     b
-    # )
-    # Line locations will be different than the original,
-    # which is taken into account later on.
-    tree = parse(f"(\n{segment}\n)")
-
-    if len(tree.body) != 1:
-        return default_anchors
-
-    lines = segment.splitlines()
-
-    def normalize(lineno: int, offset: int):
-        """Get character index given byte offset"""
-        return offset
-
-    def next_valid_char(lineno: int, col: int):
-        """Gets the next valid character index in `lines`, if
-        the current location is not valid. Handles empty lines.
-        """
-        while lineno < len(lines) and col >= len(lines[lineno]):
-            col = 0
-            lineno += 1
-        assert lineno < len(lines) and col < len(lines[lineno])
-        return lineno, col
-
-    def increment(lineno: int, col: int):
-        """Get the next valid character index in `lines`."""
-        col += 1
-        lineno, col = next_valid_char(lineno, col)
-        return lineno, col
-
-    def next_line(lineno: int, col: int):
-        """Get the next valid character at least on the next line"""
-        col = 0
-        lineno += 1
-        lineno, col = next_valid_char(lineno, col)
-        return lineno, col
-
-    def increment_until(lineno: int, col: int, stop: Callable[[str], bool]):
-        """Get the next valid non-"\\#" character that satisfies the `stop` predicate"""
-        while True:
-            ch = lines[lineno][col]
-            if ch in "\\#":
-                lineno, col = next_line(lineno, col)
-            elif not stop(ch):
-                lineno, col = increment(lineno, col)
-            else:
-                break
-        return lineno, col
-
-    def setup_positions(expr: expr, force_valid=True):
-        """Get the lineno/col position of the end of `expr`. If `force_valid` is True,
-        forces the position to be a valid character (e.g. if the position is beyond the
-        end of the line, move to the next line)
-        """
-        # -2 since end_lineno is 1-indexed and because we added an extra
-        # bracket + newline to `segment` when calling ast.parse
-        if expr.end_lineno is None or expr.end_col_offset is None:
-            raise Exception("Precise positions are not available.")
-
-        lineno = expr.end_lineno - 2
-        col = normalize(lineno, expr.end_col_offset)
-        return next_valid_char(lineno, col) if force_valid else (lineno, col)
-
-    match tree.body[0]:
-        case Expr(value=expression):
-            pass
-        case _:
-            return default_anchors
-
-    match expression:
-        case BinOp(left=left, right=right):
-            # ast gives these locations for BinOp subexpressions
-            # ( left_expr ) + ( right_expr )
-            #   left^^^^^       right^^^^^
-            left_lineno, left_col = setup_positions(left)
-
-            # First operator character is the first non-space/')' character
-            left_lineno, left_col = increment_until(
-                left_lineno, left_col, lambda x: not x.isspace() and x != ')')
-
-            # binary op is 1 or 2 characters long, on the same line,
-            # before the right subexpression
-            right_lineno = left_lineno
-            right_col = left_col + 1
-            if (
-                right_col < len(lines[right_lineno])
-                and (
-                    # operator char should not be in the right subexpression
-                    right.lineno - 2 > right_lineno or
-                    right_col < normalize(right.lineno - 2, right.col_offset)
-                )
-                and not (ch := lines[right_lineno][right_col]).isspace()
-                and ch not in "\\#"
-            ):
-                right_col += 1
-
-            if left_lineno == 0:
-                left_col += start_offset
-            if right_lineno == 0:
-                right_col += start_offset
-
-            return [
-                (0, start_offset),  # start of left_expr
-                (left_lineno, left_col),  # end of left_expr
-                (right_lineno, right_col),  # start of right_expr
-                (end_lineno, end_offset),  # end of right_expr
-            ]
-
-        case Subscript(value=value):
-            # ast gives these locations for value and slice subexpressions
-            # ( value_expr ) [ slice_expr ]
-            #   value^^^^^     slice^^^^^
-            # subscript^^^^^^^^^^^^^^^^^^^^
-
-            # find left bracket
-            left_lineno, left_col = setup_positions(value)
-            left_lineno, left_col = increment_until(left_lineno, left_col, lambda x: x == '[')
-            # find right bracket (final character of expression)
-            right_lineno, right_col = setup_positions(expression, force_valid=False)
-
-            if left_lineno == 0:
-                left_col += start_offset
-            if right_lineno == 0:
-                right_col += start_offset
-
-            return [
-                (0, start_offset),
-                (left_lineno, left_col),
-                (right_lineno, right_col),
-                (end_lineno, end_offset),
-            ]
-
-        case Call(func=func):
-            # ast gives these locations for function call expressions
-            # ( func_expr ) (args, kwargs)
-            #   func^^^^^
-            # call^^^^^^^^^^^^^^^^^^^^^^^^
-
-            # find left bracket
-            left_lineno, left_col = setup_positions(func)
-            left_lineno, left_col = increment_until(left_lineno, left_col, lambda x: x == '(')
-            # find right bracket (final character of expression)
-            right_lineno, right_col = setup_positions(expression, force_valid=False)
-
-            if left_lineno == 0:
-                left_col += start_offset
-            if right_lineno == 0:
-                right_col += start_offset
-
-            return [
-                (0, start_offset),
-                (left_lineno, left_col),
-                (right_lineno, right_col),
-                (end_lineno, end_offset),
-            ]
-
-        case _:
-            return default_anchors
-
-
 class ExceptionPrintContextKwargs(TypedDict):
     filter_private: NotRequired[bool]
     max_group_width: NotRequired[int]
@@ -639,6 +371,274 @@ def MaybeColoredExceptionPrintContext(
             return NonColoredExceptionPrintContext(file, **kwargs)
 
 
+# Reimplement parts of Python 3.14 traceback module, so we can add Ren'Py-specific behavior.
+def _display_width(line: str) -> Iterator[int]:
+    """
+    Calculate the extra amount of width space the given source
+    code segment might take if it were to be displayed on a fixed
+    width output device. Supports wide unicode characters and emojis.
+    """
+
+    # Fast track for ASCII-only strings
+    if line.isascii():
+        return itertools.repeat(1, len(line))
+
+    from unicodedata import east_asian_width
+
+    return (2 if east_asian_width(char) in "WF" else 1 for char in line)
+
+
+def _calculate_anchors(frame_summary: 'FrameSummary'):
+    """
+    For given frame summary, return None if there is no column information or
+    other error happens, or list of 4 (lineno, colno) tuples that represent:
+        - position where secondary character starts
+        - position where primary character starts
+        - position where secondary character starts again
+        - position where secondary character ends
+
+    The invariant is that for split lines of frame code, carets can be rendered as
+    nothing until first tuple, secondary char until second tuple, primary char
+    until third tuple, secondary char until fourth tuple, and nothing after fourth
+    tuple.
+    """
+
+    if frame_summary.colno is None or frame_summary.end_colno is None:
+        return None
+
+    all_lines = list(frame_summary.lines)
+    end_lineno = frame_summary.end_lineno - frame_summary.lineno
+    first_line = all_lines[0]
+    # assume all_lines has enough lines (since we constructed it)
+    last_line = all_lines[end_lineno]
+
+    # character index of the start/end of the instruction
+    start_offset = frame_summary.colno
+    end_offset = frame_summary.end_colno
+
+    # Correct extra offset from _ren.py transformation.
+    if frame_summary.filename.endswith("_ren.py"):
+        from renpy.lexer import ren_py_to_rpy_offsets
+        try:
+            with open(frame_summary.filename, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+
+            offsets = list(ren_py_to_rpy_offsets(lines, frame_summary.filename))
+        except Exception:
+            return None
+
+        for i, offset in enumerate(offsets, start=1):
+            if offset is not None:
+                if i == frame_summary.lineno:
+                    start_offset -= offset
+
+                elif i == frame_summary.end_lineno:
+                    end_offset -= offset
+
+    # Correct extra offset from munged names.
+    from renpy.lexer import munge_filename, get_string_munger
+    munge_prefix = munge_filename(frame_summary.filename)
+    munge_string = get_string_munger(munge_prefix)
+    len_prefix = len(munge_prefix) - 2
+
+    idx = 0
+    munged_first_line = munge_string(first_line)
+    while (idx := munged_first_line.find(munge_prefix, idx, start_offset + len_prefix)) != -1:
+        start_offset -= len_prefix
+        idx += len_prefix
+
+    idx = 0
+    munged_last_line = munge_string(last_line)
+    while (idx := munged_last_line.find(munge_prefix, idx, end_offset + len_prefix)) != -1:
+        end_offset -= len_prefix
+        idx += len_prefix
+
+    default_anchors = [
+        (0, start_offset), (0, start_offset),
+        (end_lineno, end_offset), (end_lineno, end_offset)]
+
+    # get exact code segment corresponding to the instruction
+    segment = "\n".join(all_lines)
+    segment = segment[start_offset:len(segment) - (len(last_line) - end_offset)]
+
+    from ast import parse, expr, BinOp, Expr, Subscript, Call
+    # Without parentheses, `segment` is parsed as a statement.
+    # Binary ops, subscripts, and calls are expressions, so
+    # we can wrap them with parentheses to parse them as
+    # (possibly multi-line) expressions.
+    # e.g. if we try to highlight the addition in
+    # x = (
+    #     a +
+    #     b
+    # )
+    # then we would ast.parse
+    #     a +
+    #     b
+    # which is not a valid statement because of the newline.
+    # Adding brackets makes it a valid expression.
+    # (
+    #     a +
+    #     b
+    # )
+    # Line locations will be different than the original,
+    # which is taken into account later on.
+    tree = parse(f"(\n{segment}\n)")
+
+    if len(tree.body) != 1:
+        return default_anchors
+
+    lines = segment.splitlines()
+
+    def normalize(lineno: int, offset: int):
+        """Get character index given byte offset"""
+        return offset
+
+    def next_valid_char(lineno: int, col: int):
+        """Gets the next valid character index in `lines`, if
+        the current location is not valid. Handles empty lines.
+        """
+        while lineno < len(lines) and col >= len(lines[lineno]):
+            col = 0
+            lineno += 1
+        assert lineno < len(lines) and col < len(lines[lineno])
+        return lineno, col
+
+    def increment(lineno: int, col: int):
+        """Get the next valid character index in `lines`."""
+        col += 1
+        lineno, col = next_valid_char(lineno, col)
+        return lineno, col
+
+    def next_line(lineno: int, col: int):
+        """Get the next valid character at least on the next line"""
+        col = 0
+        lineno += 1
+        lineno, col = next_valid_char(lineno, col)
+        return lineno, col
+
+    def increment_until(lineno: int, col: int, stop: Callable[[str], bool]):
+        """Get the next valid non-"\\#" character that satisfies the `stop` predicate"""
+        while True:
+            ch = lines[lineno][col]
+            if ch in "\\#":
+                lineno, col = next_line(lineno, col)
+            elif not stop(ch):
+                lineno, col = increment(lineno, col)
+            else:
+                break
+        return lineno, col
+
+    def setup_positions(expr: expr, force_valid=True):
+        """Get the lineno/col position of the end of `expr`. If `force_valid` is True,
+        forces the position to be a valid character (e.g. if the position is beyond the
+        end of the line, move to the next line)
+        """
+        # -2 since end_lineno is 1-indexed and because we added an extra
+        # bracket + newline to `segment` when calling ast.parse
+        if expr.end_lineno is None or expr.end_col_offset is None:
+            raise Exception("Precise positions are not available.")
+
+        lineno = expr.end_lineno - 2
+        col = normalize(lineno, expr.end_col_offset)
+        return next_valid_char(lineno, col) if force_valid else (lineno, col)
+
+    match tree.body[0]:
+        case Expr(value=expression):
+            pass
+        case _:
+            return default_anchors
+
+    match expression:
+        case BinOp(left=left, right=right):
+            # ast gives these locations for BinOp subexpressions
+            # ( left_expr ) + ( right_expr )
+            #   left^^^^^       right^^^^^
+            left_lineno, left_col = setup_positions(left)
+
+            # First operator character is the first non-space/')' character
+            left_lineno, left_col = increment_until(
+                left_lineno, left_col, lambda x: not x.isspace() and x != ')')
+
+            # binary op is 1 or 2 characters long, on the same line,
+            # before the right subexpression
+            right_lineno = left_lineno
+            right_col = left_col + 1
+            if (
+                right_col < len(lines[right_lineno])
+                and (
+                    # operator char should not be in the right subexpression
+                    right.lineno - 2 > right_lineno or
+                    right_col < normalize(right.lineno - 2, right.col_offset)
+                )
+                and not (ch := lines[right_lineno][right_col]).isspace()
+                and ch not in "\\#"
+            ):
+                right_col += 1
+
+            if left_lineno == 0:
+                left_col += start_offset
+            if right_lineno == 0:
+                right_col += start_offset
+
+            return [
+                (0, start_offset),  # start of left_expr
+                (left_lineno, left_col),  # end of left_expr
+                (right_lineno, right_col),  # start of right_expr
+                (end_lineno, end_offset),  # end of right_expr
+            ]
+
+        case Subscript(value=value):
+            # ast gives these locations for value and slice subexpressions
+            # ( value_expr ) [ slice_expr ]
+            #   value^^^^^     slice^^^^^
+            # subscript^^^^^^^^^^^^^^^^^^^^
+
+            # find left bracket
+            left_lineno, left_col = setup_positions(value)
+            left_lineno, left_col = increment_until(left_lineno, left_col, lambda x: x == '[')
+            # find right bracket (final character of expression)
+            right_lineno, right_col = setup_positions(expression, force_valid=False)
+
+            if left_lineno == 0:
+                left_col += start_offset
+            if right_lineno == 0:
+                right_col += start_offset
+
+            return [
+                (0, start_offset),
+                (left_lineno, left_col),
+                (right_lineno, right_col),
+                (end_lineno, end_offset),
+            ]
+
+        case Call(func=func):
+            # ast gives these locations for function call expressions
+            # ( func_expr ) (args, kwargs)
+            #   func^^^^^
+            # call^^^^^^^^^^^^^^^^^^^^^^^^
+
+            # find left bracket
+            left_lineno, left_col = setup_positions(func)
+            left_lineno, left_col = increment_until(left_lineno, left_col, lambda x: x == '(')
+            # find right bracket (final character of expression)
+            right_lineno, right_col = setup_positions(expression, force_valid=False)
+
+            if left_lineno == 0:
+                left_col += start_offset
+            if right_lineno == 0:
+                right_col += start_offset
+
+            return [
+                (0, start_offset),
+                (left_lineno, left_col),
+                (right_lineno, right_col),
+                (end_lineno, end_offset),
+            ]
+
+        case _:
+            return default_anchors
+
+
 @dataclasses.dataclass(init=False, repr=False, slots=True)
 class FrameSummary:
     """Information about a single frame from a traceback."""
@@ -818,6 +818,11 @@ class FrameSummary:
         ctx.location(self.filename, self.lineno, self.name)
 
         original_lines = list(self.lines)
+
+        # Do not print empty lines.
+        if not any(l.strip() for l in original_lines):
+            return
+
         dedent_lines = textwrap.dedent("\n".join(original_lines)).split("\n")
         dedent_amount = len(original_lines[0]) - len(dedent_lines[0])
         if carets := [*self.carets]:
