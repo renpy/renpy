@@ -338,7 +338,7 @@ translate schinese button_displayables_220b020d:
 # game/tutorial_screen_displayables.rpy:558
 translate schinese button_displayables_b89d12aa:
 
-    # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+    # e "Of course, it's pretty rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
     e "当然，我们很少在界面里定制按钮。相反，我们会创建自定义样式并让Ren'Py使用。"
 
 # game/tutorial_screen_displayables.rpy:577

@@ -749,7 +749,7 @@
     new "Pengemaskini"
 
     # 00updater.rpy:1419
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Telah berlakunya ralat:"
 
     # 00updater.rpy:1421

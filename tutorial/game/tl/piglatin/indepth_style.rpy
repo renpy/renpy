@@ -110,7 +110,7 @@ translate piglatin style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate piglatin style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "Inallyfay, heretay isay hetay hetay ylestay atementstay, hichway reatescay oray angeschay aay amednay ylestay. Ybay ivinggay Exttay hetay ylestay argumentay, eway elltay itay otay useay hetay ue_textblay ylestay."
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate piglatin style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate piglatin style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "Ybay efaultday hetay arentpay ofay hetay ylestay ashay hetay amesay amenay, ithway hetay refixpay upay otay hetay hetay irstfay underscoreay emovedray. Fiay hetay ylestay oesday otnay avehay anay underscoreay inay itsay amenay, 'efaultday' isay useday."
 
 # game/indepth_style.rpy:184
@@ -806,4 +806,3 @@ translate piglatin strings:
     # game/indepth_style.rpy:884
     old "Sixth Child"
     new "Ixthsay Hildcay"
-

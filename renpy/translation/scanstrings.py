@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,7 +32,8 @@ import renpy
 ################################################################################
 
 STRING_RE = r"""(?x)
-\b_[_p]?\s*(\((?:[\s\\\n]*[uU]?(?:
+\b(?:_|__|___|_p)
+\s*(\((?:[\s\\\n]*[uU]?(?:
 \"\"\"(?:\\.|\\\n|\"{1,2}|[^\\"])*?\"\"\"
 |'''(?:\\.|\\\n|\'{1,2}|[^\\'])*?'''
 |"(?:\\.|\\\n|[^\\"])*"
@@ -188,6 +189,17 @@ def scan_comments(filename):
     return rv
 
 
+def scan_additional_strings():
+
+    rv = [ ]
+
+    for cb in renpy.config.translate_additional_strings_callbacks:
+        for filename, lineno, text in cb():
+            rv.append(String(filename, lineno, text, False))
+
+    return rv
+
+
 def scan(min_priority=0, max_priority=299, common_only=False):
     """
     Scans all files for translatable strings and comments. Returns a list
@@ -206,6 +218,8 @@ def scan(min_priority=0, max_priority=299, common_only=False):
 
         strings.extend(scan_strings(filename))
         strings.extend(scan_comments(filename))
+
+    strings.extend(scan_additional_strings())
 
     strings.sort(key=lambda s : s.sort_key)
 

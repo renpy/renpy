@@ -75,7 +75,7 @@ Here's an example::
         g.image("dawn1")
         g.unlock("dawn1")
 
-        # This button has multiple images assocated with it. We use unlock_image
+        # This button has multiple images associated with it. We use unlock_image
         # so we don't have to call both .image and .unlock. We also apply a
         # transform to the first image.
         g.button("dark")

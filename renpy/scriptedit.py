@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -33,7 +33,7 @@ import codecs
 
 # A map from line loc (elided filename, line) to the Line object representing
 # that line.
-lines = { }
+lines: dict[tuple[str, int], "Line"] = { }
 
 # The set of files that have been loaded.
 files = set()
@@ -143,7 +143,8 @@ def adjust_line_locations(filename, linenumber, char_offset, line_offset):
 
         new_lines[fn, ln] = line
 
-    lines = new_lines
+    lines.clear()
+    lines.update(new_lines)
 
 
 def insert_line_before(code, filename, linenumber):
@@ -162,19 +163,13 @@ def insert_line_before(code, filename, linenumber):
 
     old_line = lines[filename, linenumber]
 
-    m = re.match(r' *', old_line.text)
-    indent = m.group(0)
-
-    if not code:
+    if code:
+        indent = re.match(r' *', old_line.text).group(0)
+    else:
         indent = ''
 
-    if old_line.text.endswith("\r\n") or not old_line.text.endswith("\n"):
-        line_ending = "\r\n"
-    else:
-        line_ending = "\n"
-
     raw_code = indent + code
-    code = indent + code + line_ending
+    code = indent + code + "\n"
 
     new_line = Line(old_line.filename, old_line.number, old_line.start)
     new_line.text = raw_code
@@ -182,7 +177,7 @@ def insert_line_before(code, filename, linenumber):
     new_line.end = new_line.start + len(raw_code)
     new_line.end_delim = new_line.start + len(code)
 
-    with codecs.open(old_line.filename, "r", "utf-8") as f:
+    with open(old_line.filename, "r", encoding="utf-8") as f:
         data = f.read()
 
     data = data[:old_line.start] + code + data[old_line.start:]
@@ -191,7 +186,7 @@ def insert_line_before(code, filename, linenumber):
 
     with renpy.loader.auto_lock:
 
-        with codecs.open(old_line.filename, "w", "utf-8") as f:
+        with open(old_line.filename, "w", encoding="utf-8") as f:
             f.write(data)
 
         renpy.loader.add_auto(old_line.filename, force=True)
@@ -214,7 +209,7 @@ def remove_line(filename, linenumber):
 
     line = lines[filename, linenumber]
 
-    with codecs.open(line.filename, "r", "utf-8") as f:
+    with open(line.filename, "r", encoding="utf-8") as f:
         data = f.read()
 
     code = data[line.start:line.end_delim]
@@ -225,7 +220,7 @@ def remove_line(filename, linenumber):
 
     with renpy.loader.auto_lock:
 
-        with codecs.open(line.filename, "w", "utf-8") as f:
+        with open(line.filename, "w", encoding="utf-8") as f:
             f.write(data)
 
         renpy.loader.add_auto(line.filename, force=True)
@@ -317,7 +312,7 @@ def first_and_last_nodes(nodes):
 
 def adjust_ast_linenumbers(filename, linenumber, offset):
     """
-    This adjusts the line numbers in the the ast.
+    This adjusts the line numbers in the ast.
 
     `filename`
         The filename to adjust.

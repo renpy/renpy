@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -60,11 +60,23 @@ def call_str(function, *args):
 # Set of channel IDs that are not video channels
 audio_channels = set()
 
+
 def set_movie_channel(channel, movie):
     if video_only and not movie:
         audio_channels.add(channel)
 
 renpysound.set_movie_channel = set_movie_channel # type: ignore
+
+
+def set_channel_count(count):
+    """
+    Sets the number of channels.
+    """
+
+    call("set_channel_count", count)
+
+renpysound.set_channel_count = set_channel_count # type: ignore
+
 
 # Map of renpysound functions that have been replaced with webaudio functions
 renpysound_funcs = {}
@@ -111,7 +123,7 @@ def proxy_call_both(func):
     return func
 
 @proxy_with_channel
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -119,8 +131,9 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     `name`
         A python object giving a readable name for the file.
 
-    `paused`
-        If True, playback is paused rather than started.
+    `synchro_start`
+        If true, the file is played in synchro start mode. This means that playing will be deferred until
+        all other synchro start files are ready to play.
 
     `fadein`
         The time it should take the fade the music in, in seconds.
@@ -143,7 +156,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     """
 
     try:
-        if not isinstance(file, basestring):
+        if not isinstance(file, str):
             file = file.raw.name
     except Exception:
         if renpy.config.debug_sound:
@@ -156,11 +169,11 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     afid = load_audio_filter(audio_filter)
 
     call("stop", channel)
-    call("queue", channel, file, name, paused, fadein, tight, start, end, relative_volume, afid)
+    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid)
 
 
 @proxy_with_channel
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -169,7 +182,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
     """
 
     try:
-        if not isinstance(file, basestring):
+        if not isinstance(file, str):
             file = file.raw.name
     except Exception:
         if renpy.config.debug_sound:
@@ -181,7 +194,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
 
     afid = load_audio_filter(audio_filter)
 
-    call("queue", channel, file, name, False, fadein, tight, start, end, relative_volume, afid)
+    call("queue", channel, file, name, synchro_start, fadein, tight, start, end, relative_volume, afid)
 
 
 @proxy_with_channel
@@ -256,15 +269,6 @@ def global_pause(pause):
     """
 
     # Not used on web.
-
-
-@proxy_call_both
-def unpause_all_at_start():
-    """
-    Unpauses all channels that are paused.
-    """
-
-    call("unpauseAllAtStart")
 
 
 @proxy_with_channel
@@ -360,14 +364,14 @@ def set_secondary_volume(channel, volume, delay):
 
 
 @proxy_with_channel
-def replace_audio_filter(channel, audio_filter):
+def replace_audio_filter(channel, audio_filter, primary):
     """
     Replaces the audio filter for `channel` with `audio_filter`.
     """
 
     afid = load_audio_filter(audio_filter)
 
-    call("replace_audio_filter", channel, afid)
+    call("replace_audio_filter", channel, afid, primary)
 
 
 def audio_filter_constructor(f):
@@ -446,7 +450,7 @@ def load_audio_filter(af):
 def deallocate_audio_filter(audio_filter):
     """
     Called when an audio filter is about to be deallocated to release all
-    assocated resources.
+    associated resources.
     """
 
     objid = id(audio_filter)
@@ -597,6 +601,8 @@ def periodic():
     """
     Called periodically (at 20 Hz).
     """
+
+    call("periodic")
 
 
 @proxy_call_both

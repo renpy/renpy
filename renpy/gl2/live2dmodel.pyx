@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,7 +34,7 @@ from renpy.uguu.gl cimport GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD,
 
 import renpy
 
-cdef extern from "SDL.h" nogil:
+cdef extern from "SDL2/SDL.h" nogil:
     void* SDL_LoadObject(const char* sofile)
     void* SDL_LoadFunction(void* handle, const char* name)
 
@@ -88,7 +88,7 @@ include "live2dcsm.pxi"
 
 
 # Enable logging.
-cdef void __stdcall log_function(const char *message):
+cdef void __stdcall log_function(const char *message) noexcept:
     print(message)
 
 def post_init():
@@ -134,6 +134,7 @@ class Part(object):
         self.name = name
         self.default_opacity = default_opacity
         self.remaining = 1.0
+
 
 cdef class Live2DModel:
     """
@@ -261,7 +262,7 @@ cdef class Live2DModel:
 
         self.parameters = { }
 
-        for 0 <= i < self.parameter_count:
+        for i in range(self.parameter_count):
             name = self.parameter_ids[i].decode("utf-8")
             self.parameters[name] = Parameter(
                 i, name,
@@ -272,7 +273,7 @@ cdef class Live2DModel:
 
         self.parts = { }
 
-        for 0 <= i < self.part_count:
+        for i in range(self.part_count):
             name = self.part_ids[i].decode("utf-8")
             self.parts[name] = Part(i, name, self.part_opacities[i])
 
@@ -389,24 +390,15 @@ cdef class Live2DModel:
         csmUpdateModel(self.model)
 
         # Render the model.
-        w = int(zoom * self.pixel_size.X)
-        h = int(zoom * self.pixel_size.Y)
+        w = self.pixel_size.X * zoom
+        h = self.pixel_size.Y * zoom
+
+        offset_x = self.pixel_origin.X * zoom
+        offset_y = self.pixel_origin.Y * zoom
 
         ppu = self.pixels_per_unit * zoom
 
-        if ppu:
-            invppu = 1 / ppu
-        else:
-            invppu = 0
-
-        offset = (w / 2.0 - ppu, h / 2.0 - ppu)
-
-        reverse = Matrix([
-            ppu, 0, 0, ppu,
-            0, -ppu, 0, ppu,
-            0, 0, 1, 0,
-            0, 0, 0, 1, ])
-
+        reverse = Matrix.offset(offset_x, offset_y, 0.0) * Matrix.scale(ppu, -ppu, 1.0)
         forward = reverse.inverse()
 
         rv = Render(w, h)
@@ -418,7 +410,7 @@ cdef class Live2DModel:
         cdef csmVector4 multiply
         cdef csmVector4 screen
 
-        for 0 <= i < self.drawable_count:
+        for i in range(self.drawable_count):
 
             multiply = self.drawable_multiply_colors[i]
             screen = self.drawable_screen_colors[i]
@@ -433,12 +425,14 @@ cdef class Live2DModel:
             memcpy(mesh.attribute, self.drawable_vertex_uvs[i], sizeof(float) * mesh.points * 2)
 
             mesh.triangles = self.drawable_index_counts[i] // 3
-            memcpy(mesh.triangle, self.drawable_indices[i],  sizeof(unsigned short) * mesh.triangles * 3)
+
+            for j in range(mesh.triangles * 3):
+                mesh.triangle[j] = self.drawable_indices[i][j]
 
             tex = textures[self.drawable_texture_indices[i]]
 
             # Create a render that can be used as a mask.
-            mr = Render(ppu * 2, ppu * 2)
+            mr = Render(w, h)
             mr.reverse = reverse
             mr.forward = forward
             mr.mesh = mesh
@@ -454,7 +448,7 @@ cdef class Live2DModel:
             mask_renders.append(mr)
 
             # Create the render that is actually drawn.
-            r = Render(ppu * 2, ppu * 2)
+            r = Render(w, h)
             r.reverse = reverse
             r.forward = forward
             r.mesh = mesh
@@ -488,7 +482,7 @@ cdef class Live2DModel:
 
         multi_masks = { }
 
-        for 0 <= i < self.drawable_count:
+        for i in range(self.drawable_count):
 
             multiply = self.drawable_multiply_colors[i]
             screen = self.drawable_screen_colors[i]
@@ -500,11 +494,12 @@ cdef class Live2DModel:
 
             if self.drawable_mask_counts[i] == 1:
                 m = mask_renders[self.drawable_masks[i][0]]
+
             else:
 
                 key = [ ]
 
-                for 0 <= j < self.drawable_mask_counts[i]:
+                for j in range(self.drawable_mask_counts[i]):
                     key.append(self.drawable_masks[i][j])
 
                 key = tuple(key)
@@ -528,11 +523,14 @@ cdef class Live2DModel:
             for s in shaders:
                 r.add_shader(s)
 
+            r.add_uniform("u_live2d_ppu", ppu)
+            r.add_uniform("u_live2d_offset", (offset_x, offset_y))
+
             r.blit(m, (0, 0))
 
         renders.sort()
 
         for t in renders:
-            rv.subpixel_blit(t[1], offset)
+            rv.subpixel_blit(t[1], (0, 0))
 
         return rv

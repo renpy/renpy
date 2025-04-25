@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,7 +28,7 @@ import functools
 
 
 class Curry(object):
-    # essentialy the same as Partial, kept for compatibility
+    # essentially the same as Partial, kept for compatibility
 
     hash = None
 

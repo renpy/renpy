@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -33,9 +33,6 @@ label new_project:
 
     if persistent.projects_directory is None:
         $ interface.error(_("The projects directory could not be set. Giving up."))
-
-    if PY2:
-        $ interface.info(_("Warning : you are using Ren'Py 7. It is recommended to start new projects using Ren'Py 8 instead."))
 
     python:
         new_project_language = __("{#language name and font}")

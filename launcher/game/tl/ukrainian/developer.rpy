@@ -89,8 +89,6 @@ translate ukrainian strings:
     old "stack: print the return stack"
     new "stack: вивести стек повернення"
 
-translate ukrainian strings:
-
     # renpy/common/_developer/developer.rpym:51
     old "Persistent Viewer"
     new "Переглядач даних"
@@ -99,11 +97,73 @@ translate ukrainian strings:
     old "Speech Bubble Editor (Shift+B)"
     new "Редактор мовних бульбашок (Shift+B)"
 
+    # renpy/common/_developer/developer.rpym:70
+    old "Show Translation Info"
+    new "Показати відомості про переклад"
+
+    # renpy/common/_developer/developer.rpym:73
+    old "Hide Translation Info"
+    new "Сховати відомості про переклад"
+
+    # renpy/common/_developer/developer.rpym:69
+    old "Show Translation Identifiers"
+    new "Показати ідентифікатори перекладу"
+
+    # renpy/common/_developer/developer.rpym:72
+    old "Hide Translation Identifiers"
+    new "Сховати ідентифікатори перекладу"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Filename and Line"
+    new "Показати назву файлу та рядок"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Filename and Line"
+    new "Сховати назву файлу та рядок"
+
+    # renpy/common/_developer/developer.rpym:127
+    old "Layer [l]:"
+    new "Шар [l]:"
+
+    # renpy/common/_developer/developer.rpym:131
+    old "    [name] [attributes] (hidden)"
+    new "    [name] [attributes] (приховано)"
+
+    # renpy/common/_developer/developer.rpym:135
+    old "    [name] [attributes]"
+    new "    [name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:606
+    old "\n{color=#fff}Copied to clipboard.{/color}"
+    new "\n{color=#fff}Скопійовано до буфера обміну.{/color}"
+
+    # renpy/common/_developer/developer.rpym:612
+    old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
+    new "\n{color=#fff}Клацніть для копіювання.\nПеретягніть для пересування.{/color}"
+
+    # renpy/common/_developer/developer.rpym:657
+    old "Click to open in editor."
+    new "Клацніть, щоб відкрити в редакторі."
+
+    # renpy/common/00console.rpy:725
+    old "The console is using short representations. To disable this, type 'long', and to re-enable, type 'short'"
+    new "Консоль використовує короткі представлення. Щоб вимкнути це, введіть 'long', а щоб увімкнути, введіть 'short'"
+
     # renpy/common/00console.rpy:789
     old "help: show this help\n help <expr>: show signature and documentation of <expr>"
     new "help: показує цю довідку\n help <вираз>: показує підпис та документацію <виразу>"
 
     # renpy/common/00console.rpy:813
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
-    new "У довідці можуть відображатися недокументовані функції. Будь ласка, перевірте, чи функцію або\nклас, який бажаєте використати, задокументовано.\n\n"
+    new "У довідці можуть бути недокументовані функції. Будь ласка, перевірте, чи бажана функція або\nклас задокументовано.\n\n"
+
+translate ukrainian strings:
+
+    # renpy/common/_developer/developer.rpym:133
+    old "    [name!q] [attributes!q] (hidden)"
+    new "    [name!q] [attributes!q] (приховано)"
+
+    # renpy/common/_developer/developer.rpym:137
+    old "    [name!q] [attributes!q]"
+    new "    [name!q] [attributes!q]"
 

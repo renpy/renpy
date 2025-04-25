@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -201,7 +201,7 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
         return list(set(attrcount.keys()) | set(j for i in sequences for j in i))
 
     # If we have a sequence, do a topological sort on the before-after relation -
-    # with an ajustment to make sure it will complete even if it loops.
+    # with an adjustment to make sure it will complete even if it loops.
 
     rv = [ ]
 
@@ -323,7 +323,7 @@ class ImageReference(renpy.display.displayable.Displayable):
     """
     ImageReference objects are used to reference images by their name,
     which is a tuple of strings corresponding to the name used to define
-    the image in an image statment.
+    the image in an image statement.
     """
 
     nosave = [ 'target' ]
@@ -407,10 +407,14 @@ class ImageReference(renpy.display.displayable.Displayable):
 
         if not name:
             error("Image '%s' not found." % ' '.join(self.name))
+            if renpy.game.lint:
+                renpy.lint.report("References image '%s', which does not exist.", ' '.join(self.name))
             return False
 
         if name and (self._args.name == name):
             error("Image '{}' refers to itself.".format(' '.join(name)))
+            if renpy.game.lint:
+                renpy.lint.report("Image '%s' refers to itself.", ' '.join(name))
             return False
 
         args += self._args.args
@@ -577,7 +581,7 @@ class DynamicImage(renpy.display.displayable.Displayable):
 
         self._uses_scope = False
 
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             if ("[prefix_" in name):
                 self._duplicatable = True
 

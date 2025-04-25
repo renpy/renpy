@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -83,8 +83,9 @@ def open_file(fn, encoding=None, directory=None): # @ReservedAssignment
 
     `encoding`
         If given, the file is open in text mode with the given encoding.
-        If None, the default, the encoding is taken from :var:`config.open_file_encoding`.
         If False, the file is opened in binary mode.
+        If None, the default, the encoding is taken from :var:`config.open_file_encoding`.
+        In most cases, None will open a file in binary mode.
 
     `directory`
         If not None, a directory to search in if the file is not found
@@ -163,7 +164,7 @@ def fsencode(s, force=False): # type: (str, bool) -> str
     Converts s from unicode to the filesystem encoding.
     """
 
-    if (not PY2) and (not force):
+    if not force:
         return s
 
     if not isinstance(s, str):

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -55,7 +55,7 @@ init -1 python in util:
 
         for subdir, directories, files in os.walk(directory):
             for fn in directories:
-                if not isinstance(fn, unicode):
+                if not isinstance(fn, str):
                     continue
 
                 fullfn = os.path.join(subdir, fn)
@@ -66,7 +66,7 @@ init -1 python in util:
                 yield relfn, True
 
             for fn in files:
-                if not isinstance(fn, unicode):
+                if not isinstance(fn, str):
                     continue
 
                 fullfn = os.path.join(subdir, fn)

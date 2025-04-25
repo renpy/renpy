@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -143,15 +143,15 @@ def scry():
     following fields:
 
     `nvl_clear`
-        Is true if an ``nvl clear`` statement will execute before the
+        Is True if an ``nvl clear`` statement will execute before the
         next interaction.
 
     `say`
-        Is true if an ``say`` statement will execute before the
+        Is True if an ``say`` statement will execute before the
         next interaction.
 
     `menu_with_caption`
-        Is true if a ``menu`` statement with a caption will execute
+        Is True if a ``menu`` statement with a caption will execute
         before the next interaction.
 
     `who`
@@ -358,6 +358,16 @@ def is_skipping():
     return not not renpy.config.skipping
 
 
+def stop_skipping():
+    """
+    :doc: other
+
+    Stops skipping, if Ren'Py is currently skipping.
+    """
+
+    renpy.config.skipping = None
+
+
 def is_init_phase():
     """
     :doc: other
@@ -410,3 +420,13 @@ def get_game_runtime():
     """
 
     return renpy.game.contexts[0].runtime
+
+def get_statement_name():
+    """
+    :doc: other
+
+    Get the name of the current statement, a string like "say", "say-nvl", or "window hide". This is the
+    same statement name used with :var:`config.statement_callbacks`.
+    """
+
+    return renpy.ast.current_statement_name

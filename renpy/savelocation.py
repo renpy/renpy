@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -45,6 +45,58 @@ import time
 tmp = "." + str(int(time.time())) + ".tmp"
 
 
+# The number of times pause_syncfs has been called, without a corresponding
+# resume_syncfs
+pause_syncfs_count = 0
+
+def pause_syncfs():
+    """
+    Pauses the filesystem sync. This should be called before doing a large
+    number of file operations.
+    """
+
+    global pause_syncfs_count
+    pause_syncfs_count += 1
+
+
+def resume_syncfs():
+    """
+    Resumes the filesystem sync. This should be called after a corresponding
+    pause_syncfs.
+    """
+
+    global pause_syncfs_count
+    pause_syncfs_count -= 1
+
+    if pause_syncfs_count == 0:
+        syncfs()
+
+
+class SyncfsLock(object):
+    """
+    Context to pause then resume the filesystem sync.
+    """
+    def __enter__(self):
+        pause_syncfs()
+        return self
+
+    def __exit__(self, exception_type, exception_value, exception_traceback):
+        resume_syncfs()
+
+
+def syncfs():
+    """
+    Syncs the filesystem.
+    """
+
+    if pause_syncfs_count > 0:
+        return
+
+    if renpy.emscripten:
+        import emscripten # type: ignore
+        emscripten.syncfs()
+
+
 class FileLocation(object):
     """
     A location that saves files to a directory on disk.
@@ -80,8 +132,8 @@ class FileLocation(object):
         # The persistent file.
         self.persistent = os.path.join(self.directory, "persistent")
 
-        # The mtime of the persistent file.
-        self.persistent_mtime = 0
+        # The minumum mtime at which it makes sense to load the persistent file.
+        self.persistent_mtime = renpy.persistent.persistent_mtime
 
         # The data loaded from the persistent file.
         self.persistent_data = None
@@ -98,9 +150,7 @@ class FileLocation(object):
         Called to indicate that the HOME filesystem was changed.
         """
 
-        if renpy.emscripten:
-            import emscripten # type: ignore
-            emscripten.syncfs()
+        syncfs()
 
     def scan(self):
         """
@@ -143,7 +193,7 @@ class FileLocation(object):
                 if os.path.exists(pfn):
                     mtime = os.path.getmtime(pfn)
 
-                    if mtime != self.persistent_mtime:
+                    if mtime > self.persistent_mtime:
                         data = renpy.persistent.load(pfn)
                         if data is not None:
                             self.persistent_mtime = mtime
@@ -344,17 +394,22 @@ class FileLocation(object):
             self.sync()
             self.scan()
 
-    def load_persistent(self):
+    def load_persistent(self, *, consume=False):
         """
         Returns a list of (mtime, persistent) tuples loaded from the
         persistent file. This should return quickly, with the actual
-        load occuring in the scan thread.
+        load occurring in the scan thread.
         """
 
-        if self.persistent_data:
-            return [ (self.persistent_mtime, self.persistent_data) ]
-        else:
+        if not self.persistent_data:
             return [ ]
+
+        rv = [ (self.persistent_mtime, self.persistent_data) ]
+
+        if consume:
+            self.persistent_data = None
+
+        return rv
 
     def save_persistent(self, data):
         """
@@ -371,6 +426,8 @@ class FileLocation(object):
             fn_tmp = fn + tmp
             fn_new = fn + ".new"
 
+            pause_syncfs()
+
             with open(fn_tmp, "wb") as f:
                 f.write(data)
 
@@ -382,7 +439,7 @@ class FileLocation(object):
 
             renpy.util.expose_file(fn)
 
-            self.sync()
+            resume_syncfs()
 
     def unlink_persistent(self):
 
@@ -460,9 +517,10 @@ class MultiLocation(object):
 
         saved = False
 
-        for l in self.active_locations():
-            l.save(slotname, record)
-            saved = True
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.save(slotname, record)
+                saved = True
 
         if not saved:
             raise Exception("Not saved - no valid save locations.")
@@ -535,40 +593,43 @@ class MultiLocation(object):
         if not renpy.config.save:
             return
 
-        for l in self.active_locations():
-            l.unlink(slotname)
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.unlink(slotname)
 
     def rename(self, old, new):
         if not renpy.config.save:
             return
 
-        for l in self.active_locations():
-            l.rename(old, new)
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.rename(old, new)
 
     def copy(self, old, new):
         if not renpy.config.save:
             return
 
-        for l in self.active_locations():
-            l.copy(old, new)
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.copy(old, new)
 
-    def load_persistent(self):
+    def load_persistent(self, *, consume=False):
         rv = [ ]
 
         for l in self.active_locations():
-            rv.extend(l.load_persistent())
+            rv.extend(l.load_persistent(consume=consume))
 
         return rv
 
     def save_persistent(self, data):
-
-        for l in self.active_locations():
-            l.save_persistent(data)
+        with SyncfsLock():
+            for l in reversed(self.active_locations()):
+                l.save_persistent(data)
 
     def unlink_persistent(self):
-
-        for l in self.active_locations():
-            l.unlink_persistent()
+        with SyncfsLock():
+            for l in self.active_locations():
+                l.unlink_persistent()
 
     def scan(self):
         # This should scan everything, as a scan can help decide if a
@@ -633,17 +694,26 @@ def init():
 
     location = MultiLocation()
 
+    # Reuse locations when possible.
+    if current := renpy.loadsave.location:
+        reusable = {fl.directory: fl for fl in current.locations}
+    else:
+        reusable = {}
+
+    def location_add(d):
+        location.add(reusable.get(d, None) or FileLocation(d))
+
     # 1. User savedir.
-    location.add(FileLocation(renpy.config.savedir))
+    location_add(renpy.config.savedir)
 
     # 2. Game-local savedir.
     if (not renpy.mobile) and (not renpy.macapp):
         path = os.path.join(renpy.config.gamedir, "saves")
-        location.add(FileLocation(path))
+        location_add(path)
 
     # 3. Extra savedirs.
     for i in renpy.config.extra_savedirs:
-        location.add(FileLocation(i))
+        location_add(i)
 
     # Scan the location once.
     location.scan()

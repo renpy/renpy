@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -55,7 +55,6 @@ from renpy.revertable import revertable_sorted as sorted # @UnusedImport
 from renpy.revertable import MultiRevertable
 
 import renpy.ui as ui # @UnusedImport
-from renpy.translation import translate_string as __ # @UnusedImport
 
 from renpy.python import store_eval as eval
 
@@ -90,6 +89,8 @@ def _(s):
 
     return s
 
+from renpy.translation import translate_string as __
+from renpy.substitutions import ___
 
 def _p(s):
     '''
@@ -201,6 +202,3 @@ __all__ = [
     'ui',
     'unicode',
 ]
-
-if PY2:
-    __all__ = [ bytes(i) for i in __all__ ] # type: ignore

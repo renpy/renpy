@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -36,7 +36,7 @@ init -1150 python in bubble:
 
     # This becomes true when the screen is shown.
     shown = NoRollback()
-    shown.value = False
+    shown.value = renpy.session.get('speechbubble_shown', False)
 
     # The path to the json file the bubble database is stored in.
     db_filename = "bubble.json"
@@ -79,7 +79,10 @@ init -1150 python in bubble:
     frame = None
     thoughtframe = None
 
-    # The layer that retained screens are placed on.
+    # The layer that bubble screen are placed on.
+    layer = "screens"
+
+    # The layer that retained bubble screens are placed on.
     retain_layer = "screens"
 
     # Statements that cause retained bubbles to be cleared.
@@ -92,6 +95,7 @@ init -1150 python in bubble:
                 return
 
             shown.value = not shown.value
+            renpy.session['speechbubble_shown'] = shown.value
             renpy.restart_interaction()
 
         def get_selected(self):
@@ -234,6 +238,13 @@ init -1150 python in bubble:
             extra_properties.update(properties.get(properties_key, { }))
             extra_properties[area_property] = self.expand_area(tag_properties[image_tag]["area"], properties_key)
 
+            if retain:
+                show_layer = retain_layer
+            else:
+                show_layer = layer
+
+            extra_properties["show_layer"] = show_layer
+
             return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, retain=retain, extra_properties=extra_properties)
 
     class CycleBubbleProperty(Action):
@@ -330,6 +341,9 @@ init -1150 python in bubble:
         rv = [ ]
 
         for image_tag, tlid in current_dialogue:
+            if image_tag not in tag_properties:
+                continue
+
             property_list = [ ]
 
             property_list.append((

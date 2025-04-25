@@ -84,7 +84,7 @@ The value of a uniform can be:
 * Between 1 and 4 numbers, separated by commas. These can be used with the
   the float, vec2, vec3, or vec4 types.
 * A color, beginning with #. (For example, #f00 or #ff0000 for red.) This
-  creates a a vec4 corresponding to that color. This color will be
+  creates a vec4 corresponding to that color. This color will be
   premultiplied by its alpha channel.
 * A :doc:`displayable <displayables>` that will be
   used as a texture. This creates a sampler2D that can be used to sample
@@ -155,11 +155,20 @@ it needs to be declared in the `variables` argument to renpy.register_text_shade
 In addition to these, the model :ref:`uniforms and attributes <model-uniforms>` are available, with
 `a_position`, `a_tex_coord`, `u_time` and `u_random` being particularly useful.
 
+
 Uniforms
 ^^^^^^^^
 
 ``float u_text_depth``
-    The depth of the text from the top. The topmost layer of text has a depth of 0.0, the next layer has a depth of 1.0, and so on.
+    The depth of the text from the top. The topmost text has a depth of 0.0, the first outline or shadow has a
+    depth of 1.0, the second outline or shadow has a depth of 2.0, and so on.
+
+``float u_text_main``
+    If this is 1.0, the text is the main text. If this is 0.0, the text is the outline or shadow of the main text.
+
+``float u_text_max_depth``
+    The maximum value of u_text_depth. This is the number of outlines and shadows that will be drawn. When u_text_depth
+    is equal to this value, the texct is the last outline or shadow, which may be useful for drawing backgrounds.
 
 ``vec2 u_text_offset``
     The offset of the text from the center of the character. This is in drawable pixels in x, y order.
@@ -167,35 +176,42 @@ Uniforms
 ``float u_text_outline``
     The width of the outline around the text. This is in drawable pixels, and is the distance from the edge of the text to the edge of the outline.
 
-``float u_text_main``
-    If this is 1.0, the text is the main text. If this is 0.0, the text is the outline or shadow of the main text.
+``float u_text_slow_duration``
+    The duration of a single slow character, when showing slow text. 0.0 if not showing slow text.
 
 ``float u_text_slow_time``
     The time in seconds since the start of the slow text effect. This will only increase until the end of slow
     text, when it will max out. If the user clicks to terminate slow text, this will max out. It should only
-    be used for slow text - use
-
-``float u_text_slow_duration``
-    The duration of a single slow character, when showing slow text. 0.0 if not showing slow text.
-
-``float u_text_to_virtual``
-    The ratio of drawable pixels to virtual pixels. This is used to convert from drawable pixels to virtual pixels.
+    be used for slow text - use u_time for other effects that need to vary over time.
 
 ``float u_text_to_drawable``
     The ratio of virtual pixels to drawable pixels. This is used to convert from virtual pixels to drawable pixels.
 
+``float u_text_to_virtual``
+    The ratio of drawable pixels to virtual pixels. This is used to convert from drawable pixels to virtual pixels.
+
 ``sampler2D tex0``
-    This texture contains the rendered text.
+    This texture contains the rendered text at the current depth.
 
 ``vec2 res0``
-    The resolution of the texture, in drawable pixels.
+    The resolution of tex0, in drawable pixels.
+
 
 Attributes
 ^^^^^^^^^^
 
+When drawing text, each vertex corresponds to a single glyph. Multiple glyphs may have vertices that share
+locations, but these are passed to the shader as different vertices.
+
+``float a_text_ascent``
+    The ascent of the current glyph's font above the baseline, in drawable pixels.
+
 ``vec2 a_text_center``
-    The position of the center of the center of the vertex's baseline, in drawable pixels. This is not the
+    The position of the center of the glyphs's baseline, in drawable pixels. This is not the
     center of the rectangle, it's a point on the baseline and around the center of the character.
+
+``float a_text_descent``
+    The descent of the current glyph below the baseline, in drawable pixels.
 
 ``float a_text_index``
     The index of the glyph being drawn. This is 0 for the first vertex and goes up by one for each vertex.
@@ -215,9 +231,15 @@ Attributes
     but ``u_text_slow_duration`` is not 0.0, this will be -3600.0.
 
 ``vec4 a_text_pos_rect``
-    The rectangle being drawn, in drawable pixels. This is a vec4 with the x, y, width, and height of the rectangle,
+    The rectangle containing the glyph, in drawable pixels. This is a vec4 with the x, y, width, and height of the rectangle,
     in drawable pixels. This can be converted to texture coordinates by dividing it by ``res0``.
 
+Pseudo-Glyphs
+-------------
+
+Ren'Py will creates pseudo-glyphs that cover the start and end of each line. If a line
+is blank, one pseudo-glyph is created covering the whole line. These pseudo-glyphs are necessary
+to cover areas where outlines may extend into a line above or below the current line.
 
 Example
 -------

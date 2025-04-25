@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -65,18 +65,10 @@ copyreg._reconstructor = _reconstructor # type: ignore
 # this to check to see if a background-save is valid.
 mutate_flag = True
 
-# In Python 2 functools.wraps does not check for the existence of WRAPPER_ASSIGNMENTS elements,
-# so for the C-defined methods we have AttributeError: 'method_descriptor' object has no attribute '__module__'.
-# To work around this, we only keep attributes that surely exist.
-if PY2:
-    def _method_wrapper(method):
-        return functools.wraps(method, ("__name__", "__doc__"), ())
-else:
-    _method_wrapper = functools.wraps # type: ignore
 
 def mutator(method):
 
-    @_method_wrapper(method)
+    @functools.wraps(method)
     def do_mutation(self, *args, **kwargs):
 
         global mutate_flag
@@ -176,11 +168,7 @@ class RevertableList(list):
         list.__init__(self, *args)
 
     __delitem__ = mutator(list.__delitem__)
-    if PY2:
-        __delslice__ = mutator(list.__delslice__) # type: ignore
     __setitem__ = mutator(list.__setitem__)
-    if PY2:
-        __setslice__ = mutator(list.__setslice__) # type: ignore
     __iadd__ = mutator(list.__iadd__)
     __imul__ = mutator(list.__imul__)
     append = mutator(list.append)
@@ -193,7 +181,7 @@ class RevertableList(list):
 
     def wrapper(method): # type: ignore
 
-        @_method_wrapper(method)
+        @functools.wraps(method)
         def newmethod(*args, **kwargs):
             l = method(*args, **kwargs) # type: ignore
             if l is NotImplemented:
@@ -203,8 +191,6 @@ class RevertableList(list):
         return newmethod
 
     __add__ = wrapper(list.__add__) # type: ignore
-    if PY2:
-        __getslice__ = wrapper(list.__getslice__) # type: ignore
     __mul__ = wrapper(list.__mul__) # type: ignore
     __rmul__ = wrapper(list.__rmul__) # type: ignore
 
@@ -288,58 +274,31 @@ class RevertableDict(dict):
     setdefault = mutator(dict.setdefault)
     update = mutator(dict.update)
 
-    if PY2:
+    itervalues = dict.values
+    iterkeys = dict.keys
+    iteritems = dict.items
 
-        def keys(self):
-            rv = dict.keys(self)
+    def has_key(self, key):
+        return (key in self)
 
-            if (sys._getframe(1).f_code.co_flags & FUTURE_FLAGS) != FUTURE_FLAGS:
-                rv = RevertableList(rv)
+    # https://peps.python.org/pep-0584 methods
+    def __or__(self, other):
+        if not isinstance(other, dict):
+            return NotImplemented
+        rv = RevertableDict(self)
+        rv.update(other)
+        return rv
 
-            return rv
+    def __ror__(self, other):
+        if not isinstance(other, dict):
+            return NotImplemented
+        rv = RevertableDict(other)
+        rv.update(self)
+        return rv
 
-        def values(self):
-            rv = dict.values(self)
-
-            if (sys._getframe(1).f_code.co_flags & FUTURE_FLAGS) != FUTURE_FLAGS:
-                rv = RevertableList(rv)
-
-            return rv
-
-        def items(self):
-            rv = dict.items(self)
-
-            if (sys._getframe(1).f_code.co_flags & FUTURE_FLAGS) != FUTURE_FLAGS:
-                rv = RevertableList(rv)
-
-            return rv
-
-    else:
-        itervalues = dict.values
-        iterkeys = dict.keys
-        iteritems = dict.items
-
-        def has_key(self, key):
-            return (key in self)
-
-        # https://peps.python.org/pep-0584 methods
-        def __or__(self, other):
-            if not isinstance(other, dict):
-                return NotImplemented
-            rv = RevertableDict(self)
-            rv.update(other)
-            return rv
-
-        def __ror__(self, other):
-            if not isinstance(other, dict):
-                return NotImplemented
-            rv = RevertableDict(other)
-            rv.update(self)
-            return rv
-
-        def __ior__(self, other):
-            self.update(other)
-            return self
+    def __ior__(self, other):
+        self.update(other)
+        return self
 
     def copy(self):
         rv = RevertableDict()
@@ -429,7 +388,7 @@ class RevertableSet(set):
 
     def wrapper(method): # type: ignore
 
-        @_method_wrapper(method)
+        @functools.wraps(method)
         def newmethod(*args, **kwargs):
             rv = method(*args, **kwargs) # type: ignore
             if isinstance(rv, set):
@@ -548,7 +507,7 @@ class MultiRevertable(object):
 
 def checkpointing(method):
 
-    @_method_wrapper(method)
+    @functools.wraps(method)
     def do_checkpoint(self, *args, **kwargs):
 
         renpy.game.context().force_checkpoint = True
@@ -560,7 +519,7 @@ def checkpointing(method):
 
 def list_wrapper(method):
 
-    @_method_wrapper(method)
+    @functools.wraps(method)
     def newmethod(*args, **kwargs):
         l = method(*args, **kwargs)
         return RevertableList(l)
@@ -592,10 +551,7 @@ class RollbackRandom(random.Random):
 
     setstate = checkpointing(mutator(random.Random.setstate))
 
-    if PY2:
-        jumpahead = checkpointing(mutator(random.Random.jumpahead)) # type: ignore
-    else:
-        choices = list_wrapper(random.Random.choices)
+    choices = list_wrapper(random.Random.choices)
     sample = list_wrapper(random.Random.sample)
 
     getrandbits = checkpointing(mutator(random.Random.getrandbits))
@@ -623,8 +579,7 @@ class DetRandom(random.Random):
         super(DetRandom, self).__init__()
         self.stack = [ ]
 
-    if not PY2:
-        choices = list_wrapper(random.Random.choices)
+    choices = list_wrapper(random.Random.choices)
     sample = list_wrapper(random.Random.sample)
 
     def random(self):

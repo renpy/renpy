@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -173,7 +173,7 @@ init -1800:
         adjust_spacing True
         emoji_font "TwemojiCOLRv0.ttf"
         prefer_emoji True
-        shaper ("harfbuzz" if (not PY2) else "freetype")
+        shaper "harfbuzz"
 
         # Window properties
         background None
@@ -390,6 +390,22 @@ init -1800:
     # Labels
     style pref_label:
         alt "" # We expect the labelled buttons/bars to read themselves out.
+
+    # Sync
+
+    if renpy.loadable("gui/overlay/confirm.png"):
+        style sync_overlay is empty:
+            background "gui/overlay/confirm.png"
+    else:
+        style sync_overlay is empty:
+            background "#000a"
+
+    style sync_frame is frame
+    style sync_text is gui_text
+    style sync_button is button
+    style sync_button_text is button_text
+    style sync_label is label
+    style sync_label_text is label_text
 
 
 ################################################################################

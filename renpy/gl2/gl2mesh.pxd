@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -66,4 +66,4 @@ cdef class Mesh:
 
     # The triangle data, where each triangle consists of the index of three
     # points. This is 3 * allocated_triangles in size.
-    cdef unsigned short *triangle
+    cdef unsigned int *triangle

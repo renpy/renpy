@@ -62,7 +62,7 @@ translate japanese demo_character_66d08d98:
 # game/indepth_character.rpy:39
 translate japanese demo_character_7e0d75aa:
 
-    # e "Properties beginning with window apply to the textbox, those with what apply to the the dialogue, and those with who to the name of Character speaking."
+    # e "Properties beginning with window apply to the textbox, those with what apply to the dialogue, and those with who to the name of Character speaking."
     e "windowで始まるプロパティーはテキストボックスに適用され、whatで始まるものは台詞に適用され、whoで始まるものは発言しているキャラクターの名前に適用されます。"
 
 # game/indepth_character.rpy:41
@@ -208,4 +208,3 @@ translate japanese demo_character_0c8f314a:
 
     # "I think I do."
     "そう思います。"
-

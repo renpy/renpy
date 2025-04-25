@@ -73,6 +73,24 @@ the changes did not affect speech bubble placement.
 
 It's possible to apply transforms to the speech bubble by editing the :ref:`bubble-screen`.
 
+.. _bubble-ctc:
+
+If you'd like a CTC indicator to be part of the bubble screen, consider giving the
+`ctc_position` argument to Character the value of "screen-variable". You may also need
+to add::
+
+    showif ctc:
+        add ctc
+
+to the end of the bubble screen, if this is not present. You'd then define the character as:
+
+    define e = Character(
+        None,
+        image="eileen",
+        kind=bubble,
+        ctc_position="screen-variable",
+        ctc=Transform("ctc_image.png", align=(0.5, 1.0))
+
 
 Configuration Variables
 -----------------------
@@ -87,16 +105,14 @@ The ``bubble`` namespace contains the following variables:
     The database file, stored in the game directory, that contains the
     speech bubble information.
 
+.. var:: bubble.clear_retain_statements = [ "call screen", "menu",  "say", "say-centered", "say-nvl", "scene", ]
+
+    This is a list of statements that will automatically cause retained bubbles to be cleared.
 
 .. var:: bubble.cols = 24
 
     The granularity of the grid that's used to position and size speech bubbles,
     in the horizontal direction.
-
-.. var:: bubble.rows = 24
-
-    The granularity of the grid that's used to position and size speech bubbles,
-    in the vertical direction.
 
 .. var:: bubble.default_area = (15, 1, 8, 5)
 
@@ -104,6 +120,29 @@ The ``bubble`` namespace contains the following variables:
     area is specified. This is a tuple of the form (x, y, w, h),
     where each value is a number of grid cells.
 
+.. var:: bubble.expand_area = { ... }
+
+    This is a map from the name of a set of properties to a (left, top, right, bottom)
+    tuple. If found in this set, the area of the speech bubble is expanded by the
+    given number of pixels.
+
+    This makes the speech bubble bigger than the area the creator dragged out.
+    The intent is that this can be used to drag out the body of the speech
+    bubble without concern for the tail, and also for the text itself to stay
+    put when the set of properties is changed and the tail moves.
+
+    By default, this is::
+
+        define bubble.expand_area = {
+            "bottom_left" : (0, 0, 0, 22),
+            "bottom_right" : (0, 0, 0, 22),
+            "top_left" : (0, 22, 0, 0),
+            "top_right" : (0, 22, 0, 0),
+        }
+
+.. var:: bubble.layer = "screens"
+
+    The layer that non-retained bubbles are placed on.
 
 .. var:: bubble.properties = { ... }
 
@@ -166,29 +205,14 @@ The ``bubble`` namespace contains the following variables:
     bubble.properties_order, and can be used to customize the list of bubble
     properties by character.
 
-.. var:: bubble.expand_area = { ... }
+.. var:: bubble.retain_layer = "screens"
 
-    This is a map from the name of a set of properties to a (left, top, right, bottom)
-    tuple. If found in this set, the area of the speech bubble is expanded by the
-    given number of pixels.
+    The layer that retained bubbles are placed on.
 
-    This makes the speech bubble bigger than the area the creator dragged out.
-    The intent is that this can be used to drag out the body of the speech
-    bubble without concern for the tail, and also for the text itself to stay
-    put when the set of properties is changed and the tail moves.
+.. var:: bubble.rows = 24
 
-    By default, this is::
-
-        define bubble.expand_area = {
-            "bottom_left" : (0, 0, 0, 22),
-            "bottom_right" : (0, 0, 0, 22),
-            "top_left" : (0, 22, 0, 0),
-            "top_right" : (0, 22, 0, 0),
-        }
-
-.. var:: bubble.clear_retain_statements = [ "call screen", "menu",  "say", "say-centered", "say-nvl", "scene", ]
-
-    This is a list of statements that will automatically cause retained bubbles to be cleared.
+    The granularity of the grid that's used to position and size speech bubbles,
+    in the vertical direction.
 
 
 .. _bubble-screen:

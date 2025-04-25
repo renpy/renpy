@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,18 +34,11 @@ except ImportError:
 
 import renpy
 
-if PY2:
-    from urllib import urlencode as _urlencode # type: ignore
-else:
-    from urllib.parse import urlencode as _urlencode
+from urllib.parse import urlencode as _urlencode
 
 try:
-    if PY2:
-        import urllib
-        proxies = urllib.getproxies() # type: ignore
-    else:
-        import urllib.request
-        proxies = urllib.request.getproxies()
+    import urllib.request
+    proxies = urllib.request.getproxies()
 except Exception as e:
     proxies = {}
 

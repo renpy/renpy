@@ -139,7 +139,7 @@ to be removed.)
 Ren'Py then takes the list of shader parts, and retrieves lists of variables,
 functions, vertex shader parts, and fragment shader parts. These are, in turn,
 used to generate the source code for shaders, with the parts of the vertex and
-fragement shaders being included in low-number to high-number priority order.
+fragment shaders being included in low-number to high-number priority order.
 
 This means that any variable created by one of the shaders will be accessible
 by every other fragment from any other shader in the list of shader parts.
@@ -172,8 +172,10 @@ Ren'Py supports only the following variable types:
 * vec2 (a tuple of 2 floats)
 * vec3 (a tuple of 3 floats)
 * vec4 (a tuple of 4 floats)
+* mat2 (a :class:`Matrix`)
+* mat3 (a :class:`Matrix`)
 * mat4 (a :class:`Matrix`)
-* sampler2D (supplied by Ren'Py)
+* sampler2D (a Displayabe, including strings that give Displayables, or a Render)
 
 Uniform variables should begin with u\_, attributes with a\_, and varying
 variables with v\_. Names starting with u_renpy\_, a_renpy, and v_renpy
@@ -265,7 +267,7 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
 
     If not None, this can either be a 2 or 4-component tuple. If mesh is
     True and this is given, this applies padding to the size of the textures
-    applied to the the textures used by the mesh. A 2-component tuple applies
+    applied to the textures used by the mesh. A 2-component tuple applies
     padding to the right and bottom, while a 4-component tuple applies
     padding to the left, top, right, and bottom.
 
@@ -334,13 +336,15 @@ when what is drawn is not fully opaque.
 
 .. _model-uniforms:
 
-Uniforms and Attributes
------------------------
+Float, Sample, and Vector Uniforms
+-----------------------------------
 
-The following uniforms are made available to all Models.
+The following uniforms are made available to all models.
 
 ``vec2 u_model_size``
-    The width and height of the model.
+    The width and height of the model, as supplied to Ren'Py. This
+    is only available for 2D models that supply a size, and is (0, 0)
+    for 3d models.
 
 .. _u-lod-bias:
 
@@ -349,9 +353,6 @@ The following uniforms are made available to all Models.
     set in a Transform. The default value, taken from :var:`config.gl_lod_bias`
     and defaulting to -0.5, biases Ren'Py to always pick the next bigger
     level and scale it down.
-
-``mat4 u_transform``
-    The transform used to project virtual pixels to the OpenGL viewport.
 
 ``float u_time``
     The time of the frame. The epoch is undefined, so it's best to treat
@@ -392,7 +393,59 @@ The following uniforms are made available to all Models.
     image file. After a render to texture, it's the number of drawable pixels
     the rendered texture covered.
 
-The following attributes are available to all models:
+In addition, if a sampler uniform is available, then suffixing it with ``__res`` will give a vec2
+containing the underlying texture size. For example, ``u_markup__res`` will give the size of the
+``u_markup`` texture.
+
+Matrix Uniforms
+----------------
+
+The following uniforms are made available to all models. This assumes that only one transform with the
+:tpref:`perspective` property is used to render a model. When multiple transforms with the :tpref:`perspective`
+are used, the innermost transformation with perspective set defines the world and view spaces.
+
+``mat4 u_projection``
+    This is a matrix that transforms coordinates from view space to the OpenGL viewport.
+    This is sent by Ren'Py, and is updated by transforms with the :tpref:`perspective` property
+    to encapsulate the effects of that property.
+
+``mat4 u_view``
+    This is a matrix that transforms vertex coordinates from the world space to the view space. This
+    defaults to the identity matrix, but can be set by transforms with the :tpref:`perspective` property,
+    in which case the effects of positioning, rotation, and scaling are encapsulated in this matrix.
+
+``mat4 u_model``
+    This is a matrix that transforms vertex coordinates from the model space to the world space.
+
+``mat4 u_projectionview``
+    This matrix contains ``u_projection * u_view``. It exists to minimize the number of uniforms that need
+    to be sent to the GPU, and the amount of work that needs to be done in the shader.
+
+``mat4 u_transform``
+    This is the same as ``u_projectionview * u_model``. It's the matrix that transforms vertex coordinates
+    directly to the OpenGL viewport. It exists to minimize the number of uniforms that need to be sent to the GPU,
+    the amount of work that needs to be done in the shader, and for compatibility with older versions of Ren'Py.
+
+In addition to these methods, Ren'Py can synthesize matrices with certain functions applied when suffixes are
+appended to the matrix
+
+``__inverse``
+    When appended to a matrix, this returns the inverse of the matrix. For example, ``u_projection__inverse``
+    is the inverse of the projection matrix.
+
+``__transpose``
+    When appended to a matrix, this returns the transpose of the matrix. For example, ``u_view__transpose``
+    is the transpose of the view matrix.
+
+``__inversetranspose``
+    When appended to a matrix, this returns the inverse of the transpose of the matrix. For example,
+    ``u_model__inversetranspose`` is the inverse of the transpose of the model matrix. This is useful for
+    transforming normals.
+
+Attributes
+----------
+
+The following attribute is available to all models:
 
 ``vec4 a_position``
     The position of the vertex being rendered. This is in virtual pixels, relative to the upper
@@ -403,6 +456,19 @@ If textures are available, so is the following attribute:
 ``vec2 a_tex_coord``
     The coordinate that this vertex projects to inside the textures.
 
+If normals are available, so is the following attribute:
+
+``vec3 a_normal``
+    The normal of the vertex being rendered.
+
+If tangents are available, so are the following attributes:
+
+``vec3 a_tangent``
+    The tangent of the vertex being rendered.
+
+``vec3 a_bitangent``
+    The bitangent of the vertex being rendered.
+
 .. _gl-properties:
 
 GL Properties
@@ -412,7 +478,7 @@ GL properties change the global state of OpenGL, or the Model-Based renderer.
 These properties can be used with a Transform, or with the :func:`Render.add_property`
 function.
 
-.. _gl-blend_func:
+.. _gl-blend-func:
 
 ``gl_blend_func``
     If present, this is expected to be a six-component tuple, which is
@@ -494,11 +560,20 @@ can be supplied the property method.
     and `gl_texture_wrap_tex3` the fourth. While only these four are avalable through Transforms,
     it's possibe to supply "texture_wrap_tex4" or "texture_wrap_myuniform" to Render.add_property.
 
+GLTFModel Displayable
+-----------------------
+
+The GLTFModel displayble allow you to load 3D models in the GLTF file format. This is what you should use
+if you have a 3D model you created in another program and want to display in Ren'Py.
+
+.. include:: inc/assimp
+
 Model Displayable
 -----------------
 
 The Model displayable acts as a factory to created models for use with the
-model-based renderer.
+model-based renderer. This is an older API you may wish to use when you want to create
+models in Python.
 
 .. include:: inc/model_displayable
 

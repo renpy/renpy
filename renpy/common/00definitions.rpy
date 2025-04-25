@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,8 +27,7 @@
 init -1400:
 
     transform reset:
-        alpha 1.0 rotate None zoom 1.0 xzoom 1.0 yzoom 1.0 align (0, 0) alignaround (0, 0) subpixel False
-        xsize None ysize None fit None crop None
+        _reset True
 
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
@@ -111,7 +110,7 @@ init -1400 python:
 
     # This defines a family of move transitions, using the old-style methods.
     def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
-        """
+        r"""
         :doc: transition_family
 
         This defines a family of :class:`move transitions <MoveTransition>`,

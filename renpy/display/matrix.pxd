@@ -30,6 +30,9 @@ cdef class Matrix:
     # The inverse of this Matrix.
     cdef Matrix inverse_cache
 
+    # The transpose of this Matrix.
+    cdef Matrix transpose_cache
+
     cdef inline void transform4(Matrix self, float *ox, float *oy, float *oz, float *ow, float x, float y, float z, float w):
         ox[0] = x * self.xdx + y * self.xdy + z * self.xdz + w * self.xdw
         oy[0] = x * self.ydx + y * self.ydy + z * self.ydz + w * self.ydw
@@ -48,6 +51,39 @@ cdef class Matrix:
     cpdef bint is_unit_aligned(Matrix self)
 
     cpdef Matrix inverse(Matrix self)
+
+    cpdef Matrix transpose(Matrix self)
+
+    cdef inline void ctake(Matrix self, Matrix other):
+        """
+        Take the values from another matrix, and put them into this one.
+        """
+
+        self.xdx = other.xdx
+        self.xdy = other.xdy
+        self.xdz = other.xdz
+        self.xdw = other.xdw
+
+        self.ydx = other.ydx
+        self.ydy = other.ydy
+        self.ydz = other.ydz
+        self.ydw = other.ydw
+
+        self.zdx = other.zdx
+        self.zdy = other.zdy
+        self.zdz = other.zdz
+        self.zdw = other.zdw
+
+        self.wdx = other.wdx
+        self.wdy = other.wdy
+        self.wdz = other.wdz
+        self.wdw = other.wdw
+
+    cdef Matrix inplace_multiply(Matrix self, Matrix other)
+    cdef Matrix inplace_offset(Matrix self, float xo, float yo)
+    cdef Matrix inplace_reverse_offset(Matrix self, float xo, float yo)
+    cdef Matrix inplace_inverse(Matrix self)
+    cdef Matrix inplace_transpose(Matrix self)
 
     @staticmethod
     cdef bint is_drawable_aligned(Matrix a, Matrix b)

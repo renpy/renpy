@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -244,7 +244,7 @@ init python:
                     screenshot = _file_picker_process_screenshot(screenshot)
                     save_info[fn] = (extra_info, screenshot, mtime)
 
-                    if not fn.startswith("auto-") and mtime > newest_mtime:
+                    if not fn.startswith("auto-") and (newest_mtime is None or mtime > newest_mtime):
                         newest = fn
                         newest_mtime = mtime
 

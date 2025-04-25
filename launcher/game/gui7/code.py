@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -172,7 +172,7 @@ class CodeGenerator(object):
 
         for l in self.lines:
 
-            m = re.match('^(\s*)define (.*?) =', l)
+            m = re.match(r'^(\s*)define (.*?) =', l)
 
             if m:
                 indent = m.group(1)

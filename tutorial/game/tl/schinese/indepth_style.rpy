@@ -110,7 +110,7 @@ translate schinese style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate schinese style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "最后是样式语句，它创建或更改命名样式。通过给Text指定样式参数，我们告诉它使用blue_text样式。"
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate schinese style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate schinese style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "默认情况下，父样式具有相同的名称，只是删除了第一个下划线之前的前缀。如果样式名中没有下划线，则使用“default”。"
 
 # game/indepth_style.rpy:184

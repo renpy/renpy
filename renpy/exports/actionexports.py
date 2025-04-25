@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -59,7 +59,7 @@ def display_notify(message):
     renpy.exports.restart_interaction()
 
 
-def confirm(message):
+def confirm(message, **kwargs):
     """
     :doc: other
 
@@ -71,8 +71,10 @@ def confirm(message):
     `message`
         The message that will be displayed.
 
+    Additional keyword arguments not beginning with _ are passed to the screen.
+
     See :func:`Confirm` for a similar Action.
     """
     Return = renpy.store.Return
-    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False))
+    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False), **kwargs)
     return renpy.ui.interact()

@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,20 +27,14 @@ cdef class Program:
     cdef public object name
 
     # The number of the OpenGL program created.
-    cdef GLuint program
+    cdef public GLuint program
 
     # The text of the vertex and fragment shaders.
-    cdef object vertex
-    cdef object fragment
+    cdef public object vertex
+    cdef public object fragment
 
-    cdef public dict uniforms
-
+    # Objects used to set attributes and uniforms.
     cdef public list attributes
+    cdef public list uniform_setters
 
-    cdef public int samplers
-
-    cdef public int nearest
-
-    cdef dict properties
-
-    cdef GLuint load_shader(self, GLenum shader_type, source) except? 0
+    cdef GLuint load_shader(self, GLenum shader_type, source) except 0

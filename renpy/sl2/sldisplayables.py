@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -190,6 +190,7 @@ Keyword("mask")
 Keyword("caret_blink")
 Keyword("multiline")
 Keyword("action")
+Keyword("arrowkeys")
 Style("caret")
 add(text_properties)
 
@@ -271,6 +272,7 @@ Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("released")
+Keyword("thumb_align")
 add(bar_properties)
 
 
@@ -305,6 +307,7 @@ Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("released")
+Keyword("thumb_align")
 add(bar_properties)
 
 # Omit autobar. (behavior)
@@ -424,6 +427,7 @@ Keyword("selected_insensitive")
 Keyword("auto")
 Keyword("alpha")
 Keyword("cache")
+add(box_properties)
 
 DisplayableParser("hotspot", renpy.ui._hotspot, "hotspot", 1, hotspot=True)
 Positional("spot")
@@ -477,7 +481,8 @@ for name in [ "add", "image" ]:
     Keyword("id")
     Keyword("alt")
     for i in renpy.atl.PROPERTIES:
-        Style(i)
+        if not i.startswith("_"):
+            Style(i)
 
 DisplayableParser("drag", renpy.display.dragdrop.Drag, "drag", 1, replaces=True)
 Keyword("activated")

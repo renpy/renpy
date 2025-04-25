@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -47,10 +47,7 @@ import renpy
 class StoreDeleted(object):
 
     def __reduce__(self):
-        if PY2:
-            return b"deleted"
-        else:
-            return "deleted"
+        return "deleted"
 
 
 deleted = StoreDeleted()
@@ -150,9 +147,13 @@ def reached(obj, reachable, wait):
     except Exception:
         pass
 
+    # Strings and bytes are not containers.
+    if isinstance(obj, (str, bytes)):
+        return
+
     # Below this, we only consider containers with a defined size.
     try:
-        if (not len(obj)) or isinstance(obj, basestring):
+        if not len(obj):
             return
     except Exception:
         return
@@ -539,7 +540,7 @@ class RollbackLog(renpy.object.Object):
                 ignore = False
             elif self.current.retain_after_load:
                 ignore = False
-            elif isinstance(context.current, basestring) and not isinstance(self.current.context.current, basestring):
+            elif isinstance(context.current, str) and not isinstance(self.current.context.current, str):
                 # This will start a new rollback on reaching a label, if the current rollback isn't at a label.
                 ignore = False
         else:
@@ -1104,7 +1105,6 @@ class RollbackLog(renpy.object.Object):
         renpy.game.log = self
 
         renpy.python.clean_stores()
-        renpy.translation.init_translation()
 
         store_dicts = renpy.python.store_dicts
 

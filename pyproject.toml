@@ -1,9 +1,9 @@
 [tool.pyright]
 
-include = [ 
-    "*.py", 
-    "renpy/", 
-    "module/" 
+include = [
+    "*.py",
+    "renpy/",
+    "src/"
 ]
 
 exclude = [
@@ -14,6 +14,31 @@ ignore = [
     "renpycoverage.py"
 ]
 
+reportOptionalSubscript = false
+reportOptionalMemberAccess = false
+reportOptionalCall = false
+reportOptionalIterable = false
+reportOptionalContextManager = false
+reportOptionalOperand = false
+reportMissingModuleSource = false
+
+
+[tool.cyright]
+include = [
+    "*.py",
+    "renpy/",
+    "src/"
+]
+
+exclude = [
+    "module/build/",
+]
+
+ignore = [
+    "renpycoverage.py"
+]
+
+reportGeneralTypeIssues = false
 reportOptionalSubscript = false
 reportOptionalMemberAccess = false
 reportOptionalCall = false

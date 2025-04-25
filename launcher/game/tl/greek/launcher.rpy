@@ -370,7 +370,7 @@
     new "{b}Συνιστάται.{/b} Ένας επεξεργαστής κειμένου σε έκδοση beta, με εύκολο περιβάλλον εργασίας και χαραχτηριστικά που σας βοηθούν, όπως π.χ. ορθογραφικό έλεγχο. Ο Editra προς το παρόν δεν υποστηρίζει IME για είσοδο κειμένου σε Κινέζικα, Ιαπωνέζικα και Κορεάτικα. Σε Linux ο Editra απαιτεί το wxPython."
 
     # editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Αυτό πιθανώς να συνέβη, διότι το wxPython δεν έχει εγκατασταθεί σε αυτό το σύστημα."
 
     # editor.rpy:169
@@ -386,7 +386,7 @@
     new "1.8 MB απαιτείται να κατέβει."
 
     # editor.rpy:182
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Αυτό πιθανώς να συνέβη, διότι η Java δεν έχει εγκατασταθεί σε αυτό το σύστημα."
 
     # editor.rpy:191
@@ -398,7 +398,7 @@
     new "Εμποδίζει τη Ren'Py να ανοίξει επεξεργαστή κειμένου."
 
     # editor.rpy:359
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Μια προγραμματιστική εξαίρεση συνέβει κατά την εκκίνηση του επεξεργαστή κειμένου:\n[exception!q] "
 
     # editor.rpy:457
@@ -624,7 +624,7 @@
     new "ΣΦΑΛΜΑ"
 
     # interface.rpy:356
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "Ενόσω [what!qt], συνέβη ένα σφάλμα:"
 
     # interface.rpy:356
@@ -1179,7 +1179,7 @@
     new "Η απόλυτη νεώτερη έκδοση της Ren'Py. Μπορεί να έχει τα πιο νέα χαρακτηριστικά, αλλά να μη μπορέι καν να φορτώσει."
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Ένα σφάλμα συνέβη:"
 
     # updater.rpy:154

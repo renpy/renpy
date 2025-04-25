@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,6 +25,15 @@ define gui.asian = False
 # This is set in new_project before new_template_project is called,
 # and provides the full path to the template project.
 default gui_template_path = None
+
+define LIBS_TXT = _("""\
+The game/libs/ directory is meant for third-party libraries that ask to be
+put in game/libs.
+
+When this file (game/libs/libs.txt) is present, Ren'Py will load all files
+in libs before any other file in game/, and will not consider directory names
+when loading these files.
+""")
 
 init -1 python:
 

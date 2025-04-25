@@ -95,8 +95,7 @@ Persistent Functions
     `progress`
         If true, also resets progress data that Ren'Py keeps.
 
-    Note that this will delete all persistent data, and will not re-apply
-    defaults until Ren'Py restarts.
+    Note that this will re-apply defaults.
 
 .. include:: inc/persistent
 

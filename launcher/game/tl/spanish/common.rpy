@@ -884,7 +884,7 @@ translate spanish strings:
 
     # renpy/common/00sync.rpy:593
     old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
-    new "Puede usar esta ID para descargar su guardado en otro dispositivo.\nEsta sincronización caducará en una hora.\RenPy Sync está para {a=https://www.renpy.org/sponsors.html}los patrocinadores de Ren'Py{/a}."
+    new "Puede usar esta ID para descargar su guardado en otro dispositivo.\nEsta sincronización caducará en una hora.\nRenPy Sync está para {a=https://www.renpy.org/sponsors.html}los patrocinadores de Ren'Py{/a}."
 
     # renpy/common/00sync.rpy:619
     old "Sync Error"
@@ -943,7 +943,7 @@ translate spanish strings:
     new "Descarga de los datos del juego."
 
     # renpy/common/00updater.rpy:2078
-    old "An error occured when trying to download game data:"
+    old "An error occurred when trying to download game data:"
     new "Se ha producido un error al intentar descargar los datos del juego:"
 
     # renpy/common/00updater.rpy:2083

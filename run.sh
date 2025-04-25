@@ -2,13 +2,21 @@
 # This builds out of date modules using the default C compiler, and then
 # runs them.
 
+set -e
+
 export RENPY_CYTHON=cython
 
-try () {
-    "$@" || exit -1
-}
-
+ROOT="$(dirname $(realpath $0))"
 QUIET=${RENPY_QUIET- --quiet}
+
+renpy_branch=$(git branch --show-current)
+pushd "$ROOT/pygame_sdl2" >/dev/null
+pygame_sdl2_branch=$(git branch --show-current)
+popd >/dev/null
+
+if [ "$renpy_branch" != "$pygame_sdl2_branch" ]; then
+    echo "warning: Ren'Py branch: $renpy_branch, pygame_sdl2 branch: $pygame_sdl2_branch"
+fi
 
 if [ -n "$RENPY_COVERAGE" ]; then
     variant="renpy-coverage"
@@ -25,20 +33,14 @@ if [ -z "$VIRTUAL_ENV" ] ; then
     exit 1
 fi
 
-PY_VERSION=$(python -c 'import sys; print(sys.version_info.major)')
-
-if [ $PY_VERSION != "2" ]; then
-    BUILD_J="-j $(nproc)"
-    ADAPT_TO_SETUPTOOLS="--old-and-unmanageable"
-fi
-
-ROOT="$(dirname $(realpath $0))"
+BUILD_J="-j $(nproc)"
+ADAPT_TO_SETUPTOOLS="--old-and-unmanageable"
 
 setup () {
     pushd $1 >/dev/null
 
-    try python setup.py $QUIET \
-        build -b build/lib.$variant -t build/tmp.$variant $BUILD_J \
+    python setup.py $QUIET \
+        build -b tmp/build/lib.$variant -t tmp/build/tmp.$variant $BUILD_J \
         $RENPY_BUILD_ARGS install $ADAPT_TO_SETUPTOOLS
 
     popd >/dev/null
@@ -48,13 +50,14 @@ if [ -e "$ROOT/pygame_sdl2" ]; then
     setup "$ROOT/pygame_sdl2/"
 fi
 
+
 if [ -e "$ROOT/cubism" ]; then
     export CUBISM="$ROOT/cubism"
     export CUBISM_PLATFORM=${CUBISM_PLATFORM:-linux/x86_64}
     export LD_LIBRARY_PATH="$CUBISM/Core/dll/$CUBISM_PLATFORM"
 fi
 
-setup "$ROOT/module/"
+setup "$ROOT/"
 
 python "$ROOT/distribute.py" --link-directories
 

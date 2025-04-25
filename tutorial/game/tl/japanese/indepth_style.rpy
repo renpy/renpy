@@ -110,7 +110,7 @@ translate japanese style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate japanese style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "最後はstyleステートメントで、これは名前つきのスタイルを作成または変更します。Textにstyle引数を与えて、blue_textスタイルを使用するよう指示します。"
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate japanese style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate japanese style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "デフォルトでは、スタイルの親は最初の接頭辞が除去された同じ名前であり、スタイル名にアンダースコアがなければ'default'が使用されます。"
 
 # game/indepth_style.rpy:184

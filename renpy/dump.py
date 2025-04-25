@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -128,7 +128,7 @@ def dump(error):
         filename = n.filename
         line = n.linenumber
 
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             continue
 
         if not name_filter(name, filename):
@@ -249,12 +249,8 @@ def dump(error):
     if filename != "-":
         new = filename + ".new"
 
-        if PY2:
-            with open(new, "wb") as f:
-                json.dump(result, f) # type: ignore
-        else:
-            with open(new, "w") as f:
-                json.dump(result, f)
+        with open(new, "w") as f:
+            json.dump(result, f)
 
         if os.path.exists(filename):
             os.unlink(filename)

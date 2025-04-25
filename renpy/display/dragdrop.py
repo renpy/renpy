@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -94,6 +94,9 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
     has been computed, the layout properties are ignored in favor of the
     position stored inside the Drag.
 
+    Transforms should not be applied to a Drag directly. Instead, apply
+    the transform to the child of the Drag.
+
     `d`
         If present, the child of this Drag. Drags use the child style
         in preference to this, if it's not None.
@@ -118,7 +121,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
     `activated`
         A callback (or list of callbacks) that is called when the mouse
         is pressed down on the drag. It is called with one argument, a
-        a list of Drags that are being dragged. The return value of this
+        list of Drags that are being dragged. The return value of this
         callback is ignored.
 
     `dragging`
@@ -736,14 +739,19 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
     def event(self, ev, x, y, st):
 
+        grabbed = (renpy.display.focus.get_grab() is self)
+
+        if not grabbed:
+            rv = self.child.event(ev, x, y, st)
+            if rv is not None:
+                return rv
+
         if not self.is_focused():
-            return self.child.event(ev, x, y, st)
+            return None
 
         # Mouse, in parent-relative coordinates.
         par_x = int(self.last_x + x)
         par_y = int(self.last_y + y)
-
-        grabbed = (renpy.display.focus.get_grab() is self)
 
         if grabbed and self.snapping:
             # Stop the snap, since it was picked up

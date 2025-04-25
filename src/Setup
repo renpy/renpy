@@ -1,0 +1,43 @@
+_renpy ../tmp/gen/_renpy.c IMG_savepng.c core.c
+_renpybidi ../tmp/gen/_renpybidi.c renpybidicore.c
+renpy.audio.renpysound ../tmp/gen/renpy.audio.renpysound.c renpysound_core.c ffmedia.c
+renpy.audio.filter ../tmp/gen/renpy.audio.filter.c
+renpy.astsupport ../tmp/gen/renpy.astsupport.c
+renpy.cslots ../tmp/gen/renpy.cslots.c
+renpy.lexersupport ../tmp/gen/renpy.lexersupport.c
+renpy.pydict ../tmp/gen/renpy.pydict.c
+renpy.style ../tmp/gen/renpy.style.c
+renpy.encryption ../tmp/gen/renpy.encryption.c
+renpy.styledata.styleclass ../tmp/gen/renpy.styledata.styleclass.c
+renpy.styledata.stylesets ../tmp/gen/renpy.styledata.stylesets.c
+renpy.styledata.style_selected_hover_functions ../tmp/gen/renpy.styledata.style_selected_hover_functions.c
+renpy.styledata.style_selected_idle_functions ../tmp/gen/renpy.styledata.style_selected_idle_functions.c
+renpy.styledata.style_selected_insensitive_functions ../tmp/gen/renpy.styledata.style_selected_insensitive_functions.c
+renpy.styledata.style_selected_functions ../tmp/gen/renpy.styledata.style_selected_functions.c
+renpy.styledata.style_hover_functions ../tmp/gen/renpy.styledata.style_hover_functions.c
+renpy.styledata.style_idle_functions ../tmp/gen/renpy.styledata.style_idle_functions.c
+renpy.styledata.style_insensitive_functions ../tmp/gen/renpy.styledata.style_insensitive_functions.c
+renpy.styledata.style_functions ../tmp/gen/renpy.styledata.style_functions.c
+renpy.styledata.style_activate_functions ../tmp/gen/renpy.styledata.style_activate_functions.c
+renpy.styledata.style_selected_activate_functions ../tmp/gen/renpy.styledata.style_selected_activate_functions.c
+renpy.display.matrix ../tmp/gen/renpy.display.matrix.c
+renpy.display.render ../tmp/gen/renpy.display.render.c
+renpy.display.accelerator ../tmp/gen/renpy.display.accelerator.c
+renpy.display.quaternion ../tmp/gen/renpy.display.quaternion.c
+renpy.uguu.gl ../tmp/gen/renpy.uguu.gl.c
+renpy.uguu.uguu ../tmp/gen/renpy.uguu.uguu.c
+renpy.gl2.assimp ../tmp/gen/renpy.gl2.assimp.cc assimpio.cc
+renpy.gl2.gl2mesh ../tmp/gen/renpy.gl2.gl2mesh.c
+renpy.gl2.gl2mesh2 ../tmp/gen/renpy.gl2.gl2mesh2.c
+renpy.gl2.gl2mesh3 ../tmp/gen/renpy.gl2.gl2mesh3.c
+renpy.gl2.gl2polygon ../tmp/gen/renpy.gl2.gl2polygon.c
+renpy.gl2.gl2model ../tmp/gen/renpy.gl2.gl2model.c
+renpy.gl2.gl2draw ../tmp/gen/renpy.gl2.gl2draw.c
+renpy.gl2.gl2texture ../tmp/gen/renpy.gl2.gl2texture.c
+renpy.gl2.gl2uniform ../tmp/gen/renpy.gl2.gl2uniform.c
+renpy.gl2.gl2shader ../tmp/gen/renpy.gl2.gl2shader.c
+renpy.gl2.live2dmodel ../tmp/gen/renpy.gl2.live2dmodel.c
+renpy.text.textsupport ../tmp/gen/renpy.text.textsupport.c
+renpy.text.texwrap ../tmp/gen/renpy.text.texwrap.c
+renpy.text.ftfont ../tmp/gen/renpy.text.ftfont.c ftsupport.c ttgsubtable.c
+renpy.text.hbfont ../tmp/gen/renpy.text.hbfont.c

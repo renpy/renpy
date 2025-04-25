@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -58,104 +58,64 @@ Right now, it does the following things:
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 
-import future.standard_library
-import future.utils
 import builtins
 
 import io
 import sys
 import operator
 
-python_open = open
-
-################################################################################
-# Alias the Python 3 standard library.
-
-future.standard_library.install_aliases()
 
 ################################################################################
 # Determine if this is Python2.
 
-PY2 = future.utils.PY2
+PY2 = False
 
 ################################################################################
 # Make open mimic Python 3.
 
-if PY2:
-    open = io.open
-    import re
-    re.Pattern = re._pattern_type # type:ignore
-else:
-    open = builtins.open
-
-
-def compat_open(*args, **kwargs):
-    if (sys._getframe(1).f_code.co_flags & 0xa000) == 0xa000:
-        return open(*args, **kwargs)
-    else:
-        return python_open(*args, **kwargs)
+python_open = open
+open = builtins.open
+compat_open = open
 
 
 ################################################################################
-# Make strict use surrogateescape error handling on PY2.
+# Codecs.
 
 import codecs
 
 strict_error = codecs.lookup_error("strict")
 codecs.register_error("python_strict", strict_error)
 
-if PY2:
-    surrogateescape_error = codecs.lookup_error("surrogateescape")
-    codecs.register_error("strict", surrogateescape_error)
-
-import renpy
-renpy.update_path()
 
 ################################################################################
 # String (text and binary) types and functions.
 
-basestring = future.utils.string_types
+basestring = (str, )
 pystr = str
-unicode = future.utils.text_type
+unicode = str
+str = builtins.str
 
-# This tries to help pylance get the types right.
-str = builtins.str; globals()["str"] = future.utils.text_type
+def bord(s): # type: (bytes) -> int
+    return s[0]
 
+def bchr(i): # type: (int) -> bytes
+    return bytes([i])
 
-bord = future.utils.bord
+def tobytes(s):
+    if isinstance(s, bytes):
+        return s
+    else:
+        if isinstance(s, str):
+            return s.encode('latin-1')
+        else:
+            return bytes(s)
 
-if PY2:
-    bchr = chr # type: ignore
-else:
-    def bchr(i): # type: (int) -> bytes
-        return bytes([i])
-tobytes = future.utils.tobytes
-
-from future.builtins import chr
-
-################################################################################
-# Dictionary views.
-
-# The try block solves a chicken-and-egg problem when dictviews is not
-# compiled yet, as part of the Ren'Py build process.
-
-def add_attribute(obj, name, value):
-    pass
-
-if PY2:
-    try:
-        from renpy.compat.dictviews import add_attribute
-    except ImportError:
-        print("Could not import renpy.compat.dictviews.", file=sys.stderr)
-
+chr = builtins.chr
 
 ################################################################################
 # Range.
 
-if PY2:
-    range = xrange # type: ignore
-else:
-    range = builtins.range
+range = builtins.range
 
 ################################################################################
 # Round.
@@ -163,57 +123,15 @@ else:
 round = builtins.round
 
 ################################################################################
-# Allow TextIOWrapper to take utf8-bytes.
-
-if PY2:
-
-    import types
-
-    # io.TextIOWrapper._write = io.TextIOWrapper.write
-
-    def text_write(self, s):
-        if isinstance(s, bytes):
-            s = s.decode("utf-8", "surrogateescape")
-        return self._write(s)
-
-    add_attribute(io.TextIOWrapper, "_write", io.TextIOWrapper.write)
-    add_attribute(io.TextIOWrapper, "write", types.MethodType(text_write, None, io.TextIOWrapper)) # type: ignore
-
-################################################################################
-# Chance the default for subprocess.Popen.
-if PY2:
-    import subprocess
-    if hasattr(subprocess, 'Popen'):  # Web2 does not have subprocess.Popen
-        class Popen(subprocess.Popen):
-            def __init__(self, *args, **kwargs):
-                if ("stdout" not in kwargs) and ("stderr" not in kwargs) and ("stdin" not in kwargs):
-                    kwargs.setdefault("close_fds", True)
-                super(Popen, self).__init__(*args, **kwargs)
-
-        subprocess.Popen = Popen
-
-################################################################################
-# Intern
-
-if PY2:
-    intern_cache = {}
-
-    def intern(s):
-        return intern_cache.setdefault(s, s)
-
-    sys.intern = intern
-
-################################################################################
 # Export functions.
 
 __all__ = [ "PY2", "open", "basestring", "str", "pystr", "range",
             "round", "bord", "bchr", "tobytes", "chr", "unicode", ]
 
-if PY2:
-    __all__ = [ bytes(i) for i in __all__ ] # type: ignore
-
 
 # Generated by scripts/relative_imports.py, do not edit below this line.
-if 1 == 0:
-    from . import fixes
-    from . import pickle
+import typing
+
+if typing.TYPE_CHECKING:
+    from . import fixes as fixes
+    from . import pickle as pickle

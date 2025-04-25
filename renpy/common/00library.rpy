@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -138,27 +138,36 @@ init -1700 python:
 
     def _default_empty_window():
 
+        who = None
+        multiple = None
+
         try:
+
             scry = renpy.scry()
+
+            window_hide = renpy.get_statement_name() == "window hide"
 
             # When running in a say statement or menu-with-caption, scry for
             # the next say statement, and get the window from that.
-            if scry.say or scry.menu_with_caption or store._window_next:
+            if (scry.say or scry.menu_with_caption or store._window_next) and not window_hide:
                 who = None
 
                 for i in range(20):
                     if scry.say:
                         who = scry.who
+                        multiple = scry.multiple
                         break
 
                     scry = scry.next()
+                    if scry is None:
+                        break
 
             else:
                 who = _last_say_who
                 who = renpy.eval_who(who)
 
         except Exception:
-            who = None
+            pass
 
         if who is None:
             who = narrator
@@ -166,9 +175,9 @@ init -1700 python:
         if isinstance(who, NVLCharacter):
             nvl_show_core()
         elif not isinstance(store.narrator, NVLCharacter):
-            store.narrator.empty_window()
+            store.narrator.empty_window(multiple=multiple)
         else:
-            store._narrator.empty_window()
+            store._narrator.empty_window(multiple=multiple)
 
     config.empty_window = _default_empty_window
 
@@ -187,7 +196,7 @@ init -1700 python:
 
             if who is None:
                 who = narrator
-            elif isinstance(who, basestring):
+            elif isinstance(who, str):
                 who = Character(who, kind=name_only)
 
             return who

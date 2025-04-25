@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,260 +27,230 @@ import renpy
 import pickle
 import io
 
-# Protocol 2 can be loaded on Python 2 and Python 3.
-PROTOCOL = 2
+PROTOCOL = pickle.HIGHEST_PROTOCOL
 
-if PY2:
 
-    import cPickle # type: ignore
+import functools
+import datetime
+import ast
 
-    def load(f): # type: ignore
-        if renpy.config.use_cpickle:
-            return cPickle.load(f)
+def make_datetime(cls, *args, **kwargs):
+    """
+    Makes a datetime.date, datetime.time, or datetime.datetime object
+    from a surrogateescaped str. This is used when unpickling a datetime
+    object that was first created in Python 2.
+    """
+
+    if (len(args) == 1) and isinstance(args[0], str):
+        data = args[0].encode("utf-8", "surrogateescape")
+        return cls.__new__(cls, data.decode("latin-1"))
+
+    return cls.__new__(cls, *args, **kwargs)
+
+class Unpickler(pickle.Unpickler):
+    date = functools.partial(make_datetime, datetime.date)
+    time = functools.partial(make_datetime, datetime.time)
+    datetime = functools.partial(make_datetime, datetime.datetime)
+
+    def find_class(self, module, name):
+        if module == "datetime":
+            if name == "date":
+                return self.date
+            elif name == "time":
+                return self.time
+            elif name == "datetime":
+                return self.datetime
+
+        if module == "_ast" and name in REWRITE_NODES:
+            return REWRITE_NODES[name]
+
+        return super().find_class(module, name)
+
+def load(f):
+    up = Unpickler(f, fix_imports=True, encoding="utf-8", errors="surrogateescape")
+    return up.load()
+
+def loads(s):
+    return load(io.BytesIO(s))
+
+def dump(o, f, highest=False):
+    pickle.dump(o, f, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
+
+def dumps(o, highest=False):
+    return pickle.dumps(o, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
+
+# The python AST module changed significantly between python 2 and 3. Old-style
+# screenlang support records raw python ast nodes into the rpyc data, making these
+# impossible to load normally. This dict contains mappings of nodes that need to be
+# modified to wrapper classes with a custom __setstate__ implementation that will
+# cause the pickle machinery to do the right thing.
+# There are some things that cannot be handled by this
+# (as the type of the node to be emitted is not fixed at that point), so those
+# are handled by a NodeTransformer in the ast.Module replacement.
+# Note: this isn't a complete python 2 -> python 3 ast conversion, we just convert
+# what is needed to still support old-style screens (Ren'py 6.17 and below)
+# mapping of "classname": WrapperClass
+REWRITE_NODES = {}
+
+# NodeTransformer that runs after the ast has been instantiated in the ast.Module
+# handler, and allows us to fix some more difficult issues. Currently only
+# handles converting ast.Name nodes that contain True/False/None into the appropriate
+# ast.Constant nodes.
+class AstFixupTransformer(ast.NodeTransformer):
+    def visit_Name(self, node):
+        # in python 2 True, False, None are keywords, and get parsed as such.
+        if node.id == "True":
+            alt_node = ast.Constant(True)
+
+        elif node.id == "False":
+            alt_node = ast.Constant(False)
+
+        elif node.id == "None":
+            alt_node = ast.Constant(None)
+
         else:
-            return pickle.load(f)
+            return node
 
-    def loads(s): # type: ignore
-        if renpy.config.use_cpickle:
-            return cPickle.loads(s)
-        else:
-            return pickle.loads(s)
+        alt_node.lineno = node.lineno
+        alt_node.col_offset = node.col_offset
+        return alt_node
 
-    def dump(o, f, highest=False):
-        if renpy.config.use_cpickle:
-            cPickle.dump(o, f, PROTOCOL)
-        else:
-            pickle.dump(o, f,PROTOCOL)
+# wrapper classes. They all have __setstate__ defined to handle converting from the
+# py2 class, and __reduce__ implemented to convert to the underlying py3 class
+# if it gets repickled. Note that py3 ast classes will not hit the REWRITE_NODES check
+# as py3 classes report to be from "ast" instead of "_ast"
+class CallWrapper(ast.Call):
+    def __reduce__(self):
+        _, args, attrs = super().__reduce__()
+        return ast.Call, args, attrs
 
-    def dumps(o, highest=False): # type: ignore
-        if renpy.config.use_cpickle:
-            return cPickle.dumps(o, PROTOCOL)
-        else:
-            return pickle.dumps(o, PROTOCOL)
+    def __setstate__(self, state):
+        # source info
+        self.lineno = state["lineno"]
+        self.col_offset = state["col_offset"]
 
-else:
+        # contents
+        self.func = state["func"]
+        self.args = state["args"]
+        self.keywords = state["keywords"]
 
-    import functools
-    import datetime
-    import ast
+        # these gained some extra info
+        for keyword in self.keywords:
+            keyword.lineno = self.lineno
+            keyword.col_offset = self.col_offset
 
-    def make_datetime(cls, *args, **kwargs):
-        """
-        Makes a datetime.date, datetime.time, or datetime.datetime object
-        from a surrogateescaped str. This is used when unpickling a datetime
-        object that was first created in Python 2.
-        """
+        # these are no longer an extra field, they're just part of args and keywords
+        # as you can now supply multiple of them.
+        if state["starargs"]:
+            node = ast.Starred(value=state["starargs"], ctx=ast.Load())
+            node.lineno = self.lineno
+            node.col_offset = self.col_offset
+            self.args.append(node)
 
-        if (len(args) == 1) and isinstance(args[0], str):
-            data = args[0].encode("utf-8", "surrogateescape")
-            return cls.__new__(cls, data.decode("latin-1"))
+        if state["kwargs"]:
+            node = ast.keyword(None, state["kwargs"])
+            node.lineno = self.lineno
+            node.col_offset = self.col_offset
+            self.keywords.append(node)
 
-        return cls.__new__(cls, *args, **kwargs)
+REWRITE_NODES["Call"] = CallWrapper
 
-    class Unpickler(pickle.Unpickler):
-        date = functools.partial(make_datetime, datetime.date)
-        time = functools.partial(make_datetime, datetime.time)
-        datetime = functools.partial(make_datetime, datetime.datetime)
+class NumWrapper(ast.Constant):
+    def __reduce__(self):
+        _, args, attrs = super().__reduce__()
+        return ast.Constant, args, attrs
 
-        def find_class(self, module, name):
-            if module == "datetime":
-                if name == "date":
-                    return self.date
-                elif name == "time":
-                    return self.time
-                elif name == "datetime":
-                    return self.datetime
+    def __setstate__(self, state):
+        # source info
+        self.lineno = state["lineno"]
+        self.col_offset = state["col_offset"]
 
-            if module == "_ast" and name in REWRITE_NODES:
-                return REWRITE_NODES[name]
+        # contents
+        self.value = state["n"]
 
-            return super().find_class(module, name)
+REWRITE_NODES["Num"] = NumWrapper
 
-    def load(f):
-        up = Unpickler(f, fix_imports=True, encoding="utf-8", errors="surrogateescape")
-        return up.load()
+class StrWrapper(ast.Constant):
+    def __reduce__(self):
+        _, args, attrs = super().__reduce__()
+        return ast.Constant, args, attrs
 
-    def loads(s):
-        return load(io.BytesIO(s))
+    def __setstate__(self, state):
+        # source info
+        self.lineno = state["lineno"]
+        self.col_offset = state["col_offset"]
 
-    def dump(o, f, highest=False):
-        pickle.dump(o, f, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
+        # contents
+        self.value = state["s"]
 
-    def dumps(o, highest=False):
-        return pickle.dumps(o, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
+REWRITE_NODES["Str"] = StrWrapper
 
-    # The python AST module changed significantly between python 2 and 3. Old-style
-    # screenlang support records raw python ast nodes into the rpyc data, making these
-    # impossible to load normally. This dict contains mappings of nodes that need to be
-    # modified to wrapper classes with a custom __setstate__ implementation that will
-    # cause the pickle machinery to do the right thing.
-    # There are some things that cannot be handled by this
-    # (as the type of the node to be emitted is not fixed at that point), so those
-    # are handled by a NodeTransformer in the ast.Module replacement.
-    # Note: this isn't a complete python 2 -> python 3 ast conversion, we just convert
-    # what is needed to still support old-style screens (Ren'py 6.17 and below)
-    # mapping of "classname": WrapperClass
-    REWRITE_NODES = {}
+class ModuleWrapper(ast.Module):
+    def __reduce__(self):
+        _, args, attrs = super().__reduce__()
+        return ast.Module, args, attrs
 
-    # NodeTransformer that runs after the ast has been instantiated in the ast.Module
-    # handler, and allows us to fix some more difficult issues. Currently only
-    # handles converting ast.Name nodes that contain True/False/None into the appropriate
-    # ast.Constant nodes.
-    class AstFixupTransformer(ast.NodeTransformer):
-        def visit_Name(self, node):
-            # in python 2 True, False, None are keywords, and get parsed as such.
-            if node.id == "True":
-                alt_node = ast.Constant(True)
+    def __setstate__(self, state):
+        # contents
+        self.body = state["body"]
+        self.type_ignores = []
 
-            elif node.id == "False":
-                alt_node = ast.Constant(False)
+        # this is the root node, so now is a good moment do do some transforms we couldn't
+        # do earlier because we weren't sure of the node type to be created.
 
-            elif node.id == "None":
-                alt_node = ast.Constant(None)
+        transformer = AstFixupTransformer()
+        transformer.visit(self)
 
-            else:
-                return node
+REWRITE_NODES["Module"] = ModuleWrapper
 
-            alt_node.lineno = node.lineno
-            alt_node.col_offset = node.col_offset
-            return alt_node
+class ReprWrapper(ast.Call):
+    def __reduce__(self):
+        _, args, attrs = super().__reduce__()
+        return ast.Call, args, attrs
 
-    # wrapper classes. They all have __setstate__ defined to handle converting from the
-    # py2 class, and __reduce__ implemented to convert to the underlying py3 class
-    # if it gets repickled. Note that py3 ast classes will not hit the REWRITE_NODES check
-    # as py3 classes report to be from "ast" instead of "_ast"
-    class CallWrapper(ast.Call):
-        def __reduce__(self):
-            _, args, attrs = super().__reduce__()
-            return ast.Call, args, attrs
+    def __setstate__(self, state):
+        # we need to transform `thing` into repr(thing)
+        # source info
+        self.lineno = state["lineno"]
+        self.col_offset = state["col_offset"]
 
-        def __setstate__(self, state):
-            # source info
-            self.lineno = state["lineno"]
-            self.col_offset = state["col_offset"]
+        # contents
+        self.func = ast.Name("repr", ast.Load(), lineno=self.lineno, col_offset=self.col_offset)
+        self.args = [state["value"]]
+        self.keywords = []
 
-            # contents
-            self.func = state["func"]
-            self.args = state["args"]
-            self.keywords = state["keywords"]
+REWRITE_NODES["Repr"] = ReprWrapper
 
-            # these gained some extra info
-            for keyword in self.keywords:
-                keyword.lineno = self.lineno
-                keyword.col_offset = self.col_offset
+class ArgumentsWrapper(ast.arguments):
+    def __reduce__(self):
+        _, args, attrs = super().__reduce__()
+        return ast.arguments, args, attrs
 
-            # these are no longer an extra field, they're just part of args and keywords
-            # as you can now supply multiple of them.
-            if state["starargs"]:
-                node = ast.Starred(value=state["starargs"], ctx=ast.Load())
-                node.lineno = self.lineno
-                node.col_offset = self.col_offset
-                self.args.append(node)
+    def __setstate__(self, state):
+        # source info: this node doesn't get source info
 
-            if state["kwargs"]:
-                node = ast.keyword(None, state["kwargs"])
-                node.lineno = self.lineno
-                node.col_offset = self.col_offset
-                self.keywords.append(node)
+        def make_arg(name):
+            # python 2 just uses bare ast.Name nodes as arguments
+            # technically it also can support more complex tuple destructuring
+            # expressions in here, but python 3 just doesn't support that,
+            # and there's really no good way of exactly handling that crazyness.
+            assert isinstance(name, ast.Name)
+            return ast.arg(name.id, lineno=name.lineno, col_offset=name.col_offset)
 
-    REWRITE_NODES["Call"] = CallWrapper
+        # contents. source doesn't record lineno/col_offset for vararg/kwarg
+        self.posonlyargs = []
+        self.args = [make_arg(i) for i in state["args"]]
+        self.vararg = ast.arg(state["vararg"], lineno=1, col_offset=0)
+        self.kwonlyargs = []
+        self.kw_defaults = []
+        self.kwarg = ast.arg(state["kwarg"], lineno=1, col_offset=0)
+        self.defaults =  state["defaults"]
 
-    class NumWrapper(ast.Constant):
-        def __reduce__(self):
-            _, args, attrs = super().__reduce__()
-            return ast.Constant, args, attrs
+REWRITE_NODES["arguments"] = ArgumentsWrapper
 
-        def __setstate__(self, state):
-            # source info
-            self.lineno = state["lineno"]
-            self.col_offset = state["col_offset"]
+class ParamWrapper(ast.Load):
+    def __reduce__(self):
+        _, args, attrs = super().__reduce__()
+        return ast.Load, args, attrs
 
-            # contents
-            self.value = state["n"]
-
-    REWRITE_NODES["Num"] = NumWrapper
-
-    class StrWrapper(ast.Constant):
-        def __reduce__(self):
-            _, args, attrs = super().__reduce__()
-            return ast.Constant, args, attrs
-
-        def __setstate__(self, state):
-            # source info
-            self.lineno = state["lineno"]
-            self.col_offset = state["col_offset"]
-
-            # contents
-            self.value = state["s"]
-
-    REWRITE_NODES["Str"] = StrWrapper
-
-    class ModuleWrapper(ast.Module):
-        def __reduce__(self):
-            _, args, attrs = super().__reduce__()
-            return ast.Module, args, attrs
-
-        def __setstate__(self, state):
-            # contents
-            self.body = state["body"]
-            self.type_ignores = []
-
-            # this is the root node, so now is a good moment do do some transforms we couldn't
-            # do earlier because we weren't sure of the node type to be created.
-
-            transformer = AstFixupTransformer()
-            transformer.visit(self)
-
-    REWRITE_NODES["Module"] = ModuleWrapper
-
-    class ReprWrapper(ast.Call):
-        def __reduce__(self):
-            _, args, attrs = super().__reduce__()
-            return ast.Call, args, attrs
-
-        def __setstate__(self, state):
-            # we need to transform `thing` into repr(thing)
-            # source info
-            self.lineno = state["lineno"]
-            self.col_offset = state["col_offset"]
-
-            # contents
-            self.func = ast.Name("repr", ast.Load(), lineno=self.lineno, col_offset=self.col_offset)
-            self.args = [state["value"]]
-            self.keywords = []
-
-    REWRITE_NODES["Repr"] = ReprWrapper
-
-    class ArgumentsWrapper(ast.arguments):
-        def __reduce__(self):
-            _, args, attrs = super().__reduce__()
-            return ast.arguments, args, attrs
-
-        def __setstate__(self, state):
-            # source info: this node doesn't get source info
-
-            def make_arg(name):
-                # python 2 just uses bare ast.Name nodes as arguments
-                # technically it also can support more complex tuple destructuring
-                # expressions in here, but python 3 just doesn't support that,
-                # and there's really no good way of exactly handling that crazyness.
-                assert isinstance(name, ast.Name)
-                return ast.arg(name.id, lineno=name.lineno, col_offset=name.col_offset)
-
-            # contents. source doesn't record lineno/col_offset for vararg/kwarg
-            self.posonlyargs = []
-            self.args = [make_arg(i) for i in state["args"]]
-            self.vararg = ast.arg(state["vararg"], lineno=1, col_offset=0)
-            self.kwonlyargs = []
-            self.kw_defaults = []
-            self.kwarg = ast.arg(state["kwarg"], lineno=1, col_offset=0)
-            self.defaults =  state["defaults"]
-
-    REWRITE_NODES["arguments"] = ArgumentsWrapper
-
-    class ParamWrapper(ast.Load):
-        def __reduce__(self):
-            _, args, attrs = super().__reduce__()
-            return ast.Load, args, attrs
-
-    REWRITE_NODES["Param"] = ParamWrapper
+REWRITE_NODES["Param"] = ParamWrapper

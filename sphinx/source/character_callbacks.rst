@@ -9,7 +9,7 @@ to :func:`Character`, or setting the :var:`config.character_callback` or
 :var:`config.all_character_callbacks` variables.
 
 The character callback is called with a single positional argument, the event
-that occured. Possible events are:
+that occurred. Possible events are:
 
 "begin"
     Called at the start of a say statement.
@@ -18,6 +18,9 @@ that occured. Possible events are:
     Called before showing each segment of dialogue. Dialogue may be separated
     into multiple segments by the {w} or {p} text tags, but always consists of
     at least one segment.
+
+"show_done"
+    Called after showing each segment of dialogue.
 
 "slow_done"
     Called after slow text finishes showing. Note that this event may occur
@@ -33,10 +36,13 @@ The callback is called with at the keyword arguments:
     This is true if the dialogue causes an interaction to occur.
 
 `type`
-    The type of character (e.g. "nvl", "adv", "balloon").
+    The type of character (e.g. "nvl", "adv", "bubble").
 
 `what`
     The text that is going to be supplied to the what displayable.
+
+`multiple`
+    The `multiple` argument to :func:`Character`.
 
 The "show" and "slow_done" callbacks are also given additional keyword
 arguments:
@@ -56,7 +62,7 @@ arguments:
 
 
 Other values of the positional argument and additional keyword arguments may
-be supplie to the callback. The callback should be written to ignore keyword arguments it
+be supplied to the callback. The callback should be written to ignore keyword arguments it
 does not understand.
 
 Example
@@ -81,11 +87,10 @@ text is enabled::
 
         pike "So, hanging out on Talos IV, minding my own business, when..."
 
-This is an example of how to specialize a general callback for specific
-characters::
+To specialize a general callback with for specific characters, you can
+pass arguments to the callback function with the `cb_` prefix::
 
     init python:
-        import functools
         def boopy_voice(event, interact=True, boopfile="normal_boop.ogg", **kwargs):
             if not interact:
                 return
@@ -95,5 +100,5 @@ characters::
             elif event == "slow_done":
                 renpy.sound.stop()
 
-    define nagata = Character("Naomi", callback=functools.partial(boopy_voice, boopfile="belter_boop.ogg"))
     define chrisjen = Character("Chrisjen", callback=boopy_voice)
+    define nagata = Character("Naomi", callback=boopy_voice, cb_boopfile="sfx-blipmale.ogg")

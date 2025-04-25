@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -176,7 +176,7 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
 
         # If new does not have .layers or .scene_list, then we simply
         # insert a move from the old position to the new position, if
-        # a move occured.
+        # a move occurred.
 
         if (not isinstance(new, renpy.display.layout.MultiBox)
                 or (new.layers is None and new.layer_name is None)):
@@ -547,7 +547,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
         # If new does not have .layers or .scene_list, then we simply
         # insert a move from the old position to the new position, if
-        # a move occured.
+        # a move occurred.
 
         if (not isinstance(new, renpy.display.layout.MultiBox)
                 or (new.layers is None and new.layer_name is None)):
@@ -639,7 +639,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
         def moving(old_sle, new_sle):
 
             if old_sle.displayable is new_sle.displayable:
-                rv_sl.append(new_sle)
+                rv_sl.append(merge(new_sle, wrap(new_sle)))
                 return
 
             old_d = wrap(old_sle)

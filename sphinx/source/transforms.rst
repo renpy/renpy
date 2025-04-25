@@ -105,8 +105,8 @@ The transforms are:
 
 .. var:: reset
 
-    Resets the transform. Places the displayable in the top-left corner of the
-    screen, and also eliminates any zoom, rotation, or other effects.
+    Resets the transform to the default values of each property, removing any
+    properites set before it.
 
 .. var:: right
 
@@ -757,7 +757,7 @@ The functions have the same signature as those used with :func:`Transform`:
 * The second argument is the shown timebase, the number of seconds since the
   function began executing.
 
-* The third argument is the the animation timebase, which is the number of
+* The third argument is the animation timebase, which is the number of
   seconds something with the same tag has been on the screen.
 
 * If the function returns a number, it will be called again after that number of
@@ -870,11 +870,6 @@ The following events are triggered automatically within an ATL transform:
 ``replaced``
     Triggered when the transform is replaced by another. The image will not
     actually hide until the ATL block finishes.
-
-``update``
-    Triggered when a screen is updated without being shown or replacing another
-    screen. This happens in rare but possible cases, such as when the game is
-    loaded and when styles or translations change.
 
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``, ``insensitive``, ``selected_insensitive``
     Triggered when a button containing this transform, or a button contained by
@@ -1111,7 +1106,7 @@ The Transform Class
 
 One equivalent to to the simplest ATL transforms is the Transform class.
 
-.. class:: Transform(child=None, function=None, **properties)
+.. class:: Transform(child=None, *, function=None, reset=False, **properties)
 
     Creates a transform which applies operations such as cropping, rotation,
     scaling or alpha-blending to its child. A transform object has fields
@@ -1120,6 +1115,11 @@ One equivalent to to the simplest ATL transforms is the Transform class.
 
     `child`
         The child the transform applies to.
+
+    `reset`
+        If True, the transform will reset properties to their default values
+        when it is shown, rather than inheriting those properties from the
+        transforms it replaces.
 
     .. function:: function(trans: Transform, st: float, at: float, /) -> int|None
 

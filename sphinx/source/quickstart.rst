@@ -125,8 +125,9 @@ line of narration.
 
 To try this out, from the top screen of the launcher select "My Question"
 project, and then choose "script.rpy" from under Edit File. If this is
-your first time, Ren'Py will ask you to select an editor (we recommend
-Editra for first time creators), and will download the editor you choose.
+your first time, Ren'Py will ask you to select an editor. We recommend Visual
+Studio Code for new creators - in addition to being a solid choice, the launcher
+can also download it for you.
 Then it will open the script file in the editor.
 
 Once the editor opens, erase everything in :file:`script.rpy`. We're starting
@@ -706,7 +707,7 @@ The game folder in the created project includes below folders and files.
 
 **\*.rpyc**
     Those files are result of compiling each :file:`.rpy` files to reduce loading time.
-    You don't need to edit those files without deleting the corresonding :file:`.rpy`
+    You don't need to edit those files without deleting the corresponding :file:`.rpy`
     file. See :doc:`language_basics` for more details.
 
 Releasing Your Game

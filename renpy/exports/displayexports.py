@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -94,6 +94,11 @@ def copy_images(old, new):
     `new`
         A space-separated string giving the components of the new image
         name.
+
+    This function may only be run from inside an init block. It is an
+    error to run this function once the game has started. As the ``image``
+    statement runs with init priority 500, this should generally be called
+    with init priority 501 or higher.
     """
 
     if not isinstance(old, tuple):
@@ -104,7 +109,7 @@ def copy_images(old, new):
 
     lenold = len(old)
 
-    for k, v in renpy.display.image.images.items():
+    for k, v in list(renpy.display.image.images.items()):
         if len(k) < lenold:
             continue
 
@@ -268,7 +273,7 @@ def _find_image(layer, key, name, what):
     # If a specific image is requested, use it.
     if what is not None:
 
-        if isinstance(what, basestring):
+        if isinstance(what, str):
             what = tuple(what.split())
 
         return name, what
@@ -492,7 +497,8 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         img._unique()
 
     # Update the list of images we have ever seen.
-    renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
+    if renpy.exports.is_seen_allowed():
+        renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
 
     if tag and munge_name:
         name = (tag,) + name[1:]
@@ -581,7 +587,7 @@ def toggle_fullscreen():
     renpy.game.preferences.fullscreen = not renpy.game.preferences.fullscreen # type: ignore
 
 
-def take_screenshot(scale=None, background=False):
+def take_screenshot(scale=None, background=False, keep_existing=False):
     """
     :doc: loadsave
     :args: ()
@@ -593,7 +599,7 @@ def take_screenshot(scale=None, background=False):
     if scale is None:
         scale = (renpy.config.thumbnail_width, renpy.config.thumbnail_height)
 
-    renpy.game.interface.take_screenshot(scale, background=background)
+    renpy.game.interface.take_screenshot(scale, background=background, keep_existing=keep_existing)
 
 
 def screenshot(filename):
@@ -744,9 +750,6 @@ def image_size(im):
     using the image cache. This can be slow.
     """
 
-    # Index the archives, if we haven't already.
-    renpy.loader.index_archives()
-
     im = renpy.easy.displayable(im)
 
     if not isinstance(im, renpy.display.im.Image):
@@ -767,7 +770,7 @@ def get_at_list(name, layer=None):
     If `layer` is None, uses the default layer for the given tag.
     """
 
-    if isinstance(name, basestring):
+    if isinstance(name, str):
         name = tuple(name.split())
 
     tag = name[0]
@@ -1091,8 +1094,8 @@ def reset_physical_size():
 
     Attempts to set the size of the physical window to the size specified
     using :var:`renpy.config.physical_height` and :var:`renpy.config.physical_width`,
-    or the size set using :var:`renpy.config.screen_width` and :var:`renpy.config.screen_height`
-    if not set.
+    or, if those are not set, the size set using :var:`renpy.config.screen_width`
+    and :var:`renpy.config.screen_height`.
     """
 
     set_physical_size((renpy.config.physical_width or renpy.config.screen_width, renpy.config.physical_height or renpy.config.screen_height))
@@ -1147,7 +1150,11 @@ def set_mouse_pos(x, y, duration=0):
     :doc: other
 
     Jump the mouse pointer to the location given by arguments x and y.
-    If the device does not have a mouse pointer, this does nothing.
+    If the device does not have a mouse pointer, or if it is not possible for
+    Ren'Py to move that pointer, this does nothing.
+
+    This is unlikely to work on the Linux with Wayland, Android, iOS, or Web
+    platforms.
 
     `duration`
         The time it will take to perform the move, in seconds.
@@ -1251,7 +1258,7 @@ def is_start_interact():
     """
     :doc: other
 
-    Returns true if restart_interaction has not been called during the current
+    Returns True if restart_interaction has not been called during the current
     interaction. This can be used to determine if the interaction is just being
     started, or has been restarted.
     """
@@ -1277,9 +1284,6 @@ def get_refresh_rate(precision=5):
         75, and 120), this likely will improve accuracy. Setting precision
         to 1 disables this.
     """
-
-    if PY2:
-        precision = float(precision)
 
     info = renpy.display.get_info()
     rv = info.refresh_rate # type: ignore
@@ -1363,7 +1367,7 @@ def get_mouse_name(interaction=False):
 
     `interaction`
         If true, get a mouse name that is based on the type of interaction
-        occuring. (This is rarely useful.)
+        occurring. (This is rarely useful.)
     """
 
     if not renpy.display.interface:
@@ -1423,7 +1427,7 @@ def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False)
         The displayable or Render to render. If a Render, `width`, `height`, `st`, and `at` are ignored.
 
     `width`
-        The width to offer `d`, in virtual pixesl. If None, :var:`config.screen_width`.
+        The width to offer `d`, in virtual pixels. If None, :var:`config.screen_width`.
 
     `height`
         The height to offer `d`, in virtual pixels. If None, :var:`config.screen_height`.
@@ -1432,7 +1436,7 @@ def render_to_surface(d, width=None, height=None, st=0.0, at=None, resize=False)
         The time of the render, in the shown timebase.
 
     `at`
-        The time of the rendem in the animation timebase. If None, `st` is used.
+        The time of the render in the animation timebase. If None, `st` is used.
 
     `resize`
         If True, the surface will be resized to the virtual size of the displayable or render. This

@@ -725,7 +725,7 @@ Text Style Properties
 
 .. style-property:: prefer_emoji boolean
 
-    Some unicode characters have both Emoji and non-Emjoji presentations. This
+    Some unicode characters have both Emoji and non-Emoji presentations. This
     style property chooses if such characters are given the Emoji presentation
     or not.
 
@@ -1055,11 +1055,14 @@ left and right sides are used.
     If not None, this is a displayable that is drawn over the break
     between the sides of the bar.
 
-.. style-property:: thumb_offset int
+.. style-property:: thumb_offset int or tuple of (int, int)
 
     The amount that by which the thumb overlaps the bars, in
     pixels. To have the left and right bars continue unbroken, set
-    this to half the width of the thumb in pixels.
+    this to half the width of the thumb in pixels. This may also be
+    a tuple, in which case the first number is used for the left/top
+    thumb offset, and the second number is used for the right/bottom
+    thumb offset.
 
 .. style-property:: mouse string
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -57,7 +57,7 @@ sound = True
 debug = False
 
 # Ditto, but for sound operations
-debug_sound = False
+debug_sound = os.environ.get("RENPY_DEBUG_SOUND", False)
 
 # Is rollback enabled? (This only controls if the user-invoked
 # rollback command does anything)
@@ -141,7 +141,7 @@ sound_sample_rate = 48000
 # The default fadeout used when playing or stopping audio.
 fadeout_audio = 0.016
 
-# The old name of config.fadeout_audio. Kept for compatibility, and yused
+# The old name of config.fadeout_audio. Kept for compatibility, and used
 # in 00compat.rpy.
 fade_music = None
 
@@ -776,7 +776,7 @@ translate_files = [ ]
 # translated.
 translate_comments = [ ]
 
-# Should we trying detect user locale on first launch?
+# Should we try detect user locale on first launch?
 enable_language_autodetect = False
 
 # A function from (locale, region) -> existing language.
@@ -823,7 +823,7 @@ profile_screens = [ ]
 allow_sysfonts = False
 
 # Should Ren'Py tightly loop during fadeouts? (That is, not stop the fadeout
-# if it reaches the end of a trac.)
+# if it reaches the end of a track.)
 tight_loop_default = True
 
 # Should Ren'Py apply style_prefix to viewport scrollbar styles?
@@ -849,7 +849,7 @@ lint_stats_callbacks = [ ]
 # Should we apply position properties to the side of a viewport?
 position_viewport_side = True
 
-# Things that be given properties via Character.
+# Things that can be given properties via Character.
 character_id_prefixes = [ ]
 
 # Should {nw} wait for voice.
@@ -886,7 +886,7 @@ loadable_callback = None
 
 # How many frames should be drawn fast each time the screen needs to be
 # updated?
-fast_redraw_frames = 4
+fast_redraw_frames = 12
 
 # The color passed to glClearColor when clearing the screen.
 gl_clear_color = "#000"
@@ -949,7 +949,7 @@ repeat_transform_events = [ "show", "replace", "update" ]
 # How many statements should we warp through?
 warp_limit = 1000
 
-# Should dissolve statments force the use of alpha.
+# Should dissolve statements force the use of alpha.
 dissolve_force_alpha = True
 
 # A map from a displayable prefix to a function that returns a displayable
@@ -983,7 +983,7 @@ menu_include_disabled = False
 # Should we report extraneous attributes?
 report_extraneous_attributes = True
 
-# Should we play non-loooped music when skipping?
+# Should we avoid playing non-loooped music when skipping?
 skip_sounds = False
 
 # Should we lint screens without parameters?
@@ -1053,7 +1053,7 @@ context_copy_remove_screens = [ "notify" ]
 # An exception handling callback.
 exception_handler = None
 
-# A label that is jumped to if return fails.
+# A label to jump to if return fails.
 return_not_found_label = None
 
 # A list of (regex, autoreload function) tuples.
@@ -1133,6 +1133,9 @@ controller_blocklist = [
     "030000006d0400000000", # Razer Xbox 360 Controller (#4622)
 ]
 
+# Should other textures be mipmapped by default?
+mipmap = "auto"
+
 # Should dissolve transitions be mipmapped by default?
 mipmap_dissolves = False
 
@@ -1149,7 +1152,7 @@ allow_screensaver = True
 context_fadein_music = 0
 context_fadeout_music = 0
 
-# Shout it be possible to dismiss blocking transitions that are not part of
+# Should it be possible to dismiss blocking transitions that are not part of
 # a with statement?
 dismiss_blocking_transitions = True
 
@@ -1307,7 +1310,7 @@ viewport_drag_radius = 10
 # function is run.
 scene_callbacks = [ ]
 
-# The physical width and heigh of the game window. If None, the window defaults
+# The physical width and height of the game window. If None, the window defaults
 # to config.screen_width and config.screen_height.
 physical_width = None
 physical_height = None
@@ -1315,7 +1318,7 @@ physical_height = None
 # If true, lenticular brackets can be used to encode ruby text.
 lenticular_bracket_ruby = True
 
-# If true, the web implentation of renpy.input will be used.
+# If true, the web implementation of renpy.input will be used.
 web_input = True
 
 # Aliases for the keys on the numeric keypad, to make them easier to write as keysyms.
@@ -1372,7 +1375,7 @@ check_conflicting_properties = False
 # A list of extra save directories. Strings giving the full paths.
 extra_savedirs = [ ]
 
-# The text-to-speech dictionary. A list of [ (RegeEx|String, String) ] pairs.
+# The text-to-speech dictionary. A list of [ (RegEx|String, String) ] pairs.
 tts_substitutions = [ ]
 
 # The base URL where unpacked web videos can be found.
@@ -1474,8 +1477,6 @@ python_exit_callbacks = [ ]
 # Should exceptions be raised if an image fails to load.
 raise_image_load_exceptions = None
 
-# 8.2.2
-
 # A map from name to text shader object.
 textshaders = { } # type: dict[str, renpy.text.shader.TextShader]
 
@@ -1503,6 +1504,32 @@ interface_layer = "screens"
 # Should Transform crop be limited to the width and height of the image being cropped?
 limit_transform_crop = False
 
+# Should as dissolve shrink to the size of the smallest child?
+dissolve_shrinks = False
+
+# Should arabic presentations forms be reversed to base forms?
+reverse_arabic_presentation_forms = True
+
+# Should the script be compiled with from future import annotations?
+future_annotations = False
+
+# Marking labels, images and audio in replays as seen is not allowed.
+no_replay_seen = False
+
+# Should we use pre-8.4 show expression behavior?
+old_show_expression = False
+
+# Callbacks that give the translation system more strings to translate.
+translate_additional_strings_callbacks = [ ]
+
+# Should Ren'Py keep and existing screenshot when entering a menu.
+keep_screenshot_entering_menu = False
+
+# Should Ren'Py hash seen statements and tlids?
+hash_seen = True
+
+# A function that is called whenever persistent data is loaded.
+persistent_callback = None
 
 
 del os

@@ -40,14 +40,14 @@ can then change it again.)
 
     When on a desktop platform, touches or clicks to this side of the window
     cause rollback to occur. One of "left", "right", or "disable". This is
-    the equivalend of the "rollback side" preference when on a desktop
+    the equivalent of the "rollback side" preference when on a desktop
     platform.
 
 .. var:: preferences.mobile_rollback_side = "disable"
 
     When on a mobile platform, touches or clicks to this side of the window
     cause rollback to occur. One of "left", "right", or "disable". This is
-    the equivalend of the "rollback side" preference when on a mobile
+    the equivalent of the "rollback side" preference when on a mobile
     platform.
 
 .. var:: preferences.language = None
@@ -185,6 +185,12 @@ can then change it again.)
     If True, Ren'Py will attempt to restore the window position when the game
     is restarted. If False, Ren'Py will not attempt to restore the window
     position. The equivalent of the "restore window position" preference.
+
+.. var:: preferences.force_mono = False
+
+    If True, Ren'Py will mix stereo audio to mono before playing it. If False,
+    stereo audio will be played normally.
+
 
 .. _mixer-defaults:
 

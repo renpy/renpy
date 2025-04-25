@@ -95,14 +95,14 @@ Live2D animations are defined using the Live2D displayable and the image stateme
 
     `nonexclusive`
         If not None, this should be a list of names of nonexclusive expressions.
-        Expressions default to being exlcusive, with only one beign shown at
+        Expressions default to being exclusive, with only one being shown at
         a time. If listed here, any number of nonexclusive expressions can be
         shown, in addition to one exclusive expression.
 
     `seamless`
         This determines if seamless looping should be used. Seamless looping
         avoids fading between loops of a single motion. This may be True to
-        enable seamless looping all the time, False to dispable it all the
+        enable seamless looping all the time, False to disable it all the
         time, or a set of motions to be looped.
 
     `default_fade`
@@ -121,7 +121,7 @@ Live2D animations are defined using the Live2D displayable and the image stateme
     `attribute_filter`
         If not None, this is a function that takes a tuple of attributes,
         and returns a second tuple of attributes. This is usually used to
-        filter out nonexclusice attributes that conflict with each other. The attributes
+        filter out nonexclusive attributes that conflict with each other. The attributes
         are ordered such that more recently requested attributes come first,
         meaning that in the case of a conflict, the first attribute should
         win.

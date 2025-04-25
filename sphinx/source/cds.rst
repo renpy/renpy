@@ -51,7 +51,9 @@ For example, the above behaviour, but written as a CDS::
 
         def lint_random(parsed_object):
             for i in parsed_object:
-                renpy.error(renpy.check_text_tags(i.what))
+                    check = renpy.check_text_tags(i.block[0].what)
+                    if check:
+                        renpy.error(check)
 
 
         renpy.register_statement(
@@ -88,7 +90,9 @@ Creator-Defined Statements (CDS) must conform to the following rules:
 
 - The file containing the CDS must be loaded earlier than any file that uses it.
   (Since Ren'Py loads files in the Unicode sort order of their path, it generally makes sense to
-  prefix the name of any file containing a CDS with 01 or some other small number.)
+  prefix the name of any file containing a CDS with 01 or some other small number. See :ref:`early-phase` for
+  more information about the order in which Ren'Py loads files, with special details about the  game/libs/ and
+  game/mods/ directories.)
 
 Creator-Defined Statements are registered using the :func:`renpy.register_statement`
 function. This functions takes other functions that perform operations on the content of the CDS.
@@ -365,6 +369,10 @@ A custom statement's parse function takes an instance of a Lexer object.
                         ll.expect_eol()
 
                 return { "strings" : strings }
+
+A function allows you to lex arbitrary strings:
+
+.. include:: inc/lexer
 
 
 Lint Utility Functions

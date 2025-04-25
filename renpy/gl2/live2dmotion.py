@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,7 +22,22 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 
 import json
+import math
+
 import renpy
+
+
+def cosine_easing(done):
+    """
+    Cosine easing function.
+    """
+
+    if done < 0.0:
+        return 0.0
+    elif done > 1.0:
+        return 1.0
+    else:
+        return 0.5 - 0.5 * math.cos(done * math.pi)
 
 
 class Linear(object):
@@ -258,11 +273,11 @@ class Motion(object):
             factor = 1.0
 
             if st > self.duration - fadeout:
-                factor = min(factor, 1.0 - (st - (self.duration - fadeout)) / fadeout)
+                factor = min(factor, 1.0 - cosine_easing((st - (self.duration - fadeout)) / fadeout))
 
             if fade_st is not None:
                 if fadeout > 0:
-                    factor = min(factor, 1.0 - fade_st / fadeout)
+                    factor = min(factor, 1.0 - cosine_easing(fade_st / fadeout))
                 else:
                     factor = 0.0
 

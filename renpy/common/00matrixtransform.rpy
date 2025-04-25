@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -67,15 +67,15 @@ init -1400 python:
 
     class OffsetMatrix(TransformMatrix, DictEquality):
         nargs = 3
-        function = Matrix.offset
+        function = staticmethod(Matrix.offset)
         __doc__ = TransformMatrix._document(Matrix.offset)
 
     class RotateMatrix(TransformMatrix, DictEquality):
         nargs = 3
-        function = Matrix.rotate
+        function = staticmethod(Matrix.rotate)
         __doc__ = TransformMatrix._document(Matrix.rotate)
 
     class ScaleMatrix(TransformMatrix, DictEquality):
         nargs = 3
-        function = Matrix.scale
+        function = staticmethod(Matrix.scale)
         __doc__ = TransformMatrix._document(Matrix.scale)

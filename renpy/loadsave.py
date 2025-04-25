@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,10 +23,6 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-from future.utils import reraise
-
-from typing import Optional
 
 import io
 import zipfile
@@ -68,11 +64,17 @@ def save_dump(roots, log):
         if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             o_repr = repr(o)
 
-        elif isinstance(o, basestring):
+        elif isinstance(o, str):
             if len(o) <= 80:
                 o_repr = repr(o)
             else:
-                o_repr = repr(o[:80]) + "..."
+                o_repr = repr(o[:40] + "..." + o[-40:])
+
+        elif isinstance(o, bytes):
+            if len(o) <= 80:
+                o_repr = repr(o)
+            else:
+                o_repr = repr(o[:40] + b"..." + o[-40:])
 
         elif isinstance(o, (tuple, list)):
             o_repr = "<" + o.__class__.__name__ + ">"
@@ -82,16 +84,10 @@ def save_dump(roots, log):
 
         elif isinstance(o, types.MethodType):
 
-            if PY2:
-                o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__func__.__name__) # type: ignore
-            else:
-                o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
+            o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
 
         elif isinstance(o, types.FunctionType):
-            if PY2:
-                name = o.__name__
-            else:
-                name = o.__qualname__ or o.__name__
+            name = o.__qualname__ or o.__name__
 
             o_repr = o.__module__ + '.' + name
 
@@ -135,7 +131,7 @@ def save_dump(roots, log):
                 reduction = [ ]
                 o_repr_cache[ido] = "BAD REDUCTION " + o_repr
 
-            if isinstance(reduction, basestring):
+            if isinstance(reduction, str):
                 o_repr_cache[ido] = o.__module__ + '.' + reduction
                 size = 1
 
@@ -415,25 +411,17 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
     logf = io.BytesIO()
     try:
         dump((roots, renpy.game.log), logf)
-    except Exception:
-
-        t, e, tb = sys.exc_info()
-
-        if mutate_flag:
-            reraise(t, e, tb)
+    except Exception as e:
+        if mutate_flag or not e.args:
+            raise
 
         try:
-            bad = find_bad_reduction(roots, renpy.game.log)
+            if bad := find_bad_reduction(roots, renpy.game.log):
+                e.args = (e.args[0] + f' (perhaps {bad})', *e.args[1:])
         except Exception:
-            reraise(t, e, tb)
+            pass
 
-        if bad is None:
-            reraise(t, e, tb)
-
-        if e.args:
-            e.args = (e.args[0] + ' (perhaps {})'.format(bad),) + e.args[1:]
-
-        reraise(t, e, tb)
+        raise
 
     if mutate_flag and renpy.revertable.mutate_flag:
         raise SaveAbort()
@@ -470,7 +458,7 @@ autosave_thread = None
 autosave_not_running = threading.Event()
 autosave_not_running.set()
 
-# The number of times autosave has been called without a save occuring.
+# The number of times autosave has been called without a save occurring.
 autosave_counter = 0
 
 # True if a background autosave has finished.
@@ -488,9 +476,7 @@ def autosave_thread_function(take_screenshot):
 
     try:
 
-        try:
-
-            cycle_saves(prefix, renpy.config.autosave_slots)
+        with renpy.savelocation.SyncfsLock():
 
             if renpy.config.auto_save_extra_info:
                 extra_info = renpy.config.auto_save_extra_info()
@@ -500,19 +486,18 @@ def autosave_thread_function(take_screenshot):
             if take_screenshot:
                 renpy.exports.take_screenshot(background=True)
 
-            save(prefix + "1", mutate_flag=True, extra_info=extra_info)
-            autosave_counter = 0
+            save("_auto", mutate_flag=True, extra_info=extra_info)
+            cycle_saves(prefix, renpy.config.autosave_slots)
+            rename_save("_auto", prefix + "1")
 
+            autosave_counter = 0
             did_autosave = True
 
-        except Exception:
-            pass
+    except Exception:
+        pass
 
     finally:
         autosave_not_running.set()
-        if renpy.emscripten:
-            import emscripten
-            emscripten.syncfs()
 
 
 def autosave():
@@ -722,6 +707,10 @@ def list_slots(regexp=None):
     return slots
 
 
+# The set of slots that have been accessed, such that clearing the slot
+# should restart the interaction.
+accessed_slots = set()
+
 # A cache for newest slot info.
 newest_slot_cache = { }
 
@@ -768,6 +757,8 @@ def slot_mtime(slotname):
     Returns the modification time for `slot`, or None if the slot is empty.
     """
 
+    accessed_slots.add(slotname)
+
     return get_cache(slotname).get_mtime()
 
 
@@ -783,6 +774,8 @@ def slot_json(slotname):
     dictionary will contain the same data as it did when the game was saved.
     """
 
+    accessed_slots.add(slotname)
+
     return get_cache(slotname).get_json()
 
 
@@ -794,6 +787,8 @@ def slot_screenshot(slotname):
     or None if the slot is empty.
     """
 
+    accessed_slots.add(slotname)
+
     return get_cache(slotname).get_screenshot()
 
 
@@ -803,6 +798,8 @@ def can_load(filename, test=False):
 
     Returns true if `filename` exists as a save slot, and False otherwise.
     """
+
+    accessed_slots.add(filename)
 
     c = get_cache(filename)
 
@@ -889,6 +886,15 @@ def cycle_saves(name, count):
 unknown = renpy.object.Sentinel("unknown")
 
 
+def wrap_json(d):
+    if isinstance(d, list):
+        return [ wrap_json(i) for i in d ]
+    if isinstance(d, dict):
+        return renpy.revertable.RevertableDict({ k : wrap_json(v) for k, v in d.items() })
+    else:
+        return d
+
+
 class Cache(object):
     """
     This represents cached information about a save slot.
@@ -924,7 +930,7 @@ class Cache(object):
         if rv is unknown:
             rv = self.json = location.json(self.slotname)
 
-        return rv
+        return wrap_json(rv)
 
     def get_screenshot(self):
 
@@ -969,13 +975,17 @@ def clear_slot(slotname):
 
     newest_slot_cache.clear()
 
-    renpy.exports.restart_interaction()
+    if slotname in accessed_slots:
+        accessed_slots.discard(slotname)
+        renpy.exports.restart_interaction()
 
 
 def clear_cache():
     """
     Clears the entire cache.
     """
+
+    accessed_slots.clear()
 
     for c in cache.values():
         c.clear()

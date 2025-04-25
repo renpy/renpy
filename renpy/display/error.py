@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,7 +22,7 @@
 # This file contains code to handle GUI-based error reporting.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import os
@@ -60,8 +60,6 @@ def init_display():
     The minimum amount of code required to init the display.
     """
 
-    renpy.config.gl2 = getattr(renpy.game.persistent, "_gl2", True)
-
     # Ensure we have correctly-typed preferences.
     renpy.game.preferences.check()
 
@@ -70,7 +68,7 @@ def init_display():
 
     if not renpy.game.interface:
         renpy.display.core.Interface()
-        renpy.loader.index_archives()
+        renpy.loader.index_files()
         renpy.display.im.cache.init()
 
     renpy.game.interface.start()
@@ -145,7 +143,7 @@ def report_exception(short, full, traceback_fn):
             reload_action=reload_action,
             ignore_action=ignore_action,
             traceback_fn=traceback_fn,
-            )
+        )
 
         renpy.display.im.ignored_images |= renpy.display.im.images_to_ignore
 
@@ -164,7 +162,7 @@ def report_exception(short, full, traceback_fn):
         raise
 
 
-def report_parse_errors(errors, error_fn):
+def report_parse_errors(errors: list[str], error_fn: str) -> bool:
     """
     Reports an exception to the user. Returns True if the exception should
     be raised by the normal reporting mechanisms. Otherwise, should raise
@@ -176,7 +174,7 @@ def report_parse_errors(errors, error_fn):
 
     error_dump()
 
-    if renpy.game.args.command != "run": # @UndefinedVariable
+    if renpy.game.args.command != "run":
         return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
@@ -201,7 +199,7 @@ def report_parse_errors(errors, error_fn):
             reload_action=reload_action,
             errors=errors,
             error_fn=error_fn,
-            )
+        )
 
     except renpy.game.CONTROL_EXCEPTIONS:
         raise
@@ -210,3 +208,5 @@ def report_parse_errors(errors, error_fn):
         renpy.display.log.write("While handling exception:")
         renpy.display.log.exception()
         raise
+
+    return False

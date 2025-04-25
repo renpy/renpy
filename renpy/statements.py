@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -78,7 +78,7 @@ def register(
           parse that block.
         * "possible", to indicate that the statement may or may not take
           a block.
-        * "script" to indicate that the block shopuld be interpreted as a
+        * "script" to indicate that the block should be interpreted as a
           block of Ren'Py script language statements. See `next` for how
           to implement control flow using this.
         * "script-possible" is treated like "script" if a block is present,
@@ -160,8 +160,8 @@ def register(
 
     `translation_strings`
         A function that is called with the parsed block. It's expected to
-        return a list of strings, which are then reported as being available
-        to be translated.
+        return a list of strings or tuples of (string line number, string),
+        which are then reported as being available to be translated.
 
     `force_begin_rollback`
         This should be set to true on statements that are likely to cause the

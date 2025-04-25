@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -408,10 +408,11 @@ init -1500 python:
                     layout.yesno_screen(layout.OVERWRITE_SAVE, FileSave(self.name, False, False, self.page, cycle=self.cycle, slot=self.slot, action=self.action))
                     return
 
-            if self.cycle:
-                renpy.renpy.loadsave.cycle_saves(__slotname("", self.page, self.slot), config.quicksave_slots)
+            with renpy.savelocation.SyncfsLock():
+                if self.cycle:
+                    renpy.renpy.loadsave.cycle_saves(__slotname("", self.page, self.slot), config.quicksave_slots)
 
-            renpy.save(fn, extra_info=save_name)
+                renpy.save(fn, extra_info=save_name)
 
             renpy.restart_interaction()
 
@@ -558,7 +559,7 @@ init -1500 python:
 
     def FileAction(name, page=None, **kwargs):
         """
-        :doc: file_action
+        :doc: file_action action
 
         "Does the right thing" with the file. This means loading it if the
         load screen is showing (current screen is named "load"), and saving
@@ -591,7 +592,7 @@ init -1500 python:
         if page is None:
             return
 
-        page = unicode(page)
+        page = str(page)
 
         for i in renpy.list_slots(__slotname(page, r'\d+')):
             renpy.predict(renpy.slot_screenshot(i))
@@ -654,7 +655,7 @@ init -1500 python:
         An input value that updates the name of a file page.
 
         `pattern`
-            This is used for the default name of a page. Python-style substition
+            This is used for the default name of a page. Python-style substitution
             is performed, such that {} is replaced with the number of the page.
 
         `auto`
@@ -947,7 +948,7 @@ init -1500 python:
     @renpy.pure
     def QuickSave(message=_("Quick save complete."), newest=False):
         """
-        :doc: file_action
+        :doc: file_action action
 
         Performs a quick save.
 
@@ -956,7 +957,7 @@ init -1500 python:
 
         `newest`
             Set to true to mark the quicksave as the newest save.
-         """
+        """
 
         rv = [ FileSave(1, page="quick", confirm=False, cycle=True, newest=newest, action=Notify(message)) ]
 
@@ -970,7 +971,7 @@ init -1500 python:
     @renpy.pure
     def QuickLoad(confirm=True):
         """
-        :doc: file_action
+        :doc: file_action action
 
         Performs a quick load.
 

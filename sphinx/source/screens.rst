@@ -213,9 +213,16 @@ expression. It takes the following properties:
     and :func:`Return` actions, it's safe to enable `roll_forward`. Other
     actions may have side-effects that will not occur during the roll_forward.
 
+If the first line of a screen is a Python string, it is used as the docstring for
+the screen. The docstring can be retrieved with :func:`renpy.get_screen_docstring`.
+
 ::
 
    screen hello_world():
+        """
+        Displays a hello world message.
+        """
+
         tag example
         zorder 1
         modal False
@@ -340,8 +347,8 @@ All user interface statements take the following common properties:
 
 .. screen-property:: prefer_screen_to_id
 
-    If true, when a property is provided by both the the screen and a
-    displayble identifier, the screen property is used. If false, the
+    If true, when a property is provided by both the screen and a
+    displayable identifier, the screen property is used. If false, the
     default, the displayable property is used. (This can be used to
     decide if the screen overrides properties set by a Character.)
 
@@ -456,6 +463,13 @@ data. It takes the following properties:
 
     An action to run when the bar button is released. This will be invoked
     even if the bar has not changed its value.
+
+.. screen-property:: thumb_align
+
+    The alignment of the bar thumb, relative to the bar. If the bar and
+    thumb are different sizes - for example, the thumb is taller than the
+    height of a horizontal bar - thumb_align can be set to 0.5 so the centers
+    of the bar and thumb are aligned.
 
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
@@ -929,6 +943,11 @@ The input statement takes no parameters, and the following properties:
     Generally, this is is used with a `value` that stores the input into
     a variable, so the action can access it.
 
+.. screen-property:: arrowkeys
+
+    If True (the default), the arrow keys can be used to move the caret left and right
+    within the input. If False, arrow keys are ignored, making them available for other uses,
+    like changing focus.
 
 
 It also takes:
@@ -1114,9 +1133,23 @@ Nearrect takes the following properties:
     Passing "tooltip" to this uses the location of the last displayable that
     was focused while displaying a tooltip.
 
+    If present, overrides `rect`
+
+.. screen-property:: preferred_side
+
+    One of ``"left"``, ``"top"``, ``"right"``, ``"bottom"`` to prefer that
+    position for the nearrect. If there is not room on one side, the opposite
+    side is used. By default, the preferred side is "bottom".
+
 .. screen-property:: prefer_top
 
-    If given, positioning the child above the focus rect is preferred.
+    Deprecated. Equivalent to ``preferred_side "top"``
+
+.. screen-property:: invert_offsets
+
+    If True and there isn't enough space on the preferred side, multiply
+    xoffset and yoffset by -1 since the child will be on the opposite side of
+    the rectangle. False by default.
 
 It also takes:
 
@@ -1124,21 +1157,26 @@ It also takes:
 * :ref:`position-style-properties`
 
 
-Nearrect differs from the other layouts in that it positions its child near
-the given rectangle, rather than inside it. The child is first rendered with
-the full width available, and the maximum of the height above and height below
-the rectangle. The y position is then computed as followed.
+Nearrect differs from the other layouts in that it positions its child near the
+given rectangle, rather than inside it. For a `preferred_side` of ``"top"`` or
+``"bottom"`` (resp. ``"left"``, ``"right"``), the child is first rendered with
+the full width (resp. height) available, and the maximum of the height
+(resp. width) above and below the rectangle. The y position (resp. x position)
+is then computed as followed.
 
-* If the child will fit above the rectangle and `prefer_top` is given, the child
-  is positioned directly above the rectangle.
-* Otherwise, if the child can fit below the rectangle, it's positioned directly
-  below the rectangle.
-* Otherwise, the child is positioned directly above the rectangle.
+* If the child will fit on the `preferred_side` of the rectangle, the child is
+  positioned directly adjacent to the rectangle.
+* Otherwise, if the child can fit opposite the `preferred_side` of the
+  rectangle, it's positioned there.
+* Otherwise, the child is positioned directly adjacent to the rectangles's
+  `preferred_side`.
 
-The x positioning is computed using the normal rules, using the :propref:`xpos`
-and :propref:`xanchor` properties of the child, and properties that set them,
-such as :propref:`xalign`. The pos properties are relative to the x coordinate
-of the rectangle, and in the case of a floating point number, the width.
+The x positioning (resp. y position) is computed using the normal rules, using
+the :propref:`xpos` and :propref:`xanchor` properties (resp. :propref:`ypos`,
+:propref:`yanchor`) of the child, and properties that set them, such as
+:propref:`xalign`. The pos properties are relative to the x coordinate
+(resp. y coordinate) of the rectangle, and in the case of a floating point
+number, the width (resp. height).
 
 At the end of positioning, the :propref:`xoffset` and :propref:`yoffset`
 properties are applied as normal.
@@ -1638,7 +1676,7 @@ If one is omitted or None, the other is automatically determined from the
 size, spacing, and number of children. If a row or column would be underfull,
 ``null`` displayable are used to fill the remaining space.
 
-Vpgrids take the the following properties:
+Vpgrids take the following properties:
 
 .. screen-property:: cols
 
@@ -1924,7 +1962,7 @@ self-voicing feature to work.
 Add Statement
 =============
 
-The add statement is a bit special, as it adds an already-exising displayble
+The add statement is a bit special, as it adds an already-existing displayble
 to the screen. As a result, it doesn't take the properties common to the
 user interface statements.
 
@@ -1972,12 +2010,12 @@ rectangular area on the screen. It takes the following properties:
 
 .. screen-property:: cols
 
-    If not None, the defaut, this divides the screen up into a grid
+    If not None, the default, this divides the screen up into a grid
     with this many columns.
 
 .. screen-property:: rows
 
-    If not None, the defaut, this divides the screen up into a grid
+    If not None, the default, this divides the screen up into a grid
     with this many rows.
 
 .. screen-property:: position
@@ -2227,8 +2265,11 @@ to the result of assigning the arguments to those parameters. ::
                   use file_slot(i)
 
 
-The use statement may take one property, ``id``, which must be placed
-after the parameter list if present. This screen is only useful when
+The use statement may take clauses properties, ``id`` and ``as``. These properties must be placed
+after the parameter list, if present, and must be on the first line of the statement, not in
+th block.
+
+The ``id`` clause is only useful when
 two screens with the same tag use the same screen. In this case,
 when one screen replaces the other, the state of the used screen
 is transfered from old to new.
@@ -2258,6 +2299,18 @@ is transfered from old to new.
         show screen s2
         pause
         return
+
+The ``as`` clause should be followed by a variable name. When the used screen finishes, the binding of the `main`
+variable in the screen is assigned to the given variable. For example::
+
+    screen child():
+        add MyCreatorDefinedDisplayable() as main
+
+    screen parent():
+        use child as mycdd
+
+        # Here, the MyCreatorDefinedDisplaybale instance is assigned to cdd.
+
 
 Instead of the name of the screen, the keyword ``expression`` can be
 given, followed by an expression giving the name of the screen to use.
@@ -2364,7 +2417,7 @@ The ``showif`` statement wraps its children in a displayable that manages
 the show and hide process.
 
 Multiple showif statements can be grouped together into a single
-``showif``/``elif``/``else`` construct, similiar to an if statement.
+``showif``/``elif``/``else`` construct, similar to an if statement.
 **Unlike the if statement, showif executes all of its blocks, including Python, even if the condition is false.**
 This is because the showif statement needs to create the children that it is
 hiding.
@@ -2581,6 +2634,9 @@ those of the :ref:`show-screen-statement`:
 ``with``
     In a call screen statement, the ``with`` clause causes a transition
     to occur when the screen is shown.
+
+    This does **not** cause a ``with None`` occur before the screen is shown, so all show and hide statements before
+    the screen will run. If you need a ``with None``, add one.
 
 Since calling a screen is an interaction, and interactions trigger
 an implicit ``with None``, using a ``with`` statement after the

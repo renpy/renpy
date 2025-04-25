@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -141,7 +141,7 @@ init -1500 python:
 
     @renpy.pure
     class Continue(Action, DictEquality):
-        """
+        r"""
         :doc: menu_action
 
         Causes the last save to be loaded.
@@ -300,6 +300,11 @@ init -1500 python:
             if not self.get_sensitive():
                 return
 
+            if config.skipping:
+                config.skipping = None
+                renpy.restart_interaction()
+                return
+
             if self.confirm:
                 if self.fast:
                     if _preferences.skip_unseen:
@@ -317,14 +322,10 @@ init -1500 python:
                 else:
                     renpy.jump("_return_skipping")
             else:
-
-                if not config.skipping:
-                    if self.fast:
-                        config.skipping = "fast"
-                    else:
-                        config.skipping = "slow"
+                if self.fast:
+                    config.skipping = "fast"
                 else:
-                    config.skipping = None
+                    config.skipping = "slow"
 
                 renpy.restart_interaction()
 
@@ -345,6 +346,10 @@ init -1500 python:
                 return False
 
             if renpy.game.context().seen_current(True):
+                return True
+
+            tlid = renpy.game.context().translate_identifier
+            if renpy.seen_translation(tlid):
                 return True
 
             if _preferences.skip_unseen:

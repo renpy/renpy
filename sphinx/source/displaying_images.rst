@@ -111,7 +111,7 @@ Images Directory
 ----------------
 
 The image directory is named "images", and is placed under the game directory.
-When a file with a .jpg, .jpeg, .jxl, .png, or .webp extension is placed underneath this directory,
+When a file with a .jpg, .jpeg, .png, or .webp extension is placed underneath this directory,
 the extension is stripped, the rest of the filename is forced to lowercase,
 and the resulting filename is used as the image name if an image with that
 name has not been previously defined.
@@ -138,7 +138,7 @@ image will fill the entire screen.
 
 When oversampling is enabled, the size that the image is displayed at is
 smaller than the image size would imply. For example, if an image is 3480x2160,
-and has an oversamply of 2, then each axis will be halved, and the image would
+and has an oversample of 2, then each axis will be halved, and the image would
 fill the same 1920x1080 window.
 
 This is useful when the image might be zoomed in on, and the extra detail is
@@ -148,7 +148,7 @@ resolution graphics.
 
 Oversampling is automatically enabled if the image ends with an '@' followed
 by a number, before the extension. For example, :file:`eileen happy@2.png` is
-2x oversampled, and :file:`eileen happy@3x.png` will be 3x oversampled. Oversampling
+2x oversampled, and :file:`eileen happy@3.png` will be 3x oversampled. Oversampling
 can also be enabled by giving the `oversample` keyword argument to :func:`Image`.
 
 A directory can also specify how much to oversample images inside it. For example,
@@ -484,7 +484,7 @@ is equivalent to::
 
 Note that even though this applies to the :ref:`show-screen-statement`
 and :ref:`hide-screen-statement` statements too,
-:ref:`call-screen-statement` works a bit differently.
+:ref:`call-screen-statement` differently.
 
 .. _camera:
 

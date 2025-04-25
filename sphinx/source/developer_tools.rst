@@ -95,7 +95,7 @@ from, and the properties each style contributes to the final displayable.
 ---------------
 
 When :var:`config.developer` or :var:`config.fast_skipping` is True, pressing
-the `fast_skip` key (by default, ">") causes the the game to immediately skip to
+the `fast_skip` key (by default, ">") causes the game to immediately skip to
 the next important interaction.  For this purpose, an important interaction is
 one that is not caused by a say statement, transition, or pause command.
 Usually, this means skipping to the next menu, but it will also stop when
@@ -149,3 +149,34 @@ Debug Functions
 ---------------
 
 .. include:: inc/debug
+
+
+Launcher Customization
+----------------------
+
+It's possible to customize the Ren'Py launcher to select the files and directories
+that are available to click on. To do this, create project.json with the lines below::
+
+    {
+        "renpy_launcher":
+        {
+            "open_directory":
+            {
+                "game": "game",
+                "base": ".",
+                "images": "game/images",
+                "audio": "game/audio",
+                "gui": "game/gui"
+            },
+            "edit_file":
+            {
+                "script.rpy": "game/script.rpy",
+                "options.rpy": "game/options.rpy",
+                "gui.rpy": "game/gui.rpy",
+                "screens.rpy": "game/screens.rpy"
+            }
+        }
+    }
+
+If the file already exists, you'll want to edit in the renpy_launcher key and the lines below it.
+You can then edit the dictionaries to change the available files and directories.

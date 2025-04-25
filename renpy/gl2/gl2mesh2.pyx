@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -65,7 +65,7 @@ cdef class Mesh2(Mesh):
         if triangles:
 
             self.triangles = 0
-            self.triangle = <unsigned short *> malloc(triangles * 3 * sizeof(int))
+            self.triangle = <unsigned int *> malloc(triangles * 3 * sizeof(unsigned int))
 
     def __dealloc__(Mesh2 self):
 
@@ -78,19 +78,19 @@ cdef class Mesh2(Mesh):
 
     def __repr__(Mesh2 self):
 
-        cdef unsigned short i
-        cdef unsigned short j
+        cdef int i
+        cdef int j
 
         rv = "<Mesh2 {!r}".format(self.layout.offset)
 
-        for 0 <= i < self.points:
+        for i in range(self.points):
             rv += "\n    {}: {: >8.3f} {:> 8.3f}| ".format(chr(i + 65), self.point[i].x, self.point[i].y)
-            for 0 <= j < self.layout.stride:
+            for j in range(self.layout.stride):
                 rv += "{:> 8.3f} ".format(self.attribute[i * self.layout.stride + j])
 
         rv += "\n    "
 
-        for 0 <= i < self.triangles:
+        for i in range(self.triangles):
             rv += "{}-{}-{} ".format(
                 chr(self.triangle[i * 3 + 0] + 65),
                 chr(self.triangle[i * 3 + 1] + 65),
@@ -201,8 +201,8 @@ cdef class Mesh2(Mesh):
 
         rv.points = width * height
 
-        for 0 <= y < height:
-            for 0 <= x < width:
+        for y in range(height):
+            for x in range(width):
                 i = x + y * width
 
                 rv.point[i].x = pl + (pr - pl) * (1.0 * x / (width - 1))
@@ -213,8 +213,8 @@ cdef class Mesh2(Mesh):
 
         rv.triangles = 2 * (width - 1) * (height - 1)
 
-        for 0 <= y < height - 1:
-            for 0 <= x < width - 1:
+        for y in range(height - 1):
+            for x in range(width - 1):
 
                 i = 6 * (x + y * (width - 1))
 
@@ -252,6 +252,8 @@ cdef class Mesh2(Mesh):
         double index,
         double left, double top, double right, double bottom,
         double left_time, double right_time,
+        double ascent, double descent,
+        double xoffset, double yoffset
         ):
         """
         Adds a glyph to a mesh created by `text_mesh`.
@@ -281,6 +283,10 @@ cdef class Mesh2(Mesh):
         cdef int stride = self.layout.stride
         cdef int attribute = self.points * stride
 
+        left -= xoffset
+        right -= xoffset
+        cx -= xoffset
+
         self.point[point + 0].x = left
         self.point[point + 0].y = bottom
         self.attribute[attribute + 0] = tex_left
@@ -296,6 +302,8 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 9] = top
         self.attribute[attribute + 10] = width
         self.attribute[attribute + 11] = height
+        self.attribute[attribute + 12] = ascent
+        self.attribute[attribute + 13] = descent
 
         attribute += stride
 
@@ -314,6 +322,8 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 9] = top
         self.attribute[attribute + 10] = width
         self.attribute[attribute + 11] = height
+        self.attribute[attribute + 12] = ascent
+        self.attribute[attribute + 13] = descent
 
         attribute += stride
 
@@ -332,6 +342,8 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 9] = top
         self.attribute[attribute + 10] = width
         self.attribute[attribute + 11] = height
+        self.attribute[attribute + 12] = ascent
+        self.attribute[attribute + 13] = descent
 
         attribute += stride
 
@@ -350,6 +362,8 @@ cdef class Mesh2(Mesh):
         self.attribute[attribute + 9] = top
         self.attribute[attribute + 10] = width
         self.attribute[attribute + 11] = height
+        self.attribute[attribute + 12] = ascent
+        self.attribute[attribute + 13] = descent
 
         cdef int triangle = self.triangles * 3
 
@@ -371,6 +385,29 @@ cdef class Mesh2(Mesh):
 
         return crop_mesh(self, p)
 
+    def remap_texture(
+        self,
+        float old_x, float old_y, float old_w, float old_h,
+        float new_x, float new_y, float new_w, float new_h):
+
+        """
+        Offsets the texture coordinates of this mesh by the given amount.
+        """
+
+        cdef int i
+        cdef float x
+        cdef float y
+
+        if new_w == 0 or new_h == 0:
+            return
+
+        for i in range(self.points):
+            x = self.attribute[i * self.layout.stride + 0] * old_w + old_x
+            y = self.attribute[i * self.layout.stride + 1] * old_h + old_y
+
+            self.attribute[i * self.layout.stride + 0] = (x - new_x) / new_w
+            self.attribute[i * self.layout.stride + 1] = (y - new_y) / new_h
+
     def get_points(Mesh2 self):
         """
         Returns the points that make up this mesh as tuples.
@@ -380,7 +417,7 @@ cdef class Mesh2(Mesh):
 
         rv = [ ]
 
-        for 0 <= i < self.points:
+        for i in range(self.points):
             rv.append((self.point[i].x, self.point[i].y, 0.0, 1.0))
 
         return rv
@@ -443,7 +480,7 @@ cdef void copy_point(Mesh2 old, int op, Mesh2 new, int np):
 
     new.point[np] = old.point[op]
 
-    for 0 <= i < stride:
+    for i in range(stride):
         new.attribute[np * stride + i] = old.attribute[op * stride + i]
 
 cdef void intersectLines(
@@ -469,7 +506,7 @@ cdef int split_line(Mesh2 old, Mesh2 new, CropInfo *ci, int p0idx, int p1idx):
 
     cdef int i
 
-    for 0 <= i < SPLIT_CACHE_LEN:
+    for i in range(SPLIT_CACHE_LEN):
         if (ci.split[i].p0idx == p0idx) and (ci.split[i].p1idx == p1idx):
             return ci.split[i].npidx
         elif (ci.split[i].p0idx == p1idx) and (ci.split[i].p1idx == p0idx):
@@ -500,7 +537,7 @@ cdef int split_line(Mesh2 old, Mesh2 new, CropInfo *ci, int p0idx, int p1idx):
     cdef float a
     cdef float b
 
-    for 0 <= i < stride:
+    for i in range(stride):
         a = old.attribute[p0idx * stride + i]
         b = old.attribute[p1idx * stride + i]
         new.attribute[npidx * stride + i] = a + d * (b - a)
@@ -595,7 +632,7 @@ cdef Mesh2 split_mesh(Mesh2 old, float x0, float y0, float x1, float y1):
     all_outside = True
     all_inside = True
 
-    for 0 <= i < old.points:
+    for i in range(old.points):
         px = old.point[i].x - x0
         py = old.point[i].y - y0
 
@@ -621,7 +658,7 @@ cdef Mesh2 split_mesh(Mesh2 old, float x0, float y0, float x1, float y1):
 
     # Step 2: Copy points that are inside.
 
-    for 0 <= i < old.points:
+    for i in range(old.points):
         if ci.point[i].inside:
             copy_point(old, i, new, new.points)
             ci.point[i].replacement = new.points
@@ -631,7 +668,7 @@ cdef Mesh2 split_mesh(Mesh2 old, float x0, float y0, float x1, float y1):
 
     ci.splits = 0
 
-    for 0 <= i < SPLIT_CACHE_LEN:
+    for i in range(SPLIT_CACHE_LEN):
         ci.split[i].p0idx = -1
         ci.split[i].p1idx = -1
 
@@ -647,7 +684,7 @@ cdef Mesh2 split_mesh(Mesh2 old, float x0, float y0, float x1, float y1):
     cdef bint p1in
     cdef bint p2in
 
-    for 0 <= i < old.triangles:
+    for i in range(old.triangles):
         p0 = old.triangle[3 * i + 0]
         p1 = old.triangle[3 * i + 1]
         p2 = old.triangle[3 * i + 2]
@@ -697,7 +734,7 @@ cdef Mesh2 crop_mesh(Mesh2 m, Polygon p):
 
     j = p.points - 1
 
-    for 0 <= i < p.points:
+    for i in range(p.points):
         rv = split_mesh(rv, p.point[j].x, p.point[j].y, p.point[i].x, p.point[i].y)
         j = i
 

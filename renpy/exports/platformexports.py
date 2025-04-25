@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -45,7 +45,7 @@ def variant(name):
     returns True if any of the variants would.
     """
 
-    if isinstance(name, basestring):
+    if isinstance(name, str):
         return name in renpy.config.variants
     else:
         for n in name:
@@ -83,7 +83,7 @@ def invoke_in_thread(fn, *args, **kwargs):
     stopped when Ren'Py is shutting down.
 
     This thread is very limited in what it can do with the Ren'Py API.
-    Changing store variables is allowed, as are calling calling the following
+    Changing store variables is allowed, as are calling the following
     functions:
 
     * :func:`renpy.restart_interaction`
@@ -276,3 +276,19 @@ def request_permission(permission):
         return False
 
     return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8")) # type: ignore
+
+def open_url(url):
+    """
+    :doc: other
+
+    Opens a URL in the system's web browser, if possible.
+    """
+
+    if not renpy.mobile:
+        renpy.game.preferences.fullscreen = False
+
+    try:
+        import webbrowser
+        webbrowser.open_new(url)
+    except Exception:
+        pass

@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -51,6 +51,8 @@ from renpy.pyanalysis import Analysis, NOT_CONST, LOCAL_CONST, GLOBAL_CONST, cca
 import hashlib
 import time
 
+from renpy.python import py_eval as eval
+
 # This file contains the abstract syntax tree for a screen language
 # screen.
 
@@ -81,7 +83,7 @@ def compile_expr(loc, node):
     flags = renpy.python.new_compile_flags | renpy.python.file_compiler_flags.get(filename, 0)
 
     expr = ast.Expression(body=node)
-    renpy.python.fix_locations(expr, 1, 0)
+    renpy.python.LocationFixer(node)
     return compile(expr, filename, "eval", flags, True)
 
 class SLContext(renpy.ui.Addable):
@@ -386,6 +388,10 @@ class SLBlock(SLNode):
     # The actual transform created from the atl transform.
     transform = None
 
+    # True if this block has a variable name that should apply to the parent.
+    # (Only used by CustomParser, an implementation detail.)
+    variable : str|None = None
+
     def __init__(self, loc):
         SLNode.__init__(self, loc)
 
@@ -432,7 +438,7 @@ class SLBlock(SLNode):
             if const == GLOBAL_CONST:
                 keyword_values[k] = py_eval_bytecode(compile_expr(self.location, node))
             else:
-                keyword_keys.append(ast.Str(s=k))
+                keyword_keys.append(ast.Constant(value=k))
                 keyword_exprs.append(node) # Will be compiled as part of ast.Dict below.
 
             self.constant = min(self.constant, const)
@@ -818,7 +824,7 @@ class SLDisplayable(SLBlock):
 
             if const == GLOBAL_CONST:
                 values.append(py_eval_bytecode(compile_expr(self.location, node)))
-                exprs.append(ast.Num(n=0))
+                exprs.append(ast.Constant(value=0))
                 has_values = True
             else:
                 values.append(use_expression)
@@ -1950,8 +1956,9 @@ class SLUse(SLNode):
 
     id = None
     block = None
+    variable = None
 
-    def __init__(self, loc, target, args, id_expr, block):
+    def __init__(self, loc, target, args, id_expr, block, variable):
 
         SLNode.__init__(self, loc)
 
@@ -1971,6 +1978,9 @@ class SLUse(SLNode):
         # A block for transclusion, or None if the statement does not have a
         # block.
         self.block = block
+
+        # The variable the main displayable is assigned to.
+        self.variable = variable
 
     def copy(self, transclude):
 
@@ -1993,8 +2003,11 @@ class SLUse(SLNode):
 
         self.last_keyword = True
 
-        if self.id:
+        if self.id or self.variable:
             self.constant = NOT_CONST
+
+        if self.variable:
+            analysis.mark_not_constant(self.variable)
 
         if self.block:
             self.block.analyze(analysis)
@@ -2161,6 +2174,10 @@ class SLUse(SLNode):
         if ctx.fail:
             context.fail = True
 
+        if self.variable:
+            context.scope[self.variable] = ctx.scope.get("main", None)
+
+
     def copy_on_change(self, cache):
 
         c = cache.get(self.serial, None)
@@ -2265,7 +2282,9 @@ class SLCustomUse(SLNode):
     by renpy.register_sl_statement.
     """
 
-    def __init__(self, loc, target, positional, block):
+    variable = None
+
+    def __init__(self, loc, target, positional, block, variable):
 
         SLNode.__init__(self, loc)
 
@@ -2280,6 +2299,9 @@ class SLCustomUse(SLNode):
 
         # A block for transclusion, from which we also take kwargs.
         self.block = block
+
+        # The variable the main displayable is assigned to.
+        self.variable = variable
 
     def copy(self, transclude):
 
@@ -2323,6 +2345,10 @@ class SLCustomUse(SLNode):
                 raise Exception("A screen used in CD SLS should be a SL-based screen.")
             else:
                 return
+
+        if self.variable is not None:
+            self.constant = NOT_CONST
+            analysis.mark_not_constant(self.variable)
 
         # If we have the id property, we're not constant - since we may get
         # our state via other screen on replace.
@@ -2436,6 +2462,9 @@ class SLCustomUse(SLNode):
         if ctx.fail:
             context.fail = True
 
+        if self.variable:
+            context.scope[self.variable] = ctx.scope.get("main", None)
+
     def copy_on_change(self, cache):
 
         c = cache.get(self.serial, None)
@@ -2492,6 +2521,7 @@ class SLScreen(SLBlock):
     layer = "'screens'"
     sensitive = "True"
     roll_forward = "None"
+    docstring = None
 
     def __init__(self, loc):
 
@@ -2528,6 +2558,9 @@ class SLScreen(SLBlock):
         # True if this screen has been prepared.
         self.prepared = False
 
+        # The docstring for this screen, or None if there is none.
+        self.docstring = None
+
     def copy(self, transclude):
         rv = self.instantiate(transclude) # type: ignore
 
@@ -2563,6 +2596,7 @@ class SLScreen(SLBlock):
             layer=renpy.python.py_eval(self.layer),
             sensitive=self.sensitive,
             roll_forward=renpy.python.py_eval(self.roll_forward),
+            docstring=renpy.python.py_eval(self.docstring) if self.docstring else None,
             )
 
     def analyze(self, analysis):

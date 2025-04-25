@@ -213,7 +213,7 @@ be present by default unless an attribute in the same group is called. The
 ``null`` keyword prevents this clause from getting attached a displayable, which
 can be useful for bookkeeping and to build conditional display conditions using
 `if_all`, `if_any`, `if_not`, `attribute_function`,
-:var:`config.adjust_attributes` or :var:`config.default_attributes`.
+:var:`config.adjust_attributes` or :var:`config.default_attribute_callbacks`.
 
 The same attribute name
 can be used in multiple ``attribute`` clauses (and in auto-defined attributes as
@@ -516,7 +516,7 @@ Note that with the exception of the conditions in the ``if`` statement, all
 expressions written in a ``layeredimage`` block are evaluated at init time, when
 the layered image is first defined. This is not the case for ATL transforms for
 example, or for anything occurring in :var:`config.adjust_attributes`,
-:var:`config.default_attributes` or ``attribute_function``, but it is the case
+:var:`config.default_attribute_callbacks` or ``attribute_function``, but it is the case
 for ``format_function`` which is also only called at layeredimage definition.
 
 

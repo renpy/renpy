@@ -294,8 +294,8 @@ translate None strings:
     new "Updater"
 
     # 00updater.rpy:1406
-    old "An error has occured:"
-    new "An error has occured:"
+    old "An error has occurred:"
+    new "An error has occurred:"
 
     # 00updater.rpy:1408
     old "Checking for updates."

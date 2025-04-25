@@ -35,33 +35,52 @@ holders, under the same terms.
 
 Ren'Py binaries can include source code from the following projects:
 
-* Python (Python License)
-* Pygame_SDL2 (MIT License, GNU LGPL)
-* SDL2 (Zlib License)
-* SDL2_image (Zlib License)
-* SDL2_ttf (Zlib License)
+* ANGLE (Three clause BSD License)
+* aom (AOM BSD License, Alliance for Open Media Patent License 1.0)
+* brotli (MIT License)
+* bzip2 (Bzip2 License)
+* certifi (Mozilla Public License 2.0)
+* chardet (GNU LGPL)
+* charset-mormalizer (MIT License)
+* ecdsa (MIT License)
+* FFmpeg (GNU LGPL) (libav in some older versions, also GNU LGPL)
 * Freetype (Zlib License)
 * Fribidi (GNU LGPL)
-* ffmpeg (GNU LGPL) (libav in some older versions, also GNU LGPL)
+* future (MIT License)
+* GLEW (Modified BSD, MIT License)
+* harfbuzz (Old MIT License)
+* idna (BSD 3-Clause License)
+* libavif (AOM BSD License)
+* libffi (MIT License)
+* libhydrogen (ISC License)
 * libjpeg-turbo (IJG License, Modified BSD License, Zlib License)
 * libpng (PNG License)
-* zlib (Zlib License)
-* bzip2 (Bzip2 License)
-* pyobjc (MIT License)
-* py2exe (MIT License)
-* GLEW (Modified BSD, MIT License)
-* zsync (Artistic License)
-* pyjnius (MIT License)
-* ANGLE (Three clause BSD License)
-* requests (Apache License 2.0)
-* certifi (Mozilla Public License 2.0)
-* urllib3 (MIT License)
-* chardet (GNU LGPL)
 * libusb (GNU LGPL)
-* tinyfiledialogs (Zlib License)
 * libwebp (Modified BSD License, Patent License)
-* aom (AOM BSD License, Alliance for Open Media Patent License 1.0)
-* libavif (AOM BSD License)
+* libyuv (Three clause BSD License)
+* MetalAngle (Three clause BSD License)
+* Open Asset Import Library (assimp) (Three Clause BSD License)
+* pefile (MIT License)
+* py2exe (MIT License)
+* pyasn1 (Modified BSD License)
+* Pygame_SDL2 (MIT License, GNU LGPL)
+* pyjnius (MIT License)
+* pyobjc (MIT License)
+* pysocks (Three Clause BSD License)
+* Python (Python License)
+* requests (Apache License 2.0)
+* rsa (Apache Lixense 2.0)
+* SDL2_image (Zlib License)
+* SDL2_ttf (Zlib License)
+* SDL2 (Zlib License)
+* six (MIT License)
+* tinyfiledialogs (Zlib License)
+* urllib3 (MIT License)
+* urllib3 (MIT License)
+* websockets (Three Clause BSD License)
+* xz (Three clause BSD License)
+* zlib (Zlib License)
+* zsync (Artistic License)
 
 For the purposes of LGPL compliance, all source code that Ren'Py depends
 on is located in one of the following repositories:
@@ -214,7 +233,7 @@ GNU Lesser General Public License
                    GNU LESSER GENERAL PUBLIC LICENSE
     TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
-   0. This License Agreement applies to any software library or other
+   1. This License Agreement applies to any software library or other
  program which contains a notice placed by the copyright holder or
  other authorized party saying it may be distributed under the terms of
  this Lesser General Public License (also called "this License").
@@ -258,7 +277,7 @@ GNU Lesser General Public License
  and you may at your option offer warranty protection in exchange for a
  fee.
 
-   2. You may modify your copy or copies of the Library or any portion
+   1. You may modify your copy or copies of the Library or any portion
  of it, thus forming a work based on the Library, and copy and
  distribute such modifications or work under the terms of Section 1
  above, provided that you also meet all of these conditions:
@@ -1897,3 +1916,143 @@ IJG License
     We specifically permit and encourage the use of this software as the basis of
     commercial products, provided that all warranty or liability claims are
     assumed by the product vendor.
+
+
+Libhydrogen License
+-------------------
+
+::
+
+    ISC License
+
+    Copyright (c) 2017-2023
+    Frank Denis <j at pureftpd dot org>
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+
+Harfbuzz License
+----------------
+
+::
+
+    HarfBuzz is licensed under the so-called "Old MIT" license.  Details follow.
+    For parts of HarfBuzz that are licensed under different licenses see individual
+    files names COPYING in subdirectories where applicable.
+
+    Copyright © 2010-2022  Google, Inc.
+    Copyright © 2015-2020  Ebrahim Byagowi
+    Copyright © 2019,2020  Facebook, Inc.
+    Copyright © 2012,2015  Mozilla Foundation
+    Copyright © 2011  Codethink Limited
+    Copyright © 2008,2010  Nokia Corporation and/or its subsidiary(-ies)
+    Copyright © 2009  Keith Stribley
+    Copyright © 2011  Martin Hosken and SIL International
+    Copyright © 2007  Chris Wilson
+    Copyright © 2005,2006,2020,2021,2022,2023  Behdad Esfahbod
+    Copyright © 2004,2007,2008,2009,2010,2013,2021,2022,2023  Red Hat, Inc.
+    Copyright © 1998-2005  David Turner and Werner Lemberg
+    Copyright © 2016  Igalia S.L.
+    Copyright © 2022  Matthias Clasen
+    Copyright © 2018,2021  Khaled Hosny
+    Copyright © 2018,2019,2020  Adobe, Inc
+    Copyright © 2013-2015  Alexei Podtelezhnikov
+
+    For full copyright notices consult the individual files in the package.
+
+
+    Permission is hereby granted, without written agreement and without
+    license or royalty fees, to use, copy, modify, and distribute this
+    software and its documentation for any purpose, provided that the
+    above copyright notice and the following two paragraphs appear in
+    all copies of this software.
+
+    IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE TO ANY PARTY FOR
+    DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+    ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN
+    IF THE COPYRIGHT HOLDER HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+    DAMAGE.
+
+    THE COPYRIGHT HOLDER SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING,
+    BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+    FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+    ON AN "AS IS" BASIS, AND THE COPYRIGHT HOLDER HAS NO OBLIGATION TO
+    PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+
+Libyuv License
+--------------
+
+::
+
+    Copyright 2011 The LibYuv Project Authors. All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are
+    met:
+
+      * Redistributions of source code must retain the above copyright
+        notice, this list of conditions and the following disclaimer.
+
+      * Redistributions in binary form must reproduce the above copyright
+        notice, this list of conditions and the following disclaimer in
+        the documentation and/or other materials provided with the
+        distribution.
+
+      * Neither the name of Google nor the names of its contributors may
+        be used to endorse or promote products derived from this software
+        without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+XZ License
+-----------
+
+::
+
+    Copyright (c) 2014-2022  Ulrich Kunitz
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this
+      list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+    * My name, Ulrich Kunitz, may not be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

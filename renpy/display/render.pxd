@@ -22,6 +22,10 @@
 
 from renpy.display.matrix cimport Matrix, Matrix2D
 
+cdef public int MATRIX_MODEL
+cdef public int MATRIX_VIEW
+cdef public int MATRIX_PROJECTION
+
 cdef class Render:
 
     cdef public bint mark, cache_killed, killed
@@ -44,6 +48,9 @@ cdef class Render:
 
     # The transform toward screen space.
     cdef public Matrix reverse
+
+    # The kind of matrix Reverse is.
+    cdef public int matrix_kind
 
     # Alpha multiplication - this is multipled with r, g, b, and a, to reduce
     # the alpha of this Render and its children.
@@ -100,6 +107,9 @@ cdef class Render:
 
     # A flag that's used to enable debugging on a per-render basis.
     cdef public bint debug
+
+    # A flag that tells us if uniforms has a render in it.
+    cdef public bint uniforms_has_render
 
     # operations ###############################################################
 

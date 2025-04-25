@@ -830,7 +830,7 @@ translate czech strings:
     new "Aktualizátor"
 
     # renpy/common/00updater.rpy:1631
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Vyskytla se chyba:"
 
     # renpy/common/00updater.rpy:1633

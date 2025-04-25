@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,6 +32,7 @@ import threading
 import copy
 import gc
 import atexit
+import platform
 
 import pygame_sdl2 as pygame
 import renpy
@@ -107,6 +108,30 @@ enabled_events = {
     REDRAW,
     EVENTNAME,
     }
+
+input_events = {
+    pygame.KEYDOWN,
+    pygame.KEYUP,
+
+    pygame.TEXTEDITING,
+    pygame.TEXTINPUT,
+
+    pygame.MOUSEMOTION,
+    pygame.MOUSEBUTTONDOWN,
+    pygame.MOUSEBUTTONUP,
+    pygame.MOUSEWHEEL,
+
+    pygame.JOYAXISMOTION,
+    pygame.JOYHATMOTION,
+    pygame.JOYBALLMOTION,
+    pygame.JOYBUTTONDOWN,
+    pygame.JOYBUTTONUP,
+
+    pygame.CONTROLLERAXISMOTION,
+    pygame.CONTROLLERBUTTONDOWN,
+    pygame.CONTROLLERBUTTONUP,
+}
+
 
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
@@ -233,12 +258,6 @@ class absolute(float):
         return absolute(absolute.compute_raw(value, room))
 
 for fn in (
-    '__coerce__', # PY2
-    '__div__', # PY2
-    '__long__', # PY2
-    '__nonzero__', # PY2
-    '__rdiv__', # PY2
-
     '__abs__',
     '__add__',
     # '__bool__', # non-float
@@ -279,11 +298,10 @@ for fn in (
     # 'hex', # non-float
     # 'is_integer', # non-float
 ):
-    f = getattr(float, fn, None)
-    if f is not None: # for PY2-only and PY3-only methods
-        setattr(absolute, fn, absolute_wrap(f))
+    f = getattr(float, fn)
+    setattr(absolute, fn, absolute_wrap(f))
 
-del absolute_wrap, fn, f # type: ignore
+del absolute_wrap, fn, f  # type: ignore
 
 
 
@@ -371,7 +389,7 @@ class Renderer(object):
     and then:
     - "renderer", the name of the Renderer.
     - "resizable", true if the window can be resized.
-    - "additive", true if additive blendering is supported.
+    - "additive", true if additive blending is supported.
     - "models", true if model-based rendering is being used.
     """
 
@@ -386,7 +404,7 @@ class Renderer(object):
     def update(self, force=False):
         """
         This is called before a draw operation to check to see if the state of
-        the draw objects needs to be updated after an external event has occured.
+        the draw objects needs to be updated after an external event has occurred.
         Things that require draw updates might be:
 
         * The window has changed its size.
@@ -534,7 +552,7 @@ class Renderer(object):
     def mouse_event(self, ev):
         """
         This translates the .pos field of `ev` from physical coordinates to
-        virtual coordinates. Returns an (x, y) pait of virtual coordinates.
+        virtual coordinates. Returns an (x, y) pair of virtual coordinates.
         """
 
         return ev
@@ -659,7 +677,7 @@ class Interface(object):
         # The time at which this draw occurs.
         self.frame_time = 0
 
-        # The time when this interaction occured.
+        # The time when this interaction occurred.
         self.interact_time = None
 
         # The time we last tried to quit.
@@ -741,6 +759,9 @@ class Interface(object):
 
         # The time when the event was dispatched.
         self.event_time = 0
+
+        # The time of the last input event (mouse, keyboard, gamepad).
+        self.input_event_time = 0
 
         # The time we saw the last mouse event.
         self.mouse_event_time = None
@@ -967,6 +988,14 @@ class Interface(object):
         if renpy.android:
             self.check_android_start()
 
+        gc.collect()
+
+        if gc.garbage:
+            del gc.garbage[:]
+
+        # Kill off the presplash.
+        renpy.display.presplash.end()
+
         # Initialize audio.
         pygame.display.hint("SDL_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
         pygame.display.hint("SDL_AUDIO_DEVICE_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
@@ -984,15 +1013,7 @@ class Interface(object):
 
         renpy.display.emulator.init_emulator()
 
-        gc.collect()
-
-        if gc.garbage:
-            del gc.garbage[:]
-
         renpy.display.render.render_ready()
-
-        # Kill off the presplash.
-        renpy.display.presplash.end()
 
         # If we are on the web browser, start preloading the browser cache.
         if renpy.emscripten and renpy.game.preferences.web_cache_preload:
@@ -1018,7 +1039,7 @@ class Interface(object):
 
         pygame.event.get([ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ])
 
-        # Create a cache of the the mouse information.
+        # Create a cache of the mouse information.
         if renpy.config.mouse:
 
             self.cursor_cache = { }
@@ -1106,7 +1127,7 @@ class Interface(object):
         if renpy.android:
             from jnius import autoclass
             PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
-            PythonSDLActivity.hidePresplash()
+            PythonSDLActivity.mActivity.hidePresplash()
 
             print("Hid presplash.")
 
@@ -1174,24 +1195,17 @@ class Interface(object):
         renpy.config.renderer = renderer
 
         if renpy.android or renpy.ios or renpy.emscripten:
-            renderers = [ "gles" ]
+            renderers = [ "gles2" ]
         elif renpy.windows:
-            renderers = [ "gl", "angle", "gles" ]
+            renderers = [ "gl2", "angle2", "gles2" ]
+        elif renpy.linux and platform.machine() == "aarch64":
+            renderers = [ "gles2", "gl2" ]
         else:
-            renderers = [ "gl", "gles" ]
-
-        gl2_renderers = [ ]
-
-        for i in [ "gl", "angle", "gles" ]:
-
-            if i in renderers:
-                gl2_renderers.append(i + "2")
-
-        renderers = gl2_renderers + renderers
+            renderers = [ "gl2", "gles2" ]
 
         # Prevent a performance warning if the renderer
         # is taken from old persistent data.
-        if renderer not in gl2_renderers and (renpy.macintosh or renpy.android or renpy.config.gl2):
+        if renderer not in renderers:
             renderer = "auto"
 
         # Software renderer is the last hope for PC .
@@ -1227,10 +1241,6 @@ class Interface(object):
 
                 return False
 
-        make_draw("gl", "renpy.gl.gldraw", "GLDraw", "gl")
-        make_draw("angle", "renpy.gl.gldraw", "GLDraw", "angle")
-        make_draw("gles", "renpy.gl.gldraw", "GLDraw", "gles")
-
         make_draw("gl2", "renpy.gl2.gl2draw", "GL2Draw", "gl2")
         make_draw("angle2", "renpy.gl2.gl2draw", "GL2Draw", "angle2")
         make_draw("gles2", "renpy.gl2.gl2draw", "GL2Draw", "gles2")
@@ -1258,6 +1268,7 @@ class Interface(object):
         if renpy.display.draw is not None:
             renpy.display.draw.kill_textures()
 
+        renpy.gl2.assimp.free_memory()
         renpy.display.im.cache.clear()
         renpy.display.render.free_memory()
         renpy.text.text.layout_cache_clear()
@@ -1337,7 +1348,6 @@ class Interface(object):
             raise Exception("Could not set video mode.")
 
         renpy.session["renderer"] = draw.info["renderer"]
-        renpy.game.persistent._gl2 = renpy.config.gl2
 
         if renpy.android:
             android.init()
@@ -1380,7 +1390,7 @@ class Interface(object):
             self.after_first_frame()
             self.first_frame = False
 
-    def take_screenshot(self, scale, background=False):
+    def take_screenshot(self, scale, background=False, keep_existing=False):
         """
         This takes a screenshot of the current screen, and stores it so
         that it can gotten using get_screenshot()
@@ -1388,7 +1398,13 @@ class Interface(object):
         `background`
            If true, we're in a background thread. So queue the request
            until it can be handled by the main thread.
+
+        `keep_existing`
+            If true, the existing screenshot is kept.
         """
+
+        if self.screenshot and keep_existing:
+            return
 
         self.clear_screenshot = False
 
@@ -2219,7 +2235,7 @@ class Interface(object):
 
     def consider_gc(self):
         """
-        Considers if we should peform a garbage collection.
+        Considers if we should perform a garbage collection.
         """
 
         if not renpy.config.manage_gc:
@@ -2315,8 +2331,21 @@ class Interface(object):
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()
-                    renpy.persistent.check_update()
                     self.did_autosave = True
+
+                step += 1
+
+            # Step 6: Persistent data.
+            elif step == 6:
+
+                if not self.did_persistent:
+
+                    if renpy.emscripten:
+                        renpy.persistent.update()
+                    else:
+                        renpy.persistent.check_update()
+
+                    self.did_persistent = True
 
                 step += 1
 
@@ -2746,6 +2775,9 @@ class Interface(object):
             # We only want to do autosave once.
             self.did_autosave = False
 
+            # We only want to save persistent once.
+            self.did_persistent = False
+
             old_timeout_time = None
             old_redraw_time = None
 
@@ -2798,7 +2830,7 @@ class Interface(object):
                         renpy.game.preferences.fullscreen = False
 
                     if renpy.game.preferences.fullscreen != self.fullscreen:
-                        if (not PY2) and renpy.emscripten:
+                        if renpy.emscripten:
                             if renpy.game.preferences.fullscreen:
                                 emscripten.run_script("setFullscreen(true);")
                             else:
@@ -2898,6 +2930,14 @@ class Interface(object):
                 if renpy.loadsave.did_autosave:
                     renpy.loadsave.did_autosave = False
                     renpy.exports.run(renpy.config.autosave_callback)
+
+                # End an obsolete ongoing transition.
+                if (not trans_pause) and self.ongoing_transition.get(None, None) and not self.get_ongoing_transition(None):
+                    self.transition.pop(None, None)
+                    self.ongoing_transition.pop(None, None)
+                    self.transition_time.pop(None, None)
+                    self.transition_from.pop(None, None)
+                    self.restart_interaction = True
 
                 # See if we want to restart the interaction entirely.
                 if self.restart_interaction and not self.display_reset:
@@ -3206,6 +3246,11 @@ class Interface(object):
                     x = -1
                     y = -1
 
+                self.event_time = end_time = get_time()
+
+                if ev.type in input_events:
+                    self.input_event_time = self.event_time
+
                 # This can set the event to None, to ignore it.
                 ev = renpy.display.controller.event(ev)
                 if not ev:
@@ -3213,8 +3258,6 @@ class Interface(object):
 
                 # Handle skipping.
                 renpy.display.behavior.skipping(ev)
-
-                self.event_time = end_time = get_time()
 
                 try:
 

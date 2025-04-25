@@ -293,7 +293,7 @@ The default notify screen, and its associated transform, are::
     screen notify(message):
         zorder 100
 
-        text message at _notify_transform
+        text "[message!tq]" at _notify_transform
 
         # This controls how long it takes between when the screen is
         # first shown, and when it begins hiding.

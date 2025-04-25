@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -167,7 +167,7 @@ init -1500 python:
             is based on the constants used for the luminance channel
             of an NTSC television signal. Since the human eye is
             mostly sensitive to green, more of the green channel is
-            kept then the other two channels.
+            kept than the other two channels.
         """
 
         def __init__(self, value, desat=(0.2126, 0.7152, 0.0722)):
@@ -312,7 +312,7 @@ init -1500 python:
 
         The alpha channel is not touched.
 
-        This is inteded for use with a black and white image (or one that
+        This is intended for use with a black and white image (or one that
         has been desaturated with :func:`SaturationMatrix`), and will yield
         strange results when used with images that are not black and white.
 

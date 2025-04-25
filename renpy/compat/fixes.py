@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,9 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import annotations
 
+from typing import Iterator
 
 import tokenize
 import token
@@ -29,75 +29,56 @@ import io
 import ast
 
 
-def fix_octal_numbers(tokens):
+def fix_octal_numbers(tokens: Iterator[tokenize.TokenInfo]):
     """
-    This fixes python-2 style octal numbers. Tokenize seems to report this
-    as two numbers, the first of which has a string of '0'. This merges that
-    with the next token.
+    This fixes python-2 style octal numbers. Tokenize reports this
+    as NUMBER which starts with '0'. This replaces this as a 0oXXX.
     """
 
-    old = tokens[0]
-    rv = [ ]
+    for t in tokens:
+        if t.type == token.NUMBER and t.string != "0" and t.string.startswith("0"):
+            yield tokenize.TokenInfo(
+                token.NUMBER, f"0o{t.string[1:]}",
+                t.start, t.end, t.line)
+        else:
+            yield t
 
-    for new in tokens:
 
-        if (old.type == token.NUMBER) and (new.type == token.NUMBER) and old.string == "0":
-            rv.pop()
-            new = tokenize.TokenInfo(token.NUMBER, old.string + "o" + new.string, old.start, new.end, new.line)
-
-        rv.append(new)
-        old = new
-
-    return rv
-
-def fix_spaceship(tokens):
+def fix_spaceship(tokens: Iterator[tokenize.TokenInfo]):
     """
     This fixes the Python 2 spaceship operator (<>).
     """
 
-    old = tokens[0]
-    rv = [ ]
-
-    for new in tokens:
-
-        if old.exact_type == token.LESS and new.exact_type == token.GREATER:
-            rv.pop()
-            new = tokenize.TokenInfo(token.OP, "!=", old.start, new.end, old.line)
-
-        rv.append(new)
-        old = new
-
-    return rv
+    for t in tokens:
+        if t.type == token.OP and t.string == "<>":
+            yield tokenize.TokenInfo(token.OP, "!=", t.start, t.end, t.line)
+        else:
+            yield t
 
 
-def fix_backtick_repr(tokens):
+def fix_backtick_repr(tokens: Iterator[tokenize.TokenInfo]):
     """
-    This fixes the Python 2 backtick-repr.
+    This fixes the Python 2 backtick-repr and replaces it with call to repr.
     """
-
-    rv = [ ]
 
     # Is this the first backtick in a pair?
     first = True
 
     for t in tokens:
 
-        if t.type == token.ERRORTOKEN and t.string == "`":
+        if t.type == token.OP and t.string == "`":
             if first:
-                rv.append(tokenize.TokenInfo(token.NAME, "repr", t.start, t.end, t.line))
-                rv.append(tokenize.TokenInfo(token.LPAR, "(", t.end, t.end, t.line))
+                yield tokenize.TokenInfo(token.NAME, "repr", t.start, t.end, t.line)
+                yield tokenize.TokenInfo(token.LPAR, "(", t.end, t.end, t.line)
                 first = False
             else:
-                rv.append(tokenize.TokenInfo(token.RPAR, ")", t.start, t.end, t.line))
+                yield tokenize.TokenInfo(token.RPAR, ")", t.start, t.end, t.line)
                 first = True
         else:
-            rv.append(t)
-
-    return rv
+            yield t
 
 
-
-def fix_print(line):
+def fix_print(line: list[tokenize.TokenInfo]):
     """
     This tries to remove Python 2-style print statements.
     """
@@ -127,7 +108,7 @@ def fix_print(line):
     return newline
 
 
-def fix_raise(line):
+def fix_raise(line: list[tokenize.TokenInfo]):
     if len(line) < 4:
         return line
 
@@ -150,53 +131,42 @@ def fix_raise(line):
     return newline
 
 
-def fix_lines(tokens):
+def fix_lines(tokens: Iterator[tokenize.TokenInfo]):
 
     def fix_line(line):
         line = fix_print(line)
         line = fix_raise(line)
         return line
 
-    rv = [ ]
-    line = [ ]
+    line: list[tokenize.TokenInfo] = []
 
-    for i in tokens:
+    extra_tokens = (
+        token.NL,
+        token.INDENT,
+        token.DEDENT,
+        token.COMMENT,
+        token.ENDMARKER,
+        token.ENCODING,
+    )
 
-        if not line:
-            if i.exact_type == token.NL:
-                rv.append(i)
-                continue
+    for t in tokens:
 
-            if i.exact_type == token.INDENT:
-                rv.append(i)
-                continue
-
-            if i.exact_type == token.DEDENT:
-                rv.append(i)
-                continue
-
-            if i.exact_type == token.ENDMARKER:
-                rv.append(i)
-                continue
-
-            if i.exact_type == token.ENCODING:
-                rv.append(i)
-                continue
-
-        line.append(i)
-
-        if i.type != token.NEWLINE:
+        if not line and t.exact_type in extra_tokens:
+            yield t
             continue
 
-        rv.extend(fix_line(line))
-        line = [ ]
+        line.append(t)
 
-    rv.extend(fix_line(line))
+        if t.type != token.NEWLINE:
+            continue
 
-    return rv
+        yield from fix_line(line)
+        line = []
+
+    yield from fix_line(line)
 
 
-def fix_tokens(source):
+def fix_tokens(source: str):
     """
     This applies fixes that will help python 2 code run under python 3. Not all
     problem will be fixed, but this will attempt to handle common issues.
@@ -206,11 +176,8 @@ def fix_tokens(source):
 
     try:
 
-        if PY2:
-            return source
-
-        bio = io.BytesIO(source.encode("utf-8"))
-        tokens = list(tokenize.tokenize(bio.readline))
+        bio = io.StringIO(source, None)
+        tokens = tokenize.generate_tokens(bio.readline)
 
         tokens = fix_octal_numbers(tokens)
         tokens = fix_spaceship(tokens)
@@ -218,7 +185,7 @@ def fix_tokens(source):
 
         tokens = fix_lines(tokens)
 
-        rv = tokenize.untokenize(tokens).decode("utf-8")
+        rv: str = tokenize.untokenize(tokens)
 
         return rv
 
@@ -226,6 +193,7 @@ def fix_tokens(source):
         # import traceback
         # traceback.print_exc()
         raise e
+
 
 class ReorderGlobals(ast.NodeTransformer):
     """
@@ -236,29 +204,30 @@ class ReorderGlobals(ast.NodeTransformer):
     def __init__(self):
         self.globals = set()
 
-    def visit_Global(self, n):
+    def visit_Global(self, node):
 
-        for i in n.names:
+        for i in node.names:
             self.globals.add(i)
 
         return ast.Pass()
 
-    def visit_FunctionDef(self, n):
+    def visit_FunctionDef(self, node: ast.FunctionDef):
 
         old_globals = self.globals
 
         try:
-            n = self.generic_visit(n)
+            node = self.generic_visit(node)  # type: ignore
 
             new_globals = list(self.globals)
             new_globals.sort()
 
             if new_globals:
-                n.body.insert(0, ast.Global(names=new_globals)) # type: ignore
+                node.body.insert(0, ast.Global(names=new_globals))
 
-            return n
+            return node
         finally:
             self.globals = old_globals
+
 
 reorder_globals = ReorderGlobals()
 
@@ -270,9 +239,6 @@ def fix_ast(tree):
 
     These are fixes that apply at the AST level.
     """
-
-    if PY2:
-        return tree
 
     try:
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -227,7 +227,7 @@ def init_keymap():
 
 def clear_keymap_cache():
     """
-    :undocumented:
+    :doc: keymap
 
     Clears the keymap cache. This allows changes to :var:`config.keymap` to
     take effect without restarting Ren'Py.
@@ -245,8 +245,8 @@ def queue_event(name, up=False, **kwargs):
     names in :var:`config.keymap`, or a list of such names.
 
     `up`
-        This should be false when the event begins (for example, when a keyboard
-        button is pressed.) It should be true when the event ends (when the
+        This should be False when the event begins (for example, when a keyboard
+        button is pressed.) It should be True when the event ends (when the
         button is released.)
 
     The event is queued at the time this function is called. This function will
@@ -807,6 +807,8 @@ class SayBehavior(renpy.display.layout.Null):
 
             if ev.type == renpy.display.core.TIMEEVENT and st >= skip_delay:
 
+                tlid = renpy.game.context().translate_identifier
+
                 if ev.modal:
                     return None
                 elif renpy.game.preferences.skip_unseen:
@@ -814,6 +816,8 @@ class SayBehavior(renpy.display.layout.Null):
                 elif renpy.config.skipping == "fast":
                     return True
                 elif renpy.game.context().seen_current(True):
+                    return True
+                elif tlid and renpy.exports.seen_translation(tlid):
                     return True
                 else:
                     renpy.config.skipping = None
@@ -894,6 +898,8 @@ KEY_EVENTS = (
 
 
 class Button(renpy.display.layout.Window):
+
+    _store_transform_event = True
 
     keymap = { }
     action = None
@@ -1114,9 +1120,9 @@ class Button(renpy.display.layout.Window):
         # If we have a child, try passing the event to it. (For keyboard
         # events, this only happens if we're focused.)
         if (not (ev.type in KEY_EVENTS)) or self.style.key_events:
-                rv = super(Button, self).event(ev, x, y, st)
-                if rv is not None:
-                    return rv
+            rv = super(Button, self).event(ev, x, y, st)
+            if rv is not None:
+                return rv
         else:
 
             # Used to prevent keymaps (the key statement) from reacting to
@@ -1194,7 +1200,7 @@ class Button(renpy.display.layout.Window):
     def _tts_all(self):
         rv = self._tts_common(alt(self.action))
 
-        if self.is_selected() and (self.style.alt == self.style._hover_alt()):
+        if self.style.prefix.startswith("selected_")  and (self.style.alt == self.style._hover_alt()):
             rv += " " + renpy.minstore.__("selected")
 
         return rv
@@ -1382,7 +1388,7 @@ class CaretBlink(renpy.display.displayable.Displayable):
         st -= self.st_base
 
         cr = renpy.display.render.render(self.caret, width, height, st, at)
-        rv = renpy.display.render.Render(1, height)
+        rv = renpy.display.render.Render(cr.width, height)
 
         ttl = self.caret_blink - st % self.caret_blink
 
@@ -1411,6 +1417,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
     shown = False
     multiline = False
     action = None
+    arrowkeys = True
 
     st = 0
 
@@ -1432,6 +1439,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                  caret_blink=None,
                  multiline=False,
                  action=None,
+                 arrowkeys=True,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
@@ -1469,6 +1477,8 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         self.multiline = multiline
 
         self.action = action
+
+        self.arrowkeys = arrowkeys
 
         caretprops = { 'color' : None }
 
@@ -1542,15 +1552,28 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
 
         def set_content(content):
 
-            if content == "":
-                content = u" "
-
             if editable:
                 l = len(content)
-                self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), edit_text, caret,
-                               content[self.caret_pos:l].replace("{", "{{"), self.suffix])
+                caret_content = [
+                    self.prefix,
+                    content[0:self.caret_pos].replace("{", "{{"),
+                    edit_text,
+                    caret,
+                    content[self.caret_pos:l].replace("{", "{{"),
+                    self.suffix
+                    ]
+
             else:
-                self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
+                caret_content = [
+                    self.prefix,
+                    content.replace("{", "{{"),
+                    self.suffix
+                ]
+
+            if not content:
+                caret_content.append("{space=1}")
+
+            self.set_text(caret_content)
 
             if isinstance(self.caret, CaretBlink):
                 self.caret.st_base = self.st
@@ -1674,7 +1697,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             if not self.changed:
                 return content
 
-        elif map_event(ev, "input_left"):
+        elif map_event(ev, "input_left") and self.arrowkeys:
             if self.caret_pos > 0:
                 self.caret_pos -= 1
                 self.update_text(self.content, self.editable)
@@ -1682,7 +1705,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
-        elif map_event(ev, "input_jump_word_left"):
+        elif map_event(ev, "input_jump_word_left") and self.arrowkeys:
             if self.caret_pos > 0:
                 space_pos = 0
                 for item in re.finditer(r"\s+", self.content[:self.caret_pos]):
@@ -1695,7 +1718,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
-        elif map_event(ev, "input_right"):
+        elif map_event(ev, "input_right") and self.arrowkeys:
             if self.caret_pos < l:
                 self.caret_pos += 1
                 self.update_text(self.content, self.editable)
@@ -1703,7 +1726,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
-        elif map_event(ev, "input_jump_word_right"):
+        elif map_event(ev, "input_jump_word_right") and self.arrowkeys:
             if self.caret_pos < l:
                 space_pos = l
                 for item in re.finditer(r"\s+", self.content[self.caret_pos + 1:]):
@@ -2188,6 +2211,8 @@ class Bar(renpy.display.displayable.Displayable):
     to clicks on that value.
     """
 
+    _store_transform_event = True
+
     @property
     def _draggable(self):
         return self.focusable
@@ -2267,6 +2292,8 @@ class Bar(renpy.display.displayable.Displayable):
 
         self.adjustment = adjustment
         self.focusable = True
+
+        self.thumb_align = properties.pop("thumb_align", 0.0)
 
         # These are set when we are first rendered.
         self.thumb_dim = 0
@@ -2351,19 +2378,26 @@ class Bar(renpy.display.displayable.Displayable):
         else:
             thumb_dim = active
 
-        thumb_offset = abs(self.style.thumb_offset)
+        if isinstance(self.style.thumb_offset, tuple):
+            fore_thumb_offset = abs(self.style.thumb_offset[0])
+            aft_thumb_offset = abs(self.style.thumb_offset[1])
+        else:
+            fore_thumb_offset = abs(self.style.thumb_offset)
+            aft_thumb_offset = fore_thumb_offset
 
         if bar_vertical:
             thumb = render(self.style.thumb, width, thumb_dim, st, at)
             thumb_shadow = render(self.style.thumb_shadow, width, thumb_dim, st, at)
             thumb_dim = thumb.height
+            thumb_dim2 = thumb.width
         else:
             thumb = render(self.style.thumb, thumb_dim, height, st, at)
             thumb_shadow = render(self.style.thumb_shadow, thumb_dim, height, st, at)
             thumb_dim = thumb.width
+            thumb_dim2 = thumb.height
 
         # Remove the offset from the thumb.
-        thumb_dim -= thumb_offset * 2
+        thumb_dim -= fore_thumb_offset + aft_thumb_offset
         self.thumb_dim = thumb_dim
 
         active -= thumb_dim
@@ -2380,6 +2414,8 @@ class Bar(renpy.display.displayable.Displayable):
         fore_size += fore_gutter
         aft_size += aft_gutter
 
+        thumb_align = self.thumb_align
+
         rv = renpy.display.render.Render(width, height)
 
         if bar_vertical:
@@ -2387,37 +2423,47 @@ class Bar(renpy.display.displayable.Displayable):
             if self.style.bar_resizing:
                 foresurf = render(self.style.fore_bar, width, fore_size, st, at)
                 aftsurf = render(self.style.aft_bar, width, aft_size, st, at)
-                rv.blit(thumb_shadow, (0, fore_size - thumb_offset))
-                rv.blit(foresurf, (0, 0), main=False)
-                rv.blit(aftsurf, (0, height - aft_size), main=False)
-                rv.blit(thumb, (0, fore_size - thumb_offset))
+                fore_leftover = (thumb_dim2 - foresurf.width) * thumb_align
+                aft_leftover = (thumb_dim2 - aftsurf.width) * thumb_align
+
+                rv.blit(thumb_shadow, (0, fore_size - fore_thumb_offset))
+                rv.blit(foresurf, (fore_leftover, 0), main=False)
+                rv.blit(aftsurf, (aft_leftover, height - aft_size), main=False)
+                rv.blit(thumb, (0, fore_size - fore_thumb_offset))
 
             else:
                 foresurf = render(self.style.fore_bar, width, height, st, at)
                 aftsurf = render(self.style.aft_bar, width, height, st, at)
+                fore_leftover = (thumb_dim2 - foresurf.width) * self.thumb_align
+                aft_leftover = (thumb_dim2 - aftsurf.width) * self.thumb_align
 
-                rv.blit(thumb_shadow, (0, fore_size - thumb_offset))
-                rv.blit(foresurf.subsurface((0, 0, width, fore_size)), (0, 0), main=False)
-                rv.blit(aftsurf.subsurface((0, height - aft_size, width, aft_size)), (0, height - aft_size), main=False)
-                rv.blit(thumb, (0, fore_size - thumb_offset))
+                rv.blit(thumb_shadow, (0, fore_size - fore_thumb_offset))
+                rv.blit(foresurf.subsurface((0, 0, width, fore_size)), (fore_leftover, 0), main=False)
+                rv.blit(aftsurf.subsurface((0, height - aft_size, width, aft_size)), (aft_leftover, height - aft_size), main=False)
+                rv.blit(thumb, (0, fore_size - fore_thumb_offset))
 
         else:
             if self.style.bar_resizing:
                 foresurf = render(self.style.fore_bar, fore_size, height, st, at)
                 aftsurf = render(self.style.aft_bar, aft_size, height, st, at)
-                rv.blit(thumb_shadow, (fore_size - thumb_offset, 0))
-                rv.blit(foresurf, (0, 0), main=False)
-                rv.blit(aftsurf, (width - aft_size, 0), main=False)
-                rv.blit(thumb, (fore_size - thumb_offset, 0))
+                fore_leftover = (thumb_dim2 - foresurf.height) * self.thumb_align
+                aft_leftover = (thumb_dim2 - aftsurf.height) * self.thumb_align
+
+                rv.blit(thumb_shadow, (fore_size - fore_thumb_offset, 0))
+                rv.blit(foresurf, (0, fore_leftover), main=False)
+                rv.blit(aftsurf, (width - aft_size, aft_leftover), main=False)
+                rv.blit(thumb, (fore_size - fore_thumb_offset, 0))
 
             else:
                 foresurf = render(self.style.fore_bar, width, height, st, at)
                 aftsurf = render(self.style.aft_bar, width, height, st, at)
+                fore_leftover = (thumb_dim2 - foresurf.height) * self.thumb_align
+                aft_leftover = (thumb_dim2 - aftsurf.height) * self.thumb_align
 
-                rv.blit(thumb_shadow, (fore_size - thumb_offset, 0))
-                rv.blit(foresurf.subsurface((0, 0, fore_size, height)), (0, 0), main=False)
-                rv.blit(aftsurf.subsurface((width - aft_size, 0, aft_size, height)), (width - aft_size, 0), main=False)
-                rv.blit(thumb, (fore_size - thumb_offset, 0))
+                rv.blit(thumb_shadow, (fore_size - fore_thumb_offset, 0))
+                rv.blit(foresurf.subsurface((0, 0, fore_size, height)), (0, fore_leftover), main=False)
+                rv.blit(aftsurf.subsurface((width - aft_size, 0, aft_size, height)), (width - aft_size, aft_leftover), main=False)
+                rv.blit(thumb, (fore_size - fore_thumb_offset, 0))
 
         if self.focusable:
             rv.add_focus(self, None, 0, 0, width, height)
@@ -2456,8 +2502,10 @@ class Bar(renpy.display.displayable.Displayable):
 
         vertical = self.style.bar_vertical
         invert = self.style.bar_invert ^ vertical
+
         if invert:
             value = range - value
+            old_inverted_value = value
 
         grabbed = (renpy.display.focus.get_grab() is self)
         just_grabbed = False
@@ -2467,7 +2515,7 @@ class Bar(renpy.display.displayable.Displayable):
         if not grabbed and map_event(ev, "bar_activate"):
             renpy.display.tts.speak(renpy.minstore.__("activate"))
             renpy.display.focus.set_grab(self)
-            self.set_style_prefix("selected_hover_", True)
+            self.set_style_prefix("hover_", True)
             just_grabbed = True
             grabbed = True
             ignore_event = True
@@ -2527,12 +2575,16 @@ class Bar(renpy.display.displayable.Displayable):
                 value = range
 
         if invert:
-            value = range - value
+            if value == old_inverted_value: # type: ignore
+                value = old_value
+            else:
+                value = range - value
+
 
         if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
             renpy.display.tts.speak(renpy.minstore.__("deactivate"))
-            self.set_style_prefix("hover_", True)
             renpy.display.focus.set_grab(None)
+            self.set_style_prefix("hover_", True)
 
             # Invoke rounding adjustment on bar release
             value = self.adjustment.round_value(value, release=True)
@@ -2560,6 +2612,10 @@ class Bar(renpy.display.displayable.Displayable):
 
     def set_style_prefix(self, prefix, root):
         if root:
+
+            if renpy.display.focus.get_grab() is self:
+                prefix = "selected_" + prefix
+
             super(Bar, self).set_style_prefix(prefix, root)
 
     def _tts(self):
@@ -2787,7 +2843,7 @@ class OnEvent(renpy.display.displayable.Displayable):
         self.action = action
 
     def is_event(self, event):
-        if isinstance(self.event_name, basestring):
+        if isinstance(self.event_name, str):
             return self.event_name == event
         else:
             return event in self.event_name
@@ -2988,7 +3044,7 @@ class WebInput(renpy.display.displayable.Displayable):
 
     @staticmethod
     def post_find_focusable():
-        if PY2 or not renpy.emscripten:
+        if not renpy.emscripten:
             return
 
         if WebInput.active is None:

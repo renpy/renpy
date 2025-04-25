@@ -12,12 +12,89 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
-Pending Deprecations
---------------------
+.. _incompatible-8.4.0:
 
-Ren'Py 7.8 is the last release to support Python 2.
+8.4.0
+-----
 
-Ren'Py 8.4 will drop support for the original OpenGL renderer (gl1), and for Windows 7, 8, and 8.1.
+
+**Mipmaps**
+Mipmaps are smaller versions of an image that are used when Ren'Py scales an image down. Using mipmaps
+prevents the image from becoming jagged when scaled down, but generating mipmaps takes time and can cause the game
+to use more memory.
+
+Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
+image. To always enable mipmaps, set :var:`config.mipmap` to True. If this isn't set to true, Ren'Py will only
+create mipmaps if the display is scaled down to less than 75% of the virtual window size.
+
+Mipmaps will automatically be created for images loaded for the purpose of Live2D or AssimpModel, as these are
+likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
+of :func:`Image`.
+
+
+**Show expression.** The ``show expression`` statement has been changed so that::
+
+    show expression "bg washington"
+
+is exactly equivalent to:
+
+    show bg washington
+
+Previously, this would use the expression itself as the tag. When the expression is not a string,
+a unique tag is created for the show expression statement. This change can be reverted with::
+
+    define config.old_show_expression = True
+
+
+.. _incompatible-8.3.4:
+.. _incompatible-7.8.4:
+
+
+8.3.4 / 7.8.4
+-------------
+
+**Dissolving Different-Sized Displayables, part two.** When ImageDissolving or AlphaDissolving between
+displayables of different sizes, Ren'Py will give the result the size of the largest displayable, in
+each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis), add to your game::
+
+    define config.dissolve_shrinks = True
+
+
+
+.. _incompatible-8.3.4:
+.. _incompatible-7.8.4:
+
+
+8.3.4 / 7.8.4
+-------------
+
+**Dissolving Different-Sized Displayables, part two.** When ImageDissolving or AlphaDissolving between
+displayables of different sizes, Ren'Py will give the result the size of the largest displayable, in
+each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis), add to your game::
+
+    define config.dissolve_shrinks = True
+
+**Removal of the ATL 'update' event.** Previous versions of Ren'Py could deliver and "update" event to ATL
+inside screens when the screen was changed in major ways, such as when changing translations. This event
+was not delivered reliably, and is unlikely to have been used, so it has been removed.
+
+
+.. _incompatible-8.3.4:
+.. _incompatible-7.8.4:
+
+
+8.3.4 / 7.8.4
+-------------
+
+**Dissolving Different-Sized Displayables, part two.** When ImageDissolving or AlphaDissolving between
+displayables of different sizes, Ren'Py will give the result the size of the largest displayable, in
+each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis), add to your game::
+
+    define config.dissolve_shrinks = True
+
+**Removal of the ATL 'update' event.** Previous versions of Ren'Py could deliver and "update" event to ATL
+inside screens when the screen was changed in major ways, such as when changing translations. This event
+was not delivered reliably, and is unlikely to have been used, so it has been removed.
 
 
 .. _incompatible-8.3.0:
@@ -62,12 +139,12 @@ impact on existing games, especially if you were only using documented features.
     transform t1(child):
         ...
 
-    transform t2(chile):
+    transform t2(delay=1.0):
         ...
 
-    t1(child="eileen") # will now have a child set to the "eileen" image, but previously didn't
-    t2(child="eileen") # the child is set, as before
-    t1("eileen") # the child is set, as before
+    t1(child="eileen happy") # will now have a child set to the "eileen happy" image, but previously didn't.
+    t2(child="eileen happy") # the child is set, as before.
+    t1("eileen happy")       # the child is set, as before.
 
 **Character Callbacks** have been changed to take a large number of additional arguments,
 as documented at :doc:`character_callbacks`. This should not require changes as character
@@ -317,6 +394,21 @@ disappear. Now, the event will be allowed to run to completion.
 To disable this, add to your game::
 
     define config.screens_never_cancel_hide = False
+
+
+.. _incompatible-8.1.2:
+.. _incompatible-7.6.2:
+
+8.1.2 / 7.6.2
+-------------
+
+**Dissolving Different-Sized Displayables** When dissolving between two displayables
+of different sizes, Ren'Py will give the result the size of the largest displayable, in
+each access. To revert to the previous behavior (the smallest size on each axis), add to your game::
+
+    define config.dissolve_shrinks = True
+
+
 
 
 .. _incompatible-8.1.1:
@@ -877,7 +969,7 @@ to be given. To revert to the old interface, use::
 
 It's mode parameter has also been slightly changed, and will now return
 a value of ``both`` when both a ``permanent`` and ``temporary``
-attribute transition is occuring.
+attribute transition is occurring.
 
 .. _incompatible-7.2.2:
 

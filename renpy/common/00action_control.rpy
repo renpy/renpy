@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -183,7 +183,7 @@ init -1500 python:
     @renpy.pure
     def ShowTransient(screen, transition=None, *args, **kwargs):
         """
-        :doc: control_action
+        :doc: control_action action
 
         Shows a transient screen. A transient screen will be hidden when
         the current interaction completes. The arguments are

@@ -1,5 +1,5 @@
 
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,6 +20,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-ctypedef void (*apply_audio_filter_type)(object, float *, int, int, int)
+ctypedef void (*apply_audio_filter_type)(object, float *, int, int, int) noexcept
 
 cdef apply_audio_filter_type *get_apply_audio_filter()

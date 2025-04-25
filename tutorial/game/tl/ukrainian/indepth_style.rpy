@@ -111,7 +111,7 @@ translate ukrainian style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate ukrainian style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "І нарешті, є оператор style, який створює або змінює названий стиль. Надаючи Text аргумент style, ми повідомляємо йому використовувати стиль blue_text."
 
 # game/indepth_style.rpy:180
@@ -123,7 +123,7 @@ translate ukrainian style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate ukrainian style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "За замовчуванням батьківський стиль має таку саму назву, з вилученим префіксом до першого підкреслення. Якщо стиль не має підкреслення в назві, використовується 'default'."
 
 # game/indepth_style.rpy:184

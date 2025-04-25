@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,11 +31,7 @@ import renpy
 from renpy.display.render import render, Render
 
 
-if PY2:
-    def compute_raw(value, room):
-        return renpy.display.core.absolute.compute_raw(value, room)
-else:
-    compute_raw = renpy.display.core.absolute.compute_raw
+compute_raw = renpy.display.core.absolute.compute_raw
 
 
 def xyminimums(style, width, height):
@@ -132,9 +128,6 @@ class Container(renpy.display.displayable.Displayable):
         super(Container, self).__init__(**properties)
 
     def set_transform_event(self, event):
-        """
-        Sets the transform event of this displayable to event.
-        """
 
         super(Container, self).set_transform_event(event)
 
@@ -1111,7 +1104,7 @@ class MultiBox(Container):
                 if box_wrap:
                     rw = width
                 else:
-                    rw = remwidth
+                    rw = remwidth - next_padding
 
                 surf = render(d, rw, height - y, cst, cat)
                 sw, sh = surf.get_size()
@@ -1126,6 +1119,9 @@ class MultiBox(Container):
                     line = [ ]
                     first_line = False
                     next_padding = 0
+
+                    surf = render(d, rw, height - y, cst, cat)
+                    sw, sh = surf.get_size()
 
                 line.append((d, (next_padding, 0), x, y, surf))
                 line_height = max(line_height, sh)
@@ -1166,7 +1162,7 @@ class MultiBox(Container):
                 if box_wrap:
                     rh = height
                 else:
-                    rh = remheight
+                    rh = remheight - next_padding
 
                 surf = render(d, width - x, rh, cst, cat)
                 sw, sh = surf.get_size()
@@ -1181,6 +1177,9 @@ class MultiBox(Container):
                     line = [ ]
                     first_line = False
                     next_padding = 0
+
+                    surf = render(d, width - x, rh, cst, cat)
+                    sw, sh = surf.get_size()
 
                 line.append((d, (0, next_padding), x, y, surf))
                 line_width = max(line_width, sw)
@@ -1449,6 +1448,7 @@ class Window(Container):
 
             self.current_child = child
 
+
         # Render the child.
         surf = render(child,
                       width - cxmargin - cxpadding,
@@ -1596,8 +1596,8 @@ class DynamicDisplayable(renpy.display.displayable.Displayable):
         super(DynamicDisplayable, self).__init__()
         self.child = None
 
-        if isinstance(function, basestring):
-            args = (function,)
+        if isinstance(function, str):
+            args = (function, )
             kwargs = { }
             function = dynamic_displayable_compat
 
@@ -1701,6 +1701,12 @@ def condition_switch_pick(switch):
         if cond is None:
             return d
 
+        if cond is True:
+            return d
+
+        if cond is False:
+            continue
+
         if cond in cond_cache:
             code = cond_cache[cond]
         else:
@@ -1771,7 +1777,9 @@ def ConditionSwitch(*args, **kwargs):
 
     for cond, d in zip(args[0::2], args[1::2]):
 
-        if cond not in cond_cache:
+        if cond is True or cond is False or cond is None:
+            code = cond
+        elif cond not in cond_cache:
             code = renpy.python.py_compile(cond, 'eval')
             cond_cache[cond] = code
 
@@ -1887,7 +1895,7 @@ class Side(Container):
 
         super(Side, self).__init__(style=style, **properties)
 
-        if isinstance(positions, basestring):
+        if isinstance(positions, str):
             positions = positions.split()
 
         seen = set()
@@ -2350,13 +2358,30 @@ class AlphaMask(Container):
 
     invert = False
 
+    _duplicatable = False
+
     def __init__(self, child, mask, invert=False, **properties):
         super(AlphaMask, self).__init__(**properties)
 
+
         self.mask = renpy.easy.displayable(mask)
+        self._duplicatable = self.mask._duplicatable
+
         self.add(self.mask)
         self.add(child)
         self.invert = invert
+
+    def _duplicate(self, args):
+        rv = super(AlphaMask, self)._duplicate(args)
+
+        if (rv is not self) and rv.mask._duplicatable:
+            rv.mask = self.mask._duplicate(args)
+
+        return rv
+
+    def _unique(self):
+        super(AlphaMask, self)._unique()
+        self.mask._unique()
 
     def visit(self):
         return [ self.mask, self.child ]
@@ -2396,10 +2421,17 @@ class NearRect(Container):
     `rect`
         The rectangle to place the child near.
 
+    `focus`
+        Passed to `GetFocusRect`. The special name "tooltop" will retrieve the
+        rect of last displayable to set a tooltip. If present, overrides `rect`.
+
     `preferred_side`
         One of "left", "top", "right", "bottom" to prefer that position for
         the nearrect. If there is not room on one side, the opposite side is
         used. By default, the preferred side is "bottom".
+
+    `prefer_top`
+        Deprecated. Equivalent to passing `preferred_side="top"`
 
     `invert_offsets`
         If True and there isn't enough space on the preferred side, multiply the

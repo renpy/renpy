@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -57,8 +57,8 @@ import_pygame_sdl2()
 
 cdef extern from "renpysound_core.h":
 
-    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int fadein, int tight, int paused, double start, double end, float volume, object audio_filter)
-    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int fadein, int tight, double start, double end, float volume, object audio_filter)
+    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
+    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int synchro_start, int fadein, int tight, double start, double end, float volume, object audio_filter)
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
@@ -74,7 +74,7 @@ cdef extern from "renpysound_core.h":
     float RPS_get_volume(int channel)
     void RPS_set_pan(int channel, float pan, float delay)
     void RPS_set_secondary_volume(int channel, float vol2, float delay)
-    void RPS_replace_audio_filter(int channel, object audio_filter)
+    void RPS_replace_audio_filter(int channel, object audio_filter, int primary)
 
     void RPS_advance_time()
     int RPS_video_ready(int channel)
@@ -89,20 +89,21 @@ cdef extern from "renpysound_core.h":
 
     int RPS_get_sample_rate()
     char *RPS_get_error()
+    void RPS_set_channel_count(int count)
 
     void (*RPS_generate_audio_c_function)(float *stream, int length)
     void (*RPS_apply_audio_filter)(object, float *stream, int length, int channels, int sample_rate)
 
 
 from renpy.audio.filter cimport get_apply_audio_filter
-RPS_apply_audio_filter = <void (*)(object, float *, int, int, int)> get_apply_audio_filter()
+RPS_apply_audio_filter = <void (*)(object, float *, int, int, int) noexcept> get_apply_audio_filter()
 
 
 def check_error():
     """
     This is called by Ren'Py to check for an error. This function should raise
     a meaningful exception if an error has occurred in a background thread,
-    or do nothing if an error has not occured. (It should clear any error that
+    or do nothing if an error has not occurred. (It should clear any error that
     it raises.)
     """
 
@@ -111,7 +112,7 @@ def check_error():
         raise Exception(unicode(e, "utf-8", "replace"))
 
 
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -152,22 +153,17 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     if rw == NULL:
         raise Exception("Could not create RWops.")
 
-    if paused:
-        pause = 1
-    else:
-        pause = 0
-
     if tight:
         tight = 1
     else:
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_play(channel, rw, name, name, fadein * 1000, tight, pause, start, end, relative_volume, audio_filter)
+    RPS_play(channel, rw, name, name, synchro_start, fadein * 1000, tight, start, end, relative_volume, audio_filter)
     check_error()
 
 
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -191,7 +187,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_queue(channel, rw, name, name, fadein * 1000, tight, start, end, relative_volume, audio_filter)
+    RPS_queue(channel, rw, name, name, synchro_start, fadein * 1000, tight, start, end, relative_volume, audio_filter)
     check_error()
 
 
@@ -256,14 +252,6 @@ def unpause(channel):
 
     RPS_pause(channel, 0)
     check_error()
-
-
-def unpause_all_at_start():
-    """
-    Unpauses all channels that are paused at the start.
-    """
-
-    RPS_unpause_all_at_start()
 
 
 def global_pause(pause):
@@ -356,21 +344,25 @@ def set_secondary_volume(channel, volume, delay):
     check_error()
 
 
-def replace_audio_filter(channel, audio_filter):
+def replace_audio_filter(channel, audio_filter, playing):
     """
     Replaces the audio filter for `channel` with `audio_filter`.
+
+    `playing`
+        If true, the filter is applied to the currently playing file and queued file. If false,
+        the filter is only applied to the queued file.
     """
 
     if audio_filter is not None:
         audio_filter.prepare(get_sample_rate())
 
-    RPS_replace_audio_filter(channel, audio_filter)
+    RPS_replace_audio_filter(channel, audio_filter, playing)
 
 
 def deallocate_audio_filter(audio_filter):
     """
     Called when an audio filter is about to be dealloica to release all
-    assocated resources.
+    associated resources.
     """
 
     # Does nothing on this backend, but is used on web audio.
@@ -499,6 +491,14 @@ def advance_time():
     RPS_advance_time()
 
 
+def set_channel_count(count):
+    """
+    Sets the number of channels that the audio system should use
+    """
+
+    RPS_set_channel_count(count)
+
+
 def get_sample_rate():
     """
     Returns the sample rate of the audio system.
@@ -527,7 +527,7 @@ def set_generate_audio_c_function(fn):
         import ctypes
         fn = ctypes.cast(fn, ctypes.c_void_p).value
 
-    RPS_generate_audio_c_function = <void (*)(float *, int)> <uintptr_t> fn
+    RPS_generate_audio_c_function = <void (*)(float *, int) noexcept> <uintptr_t> fn
 
 
 # Store the sample surfaces so they stay alive.

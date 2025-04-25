@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -421,7 +421,7 @@ def redraw(d, when):
     redraw_queue.append((when + renpy.game.interface.frame_time, d))
 
 
-IDENTITY = Matrix2D(1, 0, 0, 1)
+IDENTITY = renpy.display.matrix.IDENTITY
 
 
 def take_focuses(focuses):
@@ -501,14 +501,17 @@ def mark_sweep():
     cdef list worklist
     cdef int i
     cdef Render r, j
+    cdef object o
 
     worklist = [ ]
 
     if screen_render is not None:
         worklist.append(screen_render)
 
-    cache_renders = renpy.display.im.cache.get_renders()
-    worklist.extend(cache_renders)
+    worklist.extend(renpy.display.im.cache.get_renders())
+
+    for r in worklist:
+        r.mark = True
 
     i = 0
 
@@ -522,11 +525,11 @@ def mark_sweep():
 
         i += 1
 
-    if screen_render is not None:
-        screen_render.mark = True
-
-    for r in cache_renders:
-        r.mark = True
+    if renpy.emscripten:
+        # Do not kill Renders that cache the last video frame
+        for o in renpy.display.video.texture.values():
+            if isinstance(o, Render):
+                o.mark = True
 
     for r in live_renders:
         if not r.mark:
@@ -537,45 +540,18 @@ def mark_sweep():
     live_renders = worklist
 
 
-def compute_subline(sx0, sw, cx0, cw):
-    """
-    Given a source line (start sx0, width sw) and a crop line (cx0, cw),
-    return three things:
-
-    * The offset of the portion of the source line that overlaps with
-      the crop line, relative to the crop line.
-    * The offset of the portion of the source line that overlaps with the
-      the crop line, relative to the source line.
-    * The length of the overlap in pixels. (can be <= 0)
-    """
-
-    sx1 = sx0 + sw
-    cx1 = cx0 + cw
-
-    if sx0 > cx0:
-        start = sx0
-    else:
-        start = cx0
-
-    offset = start - cx0
-    crop = start - sx0
-
-    if sx1 < cx1:
-        width = sx1 - start
-    else:
-        width = cx1 - start
-
-    return offset, crop, width
-
-
-
-
-# Possible operations that can be done as part of a render.
+# Possible operations that can be done as part of a render. Not used anymore, but kept
+# for compatibility.
 BLIT = 0
 DISSOLVE = 1
 IMAGEDISSOLVE = 2
 PIXELLATE = 3
 FLATTEN = 4
+
+# Possible matrix kinds.
+MATRIX_VIEW = 0
+MATRIX_MODEL = 1
+MATRIX_PROJECTION = 2
 
 cdef class Render:
 
@@ -617,6 +593,9 @@ cdef class Render:
         # be of the (0, 0) point in the child coordinate space.
         self.forward = None
         self.reverse = None
+
+        # The kind of matrix that is being updated by this displayable.
+        self.matrix_kind = MATRIX_MODEL
 
         # This is used to adjust the alpha of children of this render.
         self.alpha = 1
@@ -706,6 +685,9 @@ cdef class Render:
         # Have the textures been loaded?
         self.loaded = False
 
+        # Do the uniforms have a render in them?
+        self.uniforms_has_render = False
+
         live_renders.append(self)
 
     _types = """\
@@ -745,6 +727,7 @@ cdef class Render:
         cached_texture: Any
         cached_model: Any
         loaded: bool
+        uniforms_has_render: bool
         """
 
     def __repr__(self): #@DuplicatedSignature
@@ -915,7 +898,42 @@ cdef class Render:
 
     pygame_surface = render_to_texture
 
-    def subsurface(self, rect, focus=False, subpixel=False):
+
+    def compute_subline(self, sx, sw, cx, cw, bx, bw):
+        """
+        Given a source line (start sx0, width sw) and a crop line (cx0, cw),
+        return three things:
+
+        * The offset of the portion of the source line that overlaps with
+        the crop line, relative to the crop line.
+        * The offset of the portion of the source line that overlaps with the
+        the crop line, relative to the source line.
+        * The length of the overlap in pixels. (can be <= 0)
+        """
+
+
+        s_end = sx + sw
+        c_end = cx + cw
+
+        start = max(sx, cx)
+
+        offset = start - cx
+        crop = start - sx
+
+        end = min(s_end, c_end)
+        width = end - start
+
+        bsx = max(sx, bx)
+
+        if bsx < 0:
+            offset += bsx
+            crop += bsx
+            width -= bsx
+
+        return offset, crop, width
+
+
+    def subsurface(self, rect, focus=False, subpixel=False, bounds=None):
         """
         Returns a subsurface of this render. If `focus` is true, then
         the focuses are copied from this render to the child.
@@ -928,6 +946,14 @@ cdef class Render:
             y = int(y)
             w = int(w)
             h = int(h)
+
+        if bounds is not None:
+            bx, by, bw, bh = bounds
+        else:
+            bx = x
+            by = y
+            bw = w
+            bh = h
 
         rv = Render(w, h)
 
@@ -991,8 +1017,11 @@ cdef class Render:
             child_subpixel = subpixel or not isinstance(cx, int) or not isinstance(cy, int)
 
             childw, childh = child.get_size()
-            xo, cx, cw = compute_subline(cx, childw, x, w)
-            yo, cy, ch = compute_subline(cy, childh, y, h)
+            xo, cx, cw = self.compute_subline(cx, childw, x, w, bx, bw)
+            yo, cy, ch = self.compute_subline(cy, childh, y, h, by, bh)
+
+            cbx = bx - xo
+            cby = by - yo
 
             if cw <= 0 or ch <= 0 or w - xo <= 0 or h - yo <= 0:
                 continue
@@ -1007,17 +1036,25 @@ cdef class Render:
                 if isinstance(child, Render):
 
                     if child.xclipping:
+                        end = min(cw, cbx+bw)
+                        cbx = max(0, cbx)
+                        bw = end - cbx
+
                         cropw = cw
                     else:
                         cropw = w - xo
 
                     if child.yclipping:
+                        end = min(ch, cby+bh)
+                        cby = max(0, cby)
+                        bh = end - cby
+
                         croph = ch
                     else:
                         croph = h - yo
 
                     crop = (cx, cy, cropw, croph)
-                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel)
+                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel, bounds=(cbx, cby, bw, bh))
                     newchild.width = cw
                     newchild.height = ch
                     newchild.render_of = child.render_of[:]
@@ -1044,8 +1081,8 @@ cdef class Render:
                     rv.add_focus(d, arg, xo, yo, fw, fh, mx, my, mask)
                     continue
 
-                xo, cx, fw = compute_subline(xo, fw, x, w)
-                yo, cy, fh = compute_subline(yo, fh, y, h)
+                xo, cx, fw = self.compute_subline(xo, fw, x, w, bx, bw)
+                yo, cy, fh = self.compute_subline(yo, fh, y, h, by, bh)
 
                 if fw <= 0 or fh <= 0:
                     continue
@@ -1054,8 +1091,8 @@ cdef class Render:
 
                     mw, mh = mask.get_size()
 
-                    mx, mcx, mw = compute_subline(mx, mw, x, w)
-                    my, mcy, mh = compute_subline(my, mh, y, h)
+                    mx, mcx, mw = self.compute_subline(mx, mw, x, w, bx, bw)
+                    my, mcy, mh = self.compute_subline(my, mh, y, h, by, bh)
 
                     if mw <= 0 or mh <= 0:
                         mx = None
@@ -1174,6 +1211,7 @@ cdef class Render:
         self.cached_texture = None
         self.cached_model = None
 
+    NO_MOUSE_FOCUS = renpy.object.Sentinel("NO_MOUSE_FOCUS")
 
     def add_focus(self, d, arg=None, x=0, y=0, w=None, h=None, mx=None, my=None, mask=None):
         """
@@ -1337,6 +1375,9 @@ cdef class Render:
             if y < 0 or y >= self.height:
                 return None
 
+        if self.forward and self.forward.is_2d_null():
+            return None
+
         rv = None
 
         if self.pass_focuses:
@@ -1366,6 +1407,9 @@ cdef class Render:
             for (d, arg, xo, yo, w, h, mx, my, mask) in reversed(self.focuses):
 
                 if xo is None or xo is False:
+                    continue
+
+                if arg is self.NO_MOUSE_FOCUS:
                     continue
 
                 elif mx is not None:
@@ -1623,6 +1667,10 @@ cdef class Render:
         to the shaders that render this Render and its children.
         """
 
+        if type(value) is Render:
+            self.depends_on(value)
+            self.uniforms_has_render = True
+
         if self.uniforms is None:
             self.uniforms = { name : value }
         else:
@@ -1640,6 +1688,17 @@ cdef class Render:
             self.properties = { name : value }
         else:
             self.properties[name] = value
+
+    def get_property(self, name, default):
+
+        if self.properties is None:
+            return default
+
+        if name[:3] == "gl_":
+            name = name[3:]
+
+        return self.properties.get(name, default)
+
 
 class Canvas(object):
 

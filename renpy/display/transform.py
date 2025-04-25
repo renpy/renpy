@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,10 +29,14 @@ from typing import Any
 import math
 
 import renpy
+from renpy.display.displayable import Displayable
 from renpy.display.layout import Container
 from renpy.display.accelerator import RenderTransform
 from renpy.atl import position, DualAngle, position_or_none, any_object, bool_or_none, float_or_none, matrix, mesh
 from renpy.display.core import absolute
+
+# A List of fields that have displayables in them.
+displayable_uniform_fields = set()
 
 class Camera(renpy.object.Object):
     """
@@ -87,6 +91,31 @@ def limit_angle(n):
 
     return n
 
+class TextureUniform(object):
+    """
+    Descriptor for a sampler2D uniform.
+    """
+
+    def __init__(self, name):
+        self.name = name
+
+    def __get__(self, instance, owner):
+        return instance.__dict__.get(self.name, None)
+
+    def __set__(self, instance, value):
+        if isinstance(value, str):
+            value = renpy.easy.displayable(value)
+
+        if isinstance(value, Displayable):
+            value = renpy.display.im.unoptimized_texture(value)
+
+            if instance.texture_uniforms is None:
+                instance.texture_uniforms = set()
+
+            instance.texture_uniforms.add(self.name)
+
+        instance.__dict__[self.name] = value
+
 
 class TransformState(renpy.object.Object):
 
@@ -103,6 +132,8 @@ class TransformState(renpy.object.Object):
     radius_sign = 1
     relative_anchor_radius_sign = 1
     absolute_anchor_radius_sign = 1
+
+    texture_uniforms = None
 
     def __init__(self):
 
@@ -194,15 +225,31 @@ class TransformState(renpy.object.Object):
         Returns the value of an attribute.
         """
 
-        rv = getattr(self, prop, None)
-        if rv is not None:
-            return rv
+        old_xpos = self.xpos
+        old_ypos = self.ypos
+        old_xanchor = self.xanchor
+        old_yanchor = self.yanchor
 
-        if prop in diff4_properties:
-            return getattr(self, "inherited_" + prop, None)
-        else:
-            return rv
+        try:
+            if self.xpos is None:
+                self.xpos = self.inherited_xpos
 
+            if self.ypos is None:
+                self.ypos = self.inherited_ypos
+
+            if self.xanchor is None:
+                self.xanchor = self.inherited_xanchor
+
+            if self.yanchor is None:
+                self.yanchor = self.inherited_yanchor
+
+            return getattr(self, prop, None)
+
+        finally:
+            self.xpos = old_xpos
+            self.ypos = old_ypos
+            self.xanchor = old_xanchor
+            self.yanchor = old_yanchor
 
     def get_placement(self, cxoffset=0, cyoffset=0):
 
@@ -587,6 +634,26 @@ class TransformState(renpy.object.Object):
 
     xycenter = property(get_pos, set_xycenter)
 
+    def get_reset(self):
+        return False
+
+    def set_reset(self, value):
+        if value:
+            self.take_state(RESET_STATE)
+
+    _reset = property(get_reset, set_reset)
+
+
+RESET_STATE = TransformState()
+
+
+def simplify_position(v):
+    if isinstance(v, tuple):
+        return tuple(simplify_position(i) for i in v)
+    elif isinstance(v, position):
+        return v.simplify()
+    else:
+        return v
 
 class Proxy(object):
     """
@@ -597,14 +664,6 @@ class Proxy(object):
         self.name = name
 
     def __get__(self, instance, owner):
-
-        def simplify_position(v):
-            if isinstance(v, tuple):
-                return tuple(simplify_position(i) for i in v)
-            elif isinstance(v, position):
-                return v.simplify()
-            else:
-                return v
 
         return simplify_position(getattr(instance.state, self.name))
 
@@ -682,10 +741,14 @@ class Transform(Container):
                  focus=None,
                  default=False,
                  _args=None,
-
+                 *,
+                 reset=False,
                  **kwargs):
 
         properties = {k: kwargs.pop(k) for k in style_properties if k in kwargs}
+
+        if reset:
+            kwargs = {"_reset": True} | kwargs
 
         self.kwargs = kwargs
         self.style_arg = style
@@ -955,7 +1018,7 @@ class Transform(Container):
         elif isinstance(d, ATLTransform):
             d.execute(d, fst, fat)
 
-        new_child = d.child._hide(st - self.st_offset, at - self.st_offset, kind)
+        new_child = d.child._hide(st - self.st_offset, at - self.at_offset, kind)
 
         if new_child is not None:
             d.child = new_child
@@ -1185,9 +1248,12 @@ class Transform(Container):
         child = self.child._in_current_store()
         if child is self.child:
             return self
-        rv = self()
+
+        # This forestalls any _duplicate attempts while building the transform.
+        child._unique()
+
+        rv = self(child=child)
         rv.take_execution_state(self)
-        rv.child = child
         rv._unique()
 
         return rv
@@ -1265,7 +1331,7 @@ def add_property(name, atl=any_object, default=None, diff=2): # type: (str, Any,
         diff4_properties.add(name)
 
 
-def add_uniform(name):
+def add_uniform(name, uniform_type):
     """
     Adds a uniform with `name` to Transform and ATL.
     """
@@ -1277,6 +1343,9 @@ def add_uniform(name):
         return
 
     add_property(name, diff=2)
+
+    if uniform_type == "sampler2D":
+        setattr(TransformState, name, TextureUniform(name))
 
     uniforms.add(name)
 
@@ -1381,6 +1450,8 @@ ALIASES = {
     "xysize" : (position_or_none, position_or_none),
     "yalign" : position_or_none, # documented as float
     "ycenter" : position_or_none,
+
+    "_reset" : bool,
 }
 
 renpy.atl.PROPERTIES.update(ALIASES)

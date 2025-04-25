@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -76,24 +76,14 @@ class BinFile(object):
         self.addr = addr
 
     def tostring(self):
-        if PY2:
-            return self.a.tostring() # type: ignore
-        else:
-            return self.a.tobytes()
+        return self.a.tobytes()
 
     def substring(self, start, len): # @ReservedAssignment
-        if PY2:
-            return self.a[start:start + len].tostring() # type: ignore
-        else:
-            return self.a[start:start + len].tobytes()
+        return self.a[start:start + len].tobytes()
 
     def __init__(self, data):
         self.a = array.array('B')
-
-        if PY2:
-            self.a.fromstring(data) # type: ignore
-        else:
-            self.a.frombytes(data)
+        self.a.frombytes(data)
 
 ##############################################################################
 # These functions parse data out of the file. In these functions, offset is
@@ -396,7 +386,7 @@ def change_icons(oldexe, icofn):
 
 
     #Image size is the memory size of all sections + all headers, padded to memory alignment.
-    #There's alread a header size, and this isn't changing headers, so just add.
+    #There's already a header size, and this isn't changing headers, so just add.
     #imageSize = pe.OPTIONAL_HEADER.ImageBase + pe.OPTIONAL_HEADER.SizeOfHeaders
     imageSize = pe.OPTIONAL_HEADER.SizeOfHeaders
     for s in pe.sections:

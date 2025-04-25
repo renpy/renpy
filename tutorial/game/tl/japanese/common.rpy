@@ -834,7 +834,7 @@ translate japanese strings:
     new "アップデーター"
 
     # renpy/common/00updater.rpy:1446
-    old "An error has occured:"
+    old "An error has occurred:"
     new "エラーが発生しました。"
 
     # renpy/common/00updater.rpy:1448
@@ -1385,7 +1385,7 @@ translate japanese strings:
     new "ゲームデータがダウンロードされました"
 
     # renpy/common/00updater.rpy:2078
-    old "An error occured when trying to download game data:"
+    old "An error occurred when trying to download game data:"
     new "ゲームデータダウンロード中にエラーが発生しました:"
 
     # renpy/common/00updater.rpy:2083

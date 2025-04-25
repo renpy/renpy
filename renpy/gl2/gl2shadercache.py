@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -69,8 +69,6 @@ def register_shader(name, **kwargs):
     return ShaderPart(name, **kwargs)
 
 
-
-
 class ShaderPart(object):
     """
     Arguments are as for register_shader.
@@ -137,34 +135,33 @@ class ShaderPart(object):
         variables = self.substitute_name(variables)
 
         for l in variables.split("\n"):
-            l = l.partition("//")[0].strip(' ;')
 
-            a = l.split()
-            if not a:
+            l = l.partition("//")[0]
+            l = l.strip()
+            if not l:
                 continue
 
-            a = tuple(a)
+            v = renpy.gl2.gl2shader.Variable(self.name, l)
 
-            if len(a) != 3:
-                raise Exception("{}: Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(self.name, l))
+            if v.storage not in { "uniform", "attribute", "varying" }:
+                raise Exception("In shader {}: Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(self.name, l))
 
-            kind = a[0]
-            type_ = a[1]
-            name = a[2]
+            if v.array:
+                self.variable_types[v.name] = v.type + "[]"
+            else:
+                self.variable_types[v.name] = v.type
 
-            self.variable_types[name] = type_
+            if v.name in vertex_used:
+                self.vertex_variables.add(v)
 
-            if name in vertex_used:
-                self.vertex_variables.add(a)
+            if v.name in fragment_used:
+                self.fragment_variables.add(v)
 
-            if name in fragment_used:
-                self.fragment_variables.add(a)
+            if v.storage == "uniform" and not private_uniforms:
+                renpy.display.transform.add_uniform(v.name, v.type)
 
-            if kind == "uniform" and not private_uniforms:
-                renpy.display.transform.add_uniform(name)
-
-            if kind == "uniform":
-                self.uniforms.append(name)
+            if v.storage == "uniform":
+                self.uniforms.append(v.name)
 
         self.raw_variables = variables
 
@@ -220,7 +217,13 @@ def source(variables, parts, functions, fragment, gles):
 
         if fragment:
             rv.append("""\
-precision mediump float;
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+    precision highp float;
+    precision highp int;
+#else
+    precision mediump float;
+    precision mediump int;
+#endif
 """)
 
     else:
@@ -228,10 +231,10 @@ precision mediump float;
 #version 120
 """)
 
-    rv.extend(functions)
+    for v in sorted(variables, key=lambda x: x.name):
+        rv.append(v.line + ";\n")
 
-    for storage, type_, name in sorted(variables):
-        rv.append("{} {} {};\n".format(storage, type_, name))
+    rv.extend(functions)
 
     rv.append("\nvoid main() {\n")
 

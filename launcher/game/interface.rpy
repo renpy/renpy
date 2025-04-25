@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -33,6 +33,10 @@ init python in interface:
     DOC_URL = "http://www.renpy.org/doc/html/"
     DOC_LOCAL_URL = "file:///" + DOC_PATH
 
+    # If true, the launcher should not link back to renpy.org.
+    NO_LAUNCHER_LINKS = os.path.exists(os.path.join(config.renpy_base, "no_launcher_links.txt"))
+
+
     local_doc_exists = os.path.exists(DOC_PATH)
 
     def get_doc_url(page):
@@ -40,7 +44,7 @@ init python in interface:
         Returns the URL to the documentation page.
         """
 
-        if local_doc_exists and not persistent.use_web_doc:
+        if local_doc_exists and (NO_LAUNCHER_LINKS or not persistent.use_web_doc):
             from urllib.parse import urljoin
             from urllib.request import pathname2url
 
@@ -117,7 +121,10 @@ screen bottom_info:
                 hbox:
                     spacing INDENT
                     textbutton _("Documentation") style "l_link" action interface.OpenDocumentation()
-                    textbutton _("Ren'Py Website") style "l_link" action OpenURL(interface.RENPY_URL)
+
+                    if not interface.NO_LAUNCHER_LINKS:
+                        textbutton _("Ren'Py Website") style "l_link" action OpenURL(interface.RENPY_URL)
+
                     textbutton _("[interface.version]") style "l_link" action Jump("about")
 
                 hbox:
@@ -133,7 +140,7 @@ screen bottom_info:
                     textbutton _("preferences") style "l_link" action Jump("preferences")
                     textbutton _("quit") style "l_link" action Quit(confirm=False)
 
-            if persistent.sponsor_message:
+            if persistent.sponsor_message and not interface.NO_LAUNCHER_LINKS:
 
                 textbutton _("Ren'Py Sponsor Information"):
                     style "l_link"
@@ -345,7 +352,7 @@ init python in interface:
 
     def error(message, submessage=None, label="front_page", **kwargs):
         """
-        Indicates to the user that an error has occured.
+        Indicates to the user that an error has occurred.
 
         `message`
             The message to display.
@@ -401,7 +408,7 @@ init python in interface:
         except Exception as e:
             renpy.renpy.error.report_exception(e, editor=False)
 
-            error(_("While [what!qt], an error occured:"),
+            error(_("While [what!qt], an error occurred:"),
                 _("[exception!q]"),
                 what=what,
                 label=label,

@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -216,6 +216,13 @@ Preference("window_position_layout", None, (tuple, type(None)))
 # Should the window position be restored?
 Preference("restore_window_position", True)
 
+# Is the game forcing mono audio?
+Preference("mono_audio", False)
+
+# Should font kerning be adjustedt?
+Preference("font_kerning", 0.0)
+
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
@@ -270,6 +277,9 @@ class Preferences(renpy.object.Object):
         window_position = (0, 0)
         window_position_layout = ( (0, 0, 1920, 1080), )
         restore_window_position = True
+        mono_audio = False
+        font_kerning = 0.0
+
 
     def init(self):
         """

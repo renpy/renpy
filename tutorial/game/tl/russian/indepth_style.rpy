@@ -110,7 +110,7 @@ translate russian style_basics_dbe80939:
 # game/indepth_style.rpy:174
 translate russian style_basics_ac6a8414:
 
-    # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
+    # e "Finally, there is the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
     e "И наконец, существует оператор style, создающий или изменящий уже существующий стиль. Добавив к тексту аргумент style, мы говорим Ren'py использовать стиль blue_text."
 
 # game/indepth_style.rpy:180
@@ -122,7 +122,7 @@ translate russian style_basics_3d9bdff7:
 # game/indepth_style.rpy:182
 translate russian style_basics_49c5fbfe:
 
-    # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
+    # e "By default the parent of the style has the same name, with the prefix up to the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
     e "Изначально, родитель стиля имеет то же начальное имя, плюс префиксы, вплоть до первого символа подчёркивания. Если в полном имени стиля нет подчёркиваний, то используется стиль 'default'."
 
 # game/indepth_style.rpy:184

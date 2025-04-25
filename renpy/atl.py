@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,6 +27,13 @@ import random
 import renpy
 from renpy.parameter import Signature, ValuedParameter
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
+
+def late_imports():
+    global Displayable, Matrix, Camera
+
+    from renpy.display.displayable import Displayable
+    from renpy.display.matrix import Matrix
+    from renpy.display.transform import Camera
 
 def compiling(loc):
     file, number = loc # @ReservedAssignment
@@ -139,8 +146,6 @@ class position(object):
             return self * (1/other)
         return NotImplemented
 
-    __div__ = __truediv__ # PY2
-
     def __pos__(self):
         return position(renpy.display.core.absolute(self.absolute), float(self.relative))
 
@@ -225,6 +230,7 @@ def mesh(x):
 # function. This is massively added to by renpy.display.transform.
 PROPERTIES = { }
 
+tuple_or_list = (tuple, list)
 
 def interpolate(t, a, b, typ):
     """
@@ -232,18 +238,18 @@ def interpolate(t, a, b, typ):
     """
 
     # Deal with booleans, nones, etc.
-    if b is None or isinstance(b, (bool, basestring, renpy.display.matrix.Matrix, renpy.display.transform.Camera)):
+    if b is None or isinstance(b, (bool, str, Displayable, Matrix, Camera)):
         if t >= 1.0:
             return b
         else:
             return a
 
     # Recurse into tuples.
-    elif isinstance(b, tuple):
-        if a is None:
+    elif isinstance(b, tuple_or_list):
+        if not isinstance(a, tuple_or_list):
             a = [ None ] * len(b)
 
-        if not isinstance(typ, tuple):
+        if not isinstance(typ, tuple_or_list):
             typ = (typ,) * len(b)
 
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, typ))
@@ -422,7 +428,7 @@ class ATLTransformBase(renpy.object.Object):
             rv_parameters = []
             for name, value in self.context.context.items():
                 if name not in self.parameters.parameters:
-                    rv_parameters.append(ValuedParameter(name, ValuedParameter.KEYWORD_ONLY, value))
+                    rv_parameters.append(ValuedParameter(name, ValuedParameter.KEYWORD_ONLY, default=value))
             if rv_parameters:
                 rv_parameters = list(self.parameters.parameters.values()) + rv_parameters
                 rv_parameters.sort(key=lambda p: p.kind)
@@ -656,10 +662,10 @@ class ATLTransformBase(renpy.object.Object):
                 continue
 
             elif passed:
-                param = ValuedParameter(name, param.KEYWORD_ONLY, scope[name])
+                param = ValuedParameter(name, param.KEYWORD_ONLY, default=scope[name])
 
             elif param.has_default:
-                param = ValuedParameter(name, pkind, scope[name])
+                param = ValuedParameter(name, pkind, default=scope[name])
 
             else:
                 ## not passed and no default value
@@ -952,7 +958,7 @@ class RawBlock(RawStatement):
         old_exception_info = renpy.game.exception_info
         try:
             block = self.compile(Context({}))
-        except RuntimeError:  # PY3: RecursionError
+        except RecursionError:
             raise Exception("This transform refers to itself in a cycle.")
         except Exception:
             self.constant = NOT_CONST
@@ -1145,6 +1151,16 @@ compatible_pairs = [
 # values of the variables here.
 
 
+def check_spline_types(value):
+    if isinstance(value, (position, int, float)):
+        return True
+
+    if isinstance(value, tuple):
+        return all(check_spline_types(i) for i in value)
+
+    return False
+
+
 class RawMultipurpose(RawStatement):
 
     warp_function = None
@@ -1206,15 +1222,6 @@ class RawMultipurpose(RawStatement):
     def compile(self, ctx): # @ReservedAssignment
 
         compiling(self.loc)
-
-        def check_spline_types(value):
-            if isinstance(value, (position, int, float)):
-                return True
-
-            if isinstance(value, tuple):
-                return all(check_spline_types(i) for i in value)
-
-            return False
 
         # Figure out what kind of statement we have. If there's no
         # interpolator, and no properties, than we have either a
@@ -1332,7 +1339,7 @@ class RawMultipurpose(RawStatement):
             except Exception:
                 continue
 
-            if isinstance(i, ATLTransformBase):
+            if isinstance(i, ATLTransformBase) and (i.child is None):
                 i.atl.predict(ctx)
                 return
 
@@ -1340,6 +1347,28 @@ class RawMultipurpose(RawStatement):
                 renpy.easy.predict(i)
             except Exception:
                 continue
+
+        for k, e in self.properties:
+            if k[:2] == "u_":
+
+                try:
+                    d = ctx.eval(e)
+                except Exception:
+                    continue
+
+                if isinstance(d, str):
+                    d = renpy.easy.displayable(d)
+
+                if not isinstance(d, Displayable):
+                    continue
+
+                try:
+                    d = renpy.display.im.unoptimized_texture(d)
+                    renpy.easy.predict(d)
+                except Exception:
+                    continue
+
+
 
 # This lets us have an ATL transform as our child.
 class RawContainsExpr(RawStatement):

@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -159,6 +159,12 @@ cdef class Matrix:
 
     def __mul__(Matrix self, Matrix other):
 
+        if other is IDENTITY:
+            return self
+
+        if self is IDENTITY:
+            return other
+
         cdef Matrix rv = Matrix(None)
 
         rv.xdx = other.wdx*self.xdw + other.xdx*self.xdx + other.ydx*self.xdy + other.zdx*self.xdz
@@ -183,18 +189,160 @@ cdef class Matrix:
 
         return rv
 
+    cdef Matrix inplace_multiply(Matrix self, Matrix other):
+
+        if other is IDENTITY:
+            return self
+
+        if self is IDENTITY:
+            raise ValueError("Cannot in-place multiply IDENTITY.")
+
+        cdef float xdx, xdy, xdz, xdw
+        cdef float ydx, ydy, ydz, ydw
+        cdef float zdx, zdy, zdz, zdw
+        cdef float wdx, wdy, wdz, wdw
+
+        xdx = other.wdx*self.xdw + other.xdx*self.xdx + other.ydx*self.xdy + other.zdx*self.xdz
+        xdy = other.wdy*self.xdw + other.xdy*self.xdx + other.ydy*self.xdy + other.zdy*self.xdz
+        xdz = other.wdz*self.xdw + other.xdz*self.xdx + other.ydz*self.xdy + other.zdz*self.xdz
+        xdw = other.wdw*self.xdw + other.xdw*self.xdx + other.ydw*self.xdy + other.zdw*self.xdz
+
+        ydx = other.wdx*self.ydw + other.xdx*self.ydx + other.ydx*self.ydy + other.zdx*self.ydz
+        ydy = other.wdy*self.ydw + other.xdy*self.ydx + other.ydy*self.ydy + other.zdy*self.ydz
+        ydz = other.wdz*self.ydw + other.xdz*self.ydx + other.ydz*self.ydy + other.zdz*self.ydz
+        ydw = other.wdw*self.ydw + other.xdw*self.ydx + other.ydw*self.ydy + other.zdw*self.ydz
+
+        zdx = other.wdx*self.zdw + other.xdx*self.zdx + other.ydx*self.zdy + other.zdx*self.zdz
+        zdy = other.wdy*self.zdw + other.xdy*self.zdx + other.ydy*self.zdy + other.zdy*self.zdz
+        zdz = other.wdz*self.zdw + other.xdz*self.zdx + other.ydz*self.zdy + other.zdz*self.zdz
+        zdw = other.wdw*self.zdw + other.xdw*self.zdx + other.ydw*self.zdy + other.zdw*self.zdz
+
+        wdx = other.wdx*self.wdw + other.xdx*self.wdx + other.ydx*self.wdy + other.zdx*self.wdz
+        wdy = other.wdy*self.wdw + other.xdy*self.wdx + other.ydy*self.wdy + other.zdy*self.wdz
+        wdz = other.wdz*self.wdw + other.xdz*self.wdx + other.ydz*self.wdy + other.zdz*self.wdz
+        wdw = other.wdw*self.wdw + other.xdw*self.wdx + other.ydw*self.wdy + other.zdw*self.wdz
+
+        self.xdx = xdx
+        self.xdy = xdy
+        self.xdz = xdz
+        self.xdw = xdw
+
+        self.ydx = ydx
+        self.ydy = ydy
+        self.ydz = ydz
+        self.ydw = ydw
+
+        self.zdx = zdx
+        self.zdy = zdy
+        self.zdz = zdz
+        self.zdw = zdw
+
+        self.wdx = wdx
+        self.wdy = wdy
+        self.wdz = wdz
+        self.wdw = wdw
+
+        return self
+
+    cdef Matrix inplace_offset(Matrix self, float xo, float yo):
+        """
+        This is equivalent to self *= Matrix.offset(xo, yo, 0.0), but is faster
+        because much less allocation and multiplication needs to be done.
+        """
+
+        cdef float xdx, xdy, xdz, xdw
+        cdef float ydx, ydy, ydz, ydw
+        cdef float zdx, zdy, zdz, zdw
+        cdef float wdx, wdy, wdz, wdw
+
+        xdw = self.xdw + xo*self.xdx + yo*self.xdy
+        ydw = self.ydw + xo*self.ydx + yo*self.ydy
+        zdw = self.zdw + xo*self.zdx + yo*self.zdy
+        wdw = self.wdw + xo*self.wdx + yo*self.wdy
+
+        self.xdw = xdw
+        self.ydw = ydw
+        self.zdw = zdw
+        self.wdw = wdw
+
+        return self
+
+    cdef Matrix inplace_reverse_offset(Matrix self, float xo, float yo):
+
+        cdef float xdx, xdy, xdz, xdw
+        cdef float ydx, ydy, ydz, ydw
+        cdef float zdx, zdy, zdz, zdw
+
+        xdx = self.wdx*xo + self.xdx
+        xdy = self.wdy*xo + self.xdy
+        xdz = self.wdz*xo + self.xdz
+        xdw = self.wdw*xo + self.xdw
+
+        ydx = self.wdx*yo + self.ydx
+        ydy = self.wdy*yo + self.ydy
+        ydz = self.wdz*yo + self.ydz
+        ydw = self.wdw*yo + self.ydw
+
+        zdx = self.xdx + self.zdx
+        zdy = self.xdy + self.zdy
+        zdz = self.xdz + self.zdz
+        zdw = self.xdw + self.zdw
+
+        self.xdx = xdx
+        self.xdy = xdy
+        self.xdz = xdz
+        self.xdw = xdw
+
+        self.ydx = ydx
+        self.ydy = ydy
+        self.ydz = ydz
+        self.ydw = ydw
+
+        self.zdx = zdx
+        self.zdy = zdy
+        self.zdz = zdz
+        self.zdw = zdw
+
+        return self
+
     def __repr__(Matrix self):
         cdef int x, y
 
         rv = "Matrix(["
 
-        for 0 <= y < 4:
+        for y in range(4):
             if y:
                 rv += "\n        "
-            for 0 <= x < 4:
+            for x in range(4):
                 rv += "{:10.7f}, ".format(self.m[x * 4 + y])
 
         return rv + "])"
+
+    def take(Matrix self, Matrix other):
+        """
+        Take the values from another matrix.
+        """
+
+        cdef float *m = self.m
+        cdef float *om = other.m
+        cdef int i
+
+        for i in range(16):
+            m[i] = om[i]
+
+        return self
+
+    def is_2d_null(self):
+        """
+        Returns true if a 2D matrix always projects to 0 in the x or y directions.
+        """
+
+        if self.xdx == 0.0 and self.xdy == 0.0:
+            return True
+        if self.ydx == 0.0 and self.ydy == 0.0:
+            return True
+
+        return False
 
     def transform(Matrix self, float x, float y, float z=0.0, float w=1.0, int components=2):
         cdef float ox, oy, oz, ow
@@ -221,7 +369,7 @@ cdef class Matrix:
 
         total = 0
 
-        for 0 < i < 16:
+        for i in range(16):
             total += abs(self.m[i] - other_matrix.m[i])
 
         return total < .0001
@@ -244,7 +392,7 @@ cdef class Matrix:
         total_1 = 0
         total_2 = 0
 
-        for 0 < i < 16:
+        for i in range(16):
             v = abs(self.m[i])
             total_1 += abs(v - aligned_1[i])
             total_2 += abs(v - aligned_2[i])
@@ -304,26 +452,26 @@ cdef class Matrix:
         cdef float *m = self.m
         cdef float *im = rv.m
 
-        cdef double A2323 = m[10] * m[15] - m[11] * m[14];
-        cdef double A1323 = m[ 9] * m[15] - m[11] * m[13];
-        cdef double A1223 = m[ 9] * m[14] - m[10] * m[13];
-        cdef double A0323 = m[ 8] * m[15] - m[11] * m[12];
-        cdef double A0223 = m[ 8] * m[14] - m[10] * m[12];
-        cdef double A0123 = m[ 8] * m[13] - m[ 9] * m[12];
-        cdef double A2313 = m[ 6] * m[15] - m[ 7] * m[14];
-        cdef double A1313 = m[ 5] * m[15] - m[ 7] * m[13];
-        cdef double A1213 = m[ 5] * m[14] - m[ 6] * m[13];
-        cdef double A2312 = m[ 6] * m[11] - m[ 7] * m[10];
-        cdef double A1312 = m[ 5] * m[11] - m[ 7] * m[ 9];
-        cdef double A1212 = m[ 5] * m[10] - m[ 6] * m[ 9];
-        cdef double A0313 = m[ 4] * m[15] - m[ 7] * m[12];
-        cdef double A0213 = m[ 4] * m[14] - m[ 6] * m[12];
-        cdef double A0312 = m[ 4] * m[11] - m[ 7] * m[ 8];
-        cdef double A0212 = m[ 4] * m[10] - m[ 6] * m[ 8];
-        cdef double A0113 = m[ 4] * m[13] - m[ 5] * m[12];
-        cdef double A0112 = m[ 4] * m[ 9] - m[ 5] * m[ 8];
+        cdef double A2323 = m[10] * m[15] - m[11] * m[14]
+        cdef double A1323 = m[ 9] * m[15] - m[11] * m[13]
+        cdef double A1223 = m[ 9] * m[14] - m[10] * m[13]
+        cdef double A0323 = m[ 8] * m[15] - m[11] * m[12]
+        cdef double A0223 = m[ 8] * m[14] - m[10] * m[12]
+        cdef double A0123 = m[ 8] * m[13] - m[ 9] * m[12]
+        cdef double A2313 = m[ 6] * m[15] - m[ 7] * m[14]
+        cdef double A1313 = m[ 5] * m[15] - m[ 7] * m[13]
+        cdef double A1213 = m[ 5] * m[14] - m[ 6] * m[13]
+        cdef double A2312 = m[ 6] * m[11] - m[ 7] * m[10]
+        cdef double A1312 = m[ 5] * m[11] - m[ 7] * m[ 9]
+        cdef double A1212 = m[ 5] * m[10] - m[ 6] * m[ 9]
+        cdef double A0313 = m[ 4] * m[15] - m[ 7] * m[12]
+        cdef double A0213 = m[ 4] * m[14] - m[ 6] * m[12]
+        cdef double A0312 = m[ 4] * m[11] - m[ 7] * m[ 8]
+        cdef double A0212 = m[ 4] * m[10] - m[ 6] * m[ 8]
+        cdef double A0113 = m[ 4] * m[13] - m[ 5] * m[12]
+        cdef double A0112 = m[ 4] * m[ 9] - m[ 5] * m[ 8]
 
-        cdef double det;
+        cdef double det
 
         det = m[ 0] * ( m[ 5] * A2323 - m[ 6] * A1323 + m[ 7] * A1223 ) \
             - m[ 1] * ( m[ 4] * A2323 - m[ 6] * A0323 + m[ 7] * A0223 ) \
@@ -334,7 +482,7 @@ cdef class Matrix:
             rv.m[15] = 1.0
             return rv
 
-        det = 1 / det;
+        det = 1 / det
 
         im[ 0] = <float> (det *   ( m[ 5] * A2323 - m[ 6] * A1323 + m[ 7] * A1223 ))
         im[ 1] = <float> (det * - ( m[ 1] * A2323 - m[ 2] * A1323 + m[ 3] * A1223 ))
@@ -354,6 +502,149 @@ cdef class Matrix:
         im[15] = <float> (det *   ( m[ 0] * A1212 - m[ 1] * A0212 + m[ 2] * A0112 ))
 
         return rv
+
+    cdef Matrix inplace_inverse(Matrix self):
+        """
+        Computes the inverse of this matrix in place.
+        """
+
+        cdef float *m = self.m
+        cdef float[16] im
+
+        cdef double A2323 = m[10] * m[15] - m[11] * m[14]
+        cdef double A1323 = m[ 9] * m[15] - m[11] * m[13]
+        cdef double A1223 = m[ 9] * m[14] - m[10] * m[13]
+        cdef double A0323 = m[ 8] * m[15] - m[11] * m[12]
+        cdef double A0223 = m[ 8] * m[14] - m[10] * m[12]
+        cdef double A0123 = m[ 8] * m[13] - m[ 9] * m[12]
+        cdef double A2313 = m[ 6] * m[15] - m[ 7] * m[14]
+        cdef double A1313 = m[ 5] * m[15] - m[ 7] * m[13]
+        cdef double A1213 = m[ 5] * m[14] - m[ 6] * m[13]
+        cdef double A2312 = m[ 6] * m[11] - m[ 7] * m[10]
+        cdef double A1312 = m[ 5] * m[11] - m[ 7] * m[ 9]
+        cdef double A1212 = m[ 5] * m[10] - m[ 6] * m[ 9]
+        cdef double A0313 = m[ 4] * m[15] - m[ 7] * m[12]
+        cdef double A0213 = m[ 4] * m[14] - m[ 6] * m[12]
+        cdef double A0312 = m[ 4] * m[11] - m[ 7] * m[ 8]
+        cdef double A0212 = m[ 4] * m[10] - m[ 6] * m[ 8]
+        cdef double A0113 = m[ 4] * m[13] - m[ 5] * m[12]
+        cdef double A0112 = m[ 4] * m[ 9] - m[ 5] * m[ 8]
+
+        cdef double det
+
+        det = m[ 0] * ( m[ 5] * A2323 - m[ 6] * A1323 + m[ 7] * A1223 ) \
+            - m[ 1] * ( m[ 4] * A2323 - m[ 6] * A0323 + m[ 7] * A0223 ) \
+            + m[ 2] * ( m[ 4] * A1323 - m[ 5] * A0323 + m[ 7] * A0123 ) \
+            - m[ 3] * ( m[ 4] * A1223 - m[ 5] * A0223 + m[ 6] * A0123 )
+
+        if det == 0:
+            m[15] = 1.0
+            return self
+
+        det = 1 / det
+
+        im[ 0] = <float> (det *   ( m[ 5] * A2323 - m[ 6] * A1323 + m[ 7] * A1223 ))
+        im[ 1] = <float> (det * - ( m[ 1] * A2323 - m[ 2] * A1323 + m[ 3] * A1223 ))
+        im[ 2] = <float> (det *   ( m[ 1] * A2313 - m[ 2] * A1313 + m[ 3] * A1213 ))
+        im[ 3] = <float> (det * - ( m[ 1] * A2312 - m[ 2] * A1312 + m[ 3] * A1212 ))
+        im[ 4] = <float> (det * - ( m[ 4] * A2323 - m[ 6] * A0323 + m[ 7] * A0223 ))
+        im[ 5] = <float> (det *   ( m[ 0] * A2323 - m[ 2] * A0323 + m[ 3] * A0223 ))
+        im[ 6] = <float> (det * - ( m[ 0] * A2313 - m[ 2] * A0313 + m[ 3] * A0213 ))
+        im[ 7] = <float> (det *   ( m[ 0] * A2312 - m[ 2] * A0312 + m[ 3] * A0212 ))
+        im[ 8] = <float> (det *   ( m[ 4] * A1323 - m[ 5] * A0323 + m[ 7] * A0123 ))
+        im[ 9] = <float> (det * - ( m[ 0] * A1323 - m[ 1] * A0323 + m[ 3] * A0123 ))
+        im[10] = <float> (det *   ( m[ 0] * A1313 - m[ 1] * A0313 + m[ 3] * A0113 ))
+        im[11] = <float> (det * - ( m[ 0] * A1312 - m[ 1] * A0312 + m[ 3] * A0112 ))
+        im[12] = <float> (det * - ( m[ 4] * A1223 - m[ 5] * A0223 + m[ 6] * A0123 ))
+        im[13] = <float> (det *   ( m[ 0] * A1223 - m[ 1] * A0223 + m[ 2] * A0123 ))
+        im[14] = <float> (det * - ( m[ 0] * A1213 - m[ 1] * A0213 + m[ 2] * A0113 ))
+        im[15] = <float> (det *   ( m[ 0] * A1212 - m[ 1] * A0212 + m[ 2] * A0112 ))
+
+        cdef int i
+
+        for i in range(16):
+            m[i] = im[i]
+
+        return self
+
+    cpdef Matrix transpose(Matrix self):
+        """
+        Returns the transpose of this matrix.
+        """
+
+        if self.transpose_cache is not None:
+            return self.transpose_cache
+
+        cdef Matrix rv = Matrix(None)
+
+        self.transpose_cache = rv
+
+        rv.xdx = self.xdx
+        rv.xdy = self.ydx
+        rv.xdz = self.zdx
+        rv.xdw = self.wdx
+
+        rv.ydx = self.xdy
+        rv.ydy = self.ydy
+        rv.ydz = self.zdy
+        rv.ydw = self.wdy
+
+        rv.zdx = self.xdz
+        rv.zdy = self.ydz
+        rv.zdz = self.zdz
+        rv.zdw = self.wdz
+
+        rv.wdx = self.xdw
+        rv.wdy = self.ydw
+        rv.wdz = self.zdw
+        rv.wdw = self.wdw
+
+        return rv
+
+    cdef Matrix inplace_transpose(Matrix self):
+
+
+        cdef float xdx, xdy, xdz, xdw
+        cdef float ydx, ydy, ydz, ydw
+        cdef float zdx, zdy, zdz, zdw
+        cdef float wdx, wdy, wdz, wdw
+
+        xdx = self.xdx
+        xdy = self.ydx
+        xdz = self.zdx
+        xdw = self.wdx
+        ydx = self.xdy
+        ydy = self.ydy
+        ydz = self.zdy
+        ydw = self.wdy
+        zdx = self.xdz
+        zdy = self.ydz
+        zdz = self.zdz
+        zdw = self.wdz
+        wdx = self.xdw
+        wdy = self.ydw
+        wdz = self.zdw
+        wdw = self.wdw
+
+        self.xdx = xdx
+        self.xdy = ydx
+        self.xdz = zdx
+        self.xdw = wdx
+        self.ydx = xdy
+        self.ydy = ydy
+        self.ydz = zdy
+        self.ydw = wdy
+        self.zdx = xdz
+        self.zdy = ydz
+        self.zdz = zdz
+        self.zdw = wdz
+        self.wdx = xdw
+        self.wdy = ydw
+        self.wdz = zdw
+        self.wdw = wdw
+
+        return self
+
 
     @staticmethod
     cdef Matrix cidentity():
@@ -499,5 +790,9 @@ cdef class Matrix2D(Matrix):
 
         self.zdz = 1.0
         self.wdw = 1.0
+
+cdef Matrix IDENTITY_MATRIX = Matrix([1.0, 0.0, 0.0, 1.0])
+IDENTITY = IDENTITY_MATRIX
+
 
 include "matrix_functions.pxi"

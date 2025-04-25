@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -45,7 +45,7 @@ def expand_predict(d):
     Use the fnmatch function to expland `d` for the purposes of prediction.
     """
 
-    if not isinstance(d, basestring):
+    if not isinstance(d, str):
         return [ d ]
 
     if not "*" in d:
@@ -149,7 +149,7 @@ def predicting():
     """
     :doc: other
 
-    Returns true if Ren'Py is currently in a predicting phase.
+    Returns True if Ren'Py is currently in a predicting phase.
     """
 
     return renpy.display.predict.predicting

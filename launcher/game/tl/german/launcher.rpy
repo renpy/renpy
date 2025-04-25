@@ -376,7 +376,7 @@
     new "{b}Empfohlen.{/b} Ein Betaeditor mit einer leichten Benutzeroberfläche und Funktionen, die bei der Entwicklung helfen, wie eine Rechtschreibprüfung. Editra fehlt derzeit die Eingabemethode, die für Chinesisch, Japanisch und Koreanisch benötigt wird. Unter Linux benötigt Editra wxPython."
 
     # editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Dies ist vermutlich passiert, weil wxPython nicht auf Deinem System installiert ist."
 
     # editor.rpy:169
@@ -392,7 +392,7 @@
     new "1,8 MB benötigt."
 
     # editor.rpy:182
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Dies ist vermutlich passiert, weil Java nicht auf Deinem System installiert ist."
 
     # editor.rpy:191
@@ -404,7 +404,7 @@
     new "Verhindert, dass Ren'Py einen Texteditor öffnet."
 
     # editor.rpy:359
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Ein Fehler ist beim Starten des Texteditors aufgetreten:\n[exception!q]"
 
     # editor.rpy:457
@@ -631,7 +631,7 @@
     new "FEHLER"
 
     # interface.rpy:356
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "Während [what!qt] ist ein Fehler aufgetreten:"
 
     # interface.rpy:356
@@ -1193,7 +1193,7 @@
     new "Die allerneuste Ren'Py Version. Diese enthält die neusten Funktionen, könnte aber auch überhaupt nicht funktionieren."
 
     # updater.rpy:152
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Ein Fehler ist aufgetreten:"
 
     # updater.rpy:154

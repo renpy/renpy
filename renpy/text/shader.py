@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -80,15 +80,37 @@ def to_uniform_value(shader_name, uniform_name, variable_types, value):
 
         if not isinstance(value, float):
             raise ValueError("Expected a float for %r in shader %r." % (uniform_name, shader_name))
-    elif type == "vec2":
+
+    elif type == "int":
+        try:
+            value = int(value) # type: ignore
+        except ValueError:
+            pass
+
+        if not isinstance(value, int):
+            raise ValueError("Expected an int for %r in shader %r." % (uniform_name, shader_name))
+
+    if type == "bool":
+        try:
+            value = bool(value) # type: ignore
+        except ValueError:
+            pass
+
+        if not isinstance(value, bool):
+            raise ValueError("Expected a float for %r in shader %r." % (uniform_name, shader_name))
+
+    elif type in { "vec2", "ivec2", "bvec2" }:
         if not isinstance(value, tuple) or len(value) != 2:
             raise ValueError("Expected a 2 component tuple for %r in shader %r." % (uniform_name, shader_name))
-    elif type == "vec3":
+
+    elif type in { "vec3", "ivec3", "bvec3" }:
         if not isinstance(value, tuple) or len(value) != 3:
             raise ValueError("Expected a 3 component tuple for %r in shader %r." % (uniform_name, shader_name))
-    elif type == "vec4":
+
+    elif type in { "vec4", "ivec4", "bvec4" }:
         if not isinstance(value, tuple) or len(value) != 4:
             raise ValueError("Expected a 4 component tuple for %r in shader %r." % (uniform_name, shader_name))
+
     elif type == "sampler2D":
         if not isinstance(value, renpy.display.displayable.Displayable):
             raise ValueError("Expected a displayable for %r in shader %r." % (uniform_name, shader_name))
@@ -116,8 +138,8 @@ class TextShader(object):
             doc=None):
 
         # A tuple of shaders to apply to text.
-        if isinstance(shader, basestring):
-            self.shader = (shader,)
+        if isinstance(shader, str):
+            self.shader = (shader, )
         else:
             self.shader = tuple(shader)
 
@@ -266,6 +288,9 @@ def create_textshader_args_dict(name, shader, s):
         if not uniform.startswith("u_"):
             uniform = "u_" + uniform
 
+        if uniform.startswith("u__"):
+            uniform = uniform[:2] + "textshader_" + name.replace(".", "_") + uniform[2:]
+
         for k, v in shader.uniforms:
             if k == uniform:
                 break
@@ -291,7 +316,7 @@ def parse_textshader(o):
     if isinstance(o, TextShader):
         return o
 
-    if isinstance(o, basestring):
+    if isinstance(o, str):
 
         # Combine multiple shaders separated by "|".
         if "|" in o:

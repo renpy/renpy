@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,106 +34,21 @@ init python in distribute:
     from zipfile import crc32
 
     # Since the long type doesn't exist on py3, define it here
-    if not PY2:
-        long = int
+    long = int
 
     zlib.Z_DEFAULT_COMPRESSION = 5
 
-    if PY2:
+    class ZipFile(zipfile.ZipFile):
 
-        class ZipFile(zipfile.ZipFile):
+        def write_with_info(self, zinfo, filename):
 
-            def write_with_info(self, zinfo, filename):
-                """Put the bytes from filename into the archive under the name
-                arcname."""
-                if not self.fp:
-                    raise RuntimeError(
-                        "Attempt to write to ZIP archive that was already closed")
+            if zinfo.filename.endswith("/"):
+                data = b''
+            else:
+                with open(filename, "rb") as f:
+                    data = f.read()
 
-                st = os.stat(filename)
-                isdir = stat.S_ISDIR(st.st_mode)
-
-                zinfo.file_size = st.st_size
-                zinfo.flag_bits = 0x00
-                zinfo.header_offset = self.fp.tell()    # Start of header bytes
-
-                self._writecheck(zinfo)
-                self._didModify = True
-
-                if isdir:
-                    zinfo.file_size = 0
-                    zinfo.compress_size = 0
-                    zinfo.CRC = 0
-                    self.filelist.append(zinfo)
-                    self.NameToInfo[zinfo.filename] = zinfo
-                    self.fp.write(zinfo.FileHeader())
-                    return
-
-                with open(filename, "rb") as fp:
-                    # Must overwrite CRC and sizes with correct data later
-                    zinfo.CRC = CRC = 0
-                    zinfo.compress_size = compress_size = 0
-                    file_size = 0
-
-                    zip64 = self._allowZip64 and \
-                            zinfo.file_size * 1.05 > zipfile.ZIP64_LIMIT
-
-                    self.fp.write(zinfo.FileHeader(zip64))
-
-                    if zinfo.compress_type == zipfile.ZIP_DEFLATED:
-                        cmpr = zlib.compressobj(zlib.Z_DEFAULT_COMPRESSION,
-                            zlib.DEFLATED, -15)
-                    else:
-                        cmpr = None
-                    while 1:
-                        buf = fp.read(1024 * 1024)
-                        if not buf:
-                            break
-                        file_size = file_size + len(buf)
-                        CRC = crc32(buf, CRC) & 0xffffffff
-                        if cmpr:
-                            buf = cmpr.compress(buf)
-                            compress_size = compress_size + len(buf)
-                        self.fp.write(buf)
-                if cmpr:
-                    buf = cmpr.flush()
-                    compress_size = compress_size + len(buf)
-                    self.fp.write(buf)
-                    zinfo.compress_size = compress_size
-                else:
-                    zinfo.compress_size = file_size
-                zinfo.CRC = CRC
-                zinfo.file_size = file_size
-
-                if not zip64 and self._allowZip64:
-                    if file_size > zipfile.ZIP64_LIMIT:
-                        raise RuntimeError('File size has increased during compressing')
-                    if compress_size > zipfile.ZIP64_LIMIT:
-                        raise RuntimeError('Compressed size larger than uncompressed size')
-
-                # Seek backwards and write CRC and file sizes
-                position = self.fp.tell()       # Preserve current position in file
-                self.fp.seek(zinfo.header_offset, 0)
-
-                self.fp.write(zinfo.FileHeader(zip64))
-
-                self.fp.seek(position, 0)
-                self.filelist.append(zinfo)
-                self.NameToInfo[zinfo.filename] = zinfo
-
-    else:
-
-        class ZipFile(zipfile.ZipFile):
-
-            def write_with_info(self, zinfo, filename):
-
-                if zinfo.filename.endswith("/"):
-                    data = b''
-                else:
-                    with open(filename, "rb") as f:
-                        data = f.read()
-
-                self.writestr(zinfo, data)
+            self.writestr(zinfo, data)
 
 
     class ZipPackage(object):
@@ -469,3 +384,5 @@ init python in distribute:
         for i in parallel_threads:
             if i.done:
                 i.done()
+
+        parallel_threads.clear()

@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -91,7 +91,7 @@ cdef class WordWrapper(object):
 
             # Note that we start iteration at start+1, so we don't unmark the
             # first character.
-            for i from start < i < end:
+            for i in range(start + 1, end):
                 (<Glyph> words[i].glyph).split = SPLIT_NONE
 
             end = start
@@ -119,7 +119,7 @@ cdef class WordWrapper(object):
         scores[0] = 0.0
         splits[0] = 0
 
-        for 1 <= j <= self.len_words:
+        for j in range(1, self.len_words + 1):
 
             j_x = words[j-1].end_x
 
@@ -188,7 +188,7 @@ cdef class WordWrapper(object):
         start_glyph = glyphs[0]
         x = start_glyph.advance
 
-        for i from 1 <= i < len_glyphs:
+        for i in range(1, len_glyphs):
 
             g = <Glyph> <object> glyphs[i]
 

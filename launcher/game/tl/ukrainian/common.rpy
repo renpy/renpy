@@ -155,7 +155,7 @@ translate ukrainian strings:
 
     # 00action_file.rpy:240
     old "%b %d, %H:%M"
-    new "%b %d, %H:%M"
+    new "%d %b, %H:%M"
 
     # 00action_file.rpy:353
     old "Save slot %s: [text]"
@@ -207,7 +207,7 @@ translate ukrainian strings:
 
     # 00director.rpy:708
     old "The interactive director is not enabled here."
-    new "Інтерактивний режисер тут не ввімкнений."
+    new "Інтерактивний режисер тут не ввімкнено."
 
     # 00director.rpy:1481
     old "⬆"
@@ -223,7 +223,7 @@ translate ukrainian strings:
 
     # 00director.rpy:1561
     old "(statement)"
-    new "(функція)"
+    new "(оператор)"
 
     # 00director.rpy:1562
     old "(tag)"
@@ -235,7 +235,7 @@ translate ukrainian strings:
 
     # 00director.rpy:1564
     old "(transform)"
-    new "(трансформація)"
+    new "(перетворення)"
 
     # 00director.rpy:1589
     old "(transition)"
@@ -247,7 +247,7 @@ translate ukrainian strings:
 
     # 00director.rpy:1602
     old "(filename)"
-    new "(ім’я файла)"
+    new "(назва файлу)"
 
     # 00director.rpy:1631
     old "Change"
@@ -267,7 +267,7 @@ translate ukrainian strings:
 
     # 00director.rpy:1674
     old "Statement:"
-    new "Функція:"
+    new "Оператор:"
 
     # 00director.rpy:1695
     old "Tag:"
@@ -279,7 +279,7 @@ translate ukrainian strings:
 
     # 00director.rpy:1729
     old "Transforms:"
-    new "Трансформації:"
+    new "Перетворення:"
 
     # 00director.rpy:1748
     old "Behind:"
@@ -295,7 +295,7 @@ translate ukrainian strings:
 
     # 00director.rpy:1803
     old "Audio Filename:"
-    new "Ім’я аудіофайлу::"
+    new "Назва аудіофайлу:"
 
     # 00gui.rpy:370
     old "Are you sure?"
@@ -311,7 +311,7 @@ translate ukrainian strings:
 
     # 00gui.rpy:373
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "Завантаження гри приведе до втрати незбереженого прогресу.\nВи дійсно бажаєте це зробити?"
+    new "Завантаження призведе до втрати незбереженого поступу.\nВи дійсно бажаєте продовжити?"
 
     # 00gui.rpy:374
     old "Are you sure you want to quit?"
@@ -319,7 +319,7 @@ translate ukrainian strings:
 
     # 00gui.rpy:375
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "Ви дійсно бажаєте повернутися до головного меню?\nЦе призведе до втрати незбереженого прогресу."
+    new "Ви дійсно бажаєте повернутися до головного меню?\nЦя дія призведе до втрати незбереженого поступу."
 
     # 00gui.rpy:376
     old "Are you sure you want to end the replay?"
@@ -331,7 +331,7 @@ translate ukrainian strings:
 
     # 00gui.rpy:378
     old "Are you sure you want to skip to the next choice?"
-    new "Ви дійсно бажаєте пропустити все до наступного вибору?"
+    new "Ви дійсно бажаєте пропускати до наступного вибору?"
 
     # 00gui.rpy:379
     old "Are you sure you want to skip unseen dialogue to the next choice?"
@@ -351,7 +351,7 @@ translate ukrainian strings:
 
     # 00library.rpy:147
     old "Clipboard voicing enabled. "
-    new "Озвучення буфера обміну увімкнено."
+    new "Озвучення буфера обміну ввімкнено."
 
     # 00library.rpy:148
     old "Self-voicing enabled. "
@@ -371,11 +371,11 @@ translate ukrainian strings:
 
     # 00library.rpy:153
     old "horizontal scroll"
-    new "горизонтальне прокручування"
+    new "горизонтальна прокрутка"
 
     # 00library.rpy:154
     old "vertical scroll"
-    new "вертикальне прокручування"
+    new "вертикальна прокрутка"
 
     # 00library.rpy:155
     old "activate"
@@ -411,7 +411,7 @@ translate ukrainian strings:
 
     # 00preferences.rpy:228
     old "skip transitions"
-    new "пропустити переходи"
+    new "пропускати переходи"
 
     # 00preferences.rpy:230
     old "video sprites"
@@ -423,7 +423,7 @@ translate ukrainian strings:
 
     # 00preferences.rpy:248
     old "text speed"
-    new "швидкість тексту"
+    new "швидкість друку тексту"
 
     # 00preferences.rpy:256
     old "joystick"
@@ -435,19 +435,19 @@ translate ukrainian strings:
 
     # 00preferences.rpy:263
     old "skip"
-    new "пропустити"
+    new "пропускати"
 
     # 00preferences.rpy:266
     old "skip unseen [text]"
-    new "пропустити весь [text]"
+    new "пропускати весь [text]"
 
     # 00preferences.rpy:271
     old "skip unseen text"
-    new "пропускати увесь текст"
+    new "пропускати весь текст"
 
     # 00preferences.rpy:273
     old "begin skipping"
-    new "почати пропускати"
+    new "почати пропуск"
 
     # 00preferences.rpy:277
     old "after choices"
@@ -471,7 +471,7 @@ translate ukrainian strings:
 
     # 00preferences.rpy:310
     old "auto-forward after click"
-    new "перемотка після дотику"
+    new "перемотка після клацу"
 
     # 00preferences.rpy:319
     old "automatic move"
@@ -479,7 +479,7 @@ translate ukrainian strings:
 
     # 00preferences.rpy:328
     old "wait for voice"
-    new "чекати голос"
+    new "чекати на голос"
 
     # 00preferences.rpy:337
     old "voice sustain"
@@ -495,7 +495,7 @@ translate ukrainian strings:
 
     # 00preferences.rpy:364
     old "debug voicing"
-    new "режим налагодження синтезу мови"
+    new "налагоджувальне озвучення"
 
     # 00preferences.rpy:373
     old "emphasize audio"
@@ -507,7 +507,7 @@ translate ukrainian strings:
 
     # 00preferences.rpy:392
     old "gl powersave"
-    new "економія енергії"
+    new "енергозбереження"
 
     # 00preferences.rpy:398
     old "gl framerate"
@@ -523,7 +523,7 @@ translate ukrainian strings:
 
     # 00preferences.rpy:414
     old "sound volume"
-    new "гучність звук. ефектів"
+    new "гучність звукових ефектів"
 
     # 00preferences.rpy:415
     old "voice volume"
@@ -535,7 +535,7 @@ translate ukrainian strings:
 
     # 00preferences.rpy:417
     old "mute sound"
-    new "без звук. ефектів"
+    new "без звукових ефектів"
 
     # 00preferences.rpy:418
     old "mute voice"
@@ -547,19 +547,19 @@ translate ukrainian strings:
 
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "Озвучення буфера обміну увімкнено. Натисніть 'shift+C', щоб вимкнути."
+    new "Озвучення буфера обміну ввімкнено. Натисніть «Shift+C», щоб вимкнути."
 
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Синтез мовлення має сказати \"[renpy.display.tts.last]\". Натисніть 'alt+shift+V', щоб вимкнути."
+    new "Синтез мовлення сказав би «[renpy.display.tts.last]». Натисніть «Alt+Shift+V», щоб вимкнути."
 
     # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Синтез мовлення увімкнено. Натисніть 'v', щоб вимкнути його."
+    new "Синтез мовлення увімкнено. Натисніть «V», щоб вимкнути."
 
     # _compat\gamemenu.rpym:198
     old "Empty Slot."
-    new "Порожній комірка."
+    new "Порожня комірка."
 
     # _compat\gamemenu.rpym:355
     old "Previous"
@@ -595,7 +595,7 @@ translate ukrainian strings:
 
     # _developer\developer.rpym:51
     old "Image Location Picker"
-    new "Вибір розташування зображень"
+    new "Вибирач розташування зображень"
 
     # _developer\developer.rpym:53
     old "Filename List"
@@ -603,15 +603,15 @@ translate ukrainian strings:
 
     # _developer\developer.rpym:57
     old "Show Image Load Log (F4)"
-    new "Показати журнал завант. зображень (F4)"
+    new "Показати панель завантаження зображень (F4)"
 
     # _developer\developer.rpym:60
     old "Hide Image Load Log (F4)"
-    new "Сховати журнал завант. зображень (F4)"
+    new "Сховати панель завантаження зображень (F4)"
 
     # _developer\developer.rpym:63
     old "Image Attributes"
-    new "Атрибути зображення"
+    new "Атрибути зображень"
 
     # _developer\developer.rpym:90
     old "[name] [attributes] (hidden)"
@@ -639,7 +639,7 @@ translate ukrainian strings:
 
     # _developer\developer.rpym:435
     old "Right-click or escape to quit."
-    new "Натисніть ПКМ або Escape, щоб вийти."
+    new "Натисніть ПКМ або ESC, щоб вийти."
 
     # _developer\developer.rpym:467
     old "Rectangle copied to clipboard."
@@ -655,11 +655,11 @@ translate ukrainian strings:
 
     # _developer\developer.rpym:617
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
-    new "Текстури: [tex_count] ([tex_size_mb:.1f] Мб)"
+    new "Текстури: [tex_count] ([tex_size_mb:.1f] МБ)"
 
     # _developer\developer.rpym:621
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
-    new "Кеш зображень: [cache_pct:.1f]% ([cache_size_mb:.1f] Мб)"
+    new "Кеш зображень: [cache_pct:.1f]% ([cache_size_mb:.1f] МБ)"
 
     # _developer\developer.rpym:631
     old "✔ "
@@ -671,7 +671,7 @@ translate ukrainian strings:
 
     # _developer\developer.rpym:639
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ передбачене зображення (добре){/color}\n{color=#fcc}✘ раптове зображення (погано){/color}\n{color=#fff}Перетягніть, щоб перемістити.{/color}"
+    new "\n{color=#cfc}✔ передбачене зображення (добре){/color}\n{color=#fcc}✘ непередбачене зображення (погано){/color}\n{color=#fff}Перетягніть для пересування.{/color}"
 
     # _developer\inspector.rpym:38
     old "Displayable Inspector"
@@ -699,7 +699,7 @@ translate ukrainian strings:
 
     # _developer\inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        (на об’єкт не впливають жодні параметри)"
+    new "        (на об’єкт не впливають жодні властивості)"
 
     # _developer\inspector.rpym:147
     old "        (default properties omitted)"
@@ -767,7 +767,7 @@ translate ukrainian strings:
 
     # 00updater.rpy:1452
     old "[u.version] is available. Do you want to install it?"
-    new "[u.version] доступно. Бажаєте її встановити?"
+    new "[u.version] доступно. Бажаєте її установити?"
 
     # 00updater.rpy:1454
     old "Preparing to download the updates."
@@ -783,7 +783,7 @@ translate ukrainian strings:
 
     # 00updater.rpy:1462
     old "The updates have been installed. The program will restart."
-    new "Оновлення встановлено. Програма буде перезапущена."
+    new "Оновлення було встановлено. Програму буде перезапущено."
 
     # 00updater.rpy:1464
     old "The updates have been installed."
@@ -823,11 +823,11 @@ translate ukrainian strings:
 
     # 00accessibility.rpy:76
     old "Font Override"
-    new "Замінити шрифт"
+    new "Перевизначення шрифту"
 
     # 00accessibility.rpy:80
     old "Default"
-    new "Стандратний"
+    new "Стандартний"
 
     # 00accessibility.rpy:84
     old "DejaVu Sans"
@@ -859,7 +859,7 @@ translate ukrainian strings:
 
     # 00accessibility.rpy:125
     old "Text-to-speech"
-    new "Перетворення тексту в мовлення"
+    new "Текст-у-мовлення"
 
     # 00accessibility.rpy:129
     old "Clipboard"
@@ -879,7 +879,7 @@ translate ukrainian strings:
 
     # renpy/common/00accessibility.rpy:191
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new "Параметри цього меню призначені для покращення доступності. Вони можуть працювати не з усіма іграми, а деякі комбінації параметрів можуть зробити гру неможливою для гри. Це не є проблемою гри або рушія. Для досягнення найкращих результатів при зміні шрифтів намагайтеся зберігати розмір тексту таким, яким він був спочатку."
+    new "Параметри цього меню призначені для покращення доступності. Вони можуть працювати не з усіма іграми, а деякі комбінації параметрів можуть зробити гру неможливою для гри. Це не є проблемою гри або рушія. Для отримання кращих результатів при зміні шрифтів намагайтеся зберігати розмір тексту таким, яким він був спочатку."
 
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing Volume Drop"
@@ -919,7 +919,7 @@ translate ukrainian strings:
 
     # renpy/common/00preferences.rpy:535
     old "mute main"
-    new "без основи"
+    new "без основної гучності"
 
 translate ukrainian strings:
 
@@ -941,11 +941,11 @@ translate ukrainian strings:
 
     # renpy/common/00director.rpy:1768
     old "Click to set transform, right click to add to transform list."
-    new "Натисніть, щоб встановити трансформацію, натисніть ПКМ, щоб додати до списку трансформацій."
+    new "Натисніть, щоб установити перетворення, клацніть ПКМ, щоб додати до списку перетворень."
 
     # renpy/common/00director.rpy:1789
     old "Click to set, right click to add to behind list."
-    new "Натисніть, щоб встановити, натисніть ПКМ, щоб додати до списку."
+    new "Натисніть, щоб установити, клацніть ПКМ, щоб додати до списку."
 
     # renpy/common/00gui.rpy:456
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
@@ -953,7 +953,7 @@ translate ukrainian strings:
 
     # renpy/common/00gui.rpy:457
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
-    new "Чи довіряєте ви пристрою, на якому було створено збереження? Ви повинні вибрати «Так», тільки якщо ви є єдиним користувачем пристрою."
+    new "Чи довіряєте ви пристрою, на якому було створено збереження? Ви повинні натиснути «Так», лише якщо ви є єдиним користувачем пристрою."
 
     # renpy/common/00preferences.rpy:528
     old "audio when unfocused"
@@ -961,7 +961,7 @@ translate ukrainian strings:
 
     # renpy/common/00preferences.rpy:537
     old "web cache preload"
-    new "попер. завантаження вебкешу"
+    new "попереднє завантаження вебкешу"
 
     # renpy/common/00preferences.rpy:552
     old "voice after game menu"
@@ -973,7 +973,7 @@ translate ukrainian strings:
 
     # renpy/common/00speechbubble.rpy:349
     old "(hide)"
-    new "(приховати)"
+    new "(сховати)"
 
     # renpy/common/00sync.rpy:70
     old "Sync downloaded."
@@ -985,7 +985,7 @@ translate ukrainian strings:
 
     # renpy/common/00sync.rpy:192
     old "The Ren'Py Sync server timed out."
-    new "Сервер Ren'Py Sync вийшов з ладу."
+    new "Час під’єднання до Ren'Py Sync закінчився."
 
     # renpy/common/00sync.rpy:194
     old "An unknown error occurred while connecting to the Ren'Py Sync server."
@@ -993,11 +993,11 @@ translate ukrainian strings:
 
     # renpy/common/00sync.rpy:267
     old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
-    new "Сервер Ren'Py Sync не має копії цієї синхронізації. Ідентифікатор синхронізації може бути недійсним або його термін дії закінчився."
+    new "Сервер Ren'Py Sync не має копії цієї синхронізації. Ідентифікатор синхронізації може бути недійсним або термін його дії закінчився."
 
     # renpy/common/00sync.rpy:409
     old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
-    new "Будь ласка, введіть згенерований вами ідентифікатор синхронізації.\nНіколи не вводьте ідентифікатор синхронізації, який ви не створювали."
+    new "Введіть згенерований вами ідентифікатор синхронізації.\nНіколи не вводьте не створений вами ідентифікатор синхронізації."
 
     # renpy/common/00sync.rpy:428
     old "The sync ID is not in the correct format."
@@ -1013,19 +1013,19 @@ translate ukrainian strings:
 
     # renpy/common/00sync.rpy:476
     old "The sync contains a file with an invalid name."
-    new "Синхронізація містить файл з невірною назвою."
+    new "Синхронізація містить файл з недійсною назвою."
 
     # renpy/common/00sync.rpy:529
     old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
-    new "Це завантажить ваші збереження на {a=https://sync.renpy.org}сервер Ren'Py Sync{/a}.\nБажаєте продовжити?"
+    new "Ця дія вивантажить ваші збереження на {a=https://sync.renpy.org}сервер Ren'Py Sync{/a}.\nБажаєте продовжити?"
 
     # renpy/common/00sync.rpy:558
     old "Enter Sync ID"
-    new "Уведіть ідентифікатор синхронізації"
+    new "Введіть ідентифікатор синхронізації"
 
     # renpy/common/00sync.rpy:569
     old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
-    new "Зв’язок зі {a=https://sync.renpy.org}сервером Ren'Py Sync{/a}."
+    new "Ця дія зв’яжеться зі {a=https://sync.renpy.org}сервером Ren'Py Sync{/a}."
 
     # renpy/common/00sync.rpy:596
     old "Sync Success"
@@ -1043,3 +1043,114 @@ translate ukrainian strings:
     old "Sync Error"
     new "Помилка синхронізації"
 
+translate ukrainian strings:
+
+    # renpy/common/00accessibility.rpy:120
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
+    new "Меню доступності. Використовуйте стрілки вгору та вниз для навігації, а клавішу Enter для взаємодії між кнопками та смуг."
+
+    # renpy/common/00accessibility.rpy:197
+    old "Self-voicing support is limited when using a touch screen."
+    new "Підтримка синтезу мовлення обмежена при використанні сенсорного екрана."
+
+    # renpy/common/00director.rpy:1776
+    old "Customize director.transforms to add more transforms."
+    new "Налаштуйте «director.transforms», щоб додати більше перетворень."
+
+    # renpy/common/00director.rpy:1821
+    old "Click to set."
+    new "Клацніть, щоб установити."
+
+    # renpy/common/00director.rpy:1822
+    old "Customize director.transitions to add more transitions."
+    new "Налаштуйте «director.transitions», щоб додати більше переходів."
+
+    # renpy/common/00director.rpy:1845
+    old "Customize director.audio_channels to add more channels."
+    new "Налаштуйте «director.audio_channels», щоб додати більше каналів."
+
+    # renpy/common/00gui.rpy:454
+    old "Are you sure you want to continue where you left off?"
+    new "Ви дійсно бажаєте продовжити з того місця, на якому зупинилися?"
+
+    # renpy/common/00preferences.rpy:438
+    old "self voicing enable"
+    new "увімкнути синтез мовлення"
+
+    # renpy/common/00preferences.rpy:440
+    old "self voicing disable"
+    new "вимкнути синтез мовлення"
+
+    # renpy/common/00preferences.rpy:455
+    old "clipboard voicing enable"
+    new "увімкнути озвучення буфера обміну"
+
+    # renpy/common/00preferences.rpy:457
+    old "clipboard voicing disable"
+    new "вимкнути озвучення буфера обміну"
+
+    # renpy/common/00preferences.rpy:464
+    old "debug voicing enable"
+    new "увімкнути налагоджувальне озвучення"
+
+    # renpy/common/00preferences.rpy:466
+    old "debug voicing disable"
+    new "вимкнути налагоджувальне озвучення"
+
+    # renpy/common/00preferences.rpy:586
+    old "restore window position"
+    new "відновити положення вікна"
+
+    # renpy/common/00preferences.rpy:595
+    old "reset"
+    new "скинути"
+
+    # renpy/common/00speechbubble.rpy:408
+    old "(clear retained bubbles)"
+    new "(очистити залишкові бульбашки)"
+
+    # renpy/common/00updater.rpy:505
+    old "No update methods found."
+    new "Методів оновлення не знайдено."
+
+    # renpy/common/00updater.rpy:552
+    old "Could not download file list: "
+    new "Не вдалося завантажити список файлів: "
+
+    # renpy/common/00updater.rpy:555
+    old "File list digest does not match."
+    new "Дайджест списку файлів не збігається."
+
+    # renpy/common/00updater.rpy:2072
+    old "Preparing to download the game data."
+    new "Підготовка до завантаження даних гри."
+
+    # renpy/common/00updater.rpy:2074
+    old "Downloading the game data."
+    new "Завантаження даних гри."
+
+    # renpy/common/00updater.rpy:2076
+    old "The game data has been downloaded."
+    new "Дані гри було завантажено."
+
+    # renpy/common/00updater.rpy:2078
+    old "An error occurred when trying to download game data:"
+    new "Виникла помилка при спробі завантажити дані гри:"
+
+    # renpy/common/00updater.rpy:2083
+    old "This game cannot be run until the game data has been downloaded."
+    new "Цю гру не можна буде запустити, доки не будуть завантажені дані гри."
+
+    # renpy/common/00updater.rpy:2090
+    old "Retry"
+    new "Повторити"
+
+translate ukrainian strings:
+
+    # renpy/common/00translation.rpy:63
+    old "Translation identifier: [identifier]"
+    new "Ідентифікатор перекладу: [identifier]"
+
+    # renpy/common/00translation.rpy:84
+    old " translates [tl.filename]:[tl.linenumber]"
+    new " перекладає [tl.filename]:[tl.linenumber]"

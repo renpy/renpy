@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -183,15 +183,6 @@ init -1500 python:
         if volume is None:
             return _CharacterVolumeValue(voice_tag)
         else:
-            if volume > 0:
-                if config.quadratic_volumes:
-                    volume = volume ** 2
-                else:
-                    volume = (1 - volume) * config.volume_db_range
-                    volume = pow(10, volume / 20.0)
-
-            else:
-                volume = 0
             return SetDict(persistent._character_volume, voice_tag, volume)
 
 
@@ -336,7 +327,7 @@ init -1500 python:
                     if tlid is None:
                         continue
 
-                    if isinstance(config.auto_voice, (str, unicode)):
+                    if isinstance(config.auto_voice, str):
                         fn = config.auto_voice.format(id=tlid)
                     else:
                         fn = config.auto_voice(tlid)
@@ -477,6 +468,9 @@ init -1500 python hide:
             if not getattr(renpy.context(), "_menu", False):
                 store._last_voice_play = None
 
+        if config.skipping:
+            renpy.sound.stop(channel="voice")
+
         _voice.play = None
         _voice.sustain = False
         _voice.tag = None
@@ -558,7 +552,7 @@ python early hide:
         _voice.seen_in_lint = True
 
         fn = _try_eval(fn, 'voice filename')
-        if not isinstance(fn, basestring):
+        if not isinstance(fn, str):
             return
 
         try:
@@ -569,12 +563,13 @@ python early hide:
         if not renpy.music.playable(fn, 'voice'):
             renpy.error('voice file %r is not playable' % fn)
 
-    renpy.statements.register('voice',
-                              parse=parse_voice,
-                              execute=execute_voice,
-                              predict=predict_voice,
-                              lint=lint_voice,
-                              translatable=True)
+    renpy.statements.register(
+        'voice',
+        parse=parse_voice,
+        execute=execute_voice,
+        predict=predict_voice,
+        lint=lint_voice,
+        translatable=True)
 
     def parse_voice_sustain(l):
         if not l.eol():
@@ -585,7 +580,8 @@ python early hide:
     def execute_voice_sustain(parsed):
         voice_sustain()
 
-    renpy.statements.register('voice sustain',
-                              parse=parse_voice_sustain,
-                              execute=execute_voice_sustain,
-                              translatable=True)
+    renpy.statements.register(
+        'voice sustain',
+        parse=parse_voice_sustain,
+        execute=execute_voice_sustain,
+        translatable=True)

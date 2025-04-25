@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -318,6 +318,7 @@ class Pixellate(Transition):
         rv.add_shader("renpy.texture")
         rv.add_property("texture_scaling", "nearest_mipmap_nearest")
         rv.add_property("anisotropic", False)
+        rv.add_property("mipmap", True)
         rv.add_uniform("u_lod_bias", step + 1)
 
         renpy.display.render.redraw(self, 0)
@@ -383,8 +384,12 @@ class Dissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        width = max(top.width, bottom.width)
-        height = max(top.height, bottom.height)
+        if renpy.config.dissolve_shrinks:
+            width = min(top.width, bottom.width)
+            height = min(top.height, bottom.height)
+        else:
+            width = max(top.width, bottom.width)
+            height = max(top.height, bottom.height)
 
         rv = renpy.display.render.Render(width, height)
 
@@ -548,8 +553,12 @@ class ImageDissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        width = min(bottom.width, top.width, image.width)
-        height = min(bottom.height, top.height, image.height)
+        if renpy.config.dissolve_shrinks:
+            width = min(bottom.width, top.width, image.width)
+            height = min(bottom.height, top.height, image.height)
+        else:
+            width = max(bottom.width, top.width, image.width)
+            height = max(bottom.height, top.height, image.height)
 
         rv = renpy.display.render.Render(width, height)
 
@@ -672,8 +681,12 @@ class AlphaDissolve(Transition):
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
 
-        width = min(bottom.width, top.width)
-        height = min(bottom.height, top.height)
+        if renpy.config.dissolve_shrinks:
+            width = min(bottom.width, top.width, image.width)
+            height = min(bottom.height, top.height, image.height)
+        else:
+            width = max(bottom.width, top.width)
+            height = max(bottom.height, top.height)
 
         control = render(self.control, width, height, st, at)
 

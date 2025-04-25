@@ -62,7 +62,7 @@ translate french demo_character_66d08d98:
 # game/indepth_character.rpy:39
 translate french demo_character_7e0d75aa:
 
-    # e "Properties beginning with window apply to the textbox, those with what apply to the the dialogue, and those with who to the name of Character speaking."
+    # e "Properties beginning with window apply to the textbox, those with what apply to the dialogue, and those with who to the name of Character speaking."
     e "Les propriétés préfixées par 'window' concernent la zone de texte, celle avec 'what' concerne les dialogues et celles avec 'who' concerne l’affichage du nom du personnage."
 
 # game/indepth_character.rpy:41
@@ -207,4 +207,3 @@ translate french demo_character_0c8f314a:
 
     # "I think I do."
     "Je crois, oui."
-

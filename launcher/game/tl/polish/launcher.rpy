@@ -632,7 +632,7 @@
     new "Wymagane pobieranie 1,8 MB."
 
     # game/editor.rpy:177
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Problem powstał prawdopodobnie przez brak zainstalowanego oprogramowania Java na tym systemie."
 
     # game/editor.rpy:186
@@ -656,7 +656,7 @@
     new "Edytuj [text]."
 
     # game/editor.rpy:354
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "Wystąpił wyjątek podczas uruchamiania edytora tekstu:\n[exception!q]"
 
     # game/editor.rpy:486
@@ -965,7 +965,7 @@
     new "Otwieranie pliku dziennika"
 
     # game/interface.rpy:394
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "Podczas [what!qt], wystąpił błąd:"
 
     # game/interface.rpy:394
@@ -1553,7 +1553,7 @@
     new "%B %d, %Y"
 
     # game/updater.rpy:140
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Wystąpił błąd:"
 
     # game/updater.rpy:142

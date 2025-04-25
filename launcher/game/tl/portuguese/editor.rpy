@@ -11,7 +11,7 @@
     new "{b}Recomendado.{/b} Um editor beta com uma interface fácil  para uso e características que ajudam no desenvolvimento, como correção ortográfica. Editra atualmente carece do suporte IME necessário para textos em Chinês, Japonês e Coreano. No Linux, Editra necessita do wxPython."
 
     # game/editor.rpy:137
-    old "This may have occured because wxPython is not installed on this system."
+    old "This may have occurred because wxPython is not installed on this system."
     new "Isto pode ter ocorrido porque wxPython não está instalado neste sistema."
 
     # game/editor.rpy:144
@@ -28,7 +28,7 @@
     new "Downlod de 1.8 MB é necessário."
 
     # game/editor.rpy:158
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Isto pode ter ocorrido porque Java não está instalado neste sistema"
 
     # option: "System Editor"
@@ -52,8 +52,8 @@
     new "Evita que Ren'Py abra um editor de texto."
 
     # game/editor.rpy:327
-    old "An exception occured while launching the text editor:\n[exception!q]"
-    new "Ocorreu uma exceção ao executar o editor de texto:\[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
+    new "Ocorreu uma exceção ao executar o editor de texto:\n[exception!q]"
 
     # game/editor.rpy:423
     old "Select Editor"

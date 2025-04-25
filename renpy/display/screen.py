@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -109,7 +109,7 @@ class ScreenProfile(renpy.object.Object):
         self.const = const
 
         if name is not None:
-            if isinstance(name, basestring):
+            if isinstance(name, str):
                 name = tuple(name.split())
                 profile[name] = self
 
@@ -123,7 +123,7 @@ def get_profile(name):
         A string or tuple.
     """
 
-    if isinstance(name, basestring):
+    if isinstance(name, str):
         name = tuple(name.split())
 
     if name in profile:
@@ -203,6 +203,7 @@ class Screen(renpy.object.Object):
 
     sensitive = "True"
     roll_forward = None
+    docstring = None
 
     def __init__(self,
                  name,
@@ -216,15 +217,16 @@ class Screen(renpy.object.Object):
                  location=None,
                  layer="screens",
                  sensitive="True",
-                 roll_forward=None):
+                 roll_forward=None,
+                 docstring=None):
 
         # The name of this screen.
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             name = tuple(name.split())
 
         self.name = name
 
-        if (variant is None) or isinstance(variant, basestring):
+        if variant is None or isinstance(variant, str):
             variant = [ variant ]
 
         for v in variant:
@@ -272,6 +274,9 @@ class Screen(renpy.object.Object):
         # call screen statement? True for yes, False for no, None for
         # config.call_screen_roll_forward.
         self.roll_forward = roll_forward
+
+        # The docstring for this screen.
+        self.docstring = docstring
 
         global prepared
         global analyzed
@@ -403,7 +408,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.cache = { }
 
         if tag and layer:
-            old_screen = get_screen(tag, layer)
+            old_screen = get_screen(tag, layer, tag_only=True)
         else:
             old_screen = None
 
@@ -502,7 +507,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         hiding = (self.phase == OLD) or (self.phase == HIDE)
 
-        if self.modal and not callable(self.modal):
+        if self.modal and not callable(self.modal) and not hiding:
             renpy.display.focus.mark_modal()
 
         try:
@@ -570,6 +575,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
                     i.set_transform_event(kind)
             finally:
                 pop_current_screen()
+
+            if self.modal:
+                renpy.display.render.redraw(self, 0)
 
 
         hid.phase = HIDE
@@ -713,9 +721,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if self.miss_cache:
             self.miss_cache.clear()
 
-        # Deal with the case where the screen version changes.
-        if (self.cache.get(NAME, None) is not old_cache) and (self.current_transform_event is None) and (self.phase == UPDATE):
-            self.current_transform_event = "update"
+        # Send a pending transform event.
 
         if self.current_transform_event:
 
@@ -728,6 +734,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             finally:
                 pop_current_screen()
 
+
             self.current_transform_event = None
 
         if profile:
@@ -739,16 +746,15 @@ class ScreenDisplayable(renpy.display.layout.Container):
             if self.profile.debug:
                 profile_log.write("\n")
 
+        if self.phase == SHOW:
+            self.phase = UPDATE
+
         return self.widgets
 
     def render(self, w, h, st, at):
 
         if not self.child:
             self.update()
-
-        if self.phase == SHOW:
-            self.phase = UPDATE
-
         try:
             push_current_screen(self)
             child = renpy.display.render.render(self.child, w, h, st, at)
@@ -874,7 +880,7 @@ def get_all_screen_variants(name):
     order.
     """
 
-    if isinstance(name, basestring):
+    if isinstance(name, str):
         name = tuple(name.split())
 
     name = name[0]
@@ -1084,7 +1090,7 @@ def get_screen_layer(name):
     Returns the layer that the screen with `name` is part of.
     """
 
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         name = name[0]
 
     screen = get_screen_variant(name)
@@ -1095,7 +1101,26 @@ def get_screen_layer(name):
         return screen.layer
 
 
-def get_screen(name, layer=None):
+def get_screen_docstring(name, variant=None):
+    """
+    :doc: screens
+
+    Returns the docstring for the screen with `name` and `variant`.
+
+    `name`
+        The name of the screen.
+    `variant`
+        The variant of the screen. If None, the default variant is used.
+    """
+
+    screen = get_screen_variant(name, [ variant ])
+    if screen is not None:
+        return screen.docstring
+    else:
+        return None
+
+
+def get_screen(name, layer=None, tag_only=False):
     """
     :doc: screens
 
@@ -1105,6 +1130,9 @@ def get_screen(name, layer=None):
 
     This can also take a list of names, in which case the first screen
     that is showing is returned.
+
+    `tag_only`
+        If true, only the tag is considered.
 
     This function can be used to check whether a screen is showing::
 
@@ -1138,8 +1166,8 @@ def get_screen(name, layer=None):
     if layer is None:
         layer = get_screen_layer(name)
 
-    if isinstance(name, basestring):
-        name = (name,)
+    if isinstance(name, str):
+        name = (name, )
 
     sl = renpy.exports.scene_lists()
 
@@ -1149,11 +1177,13 @@ def get_screen(name, layer=None):
         if sd is not None:
             return sd
 
-    for tag in name:
+    if not tag_only:
 
-        sd = sl.get_displayable_by_name(layer, (tag,))
-        if sd is not None:
-            return sd
+        for tag in name:
+
+            sd = sl.get_displayable_by_name(layer, (tag,))
+            if sd is not None:
+                return sd
 
     return None
 
@@ -1340,7 +1370,7 @@ def show_screen(_screen_name, *_args, **kwargs):
     if _zorder is None:
         _zorder = d.zorder
 
-    old_d = get_screen(_tag, _layer)
+    old_d = get_screen(_tag, _layer, tag_only=True)
 
     if old_d and old_d.cache:
         d.cache = old_d.cache
@@ -1445,7 +1475,6 @@ def hide_screen(tag, layer=None, immediately=False):
         layer = get_screen_layer((tag,))
 
     screen = get_screen(tag, layer)
-
 
     sls = renpy.display.scenelists.scene_lists()
 

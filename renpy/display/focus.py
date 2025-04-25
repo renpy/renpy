@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -42,7 +42,7 @@ def capture_focus(name="default"):
     box of that displayable, and stores it with `name`. If not, removes any
     focus stored with `name`.
 
-    Captured focuses are not saved when the game is saveed.
+    Captured focuses are not saved when the game is saved.
 
     `name`
         Should be a string. The name "tooltip" is special, as it's
@@ -434,7 +434,7 @@ def before_interact(roots):
         max_default_focus_name = None
 
     # Should we do the max_default logic?
-    should_max_default = renpy.display.interface.event_time > renpy.display.interface.mouse_event_time + .1
+    should_max_default = renpy.display.interface.input_event_time > renpy.display.interface.mouse_event_time + .1
 
     # Is this an explicit change, using the override operation?
     explicit = False
@@ -463,11 +463,13 @@ def before_interact(roots):
 
     # When increasing the default focus, and the user is not using the mouse,
     # switch to the default.
-    if should_max_default and (max_default > old_max_default):
+    if not explicit and should_max_default and (max_default > old_max_default):
         current = max_default_focus
         set_grab(None)
         set_focused(max_default_focus, None, max_default_screen)
-        old_max_default = max_default
+        explicit = True
+
+    old_max_default = max_default
 
     # Try to find the current focus.
     if current is not None:
@@ -578,8 +580,8 @@ def clear_focus():
     Clears the focus when the window loses mouse focus.
     """
 
-    set_grab(None)
-    change_focus(None)
+    if not grab:
+        change_focus(None)
 
 
 def force_focus(d, arg=None):
@@ -666,6 +668,18 @@ def focus_extreme(xmul, ymul, wmul, hmul):
         return change_focus(max_focus)
 
 
+def check_keyboard_focus():
+    """
+    If the current widget is not keyboard focusable, clears
+    the focus.
+    """
+
+    current = get_focused()
+
+    if current and not current.style.keyboard_focus:
+        change_focus(None)
+
+
 # This calculates the distance between two points, applying
 # the given fudge factors. The distance is left squared.
 def points_dist(x0, y0, x1, y1, xfudge, yfudge):
@@ -739,6 +753,8 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
     if not focus_list:
         return
 
+    check_keyboard_focus()
+
     # No widget focused.
     current = get_focused()
 
@@ -778,7 +794,7 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
         focus_extreme(xmul, ymul, wmul, hmul)
         return
 
-    from_focus_x, from_focus_y, from_focus_w, from_focus_h = from_focus.inset_rect()
+    from_focus_x, from_focus_y, from_focus_w, from_focus_h = from_rect = from_focus.inset_rect()
 
     fx0 = from_focus_x + from_focus_w * from_x0
     fy0 = from_focus_y + from_focus_h * from_y0
@@ -806,10 +822,10 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
         if f.x is False:
             continue
 
-        if not condition(from_focus, f):
-            continue
+        f_x, f_y, f_w, f_h = to_rect = f.inset_rect()
 
-        f_x, f_y, f_w, f_h = f.inset_rect()
+        if not condition(from_rect, to_rect):
+            continue
 
         tx0 = f_x + f_w * to_x0
         ty0 = f_y + f_h * to_y0
@@ -842,6 +858,8 @@ def focus_ordered(delta):
 
     candidates = [ ]
     index = 0
+
+    check_keyboard_focus()
 
     current = get_focused()
     current_index = None
@@ -899,30 +917,31 @@ def key_handler(ev):
 
     else:
 
+
         if map_event(ev, 'focus_right'):
             return focus_nearest(0.9, 0.1, 0.9, 0.9,
                                  0.1, 0.1, 0.1, 0.9,
                                  verti_line_dist,
-                                 lambda old, new : old.x + old.w <= new.x,
+                                 lambda old, new : old[0] + old[2] <= new[0],
                                  -1, 0, 0, 0)
 
         if map_event(ev, 'focus_left'):
             return focus_nearest(0.1, 0.1, 0.1, 0.9,
                                  0.9, 0.1, 0.9, 0.9,
                                  verti_line_dist,
-                                 lambda old, new : new.x + new.w <= old.x,
+                                 lambda old, new : new[0] + new[2] <= old[0],
                                  1, 0, 1, 0)
 
         if map_event(ev, 'focus_up'):
             return focus_nearest(0.1, 0.1, 0.9, 0.1,
                                  0.1, 0.9, 0.9, 0.9,
                                  horiz_line_dist,
-                                 lambda old, new : new.y + new.h <= old.y,
+                                 lambda old, new : new[1] + new[3] <= old[1],
                                  0, 1, 0, 1)
 
         if map_event(ev, 'focus_down'):
             return focus_nearest(0.1, 0.9, 0.9, 0.9,
                                  0.1, 0.1, 0.9, 0.1,
                                  horiz_line_dist,
-                                 lambda old, new : old.y + old.h <= new.y,
+                                 lambda old, new : old[1] + old[3] <= new[1],
                                  0, -1, 0, 0)

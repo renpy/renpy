@@ -6,6 +6,9 @@ These environment variables may disappear or change between Ren'Py releases.
 
 The following environment variables control the behavior of Ren'Py:
 
+``RENPY_DEBUG_SOUND``
+    If set, Ren'Py will generate exceptions when audio errors occur.
+
 ``RENPY_DISABLE_JOYSTICK``
     If set, joystick detection is disabled. Use this if a faulty joystick is
     causing Ren'Py to advance when not desired.

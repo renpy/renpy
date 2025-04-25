@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -92,6 +92,10 @@ init python in project:
             # The mtime of the last dump file loaded.
             self.dump_mtime = 0
 
+            # A processed version of data['renpy_launcher'] with missing files
+            # and directories removed.
+            self.renpy_launcher = None
+
         def get_dump_filename(self):
 
             if os.path.exists(os.path.join(self.gamedir, "saves")):
@@ -116,7 +120,7 @@ init python in project:
 
             try:
                 with open(os.path.join(self.path, "project.json"), "w") as f:
-                    json.dump(self.data, f)
+                    json.dump(self.data, f, indent=2)
             except Exception:
                 self.load_data()
 
@@ -154,6 +158,43 @@ init python in project:
                         dp.append("market")
 
                 data["renamed_steam"] = True
+
+
+        def get_renpy_launcher(self):
+
+            if self.renpy_launcher is not None:
+                return self.renpy_launcher
+
+            rv = { }
+
+            default_values = {
+                "open_directory":
+                {
+                    "game": "game",
+                    "base": ".",
+                    "images": "game/images",
+                    "audio": "game/audio",
+                    "gui": "game/gui",
+                    "libs": "game/libs",
+                    "mods": "game/mods",
+                },
+                "edit_file":
+                {
+                    "script.rpy": "game/script.rpy",
+                    "options.rpy": "game/options.rpy",
+                    "gui.rpy": "game/gui.rpy",
+                    "screens.rpy": "game/screens.rpy"
+                }
+            }
+
+            for k, default_d in default_values.items():
+                d = self.data.get("renpy_launcher", {}).get(k, default_d)
+                rv[k] = { name : path for name, path in d.items() if os.path.exists(os.path.join(self.path, path)) }
+
+            self.renpy_launcher = rv
+
+            return rv
+
 
 
         def make_tmp(self):
@@ -351,12 +392,6 @@ init python in project:
                     l += 1
 
                     line = line[:1024]
-
-                    if PY2:
-                        try:
-                            line = line.decode("utf-8")
-                        except Exception:
-                            continue
 
                     m = re.search(r"#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
 
@@ -672,7 +707,7 @@ init python in project:
                 The label to jump to when clicked.
             """
 
-            if isinstance(p, basestring):
+            if isinstance(p, str):
                 p = manager.get(p)
 
             self.project = p
@@ -760,7 +795,7 @@ init python in project:
         def __init__(self, p=None):
             if p is None:
                 self.project = current
-            elif isinstance(p, basestring):
+            elif isinstance(p, str):
                 self.project = manager.get(p)
             else:
                 self.project = p

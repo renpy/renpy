@@ -44,7 +44,7 @@ by adding to the bottom of gui.rpy::
     define gui.slot_button_text_selected_idle_color = gui.selected_color
     define gui.slot_button_text_selected_hover_color = gui.hover_color
 
-A problem introduced in 6.99.14.2 with the the default statement
+A problem introduced in 6.99.14.2 with the default statement
 not working after a rollback has been fixed. This should only ever
 have affected games that were updated after a save was first
 created.
@@ -535,7 +535,7 @@ placed in parenthesis after the text to be spoken. For example::
     e "Hey!" (what_size=36, what_color="#ffeeee")
 
 These arguments are first passed to config.say_argument_callback, and then
-are passed to the character. The default implemention (in :func:`Character`)
+are passed to the character. The default implementation (in :func:`Character`)
 creates a new character with the passed arguments, and uses that to display
 the text.
 
@@ -774,7 +774,7 @@ A crash on video playback on Android and iOS has been fixed.
 
 The default encoding for non-Unicode strings in Ren'Py has been changed to
 the filesystem encoding. This should address a series of encoding issues
-that have occured on non-ascii systems since 6.99.12.
+that have occurred on non-ascii systems since 6.99.12.
 
 Ren'Py will no longer search for system-installed fonts when in developer
 mode.
@@ -3058,7 +3058,7 @@ Other Changes
 -------------
 
 * :ref:`Viewports <sl-viewport>` now support edge scrolling, which scrolls
-  the viewport when the mouse is within a a configurable distance of the
+  the viewport when the mouse is within a configurable distance of the
   viewport edge.
 
 * Most keyboard keys now automatically repeat. The repeat rate is controlled

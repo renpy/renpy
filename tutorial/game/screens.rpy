@@ -105,7 +105,6 @@ example say_screen:
             text what id "what"
 
 screen say(who, what):
-    style_prefix "say"
 
     window:
         id "window"
