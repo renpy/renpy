@@ -73,6 +73,24 @@ the changes did not affect speech bubble placement.
 
 It's possible to apply transforms to the speech bubble by editing the :ref:`bubble-screen`.
 
+.. _bubble-ctc:
+
+If you'd like a CTC indicator to be part of the bubble screen, consider giving the
+`ctc_position` argument to Character the value of "screen-variable". You may also need
+to add::
+
+    showif ctc:
+        add ctc
+
+to the end of the bubble screen, if this is not present. You'd then define the character as:
+
+    define e = Character(
+        None,
+        image="eileen",
+        kind=bubble,
+        ctc_position="screen-variable",
+        ctc=Transform("ctc_image.png", align=(0.5, 1.0))
+
 
 Configuration Variables
 -----------------------

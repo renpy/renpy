@@ -87,6 +87,10 @@ accessibility menu, the "font kerning" :func:`Preference`, and the :var:`prefere
 Features
 --------
 
+Character's `ctc_position` argument now takes a new value `screen-variable`. This places the click-to-continue
+indicator in a screen variable, which allows it to be positioned inside the screen. This is intended for use
+with speech bubbles, to allow the click-to-continue indicator to be :ref:`positioned inside the speech bubble <bubble-ctc>`.
+
 The new :func:`renpy.lex_string` function makes it possible to create a Lexer for an arbitrary string.
 
 The :class:`SpriteManager` and :func:`SnowBlossom` displayables now support the `animation` parameter,
@@ -141,6 +145,8 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 
 Other Changes
 -------------
+
+CTC indicators inside retained speech bubbles will now be cleared when the player clicks past the dialogue.
 
 In some circumstances, Ren'Py will reuse tuples containing immutable values (float, int, bool,
 complex, str, bytes, and other immutable tuples), which can reduce memory usage and improve performance. This
