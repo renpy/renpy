@@ -115,7 +115,7 @@ class ExceptionPrintContext(abc.ABC):
         """
 
     @abc.abstractmethod
-    def location(self, filename: str, lineno: int, name: str):
+    def location(self, filename: str, lineno: int, name: str | None):
         """
         Emits a line that shows the location of the frame in the source code.
 
@@ -126,7 +126,8 @@ class ExceptionPrintContext(abc.ABC):
             The line number of the source code.
 
         `name`
-            The name of the code that was running when the exception occurred.
+            The name of the code that was running when the exception occurred
+            or None if the name is not available.
 
         Subclasses should override this method to emit the location information
         in a way that makes sense for their particular application.
@@ -245,10 +246,15 @@ class ANSIColoredPrintContext(TextIOExceptionPrintContext):
     RED = "\x1b[31m"
 
     def location(self, filename, lineno, name):
+        if name is None:
+            name_str = ""
+        else:
+            name_str = f', in {self.MAGENTA}{name}{self.RESET}'
+
         self._print(
             f'File {self.MAGENTA}"{filename}"{self.RESET}, '
-            f'line {self.MAGENTA}{lineno}{self.RESET}, '
-            f'in {self.MAGENTA}{name}{self.RESET}')
+            f'line {self.MAGENTA}{lineno}{self.RESET}'
+            f'{name_str}')
 
     def source_carets(self, line, carets):
         if carets is None:
@@ -292,10 +298,15 @@ class NonColoredExceptionPrintContext(TextIOExceptionPrintContext):
 
         return (2 if east_asian_width(char) in "WF" else 1 for char in line)
 
-    def location(self, filename: str, lineno: int, name: str):
-        self._print(f'File "{filename}", line {lineno}, in {name}')
+    def location(self, filename, lineno, name):
+        if name is None:
+            name_str = ""
+        else:
+            name_str = f', in {name}'
 
-    def source_carets(self, line: str, carets: str | None):
+        self._print(f'File "{filename}", line {lineno}{name_str}')
+
+    def source_carets(self, line, carets):
         self._print(line)
         if carets is not None:
             chars = list[str]()
@@ -303,15 +314,11 @@ class NonColoredExceptionPrintContext(TextIOExceptionPrintContext):
                 chars.append(char * width)
             self._print("".join(chars))
 
-    def final_exception_line(self, exc_type: str, text: str | None):
+    def final_exception_line(self, exc_type, text):
         if text is None:
             self._print(exc_type)
         else:
             self._print(f"{exc_type}: {text}")
-
-    def string(self, text: str):
-        self._print(text)
-
 
 
 def MaybeColoredExceptionPrintContext(
@@ -391,6 +398,51 @@ def MaybeColoredExceptionPrintContext(
 
 
 # Reimplement parts of Python 3.14 traceback module, so we can add Ren'Py-specific behavior.
+def normalize_renpy_line_offset(filename: str, linenumber: int, offset: int, line: str):
+    """
+    Given byte offset in `line`, convert it into character offset and
+    discard extra offset from munged names.
+    """
+
+    if not line.isascii():
+        as_utf8 = line.encode('utf-8')
+        offset = len(as_utf8[:offset].decode("utf-8", errors="replace"))
+
+    # Correct extra offset from _ren.py transformation.
+    if filename.endswith("_ren.py"):
+        from renpy.lexer import ren_py_to_rpy_offsets
+        with open(filename, "r", encoding="utf-8") as f:
+            lines = f.readlines()  # TODO: optimize this block?
+
+        offsets = ren_py_to_rpy_offsets(lines, filename)
+        for i, base_offset in enumerate(offsets, start=1):
+            if base_offset is not None:
+                if i == linenumber:
+                    offset -= base_offset
+                    break
+
+    from renpy.lexer import munge_filename, get_string_munger
+    munge_prefix = munge_filename(filename)
+
+    if munge_prefix in line:
+        munged_line = get_string_munger(munge_prefix)(line)
+        len_prefix = len(munge_prefix) - 2
+
+        idx = 0
+        while True:
+            idx = munged_line.find(
+                munge_prefix,
+                idx,
+                offset + len_prefix)
+
+            if idx == -1:
+                break
+
+            offset -= len_prefix
+            idx += len_prefix
+
+    return offset
+
 def _calculate_anchors(frame_summary: 'FrameSummary'):
     """
     For given frame summary, return None if there is no column information or
@@ -416,63 +468,17 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
     last_line = all_lines[end_lineno]
 
     # character index of the start/end of the instruction
-    start_offset = frame_summary.colno
-    end_offset = frame_summary.end_colno
+    start_offset = normalize_renpy_line_offset(
+        frame_summary.filename,
+        frame_summary.lineno,
+        frame_summary.colno,
+        first_line)
 
-    # Correct extra offset from _ren.py transformation.
-    if frame_summary.filename.endswith("_ren.py"):
-        from renpy.lexer import ren_py_to_rpy_offsets
-        try:
-            with open(frame_summary.filename, "r", encoding="utf-8") as f:
-                lines = f.readlines()
-
-            offsets = list(ren_py_to_rpy_offsets(lines, frame_summary.filename))
-        except Exception:
-            return None
-
-        for i, offset in enumerate(offsets, start=1):
-            if offset is not None:
-                if i == frame_summary.lineno:
-                    start_offset -= offset
-
-                if i == frame_summary.end_lineno:
-                    end_offset -= offset
-                    break
-
-    def normalize_munge(line: str, offset: int):
-        """
-        Given byte offset in `line`, convert it into character offset and
-        discard extra offset from munged names.
-        """
-
-        if not line.isascii():
-            as_utf8 = line.encode('utf-8')
-            offset = len(as_utf8[:offset].decode("utf-8", errors="replace"))
-
-        from renpy.lexer import munge_filename, get_string_munger
-        munge_prefix = munge_filename(frame_summary.filename)
-
-        if munge_prefix in line:
-            munged_line = get_string_munger(munge_prefix)(line)
-            len_prefix = len(munge_prefix) - 2
-
-            idx = 0
-            while True:
-                idx = munged_line.find(
-                    munge_prefix,
-                    idx,
-                    offset + len_prefix)
-
-                if idx == -1:
-                    break
-
-                offset -= len_prefix
-                idx += len_prefix
-
-        return offset
-
-    start_offset = normalize_munge(first_line, start_offset)
-    end_offset = normalize_munge(last_line, end_offset)
+    end_offset = normalize_renpy_line_offset(
+        frame_summary.filename,
+        frame_summary.end_lineno,
+        frame_summary.end_colno,
+        last_line)
 
     default_anchors = [
         (0, start_offset), (0, start_offset),
@@ -1177,7 +1183,7 @@ class TracebackException:
             ctx = NonColoredExceptionPrintContext(io.StringIO())
 
         if self._is_syntax_error:
-            raise NotImplementedError
+            self._format_syntax_error(ctx)
 
         ctx.final_exception_line(self.exc_type_str, self._str or None)
 
@@ -1190,6 +1196,68 @@ class TracebackException:
                     ex.format_exception_only(ctx, show_group=show_group)
 
         return ctx.getvalue()
+
+    def _format_syntax_error(self, ctx: ExceptionPrintContext):
+        """Format SyntaxError exceptions (internal helper)."""
+        # Show exactly where the problem was found.
+
+        filename = self.filename or "<string>"
+        if self.lineno is not None:
+            ctx.location(filename, self.lineno, None)
+
+        text = self.text
+        if isinstance(text, str):
+            # text  = "   foo\n"
+            # rtext = "   foo"
+            # ltext =    "foo"
+            rtext = text.rstrip('\n')
+            ltext = rtext.lstrip(' \n\f')
+            spaces = len(rtext) - len(ltext)
+            if self.offset is None:
+                ctx.source_carets(ltext, None)
+
+            elif isinstance(self.offset, int):
+                if self.lineno is not None:
+                    offset = normalize_renpy_line_offset(
+                        filename,
+                        self.lineno,
+                        self.offset,
+                        rtext)
+                else:
+                    offset = self.offset
+
+                if self.lineno == self.end_lineno:
+                    end_offset = self.end_offset or offset
+                else:
+                    end_offset = len(rtext) + 1
+
+                if self.end_lineno is not None:
+                    end_offset = normalize_renpy_line_offset(
+                        filename,
+                        self.end_lineno,
+                        end_offset,
+                        rtext)
+
+                if self.text and offset > len(self.text):
+                    offset = len(rtext) + 1
+                if self.text and end_offset > len(self.text):
+                    end_offset = len(rtext) + 1
+                if offset >= end_offset or end_offset < 0:
+                    end_offset = offset + 1
+
+                # Convert 1-based column offset to 0-based index into stripped text
+                colno = offset - 1 - spaces
+                end_colno = end_offset - 1 - spaces
+                if colno >= 0:
+                    # non-space whitespace (likes tabs) must be kept for alignment
+                    carets = "".join((c if c.isspace() else ' ') for c in ltext[:colno])
+                    carets += '^' * (end_colno - colno)
+                    ctx.source_carets(ltext, carets)
+                else:
+                    ctx.source_carets(ltext, None)
+
+        msg = self.msg or "<no detail available>"
+        ctx.final_exception_line(self.exc_type_str, msg)
 
     def format(self, ctx: ExceptionPrintContext | None = None, /, *, chain=True, show_group=False) -> Any:
         """
