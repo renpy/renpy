@@ -404,10 +404,6 @@ def normalize_renpy_line_offset(filename: str, linenumber: int, offset: int, lin
     discard extra offset from munged names.
     """
 
-    if not line.isascii():
-        as_utf8 = line.encode('utf-8')
-        offset = len(as_utf8[:offset].decode("utf-8", errors="replace"))
-
     # Correct extra offset from _ren.py transformation.
     if filename.endswith("_ren.py"):
         from renpy.lexer import ren_py_to_rpy_offsets
@@ -420,6 +416,10 @@ def normalize_renpy_line_offset(filename: str, linenumber: int, offset: int, lin
                 if i == linenumber:
                     offset -= base_offset
                     break
+
+    if not line.isascii():
+        as_utf8 = line.encode('utf-8')
+        offset = len(as_utf8[:offset].decode("utf-8", errors="replace"))
 
     from renpy.lexer import munge_filename, get_string_munger
     munge_prefix = munge_filename(filename)
