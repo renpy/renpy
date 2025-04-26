@@ -87,6 +87,8 @@ accessibility menu, the "font kerning" :func:`Preference`, and the :var:`prefere
 Features
 --------
 
+The launcher's "Console output" option now works on the Macintosh platform.
+
 Character's `ctc_position` argument now takes a new value `screen-variable`. This places the click-to-continue
 indicator in a screen variable, which allows it to be positioned inside the screen. This is intended for use
 with speech bubbles, to allow the click-to-continue indicator to be :ref:`positioned inside the speech bubble <bubble-ctc>`.
