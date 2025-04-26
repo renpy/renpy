@@ -22,8 +22,11 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from typing import TYPE_CHECKING, Callable
+
+# FrameType can't be pickled!
+if TYPE_CHECKING:
+    from types import FrameType
 
 import sys
 import time
@@ -154,6 +157,8 @@ class Context(renpy.object.Object):
     deferred_translate_identifier = None
 
     predict_return_stack = None # type: list|None
+
+    exception_handler: Callable[[renpy.error.TracebackException], bool] | None
 
     def __repr__(self):
 
@@ -460,7 +465,48 @@ class Context(renpy.object.Object):
 
             raise e
 
-    def report_traceback(self, name, last):
+    def handle_exception(self):
+        """
+        Handles exception that is currently on a fly.
+        """
+
+        e = sys.exception()
+        if e is None:
+            return
+
+        # Base exceptions are not handled.
+        elif not isinstance(e, Exception):
+            raise
+
+        te = renpy.error.report_exception(e, editor=False)
+
+        # Local exception handler, if any. This should handle all cases
+        # of the exception.
+        if self.exception_handler is not None:
+            self.exception_handler(te)
+            return
+
+        # Creator-defined exception handler. Returns True
+        # if exception handled.
+        if renpy.config.exception_handler is not None:
+            try:
+                # Before 8.4 it was a function that takes 3 strings.
+                import inspect
+                inspect.signature(renpy.config.exception_handler).bind(te)
+
+            except TypeError:
+                if not renpy.config.exception_handler(*te): # type: ignore
+                    return
+
+            else:
+                if not renpy.config.exception_handler(te):
+                    return
+
+        # RenPy default exception handler. Returns True
+        # if exception NOT handled.
+        renpy.display.error.report_exception(te)
+
+    def report_traceback(self, name: str, last: bool):
 
         if last:
             return
@@ -608,40 +654,13 @@ class Context(renpy.object.Object):
 
                     raise
 
-                except Exception as e:
+                except Exception:
                     self.translate_interaction = None
 
-                    short, full, traceback_fn = renpy.error.report_exception(e, editor=False)
-
-                    reraise = True
-                    try:
-                        # Local exception handler, if any.
-                        if self.exception_handler is not None:
-                            self.exception_handler(short, full, traceback_fn)
-                            reraise = False
-
-                        # Creator-defined exception handler. Returns True
-                        # if exception handled.
-                        elif renpy.config.exception_handler is not None:
-                            reraise = not renpy.config.exception_handler(short, full, traceback_fn)
-
-                        # RenPy default exception handler. Returns True
-                        # if exception NOT handled.
-                        if reraise:
-                            reraise = renpy.display.error.report_exception(
-                                short,
-                                full,
-                                traceback_fn
-                            )
-
-                    except renpy.game.CONTROL_EXCEPTIONS:
-                        raise
-                    except Exception:
-                        pass
-
-                    # Raise original exception.
-                    if reraise:
-                        raise
+                    # This could raise CONTROL_EXCEPTIONS that are handled
+                    # as if it happened in node execute. Other exceptions
+                    # are chained to original and reported after program exit.
+                    self.handle_exception()
 
                 node = self.next_node
 

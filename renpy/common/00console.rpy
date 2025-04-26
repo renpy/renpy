@@ -124,9 +124,11 @@ default persistent._console_unicode_escaping = False
 
 init -1500 python in _console:
     from store import config, persistent, NoRollback
+    from renpy.error import TracebackException, TextIOExceptionPrintContext
+
     import io
+    import re
     import sys
-    import traceback
     import store
     try:
         import pydoc
@@ -454,13 +456,98 @@ init -1500 python in _console:
     HistoryEntry = ConsoleHistoryEntry
 
 
+    class ConsolePrintContext(TextIOExceptionPrintContext):
+        BOLD_RED = "#DE382B"
+        RED = "#FF0000"
+
+        def __init__(self):
+            super().__init__(
+                io.StringIO(),
+                filter_private=False,
+                max_group_width=5,
+                max_group_depth=1,
+            )
+
+        def _escape_limit(self, s: str):
+            s = s.replace("{", "{{")
+            if len(s) > 200:
+                s = s[:100] + " ... " + s[-100:]
+
+            return s
+
+        def _bold(self, text: str):
+            return f"{{b}}{text}{{/b}}"
+
+        def _color(self, text: str, color: str):
+            return f"{{color={color}}}{text}{{/color}}"
+
+        def location(self, filename, lineno, name):
+            self._print(
+                f'File {{a=edit:{lineno}:{filename}}}"{filename}", '
+                f'line {lineno}{{/a}}, '
+                f'in {name}')
+
+        def source_carets(self, line, carets):
+            if carets is None:
+                self._print(self._escape_limit(line))
+                return
+
+            from itertools import groupby
+
+            zipped = zip(line, carets, strict=True)
+            colorized_line_parts: list[str] = []
+            for color, group in groupby(zipped, key=lambda x: x[1]):
+                caret_group = list(group)
+                line_part = "".join(char for char, _ in caret_group)
+                line_part = self._escape_limit(line_part)
+                if color == "^":
+                    line_part = self._color(line_part, self.BOLD_RED)
+                    line_part = self._bold(line_part)
+                elif color == "~":
+                    line_part = self._color(line_part, self.RED)
+
+                colorized_line_parts.append(line_part)
+
+            self._print("".join(colorized_line_parts))
+
+        def string(self, text: str):
+            self._print(self._escape_limit(text))
+
+        def final_exception_line(self, exc_type: str, text: str | None):
+            exc_type = self._escape_limit(exc_type)
+            exc_type = self._color(exc_type, self.BOLD_RED)
+            exc_type = self._bold(exc_type)
+            if text is None:
+                self._print(exc_type)
+            else:
+                text = self._escape_limit(text)
+                text = self._color(text, self.RED)
+                self._print(f"{exc_type}: {text}")
+
+
     stdio_lines = _list()
+
+    def _strip_ansi(s):
+        # 7-bit C1 ANSI sequences
+        ansi_escape = re.compile(r'''
+            \x1B  # ESC
+            (?:   # 7-bit C1 Fe (except CSI)
+                [@-Z\\-_]
+            |     # or [ for CSI, followed by a control sequence
+                \[
+                [0-?]*  # Parameter bytes
+                [ -/]*  # Intermediate bytes
+                [@-~]   # Final byte
+            )
+        ''', re.VERBOSE)
+
+        return ansi_escape.sub('', s)
 
     def stdout_line(l):
         if not (config.console or config.developer):
             return
 
-        stdio_lines.append((False, l))
+        stdio_lines.append((False, _strip_ansi(l)))
 
         while len(stdio_lines) > config.console_history_lines:
             stdio_lines.pop(0)
@@ -469,7 +556,7 @@ init -1500 python in _console:
         if not (config.console or config.developer):
             return
 
-        stdio_lines.append((True, l))
+        stdio_lines.append((True, _strip_ansi(l)))
 
         while len(stdio_lines) > config.console_history_lines:
             stdio_lines.pop(0)
@@ -479,7 +566,7 @@ init -1500 python in _console:
     config.stderr_callbacks.append(stderr_line)
 
 
-    class ScriptErrorHandler(object):
+    class ScriptErrorHandler:
         """
         Handles error in Ren'Py script.
         """
@@ -487,9 +574,9 @@ init -1500 python in _console:
         def __init__(self):
             self.target_depth = renpy.call_stack_depth()
 
-        def __call__(self, short, full, traceback_fn):
+        def __call__(self, traceback_exception):
             he = console.history[-1]
-            he.result = short.split("\n")[-2]
+            he.result = traceback_exception.format_exception_only(ConsolePrintContext())
             he.is_error = True
 
             while renpy.call_stack_depth() > self.target_depth:
@@ -663,9 +750,11 @@ init -1500 python in _console:
 
             return renpy.game.context().rollback
 
-        def format_exception(self):
-            etype, evalue, etb = sys.exc_info()
-            return traceback.format_exception_only(etype, evalue)[-1]
+        def format_exception_only(self, e):
+            return TracebackException(e).format_exception_only(ConsolePrintContext())
+
+        def format_exception(self, e):
+            return TracebackException(e).format(ConsolePrintContext())
 
         def run(self, lines):
 
@@ -728,9 +817,9 @@ init -1500 python in _console:
                 # Try to exec it.
                 try:
                     renpy.python.py_compile(code, "exec")
-                except Exception:
+                except Exception as e:
                     if error is None:
-                        error = self.format_exception()
+                        error = self.format_exception_only(e)
                 else:
                     renpy.python.py_exec(code)
                     return
@@ -743,11 +832,8 @@ init -1500 python in _console:
             except renpy.game.CONTROL_EXCEPTIONS:
                 raise
 
-            except Exception:
-                import traceback
-                traceback.print_exc()
-
-                he.result = self.format_exception().rstrip()
+            except Exception as e:
+                he.result = self.format_exception(e)
                 he.update_lines()
                 he.is_error = True
 
@@ -1095,7 +1181,7 @@ screen _console:
 
                         frame style "_console_result":
                             if he.is_error:
-                                text "[he.result!q]" style "_console_error_text"
+                                text "[he.result]" style "_console_error_text"
                             else:
                                 text "[he.result!q]" style "_console_result_text"
 
