@@ -93,7 +93,7 @@ translate russian tutorial_dialogue_5269d005:
 translate russian tutorial_dialogue_241c0c74:
 
     # "Eileen" "Script might seem scary at first, but if you look you'll see it's easy to match it up to what I'm saying."
-    "Эйлин" "С непривычки скрипт может показаться пугающим, но если вы присмотритесь, то увидете, как просто обозначено то, что я говорю."
+    "Эйлин" "С непривычки скрипт может показаться пугающим, но если вы присмотритесь, то увидите, как просто обозначено то, что я говорю."
 
 # game/tutorial_quickstart.rpy:82
 translate russian tutorial_dialogue_f0d66410:
