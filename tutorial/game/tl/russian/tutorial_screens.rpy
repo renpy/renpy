@@ -219,7 +219,7 @@ translate russian screens_properties_423246a2:
 translate russian screens_properties_4fde164e:
 
     # e "When the modal property is true, you can't interact with things beneath the screen. You'll have to click 'Close This Screen' before you can continue."
-    e "Когда параметр modal имеет значение true, вы не можете взаимодейстовать с объектами за экраном. Поэтому сейчас вам надо нажать на 'Закрыть этот экран', чтобы мы смогли продолжить."
+    e "Когда параметр modal имеет значение true, вы не можете взаимодействовать с объектами за экраном. Поэтому сейчас вам надо нажать на 'Закрыть этот экран', чтобы мы смогли продолжить."
 
 # game/tutorial_screens.rpy:398
 translate russian screens_properties_550c0bea:
