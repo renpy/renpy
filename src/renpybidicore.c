@@ -40,6 +40,7 @@ PyObject *renpybidi_reorder(PyObject *s, int *direction) {
     FriBidiChar *srcuni;
     FriBidiLevel *levels;
     FriBidiCharType *types;
+    FriBidiLevel ret;
 
     PyUnicode_READY(s);
     size = PyUnicode_GET_LENGTH(s);
@@ -49,29 +50,37 @@ PyObject *renpybidi_reorder(PyObject *s, int *direction) {
     types = (FriBidiCharType *) alloca(size * 4);
 
     PyUnicode_AsUCS4(s, (Py_UCS4 *) srcuni, size, 0);
-    
+
     fribidi_get_bidi_types(
         srcuni,
         size,
         types);
-    
-    fribidi_get_par_embedding_levels_ex(
+
+    ret = fribidi_get_par_embedding_levels_ex(
         types,
         NULL,
         size,
         (FriBidiParType *) direction,
         levels);
-    
-    fribidi_reorder_line(
+
+    if (ret == 0) {
+        return s;
+    }
+
+    ret = fribidi_reorder_line(
         FRIBIDI_FLAG_REORDER_NSM,
         types,
         size,
-        NULL,
+        0,
         (FriBidiParType) *direction,
         levels,
         srcuni,
         NULL);
-    
+
+    if (ret == 0) {
+        return s;
+    }
+
     return PyUnicode_FromKindAndData(PyUnicode_4BYTE_KIND, srcuni, size);
 }
 
@@ -120,8 +129,8 @@ PyObject *renpybidi_reorder(PyObject *s, int *direction) {
     FriBidiChar *srcuni;
     FriBidiLevel *levels;
     FriBidiCharType *types;
-    PyObject *rv;
-
+    PyObject *rv = s;
+    FriBidiLevel ret;
 
     Py_UNICODE *p = PyUnicode_AS_UNICODE((PyUnicodeObject *) s);
     size = PyUnicode_GET_SIZE((PyUnicodeObject *) s);
@@ -133,28 +142,35 @@ PyObject *renpybidi_reorder(PyObject *s, int *direction) {
     for (Py_ssize_t i = 0; i < size; i++) {
         srcuni[i] = p[i];
     }
-    
+
     fribidi_get_bidi_types(
         srcuni,
         size,
         types);
-    
-    fribidi_get_par_embedding_levels_ex(
+
+    ret = fribidi_get_par_embedding_levels_ex(
         types,
         NULL,
         size,
         (FriBidiParType *) direction,
         levels);
-    
-    fribidi_reorder_line(
+
+    if (ret == 0) {
+        goto done;
+    }
+
+    ret = fribidi_reorder_line(
         FRIBIDI_FLAG_REORDER_NSM,
         types,
         size,
-        NULL,
+        0,
         (FriBidiParType) *direction,
         levels,
         srcuni,
         NULL);
+
+    if (ret == 0) {
+        goto done;
 
     p = (Py_UNICODE *) alloca(size * sizeof(Py_UNICODE));
 
@@ -164,6 +180,7 @@ PyObject *renpybidi_reorder(PyObject *s, int *direction) {
 
     rv = PyUnicode_FromUnicode(p, size);
 
+done:
     return rv;
 }
 
