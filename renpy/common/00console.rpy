@@ -123,8 +123,8 @@ default persistent._console_traced_short = True
 default persistent._console_unicode_escaping = False
 
 init -1500 python in _console:
-    from store import config, persistent, NoRollback
-    from renpy.error import TracebackException, TextIOExceptionPrintContext
+    from store import config, persistent, NoRollback, _ExceptionPrintContext
+    from renpy.error import TracebackException
 
     import io
     import re
@@ -455,76 +455,6 @@ init -1500 python in _console:
 
     HistoryEntry = ConsoleHistoryEntry
 
-
-    class ConsolePrintContext(TextIOExceptionPrintContext):
-        BOLD_RED = "#DE382B"
-        RED = "#FF0000"
-
-        def __init__(self):
-            super().__init__(
-                io.StringIO(),
-                filter_private=False,
-                max_group_width=5,
-                max_group_depth=1,
-            )
-
-        def _escape_limit(self, s: str):
-            s = s.replace("{", "{{")
-            if len(s) > 200:
-                s = s[:100] + " ... " + s[-100:]
-
-            return s
-
-        def _bold(self, text: str):
-            return f"{{b}}{text}{{/b}}"
-
-        def _color(self, text: str, color: str):
-            return f"{{color={color}}}{text}{{/color}}"
-
-        def location(self, filename, lineno, name):
-            self._print(
-                f'File {{a=edit:{lineno}:{filename}}}"{filename}", '
-                f'line {lineno}{{/a}}, '
-                f'in {name}')
-
-        def source_carets(self, line, carets):
-            if carets is None:
-                self._print(self._escape_limit(line))
-                return
-
-            from itertools import groupby
-
-            zipped = zip(line, carets, strict=True)
-            colorized_line_parts: list[str] = []
-            for color, group in groupby(zipped, key=lambda x: x[1]):
-                caret_group = list(group)
-                line_part = "".join(char for char, _ in caret_group)
-                line_part = self._escape_limit(line_part)
-                if color == "^":
-                    line_part = self._color(line_part, self.BOLD_RED)
-                    line_part = self._bold(line_part)
-                elif color == "~":
-                    line_part = self._color(line_part, self.RED)
-
-                colorized_line_parts.append(line_part)
-
-            self._print("".join(colorized_line_parts))
-
-        def string(self, text: str):
-            self._print(self._escape_limit(text))
-
-        def final_exception_line(self, exc_type: str, text: str | None):
-            exc_type = self._escape_limit(exc_type)
-            exc_type = self._color(exc_type, self.BOLD_RED)
-            exc_type = self._bold(exc_type)
-            if text is None:
-                self._print(exc_type)
-            else:
-                text = self._escape_limit(text)
-                text = self._color(text, self.RED)
-                self._print(f"{exc_type}: {text}")
-
-
     stdio_lines = _list()
 
     def _strip_ansi(s):
@@ -576,7 +506,7 @@ init -1500 python in _console:
 
         def __call__(self, traceback_exception):
             he = console.history[-1]
-            he.result = traceback_exception.format_exception_only(ConsolePrintContext())
+            he.result = traceback_exception.format_exception_only(_ExceptionPrintContext(filter_private=False))
             he.is_error = True
 
             while renpy.call_stack_depth() > self.target_depth:
@@ -751,10 +681,10 @@ init -1500 python in _console:
             return renpy.game.context().rollback
 
         def format_exception_only(self, e):
-            return TracebackException(e).format_exception_only(ConsolePrintContext())
+            return TracebackException(e).format_exception_only(_ExceptionPrintContext(filter_private=False))
 
         def format_exception(self, e):
-            return TracebackException(e).format(ConsolePrintContext())
+            return TracebackException(e).format(_ExceptionPrintContext(filter_private=False))
 
         def run(self, lines):
 
