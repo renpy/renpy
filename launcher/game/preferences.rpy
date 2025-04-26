@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 default persistent.show_edit_funcs = True
-default persistent.windows_console = False
+default persistent.use_console = False
 default persistent.lint_options = set()
 default persistent.use_web_doc = False
 
@@ -235,8 +235,8 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            if renpy.windows:
-                                textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
+                            if renpy.windows or renpy.macintosh:   
+                                textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "use_console")
 
                             textbutton _("Skip splashscreen") style "l_checkbox" action ToggleField(persistent, "skip_splashscreen")
 
