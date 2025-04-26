@@ -473,7 +473,10 @@ class SlowDone(object):
         if self.interact and self.delay != 0:
 
             if self.ctc and self.ctc_position == "screen-variable":
-                renpy.exports.set_screen_variable("ctc", self.ctc, self.screen_tag, self.screen_layer)
+                try:
+                    renpy.exports.set_screen_variable("ctc", self.ctc, self.screen_tag, self.screen_layer)
+                except Exception:
+                    pass
                 renpy.exports.restart_interaction()
 
             elif renpy.display.screen.has_screen("ctc"):
@@ -838,7 +841,10 @@ def display_say(
                         elif ctc_position == "nestled-close":
                             what_text.set_ctc([ "{_end}", u"\ufeff", what_ctc, ])
                         elif ctc_position == "screen-variable":
-                            renpy.exports.set_screen_variable("ctc", None, slow_done.screen_tag, slow_done.screen_layer)
+                            try:
+                                renpy.exports.set_screen_variable("ctc", None, slow_done.screen_tag, slow_done.screen_layer)
+                            except Exception:
+                                pass
 
                 # This is only the case if the user has rolled forward, {nw} happens, or
                 # maybe in some other obscure cases.
