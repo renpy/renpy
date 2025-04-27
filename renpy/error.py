@@ -291,10 +291,10 @@ class ANSIColors:
 
 class ANSIColoredPrintContext(TextIOExceptionPrintContext):
     LOCATION_COLOR = ANSIColors.INTENSE_BLUE
-    PRIMARY_CARET_COLOR = ANSIColors.BOLD_RED
-    SECONDARY_CARET_COLOR = ANSIColors.RED
-    EXCEPTION_TYPE_COLOR = ANSIColors.INTENSE_BLUE
-    EXCEPTION_VALUE_COLOR = ANSIColors.BLUE
+    PRIMARY_CARET_COLOR = ANSIColors.RED
+    SECONDARY_CARET_COLOR = ANSIColors.INTENSE_RED
+    EXCEPTION_TYPE_COLOR = ANSIColors.BLUE
+    EXCEPTION_VALUE_COLOR = ANSIColors.INTENSE_BLUE
 
     def location(self, filename, lineno, name):
         if name is None:
@@ -303,8 +303,8 @@ class ANSIColoredPrintContext(TextIOExceptionPrintContext):
             name_str = f', in {name}'
 
         self._print(
-            f'File {self.LOCATION_COLOR}"{filename}"{ANSIColors.RESET}, '
-            f'line {self.LOCATION_COLOR}{lineno}{ANSIColors.RESET}'
+            f'File {self.LOCATION_COLOR}"{filename}", '
+            f'line {lineno}{ANSIColors.RESET}'
             f'{name_str}')
 
     def source_carets(self, line, carets):
