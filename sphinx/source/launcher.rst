@@ -15,6 +15,10 @@ Only one level of folders is supported, so you can't create a folder inside a fo
 
 Folders can be expanded and collapsed by clicking on the name in the launcher.
 
+.. warning::
+
+    Currently, the Ren'Py launcher only supports one project with a given name. So it's not
+    possible to have the same project name in different folders.
 
 Projects.txt
 ------------
