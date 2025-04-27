@@ -297,7 +297,7 @@ def list_logical_lines(
     munge_string = get_string_munger(prefix)
 
     # Convert windows and mac newlines to \n, so we don't have to worry about it.
-    if filedata:
+    if filedata is not None:
         data_io = io.StringIO(filedata, None)
     else:
         data_io = open(original_filename, "r", encoding="utf-8")
