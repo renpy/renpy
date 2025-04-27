@@ -121,9 +121,6 @@ init -1 python:
     # containing commands, preferences, and navigation info.
     WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
-    # Controls the folder displayable, 0.0 should be used for light backgrounds and 1.0 for dark.
-    FOLDER_MATRIX = 0.0
-
     if persistent.theme == 'dark':
         # The color of non-interactive text.
         TEXT = "#ababab"
@@ -167,8 +164,6 @@ init -1 python:
         # containing commands, preferences, and navigation info.
         WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
-        # Controls the folder displayable, 0.0 should be used for light backgrounds and 1.0 for dark.
-        FOLDER_MATRIX = 1.0
 
     elif persistent.theme == 'custom':
 
@@ -214,22 +209,10 @@ init -1 python:
         # containing commands, preferences, and navigation info.
         WINDOW = custom_window
 
-        # Controls the folder displayable, 0.0 should be used for light backgrounds and 1.0 for dark.
-        FOLDER_MATRIX = custom_folder
 
-# Images used by the launcher for folders
+    def folder_icon(color):
+        return Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(color))
 
-image folder_closed:
-    on idle:
-        Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(IDLE))
-    on hover:
-        Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=FOLDER_MATRIX))
-
-image folder_open:
-    on idle:
-        Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(HOVER))
-    on hover:
-        Transform("images/folder.svg", xysize=(25,25), matrixcolor=InvertMatrix(value=FOLDER_MATRIX))
 
 init 1 python:
 
@@ -410,6 +393,18 @@ style l_list_text is l_default:
     selected_idle_color REVERSE_TEXT
     selected_hover_color REVERSE_TEXT
     insensitive_color DISABLED
+
+style l_folder is l_default:
+    left_padding 25 + 5
+    yminimum 25
+    xfill True
+    background folder_icon(IDLE)
+    hover_background Fixed(REVERSE_HOVER, folder_icon(REVERSE_TEXT))
+
+style l_folder_text is l_default:
+    idle_color IDLE
+    hover_color REVERSE_TEXT
+    yalign 0.5
 
 style l_list2 is l_list:
     left_padding (HALF_INDENT + INDENT)

@@ -98,7 +98,6 @@ screen front_page:
         key "K_F5" action project.Launch()
 
 
-
 # This is used by front_page to display the list of known projects on the screen.
 screen front_page_project_list:
 
@@ -112,7 +111,7 @@ screen front_page_project_list:
             text "Projects"
             for p in projects:
 
-                textbutton _(f"[p.display_name]" if p.display_name else "[p.name!q]"):
+                textbutton ("[p.display_name]" if p.display_name else "[p.name!q]"):
                     action project.Select(p)
                     alt _("Select project [text].")
                     style "l_list"
@@ -122,24 +121,11 @@ screen front_page_project_list:
         if folders:
             for pf in folders:
 
-                button:
-                    if pf.hidden:
-                        hover_background REVERSE_HOVER
-                        xfill True
-                        hbox:
-                            spacing 5
-                            add "folder_closed"
-                            text pf.name.capitalize() color IDLE hover_color REVERSE_TEXT bold True yalign 0.5
-
-                    else:
-                        hover_background REVERSE_IDLE
-                        xfill True
-                        hbox:
-                           spacing 5
-                           add "folder_open"
-                           text pf.name.capitalize() color HOVER hover_color REVERSE_TEXT bold True yalign 0.5
-
+                textbutton "[pf.name.capitalize()]":
                     action project.CollapseFolder(pf)
+                    alt _("Open folder [text].")
+                    selected_alt _("Close folder [text].")
+                    style "l_folder"
 
                 if not pf.hidden:
                     for p in pf.projects:
@@ -147,32 +133,20 @@ screen front_page_project_list:
                             action project.Select(p)
                             alt _("Select project [text].")
                             style "l_list"
-                            xoffset 10
 
             null height 6
 
         if persistent.show_tutorial_projects:
-            button:
-                if persistent.collapsed_folders["Tutorials"]:
-                    hover_background REVERSE_HOVER
-                    xfill True
-                    hbox:
-                        spacing 5
-                        add "folder_closed"
-                        text "Tutorials" color IDLE hover_color REVERSE_TEXT bold True yalign 0.5
-                else:
-                    hover_background REVERSE_IDLE
-                    xfill True
-                    hbox:
-                       spacing 5
-                       add "folder_open"
-                       text "Tutorials" color HOVER hover_color REVERSE_TEXT bold True yalign 0.5
 
-                action ToggleDict(persistent.collapsed_folders, "Tutorials")
+            if folders:
+                textbutton _("Tutorials"):
+                    action ToggleDict(persistent.collapsed_folders, "Tutorials")
+                    alt _("Select folder [text].")
+                    style "l_folder"
 
-            if not persistent.collapsed_folders["Tutorials"]:
-                textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
-                textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
+                if (not folders) or (not persistent.collapsed_folders["Tutorials"]):
+                    textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
+                    textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
 
 
 # This is used for the right side of the screen, which is where the project-specific

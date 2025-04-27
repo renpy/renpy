@@ -68,7 +68,6 @@ Texture Uniforms
 Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
 to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
 
-
 Accessibility
 -------------
 
@@ -83,11 +82,16 @@ or the :var:`preferences.force_mono` variable.
 Ren'Py now includes a preference to allow the user to adjust font kerning. This is exposed through the
 accessibility menu, the "font kerning" :func:`Preference`, and the :var:`preferences.font_kerning` variable.
 
+Launcher
+--------
+
+The launcher now supports games being placed into folders, which can be collapsed and expanded. To put a
+game in a folder, create a directory underneath the projects directory, and move the game into that directory.
+
+The launcher's "Console output" option now works on the Macintosh platform.
 
 Features
 --------
-
-The launcher's "Console output" option now works on the Macintosh platform.
 
 Character's `ctc_position` argument now takes a new value `screen-variable`. This places the click-to-continue
 indicator in a screen variable, which allows it to be positioned inside the screen. This is intended for use
