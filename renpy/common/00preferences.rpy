@@ -269,6 +269,7 @@ init -1500 python:
         * Preference("self voicing volume drop")
         * Preference("font size")
         * Preference("font line spacing")
+        * Preference("font kerning")
 
         The `range` parameter can be given to give the range of certain bars.
         For "text speed", it defaults to 200 cps. For "auto-forward time", it
@@ -606,6 +607,14 @@ init -1500 python:
                     return SetField(_preferences, "mono_audio", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "mono_audio")
+
+            elif name == _("font kerning"):
+
+                if value is None:
+                    return FieldValue(_preferences, "font_kerning", min=-2.0, max=2.0, action=_DisplayReset())
+
+                return [ SetField(_preferences, "font_kerning", value), _DisplayReset() ]
+
 
             elif name == _("reset"):
                 return __ResetPreferences()

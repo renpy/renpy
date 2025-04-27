@@ -72,15 +72,28 @@ to sample textures. These transforms can be supplied a displayable or a string t
 Accessibility
 -------------
 
+The shift+A accessibility menu has been redesigned. It's now smaller, so that the bottom of the game
+(usually including dialogue) is visible, allowing the effects of the menu to be seen more immediately.
+It also has been broken up into multiple pages, to allow for new options to be added.
+
 Ren'Py can now force audio to mono, allowing sounds contain information on only the left or right channel
 to become audible on both. This can be enabled through the shift+A accessibility menu, the "force mono" :func:`Preference`,
-or the :var:`preferences.force_mono` preference.
+or the :var:`preferences.force_mono` variable.
 
-The shift+A accessibility menu has been redesigned to improve alignment.
+Ren'Py now includes a preference to allow the user to adjust font kerning. This is exposed through the
+accessibility menu, the "font kerning" :func:`Preference`, and the :var:`preferences.font_kerning` variable.
 
 
 Features
 --------
+
+The launcher's "Console output" option now works on the Macintosh platform.
+
+Character's `ctc_position` argument now takes a new value `screen-variable`. This places the click-to-continue
+indicator in a screen variable, which allows it to be positioned inside the screen. This is intended for use
+with speech bubbles, to allow the click-to-continue indicator to be :ref:`positioned inside the speech bubble <bubble-ctc>`.
+
+The new :func:`renpy.lex_string` function makes it possible to create a Lexer for an arbitrary string.
 
 The :class:`SpriteManager` and :func:`SnowBlossom` displayables now support the `animation` parameter,
 which can be used to prevent resetting when the displayable is reshown.
@@ -134,6 +147,8 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 
 Other Changes
 -------------
+
+CTC indicators inside retained speech bubbles will now be cleared when the player clicks past the dialogue.
 
 In some circumstances, Ren'Py will reuse tuples containing immutable values (float, int, bool,
 complex, str, bytes, and other immutable tuples), which can reduce memory usage and improve performance. This

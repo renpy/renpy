@@ -112,159 +112,184 @@ init -1500 python hide:
 
     config.font_transforms["dejavusans"] = dejavusans
 
+screen _accessibility_audio():
+
+    grid 2 1:
+        xfill True
+        spacing gui._scale(40)
+
+        vbox:
+
+            label _("Self-Voicing")
+
+            if renpy.variant("touch"):
+                text _("Self-voicing support is limited when using a touch screen.")
+
+            textbutton _("Off"):
+                action Preference("self voicing", "disable")
+                style_suffix "radio_button"
+
+            textbutton _("Text-to-speech"):
+                action Preference("self voicing", "enable")
+                style_suffix "radio_button"
+
+            textbutton _("Clipboard"):
+                action Preference("clipboard voicing", "enable")
+                style_suffix "radio_button"
+
+            textbutton _("Debug"):
+                action Preference("debug voicing", "enable")
+                style_suffix "radio_button"
+
+            label _("Voice Volume")
+
+            side "c r":
+
+                spacing gui._scale(10)
+
+                bar value Preference("voice volume") yalign 0.5
+
+                textbutton _("Reset"):
+                    alt "reset voice volume"
+                    action Preference("voice volume", 1.0)
+
+            label _("Self-Voicing Volume Drop")
+
+            side "c r":
+                spacing gui._scale(10)
+
+                bar value Preference("self voicing volume drop") yalign 0.5
+
+                textbutton _("Reset"):
+                    alt "reset self voicing volume drop"
+                    action Preference("self voicing volume drop", 0.5)
+
+        vbox:
+
+            label _("Mono Audio")
+
+            textbutton _("Enable"):
+                action Preference("mono audio", "enable")
+                style_suffix "radio_button"
+
+            textbutton _("Disable"):
+                action Preference("mono audio", "disable")
+                style_suffix "radio_button"
+
+screen _accessibility_text():
+
+    grid 2 1:
+        xfill True
+        spacing gui._scale(40)
+
+        vbox:
+
+            label _("Font Override")
+
+            textbutton _("Default"):
+                action Preference("font transform", None)
+                style_suffix "radio_button"
+
+            textbutton _("DejaVu Sans"):
+                action Preference("font transform", "dejavusans")
+                style_suffix "radio_button"
+
+            textbutton _("Opendyslexic"):
+                action Preference("font transform", "opendyslexic")
+                style_suffix "radio_button"
+
+            label _("High Contrast Text")
+
+            textbutton _("Enable"):
+                action Preference("high contrast text", "enable")
+                style_suffix "radio_button"
+
+            textbutton _("Disable"):
+                action Preference("high contrast text", "disable")
+                style_suffix "radio_button"
+
+        vbox:
+
+            label _("Text Size Scaling")
+
+            side "c r":
+                spacing gui._scale(10)
+
+                bar value Preference("font size") yalign 0.5
+
+                textbutton _("Reset"):
+                    alt "reset font size"
+                    action Preference("font size", 1.0)
+
+            label _("Line Spacing Scaling")
+
+            side "c r":
+                spacing gui._scale(10)
+
+                bar value Preference("font line spacing") yalign 0.5
+
+                textbutton _("Reset"):
+                    alt "reset font line spacing"
+                    action Preference("font line spacing", 1.0)
+
+            label _("Kerning")
+
+            side "c r":
+                spacing gui._scale(10)
+
+                bar value Preference("font kerning") yalign 0.5
+
+                textbutton _("Reset"):
+                    alt "reset font kerning"
+                    action Preference("font kerning", 0.0)
+
+
 screen _accessibility():
     layer config.interface_layer
     zorder 2000
     modal True
 
+    default page = "audio"
+
     frame:
         style_group ""
         alt _("Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars.")
+        yfill False
 
         has side "c b":
             spacing gui._scale(10)
             xfill True
-            yfill True
 
-        fixed:
+        viewport:
+            scrollbars "vertical"
+            mousewheel True
+            viewport_yfill False
 
-            viewport:
-                scrollbars "vertical"
-                mousewheel True
 
-                has grid 2 1:
+            vbox:
+
+                hbox:
                     xfill True
-                    spacing 40
 
-                vbox:
+                    hbox:
+                        spacing gui._scale(25)
 
-                    label _("Font Override")
+                        textbutton _("Self-Voicing and Audio"):
+                            style_suffix "big_radio_button"
+                            action SetScreenVariable("page", "audio")
 
+                        textbutton _("Text"):
+                            style_suffix "big_radio_button"
+                            action SetScreenVariable("page", "text")
 
-                    textbutton _("Default"):
-                        action Preference("font transform", None)
-                        style_suffix "radio_button"
+                    textbutton _("Return"):
+                        action Hide("_accessibility")
+                        style_suffix "big_radio_button"
+                        xalign 1.0
 
-                    textbutton _("DejaVu Sans"):
-                        action Preference("font transform", "dejavusans")
-                        style_suffix "radio_button"
+                if page == "audio":
+                    use _accessibility_audio()
+                elif page == "text":
+                    use _accessibility_text()
 
-                    textbutton _("Opendyslexic"):
-                        action Preference("font transform", "opendyslexic")
-                        style_suffix "radio_button"
-
-                    textbutton "":
-                        action None
-                        style_suffix "radio_button"
-
-                    null height 10
-
-                    label _("Text Size Scaling")
-
-                    side "c r":
-                        spacing gui._scale(10)
-
-                        bar value Preference("font size") yalign 0.5
-
-                        textbutton _("Reset"):
-                            alt "reset font size"
-                            action Preference("font size", 1.0)
-
-                    null height 10
-
-                    label _("Line Spacing Scaling")
-
-                    side "c r":
-                        spacing gui._scale(10)
-
-                        bar value Preference("font line spacing") yalign 0.5
-
-                        textbutton _("Reset"):
-                            alt "reset font line spacing"
-                            action Preference("font line spacing", 1.0)
-
-                    null height 10
-
-                    label _("High Contrast Text")
-
-                    textbutton _("Enable"):
-                        action Preference("high contrast text", "enable")
-                        style_suffix "radio_button"
-
-                    textbutton _("Disable"):
-                        action Preference("high contrast text", "disable")
-                        style_suffix "radio_button"
-
-
-                vbox:
-
-                    label _("Self-Voicing")
-
-                    if renpy.variant("touch"):
-                        text _("Self-voicing support is limited when using a touch screen.")
-
-                    textbutton _("Off"):
-                        action Preference("self voicing", "disable")
-                        style_suffix "radio_button"
-
-                    textbutton _("Text-to-speech"):
-                        action Preference("self voicing", "enable")
-                        style_suffix "radio_button"
-
-                    textbutton _("Clipboard"):
-                        action Preference("clipboard voicing", "enable")
-                        style_suffix "radio_button"
-
-                    textbutton _("Debug"):
-                        action Preference("debug voicing", "enable")
-                        style_suffix "radio_button"
-
-                    null height 10
-
-                    label _("Voice Volume")
-
-                    side "c r":
-
-                        spacing gui._scale(10)
-
-                        bar value Preference("voice volume") yalign 0.5
-
-                        textbutton _("Reset"):
-                            alt "reset voice volume"
-                            action Preference("voice volume", 1.0)
-
-                    null height 10
-
-                    label _("Self-Voicing Volume Drop")
-
-                    side "c r":
-                        spacing gui._scale(10)
-
-                        bar value Preference("self voicing volume drop") yalign 0.5
-
-                        textbutton _("Reset"):
-                            alt "reset self voicing volume drop"
-                            action Preference("self voicing volume drop", 0.5)
-
-                    null height 10
-
-                    label _("Mono Audio")
-
-                    textbutton _("Enable"):
-                        action Preference("mono audio", "enable")
-                        style_suffix "radio_button"
-
-                    textbutton _("Disable"):
-                        action Preference("mono audio", "disable")
-                        style_suffix "radio_button"
-
-        vbox:
-
-            text _("The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was.")
-
-            hbox:
-                spacing gui._scale(25)
-
-                textbutton _("Return"):
-                    action Hide("_accessibility")
-                    yalign 1.0
+        text _("The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was.")

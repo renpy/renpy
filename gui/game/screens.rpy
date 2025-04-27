@@ -1442,6 +1442,10 @@ screen bubble(who, what):
         text what:
             id "what"
 
+        default ctc = None
+        showif ctc:
+            add ctc
+
 style bubble_window is empty
 style bubble_namebox is empty
 style bubble_who is default

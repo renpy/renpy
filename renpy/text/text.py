@@ -349,8 +349,10 @@ class TextSegment(object):
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
-        if self.kerning:
-            textsupport.kerning(rv, self.kerning)
+        kerning = self.kerning + self.size / 30 * renpy.game.preferences.font_kerning
+
+        if kerning:
+            textsupport.kerning(rv, kerning)
 
         if self.hyperlink:
             for g in rv:
@@ -1574,8 +1576,9 @@ class Layout(object):
     def rtl_paragraph(self, p):
         """
         Given a paragraph (a list of segment, text tuples) handles
-        RTL and ligaturization. This returns the reversed RTL paragraph,
-        which differers from the LTR one. It also returns a flag that is
+        RTL, and if the shaper is set to freetype, ligaturization. 
+        This returns the reversed RTL paragraph, which differs
+        from the LTR one. It also returns a flag that is
         True if this is an rtl paragraph.
         """
 
@@ -1584,17 +1587,14 @@ class Layout(object):
         l = [ ]
 
         for ts, s in p:
-            s, direction = log2vis(str(s), direction)
+            ft_enabled = (getattr(ts, "shaper", "") != "harfbuzz")
 
-            if s and getattr(ts, "shaper", "") == "harfbuzz":
-                s = renpy.text.extras.unmap_arabic_presentation_forms(s)
-
+            s, direction = log2vis(str(s), ft_enabled, direction)
+            
             l.append((ts, s))
 
         rtl = (direction == RTL or direction == WRTL)
-        if rtl:
-            l.reverse()
-
+        
         return l, rtl
 
     def figure_outlines(self, style):
@@ -2245,10 +2245,12 @@ class Text(renpy.display.displayable.Displayable):
     def set_ctc(self, ctc):
         self.ctc = ctc
         self.dirty = True
+        renpy.display.render.redraw(self, 0)
 
     def set_last_ctc(self, last_ctc):
         self.last_ctc = last_ctc
         self.dirty = True
+        renpy.display.render.redraw(self, 0)
 
     def update(self):
         """
@@ -2262,7 +2264,7 @@ class Text(renpy.display.displayable.Displayable):
 
         if not self.tokenized:
 
-            text = self.text
+            text = list(self.text)
 
             # Decide the portion of the text to show quickly, the part to
             # show slowly, and the part not to show (but to lay out).

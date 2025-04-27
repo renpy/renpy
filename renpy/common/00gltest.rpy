@@ -88,8 +88,6 @@ init -1500:
 
                     label _("Renderer")
 
-                    null height 10
-
                     textbutton _("Automatically Choose"):
                         action _SetRenderer("auto")
                         style_suffix "radio_button"
@@ -109,11 +107,7 @@ init -1500:
                             action _SetRenderer("gles2")
                             style_suffix "radio_button"
 
-                    null height 10
-
                     label _("Gamepad")
-
-                    null height 10
 
                     textbutton _("Enable (No Blocklist)"):
                         action SetField(_preferences, "pad_enabled", "all")
@@ -140,8 +134,6 @@ init -1500:
 
                     label _("Powersave")
 
-                    null height 10
-
                     textbutton _("Enable"):
                         action Preference("gl powersave", True)
                         style_suffix "radio_button"
@@ -150,11 +142,7 @@ init -1500:
                         action Preference("gl powersave", False)
                         style_suffix "radio_button"
 
-                    null height 10
-
                     label _("Framerate")
-
-                    null height 10
 
                     textbutton _("Screen"):
                         action Preference("gl framerate", None)
@@ -168,11 +156,7 @@ init -1500:
                         action Preference("gl framerate", 30)
                         style_suffix "radio_button"
 
-                    null height 10
-
                     label _("Tearing")
-
-                    null height 10
 
                     textbutton _("Enable"):
                         action Preference("gl tearing", True)
@@ -181,8 +165,6 @@ init -1500:
                     textbutton _("Disable"):
                         action Preference("gl tearing", False)
                         style_suffix "radio_button"
-
-                    null height 10
 
             vbox:
 
