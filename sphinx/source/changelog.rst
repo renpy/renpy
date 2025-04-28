@@ -93,6 +93,9 @@ The launcher's "Console output" option now works on the Macintosh platform.
 Features
 --------
 
+:ref:`Grids <sl-grid>` now support `right_to_left` and `bottom_to_top` properties, which control the order in which
+the grid is filled.
+
 Character's `ctc_position` argument now takes a new value `screen-variable`. This places the click-to-continue
 indicator in a screen variable, which allows it to be positioned inside the screen. This is intended for use
 with speech bubbles, to allow the click-to-continue indicator to be :ref:`positioned inside the speech bubble <bubble-ctc>`.

@@ -427,6 +427,7 @@ class Grid(Container):
     """
 
     allow_underfull = None
+    gridmap = None
 
     def __init__(self, cols, rows, padding=None,
                  transpose=False,
@@ -495,7 +496,10 @@ class Grid(Container):
 
         # Generates a gridmap list containing (col, row) tuples of intended position
         # for each child.
-        gridmap = self.generate_gridmap()
+
+        gridmap = self.gridmap
+        if gridmap is None:
+            gridmap = self.gridmap = self.generate_gridmap()
 
         # Now, start the actual rendering.
 
