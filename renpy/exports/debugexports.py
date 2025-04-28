@@ -103,7 +103,6 @@ def log(msg: str | None):
         pass
 
     try:
-
         if not logfile:
             import os
 
@@ -111,9 +110,7 @@ def log(msg: str | None):
                 file_mode = "w"
             else:
                 file_mode = "a"
-            logfile = open(
-                os.path.join(renpy.config.basedir, renpy.config.log), file_mode
-            )
+            logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), file_mode)
 
             if not logfile.tell():
                 logfile.write("\ufeff")

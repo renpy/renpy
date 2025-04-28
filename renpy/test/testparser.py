@@ -47,7 +47,6 @@ import renpy
 
 
 def parse_click(l: renpy.lexer.Lexer, loc: tuple[str, int], target):
-
     rv = testast.Click(loc, target)
 
     while True:
@@ -70,7 +69,6 @@ def parse_type(l: renpy.lexer.Lexer, loc: tuple[str, int], keys):
     rv = testast.Type(loc, keys)
 
     while True:
-
         if l.keyword("pattern"):
             rv.pattern = l.require(l.string)
 
@@ -89,7 +87,6 @@ def parse_move(l: renpy.lexer.Lexer, loc: tuple[str, int]):
     rv.position = l.require(l.simple_expression)
 
     while True:
-
         if l.keyword("pattern"):
             rv.pattern = l.require(l.string)
 
@@ -100,7 +97,6 @@ def parse_move(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 
 def parse_drag(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     points = l.require(l.simple_expression)
 
     rv = testast.Drag(loc, points)
@@ -123,22 +119,18 @@ def parse_drag(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 def parse_clause(l: renpy.lexer.Lexer, loc: tuple[str, int]):
     if l.keyword("run"):
-
         expr = l.require(l.simple_expression)
         return testast.Action(loc, expr)
 
     elif l.keyword("pause"):
-
         expr = l.require(l.simple_expression)
         return testast.Pause(loc, expr)
 
     elif l.keyword("label"):
-
         name = l.require(l.label_name)
         return testast.Label(loc, name)
 
     elif l.keyword("type"):
-
         name = l.name()
         if name is not None:
             return parse_type(l, loc, [name])
@@ -148,7 +140,6 @@ def parse_clause(l: renpy.lexer.Lexer, loc: tuple[str, int]):
         return parse_type(l, loc, list(string))
 
     elif l.keyword("drag"):
-
         return parse_drag(l, loc)
 
     elif l.keyword("move"):
@@ -171,9 +162,7 @@ def parse_clause(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 
 def parse_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     if l.keyword("python"):
-
         l.require(":")
 
         l.expect_block("python block")
@@ -197,7 +186,6 @@ def parse_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
     l.expect_noblock("statement")
 
     if l.match(r"\$"):
-
         source = l.require(l.rest)
 
         code = renpy.ast.PyCode(source, loc)

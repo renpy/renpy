@@ -53,10 +53,7 @@ def init_layers():
     global layers, sticky_layers, ordered_layers
 
     ordered_layers = (
-        renpy.config.detached_layers
-        + renpy.config.bottom_layers
-        + renpy.config.layers
-        + renpy.config.top_layers
+        renpy.config.detached_layers + renpy.config.bottom_layers + renpy.config.layers + renpy.config.top_layers
     )
     layers = frozenset(ordered_layers)
     sticky_layers = frozenset(renpy.config.sticky_layers + renpy.config.detached_layers)
@@ -77,15 +74,13 @@ class SceneListEntry(renpy.object.Object):
         self.name = name
 
     def __iter__(self):
-        return iter(
-            (
-                self.tag,
-                self.zorder,
-                self.show_time,
-                self.animation_time,
-                self.displayable,
-            )
-        )
+        return iter((
+            self.tag,
+            self.zorder,
+            self.show_time,
+            self.animation_time,
+            self.displayable,
+        ))
 
     def __getitem__(self, index):
         return (
@@ -110,7 +105,6 @@ class SceneListEntry(renpy.object.Object):
         )
 
     def update_time(self, time):
-
         rv = self
 
         if self.show_time is None or self.animation_time is None:
@@ -147,9 +141,7 @@ class SceneLists(renpy.object.Object):
                 self.config_layer_transform[i] = []
 
     def after_upgrade(self, version):
-
         if version < 1:
-
             self.at_list = {}
             self.layer_at_list = {}
 
@@ -162,9 +154,7 @@ class SceneLists(renpy.object.Object):
 
         if version < 4:
             for k in self.layers:
-                self.layers[k] = [
-                    SceneListEntry(*(i + (None,))) for i in self.layers[k]
-                ]
+                self.layers[k] = [SceneListEntry(*(i + (None,))) for i in self.layers[k]]
 
             self.additional_transient = []
 
@@ -184,7 +174,6 @@ class SceneLists(renpy.object.Object):
             self.additional_transient = [(layer, tag, None) for layer, tag in self.additional_transient]  # type: ignore
 
     def __init__(self, oldsl, shown):
-
         super(SceneLists, self).__init__()
 
         # Has a window been shown as part of these scene lists?
@@ -229,9 +218,7 @@ class SceneLists(renpy.object.Object):
         self.sticky_tags = {}
 
         if oldsl:
-
             for i in layers:
-
                 try:
                     self.layers[i] = oldsl.layers[i][:]
                 except KeyError:
@@ -373,7 +360,6 @@ class SceneLists(renpy.object.Object):
         remove_index = None
 
         for i, sle in enumerate(self.layers[layer]):
-
             if remove_index is None:
                 if (sle.tag and sle.tag == tag) or sle.displayable == tag:
                     remove_index = i
@@ -385,9 +371,7 @@ class SceneLists(renpy.object.Object):
             zorder = renpy.config.tag_zorder.get(tag, 0)
 
         for i, sle in enumerate(self.layers[layer]):
-
             if add_index is None:
-
                 if sle.zorder == zorder:
                     if sle.tag and (sle.tag == tag or sle.tag in behind):
                         add_index = i
@@ -445,14 +429,10 @@ class SceneLists(renpy.object.Object):
         """
 
         if not isinstance(thing, renpy.display.core.Displayable):
-            raise Exception(
-                "Attempting to show something that isn't a displayable:" + repr(thing)
-            )
+            raise Exception("Attempting to show something that isn't a displayable:" + repr(thing))
 
         if layer not in self.layers:
-            raise Exception(
-                "Trying to add something to non-existent layer '%s'." % layer
-            )
+            raise Exception("Trying to add something to non-existent layer '%s'." % layer)
 
         if key:
             self.remove_hide_replaced(layer, key)
@@ -496,17 +476,14 @@ class SceneLists(renpy.object.Object):
                 and renpy.config.keep_running_transform
                 and isinstance(old, renpy.display.motion.Transform)
             ):
-
                 thing = sle.displayable._change_transform_child(thing)
 
             else:
-
                 thing = self.transform_state(old, thing)
 
             thing.set_transform_event("replace")
 
         else:
-
             if not isinstance(thing, renpy.display.motion.Transform):
                 thing = self.transform_state(default_transform, thing)
 
@@ -551,7 +528,6 @@ class SceneLists(renpy.object.Object):
                 prefix = None
 
         if (prefix is not None) and oldsle.tag:
-
             d = oldsle.displayable._in_current_store()._hide(now - st, now - at, prefix)
 
             # _hide can mutate the layers, so we need to recompute
@@ -559,10 +535,7 @@ class SceneLists(renpy.object.Object):
             index = l.index(oldsle)
 
             if d is not None:
-
-                sle = SceneListEntry(
-                    prefix + "$" + oldsle.tag, oldsle.zorder, st, at, d, None
-                )
+                sle = SceneListEntry(prefix + "$" + oldsle.tag, oldsle.zorder, st, at, d, None)
 
                 l[index] = sle
 
@@ -584,7 +557,6 @@ class SceneLists(renpy.object.Object):
         rv = []
         for l in self.layers.values():
             for sle in l:
-
                 if current and sle.tag and ("$" in sle.tag):
                     continue
 
@@ -600,7 +572,6 @@ class SceneLists(renpy.object.Object):
         """
 
         for i in range(len(self.layers[layer]) - 1, -1, -1):
-
             sle = self.layers[layer][i]
 
             if thing:
@@ -612,9 +583,7 @@ class SceneLists(renpy.object.Object):
 
             self.hide_or_replace(layer, i, "hide")
 
-    def remove(
-        self, layer, thing, prefix="hide"
-    ):  # type: (str, str|tuple|renpy.display.core.Displayable, str|None) -> None
+    def remove(self, layer, thing, prefix="hide"):  # type: (str, str|tuple|renpy.display.core.Displayable, str|None) -> None
         """
         Thing is either a key or a displayable. This iterates through the
         named layer, searching for entries matching the thing.
@@ -625,9 +594,7 @@ class SceneLists(renpy.object.Object):
         """
 
         if layer not in self.layers:
-            raise Exception(
-                "Trying to remove something from non-existent layer '%s'." % layer
-            )
+            raise Exception("Trying to remove something from non-existent layer '%s'." % layer)
 
         _add_index, remove_index, _zorder = self.find_index(layer, thing, 0, [])
 
@@ -658,7 +625,6 @@ class SceneLists(renpy.object.Object):
             self.layers[layer][:] = []
 
         else:
-
             # Have to iterate in reverse order, since otherwise
             # the indexes might change.
             for i in range(len(self.layers[layer]) - 1, -1, -1):
@@ -673,7 +639,6 @@ class SceneLists(renpy.object.Object):
             self.layer_at_list[layer] = (None, [])
 
     def set_layer_at_list(self, layer, at_list, reset=True, camera=False):
-
         if camera:
             self.camera_list[layer] = (None, list(at_list))
         else:
@@ -757,9 +722,7 @@ class SceneLists(renpy.object.Object):
         new_transform = None
 
         if at_list:
-
             for a in at_list:
-
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
                 else:
@@ -791,9 +754,7 @@ class SceneLists(renpy.object.Object):
         new_transform = None
 
         if at_list:
-
             for a in at_list:
-
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
                 else:
@@ -824,9 +785,7 @@ class SceneLists(renpy.object.Object):
         new_transform = None
 
         if at_list:
-
             for a in at_list:
-
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
                 else:
@@ -868,9 +827,7 @@ class SceneLists(renpy.object.Object):
 
         for sle in layer_list:
             if (sle.tag == hide_tag) or (sle.tag == replaced_tag):
-                d = sle.displayable._hide(
-                    now - sle.show_time, now - sle.animation_time, "cancel"
-                )
+                d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "cancel")
 
                 if d is None:
                     continue
@@ -892,20 +849,14 @@ class SceneLists(renpy.object.Object):
             newl = []
 
             for sle in v:
-
                 if sle.tag:
-
                     if sle.tag.startswith("hide$"):
-                        d = sle.displayable._hide(
-                            now - sle.show_time, now - sle.animation_time, "hide"
-                        )
+                        d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "hide")
                         if not d:
                             continue
 
                     elif sle.tag.startswith("replaced$"):
-                        d = sle.displayable._hide(
-                            now - sle.show_time, now - sle.animation_time, "replaced"
-                        )
+                        d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "replaced")
                         if not d:
                             continue
 
@@ -922,9 +873,7 @@ class SceneLists(renpy.object.Object):
             newl = []
 
             for sle in v:
-
                 if sle.tag:
-
                     if "$" in sle.tag:
                         continue
 
@@ -990,16 +939,12 @@ class SceneLists(renpy.object.Object):
         else:
             at = 0
 
-        surf = renpy.display.render.render_for_size(
-            sle.displayable, width, height, st, at
-        )
+        surf = renpy.display.render.render_for_size(sle.displayable, width, height, st, at)
 
         sw = surf.width
         sh = surf.height
 
-        x, y = renpy.display.displayable.place(
-            width, height, sw, sh, sle.displayable.get_placement()
-        )
+        x, y = renpy.display.displayable.place(width, height, sw, sh, sle.displayable.get_placement())
 
         return (x, y, sw, sh)
 
@@ -1011,7 +956,6 @@ class SceneLists(renpy.object.Object):
         rv = []
 
         for sle in self.layers.get(layer, []):
-
             if sle.tag is None:
                 continue
             if "$" in sle.tag:
@@ -1028,7 +972,6 @@ class SceneLists(renpy.object.Object):
 
         sl = self.layers.get(layer, [])
         for sle in sl:
-
             if sle.tag == tag:
                 sle.zorder = zorder
 

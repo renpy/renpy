@@ -412,7 +412,6 @@ def add_to_all_stores(name: str, value: Any):
         raise Exception("add_to_all_stores is only allowed in init code.")
 
     for _k, ns in renpy.python.store_dicts.items():
-
         if name not in ns:
             ns[name] = value
 

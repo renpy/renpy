@@ -149,7 +149,6 @@ def load_string(s: str, filename: str = "<string>"):
     old_exception_info = renpy.game.exception_info
 
     try:
-
         old_locked = renpy.config.locked
         renpy.config.locked = False
 
@@ -200,7 +199,6 @@ def load_language(language):
     old_exception_info = renpy.game.exception_info
 
     try:
-
         old_locked = renpy.config.locked
         renpy.config.locked = False
 

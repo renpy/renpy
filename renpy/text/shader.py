@@ -19,8 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import re
 
@@ -74,7 +74,7 @@ def to_uniform_value(shader_name, uniform_name, variable_types, value):
 
     if type == "float":
         try:
-            value = float(value) # type: ignore
+            value = float(value)  # type: ignore
         except ValueError:
             pass
 
@@ -83,7 +83,7 @@ def to_uniform_value(shader_name, uniform_name, variable_types, value):
 
     elif type == "int":
         try:
-            value = int(value) # type: ignore
+            value = int(value)  # type: ignore
         except ValueError:
             pass
 
@@ -92,22 +92,22 @@ def to_uniform_value(shader_name, uniform_name, variable_types, value):
 
     if type == "bool":
         try:
-            value = bool(value) # type: ignore
+            value = bool(value)  # type: ignore
         except ValueError:
             pass
 
         if not isinstance(value, bool):
             raise ValueError("Expected a float for %r in shader %r." % (uniform_name, shader_name))
 
-    elif type in { "vec2", "ivec2", "bvec2" }:
+    elif type in {"vec2", "ivec2", "bvec2"}:
         if not isinstance(value, tuple) or len(value) != 2:
             raise ValueError("Expected a 2 component tuple for %r in shader %r." % (uniform_name, shader_name))
 
-    elif type in { "vec3", "ivec3", "bvec3" }:
+    elif type in {"vec3", "ivec3", "bvec3"}:
         if not isinstance(value, tuple) or len(value) != 3:
             raise ValueError("Expected a 3 component tuple for %r in shader %r." % (uniform_name, shader_name))
 
-    elif type in { "vec4", "ivec4", "bvec4" }:
+    elif type in {"vec4", "ivec4", "bvec4"}:
         if not isinstance(value, tuple) or len(value) != 4:
             raise ValueError("Expected a 4 component tuple for %r in shader %r." % (uniform_name, shader_name))
 
@@ -124,22 +124,22 @@ class TextShader(object):
     """
 
     def __init__(
-            self,
-            shader,
-            uniforms,
-            variable_types=None,
-            extra_slow_time=0.0,
-            extra_slow_duration=0.0,
-            redraw=None,
-            redraw_when_slow=0.0,
-            include_default=True,
-            adjust_function=None,
-            adjust_name_map=None,
-            doc=None):
-
+        self,
+        shader,
+        uniforms,
+        variable_types=None,
+        extra_slow_time=0.0,
+        extra_slow_duration=0.0,
+        redraw=None,
+        redraw_when_slow=0.0,
+        include_default=True,
+        adjust_function=None,
+        adjust_name_map=None,
+        doc=None,
+    ):
         # A tuple of shaders to apply to text.
         if isinstance(shader, str):
-            self.shader = (shader, )
+            self.shader = (shader,)
         else:
             self.shader = tuple(shader)
 
@@ -178,7 +178,7 @@ class TextShader(object):
         self.variable_types = variable_types
 
         if self.adjust_function is not None:
-            kwargs = { self.adjust_name_map.get(k, k): v for k, v in uniforms }
+            kwargs = {self.adjust_name_map.get(k, k): v for k, v in uniforms}
             self.adjust_function(self, **kwargs)
 
         self.key = (
@@ -189,7 +189,7 @@ class TextShader(object):
             self.redraw_when_slow,
             self.include_default,
             self.uniforms,
-            )
+        )
 
     def __hash__(self):
         return hash(self.key)
@@ -219,13 +219,11 @@ class TextShader(object):
             self.include_default or other.include_default,
         )
 
-
     def copy(self, new_uniforms):
         """
         Create a copy of this TextShader, with the uniforms updated with
         the new uniforms.
         """
-
 
         uniforms = dict(self.uniforms)
         uniforms.update(new_uniforms)
@@ -242,6 +240,7 @@ class TextShader(object):
             self.adjust_function,
             self.adjust_name_map,
         )
+
 
 def compute_times(shaders):
     """
@@ -269,10 +268,9 @@ def create_textshader_args_dict(name, shader, s):
     Given a string, create a textshader uniforms from it.
     """
 
-    rv = { }
+    rv = {}
 
     for i, arg in enumerate(s.split(":")):
-
         if "=" in arg:
             uniform, _, value = arg.partition("=")
         else:
@@ -317,10 +315,9 @@ def parse_textshader(o):
         return o
 
     if isinstance(o, str):
-
         # Combine multiple shaders separated by "|".
         if "|" in o:
-            shaders = [ parse_textshader(i) for i in o.split("|") ]
+            shaders = [parse_textshader(i) for i in o.split("|")]
             rv = shaders[0]
             for shader in shaders[1:]:
                 rv = rv.combine(shader)
@@ -344,7 +341,8 @@ def parse_textshader(o):
     raise Exception("Expected a TextShader, but got %r." % o)
 
 
-parsed_shader_cache = { }
+parsed_shader_cache = {}
+
 
 def get_textshader(o):
     """
@@ -380,16 +378,17 @@ def get_textshader(o):
 
 
 def register_textshader(
-        name,
-        shaders=tuple(),
-        extra_slow_time=0.0,
-        extra_slow_duration=0.0,
-        redraw=None,
-        redraw_when_slow=0.0,
-        include_default=True,
-        adjust_function=None,
-        doc=None,
-        **kwargs):
+    name,
+    shaders=tuple(),
+    extra_slow_time=0.0,
+    extra_slow_duration=0.0,
+    redraw=None,
+    redraw_when_slow=0.0,
+    include_default=True,
+    adjust_function=None,
+    doc=None,
+    **kwargs,
+):
     """
     :doc: textshader
 
@@ -453,8 +452,8 @@ def register_textshader(
     which registers the shader part.
     """
 
-    textshader_kwargs = { }
-    part_kwargs = { }
+    textshader_kwargs = {}
+    part_kwargs = {}
 
     for k, v in kwargs.items():
         if k == "variables":
@@ -469,22 +468,19 @@ def register_textshader(
             raise TypeError("renpy.register_textshader got an unknown keyword argument %r." % (k,))
 
     if isinstance(shaders, str):
-        shaders = ( shaders, )
+        shaders = (shaders,)
 
-    shaders = tuple(shaders) + ( "textshader." + name, )
+    shaders = tuple(shaders) + ("textshader." + name,)
 
-    part = renpy.exports.register_shader(
-        "textshader." + name,
-        private_uniforms=True,
-        **part_kwargs)
+    part = renpy.exports.register_shader("textshader." + name, private_uniforms=True, **part_kwargs)
 
     if doc is not None:
         doc = part.substitute_name(doc)
 
-    mapped_names = { part.expand_name(k): k for k in textshader_kwargs }
-    textshader_kwargs = { part.expand_name(k): v for k, v in textshader_kwargs.items() }
+    mapped_names = {part.expand_name(k): k for k in textshader_kwargs}
+    textshader_kwargs = {part.expand_name(k): v for k, v in textshader_kwargs.items()}
 
-    uniforms = { }
+    uniforms = {}
 
     for k in part.uniforms:
         if k in textshader_kwargs:

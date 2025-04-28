@@ -75,7 +75,6 @@ class Object(object):
     after_setstate: None = None
 
     def __setstate__(self, new_dict: dict[str, Any]):
-
         version = new_dict.pop("__version__", 0)
 
         self.__dict__.update(new_dict)

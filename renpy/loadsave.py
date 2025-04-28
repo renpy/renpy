@@ -22,7 +22,7 @@
 # This file contains functions that load and save the game state.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import io
 import zipfile
@@ -52,7 +52,7 @@ def save_dump(roots, log):
     and the type or repr of the object.
     """
 
-    o_repr_cache = { }
+    o_repr_cache = {}
 
     def visit(o, path):
         ido = id(o)
@@ -83,13 +83,12 @@ def save_dump(roots, log):
             o_repr = "<" + o.__class__.__name__ + ">"
 
         elif isinstance(o, types.MethodType):
-
             o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
 
         elif isinstance(o, types.FunctionType):
             name = o.__qualname__ or o.__name__
 
-            o_repr = o.__module__ + '.' + name
+            o_repr = o.__module__ + "." + name
 
         elif isinstance(o, object):
             o_repr = "<{0}>".format(type(o).__name__)
@@ -124,15 +123,14 @@ def save_dump(roots, log):
             size = 1
 
         else:
-
             try:
                 reduction = o.__reduce_ex__(PROTOCOL)
             except Exception:
-                reduction = [ ]
+                reduction = []
                 o_repr_cache[ido] = "BAD REDUCTION " + o_repr
 
             if isinstance(reduction, str):
-                o_repr_cache[ido] = o.__module__ + '.' + reduction
+                o_repr_cache[ido] = o.__module__ + "." + reduction
                 size = 1
 
             else:
@@ -148,7 +146,7 @@ def save_dump(roots, log):
                 # (These units are about 20-25 bytes on my computer.)
                 size = 1
 
-                state = get(2, { })
+                state = get(2, {})
                 if isinstance(state, dict):
                     for k, v in state.items():
                         size += 2
@@ -156,12 +154,11 @@ def save_dump(roots, log):
                 else:
                     size += visit(state, path + ".__getstate__()")
 
-                for i, oo in enumerate(get(3, [])): # type: ignore
+                for i, oo in enumerate(get(3, [])):  # type: ignore
                     size += 1
                     size += visit(oo, "{0}[{1}]".format(path, i))
 
-                for i in get(4, []): # type: ignore
-
+                for i in get(4, []):  # type: ignore
                     if len(i) != 2:
                         continue
 
@@ -215,15 +212,12 @@ def find_bad_reduction(roots, log):
             return visit(o.__self__, path + ".im_self")
 
         elif isinstance(o, types.ModuleType):
-
             return "{} = {}".format(path, repr(o)[:160])
 
         else:
-
             try:
                 reduction = o.__reduce_ex__(2)
             except Exception:
-
                 import copy
 
                 try:
@@ -242,7 +236,7 @@ def find_bad_reduction(roots, log):
                 else:
                     return default
 
-            state = get(2, { })
+            state = get(2, {})
             if isinstance(state, dict):
                 for k, v in state.items():
                     rv = visit(v, path + "." + k)
@@ -259,7 +253,6 @@ def find_bad_reduction(roots, log):
                     return rv
 
             for i in get(4, []):
-
                 if len(i) != 2:
                     continue
 
@@ -277,6 +270,7 @@ def find_bad_reduction(roots, log):
             return rv
 
     return visit(log, "renpy.game.log")
+
 
 ################################################################################
 # Saving
@@ -301,13 +295,11 @@ def safe_rename(old, new):
     try:
         os.rename(old, new)
     except Exception:
-
         # If the rename failed, try again.
         try:
             os.unlink(new)
             os.rename(old, new)
         except Exception:
-
             # If it fails a second time, give up.
             try:
                 os.unlink(old)
@@ -373,7 +365,7 @@ class SaveRecord(object):
         self.first_filename = filename
 
 
-def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
+def save(slotname, extra_info="", mutate_flag=False, include_screenshot=True):
     """
     :doc: loadsave
     :args: (filename, extra_info='')
@@ -417,7 +409,7 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
 
         try:
             if bad := find_bad_reduction(roots, renpy.game.log):
-                e.args = (e.args[0] + f' (perhaps {bad})', *e.args[1:])
+                e.args = (e.args[0] + f" (perhaps {bad})", *e.args[1:])
         except Exception:
             pass
 
@@ -432,12 +424,12 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
         screenshot = None
 
     json = {
-        "_save_name" : extra_info,
-        "_renpy_version" : list(renpy.version_tuple),
-        "_version" : renpy.config.version,
-        "_game_runtime" : renpy.exports.get_game_runtime(),
-        "_ctime" : time.time(),
-        }
+        "_save_name": extra_info,
+        "_renpy_version": list(renpy.version_tuple),
+        "_version": renpy.config.version,
+        "_game_runtime": renpy.exports.get_game_runtime(),
+        "_ctime": time.time(),
+    }
 
     for i in renpy.config.save_json_callbacks:
         i(json)
@@ -464,8 +456,8 @@ autosave_counter = 0
 # True if a background autosave has finished.
 did_autosave = False
 
-def autosave_thread_function(take_screenshot):
 
+def autosave_thread_function(take_screenshot):
     global autosave_counter
     global did_autosave
 
@@ -475,9 +467,7 @@ def autosave_thread_function(take_screenshot):
         prefix = "auto-"
 
     try:
-
         with renpy.savelocation.SyncfsLock():
-
             if renpy.config.auto_save_extra_info:
                 extra_info = renpy.config.auto_save_extra_info()
             else:
@@ -577,7 +567,6 @@ def force_autosave(take_screenshot=False, block=False):
         return
 
     if block:
-
         if renpy.config.auto_save_extra_info:
             extra_info = renpy.config.auto_save_extra_info()
         else:
@@ -606,13 +595,13 @@ def force_autosave(take_screenshot=False, block=False):
     else:
         autosave_thread_function(take_screenshot)
 
+
 ################################################################################
 # Loading and Slot Manipulation
 ################################################################################
 
 
 def scan_saved_game(slotname):
-
     c = get_cache(slotname)
 
     mtime = c.get_mtime()
@@ -624,7 +613,7 @@ def scan_saved_game(slotname):
     if json is None:
         return None
 
-    extra_info = json.get("_save_name", "") # type: ignore
+    extra_info = json.get("_save_name", "")  # type: ignore
 
     screenshot = c.get_screenshot()
 
@@ -634,7 +623,7 @@ def scan_saved_game(slotname):
     return extra_info, screenshot, mtime
 
 
-def list_saved_games(regexp=r'.', fast=False):
+def list_saved_games(regexp=r".", fast=False):
     """
     :doc: loadsave
 
@@ -659,23 +648,22 @@ def list_saved_games(regexp=r'.', fast=False):
     slots = location.list()
 
     if regexp is not None:
-        slots = [ i for i in slots if re.match(regexp, i) ]
+        slots = [i for i in slots if re.match(regexp, i)]
 
     slots.sort()
 
     if fast:
         return slots
 
-    rv = [ ]
+    rv = []
 
     for s in slots:
-
         c = get_cache(s)
 
         if c is not None:
             json = c.get_json()
             if json is not None:
-                extra_info = json.get("_save_name", "") # type: ignore
+                extra_info = json.get("_save_name", "")  # type: ignore
             else:
                 extra_info = ""
 
@@ -700,7 +688,7 @@ def list_slots(regexp=None):
     slots = location.list()
 
     if regexp is not None:
-        slots = [ i for i in slots if re.match(regexp, i) ]
+        slots = [i for i in slots if re.match(regexp, i)]
 
     slots.sort()
 
@@ -712,7 +700,7 @@ def list_slots(regexp=None):
 accessed_slots = set()
 
 # A cache for newest slot info.
-newest_slot_cache = { }
+newest_slot_cache = {}
 
 
 def newest_slot(regexp=None):
@@ -727,14 +715,12 @@ def newest_slot(regexp=None):
 
     rv = newest_slot_cache.get(regexp, unknown)
     if rv is unknown:
-
         max_mtime = 0
         rv = None
 
         slots = location.list()
 
         for i in slots:
-
             if (regexp is not None) and (not re.match(regexp, i)):
                 continue
 
@@ -742,7 +728,7 @@ def newest_slot(regexp=None):
             if mtime is None:
                 continue
 
-            if mtime >= max_mtime: # type: ignore
+            if mtime >= max_mtime:  # type: ignore
                 rv = i
                 max_mtime = mtime
 
@@ -877,6 +863,7 @@ def cycle_saves(name, count):
     for i in range(count - 1, 0, -1):
         rename_save(name + str(i), name + str(i + 1))
 
+
 ################################################################################
 # Cache
 ################################################################################
@@ -888,9 +875,9 @@ unknown = renpy.object.Sentinel("unknown")
 
 def wrap_json(d):
     if isinstance(d, list):
-        return [ wrap_json(i) for i in d ]
+        return [wrap_json(i) for i in d]
     if isinstance(d, dict):
-        return renpy.revertable.RevertableDict({ k : wrap_json(v) for k, v in d.items() })
+        return renpy.revertable.RevertableDict({k: wrap_json(v) for k, v in d.items()})
     else:
         return d
 
@@ -915,7 +902,6 @@ class Cache(object):
         self.screenshot = unknown
 
     def get_mtime(self):
-
         rv = self.mtime
 
         if rv is unknown:
@@ -924,7 +910,6 @@ class Cache(object):
         return rv
 
     def get_json(self):
-
         rv = self.json
 
         if rv is unknown:
@@ -933,7 +918,6 @@ class Cache(object):
         return wrap_json(rv)
 
     def get_screenshot(self):
-
         rv = self.screenshot
 
         if rv is unknown:
@@ -953,11 +937,10 @@ class Cache(object):
 
 # A map from slotname to cache object. This is used to cache savegame scan
 # data until the slot changes.
-cache = { }
+cache = {}
 
 
 def get_cache(slotname):
-
     rv = cache.get(slotname, None)
 
     if rv is None:

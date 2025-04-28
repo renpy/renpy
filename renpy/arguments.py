@@ -102,14 +102,11 @@ class ArgumentParser(argparse.ArgumentParser):
 
         self.group: argparse.ArgumentParser = self
 
-        argparse.ArgumentParser.__init__(
-            self, description="The Ren'Py visual novel engine.", add_help=False
-        )
+        argparse.ArgumentParser.__init__(self, description="The Ren'Py visual novel engine.", add_help=False)
 
         command_names = ", ".join(sorted(commands))
 
         if require_command:
-
             self.add_argument(
                 "basedir",
                 help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.",
@@ -117,13 +114,10 @@ class ArgumentParser(argparse.ArgumentParser):
 
             self.add_argument(
                 "command",
-                help="The command to execute. Available commands are: "
-                + command_names
-                + ". Defaults to 'run'.",
+                help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
             )
 
         else:
-
             self.add_argument(
                 "basedir",
                 default="",
@@ -133,9 +127,7 @@ class ArgumentParser(argparse.ArgumentParser):
 
             self.add_argument(
                 "command",
-                help="The command to execute. Available commands are: "
-                + command_names
-                + ". Defaults to 'run'.",
+                help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
                 nargs="?",
                 default="run",
             )
@@ -185,9 +177,7 @@ class ArgumentParser(argparse.ArgumentParser):
             help="Prevents the compile command from deleting orphan rpyc files.",
         )
 
-        self.add_argument(
-            "--lint", action="store_true", dest="lint", help=argparse.SUPPRESS
-        )
+        self.add_argument("--lint", action="store_true", dest="lint", help=argparse.SUPPRESS)
 
         self.add_argument(
             "--errors-in-editor",
@@ -235,9 +225,7 @@ class ArgumentParser(argparse.ArgumentParser):
             )
 
             command = renpy.game.args.command  # type: ignore
-            self.group = self.add_argument_group(
-                "{0} command arguments".format(command), description
-            )
+            self.group = self.add_argument_group("{0} command arguments".format(command), description)
 
     @override
     def add_argument(self, *args: Any, **kwargs: Any) -> argparse.Action:
@@ -268,9 +256,7 @@ def run() -> bool:
     The default command, that (when called) leads to normal game startup.
     """
 
-    ap = ArgumentParser(
-        description="Runs the current project normally.", require_command=False
-    )
+    ap = ArgumentParser(description="Runs the current project normally.", require_command=False)
 
     ap.add_argument(
         "--profile-display",
@@ -343,9 +329,7 @@ def rmpersistent() -> bool:
     return False
 
 
-def register_command(
-    name: str, function: Callable[[], bool], uses_display: bool = False
-):
+def register_command(name: str, function: Callable[[], bool], uses_display: bool = False):
     """
     Registers a command that can be invoked when Ren'Py is run on the command
     line. When the command is run, `function` is called with no arguments.
@@ -431,7 +415,6 @@ epic_arguments = None
 
 
 def clean_epic_arguments():
-
     for i in sys.argv[1:]:
         if i.lower().startswith("-epicapp="):
             break
@@ -450,7 +433,6 @@ def clean_epic_arguments():
 
 
 def clean_macos_arguments():
-
     for i in sys.argv[1:]:
         if i.lower().startswith("-psn"):
             break

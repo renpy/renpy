@@ -23,7 +23,7 @@
 # up a rectangular area of the screen, and do not respond to input.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -44,7 +44,6 @@ class Solid(renpy.display.displayable.Displayable):
     """
 
     def __init__(self, color, **properties):
-
         super(Solid, self).__init__(**properties)
 
         if color is not None:
@@ -59,13 +58,12 @@ class Solid(renpy.display.displayable.Displayable):
         if not self._equals(o):
             return False
 
-        return (self.color == o.color)
+        return self.color == o.color
 
     def visit(self):
-        return [ ]
+        return []
 
     def render(self, width, height, st, at):
-
         xminimum, yminimum = renpy.display.layout.xyminimums(self.style, width, height)
 
         width = max(xminimum, width)
@@ -124,7 +122,6 @@ class Borders(object):
     """
 
     def __init__(self, left, top, right, bottom, pad_left=0, pad_top=0, pad_right=0, pad_bottom=0):
-
         self.left = left
         self.top = top
         self.right = right
@@ -142,7 +139,7 @@ class Borders(object):
             self.top + self.pad_top,
             self.right + self.pad_right,
             self.bottom + self.pad_bottom,
-            )
+        )
 
 
 class Frame(renpy.display.displayable.Displayable):
@@ -188,23 +185,34 @@ class Frame(renpy.display.displayable.Displayable):
          # Resize the background of the text window if it's too small.
          init python:
              style.window.background = Frame("frame.png", 10, 10)
-        """
+    """
 
     __version__ = 1
 
-    properties = { }
+    properties = {}
     tile_ratio = 0.5
 
     def after_upgrade(self, version):
         if version < 2:
-            self.left = self.xborder # type: ignore
-            self.right = self.xborder # type: ignore
-            self.top = self.yborder # type: ignore
-            self.bottom = self.yborder # type: ignore
+            self.left = self.xborder  # type: ignore
+            self.right = self.xborder  # type: ignore
+            self.top = self.yborder  # type: ignore
+            self.bottom = self.yborder  # type: ignore
 
-    def __init__(self, image, left=None, top=None, right=None, bottom=None,
-                 xborder=0, yborder=0, bilinear=True, tile=False,
-                 tile_ratio=0.5, **properties):
+    def __init__(
+        self,
+        image,
+        left=None,
+        top=None,
+        right=None,
+        bottom=None,
+        xborder=0,
+        yborder=0,
+        bilinear=True,
+        tile=False,
+        tile_ratio=0.5,
+        **properties,
+    ):
         super(Frame, self).__init__(**properties)
 
         self.image = renpy.easy.displayable(image)
@@ -246,9 +254,8 @@ class Frame(renpy.display.displayable.Displayable):
             self.top,
             self.right,
             self.bottom,
-            (" tile ({})".format(self.tile_ratio) if self.tile == "integer"
-             else " tile" if self.tile
-             else ""))
+            (" tile ({})".format(self.tile_ratio) if self.tile == "integer" else " tile" if self.tile else ""),
+        )
 
     def __eq__(self, o):
         if not self._equals(o):
@@ -275,20 +282,16 @@ class Frame(renpy.display.displayable.Displayable):
         return True
 
     def render(self, width, height, st, at):
-
         width = max(self.style.xminimum, width)
         height = max(self.style.yminimum, height)
 
-
         # The size of the final displayable.
         if self.tile:
-
             dw = int(width)
             dh = int(height)
         else:
             dw = width
             dh = height
-
 
         if width and height:
             minw, minh = renpy.display.draw.draw_to_virt.transform(1, 1)
@@ -326,7 +329,6 @@ class Frame(renpy.display.displayable.Displayable):
             return self.sw_render(crend, dw, dh, left, top, right, bottom)
 
         def draw(x0, x1, y0, y1):
-
             # Compute the coordinates of the left, right, top, and
             # bottom sides of the region, for both the source and
             # destination surfaces.
@@ -381,7 +383,6 @@ class Frame(renpy.display.displayable.Displayable):
 
             # Scale or tile if we have to.
             if csw != cdw or csh != cdh:
-
                 if self.tile:
                     ctw, cth = cdw, cdh
 
@@ -434,7 +435,6 @@ class Frame(renpy.display.displayable.Displayable):
     def draw_pattern(self, draw, left, top, right, bottom):
         # Top row.
         if top:
-
             if left:
                 draw(0, left, 0, top)
 
@@ -463,7 +463,6 @@ class Frame(renpy.display.displayable.Displayable):
                 draw(-right, 0, -bottom, 0)
 
     def sw_render(self, crend, dw, dh, left, top, right, bottom):
-
         source = crend.render_to_texture(True)
         sw, sh = source.get_size()
 
@@ -471,7 +470,6 @@ class Frame(renpy.display.displayable.Displayable):
         rv = dest
 
         def draw(x0, x1, y0, y1):
-
             # Compute the coordinates of the left, right, top, and
             # bottom sides of the region, for both the source and
             # destination surfaces.
@@ -522,15 +520,12 @@ class Frame(renpy.display.displayable.Displayable):
 
             # Scale or tile if we have to.
             if dstsize != srcsize:
-
                 if self.tile:
                     tilew, tileh = srcsize
                     dstw, dsth = dstsize
 
-                    xtiles = max(
-                        1, dstw // tilew + (1 if dstw % tilew else 0))
-                    ytiles = max(
-                        1, dsth // tileh + (1 if dsth % tileh else 0))
+                    xtiles = max(1, dstw // tilew + (1 if dstw % tilew else 0))
+                    ytiles = max(1, dsth // tileh + (1 if dsth % tileh else 0))
 
                     if dstw % tilew or dsth % tileh:
                         # Area is not an exact integer number of tiles
@@ -542,8 +537,7 @@ class Frame(renpy.display.displayable.Displayable):
                                 ytiles = max(1, ytiles - 1)
 
                     # Tile at least one tile in each direction
-                    surf2 = renpy.display.pgrender.surface_unscaled(
-                        (tilew * xtiles, tileh * ytiles), surf)
+                    surf2 = renpy.display.pgrender.surface_unscaled((tilew * xtiles, tileh * ytiles), surf)
 
                     for y in range(0, ytiles):
                         for x in range(0, xtiles):
@@ -601,7 +595,7 @@ class Frame(renpy.display.displayable.Displayable):
         return rv
 
     def visit(self):
-        rv = [ self.image ]
+        rv = [self.image]
         self.style._visit_frame(rv.append)
         return rv
 
@@ -619,7 +613,6 @@ class FileCurrentScreenshot(renpy.display.displayable.Displayable):
     """
 
     def __init__(self, empty=None, **properties):
-
         super(FileCurrentScreenshot, self).__init__(**properties)
 
         if empty is None:
@@ -628,7 +621,6 @@ class FileCurrentScreenshot(renpy.display.displayable.Displayable):
         self.empty = empty
 
     def render(self, width, height, st, at):
-
         ss = renpy.display.interface.screenshot_surface
 
         if ss is None:

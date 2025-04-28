@@ -125,7 +125,7 @@ preferences: Any = None
 initcode_ast_id: int = 0
 
 # The build_info.
-build_info: dict[str, Any] = { "info" : { } }
+build_info: dict[str, Any] = {"info": {}}
 
 
 class ExceptionInfo(object):
@@ -285,9 +285,7 @@ def context(index: int = -1):
     return contexts[index]
 
 
-def invoke_in_new_context(
-    callable: Callable[..., Any], *args: Any, **kwargs: Any
-):  # @ReservedAssignment
+def invoke_in_new_context(callable: Callable[..., Any], *args: Any, **kwargs: Any):  # @ReservedAssignment
     """
     :doc: context
 
@@ -331,7 +329,6 @@ def invoke_in_new_context(
         renpy.display.interface.enter_context()
 
     try:
-
         return callable(*args, **kwargs)
 
     except renpy.game.RestartContext:
@@ -343,13 +340,11 @@ def invoke_in_new_context(
         raise
 
     except renpy.game.JumpOutException as e:
-
         contexts[-2].force_checkpoint = True
         contexts[-2].abnormal = True
         raise renpy.game.JumpException(e.args[0])
 
     finally:
-
         if not restart_context:
             context.pop_all_dynamic()
 
@@ -404,7 +399,6 @@ def call_in_new_context(label: str, *args: Any, **kwargs: Any):
         renpy.store._kwargs = None
 
     try:
-
         context.goto_label(label)
         return renpy.execution.run_context(False)
 
@@ -414,7 +408,6 @@ def call_in_new_context(label: str, *args: Any, **kwargs: Any):
         raise renpy.game.JumpException(e.args[0])
 
     finally:
-
         contexts.pop()
         contexts[-1].do_deferred_rollback()
 
@@ -463,7 +456,6 @@ def call_replay(label: str, scope: dict[str, Any] | None = None):
     renpy.store._in_replay = label
 
     try:
-
         context.goto_label("_start_replay")
         renpy.execution.run_context(False)
 
@@ -471,7 +463,6 @@ def call_replay(label: str, scope: dict[str, Any] | None = None):
         pass
 
     finally:
-
         context.pop_all_dynamic()
 
         contexts.pop()

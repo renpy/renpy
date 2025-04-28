@@ -30,7 +30,6 @@ def expose_file(fn: str):
     """
 
     if renpy.android:
-
         try:
             os.chmod(fn, 0o660)
         except Exception:
@@ -44,7 +43,6 @@ def expose_directory(dn: str):
     """
 
     if renpy.android:
-
         try:
             os.chmod(dn, 0o770)
         except Exception:

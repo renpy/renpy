@@ -37,9 +37,7 @@ def fix_octal_numbers(tokens: Iterator[tokenize.TokenInfo]):
 
     for t in tokens:
         if t.type == token.NUMBER and t.string != "0" and t.string.startswith("0"):
-            yield tokenize.TokenInfo(
-                token.NUMBER, f"0o{t.string[1:]}",
-                t.start, t.end, t.line)
+            yield tokenize.TokenInfo(token.NUMBER, f"0o{t.string[1:]}", t.start, t.end, t.line)
         else:
             yield t
 
@@ -65,7 +63,6 @@ def fix_backtick_repr(tokens: Iterator[tokenize.TokenInfo]):
     first = True
 
     for t in tokens:
-
         if t.type == token.OP and t.string == "`":
             if first:
                 yield tokenize.TokenInfo(token.NAME, "repr", t.start, t.end, t.line)
@@ -132,7 +129,6 @@ def fix_raise(line: list[tokenize.TokenInfo]):
 
 
 def fix_lines(tokens: Iterator[tokenize.TokenInfo]):
-
     def fix_line(line):
         line = fix_print(line)
         line = fix_raise(line)
@@ -150,7 +146,6 @@ def fix_lines(tokens: Iterator[tokenize.TokenInfo]):
     )
 
     for t in tokens:
-
         if not line and t.exact_type in extra_tokens:
             yield t
             continue
@@ -175,7 +170,6 @@ def fix_tokens(source: str):
     """
 
     try:
-
         bio = io.StringIO(source, None)
         tokens = tokenize.generate_tokens(bio.readline)
 
@@ -205,14 +199,12 @@ class ReorderGlobals(ast.NodeTransformer):
         self.globals = set()
 
     def visit_Global(self, node):
-
         for i in node.names:
             self.globals.add(i)
 
         return ast.Pass()
 
     def visit_FunctionDef(self, node: ast.FunctionDef):
-
         old_globals = self.globals
 
         try:
@@ -241,7 +233,6 @@ def fix_ast(tree):
     """
 
     try:
-
         tree = reorder_globals.visit(tree)
         return tree
 

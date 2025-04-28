@@ -219,7 +219,6 @@ class StoreDict(dict[Any, Any]):
         delta_ebc = set()
 
         if cycle:
-
             for k in rv:
                 if k not in self.ever_been_changed:
                     self.ever_been_changed.add(k)
@@ -282,7 +281,6 @@ def create_store(name: str):
     eval("1", d)
 
     for k, v in renpy.minstore.__dict__.items():
-
         if k in (
             "__all__",
             "__name__",
@@ -317,7 +315,6 @@ class StoreBackup:
     """
 
     def __init__(self):
-
         # The contents of the store for each store.
         self.store = {}
 
@@ -332,7 +329,6 @@ class StoreBackup:
                 self.backup_one(k)
 
     def backup_one(self, name):
-
         d = store_dicts[name]
 
         self.store[name] = dict(d)
@@ -351,7 +347,6 @@ class StoreBackup:
         sd.ever_been_changed.update(self.ever_been_changed[name])
 
     def restore(self):
-
         for k in self.store:
             self.restore_one(k)
 
@@ -367,7 +362,6 @@ def make_clean_stores():
     global clean_store_backup
 
     for _k, v in store_dicts.items():
-
         v.ever_been_changed.clear()
         v.begin()
 
@@ -394,7 +388,6 @@ def clean_store(name: str):
 
 
 def reset_store_changes(name: str):
-
     if not name.startswith("store."):
         name = "store." + name
 
@@ -516,7 +509,6 @@ def find_starred_match_patterns(node: ast.AST):
 
 
 class WrapNode(ast.NodeTransformer):
-
     def wrap_generator(self, node: ast.AST):
         """
         This wraps generators in lambdas, such that:
@@ -559,7 +551,6 @@ class WrapNode(ast.NodeTransformer):
         )
 
     def wrap_starred_assign(self, n: ast.stmt, targets: Iterable[ast.AST]):
-
         starred = find_starred_variables(targets)
 
         if not starred:
@@ -568,7 +559,6 @@ class WrapNode(ast.NodeTransformer):
         list_stmts: list[ast.stmt] = []
 
         for var in starred:
-
             call = ast.Call(
                 func=ast.Name(id="__renpy__list__", ctx=ast.Load()),
                 args=[ast.Name(id=var, ctx=ast.Load())],
@@ -590,14 +580,12 @@ class WrapNode(ast.NodeTransformer):
         )
 
     def wrap_starred_for(self, node: ast.For):
-
         starred = find_starred_variables([node.target])
 
         if not starred:
             return node
 
         for var in starred:
-
             call = ast.Call(
                 func=ast.Name(id="__renpy__list__", ctx=ast.Load()),
                 args=[ast.Name(id=var, ctx=ast.Load())],
@@ -614,7 +602,6 @@ class WrapNode(ast.NodeTransformer):
         return node
 
     def wrap_starred_with(self, node: ast.With):
-
         optional_vars: list[ast.expr] = []
 
         for i in node.items:
@@ -630,7 +617,6 @@ class WrapNode(ast.NodeTransformer):
             return node
 
         for var in starred:
-
             call = ast.Call(
                 func=ast.Name(id="__renpy__list__", ctx=ast.Load()),
                 args=[ast.Name(id=var, ctx=ast.Load())],
@@ -647,13 +633,11 @@ class WrapNode(ast.NodeTransformer):
         return node
 
     def wrap_match_case(self, node: ast.match_case):
-
         starred = find_starred_match_patterns(node.pattern)
         if not starred:
             return node
 
         for var, kind in reversed(starred):
-
             if kind == "list":
                 call = ast.Call(
                     func=ast.Name(id="__renpy__list__", ctx=ast.Load()),
@@ -866,18 +850,15 @@ def save_warnings():
         _: TextIO | None = None,
         line: str | None = None,
     ):
-        pending_warnings.append(
-            (
-                filename,
-                lineno,
-                warnings.formatwarning(message, category, filename, lineno, line),
-            )
-        )
+        pending_warnings.append((
+            filename,
+            lineno,
+            warnings.formatwarning(message, category, filename, lineno, line),
+        ))
 
     old = warnings.showwarning
 
     try:
-
         warnings.showwarning = showwarning
 
         yield
@@ -885,14 +866,11 @@ def save_warnings():
         compile_warnings.extend(pending_warnings)
 
     finally:
-
         warnings.showwarning = old
 
 
 # Flags used by py_compile.
-old_compile_flags = (
-    __future__.nested_scopes.compiler_flag | __future__.with_statement.compiler_flag
-)
+old_compile_flags = __future__.nested_scopes.compiler_flag | __future__.with_statement.compiler_flag
 
 new_compile_flags = (
     old_compile_flags
@@ -934,8 +912,11 @@ class LocationFixer:
     rest_line_col_delta: int
 
     def __init__(
-        self, node: ast.Module | ast.Expression, line_delta: int = 0,
-        first_line_col_delta: int = 0, rest_line_col_delta: int = 0,
+        self,
+        node: ast.Module | ast.Expression,
+        line_delta: int = 0,
+        first_line_col_delta: int = 0,
+        rest_line_col_delta: int = 0,
     ):
         self.line_delta = line_delta
         self.first_line_col_delta = first_line_col_delta
@@ -946,7 +927,7 @@ class LocationFixer:
     def fix(self, node: ast.stmt, lineno: int, col_offset: int):
         # Not all nodes have location attributes, e.g. expr_context.
         # But it's either none of them, or all 4 of them.
-        if 'lineno' not in node._attributes:
+        if "lineno" not in node._attributes:
             for c in ast.iter_child_nodes(node):
                 self.fix(c, lineno, col_offset)
 
@@ -967,7 +948,6 @@ class LocationFixer:
             node.col_offset = col_offset
 
         try:
-
             if node.end_lineno == 1:
                 node.end_col_offset += self.first_line_col_delta
             else:
@@ -979,13 +959,12 @@ class LocationFixer:
             node.end_lineno = node.lineno
             node.end_col_offset = node.col_offset
 
-
         end = (node.end_lineno, node.end_col_offset)
         for c in ast.iter_child_nodes(node):
             self.fix(c, lineno, col_offset)
 
             # Not all children may have end location attributes.
-            if 'lineno' in c._attributes:
+            if "lineno" in c._attributes:
                 if end < (c_end := (c.end_lineno, c.end_col_offset)):
                     end = c_end
 
@@ -1021,7 +1000,6 @@ def quote_eval(s: str):
     string = None
 
     while i < len_s:
-
         c = s[i]
 
         # Non-special characters.
@@ -1050,12 +1028,7 @@ def quote_eval(s: str):
 
         # String delimiters.
         if c in "'\"":
-
-            if (
-                ((string is None) or (len(string) == 3))
-                and (s[i + 1] == c)
-                and (s[i + 2] == c)
-            ):
+            if ((string is None) or (len(string) == 3)) and (s[i + 1] == c) and (s[i + 2] == c):
                 delim = c + c + c
             else:
                 delim = c
@@ -1084,7 +1057,9 @@ def quote_eval(s: str):
     # Since the last 2 characters are \0, those characters need to be stripped.
     return "".join(rv[:-2])
 
+
 IMMUTABLE_TYPES = (int, float, str, bool, bytes, type(None), complex)
+
 
 def is_immutable_value(v):
     """
@@ -1098,6 +1073,7 @@ def is_immutable_value(v):
         return all(is_immutable_value(i) for i in v)
 
     return False
+
 
 def py_compile(
     source: str | PyExpr | ast.Module,
@@ -1179,7 +1155,6 @@ def py_compile(
         flags |= __future__.annotations.compiler_flag
 
     if cache:
-
         key = (hashcode, lineno, filename, mode, renpy.script.PYC_MAGIC, flags, column)
         warnings_key = ("warnings", key)
 
@@ -1196,7 +1171,6 @@ def py_compile(
         bytecode = renpy.game.script.bytecode_oldcache.get(key, None)
 
         if bytecode is not None:
-
             try:
                 rv = marshal.loads(bytecode)
                 py_compile_cache[key] = rv
@@ -1204,9 +1178,9 @@ def py_compile(
                 renpy.game.script.bytecode_newcache[key] = bytecode
 
                 if warnings_key in renpy.game.script.bytecode_oldcache:
-                    renpy.game.script.bytecode_newcache[warnings_key] = (
-                        renpy.game.script.bytecode_oldcache[warnings_key]
-                    )
+                    renpy.game.script.bytecode_newcache[warnings_key] = renpy.game.script.bytecode_oldcache[
+                        warnings_key
+                    ]
 
                 return rv
 
@@ -1221,10 +1195,8 @@ def py_compile(
     source = source.replace("\r", "")
 
     if mode == "eval" and not ast_node:
-
         # If possible, compute the value of immutable literals.
         try:
-
             rv = ast.literal_eval(source)
             if is_immutable_value(rv):
                 rv = ("literal", rv)
@@ -1241,7 +1213,6 @@ def py_compile(
     line_offset = lineno - 1
 
     try:
-
         if mode == "hide":
             py_mode = "exec"
         else:
@@ -1250,19 +1221,14 @@ def py_compile(
         tree: Any = None
 
         with save_warnings():
-
             try:
-                tree = compile(
-                    source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True
-                )
+                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True)
 
             except SyntaxError:
                 handled = False
                 try:
                     fixed_source = renpy.compat.fixes.fix_tokens(source)
-                    tree = compile(
-                        fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True
-                    )
+                    tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, True)
                     handled = True
                 except Exception:
                     pass
@@ -1317,7 +1283,6 @@ def py_compile(
         return rv
 
     except SyntaxError as e:
-
         try:
             # e.text = # renpy.lexer.get_line_text(e.filename, e.lineno)
             e.text = source.splitlines()[e.lineno - 1]
@@ -1337,7 +1302,6 @@ def py_exec_bytecode(
     locals: dict[str, Any] | None = None,
     store: str = "store",
 ):  # @ReservedAssignment
-
     if hide:
         locals = {}  # @ReservedAssignment
 
@@ -1351,7 +1315,6 @@ def py_exec_bytecode(
 
 
 def py_exec(source: str, hide: bool = False, store: StoreDict | None = None):
-
     if store is None:
         store = store_dicts["store"]
 
@@ -1368,7 +1331,6 @@ def py_eval_bytecode(
     globals: dict[str, Any] | None = None,
     locals: dict[str, Any] | None = None,
 ):  # @ReservedAssignment
-
     if bytecode.__class__ is tuple:
         return bytecode[1]
 
@@ -1397,7 +1359,6 @@ def store_eval(
     globals: dict[str, Any] | None = None,
     locals: dict[str, Any] | None = None,
 ):
-
     if globals is None:
         globals = sys._getframe(1).f_globals  # pyright: ignore[reportPrivateUsage]
 
@@ -1424,7 +1385,6 @@ def raise_at_location(e: Exception, loc: tuple[str, int]):
 # This was used to proxy accesses to the store. Now it's kept around to deal
 # with cases where it might have leaked into a pickle.
 class StoreProxy(object):
-
     def __getattr__(self, k: str):
         return getattr(renpy.store, k)  # @UndefinedVariable
 

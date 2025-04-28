@@ -74,9 +74,7 @@ parse_errors: list[str] = []
 
 # A list of deferred parser error. These are potential parse errors that
 # can be released or not when parse errors are reported.
-deferred_parse_errors: collections.defaultdict[str, list[str]] = (
-    collections.defaultdict(list)
-)
+deferred_parse_errors: collections.defaultdict[str, list[str]] = collections.defaultdict(list)
 
 ################################################################################
 # Parsing of structures that are less than a full statement.
@@ -96,7 +94,6 @@ def parse_image_name(
     rv = [l.require(l.image_name_component)]
 
     while True:
-
         points.append(l.checkpoint())
 
         n = l.image_name_component()
@@ -172,7 +169,6 @@ def parse_image_specifier(l: renpy.lexer.Lexer):
         expression = None
 
     while True:
-
         if l.keyword("onlayer"):
             if layer:
                 l.error("multiple onlayer clauses are prohibited.")
@@ -182,7 +178,6 @@ def parse_image_specifier(l: renpy.lexer.Lexer):
             continue
 
         if l.keyword("at"):
-
             if at_list:
                 l.error("multiple at clauses are prohibited.")
             else:
@@ -191,7 +186,6 @@ def parse_image_specifier(l: renpy.lexer.Lexer):
             continue
 
         if l.keyword("as"):
-
             if tag:
                 l.error("multiple as clauses are prohibited.")
             else:
@@ -200,7 +194,6 @@ def parse_image_specifier(l: renpy.lexer.Lexer):
             continue
 
         if l.keyword("zorder"):
-
             if zorder is not None:
                 l.error("multiple zorder clauses are prohibited.")
             else:
@@ -209,7 +202,6 @@ def parse_image_specifier(l: renpy.lexer.Lexer):
             continue
 
         if l.keyword("behind"):
-
             if behind:
                 l.error("multiple behind clauses are prohibited.")
 
@@ -245,7 +237,6 @@ def parse_with(l: renpy.lexer.Lexer, node: ast.Node):
 
 
 def parse_menu(stmtl: renpy.lexer.Lexer, loc: tuple[str, int], arguments):
-
     l = stmtl.subblock_lexer()
 
     has_choice = False
@@ -261,7 +252,6 @@ def parse_menu(stmtl: renpy.lexer.Lexer, loc: tuple[str, int], arguments):
     item_arguments: list[ast.ArgumentInfo | None] = []
 
     while l.advance():
-
         if l.keyword("with"):
             with_ = l.require(l.simple_expression)
             l.expect_eol()
@@ -291,7 +281,6 @@ def parse_menu(stmtl: renpy.lexer.Lexer, loc: tuple[str, int], arguments):
         what = l.triple_string() or l.string()
 
         if who is not None and what is not None:
-
             if has_caption:
                 l.error("Say menuitems and captions may not exist in the same menu.")
 
@@ -327,7 +316,6 @@ def parse_menu(stmtl: renpy.lexer.Lexer, loc: tuple[str, int], arguments):
 
         # A string on a line by itself is a caption.
         if l.eol():
-
             if l.subblock:
                 l.error(
                     "Line is followed by a block, despite not being a menu choice. Did you forget a colon at the end of the line?"
@@ -421,35 +409,24 @@ def parse_parameters(l: renpy.lexer.Lexer):
             l.error("duplicate parameter name {!r}".format(name))
 
     while not l.match(r"\)"):
-
         if l.match(r"\*\*"):
-
             extrakw = l.require(l.name)
             name_parsed(extrakw)
             parameters[extrakw] = Parameter(extrakw, Parameter.VAR_KEYWORD)
 
             if l.match(r"="):
-                l.error(
-                    "a var-keyword parameter (**{}) cannot have a default value".format(
-                        extrakw
-                    )
-                )
+                l.error("a var-keyword parameter (**{}) cannot have a default value".format(extrakw))
 
             # Allow trailing comma
             l.match(r",")
 
             # extrakw is always last parameter
             if not l.match(r"\)"):
-                l.error(
-                    "no parameter can follow a var-keyword parameter (**{})".format(
-                        extrakw
-                    )
-                )
+                l.error("no parameter can follow a var-keyword parameter (**{})".format(extrakw))
 
             break
 
         elif l.match(r"\*"):
-
             if now_kwonly:
                 l.error("* may appear only once")
 
@@ -462,16 +439,11 @@ def parse_parameters(l: renpy.lexer.Lexer):
             extrapos = l.name()
 
             if extrapos is not None:
-
                 name_parsed(extrapos)
                 parameters[extrapos] = Parameter(extrapos, Parameter.VAR_POSITIONAL)
 
                 if l.match(r"="):
-                    l.error(
-                        "a var-positional parameter (*{}) cannot have a default value".format(
-                            extrapos
-                        )
-                    )
+                    l.error("a var-positional parameter (*{}) cannot have a default value".format(extrapos))
 
             else:
                 missing_kwonly = True
@@ -480,7 +452,6 @@ def parse_parameters(l: renpy.lexer.Lexer):
             l.error("expected comma between / and *")
 
         elif l.match("/"):
-
             if now_kwonly:
                 l.error("/ must be ahead of *")
 
@@ -491,14 +462,11 @@ def parse_parameters(l: renpy.lexer.Lexer):
                 l.error("at least one parameter must precede /")
 
             # All previous parameters are actually positional-only
-            parameters = collections.OrderedDict(
-                (k, p.replace(kind=p.POSITIONAL_ONLY)) for k, p in parameters.items()
-            )
+            parameters = collections.OrderedDict((k, p.replace(kind=p.POSITIONAL_ONLY)) for k, p in parameters.items())
 
             got_slash = True
 
         else:
-
             name = l.require(l.name)
 
             missing_kwonly = False
@@ -514,11 +482,7 @@ def parse_parameters(l: renpy.lexer.Lexer):
                     l.error("empty default value for parameter {!r}".format(name))
 
             elif now_default and not now_kwonly:
-                l.error(
-                    "non-default parameter {!r} follows a default parameter".format(
-                        name
-                    )
-                )
+                l.error("non-default parameter {!r} follows a default parameter".format(name))
 
             name_parsed(name)
             parameters[name] = Parameter(name, kind=kind, default=default)
@@ -598,9 +562,7 @@ def parse_arguments(l: renpy.lexer.Lexer):
         l.require(r",")
         index += 1
 
-    return renpy.parameter.ArgumentInfo(
-        arguments, starred_indexes, doublestarred_indexes
-    )
+    return renpy.parameter.ArgumentInfo(arguments, starred_indexes, doublestarred_indexes)
 
 
 ##############################################################################
@@ -621,7 +583,6 @@ class ParseTrie(object):
         name: list[str] | tuple[str, ...],
         function: Callable[..., ast.Node | list[ast.Node]],
     ):
-
         if not name:
             self.default = function
             return
@@ -634,9 +595,7 @@ class ParseTrie(object):
 
         self.words[first].add(rest, function)
 
-    def parse(
-        self, l: renpy.lexer.Lexer
-    ) -> Callable[..., ast.Node | list[ast.Node]] | ast.Node | None:
+    def parse(self, l: renpy.lexer.Lexer) -> Callable[..., ast.Node | list[ast.Node]] | ast.Node | None:
         old_pos = l.pos
 
         word = l.word() or l.match(r"\$")
@@ -675,7 +634,6 @@ def statement(keywords: str):
 
 @statement("if")
 def if_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     entries: list[tuple[str, list[ast.Node]]] = []
 
     condition = l.require(l.python_expression)
@@ -690,7 +648,6 @@ def if_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
     l.advance()
 
     while l.keyword("elif"):
-
         condition = l.require(l.python_expression)
         l.require(":")
         l.expect_eol()
@@ -718,7 +675,6 @@ def if_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 @statement("IF")
 def IF_statement(l: renpy.lexer.Lexer, _: tuple[str, int]):
-
     rv = None
 
     condition = l.require(l.python_expression)
@@ -732,7 +688,6 @@ def IF_statement(l: renpy.lexer.Lexer, _: tuple[str, int]):
     l.advance()
 
     while l.keyword("ELIF"):
-
         condition = l.require(l.python_expression)
         l.require(":")
         l.expect_eol()
@@ -858,11 +813,7 @@ def call_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]) -> list[ast.Node]
 
     arguments = parse_arguments(l)
 
-    rv: list[ast.Node] = [
-        ast.Call(
-            loc, target, expression, arguments, (expression and l.global_label or "")
-        )
-    ]
+    rv: list[ast.Node] = [ast.Call(loc, target, expression, arguments, (expression and l.global_label or ""))]
 
     if l.keyword("from"):
         name = l.require(l.label_name_declare)
@@ -938,7 +889,6 @@ def show_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 @statement("show layer")
 def show_layer_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     layer = l.require(l.image_name_component)
 
     if l.keyword("at"):
@@ -963,7 +913,6 @@ def show_layer_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 @statement("camera")
 def camera_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     layer = l.image_name_component() or "master"
 
     if l.keyword("at"):
@@ -1040,7 +989,6 @@ def image_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 @statement("define")
 def define_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     priority = l.integer()
     if priority:
         priority = int(priority)
@@ -1087,7 +1035,6 @@ def define_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 @statement("default")
 def default_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     priority = l.integer()
     if priority:
         priority = int(priority)
@@ -1121,7 +1068,6 @@ def default_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 @statement("transform")
 def transform_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     priority = l.integer()
     if priority:
         priority = int(priority)
@@ -1144,22 +1090,12 @@ def transform_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
                 found_pos_only = True
                 l.deferred_error(
                     "atl_pos_only",
-                    "the transform statement does not take positional-only parameters ({} is not allowed)".format(
-                        p
-                    ),
+                    "the transform statement does not take positional-only parameters ({} is not allowed)".format(p),
                 )
             elif p.kind == p.VAR_POSITIONAL:
-                l.error(
-                    "the transform statement does not take *args ({} is not allowed)".format(
-                        p
-                    )
-                )
+                l.error("the transform statement does not take *args ({} is not allowed)".format(p))
             elif p.kind == p.VAR_KEYWORD:
-                l.error(
-                    "the transform statement does not take **kwargs ({} is not allowed)".format(
-                        p
-                    )
-                )
+                l.error("the transform statement does not take **kwargs ({} is not allowed)".format(p))
             elif (p.kind == p.KEYWORD_ONLY) and (p.default is p.empty):
                 l.error(
                     "the transform statement does not take required keyword-only parameters ({} is not allowed)".format(
@@ -1232,7 +1168,6 @@ def label_statement(
     loc: tuple[str, int],
     init: bool = False,
 ) -> ast.Label:
-
     name = l.require(l.label_name_declare)
     l.set_global_label(name)
     parameters = parse_parameters(l)
@@ -1258,7 +1193,6 @@ def init_offset_statement(
     l: renpy.lexer.Lexer,
     _: tuple[str, int],
 ) -> list[ast.Node]:
-
     l.require("=")
     offset = l.require(l.integer)
 
@@ -1271,15 +1205,12 @@ def init_offset_statement(
 
 
 @statement("init label")
-def init_label_statement(
-    l: renpy.lexer.Lexer, loc: tuple[str, int]
-) -> ast.Node | list[ast.Node]:
+def init_label_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]) -> ast.Node | list[ast.Node]:
     return label_statement(l, loc, init=True)
 
 
 @statement("init")
 def init_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     p = l.integer()
 
     if p:
@@ -1288,7 +1219,6 @@ def init_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
         priority = 0
 
     if l.match(":"):
-
         l.expect_eol()
         l.expect_block("init statement")
 
@@ -1297,7 +1227,6 @@ def init_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
         l.advance()
 
     else:
-
         old_init = l.init
 
         try:
@@ -1321,7 +1250,6 @@ def init_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 @statement("rpy monologue")
 def rpy_statement(l: renpy.lexer.Lexer, _: tuple[str, int]) -> list[ast.Node]:
-
     if l.keyword("double"):
         l.monologue_delimiter = "\n\n"
     elif l.keyword("single"):
@@ -1340,7 +1268,6 @@ def rpy_statement(l: renpy.lexer.Lexer, _: tuple[str, int]) -> list[ast.Node]:
 
 @statement("screen")
 def screen_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     slver = l.integer()
     if slver is not None:
         screen_language = int(slver)
@@ -1407,9 +1334,7 @@ def translate_strings(
             ll.error("could not parse string")
 
     while ll.advance():
-
         if ll.keyword("old"):
-
             if old is not None:
                 ll.error("previous string is missing a translation")
 
@@ -1421,7 +1346,6 @@ def translate_strings(
                 ll.error("Could not parse string.")
 
         elif ll.keyword("new"):
-
             if old is None:
                 ll.error("no string to translate")
 
@@ -1465,10 +1389,7 @@ translate_none_files: set[str] = set()
 
 
 @statement("translate")
-def translate_statement(
-    l: renpy.lexer.Lexer, loc: tuple[str, int]
-) -> ast.Node | list[ast.Node]:
-
+def translate_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]) -> ast.Node | list[ast.Node]:
     language = l.require(l.name)
 
     if language == "None":
@@ -1534,7 +1455,6 @@ def translate_statement(
 
 @statement("style")
 def style_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     # Parse priority and name.
     name = l.require(l.word)
 
@@ -1567,9 +1487,7 @@ def style_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
         if l.keyword("del"):
             propname = l.require(l.name)
 
-            if (
-                propname not in renpy.style.prefixed_all_properties
-            ):  # @UndefinedVariable
+            if propname not in renpy.style.prefixed_all_properties:  # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
             rv.delattr.append(propname)  # type: ignore
@@ -1613,7 +1531,6 @@ def style_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
         ll = l.subblock_lexer()
 
         while ll.advance():
-
             while parse_clause(ll):
                 pass
 
@@ -1629,11 +1546,9 @@ def style_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]):
 
 @statement("rpy python")
 def rpy_python(l: renpy.lexer.Lexer, loc: tuple[str, int]):
-
     rv: list[ast.Node] = []
 
     while (not rv) or l.match(","):
-
         r = l.match("3")  # for compatibility with old code.
         if not r:
             r = l.require(l.word, "__future__ name")
@@ -1656,7 +1571,6 @@ def finish_say(
     temporary_attributes: tuple[str, ...] | None = None,
     interact: bool = True,
 ):
-
     if what is None:
         return None
 
@@ -1665,7 +1579,6 @@ def finish_say(
     identifier = None
 
     while True:
-
         if l.keyword("nointeract"):
             interact = False
 
@@ -1676,7 +1589,6 @@ def finish_say(
             with_ = l.require(l.simple_expression)
 
         elif l.keyword("id"):
-
             identifier = l.require(l.name)
 
         else:
@@ -1691,14 +1603,12 @@ def finish_say(
             arguments = args
 
     if isinstance(what, list):
-
         if len(what) > 1 and identifier is not None:
             l.error("Monologue mode say statements cannot have an id clause.")
 
         rv: list[ast.Node] = []
 
         for i in what:
-
             if i == "{clear}":
                 rv.append(
                     ast.UserStatement(
@@ -1766,10 +1676,7 @@ def say_attributes(l: renpy.lexer.Lexer) -> tuple[str, ...] | None:
 
 
 @statement("")
-def say_statement(
-    l: renpy.lexer.Lexer, loc: tuple[str, int]
-) -> list[ast.Node] | ast.Node:
-
+def say_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]) -> list[ast.Node] | ast.Node:
     state = l.checkpoint()
 
     # Try for a single-argument say statement.
@@ -1778,7 +1685,6 @@ def say_statement(
     rv = finish_say(l, loc, None, what)
 
     if (rv is not None) and l.eol():
-
         # We have a one-argument say statement.
         l.expect_noblock("say statement")
         l.advance()
@@ -1800,7 +1706,6 @@ def say_statement(
     what = l.triple_string() or l.string()
 
     if (who is not None) and (what is not None):
-
         rv = cast(
             ast.Node | list[ast.Node],
             finish_say(l, loc, who, what, attributes, temporary_attributes),
@@ -1862,7 +1767,6 @@ def parse_block(l: renpy.lexer.Lexer):
 
     while not l.eob:
         try:
-
             stmt = parse_statement(l)
 
             if isinstance(stmt, list):
@@ -1956,9 +1860,7 @@ def release_deferred_errors():
         release("atl_pos_only")
 
     if deferred_parse_errors:
-        raise Exception(
-            "Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors))
-        )
+        raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))
 
 
 def get_parse_errors():
@@ -1972,7 +1874,6 @@ def get_parse_errors():
 
 
 def report_parse_errors():
-
     release_deferred_errors()
 
     if not parse_errors:
@@ -1997,7 +1898,6 @@ def report_parse_errors():
         print("", file=f)
 
         for i in parse_errors:
-
             full_text += i
             full_text += "\n\n"
 

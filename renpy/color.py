@@ -159,7 +159,6 @@ class Color(tuple[int, int, int, int]):
         rgb: tuple[float, float, float] | None = None,
         alpha: float = 1.0,
     ):
-
         if color is not None:
             c = color
 
@@ -190,11 +189,7 @@ class Color(tuple[int, int, int, int]):
                     b = int(c[2], 16) * 0x11
                     a = int(c[3], 16) * 0x11
                 else:
-                    raise Exception(
-                        "Color string {!r} must be 3, 4, 6, or 8 hex digits long.".format(
-                            c
-                        )
-                    )
+                    raise Exception("Color string {!r} must be 3, 4, 6, or 8 hex digits long.".format(c))
 
                 return tuple.__new__(cls, (r, g, b, a))
 
@@ -241,9 +236,7 @@ class Color(tuple[int, int, int, int]):
     @property
     def hexcode(self):
         if self.alpha != 1.0:
-            return "#{self[0]:02x}{self[1]:02x}{self[2]:02x}{self[3]:02x}".format(
-                self=self
-            )
+            return "#{self[0]:02x}{self[1]:02x}{self[2]:02x}{self[3]:02x}".format(self=self)
         else:
             return "#{self[0]:02x}{self[1]:02x}{self[2]:02x}".format(self=self)
 
@@ -323,28 +316,24 @@ class Color(tuple[int, int, int, int]):
     def __add__(self, other: tuple[int, ...] | str | Color | None):
         other = Color(other)
 
-        return Color(
-            (
-                cast(int, self[0] + other[0]),
-                cast(int, self[1] + other[1]),
-                cast(int, self[2] + other[2]),
-                cast(int, self[3] + other[3]),
-            )
-        )
+        return Color((
+            cast(int, self[0] + other[0]),
+            cast(int, self[1] + other[1]),
+            cast(int, self[2] + other[2]),
+            cast(int, self[3] + other[3]),
+        ))
 
     __radd__ = __add__
 
     def __sub__(self, other: tuple[int, ...] | str | Color | None):
         other = Color(other)
 
-        return Color(
-            (
-                cast(int, self[0] - other[0]),
-                cast(int, self[1] - other[1]),
-                cast(int, self[2] - other[2]),
-                cast(int, self[3] - other[3]),
-            )
-        )
+        return Color((
+            cast(int, self[0] - other[0]),
+            cast(int, self[1] - other[1]),
+            cast(int, self[2] - other[2]),
+            cast(int, self[3] - other[3]),
+        ))
 
     def __rsub__(self, other: tuple[int, ...] | str | Color | None):
         other = Color(other)
@@ -355,20 +344,17 @@ class Color(tuple[int, int, int, int]):
         self,
         other: tuple[int, ...] | str | Color | None | renpy.display.im.matrix,
     ):
-
         if isinstance(other, renpy.display.im.matrix):
             return Color(tuple(int(i) for i in other.vector_mul(self)[:4]))
 
         other = Color(other)
 
-        return Color(
-            (
-                cast(int, self[0] * other[0]),
-                cast(int, self[1] * other[1]),
-                cast(int, self[2] * other[2]),
-                cast(int, self[3] * other[3]),
-            )
-        )
+        return Color((
+            cast(int, self[0] * other[0]),
+            cast(int, self[1] * other[1]),
+            cast(int, self[2] * other[2]),
+            cast(int, self[3] * other[3]),
+        ))
 
     __rmul__ = __mul__  # type: ignore
 
@@ -389,11 +375,9 @@ class Color(tuple[int, int, int, int]):
         b: float | tuple[float, ...] | Color,
         fraction: float,
     ):
-
         if isinstance(a, tuple):
             rv = tuple(
-                self.interpolate_core(ac, bc, fraction)
-                for ac, bc in zip(a, cast(tuple[float, float, float], b))
+                self.interpolate_core(ac, bc, fraction) for ac, bc in zip(a, cast(tuple[float, float, float], b))
             )
             return type(a)(cast(tuple[int, ...], rv))
         else:

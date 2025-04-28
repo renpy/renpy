@@ -23,8 +23,7 @@
 # allows us to enhance the feature set of pygame in a renpy specific way.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import pygame_sdl2
@@ -67,10 +66,7 @@ def pixellate(src, dst, avgwidth, avgheight, outwidth, outheight):
     The two surfaces must either have the same alpha or no alpha.
     """
 
-    convert_and_call(_renpy.pixellate,
-                     src, dst,
-                     avgwidth, avgheight,
-                     outwidth, outheight)
+    convert_and_call(_renpy.pixellate, src, dst, avgwidth, avgheight, outwidth, outheight)
 
 
 def scale(s, size):
@@ -92,10 +88,22 @@ def scale(s, size):
 # for 24 and 32 bpp modes. We represent 0xff000000 as positive and negative
 # numbers so that it doesn't yield a warning, and so that it works on
 # 32 and 64 bit platforms.
-if sys.byteorder == 'big':
-    bo32 = { 255 : 3, 65280 : 2, 16711680 : 1, 4278190080 : 0, -16777216 : 0, }
+if sys.byteorder == "big":
+    bo32 = {
+        255: 3,
+        65280: 2,
+        16711680: 1,
+        4278190080: 0,
+        -16777216: 0,
+    }
 else:
-    bo32 = { 255 : 0, 65280 : 1, 16711680 : 2, 4278190080 : 3, -16777216 : 3, }
+    bo32 = {
+        255: 0,
+        65280: 1,
+        16711680: 2,
+        4278190080: 3,
+        -16777216: 3,
+    }
 
 bo_cache = None
 
@@ -110,19 +118,18 @@ def byte_offset(src):
     global bo_cache
 
     if bo_cache is None:
-        bo_cache = [ bo32[i] for i in src.get_masks() ]
+        bo_cache = [bo32[i] for i in src.get_masks()]
 
     return bo_cache
 
 
 def endian_order(src, r, g, b, a):
-
     if bo_cache is None:
         byte_offset(src)
 
-    rv = [ a, a, a, a ]
+    rv = [a, a, a, a]
 
-    for i, index_i in zip((r, g, b, a), bo_cache): # type: ignore
+    for i, index_i in zip((r, g, b, a), bo_cache):  # type: ignore
         rv[index_i] = i
 
     return rv
@@ -134,9 +141,7 @@ def linmap(src, dst, rmap, gmap, bmap, amap):
     parameters should be fixed-point integers, with 1.0 == 256.
     """
 
-    convert_and_call(_renpy.linmap,
-                     src, dst,
-                     *endian_order(dst, rmap, gmap, bmap, amap))
+    convert_and_call(_renpy.linmap, src, dst, *endian_order(dst, rmap, gmap, bmap, amap))
 
 
 save_png = _renpy.save_png
@@ -150,9 +155,7 @@ def map(src, dst, rmap, gmap, bmap, amap):  # @ReservedAssignment
     component value is mapped to.
     """
 
-    convert_and_call(_renpy.map,
-                     src, dst,
-                     *endian_order(dst, rmap, gmap, bmap, amap))
+    convert_and_call(_renpy.map, src, dst, *endian_order(dst, rmap, gmap, bmap, amap))
 
 
 def blur(src, wrk, dst, xrad, yrad=None):  # @ReservedAssignment
@@ -190,17 +193,9 @@ def twomap(src, dst, white, black):
     ramp = renpy.display.im.ramp
 
     if br == 0 and bg == 0 and bb == 0:
-        linmap(src, dst,
-               wr + 1,
-               wg + 1,
-               wb + 1,
-               wa + 1)
+        linmap(src, dst, wr + 1, wg + 1, wb + 1, wa + 1)
     else:
-        map(src, dst,
-            ramp(br, wr),
-            ramp(bg, wg),
-            ramp(bb, wb),
-            ramp(0, wa))
+        map(src, dst, ramp(br, wr), ramp(bg, wg), ramp(bb, wb), ramp(0, wa))
 
 
 def alpha_munge(src, dst, amap):
@@ -220,19 +215,17 @@ def alpha_munge(src, dst, amap):
 
 
 def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, dh=None, precise=0):
-
     if sw is None:
         sw, sh = src.get_size()
     if dw is None:
         dw, dh = dst.get_size()
 
     while True:
-
         if sw <= dw * 2 and sh <= dh * 2:
             break
 
         nsw = max(sw // 2, dw)
-        nsh = max(sh // 2, dh) # type: ignore
+        nsh = max(sh // 2, dh)  # type: ignore
 
         nsrc = renpy.display.pgrender.surface((nsw, nsh), src.get_masks()[3])
 
@@ -259,21 +252,39 @@ def imageblend(a, b, dst, img, amap):
 
 
 def colormatrix(src, dst, matrix):
-    c = [ matrix[0:5], matrix[5:10], matrix[10:15], matrix[15:20] ]
+    c = [matrix[0:5], matrix[5:10], matrix[10:15], matrix[15:20]]
     offs = byte_offset(src)
 
-    o = [ None ] * 4
+    o = [None] * 4
     for i in range(0, 4):
-        o[offs[i]] = i # type: ignore
+        o[offs[i]] = i  # type: ignore
 
-    _renpy.colormatrix(src, dst,
-                       c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4], # type: ignore
-                       c[o[1]][o[0]], c[o[1]][o[1]], c[o[1]][o[2]], c[o[1]][o[3]], c[o[1]][4], # type: ignore
-                       c[o[2]][o[0]], c[o[2]][o[1]], c[o[2]][o[2]], c[o[2]][o[3]], c[o[2]][4], # type: ignore
-                       c[o[3]][o[0]], c[o[3]][o[1]], c[o[3]][o[2]], c[o[3]][o[3]], c[o[3]][4]) # type: ignore
+    _renpy.colormatrix(
+        src,
+        dst,
+        c[o[0]][o[0]],
+        c[o[0]][o[1]],
+        c[o[0]][o[2]],
+        c[o[0]][o[3]],
+        c[o[0]][4],  # type: ignore
+        c[o[1]][o[0]],
+        c[o[1]][o[1]],
+        c[o[1]][o[2]],
+        c[o[1]][o[3]],
+        c[o[1]][4],  # type: ignore
+        c[o[2]][o[0]],
+        c[o[2]][o[1]],
+        c[o[2]][o[2]],
+        c[o[2]][o[3]],
+        c[o[2]][4],  # type: ignore
+        c[o[3]][o[0]],
+        c[o[3]][o[1]],
+        c[o[3]][o[2]],
+        c[o[3]][o[3]],
+        c[o[3]][4],
+    )  # type: ignore
 
 
 def subpixel(src, dst, x, y):
-
     shift = src.get_shifts()[3]
     _renpy.subpixel(src, dst, x, y, shift)

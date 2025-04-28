@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -39,7 +39,6 @@ def find_focus(pattern):
     """
 
     def match(f):
-
         if pattern is None:
             if f.x is None:
                 return "default"
@@ -47,7 +46,7 @@ def find_focus(pattern):
                 return None
 
         if f.x is None:
-            t = renpy.display.tts.root._tts_all() # @UndefinedVariable
+            t = renpy.display.tts.root._tts_all()  # @UndefinedVariable
         else:
             t = f.widget._tts_all()
 
@@ -57,10 +56,9 @@ def find_focus(pattern):
             return None
 
     # A list of alt_text, focus pairs.
-    matching = [ ]
+    matching = []
 
     for f in renpy.display.focus.focus_list:
-
         alt = match(f)
 
         if alt is not None:
@@ -71,7 +69,7 @@ def find_focus(pattern):
 
     # This gets the matching displayable with the shortest alt text, which
     # is likely what we want.
-    matching.sort(key=lambda a : (len(a[0]), a[0]))
+    matching.sort(key=lambda a: (len(a[0]), a[0]))
     return matching[0][1]
 
 
@@ -107,7 +105,7 @@ def find_position(f, position):
         return (
             relative_position(x, posx, renpy.config.screen_width),
             relative_position(y, posy, renpy.config.screen_height),
-            )
+        )
 
     orig_f = f
 
@@ -123,7 +121,6 @@ def find_position(f, position):
     y = relative_position(y, posy, f.h) + f.y
 
     for _i in range(100):
-
         x = int(x)
         y = int(y)
 

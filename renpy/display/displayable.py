@@ -20,11 +20,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import copy
 
 import renpy
+
 
 def place(width, height, sw, sh, placement):
     """
@@ -80,14 +81,14 @@ class DisplayableArguments(renpy.object.Object):
     """
 
     # The name of the displayable without any arguments.
-    name = () # type: tuple
+    name = ()  # type: tuple
 
     # Arguments supplied.
-    args = () # type: tuple
+    args = ()  # type: tuple
 
     # The style prefix in play. This is used by DynamicImage to figure
     # out the prefix list to apply.
-    prefix = None # Optional[str]
+    prefix = None  # Optional[str]
 
     # True if lint is in use.
     lint = False
@@ -106,10 +107,12 @@ class DisplayableArguments(renpy.object.Object):
 
     def extraneous(self):
         if renpy.config.developer and renpy.config.report_extraneous_attributes:
-            raise Exception("Image '{}' does not accept attributes '{}'.".format(
-                " ".join(self.name),
-                " ".join(self.args),
-                ))
+            raise Exception(
+                "Image '{}' does not accept attributes '{}'.".format(
+                    " ".join(self.name),
+                    " ".join(self.args),
+                )
+            )
 
 
 default_style = renpy.style.Style("default")
@@ -142,7 +145,7 @@ class Displayable(renpy.object.Object):
     full_focus_name = None
 
     # A role ('selected_' or '' that prefixes the style).
-    role = ''
+    role = ""
 
     # The event we'll pass on to our parent transform.
     transform_event = None
@@ -156,7 +159,7 @@ class Displayable(renpy.object.Object):
     _main = None
 
     # A list of the children that make up this composite displayable.
-    _composite_parts = [ ]
+    _composite_parts = []
 
     # The location the displayable was created at, if known.
     _location = None
@@ -191,22 +194,23 @@ class Displayable(renpy.object.Object):
 
     # Used by a transition (or transition-like object) to determine how long to
     # delay for.
-    delay = None # type: float|None
+    delay = None  # type: float|None
 
     # An id that can be used to identify this displayable.
-    id = None # type: str|None
+    id = None  # type: str|None
 
     def __ne__(self, o):
         return not (self == o)
 
-    def __init__(self, focus=None, default=False, style='default', _args=None, tooltip=None, default_focus=False, **properties):
-
+    def __init__(
+        self, focus=None, default=False, style="default", _args=None, tooltip=None, default_focus=False, **properties
+    ):
         global default_style
 
         if (style == "default") and (not properties):
             self.style = default_style
         else:
-            self.style = renpy.style.Style(style, properties) # @UndefinedVariable
+            self.style = renpy.style.Style(style, properties)  # @UndefinedVariable
 
         self.focus_name = focus
         self.default = default or default_focus
@@ -312,16 +316,12 @@ class Displayable(renpy.object.Object):
         reprinfo = self._repr_info()
         if reprinfo is None:
             return rep
-        if reprinfo and not ((reprinfo[0] == '(') and (reprinfo[-1] == ')')):
+        if reprinfo and not ((reprinfo[0] == "(") and (reprinfo[-1] == ")")):
             reprinfo = "".join(("(", reprinfo, ")"))
         parto = rep.rpartition(" at ")
-        return " ".join((parto[0],
-                         reprinfo,
-                         "at",
-                         parto[2]))
+        return " ".join((parto[0], reprinfo, "at", parto[2]))
 
     def find_focusable(self, callback, focus_name):
-
         focus_name = self.focus_name or focus_name
 
         if self.focusable:
@@ -353,7 +353,6 @@ class Displayable(renpy.object.Object):
         self.set_style_prefix(self.role + "idle_", True)
 
     def is_focused(self):
-
         if renpy.display.focus.grab and renpy.display.focus.grab is not self:
             return
 
@@ -422,7 +421,6 @@ class Displayable(renpy.object.Object):
             seen = set()
 
         for d in self.visit():
-
             if d is None:
                 continue
 
@@ -442,7 +440,7 @@ class Displayable(renpy.object.Object):
         list may also include None values.
         """
 
-        return [ ]
+        return []
 
     def per_interact(self):
         """
@@ -518,7 +516,6 @@ class Displayable(renpy.object.Object):
         """
 
         if self.transform_event_responder or self._store_transform_event:
-
             if event == self.transform_event:
                 return
 
@@ -578,8 +575,7 @@ class Displayable(renpy.object.Object):
         return
 
     def _tts_common(self, default_alt=None, reverse=False):
-
-        rv = [ ]
+        rv = []
 
         if reverse:
             order = -1
@@ -594,14 +590,13 @@ class Displayable(renpy.object.Object):
 
                 if isinstance(speech, renpy.display.tts.TTSDone):
                     if speech.strip():
-                        rv = [ speech ]
+                        rv = [speech]
                     else:
-                        rv = [ ]
+                        rv = []
                     break
 
                 if speech.strip():
                     rv.append(speech)
-
 
         rv = ": ".join(rv)
         rv = rv.replace("::", ":")
@@ -613,7 +608,7 @@ class Displayable(renpy.object.Object):
             alt = default_alt
 
         if alt is not None:
-            rv = renpy.substitutions.substitute(alt, scope={ "text" : rv })[0]
+            rv = renpy.substitutions.substitute(alt, scope={"text": rv})[0]
 
         rv = type(speech)(rv)
 

@@ -44,7 +44,7 @@ import renpy
 
 
 class HasReportTraceback(Protocol):
-    def report_traceback(self, name: str, last: bool, frame: 'FrameType') -> list['FrameSummary'] | None:
+    def report_traceback(self, name: str, last: bool, frame: "FrameType") -> list["FrameSummary"] | None:
         """
         Convert a frame corresponding to a call of a method `name` of this object to a
         list of FrameSummary objects.
@@ -229,14 +229,13 @@ class TextIOExceptionPrintContext(ExceptionPrintContext):
         self._print()
 
     def exceptions_separator(self, index: int, total: int):
-        truncated = (index >= self.max_group_width)
-        title = f'{index + 1}' if not truncated else '...'
-        self._print(
-            ('+-' if index == 0 else '  ') +
-            f'+---------------- {title} ----------------')
+        truncated = index >= self.max_group_width
+        title = f"{index + 1}" if not truncated else "..."
+        self._print(("+-" if index == 0 else "  ") + f"+---------------- {title} ----------------")
 
     def exceptions_close(self):
         self._print("+------------------------------------")
+
 
 class ANSIColoredPrintContext(TextIOExceptionPrintContext):
     RESET = "\x1b[0m"
@@ -249,12 +248,9 @@ class ANSIColoredPrintContext(TextIOExceptionPrintContext):
         if name is None:
             name_str = ""
         else:
-            name_str = f', in {self.MAGENTA}{name}{self.RESET}'
+            name_str = f", in {self.MAGENTA}{name}{self.RESET}"
 
-        self._print(
-            f'File {self.MAGENTA}"{filename}"{self.RESET}, '
-            f'line {self.MAGENTA}{lineno}{self.RESET}'
-            f'{name_str}')
+        self._print(f'File {self.MAGENTA}"{filename}"{self.RESET}, line {self.MAGENTA}{lineno}{self.RESET}{name_str}')
 
     def source_carets(self, line, carets):
         if carets is None:
@@ -281,6 +277,7 @@ class ANSIColoredPrintContext(TextIOExceptionPrintContext):
         else:
             self._print(f"{self.BOLD_MAGENTA}{exc_type}{self.RESET}: {self.MAGENTA}{text}{self.RESET}")
 
+
 class NonColoredExceptionPrintContext(TextIOExceptionPrintContext):
     @staticmethod
     def _display_width(line: str) -> Iterator[int]:
@@ -302,7 +299,7 @@ class NonColoredExceptionPrintContext(TextIOExceptionPrintContext):
         if name is None:
             name_str = ""
         else:
-            name_str = f', in {name}'
+            name_str = f", in {name}"
 
         self._print(f'File "{filename}", line {lineno}{name_str}')
 
@@ -322,8 +319,7 @@ class NonColoredExceptionPrintContext(TextIOExceptionPrintContext):
 
 
 def MaybeColoredExceptionPrintContext(
-    file: TextIO | None = None,
-    **kwargs: Unpack[ExceptionPrintContextKwargs]
+    file: TextIO | None = None, **kwargs: Unpack[ExceptionPrintContextKwargs]
 ) -> ExceptionPrintContext:
     """
     Returns exception print context that writes to a file or other text IO.
@@ -407,6 +403,7 @@ def normalize_renpy_line_offset(filename: str, linenumber: int, offset: int, lin
     # Correct extra offset from _ren.py transformation.
     if filename.endswith("_ren.py"):
         from renpy.lexer import ren_py_to_rpy_offsets
+
         with open(filename, "r", encoding="utf-8") as f:
             lines = f.readlines()  # TODO: optimize this block?
 
@@ -418,10 +415,11 @@ def normalize_renpy_line_offset(filename: str, linenumber: int, offset: int, lin
                     break
 
     if not line.isascii():
-        as_utf8 = line.encode('utf-8')
+        as_utf8 = line.encode("utf-8")
         offset = len(as_utf8[:offset].decode("utf-8", errors="replace"))
 
     from renpy.lexer import munge_filename, get_string_munger
+
     munge_prefix = munge_filename(filename)
 
     if munge_prefix in line:
@@ -430,10 +428,7 @@ def normalize_renpy_line_offset(filename: str, linenumber: int, offset: int, lin
 
         idx = 0
         while True:
-            idx = munged_line.find(
-                munge_prefix,
-                idx,
-                offset + len_prefix)
+            idx = munged_line.find(munge_prefix, idx, offset + len_prefix)
 
             if idx == -1:
                 break
@@ -443,7 +438,8 @@ def normalize_renpy_line_offset(filename: str, linenumber: int, offset: int, lin
 
     return offset
 
-def _calculate_anchors(frame_summary: 'FrameSummary'):
+
+def _calculate_anchors(frame_summary: "FrameSummary"):
     """
     For given frame summary, return None if there is no column information or
     other error happens, or list of 4 (lineno, colno) tuples that represent:
@@ -469,26 +465,21 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
 
     # character index of the start/end of the instruction
     start_offset = normalize_renpy_line_offset(
-        frame_summary.filename,
-        frame_summary.lineno,
-        frame_summary.colno,
-        first_line)
+        frame_summary.filename, frame_summary.lineno, frame_summary.colno, first_line
+    )
 
     end_offset = normalize_renpy_line_offset(
-        frame_summary.filename,
-        frame_summary.end_lineno,
-        frame_summary.end_colno,
-        last_line)
+        frame_summary.filename, frame_summary.end_lineno, frame_summary.end_colno, last_line
+    )
 
-    default_anchors = [
-        (0, start_offset), (0, start_offset),
-        (end_lineno, end_offset), (end_lineno, end_offset)]
+    default_anchors = [(0, start_offset), (0, start_offset), (end_lineno, end_offset), (end_lineno, end_offset)]
 
     # get exact code segment corresponding to the instruction
     segment = "\n".join(all_lines)
-    segment = segment[start_offset:len(segment) - (len(last_line) - end_offset)]
+    segment = segment[start_offset : len(segment) - (len(last_line) - end_offset)]
 
     from ast import parse, expr, BinOp, Expr, Subscript, Call
+
     # Without parentheses, `segment` is parsed as a statement.
     # Binary ops, subscripts, and calls are expressions, so
     # we can wrap them with parentheses to parse them as
@@ -518,7 +509,7 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
 
     def normalize(lineno: int, offset: int):
         """Get character index given byte offset"""
-        as_utf8 = lines[lineno].encode('utf-8')
+        as_utf8 = lines[lineno].encode("utf-8")
         return len(as_utf8[:offset].decode("utf-8", errors="replace"))
 
     def next_valid_char(lineno: int, col: int):
@@ -584,8 +575,7 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
             left_lineno, left_col = setup_positions(left)
 
             # First operator character is the first non-space/')' character
-            left_lineno, left_col = increment_until(
-                left_lineno, left_col, lambda x: not x.isspace() and x != ')')
+            left_lineno, left_col = increment_until(left_lineno, left_col, lambda x: not x.isspace() and x != ")")
 
             # binary op is 1 or 2 characters long, on the same line,
             # before the right subexpression
@@ -595,8 +585,7 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
                 right_col < len(lines[right_lineno])
                 and (
                     # operator char should not be in the right subexpression
-                    right.lineno - 2 > right_lineno or
-                    right_col < normalize(right.lineno - 2, right.col_offset)
+                    right.lineno - 2 > right_lineno or right_col < normalize(right.lineno - 2, right.col_offset)
                 )
                 and not (ch := lines[right_lineno][right_col]).isspace()
                 and ch not in "\\#"
@@ -623,7 +612,7 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
 
             # find left bracket
             left_lineno, left_col = setup_positions(value)
-            left_lineno, left_col = increment_until(left_lineno, left_col, lambda x: x == '[')
+            left_lineno, left_col = increment_until(left_lineno, left_col, lambda x: x == "[")
             # find right bracket (final character of expression)
             right_lineno, right_col = setup_positions(expression, force_valid=False)
 
@@ -647,7 +636,7 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
 
             # find left bracket
             left_lineno, left_col = setup_positions(func)
-            left_lineno, left_col = increment_until(left_lineno, left_col, lambda x: x == '(')
+            left_lineno, left_col = increment_until(left_lineno, left_col, lambda x: x == "(")
             # find right bracket (final character of expression)
             right_lineno, right_col = setup_positions(expression, force_valid=False)
 
@@ -710,6 +699,7 @@ class FrameSummary:
         self.name = name
 
         from renpy.lexer import elide_filename
+
         self.filename = elide_filename(filename)
 
         self.lineno = lineno
@@ -878,7 +868,7 @@ class StackSummary(list[FrameSummary]):
     A list of FrameSummary objects, representing a stack of frames.
     """
 
-    def __init__(self, traceback: 'TracebackType | None', /):
+    def __init__(self, traceback: "TracebackType | None", /):
         tb = traceback
         filenames = set()
 
@@ -898,8 +888,9 @@ class StackSummary(list[FrameSummary]):
             if tb.tb_lasti < 0:
                 lineno = colno = end_lineno = end_colno = None
             else:
-                lineno, end_lineno, colno, end_colno = \
-                    next(itertools.islice(code.co_positions(), tb.tb_lasti // 2, None))
+                lineno, end_lineno, colno, end_colno = next(
+                    itertools.islice(code.co_positions(), tb.tb_lasti // 2, None)
+                )
 
             if lineno is None:
                 lineno = tb.tb_lineno
@@ -908,25 +899,27 @@ class StackSummary(list[FrameSummary]):
 
             filenames.add(filename)
             linecache.lazycache(filename, frame.f_globals)
-            self.append(FrameSummary(
-                code.co_name,
-                filename,
-                lineno,
-                colno,
-                end_lineno,
-                end_colno,
-            ))
+            self.append(
+                FrameSummary(
+                    code.co_name,
+                    filename,
+                    lineno,
+                    colno,
+                    end_lineno,
+                    end_colno,
+                )
+            )
 
         for filename in filenames:
             linecache.checkcache(filename)
 
     @staticmethod
-    def _report_traceback(tb: 'TracebackType'):
+    def _report_traceback(tb: "TracebackType"):
         if renpy.config.raw_tracebacks:
             return None
 
         try:
-            obj = tb.tb_frame.f_locals['self']
+            obj = tb.tb_frame.f_locals["self"]
             report_traceback = obj.report_traceback
         except Exception:
             return None
@@ -935,6 +928,7 @@ class StackSummary(list[FrameSummary]):
         last = tb.tb_next is None
 
         import inspect
+
         try:
             inspect.signature(report_traceback).bind(obj, name, last, tb.tb_frame)
         except TypeError:
@@ -945,12 +939,14 @@ class StackSummary(list[FrameSummary]):
 
             rv: list[FrameSummary] = []
             for filename, line_number, name, text in frames:
-                rv.append(FrameSummary(
-                    name,
-                    filename,
-                    line_number,
-                    text=text,
-                ))
+                rv.append(
+                    FrameSummary(
+                        name,
+                        filename,
+                        line_number,
+                        text=text,
+                    )
+                )
 
             return rv
         else:
@@ -992,15 +988,16 @@ class StackSummary(list[FrameSummary]):
                 continue
 
             if (
-                last_file is None or last_file != frame_summary.filename or
-                last_line is None or last_line != frame_summary.lineno or
-                last_name is None or last_name != frame_summary.name
+                last_file is None
+                or last_file != frame_summary.filename
+                or last_line is None
+                or last_line != frame_summary.lineno
+                or last_name is None
+                or last_name != frame_summary.name
             ):
                 if count > RECURSIVE_CUTOFF:
                     count -= RECURSIVE_CUTOFF
-                    ctx.string(
-                        f'[Previous line repeated {count} more '
-                        f'time{"s" if count > 1 else ""}]')
+                    ctx.string(f"[Previous line repeated {count} more time{'s' if count > 1 else ''}]")
 
                 last_file = frame_summary.filename
                 last_line = frame_summary.lineno
@@ -1015,16 +1012,14 @@ class StackSummary(list[FrameSummary]):
 
         if count > RECURSIVE_CUTOFF:
             count -= RECURSIVE_CUTOFF
-            ctx.string(
-                f'[Previous line repeated {count} more '
-                f'time{"s" if count > 1 else ""}]')
+            ctx.string(f"[Previous line repeated {count} more time{'s' if count > 1 else ''}]")
 
 
 def _safe_string(value, what, func: Callable[..., str] = str):
     try:
         return func(value)
     except:
-        return f'<{what} {func.__name__}() failed>'
+        return f"<{what} {func.__name__}() failed>"
 
 
 class TracebackException:
@@ -1068,24 +1063,20 @@ class TracebackException:
         self.stack = StackSummary(exception.__traceback__)
 
         # Capture now to permit freeing resources
-        self._str = _safe_string(exception, 'exception')
+        self._str = _safe_string(exception, "exception")
 
         self.__notes__: list[str]
         try:
-            notes = getattr(exception, '__notes__', None)
+            notes = getattr(exception, "__notes__", None)
         except Exception as e:
-            err = _safe_string(e, '__notes__', repr)
-            self.__notes__ = [
-                f'Ignored error getting __notes__: {err}']
+            err = _safe_string(e, "__notes__", repr)
+            self.__notes__ = [f"Ignored error getting __notes__: {err}"]
         else:
-            if (
-                isinstance(notes, collections.abc.Sequence)
-                and not isinstance(notes, (str, bytes))
-            ):
-                self.__notes__ = [_safe_string(note, 'note') for note in notes]
+            if isinstance(notes, collections.abc.Sequence) and not isinstance(notes, (str, bytes)):
+                self.__notes__ = [_safe_string(note, "note") for note in notes]
 
             elif notes is not None:
-                self.__notes__ = [_safe_string(notes, '__notes__')]
+                self.__notes__ = [_safe_string(notes, "__notes__")]
             else:
                 self.__notes__ = []
 
@@ -1127,12 +1118,12 @@ class TracebackException:
             queue: list[tuple[TracebackException, BaseException | None]] = [(self, exception)]
             while queue:
                 te, e = queue.pop()
-                if (e and e.__cause__ is not None and id(e.__cause__) not in _seen):
+                if e and e.__cause__ is not None and id(e.__cause__) not in _seen:
                     cause = TracebackException(e.__cause__, _seen=_seen)
                     te.__cause__ = cause
                     queue.append((te.__cause__, e.__cause__))
 
-                if (e and e.__context__ is not None and id(e.__context__) not in _seen):
+                if e and e.__context__ is not None and id(e.__context__) not in _seen:
                     context = TracebackException(e.__context__, _seen=_seen)
                     te.__context__ = context
                     queue.append((te.__context__, e.__context__))
@@ -1153,7 +1144,7 @@ class TracebackException:
         if s_mod not in ("__main__", "builtins"):
             if not isinstance(s_mod, str):
                 s_mod = "<unknown>"
-            s_type = s_mod + '.' + s_type
+            s_type = s_mod + "." + s_type
         return s_type
 
     def __eq__(self, other):
@@ -1210,19 +1201,15 @@ class TracebackException:
             # text  = "   foo\n"
             # rtext = "   foo"
             # ltext =    "foo"
-            rtext = text.rstrip('\n')
-            ltext = rtext.lstrip(' \n\f')
+            rtext = text.rstrip("\n")
+            ltext = rtext.lstrip(" \n\f")
             spaces = len(rtext) - len(ltext)
             if self.offset is None:
                 ctx.source_carets(ltext, None)
 
             elif isinstance(self.offset, int):
                 if self.lineno is not None:
-                    offset = normalize_renpy_line_offset(
-                        filename,
-                        self.lineno,
-                        self.offset,
-                        rtext)
+                    offset = normalize_renpy_line_offset(filename, self.lineno, self.offset, rtext)
                 else:
                     offset = self.offset
 
@@ -1232,11 +1219,7 @@ class TracebackException:
                     end_offset = len(rtext) + 1
 
                 if self.end_lineno is not None:
-                    end_offset = normalize_renpy_line_offset(
-                        filename,
-                        self.end_lineno,
-                        end_offset,
-                        rtext)
+                    end_offset = normalize_renpy_line_offset(filename, self.end_lineno, end_offset, rtext)
 
                 if self.text and offset > len(self.text):
                     offset = len(rtext) + 1
@@ -1250,8 +1233,8 @@ class TracebackException:
                 end_colno = end_offset - 1 - spaces
                 if colno >= 0:
                     # non-space whitespace (likes tabs) must be kept for alignment
-                    carets = "".join((c if c.isspace() else ' ') for c in ltext[:colno])
-                    carets += '^' * (end_colno - colno)
+                    carets = "".join((c if c.isspace() else " ") for c in ltext[:colno])
+                    carets += "^" * (end_colno - colno)
                     ctx.source_carets(ltext, carets)
                 else:
                     ctx.source_carets(ltext, None)
@@ -1285,7 +1268,7 @@ class TracebackException:
                 if exc.__cause__ is not None:
                     chained_method = ctx.chain_cause
                     chained_exc = exc.__cause__
-                elif (exc.__context__ is not None and not exc.__suppress_context__):
+                elif exc.__context__ is not None and not exc.__suppress_context__:
                     chained_method = ctx.chain_context
                     chained_exc = exc.__context__
                 else:
@@ -1302,7 +1285,7 @@ class TracebackException:
 
             if exc.exceptions is None:
                 if not exc.stack.should_filter(ctx):
-                    ctx.string('Traceback (most recent call last):')
+                    ctx.string("Traceback (most recent call last):")
 
                     with ctx.indent():
                         exc.stack.format(ctx)
@@ -1314,12 +1297,12 @@ class TracebackException:
                 ctx.string(f"... (max group depth is {ctx.max_group_depth})")
             else:
                 # format exception group
-                is_toplevel = (ctx.exception_group_depth == 0)
+                is_toplevel = ctx.exception_group_depth == 0
                 if is_toplevel:
                     ctx.exception_group_depth += 1
 
                 if not exc.stack.should_filter(ctx):
-                    ctx.string('Exception Group Traceback (most recent call last):')
+                    ctx.string("Exception Group Traceback (most recent call last):")
 
                     with ctx.indent():
                         exc.stack.format(ctx)
@@ -1334,12 +1317,12 @@ class TracebackException:
 
                 ctx.need_close = False
                 for i in range(n):
-                    last_exc = (i == n-1)
+                    last_exc = i == n - 1
                     if last_exc:
                         # The closing frame may be added by a recursive call
                         ctx.need_close = True
 
-                    truncated = (i >= ctx.max_group_width)
+                    truncated = i >= ctx.max_group_width
                     with ctx.indent():
                         ctx.exceptions_separator(i, n)
 
@@ -1348,7 +1331,7 @@ class TracebackException:
                             exc.exceptions[i].format(ctx, chain=chain)
                         else:
                             remaining = num_exceptions - ctx.max_group_width
-                            plural = 's' if remaining > 1 else ''
+                            plural = "s" if remaining > 1 else ""
                             ctx.string(f"and {remaining} more exception{plural}")
 
                         if last_exc and ctx.need_close:
@@ -1409,6 +1392,7 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
     # we need to populate it.
     if e.__traceback__ is None:
         from types import TracebackType
+
         f = sys._getframe().f_back  # type: ignore
         assert f is not None
         e.__traceback__ = TracebackType(None, f, f.f_lasti, f.f_lineno)
@@ -1459,7 +1443,6 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
 
     # Inside of the file, which may not be openable.
     try:
-
         f, te.traceback_fn = open_error_file("traceback.txt", "w")
 
         with f:
@@ -1491,7 +1474,6 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
             pass
 
     except Exception:
-
         te.traceback_fn = os.path.join(renpy.config.basedir, "traceback.txt")
 
     return te

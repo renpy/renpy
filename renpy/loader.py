@@ -209,14 +209,10 @@ class RPAv3ArchiveHandler(object):
         # Deobfuscate the index.
 
         for k in index.keys():
-
             if len(index[k][0]) == 2:
                 index[k] = [(offset ^ key, dlen ^ key) for offset, dlen in index[k]]
             else:
-                index[k] = [
-                    (offset ^ key, dlen ^ key, start_to_bytes(start))
-                    for offset, dlen, start in index[k]
-                ]
+                index[k] = [(offset ^ key, dlen ^ key, start_to_bytes(start)) for offset, dlen, start in index[k]]
 
         return index
 
@@ -321,7 +317,6 @@ def index_archives():
 
 def walkdir(path: str, elide: int | None = None):  # @ReservedAssignment
     if elide is None:
-
         # Only existence check the top level for speed.
         if not os.path.exists(path) and not renpy.config.developer:
             return
@@ -330,7 +325,6 @@ def walkdir(path: str, elide: int | None = None):  # @ReservedAssignment
         elide = len(path) + 1
 
     for de in os.scandir(path):
-
         if de.is_dir():
             yield from walkdir(de.path, elide)
         else:
@@ -366,7 +360,6 @@ def scandirfiles():
     seen = set()
 
     def add(dn, fn, files, seen):
-
         fn = str(fn)
 
         if fn in seen:
@@ -392,14 +385,12 @@ def scandirfiles_from_apk(add, seen):
     """
 
     for apk in apks:
-
         if apk not in game_apks:
             files = common_files  # @UnusedVariable
         else:
             files = game_files  # @UnusedVariable
 
         for f in apk.list():
-
             # Strip off the "x-" in front of each filename, which is there
             # to ensure that aapt actually includes every file.
             if apk not in split_apks:
@@ -450,7 +441,6 @@ def scandirfiles_from_filesystem(add, seen):
     exts = archive_handlers.exts
 
     for i in renpy.config.searchpath:
-
         if i == renpy.config.commondir:
             files = common_files  # @UnusedVariable
         else:
@@ -459,7 +449,6 @@ def scandirfiles_from_filesystem(add, seen):
         i = os.path.join(renpy.config.basedir, i)
 
         for j in walkdir(i):
-
             # Use rpartition as much faster than pathlib and splitext.
             stem, _, ext = j.rpartition(".")
             ext = "." + ext
@@ -521,7 +510,6 @@ if "RENPY_TEST_RWOPS" in os.environ:
             length = f.tell()
 
         try:
-
             a = RWopsIO.from_buffer(data, name=name)
 
             if length <= 1024:
@@ -600,7 +588,6 @@ def load_from_archive(name: str):
 
         # Direct path.
         if len(index[name]) == 1:
-
             t = index[name][0]
             if len(t) == 2:
                 offset, dlen = t
@@ -682,14 +669,10 @@ def check_name(name: str):
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
     if renpy.config.reject_relative:
-
         split = name.split("/")
 
         if ("." in split) or (".." in split):
-            raise Exception(
-                "Filenames may not contain relative directories like '.' and '..': %r"
-                % name
-            )
+            raise Exception("Filenames may not contain relative directories like '.' and '..': %r" % name)
 
 
 def get_prefixes(tl: bool = True, directory: str | None = None):
@@ -705,14 +688,12 @@ def get_prefixes(tl: bool = True, directory: str | None = None):
         language = None
 
     for prefix in renpy.config.search_prefixes:
-
         if language is not None:
             rv.append(f"{renpy.config.tl_directory}/{language}/{prefix}")
 
         rv.append(prefix)
 
     if directory is not None:
-
         if language is not None:
             rv.append(f"{renpy.config.tl_directory}/{language}/{directory}/")
 
@@ -722,12 +703,9 @@ def get_prefixes(tl: bool = True, directory: str | None = None):
 
 
 def load(name: str, directory: str | None = None, tl: bool = True):
-
     if renpy.display.predict.predicting:  # @UndefinedVariable
         if threading.current_thread().name == "MainThread":
-            if not (
-                renpy.emscripten or os.environ.get("RENPY_SIMULATE_DOWNLOAD", False)
-            ):
+            if not (renpy.emscripten or os.environ.get("RENPY_SIMULATE_DOWNLOAD", False)):
                 raise Exception("Refusing to open {} while predicting.".format(name))
 
     if renpy.config.reject_backslash and "\\" in name:
@@ -782,12 +760,9 @@ def loadable_core(name: str):
 
 
 def loadable(name: str, tl: bool = True, directory: str | None = None):
-
     name = name.lstrip("/")
 
-    if (renpy.config.loadable_callback is not None) and renpy.config.loadable_callback(
-        name
-    ):
+    if (renpy.config.loadable_callback is not None) and renpy.config.loadable_callback(name):
         return True
 
     for p in get_prefixes(tl=tl, directory=directory):
@@ -870,7 +845,6 @@ class RenpyImporter(object):
         self.prefix: str = prefix
 
     def translate(self, fullname: str | bytes, prefix: str | None = None):
-
         if prefix is None:
             prefix = self.prefix
 
@@ -935,9 +909,7 @@ class RenpyImporter(object):
             mod.__path__ = [mod.__file__[: -len("__init__.py")]]
 
         for encoding in ["utf-8", "latin-1"]:
-
             try:
-
                 source = cast(typing.BinaryIO, load(filename)).read().decode(encoding)
                 if source and source[0] == "\ufeff":
                     source = source[1:]
@@ -976,12 +948,9 @@ class RenpyImporter(object):
         return self.load_module(fullname, "get_code")
 
     def get_data(self, filename: str):
-
         filename = os.path.normpath(filename).replace("\\", "/")
 
-        _check_prefix = "{0}/".format(
-            os.path.normpath(renpy.config.gamedir).replace("\\", "/")
-        )
+        _check_prefix = "{0}/".format(os.path.normpath(renpy.config.gamedir).replace("\\", "/"))
         if filename.startswith(_check_prefix):
             filename = filename[len(_check_prefix) :]
 
@@ -1070,9 +1039,7 @@ def add_auto(fn: str, force: bool = False):
 
     fn = fn.replace("\\", "/")
 
-    if renpy.config.commondir and pathlib.Path(fn).is_relative_to(
-        renpy.config.commondir
-    ):
+    if renpy.config.commondir and pathlib.Path(fn).is_relative_to(renpy.config.commondir):
         return
 
     for e in renpy.config.autoreload_blacklist:
@@ -1098,9 +1065,7 @@ def auto_thread_function():
     global max_mtime
 
     while True:
-
         with auto_lock:
-
             auto_lock.wait(1.5)
 
             if auto_quit_flag:
@@ -1109,7 +1074,6 @@ def auto_thread_function():
             items = list(auto_mtimes.items())
 
         for fn, mtime in items:
-
             if mtime is auto_blacklisted:
                 continue
 
@@ -1119,7 +1083,6 @@ def auto_thread_function():
                 max_mtime = max(max_mtime, new_mtime)
 
             if new_mtime != mtime:
-
                 with auto_lock:
                     if auto_mtime(fn) != auto_mtimes[fn]:
                         needs_autoreload.add(fn)

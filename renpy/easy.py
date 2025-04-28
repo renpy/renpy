@@ -80,7 +80,6 @@ def displayable_or_none(
     scope: dict[str, Any] | None = None,
     dynamic: bool = True,
 ) -> renpy.display.displayable.Displayable | None:
-
     if isinstance(d, renpy.display.displayable.Displayable):
         return d
 
@@ -169,9 +168,7 @@ def displayable(
     raise Exception("Not a displayable: %r" % (d,))
 
 
-def dynamic_image(
-    d, scope=None, prefix=None, search=None
-):  # type: (Any, dict|None, str|None, list|None) -> renpy.display.displayable.Displayable|None
+def dynamic_image(d, scope=None, prefix=None, search=None):  # type: (Any, dict|None, str|None, list|None) -> renpy.display.displayable.Displayable|None
     """
     Substitutes a scope into `d`, then returns a displayable.
 
@@ -183,7 +180,6 @@ def dynamic_image(
         d = [d]
 
     def find(name):
-
         if renpy.exports.image_exists(name):
             return True
 
@@ -200,25 +196,19 @@ def dynamic_image(
         return False
 
     for i in d:
-
         if not isinstance(i, str):
             continue
 
         if (prefix is not None) and ("[prefix_" in i):
-
             if scope:
                 scope = dict(scope)
             else:
                 scope = {}
 
-            for p in renpy.styledata.stylesets.prefix_search[
-                prefix
-            ]:  # @UndefinedVariable
+            for p in renpy.styledata.stylesets.prefix_search[prefix]:  # @UndefinedVariable
                 scope["prefix_"] = p
 
-                rv = renpy.substitutions.substitute(
-                    i, scope=scope, force=True, translate=False
-                )[0]
+                rv = renpy.substitutions.substitute(i, scope=scope, force=True, translate=False)[0]
 
                 if find(rv):
                     return displayable_or_none(rv)
@@ -227,10 +217,7 @@ def dynamic_image(
                     search.append(rv)
 
         else:
-
-            rv = renpy.substitutions.substitute(
-                i, scope=scope, force=True, translate=False
-            )[0]
+            rv = renpy.substitutions.substitute(i, scope=scope, force=True, translate=False)[0]
 
             if find(rv):
                 return displayable_or_none(rv)

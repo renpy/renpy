@@ -161,9 +161,7 @@ def invoke_in_main_thread(fn, *args, **kwargs):
     """
 
     if renpy.game.context().init_phase:
-        raise Exception(
-            "invoke_in_main_thread may not be called during the init phase."
-        )
+        raise Exception("invoke_in_main_thread may not be called during the init phase.")
 
     renpy.display.interface.invoke_queue.append((fn, args, kwargs))
 
@@ -210,7 +208,6 @@ def get_sdl_dll():
         return sdl_dll
 
     try:
-
         lib = os.path.dirname(sys.executable) + "/"
 
         DLLS = [
@@ -289,9 +286,7 @@ def check_permission(permission):
     activity = PythonSDLActivity.mActivity
 
     try:
-        return (
-            activity.checkSelfPermission(permission) == 0
-        )  # PackageManager.PERMISSION_GRANTED
+        return activity.checkSelfPermission(permission) == 0  # PackageManager.PERMISSION_GRANTED
     except Exception:
         return False
 

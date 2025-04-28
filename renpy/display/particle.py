@@ -33,6 +33,7 @@ from renpy.display.render import render
 # Distribution functions.
 DISTRIBUTION_FUNC_T = Callable[[float, float], float]
 
+
 def _interpolate(a: float, b: float, step: float) -> float:
     return a + (b - a) * step
 
@@ -57,6 +58,7 @@ def arcsine(a: float, b: float) -> float:
 
     return _interpolate(a, b, x)
 
+
 distribution_func_map = {
     "linear": linear,
     "gaussian": gaussian,
@@ -72,7 +74,7 @@ class SpriteCache(renpy.object.Object):
     need to be re-rendered.
     """
 
-    nosave = [ 'st', 'render' ]
+    nosave = ["st", "render"]
 
     # Private Fields:
     #
@@ -86,11 +88,11 @@ class SpriteCache(renpy.object.Object):
     # fast - If true, then the render is simple enough it can just be appended to
     # the manager's render's children list.
 
-    child = None # type: renpy.display.displayable.Displayable|None
-    child_copy = None # type: renpy.display.displayable.Displayable|None
-    st = None # type: float|None
-    render = None # type: renpy.display.render.Render|None
-    fast = False # type: bool
+    child = None  # type: renpy.display.displayable.Displayable|None
+    child_copy = None  # type: renpy.display.displayable.Displayable|None
+    st = None  # type: float|None
+    render = None  # type: renpy.display.render.Render|None
+    fast = False  # type: bool
 
 
 class Sprite(renpy.object.Object):
@@ -119,18 +121,16 @@ class Sprite(renpy.object.Object):
         them).
 
     The methods of a Sprite object are:
-        """
+    """
 
-    x = 0 # type: int|float|renpy.display.core.absolute
-    y = 0 # type: int|float|renpy.display.core.absolute
-    zorder = 0 # type: int|float
+    x = 0  # type: int|float|renpy.display.core.absolute
+    y = 0  # type: int|float|renpy.display.core.absolute
+    zorder = 0  # type: int|float
 
-
-    child = None # type: renpy.display.displayable.Displayable|None
-    render = None # type: renpy.display.render.Render|None
-    live = True # type: bool
-    manager = None # type: SpriteManager|None
-
+    child = None  # type: renpy.display.displayable.Displayable|None
+    render = None  # type: renpy.display.render.Render|None
+    live = True  # type: bool
+    manager = None  # type: SpriteManager|None
 
     # Fields:
     #
@@ -246,11 +246,11 @@ class SpriteManager(renpy.display.displayable.Displayable):
 
         # A map from a displayable to the SpriteDisplayable object
         # representing that displayable.
-        self.displayable_map = { }
+        self.displayable_map = {}
 
         # A list of children of this displayable, in zorder. (When sorted.)
         # This is a list of Sprites.
-        self.children = [ ]
+        self.children = []
 
         # True if at least one child has been killed.
         self.dead_child = False
@@ -299,7 +299,6 @@ class SpriteManager(renpy.display.displayable.Displayable):
         renpy.display.render.redraw(self, delay)
 
     def render(self, width, height, st, at):
-
         if self.animation:
             st = at
 
@@ -307,7 +306,6 @@ class SpriteManager(renpy.display.displayable.Displayable):
         self.height = height
 
         if self.update_function is not None:
-
             redraw = self.update_function(st)
 
             if redraw is not None:
@@ -317,18 +315,17 @@ class SpriteManager(renpy.display.displayable.Displayable):
             self.displayable_map.clear()
 
         if self.dead_child:
-            self.children = [ i for i in self.children if i.live ]
+            self.children = [i for i in self.children if i.live]
 
         self.children.sort(key=lambda sc: sc.zorder)
 
-        caches = [ ]
+        caches = []
 
         rv = renpy.display.render.Render(width, height)
 
         events = False
 
         for i in self.children:
-
             events |= i.events
 
             cache = i.cache
@@ -340,18 +337,22 @@ class SpriteManager(renpy.display.displayable.Displayable):
                 cst = st - cache.st
 
                 cache.render = r = render(cache.child_copy, width, height, cst, cst)
-                cache.fast = (r.forward is None) and (not r.mesh) and (not r.uniforms) and (not r.shaders) and (not r.properties) and (not r.xclipping) and not (r.yclipping)
+                cache.fast = (
+                    (r.forward is None)
+                    and (not r.mesh)
+                    and (not r.uniforms)
+                    and (not r.shaders)
+                    and (not r.properties)
+                    and (not r.xclipping)
+                    and not (r.yclipping)
+                )
                 rv.depends_on(r)
 
                 caches.append(cache)
 
             if cache.fast:
                 for child, xo, yo, _focus, _main in r.children:
-                    rv.children.append((child,
-                                        xo + i.x,
-                                        yo + i.y,
-                                        False,
-                                        False))
+                    rv.children.append((child, xo + i.x, yo + i.y, False, False))
 
             else:
                 rv.subpixel_blit(r, (i.x, i.y))
@@ -362,7 +363,7 @@ class SpriteManager(renpy.display.displayable.Displayable):
         return rv
 
     def event(self, ev, x, y, st):
-        for i in range(len(self.children) -1, -1, -1):
+        for i in range(len(self.children) - 1, -1, -1):
             s = self.children[i]
 
             if s.events:
@@ -376,7 +377,7 @@ class SpriteManager(renpy.display.displayable.Displayable):
             return None
 
     def visit(self):
-        rv = [ ]
+        rv = []
 
         try:
             if self.predict_function:
@@ -390,7 +391,7 @@ class SpriteManager(renpy.display.displayable.Displayable):
         return rv
 
     def destroy_all(self):
-        self.children = [ ]
+        self.children = []
 
 
 class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback):
@@ -400,7 +401,7 @@ class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback
 
     __version__ = 1
 
-    nosave = [ 'particles' ]
+    nosave = ["particles"]
 
     def after_upgrade(self, version):
         if version < 1:
@@ -422,16 +423,15 @@ class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback
         self.particles = None
 
     def update_callback(self, st):
-
         particles = self.particles
 
         if st == 0 or particles is None:
             self.sm.destroy_all()
-            particles = [ ]
+            particles = []
 
         add_parts = self.factory.create(particles, st)
 
-        new_particles = [ ]
+        new_particles = []
 
         for sprite, p in particles:
             update = p.update(st)
@@ -479,11 +479,10 @@ class Particles(renpy.display.displayable.Displayable, renpy.rollback.NoRollback
         return renpy.display.render.render(self.sm, w, h, st, at)
 
     def visit(self):
-        return [ self.sm ]
+        return [self.sm]
 
 
 class SnowBlossomFactory(renpy.rollback.NoRollback):
-
     rotate = False
 
     def __setstate__(self, state):
@@ -491,7 +490,18 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
         vars(self).update(state)
         self.init()
 
-    def __init__(self, image, count, xspeed, yspeed, border, start, fast, rotate=False, distribution: Union[DISTRIBUTION_FUNC_T, str] = "linear"):
+    def __init__(
+        self,
+        image,
+        count,
+        xspeed,
+        yspeed,
+        border,
+        start,
+        fast,
+        rotate=False,
+        distribution: Union[DISTRIBUTION_FUNC_T, str] = "linear",
+    ):
         self.image = renpy.easy.displayable(image)
         self.count = count
         self.xspeed = xspeed
@@ -508,12 +518,11 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
         self.init()
 
     def init(self):
-        self.starts = [ random.uniform(0, self.start) for _i in range(0, self.count) ]  # W0201
+        self.starts = [random.uniform(0, self.start) for _i in range(0, self.count)]  # W0201
         self.starts.append(self.start)
         self.starts.sort()
 
     def create(self, particles, st):
-
         def ranged(n):
             if isinstance(n, tuple):
                 return random.uniform(n[0], n[1])
@@ -521,45 +530,52 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
                 return n
 
         if (st == 0) and not particles and self.fast:
-            rv = [ ]
+            rv = []
 
             for _i in range(0, self.count):
-                rv.append(SnowBlossomParticle(self.image,
-                                              ranged(self.xspeed),
-                                              ranged(self.yspeed),
-                                              self.border,
-                                              st,
-                                              random.uniform(0, 100),
-                                              fast=True,
-                                              rotate=self.rotate,
-                                              distribution=self.distribution))
+                rv.append(
+                    SnowBlossomParticle(
+                        self.image,
+                        ranged(self.xspeed),
+                        ranged(self.yspeed),
+                        self.border,
+                        st,
+                        random.uniform(0, 100),
+                        fast=True,
+                        rotate=self.rotate,
+                        distribution=self.distribution,
+                    )
+                )
             return rv
 
         if particles is None or len(particles) < self.count:
-
             # Check to see if we have a particle ready to start. If not,
             # don't start it.
             if particles and st < self.starts[len(particles)]:
                 return None
 
-            return [ SnowBlossomParticle(self.image,
-                                         ranged(self.xspeed),
-                                         ranged(self.yspeed),
-                                         self.border,
-                                         st,
-                                         random.uniform(0, 100),
-                                         fast=False,
-                                         rotate=self.rotate,
-                                         distribution=self.distribution) ]
+            return [
+                SnowBlossomParticle(
+                    self.image,
+                    ranged(self.xspeed),
+                    ranged(self.yspeed),
+                    self.border,
+                    st,
+                    random.uniform(0, 100),
+                    fast=False,
+                    rotate=self.rotate,
+                    distribution=self.distribution,
+                )
+            ]
 
     def predict(self):
-        return [ self.image ]
+        return [self.image]
 
 
 class SnowBlossomParticle(renpy.rollback.NoRollback):
-
-    def __init__(self, image, xspeed, yspeed, border, start, offset, fast, rotate, distribution: DISTRIBUTION_FUNC_T = linear):
-
+    def __init__(
+        self, image, xspeed, yspeed, border, start, offset, fast, rotate, distribution: DISTRIBUTION_FUNC_T = linear
+    ):
         # safety.
         if yspeed == 0:
             yspeed = 1
@@ -620,16 +636,18 @@ class SnowBlossomParticle(renpy.rollback.NoRollback):
             return int(ypos), int(xpos), to + self.offset, self.image
 
 
-def SnowBlossom(d,
-                count=10,
-                border=50,
-                xspeed=(20, 50),
-                yspeed=(100, 200),
-                start=0,
-                fast=False,
-                horizontal=False,
-                distribution: Union[DISTRIBUTION_FUNC_T, str] = "linear",
-                animation=False):
+def SnowBlossom(
+    d,
+    count=10,
+    border=50,
+    xspeed=(20, 50),
+    yspeed=(100, 200),
+    start=0,
+    fast=False,
+    horizontal=False,
+    distribution: Union[DISTRIBUTION_FUNC_T, str] = "linear",
+    animation=False,
+):
     """
     :doc: sprites_extra
 
@@ -687,13 +705,17 @@ def SnowBlossom(d,
     if horizontal:
         xspeed, yspeed = yspeed, xspeed
 
-    return Particles(SnowBlossomFactory(image=d,
-                                        count=count,
-                                        border=border,
-                                        xspeed=xspeed,
-                                        yspeed=yspeed,
-                                        start=start,
-                                        fast=fast,
-                                        rotate=horizontal,
-                                        distribution=distribution),
-                    animation=animation)
+    return Particles(
+        SnowBlossomFactory(
+            image=d,
+            count=count,
+            border=border,
+            xspeed=xspeed,
+            yspeed=yspeed,
+            start=start,
+            fast=fast,
+            rotate=horizontal,
+            distribution=distribution,
+        ),
+        animation=animation,
+    )

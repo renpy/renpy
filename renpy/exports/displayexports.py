@@ -303,23 +303,19 @@ def _find_image(layer, key, name, what):
 
     # If a specific image is requested, use it.
     if what is not None:
-
         if isinstance(what, str):
             what = tuple(what.split())
 
         return name, what
 
     if renpy.config.image_attributes:
-
         new_image = renpy.game.context().images.apply_attributes(layer, key, name)
         if new_image is not None:
             image = new_image
             name = (key,) + new_image[1:]
             return name, new_image
 
-    f = renpy.config.adjust_attributes.get(
-        name[0], None
-    ) or renpy.config.adjust_attributes.get(None, None)
+    f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
     if f is not None:
         new_image = f(name)
         name = (key,) + new_image[1:]
@@ -358,7 +354,6 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[]):
         base = img = what
 
     else:
-
         name, what = _find_image(layer, key, name, what)
         base = img = renpy.display.image.ImageReference(what, style="image_placement")
 
@@ -508,13 +503,8 @@ def show(
             at_list = renpy.easy.to_list(tt, copy=True)
 
     if isinstance(what, renpy.display.displayable.Displayable):
-
-        if renpy.config.wrap_shown_transforms and isinstance(
-            what, renpy.display.motion.Transform
-        ):
-            base = img = renpy.display.image.ImageReference(
-                what, style="image_placement"
-            )
+        if renpy.config.wrap_shown_transforms and isinstance(what, renpy.display.motion.Transform):
+            base = img = renpy.display.image.ImageReference(what, style="image_placement")
 
             # Semi-principled, but mimics pre-6.99.6 behavior - if `what` is
             # already a transform, do not apply the default transform to it.
@@ -658,9 +648,7 @@ def take_screenshot(scale=None, background=False, keep_existing=False):
     if scale is None:
         scale = (renpy.config.thumbnail_width, renpy.config.thumbnail_height)
 
-    renpy.game.interface.take_screenshot(
-        scale, background=background, keep_existing=keep_existing
-    )
+    renpy.game.interface.take_screenshot(scale, background=background, keep_existing=keep_existing)
 
 
 def screenshot(filename):
@@ -859,9 +847,7 @@ def show_layer_at(at_list, layer="master", reset=True, camera=False):
 
     at_list = renpy.easy.to_list(at_list)
 
-    renpy.game.context().scene_lists.set_layer_at_list(
-        layer, at_list, reset=reset, camera=camera
-    )
+    renpy.game.context().scene_lists.set_layer_at_list(layer, at_list, reset=reset, camera=camera)
 
 
 layer_at_list = show_layer_at
@@ -973,7 +959,6 @@ def shown_window():
 
 
 class placement(renpy.revertable.RevertableObject):
-
     def __init__(self, p):
         super(placement, self).__init__()
 
@@ -1072,14 +1057,10 @@ def is_pixel_opaque(d, width, height, st, at, x, y):
     """
 
     # Uses the caching features of renpy.render, as opposed to d.render.
-    return bool(
-        render(renpy.easy.displayable(d), width, height, st, at).is_pixel_opaque(x, y)
-    )
+    return bool(render(renpy.easy.displayable(d), width, height, st, at).is_pixel_opaque(x, y))
 
 
-class Displayable(
-    renpy.display.displayable.Displayable, renpy.revertable.RevertableObject
-):
+class Displayable(renpy.display.displayable.Displayable, renpy.revertable.RevertableObject):
     pass
 
 
@@ -1148,7 +1129,6 @@ def set_physical_size(size):
     renpy.game.preferences.fullscreen = False  # type: ignore
 
     if get_renderer_info()["resizable"]:
-
         renpy.game.preferences.physical_size = (width, height)  # type: ignore
 
         if renpy.display.draw is not None:
@@ -1165,12 +1145,10 @@ def reset_physical_size():
     and :var:`renpy.config.screen_height`.
     """
 
-    set_physical_size(
-        (
-            renpy.config.physical_width or renpy.config.screen_width,
-            renpy.config.physical_height or renpy.config.screen_height,
-        )
-    )
+    set_physical_size((
+        renpy.config.physical_width or renpy.config.screen_width,
+        renpy.config.physical_height or renpy.config.screen_height,
+    ))
 
 
 def get_image_load_log(age=None):
@@ -1283,9 +1261,7 @@ def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
         return
 
     if (above is not None) and (below is not None):
-        raise Exception(
-            "The above and below arguments to renpy.add_layer are mutually exclusive."
-        )
+        raise Exception("The above and below arguments to renpy.add_layer are mutually exclusive.")
 
     elif above is not None:
         try:
@@ -1300,9 +1276,7 @@ def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
             raise Exception("Layer '%s' does not exist." % below)
 
     else:
-        raise Exception(
-            "The renpy.add_layer function requires either the above or below argument."
-        )
+        raise Exception("The renpy.add_layer function requires either the above or below argument.")
 
     layers.insert(index, layer)
 
@@ -1327,9 +1301,7 @@ def maximum_framerate(t):
         if t is None:
             renpy.display.core.initial_maximum_framerate = 0
         else:
-            renpy.display.core.initial_maximum_framerate = max(
-                renpy.display.core.initial_maximum_framerate, t
-            )
+            renpy.display.core.initial_maximum_framerate = max(renpy.display.core.initial_maximum_framerate, t)
 
 
 def is_start_interact():

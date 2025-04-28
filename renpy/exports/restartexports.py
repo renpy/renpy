@@ -68,9 +68,7 @@ def full_restart(
     """
 
     if save and (renpy.store._quit_slot is not None):
-        renpy.loadsave.save(
-            renpy.store._quit_slot, getattr(renpy.store, "save_name", "")
-        )
+        renpy.loadsave.save(renpy.store._quit_slot, getattr(renpy.store, "save_name", ""))
 
     if transition is False:
         transition = renpy.config.end_game_transition
@@ -117,7 +115,6 @@ def reload_script():
         utter_restart()
 
     if not renpy.store.main_menu:
-
         if s is not None:
             session["_reload_screen"] = s.screen_name[0]
             session["_reload_screen_args"] = s.scope.get("_args", ())
@@ -126,7 +123,6 @@ def reload_script():
         renpy.game.call_in_new_context("_save_reload_game")
 
     else:
-
         if s is not None:
             session["_main_menu_screen"] = s.screen_name[0]
             session["_main_menu_screen_args"] = s.scope.get("_args", ())
@@ -154,9 +150,7 @@ def quit(relaunch=False, status=0, save=False):  # @ReservedAssignment
     """
 
     if save and (renpy.store._quit_slot is not None):
-        renpy.loadsave.save(
-            renpy.store._quit_slot, getattr(renpy.store, "save_name", "")
-        )
+        renpy.loadsave.save(renpy.store._quit_slot, getattr(renpy.store, "save_name", ""))
 
     if renpy.exports.has_label("quit"):
         renpy.exports.call_in_new_context("quit")

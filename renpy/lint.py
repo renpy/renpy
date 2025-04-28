@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 from typing import Any
 
 import codecs
@@ -65,7 +65,7 @@ error_reported = False
 
 def report(msg, *args):
     if report_node:
-        out = u"%s:%d " % (renpy.lexer.unicode_filename(report_node.filename), report_node.linenumber)
+        out = "%s:%d " % (renpy.lexer.unicode_filename(report_node.filename), report_node.linenumber)
     else:
         out = ""
 
@@ -77,7 +77,7 @@ def report(msg, *args):
     error_reported = True
 
 
-added = { }
+added = {}
 
 # Reports additional information about a message, the first time it
 # occurs.
@@ -114,7 +114,6 @@ def problem_listing(header, problems):
         print("{}:".format(filename))
 
         if args.all_problems:
-
             for line, message in file_problems[:4]:
                 print("    * line {:>5d} {}".format(line, message))
 
@@ -152,7 +151,7 @@ def try_eval(where, expr, additional=None):
 
     # Simply look up the first component of the python expression, and
     # see if it exists in the store.
-    m = re.match(r'\s*([a-zA-Z_]\w*)', expr)
+    m = re.match(r"\s*([a-zA-Z_]\w*)", expr)
 
     if not m:
         return
@@ -166,6 +165,7 @@ def try_eval(where, expr, additional=None):
     report("Could not evaluate '%s', in %s.", expr, where)
     if additional:
         add(additional)
+
 
 # Returns True of the expression can be compiled as python, False
 # otherwise.
@@ -192,7 +192,7 @@ def try_compile(where, expr, additional=None):
     """
 
     try:
-        renpy.python.py_compile(expr, 'eval')
+        renpy.python.py_compile(expr, "eval")
     except Exception:
         report("'%s' could not be compiled as a python expression, %s.", expr, where)
         if additional:
@@ -225,23 +225,21 @@ def image_exists_imprecise(name):
             required.add(i)
 
     for im, d in renpy.display.image.images.items():
-
         if im[0] != nametag:
             continue
 
         attrs = set(im[1:])
 
-        if [ i for i in banned if i in attrs ]:
+        if [i for i in banned if i in attrs]:
             continue
 
         try:
-
             li = getattr(d, "_list_attributes", None)
 
             if li is not None:
                 attrs = attrs | set(li(im[0], required))
 
-            if [ i for i in required if i not in attrs ]:
+            if [i for i in required if i not in attrs]:
                 continue
 
         except Exception:
@@ -277,7 +275,6 @@ def image_exists_precise(name):
             required.add(i)
 
     for im, d in renpy.display.image.images.items():
-
         if im[0] != nametag:
             continue
 
@@ -289,7 +286,6 @@ def image_exists_precise(name):
         rest = required - attrs
 
         if rest:
-
             try:
                 da = renpy.display.displayable.DisplayableArguments()
                 da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs)
@@ -338,11 +334,10 @@ def image_exists(name, expression, tag, precise=True):
 
 
 # Only check each file once.
-check_file_cache = { }
+check_file_cache = {}
 
 
 def check_file(what, fn, directory=None):
-
     if not isinstance(fn, str):
         return
 
@@ -363,13 +358,12 @@ def check_file(what, fn, directory=None):
 
 
 def check_displayable(what, d):
-
     def predict_image(img):
         files.extend(img.predict_files())
 
     renpy.display.predict.image = predict_image
 
-    files = [ ]
+    files = []
 
     try:
         if isinstance(d, renpy.display.displayable.Displayable):
@@ -383,10 +377,9 @@ def check_displayable(what, d):
 
 # Lints ast.Image nodes.
 def check_image(node):
-
     name = " ".join(node.imgname)
 
-    check_displayable('image %s' % name, renpy.display.image.images[node.imgname])
+    check_displayable("image %s" % name, renpy.display.image.images[node.imgname])
 
 
 def imspec(t):
@@ -400,7 +393,6 @@ def imspec(t):
 
 # Lints ast.Show and ast.Scene nodes.
 def check_show(node, precise):
-
     # A Scene may have an empty imspec.
     if not node.imspec:
         return
@@ -415,7 +407,9 @@ def check_show(node, precise):
     image_exists(name, expression, tag, precise=precise)
 
     for i in at_list:
-        try_eval("the at list of a scene or show statement", i, "Perhaps you forgot to define or misspelled a transform.")
+        try_eval(
+            "the at list of a scene or show statement", i, "Perhaps you forgot to define or misspelled a transform."
+        )
 
 
 def precheck_show(node):
@@ -426,11 +420,11 @@ def precheck_show(node):
     tag = imspec(node.imspec)[2]
     image_prefixes[tag] = True
 
+
 # Lints ast.Hide.
 
 
 def check_hide(node):
-
     name, _expression, tag, _at_list, layer, _zorder, _behind = imspec(node.imspec)
 
     tag = tag or name[0]
@@ -441,7 +435,10 @@ def check_hide(node):
         report("Uses layer '%s', which is not defined.", layer)
 
     if tag not in image_prefixes:
-        report("The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.", tag)
+        report(
+            "The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.",
+            tag,
+        )
 
 
 def check_with(node):
@@ -449,7 +446,6 @@ def check_with(node):
 
 
 def check_user(node):
-
     def error(msg):
         report("%s", msg)
 
@@ -466,17 +462,15 @@ def check_user(node):
 
 
 def quote_text(s):
-
     s = s.replace("\\", "\\\\")
-    s = s.replace("\"", "\\\"")
+    s = s.replace('"', '\\"')
     s = s.replace("\t", "\\t")
     s = s.replace("\n", "\\n")
 
-    return "\"" + s + "\""
+    return '"' + s + '"'
 
 
 def text_checks(s):
-
     if renpy.config.say_menu_text_filter is not None:
         s = renpy.config.say_menu_text_filter(s)
 
@@ -485,7 +479,6 @@ def text_checks(s):
         report("%s (in %s)", msg, quote_text(s))
 
     if "%" in s and renpy.config.old_substitutions:
-
         state = 0
         pos = 0
         fmt = ""
@@ -523,7 +516,6 @@ def text_checks(s):
 
 
 def check_say(node):
-
     if node.who:
         try:
             char = renpy.ast.eval_who(node.who)
@@ -535,7 +527,11 @@ def check_say(node):
         char = None
 
     if node.with_:
-        try_eval("the with clause of a say statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
+        try_eval(
+            "the with clause of a say statement",
+            node.with_,
+            "Perhaps you forgot to declare, or misspelled, a transition?",
+        )
 
     text_checks(node.what)
 
@@ -566,18 +562,21 @@ def check_say(node):
         if image_exists_imprecise(name):
             continue
 
-        if image_exists_imprecise(('side',) + name):
+        if image_exists_imprecise(("side",) + name):
             continue
 
         report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(orig))
 
 
 def check_menu(node):
-
     if node.with_:
-        try_eval("the with clause of a menu statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
+        try_eval(
+            "the with clause of a menu statement",
+            node.with_,
+            "Perhaps you forgot to declare, or misspelled, a transition?",
+        )
 
-    if not [ (l, c, b) for l, c, b in node.items if b ]:
+    if not [(l, c, b) for l, c, b in node.items if b]:
         report("The menu does not contain any selectable choices.")
 
     for l, c, b in node.items:
@@ -588,7 +587,6 @@ def check_menu(node):
 
 
 def check_jump(node):
-
     if node.expression:
         return
 
@@ -597,7 +595,6 @@ def check_jump(node):
 
 
 def check_call(node):
-
     if node.expression:
         return
 
@@ -615,12 +612,14 @@ def check_if(node):
 
 
 def check_define(node, kind):
-
     if node.store == "store.persistent" and kind == "define":
-        report("Define should not be used with a persistent variable. Use default persistent.%s = ... instead.", node.varname)
+        report(
+            "Define should not be used with a persistent variable. Use default persistent.%s = ... instead.",
+            node.varname,
+        )
         return
 
-    if node.store != 'store':
+    if node.store != "store":
         return
 
     if node.varname in renpy.config.lint_ignore_replaces:
@@ -637,9 +636,9 @@ def check_redefined(node, kind):
     """
     Check if a define or default statement has already been created.
     """
-    if kind == 'default':
+    if kind == "default":
         scanned = all_default_statements
-    elif kind == 'define':
+    elif kind == "define":
         scanned = all_define_statements
 
         if not (node.operator == "=" and node.index is None):
@@ -675,11 +674,8 @@ def check_redefined(node, kind):
 
 
 def check_style_property_displayable(name, property, d):
-
     if not d._duplicatable:
-        check_displayable(
-            "{}, property {}".format(name, property),
-            d)
+        check_displayable("{}, property {}".format(name, property), d)
         return
 
     renpy.style.init_inspect()
@@ -691,17 +687,15 @@ def check_style_property_displayable(name, property, d):
 
     alts = sort_short(renpy.style.prefix_alts)
 
-    for p in sort_short(renpy.style.affects.get(property, [ ])):
+    for p in sort_short(renpy.style.affects.get(property, [])):
         for prefix in alts:
-            rest = p[len(prefix):]
+            rest = p[len(prefix) :]
             if rest in renpy.style.all_properties:
                 args = d._args.copy(prefix=prefix)
                 dd = d._duplicate(args)
                 dd._unique()
 
-                check_displayable(
-                    "{}, property {}".format(name, prefix + property),
-                    dd)
+                check_displayable("{}, property {}".format(name, prefix + property), dd)
 
                 break
 
@@ -709,10 +703,8 @@ def check_style_property_displayable(name, property, d):
 
 
 def check_style(name, s):
-
     for p in s.properties:
         for k, v in p.items():
-
             # Treat font specially.
             if k.endswith("font"):
                 if isinstance(v, renpy.text.font.FontGroup):
@@ -752,22 +744,24 @@ def check_parameters(kind, node_name, parameter_info):
 
         if len(rv) == 1:
             name = rv.pop()
-            report("In {0} {1!r}, the {2!r} parameter replaces a {3} built-in name, which may cause problems.".format(kind, node_name, name, cat))
+            report(
+                "In {0} {1!r}, the {2!r} parameter replaces a {3} built-in name, which may cause problems.".format(
+                    kind, node_name, name, cat
+                )
+            )
             if not "_" in name:
                 add("This can be fixed by naming it '{}_'".format(name))
         elif rv:
             last = rv.pop()
             prettyprevious = ", ".join(repr(name) for name in rv)
-            report("In {0} {1!r}, the {2} and {3!r} parameters replace {4} built-in names, which may cause problems.".format(
-                kind,
-                node_name,
-                prettyprevious,
-                last,
-                cat))
+            report(
+                "In {0} {1!r}, the {2} and {3!r} parameters replace {4} built-in names, which may cause problems.".format(
+                    kind, node_name, prettyprevious, last, cat
+                )
+            )
 
 
 def check_label(node):
-
     if args.reserved_parameters:
         check_parameters("label", node.name, node.parameters)
 
@@ -781,13 +775,11 @@ def check_label(node):
     pi = node.parameters
 
     if pi is not None:
-
         for i in pi.parameters:
             add_arg(i)
 
 
 def check_screen(node):
-
     if (node.screen.parameters is None) and renpy.config.lint_screens_without_parameters:
         report("The screen %s has not been given a parameter list.", node.screen.name)
         add("This can be fixed by writing 'screen %s():' instead.", node.screen.name)
@@ -797,7 +789,7 @@ def check_screen(node):
 
 
 def check_styles():
-    for full_name, s in renpy.style.styles.items(): # @UndefinedVariable
+    for full_name, s in renpy.style.styles.items():  # @UndefinedVariable
         name = "style." + full_name[0]
         for i in full_name[1:]:
             name += "[{!r}]".format(i)
@@ -822,11 +814,11 @@ def humanize(n):
 
     for i, c in enumerate(reversed(s)):
         if i and not (i % 3):
-            rv.insert(0, ',')
+            rv.insert(0, ",")
 
         rv.insert(0, c)
 
-    return ''.join(rv)
+    return "".join(rv)
 
 
 def check_filename_encodings():
@@ -881,22 +873,33 @@ def common(n):
     else:
         return False
 
+
 def report_character_stats(charastats):
     """
     Returns a list of character stat lines.
     """
 
-    rv = [ "", "Character Statistics (for default language):", ] # type: list[str|list[str]]
+    rv = [
+        "",
+        "Character Statistics (for default language):",
+    ]  # type: list[str|list[str]]
 
-    bullets = [ ]
+    bullets = []
 
     for char in sorted(charastats, key=lambda char: charastats[char].tuple(), reverse=True):
         count = charastats[char]
         bullets.append(
-            " * " + char
-            + " has " + humanize(count.blocks) + (" block " if count.blocks == 1 else " blocks ") + "of dialogue, "
-            + "containing " + humanize(count.words) + " words and "
-            + humanize(count.characters) + " characters."
+            " * "
+            + char
+            + " has "
+            + humanize(count.blocks)
+            + (" block " if count.blocks == 1 else " blocks ")
+            + "of dialogue, "
+            + "containing "
+            + humanize(count.words)
+            + " words and "
+            + humanize(count.characters)
+            + " characters."
         )
 
     rv.append(bullets)
@@ -905,8 +908,7 @@ def report_character_stats(charastats):
 
 
 def check_image_manipulators():
-
-    problems = [ ]
+    problems = []
 
     for filename, linenumber, classname in renpy.display.im.ImageBase.obsolete_list:
         problems.append((filename, linenumber, "im.%s" % classname))
@@ -1018,8 +1020,7 @@ def check_unreachables(all_nodes):
 
 
 def check_orphan_translations(none_lang_identifiers, translation_identifiers):
-
-    problems = [ ]
+    problems = []
 
     for id, nodes in translation_identifiers.items():
         if id not in none_lang_identifiers:
@@ -1034,7 +1035,7 @@ def check_python_warnings():
     Reports Python warnings.
     """
 
-    warnings = [ ]
+    warnings = []
 
     for k, v in renpy.game.script.bytecode_newcache.items():
         if isinstance(k, tuple) and k[0] == "warnings":
@@ -1048,7 +1049,7 @@ def check_python_warnings():
     warnings.sort()
 
     for _filename, _line, text in warnings:
-        print("\n" + text, end='')
+        print("\n" + text, end="")
 
 
 def lint():
@@ -1057,17 +1058,37 @@ def lint():
     other checks.
     """
 
-    ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
-    ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
+    ap = renpy.arguments.ArgumentParser(
+        description="Checks the script for errors and prints script statistics.", require_command=False
+    )
+    ap.add_argument("filename", nargs="?", action="store", help="The file to write to.")
 
-    ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errors, 1 if lint errors are found.")
+    ap.add_argument(
+        "--error-code",
+        action="store_true",
+        help="If given, the error code is 0 if the game has no lint errors, 1 if lint errors are found.",
+    )
 
-    ap.add_argument("--no-orphan-tl", dest="orphan_tl", action="store_false", help="If not given, orphan translations are reported.")
-    ap.add_argument("--reserved-parameters", action="store_true", help="If given, renpy or python reserved names in renpy statement parameters are reported.")
-    ap.add_argument("--by-character", action="store_true", help="If given, the count of blocks, words, and characters for each character is reported.")
+    ap.add_argument(
+        "--no-orphan-tl", dest="orphan_tl", action="store_false", help="If not given, orphan translations are reported."
+    )
+    ap.add_argument(
+        "--reserved-parameters",
+        action="store_true",
+        help="If given, renpy or python reserved names in renpy statement parameters are reported.",
+    )
+    ap.add_argument(
+        "--by-character",
+        action="store_true",
+        help="If given, the count of blocks, words, and characters for each character is reported.",
+    )
     ap.add_argument("--check-unclosed-tags", action="store_true", help="If given, unclosed text tags are reported.")
 
-    ap.add_argument("--all-problems", action="store_true", help="If given, all problems of a kind are reported, not just the first ten.")
+    ap.add_argument(
+        "--all-problems",
+        action="store_true",
+        help="If given, all problems of a kind are reported, not just the first ten.",
+    )
 
     global args
     args = ap.parse_args()
@@ -1084,11 +1105,11 @@ def lint():
     renpy.exports.execute_default_statement(True)
 
     # Initialise store and values set by start callbacks.
-    renpy.exports.call_in_new_context('_start_store')
+    renpy.exports.call_in_new_context("_start_store")
 
     # This supports check_hide.
     global image_prefixes
-    image_prefixes = { }
+    image_prefixes = {}
 
     for k in renpy.display.image.images:
         image_prefixes[k[0]] = True
@@ -1097,7 +1118,7 @@ def lint():
     # them. We sort them in filename, linenumber order.
 
     all_stmts = list(renpy.game.script.all_stmts)
-    all_stmts.sort(key=lambda n : n.filename)
+    all_stmts.sort(key=lambda n: n.filename)
 
     # The current count.
     counts = collections.defaultdict(Count)
@@ -1114,14 +1135,13 @@ def lint():
     global report_node
 
     none_language_ids = set()
-    translated_ids = collections.defaultdict(list) # id : [nodes]
+    translated_ids = collections.defaultdict(list)  # id : [nodes]
 
     for node in all_stmts:
         if isinstance(node, (renpy.ast.Show, renpy.ast.Scene)):
             precheck_show(node)
 
     for node in all_stmts:
-
         if common(node):
             continue
 
@@ -1153,7 +1173,7 @@ def lint():
 
             counts[node_language].add(node.what)
             if node_language is None:
-                charastats[node.who or 'narrator'].add(node.what)
+                charastats[node.who or "narrator"].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -1229,10 +1249,9 @@ def lint():
     # list of either strings or lists of strings
     # the elements of `lines` will be printed separated by blank lines
     # the strings in lists in `lines` will be separated by simple carriage-returns
-    lines = [ ]
+    lines = []
 
     def report_language(language):
-
         count = counts[language]
 
         if count.blocks <= 0:
@@ -1250,7 +1269,8 @@ characters per block. """.format(
             humanize(count.words),
             humanize(count.characters),
             1.0 * count.words / count.blocks,
-            1.0 * count.characters / count.blocks)
+            1.0 * count.characters / count.blocks,
+        )
 
         lines.append(s)
 
@@ -1260,12 +1280,15 @@ characters per block. """.format(
     print("")
 
     languages = list(counts)
-    languages.sort(key=lambda a : a or "")
+    languages.sort(key=lambda a: a or "")
     for i in languages:
         report_language(i)
 
-    lines.append("The game contains {0} menus, {1} images, and {2} screens.".format(
-        humanize(menu_count), humanize(image_count), humanize(screen_count)))
+    lines.append(
+        "The game contains {0} menus, {1} images, and {2} screens.".format(
+            humanize(menu_count), humanize(image_count), humanize(screen_count)
+        )
+    )
 
     if args.by_character:
         lines.extend(report_character_stats(charastats))
@@ -1276,7 +1299,6 @@ characters per block. """.format(
             l = (l,)
 
         for ll in l:
-
             if ll.startswith(" * "):
                 prefix = " * "
                 altprefix = "   "

@@ -325,10 +325,7 @@ def register[T](
         raise Exception('Unknown "block" argument value: {}'.format(block))
 
     # The function that is called to create an ast.UserStatement.
-    def parse_user_statement(
-        l: renpy.lexer.Lexer, loc: tuple[str, int]
-    ) -> renpy.ast.Node | list[renpy.ast.Node]:
-
+    def parse_user_statement(l: renpy.lexer.Lexer, loc: tuple[str, int]) -> renpy.ast.Node | list[renpy.ast.Node]:
         renpy.exports.push_error_handler(l.error)
 
         old_subparses = l.subparses
@@ -413,7 +410,6 @@ def parse(node: renpy.ast.Node, line: str, subblock: list[renpy.lexer.GroupedLin
 
     renpy.exports.push_error_handler(l.error)
     try:
-
         pf = cast(
             Callable[[renpy.lexer.Lexer], renpy.ast.Node | list[renpy.ast.Node]] | None,
             parsers.parse(l),

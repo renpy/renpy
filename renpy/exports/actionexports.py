@@ -97,7 +97,5 @@ def confirm(message: str, **kwargs: Any):
     See :func:`Confirm` for a similar Action.
     """
     Return = renpy.store.Return
-    renpy.store.layout.yesno_screen(
-        message, yes=Return(True), no=Return(False), **kwargs
-    )
+    renpy.store.layout.yesno_screen(message, yes=Return(True), no=Return(False), **kwargs)
     return renpy.ui.interact()

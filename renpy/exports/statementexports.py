@@ -94,9 +94,7 @@ def imagemap[T](
 
     renpy.exports.mode("imagemap")
 
-    renpy.ui.imagemap_compat(
-        ground, selected, hotspots, unselected=unselected, style=style, **properties
-    )
+    renpy.ui.imagemap_compat(ground, selected, hotspots, unselected=unselected, style=style, **properties)
 
     roll_forward = renpy.exports.roll_forward_info()
     if roll_forward not in [result for _x0, _y0, _x1, _y1, result in hotspots]:
@@ -198,12 +196,7 @@ def pause(
     ):
         roll_forward = None
 
-    if (
-        (delay is not None)
-        and renpy.game.after_rollback
-        and not renpy.config.pause_after_rollback
-    ):
-
+    if (delay is not None) and renpy.game.after_rollback and not renpy.config.pause_after_rollback:
         rv = roll_forward
         if rv is None:
             rv = False
@@ -230,9 +223,7 @@ def pause(
         afm = None
 
     if hard or not renpy.store._dismiss_pause:
-        renpy.ui.saybehavior(
-            afm=afm, dismiss="dismiss_hard_pause", dismiss_unfocused=[]
-        )
+        renpy.ui.saybehavior(afm=afm, dismiss="dismiss_hard_pause", dismiss_unfocused=[])
     else:
         renpy.ui.saybehavior(afm=afm)
 
@@ -302,7 +293,6 @@ def with_statement(trans, always=False, paired=None, clear=True):
     renpy.exports.mode("with")
 
     if isinstance(trans, dict):
-
         for k, v in trans.items():
             if k is None:
                 continue

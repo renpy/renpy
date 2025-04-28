@@ -48,9 +48,7 @@ from renpy.exports.commonexports import renpy_pure
 
 
 class TagQuotingDict(object):
-
     def __getitem__(self, key: str) -> Any:
-
         store = renpy.store.__dict__
 
         if key in store:
@@ -62,9 +60,7 @@ class TagQuotingDict(object):
             return rv
         else:
             if renpy.config.debug:
-                raise Exception(
-                    "During an interpolation, '%s' was not found as a variable." % key
-                )
+                raise Exception("During an interpolation, '%s' was not found as a variable." % key)
             return "<" + key + " unbound>"
 
 
@@ -165,7 +161,6 @@ def do_reshow_say(
     *args: Any,
     **kwargs: Any,
 ):
-
     if who is not None:
         who = renpy.python.py_eval(who)
 
@@ -253,7 +248,6 @@ def get_side_image(
             return None
 
     else:
-
         # Character will compute the appropriate attributes, and stores it
         # in _side_image_attributes.
         attrs = renpy.store._side_image_attributes

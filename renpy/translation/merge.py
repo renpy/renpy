@@ -20,8 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -43,7 +42,7 @@ def merge_strings():
 
     language = args.language
 
-    if language == 'None':
+    if language == "None":
         language = None
 
     if language not in renpy.game.script.translator.strings:  # @UndefinedVariable
@@ -53,7 +52,7 @@ def merge_strings():
         data = json.loads(f.read())
 
     if args.reverse:
-        new_data = { }
+        new_data = {}
 
         for k, v in data.items():
             new_data[v] = k
@@ -65,7 +64,6 @@ def merge_strings():
     renpy.config.clear_lines = False
 
     for k, v in st.translations.items():
-
         trivial = (not v) or (k == v)
 
         if (not trivial) and (not args.replace):
@@ -79,7 +77,7 @@ def merge_strings():
 
         new = data[k]
         quoted = renpy.translation.quote_unicode(new)
-        code = u'new "{}"'.format(quoted)
+        code = 'new "{}"'.format(quoted)
 
         filename, linenumber = st.translation_loc[k]
         renpy.scriptedit.insert_line_before(code, filename, linenumber)

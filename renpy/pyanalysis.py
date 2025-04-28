@@ -215,9 +215,7 @@ class Control(object):
 
     @override
     def __repr__(self):
-        return "<Control const={0} loop={1} imagemap={2}>".format(
-            self.const, self.loop, self.imagemap
-        )
+        return "<Control const={0} loop={1} imagemap={2}>".format(self.const, self.loop, self.imagemap)
 
 
 # Three levels of constness.
@@ -236,7 +234,6 @@ NOT_CONST = 0
 
 
 class DeltaSet[T](object):
-
     def __init__(self, base: set[T], copy: DeltaSet[T] | None = None):
         """
         Represents a set that stores its contents as differences from a base
@@ -255,7 +252,6 @@ class DeltaSet[T](object):
         self.changed: bool = False
 
     def add(self, v: T):
-
         if v in self.removed:
             self.removed.discard(v)
             self.changed = True
@@ -264,7 +260,6 @@ class DeltaSet[T](object):
             self.changed = True
 
     def discard(self, v: T):
-
         if v in self.added:
             self.added.discard(v)
             self.changed = True
@@ -279,7 +274,6 @@ class DeltaSet[T](object):
         return DeltaSet(self.base, self)
 
     def __iter__(self):
-
         for i in self.base:
             if i not in self.removed:
                 yield i
@@ -295,7 +289,6 @@ class Analysis(object):
     """
 
     def __init__(self, parent: Analysis | None = None):
-
         # The parent context transcludes run in, or None if there is no parent
         # context.
         self.parent: Analysis | None = parent
@@ -330,9 +323,7 @@ class Analysis(object):
 
         return rv
 
-    def push_control(
-        self, const: bool = True, loop: bool = False, imagemap: bool = False
-    ):
+    def push_control(self, const: bool = True, loop: bool = False, imagemap: bool = False):
         self.control = Control(
             self.control.const and const,
             loop,
@@ -386,7 +377,6 @@ class Analysis(object):
             or self.local_constant.changed
             or self.pure_functions.changed
         ):
-
             self.not_constant.changed = False
             self.global_constant.changed = False
             self.local_constant.changed = False
@@ -639,7 +629,6 @@ class PyAnalysis(ast.NodeVisitor):
 
     @override
     def visit_NamedExpr(self, node: ast.NamedExpr):
-
         const = self.analysis.is_constant(node.value)
         self.analysis.push_control(const, False)
 
@@ -676,7 +665,6 @@ class PyAnalysis(ast.NodeVisitor):
 
     @override
     def visit_AugAssign(self, node: ast.AugAssign):
-
         self.analysis.push_control(False, False)
 
         self.generic_visit(node)
@@ -738,7 +726,6 @@ class PyAnalysis(ast.NodeVisitor):
 
     @override
     def visit_withitem(self, node: ast.withitem):
-
         const = self.analysis.is_constant(node.context_expr)
         self.visit(node.context_expr)
 
@@ -833,9 +820,7 @@ class CompilerCache(object):
         rv = self.ast_eval_cache.get(key, None)
 
         if rv is None:
-            expr = py_compile(
-                expr, "eval", ast_node=True
-            )  # pyright: ignore[reportAssignmentType]
+            expr = py_compile(expr, "eval", ast_node=True)  # pyright: ignore[reportAssignmentType]
 
             try:
                 ast.literal_eval(expr)

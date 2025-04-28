@@ -143,9 +143,7 @@ def checkpoint(data=None, keep_rollback=None, hard=True):
     if keep_rollback is None:
         keep_rollback = renpy.config.keep_rollback_data
 
-    renpy.game.log.checkpoint(
-        data, keep_rollback=keep_rollback, hard=renpy.store._rollback and hard
-    )
+    renpy.game.log.checkpoint(data, keep_rollback=keep_rollback, hard=renpy.store._rollback and hard)
 
     if renpy.store._rollback and renpy.config.auto_clear_screenshot:
         renpy.game.interface.clear_screenshot = True
@@ -249,7 +247,6 @@ def rollback(
         return
 
     if not force:
-
         if not renpy.store._rollback:
             return
 

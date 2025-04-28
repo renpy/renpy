@@ -116,14 +116,11 @@ def menu(
     # condition is true.
 
     if renpy.config.menu_actions:
-
         location = renpy.game.context().current
 
         new_items = []
 
-        for (label, condition, value), (item_args, item_kwargs) in zip(
-            items, item_arguments
-        ):
+        for (label, condition, value), (item_args, item_kwargs) in zip(items, item_arguments):
             label = substitute(label)
             condition = renpy.python.py_eval(condition)
 
@@ -131,29 +128,22 @@ def menu(
                 continue
 
             if value is not None:
-                new_items.append(
-                    (
+                new_items.append((
+                    label,
+                    renpy.ui.ChoiceReturn(
                         label,
-                        renpy.ui.ChoiceReturn(
-                            label,
-                            value,
-                            location,
-                            sensitive=condition,
-                            args=item_args,
-                            kwargs=item_kwargs,
-                        ),
-                    )
-                )
+                        value,
+                        location,
+                        sensitive=condition,
+                        args=item_args,
+                        kwargs=item_kwargs,
+                    ),
+                ))
             else:
                 new_items.append((label, None))
 
     else:
-
-        new_items = [
-            (substitute(label), value)
-            for label, condition, value in items
-            if renpy.python.py_eval(condition)
-        ]
+        new_items = [(substitute(label), value) for label, condition, value in items if renpy.python.py_eval(condition)]
 
     # Check to see if there's at least one choice in set of items:
     choices = [value for label, value in new_items if value is not None]
@@ -314,9 +304,7 @@ def display_menu[T](
         menu_kwargs = _kwargs or {}
 
         if renpy.config.menu_arguments_callback is not None:
-            menu_args, menu_kwargs = renpy.config.menu_arguments_callback(
-                *menu_args, **menu_kwargs
-            )
+            menu_args, menu_kwargs = renpy.config.menu_arguments_callback(*menu_args, **menu_kwargs)
 
     else:
         menu_args, menu_kwargs = get_menu_args()
@@ -331,9 +319,7 @@ def display_menu[T](
         choice_for_skipping()
 
         if not predict_only:
-            if renpy.config.choice_empty_window and (
-                not renpy.game.context().scene_lists.shown_window
-            ):
+            if renpy.config.choice_empty_window and (not renpy.game.context().scene_lists.shown_window):
                 renpy.config.choice_empty_window("", interact=False)
 
     choices: list[T] = []
@@ -355,10 +341,7 @@ def display_menu[T](
 
     # Auto choosing.
     if renpy.config.auto_choice_delay:
-
-        renpy.ui.pausebehavior(
-            renpy.config.auto_choice_delay, renpy.exports.random.choice(choices)
-        )
+        renpy.ui.pausebehavior(renpy.config.auto_choice_delay, renpy.exports.random.choice(choices))
 
     # The location
     location = cast(tuple[str, int], renpy.game.context().current)
@@ -373,7 +356,6 @@ def display_menu[T](
 
     # Show the menu.
     if renpy.exports.has_screen(screen):
-
         item_actions: list[MenuEntry[Any]] = []
 
         if widget_properties is None:
@@ -382,7 +364,6 @@ def display_menu[T](
             props = widget_properties
 
         for label, value in items:
-
             if not label:
                 value = None
 
@@ -471,11 +452,9 @@ def display_menu[T](
     log("")
 
     if interact:
-
         rv = renpy.ui.interact(mouse="menu", type=type, roll_forward=roll_forward)
 
         for label, val in items:
-
             if isinstance(val, renpy.ui.ChoiceReturn):
                 val = val.value
 

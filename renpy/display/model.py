@@ -23,11 +23,9 @@ import renpy
 
 
 class Texture(object):
-
     texture_wrap = None
 
     def __init__(self, displayable, focus, main, fit, texture_wrap):
-
         displayable = renpy.easy.displayable(displayable)
 
         if displayable._duplicatable:
@@ -43,7 +41,6 @@ class Texture(object):
         self.texture_wrap = texture_wrap
 
     def _in_current_store(self):
-
         d = self.displayable._in_current_store()
 
         if d is self.displayable:
@@ -79,13 +76,13 @@ class Model(renpy.display.displayable.Displayable):
         super(Model, self).__init__(**properties)
 
         self.size = size
-        self.textures = [ ]
+        self.textures = []
 
         self._mesh = None
 
-        self.shaders = [ ]
-        self.uniforms = { }
-        self.properties = { }
+        self.shaders = []
+        self.uniforms = {}
+        self.properties = {}
 
     def grid_mesh(self, width, height):
         """
@@ -214,14 +211,13 @@ class Model(renpy.display.displayable.Displayable):
             i.displayable.set_style_prefix(prefix, False)
 
     def _in_current_store(self):
-
-        textures = [ ]
+        textures = []
 
         changed = False
 
         for old in self.textures:
             new = old._in_current_store()
-            changed |= (old is not new)
+            changed |= old is not new
             textures.append(new)
 
         if not changed:
@@ -233,17 +229,16 @@ class Model(renpy.display.displayable.Displayable):
         return rv
 
     def visit(self):
-        return [ i.displayable for i in self.textures ]
+        return [i.displayable for i in self.textures]
 
     def render(self, width, height, st, at):
-
         if not renpy.display.render.models:
             raise Exception("The Model displayable may only be used when model-based rendering is active.")
 
         if self.size is not None:
             width, height = self.size
 
-        renders = [ renpy.display.im.render_for_texture(i.displayable, width, height, st, at) for i in self.textures ]
+        renders = [renpy.display.im.render_for_texture(i.displayable, width, height, st, at) for i in self.textures]
 
         for cr, t in zip(renders, self.textures):
             if t.fit:
@@ -258,27 +253,32 @@ class Model(renpy.display.displayable.Displayable):
                 rv.add_property("texture_wrap_tex{}".format(i), t.texture_wrap)
 
         if self._mesh is None:
-
             if self.textures:
                 rv.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_rectangle(
-                    0.0, 0.0, width, height,
-                    0.0, 0.0, 1.0, 1.0,
-                    )
+                    0.0,
+                    0.0,
+                    width,
+                    height,
+                    0.0,
+                    0.0,
+                    1.0,
+                    1.0,
+                )
             else:
-
                 rv.mesh = renpy.gl2.gl2mesh2.Mesh2.rectangle(
-                    0.0, 0.0, width, height,
-                    )
+                    0.0,
+                    0.0,
+                    width,
+                    height,
+                )
 
         elif isinstance(self._mesh, tuple):
-
             if self._mesh[0] == "grid":
                 _, mesh_width, mesh_height = self._mesh
 
                 rv.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
-                    mesh_width, mesh_height,
-                    0.0, 0.0, width, height,
-                    0.0, 0.0, 1.0, 1.0)
+                    mesh_width, mesh_height, 0.0, 0.0, width, height, 0.0, 0.0, 1.0, 1.0
+                )
 
         else:
             rv.mesh = self._mesh

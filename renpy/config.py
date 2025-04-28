@@ -549,9 +549,7 @@ key_repeat = (0.3, 0.03)
 voice_tag_callback = None
 
 # A list of callbacks that can be used to add JSON to save files.
-save_json_callbacks: list[
-    Callable[[dict[str, str | list[int] | int | float]], None]
-] = []
+save_json_callbacks: list[Callable[[dict[str, str | list[int] | int | float]], None]] = []
 
 # The duration of a longpress, in seconds.
 longpress_duration = 0.5
@@ -666,14 +664,10 @@ minimum_presplash_time = 0.0
 nearest_neighbor = False
 
 # Should Ren'Py use the drawable resolution at all? (For RTT, Text, etc?)
-use_drawable_resolution = bool(
-    int(os.environ.get("RENPY_USE_DRAWABLE_RESOLUTION", "1"))
-)
+use_drawable_resolution = bool(int(os.environ.get("RENPY_USE_DRAWABLE_RESOLUTION", "1")))
 
 # Should text layout occur at drawable resolution?
-drawable_resolution_text = bool(
-    int(os.environ.get("RENPY_DRAWABLE_RESOLUTION_TEXT", "1"))
-)
+drawable_resolution_text = bool(int(os.environ.get("RENPY_DRAWABLE_RESOLUTION_TEXT", "1")))
 
 # Should we fill the virtual-resolution text box?
 draw_virtual_text_box = bool(int(os.environ.get("RENPY_DRAW_VIRTUAL_TEXT_BOX", "0")))
@@ -883,9 +877,7 @@ character_id_prefixes = []
 nw_voice = True
 
 # If not None, a function that's used to process say arguments.
-say_arguments_callback: Callable[..., tuple[tuple[Any, ...], dict[str, Any]]] | None = (
-    None
-)
+say_arguments_callback: Callable[..., tuple[tuple[Any, ...], dict[str, Any]]] | None = None
 
 # Should we show an atl interpolation for one frame?
 atl_one_frame = True
@@ -1025,9 +1017,7 @@ skip_sounds = False
 lint_screens_without_parameters = True
 
 # If not None, a function that's used to process and modify menu arguments.
-menu_arguments_callback: (
-    Callable[..., tuple[tuple[Any, ...], dict[str, Any]]] | None
-) = None
+menu_arguments_callback: Callable[..., tuple[tuple[Any, ...], dict[str, Any]]] | None = None
 
 # Should Ren'PY automatically clear the screenshot?
 auto_clear_screenshot = True
@@ -1247,10 +1237,7 @@ webaudio = True
 webaudio_required_types = ["audio/ogg", "audio/mpeg"]
 
 # If not None, a callback that can be used to alter audio filenames.
-audio_filename_callback: (
-    Callable[[str | renpy.audio.audio.AudioData], str | renpy.audio.audio.AudioData]
-    | None
-) = None
+audio_filename_callback: Callable[[str | renpy.audio.audio.AudioData], str | renpy.audio.audio.AudioData] | None = None
 
 # Should minimums be adjusted when x/yminimum and x/ymaximum are both floats?
 adjust_minimums = True
@@ -1318,9 +1305,7 @@ choice_empty_window = None
 
 # The encoding that's used by renpy.open_file by default. False
 # means to use binary mode.
-open_file_encoding: str | Literal[False] = os.environ.get(
-    "RENPY_OPEN_FILE_ENCODING", False
-)
+open_file_encoding: str | Literal[False] = os.environ.get("RENPY_OPEN_FILE_ENCODING", False)
 
 # A callback that can modify the gl2 window flags.
 gl2_modify_window_flags = None

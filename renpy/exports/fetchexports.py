@@ -110,13 +110,7 @@ def fetch_requests(
     url: str | bytes,
     method: str | bytes,
     data: (
-        Iterable[bytes]
-        | str
-        | bytes
-        | list[tuple[Any, Any]]
-        | tuple[tuple[Any, Any], ...]
-        | Mapping[Any, Any]
-        | None
+        Iterable[bytes] | str | bytes | list[tuple[Any, Any]] | tuple[tuple[Any, Any], ...] | Mapping[Any, Any] | None
     ),
     content_type: str,
     timeout: float | tuple[float, float] | tuple[float, None],
@@ -215,16 +209,13 @@ def fetch_emscripten(
     while time.time() - start < timeout:
         fetch_pause()
 
-        result = emscripten.run_script_string(
-            """fetchFileResult({})""".format(fetch_id)
-        )
+        result = emscripten.run_script_string("""fetchFileResult({})""".format(fetch_id))
         status, _ignored, message = result.partition(" ")
 
         if status != "PENDING":
             break
 
     try:
-
         if status == "OK":
             with open(fn, "rb") as f:
                 return f.read()
@@ -332,13 +323,9 @@ def fetch(
         data = _json.dumps(json).encode("utf-8")
 
     if renpy.emscripten:
-        content = fetch_emscripten(
-            url, method, data, content_type, timeout, headers=headers
-        )
+        content = fetch_emscripten(url, method, data, content_type, timeout, headers=headers)
     else:
-        content = fetch_requests(
-            url, method, data, content_type, timeout, headers=headers
-        )
+        content = fetch_requests(url, method, data, content_type, timeout, headers=headers)
 
     if isinstance(content, Exception):
         raise content  # type: ignore

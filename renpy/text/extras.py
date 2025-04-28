@@ -173,21 +173,16 @@ def filter_text_tags(
     """
 
     if (allow is None) and (deny is None):
-        raise Exception(
-            "Only one of the allow and deny keyword arguments should be given to filter_text_tags."
-        )
+        raise Exception("Only one of the allow and deny keyword arguments should be given to filter_text_tags.")
 
     if (allow is not None) and (deny is not None):
-        raise Exception(
-            "Only one of the allow and deny keyword arguments should be given to filter_text_tags."
-        )
+        raise Exception("Only one of the allow and deny keyword arguments should be given to filter_text_tags.")
 
     tokens = cast(list[tuple[str, str]], textsupport.tokenize(str(s)))
 
     rv: list[str] = []
 
     for tokentype, text in tokens:
-
         if tokentype == PARAGRAPH:
             rv.append("\n")
         elif tokentype == TAG:
@@ -230,7 +225,6 @@ def filter_alt_text(s: str):
     active: set[str] = set()
 
     for tokentype, text in tokens:
-
         if tokentype == PARAGRAPH:
             rv.append("\n")
         elif tokentype == TAG:
@@ -289,14 +283,11 @@ class ParameterizedText(object):
     _duplicatable: bool = True
 
     def _duplicate(self, args: Any):
-
         if args.lint:
             return renpy.text.text.Text("", style=self.style, **self.properties)
 
         if len(args.args) == 0:
-            raise Exception(
-                "'%s' takes a single string parameter." % " ".join(args.name)
-            )
+            raise Exception("'%s' takes a single string parameter." % " ".join(args.name))
 
         param = "".join(args.args)
         string = renpy.python.py_eval(param)
@@ -320,7 +311,6 @@ def textwrap(s: str, width: int = 78, asian: bool = False):
     glyphs: list[str] = []
 
     for c in str(s):
-
         eaw = unicodedata.east_asian_width(c)
 
         if (eaw == "F") or (eaw == "W"):
@@ -371,12 +361,7 @@ def thaic90(s: str) -> str:
     # ==============================================
 
     def isBase(c: str):
-        return (
-            ("\u0e01" <= c <= "\u0e30")
-            or c == "\u0e30"
-            or c == "\u0e40"
-            or c == "\u0e41"
-        )
+        return ("\u0e01" <= c <= "\u0e30") or c == "\u0e30" or c == "\u0e40" or c == "\u0e41"
 
     def isBaseAsc(c: str):
         return c == "\u0e1b" or c == "\u0e1d" or c == "\u0e1f" or c == "\u0e2c"
@@ -428,9 +413,7 @@ def thaic90(s: str) -> str:
             if isLower(b) and z > 0:
                 b = s[z - 2]
             if isBase(b):
-                Nikhahit = z < length - 1 and (
-                    s[z + 1] == "\u0e33" or s[z + 1] == "\u0e4d"
-                )
+                Nikhahit = z < length - 1 and (s[z + 1] == "\u0e33" or s[z + 1] == "\u0e4d")
                 if isBaseAsc(b):
                     if Nikhahit:
                         # [base.asc] [nikhahit] [top] -> [base.asc] [nikhahit] [top.left]
@@ -495,4 +478,4 @@ def thaic90(s: str) -> str:
 
         rv.append(c)
 
-    return u''.join(rv)
+    return "".join(rv)

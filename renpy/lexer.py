@@ -94,29 +94,24 @@ class ParseError(SyntaxError):
 
                 if self.offset is not None:
                     from renpy.error import normalize_renpy_line_offset
-                    offset = normalize_renpy_line_offset(
-                        filename,
-                        lineno,
-                        self.offset,
-                        self.text)
+
+                    offset = normalize_renpy_line_offset(filename, lineno, self.offset, self.text)
 
                     # Fallback to single caret for cases end_offset is before offset.
                     if self.end_offset is None or self.end_offset <= offset:
                         end_offset = offset + 1
                     else:
                         end_offset = normalize_renpy_line_offset(
-                            filename,
-                            self.end_lineno or lineno,
-                            self.end_offset,
-                            self.text)
+                            filename, self.end_lineno or lineno, self.end_offset, self.text
+                        )
 
                     left_spaces = len(text) - len(text.lstrip())
                     offset -= left_spaces
                     end_offset -= left_spaces
 
                     if offset >= 0:
-                        caret_space = ' ' * (offset - 1)
-                        carets = '^' * (end_offset - offset)
+                        caret_space = " " * (offset - 1)
+                        carets = "^" * (end_offset - offset)
                         message += f"\n    {caret_space}{carets}"
 
             for note in getattr(self, "__notes__", ()):
@@ -241,7 +236,6 @@ def get_string_munger(prefix: str) -> Callable[[str], str]:
     if renpy.config.munge_in_strings:
 
         def munge_string(m: re.Match[str]):
-
             g1 = m.group(1)
 
             if "__" in g1:
@@ -428,9 +422,9 @@ def list_logical_lines(
                 # This can happen only if we have unclosed parens.
                 c, lineno, column = open_parens[-1]
 
-                raise ParseError(f"'{c}' was never closed",
-                                 filename, lineno, column + 1,
-                                 linecache.getline(filename, lineno))
+                raise ParseError(
+                    f"'{c}' was never closed", filename, lineno, column + 1, linecache.getline(filename, lineno)
+                )
 
             # Name and runs of spaces are the most common cases, so it's first.
             if c in " _" or c.isalnum():
@@ -541,24 +535,24 @@ def list_logical_lines(
 
             elif c in "}])":
                 if not open_parens:
-
-                    raise ParseError(f"unmatched '{c}'",
-                                     filename, number, pos - line_startpos + 1,
-                                     linecache.getline(filename, number))
+                    raise ParseError(
+                        f"unmatched '{c}'",
+                        filename,
+                        number,
+                        pos - line_startpos + 1,
+                        linecache.getline(filename, number),
+                    )
 
                 open_c, _, _ = open_parens.pop()
 
-                if not (
-                    c == ")"
-                    and open_c == "("
-                    or c == "]"
-                    and open_c == "["
-                    or c == "}"
-                    and open_c == "{"
-                ):
-                    raise ParseError(f"closing parenthesis '{c}' does not match opening parenthesis '{open_c}'",
-                                     filename, number, pos - line_startpos + 1,
-                                     linecache.getline(filename, number))
+                if not (c == ")" and open_c == "(" or c == "]" and open_c == "[" or c == "}" and open_c == "{"):
+                    raise ParseError(
+                        f"closing parenthesis '{c}' does not match opening parenthesis '{open_c}'",
+                        filename,
+                        number,
+                        pos - line_startpos + 1,
+                        linecache.getline(filename, number),
+                    )
 
                 line.append(c)
                 pos += 1
@@ -636,9 +630,7 @@ def group_logical_lines(lines: list[tuple[str, int, str]]) -> list[GroupedLine]:
     filename, number, text = lines[0]
 
     if text.startswith(" "):
-        raise ParseError(
-            "Unexpected indentation at start of file.", filename, number, text=text
-        )
+        raise ParseError("Unexpected indentation at start of file.", filename, number, text=text)
 
     stack: list[tuple[int, list[GroupedLine]]] = [(0, [])]
     block_indent, block = stack[-1]
@@ -745,13 +737,10 @@ class SubParse(object):
 
     @override
     def __repr__(self):
-
         if not self.block:
             return "<SubParse empty>"
         else:
-            return "<SubParse {}:{}>".format(
-                self.block[0].filename, self.block[0].linenumber
-            )
+            return "<SubParse {}:{}>".format(self.block[0].filename, self.block[0].linenumber)
 
 
 class Lexer(object):
@@ -772,7 +761,6 @@ class Lexer(object):
         monologue_delimiter: str = "\n\n",
         subparses: list[SubParse] | None = None,
     ):
-
         # Older version of Lexer had block being a list of tuples. Those lists can be found in UserStatements,
         # and so need to be upgraded.
         if block and not isinstance(block[0], GroupedLine):
@@ -951,16 +939,9 @@ class Lexer(object):
         """
 
         if (self.line == -1) and self.block:
-            self.filename, self.number, self.column, self.text, self.subblock = (
-                self.block[0]
-            )
+            self.filename, self.number, self.column, self.text, self.subblock = self.block[0]
 
-        raise ParseError(
-            msg,
-            self.filename,
-            self.number,
-            self.pos + 1,
-            self.text)
+        raise ParseError(msg, self.filename, self.number, self.pos + 1, self.text)
 
     def deferred_error(self, queue: str, msg: str):
         """
@@ -972,13 +953,9 @@ class Lexer(object):
         """
 
         if (self.line == -1) and self.block:
-            self.filename, self.number, self.column, self.text, self.subblock = (
-                self.block[0]
-            )
+            self.filename, self.number, self.column, self.text, self.subblock = self.block[0]
 
-        ParseError(msg, self.filename, self.number, self.pos + 1, self.text).defer(
-            queue
-        )
+        ParseError(msg, self.filename, self.number, self.pos + 1, self.text).defer(queue)
 
     def eol(self):
         """
@@ -1096,7 +1073,6 @@ class Lexer(object):
             return c
 
         if not raw:
-
             # Collapse runs of whitespace into single spaces.
             s = re.sub(r"[ \n]+", " ", s)
 
@@ -1155,7 +1131,6 @@ class Lexer(object):
             return c
 
         if not raw:
-
             s = re.sub(r" *\n *", "\n", s)
 
             mondel = self.monologue_delimiter
@@ -1358,7 +1333,7 @@ class Lexer(object):
 
             self.match(r'.[^\'"\\]*')
 
-        return self.text[old_pos:self.pos]
+        return self.text[old_pos : self.pos]
 
     def dotted_name(self):
         """
@@ -1404,7 +1379,6 @@ class Lexer(object):
         start = self.pos
 
         while not self.eol():
-
             c = self.text[self.pos]
 
             if c in delim:
@@ -1504,7 +1478,6 @@ class Lexer(object):
 
         # Operator.
         while True:
-
             while self.match(operator_regexp):
                 pass
 
@@ -1513,13 +1486,7 @@ class Lexer(object):
 
             # We start with either a name, a python_string, or parenthesized
             # python
-            if not (
-                self.python_string()
-                or lex_name()
-                or self.float()
-                or self.parenthesised_python()
-            ):
-
+            if not (self.python_string() or lex_name() or self.float() or self.parenthesised_python()):
                 break
 
             while True:
@@ -1671,7 +1638,6 @@ class Lexer(object):
         rv: list[str],
         line_holder: LineNumberHolder,
     ) -> None:
-
         for _fn, ln, indent, text, subblock in block:
             prefix: str = " " * indent
 
@@ -1717,9 +1683,7 @@ class Lexer(object):
         """
 
         if self.subparses is None:
-            raise Exception(
-                "A renpy_statement can only be parsed inside a creator-defined statement."
-            )
+            raise Exception("A renpy_statement can only be parsed inside a creator-defined statement.")
 
         block = renpy.parser.parse_statement(self)
         self.unadvance()
@@ -1733,11 +1697,8 @@ class Lexer(object):
         return sp
 
     def renpy_block(self, empty: bool = False):
-
         if self.subparses is None:
-            raise Exception(
-                "A renpy_block can only be parsed inside a creator-defined statement."
-            )
+            raise Exception("A renpy_block can only be parsed inside a creator-defined statement.")
 
         if self.line < 0:
             self.advance()
@@ -1746,7 +1707,6 @@ class Lexer(object):
 
         while not self.eob:
             try:
-
                 stmt = renpy.parser.parse_statement(self)
 
                 if isinstance(stmt, list):
@@ -1789,7 +1749,7 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
     open_linenumber = 0
 
     # Remove BOM.
-    if lines and lines[0] and lines[0][0] == '\ufeff':
+    if lines and lines[0] and lines[0][0] == "\ufeff":
         lines[0] = lines[0][1:]
 
     for linenumber, l in enumerate(lines, start=1):
@@ -1848,9 +1808,7 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
         )
 
     if state == RENPY:
-        raise ParseError(
-            f'\'"""renpy\' block was not terminated by """.', filename, open_linenumber
-        )
+        raise ParseError(f'\'"""renpy\' block was not terminated by """.', filename, open_linenumber)
 
 
 def ren_py_to_rpy(text: str, filename: str | None) -> str:
@@ -1868,9 +1826,7 @@ def ren_py_to_rpy(text: str, filename: str | None) -> str:
 
     # Consume as much as possible from the input
     try:
-        for offset, line in zip(
-            ren_py_to_rpy_offsets(lines, filename or "<string>"), lines
-        ):
+        for offset, line in zip(ren_py_to_rpy_offsets(lines, filename or "<string>"), lines):
             if offset is None:
                 result.append("")
             else:

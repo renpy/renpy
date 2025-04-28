@@ -152,7 +152,6 @@ def compile_event(key, keydown):
         rv = "(ev.type == %d" % pygame.KEYUP
 
     if not mouse:
-
         if "repeat" in modifiers:
             rv += " and (ev.repeat)"
         elif "any" in modifiers or "anyrepeat" in modifiers:
@@ -161,30 +160,25 @@ def compile_event(key, keydown):
             rv += " and (not ev.repeat)"
 
     if not "anymod" in modifiers:
-
         if key not in ["K_LALT", "K_RALT"]:
-
             if "alt" in modifiers or (renpy.macintosh and "osctrl" in modifiers):
                 rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
             else:
                 rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
 
         if key not in ["K_LGUI", "K_RGUI"]:
-
             if "meta" in modifiers:
                 rv += " and (ev.mod & %d)" % pygame.KMOD_META
             else:
                 rv += " and not (ev.mod & %d)" % pygame.KMOD_META
 
         if key not in ["K_LCTRL", "K_RCTRL"]:
-
             if "ctrl" in modifiers or (not renpy.macintosh and "osctrl" in modifiers):
                 rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
             else:
                 rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
 
     if key not in ["K_LSHIFT", "K_RSHIFT"]:
-
         if "shift" in modifiers:
             rv += " and (ev.mod & %d)" % pygame.KMOD_SHIFT
 
@@ -192,7 +186,6 @@ def compile_event(key, keydown):
             rv += " and not (ev.mod & %d)" % pygame.KMOD_SHIFT
 
     if key not in ["K_CAPSLOCK"]:
-
         if "caps" in modifiers:
             rv += " and (ev.mod & %d)" % pygame.KMOD_CAPS
 
@@ -200,7 +193,6 @@ def compile_event(key, keydown):
             rv += " and not (ev.mod & %d)" % pygame.KMOD_CAPS
 
     if key not in ["K_NUMLOCK"]:
-
         if "num" in modifiers:
             rv += " and (ev.mod & %d)" % pygame.KMOD_NUM
 
@@ -373,7 +365,6 @@ def skipping(ev):
         return
 
     if map_event(ev, "skip"):
-
         if (renpy.game.interface.text_rect is None) or renpy.config.skip_during_text:
             renpy.config.skipping = "slow"
             renpy.exports.restart_interaction()
@@ -459,7 +450,6 @@ def run_unhovered(var):
 
 
 def run_periodic(var, st):
-
     if isinstance(var, (list, tuple)):
         rv = None
 
@@ -476,7 +466,6 @@ def run_periodic(var, st):
 
 
 def get_tooltip(action):
-
     if isinstance(action, (list, tuple)):
         for i in action:
             rv = get_tooltip(i)
@@ -535,7 +524,6 @@ def is_sensitive(action):
 
 
 def alt(clicked):
-
     if isinstance(clicked, (list, tuple)):
         rv = []
 
@@ -579,15 +567,12 @@ class Keymap(renpy.display.layout.Null):
         self.capture = capture
 
     def event(self, ev, x, y, st):
-
         # This field is created by Button.
         if getattr(ev, "_suppressed", False):
             return
 
         for name, action in self.keymap.items():
-
             if map_event(ev, name):
-
                 renpy.exports.play(self.style.activate_sound)
 
                 rv = run(action)
@@ -627,15 +612,7 @@ class PauseBehavior(renpy.display.layout.Null):
     modal = False
     self_voice = False
 
-    def __init__(
-        self,
-        delay,
-        result=False,
-        voice=False,
-        self_voicing=False,
-        modal=None,
-        **properties
-    ):
+    def __init__(self, delay, result=False, voice=False, self_voicing=False, modal=None, **properties):
         super(PauseBehavior, self).__init__(**properties)
 
         self.delay = delay
@@ -645,15 +622,12 @@ class PauseBehavior(renpy.display.layout.Null):
         self.modal = (renpy.config.modal_blocks_pause) if (modal is None) else modal
 
     def event(self, ev, x, y, st):
-
         if ev.type == renpy.display.core.TIMEEVENT:
-
             if ev.modal and self.modal:
                 renpy.game.interface.timeout(max(self.delay - st, 0))
                 return
 
             if st >= self.delay:
-
                 if self.self_voicing and renpy.config.nw_voice:
                     if renpy.display.tts.is_active() or not renpy.config.afm_callback():
                         renpy.game.interface.timeout(0.05)
@@ -686,7 +660,6 @@ class PredictPauseBehavior(renpy.display.layout.Null):
         super(PredictPauseBehavior, self).__init__(**properties)
 
     def event(self, ev, x, y, st):
-
         if not renpy.display.interface.force_prediction:
             return False
 
@@ -707,7 +680,6 @@ class SoundStopBehavior(renpy.display.layout.Null):
         self.result = result
 
     def event(self, ev, x, y, st):
-
         if not renpy.audio.music.get_playing(self.channel):
             return self.result
 
@@ -736,7 +708,7 @@ class SayBehavior(renpy.display.layout.Null):
         allow_dismiss=None,
         dismiss_unfocused=["dismiss_unfocused"],
         dialogue_pause=None,
-        **properties
+        **properties,
     ):
         super(SayBehavior, self).__init__(default=default, **properties)
 
@@ -768,7 +740,6 @@ class SayBehavior(renpy.display.layout.Null):
         self.afm_length = 1
 
         for text in args:
-
             try:
                 afm_text = text.text[0][text.start : text.end]
                 afm_text = renpy.text.extras.filter_text_tags(afm_text, allow=[])
@@ -777,17 +748,9 @@ class SayBehavior(renpy.display.layout.Null):
                 self.afm_length += max(text.end - text.start, 1)
 
     def event(self, ev, x, y, st):
-
-        if (
-            self.afm_length
-            and renpy.game.preferences.afm_time
-            and renpy.game.preferences.afm_enable
-        ):
-
+        if self.afm_length and renpy.game.preferences.afm_time and renpy.game.preferences.afm_enable:
             afm_delay = (
-                1.0
-                * (renpy.config.afm_bonus + self.afm_length)
-                / renpy.config.afm_characters
+                1.0 * (renpy.config.afm_bonus + self.afm_length) / renpy.config.afm_characters
             ) * renpy.game.preferences.afm_time
 
             if self.dialogue_pause is not None:
@@ -805,10 +768,7 @@ class SayBehavior(renpy.display.layout.Null):
                 return None
 
             if st > afm_delay:
-
-                if not renpy.display.tts.is_active() and (
-                    not renpy.game.preferences.self_voicing or self.is_focused()
-                ):
+                if not renpy.display.tts.is_active() and (not renpy.game.preferences.self_voicing or self.is_focused()):
                     if (not renpy.config.afm_callback) or renpy.config.afm_callback():
                         return True
 
@@ -820,9 +780,7 @@ class SayBehavior(renpy.display.layout.Null):
         dismiss = [(i, True) for i in self.dismiss] + [(i, False) for i in self.dismiss_unfocused]  # type: ignore
 
         for dismiss_event, check_focus in dismiss:
-
             if map_event(ev, dismiss_event):
-
                 if check_focus and not self.is_focused():
                     continue
 
@@ -839,17 +797,14 @@ class SayBehavior(renpy.display.layout.Null):
                     rollback_side = renpy.game.preferences.desktop_rollback_side
 
                 if ev.type == pygame.MOUSEBUTTONUP:
-
                     percent = 1.0 * x / renpy.config.screen_width
 
                     if rollback_side == "left":
-
                         if percent < renpy.config.rollback_side_size:
                             renpy.exports.rollback()
                             raise renpy.display.core.IgnoreEvent()
 
                     elif rollback_side == "right":
-
                         if (1.0 - percent) < renpy.config.rollback_side_size:
                             renpy.exports.rollback()
                             raise renpy.display.core.IgnoreEvent()
@@ -859,7 +814,6 @@ class SayBehavior(renpy.display.layout.Null):
                     and renpy.game.preferences.afm_enable
                     and not renpy.game.preferences.afm_after_click
                 ):
-
                     renpy.game.preferences.afm_enable = False
                     renpy.exports.restart_interaction()
                     raise renpy.display.core.IgnoreEvent()
@@ -872,14 +826,8 @@ class SayBehavior(renpy.display.layout.Null):
 
         skip_delay = renpy.config.skip_delay / 1000.0
 
-        if (
-            renpy.config.skipping
-            and renpy.config.allow_skipping
-            and renpy.store._skipping
-        ):
-
+        if renpy.config.skipping and renpy.config.allow_skipping and renpy.store._skipping:
             if ev.type == renpy.display.core.TIMEEVENT and st >= skip_delay:
-
                 tlid = renpy.game.context().translate_identifier
 
                 if ev.modal:
@@ -944,7 +892,6 @@ class DismissBehavior(renpy.display.displayable.Displayable):
         return rv
 
     def event(self, ev, x, y, st):
-
         if self.is_focused() and map_event(ev, self.keysym):
             renpy.exports.play(self.style.activate_sound)
             rv = run(self.action)
@@ -966,7 +913,6 @@ KEY_EVENTS = (pygame.KEYDOWN, pygame.KEYUP, pygame.TEXTEDITING, pygame.TEXTINPUT
 
 
 class Button(renpy.display.layout.Window):
-
     _store_transform_event = True
 
     keymap = {}
@@ -1001,9 +947,8 @@ class Button(renpy.display.layout.Window):
         sensitive=None,
         keysym=None,
         alternate_keysym=None,
-        **properties
+        **properties,
     ):
-
         if isinstance(clicked, renpy.ui.Action):
             action = clicked
 
@@ -1054,16 +999,12 @@ class Button(renpy.display.layout.Window):
                 predict_action(v)
 
     def render(self, width, height, st, at):
-
         if self.style.time_policy:
-            st, self.time_policy_data = self.style.time_policy(
-                st, self.time_policy_data, self.style
-            )
+            st, self.time_policy_data = self.style.time_policy(st, self.time_policy_data, self.style)
 
         rv = super(Button, self).render(width, height, st, at)
 
         if self.clicked:
-
             rect = self.style.focus_rect
             if rect is not None:
                 fx, fy, fw, fh = rect
@@ -1079,16 +1020,12 @@ class Button(renpy.display.layout.Window):
                 mask = rv
             elif mask is not None:
                 try:
-                    mask = renpy.display.render.render(
-                        mask, rv.width, rv.height, st, at
-                    )
+                    mask = renpy.display.render.render(mask, rv.width, rv.height, st, at)
                 except Exception:
                     if callable(mask):
                         mask = mask
                     else:
-                        raise Exception(
-                            "Focus_mask must be None, True, a displayable, or a callable."
-                        )
+                        raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
 
             if mask is not None:
                 fmx = 0
@@ -1141,9 +1078,7 @@ class Button(renpy.display.layout.Window):
         return is_sensitive(self.action)
 
     def per_interact(self):
-
         if not self.locked:
-
             if self.action is not None:
                 if self.is_selected():
                     role = "selected_"
@@ -1182,7 +1117,6 @@ class Button(renpy.display.layout.Window):
         super(Button, self).per_interact()
 
     def event(self, ev, x, y, st):
-
         if self.locked:
             return None
 
@@ -1209,7 +1143,6 @@ class Button(renpy.display.layout.Window):
             if rv is not None:
                 return rv
         else:
-
             # Used to prevent keymaps (the key statement) from reacting to
             # this event. This is consumed by Keymap.
             try:
@@ -1240,7 +1173,6 @@ class Button(renpy.display.layout.Window):
 
         # Handle the longpress event, if necessary.
         if (self.alternate is not None) and renpy.display.touch:
-
             if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
                 self.longpress_start = st
                 self.longpress_x = x
@@ -1251,10 +1183,7 @@ class Button(renpy.display.layout.Window):
             if self.longpress_start is not None:
                 if ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
                     self.longpress_start = None
-                elif (
-                    math.hypot(x - self.longpress_x, y - self.longpress_y)
-                    > renpy.config.longpress_radius
-                ):
+                elif math.hypot(x - self.longpress_x, y - self.longpress_y) > renpy.config.longpress_radius:
                     self.longpress_start = None
                 elif st >= (self.longpress_start + renpy.config.longpress_duration):
                     renpy.exports.vibrate(renpy.config.longpress_vibrate)
@@ -1288,7 +1217,7 @@ class Button(renpy.display.layout.Window):
     def _tts_all(self):
         rv = self._tts_common(alt(self.action))
 
-        if self.style.prefix.startswith("selected_")  and (self.style.alt == self.style._hover_alt()):
+        if self.style.prefix.startswith("selected_") and (self.style.alt == self.style._hover_alt()):
             rv += " " + renpy.minstore.__("selected")
 
         return rv
@@ -1298,17 +1227,10 @@ class Button(renpy.display.layout.Window):
 # widget.
 
 
-def TextButton(
-    text, style="button", text_style="button_text", clicked=None, **properties
-):
+def TextButton(text, style="button", text_style="button_text", clicked=None, **properties):
+    text_properties, button_properties = renpy.easy.split_properties(properties, "text_", "")
 
-    text_properties, button_properties = renpy.easy.split_properties(
-        properties, "text_", ""
-    )
-
-    text = renpy.text.text.Text(
-        text, style=text_style, **text_properties
-    )  # @UndefinedVariable
+    text = renpy.text.text.Text(text, style=text_style, **text_properties)  # @UndefinedVariable
     return Button(text, style=style, clicked=clicked, **button_properties)
 
 
@@ -1333,9 +1255,8 @@ class ImageButton(Button):
         style="image_button",
         clicked=None,
         hovered=None,
-        **properties
+        **properties,
     ):
-
         hover_image = hover_image or idle_image
         insensitive_image = insensitive_image or idle_image
         activate_image = activate_image or hover_image
@@ -1356,9 +1277,7 @@ class ImageButton(Button):
             selected_activate_=renpy.easy.displayable(selected_activate_image),
         )
 
-        super(ImageButton, self).__init__(
-            None, style=style, clicked=clicked, hovered=hovered, **properties
-        )
+        super(ImageButton, self).__init__(None, style=style, clicked=clicked, hovered=hovered, **properties)
 
     def visit(self):
         rv = list(self.state_children.values())
@@ -1367,7 +1286,6 @@ class ImageButton(Button):
         return rv
 
     def get_child(self):
-
         raw_child = self.style.child or self.state_children[self.style.prefix]
 
         if raw_child is not self.imagebutton_raw_child:
@@ -1386,7 +1304,6 @@ class ImageButton(Button):
 
 # This is used for an input that takes its focus from a button.
 class HoveredProxy(object):
-
     def __init__(self, a, b):
         self.a = a
         self.b = b
@@ -1425,7 +1342,6 @@ def input_pre_per_interact():
 
 
 def input_post_per_interact():
-
     global current_input_value
     global input_value_active
 
@@ -1434,16 +1350,12 @@ def input_post_per_interact():
             break
 
     else:
-
         current_input_value = default_input_value
 
         input_value_active = True
 
     for i in inputs:
-
-        editable = (
-            (i.value == current_input_value) and input_value_active and i.value.editable
-        )
+        editable = (i.value == current_input_value) and input_value_active and i.value.editable
 
         content = i.value.get_text()
 
@@ -1458,7 +1370,6 @@ class CaretBlink(renpy.display.displayable.Displayable):
     """
 
     def __init__(self, caret, caret_blink, **properties):
-
         properties.setdefault("yalign", 0.0)
 
         super(CaretBlink, self).__init__(**properties)
@@ -1536,12 +1447,9 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         multiline=False,
         action=None,
         arrowkeys=True,
-        **properties
+        **properties,
     ):
-
-        super(Input, self).__init__(
-            "", style=style, replaces=replaces, substitute=False, **properties
-        )
+        super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
 
         if caret_blink is None:
             caret_blink = renpy.config.input_caret_blink
@@ -1585,9 +1493,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             if i.endswith("color"):
                 caretprops[i] = v
 
-        caret = renpy.display.image.Solid(
-            xysize=(1, renpy.store.preferences.font_size), style=style, **caretprops
-        )
+        caret = renpy.display.image.Solid(xysize=(1, renpy.store.preferences.font_size), style=style, **caretprops)
 
         if caret_blink:
             caret = CaretBlink(caret, caret_blink)
@@ -1610,13 +1516,11 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         self.update_text(self.content, self.editable)
 
     def update_text(self, new_content, editable, check_size=False):
-
         edit = renpy.display.interface.text_editing
 
         old_content = self.content
 
         if new_content != self.content or editable != self.editable or edit:
-
             renpy.display.render.redraw(self, 0)
 
         self.editable = editable
@@ -1629,7 +1533,6 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
         # Format text being edited by the IME.
         if edit:
-
             self.edit_text = edit.text
 
             edit_text_0 = edit.text[: edit.start]
@@ -1652,7 +1555,6 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             edit_text = ""
 
         def set_content(content):
-
             if editable:
                 l = len(content)
                 caret_content = [
@@ -1705,11 +1607,9 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         self.update_text(self.content, False)
 
     def per_interact(self):
-
         global default_input_value
 
         if self.value is not None:
-
             inputs.append(self)
             input_values.append(self.value)
 
@@ -1717,7 +1617,6 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
                 default_input_value = self.value
 
         if not self.shown:
-
             if self.value is not None:
                 default = self.value.get_text()
                 self.default = str(default)
@@ -1729,21 +1628,18 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             self.shown = True
 
     def event(self, ev, x, y, st):
-
         self.st = st
         self.old_caret_pos = self.caret_pos
 
         if not self.editable:
             return None
 
-        edit_controls = any(
-            [
-                map_event(ev, "input_jump_word_left"),
-                map_event(ev, "input_jump_word_right"),
-                map_event(ev, "input_delete_word"),
-                map_event(ev, "input_delete_full"),
-            ]
-        )
+        edit_controls = any([
+            map_event(ev, "input_jump_word_left"),
+            map_event(ev, "input_jump_word_right"),
+            map_event(ev, "input_delete_word"),
+            map_event(ev, "input_delete_full"),
+        ])
 
         if (
             (ev.type == pygame.KEYDOWN)
@@ -1758,12 +1654,8 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         raw_text = None
 
         if map_event(ev, "input_backspace"):
-
             if self.content and self.caret_pos > 0:
-                content = (
-                    self.content[0 : self.caret_pos - 1]
-                    + self.content[self.caret_pos : l]
-                )
+                content = self.content[0 : self.caret_pos - 1] + self.content[self.caret_pos : l]
                 self.caret_pos -= 1
                 self.update_text(content, self.editable)
 
@@ -1771,9 +1663,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             raise renpy.display.core.IgnoreEvent()
 
         elif self.multiline and map_event(ev, "input_next_line"):
-            content = (
-                self.content[: self.caret_pos] + "\n" + self.content[self.caret_pos :]
-            )
+            content = self.content[: self.caret_pos] + "\n" + self.content[self.caret_pos :]
             self.caret_pos += 1
             self.update_text(content, self.editable)
 
@@ -1781,15 +1671,10 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             raise renpy.display.core.IgnoreEvent()
 
         elif map_event(ev, "input_enter"):
-
             content = self.content
 
             if self.edit_text:
-                content = (
-                    content[0 : self.caret_pos]
-                    + self.edit_text
-                    + self.content[self.caret_pos :]
-                )
+                content = content[0 : self.caret_pos] + self.edit_text + self.content[self.caret_pos :]
 
             if self.action is not None:
                 rv = run(self.action)
@@ -1854,10 +1739,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
         elif map_event(ev, "input_delete"):
             if self.caret_pos < l:
-                content = (
-                    self.content[0 : self.caret_pos]
-                    + self.content[self.caret_pos + 1 : l]
-                )
+                content = self.content[0 : self.caret_pos] + self.content[self.caret_pos + 1 : l]
                 self.update_text(content, self.editable)
 
             renpy.display.render.redraw(self, 0)
@@ -1921,29 +1803,22 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             raw_text = ev.text
 
         elif ev.type == pygame.KEYDOWN:
-
             if ev.unicode and ord(ev.unicode[0]) >= 32:
                 raw_text = ev.unicode
             elif renpy.display.interface.text_event_in_queue():
                 raise renpy.display.core.IgnoreEvent()
-            elif (32 <= ev.key < 127) and not (
-                ev.mod & (pygame.KMOD_ALT | pygame.KMOD_META)
-            ):
+            elif (32 <= ev.key < 127) and not (ev.mod & (pygame.KMOD_ALT | pygame.KMOD_META)):
                 # Ignore printable keycodes without unicode.
                 raise renpy.display.core.IgnoreEvent()
 
         if raw_text is not None:
-
             text = ""
 
             for c in raw_text:
-
                 # Allow is given
                 if self.allow:
-
                     # Allow is regex
                     if isinstance(self.allow, re.Pattern):
-
                         # Character doesn't match
                         if self.allow.search(c) is None:
                             continue
@@ -1954,10 +1829,8 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
                 # Exclude is given
                 if self.exclude:
-
                     # Exclude is regex
                     if isinstance(self.exclude, re.Pattern):
-
                         # Character matches
                         if self.exclude.search(c) is not None:
                             continue
@@ -1973,12 +1846,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
                 text = text[:remaining]
 
             if text:
-
-                content = (
-                    self.content[0 : self.caret_pos]
-                    + text
-                    + self.content[self.caret_pos : l]
-                )
+                content = self.content[0 : self.caret_pos] + text + self.content[self.caret_pos : l]
                 self.caret_pos += len(text)
 
                 self.update_text(content, self.editable, check_size=True)
@@ -2225,7 +2093,6 @@ class Adjustment(renpy.object.Object):
         adj_registered.setdefault(self, []).append(d)
 
     def change(self, value, end_animation=True):
-
         if end_animation:
             self.end_animation()
 
@@ -2240,7 +2107,6 @@ class Adjustment(renpy.object.Object):
             value = self._range
 
         if value != self._value:
-
             if self.restart_interaction_at_limit:
                 value_0 = value == 0
                 _value_0 = self._value == 0
@@ -2306,7 +2172,6 @@ class Adjustment(renpy.object.Object):
                 self.change(value, end_animation=False)
 
     def periodic(self, st):
-
         if self.animation_target is None:
             return
 
@@ -2353,7 +2218,6 @@ class Bar(renpy.display.displayable.Displayable):
     __version__ = 2
 
     def after_upgrade(self, version):
-
         if version < 1:
             self.adjustment = Adjustment(self.range, self.value, changed=self.changed)  # type: ignore
             self.adjustment.register(self)
@@ -2381,14 +2245,12 @@ class Bar(renpy.display.displayable.Displayable):
         hovered=None,
         unhovered=None,
         released=None,
-        **properties
+        **properties,
     ):
-
         self.value = None
 
         if adjustment is None:
             if isinstance(value, renpy.ui.BarValue):
-
                 if isinstance(replaces, Bar):
                     value.replaces(replaces.value)
 
@@ -2403,9 +2265,7 @@ class Bar(renpy.display.displayable.Displayable):
                     properties.setdefault("tooltip", tooltip)
 
             else:
-                adjustment = Adjustment(
-                    range, value, step=step, page=page, changed=changed
-                )
+                adjustment = Adjustment(range, value, step=step, page=page, changed=changed)
 
         if style is None:
             if self.value is not None:
@@ -2461,7 +2321,6 @@ class Bar(renpy.display.displayable.Displayable):
         return rv
 
     def render(self, width, height, st, at):
-
         # Handle redrawing.
         if self.value is not None:
             redraw = self.value.periodic(st)
@@ -2556,7 +2415,6 @@ class Bar(renpy.display.displayable.Displayable):
         rv = renpy.display.render.Render(width, height)
 
         if bar_vertical:
-
             if self.style.bar_resizing:
                 foresurf = render(self.style.fore_bar, width, fore_size, st, at)
                 aftsurf = render(self.style.aft_bar, width, aft_size, st, at)
@@ -2639,7 +2497,6 @@ class Bar(renpy.display.displayable.Displayable):
             run(self.unhovered)
 
     def event(self, ev, x, y, st):
-
         if not self.focusable:
             return None
 
@@ -2675,7 +2532,6 @@ class Bar(renpy.display.displayable.Displayable):
             renpy.exports.play(self.style.activate_sound)
 
         if grabbed:
-
             if vertical:
                 increase = "bar_down"
                 decrease = "bar_up"
@@ -2698,9 +2554,7 @@ class Bar(renpy.display.displayable.Displayable):
                 pygame.MOUSEBUTTONUP,
                 pygame.MOUSEBUTTONDOWN,
             ):
-
                 if vertical:
-
                     tgutter = self.style.fore_gutter
                     bgutter = self.style.aft_gutter
                     zone_height = self.height - tgutter - bgutter - self.thumb_dim
@@ -2768,7 +2622,6 @@ class Bar(renpy.display.displayable.Displayable):
 
     def set_style_prefix(self, prefix, root):
         if root:
-
             if renpy.display.focus.get_grab() is self:
                 prefix = "selected_" + prefix
 
@@ -2778,7 +2631,6 @@ class Bar(renpy.display.displayable.Displayable):
         return ""
 
     def _tts_all(self):
-
         if self.value is not None:
             alt = self.value.alt
         else:
@@ -2811,7 +2663,6 @@ class Conditional(renpy.display.layout.Container):
             return render(self.null, width, height, st, at)
 
     def event(self, ev, x, y, st):
-
         state = eval(self.condition, renpy.store.__dict__)
 
         if state != self.state:
@@ -2833,7 +2684,6 @@ class TimerState(renpy.python.AlwaysRollback):
 
 
 class Timer(renpy.display.layout.Null):
-
     __version__ = 1
 
     started = False
@@ -2846,17 +2696,7 @@ class Timer(renpy.display.layout.Null):
             self.state.started = self.started
             self.state.next_event = self.next_event
 
-    def __init__(
-        self,
-        delay,
-        action=None,
-        repeat=False,
-        args=(),
-        kwargs={},
-        replaces=None,
-        modal=None,
-        **properties
-    ):
+    def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}, replaces=None, modal=None, **properties):
         super(Timer, self).__init__(**properties)
 
         if delay <= 0:
@@ -2888,7 +2728,6 @@ class Timer(renpy.display.layout.Null):
             self.state = TimerState()
 
     def render(self, width, height, st, at):
-
         if not self.state.started:
             self.state.started = True
             self.state.next_event = st + self.delay
@@ -2897,7 +2736,6 @@ class Timer(renpy.display.layout.Null):
         return super(Timer, self).render(width, height, st, at)
 
     def event(self, ev, x, y, st):
-
         if ev.type == renpy.display.core.TIMEEVENT and self.modal and ev.modal:
             return
 
@@ -2927,7 +2765,6 @@ class Timer(renpy.display.layout.Null):
 
 
 class MouseArea(renpy.display.displayable.Displayable):
-
     # The offset between st and at.
     at_st_offset = 0
 
@@ -2956,7 +2793,6 @@ class MouseArea(renpy.display.displayable.Displayable):
         return Render(width, height)
 
     def event(self, ev, x, y, st):
-
         # Mouseareas should not handle events when something else is grabbing.
         if renpy.display.focus.get_grab():
             return
@@ -3027,7 +2863,6 @@ class OnEvent(renpy.display.displayable.Displayable):
             return False
 
     def set_transform_event(self, event):
-
         if self.is_event(event):
             rv = run(self.action)
 
@@ -3046,16 +2881,7 @@ class AreaPicker(renpy.display.layout.Container):
     to let Ren'Py know what's going on.
     """
 
-    def __init__(
-        self,
-        rows=None,
-        cols=None,
-        position=None,
-        changed=None,
-        finished=None,
-        persist=False,
-        **properties
-    ):
+    def __init__(self, rows=None, cols=None, position=None, changed=None, finished=None, persist=False, **properties):
         super(AreaPicker, self).__init__(**properties)
 
         # The number of entries in the x and y grids, or None
@@ -3082,7 +2908,6 @@ class AreaPicker(renpy.display.layout.Container):
         self.persist = persist
 
     def round_to_grid(self, x, y, current):
-
         if x == -1 and y == -1:
             return current
 
@@ -3113,7 +2938,6 @@ class AreaPicker(renpy.display.layout.Container):
         return (px, py, w, h)
 
     def get_rect(self):
-
         if self.rect0 is None or self.rect1 is None:
             return None
 
@@ -3143,14 +2967,12 @@ class AreaPicker(renpy.display.layout.Container):
         return rv
 
     def event(self, ev, x, y, st):
-
         old_rect = self.get_rect()
         grabbed = renpy.display.focus.get_grab()
 
         finished = False
 
         if self.is_focused():
-
             if map_event(ev, "drag_activate"):
                 self.rect0 = self.round_to_grid(x, y, self.rect0)
                 self.rect1 = self.rect0
@@ -3187,7 +3009,6 @@ class AreaPicker(renpy.display.layout.Container):
                     self.rect0 = self.rect1
 
         else:
-
             self.rect0 = None
             self.rect1 = None
 
@@ -3203,16 +3024,7 @@ class WebInput(renpy.display.displayable.Displayable):
     # The active input, if any.
     active = None
 
-    def __init__(
-        self,
-        prompt,
-        default="",
-        allow=None,
-        exclude: str | None = "{}",
-        mask=False,
-        **properties
-    ):
-
+    def __init__(self, prompt, default="", allow=None, exclude: str | None = "{}", mask=False, **properties):
         super(WebInput, self).__init__(**properties)
 
         self.prompt = prompt
@@ -3256,7 +3068,6 @@ class WebInput(renpy.display.displayable.Displayable):
         )
 
     def event(self, ev, x, y, st):
-
         if not emscripten:
             return None
 

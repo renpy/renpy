@@ -116,7 +116,7 @@ def input(
     mask: str | None = None,
     copypaste: bool = True,
     multiline: bool = False,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> str:  # @ReservedAssignment
     """
     :doc: input
@@ -193,11 +193,7 @@ def input(
     show_properties, kwargs = renpy.easy.split_properties(kwargs, "show_", "")
 
     if kwargs:
-        raise TypeError(
-            "renpy.input() got unexpected keyword argument(s): {}".format(
-                ", ".join(kwargs.keys())
-            )
-        )
+        raise TypeError("renpy.input() got unexpected keyword argument(s): {}".format(", ".join(kwargs.keys())))
 
     if renpy.exports.has_screen(screen):
         widget_properties = {}
@@ -214,15 +210,10 @@ def input(
         )
 
         renpy.exports.show_screen(
-            screen,
-            _transient=True,
-            _widget_properties=widget_properties,
-            prompt=prompt,
-            **show_properties
+            screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **show_properties
         )
 
     else:
-
         if screen != "input":
             raise Exception("The '{}' screen does not exist.".format(screen))
 
@@ -231,9 +222,7 @@ def input(
 
         renpy.ui.text(prompt, style="input_prompt")
 
-        inputwidget = renpy.ui.input(
-            default, length=length, style="input_text", allow=allow, exclude=exclude
-        )
+        inputwidget = renpy.ui.input(default, length=length, style="input_text", allow=allow, exclude=exclude)
 
         # disable input in fixed rollback
         if fixed:
