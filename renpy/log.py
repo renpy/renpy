@@ -22,8 +22,7 @@
 # This module handles the logging of messages to a file.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # type: ignore
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # type: ignore
 
 
 import os
@@ -34,7 +33,7 @@ import tempfile
 import sys
 import io
 
-import encodings.latin_1 # @UnusedImport
+import encodings.latin_1  # @UnusedImport
 
 import renpy
 
@@ -79,8 +78,7 @@ class LogFile(object):
         if renpy.ios:
             self.file = real_stdout
 
-    def open(self): # @ReservedAssignment
-
+    def open(self):  # @ReservedAssignment
         if renpy.config.log_to_stdout:
             self.file = real_stdout
             return True
@@ -133,9 +131,9 @@ class LogFile(object):
                     pass
 
             if self.append:
-                self.write('')
-                self.write('=' * 78)
-                self.write('')
+                self.write("")
+                self.write("=" * 78)
+                self.write("")
 
             self.write("%s UTC", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))
             try:
@@ -148,7 +146,9 @@ class LogFile(object):
             if "name" in renpy.game.build_info:
                 self.write("%s", renpy.game.build_info["name"])
                 self.write("%s", renpy.game.build_info["version"])
-                self.write("Built at %s UTC", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(renpy.game.build_info["time"])))
+                self.write(
+                    "Built at %s UTC", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(renpy.game.build_info["time"]))
+                )
                 self.write("")
 
             return True
@@ -164,7 +164,6 @@ class LogFile(object):
         """
 
         if self.open():
-
             if not isinstance(s, str):
                 s = s.decode("latin-1")
 
@@ -176,11 +175,11 @@ class LogFile(object):
 
                 s += "\n"
 
-            self.file.write(s) # type: ignore
+            self.file.write(s)  # type: ignore
 
             if self.flush:
                 try:
-                    self.file.flush() # type: ignore
+                    self.file.flush()  # type: ignore
                 except Exception:
                     self.flush = False
 
@@ -190,15 +189,15 @@ class LogFile(object):
         """
 
         self.raw_write = True
-        traceback.print_exc(None, self) # type: ignore
+        traceback.print_exc(None, self)  # type: ignore
         self.raw_write = False
 
 
 # A map from the log name to a log object.
-log_cache = { }
+log_cache = {}
 
 
-def open(name, append=False, developer=False, flush=False): # @ReservedAssignment
+def open(name, append=False, developer=False, flush=False):  # @ReservedAssignment
     rv = log_cache.get(name, None)
 
     if rv is None:
@@ -206,6 +205,7 @@ def open(name, append=False, developer=False, flush=False): # @ReservedAssignmen
         log_cache[name] = rv
 
     return rv
+
 
 ################################################################################
 # Timed event log.
@@ -226,28 +226,26 @@ class TimeLog(list):
         self.prune(now)
 
     def prune(self, now=None):
-
         if now is None:
             now = time.time()
 
         while self[0][0] < (now - self.duration):
             self.pop(0)
 
+
 ################################################################################
 # Stdout / Stderr Redirection
 
 
 class StdioRedirector(object):
-
     real_file = sys.stderr
 
     def __init__(self):
-        self.buffer = ''
+        self.buffer = ""
         self.log = open("log", developer=False, append=False, flush=True)
         self.encoding = "utf-8"
 
     def write(self, s):
-
         if not isinstance(s, str):
             s = str(s, "utf-8", "replace")
 
@@ -265,7 +263,7 @@ class StdioRedirector(object):
         try:
             callbacks = self.get_callbacks()
         except Exception:
-            callbacks = [ ]
+            callbacks = []
 
         for l in lines[:-1]:
             self.log.write("%s", l)
@@ -298,7 +296,7 @@ class StdioRedirector(object):
         pass
 
     def get_callbacks(self):
-        return [ ]
+        return []
 
 
 if not "RENPY_NO_REDIRECT_STDIO" in os.environ:
@@ -320,7 +318,6 @@ if not "RENPY_NO_REDIRECT_STDIO" in os.environ:
     sys.stderr = sys_stderr = StderrRedirector()
 
 else:
-
     sys_stdout = sys.stdout
     sys_stderr = sys.stderr
 

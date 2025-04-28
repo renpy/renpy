@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -34,6 +34,7 @@ import functools
 import datetime
 import ast
 
+
 def make_datetime(cls, *args, **kwargs):
     """
     Makes a datetime.date, datetime.time, or datetime.datetime object
@@ -46,6 +47,7 @@ def make_datetime(cls, *args, **kwargs):
         return cls.__new__(cls, data.decode("latin-1"))
 
     return cls.__new__(cls, *args, **kwargs)
+
 
 class Unpickler(pickle.Unpickler):
     date = functools.partial(make_datetime, datetime.date)
@@ -66,18 +68,23 @@ class Unpickler(pickle.Unpickler):
 
         return super().find_class(module, name)
 
+
 def load(f):
     up = Unpickler(f, fix_imports=True, encoding="utf-8", errors="surrogateescape")
     return up.load()
 
+
 def loads(s):
     return load(io.BytesIO(s))
+
 
 def dump(o, f, highest=False):
     pickle.dump(o, f, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
 
+
 def dumps(o, highest=False):
     return pickle.dumps(o, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
+
 
 # The python AST module changed significantly between python 2 and 3. Old-style
 # screenlang support records raw python ast nodes into the rpyc data, making these
@@ -91,6 +98,7 @@ def dumps(o, highest=False):
 # what is needed to still support old-style screens (Ren'py 6.17 and below)
 # mapping of "classname": WrapperClass
 REWRITE_NODES = {}
+
 
 # NodeTransformer that runs after the ast has been instantiated in the ast.Module
 # handler, and allows us to fix some more difficult issues. Currently only
@@ -114,6 +122,7 @@ class AstFixupTransformer(ast.NodeTransformer):
         alt_node.lineno = node.lineno
         alt_node.col_offset = node.col_offset
         return alt_node
+
 
 # wrapper classes. They all have __setstate__ defined to handle converting from the
 # py2 class, and __reduce__ implemented to convert to the underlying py3 class
@@ -153,7 +162,9 @@ class CallWrapper(ast.Call):
             node.col_offset = self.col_offset
             self.keywords.append(node)
 
+
 REWRITE_NODES["Call"] = CallWrapper
+
 
 class NumWrapper(ast.Constant):
     def __reduce__(self):
@@ -168,7 +179,9 @@ class NumWrapper(ast.Constant):
         # contents
         self.value = state["n"]
 
+
 REWRITE_NODES["Num"] = NumWrapper
+
 
 class StrWrapper(ast.Constant):
     def __reduce__(self):
@@ -183,7 +196,9 @@ class StrWrapper(ast.Constant):
         # contents
         self.value = state["s"]
 
+
 REWRITE_NODES["Str"] = StrWrapper
+
 
 class ModuleWrapper(ast.Module):
     def __reduce__(self):
@@ -201,7 +216,9 @@ class ModuleWrapper(ast.Module):
         transformer = AstFixupTransformer()
         transformer.visit(self)
 
+
 REWRITE_NODES["Module"] = ModuleWrapper
+
 
 class ReprWrapper(ast.Call):
     def __reduce__(self):
@@ -219,7 +236,9 @@ class ReprWrapper(ast.Call):
         self.args = [state["value"]]
         self.keywords = []
 
+
 REWRITE_NODES["Repr"] = ReprWrapper
+
 
 class ArgumentsWrapper(ast.arguments):
     def __reduce__(self):
@@ -244,13 +263,16 @@ class ArgumentsWrapper(ast.arguments):
         self.kwonlyargs = []
         self.kw_defaults = []
         self.kwarg = ast.arg(state["kwarg"], lineno=1, col_offset=0)
-        self.defaults =  state["defaults"]
+        self.defaults = state["defaults"]
+
 
 REWRITE_NODES["arguments"] = ArgumentsWrapper
+
 
 class ParamWrapper(ast.Load):
     def __reduce__(self):
         _, args, attrs = super().__reduce__()
         return ast.Load, args, attrs
+
 
 REWRITE_NODES["Param"] = ParamWrapper

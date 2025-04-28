@@ -19,10 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
+
 
 def notify(message):
     """
@@ -52,8 +53,8 @@ def display_notify(message):
     The default implementation of :func:`renpy.notify`.
     """
 
-    renpy.exports.hide_screen('notify')
-    renpy.exports.show_screen('notify', message=message)
+    renpy.exports.hide_screen("notify")
+    renpy.exports.show_screen("notify", message=message)
     renpy.display.tts.notify_text = renpy.text.extras.filter_alt_text(message)
 
     renpy.exports.restart_interaction()

@@ -25,8 +25,7 @@
 # so that prediction of images works.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -39,8 +38,8 @@ class Transition(renpy.display.displayable.Displayable):
     dispatching.
     """
 
-    new_widget = None # type:renpy.display.displayable.Displayable|None
-    old_widget = None # type:renpy.display.displayable.Displayable|None
+    new_widget = None  # type:renpy.display.displayable.Displayable|None
+    old_widget = None  # type:renpy.display.displayable.Displayable|None
 
     def __init__(self, delay, **properties):
         super(Transition, self).__init__(**properties)
@@ -48,14 +47,13 @@ class Transition(renpy.display.displayable.Displayable):
         self.events = True
 
     def event(self, ev, x, y, st):
-
         if self.events or ev.type == renpy.display.core.TIMEEVENT:
-            return self.new_widget.event(ev, x, y, st) # E1101
+            return self.new_widget.event(ev, x, y, st)  # E1101
         else:
             return None
 
     def visit(self):
-        return [ self.new_widget, self.old_widget ] # E1101
+        return [self.new_widget, self.old_widget]  # E1101
 
     def get_placement(self):
         if renpy.config.transitions_use_child_placement:
@@ -65,12 +63,8 @@ class Transition(renpy.display.displayable.Displayable):
 
 
 def null_render(d, width, height, st, at):
-
     d.events = True
-    surf = renpy.display.render.render(d.new_widget,
-                                       width,
-                                       height,
-                                       st, at)
+    surf = renpy.display.render.render(d.new_widget, width, height, st, at)
 
     rv = renpy.display.render.Render(surf.width, surf.height)
     rv.blit(surf, (0, 0))
@@ -135,14 +129,13 @@ class MultipleTransition(Transition):
     """
 
     def __init__(self, args, old_widget=None, new_widget=None, **properties):
-
         if len(args) % 2 != 1 or len(args) < 3:
             raise Exception("MultipleTransition requires an odd number of items, and at least 3 items.")
 
-        self.transitions = [ ]
+        self.transitions = []
 
         # The screens that we use for the transition.
-        self.screens = [ renpy.easy.displayable(i) for i in args[0::2] ]
+        self.screens = [renpy.easy.displayable(i) for i in args[0::2]]
 
         def oldnew(w):
             if w is False:
@@ -164,29 +157,25 @@ class MultipleTransition(Transition):
         self.events = False
 
     def visit(self):
-        return [ i for i in self.screens if isinstance(i, renpy.display.displayable.Displayable)] + self.transitions
+        return [i for i in self.screens if isinstance(i, renpy.display.displayable.Displayable)] + self.transitions
 
     def event(self, ev, x, y, st):
-
         if self.events or ev.type == renpy.display.core.TIMEEVENT:
             return self.transitions[-1].event(ev, x, y, st)
         else:
             return None
 
     def render(self, width, height, st, at):
-
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
 
         for trans in self.transitions[:-1]:
-
             if trans.delay > st:
                 break
 
             st -= trans.delay
 
         else:
-
             trans = self.transitions[-1]
             self.events = True
 
@@ -204,15 +193,16 @@ class MultipleTransition(Transition):
         return rv
 
 
-def Fade(out_time,
-         hold_time,
-         in_time,
-         old_widget=None,
-         new_widget=None,
-         color=None,
-         widget=None,
-         alpha=False,
-         ):
+def Fade(
+    out_time,
+    hold_time,
+    in_time,
+    old_widget=None,
+    new_widget=None,
+    color=None,
+    widget=None,
+    alpha=False,
+):
     """
     :doc: transition function
     :args: (out_time, hold_time, in_time, *, color="#000")
@@ -245,12 +235,15 @@ def Fade(out_time,
     if not widget:
         widget = renpy.display.image.Solid((0, 0, 0, 255))
 
-    args = [ False, dissolve(out_time, alpha=alpha), widget ]
+    args = [False, dissolve(out_time, alpha=alpha), widget]
 
     if hold_time:
-        args.extend([ notrans(hold_time), widget, ])
+        args.extend([
+            notrans(hold_time),
+            widget,
+        ])
 
-    args.extend([dissolve(in_time, alpha=alpha), True ])
+    args.extend([dissolve(in_time, alpha=alpha), True])
 
     return MultipleTransition(args, old_widget=old_widget, new_widget=new_widget)
 
@@ -274,7 +267,6 @@ class Pixellate(Transition):
     """
 
     def __init__(self, time, steps, old_widget=None, new_widget=None, **properties):
-
         time = float(time)
 
         super(Pixellate, self).__init__(time, **properties)
@@ -290,7 +282,6 @@ class Pixellate(Transition):
         self.quantum = time / (2 * steps)
 
     def render(self, width, height, st, at):
-
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
 
@@ -312,7 +303,7 @@ class Pixellate(Transition):
         rv.blit(rdr, (0, 0))
 
         rv.operation = renpy.display.render.PIXELLATE
-        rv.operation_parameter = 2 ** step
+        rv.operation_parameter = 2**step
 
         rv.mesh = True
         rv.add_shader("renpy.texture")
@@ -368,7 +359,6 @@ class Dissolve(Transition):
         self.time_warp = time_warp
 
     def render(self, width, height, st, at):
-
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
 
@@ -398,7 +388,6 @@ class Dissolve(Transition):
         rv.operation_complete = complete
 
         if renpy.display.render.models:
-
             target = rv.get_size()
 
             if top.get_size() != target:
@@ -409,7 +398,9 @@ class Dissolve(Transition):
             rv.mesh = True
             rv.add_shader("renpy.dissolve")
             rv.add_uniform("u_renpy_dissolve", complete)
-            rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
+            rv.add_property(
+                "mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap
+            )
 
         rv.blit(bottom, (0, 0), focus=False, main=False)
         rv.blit(top, (0, 0), focus=True, main=True)
@@ -473,19 +464,19 @@ class ImageDissolve(Transition):
     time_warp = None
 
     def __init__(
-            self,
-            image,
-            time,
-            ramplen=8,
-            ramptype='linear',
-            ramp=None,
-            reverse=False,
-            alpha=False,
-            old_widget=None,
-            new_widget=None,
-            time_warp=None,
-            **properties):
-
+        self,
+        image,
+        time,
+        ramplen=8,
+        ramptype="linear",
+        ramp=None,
+        reverse=False,
+        alpha=False,
+        old_widget=None,
+        new_widget=None,
+        time_warp=None,
+        **properties,
+    ):
         # ramptype and ramp are now unused, but are kept for compatibility with
         # older code.
 
@@ -500,16 +491,44 @@ class ImageDissolve(Transition):
         if renpy.display.render.models:
             if not reverse:
                 # Copies red -> alpha
-                matrix = renpy.display.matrix.Matrix([0, 0, 0, 0,
-                                                      0, 0, 0, 0,
-                                                      0, 0, 0, 0,
-                                                      1, 0, 0, 0, ])
+                matrix = renpy.display.matrix.Matrix([
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                ])
             else:
                 # Copies alpha-red -> alpha
-                matrix = renpy.display.matrix.Matrix([0, 0, 0, 0,
-                                                      0, 0, 0, 0,
-                                                      0, 0, 0, 0,
-                                                      -1, 0, 0, 1, ])
+                matrix = renpy.display.matrix.Matrix([
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    -1,
+                    0,
+                    0,
+                    1,
+                ])
                 # asserts the displayable is not transparent at all
                 # just like InvertMatrix does
             self.image = renpy.display.motion.Transform(image, matrixcolor=matrix)
@@ -517,18 +536,10 @@ class ImageDissolve(Transition):
         else:
             if not reverse:
                 # Copies red -> alpha
-                matrix = renpy.display.im.matrix(
-                    0, 0, 0, 0, 1,
-                    0, 0, 0, 0, 1,
-                    0, 0, 0, 0, 1,
-                    1, 0, 0, 0, 0)
+                matrix = renpy.display.im.matrix(0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0)
             else:
                 # Copies 1-red -> alpha
-                matrix = renpy.display.im.matrix(
-                    0, 0, 0, 0, 1,
-                    0, 0, 0, 0, 1,
-                    0, 0, 0, 0, 1,
-                    -1, 0, 0, 0, 1)
+                matrix = renpy.display.im.matrix(0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -1, 0, 0, 0, 1)
             self.image = renpy.display.im.MatrixColor(image, matrix)
 
         if ramp is not None:
@@ -538,10 +549,9 @@ class ImageDissolve(Transition):
         self.ramplen = max(ramplen, 1)
 
     def visit(self):
-        return super(ImageDissolve, self).visit() + [ self.image ]
+        return super(ImageDissolve, self).visit() + [self.image]
 
     def render(self, width, height, st, at):
-
         if renpy.game.less_updates or renpy.display.less_imagedissolve:
             return null_render(self, width, height, st, at)
 
@@ -573,7 +583,6 @@ class ImageDissolve(Transition):
         rv.operation_parameter = self.ramplen
 
         if renpy.display.render.models:
-
             target = rv.get_size()
 
             if image.get_size() != target:
@@ -596,10 +605,14 @@ class ImageDissolve(Transition):
 
             rv.mesh = True
 
-            rv.add_shader("renpy.imagedissolve",)
+            rv.add_shader(
+                "renpy.imagedissolve",
+            )
             rv.add_uniform("u_renpy_dissolve_offset", offset)
             rv.add_uniform("u_renpy_dissolve_multiplier", 256.0 / ramp)
-            rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
+            rv.add_property(
+                "mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap
+            )
 
         rv.blit(image, (0, 0), focus=False, main=False)
         rv.blit(bottom, (0, 0), focus=False, main=False)
@@ -640,16 +653,7 @@ class AlphaDissolve(Transition):
 
     mipmap = None
 
-    def __init__(
-            self,
-            control,
-            delay=0.0,
-            old_widget=None,
-            new_widget=None,
-            alpha=False,
-            reverse=False,
-            **properties):
-
+    def __init__(self, control, delay=0.0, old_widget=None, new_widget=None, alpha=False, reverse=False, **properties):
         super(AlphaDissolve, self).__init__(delay, **properties)
 
         self.control = renpy.display.layout.Fixed()
@@ -668,10 +672,9 @@ class AlphaDissolve(Transition):
         self.reverse = reverse
 
     def visit(self):
-        return super(AlphaDissolve, self).visit() + [ self.control ]
+        return super(AlphaDissolve, self).visit() + [self.control]
 
     def render(self, width, height, st, at):
-
         if renpy.game.less_updates or renpy.display.less_imagedissolve:
             return null_render(self, width, height, st, at)
 
@@ -699,10 +702,14 @@ class AlphaDissolve(Transition):
 
         if renpy.display.render.models:
             rv.mesh = True
-            rv.add_shader("renpy.imagedissolve",)
+            rv.add_shader(
+                "renpy.imagedissolve",
+            )
             rv.add_uniform("u_renpy_dissolve_offset", 0)
             rv.add_uniform("u_renpy_dissolve_multiplier", 1.0)
-            rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
+            rv.add_property(
+                "mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap
+            )
 
         rv.blit(control, (0, 0), focus=False, main=False)
 
@@ -717,8 +724,8 @@ class AlphaDissolve(Transition):
 
 
 def interpolate_tuple(t0, t1, time, scales):
-    return tuple(round(s * (a * (1.0 - time) + b * time))
-                    for a, b, s in zip(t0, t1, scales))
+    return tuple(round(s * (a * (1.0 - time) + b * time)) for a, b, s in zip(t0, t1, scales))
+
 
 class CropMove(Transition):
     """
@@ -802,17 +809,19 @@ class CropMove(Transition):
         define irisin = CropMove(1.0, "irisin")
     """
 
-    def __init__(self, time,
-                       mode="slideright",
-                       startcrop=(0.0, 0.0, 0.0, 1.0),
-                       startpos=(0.0, 0.0),
-                       endcrop=(0.0, 0.0, 1.0, 1.0),
-                       endpos=(0.0, 0.0),
-                       topnew=True,
-                       old_widget=None,
-                       new_widget=None,
-                       **properties):
-
+    def __init__(
+        self,
+        time,
+        mode="slideright",
+        startcrop=(0.0, 0.0, 0.0, 1.0),
+        startpos=(0.0, 0.0),
+        endcrop=(0.0, 0.0, 1.0, 1.0),
+        endpos=(0.0, 0.0),
+        topnew=True,
+        old_widget=None,
+        new_widget=None,
+        **properties,
+    ):
         super(CropMove, self).__init__(time, **properties)
         self.time = time
 
@@ -943,7 +952,6 @@ class CropMove(Transition):
             self.top = old_widget
 
     def render(self, width, height, st, at):
-
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
 
@@ -1001,12 +1009,7 @@ class PushMove(Transition):
         define pushdown = PushMove(1.0, "pushdown")
     """
 
-    def __init__(self, time,
-                 mode="pushright",
-                 old_widget=None,
-                 new_widget=None,
-                 **properties):
-
+    def __init__(self, time, mode="pushright", old_widget=None, new_widget=None, **properties):
         super(PushMove, self).__init__(time, **properties)
         self.time = time
 
@@ -1062,7 +1065,6 @@ class PushMove(Transition):
         self.events = False
 
     def render(self, width, height, st, at):
-
         if renpy.game.less_updates:
             return null_render(self, width, height, st, at)
 
@@ -1140,7 +1142,7 @@ def SubTransition(rect, trans, old_widget=None, new_widget=None, **properties):
     delay = inner.delay
     inner = renpy.display.layout.Position(inner, xpos=x, ypos=y, xanchor=0, yanchor=0)
 
-    f = renpy.display.layout.MultiBox(layout='fixed')
+    f = renpy.display.layout.MultiBox(layout="fixed")
     f.add(new_widget)
     f.add(inner)
 

@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import argparse
 import json
@@ -37,7 +37,6 @@ class BlockGenerator(object):
     """
 
     def __init__(self, targetdir, max_rpu_size=50 * 1024 * 1024):
-
         # Used to lock generation.
         self.lock = threading.Lock()
 
@@ -51,7 +50,7 @@ class BlockGenerator(object):
         self.max_rpu_size = max_rpu_size
 
         # All the blocks that have been generated.
-        self.blocks = [ ]
+        self.blocks = []
 
         # Clean out files in the target directory.
         for i in os.listdir(targetdir):
@@ -63,7 +62,7 @@ class BlockGenerator(object):
         self.filelist = None
 
         # The current segment list.
-        self.segments = [ ]
+        self.segments = []
 
         # The following field is changed quite a bit. ##########################
 
@@ -98,13 +97,13 @@ class BlockGenerator(object):
         self.new_rpu.close()
         self.new_rpu = None
 
-        filename = common.hash_list([ i.hash for i in self.segments ]) + ".rpu"
+        filename = common.hash_list([i.hash for i in self.segments]) + ".rpu"
 
         os.rename(self.path("new.rpu"), self.path(filename))
 
         self.blocks.append(common.File(filename, segments=self.segments))
 
-        self.segments = [ ]
+        self.segments = []
 
     def generate_segment(self, f, seg):
         """
@@ -128,7 +127,7 @@ class BlockGenerator(object):
 
         cdata = zlib.compress(data, 3)
 
-        if len(cdata) < len(data) * .95:
+        if len(cdata) < len(data) * 0.95:
             data = cdata
             compressed = common.COMPRESS_ZLIB
 
@@ -141,9 +140,7 @@ class BlockGenerator(object):
         self.segments.append(seg)
 
     def generate(self, name, filelist, progress=None):
-
         with self.lock:
-
             self.filelist = filelist
 
             # Create a list of files by reverse mtime. The idea is that the newer
@@ -154,7 +151,6 @@ class BlockGenerator(object):
             files.reverse()
 
             for i, file in enumerate(files):
-
                 if progress:
                     progress(i + 1, len(files))
 

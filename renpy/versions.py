@@ -20,15 +20,15 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
-py_branch_to_version = { }
+py_branch_to_version = {}
 
 import sys
 import os
 
-class Version(object):
 
+class Version(object):
     def __init__(self, branch, python, version, name):
         """
         `branch`
@@ -77,12 +77,13 @@ def make_dict(branch, suffix="00000000", official=False, nightly=False):
     version = py_branch_to_version.get((py, branch)) or py_branch_to_version[(py, "main")]
 
     return {
-        "version" : version.version + "." + str(suffix),
-        "version_name" : version.name,
-        "official" : official,
-        "nightly" : nightly,
-        "branch" : branch,
+        "version": version.version + "." + str(suffix),
+        "version_name": version.name,
+        "official": official,
+        "nightly": nightly,
+        "branch": branch,
     }
+
 
 def get_version():
     """
@@ -97,7 +98,6 @@ def get_version():
     branch = "main"
 
     try:
-
         for l in open(git_head, "r"):
             l = l.rstrip()
             m = re.match(r"ref: refs/heads/(.*)", l)
@@ -107,10 +107,10 @@ def get_version():
 
     except:
         import traceback
+
         traceback.print_exc()
 
     return make_dict(branch)
-
 
 
 def generate_vc_version(nightly=False):
@@ -127,16 +127,28 @@ def generate_vc_version(nightly=False):
     import time
 
     try:
+        branch = subprocess.check_output(["git", "branch", "--show-current"]).decode("utf-8").strip()
 
-        branch = subprocess.check_output([ "git", "branch", "--show-current" ]).decode("utf-8").strip()
-
-        s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", ]).decode("utf-8").strip()
+        s = (
+            subprocess.check_output([
+                "git",
+                "describe",
+                "--tags",
+                "--dirty",
+            ])
+            .decode("utf-8")
+            .strip()
+        )
         parts = s.strip().split("-")
         dirty = "dirty" in parts
 
         commits_per_day = collections.defaultdict(int)
 
-        for i in subprocess.check_output([ "git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d" ]).decode("utf-8").split():
+        for i in (
+            subprocess.check_output(["git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d"])
+            .decode("utf-8")
+            .split()
+        ):
             commits_per_day[i[2:]] += 1
 
         if dirty:
@@ -151,11 +163,7 @@ def generate_vc_version(nightly=False):
         vc_version = "00000000"
         official = False
 
-    version_dict = make_dict(
-        branch,
-        suffix=vc_version,
-        official=socket.gethostname() == "eileen",
-        nightly=nightly)
+    version_dict = make_dict(branch, suffix=vc_version, official=socket.gethostname() == "eileen", nightly=nightly)
 
     vc_version_fn = os.path.join(os.path.dirname(__file__), "vc_version.py")
 

@@ -23,7 +23,7 @@
 # Definitions of screen language statements.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -71,7 +71,7 @@ class ShowIf(renpy.display.layout.Container):
 
     @property
     def _box_skip(self):
-        return (not self.show_child)
+        return not self.show_child
 
     def per_interact(self):
         if self.pending_event:
@@ -79,7 +79,6 @@ class ShowIf(renpy.display.layout.Container):
             self.pending_event = None
 
     def render(self, width, height, st, at):
-
         cr = None
 
         if isinstance(self.child, renpy.display.motion.Transform):
@@ -101,7 +100,7 @@ class ShowIf(renpy.display.layout.Container):
         else:
             rv = renpy.display.render.Render(0, 0)
 
-        self.offsets = [ (0, 0) ]
+        self.offsets = [(0, 0)]
 
         return rv
 
@@ -133,13 +132,13 @@ Keyword("substitute")
 Keyword("scope")
 add(text_properties)
 
-DisplayableParser("hbox", renpy.display.layout.MultiBox, "hbox", many, default_keywords={ 'layout' : 'horizontal' })
+DisplayableParser("hbox", renpy.display.layout.MultiBox, "hbox", many, default_keywords={"layout": "horizontal"})
 add(box_properties)
 
-DisplayableParser("vbox", renpy.display.layout.MultiBox, "vbox", many, default_keywords={ 'layout' : 'vertical' })
+DisplayableParser("vbox", renpy.display.layout.MultiBox, "vbox", many, default_keywords={"layout": "vertical"})
 add(box_properties)
 
-DisplayableParser("fixed", renpy.display.layout.MultiBox, "fixed", many, default_keywords={ 'layout' : 'fixed' })
+DisplayableParser("fixed", renpy.display.layout.MultiBox, "fixed", many, default_keywords={"layout": "fixed"})
 add(box_properties)
 
 DisplayableParser("grid", renpy.display.layout.Grid, "grid", many)
@@ -158,7 +157,7 @@ Style("spacing")
 
 # Omit sizer, as we can always just put an xmaximum and ymaximum on an item.
 
-for name in [ "window", "frame" ]:
+for name in ["window", "frame"]:
     DisplayableParser(name, renpy.display.layout.Window, name, 1)
     add(window_properties)
 
@@ -244,7 +243,7 @@ add(text_text_properties)
 
 
 def sl2bar(context=None, **properties):
-    range = 1 # @ReservedAssignment
+    range = 1  # @ReservedAssignment
     value = 0
     width = None
     height = None
@@ -254,7 +253,7 @@ def sl2bar(context=None, **properties):
     if "height" in properties:
         height = properties.pop("height")
     if "range" in properties:
-        range = properties.pop("range") # @ReservedAssignment
+        range = properties.pop("range")  # @ReservedAssignment
     if "value" in properties:
         value = properties.pop("value")
 
@@ -279,7 +278,7 @@ add(bar_properties)
 
 
 def sl2vbar(context=None, **properties):
-    range = 1 # @ReservedAssignment
+    range = 1  # @ReservedAssignment
     value = 0
     width = None
     height = None
@@ -289,7 +288,7 @@ def sl2vbar(context=None, **properties):
     if "height" in properties:
         height = properties.pop("height")
     if "range" in properties:
-        range = properties.pop("range") # @ReservedAssignment
+        range = properties.pop("range")  # @ReservedAssignment
     if "value" in properties:
         value = properties.pop("value")
 
@@ -451,7 +450,6 @@ for i in renpy.atl.PROPERTIES:
 
 
 def sl2add(d, replaces=None, scope=None, **kwargs):
-
     if d is None:
         return renpy.sl2.slast.NO_DISPLAYABLE
 
@@ -471,12 +469,12 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
 
     if kwargs:
         rv = Transform(child=d, **kwargs)
-        rv._main = d # type: ignore
+        rv._main = d  # type: ignore
 
     return rv
 
 
-for name in [ "add", "image" ]:
+for name in ["add", "image"]:
     DisplayableParser(name, sl2add, None, 0, replaces=True, default_properties=False, scope=True, unique=False)
     Positional("im")
     Keyword("at")
@@ -528,7 +526,7 @@ Keyword("prefer_top")
 Keyword("preferred_side")
 Keyword("invert_offsets")
 
-DisplayableParser("dismiss", renpy.display.behavior.DismissBehavior , "default", 0)
+DisplayableParser("dismiss", renpy.display.behavior.DismissBehavior, "default", 0)
 Keyword("action")
 Keyword("modal")
 Keyword("keysym")

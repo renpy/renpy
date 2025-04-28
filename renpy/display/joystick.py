@@ -23,7 +23,7 @@
 # been removed, save for a few compatibility functions.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import pygame_sdl2
@@ -41,7 +41,7 @@ class JoyBehavior(renpy.display.layout.Null):
     """
 
 
-joysticks = { }
+joysticks = {}
 
 
 def count():
@@ -49,7 +49,6 @@ def count():
 
 
 def get(n):
-
     if n in joysticks:
         return joysticks[n]
 

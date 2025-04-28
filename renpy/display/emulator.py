@@ -22,7 +22,7 @@
 # This file contains code to emulate various other devices on the PC.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import os
@@ -36,7 +36,7 @@ import renpy
 emulator = None
 
 # An overlay that is placed over the screen to support the emulator.
-overlay = [ ]
+overlay = []
 
 # True if we're in ios mode, where we don't allow keys.
 ios = False
@@ -49,7 +49,7 @@ def null_emulator(ev, x, y):
     return ev, x, y
 
 
-TOUCH_KEYS = [ pygame.K_ESCAPE, pygame.K_PAGEUP ]
+TOUCH_KEYS = [pygame.K_ESCAPE, pygame.K_PAGEUP]
 
 
 def touch_emulator(ev, x, y):
@@ -68,7 +68,7 @@ def touch_emulator(ev, x, y):
         if ev.button != 1:
             return None, x, y
 
-        move = pygame.event.Event(pygame.MOUSEMOTION, { "pos" : (0, 0), "rel" : (0, 0), "buttons" : (0, 0, 0) })
+        move = pygame.event.Event(pygame.MOUSEMOTION, {"pos": (0, 0), "rel": (0, 0), "buttons": (0, 0, 0)})
         renpy.display.interface.pushed_event = move
 
     elif ev.type == pygame.MOUSEMOTION:
@@ -91,7 +91,7 @@ def touch_emulator(ev, x, y):
     return ev, x, y
 
 
-TV_KEYS = [ pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_RETURN, pygame.K_ESCAPE, pygame.K_PAGEUP ]
+TV_KEYS = [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_RETURN, pygame.K_ESCAPE, pygame.K_PAGEUP]
 
 
 def tv_emulator(ev, x, y):
@@ -125,9 +125,9 @@ def dynamic_keyboard(st, at):
 
     if keyboard is None:
         keyboard = renpy.store.Fixed(
-            renpy.store.Solid("#0008", yalign=1.0, ymaximum=.625),
-            renpy.store.Text("On-Screen Keyboard", xalign=.5, yalign=.75),
-            )
+            renpy.store.Solid("#0008", yalign=1.0, ymaximum=0.625),
+            renpy.store.Text("On-Screen Keyboard", xalign=0.5, yalign=0.75),
+        )
         null = renpy.store.Null()
 
     if renpy.display.interface.old_text_rect:
@@ -135,7 +135,7 @@ def dynamic_keyboard(st, at):
     else:
         rv = null
 
-    return rv, .33
+    return rv, 0.33
 
 
 def init_emulator():
@@ -151,37 +151,37 @@ def init_emulator():
 
     if name == "touch":
         emulator = touch_emulator
-        overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
+        overlay = [renpy.store.DynamicDisplayable(dynamic_keyboard)]
 
     elif name == "ios-touch":
         emulator = touch_emulator
-        overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
+        overlay = [renpy.store.DynamicDisplayable(dynamic_keyboard)]
         ios = True
 
     elif name == "tv":
         emulator = tv_emulator
-        overlay = [ renpy.display.motion.Transform(
-            "_tv_unsafe.png",
-            xalign=0.5,
-            yalign=0.5,
-            size=(int(renpy.config.screen_height * 16.0 / 9.0), renpy.config.screen_height),
-            ) ]
+        overlay = [
+            renpy.display.motion.Transform(
+                "_tv_unsafe.png",
+                xalign=0.5,
+                yalign=0.5,
+                size=(int(renpy.config.screen_height * 16.0 / 9.0), renpy.config.screen_height),
+            )
+        ]
 
     else:
         emulator = null_emulator
-        overlay = [ ]
+        overlay = []
 
 
 def early_init_emulator():
-
     name = os.environ.get("RENPY_EMULATOR", "")
 
     if name:
-
-        renpy.exports.windows = False # type: ignore
-        renpy.exports.linux = False # type: ignore
-        renpy.exports.macintosh = False # type: ignore
-        renpy.exports.web = False # type: ignore
-        renpy.exports.android = renpy.exports.variant("android") # type: ignore
-        renpy.exports.ios = renpy.exports.variant("ios") # type: ignore
+        renpy.exports.windows = False  # type: ignore
+        renpy.exports.linux = False  # type: ignore
+        renpy.exports.macintosh = False  # type: ignore
+        renpy.exports.web = False  # type: ignore
+        renpy.exports.android = renpy.exports.variant("android")  # type: ignore
+        renpy.exports.ios = renpy.exports.variant("ios")  # type: ignore
         renpy.exports.mobile = renpy.exports.android or renpy.exports.ios  # type: ignore

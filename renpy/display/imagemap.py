@@ -22,7 +22,7 @@
 # This file handles imagemap caching.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import hashlib
@@ -48,7 +48,7 @@ class ImageMapCrop(renpy.display.displayable.Displayable):
         self.rect = rect
 
     def visit(self):
-        return [ self.child ]
+        return [self.child]
 
     def render(self, width, height, st, at):
         cr = render(self.child, renpy.config.screen_width, renpy.config.screen_height, st, at)

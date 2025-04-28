@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 from typing import Optional, Any
 
@@ -32,10 +32,10 @@ import renpy.log
 # The draw object through which all drawing is routed. This object
 # contains all of the distinction between the software and GL
 # renderers.
-draw = None # type: Any|None
+draw = None  # type: Any|None
 
 # The interface object.
-interface = None # type: Optional[renpy.display.core.Interface]
+interface = None  # type: Optional[renpy.display.core.Interface]
 
 # Should we disable imagedissolve-type transitions?
 less_imagedissolve = False
@@ -50,15 +50,18 @@ info = None
 # all platforms.)
 can_fullscreen = True
 
+
 def get_info():
     global info
 
     if info is None:
         import pygame_sdl2 as pygame
+
         pygame.display.init()
         info = pygame.display.Info()
 
     return info
+
 
 # Logs we use.
 log = renpy.log.open("log", developer=False, append=False)

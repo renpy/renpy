@@ -20,8 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import collections
@@ -87,7 +86,7 @@ def process_file(fn):
     consumed = 0
 
     # The output.
-    output = u""
+    output = ""
 
     for position, target in edits:
         output += data[consumed:position]
@@ -110,7 +109,6 @@ def process_file(fn):
 
 
 def add_from():
-
     renpy.arguments.takes_no_arguments("Adds from clauses to call statements that are missing them.")
 
     for fn in missing:

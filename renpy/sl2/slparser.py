@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 from typing import Any, Callable, Literal
 
 
@@ -33,16 +33,16 @@ from ast import literal_eval
 
 # A tuple of style prefixes that we know of.
 STYLE_PREFIXES = [
-    '',
-    'insensitive_',
-    'hover_',
-    'idle_',
-    'activate_',
-    'selected_',
-    'selected_insensitive_',
-    'selected_hover_',
-    'selected_idle_',
-    'selected_activate_',
+    "",
+    "insensitive_",
+    "hover_",
+    "idle_",
+    "activate_",
+    "selected_",
+    "selected_insensitive_",
+    "selected_hover_",
+    "selected_idle_",
+    "selected_activate_",
 ]
 
 ##############################################################################
@@ -56,7 +56,7 @@ parser = None
 statements = dict()
 
 # A list of statements that are valid anywhere a child can be placed.
-all_child_statements = [ ]
+all_child_statements = []
 
 # Statements that can contain children.
 childbearing_statements = set()
@@ -86,7 +86,7 @@ class Keyword(object):
     def __init__(self, name):
         self.name = name
 
-        properties['', False].add(name)
+        properties["", False].add(name)
 
         if parser:
             parser.add(self)
@@ -100,7 +100,7 @@ class Style(object):
     def __init__(self, name):
         self.name = name
 
-        properties['', True].add(self.name)
+        properties["", True].add(self.name)
 
         if parser:
             parser.add(self)
@@ -123,6 +123,7 @@ class PrefixStyle(object):
 
 from renpy.styledata.stylesets import proxy_properties as incompatible_props
 
+
 def check_incompatible_props(new, olds):
     """
     Takes a property and a set of already-seen properties, and checks
@@ -136,23 +137,22 @@ def check_incompatible_props(new, olds):
 
     return False
 
-class Parser(object):
 
+class Parser(object):
     # The number of children this statement takes, out of 0, 1, or "many".
     # This defaults to "many" so the has statement errors out when not
     # inside something that takes a single child.
     nchildren = "many"
 
     def __init__(self, name, child_statement=True):
-
         # The name of this object.
         self.name = name
 
         # The positional arguments, keyword arguments, and child
         # statements of this statement.
-        self.positional = [ ]
-        self.keyword = { }
-        self.children = { }
+        self.positional = []
+        self.keyword = {}
+        self.children = {}
 
         statements[name] = self
 
@@ -197,7 +197,7 @@ class Parser(object):
             self.children[i.name] = i
 
     def parse_statement(self, loc, l, layout_mode=False, keyword=True):
-        word = l.word() or l.match(r'\$')
+        word = l.word() or l.match(r"\$")
 
         if word and word in self.children:
             if layout_mode:
@@ -229,7 +229,17 @@ class Parser(object):
 
         raise Exception("Not Implemented")
 
-    def parse_contents(self, l, target, layout_mode=False, can_has=False, can_tag=False, block_only=False, keyword=True, docstring=False):
+    def parse_contents(
+        self,
+        l,
+        target,
+        layout_mode=False,
+        can_has=False,
+        can_tag=False,
+        block_only=False,
+        keyword=True,
+        docstring=False,
+    ):
         """
         Parses the remainder of the current line of `l`, and all of its subblock,
         looking for keywords and children.
@@ -261,7 +271,7 @@ class Parser(object):
 
             if can_tag and name == "tag":
                 if target.tag is not None:
-                    l.error('the tag keyword argument appears more than once in a %s statement.' % (self.name,))
+                    l.error("the tag keyword argument appears more than once in a %s statement." % (self.name,))
 
                 target.tag = l.require(l.word)
                 l.expect_noblock(name)
@@ -270,21 +280,23 @@ class Parser(object):
             if self.variable:
                 if name == "as":
                     if target.variable is not None:
-                        l.error('an as clause may only appear once in a %s statement.' % (self.name,))
+                        l.error("an as clause may only appear once in a %s statement." % (self.name,))
 
                     target.variable = l.require(l.word)
                     return
 
             if name not in self.keyword:
                 if name == "continue" or name == "break":
-                    l.error("The %s statement may only appear inside a for statement, or an if statement inside a for statement." % name)
+                    l.error(
+                        "The %s statement may only appear inside a for statement, or an if statement inside a for statement."
+                        % name
+                    )
                 elif name in statements:
-                    l.error('The %s statement is not a valid child of the %s statement.' % (name, self.name))
+                    l.error("The %s statement is not a valid child of the %s statement." % (name, self.name))
                 else:
-                    l.error('%r is not a keyword argument or valid child of the %s statement.' % (name, self.name))
+                    l.error("%r is not a keyword argument or valid child of the %s statement." % (name, self.name))
 
             if name == "at" and l.match_multiple("transform", ":"):
-
                 if target.atl_transform is not None:
                     l.error("More than one 'at transform' block is given.")
 
@@ -295,10 +307,13 @@ class Parser(object):
                 return
 
             if name in seen_keywords:
-                l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+                l.error("keyword argument %r appears more than once in a %s statement." % (name, self.name))
             incomprop = check_incompatible_props(name, seen_keywords)
             if incomprop:
-                l.deferred_error("check_conflicting_properties", 'keyword argument {!r} is incompatible with {!r}.'.format(name, incomprop))
+                l.deferred_error(
+                    "check_conflicting_properties",
+                    "keyword argument {!r} is incompatible with {!r}.".format(name, incomprop),
+                )
 
             if name == "at" and target.atl_transform:
                 l.error("The 'at' property must occur before the 'at transform' block.")
@@ -313,7 +328,10 @@ class Parser(object):
                 try:
                     literal_eval(expr)
                 except Exception:
-                    l.error("a non-constant keyword argument like '%s %s' is not allowed after a python block." % (name, expr))
+                    l.error(
+                        "a non-constant keyword argument like '%s %s' is not allowed after a python block."
+                        % (name, expr)
+                    )
 
             target.keyword.append((name, expr))
 
@@ -326,11 +344,10 @@ class Parser(object):
             block = True
 
         else:
-
             # If not block_only, we allow keyword arguments on the starting
             # line.
             while True:
-                if l.match(':'):
+                if l.match(":"):
                     l.expect_eol()
                     l.expect_block(self.name)
                     block = True
@@ -342,10 +359,10 @@ class Parser(object):
                     block = False
                     break
 
-                parse_keyword(l, 'expected a keyword argument, colon, or end of line.', True)
+                parse_keyword(l, "expected a keyword argument, colon, or end of line.", True)
 
         # A list of lexers we need to parse the contents of.
-        lexers = [ ]
+        lexers = []
 
         if block:
             lexers.append(l.subblock_lexer())
@@ -357,9 +374,7 @@ class Parser(object):
         # block after a has clause.
 
         for l in lexers:
-
             while l.advance():
-
                 state = l.checkpoint()
                 loc = l.get_location()
 
@@ -370,7 +385,7 @@ class Parser(object):
                         target.docstring = s
                         continue
 
-                if l.keyword(r'has'):
+                if l.keyword(r"has"):
                     if not can_has:
                         l.error("The has statement is not allowed here.")
 
@@ -380,7 +395,7 @@ class Parser(object):
                     c = self.parse_statement(loc, l, layout_mode=True, keyword=keyword)
 
                     if c is None:
-                        l.error('Has expects a child statement.')
+                        l.error("Has expects a child statement.")
 
                     target.children.append(c)
 
@@ -440,7 +455,7 @@ class Parser(object):
         PrefixStyle(prefix, name)
         return self
 
-    def add_property_group(self, group, prefix=''):
+    def add_property_group(self, group, prefix=""):
         global parser
         parser = self
 
@@ -612,10 +627,21 @@ def register_sl_displayable(*args, **kwargs):
 
 
 class DisplayableParser(Parser):
-
-    def __init__(self, name, displayable, style, nchildren=0, scope=False,
-                 pass_context=False, imagemap=False, replaces=False, default_keywords={},
-                 hotspot=False, default_properties=True, unique=False): # type: (str, Callable, str|None, int|Literal["many"]|renpy.object.Sentinel, bool, bool, bool, bool, dict[str, Any], bool, bool, bool) -> None
+    def __init__(
+        self,
+        name,
+        displayable,
+        style,
+        nchildren=0,
+        scope=False,
+        pass_context=False,
+        imagemap=False,
+        replaces=False,
+        default_keywords={},
+        hotspot=False,
+        default_properties=True,
+        unique=False,
+    ):  # type: (str, Callable, str|None, int|Literal["many"]|renpy.object.Sentinel, bool, bool, bool, bool, dict[str, Any], bool, bool, bool) -> None
         """
         `scope`
             If true, the scope is passed into the displayable function as a keyword
@@ -673,7 +699,6 @@ class DisplayableParser(Parser):
         return self.parse(loc, l, parent, keyword, layout_mode=True)
 
     def parse(self, loc, l, parent, keyword, layout_mode=False):
-
         rv = slast.SLDisplayable(
             loc,
             self.displayable,
@@ -687,7 +712,7 @@ class DisplayableParser(Parser):
             hotspot=self.hotspot,
             name=self.name,
             unique=self.unique,
-            )
+        )
 
         for _i in self.positional:
             expr = l.simple_expression()
@@ -697,18 +722,21 @@ class DisplayableParser(Parser):
 
             rv.positional.append(expr)
 
-        can_has = (self.nchildren == 1)
+        can_has = self.nchildren == 1
         self.parse_contents(l, rv, layout_mode=layout_mode, can_has=can_has, can_tag=False)
 
         if len(rv.positional) != len(self.positional):
             if not rv.keyword_exist("arguments"):
-                l.error("{} statement expects {} positional arguments, got {}.".format(self.name, len(self.positional), len(rv.positional)))
+                l.error(
+                    "{} statement expects {} positional arguments, got {}.".format(
+                        self.name, len(self.positional), len(rv.positional)
+                    )
+                )
 
         return rv
 
 
 class IfParser(Parser):
-
     def __init__(self, name, node_type, parent_contents):
         """
         `node_type`
@@ -728,7 +756,6 @@ class IfParser(Parser):
             childbearing_statements.add(self)
 
     def parse(self, loc, l, parent, keyword):
-
         if self.parent_contents:
             contents_from = parent
         else:
@@ -738,7 +765,7 @@ class IfParser(Parser):
 
         condition = l.require(l.python_expression)
 
-        l.require(':')
+        l.require(":")
 
         block = slast.SLBlock(loc)
         contents_from.parse_contents(l, block, block_only=True)
@@ -748,13 +775,11 @@ class IfParser(Parser):
         state = l.checkpoint()
 
         while l.advance():
-
             loc = l.get_location()
 
             if l.keyword("elif"):
-
                 condition = l.require(l.python_expression)
-                l.require(':')
+                l.require(":")
 
                 block = slast.SLBlock(loc)
                 contents_from.parse_contents(l, block, block_only=True, keyword=keyword)
@@ -764,9 +789,8 @@ class IfParser(Parser):
                 state = l.checkpoint()
 
             elif l.keyword("else"):
-
                 condition = None
-                l.require(':')
+                l.require(":")
 
                 block = slast.SLBlock(loc)
                 contents_from.parse_contents(l, block, block_only=True, keyword=keyword)
@@ -789,7 +813,6 @@ IfParser("showif", slast.SLShowIf, False)
 
 
 class ForParser(Parser):
-
     def __init__(self, name):
         super(ForParser, self).__init__(name)
         childbearing_statements.add(self)
@@ -804,10 +827,9 @@ class ForParser(Parser):
         pattern = False
 
         while True:
-
             if l.match(r"\("):
                 name = self.name_or_tuple_pattern(l)
-                l.require(r'\)')
+                l.require(r"\)")
                 pattern = True
             else:
                 name = l.name()
@@ -829,7 +851,6 @@ class ForParser(Parser):
         l.error("expected variable or tuple pattern.")
 
     def parse(self, loc, l, parent, keyword):
-
         l.skip_whitespace()
 
         tuple_start = l.pos
@@ -837,22 +858,22 @@ class ForParser(Parser):
 
         if not name:
             name = "_sl2_i"
-            pattern = l.text[tuple_start:l.pos]
+            pattern = l.text[tuple_start : l.pos]
             stmt = pattern + " = " + name
             code = renpy.ast.PyCode(stmt, loc)
         else:
             code = None
 
-        if l.match('index'):
+        if l.match("index"):
             index_expression = l.require(l.say_expression)
         else:
             index_expression = None
 
-        l.require('in')
+        l.require("in")
 
         expression = l.require(l.python_expression)
 
-        l.require(':')
+        l.require(":")
         l.expect_eol()
 
         rv = slast.SLFor(loc, name, expression, index_expression)
@@ -869,32 +890,29 @@ for_parser = ForParser("for")
 
 
 class BreakParser(Parser):
-
     def parse(self, loc, l, parent, keyword):
-
         l.expect_eol()
-        l.expect_noblock('break statement')
+        l.expect_noblock("break statement")
 
         return slast.SLBreak(loc)
 
+
 for_parser.add(BreakParser("break", False))
 
+
 class ContinueParser(Parser):
-
     def parse(self, loc, l, parent, keyword):
-
         l.expect_eol()
-        l.expect_noblock('continue statement')
+        l.expect_noblock("continue statement")
 
         return slast.SLContinue(loc)
+
 
 for_parser.add(ContinueParser("continue", False))
 
 
 class OneLinePythonParser(Parser):
-
     def parse(self, loc, l, parent, keyword):
-
         loc = l.get_location()
         source = l.require(l.rest)
 
@@ -909,12 +927,10 @@ OneLinePythonParser("$")
 
 
 class MultiLinePythonParser(Parser):
-
     def parse(self, loc, l, parent, keyword):
-
         loc = l.get_location()
 
-        l.require(':')
+        l.require(":")
 
         l.expect_eol()
         l.expect_block("python block")
@@ -929,11 +945,9 @@ MultiLinePythonParser("python")
 
 
 class PassParser(Parser):
-
     def parse(self, loc, l, parent, keyword):
-
         l.expect_eol()
-        l.expect_noblock('pass statement')
+        l.expect_noblock("pass statement")
 
         return slast.SLPass(loc)
 
@@ -942,15 +956,13 @@ pass_statement = PassParser("pass")
 
 
 class DefaultParser(Parser):
-
     def parse(self, loc, l, parent, keyword):
-
         name = l.require(l.word)
-        l.require(r'=')
+        l.require(r"=")
         rest = l.rest()
 
         l.expect_eol()
-        l.expect_noblock('default statement')
+        l.expect_noblock("default statement")
 
         return slast.SLDefault(loc, name, rest)
 
@@ -959,16 +971,14 @@ DefaultParser("default")
 
 
 class UseParser(Parser):
-
     def __init__(self, name):
         super(UseParser, self).__init__(name)
         childbearing_statements.add(self)
 
     def parse(self, loc, l, parent, keyword):
-
-        if l.keyword('expression'):
+        if l.keyword("expression"):
             target = l.require(l.simple_expression)
-            l.keyword('pass')
+            l.keyword("pass")
         else:
             target = l.require(l.word)
 
@@ -978,13 +988,12 @@ class UseParser(Parser):
         variable = None
 
         while True:
-
-            if l.keyword('id'):
+            if l.keyword("id"):
                 if id_expr is not None:
                     l.error("The id keyword may only appear once in a use statement.")
                 id_expr = l.simple_expression()
 
-            elif l.keyword('as'):
+            elif l.keyword("as"):
                 if variable is not None:
                     l.error("The as keyword may only appear once in a use statement.")
                 variable = l.require(l.word)
@@ -992,7 +1001,7 @@ class UseParser(Parser):
             else:
                 break
 
-        if l.match(':'):
+        if l.match(":"):
             l.expect_eol()
             l.expect_block("use statement")
 
@@ -1014,7 +1023,6 @@ Keyword("style_group")
 
 
 class TranscludeParser(Parser):
-
     def parse(self, loc, l, parent, keyword):
         l.expect_eol()
         return slast.SLTransclude(loc)
@@ -1083,8 +1091,7 @@ class CustomParser(Parser):
         self.variable = True
 
     def parse(self, loc, l, parent, keyword):
-
-        arguments = [ ]
+        arguments = []
 
         # Parse positional arguments.
         for _i in self.positional:
@@ -1097,12 +1104,16 @@ class CustomParser(Parser):
 
         # Parser keyword arguments and children.
         block = slast.SLBlock(loc)
-        can_has = (self.nchildren == 1)
+        can_has = self.nchildren == 1
         self.parse_contents(l, block, can_has=can_has, can_tag=False)
 
         if len(arguments) != len(self.positional):
             if not block.keyword_exist("arguments"):
-                l.error("{} statement expects {} positional arguments, got {}.".format(self.name, len(self.positional), len(arguments)))
+                l.error(
+                    "{} statement expects {} positional arguments, got {}.".format(
+                        self.name, len(self.positional), len(arguments)
+                    )
+                )
 
         variable = block.variable
         block.variable = None
@@ -1111,16 +1122,14 @@ class CustomParser(Parser):
 
 
 class ScreenParser(Parser):
-
     def __init__(self):
         super(ScreenParser, self).__init__("screen", child_statement=False)
 
     def parse(self, loc, l, parent, name="_name", keyword=True):
-
         screen = slast.SLScreen(loc)
 
         screen.name = l.require(l.word)
-        screen.parameters = renpy.parser.parse_parameters(l) # type: ignore
+        screen.parameters = renpy.parser.parse_parameters(l)  # type: ignore
 
         self.parse_contents(l, screen, can_tag=True, docstring=True)
 
@@ -1154,7 +1163,6 @@ def init():
     screen_parser.add(all_child_statements)
 
     for i in all_child_statements:
-
         if i in childbearing_statements:
             i.add(all_child_statements)
         else:

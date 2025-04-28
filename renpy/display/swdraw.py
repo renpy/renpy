@@ -20,8 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import math
@@ -40,11 +39,10 @@ class Clipper(object):
     """
 
     def __init__(self):
-
         # Lists of (x0, y0, x1, y1, clip, surface, transform) tuples,
         # representing how a displayable is drawn to the screen.
-        self.blits = [ ]
-        self.old_blits = [ ]
+        self.blits = []
+        self.old_blits = []
 
         # Sets of (x0, y0, x1, y1) tuples, representing areas that
         # aren't part of any displayable.
@@ -70,7 +68,7 @@ class Clipper(object):
         mutated = self.mutated
 
         self.old_blits = bl1
-        self.blits = [ ]
+        self.blits = []
         self.old_forced = forced
         self.forced = set()
         self.mutated = set()
@@ -85,14 +83,14 @@ class Clipper(object):
         # Check to see if a full redraw has been forced, and return
         # early.
         if full_redraw:
-            return fullscreen, [ fullscreen ]
+            return fullscreen, [fullscreen]
 
         # Quick checks to see if a dissolve is happening, or something like
         # that.
         changes = forced | old_forced
 
         if fullscreen in changes:
-            return fullscreen, [ fullscreen ]
+            return fullscreen, [fullscreen]
 
         # Compute the differences between the two sets, and add those
         # to changes.
@@ -127,13 +125,12 @@ class Clipper(object):
 
         # No changes? Quit.
         if not changes:
-            return None, [ ]
+            return None, []
 
         # Compute the sizes of the updated rectangles.
-        sized = [ ]
+        sized = []
 
         for x0, y0, x1, y1, (sx0, sy0, sx1, sy1) in changes:
-
             # Round up by a pixel, to prevent visual artifacts when scaled down.
             x1 += 1
             y1 += 1
@@ -156,14 +153,14 @@ class Clipper(object):
             area = w * h
 
             if area >= sa:
-                return fullscreen, [ fullscreen ]
+                return fullscreen, [fullscreen]
 
             sized.append((area, x0, y0, x1, y1))
 
         sized.sort()
 
         # The list of non-contiguous updates.
-        noncont = [ ]
+        noncont = []
 
         # The total area of noncont.
         nca = 0
@@ -176,16 +173,14 @@ class Clipper(object):
             merged = False
 
             if nca + area >= sa:
-                return (0, 0, sw, sh), [ (0, 0, sw, sh) ]
+                return (0, 0, sw, sh), [(0, 0, sw, sh)]
 
             i = 0
 
             while i < len(sized):
                 _iarea, ix0, iy0, ix1, iy1 = sized[i]
 
-                if (x0 <= ix0 <= x1 or x0 <= ix1 <= x1) and \
-                   (y0 <= iy0 <= y1 or y0 <= iy1 <= y1):
-
+                if (x0 <= ix0 <= x1 or x0 <= ix1 <= x1) and (y0 <= iy0 <= y1 or y0 <= iy1 <= y1):
                     merged = True
                     x0 = min(x0, ix0)
                     x1 = max(x1, ix1)
@@ -206,7 +201,7 @@ class Clipper(object):
                 nca += area
 
         if not noncont:
-            return None, [ ]
+            return None, []
 
         x0, y0, x1, y1 = noncont.pop()
         x0 = int(x0)
@@ -215,10 +210,9 @@ class Clipper(object):
         y1 = int(math.ceil(y1))
 
         # A list of (x, y, w, h) tuples for each update.
-        updates = [ (x0, y0, x1 - x0, y1 - y0) ]
+        updates = [(x0, y0, x1 - x0, y1 - y0)]
 
         for ix0, iy0, ix1, iy1 in noncont:
-
             ix0 = int(ix0)
             iy0 = int(iy0)
             ix1 = int(math.ceil(ix1))
@@ -234,7 +228,7 @@ class Clipper(object):
         return (x0, y0, x1 - x0, y1 - y0), updates
 
 
-clippers = [ Clipper() ]
+clippers = [Clipper()]
 
 
 def surface(w, h, alpha):
@@ -255,7 +249,7 @@ def copy_surface(surf):
     w, h = surf.get_size()
     rv = surface(w, h, True)
 
-    renpy.display.accelerator.nogil_copy(surf, rv) # @UndefinedVariable
+    renpy.display.accelerator.nogil_copy(surf, rv)  # @UndefinedVariable
     return rv
 
 
@@ -275,7 +269,6 @@ def draw_special(what, dest, x, y):
         return
 
     if what.operation == DISSOLVE:
-
         bottom = what.children[0][0].render_to_texture(True)
         top = what.children[1][0].render_to_texture(True)
 
@@ -288,13 +281,13 @@ def draw_special(what, dest, x, y):
             bottom.subsurface((-x, -y, w, h)),
             top.subsurface((-x, -y, w, h)),
             target,
-            int(what.operation_complete * 255))
+            int(what.operation_complete * 255),
+        )
 
         if what.operation_alpha:
             dest.blit(target, (0, 0))
 
     elif what.operation == IMAGEDISSOLVE:
-
         image = what.children[0][0].render_to_texture(True)
         bottom = what.children[1][0].render_to_texture(True)
         top = what.children[2][0].render_to_texture(True)
@@ -313,28 +306,25 @@ def draw_special(what, dest, x, y):
         ramp += b"\xff" * 256
 
         step = int(what.operation_complete * (256 + ramplen))
-        ramp = ramp[step:step + 256]
+        ramp = ramp[step : step + 256]
 
         renpy.display.module.imageblend(
             bottom.subsurface((-x, -y, w, h)),
             top.subsurface((-x, -y, w, h)),
             target,
             image.subsurface((-x, -y, w, h)),
-            ramp)
+            ramp,
+        )
 
         if what.operation_alpha:
             dest.blit(target, (0, 0))
 
     elif what.operation == PIXELLATE:
-
         surf = what.children[0][0].render_to_texture(dest.get_masks()[3])
 
         px = what.operation_parameter
 
-        renpy.display.module.pixellate(
-            surf.subsurface((-x, -y, w, h)),
-            dest.subsurface((0, 0, w, h)),
-            px, px, px, px)
+        renpy.display.module.pixellate(surf.subsurface((-x, -y, w, h)), dest.subsurface((0, 0, w, h)), px, px, px, px)
 
     elif what.operation == FLATTEN:
         surf = what.children[0][0].render_to_texture(dest.get_masks()[3])
@@ -360,10 +350,8 @@ def draw(dest, clip, what, xo, yo, screen):
     """
 
     if not isinstance(what, renpy.display.render.Render):
-
         # Pixel-Aligned blit.
         if isinstance(xo, int) and isinstance(yo, int):
-
             if clip:
                 w, h = what.get_size()
                 dest.blits.append((xo, yo, xo + w, yo + h, clip, what, None))
@@ -389,7 +377,6 @@ def draw(dest, clip, what, xo, yo, screen):
 
     # Deal with draw functions.
     if what.operation != BLIT:
-
         xo = int(xo)
         yo = int(yo)
 
@@ -437,7 +424,6 @@ def draw(dest, clip, what, xo, yo, screen):
 
     # Deal with clipping, if necessary.
     if what.xclipping or what.yclipping:
-
         if clip:
             cx0, cy0, cx1, cy1 = clip
 
@@ -455,7 +441,6 @@ def draw(dest, clip, what, xo, yo, screen):
             return
 
         else:
-
             # After this code, x and y are the coordinates of the subsurface
             # relative to the destination. xo and yo are the offset of the
             # upper-left corner relative to the subsurface.
@@ -487,8 +472,7 @@ def draw(dest, clip, what, xo, yo, screen):
     # Deal with alpha and transforms by passing them off to draw_transformed.
     if what.alpha != 1 or what.over != 1.0 or (what.forward is not None and what.forward is not IDENTITY):
         for child, cxo, cyo, _focus, _main in what.children:
-            draw_transformed(dest, clip, child, xo + cxo, yo + cyo,
-                             what.alpha * what.over, what.forward, what.reverse)
+            draw_transformed(dest, clip, child, xo + cxo, yo + cyo, what.alpha * what.over, what.forward, what.reverse)
         return
 
     for child, cxo, cyo, _focus, _main in what.children:
@@ -496,9 +480,8 @@ def draw(dest, clip, what, xo, yo, screen):
 
 
 def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
-
     # If our alpha has hit 0, don't do anything.
-    if alpha <= 0.003: # (1 / 256)
+    if alpha <= 0.003:  # (1 / 256)
         return
 
     if forward is None:
@@ -506,12 +489,10 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         reverse = IDENTITY
 
     if not isinstance(what, renpy.display.render.Render):
-
         # Figure out where the other corner of the transformed surface
         # is on the screen.
         sw, sh = what.get_size()
         if clip:
-
             dx0, dy0, dx1, dy1 = clip
             dw = dx1 - dx0
             dh = dy1 - dy0
@@ -545,24 +526,22 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         cx, cy = forward.transform(minx - xo, miny - yo)
 
         if clip:
-
-            dest.blits.append(
-                (minx, miny, maxx + dx0, maxy + dy0, clip, what, # type: ignore
-                 (cx, cy,
-                  forward.xdx, forward.ydx,
-                  forward.xdy, forward.ydy,
-                  alpha)))
+            dest.blits.append((
+                minx,
+                miny,
+                maxx + dx0,
+                maxy + dy0,
+                clip,
+                what,  # type: ignore
+                (cx, cy, forward.xdx, forward.ydx, forward.xdy, forward.ydy, alpha),
+            ))
 
         else:
-
             dest = dest.subsurface((minx, miny, maxx - minx, maxy - miny))
 
             renpy.display.module.self(
-                what, dest,
-                cx, cy,
-                forward.xdx, forward.ydx,
-                forward.xdy, forward.ydy,
-                alpha, True)
+                what, dest, cx, cy, forward.xdx, forward.ydx, forward.xdy, forward.ydy, alpha, True
+            )
 
         return
 
@@ -570,7 +549,6 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         renpy.display.interface.text_rect = what.screen_rect(xo, yo, reverse)
 
     if what.xclipping or what.yclipping:
-
         if reverse.xdy or reverse.ydx:
             draw_transformed(dest, clip, what.pygame_surface(True), xo, yo, alpha, forward, reverse)
             return
@@ -595,7 +573,6 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
             return
 
         else:
-
             # After this code, x and y are the coordinates of the subsurface
             # relative to the destination. xo and yo are the offset of the
             # upper-left corner relative to the subsurface.
@@ -630,7 +607,6 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         return
 
     for child, cxo, cyo, _focus, _main in what.children:
-
         cxo, cyo = reverse.transform(cxo, cyo)
 
         if what.forward:
@@ -640,7 +616,9 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
             child_forward = forward
             child_reverse = reverse
 
-        draw_transformed(dest, clip, child, xo + cxo, yo + cyo, alpha * what.alpha * what.over, child_forward, child_reverse)
+        draw_transformed(
+            dest, clip, child, xo + cxo, yo + cyo, alpha * what.alpha * what.over, child_forward, child_reverse
+        )
 
 
 def do_draw_screen(screen_render, full_redraw, swdraw):
@@ -658,7 +636,7 @@ def do_draw_screen(screen_render, full_redraw, swdraw):
     cliprect, updates = clipper.compute(full_redraw)
 
     if cliprect is None:
-        return [ ]
+        return []
 
     x, y, _w, _h = cliprect
 
@@ -679,7 +657,6 @@ class SWDraw(object):
         self.reset()
 
     def reset(self):
-
         # Should we draw the screen?
         self.suppressed_blit = False
 
@@ -687,7 +664,7 @@ class SWDraw(object):
         self.next_frame = 0
 
         # Info.
-        self.info = { "renderer" : "sw", "resizable" : False, "additive" : False }
+        self.info = {"renderer": "sw", "resizable": False, "additive": False}
 
         if self.display_info is None:
             self.display_info = renpy.display.get_info()
@@ -706,7 +683,6 @@ class SWDraw(object):
         return 0, 0
 
     def init(self, virtual_size):
-
         # These disable a failed load of ANGLE.
         pygame.display.gl_reset_attributes()
         pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
@@ -717,8 +693,8 @@ class SWDraw(object):
         width, height = virtual_size
 
         # Set up scaling, if necessary.
-        screen_width = self.display_info.current_w # type: ignore
-        screen_height = self.display_info.current_h # type: ignore
+        screen_width = self.display_info.current_w  # type: ignore
+        screen_height = self.display_info.current_h  # type: ignore
 
         scale_factor = min(1.0 * screen_width / width, 1.0 * screen_height / height, 1.0)
         if "RENPY_SCALE_FACTOR" in os.environ:
@@ -759,7 +735,7 @@ class SWDraw(object):
     def resize(self):
         return
 
-    def quit(self): # @ReservedAssignment
+    def quit(self):  # @ReservedAssignment
         return
 
     def translate_point(self, x, y):
@@ -773,7 +749,7 @@ class SWDraw(object):
         return (x, y)
 
     def mouse_event(self, ev):
-        x, y = getattr(ev, 'pos', pygame.mouse.get_pos()) # type: ignore
+        x, y = getattr(ev, "pos", pygame.mouse.get_pos())  # type: ignore
 
         x /= self.scale_factor
         y /= self.scale_factor
@@ -789,7 +765,6 @@ class SWDraw(object):
         return x, y
 
     def set_mouse_pos(self, x, y):
-
         x *= self.scale_factor
         y *= self.scale_factor
 
@@ -846,7 +821,7 @@ class SWDraw(object):
         Draws the screen.
         """
 
-        updates = [ ]
+        updates = []
 
         damage = do_draw_screen(surftree, self.full_redraw, self)
 
@@ -856,7 +831,6 @@ class SWDraw(object):
         self.full_redraw = False
 
         if self.window is self.screen:
-
             pygame.display.update(updates)
 
         else:
@@ -865,7 +839,6 @@ class SWDraw(object):
             pygame.display.flip()
 
     def render_to_texture(self, render, alpha):
-
         rv = surface(render.width, render.height, alpha)
         draw(rv, None, render, 0, 0, False)
 
@@ -922,7 +895,7 @@ class SWDraw(object):
         Wait a little bit so the CPU doesn't speed up.
         """
 
-        time.sleep(.0001)
+        time.sleep(0.0001)
 
     def get_physical_size(self):
         """

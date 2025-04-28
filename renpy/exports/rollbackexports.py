@@ -19,8 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -178,7 +178,6 @@ def retain_after_load():
     renpy.game.log.retain_after_load()
 
 
-
 def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True, current_label=None):
     """
     :doc: rollback
@@ -220,7 +219,6 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, a
         return
 
     if not force:
-
         if not renpy.store._rollback:
             return
 
@@ -232,7 +230,9 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, a
 
     renpy.config.skipping = None
     renpy.game.log.complete()
-    renpy.game.log.rollback(checkpoints, greedy=greedy, label=label, force=(force is True), abnormal=abnormal, current_label=current_label)
+    renpy.game.log.rollback(
+        checkpoints, greedy=greedy, label=label, force=(force is True), abnormal=abnormal, current_label=current_label
+    )
 
 
 def get_roll_forward():

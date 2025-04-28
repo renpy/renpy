@@ -19,8 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
@@ -48,7 +48,7 @@ def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu
     if transition is False:
         transition = renpy.config.end_game_transition
 
-    raise renpy.game.FullRestartException((transition, label, target)) # type: ignore
+    raise renpy.game.FullRestartException((transition, label, target))  # type: ignore
 
 
 def utter_restart(keep_renderer=False):
@@ -90,25 +90,23 @@ def reload_script():
         utter_restart()
 
     if not renpy.store.main_menu:
-
         if s is not None:
             session["_reload_screen"] = s.screen_name[0]
             session["_reload_screen_args"] = s.scope.get("_args", ())
-            session["_reload_screen_kwargs"] = s.scope.get("_kwargs", { })
+            session["_reload_screen_kwargs"] = s.scope.get("_kwargs", {})
 
         renpy.game.call_in_new_context("_save_reload_game")
 
     else:
-
         if s is not None:
             session["_main_menu_screen"] = s.screen_name[0]
             session["_main_menu_screen_args"] = s.scope.get("_args", ())
-            session["_main_menu_screen_kwargs"] = s.scope.get("_kwargs", { })
+            session["_main_menu_screen_kwargs"] = s.scope.get("_kwargs", {})
 
         utter_restart()
 
 
-def quit(relaunch=False, status=0, save=False): # @ReservedAssignment
+def quit(relaunch=False, status=0, save=False):  # @ReservedAssignment
     """
     :doc: other
 

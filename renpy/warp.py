@@ -24,8 +24,7 @@
 # location.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -48,10 +47,10 @@ def warp():
     if spec is None:
         return None
 
-    if ':' not in spec:
-        raise Exception('No : found in warp location.')
+    if ":" not in spec:
+        raise Exception("No : found in warp location.")
 
-    filename, line = spec.split(':', 1)
+    filename, line = spec.split(":", 1)
     line = int(line)
 
     if not renpy.config.developer:
@@ -63,13 +62,12 @@ def warp():
     # First, compute for each statement reachable from a scene statement,
     # one statement that reaches that statement.
 
-    prev = { }
+    prev = {}
 
     seenset = set(renpy.game.script.namemap.values())
 
     # This is called to indicate that next can be executed following node.
     def add(node, next):  # @ReservedAssignment
-
         if next is None:
             return
 
@@ -91,15 +89,14 @@ def warp():
             return None
 
         n = None
-        n = n or prefer(lambda a, b : (a.filename == next.filename) and (b.filename != next.filename))
-        n = n or prefer(lambda a, b : (a.linenumber <= next.linenumber) and (b.linenumber > next.linenumber))
-        n = n or prefer(lambda a, b : (a.linenumber >= b.linenumber))
+        n = n or prefer(lambda a, b: (a.filename == next.filename) and (b.filename != next.filename))
+        n = n or prefer(lambda a, b: (a.linenumber <= next.linenumber) and (b.linenumber > next.linenumber))
+        n = n or prefer(lambda a, b: (a.linenumber >= b.linenumber))
         n = n or node
 
         prev[next] = n
 
     for n in seenset:
-
         if isinstance(n, renpy.ast.Translate) and n.language:
             continue
 
@@ -117,7 +114,6 @@ def warp():
             add(n, n.block[0])
 
         if isinstance(n, renpy.ast.If):
-
             seen_true = False
 
             for condition, block in n.entries:
@@ -131,16 +127,13 @@ def warp():
 
         if isinstance(n, renpy.ast.UserStatement):
             add(n, n.get_next())
-        elif getattr(n, 'next', None) is not None:
+        elif getattr(n, "next", None) is not None:
             add(n, n.next)
 
     # Now, attempt to find a statement preceding the line that the
     # user wants to warp to.
 
-    candidates = [ (n.linenumber, n)
-                   for n in seenset
-                   if n.filename == filename and n.linenumber <= line
-                   ]
+    candidates = [(n.linenumber, n) for n in seenset if n.filename == filename and n.linenumber <= line]
 
     # We didn't find any candidate statements, so give up the warp.
     if not candidates:
@@ -153,7 +146,7 @@ def warp():
     node = candidates[-1][1]
 
     # Now, determine a list of nodes to run while getting to this node.
-    run = [ ]
+    run = []
     n = node
 
     while True:
@@ -165,7 +158,7 @@ def warp():
 
     run.reverse()
 
-    run = run[-renpy.config.warp_limit:]
+    run = run[-renpy.config.warp_limit :]
 
     renpy.config.skipping = "fast"
 
@@ -173,9 +166,7 @@ def warp():
     # only them.
 
     for n in run:
-
         if n.can_warp():
-
             # Execute, if possible.
             try:
                 n.execute()
