@@ -93,7 +93,6 @@ class LogFile(object):
             self.file = real_stdout
 
     def open(self):  # @ReservedAssignment
-
         if renpy.config.log_to_stdout:
             self.file = real_stdout
             return True
@@ -169,9 +168,7 @@ class LogFile(object):
                 self.write("%s", renpy.game.build_info["version"])
                 self.write(
                     "Built at %s UTC",
-                    time.strftime(
-                        "%Y-%m-%d %H:%M:%S", time.gmtime(renpy.game.build_info["time"])
-                    ),
+                    time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(renpy.game.build_info["time"])),
                 )
                 self.write("")
 
@@ -188,7 +185,6 @@ class LogFile(object):
         """
 
         if self.open():
-
             if not isinstance(s, str):
                 s = s.decode("latin-1")
 
@@ -258,7 +254,6 @@ class TimeLog[T](list[tuple[float, T]]):
         self.prune(now)
 
     def prune(self, now: float | None = None):
-
         if now is None:
             now = time.time()
 
@@ -271,7 +266,6 @@ class TimeLog[T](list[tuple[float, T]]):
 
 
 class StdioRedirector(object):
-
     real_file: TextIO = sys.stderr
 
     def __init__(self):
@@ -280,7 +274,6 @@ class StdioRedirector(object):
         self.encoding: str = "utf-8"
 
     def write(self, s: bytes | str):
-
         if not isinstance(s, str):
             s = str(s, "utf-8", "replace")
 
@@ -317,7 +310,7 @@ class StdioRedirector(object):
     def isatty(self):
         return self.real_file.isatty()
 
-    def writelines(self, lines: Iterable[str | bytes]:
+    def writelines(self, lines: Iterable[str | bytes]):
         for i in lines:
             self.write(i)
 
@@ -355,7 +348,6 @@ if not "RENPY_NO_REDIRECT_STDIO" in os.environ:
     sys.stderr = sys_stderr = StderrRedirector()
 
 else:
-
     sys_stdout = sys.stdout
     sys_stderr = sys.stderr
 
