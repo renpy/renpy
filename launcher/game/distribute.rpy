@@ -90,7 +90,7 @@ def fix_dlc(name, fn):
     if not os.path.exists(os.path.join(config.renpy_base, fn)):
         return
 
-    u = sys._getframe(2).f_locals["self"]
+    u = sys._getframe(2 if sys.version_info.major >= 3 else 4).f_locals["self"]
     if name in u.current_state:
         return
 
