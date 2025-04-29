@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
     # game/new_project.rpy:77
     old "{#language name and font}"
     new "{font=fonts/Roboto-Light.ttf}Español{/font}"
@@ -384,7 +384,7 @@
     new "Un editor maduro. Editra carece de soporte IME, necesario para el texto en chino, japonés y coreano. En Linux, Editra necesita wxPython."
 
     # editor.rpy:195
-    old "This may have occurred because wxPython is not installed on this system."
+    old "This may have occured because wxPython is not installed on this system."
     new "Esto puede haber ocurrido porque wxPython no está instalado en este sistema."
 
     # editor.rpy:197
@@ -400,7 +400,7 @@
     new "Requiere descargar 1.8 MB."
 
     # editor.rpy:210
-    old "This may have occurred because Java is not installed on this system."
+    old "This may have occured because Java is not installed on this system."
     new "Esto puede haber ocurrido porque Java no está instalado en este sistema"
 
     # editor.rpy:219
@@ -424,7 +424,7 @@
     new "Editar [text]."
 
     # editor.rpy:387
-    old "An exception occurred while launching the text editor:\n[exception!q]"
+    old "An exception occured while launching the text editor:\n[exception!q]"
     new "Ha ocurrido una excepción mientras se ejecutaba el editor de texto:\\[exception!q]"
 
     # editor.rpy:519
@@ -1216,7 +1216,7 @@
     new "Versión de desarrollo de Ren'Py. Puede tener las últimas características o puede no funcionar."
 
     # updater.rpy:152
-    old "An error has occurred:"
+    old "An error has occured:"
     new "Ha sucedido un error:"
 
     # updater.rpy:154
@@ -1568,7 +1568,7 @@
     new "abriendo el archivo de registro"
 
     # game/interface.rpy:394
-    old "While [what!qt], an error occurred:"
+    old "While [what!qt], an error occured:"
     new "Mientras que [what!qt], ocurrió un error:"
 
     # game/interface.rpy:394
@@ -2250,3 +2250,23 @@
     # game/project.rpy:776
     old "Splashscreen skipped in launcher preferences."
     new "Se omite la pantalla Splashscreen en las preferencias del lanzador."
+
+    # game/editor.rpy:667
+    old "You are using an old version of the Ren'Py Language support for Visual Studio Code. Would you like to upgrade?"
+    new "Está utilizando una versión antigua del soporte Ren'Py Language para Visual Studio Code. ¿Desea actualizarla?"
+
+    # game/editor.rpy:667
+    old "Upgrade."
+    new "Actualizar."
+
+    # game/install.rpy:186
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "El {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK para Native{/a} añade soporte para mostrar modelos Live2D. Coloca CubismSdkForNative-{i}versión{/i}.zip en el directorio del SDK de Ren'Py y luego haz clic en Instalar. Para distribuir un juego con Live2D, debes aceptar una licencia de Live2D, Inc."
+
+    # game/navigation.rpy:230
+    old "Show translation files"
+    new "Mostrar archivos de traducción"
+
+    # game/preferences.rpy:258
+    old "Prefer the web documentation"
+    new "PrefiePreferir ra la documentación web"

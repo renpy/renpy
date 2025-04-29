@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
@@ -130,11 +130,11 @@
 
     # 00console.rpy:259
     old "Ren'Py script enabled."
-    new "Script Ren'Py habilitado."
+    new "Script Ren'Py activado."
 
     # 00console.rpy:261
     old "Ren'Py script disabled."
-    new "Script Ren'Py deshabilitado."
+    new "Script Ren'Py desactivado."
 
     # 00console.rpy:496
     old "help: show this help"
@@ -202,7 +202,7 @@
 
     # renpy/common/00console.rpy:925
     old "escape: Enables escaping of unicode symbols in unicode strings."
-    new "escape: habilita el escape de símbolos Unicode en cadenas Unicode."
+    new "escape: Activa el escape de símbolos Unicode en cadenas Unicode."
 
     # renpy/common/00console.rpy:929
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
@@ -267,3 +267,23 @@
     # renpy/common/_developer/developer.rpym:657
     old "Click to open in editor."
     new "Haz clic para abrir en el editor."
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Show Translation Info"
+    new "Mostrar Información de Traducción"
+
+    # renpy/common/_developer/developer.rpym:73
+    old "Hide Translation Info"
+    new "Ocultar Información de Traducción"
+
+    # renpy/common/_developer/developer.rpym:133
+    old "    [name!q] [attributes!q] (hidden)"
+    new "    [name!q] [attributes!q] (oculto)"
+
+    # renpy/common/_developer/developer.rpym:137
+    old "    [name!q] [attributes!q]"
+    new "    [name!q] [attributes!q]"
+
+    # renpy/common/00console.rpy:725
+    old "The console is using short representations. To disable this, type 'long', and to re-enable, type 'short'"
+    new "La consola está utilizando representaciones cortas. Para desactivarlo, escriba 'long', y para volver a activarlo, escriba 'short'."
