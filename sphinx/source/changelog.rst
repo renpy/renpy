@@ -155,6 +155,8 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 Other Changes
 -------------
 
+The "Click to play the video." screen used on some web platforms is now translatable.
+
 CTC indicators inside retained speech bubbles will now be cleared when the player clicks past the dialogue.
 
 In some circumstances, Ren'Py will reuse tuples containing immutable values (float, int, bool,

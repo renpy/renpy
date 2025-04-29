@@ -22,6 +22,12 @@
 # This file contains code that creates a few new statements.
 
 init -1200 python in audio:
+
+    # The prompt asking the user to click to play video on the web platform.
+    # This can be translated or changed using Ren'Py's translation system.
+    __("Click to play the video.")
+
+
     # Do not participate in saves.
     _constant = True
 

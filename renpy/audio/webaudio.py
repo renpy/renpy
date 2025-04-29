@@ -550,7 +550,7 @@ def set_video(channel, video, loop=False):
         import sys
         print('Warning: video playback is not supported on this browser', file=sys.stderr)
 
-    call("set_video", channel, video, loop)
+    call("set_video", channel, video, loop, renpy.translation.translate_string("Click to play the video."))
 
 def video_supported():
     # Video only work with OpenGL v2 renderers (should be supported since WebGL v1,
