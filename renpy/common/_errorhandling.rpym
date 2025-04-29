@@ -233,6 +233,10 @@ init label _errorhandling:
         size gui._scale(26)
         kerning -1
 
+    style _trace:
+        left_margin gui._scale(10)
+        top_margin gui._scale(5)
+
     style _bar is _default:
         left_bar "#468"
         hover_left_bar "#24C"
@@ -508,17 +512,14 @@ init python:
 
             return s
 
-        def _big(self, text: str):
-            return f"{{size=+2}}{text}{{/size}}"
-
         def _color(self, text: str, color: str):
             return f"{{color={color}}}{text}{{/color}}"
 
         def location(self, filename, lineno, name):
             self._print(
-                f'File {{a=edit:{lineno}:{filename}}}"{filename}", '
-                f'line {lineno}{{/a}}, '
-                f'in {name}')
+                f'{{a=edit:{lineno}:{filename}}}'
+                f'File "{filename}", line {lineno}'
+                f'{{/a}}, in {name}')
 
         def source_carets(self, line, carets):
             if carets is None:
@@ -547,7 +548,6 @@ init python:
 
         def final_exception_line(self, exc_type: str, text: str | None):
             exc_type = self._escape_limit(exc_type)
-            exc_type = self._big(exc_type)
             if text is None:
                 self._print(exc_type)
             else:
@@ -806,10 +806,12 @@ screen _exception:
             has vbox
 
             text "[renpy.game.exception_info]" size gui._scale(22)
-            text fmt_short substitute False
+            frame style '_trace':
+                text fmt_short substitute False
 
             text "Full traceback:" size gui._scale(22)
-            text fmt_full substitute False
+            frame style '_trace':
+                text fmt_full substitute False
 
         hbox:
             vbox:

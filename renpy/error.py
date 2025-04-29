@@ -303,9 +303,9 @@ class ANSIColoredPrintContext(TextIOExceptionPrintContext):
             name_str = f', in {name}'
 
         self._print(
-            f'File {self.LOCATION_COLOR}"{filename}", '
-            f'line {lineno}{ANSIColors.RESET}'
-            f'{name_str}')
+            f'{self.LOCATION_COLOR}'
+            f'File "{filename}", line {lineno}'
+            f'{ANSIColors.RESET}{name_str}')
 
     def source_carets(self, line, carets):
         if carets is None:
@@ -1355,10 +1355,7 @@ class TracebackException:
 
             if exc.exceptions is None:
                 if not exc.stack.should_filter(ctx):
-                    ctx.string('Traceback (most recent call last):')
-
-                    with ctx.indent():
-                        exc.stack.format(ctx)
+                    exc.stack.format(ctx)
 
                 exc.format_exception_only(ctx)
 
@@ -1372,10 +1369,7 @@ class TracebackException:
                     ctx.exception_group_depth += 1
 
                 if not exc.stack.should_filter(ctx):
-                    ctx.string('Exception Group Traceback (most recent call last):')
-
-                    with ctx.indent():
-                        exc.stack.format(ctx)
+                    exc.stack.format(ctx)
 
                     exc.format_exception_only(ctx)
 
