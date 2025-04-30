@@ -40,6 +40,7 @@ PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction, PyObject *
     FriBidiChar *srcuni;
     FriBidiCharType *types;
     FriBidiLevel *levels;
+    FriBidiLevel ret;
 
     PyUnicode_READY(s);
     size = PyUnicode_GET_LENGTH(s);
@@ -55,12 +56,16 @@ PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction, PyObject *
         size,
         types);
     
-    fribidi_get_par_embedding_levels_ex(
+    ret = fribidi_get_par_embedding_levels_ex(
         types,
         NULL,
         size,
         (FriBidiParType *) direction,
         levels);
+    
+    if (ret == 0) {
+        return s;
+    }
     
     for (int i=0; i<size; i++)
         PyList_Append(seg_levels, Py_BuildValue("i", (int) levels[i]));
@@ -114,6 +119,7 @@ PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction, PyObject *
     FriBidiCharType *types;
     FriBidiLevel *levels;
     PyObject *rv;
+    FriBidiLevel ret;
 
 
     Py_UNICODE *p = PyUnicode_AS_UNICODE((PyUnicodeObject *) s);
@@ -132,12 +138,16 @@ PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction, PyObject *
         size,
         types);
     
-    fribidi_get_par_embedding_levels_ex(
+    ret = fribidi_get_par_embedding_levels_ex(
         types,
         NULL,
         size,
         (FriBidiParType *) direction,
         levels);
+
+    if (ret == 0) {
+        goto done;
+    }
     
     for (int i=0; i<size; i++)
         PyList_Append(seg_levels, Py_BuildValue("i", (int) levels[i]));
@@ -150,6 +160,7 @@ PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction, PyObject *
 
     rv = PyUnicode_FromUnicode(p, size);
 
+done:
     return rv;
 }
 
