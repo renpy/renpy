@@ -144,9 +144,9 @@ screen front_page_project_list:
                     alt _("Select folder [text].")
                     style "l_folder"
 
-                if (not folders) or (not persistent.collapsed_folders["Tutorials"]):
-                    textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
-                    textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
+            if (not folders) or (not persistent.collapsed_folders["Tutorials"]):
+                textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
+                textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
 
 
 # This is used for the right side of the screen, which is where the project-specific
