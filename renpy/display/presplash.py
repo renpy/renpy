@@ -160,24 +160,25 @@ def pump_window():
     global last_pump_time
     global pump_count, pump_total
 
-    pump_count += 1
+    if (main_window := pygame_sdl2.display.get_window()) is None:  # type: ignore
+        pump_count += 1
 
     if renpy.emscripten:
-        emscripten.sleep(0)
-
-    if window is None:
-        return
+        emscripten.sleep(0)  # type: ignore
 
     if last_pump_time + 1/24 > time.time():
         return
 
     last_pump_time = time.time()
 
-    for ev in pygame_sdl2.event.get():
-        if ev.type == pygame_sdl2.QUIT:
+    for ev in pygame_sdl2.event.get():  # type: ignore
+        if ev.type == pygame_sdl2.QUIT:  # type: ignore
             raise renpy.game.QuitException(relaunch=False, status=0)
 
-    if not progress_bar:
+    if main_window is not None:
+        main_window.update()
+
+    if window is None:
         return
 
     if not pump_total:
@@ -187,7 +188,9 @@ def pump_window():
         pump_total = (len(renpy.game.script.common_script_files) +
                       len(renpy.game.script.script_files)) + pump_clock
 
-    progress_bar.draw(window.get_surface(), pump_count / pump_total)
+    if progress_bar is not None:
+        progress_bar.draw(window.get_surface(), pump_count / pump_total)
+
     window.update()
 
 
