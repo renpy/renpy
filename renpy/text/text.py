@@ -1585,13 +1585,26 @@ class Layout(object):
         direction = ON
 
         l = [ ]
+        levels = [ ]
+        seg_dir = [ ]
+        seg_str = [ ]
+        curr_seg = 0
 
         for ts, s in p:
             ft_enabled = (getattr(ts, "shaper", "") != "harfbuzz")
 
-            s, direction = log2vis(str(s), ft_enabled, direction)
-            
-            l.append((ts, s))
+            s, direction, levels = log2vis(str(s), levels, ft_enabled, direction)
+            seg_dir.append(levels[0]%2)
+            seg_str.append(s[0])
+            for i in range(1, len(s)):
+                if seg_dir[curr_seg] != levels[i]%2:
+                    seg_dir.append(levels[i]%2)
+                    seg_str.append(s[i])
+                    curr_seg += 1
+                else:
+                    seg_str[curr_seg] += s[i]
+            for ss in seg_str:
+                l.append((ts, ss))
 
         rtl = (direction == RTL or direction == WRTL)
         
