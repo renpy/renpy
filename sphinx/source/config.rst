@@ -2056,6 +2056,25 @@ Voice
 
     See above.
 
+.. var:: config.voice_callbacks = [ ]
+
+    A list of functions that are called by the voice system. The function should take two arguments:
+
+    `event`
+        The event that was triggered. This is one of:
+
+        "play"
+            The voice system is about to play a voice file.
+        "stop"
+            The voice system has stopped playing a voice file.
+
+    `info`
+        An object containing information about the voice file that is being played. This is the same
+        object that is return from :func:`_get_voice_info`.
+
+    The function should also accept unknown keyword arguments, though no keyword arguments are
+    currently documented.
+
 .. var:: config.voice_filename_format = "{filename}"
 
     A string that is formatted with the string argument to the voice

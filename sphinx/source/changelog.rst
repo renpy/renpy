@@ -93,6 +93,9 @@ The launcher's "Console output" option now works on the Macintosh platform.
 Features
 --------
 
+:var:`config.voice_callbacks` allows you to define callbacks that are called when voice lines are played
+or stop.
+
 :ref:`Grids <sl-grid>` now support `right_to_left` and `bottom_to_top` properties, which control the order in which
 the grid is filled.
 
