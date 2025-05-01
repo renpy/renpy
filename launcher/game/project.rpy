@@ -41,11 +41,12 @@ init python in project:
     if persistent.blurb is None:
         persistent.blurb = 0
 
-    # NOTE
     # Added this persistent variable to retain any
     # previous folder that was collapsed or shown
     if persistent.collapsed_folders is None:
-        persistent.collapsed_folders = {'Tutorials':False}
+        persistent.collapsed_folders = { }
+
+    persistent.collapsed_folders.setdefault("Tutorials", False)
 
     project_filter = [ i.strip() for i in os.environ.get("RENPY_PROJECT_FILTER", "").split(":") if i.strip() ]
 
@@ -347,7 +348,7 @@ init python in project:
 
         def generate_mac_launch_string(self, cmd):
             """
-            replaces the existing launch arguments, 
+            replaces the existing launch arguments,
             with the correct ones to open up a console window on MacOS based systems
             """
             python_launch_string = ""
@@ -356,7 +357,7 @@ init python in project:
                 python_launch_string += argument
                 # adding spacing between arguments
                 python_launch_string += " "
-            
+
             return ["osascript", "-e", 'tell app "Terminal" to do script "'+python_launch_string+' && exit"']
 
 
