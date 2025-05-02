@@ -90,6 +90,10 @@ game in a folder, create a directory underneath the projects directory, and move
 
 The launcher's "Console output" option now works on the Macintosh platform.
 
+Building an update will now produce a ``public_key.pem`` file, containing key material that can be shared with
+the world. When building a :doc:`downloader game <downloader>`, this file should be copied to the base directory of
+the downloader game. This is the public key that will be used to verify the download.
+
 Features
 --------
 

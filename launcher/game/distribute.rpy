@@ -1554,6 +1554,10 @@ fix_dlc("renios", "renios")
                     if os.path.exists(update_fn):
                         shutil.copy(update_fn, final_update_fn)
 
+                if format == "rpu":
+                    if os.path.exists(self.temp_filename("key.pem")):
+                        shutil.copy(self.temp_filename("key.pem"), os.path.join(self.destination, "public_key.pem"))
+
             if format == "tar.bz2" or format == "bare-tar.bz2":
                 pkg = TarPackage(path, "w:bz2")
             elif format == "update":
