@@ -1516,7 +1516,6 @@ fix_dlc("renios", "renios")
 
             update_fn = self.temp_filename(filename + ".update.json")
 
-
             if self.include_update and not format.startswith("app-"):
 
                 with open(update_fn, "w") as f:
@@ -1551,7 +1550,7 @@ fix_dlc("renios", "renios")
 
                 final_update_fn = os.path.join(self.destination, filename + ".update.json")
 
-                if self.build_update or dlc:
+                if format == "update":
                     if os.path.exists(update_fn):
                         shutil.copy(update_fn, final_update_fn)
 
