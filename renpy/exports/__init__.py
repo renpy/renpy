@@ -22,8 +22,22 @@
 # This file contains functions that are exported to the script namespace as
 # the renpy namespace. (So renpy.say, renpy.pause, and so on.)
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
+from typing import Any
 
 import gc
 import io
@@ -352,7 +366,7 @@ from renpy.exports.debugexports import (
     pop_error_handler,
     push_error_handler,
     warp_to_line,
-    write_log
+    write_log,
 )
 
 from renpy.exports.displayexports import (
@@ -436,7 +450,7 @@ from renpy.exports.fetchexports import (
     fetch_requests,
     fetch,
     FetchError,
-    proxies
+    proxies,
 )
 
 from renpy.exports.inputexports import (
@@ -467,8 +481,8 @@ from renpy.exports.mediaexports import (
 )
 
 # The arguments and keyword arguments for the current menu call.
-menu_args = None
-menu_kwargs = None
+menu_args: tuple[Any, ...] | None = None
+menu_kwargs: dict[str, Any] | None = None
 
 from renpy.exports.menuexports import (
     choice_for_skipping,
@@ -599,7 +613,7 @@ else:
 
 
 @renpy_pure
-def version(tuple=False): # @ReservedAssignment
+def version(tuple=False):  # @ReservedAssignment
     """
     :doc: renpy_version
 
@@ -625,6 +639,7 @@ license = ""
 
 try:
     import platform as _platform
+
     platform = "-".join(_platform.platform().split("-")[:2])
 except Exception:
     if renpy.android:

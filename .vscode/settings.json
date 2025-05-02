@@ -80,7 +80,6 @@
         "renpy/uguu/gl.pyi": true,
         "renpy/uguu/uguu.pyi": true
     },
-    "python.languageServer": "Pylance",
     "python.analysis.typeCheckingMode": "basic",
     "python.analysis.diagnosticMode": "workspace",
     "python.linting.pylintEnabled": false,
@@ -91,7 +90,7 @@
     "esbonio.sphinx.confDir": "",
     "renpy.excludeCompiledFilesFromWorkspace": true,
     "renpy.watchFoldersForChanges": false,
-    "renpy.warnOnInvalidVariableNames": "Disabled",
+    "renpy.warnOnInvalidVariableNames": false,
     "renpy.warnOnInvalidFilenameIssues": "Disabled",
     "renpy.warnOnIndentationAndSpacingIssues": "Disabled",
     "editor.tokenColorCustomizations": {
@@ -135,10 +134,7 @@
                 }
             },
             {
-                "scope": [
-                    "renpy.meta.u",
-                    "renpy.meta.a"
-                ],
+                "scope": ["renpy.meta.u", "renpy.meta.a"],
                 "settings": {
                     "fontStyle": "underline"
                 }

@@ -22,7 +22,7 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Any, Callable, override
 
 # FrameType can't be pickled!
 if TYPE_CHECKING:
@@ -67,7 +67,7 @@ def check_infinite_loop():
     return
 
 
-def not_infinite_loop(delay):
+def not_infinite_loop(delay: float):
     """
     :doc: other
 
@@ -95,22 +95,28 @@ class PredictInfo(renpy.object.Object):
 
 class LineLogEntry(object):
 
-    def __init__(self, filename, line, node, abnormal):
-        self.filename = filename
-        self.line = line
-        self.node_name = node.name
-        self.abnormal = abnormal
+    def __init__(self, filename: str, line: int, node: renpy.ast.Node, abnormal: Any):
+        self.filename: str = filename
+        self.line: int = line
+        self.node_name: renpy.ast.NodeName = node.name
+        self.abnormal: Any = abnormal
 
         for i in renpy.config.line_log_callbacks:
             i(self)
 
-    def __eq__(self, other):
+    @override
+    def __eq__(self, other: Any):
         if not isinstance(other, LineLogEntry):
             return False
 
-        return (self.filename == other.filename) and (self.line == other.line) and (self.node_name is other.node_name)
+        return (
+            (self.filename == other.filename)
+            and (self.line == other.line)
+            and (self.node_name is other.node_name)
+        )
 
-    def __ne__(self, other):
+    @override
+    def __ne__(self, other: Any):
         return not (self == other)
 
     @property
@@ -141,13 +147,13 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 16
+    __version__: int = 16
 
-    nosave = [ 'next_node' ]
+    nosave: list[str] = ["next_node"]
 
-    next_node = None
+    next_node: renpy.ast.Node | None = None
 
-    force_checkpoint = False
+    force_checkpoint: bool = False
 
     come_from_name = None
     come_from_label = None
@@ -156,10 +162,11 @@ class Context(renpy.object.Object):
 
     deferred_translate_identifier = None
 
-    predict_return_stack = None # type: list|None
+    predict_return_stack: list[Any] | None = None
 
     exception_handler: Callable[[renpy.error.TracebackException], bool] | None
 
+    @override
     def __repr__(self):
 
         try:
@@ -172,46 +179,44 @@ class Context(renpy.object.Object):
                     node.filename,
                     node.linenumber,
                     node.diff_info(),
-                    )
+                )
 
         except Exception:
             pass
 
         return "<Context>"
 
-
-
-    def after_upgrade(self, version):
+    def after_upgrade(self, version: int):
         if version < 1:
-            self.scene_lists.image_predict_info = self.predict_info.images # type: ignore
+            self.scene_lists.image_predict_info = self.predict_info.images  # type: ignore
 
         if version < 2:
-            self.abnormal = False
-            self.last_abnormal = False
+            self.abnormal: bool = False
+            self.last_abnormal: bool = False
 
         if version < 3:
-            self.music = { }
+            self.music = {}
 
         if version < 4:
-            self.interacting = False
+            self.interacting: bool = False
 
         if version < 5:
-            self.modes = renpy.revertable.RevertableList([ "start" ])
-            self.use_modes = True
+            self.modes: list[str] = renpy.revertable.RevertableList(["start"])
+            self.use_modes: bool = True
 
         if version < 6:
-            self.images = self.predict_info.images # type: ignore
+            self.images = self.predict_info.images  # type: ignore
 
         if version < 7:
-            self.init_phase = False
+            self.init_phase: bool = False
             self.next_node = None
 
         if version < 8:
             self.defer_rollback = None
 
         if version < 9:
-            self.translate_language = None
-            self.translate_identifier = None
+            self.translate_language: str | None = None
+            self.translate_identifier: str | None = None
 
         if version < 10:
             self.exception_handler = None
@@ -220,18 +225,18 @@ class Context(renpy.object.Object):
             self.say_attributes = None
 
         if version < 13:
-            self.line_log = [ ]
+            self.line_log = []
 
         if version < 14:
-            self.movie = { }
+            self.movie = {}
 
         if version < 15:
-            self.abnormal_stack = [ False ] * len(self.return_stack)
+            self.abnormal_stack = [False] * len(self.return_stack)
 
         if version < 16:
             self.alternate_translate_identifier = None
 
-    def __init__(self, rollback, context=None, clear=False):
+    def __init__(self, rollback, context=None, clear: bool | list[str] = False):
         """
         `clear`
             True if we should clear out the context_clear_layers.
@@ -240,21 +245,23 @@ class Context(renpy.object.Object):
         super(Context, self).__init__()
 
         self.current = None
-        self.call_location_stack = [ ]
-        self.return_stack = [ ]
+        self.call_location_stack = []
+        self.return_stack: list[str] = []
 
         # The value of abnormal at the time of the call.
-        self.abnormal_stack = [ ]
+        self.abnormal_stack = []
 
         # Two deeper then the return stack and call location stack.
         # 1 deeper is for the context top-level, 2 deeper is for
         # _args, _kwargs, and _return.
-        self.dynamic_stack = [ { } ]
+        self.dynamic_stack = [{}]
 
         self.rollback = rollback
-        self.runtime = 0
-        self.info = renpy.revertable.RevertableObject()
-        self.seen = False
+        self.runtime: int = 0
+        self.info: renpy.revertable.RevertableObject = (
+            renpy.revertable.RevertableObject()
+        )
+        self.seen: bool = False
 
         # True if there has just been an abnormal transfer of control,
         # like the start of a context, a jump, or a call. (Returns are
@@ -269,7 +276,7 @@ class Context(renpy.object.Object):
 
         # A map from the name of a music channel to the MusicContext
         # object corresponding to that channel.
-        self.music = { }
+        self.music = {}
 
         # True if we're in the middle of a call to ui.interact. This
         # will cause Ren'Py to generate an error if we call ui.interact
@@ -280,7 +287,7 @@ class Context(renpy.object.Object):
         self.init_phase = False
 
         # When deferring a rollback, the arguments to pass to renpy.exports.rollback.
-        self.defer_rollback = None # type: tuple[int, bool]|None
+        self.defer_rollback: tuple[int, bool] | None = None
 
         # The exception handler that is called when an exception occurs while executing
         # code. If None, a default handler is used. This is reset when run is called.
@@ -292,14 +299,14 @@ class Context(renpy.object.Object):
 
         # A list of lines that were run since the last time this log was
         # cleared.
-        self.line_log = [ ]
+        self.line_log: list[str] = []
 
         # Do we want to force a checkpoint before the next statement
         # executed?
         self.force_checkpoint = False
 
         # A map from a channel to the Movie playing on that channel.
-        self.movie = { }
+        self.movie = {}
 
         if context:
             oldsl = context.scene_lists
@@ -316,13 +323,24 @@ class Context(renpy.object.Object):
             oldsl = None
             self.images = renpy.display.image.ShownImageInfo(None)
 
-        self.scene_lists = renpy.display.scenelists.SceneLists(oldsl, self.images)
+        self.scene_lists: renpy.display.scenelists.SceneLists = (
+            renpy.display.scenelists.SceneLists(oldsl, self.images)
+        )
 
         for i in renpy.config.context_copy_remove_screens:
             self.scene_lists.remove("screens", i, None)
 
-        self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay", "_side_image_attributes" ])
-        self.dynamic_stack.append({ })
+        self.make_dynamic(
+            [
+                "_return",
+                "_args",
+                "_kwargs",
+                "mouse_visible",
+                "suppress_overlay",
+                "_side_image_attributes",
+            ]
+        )
+        self.dynamic_stack.append({})
 
         if clear:
             if clear is True:
@@ -332,11 +350,11 @@ class Context(renpy.object.Object):
                 self.scene_lists.clear(layer=i)
 
         # A list of modes that the context has been in.
-        self.modes = renpy.revertable.RevertableList([ "start" ])
+        self.modes = renpy.revertable.RevertableList(["start"])
         self.use_modes = True
 
         # The language we started with.
-        self.translate_language = renpy.game.preferences.language # type: ignore
+        self.translate_language = renpy.game.preferences.language  # type: ignore
 
         # The identifier of the current translate block.
         self.translate_identifier = None
@@ -351,9 +369,9 @@ class Context(renpy.object.Object):
         # When adding something here, consider if it needs to be added in
         # renpy.rollback.Rollback.purge_unreachable.
 
-    def replace_node(self, old, new):
+    def replace_node(self, old: renpy.ast.Node, new: renpy.ast.Node):
 
-        def replace_one(name):
+        def replace_one(name: renpy.ast.NodeName):
             n = renpy.game.script.lookup(name)
             if n is old:
                 return new.name
@@ -361,9 +379,9 @@ class Context(renpy.object.Object):
             return name
 
         self.current = replace_one(self.current)
-        self.return_stack = [ replace_one(i) for i in self.return_stack ]
+        self.return_stack = [replace_one(i) for i in self.return_stack]
 
-    def make_dynamic(self, names, context=False):
+    def make_dynamic(self, names: Iterable[str], context: bool = False):
         """
         Makes the variable names listed in names dynamic, by backing up
         their current value (if not already dynamic in the current call).
@@ -387,7 +405,9 @@ class Context(renpy.object.Object):
                 storemodule = store.get(storename, None)
 
                 if not isinstance(storemodule, renpy.python.StoreModule):
-                    raise Exception("{} is not a valid namespace.".format(i.rpartition(".")[0]))
+                    raise Exception(
+                        "{} is not a valid namespace.".format(i.rpartition(".")[0])
+                    )
 
                 store = storemodule.__dict__
 
@@ -440,13 +460,13 @@ class Context(renpy.object.Object):
                 else:
                     roots[name] = v
 
-    def goto_label(self, node_name):
+    def goto_label(self, node_name: renpy.ast.NodeName):
         """
         Sets the name of the node that will be run when this context
         next executes.
         """
 
-        self.current = node_name
+        self.current: renpy.ast.NodeName = node_name
 
     def check_stacks(self):
         """
@@ -455,7 +475,11 @@ class Context(renpy.object.Object):
 
         if len(self.dynamic_stack) != len(self.return_stack) + 2:
 
-            e = Exception("Potential return stack corruption: dynamic={} return={}".format(len(self.dynamic_stack), len(self.return_stack)))
+            e = Exception(
+                "Potential return stack corruption: dynamic={} return={}".format(
+                    len(self.dynamic_stack), len(self.return_stack)
+                )
+            )
 
             while len(self.dynamic_stack) < len(self.return_stack) + 2:
                 self.dynamic_stack.append({})
@@ -511,7 +535,7 @@ class Context(renpy.object.Object):
         if last:
             return
 
-        rv = [ ]
+        rv = []
 
         for i in self.call_location_stack:
             try:
@@ -539,7 +563,7 @@ class Context(renpy.object.Object):
 
         ps = pyast.Pass(lineno=node.linenumber, col_offset=0)
         module = pyast.Module(body=[ps], type_ignores=[])
-        code = compile(module, node.filename, 'exec')
+        code = compile(module, node.filename, "exec")
         exec(code)
 
     def come_from(self, name, label):
@@ -575,13 +599,19 @@ class Context(renpy.object.Object):
             if node.name == self.come_from_name:
                 self.come_from_name = None
                 node = self.call(self.come_from_label, return_site=node.name)
-                self.make_dynamic([ "_return", "_begin_rollback" ])
+                self.make_dynamic(["_return", "_begin_rollback"])
                 renpy.store._begin_rollback = False
 
             this_node = node
             type_node_name = type(node).__name__
 
-            renpy.plog(1, "--- start {} ({}:{})", type_node_name, node.filename, node.linenumber)
+            renpy.plog(
+                1,
+                "--- start {} ({}:{})",
+                type_node_name,
+                node.filename,
+                node.linenumber,
+            )
 
             self.current = node.name
             self.last_abnormal = self.abnormal
@@ -589,7 +619,9 @@ class Context(renpy.object.Object):
             self.defer_rollback = None
 
             if renpy.config.line_log:
-                ll_entry = LineLogEntry(node.filename, node.linenumber, node, self.last_abnormal)
+                ll_entry = LineLogEntry(
+                    node.filename, node.linenumber, node, self.last_abnormal
+                )
 
                 if ll_entry not in self.line_log:
                     self.line_log.append(ll_entry)
@@ -638,11 +670,23 @@ class Context(renpy.object.Object):
 
                     self.next_node = None
 
-                    renpy.plog(2, "    before execute {} ({}:{})", type_node_name, node.filename, node.linenumber)
+                    renpy.plog(
+                        2,
+                        "    before execute {} ({}:{})",
+                        type_node_name,
+                        node.filename,
+                        node.linenumber,
+                    )
 
                     node.execute()
 
-                    renpy.plog(2, "    after execute {} ({}:{})", type_node_name, node.filename, node.linenumber)
+                    renpy.plog(
+                        2,
+                        "    after execute {} ({}:{})",
+                        type_node_name,
+                        node.filename,
+                        node.linenumber,
+                    )
 
                     if developer and self.next_node:
                         self.check_stacks()
@@ -674,7 +718,9 @@ class Context(renpy.object.Object):
                     return_site = getattr(node, "statement_start", node).name
                 else:
                     if self.next_node is None:
-                        raise Exception("renpy.call can't be used when the next node is undefined.")
+                        raise Exception(
+                            "renpy.call can't be used when the next node is undefined."
+                        )
                     return_site = self.next_node.name
 
                 node = self.call(e.label, return_site=return_site)
@@ -689,10 +735,16 @@ class Context(renpy.object.Object):
                     else:
                         seen_key = self.current
 
-                    renpy.game.persistent._seen_ever[seen_key] = True # type: ignore
+                    renpy.game.persistent._seen_ever[seen_key] = True  # type: ignore
                     renpy.game.seen_session[seen_key] = True
 
-            renpy.plog(2, "    end {} ({}:{})", type_node_name, this_node.filename, this_node.linenumber)
+            renpy.plog(
+                2,
+                "    end {} ({}:{})",
+                type_node_name,
+                this_node.filename,
+                this_node.linenumber,
+            )
 
         if self.rollback and renpy.game.log:
             renpy.game.log.complete()
@@ -718,11 +770,11 @@ class Context(renpy.object.Object):
         self.call_location_stack.append(self.current)
 
         self.return_stack.append(return_site)
-        self.dynamic_stack.append({ })
+        self.dynamic_stack.append({})
         self.abnormal_stack.append(self.last_abnormal)
         self.current = label
 
-        self.make_dynamic([ "_args", "_kwargs" ])
+        self.make_dynamic(["_args", "_kwargs"])
         renpy.store._args = None
         renpy.store._kwargs = None
 
@@ -776,7 +828,11 @@ class Context(renpy.object.Object):
                 else:
 
                     if renpy.config.developer:
-                        raise Exception("Could not find return label {!r}.".format(self.return_stack[-1]))
+                        raise Exception(
+                            "Could not find return label {!r}.".format(
+                                self.return_stack[-1]
+                            )
+                        )
 
                     self.return_stack.pop()
                     self.call_location_stack.pop()
@@ -802,7 +858,7 @@ class Context(renpy.object.Object):
         rv = Context(self.rollback, self)
         rv.call_location_stack = self.call_location_stack[:]
         rv.return_stack = self.return_stack[:]
-        rv.dynamic_stack = [ i.copy() for i in self.dynamic_stack ]
+        rv.dynamic_stack = [i.copy() for i in self.dynamic_stack]
         rv.current = self.current
 
         rv.runtime = self.runtime
@@ -819,7 +875,9 @@ class Context(renpy.object.Object):
 
         return rv
 
-    def predict_call(self, label, return_site):
+    def predict_call(
+        self, label: str, return_site: str | renpy.ast.NodeName
+    ) -> renpy.ast.Node:
         """
         This is called by the prediction code to indicate that a call to
         `label` will occur.
@@ -831,7 +889,7 @@ class Context(renpy.object.Object):
         Returns the node corresponding to `label`
         """
 
-        self.predict_return_stack = list(self.predict_return_stack) # type: ignore
+        self.predict_return_stack = list(self.predict_return_stack or [])  # type: ignore
         self.predict_return_stack.append(return_site)
 
         return renpy.game.script.lookup(label)
@@ -867,7 +925,7 @@ class Context(renpy.object.Object):
         old_images = self.images
 
         # A worklist of (node, images, return_stack) tuples.
-        nodes = [ ]
+        nodes = []
 
         # The set of nodes we've seen. (We only consider each node once.)
         seen = set()
@@ -923,7 +981,7 @@ class Context(renpy.object.Object):
 
         yield False
 
-    def seen_current(self, ever):
+    def seen_current(self, ever: bool):
         """
         Returns a true value if we have finished the current statement
         at least once before.
@@ -937,7 +995,7 @@ class Context(renpy.object.Object):
             return False
 
         if ever:
-            seen = renpy.game.persistent._seen_ever # type: ignore
+            seen = renpy.game.persistent._seen_ever  # type: ignore
         else:
             seen = renpy.game.seen_session
 
@@ -960,7 +1018,7 @@ class Context(renpy.object.Object):
     def get_return_stack(self):
         return list(self.return_stack)
 
-    def set_return_stack(self, return_stack):
+    def set_return_stack(self, return_stack: Iterable[str]):
         self.return_stack = list(return_stack)
 
         while len(self.call_location_stack) > len(self.return_stack):
@@ -975,7 +1033,7 @@ class Context(renpy.object.Object):
             self.dynamic_stack.append({})
 
 
-def run_context(top):
+def run_context(top: bool):
     """
     Runs the current context until it can't be run anymore, while handling
     the RestartContext and RestartTopContext exceptions.
@@ -1012,6 +1070,7 @@ def run_context(top):
             context.pop_all_dynamic()
             raise
 
+
 def reset_all_contexts():
     """
     :doc: context
@@ -1034,11 +1093,12 @@ def reset_all_contexts():
     to continue at.
     """
 
-
     old = renpy.game.context()
 
     if old.next_node is None:
-        raise Exception("The renpy.reset_all_contexts function can only be called as the last thing in a python statement.")
+        raise Exception(
+            "The renpy.reset_all_contexts function can only be called as the last thing in a python statement."
+        )
 
     while renpy.game.contexts:
         c = renpy.game.contexts.pop()

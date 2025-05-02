@@ -19,8 +19,28 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Any, Callable  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import os
 import sys
@@ -31,8 +51,9 @@ import pygame_sdl2
 
 from renpy.exports.commonexports import renpy_pure
 
+
 @renpy_pure
-def variant(name):
+def variant(name: str | list[str]):
     """
     :doc: screens
 
@@ -55,7 +76,7 @@ def variant(name):
         return False
 
 
-def vibrate(duration):
+def vibrate(duration: float):
     """
     :doc: other
 
@@ -67,11 +88,12 @@ def vibrate(duration):
         duration = 0.01
 
     if renpy.android:
-        import android # @UnresolvedImport
+        import android  # @UnresolvedImport
+
         android.vibrate(duration)
 
 
-def invoke_in_thread(fn, *args, **kwargs):
+def invoke_in_thread(fn: Callable[..., Any], *args: Any, **kwargs: Any):
     """
     :doc: other
 
@@ -105,6 +127,7 @@ def invoke_in_thread(fn, *args, **kwargs):
             fn(*args, **kwargs)
         except Exception:
             import traceback
+
             traceback.print_exc()
 
         renpy.exports.restart_interaction()
@@ -138,7 +161,9 @@ def invoke_in_main_thread(fn, *args, **kwargs):
     """
 
     if renpy.game.context().init_phase:
-        raise Exception("invoke_in_main_thread may not be called during the init phase.")
+        raise Exception(
+            "invoke_in_main_thread may not be called during the init phase."
+        )
 
     renpy.display.interface.invoke_queue.append((fn, args, kwargs))
 
@@ -156,11 +181,11 @@ def get_on_battery():
 
     global old_battery
 
-    pi = pygame_sdl2.power.get_power_info() # @UndefinedVariable
+    pi = pygame_sdl2.power.get_power_info()  # @UndefinedVariable
 
-    if pi.state == pygame_sdl2.POWERSTATE_UNKNOWN: # @UndefinedVariable
+    if pi.state == pygame_sdl2.POWERSTATE_UNKNOWN:  # @UndefinedVariable
         return old_battery
-    elif pi.state == pygame_sdl2.POWERSTATE_ON_BATTERY: # @UndefinedVariable
+    elif pi.state == pygame_sdl2.POWERSTATE_ON_BATTERY:  # @UndefinedVariable
         old_battery = True
         return True
     else:
@@ -169,6 +194,7 @@ def get_on_battery():
 
 
 sdl_dll = False
+
 
 def get_sdl_dll():
     """
@@ -187,7 +213,16 @@ def get_sdl_dll():
 
         lib = os.path.dirname(sys.executable) + "/"
 
-        DLLS = [ None, lib + "librenpython.dll", lib + "librenpython.dylib", lib + "librenpython.so", "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
+        DLLS = [
+            None,
+            lib + "librenpython.dll",
+            lib + "librenpython.dylib",
+            lib + "librenpython.so",
+            "librenpython.so",
+            "SDL2.dll",
+            "libSDL2.dylib",
+            "libSDL2-2.0.so.0",
+        ]
 
         import ctypes
 
@@ -249,16 +284,19 @@ def check_permission(permission):
         return False
 
     from jnius import autoclass
+
     PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
     activity = PythonSDLActivity.mActivity
 
     try:
-        return activity.checkSelfPermission(permission) == 0 # PackageManager.PERMISSION_GRANTED
+        return (
+            activity.checkSelfPermission(permission) == 0
+        )  # PackageManager.PERMISSION_GRANTED
     except Exception:
         return False
 
 
-def request_permission(permission):
+def request_permission(permission: str):
     """
     :doc: android_permission
 
@@ -275,9 +313,10 @@ def request_permission(permission):
     if not renpy.android:
         return False
 
-    return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8")) # type: ignore
+    return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8"))  # type: ignore
 
-def open_url(url):
+
+def open_url(url: str):
     """
     :doc: other
 
@@ -289,6 +328,7 @@ def open_url(url):
 
     try:
         import webbrowser
+
         webbrowser.open_new(url)
     except Exception:
         pass

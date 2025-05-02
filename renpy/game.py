@@ -23,10 +23,33 @@
 # It's purpose is to store in one global all of the data that would
 # be to annoying to lug around otherwise.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+# pyright: reportUnusedCallResult=false
 
-from typing import Optional, Any
+
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+    annotations,
+)
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
+
+from typing import Any, Callable, cast, override
 
 import renpy
 
@@ -35,36 +58,36 @@ basepath = None
 
 # A list of paths that we search to load things. This is searched for
 # everything that can be loaded, before archives are used.
-searchpath = [ ]
+searchpath = []
 
 # The options that were read off the command line.
-args = None # type: Any
+args: Any = None
 
 # The game's script.
-script = None # type: Optional[renpy.script.Script]
+script: renpy.script.Script | None = None  #
 
 # A stack of execution contexts.
-contexts = [ ]
+contexts: list[renpy.execution.Context] = []
 
 # The interface that the game uses to interact with the user.
-interface = None # type: Optional[renpy.display.core.Interface]
+interface: renpy.display.core.Interface | None = None
 
 # Are we inside lint?
 lint = False
 
 # The RollbackLog that keeps track of changes to the game state
 # and to the store.
-log = None # type: renpy.rollback.RollbackLog|None
+log: renpy.rollback.RollbackLog | None = None
 
 # Some useful additional information about program execution that
 # can be added to the exception.
-exception_info = ''
+exception_info: str = ""
 
 # Used to store style information.
 style = None
 
 # The set of statements we've seen in this session.
-seen_session: dict[Any, bool] = { }
+seen_session: dict[Any, bool] = {}
 
 # The number of entries in persistent._seen_translates that are also in
 # the current game.
@@ -77,7 +100,7 @@ new_translates_count: int = 0
 after_rollback = False
 
 # Code that's run after the init code.
-post_init = [ ]
+post_init: list[Callable[[], None]] = []
 
 # Should we attempt to run in a mode that uses less memory?
 less_memory = False
@@ -93,13 +116,13 @@ less_mouse = False
 less_imagedissolve = False
 
 # The persistent data that's kept from session to session
-persistent = None # type: Any
+persistent: Any = None
 
 # The current preferences.
-preferences = None # type: Any
+preferences: Any = None
 
 # Current id of the AST node in script initcode
-initcode_ast_id = 0
+initcode_ast_id: int = 0
 
 # The build_info.
 build_info: dict[str, Any] = { "info" : { } }
@@ -115,14 +138,14 @@ class ExceptionInfo(object):
         The arguments that are percent-formatted with `s`.
     """
 
-    def __init__(self, s, args):
-        self.s = s
-        self.args = args
+    def __init__(self, s: str, args: list[Any]):
+        self.s: str = s
+        self.args: list[Any] = args
 
     def __enter__(self):
         return
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any):
         if exc_type:
             renpy.game.exception_info = self.s % self.args
 
@@ -149,8 +172,9 @@ class FullRestartException(Exception):
     destroying the store and config and so on.
     """
 
-    def __init__(self, reason="end_game"): # W0231
-        self.reason = reason
+    def __init__(self, reason: str = "end_game") -> None:
+        super().__init__()
+        self.reason: str = reason
 
 
 class UtterRestartException(Exception):
@@ -173,10 +197,10 @@ class QuitException(Exception):
         The status code Ren'Py will return to the operating system.
     """
 
-    def __init__(self, relaunch=False, status=0):
+    def __init__(self, relaunch: bool = False, status: int = 0):
         Exception.__init__(self)
-        self.relaunch = relaunch
-        self.status = status
+        self.relaunch: bool = relaunch
+        self.status: int = status
 
 
 class JumpException(Exception):
@@ -200,16 +224,23 @@ class CallException(Exception):
     and control to be transferred to the named label.
     """
 
-    from_current = False
+    from_current: bool = False
 
-    def __init__(self, label, args, kwargs, from_current=False):
+    def __init__(
+        self,
+        label: str,
+        args: tuple[Any],
+        kwargs: dict[str, Any],
+        from_current: bool = False,
+    ):
         Exception.__init__(self)
 
-        self.label = label
-        self.args = args
-        self.kwargs = kwargs
+        self.label: str = label
+        self.args: tuple[Any] = args
+        self.kwargs: dict[str, Any] = kwargs
         self.from_current = from_current
 
+    @override
     def __reduce__(self):
         return (CallException, (self.label, self.args, self.kwargs, self.from_current))
 
@@ -242,10 +273,10 @@ CONTROL_EXCEPTIONS = (
     EndReplay,
     ParseErrorException,
     KeyboardInterrupt,
-    )
+)
 
 
-def context(index=-1):
+def context(index: int = -1):
     """
     Return the current execution context, or the context at the
     given index if one is specified.
@@ -254,8 +285,9 @@ def context(index=-1):
     return contexts[index]
 
 
-
-def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
+def invoke_in_new_context(
+    callable: Callable[..., Any], *args: Any, **kwargs: Any
+):  # @ReservedAssignment
     """
     :doc: context
 
@@ -283,7 +315,7 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
         list, only the layers in the list are cleared.
     """
 
-    clear = kwargs.pop('_clear_layers', True)
+    clear = cast(bool, kwargs.pop("_clear_layers", True))
 
     restart_context = False
 
@@ -328,7 +360,7 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
             contexts[-1].scene_lists.focused = None
 
 
-def call_in_new_context(label, *args, **kwargs):
+def call_in_new_context(label: str, *args: Any, **kwargs: Any):
     """
     :doc: context
 
@@ -348,7 +380,7 @@ def call_in_new_context(label, *args, **kwargs):
         list, only the layers in the list are cleared.
     """
 
-    clear = kwargs.pop('_clear_layers', True)
+    clear = cast(bool, kwargs.pop("_clear_layers", True))
 
     if renpy.game.log.current is not None:
         renpy.game.log.complete()
@@ -390,7 +422,7 @@ def call_in_new_context(label, *args, **kwargs):
             contexts[-1].scene_lists.focused = None
 
 
-def call_replay(label, scope={}):
+def call_replay(label: str, scope: dict[str, Any] | None = None):
     """
     :doc: replay
 
@@ -399,6 +431,9 @@ def call_replay(label, scope={}):
     The `scope` argument is used to set the initial values of variables in the
     memory context.
     """
+
+    if scope is None:
+        scope = {}
 
     renpy.display.focus.clear_focus()
 
@@ -453,8 +488,8 @@ def call_replay(label, scope={}):
 
 
 # Type information.
-if False:
-    script = renpy.script.Script()
-    interface = renpy.display.core.Interface()
-    log = renpy.python.RollbackLog()
-    preferences = renpy.preferences.Preferences()
+# if False:
+#     script = renpy.script.Script()
+#     interface = renpy.display.core.Interface()
+#     log = renpy.python.RollbackLog()
+#     preferences = renpy.preferences.Preferences()

@@ -1,18 +1,10 @@
 [tool.pyright]
 
-include = [
-    "*.py",
-    "renpy/",
-    "src/"
-]
+include = ["*.py", "renpy/", "src/"]
 
-exclude = [
-    "module/build/",
-]
+exclude = ["module/build/"]
 
-ignore = [
-    "renpycoverage.py"
-]
+ignore = ["renpycoverage.py"]
 
 reportOptionalSubscript = false
 reportOptionalMemberAccess = false
@@ -21,22 +13,26 @@ reportOptionalIterable = false
 reportOptionalContextManager = false
 reportOptionalOperand = false
 reportMissingModuleSource = false
+reportUnusedImport = false
+pythonVersion = "3.12"
+reportUnknownParameterType = false
+reportExplicitAny = false
+reportAny = false
+reportPrivateLocalImportUsage = false
+reportUnusedCallResult = false
+reportIncompatibleVariableOverride = false
+reportIncompatibleMethodOverride = false
+reportMissingImports = false
+reportAttributeAccessIssue = false
+reportOperatorIssue = false
 
 
 [tool.cyright]
-include = [
-    "*.py",
-    "renpy/",
-    "src/"
-]
+include = ["*.py", "renpy/", "src/"]
 
-exclude = [
-    "module/build/",
-]
+exclude = ["module/build/"]
 
-ignore = [
-    "renpycoverage.py"
-]
+ignore = ["renpycoverage.py"]
 
 reportGeneralTypeIssues = false
 reportOptionalSubscript = false

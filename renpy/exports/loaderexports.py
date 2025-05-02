@@ -19,8 +19,28 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import (
+    division,
+    absolute_import,
+    with_statement,
+    print_function,
+    unicode_literals,
+)
+from typing import Literal  # type: ignore
+from renpy.compat import (
+    PY2,
+    basestring,
+    bchr,
+    bord,
+    chr,
+    open,
+    pystr,
+    range,
+    round,
+    str,
+    tobytes,
+    unicode,
+)  # *
 
 import io
 import sys
@@ -30,7 +50,7 @@ from renpy.exports.commonexports import renpy_pure
 
 
 @renpy_pure
-def loadable(filename, directory=None, tl=True):
+def loadable(filename: str, directory: str | None = None, tl: bool = True):
     """
     :doc: file
 
@@ -50,7 +70,7 @@ def loadable(filename, directory=None, tl=True):
 
 
 @renpy_pure
-def exists(filename):
+def exists(filename: str):
     """
     :doc: file_rare
 
@@ -69,7 +89,9 @@ def exists(filename):
         return False
 
 
-def open_file(fn, encoding=None, directory=None): # @ReservedAssignment
+def open_file(
+    fn: str, encoding: str | Literal[False] | None = None, directory: str | None = None
+):  # @ReservedAssignment
     """
     :doc: file
 
@@ -104,12 +126,12 @@ def open_file(fn, encoding=None, directory=None): # @ReservedAssignment
     rv = io.BufferedReader(rv)
 
     if encoding:
-        rv = io.TextIOWrapper(rv, encoding=encoding, errors="surrogateescape") # type: ignore
+        rv = io.TextIOWrapper(rv, encoding=encoding, errors="surrogateescape")  # type: ignore
 
     return rv
 
 
-def file(fn, encoding=None):
+def file(fn: str, encoding: str | Literal[False] | None = None):
     """
     :doc: file
 
@@ -120,7 +142,7 @@ def file(fn, encoding=None):
     return open_file(fn, encoding=encoding)
 
 
-def notl_file(fn): # @ReservedAssignment
+def notl_file(fn: str):  # @ReservedAssignment
     """
     :undocumented:
 
@@ -130,7 +152,7 @@ def notl_file(fn): # @ReservedAssignment
 
 
 @renpy_pure
-def list_files(common=False):
+def list_files(common: bool = False):
     """
     :doc: file
 
@@ -142,7 +164,7 @@ def list_files(common=False):
         listing.
     """
 
-    rv = [ ]
+    rv: list[str] = []
 
     for _dir, fn in renpy.loader.listdirfiles(common):
         if fn.startswith("saves/"):
@@ -156,7 +178,7 @@ def list_files(common=False):
 
 
 @renpy_pure
-def fsencode(s, force=False): # type: (str, bool) -> str
+def fsencode(s: str | bytes, force: bool = False):
     """
     :doc: file_rare
     :name: renpy.fsencode
@@ -171,11 +193,11 @@ def fsencode(s, force=False): # type: (str, bool) -> str
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"
-    return s.encode(fsencoding) # type: ignore
+    return s.encode(fsencoding)  # type: ignore
 
 
 @renpy_pure
-def fsdecode(s): # type: (bytes|str) -> str
+def fsdecode(s: bytes | str):
     """
     :doc: file_rare
     :name: renpy.fsdecode
@@ -187,10 +209,10 @@ def fsdecode(s): # type: (bytes|str) -> str
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"
-    return s.decode(fsencoding) # type: ignore
+    return s.decode(fsencoding)  # type: ignore
 
 
-def munge(name, filename=None):
+def munge(name: str, filename: str | None = None):
     """
     :doc: other
 

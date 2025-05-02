@@ -1479,6 +1479,7 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
     full = io.StringIO()
 
     print(str(renpy.game.exception_info), file=simple)
+
     te.format(NonColoredExceptionPrintContext(simple, filter_private=True))
 
     print("Full traceback:", file=full)
@@ -1518,13 +1519,16 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
             f.write("\ufeff")  # BOM
 
             print("I'm sorry, but an uncaught exception occurred.", file=f)
-            print('', file=f)
+            print("", file=f)
 
             f.write(te.simple)
 
-            print('', file=f)
-            print("-- Full Traceback ------------------------------------------------------------", file=f)
-            print('', file=f)
+            print("", file=f)
+            print(
+                "-- Full Traceback ------------------------------------------------------------",
+                file=f,
+            )
+            print("", file=f)
 
             f.write(te.full)
 
@@ -1540,6 +1544,7 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
             pass
 
     except Exception:
+
         te.traceback_fn = os.path.join(renpy.config.basedir, "traceback.txt")
 
     return te
