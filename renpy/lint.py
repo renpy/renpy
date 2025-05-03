@@ -1154,8 +1154,17 @@ def lint():
                 node_language = language
 
             counts[node_language].add(node.what)
+
             if node_language is None:
-                charastats[node.who or 'narrator'].add(node.what)
+                char_name = node.who or 'narrator'
+                if renpy.config.lint_char_aliases and node.who:
+                    try:
+                        char = renpy.ast.eval_who(node.who)
+                        char_name = char.name
+                    except Exception:
+                        pass  # this will be reported in check_say
+
+                charastats[char_name].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
