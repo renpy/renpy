@@ -1157,12 +1157,17 @@ def lint():
 
             if node_language is None:
                 char_name = node.who or 'narrator'
-                if renpy.config.lint_char_aliases and node.who:
+
+                if renpy.config.lint_show_names and node.who:
                     try:
                         char = renpy.ast.eval_who(node.who)
-                        char_name = char.name
+                        if isinstance(char, renpy.character.ADVCharacter) and isinstance(char.name, str):
+                            char_name = char.name
+                        elif isinstance(char, str):
+                            char_name = char
+
                     except Exception:
-                        pass  # this will be reported in check_say
+                        pass
 
                 charastats[char_name].add(node.what)
 

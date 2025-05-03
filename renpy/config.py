@@ -281,9 +281,6 @@ clear_log = False
 # Lint hooks.
 lint_hooks = [ ]
 
-# Aliases for character names in the linter character statistics view
-lint_char_aliases = False
-
 # Hyperlink styler.
 hyperlink_styler = None
 
@@ -1533,6 +1530,10 @@ hash_seen = True
 
 # A function that is called whenever persistent data is loaded.
 persistent_callback = None
+
+# Aliases for character names in the linter character statistics view
+lint_show_names = False
+
 
 
 del os

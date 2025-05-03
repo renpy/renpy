@@ -97,6 +97,8 @@ the downloader game. This is the public key that will be used to verify the down
 Features
 --------
 
+The lint report can be configured to expand character aliases to names by setting :var:`config.lint_show_names` to True.
+
 :var:`config.voice_callbacks` allows you to define callbacks that are called when voice lines are played
 or stop.
 

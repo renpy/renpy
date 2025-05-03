@@ -2241,8 +2241,13 @@ Debugging
 
     If true, and :var:`config.developer` is true, the lint report will include
     statistics about the number of dialogue blocks spoken for each character.
-    The chanracter statistics are disabled when the game is packaged, to
+    The character statistics are disabled when the game is packaged, to
     prevent spoilers.
+
+.. var:: config.lint_show_names = False
+
+    If true, and :var:`lint_character_statistics` is true, the lint report will expand the aliases
+    of the character names to the name parameter given it :func:`Character`, if possible.
 
 .. var:: config.lint_hooks = [ ... ]
 
