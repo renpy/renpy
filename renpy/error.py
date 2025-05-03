@@ -489,7 +489,7 @@ def normalize_renpy_line_offset(filename: str, linenumber: int, offset: int, lin
     from renpy.lexer import munge_filename, get_string_munger
     munge_prefix = munge_filename(filename)
 
-    if munge_prefix in line:
+    if "__" in line:
         munged_line = get_string_munger(munge_prefix)(line)
         len_prefix = len(munge_prefix) - 2
 
@@ -545,15 +545,11 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
         frame_summary.end_colno,
         last_line)
 
-    default_anchors = [
-        (0, start_offset), (0, start_offset),
-        (end_lineno, end_offset), (end_lineno, end_offset)]
-
     # get exact code segment corresponding to the instruction
-    segment = "\n".join(all_lines)
-    segment = segment[start_offset:len(segment) - (len(last_line) - end_offset)]
+    whole_statement = "\n".join(all_lines)
+    segment = whole_statement[start_offset:len(whole_statement) - (len(last_line) - end_offset)]
 
-    from ast import parse, expr, BinOp, Expr, Subscript, Call
+    from ast import parse, expr, BinOp, Expr, Subscript, Call, Return, Assign, AugAssign, Name, AST
     # Without parentheses, `segment` is parsed as a statement.
     # Binary ops, subscripts, and calls are expressions, so
     # we can wrap them with parentheses to parse them as
@@ -577,7 +573,7 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
     tree = parse(f"(\n{segment}\n)")
 
     if len(tree.body) != 1:
-        return default_anchors
+        return None
 
     lines = segment.splitlines()
 
@@ -639,7 +635,7 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
         case Expr(value=expression):
             pass
         case _:
-            return default_anchors
+            return None
 
     match expression:
         case BinOp(left=left, right=right):
@@ -721,15 +717,108 @@ def _calculate_anchors(frame_summary: 'FrameSummary'):
             if right_lineno == 0:
                 right_col += start_offset
 
-            return [
+            result = [
                 (0, start_offset),
                 (left_lineno, left_col),
                 (right_lineno, right_col),
                 (end_lineno, end_offset),
             ]
 
+            # Suppress carets in case call is not part of bigger expression.
+            call = None
+            try:
+                l_whole_statement = whole_statement.lstrip(" $\t")
+                tree = parse(l_whole_statement)
+                statement = next(iter(tree.body))
+
+                # call(...)
+                if (
+                    isinstance(statement, Expr)
+                    and isinstance(statement.value, Call)
+                ):
+                    call = statement.value
+                # return call(...)
+                elif (
+                    isinstance(statement, Return)
+                    and isinstance(statement.value, Call)
+                ):
+                    call = statement.value
+                # ... = call(...)
+                elif (
+                    isinstance(statement, Assign)
+                    and isinstance(statement.value, Call)
+                ):
+                    call = statement.value
+                # ... += call(...)
+                elif (
+                    isinstance(statement, AugAssign)
+                    and isinstance(statement.value, Call)
+                ):
+                    call = statement.value
+                else:
+                    return result
+
+            except Exception:
+                return result
+
+            def _compare(a, b):
+                # Compare two fields on an AST object, which may themselves be
+                # AST objects, lists of AST objects, or primitive ASDL types
+                # like identifiers and constants.
+                if isinstance(a, AST):
+                    if type(a) is not type(b):
+                        return False
+
+                    return _compare_fields(a, b)
+
+                elif isinstance(a, list):
+                    # If a field is repeated, then both objects will represent
+                    # the value as a list.
+                    if len(a) != len(b):
+                        return False
+                    for a_item, b_item in zip(a, b):
+                        if type(a) is not type(b):
+                            return False
+
+                        if not _compare_fields(a_item, b_item):
+                            return False
+                    else:
+                        return True
+                else:
+                    return type(a) is type(b) and a == b
+
+            sentinel = object()  # handle the possibility of a missing attribute/field
+
+            def _compare_fields(a: AST, b: AST):
+                if a._fields != b._fields:
+                    return False
+
+                for field in a._fields:
+                    a_field = getattr(a, field, sentinel)
+                    b_field = getattr(b, field, sentinel)
+                    if a_field is sentinel and b_field is sentinel:
+                        # both nodes are missing a field at runtime
+                        continue
+                    if a_field is sentinel or b_field is sentinel:
+                        # one of the node is missing a field
+                        return False
+                    if not _compare(a_field, b_field):
+                        return False
+                else:
+                    return True
+
+            if _compare_fields(call, expression):
+                return None
+            else:
+                return result
+
         case _:
-            return default_anchors
+            return [
+                (0, start_offset),
+                (0, start_offset),
+                (end_lineno, end_offset),
+                (end_lineno, end_offset)
+            ]
 
 
 @dataclasses.dataclass(init=False, repr=False, slots=True)
