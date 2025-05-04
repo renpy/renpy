@@ -2284,7 +2284,16 @@ class UserStatement(Node):
 
     def execute(self):
         next_node(self.get_next())
-        statement_name(self.get_name())
+
+        name = self.get_name()
+
+        statement_name(name)
+
+        if isinstance(self.name, str) and renpy.config.cds_label_callbacks:
+            renpy.easy.run_callbacks(
+                renpy.config.label_callback, name, renpy.game.context().last_abnormal)
+            renpy.easy.run_callbacks(
+                renpy.config.label_callbacks, name, renpy.game.context().last_abnormal)
 
         if self.atl is not None:
             self.call("execute", atl=renpy.display.transform.ATLTransform(self.atl))

@@ -1534,6 +1534,8 @@ persistent_callback = None
 # Aliases for character names in the linter character statistics view
 lint_show_names = False
 
+# Should label callbacks be called for creator-defined statements?
+cds_label_callbacks = True
 
 
 del os

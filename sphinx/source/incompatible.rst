@@ -12,6 +12,7 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+
 .. _incompatible-8.4.0:
 
 8.4.0
@@ -46,9 +47,14 @@ a unique tag is created for the show expression statement. This change can be re
     define config.old_show_expression = True
 
 
+**Creator-defined Statements and config.label_callbacks** Creator-defined statements now call :var:`config.label_callbacks`,
+when a label is defined. To revert to the old behavior of not calling config.label_callbacks, add to your game::
+
+    define config.cds_label_callbacks = False
+
+
 .. _incompatible-8.3.4:
 .. _incompatible-7.8.4:
-
 
 8.3.4 / 7.8.4
 -------------
