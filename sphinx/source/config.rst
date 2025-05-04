@@ -562,7 +562,7 @@ Layers
 
 .. var:: config.bottom_layers = [ "bottom", ... ]
 
-    This is a list of names of layers that are displayed above all
+    This is a list of names of layers that are displayed beneath all
     other layers, and do not participate in a transition that is
     applied to all layers. If a layer name is listed here, it should
     not be listed in :var:`config.layers`` or :var:`config.top_layers`.
