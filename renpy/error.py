@@ -1092,6 +1092,188 @@ def _safe_string(value, what, func: Callable[..., str] = str):
         return f'<{what} {func.__name__}() failed>'
 
 
+def _compute_best_suggestion(values: list[str], value: str) -> str | None:
+    MAX_CANDIDATE_ITEMS = 1200  # Python uses 750, but renpy.store can contain a lot more.
+    MAX_STRING_SIZE = 40
+    MOVE_COST = 2
+    CASE_COST = 1
+
+    def substitution_cost(ch_a: str, ch_b: str):
+        if ch_a == ch_b:
+            return 0
+
+        if ch_a.lower() == ch_b.lower():
+            return CASE_COST
+
+        return MOVE_COST
+
+
+    def levenshtein_distance(a, b, max_cost):
+        # A Python implementation of Python/suggestions.c:levenshtein_distance.
+
+        # Both strings are the same
+        if a == b:
+            return 0
+
+        # Trim away common affixes
+        pre = 0
+        while a[pre:] and b[pre:] and a[pre] == b[pre]:
+            pre += 1
+        a = a[pre:]
+        b = b[pre:]
+        post = 0
+        while a[:post or None] and b[:post or None] and a[post-1] == b[post-1]:
+            post -= 1
+        a = a[:post or None]
+        b = b[:post or None]
+        if not a or not b:
+            return MOVE_COST * (len(a) + len(b))
+        if len(a) > MAX_STRING_SIZE or len(b) > MAX_STRING_SIZE:
+            return max_cost + 1
+
+        # Prefer shorter buffer
+        if len(b) < len(a):
+            a, b = b, a
+
+        # Quick fail when a match is impossible
+        if (len(b) - len(a)) * MOVE_COST > max_cost:
+            return max_cost + 1
+
+        # Instead of producing the whole traditional len(a)-by-len(b)
+        # matrix, we can update just one row in place.
+        # Initialize the buffer row
+        row = list(range(MOVE_COST, MOVE_COST * (len(a) + 1), MOVE_COST))
+
+        result = 0
+        for bindex in range(len(b)):
+            bchar = b[bindex]
+            distance = result = bindex * MOVE_COST
+            minimum = sys.maxsize
+            for index in range(len(a)):
+                # 1) Previous distance in this row is cost(b[:b_index], a[:index])
+                substitute = distance + substitution_cost(bchar, a[index])
+                # 2) cost(b[:b_index], a[:index+1]) from previous row
+                distance = row[index]
+                # 3) existing result is cost(b[:b_index+1], a[index])
+
+                insert_delete = min(result, distance) + MOVE_COST
+                result = min(insert_delete, substitute)
+
+                # cost(b[:b_index+1], a[:index+1])
+                row[index] = result
+                if result < minimum:
+                    minimum = result
+            if minimum > max_cost:
+                # Everything in this row is too big, so bail early.
+                return max_cost + 1
+
+        return result
+
+    if len(values) > MAX_CANDIDATE_ITEMS:
+        return None
+
+    value_len = len(value)
+    if value_len > MAX_STRING_SIZE:
+        return None
+
+    # Compute closest match
+    best_distance = value_len
+    suggestion = None
+    for possible_name in values:
+        if possible_name == value:
+            # A missing attribute is "found". Don't suggest it (see cpython issue #88821).
+            continue
+
+        # No more than 1/3 of the involved characters should need changed.
+        max_distance = (len(possible_name) + value_len + 3) * MOVE_COST // 6
+        # Don't take matches we've already beaten.
+        max_distance = min(max_distance, best_distance - 1)
+        current_distance = levenshtein_distance(value, possible_name, max_distance)
+        if current_distance > max_distance:
+            continue
+
+        if not suggestion or current_distance < best_distance:
+            suggestion = possible_name
+            best_distance = current_distance
+
+    return suggestion
+
+
+def _compute_suggestion_error(exception: BaseException):
+    if isinstance(exception, AttributeError):
+        try:
+            d = dir(exception.obj)
+        except Exception:
+            return None
+
+        hide_underscored = (exception.name[:1] != '_')
+        if hide_underscored and exception.__traceback__ is not None:
+            tb = exception.__traceback__
+            while tb.tb_next is not None:
+                tb = tb.tb_next
+
+            frame = tb.tb_frame
+            if 'self' in frame.f_locals and frame.f_locals['self'] is exception.obj:
+                hide_underscored = False
+
+        if hide_underscored:
+            d = [x for x in d if x[:1] != '_']
+
+        if suggestion := _compute_best_suggestion(d, exception.name):
+            return f" Did you mean: '{suggestion}'?"
+
+    elif isinstance(exception, NameError):
+        # find most recent frame
+        tb = exception.__traceback__
+        if tb is None:
+            return None
+
+        while tb.tb_next is not None:
+            tb = tb.tb_next
+
+        frame = tb.tb_frame
+        names = {}
+        names |= frame.f_locals
+        names |= frame.f_globals
+        names |= frame.f_builtins
+        d = list(names)
+
+        # Check first if we are in a method and the instance
+        # has the wrong name as attribute
+        if 'self' in frame.f_locals:
+            self = frame.f_locals['self']
+            if hasattr(self, exception.name):
+                return f" Did you mean: 'self.{exception.name}'?"
+
+        is_stdlib_module_name = exception.name in sys.stdlib_module_names
+        if suggestion := _compute_best_suggestion(d, exception.name):
+            if is_stdlib_module_name:
+                return f" Did you mean: '{suggestion}' or did you forget to import '{exception.name}'?"
+            else:
+                return f" Did you mean: '{suggestion}'?"
+        elif is_stdlib_module_name:
+            return f" Did you forget to import '{exception.name}'?"
+
+    elif isinstance(exception, ImportError):
+        wrong_name = exception.name_from
+        mod_name = exception.name
+        if wrong_name is None or mod_name is None:
+            return None
+
+        try:
+            mod = __import__(mod_name)
+            d = dir(mod)
+        except Exception:
+            return None
+
+        if wrong_name[:1] != '_':
+            d = [x for x in d if x[:1] != '_']
+
+        if suggestion := _compute_best_suggestion(d, wrong_name):
+            return f" Did you mean: '{suggestion}'?"
+
+
+
 class TracebackException:
     """
     An exception ready for rendering.
@@ -1169,6 +1351,12 @@ class TracebackException:
             self.end_offset = exception.end_offset
             self.msg = exception.msg
             self._is_syntax_error = True
+
+        elif suggestion := _compute_suggestion_error(exception):
+            if not self._str.endswith("."):
+                suggestion = f".{suggestion}"
+
+            self._str += suggestion
 
         self.__suppress_context__ = exception.__suppress_context__
 
