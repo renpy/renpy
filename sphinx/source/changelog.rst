@@ -10,6 +10,13 @@ Changelog (Ren'Py 7.x-)
 8.4.0
 =====
 
+Performance Improvements
+------------------------
+
+*Live2D* When rendering Live2D models, Ren'Py will avoid doing unproductive work to create Renders for layers
+that are not visible, and masks that are not used. This can improve performance when using Live2D models with
+many layers.
+
 Requirement and Dependency Changes
 ----------------------------------
 

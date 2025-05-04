@@ -38,8 +38,9 @@ def finish(p):
             if not os.path.exists(fulldn):
                 os.mkdir(fulldn)
 
-    with open(os.path.join(p.prefix, "libs", "libs.txt"), "w") as f:
-        f.write(renpy.translation.translate_string(renpy.store.LIBS_TXT, language=p.language))
+    if hasattr(renpy.store, "LIBS_TXT"):
+        with open(os.path.join(p.prefix, "libs", "libs.txt"), "w") as f:
+            f.write(renpy.translation.translate_string(renpy.store.LIBS_TXT, language=p.language))
 
 def generate_gui(p):
 
