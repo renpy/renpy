@@ -882,6 +882,9 @@ class Interface(object):
         # Set by renpy.exports.invoke_in_main_thread.
         self.invoke_queue = [ ]
 
+        # The previous state of the screensaver.
+        self.last_screensaver = None
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -1091,8 +1094,6 @@ class Interface(object):
         if renpy.config.mouse_focus_clickthrough:
             pygame.display.hint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1")
 
-        pygame.display.set_screensaver(renpy.config.allow_screensaver)
-
         # Needed for Ubuntu Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
         os.environ['SDL_VIDEO_X11_WMCLASS'] = wmclass
@@ -1130,6 +1131,17 @@ class Interface(object):
             PythonSDLActivity.mActivity.hidePresplash()
 
             print("Hid presplash.")
+
+    def set_screensaver(self):
+
+        new_screensaver = renpy.config.allow_screensaver
+
+        if renpy.game.preferences.afm_enable:
+            new_screensaver = False
+
+        if new_screensaver != self.last_screensaver:
+            pygame.display.set_screensaver(new_screensaver)
+            self.last_screensaver = new_screensaver
 
     def set_icon(self):
         """
@@ -2472,6 +2484,9 @@ class Interface(object):
 
         # Set the window caption.
         self.set_window_caption()
+
+        # Set the screensaver.
+        self.set_screensaver()
 
         # Tick time forward.
         renpy.display.im.cache.tick()
