@@ -276,6 +276,9 @@ Pixel Effects
     Ren'Py versions, and the blurring may exhibit artifacts, especially when the
     image being blurred is changing.
 
+    Blurring causes its child to be flattened, with the child drawn onto a transparent
+    background before the blurring happens.
+
 Polar Positioning
 -----------------
 
