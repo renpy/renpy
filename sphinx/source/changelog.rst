@@ -177,6 +177,9 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 Other Changes
 -------------
 
+Text inputs (:func:`renpy.input` and the :ref:`input <sl-input>` displayable) disable non-required text
+ligatures, so that ligaturization doesn't change when the caret moves.
+
 Ren'Py will disable the screensaver (and hence, the system going to sleep) when auto-forward mode is active.
 
 A creator-defined statement that defines a label will now call :var:`config.label_callbacks` when run.
