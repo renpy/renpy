@@ -496,14 +496,14 @@ init python:
         BRIGHT_RED = "#e00000"
         RED = "#800000"
 
-        def __init__(self, *, filter_private: bool, context_line=None):
+        def __init__(self, *, filter_private: bool, emit_context=True):
             import io
             super().__init__(
                 io.StringIO(),
                 filter_private=filter_private,
                 max_group_width=5,
                 max_group_depth=1,
-                context_line=context_line
+                emit_context=emit_context
             )
 
         def _escape_limit(self, s: str):
@@ -558,11 +558,11 @@ init python:
 
     def __simple_traceback(traceback_exception):
         return traceback_exception.format(_ExceptionPrintContext(
-            filter_private=True, context_line=False))
+            filter_private=True, emit_context=False))
 
     def __full_traceback(traceback_exception):
         return traceback_exception.format(_ExceptionPrintContext(
-            filter_private=False, context_line=False))
+            filter_private=False, emit_context=False))
 
     def __format_parse_errors(errors: list[str]):
         """
