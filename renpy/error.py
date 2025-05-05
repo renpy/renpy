@@ -1358,10 +1358,10 @@ class TracebackException:
             self.msg = exception.msg
             self._is_syntax_error = True
 
-        else:
+        elif handlers := renpy.config.error_suggestion_handlers:
             suggestion = None
             # Reversed so that the most specific handler is called first.
-            for typ, handler in reversed(renpy.config.error_suggestion_handlers.items()):
+            for typ, handler in reversed(handlers.items()):
                 if isinstance(exception, typ):
                     if suggestion := handler(exception):
                         break
