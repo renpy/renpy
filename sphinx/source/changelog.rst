@@ -101,8 +101,14 @@ Building an update will now produce a ``public_key.pem`` file, containing key ma
 the world. When building a :doc:`downloader game <downloader>`, this file should be copied to the base directory of
 the downloader game. This is the public key that will be used to verify the download.
 
-Features
---------
+
+
+
+Other Features
+--------------
+
+Ren'Py now supports OpenType font layout features, which can control things like ligaturization and other
+settings. These features are controlled by the :propref:`font_features` style property, and the :tt:`features` text tag.
 
 The lint report can be configured to expand character aliases to names by setting :var:`config.lint_show_names` to True.
 

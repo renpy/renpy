@@ -1539,7 +1539,23 @@ class Layout(object):
                         raise
 
                     axis = tag.partition(":")[2].lower()
-                    ts.axis[axis] = float(value)
+                    ts.axis[axis] = value
+
+
+                elif tag.startswith("feature:"):
+                    ts = push()
+                    if ts.features:
+                        ts.features = dict(ts.features)
+                    else:
+                        ts.features = { }
+
+                    try:
+                        value = int(value)
+                    except (TypeError, ValueError):
+                        raise
+
+                    feature = tag.partition(":")[2].lower()
+                    ts.features[feature] = value
 
                 elif tag[0] == "#":
                     pass

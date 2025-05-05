@@ -525,6 +525,14 @@ Text Style Properties
     image-based font, this should be the name used to register the
     font.
 
+.. style-property:: font_features dict or None
+
+    If not None, this should be a dictionary mapping OpenType layout features to values.
+    The keys of the dictionary should be the four-character OpenType feature tags, and
+    the values should be booleans.
+
+    A list of layout features can be found `here <https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags>`_.
+
 .. style-property:: hinting str
 
     Controls how the font will be hinted. This should be one of the following

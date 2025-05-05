@@ -292,6 +292,18 @@ Tags that apply to all text are:
 
         "{cps=20}Fixed Speed{/cps} {cps=*2}Double Speed{/cps}
 
+
+.. text-tag:: feature
+
+    The feature tag enables or disables OpenType layout features. The name of
+    the feature is part of the tag, separated by a colon. The argument
+    should be 1 to enable the feature, or 0 to disable it. For example,
+    to disable ligatures, use the following: ::
+
+        "{feature:liga=0}Traffic{/feature} is light today."
+
+    A list of layout features can be found `here <https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags>`_.
+
 .. text-tag:: font
 
     The font tag renders the text between itself and its closing tag

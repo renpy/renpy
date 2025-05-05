@@ -44,6 +44,7 @@ text_tags = dict(
     p=False,
     w=False,
     fast=False,
+    feature=True,
     b=True,
     i=True,
     u=True,
