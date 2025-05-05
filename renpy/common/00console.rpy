@@ -61,6 +61,7 @@ init -1500:
     style _console_input_text is _console_text:
         color "#000000"
         adjust_spacing False
+        font_features { "liga": False, "clig" : False }
 
     style _console_history is _default:
         xfill True
