@@ -192,7 +192,25 @@ def cache_get(screen, args, kwargs):
 
     return sc.cache
 
+
 # Screens #####################################################################
+class ScreenNotFound(LookupError):
+    """
+    Exception that is raised when a screen with given name does not exists.
+    """
+
+    def __init__(self, name: str):
+        super().__init__(f"Screen {name!r} is not known.")
+        self.name = name
+
+    def get_suggestion(self):
+        d = list(renpy.display.screen.screens_by_name)
+
+        if self.name[:1] != '_':
+            d = [x for x in d if x[:1] != '_']
+
+        if suggestion := renpy.error.compute_closest_value(self.name, d):
+            return f" Did you mean: '{suggestion}'?"
 
 
 class Screen(renpy.object.Object):
@@ -1293,7 +1311,7 @@ def get_screen_roll_forward(screen_name):
     screen = get_screen_variant(name[0])
 
     if screen is None:
-        raise Exception("Screen %s is not known.\n" % (name[0],))
+        raise ScreenNotFound(name[0])
 
     return screen.roll_forward
 
@@ -1349,7 +1367,7 @@ def show_screen(_screen_name, *_args, **kwargs):
     screen = get_screen_variant(name[0])
 
     if screen is None:
-        raise Exception("Screen %s is not known.\n" % (name[0],))
+        raise ScreenNotFound(name[0])
 
     if _layer is None:
         _layer = get_screen_layer(name)
@@ -1496,7 +1514,7 @@ def use_screen(_screen_name, *_args, **kwargs):
     screen = get_screen_variant(name[0])
 
     if screen is None:
-        raise Exception("Screen %r is not known." % (name,))
+        raise ScreenNotFound(name[0])
 
     old_transfers = _current_screen.old_transfers
     _current_screen.old_transfers = True

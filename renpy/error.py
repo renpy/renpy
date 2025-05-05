@@ -1092,7 +1092,13 @@ def _safe_string(value, what, func: Callable[..., str] = str):
         return f'<{what} {func.__name__}() failed>'
 
 
-def _compute_best_suggestion(values: list[str], value: str) -> str | None:
+def compute_closest_value(value: str, values: list[str]) -> str | None:
+    """
+    Computes the closest (lexicographically) value in the list of values.
+
+    Returns None if execution takes too long or all values are too distant.
+    """
+
     MAX_CANDIDATE_ITEMS = 1200  # Python uses 750, but renpy.store can contain a lot more.
     MAX_STRING_SIZE = 40
     MOVE_COST = 2
@@ -1199,79 +1205,79 @@ def _compute_best_suggestion(values: list[str], value: str) -> str | None:
     return suggestion
 
 
-def _compute_suggestion_error(exception: BaseException):
-    if isinstance(exception, AttributeError):
-        try:
-            d = dir(exception.obj)
-        except Exception:
-            return None
+def handle_attribute_error(exception: AttributeError):
+    try:
+        d = dir(exception.obj)
+    except Exception:
+        return None
 
-        hide_underscored = (exception.name[:1] != '_')
-        if hide_underscored and exception.__traceback__ is not None:
-            tb = exception.__traceback__
-            while tb.tb_next is not None:
-                tb = tb.tb_next
-
-            frame = tb.tb_frame
-            if 'self' in frame.f_locals and frame.f_locals['self'] is exception.obj:
-                hide_underscored = False
-
-        if hide_underscored:
-            d = [x for x in d if x[:1] != '_']
-
-        if suggestion := _compute_best_suggestion(d, exception.name):
-            return f" Did you mean: '{suggestion}'?"
-
-    elif isinstance(exception, NameError):
-        # find most recent frame
+    hide_underscored = (exception.name[:1] != '_')
+    if hide_underscored and exception.__traceback__ is not None:
         tb = exception.__traceback__
-        if tb is None:
-            return None
-
         while tb.tb_next is not None:
             tb = tb.tb_next
 
         frame = tb.tb_frame
-        names = {}
-        names |= frame.f_locals
-        names |= frame.f_globals
-        names |= frame.f_builtins
-        d = list(names)
+        if 'self' in frame.f_locals and frame.f_locals['self'] is exception.obj:
+            hide_underscored = False
 
-        # Check first if we are in a method and the instance
-        # has the wrong name as attribute
-        if 'self' in frame.f_locals:
-            self = frame.f_locals['self']
-            if hasattr(self, exception.name):
-                return f" Did you mean: 'self.{exception.name}'?"
+    if hide_underscored:
+        d = [x for x in d if x[:1] != '_']
 
-        is_stdlib_module_name = exception.name in sys.stdlib_module_names
-        if suggestion := _compute_best_suggestion(d, exception.name):
-            if is_stdlib_module_name:
-                return f" Did you mean: '{suggestion}' or did you forget to import '{exception.name}'?"
-            else:
-                return f" Did you mean: '{suggestion}'?"
-        elif is_stdlib_module_name:
-            return f" Did you forget to import '{exception.name}'?"
+    if suggestion := compute_closest_value(exception.name, d):
+        return f" Did you mean: '{suggestion}'?"
 
-    elif isinstance(exception, ImportError):
-        wrong_name = exception.name_from
-        mod_name = exception.name
-        if wrong_name is None or mod_name is None:
-            return None
 
-        try:
-            mod = __import__(mod_name)
-            d = dir(mod)
-        except Exception:
-            return None
+def handle_name_error(exception: NameError):
+    # find most recent frame
+    tb = exception.__traceback__
+    if tb is None:
+        return None
 
-        if wrong_name[:1] != '_':
-            d = [x for x in d if x[:1] != '_']
+    while tb.tb_next is not None:
+        tb = tb.tb_next
 
-        if suggestion := _compute_best_suggestion(d, wrong_name):
+    frame = tb.tb_frame
+    names = {}
+    names |= frame.f_locals
+    names |= frame.f_globals
+    names |= frame.f_builtins
+    d = list(names)
+
+    # Check first if we are in a method and the instance
+    # has the wrong name as attribute
+    if 'self' in frame.f_locals:
+        self = frame.f_locals['self']
+        if hasattr(self, exception.name):
+            return f" Did you mean: 'self.{exception.name}'?"
+
+    is_stdlib_module_name = exception.name in sys.stdlib_module_names
+    if suggestion := compute_closest_value(exception.name, d):
+        if is_stdlib_module_name:
+            return f" Did you mean: '{suggestion}' or did you forget to import '{exception.name}'?"
+        else:
             return f" Did you mean: '{suggestion}'?"
+    elif is_stdlib_module_name:
+        return f" Did you forget to import '{exception.name}'?"
 
+
+def handle_import_error(exception: ImportError):
+    wrong_name = exception.name_from
+    mod_name = exception.name
+    if wrong_name is None or mod_name is None:
+        return None
+
+    try:
+        mod = __import__(mod_name)
+        d = dir(mod)
+    except Exception:
+        return None
+
+    if wrong_name[:1] != '_':
+        d = [x for x in d if x[:1] != '_']
+
+    if suggestion := compute_closest_value(wrong_name, d):
+        return f" Did you mean: '{suggestion}'?"
 
 
 class TracebackException:
@@ -1352,11 +1358,20 @@ class TracebackException:
             self.msg = exception.msg
             self._is_syntax_error = True
 
-        elif suggestion := _compute_suggestion_error(exception):
-            if not self._str.endswith("."):
-                suggestion = f".{suggestion}"
+        else:
+            suggestion = None
+            # Reversed so that the most specific handler is called first.
+            for typ, handler in reversed(renpy.config.error_suggestion_handlers.items()):
+                if isinstance(exception, typ):
+                    if suggestion := handler(exception):
+                        break
 
-            self._str += suggestion
+            if suggestion:
+                suggestion = suggestion.lstrip()
+                if self._str.endswith("."):
+                    self._str += f" {suggestion}"
+                else:
+                    self._str += f". {suggestion}"
 
         self.__suppress_context__ = exception.__suppress_context__
 

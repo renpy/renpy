@@ -72,6 +72,25 @@ class ScriptError(Exception):
     or otherwise wrong.
     """
 
+class LabelNotFound(ScriptError, LookupError):
+    """
+    Exception that is raised when a named node is not found.
+    """
+
+    def __init__(self, label: str):
+        super().__init__(f"Label {label!r} not found.")
+        self.name = label
+
+    def get_suggestion(self):
+        d = [node.name for node in renpy.game.script.namemap.values()
+                        if isinstance(node.name, str)]
+
+        if self.name[:1] != '_':
+            d = [x for x in d if x[:1] != '_']
+
+        if suggestion := renpy.error.compute_closest_value(self.name, d):
+            return f" Did you mean: '{suggestion}'?"
+
 
 def collapse_stmts(stmts):
     """
@@ -1117,7 +1136,10 @@ class Script(object):
             rv = self.namemap.get(label, None)
 
         if rv is None:
-            raise ScriptError("could not find label '%s'." % str(original))
+            if isinstance(original, str):
+                raise LabelNotFound(original)
+            else:
+                raise ScriptError(f"could not find label '{original}'.")
 
         return self.namemap[label]
 
