@@ -510,9 +510,10 @@ cdef class GL2Draw:
 
         return True
 
-    def on_resize(self, first=False):
+    def on_resize(self, first=False, full_reset=False):
 
-        full_reset = renpy.display.interface.display_reset or first
+        if first:
+            full_reset = True
 
         if renpy.android or renpy.ios or renpy.emscripten:
             full_reset = True
@@ -688,8 +689,9 @@ cdef class GL2Draw:
         ):
 
             self.maximized = maximized
+            full_reset = renpy.display.interface.display_reset
             renpy.display.interface.before_resize()
-            self.on_resize()
+            self.on_resize(full_reset=full_reset)
 
             return True
         else:
