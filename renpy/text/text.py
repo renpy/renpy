@@ -284,8 +284,6 @@ class TextSegment(object):
             self.shader = None
 
 
-        self.features = { 'liga' : 0, 'clig' : 0 }
-
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
 
