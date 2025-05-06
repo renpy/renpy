@@ -796,7 +796,7 @@ def can_load(filename, test=False):
     """
     :doc: loadsave
 
-    Returns true if `filename` exists as a save slot, and False otherwise.
+    Returns true if `filename` (e.g. '3-2' for page 3, slot 2) exists as a save slot, and False otherwise.
     """
 
     accessed_slots.add(filename)
