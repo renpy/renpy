@@ -101,7 +101,7 @@ Building an update will now produce a ``public_key.pem`` file, containing key ma
 the world. When building a :doc:`downloader game <downloader>`, this file should be copied to the base directory of
 the downloader game. This is the public key that will be used to verify the download.
 
-
+When creating a new game, Ren'Py will now include a .gitignore file that contains a default set of files to ignore.
 
 
 Other Features
