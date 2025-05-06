@@ -1157,6 +1157,37 @@ def reverse_lines(list glyphs):
 
     return rv
 
+def set_directions(list glyphs, list directions):
+    """
+    Sets the glyph RTL attribute in RTL segments.
+    In vertical texts, this translates to BTT.
+    """
+
+    cdef list rv
+    cdef list block
+    cdef Glyph g
+
+    rv = [ ]
+    block = [ ]
+
+    for g, d in zip(glyphs, directions):
+
+        if g.split == SPLIT_INSTEAD:
+            rv.extend(block)
+            rv.append(g)
+            block = [ ]
+
+            continue
+
+        if d == 1:
+            g.rtl = True
+
+        block.append(g)
+
+    rv.extend(block)
+
+    return rv
+
 def copy_splits(list source, list dest):
     """
     Copies break and timing information from one list of glyphs

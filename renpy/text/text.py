@@ -773,23 +773,20 @@ class Layout(object):
             # A list of (segment, list of glyph) pairs.
             seg_glyphs = [ ]
 
+            par_directions = [ ]
 
-            for ts, s in p:
+            for ts, s, d in p:
                 glyphs = ts.glyphs(s, self)
+                for l in range(len(s)):
+                    par_directions.append(d)
 
-                t = (ts, glyphs)
+                t = (ts, glyphs, d)
                 seg_glyphs.append(t)
                 par_seg_glyphs.append(t)
                 par_glyphs.extend(glyphs)
                 all_glyphs.extend(glyphs)
 
-            # RTL - Reverse each line, segment, so that we can use LTR
-            # linebreaking algorithms.
-            if rtl:
-                par_glyphs.reverse()
-                seg_glyphs.reverse()
-                for ts, glyphs in seg_glyphs:
-                    glyphs.reverse()
+            par_glyphs = textsupport.set_directions(par_glyphs, par_directions)
 
             self.paragraph_glyphs.append(list(par_glyphs))
 
@@ -832,7 +829,7 @@ class Layout(object):
                 else:
                     raise Exception("Unknown layout: {0}".format(layout))
 
-            for ts, glyphs in seg_glyphs:
+            for ts, glyphs, d in seg_glyphs:
                 # Only assign a time if we're past the start segment.
                 if not started:
                     if self.start_segment is ts:
@@ -850,11 +847,6 @@ class Layout(object):
                     gt = ts.assign_times(gt, glyphs)
 
             index = textsupport.assign_index(index, par_glyphs)
-
-            # RTL - Reverse the glyphs in each line, back to RTL order,
-            # now that we have lines.
-            if rtl:
-                par_glyphs = textsupport.reverse_lines(par_glyphs)
 
             # Taking into account indentation, kerning, justification, and text_align,
             # lay out the X coordinate of each glyph.
@@ -939,7 +931,7 @@ class Layout(object):
         # we have them, grow the bounding box.
 
         bounds = (0, 0, maxx, y)
-        for ts, glyphs in par_seg_glyphs:
+        for ts, glyphs, d in par_seg_glyphs:
             bounds = ts.bounds(glyphs, bounds, self)
 
         self.add_left = max(-bounds[0], 0)
@@ -1004,7 +996,7 @@ class Layout(object):
             di.override_color = color
             di.outline = o
 
-            for ts, glyphs in par_seg_glyphs:
+            for ts, glyphs, d in par_seg_glyphs:
                 if ts is self.end_segment:
                     break
 
@@ -1603,8 +1595,8 @@ class Layout(object):
                     curr_seg += 1
                 else:
                     seg_str[curr_seg] += s[i]
-            for ss in seg_str:
-                l.append((ts, ss))
+            for ss, d in zip(seg_str, seg_dir):
+                l.append((ts, ss, d))
 
         rtl = (direction == RTL or direction == WRTL)
         
