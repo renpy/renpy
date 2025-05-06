@@ -1272,19 +1272,23 @@ class Interface(object):
 
         return rv
 
-    def kill_textures(self):
+    def kill_textures(self, keep_const_size=False):
         """
         Kills all textures that have been loaded.
         """
 
-        if renpy.display.draw is not None:
-            renpy.display.draw.kill_textures()
-
         renpy.gl2.assimp.free_memory()
-        renpy.display.im.cache.clear()
         renpy.display.render.free_memory()
         renpy.text.text.layout_cache_clear()
         renpy.display.video.texture.clear()
+
+        if keep_const_size:
+            renpy.display.im.cache.clear_variable_size()
+        else:
+            renpy.display.im.cache.clear()
+
+        if renpy.display.draw is not None:
+            renpy.display.draw.kill_textures()
 
     def kill_surfaces(self):
         """
@@ -1299,7 +1303,7 @@ class Interface(object):
         This is called when the window has been resized.
         """
 
-        self.kill_textures()
+        self.kill_textures(keep_const_size=not self.display_reset)
 
         if not renpy.mobile:
             pygame.key.stop_text_input() # @UndefinedVariable
@@ -3159,6 +3163,8 @@ class Interface(object):
 
                 # Handle videoresize.
                 if ev.type == pygame.VIDEORESIZE:
+
+                    pygame.event.get(pygame.VIDEORESIZE)
 
                     if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
                         renpy.display.draw.full_redraw = True

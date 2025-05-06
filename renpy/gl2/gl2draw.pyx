@@ -512,11 +512,17 @@ cdef class GL2Draw:
 
     def on_resize(self, first=False):
 
-        if not first:
-            self.quit_fbo()
-            self.shader_cache.clear()
+        full_reset = renpy.display.interface.display_reset or first
 
         if renpy.android or renpy.ios or renpy.emscripten:
+            full_reset = True
+
+        if not first:
+            self.quit_fbo()
+            if full_reset:
+                self.shader_cache.clear()
+
+        if full_reset:
             pygame.display.get_window().recreate_gl_context(always=renpy.emscripten)
 
         # Are we in fullscreen mode?
@@ -609,9 +615,13 @@ cdef class GL2Draw:
 
         self.draw_transform = Matrix.cscreen_projection(self.drawable_viewport[2], self.drawable_viewport[3])
 
-        self.shader_cache.load()
         self.init_fbo()
-        self.texture_loader.init()
+
+        if full_reset:
+            self.shader_cache.load()
+            self.texture_loader.init()
+        else:
+            self.texture_loader.cleanup()
 
         self.auto_mipmap = self.draw_per_virt < 0.75
 
