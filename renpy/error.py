@@ -65,7 +65,7 @@ class ExceptionPrintContextKwargs(TypedDict):
     filter_private: NotRequired[bool]
     max_group_width: NotRequired[int]
     max_group_depth: NotRequired[int]
-    context_line: NotRequired[str|bool|None]
+    emit_context: NotRequired[bool]
 
 
 class ExceptionPrintContext(abc.ABC):
@@ -77,7 +77,7 @@ class ExceptionPrintContext(abc.ABC):
         self.filter_private = kwargs.get("filter_private", False)
         self.max_group_width = kwargs.get("max_group_width", 15)
         self.max_group_depth = kwargs.get("max_group_depth", 10)
-        self.context_line = kwargs.get("context_line", None)
+        self.emit_context = kwargs.get("emit_context", True)
 
     def should_filter(self, filename: str) -> bool:
         """
@@ -109,16 +109,6 @@ class ExceptionPrintContext(abc.ABC):
             yield
         finally:
             self.indent_depth -= 1
-
-    def context(self, text: str):
-        if self.context_line is None:
-            self.string(text)
-        else:
-            if self.context_line:
-                self.string(self.context_line)
-
-            # Reset so as not to affect chained exceptions.
-            self.context_line = None
 
     @abc.abstractmethod
     def getvalue(self) -> Any:
@@ -1364,10 +1354,13 @@ class TracebackException:
         for meth, exc in reversed(output):
             if meth is not None:
                 meth()
+                ctx.emit_context = True
 
             if exc.exceptions is None:
                 if not exc.stack.should_filter(ctx):
-                    ctx.context('Traceback (most recent call last):')
+                    if ctx.emit_context:
+                        ctx.string('Traceback (most recent call last):')
+
                     exc.stack.format(ctx)
 
                 exc.format_exception_only(ctx)
@@ -1375,6 +1368,7 @@ class TracebackException:
             elif ctx.exception_group_depth > ctx.max_group_depth:
                 # exception group, but depth exceeds limit
                 ctx.string(f"... (max group depth is {ctx.max_group_depth})")
+
             else:
                 # format exception group
                 is_toplevel = (ctx.exception_group_depth == 0)
@@ -1382,7 +1376,9 @@ class TracebackException:
                     ctx.exception_group_depth += 1
 
                 if not exc.stack.should_filter(ctx):
-                    ctx.context('Exception Group Traceback (most recent call last):')
+                    if ctx.emit_context:
+                        ctx.string('Exception Group Traceback (most recent call last):')
+
                     exc.stack.format(ctx)
                     exc.format_exception_only(ctx)
 
@@ -1485,21 +1481,24 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
     simple = io.StringIO()
     full = io.StringIO()
 
+    print(str(renpy.game.exception_info), file=simple)
     te.format(NonColoredExceptionPrintContext(
-        simple, filter_private=True, context_line=renpy.game.exception_info))
+        simple, filter_private=True, emit_context=False))
 
     te.format(NonColoredExceptionPrintContext(
-        full, filter_private=False, context_line="Full traceback:"))
+        full, filter_private=False))
 
     # Write to stdout/stderr.
     try:
         print(file=sys.stdout)
+        print("Full traceback:", file=sys.stdout)
         te.format(MaybeColoredExceptionPrintContext(
-            sys.stdout, filter_private=False, context_line="Full traceback:"))
+            sys.stdout, filter_private=False, emit_context=False))
 
         print(file=sys.stdout)
+        print(str(renpy.game.exception_info), file=sys.stdout)
         te.format(MaybeColoredExceptionPrintContext(
-            sys.stdout, filter_private=True, context_line=renpy.game.exception_info))
+            sys.stdout, filter_private=True, emit_context=False))
     except Exception:
         pass
 

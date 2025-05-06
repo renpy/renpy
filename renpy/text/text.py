@@ -272,6 +272,7 @@ class TextSegment(object):
             self.instance = source.instance
             self.axis = source.axis
             self.shader = source.shader
+            self.features = None
 
         else:
             self.hyperlink = 0
@@ -281,6 +282,9 @@ class TextSegment(object):
             self.ignore = False
             self.default_font = True
             self.shader = None
+
+
+        self.features = { 'liga' : 0, 'clig' : 0 }
 
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
@@ -327,6 +331,7 @@ class TextSegment(object):
 
         self.axis = style.axis
         self.instance = style.instance
+        self.features = style.font_features
 
         if context and style.textshader and not self.shader:
             raise Exception("%s supplies a textshader, but the Text displayable does not use textshaders. Consider using config.default_textshader to opt-in." % (context,))
@@ -345,7 +350,7 @@ class TextSegment(object):
         if self.ignore:
             return [ ]
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.features)
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
@@ -383,7 +388,7 @@ class TextSegment(object):
             color = self.color
             black_color = self.black_color
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.features)
         fo.draw(di.surface, xo, yo, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
@@ -448,7 +453,7 @@ class TextSegment(object):
         origin point.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.features)
         return fo.bounds(glyphs, bounds)
 
 
@@ -1534,7 +1539,23 @@ class Layout(object):
                         raise
 
                     axis = tag.partition(":")[2].lower()
-                    ts.axis[axis] = float(value)
+                    ts.axis[axis] = value
+
+
+                elif tag.startswith("feature:"):
+                    ts = push()
+                    if ts.features:
+                        ts.features = dict(ts.features)
+                    else:
+                        ts.features = { }
+
+                    try:
+                        value = int(value)
+                    except (TypeError, ValueError):
+                        raise
+
+                    feature = tag.partition(":")[2].lower()
+                    ts.features[feature] = value
 
                 elif tag[0] == "#":
                     pass
@@ -1576,7 +1597,7 @@ class Layout(object):
     def rtl_paragraph(self, p):
         """
         Given a paragraph (a list of segment, text tuples) handles
-        RTL, and if the shaper is set to freetype, ligaturization. 
+        RTL, and if the shaper is set to freetype, ligaturization.
         This returns the reversed RTL paragraph, which differs
         from the LTR one. It also returns a flag that is
         True if this is an rtl paragraph.
@@ -1590,11 +1611,11 @@ class Layout(object):
             ft_enabled = (getattr(ts, "shaper", "") != "harfbuzz")
 
             s, direction = log2vis(str(s), ft_enabled, direction)
-            
+
             l.append((ts, s))
 
         rtl = (direction == RTL or direction == WRTL)
-        
+
         return l, rtl
 
     def figure_outlines(self, style):

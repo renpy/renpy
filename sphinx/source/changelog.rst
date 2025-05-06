@@ -10,6 +10,13 @@ Changelog (Ren'Py 7.x-)
 8.4.0
 =====
 
+Performance Improvements
+------------------------
+
+*Live2D* When rendering Live2D models, Ren'Py will avoid doing unproductive work to create Renders for layers
+that are not visible, and masks that are not used. This can improve performance when using Live2D models with
+many layers.
+
 Requirement and Dependency Changes
 ----------------------------------
 
@@ -94,8 +101,14 @@ Building an update will now produce a ``public_key.pem`` file, containing key ma
 the world. When building a :doc:`downloader game <downloader>`, this file should be copied to the base directory of
 the downloader game. This is the public key that will be used to verify the download.
 
-Features
---------
+
+
+
+Other Features
+--------------
+
+Ren'Py now supports OpenType font layout features, which can control things like ligaturization and other
+settings. These features are controlled by the :propref:`font_features` style property, and the :tt:`features` text tag.
 
 The lint report can be configured to expand character aliases to names by setting :var:`config.lint_show_names` to True.
 
@@ -163,6 +176,8 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 
 Other Changes
 -------------
+
+Ren'Py will disable the screensaver (and hence, the system going to sleep) when auto-forward mode is active.
 
 A creator-defined statement that defines a label will now call :var:`config.label_callbacks` when run.
 

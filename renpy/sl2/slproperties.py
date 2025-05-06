@@ -79,6 +79,7 @@ text_property_names = [
     "emoji_font",
     "first_indent",
     "font",
+    "font_features",
     "size",
     "hyperlink_functions",
     "italic",

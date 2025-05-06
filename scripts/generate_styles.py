@@ -157,6 +157,7 @@ style_properties = sorted_dict(
     focus_mask='expand_focus_mask',
     focus_rect=None,
     font=None,
+    font_features=None,
     fore_bar='none_is_null',
     fore_gutter=None,
     foreground='renpy.easy.displayable_or_none',

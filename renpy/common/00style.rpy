@@ -308,6 +308,7 @@ init -1800:
     style input:
         color "#ff0"
         adjust_spacing False
+        font_features { "liga": False, "clig" : False }
 
     # Centered text and dialogue
 
