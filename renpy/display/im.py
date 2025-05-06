@@ -201,6 +201,18 @@ class Cache(object):
 
             self.added.clear()
 
+    def clear_variable_size(self):
+        """
+        Clears out cache entries that are variable size.
+        """
+
+        with self.lock:
+
+            for ce in list(self.cache.values()):
+
+                if not ce.what.const_size:
+                    self.kill(ce)
+
     def get_renders(self):
         """
         Get a list of Renders in the image cache, where ce.texture is a Render.
@@ -591,6 +603,11 @@ class ImageBase(renpy.display.displayable.Displayable):
     # If the image failed to load, a placeholder used to report the error.
     fail = None
 
+    # True if the size of the im does not depend on anything other than the image manipulator,
+    # False otherwise.
+    const_size = False
+
+
     def after_upgrade(self, version):
         if version < 1:
             self.cache = True
@@ -718,6 +735,8 @@ class Image(ImageBase):
         self.is_svg = filename.lower().endswith(".svg")
         self.pixel_perfect = self.is_svg
 
+        self.const_size = not self.is_svg
+
     def _repr_info(self):
         return repr(self.filename)
 
@@ -828,6 +847,7 @@ class Data(ImageBase):
         super(Data, self).__init__(data, filename, **properties)
         self.data = data
         self.filename = filename
+        self.const_size = True
 
     def _repr_info(self):
         return repr(self.filename)
@@ -846,6 +866,7 @@ class ZipFileImage(ImageBase):
 
         self.zipfilename = zipfilename
         self.filename = filename
+        self.const_size = True
 
     def load(self):
         try:
@@ -901,6 +922,8 @@ class Composite(ImageBase):
 
         # Only supports all the images having the same oversample factor
         self.oversample = self.images[0].get_oversample()
+
+        self.const_size = all(i.const_size for i in self.images)
 
     def get_hash(self):
         rv = 0
@@ -963,6 +986,8 @@ class Scale(ImageBase):
         self.height = int(height)
         self.bilinear = bilinear
 
+        self.const_size = True
+
     def get_hash(self):
         return self.image.get_hash()
 
@@ -1023,6 +1048,8 @@ class FactorScale(ImageBase):
         self.width = width
         self.height = height
         self.bilinear = bilinear
+
+        self.const_size = self.image.const_size
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1085,6 +1112,8 @@ class Flip(ImageBase):
         self.horizontal = horizontal
         self.vertical = vertical
 
+        self.const_size = self.image.const_size
+
     def get_hash(self):
         return self.image.get_hash()
 
@@ -1127,6 +1156,8 @@ class Rotozoom(ImageBase):
         self.oversample = im.get_oversample()
         self.angle = angle
         self.zoom = zoom
+
+        self.const_size = self.image.const_size
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1178,6 +1209,8 @@ class Crop(ImageBase):
         self.y = y
         self.w = w
         self.h = h
+
+        self.const_size = True
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1243,6 +1276,8 @@ class Map(ImageBase):
         self.amap = amap
 
         self.force_alpha = force_alpha
+
+        self.const_size = self.image.const_size
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1329,6 +1364,8 @@ class Recolor(ImageBase):
 
         self.force_alpha = force_alpha
 
+        self.const_size = self.image.const_size
+
     def get_hash(self):
         return self.image.get_hash()
 
@@ -1375,6 +1412,8 @@ class Blur(ImageBase):
         self.oversample = im.get_oversample()
         self.rx = xrad
         self.ry = xrad if yrad is None else yrad
+
+        self.const_size = self.image.const_size
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1443,6 +1482,8 @@ class MatrixColor(ImageBase):
         self.image = im
         self.oversample = im.get_oversample()
         self.matrix = matrix
+
+        self.const_size = self.image.const_size
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1883,6 +1924,8 @@ class Tile(ImageBase):
         self.oversample = im.get_oversample()
         self.size = size
 
+        self.const_size = True
+
     def get_hash(self):
         return self.image.get_hash()
 
@@ -1942,6 +1985,8 @@ class AlphaMask(ImageBase):
         # The two images already need to be the same size, they now also need the same oversample.
         self.oversample = self.base.get_oversample()
 
+        self.const_size = self.base.const_size and self.mask.const_size
+
     def get_hash(self):
         return self.base.get_hash() + self.mask.get_hash()
 
@@ -1976,6 +2021,8 @@ class Null(ImageBase):
     def __init__(self, **properties):
         super(Null, self).__init__(**properties)
 
+        self.const_size = True
+
     def get_hash(self):
         return 42
 
@@ -2002,6 +2049,8 @@ class UnoptimizedTexture(ImageBase):
         im = image(im)
         super(UnoptimizedTexture, self).__init__(im.identity, optimize_bounds=False, **properties)
         self.image = im
+
+        self.const_size = im.const_size
 
     def get_hash(self):
         return self.image.get_hash()
