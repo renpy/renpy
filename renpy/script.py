@@ -469,12 +469,21 @@ class Script(object):
 
         all_stmts = collapse_stmts(stmts)
 
-        version = int(time.time())
+        version = int(time.time() * 100) & 0xFFFFFFFF
+
+        old_names = set(s.name for s in all_stmts)
 
         for s in all_stmts:
             if s.name is None:
-                s.name = (fn, version, self.serial)
-                self.serial += 1
+
+                while True:
+                    name = (fn, version, self.serial)
+                    self.serial += 1
+
+                    if name not in old_names:
+                        break
+
+                s.name = name
 
     def merge_names(self, old_stmts, new_stmts, used_names):
 
