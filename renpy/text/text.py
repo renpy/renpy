@@ -272,7 +272,7 @@ class TextSegment(object):
             self.instance = source.instance
             self.axis = source.axis
             self.shader = source.shader
-            self.features = None
+            self.features = source.features
 
         else:
             self.hyperlink = 0
