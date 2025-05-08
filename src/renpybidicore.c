@@ -35,11 +35,12 @@ PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
     return PyUnicode_FromKindAndData(PyUnicode_4BYTE_KIND, dstuni, size);
 }
 
-PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction, PyObject *seg_levels) {
+PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction) {
     Py_ssize_t size;
     FriBidiChar *srcuni;
     FriBidiCharType *types;
     FriBidiLevel *levels;
+    PyObject *rv;
     FriBidiLevel ret;
 
     PyUnicode_READY(s);
@@ -50,27 +51,29 @@ PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction, PyObject *
     levels = (FriBidiLevel *) alloca(size * 4);
 
     PyUnicode_AsUCS4(s, (Py_UCS4 *) srcuni, size, 0);
-    
+
     fribidi_get_bidi_types(
         srcuni,
         size,
         types);
-    
+
     ret = fribidi_get_par_embedding_levels_ex(
         types,
         NULL,
         size,
         (FriBidiParType *) direction,
         levels);
-    
+
     if (ret == 0) {
-        return s;
+        Py_RETURN_NONE;
     }
-    
+
+    rv = PyTuple_New(size);
+
     for (int i=0; i<size; i++)
-        PyList_Append(seg_levels, Py_BuildValue("i", (int) levels[i]));
-    
-    return PyUnicode_FromKindAndData(PyUnicode_4BYTE_KIND, srcuni, size);
+        PyTuple_SetItem(rv, i, Py_BuildValue("i", (int) levels[i]));
+
+    return rv;
 }
 
 #else
@@ -113,7 +116,7 @@ PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
     return rv;
 }
 
-PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction, PyObject *seg_levels) {
+PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction) {
     Py_ssize_t size;
     FriBidiChar *srcuni;
     FriBidiCharType *types;
@@ -132,12 +135,12 @@ PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction, PyObject *
     for (Py_ssize_t i = 0; i < size; i++) {
         srcuni[i] = p[i];
     }
-    
+
     fribidi_get_bidi_types(
         srcuni,
         size,
         types);
-    
+
     ret = fribidi_get_par_embedding_levels_ex(
         types,
         NULL,
@@ -146,21 +149,14 @@ PyObject *renpybidi_get_embedding_levels(PyObject *s, int *direction, PyObject *
         levels);
 
     if (ret == 0) {
-        goto done;
+        Py_RETURN_NONE;
     }
-    
+
+    rv = PyTuple_New(size);
+
     for (int i=0; i<size; i++)
-        PyList_Append(seg_levels, Py_BuildValue("i", (int) levels[i]));
+        PyTuple_SetItem(rv, i, Py_BuildValue("i", (int) levels[i]));
 
-    p = (Py_UNICODE *) alloca(size * sizeof(Py_UNICODE));
-
-    for (Py_ssize_t i = 0; i < size; i++) {
-        p[i] = (Py_UNICODE) srcuni[i];
-    }
-
-    rv = PyUnicode_FromUnicode(p, size);
-
-done:
     return rv;
 }
 
