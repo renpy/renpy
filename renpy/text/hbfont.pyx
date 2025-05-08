@@ -457,6 +457,7 @@ cdef class HBFont:
         int outline
         bint antialias
         bint vertical
+        bint direction
 
         # Information used to modify the font.
 
@@ -509,7 +510,7 @@ cdef class HBFont:
         if self.hb_font:
             hb_font_destroy(self.hb_font)
 
-    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting, instance, axis):
+    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting, instance, axis, direction):
 
         self.face_object = face
         self.face = self.face_object.face
@@ -545,6 +546,7 @@ cdef class HBFont:
         self.outline = outline
         self.antialias = antialias
         self.vertical = vertical
+        self.direction = direction
 
         if outline == 0:
             self.stroker = NULL;
@@ -877,9 +879,15 @@ cdef class HBFont:
         hb_buffer_add_utf32(hb, <const uint32_t *> ((<const char *> utf32_s) + 4), len(s), 0, len(s));
 
         if self.vertical:
-            hb_buffer_set_direction(hb, HB_DIRECTION_TTB)
+            if self.direction:
+                hb_buffer_set_direction(hb, HB_DIRECTION_BTT)
+            else:
+                hb_buffer_set_direction(hb, HB_DIRECTION_TTB)
         else:
-            hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
+            if self.direction:
+                hb_buffer_set_direction(hb, HB_DIRECTION_RTL)
+            else:
+                hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
 
         hb_buffer_guess_segment_properties(hb)
         hb_buffer_set_cluster_level(hb, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS)

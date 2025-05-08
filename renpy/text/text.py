@@ -272,6 +272,7 @@ class TextSegment(object):
             self.instance = source.instance
             self.axis = source.axis
             self.shader = source.shader
+            self.direction = None
 
         else:
             self.hyperlink = 0
@@ -283,7 +284,7 @@ class TextSegment(object):
             self.shader = None
 
     def __repr__(self):
-        return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
+        return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}, direction={direction}>".format(**self.__dict__)
 
     def take_style(self, style, layout, context=None):
         """
@@ -345,7 +346,7 @@ class TextSegment(object):
         if self.ignore:
             return [ ]
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.direction)
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
@@ -383,7 +384,7 @@ class TextSegment(object):
             color = self.color
             black_color = self.black_color
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.direction)
         fo.draw(di.surface, xo, yo, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
@@ -448,7 +449,7 @@ class TextSegment(object):
         origin point.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.direction)
         return fo.bounds(glyphs, bounds)
 
 
@@ -1596,6 +1597,7 @@ class Layout(object):
                 else:
                     seg_str[curr_seg] += s[i]
             for ss, d in zip(seg_str, seg_dir):
+                ts.direction = d
                 l.append((ts, ss, d))
 
         rtl = (direction == RTL or direction == WRTL)

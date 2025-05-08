@@ -700,7 +700,7 @@ font_cache = { }
 last_scale = 1.0
 
 
-def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, axis):
+def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, axis, direction):
 
     if hbfont is None:
         shaper = "freetype"
@@ -749,7 +749,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
     face = load_face(fn, shaper)
 
     if shaper == "harfbuzz":
-        rv = hbfont.HBFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting, instance, axis) # @UndefinedVariable
+        rv = hbfont.HBFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting, instance, axis, direction) # @UndefinedVariable
     else:
         rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) # @UndefinedVariable
 
