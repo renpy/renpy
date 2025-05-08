@@ -7,6 +7,11 @@
 /game/**/*.rpyc
 /game/**/*.rpymc
 
+# Files Ren'Py can generate.
+/game/**/*.bak
+/game/**/*.new
+/game/**/*.old
+
 # Error, log, and output files.
 /errors.txt
 /files.txt
