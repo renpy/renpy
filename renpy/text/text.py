@@ -1597,8 +1597,9 @@ class Layout(object):
                 else:
                     seg_str[curr_seg] += s[i]
             for ss, d in zip(seg_str, seg_dir):
-                ts.direction = d
-                l.append((ts, ss, d))
+                tss = TextSegment(ts)
+                tss.direction = d
+                l.append((tss, ss, d))
 
         rtl = (direction == RTL or direction == WRTL)
         
