@@ -26,7 +26,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional, List, Callable
+from typing import Any, Optional, List, Callable
 
 
 import collections
@@ -1537,6 +1537,13 @@ lint_show_names = False
 # Should label callbacks be called for creator-defined statements?
 cds_label_callbacks = True
 
+error_suggestion_handlers: dict[type[BaseException], Callable[[Any], str | None]] = { }
+"""
+Dictonary from exception type to a function that takes an exception that
+occurred and returns a string with suggestion to add to the exception message
+or None if no suggestion is available.
+"""
+
 
 del os
 del collections
@@ -1571,6 +1578,13 @@ def init():
     gl_blend_func["multiply"] = (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE)
     gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
+
+    error_suggestion_handlers[AttributeError] = renpy.error.handle_attribute_error
+    error_suggestion_handlers[NameError] = renpy.error.handle_name_error
+    error_suggestion_handlers[ImportError] = renpy.error.handle_import_error
+    error_suggestion_handlers[renpy.script.LabelNotFound] = renpy.script.LabelNotFound.get_suggestion
+    error_suggestion_handlers[renpy.display.screen.ScreenNotFound] = renpy.display.screen.ScreenNotFound.get_suggestion
+    error_suggestion_handlers[renpy.display.image.ImageNotFound] = renpy.display.image.ImageNotFound.get_suggestion
 
 
 def post_init():
