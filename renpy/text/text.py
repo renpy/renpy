@@ -340,7 +340,7 @@ class TextSegment(object):
 
     # From here down is the public glyph API.
 
-    def glyphs(self, s, layout):
+    def glyphs(self, s, layout, level=0):
         """
         Return the list of glyphs corresponding to unicode string s.
         """
@@ -349,7 +349,7 @@ class TextSegment(object):
             return [ ]
 
         fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.features)
-        rv = fo.glyphs(s)
+        rv = fo.glyphs(s, level)
 
         # Apply kerning to the glyphs.
         kerning = self.kerning + self.size / 30 * renpy.game.preferences.font_kerning
