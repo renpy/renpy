@@ -1687,12 +1687,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                     raise renpy.display.core.IgnoreEvent()
 
             if self.value:
-                rv = self.value.enter()
-
-                if rv is not None:
-                    return rv
-                else:
-                    raise renpy.display.core.IgnoreEvent()
+                return self.value.enter()
 
             if not self.changed:
                 return content
