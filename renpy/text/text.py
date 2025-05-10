@@ -1580,9 +1580,9 @@ class Layout(object):
 
     def glyphs_paragraph(self, p):
         """
-        Takes a paragraph (a list of segment, text tuples) and return a list
-        segment, glyph tuples as well as a boolen indicating if this is an RTL
-        paragraph.
+        Takes a paragraph (a list of segment, text tuples) and returns a list
+        of segment, glyph list tuples as well as a boolean indicating if this
+        is an RTL paragraph.
         """
 
         if not renpy.config.rtl:
