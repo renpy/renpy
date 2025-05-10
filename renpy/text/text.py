@@ -637,6 +637,8 @@ class Layout(object):
         width = min(32767, width)
         height = min(32767, height)
 
+        style = text.style
+
         if drawable_res and (not size_only) and renpy.config.use_drawable_resolution and renpy.config.drawable_resolution_text:
             # How much do we want to oversample the text by, compared to the
             # virtual resolution.
@@ -646,7 +648,7 @@ class Layout(object):
             self.reverse = renpy.display.draw.draw_to_virt
             self.forward = renpy.display.draw.virt_to_draw
 
-            self.outline_step = text.style.outline_scaling == "step"
+            self.outline_step = style.outline_scaling == "step"
 
             self.pixel_perfect = True
 
@@ -658,8 +660,6 @@ class Layout(object):
             self.outline_step = True
 
             self.pixel_perfect = False
-
-        style = text.style
 
         self.line_overlap_split = self.scale_int(style.line_overlap_split)
 
