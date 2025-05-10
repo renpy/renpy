@@ -174,6 +174,7 @@ init -1800:
         emoji_font "TwemojiCOLRv0.ttf"
         prefer_emoji True
         shaper "harfbuzz"
+        reading_order None
 
         # Window properties
         background None

@@ -39,9 +39,11 @@ from renpy.text.emoji_trie import emoji, UNQUALIFIED
 
 from renpy.gl2.gl2polygon import Polygon
 
-from _renpybidi import ON, RTL, WRTL, get_embedding_levels, log2vis # @UnresolvedImport
+from _renpybidi import LTR, ON, RTL, WLTR, WRTL, get_embedding_levels, log2vis # @UnresolvedImport
+
 
 BASELINE = -65536
+READING_ORDER = {None: ON, 'ltr': LTR, 'rtl': RTL, 'wltr': WLTR, 'wrtl': WRTL}
 
 
 class Blit(object):
@@ -752,6 +754,7 @@ class Layout(object):
         ended = False
 
         language = style.language
+        order = READING_ORDER[style.reading_order]
 
         for p_num, p in enumerate(self.paragraphs):
 
@@ -762,7 +765,7 @@ class Layout(object):
 
             # 3. Convert each paragraph into a Segment, glyph list. (Store this
             # to use when we draw things.)
-            seg_glyphs, rtl = self.glyphs_paragraph(p)
+            seg_glyphs, rtl = self.glyphs_paragraph(p, order)
 
             # A list of glyphs in the paragraph.
             par_glyphs = [ g for _, gl in seg_glyphs for g in gl ]
@@ -1576,7 +1579,7 @@ class Layout(object):
         return rv
 
 
-    def glyphs_paragraph(self, p):
+    def glyphs_paragraph(self, p, direction):
         """
         Takes a paragraph (a list of segment, text tuples) and returns a list
         of segment, glyph list tuples as well as a boolean indicating if this
@@ -1586,7 +1589,6 @@ class Layout(object):
         if not renpy.config.rtl:
             return [(ts, ts.glyphs(s, self)) for ts, s in p], False
 
-        direction = ON
         rv = []
 
         for ts, s in p:
