@@ -716,7 +716,7 @@ class Layout(object):
         all_glyphs = [ ]
 
         # A list of (segment, glyph_list) pairs for all paragraphs.
-        par_seg_glyphs = [ ]
+        all_seg_glyphs = [ ]
 
         # A list of Line objects.
         lines = [ ]
@@ -765,12 +765,10 @@ class Layout(object):
             seg_glyphs, rtl = self.glyphs_paragraph(p)
 
             # A list of glyphs in the paragraph.
-            par_glyphs = [ ]
+            par_glyphs = [ g for _, gl in seg_glyphs for g in gl ]
 
-            for t in seg_glyphs:
-                par_seg_glyphs.append(t)
-                par_glyphs.extend(t[1])
-                all_glyphs.extend(t[1])
+            all_glyphs.extend(par_glyphs)
+            all_seg_glyphs.extend(seg_glyphs)
 
             # RTL - Reverse each line, segment, so that we can use LTR
             # linebreaking algorithms. Also necessary for timings.
@@ -928,7 +926,7 @@ class Layout(object):
         # we have them, grow the bounding box.
 
         bounds = (0, 0, maxx, y)
-        for ts, glyphs in par_seg_glyphs:
+        for ts, glyphs in all_seg_glyphs:
             bounds = ts.bounds(glyphs, bounds, self)
 
         self.add_left = max(-bounds[0], 0)
@@ -993,7 +991,7 @@ class Layout(object):
             di.override_color = color
             di.outline = o
 
-            for ts, glyphs in par_seg_glyphs:
+            for ts, glyphs in all_seg_glyphs:
                 if ts is self.end_segment:
                     break
 
