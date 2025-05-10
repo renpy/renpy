@@ -39,7 +39,7 @@ from renpy.text.emoji_trie import emoji, UNQUALIFIED
 
 from renpy.gl2.gl2polygon import Polygon
 
-from _renpybidi import log2vis, WRTL, RTL, ON # @UnresolvedImport
+from _renpybidi import ON, RTL, WRTL, get_embedding_levels, log2vis # @UnresolvedImport
 
 BASELINE = -65536
 
@@ -340,7 +340,7 @@ class TextSegment(object):
 
     # From here down is the public glyph API.
 
-    def glyphs(self, s, layout):
+    def glyphs(self, s, layout, level=0):
         """
         Return the list of glyphs corresponding to unicode string s.
         """
@@ -349,7 +349,7 @@ class TextSegment(object):
             return [ ]
 
         fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.features)
-        rv = fo.glyphs(s)
+        rv = fo.glyphs(s, level)
 
         # Apply kerning to the glyphs.
         kerning = self.kerning + self.size / 30 * renpy.game.preferences.font_kerning
@@ -760,34 +760,20 @@ class Layout(object):
                 # segment.
                 p = self.thaic90_paragraph(p)
 
-            # RTL - apply RTL to the text of each segment, then
-            # reverse the order of the segments in each paragraph.
-            if renpy.config.rtl:
-                p, rtl = self.rtl_paragraph(p)
-            else:
-                rtl = False
-
             # 3. Convert each paragraph into a Segment, glyph list. (Store this
             # to use when we draw things.)
+            seg_glyphs, rtl = self.glyphs_paragraph(p)
 
             # A list of glyphs in the paragraph.
             par_glyphs = [ ]
 
-            # A list of (segment, list of glyph) pairs.
-            seg_glyphs = [ ]
-
-
-            for ts, s in p:
-                glyphs = ts.glyphs(s, self)
-
-                t = (ts, glyphs)
-                seg_glyphs.append(t)
+            for t in seg_glyphs:
                 par_seg_glyphs.append(t)
-                par_glyphs.extend(glyphs)
-                all_glyphs.extend(glyphs)
+                par_glyphs.extend(t[1])
+                all_glyphs.extend(t[1])
 
             # RTL - Reverse each line, segment, so that we can use LTR
-            # linebreaking algorithms.
+            # linebreaking algorithms. Also necessary for timings.
             if rtl:
                 par_glyphs.reverse()
                 seg_glyphs.reverse()
@@ -1592,29 +1578,53 @@ class Layout(object):
         return rv
 
 
-    def rtl_paragraph(self, p):
+    def glyphs_paragraph(self, p):
         """
-        Given a paragraph (a list of segment, text tuples) handles
-        RTL, and if the shaper is set to freetype, ligaturization.
-        This returns the reversed RTL paragraph, which differs
-        from the LTR one. It also returns a flag that is
-        True if this is an rtl paragraph.
+        Takes a paragraph (a list of segment, text tuples) and return a list
+        segment, glyph tuples as well as a boolen indicating if this is an RTL
+        paragraph.
         """
+
+        if not renpy.config.rtl:
+            return [(ts, ts.glyphs(s, self)) for ts, s in p], False
 
         direction = ON
-
-        l = [ ]
+        rv = []
 
         for ts, s in p:
-            ft_enabled = (getattr(ts, "shaper", "") != "harfbuzz")
+            if not isinstance(ts, TextSegment):
+                rv.append((ts, ts.glyphs(s, self)))
 
-            s, direction = log2vis(str(s), ft_enabled, direction)
+            elif ts.shaper == "harfbuzz":
+                l, direction = get_embedding_levels(str(s), direction)
+                offset = 0
 
-            l.append((ts, s))
+                if l:
+                    current = l[0]
 
-        rtl = (direction == RTL or direction == WRTL)
+                    for i, l in enumerate(l):
+                        if l == current:
+                            continue
 
-        return l, rtl
+                        rv.append((ts, ts.glyphs(s[offset:i], self, current)))
+
+                        offset = i
+                        current = l
+
+                else:
+                    l = 0
+
+                rv.append((ts, ts.glyphs(s[offset:], self, l)))
+
+            else:
+                s, direction = log2vis(str(s), direction)
+                rv.append((ts, ts.glyphs(s, self)))
+
+        if rtl := direction == RTL or direction == WRTL:
+            rv.reverse()
+
+        return rv, rtl
+
 
     def figure_outlines(self, style):
         """

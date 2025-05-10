@@ -901,7 +901,7 @@ cdef class HBFont:
 
         return rv
 
-    def glyphs(self, unicode s):
+    def glyphs(self, unicode s, int level):
         """
         Sizes s, returning a list of Glyph objects.
         """
@@ -941,9 +941,15 @@ cdef class HBFont:
         hb_buffer_add_utf32(hb, <const uint32_t *> ((<const char *> utf32_s) + 4), len(s), 0, len(s));
 
         if self.vertical:
-            hb_buffer_set_direction(hb, HB_DIRECTION_TTB)
+            if level & 0x1:
+                hb_buffer_set_direction(hb, HB_DIRECTION_BTT)
+            else:
+                hb_buffer_set_direction(hb, HB_DIRECTION_TTB)
         else:
-            hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
+            if level & 0x1:
+                hb_buffer_set_direction(hb, HB_DIRECTION_RTL)
+            else:
+                hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
 
         hb_buffer_guess_segment_properties(hb)
         hb_buffer_set_cluster_level(hb, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS)
