@@ -104,6 +104,26 @@ the downloader game. This is the public key that will be used to verify the down
 When creating a new game, Ren'Py will now include a .gitignore file that contains a default set of files to ignore.
 
 
+Text
+-----
+
+A problem with mark positions on ligatures has been fixed. This mainly affected
+Arabic, but applies to all text. Note that this fix is only available when using
+the Harfbuzz shaper.
+
+The :propref:`reading_order` style property has been added so that a preference
+for the directionality of text may be expressed when ``config.rtl`` is ``True``.
+Setting it to ``"wrtl"`` (weak right-to-left) will cause directionally neutral
+lines to be displayed right-to-left (previously they would always be displayed
+left-to-right). This is mostly to support punctuation-only dialogue lines in RTL
+language games and translations.
+
+Finally, a regression in how bidirectional text embedding was handled when using
+the Harfbuzz text shaper introduced in ``8.3.7`` has been fixed. Text containing
+runs of both LTR and RTL characters will now render with the correct
+directionality for the individual runs again.
+
+
 Other Features
 --------------
 

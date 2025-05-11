@@ -39,9 +39,11 @@ from renpy.text.emoji_trie import emoji, UNQUALIFIED
 
 from renpy.gl2.gl2polygon import Polygon
 
-from _renpybidi import ON, RTL, WRTL, get_embedding_levels, log2vis # @UnresolvedImport
+from _renpybidi import LTR, ON, RTL, WLTR, WRTL, get_embedding_levels, log2vis # @UnresolvedImport
+
 
 BASELINE = -65536
+READING_ORDER = {None: ON, 'ltr': LTR, 'rtl': RTL, 'wltr': WLTR, 'wrtl': WRTL}
 
 
 class Blit(object):
@@ -637,6 +639,8 @@ class Layout(object):
         width = min(32767, width)
         height = min(32767, height)
 
+        style = text.style
+
         if drawable_res and (not size_only) and renpy.config.use_drawable_resolution and renpy.config.drawable_resolution_text:
             # How much do we want to oversample the text by, compared to the
             # virtual resolution.
@@ -646,7 +650,7 @@ class Layout(object):
             self.reverse = renpy.display.draw.draw_to_virt
             self.forward = renpy.display.draw.virt_to_draw
 
-            self.outline_step = text.style.outline_scaling == "step"
+            self.outline_step = style.outline_scaling == "step"
 
             self.pixel_perfect = True
 
@@ -658,8 +662,6 @@ class Layout(object):
             self.outline_step = True
 
             self.pixel_perfect = False
-
-        style = text.style
 
         self.line_overlap_split = self.scale_int(style.line_overlap_split)
 
@@ -716,7 +718,7 @@ class Layout(object):
         all_glyphs = [ ]
 
         # A list of (segment, glyph_list) pairs for all paragraphs.
-        par_seg_glyphs = [ ]
+        all_seg_glyphs = [ ]
 
         # A list of Line objects.
         lines = [ ]
@@ -752,6 +754,7 @@ class Layout(object):
         ended = False
 
         language = style.language
+        order = READING_ORDER[style.reading_order]
 
         for p_num, p in enumerate(self.paragraphs):
 
@@ -762,15 +765,13 @@ class Layout(object):
 
             # 3. Convert each paragraph into a Segment, glyph list. (Store this
             # to use when we draw things.)
-            seg_glyphs, rtl = self.glyphs_paragraph(p)
+            seg_glyphs, rtl = self.glyphs_paragraph(p, order)
 
             # A list of glyphs in the paragraph.
-            par_glyphs = [ ]
+            par_glyphs = [ g for _, gl in seg_glyphs for g in gl ]
 
-            for t in seg_glyphs:
-                par_seg_glyphs.append(t)
-                par_glyphs.extend(t[1])
-                all_glyphs.extend(t[1])
+            all_glyphs.extend(par_glyphs)
+            all_seg_glyphs.extend(seg_glyphs)
 
             # RTL - Reverse each line, segment, so that we can use LTR
             # linebreaking algorithms. Also necessary for timings.
@@ -928,7 +929,7 @@ class Layout(object):
         # we have them, grow the bounding box.
 
         bounds = (0, 0, maxx, y)
-        for ts, glyphs in par_seg_glyphs:
+        for ts, glyphs in all_seg_glyphs:
             bounds = ts.bounds(glyphs, bounds, self)
 
         self.add_left = max(-bounds[0], 0)
@@ -993,7 +994,7 @@ class Layout(object):
             di.override_color = color
             di.outline = o
 
-            for ts, glyphs in par_seg_glyphs:
+            for ts, glyphs in all_seg_glyphs:
                 if ts is self.end_segment:
                     break
 
@@ -1578,17 +1579,16 @@ class Layout(object):
         return rv
 
 
-    def glyphs_paragraph(self, p):
+    def glyphs_paragraph(self, p, direction):
         """
-        Takes a paragraph (a list of segment, text tuples) and return a list
-        segment, glyph tuples as well as a boolen indicating if this is an RTL
-        paragraph.
+        Takes a paragraph (a list of segment, text tuples) and returns a list
+        of segment, glyph list tuples as well as a boolean indicating if this
+        is an RTL paragraph.
         """
 
         if not renpy.config.rtl:
             return [(ts, ts.glyphs(s, self)) for ts, s in p], False
 
-        direction = ON
         rv = []
 
         for ts, s in p:

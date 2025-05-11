@@ -737,6 +737,36 @@ Text Style Properties
     style property chooses if such characters are given the Emoji presentation
     or not.
 
+.. style-property:: reading_order string
+
+    This controls the how text is presented for reading when RTL support has
+    been enabled. The main use of this is to influence directionally neutral
+    lines, such as those made up purely of punctuation.
+
+    This has no effect unless :var:`config.rtl` is set to ``True``.
+
+    ``None``
+        The default, the reading order will be determined based on the text.
+        Most neutral lines will be treated as left-to-right.
+
+    ``"ltr"``
+        Forces left-to-right presentation, even when a line is predominantly
+        made up of runs of RTL characters.
+
+    ``"rtl"``
+        Forces right-to-left presentation, even when a line is predominantly
+        made up of runs of LTR characters.
+
+    ``"wltr"``
+        Prefers left-to-right presentation, but will switch to right-to-left
+        presentation if it makes more sense for the current text. Useful for
+        impacting punctuation-only lines such as ``"..!"``.
+
+    ``"wrtl"``
+        Prefers right-to-left presentation, but will switch to left-to-right
+        presentation if it makes more sense for the current text. Useful for
+        impacting punctuation-only lines such as ``"..!"``.
+
 .. style-property:: rest_indent int
 
     Specifies the number of pixels the second and later lines in a
