@@ -22,7 +22,7 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Any
 
 # FrameType can't be pickled!
 if TYPE_CHECKING:
@@ -91,6 +91,24 @@ class PredictInfo(renpy.object.Object):
     """
     Not used anymore, but needed for backwards compatibility.
     """
+
+
+class NewPredictInfo:
+    """
+    A new version of PredictInfo.
+    """
+
+    node: "renpy.ast.Node"
+    "The node that is being predicted."
+
+    images: "renpy.display.image.ShownImageInfo"
+    "The state of images at the time of prediction."
+
+    predict_return_stack: list[Any]
+    "The return stack at the time of prediction."
+
+    tlids: list[str|None]
+    "A list of strings giving translation identifiers that are in effect at the time of prediction."
 
 
 class LineLogEntry(object):
@@ -883,7 +901,13 @@ class Context(renpy.object.Object):
             if node in seen:
                 continue
 
-            nodes.append((node, self.images, self.return_stack))
+            npi = NewPredictInfo()
+            npi.node = node
+            npi.images = self.images
+            npi.predict_return_stack = self.return_stack
+            npi.tlids = [ self.translate_identifier, self.alternate_translate_identifier ]
+
+            nodes.append(npi)
             seen.add(node)
 
         # Predict statements.
@@ -892,7 +916,12 @@ class Context(renpy.object.Object):
             if i >= len(nodes):
                 break
 
-            node, images, return_stack = nodes[i]
+            npi = nodes[i]
+            node = npi.node
+            images = npi.images
+            return_stack = npi.predict_return_stack
+
+            renpy.display.predict.tlids = npi.tlids
 
             self.images = renpy.display.image.ShownImageInfo(images)
             self.predict_return_stack = return_stack
@@ -904,7 +933,14 @@ class Context(renpy.object.Object):
                         continue
 
                     if n not in seen:
-                        nodes.append((n, self.images, self.predict_return_stack))
+
+                        npi = NewPredictInfo()
+                        npi.node = n
+                        npi.images = self.images
+                        npi.predict_return_stack = self.predict_return_stack
+                        npi.tlids = renpy.display.predict.tlids
+
+                        nodes.append(npi)
                         seen.add(n)
 
             except Exception:

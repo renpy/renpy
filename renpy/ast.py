@@ -2886,7 +2886,12 @@ class Translate(Node):
         renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
 
     def predict(self) -> list[Node | None]:
-        return [self.lookup()]
+
+        try:
+            renpy.display.predict.tlids = [ self.identifier, getattr(self, "alternate", None) ]
+            return [self.lookup()]
+        finally:
+            renpy.display.predict.tlids = [ ]
 
     def scry(self):
         rv = Scry()
@@ -3017,12 +3022,21 @@ class TranslateSay(Say):
             renpy.game.context().alternate_translate_identifier = None
 
     def predict(self) -> list[Node | None]:
-        node = self.lookup()
 
-        if node is None or node is self:
-            return Say.predict(self)
+        renpy.display.predict.tlids = [self.identifier, getattr(self, "alternate", None)]
 
-        return [node]
+        try:
+
+            node = self.lookup()
+
+            if node is None or node is self:
+                return Say.predict(self)
+
+            return [node]
+
+        finally:
+            renpy.display.predict.tlids = []
+
 
     def scry(self):
         node = self.lookup()
