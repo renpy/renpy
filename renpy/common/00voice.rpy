@@ -325,21 +325,32 @@ init -1500 python:
         An object returned by VoiceInfo and get_voice_info().
         """
 
-        def __init__(self):
+        def __init__(self, predict=False, tag=None):
 
-            self.filename = _voice.play
+            if not predict:
+                self.filename = _voice.play
+                self.sustain = _voice.sustain
+                self.tag = _voice.tag
+            else:
+                self.filename = None
+                self.sustain = False
+                self.tag = tag
+
             self.auto_filename = None
             self.tlid = None
-            self.sustain = _voice.sustain
-            self.tag = _voice.tag
 
             if not self.filename and config.auto_voice:
 
-                for tlid in [
-                    renpy.game.context().translate_identifier,
-                    renpy.game.context().alternate_translate_identifier,
-                    renpy.game.context().deferred_translate_identifier,
-                    ]:
+                if predict:
+                    tlids = renpy.display.predict.tlids
+                else:
+                    tlids = [
+                        renpy.game.context().translate_identifier,
+                        renpy.game.context().alternate_translate_identifier,
+                        renpy.game.context().deferred_translate_identifier,
+                    ]
+
+                for tlid in tlids:
 
                     if tlid is None:
                         continue
@@ -349,7 +360,8 @@ init -1500 python:
                     else:
                         fn = config.auto_voice(tlid)
 
-                    self.auto_filename = fn
+                    if self.auto_filename is None:
+                        self.auto_filename = fn
 
                     if fn and renpy.loadable(fn, directory="audio"):
 
@@ -535,6 +547,30 @@ init -1500 python hide:
     config.periodic_callbacks.append(_voice_periodic_callback)
 
 
+    def _auto_voice_predict_callback(tag):
+        """
+        Called to perform auto-voice prediction.
+        """
+
+        if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+            vi = VoiceInfo(predict=True, tag=tag)
+
+            fn = vi.filename
+
+            if not fn:
+                return
+
+            try:
+                with renpy.loader.load(fn, directory="audio") as f:
+                    pass
+
+                renpy.webloader.extend(fn)
+            except renpy.webloader.DownloadNeeded as exception:
+                renpy.webloader.enqueue(exception.relpath, 'voice', None)
+
+    config.auto_voice_predict_callback = _auto_voice_predict_callback
+
+
 screen _auto_voice:
     layer config.interface_layer
 
@@ -578,6 +614,8 @@ python early hide:
             try:
                 with renpy.loader.load(fn, directory="audio") as f:
                     pass
+
+                renpy.webloader.extend(fn)
             except renpy.webloader.DownloadNeeded as exception:
                 renpy.webloader.enqueue(exception.relpath, 'voice', None)
         return [ ]

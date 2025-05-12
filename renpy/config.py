@@ -1544,6 +1544,12 @@ occurred and returns a string with suggestion to add to the exception message
 or None if no suggestion is available.
 """
 
+auto_voice_predict_callback : Callable[[str], None]|None = None
+"""
+A callback that is called when an auto-voice prediction is made.
+These are called with the voice tag of the character.
+"""
+
 
 del os
 del collections

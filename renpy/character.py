@@ -1552,6 +1552,9 @@ class ADVCharacter(object):
 
         renpy.store._side_image_attributes = attrs
 
+        if self.voice_tag and renpy.config.auto_voice_predict_callback:
+            renpy.config.auto_voice_predict_callback(self.voice_tag)
+
         try:
 
             if self.dynamic:

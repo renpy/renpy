@@ -197,6 +197,9 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 Other Changes
 -------------
 
+On the web platform, Ren'Py will now preload automatic voice lines, ensuring the files can play immediately,
+even if not fully cached on the player's device.
+
 Text inputs (:func:`renpy.input` and the :ref:`input <sl-input>` displayable) disable non-required text
 ligatures, so that ligaturization doesn't change when the caret moves.
 

@@ -259,3 +259,16 @@ def process_downloaded_resources():
         if delta > ttl:
             os.unlink(fullpath)
             del to_unlink[fullpath]
+
+
+def extend(relpath):
+    """
+    Extends the unlink time so that the file is not removed from the cache.
+    """
+
+    fullpath = os.path.join(renpy.config.gamedir, relpath)
+
+    with queue_lock:
+
+        if fullpath in to_unlink:
+            to_unlink[fullpath] = time.time() + 120
