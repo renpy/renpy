@@ -2920,7 +2920,7 @@ class Interface(object):
                                 x = -1
                                 y = -1
 
-                            if renpy.android and self.last_event.type == pygame.MOUSEBUTTONUP:
+                            if (self.last_event.type == pygame.MOUSEBUTTONUP) and getattr(self.last_event, "touch", False):
                                 x = -1
                                 y = -1
 
