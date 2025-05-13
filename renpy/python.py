@@ -1159,7 +1159,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
                 return rv
 
-        except ValueError:
+        except Exception:
             pass
 
         source = quote_eval(source)
@@ -1305,6 +1305,7 @@ def py_eval_bytecode(bytecode, globals=None, locals=None): # @ReservedAssignment
 
 
 def py_eval(code, globals=None, locals=None): # @ReservedAssignment
+
     if isinstance(code, str):
         code = py_compile(code, 'eval')
 
