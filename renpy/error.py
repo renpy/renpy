@@ -1510,10 +1510,12 @@ class TracebackException:
                         # Convert 1-based column offset to 0-based index into stripped text
                         colno = offset - 1 - spaces
                         end_colno = end_offset - 1 - spaces
+
                         if colno >= 0:
-                            # non-space whitespace (likes tabs) must be kept for alignment
-                            carets = "".join((c if c.isspace() else ' ') for c in ltext[:colno])
-                            carets += '^' * (end_colno - colno)
+                            carets = "".join(
+                                # non-space whitespace (likes tabs) must be kept for alignment
+                                '^' if colno <= i < end_colno else (c if c.isspace() else ' ')
+                                for i, c in enumerate(ltext))
                             ctx.source_carets(ltext, carets)
                         else:
                             ctx.source_carets(ltext, None)
