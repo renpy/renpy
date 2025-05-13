@@ -1442,8 +1442,8 @@ class TracebackException:
 
         if self._is_syntax_error:
             self._format_syntax_error(ctx)
-
-        ctx.final_exception_line(self.exc_type_str, self._str or None)
+        else:
+            ctx.final_exception_line(self.exc_type_str, self._str or None)
 
         for note in self.__notes__:
             ctx.string(note)
