@@ -295,8 +295,8 @@ class ANSIColoredPrintContext(TextIOExceptionPrintContext):
     LOCATION_COLOR = ANSIColors.INTENSE_BLUE
     PRIMARY_CARET_COLOR = ANSIColors.RED
     SECONDARY_CARET_COLOR = ANSIColors.INTENSE_RED
-    EXCEPTION_TYPE_COLOR = ANSIColors.BLUE
-    EXCEPTION_VALUE_COLOR = ANSIColors.INTENSE_BLUE
+    EXCEPTION_TYPE_COLOR = ANSIColors.INTENSE_WHITE
+    EXCEPTION_VALUE_COLOR = ANSIColors.RESET
 
     def location(self, filename, lineno, name):
         if name is None:
@@ -1459,60 +1459,64 @@ class TracebackException:
         """Format SyntaxError exceptions (internal helper)."""
         # Show exactly where the problem was found.
 
-        filename = self.filename or "<string>"
-        if self.lineno is not None:
-            ctx.location(filename, self.lineno, None)
+        with ctx.indent():
 
-        text = self.text
-        if isinstance(text, str):
-            # text  = "   foo\n"
-            # rtext = "   foo"
-            # ltext =    "foo"
-            rtext = text.rstrip('\n')
-            ltext = rtext.lstrip(' \n\f')
-            spaces = len(rtext) - len(ltext)
-            if self.offset is None:
-                ctx.source_carets(ltext, None)
+            filename = self.filename or "<string>"
+            if self.lineno is not None:
+                ctx.location(filename, self.lineno, None)
 
-            elif isinstance(self.offset, int):
-                if self.lineno is not None:
-                    offset = normalize_renpy_line_offset(
-                        filename,
-                        self.lineno,
-                        self.offset,
-                        rtext)
-                else:
-                    offset = self.offset
+            with ctx.indent():
 
-                if self.lineno == self.end_lineno:
-                    end_offset = self.end_offset or offset
-                else:
-                    end_offset = len(rtext) + 1
+                text = self.text
+                if isinstance(text, str):
+                    # text  = "   foo\n"
+                    # rtext = "   foo"
+                    # ltext =    "foo"
+                    rtext = text.rstrip('\n')
+                    ltext = rtext.lstrip(' \n\f')
+                    spaces = len(rtext) - len(ltext)
+                    if self.offset is None:
+                        ctx.source_carets(ltext, None)
 
-                if self.end_lineno is not None:
-                    end_offset = normalize_renpy_line_offset(
-                        filename,
-                        self.end_lineno,
-                        end_offset,
-                        rtext)
+                    elif isinstance(self.offset, int):
+                        if self.lineno is not None:
+                            offset = normalize_renpy_line_offset(
+                                filename,
+                                self.lineno,
+                                self.offset,
+                                rtext)
+                        else:
+                            offset = self.offset
 
-                if self.text and offset > len(self.text):
-                    offset = len(rtext) + 1
-                if self.text and end_offset > len(self.text):
-                    end_offset = len(rtext) + 1
-                if offset >= end_offset or end_offset < 0:
-                    end_offset = offset + 1
+                        if self.lineno == self.end_lineno:
+                            end_offset = self.end_offset or offset
+                        else:
+                            end_offset = len(rtext) + 1
 
-                # Convert 1-based column offset to 0-based index into stripped text
-                colno = offset - 1 - spaces
-                end_colno = end_offset - 1 - spaces
-                if colno >= 0:
-                    # non-space whitespace (likes tabs) must be kept for alignment
-                    carets = "".join((c if c.isspace() else ' ') for c in ltext[:colno])
-                    carets += '^' * (end_colno - colno)
-                    ctx.source_carets(ltext, carets)
-                else:
-                    ctx.source_carets(ltext, None)
+                        if self.end_lineno is not None:
+                            end_offset = normalize_renpy_line_offset(
+                                filename,
+                                self.end_lineno,
+                                end_offset,
+                                rtext)
+
+                        if self.text and offset > len(self.text):
+                            offset = len(rtext) + 1
+                        if self.text and end_offset > len(self.text):
+                            end_offset = len(rtext) + 1
+                        if offset >= end_offset or end_offset < 0:
+                            end_offset = offset + 1
+
+                        # Convert 1-based column offset to 0-based index into stripped text
+                        colno = offset - 1 - spaces
+                        end_colno = end_offset - 1 - spaces
+                        if colno >= 0:
+                            # non-space whitespace (likes tabs) must be kept for alignment
+                            carets = "".join((c if c.isspace() else ' ') for c in ltext[:colno])
+                            carets += '^' * (end_colno - colno)
+                            ctx.source_carets(ltext, carets)
+                        else:
+                            ctx.source_carets(ltext, None)
 
         msg = self.msg or "<no detail available>"
         ctx.final_exception_line(self.exc_type_str, msg)
