@@ -513,11 +513,11 @@ class Context(renpy.object.Object):
                 inspect.signature(renpy.config.exception_handler).bind(te)
 
             except TypeError:
-                if not renpy.config.exception_handler(*te): # type: ignore
+                if renpy.config.exception_handler(*te): # type: ignore
                     return
 
             else:
-                if not renpy.config.exception_handler(te):
+                if renpy.config.exception_handler(te):
                     return
 
         # RenPy default exception handler. Returns True
