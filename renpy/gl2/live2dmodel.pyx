@@ -527,6 +527,10 @@ cdef class Live2DModel:
 
             r = raw_renders[i]
 
+            # Layer is not visible.
+            if r is None:
+                continue
+
             if self.drawable_mask_counts[i] == 1:
                 m = mask_renders[self.drawable_masks[i][0]]
 
