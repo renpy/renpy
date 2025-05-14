@@ -378,16 +378,21 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
     :doc: loadsave
     :args: (filename, extra_info='')
 
-    Saves the game state to a save slot.
+    Saves the game to the slot identified by `filename`.
 
     `filename`
         A string giving the name of a save slot. Despite the variable name,
-        this corresponds only loosely to filenames.
+        this corresponds only loosely to filenames (e.g. '3-2' for page 3, slot 2)
 
     `extra_info`
-        An additional string that should be saved to the save file. Usually,
-        this is the value of :var:`save_name`.
+        A string stored as the ``_save_name`` field in the save file’s metadata. This can be retrieved via :func:`renpy.slot_json(slotname)["_save_name"]`, :func:`FileJson(slotname)` (with ``key=None`` or ``key="_save_name"``), or as the ``extra_info`` field in :func:`renpy.list_saved_games`. It is typically used with the global :var:`save_name` variable (e.g., ``"Chapter 1"``). If empty, ``_save_name`` will be an empty string.
 
+    Example::
+        $ save_name = "Chapter 1"
+        $ renpy.save("1-1", extra_info=save_name)
+
+    To store additional or complex metadata, use :var:`config.save_json_callbacks` to add custom fields to the metadata dictionary.
+        
     :func:`renpy.take_screenshot` should be called before this function.
     """
 
@@ -647,12 +652,35 @@ def list_saved_games(regexp=r'.', fast=False):
     * The time the game was stayed at, in seconds since the UNIX epoch.
 
     `regexp`
-        A regular expression that is matched against the start of the
-        filename to filter the list.
+        A regular expression to filter save slot names. If ``None``, all slots are included.
 
     `fast`
-        If fast is true, the filename is returned instead of the
-        tuple.
+        If fast is true, only a list with matching filenames is returned instead of the list of tuples, making it equivalent to :func:`list_slots`
+    
+    Unless ``fast=True``, returns a list of tuples, each containing:
+    - The slot name (e.g., ``"1-1"``).
+    - ``extra_info``, the ``_save_name`` field from the save file’s metadata, set by the ``extra_info`` argument of :func:`renpy.save`.
+    - ``time``, the modification time of the save file, in seconds since the epoch (equivalent to ``_ctime`` in :func:`renpy.slot_json` or :func:`FileJson`).
+    - ``screenshot``, a displayable (or ``None``) for the save’s screenshot, accessible via :func:`FileScreenshot`.
+
+    To access other metadata fields (e.g., ``_renpy_version``, ``_version``, ``_game_runtime``, custom fields), use :func:`renpy.slot_json` or, for built-in fields only, :func:`FileJson`.
+
+   Example::
+
+       screen save_list():
+           vbox:
+               for name, extra_info, time, screenshot in renpy.list_saved_games(fast=False):
+                   textbutton "[name]: [extra_info]" action FileLoad(name)
+
+    Ren'Py save slots follow naming conventions: manual saves use the format ``page-slot`` (e.g., ``1-1``, ``2-3``), autosaves use ``auto-slot`` (e.g., ``auto-1``), and quicksaves use ``quick-slot`` (e.g., ``quick-1``). The ``regexp`` parameter can filter these slots using Python regular expressions.
+
+   Useful Regular Expressions:
+
+   - ``r"^(\d+|auto|quick)-\d+$"``: Matches all manual (e.g., ``1-1``), auto (e.g., ``auto-1``), and quick (e.g., ``quick-1``) saves. Intentionally listing the types you need avoids encountering built-in save types like ``_reload-1``
+   - ``r"^\d+-\d+$"``: Matches manual saves (e.g., ``1-1``, ``2-3``).
+   - ``r"^auto-\d+$"``: Matches autosaves (e.g., ``auto-1``, ``auto-2``).
+   - ``r"^quick-\d+$"``: Matches quicksaves (e.g., ``quick-1``, ``quick-2``).
+        
     """
 
     # A list of save slots.
@@ -694,6 +722,8 @@ def list_slots(regexp=None):
     Returns a list of non-empty save slots. If `regexp` exists, only slots
     that begin with `regexp` are returned. The slots are sorted in
     string-order.
+
+    For a list of useful regular expressions, see :func:`list_saved_games`
     """
 
     # A list of save slots.
@@ -723,6 +753,8 @@ def newest_slot(regexp=None):
     recent modification time), or None if there are no (matching) saves.
 
     If `regexp` exists, only slots that begin with `regexp` are returned.
+
+    For a list of useful regular expressions, see :func:`list_saved_games`
     """
 
     rv = newest_slot_cache.get(regexp, unknown)
@@ -766,12 +798,19 @@ def slot_json(slotname):
     """
     :doc: loadsave
 
-    Returns the json information for `slotname`, or None if the slot is
-    empty.
+    Returns a dictionary containing the metadata of the save file in `slotname`, including ``_save_name``, ``_renpy_version``, ``_version``, ``_game_runtime``, ``_ctime``, and any custom fields added via :var:`config.save_json_callbacks` at the time of saving. If the slot is empty, `None` is returned. For save/load screen actions, :func:`FileJson` provides a subset of these fields (excluding custom fields).
 
-    Much like the ``d`` argument to the :var:`config.save_json_callbacks`
-    function, it will be returned as a dictionary. More precisely, the
-    dictionary will contain the same data as it did when the game was saved.
+        Example::
+
+        def show_game_runtime(slot):
+            metadata = renpy.slot_json(slot)
+            name = metadata.get('_save_name', '')
+            runtime = metadata.get('_game_runtime', 0)
+            hours = int(runtime // 3600)
+            minutes = int((runtime % 3600) // 60)
+            seconds = int(runtime % 60)
+            runtime_formatted = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+            renpy.notify("Save Name: [name], Game Runtime: [runtime_formatted]")
     """
 
     accessed_slots.add(slotname)
@@ -813,7 +852,7 @@ def load(filename):
     """
     :doc: loadsave
 
-    Loads the game state from the save slot `filename`. If the file is loaded
+    Loads the game state from the save slot `filename` (e.g. '3-2' for page 3, slot 2). If the file is loaded
     successfully, this function never returns.
     """
 
@@ -830,7 +869,7 @@ def unlink_save(filename):
     """
     :doc: loadsave
 
-    Deletes the save slot with the given name.
+    Deletes the save slot with the given name (e.g. '3-2' for page 3, slot 2).
     """
 
     location.unlink(filename)
