@@ -202,6 +202,35 @@ class DialogueTextTags(object):
             self.pause_delay.append(None)
 
 
+class CTCPauseHolder(renpy.display.displayable.Displayable):
+
+    def __init__(self, ctc):
+        renpy.display.displayable.Displayable.__init__(self)
+
+        self.ctc = ctc
+        self._duplicatable = ctc._duplicatable
+
+    def render(self, width, height, st, at):
+        cr = renpy.display.render.render(self.ctc, width, height, st, at)
+        rv = renpy.display.render.Render(0, cr.width)
+        rv.blit(cr, (0, 0))
+
+        return rv
+
+    def visit(self):
+        return [ self.ctc ]
+
+    def _duplicate(self, args):
+        if self.ctc._duplicatable:
+            return CTCPauseHolder(self.ctc._duplicate(args))
+        else:
+            return self
+
+    def get_position(self):
+        return self.ctc.get_position()
+
+
+
 def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, two_window=False, side_image=None, screen=None, properties=None, **kwargs):
     """
     This is the default function used by Character to predict images that
@@ -789,7 +818,7 @@ def display_say(
 
                     if extend_text or not last_pause:
                         if ctc_position == "nestled" or ctc_position == "nestled-close":
-                                what_ctc = renpy.store.Fixed(what_ctc, xsize=0)
+                                what_ctc = CTCPauseHolder(what_ctc)
 
                     if ctc_position == "nestled":
                         what_text.set_ctc(what_ctc)
