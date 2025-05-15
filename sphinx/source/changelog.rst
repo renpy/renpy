@@ -38,9 +38,9 @@ Ren'Py now includes support for two more special directories, :file:`game/libs` 
 directories are intended to receive third-party libraries and mods, respectively.
 
 When the file :file:`game/libs/libs.txt`
-exists, script files inside it are loaded in unicode order by filename (not full path), before other files in :file:`game`.
-Similarly, when the file :file:`game/mods/mods.txt` exists, script files inside it are loaded in unicode order by filename,
-after other files in :file:`game/` and :file:`game/libs/`.
+exists, script files inside :file:`game/libs` have the first directory removed, if any, and are loaded in unicode order by the path
+not including that directory. Similarly, when the file :file:`game/mods/mods.txt` exists, script files inside it are loaded in
+unicode order by the path, not including that directory.
 
 Note that load order is relatively unimportant in Ren'Py - it's mostly used with :doc:`cds`. Init priorities levels
 have been changed to recommend that games use init priorities of -99 to 99, and libraries and mods use from -999 to -100

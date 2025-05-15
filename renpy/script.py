@@ -379,13 +379,25 @@ class Script(object):
             priority = 1
             sort_key = fn
 
+            parts = fn.split("/")
+
             if has_libs and fn.startswith("libs/"):
                 priority = 0
-                sort_key = fn.rpartition("/")[2]
+
+                if len(parts) > 2:
+                    sort_key = "/".join(parts[2:])
+                else:
+                    sort_key = parts[1]
+
+                print("SORT KEY", sort_key)
 
             if has_mods and fn.startswith("mods/"):
                 priority = 2
-                sort_key = fn.rpartition("/")[2]
+
+                if len(parts) > 2:
+                    sort_key = "/".join(parts[2:])
+                else:
+                    sort_key = parts[1]
 
             return (priority, sort_key, fn, dn)
 
