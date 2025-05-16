@@ -367,7 +367,10 @@ class Cache(object):
                     texsurf = ce.surf.subsurface(ce.bounds)
                     renpy.display.render.mutated_surface(texsurf)
 
-                ce.texture = renpy.display.draw.load_texture(texsurf, properties={ 'mipmap' : image.mipmap })
+                if image.mipmap is not None:
+                    ce.texture = renpy.display.draw.load_texture(texsurf, properties={ 'mipmap' : image.mipmap })
+                else:
+                    ce.texture = renpy.display.draw.load_texture(texsurf)
 
                 # This was loaded while predicting images for immediate use,
                 # so get it onto the GPU.
@@ -598,7 +601,7 @@ class ImageBase(renpy.display.displayable.Displayable):
     obsolete = True
 
     obsolete_list = [ ]
-    mipmap = True
+    mipmap = None
 
     # If the image failed to load, a placeholder used to report the error.
     fail = None
@@ -614,11 +617,13 @@ class ImageBase(renpy.display.displayable.Displayable):
 
     def __init__(self, *args, **properties):
 
+        flat_properties = tuple(j for i in properties.items() for j in i)
+
         self.rle = properties.pop('rle', None)
         self.cache = properties.pop('cache', True)
         self.optimize_bounds = properties.pop('optimize_bounds', True)
         self.oversample = properties.pop('oversample', 1)
-        self.mipmap = properties.pop('mipmap', "auto")
+        self.mipmap = properties.pop('mipmap', None)
 
         if self.oversample <= 0:
             raise Exception("Image's oversample parameter must be greater than 0.")
@@ -626,7 +631,7 @@ class ImageBase(renpy.display.displayable.Displayable):
         properties.setdefault('style', 'image')
 
         super(ImageBase, self).__init__(**properties)
-        self.identity = (type(self).__name__,) + args
+        self.identity = (type(self).__name__,) + args + flat_properties
 
         if self.obsolete and renpy.game.context().init_phase:
             frame = sys._getframe(2)
@@ -2066,7 +2071,7 @@ def image(arg, loose=False, **properties):
     """
     :doc: im_image
     :name: Image
-    :args: (filename, *, optimize_bounds=True, oversample=1, dpi=96, mipmap="auto", **properties)
+    :args: (filename, *, optimize_bounds=True, oversample=1, dpi=96, mipmap=None, **properties)
 
     Loads an image from a file. `filename` is a
     string giving the name of the file.
@@ -2094,7 +2099,7 @@ def image(arg, loose=False, **properties):
     `mipmap`
         If this is "auto", then mipmaps are generated for the image only if the game is scaled down to less than
         75% of its default size. If this is True, mipmaps are always generated. If this is False, mipmaps are never
-        generated.
+        generated. If this is None, then the default is taken from config.mipmap.
     """
 
     """
