@@ -169,6 +169,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    :maxdepth: 1
    :caption: Engine Developer Documentation
 
+   documentation
    editor
    skins
    translating_renpy
