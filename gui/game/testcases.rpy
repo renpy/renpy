@@ -30,6 +30,9 @@
     "Unseen Text"
     "Unseen Text"
 
+    "Scene Changes"
+    "Scene Changes"
+
     "After Choices"
     "After Choices"
 
