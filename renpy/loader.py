@@ -34,6 +34,7 @@ import time
 import pathlib
 import importlib.machinery
 import importlib.abc
+import importlib.util
 
 from pygame_sdl2.rwobject import RWopsIO
 
@@ -960,12 +961,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         with load(module_info.filename, tl=False) as f:
             bindata = f.read()
 
-        try:
-            return bindata.decode()
-        except UnicodeError:
-            pass
-
-        return bindata.decode("latin-1")
+        return importlib.util.decode_source(bindata)
 
     def get_code(self, fullname: str):
         module_info = self._get_module_info(fullname)
