@@ -389,8 +389,6 @@ class Script(object):
                 else:
                     sort_key = parts[1]
 
-                print("SORT KEY", sort_key)
-
             if has_mods and fn.startswith("mods/"):
                 priority = 2
 
