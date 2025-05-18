@@ -979,9 +979,8 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
         # TODO: add bytecode handling?
 
-        source = self.get_source(fullname)
-        if source is None:
-            return None
+        with load(module_info.filename, tl=False) as f:
+            source = f.read()
 
         return self.source_to_code(source, filename)
 
