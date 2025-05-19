@@ -1302,11 +1302,13 @@ def interact():
                 if ctx.raw_audio_filter != c.raw_audio_filter:
                     c.set_audio_filter(ctx.raw_audio_filter, True)
 
-                if c.loop != filenames:
-                    c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
+                if not c.name in renpy.display.video.last_channel_movie:
 
-                if filenames:
-                    c.enqueue(filenames, loop=True, synchro_start=c.default_synchro_start, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)
+                    if c.loop != filenames:
+                        c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
+
+                    if filenames:
+                        c.enqueue(filenames, loop=True, synchro_start=c.default_synchro_start, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)
 
                 c.last_changed = ctx.last_changed
 
