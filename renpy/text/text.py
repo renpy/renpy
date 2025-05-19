@@ -1399,8 +1399,8 @@ class Layout(object):
                     ts.strikethrough = False
 
                 elif tag == "":
-                    style = getattr(renpy.store.style, value)
-                    push().take_style(style, self, "The %s style" % value)
+                    new_style = getattr(renpy.store.style, value)
+                    push().take_style(new_style, self, "The %s style" % value)
 
                 elif tag == "font":
                     value = renpy.config.font_name_map.get(value, value)
