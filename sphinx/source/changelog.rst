@@ -107,6 +107,9 @@ When creating a new game, Ren'Py will now include a .gitignore file that contain
 Text
 -----
 
+Ren'Py now supports OpenType font layout features, which can control things like ligaturization and other
+settings. These features are controlled by the :propref:`font_features` style property, and the :tt:`features` text tag.
+
 A problem with mark positions on ligatures has been fixed. This mainly affected
 Arabic, but applies to all text. Note that this fix is only available when using
 the Harfbuzz shaper.
@@ -127,8 +130,7 @@ directionality for the individual runs again.
 Other Features
 --------------
 
-Ren'Py now supports OpenType font layout features, which can control things like ligaturization and other
-settings. These features are controlled by the :propref:`font_features` style property, and the :tt:`features` text tag.
+:func:`MixerValue` now suports the `step` and `force_step` parameters.
 
 The lint report can be configured to expand character aliases to names by setting :var:`config.lint_show_names` to True.
 
