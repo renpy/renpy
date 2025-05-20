@@ -385,14 +385,17 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
         this corresponds only loosely to filenames (e.g. '3-2' for page 3, slot 2)
 
     `extra_info`
-        A string stored as the ``_save_name`` field in the save file’s metadata. This can be retrieved via :func:`renpy.slot_json(slotname)["_save_name"]`, :func:`FileJson(slotname)` (with ``key=None`` or ``key="_save_name"``), or as the ``extra_info`` field in :func:`renpy.list_saved_games`. It is typically used with the global :var:`save_name` variable (e.g., ``"Chapter 1"``). If empty, ``_save_name`` will be an empty string.
+        A string stored as the ``_save_name`` field in the save file’s metadata. This can be retrieved via
+        :func:`renpy.slot_json` (using the "_savename" key, :func:`FileJson` (with ``key=None`` or ``key="_save_name"``),
+        or as the ``extra_info`` field in :func:`renpy.list_saved_games`. It is typically used with the global
+        :var:`save_name` variable (e.g., ``"Chapter 1"``). If empty, ``_save_name`` will be an empty string.
 
     Example::
         $ save_name = "Chapter 1"
         $ renpy.save("1-1", extra_info=save_name)
 
     To store additional or complex metadata, use :var:`config.save_json_callbacks` to add custom fields to the metadata dictionary.
-        
+
     :func:`renpy.take_screenshot` should be called before this function.
     """
 
@@ -656,7 +659,7 @@ def list_saved_games(regexp=r'.', fast=False):
 
     `fast`
         If fast is true, only a list with matching filenames is returned instead of the list of tuples, making it equivalent to :func:`list_slots`
-    
+
     Unless ``fast=True``, returns a list of tuples, each containing:
     - The slot name (e.g., ``"1-1"``).
     - ``extra_info``, the ``_save_name`` field from the save file’s metadata, set by the ``extra_info`` argument of :func:`renpy.save`.
@@ -680,7 +683,7 @@ def list_saved_games(regexp=r'.', fast=False):
    - ``r"^\d+-\d+$"``: Matches manual saves (e.g., ``1-1``, ``2-3``).
    - ``r"^auto-\d+$"``: Matches autosaves (e.g., ``auto-1``, ``auto-2``).
    - ``r"^quick-\d+$"``: Matches quicksaves (e.g., ``quick-1``, ``quick-2``).
-        
+
     """
 
     # A list of save slots.

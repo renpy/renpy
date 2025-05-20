@@ -229,10 +229,12 @@ Ren'Py save files (e.g., ``1-1.save``) are compressed archives containing:
   - ``_game_runtime``: The number of seconds the game has been waiting on user input, as returned by :func:`renpy.get_game_runtime` at the time of saving.
   - ``_ctime``: The UNIX timestamp (seconds since the epoch) when the save was created.
   - ``_screenshot``: A displayable for the save’s screenshot, accessible via :func:`renpy.list_saved_games` or :func:`FileScreenshot`.
-  - Custom fields added via :var:`config.save_json_callbacks`, accessible only via :func:`renpy.slot_json`.
 
-The metadata is stored in a JSON-compatible format (strings, numbers, lists, etc.) but serialized using Python’s ``pickle`` module, not as a JSON string.
-When using ``_save_name`` (via :var:`save_name` or ``extra_info``), special characters like ``[]`` or ``{}``, may cause issues if they're interpreted directly by Ren'Py’s text parser in the save/load UI, causing errors or unexpected rendering. Use :var:`config.save_json_callbacks` to store complex metadata safely, or use ``substitute False`` when displaying it as :class:`Text`.
+The metadata is stored in JSON, and so is limited to values JSON can represent, like strings, numbers, lists, and dicts.
+When using ``_save_name`` (via :var:`save_name` or ``extra_info``), special characters like
+``[]`` or ``{}``, may cause issues if they're interpreted directly by Ren'Py’s text parser in the save/load UI,
+causing errors or unexpected rendering. Use :var:`config.save_json_callbacks` to store complex metadata safely,
+or use ``substitute False`` when displaying it as :class:`Text`.
 
 .. _save-functions:
 
