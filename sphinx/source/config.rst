@@ -1942,6 +1942,13 @@ Transition Control
 Translation
 -----------
 
+.. var:: config.clear_history_on_language_change = True
+
+    If True, the history is cleared when the language changes. This
+    is used to ensure that the history only contains strings that are
+    representable in the current font. If False, the history is kept
+    when the language changes.
+
 .. var:: config.default_language = None
 
     If not None, this should be a string giving the default language

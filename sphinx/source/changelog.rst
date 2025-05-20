@@ -130,6 +130,9 @@ directionality for the individual runs again.
 Other Features
 --------------
 
+The new :var:`config.clear_history_on_language_change` variable controls whether history is cleared when the
+language is changed.
+
 :func:`MixerValue` now suports the `step` and `force_step` parameters.
 
 The lint report can be configured to expand character aliases to names by setting :var:`config.lint_show_names` to True.

@@ -1550,6 +1550,11 @@ A callback that is called when an auto-voice prediction is made.
 These are called with the voice tag of the character.
 """
 
+clear_history_on_language_change: bool = True
+"""
+Should the history be cleared when the language changes?
+"""
+
 
 del os
 del collections
