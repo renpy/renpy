@@ -658,11 +658,10 @@ class ATLTransformBase(renpy.object.Object):
             # if name in (args_param_name, kwargs_param_name):
             #     pass
 
-            ## when positional-only parameters are enabled
-            # elif passed and (pkind == param.POSITIONAL_ONLY):
-            #     continue
+            if passed and (pkind == param.POSITIONAL_ONLY): # turn into elif when possible
+                continue
 
-            if passed: # turn into elif when possible
+            elif passed:
                 param = ValuedParameter(name, param.KEYWORD_ONLY, default=scope[name])
 
             elif param.has_default:
