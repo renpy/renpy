@@ -69,6 +69,16 @@ Mipmaps will automatically be created for images loaded for the purpose of Live2
 likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
 of :func:`Image`.
 
+Automatic Oversampling
+----------------------
+
+Ren'Py will now automatically look for oversampled version of images, and use those if the game is scaled up.
+
+As an example, take loading "eileen happy.png". When the game is scaled to more than 100% of it's virtual size,
+when loading "eileen happy.png", Ren'Py will also look for "eileen happy@2.png", and load that if it exists.
+When scaled to more than 200%, it will look for "eileen happy@4.png", "eileen happy@3.png", and
+"eileen happy@2.png". If none of these exist, it will use "eileen happy.png".
+
 Texture Uniforms
 ----------------
 

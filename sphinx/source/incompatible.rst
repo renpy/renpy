@@ -32,6 +32,14 @@ Mipmaps will automatically be created for images loaded for the purpose of Live2
 likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
 of :func:`Image`.
 
+**Automatic Oversamping** When Ren'Py is scaled up enough, it can search the image files for
+higher resolution images, and load those instead. See :ref:`automatic-oversampling` for more informaiton.
+This can be disabled with:
+
+    define config.automatic_oversampling = None
+
+As this can be useful for older games, and is unlikely to cause problems, automatic oversampling is
+left enabled when running older games.
 
 **Show expression.** The ``show expression`` statement has been changed so that::
 

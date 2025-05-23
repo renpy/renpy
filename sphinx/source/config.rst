@@ -351,6 +351,11 @@ Display
 
             config.adjust_view_size = force_integer_multiplier
 
+.. var:: config.automatic_oversampling = 4
+
+    The highest level of :ref:`automatic oversampling <automatic-oversampling>` that
+    Ren'Py will use. If None, automatic oversampling is disabled.
+
 .. var:: config.display_start_callbacks = [ ]
 
     This contains a list of functions that are called after Ren'Py

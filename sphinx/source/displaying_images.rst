@@ -154,6 +154,14 @@ can also be enabled by giving the `oversample` keyword argument to :func:`Image`
 A directory can also specify how much to oversample images inside it. For example,
 :file:`images/@2/eileen happy.png` will be oversampled 2x.
 
+.. _automatic-oversampling:
+
+If no oversampling is applied to an image, Ren'Py will attempt to automatically find
+oversampled images to use. For example, if the game is scaled by more than 1x and less than or exactly 2x,
+Ren'Py loading :file:`eileen happy.png` will look for :file:`eileen happy@2.png`, and use that if it exists. If the scaling
+is greater than 2x, Ren'Py will look for :file:`eileen happy @4.png`, :file:`eileen happy@3.png`, and :file:`eileen happy@2.png`,
+and use the first one that it finds, or :file:`eileen happy.png` if none of them exist.
+
 .. _image-statement:
 
 Image Statement

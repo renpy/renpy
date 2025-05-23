@@ -1555,6 +1555,12 @@ clear_history_on_language_change: bool = True
 Should the history be cleared when the language changes?
 """
 
+automatic_oversampling: int|None = 4
+"""
+The highest automatic oversampling level that will be used. If None, automatic
+oversampling is disabled.
+"""
+
 
 del os
 del collections

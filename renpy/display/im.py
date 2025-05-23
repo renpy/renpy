@@ -323,8 +323,8 @@ class Cache(object):
                 bounds = tuple(surf.get_bounding_rect())
                 bounds = expand_bounds(bounds, size, renpy.config.expand_texture_bounds)
 
-                if image.oversample > 1:
-                    bounds = ensure_bounds_divide_evenly(bounds, image.oversample)
+                if image.get_oversample() > 1:
+                    bounds = ensure_bounds_divide_evenly(bounds, image.get_oversample())
 
                 w = bounds[2]
                 h = bounds[3]
@@ -596,7 +596,10 @@ class ImageBase(renpy.display.displayable.Displayable):
     __version__ = 1
 
     optimize_bounds = False
-    oversample = 1
+
+    oversample = None
+    "How much to oversample the image by. None if not set."
+
     pixel_perfect = False
     obsolete = True
 
@@ -622,10 +625,10 @@ class ImageBase(renpy.display.displayable.Displayable):
         self.rle = properties.pop('rle', None)
         self.cache = properties.pop('cache', True)
         self.optimize_bounds = properties.pop('optimize_bounds', True)
-        self.oversample = properties.pop('oversample', 1)
+        self.oversample = properties.pop('oversample', None)
         self.mipmap = properties.pop('mipmap', None)
 
-        if self.oversample <= 0:
+        if self.oversample is not None and self.oversample <= 0:
             raise Exception("Image's oversample parameter must be greater than 0.")
 
         properties.setdefault('style', 'image')
@@ -662,9 +665,10 @@ class ImageBase(renpy.display.displayable.Displayable):
 
     def render(self, w, h, st, at):
         try:
-            return cache.get(self, render=True)
+            d = self.get_oversampled_image()
+            return cache.get(d, render=True)
         except Exception as e:
-            if renpy.config.raise_image_load_exceptions:
+            if renpy.config.raise_image_load_exceptions or True:
                 raise
 
             self.fail = renpy.text.text.Text(str(e), style="_image_error")
@@ -677,7 +681,7 @@ class ImageBase(renpy.display.displayable.Displayable):
             return super(ImageBase, self).get_placement()
 
     def predict_one(self):
-        renpy.display.predict.image(self)
+        renpy.display.predict.image(self.get_oversampled_image())
 
     def predict_files(self):
         """
@@ -700,7 +704,17 @@ class ImageBase(renpy.display.displayable.Displayable):
         Returns the oversample value for this image.
         """
 
-        return self.oversample
+        if self.oversample is None:
+            return 1
+        else:
+            return self.oversample
+
+    def get_oversampled_image(self):
+        """
+        Returns another image that contains an image that is the oversampled version of this image.
+        """
+
+        return self
 
 
 ignored_images = set()
@@ -742,6 +756,38 @@ class Image(ImageBase):
 
         self.const_size = not self.is_svg
 
+    def get_oversampled_image(self):
+        if renpy.config.automatic_oversampling is None:
+            return self
+
+        if self.is_svg or self.oversample is not None:
+            return self
+
+        if renpy.display.draw is None:
+            return self
+
+        draw_per_virt = renpy.display.draw.draw_per_virt
+
+        if draw_per_virt <= 1.0:
+            return self
+
+        max_oversample = 2 ** int(math.ceil(math.log2(draw_per_virt)))
+        max_oversample = min(max_oversample, renpy.config.automatic_oversampling)
+
+        base, _, ext = self.filename.rpartition(".")
+        base, _, extras = base.partition("@")
+
+        if extras:
+            extras = "," + extras
+
+        for i in range(max_oversample, 1, -1):
+            filename = f"{base}@{i}{extras}.{ext}"
+
+            if renpy.loader.loadable(filename, directory="images"):
+                return Image(filename)
+
+        return self
+
     def _repr_info(self):
         return repr(self.filename)
 
@@ -749,10 +795,12 @@ class Image(ImageBase):
         return renpy.loader.get_hash(self.filename)
 
     def get_oversample(self):
+        oversample = self.oversample or 1
+
         if self.is_svg:
-            return self.oversample * renpy.display.draw.draw_per_virt
+            return oversample * renpy.display.draw.draw_per_virt
         else:
-            return self.oversample
+            return oversample
 
     def load(self, unscaled=False):
 
