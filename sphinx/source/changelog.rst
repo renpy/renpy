@@ -79,8 +79,8 @@ when loading "eileen happy.png", Ren'Py will also look for "eileen happy@2.png",
 When scaled to more than 200%, it will look for "eileen happy@4.png", "eileen happy@3.png", and
 "eileen happy@2.png". If none of these exist, it will use "eileen happy.png".
 
-Ren'Py also supports oversampling and automatic oversampling for movies played using :class:`Movie`. This works
-similarly to images, with respect to filenames.
+Ren'Py also supports oversampling and automatic oversampling for movies played using :class:`Movie` and
+:func:`renpy.movie_cutscene`. This works similarly to images, with respect to filenames.
 
 Texture Uniforms
 ----------------

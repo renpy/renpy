@@ -80,17 +80,20 @@ def movie_start(filename, size=None, loops=0):
     renpy.audio.music.play(filename, channel='movie', loop=loop)
 
 
-movie_start_fullscreen = movie_start
-
-def movie_start_displayable(filename, size=None, loops=0):
+def movie_start_fullscreen(filename, size=None, loops=0):
     """
-    This starts a movie playing.
+    Starts a movie playing in fullscreen mode. This handles oversampling for
+    fullscreen movies.
     """
 
-    movie_start(filename, size, loops, oversample=False)
+    if isinstance(filename, str):
+        filename = find_oversampled_filename(filename)
+
+    movie_start(filename, size, loops)
 
 
 movie_start_displayable = movie_start
+
 
 # A map from a channel name to the movie texture that is being displayed
 # on that channel.
@@ -296,6 +299,32 @@ def render_movie(channel, width, height):
     return resize_movie(tex, width, height)
 
 
+def find_oversampled_filename(filename):
+    """
+    When automatic oversampling is enabled, this function will search the filename for an
+    oversampled movie.
+    """
+
+    if "@" not in filename and renpy.config.automatic_oversampling and renpy.display.draw and renpy.display.draw.draw_per_virt > 1.0:
+
+        max_oversample = 2 ** int(math.ceil(math.log2(renpy.display.draw.draw_per_virt)))
+        max_oversample = min(max_oversample, renpy.config.automatic_oversampling)
+
+        base, _, ext = filename.rpartition(".")
+        base, _, extras = base.partition("@")
+
+        if extras:
+            extras = "," + extras
+
+        for i in range(max_oversample, 1, -1):
+            new_filename = f"{base}@{i}{extras}.{ext}"
+
+            if Movie.any_loadable(new_filename):
+                filename = new_filename
+                break
+
+    return filename
+
 def find_oversampled(new, filename):
     """
     This is used by default_play_callback to find the oversampled version of a video, to
@@ -307,25 +336,9 @@ def find_oversampled(new, filename):
         oversample = 1.0
     else:
 
+        filename = find_oversampled_filename(filename)
+
         oversample = 1.0
-
-        if "@" not in filename and renpy.config.automatic_oversampling and renpy.display.draw and renpy.display.draw.draw_per_virt > 1.0:
-
-            max_oversample = 2 ** int(math.ceil(math.log2(renpy.display.draw.draw_per_virt)))
-            max_oversample = min(max_oversample, renpy.config.automatic_oversampling)
-
-            base, _, ext = filename.rpartition(".")
-            base, _, extras = base.partition("@")
-
-            if extras:
-                extras = "," + extras
-
-            for i in range(max_oversample, 1, -1):
-                new_filename = f"{base}@{i}{extras}.{ext}"
-
-                if new.any_loadable(new_filename):
-                    filename = new_filename
-                    break
 
         if "@" in filename:
             if filename[0] == "<":
