@@ -668,7 +668,7 @@ class ImageBase(renpy.display.displayable.Displayable):
             d = self.get_oversampled_image()
             return cache.get(d, render=True)
         except Exception as e:
-            if renpy.config.raise_image_load_exceptions or True:
+            if renpy.config.raise_image_load_exceptions:
                 raise
 
             self.fail = renpy.text.text.Text(str(e), style="_image_error")
