@@ -384,8 +384,8 @@ cdef class Live2DModel:
         cdef Render rv
 
         shaders = ("renpy.texture", "live2d.flip_texture", "live2d.colors")
-        mask_shaders = ("live2d.mask", "live2d.flip_texture")
-        inverted_mask_shaders = ("live2d.inverted_mask", "live2d.flip_texture")
+        mask_shaders = ("-renpy.texture", "live2d.mask", "live2d.flip_texture")
+        inverted_mask_shaders = ("-renpy.texture", "live2d.inverted_mask", "live2d.flip_texture")
 
         csmUpdateModel(self.model)
 
