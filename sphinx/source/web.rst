@@ -134,6 +134,8 @@ in the base directory of your project. This image must have a minimum resolution
 512x512 and its width and height must be equal.
 If no custom image is given, the default Ren'Py icon is used.
 
+.. _progressive-downloading:
+
 Progressive Downloading
 -----------------------
 

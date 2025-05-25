@@ -823,6 +823,11 @@ Media (Music, Sound, and Video)
     wav files are of a lower rate, changing this to that rate may make
     things more efficient.
 
+.. var:: config.web_unload_music = None
+
+    If not None, this should be an number of seconds. Music downloaded as part of
+    :ref:`progressive downloading <progressive-downloading>` will be unloaded after this number of seconds.
+
 .. var:: config.web_video_base = "./game"
 
     When playing a movie in the web browser, this is a URL that
@@ -832,13 +837,6 @@ Media (Music, Sound, and Video)
 
     This allows large movie files to be hosted on a different server
     than the rest of the game.
-..
-    Lez's comment: This is a TODO variable, look bottom of _audio.js
-    .. var:: config.web_video_prompt = _("Touch to play the video.")
-
-        On Mobile Safari on iOS, by default, the player will need to click to play
-        a movie with sound. This variable gives the message that's used to prompt
-        players to click.
 
 .. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mpeg", ... ]
 

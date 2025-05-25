@@ -1561,6 +1561,11 @@ The highest automatic oversampling level that will be used. If None, automatic
 oversampling is disabled.
 """
 
+web_unload_music: float|None = None
+"""
+If not None, the time in seconds before the music is unloaded when downloaded as part of a web build.
+"""
+
 
 del os
 del collections

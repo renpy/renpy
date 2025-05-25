@@ -143,6 +143,9 @@ directionality for the individual runs again.
 Other Features
 --------------
 
+The new :var:`config.web_unload_music` variable controls whether music is unloaded when downloaded as part
+of :ref:`progressive downloading <progressive-downloading>`.
+
 The new :var:`config.clear_history_on_language_change` variable controls whether history is cleared when the
 language is changed.
 

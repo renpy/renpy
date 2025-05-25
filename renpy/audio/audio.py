@@ -615,6 +615,13 @@ class Channel(object):
 
             self.paused = want_pause
 
+        # Ensure the music won't be unloaded while playing.
+        for i in self.queue:
+            renpy.webloader.extend(self.split_filename(i.filename, i.loop)[0])
+
+        for i in self.loop:
+            renpy.webloader.extend(self.split_filename(i, True)[0])
+
     def dequeue(self, even_tight=False):
         """
         Clears the queued music.

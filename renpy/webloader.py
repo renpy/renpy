@@ -230,12 +230,17 @@ def process_downloaded_resources():
 
                     # mark for deletion
                     fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
-                    to_unlink[fullpath] = time.time()
+                    to_unlink[fullpath] = time.time() + 10
 
                 elif rr.rtype == 'music':
                     # - just wait for the 0.5s placeholder to finish,
                     #   will be reloaded on sound loop
-                    # - no unlink
+
+                    if renpy.config.web_unload_music:
+                        # mark for deletion
+                        fullpath = os.path.join(renpy.config.gamedir, rr.relpath)
+                        to_unlink[fullpath] = time.time() + renpy.config.web_unload_music
+
                     pass
 
                 elif rr.rtype == 'voice':
@@ -265,6 +270,9 @@ def extend(relpath):
     """
     Extends the unlink time so that the file is not removed from the cache.
     """
+
+    if not renpy.emscripten:
+        return
 
     fullpath = os.path.join(renpy.config.gamedir, relpath)
 
