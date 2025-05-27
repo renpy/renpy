@@ -100,7 +100,7 @@ class Style(object):
     def __init__(self, name):
         self.name = name
 
-        properties['', True].add(self.name)
+        properties['', True].add(name)
 
         if parser:
             parser.add(self)
@@ -115,13 +115,21 @@ class PrefixStyle(object):
         self.prefix = prefix
         self.name = name
 
-        properties[prefix, True].add(self.name)
+        properties[prefix, True].add(name)
+        update_incompatible_props(prefix, name)
 
         if parser:
             parser.add(self)
 
 
-from renpy.styledata.stylesets import proxy_properties as incompatible_props
+from renpy.styledata.stylesets import proxy_properties
+
+incompatible_props = proxy_properties.copy()
+
+def update_incompatible_props(prefix, prop):
+    res = incompatible_props.get(prop, None)
+    if res is not None:
+        incompatible_props[prefix + prop] = frozenset(prefix + p for p in res)
 
 def check_incompatible_props(new, olds):
     """

@@ -69,11 +69,11 @@ class Prefix(object):
         # A list of prefix indexes that should be updated when this prefix is
         # updated, including this prefix.
         if index >= 0:
-            self.alts = [ self.index ]
-            self.alt_names = [ self.name ]
+            self.alts = [index]
+            self.alt_names = [name]
         else:
-            self.alts = [ ]
-            self.alt_names = [ ]
+            self.alts = []
+            self.alt_names = []
 
         for i in alts:
             self.alts.append(prefixes[i].index)
@@ -638,12 +638,12 @@ def generate_sets():
     ap = collections.OrderedDict()
 
     for k, v in all_properties.items():
-        ap[k] = [ i[0] for i in v ]
+        ap[k] = [i[0] for i in v]
 
     proxy_property_code = "{"
 
     for p, l in synthetic_properties.items():
-        proxy_property_code += '"{}" : frozenset({}),'.format(p, [ el[0] for el in l ])
+        proxy_property_code += '"{}" : frozenset({}),'.format(p, [el[0] for el in l])
 
     proxy_property_code += "}"
 
