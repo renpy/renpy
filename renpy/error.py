@@ -1196,6 +1196,10 @@ def compute_closest_value(value: str, values: list[str]) -> str | None:
 
 
 def handle_attribute_error(exception: AttributeError):
+    # Manually created, e.g. AttributeError(..., name=None)
+    if exception.name is None:
+        return None
+
     try:
         d = dir(exception.obj)
     except Exception:
@@ -1219,6 +1223,10 @@ def handle_attribute_error(exception: AttributeError):
 
 
 def handle_name_error(exception: NameError):
+    # Manually created NameError(..., name=None)
+    if exception.name is None:
+        return None
+
     # find most recent frame
     tb = exception.__traceback__
     if tb is None:
