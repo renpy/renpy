@@ -1202,13 +1202,15 @@ class Transform(Container):
                 xanchor = absolute.compute_raw(xanchor, cw)
                 yanchor = absolute.compute_raw(yanchor, ch)
 
-                xanchor -= cw / 2.0
-                yanchor -= ch / 2.0
+                if self.reverse is not None:
 
-                xanchor, yanchor = self.reverse.transform(xanchor, yanchor)
+                    xanchor -= cw / 2.0
+                    yanchor -= ch / 2.0
 
-                xanchor += rw / 2.0
-                yanchor += rh / 2.0
+                    xanchor, yanchor = self.reverse.transform(xanchor, yanchor)
+
+                    xanchor += rw / 2.0
+                    yanchor += rh / 2.0
 
                 xanchor = absolute(xanchor)
                 yanchor = absolute(yanchor)
