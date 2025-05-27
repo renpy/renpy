@@ -218,6 +218,8 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 Other Changes
 -------------
 
+A regression that kept "Add From to Calls" from working has been fixed.
+
 On the web platform, Ren'Py will now preload automatic voice lines, ensuring the files can play immediately,
 even if not fully cached on the player's device.
 
