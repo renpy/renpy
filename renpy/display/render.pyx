@@ -1058,6 +1058,8 @@ cdef class Render:
                     newchild.width = cw
                     newchild.height = ch
                     newchild.render_of = child.render_of[:]
+                    newchild.xclipping = child.xclipping
+                    newchild.yclipping = child.yclipping
 
                 else:
 
