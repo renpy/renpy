@@ -679,10 +679,10 @@ def list_saved_games(regexp=r'.', fast=False):
 
    Useful Regular Expressions:
 
-   - ``r"^(\d+|auto|quick)-\d+$"``: Matches all manual (e.g., ``1-1``), auto (e.g., ``auto-1``), and quick (e.g., ``quick-1``) saves. Intentionally listing the types you need avoids encountering built-in save types like ``_reload-1``
-   - ``r"^\d+-\d+$"``: Matches manual saves (e.g., ``1-1``, ``2-3``).
-   - ``r"^auto-\d+$"``: Matches autosaves (e.g., ``auto-1``, ``auto-2``).
-   - ``r"^quick-\d+$"``: Matches quicksaves (e.g., ``quick-1``, ``quick-2``).
+   - ``r"^(\\d+|auto|quick)-\\d+$"``: Matches all manual (e.g., ``1-1``), auto (e.g., ``auto-1``), and quick (e.g., ``quick-1``) saves. Intentionally listing the types you need avoids encountering built-in save types like ``_reload-1``
+   - ``r"^\\d+-\\d+$"``: Matches manual saves (e.g., ``1-1``, ``2-3``).
+   - ``r"^auto-\\d+$"``: Matches autosaves (e.g., ``auto-1``, ``auto-2``).
+   - ``r"^quick-\\d+$"``: Matches quicksaves (e.g., ``quick-1``, ``quick-2``).
 
     """
 
