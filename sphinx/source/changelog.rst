@@ -143,6 +143,9 @@ directionality for the individual runs again.
 Other Features
 --------------
 
+The new :func:`renpy.get_save_data` function allows you to retrieve the data for a particular save slot,
+without loading the save.
+
 The new :var:`config.web_unload_music` variable controls whether music is unloaded when downloaded as part
 of :ref:`progressive downloading <progressive-downloading>`.
 

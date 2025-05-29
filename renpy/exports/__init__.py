@@ -191,6 +191,7 @@ from renpy.loadsave import (
     can_load,
     copy_save,
     force_autosave,
+    get_save_data,
     list_saved_games,
     list_slots,
     load,

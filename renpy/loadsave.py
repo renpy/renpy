@@ -865,8 +865,25 @@ def load(filename):
         return
 
     roots, log = loads(log_data)
+
     log.unfreeze(roots, label="_after_load")
 
+def get_save_data(filename):
+    """
+    :doc: loadsave
+
+    This loads a game's data from the save slot `filename` (e.g. '3-2' for page 3, slot 2), without
+    actually changing the game state. It returns a dictionary containing variable names relative to
+    the default store, mapped to the value of those variables at the time of the save.
+    """
+    log_data, signature = location.load(filename)
+
+    if not renpy.savetoken.check_load(log_data, signature):
+        return
+
+    roots, log = loads(log_data)
+
+    return { k[6:]: v for k, v in roots.items() if k.startswith("store.") }
 
 def unlink_save(filename):
     """
