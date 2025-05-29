@@ -236,6 +236,23 @@ When using ``_save_name`` (via :var:`save_name` or ``extra_info``), special char
 causing errors or unexpected rendering. Use :var:`config.save_json_callbacks` to store complex metadata safely,
 or use ``substitute False`` when displaying it as :class:`Text`.
 
+Traceback Saves
+---------------
+
+If possible, Ren'Py creates saves when an uncaught exception occurs, containing both the game
+state and the traceback. These saves are stored in slots with the name :file:`_tracesave-1` to
+:file:`_tracesave-10`. In these files, the traceback is stored in the file metadata, and can be retrieved
+with::
+
+    traceback = renpy.slot_json("_tracesave-1")["_traceback"]
+
+It's also possible to use :func:`renpy.get_save_data` to retrieve the variables the game used when the
+traceback save was created.
+
+The new :func:`renpy.get_save_data` function allows you to retrieve the data for a particular save slot,
+without loading the save. This can be used with a traceback save to retrieve the game data without loading
+into an error state.
+
 .. _save-functions:
 
 Save Functions and Variables

@@ -1762,6 +1762,12 @@ def report_exception(e: Exception, editor=True) -> TracebackException:
         except Exception:
             pass
 
+        try:
+            renpy.loadsave.cycle_saves("_tracesave-", 10)
+            renpy.loadsave.save("_tracesave-1", extra_json={ "_traceback" : te.full })
+        except Exception:
+            pass
+
     except Exception:
         te.traceback_fn = os.path.join(renpy.config.basedir, "traceback.txt")
 

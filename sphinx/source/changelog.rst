@@ -139,12 +139,20 @@ the Harfbuzz text shaper introduced in ``8.3.7`` has been fixed. Text containing
 runs of both LTR and RTL characters will now render with the correct
 directionality for the individual runs again.
 
+Traceback Saves
+---------------
+
+If possible, Ren'Py now creates saves when an uncaught exception occurs, containing both the game
+state and the traceback. These saves are stored in slots with the name :file:`_tracesave-1` to :file:`_tracesave-10`.
+and have the traceback accessible through the json metadata.
+
+The new :func:`renpy.get_save_data` function allows you to retrieve the data for a particular save slot,
+without loading the save. This can be used with a traceback save to retrieve the game data without loading
+into an error state.
+
 
 Other Features
 --------------
-
-The new :func:`renpy.get_save_data` function allows you to retrieve the data for a particular save slot,
-without loading the save.
 
 The new :var:`config.web_unload_music` variable controls whether music is unloaded when downloaded as part
 of :ref:`progressive downloading <progressive-downloading>`.

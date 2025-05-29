@@ -373,10 +373,10 @@ class SaveRecord(object):
         self.first_filename = filename
 
 
-def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
+def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True, extra_json=None):
     """
     :doc: loadsave
-    :args: (filename, extra_info='')
+    :args: (filename, extra_info='', *, extra_json=None)
 
     Saves the game to the slot identified by `filename`.
 
@@ -389,6 +389,10 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
         :func:`renpy.slot_json` (using the "_savename" key, :func:`FileJson` (with ``key=None`` or ``key="_save_name"``),
         or as the ``extra_info`` field in :func:`renpy.list_saved_games`. It is typically used with the global
         :var:`save_name` variable (e.g., ``"Chapter 1"``). If empty, ``_save_name`` will be an empty string.
+
+    `extra_json`
+        A dictionary of additional metadata to be stored in the save file. This is merged with the default metadata
+        and the metadata from :var:`config.save_json_callbacks`.
 
     Example::
         $ save_name = "Chapter 1"
@@ -449,6 +453,9 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True):
 
     for i in renpy.config.save_json_callbacks:
         i(json)
+
+    if extra_json is not None:
+        json.update(extra_json)
 
     json = json_dumps(json)
 
