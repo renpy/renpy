@@ -54,6 +54,10 @@ Ren'Py store (rather than in an isolated module), and the Python code is subject
 to the transformations that enable rollback and save/load to work - see
 :doc:`python` and :ref:`rollback`.
 
+Modular counterpart
+-------
+Replacing \_ren.py with \_rem.py turns the regular script file into a loadable module.
+
 Example
 -------
 
