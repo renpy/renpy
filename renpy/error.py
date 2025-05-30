@@ -94,7 +94,7 @@ class ExceptionPrintContext(abc.ABC):
         if filename and filename[0] == "<" and filename[-1] == ">":
             return True
 
-        if filename.endswith((".rpy", ".rpym", "_ren.py")):
+        if filename.endswith((".rpy", ".rpym", "_ren.py", "_rem.py")):
             # TODO: Make it more robust by is_relative_to check.
             return filename.startswith(("renpy/common/", "game/libs/"))
         elif filename.endswith(".py"):
@@ -460,7 +460,7 @@ def normalize_renpy_line_offset(filename: str, linenumber: int, offset: int, lin
     """
 
     # Correct extra offset from _ren.py transformation.
-    if filename.endswith("_ren.py"):
+    if filename.endswith(("_ren.py", "_rem.py")):
         from renpy.lexer import ren_py_to_rpy_offsets
         with open(filename, "r", encoding="utf-8") as f:
             lines = f.readlines()  # TODO: optimize this block?

@@ -290,6 +290,13 @@ class Script(object):
             elif fn.endswith(".rpyc"):
                 fn = fn[:-5]
                 target = script_files
+            
+            elif fn.endswith("_rem.py"):
+                if dir is None:
+                    continue
+
+                fn = fn[:-7]
+                target = module_files
 
             elif fn.endswith(".rpym"):
                 if dir is None:
@@ -458,7 +465,7 @@ class Script(object):
         fn, dir = files[0] # @ReservedAssignment
         initcode = [ ]
 
-        self.load_appropriate_file(".rpymc", [ ".rpym" ], dir, fn, initcode)
+        self.load_appropriate_file(".rpymc", [ "_rem.py", ".rpym" ], dir, fn, initcode)
 
         if renpy.parser.report_parse_errors():
             raise SystemExit(-1)
@@ -793,7 +800,7 @@ class Script(object):
 
         try:
 
-            if fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith("_ren.py"):
+            if fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith("_ren.py") or fn.endswith("_rem.py"):
 
                 if not dir:
                     raise Exception("Cannot load rpy/rpym/ren.py file %s from inside an archive." % fn)
@@ -806,6 +813,9 @@ class Script(object):
                 if fn.endswith("_ren.py"):
                     rpycfn = fullfn[:-7] + ".rpyc"
                     oldrpycfn = olddir + "/" + fn[:-7] + ".rpyc"
+                elif fn.endswith("_rem.py"):
+                    rpycfn = fullfn[:-7] + ".rpymc"
+                    oldrpycfn = olddir + "/" + fn[:-7] + ".rpymc"
                 else:
                     rpycfn = fullfn + "c"
                     oldrpycfn = olddir + "/" + fn + "c"
