@@ -16,6 +16,18 @@ names can lead to obscure problems.
 
 .. include:: inc/reserved_builtins
 
+The following are reserved names imported from the Python
+`typing <https://docs.python.org/3/library/typing.html>`_  module into all Ren'Py stores.
+
+* Any
+* Callable
+* Literal
+* Self
+* cast
+* final
+* overload
+* override
+
 The following is a list of names that are used by Ren'Py. While in some
 cases it makes sense to redefine these names, one should be aware that doing
 so can cause obscure problems.

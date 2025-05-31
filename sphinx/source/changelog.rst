@@ -229,6 +229,9 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 Other Changes
 -------------
 
+From the Python typing module, the names Callable, Any, Self, Literal, cast, overload, final, and override are imported
+into namespaces. These become reserved names in Ren'Py, and should not be used as names in newly-developed projects.
+
 A regression that kept "Add From to Calls" from working has been fixed.
 
 On the web platform, Ren'Py will now preload automatic voice lines, ensuring the files can play immediately,
