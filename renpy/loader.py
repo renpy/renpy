@@ -901,7 +901,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         self._finder_cache = dict(self._visit_dir(files=(
             fn for _, fn in game_files
             if fn.endswith(".py")
-            if not fn.endswith(("_ren.py", "_rem.py")))))
+            if not fn.endswith(("_ren.py", "_rpym.py")))))
         return self._finder_cache
 
     def _get_module_info(self, fullname: str) -> _ModuleInfo | None:

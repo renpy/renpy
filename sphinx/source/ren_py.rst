@@ -56,10 +56,10 @@ to the transformations that enable rollback and save/load to work - see
 
 Modular counterpart
 -------
-Replacing \_ren.py with \_rem.py turns the regular script file into a loadable module.
-So, if you want to load `path/to/some_module_rem.py`, you can do it as follows::
+Replacing \_ren.py with \_rpym.py turns the regular script file into a loadable module.
+So, if you want to load `path/to/some_module_rpym.py`, you can do it as follows::
 
-    renpy.load_module('path/to/some_module') # _rem.py suffix would be redundant
+    renpy.load_module('path/to/some_module') # _rpym.py suffix would be redundant
 
 Example
 -------

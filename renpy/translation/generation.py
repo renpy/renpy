@@ -230,8 +230,8 @@ def translation_filename(s):
 
     if filename.endswith("_ren.py"):
         filename = filename[:-7] + ".rpy"
-    elif filename.endswith("_rem.py"):
-        filename = filename[:-7] + ".rpy"
+    elif filename.endswith("_rpym.py"):
+        filename = filename[:-8] + ".rpy"
 
     if filename[-1] == "m":
         filename = filename[:-1]
@@ -450,7 +450,7 @@ def translate_list_files():
 
         filename = os.path.join(dirname, filename)
 
-        if not filename.endswith((".rpy", ".rpym", "_ren.py", "_rem.py")):
+        if not filename.endswith((".rpy", ".rpym", "_ren.py", "_rpym.py")):
             continue
 
         filename = os.path.normpath(filename)
