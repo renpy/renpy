@@ -800,7 +800,7 @@ class Script(object):
 
         try:
 
-            if fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith("_ren.py") or fn.endswith("_rem.py"):
+            if fn.endswith((".rpy", ".rpym", "_ren.py", "_rem.py")):
 
                 if not dir:
                     raise Exception("Cannot load rpy/rpym/ren.py file %s from inside an archive." % fn)

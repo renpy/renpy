@@ -450,7 +450,7 @@ def translate_list_files():
 
         filename = os.path.join(dirname, filename)
 
-        if not (filename.endswith(".rpy") or filename.endswith(".rpym") or filename.endswith("_ren.py") or filename.endswith("_rem.py")):
+        if not filename.endswith((".rpy", ".rpym", "_ren.py", "_rem.py")):
             continue
 
         filename = os.path.normpath(filename)
