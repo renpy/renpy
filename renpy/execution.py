@@ -626,7 +626,7 @@ class Context(renpy.object.Object):
                 force_rollback = False
 
             # Force a new rollback to start to match things in the forward log.
-            if renpy.game.log.forward and renpy.game.log.forward[0][0] == node.name:
+            if renpy.game.log.forward and renpy.game.log.forward[0].name == node.name:
                 update_rollback = True
                 force_rollback = True
 
