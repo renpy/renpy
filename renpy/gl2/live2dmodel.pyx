@@ -191,6 +191,8 @@ cdef class Live2DModel:
 
     cdef list meshes
 
+    cdef object filename
+
     _types = """
         parameters : dict[str, Parameter]
         parts : dict[str, Part]
@@ -204,6 +206,8 @@ cdef class Live2DModel:
         """
 
         cdef int i
+
+        self.filename = fn
 
         with renpy.loader.load(fn, directory="images") as f:
             data = f.read()
@@ -281,6 +285,13 @@ cdef class Live2DModel:
         self.parameter_groups = { }
 
         csmUpdateModel(self.model)
+
+    def __repr__(self):
+        """
+        Returns a string representation of the model.
+        """
+
+        return f"<Live2DModel {self.filename}>"
 
     def reset_parameters(self):
         """
