@@ -305,7 +305,7 @@ class Channel(object):
         # Are we paused?
         self.paused = None
 
-        if default_loop is None:
+        if default_loop is NotSet:
             # By default, should we loop the music?
             self.default_loop = True
             # Was this set explicitly?
@@ -867,7 +867,7 @@ channels = { }
 
 def register_channel(name,
                      mixer=None,
-                     loop=None,
+                     loop=NotSet,
                      stop_on_mute=True,
                      tight=False,
                      file_prefix="",
@@ -898,7 +898,8 @@ def register_channel(name,
         mixers reachable by the player requires changing the preferences screens.
 
     `loop`
-        If true, sounds on this channel loop by default.
+        If True or None, sounds on this channel loop by default. If False, sounds on
+        this channel do not loop by default.
 
     `stop_on_mute`
         If true, music on the channel is stopped when the channel is muted.
