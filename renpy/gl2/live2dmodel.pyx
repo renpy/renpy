@@ -557,7 +557,7 @@ cdef class Live2DModel:
                 m = multi_masks.get(key, None)
 
                 if m is None:
-                    m = renpy.display.render.Render(ppu * 2, ppu * 2)
+                    m = renpy.display.render.Render(w, h)
 
                     for j in key:
                         m.blit(mask_renders[j], (0, 0))
