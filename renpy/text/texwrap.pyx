@@ -198,6 +198,14 @@ cdef class WordWrapper(object):
             if g.ruby == RUBY_ALT:
                 continue
 
+            if g.split == SPLIT_IGNORE:
+                ignored += g.advance
+                continue
+
+            else:
+                x += g.advance + ignored
+                ignored = 0
+
             if g.split == SPLIT_INSTEAD:
                 word.glyph = <void *> start_glyph
                 word.start_x = start_x
@@ -218,11 +226,6 @@ cdef class WordWrapper(object):
                 start_x = x
                 start_glyph = g
 
-            if g.split == SPLIT_IGNORE:
-                ignored += g.advance
-            else:
-                x += g.advance + ignored
-                ignored = 0
 
         x += ignored
 
