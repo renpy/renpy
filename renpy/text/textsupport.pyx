@@ -26,6 +26,13 @@ import renpy
 
 include "linebreak.pxi"
 
+split_name = {
+    SPLIT_NONE: "SPLIT_NONE",
+    SPLIT_BEFORE: "SPLIT_BEFORE",
+    SPLIT_INSTEAD: "SPLIT_INSTEAD",
+    SPLIT_IGNORE: "SPLIT_IGNORE",
+}
+
 cdef class Glyph:
 
     def __cinit__(self):
@@ -43,9 +50,9 @@ cdef class Glyph:
 
     def __repr__(self):
         if self.variation == 0:
-            return "<Glyph {0!r} time={1}>".format(self.character, self.time)
+            return f"<Glyph U+{self.character:4x} {chr(self.character)} time={self.time} {split_name[self.split]}>"
         else:
-            return "<Glyph {0!r} vs={1} time={2}>".format(self.character, self.variation, self.time)
+            return f"<Glyph U+{self.character:4x} {chr(self.character)} vs={self.variation} time={self.time} {split_name[self.split]}>"
 
     _types = """
         x: int
