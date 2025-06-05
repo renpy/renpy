@@ -1425,7 +1425,11 @@ class ADVCharacter(object):
 
         # 7.4.5 on.
         else:
-            return (sub(prefix) + sub(body) + sub(suffix))
+            if thing == "what":
+                return (sub(prefix) + sub(body, translate=not renpy.game.preferences.language) + sub(suffix))
+            else:
+                return (sub(prefix) + sub(body) + sub(suffix))
+
 
     def __call__(self, what, interact=True, _call_done=True, multiple=None, **kwargs):
 
