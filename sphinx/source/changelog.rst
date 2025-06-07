@@ -154,6 +154,9 @@ into an error state.
 Other Features
 --------------
 
+The new :func:`HasSideImage` function returns the presence or absence of a side image before the side image
+itself is determined, making it useable in the say screen for layout.
+
 The new :var:`config.web_unload_music` variable controls whether music is unloaded when downloaded as part
 of :ref:`progressive downloading <progressive-downloading>`.
 
