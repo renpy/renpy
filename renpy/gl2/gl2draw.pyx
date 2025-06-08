@@ -1544,8 +1544,8 @@ cdef class GL2DrawingContext:
             new_clip_polygon = Polygon.rectangle(0, 0, r.width, r.height)
 
             if self.clip_polygon is not None:
-                clip_polygon = new_clip_polygon.intersect(self.clip_polygon)
-                if clip_polygon is None:
+                self.clip_polygon = new_clip_polygon.intersect(self.clip_polygon)
+                if self.clip_polygon is None:
                     return
             else:
                 self.clip_polygon = new_clip_polygon
