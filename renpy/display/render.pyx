@@ -1021,23 +1021,25 @@ cdef class Render:
                     if child.xclipping:
                         end = min(cw, cbx+bw)
                         cbx = max(0, cbx)
-                        bw = end - cbx
+                        cbw = end - cbx
 
                         cropw = cw
                     else:
                         cropw = w - xo
+                        cbw = bw
 
                     if child.yclipping:
                         end = min(ch, cby+bh)
                         cby = max(0, cby)
-                        bh = end - cby
+                        cbh = end - cby
 
                         croph = ch
                     else:
                         croph = h - yo
+                        cbh = bh
 
                     crop = (cx, cy, cropw, croph)
-                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel, bounds=(cbx, cby, bw, bh))
+                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel, bounds=(cbx, cby, cbw, cbh))
                     newchild.render_of = child.render_of[:]
                     newchild.xclipping = child.xclipping or newchild.xclipping
                     newchild.yclipping = child.yclipping or newchild.yclipping
