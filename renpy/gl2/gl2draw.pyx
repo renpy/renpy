@@ -1321,6 +1321,7 @@ cdef class GL2Draw:
 
         return (x, y)
 
+BIG_PIXELS = 65536 # Chosen to be bigger than any reasonable screen size, to limit
 
 cdef class GL2DrawingContext:
     """
@@ -1541,7 +1542,11 @@ cdef class GL2DrawingContext:
 
         # Handle clipping.
         if (r.xclipping or r.yclipping):
-            new_clip_polygon = Polygon.rectangle(0, 0, r.width, r.height)
+            new_clip_polygon = Polygon.rectangle(
+                0 if r.xclipping else -BIG_PIXELS,
+                0 if r.yclipping else -BIG_PIXELS,
+                r.width if r.xclipping else BIG_PIXELS,
+                r.height if r.yclipping else BIG_PIXELS)
 
             if self.clip_polygon is not None:
                 self.clip_polygon = new_clip_polygon.intersect(self.clip_polygon)
