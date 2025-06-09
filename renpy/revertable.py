@@ -447,6 +447,8 @@ class RevertableObject(object):
             raise TypeError("Classes with __slots__ do not support rollback. "
                             "To create a class with slots, inherit from python_object instead.")
 
+        super().__init_subclass__()
+
     __setattr__ = mutator(object.__setattr__)
     __delattr__ = mutator(object.__delattr__)
 
