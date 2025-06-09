@@ -1566,6 +1566,10 @@ web_unload_music: float|None = None
 If not None, the time in seconds before the music is unloaded when downloaded as part of a web build.
 """
 
+mesh_pad_compat: bool = False
+"""
+Should mesh pad work the way it did before 8.4? (That is, it shifts things to the right/down by pad_left/pad_top.)
+"""
 
 del os
 del collections

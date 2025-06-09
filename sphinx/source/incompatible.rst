@@ -60,6 +60,10 @@ when a label is defined. To revert to the old behavior of not calling config.lab
 
     define config.cds_label_callbacks = False
 
+**Mesh Padding** The behavior of :tpref:`mesh_pad` has been changed when left or top padding is present. Previously, this would
+offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
+left and top of the child.
+
 
 .. _incompatible-8.3.4:
 .. _incompatible-7.8.4:

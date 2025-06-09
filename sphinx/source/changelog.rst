@@ -151,8 +151,8 @@ without loading the save. This can be used with a traceback save to retrieve the
 into an error state.
 
 
-Other Features
---------------
+Features
+--------
 
 The new :func:`HasSideImage` function returns the presence or absence of a side image before the side image
 itself is determined, making it useable in the say screen for layout.
@@ -229,8 +229,12 @@ inside for translation.
 The :var:`config.persistent_callback` callback makes it possible to update persistent data when it is loaded.
 
 
-Other Changes
--------------
+Changes
+-------
+
+The behavior of :tpref:`mesh_pad` has been changed when left or top padding is present. Previously, this would
+offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
+left and top of the child.
 
 From the Python typing module, the names Callable, Any, Self, Literal, cast, overload, final, and override are imported
 into namespaces. These become reserved names in Ren'Py, and should not be used as names in newly-developed projects.
