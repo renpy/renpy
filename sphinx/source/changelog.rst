@@ -232,6 +232,9 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 Changes
 -------
 
+:class:`Transform` now has an attribute, original_child, that gives the child of the transform before the
+function was called.
+
 The behavior of :tpref:`mesh_pad` has been changed when left or top padding is present. Previously, this would
 offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
 left and top of the child.

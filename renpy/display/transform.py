@@ -734,6 +734,8 @@ class Transform(Container):
     # Default before we set this.
     child_size = (0, 0)
 
+    original_child = None
+
     def __init__(self,
                  child=None,
                  function=None,
@@ -760,6 +762,9 @@ class Transform(Container):
         child = renpy.easy.displayable_or_none(child)
         if child is not None:
             self.add(child)
+
+        self.original_child: renpy.display.displayable.Displayable = child
+        "The child that was passed to the constructor."
 
         self.state = TransformState() # type: Any
 

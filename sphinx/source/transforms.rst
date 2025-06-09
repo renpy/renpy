@@ -1156,6 +1156,11 @@ One equivalent to to the simplest ATL transforms is the Transform class.
         If ``hide_request`` is true, this can be set to false to prevent the
         transform from being hidden.
 
+    .. attribute:: original_child
+
+        This is the child Displayable that was set when the transform was created,
+        before any calls to set_child. This may be None if no child was during creation.
+
     .. method:: set_child(child)
 
         Call this method with a new `child` to change the child of this
