@@ -1,10 +1,11 @@
-﻿init offset = -100
+init offset = -100
 
 python early in layeredimage:
     # Do not participate in saves.
     _constant = True
 
     from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
+    from store import AlphaMask, Window
     from collections import OrderedDict, defaultdict
 
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
@@ -1137,9 +1138,23 @@ python early in layeredimage:
         `transform`
             If given, a transform or list of transforms that are applied to the
             image after it has been proxied.
+
+        `mask`
+            If given, a mask image which is applied on the transformed
+            layeredimage proxy using :ref:`AlphaMask`. The layeredimage proxy
+            is provided as the child to the AlphaMask and this argument as the
+            mask.
+
+        `background`
+            If given, a displayable which is displayed behind the final
+            layeredimage proxy, after the transforms and mask have been applied.
+
+        `foreground`
+            If given, a displayable which is displayed in front of the final
+            layeredimage proxy, after the transforms and mask have been applied.
         """
 
-        def __init__(self, name, transform=None):
+        def __init__(self, name, transform=None, mask=None, foreground=None, background=None):
 
             self.name = name
 
@@ -1152,6 +1167,9 @@ python early in layeredimage:
 
             else:
                 self.transform = renpy.easy.to_list(transform)
+            self.mask = mask
+            self.background = background
+            self.foreground = foreground
 
         @property
         def image(self):
@@ -1174,6 +1192,13 @@ python early in layeredimage:
 
             for i in self.transform:
                 rv = i(rv)
+
+            if self.mask:
+                rv = AlphaMask(rv, self.mask)
+
+            if self.background or self.foreground:
+                rv = Window(rv, background=self.background,
+                    foreground=self.foreground, style="empty")
 
             return rv
 
