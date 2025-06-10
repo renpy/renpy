@@ -64,6 +64,17 @@ when a label is defined. To revert to the old behavior of not calling config.lab
 offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
 left and top of the child.
 
+**Small GUI Viewport Size**
+While not strictly incompatible, we recommend adding the following to games that use the default GUI::
+
+    style game_menu_viewport:
+        variant "small"
+        xsize 1305
+
+This ensures menus will have a scrollbar on phones and televisions. The number 1305 is suitable for a 1920 pixel wide
+game. For a 1280 pixel wide game, use 870. For a 3840 pixel wide game, use 2010. (Other resolutions should use
+0.68 times the width of the game, rounded down to an integer.)
+
 
 .. _incompatible-8.3.4:
 .. _incompatible-7.8.4:
