@@ -27,13 +27,13 @@ from typing import Optional
 import renpy.pygame as pygame
 
 # The overridden positioning of the mouse.
-mouse_pos = None  # type: Optional[tuple[int, int]]
+mouse_pos: tuple[int, int] | None = None
 
 # The mouse buttons.
 mouse_buttons = [0, 0, 0]
 
 
-def get_mouse_pos(x, y):
+def get_mouse_pos(x: int, y: int) -> tuple[int, int]:
     """
     Called to get the overridden mouse position.
     """
@@ -44,11 +44,11 @@ def get_mouse_pos(x, y):
     return mouse_pos
 
 
-def post(event_type, **kwargs):
+def post(event_type: int, **kwargs) -> None:
     pygame.event.post(pygame.event.Event(event_type, test=True, **kwargs))
 
 
-def move_mouse(x, y):
+def move_mouse(x: int, y: int) -> None:
     """
     Moves the mouse to x, y.
     """
@@ -68,7 +68,7 @@ def move_mouse(x, y):
     mouse_pos = pos
 
 
-def press_mouse(button):
+def press_mouse(button: int) -> None:
     """
     Presses mouse button `button`.
     """
@@ -79,7 +79,7 @@ def press_mouse(button):
         mouse_buttons[button - 1] = 1
 
 
-def release_mouse(button):
+def release_mouse(button: int) -> None:
     """
     Releases mouse button `button`.
     """
@@ -89,7 +89,7 @@ def release_mouse(button):
         mouse_buttons[button - 1] = 0
 
 
-def click_mouse(button, x, y):
+def click_mouse(button: int, x: int, y: int) -> None:
     """
     Clicks the mouse at x, y
     """
@@ -99,7 +99,7 @@ def click_mouse(button, x, y):
     release_mouse(button)
 
 
-def reset():
+def reset() -> None:
     """
     Resets mouse handling once the test has ended.
     """

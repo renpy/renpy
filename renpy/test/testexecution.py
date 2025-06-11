@@ -26,37 +26,40 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import renpy
 import renpy.pygame as pygame
 
+from renpy.test.testast import Node
+from renpy.test.types import State, NodeLocation
+
 # A map from the name of a testcase to the testcase.
-testcases = {}
+testcases: dict[str, Node] = {}
 
 # The root node.
-node = None
+node: Node | None = None
 
 # The location of the currently execution TL node.
-node_loc = None
+node_loc: NodeLocation | None = None
 
 # The state of the root node.
-state = None
+state: State = None
 
 # The previous state and location in the game script.
-old_state = None
-old_loc = None
+old_state: State | None = None
+old_loc: NodeLocation | None = None
 
 # The last time the state changed.
-last_state_change = 0
+last_state_change: float = 0
 
 # The time the root node started executing.
-start_time = None
+start_time: float = 0
 
 # An action to run before executing another command.
-action = None
+action: Node | None = None
 
 # The set of labels that have been reached since the last time execute
 # has been called.
-labels = set()
+labels: set[str] = set()
 
 
-def take_name(name):
+def take_name(name: str) -> None:
     """
     Takes the name of a statement that is about to run.
     """
@@ -73,11 +76,11 @@ class TestJump(Exception):
     An exception that is raised in order to jump to `node`.
     """
 
-    def __init__(self, node):
+    def __init__(self, node: Node):
         self.node = node
 
 
-def lookup(name, from_node):
+def lookup(name: str, from_node: Node) -> Node:
     """
     Tries to look up the name with `target`. If found, returns it, otherwise
     raises an exception.
@@ -89,35 +92,40 @@ def lookup(name, from_node):
     raise KeyError("Testcase {} not found at {}:{}.".format(name, from_node.filename, from_node.linenumber))
 
 
-def execute_node(now, node, state, start):
+def execute_node(
+    now: float,
+    current_node: Node,
+    current_state: State | None,
+    start: float
+) -> tuple[Node | None, State | None, float]:
     """
     Performs one execution cycle of a node.
     """
 
     while True:
         try:
-            if state is None:
-                state = node.start()
+            if current_state is None:
+                current_state = current_node.start()
                 start = now
 
-            if state is None:
+            if current_state is None:
                 break
 
-            state = node.execute(state, now - start)
+            current_state = current_node.execute(current_state, now - start)
 
             break
 
         except TestJump as e:
-            node = e.node
-            state = None
+            current_node = e.node
+            current_state = None
 
-    if state is None:
-        node = None
+    if current_state is None:
+        return None, current_state, start
+    else:
+        return current_node, current_state, start
 
-    return node, state, start
 
-
-def execute():
+def execute() -> None:
     """
     Called periodically by the test code to generate events, if desired.
     """
@@ -177,7 +185,7 @@ def execute():
         raise Exception("Testcase stuck at {}:{}.".format(node_loc[0], node_loc[1]))
 
 
-def test_command():
+def test_command() -> bool:
     """
     The dialogue command. This updates dialogue.txt, a file giving all the dialogue
     in the game.
