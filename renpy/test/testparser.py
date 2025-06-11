@@ -37,7 +37,7 @@ def parse_click(l, loc, target):
         elif l.keyword("pos"):
             rv.position = l.require(l.simple_expression)
 
-        elif l.keyword("always"):
+        elif (target is not None) and l.keyword("always"):
             rv.always = True
 
         else:
@@ -98,8 +98,32 @@ def parse_drag(l, loc):
     return rv
 
 
+def parse_not(l, loc):
+    if l.keyword("not"):
+        return testast.Not(loc, parse_not(l, loc))
+    else:
+        return parse_clause(l, loc)
+
+def parse_and(l, loc):
+    rv = parse_not(l, loc)
+    while l.keyword("and"):
+        rv = testast.And(loc, rv, parse_not(l, loc))
+    return rv
+
+def parse_or(l, loc):
+    rv = parse_and(l, loc)
+    while l.keyword("or"):
+        rv = testast.Or(loc, rv, parse_and(l, loc))
+    return rv
+
 def parse_clause(l, loc):
-    if l.keyword("run"):
+    if l.match(r'\('):
+        rv = parse_or(l, loc)
+        l.require(r'\)')
+        return rv
+
+    elif l.keyword("run"):
+
         expr = l.require(l.simple_expression)
         return testast.Action(loc, expr)
 
@@ -110,6 +134,11 @@ def parse_clause(l, loc):
     elif l.keyword("label"):
         name = l.require(l.label_name)
         return testast.Label(loc, name)
+
+    elif l.keyword('eval'):
+
+        source = l.require(l.simple_expression)
+        return testast.Eval(loc, source)
 
     elif l.keyword("type"):
         name = l.name()
@@ -133,6 +162,9 @@ def parse_clause(l, loc):
         pattern = l.require(l.string)
         return testast.Scroll(loc, pattern)
 
+    elif l.keyword("pass"):
+        return testast.Pass(loc)
+
     else:
         target = l.string()
         if target:
@@ -144,14 +176,16 @@ def parse_clause(l, loc):
 
 def parse_statement(l, loc):
     if l.keyword("python"):
+
+        hide = l.keyword("hide")
         l.require(":")
 
         l.expect_block("python block")
 
         source = l.python_block()
 
-        code = renpy.ast.PyCode(source, loc)
-        return testast.Python(loc, code)
+        code = renpy.ast.PyCode(source, loc, 'hide' if hide else 'exec')
+        return testast.Python(loc, code, hide)
 
     if l.keyword("if"):
         l.expect_block("if block")
@@ -173,8 +207,8 @@ def parse_statement(l, loc):
         return testast.Python(loc, code)
 
     elif l.keyword("assert"):
-        source = l.require(l.rest)
-        return testast.Assert(loc, source)
+        check = parse_clause(l, loc)
+        return testast.Assert(loc, check)
 
     elif l.keyword("jump"):
         target = l.require(l.name)
@@ -183,6 +217,9 @@ def parse_statement(l, loc):
     elif l.keyword("call"):
         target = l.require(l.name)
         return testast.Call(loc, target)
+
+    elif l.keyword('exit'):
+        return testast.Exit(loc)
 
     rv = parse_clause(l, loc)
 

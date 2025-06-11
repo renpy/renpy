@@ -86,7 +86,7 @@ def lookup(name, from_node):
     if name in testcases:
         return testcases[name]
 
-    raise Exception("Testcase {} not found at {}:{}.".format(name, from_node.filename, from_node.linenumber))
+    raise KeyError("Testcase {} not found at {}:{}.".format(name, from_node.filename, from_node.linenumber))
 
 
 def execute_node(now, node, state, start):
@@ -161,6 +161,8 @@ def execute():
 
     if node is None:
         renpy.test.testmouse.reset()
+        for clbk in renpy.config.end_testcase_callbacks:
+            clbk()
         return
 
     loc = renpy.exports.get_filename_line()

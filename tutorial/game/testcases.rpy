@@ -1,5 +1,4 @@
-﻿
-testcase player_experience:
+﻿testcase player_experience:
     scroll "Bar" until "Player Experience"
     click until "Yes."
 
@@ -198,6 +197,9 @@ testcase translations:
     click until label tutorials
 
 
+init python:
+    import time
+
 testcase out_of_game:
     "Back"
     "Back"
@@ -210,6 +212,8 @@ testcase out_of_game:
     $ _preferences.afm_time = 1
 
 
+    $ testvar = time.time()
+
     "Auto"
     scroll "Bar" until "Player Experience"
     "Auto"
@@ -218,14 +222,20 @@ testcase out_of_game:
     pause .5
 
     "Save"
+    pause .5
+
     "Save Slot 1"
-    "Yes"
+    ("Yes" or pass)
+
+    $ testvar = "value not comparable with a number"
 
     "Load"
     pause .5
 
     "Load Slot 1"
     "Yes"
+
+    assert eval (time.time() - testvar < 15)
 
     "Prefs"
     pause .5
@@ -294,6 +304,3 @@ testcase default:
     "That's enough for now."
     click until "Quit"
     pause .5
-
-
-

@@ -303,3 +303,11 @@ label force_recompile:
         project.current.launch([ 'compile' ], wait=True)
 
     jump front_page
+
+label launch_tests:
+
+    python hide:
+        interface.processing(_("Launching tests..."))
+        project.current.launch([ 'test' ], wait=True)
+
+    jump front_page
