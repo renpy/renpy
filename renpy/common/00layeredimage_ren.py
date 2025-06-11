@@ -1039,10 +1039,7 @@ def parse_group(l, li_name):
                     continue
 
                 if ll.keyword("attribute"):
-                    # TODO check this whole block again
                     raw_attribute = parse_attribute(ll)
-                    # if "variant" in attribute_node.final_properties:
-                    #     ll.error(f"Attribute {attribute_node.name} cannot have a variant when inside a group.")
                     rv.children.append(raw_attribute)
                     continue
 
@@ -1073,7 +1070,7 @@ def parse_group(l, li_name):
             if "variant" in an.final_properties:
                 l.error(f"Attribute {an.name!r} has a variant, it cannot be inside group {group_name!r} which also has a variant.")
     elif (group_name is None) and ("auto" in rv.final_properties):
-        # tolerated for name multiple groups, for compatibility
+        # tolerated for named multiple groups, for compatibility
         l.error(f"Group {group_name!r} cannot be multiple and auto at the same time.")
 
     return rv
