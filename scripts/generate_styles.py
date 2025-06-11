@@ -69,11 +69,11 @@ class Prefix(object):
         # A list of prefix indexes that should be updated when this prefix is
         # updated, including this prefix.
         if index >= 0:
-            self.alts = [ self.index ]
-            self.alt_names = [ self.name ]
+            self.alts = [index]
+            self.alt_names = [name]
         else:
-            self.alts = [ ]
-            self.alt_names = [ ]
+            self.alts = []
+            self.alt_names = []
 
         for i in alts:
             self.alts.append(prefixes[i].index)
@@ -130,7 +130,6 @@ style_properties = sorted_dict(
     background='renpy.easy.displayable_or_none',
     bar_invert=None,
     bar_resizing=None,
-    unscrollable=None,
     bar_vertical=None,
     black_color='renpy.easy.color',
     bold=None,
@@ -157,6 +156,7 @@ style_properties = sorted_dict(
     focus_mask='expand_focus_mask',
     focus_rect=None,
     font=None,
+    font_features=None,
     fore_bar='none_is_null',
     fore_gutter=None,
     foreground='renpy.easy.displayable_or_none',
@@ -164,8 +164,8 @@ style_properties = sorted_dict(
     hinting=None,
     hover_sound=None,
     hyperlink_functions=None,
-    italic=None,
     instance=None,
+    italic=None,
     justify=None,
     kerning=None,
     key_events=None,
@@ -173,20 +173,21 @@ style_properties = sorted_dict(
     keyboard_focus_insets=None,
     language=None,
     layout=None,
-    line_leading=None,
     left_margin=None,
-    line_overlap_split=None,
     left_padding=None,
+    line_leading=None,
+    line_overlap_split=None,
     line_spacing=None,
-    mouse=None,
-    modal=None,
     min_width=None,
     mipmap=None,
+    modal=None,
+    mouse=None,
     newline_indent=None,
     order_reverse=None,
-    outlines='expand_outlines',
     outline_scaling=None,
+    outlines='expand_outlines',
     prefer_emoji=None,
+    reading_order=None,
     rest_indent=None,
     right_margin=None,
     right_padding=None,
@@ -200,11 +201,11 @@ style_properties = sorted_dict(
     slow_cps_multiplier=None,
     spacing=None,
     strikethrough=None,
-    subtitle_width=None,
     subpixel=None,
-    textshader=None,
-    text_y_fudge=None,
+    subtitle_width=None,
     text_align=None,
+    text_y_fudge=None,
+    textshader=None,
     thumb='none_is_null',
     thumb_offset=None,
     thumb_shadow='none_is_null',
@@ -212,6 +213,7 @@ style_properties = sorted_dict(
     top_margin=None,
     top_padding=None,
     underline=None,
+    unscrollable=None,
     vertical=None,
     xanchor='expand_anchor',
     xfill=None,
@@ -636,12 +638,12 @@ def generate_sets():
     ap = collections.OrderedDict()
 
     for k, v in all_properties.items():
-        ap[k] = [ i[0] for i in v ]
+        ap[k] = [i[0] for i in v]
 
     proxy_property_code = "{"
 
     for p, l in synthetic_properties.items():
-        proxy_property_code += '"{}" : frozenset({}),'.format(p, [ el[0] for el in l ])
+        proxy_property_code += '"{}" : frozenset({}),'.format(p, [el[0] for el in l])
 
     proxy_property_code += "}"
 

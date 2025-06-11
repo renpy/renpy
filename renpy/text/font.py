@@ -700,10 +700,7 @@ font_cache = { }
 last_scale = 1.0
 
 
-def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, axis):
-
-    if hbfont is None:
-        shaper = "freetype"
+def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, axis, features):
 
     # If the scale changed, invalidate caches of scaled fonts.
     global last_scale
@@ -732,8 +729,10 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
 
         return rv
 
+    features = None if features is None else tuple(sorted(features.items()))
+
     # Check for a cached TTF.
-    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, None if axis is None else tuple(sorted(axis.items())))
+    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale, shaper, instance, None if axis is None else tuple(sorted(axis.items())), features)
 
     rv = font_cache.get(key, None)
     if rv is not None:
@@ -749,7 +748,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
     face = load_face(fn, shaper)
 
     if shaper == "harfbuzz":
-        rv = hbfont.HBFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting, instance, axis) # @UndefinedVariable
+        rv = hbfont.HBFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting, instance, axis, features) # @UndefinedVariable
     else:
         rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) # @UndefinedVariable
 

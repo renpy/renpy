@@ -319,6 +319,37 @@ def wrap_render(child, w, h, st, at):
     return rv
 
 
+class ImageNotFound(LookupError):
+    """
+    Exception that is raised when an image with given tag and attributes not found.
+    """
+
+    def __init__(self, tag: str, *attributes: str):
+        if attributes:
+            name = " ".join(attributes)
+            msg = f"Image '{tag} {name}' not found."
+        else:
+            msg = f"Image '{tag}' not found."
+
+        super().__init__(msg)
+
+        self.tag = tag
+        self.attributes = attributes
+
+    def get_suggestion(self):
+        d = get_available_image_tags()
+        if self.tag not in d:
+            if self.tag[:1] != "_":
+                d = [i for i in d if i[:1] != "_"]
+
+            if suggestion := renpy.error.compute_closest_value(self.tag, d):
+                return f" Did you mean: '{suggestion}'?"
+
+            return None
+
+        # TODO: Handle misspelled attributes.
+
+
 class ImageReference(renpy.display.displayable.Displayable):
     """
     ImageReference objects are used to reference images by their name,
@@ -386,11 +417,11 @@ class ImageReference(renpy.display.displayable.Displayable):
         if not isinstance(name, tuple):
             name = tuple(name.split())
 
-        def error(msg):
-            self.target = renpy.text.text.Text(msg, style="_image_error")
+        def error(exception: Exception):
+            self.target = renpy.text.text.Text(str(exception), style="_image_error")
 
             if renpy.config.debug:
-                raise Exception(msg)
+                raise exception
 
         target = None # typing
 
@@ -406,13 +437,13 @@ class ImageReference(renpy.display.displayable.Displayable):
             name = name[:-1]
 
         if not name:
-            error("Image '%s' not found." % ' '.join(self.name))
+            error(ImageNotFound(*self.name))
             if renpy.game.lint:
                 renpy.lint.report("References image '%s', which does not exist.", ' '.join(self.name))
             return False
 
         if name and (self._args.name == name):
-            error("Image '{}' refers to itself.".format(' '.join(name)))
+            error(RecursionError(f"Image '{' '.join(name)}' refers to itself."))
             if renpy.game.lint:
                 renpy.lint.report("Image '%s' refers to itself.", ' '.join(name))
             return False
@@ -429,7 +460,7 @@ class ImageReference(renpy.display.displayable.Displayable):
             if renpy.config.raise_image_exceptions:
                 raise
 
-            error(str(e))
+            error(e)
             return False
 
         # Copy the old transform over.

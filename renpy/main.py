@@ -97,6 +97,9 @@ def run(restart):
     # Clear obsolete image manipulators.
     renpy.display.im.ImageBase.obsolete_list = [ ]
 
+    # Clear missing from clauses.
+    renpy.add_from.clear()
+
     if renpy.config.clear_lines:
         renpy.scriptedit.lines.clear()
 

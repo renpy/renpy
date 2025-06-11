@@ -989,6 +989,9 @@ init -1500 python in updater:
             # New-style ECDSA signature.
             key = os.path.join(config.basedir, "update", "key.pem")
 
+            # Included with downloader app.
+            key = os.path.join(config.basedir, "public_key.pem")
+
             if not os.path.exists(key):
                 key = os.path.join(self.updatedir, "key.pem")
 

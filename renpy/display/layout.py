@@ -427,11 +427,15 @@ class Grid(Container):
     """
 
     allow_underfull = None
+    gridmap = None
 
     def __init__(self, cols, rows, padding=None,
                  transpose=False,
                  style='grid',
                  allow_underfull=None,
+                 *,
+                 right_to_left=False,
+                 bottom_to_top=False,
                  **properties):
         """
         @param cols: The number of columns in this widget.
@@ -442,6 +446,12 @@ class Grid(Container):
 
         @params allow_underfull: Controls if grid may be underfull.
         If None - uses config.allow_underfull_grids.
+
+        @params right_to_left: True if cells should be filled
+        right to left.
+
+        @params bottom_to_top: True if cells should be filled
+        bottom to top.
         """
 
         if padding is not None:
@@ -457,6 +467,9 @@ class Grid(Container):
 
         self.transpose = transpose
         self.allow_underfull = allow_underfull
+
+        self.right_to_left = right_to_left
+        self.bottom_to_top = bottom_to_top
 
     def render(self, width, height, st, at):
 
@@ -481,14 +494,12 @@ class Grid(Container):
         cols = self.cols
         rows = self.rows
 
-        if self.transpose:
-            children = [ ]
-            for y in range(rows):
-                for x in range(cols):
-                    children.append(self.children[y + x * rows])
+        # Generates a gridmap list containing (col, row) tuples of intended position
+        # for each child.
 
-        else:
-            children = self.children
+        gridmap = self.gridmap
+        if gridmap is None:
+            gridmap = self.gridmap = self.generate_gridmap()
 
         # Now, start the actual rendering.
 
@@ -500,8 +511,8 @@ class Grid(Container):
         if self.style.yfill:
             renheight = (height - (rows - 1) * yspacing - top_margin - bottom_margin) // rows
 
-        renders = [ render(i, renwidth, renheight, st, at) for i in children ]
-        sizes = [ i.get_size() for i in renders ]
+        renders = [render(child, renwidth, renheight, st, at) for child in self.children]
+        sizes = [r.get_size() for r in renders]
 
         cwidth = 0
         cheight = 0
@@ -521,27 +532,19 @@ class Grid(Container):
 
         rv = renpy.display.render.Render(width, height)
 
-        offsets = [ ]
+        # List of offsets in the same order as self.children
+        self.offsets = []
 
-        for y in range(0, rows):
-            for x in range(0, cols):
+        for i, child in enumerate(self.children):
+            col, row = gridmap[i]
 
-                child = children[ x + y * cols ]
-                surf = renders[x + y * cols]
+            surf = renders[i]
 
-                xpos = x * (cwidth + xspacing) + left_margin
-                ypos = y * (cheight + yspacing) + top_margin
+            xpos = col * (cwidth + xspacing) + left_margin
+            ypos = row * (cheight + yspacing) + top_margin
 
-                offset = child.place(rv, xpos, ypos, cwidth, cheight, surf)
-                offsets.append(offset)
-
-        if self.transpose:
-            self.offsets = [ ]
-            for x in range(cols):
-                for y in range(rows):
-                    self.offsets.append(offsets[y * cols + x])
-        else:
-            self.offsets = offsets
+            offset = child.place(rv, xpos, ypos, cwidth, cheight, surf)
+            self.offsets.append(offset)
 
         return rv
 
@@ -572,6 +575,22 @@ class Grid(Container):
 
         for _ in range(delta):
             self.add(null)
+
+    def generate_gridmap(self):
+        row_order = range(self.rows)
+        if self.bottom_to_top:
+            row_order = row_order[::-1]
+
+        col_order = range(self.cols)
+        if self.right_to_left:
+            col_order = col_order[::-1]
+
+        if self.transpose:
+            intended_order = [(col, row) for col in col_order for row in row_order]
+        else:
+            intended_order = [(col, row) for row in row_order for col in col_order]
+
+        return intended_order
 
 
 class IgnoreLayers(Exception):

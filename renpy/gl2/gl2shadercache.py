@@ -127,7 +127,7 @@ class ShaderPart(object):
             else:
                 raise Exception("Keyword arguments to ShaderPart must be of the form {vertex,fragment}_{priority}.")
 
-            parts.append((priority, v))
+            parts.append((priority, name, v))
 
             for m in re.finditer(r'\b\w+\b', v):
                 used.add(m.group(0))
@@ -240,7 +240,7 @@ def source(variables, parts, functions, fragment, gles):
 
     parts.sort()
 
-    for _, part in parts:
+    for _, _, part in parts:
         rv.append(part)
 
     rv.append("}\n")

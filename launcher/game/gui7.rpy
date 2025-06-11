@@ -31,8 +31,8 @@ The game/libs/ directory is meant for third-party libraries that ask to be
 put in game/libs.
 
 When this file (game/libs/libs.txt) is present, Ren'Py will load all files
-in libs before any other file in game/, and will not consider directory names
-when loading these files.
+in libs before any other file in game/, and will ignore the first directory
+name under game/libs when determining the order to load files.
 """)
 
 init -1 python:

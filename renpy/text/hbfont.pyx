@@ -33,12 +33,22 @@ import sys
 
 import renpy.config
 
+from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
+
 cdef extern from "ftsupport.h":
     char *freetype_error_to_string(int error)
 
 cdef extern from "harfbuzz/hb.h":
 
     ctypedef int hb_bool_t
+
+    ctypedef unsigned int hb_tag_t
+
+    ctypedef struct hb_feature_t:
+        hb_tag_t tag
+        unsigned int value
+        unsigned int start
+        unsigned int end
 
     enum hb_direction_t:
         HB_DIRECTION_INVALID
@@ -108,7 +118,6 @@ cdef extern from "harfbuzz/hb.h":
 
     void hb_font_destroy(hb_font_t *)
 
-    struct hb_feature_t
 
     void hb_font_set_scale(hb_font_t *font, int x_scale, int y_scale)
     void hb_font_set_synthetic_slant(hb_font_t *font, float slant)
@@ -333,6 +342,53 @@ class Variations:
 
         return "\n".join(rv)
 
+cdef class Features:
+    """
+    Represents the features of a font.
+    """
+
+    cdef hb_feature_t *features
+    cdef unsigned int num_features
+    cdef unsigned int tag_word
+
+    def __dealloc__(self):
+        if self.features:
+            PyMem_Free(self.features)
+
+    def __init__(self, features):
+        """
+        Features is a tuple of tuples, where each tuple is a feature name and value.
+        """
+
+        self.num_features = len(features)
+        self.features = <hb_feature_t *> PyMem_Malloc(self.num_features * sizeof(hb_feature_t))
+
+        for i in range(self.num_features):
+
+            tag_bytes = features[i][0].encode("utf-8")
+            tag_word = (tag_bytes[0] << 24) | (tag_bytes[1] << 16) | (tag_bytes[2] << 8) | tag_bytes[3]
+
+            self.features[i].tag = tag_word
+            self.features[i].value = features[i][1]
+            self.features[i].start = 0
+            self.features[i].end = -1
+
+    cache = { }
+
+    @staticmethod
+    def get(features):
+        """
+        Returns a Features object for the given features.
+        """
+
+        if features in Features.cache:
+            return Features.cache[features]
+
+        rv = Features(features)
+        Features.cache[features] = rv
+
+        return rv
+
 
 cdef class HBFace:
     """
@@ -493,6 +549,9 @@ cdef class HBFont:
         # For a variable font, the values for all non-default axes.
         object axis
 
+        # A features object giving the font features.
+        Features features
+
 
     def __cinit__(self):
         for i in range(256):
@@ -509,7 +568,7 @@ cdef class HBFont:
         if self.hb_font:
             hb_font_destroy(self.hb_font)
 
-    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting, instance, axis):
+    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting, instance, axis, features):
 
         self.face_object = face
         self.face = self.face_object.face
@@ -536,6 +595,11 @@ cdef class HBFont:
 
         self.instance = instance
         self.axis = axis
+
+        if features:
+            self.features = Features.get(features)
+        else:
+            self.features = None
 
         size = size * renpy.config.ftfont_scale.get(face.fn, 1.0) * renpy.game.preferences.font_size
 
@@ -837,7 +901,7 @@ cdef class HBFont:
 
         return rv
 
-    def glyphs(self, unicode s):
+    def glyphs(self, unicode s, int level):
         """
         Sizes s, returning a list of Glyph objects.
         """
@@ -877,14 +941,23 @@ cdef class HBFont:
         hb_buffer_add_utf32(hb, <const uint32_t *> ((<const char *> utf32_s) + 4), len(s), 0, len(s));
 
         if self.vertical:
-            hb_buffer_set_direction(hb, HB_DIRECTION_TTB)
+            if level & 0x1:
+                hb_buffer_set_direction(hb, HB_DIRECTION_BTT)
+            else:
+                hb_buffer_set_direction(hb, HB_DIRECTION_TTB)
         else:
-            hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
+            if level & 0x1:
+                hb_buffer_set_direction(hb, HB_DIRECTION_RTL)
+            else:
+                hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
 
         hb_buffer_guess_segment_properties(hb)
         hb_buffer_set_cluster_level(hb, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS)
 
-        hb_shape(self.hb_font, hb, NULL, 0)
+        if self.features:
+            hb_shape(self.hb_font, hb, self.features.features, self.features.num_features)
+        else:
+            hb_shape(self.hb_font, hb, NULL, 0)
 
         glyph_info = hb_buffer_get_glyph_infos(hb, &glyph_count);
         glyph_pos = hb_buffer_get_glyph_positions(hb, &glyph_count);

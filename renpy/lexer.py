@@ -69,10 +69,12 @@ class ParseError(SyntaxError):
     def message(self) -> str:
         """
         Fully formatted message of the error close to the result of
-        `traceback.print_exception_only`.
+        `traceback.format_exception_only`.
         """
         if self._message is None:
-            message = f'File "{self.filename}", line {self.lineno}: {self.msg}'
+            filename = self.filename or "<string>"
+            lineno = self.lineno or 1
+            message = f'File "{filename}", line {lineno}: {self.msg}'
             if self.text is not None:
                 # Neither Python nor this class does not support multiline syntax error code.
                 # Just strip the first line of provided code.
@@ -85,20 +87,29 @@ class ParseError(SyntaxError):
                 message += f'\n    {text.lstrip()}'
 
                 if self.offset is not None:
-                    offset = self.offset
+                    from renpy.error import normalize_renpy_line_offset
+                    offset = normalize_renpy_line_offset(
+                        filename,
+                        lineno,
+                        self.offset,
+                        self.text)
 
                     # Fallback to single caret for cases end_offset is before offset.
                     if self.end_offset is None or self.end_offset <= offset:
                         end_offset = offset + 1
                     else:
-                        end_offset = self.end_offset
+                        end_offset = normalize_renpy_line_offset(
+                            filename,
+                            self.end_lineno or lineno,
+                            self.end_offset,
+                            self.text)
 
                     left_spaces = len(text) - len(text.lstrip())
                     offset -= left_spaces
                     end_offset -= left_spaces
 
                     if offset >= 0:
-                        caret_space = ' ' * offset
+                        caret_space = ' ' * (offset - 1)
                         carets = '^' * (end_offset - offset)
                         message += f"\n    {caret_space}{carets}"
 
@@ -286,7 +297,7 @@ def list_logical_lines(
     munge_string = get_string_munger(prefix)
 
     # Convert windows and mac newlines to \n, so we don't have to worry about it.
-    if filedata:
+    if filedata is not None:
         data_io = io.StringIO(filedata, None)
     else:
         data_io = open(original_filename, "r", encoding="utf-8")
@@ -363,7 +374,7 @@ def list_logical_lines(
                 # This can happen only if we have unclosed parens.
                 c, lineno, column = open_parens[-1]
                 raise ParseError(f"'{c}' was never closed",
-                                 filename, lineno, column,
+                                 filename, lineno, column + 1,
                                  linecache.getline(filename, lineno))
 
             # Name and runs of spaces are the most common cases, so it's first.
@@ -473,7 +484,7 @@ def list_logical_lines(
             elif c in '}])':
                 if not open_parens:
                     raise ParseError(f"unmatched '{c}'",
-                                     filename, number, pos - line_startpos,
+                                     filename, number, pos - line_startpos + 1,
                                      linecache.getline(filename, number))
 
                 open_c, _, _ = open_parens.pop()
@@ -484,7 +495,7 @@ def list_logical_lines(
                     c == "}" and open_c == "{"
                 ):
                     raise ParseError(f"closing parenthesis '{c}' does not match opening parenthesis '{open_c}'",
-                                     filename, number, pos - line_startpos,
+                                     filename, number, pos - line_startpos + 1,
                                      linecache.getline(filename, number))
 
                 line.append(c)
@@ -854,7 +865,7 @@ class Lexer(object):
             msg,
             self.filename,
             self.number,
-            self.pos,
+            self.pos + 1,
             self.text)
 
     def deferred_error(self, queue, msg):
@@ -1631,6 +1642,10 @@ def ren_py_to_rpy_offsets(lines: list[str], filename: str):
     state = IGNORE
 
     open_linenumber = 0
+
+    # Remove BOM.
+    if lines and lines[0] and lines[0][0] == '\ufeff':
+        lines[0] = lines[0][1:]
 
     for linenumber, l in enumerate(lines, start=1):
         if state != RENPY:

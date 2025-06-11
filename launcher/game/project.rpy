@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -40,6 +40,13 @@ init python in project:
 
     if persistent.blurb is None:
         persistent.blurb = 0
+
+    # Added this persistent variable to retain any
+    # previous folder that was collapsed or shown
+    if persistent.collapsed_folders is None:
+        persistent.collapsed_folders = { }
+
+    persistent.collapsed_folders.setdefault("Tutorials", False)
 
     project_filter = [ i.strip() for i in os.environ.get("RENPY_PROJECT_FILTER", "").split(":") if i.strip() ]
 
@@ -267,7 +274,7 @@ init python in project:
             else:
                 extension = ""
 
-            if persistent.windows_console:
+            if persistent.use_console:
                 executables = [ "python" + extension ]
             else:
                 executables = [ "pythonw" + extension ]
@@ -322,6 +329,9 @@ init python in project:
             # Launch the project.
             cmd = [ renpy.fsencode(i) for i in cmd ]
 
+            if persistent.use_console and renpy.macintosh:
+                cmd = self.generate_mac_launch_string(cmd)
+
             p = subprocess.Popen(cmd, env=encoded_environ)
 
             if wait:
@@ -335,6 +345,20 @@ init python in project:
                         interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
 
             renpy.not_infinite_loop(30)
+
+        def generate_mac_launch_string(self, cmd):
+            """
+            replaces the existing launch arguments,
+            with the correct ones to open up a console window on MacOS based systems
+            """
+            python_launch_string = ""
+
+            for argument in cmd:
+                python_launch_string += argument
+                # adding spacing between arguments
+                python_launch_string += " "
+
+            return ["osascript", "-e", 'tell app "Terminal" to do script "'+python_launch_string+' && exit"']
 
 
         def update_dump(self, force=False, gui=True, compile=False):
@@ -464,6 +488,26 @@ init python in project:
 
             return os.access(self.path, os.W_OK)
 
+    class ProjectFolder(object):
+        """
+        This handles the folder name and the projects within
+        this folder.
+        """
+
+        def __init__(self, name):
+            # The folder name.
+            self.name = name
+
+            # Normal projects, in alphabetical order by lowercase name.
+            self.projects = [ ]
+
+            # Controls wether the folder is collapsed or shown.
+            self.hidden = True
+
+        # NOTE
+        # Vague function name but context is self explanatory
+        def add(self, p):
+            self.projects.append(p)
 
     class ProjectManager(object):
         """
@@ -475,6 +519,9 @@ init python in project:
 
             # The projects directory.
             self.projects_directory = ""
+
+            # NOTE: Folder of projects, in alphabetical order by lowercase name.
+            self.folders = [ ]
 
             # Normal projects, in alphabetical order by lowercase name.
             self.projects = [ ]
@@ -515,6 +562,7 @@ init python in project:
 
             self.projects_directory = persistent.projects_directory
 
+            self.folders = [ ]
             self.projects = [ ]
             self.templates = [ ]
             self.all_projects = [ ]
@@ -525,6 +573,8 @@ init python in project:
 
             self.scan_directory(config.renpy_base)
 
+            # NOTE: Added `self.folders` that holds the ProjectFolder objects
+            self.folders.sort(key=lambda p : p.name.lower())
             self.projects.sort(key=lambda p : p.name.lower())
             self.templates.sort(key=lambda p : p.name.lower())
 
@@ -538,20 +588,100 @@ init python in project:
 
             current = self.get_tutorial()
 
+        # NOTE
+        # Turned this `has_game` function part of the class as static
+        # Because it was used in a few places due the changes.
+        @staticmethod
+        def has_game(dn):
+            return os.path.isdir(os.path.join(dn, "game"))
+
+        # NOTE
+        # This function remove any folder that was saved
+        # that doesn't exist anymore in `self.projects_directory`
+        def clear_collapsed_folders(self):
+            prefix = os.path.normpath(self.projects_directory)
+
+            for name in [*persistent.collapsed_folders.keys()]:
+                dpath = os.path.join(prefix, name)
+
+                if not os.path.isdir(dpath) and not "Tutorials":
+                    persistent.collapsed_folders.pop(name)
+
+        # NOTE
+        # This function is similar to `find_basedir` but instead it looks inside
+        # The folder the user linked renpy to look for projects
+        def find_folder_projects(self, d):
+
+            nd = os.path.normpath(d)
+            prefix = os.path.normpath(self.projects_directory)
+
+            if nd.startswith(prefix):
+                fpath, fname = os.path.split(nd)
+                full_path = os.path.join(fpath, fname)
+
+                pf = ProjectFolder(fname)
+
+                # If the key was found in `persistent.collapsed_folders`
+                # uses the value stored there
+                try:
+                    pf.hidden = persistent.collapsed_folders[fname]
+
+                except KeyError:
+                    pf.hidden = (fname != "master")
+
+                # NOTE
+                # Effectively almost the same as `scan_directory_direct`
+                # but we ignore files that don't contain any `game/` folder.
+
+                for pdir in util.listdir(full_path):
+                    ppath = os.path.join(full_path, pdir)
+
+                    if not os.path.isdir(ppath):
+                        continue
+
+                    if not self.has_game(ppath):
+                        continue
+
+                    if ppath in self.scanned:
+                        continue
+
+                    self.scanned.add(ppath)
+
+                    # Get the name of the project
+                    name = os.path.split(ppath)[1]
+
+                    # We have a project directory, so create a Project.
+                    p = Project(ppath, name)
+
+                    # Adds the project to the ProjectFolder
+                    pf.add(p)
+
+                    self.all_projects.append(p)
+
+                if not pf.hidden and not pf.projects:
+                    pf.hidden = True
+
+                # Return None if the project folder is emtpy.
+                if not pf.projects:
+                    return None
+
+                # Return the project folder object.
+                return pf
+
+            return None
+
 
         def find_basedir(self, d):
             """
             Try to find a project basedir in d.
             """
 
-            def has_game(dn):
-                return os.path.isdir(os.path.join(dn, "game"))
-
-            if has_game(d):
+            if self.has_game(d):
                 return d
 
             dn = os.path.join(d, "Contents", "Resources", "autorun")
-            if has_game(dn):
+
+            if self.has_game(dn):
                 return dn
 
             for dn in os.listdir(d):
@@ -560,7 +690,7 @@ init python in project:
 
                 dn = os.path.join(d, dn, "Contents", "Resources", "autorun")
 
-                if has_game(dn):
+                if self.has_game(dn):
                     return dn
 
             return None
@@ -609,37 +739,52 @@ init python in project:
             if not os.path.isdir(ppath):
                 return
 
+            # NOTE
+            # This is where heavy changes were made, Instead of returning right away
+            # now the code checks if the folder inside the `self.projects_directory`
+            # is a game folder, if not it looks if the folder has subfolders that
+            # could be a project
             try:
-                ppath = self.find_basedir(ppath)
+                if self.has_game(ppath):
+                    p_path = self.find_basedir(ppath)
+
+                    if p_path in self.scanned:
+                        return
+
+                    self.scanned.add(p_path)
+
+                    # We have a project directory, so create a Project.
+                    p = Project(p_path, name)
+
+                    if project_filter and (p.name not in project_filter):
+                        return
+
+                    project_type = p.data.get("type", "normal")
+
+                    if project_type == "hidden":
+                        pass
+
+                    elif project_type == "template":
+                        self.projects.append(p)
+                        self.templates.append(p)
+
+                    else:
+                        self.projects.append(p)
+
+                    self.all_projects.append(p)
+
+                else:
+                    self.clear_collapsed_folders()
+
+                    pf = self.find_folder_projects(ppath)
+
+                    if pf is None:
+                        return
+
+                    self.folders.append(pf)
+
             except Exception:
                 return
-
-            if ppath is None:
-                return
-
-            if ppath in self.scanned:
-                return
-
-            self.scanned.add(ppath)
-
-            # We have a project directory, so create a Project.
-            p = Project(ppath, name)
-
-            if project_filter and (p.name not in project_filter):
-                return
-
-            project_type = p.data.get("type", "normal")
-
-            if project_type == "hidden":
-                pass
-            elif project_type == "template":
-                self.projects.append(p)
-                self.templates.append(p)
-            else:
-                self.projects.append(p)
-
-            self.all_projects.append(p)
-
 
         def get(self, name):
             """
@@ -828,6 +973,18 @@ init python in project:
             manager.scan()
             renpy.restart_interaction()
 
+    # NOTE: Action class for ProjectFolder
+    class CollapseFolder(Action):
+        def __init__(self, pf):
+            self.pf = pf
+
+        def __call__(self):
+            self.pf.hidden = not self.pf.hidden
+            persistent.collapsed_folders[self.pf.name] = self.pf.hidden
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            return (not self.pf.hidden)
 
     manager.scan()
 

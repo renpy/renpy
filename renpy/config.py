@@ -26,7 +26,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional, List, Callable
+from typing import Any, Optional, List, Callable
 
 
 import collections
@@ -1051,7 +1051,7 @@ depth_size = 24
 context_copy_remove_screens = [ "notify" ]
 
 # An exception handling callback.
-exception_handler = None
+exception_handler: Callable[[renpy.error.TracebackException], bool] | None = None
 
 # A label to jump to if return fails.
 return_not_found_label = None
@@ -1531,6 +1531,45 @@ hash_seen = True
 # A function that is called whenever persistent data is loaded.
 persistent_callback = None
 
+# Aliases for character names in the linter character statistics view
+lint_show_names = False
+
+# Should label callbacks be called for creator-defined statements?
+cds_label_callbacks = True
+
+error_suggestion_handlers: dict[type[BaseException], Callable[[Any], str | None]] = { }
+"""
+Dictonary from exception type to a function that takes an exception that
+occurred and returns a string with suggestion to add to the exception message
+or None if no suggestion is available.
+"""
+
+auto_voice_predict_callback : Callable[[str], None]|None = None
+"""
+A callback that is called when an auto-voice prediction is made.
+These are called with the voice tag of the character.
+"""
+
+clear_history_on_language_change: bool = True
+"""
+Should the history be cleared when the language changes?
+"""
+
+automatic_oversampling: int|None = 4
+"""
+The highest automatic oversampling level that will be used. If None, automatic
+oversampling is disabled.
+"""
+
+web_unload_music: float|None = None
+"""
+If not None, the time in seconds before the music is unloaded when downloaded as part of a web build.
+"""
+
+mesh_pad_compat: bool = False
+"""
+Should mesh pad work the way it did before 8.4? (That is, it shifts things to the right/down by pad_left/pad_top.)
+"""
 
 del os
 del collections
@@ -1565,6 +1604,13 @@ def init():
     gl_blend_func["multiply"] = (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE)
     gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
+
+    error_suggestion_handlers[AttributeError] = renpy.error.handle_attribute_error
+    error_suggestion_handlers[NameError] = renpy.error.handle_name_error
+    error_suggestion_handlers[ImportError] = renpy.error.handle_import_error
+    error_suggestion_handlers[renpy.script.LabelNotFound] = renpy.script.LabelNotFound.get_suggestion
+    error_suggestion_handlers[renpy.display.screen.ScreenNotFound] = renpy.display.screen.ScreenNotFound.get_suggestion
+    error_suggestion_handlers[renpy.display.image.ImageNotFound] = renpy.display.image.ImageNotFound.get_suggestion
 
 
 def post_init():

@@ -23,6 +23,7 @@
 # Ren'Py script.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from typing import Any
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import renpy
@@ -55,7 +56,7 @@ from importlib.util import MAGIC_NUMBER as PYC_MAGIC
 PYC_MAGIC += b'_2025-04-18'
 
 # Change this to force a recompile of RPYC files when required, if the .rpy file exists.
-RPYC_MAGIC = b'_2025-04-18'
+RPYC_MAGIC = b'_2025-06-10'
 
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
@@ -71,6 +72,28 @@ class ScriptError(Exception):
     Exception that is raised if the script is somehow inconsistent,
     or otherwise wrong.
     """
+
+class LabelNotFound(ScriptError, LookupError):
+    """
+    Exception that is raised when a named node is not found.
+    """
+
+    def __init__(self, label: str | tuple[Any, ...]):
+        super().__init__(f"could not find label '{label}'.")
+        self.name = label
+
+    def get_suggestion(self):
+        if not isinstance(self.name, str):
+            return None
+
+        d = [node.name for node in renpy.game.script.namemap.values()
+                        if isinstance(node.name, str)]
+
+        if self.name[:1] != '_':
+            d = [x for x in d if x[:1] != '_']
+
+        if suggestion := renpy.error.compute_closest_value(self.name, d):
+            return f" Did you mean: '{suggestion}'?"
 
 
 def collapse_stmts(stmts):
@@ -356,13 +379,23 @@ class Script(object):
             priority = 1
             sort_key = fn
 
+            parts = fn.split("/")
+
             if has_libs and fn.startswith("libs/"):
                 priority = 0
-                sort_key = fn.rpartition("/")[2]
+
+                if len(parts) > 2:
+                    sort_key = "/".join(parts[2:])
+                else:
+                    sort_key = parts[1]
 
             if has_mods and fn.startswith("mods/"):
                 priority = 2
-                sort_key = fn.rpartition("/")[2]
+
+                if len(parts) > 2:
+                    sort_key = "/".join(parts[2:])
+                else:
+                    sort_key = parts[1]
 
             return (priority, sort_key, fn, dn)
 
@@ -469,12 +502,21 @@ class Script(object):
 
         all_stmts = collapse_stmts(stmts)
 
-        version = int(time.time())
+        version = int(time.time() * 100) & 0xFFFFFFFF
+
+        old_names = set(s.name for s in all_stmts)
 
         for s in all_stmts:
             if s.name is None:
-                s.name = (fn, version, self.serial)
-                self.serial += 1
+
+                while True:
+                    name = (fn, version, self.serial)
+                    self.serial += 1
+
+                    if name not in old_names:
+                        break
+
+                s.name = name
 
     def merge_names(self, old_stmts, new_stmts, used_names):
 
@@ -1101,7 +1143,7 @@ class Script(object):
     def lookup(self, label):
         """
         Looks up the given label in the game. If the label is not found,
-        raises a ScriptError.
+        raises a LabelNotFound.
         """
 
         if isinstance(label, renpy.parser.SubParse):
@@ -1117,7 +1159,7 @@ class Script(object):
             rv = self.namemap.get(label, None)
 
         if rv is None:
-            raise ScriptError("could not find label '%s'." % str(original))
+            raise LabelNotFound(original)
 
         return self.namemap[label]
 

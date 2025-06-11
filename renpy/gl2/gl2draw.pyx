@@ -510,13 +510,20 @@ cdef class GL2Draw:
 
         return True
 
-    def on_resize(self, first=False):
+    def on_resize(self, first=False, full_reset=False):
+
+        if first:
+            full_reset = True
+
+        if renpy.android or renpy.ios or renpy.emscripten:
+            full_reset = True
 
         if not first:
             self.quit_fbo()
-            self.shader_cache.clear()
+            if full_reset:
+                self.shader_cache.clear()
 
-        if renpy.android or renpy.ios or renpy.emscripten:
+        if full_reset:
             pygame.display.get_window().recreate_gl_context(always=renpy.emscripten)
 
         # Are we in fullscreen mode?
@@ -609,9 +616,13 @@ cdef class GL2Draw:
 
         self.draw_transform = Matrix.cscreen_projection(self.drawable_viewport[2], self.drawable_viewport[3])
 
-        self.shader_cache.load()
         self.init_fbo()
-        self.texture_loader.init()
+
+        if full_reset:
+            self.shader_cache.load()
+            self.texture_loader.init()
+        else:
+            self.texture_loader.cleanup()
 
         self.auto_mipmap = self.draw_per_virt < 0.75
 
@@ -678,8 +689,9 @@ cdef class GL2Draw:
         ):
 
             self.maximized = maximized
+            full_reset = renpy.display.interface.display_reset
             renpy.display.interface.before_resize()
-            self.on_resize()
+            self.on_resize(full_reset=full_reset)
 
             return True
         else:
@@ -1309,6 +1321,7 @@ cdef class GL2Draw:
 
         return (x, y)
 
+BIG_PIXELS = 65536 # Chosen to be bigger than any reasonable screen size, to limit
 
 cdef class GL2DrawingContext:
     """
@@ -1529,11 +1542,15 @@ cdef class GL2DrawingContext:
 
         # Handle clipping.
         if (r.xclipping or r.yclipping):
-            new_clip_polygon = Polygon.rectangle(0, 0, r.width, r.height)
+            new_clip_polygon = Polygon.rectangle(
+                0 if r.xclipping else -BIG_PIXELS,
+                0 if r.yclipping else -BIG_PIXELS,
+                r.width if r.xclipping else BIG_PIXELS,
+                r.height if r.yclipping else BIG_PIXELS)
 
             if self.clip_polygon is not None:
-                clip_polygon = new_clip_polygon.intersect(self.clip_polygon)
-                if clip_polygon is None:
+                self.clip_polygon = new_clip_polygon.intersect(self.clip_polygon)
+                if self.clip_polygon is None:
                     return
             else:
                 self.clip_polygon = new_clip_polygon

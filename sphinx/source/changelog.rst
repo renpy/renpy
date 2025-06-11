@@ -10,6 +10,13 @@ Changelog (Ren'Py 7.x-)
 8.4.0
 =====
 
+Performance Improvements
+------------------------
+
+*Live2D* When rendering Live2D models, Ren'Py will avoid doing unproductive work to create Renders for layers
+that are not visible, and masks that are not used. This can improve performance when using Live2D models with
+many layers.
+
 Requirement and Dependency Changes
 ----------------------------------
 
@@ -31,9 +38,9 @@ Ren'Py now includes support for two more special directories, :file:`game/libs` 
 directories are intended to receive third-party libraries and mods, respectively.
 
 When the file :file:`game/libs/libs.txt`
-exists, script files inside it are loaded in unicode order by filename (not full path), before other files in :file:`game`.
-Similarly, when the file :file:`game/mods/mods.txt` exists, script files inside it are loaded in unicode order by filename,
-after other files in :file:`game/` and :file:`game/libs/`.
+exists, script files inside :file:`game/libs` have the first directory removed, if any, and are loaded in unicode order by the path
+not including that directory. Similarly, when the file :file:`game/mods/mods.txt` exists, script files inside it are loaded in
+unicode order by the path, not including that directory.
 
 Note that load order is relatively unimportant in Ren'Py - it's mostly used with :doc:`cds`. Init priorities levels
 have been changed to recommend that games use init priorities of -99 to 99, and libraries and mods use from -999 to -100
@@ -77,12 +84,24 @@ Mipmaps will automatically be created for images loaded for the purpose of Live2
 likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
 of :func:`Image`.
 
+Automatic Oversampling
+----------------------
+
+Ren'Py will now automatically look for oversampled version of images, and use those if the game is scaled up.
+
+As an example, take loading "eileen happy.png". When the game is scaled to more than 100% of it's virtual size,
+when loading "eileen happy.png", Ren'Py will also look for "eileen happy@2.png", and load that if it exists.
+When scaled to more than 200%, it will look for "eileen happy@4.png", "eileen happy@3.png", and
+"eileen happy@2.png". If none of these exist, it will use "eileen happy.png".
+
+Ren'Py also supports oversampling and automatic oversampling for movies played using :class:`Movie` and
+:func:`renpy.movie_cutscene`. This works similarly to images, with respect to filenames.
+
 Texture Uniforms
 ----------------
 
 Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
 to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
-
 
 Accessibility
 -------------
@@ -98,9 +117,80 @@ or the :var:`preferences.force_mono` variable.
 Ren'Py now includes a preference to allow the user to adjust font kerning. This is exposed through the
 accessibility menu, the "font kerning" :func:`Preference`, and the :var:`preferences.font_kerning` variable.
 
+Launcher
+--------
+
+The launcher now supports games being placed into folders, which can be collapsed and expanded. To put a
+game in a folder, create a directory underneath the projects directory, and move the game into that directory.
+
+The launcher's "Console output" option now works on the Macintosh platform.
+
+Building an update will now produce a ``public_key.pem`` file, containing key material that can be shared with
+the world. When building a :doc:`downloader game <downloader>`, this file should be copied to the base directory of
+the downloader game. This is the public key that will be used to verify the download.
+
+When creating a new game, Ren'Py will now include a .gitignore file that contains a default set of files to ignore.
+
+
+Text
+-----
+
+Ren'Py now supports OpenType font layout features, which can control things like ligaturization and other
+settings. These features are controlled by the :propref:`font_features` style property, and the :tt:`features` text tag.
+
+A problem with mark positions on ligatures has been fixed. This mainly affected
+Arabic, but applies to all text. Note that this fix is only available when using
+the Harfbuzz shaper.
+
+The :propref:`reading_order` style property has been added so that a preference
+for the directionality of text may be expressed when ``config.rtl`` is ``True``.
+Setting it to ``"wrtl"`` (weak right-to-left) will cause directionally neutral
+lines to be displayed right-to-left (previously they would always be displayed
+left-to-right). This is mostly to support punctuation-only dialogue lines in RTL
+language games and translations.
+
+Finally, a regression in how bidirectional text embedding was handled when using
+the Harfbuzz text shaper introduced in ``8.3.7`` has been fixed. Text containing
+runs of both LTR and RTL characters will now render with the correct
+directionality for the individual runs again.
+
+Traceback Saves
+---------------
+
+If possible, Ren'Py now creates saves when an uncaught exception occurs, containing both the game
+state and the traceback. These saves are stored in slots with the name :file:`_tracesave-1` to :file:`_tracesave-10`.
+and have the traceback accessible through the json metadata.
+
+The new :func:`renpy.get_save_data` function allows you to retrieve the data for a particular save slot,
+without loading the save. This can be used with a traceback save to retrieve the game data without loading
+into an error state.
+
 
 Features
 --------
+
+The new :func:`HasSideImage` function returns the presence or absence of a side image before the side image
+itself is determined, making it useable in the say screen for layout.
+
+The new :var:`config.web_unload_music` variable controls whether music is unloaded when downloaded as part
+of :ref:`progressive downloading <progressive-downloading>`.
+
+The new :var:`config.clear_history_on_language_change` variable controls whether history is cleared when the
+language is changed.
+
+:func:`MixerValue` now suports the `step` and `force_step` parameters.
+
+The lint report can be configured to expand character aliases to names by setting :var:`config.lint_show_names` to True.
+
+:var:`config.voice_callbacks` allows you to define callbacks that are called when voice lines are played
+or stop.
+
+:ref:`Grids <sl-grid>` now support `right_to_left` and `bottom_to_top` properties, which control the order in which
+the grid is filled.
+
+Character's `ctc_position` argument now takes a new value `screen-variable`. This places the click-to-continue
+indicator in a screen variable, which allows it to be positioned inside the screen. This is intended for use
+with speech bubbles, to allow the click-to-continue indicator to be :ref:`positioned inside the speech bubble <bubble-ctc>`.
 
 The new :func:`renpy.lex_string` function makes it possible to create a Lexer for an arbitrary string.
 
@@ -154,8 +244,34 @@ inside for translation.
 The :var:`config.persistent_callback` callback makes it possible to update persistent data when it is loaded.
 
 
-Other Changes
--------------
+Changes
+-------
+
+:class:`Transform` now has an attribute, original_child, that gives the child of the transform before the
+function was called.
+
+The behavior of :tpref:`mesh_pad` has been changed when left or top padding is present. Previously, this would
+offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
+left and top of the child.
+
+From the Python typing module, the names Callable, Any, Self, Literal, cast, overload, final, and override are imported
+into namespaces. These become reserved names in Ren'Py, and should not be used as names in newly-developed projects.
+
+A regression that kept "Add From to Calls" from working has been fixed.
+
+On the web platform, Ren'Py will now preload automatic voice lines, ensuring the files can play immediately,
+even if not fully cached on the player's device.
+
+Text inputs (:func:`renpy.input` and the :ref:`input <sl-input>` displayable) disable non-required text
+ligatures, so that ligaturization doesn't change when the caret moves.
+
+Ren'Py will disable the screensaver (and hence, the system going to sleep) when auto-forward mode is active.
+
+A creator-defined statement that defines a label will now call :var:`config.label_callbacks` when run.
+
+The "Click to play the video." screen used on some web platforms is now translatable.
+
+CTC indicators inside retained speech bubbles will now be cleared when the player clicks past the dialogue.
 
 In some circumstances, Ren'Py will reuse tuples containing immutable values (float, int, bool,
 complex, str, bytes, and other immutable tuples), which can reduce memory usage and improve performance. This

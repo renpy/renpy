@@ -202,6 +202,35 @@ class DialogueTextTags(object):
             self.pause_delay.append(None)
 
 
+class CTCPauseHolder(renpy.display.displayable.Displayable):
+
+    def __init__(self, ctc):
+        renpy.display.displayable.Displayable.__init__(self)
+
+        self.ctc = ctc
+        self._duplicatable = ctc._duplicatable
+
+    def render(self, width, height, st, at):
+        cr = renpy.display.render.render(self.ctc, width, height, st, at)
+        rv = renpy.display.render.Render(0, cr.width)
+        rv.blit(cr, (0, 0))
+
+        return rv
+
+    def visit(self):
+        return [ self.ctc ]
+
+    def _duplicate(self, args):
+        if self.ctc._duplicatable:
+            return CTCPauseHolder(self.ctc._duplicate(args))
+        else:
+            return self
+
+    def get_position(self):
+        return self.ctc.get_position()
+
+
+
 def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, two_window=False, side_image=None, screen=None, properties=None, **kwargs):
     """
     This is the default function used by Character to predict images that
@@ -450,6 +479,12 @@ class SlowDone(object):
     last_pause = True
     no_wait=False
 
+    # The screen tag that is in use.
+    screen_tag = None
+
+    # The screen layer that is in use.
+    screen_layer = None
+
     def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause, no_wait):
         self.ctc = ctc
         self.ctc_position = ctc_position
@@ -466,7 +501,14 @@ class SlowDone(object):
 
         if self.interact and self.delay != 0:
 
-            if renpy.display.screen.has_screen("ctc"):
+            if self.ctc and self.ctc_position == "screen-variable":
+                try:
+                    renpy.exports.set_screen_variable("ctc", self.ctc, self.screen_tag, self.screen_layer)
+                except Exception:
+                    pass
+                renpy.exports.restart_interaction()
+
+            elif renpy.display.screen.has_screen("ctc"):
 
                 if self.ctc:
                     args = [ self.ctc ]
@@ -477,8 +519,10 @@ class SlowDone(object):
                 renpy.exports.restart_interaction()
 
             elif self.ctc and self.ctc_position == "fixed":
+
                 renpy.display.screen.show_screen("_ctc", _transient=True, ctc=self.ctc)
                 renpy.exports.restart_interaction()
+
 
         if self.delay is not None:
             renpy.ui.pausebehavior(self.delay, True, voice=self.last_pause and not self.no_wait, self_voicing=self.last_pause)
@@ -722,7 +766,7 @@ def display_say(
                 if extend_text:
                     extend_text = "{done}" + extend_text
 
-                    if last_pause:
+                    if last_pause and ctc_pause:
                         what_ctc = ctc_pause # show ctc_pause when using extend
 
             # Show the text.
@@ -749,6 +793,10 @@ def display_say(
                             sls = renpy.game.context().scene_lists
                             sls.set_transient_prefix(what_text[2], what_text[0], "replaced")
 
+
+                slow_done.screen_tag = what_text[0]
+                slow_done.screen_layer = what_text[2]
+
                 what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
 
             if not multiple:
@@ -768,10 +816,9 @@ def display_say(
 
                 if what_ctc:
 
-
                     if extend_text or not last_pause:
                         if ctc_position == "nestled" or ctc_position == "nestled-close":
-                                what_ctc = renpy.store.Fixed(what_ctc, xsize=0)
+                                what_ctc = CTCPauseHolder(what_ctc)
 
                     if ctc_position == "nestled":
                         what_text.set_ctc(what_ctc)
@@ -814,7 +861,19 @@ def display_say(
                 slow_done()
 
             if final:
-                rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
+                try:
+                    rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
+                finally:
+                    if retain and what_ctc:
+                        if ctc_position == "nestled":
+                            what_text.set_ctc([ "{_end}", what_ctc ])
+                        elif ctc_position == "nestled-close":
+                            what_text.set_ctc([ "{_end}", u"\ufeff", what_ctc, ])
+                        elif ctc_position == "screen-variable":
+                            try:
+                                renpy.exports.set_screen_variable("ctc", None, slow_done.screen_tag, slow_done.screen_layer)
+                            except Exception:
+                                pass
 
                 # This is only the case if the user has rolled forward, {nw} happens, or
                 # maybe in some other obscure cases.
@@ -1366,7 +1425,11 @@ class ADVCharacter(object):
 
         # 7.4.5 on.
         else:
-            return (sub(prefix) + sub(body) + sub(suffix))
+            if thing == "what":
+                return (sub(prefix) + sub(body, translate=not renpy.game.preferences.language) + sub(suffix))
+            else:
+                return (sub(prefix) + sub(body) + sub(suffix))
+
 
     def __call__(self, what, interact=True, _call_done=True, multiple=None, **kwargs):
 
@@ -1521,6 +1584,9 @@ class ADVCharacter(object):
             attrs = None
 
         renpy.store._side_image_attributes = attrs
+
+        if self.voice_tag and renpy.config.auto_voice_predict_callback:
+            renpy.config.auto_voice_predict_callback(self.voice_tag)
 
         try:
 
@@ -1731,13 +1797,30 @@ def Character(name=NotSet, kind=None, **properties):
         when you want a `ctc_pause` but no `ctc_timedpause`.
 
     `ctc_position`
-        Controls the location of the click-to-continue indicator. If
-        ``"nestled"``, the indicator is displayed as part of the text
-        being shown, immediately after the last character. ``"nestled-close"`` is
-        similar, except a break is not allowed between the text and the CTC
-        indicator. If ``"fixed"``, a new screen containing the CTC indicator is shown,
-        and the position style properties of the CTC displayable are used
-        to position the CTC indicator.
+        Controls the location of the click-to-continue indicator.
+        This can be:
+
+        "nestled"
+            The indicator is displayed as part of the text
+            being shown, immediately after the last character.
+
+        "nestled-close"
+            Similar to ``"nestled"``, but a break is not allowed between
+            the text and the CTC indicator.
+
+        "fixed"
+            If a screen named "ctc" exists, it is shown. Otherwise, the CTC
+            displayable is show, and the position style properties of the CTC
+            displayable are used to position the CTC indicator.
+
+        "screen-variable"
+            When given, the variable named "ctc" is set to the CTC displayable
+            when the CTC indicator should be show. This can be used with the
+            following screen language::
+
+                default ctc = None
+                showif ctc:
+                    add ctc
 
     **Screens.**
     The display of dialogue uses a :ref:`screen <screens>`. These arguments

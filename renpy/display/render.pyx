@@ -275,6 +275,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         rv.render_of.append(d)
         renpy.plog(4, "after clipping")
 
+    rv.debug = style.debug or rv.debug
 
     if not sizing:
 
@@ -984,24 +985,6 @@ cdef class Render:
             # Try to avoid clipping if a surface fits entirely inside the
             # rectangle.
 
-            if (reverse is None) or (reverse.xdx > 0.0 and
-                                     reverse.xdy == 0.0 and
-                                     reverse.ydx == 0.0 and
-                                     reverse.ydy > 0.0):
-
-                forward = this.forward or IDENTITY
-
-                tx, ty = forward.transform(x, y)
-                tw, th = forward.transform(w + x, h + y)
-                rw, rh = forward.transform(this.width, this.height)
-
-                if (tx <= 0) and (tw >= rw):
-                    rv.xclipping = False
-
-                if (ty <= 0) and (th >= rh):
-                    rv.yclipping = False
-
-
             if subpixel:
                 rv.subpixel_blit(this, (-x, -y), focus=focus, main=True)
             else:
@@ -1038,26 +1021,28 @@ cdef class Render:
                     if child.xclipping:
                         end = min(cw, cbx+bw)
                         cbx = max(0, cbx)
-                        bw = end - cbx
+                        cbw = end - cbx
 
                         cropw = cw
                     else:
                         cropw = w - xo
+                        cbw = bw
 
                     if child.yclipping:
                         end = min(ch, cby+bh)
                         cby = max(0, cby)
-                        bh = end - cby
+                        cbh = end - cby
 
                         croph = ch
                     else:
                         croph = h - yo
+                        cbh = bh
 
                     crop = (cx, cy, cropw, croph)
-                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel, bounds=(cbx, cby, bw, bh))
-                    newchild.width = cw
-                    newchild.height = ch
+                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel, bounds=(cbx, cby, cbw, cbh))
                     newchild.render_of = child.render_of[:]
+                    newchild.xclipping = child.xclipping or newchild.xclipping
+                    newchild.yclipping = child.yclipping or newchild.yclipping
 
                 else:
 

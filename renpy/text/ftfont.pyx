@@ -544,7 +544,7 @@ cdef class FTFont:
         return rv
 
 
-    def glyphs(self, unicode s):
+    def glyphs(self, unicode s, int level):
         """
         Sizes s, returning a list of Glyph objects.
         """

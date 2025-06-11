@@ -136,8 +136,8 @@ def find_position(f, position):
             if (nf.widget == f.widget) and (nf.arg == f.arg):
                 return x, y
 
-        x = random.randrange(f.x, f.x + f.w)
-        y = random.randrange(f.y, f.y + f.h)
+        x = random.randrange(f.x, int(f.x + f.w))
+        y = random.randrange(f.y, int(f.y + f.h))
 
     else:
         print()

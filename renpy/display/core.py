@@ -882,6 +882,9 @@ class Interface(object):
         # Set by renpy.exports.invoke_in_main_thread.
         self.invoke_queue = [ ]
 
+        # The previous state of the screensaver.
+        self.last_screensaver = None
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -1091,8 +1094,6 @@ class Interface(object):
         if renpy.config.mouse_focus_clickthrough:
             pygame.display.hint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1")
 
-        pygame.display.set_screensaver(renpy.config.allow_screensaver)
-
         # Needed for Ubuntu Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
         os.environ['SDL_VIDEO_X11_WMCLASS'] = wmclass
@@ -1130,6 +1131,17 @@ class Interface(object):
             PythonSDLActivity.mActivity.hidePresplash()
 
             print("Hid presplash.")
+
+    def set_screensaver(self):
+
+        new_screensaver = renpy.config.allow_screensaver
+
+        if renpy.game.preferences.afm_enable:
+            new_screensaver = False
+
+        if new_screensaver != self.last_screensaver:
+            pygame.display.set_screensaver(new_screensaver)
+            self.last_screensaver = new_screensaver
 
     def set_icon(self):
         """
@@ -1260,19 +1272,23 @@ class Interface(object):
 
         return rv
 
-    def kill_textures(self):
+    def kill_textures(self, keep_const_size=False):
         """
         Kills all textures that have been loaded.
         """
 
-        if renpy.display.draw is not None:
-            renpy.display.draw.kill_textures()
-
         renpy.gl2.assimp.free_memory()
-        renpy.display.im.cache.clear()
         renpy.display.render.free_memory()
         renpy.text.text.layout_cache_clear()
         renpy.display.video.texture.clear()
+
+        if keep_const_size:
+            renpy.display.im.cache.clear_variable_size()
+        else:
+            renpy.display.im.cache.clear()
+
+        if renpy.display.draw is not None:
+            renpy.display.draw.kill_textures()
 
     def kill_surfaces(self):
         """
@@ -1287,7 +1303,7 @@ class Interface(object):
         This is called when the window has been resized.
         """
 
-        self.kill_textures()
+        self.kill_textures(keep_const_size=not self.display_reset)
 
         if not renpy.mobile:
             pygame.key.stop_text_input() # @UndefinedVariable
@@ -2473,6 +2489,9 @@ class Interface(object):
         # Set the window caption.
         self.set_window_caption()
 
+        # Set the screensaver.
+        self.set_screensaver()
+
         # Tick time forward.
         renpy.display.im.cache.tick()
         renpy.text.text.text_tick()
@@ -2901,7 +2920,7 @@ class Interface(object):
                                 x = -1
                                 y = -1
 
-                            if renpy.android and self.last_event.type == pygame.MOUSEBUTTONUP:
+                            if (self.last_event.type == pygame.MOUSEBUTTONUP) and getattr(self.last_event, "touch", False):
                                 x = -1
                                 y = -1
 
@@ -3144,6 +3163,8 @@ class Interface(object):
 
                 # Handle videoresize.
                 if ev.type == pygame.VIDEORESIZE:
+
+                    pygame.event.get(pygame.VIDEORESIZE)
 
                     if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
                         renpy.display.draw.full_redraw = True

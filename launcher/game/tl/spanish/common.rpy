@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
@@ -202,7 +202,7 @@
 
     # 00director.rpy:709
     old "The interactive director is not enabled here."
-    new "El director interactivo no está habilitado aquí."
+    new "El director interactivo no está activado aquí."
 
     # 00director.rpy:1479
     old "⬆"
@@ -482,7 +482,7 @@
 
     # 00preferences.rpy:346
     old "self voicing"
-    new "autovoz"
+    new "voz automaitica"
 
     # 00preferences.rpy:355
     old "clipboard voicing"
@@ -943,7 +943,7 @@ translate spanish strings:
     new "Descarga de los datos del juego."
 
     # renpy/common/00updater.rpy:2078
-    old "An error occurred when trying to download game data:"
+    old "An error occured when trying to download game data:"
     new "Se ha producido un error al intentar descargar los datos del juego:"
 
     # renpy/common/00updater.rpy:2083
@@ -953,3 +953,48 @@ translate spanish strings:
     # renpy/common/00updater.rpy:2090
     old "Retry"
     new "Reintentar"
+
+    # renpy/common/00accessibility.rpy:122
+    old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
+    new "Menú de accesibilidad. Utilice las flechas arriba y abajo para navegar y la tecla Entrar para activar botones y barras."
+
+    # renpy/common/00accessibility.rpy:199
+    old "Self-voicing support is limited when using a touch screen."
+    new "El soporte de voz automática es limitado cuando se utiliza una pantalla táctil."
+
+    # renpy/common/00gui.rpy:454
+    old "Are you sure you want to continue where you left off?"
+    new "¿Seguro que quieres continuar donde lo dejaste?"
+
+    # renpy/common/00preferences.rpy:440
+    old "self voicing enable"
+    new "voz automática activada"
+
+    # renpy/common/00preferences.rpy:442
+    old "self voicing disable"
+    new "voz automática desactivada"
+
+    # renpy/common/00preferences.rpy:457
+    old "clipboard voicing enable"
+    new "portapapeles de voz activada"
+
+    # renpy/common/00preferences.rpy:459
+    old "clipboard voicing disable"
+    new "portapapeles de voz desactivada"
+
+    # renpy/common/00preferences.rpy:466
+    old "debug voicing enable"
+    new "depuración de voz activada"
+
+    # renpy/common/00preferences.rpy:468
+    old "debug voicing disable"
+    new "depuración de voz desactivada"
+
+    # renpy/common/00translation.rpy:63
+    old "Translation identifier: [identifier]"
+    new "Identificador de traducción: [identifier]"
+
+    # renpy/common/00translation.rpy:84
+    old " translates [tl.filename]:[tl.linenumber]"
+    new " traducciones [tl.filename]:[tl.linenumber]"
+

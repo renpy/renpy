@@ -5,6 +5,21 @@ Launcher
 The Ren'Py launcher is mostly documented in other portions of the manual. This
 page contains information about the launcher that doesn't fit anywhere else.
 
+
+Project Folders
+---------------
+
+The launcher supports folders. You can create a folder by creating a directory
+under the projects directory, and moving the project into it, then clicking Refresh.
+Only one level of folders is supported, so you can't create a folder inside a folder.
+
+Folders can be expanded and collapsed by clicking on the name in the launcher.
+
+.. warning::
+
+    Currently, the Ren'Py launcher only supports one project with a given name. So it's not
+    possible to have the same project name in different folders.
+
 Projects.txt
 ------------
 

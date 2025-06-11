@@ -50,6 +50,7 @@ init -1500 python:
     _voice.tlid = None
     _voice.auto_file = None
     _voice.info = None
+    _voice.playing_info = None
     _voice.last_playing = 0.0
 
     # If true, the voice system ignores the interaction.
@@ -62,9 +63,22 @@ init -1500 python:
     # exists, it's played as a voice file.
     config.auto_voice = None
 
+    # A list of voice callbacks.
+    config.voice_callbacks = []
+
     # The last sound played on the voice channel. (This is used to replay
     # it.)
     _last_voice_play = None
+
+
+    def _invoke_voice_callbacks(event):
+        """
+        Invokes the voice callback if _voice.playing_info is not None.
+        """
+
+        if _voice.playing_info is not None:
+            for callback in config.voice_callbacks:
+                callback(event, _voice.playing_info, _unknown_kwarg=True)
 
 
     # Call this to specify the voice file that will be played for
@@ -232,6 +246,9 @@ init -1500 python:
             volume = persistent._character_volume.get(self.voice_tag, 1.0)
             renpy.music.get_channel("voice").set_volume(volume)
 
+            _invoke_voice_callbacks("stop")
+            _voice.playing_info = None
+
             renpy.sound.play(self.sample, channel="voice")
             renpy.restart_interaction()
             self.periodic(0)
@@ -308,21 +325,32 @@ init -1500 python:
         An object returned by VoiceInfo and get_voice_info().
         """
 
-        def __init__(self):
+        def __init__(self, predict=False, tag=None):
 
-            self.filename = _voice.play
+            if not predict:
+                self.filename = _voice.play
+                self.sustain = _voice.sustain
+                self.tag = _voice.tag
+            else:
+                self.filename = None
+                self.sustain = False
+                self.tag = tag
+
             self.auto_filename = None
             self.tlid = None
-            self.sustain = _voice.sustain
-            self.tag = _voice.tag
 
             if not self.filename and config.auto_voice:
 
-                for tlid in [
-                    renpy.game.context().translate_identifier,
-                    renpy.game.context().alternate_translate_identifier,
-                    renpy.game.context().deferred_translate_identifier,
-                    ]:
+                if predict:
+                    tlids = renpy.display.predict.tlids
+                else:
+                    tlids = [
+                        renpy.game.context().translate_identifier,
+                        renpy.game.context().alternate_translate_identifier,
+                        renpy.game.context().deferred_translate_identifier,
+                    ]
+
+                for tlid in tlids:
 
                     if tlid is None:
                         continue
@@ -332,7 +360,8 @@ init -1500 python:
                     else:
                         fn = config.auto_voice(tlid)
 
-                    self.auto_filename = fn
+                    if self.auto_filename is None:
+                        self.auto_filename = fn
 
                     if fn and renpy.loadable(fn, directory="audio"):
 
@@ -427,6 +456,8 @@ init -1500 python hide:
 
         if getattr(renpy.context(), "_menu", False) and not _preferences.voice_after_game_menu:
             renpy.sound.stop(channel="voice")
+            _invoke_voice_callbacks("stop")
+            _voice.playing_info = None
             return
 
         if _preferences.voice_sustain and not _voice.sustain:
@@ -453,23 +484,31 @@ init -1500 python hide:
 
         if (not volume) or (_voice.tag in persistent._voice_mute):
             renpy.sound.stop(channel="voice")
+            _invoke_voice_callbacks("stop")
             store._last_voice_play = _voice.play
+            _voice.playing_info = None
 
         elif _voice.play:
             if not config.skipping:
                 renpy.music.get_channel("voice").set_volume(volume)
                 renpy.sound.play(_voice.play, channel="voice")
+                _invoke_voice_callbacks("stop")
+                _voice.playing_info = vi
+                _invoke_voice_callbacks("play")
 
             store._last_voice_play = _voice.play
 
         elif not _voice.sustain:
             renpy.sound.stop(channel="voice")
+            _invoke_voice_callbacks("stop")
+            _voice.playing_info = None
 
             if not getattr(renpy.context(), "_menu", False):
                 store._last_voice_play = None
 
         if config.skipping:
             renpy.sound.stop(channel="voice")
+            _invoke_voice_callbacks("stop")
 
         _voice.play = None
         _voice.sustain = False
@@ -499,6 +538,37 @@ init -1500 python hide:
             _voice.tag = voice_tag
 
     config.voice_tag_callback = voice_tag_callback
+
+    def _voice_periodic_callback():
+        if _voice.playing_info is not None and not renpy.sound.is_playing(channel="voice"):
+            _invoke_voice_callbacks("stop")
+            _voice.playing_info = None
+
+    config.periodic_callbacks.append(_voice_periodic_callback)
+
+
+    def _auto_voice_predict_callback(tag):
+        """
+        Called to perform auto-voice prediction.
+        """
+
+        if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+            vi = VoiceInfo(predict=True, tag=tag)
+
+            fn = vi.filename
+
+            if not fn:
+                return
+
+            try:
+                with renpy.loader.load(fn, directory="audio") as f:
+                    pass
+
+                renpy.webloader.extend(fn)
+            except renpy.webloader.DownloadNeeded as exception:
+                renpy.webloader.enqueue(exception.relpath, 'voice', None)
+
+    config.auto_voice_predict_callback = _auto_voice_predict_callback
 
 
 screen _auto_voice:
@@ -544,6 +614,8 @@ python early hide:
             try:
                 with renpy.loader.load(fn, directory="audio") as f:
                     pass
+
+                renpy.webloader.extend(fn)
             except renpy.webloader.DownloadNeeded as exception:
                 renpy.webloader.enqueue(exception.relpath, 'voice', None)
         return [ ]

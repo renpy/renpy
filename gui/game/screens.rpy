@@ -1442,6 +1442,10 @@ screen bubble(who, what):
         text what:
             id "what"
 
+        default ctc = None
+        showif ctc:
+            add ctc
+
 style bubble_window is empty
 style bubble_namebox is empty
 style bubble_who is default
@@ -1563,6 +1567,10 @@ style game_menu_navigation_frame:
 style game_menu_content_frame:
     variant "small"
     top_margin 0
+
+style game_menu_viewport:
+    variant "small"
+    xsize gui.scale(870)
 
 style pref_vbox:
     variant "small"

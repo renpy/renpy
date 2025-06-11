@@ -201,6 +201,18 @@ class Cache(object):
 
             self.added.clear()
 
+    def clear_variable_size(self):
+        """
+        Clears out cache entries that are variable size.
+        """
+
+        with self.lock:
+
+            for ce in list(self.cache.values()):
+
+                if not ce.what.const_size:
+                    self.kill(ce)
+
     def get_renders(self):
         """
         Get a list of Renders in the image cache, where ce.texture is a Render.
@@ -311,8 +323,8 @@ class Cache(object):
                 bounds = tuple(surf.get_bounding_rect())
                 bounds = expand_bounds(bounds, size, renpy.config.expand_texture_bounds)
 
-                if image.oversample > 1:
-                    bounds = ensure_bounds_divide_evenly(bounds, image.oversample)
+                if image.get_oversample() > 1:
+                    bounds = ensure_bounds_divide_evenly(bounds, image.get_oversample())
 
                 w = bounds[2]
                 h = bounds[3]
@@ -355,7 +367,10 @@ class Cache(object):
                     texsurf = ce.surf.subsurface(ce.bounds)
                     renpy.display.render.mutated_surface(texsurf)
 
-                ce.texture = renpy.display.draw.load_texture(texsurf, properties={ 'mipmap' : image.mipmap })
+                if image.mipmap is not None:
+                    ce.texture = renpy.display.draw.load_texture(texsurf, properties={ 'mipmap' : image.mipmap })
+                else:
+                    ce.texture = renpy.display.draw.load_texture(texsurf)
 
                 # This was loaded while predicting images for immediate use,
                 # so get it onto the GPU.
@@ -581,15 +596,23 @@ class ImageBase(renpy.display.displayable.Displayable):
     __version__ = 1
 
     optimize_bounds = False
-    oversample = 1
+
+    oversample = None
+    "How much to oversample the image by. None if not set."
+
     pixel_perfect = False
     obsolete = True
 
     obsolete_list = [ ]
-    mipmap = True
+    mipmap = None
 
     # If the image failed to load, a placeholder used to report the error.
     fail = None
+
+    # True if the size of the im does not depend on anything other than the image manipulator,
+    # False otherwise.
+    const_size = False
+
 
     def after_upgrade(self, version):
         if version < 1:
@@ -597,19 +620,21 @@ class ImageBase(renpy.display.displayable.Displayable):
 
     def __init__(self, *args, **properties):
 
+        flat_properties = tuple(j for i in properties.items() for j in i)
+
         self.rle = properties.pop('rle', None)
         self.cache = properties.pop('cache', True)
         self.optimize_bounds = properties.pop('optimize_bounds', True)
-        self.oversample = properties.pop('oversample', 1)
-        self.mipmap = properties.pop('mipmap', "auto")
+        self.oversample = properties.pop('oversample', None)
+        self.mipmap = properties.pop('mipmap', None)
 
-        if self.oversample <= 0:
+        if self.oversample is not None and self.oversample <= 0:
             raise Exception("Image's oversample parameter must be greater than 0.")
 
         properties.setdefault('style', 'image')
 
         super(ImageBase, self).__init__(**properties)
-        self.identity = (type(self).__name__,) + args
+        self.identity = (type(self).__name__,) + args + flat_properties
 
         if self.obsolete and renpy.game.context().init_phase:
             frame = sys._getframe(2)
@@ -640,7 +665,8 @@ class ImageBase(renpy.display.displayable.Displayable):
 
     def render(self, w, h, st, at):
         try:
-            return cache.get(self, render=True)
+            d = self.get_oversampled_image()
+            return cache.get(d, render=True)
         except Exception as e:
             if renpy.config.raise_image_load_exceptions:
                 raise
@@ -655,7 +681,7 @@ class ImageBase(renpy.display.displayable.Displayable):
             return super(ImageBase, self).get_placement()
 
     def predict_one(self):
-        renpy.display.predict.image(self)
+        renpy.display.predict.image(self.get_oversampled_image())
 
     def predict_files(self):
         """
@@ -678,7 +704,17 @@ class ImageBase(renpy.display.displayable.Displayable):
         Returns the oversample value for this image.
         """
 
-        return self.oversample
+        if self.oversample is None:
+            return 1
+        else:
+            return self.oversample
+
+    def get_oversampled_image(self):
+        """
+        Returns another image that contains an image that is the oversampled version of this image.
+        """
+
+        return self
 
 
 ignored_images = set()
@@ -718,6 +754,40 @@ class Image(ImageBase):
         self.is_svg = filename.lower().endswith(".svg")
         self.pixel_perfect = self.is_svg
 
+        self.const_size = not self.is_svg
+
+    def get_oversampled_image(self):
+        if renpy.config.automatic_oversampling is None:
+            return self
+
+        if self.is_svg or self.oversample is not None:
+            return self
+
+        if renpy.display.draw is None:
+            return self
+
+        draw_per_virt = renpy.display.draw.draw_per_virt
+
+        if draw_per_virt <= 1.0:
+            return self
+
+        max_oversample = 2 ** int(math.ceil(math.log2(draw_per_virt)))
+        max_oversample = min(max_oversample, renpy.config.automatic_oversampling)
+
+        base, _, ext = self.filename.rpartition(".")
+        base, _, extras = base.partition("@")
+
+        if extras:
+            extras = "," + extras
+
+        for i in range(max_oversample, 1, -1):
+            filename = f"{base}@{i}{extras}.{ext}"
+
+            if renpy.loader.loadable(filename, directory="images"):
+                return Image(filename)
+
+        return self
+
     def _repr_info(self):
         return repr(self.filename)
 
@@ -725,10 +795,12 @@ class Image(ImageBase):
         return renpy.loader.get_hash(self.filename)
 
     def get_oversample(self):
+        oversample = self.oversample or 1
+
         if self.is_svg:
-            return self.oversample * renpy.display.draw.draw_per_virt
+            return oversample * renpy.display.draw.draw_per_virt
         else:
-            return self.oversample
+            return oversample
 
     def load(self, unscaled=False):
 
@@ -828,6 +900,7 @@ class Data(ImageBase):
         super(Data, self).__init__(data, filename, **properties)
         self.data = data
         self.filename = filename
+        self.const_size = True
 
     def _repr_info(self):
         return repr(self.filename)
@@ -846,6 +919,7 @@ class ZipFileImage(ImageBase):
 
         self.zipfilename = zipfilename
         self.filename = filename
+        self.const_size = True
 
     def load(self):
         try:
@@ -901,6 +975,8 @@ class Composite(ImageBase):
 
         # Only supports all the images having the same oversample factor
         self.oversample = self.images[0].get_oversample()
+
+        self.const_size = all(i.const_size for i in self.images)
 
     def get_hash(self):
         rv = 0
@@ -963,6 +1039,8 @@ class Scale(ImageBase):
         self.height = int(height)
         self.bilinear = bilinear
 
+        self.const_size = True
+
     def get_hash(self):
         return self.image.get_hash()
 
@@ -1023,6 +1101,8 @@ class FactorScale(ImageBase):
         self.width = width
         self.height = height
         self.bilinear = bilinear
+
+        self.const_size = self.image.const_size
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1085,6 +1165,8 @@ class Flip(ImageBase):
         self.horizontal = horizontal
         self.vertical = vertical
 
+        self.const_size = self.image.const_size
+
     def get_hash(self):
         return self.image.get_hash()
 
@@ -1127,6 +1209,8 @@ class Rotozoom(ImageBase):
         self.oversample = im.get_oversample()
         self.angle = angle
         self.zoom = zoom
+
+        self.const_size = self.image.const_size
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1178,6 +1262,8 @@ class Crop(ImageBase):
         self.y = y
         self.w = w
         self.h = h
+
+        self.const_size = True
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1243,6 +1329,8 @@ class Map(ImageBase):
         self.amap = amap
 
         self.force_alpha = force_alpha
+
+        self.const_size = self.image.const_size
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1329,6 +1417,8 @@ class Recolor(ImageBase):
 
         self.force_alpha = force_alpha
 
+        self.const_size = self.image.const_size
+
     def get_hash(self):
         return self.image.get_hash()
 
@@ -1375,6 +1465,8 @@ class Blur(ImageBase):
         self.oversample = im.get_oversample()
         self.rx = xrad
         self.ry = xrad if yrad is None else yrad
+
+        self.const_size = self.image.const_size
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1443,6 +1535,8 @@ class MatrixColor(ImageBase):
         self.image = im
         self.oversample = im.get_oversample()
         self.matrix = matrix
+
+        self.const_size = self.image.const_size
 
     def get_hash(self):
         return self.image.get_hash()
@@ -1883,6 +1977,8 @@ class Tile(ImageBase):
         self.oversample = im.get_oversample()
         self.size = size
 
+        self.const_size = True
+
     def get_hash(self):
         return self.image.get_hash()
 
@@ -1942,6 +2038,8 @@ class AlphaMask(ImageBase):
         # The two images already need to be the same size, they now also need the same oversample.
         self.oversample = self.base.get_oversample()
 
+        self.const_size = self.base.const_size and self.mask.const_size
+
     def get_hash(self):
         return self.base.get_hash() + self.mask.get_hash()
 
@@ -1976,6 +2074,8 @@ class Null(ImageBase):
     def __init__(self, **properties):
         super(Null, self).__init__(**properties)
 
+        self.const_size = True
+
     def get_hash(self):
         return 42
 
@@ -2003,6 +2103,8 @@ class UnoptimizedTexture(ImageBase):
         super(UnoptimizedTexture, self).__init__(im.identity, optimize_bounds=False, **properties)
         self.image = im
 
+        self.const_size = im.const_size
+
     def get_hash(self):
         return self.image.get_hash()
 
@@ -2017,7 +2119,7 @@ def image(arg, loose=False, **properties):
     """
     :doc: im_image
     :name: Image
-    :args: (filename, *, optimize_bounds=True, oversample=1, dpi=96, mipmap="auto", **properties)
+    :args: (filename, *, optimize_bounds=True, oversample=1, dpi=96, mipmap=None, **properties)
 
     Loads an image from a file. `filename` is a
     string giving the name of the file.
@@ -2045,7 +2147,7 @@ def image(arg, loose=False, **properties):
     `mipmap`
         If this is "auto", then mipmaps are generated for the image only if the game is scaled down to less than
         75% of its default size. If this is True, mipmaps are always generated. If this is False, mipmaps are never
-        generated.
+        generated. If this is None, then the default is taken from config.mipmap.
     """
 
     """

@@ -22,8 +22,11 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from typing import TYPE_CHECKING, Callable, Any
+
+# FrameType can't be pickled!
+if TYPE_CHECKING:
+    from types import FrameType
 
 import sys
 import time
@@ -90,6 +93,24 @@ class PredictInfo(renpy.object.Object):
     """
 
 
+class NewPredictInfo:
+    """
+    A new version of PredictInfo.
+    """
+
+    node: "renpy.ast.Node"
+    "The node that is being predicted."
+
+    images: "renpy.display.image.ShownImageInfo"
+    "The state of images at the time of prediction."
+
+    predict_return_stack: list[Any]
+    "The return stack at the time of prediction."
+
+    tlids: list[str|None]
+    "A list of strings giving translation identifiers that are in effect at the time of prediction."
+
+
 class LineLogEntry(object):
 
     def __init__(self, filename, line, node, abnormal):
@@ -154,6 +175,8 @@ class Context(renpy.object.Object):
     deferred_translate_identifier = None
 
     predict_return_stack = None # type: list|None
+
+    exception_handler: Callable[[renpy.error.TracebackException], bool] | None
 
     def __repr__(self):
 
@@ -460,7 +483,48 @@ class Context(renpy.object.Object):
 
             raise e
 
-    def report_traceback(self, name, last):
+    def handle_exception(self):
+        """
+        Handles exception that is currently on a fly.
+        """
+
+        e = sys.exception()
+        if e is None:
+            return
+
+        # Base exceptions are not handled.
+        elif not isinstance(e, Exception):
+            raise
+
+        te = renpy.error.report_exception(e, editor=False)
+
+        # Local exception handler, if any. This should handle all cases
+        # of the exception.
+        if self.exception_handler is not None:
+            self.exception_handler(te)
+            return
+
+        # Creator-defined exception handler. Returns True
+        # if exception handled.
+        if renpy.config.exception_handler is not None:
+            try:
+                # Before 8.4 it was a function that takes 3 strings.
+                import inspect
+                inspect.signature(renpy.config.exception_handler).bind(te)
+
+            except TypeError:
+                if renpy.config.exception_handler(*te): # type: ignore
+                    return
+
+            else:
+                if renpy.config.exception_handler(te):
+                    return
+
+        # RenPy default exception handler. Returns True
+        # if exception NOT handled.
+        renpy.display.error.report_exception(te)
+
+    def report_traceback(self, name: str, last: bool):
 
         if last:
             return
@@ -562,7 +626,7 @@ class Context(renpy.object.Object):
                 force_rollback = False
 
             # Force a new rollback to start to match things in the forward log.
-            if renpy.game.log.forward and renpy.game.log.forward[0][0] == node.name:
+            if renpy.game.log.forward and renpy.game.log.forward[0].name == node.name:
                 update_rollback = True
                 force_rollback = True
 
@@ -608,40 +672,13 @@ class Context(renpy.object.Object):
 
                     raise
 
-                except Exception as e:
+                except Exception:
                     self.translate_interaction = None
 
-                    short, full, traceback_fn = renpy.error.report_exception(e, editor=False)
-
-                    reraise = True
-                    try:
-                        # Local exception handler, if any.
-                        if self.exception_handler is not None:
-                            self.exception_handler(short, full, traceback_fn)
-                            reraise = False
-
-                        # Creator-defined exception handler. Returns True
-                        # if exception handled.
-                        elif renpy.config.exception_handler is not None:
-                            reraise = not renpy.config.exception_handler(short, full, traceback_fn)
-
-                        # RenPy default exception handler. Returns True
-                        # if exception NOT handled.
-                        if reraise:
-                            reraise = renpy.display.error.report_exception(
-                                short,
-                                full,
-                                traceback_fn
-                            )
-
-                    except renpy.game.CONTROL_EXCEPTIONS:
-                        raise
-                    except Exception:
-                        pass
-
-                    # Raise original exception.
-                    if reraise:
-                        raise
+                    # This could raise CONTROL_EXCEPTIONS that are handled
+                    # as if it happened in node execute. Other exceptions
+                    # are chained to original and reported after program exit.
+                    self.handle_exception()
 
                 node = self.next_node
 
@@ -652,10 +689,15 @@ class Context(renpy.object.Object):
             except renpy.game.CallException as e:
 
                 if e.from_current:
-                    return_site = getattr(node, "statement_start", node).name
+                    if (statement_start := getattr(node, "statement_start", None)) is None:
+                        statement_start = node
+
+                    return_site = statement_start.name
+
                 else:
                     if self.next_node is None:
                         raise Exception("renpy.call can't be used when the next node is undefined.")
+
                     return_site = self.next_node.name
 
                 node = self.call(e.label, return_site=return_site)
@@ -864,7 +906,13 @@ class Context(renpy.object.Object):
             if node in seen:
                 continue
 
-            nodes.append((node, self.images, self.return_stack))
+            npi = NewPredictInfo()
+            npi.node = node
+            npi.images = self.images
+            npi.predict_return_stack = self.return_stack
+            npi.tlids = [ self.translate_identifier, self.alternate_translate_identifier ]
+
+            nodes.append(npi)
             seen.add(node)
 
         # Predict statements.
@@ -873,7 +921,12 @@ class Context(renpy.object.Object):
             if i >= len(nodes):
                 break
 
-            node, images, return_stack = nodes[i]
+            npi = nodes[i]
+            node = npi.node
+            images = npi.images
+            return_stack = npi.predict_return_stack
+
+            renpy.display.predict.tlids = npi.tlids
 
             self.images = renpy.display.image.ShownImageInfo(images)
             self.predict_return_stack = return_stack
@@ -885,7 +938,14 @@ class Context(renpy.object.Object):
                         continue
 
                     if n not in seen:
-                        nodes.append((n, self.images, self.predict_return_stack))
+
+                        npi = NewPredictInfo()
+                        npi.node = n
+                        npi.images = self.images
+                        npi.predict_return_stack = self.predict_return_stack
+                        npi.tlids = renpy.display.predict.tlids
+
+                        nodes.append(npi)
                         seen.add(n)
 
             except Exception:

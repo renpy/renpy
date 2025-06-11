@@ -97,6 +97,7 @@ init label _errorhandling:
         emoji_font "TwemojiCOLRv0.ttf"
         prefer_emoji True
         shaper "harfbuzz"
+        reading_order None
 
         # Window properties
         background None
@@ -232,6 +233,10 @@ init label _errorhandling:
     style _label_text is _default:
         size gui._scale(26)
         kerning -1
+
+    style _trace:
+        left_margin gui._scale(10)
+        top_margin gui._scale(5)
 
     style _bar is _default:
         left_bar "#468"
@@ -487,33 +492,78 @@ init python:
     def _(s):
         return s
 
-    def __limit_lines(lines):
-        """
-        Limit the number of lines shown.
-        """
 
-        if len(lines) < 401:
-            return lines
+    class _ExceptionPrintContext(renpy.renpy.error.TextIOExceptionPrintContext):
+        BRIGHT_RED = "#e00000"
+        RED = "#800000"
 
-        return lines[:200] + [ "..." ] + lines[-200:]
+        def __init__(self, *, filter_private: bool, emit_context=True):
+            import io
+            super().__init__(
+                io.StringIO(),
+                filter_private=filter_private,
+                max_group_width=5,
+                max_group_depth=1,
+                emit_context=emit_context
+            )
 
-    # This function is responsible for taking a traceback, and converting
-    # it to a string that can be shown with text.
-    def __format_traceback(s):
-        import re
+        def _escape_limit(self, s: str):
+            s = s.replace("{", "{{")
+            if len(s) > 400:
+                s = s[:200] + " ... " + s[-200:]
 
-        lines = [ i.replace("{", "{{") for i in s.split("\n") ]
-        lines = __limit_lines(lines)
+            return s
 
-        rv = [ ("{size=%d}" % gui._scale(22)) + lines[0] + "{/size}" ]
+        def _color(self, text: str, color: str):
+            return f"{{color={color}}}{text}{{/color}}"
 
-        for i in lines[1:]:
-            i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
-            rv.append("  " + i)
+        def location(self, filename, lineno, name):
+            self._print(
+                f'{{a=edit:{lineno}:{filename}}}'
+                f'File "{filename}", line {lineno}'
+                f'{{/a}}, in {name}')
 
-        rv[1] = "{vspace=5}" + rv[1]
+        def source_carets(self, line, carets):
+            if carets is None:
+                self._print(self._escape_limit(line))
+                return
 
-        return "\n".join(rv)
+            from itertools import groupby
+
+            zipped = zip(line, carets, strict=True)
+            colorized_line_parts: list[str] = []
+            for color, group in groupby(zipped, key=lambda x: x[1]):
+                caret_group = list(group)
+                line_part = "".join(char for char, _ in caret_group)
+                line_part = self._escape_limit(line_part)
+                if color == "^":
+                    line_part = self._color(line_part, self.BRIGHT_RED)
+                elif color == "~":
+                    line_part = self._color(line_part, self.RED)
+
+                colorized_line_parts.append(line_part)
+
+            self._print("".join(colorized_line_parts))
+
+        def string(self, text: str):
+            self._print(self._escape_limit(text))
+
+        def final_exception_line(self, exc_type: str, text: str | None):
+            exc_type = self._escape_limit(exc_type)
+            if text is None:
+                self._print(exc_type)
+            else:
+                text = self._escape_limit(text)
+                self._print(f"{exc_type}: {text}")
+
+
+    def __simple_traceback(traceback_exception):
+        return traceback_exception.format(_ExceptionPrintContext(
+            filter_private=True, emit_context=False))
+
+    def __full_traceback(traceback_exception):
+        return traceback_exception.format(_ExceptionPrintContext(
+            filter_private=False, emit_context=False))
 
     def __format_parse_errors(errors: list[str]):
         """
@@ -735,8 +785,8 @@ screen _exception:
     zorder 1090
 
     default tt = __Tooltip("")
-    default fmt_short = __format_traceback(short)
-    default fmt_full = __format_traceback(full)
+    default fmt_short = __simple_traceback(traceback_exception)
+    default fmt_full = __full_traceback(traceback_exception)
 
     frame:
         style_group ""
@@ -747,7 +797,8 @@ screen _exception:
         side "c r":
             xfill True
             label _("An exception has occurred.") text_size gui._scale(40)
-            text "{size=-3}[config.version!q]\n[renpy.version_only!q]\n[renpy.platform!q]{/size}" textalign 1.0 yalign 0.5
+            text "{size=-3}[config.version!q]\n[renpy.version_only!q]\n[renpy.platform!q]{/size}":
+                textalign 1.0 yalign 0.5
 
         viewport:
             id "viewport"
@@ -758,8 +809,13 @@ screen _exception:
 
             has vbox
 
-            text fmt_short substitute False
-            text fmt_full substitute False
+            text "[renpy.game.exception_info]" size gui._scale(22)
+            frame style '_trace':
+                text fmt_short substitute False
+
+            text "Full traceback:" size gui._scale(22)
+            frame style '_trace':
+                text fmt_full substitute False
 
         hbox:
             vbox:
@@ -793,7 +849,7 @@ screen _exception:
                                 action __EnterConsole()
                                 hovered tt.action(_("Opens a console to allow debugging the problem."))
 
-                    use _exception_actions(traceback_fn, tt)
+                    use _exception_actions(traceback_exception.traceback_fn, tt)
 
                 # Tooltip.
                 text tt.value

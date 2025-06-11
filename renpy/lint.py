@@ -123,6 +123,8 @@ def problem_listing(header, problems):
             for line, message in file_problems:
                 print("    * line {:>5d} {}".format(line, message))
 
+    global error_reported
+    error_reported = True
 
 # Tries to evaluate an expression, announcing an error if it fails.
 def try_eval(where, expr, additional=None):
@@ -1150,8 +1152,22 @@ def lint():
                 node_language = language
 
             counts[node_language].add(node.what)
+
             if node_language is None:
-                charastats[node.who or 'narrator'].add(node.what)
+                char_name = node.who or 'narrator'
+
+                if renpy.config.lint_show_names and node.who:
+                    try:
+                        char = renpy.ast.eval_who(node.who)
+                        if isinstance(char, renpy.character.ADVCharacter) and isinstance(char.name, str):
+                            char_name = char.name
+                        elif isinstance(char, str):
+                            char_name = char
+
+                    except Exception:
+                        pass
+
+                charastats[char_name].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)

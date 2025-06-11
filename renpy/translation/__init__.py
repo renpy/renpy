@@ -766,7 +766,9 @@ def clean_data():
     This cleans out data that's dependent on the language.
     """
 
-    renpy.store._history_list = renpy.store.list() # type: ignore
+    if renpy.config.clear_history_on_language_change:
+        renpy.store._history_list = renpy.store.list() # type: ignore
+
     renpy.store.nvl_list = renpy.store.list() # type: ignore
     renpy.game.log.forward = [ ]
 

@@ -722,7 +722,7 @@ def menu_statement(l, loc):
     rv.extend(menu)
 
     for i in rv:
-        if isinstance(rv, renpy.ast.Menu):
+        if isinstance(i, renpy.ast.Menu):
             i.statement_start = rv[0]
 
     return rv
@@ -783,11 +783,10 @@ def call_statement(l, loc):
         name = l.require(l.label_name_declare)
         rv.append(ast.Label(loc, name, [], None))
     else:
-        if renpy.scriptedit.lines and (loc in renpy.scriptedit.lines):
-            if expression:
-                renpy.add_from.report_missing("expression", renpy.lexer.original_filename, renpy.scriptedit.lines[loc].end)
-            else:
-                renpy.add_from.report_missing(target, renpy.lexer.original_filename, renpy.scriptedit.lines[loc].end)
+        if expression:
+            renpy.add_from.report_missing("expression", renpy.lexer.original_filename, loc)
+        else:
+            renpy.add_from.report_missing(target, renpy.lexer.original_filename, loc)
 
     rv.append(ast.Pass(loc))
 

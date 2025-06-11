@@ -191,6 +191,8 @@ cdef class Live2DModel:
 
     cdef list meshes
 
+    cdef object filename
+
     _types = """
         parameters : dict[str, Parameter]
         parts : dict[str, Part]
@@ -204,6 +206,8 @@ cdef class Live2DModel:
         """
 
         cdef int i
+
+        self.filename = fn
 
         with renpy.loader.load(fn, directory="images") as f:
             data = f.read()
@@ -281,6 +285,13 @@ cdef class Live2DModel:
         self.parameter_groups = { }
 
         csmUpdateModel(self.model)
+
+    def __repr__(self):
+        """
+        Returns a string representation of the model.
+        """
+
+        return f"<Live2DModel {self.filename}>"
 
     def reset_parameters(self):
         """
@@ -384,8 +395,8 @@ cdef class Live2DModel:
         cdef Render rv
 
         shaders = ("renpy.texture", "live2d.flip_texture", "live2d.colors")
-        mask_shaders = ("live2d.mask", "live2d.flip_texture")
-        inverted_mask_shaders = ("live2d.inverted_mask", "live2d.flip_texture")
+        mask_shaders = ("-renpy.texture", "live2d.mask", "live2d.flip_texture")
+        inverted_mask_shaders = ("-renpy.texture", "live2d.inverted_mask", "live2d.flip_texture")
 
         csmUpdateModel(self.model)
 
@@ -410,7 +421,34 @@ cdef class Live2DModel:
         cdef csmVector4 multiply
         cdef csmVector4 screen
 
+        # The indexes of layers that have been used as masks.
+        used_masks = set()
+
         for i in range(self.drawable_count):
+
+            # If this drawable is not visible, skip it.
+            if self.drawable_dynamic_flags[i] & csmIsVisible == 0:
+                continue
+
+            if self.drawable_opacities[i] == 0.0:
+                continue
+
+            for j in range(self.drawable_mask_counts[i]):
+                used_masks.add(self.drawable_masks[i][j])
+
+        for i in range(self.drawable_count):
+
+            # True if the layers is visible.
+            is_visible = self.drawable_dynamic_flags[i] & csmIsVisible and self.drawable_opacities[i] != 0.0
+
+            # True if the layer is used as a mask by a visible layer.
+            is_mask = i in used_masks
+
+            if not is_visible and not is_mask:
+                mask_renders.append(None)
+                raw_renders.append(None)
+
+                continue
 
             multiply = self.drawable_multiply_colors[i]
             screen = self.drawable_screen_colors[i]
@@ -431,44 +469,49 @@ cdef class Live2DModel:
 
             tex = textures[self.drawable_texture_indices[i]]
 
-            # Create a render that can be used as a mask.
-            mr = Render(w, h)
-            mr.reverse = reverse
-            mr.forward = forward
-            mr.mesh = mesh
+            if is_mask:
 
-            mr.add_uniform("u_multiply", multiply_tuple)
-            mr.add_uniform("u_screen", screen_tuple)
+                # Create a render that can be used as a mask.
+                mr = Render(w, h)
+                mr.reverse = reverse
+                mr.forward = forward
+                mr.mesh = mesh
 
-            for s in shaders:
-                mr.add_shader(s)
+                mr.add_uniform("u_multiply", multiply_tuple)
+                mr.add_uniform("u_screen", screen_tuple)
 
-            mr.blit(tex, (0, 0))
+                for s in shaders:
+                    mr.add_shader(s)
 
-            mask_renders.append(mr)
+                mr.blit(tex, (0, 0))
 
-            # Create the render that is actually drawn.
-            r = Render(w, h)
-            r.reverse = reverse
-            r.forward = forward
-            r.mesh = mesh
+                mask_renders.append(mr)
 
-            r.add_uniform("u_multiply", multiply_tuple)
-            r.add_uniform("u_screen", screen_tuple)
+            else:
+                mask_renders.append(None)
 
-            for s in shaders:
-                r.add_shader(s)
+            if is_visible:
 
-            r.blit(tex, (0, 0))
+                # Create the render that is actually drawn.
+                r = Render(w, h)
+                r.reverse = reverse
+                r.forward = forward
+                r.mesh = mesh
 
-            raw_renders.append(r)
+                r.add_uniform("u_multiply", multiply_tuple)
+                r.add_uniform("u_screen", screen_tuple)
 
-            if self.drawable_constant_flags[i] & csmBlendAdditive:
-                r.add_property("blend_func", (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE))
-            elif self.drawable_constant_flags[i] & csmBlendMultiplicative:
-                r.add_property("blend_func", (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE))
+                for s in shaders:
+                    r.add_shader(s)
 
-            if self.drawable_dynamic_flags[i] & csmIsVisible:
+                r.blit(tex, (0, 0))
+
+                raw_renders.append(r)
+
+                if self.drawable_constant_flags[i] & csmBlendAdditive:
+                    r.add_property("blend_func", (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE))
+                elif self.drawable_constant_flags[i] & csmBlendMultiplicative:
+                    r.add_property("blend_func", (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE))
 
                 alpha = self.drawable_opacities[i]
 
@@ -479,6 +522,9 @@ cdef class Live2DModel:
                     r.add_uniform("u_renpy_over", 1.0)
 
                 renders.append((self.drawable_render_orders[i], r))
+
+            else:
+                raw_renders.append(None)
 
         multi_masks = { }
 
@@ -491,6 +537,10 @@ cdef class Live2DModel:
                 continue
 
             r = raw_renders[i]
+
+            # Layer is not visible.
+            if r is None:
+                continue
 
             if self.drawable_mask_counts[i] == 1:
                 m = mask_renders[self.drawable_masks[i][0]]
@@ -507,7 +557,7 @@ cdef class Live2DModel:
                 m = multi_masks.get(key, None)
 
                 if m is None:
-                    m = renpy.display.render.Render(ppu * 2, ppu * 2)
+                    m = renpy.display.render.Render(w, h)
 
                     for j in key:
                         m.blit(mask_renders[j], (0, 0))

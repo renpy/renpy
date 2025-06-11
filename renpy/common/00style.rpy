@@ -174,6 +174,7 @@ init -1800:
         emoji_font "TwemojiCOLRv0.ttf"
         prefer_emoji True
         shaper "harfbuzz"
+        reading_order None
 
         # Window properties
         background None
@@ -308,6 +309,7 @@ init -1800:
     style input:
         color "#ff0"
         adjust_spacing False
+        font_features { "liga": False, "clig" : False }
 
     # Centered text and dialogue
 

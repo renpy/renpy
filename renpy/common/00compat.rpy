@@ -338,6 +338,8 @@ init -1100 python:
         if version <= (8, 3, 99):
             config.old_show_expression = True
             config.mipmap = True
+            config.cds_label_callbacks = False
+            config.mesh_pad_compat = True
 
 
     # The version of Ren'Py this script is intended for, or

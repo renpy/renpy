@@ -22,6 +22,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+import math
 import collections
 import re
 
@@ -79,8 +80,20 @@ def movie_start(filename, size=None, loops=0):
     renpy.audio.music.play(filename, channel='movie', loop=loop)
 
 
-movie_start_fullscreen = movie_start
+def movie_start_fullscreen(filename, size=None, loops=0):
+    """
+    Starts a movie playing in fullscreen mode. This handles oversampling for
+    fullscreen movies.
+    """
+
+    if isinstance(filename, str):
+        filename = find_oversampled_filename(filename)
+
+    movie_start(filename, size, loops)
+
+
 movie_start_displayable = movie_start
+
 
 # A map from a channel name to the movie texture that is being displayed
 # on that channel.
@@ -286,12 +299,71 @@ def render_movie(channel, width, height):
     return resize_movie(tex, width, height)
 
 
+def find_oversampled_filename(filename):
+    """
+    When automatic oversampling is enabled, this function will search the filename for an
+    oversampled movie.
+    """
+
+    if "@" not in filename and renpy.config.automatic_oversampling and renpy.display.draw and renpy.display.draw.draw_per_virt > 1.0:
+
+        max_oversample = 2 ** int(math.ceil(math.log2(renpy.display.draw.draw_per_virt)))
+        max_oversample = min(max_oversample, renpy.config.automatic_oversampling)
+
+        base, _, ext = filename.rpartition(".")
+        base, _, extras = base.partition("@")
+
+        if extras:
+            extras = "," + extras
+
+        for i in range(max_oversample, 1, -1):
+            new_filename = f"{base}@{i}{extras}.{ext}"
+
+            if Movie.any_loadable(new_filename):
+                filename = new_filename
+                break
+
+    return filename
+
+def find_oversampled(new, filename):
+    """
+    This is used by default_play_callback to find the oversampled version of a video, to
+    """
+
+    if new.oversample is not None:
+        oversample = 1.0 * new.oversample
+    elif not isinstance(filename, str):
+        oversample = 1.0
+    else:
+
+        filename = find_oversampled_filename(filename)
+
+        oversample = 1.0
+
+        if "@" in filename:
+            if filename[0] == "<":
+                filename = filename.partition(">")[2]
+
+            base = filename.rpartition(".")[0]
+            extras = base.rpartition("@")[2].partition("/")[0].split(",")
+
+            for i in extras:
+                try:
+                    oversample = float(i)
+                except Exception:
+                    raise Exception("Unknown movie modifier %r in %r." % (i, filename))
+
+    new.playing_oversample = oversample
+    return filename
+
+
 def default_play_callback(old, new): # @UnusedVariable
 
-    renpy.audio.music.play(new._play, channel=new.channel, loop=new.loop)
-
     if new.mask:
-        renpy.audio.music.play(new.mask, channel=new.mask_channel, loop=new.loop)
+        renpy.audio.music.play(find_oversampled(new, new.mask), channel=new.mask_channel, loop=new.loop)
+
+    renpy.audio.music.play(find_oversampled(new, new._play), channel=new.channel, loop=new.loop)
+
 
 # A serial number that's used to generated movie channels.
 movie_channel_serial = 0
@@ -398,6 +470,22 @@ class Movie(renpy.display.displayable.Displayable):
         If true, and the movie has ended, the last frame will be displayed,
         rather than the movie being hidden. This only works if `loop` is
         false. (This behavior will also occur if `group` is set.)
+
+    `oversample`
+        If this is greater than 1, the movieis considered to be oversampled,
+        with more pixels than its logical size would imply. For example, if
+        an movie file is 1280x720 and oversample is 2, then the image will
+        be treated as a 640x360 movie for the purpose of layout.
+
+        If None, Ren'Py will automatically determine oversamping. If an @ followed
+        by a number is found in the filename, that number will be used as the the
+        oversampling factor. Otherwise, Ren'Py will search for files and use those.
+
+        Specifically, if :file`launch.webm` is used, Ren'Py will search for :file:`launch@2.webm`
+        if the movie is scaled up more than 1x, and :file:`launch@4.webm` and :file:`launch@3.webm`
+        if the movie is scaled up more than 2x.
+
+        Automatic oversampling of movies only happens when the movie begins playing.
     """
 
     fullscreen = False
@@ -417,8 +505,14 @@ class Movie(renpy.display.displayable.Displayable):
     loop = True
     group = None
 
+    oversample: float|None = None
+    """The oversampling factor of the movie given in Movie.__init__"""
 
-    def any_loadable(self, name):
+    playing_oversample: float = 1
+    """The oversampling factor of the movie that is currently playing."""
+
+    @staticmethod
+    def any_loadable(name):
         """
         If `name` is a string, checks if that filename is loadable.
         If `name` is a list of strings, checks if any filenames is loadable.
@@ -470,7 +564,7 @@ class Movie(renpy.display.displayable.Displayable):
 
     keep_last_frame_serial = 0
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, group=None, keep_last_frame=False, **properties):
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, group=None, keep_last_frame=False, oversample=None, **properties):
 
         global movie_channel_serial
 
@@ -516,6 +610,7 @@ class Movie(renpy.display.displayable.Displayable):
             Movie.keep_last_frame_serial += 1
 
         self.group = group
+
 
         if self.image and self.image._duplicatable:
             self._duplicatable = True
@@ -584,6 +679,10 @@ class Movie(renpy.display.displayable.Displayable):
 
             rv = renpy.display.render.Render(width, height)
             rv.blit(tex, (0, 0))
+
+            if self.playing_oversample != 1:
+                rv.reverse = renpy.display.matrix.Matrix2D(1.0 / self.playing_oversample, 0.0, 0.0, 1.0 / self.playing_oversample)
+                rv.forward = renpy.display.matrix.Matrix2D(self.playing_oversample, 0.0, 0.0, self.playing_oversample)
 
         elif (not not_playing) and (self.start_image is not None):
             surf = renpy.display.render.render(self.start_image, width, height, st, at)
@@ -685,6 +784,8 @@ def update_playing():
 
         if (c in reset_channels) and renpy.config.replay_movie_sprites:
             m.play(old)
+        elif old is m or last is m:
+            continue
         elif old is not m:
             m.play(old)
         elif m.loop and last is not m:
@@ -696,6 +797,7 @@ def update_playing():
         if c not in channel_movie:
             stopped.add(c)
             m.stop()
+
 
     for c, m in old_channel_movie.items():
         if c not in channel_movie:

@@ -43,6 +43,8 @@ predicting = False
 # like to predict.
 screens = [ ]
 
+# A list of translation ids for the statement being predicted.
+tlids = list[str|None]
 
 def displayable(d):
     """

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -100,11 +100,7 @@ init -1 python:
     PATTERN = "images/pattern.png"
 
     # A displayable used for the background of everything.
-    BACKGROUND = "background"
-
-    # A displayable used for the background of windows
-    # containing commands, preferences, and navigation info.
-    WINDOW = Frame("window", 0, 0, tile=True)
+    BACKGROUND = Fixed(Solid(REVERSE_TEXT), xsize=800, ysize=600)
 
     # A displayable used for the background of the projects list.
     PROJECTS_WINDOW = Null()
@@ -120,6 +116,10 @@ init -1 python:
 
     # The color of input text.
     INPUT_COLOR = "#d86b45"
+
+    # A displayable used for the background of windows
+    # containing commands, preferences, and navigation info.
+    WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
     if persistent.theme == 'dark':
         # The color of non-interactive text.
@@ -164,49 +164,6 @@ init -1 python:
         # containing commands, preferences, and navigation info.
         WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
-    elif persistent.theme == 'clear':
-
-        # The color of non-interactive text.
-        TEXT = "#545454"
-
-        # Colors for buttons in various states.
-        IDLE = "#42637b"
-        HOVER = "#d86b45"
-        DISABLED = "#808080"
-
-        # Colors for reversed text buttons (selected list entries).
-        REVERSE_IDLE = "#78a5c5"
-        REVERSE_HOVER = "#d86b45"
-        REVERSE_TEXT = "#ffffff"
-
-        # Colors for the scrollbar thumb.
-        SCROLLBAR_IDLE = "#dfdfdf"
-        SCROLLBAR_HOVER = "#d86b45"
-
-        # An image used as a separator pattern.
-        PATTERN = "images/pattern.png"
-
-        # A displayable used for the background of everything.
-        BACKGROUND = Fixed(Solid(REVERSE_TEXT), xsize=800, ysize=600)
-
-        # A displayable used for the background of the projects list.
-        PROJECTS_WINDOW = Null()
-
-        # A displayable used the background of information boxes.
-        INFO_WINDOW = "#f9f9f9"
-
-        # Colors for the titles of information boxes.
-        ERROR_COLOR = "#d15353"
-        INFO_COLOR = "#545454"
-        INTERACTION_COLOR = "#d19753"
-        QUESTION_COLOR = "#d19753"
-
-        # The color of input text.
-        INPUT_COLOR = "#d86b45"
-
-        # A displayable used for the background of windows
-        # containing commands, preferences, and navigation info.
-        WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
     elif persistent.theme == 'custom':
 
@@ -252,6 +209,9 @@ init -1 python:
         # containing commands, preferences, and navigation info.
         WINDOW = custom_window
 
+
+    def folder_icon(color):
+        return Transform("images/folder.svg", xysize=(25,25), matrixcolor=TintMatrix(color))
 
 
 init 1 python:
@@ -422,7 +382,7 @@ style l_indent_margin is l_indent:
 
 # Lists.
 style l_list is l_default:
-    left_padding HALF_INDENT
+    left_padding INDENT
     xfill True
     selected_background REVERSE_IDLE
     selected_hover_background REVERSE_HOVER
@@ -433,6 +393,18 @@ style l_list_text is l_default:
     selected_idle_color REVERSE_TEXT
     selected_hover_color REVERSE_TEXT
     insensitive_color DISABLED
+
+style l_folder is l_default:
+    left_padding 25 + 5
+    yminimum 25
+    xfill True
+    background folder_icon(IDLE)
+    hover_background Fixed(REVERSE_HOVER, folder_icon(REVERSE_TEXT))
+
+style l_folder_text is l_default:
+    idle_color IDLE
+    hover_color REVERSE_TEXT
+    yalign 0.5
 
 style l_list2 is l_list:
     left_padding (HALF_INDENT + INDENT)

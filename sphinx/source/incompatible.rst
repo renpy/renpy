@@ -12,6 +12,7 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+
 .. _incompatible-8.4.0:
 
 8.4.0
@@ -31,6 +32,14 @@ Mipmaps will automatically be created for images loaded for the purpose of Live2
 likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
 of :func:`Image`.
 
+**Automatic Oversamping** When Ren'Py is scaled up enough, it can search the image files for
+higher resolution images, and load those instead. See :ref:`automatic-oversampling` for more informaiton.
+This can be disabled with:
+
+    define config.automatic_oversampling = None
+
+As this can be useful for older games, and is unlikely to cause problems, automatic oversampling is
+left enabled when running older games.
 
 **Show expression.** The ``show expression`` statement has been changed so that::
 
@@ -45,12 +54,31 @@ a unique tag is created for the show expression statement. This change can be re
 
     define config.old_show_expression = True
 
-
 **LayeredImage** The "variant" and "prefix" properties, if passed unquoted names, now read them as an unquoted string instead of a variable to be evaluated at init time. It is unlikely to cause any issue, but if it does, you can use::
 
     variant f"{old_expression}"
 
 Also, naming a group "multiple" is no longer supported.
+
+**Creator-defined Statements and config.label_callbacks** Creator-defined statements now call :var:`config.label_callbacks`,
+when a label is defined. To revert to the old behavior of not calling config.label_callbacks, add to your game::
+
+    define config.cds_label_callbacks = False
+
+**Mesh Padding** The behavior of :tpref:`mesh_pad` has been changed when left or top padding is present. Previously, this would
+offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
+left and top of the child.
+
+**Small GUI Viewport Size**
+While not strictly incompatible, we recommend adding the following to games that use the default GUI::
+
+    style game_menu_viewport:
+        variant "small"
+        xsize 1305
+
+This ensures menus will have a scrollbar on phones and televisions. The number 1305 is suitable for a 1920 pixel wide
+game. For a 1280 pixel wide game, use 870. For a 3840 pixel wide game, use 2010. (Other resolutions should use
+0.68 times the width of the game, rounded down to an integer.)
 
 
 .. _incompatible-8.3.4:

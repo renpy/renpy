@@ -351,6 +351,11 @@ Display
 
             config.adjust_view_size = force_integer_multiplier
 
+.. var:: config.automatic_oversampling = 4
+
+    The highest level of :ref:`automatic oversampling <automatic-oversampling>` that
+    Ren'Py will use. If None, automatic oversampling is disabled.
+
 .. var:: config.display_start_callbacks = [ ]
 
     This contains a list of functions that are called after Ren'Py
@@ -562,7 +567,7 @@ Layers
 
 .. var:: config.bottom_layers = [ "bottom", ... ]
 
-    This is a list of names of layers that are displayed above all
+    This is a list of names of layers that are displayed beneath all
     other layers, and do not participate in a transition that is
     applied to all layers. If a layer name is listed here, it should
     not be listed in :var:`config.layers`` or :var:`config.top_layers`.
@@ -818,6 +823,11 @@ Media (Music, Sound, and Video)
     wav files are of a lower rate, changing this to that rate may make
     things more efficient.
 
+.. var:: config.web_unload_music = None
+
+    If not None, this should be an number of seconds. Music downloaded as part of
+    :ref:`progressive downloading <progressive-downloading>` will be unloaded after this number of seconds.
+
 .. var:: config.web_video_base = "./game"
 
     When playing a movie in the web browser, this is a URL that
@@ -827,13 +837,6 @@ Media (Music, Sound, and Video)
 
     This allows large movie files to be hosted on a different server
     than the rest of the game.
-..
-    Lez's comment: This is a TODO variable, look bottom of _audio.js
-    .. var:: config.web_video_prompt = _("Touch to play the video.")
-
-        On Mobile Safari on iOS, by default, the player will need to click to play
-        a movie with sound. This variable gives the message that's used to prompt
-        players to click.
 
 .. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mpeg", ... ]
 
@@ -1942,6 +1945,13 @@ Transition Control
 Translation
 -----------
 
+.. var:: config.clear_history_on_language_change = True
+
+    If True, the history is cleared when the language changes. This
+    is used to ensure that the history only contains strings that are
+    representable in the current font. If False, the history is kept
+    when the language changes.
+
 .. var:: config.default_language = None
 
     If not None, this should be a string giving the default language
@@ -2055,6 +2065,25 @@ Voice
 .. var:: config.emphasize_audio_volume = 0.8
 
     See above.
+
+.. var:: config.voice_callbacks = [ ]
+
+    A list of functions that are called by the voice system. The function should take two arguments:
+
+    `event`
+        The event that was triggered. This is one of:
+
+        "play"
+            The voice system is about to play a voice file.
+        "stop"
+            The voice system has stopped playing a voice file.
+
+    `info`
+        An object containing information about the voice file that is being played. This is the same
+        object that is return from :func:`_get_voice_info`.
+
+    The function should also accept unknown keyword arguments, though no keyword arguments are
+    currently documented.
 
 .. var:: config.voice_filename_format = "{filename}"
 
@@ -2222,8 +2251,13 @@ Debugging
 
     If true, and :var:`config.developer` is true, the lint report will include
     statistics about the number of dialogue blocks spoken for each character.
-    The chanracter statistics are disabled when the game is packaged, to
+    The character statistics are disabled when the game is packaged, to
     prevent spoilers.
+
+.. var:: config.lint_show_names = False
+
+    If true, and :var:`lint_character_statistics` is true, the lint report will expand the aliases
+    of the character names to the name parameter given it :func:`Character`, if possible.
 
 .. var:: config.lint_hooks = [ ... ]
 

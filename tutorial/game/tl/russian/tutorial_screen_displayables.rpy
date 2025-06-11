@@ -387,7 +387,7 @@ translate russian bar_displayables_c2aa4725:
 translate russian bar_displayables_2fc44226:
 
     # e "Finally, the bottom style is the 'scrollbar' style, which is used for horizontal scrollbars. When used as a scrollbar, the thumb in the center changes size to reflect the visible area of a viewport."
-    e "И наконец, нижний стиль — 'scrollbar', используемый для горинтальных полос прокрутки. При использовании полос прокрутки, тумблер в центре воздействует на порт просмотра, позволяя его перемещать."
+    e "И наконец, нижний стиль — 'scrollbar', используемый для горизонтальных полос прокрутки. При использовании полос прокрутки, тумблер в центре воздействует на порт просмотра, позволяя его перемещать."
 
 # game/tutorial_screen_displayables.rpy:623
 translate russian bar_displayables_26eb88bf:

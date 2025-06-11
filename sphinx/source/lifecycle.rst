@@ -20,18 +20,17 @@ Script Parsing Phase
 To read the game's code, Ren'Py reads each of the game's ``.rpy`` (and ``_ren.py``) files one by
 one. That's the "parsing" phase, or "early" phase. The order that files are read in is:
 
-1. Files inside :file`renpy/common` are loaded using  using the full path, in unicode order.
+1. Files inside :file:`renpy/common` are loaded using  using the full path, in unicode order. This is only for use by
+   Ren'Py.
 
-2. Only if :file:`game/libs/libs.txt` exists, files in game/libs are loaded using the filename only,
-   in unicode order. (In this order, :file:`game/libs/plants/aloe.rpy` will load before :file:`game/libs/animals/zebra.rpy`.)
+2. Only if :file:`game/libs/libs.txt` exists, files in :file:`game/libs` have the first directory removed, if any and
+   then are loaded in unicode order. In this order, :file:`game/libs/plants/aloe.rpy` will load before :file:`game/libs/animals/zebra.rpy`.
 
-3. Files in :file:`game` are loaded using the full path, in unicode order. (In this order,
+5. Files in :file:`game` are loaded using the full path, in unicode order. (In this order,
    :file:`game/animals/zebra.rpy` will load before :file:`game/plants/aloe.rpy`.)
 
-4. Only if :file:`game/mods/mods.txt` exists, files in game/mods are loaded using the filename only,
-   in unicode order. (In this order, :file:`game/mods/plants/aloe.rpy` will load before :file:`game/mods/animals/zebra.rpy`.)
-
-The precise order of file loading mostly affects :doc:`cds`.
+6. Only if :file:`game/mods/mods.txt` exists, :file:`game/mods` have the first directory removed, if any and
+   then are loaded in unicode order. In this order, :file:`game/mods/plants/aloe.rpy` will load before :file:`game/mods/animals/zebra.rpy`.
 
 The first creator-written code being executed is what's written in ``python early`` blocks. These
 are executed after the file they're in has been read and parsed, but before the next file gets

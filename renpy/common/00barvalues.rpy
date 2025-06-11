@@ -362,6 +362,9 @@ init -1500 python hide:
         `step`
             The amount to change the bar by. If None, defaults to 1/10th of
             the bar.
+        `force_step`
+            If True, the bar can only take discrete steps, with the steps given
+            by `step`. If False, the bar can take any value in the range.
         `action`
             If not None, an action to call when the {kind}'s value is changed.
         `min`
@@ -399,10 +402,24 @@ init -1500 python:
             The name of the mixer to adjust. This is usually one of
             "main", "music", "sfx", or "voice". See :ref:`volume`
             for more information.
+
+        `step`
+            The amount to change the bar by. If None, defaults to 1/10th of
+            the bar. For MixerValue, this is the amount of decibels to change the
+            volume by.
+
+        `force_step`
+            If True, the bar can only take discrete steps, with the steps given
+            by `step`. If False, the bar can take any value in the range.
         """
 
-        def __init__(self, mixer):
+        step = None
+        force_step = False
+
+        def __init__(self, mixer, step=None, force_step=False):
             self.mixer = mixer
+            self.step = step
+            self.force_step = force_step
 
         def get_volume(self):
             return _preferences.get_volume(self.mixer)
@@ -453,7 +470,9 @@ init -1500 python:
             return ui.adjustment(
                 range=range,
                 value=value,
-                changed=self.set_mixer)
+                changed=self.set_mixer,
+                step=self.step,
+                force_step=self.force_step)
 
         def get_style(self):
             return "slider", "vslider"

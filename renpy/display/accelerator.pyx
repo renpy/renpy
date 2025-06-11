@@ -202,6 +202,7 @@ cdef class RenderTransform:
         # The reverse transform.
         self.reverse = None # type: renpy.display.render.Matrix|None
 
+
     cdef make_mesh(self, cr):
         """
         Creates a mesh from the given render.
@@ -209,8 +210,6 @@ cdef class RenderTransform:
         Handles the mesh, mesh_pad, and blur properties.
         """
 
-        # The render we're going to return.
-        mr = Render(cr.width, cr.height)
 
         mesh = self.state.mesh
         blur = self.state.blur
@@ -228,9 +227,13 @@ cdef class RenderTransform:
             padded = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
             padded.blit(cr, (pad_left, pad_top))
 
-            cr = padded
+        else:
+            pad_left = pad_top = pad_right = pad_bottom = 0
+            padded = cr
 
-        mr.blit(cr, (0, 0))
+        mr = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
+        mr.blit(padded, (pad_left, pad_top))
+
 
         mr.operation = renpy.display.render.FLATTEN
         mr.add_shader("renpy.texture")
@@ -254,7 +257,17 @@ cdef class RenderTransform:
             mr.add_property("mipmap", True)
 
         self.mr = mr
-        return mr
+        rv = self.mr
+
+        if pad_left or pad_top or pad_right or pad_bottom:
+            rv = Render(mr.width - pad_left - pad_right, mr.height - pad_top - pad_bottom)
+            if renpy.config.mesh_pad_compat:
+                rv.blit(mr, (0, 0))
+            else:
+                rv.blit(mr, (-pad_left, -pad_top))
+
+        return rv
+
 
     cdef tile_and_pan(self):
         """

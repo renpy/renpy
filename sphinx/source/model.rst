@@ -217,6 +217,15 @@ will be accessible by any and all other shaders applied from the same list. This
 can be useful when having optional parts in a given shader system, but it can also
 lead to name collisions when using two independent shaders.
 
+**GLSL Version.**
+The version of GLSL supported depends on platform, but the most restrictive
+are mobile and web platforms, which use GLSL ES 1.00. Ren'Py declares variables
+to have highp precision, which supports floating point numbers in the range
+2\ :sup:`-62` to 2\ :sup:`62`. Non-zero floating point numbers should have a
+magnitude betwee 2\ :sup:`-62` and 2\ :sup:`62`, and integers should be in the range
+range -2\ :sup:`16` to 2\ :sup:`16`.  Actual hardware often supports a larger range,
+but this isn't guaranteed.
+
 There is a variable that can help in debugging custom shaders:
 
 .. var:: config.log_gl_shaders = False

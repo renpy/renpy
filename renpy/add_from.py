@@ -32,13 +32,13 @@ import os
 missing = collections.defaultdict(list)
 
 
-def report_missing(target, filename, position):
+def report_missing(target, filename, loc):
     """
-    Reports that the call statement ending at `position` in `filename`
+    Reports that the call statement starting at `loc` in `filename`
     is missing a from clause.
     """
 
-    missing[filename].append((position, target))
+    missing[filename].append((loc, target))
 
 
 # Labels that we've created while running add_from.
@@ -77,6 +77,8 @@ def process_file(fn):
     if not os.path.exists(fn):
         return
 
+    renpy.scriptedit.ensure_loaded(fn)
+
     edits = missing[fn]
     edits.sort()
 
@@ -89,9 +91,15 @@ def process_file(fn):
     # The output.
     output = u""
 
-    for position, target in edits:
-        output += data[consumed:position]
-        consumed = position
+    for loc, target in edits:
+
+        if loc not in renpy.scriptedit.lines:
+            continue
+
+        end = renpy.scriptedit.lines[loc].end
+
+        output += data[consumed:end]
+        consumed = end
 
         output += " from {}".format(generate_label(target))
 
@@ -107,6 +115,13 @@ def process_file(fn):
 
     os.rename(fn, fn + ".bak")
     os.rename(fn + ".new", fn)
+
+def clear():
+    """
+    Clears the list of missing from clauses.
+    """
+
+    missing.clear()
 
 
 def add_from():

@@ -28,6 +28,26 @@ import os
 import shutil
 
 
+def copy_gitignore(p):
+    """
+    Copy gitignore.txt from the template directory to the game directory.
+    """
+
+    old = os.path.join(p.template, "..", "gitignore.txt")
+    new = os.path.join(p.prefix, "..", ".gitignore")
+
+    if not os.path.exists(old):
+        return
+
+    if os.path.exists(new):
+        return
+
+    with open(old, "r") as f:
+        data = f.read()
+
+    with open(new, "w") as f:
+        f.write(data)
+
 
 def finish(p):
 
@@ -38,8 +58,12 @@ def finish(p):
             if not os.path.exists(fulldn):
                 os.mkdir(fulldn)
 
-    with open(os.path.join(p.prefix, "libs", "libs.txt"), "w") as f:
-        f.write(renpy.translation.translate_string(renpy.store.LIBS_TXT, language=p.language))
+    if hasattr(renpy.store, "LIBS_TXT"):
+        with open(os.path.join(p.prefix, "libs", "libs.txt"), "w") as f:
+            f.write(renpy.translation.translate_string(renpy.store.LIBS_TXT, language=p.language))
+
+    copy_gitignore(p)
+
 
 def generate_gui(p):
 

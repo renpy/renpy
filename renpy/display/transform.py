@@ -734,6 +734,8 @@ class Transform(Container):
     # Default before we set this.
     child_size = (0, 0)
 
+    original_child = None
+
     def __init__(self,
                  child=None,
                  function=None,
@@ -760,6 +762,9 @@ class Transform(Container):
         child = renpy.easy.displayable_or_none(child)
         if child is not None:
             self.add(child)
+
+        self.original_child: renpy.display.displayable.Displayable = child
+        "The child that was passed to the constructor."
 
         self.state = TransformState() # type: Any
 
@@ -1202,13 +1207,15 @@ class Transform(Container):
                 xanchor = absolute.compute_raw(xanchor, cw)
                 yanchor = absolute.compute_raw(yanchor, ch)
 
-                xanchor -= cw / 2.0
-                yanchor -= ch / 2.0
+                if self.reverse is not None:
 
-                xanchor, yanchor = self.reverse.transform(xanchor, yanchor)
+                    xanchor -= cw / 2.0
+                    yanchor -= ch / 2.0
 
-                xanchor += rw / 2.0
-                yanchor += rh / 2.0
+                    xanchor, yanchor = self.reverse.transform(xanchor, yanchor)
+
+                    xanchor += rw / 2.0
+                    yanchor += rh / 2.0
 
                 xanchor = absolute(xanchor)
                 yanchor = absolute(yanchor)

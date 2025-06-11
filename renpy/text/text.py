@@ -39,9 +39,11 @@ from renpy.text.emoji_trie import emoji, UNQUALIFIED
 
 from renpy.gl2.gl2polygon import Polygon
 
-from _renpybidi import log2vis, WRTL, RTL, ON # @UnresolvedImport
+from _renpybidi import LTR, ON, RTL, WLTR, WRTL, get_embedding_levels, log2vis # @UnresolvedImport
+
 
 BASELINE = -65536
+READING_ORDER = {None: ON, 'ltr': LTR, 'rtl': RTL, 'wltr': WLTR, 'wrtl': WRTL}
 
 
 class Blit(object):
@@ -272,6 +274,7 @@ class TextSegment(object):
             self.instance = source.instance
             self.axis = source.axis
             self.shader = source.shader
+            self.features = source.features
 
         else:
             self.hyperlink = 0
@@ -281,6 +284,7 @@ class TextSegment(object):
             self.ignore = False
             self.default_font = True
             self.shader = None
+
 
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
@@ -327,6 +331,7 @@ class TextSegment(object):
 
         self.axis = style.axis
         self.instance = style.instance
+        self.features = style.font_features
 
         if context and style.textshader and not self.shader:
             raise Exception("%s supplies a textshader, but the Text displayable does not use textshaders. Consider using config.default_textshader to opt-in." % (context,))
@@ -337,7 +342,7 @@ class TextSegment(object):
 
     # From here down is the public glyph API.
 
-    def glyphs(self, s, layout):
+    def glyphs(self, s, layout, level=0):
         """
         Return the list of glyphs corresponding to unicode string s.
         """
@@ -345,8 +350,8 @@ class TextSegment(object):
         if self.ignore:
             return [ ]
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
-        rv = fo.glyphs(s)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.features)
+        rv = fo.glyphs(s, level)
 
         # Apply kerning to the glyphs.
         kerning = self.kerning + self.size / 30 * renpy.game.preferences.font_kerning
@@ -383,7 +388,7 @@ class TextSegment(object):
             color = self.color
             black_color = self.black_color
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.features)
         fo.draw(di.surface, xo, yo, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
@@ -448,7 +453,7 @@ class TextSegment(object):
         origin point.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample, self.shaper, self.instance, self.axis, self.features)
         return fo.bounds(glyphs, bounds)
 
 
@@ -634,6 +639,8 @@ class Layout(object):
         width = min(32767, width)
         height = min(32767, height)
 
+        style = text.style
+
         if drawable_res and (not size_only) and renpy.config.use_drawable_resolution and renpy.config.drawable_resolution_text:
             # How much do we want to oversample the text by, compared to the
             # virtual resolution.
@@ -643,7 +650,7 @@ class Layout(object):
             self.reverse = renpy.display.draw.draw_to_virt
             self.forward = renpy.display.draw.virt_to_draw
 
-            self.outline_step = text.style.outline_scaling == "step"
+            self.outline_step = style.outline_scaling == "step"
 
             self.pixel_perfect = True
 
@@ -655,8 +662,6 @@ class Layout(object):
             self.outline_step = True
 
             self.pixel_perfect = False
-
-        style = text.style
 
         self.line_overlap_split = self.scale_int(style.line_overlap_split)
 
@@ -713,7 +718,7 @@ class Layout(object):
         all_glyphs = [ ]
 
         # A list of (segment, glyph_list) pairs for all paragraphs.
-        par_seg_glyphs = [ ]
+        all_seg_glyphs = [ ]
 
         # A list of Line objects.
         lines = [ ]
@@ -749,6 +754,7 @@ class Layout(object):
         ended = False
 
         language = style.language
+        order = READING_ORDER[style.reading_order]
 
         for p_num, p in enumerate(self.paragraphs):
 
@@ -757,34 +763,18 @@ class Layout(object):
                 # segment.
                 p = self.thaic90_paragraph(p)
 
-            # RTL - apply RTL to the text of each segment, then
-            # reverse the order of the segments in each paragraph.
-            if renpy.config.rtl:
-                p, rtl = self.rtl_paragraph(p)
-            else:
-                rtl = False
-
             # 3. Convert each paragraph into a Segment, glyph list. (Store this
             # to use when we draw things.)
+            seg_glyphs, rtl = self.glyphs_paragraph(p, order)
 
             # A list of glyphs in the paragraph.
-            par_glyphs = [ ]
+            par_glyphs = [ g for _, gl in seg_glyphs for g in gl ]
 
-            # A list of (segment, list of glyph) pairs.
-            seg_glyphs = [ ]
-
-
-            for ts, s in p:
-                glyphs = ts.glyphs(s, self)
-
-                t = (ts, glyphs)
-                seg_glyphs.append(t)
-                par_seg_glyphs.append(t)
-                par_glyphs.extend(glyphs)
-                all_glyphs.extend(glyphs)
+            all_glyphs.extend(par_glyphs)
+            all_seg_glyphs.extend(seg_glyphs)
 
             # RTL - Reverse each line, segment, so that we can use LTR
-            # linebreaking algorithms.
+            # linebreaking algorithms. Also necessary for timings.
             if rtl:
                 par_glyphs.reverse()
                 seg_glyphs.reverse()
@@ -939,7 +929,7 @@ class Layout(object):
         # we have them, grow the bounding box.
 
         bounds = (0, 0, maxx, y)
-        for ts, glyphs in par_seg_glyphs:
+        for ts, glyphs in all_seg_glyphs:
             bounds = ts.bounds(glyphs, bounds, self)
 
         self.add_left = max(-bounds[0], 0)
@@ -1004,7 +994,7 @@ class Layout(object):
             di.override_color = color
             di.outline = o
 
-            for ts, glyphs in par_seg_glyphs:
+            for ts, glyphs in all_seg_glyphs:
                 if ts is self.end_segment:
                     break
 
@@ -1401,8 +1391,8 @@ class Layout(object):
                     ts.strikethrough = False
 
                 elif tag == "":
-                    style = getattr(renpy.store.style, value)
-                    push().take_style(style, self, "The %s style" % value)
+                    new_style = getattr(renpy.store.style, value)
+                    push().take_style(new_style, self, "The %s style" % value)
 
                 elif tag == "font":
                     value = renpy.config.font_name_map.get(value, value)
@@ -1534,7 +1524,23 @@ class Layout(object):
                         raise
 
                     axis = tag.partition(":")[2].lower()
-                    ts.axis[axis] = float(value)
+                    ts.axis[axis] = value
+
+
+                elif tag.startswith("feature:"):
+                    ts = push()
+                    if ts.features:
+                        ts.features = dict(ts.features)
+                    else:
+                        ts.features = { }
+
+                    try:
+                        value = int(value)
+                    except (TypeError, ValueError):
+                        raise
+
+                    feature = tag.partition(":")[2].lower()
+                    ts.features[feature] = value
 
                 elif tag[0] == "#":
                     pass
@@ -1573,31 +1579,52 @@ class Layout(object):
         return rv
 
 
-    def rtl_paragraph(self, p):
+    def glyphs_paragraph(self, p, direction):
         """
-        Given a paragraph (a list of segment, text tuples) handles
-        RTL and ligaturization. This returns the reversed RTL paragraph,
-        which differers from the LTR one. It also returns a flag that is
-        True if this is an rtl paragraph.
+        Takes a paragraph (a list of segment, text tuples) and returns a list
+        of segment, glyph list tuples as well as a boolean indicating if this
+        is an RTL paragraph.
         """
 
-        direction = ON
+        if not renpy.config.rtl:
+            return [(ts, ts.glyphs(s, self)) for ts, s in p], False
 
-        l = [ ]
+        rv = []
 
         for ts, s in p:
-            s, direction = log2vis(str(s), direction)
+            if not isinstance(ts, TextSegment):
+                rv.append((ts, ts.glyphs(s, self)))
 
-            if s and getattr(ts, "shaper", "") == "harfbuzz":
-                s = renpy.text.extras.unmap_arabic_presentation_forms(s)
+            elif ts.shaper == "harfbuzz":
+                l, direction = get_embedding_levels(str(s), direction)
+                offset = 0
 
-            l.append((ts, s))
+                if l:
+                    current = l[0]
 
-        rtl = (direction == RTL or direction == WRTL)
-        if rtl:
-            l.reverse()
+                    for i, l in enumerate(l):
+                        if l == current:
+                            continue
 
-        return l, rtl
+                        rv.append((ts, ts.glyphs(s[offset:i], self, current)))
+
+                        offset = i
+                        current = l
+
+                else:
+                    l = 0
+
+                rv.append((ts, ts.glyphs(s[offset:], self, l)))
+
+            else:
+                s, direction = log2vis(str(s), direction)
+                rv.append((ts, ts.glyphs(s, self)))
+
+        if rtl := direction == RTL or direction == WRTL:
+            rv.reverse()
+
+        return rv, rtl
+
 
     def figure_outlines(self, style):
         """
@@ -2247,10 +2274,12 @@ class Text(renpy.display.displayable.Displayable):
     def set_ctc(self, ctc):
         self.ctc = ctc
         self.dirty = True
+        renpy.display.render.redraw(self, 0)
 
     def set_last_ctc(self, last_ctc):
         self.last_ctc = last_ctc
         self.dirty = True
+        renpy.display.render.redraw(self, 0)
 
     def update(self):
         """
@@ -2264,7 +2293,7 @@ class Text(renpy.display.displayable.Displayable):
 
         if not self.tokenized:
 
-            text = self.text
+            text = list(self.text)
 
             # Decide the portion of the text to show quickly, the part to
             # show slowly, and the part not to show (but to lay out).

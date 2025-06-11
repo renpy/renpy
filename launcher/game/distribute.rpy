@@ -90,7 +90,7 @@ def fix_dlc(name, fn):
     if not os.path.exists(os.path.join(config.renpy_base, fn)):
         return
 
-    u = sys._getframe(2).f_locals["self"]
+    u = sys._getframe(2 if sys.version_info.major >= 3 else 4).f_locals["self"]
     if name in u.current_state:
         return
 
@@ -1516,7 +1516,6 @@ fix_dlc("renios", "renios")
 
             update_fn = self.temp_filename(filename + ".update.json")
 
-
             if self.include_update and not format.startswith("app-"):
 
                 with open(update_fn, "w") as f:
@@ -1551,9 +1550,13 @@ fix_dlc("renios", "renios")
 
                 final_update_fn = os.path.join(self.destination, filename + ".update.json")
 
-                if self.build_update or dlc:
+                if format == "update":
                     if os.path.exists(update_fn):
                         shutil.copy(update_fn, final_update_fn)
+
+                if format == "rpu":
+                    if os.path.exists(self.temp_filename("key.pem")):
+                        shutil.copy(self.temp_filename("key.pem"), os.path.join(self.destination, "public_key.pem"))
 
             if format == "tar.bz2" or format == "bare-tar.bz2":
                 pkg = TarPackage(path, "w:bz2")

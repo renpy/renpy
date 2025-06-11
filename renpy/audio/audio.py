@@ -305,7 +305,7 @@ class Channel(object):
         # Are we paused?
         self.paused = None
 
-        if default_loop is None:
+        if default_loop is NotSet:
             # By default, should we loop the music?
             self.default_loop = True
             # Was this set explicitly?
@@ -615,6 +615,13 @@ class Channel(object):
 
             self.paused = want_pause
 
+        # Ensure the music won't be unloaded while playing.
+        for i in self.queue:
+            renpy.webloader.extend(self.split_filename(i.filename, i.loop)[0])
+
+        for i in self.loop:
+            renpy.webloader.extend(self.split_filename(i, True)[0])
+
     def dequeue(self, even_tight=False):
         """
         Clears the queued music.
@@ -860,7 +867,7 @@ channels = { }
 
 def register_channel(name,
                      mixer=None,
-                     loop=None,
+                     loop=NotSet,
                      stop_on_mute=True,
                      tight=False,
                      file_prefix="",
@@ -891,7 +898,8 @@ def register_channel(name,
         mixers reachable by the player requires changing the preferences screens.
 
     `loop`
-        If true, sounds on this channel loop by default.
+        If True or None, sounds on this channel loop by default. If False, sounds on
+        this channel do not loop by default.
 
     `stop_on_mute`
         If true, music on the channel is stopped when the channel is muted.
@@ -1302,11 +1310,13 @@ def interact():
                 if ctx.raw_audio_filter != c.raw_audio_filter:
                     c.set_audio_filter(ctx.raw_audio_filter, True)
 
-                if c.loop != filenames:
-                    c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
+                if not c.name in renpy.display.video.last_channel_movie:
 
-                if filenames:
-                    c.enqueue(filenames, loop=True, synchro_start=c.default_synchro_start, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)
+                    if c.loop != filenames:
+                        c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
+
+                    if filenames:
+                        c.enqueue(filenames, loop=True, synchro_start=c.default_synchro_start, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)
 
                 c.last_changed = ctx.last_changed
 

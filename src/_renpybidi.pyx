@@ -30,6 +30,7 @@ cdef extern from "fribidi/fribidi.h":
 
 cdef extern from "renpybidicore.h":
     object renpybidi_log2vis(object, int *)
+    object renpybidi_get_embedding_levels(object, int *)
 
 WLTR = FRIBIDI_TYPE_WL
 LTR = FRIBIDI_TYPE_LTR
@@ -39,6 +40,12 @@ WRTL = FRIBIDI_TYPE_WR
 
 
 def log2vis(s, int direction=FRIBIDI_TYPE_ON):
-
     s = renpybidi_log2vis(s, &direction)
+
     return s, direction
+
+
+def get_embedding_levels(s, int direction=FRIBIDI_TYPE_ON):
+    l = renpybidi_get_embedding_levels(s, &direction)
+
+    return l, direction
