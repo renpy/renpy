@@ -331,17 +331,10 @@ class Attribute(Layer):
         A transform or list of transforms that are applied to the
         image.
 
-    `if_all`
-        An attribute or list of attributes. The displayable is only shown
-        if all of these are showing.
-
-    `if_any`
-        An attribute or list of attributes. if not empty, the displayable is only shown
-        if any of these are showing.
-
-    `if_not`
-        An attribute or list of attributes. The displayable is only shown
-        if none of these are showing.
+    `if_attr`
+        A string containing an if_attr expression, described in the :ref:`if_attr` section.
+        The displayable is only shown when the expression is satisfied by
+        the pool of attributes currently applied to the layeredimage.
 
     `variant`
         A string giving the variant of the attribute. This is used
@@ -411,17 +404,10 @@ class Condition(Layer):
         If not None, this should be a displayable that is displayed when
         the condition is true.
 
-    `if_all`
-        An attribute or list of attributes. The condition is only evaluated
-        if all of these are showing.
-
-    `if_any`
-        An attribute or list of attributes. If not empty, the condition is
-        only evaluated if any of these are showing.
-
-    `if_not`
-        An attribute or list of attributes. The condition is only evaluated
-        if none of these are showing.
+    `if_attr`
+        A string containing an if_attr expression, described in the :ref:`if_attr` section.
+        The condition is only evaluated when the expression is satisfied by
+        the pool of attributes currently applied to the layeredimage.
 
     `at`
         A transform or list of transforms that are applied to the image.
@@ -510,17 +496,10 @@ class Always(Layer):
         A transform or list of transforms that are applied to the
         image.
 
-    `if_all`
-        An attribute or list of attributes. The displayable is only shown
-        if all of these are showing.
-
-    `if_any`
-        An attribute or list of attributes. If not empty, the displayable
-        is only shown if any of these are showing.
-
-    `if_not`
-        An attribute or list of attributes. The displayable is only shown
-        if none of these are showing.
+    `if_attr`
+        A string containing an if_attr expression, described in the :ref:`if_attr` section.
+        The displayable is only shown when the expression is satisfied by
+        the pool of attributes currently applied to the layeredimage.
     """
 
     def __init__(self, image, **kwargs):
