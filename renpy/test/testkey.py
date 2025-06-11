@@ -25,7 +25,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy.pygame as pygame
 
-from renpy.test.types import Node, NodeLocation
+from renpy.test.testast import Node
+from renpy.test.types import NodeLocation
 
 code_to_unicode = {
     pygame.K_UNKNOWN: "",
