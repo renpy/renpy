@@ -236,7 +236,7 @@ class Layer(object):
         self.at = resolve_at(at)
 
         if isinstance(if_attr, str):
-            if_attr = IfAttr.parse(renpy.lexer.lex_string(if_attr)) # TODO test
+            if_attr = IfAttr.parse(renpy.lexer.lex_string(if_attr))
         self.if_attr = if_attr
         self.if_all = renpy.easy.to_list(if_all)
         self.if_any = renpy.easy.to_list(if_any)
