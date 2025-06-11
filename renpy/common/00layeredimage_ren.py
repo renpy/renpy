@@ -232,8 +232,11 @@ class Layer(object):
 
     group_args = {}
 
-    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, if_attr=None, **kwargs):
+    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, if_attr: IfAttr|str|None=None, **kwargs):
         self.at = resolve_at(at)
+
+        if isinstance(if_attr, str):
+            if_attr = IfAttr.parse(renpy.lexer.lex_string(if_attr)) # TODO test
         self.if_attr = if_attr
         self.if_all = renpy.easy.to_list(if_all)
         self.if_any = renpy.easy.to_list(if_any)
