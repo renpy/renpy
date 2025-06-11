@@ -512,6 +512,14 @@ Input, Focus, and Events
     controller GUID (which cand be found in :file:`log.txt`), and if matched,
     prevent the controller from being initialized.
 
+.. var:: config.end_testcase_callbacks = [ ... ]
+
+    A list of functions that are called (without any arguments) when
+    execution of testcases end - in a good way or not. This is intended
+    to free resources as well as cleaning up anything that may have been
+    modified for the purpose of the test, such as persistent or save
+    data.
+
 .. var:: config.focus_crossrange_penalty = 1024
 
     This is the amount of penalty to apply to moves perpendicular to

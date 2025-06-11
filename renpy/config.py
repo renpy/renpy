@@ -1398,6 +1398,9 @@ early_developer = False
 # A function that returns the autosave prefix.
 autosave_prefix_callback = None
 
+# Functions called when a test ends - one way or another
+end_testcase_callbacks = [ ]
+
 # Compatibility for c492f2f8e6de57b2740fa5d00566f445124caaba.
 at_transform_compare_full_context = False
 
