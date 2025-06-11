@@ -722,7 +722,7 @@ def menu_statement(l, loc):
     rv.extend(menu)
 
     for i in rv:
-        if isinstance(rv, renpy.ast.Menu):
+        if isinstance(i, renpy.ast.Menu):
             i.statement_start = rv[0]
 
     return rv
