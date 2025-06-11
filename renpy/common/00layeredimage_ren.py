@@ -1354,11 +1354,32 @@ def lint_layeredimage(rli: RawLayeredImage) -> None:
             if c.group_name and {"auto", "multiple"}.issubset(c.final_properties):
                 renpy.error(f"In Layeredimage {rli.name!r}, group {c.group_name!r} should not be named, auto and multiple at the same time.")
 
+    if False:
         # Things that are obsolete but work, so are not reported:
         # - if_all, if_any and if_not, in any layer
         # - prefix and variant being in expr_properties (reporting this could really bloat the report)
         # - all named multiple groups
         # - non-auto multiple groups with a variant and a single attribute inside (use variant at the attribute level)
+        for c in rli.children:
+            if getattr(c, "if_any", None):
+                renpy.error("if_any is obsolete, use if_attr instead.")
+            elif getattr(c, "if_all", None):
+                renpy.error("if_all is obsolete, use if_attr instead.")
+            elif getattr(c, "if_not", None):
+                renpy.error("if_not is obsolete, use if_attr instead.")
+
+            if {"prefix", "variant"}.intersection(getattr(c, "expr_properties", ())):
+                renpy.error("prefix and variant should be passed unquoted.")
+
+            if isinstance(c, RawAttributeGroup):
+                named = c.group_name is not None
+                multiple = (not named) or c.final_properties.get("multiple", False)
+                if named and multiple:
+                    renpy.error("Multiple groups should not have a name.")
+
+                if multiple and (not c.final_properties.get("auto", False)) and (("variant" in c.final_properties) or ("variant" in c.expr_properties)) and (len(c.children) == 1):
+                    renpy.error("Use variant at the attribute level, rather than creating a multiple group.")
+
 
 renpy.register_statement("layeredimage",
     parse=parse_layeredimage,
