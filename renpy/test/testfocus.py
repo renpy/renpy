@@ -139,7 +139,7 @@ def find_position(f: Focus | None, position: Position) -> tuple[int, int]:
             if (nf.widget == f.widget) and (nf.arg == f.arg):
                 return x, y
 
-        x = random.randrange(f.x, int(f.x + f.w))
-        y = random.randrange(f.y, int(f.y + f.h))
+        x = random.randrange(int(f.x), int(f.x + f.w))
+        y = random.randrange(int(f.y), int(f.y + f.h))
 
     raise Exception("Could not locate the displayable.")
