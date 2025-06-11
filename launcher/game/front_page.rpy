@@ -208,6 +208,7 @@ screen front_page_project:
 
                 textbutton _("Navigate Script") action Jump("navigation")
                 textbutton _("Check Script (Lint)") action Call("lint")
+                textbutton _("Launch tests") action Jump("launch_tests")
 
                 if project.current.exists("game/gui.rpy"):
                     textbutton _("Change/Update GUI") action Jump("change_gui")
