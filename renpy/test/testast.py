@@ -25,24 +25,25 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy
 from renpy.test.testmouse import click_mouse, move_mouse
+from renpy.test.types import State, NodeLocation, Position
 
 
 class TestSettings(renpy.object.Object):
     def __init__(self):
         # Should we use maximum framerate mode?
-        self.maximum_framerate = True
+        self.maximum_framerate: bool = True
 
         # How long should we wait before declaring the test stuck?
-        self.timeout = 5.0
+        self.timeout: float = 5.0
 
         # Should we force the test to proceed despite suppress_underlay?
-        self.force = False
+        self.force: bool = False
 
         # How long should we wait for a transition before we proceed?
-        self.transition_timeout = 5.0
+        self.transition_timeout: float = 5.0
 
         # How many times should we try to find a good spot to place the mouse?
-        self.focus_trials = 100
+        self.focus_trials: int = 100
 
 _test = TestSettings()
 
@@ -52,10 +53,10 @@ class Node(object):
     An AST node for a test script.
     """
     __slots__ = ("filename", "linenumber")
-    def __init__(self, loc):
+    def __init__(self, loc: NodeLocation):
         self.filename, self.linenumber = loc
 
-    def start(self):
+    def start(self) -> State:
         """
         Called once when the node starts execution.
 
@@ -64,9 +65,12 @@ class Node(object):
         """
         return True
 
-    def execute(self, state, t):
+    def execute(self, state: State, t: float) -> State:
         """
         Called once each time the screen is drawn.
+
+        Returning None indicates that the node is done executing, and
+        to advance to the next node.
 
         `state`
             The last state that was returned from this node.
@@ -76,13 +80,13 @@ class Node(object):
         """
         return state
 
-    def ready(self):
+    def ready(self) -> bool:
         """
         Returns True if this node is ready to execute, or False otherwise.
         """
         return True
 
-    def report(self):
+    def report(self) -> None:
         """
         Reports the location of this statement. This should only be called
         in the execute method of leaf nodes of the test tree.
@@ -100,13 +104,42 @@ class Clause(Node):
 class PatternException(ValueError):pass
 
 class Pattern(Clause):
+    """
+    A pattern clause that finds a widget by pattern and performs an action on it.
+
+    A test clause that targets a UI element or screen position based on a pattern.
+
+    This class first attempts to find a focus (e.g., a displayable) matching the provided pattern.
+    If a position is specified, it refines the target coordinates within that focus. If no
+    pattern is given or the pattern doesn't resolve, it may fall back to
+    the current mouse position.
+
+    The actual action to be performed at the target coordinates is defined
+    by subclasses overriding the `perform` method.
+
+    Attributes:
+        pattern (str | None): The pattern string used to find a focus.
+            This could be a text string, an image filename, or another
+            identifier recognized by `renpy.test.testfocus.find_focus`.
+            If None, the action might target the current mouse position.
+
+        position (str | None): An optional Python expression string that,
+            when evaluated, should return a tuple `(x, y)` representing
+            a relative position or anchor within the found focus.
+            For example, `("center", "center")`.
+
+        always (bool): If True, the `ready()` method will always return True,
+            indicating the clause is ready to execute regardless of whether
+            the pattern can be resolved. Defaults to False.
+    """
+
     __slots__ = ("pattern", "position", "always")
 
-    def __init__(self, loc, pattern=None):
+    def __init__(self, loc: NodeLocation, pattern: str | None = None):
         super(Pattern, self).__init__(loc)
         self.pattern = pattern
-        self.position = None
-        self.always = False
+        self.position: Position | None = None
+        self.always: bool = False
 
     def execute(self, state, t):
         self.report()
@@ -131,7 +164,7 @@ class Pattern(Clause):
                 raise PatternException("The given {!r} pattern was not resolved to a target".format(self.pattern))
             x, y = renpy.exports.get_mouse_pos()
 
-        return self.perform(x, y, state, t)
+        return self.perform(x, y, state, t) # type: ignore
 
     def ready(self):
         if self.always:
@@ -141,13 +174,28 @@ class Pattern(Clause):
 
         return (f is not None)
 
-    def perform(self, x, y, state, t):
+    def perform(self, x: int, y: int, state: State, t: float) -> State:
+        """
+        Perform the action at the given coordinates.
+
+        Returning None indicates that the node is done executing, and
+        to advance to the next node.
+
+        `x`
+            The x-coordinate where the action should be performed.
+        `y`
+            The y-coordinate where the action should be performed.
+        `state`
+            The current state of the test execution.
+        `t`
+            The time since start was called.
+        """
         return None
 
 
 class Click(Pattern):
     # The number of the button to click.
-    button = 1
+    button: int = 1
 
     def perform(self, x, y, state, t):
         click_mouse(self.button, x, y)
@@ -163,7 +211,7 @@ class Move(Pattern):
 
 class Scroll(Clause):
     __slots__ = "pattern"
-    def __init__(self, loc, pattern=None):
+    def __init__(self, loc: NodeLocation, pattern: str | None = None):
         super(Scroll, self).__init__(loc)
         self.pattern = pattern
 
@@ -203,13 +251,13 @@ class Scroll(Clause):
 
 class Drag(Clause):
     __slots__ = ("points", "pattern", "button", "steps")
-    def __init__(self, loc, points):
+    def __init__(self, loc: NodeLocation, points: list[tuple[int, int]]):
         super(Drag, self).__init__(loc)
         self.points = points
 
-        self.pattern = None
-        self.button = 1
-        self.steps = 10
+        self.pattern: str | None = None
+        self.button: int = 1
+        self.steps: int = 10
 
     def execute(self, state, t):
         self.report()
@@ -284,7 +332,7 @@ class Type(Pattern):
     __slots__ = "keys"
     # interval = .01 # unused
 
-    def __init__(self, loc, keys):
+    def __init__(self, loc: NodeLocation, keys: list[str]):
         Pattern.__init__(self, loc)
         self.keys = keys
 
@@ -309,7 +357,7 @@ class Action(Clause):
     This is for the `run` keyword
     """
     __slots__ = "expr"
-    def __init__(self, loc, expr):
+    def __init__(self, loc: NodeLocation, expr):
         super(Action, self).__init__(loc)
         self.expr = expr
 
@@ -334,7 +382,7 @@ class Action(Clause):
 
 class Pause(Clause):
     __slots__ = "expr"
-    def __init__(self, loc, expr):
+    def __init__(self, loc: NodeLocation, expr):
         super(Pause, self).__init__(loc)
         self.expr = expr
 
@@ -352,7 +400,7 @@ class Pause(Clause):
 
 class Label(Clause):
     __slots__ = "name"
-    def __init__(self, loc, name):
+    def __init__(self, loc: NodeLocation, name: str):
         super(Label, self).__init__(loc)
         self.name = name
 
@@ -365,7 +413,7 @@ class Label(Clause):
 
 class Eval(Clause):
     __slots__ = ("expr", "evaluated")
-    def __init__(self, loc, expr):
+    def __init__(self, loc: NodeLocation, expr):
         super(Eval, self).__init__(loc)
         self.expr = expr
         self.evaluated = False
@@ -391,7 +439,7 @@ class Pass(Clause):
 
 class Not(Clause):
     __slots__ = "clause"
-    def __init__(self, loc, clause):
+    def __init__(self, loc: NodeLocation, clause: Clause):
         super(Not, self).__init__(loc)
         self.clause = clause
 
@@ -410,11 +458,17 @@ class Binary(Clause):
                  "left_ready", "right_ready",
                  "left_state", "right_state")
 
-    def __init__(self, loc, left, right):
+    def __init__(self, loc: NodeLocation, left: Clause, right: Clause):
         super(Binary, self).__init__(loc)
         self.left = left
         self.right = right
         self.left_ready = self.right_ready = None
+
+    def state(self) -> bool | None:
+        """
+        Returns the state of this binary clause.
+        """
+        raise NotImplementedError("state() must be implemented in subclasses of Binary.")
 
     def start(self):
         self.left_state = self.left.start()
@@ -424,7 +478,7 @@ class Binary(Clause):
 class And(Binary):
     __slots__ = ()
 
-    def state(self):
+    def state(self) -> bool | None:
         if (self.left_state is None) and (self.right_state is None):
             return None
         return True
@@ -455,7 +509,7 @@ class And(Binary):
 class Or(Binary):
     __slots__ = ()
 
-    def state(self):
+    def state(self) -> bool | None:
         if (self.left_state is None) or (self.right_state is None):
             return None
         return True
@@ -494,7 +548,7 @@ class Until(Node):
     then executes `right` once before quitting.
     """
     __slots__ = ("left", "right")
-    def __init__(self, loc, left, right):
+    def __init__(self, loc: NodeLocation, left: Node, right: Node):
         Node.__init__(self, loc)
         self.left = left
         self.right = right
@@ -534,7 +588,7 @@ class If(Node):
     statement.
     """
     __slots__ = ("condition", "block")
-    def __init__(self, loc, condition, block):
+    def __init__(self, loc: NodeLocation, condition: Node, block: "Block"):
         Node.__init__(self, loc)
 
         self.condition = condition
@@ -562,7 +616,7 @@ class If(Node):
 
 class Python(Node):
     __slots__ = ("code", "hide")
-    def __init__(self, loc, code, hide=False):
+    def __init__(self, loc: NodeLocation, code: renpy.ast.PyCode, hide: bool =False):
         Node.__init__(self, loc)
         self.code = code
         self.hide = hide
@@ -587,7 +641,7 @@ class AssertError(AssertionError):pass
 
 class Assert(Node):
     __slots__ = "clause"
-    def __init__(self, loc, clause):
+    def __init__(self, loc: NodeLocation, clause: Clause):
         Node.__init__(self, loc)
         self.clause = clause
 
@@ -604,7 +658,7 @@ class Assert(Node):
 
 class Jump(Node):
     __slots__ = "target"
-    def __init__(self, loc, target):
+    def __init__(self, loc: NodeLocation, target: str):
         Node.__init__(self, loc)
 
         self.target = target
@@ -616,7 +670,7 @@ class Jump(Node):
 
 class Call(Node):
     __slots__ = "target"
-    def __init__(self, loc, target):
+    def __init__(self, loc: NodeLocation, target: str):
         Node.__init__(self, loc)
 
         self.target = target
@@ -643,7 +697,7 @@ class Call(Node):
 
 class Block(Node):
     __slots__ = "block"
-    def __init__(self, loc, block):
+    def __init__(self, loc: NodeLocation, block: list[Node]):
         Node.__init__(self, loc)
         self.block = block
 

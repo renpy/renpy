@@ -24,12 +24,14 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 
 import renpy
+from renpy.display.focus import Focus
 import random
+from renpy.test.types import Position
 
 
-def find_focus(pattern):
+def find_focus(pattern: str | None) -> Focus | None:
     """
-    Trues to find the focus with the shortest alt text containing `pattern`.
+    Tries to find the focus with the shortest alt text containing `pattern`.
     If found, returns a random coordinate within that displayable.
 
     If `pattern` is None, returns a random coordinate that will trigger the
@@ -41,7 +43,8 @@ def find_focus(pattern):
     if pattern is not None:
         pattern = pattern.casefold()
 
-    def match(f):
+    def match(f: Focus) -> str | None:
+
         if pattern is None:
             if f.x is None:
                 # one focus, at most, ever branches here
@@ -62,7 +65,7 @@ def find_focus(pattern):
             return None
 
     # A list of alt_text, focus pairs.
-    matching = []
+    matching: list[tuple[str, Focus]] = []
 
     for f in renpy.display.focus.focus_list:
         alt = match(f)
@@ -76,17 +79,17 @@ def find_focus(pattern):
     return matching[0][1]
 
 
-def relative_position(x, posx, width):
+def relative_position(x: int, posx: int | float | None, width: int) -> float:
     if posx is not None:
         if type(posx) is float:
-            x = posx * (width - 1)
+            return posx * (width - 1)
         else:
-            x = posx
+            return posx
 
     return x
 
 
-def find_position(f, position):
+def find_position(f: Focus | None, position: Position) -> tuple[int, int]:
     """
     Returns the virtual position of a coordinate located within focus `f`.
     If position is (None, None) returns the current mouse position (if in

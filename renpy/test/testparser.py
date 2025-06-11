@@ -25,9 +25,11 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy.test.testast as testast
 import renpy
+from renpy.lexer import Lexer
+from renpy.test.types import NodeLocation
 
 
-def parse_click(l, loc, target):
+def parse_click(l: Lexer, loc: NodeLocation, target: str | None) -> testast.Click:
     rv = testast.Click(loc, target)
 
     while True:
@@ -46,7 +48,7 @@ def parse_click(l, loc, target):
     return rv
 
 
-def parse_type(l, loc, keys):
+def parse_type(l: Lexer, loc: NodeLocation, keys: list[str]) -> testast.Type:
     rv = testast.Type(loc, keys)
 
     while True:
@@ -62,12 +64,13 @@ def parse_type(l, loc, keys):
     return rv
 
 
-def parse_move(l, loc):
+def parse_move(l: Lexer, loc: NodeLocation) -> testast.Move:
     rv = testast.Move(loc)
 
     rv.position = l.require(l.simple_expression)
 
     while True:
+
         if l.keyword("pattern"):
             rv.pattern = l.require(l.string)
 
@@ -77,7 +80,7 @@ def parse_move(l, loc):
     return rv
 
 
-def parse_drag(l, loc):
+def parse_drag(l: Lexer, loc: NodeLocation) -> testast.Drag:
     points = l.require(l.simple_expression)
 
     rv = testast.Drag(loc, points)
@@ -98,28 +101,28 @@ def parse_drag(l, loc):
     return rv
 
 
-def parse_not(l, loc):
+def parse_not(l: Lexer, loc: NodeLocation) -> testast.Not | testast.Clause:
     if l.keyword("not"):
         return testast.Not(loc, parse_not(l, loc))
     else:
         return parse_clause(l, loc)
 
-def parse_and(l, loc):
+def parse_and(l: Lexer, loc: NodeLocation) -> testast.And | testast.Clause:
     rv = parse_not(l, loc)
     while l.keyword("and"):
         rv = testast.And(loc, rv, parse_not(l, loc))
     return rv
 
-def parse_or(l, loc):
+def parse_or(l: Lexer, loc: NodeLocation) -> testast.Or | testast.Clause:
     rv = parse_and(l, loc)
     while l.keyword("or"):
         rv = testast.Or(loc, rv, parse_and(l, loc))
     return rv
 
-def parse_clause(l, loc):
-    if l.match(r'\('):
+def parse_clause(l: Lexer, loc: NodeLocation) -> testast.Clause:
+    if l.match(r"\("):
         rv = parse_or(l, loc)
-        l.require(r'\)')
+        l.require(r"\)")
         return rv
 
     elif l.keyword("run"):
@@ -135,7 +138,7 @@ def parse_clause(l, loc):
         name = l.require(l.label_name)
         return testast.Label(loc, name)
 
-    elif l.keyword('eval'):
+    elif l.keyword("eval"):
 
         source = l.require(l.simple_expression)
         return testast.Eval(loc, source)
@@ -171,10 +174,11 @@ def parse_clause(l, loc):
             return parse_click(l, loc, target)
 
     l.error("Expected a test language statement or clause.")
-    return testast.Click(loc, target)
+    # return testast.Click(loc, target)
 
 
-def parse_statement(l, loc):
+def parse_statement(l: Lexer, loc: NodeLocation) -> testast.Node:
+
     if l.keyword("python"):
 
         hide = l.keyword("hide")
@@ -184,8 +188,8 @@ def parse_statement(l, loc):
 
         source = l.python_block()
 
-        code = renpy.ast.PyCode(source, loc, 'hide' if hide else 'exec')
-        return testast.Python(loc, code, hide)
+        code = renpy.ast.PyCode(source, loc, "hide" if hide else "exec")
+        return testast.Python(loc, code, hide=="hide")
 
     if l.keyword("if"):
         l.expect_block("if block")
@@ -218,7 +222,7 @@ def parse_statement(l, loc):
         target = l.require(l.name)
         return testast.Call(loc, target)
 
-    elif l.keyword('exit'):
+    elif l.keyword("exit"):
         return testast.Exit(loc)
 
     rv = parse_clause(l, loc)
@@ -230,7 +234,7 @@ def parse_statement(l, loc):
     return rv
 
 
-def parse_block(l, loc):
+def parse_block(l: Lexer, loc: NodeLocation) -> testast.Block:
     """
     Parses a named block of testcase statements.
     """
