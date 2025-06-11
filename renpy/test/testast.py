@@ -106,31 +106,23 @@ class PatternException(ValueError):pass
 class Pattern(Clause):
     """
     A pattern clause that finds a widget by pattern and performs an action on it.
+    Once found, the `perform()` method is called.
 
-    A test clause that targets a UI element or screen position based on a pattern.
+    `pattern`
+        The pattern string used to find a focus.
+        This could be a text string, an image filename, or another
+        identifier recognized by `renpy.test.testfocus.find_focus`.
+        If None, the action might target the current mouse position.
 
-    This class first attempts to find a focus (e.g., a displayable) matching the provided pattern.
-    If a position is specified, it refines the target coordinates within that focus. If no
-    pattern is given or the pattern doesn't resolve, it may fall back to
-    the current mouse position.
+    `position`
+        An optional Python expression string that, when evaluated,
+        should return a tuple `(x, y)` representing a position on the screen.
+        This is used by the `perform()` method.
+        If not specified, the current mouse position will be used.
 
-    The actual action to be performed at the target coordinates is defined
-    by subclasses overriding the `perform` method.
-
-    Attributes:
-        pattern (str | None): The pattern string used to find a focus.
-            This could be a text string, an image filename, or another
-            identifier recognized by `renpy.test.testfocus.find_focus`.
-            If None, the action might target the current mouse position.
-
-        position (str | None): An optional Python expression string that,
-            when evaluated, should return a tuple `(x, y)` representing
-            a relative position or anchor within the found focus.
-            For example, `("center", "center")`.
-
-        always (bool): If True, the `ready()` method will always return True,
-            indicating the clause is ready to execute regardless of whether
-            the pattern can be resolved. Defaults to False.
+    `always`
+        If True, the `ready()` method will always return True,
+        regardless of whether the pattern can be resolved.
     """
 
     __slots__ = ("pattern", "position", "always")

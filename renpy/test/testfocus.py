@@ -89,7 +89,7 @@ def relative_position(x: int, posx: int | float | None, width: int) -> float:
     return x
 
 
-def find_position(f: Focus | None, position: Position) -> tuple[int, int]:
+def find_position(f: Focus | None, position: Position | tuple[None, None]) -> tuple[int, int]:
     """
     Returns the virtual position of a coordinate located within focus `f`.
     If position is (None, None) returns the current mouse position (if in
