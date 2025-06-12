@@ -151,6 +151,8 @@ Debug Functions
 .. include:: inc/debug
 
 
+.. _launcher-customization:
+
 Launcher Customization
 ----------------------
 

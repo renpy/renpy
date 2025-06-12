@@ -157,6 +157,8 @@ the downloader game. This is the public key that will be used to verify the down
 
 When creating a new game, Ren'Py will now include a .gitignore file that contains a default set of files to ignore.
 
+It's possible to :ref:`customize the Ren'Py launcher <launcher-customization>`_ to select the files and directories
+that are available to click on.
 
 Text
 -----
