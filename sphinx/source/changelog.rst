@@ -86,10 +86,28 @@ always had.
 Ren'Py's GLSL shader support now allows one-dimensions arrays of uniforms of scalar and vector types, but not
 arrays of  matrices or samplers.
 
+Ren'Py now can supply separate model to world (u_model), world to camera view (u_view), and camera view to viewport
+(u_projection) matrices to shaders. These matrices are supplied as uniforms. There are also a u_projectionview matrix
+that combines u_projection and u_view, and the existing u_transform matrix is all three. Breaking these out allows
+OpenGL shaders to support lighting.
 
 Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
 to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
 
+GLTF Model Loading
+------------------
+
+Ren'Py now has a minimal ability to load 3D models defined in the GLTF format, using the Open Asset Importer library.
+Models can be loaded using the :class:`GLTFModel` displayable.
+
+Right now, the GLTFModel loading only supports loading the mesh and textures of a model. There's no support for
+animation or other features of GLTF. What's more, the default Ren'Py shaders only show the base colors, and a custom
+shader is required to handle the other portions of physical-based rendering (PBR) that GLTF supports.
+
+The current GLTFModel support is is likely useful for people who want to use 3D backgrounds in their games, but
+may require a skilled developer to position the model in 3D space. It's also intended for developers that want to
+experiment and contribute insights and development back to Ren'Py. A future release will include more tools for
+working with objects in three dimensions.
 
 Libs and Mods
 -------------
@@ -114,7 +132,6 @@ merged with the player's script, a library can be placed under game/libs, and wi
 
 `.rpe` and `.rpe.py` files are also searched in the libs directory.
 
-
 Automatic Oversampling
 ----------------------
 
@@ -127,7 +144,6 @@ When scaled to more than 200%, it will look for "eileen happy@4.png", "eileen ha
 
 Ren'Py also supports oversampling and automatic oversampling for movies played using :class:`Movie` and
 :func:`renpy.movie_cutscene`. This works similarly to images, with respect to filenames.
-
 
 Accessibility
 -------------
@@ -193,7 +209,6 @@ The new :func:`renpy.get_save_data` function allows you to retrieve the data for
 without loading the save. This can be used with a traceback save to retrieve the game data without loading
 into an error state.
 
-
 Features
 --------
 
@@ -224,6 +239,9 @@ The new :func:`renpy.lex_string` function makes it possible to create a Lexer fo
 
 The :class:`SpriteManager` and :func:`SnowBlossom` displayables now support the `animation` parameter,
 which can be used to prevent resetting when the displayable is reshown.
+
+The :func:`SnowBlossom` displayable now supports the `distribution` parameter, which controls the distribution of how
+the particles are created, allowing the particles to be created in the center or sides of the screen.
 
 The :class:`Gallery` class now supports separate transitions when entering a sequence of images, going
 between images, and exiting the sequence of images.
@@ -270,7 +288,6 @@ that the function is called from. The triple underscore function also marks the 
 inside for translation.
 
 The :var:`config.persistent_callback` callback makes it possible to update persistent data when it is loaded.
-
 
 Changes
 -------
