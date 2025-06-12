@@ -269,6 +269,9 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     * The child of this transform will be rendered to a texture.
     * The renpy.texture shader will be added.
 
+    By default, the texture used by the mesh will not be mipmapped. If
+    mipmaps are desired, :tpref:`gl_mipmap` should be set to True.
+
 .. transform-property:: mesh_pad
 
     :type: None or tuple
