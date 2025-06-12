@@ -10,13 +10,6 @@ Changelog (Ren'Py 7.x-)
 8.4.0
 =====
 
-Performance Improvements
-------------------------
-
-*Live2D* When rendering Live2D models, Ren'Py will avoid doing unproductive work to create Renders for layers
-that are not visible, and masks that are not used. This can improve performance when using Live2D models with
-many layers.
-
 Requirement and Dependency Changes
 ----------------------------------
 
@@ -30,6 +23,73 @@ such as the Raspberry Pi.
 
 The Android version of Ren'Py is now being built with 16KB pages, for future Android devices that will
 require 16 KB page support.
+
+Python 3.12
+-----------
+
+Ren'Py now uses Python 3.12 on all platforms. This makes avilable several years of Python improvements. To
+finds all of them, please see:
+
+* `What's New in Python 3.10 <https://docs.python.org/3/whatsnew/3.10.html>`_
+* `What's New in Python 3.11 <https://docs.python.org/3/whatsnew/3.11.html>`_
+* `What's New in Python 3.12 <https://docs.python.org/3/whatsnew/3.12.html>`_
+
+One of the most visible changes caused by this is that Ren'Py will now report the location of Python errors
+at sub-line granularity, rather than at line granularity. In tracebacks, the portions of a line that contribute
+to an error will be colored or underlined.
+
+Performance Improvements
+------------------------
+
+**Script Loading** The internal respresentation of the game script has been changed to reduce the amount of
+memory used and to improve loading time, by only representing data that varies from the default. For a large
+game where initial startup is dominated by script loading, this improved the time it takes to load the script by
+50%.
+
+**Persistent Data** The persistent data format has been changed to use numeric hashes of visited script locations,
+rather than the full script location. These hashes can be saved and loaded much more quickly, which improves game
+performance when the persistent data is large.
+
+**OpenGL Drawing** Ren'Py's OpenGL drawing code has been changed to remove allocations of matrix objects, and to
+reduce the amount of math that needs to be done in many cases. This can improve performance when drawing scenes
+with large numbers of drawing operations, as those scenes can be CPU-bound.
+
+Similarly, the OpenGL drawing code has been changed to avoid creating dictionaries containing the values of
+shader variables. Avoiding
+
+**Live2D** When rendering Live2D models, Ren'Py will avoid doing unproductive work to create Renders for layers
+that are not visible, and masks that are not used. This can improve performance when using Live2D models with
+many layers.
+
+Optional Mipmaps
+----------------
+
+Mipmaps are smaller versions of an image that are used when Ren'Py scales an image down. Using mipmaps
+prevents the image from becoming jagged when scaled down, but generating mipmaps takes time and can cause the game
+to use more memory.
+
+Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
+image. To always enable mipmaps, set :var:`config.mipmap` to True. If this isn't set to true, Ren'Py will only
+create mipmaps if the display is scaled down to less than 75% of the virtual window size.
+
+Mipmaps will automatically be created for images loaded for the purpose of Live2D or GLTFModel, as these are
+likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
+of :func:`Image`.
+
+Shaders
+-------
+
+Ren'Py's GLSL shader support now allows uniforms of types int, bool, ivec2, ivec3, ivec4, and bvec2, bvec3, bvec4,
+in addition to the support for float, vec2, vec3, vec4, mat2, mat3, mat4 and sampler2D that Ren'Py has
+always had.
+
+Ren'Py's GLSL shader support now allows one-dimensions arrays of uniforms of scalar and vector types, but not
+arrays of  matrices or samplers.
+
+
+Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
+to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
+
 
 Libs and Mods
 -------------
@@ -54,20 +114,6 @@ merged with the player's script, a library can be placed under game/libs, and wi
 
 `.rpe` and `.rpe.py` files are also searched in the libs directory.
 
-Optional Mipmaps
-----------------
-
-Mipmaps are smaller versions of an image that are used when Ren'Py scales an image down. Using mipmaps
-prevents the image from becoming jagged when scaled down, but generating mipmaps takes time and can cause the game
-to use more memory.
-
-Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
-image. To always enable mipmaps, set :var:`config.mipmap` to True. If this isn't set to true, Ren'Py will only
-create mipmaps if the display is scaled down to less than 75% of the virtual window size.
-
-Mipmaps will automatically be created for images loaded for the purpose of Live2D or GLTFModel, as these are
-likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
-of :func:`Image`.
 
 Automatic Oversampling
 ----------------------
@@ -82,11 +128,6 @@ When scaled to more than 200%, it will look for "eileen happy@4.png", "eileen ha
 Ren'Py also supports oversampling and automatic oversampling for movies played using :class:`Movie` and
 :func:`renpy.movie_cutscene`. This works similarly to images, with respect to filenames.
 
-Texture Uniforms
-----------------
-
-Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
-to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
 
 Accessibility
 -------------
