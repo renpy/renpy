@@ -464,6 +464,8 @@ renpyAudio.queue = (channel, file, name, synchro_start, fadein, tight, start, en
 
         video_start(c);
         return;
+    } else if (c.video) {
+        throw new Error('Videos must not be stored in game.zip.');
     }
 
     const q = {
