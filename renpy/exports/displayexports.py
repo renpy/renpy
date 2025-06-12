@@ -1409,6 +1409,32 @@ def get_mouse_name(interaction=False):
     return renpy.display.interface.get_mouse_name(interaction=interaction)
 
 
+def has_default_focus():
+    """
+    :doc: other
+
+    Returns true if the game can be advanced by clicking or pressing the
+    spacebar.
+
+    For example, it is True in a dialogue or a pause, and False in places
+    like the Game Menu.
+    """
+    return any(f.x is None for f in renpy.display.focus.focus_list)
+
+
+def has_default_focus():
+    """
+    :doc: other
+
+    Returns true if the game can be advanced by clicking or pressing the
+    spacebar.
+
+    For example, it is True in a dialogue or a pause, and False in places
+    like the Game Menu.
+    """
+    return any(f.x is None for f in renpy.display.focus.focus_list)
+
+
 def set_focus(screen, id, layer="screens"):
     """
     :doc: screens
