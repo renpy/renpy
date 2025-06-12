@@ -164,7 +164,6 @@ def execute() -> None:
 
     now = renpy.display.core.get_time()
 
-    node, state, start_time = execute_node(now, node, state, start_time)
     try:
         node, state, start_time = execute_node(now, node, state, start_time)
     except TestcaseException as e:
