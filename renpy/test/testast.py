@@ -24,6 +24,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 
 import renpy
+from renpy.display.focus import Focus
+from renpy.display.displayable import Displayable
 from renpy.test.testmouse import click_mouse, move_mouse
 from renpy.test.types import State, NodeLocation, Position
 
@@ -101,50 +103,165 @@ class Clause(Node):
         return "<{} test clause>".format(type(self).__name__.lower())
 
 
-class PatternException(ValueError):pass
+class SelectorException(ValueError):pass
 
-class Pattern(Clause):
+
+class Selector(Clause):
     """
-    A pattern clause that finds a widget by pattern and performs an action on it.
+    Base class for selectors. Selectors find a focusable or displayable
+    item on the screen.
+    """
+
+    def execute(self, state, t):
+
+        self.report()
+
+        if renpy.display.interface.trans_pause and (t < _test.transition_timeout):
+            return state
+
+        return None
+
+    def element_not_found_during_perform(self) -> None:
+        """
+        Called when the element is not found during perform.
+        This can be overridden to handle cases where the element is not found.
+        """
+        raise SelectorException("Element was not found.")
+
+    def get_element(self) -> Displayable | Focus | None:
+        """
+        Returns the element that this selector is looking for.
+        If no element is found, returns None.
+        """
+        raise NotImplementedError("get_element() must be implemented in subclasses of Selector.")
+
+    def ready(self) -> bool:
+        return self.get_element() is not None
+
+
+class DisplayableSelector(Selector):
+    """
+    A selector that finds a widget by its id or screen.
+    """
+
+    __slots__ = ("screen", "id", "layer")
+
+    def __init__(
+        self,
+        loc: NodeLocation,
+        screen: str | None = None,
+        id: str | None = None,
+        layer: str | None = None,
+    ):
+        super(DisplayableSelector, self).__init__(loc)
+        self.screen = screen
+        self.id = id
+        self.layer = layer
+
+        if self.screen is None and self.id is None:
+            raise ValueError("A displayable clause must have a screen and/or an id specified.")
+
+    def element_not_found_during_perform(self) -> None:
+        if self.screen or self.id:
+            raise SelectorException("The displayable with screen {!r} and id {!r} was not found".format(self.screen, self.id))
+
+        raise SelectorException("No displayable was specified.")
+
+    def get_element(self) -> Displayable | None:
+        if self.screen and self.id is None:
+            return renpy.exports.get_screen(self.screen, self.layer)
+        return renpy.exports.get_displayable(self.screen, self.id, self.layer)
+
+    def ready(self) -> bool:
+        ## Needs to be checked here and not in __init__ since screens are not be defined yet.
+        if self.screen is not None and not renpy.exports.has_screen(self.screen):
+            raise ValueError("The screen {!r} does not exist.".format(self.screen))
+
+        return super().ready()
+
+
+class Pattern(Selector):
+    """
+    A selector that finds a widget by its text or alt text.
     Once found, the `perform()` method is called.
 
     `pattern`
         The pattern string used to find a focus.
-        This could be a text string, an image filename, or another
+        This could be a text string, alt text, or another
         identifier recognized by `renpy.test.testfocus.find_focus`.
-        If None, the action might target the current mouse position.
+    """
+
+    __slots__ = ("pattern",)
+
+    def __init__(self, loc: NodeLocation, pattern: str):
+        super(Pattern, self).__init__(loc)
+        self.pattern = pattern
+
+    def element_not_found_during_perform(self) -> None:
+        if self.pattern:
+            raise SelectorException("The given {!r} pattern was not resolved to a target".format(self.pattern))
+
+    def get_element(self) -> Focus | None:
+        return renpy.test.testfocus.find_focus(self.pattern)
+
+
+class SelectorDrivenClause(Clause):
+    """
+    Base class for nodes that perform actions that may take
+    a selector as a target.
+
+    `selector`
+        An optional `Selector` instance that determines the target
 
     `position`
         An optional Python expression string that, when evaluated,
-        should return a tuple `(x, y)` representing a position on the screen.
-        This is used by the `perform()` method.
-        If not specified, the current mouse position will be used.
+        should return a tuple `(x, y)` representing a position relative to the
+        target element.
+        If not specified or selector is None, the current mouse position will be used.
 
     `always`
         If True, the `ready()` method will always return True,
         regardless of whether the pattern can be resolved.
     """
 
-    __slots__ = ("pattern", "position", "always")
+    __slots__ = ("selector", "position", "always")
 
-    def __init__(self, loc: NodeLocation, pattern: str | None = None):
-        super(Pattern, self).__init__(loc)
-        self.pattern = pattern
-        self.position: Position | None = None
-        self.always: bool = False
+    def __init__(
+        self,
+        loc: NodeLocation,
+        selector: Selector | None = None,
+        position: Position | None = None,
+        always: bool = False,
+    ):
+        super(SelectorDrivenClause, self).__init__(loc)
+        self.selector = selector
+        self.position = position
+        self.always = always
 
-    def execute(self, state, t):
+    def execute(self, state: State, t: float) -> State:
+
         self.report()
 
         if renpy.display.interface.trans_pause and (t < _test.transition_timeout):
             return state
 
+        x, y = self.get_position()
+
+        return self.perform(x, y, state, t)
+
+    def get_position(self) -> tuple[int, int]:
+        """
+        Returns the x and y coordinates for the action to be performed.
+        """
         if self.position is not None:
             position = renpy.python.py_eval(self.position)
         else:
             position = (None, None)
 
-        f = renpy.test.testfocus.find_focus(self.pattern)
+        if self.selector is not None:
+            f = self.selector.get_element()
+        else:
+            f = None
 
         if f is None:
             x, y = None, None
@@ -152,19 +269,11 @@ class Pattern(Clause):
             x, y = renpy.test.testfocus.find_position(f, position)
 
         if None in (x, y):
-            if self.pattern:
-                raise PatternException("The given {!r} pattern was not resolved to a target".format(self.pattern))
+            if not self.always and self.selector is not None:
+                self.selector.element_not_found_during_perform()
             x, y = renpy.exports.get_mouse_pos()
 
-        return self.perform(x, y, state, t) # type: ignore
-
-    def ready(self):
-        if self.always:
-            return True
-
-        f = renpy.test.testfocus.find_focus(self.pattern)
-
-        return (f is not None)
+        return x, y # type: ignore
 
     def perform(self, x: int, y: int, state: State, t: float) -> State:
         """
@@ -182,7 +291,16 @@ class Pattern(Clause):
         `t`
             The time since start was called.
         """
-        return None
+        raise NotImplementedError("perform() must be implemented in subclasses of SelectorDrivenNode.")
+
+    def ready(self) -> bool:
+        if self.always:
+            return True
+
+        if self.selector is not None:
+            return self.selector.ready()
+
+        return True
 
 
 class Click(Pattern):
@@ -194,7 +312,7 @@ class Click(Pattern):
         return None
 
 
-class Move(Pattern):
+class Move(SelectorDrivenClause):
     __slots__ = ()
     def perform(self, x, y, state, t):
         move_mouse(x, y)
@@ -320,12 +438,12 @@ class Drag(Clause):
             return False
 
 
-class Type(Pattern):
+class Type(SelectorDrivenClause):
     __slots__ = "keys"
     # interval = .01 # unused
 
-    def __init__(self, loc: NodeLocation, keys: list[str]):
-        Pattern.__init__(self, loc)
+    def __init__(self, loc: NodeLocation, keys: list[str], **kwargs):
+        super().__init__(loc, **kwargs)
         self.keys = keys
 
     def start(self):
@@ -631,6 +749,7 @@ class Python(Node):
 
 class AssertError(AssertionError):pass
 
+
 class Assert(Node):
     __slots__ = "clause"
     def __init__(self, loc: NodeLocation, clause: Clause):
@@ -713,6 +832,7 @@ class Block(Node):
             i += 1
 
         return i, start, s
+
 
 class Exit(Node):
     __slots__ = ()

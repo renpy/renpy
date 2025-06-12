@@ -22,10 +22,10 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
-
+import random
 import renpy
 from renpy.display.focus import Focus
-import random
+from renpy.display.displayable import Displayable
 from renpy.test.types import Position
 
 
@@ -89,7 +89,10 @@ def relative_position(x: int, posx: int | float | None, width: int) -> float:
     return x
 
 
-def find_position(f: Focus | None, position: Position | tuple[None, None]) -> tuple[int, int]:
+def find_position(
+    f: Focus | Displayable | None,
+    position: Position | tuple[None, None]
+) -> tuple[int, int]:
     """
     Returns the virtual position of a coordinate located within focus `f`.
     If position is (None, None) returns the current mouse position (if in
@@ -97,6 +100,10 @@ def find_position(f: Focus | None, position: Position | tuple[None, None]) -> tu
 
     If `f` is None, returns a position relative to the screen as a whole.
     """
+    f_original = f
+
+    if isinstance(f, Displayable):
+        f = focus_from_displayable(f)
 
     posx, posy = position
 
@@ -142,4 +149,43 @@ def find_position(f: Focus | None, position: Position | tuple[None, None]) -> tu
         x = random.randrange(int(f.x), int(f.x + f.w))
         y = random.randrange(int(f.y), int(f.y + f.h))
 
+    if isinstance(f_original, Displayable):
+        ## It's not guaranteed that the displayable is in the focus list, so we
+        ## return our best guess.
+        return f.x, f.y
+
     raise Exception("Could not locate the displayable.")
+
+
+def focus_from_displayable(d: Displayable) -> Focus | None:
+    """
+    Returns a Focus object for the given displayable `d`.
+
+    If the displayable is not in the focus list, we create a Focus object for
+    it from the render tree,
+    """
+
+    for f in renpy.display.focus.focus_list:
+        if f.widget == d:
+            return f
+
+    ## If we reach here, the displayable is not in the focus list.
+    ## Search the render tree for it.
+    stack = [(renpy.display.render.screen_render, 0, 0, None)]
+    while stack:
+        r, x, y, screen = stack.pop()
+
+        if not isinstance(r, renpy.display.render.Render):
+            continue
+
+        if d in r.render_of:
+            return Focus(widget=d, arg=None, x=x, y=y, w=r.width, h=r.height, screen=screen)
+
+        if r.render_of and isinstance(r.render_of[0], renpy.display.screen.ScreenDisplayable):
+            screen = r.render_of[0]
+
+        for r in r.children:
+            ## We care about the absolute position of the displayable, not the position relative to the parent.
+            stack.append((r[0], x + r[1], y + r[2], screen))
+
+    return None
