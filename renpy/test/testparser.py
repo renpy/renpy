@@ -29,7 +29,7 @@ from renpy.lexer import Lexer
 from renpy.test.types import NodeLocation
 
 
-def parse_click(l: Lexer, loc: NodeLocation, target: str | None) -> testast.Click:
+def parse_click(l: Lexer, loc: NodeLocation, target: testast.Selector | None) -> testast.Click:
     rv = testast.Click(loc, target)
 
     while True:
@@ -52,14 +52,15 @@ def parse_type(l: Lexer, loc: NodeLocation, keys: list[str]) -> testast.Type:
     rv = testast.Type(loc, keys)
 
     while True:
-        if l.keyword("pattern"):
-            rv.pattern = l.require(l.string)
-
-        elif l.keyword("pos"):
+        if l.keyword("pos"):
             rv.position = l.require(l.simple_expression)
 
         else:
-            break
+            selector = parse_selector(l, loc)
+            if selector is not None:
+                rv.selector = selector
+            else:
+                break
 
     return rv
 
@@ -67,15 +68,16 @@ def parse_type(l: Lexer, loc: NodeLocation, keys: list[str]) -> testast.Type:
 def parse_move(l: Lexer, loc: NodeLocation) -> testast.Move:
     rv = testast.Move(loc)
 
-    rv.position = l.require(l.simple_expression)
-
     while True:
-
-        if l.keyword("pattern"):
-            rv.pattern = l.require(l.string)
-
+        selector = parse_selector(l, loc)
+        if selector is not None:
+            rv.selector = selector
         else:
-            break
+            temp = l.simple_expression()
+            if temp is not None:
+                rv.position = temp # type: ignore
+            else:
+                break
 
     return rv
 
@@ -118,6 +120,48 @@ def parse_or(l: Lexer, loc: NodeLocation) -> testast.Or | testast.Clause:
     while l.keyword("or"):
         rv = testast.Or(loc, rv, parse_and(l, loc))
     return rv
+
+
+def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
+    """
+    Parses a selector, which is currently either Pattern (string) or Displayable (screen/id).
+    """
+
+    pattern = None
+    screen = None
+    id = None
+    layer = None
+
+    while True:
+        if l.keyword("screen"):
+            screen = l.require(l.word)
+
+        elif l.keyword("id"):
+            id = l.require(l.string)
+
+        elif l.keyword("layer"):
+            layer = l.require(l.string)
+
+        else:
+            temp = l.string()
+            if temp is not None:
+                if pattern is not None:
+                    l.error("Only one pattern may be specified in a selector.")
+                pattern = temp
+            else:
+                break
+
+    if pattern is None and screen is None and id is None:
+        return None
+
+    if pattern is not None and (screen is not None or id is not None):
+        l.error("A pattern may not be specified with a screen or id.")
+
+    if pattern is not None:
+        return testast.Pattern(loc, pattern)
+
+    return testast.DisplayableSelector(loc, screen, id, layer)
+
 
 def parse_clause(l: Lexer, loc: NodeLocation) -> testast.Clause:
     if l.match(r"\("):
@@ -169,12 +213,11 @@ def parse_clause(l: Lexer, loc: NodeLocation) -> testast.Clause:
         return testast.Pass(loc)
 
     else:
-        target = l.string()
+        target = parse_selector(l, loc)
         if target:
             return parse_click(l, loc, target)
 
     l.error("Expected a test language statement or clause.")
-    # return testast.Click(loc, target)
 
 
 def parse_statement(l: Lexer, loc: NodeLocation) -> testast.Node:
