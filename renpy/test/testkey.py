@@ -25,8 +25,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy.pygame as pygame
 
+import renpy
 from renpy.test.testast import Node
-from renpy.test.types import NodeLocation
 
 code_to_unicode = {
     pygame.K_UNKNOWN: "",
@@ -315,7 +315,7 @@ def get_keycode(node: Node, keysym: str) -> tuple[int, str | None, int]:
         mods |= pygame.KMOD_LSHIFT
 
     else:
-        code = getattr(pygame, "K_" + key, None)
+        code = getattr(pygame, key, None)
 
         if code is None:
             raise Exception("Could not find keysym {!r} at {}:{}.".format(keysym, node.filename, node.linenumber))
@@ -362,3 +362,20 @@ def up(node: Node, keysym: str) -> None:
     pygame.event.post(
         pygame.event.Event(pygame.KEYUP, key=code, scancode=code, mod=mods, repeat=False, test=True)
     )
+
+
+def queue_keysym(node: Node, name: str) -> None:
+    """
+    Trigger a keysym event, which is a string like "ctrl_K_a" or "mouseup_1"
+    or an event name in `config.keymap` like "skip" or "dismiss".
+    """
+
+    if name in renpy.config.keymap:
+        renpy.exports.queue_event(name)
+        return
+
+    down(node, name)
+    up(node, name)
+
+#         keysym = config.keymap[keysym][0]
+#     return keysym
