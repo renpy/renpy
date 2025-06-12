@@ -103,7 +103,9 @@ class Clause(Node):
         return "<{} test clause>".format(type(self).__name__.lower())
 
 
-class SelectorException(ValueError):pass
+class TestcaseException(ValueError):pass
+
+class SelectorException(TestcaseException):pass
 
 
 class Selector(Clause):
