@@ -439,27 +439,42 @@ class Drag(Clause):
 
 
 class Type(SelectorDrivenClause):
-    __slots__ = "keys"
+    __slots__ = "text"
     # interval = .01 # unused
 
-    def __init__(self, loc: NodeLocation, keys: list[str], **kwargs):
+    def __init__(self, loc: NodeLocation, text: str, **kwargs):
         super().__init__(loc, **kwargs)
-        self.keys = keys
+        self.text = text
 
     def start(self):
         return 0
 
     def perform(self, x, y, state, t):
-        if state >= len(self.keys):
+        if state >= len(self.text):
             return None
 
         move_mouse(x, y)
 
-        keysym = self.keys[state]
+        keysym = "K_" + self.text[state]
         renpy.test.testkey.down(self, keysym)
         renpy.test.testkey.up(self, keysym)
 
         return state + 1
+
+
+class Keysym(SelectorDrivenClause):
+    __slots__ = "keysym"
+
+    def __init__(self, loc: NodeLocation, keysym: str, **kwargs):
+        super().__init__(loc, **kwargs)
+        self.keysym = keysym
+
+    def perform(self, x, y, state, t):
+
+        move_mouse(x, y)
+        renpy.test.testkey.queue_keysym(self, self.keysym)
+
+        return None
 
 
 class Action(Clause):
