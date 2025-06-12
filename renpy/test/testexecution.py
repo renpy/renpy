@@ -26,7 +26,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import renpy
 import renpy.pygame as pygame
 
-from renpy.test.testast import Node
+from renpy.test.testast import Node, TestcaseException
 from renpy.test.types import State, NodeLocation
 
 # A map from the name of a testcase to the testcase.
@@ -127,7 +127,8 @@ def execute_node(
 
 def execute() -> None:
     """
-    Called periodically by the test code to generate events, if desired.
+    Called periodically by the core interact loop when a new frame is drawn.
+    This allows test code to generate events, if desired.
     """
 
     global node
@@ -164,6 +165,17 @@ def execute() -> None:
     now = renpy.display.core.get_time()
 
     node, state, start_time = execute_node(now, node, state, start_time)
+    try:
+        node, state, start_time = execute_node(now, node, state, start_time)
+    except TestcaseException as e:
+        renpy.error.report_exception(e, editor=False)
+
+        ## TODO: Print the traceback in a way that makes sense for testcases.
+        ## Include the name of the testcase, the contents of that line, and possibly testcase stack
+        exception_print_context = renpy.error.MaybeColoredExceptionPrintContext(None)
+        exception_print_context.location(renpy.exports.unelide_filename(node_loc[0]), node_loc[1], None)
+
+        node = None
 
     labels.clear()
 
