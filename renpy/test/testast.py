@@ -54,9 +54,21 @@ class Node(object):
     """
     An AST node for a test script.
     """
-    __slots__ = ("filename", "linenumber")
+    __slots__ = ("filename", "linenumber", "next")
     def __init__(self, loc: NodeLocation):
         self.filename, self.linenumber = loc
+        self.next: Node | None = None
+
+    def chain(self, next: "Node | None") -> None:
+        """
+        This is called with the Node node that should be followed after
+        executing this node, and all nodes that this node
+        executes. (For example, if this node is a block label, the
+        next is the node that should be executed after all nodes in
+        the block.)
+        """
+
+        self.next = next
 
     def start(self) -> State:
         """
@@ -71,8 +83,8 @@ class Node(object):
         """
         Called once each time the screen is drawn.
 
-        Returning None indicates that the node is done executing, and
-        to advance to the next node.
+        Returning None indicates that the node is done executing. You should
+        then call `next_node()` with the next node to execute.
 
         `state`
             The last state that was returned from this node.
@@ -80,6 +92,7 @@ class Node(object):
         `t`
             The time since start was called.
         """
+        next_node(self.next)
         return state
 
     def ready(self) -> bool:
@@ -88,19 +101,25 @@ class Node(object):
         """
         return True
 
-    def report(self) -> None:
+    def get_repr_params(self) -> str:
         """
-        Reports the location of this statement. This should only be called
-        in the execute method of leaf nodes of the test tree.
+        Returns a string representation of the parameters of this node.
+        This is used in the __repr__ method to provide additional information
+        about the node.
         """
-        renpy.test.testexecution.node_loc = (self.filename, self.linenumber)
+        return ""
+
+    def __repr__(self):
+        if params := self.get_repr_params():
+            params = " " + params
+        return "<{}{} ({}:{})>".format(type(self).__name__, params, self.filename, self.linenumber)
 
 
 class Clause(Node):
     __slots__ = ()
 
-    def __repr__(self):
-        return "<{} test clause>".format(type(self).__name__.lower())
+    # def __repr__(self):
+    #     return "<{} test clause at {}:{}>".format(type(self).__name__, self.filename, self.linenumber)
 
 
 class TestcaseException(ValueError):pass
@@ -116,11 +135,10 @@ class Selector(Clause):
 
     def execute(self, state, t):
 
-        self.report()
-
         if renpy.display.interface.trans_pause and (t < _test.transition_timeout):
             return state
 
+        next_node(self.next)
         return None
 
     def element_not_found_during_perform(self) -> None:
@@ -242,9 +260,10 @@ class SelectorDrivenClause(Clause):
 
     def execute(self, state: State, t: float) -> State:
 
-        self.report()
-
         if renpy.display.interface.trans_pause and (t < _test.transition_timeout):
+            return state
+
+        if self.selector and not self.selector.ready():
             return state
 
         x, y = self.get_position()
@@ -311,6 +330,7 @@ class Click(Pattern):
 
     def perform(self, x, y, state, t):
         click_mouse(self.button, x, y)
+        next_node(self.next)
         return None
 
 
@@ -318,6 +338,7 @@ class Move(SelectorDrivenClause):
     __slots__ = ()
     def perform(self, x, y, state, t):
         move_mouse(x, y)
+        next_node(self.next)
         return None
 
 
@@ -328,7 +349,6 @@ class Scroll(Clause):
         self.pattern = pattern
 
     def execute(self, state, t):
-        self.report()
 
         f = renpy.test.testfocus.find_focus(self.pattern)
 
@@ -350,15 +370,12 @@ class Scroll(Clause):
 
         adj.change(new)
 
+        next_node(self.next)
         return None
 
     def ready(self):
         f = renpy.test.testfocus.find_focus(self.pattern)
-
-        if f is not None:
-            return True
-        else:
-            return False
+        return f is not None
 
 
 class Drag(Clause):
@@ -372,7 +389,6 @@ class Drag(Clause):
         self.steps: int = 10
 
     def execute(self, state, t):
-        self.report()
 
         if renpy.display.interface.trans_pause:
             return state
@@ -423,6 +439,7 @@ class Drag(Clause):
 
         if not interpoints:
             renpy.test.testmouse.release_mouse(self.button)
+            next_node(self.next)
             return None
 
         else:
@@ -453,6 +470,7 @@ class Type(SelectorDrivenClause):
 
     def perform(self, x, y, state, t):
         if state >= len(self.text):
+            next_node(self.next)
             return None
 
         move_mouse(x, y)
@@ -476,6 +494,7 @@ class Keysym(SelectorDrivenClause):
         move_mouse(x, y)
         renpy.test.testkey.queue_keysym(self, self.keysym)
 
+        next_node(self.next)
         return None
 
 
@@ -493,16 +512,13 @@ class Action(Clause):
         return True
 
     def execute(self, state, t):
-        self.report()
-
         if renpy.test.testexecution.action:
-            return True
+            return state
         else:
+            next_node(self.next)
             return None
 
     def ready(self):
-        self.report()
-
         action = renpy.python.py_eval(self.expr)
         return renpy.display.behavior.is_sensitive(action)
 
@@ -517,12 +533,14 @@ class Pause(Clause):
         return float(renpy.python.py_eval(self.expr))
 
     def execute(self, state, t):
-        self.report()
-
         if t < state:
             return state
         else:
+            next_node(self.next)
             return None
+
+    def get_repr_params(self):
+        return f"{self.expr}"
 
 
 class Label(Clause):
@@ -532,10 +550,14 @@ class Label(Clause):
         self.name = name
 
     def execute(self, state, t):
+        next_node(self.next)
         return None
 
     def ready(self):
         return self.name in renpy.test.testexecution.labels
+
+    def get_repr_params(self):
+        return f"{self.name}"
 
 
 class Eval(Clause):
@@ -548,6 +570,7 @@ class Eval(Clause):
     def execute(self, state, t):
         if not self.evaluated: # check if this is necessary
             self.ready()
+        next_node(self.next)
         return None
 
     def ready(self):
@@ -555,9 +578,11 @@ class Eval(Clause):
         self.evaluated = True
         return rv
 
+
 class Pass(Clause):
     __slots__ = ()
     def execute(self, state, t):
+        next_node(self.next)
         return None
 
 
@@ -575,6 +600,7 @@ class Not(Clause):
 
     def execute(self, state, t):
         # return self.clause.execute(state, t)
+        next_node(self.next)
         return None
 
     def ready(self):
@@ -622,6 +648,11 @@ class And(Binary):
         if self.left_ready and self.right_ready and (self.right_state is not None):
             self.right_state = self.right.execute(self.right_state, t)
 
+        if self.state() is None:
+            next_node(self.next)
+            return None
+
+        next_node(self)
         return self.state()
 
     def ready(self):
@@ -653,6 +684,11 @@ class Or(Binary):
         if (self.right_ready or not self.left_ready) and (self.right_state is not None):
             self.right_state = self.right.execute(self.right_state, t)
 
+        if self.state() is None:
+            next_node(self.next)
+            return None
+
+        next_node(self)
         return self.state()
 
     def ready(self):
@@ -681,29 +717,43 @@ class Until(Node):
         self.right = right
 
     def start(self):
-        return (None, None, 0)
+        return (None, None, 0, False)
+
 
     def execute(self, state, t):
-        child, child_state, start = state
+        child, child_state, start_time, has_started = state
 
-        if self.right.ready() and (child is not self.right):
-            child = self.right
-            child_state = None
+        if child == self.right or self.right.ready():
+            ## The right hand side is ready, so we execute it once.
+            if not has_started:
+                child = self.right
+                child_state = self.right.start()
+                start_time = t
+                has_started = True
 
-        elif child is None:
-            child = self.left
+            child_state = self.right.execute(child_state, t - start_time)
 
-        if child_state is None:
-            child_state = child.start()
-            start = t
+            if child_state is None:
+                next_node(self.next)
+                return None
 
-        if child_state is not None:
-            child_state = child.execute(child_state, t - start)
+        else:
+            ## The right hand side is not ready, so we execute the left hand side.
+            if child == self.left or self.left.ready():
+                if not has_started:
+                    child = self.left
+                    child_state = self.left.start()
+                    start_time = t
+                    has_started = True
 
-        if (child_state is None) and (child is self.right):
-            return None
+            child_state = self.left.execute(child_state, t - start_time)
 
-        return child, child_state, start
+            if child_state is None:
+                next_node(self)
+                return (None, None, 0, False)
+
+        next_node(self)
+        return child, child_state, start_time, has_started
 
     def ready(self):
         return self.left.ready() or self.right.ready()
@@ -714,31 +764,20 @@ class If(Node):
     If `condition` is ready, runs the block. Otherwise, goes to the next
     statement.
     """
-    __slots__ = ("condition", "block")
-    def __init__(self, loc: NodeLocation, condition: Node, block: "Block"):
+    __slots__ = ("entries",)
+    def __init__(self, loc: NodeLocation, entries: list[tuple[Node, "Block"]]):
         Node.__init__(self, loc)
 
-        self.condition = condition
-        self.block = block
-
-    def start(self):
-        return (None, None, 0)
+        self.entries = entries # List of (condition, block) tuples.
 
     def execute(self, state, t):
-        node, child_state, start = state
-
-        if node is None:
-            if not self.condition.ready():
+        for condition, block in self.entries:
+            if renpy.python.py_eval(condition):
+                next_node(block.block[0])
                 return None
 
-            node = self.block
-
-        node, child_state, start = renpy.test.testexecution.execute_node(t, node, child_state, start)
-
-        if node is None:
-            return None
-
-        return (node, child_state, start)
+        next_node(self.next)
+        return None
 
 
 class Python(Node):
@@ -753,11 +792,10 @@ class Python(Node):
         return True
 
     def execute(self, state, t):
-        self.report()
-
         if renpy.test.testexecution.action:
             return True
         else:
+            next_node(self.next)
             return None
 
     def __call__(self):
@@ -774,13 +812,11 @@ class Assert(Node):
         self.clause = clause
 
     def execute(self, state, t):
-        self.report()
-
         if not self.clause.ready():
             raise AssertError("On line {}:{}, assertion of {} failed.".format(self.filename,
                                                                               self.linenumber,
                                                                               self.clause))
-
+        next_node(self.next)
         return None
 
 
@@ -803,20 +839,14 @@ class Call(Node):
 
         self.target = target
 
-    def start(self):
-        print("Call test", self.target)
-        node = renpy.test.testexecution.lookup(self.target, self)
-        return (node, None, 0)
-
     def execute(self, state, t):
-        node, child_state, start = state
+        n = renpy.test.testexecution.call_node(self.target)
+        print("Call test", self.target)
+        next_node(n)
+        return None
 
-        node, child_state, start = renpy.test.testexecution.execute_node(t, node, child_state, start)
-
-        if node is None:
-            return None
-
-        return (node, child_state, start)
+    def get_repr_params(self):
+        return f"{self.target}"
 
 
 ################################################################################
@@ -829,29 +859,50 @@ class Block(Node):
         Node.__init__(self, loc)
         self.block = block
 
-    def start(self):
-        return (0, None, None)
+    def chain(self, next):
+        if self.block:
+            self.next = self.block[0]
+            chain_block(self.block, next)
+        else:
+            super().chain(next)
 
     def execute(self, state, t):
-        i, start, s = state
-
-        if i >= len(self.block):
+        if not self.block:
+            next_node(self.next)
             return None
 
-        if s is None:
-            s = self.block[i].start()
-            start = t
-
-        if s is not None:
-            s = self.block[i].execute(s, t - start)
-
-        if s is None:
-            i += 1
-
-        return i, start, s
+        next_node(self.block[0])
+        return None
 
 
 class Exit(Node):
-    __slots__ = ()
     def execute(self, state, t):
         raise renpy.game.QuitException
+
+
+################################################################################
+# Utility functions
+################################################################################
+
+def chain_block(block: list[Node], next: Node | None) -> None:
+    """
+    This is called to chain together all of the nodes in a block. Node
+    n is chained with node n+1, while the last node is chained with
+    next.
+    """
+
+    if not block:
+        return
+
+    for a, b in zip(block, block[1:]):
+        a.chain(b)
+
+    block[-1].chain(next)
+
+
+def next_node(node: Node | None):
+    """
+    Indicates the next node that should be executed.
+    """
+
+    renpy.test.testexecution.next_node = node
