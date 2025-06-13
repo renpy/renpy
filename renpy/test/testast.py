@@ -22,6 +22,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
+import math
 
 import renpy
 from renpy.display.focus import Focus
@@ -709,18 +710,35 @@ class Until(Node):
     """
     Executes `left` repeatedly until `right` is ready (and unless it already is),
     then executes `right` once before quitting.
+
+    `left`
+        The node to execute repeatedly until `right` is ready.
+    `right`
+        The condition that must be ready for the node to stop executing.
+    `timeout`
+        The maximum time in seconds to wait for `right` to be ready.
+        If None, the node will never time out.
+        If float("NaN"), uses the global test timeout setting.
     """
-    __slots__ = ("left", "right")
-    def __init__(self, loc: NodeLocation, left: Node, right: Node):
+    __slots__ = ("left", "right", "timeout")
+    def __init__(self, loc: NodeLocation, left: Node, right: Node, timeout: float | None = float("NaN")
+    ):
         Node.__init__(self, loc)
         self.left = left
         self.right = right
+        self.timeout = timeout
 
     def start(self):
+        if self.timeout and math.isnan(self.timeout):
+            self.timeout = _test.timeout
+
         return (None, None, 0, False)
 
-
     def execute(self, state, t):
+        if self.timeout is not None and t > self.timeout:
+            msg = "Testcase timed out after {} seconds.".format(self.timeout)
+            raise renpy.test.testexecution.TestcaseException(msg)
+
         child, child_state, start_time, has_started = state
 
         if child == self.right or self.right.ready():

@@ -293,7 +293,17 @@ def parse_statement(l: Lexer, loc: NodeLocation) -> testast.Node:
 
     if l.keyword("until"):
         right = parse_clause(l, loc)
-        rv = testast.Until(loc, rv, right)
+
+        if l.keyword("timeout"):
+            timeout = l.require(l.simple_expression)
+            timeout = renpy.python.py_eval(timeout)
+
+            if not isinstance(timeout, (int, float, type(None))):
+                l.error("Expected a number or None for timeout.")
+
+            rv = testast.Until(loc, rv, right, timeout)
+        else:
+            rv = testast.Until(loc, rv, right)
 
     return rv
 
