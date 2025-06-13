@@ -408,7 +408,7 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
         l.error("A pattern may not be specified with a screen or id.")
 
     if pattern is not None:
-        return testast.Pattern(loc, pattern)
+        return testast.TextSelector(loc, pattern)
 
     return testast.DisplayableSelector(loc, screen, id, layer)
 

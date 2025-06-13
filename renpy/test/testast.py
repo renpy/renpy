@@ -201,7 +201,7 @@ class DisplayableSelector(Selector):
         return super().ready()
 
 
-class Pattern(Selector):
+class TextSelector(Selector):
     """
     A selector that finds a widget by its text or alt text.
     Once found, the `perform()` method is called.
@@ -215,7 +215,7 @@ class Pattern(Selector):
     __slots__ = ("pattern",)
 
     def __init__(self, loc: NodeLocation, pattern: str):
-        super(Pattern, self).__init__(loc)
+        super(TextSelector, self).__init__(loc)
         self.pattern = pattern
 
     def element_not_found_during_perform(self) -> None:
@@ -242,7 +242,7 @@ class SelectorDrivenClause(Clause):
 
     `always`
         If True, the `ready()` method will always return True,
-        regardless of whether the pattern can be resolved.
+        regardless of whether the selector is ready.
     """
 
     __slots__ = ("selector", "position", "always")
