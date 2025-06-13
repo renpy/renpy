@@ -1108,9 +1108,9 @@ class Script(object):
                 pem = renpy.parser.ParseError(
                     e.msg,
                     e.filename,
-                    e.lineno, e.offset,
+                    e.lineno, e.offset + i.col_offset,
                     e.text,
-                    e.end_lineno, e.end_offset)
+                    e.end_lineno, e.end_offset + i.col_offset)
 
                 renpy.parser.parse_errors.append(pem.message)
 
