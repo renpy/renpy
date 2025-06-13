@@ -461,9 +461,13 @@ def normalize_renpy_line_offset(filename: str, linenumber: int, offset: int, lin
 
     # Correct extra offset from _ren.py transformation.
     if filename.endswith("_ren.py"):
-        from renpy.lexer import ren_py_to_rpy_offsets
-        with open(filename, "r", encoding="utf-8") as f:
-            lines = f.readlines()  # TODO: optimize this block?
+        from renpy.lexer import ren_py_to_rpy_offsets, unelide_filename
+
+        try:
+            with open(unelide_filename(filename), "r", encoding="utf-8") as f:
+                lines = f.readlines()  # TODO: optimize this block?
+        except Exception:
+            lines = []
 
         offsets = ren_py_to_rpy_offsets(lines, filename)
         for i, base_offset in enumerate(offsets, start=1):

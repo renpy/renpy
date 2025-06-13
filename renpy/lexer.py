@@ -211,7 +211,7 @@ def elide_filename(fn):
     return rv
 
 
-def unelide_filename(fn):
+def unelide_filename(fn: str) -> str:
     fn = os.path.normpath(fn)
 
     if renpy.config.alternate_unelide_path is not None:
