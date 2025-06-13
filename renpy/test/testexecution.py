@@ -202,7 +202,7 @@ def execute() -> None:
 
     try:
         node, state, start_time, has_started = execute_node(now, node, state, start_time, has_started)
-    except TestcaseException as e:
+    except Exception as e:
         report_exception(e)
 
         node = None
