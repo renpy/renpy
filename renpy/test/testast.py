@@ -685,7 +685,7 @@ class Until(Node):
         If float("NaN"), uses the global test timeout setting.
     """
     __slots__ = ("left", "right", "timeout")
-    def __init__(self, loc: NodeLocation, left: Node, right: Node, timeout: float | None = float("NaN")
+    def __init__(self, loc: NodeLocation, left: Node, right: Condition, timeout: float | None = float("NaN")
     ):
         Node.__init__(self, loc)
         self.left = left
@@ -705,19 +705,9 @@ class Until(Node):
 
         child, child_state, start_time, has_started = state
 
-        if child == self.right or self.right.ready():
-            ## The right hand side is ready, so we execute it once.
-            if not has_started:
-                child = self.right
-                child_state = self.right.start()
-                start_time = t
-                has_started = True
-
-            child_state = self.right.execute(child_state, t - start_time)
-
-            if child_state is None:
-                next_node(self.next)
-                return None
+        if self.right.ready():
+            next_node(self.next)
+            return None
 
         else:
             ## The right hand side is not ready, so we execute the left hand side.
