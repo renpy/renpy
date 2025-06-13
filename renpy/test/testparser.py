@@ -29,8 +29,91 @@ from renpy.lexer import Lexer
 from renpy.test.types import NodeLocation
 
 
-def parse_click(l: Lexer, loc: NodeLocation, target: testast.Selector | None) -> testast.Click:
-    rv = testast.Click(loc, target)
+# The root of the parse trie.
+test_statements = renpy.parser.ParseTrie()
+
+
+def test_statement(keywords):
+    """
+    A function decorator used to declare a statement. Keywords is a string
+    giving the keywords that precede the statement.
+    """
+
+    keywords = keywords.split()
+
+    def wrap(f):
+        test_statements.add(keywords, f)
+        return f
+
+    return wrap
+
+
+##############################################################################
+# Statement functions: Control Flow
+
+
+@test_statement("call")
+def call_statement(l: Lexer, loc: NodeLocation) -> testast.Call:
+    target = l.require(l.name)
+
+    l.expect_noblock('call statement')
+    l.expect_eol()
+    l.advance()
+
+    return testast.Call(loc, target)
+
+
+@test_statement("exit")
+def exit_statement(l: Lexer, loc: NodeLocation) -> testast.Exit:
+    l.expect_noblock('exit statement')
+    l.expect_eol()
+    l.advance()
+
+    return testast.Exit(loc)
+
+
+@test_statement("if")
+def if_statement(l: Lexer, loc: NodeLocation) -> testast.If:
+    condition = parse_condition(l, loc)
+
+    l.require(":")
+    l.expect_eol()
+    l.expect_block("if block")
+    block = parse_block(l.subblock_lexer(False), loc)
+
+    l.advance()
+
+    return testast.If(loc, [(condition, block)])
+
+
+@test_statement("jump")
+def jump_statement(l: Lexer, loc: NodeLocation) -> testast.Jump:
+    target = l.require(l.name)
+
+    l.expect_noblock('jump statement')
+    l.expect_eol()
+    l.advance()
+
+    return testast.Jump(loc, target)
+
+
+@test_statement("pass")
+def pass_statement(l: Lexer, loc: NodeLocation) -> testast.Pass:
+    l.expect_noblock('pass statement')
+    l.expect_eol()
+    l.advance()
+
+    return testast.Pass(loc)
+
+
+##############################################################################
+# Statement functions: Actions
+
+@test_statement("click")
+def click_statement(l: Lexer, loc: NodeLocation) -> testast.Click | testast.Until:
+    l.expect_noblock('click statement')
+
+    rv = testast.Click(loc)
 
     while True:
         if l.keyword("button"):
@@ -39,74 +122,30 @@ def parse_click(l: Lexer, loc: NodeLocation, target: testast.Selector | None) ->
         elif l.keyword("pos"):
             rv.position = l.require(l.simple_expression)
 
-        elif (target is not None) and l.keyword("always"):
+        elif l.keyword("always"):
             rv.always = True
 
-        else:
-            selector = parse_selector(l, loc)
-            if selector is not None:
-                rv.selector = selector
-            else:
-                break
-
-    return rv
-
-
-def parse_type(l: Lexer, loc: NodeLocation, text: str) -> testast.Type:
-    rv = testast.Type(loc, text)
-
-    while True:
-
-        if l.keyword("pos"):
-            rv.position = l.require(l.simple_expression)
-
-        else:
-            selector = parse_selector(l, loc)
-            if selector is not None:
-                rv.selector = selector
-            else:
-                break
-
-    return rv
-
-
-def parse_keysym(l: Lexer, loc: NodeLocation, text: str) -> testast.Keysym:
-    rv = testast.Keysym(loc, text)
-
-    while True:
-        if l.keyword("pos"):
-            rv.position = l.require(l.simple_expression)
-
-        else:
-            selector = parse_selector(l, loc)
-            if selector is not None:
-                rv.selector = selector
-            else:
-                break
-
-    return rv
-
-
-def parse_move(l: Lexer, loc: NodeLocation) -> testast.Move:
-    rv = testast.Move(loc)
-
-    while True:
-        selector = parse_selector(l, loc)
-        if selector is not None:
+        elif selector := parse_selector(l, loc):
             rv.selector = selector
-        else:
-            temp = l.simple_expression()
-            if temp is not None:
-                rv.position = temp # type: ignore
-            else:
-                break
 
+        elif until := parse_until(l, loc, rv):
+            rv = until
+            break
+
+        else:
+            break
+
+    l.expect_eol()
+    l.advance()
     return rv
 
 
-def parse_drag(l: Lexer, loc: NodeLocation) -> testast.Drag:
-    points = l.require(l.simple_expression)
+@test_statement("drag")
+def drag_statement(l: Lexer, loc: NodeLocation) -> testast.Drag | testast.Until:
+    # TODO: Transition off of "pattern"
+    l.expect_noblock('drag statement')
 
+    points = l.require(l.simple_expression)
     rv = testast.Drag(loc, points)
 
     while True:
@@ -122,26 +161,215 @@ def parse_drag(l: Lexer, loc: NodeLocation) -> testast.Drag:
         else:
             break
 
+    l.expect_eol()
+    l.advance()
     return rv
 
 
-def parse_not(l: Lexer, loc: NodeLocation) -> testast.Not | testast.Clause:
-    if l.keyword("not"):
-        return testast.Not(loc, parse_not(l, loc))
-    else:
-        return parse_clause(l, loc)
+@test_statement("keysym")
+def keysym_statement(l: Lexer, loc: NodeLocation) -> testast.Keysym | testast.Until:
+    l.expect_noblock('keysym statement')
 
-def parse_and(l: Lexer, loc: NodeLocation) -> testast.And | testast.Clause:
-    rv = parse_not(l, loc)
-    while l.keyword("and"):
-        rv = testast.And(loc, rv, parse_not(l, loc))
+    text = l.require(l.string)
+    rv = testast.Keysym(loc, text)
+
+    while True:
+
+        if l.keyword("pos"):
+            rv.position = l.require(l.simple_expression)
+
+        elif selector := parse_selector(l, loc):
+            rv.selector = selector
+
+        elif until := parse_until(l, loc, rv):
+            rv = until
+            break
+
+        else:
+            break
+
+    l.expect_eol()
+    l.advance()
     return rv
 
-def parse_or(l: Lexer, loc: NodeLocation) -> testast.Or | testast.Clause:
-    rv = parse_and(l, loc)
-    while l.keyword("or"):
-        rv = testast.Or(loc, rv, parse_and(l, loc))
+
+@test_statement("move")
+def move_statement(l: Lexer, loc: NodeLocation) -> testast.Move | testast.Until:
+    l.expect_noblock('move statement')
+
+    rv = testast.Move(loc)
+
+    while True:
+        if selector := parse_selector(l, loc):
+            rv.selector = selector
+
+        elif until := parse_until(l, loc, rv):
+            rv = until
+            break
+
+        elif temp := l.simple_expression():
+            rv.position = temp
+
+        else:
+            break
+
+    l.expect_eol()
+    l.advance()
     return rv
+
+
+@test_statement("pause")
+def pause_statement(l: Lexer, loc: NodeLocation) -> testast.Pause | testast.Until:
+    l.expect_noblock('pause statement')
+
+    expr = l.require(l.simple_expression)
+    rv = testast.Pause(loc, expr)
+
+    if until := parse_until(l, loc, rv):
+        rv = until
+
+    l.expect_eol()
+    l.advance()
+    return rv
+
+
+@test_statement("run")
+def run_statement(l: Lexer, loc: NodeLocation) -> testast.Action | testast.Until:
+    l.expect_noblock('run statement')
+
+    expr = l.require(l.simple_expression)
+    rv = testast.Action(loc, expr)
+
+    if until := parse_until(l, loc, rv):
+        rv = until
+
+    l.expect_eol()
+    l.advance()
+    return rv
+
+
+@test_statement("scroll")
+def scroll_statement(l: Lexer, loc: NodeLocation) -> testast.Scroll | testast.Until:
+    # TODO: Transition off of "pattern"
+    l.expect_noblock('scroll statement')
+
+    ## TODO: Update to selector
+    pattern = l.require(l.string)
+    rv = testast.Scroll(loc, pattern)
+
+    if until := parse_until(l, loc, rv):
+        rv = until
+
+    l.expect_eol()
+    l.advance()
+    return rv
+
+
+@test_statement("type")
+def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
+    l.expect_noblock('type statement')
+
+    text = l.require(l.string)
+    rv = testast.Type(loc, text)
+
+    while True:
+
+        if l.keyword("pos"):
+            rv.position = l.require(l.simple_expression)
+
+        elif selector := parse_selector(l, loc):
+            rv.selector = selector
+
+        elif until := parse_until(l, loc, rv):
+            rv = until
+            break
+
+        else:
+            break
+
+    l.expect_eol()
+    l.advance()
+    return rv
+
+
+##############################################################################
+# Statement functions: Other (Python, test functions)
+
+
+@test_statement("assert")
+def assert_statement(l: Lexer, loc: NodeLocation) -> testast.Assert:
+    check = parse_condition(l, loc)
+
+    l.expect_noblock('assert statement')
+    l.expect_eol()
+    l.advance()
+
+    return testast.Assert(loc, check)
+
+
+@test_statement("python")
+def python_statement(l: Lexer, loc: NodeLocation) -> testast.Python:
+    hide = l.keyword("hide")
+
+    l.require(":")
+    l.expect_eol()
+
+    l.expect_block("python block")
+
+    source = l.python_block()
+
+    l.advance()
+
+    code = renpy.ast.PyCode(source, loc, "hide" if hide else "exec")
+    return testast.Python(loc, code, hide=="hide")
+
+
+@test_statement("$")
+def one_line_python_statement(l: Lexer, loc: NodeLocation) -> testast.Python:
+    source = l.require(l.rest)
+    code = renpy.ast.PyCode(source, loc)
+
+    l.expect_noblock("one-line python statement")
+    l.expect_eol()
+    l.advance()
+
+    return testast.Python(loc, code)
+
+
+##############################################################################
+# Functions called to parse things.
+
+
+def parse_block(l: Lexer, loc: NodeLocation) -> testast.Block:
+    """
+    Parses a named block of testcase statements.
+
+    This is the entry point for parsing test statements since it is called
+    by renpy.parser on encountering a "testcase" statement
+    """
+
+    l.advance()
+    block = [ ]
+
+    while not l.eob:
+        stmt = parse_statement(l, l.get_location())
+        block.append(stmt)
+
+    return testast.Block(loc, block)
+
+
+def parse_statement(l: Lexer, loc: NodeLocation) -> testast.Node:
+    """
+    This parses a Ren'Py test statement. l is expected to be a Ren'Py lexer
+    that has been advanced to a logical line.
+    """
+
+    pf = test_statements.parse(l)
+
+    if pf is None:
+        l.error(f"Expected statement. {l.filename}:{l.line}.")
+
+    return pf(l, loc)
 
 
 def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
@@ -185,114 +413,61 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
     return testast.DisplayableSelector(loc, screen, id, layer)
 
 
-def parse_clause(l: Lexer, loc: NodeLocation) -> testast.Clause:
+def parse_condition(l: Lexer, loc: NodeLocation, left: testast.Clause | None = None) -> testast.Clause:
+    """
+    Parses a condition that may start with a selector, or
+    have one or more 'and', 'or', 'not', or parenthesized conditions.
+    """
     if l.match(r"\("):
-        rv = parse_or(l, loc)
+        rv = parse_condition(l, loc)  # Ensure we are at the start of a condition
         l.require(r"\)")
         return rv
 
-    elif l.keyword("run"):
+    elif l.keyword("not"):
+        right = parse_condition(l, loc)
+        return testast.Not(loc, right)
 
-        expr = l.require(l.simple_expression)
-        return testast.Action(loc, expr)
+    elif l.keyword("and"):
+        if left is None:
+            l.error("Expected a left-hand side for 'and' condition.")
+        right = parse_condition(l, loc)
+        return testast.And(loc, left, right)
 
-    elif l.keyword("pause"):
-        expr = l.require(l.simple_expression)
-        return testast.Pause(loc, expr)
+    elif l.keyword("or"):
+        if left is None:
+            l.error("Expected a left-hand side for 'or' condition.")
+        right = parse_condition(l, loc)
+        return testast.Or(loc, left, right)
+
+    elif l.keyword("eval"):
+        source = l.require(l.simple_expression)
+        return testast.Eval(loc, source)
 
     elif l.keyword("label"):
         name = l.require(l.label_name)
         return testast.Label(loc, name)
 
-    elif l.keyword("eval"):
+    elif rv := parse_selector(l, loc):
+        old_pos = l.pos
+        if l.keyword("and") or l.keyword("or"):
+            l.pos = old_pos
+            rv = parse_condition(l, loc, left=rv)
 
-        source = l.require(l.simple_expression)
-        return testast.Eval(loc, source)
+        return rv
 
-    elif l.keyword("type"):
-        string = l.require(l.string)
-        return parse_type(l, loc, string)
-
-    elif l.keyword("keysym"):
-        string = l.require(l.string)
-        return parse_keysym(l, loc, string)
-
-    elif l.keyword("drag"):
-        return parse_drag(l, loc)
-
-    elif l.keyword("move"):
-        return parse_move(l, loc)
-
-    elif l.keyword("click"):
-        return parse_click(l, loc, None)
-
-    elif l.keyword("scroll"):
-        pattern = l.require(l.string)
-        return testast.Scroll(loc, pattern)
-
-    elif l.keyword("pass"):
-        return testast.Pass(loc)
-
-    else:
-        target = parse_selector(l, loc)
-        if target:
-            return parse_click(l, loc, target)
-
-    l.error("Expected a test language statement or clause.")
+    l.error("Invalid condition.")
 
 
-def parse_statement(l: Lexer, loc: NodeLocation) -> testast.Node:
+def parse_until(l: Lexer, loc: NodeLocation, left: testast.Node) -> testast.Until | None:
+    """
+    Parses an 'until' statement. It expects the left side to be a Node,
+    and then looks for the 'until' keyword, followed by a right side condition.
 
-    if l.keyword("python"):
-
-        hide = l.keyword("hide")
-        l.require(":")
-
-        l.expect_block("python block")
-
-        source = l.python_block()
-
-        code = renpy.ast.PyCode(source, loc, "hide" if hide else "exec")
-        return testast.Python(loc, code, hide=="hide")
-
-    if l.keyword("if"):
-        l.expect_block("if block")
-
-        condition = parse_clause(l, loc)
-        l.require(":")
-        block = parse_block(l.subblock_lexer(False), loc)
-
-        return testast.If(loc, condition, block)
-
-    # Single-line statements only below here.
-
-    l.expect_noblock("statement")
-
-    if l.match(r"\$"):
-        source = l.require(l.rest)
-
-        code = renpy.ast.PyCode(source, loc)
-        return testast.Python(loc, code)
-
-    elif l.keyword("assert"):
-        check = parse_clause(l, loc)
-        return testast.Assert(loc, check)
-
-    elif l.keyword("jump"):
-        target = l.require(l.name)
-        return testast.Jump(loc, target)
-
-    elif l.keyword("call"):
-        target = l.require(l.name)
-        return testast.Call(loc, target)
-
-    elif l.keyword("exit"):
-        return testast.Exit(loc)
-
-    rv = parse_clause(l, loc)
-
+    If an Until node is returned, the calling function MUST stop parsing
+    and return the Until node.
+    """
     if l.keyword("until"):
-        right = parse_clause(l, loc)
+        right = parse_condition(l, loc)
 
         if l.keyword("timeout"):
             timeout = l.require(l.simple_expression)
@@ -301,24 +476,8 @@ def parse_statement(l: Lexer, loc: NodeLocation) -> testast.Node:
             if not isinstance(timeout, (int, float, type(None))):
                 l.error("Expected a number or None for timeout.")
 
-            rv = testast.Until(loc, rv, right, timeout)
+            return testast.Until(loc, left, right, timeout)
         else:
-            rv = testast.Until(loc, rv, right)
+            return testast.Until(loc, left, right)
 
-    return rv
-
-
-def parse_block(l: Lexer, loc: NodeLocation) -> testast.Block:
-    """
-    Parses a named block of testcase statements.
-    """
-
-    block = []
-
-    while l.advance():
-        stmt = parse_statement(l, l.get_location())
-        block.append(stmt)
-
-        l.expect_eol()
-
-    return testast.Block(loc, block)
+    return None
