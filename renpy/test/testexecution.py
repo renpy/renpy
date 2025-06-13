@@ -34,12 +34,11 @@ testcases: dict[str, Node] = {}
 
 # The root node.
 node: Node | None = None
-
-# The location of the currently execution TL node.
-node_loc: NodeLocation | None = None
-
 # The state of the root node.
 state: State = None
+
+# The next node to execute.
+next_node: Node | None = None
 
 # The previous state and location in the game script.
 old_state: State | None = None
@@ -51,6 +50,9 @@ last_state_change: float = 0
 # The time the root node started executing.
 start_time: float = 0
 
+# Whether the current node has started executing.
+has_started: bool = False
+
 # An action to run before executing another command.
 action: Node | None = None
 
@@ -58,6 +60,9 @@ action: Node | None = None
 # has been called.
 labels: set[str] = set()
 
+# The stack of call nodes, used to implement the call statement.
+# List of (Node, label)
+call_node_stack: list[tuple[Node, str]] = []
 
 def take_name(name: str) -> None:
     """
@@ -92,37 +97,67 @@ def lookup(name: str, from_node: Node) -> Node:
     raise KeyError("Testcase {} not found at {}:{}.".format(name, from_node.filename, from_node.linenumber))
 
 
+def call_node(name: str) -> Node:
+    """
+    Calls the testcase with `name`. If found, returns it, otherwise
+    raises an exception.
+    """
+
+    global node
+
+    if name not in testcases:
+        raise KeyError("Testcase {} not found")
+
+    if node is not None:
+        call_node_stack.append((node, name))
+
+    return testcases[name]
+
+
+def pop_call_node() -> Node | None:
+    """
+    Pops the last call node from the stack and returns it.
+    """
+
+    if not call_node_stack:
+        if renpy.config.developer:
+            raise Exception("No call on call stack.")
+        return
+
+    return call_node_stack.pop()[0]
+
+
 def execute_node(
     now: float,
     current_node: Node,
     current_state: State | None,
-    start: float
-) -> tuple[Node | None, State | None, float]:
+    start: float,
+    current_started: bool = False,
+) -> tuple[Node | None, State | None, float, bool]:
     """
     Performs one execution cycle of a node.
     """
 
-    while True:
-        try:
-            if current_state is None:
+    try:
+        if not current_started:
+            if current_node.ready():
+                # If the node is ready, we start it.
                 current_state = current_node.start()
                 start = now
+                current_started = True
+            else:
+                return current_node, None, start, False
 
-            if current_state is None:
-                break
+        current_state = current_node.execute(current_state, now - start)
 
-            current_state = current_node.execute(current_state, now - start)
-
-            break
-
-        except TestJump as e:
-            current_node = e.node
-            current_state = None
+    except TestJump as e:
+        current_node = e.node
+        current_state = None
 
     if current_state is None:
-        return None, current_state, start
+        return next_node, None, start, False
     else:
-        return current_node, current_state, start
+        return current_node, current_state, start, current_started
 
 
 def execute() -> None:
@@ -134,6 +169,7 @@ def execute() -> None:
     global node
     global state
     global start_time
+    global has_started
     global action
     global old_state
     global old_loc
@@ -165,23 +201,24 @@ def execute() -> None:
     now = renpy.display.core.get_time()
 
     try:
-        node, state, start_time = execute_node(now, node, state, start_time)
+        node, state, start_time, has_started = execute_node(now, node, state, start_time, has_started)
     except TestcaseException as e:
-        renpy.error.report_exception(e, editor=False)
-
-        ## TODO: Print the traceback in a way that makes sense for testcases.
-        ## Include the name of the testcase, the contents of that line, and possibly testcase stack
-        exception_print_context = renpy.error.MaybeColoredExceptionPrintContext(None)
-        exception_print_context.location(renpy.exports.unelide_filename(node_loc[0]), node_loc[1], None)
+        report_exception(e)
 
         node = None
+        state = None
+        has_started = False
 
     labels.clear()
 
+    if node is None and call_node_stack:
+        # We've finished the current call, return
+        popped_node = pop_call_node()
+        if popped_node is not None:
+            node = popped_node.next
+
     if node is None:
-        renpy.test.testmouse.reset()
-        for clbk in renpy.config.end_testcase_callbacks:
-            clbk()
+        end_testcase()
         return
 
     loc = renpy.exports.get_filename_line()
@@ -193,7 +230,74 @@ def execute() -> None:
     old_loc = loc
 
     if (now - last_state_change) > _test.timeout:
-        raise Exception("Testcase stuck at {}:{}.".format(node_loc[0], node_loc[1]))
+        exc = TestcaseException("Testcase timed out after {} seconds.".format(_test.timeout))
+        report_exception(exc)
+        end_testcase()
+
+
+def report_exception(e: Exception) -> None:
+    """
+    Called to report an exception that occurred during the execution of a testcase.
+    This is used to print the traceback and other information about the exception.
+    """
+
+    global node
+    global call_node_stack
+
+    renpy.error.report_exception(e, editor=False)
+    epc = renpy.error.MaybeColoredExceptionPrintContext(None)
+
+    epc.indent_depth = 0
+    epc.string("\nDuring testcase execution:")
+
+    epc.indent_depth = 1
+
+    nodes = [x[0] for x in call_node_stack[1:]] + [node]
+    labels = [f"testcase {x[1]}" for x in call_node_stack]
+
+    for n, label in zip(nodes, labels):
+        filename = renpy.exports.unelide_filename(n.filename)
+        epc.location(filename, n.linenumber, label)
+
+        lines = renpy.lexer.list_logical_lines(filename)
+        for fname, line_num, line in lines:
+            if line_num == n.linenumber:
+                epc.string("  " + line.strip())
+                break
+
+
+def end_testcase() -> None:
+    """
+    Ends the current testcase, resetting the state and node.
+    """
+
+    global node
+    global state
+    global start_time
+    global has_started
+    global action
+    global old_state
+    global old_loc
+    global call_node_stack
+
+    ## Pop off the call stack and end the testcase.
+    if call_node_stack:
+        # root = call_node_stack[0]
+        # print(root)
+        call_node_stack.clear()
+
+    node = None
+    state = None
+    start_time = 0.0
+    has_started = False
+    action = None
+
+    old_state = None
+    old_loc = None
+
+    renpy.test.testmouse.reset()
+    for clbk in renpy.config.end_testcase_callbacks:
+        clbk()
 
 
 def test_command() -> bool:
@@ -210,8 +314,20 @@ def test_command() -> bool:
     if args.testcase not in testcases:
         raise Exception("Testcase {} was not found.".format(args.testcase))
 
+
+    ## NOTE: This command gets called when the game starts for the first time, OR when the game
+    ## goes back to the main menu after finishing the game. Special care is taken to avoid
+    ## messing up the state of the test/call stack
     global node
-    node = testcases[args.testcase]
+
+    if not node and not call_node_stack:
+        ## A bit janky, but we want the testcase to be the root node
+        node = testcases[args.testcase]
+        call_node(args.testcase)
+
+        ## Chain the nodes in the testcases
+        for name, root in testcases.items():
+            root.chain(None)
 
     return True
 
