@@ -777,18 +777,38 @@ class Python(Node):
 class AssertError(AssertionError):pass
 
 
-class Assert(Condition):
-    __slots__ = "condition"
-    def __init__(self, loc: NodeLocation, condition: Condition):
+class Assert(Node):
+    """
+    An assertion that checks if a condition is met.
+    If the condition is not met, an AssertError is raised.
+
+    `condition`
+        A `Condition` instance that should be ready for the assertion to pass.
+    `timeout`
+        The maximum delay to wait for the condition to be ready.
+    """
+    __slots__ = ("condition", "timeout")
+
+    def __init__(self, loc: NodeLocation, condition: Condition, timeout: float = 0.0):
         Node.__init__(self, loc)
         self.condition = condition
+        self.timeout = timeout
 
-    def ready(self):
+    def execute(self, state, t):
+        """
+        Executes the assertion. If the condition is not ready, it waits up to
+        `self.timeout` seconds.
+        """
         if not self.condition.ready():
+            if t < self.timeout:
+                return state
+
             raise AssertError("On line {}:{}, assertion of {} failed.".format(self.filename,
                                                                               self.linenumber,
                                                                               self.condition))
-        return True
+
+        next_node(self.next)
+        return None
 
 
 class Jump(Node):

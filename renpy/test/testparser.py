@@ -220,13 +220,20 @@ def move_statement(l: Lexer, loc: NodeLocation) -> testast.Move | testast.Until:
 
 @test_statement("pause")
 def pause_statement(l: Lexer, loc: NodeLocation) -> testast.Pause | testast.Until:
+    """
+    Provide a default delay if none is specified with an until clause
+    """
     l.expect_noblock('pause statement')
 
-    expr = l.require(l.simple_expression)
-    rv = testast.Pause(loc, expr)
-
-    if until := parse_until(l, loc, rv):
+    if until := parse_until(l, loc, testast.Pause(loc, 0.1)):
         rv = until
+
+    else:
+        delay = l.require(l.simple_expression)
+        rv = testast.Pause(loc, delay)
+
+        if until := parse_until(l, loc, rv):
+            rv = until
 
     l.expect_eol()
     l.advance()
@@ -298,13 +305,23 @@ def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
 
 @test_statement("assert")
 def assert_statement(l: Lexer, loc: NodeLocation) -> testast.Assert:
-    check = parse_condition(l, loc)
+    condition = parse_condition(l, loc)
+
+    if l.keyword("timeout"):
+        timeout = l.require(l.simple_expression)
+        timeout = renpy.python.py_eval(timeout)
+
+        if not isinstance(timeout, (int, float)):
+            l.error("Expected a number or None for timeout.")
+
+    else:
+        timeout = 0.0
 
     l.expect_noblock('assert statement')
     l.expect_eol()
     l.advance()
 
-    return testast.Assert(loc, check)
+    return testast.Assert(loc, condition, timeout)
 
 
 @test_statement("python")
