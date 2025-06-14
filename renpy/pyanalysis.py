@@ -170,7 +170,7 @@ def pure(fn):
 
 def import_from(from_module_name, in_module_name, *names):
     """
-    This function is called after each `from source_module import name` statement,
+    This function is called after each `from from_module import name` statement,
     to make sure that if `from_module.name` is a const / pure value, `in_module.name` is marked const / pure as well.
 
     Also, if `name.subname` is const / pure, we also need to make sure that `in_module.name.subname` is correctly marked.
