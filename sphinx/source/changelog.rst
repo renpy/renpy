@@ -132,6 +132,21 @@ merged with the player's script, a library can be placed under game/libs, and wi
 
 `.rpe` and `.rpe.py` files are also searched in the libs directory.
 
+Layeredimages
+-------------
+
+The ``variant`` and ``prefix`` properties, which accepted any value but evaluated it (as a string) only at init time, now accept an unquoted `image name component` (digits, letters and underscores, no space or dash, may start with a digit).
+
+In places where the syntax allowed the ``at`` keyword, it now allows an ``at transform:`` block.
+
+In places where a displayable is expected, it is now possible to use an ``image:`` block, and to define an ATL image, like an anonymous :ref:`atl-image-statement`.
+
+The new ``if_attr`` property introduces a more straightforward boolean condition syntax, replacing the ``if_any``, ``if_all`` and ``if_not`` properties which remain supported for backwards compatibility. To convert to the new syntax, you can replace ``if_any ["a", "b"] if_all ["c", "d"] if_not ["e", "f"]`` with ``if_attr ((a | b) & c & d & !(e | f))``.
+
+The ``multiple`` groups may now be anonymous, and should from now on be defined with the ``multiple`` keyword placed in lieu of the group name. This makes their behavior more consistent and easier to understand. The behavior of named multiple groups is unchanged, but they should not be used going forward.
+
+The ``attribute`` statement now takes the ``variant`` property, unless it is inside a group with a ``variant``, or it is directly assigned a displayable. This allows native support for cases which previously required a multiple group with a variant, or an attribute_function manipulation.
+
 Automatic Oversampling
 ----------------------
 
@@ -268,7 +283,7 @@ The new :func:`renpy.seen_translation`, :func:`renpy.mark_translation_seen`, and
 functions make it possible to determine if a translation has been seen.
 
 Audio filesname can now include a volume clase, like "<volume 0.5>sunflower-slow-drag.ogg". This sets the relative
-amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue` statements.
+amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue`` statements.
 
 The new :var:`config.keep_screenshot_entering_menu` variable determines if a screenshot taken with :class:`FileTakeScreenshot`
 is kept when entering a menu context.

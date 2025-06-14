@@ -42,6 +42,13 @@ practical sense, is technically correct and outlines the layeredimage syntax::
             attribute dress default:
                 "augustina_dress"
             attribute uniform
+            attribute psychedelic:
+                image:
+                    "augustina_dress"
+                    matrixcolor TintMatrix("#f00")
+                    linear 1 matrixcolor TintMatrix("#0f0")
+                    linear 1 matrixcolor TintMatrix("#00f")
+                    repeat
 
         group face auto:
             pos (100, 100)
@@ -93,6 +100,8 @@ following optional properties.
 
 `at`
     A transform or list of transforms that are applied to the layered image.
+    It can also be used in the form of ``at transform:`` followed by an ATL block,
+    to define an ATL transform which will be applied to the layeredimage.
 
 :ref:`transform properties <transform-properties>`
     If given, these are used to construct a transform that is applied to the
@@ -115,24 +124,16 @@ Always
 The ``always`` statement declares an image that is always shown inside the
 layeredimage, and which will not be attached to an attribute. It
 must be supplied a displayable, and can also take properties. Both can
-be placed on the same line or inside a block.
+be placed on the same line or inside a block. The displayable may be declared
+using the word ``image:`` followed by an ATL block, which is similar to the
+:ref:`atl-image-statement`.
 
 The ``always`` statement takes the following properties:
 
-`if_all`
-    A string or list of strings giving the names of attributes. If this is
-    given, this layer is only displayed if all of the named attributes
-    are present.
-
-`if_any`
-    A string or list of strings giving the names of attributes. If this is
-    given, this layer is only displayed if any of the named attributes
-    are present.
-
-`if_not`
-    A string or list of strings giving the names of attributes. If this is
-    given, this layer is only displayed if none of the named attributes are
-    present.
+`if_attr`
+    An :ref:`if_attr` expression in parentheses. If this is given, this layer is
+    only displayed if the set of attributes that are called on the layeredimage
+    satisfy the if_attr expression.
 
 :ref:`transform properties <transform-properties>`
     If given, these are used to construct a transform that is applied
@@ -141,6 +142,8 @@ The ``always`` statement takes the following properties:
 `at`
     A transform or list of transforms that are applied to the provided
     displayable.
+    It can also be used in the form of ``at transform:`` followed by an ATL block,
+    to define an ATL transform which will be applied to the displayable.
 
 If
 ^^
@@ -162,22 +165,13 @@ A more complete example of an ``if`` statement might look like::
     else:
         "augustina_nose_mark"
 
-Each clause must be given a displayable. It can also be given these properties:
+Each clause must be given a displayable, which can be done with the ``image:``
+syntax described earlier. It can also be given these properties:
 
-`if_all`
-    A string or list of strings giving the names of attributes. If this is
-    given, this condition is only considered if all of the named attributes
-    are present.
-
-`if_any`
-    A string or list of strings giving the names of attributes. If this is
-    given, this condition is only considered if any of the named attributes
-    are present.
-
-`if_not`
-    A string or list of strings giving the names of attributes. If this is
-    given, this condition is only considered if none of the named attributes are
-    present.
+`if_attr`
+    An :ref:`if_attr` expression in parentheses. If this is given, this condition is
+    only displayed if the set of attributes that are called on the layeredimage
+    satisfy the if_attr expression.
 
 :ref:`transform properties <transform-properties>`
     If present, these are used to construct a transform that is applied
@@ -185,6 +179,8 @@ Each clause must be given a displayable. It can also be given these properties:
 
 `at`
     A transform or list of transforms that are applied to the displayable.
+    It can also be used in the form of ``at transform:`` followed by an ATL block,
+    to define an ATL transform which will be applied to the displayable.
 
 The ``if`` statement is transformed to a :func:`ConditionSwitch` when the
 ``layeredimage`` statement runs.
@@ -207,7 +203,8 @@ image when the given attribute is used to display it. For example, using the
 previous example, calling ``show augustina dress`` will cause the
 "augustina_dress" to be shown as part of the "augustina" image.
 
-An ``attribute`` clause takes an attribute name, which is one word. It can also
+An ``attribute`` clause takes an attribute name, which is one word (more precisely,
+one image name component, see :ref:`elements-of-statements`). It can also
 take two keywords. The ``default`` keyword indicates that the attribute should
 be present by default unless an attribute in the same group is called. The
 ``null`` keyword prevents this clause from getting attached a displayable, which
@@ -221,27 +218,18 @@ part of ``auto`` groups, more about that later), with all the corresponding
 displayables being shown at the same time (the `if_all`, `if_any`, and `if_not`
 properties can tweak this).
 
-If the displayable is not explicitly given, it will be computed from the name
-of the layeredimage, the group (if any), the group's variant (if any), and the
-attribute. See the :ref:`pattern <layeredimage-pattern>` section for more
-details.
+A displayable can be given, optionally using the ``image:`` syntax described
+earlier. If no displayable is explicitly given, it will be computed from the
+name of the layeredimage, the group (if any), the group's or the attribute's
+variant (if any), and the attribute. See the
+:ref:`pattern <layeredimage-pattern>` section for more details.
 
 The attribute statement takes the following properties:
 
-`if_all`
-    A string or list of strings giving the names of attributes. If this is
-    present, this layer is only displayed if all of the named attributes
-    are present.
-
-`if_any`
-    A string or list of strings giving the names of attributes. If this is
-    present, this layer is only displayed if any of the named attributes
-    are present.
-
-`if_not`
-    A string or list of strings giving the names of attributes. If this is
-    present, this layer is only displayed if none of the named attributes are
-    present.
+`if_attr`
+    An :ref:`if_attr` expression in parentheses. If this is given, this layer is
+    only displayed if the set of attributes that are called on the layeredimage
+    satisfy the if_attr expression.
 
 :ref:`transform properties <transform-properties>`
     If present, these are used to construct a transform that is applied
@@ -249,20 +237,27 @@ The attribute statement takes the following properties:
 
 `at`
     A transform or list of transforms that are applied to the layer.
+    It can also be used in the form of ``at transform:`` followed by an ATL block,
+    to define an ATL transform which will be applied to the layer.
 
-The `if_*` clauses' test is based upon the list of attributes of the resulting
+`variant`
+    A word that is prepended to the attribute name (with an underscore) when looking
+    for a displayable for that attribute. This property is only valid for attributes
+    with no given displayable, and which are not already in a group with a variant.
+
+The `if_attr` clause's test is based upon the list of attributes of the resulting
 image, as explained :ref:`here <concept-image>`, but it **does not change** that
 list. ::
 
     layeredimage eileen:
         attribute a
-        attribute b default if_not "a"
-        attribute c default if_not "b"
+        attribute b default if_attr (!a)
+        attribute c default if_attr (!b)
 
 In this example, the ``b`` and ``c`` attributes are *always* part of the attributes
 list (because of their ``default`` clause). When calling ``show eileen a``, the
 ``a`` attribute will be displayed as requested, and the ``b`` attribute will not,
-due to its ``if_not`` property. But even if not displayed, the ``b`` attribute will
+due to its ``if_attr`` property. But even if not displayed, the ``b`` attribute will
 still be part of the attributes list, which means the ``c`` attribute will still not
 display.
 
@@ -270,54 +265,57 @@ Group
 -----
 
 The ``group`` statement groups attributes together, making them mutually
-exclusive. Unless the group is ``multiple``, when attributes `a` and `b` are in
-the same group, it is an error to include both of the attributes at the same
-time, with ``show eileen a b`` for example. In the same example, calling
+exclusive. When attributes `a` and `b` are in the same group, it is an error to
+include both of the attributes at the same time, with ``show eileen a b`` for
+example, except when the group is ``multiple``. In the same example, calling
 attribute `a` will hide attribute `b`, and vice versa. However, note that it's
 fine for several ``attribute`` clauses to be passed the same name, *even within
 the same group*. In that case, they will be considered as one attribute
 containing several sprites - more about that at the end of this section.
 
 The ``group`` statement takes a name. The name isn't used for very much, except
-to generate the default names of attributes inside the group. That is not the
-case for ``multiple`` groups in which the name doesn't have any use or impact.
+to generate the default names of attributes inside the group.
+
+The group name ``multiple`` is reserved, it has the specific behavior of making that
+group ``multiple``. In that case, no incompatibility is applied to the attributes
+declared inside the block. This is useful to have a group auto-define multiple
+attributes that are not exclusive, or to apply the same properties to a set of
+attributes at once. This conflicts with the ``default`` keyword being given to one
+of the attributes. Note that ``multiple`` groups are very different from other,
+normal groups, and that most of what's true about groups doesn't apply to them.
+Notably, they are considered as not having a name at all.
 
 The name may be followed by the ``auto`` keyword. If it's present, after any
 attributes in the group have been declared, Ren'Py will scan its list of images
 for those that match the group's pattern (see :ref:`below <layeredimage-pattern>`),
-with the specificity that in that case, a multiple group's name *is* part if the
-pattern, and that the ``format_function`` passed to the layeredimage is ignored.
+with the specificity that in that case,
+the ``format_function`` passed to the layeredimage is ignored.
 Any images that are found, except those corresponding to explicitly declared
 attributes, are then added to the group as if declared using the ``attribute``
 statement inside the group's block. See the :ref:`layeredimage-examples` section
 for a practical demo.
 
-This can be followed by the ``multiple`` keyword. If present, no incompatibility
-is applied to the attributes declared inside the block. This is useful to have a
-group auto-define multiple attributes that are not exclusive, or to apply the
-same properties to a set of attributes at once. This conflicts with the
-``default`` keyword being given to one of the attributes. Note that ``multiple``
-groups are very different from other, normal groups, and that most of what's
-true about groups doesn't apply to them.
-
-After these optional keywords, properties can then be declared on the first line
+After this optional keyword, properties can then be declared on the first line
 of the group, and it can take a block containing properties and attributes.
 
 The group statement takes the properties ``attribute`` does - such as
-``if_any``, ``at`` and so on. Properties supplied to the group are passed to
+``if_attr``, ``at`` and so on. Properties supplied to the group are passed to
 the attributes inside the group, unless overridden by the same property of the
-attribute itself. In addition, there are two properties which are specific to
-groups:
+attribute itself. Two properties are more specific to groups:
 
 `variant`
-    If given, this should be a string. If present, it adds an element that becomes
-    part of automatically-generated image names, and of the pattern used to search
-    for images when automatically defining attributes in ``auto`` groups.
+    This is similar to the property ``attribute`` takes, except that it cannot
+    be passed to both the group _and_ to attributes within it.
+    If given, this should be a word. If present, it is used as the variant for
+    automatically generating image names for attributes with no explicitly
+    passed displayables (see the :ref:`pattern <layeredimage-pattern>` section
+    for more details), and it is used in the pattern used to search for images
+    when automatically defining attributes in ``auto`` groups (see above).
 
 `prefix`
     If given, this is a prefix that is concatenated using an underscore with the
-    manually or automatically defined attribute names. So if prefix is "leftarm",
-    and the attribute name "hip" is encountered, ``show eileen leftarm_hip``
+    manually or automatically defined attribute names. So if prefix is
+    ``leftarm``, and ``attribute hip`` is encountered, ``show eileen leftarm_hip``
     will display it.
 
 An attribute may also be part of several groups, in which case the attribute is
@@ -340,12 +338,12 @@ example::
 
     layeredimage eileen sitting:
         attribute base default
-        group arms variant "behind":
+        group arms variant behind:
             attribute on_hips
             attribute on_knees
             attribute mixed
         attribute table default
-        group arms variant "infront":
+        group arms variant infront:
             attribute on_table default
             attribute holding_margarita
             attribute mixed
@@ -358,6 +356,37 @@ of the table. In this example, the `on_hips` attribute is incompatible with the
 `on_table` attribute, because even though they are not declared in the same
 block, they are both in the same group.
 
+.. _if_attr:
+
+If_attr
+=======
+
+An if_attr expression expresses a boolean condition depending on the set of
+attributes currently active on the layeredimage.
+
+It consists of one or more attribute names separated by the "&" and "|" symbols, and
+possibly negated with "!". The
+expression must then be enclosed in parentheses.
+
+Example::
+
+    always:
+        "eileen_red_dress"
+        if_attr (b & !c)
+        # the image will be shown when attribute b is active and attribute c is not
+
+    if var:
+        "eileen_blue_ribbon"
+        if_attr (!(a | b))
+        # the image will be shown when the var variable is true
+        # and neither attributes a nor b are active
+
+    attribute a:
+        "eileen_a"
+        if_attr (b | e)
+        # the image will be shown when attribute "a" is active
+        # and either attribute "b" or "e" are active
+
 .. _layeredimage-pattern:
 
 Pattern and format function
@@ -367,7 +396,7 @@ The pattern, used to find images for attributes when they are not explicitly
 given one, consists of:
 
 * The name of the layeredimage, with spaces replaced with underscores.
-* The name of the group, if any and if the group is not ``multiple``.
+* The name of the group, if we are in a non-\ ``multiple`` group.
 * The name of the variant, if there is one.
 * The name of the attribute.
 
@@ -378,17 +407,12 @@ would match the pattern augustina_work_eyes_blue\_\ `attribute`. In the
 following example::
 
     layeredimage augustina work:
-        group eyes variant "blue":
+        group eyes variant blue:
             attribute closed
 
-The attribute is linked to the image "augustina_work_eyes_blue_closed". That
+The attribute is linked to the image ``"augustina_work_eyes_blue_closed"``. That
 can resolve to an image file named :file:`augustina_work_eyes_blue_closed.png`, but it
 can also be defined explicitly using the :ref:`image-statement` for example.
-
-If you want a ``multiple`` group's name to be included in the pattern, you can
-use the following syntax::
-
-    group addons multiple variant "addons"
 
 All of the pattern behavior can be changed using a `format_function`:
 :func:`layeredimage.format_function` is the function used under the hood to
@@ -396,6 +420,9 @@ implement the behavior described above. You can see what arguments it takes, in
 case you want to supply your own `format_function` to replace it.
 
 .. include:: inc/li_ff
+
+But note that the passed `format_function` does _not_ change how ``auto`` groups
+will find their images : they will always use the exact pattern described above.
 
 Proxying Layered Images
 =======================
@@ -572,8 +599,9 @@ written code:
         attribute base default
         group face auto
             attribute neutral default
-        attribute supersad:
-            Solid("#00c3", xysize=(100, 100))
+        attribute supersad image:
+            "#00c3"
+            xysize (100, 100)
 
 The ``francis`` layeredimage will declare the (defaulted) ``base`` attribute,
 and associate it the "francis_base" (auto-defined) image using the
@@ -616,7 +644,7 @@ in the Advice section)::
     layeredimage eileen:
         attribute base default
         group outfit auto
-        group ribbon prefix "ribbon":
+        group ribbon prefix ribbon:
             attribute red
             attribute blue
 
@@ -631,3 +659,23 @@ in the Advice section)::
             return names[0], *atts
 
     define config.adjust_attributes["eileen"] = eileen_adjuster
+
+
+**Including groups in if_attr**
+
+The ``if_attr`` property does not allow a group name to be specified, so that a given layer be shown only when any or none of the attributes in a given group are shown. However, there is still a way to do that using the various other parts of the layeredimage syntax.
+
+Supposing that the group has no default attribute, you can add a default ``null`` attribute, with a name of your choice. That way, if no attribute from the group is shown, that attribute is activated (although nothing gets displayed), and it gets reactivated if an attribute of the group gets hidden.
+
+::
+
+    layeredimage eliza:
+        attribute head_and_hair default
+        group top auto
+        group headtop prefix headtop:
+            attribute notop null default
+            attribute hat
+            attribute cap
+        attribute hair_patch if_attr (notop)
+
+Here, the hair_patch attribute will only show more of Eliza's hair over her top layer (on her shoulders for example) if there is no hat to hide it.

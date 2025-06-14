@@ -54,6 +54,11 @@ a unique tag is created for the show expression statement. This change can be re
 
     define config.old_show_expression = True
 
+**LayeredImage** The "variant" and "prefix" properties, if passed unquoted names, now read them as an unquoted string instead of a variable to be evaluated at init time. It is unlikely to cause any issue, but if it does, you can use::
+
+    variant f"{old_expression}"
+
+Also, naming a group "multiple" is no longer supported.
 
 **Creator-defined Statements and config.label_callbacks** Creator-defined statements now call :var:`config.label_callbacks`,
 when a label is defined. To revert to the old behavior of not calling config.label_callbacks, add to your game::
