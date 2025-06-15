@@ -206,6 +206,19 @@ def import_from(from_module_name, in_module_name, *names):
                 else:
                     const(imported_subname)
 
+def import_all_from(from_module_name, in_module_name):
+    """
+    Called after each `from from_module import *` statement.
+    """
+    from_store = renpy.python.store_modules[from_module_name]
+
+    try:
+        names = from_store.__all__
+    except AttributeError:
+        return
+        
+    import_from(from_module_name, in_module_name, *names)
+
 class Control(object):
     """
     Represents control flow.
