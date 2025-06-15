@@ -765,8 +765,6 @@ class WrapNode(ast.NodeTransformer):
             return node
 
         namespace = node.module
-        if namespace.startswith("store"):
-            namespace = namespace[6:]
 
         names = [alias.asname or alias.name for alias in node.names]
         
@@ -790,32 +788,55 @@ class WrapNode(ast.NodeTransformer):
             )
         )
 
-        # what we are importing
-        args.extend([
-            ast.Constant(name)
-            for name in names
-        ])
-
-        renpy_pyanalysis_import_from = \
-        ast.Attribute(
-            value=ast.Attribute(
-                value=ast.Name(id="renpy", ctx=ast.Load()),
-                attr="pyanalysis",
+        if names == ["*"]:
+            renpy_pyanalysis_import_all_from = \
+            ast.Attribute(
+                value=ast.Attribute(
+                    value=ast.Name(id="renpy", ctx=ast.Load()),
+                    attr="pyanalysis",
+                    ctx=ast.Load()
+                ),
+                attr="import_all_from",
                 ctx=ast.Load()
-            ),
-            attr="import_from",
-            ctx=ast.Load()
-        )
-        
-        rv.append(
-            ast.Expr(
-                value=ast.Call(
-                    func=renpy_pyanalysis_import_from,
-                    args=args,
-                    keywords=[]
+            )
+
+            rv.append(
+                ast.Expr(
+                    value=ast.Call(
+                        func=renpy_pyanalysis_import_all_from,
+                        args=args,
+                        keywords=[]
+                    )
                 )
             )
-        )
+        
+        else:
+            # what we are importing
+            args.extend([
+                ast.Constant(name)
+                for name in names
+            ])
+
+            renpy_pyanalysis_import_from = \
+            ast.Attribute(
+                value=ast.Attribute(
+                    value=ast.Name(id="renpy", ctx=ast.Load()),
+                    attr="pyanalysis",
+                    ctx=ast.Load()
+                ),
+                attr="import_from",
+                ctx=ast.Load()
+            )
+            
+            rv.append(
+                ast.Expr(
+                    value=ast.Call(
+                        func=renpy_pyanalysis_import_from,
+                        args=args,
+                        keywords=[]
+                    )
+                )
+            )
             
         return rv
 
