@@ -191,7 +191,7 @@ class ShaderPart(object):
         return self.expand_name(m.group(0))
 
     def substitute_name(self, s):
-        return re.sub(r'[uavl]__\w+', self.expand_match, s)
+        return re.sub(r'\b[uavl]__\w+', self.expand_match, s)
 
 
 # A map from a tuple giving the parts that comprise a shader, to the Shader
