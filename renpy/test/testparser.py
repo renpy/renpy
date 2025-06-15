@@ -462,12 +462,7 @@ def parse_condition(l: Lexer, loc: NodeLocation, left: testast.Condition | None 
     Parses a condition that may start with a selector, or
     have one or more 'and', 'or', 'not', or parenthesized conditions.
     """
-    if l.match(r"\("):
-        rv = parse_condition(l, loc)  # Ensure we are at the start of a condition
-        l.require(r"\)")
-        return rv
-
-    elif l.keyword("not"):
+    if l.keyword("not"):
         right = parse_condition(l, loc)
         return testast.Not(loc, right)
 
@@ -483,23 +478,38 @@ def parse_condition(l: Lexer, loc: NodeLocation, left: testast.Condition | None 
         right = parse_condition(l, loc)
         return testast.Or(loc, left, right)
 
-    elif l.keyword("eval"):
-        source = l.require(l.simple_expression)
-        return testast.Eval(loc, source)
+    else:
+        if l.match(r"\("):
+            rv = parse_condition(l, loc)  # Ensure we are at the start of a condition
+            l.require(r"\)")
 
-    elif l.keyword("label"):
-        name = l.require(l.label_name)
-        return testast.Label(loc, name)
+        elif l.keyword("True"):
+            rv = testast.Eval(loc, "True")
 
-    elif rv := parse_selector(l, loc):
+        elif l.keyword("False"):
+            rv = testast.Eval(loc, "False")
+
+        elif l.keyword("eval"):
+            source = l.require(l.simple_expression)
+            rv = testast.Eval(loc, source)
+
+        elif l.keyword("label"):
+            name = l.require(l.label_name)
+            rv = testast.Label(loc, name)
+
+        elif rv := parse_selector(l, loc):
+            pass
+
+        else:
+            l.error("Invalid condition.")
+
+        ## Check if we have another condition after this one
         old_pos = l.pos
         if l.keyword("and") or l.keyword("or"):
             l.pos = old_pos
             rv = parse_condition(l, loc, left=rv)
 
         return rv
-
-    l.error("Invalid condition.")
 
 
 def parse_until(l: Lexer, loc: NodeLocation, left: testast.Node) -> testast.Until | None:
