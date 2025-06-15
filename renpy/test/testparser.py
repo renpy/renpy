@@ -74,16 +74,43 @@ def exit_statement(l: Lexer, loc: NodeLocation) -> testast.Exit:
 
 @test_statement("if")
 def if_statement(l: Lexer, loc: NodeLocation) -> testast.If:
-    condition = parse_condition(l, loc)
 
+    entries = [ ]
+
+    condition = parse_condition(l, loc)
     l.require(":")
     l.expect_eol()
-    l.expect_block("if block")
+    l.expect_block("if statmeent")
+
     block = parse_block(l.subblock_lexer(False), loc)
+    entries.append((condition, block))
 
     l.advance()
 
-    return testast.If(loc, [(condition, block)])
+    while l.keyword("elif"):
+        new_loc = l.get_location()
+        condition = parse_condition(l, loc)
+        l.require(":")
+        l.expect_eol()
+        l.expect_block("elif clause")
+
+        block = parse_block(l.subblock_lexer(False), new_loc)
+        entries.append((condition, block))
+
+        l.advance()
+
+    if l.keyword("else"):
+        new_loc = l.get_location()
+        l.require(":")
+        l.expect_eol()
+        l.expect_block("else clause")
+
+        block = parse_block(l.subblock_lexer(False), new_loc)
+        entries.append((testast.Eval(new_loc, "True"), block))
+
+        l.advance()
+
+    return testast.If(loc, entries)
 
 
 @test_statement("jump")
