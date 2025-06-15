@@ -1457,7 +1457,7 @@ cdef class GL2DrawingContext:
 
         if self.debug:
             import renpy.gl2.gl2debug as gl2debug
-            gl2debug.geometry(mesh, self.model_matrix, self.width, self.height)
+            gl2debug.geometry(mesh, self.projectionview_matrix * self.model_matrix, self.width, self.height)
 
         program = gl2draw.shader_cache.get(self.shaders)
 
