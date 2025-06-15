@@ -168,29 +168,43 @@ def pure(fn):
 
     return fn
 
-def import_from(from_module, in_module, *names):
+def import_from(from_module_name, in_module_name, *names):
     """
     This function is called after each `from from_module import name` statement,
     to make sure that if `from_module.name` is a const / pure value, `in_module.name` is marked const / pure as well.
+
+    Also, if `name.subname` is const / pure, we also need to make sure that `in_module.name.subname` is correctly marked.
     """
-    if from_module.startswith("store."):
-        from_module = from_module[6:]
+    if from_module_name.startswith("store."):
+        from_module_name = from_module_name[6:]
     
-    if in_module.startswith("store."):
-        in_module = in_module[6:]
+    if in_module_name.startswith("store."):
+        in_module_name = in_module_name[6:]
     
     for name in names:
-        fullname = f"{from_module}.{name}"
+        from_fullname = f"{from_module_name}.{name}"
 
-        if fullname in not_constants:
+        if from_fullname in not_constants:
             continue
 
-        fullname_after_import = f"{in_module}.{name}"
+        imported_fullname = f"{in_module_name}.{name}"
 
-        if fullname in pure_functions:
-            pure(fullname_after_import)
-        elif fullname in constants:
-            const(fullname_after_import)
+        if from_fullname in pure_functions:
+            pure(imported_fullname)
+        elif from_fullname in constants:
+            const(imported_fullname)
+
+        else:
+            from_fullname_dot = f"{from_fullname}."
+            prefix_size = len(from_fullname_dot)
+
+            for subname in tuple(filter(lambda c: c.startswith(from_fullname_dot), constants)):
+                imported_subname = f"{imported_fullname}.{subname[prefix_size:]}"
+
+                if subname in pure_functions:
+                    pure(imported_subname)
+                else:
+                    const(imported_subname)
 
 class Control(object):
     """
