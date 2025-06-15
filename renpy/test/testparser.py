@@ -56,7 +56,7 @@ def test_statement(keywords):
 def call_statement(l: Lexer, loc: NodeLocation) -> testast.Call:
     target = l.require(l.name)
 
-    l.expect_noblock('call statement')
+    l.expect_noblock("call statement")
     l.expect_eol()
     l.advance()
 
@@ -65,7 +65,7 @@ def call_statement(l: Lexer, loc: NodeLocation) -> testast.Call:
 
 @test_statement("exit")
 def exit_statement(l: Lexer, loc: NodeLocation) -> testast.Exit:
-    l.expect_noblock('exit statement')
+    l.expect_noblock("exit statement")
     l.expect_eol()
     l.advance()
 
@@ -117,7 +117,7 @@ def if_statement(l: Lexer, loc: NodeLocation) -> testast.If:
 def jump_statement(l: Lexer, loc: NodeLocation) -> testast.Jump:
     target = l.require(l.name)
 
-    l.expect_noblock('jump statement')
+    l.expect_noblock("jump statement")
     l.expect_eol()
     l.advance()
 
@@ -126,7 +126,7 @@ def jump_statement(l: Lexer, loc: NodeLocation) -> testast.Jump:
 
 @test_statement("pass")
 def pass_statement(l: Lexer, loc: NodeLocation) -> testast.Pass:
-    l.expect_noblock('pass statement')
+    l.expect_noblock("pass statement")
     l.expect_eol()
     l.advance()
 
@@ -138,7 +138,7 @@ def pass_statement(l: Lexer, loc: NodeLocation) -> testast.Pass:
 
 @test_statement("click")
 def click_statement(l: Lexer, loc: NodeLocation) -> testast.Click | testast.Until:
-    l.expect_noblock('click statement')
+    l.expect_noblock("click statement")
 
     rv = testast.Click(loc)
 
@@ -170,7 +170,7 @@ def click_statement(l: Lexer, loc: NodeLocation) -> testast.Click | testast.Unti
 @test_statement("drag")
 def drag_statement(l: Lexer, loc: NodeLocation) -> testast.Drag | testast.Until:
     # TODO: Transition off of "pattern"
-    l.expect_noblock('drag statement')
+    l.expect_noblock("drag statement")
 
     points = l.require(l.simple_expression)
     rv = testast.Drag(loc, points)
@@ -195,7 +195,7 @@ def drag_statement(l: Lexer, loc: NodeLocation) -> testast.Drag | testast.Until:
 
 @test_statement("keysym")
 def keysym_statement(l: Lexer, loc: NodeLocation) -> testast.Keysym | testast.Until:
-    l.expect_noblock('keysym statement')
+    l.expect_noblock("keysym statement")
 
     text = l.require(l.string)
     rv = testast.Keysym(loc, text)
@@ -222,7 +222,7 @@ def keysym_statement(l: Lexer, loc: NodeLocation) -> testast.Keysym | testast.Un
 
 @test_statement("move")
 def move_statement(l: Lexer, loc: NodeLocation) -> testast.Move | testast.Until:
-    l.expect_noblock('move statement')
+    l.expect_noblock("move statement")
 
     rv = testast.Move(loc)
 
@@ -250,7 +250,7 @@ def pause_statement(l: Lexer, loc: NodeLocation) -> testast.Pause | testast.Unti
     """
     Provide a default delay if none is specified with an until clause
     """
-    l.expect_noblock('pause statement')
+    l.expect_noblock("pause statement")
 
     if until := parse_until(l, loc, testast.Pause(loc, 0.1)):
         rv = until
@@ -269,7 +269,7 @@ def pause_statement(l: Lexer, loc: NodeLocation) -> testast.Pause | testast.Unti
 
 @test_statement("run")
 def run_statement(l: Lexer, loc: NodeLocation) -> testast.Action | testast.Until:
-    l.expect_noblock('run statement')
+    l.expect_noblock("run statement")
 
     expr = l.require(l.simple_expression)
     rv = testast.Action(loc, expr)
@@ -285,7 +285,7 @@ def run_statement(l: Lexer, loc: NodeLocation) -> testast.Action | testast.Until
 @test_statement("scroll")
 def scroll_statement(l: Lexer, loc: NodeLocation) -> testast.Scroll | testast.Until:
     # TODO: Transition off of "pattern"
-    l.expect_noblock('scroll statement')
+    l.expect_noblock("scroll statement")
 
     ## TODO: Update to selector
     pattern = l.require(l.string)
@@ -301,7 +301,7 @@ def scroll_statement(l: Lexer, loc: NodeLocation) -> testast.Scroll | testast.Un
 
 @test_statement("type")
 def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
-    l.expect_noblock('type statement')
+    l.expect_noblock("type statement")
 
     text = l.require(l.string)
     rv = testast.Type(loc, text)
@@ -344,7 +344,7 @@ def assert_statement(l: Lexer, loc: NodeLocation) -> testast.Assert:
     else:
         timeout = 0.0
 
-    l.expect_noblock('assert statement')
+    l.expect_noblock("assert statement")
     l.expect_eol()
     l.advance()
 
@@ -460,7 +460,7 @@ def parse_selector(l: Lexer, loc: NodeLocation) -> testast.Selector | None:
 def parse_condition(l: Lexer, loc: NodeLocation, left: testast.Condition | None = None) -> testast.Condition:
     """
     Parses a condition that may start with a selector, or
-    have one or more 'and', 'or', 'not', or parenthesized conditions.
+    have one or more "and", "or", "not", or parenthesized conditions.
     """
     if l.keyword("not"):
         right = parse_condition(l, loc)
@@ -468,13 +468,13 @@ def parse_condition(l: Lexer, loc: NodeLocation, left: testast.Condition | None 
 
     elif l.keyword("and"):
         if left is None:
-            l.error("Expected a left-hand side for 'and' condition.")
+            l.error("Expected a left-hand side for \"and\" condition.")
         right = parse_condition(l, loc)
         return testast.And(loc, left, right)
 
     elif l.keyword("or"):
         if left is None:
-            l.error("Expected a left-hand side for 'or' condition.")
+            l.error("Expected a left-hand side for \"or\" condition.")
         right = parse_condition(l, loc)
         return testast.Or(loc, left, right)
 
@@ -514,8 +514,8 @@ def parse_condition(l: Lexer, loc: NodeLocation, left: testast.Condition | None 
 
 def parse_until(l: Lexer, loc: NodeLocation, left: testast.Node) -> testast.Until | None:
     """
-    Parses an 'until' statement. It expects the left side to be a Node,
-    and then looks for the 'until' keyword, followed by a right side condition.
+    Parses an "until" statement. It expects the left side to be a Node,
+    and then looks for the "until" keyword, followed by a right side condition.
 
     If an Until node is returned, the calling function MUST stop parsing
     and return the Until node.
