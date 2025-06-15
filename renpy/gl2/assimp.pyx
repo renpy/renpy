@@ -29,7 +29,7 @@ import_pygame_sdl2()
 
 from assimpapi cimport (
     Importer, aiProcessPreset_TargetRealtime_Quality, aiProcess_ConvertToLeftHanded, aiProcess_FlipUVs, aiScene,
-    aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiFace, aiNode, aiTexture,
+    aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiPrimitiveType_LINE, aiPrimitiveType_POINT, aiFace, aiNode, aiTexture,
     aiTextureType, IOSystem,
 
     aiTextureType_NONE,
@@ -367,8 +367,18 @@ cdef class Loader:
 
         cdef aiMesh *mesh = self.scene.mMeshes[mesh_index]
 
+
+        if mesh.mPrimitiveTypes == aiPrimitiveType_LINE:
+            print(f"Warning: Mesh {mesh_index} is a line mesh, which is not supported. Skipping.")
+            return
+
+        if mesh.mPrimitiveTypes == aiPrimitiveType_POINT:
+            print(f"Warning: Mesh {mesh_index} is a point mesh, which is not supported. Skipping.")
+            return
+
         if mesh.mPrimitiveTypes != aiPrimitiveType_TRIANGLE:
-            raise Exception("Mesh %d is not a triangle mesh." % mesh_index)
+            print(f"Warning: Mesh {mesh_index} is not a triangle mesh. (Type {mesh.mPrimitiveTypes})")
+            return
 
         if self.tangents:
             layout = renpy.gl2.gl2mesh.MODEL_NT_LAYOUT
