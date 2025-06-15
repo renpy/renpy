@@ -174,6 +174,8 @@ def import_from(from_module_name, in_module_name, *names):
     to make sure that if `from_module.name` is a const / pure value, `in_module.name` is marked const / pure as well.
 
     Also, if `name.subname` is const / pure, we also need to make sure that `in_module.name.subname` is correctly marked.
+
+    `names` are 2-tuples of `(original name, imported as name)`.
     """
     if from_module_name.startswith("store."):
         from_module_name = from_module_name[6:]
@@ -181,13 +183,13 @@ def import_from(from_module_name, in_module_name, *names):
     if in_module_name.startswith("store."):
         in_module_name = in_module_name[6:]
     
-    for name in names:
+    for name, asname in names:
         from_fullname = f"{from_module_name}.{name}"
 
         if from_fullname in not_constants:
             continue
 
-        imported_fullname = f"{in_module_name}.{name}"
+        imported_fullname = f"{in_module_name}.{asname}"
 
         if from_fullname in pure_functions:
             pure(imported_fullname)
