@@ -202,6 +202,11 @@ def execute() -> None:
 
     try:
         node, state, start_time, has_started = execute_node(now, node, state, start_time, has_started)
+
+    except renpy.game.QuitException:
+        end_testcase()
+        raise
+
     except Exception as e:
         report_exception(e)
 

@@ -737,14 +737,20 @@ class If(Node):
     statement.
     """
     __slots__ = ("entries",)
-    def __init__(self, loc: NodeLocation, entries: list[tuple[Node, "Block"]]):
+    def __init__(self, loc: NodeLocation, entries: list[tuple[Condition, "Block"]]):
         Node.__init__(self, loc)
 
         self.entries = entries # List of (condition, block) tuples.
 
+    def chain(self, next):
+        self.next = next
+
+        for _condition, block in self.entries:
+            block.chain(next)
+
     def execute(self, state, t):
         for condition, block in self.entries:
-            if renpy.python.py_eval(condition):
+            if condition.ready():
                 next_node(block.block[0])
                 return None
 
