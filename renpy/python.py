@@ -768,7 +768,7 @@ class WrapNode(ast.NodeTransformer):
         if namespace.startswith("store"):
             namespace = namespace[6:]
 
-        names = [alias.asname or alias.name for alias in node.names]
+        names = [(alias.name, alias.asname or alias.name) for alias in node.names]
         
         if not names:
             return node
@@ -792,8 +792,8 @@ class WrapNode(ast.NodeTransformer):
 
         # what we are importing
         args.extend([
-            ast.Constant(name)
-            for name in names
+            ast.Tuple(ast.Constant(name), ast.Constant(asname), ctx=ast.Load())
+            for name, asname in names
         ])
 
         renpy_pyanalysis_import_from = \
