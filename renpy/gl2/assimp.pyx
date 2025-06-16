@@ -180,7 +180,7 @@ class MeshInfo:
                 path = loader.get_texture(material_index, TEXTURE_TYPES[t])
 
                 if path is None:
-                    d = renpy.display.im.Null()
+                    d = renpy.display.im.Null("#fff")
 
                 elif path.startswith("*"):
                     d = loader.model_data.embedded_textures[path]

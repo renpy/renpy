@@ -2065,23 +2065,28 @@ class Null(ImageBase):
     """
     :undocumented:
 
-    An image manipulator that returns a 1x1 transparent surface. This can be used as a missing texture,
+    An image manipulator that returns a 1x1 surface. This can be used as a missing texture,
     if needed.
+
+    `color`
+        The color of the surface.
     """
 
     obsolete = False
+    color = (0, 0, 0, 0)
 
-    def __init__(self, **properties):
+    def __init__(self, color=(0, 0, 0, 0), **properties):
         super(Null, self).__init__(**properties)
 
         self.const_size = True
+        self.color: tuple[int, int, int, int] = tuple(renpy.easy.color(color))
 
     def get_hash(self):
         return 42
 
     def load(self):
         rv = renpy.display.pgrender.surface((1, 1), True)
-        rv.fill((0, 0, 0, 0))
+        rv.fill(self.color)
         return rv
 
     def predict_files(self):
