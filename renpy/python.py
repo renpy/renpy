@@ -769,12 +769,12 @@ class WrapNode(ast.NodeTransformer):
             namespace = namespace[6:]
 
         names = [(alias.name, alias.asname or alias.name) for alias in node.names]
-        
+
         if not names:
             return node
-        
+
         rv = [ node ]
-        
+
         args = [ ]
 
         # name of the module we're importing from
@@ -792,7 +792,7 @@ class WrapNode(ast.NodeTransformer):
 
         # what we are importing
         args.extend([
-            ast.Tuple(ast.Constant(name), ast.Constant(asname), ctx=ast.Load())
+            ast.Tuple([ ast.Constant(name), ast.Constant(asname) ], ctx=ast.Load())
             for name, asname in names
         ])
 
@@ -806,7 +806,7 @@ class WrapNode(ast.NodeTransformer):
             attr="import_from",
             ctx=ast.Load()
         )
-        
+
         rv.append(
             ast.Expr(
                 value=ast.Call(
@@ -816,7 +816,7 @@ class WrapNode(ast.NodeTransformer):
                 )
             )
         )
-            
+
         return rv
 
 wrap_node = WrapNode()
