@@ -115,17 +115,6 @@ def if_statement(l: Lexer, loc: NodeLocation) -> testast.If:
     return testast.If(loc, entries)
 
 
-@test_statement("jump")
-def jump_statement(l: Lexer, loc: NodeLocation) -> testast.Jump:
-    target = l.require(l.name)
-
-    l.expect_noblock("jump statement")
-    l.expect_eol()
-    l.advance()
-
-    return testast.Jump(loc, target)
-
-
 @test_statement("pass")
 def pass_statement(l: Lexer, loc: NodeLocation) -> testast.Pass:
     l.expect_noblock("pass statement")

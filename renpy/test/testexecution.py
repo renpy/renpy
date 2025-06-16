@@ -76,14 +76,6 @@ def take_name(name: str) -> None:
         labels.add(name)
 
 
-class TestJump(Exception):
-    """
-    An exception that is raised in order to jump to `node`.
-    """
-
-    def __init__(self, node: Node):
-        self.node = node
-
 def add_testcase(name: str, node: Node | renpy.ast.Testcase) -> None:
     """
     Adds a testcase to the `testcases` dictionary. The name is a tuple of strings,
@@ -169,9 +161,6 @@ def execute_node(
 
         current_state = current_node.execute(current_state, now - start)
 
-    except TestJump as e:
-        current_node = e.node
-        current_state = None
 
     if current_state is None:
         return next_node, None, start, False
