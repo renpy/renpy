@@ -519,6 +519,13 @@ function.
     True, the draw operation will write to that pixel. Otherwise, it will
     not.
 
+``gl_cull_face``
+    If not None, this enables face culling, which is the process of removing
+    triangles that are facing away from the camera. To do this, we need to
+    know which face is the front face, and which is the back face. The front face
+    is determined using the winding order of the vertices, which is one of "cw" (clockwise) or "ccw" (counter-clockwise).
+    The values are done in the Ren'Py coordinate system (with +Y down), which is the opposite of the OpenGL coordinate system.
+
 ``gl_depth``
     If True, this will clear the depth buffer, and then enable depth
     rendering for this displayable and the children of this displayable.

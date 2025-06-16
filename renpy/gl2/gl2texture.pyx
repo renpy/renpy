@@ -412,7 +412,7 @@ cdef class GLTexture(GL2Model):
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-        renpy.gl2.gl2draw.draw_render(what, tw, th, transform)
+        renpy.gl2.gl2draw.draw_render(what, tw, th, transform, invert_front_face=True)
 
         glBindTexture(GL_TEXTURE_2D, premultiplied)
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, tw, th, 0)

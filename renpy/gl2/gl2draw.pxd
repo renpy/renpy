@@ -146,6 +146,9 @@ cdef class GL2DrawingContext:
     # Has depth been enabled?
     cdef bint has_depth
 
+    # Should the front face be inverted?
+    cdef bint invert_front_face
+
     cdef GL2DrawingContext child_context(self)
 
     cdef dict merge_properties(self, dict old, dict child)

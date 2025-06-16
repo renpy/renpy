@@ -22,7 +22,7 @@
 
 import threading
 
-from typing import Iterable
+from typing import Iterable, Literal
 
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
@@ -180,7 +180,7 @@ class MeshInfo:
                 path = loader.get_texture(material_index, TEXTURE_TYPES[t])
 
                 if path is None:
-                    d = renpy.display.im.Null("#fff")
+                    d = renpy.display.im.Null("#fff4")
 
                 elif path.startswith("*"):
                     d = loader.model_data.embedded_textures[path]
@@ -528,6 +528,12 @@ class GLTFModel(renpy.display.displayable.Displayable):
     `flip_uv`
         If True, the UV coordinates will be flipped vertically. This defaults to True, to map texture coordinates
         to how Ren'Py expects them.
+
+    `cull_face`
+        This can be ccw, cw, or None. If cw or ccw, sets the gl_cull_face property to that value, which
+        determines which faces are culled. If None, no culling is performed. This is in Ren'Py virtual coordinates,
+        which may be different from viewport coordinates or the native coordinates of the model. (This may need to
+        be changed if flip_y is set to False.)
     """
 
     filename: str
@@ -554,6 +560,9 @@ class GLTFModel(renpy.display.displayable.Displayable):
     flip_uv: bool
     "True if the UV coordinates should be flipped vertically."
 
+    cull_face: str|None
+    "The face culling mode, either 'ccw', 'cw', or None."
+
 
     def __init__(
         self,
@@ -563,9 +572,11 @@ class GLTFModel(renpy.display.displayable.Displayable):
         tangents: bool = False,
         zoom: float = 1.0,
         flip_x: bool = False,
-        flip_y: bool = True,
+        flip_y: bool = False,
         flip_z: bool = False,
-        flip_uv: bool = True):
+        flip_uv: bool = True,
+        cull_face: Literal["cw", "ccw", None] = "ccw"):
+
 
         super().__init__()
 
@@ -583,6 +594,8 @@ class GLTFModel(renpy.display.displayable.Displayable):
         self.flip_y = flip_y
         self.flip_z = flip_z
         self.flip_uv = flip_uv
+
+        self.cull_face = cull_face
 
         self.textures = [ ]
 
@@ -653,6 +666,9 @@ class GLTFModel(renpy.display.displayable.Displayable):
 
         rv.add_property("depth", True)
         rv.add_property("texture_wrap", (renpy.uguu.GL_REPEAT, renpy.uguu.GL_REPEAT))
+
+        if self.cull_face:
+            rv.add_property("cull_face", self.cull_face)
 
         return rv
 
