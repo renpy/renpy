@@ -28,6 +28,8 @@ import renpy
 from renpy.lexer import Lexer
 from renpy.test.types import NodeLocation
 
+# The current test case name
+top_testcase_name = ""
 
 # The root of the parse trie.
 test_statements = renpy.parser.ParseTrie()
@@ -328,6 +330,102 @@ def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
 
 ##############################################################################
 # Statement functions: Other (Python, test functions)
+
+## This has no decorator because it is called by the base game parser
+## The "testcase" statement is declared in renpy.parser
+def testcase_statement(l: Lexer, loc: NodeLocation) -> renpy.ast.Testcase | renpy.ast.Init:
+    """
+    Parses a testcase statement, which is a block of statements that
+    are run in the context of a test.
+    """
+    global top_testcase_name
+    name = l.require(l.name)
+
+    # parameters = renpy.parser.parse_parameters(l)
+    l.require(":")
+    l.expect_eol()
+    l.expect_block("testcase statement")
+
+    ll = l.subblock_lexer()
+    top_testcase_name = name
+    test_block = parse_subtest(ll, loc, top_testcase_name)
+
+    l.advance()
+
+    rv = renpy.ast.Testcase(loc, name, test_block)
+
+    if not l.init:
+        rv = renpy.ast.Init(loc, [ rv ], 500 + l.init_offset)
+
+    return rv
+
+
+@test_statement("subtest")
+def subtest_statement(l: Lexer, loc: NodeLocation) -> testast.Testcase:
+    global top_testcase_name
+
+    name = l.require(l.name)
+
+    # parameters = renpy.parser.parse_parameters(l)
+    l.require(":")
+    l.expect_eol()
+    l.expect_block("subtest statement")
+
+    old_top_testcase_name = top_testcase_name
+    top_testcase_name = top_testcase_name + "." + name
+    ll = l.subblock_lexer()
+    test_block = parse_subtest(ll, loc, top_testcase_name)
+    top_testcase_name = old_top_testcase_name
+
+    l.advance()
+
+    return test_block
+
+
+def parse_subtest(l: Lexer, loc: NodeLocation, name: str) -> testast.Testcase:
+    ## Get setup
+    l.advance()
+    setup_stmts = [ ]
+    subtests = [ ]
+    teardown_stmts = [ ]
+
+    found_subtest = False
+    found_teardown = False
+
+    stmt = None
+    while not l.eob:
+        stmt = parse_statement(l, l.get_location())
+        if isinstance(stmt, testast.Testcase):
+            found_subtest = True
+            break
+        setup_stmts.append(stmt)
+
+    if found_subtest:
+        subtests.append(stmt)
+        while not l.eob:
+            stmt = parse_statement(l, l.get_location())
+            if isinstance(stmt, testast.Testcase):
+                subtests.append(stmt)
+            else:
+                found_teardown = True
+                break
+
+    if found_teardown:
+        while not l.eob:
+            stmt = parse_statement(l, l.get_location())
+            teardown_stmts.append(stmt)
+
+    rv = testast.Testcase(
+        loc,
+        name,
+        setup=testast.Block(loc, setup_stmts) if setup_stmts else None,
+        subtests=subtests if subtests else None,
+        teardown=testast.Block(loc, teardown_stmts) if found_teardown else None,
+    )
+
+    renpy.test.testexecution.add_testcase(name, rv)
+
+    return rv
 
 
 @test_statement("assert")

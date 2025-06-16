@@ -2697,23 +2697,20 @@ class Style(Node):
 
 
 class Testcase(Node):
-    label: str
-    test: "renpy.test.testast.Block"
+    test: "renpy.test.testast.Testcase"
 
-    def __init__(self, loc, label, test):
+    def __init__(self, loc, name, test):
         super(Testcase, self).__init__(loc)
 
-        self.label = label
         self.test = test
+        self.name = name
 
     def diff_info(self):
-        return (Testcase, self.label)
+        return (Testcase, self.name)
 
     def execute(self):
         next_node(self.next)
         statement_name("testcase")
-
-        renpy.test.testexecution.testcases[self.label] = self.test
 
 
 class RPY(Node):
