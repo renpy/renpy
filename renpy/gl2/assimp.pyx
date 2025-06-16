@@ -342,13 +342,13 @@ cdef class Loader:
         cdef unsigned int i
 
         node_matrix = Matrix((
-            node.mTransformation.a1, node.mTransformation.b1, node.mTransformation.c1, node.mTransformation.d1,
-            node.mTransformation.a2, node.mTransformation.b2, node.mTransformation.c2, node.mTransformation.d2,
-            node.mTransformation.a3, node.mTransformation.b3, node.mTransformation.c3, node.mTransformation.d3,
-            node.mTransformation.a4, node.mTransformation.b4, node.mTransformation.c4, node.mTransformation.d4)
-            )
+            node.mTransformation.a1, node.mTransformation.a2, node.mTransformation.a3, node.mTransformation.a4,
+            node.mTransformation.b1, node.mTransformation.b2, node.mTransformation.b3, node.mTransformation.b4,
+            node.mTransformation.c1, node.mTransformation.c2, node.mTransformation.c3, node.mTransformation.c4,
+            node.mTransformation.d1, node.mTransformation.d2, node.mTransformation.d3, node.mTransformation.d4,
+            ))
 
-        matrix = node_matrix * matrix
+        matrix = matrix * node_matrix
 
         for i in range(node.mNumMeshes):
             self.load_mesh(node.mMeshes[i], matrix)
