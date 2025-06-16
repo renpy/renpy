@@ -1523,9 +1523,9 @@ cdef class GL2DrawingContext:
 
         cdef GL2DrawingContext ctx
         cdef Polygon new_clip_polygon
-        cdef bint has_reverse
-        cdef bint has_depth
-        cdef bint has_cull_face
+        cdef bint has_reverse = False
+        cdef bint has_depth = False
+        cdef bint has_cull_face = False
 
         if what.__class__ is not Render:
 

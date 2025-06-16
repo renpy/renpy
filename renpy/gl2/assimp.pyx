@@ -28,10 +28,25 @@ from pygame_sdl2 cimport *
 import_pygame_sdl2()
 
 from assimpapi cimport (
-    Importer, aiProcessPreset_TargetRealtime_Quality, aiProcess_ConvertToLeftHanded, aiProcess_FlipUVs, aiScene,
-    aiMesh, aiMatrix4x4, aiPrimitiveType_TRIANGLE, aiPrimitiveType_LINE, aiPrimitiveType_POINT, aiFace, aiNode, aiTexture,
-    aiTextureType, IOSystem,
+    Importer,
 
+    aiProcessPreset_TargetRealtime_Quality,
+    aiProcess_FlipUVs,
+    aiProcess_FlipWindingOrder,
+
+    aiScene,
+    aiMesh,
+    aiMatrix4x4,
+    aiFace,
+    aiNode,
+    IOSystem,
+
+    aiPrimitiveType_TRIANGLE,
+    aiPrimitiveType_LINE,
+    aiPrimitiveType_POINT,
+
+    aiTexture,
+    aiTextureType,
     aiTextureType_NONE,
     aiTextureType_DIFFUSE,
     aiTextureType_SPECULAR,
@@ -55,7 +70,8 @@ from assimpapi cimport (
     aiTextureType_CLEARCOAT,
     aiTextureType_TRANSMISSION,
 
-    aiString, aiMaterial
+    aiString,
+    aiMaterial
 )
 
 cdef extern from "assimpio.h":
@@ -180,7 +196,7 @@ class MeshInfo:
                 path = loader.get_texture(material_index, TEXTURE_TYPES[t])
 
                 if path is None:
-                    d = renpy.display.im.Null("#fff4")
+                    d = renpy.display.im.Null("#ffff")
 
                 elif path.startswith("*"):
                     d = loader.model_data.embedded_textures[path]
@@ -250,11 +266,7 @@ cdef class Loader:
         textures: Iterable[str],
         shaders: Iterable[str|renpy.display.displayable.Displayable],
         tangents: bool,
-        zoom: float,
-        flip_x: bool,
-        flip_y: bool,
-        flip_z: bool,
-        flip_uv: bool,) -> None:
+        zoom: float) -> None:
 
         self.shaders = shaders
         self.textures = textures
@@ -266,7 +278,7 @@ cdef class Loader:
         filename_bytes = filename.encode()
         self.scene = self.importer.ReadFile(
             filename_bytes,
-            aiProcessPreset_TargetRealtime_Quality | (aiProcess_FlipUVs if flip_uv else 0))
+            aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs | aiProcess_FlipWindingOrder)
 
         if not self.scene:
             raise Exception("Error loading %s: %s" % (filename, self.importer.GetErrorString()))
@@ -277,12 +289,9 @@ cdef class Loader:
 
             self.load_textures()
 
-            xdx = -1.0 if flip_x else 1.0
-            ydy = -1.0 if flip_y else 1.0
-            zdz = -1.0 if flip_z else 1.0
-
-            # Load the nodes.
-            m = Matrix.scale(xdx, ydy, zdz) * Matrix.scale(zoom, zoom, zoom)
+            # The base matrix uses scale and rotate to move the model into the Ren'Py coordinate system,
+            # and then scales it.
+            m = Matrix.scale(-1, -1, -1) * Matrix.rotate(0, 180, 0) *  Matrix.scale(zoom, zoom, zoom)
 
             self.load_node(self.scene.mRootNode, m)
 
@@ -514,26 +523,6 @@ class GLTFModel(renpy.display.displayable.Displayable):
     `zoom`
         A zoom factor that will be applied to the model. Many models naturally use the range -1 to 1, and so this
         may need to be quite large to make the model visible.
-
-    `flip_x`
-        If True, the model will be flipped along the x axis.
-
-    `flip_y`
-        If True, the model will be flipped along the y axis. This defaults to True, to map models to Ren'Py's
-        coordinate system.
-
-    `flip_z`
-        If True, the model will be flipped along the z axis.
-
-    `flip_uv`
-        If True, the UV coordinates will be flipped vertically. This defaults to True, to map texture coordinates
-        to how Ren'Py expects them.
-
-    `cull_face`
-        This can be ccw, cw, or None. If cw or ccw, sets the gl_cull_face property to that value, which
-        determines which faces are culled. If None, no culling is performed. This is in Ren'Py virtual coordinates,
-        which may be different from viewport coordinates or the native coordinates of the model. (This may need to
-        be changed if flip_y is set to False.)
     """
 
     filename: str
@@ -560,8 +549,6 @@ class GLTFModel(renpy.display.displayable.Displayable):
     flip_uv: bool
     "True if the UV coordinates should be flipped vertically."
 
-    cull_face: str|None
-    "The face culling mode, either 'ccw', 'cw', or None."
 
 
     def __init__(
@@ -570,12 +557,7 @@ class GLTFModel(renpy.display.displayable.Displayable):
         textures: Iterable = ("diffuse",),
         shader: str|tuple[str] = "renpy.texture",
         tangents: bool = False,
-        zoom: float = 1.0,
-        flip_x: bool = False,
-        flip_y: bool = False,
-        flip_z: bool = False,
-        flip_uv: bool = True,
-        cull_face: Literal["cw", "ccw", None] = "ccw"):
+        zoom: float = 1.0):
 
 
         super().__init__()
@@ -589,13 +571,6 @@ class GLTFModel(renpy.display.displayable.Displayable):
         self.shaders = shaders
         self.tangents = tangents
         self.zoom = zoom
-
-        self.flip_x = flip_x
-        self.flip_y = flip_y
-        self.flip_z = flip_z
-        self.flip_uv = flip_uv
-
-        self.cull_face = cull_face
 
         self.textures = [ ]
 
@@ -627,11 +602,7 @@ class GLTFModel(renpy.display.displayable.Displayable):
                         self.textures,
                         self.shaders,
                         self.tangents,
-                        self.zoom,
-                        self.flip_x,
-                        self.flip_y,
-                        self.flip_z,
-                        self.flip_uv)
+                        self.zoom)
 
                 except Exception as e:
                     del cache[self]
@@ -666,9 +637,7 @@ class GLTFModel(renpy.display.displayable.Displayable):
 
         rv.add_property("depth", True)
         rv.add_property("texture_wrap", (renpy.uguu.GL_REPEAT, renpy.uguu.GL_REPEAT))
-
-        if self.cull_face:
-            rv.add_property("cull_face", self.cull_face)
+        rv.add_property("cull_face", "ccw")
 
         return rv
 
