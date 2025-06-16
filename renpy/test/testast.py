@@ -901,18 +901,6 @@ class Assert(Node):
         return None
 
 
-class Jump(Node):
-    __slots__ = "target"
-    def __init__(self, loc: NodeLocation, target: str):
-        Node.__init__(self, loc)
-
-        self.target = target
-
-    def start(self):
-        node = renpy.test.testexecution.lookup(self.target, self)
-        raise renpy.test.testexecution.TestJump(node)
-
-
 class Call(Node):
     __slots__ = "target"
     def __init__(self, loc: NodeLocation, target: str):
