@@ -256,6 +256,9 @@ cdef class Loader:
     cdef public object shaders
     "A shader or list of shaders to use."
 
+    cdef public object filename
+    "The name of the file being loaded."
+
     def __cinit__(self):
         self.importer.SetIOHandler(new RenpyIOSystem())
 
@@ -267,6 +270,8 @@ cdef class Loader:
         shaders: Iterable[str|renpy.display.displayable.Displayable],
         tangents: bool,
         zoom: float) -> None:
+
+        self.filename = filename
 
         self.shaders = shaders
         self.textures = textures
@@ -376,17 +381,20 @@ cdef class Loader:
 
         cdef aiMesh *mesh = self.scene.mMeshes[mesh_index]
 
+        def log(msg: str):
+            renpy.display.log.write("%s", msg)
+
 
         if mesh.mPrimitiveTypes == aiPrimitiveType_LINE:
-            print(f"Warning: Mesh {mesh_index} is a line mesh, which is not supported. Skipping.")
+            log(f"Warning: {self.filename!r}, mesh {mesh_index} is a line mesh, which is not supported. Skipping.")
             return
 
         if mesh.mPrimitiveTypes == aiPrimitiveType_POINT:
-            print(f"Warning: Mesh {mesh_index} is a point mesh, which is not supported. Skipping.")
+            log(f"Warning: {self.filename!r}, mesh {mesh_index} is a point mesh, which is not supported. Skipping.")
             return
 
         if mesh.mPrimitiveTypes != aiPrimitiveType_TRIANGLE:
-            print(f"Warning: Mesh {mesh_index} is not a triangle mesh. (Type {mesh.mPrimitiveTypes})")
+            log(f"Warning: {self.filename!r}, mesh {mesh_index} is not a triangle mesh (type={mesh.mPrimitiveTypes}). Skipping.")
             return
 
         if self.tangents:
@@ -555,10 +563,9 @@ class GLTFModel(renpy.display.displayable.Displayable):
         self,
         filename: str,
         textures: Iterable = ("diffuse",),
-        shader: str|tuple[str] = "renpy.texture",
+        shader: str|tuple[str] = tuple(),
         tangents: bool = False,
         zoom: float = 1.0):
-
 
         super().__init__()
 
@@ -566,6 +573,9 @@ class GLTFModel(renpy.display.displayable.Displayable):
             shaders = (shader, )
         else:
             shaders = shader
+
+        if not shaders:
+            raise ValueError("At least one shader must be specified for GLTFModel. Consider 'renpy.texture' to start with.")
 
         self.filename = filename
         self.shaders = shaders
