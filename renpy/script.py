@@ -705,11 +705,16 @@ class Script(object):
         for node in all_stmts:
             name = node.name
 
-            check_name(node)
+            if isinstance(node, renpy.ast.Testcase):
+                # Handle testcases specially, as they are not part of the script.
+                renpy.test.testexecution.add_testcase(name, node) # type: ignore
 
-            # Add the name to the namemap. This uses the node as both key and value, as the node is equal to and
-            # hashes as its name.
-            self.namemap[node] = node
+            else:
+                check_name(node)
+
+                # Add the name to the namemap. This uses the node as both key and value, as the node is equal to and
+                # hashes as its name.
+                self.namemap[node] = node
 
             # Add any init nodes to self.initcode.
             if (priority := node.get_init()) is not None:

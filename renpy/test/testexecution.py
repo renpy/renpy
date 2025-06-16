@@ -84,8 +84,24 @@ class TestJump(Exception):
     def __init__(self, node: Node):
         self.node = node
 
+def add_testcase(name: str, node: Node | renpy.ast.Testcase) -> None:
+    """
+    Adds a testcase to the `testcases` dictionary. The name is a tuple of strings,
+    and the node is the root node of the testcase.
+    """
 
-def lookup(name: str, from_node: Node) -> Node:
+    if isinstance(node, renpy.ast.Testcase):
+        node = node.test
+
+    if name in testcases and testcases[name] != node:
+        # TODO: The node check is a hack, the same testcase is being added twice. Perhaps
+        #       once is from the compiled version, and once from the source
+        raise KeyError("Testcase {} already exists.".format(name))
+
+    testcases[name] = node
+
+
+def lookup(name: str, from_node: Node | None = None) -> Node:
     """
     Tries to look up the name with `target`. If found, returns it, otherwise
     raises an exception.
@@ -94,24 +110,27 @@ def lookup(name: str, from_node: Node) -> Node:
     if name in testcases:
         return testcases[name]
 
+    if from_node is None:
+        raise KeyError("Testcase {} not found.".format(name))
     raise KeyError("Testcase {} not found at {}:{}.".format(name, from_node.filename, from_node.linenumber))
 
 
-def call_node(name: str) -> Node:
+def call_node(name: str, target_node: Node | None = None, from_node: Node | None = None) -> Node:
     """
-    Calls the testcase with `name`. If found, returns it, otherwise
-    raises an exception.
+    Calls the node with the given name, pushing it onto the call stack.
+    If `target_node` is None, it looks up the node by name in the `testcases` dictionary.
+    If `target_node` is provided, it is used as the node to call instead of looking it up by name.
     """
 
     global node
 
-    if name not in testcases:
-        raise KeyError("Testcase {} not found")
+    if target_node is None:
+        target_node = lookup(name, from_node)
 
     if node is not None:
         call_node_stack.append((node, name))
 
-    return testcases[name]
+    return target_node
 
 
 def pop_call_node() -> Node | None:
@@ -316,10 +335,6 @@ def test_command() -> bool:
 
     args = ap.parse_args()
 
-    if args.testcase not in testcases:
-        raise Exception("Testcase {} was not found.".format(args.testcase))
-
-
     ## NOTE: This command gets called when the game starts for the first time, OR when the game
     ## goes back to the main menu after finishing the game. Special care is taken to avoid
     ## messing up the state of the test/call stack
@@ -327,7 +342,7 @@ def test_command() -> bool:
 
     if not node and not call_node_stack:
         ## A bit janky, but we want the testcase to be the root node
-        node = testcases[args.testcase]
+        node = lookup(args.testcase)
         call_node(args.testcase)
 
         ## Chain the nodes in the testcases

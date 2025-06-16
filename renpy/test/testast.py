@@ -116,6 +116,90 @@ class Node(object):
         return "<{}{} ({}:{})>".format(type(self).__name__, params, self.filename, self.linenumber)
 
 
+class Testcase(Node):
+    __slots__ = ("name", "setup", "subtests", "teardown")
+    def __init__(self, loc: NodeLocation, name: str, setup: Node | None = None,
+                 subtests: list["Testcase"] | None = None, teardown: Node | None = None):
+        super(Testcase, self).__init__(loc)
+        self.name = name
+        self.setup = setup
+        self.subtests = subtests if subtests is not None else []
+        self.teardown = teardown
+
+    def start(self) -> State:
+        """
+        Called once when the test case starts.
+        This is expected to return a state, or None to advance to the next
+        node.
+        """
+        renpy.test.testexecution.take_name(self.name)
+        # (subtest_index, ran_setup, ran_subtest, node_execution_state)
+        return (0, False, False, (None, None, 0.0, False))
+
+    def execute(self, state: State, t: float) -> State:
+        """
+        Executes the testcase. For each subtest, it calls the setup node,
+        then the subtest node, and finally the teardown node if it exists.
+        """
+        renpy.test.testexecution.take_name(self.name)
+        subtest_index, ran_setup, ran_subtest, node_execution_state = state
+        current_node, node_state, start, has_started = node_execution_state
+
+        if not ran_setup and self.setup:
+            if current_node is None:
+                current_node = self.setup
+
+            done, node_execution_state = self.execute_node(t, current_node, node_state, start, has_started)
+            return (subtest_index, done, False, node_execution_state)
+
+        ## Setup has been run, so we can proceed to the subtests.
+        if not ran_subtest and subtest_index < len(self.subtests):
+            if current_node is None:
+                current_node = self.subtests[subtest_index]
+
+            done, node_execution_state = self.execute_node(t, current_node, node_state, start, has_started)
+            return (subtest_index, True, done, node_execution_state)
+
+        ## Subtest has been run, so we can proceed to the teardown.
+        if self.teardown:
+            if current_node is None:
+                current_node = self.teardown
+
+            done, node_execution_state = self.execute_node(t, current_node, node_state, start, has_started)
+
+            if not done:
+                return (subtest_index, True, True, node_execution_state)
+
+        subtest_index += 1
+        if subtest_index < len(self.subtests):
+            return (subtest_index, False, False, (None, None, 0.0, False))
+
+        next_node(self.next)
+        return None
+
+
+    def execute_node(self,
+        t: float,
+        current_node: Node,
+        node_state: State,
+        start: float,
+        has_started: bool
+    ) -> tuple[bool, State]:
+        """
+        Executes a single node in the testcase.
+
+        Returns a tuple of (is_done, node_execution_state), where
+        `is_done` is True if the node has finished executing, and
+        `node_execution_state` is the state of the node after execution.
+        """
+        node_execution_state = renpy.test.testexecution.execute_node(t, current_node, node_state, start, has_started)
+        _, node_state, _, _ = node_execution_state
+
+        if node_state is None:
+            return (True, node_execution_state)
+
+        return (False, node_execution_state)
+
 class Condition(Node):
     """
     A base class for conditions that can be used in test scripts.
