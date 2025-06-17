@@ -127,6 +127,20 @@ def pass_statement(l: Lexer, loc: NodeLocation) -> testast.Pass:
 ##############################################################################
 # Statement functions: Actions
 
+@test_statement("advance")
+def advance_statement(l: Lexer, loc: NodeLocation) -> testast.Advance | testast.Until:
+    l.expect_noblock("advance statement")
+
+    rv = testast.Advance(loc)
+
+    if until := parse_until(l, loc, rv):
+        rv = until
+
+    l.expect_eol()
+    l.advance()
+
+    return rv
+
 @test_statement("click")
 def click_statement(l: Lexer, loc: NodeLocation) -> testast.Click | testast.Until:
     l.expect_noblock("click statement")
