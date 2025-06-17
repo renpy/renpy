@@ -552,7 +552,7 @@ class Type(SelectorDrivenNode):
 
         move_mouse(x, y)
 
-        keysym = "K_" + self.text[state]
+        keysym = self.text[state]
         renpy.test.testkey.down(self, keysym)
         renpy.test.testkey.up(self, keysym)
 
@@ -835,7 +835,7 @@ class Until(Node):
 
     def execute(self, state, t):
         if self.timeout is not None and t > self.timeout:
-            msg = "Testcase timed out after {} seconds.".format(self.timeout)
+            msg = "Until timed out after {} seconds.".format(self.timeout)
             raise renpy.test.testexecution.TestcaseException(msg)
 
         child, child_state, start_time, has_started = state
@@ -895,7 +895,8 @@ class If(Node):
 
 class Python(Node):
     __slots__ = ("code", "hide")
-    def __init__(self, loc: NodeLocation, code: renpy.ast.PyCode, hide: bool =False):
+
+    def __init__(self, loc: NodeLocation, code: renpy.ast.PyCode, hide: bool = False):
         Node.__init__(self, loc)
         self.code = code
         self.hide = hide
@@ -906,7 +907,7 @@ class Python(Node):
 
     def execute(self, state, t):
         if renpy.test.testexecution.action:
-            return True
+            return state
         else:
             next_node(self.next)
             return None
