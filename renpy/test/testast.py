@@ -643,6 +643,40 @@ class Pass(Node):
     pass
 
 
+class Advance(Node):
+    """
+    Advances the said dialogue by one line.
+    """
+    last_event: str = ""
+    last_kwargs: dict = {}
+    began_newline: bool = False
+
+    @staticmethod
+    def character_callback(event, **kwargs) -> None:
+        if event == "begin":
+            Advance.began_newline = True
+        Advance.last_event = event
+        Advance.last_kwargs = kwargs
+
+    def start(self):
+        Advance.began_newline = False
+        return Advance.last_event
+
+    def execute(self, state, t):
+        if Advance.began_newline:
+            next_node(self.next)
+            return None
+
+        renpy.test.testkey.queue_keysym(self, "dismiss")
+        return Advance.last_event
+
+    def ready(self):
+        if Advance.character_callback not in renpy.config.all_character_callbacks:
+            renpy.config.all_character_callbacks.append(Advance.character_callback)
+
+        return True
+
+
 ################################################################################
 # Boolean proxy clauses
 
