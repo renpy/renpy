@@ -304,6 +304,24 @@ def scroll_statement(l: Lexer, loc: NodeLocation) -> testast.Scroll | testast.Un
     return rv
 
 
+@test_statement("skip")
+def advance_statement(l: Lexer, loc: NodeLocation) -> testast.Skip | testast.Until:
+    l.expect_noblock("skip statement")
+
+    rv = testast.Skip(loc)
+
+    if l.keyword("fast"):
+        rv.fast = True
+
+    if until := parse_until(l, loc, rv):
+        rv = until
+
+    l.expect_eol()
+    l.advance()
+
+    return rv
+
+
 @test_statement("type")
 def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
     l.expect_noblock("type statement")
