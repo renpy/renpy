@@ -118,42 +118,6 @@ TEXTURE_TYPES = {
 }
 
 
-class ModelData:
-    """
-    Represents the information about a model after it's been loaded.
-    """
-
-    embedded_textures: dict[str, Data]
-    "The embedded textures in the model."
-
-    mesh_info: dict[str, MeshInfo]
-    "Information required to blit each mesh in the model."
-
-    def __init__(self):
-        self.embedded_textures = { }
-        self.mesh_info = [ ]
-
-
-    def duplicate(self):
-        """
-        Duplicates the model data.
-        """
-
-        rv = ModelData()
-        rv.embedded_textures = self.embedded_textures.copy()
-        rv.mesh_info = [ mi.duplicate() for mi in self.mesh_info ]
-
-        return rv
-
-
-cache: dict[AssimpModel, ModelData] = { }
-"Caches the models that have been loaded."
-
-predicted: set[AssimpModel]|None = None
-"The set of models that are predicted to be loaded."
-
-new_predicted: set[AssimpModel] = set()
-"The same, but before finish_predict() is called."
 
 
 def free_memory():
@@ -168,12 +132,9 @@ class MeshInfo:
     mesh: Mesh3
     "The mesh that's being loaded."
 
-    reverse_matrix: Matrix
-    forward_matrix: Matrix
-
     textures: list
     """
-    A list of displaybles to render and blit as textures.
+    A list of displayables to render and blit as textures.
     """
 
     shaders: Iterable[str]
@@ -181,11 +142,9 @@ class MeshInfo:
     The shaders to use.
     """
 
-    def __init__(self, Loader loader, Mesh3 mesh, reverse_matrix: Matrix, forward_matrix: Matrix,  int material_index, textures: Iterable[str], shaders: Iterable[str]):
+    def __init__(self, Loader loader, Mesh3 mesh, int material_index, textures: Iterable[str], shaders: Iterable[str]):
 
         self.mesh = mesh
-        self.reverse_matrix = reverse_matrix
-        self.forward_matrix = forward_matrix
 
         self.textures = [ ]
 
@@ -219,8 +178,6 @@ class MeshInfo:
 
         rv = MeshInfo.__new__(MeshInfo)
         rv.mesh = self.mesh
-        rv.reverse_matrix = self.reverse_matrix
-        rv.forward_matrix = self.forward_matrix
         rv.shaders = self.shaders
 
         rv.textures = [ ]
@@ -232,6 +189,86 @@ class MeshInfo:
                 rv.textures.append(d)
 
         return rv
+
+class BlitInfo:
+    """
+    This stores the information used to blit a texture.
+    """
+
+    def __init__(self, reverse: Matrix, forward: Matrix, mesh_info: MeshInfo):
+        """
+        Initializes the BlitInfo.
+        """
+
+        self.reverse: Matrix = reverse
+        self.forward: Matrix = forward
+        self.mesh_info: MeshInfo = mesh_info
+
+        if self.mesh_info is None:
+            raise ValueError("MeshInfo cannot be None.")
+
+
+    def duplicate(self, cache: dict) -> "BlitInfo":
+        """
+        Duplicates the BlitInfo, caching the MeshInfo.
+        """
+
+        key = id(self.mesh_info)
+
+        if key in cache:
+            mesh_info = cache[key]
+        else:
+            mesh_info = self.mesh_info.duplicate()
+            cache[key] = mesh_info
+
+        return BlitInfo(
+            self.reverse,
+            self.forward,
+            mesh_info)
+
+class ModelData:
+    """
+    Represents the information about a model after it's been loaded.
+    """
+
+    embedded_textures: dict[str, Data]
+    "The embedded textures in the model."
+
+    blit_info: list[BlitInfo]
+    "Information required to blit each mesh in the model."
+
+    mesh_info: list[MeshInfo]
+    "A list of MeshInfo objects used by the blit_info objects."
+
+    def __init__(self):
+        self.embedded_textures = { }
+        self.blit_info = [ ]
+
+
+    def duplicate(self):
+        """
+        Duplicates the model data.
+        """
+
+        rv = ModelData()
+        rv.embedded_textures = self.embedded_textures.copy()
+
+        cache = { }
+        rv.blit_info = [ bi.duplicate(cache) for bi in self.blit_info ]
+
+        return rv
+
+
+cache: dict[GLTFModel, ModelData] = { }
+"Caches the models that have been loaded."
+
+predicted: set[GLTFModel]|None = None
+"The set of models that are predicted to be loaded."
+
+new_predicted: set[GLTFModel] = set()
+"The same, but before finish_predict() is called."
+
+
 
 cdef class Loader:
 
@@ -247,6 +284,9 @@ cdef class Loader:
     cdef public object model_data
     "The ModelData object that is being filled in."
 
+    cdef public dict mesh_info
+    "A dictionary mapping mesh indices to MeshInfo objects."
+
     cdef public bint tangents
     "True if tangents should be included in the mesh."
 
@@ -258,6 +298,8 @@ cdef class Loader:
 
     cdef public object filename
     "The name of the file being loaded."
+
+
 
     def __cinit__(self):
         self.importer.SetIOHandler(new RenpyIOSystem())
@@ -291,6 +333,7 @@ cdef class Loader:
         try:
 
             self.model_data = model_data
+            self.mesh_info = { }
 
             self.load_textures()
 
@@ -300,9 +343,12 @@ cdef class Loader:
 
             self.load_node(self.scene.mRootNode, m)
 
+            self.model_data.mesh_info = list(self.mesh_info.values())
+
             return self.model_data
 
         finally:
+            self.mesh_info = { }
             self.shaders = [ ]
             self.textures = [ ]
             self.model_data = None
@@ -365,16 +411,29 @@ cdef class Loader:
         matrix = matrix * node_matrix
 
         for i in range(node.mNumMeshes):
-            self.load_mesh(node.mMeshes[i], matrix)
+
+            mesh_info = self.load_mesh(node.mMeshes[i])
+
+            if mesh_info is None:
+                continue
+
+            self.model_data.blit_info.append(BlitInfo(
+                matrix,
+                matrix.inverse(),
+                mesh_info))
 
         for i in range(node.mNumChildren):
             self.load_node(node.mChildren[i], matrix)
 
 
-    def load_mesh(self, mesh_index: int, matrix: Matrix) -> Render:
+    def load_mesh(self, mesh_index: int) -> MeshInfo:
         """
         Loads the mesh with index `mesh_index` from the scene.
         """
+
+        cached = self.mesh_info.get(mesh_index, None)
+        if cached is not None:
+            return cached
 
         if mesh_index < 0 or mesh_index >= self.scene.mNumMeshes:
             raise Exception("Invalid mesh index %d." % mesh_index)
@@ -383,7 +442,6 @@ cdef class Loader:
 
         def log(msg: str):
             renpy.display.log.write("%s", msg)
-
 
         if mesh.mPrimitiveTypes == aiPrimitiveType_LINE:
             log(f"Warning: {self.filename!r}, mesh {mesh_index} is a line mesh, which is not supported. Skipping.")
@@ -455,13 +513,12 @@ cdef class Loader:
         info = MeshInfo(
             self,
             m,
-            matrix,
-            matrix.inverse(),
             mesh.mMaterialIndex,
             self.textures,
             self.shaders)
 
-        self.model_data.mesh_info.append(info)
+        self.mesh_info[mesh_index] = info
+        return info
 
 loader = Loader()
 "The loader used to load in imported models."
@@ -631,11 +688,13 @@ class GLTFModel(renpy.display.displayable.Displayable):
 
         rv = Render(0, 0)
 
-        for mi in model_data.mesh_info:
+        for bi in model_data.blit_info:
+            mi = bi.mesh_info
+
             cr = Render(0, 0)
             cr.mesh = mi.mesh
-            cr.reverse = mi.reverse_matrix
-            cr.forward = mi.forward_matrix
+            cr.reverse = bi.reverse
+            cr.forward = bi.forward
 
             for i in mi.shaders:
                 cr.add_shader(i)
