@@ -677,6 +677,23 @@ class Advance(Node):
         return True
 
 
+class Skip(Node):
+    """
+    Trigger the skip key
+    """
+    __slots__ = ("fast",)
+
+    def __init__(self, loc: NodeLocation, fast: bool = False):
+        super(Skip, self).__init__(loc)
+        self.fast = fast
+
+    def start(self):
+        if self.fast:
+            renpy.config.skipping = "fast"
+        else:
+            renpy.config.skipping = "slow"
+        return True
+
 ################################################################################
 # Boolean proxy clauses
 
