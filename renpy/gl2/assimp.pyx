@@ -373,10 +373,6 @@ cdef class Loader:
             if d is not None:
                 uniforms[uniform] = unoptimized_texture(d)
 
-        if "u_tex_diffuse" not in uniforms:
-            # If no diffuse texture is set, we use a white texture.
-            uniforms["u_tex_diffuse"] = unoptimized_texture(renpy.display.im.Null("#fff"))
-
         return uniforms
 
     def get_material_uniforms(self, material_index: int):
@@ -597,12 +593,20 @@ class GLTFModel(renpy.display.displayable.Displayable):
     zoom: float
     "The zoom level of the model."
 
+    uniforms: dict[str, object]
+
+    texture_uniforms: dict[str, renpy.display.displayable.Displayable]
+    """
+    A dictionary of texture uniforms.
+    """
+
     def __init__(
         self,
         filename: str,
         shader: str|tuple[str] = tuple(),
         tangents: bool = False,
-        zoom: float = 1.0):
+        zoom: float = 1.0,
+        **kwargs):
 
         super().__init__()
 
@@ -618,6 +622,21 @@ class GLTFModel(renpy.display.displayable.Displayable):
         self.shaders = shaders
         self.tangents = tangents
         self.zoom = zoom
+
+        self.uniforms = { }
+        self.texture_uniforms = { }
+
+        kwargs.setdefault("u_tex_diffuse", renpy.display.im.Null("#fff"))
+
+        for k, v in kwargs.items():
+
+            if k.startswith("u_tex_"):
+                self.texture_uniforms[k] = renpy.display.im.unoptimized_texture(renpy.easy.displayable(v))
+            elif k.startswith("u_"):
+                self.uniforms[k] = v
+            else:
+                raise ValueError(f"Unknown keyword argument {k!r} for GLTFModel. Uniforms must start with 'u_'.")
+
 
     def load(self):
         """
@@ -658,6 +677,13 @@ class GLTFModel(renpy.display.displayable.Displayable):
 
         rv = Render(0, 0)
 
+        for k, v in self.uniforms.items():
+            rv.add_uniform(k, v)
+
+        for k, v in self.texture_uniforms.items():
+            tr = renpy.display.im.render_for_texture(v, width, height, st, at)
+            rv.add_uniform(k, tr)
+
         for bi in model_data.blit_info:
             mi = bi.mesh_info
 
@@ -672,12 +698,19 @@ class GLTFModel(renpy.display.displayable.Displayable):
             for k, v in mi.uniforms.items():
                 cr.add_uniform(k, v)
 
+            has_diffuse = False
+
             for k, i in mi.texture_uniforms.items():
                 tr = renpy.display.im.render_for_texture(i, width, height, st, at)
                 cr.add_uniform(k, tr)
 
                 if k == "u_tex_diffuse":
                     cr.blit(tr, (0, 0))
+                    has_diffuse = True
+
+            if not has_diffuse:
+                tr = renpy.display.im.render_for_texture(self.texture_uniforms.get("u_tex_diffuse", renpy.display.im.Null("#fff")), width, height, st, at)
+                cr.blit(tr, (0, 0))
 
             rv.blit(cr, (0, 0))
 
