@@ -22,6 +22,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import print_function
+from typing import Literal
 
 DEF ANGLE = False
 
@@ -1323,6 +1324,50 @@ cdef class GL2Draw:
 
 BIG_PIXELS = 65536 # Chosen to be bigger than any reasonable screen size, to limit
 
+current_cull_face: Literal["ccw",  "cw", None] = None
+"The current setting of the cull face."
+
+current_invert_front_face: bool = False
+"""
+Should the front face be inverted? This is used to make the front face work properly when rendering to
+texture, with a flipped y axis.
+"""
+
+def set_cull_face(cull_face):
+    """
+    Sets the cull face.
+    """
+
+    global current_cull_face
+
+    current_cull_face = cull_face
+
+    # Cull face is in Ren'Py's coordinate system, which is inverted from OpenGL's,
+    # and so when CW is selectes here we choose ccw, and vice-versa.
+
+    if cull_face == "cw":
+        glEnable(GL_CULL_FACE)
+        glCullFace(GL_BACK)
+
+        if not current_invert_front_face:
+            glFrontFace(GL_CCW)
+        else:
+            glFrontFace(GL_CW)
+
+    elif cull_face == "ccw":
+        glEnable(GL_CULL_FACE)
+        glCullFace(GL_BACK)
+
+        if not current_invert_front_face:
+            glFrontFace(GL_CW)
+        else:
+            glFrontFace(GL_CCW)
+
+    else:
+        glDisable(GL_CULL_FACE)
+        glCullFace(GL_BACK)
+
+
 cdef class GL2DrawingContext:
     """
     This is an object that represents the state of the GL rendering
@@ -1369,7 +1414,7 @@ cdef class GL2DrawingContext:
 
         rv.pixel_perfect = self.pixel_perfect
         rv.has_depth = self.has_depth
-        rv.invert_front_face = self.invert_front_face
+        rv.cull_face = self.cull_face
 
         return rv
 
@@ -1430,6 +1475,10 @@ cdef class GL2DrawingContext:
 
         cdef GL2Draw gl2draw = renpy.display.draw
         cdef Mesh mesh = model.mesh
+
+        # Handle cull_face.
+        if self.cull_face is not current_cull_face:
+            set_cull_face(self.cull_face)
 
         # If a clip polygon is in place, clip the mesh with it.
         if self.clip_polygon is not None:
@@ -1525,7 +1574,6 @@ cdef class GL2DrawingContext:
         cdef Polygon new_clip_polygon
         cdef bint has_reverse = False
         cdef bint has_depth = False
-        cdef bint has_cull_face = False
 
         if what.__class__ is not Render:
 
@@ -1578,37 +1626,9 @@ cdef class GL2DrawingContext:
 
                 self.has_depth = True
 
-            cull_face = r.properties.get("cull_face", None)
-            if cull_face is not None:
-
-                # Cull face is in Ren'Py's coordinate system, which is inverted from OpenGL's,
-                # and so when CW is selectes here we choose ccw, and vice-versa.
-
-                if cull_face == "cw":
-                    glEnable(GL_CULL_FACE)
-                    glCullFace(GL_BACK)
-                    has_cull_face = True
-
-                    if not self.invert_front_face:
-                        glFrontFace(GL_CCW)
-                    else:
-                        glFrontFace(GL_CW)
-
-                elif cull_face == "ccw":
-                    glEnable(GL_CULL_FACE)
-                    glCullFace(GL_BACK)
-                    has_cull_face = True
-
-                    if not self.invert_front_face:
-                        glFrontFace(GL_CW)
-                    else:
-                        glFrontFace(GL_CCW)
-
-                else:
-                    has_cull_face = False
-
-            else:
-                has_cull_face = False
+            cull_face = r.properties.get("cull_face", False)
+            if cull_face is not False:
+                self.cull_face = cull_face
 
         if has_reverse:
             self.pixel_perfect = False
@@ -1670,9 +1690,6 @@ cdef class GL2DrawingContext:
         if has_depth:
             glDisable(GL_DEPTH_TEST)
 
-        if has_cull_face:
-            glDisable(GL_CULL_FACE)
-
         return 0
 
 
@@ -1703,6 +1720,11 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
         and vice versa. Used when rendering to a texture.
     """
 
+    global current_invert_front_face
+
+    current_invert_front_face = invert_front_face
+    set_cull_face(None)
+
     cdef GL2DrawingContext ctx = root_context
 
     ctx.width = drawable_width
@@ -1720,8 +1742,6 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
 
     ctx.clip_polygon = None
     ctx.pixel_perfect = True
-
-    ctx.invert_front_face = invert_front_face
 
     if renpy.config.nearest_neighbor:
         ctx.properties["texture_scaling"] = "nearest"
