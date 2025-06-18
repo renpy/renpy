@@ -128,8 +128,6 @@ TEXTURE_TYPES = {
 }
 
 
-
-
 def free_memory():
     cache.clear()
 
@@ -218,7 +216,28 @@ class ModelData:
             renpy.display.log.write("%s", msg)
 
         log(f"GLTFModel {self.filename!r}")
-        log("   Uniforms:")
+
+        minx = miny = minz = float("inf")
+        maxx = maxy = maxz = float("-inf")
+
+        for bi in self.blit_info:
+            for x, y, z, w in bi.mesh_info.mesh.get_points():
+
+                x, y, z = bi.reverse.transform(x, y, z, components=3)
+
+                minx = min(minx, x)
+                miny = min(miny, y)
+                minz = min(minz, z)
+
+                maxx = max(maxx, x)
+                maxy = max(maxy, y)
+                maxz = max(maxz, z)
+
+        log(f"  Bounding box (after zoom):")
+
+        log(f"    X: {minx:.3f} to {maxx:.3f}")
+        log(f"    Y: {miny:.3f} to {maxy:.3f}")
+        log(f"    Z: {minz:.3f} to {maxz:.3f}")
 
         uniform_sets = [ ]
 
@@ -228,6 +247,8 @@ class ModelData:
         any_uniforms = set.union(*uniform_sets)
         all_uniforms = set.intersection(*uniform_sets)
         all_uniforms.add("u_tex_diffuse")
+
+        log("  Uniforms:")
 
         for u in sorted(any_uniforms):
             if u not in all_uniforms:
