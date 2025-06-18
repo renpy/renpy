@@ -78,7 +78,7 @@ class Node(object):
         This is expected to return a state, or None to advance to the next
         node.
         """
-        return True
+        return 0
 
     def execute(self, state: State, t: float) -> State:
         """
@@ -210,7 +210,7 @@ class Condition(Node):
     def execute(self, state: State, t: float) -> State:
         raise TestcaseException("Conditions should not be executed directly. Use `ready()` instead.")
 
-class TestcaseException(ValueError):pass
+class TestcaseException(RuntimeError):pass
 
 class SelectorException(TestcaseException):pass
 
@@ -303,6 +303,9 @@ class TextSelector(Selector):
 
     def get_element(self) -> Focus | None:
         return renpy.test.testfocus.find_focus(self.pattern)
+
+    def get_repr_params(self) -> str:
+        return f"pattern={self.pattern!r}"
 
 
 class SelectorDrivenNode(Node):
@@ -603,11 +606,12 @@ class Pause(Node):
         self.expr = expr
 
     def start(self):
-        return float(renpy.python.py_eval(self.expr))
 
     def execute(self, state, t):
-        if t < state:
-            return state
+        delay, _ = state
+        if t < delay:
+            ## Avoids timeout by appending t to the state
+            return delay, t
         else:
             next_node(self.next)
             return None
@@ -835,7 +839,7 @@ class Until(Node):
 
     def execute(self, state, t):
         if self.timeout is not None and t > self.timeout:
-            msg = "Until timed out after {} seconds.".format(self.timeout)
+            msg = "Until Statement timed out after {} seconds.".format(self.timeout)
             raise renpy.test.testexecution.TestcaseException(msg)
 
         child, child_state, start_time, has_started = state
