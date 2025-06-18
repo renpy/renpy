@@ -134,6 +134,7 @@ cdef extern from "assimp/material.h":
         aiString mKey
         unsigned int mSemantic
         unsigned int mIndex
+        unsigned int mDataLength
         aiPropertyTypeInfo mType
 
     cdef struct aiMaterial:
@@ -150,6 +151,14 @@ cdef extern from "assimp/material.h":
         ai_real *pOut)
 
     aiReturn aiGetMaterialFloatArray(
+        const aiMaterial *pMat,
+        const char *pKey,
+        unsigned int type,
+        unsigned int index,
+        ai_real *pOut,
+        unsigned int *pMax)
+
+    aiReturn aiGetMaterialIntegerArray(
         const aiMaterial *pMat,
         const char *pKey,
         unsigned int type,

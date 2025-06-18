@@ -165,7 +165,6 @@ class MeshInfo:
         self.texture_uniforms = loader.get_texture_uniforms(material_index)
 
 
-
 class BlitInfo:
     """
     This stores the information used to blit a texture.
@@ -374,11 +373,16 @@ cdef class Loader:
             if d is not None:
                 uniforms[uniform] = unoptimized_texture(d)
 
+        if "u_tex_diffuse" not in uniforms:
+            # If no diffuse texture is set, we use a white texture.
+            uniforms["u_tex_diffuse"] = unoptimized_texture(renpy.display.im.Null("#fff"))
+
         return uniforms
 
     def get_material_uniforms(self, material_index: int):
 
         cdef float[4] values
+        cdef int ivalue
         cdef unsigned int pmax
 
         cdef aiMaterial *material = self.scene.mMaterials[material_index]
@@ -386,6 +390,8 @@ cdef class Loader:
         uniforms = { }
 
         for i in range(material.mNumProperties):
+            pmax = 4
+
             prop = material.mProperties[i]
 
             key = prop.mKey.data[:prop.mKey.length].decode()
@@ -394,29 +400,31 @@ cdef class Loader:
             suffix = suffix.lower().replace(".", "_")
 
             if prop.mType != aiPTI_Float and prop.mType != aiPTI_Double and prop.mType != aiPTI_Integer and prop.mType != aiPTI_Buffer:
-                print(f"Material {material_index} property {key} has unsupported type {prop.mType}. Skipping.")
                 continue
 
             if prefix == "$mat":
                 name = f"u_material_{suffix}"
-                pmax = 1
-
-                if aiGetMaterialFloatArray(material, prop.mKey.data, 0, 0, &values[0], &pmax):
-                    continue
-
-                uniforms[name] = values[0]
-
             elif prefix == "$clr":
                 name = f"u_color_{suffix}"
-                pmax = 4
-
-                if aiGetMaterialFloatArray(material, prop.mKey.data, 0, 0, &values[0], &pmax):
-                    continue
-
-                uniforms[name] = (values[0], values[1], values[2], values[3])
-
             else:
                 continue
+
+            pmax = 4
+            if aiGetMaterialFloatArray(material, prop.mKey.data, 0, 0, &values[0], &pmax):
+                continue
+
+            if pmax == 1:
+                value = values[0]
+            elif pmax == 2:
+                value = (values[0], values[1])
+            elif pmax == 3:
+                value = (values[0], values[1], values[2])
+            elif pmax == 4:
+                value = (values[0], values[1], values[2], values[3])
+            else:
+                continue
+
+            uniforms[name] = value
 
         return uniforms
 
