@@ -292,6 +292,9 @@ def tts(s):
     if not renpy.game.preferences.self_voicing:
         return
 
+    if not renpy.config.tts_queue:
+        tts_queue[:] = [ ]
+
     tts_queue.append(s)
 
 
@@ -314,6 +317,10 @@ def speak(s, translate=True, force=False):
         s = renpy.translation.translate_string(s)
 
     s = apply_substitutions(s)
+
+    if not renpy.config.tts_queue:
+        tts_queue[:] = [ ]
+
     tts_queue.append(s)
 
 
