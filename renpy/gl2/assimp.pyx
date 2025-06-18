@@ -78,8 +78,8 @@ from assimpapi cimport (
 
     aiString,
     aiMaterial,
-    aiGetMaterialFloatArray
-
+    aiGetMaterialFloatArray,
+    aiGetMaterialIntegerArray,
 
 )
 
@@ -155,6 +155,11 @@ class MeshInfo:
     A dictionary of texture uniforms that are set by the material.
     """
 
+    twosided: bool
+    """
+    True of the mesh is two-sided, and should be rendered with backface culling disabled.
+    """
+
     def __init__(self, Loader loader, Mesh3 mesh, int material_index, textures: Iterable[str], shaders: Iterable[str]):
 
         self.mesh = mesh
@@ -162,6 +167,7 @@ class MeshInfo:
 
         self.uniforms = loader.get_material_uniforms(material_index)
         self.texture_uniforms = loader.get_texture_uniforms(material_index)
+        self.twosided = loader.get_twosided(material_index)
 
 
 class BlitInfo:
@@ -484,6 +490,20 @@ cdef class Loader:
 
         return uniforms
 
+    def get_twosided(self, material_index: int) -> bool:
+        """
+        Returns True if the material with the given index is two-sided.
+        """
+
+        cdef aiMaterial *material = self.scene.mMaterials[material_index]
+        cdef int ivalue
+
+        if aiGetMaterialIntegerArray(material, "$mat.twosided", 0, 0, &ivalue, NULL):
+            return False
+
+        return ivalue != 0
+
+
     cdef load_node(self, aiNode *node, matrix : Matrix):
         cdef unsigned int i
 
@@ -772,6 +792,9 @@ class GLTFModel(renpy.display.displayable.Displayable):
 
             for k, v in mi.uniforms.items():
                 cr.add_uniform(k, v)
+
+            if mi.twosided:
+                cr.add_uniform("u_cull_face", None)
 
             has_diffuse = False
 

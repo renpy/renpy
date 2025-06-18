@@ -163,7 +163,7 @@ cdef extern from "assimp/material.h":
         const char *pKey,
         unsigned int type,
         unsigned int index,
-        ai_real *pOut,
+        int *pOut,
         unsigned int *pMax)
 
 cdef extern from "assimp/texture.h":
