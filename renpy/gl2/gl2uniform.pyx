@@ -472,6 +472,29 @@ cdef class VirtualSizeGetter(Getter):
         return renpy.display.draw.virtual_size
 
 
+cdef class PremultiplyGetter(Getter):
+    """
+    A getter that returns the premultiplied value of the value returned by
+    another getter.
+    """
+
+    cdef Getter getter
+
+    def __init__(self, uniform_name, getter):
+        Getter.__init__(self, uniform_name)
+        self.getter = getter
+
+    def __repr__(self):
+        return f"PremultiplyGetter({self.getter!r})"
+
+    cdef object get(self, GL2DrawingContext context, GL2Model model):
+        value = self.getter.get(context, model)
+
+        if type(value) is tuple and len(value) == 4:
+            return (value[0] * value[3], value[1] * value[3], value[2] * value[3], value[3])
+        else:
+            raise TypeError("PremultiplyGetter only works with vec4 values.")
+
 
 cdef class InverseGetter(Getter):
 
@@ -669,6 +692,9 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
 
     if operation is None:
         pass
+    elif operation == "premul":
+        getter = PremultiplyGetter(uniform_name, getter)
+        uniform_type = "vec4"
     elif operation == "inverse":
         getter = InverseGetter(uniform_name, getter)
         uniform_type = "mat4"

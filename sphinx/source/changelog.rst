@@ -91,6 +91,11 @@ Ren'Py now can supply separate model to world (u_model), world to camera view (u
 that combines u_projection and u_view, and the existing u_transform matrix is all three. Breaking these out allows
 OpenGL shaders to support lighting.
 
+Ren'Py's GLSL shader support now supports performing operations on the underlying data before passing it to
+a uniform. For example, if ``u_color`` is an RGBA uniform, ``u_color__premul`` is that color, premultiplied
+by its alpha channel. Other suffixes get the resolution of a texture, and can perform inverse, transpose,
+and inverse transpose operations on matrices.
+
 Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
 to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
 

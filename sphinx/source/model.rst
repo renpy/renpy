@@ -405,9 +405,13 @@ The following uniforms are made available to all models.
     image file. After a render to texture, it's the number of drawable pixels
     the rendered texture covered.
 
-In addition, if a sampler uniform is available, then suffixing it with ``__res`` will give a vec2
+If a sampler uniform is available, then suffixing it with ``__res`` will give a vec2
 containing the underlying texture size. For example, ``u_markup__res`` will give the size of the
 ``u_markup`` texture.
+
+If a vec4 uniform is available, then suffixing it with ``__premul`` will give a vec4
+containing the premultiplied color. For example, ``u_color__premul`` will give a vec4
+where the red, green, and blue channels are multiplied by the alpha channel.
 
 Matrix Uniforms
 ----------------
