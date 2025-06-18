@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+import functools
 import threading
 
 from typing import Iterable, Literal
@@ -187,6 +188,9 @@ class ModelData:
     Represents the information about a model after it's been loaded.
     """
 
+    filename: str
+    "The filename of the model."
+
     embedded_textures: dict[str, Data]
     "The embedded textures in the model."
 
@@ -200,6 +204,36 @@ class ModelData:
         self.embedded_textures = { }
         self.blit_info = [ ]
 
+
+    def report(self):
+        """
+        Prints a report of the model data.
+        """
+
+        def log(msg: str):
+            """
+            Prints a message to the log.
+            """
+
+            renpy.display.log.write("%s", msg)
+
+        log(f"GLTFModel {self.filename!r}")
+        log("   Uniforms:")
+
+        uniform_sets = [ ]
+
+        for i in self.mesh_info:
+            uniform_sets.append(set(i.uniforms) | set(i.texture_uniforms))
+
+        any_uniforms = set.union(*uniform_sets)
+        all_uniforms = set.intersection(*uniform_sets)
+        all_uniforms.add("u_tex_diffuse")
+
+        for u in sorted(any_uniforms):
+            if u not in all_uniforms:
+                log(f"    {u} (not in all meshes)")
+            else:
+                log(f"    {u}")
 
 
 cache: dict[GLTFModel, ModelData] = { }
@@ -255,7 +289,8 @@ cdef class Loader:
         filename: str,
         shaders: Iterable[str|renpy.display.displayable.Displayable],
         tangents: bool,
-        zoom: float) -> None:
+        zoom: float,
+        report: bool) -> None:
 
         self.filename = filename
 
@@ -289,7 +324,11 @@ cdef class Loader:
 
             self.load_node(self.scene.mRootNode, m)
 
+            self.model_data.filename = filename
             self.model_data.mesh_info = list(self.mesh_info.values())
+
+            if report:
+                self.model_data.report()
 
             return self.model_data
 
@@ -579,6 +618,10 @@ class GLTFModel(renpy.display.displayable.Displayable):
     `zoom`
         A zoom factor that will be applied to the model. Many models naturally use the range -1 to 1, and so this
         may need to be quite large to make the model visible.
+
+    `report`
+        If true, a report of the model will be printed to the log. This includes the uniforms that are used by
+        the model.
     """
 
     filename: str
@@ -594,10 +637,18 @@ class GLTFModel(renpy.display.displayable.Displayable):
     "The zoom level of the model."
 
     uniforms: dict[str, object]
+    """
+    A dictionary of uniforms that are set by the model.
+    """
 
     texture_uniforms: dict[str, renpy.display.displayable.Displayable]
     """
     A dictionary of texture uniforms.
+    """
+
+    report: bool
+    """
+    Should a report of the model be printed to the log? This includes the uniforms that are used by the model.
     """
 
     def __init__(
@@ -606,6 +657,7 @@ class GLTFModel(renpy.display.displayable.Displayable):
         shader: str|tuple[str] = tuple(),
         tangents: bool = False,
         zoom: float = 1.0,
+        report: bool = False,
         **kwargs):
 
         super().__init__()
@@ -622,6 +674,7 @@ class GLTFModel(renpy.display.displayable.Displayable):
         self.shaders = shaders
         self.tangents = tangents
         self.zoom = zoom
+        self.report = report
 
         self.uniforms = { }
         self.texture_uniforms = { }
@@ -657,7 +710,8 @@ class GLTFModel(renpy.display.displayable.Displayable):
                         self.filename,
                         self.shaders,
                         self.tangents,
-                        self.zoom)
+                        self.zoom,
+                        self.report)
 
                 except Exception as e:
                     del cache[self]
