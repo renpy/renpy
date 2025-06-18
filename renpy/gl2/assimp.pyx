@@ -221,6 +221,7 @@ class ModelData:
 
             renpy.display.log.write("%s", msg)
 
+        log("")
         log(f"GLTFModel {self.filename!r}")
 
         minx = miny = minz = float("inf")
@@ -247,8 +248,53 @@ class ModelData:
 
         uniform_sets = [ ]
 
+        min_values = { }
+        max_values = { }
+
+        def recursive_min(a, b):
+            """
+            Returns the minimum of a and b. If a and b are tuples, it returns a tuple of the minimums.
+            """
+
+            if isinstance(a, tuple) and isinstance(b, tuple):
+                return tuple(recursive_min(x, y) for x, y in zip(a, b))
+            else:
+                return min(a, b)
+
+        def recursive_max(a, b):
+            """
+            Returns the maximum of a and b. If a and b are tuples, it returns a tuple of the maximums.
+            """
+            if isinstance(a, tuple) and isinstance(b, tuple):
+                return tuple(recursive_max(x, y) for x, y in zip(a, b))
+            else:
+                return max(a, b)
+
+
+        def recursive_format(v):
+            """
+            Formats a value for display. If it's a tuple, it formats each element.
+            """
+
+            if v is None:
+                return "N/A"
+
+            if isinstance(v, tuple):
+                return "(" + ", ".join(f"{x:.5g}" for x in v) + ")"
+            else:
+                return f"{v:.5g}"
+
         for i in self.mesh_info:
             uniform_sets.append(set(i.uniforms) | set(i.texture_uniforms))
+
+            for k, v in i.uniforms.items():
+                if k not in min_values:
+                    min_values[k] = v
+                    max_values[k] = v
+                else:
+                    min_values[k] = recursive_min(min_values[k], v)
+                    max_values[k] = recursive_max(max_values[k], v)
+
 
         any_uniforms = set.union(*uniform_sets)
         all_uniforms = set.intersection(*uniform_sets)
@@ -257,10 +303,19 @@ class ModelData:
         log("  Uniforms:")
 
         for u in sorted(any_uniforms):
-            if u not in all_uniforms:
-                log(f"    {u} (not in all meshes)")
+
+            min_value = min_values.get(u, None)
+            max_value = max_values.get(u, None)
+
+            if min_value is not None:
+                value_range = f"(range {recursive_format(min_value)} to {recursive_format(max_value)}) "
             else:
-                log(f"    {u}")
+                value_range = ""
+
+            if u not in all_uniforms:
+                log(f"    {u} {value_range}(not in all meshes)")
+            else:
+                log(f"    {u} {value_range}")
 
 
 cache: dict[GLTFModel, ModelData] = { }
@@ -271,8 +326,6 @@ predicted: set[GLTFModel]|None = None
 
 new_predicted: set[GLTFModel] = set()
 "The same, but before finish_predict() is called."
-
-
 
 cdef class Loader:
 
