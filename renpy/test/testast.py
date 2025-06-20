@@ -96,89 +96,70 @@ class Node(object):
         return "<{}{} ({}:{})>".format(type(self).__name__, params, self.filename, self.linenumber)
 
 
-class Testcase(Node):
-    __slots__ = ("name", "setup", "subtests", "teardown")
-    def __init__(self, loc: NodeLocation, name: str, setup: Node | None = None,
-                 subtests: list["Testcase"] | None = None, teardown: Node | None = None):
-        super(Testcase, self).__init__(loc)
+class TestCase(Node):
+    __slots__ = ("name", "description", "skip", "block")
+
+    def __init__(
+        self,
+        loc: NodeLocation,
+        name: str,
+        description: str = "",
+        skip: bool = False,
+        block: "Block | None" = None
+    ):
+        super().__init__(loc)
         self.name = name
-        self.setup = setup
-        self.subtests = subtests if subtests is not None else []
-        self.teardown = teardown
+        self.description = description
+        self.skip = skip
+        self.block = block
 
-    def start(self) -> State:
-        """
-        Called once when the test case starts.
-        This is expected to return a state, or None to advance to the next
-        node.
-        """
-        renpy.test.testexecution.take_name(self.name)
-        # (subtest_index, ran_setup, ran_subtest, node_execution_state)
-        return (0, False, False, (None, None, 0.0, False))
+    def chain(self, next) -> None:
+        if self.block is not None:
+            self.block.chain(None)
+            self.next = self.block.next
+        else:
+            self.next = None
 
-    def execute(self, state: State, t: float) -> State:
-        """
-        Executes the testcase. For each subtest, it calls the setup node,
-        then the subtest node, and finally the teardown node if it exists.
-        """
-        renpy.test.testexecution.take_name(self.name)
-        subtest_index, ran_setup, ran_subtest, node_execution_state = state
-        current_node, node_state, start, has_started = node_execution_state
+    def get_repr_params(self) -> str:
+        return f"name={self.name!r}"
 
-        if not ran_setup and self.setup:
-            if current_node is None:
-                current_node = self.setup
+class TestSuite(TestCase):
+    __slots__ = ("children", "before", "before_each", "after_each", "after")
+    def __init__(
+        self,
+        loc: NodeLocation,
+        name: str,
+        description: str = "",
+        skip: bool = False,
+        children: list[TestCase] | None = None,
+        before: "Block | None" = None,
+        before_each: "Block | None" = None,
+        after_each: "Block | None" = None,
+        after: "Block | None" = None
+    ):
+        super().__init__(loc, name, description, skip, None)
+        self.name = name
+        self.description = description
+        self.skip = skip
+        self.children = children if children is not None else []
+        self.before = before
+        self.before_each = before_each
+        self.after_each = after_each
+        self.after = after
 
-            done, node_execution_state = self.execute_node(t, current_node, node_state, start, has_started)
-            return (subtest_index, done, False, node_execution_state)
+    def add(self, child: TestCase) -> None:
+        self.children.append(child)
 
-        ## Setup has been run, so we can proceed to the subtests.
-        if not ran_subtest and subtest_index < len(self.subtests):
-            if current_node is None:
-                current_node = self.subtests[subtest_index]
+    def chain(self, next: Node | None) -> None:
+        if self.before:
+            chain_block(self.before.block, None)
+        if self.before_each:
+            chain_block(self.before_each.block, None)
+        if self.after_each:
+            chain_block(self.after_each.block, None)
+        if self.after:
+            chain_block(self.after.block, None)
 
-            done, node_execution_state = self.execute_node(t, current_node, node_state, start, has_started)
-            return (subtest_index, True, done, node_execution_state)
-
-        ## Subtest has been run, so we can proceed to the teardown.
-        if self.teardown:
-            if current_node is None:
-                current_node = self.teardown
-
-            done, node_execution_state = self.execute_node(t, current_node, node_state, start, has_started)
-
-            if not done:
-                return (subtest_index, True, True, node_execution_state)
-
-        subtest_index += 1
-        if subtest_index < len(self.subtests):
-            return (subtest_index, False, False, (None, None, 0.0, False))
-
-        next_node(self.next)
-        return None
-
-
-    def execute_node(self,
-        t: float,
-        current_node: Node,
-        node_state: State,
-        start: float,
-        has_started: bool
-    ) -> tuple[bool, State]:
-        """
-        Executes a single node in the testcase.
-
-        Returns a tuple of (is_done, node_execution_state), where
-        `is_done` is True if the node has finished executing, and
-        `node_execution_state` is the state of the node after execution.
-        """
-        node_execution_state = renpy.test.testexecution.execute_node(t, current_node, node_state, start, has_started)
-        _, node_state, _, _ = node_execution_state
-
-        if node_state is None:
-            return (True, node_execution_state)
-
-        return (False, node_execution_state)
 
 class Condition(Node):
     """
@@ -937,23 +918,6 @@ class Assert(Node):
         return None
 
 
-class Call(Node):
-    __slots__ = "target"
-    def __init__(self, loc: NodeLocation, target: str):
-        Node.__init__(self, loc)
-
-        self.target = target
-
-    def execute(self, state, t):
-        n = renpy.test.testexecution.call_node(self.target)
-        print("Call test", self.target)
-        next_node(n)
-        return None
-
-    def get_repr_params(self):
-        return f"{self.target}"
-
-
 ################################################################################
 # Control structures.
 
@@ -1010,4 +974,4 @@ def next_node(node: Node | None):
     Indicates the next node that should be executed.
     """
 
-    renpy.test.testexecution.next_node = node
+    renpy.test.testexecution.set_next_node(node)

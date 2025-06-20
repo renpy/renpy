@@ -29,7 +29,7 @@ from renpy.lexer import Lexer
 from renpy.test.types import NodeLocation
 
 # The current test case name
-top_testcase_name = ""
+current_testsuite_name = ""
 
 # The root of the parse trie.
 test_statements = renpy.parser.ParseTrie()
@@ -52,18 +52,6 @@ def test_statement(keywords):
 
 ##############################################################################
 # Statement functions: Control Flow
-
-
-@test_statement("call")
-def call_statement(l: Lexer, loc: NodeLocation) -> testast.Call:
-    target = l.require(l.name)
-
-    l.expect_noblock("call statement")
-    l.expect_eol()
-    l.advance()
-
-    return testast.Call(loc, target)
-
 
 @test_statement("exit")
 def exit_statement(l: Lexer, loc: NodeLocation) -> testast.Exit:
@@ -305,7 +293,7 @@ def scroll_statement(l: Lexer, loc: NodeLocation) -> testast.Scroll | testast.Un
 
 
 @test_statement("skip")
-def advance_statement(l: Lexer, loc: NodeLocation) -> testast.Skip | testast.Until:
+def skip_statement(l: Lexer, loc: NodeLocation) -> testast.Skip | testast.Until:
     l.expect_noblock("skip statement")
 
     rv = testast.Skip(loc)
@@ -352,100 +340,127 @@ def type_statement(l: Lexer, loc: NodeLocation) -> testast.Type | testast.Until:
 ##############################################################################
 # Statement functions: Other (Python, test functions)
 
-## This has no decorator because it is called by the base game parser
-## The "testcase" statement is declared in renpy.parser
-def testcase_statement(l: Lexer, loc: NodeLocation) -> renpy.ast.Testcase | renpy.ast.Init:
-    """
-    Parses a testcase statement, which is a block of statements that
-    are run in the context of a test.
-    """
-    global top_testcase_name
-    name = l.require(l.name)
+@test_statement("testsuite")
+def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
+    global current_testsuite_name
 
-    # parameters = renpy.parser.parse_parameters(l)
+    before: testast.Block | None = None
+    before_each: testast.Block | None = None
+    after_each: testast.Block | None = None
+    after: testast.Block | None = None
+    children: list[testast.TestCase] = [ ]
+
+    name = l.require(l.name)
+    signature = renpy.parser.parse_parameters(l)
     l.require(":")
     l.expect_eol()
-    l.expect_block("testcase statement")
+    l.expect_block("testsuite statement")
 
-    ll = l.subblock_lexer()
-    top_testcase_name = name
-    test_block = parse_subtest(ll, loc, top_testcase_name)
+    old_current_testsuite_name = current_testsuite_name
+    if current_testsuite_name:
+        current_testsuite_name += "." + name
+    else:
+        current_testsuite_name = name
+
+    ll = l.subblock_lexer(False)
+    ll.advance()
+
+    while not ll.eob:
+        if ll.keyword("before"):
+            if before is not None:
+                ll.error("Only one 'before' block is allowed in a testsuite.")
+            ll.require(":")
+            ll.expect_eol()
+            ll.expect_block("before block")
+            before = parse_block(ll.subblock_lexer(False), ll.get_location())
+            ll.advance()
+
+        elif ll.keyword("before_each"):
+            if before_each is not None:
+                ll.error("Only one 'before_each' block is allowed in a testsuite.")
+            ll.require(":")
+            ll.expect_eol()
+            ll.expect_block("before_each block")
+            before_each = parse_block(ll.subblock_lexer(False), ll.get_location())
+            ll.advance()
+
+        elif ll.keyword("after_each"):
+            if after_each is not None:
+                ll.error("Only one 'after_each' block is allowed in a testsuite.")
+            ll.require(":")
+            ll.expect_eol()
+            ll.expect_block("after_each block")
+            after_each = parse_block(ll.subblock_lexer(False), ll.get_location())
+            ll.advance()
+
+        elif ll.keyword("after"):
+            if after is not None:
+                ll.error("Only one 'after' block is allowed in a testsuite.")
+            ll.require(":")
+            ll.expect_eol()
+            ll.expect_block("after block")
+            after = parse_block(ll.subblock_lexer(False), ll.get_location())
+            ll.advance()
+
+        elif ll.keyword("testcase"):
+            children.append(testcase_statement(ll, ll.get_location()))
+
+        elif ll.keyword("testsuite"):
+            children.append(testsuite_statement(ll, ll.get_location()))
+
+        else:
+            ll.error(f"Unexpected statement in testsuite.")
 
     l.advance()
 
-    rv = renpy.ast.Testcase(loc, name, test_block)
+    extra_kwargs = { }
+    if signature:
+        extra_kwargs = signature.parameters
 
-    if not l.init:
-        rv = renpy.ast.Init(loc, [ rv ], 500 + l.init_offset)
+    rv = testast.TestSuite(
+        loc,
+        current_testsuite_name,
+        before = before,
+        before_each = before_each,
+        after_each = after_each,
+        after = after,
+        children = children,
+        **extra_kwargs
+    )
+
+    renpy.test.testexecution.add_testcase(name, rv)
+    current_testsuite_name = old_current_testsuite_name
 
     return rv
 
 
-@test_statement("subtest")
-def subtest_statement(l: Lexer, loc: NodeLocation) -> testast.Testcase:
-    global top_testcase_name
+@test_statement("testcase")
+def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
+
+    global current_testsuite_name
 
     name = l.require(l.name)
-
-    # parameters = renpy.parser.parse_parameters(l)
+    signature = renpy.parser.parse_parameters(l)
     l.require(":")
     l.expect_eol()
-    l.expect_block("subtest statement")
+    l.expect_block("testcase statement")
 
-    old_top_testcase_name = top_testcase_name
-    top_testcase_name = top_testcase_name + "." + name
-    ll = l.subblock_lexer()
-    test_block = parse_subtest(ll, loc, top_testcase_name)
-    top_testcase_name = old_top_testcase_name
+    test_block = parse_block(l.subblock_lexer(False), loc)
 
     l.advance()
 
-    return test_block
+    extra_kwargs = { }
+    if signature:
+        extra_kwargs = signature.parameters
 
-
-def parse_subtest(l: Lexer, loc: NodeLocation, name: str) -> testast.Testcase:
-    ## Get setup
-    l.advance()
-    setup_stmts = [ ]
-    subtests = [ ]
-    teardown_stmts = [ ]
-
-    found_subtest = False
-    found_teardown = False
-
-    stmt = None
-    while not l.eob:
-        stmt = parse_statement(l, l.get_location())
-        if isinstance(stmt, testast.Testcase):
-            found_subtest = True
-            break
-        setup_stmts.append(stmt)
-
-    if found_subtest:
-        subtests.append(stmt)
-        while not l.eob:
-            stmt = parse_statement(l, l.get_location())
-            if isinstance(stmt, testast.Testcase):
-                subtests.append(stmt)
-            else:
-                found_teardown = True
-                break
-
-    if found_teardown:
-        while not l.eob:
-            stmt = parse_statement(l, l.get_location())
-            teardown_stmts.append(stmt)
-
-    rv = testast.Testcase(
+    rv = testast.TestCase(
         loc,
-        name,
-        setup=testast.Block(loc, setup_stmts) if setup_stmts else None,
-        subtests=subtests if subtests else None,
-        teardown=testast.Block(loc, teardown_stmts) if found_teardown else None,
+        current_testsuite_name + "." + name,
+        block=test_block,
+        **extra_kwargs
     )
 
     renpy.test.testexecution.add_testcase(name, rv)
-
     return rv
 
 
@@ -516,6 +531,10 @@ def parse_block(l: Lexer, loc: NodeLocation) -> testast.Block:
 
     while not l.eob:
         stmt = parse_statement(l, l.get_location())
+        if isinstance(stmt, (testast.TestSuite, testast.TestCase)):
+            l.unadvance()
+            l.error("A testsuite or testcase may not be nested inside a block. "
+                    "It must be at the top level, or within a testsuite.")
         block.append(stmt)
 
     return testast.Block(loc, block)

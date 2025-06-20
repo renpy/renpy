@@ -2697,13 +2697,13 @@ class Style(Node):
 
 
 class Testcase(Node):
-    test: "renpy.test.testast.Testcase"
+    test: "renpy.test.testast.TestCase"
 
-    def __init__(self, loc, name, test):
+    def __init__(self, loc, test):
         super(Testcase, self).__init__(loc)
 
         self.test = test
-        self.name = name
+        self.name = test.name
 
     def diff_info(self):
         return (Testcase, self.name)
