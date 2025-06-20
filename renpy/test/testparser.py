@@ -353,7 +353,7 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
     after: testast.Block | None = None
     children: list[testast.TestCase] = [ ]
 
-    name = l.require(l.name)
+    name = l.require(l.dotted_name)
     signature = renpy.parser.parse_parameters(l)
 
     if name == "all" and current_testsuite_name:
@@ -445,7 +445,7 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
 
     global current_testsuite_name
 
-    name = l.require(l.name)
+    name = l.require(l.dotted_name)
     signature: renpy.parameter.Signature | None = renpy.parser.parse_parameters(l)
 
     if name == "all":
