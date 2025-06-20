@@ -591,6 +591,15 @@ if you have a 3D model you created in another program and want to display in Ren
 
 .. include:: inc/assimp
 
+Some things  we noticed:
+
+* Some models are very small, and need to be zoomed by 100x or 1000x to be useful.
+* The uniforms generating by each model can vary.
+
+We recommend creating GLTF models with report=True, and then looking at log.txt to see
+the size and  what's available. It's then possible to scale the model and to
+create a suitable shader.
+
 This does required a shader. A simple, sample shader can be added with:
 
     init python:
