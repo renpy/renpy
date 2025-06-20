@@ -1744,6 +1744,10 @@ def condition_switch_show(st, at, switch, predict_all=None):
     return condition_switch_pick(switch), None
 
 
+def continuous_switch_show(st, at, switch, predict_all=None):
+    return condition_switch_pick(switch), renpy.config.conditionswitch_refresh_rate
+
+
 def condition_switch_predict(switch, predict_all=None):
 
     if predict_all is None:
@@ -1759,7 +1763,7 @@ def ConditionSwitch(*args, **kwargs):
     """
     :name: ConditionSwitch
     :doc: disp_dynamic
-    :args: (*args, predict_all=None, **properties)
+    :args: (*args, predict_all=None, continuous=False, **properties)
 
     This is a displayable that changes what it is showing based on
     Python conditions. The positional arguments should be given in
@@ -1771,13 +1775,21 @@ def ConditionSwitch(*args, **kwargs):
     The first true condition has its displayable shown, at least
     one condition should always be true.
 
-    The conditions uses here should not have externally-visible side-effects.
+    The conditions used here should not have externally-visible side-effects.
 
     `predict_all`
         If True, all of the possible displayables will be predicted when
         the displayable is shown. If False, only the current condition is
         predicted. If None, :var:`config.conditionswitch_predict_all` is
         used.
+
+    `continuous`
+        If True, the conditions are rechecked continuously, and the
+        displayable responds to changes inbetween interactions. If False,
+        the displayable only changes what it is showing at the start of an
+        interaction. The rate at which these conditions are rechecked is
+        set by :var:`config.conditionswitch_refresh_rate`
+
 
     ::
 
@@ -1787,6 +1799,7 @@ def ConditionSwitch(*args, **kwargs):
     """
 
     predict_all = kwargs.pop("predict_all", None)
+    continuous = kwargs.pop("continuous", False)
     kwargs.setdefault('style', 'default')
 
     switch = [ ]
@@ -1805,7 +1818,8 @@ def ConditionSwitch(*args, **kwargs):
         d = renpy.easy.displayable(d)
         switch.append((cond, d))
 
-    rv = DynamicDisplayable(condition_switch_show,
+    rv = DynamicDisplayable(continuous_switch_show if continuous
+                                else condition_switch_show,
                             switch,
                             predict_all,
                             _predict_function=condition_switch_predict)
