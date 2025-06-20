@@ -228,7 +228,10 @@ def move_statement(l: Lexer, loc: NodeLocation) -> testast.Move | testast.Until:
             break
 
         elif temp := l.simple_expression():
-            rv.position = temp
+            if isinstance(temp, tuple):
+                rv.position = temp
+            else:
+                l.error("Expected a position tuple for move statement.")
 
         else:
             break
@@ -413,9 +416,9 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
 
     l.advance()
 
-    extra_kwargs = { }
+    extra_kwargs = {}
     if signature:
-        extra_kwargs = signature.parameters
+        signature.apply_defaults(extra_kwargs)
 
     rv = testast.TestSuite(
         loc,
@@ -439,7 +442,7 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
     global current_testsuite_name
 
     name = l.require(l.name)
-    signature = renpy.parser.parse_parameters(l)
+    signature: renpy.parameter.Signature | None = renpy.parser.parse_parameters(l)
     l.require(":")
     l.expect_eol()
     l.expect_block("testcase statement")
@@ -448,13 +451,13 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
 
     l.advance()
 
-    extra_kwargs = { }
+    extra_kwargs = {}
     if signature:
-        extra_kwargs = signature.parameters
+        signature.apply_defaults(extra_kwargs)
 
     rv = testast.TestCase(
         loc,
-        current_testsuite_name + "." + name,
+        current_testsuite_name + "." + name if current_testsuite_name else name,
         block=test_block,
         **extra_kwargs
     )

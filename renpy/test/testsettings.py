@@ -21,6 +21,9 @@ class TestSettings(Object):
         # Should we ignore the skip flag when executing test scripts?
         self.ignore_skip_flag: bool = False
 
+        # Should we print details about the test cases?
+        self.print_details: bool = False
+
         # Should we print skipped test cases?
         self.print_skipped: bool = False
 

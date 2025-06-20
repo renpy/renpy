@@ -786,7 +786,12 @@ class Until(Node):
         If float("NaN"), uses the global test timeout setting.
     """
     __slots__ = ("left", "right", "timeout")
-    def __init__(self, loc: NodeLocation, left: Node, right: Condition, timeout: float | None = float("NaN")
+    def __init__(
+        self,
+        loc: NodeLocation,
+        left: Node,
+        right: Condition,
+        timeout: float | None = float("NaN")
     ):
         Node.__init__(self, loc)
         self.left = left
@@ -895,12 +900,13 @@ class Assert(Node):
     `timeout`
         The maximum delay to wait for the condition to be ready.
     """
-    __slots__ = ("condition", "timeout")
+    __slots__ = ("condition", "timeout", "failed")
 
     def __init__(self, loc: NodeLocation, condition: Condition, timeout: float = 0.0):
         Node.__init__(self, loc)
         self.condition = condition
         self.timeout = timeout
+        self.failed = False
 
     def execute(self, state, t):
         """
@@ -911,9 +917,7 @@ class Assert(Node):
             if t < self.timeout:
                 return state
 
-            raise AssertError("On line {}:{}, assertion of {} failed.".format(self.filename,
-                                                                              self.linenumber,
-                                                                              self.condition))
+            self.failed = True
 
         next_node(self.next)
         return None
