@@ -251,6 +251,8 @@ class ModelData:
         min_values = { }
         max_values = { }
 
+        types: dict[str, str] = {}
+
         def recursive_min(a, b):
             """
             Returns the minimum of a and b. If a and b are tuples, it returns a tuple of the minimums.
@@ -295,6 +297,18 @@ class ModelData:
                     min_values[k] = recursive_min(min_values[k], v)
                     max_values[k] = recursive_max(max_values[k], v)
 
+                if isinstance(v, float):
+                    types[k] = "float"
+                elif isinstance(v, int):
+                    types[k] = "int"
+                elif isinstance(v, tuple):
+                    types[k] = f"vec{len(v)}"
+                else:
+                    types[k] = "unknown"
+
+            for k, v in i.texture_uniforms.items():
+                types[k] = "sampler2D"
+
 
         any_uniforms = set.union(*uniform_sets)
         all_uniforms = set.intersection(*uniform_sets)
@@ -307,15 +321,22 @@ class ModelData:
             min_value = min_values.get(u, None)
             max_value = max_values.get(u, None)
 
+            comments = [ ]
+
             if min_value is not None:
-                value_range = f"(range {recursive_format(min_value)} to {recursive_format(max_value)}) "
-            else:
-                value_range = ""
+                comments.append(f"range {recursive_format(min_value)} to {recursive_format(max_value)}")
 
             if u not in all_uniforms:
-                log(f"    {u} {value_range}(not in all meshes)")
-            else:
-                log(f"    {u} {value_range}")
+                comments.append("not in all meshes")
+
+            uniform_type = types.get(u, "unknown")
+
+            comment = "; ".join(comments)
+            if comment:
+                comment = " // " + comment
+
+
+            log(f"    uniform {uniform_type} {u};{comment}")
 
 
 cache: dict[GLTFModel, ModelData] = { }
@@ -783,6 +804,10 @@ class GLTFModel(renpy.display.displayable.Displayable):
                 self.uniforms[k] = v
             else:
                 raise ValueError(f"Unknown keyword argument {k!r} for GLTFModel. Uniforms must start with 'u_'.")
+
+        if report:
+            self.load()
+            self.report = False
 
 
     def load(self):
