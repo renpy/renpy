@@ -133,11 +133,11 @@ def find_position(
     x = relative_position(x-f.x, posx, f.w) + f.x
     y = relative_position(y-f.y, posy, f.h) + f.y
 
-    for _i in range(renpy.test.settings._test.focus_trials):
+    for _i in range(renpy.test.testsettings._test.focus_trials):
         x = int(x)
         y = int(y)
 
-        nf = renpy.display.render.focus_at_point(x, y)
+        nf = renpy.display.render.focus_at_point(x, y) # type: ignore
 
         if nf is None:
             if orig_f.x is None:
