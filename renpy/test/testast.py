@@ -28,7 +28,7 @@ import renpy
 from renpy.display.focus import Focus
 from renpy.display.displayable import Displayable
 from renpy.test.testmouse import click_mouse, move_mouse
-from renpy.test.types import State, NodeLocation, Position
+from renpy.test.types import State, NodeLocation, Position, RenpyTestException, RenpyTestTimeoutError
 
 
 class Node(object):
@@ -188,11 +188,11 @@ class Condition(Node):
     They should only check if a certain condition is met.
     """
     def execute(self, state: State, t: float) -> State:
-        raise TestcaseException("Conditions should not be executed directly. Use `ready()` instead.")
+        raise RenpyTestException("Conditions should not be executed directly. Use `ready()` instead.")
 
-class TestcaseException(RuntimeError):pass
 
-class SelectorException(TestcaseException):pass
+
+class SelectorException(RenpyTestException):pass
 
 
 class Selector(Condition):
@@ -820,7 +820,7 @@ class Until(Node):
     def execute(self, state, t):
         if self.timeout is not None and t > self.timeout:
             msg = "Until Statement timed out after {} seconds.".format(self.timeout)
-            raise renpy.test.testexecution.TestcaseException(msg)
+            raise RenpyTestTimeoutError(msg)
 
         child, child_state, start_time, has_started = state
 
