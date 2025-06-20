@@ -1,306 +1,362 @@
-﻿testcase player_experience:
-    scroll "Bar" until "Player Experience"
-    click until "Yes."
-
-    # Dialogue after menu.
-    click
-    click
-    click
-
-    # Rollback to the menu.
-    click button 4
-    click button 4
-    click button 4
-    click button 4
-
-    # Roll forward.
-    click button 5
-    click button 5
-
-    # Back again.
-    click button 4
-    click button 4
-
-    # Roll forward.
-    type PAGEDOWN
-    type PAGEDOWN
-
-    # Back again.
-    type PAGEUP
-    type PAGEUP
-
-    "No."
-
-    click until label tutorials
-
-testcase new_game:
-    scroll "Bar" until "Creating a New Game"
-    click until label tutorials
-
-testcase dialogue:
-    scroll "Bar" until "Writing Dialogue"
-    click until label tutorials
-
-testcase images:
-    scroll "Bar" until "Adding Images"
-    click until label tutorials
-
-testcase transitions:
-    scroll "Bar" until "Transitions"
-    click until label tutorials
-
-testcase music:
-    scroll "Bar" until "Music and Sound Effects"
-    click until label tutorials
-
-testcase choices:
-    scroll "Bar" until "Choices and Python"
-    click until "Yes, I do."
-    click until "Yes."
-    click until label tutorials
-
-
-testcase input:
-    scroll "Bar" until "Input and Interpolation"
-    click until "Some games might prompt the player for input."
-    type "Tom"
-    type BACKSPACE
-    type "m"
-    type LEFT
-    type RIGHT
-    type "\n"
-    click until label tutorials
-
-testcase positioning_images:
-    scroll "Bar" until "Positioning Images"
-    click until label tutorials
-
-testcase video:
-    scroll "Bar" until "Video Playback"
-    click until label tutorials
-
-testcase nvl_mode:
-    scroll "Bar" until "NVL Mode"
-    click until "Yes."
-    click until label tutorials
-
-testcase tools:
-    scroll "Bar" until "Tools and the Interactive Director"
-
-    # Not actually testing the various tools yet.
-
-    click until label tutorials
-
-testcase building:
-    scroll "Bar" until "Building Distributions"
-    click until label tutorials
-
-
-testcase text_tags:
-    scroll "Bar" until "Text Tags, Escapes, and Interpolation"
-    click until label tutorials
-
-testcase character_objects:
-    scroll "Bar" until "Character Objects"
-    click until label tutorials
-
-testcase simple_displayables:
-    scroll "Bar" until "Simple Displayables"
-    click until label tutorials
-
-
-
-testcase transition_gallery:
-    $ _test.transition_timeout = 60.0
-
-    scroll "Bar" until "Transition Gallery"
-    click until "Simple"
-    click until "ImageDissolve"
-    click until "MoveTransition"
-    click until "CropMove"
-    click until "PushMove"
-    click until "AlphaDissolve"
-    click until "something else"
-    click until label tutorials
-
-    $ _test.transition_timeout = 0.05
-
-testcase position_properties:
-    scroll "Bar" until "Position Properties"
-    click until "xpos .75 ypos .25"
-    click until label tutorials
-
-testcase transforms:
-
-    scroll "Bar" until "Transforms and Animation"
-    click until label tutorials
-
-    scroll "Bar" until "Transform Properties"
-    click until label tutorials
-
-testcase gui_customization:
-
-    scroll "Bar" until "GUI Customization"
-    click until label tutorials
-
-
-testcase styles:
-
-    scroll "Bar" until "Styles and Style Properties"
-    click until "Style basics."
-    click until "General style properties."
-    click until "Text style properties."
-    click until "Window and Button style properties."
-    click until "Bar style properties."
-    click until "Box, Grid, and Fixed style properties."
-    click until "The Displayable Inspector."
-    click until "That's all I want to know."
-    click until label tutorials
-
-
-testcase screens:
-
-    scroll "Bar" until "Screen Basics"
-    click until "What screens can do."
-    click until "Yes."
-    click until "How to show screens."
-    click until "you'll have to click"
-    "Okay"
-    click until "Passing parameters to screens."
-    click until "the call screen statement"
-    "Okay"
-    click until "Screen properties."
-    click until "Close This Screen"
-    pause .5
-    "Close This Screen"
-    click until "Special screen statements."
-    click until "Using other screens."
-    click until "That's it."
-
-    scroll "Bar" until "Screen Displayables"
-    click until "Common properties"
-    click until "Adding images"
-    click until "Text"
-    click until "Buttons"
-    click until "Bars"
-    click until "Viewports"
-    click until "Imagemaps"
-    click until "Science"
-    click until "That's all"
-
-    click until label tutorials
-
-
-testcase translations:
-
-    scroll "Bar" until "Translations"
-    click until label tutorials
-
-
-init python:
+﻿init python:
     import time
 
-testcase out_of_game:
-    "Back"
-    "Back"
-
-    "Skip"
-
-    "Back"
-
-    $ _preferences.self_voicing = False
-    $ _preferences.afm_time = 1
 
 
-    $ testvar = time.time()
+testsuite default(description="Default project testsuite"):
+    before:
+        $ _test.timeout = 4.0
+        click "Start"
+        advance until screen tutorials
 
-    "Auto"
-    scroll "Bar" until "Player Experience"
-    "Auto"
-    "History"
+    before_each:
+        ## Run before each test cases
+        $ _test.transition_timeout = 0.05
 
-    pause .5
+    after_each:
+        ## Run after each testcases
+        ## This rescues us from a crash
+        if not screen tutorials:
+            run MainMenu(confirm=False)
+            click "Start"
+            advance until screen tutorials
 
-    "Save"
-    pause .5
-
-    "Save Slot 1"
-    ("Yes" or pass)
-
-    $ testvar = "value not comparable with a number"
-
-    "Load"
-    pause .5
-
-    "Load Slot 1"
-    "Yes"
-
-    assert eval (time.time() - testvar < 15)
-
-    "Prefs"
-    pause .5
-
-    "About"
-    pause .5
-
-    "Help"
-    pause .5
-
-    "Main Menu"
-    "Yes"
-
-    "Load"
-    pause .5
-
-    "Load Slot 1"
-
-    click until "Yes."
-    click until label tutorials
+    after:
+        click "That's enough for now."
+        advance until screen main_menu
+        # click "Quit"
+        exit
 
 
+    testsuite blank:
+        testcase do_nothing:
+            pass
 
-testcase template:
+    testsuite blank2:
+        testcase do_nothing2:
+            pass
 
-    scroll "Bar" until "-"
-    click until label tutorials
+
+    ## Run the testcases
+    testcase player_experience:
+        $ preferences.text_cps = 0
+
+        scroll "Bar" until "Player Experience"
+        click "Player Experience"
+        advance until screen choice
+        click "Yes."
+
+        # Dialogue after menu.
+        advance
+        advance
+        advance
+
+        # Rollback to the menu.
+        click button 4
+        click button 4
+        click button 4
+        click button 4
+
+        # Roll forward.
+        click button 5
+        click button 5
+
+        # Back again to the menu.
+        click button 4
+        click button 4
+
+        # Roll forward.
+        keysym "K_PAGEDOWN"
+        keysym "K_PAGEDOWN"
+
+        # Back again.
+        keysym "K_PAGEUP"
+        keysym "K_PAGEUP"
+
+        click "No."
+        advance until screen tutorials
+
+    testcase new_game:
+        scroll "Bar" until "Creating a New Game"
+        click "Creating a New Game"
+        advance until screen tutorials
+
+    testcase dialogue:
+        scroll "Bar" until "Writing Dialogue"
+        click "Writing Dialogue"
+        advance until screen tutorials
+
+    testcase images:
+        scroll "Bar" until "Adding Images"
+        click "Adding Images"
+        advance until screen tutorials
+
+    testcase transitions:
+        scroll "Bar" until "Transitions"
+        click "Transitions"
+        advance until screen tutorials
+
+    testcase music:
+        scroll "Bar" until "Music and Sound Effects"
+        click "Music and Sound Effects"
+        advance until screen tutorials
+
+    testcase choices:
+        scroll "Bar" until "Choices and Python"
+        click "Choices and Python"
+        advance until screen choice
+        click "Yes, I do."
+        advance until screen choice
+        click "Yes."
+        advance until screen tutorials
+
+    testcase input:
+        scroll "Bar" until "Input and Interpolation"
+        click "Input and Interpolation"
+        advance until screen input
+        type "Tom"
+        keysym "K_BACKSPACE"
+        type "m"
+        keysym "K_LEFT"
+        keysym "K_RIGHT"
+        keysym "K_RETURN"
+        advance until screen tutorials
+
+    testcase positioning_images:
+        scroll "Bar" until "Positioning Images"
+        click "Positioning Images"
+        advance until screen tutorials
+
+    testcase video:
+        scroll "Bar" until "Video Playback"
+        click "Video Playback"
+        advance until screen tutorials
 
 
-testcase default:
+    testcase nvl_mode:
+        scroll "Bar" until "NVL Mode"
+        click "NVL Mode"
+        advance until eval ("nvl_menu" in renpy.game.context().modes) # screen nvl_choice
+        click "Yes."
+        advance until screen tutorials
 
-    $ _test.transition_timeout = 0.05
+    testcase tools:
+        scroll "Bar" until "Tools and the Interactive Director"
+        click "Tools and the Interactive Director"
+        advance until screen tutorials
 
-    "Start"
-    click until label tutorials
+        # Not actually testing the various tools yet.
 
-    call player_experience
-    call new_game
-    call dialogue
-    call images
-    call positioning_images
-    call transitions
-    call music
-    call choices
-    call input
-    call video
-    call nvl_mode
-    call tools
-    call building
+    testcase building:
+        scroll "Bar" until "Building Distributions"
+        click "Building Distributions"
+        advance until screen tutorials
 
-    call text_tags
-    call character_objects
-    call simple_displayables
-    call transition_gallery
-    call position_properties
-    call transforms
-    call gui_customization
-    call styles
-    call screens
+    testcase text_tags:
+        scroll "Bar" until "Text Tags, Escapes, and Interpolation"
+        click "Text Tags, Escapes, and Interpolation"
+        advance until screen tutorials
 
-    # Skip Minigames and CDDs.
+    testcase character_objects:
+        scroll "Bar" until "Character Objects"
+        click "Character Objects"
+        advance until screen tutorials
 
-    call translations
-    call out_of_game
+    testcase simple_displayables:
+        scroll "Bar" until "Simple Displayables"
+        click "Simple Displayables"
+        advance until screen tutorials
 
-    "That's enough for now."
-    click until "Quit"
-    pause .5
+    testcase transition_gallery:
+        $ _test.transition_timeout = 60.0
+
+        scroll "Bar" until "Transition Gallery"
+        click "Transition Gallery"
+        advance until screen choice
+        click "Simple"
+        advance until screen choice
+        click "ImageDissolve"
+        advance until screen choice
+        click "MoveTransition"
+        advance until screen choice
+        click "CropMove"
+        advance until screen choice
+        click "PushMove"
+        advance until screen choice
+        click "AlphaDissolve"
+        advance until screen choice
+        click "something else"
+        advance until screen tutorials
+
+    testcase position_properties:
+        scroll "Bar" until "Position Properties"
+        click "Position Properties"
+        advance until screen choice
+        click "xpos .75 ypos .25"
+        advance until screen tutorials
+
+    testcase transforms:
+        scroll "Bar" until "Transforms and Animation"
+        click "Transforms and Animation"
+        advance until screen tutorials
+
+        scroll "Bar" until "Transform Properties"
+        click "Transform Properties"
+        advance until screen tutorials
+
+    testcase gui_customization:
+        scroll "Bar" until "GUI Customization"
+        click "GUI Customization"
+        advance until screen tutorials
+
+    testcase styles:
+        scroll "Bar" until "Styles and Style Properties"
+        click "Styles and Style Properties"
+        advance until screen choice
+        click "Style basics."
+        advance until screen choice
+        click "General style properties."
+        advance until screen choice
+        click "Text style properties."
+        advance until screen choice
+        click "Window and Button style properties."
+        advance until screen choice
+        click "Bar style properties."
+        advance until screen choice
+        click "Box, Grid, and Fixed style properties."
+        advance until screen choice
+        click "The Displayable Inspector."
+        advance until screen choice
+        click "That's all I want to know."
+        advance until screen tutorials
+
+    testcase screens:
+        scroll "Bar" until "Screen Basics"
+        click "Screen Basics"
+        advance until screen choice
+
+        click "What screens can do."
+        advance until screen choice
+        click "Yes."
+        advance until screen choice
+
+        click "How to show screens."
+        advance until "Since we can't display dialogue at the same time"
+        advance until screen simple_screen
+        click "Okay"
+        advance until screen choice
+
+        click "Passing parameters to screens."
+        advance until screen parameter_screen
+        click "Okay"
+        advance until "The call screen statement can also take arguments"
+        advance until screen parameter_screen
+        click "Okay"
+        advance until screen choice
+
+        click "Screen properties."
+        advance until screen modal_example
+        ## No idea why, but we need to insist on closing the modal_example screen
+        click "Close This Screen" until not screen modal_example
+        advance until screen choice
+
+        click "Special screen statements."
+        advance until screen choice
+
+        click "Using other screens."
+        advance until screen choice
+
+        click "That's it."
+
+
+    testcase screen_displayables:
+        scroll "Bar" until "Screen Displayables"
+        click "Screen Displayables"
+        advance until screen choice
+        click "Common properties"
+        advance until screen choice
+        click "Adding images"
+        advance until screen choice
+        click "Text"
+        advance until screen choice
+        click "Buttons"
+        advance until screen choice
+        click "Bars"
+        advance until screen choice
+        click "Viewports"
+        advance until screen choice
+        click "Imagemaps"
+        advance until screen imagemap_example
+        click "Science"
+        advance until screen choice
+        click "That's all"
+
+        advance until screen tutorials
+
+    testcase translations:
+        scroll "Bar" until "Translations"
+        click "Translations"
+        advance until screen tutorials
+
+
+    testcase out_of_game:
+        click "Back"
+        click "Back"
+
+        click "Skip"
+
+        click "Back"
+
+        $ _preferences.self_voicing = False
+        $ _preferences.afm_time = 1
+
+
+        $ testvar = time.time()
+
+        click "Auto"
+        scroll "Bar" until "Player Experience"
+        click "Player Experience"
+        click "Auto"
+        click "History"
+
+        pause .5
+
+        click "Save"
+        pause .5
+
+        click "Save Slot 1"
+        pause 0.2
+        if "Yes":
+            click "Yes"
+
+        $ testvar = "value not comparable with a number"
+        $ testvar = "value not comparable with a number"
+
+        click "Load"
+        pause .5
+
+        click "Load Slot 1"
+        click "Yes"
+
+        assert eval (time.time() - testvar < 15) ## BUG: This assert should fail
+
+        click "Prefs"
+        pause .5
+
+        click "About"
+        pause .5
+
+        click "Help"
+        pause .5
+
+        click "Main Menu"
+        click "Yes"
+
+        click "Load"
+        pause .5
+
+        click "Load Slot 1"
+
+        advance until screen choice
+        click "Yes."
+        advance until screen tutorials
