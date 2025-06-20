@@ -428,7 +428,6 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
         **extra_kwargs
     )
 
-    renpy.test.testexecution.add_testcase(name, rv)
     current_testsuite_name = old_current_testsuite_name
 
     return rv
@@ -460,7 +459,6 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
         **extra_kwargs
     )
 
-    renpy.test.testexecution.add_testcase(name, rv)
     return rv
 
 
