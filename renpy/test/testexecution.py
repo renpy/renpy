@@ -71,11 +71,21 @@ def add_testcase(name: str, node: TestCase) -> None:
         ## This may occur if reloading the script
         return
 
+    testcases[name] = node
+
+    if "." in name:
+        ## If the name contains a dot, we assume it's a subcase of a TestSuite.
+        parts = name.split(".")
+        parent_name = ".".join(parts[:-1])
+        parent_node = lookup(parent_name)
+        if not isinstance(parent_node, TestSuite):
+            raise TypeError("Parent node {} is not a TestSuite.".format(parent_name))
+        if node not in parent_node.children:
+            parent_node.children.append(node)
+
     if isinstance(node, TestSuite):
         for child in node.children:
             add_testcase(child.name, child)
-
-    testcases[name] = node
 
 
 def lookup(name: str, from_node: Node | None = None) -> TestCase:
