@@ -32,12 +32,6 @@ Note that when a testcase finishes executing, the game doesn't close itself
 (unless the ``exit`` statement is used). Instead, it will just remain where it
 ended up in the game, awaiting user action.
 
-When that happens, or if the game quits before that happens (because of an
-``exit``, because of an exception, or for another reason), the functions added
-to the :var:`config.end_testcase_callbacks` list are called without arguments.
-This allows for clean-up code to be executed whatever may happen during the
-tests.
-
 .. should an exception during a callback call prevent subsequent callbacks from being called ?
 
 There is no equivalent callback for code being executed before the tests

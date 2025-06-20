@@ -1,11 +1,4 @@
-﻿init python:
-    def finally_callback():
-        print("finally "*100)
-    whether = renpy.is_in_test()
-
-define config.end_testcase_callbacks += [finally_callback]
-
-testcase default:
+﻿testcase default:
     python hide:
         renpy.watch("renpy.is_in_test()")
         renpy.watch("waitch")
