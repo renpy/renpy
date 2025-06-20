@@ -44,6 +44,7 @@ labels: set[str] = set()
 
 # A stack of text contexts, which tracks the execution of testcases.
 context_stack: list["TestCaseContext"] = []
+context_stack: list["TestSuiteContext"] = []
 
 def take_name(name: str) -> None:
     """
@@ -63,10 +64,12 @@ def add_testcase(name: str, node: TestCase) -> None:
     and the node is the root node of the testcase.
     """
 
-    if name in testcases and testcases[name] != node:
-        # TODO: The node check is a hack, the same testcase is being added twice. Perhaps
-        #       once is from the compiled version, and once from the source
+    if name in testcases:
         raise KeyError("Testcase {} already exists.".format(name))
+
+    if isinstance(node, TestSuite):
+        for child in node.children:
+            add_testcase(child.name, child)
 
     testcases[name] = node
 
@@ -101,6 +104,9 @@ def initialize(name: str) -> None:
 
     root = lookup(name)
 
+    ## Chain the nodes in the testcases
+    for case in testcases.values():
+        case.chain(None)
 
 
     # If the root is a TestCase, we create a TestSuite with it as the only child.
@@ -125,12 +131,12 @@ def push_context_stack(node: str | TestSuite) -> None:
         else:
             node = case
 
-    tc = TestCaseContext(node)
+    tc = TestSuiteContext(node)
     context_stack.append(tc)
 
 
 
-def pop_context_stack() -> "TestCaseContext":
+def pop_context_stack() -> "TestSuiteContext":
     """
     Pops the last call node from the stack and returns it.
     Pops the last context from the stack and returns it.
@@ -152,7 +158,7 @@ def pop_context_stack() -> "TestCaseContext":
     return rv
 
 
-def get_current_context() -> "TestCaseContext":
+def get_current_context() -> "TestSuiteContext":
     """
     Returns the current context, or raises an exception if there is no context.
     """
@@ -229,7 +235,7 @@ def exception_handler(exc: renpy.error.TracebackException) -> bool:
     return True
 
 
-class TestCaseContext:
+class TestSuiteContext:
     """
     A context manager for testcases. This is used to set the current node and state
     when entering a testcase, and to reset them when exiting.
