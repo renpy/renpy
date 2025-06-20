@@ -681,4 +681,21 @@ def parse_until(l: Lexer, loc: NodeLocation, left: testast.Node) -> testast.Unti
         else:
             return testast.Until(loc, left, right)
 
+    elif l.keyword("repeat"):
+        right = l.require(l.simple_expression)
+        right = renpy.python.py_eval(right)
+        if not isinstance(right, int):
+            l.error("Expected a number for repeat count.")
+
+        if l.keyword("timeout"):
+            timeout = l.require(l.simple_expression)
+            timeout = renpy.python.py_eval(timeout)
+
+            if not isinstance(timeout, (int, float, type(None))):
+                l.error("Expected a number or None for timeout.")
+
+            return testast.Repeat(loc, left, right, timeout)
+        else:
+            return testast.Repeat(loc, left, right)
+
     return None
