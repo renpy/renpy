@@ -28,6 +28,7 @@ import renpy
 from renpy.display.focus import Focus
 from renpy.display.displayable import Displayable
 from renpy.test.testmouse import click_mouse, move_mouse
+from renpy.test.testsettings import _test
 from renpy.test.types import State, NodeLocation, Position, RenpyTestException, RenpyTestTimeoutError
 
 
