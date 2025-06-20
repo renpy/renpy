@@ -323,6 +323,7 @@ init -1100 python:
 
         if _compat_versions(version, (7, 7, 1), (8, 2, 1)):
             config.fill_shrinks_frame = True
+            config.tts_queue = False
 
         if ((7, 4, 0) <= version) and _compat_versions(version, (7, 7, 99), (8, 2, 99)):
             config.window_functions_set_auto = True
