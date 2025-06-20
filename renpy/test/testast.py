@@ -568,6 +568,7 @@ class Pause(Node):
         self.expr = expr
 
     def start(self):
+        return float(renpy.python.py_eval(self.expr)), 0
 
     def execute(self, state, t):
         delay, _ = state
@@ -603,6 +604,18 @@ class Eval(Condition):
 
     def ready(self):
         return bool(renpy.python.py_eval(self.expr))
+
+
+class RepeatCounter(Condition):
+    __slots__ = ("value")
+
+    def __init__(self, loc: NodeLocation, value: int):
+        super(RepeatCounter, self).__init__(loc)
+        self.value = value
+
+    def ready(self):
+        self.value -= 1
+        return self.value == 0
 
 
 class Pass(Node):
@@ -835,6 +848,19 @@ class Until(Node):
 
     def ready(self):
         return self.left.ready() or self.right.ready()
+
+
+class Repeat(Until):
+    """
+    Executes `left` for `count` times.
+    """
+    def __init__(self, loc: NodeLocation, left: Node, count: int, timeout: float | None = float("NaN")):
+        ## Multiplied by 2 to account for Until.execute() calling ready twice per iteration.
+        right = RepeatCounter(loc, count * 2)
+        super(Repeat, self).__init__(loc, left, right, timeout)
+
+    def ready(self):
+        return self.left.ready()
 
 
 class If(Node):
