@@ -355,6 +355,10 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
 
     name = l.require(l.name)
     signature = renpy.parser.parse_parameters(l)
+
+    if name == "all" and current_testsuite_name:
+        l.error("The name 'all' is reserved for a testsuite that runs all tests.")
+
     l.require(":")
     l.expect_eol()
     l.expect_block("testsuite statement")
@@ -443,6 +447,10 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
 
     name = l.require(l.name)
     signature: renpy.parameter.Signature | None = renpy.parser.parse_parameters(l)
+
+    if name == "all":
+        l.error("The name 'all' is reserved for a testsuite that runs all tests.")
+
     l.require(":")
     l.expect_eol()
     l.expect_block("testcase statement")

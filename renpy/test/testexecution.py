@@ -109,7 +109,22 @@ def initialize(name: str) -> None:
     testreporter.reporter.register(testreporter.ConsoleReporter())
     renpy.config.exception_handler = exception_handler
 
-    root = lookup(name)
+    if name == "all":
+        ## Set up the "all" testsuite
+        if "all" not in testcases:
+            add_testcase("all", TestSuite(name="all", loc=("", 0), children=[]))
+        root = lookup("all")
+
+        if not isinstance(root, TestSuite):
+            raise ValueError("Root node for 'all' must be a TestSuite, got {}".format(type(root)))
+
+        for node_name, node in testcases.items():
+            if node_name == "all" or "." in node_name:
+                continue
+            root.children.append(node)
+
+    else:
+        root = lookup(name)
 
     ## Chain the nodes in the testcases
     for case in testcases.values():
@@ -146,7 +161,7 @@ def push_context_stack(node: str | TestSuite) -> None:
     tc = TestSuiteContext(node)
     context_stack.append(tc)
 
-    tc.results.start()
+    tc.results.begin()
     testreporter.reporter.test_suite_start(node)
 
 
@@ -161,7 +176,7 @@ def pop_context_stack() -> "TestSuiteContext":
         raise Exception("No context on context stack.")
 
     rv = context_stack.pop()
-    rv.results.finalize(None)
+    rv.results.end(None)
     testreporter.reporter.test_suite_end(rv.results)
 
     if len(context_stack) == 0:
@@ -238,6 +253,9 @@ def execute() -> None:
     except renpy.game.QuitException:
         while context_stack:
             pop_context_stack()
+
+        if all_results.status == testreporter.TestCaseStatus.FAILED:
+            raise renpy.game.QuitException(status=1)
         raise
 
     labels.clear()
@@ -338,7 +356,7 @@ class TestSuiteContext:
                             case = case_stack.pop()
                             results = all_results.get_result_by_name(case.name)
                             testreporter.reporter.test_case_skipped(case)
-                            results.finalize(testreporter.TestCaseStatus.SKIPPED)
+                            results.end(testreporter.TestCaseStatus.SKIPPED)
                             if isinstance(case, TestSuite) and case.children:
                                 case_stack.extend(case.children)
 
@@ -351,14 +369,14 @@ class TestSuiteContext:
                     else:
                         test_results = all_results.get_result_by_name(new_case.name)
                         self.executor.reinitialize(test_results, new_case)
-                        test_results.start()
+                        test_results.begin()
 
                 if not self.executor.done:
                     self.executor.execute()
 
                 self.ran_testcase = self.executor.done
                 if self.ran_testcase:
-                    self.executor.results.finalize(testreporter.TestCaseStatus.PASSED)
+                    self.executor.results.end(testreporter.TestCaseStatus.PASSED)
 
             ## After Each
             elif not self.ran_after_each and self.testsuite.after_each:
@@ -418,13 +436,13 @@ class TestSuiteContext:
 
         if self.ran_before and self.ran_before_each and not self.ran_testcase:
             ## If the exception happened in a testcase, move to the next one.
-            self.executor.results.finalize(testreporter.TestCaseStatus.FAILED)
+            self.executor.results.end(testreporter.TestCaseStatus.FAILED)
             self.executor.reinitialize(self.results, None)
             self.ran_testcase = True
 
         else:
             ## The exception happened outside of a testcase, so declare the testsuite failed.
-            self.results.finalize(testreporter.TestCaseStatus.FAILED)
+            self.results.end(testreporter.TestCaseStatus.FAILED)
             pop_context_stack()
 
 
@@ -532,7 +550,7 @@ def test_command() -> bool:
     """
 
     ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
-    ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?", default="default")
+    ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?", default="all")
     ap.add_argument("--no-skip", action="store_true", dest="ignore_skip_flag", default=False,
                     help="Do not skip testcases marked as skip.")
     ap.add_argument("--print-details", action="store_true", dest="print_details", default=False,

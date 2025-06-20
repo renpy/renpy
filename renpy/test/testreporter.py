@@ -24,11 +24,11 @@ class TestCaseResults:
     seconds: float = 0.0
     status: TestCaseStatus = TestCaseStatus.NOT_RUN
 
-    def start(self) -> None:
+    def begin(self) -> None:
         self.start_time = renpy.display.core.get_time()
         self.status = TestCaseStatus.PENDING
 
-    def finalize(self, status: TestCaseStatus | None) -> None:
+    def end(self, status: TestCaseStatus | None) -> None:
         """
         Finalize the test case results.
 
@@ -70,22 +70,22 @@ class TestSuiteResults(TestCaseResults):
             elif isinstance(child, renpy.test.testast.TestCase):
                 self.children.append(TestCaseResults(child.name))
 
-    def summarize(self) -> "TestSuiteResults":
+    def aggregate(self) -> "TestSuiteResults":
         rv = TestSuiteResults("")
 
         for child in self.children:
             if isinstance(child, TestSuiteResults):
-                child_summary = child.summarize()
+                child_summary = child.aggregate()
                 rv.num_asserts += child_summary.num_asserts
                 rv.num_asserts_passed += child_summary.num_asserts_passed
                 rv.num_asserts_failed += child_summary.num_asserts_failed
-                rv.num_testsuites += 1
+                rv.num_testsuites += child_summary.num_testsuites + 1
                 if child_summary.status == TestCaseStatus.PASSED:
-                    rv.num_testsuites_passed += 1
+                    rv.num_testsuites_passed += child_summary.num_testsuites_passed + 1
                 elif child_summary.status == TestCaseStatus.FAILED:
-                    rv.num_testsuites_failed += 1
+                    rv.num_testsuites_failed += child_summary.num_testsuites_failed + 1
                 elif child_summary.status == TestCaseStatus.SKIPPED:
-                    rv.num_testsuites_skipped += 1
+                    rv.num_testsuites_skipped += child_summary.num_testsuites_skipped + 1
                 rv.num_testcases += child_summary.num_testcases
                 rv.num_testcases_passed += child_summary.num_testcases_passed
                 rv.num_testcases_failed += child_summary.num_testcases_failed
@@ -105,17 +105,18 @@ class TestSuiteResults(TestCaseResults):
         rv.status = self.status
         rv.seconds = self.seconds
         rv.name = self.name
+        rv.status = self.status
 
         return rv
 
-    def finalize(self, status = None) -> None:
+    def end(self, status = None) -> None:
         """
         Finalize the test suite results.
 
         If status is None, it will be set to PASSED if all test cases passed,
         FAILED if any test case failed, or SKIPPED if all test cases were skipped.
         """
-        super().finalize(status)
+        super().end(status)
 
         if self.status == TestCaseStatus.PENDING:
             if self.num_testcases_failed > 0 or self.num_asserts_failed > 0:
@@ -287,61 +288,60 @@ class ConsoleReporter(Reporter):
             self._print("=" * 20)
 
     def _print_summarized_results(self, results: TestSuiteResults) -> None:
-        summ = results.summarize()
+        num_cases_not_run = results.num_testcases - results.num_testcases_passed - results.num_testcases_failed - results.num_testcases_skipped
+        num_suites_not_run = results.num_testsuites - results.num_testsuites_passed - results.num_testsuites_failed - results.num_testsuites_skipped
 
-        num_not_run = summ.num_testcases - summ.num_testcases_passed - summ.num_testcases_failed - summ.num_testcases_skipped
-
-        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test Results (Summary): {summ.name}")
+        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test Results (Summary): {results.name}")
 
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
-            f"Test suites: {summ.num_testsuites:5d} | "
+            f"Test suites: {results.num_testsuites:5d} | "
 
-            f"{ANSIColors.GREEN if summ.num_testsuites_passed else ANSIColors.RESET}"
-            f"{summ.num_testsuites_passed:5d} passed{ANSIColors.RESET} | "
+            f"{ANSIColors.GREEN if results.num_testsuites_passed else ANSIColors.RESET}"
+            f"{results.num_testsuites_passed:5d} passed{ANSIColors.RESET} | "
 
-            f"{ANSIColors.RED if summ.num_testsuites_failed else ANSIColors.RESET}"
-            f"{summ.num_testsuites_failed:5d} failed{ANSIColors.RESET} | "
+            f"{ANSIColors.RED if results.num_testsuites_failed else ANSIColors.RESET}"
+            f"{results.num_testsuites_failed:5d} failed{ANSIColors.RESET} | "
 
-            f"{ANSIColors.YELLOW if summ.num_testsuites_skipped else ANSIColors.RESET}"
-            f"{summ.num_testsuites_skipped:5d} skipped{ANSIColors.RESET} | "
+            f"{ANSIColors.YELLOW if results.num_testsuites_skipped else ANSIColors.RESET}"
+            f"{results.num_testsuites_skipped:5d} skipped{ANSIColors.RESET} | "
 
-            f"{ANSIColors.YELLOW if num_not_run else ANSIColors.RESET}"
-            f"{num_not_run:5d} not run{ANSIColors.RESET}"
+            f"{ANSIColors.YELLOW if num_suites_not_run else ANSIColors.RESET}"
+            f"{num_suites_not_run:5d} not run{ANSIColors.RESET}"
         )
 
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
-            f"Test cases : {summ.num_testcases:5d} | "
+            f"Test cases : {results.num_testcases:5d} | "
 
-            f"{ANSIColors.GREEN if summ.num_testcases_passed else ANSIColors.RESET}"
-            f"{summ.num_testcases_passed:5d} passed{ANSIColors.RESET} | "
+            f"{ANSIColors.GREEN if results.num_testcases_passed else ANSIColors.RESET}"
+            f"{results.num_testcases_passed:5d} passed{ANSIColors.RESET} | "
 
-            f"{ANSIColors.RED if summ.num_testcases_failed else ANSIColors.RESET}"
-            f"{summ.num_testcases_failed:5d} failed{ANSIColors.RESET} | "
+            f"{ANSIColors.RED if results.num_testcases_failed else ANSIColors.RESET}"
+            f"{results.num_testcases_failed:5d} failed{ANSIColors.RESET} | "
 
-            f"{ANSIColors.YELLOW if summ.num_testcases_skipped else ANSIColors.RESET}"
-            f"{summ.num_testcases_skipped:5d} skipped{ANSIColors.RESET} | "
+            f"{ANSIColors.YELLOW if results.num_testcases_skipped else ANSIColors.RESET}"
+            f"{results.num_testcases_skipped:5d} skipped{ANSIColors.RESET} | "
 
-            f"{ANSIColors.YELLOW if num_not_run else ANSIColors.RESET}"
-            f"{num_not_run:5d} not run{ANSIColors.RESET}"
+            f"{ANSIColors.YELLOW if num_cases_not_run else ANSIColors.RESET}"
+            f"{num_cases_not_run:5d} not run{ANSIColors.RESET}"
         )
 
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
-            f"Assertions : {summ.num_asserts:5d} | "
+            f"Assertions : {results.num_asserts:5d} | "
 
-            f"{ANSIColors.GREEN if summ.num_asserts_passed else ANSIColors.RESET}"
-            f"{summ.num_asserts_passed:5d} passed{ANSIColors.RESET} | "
+            f"{ANSIColors.GREEN if results.num_asserts_passed else ANSIColors.RESET}"
+            f"{results.num_asserts_passed:5d} passed{ANSIColors.RESET} | "
 
-            f"{ANSIColors.RED if summ.num_asserts_failed else ANSIColors.RESET}"
-            f"{summ.num_asserts_failed:5d} failed{ANSIColors.RESET} | "
+            f"{ANSIColors.RED if results.num_asserts_failed else ANSIColors.RESET}"
+            f"{results.num_asserts_failed:5d} failed{ANSIColors.RESET} | "
         )
 
-        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Time: {summ.seconds:0.6f} s")
+        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Time: {results.seconds:0.6f} s")
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
-            f"Status: {self._get_status_text(summ.status)}"
+            f"Status: {self._get_status_text(results.status)}"
         )
 
     ##################################
@@ -352,9 +352,11 @@ class ConsoleReporter(Reporter):
         self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Starting test run")
 
     def test_run_end(self, results) -> None:
+        final_results = results.aggregate()
+
         if _test.print_details:
             self._print_detailed_results(results)
-        self._print_summarized_results(results)
+        self._print_summarized_results(final_results)
 
     def test_suite_start(self, node) -> None:
         self.context = node
