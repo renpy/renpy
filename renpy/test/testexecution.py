@@ -26,8 +26,10 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import renpy
 import renpy.pygame as pygame
 
+from renpy.error import FrameSummary
 from renpy.test.testast import Node, TestSuite, TestCase
-from renpy.test.types import State, NodeLocation, RenpyTestTimeoutError
+from renpy.test.types import State, NodeLocation, RenpyTestTimeoutError, RenpyTestAssertionError
+import renpy.test.testreporter as testreporter
 from renpy.test.testsettings import _test
 
 initialized: bool = False
@@ -43,8 +45,9 @@ action: Node | None = None
 labels: set[str] = set()
 
 # A stack of text contexts, which tracks the execution of testcases.
-context_stack: list["TestCaseContext"] = []
 context_stack: list["TestSuiteContext"] = []
+
+all_results: testreporter.TestSuiteResults
 
 def take_name(name: str) -> None:
     """
@@ -65,7 +68,8 @@ def add_testcase(name: str, node: TestCase) -> None:
     """
 
     if name in testcases:
-        raise KeyError("Testcase {} already exists.".format(name))
+        ## This may occur if reloading the script
+        return
 
     if isinstance(node, TestSuite):
         for child in node.children:
@@ -97,10 +101,13 @@ def initialize(name: str) -> None:
     global initialized
     global testcases
     global context_stack
+    global all_results
 
     if initialized:
         return
 
+    testreporter.reporter.register(testreporter.ConsoleReporter())
+    renpy.config.exception_handler = exception_handler
 
     root = lookup(name)
 
@@ -111,10 +118,12 @@ def initialize(name: str) -> None:
 
     # If the root is a TestCase, we create a TestSuite with it as the only child.
     if not isinstance(root, TestSuite):
-        suite = TestSuite(name="", loc=(root.filename, root.linenumber), children=[root])
+        suite = TestSuite(name=root.name, loc=(root.filename, root.linenumber), children=[root])
     else:
         suite = root
 
+    all_results = testreporter.TestSuiteResults(name)
+    all_results.populate_children(suite)
     push_context_stack(suite)
 
     initialized = True
@@ -122,6 +131,9 @@ def initialize(name: str) -> None:
 
 def push_context_stack(node: str | TestSuite) -> None:
     global context_stack
+
+    if len(context_stack) == 0:
+        testreporter.reporter.test_run_start()
 
     if isinstance(node, str):
         case = lookup(node)
@@ -134,11 +146,12 @@ def push_context_stack(node: str | TestSuite) -> None:
     tc = TestSuiteContext(node)
     context_stack.append(tc)
 
+    tc.results.start()
+    testreporter.reporter.test_suite_start(node)
 
 
 def pop_context_stack() -> "TestSuiteContext":
     """
-    Pops the last call node from the stack and returns it.
     Pops the last context from the stack and returns it.
     """
 
@@ -148,10 +161,15 @@ def pop_context_stack() -> "TestSuiteContext":
         raise Exception("No context on context stack.")
 
     rv = context_stack.pop()
+    rv.results.finalize(None)
+    testreporter.reporter.test_suite_end(rv.results)
 
-        ## Executing a subcase may artificially lengthen the time between state changes,
-        ## so we update the value of last_state_change here
-        ctx.last_state_change = renpy.display.core.get_time()
+    if len(context_stack) == 0:
+        testreporter.reporter.test_run_end(rv.results)
+    else:
+        ctx = get_current_context()
+        ctx.executor.reinitialize(ctx.results, None)
+        ctx.ran_testcase = True
 
     renpy.test.testmouse.reset()
 
@@ -177,7 +195,7 @@ def set_next_node(next: Node | None) -> None:
     to a different node.
     """
 
-    get_current_context().next_node = next
+    get_current_context().executor.set_next_node(next)
 
 
 def is_in_test() -> bool:
@@ -244,18 +262,180 @@ class TestSuiteContext:
     testsuite: TestSuite
     """The testcase being executed."""
 
+    results: testreporter.TestSuiteResults
+    """The results of the testcase being executed."""
+
+    testcase_index: int = 0
+    """The index of the current testcase being executed."""
+
+    ran_before: bool = False
+    """Whether the before() method of the testcase has been run."""
+
+    ran_before_each: bool = False
+    """Whether the before_each() method of the testcase has been run."""
+
+    ran_testcase: bool = False
+    """Whether the current testcase has been run."""
+
+    ran_after_each: bool = False
+    """Whether the after_each() method of the testcase has been run."""
+
+    ran_after: bool = False
+    """Whether the after() method of the testcase has been run."""
+
+    executor: "NodeExecutor"
 
 
+    def __init__(self, node: TestSuite):
+        self.testsuite = node
+        results = all_results.get_result_by_name(node.name)
+        if not isinstance(results, testreporter.TestSuiteResults):
+            raise ValueError("TestSuiteResults not found for {}".format(node.name))
+        self.results = results
+
+        self.testcase_index = 0
+        self.ran_before = self.testsuite.before is None
+        self.ran_after = self.testsuite.after is None
+        self.executor = NodeExecutor(results, None)
+
+        self.prepare_for_next_testcase()
+
+
+    def prepare_for_next_testcase(self) -> None:
+        self.ran_before_each = self.testsuite.before_each is None
+        self.ran_testcase = len(self.testsuite.children) == 0
+        self.ran_after_each = self.testsuite.after_each is None
+
+
+    def execute(self) -> None:
+        try:
+            ## Before
+            if not self.ran_before and self.testsuite.before:
+                if self.executor.done:
+                    self.executor.reinitialize(self.results, self.testsuite.before)
+
+                self.executor.execute()
+                self.ran_before = self.executor.done
+
+            ## Before Each
+            elif not self.ran_before_each and self.testsuite.before_each:
+                if self.executor.done:
+                    self.executor.reinitialize(self.results, self.testsuite.before_each)
+
+                self.executor.execute()
+                self.ran_before_each = self.executor.done
+
+            ## Test Case
+            elif not self.ran_testcase and self.testsuite.children:
+                if self.executor.done:
+                    new_case = self.testsuite.children[self.testcase_index]
+
+                    if not _test.ignore_skip_flag and new_case.skip:
+                        self.testcase_index += 1
+
+                        case_stack = [new_case]
+                        while case_stack:
+                            case = case_stack.pop()
+                            results = all_results.get_result_by_name(case.name)
+                            testreporter.reporter.test_case_skipped(case)
+                            results.finalize(testreporter.TestCaseStatus.SKIPPED)
+                            if isinstance(case, TestSuite) and case.children:
+                                case_stack.extend(case.children)
+
+                        if self.testcase_index >= len(self.testsuite.children):
+                            self.ran_testcase = True
+                        return
+
+                    if isinstance(new_case, TestSuite):
+                        push_context_stack(new_case)
+                    else:
+                        test_results = all_results.get_result_by_name(new_case.name)
+                        self.executor.reinitialize(test_results, new_case)
+                        test_results.start()
+
+                if not self.executor.done:
+                    self.executor.execute()
+
+                self.ran_testcase = self.executor.done
+                if self.ran_testcase:
+                    self.executor.results.finalize(testreporter.TestCaseStatus.PASSED)
+
+            ## After Each
+            elif not self.ran_after_each and self.testsuite.after_each:
+                if self.executor.done:
+                    self.executor.reinitialize(self.results, self.testsuite.after_each)
+
+                self.executor.execute()
+                self.ran_after_each = self.executor.done
+
+            elif self.testcase_index < len(self.testsuite.children) - 1:
+                self.testcase_index += 1
+                self.prepare_for_next_testcase()
+
+            ## After
+            elif not self.ran_after and self.testsuite.after:
+                if self.executor.done:
+                    self.executor.reinitialize(self.results, self.testsuite.after)
+
+                self.executor.execute()
+                self.ran_after = self.executor.done
+
+            ## Done with the testsuite
+            else:
+                pop_context_stack()
+                return
+
+        except renpy.game.QuitException:
+            raise
+
+        except Exception as exc:
+            self.handle_exception(exc)
+            return
+
+
+    def handle_exception(self, exc: Exception | None) -> None:
+        ## Find where in the test execution the exception happened.
+        if len(context_stack) == 0:
+            raise RuntimeError("No context stack available for exception reporting.")
+
+        frame_stack: list[FrameSummary] = []
+
+        nodes = [ctx.testsuite for ctx in context_stack]
+        labels = [None] + [f"testsuite {ctx.testsuite.name}" for ctx in context_stack[:-1]]
+
+        if context_stack[-1].executor.testcase:
+            nodes += [context_stack[-1].executor.testcase, context_stack[-1].executor.node]
+            labels += [
+                f"testsuite {context_stack[-1].testsuite.name}",
+                f"testcase {context_stack[-1].executor.testcase.name}"
+                ]
+
+        for n, label in zip(nodes, labels):
+            frame_stack.append(FrameSummary(label, n.filename, n.linenumber)) # type: ignore
+
+        ## Pass to the reporter
+        testreporter.reporter.log_exception(exc, frame_stack)
+
+        if self.ran_before and self.ran_before_each and not self.ran_testcase:
+            ## If the exception happened in a testcase, move to the next one.
+            self.executor.results.finalize(testreporter.TestCaseStatus.FAILED)
+            self.executor.reinitialize(self.results, None)
+            self.ran_testcase = True
+
+        else:
+            ## The exception happened outside of a testcase, so declare the testsuite failed.
+            self.results.finalize(testreporter.TestCaseStatus.FAILED)
+            pop_context_stack()
+
+
+class NodeExecutor:
     node: Node | None = None
     """Current node being executed."""
 
     state: State | None = None
     """The state of the current node being executed."""
 
-    start_time: float = 0.0
-    """The time the current node started executing."""
-
-    has_started: bool = False
+    node_has_started: bool = False
     """Whether the current node has run the start() method."""
 
     next_node: Node | None = None
@@ -270,96 +450,64 @@ class TestSuiteContext:
     last_state_change: float = 0.0
     """The last time the state changed."""
 
+    testcase: TestCase | None = None
+    """The current testcase being executed, if any."""
 
-    def __init__(self, node: TestSuite):
-        self.testsuite = node
+    results: testreporter.TestCaseResults
+    """The results of the current testcase being executed, if any."""
 
-        self.testcase_index = 0
-        self.ran_before = self.testsuite.before is None
-        self.ran_after = self.testsuite.after is None
+    def __init__(self, results: testreporter.TestCaseResults, node: Node | None = None):
+        self.reinitialize(results, node)
 
-        self.prepare_for_next_testcase()
+    def reinitialize(self, results: testreporter.TestCaseResults, node: Node | None) -> None:
+        self.node = node
+        self.state = None
+        self.node_has_started = False
+        self.next_node = None
+        self.old_state = None
+        self.old_loc = None
+        self.last_state_change = renpy.display.core.get_time()
+        self.results = results
 
+        if isinstance(node, TestCase):
+            self.testcase = node
+        else:
+            self.testcase = None
 
-    def prepare_for_next_testcase(self) -> None:
-        self.ran_before_each = self.testsuite.before_each is None
-        self.ran_testcase = len(self.testsuite.children) == 0
-        self.ran_after_each = self.testsuite.after_each is None
-
+    def set_next_node(self, next: Node | None) -> None:
+        self.next_node = next
 
     def execute(self) -> None:
+        """
+        Performs one execution cycle of a node.
+        """
         now = renpy.display.core.get_time()
 
-        try:
-            ## Before
-            if not self.ran_before and self.testsuite.before:
-                if self.node is None:
-                    self.node = self.testsuite.before
-
-                self.execute_node(now)
-                self.ran_before = self.node is None
-
-            ## Before Each
-            elif not self.ran_before_each and self.testsuite.before_each:
-                if self.node is None:
-                    self.node = self.testsuite.before_each
-
-                self.execute_node(now)
-                self.ran_before_each = self.node is None
-
-            ## Test Case
-            elif not self.ran_testcase and self.testsuite.children:
-                if self.node is None:
-                    new_case = self.testsuite.children[self.testcase_index]
-
-                    ctx = get_current_context()
-
-                    if new_case.skip:
-                        self.testcase_index += 1
-
-                        return
-
-                    self.node = new_case
-
-                    if isinstance(self.node, TestSuite):
-                        push_context_stack(self.node)
-
-                if not isinstance(self.node, TestSuite):
-                    self.execute_node(now)
-
-                self.ran_testcase = self.node is None
-
-            ## After Each
-            elif not self.ran_after_each and self.testsuite.after_each:
-                if self.node is None:
-                    self.node = self.testsuite.after_each
-
-                self.execute_node(now)
-                self.ran_after_each = self.node is None
-
-            elif self.testcase_index < len(self.testsuite.children) - 1:
-                self.testcase_index += 1
-                self.prepare_for_next_testcase()
-
-            ## After
-            elif not self.ran_after and self.testsuite.after:
-                if self.node is None:
-                    self.node = self.testsuite.after
-
-                self.execute_node(now)
-                self.ran_after = self.node is None
-
-            ## Done with the testsuite
+        if not self.node_has_started:
+            if self.node.ready():
+                self.state = self.node.start()
+                self.start = now
+                self.node_has_started = True
             else:
-                pop_context_stack()
-                return
+                self.state = None
+                self.node_has_started = False
 
-        except renpy.game.QuitException:
-            raise
 
-        except Exception as exc:
-            self.handle_exception(exc)
-            return
+        if self.node_has_started:
+            self.state = self.node.execute(self.state, now - self.start)
+
+            ## If the current state is None, move to the next node
+            if self.state is None:
+                if isinstance(self.node, renpy.test.testast.Assert):
+                    self.results.num_asserts += 1
+                    testreporter.reporter.log_assert(self.node)
+
+                    if self.node.failed:
+                        self.results.num_asserts_failed += 1
+                        raise RenpyTestAssertionError("Assertion failed: {}".format(self.node))
+
+                self.node = self.next_node
+                self.node_has_started = False
 
         loc = renpy.exports.get_filename_line()
 
@@ -370,44 +518,11 @@ class TestSuiteContext:
         self.old_loc = loc
 
         if (now - self.last_state_change) > _test.timeout:
-            exc = RenpyTestTimeoutError("Testcase timed out after {} seconds.".format(_test.timeout))
-            self.handle_exception(exc)
-            return
+            raise RenpyTestTimeoutError("Testcase timed out after {} seconds.".format(_test.timeout))
 
-
-    def execute_node(self, now: float) -> None:
-        """
-        Performs one execution cycle of a node.
-        """
-
-        if not self.has_started:
-            if self.node.ready():
-                # If the node is ready, we start it.
-                self.state = self.node.start()
-                self.start = now
-                self.has_started = True
-            else:
-                self.state = None
-                self.has_started = False
-                return
-
-        self.state = self.node.execute(self.state, now - self.start)
-
-        ## If the current state is None, move to the next node
-        if self.state is None:
-            self.node = self.next_node
-            self.has_started = False
-
-
-    def handle_exception(self, exc: Exception | None) -> None:
-        ctx = get_current_context()
-
-        if self.ran_before and self.ran_before_each and not self.ran_testcase:
-            ## If the exception happened in a testcase, move to the next one.
-            self.ran_testcase = True
-
-        else:
-            pop_context_stack()
+    @property
+    def done(self) -> bool:
+        return self.node is None
 
 
 def test_command() -> bool:
@@ -418,8 +533,17 @@ def test_command() -> bool:
 
     ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
     ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?", default="default")
+    ap.add_argument("--no-skip", action="store_true", dest="ignore_skip_flag", default=False,
+                    help="Do not skip testcases marked as skip.")
+    ap.add_argument("--print-details", action="store_true", dest="print_details", default=False,
+                    help="Print detailed information for entire run.")
+    ap.add_argument("--print-skipped", action="store_true", dest="print_skipped", default=False,
+                    help="Print information about skipped testcases. Requires --print-detailed.")
 
     args = ap.parse_args()
+    _test.ignore_skip_flag = args.ignore_skip_flag
+    _test.print_skipped = args.print_skipped
+    _test.print_details = args.print_details
 
     ## NOTE: This command gets called when the game starts for the first time, OR when the game
     ## goes back to the main menu after finishing the game. Special care is taken to avoid
