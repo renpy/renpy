@@ -36,3 +36,4 @@ if typing.TYPE_CHECKING:
     from . import testkey as testkey
     from . import testmouse as testmouse
     from . import testparser as testparser
+    from . import testsettings as testsettings
