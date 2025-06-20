@@ -598,7 +598,7 @@ init python:
     def web_build_command():
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("web_project", help="The path to the project directory.")
-        ap.add_argument("--launch", action="store_true", help="Launches the app after build and install complete. Implies --install.")
+        ap.add_argument("--launch", action="store_true", help="Starts a webserver and launches the game after build.")
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
 
         args = ap.parse_args()
