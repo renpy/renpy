@@ -1435,6 +1435,20 @@ cdef class GL2DrawingContext:
         rv.pop("pixel_perfect", None)
         return rv
 
+    def merge_uniforms(self, dict uniforms):
+        """
+        Merges the child uniforms into the current uniforms,
+        returning new uniforms.
+        """
+
+        self.uniforms = dict(self.uniforms)
+
+        for k, v in uniforms.items():
+            if (k in self.uniforms) and (k in renpy.config.merge_uniforms):
+                self.uniforms[k] = renpy.config.merge_uniforms[k](self.uniforms[k], v)
+            else:
+                self.uniforms[k] = v
+
     cdef void correct_pixel_perfect(self):
         """
         Computes an offset for the projection transform such that the (0, 0) pixel
@@ -1501,9 +1515,7 @@ cdef class GL2DrawingContext:
             self.shaders = self.shaders + model.shaders
 
         if model.uniforms:
-            uniforms = dict(model.uniforms)
-            uniforms.update(self.uniforms)
-            self.uniforms = uniforms
+            self.merge_uniforms(model.uniforms)
 
         if self.debug:
             import renpy.gl2.gl2debug as gl2debug
@@ -1641,14 +1653,8 @@ cdef class GL2DrawingContext:
         if r.cached_model is not None:
             children = [ (r.cached_model, 0, 0, False, False) ]
         else:
-            if r.uniforms is not None:
-                self.uniforms = dict(self.uniforms)
-
-                for k, v in r.uniforms.items():
-                    if (k in self.uniforms) and (k in renpy.config.merge_uniforms):
-                        self.uniforms[k] = renpy.config.merge_uniforms[k](self.uniforms[k], v)
-                    else:
-                        self.uniforms[k] = v
+            if r.uniforms:
+                self.merge_uniforms(r.uniforms)
 
         for child, cx, cy, focus, main in children:
 
