@@ -591,7 +591,7 @@ if you have a 3D model you created in another program and want to display in Ren
 
 .. include:: inc/assimp
 
-Some things  we noticed:
+Some things we noticed:
 
 * Some models are very small, and need to be zoomed by 100x or 1000x to be useful.
 * The uniforms generating by each model can vary.
@@ -600,7 +600,11 @@ We recommend creating GLTF models with report=True, and then looking at log.txt 
 the size and  what's available. It's then possible to scale the model and to
 create a suitable shader.
 
-This does required a shader. A simple, sample shader can be added with:
+Limitations
+^^^^^^^^^^^
+
+GLTFModel currently does not include a default shader, so you must define and include a shader.
+Here is one possible shader that can be used with GLTFModel::
 
     init python:
 
@@ -637,12 +641,18 @@ This does required a shader. A simple, sample shader can be added with:
 
             gl_FragColor = diffuse_color + specular_color;
 
-            if (gl_FragColor.a < 0.5) {
+            if (gl_FragColor.a < 0.9) {
                 discard;
             }
     """)
 
-Future releases of Ren'Py will include shaders by default.
+This is a very simple shader that applies diffuse and specular lighting to the model based
+on a single light source, meant for experimentation until better shaders are created.
+
+GLTFModel does not support transparent surfaces well. While the discard command above emulates
+transparency, the ordering is a bit wrong and can lead to artifacts.
+
+
 
 Model Displayable
 -----------------
