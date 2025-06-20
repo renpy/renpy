@@ -85,17 +85,12 @@ def lookup(name: str, from_node: Node | None = None) -> TestCase:
     raise KeyError("Testcase {} not found at {}:{}.".format(name, from_node.filename, from_node.linenumber))
 
 
-def call_node(name: str, target_node: Node | None = None, from_node: Node | None = None) -> Node:
 def initialize(name: str) -> None:
     """
-    Calls the node with the given name, pushing it onto the call stack.
-    If `target_node` is None, it looks up the node by name in the `testcases` dictionary.
-    If `target_node` is provided, it is used as the node to call instead of looking it up by name.
     Initializes the test execution system. This is called when the game starts, and
     sets up the testcases and the context stack.
     """
 
-    global node
     global initialized
     global testcases
     global context_stack
@@ -106,13 +101,8 @@ def initialize(name: str) -> None:
 
     root = lookup(name)
 
-    if target_node is None:
-        target_node = lookup(name, from_node)
 
-    if node is not None:
-        call_node_stack.append((node, name))
 
-    return target_node
     # If the root is a TestCase, we create a TestSuite with it as the only child.
     if not isinstance(root, TestSuite):
         suite = TestSuite(name="", loc=(root.filename, root.linenumber), children=[root])
@@ -138,7 +128,6 @@ def push_context_stack(node: str | TestSuite) -> None:
     tc = TestCaseContext(node)
     context_stack.append(tc)
 
-def pop_call_node() -> Node | None:
 
 
 def pop_context_stack() -> "TestCaseContext":
@@ -147,13 +136,8 @@ def pop_context_stack() -> "TestCaseContext":
     Pops the last context from the stack and returns it.
     """
 
-    if not call_node_stack:
-        if renpy.config.developer:
-            raise Exception("No call on call stack.")
-        return
     global context_stack
 
-    return call_node_stack.pop()[0]
     if not context_stack:
         raise Exception("No context on context stack.")
 
