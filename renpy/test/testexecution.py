@@ -26,33 +26,14 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import renpy
 import renpy.pygame as pygame
 
-from renpy.test.testast import Node, TestcaseException
+from renpy.test.testast import Node, TestSuite, TestCase
 from renpy.test.types import State, NodeLocation, RenpyTestTimeoutError
 from renpy.test.testsettings import _test
 
+initialized: bool = False
+
 # A map from the name of a testcase to the testcase.
-testcases: dict[str, Node] = {}
-
-# The root node.
-node: Node | None = None
-# The state of the root node.
-state: State = None
-
-# The next node to execute.
-next_node: Node | None = None
-
-# The previous state and location in the game script.
-old_state: State | None = None
-old_loc: NodeLocation | None = None
-
-# The last time the state changed.
-last_state_change: float = 0
-
-# The time the root node started executing.
-start_time: float = 0
-
-# Whether the current node has started executing.
-has_started: bool = False
+testcases: dict[str, TestCase] = {}
 
 # An action to run before executing another command.
 action: Node | None = None
@@ -61,30 +42,26 @@ action: Node | None = None
 # has been called.
 labels: set[str] = set()
 
-# The stack of call nodes, used to implement the call statement.
-# List of (Node, label)
-call_node_stack: list[tuple[Node, str]] = []
+# A stack of text contexts, which tracks the execution of testcases.
+context_stack: list["TestCaseContext"] = []
 
 def take_name(name: str) -> None:
     """
     Takes the name of a statement that is about to run.
     """
 
-    if node is None:
+    if len(context_stack) == 0:
         return
 
     if isinstance(name, str):
         labels.add(name)
 
 
-def add_testcase(name: str, node: Node | renpy.ast.Testcase) -> None:
+def add_testcase(name: str, node: TestCase) -> None:
     """
     Adds a testcase to the `testcases` dictionary. The name is a tuple of strings,
     and the node is the root node of the testcase.
     """
-
-    if isinstance(node, renpy.ast.Testcase):
-        node = node.test
 
     if name in testcases and testcases[name] != node:
         # TODO: The node check is a hack, the same testcase is being added twice. Perhaps
@@ -94,7 +71,7 @@ def add_testcase(name: str, node: Node | renpy.ast.Testcase) -> None:
     testcases[name] = node
 
 
-def lookup(name: str, from_node: Node | None = None) -> Node:
+def lookup(name: str, from_node: Node | None = None) -> TestCase:
     """
     Tries to look up the name with `target`. If found, returns it, otherwise
     raises an exception.
@@ -109,13 +86,25 @@ def lookup(name: str, from_node: Node | None = None) -> Node:
 
 
 def call_node(name: str, target_node: Node | None = None, from_node: Node | None = None) -> Node:
+def initialize(name: str) -> None:
     """
     Calls the node with the given name, pushing it onto the call stack.
     If `target_node` is None, it looks up the node by name in the `testcases` dictionary.
     If `target_node` is provided, it is used as the node to call instead of looking it up by name.
+    Initializes the test execution system. This is called when the game starts, and
+    sets up the testcases and the context stack.
     """
 
     global node
+    global initialized
+    global testcases
+    global context_stack
+
+    if initialized:
+        return
+
+
+    root = lookup(name)
 
     if target_node is None:
         target_node = lookup(name, from_node)
@@ -124,49 +113,85 @@ def call_node(name: str, target_node: Node | None = None, from_node: Node | None
         call_node_stack.append((node, name))
 
     return target_node
+    # If the root is a TestCase, we create a TestSuite with it as the only child.
+    if not isinstance(root, TestSuite):
+        suite = TestSuite(name="", loc=(root.filename, root.linenumber), children=[root])
+    else:
+        suite = root
 
+    push_context_stack(suite)
+
+    initialized = True
+
+
+def push_context_stack(node: str | TestSuite) -> None:
+    global context_stack
+
+    if isinstance(node, str):
+        case = lookup(node)
+        if not isinstance(case, TestSuite):
+            loc: NodeLocation = (case.filename, case.linenumber)
+            node = TestSuite(name="", loc=loc, children=[case])
+        else:
+            node = case
+
+    tc = TestCaseContext(node)
+    context_stack.append(tc)
 
 def pop_call_node() -> Node | None:
+
+
+def pop_context_stack() -> "TestCaseContext":
     """
     Pops the last call node from the stack and returns it.
+    Pops the last context from the stack and returns it.
     """
 
     if not call_node_stack:
         if renpy.config.developer:
             raise Exception("No call on call stack.")
         return
+    global context_stack
 
     return call_node_stack.pop()[0]
+    if not context_stack:
+        raise Exception("No context on context stack.")
+
+    rv = context_stack.pop()
+
+        ## Executing a subcase may artificially lengthen the time between state changes,
+        ## so we update the value of last_state_change here
+        ctx.last_state_change = renpy.display.core.get_time()
+
+    renpy.test.testmouse.reset()
+
+    return rv
 
 
-def execute_node(
-    now: float,
-    current_node: Node,
-    current_state: State | None,
-    start: float,
-    current_started: bool = False,
-) -> tuple[Node | None, State | None, float, bool]:
+def get_current_context() -> "TestCaseContext":
     """
-    Performs one execution cycle of a node.
+    Returns the current context, or raises an exception if there is no context.
     """
 
-    try:
-        if not current_started:
-            if current_node.ready():
-                # If the node is ready, we start it.
-                current_state = current_node.start()
-                start = now
-                current_started = True
-            else:
-                return current_node, None, start, False
+    global context_stack
 
-        current_state = current_node.execute(current_state, now - start)
+    if len(context_stack) == 0:
+        raise Exception("No context on context stack.")
+
+    return context_stack[-1]
 
 
-    if current_state is None:
-        return next_node, None, start, False
-    else:
-        return current_node, current_state, start, current_started
+def set_next_node(next: Node | None) -> None:
+    """
+    Sets the next node to execute. This is used to change the flow of execution
+    to a different node.
+    """
+
+    get_current_context().next_node = next
+
+
+def is_in_test() -> bool:
+    return len(context_stack) > 0
 
 
 def execute() -> None:
@@ -175,16 +200,11 @@ def execute() -> None:
     This allows test code to generate events, if desired.
     """
 
-    global node
-    global state
-    global start_time
-    global has_started
+    global context_stack
     global action
-    global old_state
-    global old_loc
-    global last_state_change
+    global labels
 
-    if node is None:
+    if len(context_stack) == 0:
         return
 
     if renpy.display.interface.suppress_underlay and (not _test.force):
@@ -205,111 +225,199 @@ def execute() -> None:
         action = None
         renpy.display.behavior.run(old_action)
 
-    now = renpy.display.core.get_time()
-
     try:
-        node, state, start_time, has_started = execute_node(now, node, state, start_time, has_started)
-
+        get_current_context().execute()
     except renpy.game.QuitException:
-        end_testcase()
+        while context_stack:
+            pop_context_stack()
         raise
-
-    except Exception as e:
-        report_exception(e)
-
-        node = None
-        state = None
-        has_started = False
 
     labels.clear()
 
-    if node is None and call_node_stack:
-        # We've finished the current call, return
-        popped_node = pop_call_node()
-        if popped_node is not None:
-            node = popped_node.next
 
-    if node is None:
-        end_testcase()
-        return
-
-    loc = renpy.exports.get_filename_line()
-
-    if (old_state != state) or (old_loc != loc):
-        last_state_change = now
-
-    old_state = state
-    old_loc = loc
-
-    if (now - last_state_change) > _test.timeout:
-        exc = TestcaseException("Testcase timed out after {} seconds.".format(_test.timeout))
-        report_exception(exc)
-        end_testcase()
-
-
-def report_exception(e: Exception) -> None:
+def exception_handler(exc: renpy.error.TracebackException) -> bool:
     """
-    Called to report an exception that occurred during the execution of a testcase.
-    This is used to print the traceback and other information about the exception.
+    Handles exceptions that occur during the execution of testcases.
+    This is called by Ren'Py when an exception is raised.
     """
 
-    global node
-    global call_node_stack
-
-    renpy.error.report_exception(e, editor=False)
-    epc = renpy.error.MaybeColoredExceptionPrintContext(None)
-
-    epc.indent_depth = 0
-    epc.string("\nDuring testcase execution:")
-
-    epc.indent_depth = 1
-
-    nodes = [x[0] for x in call_node_stack[1:]] + [node]
-    labels = [f"testcase {x[1]}" for x in call_node_stack]
-
-    for n, label in zip(nodes, labels):
-        filename = renpy.exports.unelide_filename(n.filename)
-        epc.location(filename, n.linenumber, label)
-
-        lines = renpy.lexer.list_logical_lines(filename)
-        for fname, line_num, line in lines:
-            if line_num == n.linenumber:
-                epc.string("  " + line.strip())
-                break
+    get_current_context().handle_exception(None)
+    return True
 
 
-def end_testcase() -> None:
+class TestCaseContext:
     """
-    Ends the current testcase, resetting the state and node.
+    A context manager for testcases. This is used to set the current node and state
+    when entering a testcase, and to reset them when exiting.
     """
 
-    global node
-    global state
-    global start_time
-    global has_started
-    global action
-    global old_state
-    global old_loc
-    global call_node_stack
+    testsuite: TestSuite
+    """The testcase being executed."""
 
-    ## Pop off the call stack and end the testcase.
-    if call_node_stack:
-        # root = call_node_stack[0]
-        # print(root)
-        call_node_stack.clear()
 
-    node = None
-    state = None
-    start_time = 0.0
-    has_started = False
-    action = None
 
-    old_state = None
-    old_loc = None
+    node: Node | None = None
+    """Current node being executed."""
 
-    renpy.test.testmouse.reset()
-    for clbk in renpy.config.end_testcase_callbacks:
-        clbk()
+    state: State | None = None
+    """The state of the current node being executed."""
+
+    start_time: float = 0.0
+    """The time the current node started executing."""
+
+    has_started: bool = False
+    """Whether the current node has run the start() method."""
+
+    next_node: Node | None = None
+    """The next node to execute after the current one."""
+
+    old_state: State | None = None
+    """The previous state of the current node."""
+
+    old_loc: NodeLocation | None = None
+    """The previous location in the game script of the current node."""
+
+    last_state_change: float = 0.0
+    """The last time the state changed."""
+
+
+    def __init__(self, node: TestSuite):
+        self.testsuite = node
+
+        self.testcase_index = 0
+        self.ran_before = self.testsuite.before is None
+        self.ran_after = self.testsuite.after is None
+
+        self.prepare_for_next_testcase()
+
+
+    def prepare_for_next_testcase(self) -> None:
+        self.ran_before_each = self.testsuite.before_each is None
+        self.ran_testcase = len(self.testsuite.children) == 0
+        self.ran_after_each = self.testsuite.after_each is None
+
+
+    def execute(self) -> None:
+        now = renpy.display.core.get_time()
+
+        try:
+            ## Before
+            if not self.ran_before and self.testsuite.before:
+                if self.node is None:
+                    self.node = self.testsuite.before
+
+                self.execute_node(now)
+                self.ran_before = self.node is None
+
+            ## Before Each
+            elif not self.ran_before_each and self.testsuite.before_each:
+                if self.node is None:
+                    self.node = self.testsuite.before_each
+
+                self.execute_node(now)
+                self.ran_before_each = self.node is None
+
+            ## Test Case
+            elif not self.ran_testcase and self.testsuite.children:
+                if self.node is None:
+                    new_case = self.testsuite.children[self.testcase_index]
+
+                    ctx = get_current_context()
+
+                    if new_case.skip:
+                        self.testcase_index += 1
+
+                        return
+
+                    self.node = new_case
+
+                    if isinstance(self.node, TestSuite):
+                        push_context_stack(self.node)
+
+                if not isinstance(self.node, TestSuite):
+                    self.execute_node(now)
+
+                self.ran_testcase = self.node is None
+
+            ## After Each
+            elif not self.ran_after_each and self.testsuite.after_each:
+                if self.node is None:
+                    self.node = self.testsuite.after_each
+
+                self.execute_node(now)
+                self.ran_after_each = self.node is None
+
+            elif self.testcase_index < len(self.testsuite.children) - 1:
+                self.testcase_index += 1
+                self.prepare_for_next_testcase()
+
+            ## After
+            elif not self.ran_after and self.testsuite.after:
+                if self.node is None:
+                    self.node = self.testsuite.after
+
+                self.execute_node(now)
+                self.ran_after = self.node is None
+
+            ## Done with the testsuite
+            else:
+                pop_context_stack()
+                return
+
+        except renpy.game.QuitException:
+            raise
+
+        except Exception as exc:
+            self.handle_exception(exc)
+            return
+
+        loc = renpy.exports.get_filename_line()
+
+        if (self.old_state != self.state) or (self.old_loc != loc):
+            self.last_state_change = now
+
+        self.old_state = self.state
+        self.old_loc = loc
+
+        if (now - self.last_state_change) > _test.timeout:
+            exc = RenpyTestTimeoutError("Testcase timed out after {} seconds.".format(_test.timeout))
+            self.handle_exception(exc)
+            return
+
+
+    def execute_node(self, now: float) -> None:
+        """
+        Performs one execution cycle of a node.
+        """
+
+        if not self.has_started:
+            if self.node.ready():
+                # If the node is ready, we start it.
+                self.state = self.node.start()
+                self.start = now
+                self.has_started = True
+            else:
+                self.state = None
+                self.has_started = False
+                return
+
+        self.state = self.node.execute(self.state, now - self.start)
+
+        ## If the current state is None, move to the next node
+        if self.state is None:
+            self.node = self.next_node
+            self.has_started = False
+
+
+    def handle_exception(self, exc: Exception | None) -> None:
+        ctx = get_current_context()
+
+        if self.ran_before and self.ran_before_each and not self.ran_testcase:
+            ## If the exception happened in a testcase, move to the next one.
+            self.ran_testcase = True
+
+        else:
+            pop_context_stack()
 
 
 def test_command() -> bool:
@@ -326,16 +434,7 @@ def test_command() -> bool:
     ## NOTE: This command gets called when the game starts for the first time, OR when the game
     ## goes back to the main menu after finishing the game. Special care is taken to avoid
     ## messing up the state of the test/call stack
-    global node
-
-    if not node and not call_node_stack:
-        ## A bit janky, but we want the testcase to be the root node
-        node = lookup(args.testcase)
-        call_node(args.testcase)
-
-        ## Chain the nodes in the testcases
-        for name, root in testcases.items():
-            root.chain(None)
+    initialize(args.testcase)
 
     return True
 
