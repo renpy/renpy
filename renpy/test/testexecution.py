@@ -54,7 +54,7 @@ def take_name(name: str) -> None:
     Takes the name of a statement that is about to run.
     """
 
-    if len(context_stack) == 0:
+    if not is_in_test():
         return
 
     if isinstance(name, str):
@@ -143,30 +143,22 @@ def initialize(name: str) -> None:
 
     # If the root is a TestCase, we create a TestSuite with it as the only child.
     if not isinstance(root, TestSuite):
-        suite = TestSuite(name=root.name, loc=(root.filename, root.linenumber), children=[root])
+        suite = TestSuite(name="<Top>", loc=(root.filename, root.linenumber), children=[root])
     else:
         suite = root
 
-    all_results = testreporter.TestSuiteResults(name)
+    all_results = testreporter.TestSuiteResults(suite.name)
     all_results.populate_children(suite)
     push_context_stack(suite)
 
     initialized = True
 
 
-def push_context_stack(node: str | TestSuite) -> None:
+def push_context_stack(node: TestSuite) -> None:
     global context_stack
 
     if len(context_stack) == 0:
         testreporter.reporter.test_run_start()
-
-    if isinstance(node, str):
-        case = lookup(node)
-        if not isinstance(case, TestSuite):
-            loc: NodeLocation = (case.filename, case.linenumber)
-            node = TestSuite(name="", loc=loc, children=[case])
-        else:
-            node = case
 
     tc = TestSuiteContext(node)
     context_stack.append(tc)
@@ -186,7 +178,9 @@ def pop_context_stack() -> "TestSuiteContext":
         raise Exception("No context on context stack.")
 
     rv = context_stack.pop()
+    rv.executor.results.end(None)
     rv.results.end(None)
+
     testreporter.reporter.test_suite_end(rv.results)
 
     if len(context_stack) == 0:
@@ -237,7 +231,7 @@ def execute() -> None:
     global action
     global labels
 
-    if len(context_stack) == 0:
+    if not is_in_test():
         return
 
     if renpy.display.interface.suppress_underlay and (not _test.force):
@@ -260,13 +254,9 @@ def execute() -> None:
 
     try:
         get_current_context().execute()
-    except renpy.game.QuitException:
-        while context_stack:
-            pop_context_stack()
-
-        if all_results.status == testreporter.TestCaseStatus.FAILED:
-            raise renpy.game.QuitException(status=1)
-        raise
+    except renpy.game.QuitException as e:
+        status = quit_handler()
+        raise renpy.game.QuitException(status=status)
 
     labels.clear()
 
@@ -280,6 +270,21 @@ def exception_handler(exc: renpy.error.TracebackException) -> bool:
     get_current_context().handle_exception(None)
     return True
 
+
+def quit_handler() -> int:
+    """
+    Handles the quit command and QuitException thrown by the test.
+    Returns a status code that indicates whether the test passed or failed.
+    """
+
+    global context_stack
+
+    while context_stack:
+        pop_context_stack()
+
+    if all_results.status == testreporter.TestCaseStatus.FAILED:
+        return 1
+    return 0
 
 class TestSuiteContext:
     """
