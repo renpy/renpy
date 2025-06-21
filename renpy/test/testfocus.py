@@ -171,11 +171,11 @@ def focus_from_displayable(d: Displayable) -> Focus | None:
 
     ## If we reach here, the displayable is not in the focus list.
     ## Search the render tree for it.
-    stack = [(renpy.display.render.screen_render, 0, 0, None)]
+    stack = [(renpy.display.render.screen_render, 0, 0, None)] # type: ignore
     while stack:
         r, x, y, screen = stack.pop()
 
-        if not isinstance(r, renpy.display.render.Render):
+        if not isinstance(r, renpy.display.render.Render): # type: ignore
             continue
 
         if d in r.render_of:

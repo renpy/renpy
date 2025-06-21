@@ -61,31 +61,37 @@ def take_name(name: str) -> None:
         labels.add(name)
 
 
-def add_testcase(name: str, node: TestCase) -> None:
+def add_testcase(name: str, node: TestCase, parent: TestSuite | None = None) -> None:
     """
     Adds a testcase to the `testcases` dictionary. The name is a tuple of strings,
     and the node is the root node of the testcase.
     """
 
+    ## NOTE: This is run every time the script is reloaded.
+
     if name in testcases:
-        ## This may occur if reloading the script
-        return
+        if testcases[name] != node:
+            existing = testcases[name]
+            raise KeyError(
+                f"The testcase \"{name}\" is defined twice, "
+                f"at File {existing.filename}:{existing.linenumber} "
+                f"and File {node.filename}:{node.linenumber}.")
+        else:
+            return
 
     testcases[name] = node
 
-    if "." in name:
-        ## If the name contains a dot, we assume it's a subcase of a TestSuite.
-        parts = name.split(".")
-        parent_name = ".".join(parts[:-1])
+    if (parent is None) and ("." in name):
+        ## Add top-level dotted name tests to the appropriate testsuite
+        parent_name = name.rsplit(".", 1)[0]
         parent_node = lookup(parent_name)
         if not isinstance(parent_node, TestSuite):
-            raise TypeError("Parent node {} is not a TestSuite.".format(parent_name))
-        if node not in parent_node.children:
-            parent_node.children.append(node)
+            raise TypeError(f"Parent node \"{parent_name}\" is not a TestSuite.")
+        parent_node.children.append(node)
 
     if isinstance(node, TestSuite):
         for child in node.children:
-            add_testcase(child.name, child)
+            add_testcase(child.name, child, node)
 
 
 def lookup(name: str, from_node: Node | None = None) -> TestCase:
@@ -266,6 +272,8 @@ def exception_handler(exc: renpy.error.TracebackException) -> bool:
     Handles exceptions that occur during the execution of testcases.
     This is called by Ren'Py when an exception is raised.
     """
+    if not is_in_test():
+        return False
 
     get_current_context().handle_exception(None)
     return True
