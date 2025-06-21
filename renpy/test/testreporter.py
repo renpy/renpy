@@ -38,7 +38,7 @@ class TestCaseResults:
         if status is not None:
             self.status = status
 
-        if self.start_time > 0.0:
+        if self.start_time > 0.0 and self.end_time == 0.0:
             self.end_time = renpy.display.core.get_time()
             self.seconds = self.end_time - self.start_time
 
