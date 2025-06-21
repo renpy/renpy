@@ -304,8 +304,18 @@ class SelectorDrivenNode(Node):
         self.always = always
 
     def execute(self, state: State, t: float) -> State:
-        if renpy.display.interface.trans_pause and (t < _test.transition_timeout):
+        if renpy.display.interface.trans_pause or renpy.display.interface.ongoing_transition:
+            if t >= _test.transition_timeout:
+                ## End the transition and wait for the next frame.
+                ## We need to suppress_transition in the core loop
+                old_less_updates = renpy.game.less_updates
+                renpy.game.less_updates = True
+                return ("skipped_transition", old_less_updates, state)
             return state
+
+        if isinstance(state, tuple) and len(state) == 3 and state[0] == "skipped_transition":
+            renpy.game.less_updates = state[1]
+            state = state[-1]
 
         if self.selector and not self.selector.ready():
             return state
@@ -338,12 +348,12 @@ class SelectorDrivenNode(Node):
         else:
             x, y = renpy.test.testfocus.find_position(f, position)
 
-        if None in (x, y):
+        if x is None or y is None:
             if not self.always and self.selector is not None:
                 self.selector.element_not_found_during_perform()
             x, y = renpy.exports.get_mouse_pos()
 
-        return x, y # type: ignore
+        return x, y
 
     def perform(self, x: int, y: int, state: State, t: float) -> State | None:
         """
