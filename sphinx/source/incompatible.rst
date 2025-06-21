@@ -80,6 +80,11 @@ This ensures menus will have a scrollbar on phones and televisions. The number 1
 game. For a 1280 pixel wide game, use 870. For a 3840 pixel wide game, use 2010. (Other resolutions should use
 0.68 times the width of the game, rounded down to an integer.)
 
+**Shader Order**
+In previous versions of Ren'Py, the order in which shader parts that shared the same
+priority were applied was undefined. Now, the parts are ordered by the name of the shader, producing
+a reliable order, but this reliable order may be diferent than what was seen on particular systems.
+
 
 .. _incompatible-8.3.4:
 .. _incompatible-7.8.4:
