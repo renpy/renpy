@@ -61,6 +61,16 @@ class TestSuiteResults(TestCaseResults):
     num_testcases_skipped: int = 0
     children: list["TestSuiteResults | TestCaseResults"] = field(default_factory=list, repr=False)
 
+    @property
+    def num_testsuites_not_run(self) -> int:
+        return (self.num_testsuites - self.num_testsuites_passed
+            - self.num_testsuites_failed - self.num_testsuites_skipped)
+
+    @ property
+    def num_testcases_not_run(self) -> int:
+        return (self.num_testcases - self.num_testcases_passed
+            - self.num_testcases_failed - self.num_testcases_skipped)
+
     def populate_children(self, node: renpy.test.testast.TestSuite) -> None:
         for child in node.children:
             if isinstance(child, renpy.test.testast.TestSuite):
@@ -104,7 +114,7 @@ class TestSuiteResults(TestCaseResults):
 
         rv.status = self.status
         rv.seconds = self.seconds
-        rv.name = self.name
+        rv.name = self.name if self.name != "<Top>" else self.children[0].name
         rv.status = self.status
 
         return rv
@@ -288,10 +298,10 @@ class ConsoleReporter(Reporter):
             self._print("=" * 20)
 
     def _print_summarized_results(self, results: TestSuiteResults) -> None:
-        num_cases_not_run = results.num_testcases - results.num_testcases_passed - results.num_testcases_failed - results.num_testcases_skipped
-        num_suites_not_run = results.num_testsuites - results.num_testsuites_passed - results.num_testsuites_failed - results.num_testsuites_skipped
-
-        self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Test Results (Summary): {results.name}")
+        self._print(
+            f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
+            f"Test Results (Summary): {results.name}"
+        )
 
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
@@ -306,8 +316,8 @@ class ConsoleReporter(Reporter):
             f"{ANSIColors.YELLOW if results.num_testsuites_skipped else ANSIColors.RESET}"
             f"{results.num_testsuites_skipped:5d} skipped{ANSIColors.RESET} | "
 
-            f"{ANSIColors.YELLOW if num_suites_not_run else ANSIColors.RESET}"
-            f"{num_suites_not_run:5d} not run{ANSIColors.RESET}"
+            f"{ANSIColors.YELLOW if results.num_testsuites_not_run else ANSIColors.RESET}"
+            f"{results.num_testsuites_not_run:5d} not run{ANSIColors.RESET}"
         )
 
         self._print(
@@ -323,8 +333,8 @@ class ConsoleReporter(Reporter):
             f"{ANSIColors.YELLOW if results.num_testcases_skipped else ANSIColors.RESET}"
             f"{results.num_testcases_skipped:5d} skipped{ANSIColors.RESET} | "
 
-            f"{ANSIColors.YELLOW if num_cases_not_run else ANSIColors.RESET}"
-            f"{num_cases_not_run:5d} not run{ANSIColors.RESET}"
+            f"{ANSIColors.YELLOW if results.num_testcases_not_run else ANSIColors.RESET}"
+            f"{results.num_testcases_not_run:5d} not run{ANSIColors.RESET}"
         )
 
         self._print(
