@@ -91,6 +91,12 @@ class Node(object):
         """
         return ""
 
+    def __eq__(self, other):
+        if not isinstance(other, Node):
+            return False
+
+        return (self.filename, self.linenumber) == (other.filename, other.linenumber)
+
     def __repr__(self):
         if params := self.get_repr_params():
             params = " " + params
