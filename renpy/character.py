@@ -1426,7 +1426,7 @@ class ADVCharacter(object):
         # 7.4.5 on.
         else:
             if thing == "what":
-                return (sub(prefix) + sub(body, translate=not renpy.game.preferences.language) + sub(suffix))
+                return (sub(prefix) + sub(body, translate=not renpy.game.context().translated) + sub(suffix))
             else:
                 return (sub(prefix) + sub(body) + sub(suffix))
 
