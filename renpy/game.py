@@ -245,7 +245,7 @@ CONTROL_EXCEPTIONS = (
     )
 
 
-def context(index=-1):
+def context(index=-1) -> 'renpy.execution.Context':
     """
     Return the current execution context, or the context at the
     given index if one is specified.

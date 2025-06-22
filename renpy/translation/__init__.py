@@ -209,7 +209,7 @@ class ScriptTranslator(object):
 
         self.chain_worklist = unchained
 
-    def lookup_translate(self, identifier, alternate=None):
+    def lookup_translate(self, identifier, alternate=None) -> tuple[renpy.ast.Node, bool]:
 
         identifier = identifier.replace('.', '_')
         language = renpy.game.preferences.language
@@ -225,11 +225,14 @@ class ScriptTranslator(object):
 
         if tl is None:
             tl = self.default_translates[identifier]
+            translated = False
+        else:
+            translated = True
 
         if isinstance(tl, renpy.ast.TranslateSay):
-            return tl
+            return tl, translated
         else:
-            return tl.block[0]
+            return tl.block[0], translated
 
     def get_all_translates(self, identifier: str):
         """
@@ -859,7 +862,7 @@ def check_language():
         tid = ctx.translate_identifier or ctx.deferred_translate_identifier
 
         if tid is not None:
-            node = renpy.game.script.translator.lookup_translate(tid) # @UndefinedVariable
+            node, _ = renpy.game.script.translator.lookup_translate(tid) # @UndefinedVariable
 
             if node is not None:
                 # This is necessary for the menu-with-say case. ADVCharacter needs

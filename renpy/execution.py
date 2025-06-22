@@ -178,6 +178,9 @@ class Context(renpy.object.Object):
 
     exception_handler: Callable[[renpy.error.TracebackException], bool] | None
 
+    translated: bool = False
+    "True if the current statement has been translated using the translate system."
+
     def __repr__(self):
 
         try:

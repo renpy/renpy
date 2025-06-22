@@ -2872,7 +2872,7 @@ class Translate(Node):
     def lookup(self) -> Node:
         return renpy.game.script.translator.lookup_translate(
             self.identifier,
-            getattr(self, "alternate", None))
+            getattr(self, "alternate", None))[0]
 
     def execute(self):
 
@@ -2880,8 +2880,13 @@ class Translate(Node):
             next_node(self.next)
             raise Exception("Translation nodes cannot be run directly.")
 
-        next_node(self.lookup())
 
+        node, translated = renpy.game.script.translator.lookup_translate(
+            self.identifier,
+            getattr(self, "alternate", None))
+
+        next_node(node)
+        renpy.game.context().translated = translated
         renpy.game.context().translate_identifier = self.identifier
         renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
 
@@ -2979,7 +2984,7 @@ class TranslateSay(Say):
     def lookup(self) -> Node:
         return renpy.game.script.translator.lookup_translate(
             self.identifier,
-            getattr(self, "alternate", None))
+            getattr(self, "alternate", None))[0]
 
     def execute(self):
 
@@ -2987,11 +2992,17 @@ class TranslateSay(Say):
 
         renpy.game.context().translate_identifier = self.identifier
         renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
+        renpy.game.context().translated = False
 
         if self.language is None:
 
             # Potentially, jump to a translation.
             node = self.lookup()
+            node, translated = renpy.game.script.translator.lookup_translate(
+                    self.identifier,
+                    getattr(self, "alternate", None))
+
+            renpy.game.context().translated = translated
 
             if (node is not None) and (node is not self):
                 next_node(node)
@@ -3096,6 +3107,7 @@ class EndTranslate(Node):
 
         renpy.game.context().translate_identifier = None
         renpy.game.context().alternate_translate_identifier = None
+        renpy.game.context().translated = False
 
 
 class TranslateString(Node):
