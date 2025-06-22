@@ -30,6 +30,7 @@ the omission in future versions.
 * Andy_kl
 * Apricotorange
 * Arda Güler
+* Arman
 * Arowana-vx
 * Asfdfdfd
 * Auro-Cyanide
@@ -75,6 +76,7 @@ the omission in future versions.
 * Diapolo10
 * DinakiS
 * Dipesh Aggarwal
+* Dm1sh
 * Do10HM
 * Dogtopus
 * Doomfest
@@ -87,6 +89,7 @@ the omission in future versions.
 * Eevee (Lexy Munroe)
 * Elckarow
 * Eliza Velasquez
+* Emmanuel Ferdman
 * Emmanuel Marty
 * Emmeken
 * Enerccio
@@ -131,14 +134,17 @@ the omission in future versions.
 * JackkelDragon
 * Jackmcbarn
 * Jacob Kauffmann
+* Jade Macho
 * JaHIY
 * Jake Staines
+* Jamaine
 * James Broadhead
 * James Pearson Hughes
 * JamiesonC
 * Jan Beich
 * Jan Masek
 * Javimat
+* Jaybe Games
 * Jeremy Rand
 * Jesusaves
 * Joaquin Garmendia Cabrera
@@ -219,12 +225,14 @@ the omission in future versions.
 * Nyaatrap
 * OctoSpacc
 * OleSTEEP
+* Opolis13
 * Oscar Six
 * Oshi-Shinobu
 * Patrick Dawson
 * Paul J Martinez
 * Paul Morio
 * Pavel Langwell
+* Peter Dave Hello
 * Peter DeVita
 * Petr Abdulin
 * Philat
@@ -233,6 +241,7 @@ the omission in future versions.
 * Pratomo Asta Nugraha
 * Project Gardares
 * Psunbury
+* Quetz
 * Raj Singh Chauhan
 * Raspberry-soft
 * Rastagong
@@ -262,6 +271,7 @@ the omission in future versions.
 * Siege-Wizard
 * SleepKirby
 * Spiky Caterpillar
+* Stanislau Tsitsianok
 * Sunrise Sarsaparilla
 * Susnux
 * Sylvain Beucler
@@ -271,6 +281,7 @@ the omission in future versions.
 * The66F95
 * Thuong Nguyen Huu
 * Tichq
+* Tinyboxvk
 * Tlm-2501
 * Tmrwiz
 * Totally a booplicate
