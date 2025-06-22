@@ -312,6 +312,9 @@ The :var:`config.persistent_callback` callback makes it possible to update persi
 Changes
 -------
 
+Ren'Py now support showing the same :class:`Live2D` displayable on multiple laywers, with multiple tags,
+or both.
+
 :class:`Transform` now has an attribute, original_child, that gives the child of the transform before the
 function was called.
 

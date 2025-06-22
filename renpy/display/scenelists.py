@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from typing import Generator
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import renpy
@@ -548,6 +549,20 @@ class SceneLists(renpy.object.Object):
                 rv.append(sle.displayable)
 
         return rv
+
+    def get_all_layer_tag_displayable(self) -> Generator[tuple[str, str|None, renpy.display.displayable.Displayable], None, None]:
+        """
+        Yields tuples of (layer, tag, displayable) for all entries in the scene lists, where:
+
+        * layer is a string givint the layer name,.
+        * tag is a string giving the tag of the entry, or None if it has no tag. The tag may contain a '$'
+          character, which indicates that the entry is in the process of being hidden.
+        * displayable is the displayable associated with the entry.
+        """
+
+        for layer, l in self.layers.items():
+            for sle in l:
+                yield (layer, sle.tag, sle.displayable)
 
     def remove_above(self, layer, thing):
         """

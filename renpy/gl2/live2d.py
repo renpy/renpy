@@ -462,8 +462,13 @@ def update_states():
     """
 
     def visit(d):
+        nonlocal count
+
         if not isinstance(d, Live2D):
             return
+
+        d.name = (layer, tag, count)
+        count += 1
 
         if d.name is None:
             return
@@ -481,6 +486,12 @@ def update_states():
         # Shouldn't happen, but stop thrashing if it does.
         if state.old is d:
             return
+
+        # Deal with the case of two different Live2D displayables being shown
+        # with the same layer/tag/name.
+        if state.old is not None and state.new is not None:
+            if state.old.filename != state.new.filename:
+                state.old = None
 
         if state.cycle_new:
             state.old = state.new
@@ -502,7 +513,15 @@ def update_states():
 
     sls = renpy.display.scenelists.scene_lists()
 
-    for d in sls.get_all_displayables(current=True):
+    for layer, tag, d in sls.get_all_layer_tag_displayable():
+        if tag is None:
+            continue
+
+        if "$" in tag:
+            continue
+
+        count = 0
+
         if d is not None:
             d.visit_all(visit)
 
@@ -514,6 +533,12 @@ def update_states():
 
 
 class Live2D(renpy.display.displayable.Displayable):
+
+    name: tuple[str, str, int] | None = None
+    """
+    A structural name for this displayable, consisting of the layer, tag, and a count. This is used to
+    match the displayable to its state in a previous interaction.
+    """
 
     nosave = [ "common_cache" ]
 
@@ -674,7 +699,6 @@ class Live2D(renpy.display.displayable.Displayable):
             default_fade=self.default_fade,
             **self.properties)
 
-        rv.name = args.name
         rv._duplicatable = False
 
         return rv
