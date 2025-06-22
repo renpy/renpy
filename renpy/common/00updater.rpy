@@ -986,14 +986,17 @@ init -1500 python in updater:
             # Does updates.json need to be verified?
             require_verified = False
 
-            # New-style ECDSA signature.
-            key = os.path.join(config.basedir, "update", "key.pem")
+            # The key for either the current game, or a downloaded game.
+            key = os.path.join(self.updatedir, "key.pem")
 
-            # Included with downloader app.
-            key = os.path.join(config.basedir, "public_key.pem")
-
+            # A key that comes with the downloader app, to seed it.
             if not os.path.exists(key):
-                key = os.path.join(self.updatedir, "key.pem")
+                key = os.path.join(config.basedir, "public_key.pem")
+
+            # This game's included key, used for initial downloades if the downloader app
+            # doesn't have a key.
+            if not os.path.exists(key):
+                key = os.path.join(config.basedir, "update", "key.pem")
 
             if os.path.exists(key):
                 require_verified = True
