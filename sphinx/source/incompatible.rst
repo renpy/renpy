@@ -85,6 +85,10 @@ In previous versions of Ren'Py, the order in which shader parts that shared the 
 priority were applied was undefined. Now, the parts are ordered by the name of the shader, producing
 a reliable order, but this reliable order may be diferent than what was seen on particular systems.
 
+
+.. _incompatible-8.3.4:
+.. _incompatible-7.8.4:
+
 8.3.4 / 7.8.4
 -------------
 
