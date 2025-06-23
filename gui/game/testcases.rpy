@@ -1,110 +1,110 @@
 ﻿testcase default:
-
-    "Start"
+    $ _test.transition_timeout = 0.05
+    click "Start"
     pause .6
 
     # Test rollback
-    "Hello, World."
-    "Back"
+    click "You've created a new"
+    click "Back"
+    advance
 
-    # Test history.
-    click
-    click
-    "History"
+    # # Test history.
+    click "History"
     pause .6
 
     # Test Help.
-    "Help"
-    "Keyboard"
+    click "Help"
+    click "Keyboard"
 
     # Test About
-    "About"
+    click "About"
 
     # Test Preferences
-    "Preferences"
+    click "Preferences"
 
-    "Left"
-    "Right"
-    "Disable"
+    # click "Left"
+    # click "Right"
+    # click "Disable"
 
-    "Unseen Text"
-    "Unseen Text"
+    click "Unseen Text"
+    click "Unseen Text"
 
-    "After Choices"
-    "After Choices"
+    click "After Choices"
+    click "After Choices"
 
-    "Transitions"
-    "Transitions"
+    click "Transitions"
+    click "Transitions"
 
-    "Mute All"
-    "Mute All"
+    click "Mute All"
+    click "Mute All"
 
-    "Save"
-    "Load"
+    click "Save"
+    click "Load"
 
-    "Return"
+    click "Return"
     pause .6
 
     run Jump("test")
 
-    "In testcase code."
+    click "In testcase code."
 
     # menu_1
-    click until "Choice A"
+    advance until screen choice
+    click "Choice A"
 
 
     # input
     type "Test User\n"
-    "Name: Test User"
+    click "Name: Test User"
 
     # Nvl
-    click
-    click
-    click
+    advance
+    advance
+    advance
 
-    click
-    click
-    click until "NVL 6"
+    advance
+    advance
 
     # NVL Menu.
-    "Choice B"
+    advance until eval ("nvl_menu" in renpy.game.context().modes)
+    click "Choice B"
 
     $ renpy.unlink_save("1-1")
-    "Save"
+    click "Save"
 
     pause .6
 
-    "Save slot 1"
+    click "Save slot 1"
 
     pause .6
 
-    "Save slot 1"
-    "Yes"
+    click "Save slot 1"
+    click "Yes"
 
-    "Main Menu"
-    "Yes"
+    click "Main Menu"
+    click "Yes"
 
-    "Load"
-    "Load slot 1"
-
-    pause .5
-
-    "Save"
+    click "Load"
+    click "Load slot 1"
 
     pause .5
 
+    click "Save"
 
-    "Load"
-    "Load slot 1"
-    "No"
+    pause .5
 
-    "Return"
+
+    click "Load"
+    click "Load slot 1"
+    click "No"
+
+    click "Return"
 
     # Done.
     pause .5
 
-    "Done."
-    "Quit"
+    click "Done."
+    click "Quit"
 
 
 define nvle = Character("Eileen", kind=nvl)
