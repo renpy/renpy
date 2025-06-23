@@ -248,7 +248,7 @@ def pause_statement(l: Lexer, loc: NodeLocation) -> testast.Pause | testast.Unti
     """
     l.expect_noblock("pause statement")
 
-    if until := parse_until(l, loc, testast.Pause(loc, 0.1)):
+    if until := parse_until(l, loc, testast.Pause(loc, "0.1")):
         rv = until
 
     else:

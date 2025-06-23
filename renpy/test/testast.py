@@ -151,9 +151,9 @@ class TestCase(Block):
     ):
         super().__init__(loc, block)
         self.name = name
+        self.block = block
         self.description = description
         self.skip = skip
-        self.block = block
 
     def get_repr_params(self) -> str:
         return f"name={self.name!r}"
@@ -178,9 +178,6 @@ class TestSuite(TestCase):
         after: Block | None = None
     ):
         super().__init__(loc, name, [], description, skip)
-        self.name = name
-        self.description = description
-        self.skip = skip
         self.testcases = testcases if testcases is not None else []
         self.testcase_index = 0
         self.ran_testcase = False
@@ -203,9 +200,19 @@ class TestSuite(TestCase):
         """
         Returns the next block to execute in the test suite.
         """
-        for block in [self.before, self.before_each]:
-            if not block.done:
-                return block
+        if not self.before.done:
+            return self.before
+
+        if self.testcase_index < len(self.testcases):
+            ## Check if the current testcase is skipped
+            ## If it is, do NOT execute the before_each and after_each block
+            testcase = self.testcases[self.testcase_index]
+            if testcase.skip:
+                self.prepare_for_next_testcase()
+                return testcase
+
+        if not self.before_each.done:
+            return self.before_each
 
         if not self.ran_testcase and self.testcase_index < len(self.testcases):
             testcase = self.testcases[self.testcase_index]
@@ -234,6 +241,7 @@ class TestSuite(TestCase):
         """
         self.testcase_index += 1
         self.before_each.restart()
+        self.is_in_testcase = False
         self.ran_testcase = False
         self.after_each.restart()
 
@@ -649,7 +657,7 @@ class Action(Node):
 
 class Pause(Node):
     __slots__ = "expr"
-    def __init__(self, loc: NodeLocation, expr):
+    def __init__(self, loc: NodeLocation, expr: str):
         super(Pause, self).__init__(loc)
         self.expr = expr
 

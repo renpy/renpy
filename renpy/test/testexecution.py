@@ -204,7 +204,7 @@ def quit_handler() -> int:
     while context_stack:
         pop_context_stack()
 
-    if all_results.status == testreporter.TestCaseStatus.FAILED:
+    if all_results and all_results.status == testreporter.TestCaseStatus.FAILED:
         return 1
     return 0
 
@@ -456,6 +456,10 @@ class TestSuiteContext:
             return
 
         if isinstance(next_node, TestCase):
+            if next_node.skip:
+                report_testcase_skipped(next_node)
+                return
+
             testcase_results = all_results.get_result_by_name(next_node.name)
             testcase_results.begin()
             self.executor.reinitialize(testcase_results, next_node)
