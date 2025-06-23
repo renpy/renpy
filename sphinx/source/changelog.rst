@@ -54,8 +54,8 @@ performance when the persistent data is large.
 reduce the amount of math that needs to be done in many cases. This can improve performance when drawing scenes
 with large numbers of drawing operations, as those scenes can be CPU-bound.
 
-Similarly, the OpenGL drawing code has been changed to avoid creating dictionaries containing the values of
-shader variables. Avoiding
+Similarly, the OpenGL drawing code has been changed to avoid the repeated allocation of dictionaries
+that contain shader variables.
 
 **Live2D** When rendering Live2D models, Ren'Py will avoid doing unproductive work to create Renders for layers
 that are not visible, and masks that are not used. This can improve performance when using Live2D models with
