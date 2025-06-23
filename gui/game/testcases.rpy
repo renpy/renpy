@@ -8,9 +8,8 @@
     click "Back"
     advance
 
-    # # Test history.
+    # Test history.
     click "History"
-    pause .6
 
     # Test Help.
     click "Help"

@@ -644,7 +644,7 @@ class Context(renpy.object.Object):
 
             self.seen = False
 
-            renpy.test.testexecution.take_name(self.current)
+            renpy.test.testexecution.set_current_statement(node)
 
             try:
                 try:

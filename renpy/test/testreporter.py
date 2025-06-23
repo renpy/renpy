@@ -78,7 +78,7 @@ class TestSuiteResults(TestCaseResults):
             - self.num_testcases_failed - self.num_testcases_skipped)
 
     def populate_children(self, node: renpy.test.testast.TestSuite) -> None:
-        for child in node.children:
+        for child in node.testcases:
             if isinstance(child, renpy.test.testast.TestSuite):
                 r = TestSuiteResults(child.name)
                 r.populate_children(child)
@@ -306,7 +306,10 @@ class ConsoleReporter(Reporter):
             self._print("=" * 20)
 
     def _print_summarized_results(self, results: TestSuiteResults) -> None:
-        top_name = results.name if results.name != "<Top>" else results.children[0].name
+        if results.name == renpy.test.testexecution.isolated_testsuite_name:
+            top_name = results.children[0].name
+        else:
+            top_name = results.name
 
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
