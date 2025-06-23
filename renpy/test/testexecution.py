@@ -566,6 +566,8 @@ class NodeExecutor:
                     if self.node.failed:
                         self.results.num_asserts_failed += 1
                         raise RenpyTestAssertionError("Assertion failed: {}".format(self.node))
+                    else:
+                        self.results.num_asserts_passed += 1
 
                 self.node = self.next_node
                 self.node_has_started = False

@@ -1,8 +1,6 @@
 ﻿init python:
     import time
 
-
-
 testsuite default(description="Default project testsuite"):
     before:
         $ _test.timeout = 4.0
@@ -248,7 +246,8 @@ testsuite default(description="Default project testsuite"):
 
         click "Passing parameters to screens."
         advance until screen parameter_screen
-        click "Okay"
+        ## We need to insist on closing the screen. May have to do with transitions
+        click "Okay" until not screen parameter_screen
         advance until "The call screen statement can also take arguments"
         advance until screen parameter_screen
         click "Okay"
@@ -256,7 +255,7 @@ testsuite default(description="Default project testsuite"):
 
         click "Screen properties."
         advance until screen modal_example
-        ## No idea why, but we need to insist on closing the modal_example screen
+        ## We need to insist on closing the screen. May have to do with transitions
         click "Close This Screen" until not screen modal_example
         advance until screen choice
 
@@ -360,3 +359,11 @@ testsuite default(description="Default project testsuite"):
         advance until screen choice
         click "Yes."
         advance until screen tutorials
+
+testsuite all:
+    before_each:
+        if not screen main_menu:
+            run MainMenu(confirm=False)
+
+    after:
+        exit
