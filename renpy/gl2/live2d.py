@@ -467,8 +467,9 @@ def update_states():
         if not isinstance(d, Live2D):
             return
 
-        d.name = (layer, tag, count)
-        count += 1
+        if d.name is None:
+            d.name = (layer, tag, count)
+            count += 1
 
         if d.name is None:
             return
@@ -534,9 +535,9 @@ def update_states():
 
 class Live2D(renpy.display.displayable.Displayable):
 
-    name: tuple[str, str, int] | None = None
+    name: tuple[str, str, Any] | None = None
     """
-    A structural name for this displayable, consisting of the layer, tag, and a count. This is used to
+    A structural name for this displayable, consisting of the layer, tag, and unique id. This is used to
     match the displayable to its state in a previous interaction.
     """
 
@@ -698,6 +699,9 @@ class Live2D(renpy.display.displayable.Displayable):
             sustain=sustain,
             default_fade=self.default_fade,
             **self.properties)
+
+        if current_screen := renpy.display.screen.current_screen():
+            rv.name = (current_screen.layer, current_screen.tag, args.name)
 
         rv._duplicatable = False
 
