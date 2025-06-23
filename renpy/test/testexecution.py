@@ -125,7 +125,9 @@ def initialize(name: str) -> None:
     testreporter.reporter.register(testreporter.ConsoleReporter())
     renpy.config.exception_handler = exception_handler
 
-    if name == "all":
+    if name != "all":
+        root = lookup(name)
+    else:
         ## Set up the "all" testsuite
         if "all" not in testcases:
             add_testcase("all", TestSuite(name="all", loc=("", 0), children=[]))
@@ -139,19 +141,28 @@ def initialize(name: str) -> None:
                 continue
             root.children.append(node)
 
+    ## If the root is not a TestSuite, create one with root as the child.
+    if isinstance(root, TestSuite):
+        suite = root
     else:
-        root = lookup(name)
+        suite = TestSuite(name="<Top>", loc=(root.filename, root.linenumber), children=[root])
+
+
+    ## Mark skipped tests correctly
+    def _update_skip_flag(node: TestSuite) -> None:
+        for child in node.children:
+            if isinstance(child, TestSuite):
+                _update_skip_flag(child)
+            else:
+                child.skip = child.skip and not _test.ignore_skip_flag
+
+        node.skip = not _test.ignore_skip_flag and all(child.skip for child in node.children)
+
+    _update_skip_flag(suite)
 
     ## Chain the nodes in the testcases
     for case in testcases.values():
         case.chain(None)
-
-
-    # If the root is a TestCase, we create a TestSuite with it as the only child.
-    if not isinstance(root, TestSuite):
-        suite = TestSuite(name="<Top>", loc=(root.filename, root.linenumber), children=[root])
-    else:
-        suite = root
 
     all_results = testreporter.TestSuiteResults(suite.name)
     all_results.populate_children(suite)
@@ -165,6 +176,12 @@ def push_context_stack(node: TestSuite) -> None:
 
     if len(context_stack) == 0:
         testreporter.reporter.test_run_start()
+
+    if node.skip:
+        report_testcase_skipped(node)
+        if len(context_stack) == 0:
+            testreporter.reporter.test_run_end(all_results)
+        return
 
     tc = TestSuiteContext(node)
     context_stack.append(tc)
@@ -225,6 +242,19 @@ def set_next_node(next: Node | None) -> None:
 
 def is_in_test() -> bool:
     return len(context_stack) > 0
+
+
+def report_testcase_skipped(node: TestCase) -> None:
+    """
+    Marks all children (if any) of the given testcase as skipped.
+    """
+    if isinstance(node, TestSuite):
+        for child in node.children:
+            report_testcase_skipped(child)
+
+    results = all_results.get_result_by_name(node.name)
+    testreporter.reporter.test_case_skipped(node)
+    results.end(testreporter.TestCaseStatus.SKIPPED)
 
 
 def execute() -> None:
@@ -371,32 +401,23 @@ class TestSuiteContext:
                 if self.executor.done:
                     new_case = self.testsuite.children[self.testcase_index]
 
-                    if not _test.ignore_skip_flag and new_case.skip:
+                    if new_case.skip:
+                        report_testcase_skipped(new_case)
+
                         self.testcase_index += 1
-
-                        case_stack = [new_case]
-                        while case_stack:
-                            case = case_stack.pop()
-                            results = all_results.get_result_by_name(case.name)
-                            testreporter.reporter.test_case_skipped(case)
-                            results.end(testreporter.TestCaseStatus.SKIPPED)
-                            if isinstance(case, TestSuite) and case.children:
-                                case_stack.extend(case.children)
-
                         if self.testcase_index >= len(self.testsuite.children):
                             self.ran_testcase = True
                         return
 
                     if isinstance(new_case, TestSuite):
                         push_context_stack(new_case)
+                        return
                     else:
                         test_results = all_results.get_result_by_name(new_case.name)
                         self.executor.reinitialize(test_results, new_case)
                         test_results.begin()
 
-                if not self.executor.done:
-                    self.executor.execute()
-
+                self.executor.execute()
                 self.ran_testcase = self.executor.done
                 if self.ran_testcase:
                     self.executor.results.end(testreporter.TestCaseStatus.PASSED)
@@ -424,14 +445,12 @@ class TestSuiteContext:
             ## Done with the testsuite
             else:
                 pop_context_stack()
-                return
 
         except renpy.game.QuitException:
             raise
 
         except Exception as exc:
             self.handle_exception(exc)
-            return
 
 
     def handle_exception(self, exc: Exception | None) -> None:
@@ -457,17 +476,18 @@ class TestSuiteContext:
         ## Pass to the reporter
         testreporter.reporter.log_exception(exc, frame_stack)
 
+        self.executor.results.end(testreporter.TestCaseStatus.FAILED)
+
         if self.ran_before and self.ran_before_each and not self.ran_testcase:
             ## If the exception happened in a testcase, move to the next one.
-            self.executor.results.end(testreporter.TestCaseStatus.FAILED)
             self.executor.reinitialize(self.results, None)
             self.ran_testcase = True
 
         else:
-            ## The exception happened outside of a testcase, so declare the testsuite failed.
+            ## The exception happened outside of a testcase (eg. in the "before" hook),
+            ## so declare the testsuite failed.
             self.results.end(testreporter.TestCaseStatus.FAILED)
             pop_context_stack()
-
 
 class NodeExecutor:
     node: Node | None = None

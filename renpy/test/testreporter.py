@@ -35,14 +35,20 @@ class TestCaseResults:
         If status is None, it will be set to PASSED if no asserts failed,
         otherwise it is set to FAILED.
         """
+        if self.end_time > 0.0:
+            return # Already ended
+
+        now = renpy.display.core.get_time()
+        if self.start_time == 0.0:
+            self.start_time = now
+
+        self.end_time = now
+        self.seconds = self.end_time - self.start_time
+
         if status is not None:
             self.status = status
 
-        if self.start_time > 0.0 and self.end_time == 0.0:
-            self.end_time = renpy.display.core.get_time()
-            self.seconds = self.end_time - self.start_time
-
-        if self.status == TestCaseStatus.PENDING:
+        elif self.status == TestCaseStatus.PENDING:
             if self.num_asserts_failed > 0:
                 self.status = TestCaseStatus.FAILED
             else:
@@ -80,45 +86,6 @@ class TestSuiteResults(TestCaseResults):
             elif isinstance(child, renpy.test.testast.TestCase):
                 self.children.append(TestCaseResults(child.name))
 
-    def aggregate(self) -> "TestSuiteResults":
-        rv = TestSuiteResults("")
-
-        for child in self.children:
-            if isinstance(child, TestSuiteResults):
-                child_summary = child.aggregate()
-                rv.num_asserts += child_summary.num_asserts
-                rv.num_asserts_passed += child_summary.num_asserts_passed
-                rv.num_asserts_failed += child_summary.num_asserts_failed
-                rv.num_testsuites += child_summary.num_testsuites + 1
-                if child_summary.status == TestCaseStatus.PASSED:
-                    rv.num_testsuites_passed += child_summary.num_testsuites_passed + 1
-                elif child_summary.status == TestCaseStatus.FAILED:
-                    rv.num_testsuites_failed += child_summary.num_testsuites_failed + 1
-                elif child_summary.status == TestCaseStatus.SKIPPED:
-                    rv.num_testsuites_skipped += child_summary.num_testsuites_skipped + 1
-                rv.num_testcases += child_summary.num_testcases
-                rv.num_testcases_passed += child_summary.num_testcases_passed
-                rv.num_testcases_failed += child_summary.num_testcases_failed
-                rv.num_testcases_skipped += child_summary.num_testcases_skipped
-            else:
-                rv.num_testcases += 1
-                rv.num_asserts += child.num_asserts
-                rv.num_asserts_passed += child.num_asserts_passed
-                rv.num_asserts_failed += child.num_asserts_failed
-                if child.status == TestCaseStatus.PASSED:
-                    rv.num_testcases_passed += 1
-                elif child.status == TestCaseStatus.FAILED:
-                    rv.num_testcases_failed += 1
-                elif child.status == TestCaseStatus.SKIPPED:
-                    rv.num_testcases_skipped += 1
-
-        rv.status = self.status
-        rv.seconds = self.seconds
-        rv.name = self.name if self.name != "<Top>" else self.children[0].name
-        rv.status = self.status
-
-        return rv
-
     def end(self, status = None) -> None:
         """
         Finalize the test suite results.
@@ -126,9 +93,50 @@ class TestSuiteResults(TestCaseResults):
         If status is None, it will be set to PASSED if all test cases passed,
         FAILED if any test case failed, or SKIPPED if all test cases were skipped.
         """
-        super().end(status)
 
-        if self.status == TestCaseStatus.PENDING:
+        if self.end_time > 0.0:
+            return # Already ended
+
+        now = renpy.display.core.get_time()
+        if self.start_time == 0.0:
+            self.start_time = now
+
+        self.end_time = now
+        self.seconds = self.end_time - self.start_time
+
+        for child in self.children:
+            self.num_asserts += child.num_asserts
+            self.num_asserts_passed += child.num_asserts_passed
+            self.num_asserts_failed += child.num_asserts_failed
+
+            if isinstance(child, TestSuiteResults):
+                self.num_testsuites += child.num_testsuites + 1
+                self.num_testsuites_passed += child.num_testsuites_passed
+                self.num_testsuites_failed += child.num_testsuites_failed
+                self.num_testsuites_skipped += child.num_testsuites_skipped
+                if child.status == TestCaseStatus.PASSED:
+                    self.num_testsuites_passed += 1
+                elif child.status == TestCaseStatus.FAILED:
+                    self.num_testsuites_failed += 1
+                elif child.status == TestCaseStatus.SKIPPED:
+                    self.num_testsuites_skipped += 1
+                self.num_testcases += child.num_testcases
+                self.num_testcases_passed += child.num_testcases_passed
+                self.num_testcases_failed += child.num_testcases_failed
+                self.num_testcases_skipped += child.num_testcases_skipped
+            else:
+                self.num_testcases += 1
+                if child.status == TestCaseStatus.PASSED:
+                    self.num_testcases_passed += 1
+                elif child.status == TestCaseStatus.FAILED:
+                    self.num_testcases_failed += 1
+                elif child.status == TestCaseStatus.SKIPPED:
+                    self.num_testcases_skipped += 1
+
+        if status is not None:
+            self.status = status
+
+        elif self.status == TestCaseStatus.PENDING:
             if self.num_testcases_failed > 0 or self.num_asserts_failed > 0:
                 self.status = TestCaseStatus.FAILED
             elif self.num_testcases_skipped == self.num_testcases:
@@ -298,9 +306,11 @@ class ConsoleReporter(Reporter):
             self._print("=" * 20)
 
     def _print_summarized_results(self, results: TestSuiteResults) -> None:
+        top_name = results.name if results.name != "<Top>" else results.children[0].name
+
         self._print(
             f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} "
-            f"Test Results (Summary): {results.name}"
+            f"Test Results (Summary): {top_name}"
         )
 
         self._print(
@@ -362,11 +372,9 @@ class ConsoleReporter(Reporter):
         self._print(f"{ANSIColors.CYAN}[rpytest]{ANSIColors.RESET} Starting test run")
 
     def test_run_end(self, results) -> None:
-        final_results = results.aggregate()
-
         if _test.print_details:
             self._print_detailed_results(results)
-        self._print_summarized_results(final_results)
+        self._print_summarized_results(results)
 
     def test_suite_start(self, node) -> None:
         self.context = node
