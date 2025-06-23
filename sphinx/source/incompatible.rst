@@ -33,7 +33,7 @@ likely to be scaled down.  Mipmaps can be created for specific images by providi
 of :func:`Image`.
 
 **Automatic Oversamping** When Ren'Py is scaled up enough, it can search the image files for
-higher resolution images, and load those instead. See :ref:`automatic-oversampling` for more informaiton.
+higher resolution images, and load those instead. See :ref:`the documentation <automatic-oversampling>` for more informaiton.
 This can be disabled with:
 
     define config.automatic_oversampling = None
@@ -84,43 +84,6 @@ game. For a 1280 pixel wide game, use 870. For a 3840 pixel wide game, use 2010.
 In previous versions of Ren'Py, the order in which shader parts that shared the same
 priority were applied was undefined. Now, the parts are ordered by the name of the shader, producing
 a reliable order, but this reliable order may be diferent than what was seen on particular systems.
-
-
-.. _incompatible-8.3.4:
-.. _incompatible-7.8.4:
-
-8.3.4 / 7.8.4
--------------
-
-**Dissolving Different-Sized Displayables, part two.** When ImageDissolving or AlphaDissolving between
-displayables of different sizes, Ren'Py will give the result the size of the largest displayable, in
-each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis), add to your game::
-
-    define config.dissolve_shrinks = True
-
-
-
-.. _incompatible-8.3.4:
-.. _incompatible-7.8.4:
-
-
-8.3.4 / 7.8.4
--------------
-
-**Dissolving Different-Sized Displayables, part two.** When ImageDissolving or AlphaDissolving between
-displayables of different sizes, Ren'Py will give the result the size of the largest displayable, in
-each access. To revert to the pre-8.1.2 behavior (the smallest size on each axis), add to your game::
-
-    define config.dissolve_shrinks = True
-
-**Removal of the ATL 'update' event.** Previous versions of Ren'Py could deliver and "update" event to ATL
-inside screens when the screen was changed in major ways, such as when changing translations. This event
-was not delivered reliably, and is unlikely to have been used, so it has been removed.
-
-
-.. _incompatible-8.3.4:
-.. _incompatible-7.8.4:
-
 
 8.3.4 / 7.8.4
 -------------

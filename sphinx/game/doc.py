@@ -316,9 +316,19 @@ def scan(name, o, prefix="", inclass=False):
 
             init_doc = getdoc(init)
 
+
+            if init_doc and re.match(r'[\w\.]+\(', init_doc):
+                sig, _, init_doc = doc.partition("\n\n")
+                init_doc = textwrap.dedent(init_doc)
+
+                if "(" in sig:
+                    args = "(" + sig.partition("(")[2]
+
             if init_doc and (init_doc != objinidoc):
                 lines.append("")
                 lines.extend(init_doc.split("\n"))
+
+
 
             if init != object.__init__: # we don't want that signature either
                 try:

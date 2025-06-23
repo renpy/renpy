@@ -393,6 +393,12 @@ Display
     shown for at least this amount of time. The image may be shown longer
     if Ren'Py takes longer to start up.
 
+.. var:: config.mipmap = "auto"
+
+    This controls if Ren'Py generates mipmaps for images. If True, mipmaps are always generated. If "auto", mipmaps
+    are generated only if the window is smaller than 75% of the virtual screen size. If False, mipmaps are never
+    generated.
+
 .. var:: config.nearest_neighbor = False
 
     Uses nearest-neighbor filtering by default, to support pixel art or
@@ -760,27 +766,9 @@ Media (Music, Sound, and Video)
     A list of channels that are stopped when entering or returning to the
     main menu.
 
-.. var:: config.mipmap = "auto"
-
-    This controls if Ren'Py generates mipmaps for image. If True, mipmaps are always generated. If "auto", mipmaps
-    are generated only if the window is smaller than 75% of the virtual screen size. If False, mipmaps are never
-    generated.
-
-.. var:: config.mipmap_dissolves = False
-
-    If True, mipmaps are generated for dissolve transitions.
-
-    This takes the same values as :var:`config.mipmap`.
-
 .. var:: config.mipmap_movies = False
 
     The default value of the mipmap argument to :func:`Movie`.
-
-    This takes the same values as :var:`config.mipmap`.
-
-.. var:: config.mipmap_text = False
-
-    If True, mipmaps are generated for text.
 
     This takes the same values as :var:`config.mipmap`.
 

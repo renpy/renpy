@@ -675,7 +675,7 @@ def list_saved_games(regexp=r'.', fast=False):
 
     To access other metadata fields (e.g., ``_renpy_version``, ``_version``, ``_game_runtime``, custom fields), use :func:`renpy.slot_json` or, for built-in fields only, :func:`FileJson`.
 
-   Example::
+    Example::
 
        screen save_list():
            vbox:
@@ -810,7 +810,7 @@ def slot_json(slotname):
 
     Returns a dictionary containing the metadata of the save file in `slotname`, including ``_save_name``, ``_renpy_version``, ``_version``, ``_game_runtime``, ``_ctime``, and any custom fields added via :var:`config.save_json_callbacks` at the time of saving. If the slot is empty, `None` is returned. For save/load screen actions, :func:`FileJson` provides a subset of these fields (excluding custom fields).
 
-        Example::
+    Example::
 
         def show_game_runtime(slot):
             metadata = renpy.slot_json(slot)
