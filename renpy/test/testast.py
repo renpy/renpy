@@ -36,10 +36,14 @@ class Node(object):
     """
     An AST node for a test script.
     """
-    __slots__ = ("filename", "linenumber", "next")
+    __slots__ = ("filename", "linenumber", "next", "done")
     def __init__(self, loc: NodeLocation):
         self.filename, self.linenumber = loc
         self.next: Node | None = None
+        self.done: bool = False
+
+    def restart(self) -> None:
+        self.done = False
 
     def chain(self, next: "Node | None") -> None:
         """
@@ -103,69 +107,135 @@ class Node(object):
         return "<{}{} ({}:{})>".format(type(self).__name__, params, self.filename, self.linenumber)
 
 
-class TestCase(Node):
-    __slots__ = ("name", "description", "skip", "block")
+class Block(Node):
+    __slots__ = "block"
+    def __init__(self, loc: NodeLocation, block: list[Node]):
+        Node.__init__(self, loc)
+        self.block = block
+        self.restart()
+
+    def restart(self) -> None:
+        if self.block:
+            for node in self.block:
+                node.restart()
+            self.done = False
+        else:
+            self.done = True
+
+    def chain(self, next):
+        if self.block:
+            self.next = self.block[0]
+            chain_block(self.block, next)
+        else:
+            super().chain(next)
+
+    def execute(self, state, t):
+        if not self.block:
+            next_node(self.next)
+            return None
+
+        next_node(self.block[0])
+        return None
+
+
+class TestCase(Block):
+    __slots__ = ("name", "description", "skip")
 
     def __init__(
         self,
         loc: NodeLocation,
         name: str,
+        block: list[Node],
         description: str = "",
         skip: bool = False,
-        block: "Block | None" = None
     ):
-        super().__init__(loc)
+        super().__init__(loc, block)
         self.name = name
         self.description = description
         self.skip = skip
         self.block = block
 
-    def chain(self, next) -> None:
-        if self.block is not None:
-            self.block.chain(None)
-            self.next = self.block.next
-        else:
-            self.next = None
-
     def get_repr_params(self) -> str:
         return f"name={self.name!r}"
 
+
 class TestSuite(TestCase):
-    __slots__ = ("children", "before", "before_each", "after_each", "after")
+    __slots__ = (
+        "testcases", "testcase_index", "is_in_testcase", "ran_testcase",
+        "before", "before_each", "after_each", "after"
+    )
+
     def __init__(
         self,
         loc: NodeLocation,
         name: str,
         description: str = "",
         skip: bool = False,
-        children: list[TestCase] | None = None,
-        before: "Block | None" = None,
-        before_each: "Block | None" = None,
-        after_each: "Block | None" = None,
-        after: "Block | None" = None
+        testcases: list[TestCase] | None = None,
+        before: Block | None = None,
+        before_each: Block | None = None,
+        after_each: Block | None = None,
+        after: Block | None = None
     ):
-        super().__init__(loc, name, description, skip, None)
+        super().__init__(loc, name, [], description, skip)
         self.name = name
         self.description = description
         self.skip = skip
-        self.children = children if children is not None else []
-        self.before = before
-        self.before_each = before_each
-        self.after_each = after_each
-        self.after = after
+        self.testcases = testcases if testcases is not None else []
+        self.testcase_index = 0
+        self.ran_testcase = False
+        self.before = before if before is not None else Block(loc, [])
+        self.before_each = before_each if before_each is not None else Block(loc, [])
+        self.after_each = after_each if after_each is not None else Block(loc, [])
+        self.after = after if after is not None else Block(loc, [])
 
     def add(self, child: TestCase) -> None:
-        self.children.append(child)
+        self.testcases.append(child)
 
     def chain(self, next: Node | None) -> None:
-        if self.before:
-            chain_block(self.before.block, None)
-        if self.before_each:
-            chain_block(self.before_each.block, None)
-        if self.after_each:
-            chain_block(self.after_each.block, None)
-        if self.after:
-            chain_block(self.after.block, None)
+        for block in [self.before, self.before_each, self.after_each, self.after]:
+            block.chain(None)
+
+        for testcase in self.testcases:
+            testcase.chain(None)
+
+    def get_next_block(self) -> Block | None:
+        """
+        Returns the next block to execute in the test suite.
+        """
+        for block in [self.before, self.before_each]:
+            if not block.done:
+                return block
+
+        if not self.ran_testcase and self.testcase_index < len(self.testcases):
+            testcase = self.testcases[self.testcase_index]
+            self.is_in_testcase = True
+            self.ran_testcase = True
+            return testcase
+
+        self.is_in_testcase = False
+
+        if not self.after_each.done:
+            return self.after_each
+
+        if self.testcase_index < len(self.testcases) - 1:
+            self.prepare_for_next_testcase()
+            return self.get_next_block()
+
+        if not self.after.done:
+            return self.after
+
+        return None
+
+    def prepare_for_next_testcase(self) -> None:
+        """
+        Prepares the test suite for the next test case.
+        This is called after each test case is executed.
+        """
+        self.testcase_index += 1
+        self.before_each.restart()
+        self.ran_testcase = False
+        self.after_each.restart()
 
 
 class Condition(Node):
@@ -231,7 +301,7 @@ class DisplayableSelector(Selector):
 
     def element_not_found_during_perform(self) -> None:
         if self.screen or self.id:
-            raise SelectorException("The displayable with screen {!r} and id {!r} was not found".format(self.screen, self.id))
+            raise SelectorException("The displayable with screen {self.screen!r} and id {self.id!r} was not found")
 
         raise SelectorException("No displayable was specified.")
 
@@ -243,7 +313,7 @@ class DisplayableSelector(Selector):
     def ready(self) -> bool:
         ## Needs to be checked here and not in __init__ since screens are not be defined yet.
         if self.screen is not None and not renpy.exports.has_screen(self.screen):
-            raise ValueError("The screen {!r} does not exist.".format(self.screen))
+            raise ValueError(f"The screen {self.screen!r} does not exist.")
 
         return super().ready()
 
@@ -267,7 +337,7 @@ class TextSelector(Selector):
 
     def element_not_found_during_perform(self) -> None:
         if self.pattern:
-            raise SelectorException("The given {!r} pattern was not resolved to a target".format(self.pattern))
+            raise SelectorException(f"The given pattern {self.pattern!r} was not resolved to a target")
 
     def get_element(self) -> Focus | None:
         return renpy.test.testfocus.find_focus(self.pattern)
@@ -835,7 +905,7 @@ class Until(Node):
 
     def execute(self, state, t):
         if self.timeout is not None and t > self.timeout:
-            msg = "Until Statement timed out after {} seconds.".format(self.timeout)
+            msg = f"Until Statement timed out after {self.timeout} seconds."
             raise RenpyTestTimeoutError(msg)
 
         child, child_state, start_time, has_started = state
@@ -967,29 +1037,6 @@ class Assert(Node):
 
 ################################################################################
 # Control structures.
-
-
-class Block(Node):
-    __slots__ = "block"
-    def __init__(self, loc: NodeLocation, block: list[Node]):
-        Node.__init__(self, loc)
-        self.block = block
-
-    def chain(self, next):
-        if self.block:
-            self.next = self.block[0]
-            chain_block(self.block, next)
-        else:
-            super().chain(next)
-
-    def execute(self, state, t):
-        if not self.block:
-            next_node(self.next)
-            return None
-
-        next_node(self.block[0])
-        return None
-
 
 class Exit(Node):
     def execute(self, state, t):

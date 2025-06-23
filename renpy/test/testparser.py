@@ -355,9 +355,10 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
 
     name = l.require(l.dotted_name)
     signature = renpy.parser.parse_parameters(l)
+    global_testsuite_name = renpy.test.testexecution.global_testsuite_name
 
-    if name == "all" and current_testsuite_name:
-        l.error("The name 'all' is reserved for a testsuite that runs all tests.")
+    if name == global_testsuite_name and current_testsuite_name:
+        l.error(f"The name {global_testsuite_name!r} is reserved for a testsuite that runs all tests.")
 
     l.require(":")
     l.expect_eol()
@@ -431,7 +432,7 @@ def testsuite_statement(l: Lexer, loc: NodeLocation) -> testast.TestSuite:
         before_each = before_each,
         after_each = after_each,
         after = after,
-        children = children,
+        testcases = children,
         **extra_kwargs
     )
 
@@ -448,8 +449,9 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
     name = l.require(l.dotted_name)
     signature: renpy.parameter.Signature | None = renpy.parser.parse_parameters(l)
 
-    if name == "all":
-        l.error("The name 'all' is reserved for a testsuite that runs all tests.")
+    global_testsuite_name = renpy.test.testexecution.global_testsuite_name
+    if name == global_testsuite_name:
+        l.error(f"The name {global_testsuite_name!r} is reserved for a testsuite that runs all tests.")
 
     l.require(":")
     l.expect_eol()
@@ -466,7 +468,7 @@ def testcase_statement(l: Lexer, loc: NodeLocation) -> testast.TestCase:
     rv = testast.TestCase(
         loc,
         current_testsuite_name + "." + name if current_testsuite_name else name,
-        block=test_block,
+        block=test_block.block,
         **extra_kwargs
     )
 

@@ -32,36 +32,57 @@ from renpy.test.types import State, NodeLocation, RenpyTestTimeoutError, RenpyTe
 import renpy.test.testreporter as testreporter
 from renpy.test.testsettings import _test
 
+global_testsuite_name = "all"
+"The name of the global testsuite that contains all testcases."
+
+isolated_testsuite_name = "<Top>"
+"The name of the dummy testsuite that is created when a testcase is run in isolation."
+
 initialized: bool = False
+"Whether the test execution system has been initialized."
 
-# A map from the name of a testcase to the testcase.
+current_statement: renpy.ast.Node | None = None
+"The current statement that is being executed in the game script."
+
 testcases: dict[str, TestCase] = {}
+"A dictionary mapping the name of a testcase to the testcase node."
 
-# An action to run before executing another command.
 action: Node | None = None
+"An action to run before continuing the test execution."
 
-# The set of labels that have been reached since the last time execute
-# has been called.
 labels: set[str] = set()
+"A set of labels that have been reached since the last time execute was called."
 
-# A stack of text contexts, which tracks the execution of testcases.
 context_stack: list["TestSuiteContext"] = []
+"Stack of contexts for test execution."
 
 all_results: testreporter.TestSuiteResults
+"A TestSuiteResults object that contains the results of all testcases to be executed."
 
-def take_name(name: str) -> None:
+
+################################################################################
+## Public Methods
+
+def is_in_test() -> bool:
+    return len(context_stack) > 0
+
+
+def set_current_statement(node: renpy.ast.Node) -> None:
     """
     Takes the name of a statement that is about to run.
     """
+    global current_statement
 
     if not is_in_test():
         return
 
-    if isinstance(name, str):
-        labels.add(name)
+    current_statement = node
+
+    if isinstance(node.name, str):
+        labels.add(node.name)
 
 
-def add_testcase(name: str, node: TestCase, parent: TestSuite | None = None) -> None:
+def add_testcase(node: TestCase, parent: TestSuite | None = None) -> None:
     """
     Adds a testcase to the `testcases` dictionary. The name is a tuple of strings,
     and the node is the root node of the testcase.
@@ -69,43 +90,28 @@ def add_testcase(name: str, node: TestCase, parent: TestSuite | None = None) -> 
 
     ## NOTE: This is run every time the script is reloaded.
 
-    if name in testcases:
-        if testcases[name] != node:
-            existing = testcases[name]
+    if node.name in testcases:
+        if testcases[node.name] != node:
             raise KeyError(
-                f"The testcase \"{name}\" is defined twice, "
-                f"at File {existing.filename}:{existing.linenumber} "
+                f"The testcase {node.name!r} is defined twice, "
+                f"at File {testcases[node.name].filename}:{testcases[node.name].linenumber} "
                 f"and File {node.filename}:{node.linenumber}.")
-        else:
-            return
+        return
 
-    testcases[name] = node
+    testcases[node.name] = node
 
-    if (parent is None) and ("." in name):
-        ## Add top-level dotted name tests to the appropriate testsuite
-        parent_name = name.rsplit(".", 1)[0]
-        parent_node = lookup(parent_name)
-        if not isinstance(parent_node, TestSuite):
-            raise TypeError(f"Parent node \"{parent_name}\" is not a TestSuite.")
-        parent_node.children.append(node)
-
-    if isinstance(node, TestSuite):
-        for child in node.children:
-            add_testcase(child.name, child, node)
+    add_child_testcases(node)
+    if parent is None:
+        link_top_level_testcase_to_parent(node)
 
 
-def lookup(name: str, from_node: Node | None = None) -> TestCase:
+def set_next_node(next: Node | None) -> None:
     """
-    Tries to look up the name with `target`. If found, returns it, otherwise
-    raises an exception.
+    Sets the next node to execute. This is used to change the flow of execution
+    to a different node.
     """
 
-    if name in testcases:
-        return testcases[name]
-
-    if from_node is None:
-        raise KeyError("Testcase {} not found.".format(name))
-    raise KeyError("Testcase {} not found at {}:{}.".format(name, from_node.filename, from_node.linenumber))
+    get_current_context().executor.set_next_node(next)
 
 
 def initialize(name: str) -> None:
@@ -122,139 +128,17 @@ def initialize(name: str) -> None:
     if initialized:
         return
 
-    testreporter.reporter.register(testreporter.ConsoleReporter())
     renpy.config.exception_handler = exception_handler
 
-    if name != "all":
-        root = lookup(name)
-    else:
-        ## Set up the "all" testsuite
-        if "all" not in testcases:
-            add_testcase("all", TestSuite(name="all", loc=("", 0), children=[]))
-        root = lookup("all")
-
-        if not isinstance(root, TestSuite):
-            raise ValueError("Root node for 'all' must be a TestSuite, got {}".format(type(root)))
-
-        for node_name, node in testcases.items():
-            if node_name == "all" or "." in node_name:
-                continue
-            root.children.append(node)
-
-    ## If the root is not a TestSuite, create one with root as the child.
-    if isinstance(root, TestSuite):
-        suite = root
-    else:
-        suite = TestSuite(name="<Top>", loc=(root.filename, root.linenumber), children=[root])
-
-
-    ## Mark skipped tests correctly
-    def _update_skip_flag(node: TestSuite) -> None:
-        for child in node.children:
-            if isinstance(child, TestSuite):
-                _update_skip_flag(child)
-            else:
-                child.skip = child.skip and not _test.ignore_skip_flag
-
-        node.skip = not _test.ignore_skip_flag and all(child.skip for child in node.children)
-
-    _update_skip_flag(suite)
-
-    ## Chain the nodes in the testcases
-    for case in testcases.values():
-        case.chain(None)
+    suite = create_or_get_top_level_suite(name)
+    update_suite_skip_flag(suite)
+    suite.chain(None)
 
     all_results = testreporter.TestSuiteResults(suite.name)
     all_results.populate_children(suite)
     push_context_stack(suite)
 
     initialized = True
-
-
-def push_context_stack(node: TestSuite) -> None:
-    global context_stack
-
-    if len(context_stack) == 0:
-        testreporter.reporter.test_run_start()
-
-    if node.skip:
-        report_testcase_skipped(node)
-        if len(context_stack) == 0:
-            testreporter.reporter.test_run_end(all_results)
-        return
-
-    tc = TestSuiteContext(node)
-    context_stack.append(tc)
-
-    tc.results.begin()
-    testreporter.reporter.test_suite_start(node)
-
-
-def pop_context_stack() -> "TestSuiteContext":
-    """
-    Pops the last context from the stack and returns it.
-    """
-
-    global context_stack
-
-    if not context_stack:
-        raise Exception("No context on context stack.")
-
-    rv = context_stack.pop()
-    rv.executor.results.end(None)
-    rv.results.end(None)
-
-    testreporter.reporter.test_suite_end(rv.results)
-
-    if len(context_stack) == 0:
-        testreporter.reporter.test_run_end(rv.results)
-    else:
-        ctx = get_current_context()
-        ctx.executor.reinitialize(ctx.results, None)
-        ctx.ran_testcase = True
-
-    renpy.test.testmouse.reset()
-
-    return rv
-
-
-def get_current_context() -> "TestSuiteContext":
-    """
-    Returns the current context, or raises an exception if there is no context.
-    """
-
-    global context_stack
-
-    if len(context_stack) == 0:
-        raise Exception("No context on context stack.")
-
-    return context_stack[-1]
-
-
-def set_next_node(next: Node | None) -> None:
-    """
-    Sets the next node to execute. This is used to change the flow of execution
-    to a different node.
-    """
-
-    get_current_context().executor.set_next_node(next)
-
-
-def is_in_test() -> bool:
-    return len(context_stack) > 0
-
-
-def report_testcase_skipped(node: TestCase) -> None:
-    """
-    Marks all children (if any) of the given testcase as skipped.
-    """
-    if isinstance(node, TestSuite):
-        for child in node.children:
-            report_testcase_skipped(child)
-
-    results = all_results.get_result_by_name(node.name)
-    testreporter.reporter.test_case_skipped(node)
-    results.end(testreporter.TestCaseStatus.SKIPPED)
 
 
 def execute() -> None:
@@ -324,6 +208,192 @@ def quit_handler() -> int:
         return 1
     return 0
 
+
+################################################################################
+## Setup methods
+
+def link_top_level_testcase_to_parent(node: TestCase) -> None:
+    """
+    Links a top-level testcase (with a name that contains a dot) to its parent TestSuite.
+    """
+    if "." not in node.name:
+        return
+
+    parent_name = node.name.rsplit(".", 1)[0]
+    parent_node = get_testcase_by_name(parent_name)
+    if not isinstance(parent_node, TestSuite):
+        raise TypeError(f"Parent node \"{parent_name}\" is not a TestSuite.")
+    parent_node.add(node)
+
+
+def add_child_testcases(parent: TestCase) -> None:
+    if not isinstance(parent, TestSuite):
+        return
+
+    for child in parent.testcases:
+        add_testcase(child, parent)
+
+
+def create_or_get_top_level_suite(name) -> TestSuite:
+    if name == global_testsuite_name:
+        setup_global_test_suite()
+
+    root = get_testcase_by_name(name)
+
+    if isinstance(root, TestSuite):
+        return root
+
+    ## If the root is not a TestSuite, we create a new one and run the testcase in isolation.
+    return TestSuite(
+        name=isolated_testsuite_name,
+        loc=(root.filename, root.linenumber),
+        testcases=[root]
+        )
+
+
+def setup_global_test_suite() -> None:
+    """
+    Set up the global test suite, which contains all top-level testcases,
+    and contains hooks for before and after each test.
+    """
+    if global_testsuite_name not in testcases:
+        add_testcase(TestSuite(name=global_testsuite_name, loc=("", 0), testcases=[]))
+
+    root = get_testcase_by_name(global_testsuite_name)
+
+    if not isinstance(root, TestSuite):
+        raise ValueError(f"Root node for {global_testsuite_name!r} must be a TestSuite, got {type(root)}")
+
+    for node_name, node in testcases.items():
+        if (node_name == global_testsuite_name) or ("." in node_name):
+            continue
+        root.testcases.append(node)
+
+
+def get_testcase_by_name(name: str) -> TestCase:
+    if name not in testcases:
+        raise KeyError(f"Testcase {name} not found.")
+
+    return testcases[name]
+
+
+def update_suite_skip_flag(node: TestSuite) -> None:
+    """
+    Updates the skip flag for a TestSuite and its children based on the ignore_skip_flag setting.
+    """
+    for child in node.testcases:
+        if isinstance(child, TestSuite):
+            update_suite_skip_flag(child)
+        else:
+            child.skip = child.skip and not _test.ignore_skip_flag
+
+    node.skip = not _test.ignore_skip_flag and all(child.skip for child in node.testcases)
+
+
+################################################################################
+## Context management
+
+def get_current_context() -> "TestSuiteContext":
+    """
+    Returns the current context, or raises an exception if there is no context.
+    """
+
+    global context_stack
+
+    if len(context_stack) == 0:
+        raise Exception("No context on context stack.")
+
+    return context_stack[-1]
+
+
+def push_context_stack(node: TestSuite) -> None:
+    """
+    Pushes a new context onto the context stack, initializing it with the given TestSuite.
+    """
+    global context_stack
+
+    if len(context_stack) == 0:
+        testreporter.reporter.test_run_start()
+
+    if node.skip:
+        report_testcase_skipped(node)
+        if len(context_stack) == 0:
+            testreporter.reporter.test_run_end(all_results)
+        return
+
+    tc = TestSuiteContext(node)
+    context_stack.append(tc)
+
+    tc.results.begin()
+    testreporter.reporter.test_suite_start(node)
+
+
+def pop_context_stack() -> "TestSuiteContext":
+    """
+    Pops the last context from the stack and returns it.
+    """
+
+    global context_stack
+
+    if not context_stack:
+        raise Exception("No context on context stack.")
+
+    rv = context_stack.pop()
+    rv.executor.results.end(None)
+    rv.results.end(None)
+
+    testreporter.reporter.test_suite_end(rv.results)
+
+    if len(context_stack) == 0:
+        testreporter.reporter.test_run_end(rv.results)
+    else:
+        ctx = get_current_context()
+        ctx.executor.reinitialize(ctx.results, None)
+
+    renpy.test.testmouse.reset()
+
+    return rv
+
+
+################################################################################
+## Reporting methods
+
+def report_testcase_skipped(node: TestCase) -> None:
+    """
+    Marks all children (if any) of the given testcase as skipped.
+    """
+    if isinstance(node, TestSuite):
+        for child in node.testcases:
+            report_testcase_skipped(child)
+
+    results = all_results.get_result_by_name(node.name)
+    testreporter.reporter.test_case_skipped(node)
+    results.end(testreporter.TestCaseStatus.SKIPPED)
+
+
+def get_frame_stack() -> list[FrameSummary]:
+    """
+    Returns a list of FrameSummary objects representing the current context stack.
+    This indicates where the exception occurred in the test execution.
+    """
+    frame_stack: list[FrameSummary] = []
+
+    nodes = [ctx.testsuite for ctx in context_stack]
+    labels = [None] + [f"testsuite {ctx.testsuite.name}" for ctx in context_stack[:-1]]
+
+    if context_stack[-1].executor.testcase:
+        nodes += [context_stack[-1].executor.testcase, context_stack[-1].executor.node]
+        labels += [
+            f"testsuite {context_stack[-1].testsuite.name}",
+            f"testcase {context_stack[-1].executor.testcase.name}"
+            ]
+
+    for n, label in zip(nodes, labels):
+        frame_stack.append(FrameSummary(label, n.filename, n.linenumber)) # type: ignore
+
+    return frame_stack
+
+
 class TestSuiteContext:
     """
     A context manager for testcases. This is used to set the current node and state
@@ -331,120 +401,34 @@ class TestSuiteContext:
     """
 
     testsuite: TestSuite
-    """The testcase being executed."""
+    "The testcase being executed."
 
     results: testreporter.TestSuiteResults
-    """The results of the testcase being executed."""
-
-    testcase_index: int = 0
-    """The index of the current testcase being executed."""
-
-    ran_before: bool = False
-    """Whether the before() method of the testcase has been run."""
-
-    ran_before_each: bool = False
-    """Whether the before_each() method of the testcase has been run."""
-
-    ran_testcase: bool = False
-    """Whether the current testcase has been run."""
-
-    ran_after_each: bool = False
-    """Whether the after_each() method of the testcase has been run."""
-
-    ran_after: bool = False
-    """Whether the after() method of the testcase has been run."""
+    "The results of the testcase being executed."
 
     executor: "NodeExecutor"
+    "The executor for the current node."
 
 
     def __init__(self, node: TestSuite):
         self.testsuite = node
         results = all_results.get_result_by_name(node.name)
         if not isinstance(results, testreporter.TestSuiteResults):
-            raise ValueError("TestSuiteResults not found for {}".format(node.name))
+            raise ValueError(f"TestSuiteResults not found for {node.name}")
         self.results = results
-
-        self.testcase_index = 0
-        self.ran_before = self.testsuite.before is None
-        self.ran_after = self.testsuite.after is None
         self.executor = NodeExecutor(results, None)
-
-        self.prepare_for_next_testcase()
-
-
-    def prepare_for_next_testcase(self) -> None:
-        self.ran_before_each = self.testsuite.before_each is None
-        self.ran_testcase = len(self.testsuite.children) == 0
-        self.ran_after_each = self.testsuite.after_each is None
 
 
     def execute(self) -> None:
         try:
-            ## Before
-            if not self.ran_before and self.testsuite.before:
-                if self.executor.done:
-                    self.executor.reinitialize(self.results, self.testsuite.before)
+            self.prepare_next_execution()
+            if self.executor.done:
+                return
 
-                self.executor.execute()
-                self.ran_before = self.executor.done
-
-            ## Before Each
-            elif not self.ran_before_each and self.testsuite.before_each:
-                if self.executor.done:
-                    self.executor.reinitialize(self.results, self.testsuite.before_each)
-
-                self.executor.execute()
-                self.ran_before_each = self.executor.done
-
-            ## Test Case
-            elif not self.ran_testcase and self.testsuite.children:
-                if self.executor.done:
-                    new_case = self.testsuite.children[self.testcase_index]
-
-                    if new_case.skip:
-                        report_testcase_skipped(new_case)
-
-                        self.testcase_index += 1
-                        if self.testcase_index >= len(self.testsuite.children):
-                            self.ran_testcase = True
-                        return
-
-                    if isinstance(new_case, TestSuite):
-                        push_context_stack(new_case)
-                        return
-                    else:
-                        test_results = all_results.get_result_by_name(new_case.name)
-                        self.executor.reinitialize(test_results, new_case)
-                        test_results.begin()
-
-                self.executor.execute()
-                self.ran_testcase = self.executor.done
-                if self.ran_testcase:
-                    self.executor.results.end(testreporter.TestCaseStatus.PASSED)
-
-            ## After Each
-            elif not self.ran_after_each and self.testsuite.after_each:
-                if self.executor.done:
-                    self.executor.reinitialize(self.results, self.testsuite.after_each)
-
-                self.executor.execute()
-                self.ran_after_each = self.executor.done
-
-            elif self.testcase_index < len(self.testsuite.children) - 1:
-                self.testcase_index += 1
-                self.prepare_for_next_testcase()
-
-            ## After
-            elif not self.ran_after and self.testsuite.after:
-                if self.executor.done:
-                    self.executor.reinitialize(self.results, self.testsuite.after)
-
-                self.executor.execute()
-                self.ran_after = self.executor.done
-
-            ## Done with the testsuite
-            else:
-                pop_context_stack()
+            self.executor.execute()
+            if self.executor.done and self.executor.testcase:
+                self.executor.results.end(testreporter.TestCaseStatus.PASSED)
+                testreporter.reporter.test_case_end(self.executor.results)
 
         except renpy.game.QuitException:
             raise
@@ -453,69 +437,79 @@ class TestSuiteContext:
             self.handle_exception(exc)
 
 
+    def prepare_next_execution(self):
+        """
+        If the executor has finished executing the current node,
+        this method will reinitialize it with the next node to execute,
+        or alter the context stack as needed.
+        """
+        if not self.executor.done:
+            return
+
+        next_node = self.testsuite.get_next_block()
+        if isinstance(next_node, TestSuite):
+            push_context_stack(next_node)
+            return
+
+        if next_node is None:
+            pop_context_stack()
+            return
+
+        if isinstance(next_node, TestCase):
+            testcase_results = all_results.get_result_by_name(next_node.name)
+            testcase_results.begin()
+            self.executor.reinitialize(testcase_results, next_node)
+            return
+
+        self.executor.reinitialize(self.results, next_node)
+
     def handle_exception(self, exc: Exception | None) -> None:
-        ## Find where in the test execution the exception happened.
-        if len(context_stack) == 0:
-            raise RuntimeError("No context stack available for exception reporting.")
-
-        frame_stack: list[FrameSummary] = []
-
-        nodes = [ctx.testsuite for ctx in context_stack]
-        labels = [None] + [f"testsuite {ctx.testsuite.name}" for ctx in context_stack[:-1]]
-
-        if context_stack[-1].executor.testcase:
-            nodes += [context_stack[-1].executor.testcase, context_stack[-1].executor.node]
-            labels += [
-                f"testsuite {context_stack[-1].testsuite.name}",
-                f"testcase {context_stack[-1].executor.testcase.name}"
-                ]
-
-        for n, label in zip(nodes, labels):
-            frame_stack.append(FrameSummary(label, n.filename, n.linenumber)) # type: ignore
-
-        ## Pass to the reporter
+        frame_stack = get_frame_stack()
         testreporter.reporter.log_exception(exc, frame_stack)
 
         self.executor.results.end(testreporter.TestCaseStatus.FAILED)
+        self.executor.reinitialize(self.executor.results, None)
 
-        if self.ran_before and self.ran_before_each and not self.ran_testcase:
-            ## If the exception happened in a testcase, move to the next one.
-            self.executor.reinitialize(self.results, None)
-            self.ran_testcase = True
-
-        else:
-            ## The exception happened outside of a testcase (eg. in the "before" hook),
-            ## so declare the testsuite failed.
+        ## If the exception happened outside of a testcase (eg. in the "before" hook),
+        ## mark the testsuite as failed.
+        if not self.testsuite.is_in_testcase:
             self.results.end(testreporter.TestCaseStatus.FAILED)
             pop_context_stack()
 
+
 class NodeExecutor:
+    """
+    This class is responsible for executing a single node in the test execution.
+    It manages the state of the node, handles starting and executing it, and
+    transitions to the next node when the current one is done.
+    """
+
     node: Node | None = None
-    """Current node being executed."""
+    "Current node being executed."
 
     state: State | None = None
-    """The state of the current node being executed."""
+    "The state of the current node being executed."
 
     node_has_started: bool = False
-    """Whether the current node has run the start() method."""
+    "Whether the current node has run the start() method."
 
     next_node: Node | None = None
-    """The next node to execute after the current one."""
+    "The next node to execute after the current one."
 
     old_state: State | None = None
-    """The previous state of the current node."""
+    "The previous state of the current node."
 
     old_loc: NodeLocation | None = None
-    """The previous location in the game script of the current node."""
+    "The previous location in the game script of the current node."
 
     last_state_change: float = 0.0
-    """The last time the state changed."""
+    "The last time the state changed."
 
     testcase: TestCase | None = None
-    """The current testcase being executed, if any."""
+    "The current testcase being executed, if any."
 
     results: testreporter.TestCaseResults
-    """The results of the current testcase being executed, if any."""
+    "The results of the current testcase being executed, if any."
 
     def __init__(self, results: testreporter.TestCaseResults, node: Node | None = None):
         self.reinitialize(results, node)
@@ -542,36 +536,50 @@ class NodeExecutor:
         """
         Performs one execution cycle of a node.
         """
+        if self.node is None:
+            raise RuntimeError("No node to execute.")
+
         now = renpy.display.core.get_time()
 
-        if not self.node_has_started:
-            if self.node.ready():
-                self.state = self.node.start()
-                self.start = now
-                self.node_has_started = True
-            else:
-                self.state = None
-                self.node_has_started = False
-
+        self.try_to_start_node(now)
 
         if self.node_has_started:
             self.state = self.node.execute(self.state, now - self.start)
+            self.try_to_move_to_next_node()
 
-            ## If the current state is None, move to the next node
-            if self.state is None:
-                if isinstance(self.node, renpy.test.testast.Assert):
-                    self.results.num_asserts += 1
-                    testreporter.reporter.log_assert(self.node)
+        self.check_for_timeout(now)
 
-                    if self.node.failed:
-                        self.results.num_asserts_failed += 1
-                        raise RenpyTestAssertionError("Assertion failed: {}".format(self.node))
-                    else:
-                        self.results.num_asserts_passed += 1
+    def try_to_start_node(self, now) -> None:
+        if self.node_has_started:
+            return
 
-                self.node = self.next_node
-                self.node_has_started = False
+        if self.node.ready():
+            self.state = self.node.start()
+            self.start = now
+            self.node_has_started = True
+        else:
+            self.state = None
+            self.node_has_started = False
 
+    def try_to_move_to_next_node(self) -> None:
+        if self.state is not None:
+            return
+
+        self.node.done = True
+
+        if isinstance(self.node, renpy.test.testast.Assert):
+            self.handle_assertion_node(self.node)
+
+        self.node = self.next_node
+        self.node_has_started = False
+
+    def check_for_timeout(self, now) -> None:
+        self.update_last_state_change(now)
+
+        if (now - self.last_state_change) > _test.timeout:
+            raise RenpyTestTimeoutError(f"Testcase timed out after {_test.timeout} seconds.")
+
+    def update_last_state_change(self, now):
         loc = renpy.exports.get_filename_line()
 
         if (self.old_state != self.state) or (self.old_loc != loc):
@@ -580,8 +588,15 @@ class NodeExecutor:
         self.old_state = self.state
         self.old_loc = loc
 
-        if (now - self.last_state_change) > _test.timeout:
-            raise RenpyTestTimeoutError("Testcase timed out after {} seconds.".format(_test.timeout))
+    def handle_assertion_node(self, assertion: renpy.test.testast.Assert) -> None:
+        self.results.num_asserts += 1
+        testreporter.reporter.log_assert(assertion)
+
+        if assertion.failed:
+            self.results.num_asserts_failed += 1
+            raise RenpyTestAssertionError(f"Assertion failed: {assertion}")
+        else:
+            self.results.num_asserts_passed += 1
 
     @property
     def done(self) -> bool:
@@ -594,8 +609,14 @@ def test_command() -> bool:
     in the game.
     """
 
+    ## NOTE: This command gets called when the game starts for the first time,
+    ## OR when the game goes back to the main menu after finishing the game.
+    if initialized:
+        return True
+
     ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
-    ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?", default="all")
+    ap.add_argument("testcase", help="The name of a testcase to run.", nargs="?",
+                    default=global_testsuite_name)
     ap.add_argument("--no-skip", action="store_true", dest="ignore_skip_flag", default=False,
                     help="Do not skip testcases marked as skip.")
     ap.add_argument("--print-details", action="store_true", dest="print_details", default=False,
@@ -608,9 +629,7 @@ def test_command() -> bool:
     _test.print_skipped = args.print_skipped
     _test.print_details = args.print_details
 
-    ## NOTE: This command gets called when the game starts for the first time, OR when the game
-    ## goes back to the main menu after finishing the game. Special care is taken to avoid
-    ## messing up the state of the test/call stack
+    testreporter.reporter.register(testreporter.ConsoleReporter())
     initialize(args.testcase)
 
     return True
