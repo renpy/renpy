@@ -25,6 +25,9 @@ class RenPyLexer(PythonLexer):
             if token == Token.Error and value == "$":
                 yield index, Token.Keyword, value
 
+            elif token == Token.Error and value == "!":
+                yield index, Token.Keyword, value
+
             elif token in [ Name, Operator.Word ] and value in KEYWORDS:
                 yield index, Token.Keyword, value
 
