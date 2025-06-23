@@ -32,7 +32,7 @@ init python:
         if not filenames:
             interface.error(
                 _("Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."),
-                label="install",
+                label="preferences",
                 name=name,
                 zipglob=zipglob,
             )
