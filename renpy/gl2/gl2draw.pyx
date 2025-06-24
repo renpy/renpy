@@ -1437,9 +1437,12 @@ cdef class GL2DrawingContext:
 
     def merge_uniforms(self, dict uniforms):
         """
-        Merges the child uniforms into the current uniforms,
-        returning new uniforms.
+        Merges the child uniforms into the current uniforms.
         """
+
+        if not self.uniforms:
+            self.uniforms = uniforms
+            return
 
         self.uniforms = dict(self.uniforms)
 
@@ -1755,8 +1758,8 @@ def draw_render(what, int drawable_width, int drawable_height, Matrix projection
     ctx.draw_one(what)
 
     while ctx is not None:
-        ctx.uniforms.clear()
-        ctx.properties.clear()
+        ctx.uniforms = None
+        ctx.properties = None
 
         ctx = ctx._child_context
 
