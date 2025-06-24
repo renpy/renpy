@@ -138,6 +138,10 @@ class ArgumentParser(argparse.ArgumentParser):
             '--safe-mode', dest='safe_mode', action='store_true', default=False,
             help="Forces Ren'Py to start in safe mode, allowing the player to configure graphics.")
 
+        self.add_argument(
+            '--warp', dest='warp', default=None,
+            help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number. It is only valid in conjuction with the run command.')
+
         dump = self.add_argument_group("JSON dump arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
         dump.add_argument("--json-dump", action="store", metavar="FILE", help="The name of the JSON file.")
         dump.add_argument("--json-dump-private", action="store_true", default=False, help="Include private names. (Names beginning with _.)")
@@ -185,10 +189,6 @@ def run():
     ap.add_argument(
         '--debug-image-cache', dest='debug_image_cache', action='store_true', default=False,
         help="If present, Ren'Py will log information regarding the contents of the image cache.")
-
-    ap.add_argument(
-        '--warp', dest='warp', default=None,
-        help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
 
     args = renpy.game.args = ap.parse_args()
 
