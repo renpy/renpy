@@ -453,9 +453,9 @@ appended to the matrix
     When appended to a matrix, this returns the transpose of the matrix. For example, ``u_view__transpose``
     is the transpose of the view matrix.
 
-``__inversetranspose``
+``__inverse_transpose``
     When appended to a matrix, this returns the inverse of the transpose of the matrix. For example,
-    ``u_model__inversetranspose`` is the inverse of the transpose of the model matrix. This is useful for
+    ``u_model__inverse_transpose`` is the inverse of the transpose of the model matrix. This is useful for
     transforming normals.
 
 Attributes
