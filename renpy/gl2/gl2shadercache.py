@@ -190,8 +190,17 @@ class ShaderPart(object):
 
         return self.expand_name(m.group(0))
 
+    def expand_operation(self, m):
+        """
+        Expands an operation match object using expand_name.
+        """
+
+        return "u_{}_OP_{}".format(m.group(1), m.group(2))
+
     def substitute_name(self, s):
-        return re.sub(r'\b[uavl]__\w+', self.expand_match, s)
+        rv = re.sub(r'\b[uavl]__\w+', self.expand_match, s)
+        rv = re.sub(r'\bu_(\w+)__(\w+)', self.expand_operation, rv)
+        return rv
 
 
 # A map from a tuple giving the parts that comprise a shader, to the Shader

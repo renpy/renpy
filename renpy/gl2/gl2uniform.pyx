@@ -671,8 +671,8 @@ def generate_uniform_setter(shader_name: str, location: int, uniform_name: str, 
     field set, and sampler is the sampler number to use for the next sampler.
     """
 
-    if "__" in uniform_name:
-        base_name, _, operation = uniform_name.rpartition("__")
+    if "_OP_" in uniform_name:
+        base_name, _, operation = uniform_name.rpartition("_OP_")
     else:
         base_name = uniform_name
         operation = None
