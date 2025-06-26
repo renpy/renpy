@@ -219,13 +219,11 @@ cdef class RenderTransform:
                 pad_right, pad_bottom = mesh_pad
                 pad_left = 0
                 pad_top = 0
-
-            pr = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
-            pr.blit(cr, (pad_left, pad_top))
-
         else:
             pad_left = pad_top = pad_right = pad_bottom = 0
-            pr = cr
+
+        pr = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
+        pr.blit(cr, (pad_left, pad_top))
 
         mr = Render(pr.width, pr.height)
         mr.blit(pr, (0, 0))
