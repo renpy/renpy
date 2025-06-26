@@ -231,7 +231,6 @@ cdef class RenderTransform:
         mr.blit(pr, (0, 0))
 
         mr.operation = renpy.display.render.FLATTEN
-        mr.add_shader("renpy.texture")
 
         if isinstance(mesh, tuple):
             mesh_width, mesh_height = mesh
@@ -244,9 +243,10 @@ cdef class RenderTransform:
             mr.mesh = True
 
         if (blur is not None) and (blur > 0):
-            mr.add_shader("-renpy.texture")
             mr.add_shader("renpy.blur")
             mr.add_uniform("u_renpy_blur_log2", math.log(blur, 2))
+        else:
+            mr.add_shader("renpy.texture")
 
         if (blur is not None):
             mr.add_property("mipmap", True)
