@@ -228,7 +228,7 @@ cdef class RenderTransform:
             pr = cr
 
         mr = Render(pr.width, pr.height)
-        mr.blit(pr, (pad_left, pad_top))
+        mr.blit(pr, (0, 0))
 
         mr.operation = renpy.display.render.FLATTEN
         mr.add_shader("renpy.texture")
