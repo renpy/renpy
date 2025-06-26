@@ -202,7 +202,6 @@ cdef class RenderTransform:
         # The reverse transform.
         self.reverse = None # type: renpy.display.render.Matrix|None
 
-
     cdef make_mesh(self, cr):
         """
         Creates a mesh from the given render.
@@ -210,13 +209,10 @@ cdef class RenderTransform:
         Handles the mesh, mesh_pad, and blur properties.
         """
 
-
         mesh = self.state.mesh
         blur = self.state.blur
-        mesh_pad = self.state.mesh_pad
 
-        if self.state.mesh_pad:
-
+        if mesh_pad := self.state.mesh_pad:
             if len(mesh_pad) == 4:
                 pad_left, pad_top, pad_right, pad_bottom = mesh_pad
             else:
@@ -224,16 +220,15 @@ cdef class RenderTransform:
                 pad_left = 0
                 pad_top = 0
 
-            padded = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
-            padded.blit(cr, (pad_left, pad_top))
+            pr = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
+            pr.blit(cr, (pad_left, pad_top))
 
         else:
             pad_left = pad_top = pad_right = pad_bottom = 0
-            padded = cr
+            pr = cr
 
-        mr = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
-        mr.blit(padded, (pad_left, pad_top))
-
+        mr = Render(pr.width, pr.height)
+        mr.blit(pr, (pad_left, pad_top))
 
         mr.operation = renpy.display.render.FLATTEN
         mr.add_shader("renpy.texture")
@@ -256,11 +251,11 @@ cdef class RenderTransform:
         if (blur is not None):
             mr.add_property("mipmap", True)
 
-        self.mr = mr
-        rv = self.mr
+        rv = self.mr = mr
 
         if pad_left or pad_top or pad_right or pad_bottom:
             rv = Render(mr.width - pad_left - pad_right, mr.height - pad_top - pad_bottom)
+
             if renpy.config.mesh_pad_compat:
                 rv.blit(mr, (0, 0))
             else:
