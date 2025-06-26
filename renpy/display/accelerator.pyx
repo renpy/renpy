@@ -237,7 +237,7 @@ cdef class RenderTransform:
 
             mr.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
                 mesh_width, mesh_height,
-                0.0, 0.0, cr.width, cr.height,
+                0.0, 0.0, mr.width, mr.height,
                 0.0, 0.0, 1.0, 1.0)
         else:
             mr.mesh = True
