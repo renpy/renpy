@@ -146,8 +146,6 @@ def init():
         v_tex_coord.y = 1.0 - v_tex_coord.y;
     """)
 
-    renpy.config.interact_callbacks.append(update_states)
-
     did_init = True
 
 
@@ -454,12 +452,24 @@ class Live2DState(object):
 # A map from name to Live2DState object.
 states = collections.defaultdict(Live2DState)
 
+live2d_showing = False
+"Is live2d showing in the current interaction?"
 
 def update_states():
     """
     Called once per interact to walk the tree of displayables and find
     the old and new live2d states.
     """
+
+    global live2d_showing
+
+    if not did_init:
+        return
+
+    if not live2d_showing:
+        return
+
+    live2d_showing = False
 
     def visit(d):
         nonlocal count
@@ -634,6 +644,10 @@ class Live2D(renpy.display.displayable.Displayable):
 
         if update_function is not None:
             common.update_function = update_function
+
+    def per_interact(self):
+        global live2d_showing
+        live2d_showing = True
 
     def _duplicate(self, args):
 

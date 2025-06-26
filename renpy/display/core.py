@@ -2753,6 +2753,8 @@ class Interface(object):
             root_widget.visit_all(lambda d : d.per_interact())
             renpy.display.behavior.input_post_per_interact()
 
+            renpy.gl2.live2d.update_states()
+
             self.take_layer_displayable = None
 
 
