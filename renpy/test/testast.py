@@ -185,6 +185,7 @@ class TestSuite(TestCase):
         self.before_each = before_each if before_each is not None else Block(loc, [])
         self.after_each = after_each if after_each is not None else Block(loc, [])
         self.after = after if after is not None else Block(loc, [])
+        self.is_in_testcase = False
 
     def add(self, child: TestCase) -> None:
         self.testcases.append(child)
@@ -255,7 +256,6 @@ class Condition(Node):
     """
     def execute(self, state: State, t: float) -> State:
         raise RenpyTestException("Conditions should not be executed directly. Use `ready()` instead.")
-
 
 
 class SelectorException(RenpyTestException):pass
@@ -1005,9 +1005,6 @@ class Python(Node):
 
     def __call__(self):
         renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
-
-
-class AssertError(AssertionError):pass
 
 
 class Assert(Node):
