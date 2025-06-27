@@ -32,6 +32,8 @@ from renpy.test.testsettings import _test
 from renpy.test.types import State, NodeLocation, Position, RenpyTestException, RenpyTestTimeoutError
 
 
+class SelectorException(RenpyTestException): pass
+
 class Node(object):
     """
     An AST node for a test script.
@@ -42,8 +44,16 @@ class Node(object):
         self.next: Node | None = None
         self.done: bool = False
 
-    def restart(self) -> None:
-        self.done = False
+    def __eq__(self, other):
+        if not isinstance(other, Node):
+            return False
+
+        return (self.filename, self.linenumber) == (other.filename, other.linenumber)
+
+    def __repr__(self):
+        if params := self.get_repr_params():
+            params = " " + params
+        return "<{}{} ({}:{})>".format(type(self).__name__, params, self.filename, self.linenumber)
 
     def chain(self, next: "Node | None") -> None:
         """
@@ -55,6 +65,25 @@ class Node(object):
         """
 
         self.next = next
+
+    def get_repr_params(self) -> str:
+        """
+        Returns a string representation of the parameters of this node.
+        This is used in the __repr__ method to provide additional information
+        about the node.
+        """
+        return ""
+
+    def restart(self) -> None:
+        self.done = False
+
+    #######################
+
+    def ready(self) -> bool:
+        """
+        Returns True if this node is ready to execute, or False otherwise.
+        """
+        return True
 
     def start(self) -> State:
         """
@@ -81,31 +110,6 @@ class Node(object):
         next_node(self.next)
         return None
 
-    def ready(self) -> bool:
-        """
-        Returns True if this node is ready to execute, or False otherwise.
-        """
-        return True
-
-    def get_repr_params(self) -> str:
-        """
-        Returns a string representation of the parameters of this node.
-        This is used in the __repr__ method to provide additional information
-        about the node.
-        """
-        return ""
-
-    def __eq__(self, other):
-        if not isinstance(other, Node):
-            return False
-
-        return (self.filename, self.linenumber) == (other.filename, other.linenumber)
-
-    def __repr__(self):
-        if params := self.get_repr_params():
-            params = " " + params
-        return "<{}{} ({}:{})>".format(type(self).__name__, params, self.filename, self.linenumber)
-
 
 class Block(Node):
     __slots__ = "block"
@@ -114,6 +118,13 @@ class Block(Node):
         self.block = block
         self.restart()
 
+    def chain(self, next):
+        if self.block:
+            self.next = self.block[0]
+            chain_block(self.block, next)
+        else:
+            super().chain(next)
+
     def restart(self) -> None:
         if self.block:
             for node in self.block:
@@ -121,13 +132,6 @@ class Block(Node):
             self.done = False
         else:
             self.done = True
-
-    def chain(self, next):
-        if self.block:
-            self.next = self.block[0]
-            chain_block(self.block, next)
-        else:
-            super().chain(next)
 
     def execute(self, state, t):
         if not self.block:
@@ -160,6 +164,9 @@ class TestCase(Block):
 
 
 class TestSuite(TestCase):
+    """
+    Most of the logic is handled in renpy.test.testexecution.
+    """
     __slots__ = (
         "testcases", "testcase_index", "is_in_testcase", "ran_testcase",
         "before", "before_each", "after_each", "after"
@@ -187,15 +194,15 @@ class TestSuite(TestCase):
         self.after = after if after is not None else Block(loc, [])
         self.is_in_testcase = False
 
-    def add(self, child: TestCase) -> None:
-        self.testcases.append(child)
-
     def chain(self, next: Node | None) -> None:
         for block in [self.before, self.before_each, self.after_each, self.after]:
             block.chain(None)
 
         for testcase in self.testcases:
             testcase.chain(None)
+
+    def add(self, child: TestCase) -> None:
+        self.testcases.append(child)
 
     def get_next_block(self) -> Block | None:
         """
@@ -257,22 +264,16 @@ class Condition(Node):
     def execute(self, state: State, t: float) -> State:
         raise RenpyTestException("Conditions should not be executed directly. Use `ready()` instead.")
 
-
-class SelectorException(RenpyTestException):pass
-
-
+################################################################################
+# Selectors
 class Selector(Condition):
     """
     Base class for selectors. Selectors find a focusable or displayable
     item on the screen.
     """
 
-    def element_not_found_during_perform(self) -> None:
-        """
-        Called when the element is not found during perform.
-        This can be overridden to handle cases where the element is not found.
-        """
-        raise SelectorException("Element was not found.")
+    def ready(self) -> bool:
+        return self.get_element() is not None
 
     def get_element(self) -> Displayable | Focus | None:
         """
@@ -281,8 +282,12 @@ class Selector(Condition):
         """
         raise NotImplementedError("get_element() must be implemented in subclasses of Selector.")
 
-    def ready(self) -> bool:
-        return self.get_element() is not None
+    def element_not_found_during_perform(self) -> None:
+        """
+        Called when the element is not found during perform.
+        This can be overridden to handle cases where the element is not found.
+        """
+        raise SelectorException("Element was not found.")
 
 
 class DisplayableSelector(Selector):
@@ -307,23 +312,23 @@ class DisplayableSelector(Selector):
         if self.screen is None and self.id is None:
             raise ValueError("Specify screen and/or id.")
 
-    def element_not_found_during_perform(self) -> None:
-        if self.screen or self.id:
-            raise SelectorException("The displayable with screen {self.screen!r} and id {self.id!r} was not found")
-
-        raise SelectorException("No displayable was specified.")
-
-    def get_element(self) -> Displayable | None:
-        if self.screen and self.id is None:
-            return renpy.exports.get_screen(self.screen, self.layer)
-        return renpy.exports.get_displayable(self.screen, self.id, self.layer)
-
     def ready(self) -> bool:
         ## Needs to be checked here and not in __init__ since screens are not be defined yet.
         if self.screen is not None and not renpy.exports.has_screen(self.screen):
             raise ValueError(f"The screen {self.screen!r} does not exist.")
 
         return super().ready()
+
+    def get_element(self) -> Displayable | None:
+        if self.screen and self.id is None:
+            return renpy.exports.get_screen(self.screen, self.layer)
+        return renpy.exports.get_displayable(self.screen, self.id, self.layer)
+
+    def element_not_found_during_perform(self) -> None:
+        if self.screen or self.id:
+            raise SelectorException("The displayable with screen {self.screen!r} and id {self.id!r} was not found")
+
+        raise SelectorException("No displayable was specified.")
 
 
 class TextSelector(Selector):
@@ -343,17 +348,19 @@ class TextSelector(Selector):
         super(TextSelector, self).__init__(loc)
         self.pattern = pattern
 
-    def element_not_found_during_perform(self) -> None:
-        if self.pattern:
-            raise SelectorException(f"The given pattern {self.pattern!r} was not resolved to a target")
+    def get_repr_params(self) -> str:
+        return f"pattern={self.pattern!r}"
 
     def get_element(self) -> Focus | None:
         return renpy.test.testfocus.find_focus(self.pattern)
 
-    def get_repr_params(self) -> str:
-        return f"pattern={self.pattern!r}"
+    def element_not_found_during_perform(self) -> None:
+        if self.pattern:
+            raise SelectorException(f"The given pattern {self.pattern!r} was not resolved to a target")
 
 
+################################################################################
+# Selector-driven nodes
 class SelectorDrivenNode(Node):
     """
     Base class for nodes that perform actions that may take
@@ -386,6 +393,15 @@ class SelectorDrivenNode(Node):
         self.selector = selector
         self.position = position
         self.always = always
+
+    def ready(self) -> bool:
+        if self.always:
+            return True
+
+        if self.selector is not None:
+            return self.selector.ready()
+
+        return True
 
     def execute(self, state: State, t: float) -> State:
         if renpy.display.interface.trans_pause or renpy.display.interface.ongoing_transition:
@@ -457,14 +473,7 @@ class SelectorDrivenNode(Node):
         """
         raise NotImplementedError("perform() must be implemented in subclasses of SelectorDrivenNode.")
 
-    def ready(self) -> bool:
-        if self.always:
-            return True
 
-        if self.selector is not None:
-            return self.selector.ready()
-
-        return True
 
 
 class Click(SelectorDrivenNode):
@@ -485,6 +494,10 @@ class Scroll(Node):
     def __init__(self, loc: NodeLocation, pattern: str | None = None):
         super(Scroll, self).__init__(loc)
         self.pattern = pattern
+
+    def ready(self):
+        f = renpy.test.testfocus.find_focus(self.pattern)
+        return f is not None
 
     def execute(self, state, t):
         f = renpy.test.testfocus.find_focus(self.pattern)
@@ -510,10 +523,6 @@ class Scroll(Node):
         next_node(self.next)
         return None
 
-    def ready(self):
-        f = renpy.test.testfocus.find_focus(self.pattern)
-        return f is not None
-
 
 class Drag(Node):
     __slots__ = ("points", "pattern", "button", "steps")
@@ -524,6 +533,17 @@ class Drag(Node):
         self.pattern: str | None = None
         self.button: int = 1
         self.steps: int = 10
+
+    def ready(self):
+        if self.pattern is None:
+            return True
+
+        f = renpy.test.testfocus.find_focus(self.pattern)
+
+        if f is not None:
+            return True
+        else:
+            return False
 
     def execute(self, state, t):
         if renpy.display.interface.trans_pause:
@@ -581,17 +601,6 @@ class Drag(Node):
         else:
             return interpoints
 
-    def ready(self):
-        if self.pattern is None:
-            return True
-
-        f = renpy.test.testfocus.find_focus(self.pattern)
-
-        if f is not None:
-            return True
-        else:
-            return False
-
 
 class Type(SelectorDrivenNode):
     __slots__ = "text"
@@ -639,6 +648,10 @@ class Action(Node):
         super(Action, self).__init__(loc)
         self.expr = expr
 
+    def ready(self):
+        action = renpy.python.py_eval(self.expr)
+        return renpy.display.behavior.is_sensitive(action)
+
     def start(self):
         renpy.test.testexecution.action = renpy.python.py_eval(self.expr)
         return True
@@ -650,16 +663,15 @@ class Action(Node):
             next_node(self.next)
             return None
 
-    def ready(self):
-        action = renpy.python.py_eval(self.expr)
-        return renpy.display.behavior.is_sensitive(action)
-
 
 class Pause(Node):
     __slots__ = "expr"
     def __init__(self, loc: NodeLocation, expr: str):
         super(Pause, self).__init__(loc)
         self.expr = expr
+
+    def get_repr_params(self):
+        return f"{self.expr}"
 
     def start(self):
         return float(renpy.python.py_eval(self.expr)), 0
@@ -672,9 +684,6 @@ class Pause(Node):
         else:
             next_node(self.next)
             return None
-
-    def get_repr_params(self):
-        return f"{self.expr}"
 
 
 class Label(Condition):
@@ -731,6 +740,12 @@ class Advance(Node):
         Advance.last_event = event
         Advance.last_kwargs = kwargs
 
+    def ready(self):
+        if Advance.character_callback not in renpy.config.all_character_callbacks:
+            renpy.config.all_character_callbacks.append(Advance.character_callback)
+
+        return True
+
     def start(self):
         Advance.began_newline = False
         return Advance.last_event
@@ -742,12 +757,6 @@ class Advance(Node):
 
         renpy.test.testkey.queue_keysym(self, "dismiss")
         return Advance.last_event
-
-    def ready(self):
-        if Advance.character_callback not in renpy.config.all_character_callbacks:
-            renpy.config.all_character_callbacks.append(Advance.character_callback)
-
-        return True
 
 
 class Skip(Node):
@@ -804,12 +813,18 @@ class Binary(Condition):
 class And(Binary):
     __slots__ = ()
 
+    def ready(self):
+        self.left_ready = self.left.ready()
+        self.right_ready = self.right.ready()
+        return self.left_ready and self.right_ready
+
     def state(self) -> bool | None:
         if (self.left_state is None) and (self.right_state is None):
             return None
         return True
 
     def execute(self, state, t):
+        ## TODO: Remove?
         """
         Executes both if both are ready, otherwise the left one.
         """
@@ -828,17 +843,13 @@ class And(Binary):
         next_node(self)
         return self.state()
 
-    def ready(self):
-        """
-        Memorizes the computed values.
-        Effectively returns self.left.ready() and self.right.ready().
-        """
-        self.left_ready = self.left.ready()
-        self.right_ready = self.right.ready()
-        return self.left_ready and self.right_ready
-
 class Or(Binary):
     __slots__ = ()
+
+    def ready(self):
+        self.left_ready = self.left.ready()
+        self.right_ready = self.right.ready()
+        return self.left_ready or self.right_ready
 
     def state(self) -> bool | None:
         if (self.left_state is None) or (self.right_state is None):
@@ -846,6 +857,7 @@ class Or(Binary):
         return True
 
     def execute(self, state, t):
+        ## TODO: Remove?
         """
         Executes the ready one(s), if any, otherwise the right one.
         """
@@ -863,15 +875,6 @@ class Or(Binary):
 
         next_node(self)
         return self.state()
-
-    def ready(self):
-        """
-        Memorizes the computed values.
-        Effectively returns self.left.ready() or self.right.ready().
-        """
-        self.left_ready = self.left.ready()
-        self.right_ready = self.right.ready()
-        return self.left_ready or self.right_ready
 
 
 ################################################################################
@@ -904,6 +907,9 @@ class Until(Node):
         self.left = left
         self.right = right
         self.timeout = timeout
+
+    def ready(self):
+        return self.left.ready() or self.right.ready()
 
     def start(self):
         if self.timeout and math.isnan(self.timeout):
@@ -939,9 +945,6 @@ class Until(Node):
 
         next_node(self)
         return child, child_state, start_time, has_started
-
-    def ready(self):
-        return self.left.ready() or self.right.ready()
 
 
 class Repeat(Until):
@@ -992,6 +995,9 @@ class Python(Node):
         self.code = code
         self.hide = hide
 
+    def __call__(self):
+        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
+
     def start(self):
         renpy.test.testexecution.action = self
         return True
@@ -1002,9 +1008,6 @@ class Python(Node):
         else:
             next_node(self.next)
             return None
-
-    def __call__(self):
-        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
 
 
 class Assert(Node):
