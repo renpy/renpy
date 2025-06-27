@@ -19,9 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
 import base64
 import ecdsa
 import os
@@ -31,18 +28,18 @@ import renpy
 
 
 # The directory containing the save token information.
-token_dir = None # type: str|None
+token_dir: str | None = None
 
 # A list of the keys used to sign saves, stored as DER-encoded strings.
-signing_keys = [ ] # type: list[str]
+signing_keys: list[bytes] = []
 
 # A list of the keys used to verify saves, stored as DER-encoded strings.
-verifying_keys = [ ] # type: list[str]
+verifying_keys: list[bytes] = []
 
 # True if the save files and persistent data should be upgraded.
-should_upgrade = False # type: bool
+should_upgrade: bool = False
 
-def encode_line(key, a, b=None): #type (str, bytes, bytes|None) -> str
+def encode_line(key: str, a: bytes, b: bytes | None = None) -> str:
     """
     This encodes a line that contains a key and up to 2 base64-encoded fields.
     It returns the line with the newline appended, as a string.
@@ -53,7 +50,7 @@ def encode_line(key, a, b=None): #type (str, bytes, bytes|None) -> str
     else:
         return key + " " + base64.b64encode(a).decode("ascii") + " " + base64.b64encode(b).decode("ascii") + "\n"
 
-def decode_line(line): #type (str) -> (str, bytes, bytes|None)
+def decode_line(line: str) -> tuple[str, bytes, bytes | None]:
     """
     This decodes a line that contains a key and up to 2 base64-encoded fields.
     It returns a tuple of the key, the first field, and the second field.
@@ -76,7 +73,7 @@ def decode_line(line): #type (str) -> (str, bytes, bytes|None)
         return '', b'', None
 
 
-def sign_data(data):
+def sign_data(data: object) -> str:
     """
     Signs `data` with the signing keys and returns the
     signature. If there are no signing keys, returns None.
@@ -93,7 +90,7 @@ def sign_data(data):
 
     return rv
 
-def verify_data(data, signatures, check_verifying=True):
+def verify_data(data: object, signatures: str, check_verifying: bool = True) -> bool:
     """
     Verifies that `data` has been signed by the keys in `signatures`.
     """
@@ -118,7 +115,7 @@ def verify_data(data, signatures, check_verifying=True):
 
     return False
 
-def get_keys_from_signatures(signatures):
+def get_keys_from_signatures(signatures: str) -> list[bytes]:
     """
     Given a string containing signatures, get the verification keys
     for those signatures.
@@ -134,7 +131,7 @@ def get_keys_from_signatures(signatures):
 
     return rv
 
-def check_load(log, signatures):
+def check_load(log: object, signatures: str) -> bool:
     """
     This checks the token that was loaded from a save file to see if it's
     valid. If not, it will prompt the user to confirm the load.
@@ -182,7 +179,7 @@ def check_load(log, signatures):
     return verify_data(log, signatures, False)
 
 
-def check_persistent(data, signatures):
+def check_persistent(data: object, signatures: str) -> bool:
     """
     This checks a persistent file to see if the token is valid.
     """
@@ -195,7 +192,8 @@ def check_persistent(data, signatures):
 
     return False
 
-def create_token(filename):
+
+def create_token(filename: str) -> None:
     """
     Creates a token and writes it to `filename`, if possible.
     """
@@ -213,12 +211,12 @@ def create_token(filename):
         with open(filename, "w") as f:
             f.write(line)
 
-def upgrade_savefile(fn):
+def upgrade_savefile(fn: str) -> None:
     """
     Given a savegame, fn, upgrades it to include the token.
     """
 
-    if signing_keys is None:
+    if not signing_keys:
         return
 
     atime = os.path.getatime(fn)
@@ -251,8 +249,6 @@ def upgrade_all_savefiles():
             renpy.display.log.write("Error upgrading save file:")
             renpy.display.log.exception()
 
-    upgraded = True
-
     with open(upgraded_txt, "a") as f:
         f.write(renpy.config.save_directory + "\n")
 
@@ -263,7 +259,8 @@ def init_tokens():
     global verifying_keys
     global should_upgrade
 
-    if renpy.config.save_directory is None:
+    game_name = renpy.config.save_directory
+    if game_name is None:
         should_upgrade = True
         return
 
@@ -286,10 +283,10 @@ def init_tokens():
             if kind == "signing-key":
                 sk = ecdsa.SigningKey.from_der(key)
                 if sk is not None and sk.verifying_key is not None:
-                    signing_keys.append(sk.to_der()) # type: ignore
+                    signing_keys.append(sk.to_der())
                     verifying_keys.append(sk.verifying_key.to_der())
             elif kind == "verifying-key":
-                verifying_keys.append(key) # type: ignore
+                verifying_keys.append(key)
 
     # Process config.save_token_keys
 
@@ -298,19 +295,19 @@ def init_tokens():
         k = base64.b64decode(tk)
         try:
             vk = ecdsa.VerifyingKey.from_der(k)
-            verifying_keys.append(k) # type: ignore
+            verifying_keys.append(k)
         except Exception:
             try:
                 sk = ecdsa.SigningKey.from_der(k)
             except Exception:
-                raise Exception("In config.save_token_keys, the key {!r} is not a valid key.".format(tk))
+                raise Exception(f"In config.save_token_keys, the key {tk!r} is not a valid key.")
 
             if sk.verifying_key is not None:
                 vk = base64.b64encode(sk.verifying_key.to_der()).decode("utf-8")
             else:
                 vk = ""
 
-            raise Exception("In config.save_token_keys, the signing key {!r} was provided, but the verifying key {!r} is required.".format(tk, vk)) # type: ignore
+            raise Exception(f"In config.save_token_keys, the signing key {tk!r} was provided, but the verifying key {vk!r} is required.")
 
     # Determine if we need to upgrade the current game.
 
@@ -318,12 +315,9 @@ def init_tokens():
 
     if os.path.exists(upgraded_txt):
         with open(upgraded_txt, "r") as f:
-            upgraded_games = f.read().splitlines()
-    else:
-        upgraded_games = [ ]
-
-    if renpy.config.save_directory in upgraded_games:
-        return
+            for line in f:
+                if line == game_name:
+                    return
 
     should_upgrade = True
 
