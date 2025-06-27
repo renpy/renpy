@@ -286,9 +286,10 @@ def update_suite_skip_flag(node: TestSuite) -> None:
         if isinstance(child, TestSuite):
             update_suite_skip_flag(child)
         else:
-            child.skip = child.skip and not _test.ignore_skip_flag
+            child.skip = not _test.ignore_skip_flag and child.skip
 
-    node.skip = not _test.ignore_skip_flag and all(child.skip for child in node.testcases)
+    ## Skip if all the children are skipped, or if the node itself is marked as skipped.
+    node.skip = not _test.ignore_skip_flag and (node.skip or all(child.skip for child in node.testcases))
 
 
 ################################################################################
