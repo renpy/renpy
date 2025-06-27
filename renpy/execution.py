@@ -499,6 +499,10 @@ class Context(renpy.object.Object):
         elif not isinstance(e, Exception):
             raise
 
+        if renpy.exports.is_in_test():
+            renpy.test.testexecution.exception_handler(e)
+            return
+
         te = renpy.error.report_exception(e, editor=False)
 
         # Local exception handler, if any. This should handle all cases
