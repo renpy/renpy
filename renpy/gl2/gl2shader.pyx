@@ -160,11 +160,14 @@ class Variable:
 
         self.type = token
 
+        self.array = match_array()
+
         self.name = match_word()
         if self.name is None:
             raise ShaderError(f"In {shader_name}, couldn't find name in '{line}'.")
 
-        self.array = match_array()
+        if self.array is None:
+            self.array = match_array()
 
         if l.rstrip():
             raise ShaderError("Spurious tokens after the name in '{}'.".format(line))
