@@ -527,7 +527,6 @@ class SelectorDrivenNode(Node):
             x, y = renpy.exports.get_mouse_pos()
         else:
             x, y = renpy.test.testfocus.find_position(f, position)
-            print(f, x, y)
 
         return x, y
 
@@ -694,9 +693,9 @@ class Type(SelectorDrivenNode):
 
         move_mouse(x, y)
 
-        keysym = self.text[state]
-        renpy.test.testkey.down(self, keysym)
-        renpy.test.testkey.up(self, keysym)
+        key = self.text[state]
+        renpy.test.testkey.down(self, key)
+        renpy.test.testkey.up(self, key)
 
         return state + 1
 
