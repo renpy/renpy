@@ -184,6 +184,16 @@ def check_persistent(data: object, signatures: str) -> bool:
     This checks a persistent file to see if the token is valid.
     """
 
+    if token_dir is None:
+        return True
+
+    if not signing_keys:
+        return True
+
+    # The web sandbox should be enough.
+    if renpy.emscripten:
+        return True
+
     if should_upgrade:
         return True
 
