@@ -213,13 +213,10 @@ class Reporter(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def log_exception(self, exception: Exception | None, run_stack: list[renpy.error.FrameSummary]) -> None:
+    def log_exception(self, exception: Exception, run_stack: list[renpy.error.FrameSummary]) -> None:
         """
         Called when an exception is raised from the test case or the game
         raises an error.
-
-        May be None if the exception has already been reported by the base game.
-        This may happen if the game script throws the error rather than the test.
         """
         pass
 
@@ -412,18 +409,17 @@ class ConsoleReporter(Reporter):
         self._print(f"{ANSIColors.RED}FAILED:{ANSIColors.RESET} {expr}\n")
 
     def log_exception(self, exception, run_stack) -> None:
-        if exception is not None:
-            renpy.error.report_exception(exception, editor=False)
+        renpy.error.report_exception(exception, editor=False)
 
-            ## Report where in the script this exception occurred
-            ctx = renpy.game.context()
-            frames = ctx.report_traceback("", last=False)
-            for filename, line_number, name, text in frames:
-                summary = renpy.error.FrameSummary(name, filename, line_number, text=text)
-                filename = renpy.exports.unelide_filename(filename)
+        ## Report where in the script this exception occurred
+        ctx = renpy.game.context()
+        frames = ctx.report_traceback("", last=False)
+        for filename, line_number, name, text in frames:
+            summary = renpy.error.FrameSummary(name, filename, line_number, text=text)
+            filename = renpy.exports.unelide_filename(filename)
 
-                self.epc.location(filename, line_number, name)
-                self.epc.string("  " + summary.line.strip())
+            self.epc.location(filename, line_number, name)
+            self.epc.string("  " + summary.line.strip())
 
         self.epc.indent_depth = 0
         self.epc.string("\nDuring testcase execution:")

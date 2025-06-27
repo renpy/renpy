@@ -128,8 +128,6 @@ def initialize(name: str) -> None:
     if initialized:
         return
 
-    renpy.config.exception_handler = exception_handler
-
     suite = create_or_get_top_level_suite(name)
     update_suite_skip_flag(suite)
     suite.chain(None)
@@ -181,7 +179,7 @@ def execute() -> None:
     labels.clear()
 
 
-def exception_handler(exc: renpy.error.TracebackException) -> bool:
+def exception_handler(exc: Exception) -> bool:
     """
     Handles exceptions that occur during the execution of testcases.
     This is called by Ren'Py when an exception is raised.
@@ -189,7 +187,7 @@ def exception_handler(exc: renpy.error.TracebackException) -> bool:
     if not is_in_test():
         return False
 
-    get_current_context().handle_exception(None)
+    get_current_context().handle_exception(exc)
     return True
 
 
@@ -200,6 +198,9 @@ def quit_handler() -> int:
     """
 
     global context_stack
+
+    if not is_in_test():
+        return 0
 
     while context_stack:
         pop_context_stack()
