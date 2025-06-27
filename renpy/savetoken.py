@@ -326,7 +326,7 @@ def init_tokens():
     if os.path.exists(upgraded_txt):
         with open(upgraded_txt, "r") as f:
             for line in f:
-                if line == game_name:
+                if line.strip() == game_name:
                     return
 
     should_upgrade = True
