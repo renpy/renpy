@@ -437,6 +437,11 @@ class TestSuiteContext:
         except Exception as exc:
             self.handle_exception(exc)
 
+            if isinstance(self.executor.node, renpy.test.testast.Until):
+                ## Clean up the Until node if it was running.
+                self.executor.node.left.after_until()
+
+
 
     def prepare_next_execution(self):
         """
@@ -468,7 +473,7 @@ class TestSuiteContext:
 
         self.executor.reinitialize(self.results, next_node)
 
-    def handle_exception(self, exc: Exception | None) -> None:
+    def handle_exception(self, exc: Exception) -> None:
         frame_stack = get_frame_stack()
         testreporter.reporter.log_exception(exc, frame_stack)
 

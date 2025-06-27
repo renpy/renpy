@@ -110,6 +110,13 @@ class Node(object):
         next_node(self.next)
         return None
 
+    def after_until(self) -> None:
+        """
+        Called after an Until node has finished executing.
+        This is used to end any function that was started by this node.
+        """
+        pass
+
 
 class Block(Node):
     __slots__ = "block"
@@ -776,6 +783,10 @@ class Skip(Node):
             renpy.config.skipping = "slow"
         return True
 
+    def after_until(self) -> None:
+        renpy.config.skipping = None
+
+
 ################################################################################
 # Boolean proxy clauses
 
@@ -925,6 +936,7 @@ class Until(Node):
         child, child_state, start_time, has_started = state
 
         if self.right.ready():
+            self.left.after_until()
             next_node(self.next)
             return None
 
