@@ -278,9 +278,18 @@ class Selector(Condition):
     Base class for selectors. Selectors find a focusable or displayable
     item on the screen.
     """
+    __slots__ = ("element", "wait_for_focus")
+
+    def __init__(self, loc, wait_for_focus):
+        super().__init__(loc)
+
+        self.wait_for_focus: bool = wait_for_focus
+        self.element: Displayable | Focus | None = None
 
     def ready(self) -> bool:
-        return self.get_element() is not None
+        self.element = self.get_element()
+        focused = self.is_focused() or not self.wait_for_focus
+        return self.element is not None and focused
 
     def get_element(self) -> Displayable | Focus | None:
         """
@@ -296,6 +305,31 @@ class Selector(Condition):
         """
         raise SelectorException("Element was not found.")
 
+    def is_focused(self) -> bool:
+        """
+        Checks if the element or its children are focused.
+        """
+        displayable = None
+        if isinstance(self.element, Focus):
+            displayable = self.element.widget
+        elif isinstance(self.element, Displayable):
+            displayable = self.element
+
+        if displayable is None:
+            return False
+
+        child_stack: list[Displayable] = [displayable]
+        while child_stack:
+            child = child_stack.pop()
+
+            if child is renpy.game.context().scene_lists.focused:
+                return True
+
+            if isinstance(child, renpy.display.layout.Container):
+                child_stack.extend(child.children)
+
+        return False
+
 
 class DisplayableSelector(Selector):
     """
@@ -310,8 +344,9 @@ class DisplayableSelector(Selector):
         screen: str | None = None,
         id: str | None = None,
         layer: str | None = None,
+        wait_for_focus: bool = False,
     ):
-        super(DisplayableSelector, self).__init__(loc)
+        super(DisplayableSelector, self).__init__(loc, wait_for_focus)
         self.screen = screen
         self.id = id
         self.layer = layer
@@ -328,8 +363,43 @@ class DisplayableSelector(Selector):
 
     def get_element(self) -> Displayable | None:
         if self.screen and self.id is None:
-            return renpy.exports.get_screen(self.screen, self.layer)
-        return renpy.exports.get_displayable(self.screen, self.id, self.layer)
+            rv = renpy.exports.get_screen(self.screen, self.layer)
+        else:
+            # rv = renpy.exports.get_displayable(self.screen, self.id, self.layer)
+            rv = self.get_displayable()
+
+        return rv
+
+    def get_displayable(self) -> Displayable | None:
+        """
+        Returns the displayable that this selector is looking for.
+        If no displayable is found, returns None.
+
+        renpy.exports.get_displayable(screen, id, layer) is supposed to do this, but it sucks
+        """
+        ## TODO: Move to renpy.exports.get_displayable()?
+
+        ctx: renpy.execution.Context = renpy.game.context()
+        for layer, sles in ctx.scene_lists.layers.items():
+            layer: str
+            sles: list[renpy.display.scenelists.SceneListEntry]
+
+            if self.layer and self.layer != layer:
+                continue
+
+            for sle in sles:
+                if not isinstance(sle.displayable, renpy.display.screen.ScreenDisplayable):
+                    continue
+
+                if self.screen and sle.name != self.screen:
+                    continue
+
+                rv = sle.displayable.widgets.get(self.id, None)
+
+                if rv is not None:
+                    return rv
+
+        return None
 
     def element_not_found_during_perform(self) -> None:
         if self.screen or self.id:
@@ -351,15 +421,16 @@ class TextSelector(Selector):
 
     __slots__ = ("pattern",)
 
-    def __init__(self, loc: NodeLocation, pattern: str):
-        super(TextSelector, self).__init__(loc)
+    def __init__(self, loc: NodeLocation, pattern: str, wait_for_focus: bool = False):
+        super(TextSelector, self).__init__(loc, wait_for_focus)
         self.pattern = pattern
 
     def get_repr_params(self) -> str:
         return f"pattern={self.pattern!r}"
 
     def get_element(self) -> Focus | None:
-        return renpy.test.testfocus.find_focus(self.pattern)
+        rv = renpy.test.testfocus.find_focus(self.pattern)
+        return rv
 
     def element_not_found_during_perform(self) -> None:
         if self.pattern:
@@ -445,20 +516,18 @@ class SelectorDrivenNode(Node):
         else:
             position = (None, None)
 
-        if self.selector is not None:
-            f = self.selector.get_element()
-        else:
+        if self.selector is None or self.selector.element is None:
             f = None
+        else:
+            f = self.selector.element
 
         if f is None:
-            x, y = None, None
-        else:
-            x, y = renpy.test.testfocus.find_position(f, position)
-
-        if x is None or y is None:
             if not self.always and self.selector is not None:
                 self.selector.element_not_found_during_perform()
             x, y = renpy.exports.get_mouse_pos()
+        else:
+            x, y = renpy.test.testfocus.find_position(f, position)
+            print(f, x, y)
 
         return x, y
 
@@ -479,8 +548,6 @@ class SelectorDrivenNode(Node):
             The time since start was called.
         """
         raise NotImplementedError("perform() must be implemented in subclasses of SelectorDrivenNode.")
-
-
 
 
 class Click(SelectorDrivenNode):
