@@ -1421,7 +1421,7 @@ simple_box_reverse = False
 box_reverse_align = False
 
 # If True, positional-only parameters are allowed in ATL transform signatures.
-atl_pos_only = False
+atl_pos_only = True
 
 # If True, positional-only parameters in ATL transform signatures are treated as pos-or-keyword.
 atl_pos_only_as_pos_or_kw = False
