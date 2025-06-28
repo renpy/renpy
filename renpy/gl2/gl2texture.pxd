@@ -89,6 +89,8 @@ cdef class GLTexture(GL2Model):
     cdef public GLint default_mag_filter
     cdef public GLint default_min_filter
 
+    cdef bint has_mipmaps(self)
+
     cpdef subsurface(GLTexture self, t)
 
     cpdef GL2Model get_texture(self, int i)

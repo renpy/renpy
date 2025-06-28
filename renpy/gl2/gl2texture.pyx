@@ -312,18 +312,21 @@ cdef class GLTexture(GL2Model):
                 )
             self.properties = { }
 
-    def has_mipmaps(GLTexture self):
+    def should_have_mipmaps(GLTexture self, properties):
         """
         Returns true if this texture has mipmaps (or will have mipmaps
         when it's loaded).
         """
 
-        rv = self.properties.get("mipmap", renpy.config.mipmap)
+        rv = properties.get("mipmap", renpy.config.mipmap)
 
         if rv == "auto":
             rv = renpy.display.draw.auto_mipmap
 
         return rv
+
+    cdef bint has_mipmaps(self):
+        return self.properties["mipmap"]
 
     def get_number(GLTexture self):
         return self.number if renpy.emscripten else None
@@ -334,7 +337,8 @@ cdef class GLTexture(GL2Model):
         """
 
         self.surface = surface
-        self.properties = properties
+        self.properties = dict(properties)
+        self.properties["mipmap"] = self.should_have_mipmaps(properties)
 
         self.mesh = Mesh2.texture_rectangle(
             0.0, 0.0, self.width, self.height,
@@ -349,7 +353,7 @@ cdef class GLTexture(GL2Model):
         """
 
         self.properties = {
-            "mipmap" : properties.get("mipmap", renpy.config.mipmap),
+            "mipmap" : self.should_have_mipmaps(properties),
             "pixel_perfect" : properties.get("pixel_perfect", False),
             }
 
@@ -613,7 +617,6 @@ cdef class GLTexture(GL2Model):
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, self.min_filter)
 
-
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
@@ -661,6 +664,24 @@ cdef class GLTexture(GL2Model):
 
         glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
         glGenerateMipmap(GL_TEXTURE_2D)
+
+    def add_mipmap(self):
+        """
+        Adds a mipmap to this texture, if it doesn't exist.
+        """
+
+        if self.properties["mipmap"]:
+            return
+
+        self.properties["mipmap"] = True
+        self.loader.total_texture_size += int(self.width * self.height * 4 * .34)
+
+        # This leaves the texture selected.
+        self.mipmap_texture(self.number, self.width, self.height, self.properties)
+
+        self.min_filter = GL_LINEAR_MIPMAP_NEAREST
+        self.default_min_filter = self.min_filter
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, self.min_filter)
 
     def __del__(self):
         try:

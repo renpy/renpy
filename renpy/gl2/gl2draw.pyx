@@ -1065,11 +1065,12 @@ cdef class GL2Draw:
         r.loaded = True
 
         # Load the child textures.
+        # This needs to be outside of r.mesh, as it handles all uniform texture loading,
+        # even if uniforms isn't used.
+
         for c in r.children:
             self.load_all_textures(c[0])
 
-        # This needs to be outside of r.mesh, as it handles all uniform texture loading,
-        # even if uniforms isn't used.
         # If we have a mesh (or mesh=True), create the GL2Model.
         if r.mesh:
 
@@ -1123,15 +1124,22 @@ cdef class GL2Draw:
 
         if properties is None:
             properties = {}
+            need_mipmap = False
+        else:
+            need_mipmap = properties.get("mipmap", False)
 
         if isinstance(what, Surface):
             what = self.load_texture(what)
             self.load_all_textures(what)
 
         if isinstance(what, Texture):
+            if need_mipmap:
+                what.add_mipmap()
             return what
 
         if what.cached_texture is not None:
+            if need_mipmap:
+                what.cached_texture.add_mipmap()
             return what.cached_texture
 
         rv = self.texture_loader.render_to_texture(what, properties)
