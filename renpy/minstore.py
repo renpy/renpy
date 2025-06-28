@@ -64,7 +64,8 @@ from renpy.display.core import absolute
 from renpy.atl import position
 
 import renpy
-globals()["renpy"] = renpy.exports
+globals()["renpy"] = _renpy_exports = renpy.exports
+
 
 _print = print
 

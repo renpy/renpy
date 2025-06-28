@@ -799,7 +799,7 @@ class WrapNode(ast.NodeTransformer):
         renpy_pyanalysis_import_from = \
         ast.Attribute(
             value=ast.Attribute(
-                value=ast.Name(id="renpy", ctx=ast.Load()),
+                value=ast.Name(id="_renpy_exports", ctx=ast.Load()),
                 attr="pyanalysis",
                 ctx=ast.Load()
             ),
