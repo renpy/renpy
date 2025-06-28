@@ -119,10 +119,12 @@ class Node(object):
 
 
 class Block(Node):
-    __slots__ = "block"
-    def __init__(self, loc: NodeLocation, block: list[Node]):
+    __slots__ = ("block", "name")
+
+    def __init__(self, loc: NodeLocation, block: list[Node], name: str = ""):
         Node.__init__(self, loc)
         self.block = block
+        self.name = name
         self.restart()
 
     def chain(self, next):
@@ -150,7 +152,7 @@ class Block(Node):
 
 
 class TestCase(Block):
-    __slots__ = ("name", "description", "skip")
+    __slots__ = ("description", "skip")
 
     def __init__(
         self,
@@ -160,7 +162,7 @@ class TestCase(Block):
         description: str = "",
         skip: bool = False,
     ):
-        super().__init__(loc, block)
+        super().__init__(loc, block, name)
         self.name = name
         self.block = block
         self.description = description
@@ -176,7 +178,7 @@ class TestSuite(TestCase):
     """
     __slots__ = (
         "testcases", "testcase_index", "is_in_testcase", "ran_testcase",
-        "before", "before_each", "after_each", "after"
+        "before", "before_each", "after_each", "after", "current_block"
     )
 
     def __init__(
@@ -200,6 +202,7 @@ class TestSuite(TestCase):
         self.after_each = after_each if after_each is not None else Block(loc, [])
         self.after = after if after is not None else Block(loc, [])
         self.is_in_testcase = False
+        self.current_block: Block | None = None
 
     def chain(self, next: Node | None) -> None:
         for block in [self.before, self.before_each, self.after_each, self.after]:
@@ -212,6 +215,13 @@ class TestSuite(TestCase):
         self.testcases.append(child)
 
     def get_next_block(self) -> Block | None:
+        """
+        Advances the test suite to the next block.
+        """
+        self.current_block = self._get_next_block()
+        return self.current_block
+
+    def _get_next_block(self) -> Block | None:
         """
         Returns the next block to execute in the test suite.
         """
@@ -242,7 +252,7 @@ class TestSuite(TestCase):
 
         if self.testcase_index < len(self.testcases) - 1:
             self.prepare_for_next_testcase()
-            return self.get_next_block()
+            return self._get_next_block()
 
         if not self.after.done:
             return self.after
