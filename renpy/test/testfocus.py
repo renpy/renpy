@@ -43,40 +43,39 @@ def find_focus(pattern: str | None) -> Focus | None:
     if pattern is not None:
         pattern = pattern.casefold()
 
-    def match(f: Focus) -> str | None:
+    # {focus : (len(alt), alt)}
+    matching: dict[Focus, tuple[int, str]] = {}
 
-        if pattern is None:
-            if f.x is None:
-                # one focus, at most, ever branches here
-                # the main "click to continue" one
-                # it's the only one, if any, to be retained in the matching list
-                return "default"
-            else:
-                return None
+    for f in renpy.display.focus.focus_list:
+        alt = match(f, pattern)
+
+        if alt is not None:
+            matching[f] = (len(alt), alt)
+
+    # This gets the matching displayable with the shortest alt text, which
+    # is likely what we want.
+    return min(matching, key=matching.get, default=None)  # type: ignore
+
+
+def match(f: Focus, pattern: str | None) -> str | None:
+    if pattern is None:
+        if f.x is None:
+            # one focus, at most, ever branches here
+            # the main "click to continue" one
+            # it's the only one, if any, to be retained in the matching list
+            return "default"
+        else:
+            return None
 
         if f.x is None:
             t = renpy.display.tts.root._tts_all()
         else:
             t = f.widget._tts_all()
 
-        if pattern in t.casefold():
-            return t
-        else:
-            return None
-
-    # A list of alt_text, focus pairs.
-    matching: list[tuple[str, Focus]] = []
-
-    for f in renpy.display.focus.focus_list:
-        alt = match(f)
-
-        if alt is not None:
-            matching.append((alt, f))
-
-    # This gets the matching displayable with the shortest alt text, which
-    # is likely what we want.
-    matching.sort(key=lambda a: (len(a[0]), a[0]))
-    return matching[0][1]
+    if pattern in t.casefold():
+        return t
+    else:
+        return None
 
 
 def relative_position(x: int, posx: int | float | None, width: int) -> float:
@@ -89,10 +88,7 @@ def relative_position(x: int, posx: int | float | None, width: int) -> float:
     return x
 
 
-def find_position(
-    f: Focus | Displayable | None,
-    position: Position | tuple[None, None]
-) -> tuple[int, int]:
+def find_position(f: Focus | Displayable | None, position: Position | tuple[None, None]) -> tuple[int, int]:
     """
     Returns the virtual position of a coordinate located within focus `f`.
     If position is (None, None) returns the current mouse position (if in
@@ -118,7 +114,7 @@ def find_position(
         return (
             int(relative_position(x, posx, renpy.config.screen_width)),
             int(relative_position(y, posy, renpy.config.screen_height)),
-            )
+        )
 
     orig_f = f
 
@@ -130,14 +126,14 @@ def find_position(
         f.w = renpy.config.screen_width
         f.h = renpy.config.screen_height
 
-    x = relative_position(x-f.x, posx, f.w) + f.x
-    y = relative_position(y-f.y, posy, f.h) + f.y
+    x = relative_position(x - f.x, posx, f.w) + f.x
+    y = relative_position(y - f.y, posy, f.h) + f.y
 
     for _i in range(renpy.test.testsettings._test.focus_trials):
         x = int(x)
         y = int(y)
 
-        nf = renpy.display.render.focus_at_point(x, y) # type: ignore
+        nf = renpy.display.render.focus_at_point(x, y)  # type: ignore
 
         if nf is None:
             if orig_f.x is None:
@@ -171,11 +167,11 @@ def focus_from_displayable(d: Displayable) -> Focus | None:
 
     ## If we reach here, the displayable is not in the focus list.
     ## Search the render tree for it.
-    stack = [(renpy.display.render.screen_render, 0, 0, None)] # type: ignore
+    stack = [(renpy.display.render.screen_render, 0, 0, None)]  # type: ignore
     while stack:
         r, x, y, screen = stack.pop()
 
-        if not isinstance(r, renpy.display.render.Render): # type: ignore
+        if not isinstance(r, renpy.display.render.Render):  # type: ignore
             continue
 
         if d in r.render_of:
