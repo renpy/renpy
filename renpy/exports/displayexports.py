@@ -1023,22 +1023,34 @@ def get_renderer_info() -> renpy.display.core.RendererInfo:
 
     Returns a dictionary, giving information about the renderer Ren'Py is
     currently using. Defined keys are:
+        ``"renderer"``
+            A string giving the name of the renderer that is in use.
 
-    ``"renderer"``
-        A string giving the name of the renderer that is in use.
+        ``"resizable"``
+            True if and only if the window is resizable.
 
-    ``"resizable"``
-        True if and only if the window is resizable.
+        ``"additive"``
+            True if and only if the renderer supports additive blending.
 
-    ``"additive"``
-        True if and only if the renderer supports additive blending.
+        ``"model"``
+            Present and true if model-based rendering is supported.
 
-    ``"model"``
-        Present and true if model-based rendering is supported.
+    When using the GL2 renderer, the following keys are also defined:
+        ``"gpu_vendor"``
+            A string giving the GPU vendor.
 
-    Other, renderer-specific, keys may also exist. The dictionary should
-    be treated as immutable. This should only be called once the display
-    has been started (that is, after the init phase has finished).
+        ``"gpu_name"``
+            A string giving the GPU name.
+
+        ``"gpu_driver_version"``
+            A string giving the driver version.
+
+    Other, renderer-specific, keys may also exist.
+
+    The dictionary should be treated as immutable.
+
+    This should only be called once the display has been started (that is,
+    not sooner than first interaction).
     """
 
     if renpy.exports.is_init_phase():
