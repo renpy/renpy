@@ -774,6 +774,70 @@ init -1500 python:
 
 
     @renpy.pure
+    class ScrollViewport(Action, DictEquality):
+        """
+        :doc: other_action
+
+        Causes a Viewport to scroll to a specific position.
+
+        `id`
+            The id of the viewport in the current screen.
+
+        `position`
+            x and y coordinates for the viewport to scroll to.
+
+        `delay`
+            If non-zero, the scroll will be animated for this many seconds.
+        """
+
+        delay = 0.0
+
+        def __init__(self, id, position, delay=0.0):
+            self.id = id
+            self.position = position
+            self.delay = delay
+
+        def __call__(self):
+
+            d = renpy.get_widget(None, self.id)
+
+            if d is None:
+                raise Exception("There is no displayable with the id {}.".format(self.id))
+
+            if not isinstance(d, Viewport):
+                raise Exception("The displayable with the id {} is not a viewport. SetViewportPosition only takes Viewports as arguments.".format(self.id))
+
+            if not isinstance(self.position, tuple):
+                raise Exception("The position must be a tuple.")
+
+            xadjustment = d.xadjustment
+            yadjustment = d.yadjustment
+            adjustment = (xadjustment, yadjustment) # tuple of x and y adjustments to use in the loop below
+
+            xyadjustment_change = [] # x and y relative adjustment changes for the animate call based on the position and the current adjustment values
+
+            for i, pos in enumerate(self.position):
+                # a loop for x and y
+                # using a loop here to avoid code duplication and allow mixing and matching of absolute and relative values
+                if isinstance(pos, float) and not isinstance(pos, absolute):
+                    # If x/y is a float, use it as a relative position
+                    xyadjustment_change.append(pos * adjustment[i].range - adjustment[i].value)
+
+                else:
+                    # otherwise, use it as an absolute position
+                    xyadjustment_change.append(pos - adjustment[i].value)
+
+            if self.delay == 0.0:
+                # if there is no delay, call change and sum the x and y adjustment changes to arrive at the final position
+                xadjustment.change(xadjustment.value + xyadjustment_change[0])
+                yadjustment.change(yadjustment.value + xyadjustment_change[1])
+            else:
+                # otherwise, animate the x and y adjustment changes
+                xadjustment.animate(xyadjustment_change[0], self.delay, _warper.ease)
+                yadjustment.animate(xyadjustment_change[1], self.delay, _warper.ease)
+
+
+    @renpy.pure
     class OpenDirectory(Action, DictEquality):
         """
         :doc: other_action
