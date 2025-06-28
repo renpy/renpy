@@ -383,11 +383,19 @@ def get_frame_stack() -> list[FrameSummary]:
     nodes = [ctx.testsuite for ctx in context_stack]
     labels = [None] + [f"testsuite {ctx.testsuite.name}" for ctx in context_stack[:-1]]
 
-    if context_stack[-1].executor.testcase:
-        nodes += [context_stack[-1].executor.testcase, context_stack[-1].executor.node]
+    block = context_stack[-1].testsuite.current_block
+
+    if isinstance(block, TestCase):
+        nodes += [block, context_stack[-1].executor.node]
         labels += [
             f"testsuite {context_stack[-1].testsuite.name}",
-            f"testcase {context_stack[-1].executor.testcase.name}"
+            f"testcase {block.name}"
+            ]
+    elif isinstance(block, renpy.test.testast.Block):
+        nodes += [block, context_stack[-1].executor.node]
+        labels += [
+            f"testsuite {context_stack[-1].testsuite.name}",
+            f"hook {block.name}"
             ]
 
     for n, label in zip(nodes, labels):
@@ -428,7 +436,7 @@ class TestSuiteContext:
                 return
 
             self.executor.execute()
-            if self.executor.done and self.executor.testcase:
+            if self.executor.done and isinstance(self.testsuite.current_block, TestCase):
                 self.executor.results.end(testreporter.TestCaseStatus.PASSED)
                 testreporter.reporter.test_case_end(self.executor.results)
 
@@ -516,9 +524,6 @@ class NodeExecutor:
     last_state_change: float = 0.0
     "The last time the state changed."
 
-    testcase: TestCase | None = None
-    "The current testcase being executed, if any."
-
     results: testreporter.TestCaseResults
     "The results of the current testcase being executed, if any."
 
@@ -534,11 +539,6 @@ class NodeExecutor:
         self.old_loc = None
         self.last_state_change = renpy.display.core.get_time()
         self.results = results
-
-        if isinstance(node, TestCase):
-            self.testcase = node
-        else:
-            self.testcase = None
 
     def set_next_node(self, next: Node | None) -> None:
         self.next_node = next
