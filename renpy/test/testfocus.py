@@ -43,40 +43,39 @@ def find_focus(pattern: str | None) -> Focus | None:
     if pattern is not None:
         pattern = pattern.casefold()
 
-    def match(f: Focus) -> str | None:
-
-        if pattern is None:
-            if f.x is None:
-                # one focus, at most, ever branches here
-                # the main "click to continue" one
-                # it's the only one, if any, to be retained in the matching list
-                return "default"
-            else:
-                return None
-
-        if f.x is None:
-            t = renpy.display.tts.root._tts_all()  # @UndefinedVariable
-        else:
-            t = f.widget._tts_all()
-
-        if pattern in t.casefold():
-            return t
-        else:
-            return None
-
-    # A list of alt_text, focus pairs.
-    matching: list[tuple[str, Focus]] = []
+    # {focus : (len(alt), alt)}
+    matching: dict[Focus, tuple[int, str]] = {}
 
     for f in renpy.display.focus.focus_list:
-        alt = match(f)
+        alt = match(f, pattern)
 
         if alt is not None:
-            matching.append((alt, f))
+            matching[f] = (len(alt), alt)
 
     # This gets the matching displayable with the shortest alt text, which
     # is likely what we want.
-    matching.sort(key=lambda a: (len(a[0]), a[0]))
-    return matching[0][1]
+    return min(matching, key=matching.get, default=None) # type: ignore
+
+
+def match(f: Focus, pattern: str | None) -> str | None:
+    if pattern is None:
+        if f.x is None:
+            # one focus, at most, ever branches here
+            # the main "click to continue" one
+            # it's the only one, if any, to be retained in the matching list
+            return "default"
+        else:
+            return None
+
+    if f.x is None:
+        t = renpy.display.tts.root._tts_all()  # @UndefinedVariable
+    else:
+        t = f.widget._tts_all()
+
+    if pattern in t.casefold():
+        return t
+    else:
+        return None
 
 
 def relative_position(x: int, posx: int | float | None, width: int) -> float:
