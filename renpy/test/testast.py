@@ -793,11 +793,16 @@ class Eval(Condition):
 
 
 class RepeatCounter(Condition):
-    __slots__ = ("value")
+    __slots__ = ("initial_value", "value")
 
     def __init__(self, loc: NodeLocation, value: int):
         super(RepeatCounter, self).__init__(loc)
-        self.value = value
+        self.initial_value = value
+        self.restart()
+
+    def restart(self) -> None:
+        self.value = self.initial_value
+        return super().restart()
 
     def ready(self):
         self.value -= 1
@@ -994,6 +999,11 @@ class Until(Node):
         self.left = left
         self.right = right
         self.timeout = timeout
+
+    def restart(self):
+        self.left.restart()
+        self.right.restart()
+        super().restart()
 
     def ready(self):
         return self.left.ready() or self.right.ready()
