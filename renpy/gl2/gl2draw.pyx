@@ -474,13 +474,20 @@ cdef class GL2Draw:
             return False
 
         # Log the GL version.
-        renderer = <char *> glGetString(GL_RENDERER)
-        version = <char *> glGetString(GL_VERSION)
+        vendor_string = <char *> glGetString(GL_VENDOR)
+        vendor = self.info["gpu_vendor"] = vendor_string.decode("utf-8")
+        renpy.display.log.write(f"Vendor: {vendor!r}")
 
-        renpy.display.log.write("Vendor: %r", str(<char *> glGetString(GL_VENDOR)))
-        renpy.display.log.write("Renderer: %r", renderer)
-        renpy.display.log.write("Version: %r", version)
-        renpy.display.log.write("Display Info: %s", self.display_info)
+        renderer_string = <char *> glGetString(GL_RENDERER)
+        renderer = self.info["gpu_name"] = renderer_string.decode("utf-8")
+        renpy.display.log.write(f"Renderer: {renderer!r}")
+
+        version_string = <char *> glGetString(GL_VERSION)
+        version = self.info["gpu_driver_version"] = version_string.decode("utf-8")
+        renpy.display.log.write(f"Version: {version!r}")
+
+        self.display_info = renpy.display.get_info()
+        renpy.display.log.write(f"Display Info: {self.display_info}")
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.decode("utf-8").split(" "))

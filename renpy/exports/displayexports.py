@@ -19,9 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
 import gc
 import time
 import os
@@ -1020,7 +1017,7 @@ class Container(renpy.display.layout.Container, renpy.revertable.RevertableObjec
     _list_type = renpy.revertable.RevertableList
 
 
-def get_renderer_info():
+def get_renderer_info() -> renpy.display.core.RendererInfo:
     """
     :doc: other
 
@@ -1043,6 +1040,9 @@ def get_renderer_info():
     be treated as immutable. This should only be called once the display
     has been started (that is, after the init phase has finished).
     """
+
+    if renpy.exports.is_init_phase():
+        raise Exception("get_renderer_info may not be called during the init phase.")
 
     return renpy.display.draw.info
 
