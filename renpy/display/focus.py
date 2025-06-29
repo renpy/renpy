@@ -434,7 +434,9 @@ def before_interact(roots):
         max_default_focus_name = None
 
     # Should we do the max_default logic?
-    should_max_default = renpy.display.interface.input_event_time > renpy.display.interface.mouse_event_time + .1
+    input_event_time = renpy.display.interface.input_event_time
+    mouse_event_time = renpy.display.interface.mouse_event_time
+    should_max_default = input_event_time == 0 or input_event_time > mouse_event_time + .1
 
     # Is this an explicit change, using the override operation?
     explicit = False
