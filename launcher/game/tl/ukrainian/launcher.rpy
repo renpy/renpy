@@ -1431,7 +1431,7 @@ translate ukrainian strings:
 
     # game/preferences.rpy:250
     old "Default theme"
-    new "Типова тема"
+    new "Стандартна тема"
 
     # game/preferences.rpy:251
     old "Dark theme"
@@ -1523,7 +1523,7 @@ translate ukrainian strings:
 
     # game/project.rpy:799
     old "Ren'Py has set the projects directory to:"
-    new "Ren'Py встановив теку проєктів в:"
+    new "Ren'Py встановив дану теку для проєктів:"
 
     # game/translations.rpy:91
     old "Translations: [project.current.display_name!q]"
@@ -1559,7 +1559,7 @@ translate ukrainian strings:
 
     # game/translations.rpy:208
     old "Update Default Interface Translations"
-    new "Оновити типові переклади інтерфейсу"
+    new "Оновити стандартні переклади інтерфейсу"
 
     # game/translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
@@ -1623,7 +1623,7 @@ translate ukrainian strings:
 
     # game/translations.rpy:391
     old "Language (or None for the default language):"
-    new "Мова (або «None» для типової мови):"
+    new "Мова (або «None» для мови за стандартом):"
 
     # game/translations.rpy:428
     old "Ren'Py is extracting dialogue...."
