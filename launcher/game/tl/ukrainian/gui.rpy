@@ -11,7 +11,7 @@ translate ukrainian strings:
 
     # gui/game/gui.rpy:9
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
-    new "## Виклик gui.init скидає стилі до розумних значень за замовчуванням і встановлює ширину та висоту гри."
+    new "## Виклик gui.init скидає стилі до розумних стандартних значень і встановлює ширину та висоту гри."
 
     # gui/game/gui.rpy:14
     old "## Enable checks for invalid or unstable properties in screens or transforms"

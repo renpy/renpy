@@ -15,7 +15,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:12
     old "## A human-readable name of the game. This is used to set the default window title, and shows up in the interface and error reports."
-    new "## Зрозуміла назва гри. Використовується для задання заголовка вікна за стандартом і показується в інтерфейсі та звітах про помилки."
+    new "## Зрозуміла назва гри. Використовується для установлення стандартного заголовка вікна і показується в інтерфейсі та звітах про помилки."
 
     # gui/game/options.rpy:15
     old "## The _() surrounding the string marks it as eligible for translation."
@@ -23,7 +23,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:17
     old "Ren'Py 7 Default GUI"
-    new "Стандартний GUI Ren'Py 7"
+    new "Стандартний інтерфейс Ren'Py 7"
 
     # gui/game/options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
@@ -107,11 +107,11 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:123
     old "## Controls the default text speed. The default, 0, is infinite, while any other number is the number of characters per second to type out."
-    new "## Керує стандартною швидкістю друку тексту. Стандартне значення, 0, означає різку появу тексту, а будь-яке інше число означатиме кількість символів за секунду для друку."
+    new "## Керує стандартною швидкістю друку тексту. Стандартне значення, 0, означає різкий друк тексту, а будь-яке інше число означатиме кількість символів за секунду для друку."
 
     # gui/game/options.rpy:129
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
-    new "## Затримка автоматичного перемотування за стандартом. Більші значення призводять до довшого очікування, допустимий діапазон від 0 до 30."
+    new "## Стандартна затримка автоматичного перемотування. Більші значення призводять до довшого очікування, допустимий діапазон від 0 до 30."
 
     # gui/game/options.rpy:135
     old "## Save directory"
