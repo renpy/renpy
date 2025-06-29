@@ -827,15 +827,15 @@ translate ukrainian strings:
 
     # game/front_page.rpy:197
     old "Navigate Script"
-    new "Навігація за скриптом"
+    new "Навігація скриптів"
 
     # game/front_page.rpy:198
     old "Check Script (Lint)"
-    new "Перевірити скрипт (Lint)"
+    new "Перевірити скрипти (Lint)"
 
     # game/front_page.rpy:201
     old "Change/Update GUI"
-    new "Змінити/Оновити GUI"
+    new "Змінити/оновити GUI"
 
     # game/front_page.rpy:203
     old "Change Theme"
@@ -875,7 +875,7 @@ translate ukrainian strings:
 
     # game/front_page.rpy:262
     old "Checking script for potential problems..."
-    new "Перевірка скрипта на наявність потенційних проблем..."
+    new "Перевірка скриптів на наявність потенційних проблем..."
 
     # game/front_page.rpy:277
     old "Deleting persistent data..."
@@ -1431,7 +1431,7 @@ translate ukrainian strings:
 
     # game/preferences.rpy:250
     old "Default theme"
-    new "Стандартна тема"
+    new "Типова тема"
 
     # game/preferences.rpy:251
     old "Dark theme"
@@ -1439,11 +1439,11 @@ translate ukrainian strings:
 
     # game/preferences.rpy:252
     old "Custom theme"
-    new "Користувацька тема"
+    new "Власна тема"
 
     # game/preferences.rpy:256
     old "Information about creating a custom theme can be found {a=[skins_url]}in the Ren'Py Documentation{/a}."
-    new "Інформацію про створення користувацької теми можна знайти у {a=[skins_url]}документації Ren'Py{/a}."
+    new "Інформацію про створення власної теми можна знайти у {a=[skins_url]}документації Ren'Py{/a}."
 
     # game/preferences.rpy:273
     old "Install Libraries:"
@@ -1475,7 +1475,7 @@ translate ukrainian strings:
 
     # game/project.rpy:46
     old "After making changes to the script, press shift+R to reload your game."
-    new "Після внесення змін до скрипту натисніть «Shift+R», щоб перезавантажити гру."
+    new "Після внесення змін до скрипту натисніть «Shift+R» для перезавантаження гри."
 
     # game/project.rpy:46
     old "Press shift+O (the letter) to access the console."
@@ -1559,7 +1559,7 @@ translate ukrainian strings:
 
     # game/translations.rpy:208
     old "Update Default Interface Translations"
-    new "Оновити стандартні переклади інтерфейсу"
+    new "Оновити типові переклади інтерфейсу"
 
     # game/translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
@@ -1623,7 +1623,7 @@ translate ukrainian strings:
 
     # game/translations.rpy:391
     old "Language (or None for the default language):"
-    new "Мова (або «None» для мови за стандартом):"
+    new "Мова (або «None» для типової мови):"
 
     # game/translations.rpy:428
     old "Ren'Py is extracting dialogue...."
@@ -1987,7 +1987,7 @@ translate ukrainian strings:
 
     # game/preferences.rpy:234
     old "Game Options:"
-    new "Параметри ігор:"
+    new "Параметри гри:"
 
     # game/preferences.rpy:241
     old "Skip splashscreen"
