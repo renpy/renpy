@@ -1053,8 +1053,6 @@ def transform_statement(l, loc):
                 l.error("the transform statement does not take *args ({} is not allowed)".format(p))
             elif p.kind == p.VAR_KEYWORD:
                 l.error("the transform statement does not take **kwargs ({} is not allowed)".format(p))
-            elif (p.kind == p.KEYWORD_ONLY) and (p.default is p.empty):
-                l.error("the transform statement does not take required keyword-only parameters ({} is not allowed)".format(p))
 
     l.require(':')
     l.expect_eol()
