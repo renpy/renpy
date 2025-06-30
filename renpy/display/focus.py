@@ -371,6 +371,7 @@ def before_interact(roots):
     global grab
     global modal_generation
     global old_max_default
+    global old_max_default_focus_name
 
     modal_generation = 0
 
@@ -498,6 +499,8 @@ def before_interact(roots):
         explicit = True
         current = max_default_focus
         set_focused(max_default_focus, None, max_default_screen)
+
+    old_max_default_focus_name = max_default_focus_name
 
     if current is None:
         set_focused(None, None, None)
