@@ -393,7 +393,7 @@ Display
     shown for at least this amount of time. The image may be shown longer
     if Ren'Py takes longer to start up.
 
-.. var:: config.mipmap = "auto"
+.. var:: config.mipmap = True
 
     This controls if Ren'Py generates mipmaps for images. If True, mipmaps are always generated. If "auto", mipmaps
     are generated only if the window is smaller than 75% of the virtual screen size. If False, mipmaps are never
