@@ -1134,7 +1134,7 @@ controller_blocklist = [
 ]
 
 # Should other textures be mipmapped by default?
-mipmap = "auto"
+mipmap = True
 
 # Should dissolve transitions be mipmapped by default?
 mipmap_dissolves = False

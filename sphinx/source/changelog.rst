@@ -61,21 +61,6 @@ that contain shader variables.
 that are not visible, and masks that are not used. This can improve performance when using Live2D models with
 many layers.
 
-Optional Mipmaps
-----------------
-
-Mipmaps are smaller versions of an image that are used when Ren'Py scales an image down. Using mipmaps
-prevents the image from becoming jagged when scaled down, but generating mipmaps takes time and can cause the game
-to use more memory.
-
-Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
-image. To always enable mipmaps, set :var:`config.mipmap` to True. If this isn't set to true, Ren'Py will only
-create mipmaps if the display is scaled down to less than 75% of the virtual window size.
-
-Mipmaps will automatically be created for images loaded for the purpose of Live2D or GLTFModel, as these are
-likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
-of :func:`Image`.
-
 Shaders
 -------
 
@@ -113,6 +98,25 @@ The current GLTFModel support is is likely useful for people who want to use 3D 
 may require a skilled developer to position the model in 3D space. It's also intended for developers that want to
 experiment and contribute insights and development back to Ren'Py. A future release will include more tools for
 working with objects in three dimensions.
+
+Optional Mipmaps
+----------------
+
+Mipmaps are smaller versions of an image that are used when Ren'Py scales an image down. Using mipmaps
+prevents the image from becoming jagged when scaled down, but generating mipmaps takes time and can cause the game
+to use more memory.
+
+Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
+image. By default, Ren'Py will create mipmaps for all images it loas. A new mode will only only create mipmaps
+when the display is scaled down to less than 75% of the virtual window size. This is suitable for games
+that do not scale down images, but for which the window size may be smaller than the virtual window size.
+
+To enable this new mode, set :var:`config.mipmap` to "auto".
+
+Mipmaps will automatically be created for images loaded for the purpose of Live2D or GLTFModel, as these are
+likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
+of :func:`Image`.
+
 
 Libs and Mods
 -------------
