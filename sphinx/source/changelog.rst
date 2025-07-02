@@ -153,7 +153,7 @@ In places where the syntax allowed the ``at`` keyword, it now allows an ``at tra
 In places where a displayable is expected, it is now possible to use an ``image:`` block, and to define an ATL image,
 like an anonymous :ref:`atl-image-statement`.
 
-The new ``if_attr`` property introduces a more straightforward boolean condition syntax, replacing the ``if_any``,
+The new ``when`` property introduces a more straightforward boolean condition syntax, replacing the ``if_any``,
 ``if_all`` and ``if_not`` properties which remain supported for backwards compatibility. The new syntax removes
 the need for lists and quoting.
 To convert to the new syntax, you can replace::
@@ -164,7 +164,7 @@ To convert to the new syntax, you can replace::
 
 with the more concise::
 
-  if_attr ((a | b) & c & d & !(e | f)).
+  when (a or b) and c and d and not (e or f).
 
 The ``multiple`` groups may now be anonymous, and should from now on be defined with the ``multiple`` keyword placed in
 lieu of the group name. This makes their behavior more consistent and easier to understand. The behavior of named
