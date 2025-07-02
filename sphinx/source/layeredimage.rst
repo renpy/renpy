@@ -356,6 +356,29 @@ of the table. In this example, the `on_hips` attribute is incompatible with the
 `on_table` attribute, because even though they are not declared in the same
 block, they are both in the same group.
 
+Deprecated Properties
+---------------------
+
+The following properties of the ``always``, ``if`` and ``attribute``
+statements are deprecated, but may be present in games written before
+the ``when`` clause was added. These still work, but ``when`` is preferred.
+
+`if_all`
+    A string or list of strings giving the names of attributes. If this is
+    given, this layer is only displayed if all of the named attributes
+    are present.
+
+`if_any`
+    A string or list of strings giving the names of attributes. If this is
+    given, this layer is only displayed if any of the named attributes
+    are present.
+
+`if_not`
+    A string or list of strings giving the names of attributes. If this is
+    given, this layer is only displayed if none of the named attributes are
+    present.
+
+
 .. _if_attr:
 
 If_attr
