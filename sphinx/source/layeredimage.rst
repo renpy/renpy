@@ -209,14 +209,13 @@ take two keywords. The ``default`` keyword indicates that the attribute should
 be present by default unless an attribute in the same group is called. The
 ``null`` keyword prevents this clause from getting attached a displayable, which
 can be useful for bookkeeping and to build conditional display conditions using
-`if_all`, `if_any`, `if_not`, `attribute_function`,
+`when`, `attribute_function`,
 :var:`config.adjust_attributes` or :var:`config.default_attribute_callbacks`.
 
 The same attribute name
 can be used in multiple ``attribute`` clauses (and in auto-defined attributes as
 part of ``auto`` groups, more about that later), with all the corresponding
-displayables being shown at the same time (the `if_all`, `if_any`, and `if_not`
-properties can tweak this).
+displayables being shown at the same time (the `when` property can tweak this).
 
 A displayable can be given, optionally using the ``image:`` syntax described
 earlier. If no displayable is explicitly given, it will be computed from the
@@ -532,7 +531,7 @@ the :ref:`show statement section <show-statement>`.
   set of attributes associated with that image tag. This computing takes some
   of the incompatibility constraints into account, but not all. For instance
   incompatibilities due to attributes being in the same non-multiple group will
-  trigger at this point in time, but the if_any/if_all/if_not clauses will not.
+  trigger at this point in time, but the ``when`` clauses will not.
   That's why an attribute called but negated by such a clause will be considered
   active by renpy, and will for example become visible without having to be
   called again, if at some point the condition of the if\_x clause is no longer
