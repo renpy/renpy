@@ -364,7 +364,8 @@ A when expression expresses a boolean condition depending on the set of
 attributes currently active on the layeredimage.
 
 It consists of one or more attribute names separated by the "and" and "or"
-keywords, and possibly negated with "not".
+keywords, and possibly negated with "not". You can also use parentheses to
+express priority.
 
 Example::
 
