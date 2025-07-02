@@ -331,8 +331,8 @@ class Attribute(Layer):
         A transform or list of transforms that are applied to the
         image.
 
-    `if_attr`
-        A string containing an if_attr expression, described in the :ref:`if_attr` section.
+    `when`
+        A string containing a ``when`` expression, described in the :ref:`when` section.
         The displayable is only shown when the expression is satisfied by
         the pool of attributes currently applied to the layeredimage.
 
@@ -404,8 +404,8 @@ class Condition(Layer):
         If not None, this should be a displayable that is displayed when
         the condition is true.
 
-    `if_attr`
-        A string containing an if_attr expression, described in the :ref:`if_attr` section.
+    `when`
+        A string containing a ``when`` expression, described in the :ref:`when` section.
         The condition is only evaluated when the expression is satisfied by
         the pool of attributes currently applied to the layeredimage.
 
@@ -496,8 +496,8 @@ class Always(Layer):
         A transform or list of transforms that are applied to the
         image.
 
-    `if_attr`
-        A string containing an if_attr expression, described in the :ref:`if_attr` section.
+    `when`
+        A string containing a ``when`` expression, described in the :ref:`when` section.
         The displayable is only shown when the expression is satisfied by
         the pool of attributes currently applied to the layeredimage.
     """
@@ -1359,11 +1359,11 @@ def lint_layeredimage(rli: RawLayeredImage) -> None:
         # - non-auto multiple groups with a variant and a single attribute inside (use variant at the attribute level)
         for c in rli.children:
             if getattr(c, "if_any", None):
-                renpy.error("if_any is obsolete, use if_attr instead.")
+                renpy.error("if_any is obsolete, use \"when\" instead.")
             elif getattr(c, "if_all", None):
-                renpy.error("if_all is obsolete, use if_attr instead.")
+                renpy.error("if_all is obsolete, use \"when\" instead.")
             elif getattr(c, "if_not", None):
-                renpy.error("if_not is obsolete, use if_attr instead.")
+                renpy.error("if_not is obsolete, use \"when\" instead.")
 
             if {"prefix", "variant"}.intersection(getattr(c, "expr_properties", ())):
                 renpy.error("prefix and variant should be passed unquoted.")
