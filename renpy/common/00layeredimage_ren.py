@@ -135,9 +135,9 @@ def resolve_at(at: RawBlock|Transform|Iterable[Transform]) -> tuple[Transform, .
     return renpy.easy.to_tuple(at)
 
 
-class IfAttr(python_object):
+class WhenAttr(python_object):
     """
-    Represents an if_attr expression.
+    Represents a when expression.
     Abstract base class.
     """
     __slots__ = ()
@@ -149,13 +149,13 @@ class IfAttr(python_object):
         raise Exception # implemented in subclasses
 
     @staticmethod
-    def parse(l) -> "IfAttr":
-        l.require(r"\(", "parenthesized if_attr expression")
-        rv = IfOr.parse(l)
+    def parse(l) -> "WhenAttr":
+        l.require(r"\(", "parenthesized when expression")
+        rv = WhenOr.parse(l)
         l.require(r"\)", "closing parenthesis")
         return rv
 
-class IfOr(IfAttr):
+class WhenOr(WhenAttr):
     __slots__ = ("left", "right")
 
     def __init__(self, left, right, /):
@@ -166,13 +166,13 @@ class IfOr(IfAttr):
         return self.left.check(attributes) or self.right.check(attributes)
 
     @staticmethod
-    def parse(l) -> IfAttr:
-        rv = IfAnd.parse(l)
+    def parse(l) -> WhenAttr:
+        rv = WhenAnd.parse(l)
         while l.match(r"\|"):# or l.keyword("or"):
-            rv = IfOr(rv, IfAnd.parse(l))
+            rv = WhenOr(rv, WhenAnd.parse(l))
         return rv
 
-class IfAnd(IfAttr):
+class WhenAnd(WhenAttr):
     __slots__ = ("left", "right")
 
     def __init__(self, left, right, /):
@@ -183,13 +183,13 @@ class IfAnd(IfAttr):
         return self.left.check(attributes) and self.right.check(attributes)
 
     @staticmethod
-    def parse(l) -> IfAttr:
-        rv = IfNot.parse(l)
+    def parse(l) -> WhenAttr:
+        rv = WhenNot.parse(l)
         while l.match(r"&"):# or l.keyword("and"):
-            rv = IfAnd(rv, IfNot.parse(l))
+            rv = WhenAnd(rv, WhenNot.parse(l))
         return rv
 
-class IfNot(IfAttr):
+class WhenNot(WhenAttr):
     __slots__ = ("ifattr",)
 
     def __init__(self, ifattr, /):
@@ -199,13 +199,13 @@ class IfNot(IfAttr):
         return not self.ifattr.check(attributes)
 
     @staticmethod
-    def parse(l) -> IfAttr:
+    def parse(l) -> WhenAttr:
         if l.match(r"\!"):# or l.keyword("not"):
-            return IfNot(IfNot.parse(l))
+            return WhenNot(WhenNot.parse(l))
         else:
-            return IfAttribute.parse(l)
+            return WhenAttribute.parse(l)
 
-class IfAttribute(IfAttr):
+class WhenAttribute(WhenAttr):
     __slots__ = ("attribute",)
 
     def __init__(self, attribute, /):
@@ -215,14 +215,14 @@ class IfAttribute(IfAttr):
         return self.attribute in attributes
 
     @staticmethod
-    def parse(l) -> IfAttr:
+    def parse(l) -> WhenAttr:
         if l.match(r"\("):
-            rv = IfOr.parse(l)
+            rv = WhenOr.parse(l)
             l.require(r"\)", "closing parenthesis")
             return rv
         else:
             name = l.require(l.image_name_component, "attribute name")
-            return IfAttribute(name)
+            return WhenAttribute(name)
 
 
 class Layer(object):
@@ -232,11 +232,11 @@ class Layer(object):
 
     group_args = {}
 
-    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, if_attr: IfAttr|str|None=None, **kwargs):
+    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, if_attr: WhenAttr|str|None=None, **kwargs):
         self.at = resolve_at(at)
 
         if isinstance(if_attr, str):
-            if_attr = IfAttr.parse(renpy.lexer.lex_string(if_attr))
+            if_attr = WhenAttr.parse(renpy.lexer.lex_string(if_attr))
         self.if_attr = if_attr
         self.if_all = renpy.easy.to_list(if_all)
         self.if_any = renpy.easy.to_list(if_any)
@@ -813,7 +813,7 @@ def parse_property(l, final_properties: dict, expr_properties: dict, names: Cont
     if name in ("auto", "default", "multiple"):
         final_properties[name] = True
     elif name == "if_attr":
-        final_properties[name] = IfAttr.parse(l)
+        final_properties[name] = WhenAttr.parse(l)
     elif name in ("if_all", "if_any", "if_not"):
         expr_properties[name] = l.require(l.simple_expression)
     elif name in ("variant", "prefix"):
@@ -868,7 +868,7 @@ class RawAttribute(renpy.object.Object):
     def execute(self, group_name=None, **group_properties):
         if "if_attr" in self.final_properties:
             if "if_attr" in group_properties:
-                self.final_properties["if_attr"] = IfAnd(self.final_properties["if_attr"], group_properties.pop("if_attr"))
+                self.final_properties["if_attr"] = WhenAnd(self.final_properties["if_attr"], group_properties.pop("if_attr"))
 
         group_args = {k: group_properties.pop(k) for k in ATL_PROPERTIES.intersection(group_properties)}
 
