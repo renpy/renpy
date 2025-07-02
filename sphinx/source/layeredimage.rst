@@ -409,6 +409,16 @@ the ``when`` clause was added. These still work, but ``when`` is preferred.
     given, this layer is only displayed if none of the named attributes are
     present.
 
+To convert to the ``when`` syntax, you can replace::
+
+  if_any ["a", "b"]
+  if_all ["c", "d"]
+  if_not ["e", "f"]
+
+with the more concise::
+
+  when (a or b) and c and d and not (e or f).
+
 
 .. _layeredimage-pattern:
 
