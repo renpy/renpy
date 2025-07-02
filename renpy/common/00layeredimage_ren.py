@@ -232,12 +232,12 @@ class Layer(object):
 
     group_args = {}
 
-    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, if_attr: WhenAttr|str|None=None, **kwargs):
+    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, when: WhenAttr|str|None=None, **kwargs):
         self.at = resolve_at(at)
 
-        if isinstance(if_attr, str):
-            if_attr = WhenAttr.parse(renpy.lexer.lex_string(if_attr))
-        self.if_attr = if_attr
+        if isinstance(when, str):
+            when = WhenAttr.parse(renpy.lexer.lex_string(when))
+        self.when = when
         self.if_all = renpy.easy.to_list(if_all)
         self.if_any = renpy.easy.to_list(if_any)
         self.if_not = renpy.easy.to_list(if_not)
@@ -246,8 +246,8 @@ class Layer(object):
         self.transform_args = kwargs
 
     def check(self, attributes):
-        if self.if_attr is not None:
-            if not self.if_attr.check(attributes):
+        if self.when is not None:
+            if not self.when.check(attributes):
                 return False
 
         for i in self.if_all:
