@@ -23,7 +23,6 @@ from typing import Any, BinaryIO
 
 import types
 import pickle
-import pickletools
 import io
 import functools
 import datetime
@@ -236,6 +235,7 @@ def find_bad_reduction(**roots: object) -> str | None:
 
     return None
 
+
 def make_datetime(cls, *args, **kwargs):
     """
     Makes a datetime.date, datetime.time, or datetime.datetime object
@@ -248,6 +248,7 @@ def make_datetime(cls, *args, **kwargs):
         return cls.__new__(cls, data.decode("latin-1"))
 
     return cls.__new__(cls, *args, **kwargs)
+
 
 class Unpickler(pickle.Unpickler):
     date = functools.partial(make_datetime, datetime.date)
@@ -268,6 +269,7 @@ class Unpickler(pickle.Unpickler):
 
         return super().find_class(module, name)
 
+
 def load(f) -> Any:
     """
     Read and return an object from the pickle data stored in a file.
@@ -275,12 +277,14 @@ def load(f) -> Any:
 
     return Unpickler(f, fix_imports=True, encoding="utf-8", errors="surrogateescape").load()
 
+
 def loads(s) -> Any:
     """
     Read and return an object from the given pickle data.
     """
 
     return load(io.BytesIO(s))
+
 
 def dump(o: object, f: BinaryIO, highest=False):
     """
@@ -293,7 +297,8 @@ def dump(o: object, f: BinaryIO, highest=False):
 
     pickle.dump(o, f, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
 
-def dumps(o: object, highest=False, optimize=False, bad_reduction_name: str | None = None) -> bytes:
+
+def dumps(o: object, highest=False, bad_reduction_name: str | None = None) -> bytes:
     """
     Return the pickled representation of the object as a bytes object.
 
@@ -301,16 +306,13 @@ def dumps(o: object, highest=False, optimize=False, bad_reduction_name: str | No
         If true, use the highest protocol version available.
         Otherwise, use the default protocol version.
 
-    `optimize`
-        If true, optimize pickle data by `pickletools.optimize()`.
-
     `report_bad_reduction`
         If true, and errors are encountered during pickle, add an exception note with
         the path to the offending object.
     """
 
     try:
-        data = pickle.dumps(o, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
+        return pickle.dumps(o, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
     except Exception as e:
         if bad_reduction_name is not None:
             try:
@@ -321,10 +323,6 @@ def dumps(o: object, highest=False, optimize=False, bad_reduction_name: str | No
 
         raise
 
-    if optimize:
-        data = pickletools.optimize(data)
-
-    return data
 
 # The python AST module changed significantly between python 2 and 3. Old-style
 # screenlang support records raw python ast nodes into the rpyc data, making these
