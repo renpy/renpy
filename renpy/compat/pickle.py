@@ -140,14 +140,20 @@ def dump_paths(filename: str, **roots: object):
                 # (These units are about 20-25 bytes on my computer.)
                 size = 1
 
+                if isinstance(state, tuple):
+                    state, slots = state
+                    for k, v in slots.items():
+                        size += 1
+                        size += visit(v, f"{path}.{k}")
+
                 if state is not None:
                     size += visit(state, f"{path}.__getstate__()")
 
                 if seq is not None:
-                    visit_seq(seq, path)
+                    visit(seq, path)
 
                 if map is not None:
-                    visit_map(map, path)
+                    visit(map, path)
 
         f.write(f"{size: 7d} {path} = {o_repr_cache[ido]}\n")
 
@@ -188,7 +194,7 @@ def find_bad_reduction(**roots: object) -> str | None:
 
         seen.add(ido)
 
-        if isinstance(o, (int, float, complex, types.NoneType, types.ModuleType, type)):
+        if isinstance(o, (int, float, complex, str, bytes, types.NoneType, types.ModuleType, type)):
             return None
 
         if isinstance(o, (tuple, list)):
@@ -203,7 +209,6 @@ def find_bad_reduction(**roots: object) -> str | None:
             return visit(o.__self__, f"{path}.__self__")
 
         else:
-
             try:
                 reduction = o.__reduce_ex__(PROTOCOL)
             except Exception:
@@ -215,16 +220,22 @@ def find_bad_reduction(**roots: object) -> str | None:
             reduction = [*reduction] + [None] * (5 - len(reduction))
             _, _, state, seq, map, *_ = reduction
 
+            if isinstance(state, tuple):
+                state, slots = state
+                for k, v in slots.items():
+                    if rv := visit(v, f"{path}.{k}"):
+                        return rv
+
             if state is not None:
                 if rv := visit(state, f"{path}.__getstate__()"):
                     return rv
 
             if seq is not None:
-                if rv := visit_seq(seq, path):
+                if rv := visit(seq, path):
                     return rv
 
             if map is not None:
-                if rv := visit_map(map, path):
+                if rv := visit(map, path):
                     return rv
 
         return None
