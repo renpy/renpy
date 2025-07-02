@@ -135,7 +135,7 @@ def resolve_at(at: RawBlock|Transform|Iterable[Transform]) -> tuple[Transform, .
     return renpy.easy.to_tuple(at)
 
 
-class WhenAttr(python_object):
+class When(python_object):
     """
     Represents a when expression.
     Abstract base class.
@@ -149,13 +149,10 @@ class WhenAttr(python_object):
         raise Exception # implemented in subclasses
 
     @staticmethod
-    def parse(l) -> "WhenAttr":
-        l.require(r"\(", "parenthesized when expression")
-        rv = WhenOr.parse(l)
-        l.require(r"\)", "closing parenthesis")
-        return rv
+    def parse(l) -> "When":
+        return WhenOr.parse(l)
 
-class WhenOr(WhenAttr):
+class WhenOr(When):
     __slots__ = ("left", "right")
 
     def __init__(self, left, right, /):
@@ -166,13 +163,13 @@ class WhenOr(WhenAttr):
         return self.left.check(attributes) or self.right.check(attributes)
 
     @staticmethod
-    def parse(l) -> WhenAttr:
+    def parse(l) -> When:
         rv = WhenAnd.parse(l)
         while l.match(r"\|"):# or l.keyword("or"):
             rv = WhenOr(rv, WhenAnd.parse(l))
         return rv
 
-class WhenAnd(WhenAttr):
+class WhenAnd(When):
     __slots__ = ("left", "right")
 
     def __init__(self, left, right, /):
@@ -183,13 +180,13 @@ class WhenAnd(WhenAttr):
         return self.left.check(attributes) and self.right.check(attributes)
 
     @staticmethod
-    def parse(l) -> WhenAttr:
+    def parse(l) -> When:
         rv = WhenNot.parse(l)
         while l.match(r"&"):# or l.keyword("and"):
             rv = WhenAnd(rv, WhenNot.parse(l))
         return rv
 
-class WhenNot(WhenAttr):
+class WhenNot(When):
     __slots__ = ("ifattr",)
 
     def __init__(self, ifattr, /):
@@ -199,13 +196,13 @@ class WhenNot(WhenAttr):
         return not self.ifattr.check(attributes)
 
     @staticmethod
-    def parse(l) -> WhenAttr:
+    def parse(l) -> When:
         if l.match(r"\!"):# or l.keyword("not"):
             return WhenNot(WhenNot.parse(l))
         else:
             return WhenAttribute.parse(l)
 
-class WhenAttribute(WhenAttr):
+class WhenAttribute(When):
     __slots__ = ("attribute",)
 
     def __init__(self, attribute, /):
@@ -215,7 +212,7 @@ class WhenAttribute(WhenAttr):
         return self.attribute in attributes
 
     @staticmethod
-    def parse(l) -> WhenAttr:
+    def parse(l) -> When:
         if l.match(r"\("):
             rv = WhenOr.parse(l)
             l.require(r"\)", "closing parenthesis")
@@ -232,11 +229,11 @@ class Layer(object):
 
     group_args = {}
 
-    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, when: WhenAttr|str|None=None, **kwargs):
+    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, when: When|str|None=None, **kwargs):
         self.at = resolve_at(at)
 
         if isinstance(when, str):
-            when = WhenAttr.parse(renpy.lexer.lex_string(when))
+            when = When.parse(renpy.lexer.lex_string(when))
         self.when = when
         self.if_all = renpy.easy.to_list(if_all)
         self.if_any = renpy.easy.to_list(if_any)
@@ -813,7 +810,7 @@ def parse_property(l, final_properties: dict, expr_properties: dict, names: Cont
     if name in ("auto", "default", "multiple"):
         final_properties[name] = True
     elif name == "when":
-        final_properties[name] = WhenAttr.parse(l)
+        final_properties[name] = When.parse(l)
     elif name in ("if_all", "if_any", "if_not"):
         expr_properties[name] = l.require(l.simple_expression)
     elif name in ("variant", "prefix"):
