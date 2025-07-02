@@ -143,7 +143,7 @@ class When(python_object):
     __slots__ = ()
 
     def __init__(self):
-        raise Exception("IfAttr is an abstract base class.")
+        raise Exception("When is an abstract base class.")
 
     def check(self, attributes: set[str]) -> bool:
         raise Exception # implemented in subclasses
@@ -187,13 +187,13 @@ class WhenAnd(When):
         return rv
 
 class WhenNot(When):
-    __slots__ = ("ifattr",)
+    __slots__ = ("when",)
 
-    def __init__(self, ifattr, /):
-        self.ifattr = ifattr
+    def __init__(self, when, /):
+        self.when = when
 
     def check(self, attributes):
-        return not self.ifattr.check(attributes)
+        return not self.when.check(attributes)
 
     @staticmethod
     def parse(l) -> When:
