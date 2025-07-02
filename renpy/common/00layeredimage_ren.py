@@ -165,7 +165,7 @@ class WhenOr(When):
     @staticmethod
     def parse(l) -> When:
         rv = WhenAnd.parse(l)
-        while l.match(r"\|"):# or l.keyword("or"):
+        while l.keyword("or"):# or l.match(r"\|"):
             rv = WhenOr(rv, WhenAnd.parse(l))
         return rv
 
@@ -182,7 +182,7 @@ class WhenAnd(When):
     @staticmethod
     def parse(l) -> When:
         rv = WhenNot.parse(l)
-        while l.match(r"&"):# or l.keyword("and"):
+        while l.keyword("and"):# or l.match(r"&"):
             rv = WhenAnd(rv, WhenNot.parse(l))
         return rv
 
@@ -197,7 +197,7 @@ class WhenNot(When):
 
     @staticmethod
     def parse(l) -> When:
-        if l.match(r"\!"):# or l.keyword("not"):
+        if l.keyword("not"):# or l.match(r"\!"):
             return WhenNot(WhenNot.parse(l))
         else:
             return WhenAttribute.parse(l)
