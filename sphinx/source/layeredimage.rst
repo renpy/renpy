@@ -363,9 +363,8 @@ When
 A when expression expresses a boolean condition depending on the set of
 attributes currently active on the layeredimage.
 
-It consists of one or more attribute names separated by the "and" and "or" keywords, and
-possibly negated with "not". The
-expression must then be enclosed in parentheses.
+It consists of one or more attribute names separated by the "and" and "or"
+keywords, and possibly negated with "not".
 
 Example::
 
