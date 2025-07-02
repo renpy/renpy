@@ -29,7 +29,7 @@ FIXED_PROPERTIES = frozenset(renpy.sl2.slproperties.position_property_names)\
 BASE_PROPERTIES = ATL_PROPERTIES | FIXED_PROPERTIES \
     | {"image_format", "format_function", "attribute_function", "offer_screen", "at"}
 # The properties for all layers
-LAYER_PROPERTIES = ATL_PROPERTIES | {"if_attr", "if_all", "if_any", "if_not", "at"}
+LAYER_PROPERTIES = ATL_PROPERTIES | {"when", "if_all", "if_any", "if_not", "at"}
 # The properties for the attribute layers
 ATTRIBUTE_PROPERTIES = LAYER_PROPERTIES | {"variant", "default"}
 # The properties for the group statement
@@ -812,7 +812,7 @@ def parse_property(l, final_properties: dict, expr_properties: dict, names: Cont
 
     if name in ("auto", "default", "multiple"):
         final_properties[name] = True
-    elif name == "if_attr":
+    elif name == "when":
         final_properties[name] = WhenAttr.parse(l)
     elif name in ("if_all", "if_any", "if_not"):
         expr_properties[name] = l.require(l.simple_expression)
@@ -866,9 +866,9 @@ class RawAttribute(renpy.object.Object):
         self.expr_properties = {}
 
     def execute(self, group_name=None, **group_properties):
-        if "if_attr" in self.final_properties:
-            if "if_attr" in group_properties:
-                self.final_properties["if_attr"] = WhenAnd(self.final_properties["if_attr"], group_properties.pop("if_attr"))
+        if "when" in self.final_properties:
+            if "when" in group_properties:
+                self.final_properties["when"] = WhenAnd(self.final_properties["when"], group_properties.pop("when"))
 
         group_args = {k: group_properties.pop(k) for k in ATL_PROPERTIES.intersection(group_properties)}
 
