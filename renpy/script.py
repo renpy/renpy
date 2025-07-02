@@ -845,9 +845,6 @@ class Script(object):
 
                 self.assign_names(stmts, renpy.lexer.elide_filename(fullfn))
 
-                # import code
-                # code.interact(local=locals())
-
                 pickle_data_before_static_transforms = pickletools.optimize(dumps(
                     (data, stmts), bad_reduction_name=f"<{fn} rpyc data>"))
 
