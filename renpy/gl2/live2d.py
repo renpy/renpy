@@ -477,11 +477,12 @@ def update_states():
         if not isinstance(d, Live2D):
             return
 
-        d.name = (layer, tag, count)
-        count += 1
+        assert tag is not None
 
-        if d.name is None:
-            return
+        index = count[d.filename]
+        count[d.filename] = index + 1
+
+        d.name = (layer, tag, d.filename, index)
 
         state = states[d.name]
 
@@ -523,6 +524,8 @@ def update_states():
 
     sls = renpy.display.scenelists.scene_lists()
 
+    count = collections.defaultdict(int)
+
     for layer, tag, d in sls.get_all_layer_tag_displayable():
         if tag is None:
             continue
@@ -530,7 +533,7 @@ def update_states():
         if "$" in tag:
             continue
 
-        count = 0
+        count.clear()
 
         if d is not None:
             d.visit_all(visit)
@@ -544,7 +547,9 @@ def update_states():
 
 class Live2D(renpy.display.displayable.Displayable):
 
-    name: tuple[str, str, int] | None = None
+    filename: str
+
+    name: tuple[str, str, str, int] | None = None
     """
     A structural name for this displayable, consisting of the layer, tag, and a count. This is used to
     match the displayable to its state in a previous interaction.
