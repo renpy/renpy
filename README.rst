@@ -2,7 +2,7 @@
 The Ren'Py Visual Novel Engine
 ==============================
 
-https://www.renpy.org
+https://www.renpy.com
 
 
 Branches
