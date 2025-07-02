@@ -19,20 +19,222 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from typing import Any, BinaryIO
 
-
-import renpy
+import types
 import pickle
+import pickletools
 import io
+import functools
+import datetime
+import ast
+import renpy
 
 PROTOCOL = pickle.HIGHEST_PROTOCOL
 
 
-import functools
-import datetime
-import ast
+def dump_paths(filename: str, **roots: object):
+    """
+    Dumps information about the `roots` to `filename`. We dump the size
+    of the object (including unique children), the path to the object,
+    and the type or repr of the object.
+    """
+
+    o_repr_cache = { }
+
+    def visit_seq(o: tuple | list, path: str) -> int:
+        size = 1
+        for i, oo in enumerate(o):
+            size += 1
+            size += visit(oo, f"{path}[{i!r}]")
+
+        return size
+
+    def visit_map(o: dict, path: str) -> int:
+        size = 2
+        for k, v in o.items():
+            size += 2
+            if isinstance(k, str):
+                size += len(k) // 40 + 1
+            else:
+                size += visit(v, f"key {k!r} of {path}")
+            size += visit(v, f"{path}[{k!r}]")
+
+        return size
+
+    def visit(o: object, path: str) -> int:
+        ido = id(o)
+
+        if ido in o_repr_cache:
+            f.write(f"{0: 7d} {path} = alias {o_repr_cache[ido]}\n")
+            return 0
+
+        if isinstance(o, (int, float, complex, types.NoneType, types.ModuleType, type)):
+            o_repr = repr(o)
+
+        elif isinstance(o, str):
+            if len(o) <= 80:
+                o_repr = repr(o)
+            else:
+                o_repr = repr(o[:40] + "..." + o[-40:])
+
+        elif isinstance(o, bytes):
+            if len(o) <= 80:
+                o_repr = repr(o)
+            else:
+                o_repr = repr(o[:40] + b"..." + o[-40:])
+
+        elif isinstance(o, (tuple, list, dict)):
+            o_repr = f"<{o.__class__.__name__}>"
+
+        elif isinstance(o, types.MethodType):
+            o_repr = f"<method {o.__self__.__class__}.{o.__name__}>"
+
+        elif isinstance(o, types.FunctionType):
+            name = o.__qualname__ or o.__name__
+
+            o_repr = f"{o.__module__}.{name}"
+
+        elif isinstance(o, object):
+            o_repr = f"<{type(o).__name__}>"
+
+        else:
+            o_repr = f"BAD TYPE <{type(o).__name__}>"
+
+        o_repr_cache[ido] = o_repr
+
+        if isinstance(o, (int, float, complex, types.NoneType, types.ModuleType, type)):
+            size = 1
+
+        elif isinstance(o, (bytes, str)):
+            size = len(o) // 40 + 1
+
+        elif isinstance(o, (tuple, list)):
+            size = visit_seq(o, path)
+
+        elif isinstance(o, dict):
+            size = visit_map(o, path)
+
+        elif isinstance(o, types.MethodType):
+            size = 1 + visit(o.__self__, f"{path}.__self__")
+
+        elif isinstance(o, types.FunctionType):
+            size = 1
+
+        else:
+
+            try:
+                reduction = o.__reduce_ex__(PROTOCOL)
+            except Exception:
+                reduction = ()
+                o_repr_cache[ido] = "BAD REDUCTION " + o_repr
+
+            if isinstance(reduction, str):
+                o_repr_cache[ido] = f"{o.__module__}.{reduction}"
+                size = 1
+
+            else:
+                reduction = [*reduction] + [None] * (5 - len(reduction))
+                _, _, state, seq, map, *_ = reduction
+
+                # An estimate of the size of the object, in arbitrary units.
+                # (These units are about 20-25 bytes on my computer.)
+                size = 1
+
+                if state is not None:
+                    size += visit(state, f"{path}.__getstate__()")
+
+                if seq is not None:
+                    visit_seq(seq, path)
+
+                if map is not None:
+                    visit_map(map, path)
+
+        f.write(f"{size: 7d} {path} = {o_repr_cache[ido]}\n")
+
+        return size
+
+    f, _ = renpy.error.open_error_file(filename, "w")
+
+    with f:
+        for k, v in roots.items():
+            visit(v, k)
+
+
+def find_bad_reduction(**roots: object) -> str | None:
+    """
+    Finds objects that can't be reduced properly.
+    """
+
+    seen = set()
+
+    def visit_seq(o: tuple | list, path: str):
+        for i, oo in enumerate(o):
+            if rv := visit(oo, f"{path}[{i!r}]"):
+                return rv
+
+    def visit_map(o: dict, path: str):
+        for k, v in o.items():
+            if rv := visit(k, f"key {k!r} of {path}"):
+                return rv
+
+            if rv := visit(v, f"{path}[{k!r}]"):
+                return rv
+
+    def visit(o: object, path: str) -> str | None:
+        ido = id(o)
+
+        if ido in seen:
+            return None
+
+        seen.add(ido)
+
+        if isinstance(o, (int, float, complex, types.NoneType, types.ModuleType, type)):
+            return None
+
+        if isinstance(o, (tuple, list)):
+            if rv := visit_seq(o, path):
+                return rv
+
+        elif isinstance(o, dict):
+            if rv := visit_map(o, path):
+                return rv
+
+        elif isinstance(o, types.MethodType):
+            return visit(o.__self__, f"{path}.__self__")
+
+        else:
+
+            try:
+                reduction = o.__reduce_ex__(PROTOCOL)
+            except Exception:
+                return f"{path} = {repr(o)[:160]}"
+
+            if isinstance(reduction, str):
+                return None
+
+            reduction = [*reduction] + [None] * (5 - len(reduction))
+            _, _, state, seq, map, *_ = reduction
+
+            if state is not None:
+                if rv := visit(state, f"{path}.__getstate__()"):
+                    return rv
+
+            if seq is not None:
+                if rv := visit_seq(seq, path):
+                    return rv
+
+            if map is not None:
+                if rv := visit_map(map, path):
+                    return rv
+
+        return None
+
+    for k, v in roots.items():
+        if rv := visit(v, k):
+            return rv
+
+    return None
 
 def make_datetime(cls, *args, **kwargs):
     """
@@ -66,18 +268,63 @@ class Unpickler(pickle.Unpickler):
 
         return super().find_class(module, name)
 
-def load(f):
-    up = Unpickler(f, fix_imports=True, encoding="utf-8", errors="surrogateescape")
-    return up.load()
+def load(f) -> Any:
+    """
+    Read and return an object from the pickle data stored in a file.
+    """
 
-def loads(s):
+    return Unpickler(f, fix_imports=True, encoding="utf-8", errors="surrogateescape").load()
+
+def loads(s) -> Any:
+    """
+    Read and return an object from the given pickle data.
+    """
+
     return load(io.BytesIO(s))
 
-def dump(o, f, highest=False):
+def dump(o: object, f: BinaryIO, highest=False):
+    """
+    Write a pickled representation of `o` to the open file object `f`.
+
+    `highest`
+        If true, use the highest protocol version available.
+        Otherwise, use the default protocol version.
+    """
+
     pickle.dump(o, f, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
 
-def dumps(o, highest=False):
-    return pickle.dumps(o, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
+def dumps(o: object, highest=False, optimize=False, bad_reduction_name: str | None = None) -> bytes:
+    """
+    Return the pickled representation of the object as a bytes object.
+
+    `highest`
+        If true, use the highest protocol version available.
+        Otherwise, use the default protocol version.
+
+    `optimize`
+        If true, optimize pickle data by `pickletools.optimize()`.
+
+    `report_bad_reduction`
+        If true, and errors are encountered during pickle, add an exception note with
+        the path to the offending object.
+    """
+
+    try:
+        data = pickle.dumps(o, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
+    except Exception as e:
+        if bad_reduction_name is not None:
+            try:
+                if bad := find_bad_reduction(**{bad_reduction_name: o}):
+                    e.add_note(f"Perhaps bad reduction in {bad}")
+            except Exception:
+                pass
+
+        raise
+
+    if optimize:
+        data = pickletools.optimize(data)
+
+    return data
 
 # The python AST module changed significantly between python 2 and 3. Old-style
 # screenlang support records raw python ast nodes into the rpyc data, making these
