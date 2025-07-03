@@ -309,7 +309,6 @@ init -1100 python:
             if isinstance(build.itch_channels, list):
                 build.itch_channels = { k : v for k, v in build.itch_channels }
 
-            config.atl_pos_only = True
             config.atl_pos_only_as_pos_or_kw = True
             style.default.shaper = "freetype"
             config.mixed_position = False
