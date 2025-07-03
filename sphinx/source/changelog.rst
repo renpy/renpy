@@ -5,17 +5,6 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
-.. _renpy-8.4.1:
-
-8.4.1
-=====
-
-Changes
--------
-
-:func:`renpy.get_renderer_info` now also include GPU vendor and device name as well as driver version.
-
-
 .. _renpy-8.4.0:
 
 8.4.0
@@ -407,6 +396,7 @@ to determine otherwise.
 
 Ren'Py now also searches for `.rpe` and `.rpe.py` files in the new libs directory.
 
+:func:`renpy.get_renderer_info` now also include GPU vendor and device name as well as driver version.
 
 .. _renpy-8.3.7:
 .. _renpy-7.8.7:
