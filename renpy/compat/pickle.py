@@ -317,9 +317,10 @@ def dumps(o: object, highest=False, bad_reduction_name: str | None = None) -> by
         If true, use the highest protocol version available.
         Otherwise, use the default protocol version.
 
-    `report_bad_reduction`
-        If true, and errors are encountered during pickle, add an exception note with
-        the path to the offending object.
+    `bad_reduction_name`
+        If provided, this parameter name is used to help diagnose pickle errors
+        caused by problematic object reduction. When pickling fails, it attempts
+        to find path to the specific reduction that caused the error using this name.
     """
 
     try:
