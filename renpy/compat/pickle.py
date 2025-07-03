@@ -329,7 +329,7 @@ def dumps(o: object, highest=False, bad_reduction_name: str | None = None) -> by
         if bad_reduction_name is not None:
             try:
                 if bad := find_bad_reduction(**{bad_reduction_name: o}):
-                    e.add_note(f"Perhaps bad reduction in {bad}")
+                    e.add_note(f"Perhaps unpickleable object in {bad}")
             except Exception:
                 pass
 
