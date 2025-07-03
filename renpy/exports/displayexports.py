@@ -19,9 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
 import gc
 import time
 import os
@@ -1020,29 +1017,44 @@ class Container(renpy.display.layout.Container, renpy.revertable.RevertableObjec
     _list_type = renpy.revertable.RevertableList
 
 
-def get_renderer_info():
+def get_renderer_info() -> renpy.display.core.RendererInfo:
     """
     :doc: other
 
     Returns a dictionary, giving information about the renderer Ren'Py is
     currently using. Defined keys are:
+        ``"renderer"``
+            A string giving the name of the renderer that is in use.
 
-    ``"renderer"``
-        A string giving the name of the renderer that is in use.
+        ``"resizable"``
+            True if and only if the window is resizable.
 
-    ``"resizable"``
-        True if and only if the window is resizable.
+        ``"additive"``
+            True if and only if the renderer supports additive blending.
 
-    ``"additive"``
-        True if and only if the renderer supports additive blending.
+        ``"model"``
+            Present and true if model-based rendering is supported.
 
-    ``"model"``
-        Present and true if model-based rendering is supported.
+    When using the GL2 renderer, the following keys are also defined:
+        ``"gpu_vendor"``
+            A string giving the GPU vendor.
 
-    Other, renderer-specific, keys may also exist. The dictionary should
-    be treated as immutable. This should only be called once the display
-    has been started (that is, after the init phase has finished).
+        ``"gpu_name"``
+            A string giving the GPU name.
+
+        ``"gpu_driver_version"``
+            A string giving the driver version.
+
+    Other, renderer-specific, keys may also exist.
+
+    The dictionary should be treated as immutable.
+
+    This should only be called once the display has been started (that is,
+    not sooner than first interaction).
     """
+
+    if renpy.exports.is_init_phase():
+        raise Exception("get_renderer_info may not be called during the init phase.")
 
     return renpy.display.draw.info
 

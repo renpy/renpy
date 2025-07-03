@@ -19,10 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-from typing import Optional, Tuple
+from typing import NotRequired, TypedDict
 
 import sys
 import os
@@ -375,6 +372,17 @@ def get_safe_mode():
         return False
 
 
+class RendererInfo(TypedDict):
+    renderer: str
+    resizable: bool
+    additive: bool
+    models: bool
+
+    gpu_vendor: NotRequired[str]
+    gpu_name: NotRequired[str]
+    gpu_driver_version: NotRequired[str]
+
+
 class Renderer(object):
     """
     A Renderer (also known as a draw object) is responsible for drawing a
@@ -394,6 +402,8 @@ class Renderer(object):
     """
 
     texture_cache = { }
+
+    info: RendererInfo
 
     def get_texture_size(self):
         """
