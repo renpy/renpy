@@ -825,7 +825,6 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
     class _ModuleInfo(NamedTuple):
         filename: str
-        has_bytecode: bool
         is_package: bool
         is_namespace: bool
 
@@ -860,7 +859,6 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
             mod_info = RenpyImporter._ModuleInfo(
                 prefix + fn,
-                loadable(prefix + fn + "c", tl=False),
                 is_package,
                 False)
 
@@ -869,7 +867,6 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         if path and not seen_init:
             yield ".".join(path), RenpyImporter._ModuleInfo(
                 prefix,
-                False,
                 True,
                 True)
 
@@ -910,6 +907,8 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
                 loader=self,
                 is_package=module_info.is_package,
             )
+
+            spec.has_location = True
 
             if module_info.is_namespace:
                 spec.submodule_search_locations = [module_info.filename]
@@ -957,6 +956,12 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
             source = f.read()
 
         return self.source_to_code(source, module_info.filename)
+
+    def get_data(self, path: str):
+        try:
+            return load(path, tl=False).read()
+        except Exception as e:
+            raise OSError(f"Could not open {path!r}.") from e
 
 
 
