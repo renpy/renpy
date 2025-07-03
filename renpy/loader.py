@@ -861,7 +861,9 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
             filename = prefix + fn
             absolute_path = None
             for d in renpy.config.searchpath:
-                absolute = os.path.join(renpy.config.basedir, d, filename)
+                absolute = os.path.abspath(
+                    os.path.join(renpy.config.basedir, d, filename)
+                ).replace('\\', '/')
                 if os.path.isfile(absolute):
                     absolute_path = absolute
                     break
@@ -877,7 +879,9 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         if path and not seen_init:
             absolute_path = None
             for d in renpy.config.searchpath:
-                absolute = os.path.join(renpy.config.basedir, d, prefix)
+                absolute = os.path.abspath(
+                    os.path.join(renpy.config.basedir, d, prefix)
+                ).replace('\\', '/')
                 if os.path.isdir(absolute):
                     absolute_path = absolute
                     break
@@ -928,8 +932,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
                 is_package=module_info.is_package,
             )
 
-            if module_info.absolute_path is not None:
-                spec.has_location = True
+            spec.has_location = True
 
             if module_info.is_namespace:
                 spec.submodule_search_locations = [filename]
@@ -980,6 +983,21 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
         return self.source_to_code(source, filename)
 
+    def get_data(self, filename):
+
+        filename = os.path.normpath(filename).replace('\\', '/')
+        for d in renpy.config.searchpath:
+            _check_prefix = "{0}/".format(
+                os.path.abspath(
+                    os.path.join(renpy.config.basedir, d)
+                ).replace('\\', '/')
+            )
+            if filename.startswith(_check_prefix):
+                filename = filename[len(_check_prefix):]
+                break
+
+        with load(filename, tl=False) as f:
+            return f.read()
 
 
 meta_backup = [ ]
