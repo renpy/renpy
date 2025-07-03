@@ -825,7 +825,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
     class _ModuleInfo(NamedTuple):
         filename: str
-        absolute_path: str | None
+        has_bytecode: bool
         is_package: bool
         is_namespace: bool
 
@@ -858,33 +858,18 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
                 is_package = False
 
-            filename = prefix + fn
-            absolute_path = None
-            for d in renpy.config.searchpath:
-                absolute = os.path.join(renpy.config.basedir, d, filename)
-                if os.path.isfile(absolute):
-                    absolute_path = absolute
-                    break
-
             mod_info = RenpyImporter._ModuleInfo(
-                filename,
-                absolute_path,
+                prefix + fn,
+                loadable(prefix + fn + "c", tl=False),
                 is_package,
                 False)
 
             yield mod_name, mod_info
 
         if path and not seen_init:
-            absolute_path = None
-            for d in renpy.config.searchpath:
-                absolute = os.path.join(renpy.config.basedir, d, prefix)
-                if os.path.isdir(absolute):
-                    absolute_path = absolute
-                    break
-
             yield ".".join(path), RenpyImporter._ModuleInfo(
                 prefix,
-                absolute_path,
+                False,
                 True,
                 True)
 
@@ -920,8 +905,6 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
     def find_spec(self, fullname, path, target=None):
         if module_info := self._get_module_info(fullname):
-            filename = module_info.absolute_path or module_info.filename
-
             spec = importlib.machinery.ModuleSpec(
                 name=fullname,
                 loader=self,
@@ -929,14 +912,14 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
             )
 
             if module_info.is_namespace:
-                spec.submodule_search_locations = [filename]
+                spec.submodule_search_locations = [module_info.filename]
 
             elif module_info.is_package:
-                spec.submodule_search_locations = [filename.rpartition("/")[0]]
+                spec.submodule_search_locations = [module_info.filename.rpartition("/")[0]]
 
             if not module_info.is_namespace:
-                spec.origin = filename
-                spec.cached = filename + "c"
+                spec.origin = module_info.filename
+                spec.cached = module_info.filename + "c"
 
             return spec
 
@@ -965,17 +948,15 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         if module_info is None:
             raise ImportError
 
-        filename = module_info.absolute_path or module_info.filename
-
         if module_info.is_namespace:
-            return compile('', filename, 'exec', dont_inherit=True)
+            return compile('', module_info.filename, 'exec', dont_inherit=True)
 
         # TODO: add bytecode handling?
 
         with load(module_info.filename, tl=False) as f:
             source = f.read()
 
-        return self.source_to_code(source, filename)
+        return self.source_to_code(source, module_info.filename)
 
 
 
