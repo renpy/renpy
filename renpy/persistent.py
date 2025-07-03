@@ -19,11 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
 from typing import Any
-
 
 import os
 import copy
@@ -33,7 +29,7 @@ import weakref
 
 import renpy
 
-from renpy.compat.pickle import dump, dumps, loads
+from renpy.compat.pickle import dumps, loads, find_bad_reduction
 
 # The class that's used to hold the persistent data.
 
@@ -154,7 +150,7 @@ renpy.game.Persistent = Persistent # type: ignore
 renpy.game.persistent = Persistent()
 
 
-def safe_deepcopy(o):
+def safe_deepcopy(o, reduction_name: str):
     """
     A "safe" version of deepcopy. If an object doesn't implement __eq__
     correctly, we replace it with its original.
@@ -163,7 +159,13 @@ def safe_deepcopy(o):
     field.
     """
 
-    rv = copy.deepcopy(o)
+    try:
+        rv = copy.deepcopy(o)
+    except Exception as e:
+        if bad := find_bad_reduction(**{f"persistent.{reduction_name}": o}):
+            e.add_note(f"Perhaps bad reduction in {bad}")
+
+        raise
 
     if not (o == rv):
 
@@ -210,7 +212,7 @@ def find_changes():
         if not (new == old):
 
             persistent._changed[f] = now # type: ignore
-            backup[f] = safe_deepcopy(new)
+            backup[f] = safe_deepcopy(new, f)
 
             rv = True
 
@@ -279,7 +281,7 @@ def init():
 
     # Create the backup of the persistent data.
     for k, v in persistent.__dict__.items():
-        backup[k] = safe_deepcopy(v)
+        backup[k] = safe_deepcopy(v, k)
 
     return persistent
 
@@ -287,29 +289,28 @@ def init():
 def init_debug_pickler():
     import io, pickle
 
-    safe_types = set()
-
-    for d in renpy.python.store_dicts.values():
-        for v in d.values():
-            if isinstance(v, type):
-                safe_types.add(v)
-
     class DebugPickler(pickle.Pickler):
-        def reducer_override(self, obj):
+        safe_types: set[type] = set()
+
+        for d in renpy.python.store_dicts.values():
+            for v in d.values():
+                if isinstance(v, type):
+                    safe_types.add(v)
+
+        def reducer_override(self, obj):  # type: ignore
             t = obj if isinstance(obj, type) else type(obj)
 
-            if t not in safe_types and t.__module__.startswith("store"):
+            if t not in self.safe_types and t.__module__.startswith("store"):
                 cls = (t.__module__ + '.' + t.__qualname__)[6:]
-                raise TypeError("{} is not safe for use in persistent.".format(cls))
+                raise TypeError(f"{cls} is not safe for use in persistent.")
 
             return NotImplemented # lets normal reducing take place
 
     global dumps
 
-    def dumps(o):
-        b = io.BytesIO()
-        DebugPickler(b, renpy.compat.pickle.PROTOCOL).dump(o)
-        return b.getvalue()
+    def dumps(o, *args, **kwargs):
+        DebugPickler(io.BytesIO(), renpy.compat.pickle.PROTOCOL).dump(o)
+        return renpy.compat.pickle.dumps(o, *args, **kwargs)
 
 
 # A map from field name to merge function.
@@ -405,7 +406,7 @@ def merge(other):
         val = merge_func(old, new, pval)
 
         pvars[f] = val
-        backup[f] = safe_deepcopy(val)
+        backup[f] = safe_deepcopy(val, f)
         persistent._changed[f] = t # type: ignore
 
 
@@ -481,13 +482,17 @@ def save():
         return
 
     try:
-        data = dumps(renpy.game.persistent)
+        data = dumps(renpy.game.persistent, bad_reduction_name="peristent")
         compressed = zlib.compress(data, 3)
         compressed += renpy.savetoken.sign_data(data).encode("utf-8")
         renpy.loadsave.location.save_persistent(compressed)
     except Exception:
         if renpy.config.developer:
             raise
+
+        renpy.display.log.write("Writing persistent.")
+        renpy.display.log.exception()
+        return
 
     global persistent_mtime
 
@@ -554,9 +559,19 @@ class _MultiPersistent(object):
 
     def save(self):
         try:
+            data = dumps(renpy.game.persistent, bad_reduction_name=f"MultiPersistent({self._name})")
+        except Exception:
+            if renpy.config.developer:
+                raise
+            else:
+                renpy.display.log.write("Writing persistent.")
+                renpy.display.log.exception()
+                return
+
+        try:
             fn = self._filename
             with open(fn + ".new", "wb") as f:
-                dump(self, f)
+                f.write(data)
         except OSError as e:
             if renpy.config.developer:
                 raise e

@@ -22,27 +22,24 @@
 # This file contains code that is responsible for storing and executing a
 # Ren'Py script.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from typing import Any
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-import renpy
 
 import __future__
 import collections
+import pickletools
 import hashlib
 import os
 import difflib
 import time
-import marshal
 import struct
 import zlib
 import sys
-import pathlib
+import shutil
+
+import renpy
 
 from renpy.compat.pickle import loads, dumps
 
-import shutil
 
 # The version of the dumped script.
 script_version = renpy.script_version
@@ -108,7 +105,6 @@ def collapse_stmts(stmts):
         i.get_children(rv.append)
 
     return rv
-
 
 class Script(object):
     """
@@ -849,11 +845,13 @@ class Script(object):
 
                 self.assign_names(stmts, renpy.lexer.elide_filename(fullfn))
 
-                pickle_data_before_static_transforms = dumps((data, stmts))
+                pickle_data_before_static_transforms = pickletools.optimize(dumps(
+                    (data, stmts), bad_reduction_name=f"<{fn} rpyc data>"))
 
                 self.static_transforms(stmts)
 
-                pickle_data_after_static_transforms = dumps((data, stmts))
+                pickle_data_after_static_transforms = pickletools.optimize(dumps(
+                    (data, stmts), bad_reduction_name=f"<{fn} transformed rpyc data>"))
 
                 if not renpy.macapp:
                     try:

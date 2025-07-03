@@ -21,262 +21,23 @@
 
 # This file contains functions that load and save the game state.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
 import io
 import zipfile
 import re
 import threading
-import types
 import shutil
 import os
-import sys
 import time
 
 import renpy
 from json import dumps as json_dumps
 
-from renpy.compat.pickle import PROTOCOL, dump, loads
+from renpy.compat.pickle import dump, loads, dump_paths, find_bad_reduction
 
 
 # This is used as a quick and dirty way of versioning savegame
 # files.
 savegame_suffix = renpy.savegame_suffix
-
-
-def save_dump(roots, log):
-    """
-    Dumps information about the save to save_dump.txt. We dump the size
-    of the object (including unique children), the path to the object,
-    and the type or repr of the object.
-    """
-
-    o_repr_cache = { }
-
-    def visit(o, path):
-        ido = id(o)
-
-        if ido in o_repr_cache:
-            f.write("{0: 7d} {1} = alias {2}\n".format(0, path, o_repr_cache[ido]))
-            return 0
-
-        if isinstance(o, (int, float, type(None), types.ModuleType, type)):
-            o_repr = repr(o)
-
-        elif isinstance(o, str):
-            if len(o) <= 80:
-                o_repr = repr(o)
-            else:
-                o_repr = repr(o[:40] + "..." + o[-40:])
-
-        elif isinstance(o, bytes):
-            if len(o) <= 80:
-                o_repr = repr(o)
-            else:
-                o_repr = repr(o[:40] + b"..." + o[-40:])
-
-        elif isinstance(o, (tuple, list)):
-            o_repr = "<" + o.__class__.__name__ + ">"
-
-        elif isinstance(o, dict):
-            o_repr = "<" + o.__class__.__name__ + ">"
-
-        elif isinstance(o, types.MethodType):
-
-            o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
-
-        elif isinstance(o, types.FunctionType):
-            name = o.__qualname__ or o.__name__
-
-            o_repr = o.__module__ + '.' + name
-
-        elif isinstance(o, object):
-            o_repr = "<{0}>".format(type(o).__name__)
-
-        else:
-            o_repr = "BAD TYPE <{0}>".format(type(o).__name__)
-
-        o_repr_cache[ido] = o_repr
-
-        if isinstance(o, (int, float, type(None), types.ModuleType, type)):
-            size = 1
-
-        elif isinstance(o, bytes):
-            size = len(o) // 40 + 1
-
-        elif isinstance(o, (tuple, list)):
-            size = 1
-            for i, oo in enumerate(o):
-                size += 1
-                size += visit(oo, "{0}[{1!r}]".format(path, i))
-
-        elif isinstance(o, dict):
-            size = 2
-            for k, v in o.items():
-                size += 2
-                size += visit(v, "{0}[{1!r}]".format(path, k))
-
-        elif isinstance(o, types.MethodType):
-            size = 1 + visit(o.__self__, path + ".im_self")
-
-        elif isinstance(o, types.FunctionType):
-            size = 1
-
-        else:
-
-            try:
-                reduction = o.__reduce_ex__(PROTOCOL)
-            except Exception:
-                reduction = [ ]
-                o_repr_cache[ido] = "BAD REDUCTION " + o_repr
-
-            if isinstance(reduction, str):
-                o_repr_cache[ido] = o.__module__ + '.' + reduction
-                size = 1
-
-            else:
-                # Gets an element from the reduction, or o if we don't have
-                # such an element.
-                def get(idx, default):
-                    if idx < len(reduction) and reduction[idx] is not None:
-                        return reduction[idx]
-                    else:
-                        return default
-
-                # An estimate of the size of the object, in arbitrary units.
-                # (These units are about 20-25 bytes on my computer.)
-                size = 1
-
-                state = get(2, { })
-                if isinstance(state, dict):
-                    for k, v in state.items():
-                        size += 2
-                        size += visit(v, path + "." + k)
-                else:
-                    size += visit(state, path + ".__getstate__()")
-
-                for i, oo in enumerate(get(3, [])): # type: ignore
-                    size += 1
-                    size += visit(oo, "{0}[{1}]".format(path, i))
-
-                for i in get(4, []): # type: ignore
-
-                    if len(i) != 2:
-                        continue
-
-                    k, v = i
-
-                    size += 2
-                    size += visit(v, "{0}[{1!r}]".format(path, k))
-
-        f.write("{0: 7d} {1} = {2}\n".format(size, path, o_repr_cache[ido]))
-
-        return size
-
-    f, _ = renpy.error.open_error_file("save_dump.txt", "w")
-
-    with f:
-        visit(roots, "roots")
-        visit(log, "log")
-
-
-def find_bad_reduction(roots, log):
-    """
-    Finds objects that can't be reduced properly.
-    """
-
-    seen = set()
-
-    def visit(o, path):
-        ido = id(o)
-
-        if ido in seen:
-            return
-
-        seen.add(ido)
-
-        if isinstance(o, (int, float, type(None), type)):
-            return
-
-        if isinstance(o, (tuple, list)):
-            for i, oo in enumerate(o):
-                rv = visit(oo, "{0}[{1!r}]".format(path, i))
-                if rv is not None:
-                    return rv
-
-        elif isinstance(o, dict):
-            for k, v in o.items():
-                rv = visit(v, "{0}[{1!r}]".format(path, k))
-                if rv is not None:
-                    return rv
-
-        elif isinstance(o, types.MethodType):
-            return visit(o.__self__, path + ".im_self")
-
-        elif isinstance(o, types.ModuleType):
-
-            return "{} = {}".format(path, repr(o)[:160])
-
-        else:
-
-            try:
-                reduction = o.__reduce_ex__(2)
-            except Exception:
-
-                import copy
-
-                try:
-                    copy.copy(o)
-                    return None
-                except Exception:
-                    pass
-
-                return "{} = {}".format(path, repr(o)[:160])
-
-            # Gets an element from the reduction, or o if we don't have
-            # such an element.
-            def get(idx, default):
-                if idx < len(reduction) and reduction[idx] is not None:
-                    return reduction[idx]
-                else:
-                    return default
-
-            state = get(2, { })
-            if isinstance(state, dict):
-                for k, v in state.items():
-                    rv = visit(v, path + "." + k)
-                    if rv is not None:
-                        return rv
-            else:
-                rv = visit(state, path + ".__getstate__()")
-                if rv is not None:
-                    return rv
-
-            for i, oo in enumerate(get(3, [])):
-                rv = visit(oo, "{0}[{1}]".format(path, i))
-                if rv is not None:
-                    return rv
-
-            for i in get(4, []):
-
-                if len(i) != 2:
-                    continue
-
-                k, v = i
-
-                rv = visit(v, "{0}[{1!r}]".format(path, k))
-                if rv is not None:
-                    return rv
-
-        return None
-
-    for k, v in roots.items():
-        rv = visit(v, k)
-        if rv is not None:
-            return rv
-
-    return visit(log, "renpy.game.log")
 
 ################################################################################
 # Saving
@@ -418,18 +179,18 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True, ex
     roots = renpy.game.log.freeze(None)
 
     if renpy.config.save_dump:
-        save_dump(roots, renpy.game.log)
+        dump_paths("save_dump.txt", **{"renpy.game.log": renpy.game.log}, **roots)
 
     logf = io.BytesIO()
     try:
         dump((roots, renpy.game.log), logf)
     except Exception as e:
-        if mutate_flag or not e.args:
+        if mutate_flag:
             raise
 
         try:
-            if bad := find_bad_reduction(roots, renpy.game.log):
-                e.args = (e.args[0] + f' (perhaps {bad})', *e.args[1:])
+            if bad := find_bad_reduction(**{"renpy.game.log": renpy.game.log}, **roots):
+                e.add_note(f"Perhaps bad reduction in {bad}")
         except Exception:
             pass
 
