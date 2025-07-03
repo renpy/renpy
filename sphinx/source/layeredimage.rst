@@ -130,10 +130,10 @@ using the word ``image:`` followed by an ATL block, which is similar to the
 
 The ``always`` statement takes the following properties:
 
-`if_attr`
-    An :ref:`if_attr` expression in parentheses. If this is given, this layer is
+`when`
+    An :ref:`when` expression in parentheses. If this is given, this layer is
     only displayed if the set of attributes that are called on the layeredimage
-    satisfy the if_attr expression.
+    satisfy the when expression.
 
 :ref:`transform properties <transform-properties>`
     If given, these are used to construct a transform that is applied
@@ -168,10 +168,10 @@ A more complete example of an ``if`` statement might look like::
 Each clause must be given a displayable, which can be done with the ``image:``
 syntax described earlier. It can also be given these properties:
 
-`if_attr`
-    An :ref:`if_attr` expression in parentheses. If this is given, this condition is
+`when`
+    An :ref:`when` expression in parentheses. If this is given, this condition is
     only displayed if the set of attributes that are called on the layeredimage
-    satisfy the if_attr expression.
+    satisfy the when expression.
 
 :ref:`transform properties <transform-properties>`
     If present, these are used to construct a transform that is applied
@@ -209,14 +209,13 @@ take two keywords. The ``default`` keyword indicates that the attribute should
 be present by default unless an attribute in the same group is called. The
 ``null`` keyword prevents this clause from getting attached a displayable, which
 can be useful for bookkeeping and to build conditional display conditions using
-`if_all`, `if_any`, `if_not`, `attribute_function`,
+`when`, `attribute_function`,
 :var:`config.adjust_attributes` or :var:`config.default_attribute_callbacks`.
 
 The same attribute name
 can be used in multiple ``attribute`` clauses (and in auto-defined attributes as
 part of ``auto`` groups, more about that later), with all the corresponding
-displayables being shown at the same time (the `if_all`, `if_any`, and `if_not`
-properties can tweak this).
+displayables being shown at the same time (the `when` property can tweak this).
 
 A displayable can be given, optionally using the ``image:`` syntax described
 earlier. If no displayable is explicitly given, it will be computed from the
@@ -226,10 +225,10 @@ variant (if any), and the attribute. See the
 
 The attribute statement takes the following properties:
 
-`if_attr`
-    An :ref:`if_attr` expression in parentheses. If this is given, this layer is
+`when`
+    An :ref:`when` expression in parentheses. If this is given, this layer is
     only displayed if the set of attributes that are called on the layeredimage
-    satisfy the if_attr expression.
+    satisfy the when expression.
 
 :ref:`transform properties <transform-properties>`
     If present, these are used to construct a transform that is applied
@@ -245,19 +244,19 @@ The attribute statement takes the following properties:
     for a displayable for that attribute. This property is only valid for attributes
     with no given displayable, and which are not already in a group with a variant.
 
-The `if_attr` clause's test is based upon the list of attributes of the resulting
+The `when` clause's test is based upon the list of attributes of the resulting
 image, as explained :ref:`here <concept-image>`, but it **does not change** that
 list. ::
 
     layeredimage eileen:
         attribute a
-        attribute b default if_attr (!a)
-        attribute c default if_attr (!b)
+        attribute b default when not a
+        attribute c default when not b
 
 In this example, the ``b`` and ``c`` attributes are *always* part of the attributes
 list (because of their ``default`` clause). When calling ``show eileen a``, the
 ``a`` attribute will be displayed as requested, and the ``b`` attribute will not,
-due to its ``if_attr`` property. But even if not displayed, the ``b`` attribute will
+due to its ``when`` property. But even if not displayed, the ``b`` attribute will
 still be part of the attributes list, which means the ``c`` attribute will still not
 display.
 
@@ -299,7 +298,7 @@ After this optional keyword, properties can then be declared on the first line
 of the group, and it can take a block containing properties and attributes.
 
 The group statement takes the properties ``attribute`` does - such as
-``if_attr``, ``at`` and so on. Properties supplied to the group are passed to
+``when``, ``at`` and so on. Properties supplied to the group are passed to
 the attributes inside the group, unless overridden by the same property of the
 attribute itself. Two properties are more specific to groups:
 
@@ -356,6 +355,37 @@ of the table. In this example, the `on_hips` attribute is incompatible with the
 `on_table` attribute, because even though they are not declared in the same
 block, they are both in the same group.
 
+.. _when:
+
+When
+=======
+
+A when expression expresses a boolean condition depending on the set of
+attributes currently active on the layeredimage.
+
+It consists of one or more attribute names separated by the "and" and "or"
+keywords, and possibly negated with "not". You can also use parentheses to
+express priority.
+
+Example::
+
+    always:
+        "eileen_red_dress"
+        when b and not c
+        # the image will be shown when attribute b is active and attribute c is not
+
+    if var:
+        "eileen_blue_ribbon"
+        when not (a or b)
+        # the image will be shown when the var variable is true
+        # and neither attributes a nor b are active
+
+    attribute a:
+        "eileen_a"
+        when b or e
+        # the image will be shown when attribute "a" is active
+        # and either attribute "b" or "e" are active
+
 Deprecated Properties
 ---------------------
 
@@ -378,37 +408,16 @@ the ``when`` clause was added. These still work, but ``when`` is preferred.
     given, this layer is only displayed if none of the named attributes are
     present.
 
+To convert to the ``when`` syntax, you can replace::
 
-.. _if_attr:
+  if_any ["a", "b"]
+  if_all ["c", "d"]
+  if_not ["e", "f"]
 
-If_attr
-=======
+with the more concise::
 
-An if_attr expression expresses a boolean condition depending on the set of
-attributes currently active on the layeredimage.
+  when (a or b) and c and d and not (e or f).
 
-It consists of one or more attribute names separated by the "&" and "|" symbols, and
-possibly negated with "!". The
-expression must then be enclosed in parentheses.
-
-Example::
-
-    always:
-        "eileen_red_dress"
-        if_attr (b & !c)
-        # the image will be shown when attribute b is active and attribute c is not
-
-    if var:
-        "eileen_blue_ribbon"
-        if_attr (!(a | b))
-        # the image will be shown when the var variable is true
-        # and neither attributes a nor b are active
-
-    attribute a:
-        "eileen_a"
-        if_attr (b | e)
-        # the image will be shown when attribute "a" is active
-        # and either attribute "b" or "e" are active
 
 .. _layeredimage-pattern:
 
@@ -522,7 +531,7 @@ the :ref:`show statement section <show-statement>`.
   set of attributes associated with that image tag. This computing takes some
   of the incompatibility constraints into account, but not all. For instance
   incompatibilities due to attributes being in the same non-multiple group will
-  trigger at this point in time, but the if_any/if_all/if_not clauses will not.
+  trigger at this point in time, but the ``when`` clauses will not.
   That's why an attribute called but negated by such a clause will be considered
   active by renpy, and will for example become visible without having to be
   called again, if at some point the condition of the if\_x clause is no longer
@@ -684,9 +693,9 @@ in the Advice section)::
     define config.adjust_attributes["eileen"] = eileen_adjuster
 
 
-**Including groups in if_attr**
+**Including groups in when**
 
-The ``if_attr`` property does not allow a group name to be specified, so that a given layer be shown only when any or none of the attributes in a given group are shown. However, there is still a way to do that using the various other parts of the layeredimage syntax.
+The ``when`` property does not allow a group name to be specified, so that a given layer be shown only when any or none of the attributes in a given group are shown. However, there is still a way to do that using the various other parts of the layeredimage syntax.
 
 Supposing that the group has no default attribute, you can add a default ``null`` attribute, with a name of your choice. That way, if no attribute from the group is shown, that attribute is activated (although nothing gets displayed), and it gets reactivated if an attribute of the group gets hidden.
 
@@ -699,6 +708,6 @@ Supposing that the group has no default attribute, you can add a default ``null`
             attribute notop null default
             attribute hat
             attribute cap
-        attribute hair_patch if_attr (notop)
+        attribute hair_patch when notop
 
 Here, the hair_patch attribute will only show more of Eliza's hair over her top layer (on her shoulders for example) if there is no hat to hide it.

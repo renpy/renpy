@@ -29,7 +29,7 @@ FIXED_PROPERTIES = frozenset(renpy.sl2.slproperties.position_property_names)\
 BASE_PROPERTIES = ATL_PROPERTIES | FIXED_PROPERTIES \
     | {"image_format", "format_function", "attribute_function", "offer_screen", "at"}
 # The properties for all layers
-LAYER_PROPERTIES = ATL_PROPERTIES | {"if_attr", "if_all", "if_any", "if_not", "at"}
+LAYER_PROPERTIES = ATL_PROPERTIES | {"when", "if_all", "if_any", "if_not", "at"}
 # The properties for the attribute layers
 ATTRIBUTE_PROPERTIES = LAYER_PROPERTIES | {"variant", "default"}
 # The properties for the group statement
@@ -135,27 +135,24 @@ def resolve_at(at: RawBlock|Transform|Iterable[Transform]) -> tuple[Transform, .
     return renpy.easy.to_tuple(at)
 
 
-class IfAttr(python_object):
+class When(python_object):
     """
-    Represents an if_attr expression.
+    Represents a when expression.
     Abstract base class.
     """
     __slots__ = ()
 
     def __init__(self):
-        raise Exception("IfAttr is an abstract base class.")
+        raise Exception("When is an abstract base class.")
 
     def check(self, attributes: set[str]) -> bool:
         raise Exception # implemented in subclasses
 
     @staticmethod
-    def parse(l) -> "IfAttr":
-        l.require(r"\(", "parenthesized if_attr expression")
-        rv = IfOr.parse(l)
-        l.require(r"\)", "closing parenthesis")
-        return rv
+    def parse(l) -> "When":
+        return WhenOr.parse(l)
 
-class IfOr(IfAttr):
+class WhenOr(When):
     __slots__ = ("left", "right")
 
     def __init__(self, left, right, /):
@@ -166,13 +163,13 @@ class IfOr(IfAttr):
         return self.left.check(attributes) or self.right.check(attributes)
 
     @staticmethod
-    def parse(l) -> IfAttr:
-        rv = IfAnd.parse(l)
-        while l.match(r"\|"):# or l.keyword("or"):
-            rv = IfOr(rv, IfAnd.parse(l))
+    def parse(l) -> When:
+        rv = WhenAnd.parse(l)
+        while l.keyword("or"):# or l.match(r"\|"):
+            rv = WhenOr(rv, WhenAnd.parse(l))
         return rv
 
-class IfAnd(IfAttr):
+class WhenAnd(When):
     __slots__ = ("left", "right")
 
     def __init__(self, left, right, /):
@@ -183,29 +180,29 @@ class IfAnd(IfAttr):
         return self.left.check(attributes) and self.right.check(attributes)
 
     @staticmethod
-    def parse(l) -> IfAttr:
-        rv = IfNot.parse(l)
-        while l.match(r"&"):# or l.keyword("and"):
-            rv = IfAnd(rv, IfNot.parse(l))
+    def parse(l) -> When:
+        rv = WhenNot.parse(l)
+        while l.keyword("and"):# or l.match(r"&"):
+            rv = WhenAnd(rv, WhenNot.parse(l))
         return rv
 
-class IfNot(IfAttr):
-    __slots__ = ("ifattr",)
+class WhenNot(When):
+    __slots__ = ("when",)
 
-    def __init__(self, ifattr, /):
-        self.ifattr = ifattr
+    def __init__(self, when, /):
+        self.when = when
 
     def check(self, attributes):
-        return not self.ifattr.check(attributes)
+        return not self.when.check(attributes)
 
     @staticmethod
-    def parse(l) -> IfAttr:
-        if l.match(r"\!"):# or l.keyword("not"):
-            return IfNot(IfNot.parse(l))
+    def parse(l) -> When:
+        if l.keyword("not"):# or l.match(r"\!"):
+            return WhenNot(WhenNot.parse(l))
         else:
-            return IfAttribute.parse(l)
+            return WhenAttribute.parse(l)
 
-class IfAttribute(IfAttr):
+class WhenAttribute(When):
     __slots__ = ("attribute",)
 
     def __init__(self, attribute, /):
@@ -215,14 +212,14 @@ class IfAttribute(IfAttr):
         return self.attribute in attributes
 
     @staticmethod
-    def parse(l) -> IfAttr:
+    def parse(l) -> When:
         if l.match(r"\("):
-            rv = IfOr.parse(l)
+            rv = WhenOr.parse(l)
             l.require(r"\)", "closing parenthesis")
             return rv
         else:
             name = l.require(l.image_name_component, "attribute name")
-            return IfAttribute(name)
+            return WhenAttribute(name)
 
 
 class Layer(object):
@@ -232,12 +229,12 @@ class Layer(object):
 
     group_args = {}
 
-    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, if_attr: IfAttr|str|None=None, **kwargs):
+    def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=(), group_args={}, *, when: When|str|None=None, **kwargs):
         self.at = resolve_at(at)
 
-        if isinstance(if_attr, str):
-            if_attr = IfAttr.parse(renpy.lexer.lex_string(if_attr))
-        self.if_attr = if_attr
+        if isinstance(when, str):
+            when = When.parse(renpy.lexer.lex_string(when))
+        self.when = when
         self.if_all = renpy.easy.to_list(if_all)
         self.if_any = renpy.easy.to_list(if_any)
         self.if_not = renpy.easy.to_list(if_not)
@@ -246,8 +243,8 @@ class Layer(object):
         self.transform_args = kwargs
 
     def check(self, attributes):
-        if self.if_attr is not None:
-            if not self.if_attr.check(attributes):
+        if self.when is not None:
+            if not self.when.check(attributes):
                 return False
 
         for i in self.if_all:
@@ -331,8 +328,8 @@ class Attribute(Layer):
         A transform or list of transforms that are applied to the
         image.
 
-    `if_attr`
-        A string containing an if_attr expression, described in the :ref:`if_attr` section.
+    `when`
+        A string containing a ``when`` expression, described in the :ref:`when` section.
         The displayable is only shown when the expression is satisfied by
         the pool of attributes currently applied to the layeredimage.
 
@@ -404,8 +401,8 @@ class Condition(Layer):
         If not None, this should be a displayable that is displayed when
         the condition is true.
 
-    `if_attr`
-        A string containing an if_attr expression, described in the :ref:`if_attr` section.
+    `when`
+        A string containing a ``when`` expression, described in the :ref:`when` section.
         The condition is only evaluated when the expression is satisfied by
         the pool of attributes currently applied to the layeredimage.
 
@@ -496,8 +493,8 @@ class Always(Layer):
         A transform or list of transforms that are applied to the
         image.
 
-    `if_attr`
-        A string containing an if_attr expression, described in the :ref:`if_attr` section.
+    `when`
+        A string containing a ``when`` expression, described in the :ref:`when` section.
         The displayable is only shown when the expression is satisfied by
         the pool of attributes currently applied to the layeredimage.
     """
@@ -812,8 +809,8 @@ def parse_property(l, final_properties: dict, expr_properties: dict, names: Cont
 
     if name in ("auto", "default", "multiple"):
         final_properties[name] = True
-    elif name == "if_attr":
-        final_properties[name] = IfAttr.parse(l)
+    elif name == "when":
+        final_properties[name] = When.parse(l)
     elif name in ("if_all", "if_any", "if_not"):
         expr_properties[name] = l.require(l.simple_expression)
     elif name in ("variant", "prefix"):
@@ -866,9 +863,9 @@ class RawAttribute(renpy.object.Object):
         self.expr_properties = {}
 
     def execute(self, group_name=None, **group_properties):
-        if "if_attr" in self.final_properties:
-            if "if_attr" in group_properties:
-                self.final_properties["if_attr"] = IfAnd(self.final_properties["if_attr"], group_properties.pop("if_attr"))
+        if "when" in self.final_properties:
+            if "when" in group_properties:
+                self.final_properties["when"] = WhenAnd(self.final_properties["when"], group_properties.pop("when"))
 
         group_args = {k: group_properties.pop(k) for k in ATL_PROPERTIES.intersection(group_properties)}
 
@@ -1359,11 +1356,11 @@ def lint_layeredimage(rli: RawLayeredImage) -> None:
         # - non-auto multiple groups with a variant and a single attribute inside (use variant at the attribute level)
         for c in rli.children:
             if getattr(c, "if_any", None):
-                renpy.error("if_any is obsolete, use if_attr instead.")
+                renpy.error("if_any is obsolete, use \"when\" instead.")
             elif getattr(c, "if_all", None):
-                renpy.error("if_all is obsolete, use if_attr instead.")
+                renpy.error("if_all is obsolete, use \"when\" instead.")
             elif getattr(c, "if_not", None):
-                renpy.error("if_not is obsolete, use if_attr instead.")
+                renpy.error("if_not is obsolete, use \"when\" instead.")
 
             if {"prefix", "variant"}.intersection(getattr(c, "expr_properties", ())):
                 renpy.error("prefix and variant should be passed unquoted.")
