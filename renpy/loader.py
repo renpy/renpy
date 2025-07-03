@@ -861,9 +861,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
             filename = prefix + fn
             absolute_path = None
             for d in renpy.config.searchpath:
-                absolute = os.path.abspath(
-                    os.path.join(renpy.config.basedir, d, filename)
-                ).replace('\\', '/')
+                absolute = os.path.join(renpy.config.basedir, d, filename)
                 if os.path.isfile(absolute):
                     absolute_path = absolute
                     break
@@ -879,9 +877,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         if path and not seen_init:
             absolute_path = None
             for d in renpy.config.searchpath:
-                absolute = os.path.abspath(
-                    os.path.join(renpy.config.basedir, d, prefix)
-                ).replace('\\', '/')
+                absolute = os.path.join(renpy.config.basedir, d, prefix)
                 if os.path.isdir(absolute):
                     absolute_path = absolute
                     break
@@ -983,21 +979,6 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
         return self.source_to_code(source, filename)
 
-    def get_data(self, filename):
-
-        filename = os.path.normpath(filename).replace('\\', '/')
-        for d in renpy.config.searchpath:
-            _check_prefix = "{0}/".format(
-                os.path.abspath(
-                    os.path.join(renpy.config.basedir, d)
-                ).replace('\\', '/')
-            )
-            if filename.startswith(_check_prefix):
-                filename = filename[len(_check_prefix):]
-                break
-
-        with load(filename, tl=False) as f:
-            return f.read()
 
 
 meta_backup = [ ]
