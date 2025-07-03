@@ -928,7 +928,8 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
                 is_package=module_info.is_package,
             )
 
-            spec.has_location = True
+            if module_info.absolute_path is not None:
+                spec.has_location = True
 
             if module_info.is_namespace:
                 spec.submodule_search_locations = [filename]
