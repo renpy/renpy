@@ -291,7 +291,7 @@ def bootstrap(renpy_base):
         if not ("pygame" in sys.modules):
             pygame_sdl2.import_as_pygame()
     except Exception as e:
-        e.add_note(textwrap.dedent(f"""\
+        e.add_note(textwrap.dedent(f"""
         Could not import pygame_sdl2. Please ensure that this program has been built
         and unpacked properly. Also, make sure that the directories containing
         this program do not contain : or ; in their names.
@@ -313,7 +313,7 @@ def bootstrap(renpy_base):
     try:
         import _renpy  # type: ignore
     except Exception as e:
-        e.add_note(textwrap.dedent(f"""\
+        e.add_note(textwrap.dedent(f"""
         Could not import _renpy. Please ensure that this program has been built
         and unpacked properly.
 

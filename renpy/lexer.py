@@ -32,12 +32,16 @@ import linecache
 
 import renpy
 
-if TYPE_CHECKING:
-    def match_logical_word(data: str, pos: int) -> tuple[str, bool, int]: ...
-else:
-    from renpy.lexersupport import match_logical_word  # type: ignore
+def match_logical_word(s: str, pos: int) -> tuple[str, bool, int]: ...
+def make_pyexpr(s: str, filename: str, linenumber: int, column: int, text: str, pos: int) -> 'renpy.ast.PyExpr': ...
+if not TYPE_CHECKING:
+    # If Ren'Py is run with system Python, we can't import cython functions.
+    try:
+        from renpy.lexersupport import match_logical_word
+        from renpy.astsupport import make_pyexpr
+    except ImportError:
+        pass
 
-from renpy.astsupport import make_pyexpr
 
 
 class ParseError(SyntaxError):
