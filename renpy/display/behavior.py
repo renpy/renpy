@@ -1376,6 +1376,7 @@ class CaretBlink(renpy.display.displayable.Displayable):
         self.caret = caret
         self.caret_blink = caret_blink
 
+        self.st = 0
         self.st_base = 0
 
     def get_placement(self):
@@ -1385,14 +1386,16 @@ class CaretBlink(renpy.display.displayable.Displayable):
         return [ self.caret ]
 
     def render(self, width, height, st, at):
+        self.st = st
         st -= self.st_base
 
         cr = renpy.display.render.render(self.caret, width, height, st, at)
         rv = renpy.display.render.Render(cr.width, height)
 
-        ttl = self.caret_blink - st % self.caret_blink
+        delay = self.caret_blink / 2.0
+        ttl = self.caret_blink - (delay + st) % self.caret_blink
 
-        if ttl > self.caret_blink / 2.0:
+        if st < delay or (ttl > self.caret_blink / 2.0):
             rv.blit(cr, (0, 0))
 
         renpy.display.render.redraw(self, ttl % (self.caret_blink / 2.))
@@ -1576,7 +1579,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             self.set_text(caret_content)
 
             if isinstance(self.caret, CaretBlink):
-                self.caret.st_base = self.st
+                self.caret.st_base = self.caret.st
                 renpy.display.render.redraw(self.caret, 0)
 
         set_content(new_content)
