@@ -210,7 +210,7 @@ def create_token(filename):
     if vk is not None:
         line = encode_line("signing-key", sk.to_der(), vk.to_der())
 
-        with open(filename, "w") as f:
+        with open(filename, "a") as f:
             f.write(line)
 
 def upgrade_savefile(fn):
@@ -256,6 +256,32 @@ def upgrade_all_savefiles():
     with open(upgraded_txt, "a") as f:
         f.write(renpy.config.save_directory + "\n")
 
+def load_tokens(keys_fn):
+    """
+    Loads the tokens from the file `keys_fn`, which is expected to be in the
+    format produced by `create_token`.
+    """
+
+    global signing_keys
+    global verifying_keys
+
+    signing_keys = [ ]
+    verifying_keys = [ ]
+
+    # Load the signing and verifying keys.
+    with open(keys_fn, "r") as f:
+        for l in f:
+            kind, key, _ = decode_line(l)
+
+            if kind == "signing-key":
+                sk = ecdsa.SigningKey.from_der(key)
+                if sk is not None and sk.verifying_key is not None:
+                    signing_keys.append(sk.to_der()) # type: ignore
+                    verifying_keys.append(sk.verifying_key.to_der())
+            elif kind == "verifying-key":
+                verifying_keys.append(key) # type: ignore
+
+
 
 def init_tokens():
     global token_dir
@@ -275,21 +301,12 @@ def init_tokens():
 
     keys_fn = os.path.join(token_dir, "security_keys.txt")
 
-    if not os.path.exists(keys_fn):
+    load_tokens(keys_fn)
+
+    if not signing_keys:
+        # If there are no signing keys, we create a new token.
         create_token(keys_fn)
-
-    # Load the signing and verifying keys.
-    with open(keys_fn, "r") as f:
-        for l in f:
-            kind, key, _ = decode_line(l)
-
-            if kind == "signing-key":
-                sk = ecdsa.SigningKey.from_der(key)
-                if sk is not None and sk.verifying_key is not None:
-                    signing_keys.append(sk.to_der()) # type: ignore
-                    verifying_keys.append(sk.verifying_key.to_der())
-            elif kind == "verifying-key":
-                verifying_keys.append(key) # type: ignore
+        load_tokens(keys_fn)
 
     # Process config.save_token_keys
 
