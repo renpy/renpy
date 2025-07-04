@@ -223,6 +223,8 @@ Supported package types are "zip" and "tar.bz2" to generate files in
 those formats, and "directory" to create a directory filled with
 files.
 
+.. _archives:
+
 Archives
 --------
 
