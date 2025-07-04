@@ -770,9 +770,6 @@ class Interface(object):
         # The time when the event was dispatched.
         self.event_time = 0
 
-        # The time of the last input event (mouse, keyboard, gamepad).
-        self.input_event_time = 0
-
         # The time we saw the last mouse event.
         self.mouse_event_time = None
 
@@ -790,7 +787,10 @@ class Interface(object):
 
         # Init timing.
         init_time()
-        self.mouse_event_time = get_time()
+
+        # The time of the last input event (mouse, keyboard, gamepad).
+        self.input_event_time = get_time()
+        self.mouse_event_time = self.input_event_time - 1.0  # Setting it 1s before input_event_time allows the first interaction to use default focus.
 
         # The current window caption.
         self.window_caption = None
