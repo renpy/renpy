@@ -1287,15 +1287,15 @@ class Interface(object):
         Kills all textures that have been loaded.
         """
 
-        renpy.gl2.assimp.free_memory()
-        renpy.display.render.free_memory()
-        renpy.text.text.layout_cache_clear()
-        renpy.display.video.texture.clear()
-
         if keep_const_size:
             renpy.display.im.cache.clear_variable_size()
         else:
             renpy.display.im.cache.clear()
+
+        renpy.gl2.assimp.free_memory()
+        renpy.text.text.layout_cache_clear()
+        renpy.display.video.texture.clear()
+        renpy.display.render.free_memory()
 
         if renpy.display.draw is not None:
             renpy.display.draw.kill_textures()

@@ -192,6 +192,9 @@ class Cache(object):
 
         with self.lock:
 
+            for ce in list(self.cache.values()):
+                self.kill(ce)
+
             self.preloads = [ ]
 
             self.cache = { }
