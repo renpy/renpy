@@ -265,6 +265,7 @@ def register(
         predict_next=predict_next,
         execute_default=execute_default,
         reachable=reachable,
+        init_priority=init_priority,
     )
 
     if block not in [True, False, "script", "script-possible", "atl", "atl-possible", "possible" ]:
@@ -318,7 +319,11 @@ def register(
             rv.code_block = code_block
             rv.atl = atl
             rv.subparses = l.subparses
-            rv.init_priority = init_priority + l.init_offset
+
+            if init or execute_init or execute_default:
+                rv.init_priority = l.init_offset
+            else:
+                rv.init_priority = None
 
         finally:
             l.subparses = old_subparses
@@ -329,7 +334,10 @@ def register(
             rv = [ rv, post ]
 
         if init and not l.init:
-            rv = renpy.ast.Init(loc, [rv], init_priority + l.init_offset)
+            if not isinstance(rv, list):
+                rv = [rv]
+
+            rv = renpy.ast.Init(loc, rv, init_priority + l.init_offset)
 
         return rv
 
