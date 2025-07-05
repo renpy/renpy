@@ -319,7 +319,11 @@ def register(
             rv.code_block = code_block
             rv.atl = atl
             rv.subparses = l.subparses
-            rv.init_priority = l.init_offset
+
+            if init or execute_init or execute_default:
+                rv.init_priority = l.init_offset
+            else:
+                rv.init_priority = None
 
         finally:
             l.subparses = old_subparses

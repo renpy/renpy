@@ -2201,7 +2201,7 @@ class UserStatement(Node):
     translation_relevant: bool = False # type: ignore
     rollback: RollbackType = "normal"
     subparses: list['renpy.lexer.SubParse'] = [ ]
-    init_priority: SignedInt = 0
+    init_priority: SignedInt | None = 0
     atl: 'renpy.atl.RawBlock | None' = None
 
     def __init__(self, loc, line, block, parsed):
@@ -2277,19 +2277,14 @@ class UserStatement(Node):
             default_statements.append(self)
 
     def get_init(self):
-        is_init = renpy.statements.get("init", self.parsed)
-        # Statement has no init logic, skip it.
-        if not (
-            is_init or
-            renpy.statements.get("execute_init", self.parsed) or
-            renpy.statements.get("execute_default", self.parsed)
-        ):
+        if self.init_priority is None:
             return None
 
+        is_init = renpy.statements.get("init", self.parsed)
         init_priority = renpy.statements.get("init_priority", self.parsed)
 
         # In older versions without init_priority, init-time statements had priority 1.
-        if not init_priority and is_init:
+        if is_init and not init_priority:
             init_priority = 1
 
         # Statement init priority and init offset.
