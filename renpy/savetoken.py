@@ -301,7 +301,8 @@ def init_tokens():
 
     keys_fn = os.path.join(token_dir, "security_keys.txt")
 
-    load_tokens(keys_fn)
+    if os.path.exists(keys_fn):
+        load_tokens(keys_fn)
 
     if not signing_keys:
         # If there are no signing keys, we create a new token.
