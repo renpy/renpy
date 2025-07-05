@@ -2201,7 +2201,7 @@ class UserStatement(Node):
     translation_relevant: bool = False # type: ignore
     rollback: RollbackType = "normal"
     subparses: list['renpy.lexer.SubParse'] = [ ]
-    init_priority: SignedInt = 0
+    init_priority: 'SignedInt | None' = 0
     atl: 'renpy.atl.RawBlock | None' = None
 
     def __init__(self, loc, line, block, parsed):
