@@ -31,6 +31,7 @@ import requests
 
 from . import download
 from . import common
+from . import deferred
 
 # Constants from 00updater.py.
 PREPARING = "PREPARING"
@@ -227,27 +228,18 @@ class Update(object):
         try:
             os.unlink(filename)
             return
-        except:
+        except Exception:
             pass
 
-        basename = os.path.basename(filename)
+        deferred.defer_delete(filename)
 
-        serial = 0
-
-        while True:
-            serial += 1
-            new = os.path.join(self.deleteddir, "%s.delete.%d.rpu" % (basename, serial))
-
-            if not os.path.exists(new):
-                os.rename(filename, new)
-                break
-
-    def rename(self, old, new):
+    def rename(self, old_filename, new_filename):
         try:
-            os.rename(old, new)
-        except:
-            self.delete(new)
-            os.rename(old, new)
+            if os.path.exists(new_filename):
+                os.unlink(new_filename)
+            os.rename(old_filename, new_filename)
+        except Exception:
+            deferred.defer_rename(new_filename)
 
     def make_directories(self):
         """
@@ -279,7 +271,11 @@ class Update(object):
                     continue
 
                 oldfn = fn[:-len(".new.rpu")] + ".old.rpu"
-                self.rename(fn, oldfn)
+
+                if os.path.exists(oldfn):
+                    os.unlink(oldfn)
+
+                os.rename(fn, oldfn)
 
                 relfn = os.path.relpath(oldfn, root)
                 f = common.File(relfn, data_filename=oldfn)
