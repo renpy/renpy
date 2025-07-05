@@ -329,6 +329,12 @@ def register(
             post = renpy.ast.PostUserStatement(loc, rv)
             rv = [ rv, post ]
 
+        if init and not l.init:
+            if not isinstance(rv, list):
+                rv = [rv]
+
+            rv = renpy.ast.Init(loc, rv, init_priority + l.init_offset)
+
         return rv
 
     renpy.parser.statements.add(name, parse_user_statement)
