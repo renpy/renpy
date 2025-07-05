@@ -559,7 +559,7 @@ class _MultiPersistent(object):
 
     def save(self):
         try:
-            data = dumps(renpy.game.persistent, bad_reduction_name=f"MultiPersistent({self._name})")
+            data = dumps(self, bad_reduction_name=f"MultiPersistent({self._name})")
         except Exception:
             if renpy.config.developer:
                 raise
