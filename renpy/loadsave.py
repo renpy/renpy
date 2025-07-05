@@ -632,6 +632,13 @@ def load(filename):
     if not renpy.savetoken.check_load(log_data, signature):
         return
 
+    try:
+        json = slot_json(filename)
+    except Exception as e:
+        json = { }
+
+    renpy.session["traceback_load"] = "_traceback" in json
+
     roots, log = loads(log_data)
 
     log.unfreeze(roots, label="_after_load")

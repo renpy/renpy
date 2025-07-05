@@ -604,6 +604,9 @@ def main():
 
         while True:
 
+            if "traceback_load" in renpy.session:
+                del renpy.session["traceback_load"]
+
             if restart:
                 renpy.display.screen.before_restart()
 
