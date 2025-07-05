@@ -2273,14 +2273,27 @@ class UserStatement(Node):
     def execute_init(self):
         self.call("execute_init")
 
-        if renpy.statements.get("init", self.parsed):
-            self.init_priority = 1
-
         if renpy.statements.get("execute_default", self.parsed):
             default_statements.append(self)
 
     def get_init(self):
-        return self.init_priority
+        is_init = renpy.statements.get("init", self.parsed)
+        # Statement has no init logic, skip it.
+        if not (
+            is_init or
+            renpy.statements.get("execute_init", self.parsed) or
+            renpy.statements.get("execute_default", self.parsed)
+        ):
+            return None
+
+        init_priority = renpy.statements.get("init_priority", self.parsed)
+
+        # In older versions without init_priority, init-time statements had priority 1.
+        if not init_priority and is_init:
+            init_priority = 1
+
+        # Statement init priority and init offset.
+        return init_priority + self.init_priority
 
     def execute(self):
         next_node(self.get_next())
