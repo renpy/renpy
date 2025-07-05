@@ -271,6 +271,9 @@ def bootstrap():
     ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
 
+    if args.command == "lint":
+        args.lint = True
+
     return args
 
 

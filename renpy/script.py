@@ -1085,7 +1085,8 @@ class Script(object):
             except Exception:
                 pass
 
-        self.all_pyexpr = [ ]
+        if not renpy.game.args.lint:
+            self.all_pyexpr = [ ]
 
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
@@ -1116,7 +1117,8 @@ class Script(object):
 
                 renpy.game.exception_info = old_ei
 
-        self.all_pycode = [ ]
+        if not renpy.game.args.lint:
+            self.all_pycode = [ ]
 
     def save_bytecode(self):
         if renpy.macapp:
