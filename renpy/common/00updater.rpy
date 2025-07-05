@@ -69,95 +69,6 @@ init -1500 python in updater:
     if persistent._update_last_checked is None:
         persistent._update_last_checked = { }
 
-    # A file containing deferred update commands, one per line. Right now,
-    # there are two commands:
-    # R <path>
-    #     Rename <path>.new to <path>.
-    # D <path>
-    #     Delete <path>.
-    # Deferred commands that cannot be accomplished on start are ignored.
-    DEFERRED_UPDATE_FILE = os.path.join(config.renpy_base, "update", "deferred.txt")
-    DEFERRED_UPDATE_LOG = os.path.join(config.renpy_base, "update", "log.txt")
-
-    def process_deferred_line(l):
-
-        cmd, _, fn = l.partition(" ")
-
-        if cmd == "R":
-            if os.path.exists(fn + ".new"):
-
-                if os.path.exists(fn):
-                    os.unlink(fn)
-
-                os.rename(fn + ".new", fn)
-
-        elif cmd == "D":
-
-            if os.path.exists(fn):
-                os.unlink(fn)
-
-        elif cmd == "":
-
-            pass
-
-        else:
-            raise Exception("Bad command. %r (%r %r)" % (l, cmd, fn))
-
-    def process_deferred():
-        if not os.path.exists(DEFERRED_UPDATE_FILE):
-            return
-
-        # Give a previous process time to quit (and let go of the
-        # open files.)
-        time.sleep(3)
-
-        try:
-            log = open(DEFERRED_UPDATE_LOG, "a")
-        except Exception:
-            log = io.BytesIO()
-
-        with log:
-            with open(DEFERRED_UPDATE_FILE, "r") as f:
-                for l in f:
-
-                    l = l.rstrip("\r\n")
-
-                    log.write(l)
-
-                    try:
-                        process_deferred_line(l)
-                    except Exception:
-                        traceback.print_exc(file=log)
-
-            try:
-                os.unlink(DEFERRED_UPDATE_FILE + ".old")
-            except Exception:
-                pass
-
-            try:
-                os.rename(DEFERRED_UPDATE_FILE, DEFERRED_UPDATE_FILE + ".old")
-            except Exception:
-                traceback.print_exc(file=log)
-
-    # Process deferred updates on startup, if any exist.
-
-    process_deferred()
-
-    DELETED = os.path.join(config.renpy_base, "update", "deleted")
-
-    def process_deleted():
-        if not os.path.exists(DELETED):
-            return
-
-        import shutil
-
-        try:
-            shutil.rmtree(DELETED)
-        except Exception as e:
-            pass
-
-    process_deleted()
-
     def zsync_path(command):
         """
         Returns the full platform-specific path to command, which is one
@@ -1576,20 +1487,12 @@ init -1500 python in updater:
 
             for path in self.moves:
 
-                self.unlink(path)
-
-                if os.path.exists(path):
-                    self.log.write("could not rename file %s" % path)
-
-                    with open(DEFERRED_UPDATE_FILE, "a") as f:
-                        f.write("R " + path + "\r\n")
-
-                    continue
-
                 try:
+                    self.unlink(path)
                     os.rename(path + ".new", path)
                 except Exception:
-                    pass
+                    renpy.update.deferred.defer_rename(path)
+
 
         def delete_obsolete(self):
             """
@@ -1626,15 +1529,13 @@ init -1500 python in updater:
                 self.unlink(i)
 
                 if os.path.exists(i):
-                    self.log.write("could not delete file %s" % i)
-                    with open(DEFERRED_UPDATE_FILE, "a") as f:
-                        f.write("D " + i + "\r\n")
+                    renpy.update.deferred.defer_unlink(i)
 
             for i in old_directories:
                 try:
                     os.rmdir(i)
                 except Exception:
-                    pass
+                    renpy.update.deferred.defer_unlink(i)
 
         def save_state(self):
             """

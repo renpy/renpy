@@ -565,6 +565,9 @@ def import_all():
     import renpy.test.testparser
     import renpy.test.testexecution
 
+    import renpy.update
+    import renpy.update.deferred
+
     import renpy.main
 
     global six

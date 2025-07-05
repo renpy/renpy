@@ -317,6 +317,9 @@ def load_build_info():
 
 def main():
 
+    # Handle any file deletions or renamed that were deferred from a previous update.
+    renpy.update.deferred.init()
+
     gc.set_threshold(*renpy.config.gc_thresholds)
 
     renpy.game.exception_info = 'Before loading the script.'
