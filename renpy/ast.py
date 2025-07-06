@@ -2201,8 +2201,21 @@ class UserStatement(Node):
     translation_relevant: bool = False # type: ignore
     rollback: RollbackType = "normal"
     subparses: list['renpy.lexer.SubParse'] = [ ]
-    init_priority: SignedInt | None = 0
     atl: 'renpy.atl.RawBlock | None' = None
+
+    init_priority: SignedInt | None = None
+    """
+    Used to store statement init priority before 8.4.
+
+    All new instances should keep this set to None.
+    """
+
+    init_offset: SignedInt | None = 0
+    """
+    If None, this is a statement that does not need init-time processing.
+
+    Otherwise, this is the init offset value of the statement in a file.
+    """
 
     def __init__(self, loc, line, block, parsed):
 
@@ -2212,7 +2225,6 @@ class UserStatement(Node):
         self.line = line
         self.block = block
         self.subparses = []
-        self.init_priority = 0
 
         self.name = self.call("label")
         self.rollback = renpy.statements.get("rollback", self.parsed) or "normal" # type: ignore
@@ -2277,18 +2289,18 @@ class UserStatement(Node):
             default_statements.append(self)
 
     def get_init(self):
-        if self.init_priority is None:
+        # Legacy instance from before init_priority has become registry key.
+        if self.init_priority is not None:
+            return self.init_priority
+
+        # Statement does not need init-time processing.
+        if self.init_offset is None:
             return None
 
-        is_init = renpy.statements.get("init", self.parsed)
         init_priority = renpy.statements.get("init_priority", self.parsed)
 
-        # In older versions without init_priority, init-time statements had priority 1.
-        if is_init and not init_priority:
-            init_priority = 1
-
-        # Statement init priority and init offset.
-        return init_priority + self.init_priority
+        # Statement init priority and init offset from the file.
+        return init_priority + self.init_offset
 
     def execute(self):
         next_node(self.get_next())
