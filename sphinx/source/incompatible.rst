@@ -72,6 +72,10 @@ In previous versions of Ren'Py, the order in which shader parts that shared the 
 priority were applied was undefined. Now, the parts are ordered by the name of the shader, producing
 a reliable order, but this reliable order may be diferent than what was seen on particular systems.
 
+**Python Module Paths**
+When a Python module is loaded from the game/ directory, the ``__file__`` variable is set to the relative path of the
+module, which can be passed to :func:`renpy.open_file`. Previously, ``__file__`` could be set to the absolute path of
+the module in some cases, and the relative path in others.
 
 .. _incompatible-8.3.4:
 .. _incompatible-7.8.4:
