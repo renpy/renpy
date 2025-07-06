@@ -272,7 +272,7 @@ def register(
         raise Exception("Unknown \"block\" argument value: {}".format(block))
 
     # The function that is called to create an ast.UserStatement.
-    def parse_user_statement(l, loc):
+    def parse_user_statement(l: renpy.lexer.Lexer, loc):
 
         renpy.exports.push_error_handler(l.error)
 
@@ -320,10 +320,10 @@ def register(
             rv.atl = atl
             rv.subparses = l.subparses
 
-            if init or execute_init or execute_default:
-                rv.init_priority = l.init_offset
+            if execute_init or execute_default:
+                rv.init_offset = l.init_offset
             else:
-                rv.init_priority = None
+                rv.init_offset = None
 
         finally:
             l.subparses = old_subparses
