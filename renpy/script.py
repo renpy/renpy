@@ -53,7 +53,7 @@ from importlib.util import MAGIC_NUMBER as PYC_MAGIC
 PYC_MAGIC += b'_2025-06-16'
 
 # Change this to force a recompile of RPYC files when required, if the .rpy file exists.
-RPYC_MAGIC = b'_2025-06-16'
+RPYC_MAGIC = b'_2025-07-06'
 
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"

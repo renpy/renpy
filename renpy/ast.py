@@ -2210,7 +2210,7 @@ class UserStatement(Node):
     All new instances should keep this set to None.
     """
 
-    init_offset: SignedInt | None = 0
+    init_offset: SignedInt | None = None
     """
     If None, this is a statement that does not need init-time processing.
 
