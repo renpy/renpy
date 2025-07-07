@@ -33,8 +33,8 @@ from renpy.compat.pickle import dumps, loads, find_bad_reduction
 
 # The class that's used to hold the persistent data.
 
-class Persistent(object):
 
+class Persistent(object):
     _preferences: renpy.preferences.Preferences
     "The preferences object."
 
@@ -52,7 +52,6 @@ class Persistent(object):
 
     _seen_translates: set[Any]
     "A set of hashed or unhashed translation identifiers that have been seen."
-
 
     def __init__(self):
         self._update()
@@ -109,20 +108,20 @@ class Persistent(object):
 
         # Initialize the set of statements seen ever.
         if not self._seen_ever:
-            self._seen_ever = { }
+            self._seen_ever = {}
 
         # Initialize the set of images seen ever.
         if not self._seen_images:
-            self._seen_images = { }
+            self._seen_images = {}
 
         # Initialize the set of chosen menu choices.
         if not self._chosen:
-            self._chosen = { }
+            self._chosen = {}
 
         if not self._seen_audio:
-            self._seen_audio = { }
+            self._seen_audio = {}
 
-        self._seen_audio = { str(i) : True for i in self._seen_audio }
+        self._seen_audio = {str(i): True for i in self._seen_audio}
 
         # The set of seen translate identifiers.
         if not self._seen_translates:
@@ -132,11 +131,11 @@ class Persistent(object):
         # changed at.
         if self._changed is None:
             self._changed = {
-                "_preferences" : 0,
-                "_seen_ever" : 0,
-                "_chosen" : 0,
-                "_seen_audio" : 0,
-                "_seen_translates" : 0,
+                "_preferences": 0,
+                "_seen_ever": 0,
+                "_chosen": 0,
+                "_seen_audio": 0,
+                "_seen_translates": 0,
             }
 
         if self._version is None:
@@ -146,7 +145,7 @@ class Persistent(object):
             cb(self)
 
 
-renpy.game.Persistent = Persistent # type: ignore
+renpy.game.Persistent = Persistent  # type: ignore
 renpy.game.persistent = Persistent()
 
 
@@ -168,7 +167,6 @@ def safe_deepcopy(o, reduction_name: str):
         raise
 
     if not (o == rv):
-
         if renpy.config.developer:
             raise Exception("To be persisted, %r must support equality comparison." % o)
         else:
@@ -179,7 +177,7 @@ def safe_deepcopy(o, reduction_name: str):
 
 # A map from field names to a backup of the field names in the persistent
 # object.
-backup = { }
+backup = {}
 
 
 def find_changes():
@@ -202,7 +200,6 @@ def find_changes():
     fields = set(backup.keys()) | set(pvars.keys())
 
     for f in fields:
-
         if f == "_changed":
             continue
 
@@ -210,8 +207,7 @@ def find_changes():
         new = pvars.get(f, None)
 
         if not (new == old):
-
-            persistent._changed[f] = now # type: ignore
+            persistent._changed[f] = now  # type: ignore
             backup[f] = safe_deepcopy(new, f)
 
             rv = True
@@ -267,11 +263,11 @@ def init():
     if renpy.config.early_developer:
         init_debug_pickler()
 
-    filename = os.path.join(renpy.config.savedir, "persistent.new") # type: ignore
+    filename = os.path.join(renpy.config.savedir, "persistent.new")  # type: ignore
     persistent = load(filename)
 
     if persistent is None:
-        filename = os.path.join(renpy.config.savedir, "persistent") # type: ignore
+        filename = os.path.join(renpy.config.savedir, "persistent")  # type: ignore
         persistent = load(filename)
 
     if persistent is None:
@@ -301,10 +297,10 @@ def init_debug_pickler():
             t = obj if isinstance(obj, type) else type(obj)
 
             if t not in self.safe_types and t.__module__.startswith("store"):
-                cls = (t.__module__ + '.' + t.__qualname__)[6:]
+                cls = (t.__module__ + "." + t.__qualname__)[6:]
                 raise TypeError(f"{cls} is not safe for use in persistent.")
 
-            return NotImplemented # lets normal reducing take place
+            return NotImplemented  # lets normal reducing take place
 
     global dumps
 
@@ -314,7 +310,7 @@ def init_debug_pickler():
 
 
 # A map from field name to merge function.
-registry = { }
+registry = {}
 
 
 def register_persistent(field, func):
@@ -387,7 +383,7 @@ def merge(other):
         if pval == oval:
             continue
 
-        ptime = persistent._changed.get(f, 0) # type: ignore
+        ptime = persistent._changed.get(f, 0)  # type: ignore
 
         otime = other._changed.get(f, 0)
         otime = min(now, otime)
@@ -407,7 +403,7 @@ def merge(other):
 
         pvars[f] = val
         backup[f] = safe_deepcopy(val, f)
-        persistent._changed[f] = t # type: ignore
+        persistent._changed[f] = t  # type: ignore
 
 
 # The mtime of the most recently processed savefile.
@@ -444,14 +440,13 @@ def update(force_save=False):
     # A list of (mtime, other) pairs, where other is a persistent file
     # we might want to merge in.
     pairs = renpy.loadsave.location.load_persistent(consume=True)
-    pairs.sort(key=lambda a : a[0])
+    pairs.sort(key=lambda a: a[0])
 
     # Deals with the case where we don't have any persistent data for
     # some reason.
     mtime = persistent_mtime
 
     for mtime, other in pairs:
-
         if mtime <= persistent_mtime:
             continue
 
@@ -467,6 +462,7 @@ def update(force_save=False):
 
 
 should_save_persistent = True
+
 
 def save():
     """
@@ -499,7 +495,6 @@ def save():
     # Prevent updates just after save
     for mtime, _data in renpy.loadsave.location.load_persistent():
         persistent_mtime = max(persistent_mtime, mtime)
-
 
 
 ################################################################################
@@ -535,17 +530,17 @@ def get_MP(name):
         if instance._name == name:
             return instance
 
-class _MultiPersistent(object):
 
+class _MultiPersistent(object):
     _filename = ""
     _name = ""
     _save_on_quit = False
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        del state['_filename']
-        del state['_name']
-        del state['_save_on_quit']
+        del state["_filename"]
+        del state["_name"]
+        del state["_save_on_quit"]
         return state
 
     def __setstate__(self, state):
@@ -597,33 +592,28 @@ def MultiPersistent(name, save_on_quit=False):
         return rv
 
     if "RENPY_MULTIPERSISTENT" in os.environ:
-        files = [ renpy.exports.fsdecode(os.environ["RENPY_MULTIPERSISTENT"]) ]
+        files = [renpy.exports.fsdecode(os.environ["RENPY_MULTIPERSISTENT"])]
 
     elif renpy.android or renpy.ios:
         # Due to the security policy of mobile devices, we store MultiPersistent
         # in the same place as common persistent.
         # This is better than not working at all.
-        files = [ renpy.config.savedir ]
+        files = [renpy.config.savedir]
 
     elif renpy.windows:
-        files = [ os.path.expanduser("~/RenPy/Persistent") ]
+        files = [os.path.expanduser("~/RenPy/Persistent")]
 
-        if 'APPDATA' in os.environ:
-            files.append(
-                os.path.join(
-                    renpy.exports.fsdecode(os.environ['APPDATA']), "RenPy", "persistent"
-                )
-            )
+        if "APPDATA" in os.environ:
+            files.append(os.path.join(renpy.exports.fsdecode(os.environ["APPDATA"]), "RenPy", "persistent"))
 
     elif renpy.macintosh:
-        files = [ os.path.expanduser("~/.renpy/persistent"),
-                  os.path.expanduser("~/Library/RenPy/persistent") ]
+        files = [os.path.expanduser("~/.renpy/persistent"), os.path.expanduser("~/Library/RenPy/persistent")]
     else:
-        files = [ os.path.expanduser("~/.renpy/persistent") ]
+        files = [os.path.expanduser("~/.renpy/persistent")]
 
     # Make the new persistent directory, why not?
     try:
-        os.makedirs(files[-1]) # type: ignore
+        os.makedirs(files[-1])  # type: ignore
     except Exception:
         pass
 
@@ -632,7 +622,7 @@ def MultiPersistent(name, save_on_quit=False):
     # Find the first file that actually exists. Otherwise, use the last
     # file.
     for fn in files:
-        fn = os.path.join(fn, name) # type: ignore
+        fn = os.path.join(fn, name)  # type: ignore
         if os.path.isfile(fn):
             try:
                 with open(fn, "rb") as mpf:
@@ -647,10 +637,10 @@ def MultiPersistent(name, save_on_quit=False):
         try:
             rv = loads(data)
         except Exception:
-            renpy.display.log.write("Loading MultiPersistent at %r:" % fn) # type: ignore
+            renpy.display.log.write("Loading MultiPersistent at %r:" % fn)  # type: ignore
             renpy.display.log.exception()
 
-    rv._filename = fn # type: ignore
+    rv._filename = fn  # type: ignore
     rv._name = name
     rv._save_on_quit = save_on_quit
 
@@ -659,5 +649,5 @@ def MultiPersistent(name, save_on_quit=False):
     return rv
 
 
-renpy.loadsave._MultiPersistent = _MultiPersistent # type: ignore
-renpy.loadsave.MultiPersistent = MultiPersistent # type: ignore
+renpy.loadsave._MultiPersistent = _MultiPersistent  # type: ignore
+renpy.loadsave.MultiPersistent = MultiPersistent  # type: ignore

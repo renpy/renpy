@@ -20,10 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
-import emscripten # type: ignore
+import emscripten  # type: ignore
 import pygame
 from json import dumps
 
@@ -31,6 +31,7 @@ import renpy.audio.renpysound as renpysound
 
 # True if the browser only supports video decoding (not audio)
 video_only = False
+
 
 def call(function, *args):
     """
@@ -57,6 +58,7 @@ def call_str(function, *args):
 
     return rv
 
+
 # Set of channel IDs that are not video channels
 audio_channels = set()
 
@@ -65,7 +67,8 @@ def set_movie_channel(channel, movie):
     if video_only and not movie:
         audio_channels.add(channel)
 
-renpysound.set_movie_channel = set_movie_channel # type: ignore
+
+renpysound.set_movie_channel = set_movie_channel  # type: ignore
 
 
 def set_channel_count(count):
@@ -75,11 +78,13 @@ def set_channel_count(count):
 
     call("set_channel_count", count)
 
-renpysound.set_channel_count = set_channel_count # type: ignore
+
+renpysound.set_channel_count = set_channel_count  # type: ignore
 
 
 # Map of renpysound functions that have been replaced with webaudio functions
 renpysound_funcs = {}
+
 
 def proxy_with_channel(func):
     """
@@ -99,6 +104,7 @@ def proxy_with_channel(func):
     setattr(renpysound, func.__name__, hook)
 
     return func
+
 
 def proxy_call_both(func):
     """
@@ -122,8 +128,20 @@ def proxy_call_both(func):
 
     return func
 
+
 @proxy_with_channel
-def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def play(
+    channel,
+    file,
+    name,
+    synchro_start=False,
+    fadein=0,
+    tight=False,
+    start=0,
+    end=0,
+    relative_volume=1.0,
+    audio_filter=None,
+):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -173,7 +191,18 @@ def play(channel, file, name, synchro_start=False, fadein=0, tight=False, start=
 
 
 @proxy_with_channel
-def queue(channel, file, name, synchro_start=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0, audio_filter=None):
+def queue(
+    channel,
+    file,
+    name,
+    synchro_start=False,
+    fadein=0,
+    tight=False,
+    start=0,
+    end=0,
+    relative_volume=1.0,
+    audio_filter=None,
+):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -385,7 +414,7 @@ def audio_filter_constructor(f):
 
     args = f.__reduce__()[1]
 
-    arg_repr = [ ]
+    arg_repr = []
 
     for i in args:
         if isinstance(i, renpy.audio.filter.AudioFilter):
@@ -397,12 +426,11 @@ def audio_filter_constructor(f):
         else:
             arg_repr.append(repr(i))
 
-
     return "renpyAudio.filter.{}({})".format(f.__class__.__name__, ", ".join(arg_repr))
 
 
 # A map from the object id to the id of the audio filter.
-audio_filter_ids = { }
+audio_filter_ids = {}
 
 audio_filter_serial = 1
 
@@ -466,6 +494,7 @@ def deallocate_audio_filter(audio_filter):
 
     emscripten.run_script(js)
 
+
 renpysound.deallocate_audio_filter = deallocate_audio_filter
 
 
@@ -490,7 +519,9 @@ def video_ready(channel):
 
     return call_int("video_ready", channel)
 
+
 channel_size = {}
+
 
 @proxy_with_channel
 def read_video(channel):
@@ -507,7 +538,7 @@ def read_video(channel):
         if len(info) == 0:
             # Video dimension not ready yet
             return None
-        video_size = [int(s) for s in info.split('x')]
+        video_size = [int(s) for s in info.split("x")]
         channel_size[channel] = video_size
 
     # Generate a new texture and pass it to JS
@@ -548,16 +579,20 @@ def set_video(channel, video, loop=False):
 
     if video != renpysound.NO_VIDEO and not video_supported():
         import sys
-        print('Warning: video playback is not supported on this browser', file=sys.stderr)
+
+        print("Warning: video playback is not supported on this browser", file=sys.stderr)
 
     call("set_video", channel, video, loop, renpy.translation.translate_string("Click to play the video."))
+
 
 def video_supported():
     # Video only work with OpenGL v2 renderers (should be supported since WebGL v1,
     # but it falls back to OpenGL v1 on some configs)
-    return renpy.session["renderer"] in ('gl2', 'gles2')
+    return renpy.session["renderer"] in ("gl2", "gles2")
+
 
 loaded = False
+
 
 def load_script():
     """
@@ -590,7 +625,7 @@ def init(freq, stereo, samples, status=False, equal_mono=False, linear_fades=Fal
 
 
 @proxy_call_both
-def quit(): # @ReservedAssignment
+def quit():  # @ReservedAssignment
     """
     De-initializes the audio system.
     """

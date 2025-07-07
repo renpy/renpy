@@ -40,7 +40,7 @@ try:
     if getattr(_renpy, "__file__", "built-in") != "built-in":
         import importlib.util
 
-        libexec : str = os.path.dirname(_renpy.__file__)
+        libexec: str = os.path.dirname(_renpy.__file__)
 
         class _LibExecFinder:
             def __init__(self):
@@ -108,6 +108,7 @@ try:
 
 except ImportError:
     import renpy.versions
+
     version_dict = renpy.versions.get_version()
 
     official = version_dict["official"]
@@ -123,6 +124,7 @@ class VersionTuple(NamedTuple):
     minor: int
     patch: int
     commit: int
+
 
 version_tuple = VersionTuple(*(int(i) for i in version.split(".")))
 
@@ -169,7 +171,7 @@ elif platform.mac_ver()[0]:
     macintosh = True
 elif "ANDROID_PRIVATE" in os.environ:
     android = True
-elif sys.platform == 'emscripten' or "RENPY_EMSCRIPTEN" in os.environ:
+elif sys.platform == "emscripten" or "RENPY_EMSCRIPTEN" in os.environ:
     emscripten = True
 else:
     linux = True
@@ -223,11 +225,9 @@ backup_blacklist = {
     "renpy.test.testparser",
     "renpy.gl2",
     "renpycoverage",
-    }
+}
 
-type_blacklist = (
-    types.ModuleType,
-    )
+type_blacklist = (types.ModuleType,)
 
 name_blacklist = {
     "renpy.loadsave.autosave_not_running",
@@ -255,7 +255,7 @@ name_blacklist = {
     "renpy.gl2.assimp.loader",
     "renpy.gl2.assimp.loader_lock",
     "renpy.gl2.gl2draw.default_position",
-    }
+}
 
 
 class Backup:
@@ -269,16 +269,15 @@ class Backup:
     """
 
     def __init__(self):
-
         # A map from (module, field) to the id of the object in that field.
-        self.variables = { }
+        self.variables = {}
 
         # A map from id(object) to objects. This is discarded after being
         # pickled.
-        self.objects = { }
+        self.objects = {}
 
         # A map from module to the set of names in that module.
-        self.names = { }
+        self.names = {}
 
     def backup(self):
         for m in sys.modules.values():
@@ -290,7 +289,7 @@ class Backup:
         # A pickled version of self.objects.
         self.objects_pickle = pickle.dumps(self.objects, highest=True)
 
-        self.objects = { }
+        self.objects = {}
 
     def backup_module(self, mod):
         """
@@ -314,7 +313,6 @@ class Backup:
         self.names[mod] = set(vars(mod).keys())
 
         for k, v in vars(mod).items():
-
             if k.startswith("__") and k.endswith("__"):
                 continue
 
@@ -377,7 +375,6 @@ def plog(depth, event, *args):
 
 
 def import_all():
-
     # Note: If we add a new update_path, we have to add an equivalent
     # hook in the renpython hooks dir.
 
@@ -409,6 +406,7 @@ def import_all():
     import renpy.loader
 
     import renpy.pyanalysis
+
     sys.modules["renpy.py3analysis"] = renpy.pyanalysis
 
     import renpy.astsupport
@@ -444,9 +442,10 @@ def import_all():
     import renpy.styledata
 
     import renpy.style
+
     renpy.styledata.import_style_functions()
 
-    sys.modules['renpy.styleclass'] = renpy.style
+    sys.modules["renpy.styleclass"] = renpy.style
 
     import renpy.substitutions
     import renpy.translation
@@ -478,7 +477,7 @@ def import_all():
     import renpy.text.extras
     import renpy.text.shader
 
-    sys.modules['renpy.display.text'] = renpy.text.text
+    sys.modules["renpy.display.text"] = renpy.text.text
 
     import renpy.gl2
 
@@ -572,7 +571,8 @@ def import_all():
 
     global six
     import six
-    sys.modules['renpy.six'] = six
+
+    sys.modules["renpy.six"] = six
 
     # Back up the Ren'Py modules.
     backup.backup()
@@ -593,21 +593,21 @@ def post_import():
 
     # Import the contents of renpy.defaultstore into renpy.store, and set
     # up an alias as we do.
-    renpy.store = sys.modules['store'] # type: ignore
-    renpy.exports.store = renpy.store # type: ignore
-    sys.modules['renpy.store'] = sys.modules['store']
+    renpy.store = sys.modules["store"]  # type: ignore
+    renpy.exports.store = renpy.store  # type: ignore
+    sys.modules["renpy.store"] = sys.modules["store"]
 
     import subprocess
-    sys.modules['renpy.subprocess'] = subprocess
+
+    sys.modules["renpy.subprocess"] = subprocess
 
     for k, v in renpy.defaultstore.__dict__.items():
-
         if k in ("__all__", "__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__cached__"):
             continue
 
-        renpy.store.__dict__.setdefault(k, v) # type: ignore
+        renpy.store.__dict__.setdefault(k, v)  # type: ignore
 
-    renpy.store.eval = renpy.defaultstore.eval # type: ignore
+    renpy.store.eval = renpy.defaultstore.eval  # type: ignore
 
     # Import everything into renpy.exports, provided it isn't
     # already there.
@@ -650,7 +650,7 @@ def reload_all():
     renpy.display.interface = None
 
     if not renpy.session.get("_keep_renderer", False):
-        renpy.display.draw.quit() # type: ignore
+        renpy.display.draw.quit()  # type: ignore
         renpy.display.draw = None
 
     py_compile_cache = renpy.python.py_compile_cache
@@ -662,7 +662,7 @@ def reload_all():
             m = sys.modules[i]
 
             if m is not None:
-                m.__dict__.reset() # type: ignore
+                m.__dict__.reset()  # type: ignore
 
             del sys.modules[i]
 

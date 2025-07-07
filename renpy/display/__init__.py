@@ -44,15 +44,18 @@ info = None
 # all platforms.)
 can_fullscreen = True
 
+
 def get_info():
     global info
 
     if info is None:
         import pygame_sdl2 as pygame
+
         pygame.display.init()
         info = pygame.display.Info()
 
     return info
+
 
 # Logs we use.
 log = renpy.log.open("log", developer=False, append=False)

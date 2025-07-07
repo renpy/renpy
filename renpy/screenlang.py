@@ -20,10 +20,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
 import contextlib
+
 
 class ScreenLangScreen(renpy.object.Object):
     """
@@ -42,7 +43,6 @@ class ScreenLangScreen(renpy.object.Object):
     location = None
 
     def __init__(self):
-
         # The name of the screen.
         self.name = "<unknown>"
 
@@ -89,17 +89,16 @@ class ScreenLangScreen(renpy.object.Object):
             predict=renpy.python.py_eval(self.predict),
             parameters=self.parameters,
             location=self.location,
-            )
+        )
 
     def __call__(self, *args, **kwargs):
         scope = kwargs["_scope"]
 
         if self.parameters:
-
             args = scope.get("_args", ())
-            kwargs = scope.get("_kwargs", { })
+            kwargs = scope.get("_kwargs", {})
 
             values = renpy.ast.apply_arguments(self.parameters, args, kwargs)
             scope.update(values)
 
-        renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope) # type: ignore
+        renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope)  # type: ignore

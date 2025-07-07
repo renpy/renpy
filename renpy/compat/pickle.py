@@ -39,7 +39,7 @@ def dump_paths(filename: str, **roots: object):
     and the type or repr of the object.
     """
 
-    o_repr_cache = { }
+    o_repr_cache = {}
 
     def visit_seq(o: tuple | list, path: str) -> int:
         size = 1
@@ -121,7 +121,6 @@ def dump_paths(filename: str, **roots: object):
             size = 1
 
         else:
-
             try:
                 reduction = o.__reduce_ex__(PROTOCOL)
             except Exception:
@@ -349,6 +348,7 @@ def dumps(o: object, highest=False, bad_reduction_name: str | None = None) -> by
 # mapping of "classname": WrapperClass
 REWRITE_NODES = {}
 
+
 # NodeTransformer that runs after the ast has been instantiated in the ast.Module
 # handler, and allows us to fix some more difficult issues. Currently only
 # handles converting ast.Name nodes that contain True/False/None into the appropriate
@@ -371,6 +371,7 @@ class AstFixupTransformer(ast.NodeTransformer):
         alt_node.lineno = node.lineno
         alt_node.col_offset = node.col_offset
         return alt_node
+
 
 # wrapper classes. They all have __setstate__ defined to handle converting from the
 # py2 class, and __reduce__ implemented to convert to the underlying py3 class
@@ -410,7 +411,9 @@ class CallWrapper(ast.Call):
             node.col_offset = self.col_offset
             self.keywords.append(node)
 
+
 REWRITE_NODES["Call"] = CallWrapper
+
 
 class NumWrapper(ast.Constant):
     def __reduce__(self):
@@ -425,7 +428,9 @@ class NumWrapper(ast.Constant):
         # contents
         self.value = state["n"]
 
+
 REWRITE_NODES["Num"] = NumWrapper
+
 
 class StrWrapper(ast.Constant):
     def __reduce__(self):
@@ -440,7 +445,9 @@ class StrWrapper(ast.Constant):
         # contents
         self.value = state["s"]
 
+
 REWRITE_NODES["Str"] = StrWrapper
+
 
 class ModuleWrapper(ast.Module):
     def __reduce__(self):
@@ -458,7 +465,9 @@ class ModuleWrapper(ast.Module):
         transformer = AstFixupTransformer()
         transformer.visit(self)
 
+
 REWRITE_NODES["Module"] = ModuleWrapper
+
 
 class ReprWrapper(ast.Call):
     def __reduce__(self):
@@ -476,7 +485,9 @@ class ReprWrapper(ast.Call):
         self.args = [state["value"]]
         self.keywords = []
 
+
 REWRITE_NODES["Repr"] = ReprWrapper
+
 
 class ArgumentsWrapper(ast.arguments):
     def __reduce__(self):
@@ -501,13 +512,16 @@ class ArgumentsWrapper(ast.arguments):
         self.kwonlyargs = []
         self.kw_defaults = []
         self.kwarg = ast.arg(state["kwarg"], lineno=1, col_offset=0)
-        self.defaults =  state["defaults"]
+        self.defaults = state["defaults"]
+
 
 REWRITE_NODES["arguments"] = ArgumentsWrapper
+
 
 class ParamWrapper(ast.Load):
     def __reduce__(self):
         _, args, attrs = super().__reduce__()
         return ast.Load, args, attrs
+
 
 REWRITE_NODES["Param"] = ParamWrapper

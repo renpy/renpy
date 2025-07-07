@@ -1,4 +1,3 @@
-
 # Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -21,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import os
 
@@ -45,12 +44,11 @@ import traceback
 # Deferred commands that cannot be accomplished on start are ignored.
 DEFERRED_UPDATE_FILE: str
 
-def process_deferred_line(l):
 
+def process_deferred_line(l):
     cmd, _, fn = l.partition(" ")
 
     if cmd == "R":
-
         newfn = fn + ".new.rpu"
 
         if not os.path.exists(newfn):
@@ -65,16 +63,15 @@ def process_deferred_line(l):
         os.rename(newfn, fn)
 
     elif cmd == "D":
-
         if os.path.exists(fn):
             os.unlink(fn)
 
     elif cmd == "":
-
         pass
 
     else:
         raise Exception("Bad command. %r (%r %r)" % (l, cmd, fn))
+
 
 def process_deferred():
     DEFERRED_UPDATE_LOG = os.path.join(renpy.config.renpy_base, "update", "log.txt")
@@ -93,7 +90,6 @@ def process_deferred():
 
     with open(DEFERRED_UPDATE_FILE, "r") as f:
         for l in f:
-
             l = l.rstrip("\r\n")
 
             log.write(l)
@@ -134,6 +130,7 @@ def process_deleted():
     except Exception as e:
         pass
 
+
 def defer_rename(fn):
     """
     Defers the rename of `fn`.rpu.new or `fn`.new to `fn`.
@@ -142,6 +139,7 @@ def defer_rename(fn):
     with open(DEFERRED_UPDATE_FILE, "a") as f:
         f.write("R %s\n" % fn)
 
+
 def defer_delete(fn):
     """
     Defers the deletion of `fn`.
@@ -149,6 +147,7 @@ def defer_delete(fn):
 
     with open(DEFERRED_UPDATE_FILE, "a") as f:
         f.write("D %s\n" % fn)
+
 
 def init():
     """

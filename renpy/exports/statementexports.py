@@ -19,15 +19,24 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
 
 
-def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
-             style='imagemap', mouse='imagemap', with_none=None, **properties):
+def imagemap(
+    ground,
+    selected,
+    hotspots,
+    unselected=None,
+    overlays=False,
+    style="imagemap",
+    mouse="imagemap",
+    with_none=None,
+    **properties,
+):
     """
     :undocumented: Use screens already.
 
@@ -63,22 +72,18 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     takes the value from config.implicit_with_none.
     """
 
-    renpy.exports.mode('imagemap')
+    renpy.exports.mode("imagemap")
 
-    renpy.ui.imagemap_compat(ground, selected, hotspots, unselected=unselected,
-                             style=style, **properties)
+    renpy.ui.imagemap_compat(ground, selected, hotspots, unselected=unselected, style=style, **properties)
 
     roll_forward = renpy.exports.roll_forward_info()
-    if roll_forward not in [ result for _x0, _y0, _x1, _y1, result in hotspots]:
+    if roll_forward not in [result for _x0, _y0, _x1, _y1, result in hotspots]:
         roll_forward = None
 
     if renpy.exports.in_fixed_rollback() and renpy.config.fix_rollback_without_choice:
         renpy.ui.saybehavior()
 
-    rv = renpy.ui.interact(suppress_overlay=(not overlays),
-                           type='imagemap',
-                           mouse=mouse,
-                           roll_forward=roll_forward)
+    rv = renpy.ui.interact(suppress_overlay=(not overlays), type="imagemap", mouse=mouse, roll_forward=roll_forward)
 
     renpy.exports.checkpoint(rv)
 
@@ -155,7 +160,6 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         roll_forward = None
 
     if (delay is not None) and renpy.game.after_rollback and not renpy.config.pause_after_rollback:
-
         rv = roll_forward
         if rv is None:
             rv = False
@@ -165,7 +169,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
 
         return rv
 
-    renpy.exports.mode('pause')
+    renpy.exports.mode("pause")
 
     if music is not None:
         newdelay = renpy.audio.music.get_delay(music)
@@ -182,7 +186,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         afm = None
 
     if hard or not renpy.store._dismiss_pause:
-        renpy.ui.saybehavior(afm=afm, dismiss='dismiss_hard_pause', dismiss_unfocused=[])
+        renpy.ui.saybehavior(afm=afm, dismiss="dismiss_hard_pause", dismiss_unfocused=[])
     else:
         renpy.ui.saybehavior(afm=afm)
 
@@ -191,7 +195,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         renpy.ui.add(renpy.display.behavior.PredictPauseBehavior())
 
     try:
-        rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay, pause_modal=modal)
+        rv = renpy.ui.interact(mouse="pause", type="pause", roll_forward=roll_forward, pause=delay, pause_modal=modal)
     except (renpy.game.JumpException, renpy.game.CallException) as e:
         rv = e
 
@@ -236,13 +240,12 @@ def with_statement(trans, always=False, paired=None, clear=True):
     if renpy.config.skipping:
         trans = None
 
-    if not (renpy.game.preferences.transitions or always): # type: ignore
+    if not (renpy.game.preferences.transitions or always):  # type: ignore
         trans = None
 
-    renpy.exports.mode('with')
+    renpy.exports.mode("with")
 
     if isinstance(trans, dict):
-
         for k, v in trans.items():
             if k is None:
                 continue

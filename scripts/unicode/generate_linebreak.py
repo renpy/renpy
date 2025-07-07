@@ -47,7 +47,7 @@ print("# This is generated code. Do not edit.")
 print()
 
 # A map from character class to the number that represents it.
-cl = { }
+cl = {}
 
 
 for i, j in enumerate((lines[0] + other_classes).split()):
@@ -57,21 +57,21 @@ for i, j in enumerate((lines[0] + other_classes).split()):
 print("CLASSES = {")
 
 for i, j in enumerate((lines[0] + other_classes).split()):
-    print(("    \"{}\" : {},".format(j, i)))
+    print(('    "{}" : {},'.format(j, i)))
     cl[j] = i
 
 print("}")
 
-rules = [ ]
+rules = []
 
 for l in lines[1:]:
     for c in l.split()[1:]:
         rules.append(c)
 
 print()
-print(("cdef char *break_rules = \"" + "".join(rules) + "\""))
+print(('cdef char *break_rules = "' + "".join(rules) + '"'))
 
-cc = [ 'XX' ] * 65536
+cc = ["XX"] * 65536
 
 for l in open("LineBreak.txt"):
     m = re.match(r"(\w+)\.\.(\w+);(\w\w)", l)
@@ -102,8 +102,7 @@ for l in open("LineBreak.txt"):
 
 
 def generate(name, func):
-
-    ncc = [ ]
+    ncc = []
 
     for i, ccl in enumerate(cc):
         ncc.append(func(i, ccl))
@@ -111,7 +110,7 @@ def generate(name, func):
     assert "CJ" not in ncc
     assert "AI" not in ncc
 
-    print(("cdef char *break_" + name + " = \"" + "".join("\\x%02x" % cl[i] for i in ncc) + "\""))
+    print(("cdef char *break_" + name + ' = "' + "".join("\\x%02x" % cl[i] for i in ncc) + '"'))
 
 
 def western(i, cl):
@@ -122,18 +121,33 @@ def western(i, cl):
 
     return cl
 
-hyphens = [ 0x2010, 0x2013, 0x301c, 0x30a0 ]
 
-iteration = [ 0x3005, 0x303B, 0x309D, 0x309E, 0x30FD, 0x30FE ]
-inseperable = [ 0x2025, 0x2026 ]
+hyphens = [0x2010, 0x2013, 0x301C, 0x30A0]
 
-centered = [ 0x003A, 0x003B, 0x30FB, 0xff1a, 0xff1b, 0xff65, 0x0021, 0x003f, 0x203c, 0x2047, 0x2048, 0x2049, 0xff01, 0xff1f ]
-postfixes = [ 0x0025, 0x00A2, 0x00B0, 0x2030, 0x2032, 0x2033, 0x2103, 0xff05, 0xffe0 ]
-prefixes = [ 0x0024, 0x00a3, 0x00a5, 0x20ac, 0x2116, 0xff04, 0xffe1, 0xffe5 ]
+iteration = [0x3005, 0x303B, 0x309D, 0x309E, 0x30FD, 0x30FE]
+inseperable = [0x2025, 0x2026]
+
+centered = [
+    0x003A,
+    0x003B,
+    0x30FB,
+    0xFF1A,
+    0xFF1B,
+    0xFF65,
+    0x0021,
+    0x003F,
+    0x203C,
+    0x2047,
+    0x2048,
+    0x2049,
+    0xFF01,
+    0xFF1F,
+]
+postfixes = [0x0025, 0x00A2, 0x00B0, 0x2030, 0x2032, 0x2033, 0x2103, 0xFF05, 0xFFE0]
+prefixes = [0x0024, 0x00A3, 0x00A5, 0x20AC, 0x2116, 0xFF04, 0xFFE1, 0xFFE5]
 
 
 def cjk_strict(i, cl):
-
     if cl == "CJ":
         return "NS"
     if cl == "AI":
@@ -143,7 +157,6 @@ def cjk_strict(i, cl):
 
 
 def cjk_normal(i, cl):
-
     if i in hyphens:
         return "ID"
 
@@ -156,7 +169,6 @@ def cjk_normal(i, cl):
 
 
 def cjk_loose(i, cl):
-
     if i in hyphens:
         return "ID"
     if i in iteration:
@@ -176,6 +188,7 @@ def cjk_loose(i, cl):
         return "ID"
 
     return cl
+
 
 generate("western", western)
 generate("cjk_strict", cjk_strict)

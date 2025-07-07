@@ -20,7 +20,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class Object:
-
     linenumber: int
     "If known, the line number of the object in the source file."
 
@@ -46,9 +45,7 @@ class Object:
         and setting all slots to the default, breaking reference cycles.
         """
 
-
 class Slot[T]:
-
     number: int
     "A number assigned to this slot."
 
@@ -58,7 +55,7 @@ class Slot[T]:
     intern: bool
     "If true, the value of this slot should be interned."
 
-    def __init__(self, default_value: T|None=None, intern: bool=False) -> None:
+    def __init__(self, default_value: T | None = None, intern: bool = False) -> None:
         """
         A slot that stores a value in a CObject.
 
@@ -70,26 +67,27 @@ class Slot[T]:
             to the cslot.
         """
 
-    def __get__(self, instance : Object, owner: type) -> T:
+    def __get__(self, instance: Object, owner: type) -> T:
         """
         Gets the value of a slot.
         """
 
-    def __set__(self, instance : Object, value: T) -> None:
+    def __set__(self, instance: Object, value: T) -> None:
         """
         Sets the value of a slot.
         """
 
-
 class IntegerSlot:
-
     number: int
     "A number assigned to this slot."
 
     default_value: int
     "The default value of this slot."
 
-    def __init__(self, default_value: int = 0,) -> None:
+    def __init__(
+        self,
+        default_value: int = 0,
+    ) -> None:
         """
         A slot that stores a value in a CObject.
 
@@ -98,12 +96,12 @@ class IntegerSlot:
 
         """
 
-    def __get__(self, instance : Object, owner: type) -> int:
+    def __get__(self, instance: Object, owner: type) -> int:
         """
         Gets the value of a slot.
         """
 
-    def __set__(self, instance : Object, value: int) -> None:
+    def __set__(self, instance: Object, value: int) -> None:
         """
         Sets the value of a slot.
         """

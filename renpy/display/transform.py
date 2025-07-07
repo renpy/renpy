@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 from typing import Any
 
@@ -37,6 +37,7 @@ from renpy.display.core import absolute
 
 # A List of fields that have displayables in them.
 displayable_uniform_fields = set()
+
 
 class Camera(renpy.object.Object):
     """
@@ -66,6 +67,7 @@ def get_null():
 
     return null
 
+
 def first_not_none(*args):
     """
     Returns the first argument that is not None, or the last argument if
@@ -90,6 +92,7 @@ def limit_angle(n):
         n += 360
 
     return n
+
 
 class TextureUniform(object):
     """
@@ -118,7 +121,6 @@ class TextureUniform(object):
 
 
 class TransformState(renpy.object.Object):
-
     last_angle = 0.0
     last_relative_anchorangle = 0.0
     last_absolute_anchorangle = 0.0
@@ -136,7 +138,6 @@ class TransformState(renpy.object.Object):
     texture_uniforms = None
 
     def __init__(self):
-
         # Most fields on this object are set by add_property, at the bottom
         # of this file.
 
@@ -154,7 +155,6 @@ class TransformState(renpy.object.Object):
         self.last_angle = None
 
     def take_state(self, ts):
-
         d = self.__dict__
 
         for k in all_properties:
@@ -172,7 +172,7 @@ class TransformState(renpy.object.Object):
         self.available_height = ts.available_height
 
         # Set the position and anchor to None, so inheritance works.
-        if self.perspective is None: # type: ignore
+        if self.perspective is None:  # type: ignore
             self.xpos = None
             self.ypos = None
             self.xanchor = None
@@ -180,13 +180,9 @@ class TransformState(renpy.object.Object):
 
         # Take the computed position properties, not the
         # raw ones.
-        (self.inherited_xpos,
-         self.inherited_ypos,
-         self.inherited_xanchor,
-         self.inherited_yanchor,
-         _,
-         _,
-         _) = ts.get_placement()
+        (self.inherited_xpos, self.inherited_ypos, self.inherited_xanchor, self.inherited_yanchor, _, _, _) = (
+            ts.get_placement()
+        )
 
         self.xoffset = ts.xoffset
         self.yoffset = ts.yoffset
@@ -195,8 +191,7 @@ class TransformState(renpy.object.Object):
     # Returns a dict, with p -> (old, new) where p is a property that
     # has changed between this object and the new object.
     def diff(self, newts):
-
-        rv = { }
+        rv = {}
 
         for prop in diff2_properties:
             new = getattr(newts, prop)
@@ -206,7 +201,6 @@ class TransformState(renpy.object.Object):
                 rv[prop] = (old, new)
 
         for prop in diff4_properties:
-
             new = getattr(newts, prop)
             old = getattr(self, prop)
 
@@ -252,8 +246,7 @@ class TransformState(renpy.object.Object):
             self.yanchor = old_yanchor
 
     def get_placement(self, cxoffset=0, cyoffset=0):
-
-        if self.perspective is not None: # type: ignore
+        if self.perspective is not None:  # type: ignore
             return (
                 0,
                 0,
@@ -262,7 +255,7 @@ class TransformState(renpy.object.Object):
                 cxoffset,
                 cyoffset,
                 False,
-                )
+            )
 
         return (
             first_not_none(self.xpos, self.inherited_xpos),
@@ -272,7 +265,7 @@ class TransformState(renpy.object.Object):
             self.xoffset + cxoffset,
             self.yoffset + cyoffset,
             self.subpixel,
-            )
+        )
 
     # These update various properties.
     def get_xalign(self):
@@ -342,7 +335,7 @@ class TransformState(renpy.object.Object):
         if angle < 0:
             angle += 360
 
-        if radius < .001 and self.last_angle is not None:
+        if radius < 0.001 and self.last_angle is not None:
             angle = self.last_angle
         elif self.radius_sign < 0:
             angle = limit_angle(angle + 180)
@@ -366,7 +359,6 @@ class TransformState(renpy.object.Object):
         self.set_pos_from_angle_and_radius(angle, radius)
 
     def set_radius(self, radius):
-
         radius = self.scale(radius, min(self.available_width, self.available_height))
         vector = self.get_pos_polar_vector()
         angle = self.get_angle(vector)
@@ -381,7 +373,6 @@ class TransformState(renpy.object.Object):
         self.set_pos_from_angle_and_radius(angle, radius)
 
     def set_pos_from_angle_and_radius(self, angle, radius):
-
         xaround = self.scale(self.xaround, self.available_width)
         yaround = self.scale(self.yaround, self.available_height)
 
@@ -410,8 +401,8 @@ class TransformState(renpy.object.Object):
         xanchor = position.from_any(first_not_none(self.xanchor, self.inherited_xanchor, 0))
         yanchor = position.from_any(first_not_none(self.yanchor, self.inherited_yanchor, 0))
 
-        absolute_vector = (xanchor.absolute-xanchoraround.absolute, yanchor.absolute-yanchoraround.absolute)
-        relative_vector = (xanchor.relative-xanchoraround.relative, yanchor.relative-yanchoraround.relative)
+        absolute_vector = (xanchor.absolute - xanchoraround.absolute, yanchor.absolute - yanchoraround.absolute)
+        relative_vector = (xanchor.relative - xanchoraround.relative, yanchor.relative - yanchoraround.relative)
 
         return absolute_vector, relative_vector
 
@@ -422,25 +413,26 @@ class TransformState(renpy.object.Object):
         The absolute part of the angle is the angle between the absolute parts of the vectors,
         and the relative part, of the relative parts.
         """
-        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = polar_vectors or self.get_anchor_polar_vector()
+        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = (
+            polar_vectors or self.get_anchor_polar_vector()
+        )
 
         absolute_radius = math.hypot(absolute_vector_x, absolute_vector_y)
         relative_radius = math.hypot(relative_vector_x, relative_vector_y)
         absolute_angle = math.atan2(absolute_vector_x, -absolute_vector_y) / math.pi * 180
         relative_angle = math.atan2(relative_vector_x, -relative_vector_y) / math.pi * 180
 
-
         if absolute_angle < 0:
             absolute_angle += 360
         if relative_angle < 0:
             relative_angle += 360
 
-        if (absolute_radius < .001) and (self.last_absolute_anchorangle is not None):
+        if (absolute_radius < 0.001) and (self.last_absolute_anchorangle is not None):
             absolute_angle = self.last_absolute_anchorangle
         elif self.absolute_anchor_radius_sign < 0:
             absolute_angle = absolute_angle + 180
 
-        if (relative_radius < .001) and (self.last_relative_anchorangle is not None):
+        if (relative_radius < 0.001) and (self.last_relative_anchorangle is not None):
             relative_angle = self.last_relative_anchorangle
         elif self.relative_anchor_radius_sign < 0:
             relative_angle = relative_angle + 180
@@ -455,11 +447,13 @@ class TransformState(renpy.object.Object):
         Returns the distance between (xanchoraround, yanchoraround) and (xanchor, yanchor),
         as a position object.
         """
-        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = polar_vectors or self.get_anchor_polar_vector()
+        (absolute_vector_x, absolute_vector_y), (relative_vector_x, relative_vector_y) = (
+            polar_vectors or self.get_anchor_polar_vector()
+        )
 
         return position(
-            absolute=math.hypot(absolute_vector_x, absolute_vector_y) * self.absolute_anchor_radius_sign, # type: ignore
-            relative=math.hypot(relative_vector_x, relative_vector_y) * self.relative_anchor_radius_sign, # type: ignore
+            absolute=math.hypot(absolute_vector_x, absolute_vector_y) * self.absolute_anchor_radius_sign,  # type: ignore
+            relative=math.hypot(relative_vector_x, relative_vector_y) * self.relative_anchor_radius_sign,  # type: ignore
         )
 
     def set_anchorangle(self, angle):
@@ -532,13 +526,13 @@ class TransformState(renpy.object.Object):
             anchorradius.relative,
         )
 
-    def set_anchor_from_anchorangle_and_anchorradius(self,
-            absolute_anchorangle,
-            relative_anchorangle,
-            absolute_anchorradius,
-            relative_anchorradius,
-        ):
-
+    def set_anchor_from_anchorangle_and_anchorradius(
+        self,
+        absolute_anchorangle,
+        relative_anchorangle,
+        absolute_anchorradius,
+        relative_anchorradius,
+    ):
         xanchoraround = position.from_any(self.xanchoraround)
         yanchoraround = position.from_any(self.yanchoraround)
 
@@ -655,6 +649,7 @@ def simplify_position(v):
     else:
         return v
 
+
 class Proxy(object):
     """
     This class proxies a field from the transform to its state.
@@ -664,7 +659,6 @@ class Proxy(object):
         self.name = name
 
     def __get__(self, instance, owner):
-
         return simplify_position(getattr(instance.state, self.name))
 
     def __set__(self, instance, value):
@@ -680,20 +674,19 @@ class Transform(Container):
     transform_event_responder = True
 
     def after_upgrade(self, version):
-
         if version < 1:
             self.active = False
             self.state = TransformState()
 
-            self.state.xpos = self.xpos or 0 # type: ignore
-            self.state.ypos = self.ypos or 0 # type: ignore
-            self.state.xanchor = self.xanchor or 0 # type: ignore
-            self.state.yanchor = self.yanchor or 0 # type: ignore
-            self.state.alpha = self.alpha # type: ignore
-            self.state.rotate = self.rotate # type: ignore
-            self.state.zoom = self.zoom # type: ignore
-            self.state.xzoom = self.xzoom # type: ignore
-            self.state.yzoom = self.yzoom # type: ignore
+            self.state.xpos = self.xpos or 0  # type: ignore
+            self.state.ypos = self.ypos or 0  # type: ignore
+            self.state.xanchor = self.xanchor or 0  # type: ignore
+            self.state.yanchor = self.yanchor or 0  # type: ignore
+            self.state.alpha = self.alpha  # type: ignore
+            self.state.rotate = self.rotate  # type: ignore
+            self.state.zoom = self.zoom  # type: ignore
+            self.state.xzoom = self.xzoom  # type: ignore
+            self.state.yzoom = self.yzoom  # type: ignore
 
             self.hide_request = False
             self.hide_response = True
@@ -708,27 +701,27 @@ class Transform(Container):
             self.child_st_base = 0
 
         if version < 4:
-            self.style_arg = 'transform'
+            self.style_arg = "transform"
 
         if version < 5:
             self.replaced_request = False
             self.replaced_response = True
 
     DEFAULT_ARGUMENTS = {
-        "selected_activate" : { },
-        "selected_hover" : { },
-        "selected_idle" : { },
-        "selected_insensitive" : { },
-        "activate" : { },
-        "hover" : { },
-        "idle" : { },
-        "insensitive" : { },
-        "" : { },
-        }
+        "selected_activate": {},
+        "selected_hover": {},
+        "selected_idle": {},
+        "selected_insensitive": {},
+        "activate": {},
+        "hover": {},
+        "idle": {},
+        "insensitive": {},
+        "": {},
+    }
 
     # Compatibility with old versions of the class.
     active = False
-    children = [ ]
+    children = []
     arguments = DEFAULT_ARGUMENTS
 
     # Default before we set this.
@@ -736,17 +729,18 @@ class Transform(Container):
 
     original_child = None
 
-    def __init__(self,
-                 child=None,
-                 function=None,
-                 style="default",
-                 focus=None,
-                 default=False,
-                 _args=None,
-                 *,
-                 reset=False,
-                 **kwargs):
-
+    def __init__(
+        self,
+        child=None,
+        function=None,
+        style="default",
+        focus=None,
+        default=False,
+        _args=None,
+        *,
+        reset=False,
+        **kwargs,
+    ):
         properties = {k: kwargs.pop(k) for k in style_properties if k in kwargs}
 
         if reset:
@@ -766,25 +760,21 @@ class Transform(Container):
         self.original_child: renpy.display.displayable.Displayable = child
         "The child that was passed to the constructor."
 
-        self.state = TransformState() # type: Any
+        self.state = TransformState()  # type: Any
 
         if kwargs:
-
             # A map from prefix -> (prop -> value)
-            self.arguments = { }
+            self.arguments = {}
 
             # Fill self.arguments with a
             for k, v in kwargs.items():
-
                 prefix = ""
                 prop = k
 
                 while True:
-
                     if prop in renpy.atl.PROPERTIES and (not prefix or prefix in Transform.DEFAULT_ARGUMENTS):
-
                         if prefix not in self.arguments:
-                            self.arguments[prefix] = { }
+                            self.arguments[prefix] = {}
 
                         self.arguments[prefix][prop] = v
                         break
@@ -807,8 +797,8 @@ class Transform(Container):
             self.arguments = None
 
         # This is the matrix transforming our coordinates into child coordinates.
-        self.forward = None # type: renpy.display.matrix.Matrix|None
-        self.reverse = None # type: renpy.display.matrix.Matrix|None
+        self.forward = None  # type: renpy.display.matrix.Matrix|None
+        self.reverse = None  # type: renpy.display.matrix.Matrix|None
 
         # Have we called the function at least once?
         self.active = False
@@ -837,19 +827,18 @@ class Transform(Container):
 
     def visit(self):
         if self.child is None:
-            return [ ]
+            return []
         else:
-            return [ self.child ]
+            return [self.child]
 
     # The default function chooses entries from self.arguments that match
     # the style prefix, and applies them to the state.
     def default_function(self, state, st, at):
-
         if self.arguments is None:
             return None
 
         prefix = self.style.prefix.strip("_")
-        prefixes = [ ]
+        prefixes = []
 
         while prefix:
             prefixes.insert(0, prefix)
@@ -929,7 +918,7 @@ class Transform(Container):
         """
 
         d = self()
-        d.kwargs = { }
+        d.kwargs = {}
         d.take_state(self)
         d.take_execution_state(self)
         d.st = self.st
@@ -946,7 +935,6 @@ class Transform(Container):
         return rv
 
     def _handles_event(self, event):
-
         if (event == "replaced") and (not self.active):
             return True
 
@@ -959,7 +947,6 @@ class Transform(Container):
         return False
 
     def adjust_for_fps(self, st, at):
-
         # The timebases, adjusted for fps.
         fst = st
         fat = at
@@ -974,7 +961,6 @@ class Transform(Container):
         return fst, fat
 
     def _hide(self, st, at, kind):
-
         if kind == "cancel":
             if self.state.show_cancels_hide:
                 return None
@@ -1006,7 +992,7 @@ class Transform(Container):
         d.at_offset = self.at_offset
 
         if isinstance(self, ATLTransform):
-            d.atl_st_offset = self.atl_st_offset if (self.atl_st_offset is not None) else self.st_offset # type: ignore
+            d.atl_st_offset = self.atl_st_offset if (self.atl_st_offset is not None) else self.st_offset  # type: ignore
 
         if kind == "hide":
             d.hide_request = True
@@ -1037,7 +1023,6 @@ class Transform(Container):
         return None
 
     def set_child(self, child, duplicate=True):
-
         child = renpy.easy.displayable(child)
 
         if duplicate and child._duplicatable:
@@ -1047,7 +1032,7 @@ class Transform(Container):
                 child._unique()
 
         self.child = child
-        self.children = [ child ]
+        self.children = [child]
 
         self.child_st_base = self.st
 
@@ -1086,7 +1071,6 @@ class Transform(Container):
             self.state.last_events = self.state.events
 
     def render(self, width, height, st, at):
-
         # Prevent time from ticking backwards, as can happen if we replace a
         # transform but keep its state.
         if st + self.st_offset <= self.st:
@@ -1106,11 +1090,10 @@ class Transform(Container):
         return RenderTransform(self).render(width, height, st, at)
 
     def event(self, ev, x, y, st):
-
         if self.hide_request:
             return None
 
-        if not self.state.events: # type: ignore
+        if not self.state.events:  # type: ignore
             return
 
         children = self.children
@@ -1120,7 +1103,6 @@ class Transform(Container):
             return None
 
         for i in range(len(self.children) - 1, -1, -1):
-
             d = children[i]
             xo, yo = offsets[i]
 
@@ -1137,19 +1119,13 @@ class Transform(Container):
         return None
 
     def __call__(self, child=None, take_state=True, _args=None):
-
         if child is None:
             child = self.child
 
-        if getattr(child, '_duplicatable', False):
+        if getattr(child, "_duplicatable", False):
             child = child._duplicate(_args)
 
-        rv = Transform(
-            child=child,
-            function=self.function,
-            style=self.style_arg,
-            _args=_args,
-            **self.kwargs)
+        rv = Transform(child=child, function=self.function, style=self.style_arg, _args=_args, **self.kwargs)
 
         rv.take_state(self)
 
@@ -1157,14 +1133,12 @@ class Transform(Container):
 
     def _unique(self):
         if self._duplicatable:
-
             if self.child is not None:
                 self.child._unique()
 
             self._duplicatable = False
 
     def get_placement(self):
-
         if not self.active:
             self.update_state()
 
@@ -1175,7 +1149,6 @@ class Transform(Container):
             state = self.state
 
             if renpy.config.transform_uses_child_position:
-
                 if cxpos is not None:
                     state.inherited_xpos = cxpos
                 if cxanchor is not None:
@@ -1197,10 +1170,8 @@ class Transform(Container):
         rv = self.state.get_placement(cxoffset, cyoffset)
 
         if self.state.transform_anchor:
-
             xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = rv
             if (xanchor is not None) and (yanchor is not None):
-
                 cw, ch = self.child_size
                 rw, rh = self.render_size
 
@@ -1208,7 +1179,6 @@ class Transform(Container):
                 yanchor = absolute.compute_raw(yanchor, ch)
 
                 if self.reverse is not None:
-
                     xanchor -= cw / 2.0
                     yanchor -= ch / 2.0
 
@@ -1235,7 +1205,6 @@ class Transform(Container):
     _duplicatable = True
 
     def _duplicate(self, args):
-
         if args and args.args:
             args.extraneous()
 
@@ -1248,7 +1217,6 @@ class Transform(Container):
         return rv
 
     def _in_current_store(self):
-
         if self.child is None:
             return self
 
@@ -1270,7 +1238,6 @@ class Transform(Container):
 
 
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
-
     def __init__(self, atl, child=None, context={}, parameters=None, **properties):
         renpy.atl.ATLTransformBase.__init__(self, atl, context, parameters)
         Transform.__init__(self, child=child, **properties)
@@ -1300,13 +1267,12 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
                 renpy.game.interface.timeout(0)
             self.state.last_events = self.state.events
 
-
     def _repr_info(self):
         return repr((self.child, self.atl.loc))
 
 
 # Names of style properties that should be sent to the parent.
-style_properties = {'alt'}
+style_properties = {"alt"}
 
 # Names of transform properties, and if the property should be handled with
 # diff2 or diff4.
@@ -1319,7 +1285,7 @@ uniforms = set()
 gl_properties = set()
 
 
-def add_property(name, atl=any_object, default=None, diff=2): # type: (str, Any, Any, int|None) -> None
+def add_property(name, atl=any_object, default=None, diff=2):  # type: (str, Any, Any, int|None) -> None
     """
     Adds an ATL property.
     """
@@ -1439,26 +1405,25 @@ add_gl_property("gl_texture_wrap_tex2")
 add_gl_property("gl_texture_wrap_tex3")
 
 ALIASES = {
-    "alignaround" : (float, float),
-    "align" : (position_or_none, position_or_none), # documented as (float, float)
-    "anchor" : (position_or_none, position_or_none),
-    "anchorangle" : DualAngle.from_any,
-    "anchoraround" : (position_or_none, position_or_none),
-    "anchorradius" : position_or_none,
-    "angle" : float,
-    "around" : (position_or_none, position_or_none),
-    "offset" : (absolute, absolute),
-    "pos" : (position_or_none, position_or_none),
-    "radius" : position_or_none,
-    "size" : (int, int),
-    "xalign" : position_or_none, # documented as float,
-    "xcenter" : position_or_none,
-    "xycenter" : (position_or_none, position_or_none),
-    "xysize" : (position_or_none, position_or_none),
-    "yalign" : position_or_none, # documented as float
-    "ycenter" : position_or_none,
-
-    "_reset" : bool,
+    "alignaround": (float, float),
+    "align": (position_or_none, position_or_none),  # documented as (float, float)
+    "anchor": (position_or_none, position_or_none),
+    "anchorangle": DualAngle.from_any,
+    "anchoraround": (position_or_none, position_or_none),
+    "anchorradius": position_or_none,
+    "angle": float,
+    "around": (position_or_none, position_or_none),
+    "offset": (absolute, absolute),
+    "pos": (position_or_none, position_or_none),
+    "radius": position_or_none,
+    "size": (int, int),
+    "xalign": position_or_none,  # documented as float,
+    "xcenter": position_or_none,
+    "xycenter": (position_or_none, position_or_none),
+    "xysize": (position_or_none, position_or_none),
+    "yalign": position_or_none,  # documented as float
+    "ycenter": position_or_none,
+    "_reset": bool,
 }
 
 renpy.atl.PROPERTIES.update(ALIASES)

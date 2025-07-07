@@ -19,8 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import re
@@ -38,6 +38,7 @@ from urllib.parse import urlencode as _urlencode
 
 try:
     import urllib.request
+
     proxies = urllib.request.getproxies()
 except Exception as e:
     proxies = {}
@@ -55,7 +56,7 @@ class FetchError(Exception):
 
         self.original_exception = exception
 
-        m = re.search(r'\d\d\d', message)
+        m = re.search(r"\d\d\d", message)
         if m is not None:
             self.status_code = int(m.group(0))
         else:
@@ -72,6 +73,7 @@ def fetch_pause():
 
     if renpy.game.context().interacting:
         import pygame_sdl2
+
         pygame_sdl2.event.pump()
         renpy.audio.audio.periodic()
 
@@ -96,7 +98,7 @@ def fetch_requests(url, method, data, content_type, timeout, headers):
     import requests
 
     # Because we don't have nonlocal yet.
-    resp = [ None ]
+    resp = [None]
 
     if data is not None:
         headers = dict(headers)
@@ -106,9 +108,9 @@ def fetch_requests(url, method, data, content_type, timeout, headers):
         try:
             r = requests.request(method, url, data=data, timeout=timeout, headers=headers, proxies=proxies)
             r.raise_for_status()
-            resp[0] = r.content # type: ignore
+            resp[0] = r.content  # type: ignore
         except Exception as e:
-            resp[0] = FetchError(str(e), e) # type: ignore
+            resp[0] = FetchError(str(e), e)  # type: ignore
 
     t = threading.Thread(target=make_request)
     t.start()
@@ -138,16 +140,21 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
         if data is not None:
             f.write(data)
 
-    url = url.replace('"' , '\\"')
+    url = url.replace('"', '\\"')
 
     import json
+
     headers = json.dumps(headers)
     headers = headers.replace("\\", "\\\\").replace('"', '\\"')
 
     if method == "GET" or method == "HEAD":
-        command = """fetchFile("{method}", "{url}", null, "{fn}", null, "{headers}")""".format( method=method, url=url, fn=fn, content_type=content_type, headers=headers)
+        command = """fetchFile("{method}", "{url}", null, "{fn}", null, "{headers}")""".format(
+            method=method, url=url, fn=fn, content_type=content_type, headers=headers
+        )
     else:
-        command = """fetchFile("{method}", "{url}", "{fn}", "{fn}", "{content_type}", "{headers}")""".format( method=method, url=url, fn=fn, content_type=content_type, headers=headers)
+        command = """fetchFile("{method}", "{url}", "{fn}", "{fn}", "{content_type}", "{headers}")""".format(
+            method=method, url=url, fn=fn, content_type=content_type, headers=headers
+        )
 
     fetch_id = emscripten.run_script_int(command)
 
@@ -165,7 +172,6 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
             break
 
     try:
-
         if status == "OK":
             with open(fn, "rb") as f:
                 return f.read()
@@ -177,8 +183,9 @@ def fetch_emscripten(url, method, data, content_type, timeout, headers):
         os.unlink(fn)
 
 
-
-def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes", params=None, headers={}):
+def fetch(
+    url, method=None, data=None, json=None, content_type=None, timeout=5, result="bytes", params=None, headers={}
+):
     """
     :doc: fetch
 
@@ -239,11 +246,10 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
 
     import json as _json
 
-
     if data is not None and json is not None:
         raise FetchError("data and json arguments are mutually exclusive.")
 
-    if result not in ( "bytes", "text", "json" ):
+    if result not in ("bytes", "text", "json"):
         raise FetchError("result must be one of 'bytes', 'text', or 'json'.")
 
     if params is not None:
@@ -270,13 +276,13 @@ def fetch(url, method=None, data=None, json=None, content_type=None, timeout=5, 
         content = fetch_requests(url, method, data, content_type, timeout, headers=headers)
 
     if isinstance(content, Exception):
-        raise content # type: ignore
+        raise content  # type: ignore
 
     try:
         if result == "bytes":
             return content
         elif result == "text":
-            return content.decode("utf-8") # type: ignore
+            return content.decode("utf-8")  # type: ignore
         elif result == "json":
             return _json.loads(content)
     except Exception as e:

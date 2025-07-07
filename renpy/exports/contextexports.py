@@ -19,8 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
@@ -116,8 +116,6 @@ def context_dynamic(*variables):
     """
 
     renpy.game.context().make_dynamic(variables, context=True)
-
-
 
 
 # New context stuff.
@@ -333,7 +331,7 @@ def clear_line_log():
     Clears the line log.
     """
 
-    renpy.game.context().line_log = [ ]
+    renpy.game.context().line_log = []
 
 
 def get_skipping():
@@ -393,7 +391,6 @@ def add_to_all_stores(name, value):
         raise Exception("add_to_all_stores is only allowed in init code.")
 
     for _k, ns in renpy.python.store_dicts.items():
-
         if name not in ns:
             ns[name] = value
 
@@ -420,6 +417,7 @@ def get_game_runtime():
     """
 
     return renpy.game.contexts[0].runtime
+
 
 def get_statement_name():
     """

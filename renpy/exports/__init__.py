@@ -22,8 +22,8 @@
 # This file contains functions that are exported to the script namespace as
 # the renpy namespace. (So renpy.say, renpy.pause, and so on.)
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import gc
 import io
@@ -353,7 +353,7 @@ from renpy.exports.debugexports import (
     pop_error_handler,
     push_error_handler,
     warp_to_line,
-    write_log
+    write_log,
 )
 
 from renpy.exports.displayexports import (
@@ -431,14 +431,7 @@ from renpy.exports.displayexports import (
     transition,
 )
 
-from renpy.exports.fetchexports import (
-    fetch_emscripten,
-    fetch_pause,
-    fetch_requests,
-    fetch,
-    FetchError,
-    proxies
-)
+from renpy.exports.fetchexports import fetch_emscripten, fetch_pause, fetch_requests, fetch, FetchError, proxies
 
 from renpy.exports.inputexports import (
     get_editable_input_value,
@@ -600,7 +593,7 @@ else:
 
 
 @renpy_pure
-def version(tuple=False): # @ReservedAssignment
+def version(tuple=False):  # @ReservedAssignment
     """
     :doc: renpy_version
 
@@ -626,6 +619,7 @@ license = ""
 
 try:
     import platform as _platform
+
     platform = "-".join(_platform.platform().split("-")[:2])
 except Exception:
     if renpy.android:

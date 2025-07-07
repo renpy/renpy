@@ -24,8 +24,7 @@
 # including how to navigate around the game.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import inspect
@@ -37,12 +36,12 @@ import renpy
 
 # A list of (name, filename, linenumber) tuples, for various types of
 # name. These are added to as the definitions occur.
-definitions = [ ]
-transforms = [ ]
-screens = [ ]
+definitions = []
+transforms = []
+screens = []
 
 # Does a file exist? We cache the result here.
-file_exists_cache = { }
+file_exists_cache = {}
 
 
 def file_exists(fn):
@@ -78,17 +77,17 @@ def dump(error):
 
     completed_dump = True
 
-    if not args.json_dump: # type: ignore
+    if not args.json_dump:  # type: ignore
         return
 
-    def name_filter(name, filename): # @ReservedAssignment
+    def name_filter(name, filename):  # @ReservedAssignment
         """
         Returns true if the name is included by the name_filter, or false if it is excluded.
         """
 
         filename = filename.replace("\\", "/")
 
-        if name.startswith("_") and not args.json_dump_private: # type: ignore
+        if name.startswith("_") and not args.json_dump_private:  # type: ignore
             if name.startswith("__") and name.endswith("__"):
                 pass
             else:
@@ -98,31 +97,31 @@ def dump(error):
             return False
 
         if filename.startswith("common/") or filename.startswith("renpy/common/"):
-            return args.json_dump_common # type: ignore
+            return args.json_dump_common  # type: ignore
 
         if not filename.startswith("game/"):
             return False
 
         return True
 
-    result = { }
+    result = {}
 
     # Error flag.
     result["error"] = error
 
     # The size.
-    result["size"] = [ renpy.config.screen_width, renpy.config.screen_height ]
+    result["size"] = [renpy.config.screen_width, renpy.config.screen_height]
 
     # The name and version.
     result["name"] = renpy.config.name
     result["version"] = renpy.config.version
 
     # The JSON object we return.
-    location = { }
+    location = {}
     result["location"] = location
 
     # Labels.
-    label = location["label"] = { }
+    label = location["label"] = {}
 
     for name, n in renpy.game.script.namemap.items():
         filename = n.filename
@@ -134,34 +133,34 @@ def dump(error):
         if not name_filter(name, filename):
             continue
 
-        label[name] = [ filename, line ]
+        label[name] = [filename, line]
 
     # Definitions.
-    define = location["define"] = { }
+    define = location["define"] = {}
 
     for name, filename, line in definitions:
         if not name_filter(name, filename):
             continue
 
-        define[name] = [ filename, line ]
+        define[name] = [filename, line]
 
     # Screens.
-    screen = location["screen"] = { }
+    screen = location["screen"] = {}
 
     for name, filename, line in screens:
         if not name_filter(name, filename):
             continue
 
-        screen[name] = [ filename, line ]
+        screen[name] = [filename, line]
 
     # Transforms.
-    transform = location["transform"] = { }
+    transform = location["transform"] = {}
 
     for name, filename, line in transforms:
         if not name_filter(name, filename):
             continue
 
-        transform[name] = [ filename, line ]
+        transform[name] = [filename, line]
 
     # Code.
 
@@ -182,10 +181,9 @@ def dump(error):
 
         return None, None
 
-    code = location["callable"] = { }
+    code = location["callable"] = {}
 
     for modname, mod in sys.modules.copy().items():
-
         if mod is None:
             continue
 
@@ -197,7 +195,6 @@ def dump(error):
             continue
 
         for name, o in mod.__dict__.items():
-
             if inspect.isfunction(o):
                 try:
                     if inspect.getmodule(o) != mod:
@@ -211,14 +208,12 @@ def dump(error):
                     if not name_filter(name, filename):
                         continue
 
-                    code[prefix + name] = [ filename, line ]
+                    code[prefix + name] = [filename, line]
                 except Exception:
                     continue
 
             if inspect.isclass(o):
-
                 for methname, method in o.__dict__.items():
-
                     try:
                         if inspect.getmodule(method) != mod:
                             continue
@@ -234,17 +229,17 @@ def dump(error):
                         if not name_filter(methname, filename):
                             continue
 
-                        code[prefix + name + "." + methname] = [ filename, line ]
+                        code[prefix + name + "." + methname] = [filename, line]
                     except Exception:
                         continue
 
     # Add the build info from 00build.rpy, if it's available.
     try:
-        result["build"] = renpy.store.build.dump() # type: ignore
+        result["build"] = renpy.store.build.dump()  # type: ignore
     except Exception:
         pass
 
-    filename = renpy.exports.fsdecode(args.json_dump) # type: ignore
+    filename = renpy.exports.fsdecode(args.json_dump)  # type: ignore
 
     if filename != "-":
         new = filename + ".new"

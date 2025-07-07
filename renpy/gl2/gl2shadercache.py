@@ -27,7 +27,7 @@ import os
 import renpy
 
 # A map from shader part name to ShaderPart
-shader_part = { }
+shader_part = {}
 
 
 def register_shader(name, **kwargs):
@@ -75,10 +75,15 @@ class ShaderPart(object):
 
     """
 
-    def __init__(self, name, variables="", vertex_functions="", fragment_functions="", private_uniforms=False, **kwargs):
-
-        if not re.match(r'^[\w\.]+$', name):
-            raise Exception("The shader name {!r} contains an invalid character. Shader names are limited to ASCII alphanumeric characters, _, and .".format(name))
+    def __init__(
+        self, name, variables="", vertex_functions="", fragment_functions="", private_uniforms=False, **kwargs
+    ):
+        if not re.match(r"^[\w\.]+$", name):
+            raise Exception(
+                "The shader name {!r} contains an invalid character. Shader names are limited to ASCII alphanumeric characters, _, and .".format(
+                    name
+                )
+            )
 
         self.name = name
         shader_part[name] = self
@@ -87,25 +92,24 @@ class ShaderPart(object):
         self.fragment_functions = fragment_functions
 
         # A list of priority, text pairs for each section of the vertex and fragment shaders.
-        self.vertex_parts = [ ]
-        self.fragment_parts = [ ]
+        self.vertex_parts = []
+        self.fragment_parts = []
 
         # Sets of (storage, type, name) tuples, where storage is one of 'uniform', 'attribute', or 'varying',
         self.vertex_variables = set()
         self.fragment_variables = set()
 
         # A map from variable name to type.
-        self.variable_types = { }
+        self.variable_types = {}
 
         # A sets of variable names used in the vertex and fragments shader.
         vertex_used = set()
         fragment_used = set()
 
-        self.uniforms = [ ]
+        self.uniforms = []
 
         for k, v in kwargs.items():
-
-            shader, _, priority = k.partition('_')
+            shader, _, priority = k.partition("_")
 
             v = self.substitute_name(v)
 
@@ -129,13 +133,12 @@ class ShaderPart(object):
 
             parts.append((priority, name, v))
 
-            for m in re.finditer(r'\b\w+\b', v):
+            for m in re.finditer(r"\b\w+\b", v):
                 used.add(m.group(0))
 
         variables = self.substitute_name(variables)
 
         for l in variables.split("\n"):
-
             l = l.partition("//")[0]
             l = l.strip()
             if not l:
@@ -143,8 +146,12 @@ class ShaderPart(object):
 
             v = renpy.gl2.gl2shader.Variable(self.name, l)
 
-            if v.storage not in { "uniform", "attribute", "varying" }:
-                raise Exception("In shader {}: Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(self.name, l))
+            if v.storage not in {"uniform", "attribute", "varying"}:
+                raise Exception(
+                    "In shader {}: Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(
+                        self.name, l
+                    )
+                )
 
             if v.array:
                 self.variable_types[v.name] = v.type + "[]"
@@ -198,14 +205,14 @@ class ShaderPart(object):
         return "u_{}_OP_{}".format(m.group(1), m.group(2))
 
     def substitute_name(self, s):
-        rv = re.sub(r'\b[uavl]__\w+', self.expand_match, s)
-        rv = re.sub(r'\bu_(\w+)__(\w+)', self.expand_operation, rv)
+        rv = re.sub(r"\b[uavl]__\w+", self.expand_match, s)
+        rv = re.sub(r"\bu_(\w+)__(\w+)", self.expand_operation, rv)
         return rv
 
 
 # A map from a tuple giving the parts that comprise a shader, to the Shader
 # object. The same shader might appear multiple times, to optimize performance.
-cache = { }
+cache = {}
 
 
 def source(variables, parts, functions, fragment, gles):
@@ -217,7 +224,7 @@ def source(variables, parts, functions, fragment, gles):
         Should be set to true to generate the code for a fragment shader.
     """
 
-    rv = [ ]
+    rv = []
 
     if gles:
         rv.append("""\
@@ -257,7 +264,8 @@ def source(variables, parts, functions, fragment, gles):
     return "".join(rv)
 
 
-shader_part_filter_cache = { }
+shader_part_filter_cache = {}
+
 
 class ShaderCache(object):
     """
@@ -267,7 +275,6 @@ class ShaderCache(object):
     """
 
     def __init__(self, filename, gles):
-
         # The filename that we'll load the list of shaders from, and
         # persist it to.
         self.filename = filename
@@ -277,7 +284,7 @@ class ShaderCache(object):
 
         # A map from tuples of partnames to the shaders that have been
         # created.
-        self.cache = { }
+        self.cache = {}
 
         # A set of tuples of partnames corresponding to shaders that existed
         # in the past, but do not exist now.
@@ -332,15 +339,14 @@ class ShaderCache(object):
         # shaders.
 
         vertex_variables = set()
-        vertex_parts = [ ]
-        vertex_functions = [ ]
+        vertex_parts = []
+        vertex_functions = []
 
         fragment_variables = set()
-        fragment_parts = [ ]
-        fragment_functions = [ ]
+        fragment_parts = []
+        fragment_functions = []
 
         for i in sortedpartnames:
-
             p = shader_part.get(i, None)
 
             if p is None:
@@ -406,7 +412,7 @@ class ShaderCache(object):
                 shaders = set(self.cache.keys()) | self.missing
 
                 for i in shaders:
-                    f.write(u" ".join(i) + "\r\n")
+                    f.write(" ".join(i) + "\r\n")
 
             try:
                 os.unlink(fn)

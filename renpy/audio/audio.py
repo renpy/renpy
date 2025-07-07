@@ -25,10 +25,10 @@
 # at least pcm_ok, we have no sound whatsoever.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import time
-import pygame_sdl2 # @UnusedImport
+import pygame_sdl2  # @UnusedImport
 import os
 import re
 import threading
@@ -50,6 +50,7 @@ serial = 0
 # The number of channels passed to the last call of set_channel_count
 old_channel_count = 0
 
+
 def get_serial():
     """
     Gets a globally unique serial number for each music change.
@@ -62,6 +63,7 @@ def get_serial():
 
 AudioNotReady = renpy.object.Sentinel("AudioNotReady")
 
+
 def load(fn):
     """
     Returns a file-like object for the given filename.
@@ -70,19 +72,19 @@ def load(fn):
     try:
         rv = renpy.loader.load(fn, directory="audio")
     except renpy.webloader.DownloadNeeded as exception:
-        if exception.rtype == 'music':
-            renpy.webloader.enqueue(exception.relpath, 'music', None)
+        if exception.rtype == "music":
+            renpy.webloader.enqueue(exception.relpath, "music", None)
             return AudioNotReady  # Try again later
-        elif exception.rtype == 'voice':
-            renpy.webloader.enqueue(exception.relpath, 'voice', None)
+        elif exception.rtype == "voice":
+            renpy.webloader.enqueue(exception.relpath, "voice", None)
             return AudioNotReady  # Try again later
-        elif exception.rtype == 'video':
+        elif exception.rtype == "video":
             # Video files are downloaded by the browser, so return
             # the file name instead of a file-like object
-            return 'url:' + renpy.config.web_video_base + "/" + exception.relpath
+            return "url:" + renpy.config.web_video_base + "/" + exception.relpath
 
         # temporary 1s placeholder, will retry loading when looping:
-        rv = open(os.path.join(renpy.config.commondir, '_dl_silence.ogg'), 'rb') # type: ignore
+        rv = open(os.path.join(renpy.config.commondir, "_dl_silence.ogg"), "rb")  # type: ignore
     return rv
 
 
@@ -126,7 +128,7 @@ class AudioData(str):
         pass
 
     def __reduce__(self):
-        return(AudioData, (self.data, str(self)))
+        return (AudioData, (self.data, str(self)))
 
 
 class QueueEntry(object):
@@ -160,7 +162,6 @@ class MusicContext(renpy.revertable.RevertableObject):
     raw_audio_filter = None
 
     def __init__(self):
-
         super(MusicContext, self).__init__()
 
         # The time this channel was last ordered panned.
@@ -182,7 +183,7 @@ class MusicContext(renpy.revertable.RevertableObject):
         self.last_tight = False
 
         # What were the filenames we were ordered to loop last?
-        self.last_filenames = [ ]
+        self.last_filenames = []
 
         # The relative volume of the last files played.
         self.last_relative_volume = 1.0
@@ -200,7 +201,6 @@ class MusicContext(renpy.revertable.RevertableObject):
         # The audio filter that was given to set_audio_filter. (This is usually
         # wrapped int a Crossfade for use.)
         self.raw_audio_filter = None
-
 
     def copy(self):
         """
@@ -224,6 +224,7 @@ lock = threading.RLock()
 
 NotSet = renpy.object.Sentinel("NotSet")
 
+
 class Channel(object):
     """
     This stores information about the currently-playing music.
@@ -233,8 +234,19 @@ class Channel(object):
     audio_filter = None
     raw_audio_filter = None
 
-    def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie, framedrop, synchro_start):
-
+    def __init__(
+        self,
+        name,
+        default_loop,
+        stop_on_mute,
+        tight,
+        file_prefix,
+        file_suffix,
+        buffer_queue,
+        movie,
+        framedrop,
+        synchro_start,
+    ):
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
         self.name = name
@@ -257,11 +269,11 @@ class Channel(object):
         self.actual_volume = 1.0
 
         # The QueueEntries queued for playback on this channel.
-        self.queue = [ ]
+        self.queue = []
 
         # If true, we loop the music. This entails adding everything in this
         # variable to the end of the queue.
-        self.loop = [ ]
+        self.loop = []
 
         # Are we playing anything at all?
         self.playing = False
@@ -324,7 +336,7 @@ class Channel(object):
                 self.movie = renpy.audio.renpysound.NODROP_VIDEO
 
             if renpysound.is_webaudio:
-                renpysound.set_movie_channel(self.number, True) # type: ignore
+                renpysound.set_movie_channel(self.number, True)  # type: ignore
         else:
             self.movie = renpy.audio.renpysound.NO_VIDEO
 
@@ -375,7 +387,7 @@ class Channel(object):
         mcd[self.name] = ctx
         return ctx
 
-    def split_filename(self, filename : str | AudioData , looped : bool) -> tuple[str|AudioData, float, float, float]:
+    def split_filename(self, filename: str | AudioData, looped: bool) -> tuple[str | AudioData, float, float, float]:
         """
         Splits a filename into a filename, start time, and end time.
         """
@@ -407,7 +419,7 @@ class Channel(object):
 
         original_filename = filename
 
-        m = re.match(r'<(.*)>(.*)', filename)
+        m = re.match(r"<(.*)>(.*)", filename)
         if not m:
             return self.file_prefix + filename + self.file_suffix, 0, -1, 1.0
 
@@ -484,7 +496,9 @@ class Channel(object):
 
         # This should be set from something that checks to see if our
         # mixer is muted.
-        force_stop = self.context.force_stop or (renpy.game.preferences.mute.get(self.mixer, False) and self.stop_on_mute)
+        force_stop = self.context.force_stop or (
+            renpy.game.preferences.mute.get(self.mixer, False) and self.stop_on_mute
+        )
 
         if self.playing and force_stop:
             renpysound.stop(self.number)
@@ -492,9 +506,9 @@ class Channel(object):
 
         if force_stop:
             if self.loop:
-                self.queue = self.queue[-len(self.loop):]
+                self.queue = self.queue[-len(self.loop) :]
             else:
-                self.queue = [ ]
+                self.queue = []
             return
 
         topq = None
@@ -503,7 +517,6 @@ class Channel(object):
         # per call, to prevent memory leaks with really short sound
         # files. So this loop will only execute once, in practice.
         while True:
-
             if self._number is not None:
                 depth = renpysound.queue_depth(self.number)
             else:
@@ -568,15 +581,36 @@ class Channel(object):
                     renpysound.set_video(self.number, self.movie, loop=False)
 
                 if depth == 0:
-                    renpysound.play(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume * filename_volume, audio_filter=topq.audio_filter) # type:ignore
+                    renpysound.play(
+                        self.number,
+                        topf,
+                        topq.filename,
+                        synchro_start=self.synchro_start,
+                        fadein=topq.fadein,
+                        tight=topq.tight,
+                        start=start,
+                        end=end,
+                        relative_volume=topq.relative_volume * filename_volume,
+                        audio_filter=topq.audio_filter,
+                    )  # type:ignore
                 else:
-                    renpysound.queue(self.number, topf, topq.filename, synchro_start=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume * filename_volume, audio_filter=topq.audio_filter) # type:ignore
+                    renpysound.queue(
+                        self.number,
+                        topf,
+                        topq.filename,
+                        synchro_start=self.synchro_start,
+                        fadein=topq.fadein,
+                        tight=topq.tight,
+                        start=start,
+                        end=end,
+                        relative_volume=topq.relative_volume * filename_volume,
+                        audio_filter=topq.audio_filter,
+                    )  # type:ignore
 
                 self.playing = True
                 self.synchro_start = False
 
             except Exception:
-
                 # If playing failed, remove topq.filename from self.loop
                 # so we don't keep trying.
                 while topq.filename in self.loop:
@@ -602,12 +636,11 @@ class Channel(object):
                     self.queue.append(newq)
             # Try callback:
             elif self.callback:
-                self.callback() # E1102
+                self.callback()  # E1102
 
         want_pause = self.context.pause
 
         if self.paused != want_pause:
-
             if want_pause:
                 self.pause()
             else:
@@ -631,9 +664,8 @@ class Channel(object):
         """
 
         with lock:
-
-            self.queue = self.queue[:self.keep_queue]
-            self.loop = [ ]
+            self.queue = self.queue[: self.keep_queue]
+            self.loop = []
 
             if not pcm_ok:
                 return
@@ -653,19 +685,16 @@ class Channel(object):
         self.keep_queue = 0
 
         if pcm_ok:
-
             if self.pan_time != self.context.pan_time:
                 self.pan_time = self.context.pan_time
-                renpysound.set_pan(self.number,
-                                   self.context.pan,
-                                   0)
+                renpysound.set_pan(self.number, self.context.pan, 0)
 
             if self.secondary_volume_time != self.context.secondary_volume_time:
                 self.secondary_volume_time = self.context.secondary_volume_time
                 renpysound.set_secondary_volume(self.number, self.context.secondary_volume, 0)
 
         if not self.queue and self.callback:
-            self.callback() # E1102
+            self.callback()  # E1102
 
     def fadeout(self, secs):
         """
@@ -674,7 +703,6 @@ class Channel(object):
         """
 
         with lock:
-
             self.keep_queue = 0
             self.dequeue()
 
@@ -699,14 +727,12 @@ class Channel(object):
             renpysound.dequeue(self.number, True)
             renpysound.stop(self.number)
 
-
     def set_audio_filter(self, audio_filter, replace=False, duration=0.016):
         """
         Sets the audio filter being applied to this channel to `audio_filter`.
         """
 
         with lock:
-
             old_raw_audio_filter = self.context.raw_audio_filter
             self.context.raw_audio_filter = audio_filter
             self.raw_audio_filter = audio_filter
@@ -717,7 +743,8 @@ class Channel(object):
                 new_audio_filter = renpy.audio.filter.Crossfade(
                     old_raw_audio_filter or renpy.audio.filter.Null(),
                     audio_filter or renpy.audio.filter.Null(),
-                    duration)
+                    duration,
+                )
 
             self.context.audio_filter = new_audio_filter
 
@@ -729,21 +756,19 @@ class Channel(object):
             else:
                 renpysound.replace_audio_filter(self.number, new_audio_filter, 0)
 
-
-    def enqueue(self, filenames, loop=True, synchro_start=None, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
-
+    def enqueue(
+        self, filenames, loop=True, synchro_start=None, fadein=0, tight=None, loop_only=False, relative_volume=1.0
+    ):
         if synchro_start is None:
             synchro_start = self.default_synchro_start
 
         with lock:
-
             for filename in filenames:
                 if renpy.exports.is_seen_allowed():
                     filename, _, _, _ = self.split_filename(filename, False)
-                    renpy.game.persistent._seen_audio[str(filename)] = True # type: ignore
+                    renpy.game.persistent._seen_audio[str(filename)] = True  # type: ignore
 
             if not loop_only:
-
                 if tight is None:
                     tight = self.tight
 
@@ -762,20 +787,18 @@ class Channel(object):
             if loop:
                 self.loop = list(filenames)
             else:
-                self.loop = [ ]
+                self.loop = []
 
         with periodic_condition:
             periodic_condition.notify()
 
     def get_playing(self):
-
         if not pcm_ok:
             return None
 
         rv = None
 
         with lock:
-
             if self._number is not None:
                 rv = renpysound.playing_name(self.number)
 
@@ -791,7 +814,6 @@ class Channel(object):
         self.chan_volume = volume
 
     def get_pos(self):
-
         if not pcm_ok:
             return -1
 
@@ -801,7 +823,6 @@ class Channel(object):
         return renpysound.get_pos(self.number)
 
     def get_duration(self):
-
         if not pcm_ok:
             return 0.0
 
@@ -811,9 +832,7 @@ class Channel(object):
         return renpysound.get_duration(self.number)
 
     def set_pan(self, pan, delay):
-
         with lock:
-
             now = get_serial()
             self.context.pan_time = now
             self.context.pan = pan
@@ -823,9 +842,7 @@ class Channel(object):
                 renpysound.set_pan(self.number, self.context.pan, delay)
 
     def set_secondary_volume(self, volume, delay):
-
         with lock:
-
             now = get_serial()
             self.context.secondary_volume_time = now
             self.context.secondary_volume = volume
@@ -859,24 +876,26 @@ class Channel(object):
 
 
 # A list of channels we know about.
-all_channels = [ ]
+all_channels = []
 
 # A map from channel name to Channel object.
-channels = { }
+channels = {}
 
 
-def register_channel(name,
-                     mixer=None,
-                     loop=NotSet,
-                     stop_on_mute=True,
-                     tight=False,
-                     file_prefix="",
-                     file_suffix="",
-                     buffer_queue=True,
-                     movie=False,
-                     framedrop=True,
-                     force=False,
-                     synchro_start=None):
+def register_channel(
+    name,
+    mixer=None,
+    loop=NotSet,
+    stop_on_mute=True,
+    tight=False,
+    file_prefix="",
+    file_suffix="",
+    buffer_queue=True,
+    movie=False,
+    framedrop=True,
+    force=False,
+    synchro_start=None,
+):
     """
     :doc: audio
     :args: (name, mixer, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True, movie=False, framedrop=True)
@@ -951,7 +970,18 @@ def register_channel(name,
         all_channels.remove(channels[name])
         del channels[name]
 
-    c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie, framedrop=framedrop, synchro_start=synchro_start)
+    c = Channel(
+        name,
+        loop,
+        stop_on_mute,
+        tight,
+        file_prefix,
+        file_suffix,
+        buffer_queue,
+        movie=movie,
+        framedrop=framedrop,
+        synchro_start=synchro_start,
+    )
 
     c.mixer = mixer
 
@@ -968,14 +998,11 @@ def alias_channel(name, newname):
 
 
 def get_channel(name):
-
     rv = channels.get(name, None)
 
     if rv is None:
-
         # Do we want to auto-define a new channel?
         if name in renpy.config.auto_channels:
-
             i = 0
 
             while True:
@@ -993,7 +1020,6 @@ def get_channel(name):
 
         # One of the channels that was just defined.
         elif " " in name:
-
             base = name.split()[0]
             mixer, file_prefix, file_suffix = renpy.config.auto_channels[base]
 
@@ -1003,7 +1029,7 @@ def get_channel(name):
                 mixer=mixer,
                 file_prefix=file_prefix,
                 file_suffix=file_suffix,
-                )
+            )
 
             return channels[name]
 
@@ -1056,20 +1082,21 @@ def init():
         bufsize = 2048
         if renpy.emscripten:
             # Large buffer (and latency) as compromise to avoid sound jittering
-            bufsize = 8192 # works for me
+            bufsize = 8192  # works for me
             # bufsize = 16384  # jitter/silence right after starting a sound
 
         if renpy.config.sound_buffer_size is not None:
             bufsize = renpy.config.sound_buffer_size
 
-        if 'RENPY_SOUND_BUFSIZE' in os.environ:
-            bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
+        if "RENPY_SOUND_BUFSIZE" in os.environ:
+            bufsize = int(os.environ["RENPY_SOUND_BUFSIZE"])
 
         try:
-            renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono, renpy.config.linear_fades)
+            renpysound.init(
+                renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono, renpy.config.linear_fades
+            )
             pcm_ok = True
         except Exception:
-
             renpy.display.log.write("Audio and video init failed. Proceeding anyway.")
             renpy.display.log.exception()
 
@@ -1082,7 +1109,7 @@ def init():
                 pcm_ok = False
 
     # Find all of the mixers in the game.
-    mixers = [ ]
+    mixers = []
 
     for c in all_channels:
         if c.mixer not in mixers:
@@ -1095,7 +1122,6 @@ def init():
         renpy.game.preferences.mute.setdefault(m, False)
 
     with periodic_condition:
-
         periodic_thread_quit = False
 
         if not renpy.emscripten:
@@ -1104,6 +1130,7 @@ def init():
             periodic_thread.start()
         else:
             periodic_thread = None
+
 
 def fadeout_all():
     """
@@ -1117,8 +1144,7 @@ def fadeout_all():
     periodic()
 
 
-def quit(): # @ReservedAssignment
-
+def quit():  # @ReservedAssignment
     global periodic_thread_quit
 
     global pcm_ok
@@ -1126,7 +1152,6 @@ def quit(): # @ReservedAssignment
 
     if periodic_thread is not None:
         with periodic_condition:
-
             periodic_thread_quit = True
             periodic_condition.notify()
 
@@ -1140,8 +1165,8 @@ def quit(): # @ReservedAssignment
         c.fadeout(0)
         c.unpause()
 
-        c.queue = [ ]
-        c.loop = [ ]
+        c.queue = []
+        c.loop = []
         c.playing = False
         c.playing_midi = False
         c.synchro_start = False
@@ -1173,7 +1198,6 @@ def periodic_pass():
         return False
 
     try:
-
         if renpy.game.preferences.mono_audio:
             channel_count = 1
         else:
@@ -1184,7 +1208,7 @@ def periodic_pass():
             old_channel_count = channel_count
 
         # A list of emphasized channels.
-        emphasize_channels = [ ]
+        emphasize_channels = []
         emphasized = False
 
         for i in renpy.config.emphasize_audio_channels:
@@ -1234,14 +1258,13 @@ periodic_condition = threading.Condition()
 
 
 def periodic_thread_main():
-
     global periodic_exc
     global run_periodic
 
     while True:
         with periodic_condition:
             if not run_periodic:
-                periodic_condition.wait(.05)
+                periodic_condition.wait(0.05)
 
             if periodic_thread_quit:
                 return
@@ -1252,7 +1275,6 @@ def periodic_thread_main():
             run_periodic = False
 
         with lock:
-
             try:
                 periodic_pass()
             except Exception as e:
@@ -1268,7 +1290,6 @@ def periodic():
         return
 
     with periodic_condition:
-
         for c in all_channels:
             c.get_context()
 
@@ -1291,10 +1312,8 @@ def interact():
         return
 
     with lock:
-
         try:
             for c in all_channels:
-
                 c.interact()
 
                 ctx = c.context
@@ -1311,12 +1330,18 @@ def interact():
                     c.set_audio_filter(ctx.raw_audio_filter, True)
 
                 if not c.name in renpy.display.video.last_channel_movie:
-
                     if c.loop != filenames:
                         c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
 
                     if filenames:
-                        c.enqueue(filenames, loop=True, synchro_start=c.default_synchro_start, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)
+                        c.enqueue(
+                            filenames,
+                            loop=True,
+                            synchro_start=c.default_synchro_start,
+                            tight=tight,
+                            fadein=renpy.config.context_fadein_music,
+                            relative_volume=ctx.last_relative_volume,
+                        )
 
                 c.last_changed = ctx.last_changed
 
@@ -1325,6 +1350,7 @@ def interact():
                 raise
 
     periodic()
+
 
 def pump():
     """
@@ -1343,7 +1369,6 @@ def rollback():
     """
 
     with lock:
-
         for c in all_channels:
             if not c.loop:
                 c.fadeout(renpy.config.fadeout_audio)
@@ -1377,6 +1402,7 @@ def unpause_all():
 
     if pcm_ok:
         renpysound.global_pause(0)
+
 
 def sample_surfaces(rgb, rgba):
     if not renpysound:

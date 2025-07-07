@@ -20,12 +20,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import builtins
 
-import renpy # @UnusedImport
+import renpy  # @UnusedImport
 from renpy.python import py_compile
 
 # Import the Python AST module, instead of the Ren'Py ast module.
@@ -36,18 +36,56 @@ import zlib
 from renpy.compat.pickle import loads, dumps
 
 # The set of names that should be treated as constants.
-always_constants = { 'True', 'False', 'None' }
+always_constants = {"True", "False", "None"}
 
 # The set of names that should be treated as pure functions.
 pure_functions = {
     # Python 3 builtins.
-    'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytes', 'callable',
-    'chr', 'complex', 'dict', 'dir', 'divmod', 'enumerate', 'filter', 'float',
-    'format', 'frozenset', 'getattr', 'hasattr', 'hash', 'hex', 'int',
-    'isinstance', 'issubclass', 'len', 'list', 'map', 'max', 'min', 'oct',
-    'ord', 'pow', 'range', 'repr', 'reversed', 'round', 'set', 'slice', 'sorted',
-    'str', 'sum', 'tuple', 'type', 'zip',
-
+    "abs",
+    "all",
+    "any",
+    "ascii",
+    "bin",
+    "bool",
+    "bytes",
+    "callable",
+    "chr",
+    "complex",
+    "dict",
+    "dir",
+    "divmod",
+    "enumerate",
+    "filter",
+    "float",
+    "format",
+    "frozenset",
+    "getattr",
+    "hasattr",
+    "hash",
+    "hex",
+    "int",
+    "isinstance",
+    "issubclass",
+    "len",
+    "list",
+    "map",
+    "max",
+    "min",
+    "oct",
+    "ord",
+    "pow",
+    "range",
+    "repr",
+    "reversed",
+    "round",
+    "set",
+    "slice",
+    "sorted",
+    "str",
+    "sum",
+    "tuple",
+    "type",
+    "zip",
     # minstore.py
     "_",
     "_p",
@@ -56,32 +94,80 @@ pure_functions = {
     "__renpy__list__",
     "__renpy__dict__",
     "__renpy__set__",
-
     # defaultstore.py
-    "ImageReference", "Image", "Frame", "Solid", "LiveComposite", "LiveCrop",
-    "LiveTile", "Flatten", "Null", "Window", "Viewport", "DynamicDisplayable",
-    "ConditionSwitch", "ShowingSwitch", "Transform", "Animation", "Movie",
-    "Particles", "SnowBlossom", "Text", "ParameterizedText", "FontGroup",
-    "Drag", "Alpha", "AlphaMask", "Position", "Pan", "Move", "Motion", "Revolve", "Zoom",
-    "RotoZoom", "FactorZoom", "SizeZoom", "Fade", "Dissolve", "ImageDissolve",
-    "AlphaDissolve", "CropMove", "PushMove", "Pixellate", "OldMoveTransition",
-    "MoveTransition", "MoveFactory", "MoveIn", "MoveOut", "ZoomInOut",
-    "RevolveInOut", "MultipleTransition", "ComposeTransition", "Pause",
-    "SubTransition", "ADVSpeaker", "ADVCharacter", "Speaker", "Character",
-    "DynamicCharacter", "Fixed", "HBox", "VBox", "Grid", "AlphaBlend", "At",
-    "color", "Color",
-
+    "ImageReference",
+    "Image",
+    "Frame",
+    "Solid",
+    "LiveComposite",
+    "LiveCrop",
+    "LiveTile",
+    "Flatten",
+    "Null",
+    "Window",
+    "Viewport",
+    "DynamicDisplayable",
+    "ConditionSwitch",
+    "ShowingSwitch",
+    "Transform",
+    "Animation",
+    "Movie",
+    "Particles",
+    "SnowBlossom",
+    "Text",
+    "ParameterizedText",
+    "FontGroup",
+    "Drag",
+    "Alpha",
+    "AlphaMask",
+    "Position",
+    "Pan",
+    "Move",
+    "Motion",
+    "Revolve",
+    "Zoom",
+    "RotoZoom",
+    "FactorZoom",
+    "SizeZoom",
+    "Fade",
+    "Dissolve",
+    "ImageDissolve",
+    "AlphaDissolve",
+    "CropMove",
+    "PushMove",
+    "Pixellate",
+    "OldMoveTransition",
+    "MoveTransition",
+    "MoveFactory",
+    "MoveIn",
+    "MoveOut",
+    "ZoomInOut",
+    "RevolveInOut",
+    "MultipleTransition",
+    "ComposeTransition",
+    "Pause",
+    "SubTransition",
+    "ADVSpeaker",
+    "ADVCharacter",
+    "Speaker",
+    "Character",
+    "DynamicCharacter",
+    "Fixed",
+    "HBox",
+    "VBox",
+    "Grid",
+    "AlphaBlend",
+    "At",
+    "color",
+    "Color",
     # ui.py
-
     "ui.returns",
     "ui.jumps",
     "ui.jumpsoutofcontext",
     "ui.callsinnewcontext",
     "ui.invokesinnewcontext",
     "ui.gamemenus",
-
     # renpy.py
-
     "renpy.version_string",
     "renpy.version_only",
     "renpy.version_tuple",
@@ -89,7 +175,7 @@ pure_functions = {
     "renpy.license",
 }
 
-constants = { "config", "style" } | always_constants | pure_functions
+constants = {"config", "style"} | always_constants | pure_functions
 
 # A set of names that should not be treated as global constants.
 not_constants = set()
@@ -168,6 +254,7 @@ def pure(fn):
 
     return fn
 
+
 def import_from(from_module_name, in_module_name, *names):
     """
     This function is called after each `from from_module import name` statement,
@@ -179,10 +266,10 @@ def import_from(from_module_name, in_module_name, *names):
     """
     if from_module_name.startswith("store."):
         from_module_name = from_module_name[6:]
-    
+
     if in_module_name.startswith("store."):
         in_module_name = in_module_name[6:]
-    
+
     for name, asname in names:
         from_fullname = f"{from_module_name}.{name}"
 
@@ -207,6 +294,7 @@ def import_from(from_module_name, in_module_name, *names):
                     pure(imported_subname)
                 else:
                     const(imported_subname)
+
 
 class Control(object):
     """
@@ -247,7 +335,6 @@ NOT_CONST = 0
 
 
 class DeltaSet(object):
-
     def __init__(self, base, copy=None):
         """
         Represents a set that stores its contents as differences from a base
@@ -266,7 +353,6 @@ class DeltaSet(object):
         self.changed = False
 
     def add(self, v):
-
         if v in self.removed:
             self.removed.discard(v)
             self.changed = True
@@ -275,7 +361,6 @@ class DeltaSet(object):
             self.changed = True
 
     def discard(self, v):
-
         if v in self.added:
             self.added.discard(v)
             self.changed = True
@@ -290,7 +375,6 @@ class DeltaSet(object):
         return DeltaSet(self.base, self)
 
     def __iter__(self):
-
         for i in self.base:
             if i not in self.removed:
                 yield i
@@ -306,13 +390,12 @@ class Analysis(object):
     """
 
     def __init__(self, parent=None):
-
         # The parent context transcludes run in, or None if there is no parent
         # context.
         self.parent = parent
 
         # Analyses of children, such a screens we use.
-        self.children = { }
+        self.children = {}
 
         # The variables we consider to be not-constant.
         self.not_constant = DeltaSet(not_constants)
@@ -330,7 +413,7 @@ class Analysis(object):
         self.control = Control(True, False, False)
 
         # The stack of const_flow values.
-        self.control_stack = [ self.control ]
+        self.control_stack = [self.control]
 
     def get_child(self, identifier):
         if identifier in self.children:
@@ -343,7 +426,7 @@ class Analysis(object):
 
     def push_control(self, const=True, loop=False, imagemap=False):
         self.control = Control(self.control.const and const, loop, self.control.imagemap or imagemap)
-        self.control_stack.append(self.control) # type: ignore
+        self.control_stack.append(self.control)  # type: ignore
 
     def pop_control(self):
         rv = self.control_stack.pop()
@@ -385,11 +468,12 @@ class Analysis(object):
             if not i.at_fixed_point():
                 return False
 
-        if (self.not_constant.changed or
-                self.global_constant.changed or
-                self.local_constant.changed or
-                self.pure_functions.changed):
-
+        if (
+            self.not_constant.changed
+            or self.global_constant.changed
+            or self.local_constant.changed
+            or self.pure_functions.changed
+        ):
             self.not_constant.changed = False
             self.global_constant.changed = False
             self.local_constant.changed = False
@@ -419,7 +503,6 @@ class Analysis(object):
         self.pure_functions.discard(name)
         self.local_constant.discard(name)
         self.global_constant.discard(name)
-
 
     def _check_name(self, node):
         """
@@ -477,7 +560,6 @@ class Analysis(object):
 
         # PY3: see if there are new node types.
 
-
         if isinstance(node, ast.Constant):
             return GLOBAL_CONST
 
@@ -491,11 +573,10 @@ class Analysis(object):
             return min(
                 self._check_node(node.left),
                 self._check_node(node.right),
-                )
+            )
 
         elif isinstance(node, ast.UnaryOp):
             return self._check_node(node.operand)
-
 
         # ast.Lambda is NOT_CONST.
 
@@ -504,18 +585,13 @@ class Analysis(object):
                 self._check_node(node.test),
                 self._check_node(node.body),
                 self._check_node(node.orelse),
-                )
-
+            )
 
         elif isinstance(node, ast.Dict):
-            return min(
-                self._check_nodes(node.keys),
-                self._check_nodes(node.values)
-                )
+            return min(self._check_nodes(node.keys), self._check_nodes(node.values))
 
         elif isinstance(node, ast.Set):
             return self._check_nodes(node.elts)
-
 
         # ast.ListComp is NOT_CONST.
         # ast.SetComp is NOT_CONST.
@@ -531,7 +607,7 @@ class Analysis(object):
             return min(
                 self._check_node(node.left),
                 self._check_nodes(node.comparators),
-                )
+            )
 
         elif isinstance(node, ast.Call):
             const, name = self._check_name(node.func)
@@ -544,7 +620,6 @@ class Analysis(object):
                 self._check_nodes(node.args),
                 self._check_nodes(i.value for i in node.keywords),
             )
-
 
         elif isinstance(node, ast.FormattedValue):
             return min(
@@ -562,7 +637,7 @@ class Analysis(object):
             return min(
                 self._check_node(node.value),
                 self._check_node(node.slice),
-                )
+            )
 
         elif isinstance(node, ast.Starred):
             return self._check_node(node.value)
@@ -635,12 +710,10 @@ class PyAnalysis(ast.NodeVisitor):
     """
 
     def __init__(self, analysis):
-
         self.analysis = analysis
 
     # Expressions that assign names.
     def visit_Name(self, node):
-
         if isinstance(node.ctx, ast.AugStore):
             self.analysis.mark_not_constant(node.id)
 
@@ -651,14 +724,12 @@ class PyAnalysis(ast.NodeVisitor):
                 self.analysis.mark_not_constant(node.id)
 
     def visit_NamedExpr(self, node):
-
         const = self.analysis.is_constant(node.value)
         self.analysis.push_control(const, False)
 
         self.generic_visit(node)
 
         self.analysis.pop_control()
-
 
     # Statements that assign names or control constness.
     def visit_FunctionDef(self, node):
@@ -675,9 +746,7 @@ class PyAnalysis(ast.NodeVisitor):
     # Delete doesn't assign a name - so it would be something else making
     # the name non-const, not delete.
 
-
     def visit_Assign(self, node):
-
         const = self.analysis.is_constant(node.value)
         self.analysis.push_control(const, False)
 
@@ -686,7 +755,6 @@ class PyAnalysis(ast.NodeVisitor):
         self.analysis.pop_control()
 
     def visit_AugAssign(self, node):
-
         self.analysis.push_control(False, False)
 
         self.generic_visit(node)
@@ -694,7 +762,6 @@ class PyAnalysis(ast.NodeVisitor):
         self.analysis.pop_control()
 
     def visit_AnnAssign(self, node):
-
         const = self.analysis.is_constant(node.value)
         self.analysis.push_control(const, False)
 
@@ -702,14 +769,13 @@ class PyAnalysis(ast.NodeVisitor):
 
         self.analysis.pop_control()
 
-    def visit_For(self, node): # type: (ast.For|ast.AsyncFor) -> None
-
+    def visit_For(self, node):  # type: (ast.For|ast.AsyncFor) -> None
         const = self.analysis.is_constant(node.iter)
 
         self.analysis.push_control(const=const, loop=True)
         old_const = self.analysis.control.const
 
-        self.generic_visit(node) # All nodes in the loop depend on node.test.
+        self.generic_visit(node)  # All nodes in the loop depend on node.test.
 
         if self.analysis.control.const != old_const:
             self.generic_visit(node)
@@ -720,13 +786,12 @@ class PyAnalysis(ast.NodeVisitor):
         return self.visit_For(node)
 
     def visit_While(self, node):
-
         const = self.analysis.is_constant(node.test)
 
         self.analysis.push_control(const=const, loop=True)
         old_const = self.analysis.control.const
 
-        self.generic_visit(node) # All nodes in the loop depend on node.test.
+        self.generic_visit(node)  # All nodes in the loop depend on node.test.
 
         if self.analysis.control.const != old_const:
             self.generic_visit(node)
@@ -745,7 +810,6 @@ class PyAnalysis(ast.NodeVisitor):
     # defined as below.
 
     def visit_withitem(self, node):
-
         const = self.analysis.is_constant(node.context_expr)
         self.visit(node.context_expr)
 
@@ -773,7 +837,6 @@ class PyAnalysis(ast.NodeVisitor):
             self.analysis.mark_not_constant(node.name)
 
     def visit_Try(self, node):
-
         for i in node.handlers:
             if i.name:
                 self.analysis.mark_not_constant(i.name)
@@ -797,15 +860,14 @@ class PyAnalysis(ast.NodeVisitor):
         self.analysis.exit_loop()
 
 
-
 class CompilerCache(object):
     """
     Objects of this class are used to cache the compilation of Python code.
     """
 
     def __init__(self):
-        self.ast_eval_cache = { }
-        self.ast_exec_cache = { }
+        self.ast_eval_cache = {}
+        self.ast_exec_cache = {}
 
         # True if we've changed the caches.
         self.updated = False
@@ -830,7 +892,7 @@ class CompilerCache(object):
         rv = self.ast_eval_cache.get(key, None)
 
         if rv is None:
-            expr = py_compile(expr, 'eval', ast_node=True)
+            expr = py_compile(expr, "eval", ast_node=True)
 
             try:
                 ast.literal_eval(expr)
@@ -863,7 +925,7 @@ class CompilerCache(object):
         rv = self.ast_exec_cache.get(key, None)
 
         if rv is None:
-            rv = py_compile(code, 'exec', ast_node=True)
+            rv = py_compile(code, "exec", ast_node=True)
             self.ast_exec_cache[key] = rv
             self.updated = True
 
@@ -879,7 +941,7 @@ CACHE_FILENAME = "cache/py3analysis.rpyb"
 
 
 def load_cache():
-    if renpy.game.args.compile: # type: ignore
+    if renpy.game.args.compile:  # type: ignore
         return
 
     try:

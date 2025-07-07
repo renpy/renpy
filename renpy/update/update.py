@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import argparse
 import os
@@ -47,6 +47,7 @@ class UpdateError(Exception):
 
     pass
 
+
 class Plan(object):
     """
     This represents a plan for updating a single segment.
@@ -72,9 +73,11 @@ class Plan(object):
         # The hash.
         self.hash = hash
 
-class Update(object):
 
-    def __init__(self, url, newlists, targetdir, oldlists, progress_callback=None, logfile=None, aggressive_removal=False):
+class Update(object):
+    def __init__(
+        self, url, newlists, targetdir, oldlists, progress_callback=None, logfile=None, aggressive_removal=False
+    ):
         """
         `url`
             The url that's used as a base to download pack files from.
@@ -106,11 +109,11 @@ class Update(object):
         self.oldlists = oldlists
         self.newlists = newlists
 
-        self.old_directories = [ i for j in self.oldlists for i in j.directories ]
-        self.new_directories = [ i for j in self.newlists for i in j.directories ]
-        self.new_files = [ i for j in self.newlists for i in j.files ]
-        self.old_files = [ i for j in self.oldlists for i in j.files ]
-        self.block_files = [ i for j in self.newlists for i in j.blocks ]
+        self.old_directories = [i for j in self.oldlists for i in j.directories]
+        self.new_directories = [i for j in self.newlists for i in j.directories]
+        self.new_files = [i for j in self.newlists for i in j.files]
+        self.old_files = [i for j in self.oldlists for i in j.files]
+        self.block_files = [i for j in self.newlists for i in j.blocks]
 
         # The total number of bytes that will be used on disk before and after
         # the update.
@@ -127,7 +130,7 @@ class Update(object):
         self.write_done = 0
 
         # A list of plan objects.
-        self.plan = [ ]
+        self.plan = []
 
         # A cache for the destination filename and file pointer.
         self.destination_filename = None
@@ -140,7 +143,7 @@ class Update(object):
         self.progress_callback = progress_callback
 
         # The set of files to remove.
-        self.removals = set() # type: set[str]
+        self.removals = set()  # type: set[str]
 
         # The various directories.
         self.updatedir = os.path.join(self.targetdir, "update")
@@ -183,7 +186,6 @@ class Update(object):
 
         self.make_directories()
         self.execute_plan()
-
 
         if self.destination_fp is not None:
             self.destination_fp.close()
@@ -247,7 +249,7 @@ class Update(object):
         """
 
         directories = list(self.new_directories)
-        directories.sort(key=lambda i : i.name)
+        directories.sort(key=lambda i: i.name)
 
         for d in directories:
             if not os.path.exists(os.path.join(self.targetdir, d.name)):
@@ -263,14 +265,13 @@ class Update(object):
         root = self.targetdir
 
         for dn, dirs, files in os.walk(root):
-
             for fn in files:
                 fn = os.path.join(dn, fn)
 
                 if not fn.endswith(".new.rpu"):
                     continue
 
-                oldfn = fn[:-len(".new.rpu")] + ".old.rpu"
+                oldfn = fn[: -len(".new.rpu")] + ".old.rpu"
 
                 if os.path.exists(oldfn):
                     os.unlink(oldfn)
@@ -304,7 +305,7 @@ class Update(object):
         total = 0
         done = 0
 
-        existing = [ ]
+        existing = []
 
         for i in self.old_files:
             i.add_data_filename(self.targetdir)
@@ -327,7 +328,6 @@ class Update(object):
 
         self.old_disk_total = done
 
-
     def prepare_new_files(self):
         """
         Prepares the new files.
@@ -347,9 +347,9 @@ class Update(object):
         to the file in self.target_files.
         """
 
-        old_by_name = { i.name : i for i in self.old_files }
+        old_by_name = {i.name: i for i in self.old_files}
 
-        new_files = [ ]
+        new_files = []
 
         self.log("Removing identical files:")
 
@@ -378,20 +378,19 @@ class Update(object):
         """
 
         # A map from segment hash to (block, file, segment) tuples.
-        segment_locations = { }
+        segment_locations = {}
 
-        for f in sorted(self.block_files, key=lambda i : i.mtime):
+        for f in sorted(self.block_files, key=lambda i: i.mtime):
             for s in f.segments:
                 segment_locations[s.hash] = (True, f, s)
 
-        for f in sorted(self.old_files, key=lambda i : i.mtime):
+        for f in sorted(self.old_files, key=lambda i: i.mtime):
             for s in f.segments:
                 segment_locations[s.hash] = (False, f, s)
 
-        plan = [ ]
+        plan = []
 
         for target_file in self.new_files:
-
             for target_segment in target_file.segments:
                 block, source_file, source_segment = segment_locations.get(target_segment.hash, (False, None, None))
 
@@ -399,19 +398,21 @@ class Update(object):
                     self.log("Segment %s was not found.", target_segment.hash)
                     raise Exception("Segment %s was not found in index.")
 
-                plan.append(Plan(
-                    block,
-                    source_file.data_filename or source_file.name,
-                    source_segment.offset,
-                    source_segment.size,
-                    source_segment.compressed,
-                    target_file.data_filename,
-                    target_segment.offset,
-                    target_segment.size,
-                    target_segment.hash,
-                    ))
+                plan.append(
+                    Plan(
+                        block,
+                        source_file.data_filename or source_file.name,
+                        source_segment.offset,
+                        source_segment.size,
+                        source_segment.compressed,
+                        target_file.data_filename,
+                        target_segment.offset,
+                        target_segment.size,
+                        target_segment.hash,
+                    )
+                )
 
-        plan.sort(key=lambda p : (p.block, p.old_filename, p.old_offset, p.old_size))
+        plan.sort(key=lambda p: (p.block, p.old_filename, p.old_offset, p.old_size))
 
         self.log("Created a plan with %d entries.", len(plan))
 
@@ -431,13 +432,11 @@ class Update(object):
             self.write_total += p.new_size
 
             if p.block:
-
                 key = (p.old_filename, p.old_offset, p.old_size)
 
                 if key not in download_set:
                     download_set.add(key)
                     self.download_total += p.old_size
-
 
         # Make sure we can't divide by zero.
         self.download_total = max(self.download_total, 1)
@@ -448,8 +447,8 @@ class Update(object):
         Find the set of files that exist in old but not in new.
         """
 
-        old = { i.data_filename for i in self.old_files }
-        new = { i.data_filename for i in self.new_files }
+        old = {i.data_filename for i in self.old_files}
+        new = {i.data_filename for i in self.new_files}
 
         self.removals = old - new
 
@@ -477,7 +476,6 @@ class Update(object):
         self.download_patch_progress()
 
     def download_patch_progress(self):
-
         done = 0.5 * self.download_done / self.download_total
         done += 0.5 * self.write_done / self.write_total
 
@@ -490,7 +488,7 @@ class Update(object):
         Downloads the portions of the block file that are needed.
         """
 
-        ranges = { (i.old_offset, i.old_size) for i in plan }
+        ranges = {(i.old_offset, i.old_size) for i in plan}
         ranges = list(ranges)
 
         url = self.url + "/" + filename
@@ -520,13 +518,20 @@ class Update(object):
         # From here on, source_filename must point to a complete file on disk.
 
         with open(old_filename, "rb") as f:
-
             hash = None
-            data = b''
+            data = b""
 
             for p in plan:
-
-                self.log("%s (%d, %d)\n  -> %s (%d, %d) %s", p.old_filename, p.old_offset, p.old_size, p.new_filename, p.new_offset, p.new_size, "compressed" if p.compressed else "")
+                self.log(
+                    "%s (%d, %d)\n  -> %s (%d, %d) %s",
+                    p.old_filename,
+                    p.old_offset,
+                    p.old_size,
+                    p.new_filename,
+                    p.new_offset,
+                    p.new_size,
+                    "compressed" if p.compressed else "",
+                )
 
                 if hash != p.hash:
                     f.seek(p.old_offset)
@@ -539,7 +544,9 @@ class Update(object):
 
                     if hash != p.hash:
                         self.log("Hash mismatch on %s offset %d size %d.", p.old_filename, p.old_offset, p.old_size)
-                        raise UpdateError("Hash mismatch on %s offset %d size %d." % (p.old_filename, p.old_offset, p.old_size))
+                        raise UpdateError(
+                            "Hash mismatch on %s offset %d size %d." % (p.old_filename, p.old_offset, p.old_size)
+                        )
 
                 self.write_destination(p.new_filename, p.new_offset, data)
 
@@ -556,7 +563,7 @@ class Update(object):
         This executes the full plan, one file at a time.
         """
 
-        queue = [ ]
+        queue = []
         old_key = (False, None)
 
         for p in self.plan:
@@ -566,7 +573,7 @@ class Update(object):
                 if queue:
                     self.execute_file_plan(queue)
 
-                queue = [ ]
+                queue = []
 
                 old_key = key
 
@@ -640,7 +647,8 @@ def main():
     resp = requests.get(args.url + "/game.files.rpu")
     sourcelist = common.FileList.decode(resp.content)
 
-    Update(args.url, [ sourcelist ], args.targetdir, [ targetlist ])
+    Update(args.url, [sourcelist], args.targetdir, [targetlist])
+
 
 if __name__ == "__main__":
     main()

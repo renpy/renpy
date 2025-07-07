@@ -62,13 +62,11 @@ def safe_rename(old, new):
     try:
         os.rename(old, new)
     except Exception:
-
         # If the rename failed, try again.
         try:
             os.unlink(new)
             os.rename(old, new)
         except Exception:
-
             # If it fails a second time, give up.
             try:
                 os.unlink(old)
@@ -134,7 +132,7 @@ class SaveRecord(object):
         self.first_filename = filename
 
 
-def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True, extra_json=None):
+def save(slotname, extra_info="", mutate_flag=False, include_screenshot=True, extra_json=None):
     """
     :doc: loadsave
     :args: (filename, extra_info='', *, extra_json=None)
@@ -205,12 +203,12 @@ def save(slotname, extra_info='', mutate_flag=False, include_screenshot=True, ex
         screenshot = None
 
     json = {
-        "_save_name" : extra_info,
-        "_renpy_version" : list(renpy.version_tuple),
-        "_version" : renpy.config.version,
-        "_game_runtime" : renpy.exports.get_game_runtime(),
-        "_ctime" : time.time(),
-        }
+        "_save_name": extra_info,
+        "_renpy_version": list(renpy.version_tuple),
+        "_version": renpy.config.version,
+        "_game_runtime": renpy.exports.get_game_runtime(),
+        "_ctime": time.time(),
+    }
 
     for i in renpy.config.save_json_callbacks:
         i(json)
@@ -240,8 +238,8 @@ autosave_counter = 0
 # True if a background autosave has finished.
 did_autosave = False
 
-def autosave_thread_function(take_screenshot):
 
+def autosave_thread_function(take_screenshot):
     global autosave_counter
     global did_autosave
 
@@ -251,9 +249,7 @@ def autosave_thread_function(take_screenshot):
         prefix = "auto-"
 
     try:
-
         with renpy.savelocation.SyncfsLock():
-
             if renpy.config.auto_save_extra_info:
                 extra_info = renpy.config.auto_save_extra_info()
             else:
@@ -353,7 +349,6 @@ def force_autosave(take_screenshot=False, block=False):
         return
 
     if block:
-
         if renpy.config.auto_save_extra_info:
             extra_info = renpy.config.auto_save_extra_info()
         else:
@@ -382,13 +377,13 @@ def force_autosave(take_screenshot=False, block=False):
     else:
         autosave_thread_function(take_screenshot)
 
+
 ################################################################################
 # Loading and Slot Manipulation
 ################################################################################
 
 
 def scan_saved_game(slotname):
-
     c = get_cache(slotname)
 
     mtime = c.get_mtime()
@@ -400,7 +395,7 @@ def scan_saved_game(slotname):
     if json is None:
         return None
 
-    extra_info = json.get("_save_name", "") # type: ignore
+    extra_info = json.get("_save_name", "")  # type: ignore
 
     screenshot = c.get_screenshot()
 
@@ -410,47 +405,47 @@ def scan_saved_game(slotname):
     return extra_info, screenshot, mtime
 
 
-def list_saved_games(regexp=r'.', fast=False):
+def list_saved_games(regexp=r".", fast=False):
     """
-    :doc: loadsave
+     :doc: loadsave
 
-    Lists the save games. For each save game, returns a tuple containing:
+     Lists the save games. For each save game, returns a tuple containing:
 
-    * The filename of the save.
-    * The extra_info that was passed in.
-    * A displayable that, when displayed, shows the screenshot that was
-      used when saving the game.
-    * The time the game was stayed at, in seconds since the UNIX epoch.
+     * The filename of the save.
+     * The extra_info that was passed in.
+     * A displayable that, when displayed, shows the screenshot that was
+       used when saving the game.
+     * The time the game was stayed at, in seconds since the UNIX epoch.
 
-    `regexp`
-        A regular expression to filter save slot names. If ``None``, all slots are included.
+     `regexp`
+         A regular expression to filter save slot names. If ``None``, all slots are included.
 
-    `fast`
-        If fast is true, only a list with matching filenames is returned instead of the list of tuples, making it equivalent to :func:`list_slots`
+     `fast`
+         If fast is true, only a list with matching filenames is returned instead of the list of tuples, making it equivalent to :func:`list_slots`
 
-    Unless ``fast=True``, returns a list of tuples, each containing:
-    - The slot name (e.g., ``"1-1"``).
-    - ``extra_info``, the ``_save_name`` field from the save file’s metadata, set by the ``extra_info`` argument of :func:`renpy.save`.
-    - ``time``, the modification time of the save file, in seconds since the epoch (equivalent to ``_ctime`` in :func:`renpy.slot_json` or :func:`FileJson`).
-    - ``screenshot``, a displayable (or ``None``) for the save’s screenshot, accessible via :func:`FileScreenshot`.
+     Unless ``fast=True``, returns a list of tuples, each containing:
+     - The slot name (e.g., ``"1-1"``).
+     - ``extra_info``, the ``_save_name`` field from the save file’s metadata, set by the ``extra_info`` argument of :func:`renpy.save`.
+     - ``time``, the modification time of the save file, in seconds since the epoch (equivalent to ``_ctime`` in :func:`renpy.slot_json` or :func:`FileJson`).
+     - ``screenshot``, a displayable (or ``None``) for the save’s screenshot, accessible via :func:`FileScreenshot`.
 
-    To access other metadata fields (e.g., ``_renpy_version``, ``_version``, ``_game_runtime``, custom fields), use :func:`renpy.slot_json` or, for built-in fields only, :func:`FileJson`.
+     To access other metadata fields (e.g., ``_renpy_version``, ``_version``, ``_game_runtime``, custom fields), use :func:`renpy.slot_json` or, for built-in fields only, :func:`FileJson`.
 
-    Example::
+     Example::
 
-       screen save_list():
-           vbox:
-               for name, extra_info, time, screenshot in renpy.list_saved_games(fast=False):
-                   textbutton "[name]: [extra_info]" action FileLoad(name)
+        screen save_list():
+            vbox:
+                for name, extra_info, time, screenshot in renpy.list_saved_games(fast=False):
+                    textbutton "[name]: [extra_info]" action FileLoad(name)
 
-    Ren'Py save slots follow naming conventions: manual saves use the format ``page-slot`` (e.g., ``1-1``, ``2-3``), autosaves use ``auto-slot`` (e.g., ``auto-1``), and quicksaves use ``quick-slot`` (e.g., ``quick-1``). The ``regexp`` parameter can filter these slots using Python regular expressions.
+     Ren'Py save slots follow naming conventions: manual saves use the format ``page-slot`` (e.g., ``1-1``, ``2-3``), autosaves use ``auto-slot`` (e.g., ``auto-1``), and quicksaves use ``quick-slot`` (e.g., ``quick-1``). The ``regexp`` parameter can filter these slots using Python regular expressions.
 
-   Useful Regular Expressions:
+    Useful Regular Expressions:
 
-   - ``r"^(\\d+|auto|quick)-\\d+$"``: Matches all manual (e.g., ``1-1``), auto (e.g., ``auto-1``), and quick (e.g., ``quick-1``) saves. Intentionally listing the types you need avoids encountering built-in save types like ``_reload-1``
-   - ``r"^\\d+-\\d+$"``: Matches manual saves (e.g., ``1-1``, ``2-3``).
-   - ``r"^auto-\\d+$"``: Matches autosaves (e.g., ``auto-1``, ``auto-2``).
-   - ``r"^quick-\\d+$"``: Matches quicksaves (e.g., ``quick-1``, ``quick-2``).
+    - ``r"^(\\d+|auto|quick)-\\d+$"``: Matches all manual (e.g., ``1-1``), auto (e.g., ``auto-1``), and quick (e.g., ``quick-1``) saves. Intentionally listing the types you need avoids encountering built-in save types like ``_reload-1``
+    - ``r"^\\d+-\\d+$"``: Matches manual saves (e.g., ``1-1``, ``2-3``).
+    - ``r"^auto-\\d+$"``: Matches autosaves (e.g., ``auto-1``, ``auto-2``).
+    - ``r"^quick-\\d+$"``: Matches quicksaves (e.g., ``quick-1``, ``quick-2``).
 
     """
 
@@ -458,23 +453,22 @@ def list_saved_games(regexp=r'.', fast=False):
     slots = location.list()
 
     if regexp is not None:
-        slots = [ i for i in slots if re.match(regexp, i) ]
+        slots = [i for i in slots if re.match(regexp, i)]
 
     slots.sort()
 
     if fast:
         return slots
 
-    rv = [ ]
+    rv = []
 
     for s in slots:
-
         c = get_cache(s)
 
         if c is not None:
             json = c.get_json()
             if json is not None:
-                extra_info = json.get("_save_name", "") # type: ignore
+                extra_info = json.get("_save_name", "")  # type: ignore
             else:
                 extra_info = ""
 
@@ -501,7 +495,7 @@ def list_slots(regexp=None):
     slots = location.list()
 
     if regexp is not None:
-        slots = [ i for i in slots if re.match(regexp, i) ]
+        slots = [i for i in slots if re.match(regexp, i)]
 
     slots.sort()
 
@@ -513,7 +507,7 @@ def list_slots(regexp=None):
 accessed_slots = set()
 
 # A cache for newest slot info.
-newest_slot_cache = { }
+newest_slot_cache = {}
 
 
 def newest_slot(regexp=None):
@@ -530,14 +524,12 @@ def newest_slot(regexp=None):
 
     rv = newest_slot_cache.get(regexp, unknown)
     if rv is unknown:
-
         max_mtime = 0
         rv = None
 
         slots = location.list()
 
         for i in slots:
-
             if (regexp is not None) and (not re.match(regexp, i)):
                 continue
 
@@ -545,7 +537,7 @@ def newest_slot(regexp=None):
             if mtime is None:
                 continue
 
-            if mtime >= max_mtime: # type: ignore
+            if mtime >= max_mtime:  # type: ignore
                 rv = i
                 max_mtime = mtime
 
@@ -635,13 +627,14 @@ def load(filename):
     try:
         json = slot_json(filename)
     except Exception as e:
-        json = { }
+        json = {}
 
     renpy.session["traceback_load"] = "_traceback" in json
 
     roots, log = loads(log_data)
 
     log.unfreeze(roots, label="_after_load")
+
 
 def get_save_data(filename):
     """
@@ -658,7 +651,8 @@ def get_save_data(filename):
 
     roots, log = loads(log_data)
 
-    return { k[6:]: v for k, v in roots.items() if k.startswith("store.") }
+    return {k[6:]: v for k, v in roots.items() if k.startswith("store.")}
+
 
 def unlink_save(filename):
     """
@@ -711,6 +705,7 @@ def cycle_saves(name, count):
     for i in range(count - 1, 0, -1):
         rename_save(name + str(i), name + str(i + 1))
 
+
 ################################################################################
 # Cache
 ################################################################################
@@ -722,9 +717,9 @@ unknown = renpy.object.Sentinel("unknown")
 
 def wrap_json(d):
     if isinstance(d, list):
-        return [ wrap_json(i) for i in d ]
+        return [wrap_json(i) for i in d]
     if isinstance(d, dict):
-        return renpy.revertable.RevertableDict({ k : wrap_json(v) for k, v in d.items() })
+        return renpy.revertable.RevertableDict({k: wrap_json(v) for k, v in d.items()})
     else:
         return d
 
@@ -749,7 +744,6 @@ class Cache(object):
         self.screenshot = unknown
 
     def get_mtime(self):
-
         rv = self.mtime
 
         if rv is unknown:
@@ -758,7 +752,6 @@ class Cache(object):
         return rv
 
     def get_json(self):
-
         rv = self.json
 
         if rv is unknown:
@@ -767,7 +760,6 @@ class Cache(object):
         return wrap_json(rv)
 
     def get_screenshot(self):
-
         rv = self.screenshot
 
         if rv is unknown:
@@ -787,11 +779,10 @@ class Cache(object):
 
 # A map from slotname to cache object. This is used to cache savegame scan
 # data until the slot changes.
-cache = { }
+cache = {}
 
 
 def get_cache(slotname):
-
     rv = cache.get(slotname, None)
 
     if rv is None:

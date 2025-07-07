@@ -24,7 +24,7 @@
 # game state to some time in the past.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import __future__
 
@@ -43,22 +43,23 @@ FUTURE_FLAGS = __future__.division.compiler_flag | __future__.with_statement.com
 # Monkeypatch copy_reg to work around a change in the class that RevertableSet
 # is based on.
 
+
 def _reconstructor(cls, base, state):
     if (cls is RevertableSet) and (base is object):
         base = set
-        state = [ ]
+        state = []
 
     if base is object:
         obj = object.__new__(cls)
     else:
-        obj = base.__new__(cls, state) # type: ignore
+        obj = base.__new__(cls, state)  # type: ignore
         if base.__init__ != object.__init__:
             base.__init__(obj, state)
 
     return obj
 
 
-copyreg._reconstructor = _reconstructor # type: ignore
+copyreg._reconstructor = _reconstructor  # type: ignore
 
 
 # This is set to True whenever a mutation occurs. The save code uses
@@ -67,10 +68,8 @@ mutate_flag = True
 
 
 def mutator(method):
-
     @functools.wraps(method)
     def do_mutation(self, *args, **kwargs):
-
         global mutate_flag
 
         mutated = renpy.game.log.mutated
@@ -96,7 +95,6 @@ class CompressedList(object):
     """
 
     def __init__(self, old, new):
-
         # Pick out a pivot element near the center of the list.
         new_center = (len(new) - 1) // 2
         new_pivot = new[new_center]
@@ -105,7 +103,6 @@ class CompressedList(object):
         old_half = (len(old) - 1) // 2
 
         for i in range(0, old_half + 1):
-
             if old[old_half - i] is new_pivot:
                 old_center = old_half - i
                 break
@@ -118,7 +115,7 @@ class CompressedList(object):
             self.pre = old
             self.start = 0
             self.end = 0
-            self.post = [ ]
+            self.post = []
 
             return
 
@@ -147,18 +144,13 @@ class CompressedList(object):
         self.post = list.__getitem__(old, slice(old_end, len_old))
 
     def decompress(self, new):
-        return self.pre + new[self.start:self.end] + self.post
+        return self.pre + new[self.start : self.end] + self.post
 
     def __repr__(self):
-        return "<CompressedList {} [{}:{}] {}>".format(
-            self.pre,
-            self.start,
-            self.end,
-            self.post)
+        return "<CompressedList {} [{}:{}] {}>".format(self.pre, self.start, self.end, self.post)
 
 
 class RevertableList(list):
-
     def __init__(self, *args):
         log = renpy.game.log
 
@@ -179,20 +171,19 @@ class RevertableList(list):
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
 
-    def wrapper(method): # type: ignore
-
+    def wrapper(method):  # type: ignore
         @functools.wraps(method)
         def newmethod(*args, **kwargs):
-            l = method(*args, **kwargs) # type: ignore
+            l = method(*args, **kwargs)  # type: ignore
             if l is NotImplemented:
                 return l
             return RevertableList(l)
 
         return newmethod
 
-    __add__ = wrapper(list.__add__) # type: ignore
-    __mul__ = wrapper(list.__mul__) # type: ignore
-    __rmul__ = wrapper(list.__rmul__) # type: ignore
+    __add__ = wrapper(list.__add__)  # type: ignore
+    __mul__ = wrapper(list.__mul__)  # type: ignore
+    __rmul__ = wrapper(list.__rmul__)  # type: ignore
 
     del wrapper
 
@@ -257,7 +248,6 @@ def revertable_sorted(*args, **kwargs):
 
 
 class RevertableDict(dict):
-
     def __init__(self, *args, **kwargs):
         log = renpy.game.log
 
@@ -279,7 +269,7 @@ class RevertableDict(dict):
     iteritems = dict.items
 
     def has_key(self, key):
-        return (key in self)
+        return key in self
 
     # https://peps.python.org/pep-0584 methods
     def __or__(self, other):
@@ -346,9 +336,7 @@ class RevertableDefaultDict(RevertableDict):
         return rv
 
 
-
 class RevertableSet(set):
-
     def __setstate__(self, state):
         if isinstance(state, tuple):
             self.update(state[0].keys())
@@ -356,7 +344,7 @@ class RevertableSet(set):
             self.update(state)
 
     def __getstate__(self):
-        rv = ({ i : True for i in self},)
+        rv = ({i: True for i in self},)
         return rv
 
     # Required to ensure that getstate and setstate are called.
@@ -386,11 +374,10 @@ class RevertableSet(set):
     union_update = mutator(set.update)
     update = mutator(set.update)
 
-    def wrapper(method): # type: ignore
-
+    def wrapper(method):  # type: ignore
         @functools.wraps(method)
         def newmethod(*args, **kwargs):
-            rv = method(*args, **kwargs) # type: ignore
+            rv = method(*args, **kwargs)  # type: ignore
             if isinstance(rv, set):
                 return RevertableSet(rv)
             else:
@@ -398,15 +385,15 @@ class RevertableSet(set):
 
         return newmethod
 
-    __and__ = wrapper(set.__and__) # type: ignore
-    __sub__ = wrapper(set.__sub__) # type: ignore
-    __xor__ = wrapper(set.__xor__) # type: ignore
-    __or__ = wrapper(set.__or__) # type: ignore
-    copy = wrapper(set.copy) # type: ignore
-    difference = wrapper(set.difference) # type: ignore
-    intersection = wrapper(set.intersection) # type: ignore
-    symmetric_difference = wrapper(set.symmetric_difference) # type: ignore
-    union = wrapper(set.union) # type: ignore
+    __and__ = wrapper(set.__and__)  # type: ignore
+    __sub__ = wrapper(set.__sub__)  # type: ignore
+    __xor__ = wrapper(set.__xor__)  # type: ignore
+    __or__ = wrapper(set.__or__)  # type: ignore
+    copy = wrapper(set.copy)  # type: ignore
+    difference = wrapper(set.difference)  # type: ignore
+    intersection = wrapper(set.intersection)  # type: ignore
+    symmetric_difference = wrapper(set.symmetric_difference)  # type: ignore
+    union = wrapper(set.union)  # type: ignore
 
     del wrapper
 
@@ -444,8 +431,10 @@ class RevertableObject(object):
 
     def __init_subclass__(cls):
         if renpy.config.developer and "__slots__" in cls.__dict__:
-            raise TypeError("Classes with __slots__ do not support rollback. "
-                            "To create a class with slots, inherit from python_object instead.")
+            raise TypeError(
+                "Classes with __slots__ do not support rollback. "
+                "To create a class with slots, inherit from python_object instead."
+            )
 
         super().__init_subclass__()
 
@@ -482,10 +471,9 @@ class MultiRevertable(object):
     """
 
     def _rollback_types(self):
-        rv = [ ]
+        rv = []
 
         for i in self.__class__.__mro__:
-
             if i is MultiRevertable:
                 continue
 
@@ -501,17 +489,13 @@ class MultiRevertable(object):
         return tuple(i._compress(self, c) for i, c in zip(self._rollback_types(), clean))
 
     def _rollback(self, compressed):
-
         for i, c in zip(self._rollback_types(), compressed):
             i._rollback(self, c)
 
 
-
 def checkpointing(method):
-
     @functools.wraps(method)
     def do_checkpoint(self, *args, **kwargs):
-
         renpy.game.context().force_checkpoint = True
 
         return method(self, *args, **kwargs)
@@ -520,7 +504,6 @@ def checkpointing(method):
 
 
 def list_wrapper(method):
-
     @functools.wraps(method)
     def newmethod(*args, **kwargs):
         l = method(*args, **kwargs)
@@ -572,6 +555,7 @@ class RollbackRandom(random.Random):
         new.seed(seed)
         return new
 
+
 class DetRandom(random.Random):
     """
     This is renpy.random.
@@ -579,13 +563,12 @@ class DetRandom(random.Random):
 
     def __init__(self):
         super(DetRandom, self).__init__()
-        self.stack = [ ]
+        self.stack = []
 
     choices = list_wrapper(random.Random.choices)
     sample = list_wrapper(random.Random.sample)
 
     def random(self):
-
         if self.stack:
             rv = self.stack.pop()
         else:

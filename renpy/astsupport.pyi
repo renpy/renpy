@@ -21,7 +21,7 @@
 
 from typing import Any
 
-def hash32(s : Any) -> int:
+def hash32(s: Any) -> int:
     """
     Returns a stable 32-bit hash of the string `s`.
 
@@ -29,8 +29,7 @@ def hash32(s : Any) -> int:
         A unicode string. Other types will be coerced to unicode before hashing.
     """
 
-
-def hash64(s : Any) -> int:
+def hash64(s: Any) -> int:
     """
     Returns a stable 64-bit hash of the string `s`.
 
@@ -49,9 +48,9 @@ class PyExpr(str):
     hashcode: int
     column: int
 
-    def __new__(cls, s: str, filename: str, linenumber: int, py: int = 3, hashcode: int | None = None, column: int = 0, /) -> PyExpr:
-        ...
-
+    def __new__(
+        cls, s: str, filename: str, linenumber: int, py: int = 3, hashcode: int | None = None, column: int = 0, /
+    ) -> PyExpr: ...
     @staticmethod
     def checkpoint() -> Any:
         """

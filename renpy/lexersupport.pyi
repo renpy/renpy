@@ -19,5 +19,4 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-def match_logical_word(s: str, pos: int) -> tuple[str, bool, int]:
-    ...
+def match_logical_word(s: str, pos: int) -> tuple[str, bool, int]: ...

@@ -19,8 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import fnmatch
 
@@ -31,6 +31,7 @@ def cache_pin(*args):
     """
     :undocumented: Cache pinning has been removed.
     """
+
 
 def cache_unpin(*args):
     """
@@ -46,10 +47,10 @@ def expand_predict(d):
     """
 
     if not isinstance(d, str):
-        return [ d ]
+        return [d]
 
     if not "*" in d:
-        return [ d ]
+        return [d]
 
     if "." in d:
         l = renpy.exports.list_files(False)

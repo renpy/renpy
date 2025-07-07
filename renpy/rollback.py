@@ -24,7 +24,7 @@
 # game state to some time in the past.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 from typing import Optional, Any
 
@@ -44,8 +44,8 @@ import renpy
 # Deleted is a singleton object that's used to represent an object that has
 # been deleted from the store.
 
-class StoreDeleted(object):
 
+class StoreDeleted(object):
     def __reduce__(self):
         return "deleted"
 
@@ -69,6 +69,7 @@ class SlottedNoRollback(object):
     Objects reachable through an instance of a NoRollback class only participate
     in rollback if they are reachable through other paths.
     """
+
     __slots__ = ()
 
 
@@ -82,7 +83,9 @@ class NoRollback(SlottedNoRollback):
     reachable through other paths.
     """
 
+
 # parents = [ ]
+
 
 class AlwaysRollback(renpy.revertable.RevertableObject):
     """
@@ -101,7 +104,7 @@ class AlwaysRollback(renpy.revertable.RevertableObject):
         return self
 
 
-NOROLLBACK_TYPES = tuple() # type: tuple[type, type, type, type, type]
+NOROLLBACK_TYPES = tuple()  # type: tuple[type, type, type, type, type]
 
 
 def reached(obj, reachable, wait):
@@ -130,7 +133,6 @@ def reached(obj, reachable, wait):
         nosave = getattr(obj, "nosave", None)
 
         if nosave is not None:
-
             nosave = getattr(obj, "noreach", nosave)
 
             for k, v in vars(obj).items():
@@ -138,7 +140,6 @@ def reached(obj, reachable, wait):
                     reached(v, reachable, wait)
 
         else:
-
             # Fields have to be indexed by strings, so no need to check if
             # the filed is reached.
             for v in vars(obj).values():
@@ -194,6 +195,7 @@ def reached_vars(store, reachable, wait):
         for d in c.dynamic_stack:
             for v in d.values():
                 reached(v, reachable, wait)
+
 
 # This is the code that actually handles the logging and managing
 # of the rollbacks.
@@ -265,22 +267,21 @@ class Rollback(renpy.object.Object):
     fixed = False
 
     def __init__(self):
-
         super(Rollback, self).__init__()
 
         self.context = renpy.game.context().rollback_copy()
 
-        self.objects = [ ]
+        self.objects = []
         self.purged = False
-        self.random = [ ]
+        self.random = []
         self.forward = None
 
         # A map of maps name -> (variable -> value)
-        self.stores = { }
+        self.stores = {}
 
         # A map from store name to the changes to ever_been_changed that
         # need to be reverted.
-        self.delta_ebc = { }
+        self.delta_ebc = {}
 
         # If true, we retain the data in this rollback when a load occurs.
         self.retain_after_load = False
@@ -308,18 +309,16 @@ class Rollback(renpy.object.Object):
         self.fixed: bool = False
         "True if the rollback has become fixed, so rollback through it will put the game into to the fixed rollback mode."
 
-
     def after_upgrade(self, version):
-
         if version < 2:
-            self.stores = { "store" : { } }
+            self.stores = {"store": {}}
 
-            for i in self.store: # type: ignore
+            for i in self.store:  # type: ignore
                 if len(i) == 2:
                     k, v = i
                     self.stores["store"][k] = v
                 else:
-                    k, = i
+                    (k,) = i
                     self.stores["store"][k] = deleted
 
         if version < 3:
@@ -329,7 +328,7 @@ class Rollback(renpy.object.Object):
             self.hard_checkpoint = self.checkpoint
 
         if version < 5:
-            self.delta_ebc = { }
+            self.delta_ebc = {}
 
     def purge_unreachable(self, reachable, wait):
         """
@@ -367,17 +366,15 @@ class Rollback(renpy.object.Object):
         reached(self.context.scene_lists.get_all_displayables(), reachable, wait)
 
         # Purge object update information for unreachable objects.
-        new_objects = [ ]
+        new_objects = []
 
         objects_changed = True
         seen = set()
 
         while objects_changed:
-
             objects_changed = False
 
             for o, rb in self.objects:
-
                 id_o = id(o)
 
                 if id_o in seen or id_o not in reachable:
@@ -407,7 +404,6 @@ class Rollback(renpy.object.Object):
         store_dicts = renpy.python.store_dicts
 
         for obj, roll in reversed(self.objects):
-
             if roll is not None:
                 try:
                     obj._rollback(roll)
@@ -418,7 +414,11 @@ class Rollback(renpy.object.Object):
                         elif not renpy.config.developer:
                             continue
                         else:
-                            raise Exception("Load or rollback failed because class {} does not inherit from store.object, but did in the past. If this was an intentional change, add the class to config.ex_rollback_classes.".format(type(obj).__name__))
+                            raise Exception(
+                                "Load or rollback failed because class {} does not inherit from store.object, but did in the past. If this was an intentional change, add the class to config.ex_rollback_classes.".format(
+                                    type(obj).__name__
+                                )
+                            )
 
         for name, changes in self.stores.items():
             store = store_dicts.get(name, None)
@@ -433,7 +433,6 @@ class Rollback(renpy.object.Object):
                     store[name] = value
 
         for name, changes in self.delta_ebc.items():
-
             store = store_dicts.get(name, None)
             if store is None:
                 continue
@@ -444,14 +443,13 @@ class Rollback(renpy.object.Object):
 
         self.rollback_control()
 
-
     def rollback_control(self):
         """
         This rolls back only the control information, while leaving
         the data information intact.
         """
 
-        renpy.game.contexts = renpy.game.contexts[:-1] + [ self.context ]
+        renpy.game.contexts = renpy.game.contexts[:-1] + [self.context]
         renpy.game.log.checkpointing_suspended = self.checkpointing_suspended
 
 
@@ -475,22 +473,21 @@ class RollbackLog(renpy.object.Object):
 
     __version__ = 7
 
-    nosave = [ 'old_store', 'mutated', 'identifier_cache' ]
+    nosave = ["old_store", "mutated", "identifier_cache"]
     identifier_cache = None
     force_checkpoint = False
 
     def __init__(self):
-
         super(RollbackLog, self).__init__()
 
-        self.log = [ ]
+        self.log = []
         self.current = None
-        self.mutated = { }
+        self.mutated = {}
         self.rollback_limit = 0
         self.rollback_block = 0
         self.checkpointing_suspended = False
-        self.forward: list[Forward] = [ ]
-        self.old_store = { }
+        self.forward: list[Forward] = []
+        self.old_store = {}
 
         # Did we just do a roll forward?
         self.rolled_forward = False
@@ -511,24 +508,23 @@ class RollbackLog(renpy.object.Object):
         self.force_checkpoint = False
 
     def after_setstate(self):
-        self.mutated = { }
+        self.mutated = {}
         self.rolled_forward = False
 
     def after_upgrade(self, version):
         if version < 2:
-            self.ever_been_changed = { "store" : set(self.ever_been_changed) }
+            self.ever_been_changed = {"store": set(self.ever_been_changed)}
 
         if version < 4:
             self.retain_after_load_flag = False
 
         if version < 5:
-
             # We changed what the rollback limit represents, so recompute it
             # here.
             if self.rollback_limit:
                 nrbl = 0
 
-                for rb in self.log[-self.rollback_limit:]:
+                for rb in self.log[-self.rollback_limit :]:
                     if rb.hard_checkpoint:
                         nrbl += 1
 
@@ -540,7 +536,7 @@ class RollbackLog(renpy.object.Object):
             self.rollback_limit = hard - self.rollback_block
 
         if version < 7:
-            self.forward = [ Forward(name, data, False) for name, data in self.forward ] # type: ignore
+            self.forward = [Forward(name, data, False) for name, data in self.forward]  # type: ignore
 
     def begin(self, force=False):
         """
@@ -641,12 +637,10 @@ class RollbackLog(renpy.object.Object):
         # restore them.
 
         for _i in range(4):
-
             del self.current.objects[:]
 
             try:
                 for _k, v in self.mutated.items():
-
                     if v is None:
                         continue
 
@@ -674,7 +668,7 @@ class RollbackLog(renpy.object.Object):
         changed since the init phase finished.
         """
 
-        rv = { }
+        rv = {}
 
         for store_name, sd in renpy.python.store_dicts.items():
             for name in sd.ever_been_changed:
@@ -702,7 +696,7 @@ class RollbackLog(renpy.object.Object):
         global NOROLLBACK_TYPES
         NOROLLBACK_TYPES = (types.ModuleType, renpy.python.StoreModule, SlottedNoRollback, io.IOBase, type)
 
-        reachable = { }
+        reachable = {}
 
         reached_vars(roots, reachable, wait)
 
@@ -731,7 +725,6 @@ class RollbackLog(renpy.object.Object):
         """
 
         if self.forward:
-
             fwd = self.forward[0]
 
             if self.current.context.current == fwd.name:
@@ -787,10 +780,11 @@ class RollbackLog(renpy.object.Object):
                 # Otherwise, clear the forward stack.
                 fwd = self.forward[0]
 
-                if (self.current.context.current == fwd.name
+                if (
+                    self.current.context.current == fwd.name
                     and data == fwd.data
                     and (keep_rollback or self.rolled_forward)
-                    ):
+                ):
                     self.forward.pop(0)
                 else:
                     del self.forward[:]
@@ -867,7 +861,9 @@ class RollbackLog(renpy.object.Object):
             lfl = lfl()
 
         if not lfl:
-            raise Exception("Couldn't find a place to stop rolling back. Perhaps the script changed in an incompatible way?")
+            raise Exception(
+                "Couldn't find a place to stop rolling back. Perhaps the script changed in an incompatible way?"
+            )
 
         rb = self.log.pop()
         rb.rollback()
@@ -880,7 +876,9 @@ class RollbackLog(renpy.object.Object):
 
         raise renpy.game.RestartTopContext()
 
-    def rollback(self, checkpoints, force=False, label=None, greedy=True, on_load=False, abnormal=True, current_label=None):
+    def rollback(
+        self, checkpoints, force=False, label=None, greedy=True, on_load=False, abnormal=True, current_label=None
+    ):
         """
         This rolls the system back to the first valid rollback point
         after having rolled back past the specified number of checkpoints.
@@ -922,7 +920,7 @@ class RollbackLog(renpy.object.Object):
 
         self.purge_unreachable(self.get_roots())
 
-        revlog = [ ]
+        revlog = []
 
         # Find the place to roll back to.
         while self.log:
@@ -959,7 +957,6 @@ class RollbackLog(renpy.object.Object):
 
         # Try to rollback to just after the previous checkpoint.
         while greedy and self.log:
-
             rb = self.log[-1]
 
             if not renpy.game.script.has_label(rb.context.current):
@@ -982,10 +979,9 @@ class RollbackLog(renpy.object.Object):
         old_contexts = list(renpy.game.contexts)
 
         try:
-
             if renpy.game.context().rollback:
                 replace_context = False
-                other_contexts = [ ]
+                other_contexts = []
             else:
                 replace_context = True
                 other_contexts = renpy.game.contexts[1:]
@@ -1015,7 +1011,6 @@ class RollbackLog(renpy.object.Object):
                 self.log.append(retained)
 
         except Exception:
-
             # If there was an exception, restore the context list.
             renpy.game.contexts = old_contexts
             raise
@@ -1054,7 +1049,6 @@ class RollbackLog(renpy.object.Object):
 
         # Restart the context or the top context.
         if replace_context:
-
             if force_checkpoint:
                 renpy.game.contexts[0].force_checkpoint = True
 
@@ -1067,7 +1061,6 @@ class RollbackLog(renpy.object.Object):
             raise renpy.game.RestartTopContext()
 
         else:
-
             self.current = Rollback()
             self.current.context = renpy.game.context().rollback_copy()
 
@@ -1117,7 +1110,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         # Fix up old screens.
-        renpy.display.screen.before_restart() # @UndefinedVariable
+        renpy.display.screen.before_restart()  # @UndefinedVariable
 
         # Set us up as the game log.
         renpy.game.log = self
@@ -1127,7 +1120,6 @@ class RollbackLog(renpy.object.Object):
         store_dicts = renpy.python.store_dicts
 
         for name, value in roots.items():
-
             if "." in name:
                 store_name, name = name.rsplit(".", 1)
             else:
@@ -1155,17 +1147,15 @@ class RollbackLog(renpy.object.Object):
         # Because of the rollback, we never make it this far.
 
     def build_identifier_cache(self):
-
         if self.identifier_cache is not None:
             return
 
         rollback_limit = self.rollback_limit
         checkpoints = 1
 
-        self.identifier_cache = { }
+        self.identifier_cache = {}
 
         for i in reversed(self.log):
-
             if i.identifier is not None:
                 if renpy.game.script.has_label(i.context.current):
                     self.identifier_cache[i.identifier] = checkpoints

@@ -9,8 +9,9 @@ garbage collected manually.
 import ast
 import pathlib
 
-current_path : pathlib.Path = pathlib.Path()
-results : set[tuple[str, str]] = set()
+current_path: pathlib.Path = pathlib.Path()
+results: set[tuple[str, str]] = set()
+
 
 class FindRecursiveInnerFunction(ast.NodeVisitor):
     def __init__(self, name):
@@ -19,6 +20,7 @@ class FindRecursiveInnerFunction(ast.NodeVisitor):
     def visit_Name(self, node):
         if node.id == self.name:
             results.add((current_path, self.name))
+
 
 class FindInnerFunction(ast.NodeVisitor):
     def visit_FunctionDef(self, node):
@@ -31,13 +33,13 @@ class FindFunctions(ast.NodeVisitor):
         for i in node.body:
             FindInnerFunction().visit(i)
 
+
 def main():
     global current_path
 
     root = pathlib.Path(__file__).parent.parent
 
     for fn in root.glob("renpy/**/*.py"):
-
         current_path = fn
 
         with open(fn) as f:
@@ -48,5 +50,5 @@ def main():
         print(f"{fn}: {name}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
