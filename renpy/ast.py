@@ -2119,16 +2119,20 @@ class UserStatement(Node):
 
     init_priority: SignedInt | None = None
     """
-    Used to store statement init priority before 8.4.
+    If not None, this is the enclosing init_offset. The init_priority is
+    calculated by combining this value with init_priority from the statement.
 
-    All new instances should keep this set to None.
+    Prior to version 2, before 8.4, this used to be an absolute priority
+    and default to 0.
     """
 
-    init_offset: SignedInt | None = None
+    version: SignedInt | None = 1
     """
-    If None, this is a statement that does not need init-time processing.
+    The version of the parsed UserStatement. This is used to manage
+    compatibility as changes are made to the structure and usage.
 
-    Otherwise, this is the init offset value of the statement in a file.
+    v1: Initial version, assumed if no explicit version in state.
+    v2: init_offset tracked separately to init_priority - as of 8.4.0.
     """
 
     def __init__(self, loc, line, block, parsed):
@@ -2138,6 +2142,7 @@ class UserStatement(Node):
         self.line = line
         self.block = block
         self.subparses = []
+        self.version = 2
 
         self.name = self.call("label")
         self.rollback = renpy.statements.get("rollback", self.parsed) or "normal"  # type: ignore
@@ -2201,18 +2206,18 @@ class UserStatement(Node):
             default_statements.append(self)
 
     def get_init(self):
-        # Legacy instance from before init_priority has become registry key.
-        if self.init_priority is not None:
-            return self.init_priority
+        if self.version == 1:
+            # In version 1 the default was 0, and could never be None.
+            return self.init_priority or 0
 
         # Statement does not need init-time processing.
-        if self.init_offset is None:
+        if self.init_priority is None:
             return None
 
         init_priority = renpy.statements.get("init_priority", self.parsed)
 
         # Statement init priority and init offset from the file.
-        return init_priority + self.init_offset
+        return init_priority + self.init_priority
 
     def execute(self):
         next_node(self.get_next())

@@ -319,9 +319,9 @@ def register(
             rv.subparses = l.subparses
 
             if execute_init or execute_default:
-                rv.init_offset = l.init_offset
+                rv.init_priority = l.init_offset
             else:
-                rv.init_offset = None
+                rv.init_priority = None
 
         finally:
             l.subparses = old_subparses
