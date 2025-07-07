@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env -S uv run --env-file .env
 
 # Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
@@ -29,7 +29,6 @@ BASE = os.path.abspath(os.path.dirname(sys.argv[0]))
 os.chdir(BASE)
 
 SCRIPTS = os.path.join(BASE, 'scripts')
-sys.path.insert(0, SCRIPTS)
 
 import setuplib
 from setuplib import windows, library, cython, find_unnecessary_gen, generate_all_cython, env

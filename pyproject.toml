@@ -4,14 +4,29 @@ readme = "README.rst"
 license = "MIT"
 dynamic = ["version"]
 requires-python = "==3.12.10"
-dependencies = ["future", "six", "pefile", "requests", "ecdsa"]
+dependencies = [
+    "future",
+    "six",
+    "pefile",
+    "requests",
+    "ecdsa",
+    "pygame_sdl2 @ git+https://github.com/Andykl/pygame_sdl2.git@uv-build",
+]
 
 [project.optional-dependencies]
-dev = ["ruff", "cython", "setuptools"]
+dev = [
+    "ruff",
+    "cython",
+    "setuptools",
 
-# [build-system]
-# requires = ["setuptools"]
-# build-backend = "setuptools.build_meta"
+]
+
+[build-system]
+requires = [
+    "setuptools",
+    "cython",
+    "pygame_sdl2 @ git+https://github.com/Andykl/pygame_sdl2.git@uv-build",
+]
 
 [tool.pyright]
 include = ["*.py", "renpy/", "src/"]
@@ -26,7 +41,6 @@ reportOptionalContextManager = false
 reportOptionalOperand = false
 reportMissingModuleSource = false
 
-
 [tool.cyright]
 include = ["*.py", "renpy/", "src/"]
 exclude = ["module/build/"]
@@ -40,7 +54,6 @@ reportOptionalIterable = false
 reportOptionalContextManager = false
 reportOptionalOperand = false
 reportMissingModuleSource = false
-
 
 [tool.ruff]
 line-length = 120

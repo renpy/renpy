@@ -92,12 +92,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pygame-sdl2"
+version = "2.1.0"
+source = { git = "https://github.com/Andykl/pygame_sdl2.git?rev=uv-build#647e922a89bfcf3ce2d259e2b136f784d603e933" }
+
+[[package]]
 name = "renpy"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "ecdsa" },
     { name = "future" },
     { name = "pefile" },
+    { name = "pygame-sdl2" },
     { name = "requests" },
     { name = "six" },
 ]
@@ -115,6 +121,7 @@ requires-dist = [
     { name = "ecdsa" },
     { name = "future" },
     { name = "pefile" },
+    { name = "pygame-sdl2", git = "https://github.com/Andykl/pygame_sdl2.git?rev=uv-build" },
     { name = "requests" },
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "setuptools", marker = "extra == 'dev'" },
