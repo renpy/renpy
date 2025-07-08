@@ -94,7 +94,7 @@ wheels = [
 [[package]]
 name = "pygame-sdl2"
 version = "2.1.0"
-source = { git = "https://github.com/Andykl/pygame_sdl2.git?rev=uv-build#c3f61dc09e8e8c5cbdec89e57c984ee1eaac3bad" }
+source = { git = "https://github.com/Andykl/pygame_sdl2.git?rev=uv-build#4f3129f5c2341cfc9792ff02ce9365e6a7ccc885" }
 
 [[package]]
 name = "renpy"

@@ -84,6 +84,7 @@ cache/
 /vscode
 
 # Generated source.
+/.editable/
 /renpy/vc_version.py
 /module/gen/
 /module/gen3/

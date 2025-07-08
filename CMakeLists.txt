@@ -38,9 +38,11 @@ set(CMAKE_CXX_STANDARD 11)
 option(RENPY_STATIC "Build static version" OFF)
 option(RENPY_COVERAGE "Enable coverage" OFF)
 set(CUBISM_SDK_PATH "" CACHE PATH "Path to Cubism SDK")
+set(PYGAME_SDL2_HEADERS "" CACHE PATH "Path to pygame_sdl2/headers")
 
 if(DEFINED ENV{RENPY_STATIC})
     set(RENPY_STATIC ON)
+    message(STATUS "RENPY_STATIC is defined")
 endif()
 
 if(DEFINED ENV{RENPY_COVERAGE})
@@ -50,6 +52,14 @@ endif()
 if(DEFINED ENV{CUBISM})
     set(CUBISM_SDK_PATH "$ENV{CUBISM}")
 endif()
+
+if (DEFINED ENV{PYGAME_SDL2_HEADERS})
+    set(PYGAME_SDL2_HEADERS "$ENV{PYGAME_SDL2_HEADERS}")
+else()
+    message(STATUS "$ENV{PYGAME_SDL2_HEADERS}")
+    message(FATAL_ERROR "PYGAME_SDL2_HEADERS is not defined")
+endif()
+
 
 # Set generation directory
 set(GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/gen3)
@@ -66,6 +76,7 @@ file(MAKE_DIRECTORY ${GEN_DIR})
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${PYGAME_SDL2_HEADERS}
     ${GEN_DIR}
     ${LIBAVFORMAT_INCLUDE_DIRS}
     ${LIBAVCODEC_INCLUDE_DIRS}
@@ -198,10 +209,13 @@ function(add_cython_extension name)
     # Create Python extension
     python_add_library(${name} MODULE ${final_c_file} ${ARG_SOURCES})
 
+    # Extract the base filename for the extension
+    get_filename_component(base_filename ${module_path} NAME)
+
     # Set properties
     set_target_properties(${name} PROPERTIES
         PREFIX ""
-        OUTPUT_NAME ${name}
+        OUTPUT_NAME ${base_filename}
     )
 
     # Compile flags
@@ -226,7 +240,12 @@ function(add_cython_extension name)
     endif()
 
     # Install the extension
-    install(TARGETS ${name} DESTINATION renpy)
+    string(REPLACE "." "/" install_subpath ${name})
+    get_filename_component(install_dir ${install_subpath} DIRECTORY)
+    if (install_dir STREQUAL "")
+        set(install_dir "renpy")
+    endif()
+    install(TARGETS ${name} DESTINATION ${install_dir})
 endfunction()
 
 # Generate style files
@@ -336,7 +355,6 @@ add_cython_extension(renpy.text.hbfont
     SOURCES src/ftsupport.c
 )
 
-# Install Python modules (this would need to be expanded based on actual structure)
 install(
     DIRECTORY renpy/
     DESTINATION renpy
