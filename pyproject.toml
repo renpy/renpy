@@ -3,7 +3,7 @@ name = "renpy"
 readme = "README.rst"
 license = "MIT"
 dynamic = ["version"]
-requires-python = "==3.12.10"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "future",
     "six",
@@ -17,16 +17,30 @@ dependencies = [
 dev = [
     "ruff",
     "cython",
-    "setuptools",
-
 ]
 
 [build-system]
 requires = [
-    "setuptools",
-    "cython",
+    "scikit-build-core>=0.11",
+    "cython>=3.1.0",
     "pygame_sdl2 @ git+https://github.com/Andykl/pygame_sdl2.git@uv-build",
 ]
+build-backend = "scikit_build_core.build"
+
+[tool.scikit-build]
+build-dir = "build"
+build.verbose = true
+logging.level = "INFO"
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+input = "renpy/versions.py"
+regex = '''"main", 3, "(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)"'''
+result = "{major}.{minor}.{patch}dev"
+
+[tool.scikit-build.cmake.define]
+CMAKE_C_COMPILER = { env = "CC", default = "gcc" }
+CMAKE_CXX_COMPILER = { env = "CXX", default = "g++" }
 
 [tool.pyright]
 include = ["*.py", "renpy/", "src/"]

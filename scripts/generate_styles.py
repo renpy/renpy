@@ -19,26 +19,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import collections
-import os
+# pyright: strict
 
-from io import StringIO  # @UnusedImport
+import os
+import io
+import sys
+from typing import Any
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BASE)
-
-import setuplib
-
-
-def sorted_dict(**kwargs):
-    """
-    Constructs an ordered_dict from the keyword arguments in sorted order.
-    """
-
-    items = list(kwargs.items())
-    return collections.OrderedDict(items)
-
+GEN = os.path.join(ROOT, "tmp", "gen3")
 
 ################################################################################
 # Prefixes
@@ -46,11 +37,11 @@ def sorted_dict(**kwargs):
 
 
 # A map from prefix name to Prefix object.
-prefixes = collections.OrderedDict()
+prefixes: dict[str, 'Prefix'] = {}
 
 
-class Prefix(object):
-    def __init__(self, index, name, priority, alts):
+class Prefix:
+    def __init__(self, index: int, name: str, priority: int, alts: list[str]):
         # The index of where this prefix is stored in memory, or -1 if this
         # prefix isn't stored in memory.
         self.index = index
@@ -68,8 +59,8 @@ class Prefix(object):
         # A list of prefix indexes that should be updated when this prefix is
         # updated, including this prefix.
         if index >= 0:
-            self.alts = [index]
-            self.alt_names = [name]
+            self.alts: list[int] = [index]
+            self.alt_names: list[str] = [name]
         else:
             self.alts = []
             self.alt_names = []
@@ -117,7 +108,7 @@ PREFIX_SEARCH = {
 # All the style properties we know about. This is a dict, that maps each style
 # to a function that is called when it is set, or None if no such function
 # is needed.
-style_properties = sorted_dict(
+style_properties: dict[str, str | None] = dict(
     activate_sound=None,
     adjust_spacing=None,
     aft_bar="none_is_null",
@@ -245,9 +236,7 @@ displayable_properties = {
 }
 
 # A map from a style property to its index in the order of style_properties.
-style_property_index = collections.OrderedDict()
-for i, name in enumerate(style_properties):
-    style_property_index[name] = i
+style_property_index: dict[str, int] = {name: i for i, name in enumerate(style_properties)}
 
 style_property_count = len(style_properties)
 
@@ -256,7 +245,7 @@ style_property_count = len(style_properties)
 
 # Special priority properties - these take a +1 compared to others. Generally,
 # these would be listed in the tuples in synthetic_properties, below.
-property_priority = sorted_dict(
+property_priority: dict[str, int] = dict(
     left_margin=1,
     top_margin=1,
     right_margin=1,
@@ -286,7 +275,7 @@ property_priority = sorted_dict(
 # * The name of the style property to assign.
 # * A string giving the name of a function to call to get the value to assign, a constant
 #   numeric value, or None to not change the argument.
-synthetic_properties = sorted_dict(
+synthetic_properties: dict[str, list[tuple[str, str | int | float | None]]] = dict(
     margin=[
         ("left_margin", "index_0"),
         ("top_margin", "index_1"),
@@ -406,7 +395,7 @@ synthetic_properties = sorted_dict(
     ],
 )
 
-all_properties = collections.OrderedDict()
+all_properties: dict[str, list[tuple[str, str | int | float | None]]] = {}
 
 for k in style_properties:
     all_properties[k] = [(k, None)]
@@ -428,9 +417,9 @@ class CodeGen(object):
         If true, spew the generated code to stdout.
     """
 
-    def __init__(self, filename, spew=False):
+    def __init__(self, filename: str, spew: bool = False):
         self.filename = os.path.join(ROOT, filename)
-        self.f = StringIO()
+        self.f = io.StringIO()
         self.depth = 0
         self.spew = spew
 
@@ -447,7 +436,7 @@ class CodeGen(object):
         with open(self.filename, "w") as f:
             f.write(text)
 
-    def write(self, s, *args, **kwargs):
+    def write(self, s: str, *args: Any, **kwargs: Any) -> None:
         out = "    " * self.depth
         out += s.format(*args, **kwargs)
         out = out.rstrip()
@@ -470,7 +459,7 @@ def generate_constants():
     This generates code that defines the property functions.
     """
 
-    g = CodeGen(setuplib.gen + "/styleconstants.pxi")
+    g = CodeGen(GEN + "/styleconstants.pxi")
 
     g.write("DEF PRIORITY_LEVELS = {}", PRIORITY_LEVELS)
     g.write("DEF PREFIX_COUNT = {}", PREFIX_COUNT)
@@ -488,7 +477,12 @@ def generate_constants():
     g.close()
 
 
-def generate_property_function(g, prefix, propname, properties):
+def generate_property_function(
+    g: CodeGen,
+    prefix: Prefix,
+    propname: str,
+    properties: list[tuple[str, str | int | float | None]],
+):
     name = prefix.name + propname
 
     g.write(
@@ -552,7 +546,7 @@ def generate_property_functions():
     """
 
     for prefix in sorted(prefixes.values(), key=lambda p: p.index):
-        g = CodeGen(setuplib.gen + "/style_{}functions.pyx".format(prefix.name))
+        g = CodeGen(GEN + "/style_{}functions.pyx".format(prefix.name))
 
         g.write('include "style_common.pxi"')
         g.write("")
@@ -563,7 +557,7 @@ def generate_property_functions():
         g.close()
 
 
-def generate_property(g, propname):
+def generate_property(g: CodeGen, propname: str) -> None:
     """
     This generates the code for a single property on the style object.
     """
@@ -594,7 +588,7 @@ def generate_property(g, propname):
 
 
 def generate_properties():
-    g = CodeGen(setuplib.gen + "/styleclass.pxi")
+    g = CodeGen(GEN + "/styleclass.pxi")
 
     g.write("cdef class Style(StyleCore):")
     g.write("")
@@ -613,26 +607,26 @@ def generate_sets():
     Generates code for sets of properties.
     """
 
-    ap = collections.OrderedDict()
+    ap = {}
 
     for k, v in all_properties.items():
         ap[k] = [i[0] for i in v]
 
     proxy_property_code = "{"
 
-    for p, l in synthetic_properties.items():
-        proxy_property_code += '"{}" : frozenset({}),'.format(p, [el[0] for el in l])
+    for p, lst in synthetic_properties.items():
+        proxy_property_code += '"{}" : frozenset({}),'.format(p, [el[0] for el in lst])
 
     proxy_property_code += "}"
 
-    prefix_priority = collections.OrderedDict()
-    prefix_alts = collections.OrderedDict()
+    prefix_priority = {}
+    prefix_alts = {}
 
     for p in prefixes.values():
         prefix_priority[p.name] = p.priority
         prefix_alts[p.name] = p.alt_names
 
-    g = CodeGen(setuplib.gen + "/stylesets.pxi")
+    g = CodeGen(GEN + "/stylesets.pxi")
 
     g.write("# This file is generated by generate_styles.py.")
     g.write("")
@@ -655,4 +649,14 @@ def generate():
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 2:
+        sys.exit("Usage: python scripts/generate_styles.py [output directory]")
+
+    if len(sys.argv) == 2:
+        GEN = sys.argv[1]  # type: ignore
+        try:
+            os.makedirs(GEN)
+        except FileExistsError:
+            pass
+
     generate()

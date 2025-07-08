@@ -1,6 +1,6 @@
 version = 1
 revision = 2
-requires-python = "==3.12.10"
+requires-python = "==3.12.*"
 
 [[package]]
 name = "certifi"
@@ -94,7 +94,7 @@ wheels = [
 [[package]]
 name = "pygame-sdl2"
 version = "2.1.0"
-source = { git = "https://github.com/Andykl/pygame_sdl2.git?rev=uv-build#647e922a89bfcf3ce2d259e2b136f784d603e933" }
+source = { git = "https://github.com/Andykl/pygame_sdl2.git?rev=uv-build#c3f61dc09e8e8c5cbdec89e57c984ee1eaac3bad" }
 
 [[package]]
 name = "renpy"
@@ -112,7 +112,6 @@ dependencies = [
 dev = [
     { name = "cython" },
     { name = "ruff" },
-    { name = "setuptools" },
 ]
 
 [package.metadata]
@@ -124,7 +123,6 @@ requires-dist = [
     { name = "pygame-sdl2", git = "https://github.com/Andykl/pygame_sdl2.git?rev=uv-build" },
     { name = "requests" },
     { name = "ruff", marker = "extra == 'dev'" },
-    { name = "setuptools", marker = "extra == 'dev'" },
     { name = "six" },
 ]
 provides-extras = ["dev"]
@@ -167,15 +165,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/51/de/8589fa724590faa057e5a6d171e7f2f6cffe3287406ef40e49c682c07d89/ruff-0.12.2-py3-none-win32.whl", hash = "sha256:369ffb69b70cd55b6c3fc453b9492d98aed98062db9fec828cdfd069555f5f1a", size = 10523823, upload-time = "2025-07-03T16:40:13.203Z" },
     { url = "https://files.pythonhosted.org/packages/94/47/8abf129102ae4c90cba0c2199a1a9b0fa896f6f806238d6f8c14448cc748/ruff-0.12.2-py3-none-win_amd64.whl", hash = "sha256:dca8a3b6d6dc9810ed8f328d406516bf4d660c00caeaef36eb831cf4871b0639", size = 11629831, upload-time = "2025-07-03T16:40:15.478Z" },
     { url = "https://files.pythonhosted.org/packages/e2/1f/72d2946e3cc7456bb837e88000eb3437e55f80db339c840c04015a11115d/ruff-0.12.2-py3-none-win_arm64.whl", hash = "sha256:48d6c6bfb4761df68bc05ae630e24f506755e702d4fb08f08460be778c7ccb12", size = 10735334, upload-time = "2025-07-03T16:40:17.677Z" },
-]
-
-[[package]]
-name = "setuptools"
-version = "80.9.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/18/5d/3bf57dcd21979b887f014ea83c24ae194cfcd12b9e0fda66b957c69d1fca/setuptools-80.9.0.tar.gz", hash = "sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c", size = 1319958, upload-time = "2025-05-27T00:56:51.443Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a3/dc/17031897dae0efacfea57dfd3a82fdd2a2aeb58e0ff71b77b87e44edc772/setuptools-80.9.0-py3-none-any.whl", hash = "sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922", size = 1201486, upload-time = "2025-05-27T00:56:49.664Z" },
 ]
 
 [[package]]
