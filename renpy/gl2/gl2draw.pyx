@@ -1111,7 +1111,14 @@ cdef class GL2Draw:
                 model.set_texture(i, self.render_to_texture(c[0], properties=r.properties))
 
             if r.mesh is True:
-                model.mesh = model.get_texture(0).mesh
+                tex = model.get_texture(0)
+                if tex.width == model.width and tex.height == model.height:
+                    model.mesh = tex.mesh
+                else:
+                    # Otherwise, we need to use a mesh.
+                    model.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_rectangle(
+                        0, 0, r.width, r.height,
+                        0, 0, 1, 1)
             else:
                 model.mesh = r.mesh
 
