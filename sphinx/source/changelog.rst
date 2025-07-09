@@ -254,6 +254,9 @@ into an error state.
 Features
 --------
 
+The :tpref:`nearest` transform property now works as documented, allowing nearest neighbor texture interpolation
+to be disabled when set to False.
+
 The new :func:`HasSideImage` function returns the presence or absence of a side image before the side image
 itself is determined, making it useable in the say screen for layout.
 

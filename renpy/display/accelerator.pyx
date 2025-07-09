@@ -937,6 +937,8 @@ cdef class RenderTransform:
 
         if state.nearest:
             rv.add_property("texture_scaling", "nearest")
+        elif state.nearest is not None:
+            rv.add_property("texture_scaling", "linear_mipmap_nearest")
 
         if state.blend:
             rv.add_property("blend_func", renpy.config.gl_blend_func[state.blend])
