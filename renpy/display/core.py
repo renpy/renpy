@@ -2272,7 +2272,7 @@ class Interface(object):
 
             renpy.plog(2, "after gc")
 
-    def idle_frame(self, can_block, expensive):
+    def idle_frame(self, expensive):
         """
         Tasks that are run during "idle" frames.
         """
@@ -2292,7 +2292,7 @@ class Interface(object):
             if self.event_peek() and not self.force_prediction:
                 break
 
-            if not (can_block and expensive):
+            if not expensive:
                 if get_time() > (start + 0.0005):
                     break
 
@@ -3026,7 +3026,7 @@ class Interface(object):
                         expensive = True
                         can_block = True
 
-                    self.idle_frame(can_block, expensive)
+                    self.idle_frame(expensive)
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre peek")
