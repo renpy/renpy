@@ -2330,7 +2330,11 @@ class Interface(object):
             # Step 4: Preload images (on emscripten)
             elif step == 4:
                 if expensive and renpy.emscripten:
-                    renpy.display.im.cache.preload_thread_pass()
+                    try:
+                        renpy.display.im.cache.in_preload_pass = True
+                        renpy.display.im.cache.preload_thread_pass()
+                    finally:
+                        renpy.display.im.cache.in_preload_pass = False
 
                 step += 1
 

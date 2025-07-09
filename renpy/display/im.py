@@ -108,6 +108,10 @@ class Cache(object):
         # The size of the cache, in pixels.
         self.cache_limit = 0
 
+        # True if we're in a preload pass, but outside of the preload thread. The code that calls the
+        # preload pass is responsible for setting this to True and False.
+        self.in_preload_pass: bool = False
+
         # The preload thread.
         if not renpy.emscripten:
             self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
@@ -546,7 +550,7 @@ class Cache(object):
         if not renpy.config.developer:
             return
 
-        preload = threading.current_thread() is self.preload_thread
+        preload = (threading.current_thread() is self.preload_thread) or (self.in_preload_pass)
 
         self.load_log.insert(0, (time.time(), filename, preload))
 
