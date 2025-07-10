@@ -333,6 +333,8 @@ that the function is called from. The triple underscore function also marks the 
 inside for translation.
 
 The :var:`config.persistent_callback` callback makes it possible to update persistent data when it is loaded.
+Starting from this release :var:`persistent._version` will also be set to the current version of the game in
+any newly created persistent data. This can be used with the callback to migrate persistent save data.
 
 Changes
 -------
