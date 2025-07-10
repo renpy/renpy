@@ -2071,6 +2071,9 @@ class UnoptimizedTexture(ImageBase):
         self.image = im
 
         self.const_size = im.const_size
+        
+    def _repr_info(self):
+        return repr(self.image)
 
     def get_hash(self):
         return self.image.get_hash()
