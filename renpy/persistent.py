@@ -54,6 +54,7 @@ class Persistent(object):
     "A set of hashed or unhashed translation identifiers that have been seen."
 
     def __init__(self):
+        self._version = renpy.config.version
         self._update()
 
     def __setstate__(self, data):
@@ -94,6 +95,8 @@ class Persistent(object):
             self._chosen.clear()
             self._seen_audio.clear()
             self._seen_translates.clear()
+
+        self._version = renpy.config.version
 
         renpy.exports.execute_default_statement()
 
@@ -137,9 +140,6 @@ class Persistent(object):
                 "_seen_audio": 0,
                 "_seen_translates": 0,
             }
-
-        if self._version is None:
-            self._version = renpy.config.version
 
         if cb := renpy.config.persistent_callback:
             cb(self)
