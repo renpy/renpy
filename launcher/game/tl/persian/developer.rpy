@@ -1,6 +1,6 @@
 ﻿# TODO: Translation updated at 2025-07-03 12:39
 
-translate Persian strings:
+translate persian strings:
 
     # renpy/common/_developer/developer.rpym:39
     old "Developer Menu"

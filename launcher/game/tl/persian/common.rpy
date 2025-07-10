@@ -1,6 +1,6 @@
 ﻿# TODO: Translation updated at 2025-07-03 12:39
 
-translate Persian strings:
+translate persian strings:
 
     # renpy/common/00accessibility.rpy:28
     old "Self-voicing disabled."
@@ -52,7 +52,7 @@ translate Persian strings:
 
     # renpy/common/00accessibility.rpy:122
     old "Accessibility Menu. Use up and down arrows to navigate, and enter to activate buttons and bars."
-    new "منوی دسترس‌پذیری. از کلید های فلش بالا و پایین برای هدایت، و از کلید enter برای فعال کردن دکمه‌ها و میله‌ها استفاده کنید."
+    new "منوی دسترس‌پذیری. از کلیدهای فلش بالا و پایین برای هدایت، و از کلید enter برای فعال کردن دکمه‌ها و میله‌ها استفاده کنید."
 
     # renpy/common/00accessibility.rpy:141
     old "Font Override"
@@ -492,7 +492,7 @@ translate Persian strings:
 
     # renpy/common/00gui.rpy:459
     old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
-    new "این ذخیره در یک دستگاه دیگر ساخته شده است. فایل های ذخیرۀ ساخته شده با سوءنیت ممکن است به رایانۀ شما آسیب برسانند. آیا به سازندۀ این ذخیره و تمام کسانی که ممکن است فایل را تغییر داده باشند اعتماد دارید؟"
+    new "این ذخیره در یک دستگاه دیگر ساخته شده است. فایل‌های ذخیرۀ ساخته شده با سوءنیت ممکن است به رایانۀ شما آسیب برسانند. آیا به سازندۀ این ذخیره و تمام کسانی که ممکن است فایل را تغییر داده باشند اعتماد دارید؟"
 
     # renpy/common/00gui.rpy:460
     old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
