@@ -883,6 +883,9 @@ class Interface(object):
         # The previous state of the screensaver.
         self.last_screensaver = None
 
+        self.last_emscripten_preload_time: float = get_time()
+        """The last time an idle frame allowed an emacription preload pass to run without stuttering."""
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -1664,12 +1667,12 @@ class Interface(object):
         else:
             self.transition[layer] = transition
 
-    def event_peek(self):
+    def event_peek(self, sleep=True):
         """
         This peeks the next event. It returns None if no event exists.
         """
 
-        if renpy.emscripten:
+        if renpy.emscripten and sleep:
             emscripten.sleep(0)
 
         if self.pushed_event:
@@ -2289,7 +2292,8 @@ class Interface(object):
         step = 1
 
         while True:
-            if self.event_peek() and not self.force_prediction:
+
+            if self.event_peek(False) and not self.force_prediction:
                 break
 
             if not expensive:
@@ -2329,12 +2333,23 @@ class Interface(object):
 
             # Step 4: Preload images (on emscripten)
             elif step == 4:
-                if expensive and renpy.emscripten:
-                    try:
-                        renpy.display.im.cache.in_preload_pass = True
-                        renpy.display.im.cache.preload_thread_pass()
-                    finally:
-                        renpy.display.im.cache.in_preload_pass = False
+                if renpy.emscripten:
+                    if expensive:
+                        allow_preload = True
+                        self.last_emscripten_preload_time = get_time()
+                    elif renpy.config.emscripten_preload_timeout is None:
+                        allow_preload = False
+                    elif get_time() - self.last_emscripten_preload_time > renpy.config.emscripten_preload_timeout:
+                        allow_preload = True
+                    else:
+                        allow_preload = False
+
+                    if allow_preload:
+                        try:
+                            renpy.display.im.cache.in_preload_pass = True
+                            renpy.display.im.cache.preload_thread_pass()
+                        finally:
+                            renpy.display.im.cache.in_preload_pass = False
 
                 step += 1
 
