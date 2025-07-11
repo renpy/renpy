@@ -1185,6 +1185,21 @@ Saving and Loading
     early`` block. It should only reference other things typically available
     to ``python early`` blocks.
 
+    The callback can make use of :var:`persistent._version` to determine when
+    the data was originated and, if managed properly, when it was last
+    migrated. A value of None implies that the data predates this feature being
+    added in Ren'Py 8.4.
+
+    A extremely basic callback may look something like::
+
+        def migrate_persistent(data):
+            if data._version is None:
+                # Update values in data to be suitable for current version.
+                ...
+
+                # Update originating version.
+                data._version = config.version
+
 .. var:: config.quicksave_slots = 10
 
     The number of slots used by quicksaves.
