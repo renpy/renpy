@@ -1578,7 +1578,7 @@ Should mesh pad work the way it did before 8.4? (That is, it shifts things to th
 
 emscripten_preload_timeout: float|None = 5.0
 """
-After this many second without being able to preload, the emasripten port will cause a preload even if doing
+After this many second without being able to preload, the emscripten port will cause a preload even if doing
 so might cause a framerate stutter.
 """
 

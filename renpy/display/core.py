@@ -884,7 +884,7 @@ class Interface(object):
         self.last_screensaver = None
 
         self.last_emscripten_preload_time: float = get_time()
-        """The last time an idle frame allowed an emacription preload pass to run without stuttering."""
+        """The last time an idle frame allowed an emscripten preload pass to run without stuttering."""
 
         try:
             self.setup_nvdrs()
