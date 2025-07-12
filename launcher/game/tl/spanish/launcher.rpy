@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
     # game/new_project.rpy:77
     old "{#language name and font}"
     new "{font=fonts/Roboto-Light.ttf}Español{/font}"
