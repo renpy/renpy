@@ -278,7 +278,6 @@ def predefined_searchpath(commondir):
 android = ("ANDROID_PRIVATE" in os.environ)
 
 def main():
-
     renpy_base = path_to_renpy_base()
 
     sys.path.append(renpy_base)
