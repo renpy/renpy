@@ -741,7 +741,6 @@ def transpath(path: str) -> str|None:
         fn = os.path.join(renpy.config.basedir, d, path)
 
         if os.path.exists(fn):
-            add_auto(fn)
             return fn
 
 
@@ -959,6 +958,8 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         return self.source_to_code(source, module_info.filename)
 
     def get_data(self, path: str):
+        path = path.replace("\\", "/")
+
         if path.startswith("$game/"):
             path = path[6:]
 
