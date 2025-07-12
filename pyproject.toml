@@ -3,7 +3,7 @@ name = "renpy"
 readme = "README.rst"
 license = "MIT"
 dynamic = ["version"]
-requires-python = ">=3.12,<3.13"
+requires-python = "==3.12.*"
 dependencies = [
     "future",
     "six",
@@ -23,16 +23,13 @@ dev = [
 requires = [
     "scikit-build-core>=0.11",
     "cython>=3.1.0",
+    "cython-cmake",
     "pygame_sdl2 @ git+https://github.com/Andykl/pygame_sdl2.git@uv-build",
 ]
 build-backend = "scikit_build_core.build"
 
 [tool.scikit-build]
-build-dir = ".editable"
-editable.mode = "inplace"
-editable.rebuild = false
-# build.verbose = true
-# logging.level = "INFO"
+build-dir = "build"
 
 [tool.scikit-build.metadata.version]
 provider = "scikit_build_core.metadata.regex"
@@ -40,14 +37,15 @@ input = "renpy/versions.py"
 regex = '''"main", 3, "(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)"'''
 result = "{major}.{minor}.{patch}dev"
 
+[tool.scikit-build.wheel]
+cmake = true
+packages = []
+
 [tool.scikit-build.cmake.define]
-CMAKE_C_COMPILER = { env = "CC", default = "gcc" }
-CMAKE_CXX_COMPILER = { env = "CXX", default = "g++" }
 RENPY_STATIC = { env = "RENPY_STATIC" }
 RENPY_COVERAGE = { env = "RENPY_COVERAGE" }
 CUBISM = { env = "CUBISM" }
 PYGAME_SDL2_HEADERS = { env = "PYGAME_SDL2_HEADERS" }
-
 
 [tool.pyright]
 include = ["*.py", "renpy/", "src/"]

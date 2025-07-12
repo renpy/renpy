@@ -19,9 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
 py_branch_to_version = {}
 
 import sys
@@ -113,12 +110,15 @@ def get_version():
     return make_dict(branch)
 
 
-def generate_vc_version(nightly=False):
+def generate_vc_version(nightly: bool = False, output: str | None = None):
     """
     Generates the vc_version.py file.
 
     `nightly`
         If true, the nightly flag is set.
+
+    `output`
+        The output file, or None to use the default.
     """
 
     import subprocess
@@ -161,11 +161,14 @@ def generate_vc_version(nightly=False):
     except Exception:
         branch = "main"
         vc_version = "00000000"
-        official = False
 
     version_dict = make_dict(branch, suffix=vc_version, official=socket.gethostname() == "eileen", nightly=nightly)
 
-    vc_version_fn = os.path.join(os.path.dirname(__file__), "vc_version.py")
+    if output is None:
+        vc_version_fn = os.path.join(os.path.dirname(__file__), "vc_version.py")
+    else:
+        vc_version_fn = output
+        os.makedirs(os.path.dirname(vc_version_fn), exist_ok=True)
 
     with open(vc_version_fn, "w") as f:
         for k, v in sorted(version_dict.items()):
@@ -179,9 +182,10 @@ def main():
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--nightly", action="store_true", help="Set the nightly flag.")
+    ap.add_argument("--output", help="Output file", default=None)
     args = ap.parse_args()
 
-    generate_vc_version(nightly=args.nightly)
+    generate_vc_version(nightly=args.nightly, output=args.output)
 
 
 if __name__ == "__main__":

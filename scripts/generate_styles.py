@@ -21,15 +21,17 @@
 
 # pyright: strict
 
+import contextlib
 import os
 import io
-import sys
 from typing import Any
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BASE)
-GEN = os.path.join(ROOT, "tmp", "gen3")
+DEFAULT_GEN = os.path.join(ROOT, "tmp", "stylegen")
+_out_dir = DEFAULT_GEN
+_spew = False
 
 ################################################################################
 # Prefixes
@@ -240,9 +242,6 @@ style_property_index: dict[str, int] = {name: i for i, name in enumerate(style_p
 
 style_property_count = len(style_properties)
 
-# print("{} properties * {} prefixes = {} cache entries".format(
-#     style_property_count, PREFIX_COUNT, style_property_count * PREFIX_COUNT))
-
 # Special priority properties - these take a +1 compared to others. Generally,
 # these would be listed in the tuples in synthetic_properties, below.
 property_priority: dict[str, int] = dict(
@@ -407,7 +406,7 @@ all_properties.update(synthetic_properties)
 ################################################################################
 
 
-class CodeGen(object):
+class CodeGen:
     """
     Utility class for code generation.
 
@@ -417,7 +416,7 @@ class CodeGen(object):
         If true, spew the generated code to stdout.
     """
 
-    def __init__(self, filename: str, spew: bool = False):
+    def __init__(self, filename: str, spew: bool = _spew):
         self.filename = os.path.join(ROOT, filename)
         self.f = io.StringIO()
         self.depth = 0
@@ -447,11 +446,13 @@ class CodeGen(object):
         out += "\n"
         self.f.write(out)
 
+    @contextlib.contextmanager
     def indent(self):
-        self.depth += 1
-
-    def dedent(self):
-        self.depth -= 1
+        try:
+            self.depth += 1
+            yield
+        finally:
+            self.depth -= 1
 
 
 def generate_constants():
@@ -459,7 +460,7 @@ def generate_constants():
     This generates code that defines the property functions.
     """
 
-    g = CodeGen(GEN + "/styleconstants.pxi")
+    g = CodeGen(f"{_out_dir}/styleconstants.pxi")
 
     g.write("DEF PRIORITY_LEVELS = {}", PRIORITY_LEVELS)
     g.write("DEF PREFIX_COUNT = {}", PREFIX_COUNT)
@@ -489,72 +490,74 @@ def generate_property_function(
         "cdef int {name}_property(PyObject **cache, int *cache_priorities, int priority, object value) except -1:",
         name=name,
     )
-    g.indent()
 
-    g.write("priority += {}", prefix.priority + property_priority.get(propname, 0))
+    with g.indent():
+        g.write("priority += {}", prefix.priority + property_priority.get(propname, 0))
 
-    for stylepropname, func in properties:
-        value = "value"
+        for stylepropname, func in properties:
+            value = "value"
 
-        g.write("")
+            g.write("")
 
-        if isinstance(func, str):
-            g.write("v = {func}({value})", func=func, value=value)
-            value = "v"
-        elif func is not None:
-            g.write("v = {}", func)
-            value = "v"
+            if isinstance(func, str):
+                g.write("v = {func}({value})", func=func, value=value)
+                value = "v"
+            elif func is not None:
+                g.write("v = {}", func)
+                value = "v"
 
-        propfunc = style_properties[stylepropname]
+            propfunc = style_properties[stylepropname]
 
-        if propfunc is not None:
-            g.write("v = {propfunc}({value})", propfunc=propfunc, value=value)
-            value = "v"
+            if propfunc is not None:
+                g.write("v = {propfunc}({value})", propfunc=propfunc, value=value)
+                value = "v"
 
-        for alt, alt_name in zip(prefix.alts, prefix.alt_names):
-            if stylepropname in displayable_properties:
-                g.write(
-                    "assign_prefixed({}, cache, cache_priorities, priority, {}, '{}') # {}{}",
-                    alt * len(style_properties) + style_property_index[stylepropname],
-                    value,
-                    alt_name,
-                    alt_name,
-                    stylepropname,
-                )
-            else:
-                g.write(
-                    "assign({}, cache, cache_priorities, priority, <PyObject *> {}) # {}{}",
-                    alt * len(style_properties) + style_property_index[stylepropname],
-                    value,
-                    alt_name,
-                    stylepropname,
-                )
+            for alt, alt_name in zip(prefix.alts, prefix.alt_names):
+                if stylepropname in displayable_properties:
+                    g.write(
+                        "assign_prefixed({}, cache, cache_priorities, priority, {}, '{}') # {}{}",
+                        alt * len(style_properties) + style_property_index[stylepropname],
+                        value,
+                        alt_name,
+                        alt_name,
+                        stylepropname,
+                    )
+                else:
+                    g.write(
+                        "assign({}, cache, cache_priorities, priority, <PyObject *> {}) # {}{}",
+                        alt * len(style_properties) + style_property_index[stylepropname],
+                        value,
+                        alt_name,
+                        stylepropname,
+                    )
 
-    g.write("return 0")
-    g.dedent()
+        g.write("return 0")
 
     g.write("")
     g.write('register_property_function("{}", {}_property)', name, name)
     g.write("")
 
-    pass
+
+def generate_property_functions(prefix: Prefix):
+    g = CodeGen(f"{_out_dir}/style_{prefix.name}functions.pyx")
+
+    g.write('include "style_common.pxi"')
+    g.write("")
+
+    for propname, proplist in all_properties.items():
+        generate_property_function(g, prefix, propname, proplist)
+
+    g.close()
 
 
-def generate_property_functions():
+
+def generate_all_property_functions():
     """
     This generates code that defines the property functions.
     """
 
     for prefix in sorted(prefixes.values(), key=lambda p: p.index):
-        g = CodeGen(GEN + "/style_{}functions.pyx".format(prefix.name))
-
-        g.write('include "style_common.pxi"')
-        g.write("")
-
-        for propname, proplist in all_properties.items():
-            generate_property_function(g, prefix, propname, proplist)
-
-        g.close()
+        generate_property_functions(prefix)
 
 
 def generate_property(g: CodeGen, propname: str) -> None:
@@ -563,42 +566,35 @@ def generate_property(g: CodeGen, propname: str) -> None:
     """
 
     g.write("property {}:", propname)
-    g.indent()
+    with g.indent():
+        # __get__
+        g.write("def __get__(self):")
+        with g.indent():
+            g.write("return self._get({})", style_property_index[propname])
 
-    # __get__
-    g.write("def __get__(self):")
-    g.indent()
-    g.write("return self._get({})", style_property_index[propname])
-    g.dedent()
+        # __set__
+        g.write("def __set__(self, value):")
+        with g.indent():
+            g.write("self.properties.append({{ '{}' : value }})", propname)
 
-    # __set__
-    g.write("def __set__(self, value):")
-    g.indent()
-    g.write("self.properties.append({{ '{}' : value }})", propname)
-    g.dedent()
+        # __del__
+        g.write("def __del__(self):")
+        with g.indent():
+            g.write("self.delattr('{}')", propname)
 
-    # __del__
-    g.write("def __del__(self):")
-    g.indent()
-    g.write("self.delattr('{}')", propname)
-    g.dedent()
-
-    g.dedent()
     g.write("")
 
 
 def generate_properties():
-    g = CodeGen(GEN + "/styleclass.pxi")
+    g = CodeGen(f"{_out_dir}/styleclass.pxi")
 
     g.write("cdef class Style(StyleCore):")
     g.write("")
 
-    g.indent()
+    with g.indent():
+        for propname in style_properties:
+            generate_property(g, propname)
 
-    for propname in style_properties:
-        generate_property(g, propname)
-
-    g.dedent()
     g.close()
 
 
@@ -615,7 +611,7 @@ def generate_sets():
     proxy_property_code = "{"
 
     for p, lst in synthetic_properties.items():
-        proxy_property_code += '"{}" : frozenset({}),'.format(p, [el[0] for el in lst])
+        proxy_property_code += f'"{p}" : frozenset({[el[0] for el in lst]}),'
 
     proxy_property_code += "}"
 
@@ -626,7 +622,7 @@ def generate_sets():
         prefix_priority[p.name] = p.priority
         prefix_alts[p.name] = p.alt_names
 
-    g = CodeGen(GEN + "/stylesets.pxi")
+    g = CodeGen(f"{_out_dir}/stylesets.pxi")
 
     g.write("# This file is generated by generate_styles.py.")
     g.write("")
@@ -643,20 +639,40 @@ def generate_sets():
 
 def generate():
     generate_constants()
-    generate_property_functions()
+    generate_all_property_functions()
     generate_properties()
     generate_sets()
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 2:
-        sys.exit("Usage: python scripts/generate_styles.py [output directory]")
+    import argparse
+    parser = argparse.ArgumentParser()
 
-    if len(sys.argv) == 2:
-        GEN = sys.argv[1]  # type: ignore
-        try:
-            os.makedirs(GEN)
-        except FileExistsError:
-            pass
+    parser.add_argument("--output", default=_out_dir, help="Output directory")
+    parser.add_argument("--spew", action="store_true", help="Write generated code to stdout")
+    parser.add_argument("--constants", action="store_true", help="Generate constants")
+    parser.add_argument("--function", type=str, help="Generate property function 'name'")
+    parser.add_argument("--properties", action="store_true", help="Generate properties")
+    parser.add_argument("--sets", action="store_true", help="Generate sets")
 
-    generate()
+    args = parser.parse_args()
+
+    _out_dir = args.output
+    _spew = args.spew
+
+    os.makedirs(_out_dir, exist_ok=True)
+
+    if args.constants:
+        generate_constants()
+
+    elif args.function:
+        generate_property_functions(prefixes[args.function[1:]])
+
+    elif args.properties:
+        generate_properties()
+
+    elif args.sets:
+        generate_sets()
+
+    else:
+        generate()

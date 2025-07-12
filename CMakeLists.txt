@@ -1,9 +1,11 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.21)
 project(${SKBUILD_PROJECT_NAME} LANGUAGES C CXX)
 
 # Find required packages
-find_package(Python 3.12 EXACT REQUIRED COMPONENTS Interpreter Development.Module)
+find_package(Python 3.12 EXACT REQUIRED
+    COMPONENTS Interpreter Development.Module Development.Embed)
 find_package(PkgConfig REQUIRED)
+include(UseCython)
 
 # Core libraries
 pkg_check_modules(LIBAVFORMAT REQUIRED libavformat)
@@ -27,22 +29,20 @@ if(WIN32)
     find_library(OLE32_LIBRARY ole32 REQUIRED)
 endif()
 
-# Set up Cython
-find_program(CYTHON_EXECUTABLE cython REQUIRED)
-
 # Global settings
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Build configuration
 option(RENPY_STATIC "Build static version" OFF)
 option(RENPY_COVERAGE "Enable coverage" OFF)
 set(CUBISM_SDK_PATH "" CACHE PATH "Path to Cubism SDK")
-set(PYGAME_SDL2_HEADERS "" CACHE PATH "Path to pygame_sdl2/headers")
+set(PYGAME_SDL2_HEADERS "" CACHE PATH "Abosulte path to pygame_sdl2/headers (usually it is .venv/.../site-packages/include)")
 
 if(DEFINED ENV{RENPY_STATIC})
     set(RENPY_STATIC ON)
-    message(STATUS "RENPY_STATIC is defined")
 endif()
 
 if(DEFINED ENV{RENPY_COVERAGE})
@@ -56,28 +56,14 @@ endif()
 if (DEFINED ENV{PYGAME_SDL2_HEADERS})
     set(PYGAME_SDL2_HEADERS "$ENV{PYGAME_SDL2_HEADERS}")
 else()
-    message(STATUS "$ENV{PYGAME_SDL2_HEADERS}")
     message(FATAL_ERROR "PYGAME_SDL2_HEADERS is not defined")
 endif()
-
-
-# Set generation directory
-set(GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/gen3)
-if(RENPY_COVERAGE)
-    set(GEN_DIR ${GEN_DIR}-coverage)
-endif()
-if(RENPY_STATIC)
-    set(GEN_DIR ${GEN_DIR}-static)
-endif()
-
-file(MAKE_DIRECTORY ${GEN_DIR})
 
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${PYGAME_SDL2_HEADERS}
-    ${GEN_DIR}
     ${LIBAVFORMAT_INCLUDE_DIRS}
     ${LIBAVCODEC_INCLUDE_DIRS}
     ${LIBAVUTIL_INCLUDE_DIRS}
@@ -94,16 +80,6 @@ include_directories(
 if(CUBISM_SDK_PATH)
     include_directories(${CUBISM_SDK_PATH}/Core/include)
     add_definitions(-DHAVE_CUBISM)
-endif()
-
-# Global compile flags
-set(GLOBAL_COMPILE_FLAGS
-    -Wno-unused-function
-    -std=gnu99
-)
-
-if(WIN32)
-    list(APPEND GLOBAL_COMPILE_FLAGS -fno-strict-aliasing)
 endif()
 
 # Global libraries
@@ -126,16 +102,21 @@ if(WIN32)
     list(APPEND GLOBAL_LIBRARIES ${COMDLG32_LIBRARY} ${OLE32_LIBRARY})
 endif()
 
+set(CYTHON_ARGS
+    -X embedsignature=True
+    -I${CMAKE_CURRENT_SOURCE_DIR}/src
+    -I${CMAKE_CURRENT_SOURCE_DIR})
+
 # Function to create Cython extension
 function(add_cython_extension name)
     set(options)
-    set(oneValueArgs LANGUAGE PYX_FILE)
-    set(multiValueArgs SOURCES LIBRARIES COMPILE_ARGS DEFINITIONS)
+    set(oneValueArgs LANGUAGE PYX_FILE INSTALL_DIR)
+    set(multiValueArgs SOURCES LIBRARIES COMPILE_ARGS GENERATED_DEPENDENCIES)
     cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # Set defaults
     if(NOT ARG_LANGUAGE)
-        set(ARG_LANGUAGE "c")
+        set(ARG_LANGUAGE "C")
     endif()
 
     # Convert module name to path
@@ -150,64 +131,10 @@ function(add_cython_extension name)
         endif()
     endif()
 
-    # Set output file extension
-    if(ARG_LANGUAGE STREQUAL "c++")
-        set(c_file ${GEN_DIR}/${name}.cc)
-    else()
-        set(c_file ${GEN_DIR}/${name}.c)
-    endif()
-
-    # Cython flags
-    set(CYTHON_FLAGS
-        -3
-        --3str
-        -X profile=False
-        -X embedsignature=True
-        -I${CMAKE_CURRENT_SOURCE_DIR}/src
-        -I${GEN_DIR}
-        -I${CMAKE_CURRENT_SOURCE_DIR}
-    )
-
-    if(ARG_LANGUAGE STREQUAL "c++")
-        list(APPEND CYTHON_FLAGS --cplus)
-    endif()
-
-    if(RENPY_COVERAGE)
-        list(APPEND CYTHON_FLAGS -X linetrace=true)
-    endif()
-
-    if(DEFINED ENV{RENPY_ANNOTATE_CYTHON})
-        list(APPEND CYTHON_FLAGS -a)
-    endif()
-
-    # Generate C file from Cython
-    add_custom_command(
-        OUTPUT ${c_file}
-        COMMAND ${CYTHON_EXECUTABLE} ${CYTHON_FLAGS} ${pyx_file} -o ${c_file}
-        DEPENDS ${pyx_file}
-        COMMENT "Generating ${c_file} from ${pyx_file}"
-    )
-
-    # Handle static build modifications
-    if(RENPY_STATIC)
-        set(static_c_file ${GEN_DIR}/${name}_static.c)
-
-        add_custom_command(
-            OUTPUT ${static_c_file}
-            COMMAND ${CMAKE_COMMAND} -E copy ${c_file} ${c_file}.dynamic
-            COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/fix_static.py
-                ${c_file} ${static_c_file} ${name}
-            DEPENDS ${c_file}
-            COMMENT "Creating static version of ${name}"
-        )
-
-        set(final_c_file ${static_c_file})
-    else()
-        set(final_c_file ${c_file})
-    endif()
+    cython_transpile(${pyx_file} LANGUAGE ${ARG_LANGUAGE} OUTPUT_VARIABLE c_file)
 
     # Create Python extension
-    python_add_library(${name} MODULE ${final_c_file} ${ARG_SOURCES})
+    python_add_library(${name} MODULE ${c_file} ${ARG_SOURCES})
 
     # Extract the base filename for the extension
     get_filename_component(base_filename ${module_path} NAME)
@@ -218,70 +145,94 @@ function(add_cython_extension name)
         OUTPUT_NAME ${base_filename}
     )
 
-    # Compile flags
-    target_compile_options(${name} PRIVATE
-        ${GLOBAL_COMPILE_FLAGS}
-        ${ARG_COMPILE_ARGS}
-    )
-
     # Link libraries
     target_link_libraries(${name} PRIVATE
         ${GLOBAL_LIBRARIES}
         ${ARG_LIBRARIES}
     )
 
-    # Add definitions
-    if(ARG_DEFINITIONS)
-        target_compile_definitions(${name} PRIVATE ${ARG_DEFINITIONS})
-    endif()
+    # Compile flags
+    target_compile_options(${name} PRIVATE
+        ${GLOBAL_COMPILE_FLAGS}
+        ${ARG_COMPILE_ARGS}
+    )
 
-    if(RENPY_COVERAGE)
-        target_compile_definitions(${name} PRIVATE CYTHON_TRACE=1)
+    # Generated dependencies
+    if(ARG_GENERATED_DEPENDENCIES)
+        add_dependencies(${name} ${ARG_GENERATED_DEPENDENCIES})
     endif()
 
     # Install the extension
-    string(REPLACE "." "/" install_subpath ${name})
-    get_filename_component(install_dir ${install_subpath} DIRECTORY)
-    if (install_dir STREQUAL "")
-        set(install_dir "renpy")
+    if(ARG_INSTALL_DIR)
+        set(install_dir ${ARG_INSTALL_DIR})
+    else()
+        string(REPLACE "." "/" install_subpath ${name})
+        get_filename_component(install_dir ${install_subpath} DIRECTORY)
     endif()
     install(TARGETS ${name} DESTINATION ${install_dir})
 endfunction()
 
-# Generate style files
+# Style files
+set(STYLEGEN_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/stylegen")
+file(MAKE_DIRECTORY "${STYLEGEN_BUILD_DIR}")
+list(APPEND CYTHON_ARGS -I${STYLEGEN_BUILD_DIR})
 
-set(STYLE_PREFIXES
-    "" "selected_hover_" "selected_idle_" "selected_insensitive_"
-    "hover_" "idle_" "insensitive_" "activate_" "selected_activate_"
+
+function(generate_style_file name)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs ARGS)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    set(target_name "generate_${name}_target")
+    add_custom_target(${target_name}
+        COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_styles.py
+                --output ${STYLEGEN_BUILD_DIR} ${ARG_ARGS}
+        COMMAND_EXPAND_LISTS
+        BYPRODUCTS "${STYLEGEN_BUILD_DIR}/${name}"
+        COMMENT "Generating styles file ${name}"
+    )
+
+    set(${name}_TARGET ${target_name} PARENT_SCOPE)
+endfunction()
+
+generate_style_file(styleconstants.pxi ARGS --constants)
+generate_style_file(styleclass.pxi ARGS --properties)
+generate_style_file(stylesets.pxi ARGS --sets)
+
+set(STYLE_INFIXES
+    "_"
+    "_activate_"
+    "_hover_"
+    "_idle_"
+    "_insensitive_"
+    "_selected_"
+    "_selected_activate_"
+    "_selected_hover_"
+    "_selected_idle_"
+    "_selected_insensitive_"
 )
 
-set(STYLE_FUNCTION_FILES
-    ${GEN_DIR}/styleconstants.pxi
-    ${GEN_DIR}/styleclass.pxi
-    ${GEN_DIR}/stylesets.pxi
-)
-foreach(prefix ${STYLE_PREFIXES})
-    set(style_file ${GEN_DIR}/style_${prefix}functions.pyx)
-    list(APPEND STYLE_FUNCTION_FILES ${style_file})
+foreach(infix ${STYLE_INFIXES})
+    generate_style_file("style${infix}functions.pyx" ARGS --function ${infix})
 endforeach()
 
-add_custom_command(
-    OUTPUT ${STYLE_FUNCTION_FILES}
-    COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_styles.py ${GEN_DIR}
-    WORKING_DIRECTORY ${GEN_DIR}
-    COMMENT "Generating style files"
-)
+add_custom_target(generate_style_files ALL DEPENDS ${GENERATED_STYLE_FUNCTION_FILES})
+message(STATUS "Generated style files: ${GENERATED_STYLE_FUNCTION_FILES}")
 
 # Core extensions
 add_cython_extension(_renpy
+    INSTALL_DIR .
     SOURCES src/IMG_savepng.c src/core.c
 )
 
 add_cython_extension(_renpybidi
+    INSTALL_DIR .
     SOURCES src/renpybidicore.c
 )
 
 add_cython_extension(_renpytfd
+    INSTALL_DIR .
     SOURCES src/tinyfiledialogs/tinyfiledialogs.c
 )
 
@@ -290,7 +241,8 @@ add_cython_extension(renpy.astsupport)
 add_cython_extension(renpy.cslots)
 add_cython_extension(renpy.lexersupport)
 add_cython_extension(renpy.pydict)
-add_cython_extension(renpy.style)
+add_cython_extension(renpy.style
+    GENERATED_DEPENDENCIES ${styleconstants.pxi_TARGET})
 add_cython_extension(renpy.encryption)
 
 # renpy.audio extensions
@@ -304,13 +256,15 @@ add_cython_extension(renpy.audio.renpysound
 add_cython_extension(renpy.audio.filter)
 
 # renpy.styledata extensions
-add_cython_extension(renpy.styledata.styleclass)
-add_cython_extension(renpy.styledata.stylesets)
+add_cython_extension(renpy.styledata.styleclass
+    GENERATED_DEPENDENCIES ${styleclass.pxi_TARGET})
+add_cython_extension(renpy.styledata.stylesets
+    GENERATED_DEPENDENCIES ${stylesets.pxi_TARGET})
 
 # Style function extensions
-foreach(prefix ${STYLE_PREFIXES})
-    add_cython_extension(renpy.styledata.style_${prefix}functions
-        PYX_FILE ${GEN_DIR}/style_${prefix}functions.pyx
+foreach(infix ${STYLE_INFIXES})
+    add_cython_extension(renpy.styledata.style${infix}functions
+        PYX_FILE "${STYLEGEN_BUILD_DIR}/style${infix}functions.pyx"
     )
 endforeach()
 
@@ -342,7 +296,7 @@ endif()
 
 add_cython_extension(renpy.gl2.assimp
     SOURCES src/assimpio.cc
-    LANGUAGE c++
+    LANGUAGE CXX
 )
 
 # renpy.text extensions
@@ -355,6 +309,17 @@ add_cython_extension(renpy.text.hbfont
     SOURCES src/ftsupport.c
 )
 
+set(RENPY_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/renpy/vc_version.py")
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/renpy")
+
+add_custom_target(generate_renpy_version ALL
+    COMMAND
+    ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/renpy/versions.py --output "${RENPY_VERSION_FILE}"
+    BYPRODUCTS "${RENPY_VERSION_FILE}"
+    COMMENT "Generating Ren'Py version information in build directory."
+)
+
+# Install Python modules
 install(
     DIRECTORY renpy/
     DESTINATION renpy
