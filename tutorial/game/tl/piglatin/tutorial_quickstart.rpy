@@ -102,10 +102,10 @@ translate piglatin tutorial_dialogue_f0d66410:
     e "Etlay'say eesay hetay implestsay ossiblepay Enray'Ypay amegay."
 
 # game/tutorial_quickstart.rpy:89
-translate piglatin tutorial_dialogue_3e6b0068:
+translate piglatin tutorial_dialogue_8989713f:
 
     # "Wow, it's really really dark in here."
-    "Owway, Tiay'say eallyray eallyray arkday inay erehay."
+    "Owway, itay'say eallyray eallyray arkday inay erehay."
 
 # game/tutorial_quickstart.rpy:91
 translate piglatin tutorial_dialogue_5072a404:
@@ -150,10 +150,10 @@ translate piglatin tutorial_dialogue_628c9e4c:
     e "Pecialsay aracterschay inay ringsstay ancay ebay escapeday ithway aay ackslashbay. Otay includeay \" inay aay ringstay, eway avehay otay riteway \\\"."
 
 # game/tutorial_quickstart.rpy:116
-translate piglatin tutorial_dialogue_3e6b0068_1:
+translate piglatin tutorial_dialogue_8989713f_1:
 
     # "Wow, it's really really dark in here."
-    "Owway, Tiay'say eallyray eallyray arkday inay erehay."
+    "Owway, itay'say eallyray eallyray arkday inay erehay."
 
 # game/tutorial_quickstart.rpy:125
 translate piglatin tutorial_dialogue_d7f0b5b7:
@@ -200,8 +200,8 @@ translate piglatin tutorial_dialogue_90719f73:
 # game/tutorial_quickstart.rpy:151
 translate piglatin tutorial_dialogue_910f286a:
 
-    # e "The first is that it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
-    e "Hetay irstfay isay hattay'say itay'say aay itbay erbosevay. Hileway ypingtay \"Ucylay\" isnay'tay osay adbay, imagineay ifay ouyay adhay otay ypetay \"Ileeneay Ichardsonray\" housandstay ofay imestay."
+    # e "The first is that it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times." id tutorial_dialogue_910f286a
+    e "Hetay irstfay isay hattay itay'say aay itbay erbosevay. Hileway ypingtay \"Ucylay\" isnay'tay osay adbay, imagineay ifay ouyay adhay otay ypetay \"Ileeneay Ichardsonray\" housandstay ofay imestay." id tutorial_dialogue_910f286a
 
 # game/tutorial_quickstart.rpy:153
 translate piglatin tutorial_dialogue_9c9d59c2:
@@ -845,11 +845,11 @@ translate piglatin strings:
     old "Lucy"
     new "Ucylay"
 
-    # game/tutorial_quickstart.rpy:497
+    # game/tutorial_quickstart.rpy:499
     old "Yes, I do."
     new "Esyay, Iay oday."
 
-    # game/tutorial_quickstart.rpy:497
+    # game/tutorial_quickstart.rpy:502
     old "No, I don't."
     new "Onay, Iay onday'tay."
 

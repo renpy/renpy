@@ -8,8 +8,8 @@ translate piglatin tutorial_nvlmode_76b2fe88:
 # game/tutorial_nvlmode.rpy:22
 translate piglatin tutorial_nvlmode_ac125210:
 
-    # nvle "NVL-style games are games that cover the full screen with text, rather than placing it in a window at the bottom of the screen. Like this."
-    nvle "Vlnay-ylestay amesgay areay amesgay hattay overcay hetay ullfay creensay ithway exttay, atherray hentay acingplay itay inay aay indowway atay hetay ottombay ofay hetay creensay. Ikelay histay."
+    # nvle "NVL-style games are games that cover the full screen with text, rather than placing it in a window at the bottom of the screen. Like this." id tutorial_nvlmode_ac125210
+    nvle "Vlnay-ylestay amesgay areay amesgay hattay overcay hetay ullfay creensay ithway exttay, atherray hantay acingplay itay inay aay indowway atay hetay ottombay ofay hetay creensay. Ikelay histay." id tutorial_nvlmode_ac125210
 
 # game/tutorial_nvlmode.rpy:26
 translate piglatin tutorial_nvlmode_e7030787:
@@ -97,11 +97,11 @@ translate piglatin after_nvl_menu_146d840b:
 
 translate piglatin strings:
 
-    # game/tutorial_nvlmode.rpy:50
+    # game/tutorial_nvlmode.rpy:55
     old "Yes."
     new "Esyay."
 
-    # game/tutorial_nvlmode.rpy:50
+    # game/tutorial_nvlmode.rpy:61
     old "No."
     new "Onay."
 

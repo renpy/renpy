@@ -377,259 +377,259 @@ translate piglatin tutorial_atl_d90b1838:
     # e "Omitting the repeat statement means that the animation stops once we reach the end of the block of ATL code."
     e "Mittingoay hetay epeatray atementstay eansmay hattay hetay animationay opsstay onceay eway eachray hetay enday ofay hetay ockblay ofay Tlaay odecay."
 
-# game/tutorial_atl.rpy:557
+# game/tutorial_atl.rpy:556
 translate piglatin tutorial_atl_e5872360:
 
     # e "By default, displayables are replaced instantaneously. We can also use a with clause to give a transition between displayables."
     e "Ybay efaultday, isplayablesday areay eplacedray instantaneouslyay. Eway ancay alsoay useay aay ithway auseclay otay ivegay aay ansitiontray etweenbay isplayablesday."
 
-# game/tutorial_atl.rpy:564
+# game/tutorial_atl.rpy:563
 translate piglatin tutorial_atl_2e9d63ea:
 
     # e "With animation done, we'll see how we can use ATL to transform images, starting with positioning an image on the screen."
     e "Ithway animationay oneday, eway'llay eesay owhay eway ancay useay Tlaay otay ansformtray imagesay, artingstay ithway ositioningpay anay imageay onay hetay creensay."
 
-# game/tutorial_atl.rpy:573
+# game/tutorial_atl.rpy:572
 translate piglatin tutorial_atl_ddc55039:
 
     # e "The simplest thing we can do is to statically position an image. This is done by giving the names of the position properties, followed by the property values." id tutorial_atl_ddc55039
     e "Hetay implestsay hingtay eway ancay oday isay otay aticallystay ositionpay anay imageay. Histay isay oneday ybay ivinggay hetay amesnay ofay hetay ositionpay ropertiespay, ollowedfay ybay hetay ropertypay aluesvay." id tutorial_atl_ddc55039
 
-# game/tutorial_atl.rpy:578
+# game/tutorial_atl.rpy:577
 translate piglatin tutorial_atl_43516492:
 
     # e "With a few more statements, we can move things around on the screen."
     e "Ithway aay ewfay oremay atementsstay, eway ancay ovemay hingstay arounday onay hetay creensay."
 
-# game/tutorial_atl.rpy:580
+# game/tutorial_atl.rpy:579
 translate piglatin tutorial_atl_fb979287:
 
     # e "This example starts the image off at the top-right of the screen, and waits a second. It then moves it to the left side, waits another second, and repeats."
     e "Histay exampleay artsstay hetay imageay offay atay hetay optay-ightray ofay hetay creensay, anday aitsway aay econdsay. Tiay hentay ovesmay itay otay hetay eftlay idesay, aitsway anotheray econdsay, anday epeatsray."
 
-# game/tutorial_atl.rpy:582
+# game/tutorial_atl.rpy:581
 translate piglatin tutorial_atl_7650ec09:
 
     # e "The pause and repeat statements are the same statements we used in our animations. They work throughout ATL code."
     e "Hetay ausepay anday epeatray atementsstay areay hetay amesay atementsstay eway useday inay ouray animationsay. Heytay orkway hroughouttay Tlaay odecay."
 
-# game/tutorial_atl.rpy:587
+# game/tutorial_atl.rpy:586
 translate piglatin tutorial_atl_d3416d4f:
 
     # e "Having the image jump around on the screen isn't all that useful. That's why ATL has the interpolation statement."
     e "Avinghay hetay imageay umpjay arounday onay hetay creensay isnay'tay allay hattay usefulay. Hattay'say hyway Tlaay ashay hetay interpolationay atementstay."
 
-# game/tutorial_atl.rpy:589
+# game/tutorial_atl.rpy:588
 translate piglatin tutorial_atl_4e7512ec:
 
     # e "The interpolation statement allows you to smoothly vary the value of a transform property, from an old to a new value."
     e "Hetay interpolationay atementstay allowsay ouyay otay moothlysay aryvay hetay aluevay ofay aay ansformtray ropertypay, omfray anay olday otay aay ewnay aluevay."
 
-# game/tutorial_atl.rpy:591
+# game/tutorial_atl.rpy:590
 translate piglatin tutorial_atl_685eeeaa:
 
     # e "Here, we have an interpolation statement on the second ATL line. It starts off with the name of a time function, in this case linear."
     e "Erehay, eway avehay anay interpolationay atementstay onay hetay econdsay Tlaay inelay. Tiay artsstay offay ithway hetay amenay ofay aay imetay unctionfay, inay histay asecay inearlay."
 
-# game/tutorial_atl.rpy:593
+# game/tutorial_atl.rpy:592
 translate piglatin tutorial_atl_c5cb49de:
 
     # e "That's followed by an amount of time, in this case three seconds. It ends with a list of properties, each followed by its new value."
     e "Hattay'say ollowedfay ybay anay amountay ofay imetay, inay histay asecay hreetay econdssay. Tiay endsay ithway aay istlay ofay ropertiespay, eachay ollowedfay ybay itsay ewnay aluevay."
 
-# game/tutorial_atl.rpy:595
+# game/tutorial_atl.rpy:594
 translate piglatin tutorial_atl_04b8bc1d:
 
     # e "The value of each property is interpolated from its value when the statement starts to the value at the end of the statement. This is done once per frame, allowing smooth animation."
     e "Hetay aluevay ofay eachay ropertypay isay interpolateday omfray itsay aluevay henway hetay atementstay artsstay otay hetay aluevay atay hetay enday ofay hetay atementstay. Histay isay oneday onceay erpay amefray, allowingay moothsay animationay."
 
-# game/tutorial_atl.rpy:606
+# game/tutorial_atl.rpy:605
 translate piglatin tutorial_atl_2958f397:
 
     # e "ATL supports more complicated move types, like circle and spline motion. But I won't be showing those here."
     e "Tlaay upportssay oremay omplicatedcay ovemay ypestay, ikelay irclecay anday plinesay otionmay. Utbay Iay onway'tay ebay owingshay hosetay erehay."
 
-# game/tutorial_atl.rpy:610
+# game/tutorial_atl.rpy:609
 translate piglatin tutorial_atl_d08fe8d9:
 
     # e "Apart from displayables, pause, interpolation, and repeat, there are a few other statements we can use as part of ATL."
     e "Partaay omfray isplayablesday, ausepay, interpolationay, anday epeatray, heretay areay aay ewfay otheray atementsstay eway ancay useay asay artpay ofay Tlaay."
 
-# game/tutorial_atl.rpy:622
+# game/tutorial_atl.rpy:621
 translate piglatin tutorial_atl_84b22ac0:
 
     # e "ATL transforms created using the statement become ATL statements themselves. Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
     e "Tlaay ansformstray reatedcay usingay hetay atementstay ecomebay Tlaay atementsstay hemselvestay. Incesay hetay efaultday ositionspay areay alsoay ansformstray, histay eansmay hattay eway ancay useay eftlay, ightray, anday entercay insideay ofay anay Tlaay ockblay."
 
-# game/tutorial_atl.rpy:638
+# game/tutorial_atl.rpy:637
 translate piglatin tutorial_atl_331126c1:
 
     # e "Here, we have two new statements. The block statement allows you to include a block of ATL code. Since the repeat statement applies to blocks, this lets you repeat only part of an ATL transform."
     e "Erehay, eway avehay wotay ewnay atementsstay. Hetay ockblay atementstay allowsay ouyay otay includeay aay ockblay ofay Tlaay odecay. Incesay hetay epeatray atementstay appliesay otay ocksblay, histay etslay ouyay epeatray onlyay artpay ofay anay Tlaay ansformtray."
 
-# game/tutorial_atl.rpy:640
+# game/tutorial_atl.rpy:639
 translate piglatin tutorial_atl_24f67b67:
 
     # e "We also have the time statement, which runs after the given number of seconds have elapsed from the start of the block. It will run even if another statement is running, stopping the other statement."
     e "Eway alsoay avehay hetay imetay atementstay, hichway unsray afteray hetay ivengay umbernay ofay econdssay avehay elapseday omfray hetay artstay ofay hetay ockblay. Tiay illway unray evenay ifay anotheray atementstay isay unningray, oppingstay hetay otheray atementstay."
 
-# game/tutorial_atl.rpy:642
+# game/tutorial_atl.rpy:641
 translate piglatin tutorial_atl_b7709507:
 
     # e "So this example bounces the image back and forth for eleven and a half seconds, and then moves it to the right side of the screen."
     e "Osay histay exampleay ouncesbay hetay imageay ackbay anday orthfay orfay elevenay anday aay alfhay econdssay, anday hentay ovesmay itay otay hetay ightray idesay ofay hetay creensay."
 
-# game/tutorial_atl.rpy:656
+# game/tutorial_atl.rpy:655
 translate piglatin tutorial_atl_f903bc3b:
 
     # e "The parallel statement lets us run two blocks of ATL code at the same time."
     e "Hetay arallelpay atementstay etslay usay unray wotay ocksblay ofay Tlaay odecay atay hetay amesay imetay."
 
-# game/tutorial_atl.rpy:658
+# game/tutorial_atl.rpy:657
 translate piglatin tutorial_atl_5d0f8f9d:
 
     # e "Here, the top block move the image in the horizontal direction, and the bottom block moves it in the vertical direction. Since they're moving at different speeds, it looks like the image is bouncing on the screen."
     e "Erehay, hetay optay ockblay ovemay hetay imageay inay hetay orizontalhay irectionday, anday hetay ottombay ockblay ovesmay itay inay hetay erticalvay irectionday. Incesay heytay'eray ovingmay atay ifferentday peedssay, itay ookslay ikelay hetay imageay isay ouncingbay onay hetay creensay."
 
-# game/tutorial_atl.rpy:672
+# game/tutorial_atl.rpy:671
 translate piglatin tutorial_atl_28a7d27e:
 
     # e "Finally, the choice statement makes Ren'Py randomly pick a block of ATL code. This allows you to add some variation as to what Ren'Py shows."
     e "Inallyfay, hetay oicechay atementstay akesmay Enray'Ypay andomlyray ickpay aay ockblay ofay Tlaay odecay. Histay allowsay ouyay otay adday omesay ariationvay asay otay hatway Enray'Ypay owsshay."
 
-# game/tutorial_atl.rpy:678
+# game/tutorial_atl.rpy:677
 translate piglatin tutorial_atl_2265254b:
 
     # e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out {a=https://renpy.org/doc/html/atl.html}the ATL chapter in the reference manual{/a}."
     e "Histay utorialtay amegay ashay onlyay cratchedsay hetay urfacesay ofay hatway ouyay ancay oday ithway Tlaay. Orfay exampleay, eway avenhay'tay evenay overedcay hetay onay anday eventay atementsstay. Orfay oremay informationay, ouyay ightmay antway otay eckchay outay {a=https://renpy.org/doc/html/atl.html}hetay Tlaay apterchay inay hetay eferenceray anualmay{/a}."
 
-# game/tutorial_atl.rpy:687
+# game/tutorial_atl.rpy:686
 translate piglatin transform_properties_391169cf:
 
     # e "Ren'Py has quite a few transform properties that can be used with ATL, the Transform displayable, and the add Screen Language statement."
     e "Enray'Ypay ashay uiteqay aay ewfay ansformtray ropertiespay hattay ancay ebay useday ithway Tlaay, hetay Ransformtay isplayableday, anday hetay adday Creensay Anguagelay atementstay."
 
-# game/tutorial_atl.rpy:688
+# game/tutorial_atl.rpy:687
 translate piglatin transform_properties_fc895a1f:
 
     # e "Here, we'll show them off so you can see them in action and get used to what each does."
     e "Erehay, eway'llay owshay hemtay offay osay ouyay ancay eesay hemtay inay actionay anday etgay useday otay hatway eachay oesday."
 
-# game/tutorial_atl.rpy:704
+# game/tutorial_atl.rpy:703
 translate piglatin transform_properties_88daf990:
 
     # e "First off, all of the position properties are also transform properties. These include the pos, anchor, align, center, and offset properties."
     e "Irstfay offay, allay ofay hetay ositionpay ropertiespay areay alsoay ansformtray ropertiespay. Hesetay includeay hetay ospay, anchoray, alignay, entercay, anday offsetay ropertiespay."
 
-# game/tutorial_atl.rpy:722
+# game/tutorial_atl.rpy:721
 translate piglatin transform_properties_d7a487f1:
 
     # e "The position properties can also be used to pan over a displayable larger than the screen, by giving xpos and ypos negative values."
     e "Hetay ositionpay ropertiespay ancay alsoay ebay useday otay anpay overay aay isplayableday argerlay hantay hetay creensay, ybay ivinggay posxay anday posyay egativenay aluesvay."
 
-# game/tutorial_atl.rpy:732
+# game/tutorial_atl.rpy:731
 translate piglatin transform_properties_89e0d7c2:
 
     # "The subpixel property controls how things are lined up with the screen. When False, images can be pixel-perfect, but there can be pixel jumping."
     "Hetay ubpixelsay ropertypay ontrolscay owhay hingstay areay inedlay upay ithway hetay creensay. Henway Alsefay, imagesay ancay ebay ixelpay-erfectpay, utbay heretay ancay ebay ixelpay umpingjay."
 
-# game/tutorial_atl.rpy:739
+# game/tutorial_atl.rpy:738
 translate piglatin transform_properties_4194527e:
 
     # "When it's set to True, movement is smoother at the cost of blurring images a little."
     "Henway itay'say etsay otay Ruetay, ovementmay isay moothersay atay hetay ostcay ofay urringblay imagesay aay ittlelay."
 
-# game/tutorial_atl.rpy:758
+# game/tutorial_atl.rpy:757
 translate piglatin transform_properties_35934e77:
 
     # e "Transforms also support polar coordinates. The around property sets the center of the coordinate system to coordinates given in pixels."
     e "Ransformstay alsoay upportsay olarpay oordinatescay. Hetay arounday ropertypay etssay hetay entercay ofay hetay oordinatecay ystemsay otay oordinatescay ivengay inay ixelspay."
 
-# game/tutorial_atl.rpy:766
+# game/tutorial_atl.rpy:765
 translate piglatin transform_properties_605ebd0c:
 
     # e "The angle property gives the angle in degrees. Angles run clockwise, with the zero angle at the top of the screen."
     e "Hetay angleay ropertypay ivesgay hetay angleay inay egreesday. Nglesaay unray ockwiseclay, ithway hetay erozay angleay atay hetay optay ofay hetay creensay."
 
-# game/tutorial_atl.rpy:775
+# game/tutorial_atl.rpy:774
 translate piglatin transform_properties_6d4555ed:
 
     # e "The radius property gives the distance in pixels from the anchor of the displayable to the center of the coordinate system."
     e "Hetay adiusray ropertypay ivesgay hetay istanceday inay ixelspay omfray hetay anchoray ofay hetay isplayableday otay hetay entercay ofay hetay oordinatecay ystemsay."
 
-# game/tutorial_atl.rpy:789
+# game/tutorial_atl.rpy:788
 translate piglatin transform_properties_7af037a5:
 
     # e "There are several ways to resize a displayable. The zoom property lets us scale a displayable by a factor, making it bigger and smaller."
     e "Heretay areay everalsay aysway otay esizeray aay isplayableday. Hetay oomzay ropertypay etslay usay calesay aay isplayableday ybay aay actorfay, akingmay itay iggerbay anday mallersay."
 
-# game/tutorial_atl.rpy:802
+# game/tutorial_atl.rpy:801
 translate piglatin transform_properties_b6527546:
 
     # e "The xzoom and yzoom properties allow the displayable to be scaled in the X and Y directions independently."
     e "Hetay zoomxay anday zoomyay ropertiespay alloway hetay isplayableday otay ebay caledsay inay hetay Xay anday Yay irectionsday independentlyay."
 
-# game/tutorial_atl.rpy:812
+# game/tutorial_atl.rpy:811
 translate piglatin transform_properties_b98b780b:
 
     # e "By making xzoom or yzoom a negative number, we can flip the image horizontally or vertically."
     e "Ybay akingmay zoomxay oray zoomyay aay egativenay umbernay, eway ancay ipflay hetay imageay orizontallyhay oray erticallyvay."
 
-# game/tutorial_atl.rpy:822
+# game/tutorial_atl.rpy:821
 translate piglatin transform_properties_74d542ff:
 
     # e "Instead of zooming by a scale factor, the size transform property can be used to scale a displayable to a size in pixels."
     e "Nsteadiay ofay oomingzay ybay aay calesay actorfay, hetay izesay ansformtray ropertypay ancay ebay useday otay calesay aay isplayableday otay aay izesay inay ixelspay."
 
-# game/tutorial_atl.rpy:837
+# game/tutorial_atl.rpy:836
 translate piglatin transform_properties_438ed776:
 
     # e "The alpha property is used to change the opacity of a displayable. This can make it appear and disappear."
     e "Hetay alphaay ropertypay isay useday otay angechay hetay opacityay ofay aay isplayableday. Histay ancay akemay itay appearay anday isappearday."
 
-# game/tutorial_atl.rpy:850
+# game/tutorial_atl.rpy:849
 translate piglatin transform_properties_aee19f86:
 
     # e "The rotate property rotates a displayable."
     e "Hetay otateray ropertypay otatesray aay isplayableday."
 
-# game/tutorial_atl.rpy:861
+# game/tutorial_atl.rpy:860
 translate piglatin transform_properties_57b3235a:
 
     # e "By default, when a displayable is rotated, Ren'Py will include extra space on all four sides, so the size doesn't change as it rotates. Here, you can see the extra space on the left and top, and it's also there on the right and bottom."
     e "Ybay efaultday, henway aay isplayableday isay otatedray, Enray'Ypay illway includeay extraay pacesay onay allay ourfay idessay, osay hetay izesay oesnday'tay angechay asay itay otatesray. Erehay, ouyay ancay eesay hetay extraay pacesay onay hetay eftlay anday optay, anday itay'say alsoay heretay onay hetay ightray anday ottombay."
 
-# game/tutorial_atl.rpy:873
+# game/tutorial_atl.rpy:872
 translate piglatin transform_properties_66d29ee8:
 
     # e "By setting rotate_pad to False, we can get rid of the space, at the cost of the size of the displayable changing as it rotates."
     e "Ybay ettingsay otate_padray otay Alsefay, eway ancay etgay idray ofay hetay pacesay, atay hetay ostcay ofay hetay izesay ofay hetay isplayableday angingchay asay itay otatesray."
 
-# game/tutorial_atl.rpy:884
+# game/tutorial_atl.rpy:883
 translate piglatin transform_properties_7f32e8ad:
 
     # e "The tile transform properties, xtile and ytile, repeat the displayable multiple times."
     e "Hetay iletay ansformtray ropertiespay, tilexay anday tileyay, epeatray hetay isplayableday ultiplemay imestay."
 
-# game/tutorial_atl.rpy:894
+# game/tutorial_atl.rpy:893
 translate piglatin transform_properties_207b7fc8:
 
     # e "The crop property crops a rectangle out of a displayable, showing only part of it."
     e "Hetay ropcay ropertypay ropscay aay ectangleray outay ofay aay isplayableday, owingshay onlyay artpay ofay itay."
 
-# game/tutorial_atl.rpy:908
+# game/tutorial_atl.rpy:907
 translate piglatin transform_properties_e7e22d28:
 
     # e "When used together, crop and size can be used to focus in on specific parts of an image."
     e "Henway useday ogethertay, ropcay anday izesay ancay ebay useday otay ocusfay inay onay pecificsay artspay ofay anay imageay."
 
-# game/tutorial_atl.rpy:920
+# game/tutorial_atl.rpy:919
 translate piglatin transform_properties_f34abd82:
 
     # e "The xpan and ypan properties can be used to pan over a displayable, given an angle in degrees, with 0 being the center."
     e "Hetay panxay anday panyay ropertiespay ancay ebay useday otay anpay overay aay isplayableday, ivengay anay angleay inay egreesday, ithway 0 eingbay hetay entercay."
 
-# game/tutorial_atl.rpy:927
+# game/tutorial_atl.rpy:926
 translate piglatin transform_properties_bfa3b139:
 
     # e "Those are all the transform properties we have to work with. By putting them together in the right order, you can create complex things."
@@ -637,15 +637,15 @@ translate piglatin transform_properties_bfa3b139:
 
 translate piglatin strings:
 
-    # game/tutorial_atl.rpy:270
+    # game/tutorial_atl.rpy:275
     old "xpos 1.0 ypos .5"
     new "posxay 1.0 posyay .5"
 
-    # game/tutorial_atl.rpy:270
+    # game/tutorial_atl.rpy:281
     old "xpos .75 ypos .25"
     new "posxay .75 posyay .25"
 
-    # game/tutorial_atl.rpy:270
+    # game/tutorial_atl.rpy:285
     old "xpos .25 ypos .33"
     new "posxay .25 posyay .33"
 

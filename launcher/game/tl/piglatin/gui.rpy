@@ -338,8 +338,8 @@ translate piglatin strings:
     new "## Erticalvay ordersbay."
 
     # gui/game/gui.rpy:331
-    old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
-    new "## Hatway otay oday ithway unscrollableay crollbarssay inay hetay uigay. \"idehay\" ideshay hemtay, hileway Onenay owsshay hemtay."
+    old "## What to do with unscrollable scrollbars in the game menu. \"hide\" hides them, while None shows them."
+    new "## Hatway otay oday ithway unscrollableay crollbarssay inay hetay amegay enumay. \"idehay\" ideshay hemtay, hileway Onenay owsshay hemtay."
 
     # gui/game/gui.rpy:336
     old "## History"
