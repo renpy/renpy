@@ -1270,6 +1270,9 @@ class Interface(object):
         Kills all textures that have been loaded.
         """
 
+        if renpy.display.draw is None:
+            return
+
         if keep_const_size:
             renpy.display.im.cache.clear_variable_size()
         else:
@@ -1280,13 +1283,15 @@ class Interface(object):
         renpy.display.video.texture.clear()
         renpy.display.render.free_memory()
 
-        if renpy.display.draw is not None:
-            renpy.display.draw.kill_textures()
+        renpy.display.draw.kill_textures()
 
     def kill_surfaces(self):
         """
         Kills all surfaces that have been loaded.
         """
+
+        if renpy.display.draw is None:
+            return
 
         renpy.display.im.cache.clear()
         renpy.display.module.bo_cache = None
