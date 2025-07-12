@@ -611,7 +611,7 @@ init -1500 python:
             elif name == _("font kerning"):
 
                 if value is None:
-                    return FieldValue(_preferences, "font_kerning", min=-2.0, max=2.0, action=_DisplayReset())
+                    return FieldValue(_preferences, "font_kerning", min=-2.0, max=2.0, style="slider", action=_DisplayReset())
 
                 return [ SetField(_preferences, "font_kerning", value), _DisplayReset() ]
 
