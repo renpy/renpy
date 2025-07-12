@@ -735,10 +735,6 @@ def transpath(path: str) -> str|None:
     """
 
     path = path.lstrip("/")
-
-    if renpy.config.reject_backslash and "\\" in path:
-        raise Exception("Backslash in filename, use '/' instead: %r" % path)
-
     path = lower_map.get(unicodedata.normalize("NFC", path.lower()), path)
 
     for d in renpy.config.searchpath:
@@ -913,7 +909,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
             filename = transpath(module_info.filename)
             if filename is None:
-                filename = "renpy:" + module_info.filename
+                filename = "$game/" + module_info.filename
 
             if module_info.is_namespace:
                 spec.submodule_search_locations = [filename]
@@ -963,7 +959,7 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         return self.source_to_code(source, module_info.filename)
 
     def get_data(self, path: str):
-        if path.startswith("renpy:"):
+        if path.startswith("$game/"):
             path = path[6:]
 
             try:
