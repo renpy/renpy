@@ -104,7 +104,7 @@ if renpy.android:
 archives = []
 
 # A map from lower-case filename to regular-case filename.
-lower_map = {}
+lower_map: dict[str, str] = {}
 
 
 class ArchiveHandlers:
@@ -728,28 +728,44 @@ def loadable(name, tl=True, directory=None):
     return False
 
 
-def transfn(name):
+def transpath(path: str) -> str|None:
+    """
+    Translates `path` to a name that exists in one of the searched directories,
+    or to None if it does not exist.
+    """
+
+    path = path.lstrip("/")
+
+    if renpy.config.reject_backslash and "\\" in path:
+        raise Exception("Backslash in filename, use '/' instead: %r" % path)
+
+    path = lower_map.get(unicodedata.normalize("NFC", path.lower()), path)
+
+    for d in renpy.config.searchpath:
+        fn = os.path.join(renpy.config.basedir, d, path)
+
+        if os.path.exists(fn):
+            add_auto(fn)
+            return fn
+
+
+def transfn(name: bytes|str) -> str:
     """
     Tries to translate the name to a file that exists in one of the
     searched directories.
     """
 
-    name = name.lstrip("/")
+    if isinstance(name, bytes):
+        name = name.decode("utf-8")
 
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
-    name = lower_map.get(unicodedata.normalize("NFC", name.lower()), name)
+    path = transpath(name)
 
-    if isinstance(name, bytes):
-        name = name.decode("utf-8")
-
-    for d in renpy.config.searchpath:
-        fn = os.path.join(renpy.config.basedir, d, name)
-
-        if os.path.isfile(fn):
-            add_auto(fn)
-            return fn
+    if path is not None:
+        add_auto(path)
+        return path
 
     raise Exception("Couldn't find file '%s'." % name)
 
@@ -895,15 +911,19 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
 
             spec.has_location = True
 
+            filename = transpath(module_info.filename)
+            if filename is None:
+                filename = "renpy:" + module_info.filename
+
             if module_info.is_namespace:
-                spec.submodule_search_locations = [module_info.filename]
+                spec.submodule_search_locations = [filename]
 
             elif module_info.is_package:
-                spec.submodule_search_locations = [module_info.filename.rpartition("/")[0]]
+                spec.submodule_search_locations = [filename.rpartition("/")[0]]
 
             if not module_info.is_namespace:
-                spec.origin = module_info.filename
-                spec.cached = module_info.filename + "c"
+                spec.origin = filename
+                spec.cached = filename + "c"
 
             return spec
 
@@ -943,10 +963,17 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         return self.source_to_code(source, module_info.filename)
 
     def get_data(self, path: str):
-        try:
-            return load(path, tl=False).read()
-        except Exception as e:
-            raise OSError(f"Could not open {path!r}.") from e
+        if path.startswith("renpy:"):
+            path = path[6:]
+
+            try:
+                return load(path, tl=False).read()
+            except Exception as e:
+                raise OSError(f"Could not open {path!r}.") from e
+
+        else:
+            with open(path, "rb") as f:
+                return f.read()
 
 
 meta_backup = []
