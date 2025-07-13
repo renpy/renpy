@@ -182,7 +182,7 @@ Uniforms
 ``float u_text_slow_time``
     The time in seconds since the start of the slow text effect. This will only increase until the end of slow
     text, when it will max out. If the user clicks to terminate slow text, this will max out. It should only
-    be used for slow text - use
+    be used for slow text - use u_time for other effects that need to vary over time.
 
 ``float u_text_to_drawable``
     The ratio of virtual pixels to drawable pixels. This is used to convert from virtual pixels to drawable pixels.

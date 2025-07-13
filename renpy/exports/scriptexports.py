@@ -19,8 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals  # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
 from renpy.exports.commonexports import renpy_pure
@@ -50,11 +50,11 @@ def get_all_labels():
     Returns the set of all labels defined in the program, including labels
     defined for internal use in the libraries.
     """
-    rv = [ ]
+    rv = []
 
-    for i in renpy.game.script.namemap:
-        if isinstance(i, basestring):
-            rv.append(i)
+    for i in renpy.game.script.namemap.values():
+        if isinstance(i.name, str):
+            rv.append(i.name)
 
     return renpy.revertable.RevertableSet(rv)
 
@@ -102,13 +102,10 @@ def load_module(name, **kwargs):
     renpy.game.contexts.append(context)
 
     context.make_dynamic(kwargs)
-    renpy.store.__dict__.update(kwargs) # @UndefinedVariable
+    renpy.store.__dict__.update(kwargs)
 
-    for _prio, node in initcode: # @UnusedVariable
-        if isinstance(node, renpy.ast.Node):
-            renpy.game.context().run(node)
-        else:
-            node()
+    for _prio, node in initcode:
+        node.execute_init()
 
     context.pop_all_dynamic()
 
@@ -132,7 +129,6 @@ def load_string(s, filename="<string>"):
     old_exception_info = renpy.game.exception_info
 
     try:
-
         old_locked = renpy.config.locked
         renpy.config.locked = False
 
@@ -146,10 +142,7 @@ def load_string(s, filename="<string>"):
         renpy.game.contexts.append(context)
 
         for _prio, node in initcode:
-            if isinstance(node, renpy.ast.Node):
-                renpy.game.context().run(node)
-            else:
-                node()
+            node.execute_init()
 
         context.pop_all_dynamic()
         renpy.game.contexts.pop()
@@ -186,7 +179,6 @@ def load_language(language):
     old_exception_info = renpy.game.exception_info
 
     try:
-
         old_locked = renpy.config.locked
         renpy.config.locked = False
 
@@ -199,10 +191,7 @@ def load_language(language):
         renpy.game.contexts.append(context)
 
         for _prio, node in initcode:
-            if isinstance(node, renpy.ast.Node):
-                renpy.game.context().run(node)
-            else:
-                node()
+            node.execute_init()
 
         context.pop_all_dynamic()
         renpy.game.contexts.pop()

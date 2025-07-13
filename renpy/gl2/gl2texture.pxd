@@ -79,4 +79,18 @@ cdef class GLTexture(GL2Model):
     cdef public int br
     cdef public int bb
 
+    # The last texture states set in gl2uniform.
+    cdef public GLint wrap_s
+    cdef public GLint wrap_t
+    cdef public GLfloat anisotropy
+
+    cdef public GLint mag_filter
+    cdef public GLint min_filter
+    cdef public GLint default_mag_filter
+    cdef public GLint default_min_filter
+
+    cdef bint has_mipmaps(self)
+
     cpdef subsurface(GLTexture self, t)
+
+    cpdef GL2Model get_texture(self, int i)

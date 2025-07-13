@@ -82,14 +82,14 @@ cdef class Mesh3(Mesh):
 
         rv = "<Mesh3 {!r}".format(self.layout.offset)
 
-        for 0 <= i < self.points:
+        for i in range(self.points):
             rv += "\n    {}: {: >8.3f} {:> 8.3f} {:> 8.3f} | ".format(chr(i + 65), self.point[i].x, self.point[i].y, self.point[i].z)
-            for 0 <= j < self.layout.stride:
+            for j in range(self.layout.stride):
                 rv += "{:> 8.3f} ".format(self.attribute[i * self.layout.stride + j])
 
         rv += "\n    "
 
-        for 0 <= i < self.triangles:
+        for i in range(self.triangles):
             rv += "{}-{}-{} ".format(
                 chr(self.triangle[i * 3 + 0] + 65),
                 chr(self.triangle[i * 3 + 1] + 65),
@@ -203,7 +203,7 @@ cdef class Mesh3(Mesh):
 
         rv = [ ]
 
-        for 0 <= i < self.points:
+        for i in range(self.points):
             rv.append((self.point[i].x, self.point[i].y, self.point[i].z, 1.0))
 
         return rv
@@ -265,7 +265,7 @@ cdef void copy_point(Mesh3 old, int op, Mesh3 new, int np):
 
     new.point[np] = old.point[op]
 
-    for 0 <= i < stride:
+    for i in range(stride):
         new.attribute[np * stride + i] = old.attribute[op * stride + i]
 
 
@@ -292,7 +292,7 @@ cdef int split_line(Mesh3 old, Mesh3 new, CropInfo *ci, int p0idx, int p1idx):
 
     cdef int i
 
-    for 0 <= i < SPLIT_CACHE_LEN:
+    for i in range(SPLIT_CACHE_LEN):
         if (ci.split[i].p0idx == p0idx) and (ci.split[i].p1idx == p1idx):
             return ci.split[i].npidx
         elif (ci.split[i].p0idx == p1idx) and (ci.split[i].p1idx == p0idx):
@@ -330,7 +330,7 @@ cdef int split_line(Mesh3 old, Mesh3 new, CropInfo *ci, int p0idx, int p1idx):
     cdef float a
     cdef float b
 
-    for 0 <= i < stride:
+    for i in range(stride):
         a = old.attribute[p0idx * stride + i]
         b = old.attribute[p1idx * stride + i]
         new.attribute[npidx * stride + i] = a + d * (b - a)
@@ -425,7 +425,7 @@ cdef Mesh3 split_mesh(Mesh3 old, float x0, float y0, float x1, float y1):
     all_outside = True
     all_inside = True
 
-    for 0 <= i < old.points:
+    for i in range(old.points):
         px = old.point[i].x - x0
         py = old.point[i].y - y0
 
@@ -451,7 +451,7 @@ cdef Mesh3 split_mesh(Mesh3 old, float x0, float y0, float x1, float y1):
 
     # Step 2: Copy points that are inside.
 
-    for 0 <= i < old.points:
+    for i in range(old.points):
         if ci.point[i].inside:
             copy_point(old, i, new, new.points)
             ci.point[i].replacement = new.points
@@ -461,7 +461,7 @@ cdef Mesh3 split_mesh(Mesh3 old, float x0, float y0, float x1, float y1):
 
     ci.splits = 0
 
-    for 0 <= i < SPLIT_CACHE_LEN:
+    for i in range(SPLIT_CACHE_LEN):
         ci.split[i].p0idx = -1
         ci.split[i].p1idx = -1
 
@@ -477,7 +477,7 @@ cdef Mesh3 split_mesh(Mesh3 old, float x0, float y0, float x1, float y1):
     cdef bint p1in
     cdef bint p2in
 
-    for 0 <= i < old.triangles:
+    for i in range(old.triangles):
         p0 = old.triangle[3 * i + 0]
         p1 = old.triangle[3 * i + 1]
         p2 = old.triangle[3 * i + 2]
@@ -527,7 +527,7 @@ cdef Mesh3 crop_mesh(Mesh3 m, Polygon p):
 
     j = p.points - 1
 
-    for 0 <= i < p.points:
+    for i in range(p.points):
         rv = split_mesh(rv, p.point[j].x, p.point[j].y, p.point[i].x, p.point[i].y)
         j = i
 

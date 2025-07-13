@@ -164,9 +164,6 @@ init python:
 
         print("Eliminating __pycache__...")
 
-        if PY2:
-            return
-
         import pathlib
         import sys
 

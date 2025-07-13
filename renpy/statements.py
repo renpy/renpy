@@ -22,42 +22,41 @@
 # This module contains code to support user-defined statements.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
 
 # The statement registry. It's a map from tuples giving the prefixes of
 # statements to dictionaries giving the methods used for that statement.
-registry = { }
+registry = {}
 
 parsers = renpy.parser.ParseTrie()
 
 
 def register(
-        name,
-        parse=None,
-        lint=None,
-        execute=None,
-        predict=None,
-        next=None,
-        scry=None,
-        block=False,
-        init=False,
-        translatable=False, # Not used.
-        execute_init=None,
-        init_priority=0,
-        label=None,
-        warp=None,
-        translation_strings=None,
-        force_begin_rollback=False,
-        post_execute=None,
-        post_label=None,
-        predict_all=True,
-        predict_next=None,
-        execute_default=None,
-        reachable=None,
+    name,
+    parse=None,
+    lint=None,
+    execute=None,
+    predict=None,
+    next=None,
+    scry=None,
+    block=False,
+    init=False,
+    translatable=False,  # Not used.
+    execute_init=None,
+    init_priority=0,
+    label=None,
+    warp=None,
+    translation_strings=None,
+    force_begin_rollback=False,
+    post_execute=None,
+    post_label=None,
+    predict_all=True,
+    predict_next=None,
+    execute_default=None,
+    reachable=None,
 ):
     """
     :doc: statement_register
@@ -78,7 +77,7 @@ def register(
           parse that block.
         * "possible", to indicate that the statement may or may not take
           a block.
-        * "script" to indicate that the block shopuld be interpreted as a
+        * "script" to indicate that the block should be interpreted as a
           block of Ren'Py script language statements. See `next` for how
           to implement control flow using this.
         * "script-possible" is treated like "script" if a block is present,
@@ -160,8 +159,8 @@ def register(
 
     `translation_strings`
         A function that is called with the parsed block. It's expected to
-        return a list of strings, which are then reported as being available
-        to be translated.
+        return a list of strings or tuples of (string line number, string),
+        which are then reported as being available to be translated.
 
     `force_begin_rollback`
         This should be set to true on statements that are likely to cause the
@@ -265,20 +264,20 @@ def register(
         predict_next=predict_next,
         execute_default=execute_default,
         reachable=reachable,
+        init_priority=init_priority,
     )
 
-    if block not in [True, False, "script", "script-possible", "atl", "atl-possible", "possible" ]:
-        raise Exception("Unknown \"block\" argument value: {}".format(block))
+    if block not in [True, False, "script", "script-possible", "atl", "atl-possible", "possible"]:
+        raise Exception('Unknown "block" argument value: {}'.format(block))
 
     # The function that is called to create an ast.UserStatement.
-    def parse_user_statement(l, loc):
-
+    def parse_user_statement(l: renpy.lexer.Lexer, loc):
         renpy.exports.push_error_handler(l.error)
 
         old_subparses = l.subparses
 
         try:
-            l.subparses = [ ]
+            l.subparses = []
 
             text = l.text
             subblock = l.subblock
@@ -318,7 +317,11 @@ def register(
             rv.code_block = code_block
             rv.atl = atl
             rv.subparses = l.subparses
-            rv.init_priority = init_priority + l.init_offset
+
+            if execute_init or execute_default:
+                rv.init_offset = l.init_offset
+            else:
+                rv.init_offset = None
 
         finally:
             l.subparses = old_subparses
@@ -326,10 +329,13 @@ def register(
 
         if (post_execute is not None) or (post_label is not None):
             post = renpy.ast.PostUserStatement(loc, rv)
-            rv = [ rv, post ]
+            rv = [rv, post]
 
         if init and not l.init:
-            rv = renpy.ast.Init(loc, [rv], init_priority + l.init_offset)
+            if not isinstance(rv, list):
+                rv = [rv]
+
+            rv = renpy.ast.Init(loc, rv, init_priority + l.init_offset)
 
         return rv
 
@@ -347,13 +353,12 @@ def parse(node, line, subblock):
     This is used for runtime parsing of CDSes that were created before 7.3.
     """
 
-    block = [ (node.filename, node.linenumber, line, subblock) ]
+    block = [(node.filename, node.linenumber, line, subblock)]
     l = renpy.parser.Lexer(block)
     l.advance()
 
     renpy.exports.push_error_handler(l.error)
     try:
-
         pf = parsers.parse(l)
         if pf is None:
             l.error("Could not find user-defined statement at runtime.")

@@ -11,22 +11,30 @@ import pathlib
 import textwrap
 import inspect
 import types
+import json
 
 ROOT = pathlib.Path(__file__).parent.parent.absolute()
 sys.path.insert(0, str(ROOT))
 
 import _renpy
 import renpy
+
 renpy.import_all()
 
 import pygame_sdl2
+
 pygame_sdl2.import_as_pygame()
+
 
 # Patch renpy.script so the Lexer can be used.
 class FakeScript:
     all_pyexpr = None
 
+
 renpy.game.script = FakeScript()
+
+generated_files = []
+
 
 def python_signature(o):
     """
@@ -45,15 +53,14 @@ def python_signature(o):
     # If this is pure-python, then just inspect the signature.
     try:
         sig = inspect.signature(o)
-        return (str(sig))
+        return str(sig)
     except Exception:
         pass
 
     # Otherwise, look at the docstring.
     s = getattr(o, "__doc__", "")
 
-    renpy.game.script.all_pyexpr = [ ]
-
+    renpy.game.script.all_pyexpr = []
 
     s = s.split("\n\n")[0]
 
@@ -65,7 +72,7 @@ def python_signature(o):
 
     s = s.replace("-> void", "")
 
-    lines = renpy.parser.list_logical_lines('<test>', s, 1, add_lines=True)
+    lines = renpy.parser.list_logical_lines("<test>", s, 1, add_lines=True)
     nested = renpy.parser.group_logical_lines(lines)
 
     l = renpy.parser.Lexer(nested)
@@ -85,17 +92,17 @@ def python_signature(o):
 
         return m
 
-    consume(r'\(')
+    consume(r"\(")
 
     first = True
 
     while True:
         consume(",")
 
-        if consume(r'\)'):
+        if consume(r"\)"):
             break
 
-        consume(r'\**')
+        consume(r"\**")
 
         if not first:
             rv += " "
@@ -111,7 +118,7 @@ def python_signature(o):
             else:
                 break
 
-        rv += argname # type: ignore
+        rv += argname  # type: ignore
         rv += l.delimited_python(",)")
 
     rv += " "
@@ -120,14 +127,13 @@ def python_signature(o):
     return rv
 
 
-def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|type):
+def generate_namespace(out: TextIO, prefix: str, namespace: types.ModuleType | type):
     """
     This generates type information for a module or class namespace.
     """
 
     # Imports.
     for k, v in sorted(namespace.__dict__.items()):
-
         if not isinstance(v, types.ModuleType):
             continue
 
@@ -146,15 +152,13 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
 
     # Classes, methods, and functions.
     for k, v in sorted(namespace.__dict__.items()):
-
         if k in TYPING_IMPORTS:
             continue
 
-        if k in [ "__new__", "__init__" ]:
+        if k in ["__new__", "__init__"]:
             continue
 
         if isinstance(v, type):
-
             if v.__module__ != namespace.__name__:
                 if v.__module__.startswith("renpy") or v.__module__.startswith("pygame_sdl2"):
                     out.write(prefix + f"{k} = {v.__module__}.{v.__name__}\n")
@@ -165,7 +169,7 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
                 continue
 
             # Bases and class name.
-            bases = [ i.__module__ + "." + i.__name__ for i in v.__bases__  if i != object ]
+            bases = [i.__module__ + "." + i.__name__ for i in v.__bases__ if i != object]
 
             if bases:
                 bases_clause = f"({', '.join(bases)})"
@@ -188,9 +192,7 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
                 except Exception:
                     pass
 
-
             if init_sig:
-
                 if "(self" not in init_sig:
                     init_sig = "(self, " + init_sig[1:]
 
@@ -219,7 +221,6 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
 
         generated = True
 
-
     # Variables.
 
     for k, v in sorted(namespace.__dict__.items()):
@@ -235,12 +236,10 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
             generated = True
 
     if not generated:
-
         out.write(prefix + "pass\n\n")
 
 
-
-def generate_module(module : types.ModuleType, package : bool):
+def generate_module(module: types.ModuleType, package: bool):
     """
     This generates type information for a module.
     """
@@ -257,7 +256,8 @@ def generate_module(module : types.ModuleType, package : bool):
     else:
         fn = base / f"{modfn}.pyi"
 
-    print(fn)
+    if fn.exists() and not fn.read_text().startswith("from typing import"):
+        return
 
     fn.parent.mkdir(parents=True, exist_ok=True)
 
@@ -269,8 +269,10 @@ def generate_module(module : types.ModuleType, package : bool):
 
         generate_namespace(f, "", module)
 
+        generated_files.append(fn)
 
-def is_extension(m : types.ModuleType):
+
+def is_extension(m: types.ModuleType):
     """
     Returns true if m is an extension module, and False otherwise.
     """
@@ -286,7 +288,8 @@ def is_extension(m : types.ModuleType):
 
     return False
 
-def should_generate(name, m : Any):
+
+def should_generate(name, m: Any):
     """
     Returns true if we should generate the type information for the module with
     `name`.
@@ -301,13 +304,51 @@ def should_generate(name, m : Any):
     if prefix == "renpy":
         return is_extension(m)
 
-    if prefix in [ "pygame", "pygame_sdl2" ]:
+    if prefix in ["pygame", "pygame_sdl2"]:
         return True
 
     return False
 
 
+def manage_gitignore():
+    gitignore = ROOT / ".gitignore"
+
+    old_lines = gitignore.read_text().split("\n")
+    new_lines = []
+
+    for l in old_lines:
+        if l.endswith(".pyi"):
+            continue
+
+        new_lines.append(l)
+
+        if l == "# Pyi Files (generated by scripts/generate_pyi.py)":
+            new_lines.extend(generated_files)
+
+    gitignore.write_text("\n".join(new_lines))
+
+
+def manage_vscode():
+    settings = ROOT / ".vscode" / "settings.json"
+
+    with open(settings) as f:
+        j = json.load(f)
+
+    files_exclude = j["files.exclude"]
+
+    files_exclude = {k: v for k, v in files_exclude.items() if not k.endswith(".pyi")}
+
+    for i in generated_files:
+        files_exclude[str(i)] = True
+
+    j["files.exclude"] = files_exclude
+
+    with open(settings, "w") as f:
+        json.dump(j, f, indent=4)
+
+
 def main():
+    global generated_files
 
     packages = set()
 
@@ -316,17 +357,24 @@ def main():
         packages.add(package)
 
     for k, v in sorted(sys.modules.items()):
-
         if not should_generate(k, v):
             continue
 
         generate_module(v, k in packages)
 
+    generated_files.sort()
+    generated_files = [str(i.relative_to(ROOT)) for i in generated_files]
+    generated_files = [i for i in generated_files if i.startswith("renpy/")]
+
+    manage_gitignore()
+    manage_vscode()
+
     for fn in (ROOT / "scripts" / "pyi").glob("**/*.pyi"):
-        dfn =  ROOT / "typings" / fn.relative_to(ROOT / "scripts" / "pyi")
+        dfn = ROOT / "typings" / fn.relative_to(ROOT / "scripts" / "pyi")
         text = fn.read_text()
         dfn.parent.mkdir(parents=True, exist_ok=True)
         dfn.write_text(text)
+
 
 if __name__ == "__main__":
     main()

@@ -352,7 +352,7 @@ init python in interface:
 
     def error(message, submessage=None, label="front_page", **kwargs):
         """
-        Indicates to the user that an error has occured.
+        Indicates to the user that an error has occurred.
 
         `message`
             The message to display.
@@ -408,7 +408,7 @@ init python in interface:
         except Exception as e:
             renpy.renpy.error.report_exception(e, editor=False)
 
-            error(_("While [what!qt], an error occured:"),
+            error(_("While [what!qt], an error occurred:"),
                 _("[exception!q]"),
                 what=what,
                 label=label,

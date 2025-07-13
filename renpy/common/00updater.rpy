@@ -41,7 +41,6 @@ init -1500 python in updater:
     import zlib
     import codecs
     import io
-    import future.utils
 
     def urlopen(url):
         import requests
@@ -69,95 +68,6 @@ init -1500 python in updater:
     # A map from update URL to the time we last checked that URL.
     if persistent._update_last_checked is None:
         persistent._update_last_checked = { }
-
-    # A file containing deferred update commands, one per line. Right now,
-    # there are two commands:
-    # R <path>
-    #     Rename <path>.new to <path>.
-    # D <path>
-    #     Delete <path>.
-    # Deferred commands that cannot be accomplished on start are ignored.
-    DEFERRED_UPDATE_FILE = os.path.join(config.renpy_base, "update", "deferred.txt")
-    DEFERRED_UPDATE_LOG = os.path.join(config.renpy_base, "update", "log.txt")
-
-    def process_deferred_line(l):
-
-        cmd, _, fn = l.partition(" ")
-
-        if cmd == "R":
-            if os.path.exists(fn + ".new"):
-
-                if os.path.exists(fn):
-                    os.unlink(fn)
-
-                os.rename(fn + ".new", fn)
-
-        elif cmd == "D":
-
-            if os.path.exists(fn):
-                os.unlink(fn)
-
-        elif cmd == "":
-
-            pass
-
-        else:
-            raise Exception("Bad command. %r (%r %r)" % (l, cmd, fn))
-
-    def process_deferred():
-        if not os.path.exists(DEFERRED_UPDATE_FILE):
-            return
-
-        # Give a previous process time to quit (and let go of the
-        # open files.)
-        time.sleep(3)
-
-        try:
-            log = open(DEFERRED_UPDATE_LOG, "a")
-        except Exception:
-            log = io.BytesIO()
-
-        with log:
-            with open(DEFERRED_UPDATE_FILE, "r") as f:
-                for l in f:
-
-                    l = l.rstrip("\r\n")
-
-                    log.write(l)
-
-                    try:
-                        process_deferred_line(l)
-                    except Exception:
-                        traceback.print_exc(file=log)
-
-            try:
-                os.unlink(DEFERRED_UPDATE_FILE + ".old")
-            except Exception:
-                pass
-
-            try:
-                os.rename(DEFERRED_UPDATE_FILE, DEFERRED_UPDATE_FILE + ".old")
-            except Exception:
-                traceback.print_exc(file=log)
-
-    # Process deferred updates on startup, if any exist.
-
-    process_deferred()
-
-    DELETED = os.path.join(config.renpy_base, "update", "deleted")
-
-    def process_deleted():
-        if not os.path.exists(DELETED):
-            return
-
-        import shutil
-
-        try:
-            shutil.rmtree(DELETED)
-        except Exception as e:
-            pass
-
-    process_deleted()
 
     def zsync_path(command):
         """
@@ -200,7 +110,7 @@ init -1500 python in updater:
             The state that the updater is in.
 
         self.message
-            In an error state, the error message that occured.
+            In an error state, the error message that occurred.
 
         self.progress
             If not None, a number between 0.0 and 1.0 giving some sort of
@@ -213,7 +123,7 @@ init -1500 python in updater:
 
         # Here are the possible states.
 
-        # An error occured during the update process.
+        # An error occurred during the update process.
         # self.message is set to the error message.
         ERROR = "ERROR"
 
@@ -425,7 +335,7 @@ init -1500 python in updater:
                     self.log.flush()
 
             except Exception as e:
-                self.message = _type(e).__name__ + ": " + unicode(e)
+                self.message = _type(e).__name__ + ": " + str(e)
                 self.can_cancel = False
                 self.can_proceed = True
                 self.state = self.ERROR
@@ -987,11 +897,17 @@ init -1500 python in updater:
             # Does updates.json need to be verified?
             require_verified = False
 
-            # New-style ECDSA signature.
-            key = os.path.join(config.basedir, "update", "key.pem")
+            # The key for either the current game, or a downloaded game.
+            key = os.path.join(self.updatedir, "key.pem")
 
+            # A key that comes with the downloader app, to seed it.
             if not os.path.exists(key):
-                key = os.path.join(self.updatedir, "key.pem")
+                key = os.path.join(config.basedir, "public_key.pem")
+
+            # This game's included key, used for initial downloades if the downloader app
+            # doesn't have a key.
+            if not os.path.exists(key):
+                key = os.path.join(config.basedir, "update", "key.pem")
 
             if os.path.exists(key):
                 require_verified = True
@@ -1054,9 +970,9 @@ init -1500 python in updater:
             if "RENPY_TEST_MONKEYPATCH" in os.environ:
                 with open(os.environ["RENPY_TEST_MONKEYPATCH"], "r") as f:
                     monkeypatch = f.read()
-                    future.utils.exec_(monkeypatch, globals(), globals())
+                    exec(monkeypatch, globals(), globals())
             elif verified and "monkeypatch" in self.updates:
-                future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
+                exec(self.updates["monkeypatch"], globals(), globals())
 
         def add_dlc_state(self, name):
 
@@ -1571,20 +1487,12 @@ init -1500 python in updater:
 
             for path in self.moves:
 
-                self.unlink(path)
-
-                if os.path.exists(path):
-                    self.log.write("could not rename file %s" % path)
-
-                    with open(DEFERRED_UPDATE_FILE, "a") as f:
-                        f.write("R " + path + "\r\n")
-
-                    continue
-
                 try:
+                    self.unlink(path)
                     os.rename(path + ".new", path)
                 except Exception:
-                    pass
+                    renpy.update.deferred.defer_rename(path)
+
 
         def delete_obsolete(self):
             """
@@ -1621,15 +1529,13 @@ init -1500 python in updater:
                 self.unlink(i)
 
                 if os.path.exists(i):
-                    self.log.write("could not delete file %s" % i)
-                    with open(DEFERRED_UPDATE_FILE, "a") as f:
-                        f.write("D " + i + "\r\n")
+                    renpy.update.deferred.defer_unlink(i)
 
             for i in old_directories:
                 try:
                     os.rmdir(i)
                 except Exception:
-                    pass
+                    renpy.update.deferred.defer_unlink(i)
 
         def save_state(self):
             """
@@ -2026,7 +1932,7 @@ init -1500:
                 vbox:
 
                     if u.state == u.ERROR:
-                        text _("An error has occured:")
+                        text _("An error has occurred:")
                     elif u.state == u.CHECKING:
                         text _("Checking for updates.")
                     elif u.state == u.UPDATE_NOT_AVAILABLE:
@@ -2083,7 +1989,7 @@ init -1500:
             elif u.state == u.FINISHING or u.state == u.DONE:
                 text _("The game data has been downloaded.")
             else: # An error or unknown state.
-                text _("An error occured when trying to download game data:")
+                text _("An error occurred when trying to download game data:")
 
                 if u.message is not None:
                     text "[u.message!q]"

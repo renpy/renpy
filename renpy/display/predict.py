@@ -22,8 +22,7 @@
 # This file contains the routines that manage image prediction.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
@@ -41,7 +40,10 @@ predicting = False
 
 # A list of (screen name, argument dict) tuples, giving the screens we'd
 # like to predict.
-screens = [ ]
+screens = []
+
+# A list of translation ids for the statement being predicted.
+tlids = list[str | None]
 
 
 def displayable(d):
@@ -54,7 +56,7 @@ def displayable(d):
 
     if d not in predicted:
         predicted.add(d)
-        d.visit_all(lambda i : i.predict_one())
+        d.visit_all(lambda i: i.predict_one())
 
 
 def screen(_screen_name, *args, **kwargs):
@@ -117,7 +119,6 @@ def prediction_coroutine(root_widget):
     # clicks.
 
     for _i in renpy.game.context().predict():
-
         predicting = False
         yield True
         predicting = True
@@ -157,7 +158,7 @@ def prediction_coroutine(root_widget):
             yield False
             predicting = True
 
-    predicted_screens = [ ]
+    predicted_screens = []
 
     # Predict screens given with renpy.start_predict_screen.
     for name, value in list(renpy.store._predict_screen.items()):
@@ -176,7 +177,7 @@ def prediction_coroutine(root_widget):
     predicting = True
 
     try:
-        root_widget.visit_all(lambda i : i.predict_one_action())
+        root_widget.visit_all(lambda i: i.predict_one_action())
     except Exception:
         if renpy.config.debug_prediction:
             import traceback
@@ -189,7 +190,6 @@ def prediction_coroutine(root_widget):
 
     # Predict the screens themselves.
     for t in screens:
-
         while not (yield False):
             continue
 
@@ -208,5 +208,7 @@ def prediction_coroutine(root_widget):
         renpy.display.screen.predict_screen(name, *args, **kwargs)
 
         predicting = False
+
+    renpy.gl2.assimp.finish_predict()
 
     yield None

@@ -9,7 +9,7 @@ to :func:`Character`, or setting the :var:`config.character_callback` or
 :var:`config.all_character_callbacks` variables.
 
 The character callback is called with a single positional argument, the event
-that occured. Possible events are:
+that occurred. Possible events are:
 
 "begin"
     Called at the start of a say statement.
@@ -62,7 +62,7 @@ arguments:
 
 
 Other values of the positional argument and additional keyword arguments may
-be supplie to the callback. The callback should be written to ignore keyword arguments it
+be supplied to the callback. The callback should be written to ignore keyword arguments it
 does not understand.
 
 Example

@@ -32,7 +32,7 @@ init python:
         if not filenames:
             interface.error(
                 _("Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."),
-                label="install",
+                label="preferences",
                 name=name,
                 zipglob=zipglob,
             )
@@ -81,10 +81,7 @@ init python:
 
 label install_live2d:
     python hide:
-        if PY2:
-            _prefix = r"lib/py2-"
-        else:
-            _prefix = r"lib/py3-"
+        _prefix = r"lib/py3-"
 
         patterns = [
             (r".*/Core/dll/linux/x86_64/(libLive2DCubismCore.so)", _prefix + r"linux-x86_64/\1"),
@@ -96,11 +93,6 @@ label install_live2d:
             (r".*/Core/dll/android/(arm64-v8a/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
             (r".*/Core/dll/android/(x86_64/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
         ]
-
-        if PY2:
-           patterns.extend([
-                (r".*/Core/dll/windows/x86/(Live2DCubismCore.dll)", _prefix + r"windows-i686/\1"),
-           ])
 
         install_from_zip("Live2D Cubism SDK for Native", "CubismSdkForNative-[45]-*.zip", patterns)
 

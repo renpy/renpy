@@ -23,7 +23,7 @@ translate tchinese strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    new "啓用"
+    new "啟用"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
@@ -95,7 +95,7 @@ translate tchinese strings:
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "沒有可用的游戲手柄"
+    new "沒有可用的遊戲手柄"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
@@ -183,7 +183,7 @@ translate tchinese strings:
 
     # renpy/common/00gltest.rpy:100
     old "Force GL Renderer"
-    new "强制 GL 渲染器"
+    new "強制 GL 渲染器"
 
     # renpy/common/00gltest.rpy:105
     old "Force ANGLE Renderer"
@@ -195,7 +195,7 @@ translate tchinese strings:
 
     # renpy/common/00gltest.rpy:116
     old "Force GL2 Renderer"
-    new "强制 GL2 渲染器"
+    new "強制 GL2 渲染器"
 
     # renpy/common/00gltest.rpy:121
     old "Force ANGLE2 Renderer"
@@ -239,7 +239,7 @@ translate tchinese strings:
 
     # renpy/common/00gltest.rpy:264
     old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
-    new "有關如何解決此問題的更多詳細信息，請參閱 {a=[url]} 文檔 {/a} 。"
+    new "有關如何解決此問題的更多詳細資訊，請參閱 {a=[url]} 文件 {/a} 。"
 
     # renpy/common/00gltest.rpy:281
     old "Change render options"
@@ -251,7 +251,7 @@ translate tchinese strings:
 
     # renpy/common/_errorhandling.rpym:662
     old "Open"
-    new "打開"
+    new "開啟"
 
     # renpy/common/_errorhandling.rpym:666
     old "Copy BBCode"
@@ -279,7 +279,7 @@ translate tchinese strings:
 
     # renpy/common/_errorhandling.rpym:748
     old "Opens a console to allow debugging the problem."
-    new "打開控制台以調試問題。"
+    new "開啟控制台以除錯問題。"
 
     # renpy/common/00gltest.rpy:191
     old "Tearing"

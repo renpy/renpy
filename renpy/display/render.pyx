@@ -275,6 +275,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         rv.render_of.append(d)
         renpy.plog(4, "after clipping")
 
+    rv.debug = style.debug or rv.debug
 
     if not sizing:
 
@@ -421,7 +422,7 @@ def redraw(d, when):
     redraw_queue.append((when + renpy.game.interface.frame_time, d))
 
 
-IDENTITY = Matrix2D(1, 0, 0, 1)
+IDENTITY = renpy.display.matrix.IDENTITY
 
 
 def take_focuses(focuses):
@@ -508,8 +509,10 @@ def mark_sweep():
     if screen_render is not None:
         worklist.append(screen_render)
 
-    cache_renders = renpy.display.im.cache.get_renders()
-    worklist.extend(cache_renders)
+    worklist.extend(renpy.display.im.cache.get_renders())
+
+    for r in worklist:
+        r.mark = True
 
     i = 0
 
@@ -522,12 +525,6 @@ def mark_sweep():
                 worklist.append(j)
 
         i += 1
-
-    if screen_render is not None:
-        screen_render.mark = True
-
-    for r in cache_renders:
-        r.mark = True
 
     if renpy.emscripten:
         # Do not kill Renders that cache the last video frame
@@ -544,12 +541,18 @@ def mark_sweep():
     live_renders = worklist
 
 
-# Possible operations that can be done as part of a render.
+# Possible operations that can be done as part of a render. Not used anymore, but kept
+# for compatibility.
 BLIT = 0
 DISSOLVE = 1
 IMAGEDISSOLVE = 2
 PIXELLATE = 3
 FLATTEN = 4
+
+# Possible matrix kinds.
+MATRIX_VIEW = 0
+MATRIX_MODEL = 1
+MATRIX_PROJECTION = 2
 
 cdef class Render:
 
@@ -591,6 +594,9 @@ cdef class Render:
         # be of the (0, 0) point in the child coordinate space.
         self.forward = None
         self.reverse = None
+
+        # The kind of matrix that is being updated by this displayable.
+        self.matrix_kind = MATRIX_MODEL
 
         # This is used to adjust the alpha of children of this render.
         self.alpha = 1
@@ -680,6 +686,9 @@ cdef class Render:
         # Have the textures been loaded?
         self.loaded = False
 
+        # Do the uniforms have a render in them?
+        self.uniforms_has_render = False
+
         live_renders.append(self)
 
     _types = """\
@@ -719,6 +728,7 @@ cdef class Render:
         cached_texture: Any
         cached_model: Any
         loaded: bool
+        uniforms_has_render: bool
         """
 
     def __repr__(self): #@DuplicatedSignature
@@ -975,24 +985,6 @@ cdef class Render:
             # Try to avoid clipping if a surface fits entirely inside the
             # rectangle.
 
-            if (reverse is None) or (reverse.xdx > 0.0 and
-                                     reverse.xdy == 0.0 and
-                                     reverse.ydx == 0.0 and
-                                     reverse.ydy > 0.0):
-
-                forward = this.forward or IDENTITY
-
-                tx, ty = forward.transform(x, y)
-                tw, th = forward.transform(w + x, h + y)
-                rw, rh = forward.transform(this.width, this.height)
-
-                if (tx <= 0) and (tw >= rw):
-                    rv.xclipping = False
-
-                if (ty <= 0) and (th >= rh):
-                    rv.yclipping = False
-
-
             if subpixel:
                 rv.subpixel_blit(this, (-x, -y), focus=focus, main=True)
             else:
@@ -1029,26 +1021,28 @@ cdef class Render:
                     if child.xclipping:
                         end = min(cw, cbx+bw)
                         cbx = max(0, cbx)
-                        bw = end - cbx
+                        cbw = end - cbx
 
                         cropw = cw
                     else:
                         cropw = w - xo
+                        cbw = bw
 
                     if child.yclipping:
                         end = min(ch, cby+bh)
                         cby = max(0, cby)
-                        bh = end - cby
+                        cbh = end - cby
 
                         croph = ch
                     else:
                         croph = h - yo
+                        cbh = bh
 
                     crop = (cx, cy, cropw, croph)
-                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel, bounds=(cbx, cby, bw, bh))
-                    newchild.width = cw
-                    newchild.height = ch
+                    newchild = child.subsurface(crop, focus=focus, subpixel=child_subpixel, bounds=(cbx, cby, cbw, cbh))
                     newchild.render_of = child.render_of[:]
+                    newchild.xclipping = child.xclipping or newchild.xclipping
+                    newchild.yclipping = child.yclipping or newchild.yclipping
 
                 else:
 
@@ -1657,6 +1651,10 @@ cdef class Render:
         Adds a uniform with the given name and value that will be passed
         to the shaders that render this Render and its children.
         """
+
+        if type(value) is Render:
+            self.depends_on(value)
+            self.uniforms_has_render = True
 
         if self.uniforms is None:
             self.uniforms = { name : value }

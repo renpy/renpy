@@ -20,8 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy.test.testast as testast
@@ -29,17 +28,16 @@ import renpy
 
 
 def parse_click(l, loc, target):
-
     rv = testast.Click(loc, target)
 
     while True:
-        if l.keyword('button'):
+        if l.keyword("button"):
             rv.button = int(l.require(l.integer))
 
-        elif l.keyword('pos'):
+        elif l.keyword("pos"):
             rv.position = l.require(l.simple_expression)
 
-        elif l.keyword('always'):
+        elif l.keyword("always"):
             rv.always = True
 
         else:
@@ -52,11 +50,10 @@ def parse_type(l, loc, keys):
     rv = testast.Type(loc, keys)
 
     while True:
-
-        if l.keyword('pattern'):
+        if l.keyword("pattern"):
             rv.pattern = l.require(l.string)
 
-        elif l.keyword('pos'):
+        elif l.keyword("pos"):
             rv.position = l.require(l.simple_expression)
 
         else:
@@ -71,8 +68,7 @@ def parse_move(l, loc):
     rv.position = l.require(l.simple_expression)
 
     while True:
-
-        if l.keyword('pattern'):
+        if l.keyword("pattern"):
             rv.pattern = l.require(l.string)
 
         else:
@@ -82,19 +78,18 @@ def parse_move(l, loc):
 
 
 def parse_drag(l, loc):
-
     points = l.require(l.simple_expression)
 
     rv = testast.Drag(loc, points)
 
     while True:
-        if l.keyword('button'):
+        if l.keyword("button"):
             rv.button = int(l.require(l.integer))
 
-        elif l.keyword('pattern'):
+        elif l.keyword("pattern"):
             rv.pattern = l.require(l.string)
 
-        elif l.keyword('steps'):
+        elif l.keyword("steps"):
             rv.steps = int(l.require(l.integer))
 
         else:
@@ -105,32 +100,27 @@ def parse_drag(l, loc):
 
 def parse_clause(l, loc):
     if l.keyword("run"):
-
         expr = l.require(l.simple_expression)
         return testast.Action(loc, expr)
 
     elif l.keyword("pause"):
-
         expr = l.require(l.simple_expression)
         return testast.Pause(loc, expr)
 
     elif l.keyword("label"):
-
         name = l.require(l.label_name)
         return testast.Label(loc, name)
 
     elif l.keyword("type"):
-
         name = l.name()
         if name is not None:
-            return parse_type(l, loc, [ name ])
+            return parse_type(l, loc, [name])
 
         string = l.require(l.string)
 
         return parse_type(l, loc, list(string))
 
     elif l.keyword("drag"):
-
         return parse_drag(l, loc)
 
     elif l.keyword("move"):
@@ -153,10 +143,8 @@ def parse_clause(l, loc):
 
 
 def parse_statement(l, loc):
-
-    if l.keyword('python'):
-
-        l.require(':')
+    if l.keyword("python"):
+        l.require(":")
 
         l.expect_block("python block")
 
@@ -169,31 +157,30 @@ def parse_statement(l, loc):
         l.expect_block("if block")
 
         condition = parse_clause(l, loc)
-        l.require(':')
+        l.require(":")
         block = parse_block(l.subblock_lexer(False), loc)
 
         return testast.If(loc, condition, block)
 
     # Single-line statements only below here.
 
-    l.expect_noblock('statement')
+    l.expect_noblock("statement")
 
-    if l.match(r'\$'):
-
+    if l.match(r"\$"):
         source = l.require(l.rest)
 
         code = renpy.ast.PyCode(source, loc)
         return testast.Python(loc, code)
 
-    elif l.keyword('assert'):
+    elif l.keyword("assert"):
         source = l.require(l.rest)
         return testast.Assert(loc, source)
 
-    elif l.keyword('jump'):
+    elif l.keyword("jump"):
         target = l.require(l.name)
         return testast.Jump(loc, target)
 
-    elif l.keyword('call'):
+    elif l.keyword("call"):
         target = l.require(l.name)
         return testast.Call(loc, target)
 
@@ -211,7 +198,7 @@ def parse_block(l, loc):
     Parses a named block of testcase statements.
     """
 
-    block = [ ]
+    block = []
 
     while l.advance():
         stmt = parse_statement(l, l.get_location())

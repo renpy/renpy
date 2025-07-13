@@ -27,10 +27,10 @@ def shaders(incdir="source/inc"):
         if sp.name == "renpy.ftl":
             continue
 
-        for prio, source in sp.vertex_parts:
+        for prio, _, _ in sp.vertex_parts:
             vertex_priorities.append((prio, sp.name))
 
-        for prio, source in sp.fragment_parts:
+        for prio, _, _ in sp.fragment_parts:
             fragment_priorities.append((prio, sp.name))
 
     fragment_priorities.sort()
@@ -72,17 +72,15 @@ def shaders(incdir="source/inc"):
             if sp.vertex_functions or sp.fragment_functions:
                 raise Exception("Can't doc functions yet.")
 
-            for prio, s in sorted(sp.vertex_parts):
+            for prio, _, s in sorted(sp.vertex_parts):
                 p("Vertex shader (priority %d)::" % prio)
 
                 indented(s)
 
-            for prio, s in sorted(sp.fragment_parts):
+            for prio, _, s in sorted(sp.fragment_parts):
                 p("Fragment shader (priority %d)::" % prio)
 
                 indented(s)
-
-
 
 
 def textshaders(incdir="source/inc"):
@@ -90,7 +88,6 @@ def textshaders(incdir="source/inc"):
     with open(incdir + "/builtintextshaders", "w") as outf:
 
         for name, shader in sorted(renpy.config.textshaders.items()):
-            print("---", name)
 
             if not shader.doc:
                 continue

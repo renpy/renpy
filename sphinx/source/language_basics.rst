@@ -12,8 +12,7 @@ Files
 
 The script of a Ren'Py game is made up of all the files found under the
 :file:`game/` directory ending with the :file:`.rpy` extension. Ren'Py will
-consider each of these files (in the Unicode order of their paths), and will
-use the contents of the files as the script.
+consider each of these files and will use the contents of the files as the script.
 
 Generally, there's no difference between a script written in one big file and a
 script broken into multiple files. Control can be transferred within the script
@@ -88,7 +87,7 @@ at the end of a line, unless:
 * The last character on the line is a backslash (``\``).
 
 * The line contains an open parenthesis character (``(``, ``{``, or ``[``),
-  that hasn't been matched by the cooresponding closing parenthesis
+  that hasn't been matched by the corresponding closing parenthesis
   character (\ ``)``, ``}``, or ``]``, respectively).
 
 * The end of the line occurs during a string - *any* string, even with single

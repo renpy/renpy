@@ -886,7 +886,7 @@ translate ukrainian strings:
     new "Оновлення"
 
     # renpy/common/00updater.rpy:1631
-    old "An error has occured:"
+    old "An error has occurred:"
     new "Сталася помилка:"
 
     # renpy/common/00updater.rpy:1633

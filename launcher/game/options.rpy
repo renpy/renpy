@@ -322,7 +322,7 @@ init python:
         """
 
         if py is True:
-            py = 'pyo' if PY2 else 'pycache'
+            py = 'pycache'
 
         if py == 'pycache':
             build.classify_renpy(pattern + "/**__pycache__/", binary)
@@ -346,6 +346,8 @@ init python:
             build.classify_renpy(pattern + "/**.pyo", None)
 
         build.classify_renpy(pattern + "/**.pyi", None)
+        build.classify_renpy(pattern + "/**.pyx", "source_only")
+        build.classify_renpy(pattern + "/**.pxd", "source_only")
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
@@ -357,6 +359,7 @@ init python:
 
         build.classify_renpy(pattern + "/**", source)
 
+    build.classify_renpy("renpy/gl/", None)
 
     build.classify_renpy("renpy.py", "binary")
     source_and_binary("renpy")
@@ -392,22 +395,12 @@ init python:
     build.classify_renpy("sphinx/source/inc/", None)
     build.classify_renpy("sphinx/source/**", "source_only")
 
-
-    # module.
-    build.classify_renpy("module/", "source")
-    build.classify_renpy("module/*.c", "source")
-    build.classify_renpy("module/gen/", None)
-    build.classify_renpy("module/*.h", "source")
-    build.classify_renpy("module/*.py*", "source")
-    build.classify_renpy("module/include/", "source")
-    build.classify_renpy("module/include/*.pxd", "source")
-    build.classify_renpy("module/include/*.pxi", "source")
-    build.classify_renpy("module/pysdlsound/", "source")
-    build.classify_renpy("module/pysdlsound/*.py", "source")
-    build.classify_renpy("module/pysdlsound/*.pyx", "source")
-    build.classify_renpy("module/fribidi-src/**", "source")
-    build.classify_renpy("module/tinyfiledialogs/**", "source")
-    build.classify_renpy("module/libhydrogen/**", "source")
+    # Build System.
+    build.classify_renpy("setup.py", "source_only")
+    build.classify_renpy("src/**", "source_only")
+    build.classify_renpy("scripts/", "source_only")
+    build.classify_renpy("scripts/setuplib.py", "source_only")
+    build.classify_renpy("scripts/generate_styles.py", "source_only")
 
     # all-platforms binary.
     build.classify_renpy("lib/**/libpython{}.{}.dll".format(sys.version_info.major, sys.version_info.minor), "binary")
@@ -416,28 +409,17 @@ init python:
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
 
+    build.classify_renpy("lib/py3-linux-armv7l", None)
+    build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
+    source_and_binary("lib/py3-**", "binary", "binary")
 
     libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
+    source_and_binary(libpython, "binary", "binary", py='pyc')
 
-    if PY2:
-        build.classify_renpy("lib/py2-linux-armv7l/**", "linux_arm")
-        build.classify_renpy("lib/py2-linux-aarch64/**", "linux_arm")
-        source_and_binary("lib/py2-**", "binary", "binary")
-        source_and_binary("lib/python2**", "binary", "binary")
-        build.classify_renpy("renpy2.sh", "binary")
-    else:
-        build.classify_renpy("lib/**/libpython{}.{}.dll".format(sys.version_info.major, sys.version_info.minor), "binary")
-        build.classify_renpy("lib/**/libpython*.dll", None)
+    build.classify_renpy("lib/python**", None)
+    build.classify_renpy("lib/py2-**", None)
 
-        build.classify_renpy("lib/py3-linux-armv7l/**", "linux_arm")
-        build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
-        source_and_binary("lib/py3-**", "binary", "binary")
-
-        libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
-        source_and_binary(libpython, "binary", "binary", py='pyc')
-        build.classify_renpy("lib/python**", None)
-
-        build.classify_renpy("renpy3.sh", "binary")
+    build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
 

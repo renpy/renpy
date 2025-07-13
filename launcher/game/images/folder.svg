@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="Layer_1"
+   version="1.1"
+   viewBox="0 0 800 800"
+   sodipodi:docname="folder.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview9"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.28375"
+     inkscape:cx="349.36709"
+     inkscape:cy="399.61052"
+     inkscape:window-width="1499"
+     inkscape:window-height="1236"
+     inkscape:window-x="4130"
+     inkscape:window-y="412"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="Layer_1" />
+  <!-- Generator: Adobe Illustrator 29.1.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 142)  -->
+  <defs
+     id="defs4">
+    <style
+       id="style2">
+      .st0 {
+        fill: #fff;
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 66.7px;
+      }
+    </style>
+  </defs>
+  <path
+     class="st0"
+     d="M100,566.7V233.3c0-36.8,29.8-66.7,66.7-66.7h152.9c8.8,0,17.3,3.5,23.6,9.8l56.9,56.9h233.3c36.8,0,66.7,29.8,66.7,66.7v266.7c0,36.8-29.8,66.7-66.7,66.7H166.7c-36.8,0-66.7-29.8-66.7-66.7Z"
+     id="path6"
+     style="stroke-width:24;stroke-dasharray:none;opacity:1;fill:none;stroke:#ffffff;stroke-opacity:1" />
+</svg>

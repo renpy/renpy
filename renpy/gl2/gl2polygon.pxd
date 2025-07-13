@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -42,3 +42,5 @@ cdef class Polygon:
     cpdef void multiply_matrix_inplace(Polygon self, Matrix m)
     cpdef Polygon multiply_matrix(Polygon self, Matrix m)
     cpdef void ensure_winding(Polygon self)
+    cpdef void offset_inplace(Polygon self, float x, float y)
+    cpdef Polygon offset(Polygon self, float x, float y)

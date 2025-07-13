@@ -93,7 +93,7 @@ translate russian tutorial_dialogue_5269d005:
 translate russian tutorial_dialogue_241c0c74:
 
     # "Eileen" "Script might seem scary at first, but if you look you'll see it's easy to match it up to what I'm saying."
-    "Эйлин" "С непривычки скрипт может показаться пугающим, но если вы присмотритесь, то увидете, как просто обозначено то, что я говорю."
+    "Эйлин" "С непривычки скрипт может показаться пугающим, но если вы присмотритесь, то увидите, как просто обозначено то, что я говорю."
 
 # game/tutorial_quickstart.rpy:82
 translate russian tutorial_dialogue_f0d66410:
@@ -104,7 +104,7 @@ translate russian tutorial_dialogue_f0d66410:
 # game/tutorial_quickstart.rpy:89
 translate russian tutorial_dialogue_3e6b0068:
 
-    # "Wow, It's really really dark in here."
+    # "Wow, it's really really dark in here."
     "Ого, здесь очень темно."
 
 # game/tutorial_quickstart.rpy:91
@@ -152,7 +152,7 @@ translate russian tutorial_dialogue_628c9e4c:
 # game/tutorial_quickstart.rpy:116
 translate russian tutorial_dialogue_3e6b0068_1:
 
-    # "Wow, It's really really dark in here."
+    # "Wow, it's really really dark in here."
     "Ого, здесь очень темно."
 
 # game/tutorial_quickstart.rpy:125
@@ -200,7 +200,7 @@ translate russian tutorial_dialogue_90719f73:
 # game/tutorial_quickstart.rpy:151
 translate russian tutorial_dialogue_910f286a:
 
-    # e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
+    # e "The first is that it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
     e "Первая состоит в том, что это долго печатать. Нет, конечно, напечатать \"Люси\" не так сложно, но представьте, что вам нужно набрать \"Эйлин Ричардсон\" несколько тысяч раз."
 
 # game/tutorial_quickstart.rpy:153

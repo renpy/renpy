@@ -23,8 +23,7 @@
 # ensures that returned surfaces have a 2px border around them.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import sys
@@ -60,10 +59,10 @@ def set_rgba_masks():
     masks.sort(key=abs)
 
     # Choose the masks.
-    if sys.byteorder == 'big':
-        masks = ( masks[3], masks[2], masks[1], masks[0] )
+    if sys.byteorder == "big":
+        masks = (masks[3], masks[2], masks[1], masks[0])
     else:
-        masks = ( masks[0], masks[1], masks[2], masks[3] )
+        masks = (masks[0], masks[1], masks[2], masks[3])
 
     # Create the sample surface.
     sample_alpha = pygame.Surface((10, 10), 0, 32, masks)
@@ -85,14 +84,14 @@ class Surface(pygame.Surface):
         return copy_surface(self, False)
 
     def copy(self):
-        return copy_surface(self, self) # type:ignore
+        return copy_surface(self, self)  # type:ignore
 
     def subsurface(self, rect):
         rv = pygame.Surface.subsurface(self, rect)
         return rv
 
 
-def surface(rect, alpha): # (tuple, bool|Surface) -> Surface
+def surface(rect, alpha):  # (tuple, bool|Surface) -> Surface
     """
     Constructs a new surface. The allocated surface is actually a subsurface
     of a surface that has a 2 pixel border in all directions.
@@ -113,14 +112,14 @@ def surface(rect, alpha): # (tuple, bool|Surface) -> Surface
     if sample is None:
         sample = pygame.Surface((4, 4), pygame.SRCALPHA, 32)
 
-    surf = Surface((width + 4, height + 4), 0, sample) # type:ignore
+    surf = Surface((width + 4, height + 4), 0, sample)  # type:ignore
     return surf.subsurface((2, 2, width, height))  # E1101
 
 
 surface_unscaled = surface
 
 
-def copy_surface(surf, alpha=True): # (Surface, bool|Surface) -> Surface
+def copy_surface(surf, alpha=True):  # (Surface, bool|Surface) -> Surface
     """
     Creates a copy of the surface.
     """
@@ -136,7 +135,7 @@ copy_surface_unscaled = copy_surface
 # Wrapper around image loading.
 
 # Formats we can load reentrantly.
-safe_formats = { "png", "jpg", "jpeg", "webp" }
+safe_formats = {"png", "jpg", "jpeg", "webp"}
 
 # Lock used for loading unsafe formats.
 image_load_lock = threading.RLock()
@@ -144,16 +143,16 @@ image_load_lock = threading.RLock()
 
 formats = {
     # PNG
-    "png": pygame.image.INIT_PNG, # type:ignore
+    "png": pygame.image.INIT_PNG,  # type:ignore
     # JPEG
-    "jpg": pygame.image.INIT_JPG, # type:ignore
-    "jpeg": pygame.image.INIT_JPG, # type:ignore
+    "jpg": pygame.image.INIT_JPG,  # type:ignore
+    "jpeg": pygame.image.INIT_JPG,  # type:ignore
     # WebP
-    "webp": pygame.image.INIT_WEBP, # type:ignore
+    "webp": pygame.image.INIT_WEBP,  # type:ignore
     # JPEG-XL
     # "jxl": pygame.image.INIT_JXL, # type:ignore
     # AVIF
-    "avif": pygame.image.INIT_AVIF, # type:ignore
+    "avif": pygame.image.INIT_AVIF,  # type:ignore
     ## There is no real way of checking the below,
     ## but they are built into SDL2_image by default
     "tga": 0,
@@ -175,27 +174,24 @@ def load_image(f, filename, size=None):
         SVG images.
     """
 
-    _basename, _dot, ext = filename.rpartition('.')
+    _basename, _dot, ext = filename.rpartition(".")
 
     try:
-
         if ext.lower() in safe_formats:
             surf = pygame.image.load(f, renpy.exports.fsencode(filename), size=size)
         else:
-
             # Non-whitelisted formats may not be able to load in a reentrant
             # fashion.
             with image_load_lock:
                 surf = pygame.image.load(f, renpy.exports.fsencode(filename), size=size)
 
     except Exception as e:
-
         extra = ""
 
         if ext.lower() not in formats:
             extra = " ({} files are not supported by Ren'Py)".format(ext)
 
-        elif formats[ext] and (not pygame.image.has_init(formats[ext])): # type:ignore
+        elif formats[ext] and (not pygame.image.has_init(formats[ext])):  # type:ignore
             extra = " (your SDL2_image library does not support {} files)".format(ext)
 
         raise Exception("Could not load image {!r}{}: {!r}".format(filename, extra, e))
@@ -209,6 +205,7 @@ load_image_unscaled = load_image
 
 # Wrapper around functions we use from pygame.surface.
 
+
 def flip(surf, horizontal, vertical):
     surf = pygame.transform.flip(surf, horizontal, vertical)
     return copy_surface_unscaled(surf)
@@ -218,7 +215,6 @@ flip_unscaled = flip
 
 
 def rotozoom(surf, angle, zoom):
-
     surf = pygame.transform.rotozoom(surf, angle, zoom)
     return copy_surface_unscaled(surf)
 

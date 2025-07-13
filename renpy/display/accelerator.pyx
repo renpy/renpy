@@ -25,7 +25,9 @@ from __future__ import print_function
 import renpy
 import math
 from renpy.display.matrix cimport Matrix
-from renpy.display.render cimport Render, Matrix2D, render
+from renpy.display.render cimport Render, Matrix2D, render, MATRIX_VIEW, MATRIX_PROJECTION
+
+from renpy.display.displayable import Displayable
 from renpy.display.core import absolute
 
 from sdl2 cimport *
@@ -105,7 +107,7 @@ def get_poi(state):
 # Transform render function
 ################################################################################
 
-cdef Matrix2D IDENTITY
+cdef Matrix IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
 
@@ -168,7 +170,7 @@ cdef class RenderTransform:
         self.transform = transform
         self.state = transform.state
 
-        # The original width and heigh given to the render.
+        # The original width and height given to the render.
         self.widtho = 0
         self.heighto = 0
 
@@ -207,15 +209,10 @@ cdef class RenderTransform:
         Handles the mesh, mesh_pad, and blur properties.
         """
 
-        # The render we're going to return.
-        mr = Render(cr.width, cr.height)
-
         mesh = self.state.mesh
         blur = self.state.blur
-        mesh_pad = self.state.mesh_pad
 
-        if self.state.mesh_pad:
-
+        if mesh_pad := self.state.mesh_pad:
             if len(mesh_pad) == 4:
                 pad_left, pad_top, pad_right, pad_bottom = mesh_pad
             else:
@@ -223,33 +220,49 @@ cdef class RenderTransform:
                 pad_left = 0
                 pad_top = 0
 
-            padded = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
-            padded.blit(cr, (pad_left, pad_top))
+            pr = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
+            pr.blit(cr, (pad_left, pad_top))
 
-            cr = padded
+        else:
+            pad_left = pad_top = pad_right = pad_bottom = 0
+            pr = cr
 
-        mr.blit(cr, (0, 0))
+        mr = Render(pr.width, pr.height)
+        mr.blit(pr, (0, 0))
 
         mr.operation = renpy.display.render.FLATTEN
-        mr.add_shader("renpy.texture")
 
         if isinstance(mesh, tuple):
             mesh_width, mesh_height = mesh
 
             mr.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
                 mesh_width, mesh_height,
-                0.0, 0.0, cr.width, cr.height,
+                0.0, 0.0, mr.width, mr.height,
                 0.0, 0.0, 1.0, 1.0)
         else:
             mr.mesh = True
 
         if (blur is not None) and (blur > 0):
-            mr.add_shader("-renpy.texture")
             mr.add_shader("renpy.blur")
             mr.add_uniform("u_renpy_blur_log2", math.log(blur, 2))
+        else:
+            mr.add_shader("renpy.texture")
 
-        self.mr = mr
-        return mr
+        if (blur is not None):
+            mr.add_property("mipmap", True)
+
+        rv = self.mr = mr
+
+        if pad_left or pad_top or pad_right or pad_bottom:
+            rv = Render(mr.width - pad_left - pad_right, mr.height - pad_top - pad_bottom)
+
+            if renpy.config.mesh_pad_compat:
+                rv.blit(mr, (0, 0))
+            else:
+                rv.blit(mr, (-pad_left, -pad_top))
+
+        return rv
+
 
     cdef tile_and_pan(self):
         """
@@ -449,6 +462,7 @@ cdef class RenderTransform:
         cdef double rxdy
         cdef double rydx
         cdef double rydy
+        cdef double rzdz
         cdef double x2
         cdef double x3
         cdef double x4
@@ -475,11 +489,12 @@ cdef class RenderTransform:
         fit = self.state.fit
 
         # The reverse matrix used by the zoom and rotate properties.
-        # (This can probably become a Matrix at some point.)
         rxdx = 1
         rxdy = 0
         rydx = 0
         rydy = 1
+
+        rzdz = 1
 
         # Size.
         if (width != 0) and (height != 0):
@@ -570,6 +585,9 @@ cdef class RenderTransform:
             if yzoom < 0:
                 yo += height
 
+        if zoom != 1:
+            rzdz = zoom
+
         # Rotation.
         rotate = state.rotate
         if (rotate is not None) and (not self.perspective):
@@ -630,10 +648,14 @@ cdef class RenderTransform:
         self.xo = xo
 
         # Default case - no transformation matrix.
-        if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
+        if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1 and rzdz == 1:
             self.reverse = IDENTITY
         else:
-            self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
+            self.reverse = Matrix((
+                rxdx, rxdy, 0,
+                rydx, rydy, 0,
+                0, 0, rzdz,
+            ))
 
     cdef camera_matrix_operations(self):
         """
@@ -676,7 +698,7 @@ cdef class RenderTransform:
             #cameras is rotated in z, y, x order.
             #It is because rotating stage in x, y, z order means rotating a camera in z, y, x order.
             #rotating around z axis isn't rotating around the center of the screen when rotating camera in x, y, z order.
-            v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
+            v_len = math.hypot(a, b, c)
             if v_len == 0:
                 xpoi = ypoi = zpoi = 0
             else:
@@ -786,7 +808,7 @@ cdef class RenderTransform:
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
             a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
-            v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
+            v_len = math.hypot(a, b, c)
             if v_len == 0:
                 xpoi = ypoi = 0
             else:
@@ -881,7 +903,7 @@ cdef class RenderTransform:
 
             self.reverse = m * self.reverse
 
-    cdef final_render(self, rv):
+    cdef final_render(self, rv, st, at):
         """
         Apply properties to the final render:
 
@@ -915,6 +937,8 @@ cdef class RenderTransform:
 
         if state.nearest:
             rv.add_property("texture_scaling", "nearest")
+        elif state.nearest is not None:
+            rv.add_property("texture_scaling", "linear_mipmap_nearest")
 
         if state.blend:
             rv.add_property("blend_func", renpy.config.gl_blend_func[state.blend])
@@ -938,7 +962,7 @@ cdef class RenderTransform:
         # Shaders and uniforms.
         if state.shader is not None:
 
-            if isinstance(state.shader, basestring):
+            if isinstance(state.shader, str):
                 rv.add_shader(state.shader)
             else:
                 for name in state.shader:
@@ -946,6 +970,9 @@ cdef class RenderTransform:
 
         for name in renpy.display.transform.uniforms:
             value = getattr(state, name, None)
+
+            if isinstance(value, Displayable):
+                value = value.render(rv.width, rv.height, st, at)
 
             if value is not None:
                 rv.add_uniform(name, value)
@@ -1029,11 +1056,6 @@ cdef class RenderTransform:
         # The final render. (Unless we mesh it.)
         rv = Render(self.width, self.height)
 
-        # perspective
-        if perspective:
-            near, z_one_one, far = perspective
-            self.reverse = Matrix.perspective(self.width, self.height, near, z_one_one, far) * self.reverse
-
         # Apply the matrices to the transform.
         transform.reverse = self.reverse
 
@@ -1052,10 +1074,25 @@ cdef class RenderTransform:
         else:
             rv.blit(self.cr, pos)
 
+
+        # perspective
+        if perspective:
+            rv.matrix_kind = MATRIX_VIEW
+
+            prv = Render(self.width, self.height)
+            prv.blit(rv, (0, 0))
+
+            near, z_one_one, far = perspective
+            prv.reverse = Matrix.perspective(self.width, self.height, near, z_one_one, far)
+            prv.forward = prv.reverse.inverse()
+            prv.matrix_kind = MATRIX_PROJECTION
+
+            rv = prv
+
         if mesh and perspective:
             rv = self.make_mesh(rv)
 
-        self.final_render(rv)
+        self.final_render(rv, st, at)
 
         # Clipping.
         rv.xclipping = self.clipping

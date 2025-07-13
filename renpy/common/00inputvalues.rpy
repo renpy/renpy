@@ -130,7 +130,7 @@ init -1510 python:
             self.returnable = returnable
 
     class ScreenVariableInputValue(__GenericInputValue):
-        """
+        r"""
         :doc: input_value
         :args: {args}
 
@@ -249,7 +249,7 @@ init -1510 python:
 
     # not pure
     class LocalVariableInputValue(DictInputValue):
-        """
+        r"""
         :doc: input_value
         :args: {args}
 
@@ -273,8 +273,8 @@ init -1510 python:
         def get_text(self):
             try:
                 return super(LocalVariableInputValue, self).get_text()
-            except LookupError:
-                raise Exception("The {!r} local variable does not exist.".format(self.key)) # from e # PY3 only
+            except LookupError as e:
+                raise Exception("The {!r} local variable does not exist.".format(self.key)) from e
 
 init -1510 python hide:
     if config.generating_documentation:

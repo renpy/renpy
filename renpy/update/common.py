@@ -20,13 +20,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import hashlib
 import json
 import os
 import pickle
 import zlib
+
 
 def hash_data(data):
     """
@@ -58,6 +59,7 @@ def dump(d):
 COMPRESS_NONE = 0
 COMPRESS_ZLIB = 1
 
+
 class Segment(object):
     """
     This represents a segment of a file conaining the data with the given
@@ -65,7 +67,6 @@ class Segment(object):
     """
 
     def __init__(self, offset, size, hash, compressed):
-
         # The offset within the file.
         self.offset = offset
 
@@ -83,14 +84,15 @@ class Segment(object):
         if not isinstance(other, Segment):
             return False
 
-        return self.offset == other.offset and self.size == other.size and self.hash == other.hash and self.compressed == other.compressed
+        return (
+            self.offset == other.offset
+            and self.size == other.size
+            and self.hash == other.hash
+            and self.compressed == other.compressed
+        )
 
     def to_json(self):
-        return {
-            "offset" : self.offset,
-            "size" : self.size,
-            "hash" : self.hash,
-            "compressed" : self.compressed }
+        return {"offset": self.offset, "size": self.size, "hash": self.hash, "compressed": self.compressed}
 
     @staticmethod
     def from_json(d):
@@ -107,12 +109,13 @@ class Directory(object):
         self.name = name.replace("\\", "/")
 
     def to_json(self):
-        return { "name" : self.name }
+        return {"name": self.name}
 
     @staticmethod
     def from_json(d):
         rv = Directory(d["name"])
         return rv
+
 
 class File(object):
     """
@@ -120,7 +123,6 @@ class File(object):
     """
 
     def __init__(self, name, data_filename=None, segments=None, mtime=0, xbit=False):
-
         # The name of the file. This is the name that can be stored.
         self.name = name.replace("\\", "/")
 
@@ -129,7 +131,7 @@ class File(object):
         self.data_filename = data_filename.replace("\\", "/") if data_filename else None
 
         # The segments of the file. This is a list of Segment objects.
-        self.segments = segments or [ ]
+        self.segments = segments or []
 
         # The modification time of the file.
         self.mtime = mtime
@@ -139,14 +141,14 @@ class File(object):
 
     def to_json(self):
         return {
-            "name" : self.name,
-            "segments" : [ i.to_json() for i in self.segments ],
-            "xbit" : self.xbit,
+            "name": self.name,
+            "segments": [i.to_json() for i in self.segments],
+            "xbit": self.xbit,
         }
 
     @staticmethod
     def from_json(d):
-        rv = File(d["name"], segments=[ Segment.from_json(i) for i in d["segments"] ], xbit=d["xbit"])
+        rv = File(d["name"], segments=[Segment.from_json(i) for i in d["segments"]], xbit=d["xbit"])
         return rv
 
     def scan_segments(self, f, offset, size):
@@ -176,7 +178,6 @@ class File(object):
             offset += len(data)
             size -= len(data)
 
-
     def scan_rpa(self, f, total_size):
         """
         Scans an RPA archive, segmenting it into the underlying files.
@@ -189,11 +190,10 @@ class File(object):
         f.seek(offset)
         index = pickle.loads(zlib.decompress(f.read()))
 
-
         # This is a list of offset, size tuples for each of the files
         # in the archive. These will be sorted into the order the segments
         # appear in the archive.
-        segments = [ ]
+        segments = []
 
         for v in index.values():
             for i in v:
@@ -211,7 +211,6 @@ class File(object):
 
         self.scan_segments(f, pos, total_size - pos)
 
-
     def scan(self):
         """
         Separate the file into segments. This may be done in a content-aware
@@ -222,10 +221,9 @@ class File(object):
 
         self.mtime = os.path.getmtime(fn)
 
-        self.segments = [ ]
+        self.segments = []
 
         with open(fn, "rb") as f:
-
             start = f.read(1024)
 
             # Determine the size of the file.
@@ -233,7 +231,7 @@ class File(object):
             size = f.tell()
             f.seek(0)
 
-            if self.name.endswith(".rpa") and start[:8] == b'RPA-3.0 ':
+            if self.name.endswith(".rpa") and start[:8] == b"RPA-3.0 ":
                 try:
                     self.scan_rpa(f, size)
                     return
@@ -257,23 +255,23 @@ class FileList(object):
     """
 
     def __init__(self):
-        self.directories = [ ]
-        self.files = [ ]
-        self.blocks = [ ]
+        self.directories = []
+        self.files = []
+        self.blocks = []
 
     def to_json(self):
         return {
-            "directories" : [ i.to_json() for i in self.directories ],
-            "files" : [ i.to_json() for i in self.files ],
-            "blocks" : [ i.to_json() for i in self.blocks ],
+            "directories": [i.to_json() for i in self.directories],
+            "files": [i.to_json() for i in self.files],
+            "blocks": [i.to_json() for i in self.blocks],
         }
 
     @staticmethod
     def from_json(d):
         rv = FileList()
-        rv.directories = [ Directory.from_json(i) for i in d["directories"] ]
-        rv.files = [ File.from_json(i) for i in d["files"] ]
-        rv.blocks = [ File.from_json(i) for i in d["blocks"] ]
+        rv.directories = [Directory.from_json(i) for i in d["directories"]]
+        rv.files = [File.from_json(i) for i in d["files"]]
+        rv.blocks = [File.from_json(i) for i in d["blocks"]]
         return rv
 
     def to_current_json(self):
@@ -283,9 +281,9 @@ class FileList(object):
         """
 
         return {
-            "directories" : [ i.name for i in self.directories ],
-            "files" : [ i.name for i in self.files ],
-            "xbit" : [ i.name for i in self.files if i.xbit ],
+            "directories": [i.name for i in self.directories],
+            "files": [i.name for i in self.files],
+            "xbit": [i.name for i in self.files if i.xbit],
         }
 
     @staticmethod
@@ -315,7 +313,6 @@ class FileList(object):
 
         self.files.append(File(name, data_filename=path, xbit=xbit))
 
-
     def scan(self, root, data_filename=True):
         """
         Scan a directory, recursively, and add the files and directories
@@ -324,7 +321,6 @@ class FileList(object):
         """
 
         for dn, dirs, files in os.walk(root):
-
             for d in dirs:
                 d = os.path.relpath(os.path.join(dn, d), root)
                 self.directories.append(Directory(d))
@@ -341,8 +337,8 @@ class FileList(object):
                 f = File(relfn, data_filename=fn if data_filename else None, xbit=xbit)
                 self.files.append(f)
 
-        self.directories.sort(key=lambda x : x.name)
-        self.files.sort(key=lambda x : x.name)
+        self.directories.sort(key=lambda x: x.name)
+        self.files.sort(key=lambda x: x.name)
 
     def encode(self):
         """

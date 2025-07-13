@@ -2250,3 +2250,23 @@
     # game/project.rpy:776
     old "Splashscreen skipped in launcher preferences."
     new "Se omite la pantalla Splashscreen en las preferencias del lanzador."
+
+    # game/editor.rpy:667
+    old "You are using an old version of the Ren'Py Language support for Visual Studio Code. Would you like to upgrade?"
+    new "Está utilizando una versión antigua del soporte Ren'Py Language para Visual Studio Code. ¿Desea actualizarla?"
+
+    # game/editor.rpy:667
+    old "Upgrade."
+    new "Actualizar."
+
+    # game/install.rpy:186
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "El {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK para Native{/a} añade soporte para mostrar modelos Live2D. Coloca CubismSdkForNative-{i}versión{/i}.zip en el directorio del SDK de Ren'Py y luego haz clic en Instalar. Para distribuir un juego con Live2D, debes aceptar una licencia de Live2D, Inc."
+
+    # game/navigation.rpy:230
+    old "Show translation files"
+    new "Mostrar archivos de traducción"
+
+    # game/preferences.rpy:258
+    old "Prefer the web documentation"
+    new "PrefiePreferir ra la documentación web"

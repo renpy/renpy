@@ -1,4 +1,3 @@
-
 # Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -21,10 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 from itertools import chain as _chain
-import collections
 
 import renpy
 
@@ -37,14 +35,17 @@ class Parameter(object):
     and screens), where the actual value is computed at the time of the call.
     """
 
-    __slots__ = ("name", "kind", "default",)
+    __slots__ = (
+        "name",
+        "kind",
+        "default",
+    )
 
     POSITIONAL_ONLY, POSITIONAL_OR_KEYWORD, VAR_POSITIONAL, KEYWORD_ONLY, VAR_KEYWORD = range(5)
 
     empty = None
 
-    def __init__(self, name, kind, default=empty):
-        # default should only be passed by keyword, todo when PY3-only
+    def __init__(self, name, kind, *, default=empty):
         self.name = name
         self.kind = kind
         self.default = default
@@ -70,7 +71,7 @@ class Parameter(object):
         elif kind == self.VAR_KEYWORD:
             formatted = "**" + formatted
         elif self.default is not self.empty:
-            formatted += "=" + self.default # type: ignore
+            formatted += "=" + self.default  # type: ignore
 
         return formatted
 
@@ -78,7 +79,13 @@ class Parameter(object):
         return "<Parameter {}>".format(self)
 
     def __eq__(self, other):
-        return (self is other) or (isinstance(other, Parameter) and (self.name == other.name) and (self.kind == other.kind) and (self.default == other.default))
+        return (self is other) or (
+            isinstance(other, Parameter)
+            and (self.name == other.name)
+            and (self.kind == other.kind)
+            and (self.default == other.default)
+        )
+
 
 class ValuedParameter(Parameter):
     """
@@ -88,12 +95,12 @@ class ValuedParameter(Parameter):
 
     __slots__ = ()
 
-    class empty: pass # singleton, should be picklable
+    class empty:
+        pass  # singleton, should be picklable
 
-    def __init__(self, name, kind, default=empty):
-        # default should only be passed by keyword, todo when PY3-only
+    def __init__(self, name, kind, *, default=empty):
         # this method is redefined in order to change default's default value
-        super(ValuedParameter, self).__init__(name, kind, default)
+        super(ValuedParameter, self).__init__(name, kind, default=default)
 
     def default_value(self, *args, **kwargs):
         return self.default
@@ -111,6 +118,7 @@ class ValuedParameter(Parameter):
 
         return formatted
 
+
 class Signature(object):
     """
     This class is used to store information about parameters (to a label, screen, ATL...)
@@ -123,8 +131,7 @@ class Signature(object):
         if parameters is None:
             self.parameters = {}
         else:
-            # when in PY3-only, turn this into MappingProxyType o dict
-            self.parameters = collections.OrderedDict((param.name, param) for param in parameters)
+            self.parameters = {param.name: param for param in parameters}
 
     @staticmethod
     def legacy_params(parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
@@ -142,7 +149,7 @@ class Signature(object):
         """
 
         pars = []
-        posonly_found = (last_posonly is None)
+        posonly_found = last_posonly is None
         now_kw_only = False
 
         # long-time nonsense in atl.py
@@ -175,15 +182,23 @@ class Signature(object):
 
         return pars
 
-
     def __setstate__(self, state):
         if isinstance(state, dict):
             # legacy state
-            positional_only = state.get("positional_only", [ ])
+            positional_only = state.get("positional_only", [])
             last_posonly = positional_only[-1][0] if positional_only else None
-            keyword_only = state.get("keyword_only", [ ])
+            keyword_only = state.get("keyword_only", [])
             first_kwonly = keyword_only[0][0] if keyword_only else None
-            self.__init__(self.legacy_params(state["parameters"], state["positional"], state["extrapos"], state["extrakw"], last_posonly, first_kwonly))
+            self.__init__(
+                self.legacy_params(
+                    state["parameters"],
+                    state["positional"],
+                    state["extrapos"],
+                    state["extrakw"],
+                    last_posonly,
+                    first_kwonly,
+                )
+            )
         else:
             # default behavior on py3, could be a super() call but this is faster and py2-compatible
             self.parameters = state[1]["parameters"]
@@ -241,8 +256,6 @@ class Signature(object):
         - applies the defaults automatically (and lazily, as per the above)
         """
 
-        # when in PY3-only, uncomment the "from None" in the raise statements
-
         if not renpy.config.developer:
             ignore_errors = True
 
@@ -250,7 +263,7 @@ class Signature(object):
 
         def _raise(exct, msg, *argz, **kwargz):
             if not ignore_errors:
-                raise exct(msg.format(*argz, **kwargz)) # from None
+                raise exct(msg.format(*argz, **kwargz)) from None
 
         # code mostly taken from stdlib's inspect.Signature._bind
         arguments = {}
@@ -279,13 +292,14 @@ class Signature(object):
                         break
                     elif param.name in kwargs:
                         if param.kind == param.POSITIONAL_ONLY:
-                            _raise(TypeError,
+                            _raise(
+                                TypeError,
                                 "{arg!r} parameter is positional only, but was passed as a keyword",
-                                arg=param.name)
+                                arg=param.name,
+                            )
                         parameters_ex = (param,)
                         break
-                    elif (param.kind == param.VAR_KEYWORD or
-                                                param.default is not param.empty):
+                    elif param.kind == param.VAR_KEYWORD or param.default is not param.empty:
                         # That's fine too - we have a default value for this
                         # parameter.  So, lets start parsing `kwargs`, starting
                         # with the current parameter
@@ -299,24 +313,24 @@ class Signature(object):
                             break
                         else:
                             if param.kind == param.KEYWORD_ONLY:
-                                argtype = ' keyword-only'
+                                argtype = " keyword-only"
                             else:
-                                argtype = ''
-                            msg = 'missing a required{argtype} argument: {arg!r}'
+                                argtype = ""
+                            msg = "missing a required{argtype} argument: {arg!r}"
                             msg = msg.format(arg=param.name, argtype=argtype)
-                            raise TypeError(msg) # from None
+                            raise TypeError(msg) from None
             else:
                 # We have a positional argument to process
                 try:
                     param = next(parameters)
                 except StopIteration:
-                    _raise(TypeError, 'too many positional arguments')
+                    _raise(TypeError, "too many positional arguments")
                     break
                 else:
                     if param.kind in (param.VAR_KEYWORD, param.KEYWORD_ONLY):
                         # Looks like we have no parameter for this positional
                         # argument
-                        _raise(TypeError, 'too many positional arguments')
+                        _raise(TypeError, "too many positional arguments")
                         break
 
                     if param.kind == param.VAR_POSITIONAL:
@@ -329,9 +343,7 @@ class Signature(object):
                         break
 
                     if param.name in kwargs and param.kind != param.POSITIONAL_ONLY:
-                        _raise(TypeError,
-                            'multiple values for argument {arg!r}',
-                            arg=param.name)
+                        _raise(TypeError, "multiple values for argument {arg!r}", arg=param.name)
                         break
 
                     arguments[param.name] = arg_val
@@ -359,19 +371,21 @@ class Signature(object):
                 # if it has a default value, or it is an '*args'-like
                 # parameter, left alone by the processing of positional
                 # arguments.
-                if (not (partial or ignore_errors) and param.kind != param.VAR_POSITIONAL and
-                                                    param.default is param.empty):
-                    raise TypeError('missing a required argument: {arg!r}'. \
-                                    format(arg=param_name)) # from None
+                if (
+                    not (partial or ignore_errors)
+                    and param.kind != param.VAR_POSITIONAL
+                    and param.default is param.empty
+                ):
+                    raise TypeError("missing a required argument: {arg!r}".format(arg=param_name)) from None
 
             else:
                 if param.kind == param.POSITIONAL_ONLY:
                     # This should never happen in case of a properly built
                     # Signature object (but let's have this check here
                     # to ensure correct behaviour just in case)
-                    _raise(TypeError,
-                        "{arg!r} parameter is positional only, but was passed as a keyword",
-                        arg=param.name)
+                    _raise(
+                        TypeError, "{arg!r} parameter is positional only, but was passed as a keyword", arg=param.name
+                    )
                     continue
 
                 arguments[param_name] = arg_val
@@ -380,10 +394,8 @@ class Signature(object):
             if kwargs_param is not None:
                 # Process our '**kwargs'-like parameter
                 arguments[kwargs_param.name] = kwargs
-            elif not (ignore_errors or kwargs.pop('_ignore_extra_kwargs', False)):
-                raise TypeError(
-                    'got an unexpected keyword argument {arg!r}'.format(
-                        arg=next(iter(kwargs))))
+            elif not (ignore_errors or kwargs.pop("_ignore_extra_kwargs", False)):
+                raise TypeError("got an unexpected keyword argument {arg!r}".format(arg=next(iter(kwargs))))
 
         if apply_defaults:
             self.apply_defaults(arguments)
@@ -411,7 +423,7 @@ class Signature(object):
             elif render_pos_only_separator:
                 # It's not a positional-only parameter, and the flag
                 # is set to 'True' (there were pos-only params before.)
-                result.append('/')
+                result.append("/")
                 render_pos_only_separator = False
 
             if kind == Parameter.VAR_POSITIONAL:
@@ -422,7 +434,7 @@ class Signature(object):
                 # We have a keyword-only parameter to render and we haven't
                 # rendered an '*args'-like parameter before, so add a '*'
                 # separator to the parameters list ("foo(arg1, *, arg2)" case)
-                result.append('*')
+                result.append("*")
                 # This condition should be only triggered once, so
                 # reset the flag
                 render_kw_only_separator = False
@@ -432,17 +444,18 @@ class Signature(object):
         if render_pos_only_separator:
             # There were only positional-only parameters, hence the
             # flag was not reset to 'False'
-            result.append('/')
+            result.append("/")
 
         return "({})".format(", ".join(result))
 
     def __repr__(self):
         return "<Signature {}>".format(self)
 
+
 ParameterInfo = Signature
 
-def apply_arguments(parameters, args, kwargs, ignore_errors=False):
 
+def apply_arguments(parameters, args, kwargs, ignore_errors=False):
     if not renpy.config.developer:
         ignore_errors = True
 
@@ -450,45 +463,42 @@ def apply_arguments(parameters, args, kwargs, ignore_errors=False):
         if (args or kwargs) and not ignore_errors:
             raise Exception("Arguments supplied, but parameter list not present")
         else:
-            return { }
+            return {}
 
     return parameters.apply(args or (), kwargs or {}, ignore_errors)
 
 
 class ArgumentInfo(renpy.object.Object):
-
     __version__ = 1
-    starred_indexes = set()
-    doublestarred_indexes = set()
+    starred_indexes = frozenset()
+    doublestarred_indexes = frozenset()
 
     def after_upgrade(self, version):
         if version < 1:
             arguments = self.arguments
-            extrapos = self.extrapos # type: ignore
-            extrakw = self.extrakw # type: ignore
+            extrapos = self.extrapos  # type: ignore
+            extrakw = self.extrakw  # type: ignore
             length = len(arguments) + bool(extrapos) + bool(extrakw)
             if extrapos:
-                self.starred_indexes = { length - 1 }
+                self.starred_indexes = {length - 1 - bool(extrakw)}
                 arguments.append((None, extrapos))
 
             if extrakw:
-                self.doublestarred_indexes = { length - 1 }
+                self.doublestarred_indexes = {length - 1}
                 arguments.append((None, extrakw))
 
-            if extrapos and extrakw:
-                self.starred_indexes = { length - 2 }
-
     def __init__(self, arguments, starred_indexes=None, doublestarred_indexes=None):
-
         # A list of (keyword, expression) pairs.
         # If the keyword is None, the argument is thought of as positional.
         self.arguments = arguments
 
         # Indexes of arguments to be considered as * unpacking
-        self.starred_indexes = starred_indexes or set()
+        if starred_indexes is not None:
+            self.starred_indexes = starred_indexes
 
         # Indexes of arguments to be considered as ** unpacking.
-        self.doublestarred_indexes = doublestarred_indexes or set()
+        if doublestarred_indexes is not None:
+            self.doublestarred_indexes = doublestarred_indexes
 
     def evaluate(self, scope=None):
         """
@@ -496,7 +506,7 @@ class ArgumentInfo(renpy.object.Object):
         dictionary of keyword arguments.
         """
 
-        args = [ ]
+        args = []
         kwargs = renpy.revertable.RevertableDict()
 
         for i, (k, v) in enumerate(self.arguments):
@@ -516,11 +526,9 @@ class ArgumentInfo(renpy.object.Object):
         return tuple(args), kwargs
 
     def get_code(self):
-
-        l = [ ]
+        l = []
 
         for i, (keyword, expression) in enumerate(self.arguments):
-
             if i in self.starred_indexes:
                 l.append("*" + expression)
 
@@ -541,4 +549,4 @@ class ArgumentInfo(renpy.object.Object):
 
 
 EMPTY_PARAMETERS = Signature()
-EMPTY_ARGUMENTS = ArgumentInfo([ ], None, None)
+EMPTY_ARGUMENTS = ArgumentInfo((), None, None)

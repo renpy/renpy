@@ -213,9 +213,16 @@ expression. It takes the following properties:
     and :func:`Return` actions, it's safe to enable `roll_forward`. Other
     actions may have side-effects that will not occur during the roll_forward.
 
+If the first line of a screen is a Python string, it is used as the docstring for
+the screen. The docstring can be retrieved with :func:`renpy.get_screen_docstring`.
+
 ::
 
    screen hello_world():
+        """
+        Displays a hello world message.
+        """
+
         tag example
         zorder 1
         modal False
@@ -341,7 +348,7 @@ All user interface statements take the following common properties:
 .. screen-property:: prefer_screen_to_id
 
     If true, when a property is provided by both the screen and a
-    displayble identifier, the screen property is used. If false, the
+    displayable identifier, the screen property is used. If false, the
     default, the displayable property is used. (This can be used to
     decide if the screen overrides properties set by a Character.)
 
@@ -456,6 +463,13 @@ data. It takes the following properties:
 
     An action to run when the bar button is released. This will be invoked
     even if the bar has not changed its value.
+
+.. screen-property:: thumb_align
+
+    The alignment of the bar thumb, relative to the bar. If the bar and
+    thumb are different sizes - for example, the thumb is taller than the
+    height of a horizontal bar - thumb_align can be set to 0.5 so the centers
+    of the bar and thumb are aligned.
 
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
@@ -681,12 +695,22 @@ It takes two parameters. The first is the number of columns in the
 grid, and the second is the number of rows in the grid. If the grid
 is not full, the remaining cells are filled with the ``null`` displayable.
 
-Grid takes one property:
+Grid takes several properties related to the way its children are placed:
 
 .. screen-property:: transpose
 
     If False (the default), rows are filled before columns. If True,
     then columns are filled before rows.
+
+.. screen-property:: right_to_left
+
+    If True, cells are filled from right to left, instead of the default
+    left to right.
+
+.. screen-property:: bottom_to_top
+
+    If True, cells are filled from bottom to top, instead of the default
+    top to bottom.
 
 It also takes:
 
@@ -929,6 +953,11 @@ The input statement takes no parameters, and the following properties:
     Generally, this is is used with a `value` that stores the input into
     a variable, so the action can access it.
 
+.. screen-property:: arrowkeys
+
+    If True (the default), the arrow keys can be used to move the caret left and right
+    within the input. If False, arrow keys are ignored, making them available for other uses,
+    like changing focus.
 
 
 It also takes:
@@ -1943,7 +1972,7 @@ self-voicing feature to work.
 Add Statement
 =============
 
-The add statement is a bit special, as it adds an already-exising displayble
+The add statement is a bit special, as it adds an already-existing displayble
 to the screen. As a result, it doesn't take the properties common to the
 user interface statements.
 
@@ -1991,12 +2020,12 @@ rectangular area on the screen. It takes the following properties:
 
 .. screen-property:: cols
 
-    If not None, the defaut, this divides the screen up into a grid
+    If not None, the default, this divides the screen up into a grid
     with this many columns.
 
 .. screen-property:: rows
 
-    If not None, the defaut, this divides the screen up into a grid
+    If not None, the default, this divides the screen up into a grid
     with this many rows.
 
 .. screen-property:: position
@@ -2246,8 +2275,11 @@ to the result of assigning the arguments to those parameters. ::
                   use file_slot(i)
 
 
-The use statement may take one property, ``id``, which must be placed
-after the parameter list if present. This screen is only useful when
+The use statement may take clauses properties, ``id`` and ``as``. These properties must be placed
+after the parameter list, if present, and must be on the first line of the statement, not in
+th block.
+
+The ``id`` clause is only useful when
 two screens with the same tag use the same screen. In this case,
 when one screen replaces the other, the state of the used screen
 is transfered from old to new.
@@ -2277,6 +2309,18 @@ is transfered from old to new.
         show screen s2
         pause
         return
+
+The ``as`` clause should be followed by a variable name. When the used screen finishes, the binding of the `main`
+variable in the screen is assigned to the given variable. For example::
+
+    screen child():
+        add MyCreatorDefinedDisplayable() as main
+
+    screen parent():
+        use child as mycdd
+
+        # Here, the MyCreatorDefinedDisplaybale instance is assigned to cdd.
+
 
 Instead of the name of the screen, the keyword ``expression`` can be
 given, followed by an expression giving the name of the screen to use.
@@ -2383,7 +2427,7 @@ The ``showif`` statement wraps its children in a displayable that manages
 the show and hide process.
 
 Multiple showif statements can be grouped together into a single
-``showif``/``elif``/``else`` construct, similiar to an if statement.
+``showif``/``elif``/``else`` construct, similar to an if statement.
 **Unlike the if statement, showif executes all of its blocks, including Python, even if the condition is false.**
 This is because the showif statement needs to create the children that it is
 hiding.

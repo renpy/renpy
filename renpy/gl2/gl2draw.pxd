@@ -22,6 +22,9 @@
 from renpy.display.matrix cimport Matrix, Matrix2D
 cimport renpy.display.render as render
 from renpy.gl2.gl2texture cimport TextureLoader
+from renpy.gl2.gl2polygon cimport Polygon
+from renpy.display.render cimport Render
+
 from renpy.uguu.gl cimport *
 
 cdef class GL2Draw:
@@ -57,6 +60,8 @@ cdef class GL2Draw:
     cdef public object draw_per_virt
     cdef public Matrix virt_to_draw
     cdef public Matrix draw_to_virt
+
+    cdef public bint auto_mipmap
 
     # The matrix that goes from drawable space to the window. This isn't used
     # directly, it's used to determine if something is being drawn in a wa
@@ -96,3 +101,64 @@ cdef class GL2Draw:
     cdef public bint maximized
 
     cdef void change_fbo(self, GLuint fbo)
+
+
+cdef class GL2DrawingContext:
+
+    # The width and height of the drawable surface that will be affected
+    # by the draw operations.
+    cdef float width
+    cdef float height
+
+    # Is debugging enabled?
+    cdef bint debug
+
+    # Caches a second GL2DrawingContext returned when child_context() is called.
+    cdef GL2DrawingContext _child_context
+
+    # A matrix that maps camera-space coordinates to viewport coordinates.
+    cdef Matrix projection_matrix
+
+    # A matrix that maps world-space coordinates to camera-space coordinates.
+    cdef Matrix view_matrix
+
+    # The projection and view matrices, multiplied together.
+    cdef Matrix projectionview_matrix
+
+    # A matrix that maps model-space coordinates to
+    cdef Matrix model_matrix
+
+    # The clipping Polygon
+    cdef Polygon clip_polygon
+
+    # A tuple giving the names of shaders that will be applied to the model.
+    cdef tuple shaders
+
+    # A dictionary mapping uniforms names to values.
+    cdef dict uniforms
+
+    # A dictionary mapping property names to values.
+    cdef dict properties
+
+    # Is the pixel perfect transform eligible to be performed?
+    cdef bint pixel_perfect
+
+    # Has depth been enabled?
+    cdef bint has_depth
+
+    # Enables or disables face culling. None if disabled. If enabled, "cw" or "ccw", giving the
+    # winding order in the Ren'Py virtual coordinate system.
+    cdef object cull_face
+
+
+    cdef GL2DrawingContext child_context(self)
+
+    cdef dict merge_properties(self, dict old, dict child)
+
+    cdef void correct_pixel_perfect(self)
+
+    cdef object draw_model(self, model)
+
+    cdef void set_text_rect(self, Render r)
+
+    cdef object draw_one(self, what)

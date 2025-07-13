@@ -73,6 +73,10 @@ At the same time, it should ask the player if they want to download, mention
 that this can cost money if they're not on WiFi, and then download the the
 game.
 
+For the highest security, the ``public_key.pem`` file produced by building
+the main game should be copied to the base directory of the downloader game.
+This is the public key that will be used to verify the download.
+
 Here's an example script for a downloader game, using assets from the
 tutorial game::
 
@@ -155,7 +159,7 @@ Here's the default::
             elif u.state == u.FINISHING or u.state == u.DONE:
                 text _("The game data has been downloaded.")
             else: # An error or unknown state.
-                text _("An error occured when trying to download game data:")
+                text _("An error occurred when trying to download game data:")
 
                 if u.message is not None:
                     text "[u.message!q]"

@@ -432,10 +432,7 @@ fix_dlc("renios", "renios")
             for f in sorted(self, key=lambda a : a.name):
                 f.hash(sha, distributor)
 
-            if PY2:
-                return sha.hexdigest().decode("utf-8")
-            else:
-                return sha.hexdigest()
+            return sha.hexdigest()
 
         def split_by_prefix(self, prefix):
             """
@@ -661,7 +658,6 @@ fix_dlc("renios", "renios")
             # Build the mac app and windows exes.
             self.add_mac_files()
             self.add_windows_files()
-            self.add_main_py()
 
             # Add the main.py.
             self.add_main_py()
@@ -898,7 +894,7 @@ fix_dlc("renios", "renios")
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
 
-            if isinstance(file_list, basestring):
+            if isinstance(file_list, str):
                 file_list = file_list.split()
 
             f = File(name, path, False, executable)
@@ -911,7 +907,7 @@ fix_dlc("renios", "renios")
             Adds an empty directory to the file lists.
             """
 
-            if isinstance(file_list, basestring):
+            if isinstance(file_list, str):
                 file_list = file_list.split()
 
             f = File(name, None, True, False)
@@ -946,6 +942,15 @@ fix_dlc("renios", "renios")
 
                 arcfn = arcname + ".rpa"
                 arcpath = self.temp_filename(arcfn)
+
+                # Create new directories leading to the new archive file relative to the tmp root
+                # if the archive's name indicates it should be in a subdirectory
+                arc_relpath = os.path.relpath(arcpath, self.project.tmp)
+                arc_subdir = os.path.dirname(arc_relpath)
+
+                if arc_subdir:
+                    abs_subdir = os.path.join(self.project.tmp, arc_subdir)
+                    os.makedirs(abs_subdir, exist_ok=True)
 
                 af = archiver.Archive(arcpath)
 
@@ -985,7 +990,7 @@ fix_dlc("renios", "renios")
                     script_version_txt = self.temp_filename("script_version.txt")
 
                     with open(script_version_txt, "w") as f:
-                        f.write(unicode(repr(renpy.renpy.version_tuple[:-1])))
+                        f.write(repr(renpy.renpy.version_tuple[:-1]))
 
                     self.add_file("all", "game/script_version.txt", script_version_txt)
 
@@ -1075,11 +1080,8 @@ fix_dlc("renios", "renios")
 
             rv = self.temp_filename("Info.plist")
 
-            if PY2:
-                plistlib.writePlist(plist, rv)
-            else:
-                with open(rv, "wb") as f:
-                    plistlib.dump(plist, f)
+            with open(rv, "wb") as f:
+                plistlib.dump(plist, f)
 
             return rv
 
@@ -1115,16 +1117,6 @@ fix_dlc("renios", "renios")
                 prefix + "linux-x86_64/" + self.executable_name,
                 os.path.join(config.renpy_base, prefix + "linux-x86_64/renpy"),
                 True)
-
-            armfn = os.path.join(config.renpy_base, prefix + "linux-armv7l/renpy")
-
-            if os.path.exists(armfn):
-
-                self.add_file(
-                    raspi,
-                    prefix + "linux-armv7l/" + self.executable_name,
-                    armfn,
-                    True)
 
             aarch64fn = os.path.join(config.renpy_base, prefix + "linux-aarch64/renpy")
 
@@ -1228,19 +1220,8 @@ fix_dlc("renios", "renios")
                 if os.path.exists(tmp):
                     self.add_file(fl, dst, tmp)
 
-            if PY2:
-
-                if self.build["include_i686"]:
-                    write_exe("lib/py2-windows-i686/renpy.exe", self.exe32, self.exe32, windows_i686)
-                    write_exe("lib/py2-windows-i686/pythonw.exe", "lib/py2-windows-i686/pythonw.exe", "pythonw-32.exe", windows_i686)
-
-                write_exe("lib/py2-windows-x86_64/renpy.exe", self.exe, self.exe, windows)
-                write_exe("lib/py2-windows-x86_64/pythonw.exe", "lib/py2-windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
-
-            else:
-
-                write_exe("lib/py3-windows-x86_64/renpy.exe", self.exe, self.exe, windows)
-                write_exe("lib/py3-windows-x86_64/pythonw.exe", "lib/py3-windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
+            write_exe("lib/py3-windows-x86_64/renpy.exe", self.exe, self.exe, windows)
+            write_exe("lib/py3-windows-x86_64/pythonw.exe", "lib/py3-windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
 
 
         def add_main_py(self):
@@ -1535,10 +1516,9 @@ fix_dlc("renios", "renios")
 
             update_fn = self.temp_filename(filename + ".update.json")
 
-
             if self.include_update and not format.startswith("app-"):
 
-                with open(update_fn, "wb" if PY2 else "w") as f:
+                with open(update_fn, "w") as f:
                     json.dump(update, f, indent=2)
 
                 if (not dlc) or (format == "update"):
@@ -1570,14 +1550,13 @@ fix_dlc("renios", "renios")
 
                 final_update_fn = os.path.join(self.destination, filename + ".update.json")
 
-                if self.build_update or dlc:
+                if format == "update":
                     if os.path.exists(update_fn):
                         shutil.copy(update_fn, final_update_fn)
 
-                if not directory:
-                    file_hash = hash_file(path)
-                else:
-                    file_hash = ""
+                if format == "rpu":
+                    if os.path.exists(self.temp_filename("key.pem")):
+                        shutil.copy(self.temp_filename("key.pem"), os.path.join(self.destination, "public_key.pem"))
 
             if format == "tar.bz2" or format == "bare-tar.bz2":
                 pkg = TarPackage(path, "w:bz2")
@@ -1811,8 +1790,9 @@ fix_dlc("renios", "renios")
             reporter.info(_("Recompiling all rpy files into rpyc files..."))
             project.launch([ "compile", "--keep-orphan-rpyc" ], wait=True)
 
-        files = [fn + "c" for fn in project.script_files()
-                 if fn.startswith("game/") and project.exists(fn + "c")]
+        files = [
+            fn + "c" for fn in project.script_files()
+            if fn.startswith("game/") and project.exists(fn + "c")]
         len_files = len(files)
 
         if not files:

@@ -11,7 +11,7 @@ translate ukrainian strings:
 
     # gui/game/gui.rpy:9
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
-    new "## Виклик gui.init скидає стилі до розумних значень за замовчуванням і встановлює ширину та висоту гри."
+    new "## Виклик gui.init скидає стилі до розумних стандартних значень і встановлює ширину та висоту гри."
 
     # gui/game/gui.rpy:14
     old "## Enable checks for invalid or unstable properties in screens or transforms"
@@ -440,3 +440,10 @@ translate ukrainian strings:
     # gui/game/gui.rpy:461
     old "## NVL-mode."
     new "## NVL-режим."
+
+translate ukrainian strings:
+
+    # gui/game/gui.rpy:331
+    old "## What to do with unscrollable scrollbars in the game menu. \"hide\" hides them, while None shows them."
+    new "## Що робити з не прокручуваними смугами прокрутки у меню гри. Параметр «hide» приховує їх, а «None» показує їх."
+

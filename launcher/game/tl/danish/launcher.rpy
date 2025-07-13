@@ -749,7 +749,7 @@
     new "Hentning af 1.8 MB påkrævet."
 
     # game/editor.rpy:211
-    old "This may have occured because Java is not installed on this system."
+    old "This may have occurred because Java is not installed on this system."
     new "Dette er muligvis opstået, fordi Java ikke er installeret på dette system."
 
     # game/editor.rpy:220
@@ -781,7 +781,7 @@
     new "Rediger [text]."
 
     # game/editor.rpy:401
-    old "An exception occured while launching the text editor:\n[exception!q]"
+    old "An exception occurred while launching the text editor:\n[exception!q]"
     new "En undtagelse opstod under opstart af tekstbehandleren:\n[exception!q]"
 
     # game/editor.rpy:533
@@ -1073,7 +1073,7 @@
     new "åbner logfilen"
 
     # game/interface.rpy:407
-    old "While [what!qt], an error occured:"
+    old "While [what!qt], an error occurred:"
     new "En fejl opstod under [what!qt]:"
 
     # game/interface.rpy:407
@@ -1753,7 +1753,7 @@
     new "%d. %B, %Y"
 
     # game/updater.rpy:163
-    old "An error has occured:"
+    old "An error has occurred:"
     new "En fejl er opstået:"
 
     # game/updater.rpy:165

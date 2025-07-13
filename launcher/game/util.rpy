@@ -55,7 +55,7 @@ init -1 python in util:
 
         for subdir, directories, files in os.walk(directory):
             for fn in directories:
-                if not isinstance(fn, unicode):
+                if not isinstance(fn, str):
                     continue
 
                 fullfn = os.path.join(subdir, fn)
@@ -66,7 +66,7 @@ init -1 python in util:
                 yield relfn, True
 
             for fn in files:
-                if not isinstance(fn, unicode):
+                if not isinstance(fn, str):
                     continue
 
                 fullfn = os.path.join(subdir, fn)

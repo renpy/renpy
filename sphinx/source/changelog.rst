@@ -5,6 +5,412 @@ Changelog (Ren'Py 7.x-)
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
 
+.. _renpy-8.4.0:
+
+8.4.0
+=====
+
+Requirement and Dependency Changes
+----------------------------------
+
+Ren'Py now requires Windows 10 or later to run. This means that it will no longer run on Windows 7, 8, or 8.1.
+
+Ren'Py now targets Ubuntu 20.04. This also means it targets the "soldier" version of the Steam Linux Runtime.
+
+Ren'Py is no longer built for 32-bit ARM Linux. This drops support for the Raspberry Pi 3, and very old Chromebooks.
+Ren'Py is still being built for 32-bit ARM Android. Ren'Py will now prefer the gles2 renderer on ARM Linux devices,
+such as the Raspberry Pi.
+
+The Android version of Ren'Py is now being built with 16KB pages, for future Android devices that will
+require 16 KB page support.
+
+Python 3.12
+-----------
+
+Ren'Py now uses Python 3.12 on all platforms. This makes avilable several years of Python improvements. To
+finds all of them, please see:
+
+* `What's New in Python 3.10 <https://docs.python.org/3/whatsnew/3.10.html>`_
+* `What's New in Python 3.11 <https://docs.python.org/3/whatsnew/3.11.html>`_
+* `What's New in Python 3.12 <https://docs.python.org/3/whatsnew/3.12.html>`_
+
+One of the most visible changes caused by this is that Ren'Py will now report the location of Python errors
+at sub-line granularity, rather than at line granularity. In tracebacks, the portions of a line that contribute
+to an error will be colored or underlined.
+
+Performance Improvements
+------------------------
+
+**Script Loading** The internal respresentation of the game script has been changed to reduce the amount of
+memory used and to improve loading time, by only representing data that varies from the default. For a large
+game where initial startup is dominated by script loading, this improved the time it takes to load the script by
+50%.
+
+**Persistent Data** The persistent data format has been changed to use numeric hashes of visited script locations,
+rather than the full script location. These hashes can be saved and loaded much more quickly, which improves game
+performance when the persistent data is large.
+
+**OpenGL Drawing** Ren'Py's OpenGL drawing code has been changed to remove allocations of matrix objects, and to
+reduce the amount of math that needs to be done in many cases. This can improve performance when drawing scenes
+with large numbers of drawing operations, as those scenes can be CPU-bound.
+
+Similarly, the OpenGL drawing code has been changed to avoid the repeated allocation of dictionaries
+that contain shader variables.
+
+**Live2D** When rendering Live2D models, Ren'Py will avoid doing unproductive work to create Renders for layers
+that are not visible, and masks that are not used. This can improve performance when using Live2D models with
+many layers.
+
+Shaders
+-------
+
+Ren'Py's GLSL shader support now allows uniforms of types int, bool, ivec2, ivec3, ivec4, and bvec2, bvec3, bvec4,
+in addition to the support for float, vec2, vec3, vec4, mat2, mat3, mat4 and sampler2D that Ren'Py has
+always had.
+
+Ren'Py's GLSL shader support now allows one-dimensions arrays of uniforms of scalar and vector types, but not
+arrays of  matrices or samplers.
+
+Ren'Py now can supply separate model to world (u_model), world to camera view (u_view), and camera view to viewport
+(u_projection) matrices to shaders. These matrices are supplied as uniforms. There are also a u_projectionview matrix
+that combines u_projection and u_view, and the existing u_transform matrix is all three. Breaking these out allows
+OpenGL shaders to support lighting.
+
+Ren'Py's GLSL shader support now supports performing operations on the underlying data before passing it to
+a uniform. For example, if ``u_color`` is an RGBA uniform, ``u_color__premul`` is that color, premultiplied
+by its alpha channel. Other suffixes get the resolution of a texture, and can perform inverse, transpose,
+and inverse transpose operations on matrices.
+
+Inside Transforms, Ren'Py now supports uniforms of type sampler2D. These are textures that are set up
+to sample textures. These transforms can be supplied a displayable or a string that becomes a displayable.
+
+GLTF Model Loading
+------------------
+
+Ren'Py now has a minimal ability to load 3D models defined in the GLTF format, using the Open Asset Importer library.
+Models can be loaded using the :class:`GLTFModel` displayable.
+
+Right now, the GLTFModel loading only supports loading the mesh and textures of a model. There's no support for
+animation or other features of GLTF. What's more, the default Ren'Py shaders only show the base colors, and a custom
+shader is required to handle the other portions of physical-based rendering (PBR) that GLTF supports.
+
+The current GLTFModel support is is likely useful for people who want to use 3D backgrounds in their games, but
+may require a skilled developer to position the model in 3D space. It's also intended for developers that want to
+experiment and contribute insights and development back to Ren'Py. A future release will include more tools for
+working with objects in three dimensions.
+
+Optional Mipmaps
+----------------
+
+Mipmaps are smaller versions of an image that are used when Ren'Py scales an image down. Using mipmaps
+prevents the image from becoming jagged when scaled down, but generating mipmaps takes time and can cause the game
+to use more memory.
+
+Ren'Py now leaves the decision of if to create mipmaps to the developer, who knows if the game will scale down an
+image. By default, Ren'Py will create mipmaps for all images it loas. A new mode will only only create mipmaps
+when the display is scaled down to less than 75% of the virtual window size. This is suitable for games
+that do not scale down images, but for which the window size may be smaller than the virtual window size.
+
+To enable this new mode, set :var:`config.mipmap` to "auto".
+
+Mipmaps will automatically be created for images loaded for the purpose of Live2D or GLTFModel, as these are
+likely to be scaled down.  Mipmaps can be created for specific images by providing True to the mipmap parameter
+of :func:`Image`.
+
+
+Libs and Mods
+-------------
+
+Ren'Py now includes support for two more special directories, :file:`game/libs` and :file:`game/mods`. These
+directories are intended to receive third-party libraries and mods, respectively.
+
+When the file :file:`game/libs/libs.txt`
+exists, script files inside :file:`game/libs` have the first directory removed, if any, and are loaded in unicode order by the path
+not including that directory. Similarly, when the file :file:`game/mods/mods.txt` exists, script files inside it are loaded in
+unicode order by the path, not including that directory.
+
+Note that load order is relatively unimportant in Ren'Py - it's mostly used with :doc:`cds`. Init priorities levels
+have been changed to recommend that games use init priorities of -99 to 99, and libraries and mods use from -999 to -100
+and 100 to 999.
+
+When present, the libs and mods directories are showing in the launcher. The libs directory is created automatically
+when the game is created. The mods directory can be created manually if a creator wants to support mods.
+
+The goal of this change is to make it easier to distribute third-party libraries and mods. Instead of needing to be
+merged with the player's script, a library can be placed under game/libs, and will provide full functionality there.
+
+`.rpe` and `.rpe.py` files are also searched in the libs directory.
+
+Layered Images
+--------------
+
+The ``variant`` and ``prefix`` properties, which accepted any value but evaluated it (as a string) only at init time,
+now accept an unquoted `image name component` (digits, letters and underscores, no space or dash, may start with a
+digit).
+
+In places where the syntax allowed the ``at`` keyword, it now allows an ``at transform:`` block.
+
+In places where a displayable is expected, it is now possible to use an ``image:`` block, and to define an ATL image,
+like an anonymous :ref:`atl-image-statement`.
+
+The new ``when`` property introduces a more straightforward boolean condition syntax, replacing the ``if_any``,
+``if_all`` and ``if_not`` properties which remain supported for backwards compatibility. The new syntax removes
+the need for lists and quoting.
+To convert to the new syntax, you can replace::
+
+  if_any ["a", "b"]
+  if_all ["c", "d"]
+  if_not ["e", "f"]
+
+with the more concise::
+
+  when (a or b) and c and d and not (e or f).
+
+The ``multiple`` groups may now be anonymous, and should from now on be defined with the ``multiple`` keyword placed in
+lieu of the group name. This makes their behavior more consistent and easier to understand. The behavior of named
+multiple groups is unchanged, but they should not be used going forward.
+
+The ``attribute`` statement now takes the ``variant`` property, unless it is inside a group with a ``variant``, or it is
+directly assigned a displayable. This allows native support for cases which previously required a multiple group with a
+variant, or an attribute_function manipulation.
+
+Automatic Oversampling
+----------------------
+
+Ren'Py will now automatically look for oversampled version of images, and use those if the game is scaled up.
+
+As an example, take loading "eileen happy.png". When the game is scaled to more than 100% of it's virtual size,
+when loading "eileen happy.png", Ren'Py will also look for "eileen happy@2.png", and load that if it exists.
+When scaled to more than 200%, it will look for "eileen happy@4.png", "eileen happy@3.png", and
+"eileen happy@2.png". If none of these exist, it will use "eileen happy.png".
+
+Ren'Py also supports oversampling and automatic oversampling for movies played using :class:`Movie` and
+:func:`renpy.movie_cutscene`. This works similarly to images, with respect to filenames.
+
+Accessibility
+-------------
+
+The shift+A accessibility menu has been redesigned. It's now smaller, so that the bottom of the game
+(usually including dialogue) is visible, allowing the effects of the menu to be seen more immediately.
+It also has been broken up into multiple pages, to allow for new options to be added.
+
+Ren'Py can now force audio to mono, allowing sounds contain information on only the left or right channel
+to become audible on both. This can be enabled through the shift+A accessibility menu, the "force mono" :func:`Preference`,
+or the :var:`preferences.force_mono` variable.
+
+Ren'Py now includes a preference to allow the user to adjust font kerning. This is exposed through the
+accessibility menu, the "font kerning" :func:`Preference`, and the :var:`preferences.font_kerning` variable.
+
+Launcher
+--------
+
+The launcher now supports games being placed into folders, which can be collapsed and expanded. To put a
+game in a folder, create a directory underneath the projects directory, and move the game into that directory.
+
+The launcher's "Console output" option now works on the Macintosh platform.
+
+Building an update will now produce a ``public_key.pem`` file, containing key material that can be shared with
+the world. When building a :doc:`downloader game <downloader>`, this file should be copied to the base directory of
+the downloader game. This is the public key that will be used to verify the download.
+
+When creating a new game, Ren'Py will now include a .gitignore file that contains a default set of files to ignore.
+
+It's possible to :ref:`customize the Ren'Py launcher <launcher-customization>` to select the files and directories
+that are available to click on.
+
+Text
+-----
+
+Ren'Py now supports OpenType font layout features, which can control things like ligaturization and other
+settings. These features are controlled by the :propref:`font_features` style property, and the :tt:`features` text tag.
+
+A problem with mark positions on ligatures has been fixed. This mainly affected
+Arabic, but applies to all text. Note that this fix is only available when using
+the Harfbuzz shaper.
+
+The :propref:`reading_order` style property has been added so that a preference
+for the directionality of text may be expressed when ``config.rtl`` is ``True``.
+Setting it to ``"wrtl"`` (weak right-to-left) will cause directionally neutral
+lines to be displayed right-to-left (previously they would always be displayed
+left-to-right). This is mostly to support punctuation-only dialogue lines in RTL
+language games and translations.
+
+Finally, a regression in how bidirectional text embedding was handled when using
+the Harfbuzz text shaper introduced in ``8.3.7`` has been fixed. Text containing
+runs of both LTR and RTL characters will now render with the correct
+directionality for the individual runs again.
+
+Traceback Saves
+---------------
+
+If possible, Ren'Py now creates saves when an uncaught exception occurs, containing both the game
+state and the traceback. These saves are stored in slots with the name :file:`_tracesave-1` to :file:`_tracesave-10`.
+and have the traceback accessible through the json metadata.
+
+The new :func:`renpy.get_save_data` function allows you to retrieve the data for a particular save slot,
+without loading the save. This can be used with a traceback save to retrieve the game data without loading
+into an error state.
+
+Features
+--------
+
+The :tpref:`nearest` transform property now works as documented, allowing nearest neighbor texture interpolation
+to be disabled when set to False.
+
+The new :func:`HasSideImage` function returns the presence or absence of a side image before the side image
+itself is determined, making it useable in the say screen for layout.
+
+The new :var:`config.web_unload_music` variable controls whether music is unloaded when downloaded as part
+of :ref:`progressive downloading <progressive-downloading>`.
+
+The new :var:`config.clear_history_on_language_change` variable controls whether history is cleared when the
+language is changed.
+
+:func:`MixerValue` now suports the `step` and `force_step` parameters.
+
+The lint report can be configured to expand character aliases to names by setting :var:`config.lint_show_names` to True.
+
+:var:`config.voice_callbacks` allows you to define callbacks that are called when voice lines are played
+or stop.
+
+:ref:`Grids <sl-grid>` now support `right_to_left` and `bottom_to_top` properties, which control the order in which
+the grid is filled.
+
+Character's `ctc_position` argument now takes a new value `screen-variable`. This places the click-to-continue
+indicator in a screen variable, which allows it to be positioned inside the screen. This is intended for use
+with speech bubbles, to allow the click-to-continue indicator to be :ref:`positioned inside the speech bubble <bubble-ctc>`.
+
+The new :func:`renpy.lex_string` function makes it possible to create a Lexer for an arbitrary string.
+
+The :class:`SpriteManager` and :func:`SnowBlossom` displayables now support the `animation` parameter,
+which can be used to prevent resetting when the displayable is reshown.
+
+The :func:`SnowBlossom` displayable now supports the `distribution` parameter, which controls the distribution of how
+the particles are created, allowing the particles to be created in the center or sides of the screen.
+
+The :class:`Gallery` class now supports separate transitions when entering a sequence of images, going
+between images, and exiting the sequence of images.
+
+Screens now support python-style docstrings, which are used when a string is included as the first line
+of the block. Ren'Py does not do anything directly with dosctrings, but the raw string can be accessed
+using :func:`renpy.get_screen_docstring`.
+
+The :class:`Confirm` action and :func:`renpy.confirm` function now pass additional keyword arguments (not beginning
+with _) to the confirm screen.
+
+The screen language :ref:`use <sl-use>` statement now takes an ``as`` clause, which can be used to capture a
+variable named `main` from the screen. This is intended to be used like the ``as`` clause of screen language
+displayables, which captures the displayable into a variable.
+
+Custom screen language statement also support the ``as`` clause.
+
+The :var:`reset` transform now resets all properties of a Transform.
+
+:class:`Transform` now takes a `reset` property, which controls whether the transform is reset when it is
+used, as opposed to being given properties by other transforms that share a tag.
+
+The new :func:`renpy.seen_translation`, :func:`renpy.mark_translation_seen`, and :func:`renpy.mark_translation_unseen`
+functions make it possible to determine if a translation has been seen.
+
+Audio filesname can now include a volume clase, like "<volume 0.5>sunflower-slow-drag.ogg". This sets the relative
+amplitude of the track, similar to the ``volume`` clause of the ``play`` and ``queue`` statements.
+
+The new :var:`config.keep_screenshot_entering_menu` variable determines if a screenshot taken with :class:`FileTakeScreenshot`
+is kept when entering a menu context.
+
+The :propref:`thumb_offset` style property now can take a tuple giving different offsets for the two sides
+of a bar. The new :propref:`thumb_align` style property controls how a thumb is aligned with the bar.
+
+The :ref:`input <sl-input>` displayable now takes an `arrowkeys` property, which controls whether the arrow keys
+can be used to move the cursor in the input, or are used to move the focus between displayables.
+
+The :var:`config.translate_additional_strings_callbacks` callbacks make it possible for a game to offer
+additional to be added to translation files. (For example, strings from third-party libraries or data files.)
+
+The :func:`___` (triple underscore) function makes it possible translate a string, and then
+apply :ref:`text interpolation <text-interpolation>` to the result. Interpolations occur in the scope of
+that the function is called from. The triple underscore function also marks the string contained
+inside for translation.
+
+The :var:`config.persistent_callback` callback makes it possible to update persistent data when it is loaded.
+Starting from this release :var:`persistent._version` will also be set to the current version of the game in
+any newly created persistent data. This can be used with the callback to migrate persistent save data.
+
+Changes
+-------
+
+The :func:`renpy.get_renderer_info` function now returns a dictionary containing information about user's
+GPU and graphics driver, when available.
+
+Lint now reports when the translation functuions (:func:`_`, :func:`__`, :func:`___`, and :func:`_p`) are called
+with the wrong number of arguments.
+
+When Ren'Py loads a Python module from the game/ directory, ``__file__`` is set to the relative path of the module.
+
+Ren'Py now support showing the same :class:`Live2D` displayable on multiple layers, with multiple tags,
+or both.
+
+:class:`Transform` now has an attribute, original_child, that gives the child of the transform before the
+function was called.
+
+The behavior of :tpref:`mesh_pad` has been changed when left or top padding is present. Previously, this would
+offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
+left and top of the child.
+
+From the Python typing module, the names Callable, Any, Self, Literal, cast, overload, final, and override are imported
+into namespaces. These become reserved names in Ren'Py, and should not be used as names in newly-developed projects.
+
+A regression that kept "Add From to Calls" from working has been fixed.
+
+On the web platform, Ren'Py will now preload automatic voice lines, ensuring the files can play immediately,
+even if not fully cached on the player's device.
+
+Text inputs (:func:`renpy.input` and the :ref:`input <sl-input>` displayable) disable non-required text
+ligatures, so that ligaturization doesn't change when the caret moves.
+
+Ren'Py will disable the screensaver (and hence, the system going to sleep) when auto-forward mode is active.
+
+A creator-defined statement that defines a label will now call :var:`config.label_callbacks` when run.
+
+The "Click to play the video." screen used on some web platforms is now translatable.
+
+CTC indicators inside retained speech bubbles will now be cleared when the player clicks past the dialogue.
+
+In some circumstances, Ren'Py will reuse tuples containing immutable values (float, int, bool,
+complex, str, bytes, and other immutable tuples), which can reduce memory usage and improve performance. This
+may lead to these immutable tuples having the same object identity when previously they would not have.
+
+By default, Ren'Py now only creates mipmaps for textures if the display is scaled down to less than .75 of virtual
+window size. This is suitable for games that do not scale down images. To enable mipmapping again, set
+:var:`config.mipmap` to True.
+
+Ren'Py no longer triggers and autoreload when a file that had not existed comes into existence. This behavior
+had been inconsistent, working in some places but not others, required Ren'Py to spent time scanning for files
+that do not exist.
+
+Ren'Py now considers a dialogue statement to have been seen if a statement with the same translation identifier
+has been seen.
+
+For size reasons, the lists of seen dialogue and translations now store a 64-bit integer hash of the statement
+name or translation id.
+
+The ``show expression`` statement has changed so that ``show expression "bg washington"`` is equivalent
+to ``show bg washington``. Previously, the expression would be used as a tag, which would rarely be correct.
+If a displayable is given instead of a string, a tag will be generated.
+
+One the web platform, :var:`renpy.emscripten` is the emscripten module, making it available
+without needing to import it. You should still check that :var:`renpy.emscripten` is true before using it.
+
+When :var:`config.nearest_neighbor` is true, image fonts are scaled using nearest neighbor scaling,
+rather than the default bilinear scaling.
+
+The "Image Attributes" screen also indicates if transforms are applied to a layer, as it can be hard
+to determine otherwise.
+
+Ren'Py now also searches for `.rpe` and `.rpe.py` files in the new libs directory.
+
+:func:`renpy.get_renderer_info` now also include GPU vendor and device name as well as driver version.
+
 .. _renpy-8.3.7:
 .. _renpy-7.8.7:
 
@@ -130,8 +536,8 @@ A crash during video playback on the web platform has been fixed.
 Mouse coordinates passed to displayables embedded in text are now correct.
 
 
-.. _renpy-8.3.5:
-.. _renpy-7.8.5:
+.. _renpy-8.3.4:
+.. _renpy-7.8.4:
 
 8.3.4 / 7.8.4
 =============
@@ -143,6 +549,7 @@ Python Builtins (like len) are now always available during string interpolation.
 
 Animated presplash images now take precedence over static presplash images, matching
 the documentation.
+
 
 There have been a number of fixes related to dragging of viewports and drag displayables.
 
@@ -345,7 +752,7 @@ The multiple argument to Character is now supplied to :doc:`character_callbacks`
 Audio Filters
 -------------
 
-This release adds an :doc:`audio filter system <audio_filter>` to Ren'Py, providing a way of processing the sound coming out of
+This release adds an :doc:`audio filter system <audio_filters>` to Ren'Py, providing a way of processing the sound coming out of
 audio channels. The audio filter system is based on webaudio, and includes the following filters:
 
 * Biquad, a way of implementing Lowpass, Highpass, Notch, Peaking, Lowshelf, Highshelf, and Allpass filters.
@@ -618,7 +1025,7 @@ The interaction of ``window auto`` and ``nvl`` mode, especially
 :var:`config.nvl_adv_transition` and :var:`config.adl_nvl_transition`,
 has been improved. The major change is that the latter transitions will
 now only occur if the window has not been shown or hidden, preventing
-double interactions from occuring.
+double interactions from occurring.
 
 The (rarely used) ``nvl hide`` and ``nvl show`` statements now set the
 flag used by ``window auto``, preventing the window from being shown
@@ -1671,7 +2078,7 @@ if the fade time was too short.
 The :var:`config.fadeout_audio` variable (renamed from config.fade_music) controls
 the default fadeout used when stopping audio, or changing audio using ``play``. (It
 is not used by ``queue``). The default value is now 0.016 seconds, which eliminates
-popping sounds that occured when audio was stopped abruptly.
+popping sounds that occurred when audio was stopped abruptly.
 
 Audio panning (:func:`renpy.music.set_pan`) is now constant-power, so that
 panning audio should not change the volume.
@@ -4037,7 +4444,7 @@ work on both Python 2 and Python 3.
 
 First, Ren'Py now uses `future <https://python-future.org/>`_ to provide
 standard library compatibility. It's now possible to import modules using
-their Python 3 names, when a renaming has occured.
+their Python 3 names, when a renaming has occurred.
 
 When a .rpy file begins with the new ``rpy python 3`` statement, the file is
 compiled in a Python 3 compatibility mode. The two changes this causes are:

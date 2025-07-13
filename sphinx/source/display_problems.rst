@@ -46,7 +46,7 @@ on desktop hardware.
 On Suspend/Resume
 ^^^^^^^^^^^^^^^^^
 
-We have had reports of systems that lose textures when a computer is suspened
+We have had reports of systems that lose textures when a computer is suspended
 and resumed. This is likely a problem with the computer or its device drivers,
 but it is possible to force Ren'Py to reload the textures by resizing the
 window, or pressing the F key to toggle fullscreen mode.

@@ -91,7 +91,7 @@ cdef class WordWrapper(object):
 
             # Note that we start iteration at start+1, so we don't unmark the
             # first character.
-            for i from start < i < end:
+            for i in range(start + 1, end):
                 (<Glyph> words[i].glyph).split = SPLIT_NONE
 
             end = start
@@ -119,7 +119,7 @@ cdef class WordWrapper(object):
         scores[0] = 0.0
         splits[0] = 0
 
-        for 1 <= j <= self.len_words:
+        for j in range(1, self.len_words + 1):
 
             j_x = words[j-1].end_x
 
@@ -188,7 +188,7 @@ cdef class WordWrapper(object):
         start_glyph = glyphs[0]
         x = start_glyph.advance
 
-        for i from 1 <= i < len_glyphs:
+        for i in range(1, len_glyphs):
 
             g = <Glyph> <object> glyphs[i]
 
@@ -197,6 +197,14 @@ cdef class WordWrapper(object):
 
             if g.ruby == RUBY_ALT:
                 continue
+
+            if g.split == SPLIT_IGNORE:
+                ignored += g.advance
+                continue
+
+            else:
+                x += g.advance + ignored
+                ignored = 0
 
             if g.split == SPLIT_INSTEAD:
                 word.glyph = <void *> start_glyph
@@ -218,11 +226,6 @@ cdef class WordWrapper(object):
                 start_x = x
                 start_glyph = g
 
-            if g.split == SPLIT_IGNORE:
-                ignored += g.advance
-            else:
-                x += g.advance + ignored
-                ignored = 0
 
         x += ignored
 

@@ -91,7 +91,7 @@ init -1 python:
         def log(self, msg):
             with open(self.filename, "a") as f:
                 f.write("\n")
-                f.write(unicode(msg))
+                f.write(msg)
                 f.write("\n")
 
         def info(self, prompt):

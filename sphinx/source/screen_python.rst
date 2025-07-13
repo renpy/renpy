@@ -56,7 +56,7 @@ sensitive, and when it is selected.
         This should return true if the button should be rendered as a
         selected button, and false otherwise.
 
-        The default implemention returns False.
+        The default implementation returns False.
 
     .. method:: get_tooltip(self)
 
@@ -203,7 +203,7 @@ the enter key being pressed.
     .. method:: enter(self)
 
         Called when the user presses enter. If this returns a non-None
-        value, that value is returned from the interacton. This may also
+        value, that value is returned from the interaction. This may also
         raise :exc:`renpy.IgnoreEvent` to ignore the press. Otherwise, the
         enter-press is propagated to other displayables.
 
@@ -308,3 +308,6 @@ the \*\*properties syntax with a properties keyword in some place. For example::
             null height 15
 
             transclude
+
+Custom defined screen language statements support the ``as`` clause, which takes the name of the variable. If present,
+this variable will be assigned the value of `main` in the scope of the screen.

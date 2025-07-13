@@ -255,7 +255,7 @@ init -1150 python in gui:
     button_image_extension = ".png"
 
     def button_properties(kind):
-        """
+        r"""
         :doc: gui
 
         Given a `kind` of button, returns a dictionary giving standard style
@@ -339,8 +339,6 @@ init -1150 python in gui:
         :name: gui.text_properties
         :doc: gui
 
-        Given a `kind` of button, returns a dictionary giving standard style
-        properties for that button. This sets:
         Given a `kind` of textbutton, returns a dictionary giving standard style
         properties for the text inside that button. This sets:
 

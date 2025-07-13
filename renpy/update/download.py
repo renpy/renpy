@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 import renpy
 
@@ -38,8 +38,7 @@ def byte_ranges(ranges):
     ranges = list(ranges)
     ranges.sort()
 
-    rv = [ ]
-
+    rv = []
 
     for offset, size in ranges:
         start = offset
@@ -63,7 +62,7 @@ def write_range(f, headers, content):
     f.write(content)
     f.truncate(total)
 
-    return [ (start, end) ]
+    return [(start, end)]
 
 
 def write_multipart(f, headers, content):
@@ -75,17 +74,16 @@ def write_multipart(f, headers, content):
 
     content = content.split(end_boundary, 1)[0]
 
-    rv = [ ]
+    rv = []
 
     for part in content.split(boundary):
-
         if not part:
             continue
 
         part_header_text, part_content = part.split(b"\r\n\r\n", 1)
         part_header_text = part_header_text.decode("utf-8")
 
-        part_headers = { }
+        part_headers = {}
 
         for i in part_header_text.split("\r\n"):
             k, v = i.split(": ", 1)
@@ -94,6 +92,7 @@ def write_multipart(f, headers, content):
         rv.extend(write_range(f, part_headers, part_content))
 
     return rv
+
 
 def download_ranges(url, ranges, destination, progress_callback=None):
     """
@@ -123,20 +122,18 @@ def download_ranges(url, ranges, destination, progress_callback=None):
         mode = "wb"
 
     with open(destination, mode) as destination_file:
-
         while ranges:
-
             old_ranges = list(ranges)
 
             headers = {
-                'Range' : 'bytes=' + ', '.join('%d-%d' % (start, end) for start, end in ranges[:10]),
+                "Range": "bytes=" + ", ".join("%d-%d" % (start, end) for start, end in ranges[:10]),
                 "Accept-Encoding": "identity",
-                }
+            }
 
             r = requests.get(url, headers=headers, stream=True, timeout=10, proxies=renpy.exports.proxies)
             r.raise_for_status()
 
-            blocks = [ ]
+            blocks = []
 
             while True:
                 b = r.raw.read(128 * 1024)
@@ -176,8 +173,6 @@ def download_ranges(url, ranges, destination, progress_callback=None):
         return False
 
 
-
-
 def download(url, ranges, destination, progress_callback=None):
     """
     Downloads the file. First tries to use ranges, and if that fails
@@ -199,7 +194,6 @@ def download(url, ranges, destination, progress_callback=None):
         headers will add overhead.)
     """
 
-
     try:
         if download_ranges(url, ranges, destination, progress_callback=progress_callback):
             return
@@ -212,10 +206,12 @@ def download(url, ranges, destination, progress_callback=None):
     total_size = sum(i[1] for i in ranges)
     downloaded = 0
 
-    r = requests.get(url, stream=True, headers={"Accept-Encoding": "identity"}, timeout=10, proxies=renpy.exports.proxies)
+    r = requests.get(
+        url, stream=True, headers={"Accept-Encoding": "identity"}, timeout=10, proxies=renpy.exports.proxies
+    )
     r.raise_for_status()
 
-    blocks = [ ]
+    blocks = []
 
     while True:
         b = r.raw.read(128 * 1024)

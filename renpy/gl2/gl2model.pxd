@@ -1,4 +1,4 @@
-# Copyright 2004-2024 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -52,6 +52,14 @@ cdef class GL2Model:
     # a Texture.)
     cdef public object cached_texture
 
+    cdef GL2Model tex0
+    cdef GL2Model tex1
+    cdef GL2Model tex2
+    cdef GL2Model tex3
+
     cpdef GL2Model copy(GL2Model self)
     cpdef subsurface(GL2Model self, t)
     cpdef scale(GL2Model self, float factor)
+
+    cpdef void set_texture(self, int i, GL2Model texture)
+    cpdef GL2Model get_texture(self, int i)

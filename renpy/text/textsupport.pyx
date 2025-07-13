@@ -26,6 +26,13 @@ import renpy
 
 include "linebreak.pxi"
 
+split_name = {
+    SPLIT_NONE: "SPLIT_NONE",
+    SPLIT_BEFORE: "SPLIT_BEFORE",
+    SPLIT_INSTEAD: "SPLIT_INSTEAD",
+    SPLIT_IGNORE: "SPLIT_IGNORE",
+}
+
 cdef class Glyph:
 
     def __cinit__(self):
@@ -43,9 +50,9 @@ cdef class Glyph:
 
     def __repr__(self):
         if self.variation == 0:
-            return "<Glyph {0!r} time={1}>".format(self.character, self.time)
+            return f"<Glyph U+{self.character:4x} {chr(self.character)} time={self.time} {split_name[self.split]}>"
         else:
-            return "<Glyph {0!r} vs={1} time={2}>".format(self.character, self.variation, self.time)
+            return f"<Glyph U+{self.character:4x} {chr(self.character)} vs={self.variation} time={self.time} {split_name[self.split]}>"
 
     _types = """
         x: int
@@ -390,7 +397,7 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
     else:
         break_classes = break_western
 
-    for pos from 1 <= pos < len_glyphs:
+    for pos in range(1, len_glyphs):
 
         g = glyphs[pos]
         c = g.character
@@ -464,14 +471,14 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
         bc = break_rules[ old_type * BC_PITCH + new_type]
 
-        if bc == "%": # Indirect break.
+        if bc == b"%": # Indirect break.
             if space_pos:
                 g1 = glyphs[space_pos]
                 g1.split = SPLIT_INSTEAD
 
             g.split = SPLIT_NONE
 
-        elif bc == "_": # Direct break.
+        elif bc == b"_": # Direct break.
             if space_pos:
                 g1 = glyphs[space_pos]
                 g1.split = SPLIT_INSTEAD
@@ -734,7 +741,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading, int ruby_line_l
 
             has_ruby = False
 
-            for i from sol <= i < pos:
+            for i in range(sol, pos):
                 gg = glyphs[i]
 
                 if gg.ruby == RUBY_TOP:
@@ -762,7 +769,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading, int ruby_line_l
                 y += ruby_line_leading
                 line_leading += ruby_line_leading
 
-                for i from sol <= i < pos:
+                for i in range(sol, pos):
                     gg = glyphs[i]
 
                     if gg.ruby == RUBY_TOP:
@@ -1030,7 +1037,7 @@ def place_ruby(list glyphs, int ruby_offset, int altruby_offset, int surf_width,
         # Compute the width of the run.
 
         width = 0
-        for i from start_top <= i < pos:
+        for i in range(start_top, pos):
             g = glyphs[i]
             width += g.advance
 
@@ -1040,7 +1047,7 @@ def place_ruby(list glyphs, int ruby_offset, int altruby_offset, int surf_width,
         # Place the glyphs.
         x = (max_x + min_x) / 2 - width / 2
 
-        for i from start_top <= i < pos:
+        for i in range(start_top, pos):
             g = glyphs[i]
             g.x = <int> (x + .5)
 
@@ -1167,7 +1174,7 @@ def copy_splits(list source, list dest):
     cdef Glyph d
     cdef int i
 
-    for 0 <= i < len(dest):
+    for i in range(len(dest)):
         s = source[i]
         d = dest[i]
 

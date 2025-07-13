@@ -34,6 +34,10 @@ init -1900 python:
 
         prefix = config.images_directory.rstrip('/') + '/'
 
+        non_oversampled_images = [ ]
+
+        oversampled_images = [ ]
+
         for fn in renpy.list_files():
             if not fn.startswith(prefix):
                 continue
@@ -45,7 +49,20 @@ init -1900 python:
                 continue
 
             base = base.lower()
-            base = base.partition("@")[0]
+            base, _, oversampled = base.partition("@")
+
+            if oversampled:
+                oversampled_images.append((base, fn))
+            else:
+                non_oversampled_images.append((base, fn))
+
+        for base, fn in non_oversampled_images:
+            if renpy.has_image(base, exact=True):
+                continue
+
+            renpy.image(base, fn)
+
+        for base, fn in oversampled_images:
 
             if renpy.has_image(base, exact=True):
                 continue

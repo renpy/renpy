@@ -12,17 +12,73 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
-Pending Deprecations
---------------------
 
-Ren'Py 7.8 is the last release to support Python 2.
+.. _incompatible-8.4.0:
 
-Ren'Py 8.4 will drop support for the original OpenGL renderer (gl1), and for Windows 7, 8, and 8.1.
+8.4.0
+-----
 
+
+**Automatic Oversamping** When Ren'Py is scaled up enough, it can search the image files for
+higher resolution images, and load those instead. See :ref:`the documentation <automatic-oversampling>` for more informaiton.
+This can be disabled with:
+
+    define config.automatic_oversampling = None
+
+As this can be useful for older games, and is unlikely to cause problems, automatic oversampling is
+left enabled when running older games.
+
+**Show expression.** The ``show expression`` statement has been changed so that::
+
+    show expression "bg washington"
+
+is exactly equivalent to:
+
+    show bg washington
+
+Previously, this would use the expression itself as the tag. When the expression is not a string,
+a unique tag is created for the show expression statement. This change can be reverted with::
+
+    define config.old_show_expression = True
+
+**LayeredImage** The "variant" and "prefix" properties, if passed unquoted names, now read them as an unquoted string instead of a variable to be evaluated at init time. It is unlikely to cause any issue, but if it does, you can use::
+
+    variant f"{old_expression}"
+
+Also, naming a group "multiple" is no longer supported.
+
+**Creator-defined Statements and config.label_callbacks** Creator-defined statements now call :var:`config.label_callbacks`,
+when a label is defined. To revert to the old behavior of not calling config.label_callbacks, add to your game::
+
+    define config.cds_label_callbacks = False
+
+**Mesh Padding** The behavior of :tpref:`mesh_pad` has been changed when left or top padding is present. Previously, this would
+offset the child by the padding amount. Now, the child remains in the same place, with the padding added to the
+left and top of the child.
+
+**Small GUI Viewport Size**
+While not strictly incompatible, we recommend adding the following to games that use the default GUI::
+
+    style game_menu_viewport:
+        variant "small"
+        xsize 1305
+
+This ensures menus will have a scrollbar on phones and televisions. The number 1305 is suitable for a 1920 pixel wide
+game. For a 1280 pixel wide game, use 870. For a 3840 pixel wide game, use 2010. (Other resolutions should use
+0.68 times the width of the game, rounded down to an integer.)
+
+**Shader Order**
+In previous versions of Ren'Py, the order in which shader parts that shared the same
+priority were applied was undefined. Now, the parts are ordered by the name of the shader, producing
+a reliable order, but this reliable order may be diferent than what was seen on particular systems.
+
+**Python Module Paths**
+When a Python module is loaded from the game/ directory, the ``__file__`` variable is set to the relative path of the
+module, which can be passed to :func:`renpy.open_file`. Previously, ``__file__`` could be set to the absolute path of
+the module in some cases, and the relative path in others.
 
 .. _incompatible-8.3.4:
 .. _incompatible-7.8.4:
-
 
 8.3.4 / 7.8.4
 -------------
@@ -910,7 +966,7 @@ to be given. To revert to the old interface, use::
 
 It's mode parameter has also been slightly changed, and will now return
 a value of ``both`` when both a ``permanent`` and ``temporary``
-attribute transition is occuring.
+attribute transition is occurring.
 
 .. _incompatible-7.2.2:
 

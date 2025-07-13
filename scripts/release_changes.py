@@ -8,8 +8,7 @@ import collections
 
 
 def index_file(index, fn):
-
-    m = re.search(r'((atom-)?\w+).zip', str(fn))
+    m = re.search(r"((atom-)?\w+).zip", str(fn))
     if not m:
         return
 
@@ -21,8 +20,6 @@ def index_file(index, fn):
         index[base + "/" + filename] = zi.compress_size
 
 
-
-
 def index_directory(dn):
     rv = collections.defaultdict(int)
 
@@ -30,7 +27,6 @@ def index_directory(dn):
 
     if not p.exists():
         p = pathlib.Path(__file__).parent / "../dl" / dn
-
 
     for i in p.iterdir():
         index_file(rv, i)
@@ -42,7 +38,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("old", help="Either a path to a directory containing the Ren'Py downloads, or a version.")
     ap.add_argument("new", help="Either a path to a directory containing the Ren'Py downloads, or a version.")
-    ap.add_argument("prefix", default="", nargs='?', help="If given, only show results with this prefix.")
+    ap.add_argument("prefix", default="", nargs="?", help="If given, only show results with this prefix.")
     ap.add_argument("--all", action="store_true", help="If given, show files that didn't change.")
     ap.add_argument("--dirs", action="store_true", help="If given, show directories.")
     ap.add_argument("--changed", action="store_true", help="If given, show files that have changed size.")

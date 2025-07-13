@@ -559,7 +559,7 @@ init -1500 python:
 
     def FileAction(name, page=None, **kwargs):
         """
-        :doc: file_action
+        :doc: file_action action
 
         "Does the right thing" with the file. This means loading it if the
         load screen is showing (current screen is named "load"), and saving
@@ -592,7 +592,7 @@ init -1500 python:
         if page is None:
             return
 
-        page = unicode(page)
+        page = str(page)
 
         for i in renpy.list_slots(__slotname(page, r'\d+')):
             renpy.predict(renpy.slot_screenshot(i))
@@ -655,7 +655,7 @@ init -1500 python:
         An input value that updates the name of a file page.
 
         `pattern`
-            This is used for the default name of a page. Python-style substition
+            This is used for the default name of a page. Python-style substitution
             is performed, such that {} is replaced with the number of the page.
 
         `auto`
@@ -948,7 +948,7 @@ init -1500 python:
     @renpy.pure
     def QuickSave(message=_("Quick save complete."), newest=False):
         """
-        :doc: file_action
+        :doc: file_action action
 
         Performs a quick save.
 
@@ -957,7 +957,7 @@ init -1500 python:
 
         `newest`
             Set to true to mark the quicksave as the newest save.
-         """
+        """
 
         rv = [ FileSave(1, page="quick", confirm=False, cycle=True, newest=newest, action=Notify(message)) ]
 
@@ -971,7 +971,7 @@ init -1500 python:
     @renpy.pure
     def QuickLoad(confirm=True):
         """
-        :doc: file_action
+        :doc: file_action action
 
         Performs a quick load.
 

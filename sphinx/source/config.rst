@@ -74,8 +74,9 @@ Auto-Forward Mode
 .. var:: config.afm_callback = None
 
     If not None, a Python function that is called to determine if it
-    is safe to auto-forward. The intent is that this can be used by a
-    voice system to disable auto-forwarding when a voice is playing.
+    is safe to auto-forward. If None, an internal function is used to
+    disable auto-forwarding when a voice is playing, unless :var:`preferences.wait_voice`
+    is set to False.
 
 .. var:: config.afm_characters = 250
 
@@ -200,7 +201,7 @@ that feature.
         Say statements in bubble mode.
 
     "say-centered"
-        Say statments using the :var:`centered` character.
+        Say statements using the :var:`centered` character.
 
     "menu":
         Normal menu statements.
@@ -350,6 +351,11 @@ Display
 
             config.adjust_view_size = force_integer_multiplier
 
+.. var:: config.automatic_oversampling = 4
+
+    The highest level of :ref:`automatic oversampling <automatic-oversampling>` that
+    Ren'Py will use. If None, automatic oversampling is disabled.
+
 .. var:: config.display_start_callbacks = [ ]
 
     This contains a list of functions that are called after Ren'Py
@@ -364,7 +370,7 @@ Display
     edges drawn when aspect ratio of the window (or monitor in
     fullscreen mode) does not match the aspect ratio of the game.
 
-.. var:: config.gl_lod_bias = -0.5
+.. var:: config.gl_lod_bias = -0.6
 
     The default value of the :ref:`u_lod_bias <u-lod-bias>` uniform,
     which controls the mipmap level Ren'Py uses.
@@ -386,6 +392,12 @@ Display
     amount of time has been reached, it will sleep to ensure the image is
     shown for at least this amount of time. The image may be shown longer
     if Ren'Py takes longer to start up.
+
+.. var:: config.mipmap = True
+
+    This controls if Ren'Py generates mipmaps for images. If True, mipmaps are always generated. If "auto", mipmaps
+    are generated only if the window is smaller than 75% of the virtual screen size. If False, mipmaps are never
+    generated.
 
 .. var:: config.nearest_neighbor = False
 
@@ -561,7 +573,7 @@ Layers
 
 .. var:: config.bottom_layers = [ "bottom", ... ]
 
-    This is a list of names of layers that are displayed above all
+    This is a list of names of layers that are displayed beneath all
     other layers, and do not participate in a transition that is
     applied to all layers. If a layer name is listed here, it should
     not be listed in :var:`config.layers`` or :var:`config.top_layers`.
@@ -758,6 +770,8 @@ Media (Music, Sound, and Video)
 
     The default value of the mipmap argument to :func:`Movie`.
 
+    This takes the same values as :var:`config.mipmap`.
+
 .. var:: config.movie_mixer = "music"
 
     The mixer that is used when a :func:`Movie` automatically defines
@@ -768,11 +782,11 @@ Media (Music, Sound, and Video)
     The name of the audio channel used by :func:`renpy.play`,
     :propref:`hover_sound`, and :propref:`activate_sound`.
 
-.. var:: config.preserve_volume_when_muted = False
+.. var:: config.preserve_volume_when_muted = True
 
-    If False, the default, the volume of channels are shown as 0 and
+    If False, the volume of channels are shown as 0 and
     changing it disables mute when the channel is mute.
-    Otherwise, It is shown and adjustable while keeping mute.
+    If True, the default, it is shown and adjustable while keeping mute.
 
 .. var:: config.single_movie_channel = None
 
@@ -797,6 +811,11 @@ Media (Music, Sound, and Video)
     wav files are of a lower rate, changing this to that rate may make
     things more efficient.
 
+.. var:: config.web_unload_music = None
+
+    If not None, this should be an number of seconds. Music downloaded as part of
+    :ref:`progressive downloading <progressive-downloading>` will be unloaded after this number of seconds.
+
 .. var:: config.web_video_base = "./game"
 
     When playing a movie in the web browser, this is a URL that
@@ -806,12 +825,6 @@ Media (Music, Sound, and Video)
 
     This allows large movie files to be hosted on a different server
     than the rest of the game.
-
-.. var:: config.web_video_prompt = _("Touch to play the video.")
-
-    On Mobile Safari on iOS, by default, the player will need to click to play
-    a movie with sound. This variable gives the message that's used to prompt
-    players to click.
 
 .. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mpeg", ... ]
 
@@ -929,7 +942,7 @@ Paths
     :var:`config.save_directory`, which generates the default value for this
     if it is not set during a ``python early`` block.
 
-.. var:: config.search_prefixes = [ "", "images/", ... ]
+.. var:: config.search_prefixes = [ "", ... ]
 
     A list of prefixes that are prepended to filenames that are searched
     for.
@@ -1141,6 +1154,12 @@ Saving and Loading
     If true, the game will autosave. If false, no autosaving will
     occur.
 
+.. var:: config.keep_screenshot_entering_menu = False
+
+    If true, a screenshot taken with :class:`FileTakeScreenshot` will be kept
+    when entering the game menu. When false, a new screenshot will be taken
+    just before menu entry.
+
 .. var:: config.load_failed_label = None
 
     If a string, this is a label that is jumped to when a load fails because
@@ -1156,6 +1175,30 @@ Saving and Loading
     When not None, a function that's called with a filename. It should return
     True if the file is loadable, and False if not. This can be used with
     :var:`config.file_open_callback` or :var:`config.missing_image_callback`.
+
+.. var:: config.persistent_callback = None
+
+    When not None, a function that's called with a persistent store whenever
+    a persistent save file is loaded. It should make any alterations in-place.
+
+    This must be set with either the define statement, or inside a ``python
+    early`` block. It should only reference other things typically available
+    to ``python early`` blocks.
+
+    The callback can make use of :var:`persistent._version` to determine when
+    the data was originated and, if managed properly, when it was last
+    migrated. A value of None implies that the data predates this feature being
+    added in Ren'Py 8.4.
+
+    A extremely basic callback may look something like::
+
+        def migrate_persistent(data):
+            if data._version is None:
+                # Update values in data to be suitable for current version.
+                ...
+
+                # Update originating version.
+                data._version = config.version
 
 .. var:: config.quicksave_slots = 10
 
@@ -1613,7 +1656,7 @@ Skipping
 
     Set this to True to allow fast skipping outside of developer mode.
 
-.. var:: config.skip_delay = 75
+.. var:: config.skip_delay = 5
 
     The amount of time that dialogue will be shown for, when skipping
     statements using ctrl, in milliseconds. (Although it's nowhere
@@ -1905,6 +1948,13 @@ Transition Control
 Translation
 -----------
 
+.. var:: config.clear_history_on_language_change = True
+
+    If True, the history is cleared when the language changes. This
+    is used to ensure that the history only contains strings that are
+    representable in the current font. If False, the history is kept
+    when the language changes.
+
 .. var:: config.default_language = None
 
     If not None, this should be a string giving the default language
@@ -1922,7 +1972,7 @@ Translation
     While this defaults to False, it's set to True when :func:`gui.init`
     is called.
 
-.. var:: config.defer_tl_scripts = Fasle
+.. var:: config.defer_tl_scripts = False
 
     When True, avoids loading scripts in the tl directory until the
     language is selected. See :ref:`deferred-translations`.
@@ -1952,6 +2002,17 @@ Translation
 
     A list of named stores that are cleaned to their state at the end of
     the init phase when the translation language changes.
+
+.. var:: config.translate_additional_strings_callbacks = [ ]
+
+    A list of callbacks that are called when the translation system is searching for
+    strings. Each callback is expected to be return and iterable or iterator of
+    (filename, linenumber, string) tuples. The strings will then be treated as
+    additional strings to translate.
+
+    The line number doesn't need to correspond to an actual line in the file, but is used to control
+    the order in which string translations are added to transdlation files.
+
 
 .. var:: config.translate_ignore_who = [ ]
 
@@ -2004,9 +2065,28 @@ Voice
 
     See above.
 
-.. var:: config.emphasize_audio_volume = 0.5
+.. var:: config.emphasize_audio_volume = 0.8
 
     See above.
+
+.. var:: config.voice_callbacks = [ ]
+
+    A list of functions that are called by the voice system. The function should take two arguments:
+
+    `event`
+        The event that was triggered. This is one of:
+
+        "play"
+            The voice system is about to play a voice file.
+        "stop"
+            The voice system has stopped playing a voice file.
+
+    `info`
+        An object containing information about the voice file that is being played. This is the same
+        object that is return from :func:`_get_voice_info`.
+
+    The function should also accept unknown keyword arguments, though no keyword arguments are
+    currently documented.
 
 .. var:: config.voice_filename_format = "{filename}"
 
@@ -2174,8 +2254,13 @@ Debugging
 
     If true, and :var:`config.developer` is true, the lint report will include
     statistics about the number of dialogue blocks spoken for each character.
-    The chanracter statistics are disabled when the game is packaged, to
+    The character statistics are disabled when the game is packaged, to
     prevent spoilers.
+
+.. var:: config.lint_show_names = False
+
+    If true, and :var:`lint_character_statistics` is true, the lint report will expand the aliases
+    of the character names to the name parameter given it :func:`Character`, if possible.
 
 .. var:: config.lint_hooks = [ ... ]
 

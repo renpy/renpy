@@ -23,7 +23,7 @@
 # transform displayables. (As well as displayables that support them.)
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import math
@@ -58,7 +58,23 @@ class Motion(Container):
     ypos, with floats being considered fractions of the screen.
     """
 
-    def __init__(self, function, period, child=None, new_widget=None, old_widget=None, repeat=False, bounce=False, delay=None, anim_timebase=False, tag_start=None, time_warp=None, add_sizes=False, style='motion', **properties):
+    def __init__(
+        self,
+        function,
+        period,
+        child=None,
+        new_widget=None,
+        old_widget=None,
+        repeat=False,
+        bounce=False,
+        delay=None,
+        anim_timebase=False,
+        tag_start=None,
+        time_warp=None,
+        add_sizes=False,
+        style="motion",
+        **properties,
+    ):
         """
         @param child: The child displayable.
 
@@ -113,7 +129,6 @@ class Motion(Container):
         self.position = None
 
     def update_position(self, t, sizes):
-
         if renpy.game.less_updates:
             if self.delay:
                 t = self.delay
@@ -160,7 +175,6 @@ class Motion(Container):
             self.position = res
 
     def get_placement(self):
-
         if self.position is None:
             if self.add_sizes:
                 # Almost certainly gives the wrong placement, but there's nothing
@@ -172,7 +186,6 @@ class Motion(Container):
         return self.position + (self.style.xoffset, self.style.yoffset, self.style.subpixel)
 
     def render(self, width, height, st, at):
-
         if self.anim_timebase:
             t = at
         else:
@@ -186,36 +199,43 @@ class Motion(Container):
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(child, (0, 0))
 
-        self.offsets = [ (0, 0) ]
+        self.offsets = [(0, 0)]
 
         return rv
 
 
 class Interpolate(object):
-
     anchors = {
-        'top' : 0.0,
-        'center' : 0.5,
-        'bottom' : 1.0,
-        'left' : 0.0,
-        'right' : 1.0,
-        }
+        "top": 0.0,
+        "center": 0.5,
+        "bottom": 1.0,
+        "left": 0.0,
+        "right": 1.0,
+    }
 
     def __init__(self, start, end):
-
         if len(start) != len(end):
             raise Exception("The start and end must have the same number of arguments.")
 
-        self.start = [ self.anchors.get(i, i) for i in start ]
-        self.end = [ self.anchors.get(i, i) for i in end ]
+        self.start = [self.anchors.get(i, i) for i in start]
+        self.end = [self.anchors.get(i, i) for i in end]
 
     def __call__(self, t, sizes=(None, None, None, None)):
-
         return renpy.atl.interpolate(t, tuple(self.start), tuple(self.end), renpy.atl.position_or_none)
 
 
-def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
-        anim_timebase=False, style='motion', time_warp=None, **properties):
+def Pan(
+    startpos,
+    endpos,
+    time,
+    child=None,
+    repeat=False,
+    bounce=False,
+    anim_timebase=False,
+    style="motion",
+    time_warp=None,
+    **properties,
+):
     """
     This is used to pan over a child displayable, which is almost
     always an image. It works by interpolating the placement of the
@@ -252,19 +272,31 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
     x0, y0 = startpos
     x1, y1 = endpos
 
-    return Motion(Interpolate((-x0, -y0), (-x1, -y1)),
-                  time,
-                  child,
-                  repeat=repeat,
-                  bounce=bounce,
-                  style=style,
-                  anim_timebase=anim_timebase,
-                  time_warp=time_warp,
-                  **properties)
+    return Motion(
+        Interpolate((-x0, -y0), (-x1, -y1)),
+        time,
+        child,
+        repeat=repeat,
+        bounce=bounce,
+        style=style,
+        anim_timebase=anim_timebase,
+        time_warp=time_warp,
+        **properties,
+    )
 
 
-def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
-         anim_timebase=False, style='motion', time_warp=None, **properties):
+def Move(
+    startpos,
+    endpos,
+    time,
+    child=None,
+    repeat=False,
+    bounce=False,
+    anim_timebase=False,
+    style="motion",
+    time_warp=None,
+    **properties,
+):
     """
     This is used to pan over a child displayable relative to
     the containing area. It works by interpolating the placement of the
@@ -296,19 +328,20 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
     This can be used as a transition. See Motion for details.
     """
 
-    return Motion(Interpolate(startpos, endpos),
-                  time,
-                  child,
-                  repeat=repeat,
-                  bounce=bounce,
-                  anim_timebase=anim_timebase,
-                  style=style,
-                  time_warp=time_warp,
-                  **properties)
+    return Motion(
+        Interpolate(startpos, endpos),
+        time,
+        child,
+        repeat=repeat,
+        bounce=bounce,
+        anim_timebase=anim_timebase,
+        style=style,
+        time_warp=time_warp,
+        **properties,
+    )
 
 
 class Revolver(object):
-
     def __init__(self, start, end, child, around=(0.5, 0.5), cor=(0.5, 0.5), pos=None):
         self.start = start
         self.end = end
@@ -371,12 +404,9 @@ class Revolver(object):
 
 
 def Revolve(start, end, time, child, around=(0.5, 0.5), cor=(0.5, 0.5), pos=None, **properties):
-
-    return Motion(Revolver(start, end, child, around=around, cor=cor, pos=pos),
-                  time,
-                  child,
-                  add_sizes=True,
-                  **properties)
+    return Motion(
+        Revolver(start, end, child, around=around, cor=cor, pos=pos), time, child, add_sizes=True, **properties
+    )
 
 
 def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
@@ -406,18 +436,20 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
 
 
 class ZoomCommon(renpy.display.displayable.Displayable):
-
-    def __init__(self,
-                 time, child,
-                 end_identity=False,
-                 after_child=None,
-                 time_warp=None,
-                 bilinear=True,
-                 opaque=True,
-                 anim_timebase=False,
-                 repeat=False,
-                 style='motion',
-                 **properties):
+    def __init__(
+        self,
+        time,
+        child,
+        end_identity=False,
+        after_child=None,
+        time_warp=None,
+        bilinear=True,
+        opaque=True,
+        anim_timebase=False,
+        repeat=False,
+        style="motion",
+        **properties,
+    ):
         """
         @param time: The amount of time it will take to
         interpolate from the start to the end rectange.
@@ -457,13 +489,12 @@ class ZoomCommon(renpy.display.displayable.Displayable):
         self.anim_timebase = anim_timebase
 
     def visit(self):
-        return [ self.child, self.after_child ]
+        return [self.child, self.after_child]
 
-    def zoom_rectangle(self, done, width, height): # type: (ZoomCommon, float, float, float) -> tuple[int, int, int, int, int, int]
+    def zoom_rectangle(self, done, width, height):  # type: (ZoomCommon, float, float, float) -> tuple[int, int, int, int, int, int]
         raise Exception("Zoom rectangle not implemented.")
 
     def render(self, width, height, st, at):
-
         if self.anim_timebase:
             t = at
         else:
@@ -493,7 +524,9 @@ class ZoomCommon(renpy.display.displayable.Displayable):
         rx, ry, rw, rh, zw, zh = self.zoom_rectangle(done, rend.width, rend.height)
 
         if rx < 0 or ry < 0 or rx + rw > rend.width or ry + rh > rend.height:
-            raise Exception("Zoom rectangle %r falls outside of %dx%d parent surface." % ((rx, ry, rw, rh), rend.width, rend.height))
+            raise Exception(
+                "Zoom rectangle %r falls outside of %dx%d parent surface." % ((rx, ry, rw, rh), rend.width, rend.height)
+            )
 
         rv = zoom_render(rend, rx, ry, rw, rh, zw, zh, self.bilinear)
 
@@ -503,7 +536,6 @@ class ZoomCommon(renpy.display.displayable.Displayable):
         return rv
 
     def event(self, ev, x, y, st):
-
         if not self.time:
             done = 1.0
         else:
@@ -516,10 +548,8 @@ class ZoomCommon(renpy.display.displayable.Displayable):
 
 
 class Zoom(ZoomCommon):
-
     def __init__(self, size, start, end, time, child, **properties):
-
-        end_identity = (end == (0.0, 0.0) + size)
+        end_identity = end == (0.0, 0.0) + size
 
         super(Zoom, self).__init__(time, child, end_identity=end_identity, **properties)
 
@@ -528,17 +558,14 @@ class Zoom(ZoomCommon):
         self.end = end
 
     def zoom_rectangle(self, done, width, height):
-
-        rx, ry, rw, rh = [ (a + (b - a) * done) for a, b in zip(self.start, self.end) ] # type: ignore
+        rx, ry, rw, rh = [(a + (b - a) * done) for a, b in zip(self.start, self.end)]  # type: ignore
 
         return rx, ry, rw, rh, self.size[0], self.size[1]
 
 
 class FactorZoom(ZoomCommon):
-
     def __init__(self, start, end, time, child, **properties):
-
-        end_identity = (end == 1.0)
+        end_identity = end == 1.0
 
         super(FactorZoom, self).__init__(time, child, end_identity=end_identity, **properties)
 
@@ -546,16 +573,13 @@ class FactorZoom(ZoomCommon):
         self.end = end
 
     def zoom_rectangle(self, done, width, height):
-
         factor = self.start + (self.end - self.start) * done
 
         return 0, 0, width, height, factor * width, factor * height
 
 
 class SizeZoom(ZoomCommon):
-
     def __init__(self, start, end, time, child, **properties):
-
         end_identity = False
 
         super(SizeZoom, self).__init__(time, child, end_identity=end_identity, **properties)
@@ -564,7 +588,6 @@ class SizeZoom(ZoomCommon):
         self.end = end
 
     def zoom_rectangle(self, done, width, height):
-
         sw, sh = self.start
         ew, eh = self.end
 
@@ -575,29 +598,29 @@ class SizeZoom(ZoomCommon):
 
 
 class RotoZoom(renpy.display.displayable.Displayable):
-
     transform = None
 
-    def __init__(self,
-                 rot_start,
-                 rot_end,
-                 rot_delay,
-                 zoom_start,
-                 zoom_end,
-                 zoom_delay,
-                 child,
-                 rot_repeat=False,
-                 zoom_repeat=False,
-                 rot_bounce=False,
-                 zoom_bounce=False,
-                 rot_anim_timebase=False,
-                 zoom_anim_timebase=False,
-                 rot_time_warp=None,
-                 zoom_time_warp=None,
-                 opaque=False,
-                 style='motion',
-                 **properties):
-
+    def __init__(
+        self,
+        rot_start,
+        rot_end,
+        rot_delay,
+        zoom_start,
+        zoom_end,
+        zoom_delay,
+        child,
+        rot_repeat=False,
+        zoom_repeat=False,
+        rot_bounce=False,
+        zoom_bounce=False,
+        rot_anim_timebase=False,
+        zoom_anim_timebase=False,
+        rot_time_warp=None,
+        zoom_time_warp=None,
+        opaque=False,
+        style="motion",
+        **properties,
+    ):
         super(RotoZoom, self).__init__(style=style, **properties)
 
         self.rot_start = rot_start
@@ -625,10 +648,9 @@ class RotoZoom(renpy.display.displayable.Displayable):
         self.opaque = opaque
 
     def visit(self):
-        return [ self.child ]
+        return [self.child]
 
     def render(self, width, height, st, at):
-
         if self.rot_anim_timebase:
             rot_time = at
         else:
@@ -685,8 +707,8 @@ class RotoZoom(renpy.display.displayable.Displayable):
         if self.transform is None:
             self.transform = Transform(self.child)
 
-        self.transform.rotate = angle # type: ignore
-        self.transform.zoom = zoom # type: ignore
+        self.transform.rotate = angle  # type: ignore
+        self.transform.zoom = zoom  # type: ignore
 
         rv = renpy.display.render.render(self.transform, width, height, st, at)
 
@@ -697,13 +719,13 @@ class RotoZoom(renpy.display.displayable.Displayable):
 
 
 # For compatibility with old games.
-renpy.display.layout.Transform = Transform # type: ignore
-renpy.display.layout.RotoZoom = RotoZoom # type: ignore
-renpy.display.layout.SizeZoom = SizeZoom # type: ignore
-renpy.display.layout.FactorZoom = FactorZoom # type: ignore
-renpy.display.layout.Zoom = Zoom # type: ignore
-renpy.display.layout.Revolver = Revolver # type: ignore
-renpy.display.layout.Motion = Motion # type: ignore
+renpy.display.layout.Transform = Transform  # type: ignore
+renpy.display.layout.RotoZoom = RotoZoom  # type: ignore
+renpy.display.layout.SizeZoom = SizeZoom  # type: ignore
+renpy.display.layout.FactorZoom = FactorZoom  # type: ignore
+renpy.display.layout.Zoom = Zoom  # type: ignore
+renpy.display.layout.Revolver = Revolver  # type: ignore
+renpy.display.layout.Motion = Motion  # type: ignore
 renpy.display.layout.Interpolate = Interpolate  # type: ignore
 
 # Leave these functions around - they might have been pickled somewhere.

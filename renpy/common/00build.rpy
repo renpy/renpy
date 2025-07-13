@@ -42,7 +42,7 @@ init -1500 python in build:
             return s
         elif isinstance(s, list):
             return s
-        elif isinstance(s, basestring):
+        elif isinstance(s, str):
             return s.split()
 
         raise Exception("Expected a string, list, or None.")
@@ -63,23 +63,13 @@ init -1500 python in build:
 
     renpy_sh = "renpy.sh"
 
-    if PY2:
-        renpy_patterns = pattern_list([
-            ("renpy/**.pyo", "all"),
-            ("renpy/**__pycache__", None),
-        ])
+    renpy_patterns = pattern_list([
+        ("renpy/**__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), "all"),
+        ("renpy/**__pycache__", "all"),
+    ])
 
-        if os.path.exists(os.path.join(config.renpy_base, "renpy2.sh")):
-            renpy_sh = "renpy2.sh"
-
-    else:
-        renpy_patterns = pattern_list([
-            ("renpy/**__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), "all"),
-            ("renpy/**__pycache__", "all"),
-        ])
-
-        if os.path.exists(os.path.join(config.renpy_base, "renpy3.sh")):
-            renpy_sh = "renpy3.sh"
+    if os.path.exists(os.path.join(config.renpy_base, "renpy3.sh")):
+        renpy_sh = "renpy3.sh"
 
 
     # Patterns that are used to classify Ren'Py.
@@ -123,7 +113,7 @@ init -1500 python in build:
         ( "lib/*/pythonw.exe", None),
 
         # Ignore the wrong Python.
-        ( "lib/py3-*/" if PY2 else "lib/py2-*/", None),
+        ( "lib/py2-*/", None),
 
         # Windows patterns.
         ( "lib/py*-windows-i686/**", "windows_i686"),
@@ -139,7 +129,7 @@ init -1500 python in build:
         ( "lib/py*-mac-*/**", "mac"),
 
         # Old Python library.
-        ( "lib/python3.*/**" if PY2 else "lib/python2.*/**", None),
+        ( "lib/python2.*/**", None),
 
         # Shared patterns.
         ( "lib/**", "windows linux mac android ios"),
@@ -221,7 +211,6 @@ init -1500 python in build:
         ("steam_appid.txt", None),
 
         ("game/" + renpy.script.BYTECODE_FILE, "all"),
-        ("game/cache/bytecode-311.rpyb", "web"),
         ("game/cache/bytecode-*.rpyb", None),
         ("game/cache/build_info.json", None),
         ("game/cache/build_time.txt", None),

@@ -32,17 +32,22 @@ cdef class GL2Model:
     everything needed to be draw to the screen.
     """
 
-    def __init__(GL2Model self, size, mesh, shaders, uniforms):
+    def __init__(GL2Model self, size, mesh, shaders, uniforms=None, properties=None):
         self.width = size[0]
         self.height = size[1]
         self.mesh = mesh
         self.shaders = shaders
         self.uniforms = uniforms
-        self.properties = None
+        self.properties = properties
         self.cached_texture = None
 
         self.forward = IDENTITY
         self.reverse = IDENTITY
+
+        self.tex0 = None
+        self.tex1 = None
+        self.tex2 = None
+        self.tex3 = None
 
     def __repr__(GL2Model self):
         rv = "<{} {}x{} {} {}".format(type(self).__name__, self.width, self.height, self.shaders, self.uniforms)
@@ -61,17 +66,22 @@ cdef class GL2Model:
         Loads the textures associated with this model.
         """
 
-        for i in self.uniforms.itervalues():
-            if isinstance(i, GLTexture):
-                i.load()
+        if self.tex0 is not None:
+            self.tex0.load()
 
-    def program_uniforms(self, shader):
-        """
-        Called by the rest of the drawing code to set up the textures associated
-        with this model.
-        """
+        if self.tex1 is not None:
+            self.tex1.load()
 
-        shader.set_uniforms(self.uniforms)
+        if self.tex2 is not None:
+            self.tex2.load()
+
+        if self.tex3 is not None:
+            self.tex3.load()
+
+        if self.uniforms:
+            for i in self.uniforms.values():
+                if isinstance(i, GLTexture):
+                    i.load()
 
     def get_size(self):
         """
@@ -85,9 +95,14 @@ cdef class GL2Model:
         Creates an identical copy of the current model.
         """
 
-        cdef GL2Model rv = GL2Model((self.width, self.height), self.mesh, self.shaders, self.uniforms)
+        cdef GL2Model rv = GL2Model((self.width, self.height), self.mesh, self.shaders, self.uniforms, self.properties)
         rv.forward = self.forward
         rv.reverse = self.reverse
+
+        rv.tex0 = self.tex0
+        rv.tex1 = self.tex1
+        rv.tex2 = self.tex2
+        rv.tex3 = self.tex3
 
         return rv
 
@@ -139,3 +154,42 @@ cdef class GL2Model:
             rv.forward = Matrix.cscale(reciprocal_factor, reciprocal_factor, reciprocal_factor) * rv.forward
 
         return rv
+
+    cpdef void set_texture(self, int i, GL2Model texture):
+        """
+        Sets the i'th texture of this model to be `texture`.
+        """
+
+        if i == 0:
+            self.tex0 = texture
+        elif i == 1:
+            self.tex1 = texture
+        elif i == 2:
+            self.tex2 = texture
+        elif i == 3:
+            self.tex3 = texture
+        else:
+            if self.uniforms is None:
+                self.uniforms = {}
+
+            self.uniforms["tex%d" % i] = texture
+            self.uniforms["res%d" % i] = (texture.texture_width, texture.texture_height)
+
+    cpdef GL2Model get_texture(self, int i):
+        """
+        Returns the i'th texture of this model.
+        """
+
+        if i == 0:
+            return self.tex0
+        elif i == 1:
+            return self.tex1
+        elif i == 2:
+            return self.tex2
+        elif i == 3:
+            return self.tex3
+        else:
+            if self.uniforms is None:
+                return None
+
+            return self.uniforms.get("tex%d" % i, None)

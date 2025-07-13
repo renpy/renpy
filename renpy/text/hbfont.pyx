@@ -33,12 +33,22 @@ import sys
 
 import renpy.config
 
+from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
+
 cdef extern from "ftsupport.h":
     char *freetype_error_to_string(int error)
 
-cdef extern from "hb.h":
+cdef extern from "harfbuzz/hb.h":
 
     ctypedef int hb_bool_t
+
+    ctypedef unsigned int hb_tag_t
+
+    ctypedef struct hb_feature_t:
+        hb_tag_t tag
+        unsigned int value
+        unsigned int start
+        unsigned int end
 
     enum hb_direction_t:
         HB_DIRECTION_INVALID
@@ -108,7 +118,6 @@ cdef extern from "hb.h":
 
     void hb_font_destroy(hb_font_t *)
 
-    struct hb_feature_t
 
     void hb_font_set_scale(hb_font_t *font, int x_scale, int y_scale)
     void hb_font_set_synthetic_slant(hb_font_t *font, float slant)
@@ -130,7 +139,7 @@ cdef extern from "hb.h":
         unsigned int num_features);
 
 
-cdef extern from "hb-ft.h":
+cdef extern from "harfbuzz/hb-ft.h":
     hb_face_t *hb_ft_face_create(FT_Face ft_face, hb_destroy_func_t *destroy)
     hb_font_t *hb_ft_font_create(FT_Face ft_face, hb_destroy_func_t *destroy)
     hb_bool_t hb_ft_font_changed(hb_font_t *font)
@@ -138,7 +147,7 @@ cdef extern from "hb-ft.h":
     void hb_ft_font_set_load_flags (hb_font_t *font, int load_flags)
 
 
-cdef extern from "hb-ot.h":
+cdef extern from "harfbuzz/hb-ot.h":
     ctypedef unsigned int hb_ot_name_id_t
     struct hb_language_impl_t
     ctypedef const hb_language_impl_t *hb_language_t
@@ -272,7 +281,7 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
             cbuf = buf
             count = len(buf)
 
-            for i from 0 <= i < count:
+            for i in range(count):
                 buffer[i] = cbuf[i]
         except Exception:
             traceback.print_exc()
@@ -332,6 +341,53 @@ class Variations:
             rv.append("  Axis: " + repr(k) + " (minimum={}, default={}, maximum={})".format(v.minimum, v.default, v.maximum))
 
         return "\n".join(rv)
+
+cdef class Features:
+    """
+    Represents the features of a font.
+    """
+
+    cdef hb_feature_t *features
+    cdef unsigned int num_features
+    cdef unsigned int tag_word
+
+    def __dealloc__(self):
+        if self.features:
+            PyMem_Free(self.features)
+
+    def __init__(self, features):
+        """
+        Features is a tuple of tuples, where each tuple is a feature name and value.
+        """
+
+        self.num_features = len(features)
+        self.features = <hb_feature_t *> PyMem_Malloc(self.num_features * sizeof(hb_feature_t))
+
+        for i in range(self.num_features):
+
+            tag_bytes = features[i][0].encode("utf-8")
+            tag_word = (tag_bytes[0] << 24) | (tag_bytes[1] << 16) | (tag_bytes[2] << 8) | tag_bytes[3]
+
+            self.features[i].tag = tag_word
+            self.features[i].value = features[i][1]
+            self.features[i].start = 0
+            self.features[i].end = -1
+
+    cache = { }
+
+    @staticmethod
+    def get(features):
+        """
+        Returns a Features object for the given features.
+        """
+
+        if features in Features.cache:
+            return Features.cache[features]
+
+        rv = Features(features)
+        Features.cache[features] = rv
+
+        return rv
 
 
 cdef class HBFace:
@@ -424,7 +480,7 @@ cdef class HBFace:
 
             hb_face = hb_ft_face_create(self.face, NULL)
 
-            for 0 <= i < self.mm_var.num_axis:
+            for i in range(self.mm_var.num_axis):
                 if i >= 16:
                     continue
 
@@ -493,14 +549,17 @@ cdef class HBFont:
         # For a variable font, the values for all non-default axes.
         object axis
 
+        # A features object giving the font features.
+        Features features
+
 
     def __cinit__(self):
-        for i from 0 <= i < 256:
+        for i in range(256):
             self.cache[i].index = -1
             FT_Bitmap_New(&(self.cache[i].bitmap))
 
     def __dealloc__(self):
-        for i from 0 <= i < 256:
+        for i in range(256):
             FT_Bitmap_Done(library, &(self.cache[i].bitmap))
 
         if self.stroker != NULL:
@@ -509,7 +568,7 @@ cdef class HBFont:
         if self.hb_font:
             hb_font_destroy(self.hb_font)
 
-    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting, instance, axis):
+    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting, instance, axis, features):
 
         self.face_object = face
         self.face = self.face_object.face
@@ -536,6 +595,11 @@ cdef class HBFont:
 
         self.instance = instance
         self.axis = axis
+
+        if features:
+            self.features = Features.get(features)
+        else:
+            self.features = None
 
         size = size * renpy.config.ftfont_scale.get(face.fn, 1.0) * renpy.game.preferences.font_size
 
@@ -589,7 +653,7 @@ cdef class HBFont:
 
         if instance and instance.lower() in variations.instance:
             index = variations.instance[instance.lower()]
-            for 0 <= i < min(fo.mm_var.num_axis, 16):
+            for i in range(min(fo.mm_var.num_axis, 16)):
                 coords[i] = fo.mm_var.namedstyle[index].coords[i]
 
         else:
@@ -810,8 +874,8 @@ cdef class HBFont:
             FT_Bitmap_Convert(library, &(bitmap), &(rv.bitmap), 4)
 
             # Freetype gives us a bitmap where values range from 0 to 1.
-            for y from 0 <= y < rv.bitmap.rows:
-                for x from 0 <= x < rv.bitmap.width:
+            for y in range(rv.bitmap.rows):
+                for x in range(rv.bitmap.width):
                     if rv.bitmap.buffer[ y * rv.bitmap.pitch + x ]:
                         rv.bitmap.buffer[ y * rv.bitmap.pitch + x ] = 255
 
@@ -837,7 +901,7 @@ cdef class HBFont:
 
         return rv
 
-    def glyphs(self, unicode s):
+    def glyphs(self, unicode s, int level):
         """
         Sizes s, returning a list of Glyph objects.
         """
@@ -877,14 +941,23 @@ cdef class HBFont:
         hb_buffer_add_utf32(hb, <const uint32_t *> ((<const char *> utf32_s) + 4), len(s), 0, len(s));
 
         if self.vertical:
-            hb_buffer_set_direction(hb, HB_DIRECTION_TTB)
+            if level & 0x1:
+                hb_buffer_set_direction(hb, HB_DIRECTION_BTT)
+            else:
+                hb_buffer_set_direction(hb, HB_DIRECTION_TTB)
         else:
-            hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
+            if level & 0x1:
+                hb_buffer_set_direction(hb, HB_DIRECTION_RTL)
+            else:
+                hb_buffer_set_direction(hb, HB_DIRECTION_LTR)
 
         hb_buffer_guess_segment_properties(hb)
         hb_buffer_set_cluster_level(hb, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS)
 
-        hb_shape(self.hb_font, hb, NULL, 0)
+        if self.features:
+            hb_shape(self.hb_font, hb, self.features.features, self.features.num_features)
+        else:
+            hb_shape(self.hb_font, hb, NULL, 0)
 
         glyph_info = hb_buffer_get_glyph_infos(hb, &glyph_count);
         glyph_pos = hb_buffer_get_glyph_positions(hb, &glyph_count);
@@ -892,7 +965,7 @@ cdef class HBFont:
         face = self.face
         g = face.glyph
 
-        for 0 <= i < glyph_count:
+        for i in range(glyph_count):
             # print(
             #     repr(s[glyph_info[i].cluster]),
             #     glyph_info[i].codepoint,
@@ -1060,7 +1133,7 @@ cdef class HBFont:
 
                 if cache.bitmap.pixel_mode == FT_PIXEL_MODE_BGRA:
 
-                    for py from 0 <= py < rows:
+                    for py in range(rows):
 
                         if bmy < 0:
                             bmy += 1
@@ -1069,7 +1142,7 @@ cdef class HBFont:
                         line = pixels + bmy * pitch + bmx * 4
                         gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
 
-                        for px from 0 <= px < width:
+                        for px in range(width):
 
                             Gb = gline[0]
                             Gg = gline[1]
@@ -1088,7 +1161,7 @@ cdef class HBFont:
 
                 else:
 
-                    for py from 0 <= py < rows:
+                    for py in range(rows):
 
                         if bmy < 0:
                             bmy += 1
@@ -1097,7 +1170,7 @@ cdef class HBFont:
                         line = pixels + bmy * pitch + bmx * 4
                         gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
 
-                        for px from 0 <= px < width:
+                        for px in range(width):
 
                             alpha = gline[0]
 
@@ -1132,8 +1205,8 @@ cdef class HBFont:
                 ly = y - self.underline_offset - 1
                 lh = self.underline_height * underline
 
-                for py from ly <= py < min(ly + lh, surf.h):
-                    for px from underline_x <= px < underline_end:
+                for py in range(ly, min(ly + lh, surf.h)):
+                    for px in range(underline_x, underline_end):
                         line = pixels + py * pitch + px * 4
 
                         line[0] = Sr * Sa // 255
@@ -1148,8 +1221,8 @@ cdef class HBFont:
                 if lh < 1:
                     lh = 1
 
-                for py from ly <= py < (ly + lh):
-                    for px from underline_x <= px < underline_end:
+                for py in range(ly, (ly + lh)):
+                    for px in range(underline_x, underline_end):
                         line = pixels + py * pitch + px * 4
 
                         line[0] = Sr * Sa // 255

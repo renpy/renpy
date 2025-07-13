@@ -87,13 +87,13 @@ statement, and removes the space key from that list. ::
         config.keymap['dismiss'].remove('K_SPACE')
 
 The default keymap is contained inside renpy/common/00keymap.rpy, and
-as of version 8.1.0 is as follows::
+as of version 8.4.0 is as follows::
 
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'any_K_PAGEUP', 'any_KP_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
+        rollback = [ 'anyrepeat_K_PAGEUP', 'anyrepeat_KP_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
         screenshot = [ 'alt_K_s', 'alt_shift_K_s', 'noshift_K_s' ],
         toggle_afm = [ ],
         toggle_fullscreen = [ 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11', 'noshift_K_f' ],
@@ -102,7 +102,7 @@ as of version 8.1.0 is as follows::
         launch_editor = [ 'shift_K_e' ],
         dump_styles = [ ],
         reload_game = [ 'alt_K_r', 'shift_K_r' ],
-        inspector = [ 'alt_K_i', 'shift_K_i' ],
+        inspector = [ 'alt_noshift_K_i', 'shift_K_i' ],
         full_inspector = [ 'alt_shift_K_i' ],
         developer = [ 'alt_K_d', 'shift_K_d', ],
         quit = [ ],
@@ -110,15 +110,17 @@ as of version 8.1.0 is as follows::
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = ['alt_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
-        accessibility = [ 'shift_K_a' ],
+        bubble_editor = [ 'alt_K_b', 'shift_K_b' ],
 
         # Accessibility.
+        accessibility = [ 'shift_K_a' ],
         self_voicing = [ 'alt_K_v', 'K_v' ],
         clipboard_voicing = [ 'alt_shift_K_c', 'shift_K_c' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
+        extra_voicing = [ '?' ],
 
         # Say.
-        rollforward = [ 'any_K_PAGEDOWN', 'any_KP_PAGEDOWN', 'mousedown_5', ],
+        rollforward = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN', 'mousedown_5', ],
         dismiss = [ 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT', 'mouseup_1' ],
         dismiss_unfocused = [ ],
 
@@ -126,10 +128,10 @@ as of version 8.1.0 is as follows::
         dismiss_hard_pause = [ ],
 
         # Focus.
-        focus_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
-        focus_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
-        focus_up = [ 'any_K_UP', 'any_KP_UP' ],
-        focus_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
+        focus_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        focus_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        focus_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        focus_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
@@ -138,14 +140,14 @@ as of version 8.1.0 is as follows::
         button_alternate_ignore = [ 'mousedown_3' ],
 
         # Input.
-        input_backspace = [ 'any_K_BACKSPACE' ],
+        input_backspace = [ 'anyrepeat_K_BACKSPACE' ],
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
         input_next_line = [ 'shift_K_RETURN', 'shift_K_KP_ENTER' ],
-        input_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
-        input_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
-        input_up = [ 'any_K_UP', 'any_KP_UP' ],
-        input_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
-        input_delete = [ 'any_K_DELETE', 'any_KP_DELETE' ],
+        input_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        input_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        input_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        input_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
+        input_delete = [ 'anyrepeat_K_DELETE', 'anyrepeat_KP_DELETE' ],
         input_home = [ 'K_HOME', 'KP_HOME', 'meta_K_LEFT' ],
         input_end = [ 'K_END', 'KP_END', 'meta_K_RIGHT' ],
         input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c', 'meta_noshift_K_c' ],
@@ -156,19 +158,19 @@ as of version 8.1.0 is as follows::
         input_delete_full = [ 'meta_K_BACKSPACE' ],
 
         # Viewport.
-        viewport_leftarrow = [ 'any_K_LEFT', 'any_KP_LEFT' ],
-        viewport_rightarrow = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
-        viewport_uparrow = [ 'any_K_UP', 'any_KP_UP' ],
-        viewport_downarrow = [ 'any_K_DOWN', 'any_KP_DOWN' ],
+        viewport_leftarrow = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        viewport_rightarrow = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        viewport_uparrow = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        viewport_downarrow = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
         viewport_wheelup = [ 'mousedown_4' ],
         viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
-        viewport_pageup = [ 'any_K_PAGEUP', 'any_KP_PAGEUP'],
-        viewport_pagedown = [ 'any_K_PAGEDOWN', 'any_KP_PAGEDOWN' ],
+        viewport_pageup = [ 'anyrepeat_K_PAGEUP', 'anyrepeat_KP_PAGEUP'],
+        viewport_pagedown = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN' ],
 
         # These keys control skipping.
-        skip = [ 'K_LCTRL', 'K_RCTRL' ],
+        skip = [ 'anymod_K_LCTRL', 'anymod_K_RCTRL' ],
         stop_skipping = [ ],
         toggle_skip = [ 'K_TAB' ],
         fast_skip = [ '>', 'shift_K_PERIOD' ],
@@ -176,13 +178,17 @@ as of version 8.1.0 is as follows::
         # Bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
-        bar_left = [ 'any_K_LEFT', 'any_KP_LEFT' ],
-        bar_right = [ 'any_K_RIGHT', 'any_KP_RIGHT' ],
-        bar_up = [ 'any_K_UP', 'any_KP_UP' ],
-        bar_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
+        bar_left = [ 'anyrepeat_K_LEFT', 'anyrepeat_KP_LEFT' ],
+        bar_right = [ 'anyrepeat_K_RIGHT', 'anyrepeat_KP_RIGHT' ],
+        bar_up = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        bar_down = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Delete a save.
         save_delete = [ 'K_DELETE', 'KP_DELETE' ],
+
+        # Save/load screen pagination.
+        save_page_prev = ['mousedown_4'],
+        save_page_next = ['mousedown_5'],
 
         # Draggable.
         drag_activate = [ 'mousedown_1' ],
@@ -190,8 +196,9 @@ as of version 8.1.0 is as follows::
 
         # Debug console.
         console = [ 'shift_K_o', 'alt_shift_K_o' ],
-        console_older = [ 'any_K_UP', 'any_KP_UP' ],
-        console_newer = [ 'any_K_DOWN', 'any_KP_DOWN' ],
+        console_exit = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
+        console_older = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
+        console_newer = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
 
         # Director
         director = [ 'noshift_K_d' ],
@@ -206,10 +213,7 @@ as of version 8.1.0 is as follows::
         image_load_log = [ 'K_F4' ],
         profile_once = [ 'K_F8' ],
         memory_profile = [ 'K_F7' ],
-
     )
-
-
 
 Gamepad bindings work a little differently. Gamepad bindings work by mapping
 a gamepad event to one or more Ren'Py event names. The default set of
@@ -269,7 +273,6 @@ gamepad bindings is given below::
         "repeat_pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
         "repeat_pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
     }
-
 
 Gamepad buttons have an event name of the form "pad_*button*_press" or
 "pad_*button*_release". Analog axis events have the form "pad_*axis*_pos",

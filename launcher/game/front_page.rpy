@@ -98,43 +98,60 @@ screen front_page:
         key "K_F5" action project.Launch()
 
 
-
 # This is used by front_page to display the list of known projects on the screen.
 screen front_page_project_list:
 
+    $ folders = project.manager.folders
     $ projects = project.manager.projects
     $ templates = project.manager.templates
 
     vbox:
 
-        if templates and persistent.show_templates:
-
-            for p in templates:
-
-                textbutton _("[p.name!q] (template)"):
-                    action project.Select(p)
-                    alt _("Select project [text].")
-                    style "l_list"
-
-            null height 12
-
         if projects:
-
+            text "Projects"
             for p in projects:
 
-                textbutton "[p.name!q]":
+                textbutton ("[p.display_name]" if p.display_name else "[p.name!q]"):
                     action project.Select(p)
                     alt _("Select project [text].")
                     style "l_list"
 
-            null height 12
+            null height 6
 
-        textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
-        textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
+        if folders:
+            for pf in folders:
+
+                textbutton "[pf.name.capitalize()]":
+                    action project.CollapseFolder(pf)
+                    alt _("Open folder [text].")
+                    selected_alt _("Close folder [text].")
+                    style "l_folder"
+
+                if not pf.hidden:
+                    for p in pf.projects:
+                        textbutton _(f"[p.display_name]" if p.display_name else "[p.name!q]"):
+                            action project.Select(p)
+                            alt _("Select project [text].")
+                            style "l_list"
+
+            null height 6
+
+        if persistent.show_tutorial_projects:
+
+            if folders:
+                textbutton _("Tutorials"):
+                    action ToggleDict(persistent.collapsed_folders, "Tutorials")
+                    alt _("Select folder [text].")
+                    style "l_folder"
+
+            if (not folders) or (not persistent.collapsed_folders["Tutorials"]):
+                textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
+                textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
 
 
 # This is used for the right side of the screen, which is where the project-specific
 # buttons are.
+
 screen front_page_project:
 
     $ p = project.current
@@ -157,13 +174,11 @@ screen front_page_project:
                 label _("Open Directory") style "l_label_small"
 
                 frame style "l_indent":
-                    has vbox
+                    has grid 2 max(5, (len(p.get_renpy_launcher()["open_directory"]) + 1) // 2):
+                        transpose True xfill True
 
-                    textbutton "game" action OpenDirectory(os.path.join(p.path, "game"), absolute=True)
-                    textbutton "base" action OpenDirectory(os.path.join(p.path, "."), absolute=True)
-                    textbutton "images" action OpenDirectory(os.path.join(p.path, "game/images"), absolute=True)
-                    textbutton "audio" action OpenDirectory(os.path.join(p.path, "game/audio"), absolute=True)
-                    textbutton "gui" action OpenDirectory(os.path.join(p.path, "game/gui"), absolute=True)
+                    for button_name, path in p.get_renpy_launcher()["open_directory"].items():
+                        textbutton button_name action OpenDirectory(os.path.join(p.path, path), absolute=True)
 
             vbox:
                 if persistent.show_edit_funcs:
@@ -173,10 +188,8 @@ screen front_page_project:
                     frame style "l_indent":
                         has vbox
 
-                        textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
-                        textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
-                        textbutton "gui.rpy" action editor.Edit("game/gui.rpy", check=True)
-                        textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
+                        for button_name, path in p.get_renpy_launcher()["edit_file"].items():
+                            textbutton button_name action editor.Edit(path, check=True)
 
                         if editor.CanEditProject():
                             textbutton _("Open project") action editor.EditProject()

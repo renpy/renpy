@@ -16,6 +16,11 @@ try:
 except ImportError:
     import __builtin__ as builtins
 
+
+# A list of action names. This is updated as this file runs.
+actions = set()
+
+
 # Additional keywords in the Ren'Py script language.
 SCRIPT_KEYWORDS = """\
 $
@@ -233,9 +238,10 @@ objinidoc = getdoc(object.__init__)
 def scan(name, o, prefix="", inclass=False):
 
     if inspect.isclass(o):
-        if issubclass(o, (renpy.store.Action,
-                          renpy.store.BarValue,
-                          renpy.store.InputValue)):
+        if issubclass(o, renpy.store.Action):
+            doc_type = "action"
+        elif issubclass(o, (renpy.store.BarValue,
+                            renpy.store.InputValue)):
             doc_type = "function"
         else:
             doc_type = "class"
@@ -310,9 +316,19 @@ def scan(name, o, prefix="", inclass=False):
 
             init_doc = getdoc(init)
 
+
+            if init_doc and re.match(r'[\w\.]+\(', init_doc):
+                sig, _, init_doc = doc.partition("\n\n")
+                init_doc = textwrap.dedent(init_doc)
+
+                if "(" in sig:
+                    args = "(" + sig.partition("(")[2]
+
             if init_doc and (init_doc != objinidoc):
                 lines.append("")
                 lines.extend(init_doc.split("\n"))
+
+
 
             if init != object.__init__: # we don't want that signature either
                 try:
@@ -338,6 +354,10 @@ def scan(name, o, prefix="", inclass=False):
             args = str(args)
         else:
             args = "()"
+
+    if doc_type == "action":
+        actions.add(name)
+        doc_type = "function"
 
     # Put it into the line buffer.
     lb = line_buffer[section]

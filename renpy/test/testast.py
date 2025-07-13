@@ -20,16 +20,15 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
 
 
 import renpy
 from renpy.test.testmouse import click_mouse, move_mouse
 
+
 class TestSettings(renpy.object.Object):
-
     def __init__(self):
-
         # Should we use maximum framerate mode?
         self.maximum_framerate = True
 
@@ -41,6 +40,7 @@ class TestSettings(renpy.object.Object):
 
         # How long should we wait for a transition before we proceed?
         self.transition_timeout = 5.0
+
 
 _test = TestSettings()
 
@@ -91,7 +91,6 @@ class Node(object):
 
 
 class Pattern(Node):
-
     position = None
     always = False
 
@@ -103,7 +102,6 @@ class Pattern(Node):
         return True
 
     def execute(self, state, t):
-
         self.report()
 
         if renpy.display.interface.trans_pause and (t < _test.transition_timeout):
@@ -130,7 +128,6 @@ class Pattern(Node):
         return self.perform(x, y, state, t)
 
     def ready(self):
-
         if self.always:
             return True
 
@@ -144,8 +141,8 @@ class Pattern(Node):
     def perform(self, x, y, state, t):
         return None
 
-class Click(Pattern):
 
+class Click(Pattern):
     # The number of the button to click.
     button = 1
 
@@ -155,14 +152,12 @@ class Click(Pattern):
 
 
 class Move(Pattern):
-
     def perform(self, x, y, state, t):
         move_mouse(x, y)
         return None
 
 
 class Scroll(Node):
-
     def __init__(self, loc, pattern=None):
         Node.__init__(self, loc)
         self.pattern = pattern
@@ -171,7 +166,6 @@ class Scroll(Node):
         return True
 
     def execute(self, state, t):
-
         self.report()
 
         f = renpy.test.testfocus.find_focus(self.pattern)
@@ -197,7 +191,6 @@ class Scroll(Node):
         return None
 
     def ready(self):
-
         f = renpy.test.testfocus.find_focus(self.pattern)
 
         if f is not None:
@@ -207,7 +200,6 @@ class Scroll(Node):
 
 
 class Drag(Node):
-
     def __init__(self, loc, points):
         Node.__init__(self, loc)
         self.points = points
@@ -220,14 +212,12 @@ class Drag(Node):
         return True
 
     def execute(self, state, t):
-
         self.report()
 
         if renpy.display.interface.trans_pause:
             return state
 
         if self.pattern:
-
             f = renpy.test.testfocus.find_focus(self.pattern)
             if f is None:
                 return state
@@ -236,14 +226,13 @@ class Drag(Node):
             f = None
 
         if state is True:
-
             points = renpy.python.py_eval(self.points)
-            points = [ renpy.test.testfocus.find_position(f, i) for i in points ]
+            points = [renpy.test.testfocus.find_position(f, i) for i in points]
 
             if len(points) < 2:
                 raise Exception("A drag requires at least two points.")
 
-            interpoints = [ ]
+            interpoints = []
 
             xa, ya = points[0]
 
@@ -256,7 +245,7 @@ class Drag(Node):
                     interpoints.append((
                         int(xa + done * (xb - xa)),
                         int(ya + done * (yb - ya)),
-                        ))
+                    ))
 
                 xa = xb
                 ya = yb
@@ -267,7 +256,6 @@ class Drag(Node):
             renpy.test.testmouse.press_mouse(self.button)
 
         else:
-
             interpoints = state
 
             x, y = interpoints.pop(0)
@@ -281,7 +269,6 @@ class Drag(Node):
             return interpoints
 
     def ready(self):
-
         if self.pattern is None:
             return True
 
@@ -294,8 +281,7 @@ class Drag(Node):
 
 
 class Type(Pattern):
-
-    interval = .01
+    interval = 0.01
 
     def __init__(self, loc, keys):
         Pattern.__init__(self, loc)
@@ -305,7 +291,6 @@ class Type(Pattern):
         return 0
 
     def perform(self, x, y, state, t):
-
         if state >= len(self.keys):
             return None
 
@@ -319,7 +304,6 @@ class Type(Pattern):
 
 
 class Action(Node):
-
     def __init__(self, loc, expr):
         Node.__init__(self, loc)
         self.expr = expr
@@ -329,7 +313,6 @@ class Action(Node):
         return True
 
     def execute(self, state, t):
-
         self.report()
 
         if renpy.test.testexecution.action:
@@ -338,7 +321,6 @@ class Action(Node):
             return None
 
     def ready(self):
-
         self.report()
 
         action = renpy.python.py_eval(self.expr)
@@ -346,7 +328,6 @@ class Action(Node):
 
 
 class Pause(Node):
-
     def __init__(self, loc, expr):
         Node.__init__(self, loc)
         self.expr = expr
@@ -355,7 +336,6 @@ class Pause(Node):
         return float(renpy.python.py_eval(self.expr))
 
     def execute(self, state, t):
-
         self.report()
 
         if t < state:
@@ -365,7 +345,6 @@ class Pause(Node):
 
 
 class Label(Node):
-
     def __init__(self, loc, name):
         Node.__init__(self, loc)
         self.name = name
@@ -385,6 +364,7 @@ class Label(Node):
 
 ################################################################################
 # Non-clause statements.
+
 
 class Until(Node):
     """
@@ -459,7 +439,6 @@ class If(Node):
 
 
 class Python(Node):
-
     def __init__(self, loc, code):
         Node.__init__(self, loc)
         self.code = code
@@ -469,7 +448,6 @@ class Python(Node):
         return True
 
     def execute(self, state, t):
-
         self.report()
 
         if renpy.test.testexecution.action:
@@ -482,7 +460,6 @@ class Python(Node):
 
 
 class Assert(Node):
-
     def __init__(self, loc, expr):
         Node.__init__(self, loc)
         self.expr = expr
@@ -492,7 +469,6 @@ class Assert(Node):
         return True
 
     def execute(self, state, t):
-
         self.report()
 
         if renpy.test.testexecution.action:
@@ -506,7 +482,6 @@ class Assert(Node):
 
 
 class Jump(Node):
-
     def __init__(self, loc, target):
         Node.__init__(self, loc)
 
@@ -518,7 +493,6 @@ class Jump(Node):
 
 
 class Call(Node):
-
     def __init__(self, loc, target):
         Node.__init__(self, loc)
 
@@ -543,8 +517,8 @@ class Call(Node):
 ################################################################################
 # Control structures.
 
-class Block(Node):
 
+class Block(Node):
     def __init__(self, loc, block):
         Node.__init__(self, loc)
         self.block = block

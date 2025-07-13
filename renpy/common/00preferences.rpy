@@ -93,7 +93,7 @@ init -1500 python:
     @renpy.pure
     def Preference(name, value=None, range=None):
         """
-        :doc: preference_action
+        :doc: preference_action action
 
         This constructs the appropriate action or value from a preference.
         The preference name should be the name given in the standard
@@ -253,6 +253,10 @@ init -1500 python:
         * Preference("restore window position", "disable") - Will cause the window position to not be restored when the game is started.
         * Preference("restore window position", "toggle") - Will toggle the restore window position state.
 
+        * Preference("mono audio", "enable") - Forces audio to be downmixed to mono.
+        * Preference("mono audio", "disable") - Disables forcing audio to be downmixed to mono.
+        * Preference("mono audio", "toggles") - Toggles mono audio.
+
         Values that can be used with bars are:
 
         * Preference("text speed")
@@ -265,6 +269,7 @@ init -1500 python:
         * Preference("self voicing volume drop")
         * Preference("font size")
         * Preference("font line spacing")
+        * Preference("font kerning")
 
         The `range` parameter can be given to give the range of certain bars.
         For "text speed", it defaults to 200 cps. For "auto-forward time", it
@@ -282,7 +287,7 @@ init -1500 python:
 
         name = name.lower()
 
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             value = value.lower()
 
         def get():
@@ -593,6 +598,23 @@ init -1500 python:
                     return SetField(_preferences, "restore_window_position", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "restore_window_position")
+
+            elif name == _("mono audio"):
+
+                if value == "enable":
+                    return SetField(_preferences, "mono_audio", True)
+                elif value == "disable":
+                    return SetField(_preferences, "mono_audio", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "mono_audio")
+
+            elif name == _("font kerning"):
+
+                if value is None:
+                    return FieldValue(_preferences, "font_kerning", min=-2.0, max=2.0, action=_DisplayReset())
+
+                return [ SetField(_preferences, "font_kerning", value), _DisplayReset() ]
+
 
             elif name == _("reset"):
                 return __ResetPreferences()
