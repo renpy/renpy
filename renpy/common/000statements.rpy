@@ -138,6 +138,12 @@ python early hide:
 
     def predict_play_music(p):
         if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+            if p["channel"] is not None:
+                channel = eval(p["channel"])
+                if channel == 'movie':
+                    # Movies cannot be preloaded
+                    return [ ]
+
             fn = _audio_eval(p["file"])
             try:
                 with renpy.loader.load(fn, directory="audio") as f:

@@ -210,7 +210,7 @@ defines a character with the short name of "s", the long name
 are red-green-blue hex triples, as used in web pages.)
 
 The second line creates a character with a short name "m", a long name
-"Me", with the name shown in a reddish color. Other characters can be
+"Me", with the name shown in a bluish color. Other characters can be
 defined by copying one of the character lines, and changing the short
 name, long name, and color.
 

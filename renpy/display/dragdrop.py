@@ -104,7 +104,7 @@ class Drag(renpy.display.displayable.Displayable, renpy.revertable.RevertableObj
 
     `drag_name`
         If not None, the name of this draggable. This is available
-        as the `name` property of draggable objects. If a Drag
+        as the `drag_name` property of draggable objects. If a Drag
         with the same name is or was in the DragGroup, the starting
         position of this Drag is taken from that Draggable.
 
