@@ -59,7 +59,7 @@ class RenpyPath(importlib.resources.abc.Traversable):
             return NotADirectoryError(f"Not a directory: {self.path}")
 
         for name, entry in self.tree.items():
-            yield RenpyPath(self.path + "/" + name, entry)  # type:ignore[reportAbstractUsage]
+            yield RenpyPath(self.path + "/" + name, entry)
 
     def is_dir(self) -> bool:
         return isinstance(self.tree, dict)
@@ -71,9 +71,9 @@ class RenpyPath(importlib.resources.abc.Traversable):
         path = f"{self.path}/{other}"
 
         if isinstance(self.tree, dict):
-            return RenpyPath(path, self.tree.get(other, None))  # type:ignore[reportAbstractUsage]
+            return RenpyPath(path, self.tree.get(other, None))
         else:
-            return RenpyPath(path, None)  # type:ignore[reportAbstractUsage]
+            return RenpyPath(path, None)
 
     def joinpath(self, *args: str) -> "RenpyPath":
         rv = self
@@ -97,6 +97,12 @@ class RenpyPath(importlib.resources.abc.Traversable):
             return io.TextIOWrapper(f, *args, **kwargs)
         else:
             return f
+
+    def read_text(self): # type: ignore[reportIncompatibleMethodOverride]
+        return self.open("r").read()
+
+    def read_bytes(self):  # type: ignore[reportIncompatibleMethodOverride]
+        return self.open("rb").read()
 
 
 class RenpyResourceReader(importlib.resources.abc.TraversableResources):
