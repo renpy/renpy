@@ -337,7 +337,7 @@ def bootstrap(renpy_base):
 
     renpy.import_all()
 
-    renpy.loader.init_importer()
+    renpy.importer.init_importer()
 
     exit_status = None
     original_basedir = basedir

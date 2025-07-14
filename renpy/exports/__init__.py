@@ -169,6 +169,10 @@ from renpy.gl2.gl2shadercache import (
     register_shader,
 )
 
+from renpy.importer import (
+    add_python_directory,
+)
+
 from renpy.gl2.live2d import (
     has_live2d,
 )
@@ -181,10 +185,6 @@ from renpy.lexer import (
 from renpy.lint import (
     try_compile,
     try_eval,
-)
-
-from renpy.loader import (
-    add_python_directory,
 )
 
 from renpy.loadsave import (

@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Iterable, NamedTuple
+from typing import Iterable, Literal, NamedTuple
 
 import renpy
 import os
@@ -32,9 +32,6 @@ import io
 import unicodedata
 import time
 import pathlib
-import importlib.machinery
-import importlib.abc
-import importlib.util
 
 from pygame_sdl2.rwobject import RWopsIO
 
@@ -311,6 +308,12 @@ remote_files = {}
 scandirfiles_callbacks = []
 
 
+type TreeEntry = dict[str, "TreeEntry"] | Literal[True]
+tree: TreeEntry = {}
+"""This is a tree of files and directories, used to allow resource traversal. directories are represented as
+   dicts, and files as True."""
+
+
 def scandirfiles():
     """
     Scans directories, archives, and apks and fills out game_files and
@@ -334,6 +337,24 @@ def scandirfiles():
         files.append((dn, fn))
         seen.add(fn)
         loadable_cache[unicodedata.normalize("NFC", fn.lower())] = True
+
+        # Build the tree used to traverse files.
+
+        parts = fn.split("/")
+        rest = parts[-1]
+        first = parts[:-1]
+
+        t = tree
+        for i in first:
+            assert t is not True
+
+            if (i not in t) or (t[i] is True):
+                t[i] = {}
+
+            t = t[i]
+
+        assert t is not True
+        t[rest] = True
 
     for i in scandirfiles_callbacks:
         i(add, seen)
@@ -674,7 +695,7 @@ def load(name, directory=None, tl=True):
         if rv is not None:
             return rv
 
-    raise IOError("Couldn't find file '%s'." % name)
+    raise FileNotFoundError("Couldn't find file '%s'." % name)
 
 
 def loadable_core(name):
@@ -798,209 +819,6 @@ def get_hash(name):  # type: (str) -> int
 
     return rv
 
-
-# Module Loading
-class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
-    """
-    A meta-path importer, that tries to load pure Python modules from the places
-    where Ren'Py searches for data files.
-    """
-
-    def __init__(self):
-        self.prefixes: list[str] = []
-        "List of prefixes where modules can be found."
-
-        self._finder_cache: dict[str, RenpyImporter._ModuleInfo] | None = None
-        """
-        A dict from module name to module info of that module for all paths that
-        can be loaded with this importer.
-        """
-
-    def add_prefix(self, prefix: str):
-        if prefix and not prefix.endswith("/"):
-            prefix = prefix + "/"
-
-        if prefix in self.prefixes:
-            return
-
-        self.prefixes.append(prefix)
-        self.invalidate_caches()
-
-    class _ModuleInfo(NamedTuple):
-        filename: str
-        is_package: bool
-        is_namespace: bool
-
-    def _visit_dir(self, *path: str, files: Iterable[str]):
-        dir_to_fn: dict[str, list[str]] = {}
-
-        seen_init = False
-        prefix = ""
-        if path:
-            prefix += "/".join(path) + "/"
-
-        for fn in files:
-            if "/" in fn:
-                top_directory, _, fn = fn.partition("/")
-                if top_directory not in dir_to_fn:
-                    dir_to_fn[top_directory] = []
-
-                dir_to_fn[top_directory].append(fn)
-                continue
-
-            mod_name = ".".join(path)
-            if path and fn == "__init__.py":
-                seen_init = True
-                is_package = True
-            else:
-                if mod_name:
-                    mod_name += "." + fn[:-3]
-                else:
-                    mod_name = fn[:-3]
-
-                is_package = False
-
-            mod_info = RenpyImporter._ModuleInfo(prefix + fn, is_package, False)
-
-            yield mod_name, mod_info
-
-        if path and not seen_init:
-            yield ".".join(path), RenpyImporter._ModuleInfo(prefix, True, True)
-
-        for add_dir, files in dir_to_fn.items():
-            yield from self._visit_dir(*path, add_dir, files=files)
-
-    def _cache_entries(self) -> dict[str, _ModuleInfo]:
-        if self._finder_cache is not None:
-            return self._finder_cache
-
-        if not game_files:
-            scandirfiles()
-
-        self._finder_cache = dict(
-            self._visit_dir(files=(fn for _, fn in game_files if fn.endswith(".py") if not fn.endswith("_ren.py")))
-        )
-        return self._finder_cache
-
-    def _get_module_info(self, fullname: str) -> _ModuleInfo | None:
-        cache_entries = self._cache_entries()
-
-        for prefix in self.prefixes:
-            prefix = prefix.replace("/", ".")
-            if rv := cache_entries.get(prefix + fullname):
-                return rv
-
-        return None
-
-    # MetaPathFinder interface
-    def invalidate_caches(self):
-        self._finder_cache = None
-
-    def find_spec(self, fullname, path, target=None):
-        if module_info := self._get_module_info(fullname):
-            spec = importlib.machinery.ModuleSpec(
-                name=fullname,
-                loader=self,
-                is_package=module_info.is_package,
-            )
-
-            spec.has_location = True
-
-            filename = transpath(module_info.filename)
-            if filename is None:
-                filename = "$game/" + module_info.filename
-
-            if module_info.is_namespace:
-                spec.submodule_search_locations = [filename]
-
-            elif module_info.is_package:
-                spec.submodule_search_locations = [filename.rpartition("/")[0]]
-
-            if not module_info.is_namespace:
-                spec.origin = filename
-                spec.cached = filename + "c"
-
-            return spec
-
-    # InspectLoader interface
-    def is_package(self, fullname: str) -> bool:
-        if module_info := self._get_module_info(fullname):
-            return module_info.is_package
-        else:
-            raise ImportError
-
-    def get_source(self, fullname: str) -> str | None:
-        module_info = self._get_module_info(fullname)
-        if module_info is None:
-            raise ImportError
-
-        if module_info.is_namespace:
-            return None
-
-        with load(module_info.filename, tl=False) as f:
-            bindata = f.read()
-
-        return importlib.util.decode_source(bindata)
-
-    def get_code(self, fullname: str):
-        module_info = self._get_module_info(fullname)
-        if module_info is None:
-            raise ImportError
-
-        if module_info.is_namespace:
-            return compile("", module_info.filename, "exec", dont_inherit=True)
-
-        # TODO: add bytecode handling?
-
-        with load(module_info.filename, tl=False) as f:
-            source = f.read()
-
-        return self.source_to_code(source, module_info.filename)
-
-    def get_data(self, path: str):
-        path = path.replace("\\", "/")
-
-        if path.startswith("$game/"):
-            path = path[6:]
-
-            try:
-                return load(path, tl=False).read()
-            except Exception as e:
-                raise OSError(f"Could not open {path!r}.") from e
-
-        else:
-            with open(path, "rb") as f:
-                return f.read()
-
-
-meta_backup = []
-
-
-def add_python_directory(path: str):
-    """
-    :doc: other
-
-    Adds `path` to the list of paths searched for Python modules and packages.
-    The path should be a string relative to the game directory. This must be
-    called before an import statement.
-    """
-
-    for importer in sys.meta_path:
-        if isinstance(importer, RenpyImporter):
-            importer.add_prefix(path)
-
-
-def init_importer():
-    meta_backup[:] = sys.meta_path
-
-    sys.meta_path.insert(0, RenpyImporter())
-
-    add_python_directory("python-packages/")
-    add_python_directory("")
-
-
-def quit_importer():
-    sys.meta_path[:] = meta_backup
 
 
 # Auto-Reload
