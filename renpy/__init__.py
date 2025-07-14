@@ -404,6 +404,7 @@ def import_all():
 
     # Adds in the Ren'Py loader.
     import renpy.loader
+    import renpy.importer
 
     import renpy.pyanalysis
 
@@ -637,7 +638,7 @@ def reload_all():
     renpy.display.im.cache.quit()
 
     # Shut down the importer.
-    renpy.loader.quit_importer()
+    renpy.importer.quit_importer()
 
     # Free memory.
     renpy.exports.free_memory()
@@ -679,7 +680,7 @@ def reload_all():
     post_import()
 
     # Re-initialize the importer.
-    renpy.loader.init_importer()
+    renpy.importer.init_importer()
 
     # Reset main log clock.
     renpy.main.reset_clock()
@@ -718,6 +719,7 @@ if typing.TYPE_CHECKING:
     from . import exports as exports
     from . import game as game
     from . import gl2 as gl2
+    from . import importer as importer
     from . import lexer as lexer
     from . import lexersupport as lexersupport
     from . import lint as lint
