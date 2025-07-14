@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Iterable, Literal, NamedTuple
+from typing import Iterable, Literal, NamedTuple, overload
 
 import renpy
 import sys
@@ -32,6 +32,12 @@ import importlib.util
 import importlib.resources.abc
 
 from renpy.loader import TreeEntry
+
+PREFER_LOADER: bool = False
+"This can be set to True to prefer the Ren'Py loader for Python imports, for testing purposes."
+
+if PREFER_LOADER:
+    print("Using Ren'Py loader for Python imports.")
 
 # Package Resources
 
@@ -84,7 +90,7 @@ class RenpyPath(importlib.resources.abc.Traversable):
 
         return rv
 
-    def open(self, mode: str = "rb", *args, **kwargs):  # type: ignore[reportIncompatibleMethodOverride]
+    def open(self, mode: str = "r", *args, **kwargs) -> io.BufferedReader | io.TextIOWrapper:  # type:ignore[reportIncompatibleMethodOverride]
         """
         Opens the resource for reading.
         """
@@ -98,11 +104,15 @@ class RenpyPath(importlib.resources.abc.Traversable):
         else:
             return f
 
-    def read_text(self): # type: ignore[reportIncompatibleMethodOverride]
-        return self.open("r").read()
+    def read_text(self, encoding=None) -> str:
+        with self.open("r", encoding=encoding) as f:
+            assert isinstance(f, io.TextIOWrapper)
+            return f.read()
 
-    def read_bytes(self):  # type: ignore[reportIncompatibleMethodOverride]
-        return self.open("rb").read()
+    def read_bytes(self) -> bytes:
+        with self.open("rb") as f:
+            assert isinstance(f, io.BufferedReader)
+            return f.read()
 
 
 class RenpyResourceReader(importlib.resources.abc.TraversableResources):
@@ -236,6 +246,10 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
             spec.has_location = True
 
             filename = renpy.loader.transpath(module_info.filename)
+
+            if PREFER_LOADER:
+                filename = None
+
             if filename is None:
                 filename = "$game/" + module_info.filename
 
@@ -254,6 +268,10 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
     def get_resource_reader(self, fullname: str) -> RenpyResourceReader | None:
         if module_info := self._get_module_info(fullname):
             filename = renpy.loader.transpath(module_info.filename)
+
+            if PREFER_LOADER:
+                filename = None
+
             if filename is None:
                 filename = "$game/" + module_info.filename
 
