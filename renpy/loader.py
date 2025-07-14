@@ -19,7 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import Iterable, NamedTuple
+import importlib.resources
+import importlib.resources.abc
+from typing import Iterable, Literal, NamedTuple
 
 import renpy
 import os
@@ -35,6 +37,7 @@ import pathlib
 import importlib.machinery
 import importlib.abc
 import importlib.util
+import importlib.resources.abc
 
 from pygame_sdl2.rwobject import RWopsIO
 
@@ -311,6 +314,12 @@ remote_files = {}
 scandirfiles_callbacks = []
 
 
+type TreeEntry = dict[str, "TreeEntry"] | Literal[True]
+tree: TreeEntry = {}
+"""This is a tree of files and directories, used to allow resource traversal. directories are represented as
+   dicts, and files as True."""
+
+
 def scandirfiles():
     """
     Scans directories, archives, and apks and fills out game_files and
@@ -334,6 +343,24 @@ def scandirfiles():
         files.append((dn, fn))
         seen.add(fn)
         loadable_cache[unicodedata.normalize("NFC", fn.lower())] = True
+
+        # Build the tree used to traverse files.
+
+        parts = fn.split("/")
+        rest = parts[-1]
+        first = parts[:-1]
+
+        t = tree
+        for i in first:
+            assert t is not True
+
+            if (i not in t) or (t[i] is True):
+                t[i] = {}
+
+            t = t[i]
+
+        assert t is not True
+        t[rest] = True
 
     for i in scandirfiles_callbacks:
         i(add, seen)
@@ -674,7 +701,7 @@ def load(name, directory=None, tl=True):
         if rv is not None:
             return rv
 
-    raise IOError("Couldn't find file '%s'." % name)
+    raise FileNotFoundError("Couldn't find file '%s'." % name)
 
 
 def loadable_core(name):
@@ -799,6 +826,95 @@ def get_hash(name):  # type: (str) -> int
     return rv
 
 
+# Package Resources
+
+class RenpyPath(importlib.resources.abc.Traversable):
+    """
+    A class that represents a traversable resource in a Ren'Py package.
+    """
+
+    path: str
+    "The path to the resource, relative to the game directory."
+
+    tree: TreeEntry | None
+    "The tree structure of the resource, or None if it is a file."
+
+
+    def __init__(self, path: str, tree: TreeEntry|None):
+        self.path = path
+        self.tree = tree
+
+    @property
+    def name(self) -> str:
+        return self.path.rpartition("/")[2]
+
+    def iterdir(self):
+        if not isinstance(self.tree, dict):
+            return NotADirectoryError(f"Not a directory: {self.path}")
+
+        for name, entry in self.tree.items():
+            yield RenpyPath(self.path + "/" + name, entry)
+
+    def is_dir(self) -> bool:
+        return isinstance(self.tree, dict)
+
+    def is_file(self) -> bool:
+        return self.tree is True
+
+    def __truediv__(self, other: str) -> "RenpyPath":
+        path = f"{self.path}/{other}"
+
+        if isinstance(self.tree, dict):
+            return RenpyPath(path, self.tree.get(other, None))
+        else:
+            return RenpyPath(path, None)
+
+    def joinpath(self, *args: str) -> "RenpyPath":
+        rv = self
+
+        for i in args:
+            for j in i.strip("/").split("/"):
+                rv = rv / j
+
+        return rv
+
+    def open(self, mode: str = "rb", *args, **kwargs) -> io.BufferedReader:
+        """
+        Opens the resource for reading.
+        """
+        if not self.is_file():
+            raise NotADirectoryError(f"Not a file: {self.path}")
+
+        f = load(self.path)
+
+        if mode == "r":
+            return io.TextIOWrapper(f, *args, **kwargs)
+        else:
+            return f
+
+class RenpyResourceReader(importlib.resources.abc.TraversableResources):
+
+    def __init__(self, path: str):
+        self.path = path
+
+    def files(self) -> importlib.resources.abc.Traversable:
+        """
+        Returns a Traversable object representing the resource.
+        """
+
+        if not self.path.startswith("$game/"):
+            return pathlib.Path(self.path)
+
+        path = self.path[6:]
+
+        rv = RenpyPath("", tree)
+
+        for i in path.strip("/").split("/"):
+            rv = rv / i
+
+        return rv
+
+
 # Module Loading
 class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
     """
@@ -921,6 +1037,20 @@ class RenpyImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
                 spec.cached = filename + "c"
 
             return spec
+
+    def get_resource_reader(self, fullname: str) -> RenpyResourceReader | None:
+        if module_info := self._get_module_info(fullname):
+            filename = transpath(module_info.filename)
+            if filename is None:
+                filename = "$game/" + module_info.filename
+
+            if module_info.is_namespace:
+                return RenpyResourceReader(filename)
+            else:
+                # For non-namespace modules, we return a reader for the package directory.
+                package_dir = filename.rpartition("/")[0]
+                return RenpyResourceReader(package_dir)
+
 
     # InspectLoader interface
     def is_package(self, fullname: str) -> bool:
