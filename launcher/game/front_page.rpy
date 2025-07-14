@@ -108,7 +108,6 @@ screen front_page_project_list:
     vbox:
 
         if projects:
-            text "Projects"
             for p in projects:
 
                 textbutton ("[p.display_name]" if p.display_name else "[p.name!q]"):
