@@ -21,7 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode  # *
-
+from typing import Callable
 
 import renpy
 
@@ -429,6 +429,7 @@ class Restructurer(object):
         for i in children:
             if isinstance(i, renpy.ast.Label):
                 if not i.hide:
+                    assert isinstance(i.name, str)
                     if i.name.startswith("_"):
                         self.alternate = i.name
                     else:
@@ -760,12 +761,19 @@ def clean_data():
     renpy.game.log.forward = []
 
 
-def change_language(language, force=False):
+def change_language(language, force: bool = False, rebuild: bool = False):
     """
     :doc: translation_functions
 
     Changes the current language to `language`, which can be a string or
     None to use the default language.
+
+    `force`
+        If true, ensure the Python code is re-executed even if the language
+        hasn't changed.
+
+    `rebuild`
+        This forces the styles to be rebuild in all cases.
     """
 
     global old_language
@@ -774,6 +782,9 @@ def change_language(language, force=False):
 
     renpy.game.preferences.language = language
     changed = language != old_language
+
+    if rebuild:
+        changed = True
 
     if not changed and not force:
         return
@@ -810,6 +821,8 @@ def change_language(language, force=False):
     for i in renpy.config.translate_clean_stores:
         renpy.python.clean_store(i)
 
+    renpy.store.gui._apply_rebuild()
+
     if renpy.config.new_translate_order:
         new_change_language(tl, language, changed)
     else:
@@ -835,7 +848,6 @@ def change_language(language, force=False):
         renpy.exports.block_rollback()
 
     old_language = language
-
 
 
 def check_language():
