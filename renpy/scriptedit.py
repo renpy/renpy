@@ -77,10 +77,10 @@ def ensure_loaded(filename):
     anything if the filename can't be loaded.
     """
 
-    if not (filename.endswith(".rpy") or filename.endswith(".rpyc")):
+    if filename in files:
         return
 
-    if filename in files:
+    if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
         return
 
     files.add(filename)
