@@ -780,62 +780,52 @@ def change_language(language, force=False):
 
     tl = renpy.game.script.translator
 
-    # If change_languae is called with no changes but force=True, it means the game
-    # restarted. Re-run Python if the language requires it, but avoid rebuilding styles
-    # unless requested.
-    if not changed:
-        if not tl.requires_init(language) and not renpy.config.change_language_callbacks:
-            return
+    if changed:
+        renpy.style.restore(style_backup)  # @UndefinedVariable
+        renpy.style.rebuild(False)  # @UndefinedVariable
 
+        for i in renpy.config.translate_clean_stores:
+            renpy.python.clean_store(i)
+
+    elif not tl.requires_init(language):
+        return
+
+    else:
         # Prevent memory leak by ignoring any style changes from translate
         # blocks when language hasn't changed.
         current_styles = renpy.style.backup()
-
-        if renpy.config.new_translate_order:
-            new_change_language(tl, language, changed)
-        else:
-            old_change_language(tl, language, changed)
-
-        for i in renpy.config.change_language_callbacks:
-            i()
-
-        renpy.style.restore(current_styles)
-
-        # Restart the interaction.
-        renpy.exports.restart_interaction()
-
-    renpy.style.restore(style_backup)  # @UndefinedVariable
-    renpy.style.rebuild(False)  # @UndefinedVariable
-
-    for i in renpy.config.translate_clean_stores:
-        renpy.python.clean_store(i)
 
     if renpy.config.new_translate_order:
         new_change_language(tl, language, changed)
     else:
         old_change_language(tl, language, changed)
 
-    for i in renpy.config.change_language_callbacks:
-        i()
+    if changed:
+        for i in renpy.config.change_language_callbacks:
+            i()
 
-    # Reset various parts of the system. Most notably, this clears the image
-    # cache, letting us load translated images.
-    renpy.exports.free_memory()
+        # Reset various parts of the system. Most notably, this clears the image
+        # cache, letting us load translated images.
+        renpy.exports.free_memory()
 
-    # Rebuild the styles.
-    renpy.style.rebuild()  # @UndefinedVariable
+        # Rebuild the styles.
+        renpy.style.rebuild()  # @UndefinedVariable
 
-    # Re-init tts.
-    renpy.display.tts.init()
+        # Re-init tts.
+        renpy.display.tts.init()
 
-    for i in renpy.config.translate_clean_stores:
-        renpy.python.reset_store_changes(i)
+        for i in renpy.config.translate_clean_stores:
+            renpy.python.reset_store_changes(i)
 
-    if language != old_language:
         renpy.exports.block_rollback()
 
-    old_language = language
+        old_language = language
 
+    else:
+        renpy.style.restore(current_styles)
+
+    # Restart the interaction.
+    renpy.exports.restart_interaction()
 
 
 def check_language():
