@@ -108,10 +108,13 @@ init -1150 python in gui:
 
         return f
 
-    def _apply_rebuild():
+    def rebuild():
         """
-        Called by renpy.translation.change_language to rebuild the gui
-        when the language changes.
+        :doc: gui
+
+        Rebuilds the GUI.
+
+        Note: This is a very slow function.
         """
 
         global variant_functions
@@ -125,16 +128,22 @@ init -1150 python in gui:
             if renpy.variant(variant):
                 f()
 
-    def rebuild():
-        """
-        :doc: gui
+        for i in config.translate_clean_stores:
+            renpy.python.clean_store_backup.backup_one("store." + i)
 
-        Rebuilds the GUI.
+        # Similar process to that used in renpy.change_language, devoid
+        # of any specific language-change related activities.
 
-        Note: This is a very slow function.
-        """
+        renpy.style.restore(renpy.translation.style_backup)
+        renpy.style.rebuild(False)
 
-        renpy.translation.change_language(_preferences.language, force=True, rebuild=True)
+        for i in renpy.translation.deferred_styles:
+            i.apply()
+
+        renpy.config.init_system_styles()
+
+        renpy.style.rebuild()
+
         renpy.exports.restart_interaction()
 
     not_set = object()
