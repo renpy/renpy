@@ -310,7 +310,9 @@ cdef class GLTexture(GL2Model):
                 0.0, 0.0, width, height,
                 0.0, 0.0, 1.0, 1.0,
                 )
-            self.properties = { }
+            self.properties = {
+                "mipmap" : self.should_have_mipmaps({}),
+                }
 
     def should_have_mipmaps(GLTexture self, properties):
         """
