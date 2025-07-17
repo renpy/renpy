@@ -131,8 +131,9 @@ init -1150 python in gui:
         for i in config.translate_clean_stores:
             renpy.python.clean_store_backup.backup_one("store." + i)
 
-        renpy.style.rebuild()
-        renpy.exports.restart_interaction()
+        # Do the same sort of reset we'd do when changing language, without
+        # actually changing the language.
+        renpy.change_language(_preferences.language, force=True)
 
     not_set = object()
 
