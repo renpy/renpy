@@ -478,7 +478,7 @@ def save():
         return
 
     try:
-        data = dumps(renpy.game.persistent, bad_reduction_name="peristent")
+        data = dumps(renpy.game.persistent, bad_reduction_name="persistent")
         compressed = zlib.compress(data, 3)
         compressed += renpy.savetoken.sign_data(data).encode("utf-8")
         renpy.loadsave.location.save_persistent(compressed)
