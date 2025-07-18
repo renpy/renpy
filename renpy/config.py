@@ -514,7 +514,8 @@ save_dump = False
 # Can we resize a gl window?
 gl_resize = True
 
-# Called when we change the translation.
+# Called when we change the translation. Deprecated - this is now only used in 00stylepreferences.rpy, and
+# then only when the styles are rebuilt.
 change_language_callbacks = []
 
 # The translation directory.
