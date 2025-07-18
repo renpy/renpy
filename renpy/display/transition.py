@@ -685,8 +685,8 @@ class AlphaDissolve(Transition):
         top = render(self.new_widget, width, height, st, at)
 
         if renpy.config.dissolve_shrinks:
-            width = min(bottom.width, top.width, image.width)
-            height = min(bottom.height, top.height, image.height)
+            width = min(bottom.width, top.width)
+            height = min(bottom.height, top.height)
         else:
             width = max(bottom.width, top.width)
             height = max(bottom.height, top.height)
