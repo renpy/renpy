@@ -791,11 +791,12 @@ def change_language(language, force: bool = False, rebuild: bool = False):
 
     tl = renpy.game.script.translator
 
+    # This path runs when the language does not change,
+
     # If change_language is called with no changes but force=True, it means the game
-    # restarted. Re-run Python if the language requires it, but avoid rebuilding styles
-    # unless requested.
+    # restarted. Re-run Python if the language requires it, but avoid rebuilding styles.
     if not changed:
-        if not tl.requires_init(language) and not renpy.config.change_language_callbacks:
+        if not tl.requires_init(language):
             return
 
         # Prevent memory leak by ignoring any style changes from translate
@@ -806,9 +807,6 @@ def change_language(language, force: bool = False, rebuild: bool = False):
             new_change_language(tl, language, changed)
         else:
             old_change_language(tl, language, changed)
-
-        for i in renpy.config.change_language_callbacks:
-            i()
 
         renpy.style.restore(current_styles)
 
@@ -836,10 +834,8 @@ def change_language(language, force: bool = False, rebuild: bool = False):
     # cache, letting us load translated images.
     renpy.exports.free_memory()
 
-    # Rebuild the styles.
     renpy.style.rebuild()
 
-    # Re-init tts.
     renpy.display.tts.init()
 
     for i in renpy.config.translate_clean_stores:
