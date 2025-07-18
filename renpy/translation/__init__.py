@@ -729,14 +729,14 @@ def change_language(language, force=False):
     styles = change or force == 'style'
 
     # step 1: Style reset
-    # Only needed when regenerating styles (uses global backup intentionally).
+    # Restore and flush boot-time styles to give a clean starting point.
     if styles:
         renpy.style.restore(style_backup)  # @UndefinedVariable
         renpy.style.rebuild(False)  # @UndefinedVariable
 
     # step 1b: Backup styles
-    # When not regenerating styles but there is language code to run,
-    # backup styles so they can be later restored to avoid memory leaks.
+    # When bypassing the style rebuild for speed, we must backup styles
+    # so they can be later restored to avoid memory leaks.
     elif force and tl.requires_init(language):
         backup = renpy.style.backup()
 
@@ -744,22 +744,23 @@ def change_language(language, force=False):
     else:
         return
 
-    # step 2: Store reset
+    # step 2: Clean stores
     if change:
         for i in renpy.config.translate_clean_stores:
             renpy.python.clean_store(i)
 
     # step 3: Load and update language preference
-    # if change:
+    # if change: drop-through
         renpy.exports.load_language(language)
         renpy.game.preferences.language = language
 
     # step 4: Define early block executor
+    # Used by both new and legacy ordering.
     def run_early_blocks():
         for i in tl.early_block[language]:
             renpy.game.context().run(i.block[0])
 
-    # step 5: Run early language specific code and blocks (new ordering)
+    # step 5: Run language python, early blocks, and callbacks (new order)
     if renpy.config.new_translate_order:
         for i in tl.python[language]:
             renpy.python.py_exec_bytecode(i.code.bytecode)
@@ -774,18 +775,18 @@ def change_language(language, force=False):
         for i in deferred_styles:
             i.apply()
 
-    # step 7: Run early language specific blocks (legacy ordering)
+    # step 7: Run language early blocks (legacy order)
     if not renpy.config.new_translate_order:
         renpy.game.invoke_in_new_context(run_early_blocks)
 
-    # step 8: Run language specific blocks
+    # step 8: Run language blocks
     def run_blocks():
         for i in tl.block[language]:
             renpy.game.context().run(i.block[0])
 
     renpy.game.invoke_in_new_context(run_blocks)
 
-    # step 9: Run language specific code (legacy ordering)
+    # step 9: Run language python, and callbacks (legacy order)
     if not renpy.config.new_translate_order:
         for i in tl.python[language]:
             renpy.python.py_exec_bytecode(i.code.bytecode)
@@ -793,12 +794,11 @@ def change_language(language, force=False):
         for i in renpy.config.language_callbacks[language]:
             i()
 
-    # step 10: Install system styles (new ordering only)
+    # step 10: Install system styles (new order only)
     elif styles:
         renpy.config.init_system_styles()
 
-    # step 11: Notify callbacks and clear language impacted caches
-    # Only needed during a real change of language.
+    # step 11: Notify callbacks and clear language sensitive caches
     if change:
         for i in renpy.config.change_language_callbacks:
             i()
@@ -811,16 +811,15 @@ def change_language(language, force=False):
     if styles:
         renpy.style.rebuild()  # @UndefinedVariable
 
-    # step 13: Re-init tts and reset stores
-    # Only needed if we're doing a real change of language.
+    # step 13: Re-init tts and reset stores (pairs with step 2)
     if change:
         renpy.display.tts.init()
 
         for i in renpy.config.translate_clean_stores:
             renpy.python.reset_store_changes(i)
 
-    # step 14: Complete the language switch
-    # if change:
+    # step 14: Block rollback and record the language now applied
+    # if change: drop-through
         renpy.exports.block_rollback()
 
         old_language = language
