@@ -726,7 +726,6 @@ def change_language(language, force=False):
 
     backup = None
     change = language != old_language
-    python = change or force is True
     styles = change or force == 'style'
 
     # step 1: Style reset
@@ -756,7 +755,7 @@ def change_language(language, force=False):
         renpy.game.preferences.language = language
 
     # step 4: Run early language specific code and blocks (new ordering)
-    if python and renpy.config.new_translate_order:
+    if renpy.config.new_translate_order:
         for i in tl.python[language]:
             renpy.python.py_exec_bytecode(i.code.bytecode)
 
@@ -775,7 +774,7 @@ def change_language(language, force=False):
             i.apply()
 
     # step 6: Run early language specific blocks (legacy ordering)
-    if python and not renpy.config.new_translate_order:
+    if not renpy.config.new_translate_order:
         def run_early_blocks():
             for i in tl.early_block[language]:
                 renpy.game.context().run(i.block[0])
@@ -783,23 +782,22 @@ def change_language(language, force=False):
         renpy.game.invoke_in_new_context(run_early_blocks)
 
     # step 7: Run language specific blocks
-    if python:
-        def run_blocks():
-            for i in tl.block[language]:
-                renpy.game.context().run(i.block[0])
+    def run_blocks():
+        for i in tl.block[language]:
+            renpy.game.context().run(i.block[0])
 
-        renpy.game.invoke_in_new_context(run_blocks)
+    renpy.game.invoke_in_new_context(run_blocks)
 
     # step 8: Run language specific code (legacy ordering)
-    if python and not renpy.config.new_translate_order:
+    if not renpy.config.new_translate_order:
         for i in tl.python[language]:
             renpy.python.py_exec_bytecode(i.code.bytecode)
 
         for i in renpy.config.language_callbacks[language]:
             i()
 
-    # step 9: Install system styles
-    if styles and renpy.config.new_translate_order:
+    # step 9: Install system styles (new ordering only)
+    elif styles:
         renpy.config.init_system_styles()
 
     # step 10: Notify callbacks and clear language impacted caches
@@ -830,11 +828,11 @@ def change_language(language, force=False):
 
         old_language = language
 
-    # step 13b: Restore style backup
+    # step 13b: Restore style backup (pairs with step 1b)
     elif backup:
         renpy.style.restore(backup)
 
-    # step 14: Always restart the interaction
+    # step 14: Restart the interaction
     renpy.exports.restart_interaction()
 
 
