@@ -834,9 +834,6 @@ def change_language(language, force: bool = False, rebuild: bool = False):
 
     run_blocks()
 
-    for i in renpy.config.change_language_callbacks:
-        i()
-
     # Reset various parts of the system. Most notably, this clears the image
     # cache, letting us load translated images.
     renpy.exports.free_memory()
