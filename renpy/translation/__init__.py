@@ -776,6 +776,24 @@ def change_language(language, force: bool = False, rebuild: bool = False):
         This forces the styles to be rebuilt even if the language hasn't changed.
     """
 
+    def run_blocks():
+        """
+        This is common code that runs translate blocks and deferred styles.
+        """
+
+        for i in renpy.config.translate_clean_stores:
+            renpy.python.clean_store(i)
+
+        renpy.store.gui._apply_rebuild()
+
+        if renpy.config.new_translate_order:
+            new_change_language(tl, language, changed)
+        else:
+            old_change_language(tl, language, changed)
+
+        for i in renpy.config.translate_clean_stores:
+            renpy.python.reset_store_changes(i)
+
     global old_language
 
     renpy.exports.load_language(language)
@@ -803,10 +821,7 @@ def change_language(language, force: bool = False, rebuild: bool = False):
         # blocks when language hasn't changed.
         current_styles = renpy.style.backup()
 
-        if renpy.config.new_translate_order:
-            new_change_language(tl, language, changed)
-        else:
-            old_change_language(tl, language, changed)
+        run_blocks()
 
         renpy.style.restore(current_styles)
 
@@ -817,15 +832,7 @@ def change_language(language, force: bool = False, rebuild: bool = False):
     renpy.style.restore(style_backup)
     renpy.style.rebuild(False)
 
-    for i in renpy.config.translate_clean_stores:
-        renpy.python.clean_store(i)
-
-    renpy.store.gui._apply_rebuild()
-
-    if renpy.config.new_translate_order:
-        new_change_language(tl, language, changed)
-    else:
-        old_change_language(tl, language, changed)
+    run_blocks()
 
     for i in renpy.config.change_language_callbacks:
         i()
@@ -837,9 +844,6 @@ def change_language(language, force: bool = False, rebuild: bool = False):
     renpy.style.rebuild()
 
     renpy.display.tts.init()
-
-    for i in renpy.config.translate_clean_stores:
-        renpy.python.reset_store_changes(i)
 
     if language != old_language:
         renpy.exports.block_rollback()
