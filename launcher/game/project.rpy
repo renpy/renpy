@@ -536,7 +536,7 @@ init python in project:
             self.scanned = set()
 
             # The tutorial game, and the language it's for.
-            self.tutoral = None
+            self.tutorial = None
             self.tutorial_language = "the meowing of a cat"
 
             self.scan()
@@ -657,6 +657,10 @@ init python in project:
                     pf.add(p)
 
                     self.all_projects.append(p)
+
+                    project_type = p.data.get("type", "normal")
+                    if project_type == "template":
+                        self.templates.append(p)
 
                 if not pf.hidden and not pf.projects:
                     pf.hidden = True

@@ -514,7 +514,7 @@ save_dump = False
 # Can we resize a gl window?
 gl_resize = True
 
-# Called when we change the translation.
+# Removed.
 change_language_callbacks = []
 
 # The translation directory.
