@@ -773,7 +773,7 @@ def change_language(language, force: bool = False, rebuild: bool = False):
         hasn't changed.
 
     `rebuild`
-        This forces the styles to be rebuild in all cases.
+        This forces the styles to be rebuilt even if the language hasn't changed.
     """
 
     global old_language
@@ -791,7 +791,7 @@ def change_language(language, force: bool = False, rebuild: bool = False):
 
     tl = renpy.game.script.translator
 
-    # If change_languae is called with no changes but force=True, it means the game
+    # If change_language is called with no changes but force=True, it means the game
     # restarted. Re-run Python if the language requires it, but avoid rebuilding styles
     # unless requested.
     if not changed:
@@ -814,9 +814,10 @@ def change_language(language, force: bool = False, rebuild: bool = False):
 
         # Restart the interaction.
         renpy.exports.restart_interaction()
+        return
 
-    renpy.style.restore(style_backup)  # @UndefinedVariable
-    renpy.style.rebuild(False)  # @UndefinedVariable
+    renpy.style.restore(style_backup)
+    renpy.style.rebuild(False)
 
     for i in renpy.config.translate_clean_stores:
         renpy.python.clean_store(i)
@@ -836,7 +837,7 @@ def change_language(language, force: bool = False, rebuild: bool = False):
     renpy.exports.free_memory()
 
     # Rebuild the styles.
-    renpy.style.rebuild()  # @UndefinedVariable
+    renpy.style.rebuild()
 
     # Re-init tts.
     renpy.display.tts.init()
