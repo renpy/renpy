@@ -79,6 +79,7 @@ the omission in future versions.
 * Dm1sh
 * Do10HM
 * Dogtopus
+* Doohyeon Won
 * Doomfest
 * Donghyeok Tak
 * DragoonHP
@@ -241,6 +242,7 @@ the omission in future versions.
 * Pratomo Asta Nugraha
 * Project Gardares
 * Psunbury
+* Puxap-3opre
 * Quetz
 * Raj Singh Chauhan
 * Raspberry-soft
