@@ -590,7 +590,7 @@ class Channel(object):
                         tight=topq.tight,
                         start=start,
                         end=end,
-                        relative_volume=topq.relative_volume * filename_volume,
+                        relative_volume=topq.relative_volume * filename_volume * renpy.config.adjust_audio_amplitude,
                         audio_filter=topq.audio_filter,
                     )  # type:ignore
                 else:
@@ -603,7 +603,7 @@ class Channel(object):
                         tight=topq.tight,
                         start=start,
                         end=end,
-                        relative_volume=topq.relative_volume * filename_volume,
+                        relative_volume=topq.relative_volume * filename_volume * renpy.config.adjust_audio_amplitude,
                         audio_filter=topq.audio_filter,
                     )  # type:ignore
 

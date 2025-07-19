@@ -1582,6 +1582,11 @@ After this many second without being able to preload, the emscripten port will c
 so might cause a framerate stutter.
 """
 
+adjust_audio_amplitude: float = 1.0
+"""
+Adjusts the amplitude of all audio played back by multiplying it by this value.
+"""
+
 
 del os
 del collections
