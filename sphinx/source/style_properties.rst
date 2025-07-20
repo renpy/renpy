@@ -743,8 +743,6 @@ Text Style Properties
     been enabled. The main use of this is to influence directionally neutral
     lines, such as those made up purely of punctuation.
 
-    This has no effect unless :var:`config.rtl` is set to ``True``.
-
     ``None``
         The default, the reading order will be determined based on the text.
         Most neutral lines will be treated as left-to-right.
