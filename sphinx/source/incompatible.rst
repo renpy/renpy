@@ -13,6 +13,18 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-8.4.1:
+
+8.4.1
+-----
+
+**Constant-power Audio Panning** It's now possible to revert the change to
+constant-power audio panning that was introduced in 8.1.0. To do this, add to
+your game::
+
+    define config.adjust_audio_amplitude = 1.0 / 0.7071067811865476
+
+
 .. _incompatible-8.4.0:
 
 8.4.0
