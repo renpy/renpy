@@ -15,10 +15,12 @@ Fixes
 On the web platform, textures are reloaded when the browser window is resized, preventing the textures from appearing
 transparent or black.
 
+Playing a movie on the web platform no longer causes Ren'Py to produce a stream of warnings.
+
+The :func:`gui.SetPreference` action once again rebuilds the styles after the preference is set.
+
 The config.dissolve_shrinks option, which provides backwards compatibility for :class:`AlphaDissolve` transitions and
 :func:`AlphaBlend` displayables with mismatched child sizes, now works as intended.
-
-Crashes that could occur when loading a game or returning to the main menu have been resolved.
 
 Copying translations between games now works correctly. This is especially important for transferring translations from
 the launcher to newly-created games, ensuring new non-English games are set up properly.
@@ -131,11 +133,6 @@ to sample textures. These transforms can be supplied a displayable or a string t
 
 GLTF Model Loading
 ------------------
-
-Ren'Py now has a minimal ability to load 3D models defined in the GLTF format, using the Open Asset Importer library.
-Models can be loaded using the :class:`GLTFModel` displayable.
-
-Right now, the GLTFModel loading only supports loading the mesh and textures of a model. There's no support for
 
 Ren'Py now has a minimal ability to load 3D models defined in the GLTF format, using the Open Asset Importer library.
 Models can be loaded using the :class:`GLTFModel` displayable.
