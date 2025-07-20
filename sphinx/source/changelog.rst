@@ -33,7 +33,7 @@ The pixellate transition now functions as expected.
 Features
 --------
 
-Ren'Py now scans for templates in subdirectories of the projects directories.
+Ren'Py now scans for templates in subdirectories of the projects directory.
 
 Ren'Py now supports Python's `importlib.resources <https://docs.python.org/3.12/library/importlib.resources.html>`_
 module. This provides a way to load the resources in a Python package, even if that Python package is stored in an RPA
