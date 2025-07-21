@@ -227,7 +227,7 @@ cdef class TextureLoader:
             texnums[0] = texture_number
             glDeleteTextures(1, texnums)
 
-            if texture_number not in self.allocated:
+            if texture_number not in self.allocated and texture_number:
                 print("Leaking texture:", texture_number)
 
             self.allocated.discard(texture_number)
