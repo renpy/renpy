@@ -12,6 +12,8 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+Ren'Py will no longer report "Leaking texture: 0" warnings, which could be spurious in some cases.
+
 On the web platform, textures are reloaded when the browser window is resized, preventing the textures from appearing
 transparent or black.
 
@@ -41,6 +43,8 @@ archive or an Android APK or asset pack.
 
 Other Changes
 -------------
+
+Ren'Py now supports Steamworks SDK 162.
 
 Support for right-to-left languages is now enabled by default.
 
