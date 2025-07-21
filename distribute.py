@@ -15,6 +15,7 @@ import subprocess
 import argparse
 import time
 import collections
+import pathlib
 
 try:
     from importlib import reload
@@ -77,6 +78,22 @@ def link_directory(dirname):
 
     if os.path.exists(source):
         os.symlink(source, dn)
+
+def force_even_timestamps():
+    """
+    Forces the timestamps of all .py files in the renpy directory to be even.
+
+    This ensures that the timestamps can be represented in a zip file, which
+    can only represent timestamps that are even multiples of 2 seconds.
+
+    See https://github.com/renpy/renpy-build/pull/166
+    """
+
+    for fn in pathlib.Path("renpy").rglob("*.py"):
+        if fn.is_file():
+            st = fn.stat()
+            if st.st_mtime % 2 != 0:
+                os.utime(fn, (st.st_atime, st.st_mtime + 1))
 
 def main():
 
@@ -171,6 +188,8 @@ def main():
         renpy_sh = "./renpy3.sh"
     else:
         renpy_sh = "./renpy2.sh"
+
+    force_even_timestamps()
 
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=True, quiet=1)
