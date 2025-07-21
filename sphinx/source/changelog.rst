@@ -31,7 +31,6 @@ Diagnostic print statements that could appear when playing movies on the web pla
 
 The pixellate transition now functions as expected.
 
-
 Features
 --------
 
