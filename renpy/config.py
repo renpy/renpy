@@ -384,7 +384,7 @@ empty_window = None
 window_overlay_functions = []
 
 # Do we support right-to-left languages?
-rtl = False
+rtl = True
 
 # A callback for file opening.
 file_open_callback = None

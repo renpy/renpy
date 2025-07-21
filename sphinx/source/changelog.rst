@@ -42,6 +42,8 @@ archive or an Android APK or asset pack.
 Other Changes
 -------------
 
+Support for right-to-left languages is now enabled by default.
+
 When loading a Python module or package from disk, Ren'Py will now set the ``__file__`` attribute to the absolute
 path of the module or package. This reverts a change made in Ren'Py 8.4.0, which set the ``__file__`` attribute
 to the path relative to the game directory. When loading a module from an RPA archive or Android APK, this changes

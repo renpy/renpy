@@ -598,8 +598,8 @@ renpyAudio.queue_depth = (channel) => {
     let rv = 0;
     let c = get_channel(channel);
 
-    // Try to resume the audio context if it's not running.
-    if (context.state != "running") {
+    // Try to resume the audio context if it's been interrupted (iOS Safari feature)
+    if (context.state === "interrupted") {
         context.resume();
     }
 
