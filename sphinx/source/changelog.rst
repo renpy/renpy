@@ -46,8 +46,6 @@ Other Changes
 The lint check for when translation functions are called with the wrong number of arguments was too slow,
 to be included in lint, and so this check has been removed for the time being.
 
-Ren'Py now supports Steamworks SDK 162.
-
 Support for right-to-left languages is now enabled by default.
 
 When loading a Python module or package from disk, Ren'Py will now set the ``__file__`` attribute to the absolute
