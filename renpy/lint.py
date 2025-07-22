@@ -19,7 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import ast
 import time
 import re
 import sys
@@ -1051,67 +1050,6 @@ def check_python_warnings():
         print("\n" + text, end="")
 
 
-def check_translate_calls():
-    """
-    Report incorrect translate calls like `_("A", "B")`.
-    """
-
-    invalid = collections.defaultdict(set)
-
-    class CheckTranslateCall(ast.NodeVisitor):
-        def visit_Call(self, node):
-            self.generic_visit(node)
-            if not isinstance(node.func, ast.Name):
-                return
-
-            if node.func.id not in ("_", "__", "___", "_p"):
-                return
-
-            if len(node.args) == 1 and not node.keywords:
-                return
-
-            invalid[filename].add(node.lineno)
-
-    visitor = CheckTranslateCall()
-    for expr in renpy.game.script.all_pyexpr:
-        filename = expr.filename
-        try:
-            tree = renpy.python.py_compile(expr, "eval", ast_node=True)
-            visitor.visit(tree)
-
-        except Exception:
-            pass
-
-    for code in renpy.game.script.all_pycode:
-        filename = code.filename
-        nodes = renpy.python.py_compile(
-            code.source,
-            code.mode,
-            filename=code.filename,
-            lineno=code.linenumber,
-            py=code.py,
-            hashcode=code.hashcode,
-            column=code.col_offset,
-            ast_node=True,
-        )
-
-        if not isinstance(nodes, list):
-            nodes = [nodes]
-
-        for node in nodes:
-            visitor.visit(node)
-
-    for filename, lines in invalid.items():
-        lines = sorted(lines)
-        if not lines:
-            continue
-        elif len(lines) == 1:
-            report(f"In {filename} there is an incorrect call to translate function at line {lines[0]}.")
-        else:
-            lines = ", ".join(str(i) for i in lines)
-            report(f"In {filename} there are incorrect calls to translate functions at lines {lines}.")
-
-
 def lint():
     """
     The master lint function, that's responsible for staging all of the
@@ -1316,8 +1254,6 @@ def lint():
 
     if not renpy.config.check_conflicting_properties:
         print("It is advised to set config.check_conflicting_properties to True.")
-
-    check_translate_calls()
 
     for f in renpy.config.lint_hooks:
         f()

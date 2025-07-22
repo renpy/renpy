@@ -12,6 +12,8 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+Ren'Py will no longer report "Leaking texture: 0" warnings, which could be spurious in some cases.
+
 On the web platform, textures are reloaded when the browser window is resized, preventing the textures from appearing
 transparent or black.
 
@@ -29,7 +31,6 @@ Diagnostic print statements that could appear when playing movies on the web pla
 
 The pixellate transition now functions as expected.
 
-
 Features
 --------
 
@@ -41,6 +42,9 @@ archive or an Android APK or asset pack.
 
 Other Changes
 -------------
+
+The lint check for when translation functions are called with the wrong number of arguments was too slow,
+to be included in lint, and so this check has been removed for the time being.
 
 Support for right-to-left languages is now enabled by default.
 
@@ -391,7 +395,7 @@ Changes
 The :func:`renpy.get_renderer_info` function now returns a dictionary containing information about user's
 GPU and graphics driver, when available.
 
-Lint now reports when the translation functuions (:func:`_`, :func:`__`, :func:`___`, and :func:`_p`) are called
+Lint now reports when the translation functions (:func:`_`, :func:`__`, :func:`___`, and :func:`_p`) are called
 with the wrong number of arguments.
 
 When Ren'Py loads a Python module from the game/ directory, ``__file__`` is set to the relative path of the module.
