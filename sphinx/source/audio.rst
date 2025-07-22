@@ -18,12 +18,11 @@ enable a mode that is faster and less prone to skipping if the web
 browser supports all modes on the list. If your game is using only
 mp3s, and skips on Safari, then consider changing :var:`config.webaudio_required_types`.
 
-Ren'Py supports an arbitrary number of audio channels. There are three
+Ren'Py supports an arbitrary number of audio channels. There are two
 normal channels defined by default:
 
 * ``music`` - A channel for music playback.
 * ``sound`` - A channel for sound effects.
-* ``voice`` - A channel for voice.
 
 Normal channels support playing and queueing audio, but only play back
 one audio file at a time. New normal channels can be registered with
@@ -33,9 +32,12 @@ The Music Volume, Sound Volume, and Voice Volume settings
 of the in-game preferences menu are used to set individual
 volumes for these channels. See :ref:`volume` for more information.
 
-In addition to the normal channel, there is one special channel, ``audio``.
-The audio channel supports playing back multiple audio files at one time,
-but does not support queueing sound or stopping playback.
+In addition to the normal channels, there are two special channels:
+
+* ``audio`` - The audio channel supports playing back multiple audio files at one time,
+   but does not support queueing sound or stopping playback.
+* ``voice`` - The voice chanel is used by Ren'Py's voice system. Ren'Py will automaticall
+  play and stop voice files as characters speak, and may adjust the volume of the voice channel.
 
 Sounds can also be set to play when buttons, menu choices, or
 imagemaps enter their hovered or activated states. See
@@ -80,7 +82,7 @@ the filename to lower case. This is only the case for audio files with names tha
 can be expressed as Python variables, for example: :file:`my song.mp3`, :file:`8track.opus`,
 or :file:`this-is-a-song.ogg` will not work. Additionally, if two or more files would
 end up defined under the same name, only the first file (determined alphabetically by its path
-and filename, extension included) will be defined. 
+and filename, extension included) will be defined.
 
 When a file isn't placed automatically into the audio namespace, either due to
 an incompatible name or being inside a different directory, it can still be placed

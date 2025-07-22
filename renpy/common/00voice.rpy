@@ -217,11 +217,17 @@ init -1500 python:
         :doc: voice_action
 
         This plays `sample` on the voice channel, as if said by a
-        character with `voice_tag`.
+        character with `voice_tag`. This will set the volume, but will
+        not perform and other voice-related handling of the file - it's
+        intended for use in menus to help the user determine the
+        character volume.
+
+        `voice_tag`
+            The voice tag of the character that is speaking. This is used
+            to determine the volume that will be used.
 
         `sample`
-            The full path to a sound file. No voice-related handling
-            of this file is done.
+            The full path to a sound file.
 
         `selected`
             If True, buttons using this action will be marked as selected
