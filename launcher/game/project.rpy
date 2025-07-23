@@ -337,7 +337,10 @@ init python in project:
             if wait:
                 if p.wait():
 
-                    print("Launch failed. command={!r}, returncode={!r}".format(cmd, p.returncode))
+                    print(f"Launch failed (returned {p.returncode}).")
+
+                    command = " ".join(repr(i) for i in cmd)
+                    print(f"Command: {command}")
 
                     if args and not self.is_writeable():
                         interface.error(_("Launching the project failed."), _("This may be because the project is not writeable."))
