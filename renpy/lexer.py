@@ -583,45 +583,11 @@ def list_logical_lines(
 
     # Add scriptedit lines if requested.
     if add_lines:
-        offsets = []
-
-        if filedata is None:
-            # Calculate positional offsets for CR characters that Python
-            # has ignored during the code read, but that we need to know
-            # about for editing purposes.
-
-            with open(original_filename, "r", encoding="utf-8", newline="") as f:
-                raw_data = f.read()
-
-            if filename.endswith("_ren.py"):
-                raw_data = ren_py_to_rpy(raw_data, filename)
-
-            raw_data += "\n\n"
-
-            # No need to do this unless we notice missing characters.
-            if len_data < len(raw_data):
-                data = raw_data
-
-                count = 0
-
-                for c in data:
-                    if c == "\r":
-                        count += 1
-                    else:
-                        offsets.append(count)
-
         lines = renpy.scriptedit.lines
         for _, number, start, end in rv:
-            if offsets:
-                start += offsets[start]
-                end += offsets[end]
-
             l = renpy.scriptedit.Line(original_filename, number, start)
 
             l.end_delim = end + 1
-
-            if data[end - 1] == "\r":
-                end -= 1
 
             while data[end - 1] == " ":
                 end -= 1
