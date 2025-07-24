@@ -892,6 +892,9 @@ class Interface(object):
             pass
 
     def setup_nvdrs(self):
+        if renpy.session.get("_reload", False):
+            return
+
         from ctypes import cdll, c_char_p
 
         nvdrs = cdll.nvdrs
@@ -904,8 +907,8 @@ class Interface(object):
         renpy.display.log.write("nvdrs: Loaded, about to disable thread optimizations.")
 
         disable_thread_optimization()
-        error = get_nvdrs_error()
-        if error:
+
+        if error := get_nvdrs_error():
             renpy.display.log.write("nvdrs: %r (can be ignored)", error)
         else:
             renpy.display.log.write("nvdrs: Disabled thread optimizations.")
