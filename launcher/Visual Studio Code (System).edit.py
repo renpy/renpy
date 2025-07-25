@@ -75,6 +75,17 @@ class Editor(renpy.editor.Editor):
         if renpy.windows:
             CREATE_NO_WINDOW = 0x08000000
             subprocess.Popen(args, creationflags=CREATE_NO_WINDOW)
+        elif renpy.linux and self.system:
+            try:
+                subprocess.Popen(args)
+            except FileNotFoundError as missingvscode:
+                flatpak_code = [ "flatpak", "run", "com.visualstudio.code" ]
+                flatpak_args = flatpak_code + [ "-g" ] + self.args
+                flatpak_args = [ renpy.exports.fsencode(i) for i in flatpak_args ]
+                try:
+                    subprocess.Popen(flatpak_args)
+                except
+                    raise missingvscode
         else:
             subprocess.Popen(args)
 
