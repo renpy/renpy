@@ -4,6 +4,18 @@ Changelog (Ren'Py 7.x-)
 
 *There is also a list of* :doc:`incompatible changes <incompatible>`
 
+
+.. _renpy-8.5.0:
+
+8.5.0
+=====
+
+Other Changes
+-------------
+
+The game.zip file produced by the web platform no longer contains .py files.
+
+
 .. _renpy-8.4.1:
 
 8.4.1
