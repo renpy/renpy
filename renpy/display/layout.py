@@ -675,10 +675,7 @@ class MultiBox(Container):
         self.scene_list = None
 
     def _in_current_store(self):
-        if self.layer_name is not None:
-            if self.scene_list is None:
-                return self
-
+        if self.scene_list is not None:
             scene_list = []
 
             changed = False
@@ -729,7 +726,7 @@ class MultiBox(Container):
                 return self
 
         else:
-            return super(MultiBox, self)._in_current_store()
+            return super()._in_current_store()
 
         if self.offsets:
             rv.offsets = list(self.offsets)
