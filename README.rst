@@ -48,8 +48,7 @@ Nightly builds can be downloaded from:
 
    https://nightly.renpy.org
 
-Note that the latest nightly build is at the bottom of the list. Once you've
-unpacked the nightly, change into this repository, and run::
+Once you've unpacked the nightly, change into this repository, and run::
 
     ./after_checkout.sh <path-to-nightly>
 
@@ -65,51 +64,7 @@ below.
 
 Compiling the Modules
 ----------------------
-
-Building the modules requires you have the many dependencies installed on
-your system. On Ubuntu and Debian, these dependencies can be installed with
-the command::
-
-    sudo apt install virtualenvwrapper python3-dev libassimp-dev libavcodec-dev libavformat-dev \
-        libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
-        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config
-
-Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
-that version, you'll need to download it from:
-
-    https://github.com/libsdl-org/SDL_image/tree/SDL2
-
-We strongly suggest installing the Ren'Py modules into a Python
-virtualenv. To create a new virtualenv, open a new terminal and run::
-
-    . /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-    mkvirtualenv renpy
-
-To return to this virtualenv later, run::
-
-    . /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-    workon renpy
-
-After activating the virtualenv, install additional dependencies::
-
-    pip install -U setuptools cython future six typing pefile requests ecdsa
-
-Then, install pygame_sdl2 by running the following commands::
-
-    git clone https://www.github.com/renpy/pygame_sdl2
-    pushd pygame_sdl2
-    python setup.py install
-    popd
-
-Finally, use setup.py to compile extension modules that support Ren'Py::
-
-    python setup.py install
-
-Ren'Py will be installed into the activated virtualenv. It can then be run
-using the command::
-
-    python renpy.py
-
+Install `uv` yourself and then `uv run -m scripts.update_env`
 
 Other Platforms
 ---------------
