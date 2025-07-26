@@ -425,7 +425,7 @@ init python:
 
         # Use the distributor to make game.zip.
         distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"),
-                reporter=reporter, noarchive=True, scan=False, files_filter=files_filter)
+                reporter=reporter, noarchive=True, scan=False, files_filter=files_filter, web_transform_renpy=True,)
 
         reporter.info(_("Preparing progressive download"))
         files_filter.finalize()
