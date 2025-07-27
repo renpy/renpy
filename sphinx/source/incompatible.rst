@@ -13,6 +13,18 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-8.4.2:
+
+8.4.2
+-----
+
+**Zoom and the Z-Axis** In Ren'Py 8.4, the :tpref:`zoom` transform property applies to the z-axis as well as the x and y
+axes. This can cause a behavior change in older games that did not expect the z-axis to be zoomed. To revert this
+change, add to your game::
+
+    define config.zoom_zaxis = False
+
+
 .. _incompatible-8.4.1:
 
 8.4.1

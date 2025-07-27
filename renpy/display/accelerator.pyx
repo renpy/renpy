@@ -585,7 +585,7 @@ cdef class RenderTransform:
             if yzoom < 0:
                 yo += height
 
-        if zoom != 1:
+        if zoom != 1 and renpy.config.zoom_zaxis:
             rzdz = zoom
 
         # Rotation.

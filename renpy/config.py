@@ -1587,6 +1587,10 @@ adjust_audio_amplitude: float = 1.0
 Adjusts the amplitude of all audio played back by multiplying it by this value.
 """
 
+zoom_zaxis: bool = True
+"""
+If True, zooms will apply to the z-axis as well as the x and y axes.
+"""
 
 del os
 del collections
