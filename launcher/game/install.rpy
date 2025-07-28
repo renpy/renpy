@@ -98,6 +98,16 @@ label install_live2d:
 
     jump front_page
 
+label install_live2d_web:
+    python hide:
+        patterns = [
+            (r".*/Core/live2dcubismcore.js", "lib/web/live2dcubismcore.js"),
+        ]
+
+        install_from_zip("Live2D Cubism SDK for Web", "CubismSdkForWeb-5-*.zip", patterns)
+
+    jump front_page
+
 screen install_preferences():
 
     frame:
@@ -138,8 +148,12 @@ screen install_preferences():
     textbutton _("Install Live2D Cubism SDK for Native"):
         action Jump("prompt_live2d")
 
+    add HALF_SPACER
 
-screen install_live2d():
+    textbutton _("Install Live2D Cubism SDK for Web"):
+        action Jump("prompt_live2d_web")
+
+screen install_live2d(web=False):
 
     frame:
         style_group "l"
@@ -166,8 +180,14 @@ screen install_live2d():
 
                         add SPACER
 
-                        textbutton _("Install Live2D Cubism SDK for Native"):
-                            action Jump("install_live2d")
+                        if web:
+                            textbutton _("Install Live2D Cubism SDK for Web"):
+                                action Jump("install_live2d_web")
+
+                        else:
+
+                            textbutton _("Install Live2D Cubism SDK for Native"):
+                                action Jump("install_live2d")
 
                         add HALF_SPACER
 
@@ -175,13 +195,14 @@ screen install_live2d():
                             style "l_indent"
                             has vbox
 
-                            text _("The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc.")
+                            if web:
+                                text _("The {a=https://www.live2d.com/en/sdk/download/web/}Cubism SDK for Web{/a} adds support for displaying Live2D models. Place CubismSdkForWeb-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc.")
+                            else:
+                                text _("The {a=https://www.live2d.com/en/sdk/download/native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc.")
 
                             add SPACER
 
-                            text _("Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support.")
-
-
+                            text _("Live2D doesn't support Android x86_64 (including emulators and Chrome OS) and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support.")
 
     textbutton _("Cancel") action Return(False) style "l_left_button"
     textbutton _("Open Ren'Py SDK Directory") action OpenDirectory(config.renpy_base, absolute=True) style "l_right_button"
@@ -189,7 +210,11 @@ screen install_live2d():
     timer 2.0 action renpy.restart_interaction repeat True
 
 label prompt_live2d:
-    call screen install_live2d
+    call screen install_live2d(web=False)
+    jump preferences
+
+label prompt_live2d_web:
+    call screen install_live2d(web=True)
     jump preferences
 
 label install_steam:

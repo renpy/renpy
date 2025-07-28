@@ -117,7 +117,8 @@ steam_appid.txt
 
 # Live2D
 cubism
-CubismSdkForNative-4-*.zip
+CubismSdkForNative-*.zip
+CubismSdkForWeb-*.zip
 
 # Created files.
 /screenshot*
