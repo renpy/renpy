@@ -128,6 +128,9 @@ init -1500 python in build:
         # Mac patterns.
         ( "lib/py*-mac-*/**", "mac"),
 
+        # Web patterns.
+        ( "lib/web/**", "web"),
+
         # Old Python library.
         ( "lib/python2.*/**", None),
 
