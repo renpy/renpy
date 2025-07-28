@@ -397,18 +397,3 @@ block::
     work.
 
 
-.. _exec_py:
-
-Injecting Python
-----------------
-
-Python can be injected into a game at runtime by creating a file named
-``exec.py`` in the base directory. It's suggested that this file is created
-under a different name, edited, and then atomically moved into place.
-
-When Ren'Py sees a file named ``exec.py``, it will load the contents of the file,
-delete the file, and execute the contents in the game store using Python's
-``exec``. This is always done during an interaction.
-
-This is intended to support debugging tools. By default it is enabled when developer
-mode is true, but can also be enabled by setting the RENPY_EXEC_PY environment variable.
