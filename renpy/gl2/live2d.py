@@ -50,6 +50,12 @@ def onetime_init():
     if did_onetime_init:
         return
 
+    if renpy.emscripten:
+        web_init()
+        did_onetime_init = True
+        return
+
+
     if renpy.windows:
         dll = "Live2DCubismCore.dll"
     elif renpy.macintosh:
@@ -69,6 +75,24 @@ def onetime_init():
         raise Exception("Could not load Live2D. {} was not found.".format(dll))
 
     did_onetime_init = True
+
+def web_init():
+    """
+    Initializes live2d for the web platform.
+    """
+
+    try:
+        # We assume we're in /, which is where the web build lives.
+        source = open("lib/web/live2dcubismcore.js").read()
+    except FileNotFoundError:
+        raise Exception("Live2D Cubism for Web was not found. Install it in the Ren'Py launcher and rebuild the game.")
+
+    m = re.search(r"var _em_module=(.*)var _em = _em_module\(\);", source, re.DOTALL)
+    if not m:
+        raise Exception("This version of Live2D Cubism for Web is not compatible with this version of Ren'Py.")
+
+    import emscripten
+    emscripten.run_script(m.group(0) + "window.live2d_csm = _em;")
 
 
 did_init = False
