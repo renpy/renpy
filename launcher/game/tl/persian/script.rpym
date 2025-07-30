@@ -1,0 +1,34 @@
+﻿# Script-e bāzi dar in bāzi qarār migirad.
+
+# Ta'rif-e šaxsiyat hā-ye estefāde šode tavvasot-e in bāzi. Argumān-e
+# color nām-e šaxsiyat rā rangāmizi mikonad.
+
+define e = Character("ایلین")
+
+
+# Bāzi injā šoru' mišavad.
+
+label start:
+
+    # Namāyeš-e yek paszamine. In be surat-e pišfarz az yek tasvir-e
+    # movaqqati estefāde mikonad, vali šomā mitavānid yek file (be
+    # nām-e "bg room.png" yā "bg room.jpg") be puše-ye images ezāfe
+    # karde tā āz rā namāyeš dahid.
+
+    scene bg room
+
+    # In yek sprite-e šaxsiyat rā namāyeš midahad. Yek tasvir-e movaqqati
+    # estefāde šode, vali šomā mitavānid ān rā bā ezāfe kardān-e yek file
+    # be nām-e "eileen happy.png" be puše-ye images jāygozin konid.
+
+    show eileen happy
+
+    # Namāyeš-e in xotut-e diālog.
+
+    e "شما یک بازی جدید Ren'Py ساختید."
+
+    e "وقتی یک داستان، تصاویر، و موسیقی اضافه کنید، می‌توانید به دنیا انتشار کنید!"
+
+    # In bāzi rā tamām mikonad.
+
+    return
