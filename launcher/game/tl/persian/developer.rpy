@@ -140,7 +140,7 @@ translate persian strings:
 
     # renpy/common/_developer/inspector.rpym:39
     old "Displayable Inspector"
-    new "بازبین نمایه"
+    new "بازبین دیسپلیبل"
 
     # renpy/common/_developer/inspector.rpym:62
     old "Size"
@@ -160,11 +160,11 @@ translate persian strings:
 
     # renpy/common/_developer/inspector.rpym:141
     old "displayable:"
-    new "نمایه"
+    new "دیسپلیبل:"
 
     # renpy/common/_developer/inspector.rpym:147
     old "        (no properties affect the displayable)"
-    new "        (هیچ ویژگی بر نمایه تأثیرگذار نیست)"
+    new "        (هیچ ویژگی بر دیسپلیبل تأثیرگذار نیست)"
 
     # renpy/common/_developer/inspector.rpym:149
     old "        (default properties omitted)"
@@ -265,4 +265,3 @@ translate persian strings:
     # renpy/common/00console.rpy:1048
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
     new "unescape: غیرفعال کردن رهایی نمادهای یونیکد در رشته‌های یونیکد و چاپ به همان صورت که هست (پیش‌فرض)"
-

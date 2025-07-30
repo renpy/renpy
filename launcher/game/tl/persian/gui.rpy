@@ -68,7 +68,7 @@ translate persian strings:
 
     # gui/game/gui.rpy:60
     old "## The font used for in-game text."
-    new "## Fonti ke barā-ye matn-e dāxel-e bāzi estefāde mišavad."
+    new "## Fonti ke barā-ye matn-e darun-e bāzi estefāde mišavad."
 
     # gui/game/gui.rpy:63
     old "## The font used for character names."
@@ -212,7 +212,7 @@ translate persian strings:
 
     # gui/game/gui.rpy:206
     old "## Choice buttons are used in the in-game menus."
-    new "## Dokme hā-ye entexāb dar menu hā-ye dāxel-e bāzi estefāde mišavand."
+    new "## Dokme hā-ye entexāb dar menu hā-ye darun-e bāzi estefāde mišavand."
 
     # gui/game/gui.rpy:220
     old "## File Slot Buttons"
@@ -260,7 +260,7 @@ translate persian strings:
 
     # gui/game/gui.rpy:263
     old "## Buttons in the navigation section of the main and game menus."
-    new "## Dokme hā-ye dāxel-e qesmat-e hedāyati-ye menu hā-ye asli va bāzi."
+    new "## Dokme hā-ye dāxel-e baxš-e hedāyati-ye menu hā-ye asli va bāzi."
 
     # gui/game/gui.rpy:266
     old "## Controls the amount of spacing between preferences."
@@ -441,4 +441,3 @@ translate persian strings:
     # gui/game/gui.rpy:467
     old "## NVL-mode."
     new "## NVL-mode."
-

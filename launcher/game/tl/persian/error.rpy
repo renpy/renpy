@@ -184,7 +184,7 @@ translate persian strings:
 
     # renpy/common/_errorhandling.rpym:756
     old "Reloads the game from disk, saving and restoring game state if possible."
-    new "بازی را از دیسک دوباره بارگذاری می‌کند و در صورت امکان، حالت بازی را ذخیره و بازیابی می‌کند."
+    new "بازی را از دیسک مجدداً بارگذاری می‌کند و در صورت امکان، حالت بازی را ذخیره و بازیابی می‌کند."
 
     # renpy/common/_errorhandling.rpym:759
     old "Console"
@@ -201,4 +201,3 @@ translate persian strings:
     # renpy/common/_errorhandling.rpym:796
     old "Parsing the script failed."
     new "تجزیۀ اسکریپ ناموفق بود."
-

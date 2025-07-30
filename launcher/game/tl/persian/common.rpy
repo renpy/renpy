@@ -348,7 +348,7 @@ translate persian strings:
 
     # renpy/common/00director.rpy:1593
     old "(tag)"
-    new "(برچسب)"
+    new "(تگ)"
 
     # renpy/common/00director.rpy:1594
     old "(attributes)"
@@ -392,7 +392,7 @@ translate persian strings:
 
     # renpy/common/00director.rpy:1726
     old "Tag:"
-    new "برچسب:"
+    new "تگ:"
 
     # renpy/common/00director.rpy:1742
     old "Attributes:"
@@ -928,7 +928,7 @@ translate persian strings:
 
     # renpy/common/00updater.rpy:2045
     old "The updates have been installed. The program will restart."
-    new "به روزرسانی‌ها نصب شدند. برنامه دوباره باز خواهد شد."
+    new "به روزرسانی‌ها نصب شدند. برنامه مجدداً باز خواهد شد."
 
     # renpy/common/00updater.rpy:2047
     old "The updates have been installed."
@@ -981,4 +981,3 @@ translate persian strings:
     # renpy/common/00gallery.rpy:666
     old "return"
     new "برگشت"
-

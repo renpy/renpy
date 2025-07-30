@@ -96,7 +96,7 @@ translate persian strings:
 
     # gui/game/options.rpy:109
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
-    new "## Ba'd az šoru'-e bāzi, in rā mitavān bā gozāre hā-ye \"window show\", \"window hide\", va \"window auto\" ta'qir dād."
+    new "## Ba'd az šoru'-e bāzi, in rā mitavān bā gozāre hā-ye \"window show\", \"window hide\", va \"window auto\" taqir dād."
 
     # gui/game/options.rpy:115
     old "## Transitions used to show and hide the dialogue window"
@@ -136,7 +136,7 @@ translate persian strings:
 
     # gui/game/options.rpy:146
     old "## This generally should not be changed, and if it is, should always be a literal string, not an expression."
-    new "## In ma'mulan nabāyad ta'qir dāde šavad, va agar bešavad, bāyad hamiše yek rešte-ye rāstin-namād bāšad, na yek 'ebārat."
+    new "## In ma'mulan nabāyad taqir dāde šavad, va agar bešavad, bāyad hamiše yek rešte-ye rāstin-namād bāšad, na yek 'ebārat."
 
     # gui/game/options.rpy:152
     old "## Icon"
