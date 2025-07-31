@@ -6,6 +6,20 @@ Changelog (Ren'Py 7.x-)
 
 .. _renpy-8.4.1:
 
+8.4.2
+=====
+
+
+
+Other Changes
+-------------
+
+Ren'Py will now promopt you to close other Ren'Py games before an upgrade. This addresses problems on Windows
+that could be caused by launcher files in use by games that are running during the upgrade.
+
+
+.. _renpy-8.4.1:
+
 8.4.1
 =====
 
